@@ -189,12 +189,13 @@ private:
     //checks if an id fetch request will return the ids for the same landmarks as in \a lms
     bool checkIdFetchRequest(const QList<QLandmark> &lms, const QLandmarkFilter &filter,
                             const QList<QLandmarkSortOrder> &sorting = QList<QLandmarkSortOrder>(),
-                            const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint()) {
+                            int limit =-1, int offset=0) {
         //check that the id request will return the same results
         QLandmarkIdFetchRequest idFetchRequest(m_manager);
         idFetchRequest.setFilter(filter);
         idFetchRequest.setSorting(sorting);
-        idFetchRequest.setFetchHint(fetchHint);
+        idFetchRequest.setLimit(limit);
+        idFetchRequest.setOffset(offset);
 
         QSignalSpy spyId(&idFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
         idFetchRequest.start();
@@ -214,11 +215,11 @@ private:
 
     bool checkIdFetchRequest(const QList<QLandmark> &lms, const QLandmarkFilter &filter,
                             const QLandmarkSortOrder &sorting,
-                            const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint())
+                            int limit=-1, int offset=0)
     {
         QList<QLandmarkSortOrder> sortOrders;
         sortOrders << sorting;
-        return  checkIdFetchRequest(lms, filter, sortOrders, fetchHint);
+        return  checkIdFetchRequest(lms, filter, sortOrders, limit, offset);
     }
 
     bool checkCategoryIdFetchRequest(const QList<QLandmarkCategory> &cats, const QLandmarkNameSort &nameSort)
@@ -2888,32 +2889,28 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksLimitMatches() {
 
     //default
     QLandmarkFilter filter;
-    QLandmarkFetchHint fetchHint;
     QLandmarkSortOrder sortOrder;
 
-    fetchHint.setMaxItems(100);
-    ids = m_manager->landmarkIds(filter, sortOrder, fetchHint);
+    ids = m_manager->landmarkIds(filter, sortOrder, 100);
 
     QCOMPARE(ids.size(), 50);
 
     QLandmarkNameSort nameSort(Qt::DescendingOrder);
-    fetchHint.setMaxItems(25);
-    ids = m_manager->landmarkIds(filter, nameSort, fetchHint);
+
+    ids = m_manager->landmarkIds(filter, nameSort, 25);
 
     QCOMPARE(ids.size(), 25);
     QCOMPARE(m_manager->landmark(ids.at(0)).name(), QString("LM9"));
     QCOMPARE(m_manager->landmark(ids.at(24)).name(), QString("LM31"));
 
-    QList<QLandmark> lms = m_manager->landmarks(filter, nameSort, fetchHint);
+    QList<QLandmark> lms = m_manager->landmarks(filter, nameSort, 25);
     QCOMPARE(lms.size(), 25);
     QCOMPARE(lms.at(0).name(), QString("LM9"));
     QCOMPARE(lms.at(24).name(), QString("LM31"));
 
-    //try with an offset and max items
-    fetchHint.setOffset(10);
-    fetchHint.setMaxItems(10);
-    lms = m_manager->landmarks(filter, nameSort, fetchHint);
-    ids = m_manager->landmarkIds(filter, nameSort, fetchHint);
+    //try with an limit and offset
+    lms = m_manager->landmarks(filter, nameSort, 10, 10);
+    ids = m_manager->landmarkIds(filter, nameSort, 10, 10);
     QVERIFY(checkIds(lms, ids));
 
     QCOMPARE(lms.size(), 10);
@@ -2921,10 +2918,8 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksLimitMatches() {
     QCOMPARE(lms.at(9).name(), QString("LM36"));
 
     //try with an offset and no max items
-    fetchHint.setMaxItems(-1);
-    fetchHint.setOffset(10);
-    lms = m_manager->landmarks(filter,QLandmarkNameSort(Qt::AscendingOrder), fetchHint);
-    ids = m_manager->landmarkIds(filter, QLandmarkNameSort(Qt::AscendingOrder), fetchHint);
+    lms = m_manager->landmarks(filter,QLandmarkNameSort(Qt::AscendingOrder), -1, 10);
+    ids = m_manager->landmarkIds(filter, QLandmarkNameSort(Qt::AscendingOrder), -1, 10);
     QVERIFY(checkIds(lms, ids));
 
     QCOMPARE(lms.size(), 40);
@@ -2932,23 +2927,18 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksLimitMatches() {
     QCOMPARE(lms.at(39).name(), QString("LM9"));
 
     //try with an offset of -1
-    fetchHint.setMaxItems(-1);
-    fetchHint.setOffset(-1);
-    lms = m_manager->landmarks(filter, QLandmarkNameSort(Qt::AscendingOrder), fetchHint);
-    ids = m_manager->landmarkIds(filter, QLandmarkNameSort(Qt::AscendingOrder), fetchHint);
+    lms = m_manager->landmarks(filter, QLandmarkNameSort(Qt::AscendingOrder), -1, -1);
+    ids = m_manager->landmarkIds(filter, QLandmarkNameSort(Qt::AscendingOrder), -1, -1);
     QVERIFY(checkIds(lms, ids));
 
     //try with an offset which greater than the number of items
-    fetchHint.setMaxItems(100);
-    fetchHint.setOffset(500);
-    lms = m_manager->landmarks(filter, QLandmarkNameSort(Qt::AscendingOrder), fetchHint);
+
+    lms = m_manager->landmarks(filter, QLandmarkNameSort(Qt::AscendingOrder), 100, 500);
     QCOMPARE(lms.count(), 0);
 
     QLandmarkNameFilter nameFilter;
     nameFilter.setName("LM1");
-    fetchHint.setMaxItems(-1);
-    fetchHint.setOffset(5);
-    lms = m_manager->landmarks(nameFilter,QLandmarkSortOrder(),fetchHint);
+    lms = m_manager->landmarks(nameFilter,QLandmarkSortOrder(),-1, 5);
     QCOMPARE(lms.count(),0);
 }
 
@@ -2969,63 +2959,58 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksLimitMatchesAsync() {
 
     QCOMPARE(lms.size(), 50);
 
-    QLandmarkFetchHint fetchHint;
-    fetchHint.setMaxItems(100);
-    fetchRequest.setFetchHint(fetchHint);
+    fetchRequest.setLimit(100);
     fetchRequest.start();
 
     QVERIFY(waitForAsync(spy, &fetchRequest));
     lms = fetchRequest.landmarks();
-    QVERIFY(checkIdFetchRequest(lms, fetchRequest.filter(), fetchRequest.sorting(), fetchRequest.fetchHint()));
+    QVERIFY(checkIdFetchRequest(lms, fetchRequest.filter(), fetchRequest.sorting(), fetchRequest.limit(),
+    fetchRequest.offset()));
     QCOMPARE(lms.size(), 50);
 
     //try with a sort order and limit
     QLandmarkNameSort nameSort(Qt::DescendingOrder);
-    fetchHint.setMaxItems(25);
-    fetchRequest.setFetchHint(fetchHint);
+    fetchRequest.setLimit(25);
     fetchRequest.setSorting(nameSort);
     fetchRequest.start();
 
     QVERIFY(waitForAsync(spy, &fetchRequest));
     lms = fetchRequest.landmarks();
-    QVERIFY(checkIdFetchRequest(lms, fetchRequest.filter(),fetchRequest.sorting(), fetchRequest.fetchHint()));
+    QVERIFY(checkIdFetchRequest(lms, fetchRequest.filter(),fetchRequest.sorting(), fetchRequest.limit(), fetchRequest.offset()));
     QCOMPARE(lms.size(), 25);
     QCOMPARE(lms.at(0).name(), QString("LM9"));
     QCOMPARE(lms.at(24).name(), QString("LM31"));
 
-    //try with an offset and max items
-    fetchHint.setOffset(10);
-    fetchHint.setMaxItems(10);
-    fetchRequest.setFetchHint(fetchHint);
+    //try with an offset and limit
+    fetchRequest.setLimit(10);
+    fetchRequest.setOffset(10);
     fetchRequest.start();
 
     QVERIFY(waitForAsync(spy, &fetchRequest));
     lms = fetchRequest.landmarks();
     QVERIFY(checkIdFetchRequest(lms, fetchRequest.filter(), fetchRequest.sorting(),
-                                fetchRequest.fetchHint()));
+                                fetchRequest.limit(), fetchRequest.offset()));
     QCOMPARE(lms.size(), 10);
     QCOMPARE(lms.at(0).name(), QString("LM44"));
     QCOMPARE(lms.at(9).name(), QString("LM36"));
 
     //try with an offset and no max items
-    fetchHint.setMaxItems(-1);
-    fetchHint.setOffset(10);
-    fetchRequest.setFetchHint(fetchHint);
+    fetchRequest.setLimit(-1);
+    fetchRequest.setOffset(10);
     fetchRequest.setSorting(QLandmarkNameSort(Qt::AscendingOrder));
     fetchRequest.start();
 
     QVERIFY(waitForAsync(spy, &fetchRequest));
     lms = fetchRequest.landmarks();
     QVERIFY(checkIdFetchRequest(lms, fetchRequest.filter(), fetchRequest.sorting(),
-                                fetchRequest.fetchHint()));
+                                fetchRequest.limit(), fetchRequest.offset()));
     QCOMPARE(lms.size(), 40);
     QCOMPARE(lms.at(0).name(), QString("LM18"));
     QCOMPARE(lms.at(39).name(), QString("LM9"));
 
     //try with an offset of -1
-    fetchHint.setMaxItems(-1);
-    fetchHint.setOffset(-1);
-    fetchRequest.setFetchHint(fetchHint);
+    fetchRequest.setLimit(-1);
+    fetchRequest.setOffset(-1);
     fetchRequest.setSorting(QLandmarkNameSort(Qt::AscendingOrder));
     fetchRequest.start();
 
@@ -3034,9 +3019,8 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksLimitMatchesAsync() {
     QCOMPARE(lms.count(), 50);
 
     //try with an offset which greater than the number of items
-    fetchHint.setMaxItems(100);
-    fetchHint.setOffset(500);
-    fetchRequest.setFetchHint(fetchHint);
+    fetchRequest.setLimit(500);
+    fetchRequest.setOffset(100);
     fetchRequest.start();
 
     QVERIFY(waitForAsync(spy, &fetchRequest));

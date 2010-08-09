@@ -422,16 +422,13 @@ QGeoSearchReply* QGeoSearchManager::search(const QString &searchString,
         }
     }
 
-    QLandmarkFetchHint hint;
-    hint.setMaxItems(resultsCount);
-    hint.setOffset(resultsOffset);
-
     for (int i = 0; i < d_ptr->engine->additionalLandmarkManagers().size(); ++i) {
         QLandmarkManager* lm = d_ptr->engine->additionalLandmarkManagers().at(i);
 
         QLandmarkFetchRequest* fetchRequest = new QLandmarkFetchRequest(lm, this);
         fetchRequest->setFilter(intersectFilter);
-        fetchRequest->setFetchHint(hint);
+        fetchRequest->setLimit(resultsCount);
+        fetchRequest->setOffset(resultsOffset);
         fetchRequests.append(fetchRequest);
     }
 

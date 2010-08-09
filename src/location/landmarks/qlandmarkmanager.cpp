@@ -79,12 +79,12 @@ QTM_USE_NAMESPACE
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Instantiate default QLandmarkManager
 
     \section1 Retrieval operations
-    To retrieve a set of landmarks we provide may provide a QLandmarkFilter, QLandmarkSortOrder and QLandmarkFetchHint as necessary.
+    To retrieve a set of landmarks we provide may provide a QLandmarkFilter, QLandmarkSortOrder and limit and offset as necessary.
     The QLandmarkFilter defines the criteria for selecting landmarks e.g. a QLandmarkCategoryFilter may be used
     to choose landmarks that belong to a certain category or a QLandmarkProximityFilter to choose landmarks
     within a certain range from a given location.  A QLandmarkSortOrder order defines how the results should
-    be sorted and the QLandmarkFetchHint allows specification of the maximum number of items to
-    return and an offset to facilitate paging.  The following demonstrates how to search for the 5 nearest
+    be sorted.  The limit allows specification of the maximum number of items to
+    return and the offset defines the index of the first item.  The following demonstrates how to search for the 5 nearest
     landmarks to a given coordinate.
 
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve landmarks by proximity synchronously
@@ -562,10 +562,11 @@ QLandmark QLandmarkManager::landmark(const QLandmarkId &landmarkId) const
 
 /*!
     Returns a list of landmarks which match the given \a filter and are sorted according to the \a sortOrders.
-    Various fetch operation parameters may be specified by \a fetchHint.
+    The \a limit defines the maximum number of landmarks to return and the \a offset defines the index offset
+    of the first landmark.  A \a limit of -1 means all matching landmarks should be returned.
 */
 QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder> &sortOrders,
-                                             const QLandmarkFetchHint &fetchHint) const
+                                             int limit, int offset) const
 {
     Q_D(const QLandmarkManager);
 
@@ -577,7 +578,8 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, cons
 
     QList<QLandmark> lms = d->engine->landmarks(filter,
                            sortOrders,
-                           fetchHint,
+                           limit,
+                           offset,
                            &(d->errorCode),
                            &(d->errorString));
 
@@ -588,11 +590,12 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, cons
 }
 
 /*!
-    Returns a list of landmarks which match the given \a filter and are sorted according to the given \a sortOrder.
-    Various fetch operation parameters may be specified by \a fetchHint.
+    Returns a list of landmarks which match the given \a filter and are sorted according to the \a sortOrder.
+    The \a limit defines the maximum number of landmarks to return and the \a offset defines the index offset
+    of the first landmark.  A \a limit of -1 means all matching landmarks should be returned.
 */
 QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, const QLandmarkSortOrder &sortOrder,
-                                             const QLandmarkFetchHint &fetchHint) const
+                                             int limit, int offset) const
 {
     Q_D(const QLandmarkManager);
 
@@ -608,7 +611,8 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, cons
 
     QList<QLandmark> lms = d->engine->landmarks(filter,
                            sortOrders,
-                           fetchHint,
+                           limit,
+                           offset,
                            &(d->errorCode),
                            &(d->errorString));
 
@@ -641,7 +645,7 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
 
     QList<QLandmark> lms = d->engine->landmarks(idFilter,
                                                 sortOrders,
-                                                QLandmarkFetchHint(),
+                                                -1, 0,
                                                 &(d->errorCode),
                                                 &(d->errorString));
 
@@ -652,12 +656,14 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
 }
 
 /*!
-    Returns a list of landmark identifiers of landmarks that match the given \a filter, sorted
-    according to the given \a sortOrders.  Various fetch operation parameters may be specified by \a fetchHint.
+    Returns a list of landmark identifiers which match the given \a filter and are sorted according to
+    the given \a sortOrders. The \a limit defines the maximum number of landmark ids to return and the
+    \a offset defines the index offset of the first landmark id.
+    A \a limit of -1 means that ids of all matching landmarks should be returned.
 */
 QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
                                                  const QList<QLandmarkSortOrder> &sortOrders,
-                                                 const QLandmarkFetchHint &fetchHint) const
+                                                 int limit, int offset) const
 {
     Q_D(const QLandmarkManager);
 
@@ -669,7 +675,8 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
 
     QList<QLandmarkId> ids = d->engine->landmarkIds(filter,
                              sortOrders,
-                             fetchHint,
+                             limit,
+                             offset,
                              &(d->errorCode),
                              &(d->errorString));
 
@@ -680,13 +687,15 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
 }
 
 /*!
-    Convenience function for returning a list of landmark identifiers of landmarks that match the given \a filter, sorted
-    according to the given \a sortOrder. Various fetch operation parameters may be specified by \a fetchHint.
+    Returns a list of landmark identifiers which match the given \a filter and are sorted according to
+    the given \a sortOrder. The \a limit defines the maximum number of landmark ids to return and the
+    \a offset defines the index offset of the first landmark id.
+    A \a limit of -1 means that ids of all matching landmarks should be returned.
 
     This is a convenience function.
 */
 QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter, const QLandmarkSortOrder &sortOrder,
-                                                 const QLandmarkFetchHint &fetchHint) const
+                                                 int limit, int offset) const
 {
     Q_D(const QLandmarkManager);
 
@@ -701,7 +710,8 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter, 
 
     QList<QLandmarkId> ids = d->engine->landmarkIds(filter,
                              sortOrders,
-                             fetchHint,
+                             limit,
+                             offset,
                              &(d->errorCode),
                              &(d->errorString));
 

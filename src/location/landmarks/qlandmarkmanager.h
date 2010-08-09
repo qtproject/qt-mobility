@@ -125,17 +125,17 @@ public:
 
     QLandmark landmark(const QLandmarkId &landmarkId) const;
     QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders,
-                                const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint()) const;
+                                int limit=-1, int offset=0) const;
     QList<QLandmark> landmarks(const QLandmarkFilter &filter = QLandmarkFilter(), const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder(),
-                            const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint()) const;
+                            int limit=-1, int offset=0) const;
 
     QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds) const;
     QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter,
                                    const QList<QLandmarkSortOrder> &sortOrders,
-                                   const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint()) const;
+                                   int limit =-1, int offset=0) const;
     QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter = QLandmarkFilter(),
                                    const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder(),
-                                   const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint()) const;
+                                   int limit=-1, int offset =0) const;
 
     bool importLandmarks(QIODevice *device, const QString &format= QString() ,QLandmarkManager::ImportExportOption option = IncludeCategoryData, const QLandmarkCategoryId& = QLandmarkCategoryId());
     bool importLandmarks(const QString &fileName, const QString &format = QString(),QLandmarkManager::ImportExportOption option = IncludeCategoryData, const QLandmarkCategoryId& = QLandmarkCategoryId());

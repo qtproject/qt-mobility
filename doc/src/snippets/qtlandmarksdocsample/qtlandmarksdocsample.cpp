@@ -390,10 +390,7 @@ void landmarkFetch(QLandmarkManager *lm)
         distanceSort.setCoordinate(coordinate);
         distanceSort.setDirection(Qt::AscendingOrder);
 
-        QLandmarkFetchHint fetchHint;
-        fetchHint.setMaxItems(5);
-
-        landmarkManager->landmarks(filter, sortOrder, fetchHint);
+        landmarkManager->landmarks(filter, sortOrder, 5);
         //! [Retrieve landmarks by proximity synchronously]
 
         //! [Retrieve all landmarks synchronously]

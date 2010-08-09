@@ -162,10 +162,13 @@ void QDeclarativeLandmarkSource::setMaxItems(int maxItems)
 
 void QDeclarativeLandmarkSource::setFetchHints()
 {
-    if (!m_fetchRequest || m_maxItems <= 0)
+//TODO: replace fetch hint with limit and offset
+
+/*    if (!m_fetchRequest || m_maxItems <= 0)
         return;
     m_fetchHint.setMaxItems(m_maxItems);
     m_fetchRequest->setFetchHint(m_fetchHint);
+*/
 }
 
 void QDeclarativeLandmarkSource::convertLandmarksToDeclarative()

@@ -146,21 +146,38 @@ void QLandmarkFetchRequest::setSorting(const QLandmarkSortOrder &sorting)
 }
 
 /*!
-    Returns the request's fetch hint.
+    Returns the maximum number of landmarks to be returned.
 */
-QLandmarkFetchHint QLandmarkFetchRequest::fetchHint() const
+int QLandmarkFetchRequest::limit() const
 {
     Q_D(const QLandmarkFetchRequest);
-    return d->fetchHint;
+    return d->limit;
 }
 
 /*!
-    Sets the request's \a fetchHint
-*/
-void QLandmarkFetchRequest::setFetchHint(const QLandmarkFetchHint &fetchHint)
+    Sets the maximum number of landmarks to be returned to \a limit.
+ */
+void QLandmarkFetchRequest::setLimit(int limit)
 {
     Q_D(QLandmarkFetchRequest);
-    d->fetchHint = fetchHint;
+    d->limit = limit;
+}
+
+/*!
+    Returns the index offset for the request.
+*/
+int QLandmarkFetchRequest::offset() const
+{
+    Q_D(const QLandmarkFetchRequest);
+    return d->offset;
+}
+
+/*!
+    Sets the index \a offset for the request.
+*/
+void QLandmarkFetchRequest::setOffset(int offset) {
+    Q_D(QLandmarkFetchRequest);
+    d->offset = offset;
 }
 
 /*!

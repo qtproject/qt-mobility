@@ -65,7 +65,6 @@ class QLandmarkAbstractRequest;
 class QLandmarkCategory;
 class QLandmarkSortOrder;
 class QLandmarkNameSort;
-class QLandmarkFetchHint;
 class QLandmarkFilter;
 QTM_END_NAMESPACE
 
@@ -100,13 +99,13 @@ namespace DatabaseOperations {
 
     QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFilter& filter,
                                    const QList<QLandmarkSortOrder>& sortOrders,
-                                   const QLandmarkFetchHint &fetchHint,
+                                   int limit, int offset,
                                    QLandmarkManager::Error *error, QString *errorString,
                                    const QString &managerUri, QueryRun * queryRun =0);
 
     QList<QLandmark> landmarks(const QString &connectionName, const QLandmarkFilter& filter,
                                const QList<QLandmarkSortOrder>& sortOrders,
-                               const QLandmarkFetchHint &fetchHint,
+                               int limit, int offset,
                                QLandmarkManager::Error *error, QString *errorString,
                                const QString &managerUri, QueryRun *queryRun =0);
 

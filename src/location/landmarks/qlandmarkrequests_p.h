@@ -65,14 +65,16 @@ class QLandmarkIdFetchRequestPrivate : public QLandmarkAbstractRequestPrivate
 {
 public:
     QLandmarkIdFetchRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr)
+        : QLandmarkAbstractRequestPrivate(mgr),
+          limit(-1), offset(0)
     {
         type = QLandmarkAbstractRequest::LandmarkIdFetchRequest;
     }
 
     QLandmarkFilter filter;
     QList<QLandmarkSortOrder>sorting;
-    QLandmarkFetchHint fetchHint;
+    int limit;
+    int offset;
     QList<QLandmarkId> landmarkIds;
 };
 
@@ -80,13 +82,15 @@ class QLandmarkFetchRequestPrivate : public QLandmarkAbstractRequestPrivate
 {
 public:
     QLandmarkFetchRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr)
+        : QLandmarkAbstractRequestPrivate(mgr),
+        limit(-1), offset(0)
     {
         type = QLandmarkAbstractRequest::LandmarkFetchRequest;
     }
     QLandmarkFilter filter;
     QList<QLandmarkSortOrder> sorting;
-    QLandmarkFetchHint fetchHint;
+    int limit;
+    int offset;
     QList<QLandmark> landmarks;
 };
 

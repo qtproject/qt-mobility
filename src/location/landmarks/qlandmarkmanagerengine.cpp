@@ -157,14 +157,15 @@ int QLandmarkManagerEngine::managerVersion() const
 }
 
 /*!
-    Returns a list of landmark ids of landmarks that match the given \a filter, sorted
-    according to the given \a sortOrders.  Depending on the backend, this filtering operation
-    may involve retrieving all the landmarks.  Various fetch operation parameters may be specified by \a fetchHint.
+    Returns a list of landmark identifiers which match the given \a filter and are sorted according to
+    the given \a sortOrders. The \a limit defines the maximum number of landmark ids to return and the
+    \a offset defines the index offset of the first landmark id.
+    A \a limit of -1 means that ids of all matching landmarks should be returned.
 
     Any error which occurs will be saved in \a error and \a errorString.
  */
 QList<QLandmarkId> QLandmarkManagerEngine::landmarkIds(const QLandmarkFilter& filter,
-        const QList<QLandmarkSortOrder>& sortOrders, const QLandmarkFetchHint& fetchHint, QLandmarkManager::Error* error,
+        const QList<QLandmarkSortOrder>& sortOrders, int limit, int offset, QLandmarkManager::Error* error,
         QString *errorString) const
 {
     return QList<QLandmarkId>();
@@ -193,12 +194,13 @@ QLandmark QLandmarkManagerEngine::landmark(const QLandmarkId &landmarkId, QLandm
 
 /*!
     Returns a list of landmarks which match the given \a filter and are sorted according to the \a sortOrders.
-    Various fetch operation parameters are specified by \a fetchHint.
+    The \a limit defines the maximum number of landmarks to return and the \a offset defines the index offset
+    of the first landmark.  A \a limit of -1 means all matching landmarks should be returned.
 
     Overall operation errors are stored in \a error and \a errorString.
 */
 QList<QLandmark> QLandmarkManagerEngine::landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder> &sortOrders,
-                                                   const QLandmarkFetchHint &fetchHint, QLandmarkManager::Error *error, QString *errorString) const
+                                                   int limit, int offset, QLandmarkManager::Error *error, QString *errorString) const
 {
     return QList<QLandmark>();
 }

@@ -78,7 +78,7 @@ public:
     /* Filtering */
     QList<QLandmarkId> landmarkIds(const QLandmarkFilter& filter,
                                    const QList<QLandmarkSortOrder>& sortOrders,
-                                   const QLandmarkFetchHint &fetchHint,
+                                   int limit, int offset,
                                    QLandmarkManager::Error *error,
                                    QString *errorString) const;
     QList<QLandmarkCategoryId> categoryIds(const QLandmarkNameSort &nameSort,
@@ -91,7 +91,7 @@ public:
                        QString *errorString) const;
     QList<QLandmark> landmarks(const QLandmarkFilter& filter,
                                const QList<QLandmarkSortOrder>& sortOrders,
-                               const QLandmarkFetchHint &fetchHint,
+                               int limit, int offset,
                                QLandmarkManager::Error *error,
                                QString *errorString) const;
     QLandmarkCategory category(const QLandmarkCategoryId &landmarkCategoryId,
@@ -149,7 +149,7 @@ public:
     QStringList categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
 
     bool isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;;
-    void setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString);;
+    void setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString);
 
     bool isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
     void setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString);

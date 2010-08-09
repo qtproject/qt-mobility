@@ -201,11 +201,11 @@ int QLandmarkManagerEngineSqlite::managerVersion() const
 
 QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIds(const QLandmarkFilter& filter,
         const QList<QLandmarkSortOrder>& sortOrders,
-        const QLandmarkFetchHint &fetchHint,
+        int limit, int offset,
         QLandmarkManager::Error *error,
         QString *errorString) const
 {
-    return DatabaseOperations::landmarkIds(m_dbConnectionName,filter,sortOrders,fetchHint, error,errorString, managerUri() );
+    return DatabaseOperations::landmarkIds(m_dbConnectionName,filter,sortOrders,limit,offset, error,errorString, managerUri() );
 }
 
 QList<QLandmarkCategoryId> QLandmarkManagerEngineSqlite::categoryIds(const QLandmarkNameSort &nameSort, QLandmarkManager::Error *error,
@@ -224,12 +224,12 @@ QLandmark QLandmarkManagerEngineSqlite::landmark(const QLandmarkId &landmarkId,
 
 QList<QLandmark> QLandmarkManagerEngineSqlite::landmarks(const QLandmarkFilter &filter,
                                                          const QList<QLandmarkSortOrder>& sortOrders,
-                                                         const QLandmarkFetchHint &fetchHint,
+                                                         int limit, int offset,
                                                          QLandmarkManager::Error *error,
                                                          QString *errorString) const
 {
 
-    return DatabaseOperations::landmarks(m_dbConnectionName, filter, sortOrders, fetchHint, error, errorString, managerUri());
+    return DatabaseOperations::landmarks(m_dbConnectionName, filter, sortOrders, limit, offset, error, errorString, managerUri());
 }
 
 QLandmarkCategory QLandmarkManagerEngineSqlite::category(const QLandmarkCategoryId &landmarkCategoryId,

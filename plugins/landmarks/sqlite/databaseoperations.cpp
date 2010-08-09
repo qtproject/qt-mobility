@@ -440,12 +440,11 @@ bool exportLandmarksGpx(const QString &connectionName,
     QLandmarkFileHandlerGpx gpxHandler;
 
     QList<QLandmarkSortOrder> sortOrders;
-    QLandmarkFetchHint fetchHint;
     QLandmarkFilter filter;
     if (landmarkIds.count() > 0)
         filter = QLandmarkIdFilter (landmarkIds, QLandmarkIdFilter::MatchSubset);
 
-    QList<QLandmark> lms = ::landmarks(connectionName,filter, sortOrders, fetchHint, error, errorString, managerUri);
+    QList<QLandmark> lms = ::landmarks(connectionName,filter, sortOrders, -1, 0, error, errorString, managerUri);
 
     if (error && *error != QLandmarkManager::NoError)
         return false;
@@ -479,8 +478,7 @@ bool exportLandmarksLmx(const QString &connectionName,
 
     QLandmarkIdFilter idFilter(landmarkIds, QLandmarkIdFilter::MatchAll);
     QList<QLandmarkSortOrder> sortOrders;
-    QLandmarkFetchHint fetchHint;
-    QList<QLandmark> lms = ::landmarks(connectionName, idFilter, sortOrders, fetchHint, error, errorString, managerUri);
+    QList<QLandmark> lms = ::landmarks(connectionName, idFilter, sortOrders, -1, 0, error, errorString, managerUri);
 
     if (error && *error != QLandmarkManager::NoError)
         return false;
@@ -848,7 +846,7 @@ QLandmark DatabaseOperations::retrieveLandmark(const QString &connectionName, co
 
 QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName, const QLandmarkFilter& filter,
         const QList<QLandmarkSortOrder>& sortOrders,
-        const QLandmarkFetchHint &fetchHint,
+        int limit, int offset,
         QLandmarkManager::Error *error,
         QString *errorString, const QString &managerUri, QueryRun * queryRun)
 {
@@ -1037,7 +1035,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName
                 //do nothing
             } else if (filters.size() == 1) {
                 result = ::landmarkIds( connectionName, filters.at(0),
-                                QList<QLandmarkSortOrder>(), fetchHint, error, errorString, managerUri,queryRun);
+                                QList<QLandmarkSortOrder>(), limit, offset, error, errorString, managerUri,queryRun);
                 if (*error != QLandmarkManager::NoError) {
                     result.clear();
                     return result;
@@ -1045,7 +1043,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName
             } else  {
                 QSet<QString> ids;
                 QList<QLandmarkId> firstResult = landmarkIds(connectionName,filters.at(0),
-                                                QList<QLandmarkSortOrder>(), fetchHint, error, errorString,
+                                                QList<QLandmarkSortOrder>(), limit, offset, error, errorString,
                                                 managerUri, queryRun);
                 for (int j = 0; j < firstResult.size(); ++j) {
                     if (firstResult.at(j).isValid())
@@ -1061,7 +1059,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName
                     }
 
                     QList<QLandmarkId> subResult = landmarkIds(connectionName, filters.at(i),
-                                                QList<QLandmarkSortOrder>(), fetchHint, error, errorString,
+                                                QList<QLandmarkSortOrder>(), limit, offset, error, errorString,
                                                 managerUri, queryRun);
 
                     if (*error != QLandmarkManager::NoError) {
@@ -1096,7 +1094,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName
                 //do nothing
             } else if (filters.size() == 1) {
                 result =  ::landmarkIds(connectionName, filters.at(0),
-                                        QList<QLandmarkSortOrder>(), fetchHint, error, errorString,
+                                        QList<QLandmarkSortOrder>(), limit, offset, error, errorString,
                                         managerUri, queryRun);
                 if (*error != QLandmarkManager::NoError) {
                     result.clear();
@@ -1112,7 +1110,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName
                     }
                     QList<QLandmarkId> subResult = landmarkIds(connectionName, filters.at(i),
                                                                QList<QLandmarkSortOrder>(),
-                                                               fetchHint,
+                                                               limit, offset,
                                                                error, errorString,
                                                                managerUri, queryRun);
 
@@ -1289,7 +1287,6 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName
         }
     }
 
-    int offset = fetchHint.offset();
     if (offset >= result.count()) {
         result.clear();
         return result;
@@ -1318,12 +1315,12 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName
     if (offset < 0 )
         offset = 0;
 
-    return result.mid(offset, fetchHint.maxItems());
+    return result.mid(offset, limit);
 }
 
 QList<QLandmark> DatabaseOperations::landmarks(const QString &connectionName, const QLandmarkFilter& filter,
         const QList<QLandmarkSortOrder>& sortOrders,
-        const QLandmarkFetchHint &fetchHint,
+        int limit, int offset,
         QLandmarkManager::Error *error,
         QString *errorString, const QString &managerUri, QueryRun *queryRun)
 {
@@ -1339,7 +1336,7 @@ QList<QLandmark> DatabaseOperations::landmarks(const QString &connectionName, co
         return result;
     }
 
-    QList<QLandmarkId> ids = ::landmarkIds(connectionName, filter, sortOrders, fetchHint, error, errorString, managerUri, queryRun);
+    QList<QLandmarkId> ids = ::landmarkIds(connectionName, filter, sortOrders, limit, offset, error, errorString, managerUri, queryRun);
     if (error && *error != QLandmarkManager::NoError) {
         return result;
     }
@@ -2509,7 +2506,7 @@ void DatabaseOperations::QueryRun::run()
         case QLandmarkAbstractRequest::LandmarkIdFetchRequest: {
                 QLandmarkIdFetchRequest *idFetchRequest = static_cast<QLandmarkIdFetchRequest *>(request);
                 QList<QLandmarkId> lmIds = DatabaseOperations::landmarkIds(connectionName, idFetchRequest->filter(),
-                                                   idFetchRequest->sorting(), idFetchRequest->fetchHint(),
+                                                   idFetchRequest->sorting(), idFetchRequest->limit(), idFetchRequest->offset(),
                                                    &error, &errorString, managerUri, this);
 
                 QMetaObject::invokeMethod(engine, "updateLandmarkIdFetchRequest",
@@ -2524,7 +2521,7 @@ void DatabaseOperations::QueryRun::run()
         case QLandmarkAbstractRequest::LandmarkFetchRequest: {
                 QLandmarkFetchRequest *fetchRequest = static_cast<QLandmarkFetchRequest *>(request);
                 QList<QLandmark> lms = DatabaseOperations::landmarks(connectionName, fetchRequest->filter(),
-                                                fetchRequest->sorting(), fetchRequest->fetchHint(),
+                                                fetchRequest->sorting(), fetchRequest->limit(), fetchRequest->offset(),
                                                 &error, &errorString, managerUri, this);
 
 

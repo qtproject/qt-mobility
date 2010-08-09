@@ -64,8 +64,11 @@ public:
     void setSorting(const QList<QLandmarkSortOrder> &sorting);
     void setSorting(const QLandmarkSortOrder &sorting);
 
-    QLandmarkFetchHint fetchHint() const;
-    void setFetchHint(const QLandmarkFetchHint &fetchHint);
+    int limit() const;
+    void setLimit(int limit);
+
+    int offset() const;
+    void setOffset(int offset);
 
     QList<QLandmark> landmarks() const;
 private:
