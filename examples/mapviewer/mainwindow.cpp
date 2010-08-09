@@ -757,15 +757,22 @@ void MainWindow::drawPolygon(bool /*checked*/)
 
 void MainWindow::drawCircle(bool /*checked*/)
 {
-    if (markerObjects.count() < 2) return;
+    if (markerObjects.count() < 1) return;
 
     QGeoMapMarkerObject* p1 = markerObjects.at(0);
-    QGeoMapMarkerObject* p2 = markerObjects.at(markerObjects.count()-1);//1);
 
     // center of the circle
     QGeoCoordinate center = p1->coordinate();
-    // its radius, in meters
-    qreal radius = center.distanceTo(p2->coordinate());
+
+    // the circle's radius, in meters, defaults to 3000 km
+    qreal radius = 3000000;
+
+    // if a 2nd marker object is given, evaluate its distance to the first one to get the circle's radius.
+    if (markerObjects.count() >= 2) {
+        QGeoMapMarkerObject* p2 = markerObjects.at(1);
+
+        radius = center.distanceTo(p2->coordinate());
+    }
 
     QPen pen(Qt::white);
     pen.setWidth(2);
