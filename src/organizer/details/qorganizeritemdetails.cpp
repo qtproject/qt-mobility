@@ -161,6 +161,14 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTimeRange::FieldEndDateTime, "EndDateTim
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTimeRange::FieldStartDateTime, "StartDateTime");
 
+/*!
+   \variable QOrganizerEventTimeRange::FieldTimeSpecified
+
+   The constant key for the specification of whether the time is significant in the
+   start datetime of the QOrganizerEventTimeRange type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTimeRange::FieldTimeSpecified, "TimeSpecified");
+
 
 /*!
     \fn QOrganizerEventTimeRange::startDateTime() const
@@ -736,6 +744,14 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldStartDateTime, "StartDate
    the todo should be completed.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldDueDateTime, "DueDateTime");
+
+/*!
+   \variable QOrganizerTodoTimeRange::FieldTimeSpecified
+
+   The constant key for the specification of whether the time is significant in the
+   start datetime of the QOrganizerTodoTimeRange type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldTimeSpecified, "TimeSpecified");
 
 /*!
     \fn QOrganizerTodoTimeRange::startDateTime() const

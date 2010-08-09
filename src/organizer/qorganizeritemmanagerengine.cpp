@@ -645,6 +645,8 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerEventTimeRange::FieldStartDateTime, f);
     fields.insert(QOrganizerEventTimeRange::FieldEndDateTime, f);
+    f.setDataType(QVariant::Bool);
+    fields.insert(QOrganizerEventTimeRange::FieldTimeSpecified, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -772,6 +774,8 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerEventTimeRange::FieldStartDateTime, f);
     fields.insert(QOrganizerEventTimeRange::FieldEndDateTime, f);
+    f.setDataType(QVariant::Bool);
+    fields.insert(QOrganizerEventTimeRange::FieldTimeSpecified, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -909,6 +913,8 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerTodoTimeRange::FieldStartDateTime, f);
     fields.insert(QOrganizerTodoTimeRange::FieldDueDateTime, f);
+    f.setDataType(QVariant::Bool);
+    fields.insert(QOrganizerTodoTimeRange::FieldTimeSpecified, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -1033,6 +1039,8 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerTodoTimeRange::FieldStartDateTime, f);
     fields.insert(QOrganizerTodoTimeRange::FieldDueDateTime, f);
+    f.setDataType(QVariant::Bool);
+    fields.insert(QOrganizerTodoTimeRange::FieldTimeSpecified, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
