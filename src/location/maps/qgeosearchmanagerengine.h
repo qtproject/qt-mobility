@@ -86,6 +86,9 @@ public:
     QList<QLandmarkManager *> additionalLandmarkManagers() const;
     void addAdditionalLandmarkManager(QLandmarkManager *landmarkManager);
 
+    void setLocale(const QLocale &locale);
+    QLocale locale() const;
+
 signals:
     void finished(QGeoSearchReply* reply);
     void error(QGeoSearchReply* reply, QGeoSearchReply::Error error, QString errorString = QString());

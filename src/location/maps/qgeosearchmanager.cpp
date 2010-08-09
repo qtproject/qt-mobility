@@ -55,6 +55,7 @@
 #include "qlandmarknamefilter.h"
 #include "qlandmarkproximityfilter.h"
 
+#include <QLocale>
 
 QTM_BEGIN_NAMESPACE
 
@@ -519,6 +520,20 @@ void QGeoSearchManager::addAdditionalLandmarkManager(QLandmarkManager *landmarkM
 //    if (d_ptr->engine && landmarkManager)
     if (landmarkManager)
         d_ptr->engine->addAdditionalLandmarkManager(landmarkManager);
+}
+
+/*!
+*/
+void QGeoSearchManager::setLocale(const QLocale &locale)
+{
+    d_ptr->engine->setLocale(locale);
+}
+
+/*!
+*/
+QLocale QGeoSearchManager::locale() const
+{
+    return d_ptr->engine->locale();
 }
 
 /*!

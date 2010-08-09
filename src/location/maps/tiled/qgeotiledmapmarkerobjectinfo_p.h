@@ -59,18 +59,18 @@ class QGraphicsPixmapItem;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapMarkerObjectPrivate;
+class QGeoMapMarkerObject;
 
 class QGeoTiledMapMarkerObjectInfo : public QGeoTiledMapObjectInfo
 {
 public:
-    QGeoTiledMapMarkerObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
+    QGeoTiledMapMarkerObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapMarkerObjectInfo();
 
     void objectUpdate();
     void mapUpdate();
 
-    const QGeoMapMarkerObjectPrivate* marker;
+    QGeoMapMarkerObject* marker;
     QGraphicsPixmapItem *pixmapItem;
 };
 

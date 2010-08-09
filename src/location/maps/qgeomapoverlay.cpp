@@ -39,46 +39,17 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPOLYGONOBJECT_INFO_P_H
-#define QGEOTILEDMAPPOLYGONOBJECT_INFO_P_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qgeotiledmapobjectinfo_p.h"
-
-#include <QPolygonF>
-
-class QGraphicsPolygonItem;
+#include "qgeomapoverlay.h"
+#include "qgeomapdata.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapPolygonObject;
+/*!
+*/
+QGeoMapOverlay::~QGeoMapOverlay() {}
 
-class QGeoTiledMapPolygonObjectInfo : public QGeoTiledMapObjectInfo
-{
-public:
-    QGeoTiledMapPolygonObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
-    ~QGeoTiledMapPolygonObjectInfo();
-
-    void objectUpdate();
-    void mapUpdate();
-
-    QGeoMapPolygonObject *polygon;
-    QGraphicsPolygonItem *polygonItem;
-
-    QPolygonF points;
-};
+/*!
+\fn void QGeoMapOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *option)
+*/
 
 QTM_END_NAMESPACE
-
-#endif //QGEOTILEDMAPPOLYGONOBJECT_INFO_P_H
-

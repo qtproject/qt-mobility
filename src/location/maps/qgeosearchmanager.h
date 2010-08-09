@@ -49,6 +49,8 @@
 #include <QList>
 #include <QMap>
 
+class QLocale;
+
 QTM_BEGIN_NAMESPACE
 
 class QLandmarkManager;
@@ -93,6 +95,9 @@ public:
     void setAdditionalLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers);
     QList<QLandmarkManager *> additionalLandmarkManagers() const;
     void addAdditionalLandmarkManager(QLandmarkManager *landmarkManager);
+
+    void setLocale(const QLocale &locale);
+    QLocale locale() const;
 
 signals:
     void finished(QGeoSearchReply* reply);

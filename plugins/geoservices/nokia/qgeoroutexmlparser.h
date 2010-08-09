@@ -93,6 +93,7 @@ private:
     bool parseMode(QGeoRoute *route);
     bool parseSummary(QGeoRoute *route);
     bool parseGeoPoints(const QString& strPoints, QList<QGeoCoordinate> *geoPoints, const QString &elementName);
+    bool parseLeg();
     bool parseManeuver();
     bool parseLink();
     bool postProcessRoute(QGeoRoute *route);

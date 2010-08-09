@@ -109,7 +109,7 @@ void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
 *******************************************************************************/
 
 QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::GeoRouteType)
+        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::RouteType)
 {
     detailLevel = DEFAULT_ROUTE_DETAIL_LEVEL;
 }

@@ -57,6 +57,7 @@
 
 #include <QSize>
 #include <QList>
+#include <QLocale>
 
 QTM_BEGIN_NAMESPACE
 
@@ -74,6 +75,8 @@ public:
     qreal maximumZoomLevel;
     QSize minimumImageSize;
     QSize maximumImageSize;
+
+    QLocale locale;
 
 private:
     Q_DISABLE_COPY(QGeoMappingManagerEnginePrivate)

@@ -48,6 +48,8 @@
 #include <QSize>
 #include <QPair>
 
+class QLocale;
+
 QTM_BEGIN_NAMESPACE
 
 class QGeoBoundingBox;
@@ -70,7 +72,6 @@ public:
 
     QGeoMapData* createMapData(QGeoMapWidget *widget);
     void removeMapData(QGeoMapData *mapData);
-    //void updateMapImage(QGeoMapData *mapData);
 
     QList<QGeoMapWidget::MapType> supportedMapTypes() const;
 
@@ -79,6 +80,9 @@ public:
 
     qreal minimumZoomLevel() const;
     qreal maximumZoomLevel() const;
+
+    void setLocale(const QLocale &locale);
+    QLocale locale() const;
 
 private:
     QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = 0);

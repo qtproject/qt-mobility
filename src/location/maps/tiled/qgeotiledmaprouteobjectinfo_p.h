@@ -62,12 +62,12 @@ class QPointF;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapRouteObjectPrivate;
+class QGeoMapRouteObject;
 
 class QGeoTiledMapRouteObjectInfo : public QGeoTiledMapObjectInfo
 {
 public:
-    QGeoTiledMapRouteObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
+    QGeoTiledMapRouteObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapRouteObjectInfo();
 
     void objectUpdate();
@@ -75,7 +75,7 @@ public:
 
     //QLineF connectShortest(const QGeoCoordinate &point1, const QGeoCoordinate &point2) const;
 
-    const QGeoMapRouteObjectPrivate *route;
+    QGeoMapRouteObject *route;
     QGraphicsPathItem *pathItem;
     //QGraphicsItemGroup *groupItem;
 

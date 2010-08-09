@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPOLYGONOBJECT_INFO_P_H
-#define QGEOTILEDMAPPOLYGONOBJECT_INFO_P_H
+#ifndef QGEOMAPOBJECTINFO_P_H
+#define QGEOMAPOBJECTINFO_P_H
 
 //
 //  W A R N I N G
@@ -53,32 +53,26 @@
 // We mean it.
 //
 
-#include "qgeotiledmapobjectinfo_p.h"
-
-#include <QPolygonF>
-
-class QGraphicsPolygonItem;
+#include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapPolygonObject;
+class QGeoMapObject;
+class QGeoMapData;
 
-class QGeoTiledMapPolygonObjectInfo : public QGeoTiledMapObjectInfo
+class QGeoMapObjectInfoPrivate
 {
 public:
-    QGeoTiledMapPolygonObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
-    ~QGeoTiledMapPolygonObjectInfo();
+    QGeoMapObjectInfoPrivate(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    virtual ~QGeoMapObjectInfoPrivate();
 
-    void objectUpdate();
-    void mapUpdate();
+    QGeoMapData* mapData;
+    QGeoMapObject* mapObject;
 
-    QGeoMapPolygonObject *polygon;
-    QGraphicsPolygonItem *polygonItem;
-
-    QPolygonF points;
+private:
+    Q_DISABLE_COPY(QGeoMapObjectInfoPrivate)
 };
 
 QTM_END_NAMESPACE
 
-#endif //QGEOTILEDMAPPOLYGONOBJECT_INFO_P_H
-
+#endif

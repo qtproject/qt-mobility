@@ -96,7 +96,6 @@ public:
     void removeMapObject(QGeoMapObject *mapObject);
     QList<QGeoMapObject*> mapObjects();
 
-    QList<QGeoMapObject*> visibleMapObjects();
     QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
     QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
 

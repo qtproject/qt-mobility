@@ -56,6 +56,7 @@
 #include "qgeosearchmanagerengine.h"
 
 #include <QList>
+#include <QLocale>
 
 QTM_BEGIN_NAMESPACE
 
@@ -76,6 +77,8 @@ public:
     bool supportsGeocoding;
     bool supportsReverseGeocoding;
     QGeoSearchManager::SearchTypes supportedSearchTypes;
+
+    QLocale locale;
 
 private:
     Q_DISABLE_COPY(QGeoSearchManagerEnginePrivate)

@@ -62,18 +62,18 @@ class QPointF;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapPolylineObjectPrivate;
+class QGeoMapPolylineObject;
 
 class QGeoTiledMapPolylineObjectInfo : public QGeoTiledMapObjectInfo
 {
 public:
-    QGeoTiledMapPolylineObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
+    QGeoTiledMapPolylineObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapPolylineObjectInfo();
 
     void objectUpdate();
     void mapUpdate();
 
-    const QGeoMapPolylineObjectPrivate *polyline;
+    QGeoMapPolylineObject *polyline;
     QGraphicsPathItem *pathItem;
 
     QPolygonF points;
