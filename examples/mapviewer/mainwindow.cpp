@@ -630,15 +630,29 @@ void MainWindow::showEvent(QShowEvent* event)
 void MainWindow::createMenus()
 {
     QAction* menuItem;
+    QMenu* subMenuItem
     m_popupMenu = new QMenu(this);
 
-    menuItem = new QAction(tr("Spawn stuff"), this);
-    m_popupMenu->addAction(menuItem);
+    subMenuItem = new QMenu(tr("Spawn stuff"), this);
+    m_popupMenu->addMenu(subMenuItem);
+
+    menuItem = new QAction(tr("Items near the dateline"), this);
+    subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
-                     this, SLOT(demo(bool)));
+                     this, SLOT(demo1(bool)));
+
+    menuItem = new QAction(tr("Regular grid of items"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(demo2(bool)));
+
+    menuItem = new QAction(tr("Random items"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(demo3(bool)));
 
     //**************************************************************
-    QMenu* subMenuItem = new QMenu(tr("Marker"), this);
+    subMenuItem = new QMenu(tr("Marker"), this);
     m_popupMenu->addMenu(subMenuItem);
 
     menuItem = new QAction(tr("Set marker"), this);
@@ -692,7 +706,9 @@ void MainWindow::createMenus()
 
 #define MVTEST_MARK(pos) do { QGeoMapMarkerObject *marker = new QGeoMapMarkerObject(pos, QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon); m_mapWidget->addMapObject(marker); markerObjects.append(marker); } while (0)
 #define MVTEST_MARK2(lat,lng) MVTEST_MARK(QGeoCoordinate(lat,lng))
-void MainWindow::demo(bool /*checked*/)
+#define MVTEST_RECT(topleft,bottomright) removeMarkers(); MVTEST_MARK(topleft); MVTEST_MARK(bottomright); drawRect(false);
+#define MVTEST_RECT2(topleftlat,topleftlng,bottomrightlat,bottomrightlng) MVTEST_RECT(QGeoCoordinate(topleftlat,topleftlng),QGeoCoordinate(bottomrightlat,bottomrightlng))
+void MainWindow::demo1(bool /*checked*/)
 {
     MVTEST_MARK2(-30,175);
     MVTEST_MARK2(-20,170);
@@ -701,21 +717,41 @@ void MainWindow::demo(bool /*checked*/)
     drawPolygon(false);
     drawCircle(false);
 }
+void MainWindow::demo2(bool /*checked*/)
+{
+    int i = 0;
+    qreal sz = 3;
+    for (qreal lat = -90+sz; lat < 90-sz; lat += sz*3) {
+        for (qreal lng = -180+sz; lng < 180-sz; lng += sz*3) {
+            MVTEST_RECT2(lat-sz,lng-sz,lat+sz,lng+sz);
+            i++;
+        }
+    }
+    qDebug("%i items added, %i items total.", i, m_mapWidget->mapObjects().size());
+
+
+    QMessageBox *mb = new QMessageBox(QMessageBox::NoIcon, "MapViewer", QString::number(i) + " items");
+    mb->open();
+
+}
+void MainWindow::demo3(bool /*checked*/)
+{
+
+}
 
 void MainWindow::drawRect(bool /*checked*/)
 {
-    if (markerObjects.count() >= 2) {
-        QGeoMapMarkerObject* p1 = markerObjects.at(0);
-        QGeoMapMarkerObject* p2 = markerObjects.at(1);
-        QPen pen(Qt::white);
-        pen.setWidth(2);
-        QColor fill(Qt::black);
-        fill.setAlpha(65);
-        QGeoMapRectangleObject *rectangle = new QGeoMapRectangleObject(p1->coordinate(), p2->coordinate());
-        rectangle->setPen(pen);
-        rectangle->setBrush(QBrush(fill));
-        m_mapWidget->addMapObject(rectangle);
-    }
+    if (markerObjects.count() < 2)  return;
+    QGeoMapMarkerObject* p1 = markerObjects.at(0);
+    QGeoMapMarkerObject* p2 = markerObjects.at(1);
+    QPen pen(Qt::white);
+    pen.setWidth(2);
+    QColor fill(Qt::black);
+    fill.setAlpha(65);
+    QGeoMapRectangleObject *rectangle = new QGeoMapRectangleObject(p1->coordinate(), p2->coordinate());
+    rectangle->setPen(pen);
+    rectangle->setBrush(QBrush(fill));
+    m_mapWidget->addMapObject(rectangle);
 }
 
 void MainWindow::drawPolyline(bool /*checked*/)
