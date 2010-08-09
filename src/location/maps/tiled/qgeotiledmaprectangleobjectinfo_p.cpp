@@ -69,6 +69,8 @@ void QGeoTiledMapRectangleObjectInfo::objectUpdate()
 
     // is the dateline crossed = different sign AND gap is large enough
     const bool crossesDateline = lng1 * lng2 < 0 && abs(lng1 - lng2) > 180;
+    // is the shortest route east = dateline crossed XOR longitude is east by simple comparison
+    const bool goesEast = crossesDateline != (lng2 > lng1);
 
     // calculate base points
     QPointF point1 = tiledMapData->coordinateToWorldPixel(coord1);
@@ -78,9 +80,7 @@ void QGeoTiledMapRectangleObjectInfo::objectUpdate()
     QRectF bounds2;
 
     // if the dateline is crossed, draw "around" the map over the chosen pole
-    if (crossesDateline) {
-        // is the shortest route east = dateline crossed XOR longitude is east by simple comparison
-        const bool goesEast = crossesDateline != (lng2 > lng1);
+    if (crossesDateline && goesEast) {
         // direction = positive if east, negative otherwise
         const qreal dir = goesEast ? 1 : -1;
 
