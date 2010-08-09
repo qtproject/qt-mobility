@@ -81,7 +81,8 @@ public:
                                    int limit, int offset,
                                    QLandmarkManager::Error *error,
                                    QString *errorString) const;
-    QList<QLandmarkCategoryId> categoryIds(const QLandmarkNameSort &nameSort,
+    QList<QLandmarkCategoryId> categoryIds(int limit, int offset,
+                                           const QLandmarkNameSort &nameSort,
                                            QLandmarkManager::Error *error,
                                            QString *errorString) const;
 
@@ -100,7 +101,8 @@ public:
     QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds,
                                         QLandmarkManager::Error *error,
                                         QString *errorString) const;
-    QList<QLandmarkCategory> categories(const QLandmarkNameSort &nameSort,
+    QList<QLandmarkCategory> categories(int limit, int offset,
+                                        const QLandmarkNameSort &nameSort,
                                         QLandmarkManager::Error *error,
                                         QString *errorString) const;
 

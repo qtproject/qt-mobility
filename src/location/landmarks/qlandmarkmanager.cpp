@@ -491,9 +491,12 @@ QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCateg
 }
 
 /*!
-    Returns a list of all categories sorted according to the given \a nameSort.
+    Returns a list of categories.The \a limit defines the maximum number of categories
+    to return and the \a offset defines the index offset of the first category.
+    A \a limit of -1 means all categories should be returned.  The categories
+    are returned in the order as designated by \a nameSort.
 */
-QList<QLandmarkCategory> QLandmarkManager::categories(const QLandmarkNameSort &nameSort) const
+QList<QLandmarkCategory> QLandmarkManager::categories(int limit, int offset, const QLandmarkNameSort &nameSort) const
 {
     Q_D(const QLandmarkManager);
 
@@ -503,7 +506,7 @@ QList<QLandmarkCategory> QLandmarkManager::categories(const QLandmarkNameSort &n
         return QList<QLandmarkCategory>();
     }
 
-    QList<QLandmarkCategory> cats = d->engine->categories(nameSort,
+    QList<QLandmarkCategory> cats = d->engine->categories(limit, offset, nameSort,
                                     &(d->errorCode),
                                     &(d->errorString));
 
@@ -514,10 +517,12 @@ QList<QLandmarkCategory> QLandmarkManager::categories(const QLandmarkNameSort &n
 }
 
 /*!
-    Returns a list of all category identifiers.  The identifiers
-    are returned in order as designed by \a nameSort.
+    Returns a list of category identifiers.
+    The \a limit defines the maximum number of ids to return and the \a offset defines the index offset
+    of the first id.  A \a limit of -1 means ids for all categories should be returned.
+    The identifiers are returned in order as designed by \a nameSort.
 */
-QList<QLandmarkCategoryId> QLandmarkManager::categoryIds(const QLandmarkNameSort &nameSort) const
+QList<QLandmarkCategoryId> QLandmarkManager::categoryIds(int limit, int offset, const QLandmarkNameSort &nameSort) const
 {
     Q_D(const QLandmarkManager);
 
@@ -527,7 +532,7 @@ QList<QLandmarkCategoryId> QLandmarkManager::categoryIds(const QLandmarkNameSort
         return QList<QLandmarkCategoryId>();
     }
 
-    QList<QLandmarkCategoryId> ids = d->engine->categoryIds(nameSort,
+    QList<QLandmarkCategoryId> ids = d->engine->categoryIds(limit, offset, nameSort,
                                                             &(d->errorCode),
                                                             &(d->errorString));
 

@@ -1287,6 +1287,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName
         }
     }
 
+    //TODO: optimize
     if (offset >= result.count()) {
         result.clear();
         return result;
@@ -1890,6 +1891,7 @@ bool DatabaseOperations::removeLandmarks(const QString &connectionName, const QL
 
 QList<QLandmarkCategoryId> DatabaseOperations::categoryIds(const QString &connectionName,
                                        const QLandmarkNameSort &nameSort,
+                                       int limit, int offset,
                                        QLandmarkManager::Error *error, QString *errorString,
                                        const QString &managerUri,
                                        QueryRun *queryRun)
@@ -1931,12 +1933,21 @@ QList<QLandmarkCategoryId> DatabaseOperations::categoryIds(const QString &connec
         result << id;
     }
 
+    //TODO: optimize
     if (error)
         *error = QLandmarkManager::NoError;
     if (errorString)
         *errorString = "";
 
-    return result;
+    if (offset>= result.count()) {
+        result.clear();
+        return result;
+    }
+
+    if (offset < 0)
+        offset = 0;
+
+    return result.mid(offset,limit);
 }
 
 QLandmarkCategory DatabaseOperations::category(const QString &connectionName, const QLandmarkCategoryId &landmarkCategoryId,
@@ -2015,6 +2026,7 @@ QLandmarkCategory DatabaseOperations::category(const QString &connectionName, co
 QList<QLandmarkCategory> DatabaseOperations::categories(const QString &connectionName,
                 const QList<QLandmarkCategoryId> &landmarkCategoryIds,
                 const QLandmarkNameSort &nameSort,
+                int limit, int offset,
                 QLandmarkManager::Error *error, QString *errorString,
                 const QString &managerUri, bool needAll,
                 QueryRun *queryRun)
@@ -2028,7 +2040,8 @@ QList<QLandmarkCategory> DatabaseOperations::categories(const QString &connectio
     QList<QLandmarkCategory> result;
     QList<QLandmarkCategoryId> ids = landmarkCategoryIds;
     if (ids.size() == 0) {
-        ids = ::categoryIds(connectionName, nameSort, error, errorString, managerUri, queryRun);
+        ids = ::categoryIds(connectionName, nameSort, limit, offset, error, errorString, managerUri, queryRun);
+
         if (*error != QLandmarkManager::NoError) {
             return result;
         }
@@ -2065,6 +2078,7 @@ QList<QLandmarkCategory> DatabaseOperations::categories(const QString &connectio
         *error = QLandmarkManager::NoError;
     if (errorString)
         *errorString = "";
+
 
     return result;
 }
@@ -2570,6 +2584,8 @@ void DatabaseOperations::QueryRun::run()
                 QLandmarkCategoryIdFetchRequest *catIdFetchRequest = static_cast<QLandmarkCategoryIdFetchRequest *> (request);
                 QLandmarkNameSort nameSort = catIdFetchRequest->sorting();
                 QList<QLandmarkCategoryId> catIds = DatabaseOperations::categoryIds(connectionName, nameSort,
+                                                                        catIdFetchRequest->limit(),
+                                                                        catIdFetchRequest->offset(),
                                                                         &error, &errorString, managerUri,this);
 
                 QMetaObject::invokeMethod(engine, "updateLandmarkCategoryIdFetchRequest",
@@ -2590,6 +2606,7 @@ void DatabaseOperations::QueryRun::run()
                     needAll = true;
                 QLandmarkNameSort nameSort = fetchRequest->sorting();
                 QList <QLandmarkCategory> cats = DatabaseOperations::categories(connectionName, categoryIds, nameSort,
+                                                                fetchRequest->limit(), fetchRequest->offset(),
                                                                 &error, &errorString, managerUri, needAll, this);
 
                 QMetaObject::invokeMethod(engine, "updateLandmarkCategoryFetchRequest",

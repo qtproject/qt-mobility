@@ -134,6 +134,7 @@ namespace DatabaseOperations {
 
     QList<QLandmarkCategoryId> categoryIds(const QString &connectionName,
                                            const QLandmarkNameSort &nameSort,
+                                           int limit, int offet,
                                            QLandmarkManager::Error *error, QString *errorString,
                                            const QString &managerUri,
                                            QueryRun *queryRun = 0);
@@ -145,6 +146,7 @@ namespace DatabaseOperations {
     QList<QLandmarkCategory> categories(const QString &connectionName,
                                         const QList<QLandmarkCategoryId> &landmarkCategoryIds,
                                         const QLandmarkNameSort &nameSort,
+                                        int limit, int offset,
                                         QLandmarkManager::Error *error, QString *errorString,
                                         const QString &managerUri, bool needAll,
                                         QueryRun *queryRun = 0);

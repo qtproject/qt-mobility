@@ -172,10 +172,13 @@ QList<QLandmarkId> QLandmarkManagerEngine::landmarkIds(const QLandmarkFilter& fi
 }
 
 /*!
-    Returns a list of all category identifiers which are sorted according to \a nameSort.  Any error which occurs will be saved in \a
-    error and \a errorString.
+    Returns a list of category identifiers
+    The \a limit defines the maximum number of ids to return and the \a offset defines the index offset
+    of the first id.  A \a limit of -1 means ids for all categories should be returned.
+    Any error which occurs will be saved in \a error and \a errorString.
+    The identifiers are returned in order according to the given \a nameSort.
 */
-QList<QLandmarkCategoryId> QLandmarkManagerEngine::categoryIds(const QLandmarkNameSort &nameSort, QLandmarkManager::Error *error,
+QList<QLandmarkCategoryId> QLandmarkManagerEngine::categoryIds(int limit, int offset, const QLandmarkNameSort &nameSort, QLandmarkManager::Error *error,
         QString *errorString) const
 {
     return QList<QLandmarkCategoryId>();
@@ -228,9 +231,12 @@ QList<QLandmarkCategory> QLandmarkManagerEngine::categories(const QList<QLandmar
 }
 
 /*!
-    Returns a list of all categories sorted according to the gien \a nameSort.
+    Returns a list of categories.
+    The \a limit defines the maximum number of categories to return and the \a offset defines the index offset
+    of the first category.  A \a limit of -1 means all categories should be returned.
+    The returned categories ordered according to the gien \a nameSort.
 */
-QList<QLandmarkCategory> QLandmarkManagerEngine::categories(const QLandmarkNameSort &nameSort,
+QList<QLandmarkCategory> QLandmarkManagerEngine::categories(int limit, int offset, const QLandmarkNameSort &nameSort,
                                                             QLandmarkManager::Error *error, QString *errorString) const
 {
     return QList<QLandmarkCategory>();

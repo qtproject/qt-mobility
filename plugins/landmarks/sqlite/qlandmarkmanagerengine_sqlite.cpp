@@ -208,10 +208,10 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIds(const QLandmarkFilt
     return DatabaseOperations::landmarkIds(m_dbConnectionName,filter,sortOrders,limit,offset, error,errorString, managerUri() );
 }
 
-QList<QLandmarkCategoryId> QLandmarkManagerEngineSqlite::categoryIds(const QLandmarkNameSort &nameSort, QLandmarkManager::Error *error,
-        QString *errorString) const
+QList<QLandmarkCategoryId> QLandmarkManagerEngineSqlite::categoryIds(int limit, int offset, const QLandmarkNameSort &nameSort,
+                                                            QLandmarkManager::Error *error, QString *errorString) const
 {
-    return DatabaseOperations::categoryIds(m_dbConnectionName, nameSort, error, errorString, managerUri());
+    return DatabaseOperations::categoryIds(m_dbConnectionName, nameSort, limit, offset, error, errorString, managerUri());
 }
 
 /* Retrieval */
@@ -244,15 +244,16 @@ QList<QLandmarkCategory> QLandmarkManagerEngineSqlite::categories(const QList<QL
                                                                   QString *errorString) const
 {
     QLandmarkNameSort nameSort;// this should be ignored in the following call
-    return DatabaseOperations::categories(m_dbConnectionName, landmarkCategoryIds, nameSort, error, errorString, managerUri(), true);
+    return DatabaseOperations::categories(m_dbConnectionName, landmarkCategoryIds, nameSort, -1, 0, error, errorString, managerUri(), true);
 }
 
-QList<QLandmarkCategory> QLandmarkManagerEngineSqlite::categories( const QLandmarkNameSort &nameSort,
+QList<QLandmarkCategory> QLandmarkManagerEngineSqlite::categories(int limit, int offset,
+                                                                  const QLandmarkNameSort &nameSort,
                                                                   QLandmarkManager::Error *error,
                                                                   QString *errorString) const
 {
     QList<QLandmarkCategoryId> catIds;
-    return DatabaseOperations::categories(m_dbConnectionName, catIds, nameSort, error, errorString, managerUri(), false);
+    return DatabaseOperations::categories(m_dbConnectionName, catIds, nameSort, limit, offset, error, errorString, managerUri(), false);
 }
 
 

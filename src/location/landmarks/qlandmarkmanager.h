@@ -120,8 +120,8 @@ public:
     QLandmarkCategory category(const QLandmarkCategoryId &categoryId) const;
     QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &categoryIds) const;
 
-    QList<QLandmarkCategory> categories( const QLandmarkNameSort &nameSort = QLandmarkNameSort()) const;
-    QList<QLandmarkCategoryId> categoryIds(const QLandmarkNameSort &nameSort = QLandmarkNameSort()) const;
+    QList<QLandmarkCategory> categories( int limit=-1, int offset=0, const QLandmarkNameSort &nameSort = QLandmarkNameSort()) const;
+    QList<QLandmarkCategoryId> categoryIds(int limit =-1, int offset=0, const QLandmarkNameSort &nameSort = QLandmarkNameSort()) const;
 
     QLandmark landmark(const QLandmarkId &landmarkId) const;
     QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders,

@@ -124,7 +124,7 @@ bool QLandmarkFileHandlerLmx::importData(QIODevice *device)
         catIdList << m_categoryId;
         QList<QLandmarkCategory> categories;
         categories = DatabaseOperations::categories(m_connectionName, catIdList, QLandmarkNameSort(),
-                                        &m_errorCode, &m_error,m_managerUri, true);
+                                        -1, 0, &m_errorCode, &m_error,m_managerUri, true);
         if (m_errorCode != QLandmarkManager::NoError) {
             db.rollback();
             return false;
@@ -142,6 +142,7 @@ bool QLandmarkFileHandlerLmx::importData(QIODevice *device)
         QList<QLandmarkCategory> categories = DatabaseOperations::categories(m_connectionName,
                                                                              QList<QLandmarkCategoryId>(),
                                                                              QLandmarkNameSort(),
+                                                                             -1, 0,
                                                                              &m_errorCode,
                                                                              &m_error,
                                                                              m_managerUri,

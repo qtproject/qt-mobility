@@ -125,7 +125,6 @@ public:
     qRegisterMetaType<QList<QLandmarkId> >();
     qRegisterMetaType<QList<QLandmark> >();
     qRegisterMetaType<QList<QLandmarkCategory> >();
-    qRegisterMetaType<QLandmarkAbstractRequest::State>();
     qRegisterMetaType<QLandmarkAbstractRequest *>();
     qRegisterMetaType<QLandmarkFetchRequest *>();
     qRegisterMetaType<QLandmarkSaveRequest *>();
@@ -180,6 +179,18 @@ private:
             return false;
         for (int i=0; i < lms.count(); ++i) {
             if (lms.at(i).landmarkId() != lmIds.at(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+        bool checkIds(const QList<QLandmarkCategory> &cats, const QList<QLandmarkCategoryId> &catIds)
+    {
+        if (cats.count() != catIds.count())
+            return false;
+        for (int i=0; i < cats.count(); ++i) {
+            if (cats.at(i).categoryId() != catIds.at(i)) {
                 return false;
             }
         }
@@ -376,9 +387,10 @@ private slots:
     void removeMultipleLandmarksAsync();
 
     void listCategoryIds();
-    void filterLandmarksLimitMatches();
 
+    void filterLandmarksLimitMatches();
     void filterLandmarksLimitMatchesAsync();
+
     void filterLandmarksDefault();
 
     void filterLandmarksName();
@@ -426,6 +438,9 @@ private slots:
     void exportGpxAsync();
 
     void supportedFormats();
+
+    void categoryLimitOffset();
+    //TODO: void categoryLimitOffsetAsync();
 
     /*
     void sortLandmarksNameDistance();
@@ -2088,7 +2103,7 @@ void tst_QLandmarkManagerEngineSqlite::retrieveMultipleCategories() {
     //try descending order, case insensitive
     QLandmarkNameSort nameSort;
     nameSort.setDirection(Qt::DescendingOrder);
-    cats = m_manager->categories(nameSort);
+    cats = m_manager->categories(-1, 0, nameSort);
 
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     QCOMPARE(cats.count(), 6);
@@ -2102,7 +2117,7 @@ void tst_QLandmarkManagerEngineSqlite::retrieveMultipleCategories() {
     //try ascending order, case sensitive
     nameSort.setDirection(Qt::AscendingOrder);
     nameSort.setCaseSensitivity(Qt::CaseSensitive);
-    cats = m_manager->categories(nameSort);
+    cats = m_manager->categories(-1, 0, nameSort);
 
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     QCOMPARE(cats.count(), 6);
@@ -2116,7 +2131,7 @@ void tst_QLandmarkManagerEngineSqlite::retrieveMultipleCategories() {
     //try descending order, case sensitive
     nameSort.setDirection(Qt::DescendingOrder);
     nameSort.setCaseSensitivity(Qt::CaseSensitive);
-    cats = m_manager->categories(nameSort);
+    cats = m_manager->categories(-1, 0, nameSort);
 
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     QCOMPARE(cats.count(), 6);
@@ -5693,6 +5708,63 @@ void tst_QLandmarkManagerEngineSqlite::supportedFormats() {
         QStringList formats = m_manager->supportedFormats();
         QCOMPARE(formats.count(), 1);
         QVERIFY(formats.at(0) == "GpxV1.1");
+}
+
+void tst_QLandmarkManagerEngineSqlite::categoryLimitOffset() {
+    for (int i = 0; i < 50; ++i) {
+        QLandmarkCategory cat;
+        cat.setName(QString("CAT%1").arg(i));
+        QVERIFY(m_manager->saveCategory(&cat));
+    }
+
+    QList<QLandmarkCategoryId> ids = m_manager->categoryIds();
+    QCOMPARE(ids.size(), 50);
+
+    //default
+
+    ids = m_manager->categoryIds(100, 0);
+
+    QCOMPARE(ids.size(), 50);
+
+    QLandmarkNameSort nameSort(Qt::DescendingOrder);
+
+    ids = m_manager->categoryIds(25,0, nameSort);
+
+    QCOMPARE(ids.size(), 25);
+    QCOMPARE(m_manager->category(ids.at(0)).name(), QString("CAT9"));
+    QCOMPARE(m_manager->category(ids.at(24)).name(), QString("CAT31"));
+
+    QList<QLandmarkCategory> cats = m_manager->categories(25, 0, nameSort);
+    QCOMPARE(cats.size(), 25);
+    QCOMPARE(cats.at(0).name(), QString("CAT9"));
+    QCOMPARE(cats.at(24).name(), QString("CAT31"));
+
+    //try with an limit and offset
+    cats = m_manager->categories(10, 10, nameSort);
+    ids = m_manager->categoryIds(10, 10, nameSort);
+    QVERIFY(checkIds(cats, ids));
+
+    QCOMPARE(cats.size(), 10);
+    QCOMPARE(cats.at(0).name(), QString("CAT44"));
+    QCOMPARE(cats.at(9).name(), QString("CAT36"));
+
+    //try with an offset and no max items
+    cats = m_manager->categories(-1,10,QLandmarkNameSort(Qt::AscendingOrder));
+    ids = m_manager->categoryIds(-1, 10, QLandmarkNameSort(Qt::AscendingOrder));
+    QVERIFY(checkIds(cats, ids));
+
+    QCOMPARE(cats.size(), 40);
+    QCOMPARE(cats.at(0).name(), QString("CAT18"));
+    QCOMPARE(cats.at(39).name(), QString("CAT9"));
+
+    //try with an offset of -1
+    cats = m_manager->categories(-1,-1, QLandmarkNameSort(Qt::AscendingOrder));
+    ids = m_manager->categoryIds(-1,-1, QLandmarkNameSort(Qt::AscendingOrder));
+    QVERIFY(checkIds(cats, ids));
+
+    //try with an offset which greater than the number of items
+    cats = m_manager->categories( 100, 500, QLandmarkNameSort(Qt::AscendingOrder));
+    QCOMPARE(cats.count(), 0);
 }
 
 QTEST_MAIN(tst_QLandmarkManagerEngineSqlite)
