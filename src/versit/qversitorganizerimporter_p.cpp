@@ -51,8 +51,6 @@ QTM_USE_NAMESPACE
 
 QVersitOrganizerImporterPrivate::QVersitOrganizerImporterPrivate() :
     mPropertyHandler(NULL),
-    mDefaultResourceHandler(new QVersitDefaultResourceHandler),
-    mResourceHandler(mDefaultResourceHandler),
     mDurationSpecified(false)
 {
     int versitPropertyCount =
@@ -68,7 +66,6 @@ QVersitOrganizerImporterPrivate::QVersitOrganizerImporterPrivate() :
 
 QVersitOrganizerImporterPrivate::~QVersitOrganizerImporterPrivate()
 {
-    delete mDefaultResourceHandler;
 }
 
 bool QVersitOrganizerImporterPrivate::importDocument(

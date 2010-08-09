@@ -60,8 +60,6 @@ public:
     QVersitDocument mResult;
     QMap<int, QVersitOrganizerExporter::Error> mErrors;
     QVersitOrganizerExporterDetailHandler* mDetailHandler;
-    QVersitDefaultResourceHandler* mDefaultResourceHandler;
-    QVersitResourceHandler* mResourceHandler;
 
 private:
     void exportDetail(

@@ -153,28 +153,3 @@ void QVersitOrganizerExporter::setDetailHandler(QVersitOrganizerExporterDetailHa
 {
     d->mDetailHandler = handler;
 }
-
-/*!
- * \preliminary
- * Sets \a handler to be the handler to load files with, or 0 to have no handler.
- *
- * Does not take ownership of the handler.  The client should ensure the handler remains valid for
- * the lifetime of the exporter.
- *
- * NOTE: Resource handlers for organizer items have not been implemented yet.
- */
-void QVersitOrganizerExporter::setResourceHandler(QVersitResourceHandler* handler)
-{
-    d->mResourceHandler = handler;
-}
-
-/*!
- * \preliminary
- * Returns the associated resource handler.
- *
- * NOTE: Resource handlers for organizer items have not been implemented yet.
- */
-QVersitResourceHandler* QVersitOrganizerExporter::resourceHandler() const
-{
-    return d->mResourceHandler;
-}

@@ -155,22 +155,3 @@ void QVersitOrganizerImporter::setPropertyHandler(QVersitOrganizerImporterProper
 {
     d->mPropertyHandler = handler;
 }
-
-/*!
- * Sets \a handler to be the handler to save files with, or 0 to have no handler.
- *
- * Does not take ownership of the handler.  The client should ensure the handler remains valid for
- * the lifetime of the exporter.
- */
-void QVersitOrganizerImporter::setResourceHandler(QVersitResourceHandler* handler)
-{
-    d->mResourceHandler = handler;
-}
-
-/*!
- * Returns the associated resource handler.
- */
-QVersitResourceHandler* QVersitOrganizerImporter::resourceHandler() const
-{
-    return d->mResourceHandler;
-}
