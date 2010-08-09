@@ -44,9 +44,7 @@
 #include <qtorganizer.h>
 #include <QtTest/QtTest>
 #include <QDebug>
-
-//uncomment the below line when compiling for 9.2 and later versions.
-//#define AGENDA_EXT_SUPPORT
+#include <calcommon.h> // for SYMBIAN_CALENDAR_V2
 
 QTM_USE_NAMESPACE
 
@@ -143,8 +141,8 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
         << QDateTime::currentDateTime().addDays(1)
         << location
         << QOrganizerItemManager::NoError;
-    
-#ifdef AGENDA_EXT_SUPPORT
+
+#ifdef SYMBIAN_CALENDAR_V2
     location.setLocationName("TestLocationName");
     location.setGeoLocation("20.356784;76.276748");
     QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
@@ -310,7 +308,7 @@ void TestItemLocation::addLocationDetail()
     QOrganizerItemLocation itemLocation;
     itemLocation = item.detail(QOrganizerItemLocation::DefinitionName);
     QVERIFY(itemLocation.locationName() == location.locationName());
-#ifdef AGENDA_EXT_SUPPORT
+#ifdef SYMBIAN_CALENDAR_V2
     QList<QString> itemLocationString = itemLocation.geoLocation().split(QRegExp(";"));
     QList<QString> locationString = location.geoLocation().split(QRegExp(";"));
     // Check the set and retrieved values only if the latitude and logitude values were set

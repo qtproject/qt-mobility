@@ -3,8 +3,6 @@ CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtorganizer_symbian)
 PLUGIN_TYPE=organizer
  
-#uncomment the below line when compiling for 9.2 and later versions.
-#DEFINES += AGENDA_EXT_SUPPORT
 CONFIG += mobility
 MOBILITY = organizer
 

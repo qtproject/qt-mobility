@@ -48,7 +48,7 @@ void OrganizerItemLocationTransform::transformToDetailL(const CCalEntry& entry, 
 	if (!locationName.isEmpty()) {
 		location.setLocationName(locationName);
 	}	
-#ifdef AGENDA_EXT_SUPPORT
+#ifdef SYMBIAN_CALENDAR_V2
 	QString latLongStr;
 	double latitude;
 	double longitude;
@@ -79,7 +79,7 @@ void OrganizerItemLocationTransform::transformToEntryL(const QOrganizerItem& ite
         // NOTE: what about geoLocation & address?
         entry->SetLocationL(toPtrC16(loc.locationName()));
     }
-#ifdef AGENDA_EXT_SUPPORT
+#ifdef SYMBIAN_CALENDAR_V2
     QString latLongString = loc.geoLocation();
     if(!latLongString.isEmpty()) 
     {
