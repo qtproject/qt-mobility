@@ -86,6 +86,7 @@ public:
     QPoint maxZoomCenter() const;
     QSize maxZoomSize () const;
     QRect maxZoomScreenRect() const;
+    int zoomFactor () const;
 
 private slots:
     void processRequests();

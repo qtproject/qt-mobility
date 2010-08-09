@@ -66,7 +66,7 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
             m_host = host;
     }
 
-    setSupportsRouteUpdates(false);
+    setSupportsRouteUpdates(true);
     setSupportsAlternativeRoutes(true);
     setSupportsExcludeAreas(true);
 
@@ -135,11 +135,6 @@ QGeoRouteReply* QGeoRoutingManagerEngineNokia::calculateRoute(const QGeoRouteReq
 
 QGeoRouteReply* QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
 {
-    QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "Route updates are not supported by this service provider.", this);
-    emit error(reply, reply->error(), reply->errorString());
-
-    return reply;
-/*
     QString reqString = updateRouteRequestString(route,position);
 
     if (reqString.isEmpty()) {
@@ -162,7 +157,6 @@ QGeoRouteReply* QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &rout
             SLOT(routeError(QGeoRouteReply::Error, QString)));
 
     return reply;
-*/
 }
 
 QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRouteRequest &request)
@@ -192,7 +186,7 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
 
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/routing-route-service/6.2/routes.xml";
+    requestString += "/routing/6.2/calculateroute.xml";
 
     int numWaypoints = request.waypoints().size();
     if (numWaypoints < 2)
@@ -208,7 +202,7 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
         requestString += trimDouble(request.waypoints().at(i).longitude());
     }
 
-    requestString += "&modes=";
+    requestString += "&mode=";
     requestString += modesRequestString(request.routeOptimization(), request.travelModes(),
         request.avoidFeatureTypes());
 
@@ -245,7 +239,7 @@ QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute 
 
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/routing-route-service/6.2/getroute.xml";
+    requestString += "/routing/6.2/getroute.xml";
 
     requestString += "?routeid=";
     requestString += route.routeId();
@@ -259,7 +253,6 @@ QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute 
     requestString += modesRequestString(route.request().routeOptimization(), route.travelMode(),
         route.request().avoidFeatureTypes());
 
-    requestString += "&alternatives=0";
     requestString += routeRequestString(route.request());
 
     return requestString;
@@ -349,28 +342,29 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
         }
     }
 
-    QStringList responseAttributes;
+    QStringList legAttributes;
     if (request.instructionDetail() & QGeoRouteRequest::BasicInstructions) {
-        requestString += "&linkattribute=shape,length,nextLink";
-        responseAttributes.append("links");
+        requestString += "&linkattributes=shape,length,nextLink";
+        legAttributes.append("links");
     }
 
     if (request.instructionDetail() & QGeoRouteRequest::BasicSegmentData) {
-        responseAttributes.append("maneuvers");
-        requestString += "&maneuverattribute=position";
+        legAttributes.append("maneuvers");
+        requestString += "&maneuverattributes=position";
         if (!(request.instructionDetail() & QGeoRouteRequest::NoInstructions))
             requestString += ",link";
     }
 
-    requestString += "&routeattribute=waypoints,summary,shape,boundingBox";
-    if (responseAttributes.count() > 0) {
-        requestString += "," + responseAttributes.join(",");
-        requestString += "&responseattributes=";
-        requestString += responseAttributes.join(",");
+    requestString += "&routeattributes=sm,sh,bb,lg"; //summary,shape,boundingBox,legs
+    if (legAttributes.count() > 0) {
+        requestString += "&legattributes=";
+        requestString += legAttributes.join(",");
     }
 
     requestString += "&departure=";
     requestString += QDateTime::currentDateTime().toUTC().toString("yyyy-MM-ddThh:mm:ssZ");
+
+    requestString += "&instructionformat=text";
 
     requestString += "&language=ENG";  // TODO locale / language handling
 

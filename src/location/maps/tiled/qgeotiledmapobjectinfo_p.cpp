@@ -129,16 +129,17 @@ bool QGeoTiledMapObjectInfo::contains(const QGeoCoordinate &coord) const
     return false;
 }
 
-void QGeoTiledMapObjectInfo::qCreatePolygon(QGeoTiledMapDataPrivate *tiledMapDataPrivate, const QList<QGeoCoordinate> & path, QPolygonF &points, bool closedPath, qreal ypole)
+QPolygonF QGeoTiledMapObjectInfo::createPolygon(const QList<QGeoCoordinate> &path,
+                                                 QGeoTiledMapData *tiledMapData,
+                                                 bool closedPath,
+                                                 qreal ypole)
 {
-    points.clear();
-
-    QGeoTiledMapData *tiledMapData = static_cast<QGeoTiledMapData*>(tiledMapDataPrivate->q_ptr);
+    QPolygonF points;
 
     QGeoCoordinate lastCoord = closedPath ? path.last() : path.first();
     QPointF lastPoint = tiledMapData->coordinateToWorldPixel(lastCoord);
 
-    int width = tiledMapDataPrivate->maxZoomSize.width();
+    int width = tiledMapData->maxZoomSize().width();
 
     for (int i = 0; i < path.size(); ++i) {
         const QGeoCoordinate &coord = path.at(i);
@@ -152,16 +153,16 @@ void QGeoTiledMapObjectInfo::qCreatePolygon(QGeoTiledMapDataPrivate *tiledMapDat
         // is the dateline crossed = different sign AND gap is large enough
         const bool crossesDateline = lastLng * lng < 0 && abs(lastLng - lng) > 180;
 
-        // is the shortest route east = dateline crossed XOR longitude is east by simple comparison
-        const bool goesEast = crossesDateline != (lng > lastLng);
-        // direction = positive if east, negative otherwise
-        const qreal dir = goesEast ? 1 : -1;
-
         // calculate base point
         QPointF point = tiledMapData->coordinateToWorldPixel(coord);
 
         // if the dateline is crossed, draw "around" the map over the chosen pole
         if (crossesDateline) {
+            // is the shortest route east = dateline crossed XOR longitude is east by simple comparison
+            const bool goesEast = crossesDateline != (lng > lastLng);
+            // direction = positive if east, negative otherwise
+            const qreal dir = goesEast ? 1 : -1;
+
             // lastPoint on this side
             const QPointF & L = lastPoint;
 
@@ -199,6 +200,8 @@ void QGeoTiledMapObjectInfo::qCreatePolygon(QGeoTiledMapDataPrivate *tiledMapDat
         lastCoord = coord;
         lastPoint = point;
     }
+
+    return points;
 }
 
 QTM_END_NAMESPACE

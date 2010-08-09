@@ -185,11 +185,8 @@ void QGeoTiledMapCircleObjectInfo::objectUpdate()
         path.append(QGeoCoordinate(lat, lng));
     }
 
-    //makepoly(*this, path, circle, points, true, mapData->q_ptr->coordinateToWorldPixel(center).y() + (center.latitude() > 0 ? 50 : -50)); // 50px towards the closest pole
-    //makepoly(*this, path, circle, points, true); // always north pole
-    //makepoly(*this, path, circle, points, true, center.latitude() > 0 ? -100 : tiledMapDataPrivate->maxZoomSize.height()+100); // 100px beyond the closest pole
-
-    qCreatePolygon(tiledMapDataPrivate, path, points, true, center.latitude() > 0 ? -100 : tiledMapDataPrivate->maxZoomSize.height()+100); // 100px beyond the closest pole
+    points = createPolygon(path, tiledMapData, true, center.latitude() > 0 ? -100 : tiledMapData->maxZoomSize().height()+100); // 100px beyond the closest pole
+    //makepoly(points, path, mapData, true, center.latitude() > 0 ? -100 : mapData->maxZoomSize.height()+100); // 100px beyond the closest pole
 
     if (!polygonItem)
         polygonItem = new QGraphicsPolygonItem();
@@ -204,7 +201,7 @@ void QGeoTiledMapCircleObjectInfo::mapUpdate()
 {
     if (polygonItem) {
         QPen pen = circle->pen();
-        pen.setWidthF(pen.widthF() * tiledMapDataPrivate->zoomFactor);
+        pen.setWidthF(pen.widthF() * tiledMapData->zoomFactor());
         polygonItem->setPen(pen);
     }
 }

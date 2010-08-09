@@ -62,8 +62,8 @@ void QGeoTiledMapPolygonObjectInfo::objectUpdate()
 {
     QList<QGeoCoordinate> path = polygon->path();
 
-    //makepoly(*this, path, polygon, points, true);
-    qCreatePolygon(tiledMapDataPrivate, path, points, true);
+    points = createPolygon(path, tiledMapData, true);
+    //makepoly(points, path, mapData, true);
 
     if (!polygonItem)
         polygonItem = new QGraphicsPolygonItem();
@@ -78,7 +78,7 @@ void QGeoTiledMapPolygonObjectInfo::mapUpdate()
 {
     if (polygonItem) {
         QPen pen = polygon->pen();
-        pen.setWidthF(pen.widthF() * tiledMapDataPrivate->zoomFactor);
+        pen.setWidthF(pen.widthF() * tiledMapData->zoomFactor());
         polygonItem->setPen(pen);
     }
 }

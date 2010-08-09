@@ -60,8 +60,46 @@ QGeoTiledMapRectangleObjectInfo::~QGeoTiledMapRectangleObjectInfo() {}
 
 void QGeoTiledMapRectangleObjectInfo::objectUpdate()
 {
-    QPoint topLeft = tiledMapData->coordinateToWorldPixel(rectangle->bounds().topLeft());
-    QPoint bottomRight = tiledMapData->coordinateToWorldPixel(rectangle->bounds().bottomRight());
+#if 1
+    QGeoCoordinate coord1 = rectangle->bounds().topLeft();
+    QGeoCoordinate coord2 = rectangle->bounds().bottomRight();
+
+    const qreal lng1 = coord1.longitude();
+    const qreal lng2 = coord2.longitude();
+
+    // is the dateline crossed = different sign AND gap is large enough
+    const bool crossesDateline = lng1 * lng2 < 0 && abs(lng1 - lng2) > 180;
+
+    // calculate base points
+    QPointF point1 = tiledMapData->coordinateToWorldPixel(coord1);
+    QPointF point2 = tiledMapData->coordinateToWorldPixel(coord2);
+
+    QRectF bounds1 = QRectF(point1, point2).normalized();
+    QRectF bounds2;
+
+    // if the dateline is crossed, draw "around" the map over the chosen pole
+    if (crossesDateline) {
+        // is the shortest route east = dateline crossed XOR longitude is east by simple comparison
+        const bool goesEast = crossesDateline != (lng2 > lng1);
+        // direction = positive if east, negative otherwise
+        const qreal dir = goesEast ? 1 : -1;
+
+        int width = tiledMapData->maxZoomSize().width();
+
+        // lastPoint on the other side
+        QPointF point1_ = point1 - QPointF(width*dir, 0);
+
+        // point on this side
+        QPointF point2_ = point2 + QPointF(width*dir, 0);
+
+        bounds1 = QRectF(point1_, point2).normalized();
+        bounds2 = QRectF(point1, point2_).normalized();
+    }
+
+#else
+    // Old code, to be removed.
+    QPoint topLeft = mapData->q_ptr->coordinateToWorldPixel(rectangle->bounds.topLeft());
+    QPoint bottomRight = mapData->q_ptr->coordinateToWorldPixel(rectangle->bounds.bottomRight());
 
     bounds = QRectF(topLeft, bottomRight);
 
@@ -72,6 +110,7 @@ void QGeoTiledMapRectangleObjectInfo::objectUpdate()
         bounds1.setRight(bounds1.right() + tiledMapDataPrivate->maxZoomSize.width());
         bounds2 = bounds1.translated(-tiledMapDataPrivate->maxZoomSize.width(), 0);
     }
+#endif
 
     if (!rectangleItem1)
         rectangleItem1 = new QGraphicsRectItem();
@@ -104,7 +143,7 @@ void QGeoTiledMapRectangleObjectInfo::mapUpdate()
 {
     if (rectangleItem1) {
         QPen pen = rectangle->pen();
-        pen.setWidthF(pen.widthF() * tiledMapDataPrivate->zoomFactor);
+        pen.setWidthF(pen.widthF() * tiledMapData->zoomFactor());
         rectangleItem1->setPen(pen);
         if (rectangleItem2)
             rectangleItem2->setPen(pen);

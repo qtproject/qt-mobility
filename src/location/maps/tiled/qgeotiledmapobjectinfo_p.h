@@ -72,7 +72,10 @@ public:
     QGeoTiledMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapObjectInfo();
 
-    static void qCreatePolygon(QGeoTiledMapDataPrivate *tiledMapDataPrivate, const QList<QGeoCoordinate> & path, QPolygonF &points, bool closedPath, qreal ypole = -100);
+    static QPolygonF createPolygon(const QList<QGeoCoordinate> & path,
+                                    QGeoTiledMapData *tiledMapData,
+                                    bool closedPath,
+                                    qreal ypole = -100);
 
     void addToParent();
     void removeFromParent();
@@ -85,6 +88,7 @@ public:
     QGraphicsItem *graphicsItem1;
     QGraphicsItem *graphicsItem2;
     QGeoTiledMapData *tiledMapData;
+private:
     QGeoTiledMapDataPrivate *tiledMapDataPrivate;
 };
 

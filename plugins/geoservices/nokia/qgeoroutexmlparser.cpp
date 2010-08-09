@@ -162,11 +162,8 @@ bool QGeoRouteXmlParser::parseRoute(QGeoRoute *route)
                 if(succeeded)
                     route->setBounds(bounds);
             }
-            else if (m_reader->name() == "Maneuver") {
-                succeeded = parseManeuver();
-            }
-            else if (m_reader->name() == "Link") {
-                succeeded = parseLink();
+            else if (m_reader->name() == "Leg") {
+                succeeded = parseLeg();
             }
             else if (m_reader->name() == "Summary") {
                 succeeded = parseSummary(route);
@@ -179,6 +176,30 @@ bool QGeoRouteXmlParser::parseRoute(QGeoRoute *route)
     }
     if(succeeded)
         succeeded = postProcessRoute(route);
+
+    return succeeded;
+}
+
+bool QGeoRouteXmlParser::parseLeg()
+    {
+    Q_ASSERT(m_reader->isStartElement() && m_reader->name() == "Leg");
+
+    m_reader->readNext();
+    bool succeeded = true;
+    while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == "Leg")) {
+        if (m_reader->tokenType() == QXmlStreamReader::StartElement && succeeded) {
+            if (m_reader->name() == "Maneuver") {
+                succeeded = parseManeuver();
+            }
+            else if (m_reader->name() == "Link") {
+                succeeded = parseLink();
+            }
+            else {
+                m_reader->skipCurrentElement();
+            }
+        }
+        m_reader->readNext();
+    }
 
     return succeeded;
 }
@@ -286,12 +307,10 @@ bool QGeoRouteXmlParser::parseSummary(QGeoRoute *route)
     while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == "Summary")) {
         if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
             if (m_reader->name() == "Distance") {
-                QString value = m_reader->readElementText();
-                route->setDistance(value.toDouble());
+                route->setDistance(m_reader->readElementText().toDouble());
             }
             else if (m_reader->name() == "TrafficTime") {
-                QString value = m_reader->readElementText();
-                route->setTravelTime(value.toDouble());
+                route->setTravelTime(m_reader->readElementText().toDouble());
             }
             else {
                 m_reader->skipCurrentElement();
@@ -347,6 +366,39 @@ bool QGeoRouteXmlParser::parseManeuver()
             }
             else if (m_reader->name() == "ToLink") {
                 instructionContainer.toId = m_reader->readElementText();
+            }
+            else if (m_reader->name() == "TravelTime") {
+                instructionContainer.instruction.setTimeToNextInstruction(m_reader->readElementText().toInt());
+            }
+            else if (m_reader->name() == "Length") {
+                instructionContainer.instruction.setTimeToNextInstruction(m_reader->readElementText().toDouble());
+            }
+            else if (m_reader->name() == "Direction") {
+                QString value = m_reader->readElementText();
+                if (value == "forward")
+                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionForward);
+                else if (value == "bearRight")
+                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionBearRight);
+                else if (value == "lightRight")
+                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionLightRight);
+                else if (value == "right")
+                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionRight);
+                else if (value == "hardRight")
+                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionHardRight);
+                else if (value == "uTurnRight")
+                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionUTurnRight);
+                else if (value == "uTurnLeft")
+                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionUTurnLeft);
+                else if (value == "hardLeft")
+                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionHardLeft);
+                else if (value == "left")
+                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionLeft);
+                else if (value == "lightLeft")
+                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionLightLeft);
+                else if (value == "bearLeft")
+                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionBearLeft);
+                else
+                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::NoDirection);
             }
             else {
                 m_reader->skipCurrentElement();

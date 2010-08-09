@@ -78,10 +78,11 @@ void QGeoTiledMapMarkerObjectInfo::objectUpdate()
 void QGeoTiledMapMarkerObjectInfo::mapUpdate()
 {
     if (pixmapItem) {
+        int zoomFactor = tiledMapData->zoomFactor();
         pixmapItem->resetTransform();
-        pixmapItem->setScale(tiledMapDataPrivate->zoomFactor);
-        pixmapItem->translate(marker->anchor().x() * tiledMapDataPrivate->zoomFactor,
-                              marker->anchor().y() * tiledMapDataPrivate->zoomFactor);
+        pixmapItem->setScale(zoomFactor);
+        pixmapItem->translate(marker->anchor().x() * zoomFactor,
+                              marker->anchor().y() * zoomFactor);
     }
 }
 

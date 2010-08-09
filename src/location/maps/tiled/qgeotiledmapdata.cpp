@@ -652,6 +652,12 @@ QRect QGeoTiledMapData::maxZoomScreenRect() const
     return d->maxZoomScreenRect;
 }
 
+int QGeoTiledMapData::zoomFactor() const
+{
+    Q_D(const QGeoTiledMapData);
+    return d->zoomFactor;
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
