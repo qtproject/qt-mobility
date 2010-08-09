@@ -98,20 +98,6 @@
     \l {GalleryItem::onFailed}{onFailed()} and
     \l {GalleryItem::onFinished}{onFinished()} .
 
-    \section2 Query Count
-
-    The \l {GalleryQueryCount} allows you to fetch the number of items
-    matching a gallery query.
-
-    The element is like \l {GalleryItem} in that there are similar properties,
-    methods and signals. Because the returned value is likely to be a set of
-    matching items instead of a single item then the differences are the
-    existence of properties and methods for handling multiple items. For
-    example, the returned list can be filtered using \l
-    {GalleryQueryCount::filter}. Or the list can be controlled for the \e
-    {scope}, that is, how many levels of descendants of the matches to include.
-
-
     \section2 Query Requests
 
     The \l GalleryQueryModel element is used to perform the requests on a
