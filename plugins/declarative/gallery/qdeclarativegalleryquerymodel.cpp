@@ -49,6 +49,7 @@ QTM_BEGIN_NAMESPACE
     \qmlclass GalleryQueryModel GalleryQueryRequest
     \brief The GalleryQueryRequest element is used to specify a model containing
     items from a gallery.
+    \ingroup qml-gallery
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 

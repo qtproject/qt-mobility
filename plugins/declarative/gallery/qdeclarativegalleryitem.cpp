@@ -50,6 +50,8 @@ QTM_BEGIN_NAMESPACE
     \brief The GalleryItem element allows you to request information about a
     single item from a gallery
 
+    \ingroup qml-gallery
+    
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
     \sa GalleryQueryModel, GalleryQueryCount
@@ -87,7 +89,7 @@ QDeclarativeGalleryItem::~QDeclarativeGalleryItem()
 /*!
     \qmlproperty QAbstractGallery GalleryItem::gallery
 
-    This property holds the gallery an item should be requested from.
+    This property holds the gallery that an item should be requested from.
 */
 
 /*!

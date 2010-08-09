@@ -51,6 +51,8 @@ QTM_BEGIN_NAMESPACE
     \brief The GalleryQueryCount element allows you to fetch the number of
     items matching a gallery query.
 
+    \ingroup qml-gallery
+
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
     \sa GalleryQueryModel, GalleryItem
