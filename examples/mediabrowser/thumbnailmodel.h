@@ -57,7 +57,7 @@ public:
     ThumbnailModel(QAbstractGallery *gallery, QObject *parent = 0);
     ~ThumbnailModel();
 
-#ifndef QT_NO_FUTURE
+#ifndef QT_NO_QFUTURE
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
 protected:
