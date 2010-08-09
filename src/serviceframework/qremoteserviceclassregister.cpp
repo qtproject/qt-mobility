@@ -49,11 +49,11 @@
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-    \typedef QRemoteServiceIdentifier
-    \relates QRemoteServiceClassRegister
+/*
+    \class QRemoteServiceIdentifier
+    \inmodule QtServiceFramework
+    \internal
 
-    Qt-style synonym for QPair<QByteArray, QByteArray>.
 */
 
 /*!
@@ -102,8 +102,8 @@ QTM_BEGIN_NAMESPACE
     \relates QRemoteServiceClassRegister
 
     This macro marks a class as remote service and should be placed next to the Q_OBJECT
-    macro. \a T represents the name of the class implementing the service, \a interface specifies 
-    the service framework service name, interface name and \a version represents the interface 
+    macro. \a T represents the name of the class implementing the service, \a name specifies
+    name under which the service is registered, \a interface name and \a version represents the interface
     version. All parameters must match the interface information provided by the associated
     service XML file.
 

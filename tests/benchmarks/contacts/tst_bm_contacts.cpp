@@ -459,8 +459,11 @@ void tst_Contact::tst_fetchOneContact()
   QFETCH(tst_Contact::platform, platform);
   QFETCH(QContactManager *, manager);
 
+  if (manager == 0)
+    return;
+
   if(platform == tst_Contact::QContacts){
-    QContact c;    
+    QContact c;
 
     m_run++;
 
@@ -560,6 +563,9 @@ void tst_Contact::tst_fetchTenContact()
 {
   QFETCH(tst_Contact::platform, platform);
   QFETCH(QContactManager *, manager);
+
+  if (manager == 0)
+    return;
 
   if(platform == tst_Contact::QContacts){
     QContact c;
@@ -865,6 +871,9 @@ void tst_Contact::tst_nameFilter()
 { 
   QFETCH(tst_Contact::platform, platform);
   QFETCH(QContactManager *, manager);
+
+  if (manager == 0)
+    return;
  
   if(platform == tst_Contact::QContacts){
     QContactFilter fil = QContactName::match(firstNames.first(),""); // pick one first name to find

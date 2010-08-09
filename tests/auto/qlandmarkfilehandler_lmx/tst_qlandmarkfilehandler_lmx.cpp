@@ -54,8 +54,8 @@
 
 #define private public
 #include <qlandmarkmanager.h>
-#include "../../../src/location/qlandmarkmanager_p.h"
-#include "../../../src/location/qlandmarkfilehandler_lmx_p.h"
+#include "qlandmarkmanager_p.h"
+#include "qlandmarkfilehandler_lmx_p.h"
 
 QTM_USE_NAMESPACE
 
@@ -440,8 +440,8 @@ private:
         w0.setCoordinate(QGeoCoordinate(1.0, 2.0, 3.0));
         w0.setRadius(4.0);
         QGeoAddress a0;
-        a0.setThoroughfareNumber("1");
-        a0.setThoroughfareName("Main St");
+        a0.setStreetNumber("1");
+        a0.setStreet("Main St");
         a0.setCity("Brisbane");
         a0.setState("Queensland");
         a0.setCountry("Australia");
@@ -491,8 +491,8 @@ private:
 
         QLandmark w7;
         QGeoAddress a7;
-        a7.setThoroughfareNumber("1");
-        a7.setThoroughfareName("Main St");
+        a7.setStreetNumber("1");
+        a7.setStreet("Main St");
         w7.setAddress(a7);
         w << w7;
 
@@ -526,8 +526,8 @@ private:
 
         QLandmark w13;
         QGeoAddress a13;
-        a13.setThoroughfareNumber("1");
-        a13.setThoroughfareName("Main St");
+        a13.setStreetNumber("1");
+        a13.setStreet("Main St");
         a13.setCity("Brisbane");
         a13.setState("Queensland");
         a13.setCountry("Australia");

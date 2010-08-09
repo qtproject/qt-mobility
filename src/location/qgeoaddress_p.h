@@ -73,8 +73,8 @@ public:
     QString sCounty; //!< county field
     QString sCity; //!< city field
     QString sDistrict; //!< district field
-    QString sThoroughfareName; //!< thoroughfare name field
-    QString sThoroughfareNumber; //!< thoroughfare number field
+    QString sStreet; //!< street name field
+    QString sStreetNumber; //!< street number field
     QString sPostCode; //!< post code field
     QString sPostOfficeBox; //!< post office box field
 };

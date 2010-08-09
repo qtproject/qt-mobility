@@ -59,6 +59,7 @@
 #include "organizerjournaltimerangetransform.h"
 #include "organizertodoprogresstransform.h"
 #include "organizertodotimerangetransform.h"
+#include "qorganizereventoccurrence.h"
 
 QTM_USE_NAMESPACE
 
@@ -126,13 +127,41 @@ void OrganizerItemTransform::toItemPostSaveL(const CCalEntry &entry, QOrganizerI
 
 void OrganizerItemTransform::toItemL(const CCalInstance &instance, QOrganizerItem *item) const
 {
-    toItemL(instance.Entry(), item);
+    
     // TODO: strip recurrence stuff
     // TODO: set item instance origin
     // TODO: transform  CCalInstance::Time()
     // TODO: transform  CCalInstance::StartTimeL()
     // TODO: transform  CCalInstance::EndTimeL()
-}
+    QOrganizerItem parentItem;
+    toItemL(instance.Entry(), &parentItem);
+    
+    // Create an object of QOrganizerEventOccurrence when entry is of type event
+    if (QOrganizerItemType::TypeEvent == parentItem.type()) {
+    
+        QOrganizerEventOccurrence* occurrence = (QOrganizerEventOccurrence*)item; 
+        occurrence->setGuid(parentItem.guid());
+        occurrence->setParentLocalId(instance.Entry().LocalUidL());
+        
+        //set start date time of the insatance.
+        QDateTime startDateTime(OrganizerItemDetailTransform::toQDateTimeL(instance.StartTimeL()));
+        occurrence->setStartDateTime(startDateTime);
+    
+        //set orginal date as its easy for client to modify and resave the occurrence
+        occurrence->setOriginalDate(startDateTime.date());
+        //set end date time of the insatance
+        occurrence->setEndDateTime(OrganizerItemDetailTransform::toQDateTimeL(instance.EndTimeL()));
+        occurrence->setDescription(parentItem.description());
+        QOrganizerItemPriority priority(parentItem.detail(QOrganizerItemPriority::DefinitionName));
+        if (!priority.isEmpty()) {
+           occurrence->setPriority(priority.priority());
+        }
+        QOrganizerItemLocation location(parentItem.detail(QOrganizerItemLocation::DefinitionName));
+        if (!location.isEmpty()) {
+            occurrence->setLocationName(location.locationName());
+        }       
+    }
+}       
 
 void OrganizerItemTransform::debugEntryL(const CCalEntry &entry) const
 {
