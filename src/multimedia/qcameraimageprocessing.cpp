@@ -162,7 +162,12 @@ bool QCameraImageProcessing::isWhiteBalanceModeSupported(QCameraImageProcessing:
 
 int QCameraImageProcessing::manualWhiteBalance() const
 {
-    return d_func()->imageControl ? d_func()->imageControl->manualWhiteBalance() : -1;
+    QVariant value;
+
+    if (d_func()->imageControl)
+        value = d_func()->imageControl->processingParameter(QCameraImageProcessingControl::ColorTemperature);
+
+    return value.toInt();
 }
 
 /*!
@@ -171,8 +176,11 @@ int QCameraImageProcessing::manualWhiteBalance() const
 
 void QCameraImageProcessing::setManualWhiteBalance(int colorTemperature)
 {
-    if (d_func()->imageControl)
-        d_func()->imageControl->setManualWhiteBalance(colorTemperature);
+    if (d_func()->imageControl) {
+        d_func()->imageControl->setProcessingParameter(
+                    QCameraImageProcessingControl::ColorTemperature,
+                    QVariant(colorTemperature));
+    }
 }
 
 /*!
