@@ -43,7 +43,6 @@
 #define QVERSITORGANIZEREXPORTER_H
 
 #include "qmobilityglobal.h"
-#include "qversitresourcehandler.h"
 #include "qversitdocument.h"
 
 #include <qorganizeritem.h>
@@ -86,9 +85,6 @@ public:
     QMap<int, Error> errors() const;
 
     void setDetailHandler(QVersitOrganizerExporterDetailHandler* handler);
-
-    void setResourceHandler(QVersitResourceHandler* handler);
-    QVersitResourceHandler* resourceHandler() const;
 
 private:
     QVersitOrganizerExporterPrivate* d;

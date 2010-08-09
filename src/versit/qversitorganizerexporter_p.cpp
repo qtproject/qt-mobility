@@ -50,9 +50,7 @@
 QTM_USE_NAMESPACE
 
 QVersitOrganizerExporterPrivate::QVersitOrganizerExporterPrivate() :
-    mDetailHandler(NULL),
-    mDefaultResourceHandler(new QVersitDefaultResourceHandler),
-    mResourceHandler(mDefaultResourceHandler)
+    mDetailHandler(NULL)
 {
     int versitPropertyCount =
         sizeof(versitOrganizerDetailMappings)/sizeof(VersitDetailMapping);
@@ -67,7 +65,6 @@ QVersitOrganizerExporterPrivate::QVersitOrganizerExporterPrivate() :
 
 QVersitOrganizerExporterPrivate::~QVersitOrganizerExporterPrivate()
 {
-    delete mDefaultResourceHandler;
 }
 
 bool QVersitOrganizerExporterPrivate::exportItem(

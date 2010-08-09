@@ -45,14 +45,12 @@
 
 \title Telephony Events
 
-\ingroup telephony
-
 \brief The Telephony Events API enables access to the telephony event services.
 
 The Qt Telephony Events API enables access to the telephony event services to 
 provide telephony call notification that other applications can use to 
 be notified.
-Using this API you can further get information abaout the status of all
+Using this API you can further get information about the status of all
 existing calls.
 
 \tableofcontents
@@ -90,3 +88,4 @@ The library provides a number of classes and signals and properties to assist wi
 Another application can use this library to get informed about incomming calls, accessing calls information and more of the current system.
 Basically the library provides an easy access of call information of different OS system (here it is Linux and the DBus system).
 
+*/

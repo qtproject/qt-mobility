@@ -51,8 +51,6 @@ QTM_USE_NAMESPACE
 
 QVersitOrganizerImporterPrivate::QVersitOrganizerImporterPrivate() :
     mPropertyHandler(NULL),
-    mDefaultResourceHandler(new QVersitDefaultResourceHandler),
-    mResourceHandler(mDefaultResourceHandler),
     mDurationSpecified(false)
 {
     int versitPropertyCount =
@@ -68,7 +66,6 @@ QVersitOrganizerImporterPrivate::QVersitOrganizerImporterPrivate() :
 
 QVersitOrganizerImporterPrivate::~QVersitOrganizerImporterPrivate()
 {
-    delete mDefaultResourceHandler;
 }
 
 bool QVersitOrganizerImporterPrivate::importDocument(
@@ -487,7 +484,21 @@ void QVersitOrganizerImporterPrivate::parseRecurFragment(const QString& key, con
     } else if (key == QLatin1String("BYDAY")) {
         QList<Qt::DayOfWeek> days;
         QStringList dayParts = value.split(QLatin1Char(','));
-        foreach (const QString& dayStr, dayParts) {
+        foreach (QString dayStr, dayParts) {
+            if (dayStr.length() < 2) {
+                // bad day specifier
+                continue;
+            } else if (dayStr.length() > 2) {
+                // parse something like -2SU, meaning the second-last Sunday
+                QString posStr = dayStr;
+                dayStr = dayStr.right(2); // dayStr = last two chars
+                posStr.chop(2); // posStr = all except last two chars
+                bool ok;
+                int pos = posStr.toInt(&ok);
+                if (!ok)
+                    continue;
+                rule->setPositions(QList<int>() << pos);
+            }
             int day = parseDayOfWeek(dayStr);
             if (day != -1) {
                 days << (Qt::DayOfWeek)day;

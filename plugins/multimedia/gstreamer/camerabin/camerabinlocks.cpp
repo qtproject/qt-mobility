@@ -46,10 +46,9 @@
 
 #include <QDebug>
 
-CameraBinLocks::CameraBinLocks(GstElement &camerabin, CameraBinSession *session)
+CameraBinLocks::CameraBinLocks(CameraBinSession *session)
     :QCameraLocksControl(session),
      m_session(session),
-     m_camerabin(camerabin),
      m_focusStatus(QCamera::Unlocked)
 {
     connect(m_session, SIGNAL(focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)),
@@ -74,7 +73,7 @@ void CameraBinLocks::searchAndLock(QCamera::LockTypes locks)
 {
     if (locks & QCamera::LockFocus) {
         m_focusStatus = QCamera::Searching;
-        gst_photography_set_autofocus(GST_PHOTOGRAPHY(&m_camerabin), TRUE);
+        gst_photography_set_autofocus(m_session->photography(), TRUE);
         emit lockStatusChanged(QCamera::LockFocus, m_focusStatus, QCamera::UserRequest);
     }
 }
@@ -83,7 +82,7 @@ void CameraBinLocks::unlock(QCamera::LockTypes locks)
 {
     if (locks & QCamera::LockFocus) {
         m_focusStatus = QCamera::Unlocked;
-        gst_photography_set_autofocus(GST_PHOTOGRAPHY(&m_camerabin), FALSE);
+        gst_photography_set_autofocus(m_session->photography(), FALSE);
         emit lockStatusChanged(QCamera::LockFocus, m_focusStatus, QCamera::UserRequest);
     }
 }

@@ -44,13 +44,13 @@
     \row \o \l{QtMessaging} \o Classes for managing messages and attachments.
     \row \o \l{QtMultimediaKit} \o Classes to to play and record media, and manage a collection of media content.
     \row \o \l{QtSystemInfo} \o Provides system information.
-    \row \o \l{QtPublishSubscribe} \o Classes that enables applications to read item values, navigate through and subscribe
-to change notifications.
+    \row \o \l{QtPublishSubscribe} \o Classes that enables applications to read item values, navigate through and subscribe to change notifications.
     \row \o \l{QtSensors} \o Classes to provide access to sensors.
     \row \o \l{QtOrganizer} \o Classes for managing calendar and to-do entries.
     \row \o \l{QtFeedback} \o Classes to allow tactile feedback and vibration.
     \row \o \l{QtTelephony} \o Classes for observing telephony events.
     \row \o \l{QtGallery} \o Classes for managing document galleries.
+    \row \o \l{QtVersit}  \o Classes for managing Versit documents.
 
     \endtable
 
@@ -58,6 +58,12 @@ to change notifications.
     \sa {Class and Function Documentation}
 */
 
+
+/*!
+    \module QtNetwork
+    \title QtNetwork Module
+    \brief The QtNetwork module controls the system's connectivity state.
+*/
 
 /*!
     \module QtContacts
@@ -124,8 +130,15 @@ to change notifications.
 /*!
     \module QtMultimediaKit
     \title  QtMultimediaKit Module
-    \brief  The QtMultimediaKit Module provides APIs to play and record media, and manage a collection of media content.
+    \brief  The QtMultimediaKit module provides APIs to play and record media, and manage a collection of media content.
     
+    This module delivers an easy to use interface to multimedia functions. The
+    developer is able to render images, video and sound and record sound in a
+    variety of formats.
+
+    QtMultimediaKit contains both the low level APIs previously found in Qt 4.6
+    and also the High level Multimedia APIs that were introduced earlier in Qt
+    Mobility.
 */
 
 
@@ -165,6 +178,13 @@ arbitrary services.
     \module QtGallery
     \title QtGallery Module
     \brief The QtGallery module provides access to a gallery of documents.
+*/
+
+/*!
+    \module QtVersit
+    \title QtVersit Module
+    \brief The QtVersit module allows the management of Versit documents
+    including as vCards.
 */
 
 

@@ -265,6 +265,7 @@ public:
     mutable QAbstractVideoSurface::Error error;
     QVideoSurfaceFormat format;
     bool active;
+    QSize nativeResolution;
 };
 
 QT_END_NAMESPACE

@@ -43,7 +43,6 @@
 #define QVERSITORGANIZERIMPORTER_H
 
 #include "qmobilityglobal.h"
-#include "qversitresourcehandler.h"
 
 #include <qorganizeritem.h>
 
@@ -87,9 +86,6 @@ public:
     QMap<int, Error> errors() const;
 
     void setPropertyHandler(QVersitOrganizerImporterPropertyHandler* handler);
-
-    void setResourceHandler(QVersitResourceHandler* handler);
-    QVersitResourceHandler* resourceHandler() const;
 
 private:
     QVersitOrganizerImporterPrivate* d;

@@ -114,8 +114,6 @@ public:
     QList<QOrganizerItem> mItems;
     QMap<int, QVersitOrganizerImporter::Error> mErrors;
     QVersitOrganizerImporterPropertyHandler* mPropertyHandler;
-    QVersitDefaultResourceHandler* mDefaultResourceHandler;
-    QVersitResourceHandler* mResourceHandler;
     bool mDurationSpecified; // true iff a valid DURATION property has been seen in the current
                              // document with no subsequent DTEND property
 

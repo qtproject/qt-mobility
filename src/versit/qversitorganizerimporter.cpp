@@ -53,8 +53,9 @@ QTM_USE_NAMESPACE
   \l{QOrganizerItem}{QOrganizerItems}.
 
   \ingroup versit
+  \inmodule QtVersit
 
-  This class is used to convert a \l{QVersitDocument}{QVersitDocuments} (which may be produced by a
+  This class is used to convert a \l QVersitDocument (which may be produced by a
   QVersitReader) to lists of \l{QOrganizerItem}{QOrganizerItems} (which may be saved into a
   QOrganizerItemManager.  Unless there is an error, there is a one-to-one mapping between
   sub-documents of the input Versit document and QOrganizerItems.
@@ -153,23 +154,4 @@ QMap<int, QVersitOrganizerImporter::Error> QVersitOrganizerImporter::errors() co
 void QVersitOrganizerImporter::setPropertyHandler(QVersitOrganizerImporterPropertyHandler* handler)
 {
     d->mPropertyHandler = handler;
-}
-
-/*!
- * Sets \a handler to be the handler to save files with, or 0 to have no handler.
- *
- * Does not take ownership of the handler.  The client should ensure the handler remains valid for
- * the lifetime of the exporter.
- */
-void QVersitOrganizerImporter::setResourceHandler(QVersitResourceHandler* handler)
-{
-    d->mResourceHandler = handler;
-}
-
-/*!
- * Returns the associated resource handler.
- */
-QVersitResourceHandler* QVersitOrganizerImporter::resourceHandler() const
-{
-    return d->mResourceHandler;
 }

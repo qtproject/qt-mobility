@@ -53,10 +53,9 @@ class QGeoMapRectangleObjectPrivate : public QGeoMapObjectPrivate
 {
 public:
     QGeoMapRectangleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
-    QGeoMapRectangleObjectPrivate(const QGeoMapRectangleObjectPrivate &other);
     ~QGeoMapRectangleObjectPrivate();
-    QGeoMapRectangleObjectPrivate& operator= (const QGeoMapRectangleObjectPrivate &other);
 
+    QGeoBoundingBox bounds;
     QPen pen;
     QBrush brush;
 };
