@@ -271,8 +271,8 @@ QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::itemIds(const QOrganiz
     ids.Close();
     
     // No filtering and sorting needed?
-    if (filter == QOrganizerItemInvalidFilter() && sortOrders.count() == 0)
-        return itemIds;    
+    if (filter.type() == QOrganizerItemFilter::InvalidFilter || filter.type() == QOrganizerItemFilter::DefaultFilter && sortOrders.count() == 0)
+        return itemIds;   
         
     // Get items for slow filter
     QOrganizerItemFetchHint fetchHint;
@@ -323,7 +323,7 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::items(const QOrganizerItemFil
     ids.Close();
     
     // No filtering and sorting needed?
-    if (filter == QOrganizerItemInvalidFilter() && sortOrders.count() == 0)
+    if (filter.type() == QOrganizerItemFilter::InvalidFilter || filter.type() == QOrganizerItemFilter::DefaultFilter && sortOrders.count() == 0)
         return items;
     
     // Use the general implementation to filter and sort items
