@@ -58,9 +58,26 @@ void OrganizerTodoTimeRangeTransform::transformToDetailL(const CCalEntry& entry,
     }
 }
 
+void OrganizerTodoTimeRangeTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
+{
+    if(itemInstance->type() == QOrganizerItemType::TypeTodoOccurrence)
+    {
+        TCalTime startTime = instance.StartTimeL();
+        TCalTime endTime = instance.EndTimeL();
+
+        QOrganizerTodoTimeRange range;
+        if (startTime.TimeUtcL() != Time::NullTTime())
+            range.setStartDateTime(toQDateTimeL(startTime));
+        if (endTime.TimeUtcL() != Time::NullTTime())
+            range.setDueDateTime(toQDateTimeL(endTime));
+
+        itemInstance->saveDetail(&range);
+    }
+}
+
 void OrganizerTodoTimeRangeTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
-    if(item.type() == QOrganizerItemType::TypeTodo)
+    if(item.type() == QOrganizerItemType::TypeTodo || item.type() == QOrganizerItemType::TypeTodoOccurrence)
     {
         QOrganizerTodoTimeRange range = item.detail<QOrganizerTodoTimeRange>();
         if (!range.isEmpty())

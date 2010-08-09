@@ -211,15 +211,30 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(const QOrganize
             int count(instanceList.Count()); 
             // Convert calninstance list to  QOrganizerEventOccurrence and add to QOrganizerItem list                 
             for( int index=0; index < count;index++ ) {
-                 QOrganizerItem *item;
-                 if (QOrganizerItemType::TypeEvent == generator.type()){
-                     item = new QOrganizerEventOccurrence();
-                 }    
-                 TRAPD(err, m_itemTransform.toItemL(*(instanceList)[index], item));
+                 QOrganizerItem itemInstance;
+                 CCalInstance* calInstance = (instanceList)[index];
+                 
+                 if (QOrganizerItemType::TypeEvent == generator.type())
+                     itemInstance.setType(QOrganizerItemType::TypeEventOccurrence);
+                 else if (QOrganizerItemType::TypeTodo == generator.type())
+                     itemInstance.setType(QOrganizerItemType::TypeTodoOccurrence);
+                 else
+                     User::Leave(KErrNotSupported);
+
+                 TRAPD(err, m_itemTransform.toItemInstanceL(*calInstance, &itemInstance));
                  transformError(err, error);
-                 if ((*error == QOrganizerItemManager::NoError)&&(generator.guid() == item->guid())) {
-                     if ((periodEnd.isValid()&& (maxCount < 0))||(maxCount > 0) && (index < maxCount)) 
-                         occurrenceList.append(*item);
+                 if ((*error == QOrganizerItemManager::NoError)&&(generator.guid() == itemInstance.guid())) {
+                     if ((periodEnd.isValid()&& (maxCount < 0))||(maxCount > 0) && (index < maxCount)) {
+                         QOrganizerItemId id;
+                         id.setManagerUri(this->managerUri());
+                         // The instance might be modified. Then it will not point to the parent entry.
+                         // In this case local id must be set. Otherwise it should be zero.
+                         QOrganizerItemLocalId instanceEntryId = calInstance->Entry().LocalUidL();
+                         if (instanceEntryId != generator.localId())
+                             id.setLocalId(instanceEntryId);
+                         itemInstance.setId(id);
+                         occurrenceList.append(itemInstance);
+                     }
                  }    
             }           
         }

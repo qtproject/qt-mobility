@@ -72,6 +72,13 @@ void OrganizerItemRecurrenceTransform::transformToDetailL(const CCalEntry& entry
     item->saveDetail(&recurrence);
 }
 
+void OrganizerItemRecurrenceTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
+{
+    Q_UNUSED(instance);
+    Q_UNUSED(itemInstance);
+    // There is no recurrence rules with item instances
+}
+
 void OrganizerItemRecurrenceTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
     // *** Repeat rules / RDate / ExDate Methods ***
