@@ -194,6 +194,8 @@ void QGeoTiledMapCircleObjectInfo::objectUpdate()
     polygonItem->setPolygon(points);
     polygonItem->setBrush(circle->brush());
 
+    mapUpdate();
+
     graphicsItem1 = polygonItem;
 }
 
