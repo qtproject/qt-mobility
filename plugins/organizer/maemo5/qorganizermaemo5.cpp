@@ -890,6 +890,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
         QString ceventId = QString::fromStdString(cevent->getId());
         if (!ceventId.isEmpty()) {
             // CEvent ID is not empty, the event already exists in calendar
+
+            // increase the sequence number
+            cevent->setSequence(cevent->getSequence() + 1);
+
             cal->modifyEvent(cevent, calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (*error == QOrganizerItemManager::NoError)
@@ -898,6 +902,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
         }
         else {
             // CEvent ID is empty, the event is new
+
+            // set the sequence number zero
+            cevent->setSequence(0);
+
             cal->addEvent(cevent, calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (calError == CALENDAR_OPERATION_SUCCESSFUL || calError == CALENDAR_ENTRY_DUPLICATED)
@@ -987,6 +995,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
 
         if (!ctodoId.isEmpty()) {
             // CTodo ID is not empty, the todo already exists in calendar
+
+            // increase the sequence number
+            ctodo->setSequence(ctodo->getSequence() + 1);
+
             cal->modifyTodo(ctodo, calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (*error == QOrganizerItemManager::NoError)
@@ -995,6 +1007,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
         }
         else {
             // CTodo ID is empty, the todo is new
+
+            // set the sequence number zero
+            cevent->setSequence(0);
+
             cal->addTodo(ctodo, calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (calError == CALENDAR_OPERATION_SUCCESSFUL || calError == CALENDAR_ENTRY_DUPLICATED)
@@ -1034,6 +1050,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
         QString cjournalId = QString::fromStdString(cjournal->getId());
         if (!cjournalId.isEmpty()) {
             // CJournal ID is not empty, the journal already exists in calendar
+
+            // increase the sequence number
+            cjournal->setSequence(cjournal->getSequence() + 1);
+
             cal->modifyJournal(cjournal, calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (*error == QOrganizerItemManager::NoError)
@@ -1041,6 +1061,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
         }
         else {
             // CJournal ID is empty, the journal is new
+
+            // set the sequence number zero
+            cevent->setSequence(0);
+
             cal->addJournal(cjournal, calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (calError == CALENDAR_OPERATION_SUCCESSFUL || calError == CALENDAR_ENTRY_DUPLICATED)
@@ -1216,6 +1240,9 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
 
         qDebug() << "occurrence, modify:";
 
+        // increase the sequence number
+        cevent->setSequence(cevent->getSequence() + 1);
+
         cal->modifyEvent(cevent, calError);
         qDebug() << "cal error = " << calError;
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
@@ -1229,6 +1256,9 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
         // CEvent ID is empty, the event is new
 
         qDebug() << "occurrence, add new:";
+
+        // set the sequence number zero
+        cevent->setSequence(0);
 
         cal->addEvent(cevent, calError);
         qDebug() << "cal error = " << calError;
