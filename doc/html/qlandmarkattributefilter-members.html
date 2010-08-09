@@ -122,19 +122,27 @@
 <p>This is the complete list of members for <a href="qlandmarkattributefilter.html">QLandmarkAttributeFilter</a>, including inherited members.</p>
 <table class="propsummary">
 <tr><td  class="topAlign"><ul>
+<li class="fn">enum <b><a href="qlandmarkattributefilter.html#AttributeType-enum">AttributeType</a></b></li>
 <li class="fn">enum <b><a href="qlandmarkfilter.html#FilterType-enum">FilterType</a></b></li>
 <li class="fn">enum <b><a href="qlandmarkfilter.html#MatchFlag-enum">MatchFlag</a></b></li>
 <li class="fn">flags <b><a href="qlandmarkfilter.html#MatchFlag-enum">MatchFlags</a></b></li>
+<li class="fn">enum <b><a href="qlandmarkattributefilter.html#OperationType-enum">OperationType</a></b></li>
 <li class="fn"><b><a href="qlandmarkattributefilter.html#QLandmarkAttributeFilter">QLandmarkAttributeFilter</a></b> ()</li>
 <li class="fn"><b><a href="qlandmarkattributefilter.html#QLandmarkAttributeFilter-2">QLandmarkAttributeFilter</a></b> ( const QLandmarkFilter &amp; )</li>
 <li class="fn"><b><a href="qlandmarkattributefilter.html#dtor.QLandmarkAttributeFilter">~QLandmarkAttributeFilter</a></b> ()</li>
 <li class="fn"><b><a href="qlandmarkattributefilter.html#attribute">attribute</a></b> ( const QString &amp; ) const : QVariant</li>
 <li class="fn"><b><a href="qlandmarkattributefilter.html#attributeKeys">attributeKeys</a></b> () const : QStringList</li>
-</ul></td><td class="topAlign"><ul>
+<li class="fn"><b><a href="qlandmarkattributefilter.html#attributeType">attributeType</a></b> () const : AttributeType</li>
 <li class="fn"><b><a href="qlandmarkattributefilter.html#clearAttributes">clearAttributes</a></b> ()</li>
+</ul></td><td class="topAlign"><ul>
 <li class="fn"><b><a href="qlandmarkfilter.html#d_ptr-var">d_ptr</a></b> : QSharedDataPointer&lt;QLandmarkFilterPrivate&gt;</li>
+<li class="fn"><b><a href="qlandmarkattributefilter.html#matchFlags">matchFlags</a></b> ( const QString &amp; ) const : QLandmarkFilter::MatchFlags</li>
+<li class="fn"><b><a href="qlandmarkattributefilter.html#operationType">operationType</a></b> () const : OperationType</li>
 <li class="fn"><b><a href="qlandmarkattributefilter.html#removeAttribute">removeAttribute</a></b> ( const QString &amp; )</li>
-<li class="fn"><b><a href="qlandmarkattributefilter.html#setAttribute">setAttribute</a></b> ( const QString &amp;, const QVariant &amp; )</li>
+<li class="fn"><b><a href="qlandmarkattributefilter.html#setAttribute">setAttribute</a></b> ( const QString &amp;, const QVariant &amp;, QLandmarkFilter::MatchFlags )</li>
+<li class="fn"><b><a href="qlandmarkattributefilter.html#setAttributeType">setAttributeType</a></b> ( AttributeType )</li>
+<li class="fn"><b><a href="qlandmarkattributefilter.html#setAttributes">setAttributes</a></b> ( const QStringList &amp;, const QVariant &amp;, QLandmarkFilter::MatchFlags )</li>
+<li class="fn"><b><a href="qlandmarkattributefilter.html#setOperationType">setOperationType</a></b> ( OperationType )</li>
 <li class="fn"><b><a href="qlandmarkfilter.html#type">type</a></b> () const : FilterType</li>
 <li class="fn"><b><a href="qlandmarkfilter.html#operator-not-eq">operator!=</a></b> ( const QLandmarkFilter &amp; ) const : bool</li>
 <li class="fn"><b><a href="qlandmarkfilter.html#operator-eq">operator=</a></b> ( const QLandmarkFilter &amp; ) : QLandmarkFilter &amp;</li>

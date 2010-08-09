@@ -2951,15 +2951,20 @@
         <keyword ref="qlandmark.html#attributeKeys">attributeKeys</keyword>
         <keyword ref="qlandmark.html#categoryIds">categoryIds</keyword>
         <keyword ref="qlandmark.html#clear">clear</keyword>
+        <keyword ref="qlandmark.html#customAttribute">customAttribute</keyword>
+        <keyword ref="qlandmark.html#customAttributeKeys">customAttributeKeys</keyword>
         <keyword ref="qlandmark.html#description">description</keyword>
         <keyword ref="qlandmark.html#iconUrl">iconUrl</keyword>
         <keyword ref="qlandmark.html#landmarkId">landmarkId</keyword>
         <keyword ref="qlandmark.html#name">name</keyword>
         <keyword ref="qlandmark.html#phone">phone</keyword>
         <keyword ref="qlandmark.html#radius">radius</keyword>
+        <keyword ref="qlandmark.html#removeAttribute">removeAttribute</keyword>
         <keyword ref="qlandmark.html#removeCategoryId">removeCategoryId</keyword>
+        <keyword ref="qlandmark.html#removeCustomAttribute">removeCustomAttribute</keyword>
         <keyword ref="qlandmark.html#setAttribute">setAttribute</keyword>
         <keyword ref="qlandmark.html#setCategoryIds">setCategoryIds</keyword>
+        <keyword ref="qlandmark.html#setCustomAttribute">setCustomAttribute</keyword>
         <keyword ref="qlandmark.html#setDescription">setDescription</keyword>
         <keyword ref="qlandmark.html#setIconUrl">setIconUrl</keyword>
         <keyword ref="qlandmark.html#setLandmarkId">setLandmarkId</keyword>
@@ -3009,11 +3014,23 @@
     </section>
     <section ref="qlandmarkattributefilter.html" title="QLandmarkAttributeFilter Class Reference">
         <keyword ref="qlandmarkattributefilter.html">QLandmarkAttributeFilter</keyword>
+        <keyword ref="qlandmarkattributefilter.html#AttributeType-enum">AttributeType</keyword>
+        <keyword ref="qlandmarkattributefilter.html#AttributeType-enum">QLandmarkAttributeFilter::ManagerAttributes</keyword>
+        <keyword ref="qlandmarkattributefilter.html#AttributeType-enum">QLandmarkAttributeFilter::CustomAttributes</keyword>
+        <keyword ref="qlandmarkattributefilter.html#OperationType-enum">OperationType</keyword>
+        <keyword ref="qlandmarkattributefilter.html#OperationType-enum">QLandmarkAttributeFilter::OrOperation</keyword>
+        <keyword ref="qlandmarkattributefilter.html#OperationType-enum">QLandmarkAttributeFilter::AndOperation</keyword>
         <keyword ref="qlandmarkattributefilter.html#attribute">attribute</keyword>
         <keyword ref="qlandmarkattributefilter.html#attributeKeys">attributeKeys</keyword>
+        <keyword ref="qlandmarkattributefilter.html#attributeType">attributeType</keyword>
         <keyword ref="qlandmarkattributefilter.html#clearAttributes">clearAttributes</keyword>
+        <keyword ref="qlandmarkattributefilter.html#matchFlags">matchFlags</keyword>
+        <keyword ref="qlandmarkattributefilter.html#operationType">operationType</keyword>
         <keyword ref="qlandmarkattributefilter.html#removeAttribute">removeAttribute</keyword>
         <keyword ref="qlandmarkattributefilter.html#setAttribute">setAttribute</keyword>
+        <keyword ref="qlandmarkattributefilter.html#setAttributeType">setAttributeType</keyword>
+        <keyword ref="qlandmarkattributefilter.html#setAttributes">setAttributes</keyword>
+        <keyword ref="qlandmarkattributefilter.html#setOperationType">setOperationType</keyword>
         <section ref="qlandmarkattributefilter-members.html" title="List of all members"/>
     </section>
     <section ref="qlandmarkboxfilter.html" title="QLandmarkBoxFilter Class Reference">
@@ -3028,10 +3045,15 @@
         <keyword ref="qlandmarkcategory.html#attributeKeys">attributeKeys</keyword>
         <keyword ref="qlandmarkcategory.html#categoryId">categoryId</keyword>
         <keyword ref="qlandmarkcategory.html#clear">clear</keyword>
+        <keyword ref="qlandmarkcategory.html#customAttribute">customAttribute</keyword>
+        <keyword ref="qlandmarkcategory.html#customAttributeKeys">customAttributeKeys</keyword>
         <keyword ref="qlandmarkcategory.html#iconUrl">iconUrl</keyword>
         <keyword ref="qlandmarkcategory.html#name">name</keyword>
+        <keyword ref="qlandmarkcategory.html#removeAttribute">removeAttribute</keyword>
+        <keyword ref="qlandmarkcategory.html#removeCustomAttribute">removeCustomAttribute</keyword>
         <keyword ref="qlandmarkcategory.html#setAttribute">setAttribute</keyword>
         <keyword ref="qlandmarkcategory.html#setCategoryId">setCategoryId</keyword>
+        <keyword ref="qlandmarkcategory.html#setCustomAttribute">setCustomAttribute</keyword>
         <keyword ref="qlandmarkcategory.html#setIconUrl">setIconUrl</keyword>
         <keyword ref="qlandmarkcategory.html#setName">setName</keyword>
         <keyword ref="qlandmarkcategory.html#operator-not-eq">operator!=</keyword>
@@ -3262,6 +3284,7 @@
         <keyword ref="qlandmarkmanager.html#categoriesChanged">categoriesChanged</keyword>
         <keyword ref="qlandmarkmanager.html#categoriesRemoved">categoriesRemoved</keyword>
         <keyword ref="qlandmarkmanager.html#category">category</keyword>
+        <keyword ref="qlandmarkmanager.html#categoryAttributeKeys">categoryAttributeKeys</keyword>
         <keyword ref="qlandmarkmanager.html#categoryIds">categoryIds</keyword>
         <keyword ref="qlandmarkmanager.html#dataChanged">dataChanged</keyword>
         <keyword ref="qlandmarkmanager.html#error">error</keyword>
@@ -3270,9 +3293,12 @@
         <keyword ref="qlandmarkmanager.html#filterSupportLevel">filterSupportLevel</keyword>
         <keyword ref="qlandmarkmanager.html#fromUri">fromUri</keyword>
         <keyword ref="qlandmarkmanager.html#importLandmarks">importLandmarks</keyword>
+        <keyword ref="qlandmarkmanager.html#isCustomAttributesEnabled">isCustomAttributesEnabled</keyword>
+        <keyword ref="qlandmarkmanager.html#isExtendedAttributesEnabled">isExtendedAttributesEnabled</keyword>
         <keyword ref="qlandmarkmanager.html#isFeatureSupported">isFeatureSupported</keyword>
         <keyword ref="qlandmarkmanager.html#isReadOnly">isReadOnly</keyword>
         <keyword ref="qlandmarkmanager.html#landmark">landmark</keyword>
+        <keyword ref="qlandmarkmanager.html#landmarkAttributeKeys">landmarkAttributeKeys</keyword>
         <keyword ref="qlandmarkmanager.html#landmarkIds">landmarkIds</keyword>
         <keyword ref="qlandmarkmanager.html#landmarks">landmarks</keyword>
         <keyword ref="qlandmarkmanager.html#landmarksAdded">landmarksAdded</keyword>
@@ -3283,14 +3309,14 @@
         <keyword ref="qlandmarkmanager.html#managerUri">managerUri</keyword>
         <keyword ref="qlandmarkmanager.html#managerVersion">managerVersion</keyword>
         <keyword ref="qlandmarkmanager.html#parseUri">parseUri</keyword>
-        <keyword ref="qlandmarkmanager.html#platformCategoryAttributeKeys">platformCategoryAttributeKeys</keyword>
-        <keyword ref="qlandmarkmanager.html#platformLandmarkAttributeKeys">platformLandmarkAttributeKeys</keyword>
         <keyword ref="qlandmarkmanager.html#removeCategory">removeCategory</keyword>
         <keyword ref="qlandmarkmanager.html#removeLandmark">removeLandmark</keyword>
         <keyword ref="qlandmarkmanager.html#removeLandmarks">removeLandmarks</keyword>
         <keyword ref="qlandmarkmanager.html#saveCategory">saveCategory</keyword>
         <keyword ref="qlandmarkmanager.html#saveLandmark">saveLandmark</keyword>
         <keyword ref="qlandmarkmanager.html#saveLandmarks">saveLandmarks</keyword>
+        <keyword ref="qlandmarkmanager.html#setCustomAttributesEnabled">setCustomAttributesEnabled</keyword>
+        <keyword ref="qlandmarkmanager.html#setExtendedAttributesEnabled">setExtendedAttributesEnabled</keyword>
         <keyword ref="qlandmarkmanager.html#sortOrderSupportLevel">sortOrderSupportLevel</keyword>
         <keyword ref="qlandmarkmanager.html#supportedFormats">supportedFormats</keyword>
         <section ref="qlandmarkmanager-members.html" title="List of all members"/>
@@ -3304,6 +3330,7 @@
         <keyword ref="qlandmarkmanagerengine.html#categoriesChanged">categoriesChanged</keyword>
         <keyword ref="qlandmarkmanagerengine.html#categoriesRemoved">categoriesRemoved</keyword>
         <keyword ref="qlandmarkmanagerengine.html#category">category</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#categoryAttributeKeys">categoryAttributeKeys</keyword>
         <keyword ref="qlandmarkmanagerengine.html#categoryIds">categoryIds</keyword>
         <keyword ref="qlandmarkmanagerengine.html#compareDistance">compareDistance</keyword>
         <keyword ref="qlandmarkmanagerengine.html#compareLandmark">compareLandmark</keyword>
@@ -3312,9 +3339,12 @@
         <keyword ref="qlandmarkmanagerengine.html#exportLandmarks">exportLandmarks</keyword>
         <keyword ref="qlandmarkmanagerengine.html#filterSupportLevel">filterSupportLevel</keyword>
         <keyword ref="qlandmarkmanagerengine.html#importLandmarks">importLandmarks</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#isCustomAttributesEnabled">isCustomAttributesEnabled</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#isExtendedAttributesEnabled">isExtendedAttributesEnabled</keyword>
         <keyword ref="qlandmarkmanagerengine.html#isFeatureSupported">isFeatureSupported</keyword>
         <keyword ref="qlandmarkmanagerengine.html#isReadOnly">isReadOnly</keyword>
         <keyword ref="qlandmarkmanagerengine.html#landmark">landmark</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#landmarkAttributeKeys">landmarkAttributeKeys</keyword>
         <keyword ref="qlandmarkmanagerengine.html#landmarkIds">landmarkIds</keyword>
         <keyword ref="qlandmarkmanagerengine.html#landmarks">landmarks</keyword>
         <keyword ref="qlandmarkmanagerengine.html#landmarksAdded">landmarksAdded</keyword>
@@ -3324,8 +3354,6 @@
         <keyword ref="qlandmarkmanagerengine.html#managerParameters">managerParameters</keyword>
         <keyword ref="qlandmarkmanagerengine.html#managerUri">managerUri</keyword>
         <keyword ref="qlandmarkmanagerengine.html#managerVersion">managerVersion</keyword>
-        <keyword ref="qlandmarkmanagerengine.html#platformCategoryAttributeKeys">platformCategoryAttributeKeys</keyword>
-        <keyword ref="qlandmarkmanagerengine.html#platformLandmarkAttributeKeys">platformLandmarkAttributeKeys</keyword>
         <keyword ref="qlandmarkmanagerengine.html#removeCategory">removeCategory</keyword>
         <keyword ref="qlandmarkmanagerengine.html#removeLandmark">removeLandmark</keyword>
         <keyword ref="qlandmarkmanagerengine.html#removeLandmarks">removeLandmarks</keyword>
@@ -3333,6 +3361,8 @@
         <keyword ref="qlandmarkmanagerengine.html#saveCategory">saveCategory</keyword>
         <keyword ref="qlandmarkmanagerengine.html#saveLandmark">saveLandmark</keyword>
         <keyword ref="qlandmarkmanagerengine.html#saveLandmarks">saveLandmarks</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#setCustomAttributesEnabled">setCustomAttributesEnabled</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#setExtendedAttributesEnabled">setExtendedAttributesEnabled</keyword>
         <keyword ref="qlandmarkmanagerengine.html#sortLandmarks">sortLandmarks</keyword>
         <keyword ref="qlandmarkmanagerengine.html#sortOrderSupportLevel">sortOrderSupportLevel</keyword>
         <keyword ref="qlandmarkmanagerengine.html#startRequest">startRequest</keyword>

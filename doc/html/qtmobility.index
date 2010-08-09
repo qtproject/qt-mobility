@@ -3122,10 +3122,8 @@
                 <value name="None" value="2"/>
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="LandmarkFeature" fullname="QLandmarkManager::LandmarkFeature" href="qlandmarkmanager.html#LandmarkFeature-enum" location="qlandmarkmanager.h">
-                <value name="GenericLandmarkAttributes" value="0"/>
-                <value name="GenericCategoryAttributes" value="1"/>
-                <value name="PlatformLandmarkAttributes" value="2"/>
-                <value name="PlatformCategoryAttributes" value="3"/>
+                <value name="ExtendedAttributes" value="0"/>
+                <value name="CustomAttributes" value="1"/>
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="ImportExportOption" fullname="QLandmarkManager::ImportExportOption" href="qlandmarkmanager.html#ImportExportOption-enum" location="qlandmarkmanager.h">
                 <value name="IncludeCategoryData" value="0"/>
@@ -3241,14 +3239,22 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="isFeatureSupported" fullname="QLandmarkManager::isFeatureSupported" href="qlandmarkmanager.html#isFeatureSupported" location="qlandmarkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isFeatureSupported(LandmarkFeature feature) const">
                 <parameter left="LandmarkFeature" right="" name="feature" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="platformLandmarkAttributeKeys" fullname="QLandmarkManager::platformLandmarkAttributeKeys" href="qlandmarkmanager.html#platformLandmarkAttributeKeys" location="qlandmarkmanager.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="platformLandmarkAttributeKeys() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="platformCategoryAttributeKeys" fullname="QLandmarkManager::platformCategoryAttributeKeys" href="qlandmarkmanager.html#platformCategoryAttributeKeys" location="qlandmarkmanager.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="platformCategoryAttributeKeys() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isReadOnly" fullname="QLandmarkManager::isReadOnly" href="qlandmarkmanager.html#isReadOnly" location="qlandmarkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isReadOnly() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isReadOnly" fullname="QLandmarkManager::isReadOnly" href="qlandmarkmanager.html#isReadOnly-2" location="qlandmarkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" type="bool" signature="isReadOnly(const QLandmarkId &amp; landmarkId) const">
                 <parameter left="const QLandmarkId &amp;" right="" name="landmarkId" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isReadOnly" fullname="QLandmarkManager::isReadOnly" href="qlandmarkmanager.html#isReadOnly-3" location="qlandmarkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="3" type="bool" signature="isReadOnly(const QLandmarkCategoryId &amp; categoryId) const">
                 <parameter left="const QLandmarkCategoryId &amp;" right="" name="categoryId" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="landmarkAttributeKeys" fullname="QLandmarkManager::landmarkAttributeKeys" href="qlandmarkmanager.html#landmarkAttributeKeys" location="qlandmarkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="landmarkAttributeKeys() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="categoryAttributeKeys" fullname="QLandmarkManager::categoryAttributeKeys" href="qlandmarkmanager.html#categoryAttributeKeys" location="qlandmarkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="categoryAttributeKeys() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isCustomAttributesEnabled" fullname="QLandmarkManager::isCustomAttributesEnabled" href="qlandmarkmanager.html#isCustomAttributesEnabled" location="qlandmarkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isCustomAttributesEnabled() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCustomAttributesEnabled" fullname="QLandmarkManager::setCustomAttributesEnabled" href="qlandmarkmanager.html#setCustomAttributesEnabled" location="qlandmarkmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCustomAttributesEnabled(bool enabled)">
+                <parameter left="bool" right="" name="enabled" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isExtendedAttributesEnabled" fullname="QLandmarkManager::isExtendedAttributesEnabled" href="qlandmarkmanager.html#isExtendedAttributesEnabled" location="qlandmarkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isExtendedAttributesEnabled() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setExtendedAttributesEnabled" fullname="QLandmarkManager::setExtendedAttributesEnabled" href="qlandmarkmanager.html#setExtendedAttributesEnabled" location="qlandmarkmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setExtendedAttributesEnabled(bool enabled)">
+                <parameter left="bool" right="" name="enabled" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="managerName" fullname="QLandmarkManager::managerName" href="qlandmarkmanager.html#managerName" location="qlandmarkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="managerName() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="managerParameters" fullname="QLandmarkManager::managerParameters" href="qlandmarkmanager.html#managerParameters" location="qlandmarkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;QString, QString&gt;" signature="managerParameters() const"/>
@@ -3728,15 +3734,29 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setCategoryId" fullname="QLandmarkCategory::setCategoryId" href="qlandmarkcategory.html#setCategoryId" location="qlandmarkcategory.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCategoryId(const QLandmarkCategoryId &amp; id)">
                 <parameter left="const QLandmarkCategoryId &amp;" right="" name="id" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="attribute" fullname="QLandmarkCategory::attribute" href="qlandmarkcategory.html#attribute" location="qlandmarkcategory.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="attribute(const QString &amp; key, const QVariant &amp; defaultValue) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="attribute" fullname="QLandmarkCategory::attribute" href="qlandmarkcategory.html#attribute" location="qlandmarkcategory.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="attribute(const QString &amp; key) const">
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
-                <parameter left="const QVariant &amp;" right="" name="defaultValue" default="QVariant()"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setAttribute" fullname="QLandmarkCategory::setAttribute" href="qlandmarkcategory.html#setAttribute" location="qlandmarkcategory.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAttribute(const QString &amp; key, const QVariant &amp; value)">
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
                 <parameter left="const QVariant &amp;" right="" name="value" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="attributeKeys" fullname="QLandmarkCategory::attributeKeys" href="qlandmarkcategory.html#attributeKeys" location="qlandmarkcategory.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="attributeKeys() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeAttribute" fullname="QLandmarkCategory::removeAttribute" href="qlandmarkcategory.html#removeAttribute" location="qlandmarkcategory.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="removeAttribute(const QString &amp; key)">
+                <parameter left="const QString &amp;" right="" name="key" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="customAttribute" fullname="QLandmarkCategory::customAttribute" href="qlandmarkcategory.html#customAttribute" location="qlandmarkcategory.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="customAttribute(const QString &amp; key, const QVariant &amp; defaultValue) const">
+                <parameter left="const QString &amp;" right="" name="key" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="defaultValue" default="QVariant()"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCustomAttribute" fullname="QLandmarkCategory::setCustomAttribute" href="qlandmarkcategory.html#setCustomAttribute" location="qlandmarkcategory.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCustomAttribute(const QString &amp; key, const QVariant &amp; value)">
+                <parameter left="const QString &amp;" right="" name="key" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="customAttributeKeys" fullname="QLandmarkCategory::customAttributeKeys" href="qlandmarkcategory.html#customAttributeKeys" location="qlandmarkcategory.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="customAttributeKeys() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeCustomAttribute" fullname="QLandmarkCategory::removeCustomAttribute" href="qlandmarkcategory.html#removeCustomAttribute" location="qlandmarkcategory.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="removeCustomAttribute(const QString &amp; key)">
+                <parameter left="const QString &amp;" right="" name="key" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="clear" fullname="QLandmarkCategory::clear" href="qlandmarkcategory.html#clear" location="qlandmarkcategory.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clear()"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkManagerEngine" href="qlandmarkmanagerengine.html" location="qlandmarkmanagerengine.h" bases="" module="QtLocation">
@@ -3866,11 +3886,29 @@
                 <parameter left="QLandmarkManager::Error *" right="" name="error" default=""/>
                 <parameter left="QString *" right="" name="errorString" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="platformLandmarkAttributeKeys" fullname="QLandmarkManagerEngine::platformLandmarkAttributeKeys" href="qlandmarkmanagerengine.html#platformLandmarkAttributeKeys" location="qlandmarkmanagerengine.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="platformLandmarkAttributeKeys(QLandmarkManager::Error * error, QString * errorString) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="landmarkAttributeKeys" fullname="QLandmarkManagerEngine::landmarkAttributeKeys" href="qlandmarkmanagerengine.html#landmarkAttributeKeys" location="qlandmarkmanagerengine.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="landmarkAttributeKeys(QLandmarkManager::Error * error, QString * errorString) const">
                 <parameter left="QLandmarkManager::Error *" right="" name="error" default=""/>
                 <parameter left="QString *" right="" name="errorString" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="platformCategoryAttributeKeys" fullname="QLandmarkManagerEngine::platformCategoryAttributeKeys" href="qlandmarkmanagerengine.html#platformCategoryAttributeKeys" location="qlandmarkmanagerengine.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="platformCategoryAttributeKeys(QLandmarkManager::Error * error, QString * errorString) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="categoryAttributeKeys" fullname="QLandmarkManagerEngine::categoryAttributeKeys" href="qlandmarkmanagerengine.html#categoryAttributeKeys" location="qlandmarkmanagerengine.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="categoryAttributeKeys(QLandmarkManager::Error * error, QString * errorString) const">
+                <parameter left="QLandmarkManager::Error *" right="" name="error" default=""/>
+                <parameter left="QString *" right="" name="errorString" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isExtendedAttributesEnabled" fullname="QLandmarkManagerEngine::isExtendedAttributesEnabled" href="qlandmarkmanagerengine.html#isExtendedAttributesEnabled" location="qlandmarkmanagerengine.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isExtendedAttributesEnabled(QLandmarkManager::Error * error, QString * errorString) const">
+                <parameter left="QLandmarkManager::Error *" right="" name="error" default=""/>
+                <parameter left="QString *" right="" name="errorString" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setExtendedAttributesEnabled" fullname="QLandmarkManagerEngine::setExtendedAttributesEnabled" href="qlandmarkmanagerengine.html#setExtendedAttributesEnabled" location="qlandmarkmanagerengine.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error * error, QString * errorString)">
+                <parameter left="bool" right="" name="enabled" default=""/>
+                <parameter left="QLandmarkManager::Error *" right="" name="error" default=""/>
+                <parameter left="QString *" right="" name="errorString" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isCustomAttributesEnabled" fullname="QLandmarkManagerEngine::isCustomAttributesEnabled" href="qlandmarkmanagerengine.html#isCustomAttributesEnabled" location="qlandmarkmanagerengine.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isCustomAttributesEnabled(QLandmarkManager::Error * error, QString * errorString) const">
+                <parameter left="QLandmarkManager::Error *" right="" name="error" default=""/>
+                <parameter left="QString *" right="" name="errorString" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCustomAttributesEnabled" fullname="QLandmarkManagerEngine::setCustomAttributesEnabled" href="qlandmarkmanagerengine.html#setCustomAttributesEnabled" location="qlandmarkmanagerengine.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error * error, QString * errorString)">
+                <parameter left="bool" right="" name="enabled" default=""/>
                 <parameter left="QLandmarkManager::Error *" right="" name="error" default=""/>
                 <parameter left="QString *" right="" name="errorString" default=""/>
             </function>
@@ -10660,18 +10698,43 @@
                 <parameter left="const QLandmarkFilter &amp;" right="" name="other" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkAttributeFilter" fullname="QLandmarkAttributeFilter::~QLandmarkAttributeFilter" href="qlandmarkattributefilter.html#dtor.QLandmarkAttributeFilter" location="qlandmarkattributefilter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkAttributeFilter()"/>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="AttributeType" fullname="QLandmarkAttributeFilter::AttributeType" href="qlandmarkattributefilter.html#AttributeType-enum" location="qlandmarkattributefilter.h">
+                <value name="ManagerAttributes" value="0"/>
+                <value name="CustomAttributes" value="1"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="OperationType" fullname="QLandmarkAttributeFilter::OperationType" href="qlandmarkattributefilter.html#OperationType-enum" location="qlandmarkattributefilter.h">
+                <value name="AndOperation" value="0"/>
+                <value name="OrOperation" value="1"/>
+            </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="attribute" fullname="QLandmarkAttributeFilter::attribute" href="qlandmarkattributefilter.html#attribute" location="qlandmarkattributefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="attribute(const QString &amp; key) const">
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setAttribute" fullname="QLandmarkAttributeFilter::setAttribute" href="qlandmarkattributefilter.html#setAttribute" location="qlandmarkattributefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAttribute(const QString &amp; key, const QVariant &amp; value)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setAttribute" fullname="QLandmarkAttributeFilter::setAttribute" href="qlandmarkattributefilter.html#setAttribute" location="qlandmarkattributefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAttribute(const QString &amp; key, const QVariant &amp; value, QFlags&lt;QLandmarkFilter::MatchFlag&gt; flags)">
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
                 <parameter left="const QVariant &amp;" right="" name="value" default="QVariant()"/>
+                <parameter left="QFlags&lt;QLandmarkFilter::MatchFlag&gt;" right="" name="flags" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setAttributes" fullname="QLandmarkAttributeFilter::setAttributes" href="qlandmarkattributefilter.html#setAttributes" location="qlandmarkattributefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAttributes(const QStringList &amp; keys, const QVariant &amp; value, QFlags&lt;QLandmarkFilter::MatchFlag&gt; flags)">
+                <parameter left="const QStringList &amp;" right="" name="keys" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="value" default="QVariant()"/>
+                <parameter left="QFlags&lt;QLandmarkFilter::MatchFlag&gt;" right="" name="flags" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="removeAttribute" fullname="QLandmarkAttributeFilter::removeAttribute" href="qlandmarkattributefilter.html#removeAttribute" location="qlandmarkattributefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="removeAttribute(const QString &amp; key)">
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="clearAttributes" fullname="QLandmarkAttributeFilter::clearAttributes" href="qlandmarkattributefilter.html#clearAttributes" location="qlandmarkattributefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clearAttributes()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="attributeKeys" fullname="QLandmarkAttributeFilter::attributeKeys" href="qlandmarkattributefilter.html#attributeKeys" location="qlandmarkattributefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="attributeKeys() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="matchFlags" fullname="QLandmarkAttributeFilter::matchFlags" href="qlandmarkattributefilter.html#matchFlags" location="qlandmarkattributefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QLandmarkFilter::MatchFlags" signature="matchFlags(const QString &amp; key) const">
+                <parameter left="const QString &amp;" right="" name="key" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="attributeType" fullname="QLandmarkAttributeFilter::attributeType" href="qlandmarkattributefilter.html#attributeType" location="qlandmarkattributefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="AttributeType" signature="attributeType() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setAttributeType" fullname="QLandmarkAttributeFilter::setAttributeType" href="qlandmarkattributefilter.html#setAttributeType" location="qlandmarkattributefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAttributeType(AttributeType attributeType)">
+                <parameter left="AttributeType" right="" name="attributeType" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operationType" fullname="QLandmarkAttributeFilter::operationType" href="qlandmarkattributefilter.html#operationType" location="qlandmarkattributefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="OperationType" signature="operationType() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setOperationType" fullname="QLandmarkAttributeFilter::setOperationType" href="qlandmarkattributefilter.html#setOperationType" location="qlandmarkattributefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setOperationType(OperationType operationType)">
+                <parameter left="OperationType" right="" name="operationType" default=""/>
+            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactRelationshipSaveRequest" href="qcontactrelationshipsaverequest.html" location="qcontactrelationshipsaverequest.h" bases="QContactAbstractRequest" module="QtContacts">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactRelationshipSaveRequest" fullname="QContactRelationshipSaveRequest::QContactRelationshipSaveRequest" href="qcontactrelationshipsaverequest.html#QContactRelationshipSaveRequest" location="qcontactrelationshipsaverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactRelationshipSaveRequest(QObject * parent)">
@@ -12715,15 +12778,29 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setRadius" fullname="QLandmark::setRadius" href="qlandmark.html#setRadius" location="qlandmark.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRadius(double radius)">
                 <parameter left="double" right="" name="radius" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="attribute" fullname="QLandmark::attribute" href="qlandmark.html#attribute" location="qlandmark.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="attribute(const QString &amp; key, const QVariant &amp; defaultValue) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="attribute" fullname="QLandmark::attribute" href="qlandmark.html#attribute" location="qlandmark.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="attribute(const QString &amp; key) const">
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
-                <parameter left="const QVariant &amp;" right="" name="defaultValue" default="QVariant()"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setAttribute" fullname="QLandmark::setAttribute" href="qlandmark.html#setAttribute" location="qlandmark.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAttribute(const QString &amp; key, const QVariant &amp; value)">
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
                 <parameter left="const QVariant &amp;" right="" name="value" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="attributeKeys" fullname="QLandmark::attributeKeys" href="qlandmark.html#attributeKeys" location="qlandmark.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="attributeKeys() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeAttribute" fullname="QLandmark::removeAttribute" href="qlandmark.html#removeAttribute" location="qlandmark.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="removeAttribute(const QString &amp; key)">
+                <parameter left="const QString &amp;" right="" name="key" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="customAttribute" fullname="QLandmark::customAttribute" href="qlandmark.html#customAttribute" location="qlandmark.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="customAttribute(const QString &amp; key, const QVariant &amp; defaultValue) const">
+                <parameter left="const QString &amp;" right="" name="key" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="defaultValue" default="QVariant()"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCustomAttribute" fullname="QLandmark::setCustomAttribute" href="qlandmark.html#setCustomAttribute" location="qlandmark.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCustomAttribute(const QString &amp; key, const QVariant &amp; value)">
+                <parameter left="const QString &amp;" right="" name="key" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="customAttributeKeys" fullname="QLandmark::customAttributeKeys" href="qlandmark.html#customAttributeKeys" location="qlandmark.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="customAttributeKeys() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeCustomAttribute" fullname="QLandmark::removeCustomAttribute" href="qlandmark.html#removeCustomAttribute" location="qlandmark.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="removeCustomAttribute(const QString &amp; key)">
+                <parameter left="const QString &amp;" right="" name="key" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="phone" fullname="QLandmark::phone" href="qlandmark.html#phone" location="qlandmark.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="phone() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setPhone" fullname="QLandmark::setPhone" href="qlandmark.html#setPhone" location="qlandmark.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setPhone(const QString &amp; phone)">
                 <parameter left="const QString &amp;" right="" name="phone" default=""/>

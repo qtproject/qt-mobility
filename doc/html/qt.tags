@@ -8911,19 +8911,11 @@
             <anchor>LandmarkFeature-enum</anchor>
             <arglist></arglist>
         </member>
-        <member name="GenericLandmarkAttributes">
+        <member name="ExtendedAttributes">
             <anchor>LandmarkFeature-enum</anchor>
             <arglist></arglist>
         </member>
-        <member name="GenericCategoryAttributes">
-            <anchor>LandmarkFeature-enum</anchor>
-            <arglist></arglist>
-        </member>
-        <member name="PlatformLandmarkAttributes">
-            <anchor>LandmarkFeature-enum</anchor>
-            <arglist></arglist>
-        </member>
-        <member name="PlatformCategoryAttributes">
+        <member name="CustomAttributes">
             <anchor>LandmarkFeature-enum</anchor>
             <arglist></arglist>
         </member>
@@ -9155,20 +9147,6 @@
             <arglist>(LandmarkFeature feature) const</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
-            <type>QStringList</type>
-            <name>platformLandmarkAttributeKeys</name>
-            <anchorfile>qlandmarkmanager.html</anchorfile>
-            <anchor>platformLandmarkAttributeKeys</anchor>
-            <arglist>() const</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type>QStringList</type>
-            <name>platformCategoryAttributeKeys</name>
-            <anchorfile>qlandmarkmanager.html</anchorfile>
-            <anchor>platformCategoryAttributeKeys</anchor>
-            <arglist>() const</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="non" static="no">
             <type>bool</type>
             <name>isReadOnly</name>
             <anchorfile>qlandmarkmanager.html</anchorfile>
@@ -9188,6 +9166,48 @@
             <anchorfile>qlandmarkmanager.html</anchorfile>
             <anchor>isReadOnly-3</anchor>
             <arglist>(const QLandmarkCategoryId &amp; categoryId) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QStringList</type>
+            <name>landmarkAttributeKeys</name>
+            <anchorfile>qlandmarkmanager.html</anchorfile>
+            <anchor>landmarkAttributeKeys</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QStringList</type>
+            <name>categoryAttributeKeys</name>
+            <anchorfile>qlandmarkmanager.html</anchorfile>
+            <anchor>categoryAttributeKeys</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isCustomAttributesEnabled</name>
+            <anchorfile>qlandmarkmanager.html</anchorfile>
+            <anchor>isCustomAttributesEnabled</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setCustomAttributesEnabled</name>
+            <anchorfile>qlandmarkmanager.html</anchorfile>
+            <anchor>setCustomAttributesEnabled</anchor>
+            <arglist>(bool enabled)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isExtendedAttributesEnabled</name>
+            <anchorfile>qlandmarkmanager.html</anchorfile>
+            <anchor>isExtendedAttributesEnabled</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setExtendedAttributesEnabled</name>
+            <anchorfile>qlandmarkmanager.html</anchorfile>
+            <anchor>setExtendedAttributesEnabled</anchor>
+            <arglist>(bool enabled)</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>QString</type>
@@ -10600,7 +10620,7 @@
             <name>attribute</name>
             <anchorfile>qlandmarkcategory.html</anchorfile>
             <anchor>attribute</anchor>
-            <arglist>(const QString &amp; key, const QVariant &amp; defaultValue) const</arglist>
+            <arglist>(const QString &amp; key) const</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>void</type>
@@ -10615,6 +10635,41 @@
             <anchorfile>qlandmarkcategory.html</anchorfile>
             <anchor>attributeKeys</anchor>
             <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>removeAttribute</name>
+            <anchorfile>qlandmarkcategory.html</anchorfile>
+            <anchor>removeAttribute</anchor>
+            <arglist>(const QString &amp; key)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QVariant</type>
+            <name>customAttribute</name>
+            <anchorfile>qlandmarkcategory.html</anchorfile>
+            <anchor>customAttribute</anchor>
+            <arglist>(const QString &amp; key, const QVariant &amp; defaultValue) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setCustomAttribute</name>
+            <anchorfile>qlandmarkcategory.html</anchorfile>
+            <anchor>setCustomAttribute</anchor>
+            <arglist>(const QString &amp; key, const QVariant &amp; value)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QStringList</type>
+            <name>customAttributeKeys</name>
+            <anchorfile>qlandmarkcategory.html</anchorfile>
+            <anchor>customAttributeKeys</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>removeCustomAttribute</name>
+            <anchorfile>qlandmarkcategory.html</anchorfile>
+            <anchor>removeCustomAttribute</anchor>
+            <arglist>(const QString &amp; key)</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>void</type>
@@ -10823,19 +10878,47 @@
             <anchor>isReadOnly-3</anchor>
             <arglist>(const QLandmarkCategoryId &amp; categoryId, QLandmarkManager::Error * error, QString * errorString) const = 0</arglist>
         </member>
-        <member kind="function" protection="public" virtual="pure" static="no">
+        <member kind="function" protection="public" virtualness="virtual" static="no">
             <type>virtual QStringList</type>
-            <name>platformLandmarkAttributeKeys</name>
+            <name>landmarkAttributeKeys</name>
             <anchorfile>qlandmarkmanagerengine.html</anchorfile>
-            <anchor>platformLandmarkAttributeKeys</anchor>
+            <anchor>landmarkAttributeKeys</anchor>
+            <arglist>(QLandmarkManager::Error * error, QString * errorString) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="virtual" static="no">
+            <type>virtual QStringList</type>
+            <name>categoryAttributeKeys</name>
+            <anchorfile>qlandmarkmanagerengine.html</anchorfile>
+            <anchor>categoryAttributeKeys</anchor>
+            <arglist>(QLandmarkManager::Error * error, QString * errorString) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtual="pure" static="no">
+            <type>virtual bool</type>
+            <name>isExtendedAttributesEnabled</name>
+            <anchorfile>qlandmarkmanagerengine.html</anchorfile>
+            <anchor>isExtendedAttributesEnabled</anchor>
             <arglist>(QLandmarkManager::Error * error, QString * errorString) const = 0</arglist>
         </member>
         <member kind="function" protection="public" virtual="pure" static="no">
-            <type>virtual QStringList</type>
-            <name>platformCategoryAttributeKeys</name>
+            <type>virtual void</type>
+            <name>setExtendedAttributesEnabled</name>
             <anchorfile>qlandmarkmanagerengine.html</anchorfile>
-            <anchor>platformCategoryAttributeKeys</anchor>
+            <anchor>setExtendedAttributesEnabled</anchor>
+            <arglist>(bool enabled, QLandmarkManager::Error * error, QString * errorString) = 0</arglist>
+        </member>
+        <member kind="function" protection="public" virtual="pure" static="no">
+            <type>virtual bool</type>
+            <name>isCustomAttributesEnabled</name>
+            <anchorfile>qlandmarkmanagerengine.html</anchorfile>
+            <anchor>isCustomAttributesEnabled</anchor>
             <arglist>(QLandmarkManager::Error * error, QString * errorString) const = 0</arglist>
+        </member>
+        <member kind="function" protection="public" virtual="pure" static="no">
+            <type>virtual void</type>
+            <name>setCustomAttributesEnabled</name>
+            <anchorfile>qlandmarkmanagerengine.html</anchorfile>
+            <anchor>setCustomAttributesEnabled</anchor>
+            <arglist>(bool enabled, QLandmarkManager::Error * error, QString * errorString) = 0</arglist>
         </member>
         <member kind="function" protection="public" virtual="pure" static="no">
             <type>virtual void</type>
@@ -30847,6 +30930,32 @@
             <anchor>dtor.QLandmarkAttributeFilter</anchor>
             <arglist>()</arglist>
         </member>
+        <member kind="enum">
+            <name>AttributeType</name>
+            <anchor>AttributeType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="ManagerAttributes">
+            <anchor>AttributeType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="CustomAttributes">
+            <anchor>AttributeType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="enum">
+            <name>OperationType</name>
+            <anchor>OperationType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="AndOperation">
+            <anchor>OperationType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="OrOperation">
+            <anchor>OperationType-enum</anchor>
+            <arglist></arglist>
+        </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>QVariant</type>
             <name>attribute</name>
@@ -30859,7 +30968,14 @@
             <name>setAttribute</name>
             <anchorfile>qlandmarkattributefilter.html</anchorfile>
             <anchor>setAttribute</anchor>
-            <arglist>(const QString &amp; key, const QVariant &amp; value)</arglist>
+            <arglist>(const QString &amp; key, const QVariant &amp; value, QFlags&lt;QLandmarkFilter::MatchFlag&gt; flags)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setAttributes</name>
+            <anchorfile>qlandmarkattributefilter.html</anchorfile>
+            <anchor>setAttributes</anchor>
+            <arglist>(const QStringList &amp; keys, const QVariant &amp; value, QFlags&lt;QLandmarkFilter::MatchFlag&gt; flags)</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>void</type>
@@ -30881,6 +30997,41 @@
             <anchorfile>qlandmarkattributefilter.html</anchorfile>
             <anchor>attributeKeys</anchor>
             <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QLandmarkFilter::MatchFlags</type>
+            <name>matchFlags</name>
+            <anchorfile>qlandmarkattributefilter.html</anchorfile>
+            <anchor>matchFlags</anchor>
+            <arglist>(const QString &amp; key) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>AttributeType</type>
+            <name>attributeType</name>
+            <anchorfile>qlandmarkattributefilter.html</anchorfile>
+            <anchor>attributeType</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setAttributeType</name>
+            <anchorfile>qlandmarkattributefilter.html</anchorfile>
+            <anchor>setAttributeType</anchor>
+            <arglist>(AttributeType attributeType)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>OperationType</type>
+            <name>operationType</name>
+            <anchorfile>qlandmarkattributefilter.html</anchorfile>
+            <anchor>operationType</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setOperationType</name>
+            <anchorfile>qlandmarkattributefilter.html</anchorfile>
+            <anchor>setOperationType</anchor>
+            <arglist>(OperationType operationType)</arglist>
         </member>
     </compound>
     <compound kind="class">
@@ -36362,7 +36513,7 @@
             <name>attribute</name>
             <anchorfile>qlandmark.html</anchorfile>
             <anchor>attribute</anchor>
-            <arglist>(const QString &amp; key, const QVariant &amp; defaultValue) const</arglist>
+            <arglist>(const QString &amp; key) const</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>void</type>
@@ -36377,6 +36528,41 @@
             <anchorfile>qlandmark.html</anchorfile>
             <anchor>attributeKeys</anchor>
             <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>removeAttribute</name>
+            <anchorfile>qlandmark.html</anchorfile>
+            <anchor>removeAttribute</anchor>
+            <arglist>(const QString &amp; key)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QVariant</type>
+            <name>customAttribute</name>
+            <anchorfile>qlandmark.html</anchorfile>
+            <anchor>customAttribute</anchor>
+            <arglist>(const QString &amp; key, const QVariant &amp; defaultValue) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setCustomAttribute</name>
+            <anchorfile>qlandmark.html</anchorfile>
+            <anchor>setCustomAttribute</anchor>
+            <arglist>(const QString &amp; key, const QVariant &amp; value)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QStringList</type>
+            <name>customAttributeKeys</name>
+            <anchorfile>qlandmark.html</anchorfile>
+            <anchor>customAttributeKeys</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>removeCustomAttribute</name>
+            <anchorfile>qlandmark.html</anchorfile>
+            <anchor>removeCustomAttribute</anchor>
+            <arglist>(const QString &amp; key)</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>QString</type>

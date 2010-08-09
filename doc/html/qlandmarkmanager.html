@@ -156,6 +156,7 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmarkCategory&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#categories">categories</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; <i>categoryIds</i> ) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmarkCategory&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#categories-2">categories</a></b> ( const QLandmarkNameSort &amp; <i>nameSort</i> = QLandmarkNameSort() ) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QLandmarkCategory </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#category">category</a></b> ( const QLandmarkCategoryId &amp; <i>categoryId</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#categoryAttributeKeys">categoryAttributeKeys</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmarkCategoryId&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#categoryIds">categoryIds</a></b> ( const QLandmarkNameSort &amp; <i>nameSort</i> = QLandmarkNameSort() ) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> Error </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#error">error</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#errorString">errorString</a></b> () const</td></tr>
@@ -164,11 +165,14 @@
 <tr><td class="memItemLeft rightAlign topAlign"> SupportLevel </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#filterSupportLevel">filterSupportLevel</a></b> ( const QLandmarkFilter &amp; <i>filter</i> ) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#importLandmarks">importLandmarks</a></b> ( QIODevice * <i>device</i>, const QString &amp; <i>format</i> = QString(), QLandmarkManager::ImportExportOption <i>option</i> = IncludeCategoryData, const QLandmarkCategoryId &amp; <i>categoryId</i> = QLandmarkCategoryId() )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#importLandmarks-2">importLandmarks</a></b> ( const QString &amp; <i>fileName</i>, const QString &amp; <i>format</i> = QString(), QLandmarkManager::ImportExportOption <i>option</i> = IncludeCategoryData, const QLandmarkCategoryId &amp; <i>categoryId</i> = QLandmarkCategoryId() )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#isCustomAttributesEnabled">isCustomAttributesEnabled</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#isExtendedAttributesEnabled">isExtendedAttributesEnabled</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#isFeatureSupported">isFeatureSupported</a></b> ( LandmarkFeature <i>feature</i> ) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#isReadOnly">isReadOnly</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#isReadOnly-2">isReadOnly</a></b> ( const QLandmarkId &amp; <i>landmarkId</i> ) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#isReadOnly-3">isReadOnly</a></b> ( const QLandmarkCategoryId &amp; <i>categoryId</i> ) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QLandmark </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#landmark">landmark</a></b> ( const QLandmarkId &amp; <i>landmarkId</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#landmarkAttributeKeys">landmarkAttributeKeys</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmarkId&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#landmarkIds">landmarkIds</a></b> ( const QLandmarkFilter &amp; <i>filter</i>, const QList&lt;QLandmarkSortOrder&gt; &amp; <i>sortOrders</i>, const QLandmarkFetchHint &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmarkId&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#landmarkIds-2">landmarkIds</a></b> ( const QLandmarkFilter &amp; <i>filter</i> = QLandmarkFilter(), const QLandmarkSortOrder &amp; <i>sortOrder</i> = QLandmarkSortOrder(), const QLandmarkFetchHint &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmark&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#landmarks">landmarks</a></b> ( const QLandmarkFilter &amp; <i>filter</i>, const QList&lt;QLandmarkSortOrder&gt; &amp; <i>sortOrders</i>, const QLandmarkFetchHint &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</td></tr>
@@ -178,14 +182,14 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QMap&lt;QString, QString&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#managerParameters">managerParameters</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#managerUri">managerUri</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#managerVersion">managerVersion</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#platformCategoryAttributeKeys">platformCategoryAttributeKeys</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#platformLandmarkAttributeKeys">platformLandmarkAttributeKeys</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#removeCategory">removeCategory</a></b> ( const QLandmarkCategoryId &amp; <i>categoryId</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#removeLandmark">removeLandmark</a></b> ( const QLandmarkId &amp; <i>landmarkId</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#removeLandmarks">removeLandmarks</a></b> ( const QList&lt;QLandmarkId&gt; &amp; <i>landmarkIds</i>, QMap&lt;int, QLandmarkManager::Error&gt; * <i>errorMap</i> = 0 )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#saveCategory">saveCategory</a></b> ( QLandmarkCategory * <i>category</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#saveLandmark">saveLandmark</a></b> ( QLandmark * <i>landmark</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#saveLandmarks">saveLandmarks</a></b> ( QList&lt;QLandmark&gt; * <i>landmarks</i>, QMap&lt;int, QLandmarkManager::Error&gt; * <i>errorMap</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#setCustomAttributesEnabled">setCustomAttributesEnabled</a></b> ( bool <i>enabled</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#setExtendedAttributesEnabled">setExtendedAttributesEnabled</a></b> ( bool <i>enabled</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> SupportLevel </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#sortOrderSupportLevel">sortOrderSupportLevel</a></b> ( const QList&lt;QLandmarkSortOrder&gt; &amp; <i>sortOrders</i> ) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#supportedFormats">supportedFormats</a></b> () const</td></tr>
 </table>
@@ -334,6 +338,8 @@
 <p>See also <a href="qlandmarkmanager.html#categoriesAdded">categoriesAdded</a>() and <a href="qlandmarkmanager.html#categoriesChanged">categoriesChanged</a>().</p>
 <h3 class="fn"><a name="category"></a><a href="qlandmarkcategory.html">QLandmarkCategory</a> QLandmarkManager::category ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>categoryId</i> ) const</h3>
 <p>Returns the cateory in the database identified by <i>categoryId</i>.</p>
+<h3 class="fn"><a name="categoryAttributeKeys"></a>QStringList QLandmarkManager::categoryAttributeKeys () const</h3>
+<p>Returns the list of attribute keys the categories will have. If extended attributes are enabled (provided the manager supports them), categories will possess extra keys in addition to the standad cross platform keys.</p>
 <h3 class="fn"><a name="categoryIds"></a>QList&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; QLandmarkManager::categoryIds ( const <a href="qlandmarknamesort.html">QLandmarkNameSort</a> &amp; <i>nameSort</i> = QLandmarkNameSort() ) const</h3>
 <p>Returns a list of all category identifiers. The identifiers are returned in order as designed by <i>nameSort</i>.</p>
 <h3 class="fn"><a name="dataChanged"></a>void QLandmarkManager::dataChanged ()<tt> [signal]</tt></h3>
@@ -364,6 +370,10 @@
 <p>The <i>option</i> can be used to control whether categories in the imported file will be added during the import. If the <tt>AttachSingleCategory</tt> option is used, then all the landmarks in the import file are assigned to the category identified by <i>categoryId</i>, in all other cirumstances <i>categoryId</i> is ignored. If <i>categoryId</i> doesn't exist when using <tt>AttachSingleCategory</tt>, QLandmarkManager::DoesNotExist error is returned. Note that some file formats may not support categories at all.</p>
 <p>Returns true if all landmarks could be imported, otherwise returns false. It may be possible that only a subset of landmarks are imported.</p>
 <p>The current default managers for the maemo and desktop platforms support GPX version 1.1, and the format to use is <tt>GpxV1.1</tt>.</p>
+<h3 class="fn"><a name="isCustomAttributesEnabled"></a>bool QLandmarkManager::isCustomAttributesEnabled () const</h3>
+<p>Returns whether custom attributes are enabled or not. Custom attributes are arbitrary attributes created by the application for a landmark or category. If custom attributes are enabled (and the manager supports them), retrieved landmarks and categories will have extra attributes accessible using QLandmark::customAttributes(). Custom attributes must be enabled to save any landmarks with possess custom attributes. This same behaviour applies to categories if custom category attributes are supported.</p>
+<h3 class="fn"><a name="isExtendedAttributesEnabled"></a>bool QLandmarkManager::isExtendedAttributesEnabled () const</h3>
+<p>Returns whether extended attributes specific to this manager are enabled or not. If extended attributes are enabled, retrieved landmarks will have extra attribute keys accessible through the <a href="qlandmark.html#attribute">QLandmark::attribute</a>() function. Extended attributes must be enabled to save any landmarks which possess extended attributes. This same behaviour will also apply to categories if extended category attributes are supported.</p>
 <h3 class="fn"><a name="isFeatureSupported"></a>bool QLandmarkManager::isFeatureSupported ( <a href="qlandmarkmanager.html#LandmarkFeature-enum">LandmarkFeature</a> <i>feature</i> ) const</h3>
 <p>Returns whether the manager supports the given <i>feature</i>.</p>
 <h3 class="fn"><a name="isReadOnly"></a>bool QLandmarkManager::isReadOnly () const</h3>
@@ -376,6 +386,9 @@
 <p>If <i>categoryId</i> does not refer to an existing category, it is considered writable unless the manager is exclusively read-only.</p>
 <h3 class="fn"><a name="landmark"></a><a href="qlandmark.html">QLandmark</a> QLandmarkManager::landmark ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>landmarkId</i> ) const</h3>
 <p>Returns the landmark in the database identified by <i>landmarkId</i></p>
+<h3 class="fn"><a name="landmarkAttributeKeys"></a>QStringList QLandmarkManager::landmarkAttributeKeys () const</h3>
+<p>Returns the list of attribute keys the landmarks will have. If extended attributes are enabled (provided manager supported them) landmarks will possess extra keys in addition to the standard cross platform keys.</p>
+<p>Note: When saving a landark with extended attributes, all attributes much match those of the manager otherwise a <a href="qlandmarkmanager.html#Error-enum">QLandmarkManager::BadArgumentError</a> is set. If the landmark does not have one of the extended attributes in its list, then that particular attribute is ignored. This differs from the semantics for custom attributes where if a custom attribute is not present then it is removed when the landmark is saved.</p>
 <h3 class="fn"><a name="landmarkIds"></a>QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkManager::landmarkIds ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i>, const QList&lt;<a href="qlandmarksortorder.html">QLandmarkSortOrder</a>&gt; &amp; <i>sortOrders</i>, const <a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a> &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</h3>
 <p>Returns a list of landmark identifiers of landmarks that match the given <i>filter</i>, sorted according to the given <i>sortOrders</i>. Various fetch operation parameters may be specified by <i>fetchHint</i>.</p>
 <h3 class="fn"><a name="landmarkIds-2"></a>QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkManager::landmarkIds ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> = QLandmarkFilter(), const <a href="qlandmarksortorder.html">QLandmarkSortOrder</a> &amp; <i>sortOrder</i> = QLandmarkSortOrder(), const <a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a> &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</h3>
@@ -408,8 +421,6 @@
 <p>Returns the engine backend implementation version number.</p>
 <h3 class="fn"><a name="parseUri"></a>bool QLandmarkManager::parseUri ( const QString &amp; <i>uri</i>, QString * <i>pManagerId</i>, QMap&lt;QString, QString&gt; * <i>pParams</i> )<tt> [static]</tt></h3>
 <p>Splits the given <i>uri</i> into the manager, store, and parameters that it describes, and places the information into the memory addressed by <i>pManagerId</i> and <i>pParams</i> respectively. Returns true if <i>uri</i> could be split successfully, otherwise returns false</p>
-<h3 class="fn"><a name="platformCategoryAttributeKeys"></a>QStringList QLandmarkManager::platformCategoryAttributeKeys () const</h3>
-<h3 class="fn"><a name="platformLandmarkAttributeKeys"></a>QStringList QLandmarkManager::platformLandmarkAttributeKeys () const</h3>
 <h3 class="fn"><a name="removeCategory"></a>bool QLandmarkManager::removeCategory ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>categoryId</i> )</h3>
 <p>Remove the category identified by <i>categoryId</i> from the database. The categoryId is cleared(and becomes invalid) on successful removal. An unsuccessful removal will leave the identifer alone.</p>
 <p>Returns true if the category was removed successfully, otherwise returnse false.</p>
@@ -435,6 +446,12 @@
 <p>The manager might populate <i>errorMap</i> (the map of indices of the <i>landmarks</i> list to the error which occurred when saving the landmark at that index) for every index for which the landmark could not be saved.</p>
 <p>The <a href="qlandmarkmanager.html#error">QLandmarkManager::error</a>() function will only return <tt>QLandmarkManager::NoError</tt> if all landmarks were saved successfully.</p>
 <p>For each new landmark that was successfully saved, a landmark identifier is assigned to that landmark.</p>
+<h3 class="fn"><a name="setCustomAttributesEnabled"></a>void QLandmarkManager::setCustomAttributesEnabled ( bool <i>enabled</i> )</h3>
+<p>Sets whether custom attributes are <i>enabled</i> or not.</p>
+<p>See also <a href="qlandmarkmanager.html#isCustomAttributesEnabled">isCustomAttributesEnabled</a>().</p>
+<h3 class="fn"><a name="setExtendedAttributesEnabled"></a>void QLandmarkManager::setExtendedAttributesEnabled ( bool <i>enabled</i> )</h3>
+<p>Sets whether extended attributes are <i>enabled</i> or not</p>
+<p>See also <a href="qlandmarkmanager.html#isExtendedAttributesEnabled">isExtendedAttributesEnabled</a>().</p>
 <h3 class="fn"><a name="sortOrderSupportLevel"></a><a href="qlandmarkmanager.html#SupportLevel-enum">SupportLevel</a> QLandmarkManager::sortOrderSupportLevel ( const QList&lt;<a href="qlandmarksortorder.html">QLandmarkSortOrder</a>&gt; &amp; <i>sortOrders</i> ) const</h3>
 <p>Returns the support level the manager provides for the given list of <i>sortOrders</i>.</p>
 <h3 class="fn"><a name="supportedFormats"></a>QStringList QLandmarkManager::supportedFormats () const</h3>
