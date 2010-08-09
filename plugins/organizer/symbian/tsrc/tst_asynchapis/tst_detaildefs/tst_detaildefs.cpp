@@ -211,7 +211,7 @@ void TestDetailDefs::detailDefsSaveRequestResultsAvailable()
 void TestDetailDefs::removeDetails()
     {
     QStringList stringList;
-    QString string((QString)QOrganizerItemTimestamp::DefinitionName);
+    QString string((QLatin1String)QOrganizerItemTimestamp::DefinitionName);
     for (int index(0); index < KNoOfItems; index++) {
         stringList.append(string);
     }
