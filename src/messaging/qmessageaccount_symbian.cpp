@@ -42,6 +42,9 @@
 #include "qmessageaccount_p.h"
 #include "qmessagemanager.h"
 #include "qmtmengine_symbian_p.h"
+#ifdef FREESTYLEMAILUSED
+#include "qfsengine_symbian_p.h"
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -105,7 +108,13 @@ QMessage::TypeFlags QMessageAccount::messageTypes() const
 
 QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 {
-	return CMTMEngine::instance()->defaultAccount(type);
+#ifdef NCNLISTREMOVED
+    if (type == QMessage::Email) {
+        return CFSEngine::instance()->defaultAccount(type);
+    }
+#endif // NCNLISTREMOVED
+    
+    return CMTMEngine::instance()->defaultAccount(type);
 	// or return CFSEngine::instance()->defaultAccount(type);
 }
 
