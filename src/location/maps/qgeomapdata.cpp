@@ -260,7 +260,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjects()
 }
 
 /*!
-    Returns the list of map objects managed by this map which are visible and
+    Returns the list of map objects managed by this map which
     contain the point \a screenPosition within their boundaries.
 */
 QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition)
@@ -277,9 +277,8 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
 }
 
 /*!
-    Returns the list of map objects managed by this map which are visible and
-    which are displayed at least partially within the on screen rectangle
-    \a screenRect.
+    Returns the list of map objects managed by this map which are displayed at
+    least partially within the on screen rectangle \a screenRect.
 */
 QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRect)
 {

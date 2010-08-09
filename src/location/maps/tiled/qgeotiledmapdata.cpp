@@ -548,37 +548,38 @@ void QGeoTiledMapData::tileError(QGeoTiledMapReply::Error error, QString errorSt
 }
 
 /*!
-    Returns the list of map objects managed by this map which are visible and
-    which are within a pixel \a radius from the \a screenPosition.
-    The returned map objects are ordered ascendingly on their zIndices.
+    Returns the list of map objects managed by this map which are at \a
+    screenPosition. The returned map objects are ordered ascendingly on their
+    zIndices.
 */
-QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius)
+QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition)
 {
     Q_D(QGeoTiledMapData);
 
-    QRectF rect(d->maxZoomScreenRect.left() + (screenPosition.x() - radius) * d->zoomFactor,
-                d->maxZoomScreenRect.top() + (screenPosition.y() - radius) * d->zoomFactor,
-                2 * radius * d->zoomFactor,
-                2 * radius * d->zoomFactor);
+    QGeoCoordinate coord = screenPositionToCoordinate(screenPosition);
 
-    QGraphicsEllipseItem *circle = new QGraphicsEllipseItem(rect);
+    QRectF rect(d->maxZoomScreenRect.x() + (screenPosition.x() - 1) * d->zoomFactor,
+                d->maxZoomScreenRect.y() + (screenPosition.y() - 1) * d->zoomFactor,
+                2 * d->zoomFactor,
+                2 * d->zoomFactor);
 
-    QList<QGraphicsItem*> items = d->scene->collidingItems(circle);
+    QList<QGraphicsItem*> items = d->scene->items(rect, Qt::IntersectsItemShape, Qt::AscendingOrder);
 
     QList<QGeoMapObject*> results;
 
     for (int i = 0; i < items.size(); ++i) {
-        if (d->itemMap.contains(items.at(i)))
-            results.append(d->itemMap.value(items.at(i)));
+        if (!d->itemMap.contains(items.at(i)))
+            continue;
+        QGeoMapObject *result = d->itemMap.value(items.at(i));
+        if (result->contains(coord))
+            results.append(result);
     }
-
-    delete circle;
 
     return results;
 }
 
 /*!
-    Returns the list of map objects managed by this map which are visible and
+    Returns the list of map objects managed by this map which
     which are displayed at least partially within the on screen rectangle
     \a screenRect. The returned map objects are ordered ascendingly on their zIndices.
 */

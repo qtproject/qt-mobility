@@ -70,7 +70,7 @@ public:
 
     void setMapType(QGeoMapWidget::MapType mapType);
 
-    QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0);
+    QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
     QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
 
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
