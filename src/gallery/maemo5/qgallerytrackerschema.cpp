@@ -49,8 +49,11 @@
 #include "qgallerytrackertyperesultset_p.h"
 
 #include <QtCore/qdatetime.h>
+#include <QtCore/qdir.h>
 #include <QtCore/qmetatype.h>
+#include <QtCore/qsettings.h>
 #include <QtCore/qstringlist.h>
+#include <QtCore/qtextstream.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qxmlstream.h>
 
@@ -724,6 +727,7 @@ static const QGalleryCompositeProperty qt_galleryFileCompositePropertyList[] =
     QT_GALLERY_FILE_COMPOSITE_PROPERTIES
 };
 
+
 static void qt_writeFileIdCondition(int *error, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
     const int separatorIndex = itemId.string()->lastIndexOf(QLatin1Char('/'));
@@ -765,6 +769,75 @@ static void qt_writeFileScopeCondition(int *, QXmlStreamWriter *xml, const QStri
     xml->writeEndElement();
 
     xml->writeEndElement();
+}
+
+static QStringList qt_trackerRootPaths()
+{
+    QString configFileName;
+    char *env = getenv("XDG_CONFIG_HOME");
+    if (!env) {
+        configFileName = QDir::homePath() + QLatin1String("/.config/tracker/tracker.cfg");
+    } else if (env[0] == '/') {
+        configFileName = QLatin1String(env) + QLatin1String("/tracker/tracker.cfg");
+    } else {
+        configFileName
+                = QDir::homePath()
+                + QLatin1Char('/')
+                + QLatin1String(env)
+                + QLatin1String("/tracker/tracker.cfg");
+    }
+
+    QStringList paths;
+
+    QFile configFile(configFileName);
+    if (configFile.open(QIODevice::ReadOnly)) {
+        QRegExp watchRegExp(QLatin1String("^WatchDirectoryRoots\\s?=\\s?"));
+        QRegExp crawlRegExp(QLatin1String("^CrawlDirectory\\s?=\\s?"));
+        QRegExp homeRegExp(QLatin1String("\\$HOME|~"));
+        QRegExp trailingRegExp(QLatin1String("/$"));
+
+        QTextStream stream(&configFile);
+
+        while (!stream.atEnd()) {
+            const QString line = stream.readLine();
+
+            if (watchRegExp.indexIn(line) == 0) {
+                paths.append(line
+                        .mid(watchRegExp.matchedLength())
+                        .remove(trailingRegExp)
+                        .replace(QLatin1String("/;"), QLatin1String(";"))
+                        .replace(homeRegExp, QDir::homePath())
+                        .split(QLatin1Char(';'), QString::SkipEmptyParts));
+            } else if (crawlRegExp.indexIn(line) == 0) {
+                paths.append(line
+                        .mid(crawlRegExp.matchedLength())
+                        .remove(trailingRegExp)
+                        .replace(QLatin1String("/;"), QLatin1String(";"))
+                        .replace(homeRegExp, QDir::homePath())
+                        .split(QLatin1Char(';'), QString::SkipEmptyParts));
+            }
+        }
+   }
+
+    qDebug("Paths %s", qPrintable(paths.join(QLatin1String(";"))));
+
+    return paths;
+}
+
+static bool qt_writeFileRootContainerCondition(int *, QXmlStreamWriter *xml)
+{
+    xml->writeStartElement(QLatin1String("rdfq:inSet"));
+
+    xml->writeEmptyElement(QLatin1String("rdfq:Property"));
+    xml->writeAttribute(QLatin1String("name"), QLatin1String("File:Path"));
+
+    xml->writeStartElement(QLatin1String("rdf:String"));
+    xml->writeCharacters(qt_trackerRootPaths().join(QLatin1String(",")));
+    xml->writeEndElement();
+
+    xml->writeEndElement();
+
+    return true;
 }
 
 ////////
@@ -1350,8 +1423,11 @@ int QGalleryTrackerSchema::prepareFilterResponse(
 
     QString query;
 
-    if (!rootItemId.isEmpty() || filter.isValid())
+    if (!rootItemId.isEmpty()
+            || filter.isValid()
+            || (scope == QGalleryQueryRequest::DirectDescendants && m_itemIndex != -1)) {
         result = buildFilterQuery(&query, scope, rootItemId, filter);
+    }
 
     if (result != QGalleryAbstractRequest::Succeeded) {
         return result;
@@ -1434,11 +1510,13 @@ int QGalleryTrackerSchema::buildFilterQuery(
     int result = QGalleryAbstractRequest::Succeeded;
 
     QXmlStreamWriter xml(query);
-    xml.writeStartElement(QLatin1String("rdfq:Condition"));
+    QXmlStackStreamWriter writer(&xml);
+
+    writer.writeStartElement("rdfq:Condition");
 
     if (!rootItemId.isEmpty()) {
         if (filter.isValid())
-            xml.writeStartElement(QLatin1String("rdfq:and"));
+            writer.writeStartElement("rdfq:and");
 
         int index;
 
@@ -1462,6 +1540,11 @@ int QGalleryTrackerSchema::buildFilterQuery(
         } else {
             result = QGalleryAbstractRequest::InvalidItemError;
         }
+    } else if (scope == QGalleryQueryRequest::DirectDescendants && m_itemIndex != -1) {
+        if (filter.isValid())
+            writer.writeStartElement("rdfq:and");
+
+        qt_writeFileRootContainerCondition(&result, &xml);
     }
 
     if (filter.isValid()) {
@@ -1483,11 +1566,6 @@ int QGalleryTrackerSchema::buildFilterQuery(
             result = QGalleryAbstractRequest::ItemTypeError;
         }
     }
-
-    if (!rootItemId.isEmpty() && filter.isValid())
-        xml.writeEndElement();
-
-    xml.writeEndElement();
 
     return result;
 }
