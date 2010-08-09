@@ -39,46 +39,72 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPOLYGONOBJECT_INFO_P_H
-#define QGEOTILEDMAPPOLYGONOBJECT_INFO_P_H
+#include "qgeomapobjectinfo.h"
+#include "qgeomapobjectinfo_p.h"
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qgeomapdata.h"
+#include "qgeomapobject.h"
 
-#include "qgeotiledmapobjectinfo_p.h"
-
-#include <QPolygonF>
-
-class QGraphicsPolygonItem;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapPolygonObject;
+/*!
+*/
+QGeoMapObjectInfo::QGeoMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
+    : d_ptr(new QGeoMapObjectInfoPrivate(mapData, mapObject)) {}
 
-class QGeoTiledMapPolygonObjectInfo : public QGeoTiledMapObjectInfo
+/*!
+*/
+QGeoMapObjectInfo::~QGeoMapObjectInfo()
 {
-public:
-    QGeoTiledMapPolygonObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
-    ~QGeoTiledMapPolygonObjectInfo();
+    delete d_ptr;
+}
 
-    void objectUpdate();
-    void mapUpdate();
+/*!
+\fn void QGeoMapObjectInfo::addToParent()
+*/
+/*!
+\fn void QGeoMapObjectInfo::removeFromParent()
+*/
 
-    QGeoMapPolygonObject *polygon;
-    QGraphicsPolygonItem *polygonItem;
+/*!
+\fn void QGeoMapObjectInfo::objectUpdate()
+*/
+/*!
+\fn void QGeoMapObjectInfo::mapUpdate()
+*/
 
-    QPolygonF points;
-};
+/*!
+\fn QGeoBoundingBox QGeoMapObjectInfo::boundingBox() const
+*/
+/*!
+\fn bool QGeoMapObjectInfo::contains(const QGeoCoordinate &coord) const
+*/
+
+/*!
+*/
+QGeoMapData* QGeoMapObjectInfo::mapData()
+{
+    return d_ptr->mapData;
+}
+
+/*!
+*/
+QGeoMapObject* QGeoMapObjectInfo::mapObject()
+{
+    return d_ptr->mapObject;
+}
+
+/*******************************************************************************
+*******************************************************************************/
+
+QGeoMapObjectInfoPrivate::QGeoMapObjectInfoPrivate(QGeoMapData *mapData, QGeoMapObject *mapObject)
+    : mapData(mapData),
+    mapObject(mapObject) {}
+
+QGeoMapObjectInfoPrivate::~QGeoMapObjectInfoPrivate() {}
+
+/*******************************************************************************
+*******************************************************************************/
 
 QTM_END_NAMESPACE
-
-#endif //QGEOTILEDMAPPOLYGONOBJECT_INFO_P_H
-

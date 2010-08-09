@@ -44,7 +44,7 @@
 #include "qgeotiledmapdata.h"
 #include "qgeotiledmapdata_p.h"
 
-#include "qgeomaprouteobject_p.h"
+#include "qgeomaprouteobject.h"
 
 #include "qgeoroutesegment.h"
 
@@ -52,20 +52,20 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapRouteObjectInfo::QGeoTiledMapRouteObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate)
-        : QGeoTiledMapObjectInfo(mapObjectPrivate),
+QGeoTiledMapRouteObjectInfo::QGeoTiledMapRouteObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
+        : QGeoTiledMapObjectInfo(mapData, mapObject),
         pathItem(0),
         //groupItem(0),
         oldZoom(-1.0)
 {
-    route = static_cast<const QGeoMapRouteObjectPrivate*>(mapObjectPrivate);
+    route = static_cast<QGeoMapRouteObject*>(mapObject);
 }
 
 QGeoTiledMapRouteObjectInfo::~QGeoTiledMapRouteObjectInfo() {}
 
 void QGeoTiledMapRouteObjectInfo::objectUpdate()
 {
-    QListIterator<QGeoRouteSegment> segIt(route->route.routeSegments());
+    QListIterator<QGeoRouteSegment> segIt(route->route().routeSegments());
 
     while (segIt.hasNext()) {
         QListIterator<QGeoCoordinate> coordIt(segIt.next().path());
@@ -75,7 +75,7 @@ void QGeoTiledMapRouteObjectInfo::objectUpdate()
             if (!coord.isValid())
                 continue;
 
-            points.append(mapData->q_ptr->coordinateToWorldPixel(coord));
+            points.append(tiledMapData->coordinateToWorldPixel(coord));
         }
     }
 
@@ -93,15 +93,15 @@ void QGeoTiledMapRouteObjectInfo::mapUpdate()
     if (!pathItem)
         return;
 
-    if (mapData->zoomLevel != oldZoom) {
-        oldZoom = mapData->zoomLevel;
+    if (tiledMapDataPrivate->zoomLevel != oldZoom) {
+        oldZoom = tiledMapDataPrivate->zoomLevel;
 
         distanceFilteredPoints.clear();
 
         QPointF lastPoint = points.at(0);
         distanceFilteredPoints.append(points.at(0));
         for (int i = 1; i < points.size() - 1; ++i) {
-            if ((lastPoint - points.at(i)).manhattanLength() >= route->detailLevel * mapData->zoomFactor) {
+            if ((lastPoint - points.at(i)).manhattanLength() >= route->detailLevel() * tiledMapDataPrivate->zoomFactor) {
                 distanceFilteredPoints.append(points.at(i));
                 lastPoint = points.at(i);
             }
@@ -109,8 +109,8 @@ void QGeoTiledMapRouteObjectInfo::mapUpdate()
 
         distanceFilteredPoints.append(points.at(points.size() - 1));
 
-        QPen pen = route->pen;
-        pen.setWidthF(pen.widthF() * mapData->zoomFactor);
+        QPen pen = route->pen();
+        pen.setWidthF(pen.widthF() * tiledMapDataPrivate->zoomFactor);
         pathItem->setPen(pen);
     }
 
@@ -133,9 +133,9 @@ void QGeoTiledMapRouteObjectInfo::mapUpdate()
         QPointF point2 = distanceFilteredPoints.at(i + 1);
         QPointF midpoint = (point1 + point2) / 2.0;
 
-        offScreen = !(mapData->maxZoomScreenRect.contains(point1.toPoint())
-                      || mapData->maxZoomScreenRect.contains(point2.toPoint())
-                      || mapData->maxZoomScreenRect.contains(midpoint.toPoint()));
+        offScreen = !(tiledMapDataPrivate->maxZoomScreenRect.contains(point1.toPoint())
+                      || tiledMapDataPrivate->maxZoomScreenRect.contains(point2.toPoint())
+                      || tiledMapDataPrivate->maxZoomScreenRect.contains(midpoint.toPoint()));
 
         if (wasOffScreen && !offScreen)
             painterPath.moveTo(distanceFilteredPoints.at(i));

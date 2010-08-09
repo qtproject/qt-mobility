@@ -39,46 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPOLYGONOBJECT_INFO_P_H
-#define QGEOTILEDMAPPOLYGONOBJECT_INFO_P_H
+#ifndef QGEOMAPOVERLAY_H
+#define QGEOMAPOVERLAY_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qmobilityglobal.h"
 
-#include "qgeotiledmapobjectinfo_p.h"
+#include <QList>
+#include <QObject>
 
-#include <QPolygonF>
-
-class QGraphicsPolygonItem;
+class QPainter;
+class QStyleOptionGraphicsItem;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapPolygonObject;
+class QGeoMapData;
 
-class QGeoTiledMapPolygonObjectInfo : public QGeoTiledMapObjectInfo
+class Q_LOCATION_EXPORT QGeoMapOverlay 
 {
 public:
-    QGeoTiledMapPolygonObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
-    ~QGeoTiledMapPolygonObjectInfo();
+    QGeoMapOverlay(QGeoMapData *mapData);
+    virtual ~QGeoMapOverlay();
 
-    void objectUpdate();
-    void mapUpdate();
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option) = 0;
 
-    QGeoMapPolygonObject *polygon;
-    QGraphicsPolygonItem *polygonItem;
-
-    QPolygonF points;
+private:
+    Q_DISABLE_COPY(QGeoMapOverlay)
 };
 
 QTM_END_NAMESPACE
 
-#endif //QGEOTILEDMAPPOLYGONOBJECT_INFO_P_H
-
+#endif

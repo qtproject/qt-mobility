@@ -44,24 +44,24 @@
 #include "qgeotiledmapdata.h"
 #include "qgeotiledmapdata_p.h"
 
-#include "qgeomaprectangleobject_p.h"
+#include "qgeomaprectangleobject.h"
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapRectangleObjectInfo::QGeoTiledMapRectangleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate)
-        : QGeoTiledMapObjectInfo(mapObjectPrivate),
+QGeoTiledMapRectangleObjectInfo::QGeoTiledMapRectangleObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
+        : QGeoTiledMapObjectInfo(mapData, mapObject),
         rectangleItem1(0),
         rectangleItem2(0)
 {
-    rectangle = static_cast<const QGeoMapRectangleObjectPrivate*>(mapObjectPrivate);
+    rectangle = static_cast<QGeoMapRectangleObject*>(mapObject);
 }
 
 QGeoTiledMapRectangleObjectInfo::~QGeoTiledMapRectangleObjectInfo() {}
 
 void QGeoTiledMapRectangleObjectInfo::objectUpdate()
 {
-    QPoint topLeft = mapData->q_ptr->coordinateToWorldPixel(rectangle->bounds.topLeft());
-    QPoint bottomRight = mapData->q_ptr->coordinateToWorldPixel(rectangle->bounds.bottomRight());
+    QPoint topLeft = tiledMapData->coordinateToWorldPixel(rectangle->bounds().topLeft());
+    QPoint bottomRight = tiledMapData->coordinateToWorldPixel(rectangle->bounds().bottomRight());
 
     bounds = QRectF(topLeft, bottomRight);
 
@@ -69,8 +69,8 @@ void QGeoTiledMapRectangleObjectInfo::objectUpdate()
     QRectF bounds2;
 
     if (bounds1.right() < bounds1.left()) {
-        bounds1.setRight(bounds1.right() + mapData->maxZoomSize.width());
-        bounds2 = bounds1.translated(-mapData->maxZoomSize.width(), 0);
+        bounds1.setRight(bounds1.right() + tiledMapDataPrivate->maxZoomSize.width());
+        bounds2 = bounds1.translated(-tiledMapDataPrivate->maxZoomSize.width(), 0);
     }
 
     if (!rectangleItem1)
@@ -90,9 +90,9 @@ void QGeoTiledMapRectangleObjectInfo::objectUpdate()
     if (rectangleItem2)
         rectangleItem2->setRect(bounds2);
 
-    rectangleItem1->setBrush(rectangle->brush);
+    rectangleItem1->setBrush(rectangle->brush());
     if (rectangleItem2)
-        rectangleItem2->setBrush(rectangle->brush);
+        rectangleItem2->setBrush(rectangle->brush());
 
     mapUpdate();
 
@@ -103,8 +103,8 @@ void QGeoTiledMapRectangleObjectInfo::objectUpdate()
 void QGeoTiledMapRectangleObjectInfo::mapUpdate()
 {
     if (rectangleItem1) {
-        QPen pen = rectangle->pen;
-        pen.setWidthF(pen.widthF() * mapData->zoomFactor);
+        QPen pen = rectangle->pen();
+        pen.setWidthF(pen.widthF() * tiledMapDataPrivate->zoomFactor);
         rectangleItem1->setPen(pen);
         if (rectangleItem2)
             rectangleItem2->setPen(pen);

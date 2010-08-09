@@ -61,18 +61,18 @@ class QGraphicsPolygonItem;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapCircleObjectPrivate;
+class QGeoMapCircleObject;
 
 class QGeoTiledMapCircleObjectInfo : public QGeoTiledMapObjectInfo
 {
 public:
-    QGeoTiledMapCircleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
+    QGeoTiledMapCircleObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapCircleObjectInfo();
 
     void objectUpdate();
     void mapUpdate();
 
-    const QGeoMapCircleObjectPrivate* circle;
+    QGeoMapCircleObject* circle;
     QGraphicsPolygonItem *polygonItem;
 
     QPolygonF points;

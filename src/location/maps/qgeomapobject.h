@@ -57,11 +57,13 @@ class QGeoBoundingBox;
 class QGeoMapObjectPrivate;
 class QGeoMapContainer;
 
-class QGeoMapDataPrivate;
+class QGeoMapData;
 
 class Q_LOCATION_EXPORT QGeoMapObject : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(int zValue READ zValue WRITE setZValue NOTIFY zValueChanged)
+    Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
 
 public:
     enum Type {
@@ -71,7 +73,7 @@ public:
         PolylineType,
         PolygonType,
         MarkerType,
-        GeoRouteType
+        RouteType
     };
 
     QGeoMapObject(QGeoMapObject *parent = 0);
@@ -87,8 +89,8 @@ public:
 
     // TODO selection and selectability?
 
-    virtual QGeoBoundingBox boundingBox() const;
-    virtual bool contains(const QGeoCoordinate &coordinate) const;
+    QGeoBoundingBox boundingBox() const;
+    bool contains(const QGeoCoordinate &coordinate) const;
 
     QGeoMapObject* parentObject() const;
     void addChildObject(QGeoMapObject *childObject);
@@ -101,13 +103,17 @@ public:
     bool operator<(const QGeoMapObject &other) const;
     bool operator>(const QGeoMapObject &other) const;
 
+signals:
+    void zValueChanged();
+    void visibleChanged();
+
 protected:
     QGeoMapObject(QGeoMapObjectPrivate *dd);
 
     QGeoMapObjectPrivate *d_ptr;
 
 private:
-    QGeoMapObject(QGeoMapDataPrivate *mapData);
+    QGeoMapObject(QGeoMapData *mapData);
 
     Q_DECLARE_PRIVATE(QGeoMapObject)
     Q_DISABLE_COPY(QGeoMapObject)

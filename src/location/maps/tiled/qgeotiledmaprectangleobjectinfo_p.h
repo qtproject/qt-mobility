@@ -59,18 +59,18 @@ class QGraphicsRectItem;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapRectangleObjectPrivate;
+class QGeoMapRectangleObject;
 
 class QGeoTiledMapRectangleObjectInfo : public QGeoTiledMapObjectInfo
 {
 public:
-    QGeoTiledMapRectangleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
+    QGeoTiledMapRectangleObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapRectangleObjectInfo();
 
     void objectUpdate();
     void mapUpdate();
 
-    const QGeoMapRectangleObjectPrivate* rectangle;
+    QGeoMapRectangleObject* rectangle;
     QGraphicsRectItem *rectangleItem1;
     QGraphicsRectItem *rectangleItem2;
 };
