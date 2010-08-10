@@ -202,7 +202,6 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
         requestString += trimDouble(request.waypoints().at(i).longitude());
     }
 
-    requestString += "&mode=";
     requestString += modesRequestString(request.routeOptimization(), request.travelModes(),
         request.avoidFeatureTypes());
 
@@ -249,7 +248,6 @@ QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute 
     requestString += ",";
     requestString += QString::number(position.longitude());
 
-    requestString += "&mode=";
     requestString += modesRequestString(route.request().routeOptimization(), route.travelMode(),
         route.request().avoidFeatureTypes());
 
@@ -274,17 +272,17 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(QGeoRouteRequest::Rout
     if ((optimization & QGeoRouteRequest::MostScenicRoute) != 0)
         types.append("scenic");
 
-    QStringList tModes;
+    QStringList modes;
     if ((travelModes & QGeoRouteRequest::CarTravel) != 0)
-        tModes.append("car");
+        modes.append("car");
     if ((travelModes & QGeoRouteRequest::PedestrianTravel) != 0)
-        tModes.append("pedestrian");
+        modes.append("pedestrian");
     if ((travelModes & QGeoRouteRequest::PublicTransitTravel) != 0)
-        tModes.append("publicTransport");
+        modes.append("publicTransport");
     if ((travelModes & QGeoRouteRequest::BicycleTravel) != 0)
-        tModes.append("bicycle");
+        modes.append("bicycle");
     if ((travelModes & QGeoRouteRequest::TruckTravel) != 0)
-        tModes.append("truck");
+        modes.append("truck");
 
     QStringList avoidTypes;
     if (avoid != QGeoRouteRequest::AvoidNothing) {
@@ -305,20 +303,13 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(QGeoRouteRequest::Rout
         if ((avoid & QGeoRouteRequest::AvoidMotorPoolLanes) != 0)
             avoidTypes.append("allowHOVLanes");
     }
-    QString avoidStr = avoidTypes.join(",");
 
-    QStringList modes;
-    QString tMode;
-    foreach(tMode, tModes) {
-        QString type;
-        foreach(type, types) {
-            QString mode = type + ";" + tMode;
-            if (!avoidStr.isEmpty())
-                mode += ";" + avoidStr;
-            modes.append(mode);
-        }
+    for(int i=0;i<types.count();++i) {
+        requestString += "&mode"+QString::number(i)+"=";
+        requestString += types[i] + ";" + modes.join(",");
+        if (avoidTypes.count())
+            requestString += ";" + avoidTypes.join(",");
     }
-    requestString += modes.join("!");
     return requestString;
 }
 
