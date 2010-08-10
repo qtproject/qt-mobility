@@ -121,9 +121,9 @@ bool QContactlessManager::disconnect(QContactlessTarget::TagType type,
 }
 
 /*!
-    Registers for notifications when an NDEF record that matches \a typeNameFormat is detected. The
-    \a slot method on \a object will be called and should have the prototype
-    'void ndefRecordDetected(const QNdefRecord &record)'.
+    Registers for notifications when an NDEF message contains a record that matches
+    \a typeNameFormat is detected. The \a slot method on \a object will be called and should have
+    the prototype 'void ndefRecordDetected(const QNdefMessage &message)'.
 
     Returns true on success; otherwise return false.
 */
@@ -138,8 +138,8 @@ bool QContactlessManager::connect(QNdefRecord::TypeNameFormat typeNameFormat,
 }
 
 /*!
-    Unregisters notifications for when an NDEF record that match \a typeNameFormat to \a slot on
-    \a object. Returns true o success; otherwise returns false.
+    Unregisters notifications for when an NDEF message contains a record that match
+    \a typeNameFormat to \a slot on \a object. Returns true o success; otherwise returns false.
 */
 bool QContactlessManager::disconnect(QNdefRecord::TypeNameFormat typeNameFormat,
                                      const QObject *object, const char *slot)
