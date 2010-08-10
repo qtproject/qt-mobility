@@ -60,6 +60,9 @@
     \row
         \o \l {Gallery QML Plugin}{Gallery}
         \o A QML plugin for the Document Gallery API.
+    \row
+        \o \l {Location QML Plugin}{Gallery}
+        \o A QML plugin for the Location API.
     \endtable
 
 
