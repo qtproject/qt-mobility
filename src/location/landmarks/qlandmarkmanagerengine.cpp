@@ -545,9 +545,9 @@ QStringList QLandmarkManagerEngine::landmarkAttributeKeys(QLandmarkManager::Erro
     QStringList commonKeys = QStringList()
                              << "name"
                              << "description"
-                             << "iconurl"
+                             << "iconUrl"
                              << "radius"
-                             << "phone"
+                             << "phoneNumber"
                              << "url"
                              << "latitude"
                              << "longitude"
@@ -581,7 +581,7 @@ QStringList QLandmarkManagerEngine::categoryAttributeKeys(QLandmarkManager::Erro
 
     //TODO: Optimize
     QStringList commonKeys = QStringList() << "name"
-                             << "iconurl";
+                             << "iconUrl";
     return commonKeys;
 }
 

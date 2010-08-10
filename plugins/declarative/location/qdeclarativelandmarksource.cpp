@@ -50,7 +50,7 @@ QVariant QDeclarativeLandmarkSource::data(const QModelIndex &index, int role) co
     case NameRole:
         return landmark.name();
     case PhoneRole:
-        return landmark.phone();
+        return landmark.phoneNumber();
     case DescriptionRole:
         return landmark.description();
     case RadiusRole:

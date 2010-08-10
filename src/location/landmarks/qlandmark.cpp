@@ -62,9 +62,9 @@ QTM_USE_NAMESPACE
 
 QStringList QLandmarkPrivate::commonKeys = QStringList() << "name"
                                                          << "description"
-                                                         << "iconurl"
+                                                         << "iconUrl"
                                                          << "radius"
-                                                         << "phone"
+                                                         << "phoneNumber"
                                                          << "url"
                                                          << "latitude"
                                                          << "longitude"
@@ -102,7 +102,7 @@ QLandmarkPrivate::QLandmarkPrivate(const QLandmarkPrivate &other)
         radius(other.radius),
         managerAttributes(other.managerAttributes),
         customAttributes(other.customAttributes),
-        phone(other.phone),
+        phoneNumber(other.phoneNumber),
         url(other.url),
         id(other.id)
 {
@@ -117,7 +117,7 @@ QLandmarkPrivate& QLandmarkPrivate::operator= (const QLandmarkPrivate & other)
     description = other.description;
     iconUrl = other.iconUrl;
     radius = other.radius;
-    phone = other.phone;
+    phoneNumber = other.phoneNumber;
     url = other.url;
     categoryIds = other.categoryIds;
     managerAttributes = other.managerAttributes;
@@ -134,7 +134,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
             && (description == other.description)
             && (iconUrl == other.iconUrl)
             && (radius == other.radius)
-            && (phone == other.phone)
+            && (phoneNumber == other.phoneNumber)
             && (url == other.url)
             && (categoryIds == other.categoryIds)
             && (managerAttributes == other.managerAttributes)
@@ -417,12 +417,12 @@ QVariant QLandmark::attribute(const QString &key) const
         return name();
     } else if (key.compare("description", Qt::CaseInsensitive) == 0) {
         return description();
-    } else if (key.compare("iconurl",Qt::CaseInsensitive) ==0) {
+    } else if (key.compare("iconUrl",Qt::CaseInsensitive) ==0) {
         return iconUrl();
     } else if (key.compare("radius", Qt::CaseInsensitive) == 0) {
         return radius();
-    } else if (key.compare("phone", Qt::CaseInsensitive) == 0) {
-        return phone();
+    } else if (key.compare("phoneNumber", Qt::CaseInsensitive) == 0) {
+        return phoneNumber();
     } else if (key.compare("url", Qt::CaseInsensitive) ==0 ) {
         return url();
     } else if (key.compare("latitude", Qt::CaseSensitive)== 0) {
@@ -468,17 +468,17 @@ void QLandmark::setAttribute(const QString &key, const QVariant &value)
     } else if (key.compare("description", Qt::CaseInsensitive) == 0) {
         setDescription(value.toString());
         return;
-    } else if (key.compare("iconurl",Qt::CaseInsensitive) ==0) {
-        setIconUrl(QUrl(value.toString()));
+    } else if (key.compare("iconUrl",Qt::CaseInsensitive) ==0) {
+        setIconUrl(QUrl(value.toUrl()));
         return;
     } else if (key.compare("radius", Qt::CaseInsensitive) == 0) {
         setRadius(value.toDouble());
         return;
-    } else if (key.compare("phone", Qt::CaseInsensitive) == 0) {
-        setPhone(value.toString());
+    } else if (key.compare("phoneNumber", Qt::CaseInsensitive) == 0) {
+        setPhoneNumber(value.toString());
         return;
     } else if (key.compare("url", Qt::CaseInsensitive) ==0 ) {
-        setUrl(QUrl(value.toString()));
+        setUrl(QUrl(value.toUrl()));
         return;
     } else if (key.compare("latitude", Qt::CaseSensitive)== 0) {
         d->coordinate.setLatitude(value.toDouble());
@@ -597,19 +597,19 @@ void QLandmark::removeCustomAttribute(const QString &key)
 /*!
     Returns the phone number of the landmark.
 */
-QString QLandmark::phone() const
+QString QLandmark::phoneNumber() const
 {
     Q_D(const QLandmark);
-    return d->phone;
+    return d->phoneNumber;
 }
 
 /*!
-    Sets the \a phone number of the landmark.
+    Sets the \a phoneNmber of the landmark.
 */
-void QLandmark::setPhone(const QString &phone)
+void QLandmark::setPhoneNumber(const QString &phoneNumber)
 {
     Q_D(QLandmark);
-    d->phone = phone;
+    d->phoneNumber = phoneNumber;
 }
 /*!
     Returns the url of the landmark.
@@ -666,7 +666,7 @@ void QLandmark::clear()
     d->radius = 0.0;
     d->managerAttributes.clear();
     d->customAttributes.clear();
-    d->phone.clear();
+    d->phoneNumber.clear();
     d->url.clear();
     d->id = QLandmarkId();
 }

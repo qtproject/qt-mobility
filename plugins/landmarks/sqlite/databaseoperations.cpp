@@ -770,7 +770,7 @@ QLandmark DatabaseOperations::retrieveLandmark(const QString &connectionName, co
         lm.setAddress(address);
 
         if (!query1.value(21).isNull())
-            lm.setPhone(query1.value(21).toString());
+            lm.setPhoneNumber(query1.value(21).toString());
 
         if (!query1.value(22).isNull())
             lm.setUrl(query1.value(22).toString());
@@ -1536,8 +1536,8 @@ bool DatabaseOperations::saveLandmarkHelper(const QString &connectionName, QLand
     else
         bindValues.insert("post_office_box", QVariant());
 */
-    if (!landmark->phone().isEmpty())
-        bindValues.insert("phone", landmark->phone());
+    if (!landmark->phoneNumber().isEmpty())
+        bindValues.insert("phone", landmark->phoneNumber());
     else
         bindValues.insert("phone", QVariant());
 
