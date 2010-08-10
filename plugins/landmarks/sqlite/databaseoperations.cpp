@@ -764,8 +764,8 @@ QLandmark DatabaseOperations::retrieveLandmark(const QString &connectionName, co
         if (!query1.value(19).isNull())
             address.setPostCode(query1.value(19).toString());
 
-        if (!query1.value(20).isNull())
-            address.setPostOfficeBox(query1.value(20).toString());
+        //if (!query1.value(20).isNull())
+        //    address.setPostOfficeBox(query1.value(20).toString());
 
         lm.setAddress(address);
 
@@ -1530,11 +1530,12 @@ bool DatabaseOperations::saveLandmarkHelper(const QString &connectionName, QLand
     else
         bindValues.insert("postcode", QVariant());
 
+/*
     if (!address.postOfficeBox().isEmpty())
         bindValues.insert("post_office_box", address.postOfficeBox());
     else
         bindValues.insert("post_office_box", QVariant());
-
+*/
     if (!landmark->phone().isEmpty())
         bindValues.insert("phone", landmark->phone());
     else
