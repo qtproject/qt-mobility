@@ -66,6 +66,8 @@ private slots:
     void addOccurrenceDetail();
     void addOccurrenceWithException_data();
     void addOccurrenceWithException();
+    void editOccurrence_data();
+    void editOccurrence();
     void fetchNegative_data();
     void fetchNegative();
 private:
@@ -195,19 +197,26 @@ void TestItemOccurrence::addOccurrenceWithException_data()
    
     QTest::addColumn<QString>("managerName");
     QTest::addColumn<QString>("itemType");
+    QTest::addColumn<QString>("description");
     QTest::addColumn<QDateTime>("startTime");
     QTest::addColumn<QDate>("rDate");
     QTest::addColumn<QDate>("exceptionDate");
     QTest::addColumn<QOrganizerItemRecurrenceRule>("rrule");
     QTest::addColumn<QOrganizerItemPriority>("priority");
     QTest::addColumn<QOrganizerItemLocation>("location");
+    QTest::addColumn<QString>("modifiedDescription");
+    QTest::addColumn<QDateTime>("modifiedStartTime");
+
     
     QString itemType  = QOrganizerItemType::TypeEvent;
     QOrganizerItemPriority priority;
     priority.setPriority(QOrganizerItemPriority::HighestPriority);
     QOrganizerItemLocation location;
     location.setLocationName("checkLocationName");
-    location.setGeoLocation("20.176876;15.988765");
+    //location.setGeoLocation("20.176876;15.988765");
+    QString description("checkoccurrence");
+    QString newDescription("modifyOccurrence");
+    
     foreach(QString manager, availableManagers) {
         QOrganizerItemRecurrenceRule rrule;
         rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
@@ -217,12 +226,15 @@ void TestItemOccurrence::addOccurrenceWithException_data()
         QTest::newRow(QString("[%1] Daily event for 10 occurrences").arg(manager).toLatin1().constData())
             << manager
             << itemType
-            << QDateTime(QDate(QDate::currentDate().year() , 9, 1))
+            << description
+            << QDateTime(QDate(QDate::currentDate().year() , 9, 1),QTime(8,30))
             << rDate
             << exceptionDate
             << rrule
             << priority
-            << location;        
+            << location
+            << newDescription
+            << QDateTime(QDate(QDate::currentDate().year() , 8, 30));        
         
         QOrganizerItemRecurrenceRule monthRule;
         monthRule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
@@ -231,13 +243,16 @@ void TestItemOccurrence::addOccurrenceWithException_data()
         QTest::newRow(QString("[%1] Monthly event for 5 occurrences").arg(manager).toLatin1().constData())
             << manager
             << itemType
+            << description
             << QDateTime(QDate(QDate::currentDate().year() , 8, 3))
             << rDate
             << exceptionDate
             << monthRule
             << priority
-            << location;        
-       
+            << location
+            << newDescription
+            << QDateTime(QDate(QDate::currentDate().year() , 8, 1));        
+                    
         QOrganizerItemRecurrenceRule yearRule;
         yearRule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
         QList<QOrganizerItemRecurrenceRule::Month> months;
@@ -249,12 +264,15 @@ void TestItemOccurrence::addOccurrenceWithException_data()
         QTest::newRow(QString("[%1] yearly rule every other year").arg(manager).toLatin1().constData())
             << manager
             << itemType
+            << description
             << QDateTime(QDate(QDate::currentDate().year() + 2, 9, 1))            
             << rDate
             << yearException
             << yearRule
             << priority
-            << location;         
+            << location
+            << newDescription
+            << QDateTime(QDate(QDate::currentDate().year() +2 , 9, 2));         
     }
 }
 
@@ -262,6 +280,7 @@ void TestItemOccurrence::addOccurrenceWithException()
 {
     QFETCH(QString, managerName);
     QFETCH(QString, itemType);
+    QFETCH(QString,description);
     QFETCH(QDateTime, startTime);
     QFETCH(QDate, rDate);
     QFETCH(QDate,exceptionDate );
@@ -290,7 +309,7 @@ void TestItemOccurrence::addOccurrenceWithException()
     QVERIFY(item.saveDetail(&recurrence));
     
     //Add other attributes to the item.
-    item.setDescription("checkoccurrence");
+    item.setDescription(description);
     item.saveDetail(&priority);
     item.saveDetail(&location);
     
@@ -334,6 +353,84 @@ void TestItemOccurrence::addOccurrenceWithException()
     QCOMPARE(instanceList.size(),0);
 }
 
+void TestItemOccurrence::editOccurrence_data() 
+{
+    addOccurrenceWithException_data();    
+}
+
+void TestItemOccurrence::editOccurrence() 
+{
+    QFETCH(QString, managerName);
+    QFETCH(QString, itemType);
+    QFETCH(QString,description);
+    QFETCH(QDateTime, startTime);
+    QFETCH(QDate, rDate);
+    QFETCH(QDate,exceptionDate );
+    QFETCH(QOrganizerItemRecurrenceRule, rrule);
+    QFETCH(QOrganizerItemPriority, priority);
+    QFETCH(QOrganizerItemLocation, location);
+    QFETCH(QString,modifiedDescription);
+    QFETCH(QDateTime, modifiedStartTime);
+    
+    // Set the item type
+    QOrganizerItem item;
+    item.setType(itemType);
+    QOrganizerEventTimeRange timeRange;
+    timeRange.setStartDateTime(startTime);
+    QVERIFY(item.saveDetail(&timeRange));
+
+    // Add recurrence rules to the item
+    QList<QOrganizerItemRecurrenceRule> rrules;
+    rrules.append(rrule);
+    QOrganizerItemRecurrence recurrence;
+    recurrence.setRecurrenceRules(rrules);
+    QVERIFY(item.saveDetail(&recurrence));
+    
+    //Add other attributes to the item.
+    item.setDescription(description);
+    item.saveDetail(&priority);
+    item.saveDetail(&location);
+    
+    // Save item with recurrence rule.
+    QVERIFY(m_om->saveItem(&item));    
+    item = m_om->item(item.localId());
+
+    //Fetch first instance of the saved entry to modify
+    QList<QOrganizerItem> instanceList = m_om->itemInstances(item,startTime,startTime);
+    QCOMPARE(instanceList.size(),1);
+    QOrganizerItem firstItem = instanceList.at(0);
+    QCOMPARE(firstItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QOrganizerEventOccurrence firstInstance = static_cast<QOrganizerEventOccurrence>(firstItem);
+    QCOMPARE(firstItem.guid(), item.guid());
+    
+    //Modify the instance and save it
+    firstInstance.setDescription(modifiedDescription);
+    QVERIFY(m_om->saveItem(&firstInstance));    
+    
+    //Fetch the instance and verify
+    instanceList.clear();
+    instanceList = m_om->itemInstances(item,startTime,startTime);
+    QCOMPARE(instanceList.size(),1);
+    QOrganizerItem changedItem = instanceList.at(0);
+    QCOMPARE(changedItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    
+    // compare start datetime,description, priority and location
+    QOrganizerEventOccurrence changedInstance = static_cast<QOrganizerEventOccurrence>(changedItem);
+    QCOMPARE(changedInstance.startDateTime(),firstInstance.startDateTime());
+    QCOMPARE(changedInstance.description(),firstInstance.description());
+    QCOMPARE(changedInstance.priority(),firstInstance.priority());
+    QCOMPARE(changedInstance.locationName(),firstInstance.locationName());
+    
+   //Modify the start date of the instance and verify
+    firstInstance.setStartDateTime(modifiedStartTime);
+    QVERIFY(m_om->saveItem(&firstInstance));
+    
+    instanceList.clear();
+    instanceList = m_om->itemInstances(item,modifiedStartTime,modifiedStartTime);
+    QCOMPARE(instanceList.size(),1);
+    QOrganizerEventOccurrence newInstance = static_cast<QOrganizerEventOccurrence>(instanceList[0]);
+    QCOMPARE(newInstance.startDateTime(),firstInstance.startDateTime());  
+}
 
 void TestItemOccurrence::fetchNegative_data()
 {

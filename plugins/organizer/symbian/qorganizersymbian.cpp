@@ -415,6 +415,8 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItem
 {
     // Check local id
     bool isNewEntry = true;
+    RPointerArray<CCalEntry> calEntryArray;
+    const TInt expectedCount(1);
     if (item->localId()) {
         // Don't allow saving with local id defined unless the item is from this manager.
         if (item->id().managerUri() != managerUri())
@@ -424,30 +426,57 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItem
     
     // Get guid from item. New guid is generated if empty.
     HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
+    CCalEntry *entry(NULL);
+    CCalEntry *parentEntry(NULL);
+    QOrganizerItemInstanceOrigin origin = item->detail<QOrganizerItemInstanceOrigin>();
     
     // If guid was defined in item check if it matches to something
     if (!item->guid().isEmpty()) {
-        RPointerArray<CCalEntry> calEntryArray;
         m_entryView->FetchL(*globalUid, calEntryArray);
-        if (calEntryArray.Count())
-            isNewEntry = false; // found at least one existing entry with this guid
-        calEntryArray.ResetAndDestroy();
+        if (calEntryArray.Count()== expectedCount) {
+            if (!origin.parentLocalId()) {
+                entry = calEntryArray[0]; 
+                isNewEntry = false;
+            } else {
+                parentEntry = calEntryArray[0];
+            }            
+        } else if (calEntryArray.Count() > expectedCount) {
+            //Fetch on the basis of localid if localid is valid
+            calEntryArray.ResetAndDestroy();
+            if (!item->localId()) {
+                 User::Leave(KErrArgument);
+            }     
+            entry = m_entryView->FetchL(item->localId());
+            isNewEntry = false;
+                    }        
     }
-
-    // Create entry
-    CCalEntry::TType type = OrganizerItemTypeTransform::entryTypeL(*item);
-    CCalEntry::TMethod method = CCalEntry::EMethodAdd; // TODO
-    TInt seqNum = 0; // TODO
-    //TCalTime recurrenceId; // TODO
-    //CalCommon::TRecurrenceRange recurrenceRange; // TODO
-    CCalEntry *entry = CCalEntry::NewL(type, globalUid, method, seqNum);
-    CleanupStack::Pop(globalUid); // ownership passed?
+    if (isNewEntry) {
+    
+        if (origin.parentLocalId()!= 0) {
+            CleanupStack::PushL(parentEntry);
+            //create an exceptional entry and save                
+            TCalTime recurrenceId = OrganizerItemDetailTransform::toTCalTimeL(origin.originalDate());
+    
+            // create the new child now
+            entry = CCalEntry::NewL( parentEntry->EntryTypeL(),globalUid ,
+                                     parentEntry->MethodL(),parentEntry->SequenceNumberL(),
+                                     recurrenceId,CalCommon::EThisOnly );
+           
+            entry->ClearRepeatingPropertiesL();
+            entry->SetLocalUidL( TCalLocalUid( 0 ) );
+            CleanupStack::PopAndDestroy(parentEntry);
+        } else {        
+            // Create entry
+            CCalEntry::TType type = OrganizerItemTypeTransform::entryTypeL(*item);
+            CCalEntry::TMethod method = CCalEntry::EMethodAdd;
+            TInt seqNum = 0; 
+            entry = CCalEntry::NewL(type, globalUid, method, seqNum);
+             // ownership passed?
+        }
+    }    
+    CleanupStack::Pop(globalUid);
     CleanupStack::PushL(entry);
 
-    // Use old local id if we are updating and entry
-    if (!isNewEntry)
-        entry->SetLocalUidL(TCalLocalUid(item->localId()));
-        
     // Transform QOrganizerItem -> CCalEntry    
     m_itemTransform.toEntryL(*item, entry);
     
@@ -456,11 +485,11 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItem
     CleanupClosePushL(entries);
     entries.AppendL(entry);
     TInt count(0);
-    // TODO: is this needed? this code of line had been added in commit 7f0c3767
-    // but there isn't any test case that would fail if the line is commented out
-    //entry->SetLastModifiedDateL();
+    if (!isNewEntry) {
+        entry->SetLastModifiedDateL();
+    }
     m_entryView->StoreL(entries, count);
-    const TInt expectedCount(1);
+
     if (count != expectedCount) {
         // The documentation states about count "On return, this
         // contains the number of entries which were successfully stored".
@@ -482,7 +511,7 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItem
     // Cleanup
     CleanupStack::PopAndDestroy(&entries);
     CleanupStack::PopAndDestroy(entry);
-    
+    calEntryArray.Close();
     // Update change set
     if (changeSet) {
         if (isNewEntry)
