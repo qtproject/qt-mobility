@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -153,7 +154,10 @@
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactThumbnail class contains a thumbnail used in display lists to represent the contact.</p>
+<p>Users can specify a thumbnail image for a contact via this detail. Support for this detail is backend specific; some managers will save the image as given, no matter how big it is, while other managers will scale the image prior to save in order to reduce memory overhead. Some managers will automatically synthesize a thumbnail detail for each contact if an avatar image url is specified but no thumbnail detail is specified.</p>
+<p>The content of the thumbnail detail is static once set. That is, in order to change the thumbnail of a particular contact, the user must modify the detail and update the contact. This is in contrast to the <a href="qcontactavatar.html">QContactAvatar</a> detail, which contains URLs to resources; the actual content of the resource might be changed dynamically by person, group or organization for which the <a href="qcontact.html">QContact</a> is a digital representation. That is, the content of a QContactThumbnail detail is set by the user who has created the contact, but the content of a resource identified by a URL specified in a <a href="qcontactavatar.html">QContactAvatar</a> detail is set by whoever owns the resource which the URL identifies.</p>
 </div>
+<p>See also <a href="qcontactavatar.html">QContactAvatar</a>.</p>
 <hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>

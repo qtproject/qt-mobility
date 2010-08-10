@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -304,7 +305,7 @@
 <p>As an example the already existing &quot;ovi&quot; service may implement interface &quot;IDownload&quot; version 1.0, the new &quot;ovi&quot; service may implement &quot;IDownload&quot; version 1.0 and version 1.1&#x2e; In this case the old service implementation must be first be removed using <a href="qservicemanager.html#removeService">QServiceManager::removeService</a>() to make way for the new service implementation.</p>
 <a name="out-of-process-services"></a>
 <h3>Out of process Services</h3>
-<p>Out of process services behave similarly to local services, with one exception. There can be IPC errors, or the remote service can be terminate unexpectedly. QObjects returned by the service manager for out of process services have an additional signal created, errorUnrecoverableIPCFault(<a href="qservice.html#UnrecoverableIPCError-enum">QService::UnrecoverableIPCError</a>) which the client must connect to. If an error occurs the object must be destroyed, no further calls can be made. Error recovery is left up to the client application.</p>
+<p>Out of process services behave similarly to local services, with one exception. There can be IPC errors, or the remote service can terminate unexpectedly. QObjects returned by the service manager for out of process services have an additional signal created, errorUnrecoverableIPCFault(<a href="qservice.html#UnrecoverableIPCError-enum">QService::UnrecoverableIPCError</a>) which the client must connect to. If an error occurs the object must be destroyed; no further calls can be made. The error recovery is left up to the client application.</p>
 <a name="examples"></a>
 <h2>Examples</h2>
 <ul>

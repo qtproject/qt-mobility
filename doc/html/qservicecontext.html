@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -151,9 +152,12 @@
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qservicecontext.html#QServiceContext">QServiceContext</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qservicecontext.html#dtor.QServiceContext">~QServiceContext</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QVariant </td><td class="memItemRight bottomAlign"><b><a href="qservicecontext.html#clientData">clientData</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qservicecontext.html#clientId-prop">clientId</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qservicecontext.html#clientName-prop">clientName</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qservicecontext.html#notify">notify</a></b> ( ContextType <i>type</i>, const QVariant &amp; <i>data</i> ) = 0</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qservicecontext.html#resetClientData">resetClientData</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qservicecontext.html#setClientData">setClientData</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qservicecontext.html#clientId-prop">setClientId</a></b> ( const QString &amp; <i>id</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qservicecontext.html#clientName-prop">setClientName</a></b> ( const QString &amp; <i>name</i> )</td></tr>
 </table>
@@ -204,8 +208,17 @@
 <p>Constrcuts a service context with the given <i>parent</i>.</p>
 <h3 class="fn"><a name="dtor.QServiceContext"></a>QServiceContext::~QServiceContext ()<tt> [virtual]</tt></h3>
 <p>Destroys the service context object.</p>
+<h3 class="fn"><a name="clientData"></a>QVariant QServiceContext::clientData ( const QString &amp; <i>key</i> ) const</h3>
+<p>Returns the client data associated to <i>key</i>.</p>
+<p>See also <a href="qservicecontext.html#setClientData">setClientData</a>() and <a href="qservicecontext.html#resetClientData">resetClientData</a>().</p>
 <h3 class="fn"><a name="notify"></a>void QServiceContext::notify ( <a href="qservicecontext.html#ContextType-enum">ContextType</a> <i>type</i>, const QVariant &amp; <i>data</i> )<tt> [pure virtual]</tt></h3>
 <p>Services may call this function to notify the service client about service related context information of the given <i>type</i>. The contextual information is stored in <i>data</i>.</p>
+<h3 class="fn"><a name="resetClientData"></a>void QServiceContext::resetClientData ()</h3>
+<p>Deletes all client data associated to the service context.</p>
+<p>See also <a href="qservicecontext.html#clientData">clientData</a>() and <a href="qservicecontext.html#setClientData">setClientData</a>().</p>
+<h3 class="fn"><a name="setClientData"></a>void QServiceContext::setClientData ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</h3>
+<p>Attaches arbitrary data <i>value</i> to the context object. The value can be retrieved via <i>key</i>.</p>
+<p>See also <a href="qservicecontext.html#clientData">clientData</a>() and <a href="qservicecontext.html#resetClientData">resetClientData</a>().</p>
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

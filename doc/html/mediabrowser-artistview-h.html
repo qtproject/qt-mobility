@@ -70,6 +70,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -163,31 +164,40 @@
 
  #include &quot;galleryview.h&quot;
 
+ #include &lt;qmobilityglobal.h&gt;
+
  class QModelIndex;
 
  QTM_BEGIN_NAMESPACE
- class QGalleryItemListModel;
+ class QAbstractGallery;
+ class QGalleryQueryModel;
  QTM_END_NAMESPACE
+
+ QTM_USE_NAMESPACE
 
  class ArtistView : public GalleryView
  {
      Q_OBJECT
  public:
-     ArtistView(const QString &amp;type, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+     ArtistView(
+             const QString &amp;type,
+             QAbstractGallery *gallery,
+             QWidget *parent = 0,
+             Qt::WindowFlags flags = 0);
      ~ArtistView();
 
  signals:
-     void showAlbums(const QVariant &amp;containerId, const QString &amp;title);
-     void showSongs(const QVariant &amp;containerId, const QString &amp;title);
+     void showAlbums(const QVariant &amp;artistId, const QString &amp;title);
+     void showSongs(const QVariant &amp;artistId, const QString &amp;title);
 
- protected slots:
-     void mediaChanged(QGalleryItemList *media);
+ public slots:
+     void showChildren(const QVariant &amp;itemId);
 
  private slots:
      void activated(const QModelIndex &amp;index);
 
  private:
-     QGalleryItemListModel *model;
+     QScopedPointer&lt;QGalleryQueryModel&gt; model;
  };
 
  #endif</pre>

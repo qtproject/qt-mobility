@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -138,7 +139,7 @@
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qabstractgallery.html#QAbstractGallery">QAbstractGallery</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qabstractgallery.html#dtor.QAbstractGallery">~QAbstractGallery</a></b> ()</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qabstractgallery.html#isRequestSupported">isRequestSupported</a></b> ( QGalleryAbstractRequest::Type <i>type</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qabstractgallery.html#isRequestSupported">isRequestSupported</a></b> ( QGalleryAbstractRequest::RequestType <i>type</i> ) const = 0</td></tr>
 </table>
 <hr />
 <a name="protected-functions"></a>
@@ -162,7 +163,7 @@
 <p>Destroys a gallery.</p>
 <h3 class="fn"><a name="createResponse"></a><a href="qgalleryabstractresponse.html">QGalleryAbstractResponse</a> * QAbstractGallery::createResponse ( <a href="qgalleryabstractrequest.html">QGalleryAbstractRequest</a> * <i>request</i> )<tt> [pure virtual protected]</tt></h3>
 <p>Creates a response to a gallery <i>request</i>.</p>
-<h3 class="fn"><a name="isRequestSupported"></a>bool QAbstractGallery::isRequestSupported ( <a href="qgalleryabstractrequest.html#Type-enum">QGalleryAbstractRequest::Type</a> <i>type</i> ) const<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="isRequestSupported"></a>bool QAbstractGallery::isRequestSupported ( <a href="qgalleryabstractrequest.html#RequestType-enum">QGalleryAbstractRequest::RequestType</a> <i>type</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Identifies if a gallery supports a request <i>type</i>.</p>
 <p>Returns true if the request is supported, and false otherwise.</p>
 </div>

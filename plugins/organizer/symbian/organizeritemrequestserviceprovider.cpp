@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 // System includes
-#include <calentryview.h>
-#include <calentry.h>
+#include <calentry.h> // CCalEntry
+#include <calentryview.h> // CCalEntryView
 
 // User includes
 #include "organizeritemrequestserviceprovider.h"
@@ -50,8 +50,9 @@
 #include "organizerItemTypeTransform.h"
 #include "qorganizersymbian_p.h"
 
+
 // Static two phase construction
-COrganizerItemRequestsServiceProvider* COrganizerItemRequestsServiceProvider::NewL(QOrganizerItemManagerEngine& aOrganizerItemManagerEngine)
+COrganizerItemRequestsServiceProvider* COrganizerItemRequestsServiceProvider::NewL(QOrganizerItemSymbianEngine& aOrganizerItemManagerEngine)
     {
     COrganizerItemRequestsServiceProvider* self(new (ELeave) COrganizerItemRequestsServiceProvider(aOrganizerItemManagerEngine));
     CleanupStack::PushL(self);
@@ -61,9 +62,10 @@ COrganizerItemRequestsServiceProvider* COrganizerItemRequestsServiceProvider::Ne
     }
 
 // Basic first phase constructor
-COrganizerItemRequestsServiceProvider::COrganizerItemRequestsServiceProvider(QOrganizerItemManagerEngine& aOrganizerItemManagerEngine) : 
+COrganizerItemRequestsServiceProvider::COrganizerItemRequestsServiceProvider(QOrganizerItemSymbianEngine& aOrganizerItemManagerEngine) : 
         CActive(EPriorityNormal), 
-        iOrganizerItemManagerEngine(aOrganizerItemManagerEngine)
+        iOrganizerItemManagerEngine(aOrganizerItemManagerEngine),
+        iReq(NULL)
     {
     CActiveScheduler::Add(this);
     }
@@ -85,38 +87,52 @@ COrganizerItemRequestsServiceProvider::~COrganizerItemRequestsServiceProvider()
     }
 
 // Start processing aReq request to be processed asynchronously
-void COrganizerItemRequestsServiceProvider::StartRequest(QOrganizerItemAbstractRequest* aReq)
+TBool COrganizerItemRequestsServiceProvider::StartRequest(QOrganizerItemAbstractRequest* aReq)
     {
-    // change the state of the request and emit signal
+    // Change the state of the request and emit signal
     QOrganizerItemManagerEngine::updateRequestState(aReq, QOrganizerItemAbstractRequest::ActiveState);
-    // Save asych request, start the timer and then return
-    iReq = aReq;
     TRequestStatus* pStat = &iStatus;
     if (!IsActive())
-        {
-        SetActive();
+		{
+        // Save asychronous request, start the timer and then return
+        iReq = aReq;
+		SetActive();
         User::RequestComplete(pStat, KErrNone);
-        }
+		return ETrue;
+		}
+	else
+        {
+        // Another asynchronous request is already going on so this can not be taken
+        // until we implement a queue
+        return EFalse;
+		}
+    
     }
     
-// Stop asynchronous request
-void COrganizerItemRequestsServiceProvider::StopRequest()
-    {
-    // Stop asynchronous ongoing request
-    Cancel();
-    // Set the request status to InactiveState
-    QOrganizerItemManagerEngine::updateRequestState(iReq, QOrganizerItemAbstractRequest::InactiveState);
-    }
-
 // Cancel an ongoing asynchronous request
-void COrganizerItemRequestsServiceProvider::CancelRequest()
+TBool COrganizerItemRequestsServiceProvider::CancelRequest()
     {
     // Stop the request
     Cancel();
-    // Change the state of the request and smit signal
+    // Change the state of the request and emit signal
     QOrganizerItemManagerEngine::updateRequestState(iReq, QOrganizerItemAbstractRequest::CanceledState);
+    
+    return ETrue;
     }
 
+TBool COrganizerItemRequestsServiceProvider::waitForRequestFinished(TTimeIntervalMicroSeconds32 aInterval)
+    {
+    if (aInterval.Int() > 0)
+        {
+        // Block for aInterval microseconds
+        }
+    else
+        {
+        // Block forever
+        }
+    // Return false as its yet to be fully implemented
+    return false;
+    }
 
 void COrganizerItemRequestsServiceProvider::RunL()
     {
@@ -130,6 +146,7 @@ void COrganizerItemRequestsServiceProvider::RunL()
             }
         case QOrganizerItemAbstractRequest::ItemFetchRequest: 
             {
+            FetchItemsL();
             break;
             }
         case QOrganizerItemAbstractRequest::ItemLocalIdFetchRequest: 
@@ -189,7 +206,7 @@ void COrganizerItemRequestsServiceProvider::SaveItemsL()
             {
             RPointerArray<CCalEntry> calEntryArray;
             CleanupClosePushL(calEntryArray);
-            ((QOrganizerItemSymbianEngine&)(iOrganizerItemManagerEngine)).entryView()->FetchL(*globalUid, calEntryArray);
+            iOrganizerItemManagerEngine.entryView()->FetchL(*globalUid, calEntryArray);
             if (calEntryArray.Count())
                 {
                 isNewEntry = EFalse; // Found at least one existing entry with this guid
@@ -223,26 +240,96 @@ void COrganizerItemRequestsServiceProvider::SaveItemsL()
     TInt entryCount(0);
     
     // Store entry in agenda server db
-    ((QOrganizerItemSymbianEngine&)(iOrganizerItemManagerEngine)).entryView()->StoreL(entryPointerArray, entryCount);
+    iOrganizerItemManagerEngine.entryView()->StoreL(entryPointerArray, entryCount);
     
     QOrganizerItemManager::Error error;
     error = QOrganizerItemManager::NoError;
     QMap<int, QOrganizerItemManager::Error> errorMap;
     if (entryCount != noOfEntriesToBeSaved) 
         {
-        // Update the Error Map
+        // Some of the entries are not save, but the error is not know
+        // So set the error to General Error and transform this error 
+        // to corresponding Qt error
+        iOrganizerItemManagerEngine.transformError(KErrGeneral, &error);
+        // Regenerate the entryPointerArray to contain only the emtries saved to agenda server
         }
     
     // Transform details that are available/updated after saving 
     for (TInt index(0); index < entryCount; index++)
         {
-        // QOrganizerItem item;
-        // iOrganizerItemTransform->toItemPostSaveL(entryPointerArray[index], item);
+        iOrganizerItemTransform->toItemPostSaveL(*(entryPointerArray[index]), &(itemList[index]));
         }
+    // Clear iItemList for any obsolete data
+    iItemList.clear();
+    iItemList.append(itemList);
     
     CleanupStack::PopAndDestroy(&entryPointerArray);
  
-    QOrganizerItemManagerEngine::updateItemSaveRequest((QOrganizerItemSaveRequest*)(iReq), itemList, error, errorMap, QOrganizerItemAbstractRequest::FinishedState);
+    QOrganizerItemManagerEngine::updateItemSaveRequest((QOrganizerItemSaveRequest*)(iReq), iItemList, error, errorMap, QOrganizerItemAbstractRequest::FinishedState);
+    }
+
+void COrganizerItemRequestsServiceProvider::FetchItemsL()
+    {
+    QOrganizerItemFilter filter = ((QOrganizerItemFetchRequest*)iReq)->filter();
+    QList<QOrganizerItemSortOrder> sortOrder= ((QOrganizerItemFetchRequest*)iReq)->sorting();
+    // Fetch hint is not supported as of now
+    QOrganizerItemFetchHint fetchHint = ((QOrganizerItemFetchRequest*)iReq)->fetchHint();
+    
+    // Get the filter type
+    QOrganizerItemFilter::FilterType filterType = filter.type();
+
+    switch (filterType)
+        {
+        case QOrganizerItemFilter::LocalIdFilter :
+            {
+            FetchItemsByLocalIdsL(filter, fetchHint);
+            }
+            break;
+         default :
+            {
+            FetchItemsandFilterL(filter, sortOrder, fetchHint);
+            }
+            break;
+        }
+    }
+
+// Fetch Entries by local Ids
+void COrganizerItemRequestsServiceProvider::FetchItemsByLocalIdsL(QOrganizerItemFilter& filter, QOrganizerItemFetchHint& fetchHint)
+    {
+    // Get the local id filter
+    QOrganizerItemLocalIdFilter localIdFilter(filter);
+    // Get the local ids for the entries to be fetched
+    QList<QOrganizerItemLocalId> ids = localIdFilter.ids();
+    // Fetch all the entries for the ids in loop
+    TInt count(ids.count());
+    // Clear the items list before appending items in it
+    iItemList.clear();
+    
+    QOrganizerItemManager::Error error;
+    
+    for (int index(0); index < count; index++) 
+        {
+        QOrganizerItem item = iOrganizerItemManagerEngine.item(QOrganizerItemLocalId(ids[index]), fetchHint, &error);
+        if (error != QOrganizerItemManager::NoError)
+            {
+            // Change state to finish and update the results whatsoever availabel
+            // If index < count, fetch rest of the items and keep on appending to 
+            // iItemList
+            // Exit out of the loop
+            break;
+            }
+        iItemList << item;
+        }
+    QOrganizerItemManagerEngine::updateItemFetchRequest((QOrganizerItemFetchRequest*)(iReq), iItemList, error, QOrganizerItemAbstractRequest::FinishedState);
+    }
+
+// Fetch items/entries by details
+void COrganizerItemRequestsServiceProvider::FetchItemsandFilterL(QOrganizerItemFilter& filter, QList<QOrganizerItemSortOrder>& sortOrder, QOrganizerItemFetchHint& fetchHint)
+    {
+    QOrganizerItemManager::Error error;
+    iItemList.clear();
+    iItemList = iOrganizerItemManagerEngine.items(filter, sortOrder, fetchHint, &error);
+    QOrganizerItemManagerEngine::updateItemFetchRequest((QOrganizerItemFetchRequest*)(iReq), iItemList, error, QOrganizerItemAbstractRequest::FinishedState);
     }
 
 // Called by Cancel()
@@ -257,7 +344,7 @@ TInt COrganizerItemRequestsServiceProvider::RunError(TInt /*aError*/)
     // State change, RunL is left while completing an asynchronous request.
     QOrganizerItemManagerEngine::updateRequestState(iReq, QOrganizerItemAbstractRequest::FinishedState);
 
-    // generate error maps
+    // Generate error maps
     
     // Handle the error here
     return KErrNone;

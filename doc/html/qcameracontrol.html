@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -145,6 +146,7 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qcameracontrol.html#setCaptureMode">setCaptureMode</a></b> ( QCamera::CaptureMode <i>mode</i> ) = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qcameracontrol.html#setState">setState</a></b> ( QCamera::State <i>state</i> ) = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QCamera::State </td><td class="memItemRight bottomAlign"><b><a href="qcameracontrol.html#state">state</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual QCamera::Status </td><td class="memItemRight bottomAlign"><b><a href="qcameracontrol.html#status">status</a></b> () const = 0</td></tr>
 </table>
 <hr />
 <a name="signals"></a>
@@ -153,6 +155,7 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcameracontrol.html#captureModeChanged">captureModeChanged</a></b> ( QCamera::CaptureMode <i>mode</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcameracontrol.html#error">error</a></b> ( int <i>error</i>, const QString &amp; <i>errorString</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcameracontrol.html#stateChanged">stateChanged</a></b> ( QCamera::State <i>state</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcameracontrol.html#statusChanged">statusChanged</a></b> ( QCamera::Status <i>status</i> )</td></tr>
 </table>
 <hr />
 <a name="protected-functions"></a>
@@ -192,20 +195,27 @@
 <h3 class="fn"><a name="error"></a>void QCameraControl::error ( int <i>error</i>, const QString &amp; <i>errorString</i> )<tt> [signal]</tt></h3>
 <p>Signal emitted when an error occurs with error code <i>error</i> and a description of the error <i>errorString</i>.</p>
 <h3 class="fn"><a name="isCaptureModeSupported"></a>bool QCameraControl::isCaptureModeSupported ( <a href="qcamera.html#CaptureMode-enum">QCamera::CaptureMode</a> <i>mode</i> ) const<tt> [pure virtual]</tt></h3>
-<p>Returns true if the capture <i>mode</i> is suported. <a href="qcamera.html#CaptureMode-enum">QCamera::CaptureDisabled</a> mode is always considered supported and not checked by backend.</p>
+<p>Returns true if the capture <i>mode</i> is suported.</p>
 <p>Backend should return supported modes even in Stopped state.</p>
 <h3 class="fn"><a name="setCaptureMode"></a>void QCameraControl::setCaptureMode ( <a href="qcamera.html#CaptureMode-enum">QCamera::CaptureMode</a> <i>mode</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets the current capture <i>mode</i>.</p>
-<p>Setting the capture mode also triggers asynchronous camera state change to QCamera::Idle, to allow capture settings configuration before the camera is activated.</p>
 <p>See also <a href="qcameracontrol.html#captureMode">captureMode</a>().</p>
 <h3 class="fn"><a name="setState"></a>void QCameraControl::setState ( <a href="qcamera.html#State-enum">QCamera::State</a> <i>state</i> )<tt> [pure virtual]</tt></h3>
-<p>Sets the camera <i>state</i>. This operation is asynchronous, with state chages notified with <a href="qcameracontrol.html#stateChanged">stateChanged</a>() signal.</p>
+<p>Sets the camera <i>state</i>.</p>
+<p>States changes are synchronous and indicate more user intention than the internal backen status, which is synchronously reported with <a href="qcameracontrol.html#statusChanged">QCameraControl::statusChanged</a>() signal.</p>
 <p>See also <a href="qcameracontrol.html#state">state</a>() and <a href="qcamera.html#State-enum">QCamera::State</a>.</p>
 <h3 class="fn"><a name="state"></a><a href="qcamera.html#State-enum">QCamera::State</a> QCameraControl::state () const<tt> [pure virtual]</tt></h3>
 <p>Returns the state of the camera service.</p>
 <p>See also <a href="qcameracontrol.html#setState">setState</a>() and <a href="qcamera.html#state-prop">QCamera::state</a>.</p>
 <h3 class="fn"><a name="stateChanged"></a>void QCameraControl::stateChanged ( <a href="qcamera.html#State-enum">QCamera::State</a> <i>state</i> )<tt> [signal]</tt></h3>
 <p>Signal emitted when the camera <i>state</i> changes.</p>
+<p>In most cases the state chage is caused by <a href="qcameracontrol.html#setState">QCameraControl::setState</a>(), but if crytical error has occured the state changes to <a href="qcamera.html#State-enum">QCamera::UnloadedState</a>.</p>
+<h3 class="fn"><a name="status"></a><a href="qcamera.html#Status-enum">QCamera::Status</a> QCameraControl::status () const<tt> [pure virtual]</tt></h3>
+<p>Returns the status of the camera service.</p>
+<p>See also <a href="qcamera.html#state-prop">QCamera::state</a>.</p>
+<h3 class="fn"><a name="statusChanged"></a>void QCameraControl::statusChanged ( <a href="qcamera.html#Status-enum">QCamera::Status</a> <i>status</i> )<tt> [signal]</tt></h3>
+<p>Signal emitted when the camera <i>status</i> changes.</p>
+<p>QCameraControl::state changes are synchronous and reflect user input/intention while QCameraControl::status is asynchronous and used to notify application about actual state of backend.</p>
 </div>
 <hr />
 <div class="macros"/>

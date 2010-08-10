@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -158,15 +159,15 @@
 </ul>
 <a name="details"></a>
 <h2>Detailed Description</h2>
-<p>This element is part of the <b>QtMobility.gallery 1.0</b> module.</p>
-<p>See also <a href="qml-galleryquerymodel.html">GalleryQueryModel</a> and <a href="qml-galleryquerycount.html">GalleryQueryCount</a>.</p>
+<p>This element is part of the <b>QtMobility.gallery 1.1</b> module.</p>
+<p>See also <a href="qml-galleryquerymodel.html">GalleryQueryModel</a> and <a href="qml-gallerytype.html">GalleryType</a>.</p>
 <hr />
 <h2>Property Documentation</h2>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="available-prop"></a>available : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether the meta-data of an item is available.</p>
 </div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="currentProgress-prop"></a><span class="qmlreadonly">read-only</span>currentProgress : int</td></tr></table></div><div class="qmldoc"><p>This property holds the current progress value.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="gallery-prop"></a>gallery : <a href="qabstractgallery.html">QAbstractGallery</a></td></tr></table></div><div class="qmldoc"><p>This property holds the gallery an item should be requested from.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="gallery-prop"></a>gallery : <a href="qabstractgallery.html">QAbstractGallery</a></td></tr></table></div><div class="qmldoc"><p>This property holds the gallery that an item should be requested from.</p>
 </div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="item-prop"></a>item : variant</td></tr></table></div><div class="qmldoc"><p>This property holds the id of the item to return information about.</p>
 </div></div><br/>
@@ -195,7 +196,7 @@
 <li>InvalidItemError The request failed because the value of <a href="qml-galleryitem.html#item-prop">item</a> is not a valid item ID.</li>
 </ul>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="state-prop"></a>state : enum</td></tr></table></div><div class="qmldoc"><p>This property holds the state of an item request. It can be one of:</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="state-prop"></a><span class="qmlreadonly">read-only</span>state : enum</td></tr></table></div><div class="qmldoc"><p>This property holds the state of an item request. It can be one of:</p>
 <ul>
 <li>Inactive The request has finished.</li>
 <li>Active The request is currently executing.</li>

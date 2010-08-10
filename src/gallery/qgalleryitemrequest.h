@@ -44,20 +44,26 @@
 
 #include "qgalleryabstractrequest.h"
 
+#include <qgalleryproperty.h>
+
 QTM_BEGIN_NAMESPACE
 
-class QGalleryItemList;
+class QGalleryFilter;
+class QGalleryResource;
+class QGalleryResultSet;
 
 class QGalleryItemRequestPrivate;
 
 class Q_GALLERY_EXPORT QGalleryItemRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QGalleryItemRequest)
     Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
     Q_PROPERTY(bool live READ isLive WRITE setLive)
-    Q_PROPERTY(QVariant itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged)
-    Q_PROPERTY(QGalleryItemList* item READ item NOTIFY itemChanged)
+    Q_PROPERTY(QVariant itemId READ itemId WRITE setItemId NOTIFY itemIdChanged)
+    Q_PROPERTY(bool valid READ isValid NOTIFY itemChanged)
+    Q_PROPERTY(QString itemType READ itemType NOTIFY itemChanged)
+    Q_PROPERTY(QUrl itemUrl READ itemUrl NOTIFY itemChanged)
+    Q_PROPERTY(QList<QGalleryResource> resources READ resources NOTIFY itemChanged)
 public:
     explicit QGalleryItemRequest(QObject *parent = 0);
     explicit QGalleryItemRequest(QAbstractGallery *gallery, QObject *parent = 0);
@@ -70,15 +76,42 @@ public:
     void setLive(bool live);
 
     QVariant itemId() const;
-    void setItemId(const QVariant &id);
+    void setItemId(const QVariant &itemId);
 
-    QGalleryItemList *item() const;
+    QGalleryResultSet *resultSet() const;
+
+    int propertyKey(const QString &property) const;
+    QGalleryProperty::Attributes propertyAttributes(int key) const;
+    QVariant::Type propertyType(int key) const;
+
+    bool isValid() const;
+
+    QUrl itemUrl() const;
+    QString itemType() const;
+    QList<QGalleryResource> resources() const;
+
+    QVariant metaData(int key) const;
+    bool setMetaData(int key, const QVariant &value);
+
+    QVariant metaData(const QString &property) const;
+    bool setMetaData(const QString &property, const QVariant &value);
 
 Q_SIGNALS:
-    void itemChanged(QGalleryItemList *item);
+    void itemIdChanged();
+    void resultSetChanged(QGalleryResultSet *resultSet);
+    void itemChanged();
+    void metaDataChanged(const QList<int> &keys);
 
 protected:
     void setResponse(QGalleryAbstractResponse *response);
+
+private:
+    Q_DECLARE_PRIVATE(QGalleryItemRequest)
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsInserted(int, int))
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsRemoved(int, int))
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsMoved(int, int, int))
+    Q_PRIVATE_SLOT(d_func(), void _q_currentItemChanged())
+    Q_PRIVATE_SLOT(d_func(), void _q_metaDataChanged(int, int, const QList<int> &))
 };
 
 QTM_END_NAMESPACE

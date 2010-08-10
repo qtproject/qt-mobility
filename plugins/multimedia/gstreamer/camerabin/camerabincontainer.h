@@ -60,7 +60,25 @@ public:
 
     virtual QStringList supportedContainers() const { return m_supportedContainers; }
     virtual QString containerMimeType() const { return m_format; }
-    virtual void setContainerMimeType(const QString &formatMimeType) { m_format = formatMimeType; }
+    virtual void setContainerMimeType(const QString &formatMimeType)
+    {
+        m_format = formatMimeType;
+
+        if (m_userFormat != formatMimeType) {
+            m_userFormat = formatMimeType;
+            emit settingsChanged();
+        }
+    }
+
+    void setActualContainer(const QString &formatMimeType)
+    {
+        m_format = formatMimeType;
+    }
+
+    void resetActualContainer()
+    {
+        m_format = m_userFormat;
+    }
 
     virtual QString containerDescription(const QString &formatMimeType) const { return m_containerDescriptions.value(formatMimeType); }
 
@@ -70,8 +88,12 @@ public:
 
     static QSet<QString> supportedStreamTypes(GstElementFactory *factory, GstPadDirection direction);
 
+Q_SIGNALS:
+    void settingsChanged();
+
 private:
-    QString m_format;
+    QString m_format; // backend selected format, using m_userFormat
+    QString m_userFormat;
     QStringList m_supportedContainers;
     QMap<QString,QByteArray> m_elementNames;
     QMap<QString, QString> m_containerDescriptions;

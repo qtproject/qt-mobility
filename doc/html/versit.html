@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -122,7 +123,7 @@
 <li class="level1"><a href="#namespace">Namespace</a></li>
 <li class="level1"><a href="#overview">Overview</a></li>
 <li class="level1"><a href="#usage">Usage</a></li>
-<li class="level1"><a href="#main-classes">Main Classes</a></li>
+<li class="level1"><a href="#classes">Classes</a></li>
 <li class="level1"><a href="#supported-features">Supported Features</a></li>
 </ul>
 </div>
@@ -177,8 +178,9 @@
      writer.startWriting(outputDocuments); <span class="comment">// Remember to check the return value</span>
      writer.waitForFinished();
      <span class="comment">// output.buffer() now contains a vCard</span></pre>
-<a name="main-classes"></a>
-<h2>Main Classes</h2>
+<a name="classes"></a>
+<h2>Classes</h2>
+<p>The main classes for a client interested in importing or exporting vCard and iCalendar documents are:</p>
 <ul>
 <li><a href="qversitproperty.html">QVersitProperty</a></li>
 <li><a href="qversitdocument.html">QVersitDocument</a></li>
@@ -189,6 +191,15 @@
 <li><a href="qversitorganizerimporter.html">QVersitOrganizerImporter</a></li>
 <li><a href="qversitorganizerexporter.html">QVersitOrganizerExporter</a></li>
 </ul>
+<p>It is also possible to extend the behaviour of the importer and exporter classes by writing handlers and plugins. For more details, please see the document on <a href="versitplugins.html">Versit Plugins</a>. <table class="annotated">
+<tr class="odd topAlign"><td><p><a href="qversitcontactexporterdetailhandlerv2.html">QVersitContactExporterDetailHandlerV2</a></p></td><td><p>Interface for clients wishing to implement custom export behaviour for certain contact details</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qversitcontacthandler.html">QVersitContactHandler</a></p></td><td><p>Union of the QVersitContactImporterPropertyHandlerV2 and QVersitContactExporterDetailHandlerV2 interfaces</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qversitcontacthandlerfactory.html">QVersitContactHandlerFactory</a></p></td><td><p>The interface for Versit plugins</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qversitcontactimporterpropertyhandlerv2.html">QVersitContactImporterPropertyHandlerV2</a></p></td><td><p>Interface for clients wishing to implement custom import behaviour for vCard properties</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a></p></td><td><p>Default implementation of a Versit resource handler</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qversitresourcehandler.html">QVersitResourceHandler</a></p></td><td><p>Interface for clients wishing to implement custom behaviour for loading and saving files to disk when exporting and importing</p></td></tr>
+</table>
+</p>
 <a name="supported-features"></a>
 <h2>Supported Features</h2>
 <p>Please see the <a href="vcardsupport.html#vcardsupport">Supported vCard Features</a> document for a list of vCard features that the Versit module supports.</p>

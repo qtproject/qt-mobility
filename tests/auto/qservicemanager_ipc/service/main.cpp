@@ -77,14 +77,14 @@ public:
     {
         qDebug() << "SharedTestService: Writing property";
         m_value = value;
-        //emit valueChanged();
+        emit valueChanged();
     }
 
     void resetValue()
     {
         qDebug() << "SharedTestService: Resetting property";
         m_value = "FFF";
-        //emit valueChanged();
+        emit valueChanged();
     }
 
     Q_INVOKABLE QString testFunctionWithReturnValue(int input)
@@ -241,14 +241,14 @@ public:
     {
         qDebug() << "UniqueTestService: Writing property";
         m_value = value;
-        //emit valueChanged();
+        emit valueChanged();
     }
 
     void resetValue()
     {
         qDebug() << "UniqueTestService: Resetting value";
         m_value = "FFF";
-        //emit valueChanged();
+        emit valueChanged();
     }
 
     Q_INVOKABLE QString testFunctionWithReturnValue(int input)
@@ -377,20 +377,12 @@ int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
 
-    //qRegisterServiceMetaType<QServiceFilter>();
-
-    //qDBusRegisterMetaType<QServiceFilter>();
-
     qRegisterMetaType<QServiceFilter>();
     qRegisterMetaTypeStreamOperators<QServiceFilter>("QServiceFilter");
     
-    // QVariant is built in with 4.7
-    // QTBUG-11316 causes a crash so this is a work around
-//#if (QT_VERSION < QT_VERSION_CHECK(4, 7, 0))
     qRegisterMetaType<QVariant>();    
     qRegisterMetaTypeStreamOperators<QVariant>("QVariant");
-//#endif
-
+   
     registerExampleService();
 
     QRemoteServiceClassRegister::registerType<SharedTestService>(QRemoteServiceClassRegister::SharedInstance);
@@ -399,10 +391,6 @@ int main(int argc, char** argv)
     //this only works
     QRemoteServiceControl* control = new QRemoteServiceControl();
     control->publishServices("qt_sfw_example_ipc_unittest");
-#ifdef Q_OS_SYMBIAN
-    qDebug("OTR Calling RProcess::rendezvous TODO if needed and correct place");
-    RProcess::Rendezvous(KErrNone); 
-#endif
     int res =  app.exec();
     delete control;
     unregisterExampleService();

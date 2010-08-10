@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -129,6 +130,7 @@
 <li class="fn">enum <b><a href="qcamera.html#LockType-enum">LockType</a></b></li>
 <li class="fn">flags <b><a href="qcamera.html#LockType-enum">LockTypes</a></b></li>
 <li class="fn">enum <b><a href="qcamera.html#State-enum">State</a></b></li>
+<li class="fn">enum <b><a href="qcamera.html#Status-enum">Status</a></b></li>
 <li class="fn"><b><a href="qcamera.html#QCamera">QCamera</a></b> ( QObject *, QMediaServiceProvider * )</li>
 <li class="fn"><b><a href="qcamera.html#QCamera-2">QCamera</a></b> ( const QByteArray &amp;, QObject * )</li>
 <li class="fn"><b><a href="qcamera.html#dtor.QCamera">~QCamera</a></b> ()</li>
@@ -152,8 +154,9 @@
 <li class="fn"><b><a href="qcamera.html#imageProcessing">imageProcessing</a></b> () const : QCameraImageProcessing *</li>
 <li class="fn"><b><a href="qcamera.html#isAvailable">isAvailable</a></b> () const : bool</li>
 <li class="fn"><b><a href="qcamera.html#isCaptureModeSupported">isCaptureModeSupported</a></b> ( CaptureMode ) const : bool</li>
-</ul></td><td class="topAlign"><ul>
 <li class="fn"><b><a href="qmediaobject.html#isMetaDataAvailable">isMetaDataAvailable</a></b> () const : bool</li>
+</ul></td><td class="topAlign"><ul>
+<li class="fn"><b><a href="qcamera.html#load">load</a></b> ()</li>
 <li class="fn"><b><a href="qcamera.html#lockFailed">lockFailed</a></b> ()</li>
 <li class="fn"><b><a href="qcamera.html#lockStatus-prop">lockStatus</a></b> () const : QCamera::LockStatus</li>
 <li class="fn"><b><a href="qcamera.html#lockStatus-prop">lockStatus</a></b> ( QCamera::LockType ) const : QCamera::LockStatus</li>
@@ -177,9 +180,11 @@
 <li class="fn"><b><a href="qcamera.html#start">start</a></b> ()</li>
 <li class="fn"><b><a href="qcamera.html#state-prop">state</a></b> () const : State</li>
 <li class="fn"><b><a href="qcamera.html#stateChanged">stateChanged</a></b> ( QCamera::State )</li>
+<li class="fn"><b><a href="qcamera.html#status-prop">status</a></b> () const : Status</li>
 <li class="fn"><b><a href="qcamera.html#stop">stop</a></b> ()</li>
 <li class="fn"><b><a href="qcamera.html#supportedLocks">supportedLocks</a></b> () const : QCamera::LockTypes</li>
 <li class="fn"><b><a href="qmediaobject.html#unbind">unbind</a></b> ( QObject * )</li>
+<li class="fn"><b><a href="qcamera.html#unload">unload</a></b> ()</li>
 <li class="fn"><b><a href="qcamera.html#unlock">unlock</a></b> ()</li>
 <li class="fn"><b><a href="qcamera.html#unlock-2">unlock</a></b> ( QCamera::LockTypes )</li>
 </ul>

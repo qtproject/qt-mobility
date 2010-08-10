@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -139,7 +140,7 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcameraexposure.html#ExposureMode-enum">ExposureMode</a></b> { ExposureManual, ExposureAuto, ExposureNight, ExposureBacklight, ..., ExposurePortrait }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcameraexposure.html#ExposureMode-enum">ExposureMode</a></b> { ExposureManual, ExposureAuto, ExposureNight, ExposureBacklight, ..., ExposureModeVendor }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcameraexposure.html#FlashMode-enum">FlashMode</a></b> { FlashOff, FlashOn, FlashAuto, FlashRedEyeReduction, ..., FlashManual }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> flags </td><td class="memItemRight bottomAlign"><b><a href="qcameraexposure.html#FlashMode-enum">FlashModes</a></b></td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcameraexposure.html#MeteringMode-enum">MeteringMode</a></b> { MeteringAverage, MeteringSpot, MeteringMatrix }</td></tr>
@@ -212,17 +213,18 @@
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="ExposureMode-enum"></a>enum QCameraExposure::ExposureMode</h3>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
-<tr><td  class="topAlign"><tt>QCameraExposure::ExposureManual</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">Manual mode.</td></tr>
-<tr><td  class="topAlign"><tt>QCameraExposure::ExposureAuto</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Automatic mode.</td></tr>
-<tr><td  class="topAlign"><tt>QCameraExposure::ExposureNight</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">Night mode.</td></tr>
-<tr><td  class="topAlign"><tt>QCameraExposure::ExposureBacklight</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">Backlight exposure mode.</td></tr>
-<tr><td  class="topAlign"><tt>QCameraExposure::ExposureSpotlight</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">Spotlight exposure mode.</td></tr>
-<tr><td  class="topAlign"><tt>QCameraExposure::ExposureSports</tt></td><td class=" topAlign"><tt>5</tt></td><td  class="topAlign">Spots exposure mode.</td></tr>
-<tr><td  class="topAlign"><tt>QCameraExposure::ExposureSnow</tt></td><td class=" topAlign"><tt>6</tt></td><td  class="topAlign">Snow exposure mode.</td></tr>
-<tr><td  class="topAlign"><tt>QCameraExposure::ExposureBeach</tt></td><td class=" topAlign"><tt>7</tt></td><td  class="topAlign">Beach exposure mode.</td></tr>
-<tr><td  class="topAlign"><tt>QCameraExposure::ExposureLargeAperture</tt></td><td class=" topAlign"><tt>8</tt></td><td  class="topAlign">Use larger aperture with small depth of field.</td></tr>
-<tr><td  class="topAlign"><tt>QCameraExposure::ExposureSmallAperture</tt></td><td class=" topAlign"><tt>9</tt></td><td  class="topAlign">Use smaller aperture.</td></tr>
-<tr><td  class="topAlign"><tt>QCameraExposure::ExposurePortrait</tt></td><td class=" topAlign"><tt>10</tt></td><td  class="topAlign">Portrait exposure mode.</td></tr>
+<tr><td  class="topAlign"><tt>QCameraExposure::ExposureManual</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Manual mode.</td></tr>
+<tr><td  class="topAlign"><tt>QCameraExposure::ExposureAuto</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">Automatic mode.</td></tr>
+<tr><td  class="topAlign"><tt>QCameraExposure::ExposureNight</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">Night mode.</td></tr>
+<tr><td  class="topAlign"><tt>QCameraExposure::ExposureBacklight</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">Backlight exposure mode.</td></tr>
+<tr><td  class="topAlign"><tt>QCameraExposure::ExposureSpotlight</tt></td><td class=" topAlign"><tt>5</tt></td><td  class="topAlign">Spotlight exposure mode.</td></tr>
+<tr><td  class="topAlign"><tt>QCameraExposure::ExposureSports</tt></td><td class=" topAlign"><tt>6</tt></td><td  class="topAlign">Spots exposure mode.</td></tr>
+<tr><td  class="topAlign"><tt>QCameraExposure::ExposureSnow</tt></td><td class=" topAlign"><tt>7</tt></td><td  class="topAlign">Snow exposure mode.</td></tr>
+<tr><td  class="topAlign"><tt>QCameraExposure::ExposureBeach</tt></td><td class=" topAlign"><tt>8</tt></td><td  class="topAlign">Beach exposure mode.</td></tr>
+<tr><td  class="topAlign"><tt>QCameraExposure::ExposureLargeAperture</tt></td><td class=" topAlign"><tt>9</tt></td><td  class="topAlign">Use larger aperture with small depth of field.</td></tr>
+<tr><td  class="topAlign"><tt>QCameraExposure::ExposureSmallAperture</tt></td><td class=" topAlign"><tt>10</tt></td><td  class="topAlign">Use smaller aperture.</td></tr>
+<tr><td  class="topAlign"><tt>QCameraExposure::ExposurePortrait</tt></td><td class=" topAlign"><tt>11</tt></td><td  class="topAlign">Portrait exposure mode.</td></tr>
+<tr><td  class="topAlign"><tt>QCameraExposure::ExposureModeVendor</tt></td><td class=" topAlign"><tt>1000</tt></td><td  class="topAlign">The base value for device specific exposure modes.</td></tr>
 </table>
 <h3 class="flags"><a name="FlashMode-enum"></a>enum QCameraExposure::FlashMode<br/>flags QCameraExposure::FlashModes</h3>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
@@ -239,9 +241,9 @@
 <p>The FlashModes type is a typedef for <a href="qflags.html">QFlags</a>&lt;FlashMode&gt;. It stores an OR combination of FlashMode values.</p>
 <h3 class="fn"><a name="MeteringMode-enum"></a>enum QCameraExposure::MeteringMode</h3>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
-<tr><td  class="topAlign"><tt>QCameraExposure::MeteringAverage</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Center weighted average metering mode.</td></tr>
-<tr><td  class="topAlign"><tt>QCameraExposure::MeteringSpot</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">Spot metering mode.</td></tr>
-<tr><td  class="topAlign"><tt>QCameraExposure::MeteringMatrix</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">Matrix metering mode.</td></tr>
+<tr><td  class="topAlign"><tt>QCameraExposure::MeteringAverage</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">Center weighted average metering mode.</td></tr>
+<tr><td  class="topAlign"><tt>QCameraExposure::MeteringSpot</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">Spot metering mode.</td></tr>
+<tr><td  class="topAlign"><tt>QCameraExposure::MeteringMatrix</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Matrix metering mode.</td></tr>
 </table>
 </div>
 <hr />

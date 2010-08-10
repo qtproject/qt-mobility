@@ -547,6 +547,7 @@ void QCameraExposure::setAutoShutterSpeed()
     \value ExposureLargeAperture Use larger aperture with small depth of field.
     \value ExposureSmallAperture Use smaller aperture.
     \value ExposurePortrait      Portrait exposure mode.
+    \value ExposureModeVendor    The base value for device specific exposure modes.
 */
 
 /*!

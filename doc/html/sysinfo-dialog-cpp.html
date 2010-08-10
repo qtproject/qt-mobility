@@ -70,6 +70,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -413,7 +414,7 @@
              type = &quot;Removable&quot;;
          }
          if(volType == QSystemStorageInfo::CdromDrive) {
-             type =  &quot;Cdrom&quot;;
+             type =  &quot;CDRom&quot;;
          }
          if(volType == QSystemStorageInfo::RemoteDrive) {
              type =  &quot;Network&quot;;
@@ -897,9 +898,36 @@
      }
  }
 
- void Dialog::storageChanged(bool added,const QString &amp;vol)
+ void Dialog::storageChanged(bool added,const QString &amp;volName)
  {
-     setupStorage();
+     if(added) {
+         QString type;
+         QSystemStorageInfo::DriveType volType;
+         volType = sti-&gt;typeForDrive(volName);
+         if(volType == QSystemStorageInfo::InternalDrive) {
+             type =  &quot;Internal&quot;;
+         }
+
+         if(volType == QSystemStorageInfo::RemovableDrive) {
+             type = &quot;Removable&quot;;
+         }
+         if(volType == QSystemStorageInfo::CdromDrive) {
+             type =  &quot;CDRom&quot;;
+         }
+         if(volType == QSystemStorageInfo::RemoteDrive) {
+             type =  &quot;Network&quot;;
+         }
+         QStringList items;
+         items &lt;&lt; volName;
+         items &lt;&lt; type;
+         items &lt;&lt; QString::number(sti-&gt;totalDiskSpace(volName));
+         items &lt;&lt; QString::number(sti-&gt;availableDiskSpace(volName));
+         QTreeWidgetItem *item = new QTreeWidgetItem(items);
+         storageTreeWidget-&gt;addTopLevelItem(item);
+
+     } else {
+         storageTreeWidget-&gt;takeTopLevelItem( storageTreeWidget-&gt;indexOfTopLevelItem(storageTreeWidget-&gt;findItems(volName,Qt::MatchExactly).at(0)));
+     }
  }
 
  void Dialog::bluetoothChanged(bool b)

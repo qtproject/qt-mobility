@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -141,13 +142,14 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#CaptureMode-enum">CaptureMode</a></b> { CaptureDisabled, CaptureStillImage, CaptureVideo }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#CaptureMode-enum">CaptureMode</a></b> { CaptureStillImage, CaptureVideo }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#Error-enum">Error</a></b> { NoError, CameraError, InvalidRequestError, ServiceMissingError, NotSupportedFeatureError }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#LockChangeReason-enum">LockChangeReason</a></b> { UserRequest, LockAcquired, LockFailed, LockLost, LockTemporaryLost }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#LockStatus-enum">LockStatus</a></b> { Unlocked, Searching, Locked }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#LockType-enum">LockType</a></b> { NoLock, LockExposure, LockWhiteBalance, LockFocus }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> flags </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#LockType-enum">LockTypes</a></b></td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#State-enum">State</a></b> { ActiveState, IdleState, StoppedState }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#State-enum">State</a></b> { ActiveState, LoadedState, StoppedState }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#Status-enum">Status</a></b> { ActiveStatus, StartingStatus, LoadedStatus, LoadingStatus, UnloadedStatus }</td></tr>
 </table>
 <hr />
 <a name="properties"></a>
@@ -156,6 +158,7 @@
 <li class="fn"><b><a href="qcamera.html#captureMode-prop">captureMode</a></b> : QCamera::CaptureMode</li>
 <li class="fn"><b><a href="qcamera.html#lockStatus-prop">lockStatus</a></b> : const QCamera::LockStatus</li>
 <li class="fn"><b><a href="qcamera.html#state-prop">state</a></b> : const QCamera::State</li>
+<li class="fn"><b><a href="qcamera.html#status-prop">status</a></b> : const QCamera::Status</li>
 </ul>
 <ul>
 <li class="fn">1 property inherited from <a href="qmediaobject.html#properties">QMediaObject</a></li>
@@ -180,6 +183,7 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#setViewfinder">setViewfinder</a></b> ( QVideoWidget * <i>viewfinder</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#setViewfinder-2">setViewfinder</a></b> ( QGraphicsVideoItem * <i>viewfinder</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> State </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#state-prop">state</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> Status </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#status-prop">status</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QCamera::LockTypes </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#supportedLocks">supportedLocks</a></b> () const</td></tr>
 </table>
 <hr />
@@ -196,11 +200,13 @@
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#load">load</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#searchAndLock">searchAndLock</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#searchAndLock-2">searchAndLock</a></b> ( QCamera::LockTypes <i>locks</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#captureMode-prop">setCaptureMode</a></b> ( QCamera::CaptureMode <i>mode</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#start">start</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#stop">stop</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#unload">unload</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#unlock">unlock</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#unlock-2">unlock</a></b> ( QCamera::LockTypes <i>locks</i> )</td></tr>
 </table>
@@ -214,7 +220,7 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#lockStatusChanged">lockStatusChanged</a></b> ( QCamera::LockStatus <i>status</i>, QCamera::LockChangeReason <i>reason</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#lockStatusChanged-2">lockStatusChanged</a></b> ( QCamera::LockType <i>lock</i>, QCamera::LockStatus <i>status</i>, QCamera::LockChangeReason <i>reason</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#locked">locked</a></b> ()</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#stateChanged">stateChanged</a></b> ( QCamera::State <i>state</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#stateChanged">stateChanged</a></b> ( QCamera::State )</td></tr>
 </table>
 <ul>
 <li class="fn">4 signals inherited from <a href="qmediaobject.html#signals">QMediaObject</a></li>
@@ -256,9 +262,8 @@
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="CaptureMode-enum"></a>enum QCamera::CaptureMode</h3>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
-<tr><td  class="topAlign"><tt>QCamera::CaptureDisabled</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">Camera is not configured for capture yet. This is the initial camera mode in the QCamera::Stopped state.</td></tr>
-<tr><td  class="topAlign"><tt>QCamera::CaptureStillImage</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Camera is configured for still frames capture.</td></tr>
-<tr><td  class="topAlign"><tt>QCamera::CaptureVideo</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">Camera is configured for video capture.</td></tr>
+<tr><td  class="topAlign"><tt>QCamera::CaptureStillImage</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">Camera is configured for still frames capture.</td></tr>
+<tr><td  class="topAlign"><tt>QCamera::CaptureVideo</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Camera is configured for video capture.</td></tr>
 </table>
 <h3 class="fn"><a name="Error-enum"></a>enum QCamera::Error</h3>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
@@ -297,12 +302,20 @@
 </table>
 <p>It may be not allowed to change some camera settings, like image resolution or codec in the active state.</p>
 <table class="valuelist"><tr class="even"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
-<tr><td  class="topAlign"><tt>QCamera::IdleState</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The camera is loaded and ready to be configured.</td></tr>
+<tr><td  class="topAlign"><tt>QCamera::LoadedState</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The camera is loaded and ready to be configured.</td></tr>
 </table>
 <p>In the Idle state it's allowed to query camera capabilities, set capture resolution, codecs, etc.</p>
 <p>The camera state is asyncronyously changed to IdleState with <a href="qcamera.html#captureMode-prop">QCamera::setCaptureMode</a>().</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
-<tr><td  class="topAlign"><tt>QCamera::StoppedState</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The initial camera state, with camera not loaded, the camera capabilities except of supported capture modes are unknown.</td></tr>
+<tr><td  class="topAlign"><tt>QCamera::StoppedState</tt></td><td class=" topAlign">?</td><td  class="topAlign">The initial camera state, with camera not loaded, the camera capabilities except of supported capture modes are unknown.</td></tr>
+</table>
+<h3 class="fn"><a name="Status-enum"></a>enum QCamera::Status</h3>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QCamera::ActiveStatus</tt></td><td class=" topAlign"><tt>5</tt></td><td  class="topAlign">The camera has been started and can produce data. The viewfinder displays video frames in active state.</td></tr>
+<tr><td  class="topAlign"><tt>QCamera::StartingStatus</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">The camera is starting in result of state transition to <a href="qcamera.html#State-enum">QCamera::ActiveState</a>. The camera service is not ready to capture yet.</td></tr>
+<tr><td  class="topAlign"><tt>QCamera::LoadedStatus</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">The camera is loaded and ready to be configured. This status indicates the camera device is opened and it's possible to query for supported image and video capture settings, like resolution, framerate and codecs.</td></tr>
+<tr><td  class="topAlign"><tt>QCamera::LoadingStatus</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The camera device loading in result of state transition from <a href="qcamera.html#State-enum">QCamera::UnloadedState</a> to <a href="qcamera.html#State-enum">QCamera::LoadedState</a> or <a href="qcamera.html#State-enum">QCamera::ActiveState</a>.</td></tr>
+<tr><td  class="topAlign"><tt>QCamera::UnloadedStatus</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The initial camera state, with camera not loaded. The camera capabilities except of supported capture modes may be unknown.</td></tr>
 </table>
 </div>
 <hr />
@@ -339,7 +352,13 @@
 </table>
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary">
-<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#stateChanged">stateChanged</a></b> ( QCamera::State <i>state</i> )</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcamera.html#stateChanged">stateChanged</a></b> ( QCamera::State )</td></tr>
+</table>
+<h3 class="fn"><a name="status-prop"></a>status : const <a href="qcamera.html#Status-enum">QCamera::Status</a></h3>
+<p>This property holds the current status of the camera object.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> Status </td><td class="memItemRight bottomAlign"><b>status</b> () const</td></tr>
 </table>
 </div>
 <hr />
@@ -375,7 +394,11 @@
 <p>Reimplemented from <a href="qmediaobject.html#isAvailable">QMediaObject::isAvailable</a>().</p>
 <p>Returne true if the camera service is ready to use.</p>
 <h3 class="fn"><a name="isCaptureModeSupported"></a>bool QCamera::isCaptureModeSupported ( <a href="qcamera.html#CaptureMode-enum">CaptureMode</a> <i>mode</i> ) const</h3>
-<p>Returns true if the capture <i>mode</i> is suported. <a href="qcamera.html#CaptureMode-enum">QCamera::CaptureDisabled</a> mode is always supported.</p>
+<p>Returns true if the capture <i>mode</i> is suported.</p>
+<h3 class="fn"><a name="load"></a>void QCamera::load ()<tt> [slot]</tt></h3>
+<p>Open the camera device.</p>
+<p>It's not necessary to explcitly load the camera, unless unless the application have to read the supported camera settings and change the default depending on the camera capabilities.</p>
+<p>In all the other cases it's possible to start the camera directly from unloaded state.</p>
 <h3 class="fn"><a name="lockFailed"></a>void QCamera::lockFailed ()<tt> [signal]</tt></h3>
 <p>Signals locking of at least one requested camera settings failed.</p>
 <h3 class="fn"><a name="lockStatusChanged"></a>void QCamera::lockStatusChanged ( <a href="qcamera.html#LockStatus-enum">QCamera::LockStatus</a> <i>status</i>, <a href="qcamera.html#LockChangeReason-enum">QCamera::LockChangeReason</a> <i>reason</i> )<tt> [signal]</tt></h3>
@@ -403,14 +426,15 @@
 <p>Sets the <a href="qgraphicsvideoitem.html">QGraphicsVideoItem</a> based camera <i>viewfinder</i>. The previously set viewfinder is detached.</p>
 <h3 class="fn"><a name="start"></a>void QCamera::start ()<tt> [slot]</tt></h3>
 <p>Starts the camera.</p>
-<p>This can involve powering up the camera device and can be asynchronyous.</p>
 <p>State is changed to <a href="qcamera.html#State-enum">QCamera::ActiveState</a> if camera is started succesfully, otherwise <a href="qcamera.html#error">error</a>() signal is emited.</p>
-<h3 class="fn"><a name="stateChanged"></a>void QCamera::stateChanged ( <a href="qcamera.html#State-enum">QCamera::State</a> <i>state</i> )<tt> [signal]</tt></h3>
-<p>Signal emitted when <i>state</i> of the Camera object has changed.</p>
+<p>While the camera state is changed to <a href="qcamera.html#State-enum">QCamera::ActiveState</a>, starting the camera service can be asynchronous with the actual status reported with <a href="qcamera.html#status-prop">QCamera::status</a> property.</p>
+<h3 class="fn"><a name="stateChanged"></a>void QCamera::stateChanged ( <a href="qcamera.html#State-enum">QCamera::State</a> )<tt> [signal]</tt></h3>
 <h3 class="fn"><a name="stop"></a>void QCamera::stop ()<tt> [slot]</tt></h3>
-<p>Stops the camera.</p>
+<p>Stops the camera. The camera state is changed from <a href="qcamera.html#State-enum">QCamera::ActiveState</a> to <a href="qcamera.html#State-enum">QCamera::LoadedState</a>.</p>
 <h3 class="fn"><a name="supportedLocks"></a><a href="qcamera.html#LockType-enum">QCamera::LockTypes</a> QCamera::supportedLocks () const</h3>
 <p>Returns the lock types, camera supports.</p>
+<h3 class="fn"><a name="unload"></a>void QCamera::unload ()<tt> [slot]</tt></h3>
+<p>Close the camera device and deallocate the related resources.</p>
 <h3 class="fn"><a name="unlock"></a>void QCamera::unlock ()<tt> [slot]</tt></h3>
 <p>Unlock all the requested camera locks.</p>
 <p>See also QCamera::searchAndLock(QCamera::LockTypes).</p>

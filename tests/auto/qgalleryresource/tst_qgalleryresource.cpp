@@ -43,7 +43,7 @@
 
 #include <QtTest/QtTest>
 
-#include <qgalleryitemlist.h>
+#include <qgalleryresource.h>
 
 
 Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGalleryResource))

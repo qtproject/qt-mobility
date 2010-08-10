@@ -70,6 +70,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -164,25 +165,22 @@
  #include &lt;QtGui&gt;
 
  #include &lt;qdocumentgallery.h&gt;
- #include &lt;qgalleryitemlist.h&gt;
- #include &lt;qgalleryitemlistmodel.h&gt;
+ #include &lt;qgalleryquerymodel.h&gt;
 
- ArtistView::ArtistView(const QString &amp;type, QWidget *parent, Qt::WindowFlags flags)
+ ArtistView::ArtistView(
+         const QString &amp;type, QAbstractGallery *gallery, QWidget *parent, Qt::WindowFlags flags)
      : GalleryView(parent, flags)
+     , model(new QGalleryQueryModel(gallery))
  {
-     setType(type);
-     setFields(QStringList()
-             &lt;&lt; QDocumentGallery::title
-             &lt;&lt; QDocumentGallery::trackCount);
-     setSortFields(QStringList()
-             &lt;&lt; QDocumentGallery::title);
-
-     model = new QGalleryItemListModel;
+     model-&gt;setRootType(type);
 
      QHash&lt;int, QString&gt; properties;
      properties.insert(Qt::DisplayRole, QDocumentGallery::title);
      properties.insert(ArtistDelegate::TrackCount, QDocumentGallery::trackCount);
      model-&gt;addColumn(properties);
+
+     model-&gt;setSortPropertyNames(QStringList()
+             &lt;&lt; QDocumentGallery::title);
 
      QListView *view = new QListView;
      view-&gt;setIconSize(QSize(124, 124));
@@ -190,7 +188,7 @@
      view-&gt;setViewMode(QListView::IconMode);
      view-&gt;setSpacing(4);
      view-&gt;setUniformItemSizes(true);
-     view-&gt;setModel(model);
+     view-&gt;setModel(model.data());
      view-&gt;setItemDelegate(new ArtistDelegate(this));
      connect(view, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
 
@@ -204,17 +202,17 @@
 
  ArtistView::~ArtistView()
  {
-     delete model;
  }
 
- void ArtistView::mediaChanged(QGalleryItemList *media)
+ void ArtistView::showChildren(const QVariant &amp;itemId)
  {
-     model-&gt;setItemList(media);
+     model-&gt;setRootItem(itemId);
+     model-&gt;execute();
  }
 
  void ArtistView::activated(const QModelIndex &amp;index)
  {
-     emit showAlbums(media()-&gt;id(index.row()), index.data(Qt::DisplayRole).toString());
+     emit showAlbums(model-&gt;itemId(index), index.data(Qt::DisplayRole).toString());
  }</pre>
 </div>
 <p /><address><hr /><div align="center">

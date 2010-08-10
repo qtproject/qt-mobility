@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -138,19 +139,19 @@
 <h2>Overview</h2>
 <p>The Document Gallery provides an API for navigating and querying documents using their meta-data. The common use case would be populating the media selection views of a music player, or image viewer. It also provides API's for querying and editing the meta-data of individual documents.</p>
 <p>Typically all files in user directories should be available in the document gallery. The principal types are Audio, Video, Image, and (Office) Document, but files can also be categorized as a File, Folder, Text, or Playlist. There are also some meta-types composed from the meta-data of files, these are Artist, Album, AudioGenre, and PhotoAlbum.</p>
-<p>The document gallery API is composed of a set of asynchronous request (<a href="qgalleryabstractrequest.html">QGalleryAbstractRequest</a>) classes which talk to the system file indexing service, this would be tracker on Maemo platforms, the meta-data system (MDS) on Symbian and potentially Windows Search, or Spotlight on macs. There are four requests; <a href="qgalleryqueryrequest.html">QGalleryQueryRequest</a> takes a type, a parent item, and some filtering criteria (<a href="qgalleryfilter.html">QGalleryFilter</a>) and returns meta-data for all matching items in a <a href="qgalleryitemlist.html">QGalleryItemList</a>. <a href="qgalleryitemrequest.html">QGalleryItemRequest</a> takes an item ID and returns meta-data for just that item. <a href="qgalleryurlrequest.html">QGalleryUrlRequest</a> takes the URL of an item and resolves the ID and type of that item. And <a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a> takes an item ID and removes that item from the gallery.</p>
+<p>The document gallery API is composed of a set of asynchronous request (<a href="qgalleryabstractrequest.html">QGalleryAbstractRequest</a>) classes which talk to the system file indexing service, this would be tracker on Maemo platforms, the meta-data system (MDS) on Symbian and potentially Windows Search, or Spotlight on macs. There are four requests; <a href="qgalleryqueryrequest.html">QGalleryQueryRequest</a> takes a type, a parent item, and some filtering criteria (<a href="qgalleryfilter.html">QGalleryFilter</a>) and returns meta-data for all matching items in a QGalleryItemList. <a href="qgalleryitemrequest.html">QGalleryItemRequest</a> takes an item ID and returns meta-data for just that item. QGalleryUrlRequest takes the URL of an item and resolves the ID and type of that item. And <a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a> takes an item ID and removes that item from the gallery.</p>
 <p>The requests operate on implementations of the <a href="qabstractgallery.html">QAbstractGallery</a>. The default implementation is <a href="qdocumentgallery.html">QDocumentGallery</a>, but it's possible to create alternative implementations which talk to a media server or web services.</p>
-<p>The primary interface to items in a gallery is the <a href="qgalleryitemlist.html">QGalleryItemList</a> class which provides accessors for reading and writing the meta-data of a set of items.</p>
-<p>A <a href="qgalleryitemlist.html">QGalleryItemList</a> cannot be created directly, instead an instance must be requested from a gallery using one of the gallery request classes.</p>
+<p>The primary interface to items in a gallery is the QGalleryItemList class which provides accessors for reading and writing the meta-data of a set of items.</p>
+<p>A QGalleryItemList cannot be created directly, instead an instance must be requested from a gallery using one of the gallery request classes.</p>
 <a name="requests"></a>
 <h3>Requests</h3>
 <p>The gallery request classes inherit from <a href="qgalleryabstractrequest.html">QGalleryAbstractRequest</a> and are used to fetch items from a gallery, or to initiate service provided by a gallery.</p>
 <table class="annotated">
 <tr class="odd topAlign"><td><p><a href="qgalleryabstractrequest.html">QGalleryAbstractRequest</a></p></td><td><p>Base class for gallery requests</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qgallerycountrequest.html">QGalleryCountRequest</a></p></td><td><p>Request for the number of items in a gallery matching some criteria</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qgalleryitemrequest.html">QGalleryItemRequest</a></p></td><td><p>Request for an item from a gallery</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qgalleryqueryrequest.html">QGalleryQueryRequest</a></p></td><td><p>Request for a set of items from a gallery</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a></p></td><td><p>Request which removes items from a gallery</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qgalleryitemrequest.html">QGalleryItemRequest</a></p></td><td><p>Request for the properties of a single item from a gallery</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qgalleryqueryrequest.html">QGalleryQueryRequest</a></p></td><td><p>Request for a set of items from a gallery</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a></p></td><td><p>Request which removes items from a gallery</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qgallerytyperequest.html">QGalleryTypeRequest</a></p></td><td><p>Interface for requesting the properties of a type from a gallery</p></td></tr>
 </table>
 <a name="filters"></a>
 <h3>Filters</h3>
@@ -171,7 +172,7 @@
 <a name="examples"></a>
 <h2>Examples</h2>
 <table class="annotated">
-<tr class="odd topAlign"><td><p><a href="documentshare.html">Document Sharing</a></p></td><td><p></p></td></tr>
+<tr class="odd topAlign"><td><p><a href="documentproperties.html">Document Sharing</a></p></td><td><p></p></td></tr>
 <tr class="even topAlign"><td><p><a href="mediabrowser.html">Media Browser</a></p></td><td><p></p></td></tr>
 </table>
 </div>

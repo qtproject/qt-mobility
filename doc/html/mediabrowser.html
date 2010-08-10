@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -131,6 +132,8 @@
 <li><a href="mediabrowser-artistview-h.html">mediabrowser/artistview.h</a></li>
 <li><a href="mediabrowser-browser-cpp.html">mediabrowser/browser.cpp</a></li>
 <li><a href="mediabrowser-browser-h.html">mediabrowser/browser.h</a></li>
+<li><a href="mediabrowser-coverartmodel-cpp.html">mediabrowser/coverartmodel.cpp</a></li>
+<li><a href="mediabrowser-coverartmodel-h.html">mediabrowser/coverartmodel.h</a></li>
 <li><a href="mediabrowser-galleryview-cpp.html">mediabrowser/galleryview.cpp</a></li>
 <li><a href="mediabrowser-galleryview-h.html">mediabrowser/galleryview.h</a></li>
 <li><a href="mediabrowser-photodelegate-cpp.html">mediabrowser/photodelegate.cpp</a></li>
@@ -139,11 +142,13 @@
 <li><a href="mediabrowser-photoview-h.html">mediabrowser/photoview.h</a></li>
 <li><a href="mediabrowser-songview-cpp.html">mediabrowser/songview.cpp</a></li>
 <li><a href="mediabrowser-songview-h.html">mediabrowser/songview.h</a></li>
+<li><a href="mediabrowser-thumbnailmodel-cpp.html">mediabrowser/thumbnailmodel.cpp</a></li>
+<li><a href="mediabrowser-thumbnailmodel-h.html">mediabrowser/thumbnailmodel.h</a></li>
 <li><a href="mediabrowser-main-cpp.html">mediabrowser/main.cpp</a></li>
 <li><a href="mediabrowser-mediabrowser-pro.html">mediabrowser/mediabrowser.pro</a></li>
 </ul>
 <p>This example demonstrates using the Document Gallery to navigate collections of media documents organized using meta-data.</p>
-<p>The <a href="qgalleryqueryrequest.html">QGalleryQueryRequest</a> class is used to query the document gallery for items of a specific type, and for the children of container documents. And the <a href="qgalleryitemlistmodel.html">QGalleryItemListModel</a> class is used to present the documents returned by the queries, in an item view.</p>
+<p>The <a href="qgalleryqueryrequest.html">QGalleryQueryRequest</a> class is used to query the document gallery for items of a specific type, and for the children of container documents. And the QGalleryItemListModel class is used to present the documents returned by the queries, in an item view.</p>
 <p>The browser has five views that can be selected from the application menu each displaying a different type of document or collection.</p>
 <p>The <i>Artists</i> view displays a list of all artists who performed songs in the gallery and the total number of songs attributed to them. The <i>Album Artists</i> view is similar to the Artists view except it lists the title artists of albums in the gallery. Selecting an artist from one of these views will display a list of albums the artist has contributed to, or is the title artist of respectively.</p>
 <p>The <i>Albums</i> view displays a list of all albums in the gallery, including the title artist, album cover, and the number of songs on the album. Selecting an album from this list will display a list of all songs on the album.</p>

@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -124,18 +125,18 @@
 <table class="qmlsummary">
 <tr class="odd topAlign"><ul>
 <li class="fn"><b><b><a href="qml-galleryquerymodel.html#currentProgress-prop">currentProgress</a></b></b> : int</li>
-<li class="fn"><b><b><a href="qml-galleryquerymodel.html#cursorPosition-prop">cursorPosition</a></b></b> : int</li>
 <li class="fn"><b><b><a href="qml-galleryquerymodel.html#filter-prop">filter</a></b></b> : GalleryFilter</li>
 <li class="fn"><b><b><a href="qml-galleryquerymodel.html#gallery-prop">gallery</a></b></b> : QAbstractGallery</li>
-<li class="fn"><b><b><a href="qml-galleryquerymodel.html#itemType-prop">itemType</a></b></b> : string</li>
+<li class="fn"><b><b><a href="qml-galleryquerymodel.html#limit-prop">limit</a></b></b> : int</li>
 <li class="fn"><b><b><a href="qml-galleryquerymodel.html#live-prop">live</a></b></b> : bool</li>
 <li class="fn"><b><b><a href="qml-galleryquerymodel.html#maximumProgress-prop">maximumProgress</a></b></b> : int</li>
+<li class="fn"><b><b><a href="qml-galleryquerymodel.html#offset-prop">offset</a></b></b> : int</li>
 </ul></td><td class="topAlign"><ul>
-<li class="fn"><b><b><a href="qml-galleryquerymodel.html#minimumPagedItems-prop">minimumPagedItems</a></b></b> : int</li>
 <li class="fn"><b><b><a href="qml-galleryquerymodel.html#properties-prop">properties</a></b></b> : QStringList</li>
 <li class="fn"><b><b><a href="qml-galleryquerymodel.html#result-prop">result</a></b></b> : enum</li>
+<li class="fn"><b><b><a href="qml-galleryquerymodel.html#rootItem-prop">rootItem</a></b></b> : variant</li>
+<li class="fn"><b><b><a href="qml-galleryquerymodel.html#rootType-prop">rootType</a></b></b> : string</li>
 <li class="fn"><b><b><a href="qml-galleryquerymodel.html#scope-prop">scope</a></b></b> : enum</li>
-<li class="fn"><b><b><a href="qml-galleryquerymodel.html#scopeItemId-prop">scopeItemId</a></b></b> : variant</li>
 <li class="fn"><b><b><a href="qml-galleryquerymodel.html#sortProperties-prop">sortProperties</a></b></b> : QStringList</li>
 <li class="fn"><b><b><a href="qml-galleryquerymodel.html#state-prop">state</a></b></b> : enum</li>
 </ul>
@@ -158,18 +159,14 @@
 </ul>
 <a name="details"></a>
 <h2>Detailed Description</h2>
-<p>This element is part of the <b>QtMobility.gallery 1.0</b> module.</p>
+<p>This element is part of the <b>QtMobility.gallery 1.1</b> module.</p>
 <p>The properties that should be returned for each item by the query are specified in <a href="qml-galleryquerymodel.html#properties-prop">properties</a>. In addition all queries return the following properties:</p>
 <ul>
 <li>itemId The ID of an item.</li>
-<li>itemUrl The URL of an item.</li>
-<li><a href="qml-galleryquerymodel.html#itemType-prop">itemType</a> The type of an item.</li>
-<li>available Whether the meta-data of an item is currently available. Meta-data can be unavailable when an item is outside the loaded range.</li>
-<li>reading Whether the model is in the process of querying new meta-data values for an item.</li>
-<li>writing Whether the model is in the process of writing changes to meta-data values back to the gallery.</li>
+<li>itemType The type of an item.</li>
 </ul>
 <pre class="highlightedCode brush: cpp"> import Qt 4.7
- import QtMobility.gallery 1.0
+ import QtMobility.gallery 1.1
 
  Rectangle {
      width: 1024
@@ -183,8 +180,8 @@
          model: GalleryQueryModel {
              gallery: DocumentGallery {}
 
-             itemType: &quot;Image&quot;
-             properties: [&quot;thumbnailImage&quot;]
+             rootType: &quot;Image&quot;
+             properties: [ &quot;url&quot; ]
              filter: GalleryFilter {
                  property: &quot;fileName&quot;;
                  value: &quot;*.jpg&quot;;
@@ -193,28 +190,26 @@
          }
 
          delegate: Image {
-             pixmap: thumbnailImage
+             source: url
          }
      }
  }</pre>
-<p>See also <a href="qml-galleryitem.html">GalleryItem</a> and <a href="qml-galleryquerycount.html">GalleryQueryCount</a>.</p>
+<p>See also <a href="qml-galleryitem.html">GalleryItem</a> and <a href="qml-gallerytype.html">GalleryType</a>.</p>
 <hr />
 <h2>Property Documentation</h2>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="currentProgress-prop"></a>currentProgress : int</td></tr></table></div><div class="qmldoc"><p>This property holds the current progress value.</p>
-</div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="cursorPosition-prop"></a>cursorPosition : int</td></tr></table></div><div class="qmldoc"><p>This property holds the offset of a query's internal cache.</p>
 </div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="filter-prop"></a>filter : <a href="qml-galleryfilter.html">GalleryFilter</a></td></tr></table></div><div class="qmldoc"><p>This property contains criteria to used to filter the results of a query.</p>
 </div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="gallery-prop"></a>gallery : <a href="qabstractgallery.html">QAbstractGallery</a></td></tr></table></div><div class="qmldoc"><p>This property holds the gallery a query should return results from.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="itemType-prop"></a>itemType : string</td></tr></table></div><div class="qmldoc"><p>This property contains the type of item a query should return.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="limit-prop"></a>limit : int</td></tr></table></div><div class="qmldoc"><p>This property contains the maximum number of items returned by a query.</p>
 </div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="live-prop"></a>live : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether a query should refresh its results automatically.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="maximumProgress-prop"></a>maximumProgress : int</td></tr></table></div><div class="qmldoc"><p>This property holds the maximum progress value.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="maximumProgress-prop"></a><span class="qmlreadonly">read-only</span>maximumProgress : int</td></tr></table></div><div class="qmldoc"><p>This property holds the maximum progress value.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="minimumPagedItems-prop"></a>minimumPagedItems : int</td></tr></table></div><div class="qmldoc"><p>This property contains the minimum number of consectutive items a query should retain in it's internal cache.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="offset-prop"></a>offset : int</td></tr></table></div><div class="qmldoc"><p>This property holds the offset of the first item returned by a query.</p>
 </div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="properties-prop"></a>properties : QStringList</td></tr></table></div><div class="qmldoc"><p>This property holds the item properties a query should return values for.</p>
 </div></div><br/>
@@ -226,17 +221,19 @@
 <li>NoGallery No gallery was set on the query.</li>
 <li>NotSupported Queries are not supported by the <a href="qml-galleryquerymodel.html#gallery-prop">gallery</a>.</li>
 <li>ConnectionError The query failed due to a connection error.</li>
-<li>InvalidItemError The query failed because the value of <a href="qml-galleryquerymodel.html#scopeItemId-prop">scopeItemId</a> is not a valid item ID.</li>
-<li>ItemTypeError The query failed because the value of <a href="qml-galleryquerymodel.html#itemType-prop">itemType</a> is not a valid item type.</li>
+<li>InvalidItemError The query failed because the value of scopeItemId is not a valid item ID.</li>
+<li>ItemTypeError The query failed because the value of itemType is not a valid item type.</li>
 <li>InvalidPropertyError The query failed because the <a href="qml-galleryquerymodel.html#filter-prop">filter</a> refers to an invalid property.</li>
 <li>PropertyTypeError The query failed because the type of a value in the <a href="qml-galleryquerymodel.html#filter-prop">filter</a> is incompatible with the property.</li>
 <li>UnsupportedFilterTypeError The query failed because the set <a href="qml-galleryquerymodel.html#filter-prop">filter</a> is not supported by the <a href="qml-galleryquerymodel.html#gallery-prop">gallery</a>.</li>
 <li>UnsupportedFilterOptionError The query failed because an option of a <a href="qml-galleryquerymodel.html#filter-prop">filter</a> is not supported by the <a href="qml-galleryquerymodel.html#gallery-prop">gallery</a>.</li>
 </ul>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="scope-prop"></a>scope : enum</td></tr></table></div><div class="qmldoc"><p>The property contains whether a query should count the direct descendants of the <a href="qml-galleryquerymodel.html#scopeItemId-prop">scopeItemId</a> or all descendants.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="rootItem-prop"></a>rootItem : variant</td></tr></table></div><div class="qmldoc"><p>This property contains the id of an item that a query should return the descendants of.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="scopeItemId-prop"></a>scopeItemId : variant</td></tr></table></div><div class="qmldoc"><p>This property contains the id of an item that a query should return a count of the descendants of.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="rootType-prop"></a>rootType : string</td></tr></table></div><div class="qmldoc"><p>This property contains the type of item a query should return.</p>
+</div></div><br/>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="scope-prop"></a>scope : enum</td></tr></table></div><div class="qmldoc"><p>The property contains whether a query should count the direct descendants of the scopeItemId or all descendants.</p>
 </div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="sortProperties-prop"></a>sortProperties : QStringList</td></tr></table></div><div class="qmldoc"><p>This property holds the properties the results of a query should be sorted on.</p>
 </div></div><br/>

@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -122,55 +123,75 @@
 <p>This is the complete list of members for <a href="qgalleryqueryrequest.html">QGalleryQueryRequest</a>, including inherited members.</p>
 <table class="propsummary">
 <tr><td  class="topAlign"><ul>
+<li class="fn">enum <b><a href="qgalleryabstractrequest.html#RequestType-enum">RequestType</a></b></li>
 <li class="fn">enum <b><a href="qgalleryabstractrequest.html#Result-enum">Result</a></b></li>
-<li class="fn">enum <b><a href="qgalleryabstractrequest.html#Scope-enum">Scope</a></b></li>
+<li class="fn">enum <b><a href="qgalleryqueryrequest.html#Scope-enum">Scope</a></b></li>
 <li class="fn">enum <b><a href="qgalleryabstractrequest.html#State-enum">State</a></b></li>
-<li class="fn">enum <b><a href="qgalleryabstractrequest.html#Type-enum">Type</a></b></li>
 <li class="fn"><b><a href="qgalleryqueryrequest.html#QGalleryQueryRequest">QGalleryQueryRequest</a></b> ( QObject * )</li>
 <li class="fn"><b><a href="qgalleryqueryrequest.html#QGalleryQueryRequest-2">QGalleryQueryRequest</a></b> ( QAbstractGallery *, QObject * )</li>
 <li class="fn"><b><a href="qgalleryqueryrequest.html#dtor.QGalleryQueryRequest">~QGalleryQueryRequest</a></b> ()</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#cancel">cancel</a></b> ()</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#cancelled">cancelled</a></b> ()</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#clear">clear</a></b> ()</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#currentIndex-prop">currentIndex</a></b> () const : int</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#currentItemChanged">currentItemChanged</a></b> ()</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#currentProgress-prop">currentProgress</a></b> () const : int</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#d_ptr-var">d_ptr</a></b> : QScopedPointer&lt;QGalleryAbstractRequestPrivate&gt;</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#execute">execute</a></b> ()</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#failed">failed</a></b> ( int )</li>
 <li class="fn"><b><a href="qgalleryqueryrequest.html#filter-prop">filter</a></b> () const : QGalleryFilter</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#finished">finished</a></b> ( int )</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#first">first</a></b> () : bool</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#gallery-prop">gallery</a></b> () const : QAbstractGallery *</li>
-<li class="fn"><b><a href="qgalleryqueryrequest.html#initialCursorPosition-prop">initialCursorPosition</a></b> () const : int</li>
 <li class="fn"><b><a href="qgalleryqueryrequest.html#live-prop">isLive</a></b> () const : bool</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#supported-prop">isSupported</a></b> () const : bool</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#valid-prop">isValid</a></b> () const : bool</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#itemCount">itemCount</a></b> () const : int</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#itemId-prop">itemId</a></b> () const : QVariant</li>
 <li class="fn"><b><a href="qgalleryqueryrequest.html#itemType-prop">itemType</a></b> () const : QString</li>
-<li class="fn"><b><a href="qgalleryqueryrequest.html#items-prop">items</a></b> () const : QGalleryItemList *</li>
-<li class="fn"><b><a href="qgalleryqueryrequest.html#itemsChanged">itemsChanged</a></b> ( QGalleryItemList * )</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#itemUrl-prop">itemUrl</a></b> () const : QUrl</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#last">last</a></b> () : bool</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#limit-prop">limit</a></b> () const : int</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#maximumProgress-prop">maximumProgress</a></b> () const : int</li>
-<li class="fn"><b><a href="qgalleryqueryrequest.html#minimumPagedItems-prop">minimumPagedItems</a></b> () const : int</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#metaData">metaData</a></b> ( int ) const : QVariant</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#metaData-2">metaData</a></b> ( const QString &amp; ) const : QVariant</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#next">next</a></b> () : bool</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#offset-prop">offset</a></b> () const : int</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#previous">previous</a></b> () : bool</li>
 </ul></td><td class="topAlign"><ul>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#progressChanged">progressChanged</a></b> ( int, int )</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#propertyAttributes">propertyAttributes</a></b> ( int ) const : QGalleryProperty::Attributes</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#propertyKey">propertyKey</a></b> ( const QString &amp; ) const : int</li>
 <li class="fn"><b><a href="qgalleryqueryrequest.html#propertyNames-prop">propertyNames</a></b> () const : QStringList</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#propertyType">propertyType</a></b> ( int ) const : QVariant::Type</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#resources-prop">resources</a></b> () const : QList&lt;QGalleryResource&gt;</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#result-prop">result</a></b> () const : int</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#resultChanged">resultChanged</a></b> ()</li>
-<li class="fn"><b><a href="qgalleryqueryrequest.html#scope-prop">scope</a></b> () const : QGalleryAbstractRequest::Scope</li>
-<li class="fn"><b><a href="qgalleryqueryrequest.html#scopeItemId-prop">scopeItemId</a></b> () const : QVariant</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#resultSet">resultSet</a></b> () const : QGalleryResultSet *</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#resultSetChanged">resultSetChanged</a></b> ( QGalleryResultSet * )</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#rootItem-prop">rootItem</a></b> () const : QVariant</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#rootType-prop">rootType</a></b> () const : QString</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#scope-prop">scope</a></b> () const : QGalleryQueryRequest::Scope</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#currentIndex-prop">seek</a></b> ( int, bool ) : bool</li>
 <li class="fn"><b><a href="qgalleryqueryrequest.html#filter-prop">setFilter</a></b> ( const QGalleryFilter &amp; )</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#gallery-prop">setGallery</a></b> ( QAbstractGallery * )</li>
-<li class="fn"><b><a href="qgalleryqueryrequest.html#initialCursorPosition-prop">setInitialCursorPosition</a></b> ( int )</li>
-<li class="fn"><b><a href="qgalleryqueryrequest.html#itemType-prop">setItemType</a></b> ( const QString &amp; )</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#limit-prop">setLimit</a></b> ( int )</li>
 <li class="fn"><b><a href="qgalleryqueryrequest.html#live-prop">setLive</a></b> ( bool )</li>
-<li class="fn"><b><a href="qgalleryqueryrequest.html#minimumPagedItems-prop">setMinimumPagedItems</a></b> ( int )</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#setMetaData">setMetaData</a></b> ( int, const QVariant &amp; ) : bool</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#setMetaData-2">setMetaData</a></b> ( const QString &amp;, const QVariant &amp; ) : bool</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#offset-prop">setOffset</a></b> ( int )</li>
 <li class="fn"><b><a href="qgalleryqueryrequest.html#propertyNames-prop">setPropertyNames</a></b> ( const QStringList &amp; )</li>
 <li class="fn"><b><a href="qgalleryqueryrequest.html#setResponse">setResponse</a></b> ( QGalleryAbstractResponse * )</li>
-<li class="fn"><b><a href="qgalleryqueryrequest.html#scope-prop">setScope</a></b> ( QGalleryAbstractRequest::Scope )</li>
-<li class="fn"><b><a href="qgalleryqueryrequest.html#scopeItemId-prop">setScopeItemId</a></b> ( const QVariant &amp; )</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#rootItem-prop">setRootItem</a></b> ( const QVariant &amp; )</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#rootType-prop">setRootType</a></b> ( const QString &amp; )</li>
+<li class="fn"><b><a href="qgalleryqueryrequest.html#scope-prop">setScope</a></b> ( QGalleryQueryRequest::Scope )</li>
 <li class="fn"><b><a href="qgalleryqueryrequest.html#sortPropertyNames-prop">setSortPropertyNames</a></b> ( const QStringList &amp; )</li>
 <li class="fn"><b><a href="qgalleryqueryrequest.html#sortPropertyNames-prop">sortPropertyNames</a></b> () const : QStringList</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#state-prop">state</a></b> () const : State</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#stateChanged">stateChanged</a></b> ( QGalleryAbstractRequest::State )</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#succeeded">succeeded</a></b> ()</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#supportedChanged">supportedChanged</a></b> ()</li>
-<li class="fn"><b><a href="qgalleryabstractrequest.html#type">type</a></b> () const : Type</li>
+<li class="fn"><b><a href="qgalleryabstractrequest.html#type">type</a></b> () const : RequestType</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#waitForFinished">waitForFinished</a></b> ( int ) : bool</li>
 </ul>
 </td></tr>

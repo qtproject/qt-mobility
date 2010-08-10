@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -103,7 +104,8 @@
             <ul>
               <li class="first"><a href="index.html">Home</a></li>
               <!--  Bread crumbs goes here -->
-              <li><a href="modules.html">Modules</a></li>              <li>QVersitContactExporter</li>
+              <li><a href="modules.html">Modules</a></li>              <li><a href="qtversit.html">QtVersit</a></li>
+              <li>QVersitContactExporter</li>
             </ul>
           </div>
           <div class="toolbuttons toolblock">
@@ -123,6 +125,7 @@
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
+<li class="level2"><a href="#extension-via-handlers">Extension via handlers</a></li>
 <li class="level2"><a href="#exporting-group-relationships">Exporting group relationships</a></li>
 </ul>
 </div>
@@ -142,6 +145,7 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactexporter.html#QVersitContactExporter">QVersitContactExporter</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactexporter.html#QVersitContactExporter-2">QVersitContactExporter</a></b> ( const QString &amp; <i>profile</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactexporter.html#dtor.QVersitContactExporter">~QVersitContactExporter</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QVersitDocument&gt; </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactexporter.html#documents">documents</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QMap&lt;int, Error&gt; </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactexporter.html#errors">errors</a></b> () const</td></tr>
@@ -156,14 +160,8 @@
 <h2>Detailed Description</h2>
 <p>The QVersitContactExporter class converts <a href="qcontact.html">QContacts</a> into <a href="qversitdocument.html">QVersitDocuments</a>.</p>
 <p>This class is used to convert lists of <a href="qcontact.html">QContacts</a> (which may be stored in a <a href="qcontactmanager.html">QContactManager</a>) into lists of <a href="qversitdocument.html">QVersitDocuments</a> (which may be written to an I/O device using <a href="qversitreader.html">QVersitReader</a>. Unless there is an error, there is a one-to-one mapping between contacts and Versit documents. The exporter can be extended by clients by associating resource and detail handlers.</p>
-<p>A <a href="qversitresourcehandler.html">QVersitResourceHandler</a> is associated with the exporter to supply the behaviour for loading files from persistent storage. By default, this is set to a <a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a>, which supports basic resource loading from the file system. An alternative resource handler can be specified with <a href="qversitcontactexporter.html#setResourceHandler">setResourceHandler</a>().</p>
-<p>By associating a <a href="qversitcontactexporterdetailhandlerv2.html">QVersitContactExporterDetailHandlerV2</a> with the exporter using <a href="qversitcontactexporter.html#setDetailHandler">setDetailHandler</a>(), the client can pass in a handler to override the processing of details and/or handle details that QVersitContactExporter doesn't support. A &quot;backup&quot; handler is provided by <a href="qversitcontactexporterdetailhandlerv2.html#createBackupHandler">QVersitContactExporterDetailHandlerV2::createBackupHandler</a>(), which serializes any details that the standard QVersitContactExporter doesn't support to the vCard.</p>
-<p>An example usage of QVersitContactExporter:</p>
+<p>Here is a simple example of how to use QVersitContactExporter:</p>
 <pre class="highlightedCode brush: cpp">     QVersitContactExporter contactExporter;
-
-     QVersitContactExporterDetailHandlerV2* backupHandler =
-         QVersitContactExporterDetailHandlerV2::createBackupHandler();
-     contactExporter.setDetailHandler(backupHandler);
 
      QContact contact;
      <span class="comment">// Create a name</span>
@@ -175,9 +173,13 @@
          return;
      QList&lt;QVersitDocument&gt; versitDocuments = contactExporter.documents();
 
-     <span class="comment">// detailHandler.mUnknownDetails now contains the list of unknown details</span>
-
-     delete backupHandler;</pre>
+     <span class="comment">// detailHandler.mUnknownDetails now contains the list of unknown details</span></pre>
+<a name="extension-via-handlers"></a>
+<h3>Extension via handlers</h3>
+<p>A <a href="qversitresourcehandler.html">QVersitResourceHandler</a> is associated with the exporter to supply the behaviour for loading files from persistent storage. By default, this is set to a <a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a>, which supports basic resource loading from the file system. An alternative resource handler can be specified with <a href="qversitcontactexporter.html#setResourceHandler">setResourceHandler</a>().</p>
+<p>By associating a <a href="qversitcontactexporterdetailhandlerv2.html">QVersitContactExporterDetailHandlerV2</a> with the exporter using <a href="qversitcontactexporter.html#setDetailHandler">setDetailHandler</a>(), the client can pass in a handler to override the processing of details and/or handle details that QVersitContactExporter doesn't support. Also, handlers can be implicitly associated to an exporter through the <a href="versitplugins.html">handler plugin mechanism</a>. The exporter can be constructed with a profile, which gives hints about what kind of handlers should be added to it. For example, the backup profile can be used to instruct the exporter to encode any unknown details in the vCard such that it can be reconstructed later (a <a href="qversitcontactimporter.html">QVersitContactImporter</a> constructed under the backup profile can be used to decode it). To illustrate, a backup exporter can be constructed with:</p>
+<pre class="highlightedCode brush: cpp"> QVersitContactExporter exporter(QVersitContactHandlerFactory::ProfileBackup);</pre>
+<p>For more details on how the backup plugin works, see <a href="versitplugins.html">Versit Plugins</a></p>
 <a name="exporting-group-relationships"></a>
 <h3>Exporting group relationships</h3>
 <p>The exporter does not handle QContactRelationships at all.</p>
@@ -253,6 +255,9 @@
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QVersitContactExporter"></a>QVersitContactExporter::QVersitContactExporter ()</h3>
 <p>Constructs a new contact exporter</p>
+<h3 class="fn"><a name="QVersitContactExporter-2"></a>QVersitContactExporter::QVersitContactExporter ( const QString &amp; <i>profile</i> )</h3>
+<p>Constructs a new exporter for the given <i>profile</i>. The profile strings should be one of those defined by <a href="qversitcontacthandlerfactory.html">QVersitContactHandlerFactory</a>, or a value otherwise agreed to by a <a href="versitplugins.html">Versit plugin</a>.</p>
+<p>The profile determines which plugins will be loaded to supplement the exporter.</p>
 <h3 class="fn"><a name="dtor.QVersitContactExporter"></a>QVersitContactExporter::~QVersitContactExporter ()</h3>
 <p>Frees any memory in use by this contact exporter.</p>
 <h3 class="fn"><a name="documents"></a>QList&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt; QVersitContactExporter::documents () const</h3>

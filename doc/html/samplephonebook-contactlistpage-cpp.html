@@ -70,6 +70,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -296,6 +297,9 @@
      if (m_manager &amp;&amp; m_manager-&gt;managerUri() == managerUri)
          return;
 
+     if (m_manager)
+         disconnect(m_manager, 0, this, 0); <span class="comment">// we no longer want updates from the old manager</span>
+
      <span class="comment">// the change is real.  update.</span>
      if (m_initialisedManagers.contains(managerUri)) {
          m_manager = m_initialisedManagers.value(managerUri);
@@ -309,6 +313,13 @@
          }
          m_initialisedManagers.insert(managerUri, m_manager);
      }
+
+     connect(m_manager, SIGNAL(contactsAdded(const QList&lt;QContactLocalId&gt;&amp;)),
+             this, SLOT(contactsAdded(const QList&lt;QContactLocalId&gt;&amp;)));
+     connect(m_manager, SIGNAL(contactsRemoved(const QList&lt;QContactLocalId&gt;&amp;)),
+             this, SLOT(contactsRemoved(const QList&lt;QContactLocalId&gt;&amp;)));
+     connect(m_manager, SIGNAL(contactsChanged(const QList&lt;QContactLocalId&gt;&amp;)),
+             this, SLOT(contactsChanged(const QList&lt;QContactLocalId&gt;&amp;)));
 
      <span class="comment">// signal that the manager has changed.</span>
      emit managerChanged(m_manager);
@@ -324,15 +335,79 @@
      m_filterActiveLabel-&gt;setVisible(m_currentFilter != QContactFilter());
 
      m_contactsList-&gt;clear();
-     m_idToListIndex.clear();
      m_contacts = m_manager-&gt;contacts(m_currentFilter);
      foreach (QContact contact, m_contacts) {
          QListWidgetItem *currItem = new QListWidgetItem;
          currItem-&gt;setData(Qt::DisplayRole, contact.displayLabel());
          currItem-&gt;setData(Qt::UserRole, contact.localId()); <span class="comment">// also store the id of the contact.</span>
-         m_idToListIndex.insert(contact.localId(), m_contactsList-&gt;count());
          m_contactsList-&gt;addItem(currItem);
      }
+ }
+
+ void ContactListPage::contactsAdded(const QList&lt;QContactLocalId&gt;&amp; ids)
+ {
+     QContactIntersectionFilter qcif;
+     QContactLocalIdFilter qclif;
+     qclif.setIds(ids);
+     qcif.append(qclif);
+     qcif.append(m_currentFilter);
+     m_contacts = m_manager-&gt;contacts(qcif);
+     foreach (QContact contact, m_contacts) {
+         QListWidgetItem *currItem = new QListWidgetItem;
+         currItem-&gt;setData(Qt::DisplayRole, contact.displayLabel());
+         currItem-&gt;setData(Qt::UserRole, contact.localId()); <span class="comment">// also store the id of the contact.</span>
+         m_contactsList-&gt;addItem(currItem);
+     }
+ }
+
+ void ContactListPage::contactsRemoved(const QList&lt;QContactLocalId&gt;&amp; ids)
+ {
+     int i = 0;
+     while (i &lt; m_contactsList-&gt;count()) {
+         if (ids.contains(m_contactsList-&gt;item(i)-&gt;data(Qt::UserRole).toUInt())) {
+             delete m_contactsList-&gt;takeItem(i);
+         } else {
+             i++;
+         }
+     }
+     i = 0;
+     while (i &lt; m_contacts.count()) {
+         if (ids.contains(m_contacts[i].localId())) {
+             m_contacts.removeAt(i);
+         } else {
+             i++;
+         }
+     }
+ }
+
+ void ContactListPage::contactsChanged(const QList&lt;QContactLocalId&gt;&amp; ids)
+ {
+     int i = 0;
+     QMap&lt;QContactLocalId, QContact&gt; updatedContacts;
+     foreach (QContactLocalId id, ids) {
+         QContact contact = m_manager-&gt;contact(id);
+         updatedContacts.insert(id, contact);
+     }
+
+     for (i = 0; i &lt; m_contactsList-&gt;count(); i++) {
+         QListWidgetItem* currItem = m_contactsList-&gt;item(i);
+         QContactLocalId lid = currItem-&gt;data(Qt::UserRole).toUInt();
+         if (updatedContacts.contains(lid)) {
+             currItem-&gt;setData(Qt::DisplayRole, updatedContacts.value(lid).displayLabel());
+         }
+     }
+
+     for (i = 0; i &lt; m_contacts.count(); i++) {
+         QContactLocalId lid = m_contacts[i].localId();
+         if (updatedContacts.contains(lid)) {
+             m_contacts[i] = updatedContacts.value(lid);
+         }
+     }
+ }
+
+ void ContactListPage::dataChanged()
+ {
+     rebuildList(m_currentFilter);
  }
 
  void ContactListPage::addClicked()
@@ -369,7 +444,8 @@
      QContactLocalId contactId = QContactLocalId(m_contactsList-&gt;currentItem()-&gt;data(Qt::UserRole).toUInt());
      bool success = m_manager-&gt;removeContact(contactId);
      if (success) {
-         delete m_contactsList-&gt;takeItem(m_contactsList-&gt;currentRow());
+         <span class="comment">// no need to do this here - we can wait for the signal to get through to contactsRemoved()</span>
+         <span class="comment">// delete m_contactsList-&gt;takeItem(m_contactsList-&gt;currentRow());</span>
      }
      else
          QMessageBox::information(this, &quot;Failed!&quot;, &quot;Failed to delete contact!&quot;);
@@ -400,7 +476,7 @@
                      it++;
                  }
                  m_manager-&gt;saveContacts(&amp;contacts, &amp;errorMap);
-                 rebuildList(m_currentFilter);
+                 <span class="comment">//rebuildList(m_currentFilter);</span>
              }
          }
      }

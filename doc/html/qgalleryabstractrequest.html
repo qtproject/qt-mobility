@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -132,7 +133,7 @@
 </div>
 <h1 class="title">QGalleryAbstractRequest Class Reference</h1>
 <p>The QGalleryAbstractRequest class provides a base class for gallery requests. <a href="#details">More...</a></p>
-<pre class="highlightedCode brush: cpp"> #include &lt;QGalleryAbstractRequest&gt;</pre><p>Inherited by <a href="qgallerycountrequest.html">QGalleryCountRequest</a>, <a href="qgalleryitemrequest.html">QGalleryItemRequest</a>, <a href="qgalleryqueryrequest.html">QGalleryQueryRequest</a>, <a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a>, and <a href="qgalleryurlrequest.html">QGalleryUrlRequest</a>.</p>
+<pre class="highlightedCode brush: cpp"> #include &lt;QGalleryAbstractRequest&gt;</pre><p>Inherited by <a href="qgalleryitemrequest.html">QGalleryItemRequest</a>, <a href="qgalleryqueryrequest.html">QGalleryQueryRequest</a>, <a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a>, and <a href="qgallerytyperequest.html">QGalleryTypeRequest</a>.</p>
 <ul>
 <li><a href="qgalleryabstractrequest-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -140,10 +141,9 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#RequestType-enum">RequestType</a></b> { QueryRequest, ItemRequest, TypeRequest, RemoveReqest }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#Result-enum">Result</a></b> { NoResult, Succeeded, Cancelled, NoGallery, ..., RequestError }</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#Scope-enum">Scope</a></b> { AllDescendants, DirectDescendants }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#State-enum">State</a></b> { Inactive, Active, Cancelling, Idle }</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#Type-enum">Type</a></b> { Item, Url, Query, Count, Remove }</td></tr>
 </table>
 <hr />
 <a name="properties"></a>
@@ -164,8 +164,8 @@
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#QGalleryAbstractRequest">QGalleryAbstractRequest</a></b> ( Type <i>type</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#QGalleryAbstractRequest-2">QGalleryAbstractRequest</a></b> ( QAbstractGallery * <i>gallery</i>, Type <i>type</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#QGalleryAbstractRequest">QGalleryAbstractRequest</a></b> ( RequestType <i>type</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#QGalleryAbstractRequest-2">QGalleryAbstractRequest</a></b> ( QAbstractGallery * <i>gallery</i>, RequestType <i>type</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#dtor.QGalleryAbstractRequest">~QGalleryAbstractRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#currentProgress-prop">currentProgress</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QAbstractGallery * </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#gallery-prop">gallery</a></b> () const</td></tr>
@@ -174,7 +174,7 @@
 <tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#result-prop">result</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#gallery-prop">setGallery</a></b> ( QAbstractGallery * <i>gallery</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> State </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#state-prop">state</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> Type </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#type">type</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> RequestType </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#type">type</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#waitForFinished">waitForFinished</a></b> ( int <i>msecs</i> )</td></tr>
 </table>
 <hr />
@@ -213,6 +213,14 @@
 <hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
+<h3 class="fn"><a name="RequestType-enum"></a>enum QGalleryAbstractRequest::RequestType</h3>
+<p>Identifies the type of a request.</p>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::QueryRequest</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The request is a <a href="qgalleryqueryrequest.html">QGalleryQueryRequest</a>.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::ItemRequest</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The request is a <a href="qgalleryitemrequest.html">QGalleryItemRequest</a>.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::TypeRequest</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The request is a <a href="qgallerytyperequest.html">QGalleryTypeRequest</a></td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::RemoveReqest</tt></td><td class=" topAlign">?</td><td  class="topAlign">The request is a <a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a>.</td></tr>
+</table>
 <h3 class="fn"><a name="Result-enum"></a>enum QGalleryAbstractRequest::Result</h3>
 <p>Identifies the result of a gallery request.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
@@ -233,12 +241,6 @@
 <tr><td  class="topAlign"><tt>QGalleryAbstractRequest::InvalidUrlError</tt></td><td class=" topAlign"><tt>14</tt></td><td  class="topAlign">The request could not be executed due to an invalid URL.</td></tr>
 <tr><td  class="topAlign"><tt>QGalleryAbstractRequest::RequestError</tt></td><td class=" topAlign"><tt>100</tt></td><td  class="topAlign">A minimum value for request specific error results.</td></tr>
 </table>
-<h3 class="fn"><a name="Scope-enum"></a>enum QGalleryAbstractRequest::Scope</h3>
-<p>Identifies the scope of query.</p>
-<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
-<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::AllDescendants</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The query will return all descendents of the scope item.</td></tr>
-<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::DirectDescendants</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The query will return only direct descendents of the scope item.</td></tr>
-</table>
 <h3 class="fn"><a name="State-enum"></a>enum QGalleryAbstractRequest::State</h3>
 <p>Identifies the state of a gallery request.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
@@ -246,15 +248,6 @@
 <tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Active</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The request is currently executing.</td></tr>
 <tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Cancelling</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The request was cancelled, but hasn't yet returned to the Inactive state.</td></tr>
 <tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Idle</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">The request has finished, and is monitoring its return values for changes.</td></tr>
-</table>
-<h3 class="fn"><a name="Type-enum"></a>enum QGalleryAbstractRequest::Type</h3>
-<p>Identifies the type of a request.</p>
-<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
-<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Item</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The request is a <a href="qgalleryitemrequest.html">QGalleryItemRequest</a>.</td></tr>
-<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Url</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The request is a <a href="qgalleryurlrequest.html">QGalleryUrlRequest</a>.</td></tr>
-<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Query</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The request is a <a href="qgalleryqueryrequest.html">QGalleryQueryRequest</a>.</td></tr>
-<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Count</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">The request is a <a href="qgallerycountrequest.html">QGalleryCountRequest</a>.</td></tr>
-<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Remove</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">The request is a <a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a>.</td></tr>
 </table>
 </div>
 <hr />
@@ -322,10 +315,10 @@
 <hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QGalleryAbstractRequest"></a>QGalleryAbstractRequest::QGalleryAbstractRequest ( <a href="qgalleryabstractrequest.html#Type-enum">Type</a> <i>type</i>, QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QGalleryAbstractRequest"></a>QGalleryAbstractRequest::QGalleryAbstractRequest ( <a href="qgalleryabstractrequest.html#RequestType-enum">RequestType</a> <i>type</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a new gallery <i>type</i> request.</p>
 <p>The <i>parent</i> is passed to QObject.</p>
-<h3 class="fn"><a name="QGalleryAbstractRequest-2"></a>QGalleryAbstractRequest::QGalleryAbstractRequest ( <a href="qabstractgallery.html">QAbstractGallery</a> * <i>gallery</i>, <a href="qgalleryabstractrequest.html#Type-enum">Type</a> <i>type</i>, QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QGalleryAbstractRequest-2"></a>QGalleryAbstractRequest::QGalleryAbstractRequest ( <a href="qabstractgallery.html">QAbstractGallery</a> * <i>gallery</i>, <a href="qgalleryabstractrequest.html#RequestType-enum">RequestType</a> <i>type</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a new <i>type</i> request for the given <i>gallery</i>.</p>
 <p>The <i>parent</i> is passed to QObject.</p>
 <h3 class="fn"><a name="dtor.QGalleryAbstractRequest"></a>QGalleryAbstractRequest::~QGalleryAbstractRequest ()</h3>
@@ -356,7 +349,7 @@
 <p>Signals that a request has completed successfully.</p>
 <h3 class="fn"><a name="supportedChanged"></a>void QGalleryAbstractRequest::supportedChanged ()<tt> [signal]</tt></h3>
 <p>Signals the <a href="qgalleryabstractrequest.html#supported-prop">supported</a> property has changed.</p>
-<h3 class="fn"><a name="type"></a><a href="qgalleryabstractrequest.html#Type-enum">Type</a> QGalleryAbstractRequest::type () const</h3>
+<h3 class="fn"><a name="type"></a><a href="qgalleryabstractrequest.html#RequestType-enum">RequestType</a> QGalleryAbstractRequest::type () const</h3>
 <p>Returns the type of a request.</p>
 <h3 class="fn"><a name="waitForFinished"></a>bool QGalleryAbstractRequest::waitForFinished ( int <i>msecs</i> )</h3>
 <p>Waits for <i>msecs</i> for the a request to finish.</p>

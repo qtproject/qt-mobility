@@ -70,6 +70,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -160,71 +161,13 @@
 
  #include &quot;galleryview.h&quot;
 
- #include &lt;qgallerycountrequest.h&gt;
- #include &lt;qgalleryitemlist.h&gt;
- #include &lt;qgalleryqueryrequest.h&gt;
-
  GalleryView::GalleryView(QWidget *parent, Qt::WindowFlags flags)
      : QWidget(parent, flags)
-     , request(new QGalleryQueryRequest(this))
-     , countRequest(new QGalleryCountRequest(this))
  {
-     request-&gt;setLive(true);
-
-     connect(request, SIGNAL(itemsChanged(QGalleryItemList*)),
-             this, SLOT(mediaChanged(QGalleryItemList*)));
-     connect(countRequest, SIGNAL(countChanged()), this, SLOT(requestCountChanged()));
  }
 
  GalleryView::~GalleryView()
  {
- }
-
- QAbstractGallery *GalleryView::gallery() const
- {
-     return request-&gt;gallery();
- }
-
- void GalleryView::setGallery(QAbstractGallery *gallery)
- {
-     request-&gt;setGallery(gallery);
-     countRequest-&gt;setGallery(gallery);
- }
-
- void GalleryView::showChildren(const QVariant &amp;containerId)
- {
-     request-&gt;setScopeItemId(containerId);
-     request-&gt;execute();
-
-     countRequest-&gt;setScopeItemId(containerId);
-     countRequest-&gt;execute();
- }
-
- void GalleryView::setType(const QString &amp;type)
- {
-     request-&gt;setItemType(type);
-
-     countRequest-&gt;setItemType(type);
- }
-
- void GalleryView::setFields(const QStringList &amp;fields)
- {
-     request-&gt;setPropertyNames(fields);
- }
-
- void GalleryView::setSortFields(const QStringList &amp;fields)
- {
-     request-&gt;setSortPropertyNames(fields);
- }
-
- QGalleryItemList *GalleryView::media() const
- {
-     return request-&gt;items();
- }
-
- void GalleryView::requestCountChanged()
- {
-     emit countChanged(countRequest-&gt;count());
  }</pre>
 </div>
 <p /><address><hr /><div align="center">

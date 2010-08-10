@@ -68,6 +68,9 @@ public:
     QImageEncoderSettings imageSettings() const;
     void setImageSettings(const QImageEncoderSettings &settings);
 
+Q_SIGNALS:
+    void settingsChanged();
+
 private:
     QImageEncoderSettings m_settings;
 

@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -138,6 +139,7 @@
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactintersectionfilter.html#QContactIntersectionFilter">QContactIntersectionFilter</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactintersectionfilter.html#QContactIntersectionFilter-2">QContactIntersectionFilter</a></b> ( const QContactFilter &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactintersectionfilter.html#append">append</a></b> ( const QContactFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactintersectionfilter.html#clear">clear</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QContactFilter&gt; </td><td class="memItemRight bottomAlign"><b><a href="qcontactintersectionfilter.html#filters">filters</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactintersectionfilter.html#prepend">prepend</a></b> ( const QContactFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactintersectionfilter.html#remove">remove</a></b> ( const QContactFilter &amp; <i>filter</i> )</td></tr>
@@ -164,6 +166,9 @@
 <h3 class="fn"><a name="append"></a>void QContactIntersectionFilter::append ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> )</h3>
 <p>Appends the given <i>filter</i> to the list of intersected filters</p>
 <p>See also <a href="qcontactintersectionfilter.html#operator-lt-lt">operator&lt;&lt;</a>(), <a href="qcontactintersectionfilter.html#prepend">prepend</a>(), and <a href="qcontactintersectionfilter.html#filters">filters</a>().</p>
+<h3 class="fn"><a name="clear"></a>void QContactIntersectionFilter::clear ()</h3>
+<p>Clears the list of filters. A cleared intersection filter will match no contacts.</p>
+<p>See also <a href="qcontactintersectionfilter.html#filters">filters</a>() and <a href="qcontactintersectionfilter.html#setFilters">setFilters</a>().</p>
 <h3 class="fn"><a name="filters"></a>QList&lt;<a href="qcontactfilter.html">QContactFilter</a>&gt; QContactIntersectionFilter::filters () const</h3>
 <p>Returns the list of filters which form the intersection filter</p>
 <p>See also <a href="qcontactintersectionfilter.html#setFilters">setFilters</a>(), <a href="qcontactintersectionfilter.html#prepend">prepend</a>(), <a href="qcontactintersectionfilter.html#append">append</a>(), and <a href="qcontactintersectionfilter.html#remove">remove</a>().</p>
@@ -172,10 +177,10 @@
 <p>See also <a href="qcontactintersectionfilter.html#append">append</a>() and <a href="qcontactintersectionfilter.html#filters">filters</a>().</p>
 <h3 class="fn"><a name="remove"></a>void QContactIntersectionFilter::remove ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> )</h3>
 <p>Removes the given <i>filter</i> from the intersection list</p>
-<p>See also <a href="qcontactintersectionfilter.html#filters">filters</a>(), <a href="qcontactintersectionfilter.html#append">append</a>(), and <a href="qcontactintersectionfilter.html#prepend">prepend</a>().</p>
+<p>See also <a href="qcontactintersectionfilter.html#filters">filters</a>(), <a href="qcontactintersectionfilter.html#append">append</a>(), <a href="qcontactintersectionfilter.html#prepend">prepend</a>(), and <a href="qcontactintersectionfilter.html#clear">clear</a>().</p>
 <h3 class="fn"><a name="setFilters"></a>void QContactIntersectionFilter::setFilters ( const QList&lt;<a href="qcontactfilter.html">QContactFilter</a>&gt; &amp; <i>filters</i> )</h3>
 <p>Sets the filters whose criteria will be intersected to <i>filters</i></p>
-<p>See also <a href="qcontactintersectionfilter.html#filters">filters</a>().</p>
+<p>See also <a href="qcontactintersectionfilter.html#filters">filters</a>() and <a href="qcontactintersectionfilter.html#clear">clear</a>().</p>
 <h3 class="fn"><a name="operator-lt-lt"></a>QContactIntersectionFilter &amp; QContactIntersectionFilter::operator&lt;&lt; ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> )</h3>
 <p>Appends the given <i>filter</i> to the list of intersected filters</p>
 <p>See also <a href="qcontactintersectionfilter.html#append">append</a>().</p>

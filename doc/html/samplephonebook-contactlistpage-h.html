@@ -70,6 +70,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -200,6 +201,10 @@
      void deleteClicked();
      void importClicked();
      void exportClicked();
+     void contactsAdded(const QList&lt;QContactLocalId&gt;&amp; ids);
+     void contactsRemoved(const QList&lt;QContactLocalId&gt;&amp; ids);
+     void contactsChanged(const QList&lt;QContactLocalId&gt;&amp; ids);
+     void dataChanged();
 
  private:
      <span class="comment">// elements of the contact list &quot;page&quot;</span>
@@ -213,7 +218,6 @@
 
      <span class="comment">// data</span>
      QContactManager *m_manager;
-     QMap&lt;QContactLocalId, int&gt; m_idToListIndex;
      QMap&lt;QString, QContactManager*&gt; m_initialisedManagers;
      QList&lt;QContact&gt; m_contacts;
      QContactFilter m_currentFilter;

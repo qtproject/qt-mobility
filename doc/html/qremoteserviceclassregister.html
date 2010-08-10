@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -187,7 +188,7 @@
 <div class="macros"/>
 <h2>Macro Documentation</h2>
 <h3 class="fn"><a name="Q_SERVICE"></a>Q_SERVICE (  <i>T</i>,  <i>name</i>,  <i>interface</i>,  <i>version</i> )</h3>
-<p>This macro marks a class as remote service and should be placed next to the Q_OBJECT macro. <i>T</i> represents the name of the class implementing the service, <i>interface</i> specifies the service framework service name, interface name and <i>version</i> represents the interface version. All parameters must match the interface information provided by the associated service XML file.</p>
+<p>This macro marks a class as remote service and should be placed next to the Q_OBJECT macro. <i>T</i> represents the name of the class implementing the service, <i>name</i> specifies name under which the service is registered, <i>interface</i> name and <i>version</i> represents the interface version. All parameters must match the interface information provided by the associated service XML file.</p>
 <pre class="highlightedCode brush: cpp"> class ServiceClass : public QObject
  {
      Q_OBJECT
