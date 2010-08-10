@@ -43,7 +43,6 @@
 #define QLANDMARKFETCHREQUEST_H
 
 #include "qlandmarkabstractrequest.h"
-#include "qlandmarkfetchhint.h"
 
 QTM_BEGIN_NAMESPACE
 

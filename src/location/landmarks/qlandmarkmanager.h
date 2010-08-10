@@ -47,7 +47,6 @@
 #include "qlandmarkfilter.h"
 #include "qlandmarksortorder.h"
 #include "qlandmarkcategoryid.h"
-#include "qlandmarkfetchhint.h"
 #include "qlandmarknamesort.h"
 #include "qlandmarkfilter.h"
 #include "qlandmarkcategory.h"
