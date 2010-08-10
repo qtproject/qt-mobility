@@ -83,10 +83,11 @@ public:
     QGeoBoundingBox boundingBox() const;
     bool contains(const QGeoCoordinate &coord) const;
 
+    void updateItem();
+
     QRectF bounds;
 
-    QGraphicsItem *graphicsItem1;
-    QGraphicsItem *graphicsItem2;
+    QGraphicsItem *graphicsItem;
     QGeoTiledMapData *tiledMapData;
 private:
     QGeoTiledMapDataPrivate *tiledMapDataPrivate;

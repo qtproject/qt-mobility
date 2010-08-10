@@ -380,18 +380,14 @@ void QGeoMapObjectPrivate::removeFromParent()
 
 void QGeoMapObjectPrivate::objectUpdate()
 {
-    if (!info)
-        return;
-
-    info->objectUpdate();
+    if (info)
+        info->objectUpdate();
 }
 
 void QGeoMapObjectPrivate::mapUpdate()
 {
-    if (!info)
-        return;
-
-    info->mapUpdate();
+    if (info)
+        info->mapUpdate();
 
     for (int i = 0; i < children.size(); ++i)
         children[i]->mapUpdate();

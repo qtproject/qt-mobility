@@ -195,12 +195,8 @@ void MapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 void MapWidget::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     if (event->modifiers() & Qt::ControlModifier) {
-        if (lastCircle) {
-            removeMapObject(lastCircle);
+        if (lastCircle)
             lastCircle->setCenter(this->screenPositionToCoordinate(event->pos()));
-            addMapObject(lastCircle);
-            lastCircle->objectUpdate();
-        }
     }
     else if (panActive) {
         // Calculate time delta
@@ -630,7 +626,7 @@ void MainWindow::showEvent(QShowEvent* event)
 void MainWindow::createMenus()
 {
     QAction* menuItem;
-    QMenu* subMenuItem
+    QMenu* subMenuItem;
     m_popupMenu = new QMenu(this);
 
     subMenuItem = new QMenu(tr("Spawn stuff"), this);

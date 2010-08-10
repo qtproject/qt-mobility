@@ -73,7 +73,9 @@ void QGeoTiledMapPolygonObjectInfo::objectUpdate()
 
     mapUpdate();
 
-    graphicsItem1 = polygonItem;
+    graphicsItem = polygonItem;
+
+    updateItem();
 }
 
 void QGeoTiledMapPolygonObjectInfo::mapUpdate()

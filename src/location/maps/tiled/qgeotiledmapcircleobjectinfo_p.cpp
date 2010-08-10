@@ -196,7 +196,9 @@ void QGeoTiledMapCircleObjectInfo::objectUpdate()
 
     mapUpdate();
 
-    graphicsItem1 = polygonItem;
+    graphicsItem = polygonItem;
+
+    updateItem();
 }
 
 void QGeoTiledMapCircleObjectInfo::mapUpdate()

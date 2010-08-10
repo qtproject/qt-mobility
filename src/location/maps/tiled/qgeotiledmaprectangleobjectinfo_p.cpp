@@ -135,8 +135,9 @@ void QGeoTiledMapRectangleObjectInfo::objectUpdate()
 
     mapUpdate();
 
-    graphicsItem1 = rectangleItem1;
-    graphicsItem2 = rectangleItem2;
+    graphicsItem = rectangleItem1;
+
+    updateItem();
 }
 
 void QGeoTiledMapRectangleObjectInfo::mapUpdate()

@@ -71,8 +71,9 @@ void QGeoTiledMapMarkerObjectInfo::objectUpdate()
 
     mapUpdate();
 
-    graphicsItem1 = pixmapItem;
-    graphicsItem2 = 0;
+    graphicsItem = pixmapItem;
+
+    updateItem();
 }
 
 void QGeoTiledMapMarkerObjectInfo::mapUpdate()
