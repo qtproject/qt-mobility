@@ -57,6 +57,12 @@
 #include "qlandmarkidfilter.h"
 
 QTM_USE_NAMESPACE
+
+Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Gpx, "Gpx");
+Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Lmx, "Lmx");
+Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kml, "Kml");
+Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
+
 /*!
     \class QLandmarkManager
     \brief The QLandmarkManager class provides an interface for storage
@@ -148,8 +154,8 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    \enum QLandmarkManager::ImportExportOption
-    Defines the possible import/export options of the manager.
+    \enum QLandmarkManager::TransferOption
+    Defines the possible options when transfering landmarks during import or export.
     \value IncludeCategoryData During an import category data is included.  If an imported category doesn't exist
                                the category is created.  If the imported category name matches an existing
                                category name, then the landmark is added to that category.  For exports, categories
@@ -166,6 +172,9 @@ QTM_USE_NAMESPACE
                               These attributes are specific to the manager backend implementation.
     \value CustomAttributes The manager supports applications associating arbitrary custom attributes to
                             landmarks and categories.
+    \value ImportExport The manager supports import and/or export operations
+    \value Notifications The manager will emit notification signals when landmarks/categories have
+                         been added/modified/removed from the datastore it manages.
 */
 
 /*!
@@ -177,6 +186,12 @@ QTM_USE_NAMESPACE
     \value None The manager does not support the filter or sort order list at all.
 */
 
+/*!
+    \enum QLandmarkManager::TransferOperation
+    Defines the type of transfer.
+    \value ImportOperation
+    \value ExportOperation
+*/
 
 /*!
     Constructs a QLandmarkManager. The default implementation for the platform will be used.
@@ -749,7 +764,7 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
     The current default managers for the maemo and desktop platforms
     support GPX version 1.1, and the format to use is \c GpxV1.1.
 */
-bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format, QLandmarkManager::ImportExportOption option, const QLandmarkCategoryId &categoryId)
+bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format, QLandmarkManager::TransferOption option, const QLandmarkCategoryId &categoryId)
 {
     Q_D(QLandmarkManager);
 
@@ -787,7 +802,7 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format,
     The current default managers for the maemo and desktop platforms
     support GPX version 1.1, and the format to use is \c GpxV1.1.
 */
-bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &format, QLandmarkManager::ImportExportOption option, const QLandmarkCategoryId &categoryId)
+bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &format, QLandmarkManager::TransferOption option, const QLandmarkCategoryId &categoryId)
 {
     QFile file(fileName);
     return importLandmarks(&file, format,option,categoryId);
@@ -809,7 +824,7 @@ bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &f
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
 */
-bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::ImportExportOption option) const
+bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::TransferOption option) const
 {
     Q_D(const QLandmarkManager);
 
@@ -827,7 +842,10 @@ bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format,
                                       &(d->errorString));
 }
 
-QStringList QLandmarkManager::supportedFormats() const
+/*!
+    Returns the file formats supported for the given transfer \a operation. ie import or export.
+*/
+QStringList QLandmarkManager::supportedFormats(QLandmarkManager::TransferOperation operation) const
 {
     Q_D(const QLandmarkManager);
 
@@ -837,7 +855,7 @@ QStringList QLandmarkManager::supportedFormats() const
         return QStringList();
     }
 
-    return d->engine->supportedFormats(&(d->errorCode), &(d->errorString));
+    return d->engine->supportedFormats(operation, &(d->errorCode), &(d->errorString));
 }
 
 /*!
@@ -856,7 +874,7 @@ QStringList QLandmarkManager::supportedFormats() const
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
 */
-bool QLandmarkManager::exportLandmarks(const QString &fileName, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::ImportExportOption option) const
+bool QLandmarkManager::exportLandmarks(const QString &fileName, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::TransferOption option) const
 {
     QFile file(fileName);
 

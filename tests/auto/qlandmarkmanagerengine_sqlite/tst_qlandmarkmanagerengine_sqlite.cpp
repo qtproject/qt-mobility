@@ -5190,7 +5190,7 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
     QSignalSpy spyChange(m_manager,SIGNAL(landmarksChanged(QList<QLandmarkId>)));
     QSignalSpy spyRemove(m_manager,SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
 
-    QVERIFY(m_manager->importLandmarks(":data/McDonalds-AUS-Queensland.gpx", "GpxV1.1"));
+    QVERIFY(m_manager->importLandmarks(":data/McDonalds-AUS-Queensland.gpx", QLandmarkManager::Gpx));
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
 
     QList<QLandmark> landmarks = m_manager->landmarks(QLandmarkFilter());
@@ -5216,7 +5216,7 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
     QCOMPARE(ids.count(), 149);
     spyAdd.clear();
 
-    QVERIFY(m_manager->importLandmarks(":data/test.gpx", "GpxV1.1"));
+    QVERIFY(m_manager->importLandmarks(":data/test.gpx", QLandmarkManager::Gpx));
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     QTest::qWait(10);
     QCOMPARE(spyRemove.count(), 0);
@@ -5248,7 +5248,7 @@ void tst_QLandmarkManagerEngineSqlite::importGpxAsync() {
     QSignalSpy spy(&importRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
 
     importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
-    importRequest.setFormat("GpxV1.1");
+    importRequest.setFormat(QLandmarkManager::Gpx);
     importRequest.start();
 
     QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError,2000));
@@ -5277,7 +5277,7 @@ void tst_QLandmarkManagerEngineSqlite::importGpxAsync() {
 
      //check that the notifications more indepth
      importRequest.setFileName(":data/test.gpx");
-     importRequest.setFormat("GpxV1.1");
+     importRequest.setFormat(QLandmarkManager::Gpx);
      importRequest.start();
 
      QVERIFY(waitForAsync(spy, &importRequest));
@@ -5303,7 +5303,7 @@ void tst_QLandmarkManagerEngineSqlite::importGpxAsync() {
 
     //try a non-existent file
     importRequest.setFileName("doesnnotexist.gpx");
-    importRequest.setFormat("GpxV1.1");
+    importRequest.setFormat(QLandmarkManager::Gpx);
     importRequest.start();
 
     QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::DoesNotExistError));
@@ -5313,7 +5313,7 @@ void tst_QLandmarkManagerEngineSqlite::importGpxAsync() {
 
     //try cancelling and impot halfway
     importRequest.setFileName(":data/long.gpx");
-    importRequest.setFormat("GpxV1.1");
+    importRequest.setFormat(QLandmarkManager::Gpx);
     importRequest.start();
     QTest::qWait(250);
     importRequest.cancel();
@@ -5330,7 +5330,7 @@ void tst_QLandmarkManagerEngineSqlite::importLmx() {
     cat0.setName("cat0");
     m_manager->saveCategory(&cat0);
 
-    QVERIFY(m_manager->importLandmarks(":data/convert-collection-in.xml", "LmxV1.0"));
+    QVERIFY(m_manager->importLandmarks(":data/convert-collection-in.xml", QLandmarkManager::Lmx));
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     QList<QLandmarkCategory> categories = m_manager->categories();
 
@@ -5373,7 +5373,7 @@ void tst_QLandmarkManagerEngineSqlite::importLmxExcludeCategoryData() {
     cat0.setName("cat0");
     m_manager->saveCategory(&cat0);
 
-    QVERIFY(m_manager->importLandmarks(":data/convert-collection-in.xml", "LmxV1.0",QLandmarkManager::ExcludeCategoryData));
+    QVERIFY(m_manager->importLandmarks(":data/convert-collection-in.xml",  QLandmarkManager::Lmx,QLandmarkManager::ExcludeCategoryData));
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     QList<QLandmarkCategory> categories = m_manager->categories();
 
@@ -5409,25 +5409,25 @@ void tst_QLandmarkManagerEngineSqlite::importLmxAttachSingleCategory() {
 
     //try with a null id
     QLandmarkCategoryId nullId;
-    QVERIFY(!m_manager->importLandmarks(":data/convert-collection-in.xml", "LmxV1.0",QLandmarkManager::AttachSingleCategory, nullId));
+    QVERIFY(!m_manager->importLandmarks(":data/convert-collection-in.xml", QLandmarkManager::Lmx,QLandmarkManager::AttachSingleCategory, nullId));
     QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
 
     //try with an id with the wrong manager;
     QLandmarkCategoryId wrongManagerId;
     wrongManagerId.setLocalId(cat0.categoryId().localId());
     wrongManagerId.setManagerUri("wrong.manager");
-    QVERIFY(!m_manager->importLandmarks(":data/convert-collection-in.xml", "LmxV1.0",QLandmarkManager::AttachSingleCategory, wrongManagerId));
+    QVERIFY(!m_manager->importLandmarks(":data/convert-collection-in.xml", QLandmarkManager::Lmx,QLandmarkManager::AttachSingleCategory, wrongManagerId));
     QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
 
     //try with the correct manager but with a non-existent localid
     QLandmarkCategoryId wrongLocalId;
     wrongLocalId.setLocalId("500");
     wrongLocalId.setManagerUri(cat0.categoryId().managerUri());
-    QVERIFY(!m_manager->importLandmarks(":data/convert-collection-in.xml", "LmxV1.0",QLandmarkManager::AttachSingleCategory, wrongLocalId));
+    QVERIFY(!m_manager->importLandmarks(":data/convert-collection-in.xml", QLandmarkManager::Lmx,QLandmarkManager::AttachSingleCategory, wrongLocalId));
     QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
 
     //try with a valid category id
-    QVERIFY(m_manager->importLandmarks(":data/convert-collection-in.xml", "LmxV1.0",QLandmarkManager::AttachSingleCategory,catAlpha.categoryId()));
+    QVERIFY(m_manager->importLandmarks(":data/convert-collection-in.xml", QLandmarkManager::Lmx, QLandmarkManager::AttachSingleCategory,catAlpha.categoryId()));
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     QList<QLandmarkCategory> categories = m_manager->categories();
     QCOMPARE(categories.count(), 2
@@ -5482,10 +5482,10 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx() {
         file.remove();
     QVERIFY(!file.exists());
 
-    QVERIFY(m_manager->exportLandmarks("myexport.gpx","GpxV1.1"));
+    QVERIFY(m_manager->exportLandmarks("myexport.gpx",QLandmarkManager::Gpx));
     QVERIFY(file.exists());
 
-    QVERIFY(m_manager->importLandmarks("myexport.gpx", "GpxV1.1"));
+    QVERIFY(m_manager->importLandmarks("myexport.gpx", QLandmarkManager::Gpx));
     QList<QLandmark> lms = m_manager->landmarks();
     QCOMPARE(lms.count(), 7);
     QLandmarkNameFilter nameFilter;
@@ -5503,9 +5503,9 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx() {
     lmIds << lm1.landmarkId();
     lmIds << lm3.landmarkId();
     QVERIFY(file.remove());
-    QVERIFY(m_manager->exportLandmarks("myexport.gpx", "GpxV1.1", lmIds));
+    QVERIFY(m_manager->exportLandmarks("myexport.gpx", QLandmarkManager::Gpx, lmIds));
 
-    QVERIFY(m_manager->importLandmarks("myexport.gpx", "GpxV1.1"));
+    QVERIFY(m_manager->importLandmarks("myexport.gpx", QLandmarkManager::Gpx));
     lms = m_manager->landmarks();
     QCOMPARE(lms.count(), 9);
 
@@ -5553,13 +5553,13 @@ void tst_QLandmarkManagerEngineSqlite::exportGpxAsync() {
     QLandmarkExportRequest exportRequest(m_manager);
     QSignalSpy spy(&exportRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
     exportRequest.setFileName(file.fileName());
-    exportRequest.setFormat("GpxV1.1");
+    exportRequest.setFormat(QLandmarkManager::Gpx);
     exportRequest.start();
 
     QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::NoError));
     QVERIFY(file.exists());
 
-    QVERIFY(m_manager->importLandmarks("myexport.gpx", "GpxV1.1"));
+    QVERIFY(m_manager->importLandmarks("myexport.gpx", QLandmarkManager::Gpx));
     QList<QLandmark> lms = m_manager->landmarks();
     QCOMPARE(lms.count(), 7);
     QLandmarkNameFilter nameFilter;
@@ -5582,7 +5582,7 @@ void tst_QLandmarkManagerEngineSqlite::exportGpxAsync() {
     exportRequest.start();
     QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::NoError));
 
-    QVERIFY(m_manager->importLandmarks("myexport.gpx", "GpxV1.1"));
+    QVERIFY(m_manager->importLandmarks("myexport.gpx", QLandmarkManager::Gpx));
     lms = m_manager->landmarks();
     QCOMPARE(lms.count(), 9);
 
@@ -5598,9 +5598,15 @@ void tst_QLandmarkManagerEngineSqlite::exportGpxAsync() {
 }
 
 void tst_QLandmarkManagerEngineSqlite::supportedFormats() {
-        QStringList formats = m_manager->supportedFormats();
-        QCOMPARE(formats.count(), 1);
-        QVERIFY(formats.at(0) == "GpxV1.1");
+        QStringList formats = m_manager->supportedFormats(QLandmarkManager::ExportOperation);
+        QCOMPARE(formats.count(), 2);
+        QVERIFY(formats.at(0) == QLandmarkManager::Gpx);
+        QVERIFY(formats.at(1) == QLandmarkManager::Lmx);
+
+        formats = m_manager->supportedFormats(QLandmarkManager::ImportOperation);
+        QCOMPARE(formats.count(), 2);
+        QVERIFY(formats.at(0) == QLandmarkManager::Gpx);
+        QVERIFY(formats.at(1) == QLandmarkManager::Lmx);
 }
 
 void tst_QLandmarkManagerEngineSqlite::categoryLimitOffset() {

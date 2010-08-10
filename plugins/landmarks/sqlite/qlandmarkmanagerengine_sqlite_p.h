@@ -131,17 +131,17 @@ public:
 
     bool importLandmarks(QIODevice *device,
                          const QString &format,
-                         QLandmarkManager::ImportExportOption option,
+                         QLandmarkManager::TransferOption option,
                          const QLandmarkCategoryId &categoryId,
                          QLandmarkManager::Error *error,
                          QString *errorString);
     bool exportLandmarks(QIODevice *device,
                          const QString &format,
                          QList<QLandmarkId> landmarkIds,
-                         QLandmarkManager::ImportExportOption option,
+                         QLandmarkManager::TransferOption option,
                          QLandmarkManager::Error *error,
                          QString *errorString) const;
-    QStringList supportedFormats(QLandmarkManager::Error *error, QString *errorString) const;
+    QStringList supportedFormats(QLandmarkManager::TransferOperation operation, QLandmarkManager::Error *error, QString *errorString) const;
 
     QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const;
     QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders, QLandmarkManager::Error *error, QString *errorString) const;

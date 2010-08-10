@@ -305,7 +305,7 @@ bool QLandmarkManagerEngineSqlite::removeCategory(const QLandmarkCategoryId &cat
 
 bool QLandmarkManagerEngineSqlite::importLandmarks(QIODevice *device,
                                                    const QString &format,
-                                                   QLandmarkManager::ImportExportOption option,
+                                                   QLandmarkManager::TransferOption option,
                                                    const QLandmarkCategoryId &categoryId,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString)
@@ -316,14 +316,14 @@ bool QLandmarkManagerEngineSqlite::importLandmarks(QIODevice *device,
 bool QLandmarkManagerEngineSqlite::exportLandmarks(QIODevice *device,
                                                    const QString &format,
                                                    QList<QLandmarkId> landmarkIds,
-                                                   QLandmarkManager::ImportExportOption,
+                                                   QLandmarkManager::TransferOption,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString) const
 {
     return DatabaseOperations::exportLandmarks(m_dbConnectionName, device, format, landmarkIds, error, errorString, managerUri());
 }
 
-QStringList QLandmarkManagerEngineSqlite::supportedFormats(QLandmarkManager::Error *error, QString *errorString) const
+QStringList QLandmarkManagerEngineSqlite::supportedFormats(QLandmarkManager::TransferOperation operation, QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
@@ -331,7 +331,8 @@ QStringList QLandmarkManagerEngineSqlite::supportedFormats(QLandmarkManager::Err
     *errorString ="";
 
     QStringList formats;
-    formats << "GpxV1.1";
+    formats << QLandmarkManager::Gpx;
+    formats << QLandmarkManager::Lmx;
     return formats;
 }
 

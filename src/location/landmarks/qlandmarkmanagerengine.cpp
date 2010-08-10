@@ -420,7 +420,7 @@ bool QLandmarkManagerEngine::removeCategory(const QLandmarkCategoryId &categoryI
     Overall operational errors are stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, const QString &format, QLandmarkManager::ImportExportOption option, const QLandmarkCategoryId& categoryId,
+bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, const QString &format, QLandmarkManager::TransferOption option, const QLandmarkCategoryId& categoryId,
         QLandmarkManager::Error *error, QString *errorString)
 {
     Q_ASSERT(error);
@@ -449,7 +449,7 @@ bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, const QString &f
     Overall operation errors are stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::ImportExportOption option,
+bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::TransferOption option,
         QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
@@ -459,7 +459,11 @@ bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, const QString &f
     return false;
 }
 
-QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::Error *error, QString *errorString) const
+/*!
+    Returns the supported file formats for the given exchange \a operation, i.e. import or export.
+    Errors are stored in \a error and \a errorString.
+*/
+QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::TransferOperation operation , QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);

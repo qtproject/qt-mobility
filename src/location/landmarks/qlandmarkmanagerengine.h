@@ -123,11 +123,11 @@ public:
     virtual bool saveCategory(QLandmarkCategory* category, QLandmarkManager::Error *error, QString *errorString) = 0;
     virtual bool removeCategory(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error, QString *errorString) = 0;
 
-    virtual bool importLandmarks(QIODevice *device, const QString& format, QLandmarkManager::ImportExportOption option, const QLandmarkCategoryId& id,
+    virtual bool importLandmarks(QIODevice *device, const QString& format, QLandmarkManager::TransferOption option, const QLandmarkCategoryId& id,
                                 QLandmarkManager::Error *error, QString *errorString);
-    virtual bool exportLandmarks(QIODevice *device, const QString& format, QList<QLandmarkId> landmarkIds, QLandmarkManager::ImportExportOption option,
+    virtual bool exportLandmarks(QIODevice *device, const QString& format, QList<QLandmarkId> landmarkIds, QLandmarkManager::TransferOption option,
                                  QLandmarkManager::Error *error, QString *errorString) const;
-    virtual QStringList supportedFormats(QLandmarkManager::Error *error, QString *errorString) const;
+    virtual QStringList supportedFormats(QLandmarkManager::TransferOperation operation, QLandmarkManager::Error *error, QString *errorString) const;
 
     virtual QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder>& sortOrders, QLandmarkManager::Error *error, QString *errorString) const = 0;

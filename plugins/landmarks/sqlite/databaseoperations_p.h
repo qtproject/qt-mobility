@@ -176,7 +176,7 @@ namespace DatabaseOperations {
     bool importLandmarks(const QString &connectionName,
                          QIODevice *device,
                          const QString &format,
-                         QLandmarkManager::ImportExportOption option,
+                         QLandmarkManager::TransferOption option,
                          const QLandmarkCategoryId &categoryId,
                          QLandmarkManager::Error *error,
                          QString *errorString, const QString &managerUri,

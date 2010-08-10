@@ -88,7 +88,7 @@ void QLandmarkFileHandlerLmx::setLandmarks(const QList<QLandmark> &landmarks)
     m_landmarks = landmarks;
 }
 
-void QLandmarkFileHandlerLmx::setImportExportOption(QLandmarkManager::ImportExportOption option) {
+void QLandmarkFileHandlerLmx::setTransferOption(QLandmarkManager::TransferOption option) {
     m_option = option;
 }
 

@@ -52,6 +52,7 @@
 #include "qlandmarkcategory.h"
 #include "qlandmark.h"
 
+#include <qlatin1constant.h>
 #include <QObject>
 #include <QMap>
 class QIODevice;
@@ -89,14 +90,35 @@ public:
 
     enum LandmarkFeature {
         ExtendedAttributes,
-        CustomAttributes
+        CustomAttributes,
+        ImportExport,
+        Notifications
     };
 
-    enum ImportExportOption {
+
+    enum TransferOption {
         IncludeCategoryData,
         ExcludeCategoryData,
         AttachSingleCategory
     };
+
+    enum TransferOperation {
+        ImportOperation,
+        ExportOperation
+    };
+
+#ifdef Q_QDOC
+    static const QLatin1Constant Gpx;
+    static const QLatin1Constant Lmx;
+    static const QLatin1Constant Kml;
+    static const QLatin1Constant Kmz;
+#else
+    Q_DECLARE_LATIN1_CONSTANT(Gpx, "Gpx");
+    Q_DECLARE_LATIN1_CONSTANT(Lmx, "Lmx");
+    Q_DECLARE_LATIN1_CONSTANT(Kml, "Kml");
+    Q_DECLARE_LATIN1_CONSTANT(Kmz, "Kmz");
+#endif
+
 #ifdef Q_QDOC
     QLandmarkManager(QObject *parent = 0);
     QLandmarkManager(const QString &managerName, const QMap<QString, QString> &parameters = 0, QObject *parent = 0);
@@ -138,12 +160,12 @@ public:
                                     int limit=-1, int offset =0,
                                    const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder()) const;
 
-    bool importLandmarks(QIODevice *device, const QString &format= QString() ,QLandmarkManager::ImportExportOption option = IncludeCategoryData, const QLandmarkCategoryId& = QLandmarkCategoryId());
-    bool importLandmarks(const QString &fileName, const QString &format = QString(),QLandmarkManager::ImportExportOption option = IncludeCategoryData, const QLandmarkCategoryId& = QLandmarkCategoryId());
-    bool exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>(), QLandmarkManager::ImportExportOption option = IncludeCategoryData) const;
-    bool exportLandmarks(const QString &, const QString &format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>(), QLandmarkManager::ImportExportOption option = IncludeCategoryData) const;
+    bool importLandmarks(QIODevice *device, const QString &format= QString() ,QLandmarkManager::TransferOption option = IncludeCategoryData, const QLandmarkCategoryId& = QLandmarkCategoryId());
+    bool importLandmarks(const QString &fileName, const QString &format = QString(),QLandmarkManager::TransferOption option = IncludeCategoryData, const QLandmarkCategoryId& = QLandmarkCategoryId());
+    bool exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>(), QLandmarkManager::TransferOption option = IncludeCategoryData) const;
+    bool exportLandmarks(const QString &, const QString &format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>(), QLandmarkManager::TransferOption option = IncludeCategoryData) const;
 
-    QStringList supportedFormats() const;
+    QStringList supportedFormats(TransferOperation operation) const;
 
     Error error() const;
     QString errorString() const;
