@@ -162,7 +162,10 @@ QTM_USE_NAMESPACE
 /*!
     \enum QLandmarkManager::LandmarkFeature
     Defines the possible features the landmark manager can support.
-    \value GenericAttributes The manager supports landmarks and categories which have generic attributes
+    \value ExtendedAttributes The manager supports extra attributes above the standard cross platform attributes.
+                              These attributes are specific to the manager backend implementation.
+    \value CustomAttributes The manager supports applications associating arbitrary custom attributes to
+                            landmarks and categories.
 */
 
 /*!
