@@ -784,6 +784,7 @@ void CntSimStorePrivate::removeL(int index)
 void CntSimStorePrivate::updateStoreInfoL()
 {
 #ifdef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
+    TRequestStatus status;
     RMobilePhoneBookStore::TMobilePhoneBookInfoV1 info;
     RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg infoPckg(info);
     m_etelStore.GetInfo(status, infoPckg);
@@ -793,14 +794,14 @@ void CntSimStorePrivate::updateStoreInfoL()
     m_storeInfo.m_usedEntries  = info.iUsedEntries;
 #else
     // Get info
-    TRequestStatus status; 
+    TRequestStatus status;
     if (m_storeInfo.m_storeName == KParameterValueSimStoreNameOn) {
         RMobileONStore::TMobileONStoreInfoV1 onInfo;
         RMobileONStore::TMobileONStoreInfoV1Pckg onInfoPckg(onInfo);
         m_etelOnStore.GetInfo(status, onInfoPckg);
         User::WaitForRequest(status);
         User::LeaveIfError(status.Int());
-        
+
         // Update entry counts
         m_storeInfo.m_totalEntries = onInfo.iTotalEntries;
         m_storeInfo.m_usedEntries  = onInfo.iUsedEntries;
@@ -811,7 +812,7 @@ void CntSimStorePrivate::updateStoreInfoL()
         m_etelStore.GetInfo(status, infoPckg);
         User::WaitForRequest(status);
         User::LeaveIfError(status.Int());
-        
+
         // Update entry counts
         m_storeInfo.m_totalEntries = info.iTotalEntries;
         m_storeInfo.m_usedEntries  = info.iUsedEntries;
@@ -828,7 +829,7 @@ void CntSimStorePrivate::updateStoreInfoL()
     //
     // There is an API for checking these but it's Nokia internal so we must
     // do it this way - by checking if saving these details is possible.
-    
+
     // Have we checked these already?
     if (m_extraDetailsChecked == false)
     {
