@@ -45,8 +45,14 @@
 #include "qgeocoordinate.h"
 #include "qgeomapobject.h"
 
+#include "qgeoserviceprovider.h"
+#include "qgeomappingmanager.h"
+#include "qgeomapdata.h"
+
 #include <QGraphicsSceneResizeEvent>
 #include <QTimer>
+
+#include <QNetworkProxyFactory>
 
 #include <QDebug>
 
@@ -99,6 +105,30 @@ The map data is composed of images collected by satellites during the nighttime.
 The map data is a graphical representation of terrain features.  This may also
 include some of the information provided by QGeoMapWidget::StreetMap.
 */
+
+// Temporary constructor, for use by QML bindings until we come up
+// with the right QML / service provider mapping
+QGeoMapWidget::QGeoMapWidget(QGraphicsItem *parent)
+    : QGraphicsWidget(parent),
+      d_ptr(new QGeoMapWidgetPrivate(0))
+{
+    QNetworkProxyFactory::setUseSystemConfiguration(true);
+
+    d_ptr->serviceProvider = new QGeoServiceProvider("nokia");
+    d_ptr->manager = d_ptr->serviceProvider->mappingManager();
+
+    d_ptr->mapData = d_ptr->manager->createMapData(this);
+    setMapType(QGeoMapWidget::StreetMap);
+
+    setFlag(QGraphicsItem::ItemIsFocusable);
+    setFocus();
+
+    setMinimumSize(QSizeF(0, 0));
+    setPreferredSize(QSizeF(500, 500));
+    d_ptr->mapData->setViewportSize(QSizeF(300, 300));
+
+    setCenter(QGeoCoordinate(-27.0, 153.0));
+}
 
 /*!
     Creates a new mapping widget, with the mapping operations managed by
@@ -451,24 +481,15 @@ Indicates that the type of the map has been changed.
 *******************************************************************************/
 
 QGeoMapWidgetPrivate::QGeoMapWidgetPrivate(QGeoMappingManager *manager)
-        : manager(manager),
+        :serviceProvider(0),
+        manager(manager),
         mapData(0),
         panActive(false) {}
 
-QGeoMapWidgetPrivate::QGeoMapWidgetPrivate(const QGeoMapWidgetPrivate &other)
-        : manager(other.manager),
-        mapData(other.mapData),
-        panActive(other.panActive) {}
-
-QGeoMapWidgetPrivate::~QGeoMapWidgetPrivate() {}
-
-QGeoMapWidgetPrivate& QGeoMapWidgetPrivate::operator= (const QGeoMapWidgetPrivate & other)
+QGeoMapWidgetPrivate::~QGeoMapWidgetPrivate()
 {
-    manager = other.manager;
-    mapData = other.mapData;
-    panActive = other.panActive;
-
-    return *this;
+    if (serviceProvider)
+        delete serviceProvider;
 }
 
 #include "moc_qgeomapwidget.cpp"

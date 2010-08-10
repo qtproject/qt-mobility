@@ -476,20 +476,27 @@ void QGeoTiledMapData::tileFinished()
 
     QGeoTiledMapReply *reply = qobject_cast<QGeoTiledMapReply*>(sender());
 
-    if (!reply)
+    if (!reply) {
+        if (d->requests.size() > 0)
+            QTimer::singleShot(0, this, SLOT(processRequests()));
         return;
+    }
 
     d->replyRects.remove(reply->request().tileRect());
     d->replies.remove(reply);
     d->zoomCache.remove(reply->request());
 
     if (reply->error() != QGeoTiledMapReply::NoError) {
+        if (d->requests.size() > 0)
+            QTimer::singleShot(0, this, SLOT(processRequests()));
         QTimer::singleShot(0, reply, SLOT(deleteLater()));
         return;
     }
 
     if ((zoomLevel() != reply->request().zoomLevel())
             || (mapType() != reply->request().mapType())) {
+        if (d->requests.size() > 0)
+            QTimer::singleShot(0, this, SLOT(processRequests()));
         QTimer::singleShot(0, reply, SLOT(deleteLater()));
         return;
     }
@@ -498,6 +505,8 @@ void QGeoTiledMapData::tileFinished()
 
     if (!tile->loadFromData(reply->mapImageData(), reply->mapImageFormat().toAscii())) {
         delete tile;
+        if (d->requests.size() > 0)
+            QTimer::singleShot(0, this, SLOT(processRequests()));
         QTimer::singleShot(0, reply, SLOT(deleteLater()));
         return;
         //setError(QGeoTiledMapReply::ParseError, "The response from the service was not in a recognisable format.");
@@ -505,6 +514,8 @@ void QGeoTiledMapData::tileFinished()
 
     if (tile->isNull() || tile->size().isEmpty()) {
         delete tile;
+        if (d->requests.size() > 0)
+            QTimer::singleShot(0, this, SLOT(processRequests()));
         QTimer::singleShot(0, reply, SLOT(deleteLater()));
         return;
         //setError(QGeoTiledMapReply::ParseError, "The map image is empty.");

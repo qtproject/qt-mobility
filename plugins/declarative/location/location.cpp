@@ -47,6 +47,9 @@
 #include "qdeclarativelandmarksource_p.h"
 #include "qdeclarativelandmarkcategorysource_p.h"
 
+#include "qdeclarativecoordinate_p.h"
+#include "qdeclarativemapwidget_p.h"
+
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include <QtDeclarative/qdeclarative.h>
 
@@ -69,6 +72,8 @@ public:
         qmlRegisterType<QDeclarativeLandmarkSource>(uri, 1, 1, "LandmarkSource");
         qmlRegisterType<QDeclarativeLandmarkCategory>(uri, 1, 1, "LandmarkCategory");
         qmlRegisterType<QDeclarativeLandmarkCategorySource>(uri, 1, 1, "LandmarkCategorySource");
+        qmlRegisterType<QDeclarativeCoordinate>(uri, 1, 1, "Coordinate");
+        qmlRegisterType<QDeclarativeMapWidget>(uri, 1, 1, "MapWidget");
     }
 };
 

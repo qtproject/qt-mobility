@@ -42,6 +42,8 @@
 #ifndef QGEOMAPWIDGET_H
 #define QGEOMAPWIDGET_H
 
+#include <QtDeclarative/qdeclarative.h>
+
 #include "qmobilityglobal.h"
 #include <QGraphicsWidget>
 
@@ -56,8 +58,12 @@ class QGeoMapWidgetPrivate;
 class Q_LOCATION_EXPORT QGeoMapWidget : public QGraphicsWidget
 {
     Q_OBJECT
+    Q_ENUMS(MapType)
+
+    Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel)
+    Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel)
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
-    Q_PROPERTY(QGeoMapWidget::MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
+    Q_PROPERTY(MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
     Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
 
 public:
@@ -69,6 +75,7 @@ public:
         TerrainMap
     };
 
+    QGeoMapWidget(QGraphicsItem *parent = 0);
     QGeoMapWidget(QGeoMappingManager *manager, QGraphicsItem *parent = 0);
     virtual ~QGeoMapWidget();
 
@@ -81,16 +88,15 @@ public:
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
 
-    void startPanning();
-    void stopPanning();
-    void pan(int dx, int dy);
-
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
 
     QList<MapType> supportedMapTypes() const;
     void setMapType(MapType mapType);
     MapType mapType() const;
+
+    void startPanning();
+    void stopPanning();
 
     void addMapObject(QGeoMapObject *mapObject);
     void removeMapObject(QGeoMapObject *mapObject);
@@ -102,6 +108,9 @@ public:
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
     QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;
 
+public slots:
+    void pan(int dx, int dy);
+
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
 
@@ -112,8 +121,11 @@ signals:
 
 private:
     QGeoMapWidgetPrivate *d_ptr;
+    Q_DISABLE_COPY(QGeoMapWidget);
 };
 
 QTM_END_NAMESPACE
+
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QGeoMapWidget));
 
 #endif

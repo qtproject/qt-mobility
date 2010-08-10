@@ -39,44 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPWIDGET_P_H
-#define QGEOMAPWIDGET_P_H
+#ifndef QDECLARATIVEMAPWIDGET_H
+#define QDECLARATIVEMAPWIDGET_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qdeclarativecoordinate_p.h"
+#include "qgeomapwidget.h"
 
-#include "qmobilityglobal.h"
+class QGraphicsItem;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoServiceProvider;
+class QGeoCoordinate;
 class QGeoMappingManager;
-class QGeoMapData;
+class QGeoBoundingBox;
+class QGeoMapObject;
 
-class QGeoMapWidgetPrivate
+class QDeclarativeMapWidget : public QGeoMapWidget
 {
+    Q_OBJECT
+
+    Q_PROPERTY(QDeclarativeCoordinate* center READ declarativeCenter WRITE setDeclarativeCenter NOTIFY declarativeCenterChanged)
+
 public:
-    QGeoMapWidgetPrivate(QGeoMappingManager *manager);
-    ~QGeoMapWidgetPrivate();
 
-    QGeoServiceProvider *serviceProvider;
+    QDeclarativeMapWidget(QGraphicsItem *parent = 0);
+    ~QDeclarativeMapWidget();
 
-    QGeoMappingManager *manager;
-    QGeoMapData *mapData;
-    bool panActive;
+    void setDeclarativeCenter(const QDeclarativeCoordinate *center);
+    QDeclarativeCoordinate* declarativeCenter() const;
+
+    Q_INVOKABLE QPointF toScreenPosition(const QDeclarativeCoordinate *coordinate) const;
+    Q_INVOKABLE QDeclarativeCoordinate* toCoordinate(QPointF screenPosition) const;
+
+private slots:
+    void memberCenterChanged(const QGeoCoordinate &coordinate);
+
+signals:
+    void declarativeCenterChanged(const QDeclarativeCoordinate *coordinate);
 
 private:
-    Q_DISABLE_COPY(QGeoMapWidgetPrivate)
+    Q_DISABLE_COPY(QDeclarativeMapWidget);
 };
 
 QTM_END_NAMESPACE
+
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeMapWidget));
 
 #endif

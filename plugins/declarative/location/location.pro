@@ -15,6 +15,7 @@ win32|mac:!wince*:!win32-msvc:!macx-xcode:CONFIG += debug_and_release
 INCLUDEPATH += ../../../src/global
 INCLUDEPATH += ../../../src/location
 INCLUDEPATH += ../../../src/location/landmarks
+INCLUDEPATH += ../../../src/location/maps
 INCLUDEPATH += .
 
 # The header and source files of this project. Note that qmake generates dependency information
@@ -25,7 +26,9 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativelandmarksource_p.h \
            qdeclarativelandmarkcategorysource_p.h \
            qdeclarativelandmarkcategory_p.h \
-           qdeclarativelandmarkfilters_p.h
+           qdeclarativelandmarkfilters_p.h \
+           qdeclarativecoordinate_p.h \
+           qdeclarativemapwidget_p.h
 
 SOURCES += qdeclarativeposition.cpp \
            location.cpp \
@@ -34,7 +37,9 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativelandmarksource.cpp \
            qdeclarativelandmarkcategorysource.cpp \
            qdeclarativelandmarkcategory.cpp \
-           qdeclarativelandmarkfilters.cpp
+           qdeclarativelandmarkfilters.cpp \
+           qdeclarativecoordinate.cpp \
+           qdeclarativemapwidget.cpp
 
 # Tell qmake to create such makefile that qmldir and target (i.e. declarative_location)
 # are both copied to qt/imports/QtMobility/location -directory,
