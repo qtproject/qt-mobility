@@ -77,14 +77,14 @@ public:
     {
         qDebug() << "SharedTestService: Writing property";
         m_value = value;
-        //emit valueChanged();
+        emit valueChanged();
     }
 
     void resetValue()
     {
         qDebug() << "SharedTestService: Resetting property";
         m_value = "FFF";
-        //emit valueChanged();
+        emit valueChanged();
     }
 
     Q_INVOKABLE QString testFunctionWithReturnValue(int input)
@@ -241,14 +241,14 @@ public:
     {
         qDebug() << "UniqueTestService: Writing property";
         m_value = value;
-        //emit valueChanged();
+        emit valueChanged();
     }
 
     void resetValue()
     {
         qDebug() << "UniqueTestService: Resetting value";
         m_value = "FFF";
-        //emit valueChanged();
+        emit valueChanged();
     }
 
     Q_INVOKABLE QString testFunctionWithReturnValue(int input)

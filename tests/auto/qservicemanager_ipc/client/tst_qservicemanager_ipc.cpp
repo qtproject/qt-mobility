@@ -57,9 +57,6 @@
     }                                           \
     QVERIFY(a)
 
-// Add in to test Unique service instances
-//#define UNIQUE_TESTS
-
 #ifdef QT_NO_DBUS
     #define UNIQUE_TESTS
 #endif
@@ -94,23 +91,22 @@ private slots:
 
     void verifyUniqueProperties();
     void verifyUniqueProperties_data();
-#ifdef UNIQUE_TESTS
+
     void verifyUniqueClassInfo();
     void verifyUniqueClassInfo_data();
+#ifdef UNIQUE_TESTS
     void verifyUniqueEnumerator();
     void verifyUniqueEnumerator_data();
-    
 #endif
 
+    void sharedTestService();
+    void uniqueTestService();
+    
     void testInvokableFunctions();
     void testSlotInvokation();
 
-#ifdef UNIQUE_TESTS
     void testSignalling();
-#endif
     
-    void sharedTestService();
-    void uniqueTestService();
 
 #ifdef UNIQUE_TESTS
     void testIpcFailure();
@@ -704,7 +700,6 @@ void tst_QServiceManager_IPC::verifyUniqueProperties()
     }
 }
 
-#ifdef UNIQUE_TESTS
 void tst_QServiceManager_IPC::verifyUniqueClassInfo_data()
 {
     QTest::addColumn<QString>("classInfoKey");
@@ -728,6 +723,7 @@ void tst_QServiceManager_IPC::verifyUniqueClassInfo()
 
 }
 
+#ifdef UNIQUE_TESTS
 Q_DECLARE_METATYPE(QList<int> )
 void tst_QServiceManager_IPC::verifyUniqueEnumerator_data()
 {
@@ -853,12 +849,11 @@ void tst_QServiceManager_IPC::testInvokableFunctions()
     QCOMPARE(f.minorVersion(), 7);
 }
 
-#ifdef UNIQUE_TESTS
 void tst_QServiceManager_IPC::testSignalling()
 {
-    QSignalSpy spy(serviceShared, SIGNAL(signalWithIntParam(int)));
-    QMetaObject::invokeMethod(serviceShared, "triggerSignalWithIntParam");
-    QTRY_VERIFY(spy.count() == 1);
+    QSignalSpy spy(serviceUnique, SIGNAL(signalWithIntParam(int)));
+    QMetaObject::invokeMethod(serviceUnique, "triggerSignalWithIntParam");
+    QTRY_VERIFY(spy.count() > 0);
     QCOMPARE(spy.at(0).at(0).toInt(), 5);
     
     //test signalling for property changes
@@ -871,10 +866,12 @@ void tst_QServiceManager_IPC::testSignalling()
     serviceUnique->setProperty("value", QString("FFF"));
     QTRY_VERIFY(propSpy.count() == 1);
     QCOMPARE(QString("FFF"), serviceUnique->property("value").toString());
-   
+  
     //signal with custom types
     QSignalSpy variousSpy(serviceUnique, SIGNAL(signalWithVariousParam(QVariant,QString,QServiceFilter,QVariant)));
     QMetaObject::invokeMethod(serviceUnique, "triggerSignalWithVariousParam");
+    
+    QEXPECT_FAIL("", "Serviceframework IPC over QtDBus doesn't yet support signals with custom arguments", Abort);
     QTRY_VERIFY(variousSpy.count() == 1);
 
     QCOMPARE(variousSpy.at(0).count(), 4);
@@ -892,7 +889,6 @@ void tst_QServiceManager_IPC::testSignalling()
 
     QCOMPARE(variousSpy.at(0).at(3).value<QVariant>(), QVariant(5));
 }
-#endif
 
 void tst_QServiceManager_IPC::testSlotInvokation()
 {

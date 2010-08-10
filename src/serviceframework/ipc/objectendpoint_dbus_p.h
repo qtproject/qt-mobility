@@ -67,9 +67,6 @@ public:
 
     QObject* constructProxy(const QRemoteServiceIdentifier& ident);
     
-    // DBUS OVERLOAD
-    //QObject* constructProxy();
-
     void objectRequest(const QServicePackage& p);
     void methodCall(const QServicePackage& p);
     void propertyCall(const QServicePackage& p);
@@ -85,7 +82,6 @@ Q_SIGNALS:
 public Q_SLOTS:
     void newPackageReady();
     void disconnected();
-    void remainFocused(int a);
 
 //private:
 public:

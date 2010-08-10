@@ -51,8 +51,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-#define DEBUG
-
 class Response
 {
 public:
@@ -66,33 +64,6 @@ public:
 typedef QHash<QUuid, Response*> Replies;
 Q_GLOBAL_STATIC(Replies, openRequests);
 
-class ServiceSignalIntercepter : public QSignalIntercepter
-{
-    //Do not put Q_OBJECT here
-public:
-    ServiceSignalIntercepter(QObject* sender, const QByteArray& signal,
-            ObjectEndPoint* parent)
-        : QSignalIntercepter(sender, signal, parent), endPoint(parent)
-    {
-        
-    }
-
-    void setMetaIndex(int index)
-    {
-        metaIndex = index;
-    }
-
-protected:
-    void activated( const QList<QVariant>& args )
-    {
-        endPoint->invokeRemote(metaIndex, args, QMetaType::Void);
-    }
-private:
-    ObjectEndPoint* endPoint;
-    int metaIndex;
-
-};
-
 class ObjectEndPointPrivate
 {
 public:
@@ -104,60 +75,6 @@ public:
     {
     }
 
-    //service side
-    void setupSignalIntercepters(QObject * service)
-    {
-       /*
-        ServiceSignalIntercepter* intercept =
-            new ServiceSignalIntercepter(service, QByteArray("2signalWithIntParam(int)"), parent);
-       
-        qDebug() << "SIGNALLLLLLLL" << intercept->isValid() << service->metaObject()->indexOfSignal("signalWithIntParam(int)");
-        */
-        //Q_ASSERT(endPointType == ObjectEndPoint::Service);
-
-        //create a signal intercepter for each signal
-        //offered by service 
-        //exclude QObject signals
-       const QMetaObject* mo = service->metaObject();
-        while (mo && strcmp(mo->className(), "QObject"))
-        {
-            for (int i = mo->methodOffset(); i < mo->methodCount(); ++i) {
-                const QMetaMethod method = mo->method(i);
-                if (method.methodType() == QMetaMethod::Signal && method.signature()!=QByteArray("valueChanged()")) {
-                    QByteArray signal = method.signature();
-                    //add '2' for signal - see QSIGNAL_CODE
-                    ServiceSignalIntercepter* intercept = 
-                        new ServiceSignalIntercepter(service, "2"+signal, parent );
-                    intercept->setMetaIndex(i);
-                }
-            }
-            mo = mo->superClass();
-        }
-    }
-
-    /*!
-        Activate slots connected to given signal. Unfortunately we can only do this 
-        using the signal index relative to the meta object defining the signal.
-    */
-    int triggerConnectedSlots(QObject* service, const QMetaObject* meta, int id, void **args)
-    {
-        //Q_ASSERT(endPointType == ObjectEndPoint::Client);
-
-        const QMetaObject* parentMeta = meta->superClass();
-        if (parentMeta)
-            id = triggerConnectedSlots(service, parentMeta, id, args);
-
-        if (id < 0)
-            return id;
-
-        const int methodsThisType = meta->methodCount() - meta->methodOffset();
-        if (id >= 0 && id < methodsThisType)
-            QMetaObject::activate(service, meta, id, args);
-
-        id -= methodsThisType;
-        return id;
-    }
-
     // Used on client and service side
     ObjectEndPoint::Type endPointType;
     ObjectEndPoint* parent;
@@ -167,12 +84,14 @@ public:
     QUuid serviceInstanceId;
 };
 
-//TODO list:
-/*
-    - Why do we need typeIdent and serviceInstanceId on service side. The instance id should be sufficient.
+/*!
+    Client to service communication only used for establishing an object request since the returned
+    proxy is an interface to that object registered on QtDBus. Client communicates directly to QtDBus
+    for method and property access. Signals are automatically relayed from QtDBus to the proxy object.
+
+    TODO:
     - Consider merging invokeRemoteProperty() and invokeRemote()
     - QMetaClassInfo support
-
 */
 ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent)
     : QObject(parent), dispatch(comm), service(0)
@@ -244,6 +163,43 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceIdentifier& ident)
 
     openRequests()->take(p.d->messageId);
     delete response;
+        
+    // Connect all DBus interface signals to the proxy slots
+    // TODO: Implement custom arguments and function this code
+    const QMetaObject *mo = service->metaObject();
+    for (int i = mo->methodOffset(); i < mo->methodCount(); i++) {
+        const QMetaMethod mm = mo->method(i);
+        if (mm.methodType() == QMetaMethod::Signal) {
+            QByteArray sig(mm.signature());
+
+            /*
+               bool customType = false;
+               QList<QByteArray> params = mm.parameterTypes();
+               for (int i=0; i < params.size(); i++) {
+               const QByteArray& type = params[i];
+               int variantType = QVariant::nameToType(type);
+               if (variantType == QVariant::UserType) {
+               sig.replace(QByteArray(type), QByteArray("QDBusVariant")); 
+            //customType = true;
+            }
+            }
+            */
+
+            int serviceIndex = iface->metaObject()->indexOfSignal(sig);
+            if (serviceIndex > 0) {
+                /*  
+                    if (customType) {
+                    ServiceSignalIntercepter* intercept = 
+                    new ServiceSignalIntercepter((QObject*)iface, "2"+sig, this);
+                    continue;
+                    }
+                    */
+                QByteArray signal = QByteArray("2").append(sig);
+                QByteArray method = QByteArray("1").append(sig);
+                QObject::connect(iface, signal.constData(), service, method.constData());
+            }
+        }
+    }
     
     return service;
 }
@@ -311,39 +267,6 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         qDebug() << "Client Interface ObjectPath:" << objPath;
 #endif
         iface = new QDBusInterface(serviceName, objPath, "", QDBusConnection::sessionBus(), this);
-        /*
-        qDebug() << "REMAIN FOCUSED" << QObject::connect(iface, SIGNAL(signalWithIntParam(int)), this, SLOT(remainFocused(int)));
-	connection = new QDBusConnection(QDBusConnection::sessionBus());
-        qDebug() << "REMAIN FOCUSED" 
-                 << connection->connect(serviceName, objPath, "", "signalWithIntParam",
-                                        this, SLOT(remainFocused(int)));
-
-        QDBusMessage msg = QDBusMessage::createSignal(objPath, "local.SharedTestService", "signalWithIntParam");
-        QVariantList vars;
-        vars << QVariant(12);
-        msg.setArguments(vars);
-        qDebug() << "SENDING" << connection->send(msg);
-        */
-        ///////////////////////////////////////////////////////
-        /*
-        const QMetaObject *mo = iface->metaObject();
-        for (int i = mo->methodOffset(); i < mo->methodCount(); i++) {
-            const QMetaMethod mm = mo->method(i);
-            if (mm.methodType() == QMetaMethod::Signal) {
-                QByteArray sig(mm.signature());
-                sig.replace(QByteArray("QDBusVariant"), QByteArray("QVariant"));
-
-                int serviceIndex = proxy->metaObject()->indexOfMethod(sig);
-                
-                if (serviceIndex > 0 && sig!=QByteArray("valueChanged()")) {
-                qDebug() << "CLIENT OBJECT REQ" <<
-                    sig << QMetaObject::connect(iface, i, proxy, serviceIndex, Qt::DirectConnection, 0); 
-                }
-            }
-        }
-
-        */
-        ///////////////////////////////////////////////////////
 
         // Wake up waiting proxy construction code
         QTimer::singleShot(0, this, SIGNAL(pendingRequestFinished()));
@@ -362,7 +285,6 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
             dispatch->writePackage(response);
             return;
         }
-        //d->setupSignalIntercepters(service);
 
         // Start DBus connection and register proxy service
 	connection = new QDBusConnection(QDBusConnection::sessionBus());
@@ -378,7 +300,7 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
 
         QServiceMetaObjectDBus *serviceDBus = new QServiceMetaObjectDBus(service);
         connection->registerObject(objPath, serviceDBus, QDBusConnection::ExportAllContents);
-       
+        
 #ifdef DEBUG
         qDebug() << "Service Interface ObjectPath:" << objPath;
         
@@ -515,15 +437,12 @@ QVariant ObjectEndPoint::invokeRemoteProperty(int metaIndex, const QVariant& arg
     Client side method call that directly accesses the object through the DBus interface.
     All arguments and return types are processed and converted accordingly so that all functions
     satisfy the QtDBus type system.
-
-    Service side signal emit.
 */
 QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, int returnType)
 {
-
     QMetaMethod method = service->metaObject()->method(metaIndex);
 
-    //Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
+    Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
     
     // Process arguments
     QVariantList convertedList = args;
@@ -568,11 +487,10 @@ QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, i
         if (msg.type() == QDBusMessage::ReplyMessage) { 
             validDBus = true;
         }
-    } else if (method.methodType() == QMetaMethod::Signal) {
-        // Signal
-        //qDebug() << "HIYOOOOOOOOO" << method.signature();
 
-	const int numArgs = args.size();
+    } else if (method.methodType() == QMetaMethod::Signal) {
+        // Signal relay
+        const int numArgs = args.size();
         QVarLengthArray<void *, 32> a( numArgs+1 );
         a[0] = 0;
 
@@ -584,11 +502,8 @@ QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, i
                 a[arg+1] = (void *)( args[arg].data() );
         }
 
-        Q_ASSERT(d->endPointType == ObjectEndPoint::Service);
-        
-        //qDebug() << " SIGNAL CALL " << metaIndex;
-        QMetaObject::activate(iface, iface->metaObject(), 10, a.data());
-        //qDebug() << " SIGNAL CALL " << metaIndex;
+        // Activate the service proxy signal call
+        QMetaObject::activate(service, metaIndex, a.data());
         return QVariant();
     }
 
@@ -657,11 +572,6 @@ void ObjectEndPoint::waitForResponse(const QUuid& requestId)
  
         delete loop;
     }
-}
-
-void ObjectEndPoint::remainFocused(int a)
-{
-    qDebug() << "I ARE DRAGOOOOOOOOOOOOOOOOON";
 }
 
 #include "moc_objectendpoint_dbus_p.cpp"

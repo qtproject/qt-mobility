@@ -54,10 +54,11 @@ public:
 };
 
 QServiceMetaObjectDBus::QServiceMetaObjectDBus(QObject* service)
+    : QDBusAbstractAdaptor(service)
 {
     // Register our DBus custom type object
     qRegisterMetaType<QTM_PREPEND_NAMESPACE(QServiceUserTypeDBus)>();
-    customMetaId = qDBusRegisterMetaType<QTM_PREPEND_NAMESPACE(QServiceUserTypeDBus)>();
+    qDBusRegisterMetaType<QTM_PREPEND_NAMESPACE(QServiceUserTypeDBus)>();
  
     // Generate our DBus meta object
     d = new QServiceMetaObjectDBusPrivate();
@@ -65,21 +66,8 @@ QServiceMetaObjectDBus::QServiceMetaObjectDBus(QObject* service)
     d->serviceMeta = service->metaObject();
     d->dbusMeta = dbusMetaObject();
 
-    // Connect the signals
-    const QMetaObject *mo = d->dbusMeta;
-    for (int i = mo->methodOffset(); i < mo->methodCount(); i++) {
-        const QMetaMethod mm = mo->method(i);
-        if (mm.methodType() == QMetaMethod::Signal) {
-            QByteArray sig(mm.signature());
-            sig.replace(QByteArray("QDBusVariant"), QByteArray("QVariant"));
-        
-            int serviceIndex = d->serviceMeta->indexOfMethod(sig);
-
-            if (serviceIndex > 0 && sig!=QByteArray("valueChanged()")) {
-                QMetaObject::connect(d->service, serviceIndex, this, i, Qt::DirectConnection, 0);
-            }
-        }
-    }
+    // Automatically relay signals from service object to adaptor
+    setAutoRelaySignals(true);
 }
 
 QServiceMetaObjectDBus::~QServiceMetaObjectDBus()
@@ -187,7 +175,7 @@ const QMetaObject* QServiceMetaObjectDBus::dbusMetaObject() const
         property.setEnumOrFlag(mp.isEnumType());
 
         if (mp.hasNotifySignal()) {
-            //TODO: signal notify for method
+            //TODO: signal notify for property
         }
     }
 
@@ -305,9 +293,8 @@ int QServiceMetaObjectDBus::qt_metacall(QMetaObject::Call c, int id, void **a)
         // Check if this is a signal emit
         const bool isSignal = (method.methodType() == QMetaMethod::Signal);
         if (isSignal) {
-            // is a signal so trigger connected slot
-            //qDebug() << "YEEEEEEEEHAW" << d->serviceMeta->className() << method.signature() << id;
-            QMetaObject::activate(this, d->dbusMeta, id, a);
+            // Activate the signal on this meta object
+            QMetaObject::activate(this, id, a);
             return id;
         }
         
@@ -432,6 +419,16 @@ void *QServiceMetaObjectDBus::qt_metacast(const char* className)
     //this object should not be castable to anything but QObject
     return QObject::qt_metacast(className);
 }
+
+/*
+void QServiceMetaObjectDBus::connectNotify(const char* signal)
+{
+}
+
+void QServiceMetaObjectDBus::disconnectNotify(const char* signal)
+{
+}
+*/
 
 QDBusArgument &operator<<(QDBusArgument &argument, const QServiceUserTypeDBus &myType)
 {

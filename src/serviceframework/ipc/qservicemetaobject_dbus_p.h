@@ -49,7 +49,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QServiceMetaObjectDBusPrivate;
-class QServiceMetaObjectDBus : public QObject
+class QServiceMetaObjectDBus : public QDBusAbstractAdaptor
 {
 
 public:
@@ -62,14 +62,13 @@ public:
 
     const QMetaObject* dbusMetaObject() const;
 
-/*protected:
-    void connectNotify(const char* signal);
-    void disconnectNotify(const char* signal);*/
+protected:
+    //void connectNotify(const char* signal);
+    //void disconnectNotify(const char* signal);
 
 private:
     QServiceMetaObjectDBusPrivate* d;
     QVector<bool> localSignals;
-    int customMetaId;
 };
 
 
