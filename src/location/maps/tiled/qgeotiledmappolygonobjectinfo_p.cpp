@@ -71,6 +71,8 @@ void QGeoTiledMapPolygonObjectInfo::objectUpdate()
     polygonItem->setPolygon(points);
     polygonItem->setBrush(polygon->brush());
 
+    mapUpdate();
+
     graphicsItem1 = polygonItem;
 }
 

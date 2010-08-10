@@ -141,7 +141,9 @@ private:
     void createMarkerIcon();
 
 private slots:
-    void demo(bool checked);
+    void demo1(bool checked);
+    void demo2(bool checked);
+    void demo3(bool checked);
     void drawRect(bool checked);
     void drawMarker(bool checked);
     void drawPolyline(bool checked);

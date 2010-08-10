@@ -116,7 +116,7 @@ QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMa
 {
     QString rawRequest = getRequestString(request);
 
-    QNetworkRequest netRequest = QNetworkRequest(QUrl(rawRequest));
+    QNetworkRequest netRequest((QUrl(rawRequest))); // The extra pair of parens disambiguates this from a function declaration
     netRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
     m_cache->metaData(netRequest.url()).setLastModified(QDateTime::currentDateTime());
 
@@ -124,8 +124,10 @@ QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMa
 
     QGeoTiledMapReply* mapReply = new QGeoMapReplyNokia(netReply, request, this);
 
-        // TODO goes badly on linux
+    // TODO goes badly on linux
     //qDebug() << "request: " << QString::number(reinterpret_cast<int>(mapReply), 16) << " " << request.row() << "," << request.column();
+    // this one might work better. It follows defined behaviour, unlike reinterpret_cast
+    //qDebug("request: %p %i,%i @ %i", mapReply, request.row(), request.column(), request.zoomLevel());
     return mapReply;
 }
 
