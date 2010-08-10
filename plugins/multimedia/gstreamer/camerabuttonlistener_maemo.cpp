@@ -90,7 +90,7 @@ void CameraButtonListener::updateFocusButtonState()
 
     if (m_focusPressed != pressed) {
         m_focusPressed = pressed;
-        QWidget *window = QApplication::activeWindow();
+        QWidget *window = QApplication::focusWidget();
 
         if (window) {
             QApplication::postEvent(window,
@@ -114,7 +114,7 @@ void CameraButtonListener::updateShuterButtonState()
 
     if (m_shutterPressed != pressed) {
         m_shutterPressed = pressed;
-        QWidget *window = QApplication::activeWindow();
+        QWidget *window = QApplication::focusWidget();
 
         if (window) {
             QApplication::postEvent(window,
