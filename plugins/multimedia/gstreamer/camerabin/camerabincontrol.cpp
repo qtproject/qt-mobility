@@ -90,8 +90,10 @@ QCamera::CaptureMode CameraBinControl::captureMode() const
 
 void CameraBinControl::setCaptureMode(QCamera::CaptureMode mode)
 {
-    m_session->setCaptureMode(mode);
-    reloadLater();
+    if (m_session->captureMode() != mode) {
+        m_session->setCaptureMode(mode);
+        reloadLater();
+    }
 }
 
 void CameraBinControl::setState(QCamera::State state)
@@ -112,7 +114,6 @@ QCamera::State CameraBinControl::state() const
 void CameraBinControl::updateStatus()
 {
     QCamera::State sessionState = m_session->state();
-    m_state = state();
     QCamera::Status oldStatus = m_status;
 
     switch (m_state) {
@@ -140,7 +141,9 @@ void CameraBinControl::updateStatus()
     }
 
     if (m_status != oldStatus) {
-        //qDebug() << "Camera status changed" << m_status;
+#ifdef CAMEABIN_DEBUG
+        qDebug() << "Camera status changed" << m_status;
+#endif
         emit statusChanged(m_status);
     }
 
@@ -148,7 +151,9 @@ void CameraBinControl::updateStatus()
 
 void CameraBinControl::reloadLater()
 {
-    //qDebug() << "reload pipeline requested";
+#ifdef CAMEABIN_DEBUG
+    qDebug() << "reload pipeline requested";
+#endif
     if (!m_reloadPending && m_state == QCamera::ActiveState) {
         m_reloadPending = true;
         QMetaObject::invokeMethod(this, "reloadPipeline", Qt::QueuedConnection);
@@ -157,7 +162,9 @@ void CameraBinControl::reloadLater()
 
 void CameraBinControl::reloadPipeline()
 {
-    //qDebug() << "reload pipeline";
+#ifdef CAMEABIN_DEBUG
+    qDebug() << "reload pipeline";
+#endif
     if (m_reloadPending) {
         m_reloadPending = false;
         if (m_state == QCamera::ActiveState) {

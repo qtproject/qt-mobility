@@ -54,6 +54,10 @@
 
 #include <QtGui>
 
+#if (defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)) && QT_VERSION >= 0x040700
+#define HAVE_CAMERA_BUTTONS
+#endif
+
 Camera::Camera(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Camera),
@@ -82,6 +86,10 @@ Camera::Camera(QWidget *parent) :
 
     connect(videoDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateCameraDevice(QAction*)));
     connect(ui->captureWidget, SIGNAL(currentChanged(int)), SLOT(updateCaptureMode()));
+
+#ifdef HAVE_CAMERA_BUTTONS
+    ui->lockButton->hide();
+#endif
 
     setCamera(cameraDevice);
 }
@@ -133,6 +141,42 @@ void Camera::setCamera(const QByteArray &cameraDevice)
 
     updateCaptureMode();
     camera->start();
+}
+
+void Camera::keyPressEvent(QKeyEvent * event)
+{
+    switch (event->key()) {
+#if QT_VERSION >= 0x040700
+    case Qt::Key_CameraFocus:
+        camera->searchAndLock();
+        break;
+    case Qt::Key_Camera:
+        if (camera->captureMode() == QCamera::CaptureStillImage)
+            takeImage();
+        else
+            record();
+        break;
+#endif
+    default:
+        QMainWindow::keyPressEvent(event);
+    }
+}
+
+void Camera::keyReleaseEvent(QKeyEvent * event)
+{
+    switch (event->key()) {
+#if QT_VERSION >= 0x040700
+    case Qt::Key_CameraFocus:
+        camera->unlock();
+        break;
+    case Qt::Key_Camera:
+        if (camera->captureMode() == QCamera::CaptureVideo)
+            stop();
+        break;
+#endif
+    default:
+        QMainWindow::keyReleaseEvent(event);
+    }
 }
 
 void Camera::updateRecordTime()
@@ -237,15 +281,19 @@ void Camera::updateLockStatus(QCamera::LockStatus status, QCamera::LockChangeRea
     switch (status) {
     case QCamera::Searching:
         indicationColor = Qt::yellow;
+        ui->statusbar->showMessage(tr("Focusing..."));
         ui->lockButton->setText(tr("Focusing..."));
         break;
     case QCamera::Locked:
-        indicationColor = Qt::darkGreen;
+        indicationColor = Qt::darkGreen;        
         ui->lockButton->setText(tr("Unlock"));
+        ui->statusbar->showMessage(tr("Focused"), 2000);
         break;
     case QCamera::Unlocked:
         indicationColor = reason == QCamera::LockFailed ? Qt::red : Qt::black;
         ui->lockButton->setText(tr("Focus"));
+        if (reason == QCamera::LockFailed)
+            ui->statusbar->showMessage(tr("Focus Failed"), 2000);
     }
 
     QPalette palette = ui->lockButton->palette();

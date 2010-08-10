@@ -53,20 +53,23 @@
 // We mean it.
 //
 
-#include "qgalleryitemlist_p.h"
-
 #include "qgalleryabstractresponse.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryAbstractResponsePrivate : public QGalleryItemListPrivate
+class QGalleryAbstractResponsePrivate
 {
 public:
     QGalleryAbstractResponsePrivate()
-        : result(QGalleryAbstractRequest::NoResult)
+        : q_ptr(0)
+        , result(QGalleryAbstractRequest::NoResult)
         , idle(false)
     {
     }
+
+    virtual ~QGalleryAbstractResponsePrivate() {}
+
+    QGalleryAbstractResponse *q_ptr;
     int result;
     bool idle;
 };

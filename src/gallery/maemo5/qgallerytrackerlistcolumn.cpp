@@ -43,7 +43,9 @@
 
 #include "qgallerytrackerschema_p.h"
 
+#include <QtCore/qcryptographichash.h>
 #include <QtCore/qdatetime.h>
+#include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
 
 QTM_BEGIN_NAMESPACE
@@ -116,6 +118,21 @@ QVariant QGalleryTrackerCompositeIdColumn::value(QVector<QVariant>::const_iterat
 QVariant QGalleryTrackerFileUrlColumn::value(QVector<QVariant>::const_iterator row) const
 {
     return QUrl::fromLocalFile((row + m_column)->toString());
+}
+
+QGalleryTrackerCompositeColumn *QGalleryTrackerFileUrlColumn::create(const QVector<int> &)
+{
+    return new QGalleryTrackerFileUrlColumn(0);
+}
+
+QVariant QGalleryTrackerFilePathColumn::value(QVector<QVariant>::const_iterator row) const
+{
+    return *row;
+}
+
+QGalleryTrackerCompositeColumn *QGalleryTrackerFilePathColumn::create(const QVector<int> &)
+{
+    return new QGalleryTrackerFilePathColumn;
 }
 
 #include "moc_qgallerytrackerlistcolumn_p.cpp"

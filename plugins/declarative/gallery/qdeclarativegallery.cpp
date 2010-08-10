@@ -46,8 +46,8 @@
 
 #include "qdeclarativegalleryfilter.h"
 #include "qdeclarativegalleryitem.h"
-#include "qdeclarativegalleryquerycount.h"
 #include "qdeclarativegalleryquerymodel.h"
+#include "qdeclarativegallerytype.h"
 
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QAbstractGallery))
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDocumentGallery))
@@ -67,8 +67,8 @@ public:
         qmlRegisterType<QDeclarativeGalleryFilterUnion>(uri, 1, 1, "GalleryFilterUnion");
         qmlRegisterType<QDeclarativeGalleryFilterIntersection>(uri, 1, 1, "GalleryFilterIntersection");
         qmlRegisterType<QDeclarativeGalleryItem>(uri, 1, 1, "GalleryItem");
-        qmlRegisterType<QDeclarativeGalleryQueryCount>(uri, 1, 1, "GalleryQueryCount");
         qmlRegisterType<QDeclarativeGalleryQueryModel>(uri, 1, 1, "GalleryQueryModel");
+        qmlRegisterType<QDeclarativeGalleryType>(uri, 1, 1, "GalleryType");
         qmlRegisterType<QAbstractGallery>();
         qmlRegisterType<QDocumentGallery>(uri, 1, 1, "DocumentGallery");
     }

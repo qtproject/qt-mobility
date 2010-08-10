@@ -21,15 +21,15 @@ MOBILITY = gallery
 HEADERS += \
         qdeclarativegalleryfilter.h \
         qdeclarativegalleryitem.h \
-        qdeclarativegalleryquerycount.h \
-        qdeclarativegalleryquerymodel.h
+        qdeclarativegalleryquerymodel.h \
+        qdeclarativegallerytype.h
 
 SOURCES += \
         qdeclarativegallery.cpp \
         qdeclarativegalleryfilter.cpp \
         qdeclarativegalleryitem.cpp \
-        qdeclarativegalleryquerycount.cpp \
-        qdeclarativegalleryquerymodel.cpp
+        qdeclarativegalleryquerymodel.cpp \
+        qdeclarativegallerytype.cpp
 
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 

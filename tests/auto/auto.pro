@@ -182,21 +182,13 @@ contains(mobility_modules,gallery) {
         qdocumentgallery \
         qgalleryabstractrequest \
         qgalleryabstractresponse \
-        qgallerybaseresponse \
-        qgallerycountrequest \
-        qgalleryitemlist \
-        qgalleryitemlistmodel \
         qgalleryitemrequest \
+        qgalleryquerymodel \
         qgalleryqueryrequest \
         qgalleryremoverequest \
         qgalleryresource \
-        qgalleryurlrequest
+        qgallerytyperequest
 
     !unix: SUBDIRS += qgalleryfilter
-
-    unix: contains(QT_CONFIG, dbus) {
-        SUBDIRS += \
-                qgallerytrackeritemlist_maemo5
-    }
 }
 
