@@ -146,10 +146,14 @@
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategoryfetchrequest.html#dtor.QLandmarkCategoryFetchRequest">~QLandmarkCategoryFetchRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmarkCategory&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategoryfetchrequest.html#categories">categories</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmarkCategoryId&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategoryfetchrequest.html#categoryIds">categoryIds</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategoryfetchrequest.html#limit">limit</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> MatchingScheme </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategoryfetchrequest.html#matchingScheme">matchingScheme</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategoryfetchrequest.html#offset">offset</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategoryfetchrequest.html#setCategoryId">setCategoryId</a></b> ( const QLandmarkCategoryId &amp; <i>categoryId</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategoryfetchrequest.html#setCategoryIds">setCategoryIds</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; <i>categoryIds</i> = QList&lt;QLandmarkCategoryId&gt; () )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategoryfetchrequest.html#setLimit">setLimit</a></b> ( int <i>limit</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategoryfetchrequest.html#setMatchingScheme">setMatchingScheme</a></b> ( QLandmarkCategoryFetchRequest::MatchingScheme <i>matchingScheme</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategoryfetchrequest.html#setOffset">setOffset</a></b> ( int <i>offset</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategoryfetchrequest.html#setSorting">setSorting</a></b> ( const QLandmarkNameSort &amp; <i>nameSort</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QLandmarkNameSort </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategoryfetchrequest.html#sorting">sorting</a></b> () const</td></tr>
 </table>
@@ -191,19 +195,31 @@
 <p>Returns a list of identifiers for categories which will be retrieved by the fetch request.</p>
 <p>By default no category ids are set, this means the fetch request will fetch all categories.</p>
 <p>See also <a href="qlandmarkcategoryfetchrequest.html#setCategoryIds">setCategoryIds</a>().</p>
+<h3 class="fn"><a name="limit"></a>int QLandmarkCategoryFetchRequest::limit () const</h3>
+<p>Returns the maximum number of categories to be returned. If category ids have been assigned to this fetch request, the limit has no effect.</p>
+<p>See also <a href="qlandmarkcategoryfetchrequest.html#setLimit">setLimit</a>().</p>
 <h3 class="fn"><a name="matchingScheme"></a><a href="qlandmarkcategoryfetchrequest.html#MatchingScheme-enum">MatchingScheme</a> QLandmarkCategoryFetchRequest::matchingScheme () const</h3>
 <p>Returns the matching scheme for the fetch request.</p>
 <p>By default the matching scheme is set to to <tt>MatchSubset</tt>. The matching scheme only has an effect when a particular set of category ids are assigned to the fetch request. If all categories are to be retrieved, then the matching scheme is ignored.</p>
 <p>See also <a href="qlandmarkcategoryfetchrequest.html#setMatchingScheme">setMatchingScheme</a>().</p>
+<h3 class="fn"><a name="offset"></a>int QLandmarkCategoryFetchRequest::offset () const</h3>
+<p>Returns the index offset for the request. If category ids have been assigned to this fetch request then offset has no effect.</p>
+<p>See also <a href="qlandmarkcategoryfetchrequest.html#setOffset">setOffset</a>().</p>
 <h3 class="fn"><a name="setCategoryId"></a>void QLandmarkCategoryFetchRequest::setCategoryId ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>categoryId</i> )</h3>
 <p>Convenience function to set a single category identified by <i>categoryId</i> to be fetched.</p>
 <h3 class="fn"><a name="setCategoryIds"></a>void QLandmarkCategoryFetchRequest::setCategoryIds ( const QList&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; &amp; <i>categoryIds</i> = QList&lt;QLandmarkCategoryId&gt; () )</h3>
 <p>Sets the categories to be retrieved by the request as a list of <i>categoryIds</i>.</p>
 <p>If <i>categoryIds</i> is empty, then the request will fetch all categories.</p>
 <p>See also <a href="qlandmarkcategoryfetchrequest.html#categoryIds">categoryIds</a>().</p>
+<h3 class="fn"><a name="setLimit"></a>void QLandmarkCategoryFetchRequest::setLimit ( int <i>limit</i> )</h3>
+<p>Sets the maximum number of categories to be returned to <i>limit</i>.</p>
+<p>See also <a href="qlandmarkcategoryfetchrequest.html#limit">limit</a>().</p>
 <h3 class="fn"><a name="setMatchingScheme"></a>void QLandmarkCategoryFetchRequest::setMatchingScheme ( <a href="qlandmarkcategoryfetchrequest.html#MatchingScheme-enum">QLandmarkCategoryFetchRequest::MatchingScheme</a> <i>matchingScheme</i> )</h3>
 <p>Sets the <i>matchingScheme</i> of the fetch request.</p>
 <p>See also <a href="qlandmarkcategoryfetchrequest.html#matchingScheme">matchingScheme</a>().</p>
+<h3 class="fn"><a name="setOffset"></a>void QLandmarkCategoryFetchRequest::setOffset ( int <i>offset</i> )</h3>
+<p>Sets the index <i>offset</i> for the request.</p>
+<p>See also <a href="qlandmarkcategoryfetchrequest.html#offset">offset</a>().</p>
 <h3 class="fn"><a name="setSorting"></a>void QLandmarkCategoryFetchRequest::setSorting ( const <a href="qlandmarknamesort.html">QLandmarkNameSort</a> &amp; <i>nameSort</i> )</h3>
 <p>Sets <i>nameSort</i> to specify the sorting of the returned categories.</p>
 <p>See also <a href="qlandmarkcategoryfetchrequest.html#sorting">sorting</a>().</p>

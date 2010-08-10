@@ -3561,46 +3561,6 @@
         </member>
     </compound>
     <compound kind="class">
-        <name>QLandmarkDistanceSort</name>
-        <filename>qlandmarkdistancesort.html</filename>
-        <base>QLandmarkSortOrder</base>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type></type>
-            <name>QLandmarkDistanceSort</name>
-            <anchorfile>qlandmarkdistancesort.html</anchorfile>
-            <anchor>QLandmarkDistanceSort</anchor>
-            <arglist>(const QGeoCoordinate &amp; coordinate, Qt::SortOrder direction)</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type></type>
-            <name>QLandmarkDistanceSort</name>
-            <anchorfile>qlandmarkdistancesort.html</anchorfile>
-            <anchor>QLandmarkDistanceSort-2</anchor>
-            <arglist>(const QLandmarkSortOrder &amp; other)</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="virtual" static="no">
-            <type>virtual </type>
-            <name>~QLandmarkDistanceSort</name>
-            <anchorfile>qlandmarkdistancesort.html</anchorfile>
-            <anchor>dtor.QLandmarkDistanceSort</anchor>
-            <arglist>()</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type>QGeoCoordinate</type>
-            <name>coordinate</name>
-            <anchorfile>qlandmarkdistancesort.html</anchorfile>
-            <anchor>coordinate</anchor>
-            <arglist>() const</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type>void</type>
-            <name>setCoordinate</name>
-            <anchorfile>qlandmarkdistancesort.html</anchorfile>
-            <anchor>setCoordinate</anchor>
-            <arglist>(const QGeoCoordinate &amp; coordinate)</arglist>
-        </member>
-    </compound>
-    <compound kind="class">
         <name>QOrganizerItemFetchHint</name>
         <filename>qorganizeritemfetchhint.html</filename>
         <member kind="function" protection="public" virtualness="non" static="no">
@@ -4393,18 +4353,32 @@
             <arglist>(const QLandmarkSortOrder &amp; sorting)</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
-            <type>QLandmarkFetchHint</type>
-            <name>fetchHint</name>
+            <type>int</type>
+            <name>limit</name>
             <anchorfile>qlandmarkfetchrequest.html</anchorfile>
-            <anchor>fetchHint</anchor>
+            <anchor>limit</anchor>
             <arglist>() const</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>void</type>
-            <name>setFetchHint</name>
+            <name>setLimit</name>
             <anchorfile>qlandmarkfetchrequest.html</anchorfile>
-            <anchor>setFetchHint</anchor>
-            <arglist>(const QLandmarkFetchHint &amp; fetchHint)</arglist>
+            <anchor>setLimit</anchor>
+            <arglist>(int limit)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>int</type>
+            <name>offset</name>
+            <anchorfile>qlandmarkfetchrequest.html</anchorfile>
+            <anchor>offset</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setOffset</name>
+            <anchorfile>qlandmarkfetchrequest.html</anchorfile>
+            <anchor>setOffset</anchor>
+            <arglist>(int offset)</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>QList&lt;QLandmark&gt;</type>
@@ -9025,14 +8999,14 @@
             <name>categories</name>
             <anchorfile>qlandmarkmanager.html</anchorfile>
             <anchor>categories-2</anchor>
-            <arglist>(const QLandmarkNameSort &amp; nameSort) const</arglist>
+            <arglist>(int limit, int offset, const QLandmarkNameSort &amp; nameSort) const</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>QList&lt;QLandmarkCategoryId&gt;</type>
             <name>categoryIds</name>
             <anchorfile>qlandmarkmanager.html</anchorfile>
             <anchor>categoryIds</anchor>
-            <arglist>(const QLandmarkNameSort &amp; nameSort) const</arglist>
+            <arglist>(int limit, int offset, const QLandmarkNameSort &amp; nameSort) const</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>QLandmark</type>
@@ -9046,14 +9020,14 @@
             <name>landmarks</name>
             <anchorfile>qlandmarkmanager.html</anchorfile>
             <anchor>landmarks</anchor>
-            <arglist>(const QLandmarkFilter &amp; filter, const QList&lt;QLandmarkSortOrder&gt; &amp; sortOrders, const QLandmarkFetchHint &amp; fetchHint) const</arglist>
+            <arglist>(const QLandmarkFilter &amp; filter, int limit, int offset, const QList&lt;QLandmarkSortOrder&gt; &amp; sortOrders) const</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>QList&lt;QLandmark&gt;</type>
             <name>landmarks</name>
             <anchorfile>qlandmarkmanager.html</anchorfile>
             <anchor>landmarks-2</anchor>
-            <arglist>(const QLandmarkFilter &amp; filter, const QLandmarkSortOrder &amp; sortOrder, const QLandmarkFetchHint &amp; fetchHint) const</arglist>
+            <arglist>(const QLandmarkFilter &amp; filter, int limit, int offset, const QLandmarkSortOrder &amp; sortOrder) const</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>QList&lt;QLandmark&gt;</type>
@@ -9067,14 +9041,14 @@
             <name>landmarkIds</name>
             <anchorfile>qlandmarkmanager.html</anchorfile>
             <anchor>landmarkIds</anchor>
-            <arglist>(const QLandmarkFilter &amp; filter, const QList&lt;QLandmarkSortOrder&gt; &amp; sortOrders, const QLandmarkFetchHint &amp; fetchHint) const</arglist>
+            <arglist>(const QLandmarkFilter &amp; filter, int limit, int offset, const QList&lt;QLandmarkSortOrder&gt; &amp; sortOrders) const</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>QList&lt;QLandmarkId&gt;</type>
             <name>landmarkIds</name>
             <anchorfile>qlandmarkmanager.html</anchorfile>
             <anchor>landmarkIds-2</anchor>
-            <arglist>(const QLandmarkFilter &amp; filter, const QLandmarkSortOrder &amp; sortOrder, const QLandmarkFetchHint &amp; fetchHint) const</arglist>
+            <arglist>(const QLandmarkFilter &amp; filter, int limit, int offset, const QLandmarkSortOrder &amp; sortOrder) const</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>bool</type>
@@ -10729,14 +10703,14 @@
             <name>landmarkIds</name>
             <anchorfile>qlandmarkmanagerengine.html</anchorfile>
             <anchor>landmarkIds</anchor>
-            <arglist>(const QLandmarkFilter &amp; filter, const QList&lt;QLandmarkSortOrder&gt; &amp; sortOrders, const QLandmarkFetchHint &amp; fetchHint, QLandmarkManager::Error * error, QString * errorString) const = 0</arglist>
+            <arglist>(const QLandmarkFilter &amp; filter, int limit, int offset, const QList&lt;QLandmarkSortOrder&gt; &amp; sortOrders, QLandmarkManager::Error * error, QString * errorString) const = 0</arglist>
         </member>
         <member kind="function" protection="public" virtual="pure" static="no">
             <type>virtual QList&lt;QLandmarkCategoryId&gt;</type>
             <name>categoryIds</name>
             <anchorfile>qlandmarkmanagerengine.html</anchorfile>
             <anchor>categoryIds</anchor>
-            <arglist>(const QLandmarkNameSort &amp; nameSort, QLandmarkManager::Error * error, QString * errorString) const = 0</arglist>
+            <arglist>(int limit, int offset, const QLandmarkNameSort &amp; nameSort, QLandmarkManager::Error * error, QString * errorString) const = 0</arglist>
         </member>
         <member kind="function" protection="public" virtual="pure" static="no">
             <type>virtual QLandmark</type>
@@ -10750,7 +10724,7 @@
             <name>landmarks</name>
             <anchorfile>qlandmarkmanagerengine.html</anchorfile>
             <anchor>landmarks</anchor>
-            <arglist>(const QLandmarkFilter &amp; filter, const QList&lt;QLandmarkSortOrder&gt; &amp; sortOrders, const QLandmarkFetchHint &amp; fetchHint, QLandmarkManager::Error * error, QString * errorString) const = 0</arglist>
+            <arglist>(const QLandmarkFilter &amp; filter, int limit, int offset, const QList&lt;QLandmarkSortOrder&gt; &amp; sortOrders, QLandmarkManager::Error * error, QString * errorString) const = 0</arglist>
         </member>
         <member kind="function" protection="public" virtual="pure" static="no">
             <type>virtual QLandmarkCategory</type>
@@ -10771,7 +10745,7 @@
             <name>categories</name>
             <anchorfile>qlandmarkmanagerengine.html</anchorfile>
             <anchor>categories-2</anchor>
-            <arglist>(const QLandmarkNameSort &amp; nameSort, QLandmarkManager::Error * error, QString * errorString) const = 0</arglist>
+            <arglist>(int limit, int offset, const QLandmarkNameSort &amp; nameSort, QLandmarkManager::Error * error, QString * errorString) const = 0</arglist>
         </member>
         <member kind="function" protection="public" virtual="pure" static="no">
             <type>virtual bool</type>
@@ -11089,13 +11063,6 @@
             <arglist>(const QLandmark &amp; a, const QLandmark &amp; b, const QLandmarkNameSort &amp; nameSort)</arglist>
         </member>
         <member kind="function" protection="protected" virtualness="non" static="yes">
-            <type>int</type>
-            <name>compareDistance</name>
-            <anchorfile>qlandmarkmanagerengine.html</anchorfile>
-            <anchor>compareDistance</anchor>
-            <arglist>(const QLandmark &amp; a, const QLandmark &amp; b, const QLandmarkDistanceSort &amp; distanceSort)</arglist>
-        </member>
-        <member kind="function" protection="protected" virtualness="non" static="yes">
             <type>void</type>
             <name>addSorted</name>
             <anchorfile>qlandmarkmanagerengine.html</anchorfile>
@@ -11264,18 +11231,32 @@
             <arglist>(const QLandmarkSortOrder &amp; sorting)</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
-            <type>QLandmarkFetchHint</type>
-            <name>fetchHint</name>
+            <type>int</type>
+            <name>limit</name>
             <anchorfile>qlandmarkidfetchrequest.html</anchorfile>
-            <anchor>fetchHint</anchor>
+            <anchor>limit</anchor>
             <arglist>() const</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>void</type>
-            <name>setFetchHint</name>
+            <name>setLimit</name>
             <anchorfile>qlandmarkidfetchrequest.html</anchorfile>
-            <anchor>setFetchHint</anchor>
-            <arglist>(const QLandmarkFetchHint &amp; fetchHint)</arglist>
+            <anchor>setLimit</anchor>
+            <arglist>(int limit)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>int</type>
+            <name>offset</name>
+            <anchorfile>qlandmarkidfetchrequest.html</anchorfile>
+            <anchor>offset</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setOffset</name>
+            <anchorfile>qlandmarkidfetchrequest.html</anchorfile>
+            <anchor>setOffset</anchor>
+            <arglist>(int offset)</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>QList&lt;QLandmarkId&gt;</type>
@@ -15306,6 +15287,18 @@
     <compound kind="class">
         <name>QGeoMapObject</name>
         <filename>qgeomapobject.html</filename>
+        <member kind="property" type="int">
+            <name>zValue</name>
+            <anchorfile>qgeomapobject.html</anchorfile>
+            <anchor>zValue-prop</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="property" type="bool">
+            <name>visible</name>
+            <anchorfile>qgeomapobject.html</anchorfile>
+            <anchor>visible-prop</anchor>
+            <arglist></arglist>
+        </member>
         <member kind="enum">
             <name>Type</name>
             <anchor>Type-enum</anchor>
@@ -15335,7 +15328,7 @@
             <anchor>Type-enum</anchor>
             <arglist></arglist>
         </member>
-        <member name="GeoRouteType">
+        <member name="RouteType">
             <anchor>Type-enum</anchor>
             <arglist></arglist>
         </member>
@@ -15364,39 +15357,39 @@
             <type>void</type>
             <name>setZValue</name>
             <anchorfile>qgeomapobject.html</anchorfile>
-            <anchor>setZValue</anchor>
+            <anchor>zValue-prop</anchor>
             <arglist>(int zValue)</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>int</type>
             <name>zValue</name>
             <anchorfile>qgeomapobject.html</anchorfile>
-            <anchor>zValue</anchor>
+            <anchor>zValue-prop</anchor>
             <arglist>() const</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>void</type>
             <name>setVisible</name>
             <anchorfile>qgeomapobject.html</anchorfile>
-            <anchor>setVisible</anchor>
+            <anchor>visible-prop</anchor>
             <arglist>(bool visible)</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>bool</type>
             <name>isVisible</name>
             <anchorfile>qgeomapobject.html</anchorfile>
-            <anchor>isVisible</anchor>
+            <anchor>visible-prop</anchor>
             <arglist>() const</arglist>
         </member>
-        <member kind="function" protection="public" virtualness="virtual" static="no">
-            <type>virtual QGeoBoundingBox</type>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QGeoBoundingBox</type>
             <name>boundingBox</name>
             <anchorfile>qgeomapobject.html</anchorfile>
             <anchor>boundingBox</anchor>
             <arglist>() const</arglist>
         </member>
-        <member kind="function" protection="public" virtualness="virtual" static="no">
-            <type>virtual bool</type>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
             <name>contains</name>
             <anchorfile>qgeomapobject.html</anchorfile>
             <anchor>contains</anchor>
@@ -15457,6 +15450,20 @@
             <anchorfile>qgeomapobject.html</anchorfile>
             <anchor>operator&gt;</anchor>
             <arglist>(const QGeoMapObject &amp; other) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>zValueChanged</name>
+            <anchorfile>qgeomapobject.html</anchorfile>
+            <anchor>zValueChanged</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>visibleChanged</name>
+            <anchorfile>qgeomapobject.html</anchorfile>
+            <anchor>visibleChanged</anchor>
+            <arglist>()</arglist>
         </member>
     </compound>
     <compound kind="class">
@@ -16590,6 +16597,20 @@
             <anchorfile>qgeosearchmanager.html</anchorfile>
             <anchor>addAdditionalLandmarkManager</anchor>
             <arglist>(QLandmarkManager * landmarkManager)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setLocale</name>
+            <anchorfile>qgeosearchmanager.html</anchorfile>
+            <anchor>setLocale</anchor>
+            <arglist>(const QLocale &amp; locale)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QLocale</type>
+            <name>locale</name>
+            <anchorfile>qgeosearchmanager.html</anchorfile>
+            <anchor>locale</anchor>
+            <arglist>() const</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>void</type>
@@ -21250,6 +21271,34 @@
             <anchor>setSorting</anchor>
             <arglist>(const QLandmarkNameSort &amp; nameSort)</arglist>
         </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>int</type>
+            <name>limit</name>
+            <anchorfile>qlandmarkcategoryfetchrequest.html</anchorfile>
+            <anchor>limit</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setLimit</name>
+            <anchorfile>qlandmarkcategoryfetchrequest.html</anchorfile>
+            <anchor>setLimit</anchor>
+            <arglist>(int limit)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>int</type>
+            <name>offset</name>
+            <anchorfile>qlandmarkcategoryfetchrequest.html</anchorfile>
+            <anchor>offset</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setOffset</name>
+            <anchorfile>qlandmarkcategoryfetchrequest.html</anchorfile>
+            <anchor>setOffset</anchor>
+            <arglist>(int offset)</arglist>
+        </member>
     </compound>
     <compound kind="class">
         <name>QGeoMapData</name>
@@ -21368,13 +21417,6 @@
         </member>
         <member kind="function" protection="public" virtualness="virtual" static="no">
             <type>virtual QList&lt;QGeoMapObject *&gt;</type>
-            <name>visibleMapObjects</name>
-            <anchorfile>qgeomapdata.html</anchorfile>
-            <anchor>visibleMapObjects</anchor>
-            <arglist>()</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="virtual" static="no">
-            <type>virtual QList&lt;QGeoMapObject *&gt;</type>
             <name>mapObjectsAtScreenPosition</name>
             <anchorfile>qgeomapdata.html</anchorfile>
             <anchor>mapObjectsAtScreenPosition</anchor>
@@ -21386,6 +21428,34 @@
             <anchorfile>qgeomapdata.html</anchorfile>
             <anchor>mapObjectsInScreenRect</anchor>
             <arglist>(const QRectF &amp; screenRect)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QList&lt;QGeoMapOverlay *&gt;</type>
+            <name>mapOverlays</name>
+            <anchorfile>qgeomapdata.html</anchorfile>
+            <anchor>mapOverlays</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>addMapOverlay</name>
+            <anchorfile>qgeomapdata.html</anchorfile>
+            <anchor>addMapOverlay</anchor>
+            <arglist>(QGeoMapOverlay * overlay)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>removeMapOverlay</name>
+            <anchorfile>qgeomapdata.html</anchorfile>
+            <anchor>removeMapOverlay</anchor>
+            <arglist>(QGeoMapOverlay * overlay)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>clearMapOverlays</name>
+            <anchorfile>qgeomapdata.html</anchorfile>
+            <anchor>clearMapOverlays</anchor>
+            <arglist>()</arglist>
         </member>
         <member kind="function" protection="public" virtual="pure" static="no">
             <type>virtual QPointF</type>
@@ -21407,6 +21477,13 @@
             <anchorfile>qgeomapdata.html</anchorfile>
             <anchor>paint</anchor>
             <arglist>(QPainter * painter, const QStyleOptionGraphicsItem * option)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="virtual" static="no">
+            <type>virtual void</type>
+            <name>setupMapObject</name>
+            <anchorfile>qgeomapdata.html</anchorfile>
+            <anchor>setupMapObject</anchor>
+            <arglist>(QGeoMapObject * mapObject)</arglist>
         </member>
         <member kind="function" protection="protected" virtualness="non" static="no">
             <type>QGeoMapWidget *</type>
@@ -24183,6 +24260,34 @@
             <anchorfile>qlandmarkcategoryidfetchrequest.html</anchorfile>
             <anchor>sorting</anchor>
             <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>int</type>
+            <name>limit</name>
+            <anchorfile>qlandmarkcategoryidfetchrequest.html</anchorfile>
+            <anchor>limit</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setLimit</name>
+            <anchorfile>qlandmarkcategoryidfetchrequest.html</anchorfile>
+            <anchor>setLimit</anchor>
+            <arglist>(int limit)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>int</type>
+            <name>offset</name>
+            <anchorfile>qlandmarkcategoryidfetchrequest.html</anchorfile>
+            <anchor>offset</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setOffset</name>
+            <anchorfile>qlandmarkcategoryidfetchrequest.html</anchorfile>
+            <anchor>setOffset</anchor>
+            <arglist>(int offset)</arglist>
         </member>
     </compound>
     <compound kind="class">
@@ -27220,6 +27325,20 @@
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>void</type>
+            <name>setLocale</name>
+            <anchorfile>qgeosearchmanagerengine.html</anchorfile>
+            <anchor>setLocale</anchor>
+            <arglist>(const QLocale &amp; locale)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QLocale</type>
+            <name>locale</name>
+            <anchorfile>qgeosearchmanagerengine.html</anchorfile>
+            <anchor>locale</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
             <name>finished</name>
             <anchorfile>qgeosearchmanagerengine.html</anchorfile>
             <anchor>finished</anchor>
@@ -29213,66 +29332,6 @@
         </member>
     </compound>
     <compound kind="class">
-        <name>QLandmarkFetchHint</name>
-        <filename>qlandmarkfetchhint.html</filename>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type></type>
-            <name>QLandmarkFetchHint</name>
-            <anchorfile>qlandmarkfetchhint.html</anchorfile>
-            <anchor>QLandmarkFetchHint</anchor>
-            <arglist>()</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type></type>
-            <name>QLandmarkFetchHint</name>
-            <anchorfile>qlandmarkfetchhint.html</anchorfile>
-            <anchor>QLandmarkFetchHint-2</anchor>
-            <arglist>(const QLandmarkFetchHint &amp; other)</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type></type>
-            <name>~QLandmarkFetchHint</name>
-            <anchorfile>qlandmarkfetchhint.html</anchorfile>
-            <anchor>dtor.QLandmarkFetchHint</anchor>
-            <arglist>()</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type>QLandmarkFetchHint &amp;</type>
-            <name>operator=</name>
-            <anchorfile>qlandmarkfetchhint.html</anchorfile>
-            <anchor>operator=</anchor>
-            <arglist>(const QLandmarkFetchHint &amp; other)</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type>void</type>
-            <name>setMaxItems</name>
-            <anchorfile>qlandmarkfetchhint.html</anchorfile>
-            <anchor>setMaxItems</anchor>
-            <arglist>(int max)</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type>int</type>
-            <name>maxItems</name>
-            <anchorfile>qlandmarkfetchhint.html</anchorfile>
-            <anchor>maxItems</anchor>
-            <arglist>() const</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type>void</type>
-            <name>setOffset</name>
-            <anchorfile>qlandmarkfetchhint.html</anchorfile>
-            <anchor>setOffset</anchor>
-            <arglist>(int offset)</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type>int</type>
-            <name>offset</name>
-            <anchorfile>qlandmarkfetchhint.html</anchorfile>
-            <anchor>offset</anchor>
-            <arglist>() const</arglist>
-        </member>
-    </compound>
-    <compound kind="class">
         <name>QContactDetailDefinition</name>
         <filename>qcontactdetaildefinition.html</filename>
         <member kind="function" protection="public" virtualness="non" static="no">
@@ -29459,6 +29518,20 @@
             <name>maximumZoomLevel</name>
             <anchorfile>qgeomappingmanagerengine.html</anchorfile>
             <anchor>maximumZoomLevel</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setLocale</name>
+            <anchorfile>qgeomappingmanagerengine.html</anchorfile>
+            <anchor>setLocale</anchor>
+            <arglist>(const QLocale &amp; locale)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QLocale</type>
+            <name>locale</name>
+            <anchorfile>qgeomappingmanagerengine.html</anchorfile>
+            <anchor>locale</anchor>
             <arglist>() const</arglist>
         </member>
         <member kind="function" protection="protected" virtualness="non" static="no">
@@ -31154,6 +31227,20 @@
             <anchor>maximumZoomLevel</anchor>
             <arglist>() const</arglist>
         </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setLocale</name>
+            <anchorfile>qgeomappingmanager.html</anchorfile>
+            <anchor>setLocale</anchor>
+            <arglist>(const QLocale &amp; locale)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QLocale</type>
+            <name>locale</name>
+            <anchorfile>qgeomappingmanager.html</anchorfile>
+            <anchor>locale</anchor>
+            <arglist>() const</arglist>
+        </member>
     </compound>
     <compound kind="class">
         <name>QContactAnniversary</name>
@@ -31568,6 +31655,20 @@
             <name>supportedInstructionDetails</name>
             <anchorfile>qgeoroutingmanagerengine.html</anchorfile>
             <anchor>supportedInstructionDetails</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setLocale</name>
+            <anchorfile>qgeoroutingmanagerengine.html</anchorfile>
+            <anchor>setLocale</anchor>
+            <arglist>(const QLocale &amp; locale)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QLocale</type>
+            <name>locale</name>
+            <anchorfile>qgeoroutingmanagerengine.html</anchorfile>
+            <anchor>locale</anchor>
             <arglist>() const</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
@@ -33231,13 +33332,6 @@
             <name>mapObjects</name>
             <anchorfile>qgeomapwidget.html</anchorfile>
             <anchor>mapObjects</anchor>
-            <arglist>()</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type>QList&lt;QGeoMapObject *&gt;</type>
-            <name>visibleMapObjects</name>
-            <anchorfile>qgeomapwidget.html</anchorfile>
-            <anchor>visibleMapObjects</anchor>
             <arglist>()</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
@@ -35307,6 +35401,20 @@
             <name>supportedInstructionDetails</name>
             <anchorfile>qgeoroutingmanager.html</anchorfile>
             <anchor>supportedInstructionDetails</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setLocale</name>
+            <anchorfile>qgeoroutingmanager.html</anchorfile>
+            <anchor>setLocale</anchor>
+            <arglist>(const QLocale &amp; locale)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QLocale</type>
+            <name>locale</name>
+            <anchorfile>qgeoroutingmanager.html</anchorfile>
+            <anchor>locale</anchor>
             <arglist>() const</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">

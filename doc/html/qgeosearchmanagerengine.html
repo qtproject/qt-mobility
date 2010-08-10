@@ -142,11 +142,13 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmarkManager *&gt; </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanagerengine.html#additionalLandmarkManagers">additionalLandmarkManagers</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QLandmarkManager * </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanagerengine.html#defaultLandmarkManager">defaultLandmarkManager</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QGeoSearchReply * </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanagerengine.html#geocode">geocode</a></b> ( const QGeoAddress &amp; <i>address</i>, QGeoBoundingArea * <i>bounds</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QLocale </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanagerengine.html#locale">locale</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanagerengine.html#managerName">managerName</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanagerengine.html#managerVersion">managerVersion</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QGeoSearchReply * </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanagerengine.html#reverseGeocode">reverseGeocode</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i>, QGeoBoundingArea * <i>bounds</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QGeoSearchReply * </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanagerengine.html#search">search</a></b> ( const QString &amp; <i>searchString</i>, QGeoSearchManager::SearchTypes <i>searchTypes</i>, int <i>resultsCount</i>, int <i>resultsOffset</i>, QGeoBoundingArea * <i>bounds</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanagerengine.html#setAdditionalLandmarkManagers">setAdditionalLandmarkManagers</a></b> ( const QList&lt;QLandmarkManager *&gt; &amp; <i>landmarkManagers</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanagerengine.html#setLocale">setLocale</a></b> ( const QLocale &amp; <i>locale</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QGeoSearchManager::SearchTypes </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanagerengine.html#supportedSearchTypes">supportedSearchTypes</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanagerengine.html#supportsGeocoding">supportsGeocoding</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanagerengine.html#supportsReverseGeocoding">supportsReverseGeocoding</a></b> () const</td></tr>
@@ -219,6 +221,8 @@
 <p>The address data returned in the results may be different from <i>address</i>. This will usually occur if the geocoding service backend uses a different canonical form of addresses or if <i>address</i> was only partially filled out.</p>
 <p>If <i>bounds</i> is a valid <a href="qgeoboundingbox.html">QGeoBoundingBox</a> it will be used to limit the results to those that are contained by <i>bounds</i>. This is particularly useful if <i>address</i> is only partially filled out, as the service will attempt to geocode all matches for the specified data.</p>
 <p>The user is responsible for deleting the returned reply object, although this can be done in the slot connected to <a href="qgeosearchmanagerengine.html#finished">QGeoSearchManagerEngine::finished</a>(), <a href="qgeosearchmanagerengine.html#error">QGeoSearchManagerEngine::error</a>(), <a href="qgeosearchreply.html#finished">QGeoSearchReply::finished</a>() or <a href="qgeosearchreply.html#error">QGeoSearchReply::error</a>() with deleteLater().</p>
+<h3 class="fn"><a name="locale"></a>QLocale QGeoSearchManagerEngine::locale () const</h3>
+<p>See also <a href="qgeosearchmanagerengine.html#setLocale">setLocale</a>().</p>
 <h3 class="fn"><a name="managerName"></a>QString QGeoSearchManagerEngine::managerName () const</h3>
 <p>Returns the name which this engine implementation uses to distinguish itself from the implementations provided by other plugins.</p>
 <p>The combination of managerName() and <a href="qgeosearchmanagerengine.html#managerVersion">managerVersion</a>() should be unique amongst plugin implementations.</p>
@@ -254,6 +258,8 @@
 <p>This should only be set if placeSearch() makes use of a <a href="qlandmarkmanager.html">QLandmarkManager</a> instance to provide landmark searching functionality.</p>
 <p>It is important that subclasses use this method to ensure that the engine is able to carry out landmark searches. If this function is not used the engine will not be able to use or return the default landmark manager.</p>
 <p>See also <a href="qgeosearchmanagerengine.html#defaultLandmarkManager">defaultLandmarkManager</a>().</p>
+<h3 class="fn"><a name="setLocale"></a>void QGeoSearchManagerEngine::setLocale ( const QLocale &amp; <i>locale</i> )</h3>
+<p>See also <a href="qgeosearchmanagerengine.html#locale">locale</a>().</p>
 <h3 class="fn"><a name="setSupportedSearchTypes"></a>void QGeoSearchManagerEngine::setSupportedSearchTypes ( <a href="qgeosearchmanager.html#SearchType-enum">QGeoSearchManager::SearchTypes</a> <i>searchTypes</i> )<tt> [protected]</tt></h3>
 <p>Sets the search types supported by the placeSearch() with this engine to <i>searchTypes</i>.</p>
 <p>It is important that subclasses use this method to ensure that the engine reports its capabilities correctly. If this function is not used the engine will report that it does not support any search types.</p>

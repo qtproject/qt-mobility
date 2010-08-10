@@ -513,14 +513,8 @@
                     <section ref="qlandmarkcategorysaverequest.html" title="QLandmarkCategorySaveRequest Class Reference">
                         <section ref="qlandmarkcategorysaverequest-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qlandmarkdistancesort.html" title="QLandmarkDistanceSort Class Reference">
-                        <section ref="qlandmarkdistancesort-members.html" title="List of all members"/>
-                    </section>
                     <section ref="qlandmarkexportrequest.html" title="QLandmarkExportRequest Class Reference">
                         <section ref="qlandmarkexportrequest-members.html" title="List of all members"/>
-                    </section>
-                    <section ref="qlandmarkfetchhint.html" title="QLandmarkFetchHint Class Reference">
-                        <section ref="qlandmarkfetchhint-members.html" title="List of all members"/>
                     </section>
                     <section ref="qlandmarkfetchrequest.html" title="QLandmarkFetchRequest Class Reference">
                         <section ref="qlandmarkfetchrequest-members.html" title="List of all members"/>
@@ -3141,26 +3135,30 @@
             <keyword name="~QGeoMapCircleObject" id="QGeoMapCircleObject::~QGeoMapCircleObject" ref="qgeomapcircleobject.html#dtor.QGeoMapCircleObject"/>
             <keyword name="QGeoMapData" id="QGeoMapData" ref="qgeomapdata.html"/>
             <keyword name="addMapObject" id="QGeoMapData::addMapObject" ref="qgeomapdata.html#addMapObject"/>
+            <keyword name="addMapOverlay" id="QGeoMapData::addMapOverlay" ref="qgeomapdata.html#addMapOverlay"/>
             <keyword name="center" id="QGeoMapData::center" ref="qgeomapdata.html#center"/>
+            <keyword name="clearMapOverlays" id="QGeoMapData::clearMapOverlays" ref="qgeomapdata.html#clearMapOverlays"/>
             <keyword name="containerObject" id="QGeoMapData::containerObject" ref="qgeomapdata.html#containerObject"/>
             <keyword name="coordinateToScreenPosition" id="QGeoMapData::coordinateToScreenPosition" ref="qgeomapdata.html#coordinateToScreenPosition"/>
             <keyword name="engine" id="QGeoMapData::engine" ref="qgeomapdata.html#engine"/>
             <keyword name="mapObjects" id="QGeoMapData::mapObjects" ref="qgeomapdata.html#mapObjects"/>
             <keyword name="mapObjectsAtScreenPosition" id="QGeoMapData::mapObjectsAtScreenPosition" ref="qgeomapdata.html#mapObjectsAtScreenPosition"/>
             <keyword name="mapObjectsInScreenRect" id="QGeoMapData::mapObjectsInScreenRect" ref="qgeomapdata.html#mapObjectsInScreenRect"/>
+            <keyword name="mapOverlays" id="QGeoMapData::mapOverlays" ref="qgeomapdata.html#mapOverlays"/>
             <keyword name="mapType" id="QGeoMapData::mapType" ref="qgeomapdata.html#mapType"/>
             <keyword name="paint" id="QGeoMapData::paint" ref="qgeomapdata.html#paint"/>
             <keyword name="pan" id="QGeoMapData::pan" ref="qgeomapdata.html#pan"/>
             <keyword name="removeMapObject" id="QGeoMapData::removeMapObject" ref="qgeomapdata.html#removeMapObject"/>
+            <keyword name="removeMapOverlay" id="QGeoMapData::removeMapOverlay" ref="qgeomapdata.html#removeMapOverlay"/>
             <keyword name="screenPositionToCoordinate" id="QGeoMapData::screenPositionToCoordinate" ref="qgeomapdata.html#screenPositionToCoordinate"/>
             <keyword name="setCenter" id="QGeoMapData::setCenter" ref="qgeomapdata.html#setCenter"/>
             <keyword name="setMapType" id="QGeoMapData::setMapType" ref="qgeomapdata.html#setMapType"/>
             <keyword name="setViewportSize" id="QGeoMapData::setViewportSize" ref="qgeomapdata.html#setViewportSize"/>
             <keyword name="setZoomLevel" id="QGeoMapData::setZoomLevel" ref="qgeomapdata.html#setZoomLevel"/>
+            <keyword name="setupMapObject" id="QGeoMapData::setupMapObject" ref="qgeomapdata.html#setupMapObject"/>
             <keyword name="startPanning" id="QGeoMapData::startPanning" ref="qgeomapdata.html#startPanning"/>
             <keyword name="stopPanning" id="QGeoMapData::stopPanning" ref="qgeomapdata.html#stopPanning"/>
             <keyword name="viewportSize" id="QGeoMapData::viewportSize" ref="qgeomapdata.html#viewportSize"/>
-            <keyword name="visibleMapObjects" id="QGeoMapData::visibleMapObjects" ref="qgeomapdata.html#visibleMapObjects"/>
             <keyword name="widget" id="QGeoMapData::widget" ref="qgeomapdata.html#widget"/>
             <keyword name="zoomLevel" id="QGeoMapData::zoomLevel" ref="qgeomapdata.html#zoomLevel"/>
             <keyword name="~QGeoMapData" id="QGeoMapData::~QGeoMapData" ref="qgeomapdata.html#dtor.QGeoMapData"/>
@@ -3172,22 +3170,25 @@
             <keyword name="QGeoMapObject::PolylineType" id="QGeoMapObject::PolylineType" ref="qgeomapobject.html#Type-enum"/>
             <keyword name="QGeoMapObject::PolygonType" id="QGeoMapObject::PolygonType" ref="qgeomapobject.html#Type-enum"/>
             <keyword name="QGeoMapObject::MarkerType" id="QGeoMapObject::MarkerType" ref="qgeomapobject.html#Type-enum"/>
-            <keyword name="QGeoMapObject::GeoRouteType" id="QGeoMapObject::GeoRouteType" ref="qgeomapobject.html#Type-enum"/>
+            <keyword name="QGeoMapObject::RouteType" id="QGeoMapObject::RouteType" ref="qgeomapobject.html#Type-enum"/>
             <keyword name="addChildObject" id="QGeoMapObject::addChildObject" ref="qgeomapobject.html#addChildObject"/>
             <keyword name="boundingBox" id="QGeoMapObject::boundingBox" ref="qgeomapobject.html#boundingBox"/>
             <keyword name="childObjects" id="QGeoMapObject::childObjects" ref="qgeomapobject.html#childObjects"/>
             <keyword name="contains" id="QGeoMapObject::contains" ref="qgeomapobject.html#contains"/>
-            <keyword name="isVisible" id="QGeoMapObject::isVisible" ref="qgeomapobject.html#isVisible"/>
+            <keyword name="isVisible" id="QGeoMapObject::isVisible" ref="qgeomapobject.html#visible-prop"/>
             <keyword name="mapUpdate" id="QGeoMapObject::mapUpdate" ref="qgeomapobject.html#mapUpdate"/>
             <keyword name="objectUpdate" id="QGeoMapObject::objectUpdate" ref="qgeomapobject.html#objectUpdate"/>
             <keyword name="operator&lt;" id="QGeoMapObject::operator&lt;" ref="qgeomapobject.html#operator-lt"/>
             <keyword name="operator&gt;" id="QGeoMapObject::operator&gt;" ref="qgeomapobject.html#operator-gt"/>
             <keyword name="parentObject" id="QGeoMapObject::parentObject" ref="qgeomapobject.html#parentObject"/>
             <keyword name="removeChildObject" id="QGeoMapObject::removeChildObject" ref="qgeomapobject.html#removeChildObject"/>
-            <keyword name="setVisible" id="QGeoMapObject::setVisible" ref="qgeomapobject.html#setVisible"/>
-            <keyword name="setZValue" id="QGeoMapObject::setZValue" ref="qgeomapobject.html#setZValue"/>
+            <keyword name="setVisible" id="QGeoMapObject::setVisible" ref="qgeomapobject.html#visible-prop"/>
+            <keyword name="setZValue" id="QGeoMapObject::setZValue" ref="qgeomapobject.html#zValue-prop"/>
             <keyword name="type" id="QGeoMapObject::type" ref="qgeomapobject.html#type"/>
-            <keyword name="zValue" id="QGeoMapObject::zValue" ref="qgeomapobject.html#zValue"/>
+            <keyword name="visible" id="QGeoMapObject::visible" ref="qgeomapobject.html#visible-prop"/>
+            <keyword name="visibleChanged" id="QGeoMapObject::visibleChanged" ref="qgeomapobject.html#visibleChanged"/>
+            <keyword name="zValue" id="QGeoMapObject::zValue" ref="qgeomapobject.html#zValue-prop"/>
+            <keyword name="zValueChanged" id="QGeoMapObject::zValueChanged" ref="qgeomapobject.html#zValueChanged"/>
             <keyword name="~QGeoMapObject" id="QGeoMapObject::~QGeoMapObject" ref="qgeomapobject.html#dtor.QGeoMapObject"/>
             <keyword name="QGeoMapWidget" id="QGeoMapWidget" ref="qgeomapwidget.html"/>
             <keyword name="QGeoMapWidget::MapType" id="QGeoMapWidget::MapType" ref="qgeomapwidget.html#MapType-enum"/>
@@ -3219,12 +3220,12 @@
             <keyword name="startPanning" id="QGeoMapWidget::startPanning" ref="qgeomapwidget.html#startPanning"/>
             <keyword name="stopPanning" id="QGeoMapWidget::stopPanning" ref="qgeomapwidget.html#stopPanning"/>
             <keyword name="supportedMapTypes" id="QGeoMapWidget::supportedMapTypes" ref="qgeomapwidget.html#supportedMapTypes"/>
-            <keyword name="visibleMapObjects" id="QGeoMapWidget::visibleMapObjects" ref="qgeomapwidget.html#visibleMapObjects"/>
             <keyword name="zoomLevel" id="QGeoMapWidget::zoomLevel" ref="qgeomapwidget.html#zoomLevel-prop"/>
             <keyword name="zoomLevelChanged" id="QGeoMapWidget::zoomLevelChanged" ref="qgeomapwidget.html#zoomLevelChanged"/>
             <keyword name="~QGeoMapWidget" id="QGeoMapWidget::~QGeoMapWidget" ref="qgeomapwidget.html#dtor.QGeoMapWidget"/>
             <keyword name="QGeoMappingManager" id="QGeoMappingManager" ref="qgeomappingmanager.html"/>
             <keyword name="createMapData" id="QGeoMappingManager::createMapData" ref="qgeomappingmanager.html#createMapData"/>
+            <keyword name="locale" id="QGeoMappingManager::locale" ref="qgeomappingmanager.html#locale"/>
             <keyword name="managerName" id="QGeoMappingManager::managerName" ref="qgeomappingmanager.html#managerName"/>
             <keyword name="managerVersion" id="QGeoMappingManager::managerVersion" ref="qgeomappingmanager.html#managerVersion"/>
             <keyword name="maximumImageSize" id="QGeoMappingManager::maximumImageSize" ref="qgeomappingmanager.html#maximumImageSize"/>
@@ -3232,10 +3233,12 @@
             <keyword name="minimumImageSize" id="QGeoMappingManager::minimumImageSize" ref="qgeomappingmanager.html#minimumImageSize"/>
             <keyword name="minimumZoomLevel" id="QGeoMappingManager::minimumZoomLevel" ref="qgeomappingmanager.html#minimumZoomLevel"/>
             <keyword name="removeMapData" id="QGeoMappingManager::removeMapData" ref="qgeomappingmanager.html#removeMapData"/>
+            <keyword name="setLocale" id="QGeoMappingManager::setLocale" ref="qgeomappingmanager.html#setLocale"/>
             <keyword name="supportedMapTypes" id="QGeoMappingManager::supportedMapTypes" ref="qgeomappingmanager.html#supportedMapTypes"/>
             <keyword name="~QGeoMappingManager" id="QGeoMappingManager::~QGeoMappingManager" ref="qgeomappingmanager.html#dtor.QGeoMappingManager"/>
             <keyword name="QGeoMappingManagerEngine" id="QGeoMappingManagerEngine" ref="qgeomappingmanagerengine.html"/>
             <keyword name="createMapData" id="QGeoMappingManagerEngine::createMapData" ref="qgeomappingmanagerengine.html#createMapData"/>
+            <keyword name="locale" id="QGeoMappingManagerEngine::locale" ref="qgeomappingmanagerengine.html#locale"/>
             <keyword name="managerName" id="QGeoMappingManagerEngine::managerName" ref="qgeomappingmanagerengine.html#managerName"/>
             <keyword name="managerVersion" id="QGeoMappingManagerEngine::managerVersion" ref="qgeomappingmanagerengine.html#managerVersion"/>
             <keyword name="maximumImageSize" id="QGeoMappingManagerEngine::maximumImageSize" ref="qgeomappingmanagerengine.html#maximumImageSize"/>
@@ -3243,6 +3246,7 @@
             <keyword name="minimumImageSize" id="QGeoMappingManagerEngine::minimumImageSize" ref="qgeomappingmanagerengine.html#minimumImageSize"/>
             <keyword name="minimumZoomLevel" id="QGeoMappingManagerEngine::minimumZoomLevel" ref="qgeomappingmanagerengine.html#minimumZoomLevel"/>
             <keyword name="removeMapData" id="QGeoMappingManagerEngine::removeMapData" ref="qgeomappingmanagerengine.html#removeMapData"/>
+            <keyword name="setLocale" id="QGeoMappingManagerEngine::setLocale" ref="qgeomappingmanagerengine.html#setLocale"/>
             <keyword name="setMaximumImageSize" id="QGeoMappingManagerEngine::setMaximumImageSize" ref="qgeomappingmanagerengine.html#setMaximumImageSize"/>
             <keyword name="setMaximumZoomLevel" id="QGeoMappingManagerEngine::setMaximumZoomLevel" ref="qgeomappingmanagerengine.html#setMaximumZoomLevel"/>
             <keyword name="setMinimumImageSize" id="QGeoMappingManagerEngine::setMinimumImageSize" ref="qgeomappingmanagerengine.html#setMinimumImageSize"/>
@@ -3441,8 +3445,10 @@
             <keyword name="calculateRoute" id="QGeoRoutingManager::calculateRoute" ref="qgeoroutingmanager.html#calculateRoute"/>
             <keyword name="error" id="QGeoRoutingManager::error" ref="qgeoroutingmanager.html#error"/>
             <keyword name="finished" id="QGeoRoutingManager::finished" ref="qgeoroutingmanager.html#finished"/>
+            <keyword name="locale" id="QGeoRoutingManager::locale" ref="qgeoroutingmanager.html#locale"/>
             <keyword name="managerName" id="QGeoRoutingManager::managerName" ref="qgeoroutingmanager.html#managerName"/>
             <keyword name="managerVersion" id="QGeoRoutingManager::managerVersion" ref="qgeoroutingmanager.html#managerVersion"/>
+            <keyword name="setLocale" id="QGeoRoutingManager::setLocale" ref="qgeoroutingmanager.html#setLocale"/>
             <keyword name="supportedAvoidFeatureTypes" id="QGeoRoutingManager::supportedAvoidFeatureTypes" ref="qgeoroutingmanager.html#supportedAvoidFeatureTypes"/>
             <keyword name="supportedInstructionDetails" id="QGeoRoutingManager::supportedInstructionDetails" ref="qgeoroutingmanager.html#supportedInstructionDetails"/>
             <keyword name="supportedRouteOptimizations" id="QGeoRoutingManager::supportedRouteOptimizations" ref="qgeoroutingmanager.html#supportedRouteOptimizations"/>
@@ -3457,8 +3463,10 @@
             <keyword name="calculateRoute" id="QGeoRoutingManagerEngine::calculateRoute" ref="qgeoroutingmanagerengine.html#calculateRoute"/>
             <keyword name="error" id="QGeoRoutingManagerEngine::error" ref="qgeoroutingmanagerengine.html#error"/>
             <keyword name="finished" id="QGeoRoutingManagerEngine::finished" ref="qgeoroutingmanagerengine.html#finished"/>
+            <keyword name="locale" id="QGeoRoutingManagerEngine::locale" ref="qgeoroutingmanagerengine.html#locale"/>
             <keyword name="managerName" id="QGeoRoutingManagerEngine::managerName" ref="qgeoroutingmanagerengine.html#managerName"/>
             <keyword name="managerVersion" id="QGeoRoutingManagerEngine::managerVersion" ref="qgeoroutingmanagerengine.html#managerVersion"/>
+            <keyword name="setLocale" id="QGeoRoutingManagerEngine::setLocale" ref="qgeoroutingmanagerengine.html#setLocale"/>
             <keyword name="setSupportedAvoidFeatureTypes" id="QGeoRoutingManagerEngine::setSupportedAvoidFeatureTypes" ref="qgeoroutingmanagerengine.html#setSupportedAvoidFeatureTypes"/>
             <keyword name="setSupportedInstructionDetails" id="QGeoRoutingManagerEngine::setSupportedInstructionDetails" ref="qgeoroutingmanagerengine.html#setSupportedInstructionDetails"/>
             <keyword name="setSupportedRouteOptimizations" id="QGeoRoutingManagerEngine::setSupportedRouteOptimizations" ref="qgeoroutingmanagerengine.html#setSupportedRouteOptimizations"/>
@@ -3514,11 +3522,13 @@
             <keyword name="error" id="QGeoSearchManager::error" ref="qgeosearchmanager.html#error"/>
             <keyword name="finished" id="QGeoSearchManager::finished" ref="qgeosearchmanager.html#finished"/>
             <keyword name="geocode" id="QGeoSearchManager::geocode" ref="qgeosearchmanager.html#geocode"/>
+            <keyword name="locale" id="QGeoSearchManager::locale" ref="qgeosearchmanager.html#locale"/>
             <keyword name="managerName" id="QGeoSearchManager::managerName" ref="qgeosearchmanager.html#managerName"/>
             <keyword name="managerVersion" id="QGeoSearchManager::managerVersion" ref="qgeosearchmanager.html#managerVersion"/>
             <keyword name="reverseGeocode" id="QGeoSearchManager::reverseGeocode" ref="qgeosearchmanager.html#reverseGeocode"/>
             <keyword name="search" id="QGeoSearchManager::search" ref="qgeosearchmanager.html#search"/>
             <keyword name="setAdditionalLandmarkManagers" id="QGeoSearchManager::setAdditionalLandmarkManagers" ref="qgeosearchmanager.html#setAdditionalLandmarkManagers"/>
+            <keyword name="setLocale" id="QGeoSearchManager::setLocale" ref="qgeosearchmanager.html#setLocale"/>
             <keyword name="supportedSearchTypes" id="QGeoSearchManager::supportedSearchTypes" ref="qgeosearchmanager.html#supportedSearchTypes"/>
             <keyword name="supportsGeocoding" id="QGeoSearchManager::supportsGeocoding" ref="qgeosearchmanager.html#supportsGeocoding"/>
             <keyword name="supportsReverseGeocoding" id="QGeoSearchManager::supportsReverseGeocoding" ref="qgeosearchmanager.html#supportsReverseGeocoding"/>
@@ -3530,12 +3540,14 @@
             <keyword name="error" id="QGeoSearchManagerEngine::error" ref="qgeosearchmanagerengine.html#error"/>
             <keyword name="finished" id="QGeoSearchManagerEngine::finished" ref="qgeosearchmanagerengine.html#finished"/>
             <keyword name="geocode" id="QGeoSearchManagerEngine::geocode" ref="qgeosearchmanagerengine.html#geocode"/>
+            <keyword name="locale" id="QGeoSearchManagerEngine::locale" ref="qgeosearchmanagerengine.html#locale"/>
             <keyword name="managerName" id="QGeoSearchManagerEngine::managerName" ref="qgeosearchmanagerengine.html#managerName"/>
             <keyword name="managerVersion" id="QGeoSearchManagerEngine::managerVersion" ref="qgeosearchmanagerengine.html#managerVersion"/>
             <keyword name="reverseGeocode" id="QGeoSearchManagerEngine::reverseGeocode" ref="qgeosearchmanagerengine.html#reverseGeocode"/>
             <keyword name="search" id="QGeoSearchManagerEngine::search" ref="qgeosearchmanagerengine.html#search"/>
             <keyword name="setAdditionalLandmarkManagers" id="QGeoSearchManagerEngine::setAdditionalLandmarkManagers" ref="qgeosearchmanagerengine.html#setAdditionalLandmarkManagers"/>
             <keyword name="setDefaultLandmarkManager" id="QGeoSearchManagerEngine::setDefaultLandmarkManager" ref="qgeosearchmanagerengine.html#setDefaultLandmarkManager"/>
+            <keyword name="setLocale" id="QGeoSearchManagerEngine::setLocale" ref="qgeosearchmanagerengine.html#setLocale"/>
             <keyword name="setSupportedSearchTypes" id="QGeoSearchManagerEngine::setSupportedSearchTypes" ref="qgeosearchmanagerengine.html#setSupportedSearchTypes"/>
             <keyword name="setSupportsGeocoding" id="QGeoSearchManagerEngine::setSupportsGeocoding" ref="qgeosearchmanagerengine.html#setSupportsGeocoding"/>
             <keyword name="setSupportsReverseGeocoding" id="QGeoSearchManagerEngine::setSupportsReverseGeocoding" ref="qgeosearchmanagerengine.html#setSupportsReverseGeocoding"/>
@@ -3756,10 +3768,14 @@
             <keyword name="QLandmarkCategoryFetchRequest::MatchSubset" id="QLandmarkCategoryFetchRequest::MatchSubset" ref="qlandmarkcategoryfetchrequest.html#MatchingScheme-enum"/>
             <keyword name="categories" id="QLandmarkCategoryFetchRequest::categories" ref="qlandmarkcategoryfetchrequest.html#categories"/>
             <keyword name="categoryIds" id="QLandmarkCategoryFetchRequest::categoryIds" ref="qlandmarkcategoryfetchrequest.html#categoryIds"/>
+            <keyword name="limit" id="QLandmarkCategoryFetchRequest::limit" ref="qlandmarkcategoryfetchrequest.html#limit"/>
             <keyword name="matchingScheme" id="QLandmarkCategoryFetchRequest::matchingScheme" ref="qlandmarkcategoryfetchrequest.html#matchingScheme"/>
+            <keyword name="offset" id="QLandmarkCategoryFetchRequest::offset" ref="qlandmarkcategoryfetchrequest.html#offset"/>
             <keyword name="setCategoryId" id="QLandmarkCategoryFetchRequest::setCategoryId" ref="qlandmarkcategoryfetchrequest.html#setCategoryId"/>
             <keyword name="setCategoryIds" id="QLandmarkCategoryFetchRequest::setCategoryIds" ref="qlandmarkcategoryfetchrequest.html#setCategoryIds"/>
+            <keyword name="setLimit" id="QLandmarkCategoryFetchRequest::setLimit" ref="qlandmarkcategoryfetchrequest.html#setLimit"/>
             <keyword name="setMatchingScheme" id="QLandmarkCategoryFetchRequest::setMatchingScheme" ref="qlandmarkcategoryfetchrequest.html#setMatchingScheme"/>
+            <keyword name="setOffset" id="QLandmarkCategoryFetchRequest::setOffset" ref="qlandmarkcategoryfetchrequest.html#setOffset"/>
             <keyword name="setSorting" id="QLandmarkCategoryFetchRequest::setSorting" ref="qlandmarkcategoryfetchrequest.html#setSorting"/>
             <keyword name="sorting" id="QLandmarkCategoryFetchRequest::sorting" ref="qlandmarkcategoryfetchrequest.html#sorting"/>
             <keyword name="~QLandmarkCategoryFetchRequest" id="QLandmarkCategoryFetchRequest::~QLandmarkCategoryFetchRequest" ref="qlandmarkcategoryfetchrequest.html#dtor.QLandmarkCategoryFetchRequest"/>
@@ -3779,6 +3795,10 @@
             <keyword name="~QLandmarkCategoryId" id="QLandmarkCategoryId::~QLandmarkCategoryId" ref="qlandmarkcategoryid.html#dtor.QLandmarkCategoryId"/>
             <keyword name="QLandmarkCategoryIdFetchRequest" id="QLandmarkCategoryIdFetchRequest" ref="qlandmarkcategoryidfetchrequest.html"/>
             <keyword name="categoryIds" id="QLandmarkCategoryIdFetchRequest::categoryIds" ref="qlandmarkcategoryidfetchrequest.html#categoryIds"/>
+            <keyword name="limit" id="QLandmarkCategoryIdFetchRequest::limit" ref="qlandmarkcategoryidfetchrequest.html#limit"/>
+            <keyword name="offset" id="QLandmarkCategoryIdFetchRequest::offset" ref="qlandmarkcategoryidfetchrequest.html#offset"/>
+            <keyword name="setLimit" id="QLandmarkCategoryIdFetchRequest::setLimit" ref="qlandmarkcategoryidfetchrequest.html#setLimit"/>
+            <keyword name="setOffset" id="QLandmarkCategoryIdFetchRequest::setOffset" ref="qlandmarkcategoryidfetchrequest.html#setOffset"/>
             <keyword name="setSorting" id="QLandmarkCategoryIdFetchRequest::setSorting" ref="qlandmarkcategoryidfetchrequest.html#setSorting"/>
             <keyword name="sorting" id="QLandmarkCategoryIdFetchRequest::sorting" ref="qlandmarkcategoryidfetchrequest.html#sorting"/>
             <keyword name="~QLandmarkCategoryIdFetchRequest" id="QLandmarkCategoryIdFetchRequest::~QLandmarkCategoryIdFetchRequest" ref="qlandmarkcategoryidfetchrequest.html#dtor.QLandmarkCategoryIdFetchRequest"/>
@@ -3794,10 +3814,6 @@
             <keyword name="setCategories" id="QLandmarkCategorySaveRequest::setCategories" ref="qlandmarkcategorysaverequest.html#setCategories"/>
             <keyword name="setCategory" id="QLandmarkCategorySaveRequest::setCategory" ref="qlandmarkcategorysaverequest.html#setCategory"/>
             <keyword name="~QLandmarkCategorySaveRequest" id="QLandmarkCategorySaveRequest::~QLandmarkCategorySaveRequest" ref="qlandmarkcategorysaverequest.html#dtor.QLandmarkCategorySaveRequest"/>
-            <keyword name="QLandmarkDistanceSort" id="QLandmarkDistanceSort" ref="qlandmarkdistancesort.html"/>
-            <keyword name="coordinate" id="QLandmarkDistanceSort::coordinate" ref="qlandmarkdistancesort.html#coordinate"/>
-            <keyword name="setCoordinate" id="QLandmarkDistanceSort::setCoordinate" ref="qlandmarkdistancesort.html#setCoordinate"/>
-            <keyword name="~QLandmarkDistanceSort" id="QLandmarkDistanceSort::~QLandmarkDistanceSort" ref="qlandmarkdistancesort.html#dtor.QLandmarkDistanceSort"/>
             <keyword name="QLandmarkExportRequest" id="QLandmarkExportRequest" ref="qlandmarkexportrequest.html"/>
             <keyword name="device" id="QLandmarkExportRequest::device" ref="qlandmarkexportrequest.html#device"/>
             <keyword name="exportOption" id="QLandmarkExportRequest::exportOption" ref="qlandmarkexportrequest.html#exportOption"/>
@@ -3810,20 +3826,15 @@
             <keyword name="setFormat" id="QLandmarkExportRequest::setFormat" ref="qlandmarkexportrequest.html#setFormat"/>
             <keyword name="setLandmarkIds" id="QLandmarkExportRequest::setLandmarkIds" ref="qlandmarkexportrequest.html#setLandmarkIds"/>
             <keyword name="~QLandmarkExportRequest" id="QLandmarkExportRequest::~QLandmarkExportRequest" ref="qlandmarkexportrequest.html#dtor.QLandmarkExportRequest"/>
-            <keyword name="QLandmarkFetchHint" id="QLandmarkFetchHint" ref="qlandmarkfetchhint.html"/>
-            <keyword name="maxItems" id="QLandmarkFetchHint::maxItems" ref="qlandmarkfetchhint.html#maxItems"/>
-            <keyword name="offset" id="QLandmarkFetchHint::offset" ref="qlandmarkfetchhint.html#offset"/>
-            <keyword name="operator=" id="QLandmarkFetchHint::operator=" ref="qlandmarkfetchhint.html#operator-eq"/>
-            <keyword name="setMaxItems" id="QLandmarkFetchHint::setMaxItems" ref="qlandmarkfetchhint.html#setMaxItems"/>
-            <keyword name="setOffset" id="QLandmarkFetchHint::setOffset" ref="qlandmarkfetchhint.html#setOffset"/>
-            <keyword name="~QLandmarkFetchHint" id="QLandmarkFetchHint::~QLandmarkFetchHint" ref="qlandmarkfetchhint.html#dtor.QLandmarkFetchHint"/>
             <keyword name="QLandmarkFetchRequest" id="QLandmarkFetchRequest" ref="qlandmarkfetchrequest.html"/>
-            <keyword name="fetchHint" id="QLandmarkFetchRequest::fetchHint" ref="qlandmarkfetchrequest.html#fetchHint"/>
             <keyword name="filter" id="QLandmarkFetchRequest::filter" ref="qlandmarkfetchrequest.html#filter"/>
             <keyword name="landmarks" id="QLandmarkFetchRequest::landmarks" ref="qlandmarkfetchrequest.html#landmarks"/>
-            <keyword name="setFetchHint" id="QLandmarkFetchRequest::setFetchHint" ref="qlandmarkfetchrequest.html#setFetchHint"/>
+            <keyword name="limit" id="QLandmarkFetchRequest::limit" ref="qlandmarkfetchrequest.html#limit"/>
+            <keyword name="offset" id="QLandmarkFetchRequest::offset" ref="qlandmarkfetchrequest.html#offset"/>
             <keyword name="setFilter" id="QLandmarkFetchRequest::setFilter" ref="qlandmarkfetchrequest.html#setFilter"/>
             <keyword name="setLandmarkIds" id="QLandmarkFetchRequest::setLandmarkIds" ref="qlandmarkfetchrequest.html#setLandmarkIds"/>
+            <keyword name="setLimit" id="QLandmarkFetchRequest::setLimit" ref="qlandmarkfetchrequest.html#setLimit"/>
+            <keyword name="setOffset" id="QLandmarkFetchRequest::setOffset" ref="qlandmarkfetchrequest.html#setOffset"/>
             <keyword name="setSorting" id="QLandmarkFetchRequest::setSorting" ref="qlandmarkfetchrequest.html#setSorting"/>
             <keyword name="sorting" id="QLandmarkFetchRequest::sorting" ref="qlandmarkfetchrequest.html#sorting"/>
             <keyword name="~QLandmarkFetchRequest" id="QLandmarkFetchRequest::~QLandmarkFetchRequest" ref="qlandmarkfetchrequest.html#dtor.QLandmarkFetchRequest"/>
@@ -3863,11 +3874,13 @@
             <keyword name="setManagerUri" id="QLandmarkId::setManagerUri" ref="qlandmarkid.html#setManagerUri"/>
             <keyword name="~QLandmarkId" id="QLandmarkId::~QLandmarkId" ref="qlandmarkid.html#dtor.QLandmarkId"/>
             <keyword name="QLandmarkIdFetchRequest" id="QLandmarkIdFetchRequest" ref="qlandmarkidfetchrequest.html"/>
-            <keyword name="fetchHint" id="QLandmarkIdFetchRequest::fetchHint" ref="qlandmarkidfetchrequest.html#fetchHint"/>
             <keyword name="filter" id="QLandmarkIdFetchRequest::filter" ref="qlandmarkidfetchrequest.html#filter"/>
             <keyword name="landmarkIds" id="QLandmarkIdFetchRequest::landmarkIds" ref="qlandmarkidfetchrequest.html#landmarkIds"/>
-            <keyword name="setFetchHint" id="QLandmarkIdFetchRequest::setFetchHint" ref="qlandmarkidfetchrequest.html#setFetchHint"/>
+            <keyword name="limit" id="QLandmarkIdFetchRequest::limit" ref="qlandmarkidfetchrequest.html#limit"/>
+            <keyword name="offset" id="QLandmarkIdFetchRequest::offset" ref="qlandmarkidfetchrequest.html#offset"/>
             <keyword name="setFilter" id="QLandmarkIdFetchRequest::setFilter" ref="qlandmarkidfetchrequest.html#setFilter"/>
+            <keyword name="setLimit" id="QLandmarkIdFetchRequest::setLimit" ref="qlandmarkidfetchrequest.html#setLimit"/>
+            <keyword name="setOffset" id="QLandmarkIdFetchRequest::setOffset" ref="qlandmarkidfetchrequest.html#setOffset"/>
             <keyword name="setSorting" id="QLandmarkIdFetchRequest::setSorting" ref="qlandmarkidfetchrequest.html#setSorting"/>
             <keyword name="sorting" id="QLandmarkIdFetchRequest::sorting" ref="qlandmarkidfetchrequest.html#sorting"/>
             <keyword name="~QLandmarkIdFetchRequest" id="QLandmarkIdFetchRequest::~QLandmarkIdFetchRequest" ref="qlandmarkidfetchrequest.html#dtor.QLandmarkIdFetchRequest"/>
@@ -3985,7 +3998,6 @@
             <keyword name="category" id="QLandmarkManagerEngine::category" ref="qlandmarkmanagerengine.html#category"/>
             <keyword name="categoryAttributeKeys" id="QLandmarkManagerEngine::categoryAttributeKeys" ref="qlandmarkmanagerengine.html#categoryAttributeKeys"/>
             <keyword name="categoryIds" id="QLandmarkManagerEngine::categoryIds" ref="qlandmarkmanagerengine.html#categoryIds"/>
-            <keyword name="compareDistance" id="QLandmarkManagerEngine::compareDistance" ref="qlandmarkmanagerengine.html#compareDistance"/>
             <keyword name="compareLandmark" id="QLandmarkManagerEngine::compareLandmark" ref="qlandmarkmanagerengine.html#compareLandmark"/>
             <keyword name="compareName" id="QLandmarkManagerEngine::compareName" ref="qlandmarkmanagerengine.html#compareName"/>
             <keyword name="dataChanged" id="QLandmarkManagerEngine::dataChanged" ref="qlandmarkmanagerengine.html#dataChanged"/>
@@ -7284,7 +7296,6 @@
             <file>qgeoroutereply-members.html</file>
             <file>qgeosearchreply-members.html</file>
             <file>qorganizeritemdetaildefinitionfetchrequest-members.html</file>
-            <file>qlandmarkfetchhint.html</file>
             <file>qcontactthumbnail.html</file>
             <file>qmediaserviceprovider.html</file>
             <file>qabstractvaluespacelayer.html</file>
@@ -7323,7 +7334,6 @@
             <file>qversitcontactexporterdetailhandlerv2.html</file>
             <file>images/roaming-states.png</file>
             <file>qorientationreading-members.html</file>
-            <file>qlandmarkfetchhint-members.html</file>
             <file>qgallerymetadatafilter.html</file>
             <file>qlandmarkidfetchrequest-members.html</file>
             <file>qlandmarkboxfilter-members.html</file>
@@ -7734,7 +7744,6 @@
             <file>weatherinfo-icons-weather-thundershower-svg.html</file>
             <file>qmessagecontentcontainerid.html</file>
             <file>qversitcontactimporterpropertyhandlerv2-members.html</file>
-            <file>qlandmarkdistancesort-members.html</file>
             <file>qcontactdisplaylabel.html</file>
             <file>qcontactactionfactory-members.html</file>
             <file>qcontactmanager-members.html</file>
@@ -8034,7 +8043,6 @@
             <file>qlandmarkcategoryidfetchrequest-members.html</file>
             <file>qsystemstorageinfo.html</file>
             <file>qcontactavatar-members.html</file>
-            <file>qlandmarkdistancesort.html</file>
             <file>publish-subscribe-publisherdialog-hor-ui.html</file>
             <file>qmediaserviceproviderhint-members.html</file>
             <file>declarative-sfw-dialer-voipdialer-voipdialerplugin-cpp.html</file>

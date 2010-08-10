@@ -138,6 +138,7 @@
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanagerengine.html#QGeoMappingManagerEngine">QGeoMappingManagerEngine</a></b> ( const QMap&lt;QString, QVariant&gt; &amp; <i>parameters</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanagerengine.html#dtor.QGeoMappingManagerEngine">~QGeoMappingManagerEngine</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QGeoMapData * </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanagerengine.html#createMapData">createMapData</a></b> ( QGeoMapWidget * <i>widget</i> ) = 0</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QLocale </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanagerengine.html#locale">locale</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanagerengine.html#managerName">managerName</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanagerengine.html#managerVersion">managerVersion</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QSize </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanagerengine.html#maximumImageSize">maximumImageSize</a></b> () const</td></tr>
@@ -145,6 +146,7 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QSize </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanagerengine.html#minimumImageSize">minimumImageSize</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> qreal </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanagerengine.html#minimumZoomLevel">minimumZoomLevel</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanagerengine.html#removeMapData">removeMapData</a></b> ( QGeoMapData * <i>mapData</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanagerengine.html#setLocale">setLocale</a></b> ( const QLocale &amp; <i>locale</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QGeoMapWidget::MapType&gt; </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanagerengine.html#supportedMapTypes">supportedMapTypes</a></b> () const</td></tr>
 </table>
 <hr />
@@ -178,6 +180,8 @@
 <p>A <a href="qgeomapdata.html">QGeoMapData</a> instance contains and manages the information about what a map widget is looking at. A single manager can be used by several widgets since each widget has an associated <a href="qgeomapdata.html">QGeoMapData</a> instance.</p>
 <p>The <a href="qgeomapdata.html">QGeoMapData</a> instance can be treated as a kind of session object, or as a model in a model-view-controller architecture, with <a href="qgeomapwidget.html">QGeoMapWidget</a> as the view and <a href="qgeomappingmanagerengine.html">QGeoMappingManagerEngine</a> as the controller.</p>
 <p>Subclasses of <a href="qgeomappingmanagerengine.html">QGeoMappingManagerEngine</a> are free to create subclasses of <a href="qgeomapdata.html">QGeoMapData</a> in order to associate implementation specific data with the created instance..</p>
+<h3 class="fn"><a name="locale"></a>QLocale QGeoMappingManagerEngine::locale () const</h3>
+<p>See also <a href="qgeomappingmanagerengine.html#setLocale">setLocale</a>().</p>
 <h3 class="fn"><a name="managerName"></a>QString QGeoMappingManagerEngine::managerName () const</h3>
 <p>Returns the name which this engine implementation uses to distinguish itself from the implementations provided by other plugins.</p>
 <p>The combination of managerName() and <a href="qgeomappingmanagerengine.html#managerVersion">managerVersion</a>() should be unique amongst plugin implementations.</p>
@@ -202,6 +206,8 @@
 <p>See also <a href="qgeomappingmanagerengine.html#setMinimumZoomLevel">setMinimumZoomLevel</a>().</p>
 <h3 class="fn"><a name="removeMapData"></a>void QGeoMappingManagerEngine::removeMapData ( <a href="qgeomapdata.html">QGeoMapData</a> * <i>mapData</i> )<tt> [virtual]</tt></h3>
 <p>Stops this manager from managing <i>mapData</i>.</p>
+<h3 class="fn"><a name="setLocale"></a>void QGeoMappingManagerEngine::setLocale ( const QLocale &amp; <i>locale</i> )</h3>
+<p>See also <a href="qgeomappingmanagerengine.html#locale">locale</a>().</p>
 <h3 class="fn"><a name="setMaximumImageSize"></a>void QGeoMappingManagerEngine::setMaximumImageSize ( const QSize &amp; <i>maximumImageSize</i> )<tt> [protected]</tt></h3>
 <p>Sets the size of the largest map image which is supported by this engine.</p>
 <p>An invalid size indicates that this engine places no restrictions on the maximum size of the map image.</p>

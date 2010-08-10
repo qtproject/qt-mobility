@@ -136,6 +136,7 @@
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanager.html#dtor.QGeoMappingManager">~QGeoMappingManager</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QGeoMapData * </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanager.html#createMapData">createMapData</a></b> ( QGeoMapWidget * <i>widget</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QLocale </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanager.html#locale">locale</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanager.html#managerName">managerName</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanager.html#managerVersion">managerVersion</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QSize </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanager.html#maximumImageSize">maximumImageSize</a></b> () const</td></tr>
@@ -143,6 +144,7 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QSize </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanager.html#minimumImageSize">minimumImageSize</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> qreal </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanager.html#minimumZoomLevel">minimumZoomLevel</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanager.html#removeMapData">removeMapData</a></b> ( QGeoMapData * <i>mapData</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanager.html#setLocale">setLocale</a></b> ( const QLocale &amp; <i>locale</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QGeoMapWidget::MapType&gt; </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanager.html#supportedMapTypes">supportedMapTypes</a></b> () const</td></tr>
 </table>
 <a name="details"></a>
@@ -163,6 +165,8 @@
 <p>Destroys this <a href="qgeomappingmanager.html">QGeoMappingManager</a> object.</p>
 <h3 class="fn"><a name="createMapData"></a><a href="qgeomapdata.html">QGeoMapData</a> * QGeoMappingManager::createMapData ( <a href="qgeomapwidget.html">QGeoMapWidget</a> * <i>widget</i> )</h3>
 <p>Returns a new <a href="qgeomapdata.html">QGeoMapData</a> instance for <i>widget</i> which will be managed by this manager.</p>
+<h3 class="fn"><a name="locale"></a>QLocale QGeoMappingManager::locale () const</h3>
+<p>See also <a href="qgeomappingmanager.html#setLocale">setLocale</a>().</p>
 <h3 class="fn"><a name="managerName"></a>QString QGeoMappingManager::managerName () const</h3>
 <p>Returns the name of the engine which implements the behaviour of this mapping manager.</p>
 <p>The combination of managerName() and <a href="qgeomappingmanager.html#managerVersion">managerVersion</a>() should be unique amongst the plugin implementations.</p>
@@ -183,6 +187,8 @@
 <p>Larger values of the zoom level correspond to more detailed views of the map.</p>
 <h3 class="fn"><a name="removeMapData"></a>void QGeoMappingManager::removeMapData ( <a href="qgeomapdata.html">QGeoMapData</a> * <i>mapData</i> )</h3>
 <p>Stops this manager from managing <i>mapData</i>.</p>
+<h3 class="fn"><a name="setLocale"></a>void QGeoMappingManager::setLocale ( const QLocale &amp; <i>locale</i> )</h3>
+<p>See also <a href="qgeomappingmanager.html#locale">locale</a>().</p>
 <h3 class="fn"><a name="supportedMapTypes"></a>QList&lt;<a href="qgeomapwidget.html#MapType-enum">QGeoMapWidget::MapType</a>&gt; QGeoMappingManager::supportedMapTypes () const</h3>
 <p>Returns a list of the map types supported by this manager.</p>
 </div>

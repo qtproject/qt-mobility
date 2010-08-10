@@ -283,13 +283,13 @@
      <span class="comment">//retrieval via ids</span>
      QList&lt;QLandmarkId&gt; landmarkIds;
      QLandmarkNameSort sortOrder(Qt::AscendingOrder);
-     landmarkIds = lm-&gt;landmarkIds(filter, sortOrder);
+     landmarkIds = lm-&gt;landmarkIds(filter, -1, 0, sortOrder);
      foreach(QLandmarkId id, landmarkIds) {
          qDebug() &lt;&lt; &quot;Found landmark:&quot; &lt;&lt; lm-&gt;landmark(id).name();
      }</pre>
 <p>Or alternatively retrieve the landmark objects directly:</p>
 <pre class="highlightedCode brush: cpp">     QList&lt;QLandmark&gt; landmarks;
-     landmarks = lm-&gt;landmarks(filter, sortOrder);
+     landmarks = lm-&gt;landmarks(filter, -1, 0, sortOrder);
      foreach(QLandmark landmark, landmarks) {
          qDebug() &lt;&lt; &quot;Found landmark:&quot; &lt;&lt; landmark.name();
      }</pre>

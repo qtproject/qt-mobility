@@ -174,7 +174,6 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapwidget.html#startPanning">startPanning</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapwidget.html#stopPanning">stopPanning</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;MapType&gt; </td><td class="memItemRight bottomAlign"><b><a href="qgeomapwidget.html#supportedMapTypes">supportedMapTypes</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QGeoMapObject *&gt; </td><td class="memItemRight bottomAlign"><b><a href="qgeomapwidget.html#visibleMapObjects">visibleMapObjects</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> qreal </td><td class="memItemRight bottomAlign"><b><a href="qgeomapwidget.html#zoomLevel-prop">zoomLevel</a></b> () const</td></tr>
 </table>
 <hr />
@@ -261,7 +260,7 @@
 <p>Destroys this map widget.</p>
 <h3 class="fn"><a name="addMapObject"></a>void QGeoMapWidget::addMapObject ( <a href="qgeomapobject.html">QGeoMapObject</a> * <i>mapObject</i> )</h3>
 <p>Adds <i>mapObject</i> to the list of map objects managed by this widget.</p>
-<p>If <i>mapObject</i> is within the viewport of the map and <a href="qgeomapobject.html#isVisible">QGeoMapObject::isVisible</a>() returns true then the map will display the map object immediately.</p>
+<p>If <i>mapObject</i> is within the viewport of the map and <a href="qgeomapobject.html#visible-prop">QGeoMapObject::isVisible</a>() returns true then the map will display the map object immediately.</p>
 <p>The widget will take ownership of the <i>mapObject</i>.</p>
 <h3 class="fn"><a name="centerChanged"></a>void QGeoMapWidget::centerChanged ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> )<tt> [signal]</tt></h3>
 <h3 class="fn"><a name="coordinateToScreenPosition"></a>QPointF QGeoMapWidget::coordinateToScreenPosition ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> ) const</h3>
@@ -270,9 +269,9 @@
 <h3 class="fn"><a name="mapObjects"></a>QList&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapWidget::mapObjects ()</h3>
 <p>Returns the list of map objects managed by this widget.</p>
 <h3 class="fn"><a name="mapObjectsAtScreenPosition"></a>QList&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapWidget::mapObjectsAtScreenPosition ( const QPointF &amp; <i>screenPosition</i> )</h3>
-<p>Returns the list of map objects managed by this widget which are visible and contain the point <i>screenPosition</i> within their boundaries.</p>
+<p>Returns the list of map objects managed by this widget which contain the point <i>screenPosition</i> within their boundaries.</p>
 <h3 class="fn"><a name="mapObjectsInScreenRect"></a>QList&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapWidget::mapObjectsInScreenRect ( const QRectF &amp; <i>screenRect</i> )</h3>
-<p>Returns the list of map objects managed by this widget which are visible and which are displayed at least partially within the on screen rectangle <i>screenRect</i>.</p>
+<p>Returns the list of map objects managed by this widget which are displayed at least partially within the on screen rectangle <i>screenRect</i>.</p>
 <h3 class="fn"><a name="mapTypeChanged"></a>void QGeoMapWidget::mapTypeChanged ( <a href="qgeomapwidget.html#MapType-enum">QGeoMapWidget::MapType</a> <i>mapType</i> )<tt> [signal]</tt></h3>
 <p>Indicates that the type of the map has been changed.</p>
 <h3 class="fn"><a name="maximumZoomLevel"></a>qreal QGeoMapWidget::maximumZoomLevel () const</h3>
@@ -287,7 +286,7 @@
 <p>The x and y axes are specified in Graphics View Framework coordinates. By default this will mean that positive values of <i>dx</i> move the viewed area to the right and that positive values of <i>dy</i> move the viewed area down.</p>
 <h3 class="fn"><a name="removeMapObject"></a>void QGeoMapWidget::removeMapObject ( <a href="qgeomapobject.html">QGeoMapObject</a> * <i>mapObject</i> )</h3>
 <p>Removes <i>mapObject</i> from the list of map objects managed by this widget.</p>
-<p>If <i>mapObject</i> is within the viewport of the map and <a href="qgeomapobject.html#isVisible">QGeoMapObject::isVisible</a>() returns true then the map will stop displaying the map object immediately.</p>
+<p>If <i>mapObject</i> is within the viewport of the map and <a href="qgeomapobject.html#visible-prop">QGeoMapObject::isVisible</a>() returns true then the map will stop displaying the map object immediately.</p>
 <p>The widget will release ownership of the <i>mapObject</i>.</p>
 <h3 class="fn"><a name="resizeEvent"></a>void QGeoMapWidget::resizeEvent ( QGraphicsSceneResizeEvent * <i>event</i> )<tt> [protected]</tt></h3>
 <h3 class="fn"><a name="screenPositionToCoordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoMapWidget::screenPositionToCoordinate ( QPointF <i>screenPosition</i> ) const</h3>
@@ -298,8 +297,6 @@
 <h3 class="fn"><a name="stopPanning"></a>void QGeoMapWidget::stopPanning ()</h3>
 <h3 class="fn"><a name="supportedMapTypes"></a>QList&lt;<a href="qgeomapwidget.html#MapType-enum">MapType</a>&gt; QGeoMapWidget::supportedMapTypes () const</h3>
 <p>Returns the map types supported by the <a href="qgeomappingmanager.html">QGeoMappingManager</a> associated with this widget.</p>
-<h3 class="fn"><a name="visibleMapObjects"></a>QList&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapWidget::visibleMapObjects ()</h3>
-<p>Returns the list of map objects managed by this widget which are currently visible and at least partially within the viewport of the map.</p>
 <h3 class="fn"><a name="zoomLevelChanged"></a>void QGeoMapWidget::zoomLevelChanged ( qreal <i>zoomLevel</i> )<tt> [signal]</tt></h3>
 <p>Indicates that the zoom level has changed to <i>zoomLevel</i>.</p>
 </div>

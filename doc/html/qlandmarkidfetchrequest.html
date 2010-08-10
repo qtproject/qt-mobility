@@ -137,11 +137,13 @@
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfetchrequest.html#QLandmarkIdFetchRequest">QLandmarkIdFetchRequest</a></b> ( QLandmarkManager * <i>manager</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfetchrequest.html#dtor.QLandmarkIdFetchRequest">~QLandmarkIdFetchRequest</a></b> ()</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> QLandmarkFetchHint </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfetchrequest.html#fetchHint">fetchHint</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QLandmarkFilter </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfetchrequest.html#filter">filter</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmarkId&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfetchrequest.html#landmarkIds">landmarkIds</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfetchrequest.html#setFetchHint">setFetchHint</a></b> ( const QLandmarkFetchHint &amp; <i>fetchHint</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfetchrequest.html#limit">limit</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfetchrequest.html#offset">offset</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfetchrequest.html#setFilter">setFilter</a></b> ( const QLandmarkFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfetchrequest.html#setLimit">setLimit</a></b> ( int <i>limit</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfetchrequest.html#setOffset">setOffset</a></b> ( int <i>offset</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfetchrequest.html#setSorting">setSorting</a></b> ( const QList&lt;QLandmarkSortOrder&gt; &amp; <i>sorting</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfetchrequest.html#setSorting-2">setSorting</a></b> ( const QLandmarkSortOrder &amp; <i>sorting</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmarkSortOrder&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfetchrequest.html#sorting">sorting</a></b> () const</td></tr>
@@ -168,21 +170,27 @@
 <p>Creates a new landmark id fetch request object with the given <i>manager</i> and <i>parent</i>.</p>
 <h3 class="fn"><a name="dtor.QLandmarkIdFetchRequest"></a>QLandmarkIdFetchRequest::~QLandmarkIdFetchRequest ()</h3>
 <p>Destroys the request object.</p>
-<h3 class="fn"><a name="fetchHint"></a><a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a> QLandmarkIdFetchRequest::fetchHint () const</h3>
-<p>Returns the request's fetch hint.</p>
-<p>See also <a href="qlandmarkidfetchrequest.html#setFetchHint">setFetchHint</a>().</p>
 <h3 class="fn"><a name="filter"></a><a href="qlandmarkfilter.html">QLandmarkFilter</a> QLandmarkIdFetchRequest::filter () const</h3>
 <p>Returns the filter which will be used to select the landmarks whose identifiers will be returned.</p>
 <p>By default, the filter's type will be a LandmarkFilter::DefaultFilter and thus match all landmarks.</p>
 <p>See also <a href="qlandmarkidfetchrequest.html#setFilter">setFilter</a>().</p>
 <h3 class="fn"><a name="landmarkIds"></a>QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkIdFetchRequest::landmarkIds () const</h3>
 <p>Returns the list of identifiers of landmarks which matched the filter.</p>
-<h3 class="fn"><a name="setFetchHint"></a>void QLandmarkIdFetchRequest::setFetchHint ( const <a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a> &amp; <i>fetchHint</i> )</h3>
-<p>Sets the request's <i>fetchHint</i>.</p>
-<p>See also <a href="qlandmarkidfetchrequest.html#fetchHint">fetchHint</a>().</p>
+<h3 class="fn"><a name="limit"></a>int QLandmarkIdFetchRequest::limit () const</h3>
+<p>Returns the maximum number of landmark ids to be returned.</p>
+<p>See also <a href="qlandmarkidfetchrequest.html#setLimit">setLimit</a>().</p>
+<h3 class="fn"><a name="offset"></a>int QLandmarkIdFetchRequest::offset () const</h3>
+<p>Returns the index offset for the request.</p>
+<p>See also <a href="qlandmarkidfetchrequest.html#setOffset">setOffset</a>().</p>
 <h3 class="fn"><a name="setFilter"></a>void QLandmarkIdFetchRequest::setFilter ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3>
 <p>Sets the <i>filter</i> which will be used to select landmark identifiers.</p>
 <p>See also <a href="qlandmarkidfetchrequest.html#filter">filter</a>().</p>
+<h3 class="fn"><a name="setLimit"></a>void QLandmarkIdFetchRequest::setLimit ( int <i>limit</i> )</h3>
+<p>Sets the maximum number of landmarks to be returned to <i>limit</i>.</p>
+<p>See also <a href="qlandmarkidfetchrequest.html#limit">limit</a>().</p>
+<h3 class="fn"><a name="setOffset"></a>void QLandmarkIdFetchRequest::setOffset ( int <i>offset</i> )</h3>
+<p>Sets the index <i>offset</i> for the request.</p>
+<p>See also <a href="qlandmarkidfetchrequest.html#offset">offset</a>().</p>
 <h3 class="fn"><a name="setSorting"></a>void QLandmarkIdFetchRequest::setSorting ( const QList&lt;<a href="qlandmarksortorder.html">QLandmarkSortOrder</a>&gt; &amp; <i>sorting</i> )</h3>
 <p>Sets the sort ordering of the request to <i>sorting</i>. This function will only have an effect on the results if invoked prior to calling <a href="qlandmarkabstractrequest.html#start">QLandmarkAbstractRequest::start</a>().</p>
 <p>See also <a href="qlandmarkidfetchrequest.html#sorting">sorting</a>().</p>
