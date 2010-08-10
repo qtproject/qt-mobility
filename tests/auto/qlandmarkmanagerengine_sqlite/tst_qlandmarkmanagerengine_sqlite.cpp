@@ -63,7 +63,6 @@
 
 #include <qlandmarksortorder.h>
 #include <qlandmarknamesort.h>
-#include <qlandmarkdistancesort.h>
 #include <qlandmarkabstractrequest.h>
 #include <qlandmarkidfetchrequest.h>
 #include <qlandmarkfetchrequest.h>
@@ -422,9 +421,6 @@ private slots:
     void sortLandmarksName();
     void sortLandmarksNameAsync();
 
-    void sortLandmarksDistance();
-    void sortLandmarksDistanceAsync();
-
     void importGpx();
     void importGpxAsync();
 
@@ -442,13 +438,6 @@ private slots:
     void categoryLimitOffset();
     //TODO: void categoryLimitOffsetAsync();
 
-    /*
-    void sortLandmarksNameDistance();
-    void filterDistanceSortName();
-    void filterNameSortDistance();
-    void filterLandmarksCustom();
-    void sortLandmarksCustom();
-    */
 };
 
 
@@ -5186,102 +5175,6 @@ void tst_QLandmarkManagerEngineSqlite::sortLandmarksNameAsync() {
     expectedDescending << lm5;
 
     sortDescending.setCaseSensitivity(Qt::CaseSensitive);
-    fetchRequest.setSorting(sortDescending);
-    fetchRequest.start();
-
-    QVERIFY(waitForAsync(spy, &fetchRequest));
-    lms = fetchRequest.landmarks();
-    QVERIFY(checkIdFetchRequest(lms,filter,sortDescending));
-
-    QCOMPARE(lms, expectedDescending);
-}
-
-void tst_QLandmarkManagerEngineSqlite::sortLandmarksDistance() {
-    QLandmark lm1;
-    lm1.setCoordinate(QGeoCoordinate(2.0, 2.0));
-    QVERIFY(m_manager->saveLandmark(&lm1));
-
-    QLandmark lm2;
-    lm2.setCoordinate(QGeoCoordinate(1.0, 1.0));
-    QVERIFY(m_manager->saveLandmark(&lm2));
-
-    QLandmark lm3;
-    QVERIFY(m_manager->saveLandmark(&lm3));
-
-    QLandmark lm4;
-    lm4.setCoordinate(QGeoCoordinate(3.0, 3.0));
-    QVERIFY(m_manager->saveLandmark(&lm4));
-
-    QList<QLandmark> expectedAscending;
-    expectedAscending << lm2;
-    expectedAscending << lm1;
-    expectedAscending << lm4;
-    expectedAscending << lm3;
-
-    QList<QLandmark> expectedDescending;
-    expectedDescending << lm3;
-    expectedDescending << lm4;
-    expectedDescending << lm1;
-    expectedDescending << lm2;
-
-    QLandmarkFilter filter;
-    QLandmarkDistanceSort sortAscending(QGeoCoordinate(0.0, 0.0), Qt::AscendingOrder);
-
-    QList<QLandmark> lms = m_manager->landmarks(filter, sortAscending);
-
-    QCOMPARE(lms, expectedAscending);
-
-    QLandmarkDistanceSort sortDescending(QGeoCoordinate(0.0, 0.0), Qt::DescendingOrder);
-
-    lms = m_manager->landmarks(filter, sortDescending);
-
-    QCOMPARE(lms, expectedDescending);
-}
-
-void tst_QLandmarkManagerEngineSqlite::sortLandmarksDistanceAsync() {
-    QLandmark lm1;
-    lm1.setCoordinate(QGeoCoordinate(2.0, 2.0));
-    QVERIFY(m_manager->saveLandmark(&lm1));
-
-    QLandmark lm2;
-    lm2.setCoordinate(QGeoCoordinate(1.0, 1.0));
-    QVERIFY(m_manager->saveLandmark(&lm2));
-
-    QLandmark lm3;
-    QVERIFY(m_manager->saveLandmark(&lm3));
-
-    QLandmark lm4;
-    lm4.setCoordinate(QGeoCoordinate(3.0, 3.0));
-    QVERIFY(m_manager->saveLandmark(&lm4));
-
-    QList<QLandmark> expectedAscending;
-    expectedAscending << lm2;
-    expectedAscending << lm1;
-    expectedAscending << lm4;
-    expectedAscending << lm3;
-
-    QList<QLandmark> expectedDescending;
-    expectedDescending << lm3;
-    expectedDescending << lm4;
-    expectedDescending << lm1;
-    expectedDescending << lm2;
-
-    QLandmarkFilter filter;
-    QLandmarkDistanceSort sortAscending(QGeoCoordinate(0.0, 0.0), Qt::AscendingOrder);
-
-    QLandmarkFetchRequest fetchRequest(m_manager);
-    QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
-    fetchRequest.setFilter(filter);
-    fetchRequest.setSorting(sortAscending);
-    fetchRequest.start();
-
-    QVERIFY(waitForAsync(spy, &fetchRequest));
-    QList<QLandmark> lms = fetchRequest.landmarks();
-    QVERIFY(checkIdFetchRequest(lms,filter,sortAscending));
-
-    QCOMPARE(lms, expectedAscending);
-
-    QLandmarkDistanceSort sortDescending(QGeoCoordinate(0.0, 0.0), Qt::DescendingOrder);
     fetchRequest.setSorting(sortDescending);
     fetchRequest.start();
 

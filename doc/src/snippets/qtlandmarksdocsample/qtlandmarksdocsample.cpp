@@ -47,7 +47,6 @@
 #include "qlandmarknamefilter.h"
 #include "qlandmarknamesort.h"
 #include "qlandmarkproximityfilter.h"
-#include "qlandmarkdistancesort.h"
 #include "qlandmarkcategoryid.h"
 #include "qgeocoordinate.h"
 #include "qlandmarkcategory.h"
@@ -386,9 +385,8 @@ void landmarkFetch(QLandmarkManager *lm)
         filter.setCoordinate(coordinate);
         filter.setRadius(5000);
 
-        QLandmarkDistanceSort distanceSort;
-        distanceSort.setCoordinate(coordinate);
-        distanceSort.setDirection(Qt::AscendingOrder);
+        QLandmarkNameSort nameSort;
+        nameSort.setDirection(Qt::AscendingOrder);
 
         landmarkManager->landmarks(filter, sortOrder, 5);
         //! [Retrieve landmarks by proximity synchronously]
@@ -416,7 +414,7 @@ void filterByProximity(QLandmarkManager *lm)
 {
     QGeoCoordinate origin(41,74);
     QLandmarkProximityFilter filter(origin, 5000);
-    QLandmarkDistanceSort sort(origin, Qt::AscendingOrder);
+    QLandmarkNameSort sort(Qt::AscendingOrder);
     QList<QLandmarkId> matchingIds = lm->landmarkIds(filter, sort);
 
     if(matchingIds.count() == 0) {

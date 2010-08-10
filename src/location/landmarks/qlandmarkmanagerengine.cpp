@@ -62,7 +62,6 @@
 #include "qlandmarkexportrequest.h"
 
 #include "qlandmarknamesort.h"
-#include "qlandmarkdistancesort.h"
 
 #include "qlandmarkattributefilter.h"
 #include "qlandmarkboxfilter.h"
@@ -1059,12 +1058,6 @@ int QLandmarkManagerEngine::compareLandmark(const QLandmark& a, const QLandmark&
                 comparison = compareName(a, b, nameSort);
                 break;
             }
-            case (QLandmarkSortOrder::DistanceSort):
-            {
-                const QLandmarkDistanceSort distanceSort = sortOrders.at(i);
-                comparison = compareDistance(a, b, distanceSort);
-                break;
-            }
             default:
                 comparison =0;
         }
@@ -1094,54 +1087,6 @@ int QLandmarkManagerEngine::compareName(const QLandmark &a, const QLandmark &b, 
     int result = QString::compare(a.name(), b.name(), nameSort.caseSensitivity());
 
     if (nameSort.direction() == Qt::DescendingOrder)
-        result *= -1;
-
-    return result;
-}
-
-/*!
-  Compares two landmarks (\a a and \a b) by distance from a point given by \a distanceSort.
-  Returns a negative number if \a a should appear before \a b according to the sort order,
-  a positive number if \a a should appear after \a b according to the sort order,
-  and zero if the two are unable to be sorted.
-
-  Assuming an ascending order sort, a negative number is returned if \a a is closer
-  and a positive number if \a b is considered closer.  0 is returned if both are the same
-  distance away.
-
-  A invalid coordinate is considered to be an infinite distance away.
- */
-int QLandmarkManagerEngine::compareDistance(const QLandmark &a, const QLandmark &b, const QLandmarkDistanceSort &distanceSort)
-{
-    int result = 0;
-
-    if (!distanceSort.coordinate().isValid())
-        return result;
-
-    if (a.coordinate().isValid()) {
-        if (b.coordinate().isValid()) {
-            double da = distanceSort.coordinate().distanceTo(a.coordinate());
-            double db = distanceSort.coordinate().distanceTo(b.coordinate());
-
-            if (qFuzzyCompare(da,db)) {
-                result = 0;
-            } else if (da < db) {
-                result = -1;
-            } else if (da > db) {
-                result = 1;
-            }
-        } else {
-            result = -1;
-        }
-    } else {
-        if (b.coordinate().isValid()) {
-            result = 1;
-        } else {
-            result = 0;
-        }
-    }
-
-    if (distanceSort.direction() == Qt::DescendingOrder)
         result *= -1;
 
     return result;

@@ -188,7 +188,6 @@ protected:
 
     static int compareLandmark(const QLandmark& a, const QLandmark& b, const QList<QLandmarkSortOrder>& sortOrders);
     static int compareName(const QLandmark &a, const QLandmark &b, const QLandmarkNameSort &nameSort);
-    static int compareDistance(const QLandmark &a, const QLandmark &b, const QLandmarkDistanceSort &distanceSort);
 
     static void addSorted(QList<QLandmark>* sorted, const QLandmark& landmark, const QList<QLandmarkSortOrder>& sortOrders);
     static bool testFilter(const QLandmarkFilter& filter, const QLandmark& landmark);

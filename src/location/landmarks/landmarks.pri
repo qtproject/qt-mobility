@@ -13,7 +13,6 @@ PUBLIC_HEADERS += \
                     landmarks/qlandmarkcategoryidfetchrequest.h \
                     landmarks/qlandmarkcategoryremoverequest.h \
                     landmarks/qlandmarkcategorysaverequest.h \
-                    landmarks/qlandmarkdistancesort.h \
                     landmarks/qlandmarkexportrequest.h \
                     landmarks/qlandmarkfetchrequest.h \
                     landmarks/qlandmarkfilter.h \
@@ -40,7 +39,6 @@ PRIVATE_HEADERS += \
                     landmarks/qlandmarkcategory_p.h \
                     landmarks/qlandmarkcategoryfilter_p.h \
                     landmarks/qlandmarkcategoryid_p.h \
-                    landmarks/qlandmarkdistancesort_p.h \
                     landmarks/qlandmarkfilter_p.h \
                     landmarks/qlandmarkid_p.h \
                     landmarks/qlandmarkidfilter_p.h \
@@ -64,7 +62,6 @@ SOURCES += \
             landmarks/qlandmarkcategoryidfetchrequest.cpp \
             landmarks/qlandmarkcategoryremoverequest.cpp \
             landmarks/qlandmarkcategorysaverequest.cpp \
-            landmarks/qlandmarkdistancesort.cpp \
             landmarks/qlandmarkexportrequest.cpp \
             landmarks/qlandmarkfetchrequest.cpp \
             landmarks/qlandmarkfilter.cpp \
