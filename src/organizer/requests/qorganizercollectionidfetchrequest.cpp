@@ -39,40 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILDEFINITIONREMOVEREQUEST_H
-#define QORGANIZERITEMDETAILDEFINITIONREMOVEREQUEST_H
-
-#include "qtorganizerglobal.h"
-#include "qorganizeritemabstractrequest.h"
-
-#include <QStringList>
+#include "qorganizercollectionidfetchrequest.h"
+#include "qorganizeritemrequests_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemDetailDefinitionRemoveRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemDetailDefinitionRemoveRequest : public QOrganizerItemAbstractRequest
+/*!
+  \class QOrganizerCollectionIdFetchRequest
+  \brief The QOrganizerCollectionIdFetchRequest class allows a client to asynchronously
+    request collection ids from an organizer manager.
+
+
+  For a QOrganizerCollectionIdFetchRequest, the resultsAvailable() signal will be emitted when the resultant
+  collection ids (which may be retrieved by calling collectionIds()), are updated, as well as if
+  the overall operation error (which may be retrieved by calling error()) is updated.
+
+  \ingroup organizeritems-requests
+ */
+
+/*! Constructs a new organizeritem fetch request whose parent is the specified \a parent */
+QOrganizerCollectionIdFetchRequest::QOrganizerCollectionIdFetchRequest(QObject* parent)
+    : QOrganizerItemAbstractRequest(new QOrganizerCollectionIdFetchRequestPrivate, parent)
 {
-    Q_OBJECT
+}
 
-public:
-    QOrganizerItemDetailDefinitionRemoveRequest(QObject* parent = 0);
+/*! Returns the list of collection ids retrieved by this request */
+QList<QOrganizerCollectionId> QOrganizerCollectionIdFetchRequest::collectionIds() const
+{
+    Q_D(const QOrganizerCollectionIdFetchRequest);
+    return d->m_collectionIds;
+}
 
-    /* Selection */
-    void setDefinitionName(const QString& definitionName);
-    void setDefinitionNames(const QStringList& names);
-    QStringList definitionNames() const;
-    void setItemType(const QString& organizeritemType);
-    QString itemType() const;
-
-    /* Results */
-    QMap<int, QOrganizerItemManager::Error> errorMap() const;
-
-private:
-    Q_DISABLE_COPY(QOrganizerItemDetailDefinitionRemoveRequest)
-    friend class QOrganizerItemManagerEngine;
-    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemDetailDefinitionRemoveRequest)
-};
+#include "moc_qorganizercollectionidfetchrequest.cpp"
 
 QTM_END_NAMESPACE
-
-#endif

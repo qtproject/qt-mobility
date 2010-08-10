@@ -113,24 +113,6 @@ QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemDetailDefinitionFetc
     return d->m_definitions;
 }
 
-/*!
-  XXX TODO
- */
-void QOrganizerItemDetailDefinitionFetchRequest::setCollectionId(const QOrganizerCollectionLocalId& collectionId)
-{
-    Q_D(QOrganizerItemDetailDefinitionFetchRequest);
-    d->m_collectionId = collectionId;
-}
-
-/*!
-  XXX TODO
- */
-QOrganizerCollectionLocalId QOrganizerItemDetailDefinitionFetchRequest::collectionId() const
-{
-    Q_D(const QOrganizerItemDetailDefinitionFetchRequest);
-    return d->m_collectionId;
-}
-
 /*! Returns the map of input name list indices to errors which occurred */
 QMap<int, QOrganizerItemManager::Error> QOrganizerItemDetailDefinitionFetchRequest::errorMap() const
 {

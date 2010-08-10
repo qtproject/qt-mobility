@@ -135,20 +135,20 @@ public:
     bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap);
 
     /* Collections - every item belongs to one or more collections */
-    QOrganizerCollection defaultCollection() const;
-    QList<QOrganizerCollection> collections(const QString& datastore = QString()) const;
-    bool saveCollection(QOrganizerCollection* collection, const QString& datastore = QString());
+    QOrganizerCollectionId defaultCollectionId() const;
+    QList<QOrganizerCollectionId> collectionIds() const;
+    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionId>& collectionIds = QList<QOrganizerCollectionId>()) const;
+    bool saveCollection(QOrganizerCollection* collection);
     bool removeCollection(const QOrganizerCollectionLocalId& collectionId);
-    QStringList availableDatastores() const; // every collection is stored in a datastore.  most managers access only one datastore.
 
     /* Return a pruned or modified item which is valid and can be saved in the manager */
-    QOrganizerItem compatibleItem(const QOrganizerItem& original, const QOrganizerCollectionLocalId& collectionId); // Preliminary function!
+    QOrganizerItem compatibleItem(const QOrganizerItem& original);
 
-    /* Definitions - Accessors and Mutators - they are per collection (really per datastore, actually...) */
-    QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType = QOrganizerItemType::TypeEvent, const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId()) const;
-    QOrganizerItemDetailDefinition detailDefinition(const QString& definitionName, const QString& itemType = QOrganizerItemType::TypeEvent, const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId()) const;
-    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType = QOrganizerItemType::TypeEvent, const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId());
-    bool removeDetailDefinition(const QString& definitionName, const QString& itemType = QOrganizerItemType::TypeEvent, const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId());
+    /* Definitions - Accessors and Mutators */
+    QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType = QOrganizerItemType::TypeEvent) const;
+    QOrganizerItemDetailDefinition detailDefinition(const QString& definitionName, const QString& itemType = QOrganizerItemType::TypeEvent) const;
+    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType = QOrganizerItemType::TypeEvent);
+    bool removeDetailDefinition(const QString& definitionName, const QString& itemType = QOrganizerItemType::TypeEvent);
 
     /* Functionality reporting */
     enum ManagerFeature {
@@ -156,10 +156,10 @@ public:
         Anonymous,
         ChangeLogs
     };
-    bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType = QOrganizerItemType::TypeEvent, const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId()) const;
-    QList<QVariant::Type> supportedDataTypes(const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId()) const;
-    bool isFilterSupported(const QOrganizerItemFilter& filter, const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId()) const;
-    QStringList supportedItemTypes(const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId()) const;
+    bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType = QOrganizerItemType::TypeEvent) const;
+    QList<QVariant::Type> supportedDataTypes() const;
+    bool isFilterSupported(const QOrganizerItemFilter& filter) const;
+    QStringList supportedItemTypes() const;
 
     /* return a list of available backends for which a QOrganizerItemManager can be constructed. */
     static QStringList availableManagers();

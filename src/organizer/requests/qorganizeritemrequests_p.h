@@ -252,6 +252,90 @@ public:
     QMap<int, QOrganizerItemManager::Error> m_errors;
 };
 
+class QOrganizerCollectionFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+{
+public:
+    QOrganizerCollectionFetchRequestPrivate()
+        : QOrganizerItemAbstractRequestPrivate()
+    {
+    }
+
+    ~QOrganizerCollectionFetchRequestPrivate()
+    {
+    }
+
+    QOrganizerItemAbstractRequest::RequestType type() const
+    {
+        return QOrganizerItemAbstractRequest::CollectionFetchRequest;
+    }
+
+    QList<QOrganizerCollectionId> m_collectionIds;
+
+    QList<QOrganizerCollection> m_collections;
+};
+
+class QOrganizerCollectionIdFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+{
+public:
+    QOrganizerCollectionIdFetchRequestPrivate()
+        : QOrganizerItemAbstractRequestPrivate()
+    {
+    }
+
+    ~QOrganizerCollectionIdFetchRequestPrivate()
+    {
+    }
+
+    QOrganizerItemAbstractRequest::RequestType type() const
+    {
+        return QOrganizerItemAbstractRequest::CollectionIdFetchRequest;
+    }
+
+    QList<QOrganizerCollectionId> m_collectionIds;
+};
+
+class QOrganizerCollectionRemoveRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+{
+public:
+    QOrganizerCollectionRemoveRequestPrivate()
+        : QOrganizerItemAbstractRequestPrivate()
+    {
+    }
+
+    ~QOrganizerCollectionRemoveRequestPrivate()
+    {
+    }
+
+    QOrganizerItemAbstractRequest::RequestType type() const
+    {
+        return QOrganizerItemAbstractRequest::CollectionRemoveRequest;
+    }
+
+    QList<QOrganizerCollectionId> m_collectionIds;
+    QMap<int, QOrganizerItemManager::Error> m_errors;
+};
+
+class QOrganizerCollectionSaveRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+{
+public:
+    QOrganizerCollectionSaveRequestPrivate()
+        : QOrganizerItemAbstractRequestPrivate()
+    {
+    }
+
+    ~QOrganizerCollectionSaveRequestPrivate()
+    {
+    }
+
+    QOrganizerItemAbstractRequest::RequestType type() const
+    {
+        return QOrganizerItemAbstractRequest::CollectionSaveRequest;
+    }
+
+    QList<QOrganizerCollection> m_collections;
+    QMap<int, QOrganizerItemManager::Error> m_errors;
+};
+
 
 
 QTM_END_NAMESPACE

@@ -39,38 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILDEFINITIONREMOVEREQUEST_H
-#define QORGANIZERITEMDETAILDEFINITIONREMOVEREQUEST_H
+#ifndef QORGANIZERCOLLECTIONIDFETCHREQUEST_H
+#define QORGANIZERCOLLECTIONIDFETCHREQUEST_H
 
 #include "qtorganizerglobal.h"
 #include "qorganizeritemabstractrequest.h"
+#include "qorganizercollection.h"
 
+#include <QList>
 #include <QStringList>
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemDetailDefinitionRemoveRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemDetailDefinitionRemoveRequest : public QOrganizerItemAbstractRequest
+class QOrganizerCollectionIdFetchRequestPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerCollectionIdFetchRequest : public QOrganizerItemAbstractRequest
 {
     Q_OBJECT
 
 public:
-    QOrganizerItemDetailDefinitionRemoveRequest(QObject* parent = 0);
+    QOrganizerCollectionIdFetchRequest(QObject* parent = 0);
 
-    /* Selection */
-    void setDefinitionName(const QString& definitionName);
-    void setDefinitionNames(const QStringList& names);
-    QStringList definitionNames() const;
-    void setItemType(const QString& organizeritemType);
-    QString itemType() const;
+    /* Selection, restriction and sorting */
+    // none planned - do we need to add some sort of metadata filtering criteria?
 
     /* Results */
-    QMap<int, QOrganizerItemManager::Error> errorMap() const;
+    //QOrganizerCollectionId defaultCollectionId() const; // XXX TODO: need this function?
+    QList<QOrganizerCollectionId> collectionIds() const;
 
 private:
-    Q_DISABLE_COPY(QOrganizerItemDetailDefinitionRemoveRequest)
+    Q_DISABLE_COPY(QOrganizerCollectionIdFetchRequest)
     friend class QOrganizerItemManagerEngine;
-    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemDetailDefinitionRemoveRequest)
+    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerCollectionIdFetchRequest)
 };
 
 QTM_END_NAMESPACE

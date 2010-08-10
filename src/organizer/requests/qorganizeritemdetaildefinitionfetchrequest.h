@@ -66,8 +66,6 @@ public:
     QStringList definitionNames() const;
     void setItemType(const QString& organizeritemType);
     QString itemType() const;
-    void setCollectionId(const QOrganizerCollectionLocalId& collectionId);
-    QOrganizerCollectionLocalId collectionId() const;
 
     /* Results */
     QMap<QString, QOrganizerItemDetailDefinition> definitions() const;

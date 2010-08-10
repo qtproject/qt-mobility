@@ -39,38 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILDEFINITIONREMOVEREQUEST_H
-#define QORGANIZERITEMDETAILDEFINITIONREMOVEREQUEST_H
+#ifndef QORGANIZERCOLLECTIONFETCHREQUEST_H
+#define QORGANIZERCOLLECTIONFETCHREQUEST_H
 
 #include "qtorganizerglobal.h"
 #include "qorganizeritemabstractrequest.h"
+#include "qorganizercollection.h"
 
+#include <QList>
 #include <QStringList>
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemDetailDefinitionRemoveRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemDetailDefinitionRemoveRequest : public QOrganizerItemAbstractRequest
+class QOrganizerCollectionFetchRequestPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerCollectionFetchRequest : public QOrganizerItemAbstractRequest
 {
     Q_OBJECT
 
 public:
-    QOrganizerItemDetailDefinitionRemoveRequest(QObject* parent = 0);
+    QOrganizerCollectionFetchRequest(QObject* parent = 0);
 
-    /* Selection */
-    void setDefinitionName(const QString& definitionName);
-    void setDefinitionNames(const QStringList& names);
-    QStringList definitionNames() const;
-    void setItemType(const QString& organizeritemType);
-    QString itemType() const;
+    /* Selection, restriction and sorting */
+    void setCollectionIds(const QList<QOrganizerCollectionId>& collectionIds);
+    QList<QOrganizerCollectionId> collectionIds() const;
 
     /* Results */
-    QMap<int, QOrganizerItemManager::Error> errorMap() const;
+    QList<QOrganizerCollection> collections() const;
 
 private:
-    Q_DISABLE_COPY(QOrganizerItemDetailDefinitionRemoveRequest)
+    Q_DISABLE_COPY(QOrganizerCollectionFetchRequest)
     friend class QOrganizerItemManagerEngine;
-    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemDetailDefinitionRemoveRequest)
+    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerCollectionFetchRequest)
 };
 
 QTM_END_NAMESPACE

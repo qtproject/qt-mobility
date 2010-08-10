@@ -560,8 +560,11 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::items(const QOrganizerItemFilt
     filling the \a changeSet with ids of changed organizeritems as required */
 bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
+    Q_UNUSED(collectionId);
+    // XXX TODO: save in in-memory collection.
+
     // ensure that the organizeritem's details conform to their definitions
-    if (!validateItem(*theOrganizerItem, collectionId, error)) {
+    if (!validateItem(*theOrganizerItem, error)) {
         return false;
     }
 
@@ -704,13 +707,8 @@ bool QOrganizerItemMemoryEngine::removeItems(const QList<QOrganizerItemLocalId>&
 }
 
 /*! \reimp */
-QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemMemoryEngine::detailDefinitions(const QString& organizeritemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const
+QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemMemoryEngine::detailDefinitions(const QString& organizeritemType, QOrganizerItemManager::Error* error) const
 {
-    if (collectionId != 0) {
-        *error = QOrganizerItemManager::InvalidCollectionError;
-        return QMap<QString, QOrganizerItemDetailDefinition>();
-    }
-
     // lazy initialisation of schema definitions.
     if (d->m_definitions.isEmpty()) {
         d->m_definitions = QOrganizerItemManagerEngine::schemaDefinitions();
@@ -722,16 +720,16 @@ QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemMemoryEngine::detail
 
 /*! Saves the given detail definition \a def, storing any error to \a error and
     filling the \a changeSet with ids of changed organizeritems as required */
-bool QOrganizerItemMemoryEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
+bool QOrganizerItemMemoryEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
     // we should check for changes to the database in this function, and add ids of changed data to changeSet. // XXX TODO.
     Q_UNUSED(changeSet);
 
-    if (!validateDefinition(def, collectionId, error)) {
+    if (!validateDefinition(def, error)) {
         return false;
     }
 
-    detailDefinitions(organizeritemType, collectionId, error); // just to populate the definitions if we haven't already.
+    detailDefinitions(organizeritemType, error); // just to populate the definitions if we haven't already.
     QMap<QString, QOrganizerItemDetailDefinition> defsForThisType = d->m_definitions.value(organizeritemType);
     defsForThisType.insert(def.name(), def);
     d->m_definitions.insert(organizeritemType, defsForThisType);
@@ -741,17 +739,17 @@ bool QOrganizerItemMemoryEngine::saveDetailDefinition(const QOrganizerItemDetail
 }
 
 /*! \reimp */
-bool QOrganizerItemMemoryEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
+bool QOrganizerItemMemoryEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemManager::Error* error)
 {
     QOrganizerItemChangeSet changeSet;
-    bool retn = saveDetailDefinition(def, organizeritemType, collectionId, changeSet, error);
+    bool retn = saveDetailDefinition(def, organizeritemType, changeSet, error);
     d->emitSharedSignals(&changeSet);
     return retn;
 }
 
 /*! Removes the detail definition identified by \a definitionId, storing any error to \a error and
     filling the \a changeSet with ids of changed organizeritems as required */
-bool QOrganizerItemMemoryEngine::removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
+bool QOrganizerItemMemoryEngine::removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
     // we should check for changes to the database in this function, and add ids of changed data to changeSet...
     // we should also check to see if the changes have invalidated any organizeritem data, and add the ids of those organizeritems
@@ -763,8 +761,7 @@ bool QOrganizerItemMemoryEngine::removeDetailDefinition(const QString& definitio
         return false;
     }
 
-    detailDefinitions(organizeritemType, collectionId, error); // just to populate the definitions if we haven't already.
-    // XXX TODO: for collectionId...
+    detailDefinitions(organizeritemType, error); // just to populate the definitions if we haven't already.
     QMap<QString, QOrganizerItemDetailDefinition> defsForThisType = d->m_definitions.value(organizeritemType);
     bool success = defsForThisType.remove(definitionId);
     d->m_definitions.insert(organizeritemType, defsForThisType);
@@ -776,10 +773,10 @@ bool QOrganizerItemMemoryEngine::removeDetailDefinition(const QString& definitio
 }
 
 /*! \reimp */
-bool QOrganizerItemMemoryEngine::removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
+bool QOrganizerItemMemoryEngine::removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemManager::Error* error)
 {
     QOrganizerItemChangeSet changeSet;
-    bool retn = removeDetailDefinition(definitionId, organizeritemType, collectionId, changeSet, error);
+    bool retn = removeDetailDefinition(definitionId, organizeritemType, changeSet, error);
     d->emitSharedSignals(&changeSet);
     return retn;
 }
@@ -913,11 +910,11 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
             QMap<QString, QOrganizerItemDetailDefinition> requestedDefinitions;
             QStringList names = r->definitionNames();
             if (names.isEmpty())
-                names = detailDefinitions(r->itemType(), r->collectionId(), &operationError).keys(); // all definitions.
+                names = detailDefinitions(r->itemType(), &operationError).keys(); // all definitions.
 
             QOrganizerItemManager::Error tempError;
             for (int i = 0; i < names.size(); i++) {
-                QOrganizerItemDetailDefinition current = detailDefinition(names.at(i), r->itemType(), r->collectionId(), &tempError);
+                QOrganizerItemDetailDefinition current = detailDefinition(names.at(i), r->itemType(), &tempError);
                 requestedDefinitions.insert(names.at(i), current);
 
                 if (tempError != QOrganizerItemManager::NoError) {
@@ -944,7 +941,7 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
             QOrganizerItemManager::Error tempError;
             for (int i = 0; i < definitions.size(); i++) {
                 QOrganizerItemDetailDefinition current = definitions.at(i);
-                saveDetailDefinition(current, r->itemType(), r->collectionId(), changeSet, &tempError);
+                saveDetailDefinition(current, r->itemType(), changeSet, &tempError);
                 savedDefinitions.append(current);
 
                 if (tempError != QOrganizerItemManager::NoError) {
@@ -968,7 +965,7 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
 
             for (int i = 0; i < names.size(); i++) {
                 QOrganizerItemManager::Error tempError;
-                removeDetailDefinition(names.at(i), r->itemType(), r->collectionId(), changeSet, &tempError);
+                removeDetailDefinition(names.at(i), r->itemType(), changeSet, &tempError);
 
                 if (tempError != QOrganizerItemManager::NoError) {
                     errorMap.insert(i, tempError);
@@ -992,9 +989,9 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
 /*!
  * \reimp
  */
-bool QOrganizerItemMemoryEngine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& organizeritemType, const QOrganizerCollectionLocalId& collectionId) const
+bool QOrganizerItemMemoryEngine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& organizeritemType) const
 {
-    if (!supportedItemTypes(collectionId).contains(organizeritemType))
+    if (!supportedItemTypes().contains(organizeritemType))
         return false;
 
     switch (feature) {
@@ -1011,11 +1008,8 @@ bool QOrganizerItemMemoryEngine::hasFeature(QOrganizerItemManager::ManagerFeatur
 /*!
  * \reimp
  */
-QList<QVariant::Type> QOrganizerItemMemoryEngine::supportedDataTypes(const QOrganizerCollectionLocalId& collectionId) const
+QList<QVariant::Type> QOrganizerItemMemoryEngine::supportedDataTypes() const
 {
-    if (collectionId != 0)
-        return QList<QVariant::Type>();
-
     QList<QVariant::Type> st;
     st.append(QVariant::String);
     st.append(QVariant::Date);
@@ -1035,10 +1029,9 @@ QList<QVariant::Type> QOrganizerItemMemoryEngine::supportedDataTypes(const QOrga
 /*!
  * The function returns true if the backend natively supports the given filter \a filter, otherwise false.
  */
-bool QOrganizerItemMemoryEngine::isFilterSupported(const QOrganizerItemFilter& filter, const QOrganizerCollectionLocalId& collectionId) const
+bool QOrganizerItemMemoryEngine::isFilterSupported(const QOrganizerItemFilter& filter) const
 {
     Q_UNUSED(filter);
-    Q_UNUSED(collectionId);
 
     // Until we add hashes for common stuff, fall back to slow code
     return false;
