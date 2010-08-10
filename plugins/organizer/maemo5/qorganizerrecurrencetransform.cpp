@@ -177,10 +177,7 @@ void OrganizerRecurrenceTransform::addQOrganizerItemRecurrenceDate(const QDate &
 
 void OrganizerRecurrenceTransform::addQOrganizerItemExceptionDate(const QDate &date)
 {
-    qDebug() << "Exception date: " << date;
     QString icalDate = qrecurrenceDateToIcalRecurrenceDate(date);
-    qDebug() << "As ical date: " << icalDate;
-    qDebug() << "Converted to exrule: " << createSingleDayRuleFor(date);
 
     // Store the new date to the exception date vector
     m_vExceptionDateList.push_back(icalDate.toStdString());
@@ -479,7 +476,7 @@ QOrganizerItemRecurrenceRule OrganizerRecurrenceTransform::icalRecurrenceRuleToQ
     int weekstartAt = qrule.indexOf(weekstartField);
     QString weekday;
     if (weekstartAt>=0)
-        weekday = qrule.mid( weekstartAt + weekstartField.length(), 2 );
+        weekday = qrule.mid(weekstartAt + weekstartField.length(), 2);
     retn.setWeekStart(icalRecurrenceTypeWeekdayToQdayOfWeek(weekday));
 
     return retn;
@@ -541,8 +538,6 @@ QMap<QString, Qt::DayOfWeek> OrganizerRecurrenceTransform::icalRecurrenceWeekDay
 QString OrganizerRecurrenceTransform::createSingleDayRuleFor(const QDate& date) const
 {
     QStringList retn;
-    qDebug() << "Date = " << date;
-    qDebug() << "Date, day of week = " << date.dayOfWeek();
 
     // set as yearly recurrence
     retn << qfrequencyToIcalFrequency(QOrganizerItemRecurrenceRule::Yearly);

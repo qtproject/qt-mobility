@@ -405,9 +405,6 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem> *items, QMap<in
         int calError = doSaveItem(cal, &curr, cs, error);
 
         if (calError != CALENDAR_OPERATION_SUCCESSFUL || *error != QOrganizerItemManager::NoError) {
-            qDebug() << "SAVE FAILED BECAUSE:";
-            qDebug() << calError;
-            qDebug() << *error;
             success = false;
             curr.setId(QOrganizerItemId()); // clear ID
             if (errorMap) {
@@ -429,83 +426,6 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem> *items, QMap<in
 
 bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId> &itemIds, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error)
 {
-    // TODO: Remove the commented out test&debug codes when not needed anymore:
-
-    /*
-    QOrganizerItemFetchRequest *r = new QOrganizerItemFetchRequest(0);
-    startRequest(r);
-
-    while(r->state() != QOrganizerItemAbstractRequest::ActiveState) {
-        QCoreApplication::processEvents(QEventLoop::AllEvents);
-    }
-
-    d->m_asynchProcess->requestDestroyed(r);
-
-    QOrganizerItemFetchRequest *r2 = new QOrganizerItemFetchRequest(0);
-    startRequest(r2);
-    */
-
-    /*
-    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
-    CTodo *ctodo = new CTodo();
-    ctodo->setDue(QDateTime(QDate(2010,7,15),QTime(12,0,0)).toTime_t());
-    ctodo->setSummary(QString("Todo summary").toStdString());
-
-    CEvent *cevent = new CEvent();
-    cevent->setDateStart(QDateTime(QDate(2010,7,17),QTime(12,0,0)).toTime_t());
-    cevent->setDateEnd(QDateTime(QDate(2010,7,17),QTime(14,0,0)).toTime_t());
-    cevent->setSummary(QString("Event summary").toStdString());
-
-    CRecurrence* rec = new CRecurrence();
-    rec->setRtype(1); // daily
-    std::vector< CRecurrenceRule* > rules;
-    CRecurrenceRule* rrule = new CRecurrenceRule();
-    rrule->setRuleType(RECURRENCE_RULE);
-    rrule->setRrule(QString("FREQ=DAILY;COUNT=5;INTERVAL=1").toStdString());
-    rules.push_back(rrule);
-    rec->setRecurrenceRule(rules);
-    ctodo->setRecurrence(rec);
-
-    int calError;
-    cal->addTodo(ctodo,calError);
-    cal->addEvent(cevent,calError);
-
-
-    return true;
-    */
-
-    /*
-    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
-
-    int calError;
-    std::vector<CTodo*> evs = cal->getTodos(QString("report").toStdString(), calError);
-    for( int i = 0; i < evs.size(); ++i) {
-        qDebug() << QString::fromStdString(evs[i]->getId()) << ", " << QString::fromStdString(evs[i]->getGUid()) << ", " << QString::fromStdString(evs[i]->getSummary());
-        delete evs[i];
-    }
-    */
-
-    /*
-    CTodo *ctodo = new CTodo();
-    ctodo->setSummary(QString("New todo summary").toStdString());
-    ctodo->setGUid(QString("dfgdgfdsfsdfgdf").toStdString());
-    ctodo->setDateStart(QDateTime(QDate(2010,7,14),QTime(12,0,0)).toTime_t());
-    ctodo->setDateEnd(QDateTime(QDate(2010,7,14),QTime(13,0,0)).toTime_t());
-    int calError;
-    cal->addTodo(ctodo, calError);
-    qDebug() << "Todo added, id = " << QString::fromStdString(ctodo->getId());
-    qDebug() << "Cal error = " << calError;
-
-    CEvent *fetch = cal->getEventOrNull(ctodo->getId(), calError);
-    if (fetch)
-        qDebug() << "Managed to fetch, summary = " << QString::fromStdString(fetch->getSummary());
-    else
-        qDebug() << "Returned null";
-
-        */
-    //return true;
-
-
     // TODO: How should the errormap updated for the child events?
     *error = QOrganizerItemManager::NoError;
     CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
@@ -583,109 +503,24 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId> 
 
 bool QOrganizerItemMaemo5Engine::startRequest(QOrganizerItemAbstractRequest* req)
 {
-    qDebug() << "startRequest() run in thread " << (int) QThread::currentThreadId();
     d->m_asynchProcess->addRequest(req);
     QMetaObject::invokeMethod(d->m_asynchProcess, "processRequest", Qt::QueuedConnection);
     return true; // TODO: Is this ok?
-
-
-
-    /*
-        TODO
-
-        This is the entry point to the async API.  The request object describes the
-        type of request (switch on req->type()).  Req will not be null when called
-        by the framework.
-
-        Generally, you can queue the request and process them at some later time
-        (probably in another thread).
-
-        Once you start a request, call the updateRequestState and/or the
-        specific updateXXXXXRequest functions to mark it in the active state.
-
-        If your engine is particularly fast, or the operation involves only in
-        memory data, you can process and complete the request here.  That is
-        probably not the case, though.
-
-        Note that when the client is threaded, and the request might live on a
-        different thread, you might need to be careful with locking.  In particular,
-        the request might be deleted while you are still working on it.  In this case,
-        your requestDestroyed function will be called while the request is still valid,
-        and you should block in that function until your worker thread (etc) has been
-        notified not to touch that request any more.
-
-        We plan to provide some boiler plate code that will allow you to:
-
-        1) implement the sync functions, and have the async versions call the sync
-           in another thread
-
-        2) or implement the async versions of the function, and have the sync versions
-           call the async versions.
-
-        It's not ready yet, though.
-
-        Return true if the request can be started, false otherwise.  You can set an error
-        in the request if you like.
-
-    return QOrganizerItemManagerEngine::startRequest(req);
-    */
 }
 
 bool QOrganizerItemMaemo5Engine::cancelRequest(QOrganizerItemAbstractRequest* req)
 {
     return d->m_asynchProcess->cancelRequest(req);
-
-    /*
-        TODO
-
-        Cancel an in progress async request.  If not possible, return false from here.
-
-    return QOrganizerItemManagerEngine::cancelRequest(req);*/
 }
 
 bool QOrganizerItemMaemo5Engine::waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs)
 {
     return d->m_asynchProcess->waitForRequestFinished(req, msecs);
-
-    /*
-        TODO
-
-        Wait for a request to complete (up to a max of msecs milliseconds).
-
-        Return true if the request is finished (including if it was already).  False otherwise.
-
-        You should really implement this function, if nothing else than as a delay, since clients
-        may call this in a loop.
-
-        It's best to avoid processing events, if you can, or at least only process non-UI events.
-
-    return QOrganizerItemManagerEngine::waitForRequestFinished(req, msecs);*/
 }
 
 void QOrganizerItemMaemo5Engine::requestDestroyed(QOrganizerItemAbstractRequest* req)
 {
     return d->m_asynchProcess->requestDestroyed(req);
-
-    /*
-        TODO
-
-        This is called when a request is being deleted.  It lets you know:
-
-        1) the client doesn't care about the request any more.  You can still complete it if
-           you feel like it.
-        2) you can't reliably access any properties of the request pointer any more.  The pointer will
-           be invalid once this function returns.
-
-        This means that if you have a worker thread, you need to let that thread know that the
-        request object is not valid and block until that thread acknowledges it.  One way to do this
-        is to have a QSet<QOIAR*> (or QMap<QOIAR, MyCustomRequestState>) that tracks active requests, and
-        insert into that set in startRequest, and remove in requestDestroyed (or when it finishes or is
-        cancelled).  Protect that set/map with a mutex, and make sure you take the mutex in the worker
-        thread before calling any of the QOIAR::updateXXXXXXRequest functions.  And be careful of lock
-        ordering problems :D
-
-
-    return QOrganizerItemManagerEngine::requestDestroyed(req);*/
 }
 
 bool QOrganizerItemMaemo5Engine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString &itemType) const
@@ -832,13 +667,11 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerI
             }
         }
         else {
-            qDebug() << "Guid check";
             // Must find at least one todo with the GUID from the DB
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
             std::vector<CTodo*> todosWithGuid = cal->getTodos(todoOccurrence->guid().toStdString(), calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             int numberOfTodos = todosWithGuid.size();
-            qDebug() << "Number of todos = " << numberOfTodos;
             for (int i = 0; i < numberOfTodos; ++i)
                 delete todosWithGuid[i];
 
@@ -855,9 +688,6 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerI
 
 int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item, QOrganizerItemChangeSet &cs, QOrganizerItemManager::Error *error)
 {
-    qDebug() << "doSaveitem";
-    qDebug() << "item type = " << item->type();
-    qDebug() << "item label = " << item->displayLabel();
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     *error = QOrganizerItemManager::NoError;
 
@@ -866,15 +696,12 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
     if (*error != QOrganizerItemManager::NoError)
         return calError;
 
-    qDebug() << "validity check passed";
-
     // Returns InvalidItemTypeError if the type won't be recognized later
     *error = QOrganizerItemManager::InvalidItemTypeError;
 
     CComponent *component = d->m_itemTransformer.createCComponent(cal, item, error);
     if (!component || *error != QOrganizerItemManager::NoError) {
         delete component;
-        qDebug() << "DOSAVEITEM RETURNED";
         return calError;
     }
 
@@ -885,7 +712,6 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
     // fields should be set to CComponent for saving.
 
     if (item->type() == QOrganizerItemType::TypeEvent) {
-        qDebug() << "Event type recognized";
         CEvent* cevent = static_cast<CEvent *>(component);
         QString ceventId = QString::fromStdString(cevent->getId());
         if (!ceventId.isEmpty()) {
@@ -898,7 +724,6 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (*error == QOrganizerItemManager::NoError)
                 cs.insertChangedItem(item->localId());
-            qDebug() << "****** Modified event" << ceventId;
         }
         else {
             // CEvent ID is empty, the event is new
@@ -931,27 +756,19 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
 
                 calError = CALENDAR_OPERATION_SUCCESSFUL; // reset the error
                 *error = QOrganizerItemManager::NoError; // reset the error
-
-                qDebug() << "****** Added event" << newIdString;
             }
         }
 
         delete cevent;
-        qDebug() << "doSaveItem: event saving ended with return value " << calError;
-        qDebug() << "DOSAVEITEM RETURNED";
         return calError;
     }
     else if (item->type() == QOrganizerItemType::TypeEventOccurrence)
     {
-        qDebug() << "Event occurrence type recognized";
         QOrganizerEventOccurrence *eventOccurrence = static_cast<QOrganizerEventOccurrence *>(item);
 
         QOrganizerItem parentItem = parentOf(cal, eventOccurrence, error);
         if (*error == QOrganizerItemManager::NoError) {
-            //qDebug() << "Parent fetch ok";
-
             if (parentItem.localId()) {
-                //qDebug() << "Parent found";
                 // parent item found, cast it to event
                 QOrganizerEvent *parentEvent = static_cast<QOrganizerEvent *>(&parentItem);
 
@@ -966,12 +783,9 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             }
         }
 
-        qDebug() << "doSaveItem: event occurrence saving ended with return value " << calError;
-        qDebug() << "DOSAVEITEM RETURNED";
         return calError;
     }
     else if (item->type() == QOrganizerItemType::TypeTodo || item->type() == QOrganizerItemType::TypeTodoOccurrence) {
-        qDebug() << "Todo or todo occurrence type recognized";
         CTodo* ctodo = static_cast<CTodo *>(component);
         QString ctodoId = QString::fromStdString(ctodo->getId());
 
@@ -983,7 +797,6 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
                 delete ctodo;
-                qDebug() << "DOSAVEITEM RETURNED";
                 return calError;
             }
             ctodo->setId(todosWithGuid[0]->getId()); // this is safe as validity check has passed
@@ -1003,7 +816,6 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (*error == QOrganizerItemManager::NoError)
                 cs.insertChangedItem(item->localId());
-            qDebug() << "****** Modified todo" << ctodoId;
         }
         else {
             // CTodo ID is empty, the todo is new
@@ -1036,13 +848,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
 
                 calError = CALENDAR_OPERATION_SUCCESSFUL; // reset the error
                 *error = QOrganizerItemManager::NoError; // reset the error
-
-                qDebug() << "****** Added todo " << newIdString;
             }
         }
 
         delete ctodo;
-        qDebug() << "DOSAVEITEM RETURNED";
         return calError;
     }
     else if (item->type() == QOrganizerItemType::TypeJournal) {
@@ -1094,21 +903,17 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
         }
 
         delete cjournal;
-        qDebug() << "DOSAVEITEM RETURNED";
         return calError;
     }
     else if (item->type() == QOrganizerItemType::TypeNote) {
         // TODO
     }
 
-    qDebug() << "doSaveItem: went to end, return value = " << calError;
-    qDebug() << "DOSAVEITEM RETURNED";
     return calError;
 }
 
 int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEventOccurrence *occurrence, QOrganizerEvent *parent, QOrganizerItemChangeSet &cs, QOrganizerItemManager::Error *error)
 {
-    qDebug() << "saveEventOccurrence()";
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
 
     // set occurrence GUID equal to the parent GUID
@@ -1124,37 +929,30 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
     bool parentModified = false;
 
     if (!occurrence->localId()) {
-        qDebug() << "No occurrence local id";
         // Does not contain a local id => this is a generated occurrence or a new exception occurrence
         // After modifications this won't be saved anymore as a generated occurrence
         // but as an event to the calendar DB. Add an exception rule to the parent item
         // to leave out this one when generating occurrences.
 
         if (occurrence->originalDate().isValid()) {
-            qDebug() << "Original date exists = " << occurrence->originalDate();
             // The original date is valid => this is a generated occurrence
             // First solve the original occurrence, using this occurrence's original date.
             // We need that to know the original length of the generated occurrence
             // (as it may have changed now).
             QDateTime originalPeriodStart = QDateTime(occurrence->originalDate(), QTime(0,0,0));
             QDateTime originalPeriodEnd = QDateTime(occurrence->originalDate(), QTime(23,59,59,999));
-            qDebug() << "Find parent's occurrences in period " << originalPeriodStart << " - " << originalPeriodEnd;
-            QList<QOrganizerItem> parentsOccurrences = itemInstances( *parent, originalPeriodStart, originalPeriodEnd, 0, error);
+            QList<QOrganizerItem> parentsOccurrences = itemInstances(*parent, originalPeriodStart, originalPeriodEnd, 0, error);
 
             if (!parentsOccurrences.isEmpty()) {
-                qDebug() << "Parent's occurrences found";
                 QOrganizerEventOccurrence originalOccurrence = static_cast<QOrganizerEventOccurrence>(parentsOccurrences[0]);
 
                 // Add exception dates to the parent
                 QDate periodStart = originalOccurrence.startDateTime().date();
                 QDate periodEnd = originalOccurrence.endDateTime().date();
 
-                qDebug() << "To add = " << periodStart << " to " << periodEnd;
-
                 QList<QDate> newExceptionDates = parent->exceptionDates();
                 QDate exceptionDate = periodStart;
                 while (exceptionDate <= periodEnd) {
-                    qDebug() << "Added exception date: " << exceptionDate;
                     if (newExceptionDates.indexOf(exceptionDate) == -1)
                         newExceptionDates << exceptionDate;
                     exceptionDate = exceptionDate.addDays(1);
@@ -1164,18 +962,14 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
             }
         }
         else {
-            qDebug() << "No original date";
             // The original date is not valid => this is a new exception occurrence, not generated
             // Add exception days covering the occurrence's period
             QDate periodStart = occurrence->startDateTime().date();
             QDate periodEnd = occurrence->endDateTime().date();
 
-            qDebug() << "To add = " << periodStart << " to " << periodEnd;
-
             QList<QDate> newExceptionDates = parent->exceptionDates();
             QDate exceptionDate = periodStart;
             while (exceptionDate <= periodEnd) {
-                qDebug() << "Added exception date: " << exceptionDate;
                 if (newExceptionDates.indexOf(exceptionDate) == -1)
                     newExceptionDates << exceptionDate;
                 exceptionDate = exceptionDate.addDays(1);
@@ -1190,7 +984,6 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
     // the parent changes if the component creation fails.
     calError = CALENDAR_OPERATION_SUCCESSFUL;
     CComponent *component = d->m_itemTransformer.createCComponent(cal, occurrence, error);
-    qDebug() << "main, 1053, error = " << *error;
     if (!component) {
         *error = QOrganizerItemManager::UnspecifiedError;
         return calError;
@@ -1207,7 +1000,6 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
         calError = doSaveItem(cal, parent, cs, error);
 
         if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
-            qDebug() << "saving parent modification failed";
             // saving the parent modifications failed
             // we must not save the occurrence either
             delete component;
@@ -1215,7 +1007,6 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
             return calError;
         }
         if (*error != QOrganizerItemManager::NoError) {
-            qDebug() << "saving parent modification failed";
             // saving the parent modifications failed
             // we must not save the occurrence either
             delete component;
@@ -1223,28 +1014,16 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
         }
     }
 
-    /*
-    qDebug() << "Occurrence id: " << occurrence->id();
-    qDebug() << "Occurrence guid: " << occurrence->guid();
-    qDebug() << "Occurrence display label: " << occurrence->displayLabel();
-    qDebug() << "Occurrence desc: " << occurrence->description();
-    qDebug() << "Occurrence start date: " << occurrence->startDateTime();
-    qDebug() << "Occurrence end date: " << occurrence->endDateTime();
-    */
-
     // Save occurrence
     CEvent* cevent = static_cast<CEvent *>(component);
     QString ceventId = QString::fromStdString(cevent->getId());
     if (!ceventId.isEmpty()) {
         // CEvent ID is not empty, the event already exists in calendar
 
-        qDebug() << "occurrence, modify:";
-
         // increase the sequence number
         cevent->setSequence(cevent->getSequence() + 1);
 
         cal->modifyEvent(cevent, calError);
-        qDebug() << "cal error = " << calError;
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
         if (calError != CALENDAR_OPERATION_SUCCESSFUL && parentModified) {
             // occurrence saving failed, we must undo the parent changes too
@@ -1255,13 +1034,10 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
     else {
         // CEvent ID is empty, the event is new
 
-        qDebug() << "occurrence, add new:";
-
         // set the sequence number zero
         cevent->setSequence(0);
 
         cal->addEvent(cevent, calError);
-        qDebug() << "cal error = " << calError;
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
 
         if (calError == CALENDAR_OPERATION_SUCCESSFUL || calError == CALENDAR_ENTRY_DUPLICATED)
@@ -1279,8 +1055,6 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
             id.setLocalId(newId);
             id.setManagerUri(managerUri());
             occurrence->setId(id);
-
-            qDebug() << "new occurrence saved with id = " << newIdString;
 
             /*
             // Update changeset
@@ -1320,19 +1094,6 @@ void QOrganizerItemMaemo5Engine::insertOccurenceSortedByStartDate(QOrganizerItem
         }
         target.insert(index, *occ);
     }
-    /*
-    else if (occurrence->type() == QOrganizerItemType::TypeTodoOccurrence)
-    {
-        QOrganizerTodoOccurrence *occ = static_cast<QOrganizerTodoOccurrence *>(occurrence);
-        int index = 0;
-        while (index < target.count()) {
-            QOrganizerTodoOccurrence curr = static_cast<QOrganizerTodoOccurrence>(target[index]);
-            if (curr.startDateTime() > occ->startDateTime())
-                break;
-            ++index;
-        }
-        target.insert(index, *occ);
-    }*/
 }
 
 QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerItem *occurrence, QOrganizerItemManager::Error *error) const
@@ -1346,15 +1107,11 @@ QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerIt
             parentLocalId = eventOccurrence->parentLocalId();
         }
         else {
-            qDebug() << "GUID case";
-
             // parent local id was not set, fetch with [GUID,originalDate]
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
             std::vector<CEvent*> parentCands = cal->getEvents(eventOccurrence->guid().toStdString(), calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             std::vector<CEvent*>::iterator pCand;
-
-            qDebug() << "Candidate count = " << parentCands.size();
 
             // Check if some event contains recurrence information and then that the given
             // occurrence is one of the occurrences obtained from the recurrence information.
@@ -1387,9 +1144,6 @@ QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerIt
                             if (*error != QOrganizerItemManager::NoError)
                                 return QOrganizerItem(); // error occured
 
-                            //qDebug() << "Occurrences got";
-                            //qDebug() << "Occ count = " << parentCandidateOccurrences.count();
-
                             // Because the period was set, it's enough to just check if we got any
                             if (!parentCandidateOccurrences.isEmpty()) {
                                 parentLocalId = candidateLocalId;
@@ -1405,8 +1159,6 @@ QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerIt
                 }
             }
 
-            qDebug() << "parentLocalId = " << parentLocalId;
-
             if (parentLocalId)
             {
                 // Parent local id got, just free the resources
@@ -1416,8 +1168,6 @@ QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerIt
             else {
                 // None of the parent candidates contained recurrence information
                 // => return the earliest created event as parent
-
-                qDebug() << "Trying the resolve the first one";
 
                 CEvent *firstCreated = 0;
                 if (parentCands.size() > 0) {
@@ -1465,13 +1215,9 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
     std::string nativeId = QString::number(itemId).toStdString();
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
 
-    qDebug() << "item(): id to fetch = " << itemId;
-
     CEvent *cevent = cal->getEventOrNull(nativeId, calError);
-    qDebug() << "cal error = " << calError;
     *error = d->m_itemTransformer.calErrorToManagerError(calError);
     if (cevent) {
-        qDebug() << "display label = " << QString::fromStdString(cevent->getSummary());
         // first resolve is this event or an event occurrence (exception event)
         bool isOcc = false;
         if (fetchOccurrences) {
@@ -1485,7 +1231,6 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
         }
 
         if (!isOcc) {
-            qDebug() << "event";
             QOrganizerEvent retn = d->m_itemTransformer.convertCEventToQEvent(cevent);
             d->m_itemTransformer.fillInCommonCComponentDetails(&retn, cevent);
             delete cevent;
@@ -1493,20 +1238,8 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
             return retn;
         }
         else {
-            qDebug() << "exception event";
-
             QOrganizerEventOccurrence retn = d->m_itemTransformer.convertCEventToQEventOccurrence(cevent);
             d->m_itemTransformer.fillInCommonCComponentDetails(&retn, cevent);
-
-            /*
-            qDebug() << "Result event occurrence:";
-            qDebug() << "Id: " << retn.localId();
-            qDebug() << "Guid: " << retn.guid();
-            qDebug() << "label: " << retn.displayLabel();
-            qDebug() << "start: " << retn.startDateTime();
-            qDebug() << "end: " << retn.endDateTime();
-            qDebug() << "parent: " << retn.parentLocalId();
-            */
 
             // resolve and set the parent event
             QOrganizerItem parent = parentOf(cal, &retn, error);
@@ -1526,7 +1259,6 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
     CTodo *todo = cal->getTodoOrNull(nativeId, calError);
     *error = d->m_itemTransformer.calErrorToManagerError(calError);
     if (todo) {
-        qDebug() << "todo";
         QOrganizerTodo retn = d->m_itemTransformer.convertCTodoToQTodo(todo);
         d->m_itemTransformer.fillInCommonCComponentDetails(&retn, todo);
         delete todo;
@@ -1537,7 +1269,6 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
     CJournal *journal = cal->getJournalOrNull(nativeId, calError);
     *error = d->m_itemTransformer.calErrorToManagerError(calError);
     if (journal) {
-        qDebug() << "journal";
         QOrganizerJournal retn = d->m_itemTransformer.convertCJournalToQJournal(journal);
         d->m_itemTransformer.fillInCommonCComponentDetails(&retn, journal);
         delete journal;
@@ -1548,7 +1279,6 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
     // In an error situation return an invalid item
     cleanupCal(cal);
     *error = QOrganizerItemManager::DoesNotExistError;
-    qDebug() << "not exist";
     return QOrganizerItem();
 }
 
@@ -1562,9 +1292,6 @@ bool QOrganizerItemMaemo5Engine::isOccurrence(CCalendar *cal, CComponent *ccompo
         return false; // possible items with no GUID are never considered as occurrences
 
     if (typeStr == QOrganizerItemType::TypeEvent) {
-
-        qDebug() << "event";
-
         // if item contains recurrence information, it can't be an occurrence
         if (containsRecurrenceInformation(ccomponent))
             return false;

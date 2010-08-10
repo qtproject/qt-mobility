@@ -91,27 +91,21 @@ OrganizerAsynchProcess::~OrganizerAsynchProcess()
 
 void OrganizerAsynchProcess::requestDestroyed(QOrganizerItemAbstractRequest *req)
 {
-    qDebug() << "requestDestroyed() run in thread " << (int) QThread::currentThreadId();
     bool requestRemoved = false;
 
     if (req->state() != QOrganizerItemAbstractRequest::ActiveState) {
-        qDebug() << "Request was not active";
         m_mainMutex.lock();
         m_requestQueue.removeOne(req);
         m_mainMutex.unlock();
         requestRemoved = true;
-        qDebug() << "Request removed";
     }
 
-    if (!requestRemoved) {
-        qDebug() << "Have to wait for request finished";
+    if (!requestRemoved)
         waitForRequestFinished(req);
-    }
 }
 
 bool OrganizerAsynchProcess::addRequest(QOrganizerItemAbstractRequest *req)
 {
-    qDebug() << "addRequest() run in thread " << (int) QThread::currentThreadId();
     QOrganizerItemManagerEngine::updateRequestState(req, QOrganizerItemAbstractRequest::InactiveState);
     m_requestQueue.enqueue(req);
     return true; // TODO: Is this ok?
@@ -119,7 +113,6 @@ bool OrganizerAsynchProcess::addRequest(QOrganizerItemAbstractRequest *req)
 
 bool OrganizerAsynchProcess::cancelRequest(QOrganizerItemAbstractRequest *req)
 {
-    qDebug() << "cancelRequest() run in thread " << (int) QThread::currentThreadId();
     m_mainMutex.lock();
     if (req->state() != QOrganizerItemAbstractRequest::ActiveState) {
         QOrganizerItemManagerEngine::updateRequestState(req, QOrganizerItemAbstractRequest::CanceledState);
@@ -136,7 +129,6 @@ bool OrganizerAsynchProcess::cancelRequest(QOrganizerItemAbstractRequest *req)
 
 bool OrganizerAsynchProcess::waitForRequestFinished(QOrganizerItemAbstractRequest *req, int msecs)
 {
-    qDebug() << "waitForRequestFinished(time) run in thread " << (int) QThread::currentThreadId();
     if (req->state() == QOrganizerItemAbstractRequest::FinishedState)
         return true;
     else if (req->state() == QOrganizerItemAbstractRequest::CanceledState)
@@ -152,10 +144,7 @@ bool OrganizerAsynchProcess::waitForRequestFinished(QOrganizerItemAbstractReques
 
 bool OrganizerAsynchProcess::waitForRequestFinished(QOrganizerItemAbstractRequest *req)
 {
-    qDebug() << "waitForRequestFinished() run in thread " << (int) QThread::currentThreadId();
     m_activeRequests.insert(req);
-
-    qDebug() << "waitForRequestFinished() in thread " << (int) QThread::currentThreadId() << " begin waiting";
 
     do {
         yieldCurrentThread();
@@ -164,18 +153,14 @@ bool OrganizerAsynchProcess::waitForRequestFinished(QOrganizerItemAbstractReques
             && (req->state() == QOrganizerItemAbstractRequest::InactiveState
              || req->state() == QOrganizerItemAbstractRequest::ActiveState));
 
-    qDebug() << "waitForRequestFinished() in thread " << (int) QThread::currentThreadId() << " stop waiting";
-
     m_timeoutMutex.lock();
     if (!m_activeRequests.contains(req)) {
         // timeout occured
-        qDebug() << "timeout occured";
         m_timeoutMutex.unlock();
         return false;
     }
     else {
         // timeout not occured
-        qDebug() << "timeout not occured";
         m_activeRequests.remove(req);
 
         // cancel and remove timer
@@ -184,7 +169,6 @@ bool OrganizerAsynchProcess::waitForRequestFinished(QOrganizerItemAbstractReques
             if ((*timer)->request() == req)
                 break;
         if (timer != m_timers.end()) {
-            qDebug() << "timer remover";
             m_timers.removeOne(*timer);
             delete *timer;
         }
@@ -195,7 +179,6 @@ bool OrganizerAsynchProcess::waitForRequestFinished(QOrganizerItemAbstractReques
 
 void OrganizerAsynchProcess::timeout(OrganizerRequestTimeoutTimer *timer)
 {
-    qDebug() << "timeout() run in thread " << (int) QThread::currentThreadId();
     m_timeoutMutex.lock();
     if (m_activeRequests.contains(timer->request())) {
         m_activeRequests.remove(timer->request());
@@ -207,7 +190,6 @@ void OrganizerAsynchProcess::timeout(OrganizerRequestTimeoutTimer *timer)
 
 void OrganizerAsynchProcess::processRequest()
 {
-    qDebug() << "processRequest() run in thread " << (int) QThread::currentThreadId();
     m_mainMutex.lock();
 
     if (m_requestQueue.isEmpty()) {
@@ -220,8 +202,6 @@ void OrganizerAsynchProcess::processRequest()
         m_mainMutex.unlock();
         return;
     }
-
-    qDebug() << "ok";
 
     QOrganizerItemManagerEngine::updateRequestState(req, QOrganizerItemAbstractRequest::ActiveState);
 

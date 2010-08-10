@@ -397,7 +397,6 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         if (item->type() == QOrganizerItemType::TypeEvent) {
             // Build and set the recurrence information for the event
             CRecurrence *recurrence = createCRecurrence(item, error);
-            qDebug() << "itemtransform, 380: Error = " << *error;
             cevent->setRecurrence(recurrence);
             delete recurrence; // setting makes a copy
             recurrence = 0;
@@ -510,10 +509,8 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         // GUid
         if (!item->guid().isEmpty())
             retn->setGUid(item->guid().toStdString());
-        else {
+        else
             retn->setGUid(randomGuid().toStdString()); // no GUID was set, generate a random GUID
-            qDebug() << "GUID " << QString::fromStdString(retn->getGUid()) << " given to item with label " << item->displayLabel();
-        }
 
         // Comments
         QStringList commentList = item->comments();
@@ -586,8 +583,6 @@ CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* ite
 
         // TODO
     }
-
-    qDebug() << "itemtransform, 573: Error = " << *error;
 
     return 0; // no recurrence information for this item type
 }
