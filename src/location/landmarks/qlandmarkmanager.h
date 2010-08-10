@@ -122,11 +122,9 @@ public:
 #ifdef Q_QDOC
     QLandmarkManager(QObject *parent = 0);
     QLandmarkManager(const QString &managerName, const QMap<QString, QString> &parameters = 0, QObject *parent = 0);
-    QLandmarkManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
 #else
     QLandmarkManager(QObject *parent = 0);
     QLandmarkManager(const QString &managerName, const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject *parent = 0);
-    QLandmarkManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
 #endif
     virtual ~QLandmarkManager();
 
@@ -193,7 +191,7 @@ public:
     int managerVersion() const;
 
     static QStringList availableManagers();
-    static QString buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion = -1);
+    static QString buildUri(const QString& managerName, const QMap<QString, QString>& params,int implementationVersion = -1);
     static QLandmarkManager* fromUri(const QString& uri, QObject* parent = 0);
     static bool parseUri(const QString& uri, QString* managerName, QMap<QString, QString>* params);
 

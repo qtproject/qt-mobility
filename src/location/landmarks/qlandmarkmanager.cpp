@@ -243,32 +243,6 @@ QLandmarkManager::QLandmarkManager(const QString &managerName, const QMap<QStrin
 }
 
 /*!
-  Constructs a QLandmarkManager whose backend has the name \a managerName and version \a implementationVersion, where the manager
-  is constructed with the provided \a parameters.
-
-  The \a parent QObject will be used as the parent of this QLandmarkManager.
-
-  If an empty \a managerName is specified, the default implementation for the platform will be instantiated.
-  If the specified implementation version is not available, the manager with the name \a managerName with the default implementation version is instantiated.
- */
-QLandmarkManager::QLandmarkManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters, QObject* parent)
-        : QObject(parent),
-          d_ptr(new QLandmarkManagerPrivate())
-{
-    Q_D(QLandmarkManager);
-    d->q_ptr = this;
-    QMap<QString,QString> params = parameters;
-    params[QString(QTLANDMARKS_IMPLEMENTATION_VERSION_NAME)] = QString::number(implementationVersion);
-    d->createEngine(managerName, params);
-
-    if (!d->engine) {
-        d->errorCode = QLandmarkManager::InvalidManagerError;
-        d->errorString = QString("Invalid Manager, name: %1").arg(managerName);
-        qWarning() << "Invalid QLandmarkManager instantiated with name: " << managerName;
-    }
-}
-
-/*!
     Frees the memory used by the QLandmarkManager
 */
 QLandmarkManager::~QLandmarkManager()
