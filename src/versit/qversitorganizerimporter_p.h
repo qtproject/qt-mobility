@@ -55,6 +55,7 @@
 #include "qmobilityglobal.h"
 #include "qversitorganizerimporter.h"
 #include "qorganizeritemrecurrence.h"
+#include "qversitorganizerhandler.h"
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItem;
@@ -102,7 +103,7 @@ class Duration
 class Q_AUTOTEST_EXPORT QVersitOrganizerImporterPrivate
 {
 public:
-    QVersitOrganizerImporterPrivate();
+    QVersitOrganizerImporterPrivate(const QString& profile = QString());
     ~QVersitOrganizerImporterPrivate();
     bool importDocument(const QVersitDocument& versitDocument,
                         QOrganizerItem* item,
@@ -114,6 +115,7 @@ public:
     QList<QOrganizerItem> mItems;
     QMap<int, QVersitOrganizerImporter::Error> mErrors;
     QVersitOrganizerImporterPropertyHandler* mPropertyHandler;
+    QList<QVersitOrganizerHandler*> mPluginPropertyHandlers;
     bool mDurationSpecified; // true iff a valid DURATION property has been seen in the current
                              // document with no subsequent DTEND property
 

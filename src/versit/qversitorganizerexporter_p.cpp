@@ -46,10 +46,11 @@
 #include "qversitorganizerdefs_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
+#include "qversitpluginloader_p.h"
 
 QTM_USE_NAMESPACE
 
-QVersitOrganizerExporterPrivate::QVersitOrganizerExporterPrivate() :
+QVersitOrganizerExporterPrivate::QVersitOrganizerExporterPrivate(const QString& profile) :
     mDetailHandler(NULL)
 {
     int versitPropertyCount =
@@ -61,6 +62,8 @@ QVersitOrganizerExporterPrivate::QVersitOrganizerExporterPrivate() :
                     QLatin1String(versitOrganizerDetailMappings[i].detailFieldName),
                     QLatin1String(versitOrganizerDetailMappings[i].versitPropertyName)));
     }
+
+    mPluginDetailHandlers = QVersitPluginLoader::instance()->createOrganizerHandlers(profile);
 }
 
 QVersitOrganizerExporterPrivate::~QVersitOrganizerExporterPrivate()
@@ -91,10 +94,15 @@ bool QVersitOrganizerExporterPrivate::exportItem(
     }
     foreach (const QOrganizerItemDetail& detail, allDetails) {
         exportDetail(item, detail, document);
-        // run the handler, if set
-        if (mDetailHandler) {
-            mDetailHandler->itemProcessed(item, document);
-        }
+    }
+
+    // run plugin handlers
+    foreach (QVersitOrganizerExporterDetailHandler* handler, mPluginDetailHandlers) {
+        handler->itemProcessed(item, document);
+    }
+    // run the handler, if set
+    if (mDetailHandler) {
+        mDetailHandler->itemProcessed(item, document);
     }
     if (item.type() == QOrganizerItemType::TypeEventOccurrence
             && !documentContainsUidAndRecurrenceId(*document)) {
@@ -133,6 +141,12 @@ void QVersitOrganizerExporterPrivate::exportDetail(
         encodeComment(detail, &generatedProperties, &processedFields);
     } else if (mPropertyMappings.contains(detail.definitionName())) {
         encodeSimpleProperty(detail, *document, &removedProperties, &generatedProperties, &processedFields);
+    }
+
+    // run the plugin handler
+    foreach (QVersitOrganizerExporterDetailHandler* handler, mPluginDetailHandlers) {
+        handler->detailProcessed(item, detail, *document,
+                                 &processedFields, &removedProperties, &generatedProperties);
     }
     // run the detail handler, if set
     if (mDetailHandler) {

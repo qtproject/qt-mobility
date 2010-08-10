@@ -77,6 +77,7 @@ public:
     };
 
     QVersitOrganizerImporter();
+    QVersitOrganizerImporter(const QString& profile);
     ~QVersitOrganizerImporter();
 
     bool importDocument(const QVersitDocument& documents);

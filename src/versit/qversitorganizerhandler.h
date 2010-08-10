@@ -39,39 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITPLUGINLOADER_P_H
-#define QVERSITPLUGINLOADER_P_H
+#ifndef QVERSITORGANIZERHANDLER_H
+#define QVERSITORGANIZERHANDLER_H
 
-#include <QMap>
-#include <QStringList>
-#include <QList>
-
-#include "qmobilityglobal.h"
-#include "qversitcontacthandler.h"
-#include "qversitorganizerhandler.h"
+#include "qversitorganizerimporter.h"
+#include "qversitorganizerexporter.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitPluginLoader
+// qdoc seems to not find QVersitOrganizerHandler if it is declared first, hence this forward
+// declaration
+class QVersitOrganizerHandler;
+
+class Q_VERSIT_EXPORT QVersitOrganizerHandlerFactory
 {
-    private:
-        QVersitPluginLoader();
+public:
+    virtual ~QVersitOrganizerHandlerFactory() {}
+    virtual QSet<QString> profiles() const { return QSet<QString>(); }
+    virtual QString name() const = 0;
+    virtual int index() const { return 0; }
+    virtual QVersitOrganizerHandler* createHandler() const = 0;
 
-    public:
-        static QVersitPluginLoader* instance();
-        QList<QVersitContactHandler*> createContactHandlers(const QString& profile);
-        QList<QVersitOrganizerHandler*> createOrganizerHandlers(const QString& profile);
+#ifdef Q_QDOC
+    static const QLatin1Constant ProfileSync;
+    static const QLatin1Constant ProfileBackup;
+#else
+    Q_DECLARE_LATIN1_CONSTANT(ProfileSync, "Sync");
+    Q_DECLARE_LATIN1_CONSTANT(ProfileBackup, "Backup");
+#endif
+};
 
-    private:
-        void loadPlugins();
-
-        static QVersitPluginLoader* mInstance;
-        QSet<QString> mLoadedFactories;
-        QList<QVersitContactHandlerFactory*> mContactHandlerFactories;
-        QList<QVersitOrganizerHandlerFactory*> mOrganizerHandlerFactories;
-        QStringList mPluginPaths;
+class Q_VERSIT_EXPORT QVersitOrganizerHandler : public QVersitOrganizerImporterPropertyHandler,
+                                                public QVersitOrganizerExporterDetailHandler
+{
+public:
+    virtual ~QVersitOrganizerHandler() {}
 };
 
 QTM_END_NAMESPACE
+
+#define QT_VERSIT_ORGANIZER_HANDLER_INTERFACE "com.nokia.qt.mobility.versit.organizerhandlerfactory/1.0"
+Q_DECLARE_INTERFACE(QtMobility::QVersitOrganizerHandlerFactory, QT_VERSIT_ORGANIZER_HANDLER_INTERFACE);
 
 #endif

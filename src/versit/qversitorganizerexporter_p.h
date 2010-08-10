@@ -44,13 +44,14 @@
 
 #include "qversitorganizerexporter.h"
 #include "qorganizeritemrecurrencerule.h"
+#include "qversitorganizerhandler.h"
 
 QTM_BEGIN_NAMESPACE
 
 class Q_AUTOTEST_EXPORT QVersitOrganizerExporterPrivate
 {
 public:
-    QVersitOrganizerExporterPrivate();
+    QVersitOrganizerExporterPrivate(const QString& profile = QString());
     ~QVersitOrganizerExporterPrivate();
 
     bool exportItem(const QOrganizerItem& item,
@@ -60,6 +61,7 @@ public:
     QVersitDocument mResult;
     QMap<int, QVersitOrganizerExporter::Error> mErrors;
     QVersitOrganizerExporterDetailHandler* mDetailHandler;
+    QList<QVersitOrganizerHandler*> mPluginDetailHandlers;
 
 private:
     void exportDetail(

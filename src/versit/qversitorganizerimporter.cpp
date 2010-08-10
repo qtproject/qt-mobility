@@ -108,6 +108,18 @@ QVersitOrganizerImporter::QVersitOrganizerImporter()
 {
 }
 
+/*!
+ * Constructs a new importer for the given \a profile.  The profile strings should be one of those
+ * defined by QVersitOrganizerHandlerFactory, or a value otherwise agreed to by a \l{Versit
+ * Plugins}{Versit plugin}.
+ *
+ * The profile determines which plugins will be loaded to supplement the importer.
+ */
+QVersitOrganizerImporter::QVersitOrganizerImporter(const QString& profile)
+    : d(new QVersitOrganizerImporterPrivate(profile))
+{
+}
+
 /*! Frees the memory used by the importer */
 QVersitOrganizerImporter::~QVersitOrganizerImporter()
 {

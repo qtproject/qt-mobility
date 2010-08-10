@@ -94,10 +94,17 @@ void QVersitPluginLoader::loadPlugins() {
                 qobject_cast<QVersitContactHandlerFactory*>(qpl.instance());
             if (handler && !mLoadedFactories.contains(handler->name())) {
                 mLoadedFactories.insert(handler->name());
-                mFactories.append(handler);
+                mContactHandlerFactories.append(handler);
+            } else {
+                QVersitOrganizerHandlerFactory* handler =
+                    qobject_cast<QVersitOrganizerHandlerFactory*>(qpl.instance());
+                if (handler && !mLoadedFactories.contains(handler->name())) {
+                    mLoadedFactories.insert(handler->name());
+                    mOrganizerHandlerFactories.append(handler);
+                }
             }
         }
-        qSort(mFactories.begin(), mFactories.end(), factoryLessThan);
+        qSort(mContactHandlerFactories.begin(), mContactHandlerFactories.end(), factoryLessThan);
     }
 }
 
@@ -108,15 +115,37 @@ void QVersitPluginLoader::loadPlugins() {
  *
  * The caller is responsible for deleting all returned handlers.
  */
-QList<QVersitContactHandler*> QVersitPluginLoader::createHandlers(const QString& profile)
+QList<QVersitContactHandler*> QVersitPluginLoader::createContactHandlers(const QString& profile)
 {
     loadPlugins();
 
     QList<QVersitContactHandler*> handlers;
-    foreach (const QVersitContactHandlerFactory* factory, mFactories) {
+    foreach (const QVersitContactHandlerFactory* factory, mContactHandlerFactories) {
         if (factory->profiles().isEmpty() ||
                 (!profile.isEmpty() && factory->profiles().contains(profile))) {
             QVersitContactHandler* handler = factory->createHandler();
+            handlers.append(handler);
+        }
+    }
+    return handlers;
+}
+
+/*!
+ * Creates and returns handlers from the plugin.  If \a profile is the empty string, only handlers
+ * with an empty profile list are returned.  If \a profile is nonempty, only handlers with either
+ * an empty profile list or a profile list that contains the given \a profile are returned.
+ *
+ * The caller is responsible for deleting all returned handlers.
+ */
+QList<QVersitOrganizerHandler*> QVersitPluginLoader::createOrganizerHandlers(const QString& profile)
+{
+    loadPlugins();
+
+    QList<QVersitOrganizerHandler*> handlers;
+    foreach (const QVersitOrganizerHandlerFactory* factory, mOrganizerHandlerFactories) {
+        if (factory->profiles().isEmpty() ||
+                (!profile.isEmpty() && factory->profiles().contains(profile))) {
+            QVersitOrganizerHandler* handler = factory->createHandler();
             handlers.append(handler);
         }
     }

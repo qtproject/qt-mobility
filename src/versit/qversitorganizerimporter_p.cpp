@@ -45,11 +45,12 @@
 #include "qmobilityglobal.h"
 #include "qtorganizer.h"
 #include "qversitorganizerdefs_p.h"
+#include "qversitpluginloader_p.h"
 
 
 QTM_USE_NAMESPACE
 
-QVersitOrganizerImporterPrivate::QVersitOrganizerImporterPrivate() :
+QVersitOrganizerImporterPrivate::QVersitOrganizerImporterPrivate(const QString& profile) :
     mPropertyHandler(NULL),
     mDurationSpecified(false)
 {
@@ -62,10 +63,15 @@ QVersitOrganizerImporterPrivate::QVersitOrganizerImporterPrivate() :
                     QLatin1String(versitOrganizerDetailMappings[i].detailDefinitionName),
                     QLatin1String(versitOrganizerDetailMappings[i].detailFieldName)));
     }
+
+    mPluginPropertyHandlers = QVersitPluginLoader::instance()->createOrganizerHandlers(profile);
 }
 
 QVersitOrganizerImporterPrivate::~QVersitOrganizerImporterPrivate()
 {
+    foreach (QVersitOrganizerHandler* pluginHandler, mPluginPropertyHandlers) {
+        delete pluginHandler;
+    }
 }
 
 bool QVersitOrganizerImporterPrivate::importDocument(
@@ -92,6 +98,11 @@ bool QVersitOrganizerImporterPrivate::importDocument(
     foreach (const QVersitProperty& property, properties) {
         importProperty(document, property, item);
     }
+    // run plugin handlers
+    foreach (QVersitOrganizerImporterPropertyHandler* handler, mPluginPropertyHandlers) {
+        handler->documentProcessed(document, item);
+    }
+    // run property handlers
     if (mPropertyHandler) {
         mPropertyHandler->documentProcessed(document, item);
     }
@@ -158,6 +169,10 @@ void QVersitOrganizerImporterPrivate::importProperty(
         }
     }
 
+    // run plugin handlers
+    foreach (QVersitOrganizerImporterPropertyHandler* handler, mPluginPropertyHandlers) {
+        handler->propertyProcessed(document, property, *item, &success, &updatedDetails);
+    }
     // run the handler, if set
     if (mPropertyHandler) {
         mPropertyHandler->propertyProcessed(document, property, *item, &success, &updatedDetails);
