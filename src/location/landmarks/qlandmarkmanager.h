@@ -123,18 +123,20 @@ public:
     QList<QLandmarkCategoryId> categoryIds(int limit =-1, int offset=0, const QLandmarkNameSort &nameSort = QLandmarkNameSort()) const;
 
     QLandmark landmark(const QLandmarkId &landmarkId) const;
-    QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders,
-                                int limit=-1, int offset=0) const;
-    QList<QLandmark> landmarks(const QLandmarkFilter &filter = QLandmarkFilter(), const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder(),
-                            int limit=-1, int offset=0) const;
+    QList<QLandmark> landmarks(const QLandmarkFilter &filter,
+                                int limit, int offset,
+                                const QList<QLandmarkSortOrder>& sortOrders) const;
+    QList<QLandmark> landmarks(const QLandmarkFilter &filter = QLandmarkFilter(),
+                            int limit=-1, int offset=0,
+                            const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder()) const;
 
     QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds) const;
     QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter,
-                                   const QList<QLandmarkSortOrder> &sortOrders,
-                                   int limit =-1, int offset=0) const;
+                                    int limit, int offset,
+                                   const QList<QLandmarkSortOrder> &sortOrders)const;
     QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter = QLandmarkFilter(),
-                                   const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder(),
-                                   int limit=-1, int offset =0) const;
+                                    int limit=-1, int offset =0,
+                                   const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder()) const;
 
     bool importLandmarks(QIODevice *device, const QString &format= QString() ,QLandmarkManager::ImportExportOption option = IncludeCategoryData, const QLandmarkCategoryId& = QLandmarkCategoryId());
     bool importLandmarks(const QString &fileName, const QString &format = QString(),QLandmarkManager::ImportExportOption option = IncludeCategoryData, const QLandmarkCategoryId& = QLandmarkCategoryId());

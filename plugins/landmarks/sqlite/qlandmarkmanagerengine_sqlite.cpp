@@ -200,8 +200,8 @@ int QLandmarkManagerEngineSqlite::managerVersion() const
 }
 
 QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIds(const QLandmarkFilter& filter,
-        const QList<QLandmarkSortOrder>& sortOrders,
         int limit, int offset,
+        const QList<QLandmarkSortOrder>& sortOrders,
         QLandmarkManager::Error *error,
         QString *errorString) const
 {
@@ -223,8 +223,8 @@ QLandmark QLandmarkManagerEngineSqlite::landmark(const QLandmarkId &landmarkId,
 }
 
 QList<QLandmark> QLandmarkManagerEngineSqlite::landmarks(const QLandmarkFilter &filter,
-                                                         const QList<QLandmarkSortOrder>& sortOrders,
                                                          int limit, int offset,
+                                                         const QList<QLandmarkSortOrder>& sortOrders,
                                                          QLandmarkManager::Error *error,
                                                          QString *errorString) const
 {

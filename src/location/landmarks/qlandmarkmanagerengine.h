@@ -95,7 +95,7 @@ public:
     QString managerUri() const;
 
     /* Filtering */
-    virtual QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders, int limit, int offset,
+    virtual QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter,  int limit, int offset, const QList<QLandmarkSortOrder>& sortOrders,
                                            QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual QList<QLandmarkCategoryId> categoryIds(int limit, int offset, const QLandmarkNameSort &nameSort, QLandmarkManager::Error *error,
             QString *errorString) const = 0;
@@ -103,7 +103,7 @@ public:
     /* Retrieval */
     virtual QLandmark landmark(const QLandmarkId &landmarkId, QLandmarkManager::Error *error,
                                QString *errorString) const =0;
-    virtual QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders, int limit, int offset,
+    virtual QList<QLandmark> landmarks(const QLandmarkFilter &filter, int limit, int offset, const QList<QLandmarkSortOrder>& sortOrders,
                                        QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual QLandmarkCategory category(const QLandmarkCategoryId &landmarkCategoryId, QLandmarkManager::Error *error,
                                        QString *errorString) const = 0;

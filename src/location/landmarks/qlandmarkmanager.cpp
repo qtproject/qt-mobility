@@ -570,8 +570,8 @@ QLandmark QLandmarkManager::landmark(const QLandmarkId &landmarkId) const
     The \a limit defines the maximum number of landmarks to return and the \a offset defines the index offset
     of the first landmark.  A \a limit of -1 means all matching landmarks should be returned.
 */
-QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder> &sortOrders,
-                                             int limit, int offset) const
+QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, int limit, int offset,
+                                             const QList<QLandmarkSortOrder> &sortOrders) const
 {
     Q_D(const QLandmarkManager);
 
@@ -582,9 +582,9 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, cons
     }
 
     QList<QLandmark> lms = d->engine->landmarks(filter,
-                           sortOrders,
                            limit,
                            offset,
+                           sortOrders,
                            &(d->errorCode),
                            &(d->errorString));
 
@@ -599,8 +599,8 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, cons
     The \a limit defines the maximum number of landmarks to return and the \a offset defines the index offset
     of the first landmark.  A \a limit of -1 means all matching landmarks should be returned.
 */
-QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, const QLandmarkSortOrder &sortOrder,
-                                             int limit, int offset) const
+QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, int limit, int offset,
+                                             const QLandmarkSortOrder &sortOrder) const
 {
     Q_D(const QLandmarkManager);
 
@@ -615,9 +615,9 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, cons
         sortOrders.append(sortOrder);
 
     QList<QLandmark> lms = d->engine->landmarks(filter,
-                           sortOrders,
                            limit,
                            offset,
+                           sortOrders,
                            &(d->errorCode),
                            &(d->errorString));
 
@@ -649,8 +649,8 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
     // or use it to remove the landmarks which had errors?
 
     QList<QLandmark> lms = d->engine->landmarks(idFilter,
-                                                sortOrders,
                                                 -1, 0,
+                                                sortOrders,
                                                 &(d->errorCode),
                                                 &(d->errorString));
 
@@ -667,8 +667,8 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
     A \a limit of -1 means that ids of all matching landmarks should be returned.
 */
 QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
-                                                 const QList<QLandmarkSortOrder> &sortOrders,
-                                                 int limit, int offset) const
+                                                int limit, int offset,
+                                                 const QList<QLandmarkSortOrder> &sortOrders) const
 {
     Q_D(const QLandmarkManager);
 
@@ -679,9 +679,9 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
     }
 
     QList<QLandmarkId> ids = d->engine->landmarkIds(filter,
-                             sortOrders,
                              limit,
                              offset,
+                             sortOrders,
                              &(d->errorCode),
                              &(d->errorString));
 
@@ -699,8 +699,9 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
 
     This is a convenience function.
 */
-QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter, const QLandmarkSortOrder &sortOrder,
-                                                 int limit, int offset) const
+QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
+                                                 int limit, int offset,
+                                                 const QLandmarkSortOrder &sortOrder) const
 {
     Q_D(const QLandmarkManager);
 
@@ -714,11 +715,11 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter, 
     sortOrders.append(sortOrder);
 
     QList<QLandmarkId> ids = d->engine->landmarkIds(filter,
-                             sortOrders,
-                             limit,
-                             offset,
-                             &(d->errorCode),
-                             &(d->errorString));
+                                                    limit,
+                                                    offset,
+                                                    sortOrders,
+                                                    &(d->errorCode),
+                                                    &(d->errorString));
 
     if (d->errorCode != NoError)
         return QList<QLandmarkId>();

@@ -77,8 +77,8 @@ public:
 
     /* Filtering */
     QList<QLandmarkId> landmarkIds(const QLandmarkFilter& filter,
-                                   const QList<QLandmarkSortOrder>& sortOrders,
                                    int limit, int offset,
+                                   const QList<QLandmarkSortOrder>& sortOrders,
                                    QLandmarkManager::Error *error,
                                    QString *errorString) const;
     QList<QLandmarkCategoryId> categoryIds(int limit, int offset,
@@ -91,8 +91,8 @@ public:
                        QLandmarkManager::Error *error,
                        QString *errorString) const;
     QList<QLandmark> landmarks(const QLandmarkFilter& filter,
-                               const QList<QLandmarkSortOrder>& sortOrders,
                                int limit, int offset,
+                               const QList<QLandmarkSortOrder>& sortOrders,
                                QLandmarkManager::Error *error,
                                QString *errorString) const;
     QLandmarkCategory category(const QLandmarkCategoryId &landmarkCategoryId,

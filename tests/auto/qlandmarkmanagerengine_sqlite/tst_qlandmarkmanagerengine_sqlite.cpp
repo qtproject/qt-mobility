@@ -2895,26 +2895,26 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksLimitMatches() {
     QLandmarkFilter filter;
     QLandmarkSortOrder sortOrder;
 
-    ids = m_manager->landmarkIds(filter, sortOrder, 100);
+    ids = m_manager->landmarkIds(filter, 100,0, sortOrder);
 
     QCOMPARE(ids.size(), 50);
 
     QLandmarkNameSort nameSort(Qt::DescendingOrder);
 
-    ids = m_manager->landmarkIds(filter, nameSort, 25);
+    ids = m_manager->landmarkIds(filter, 25, 0, nameSort);
 
     QCOMPARE(ids.size(), 25);
     QCOMPARE(m_manager->landmark(ids.at(0)).name(), QString("LM9"));
     QCOMPARE(m_manager->landmark(ids.at(24)).name(), QString("LM31"));
 
-    QList<QLandmark> lms = m_manager->landmarks(filter, nameSort, 25);
+    QList<QLandmark> lms = m_manager->landmarks(filter, 25, 0, nameSort);
     QCOMPARE(lms.size(), 25);
     QCOMPARE(lms.at(0).name(), QString("LM9"));
     QCOMPARE(lms.at(24).name(), QString("LM31"));
 
     //try with an limit and offset
-    lms = m_manager->landmarks(filter, nameSort, 10, 10);
-    ids = m_manager->landmarkIds(filter, nameSort, 10, 10);
+    lms = m_manager->landmarks(filter, 10, 10, nameSort);
+    ids = m_manager->landmarkIds(filter, 10, 10, nameSort);
     QVERIFY(checkIds(lms, ids));
 
     QCOMPARE(lms.size(), 10);
@@ -2922,8 +2922,8 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksLimitMatches() {
     QCOMPARE(lms.at(9).name(), QString("LM36"));
 
     //try with an offset and no max items
-    lms = m_manager->landmarks(filter,QLandmarkNameSort(Qt::AscendingOrder), -1, 10);
-    ids = m_manager->landmarkIds(filter, QLandmarkNameSort(Qt::AscendingOrder), -1, 10);
+    lms = m_manager->landmarks(filter, -1, 10, QLandmarkNameSort(Qt::AscendingOrder));
+    ids = m_manager->landmarkIds(filter, -1, 10, QLandmarkNameSort(Qt::AscendingOrder));
     QVERIFY(checkIds(lms, ids));
 
     QCOMPARE(lms.size(), 40);
@@ -2931,18 +2931,18 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksLimitMatches() {
     QCOMPARE(lms.at(39).name(), QString("LM9"));
 
     //try with an offset of -1
-    lms = m_manager->landmarks(filter, QLandmarkNameSort(Qt::AscendingOrder), -1, -1);
-    ids = m_manager->landmarkIds(filter, QLandmarkNameSort(Qt::AscendingOrder), -1, -1);
+    lms = m_manager->landmarks(filter,  -1, -1, QLandmarkNameSort(Qt::AscendingOrder));
+    ids = m_manager->landmarkIds(filter, -1, -1, QLandmarkNameSort(Qt::AscendingOrder));
     QVERIFY(checkIds(lms, ids));
 
     //try with an offset which greater than the number of items
 
-    lms = m_manager->landmarks(filter, QLandmarkNameSort(Qt::AscendingOrder), 100, 500);
+    lms = m_manager->landmarks(filter, 100, 500, QLandmarkNameSort(Qt::AscendingOrder));
     QCOMPARE(lms.count(), 0);
 
     QLandmarkNameFilter nameFilter;
     nameFilter.setName("LM1");
-    lms = m_manager->landmarks(nameFilter,QLandmarkSortOrder(),-1, 5);
+    lms = m_manager->landmarks(nameFilter,-1, 5, QLandmarkSortOrder());
     QCOMPARE(lms.count(),0);
 }
 
@@ -5030,18 +5030,18 @@ void tst_QLandmarkManagerEngineSqlite::sortLandmarksNull() {
     QList<QLandmark> lms = m_manager->landmarks(filter);
     QCOMPARE(lms, expected);
 
-    lms = m_manager->landmarks(filter, sortOrder);
+    lms = m_manager->landmarks(filter, -1, 0, sortOrder);
     QCOMPARE(lms, expected);
 
-    lms = m_manager->landmarks(filter, sortOrders);
-    QCOMPARE(lms, expected);
-
-    sortOrders << sortOrder;
-    lms = m_manager->landmarks(filter, sortOrders);
+    lms = m_manager->landmarks(filter, -1, 0, sortOrders);
     QCOMPARE(lms, expected);
 
     sortOrders << sortOrder;
-    lms = m_manager->landmarks(filter, sortOrders);
+    lms = m_manager->landmarks(filter, -1, 0, sortOrders);
+    QCOMPARE(lms, expected);
+
+    sortOrders << sortOrder;
+    lms = m_manager->landmarks(filter, -1, 0, sortOrders);
     QCOMPARE(lms, expected);
 }
 
@@ -5071,12 +5071,12 @@ void tst_QLandmarkManagerEngineSqlite::sortLandmarksName() {
     QLandmarkFilter filter;
     QLandmarkNameSort sortAscending(Qt::AscendingOrder);
 
-    QList<QLandmark> lms = m_manager->landmarks(filter, sortAscending);
+    QList<QLandmark> lms = m_manager->landmarks(filter, -1, 0, sortAscending);
     QCOMPARE(lms, expectedAscending);
 
     QLandmarkNameSort sortDescending(Qt::DescendingOrder);
 
-    lms = m_manager->landmarks(filter, sortDescending);
+    lms = m_manager->landmarks(filter, -1, 0, sortDescending);
     QCOMPARE(lms, expectedDescending);
 }
 
