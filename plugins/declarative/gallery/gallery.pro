@@ -18,8 +18,6 @@ QT += declarative
 CONFIG += mobility
 MOBILITY = gallery
 
-target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
-
 HEADERS += \
         qdeclarativegalleryfilter.h \
         qdeclarativegalleryitem.h \

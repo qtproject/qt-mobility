@@ -23,7 +23,3 @@ HEADERS += \
 SOURCES += \
         qorganizermaemo5.cpp \
         qorganizerrecurrencetransform.cpp
-
-target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
-INSTALLS += target
-
