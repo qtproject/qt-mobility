@@ -54,17 +54,15 @@ class QVersitOrganizerExporterPrivate;
 class Q_VERSIT_EXPORT QVersitOrganizerExporterDetailHandler
 {
 public:
-    static QVersitOrganizerExporterDetailHandler* createBackupHandler();
     virtual ~QVersitOrganizerExporterDetailHandler() {}
     virtual void detailProcessed(const QOrganizerItem& item,
                                  const QOrganizerItemDetail& detail,
-                                 const QSet<QString>& processedFields,
                                  const QVersitDocument& document,
+                                 QSet<QString>* processedFields,
                                  QList<QVersitProperty>* toBeRemoved,
                                  QList<QVersitProperty>* toBeAdded) = 0;
     virtual void itemProcessed(const QOrganizerItem& item,
-                                  QVersitDocument* document) = 0;
-    virtual int version() const { return 1; }
+                               QVersitDocument* document) = 0;
 };
 
 class Q_VERSIT_EXPORT QVersitOrganizerExporter

@@ -92,6 +92,9 @@ bool QVersitOrganizerImporterPrivate::importDocument(
     foreach (const QVersitProperty& property, properties) {
         importProperty(document, property, item);
     }
+    if (mPropertyHandler) {
+        mPropertyHandler->documentProcessed(document, item);
+    }
     return true;
 }
 
@@ -153,6 +156,11 @@ void QVersitOrganizerImporterPrivate::importProperty(
         if (property.name() == QLatin1String("DTSTART")) {
             success = createJournalEntryDateTime(property, item, &updatedDetails);
         }
+    }
+
+    // run the handler, if set
+    if (mPropertyHandler) {
+        mPropertyHandler->propertyProcessed(document, property, *item, &success, &updatedDetails);
     }
 
     foreach (QOrganizerItemDetail detail, updatedDetails) {

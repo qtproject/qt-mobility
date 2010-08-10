@@ -91,6 +91,10 @@ bool QVersitOrganizerExporterPrivate::exportItem(
     }
     foreach (const QOrganizerItemDetail& detail, allDetails) {
         exportDetail(item, detail, document);
+        // run the handler, if set
+        if (mDetailHandler) {
+            mDetailHandler->itemProcessed(item, document);
+        }
     }
     if (item.type() == QOrganizerItemType::TypeEventOccurrence
             && !documentContainsUidAndRecurrenceId(*document)) {
@@ -129,6 +133,11 @@ void QVersitOrganizerExporterPrivate::exportDetail(
         encodeComment(detail, &generatedProperties, &processedFields);
     } else if (mPropertyMappings.contains(detail.definitionName())) {
         encodeSimpleProperty(detail, *document, &removedProperties, &generatedProperties, &processedFields);
+    }
+    // run the detail handler, if set
+    if (mDetailHandler) {
+        mDetailHandler->detailProcessed(item, detail, *document,
+                                        &processedFields, &removedProperties, &generatedProperties);
     }
 
     foreach(const QVersitProperty& property, removedProperties) {

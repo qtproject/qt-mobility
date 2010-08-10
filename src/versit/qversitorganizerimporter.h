@@ -57,16 +57,14 @@ class QVersitProperty;
 class Q_VERSIT_EXPORT QVersitOrganizerImporterPropertyHandler
 {
 public:
-    static QVersitOrganizerImporterPropertyHandler* createBackupHandler();
     virtual ~QVersitOrganizerImporterPropertyHandler() {}
     virtual void propertyProcessed(const QVersitDocument& document,
                                    const QVersitProperty& property,
-                                   bool alreadyProcessed,
                                    const QOrganizerItem& item,
+                                   bool *alreadyProcessed,
                                    QList<QOrganizerItemDetail>* updatedDetails) = 0;
     virtual void documentProcessed(const QVersitDocument& document,
                                    QOrganizerItem* item) = 0;
-    virtual int version() const { return 1; }
 };
 
 class Q_VERSIT_EXPORT QVersitOrganizerImporter
