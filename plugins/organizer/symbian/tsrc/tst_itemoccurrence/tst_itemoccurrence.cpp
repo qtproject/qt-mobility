@@ -68,8 +68,11 @@ private slots:
     void addOccurrenceWithException();
     void editOccurrence_data();
     void editOccurrence();
+    void editOccurrenceNegative_data();
+    void editOccurrenceNegative();
     void fetchNegative_data();
     void fetchNegative();
+
 private:
     QStringList getAvailableManagers();
     void addOccurrenceData(QString managerName, QString itemType);
@@ -432,6 +435,85 @@ void TestItemOccurrence::editOccurrence()
     QCOMPARE(newInstance.startDateTime(),firstInstance.startDateTime());  
 }
 
+void TestItemOccurrence::editOccurrenceNegative_data() 
+{
+    // Get the list of all available item managers
+    QStringList availableManagers = getAvailableManagers();
+ 
+    QTest::addColumn<QString>("managerName");
+    QTest::addColumn<QString>("itemType");
+    QTest::addColumn<QDateTime>("startTime");
+    QTest::addColumn<QOrganizerItemRecurrenceRule>("rrule");
+    
+    QString itemType = QOrganizerItemType::TypeEvent;
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    rrule.setCount(10);
+    foreach(QString manager, availableManagers) {
+        QTest::newRow(QString("[%1] daily repeating entry").arg(manager).toLatin1().constData())
+            << manager
+            << itemType
+            << QDateTime::currentDateTime().addSecs(3600)
+            << rrule;
+    }    
+}
+
+void TestItemOccurrence::editOccurrenceNegative() 
+{
+    QFETCH(QString, managerName);
+    QFETCH(QString, itemType);
+    QFETCH(QDateTime, startTime);
+    QFETCH(QOrganizerItemRecurrenceRule, rrule);
+     
+    // Set the item type
+    QOrganizerItem item;
+    item.setType(itemType);
+    QOrganizerEventTimeRange timeRange;
+    timeRange.setStartDateTime(startTime);
+    QVERIFY(item.saveDetail(&timeRange));
+
+    // Add recurrence rules to the item
+    QList<QOrganizerItemRecurrenceRule> rrules;
+    rrules.append(rrule);
+    QOrganizerItemRecurrence recurrence;
+    recurrence.setRecurrenceRules(rrules);
+    QVERIFY(item.saveDetail(&recurrence));
+     
+    // Save item with recurrence rule.
+    QVERIFY(m_om->saveItem(&item));    
+    item = m_om->item(item.localId());
+
+    //Fetch first instance of the saved entry to modify
+    QList<QOrganizerItem> instanceList = m_om->itemInstances(item,startTime,startTime);
+    QCOMPARE(instanceList.size(),1);
+    QOrganizerItem firstItem = instanceList.at(0);
+    QCOMPARE(firstItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QOrganizerEventOccurrence firstInstance = static_cast<QOrganizerEventOccurrence>(firstItem);
+    QString instanceGuid (firstInstance.guid());
+   
+    //Try to save instance with invalid guid
+    firstInstance.setGuid(QString(""));
+    QVERIFY(!m_om->saveItem(&firstInstance));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
+    
+    //change to invalid original Date of the instance and save 
+    firstInstance.setGuid(instanceGuid);
+    firstInstance.setOriginalDate(QDate(1000,1,1));
+    QVERIFY(!m_om->saveItem(&firstInstance));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
+    
+    firstInstance = static_cast<QOrganizerEventOccurrence>(firstItem);
+    firstInstance.setStartDateTime(startTime.addDays(-1));
+    QVERIFY(m_om->saveItem(&firstInstance));
+    
+    //Save the instance with invalid localid
+    QOrganizerItemId itemId;
+    itemId.setLocalId(1);
+    firstInstance.setId(itemId);
+    QVERIFY(!m_om->saveItem(&firstInstance));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
+}
+
 void TestItemOccurrence::fetchNegative_data()
 {
     // Get the list of all available item managers
@@ -443,7 +525,7 @@ void TestItemOccurrence::fetchNegative_data()
  
     QString itemType = QOrganizerItemType::TypeEvent;
     foreach(QString manager, availableManagers) {
-       QTest::newRow(QString("[%1] non repeating entry").arg(manager).toLatin1().constData())
+        QTest::newRow(QString("[%1] non repeating entry").arg(manager).toLatin1().constData())
             << manager
             << itemType
             << QDateTime::currentDateTime().addSecs(3600);
