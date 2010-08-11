@@ -58,9 +58,32 @@
 
 QTM_USE_NAMESPACE
 
+/*!
+   \variable QLandmarkManager::Gpx
+   The format constant to define using the kml format in the import and export functions.
+   \sa importLandmarks(), exportLandmarks()
+*/
 Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Gpx, "Gpx");
+
+/*!
+   \variable QLandmarkManager::Lmx
+   The format constant to define using the kml format in the import and export functions.
+   \sa importLandmarks(), exportLandmarks()
+*/
 Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Lmx, "Lmx");
+
+/*!
+   \variable QLandmarkManager::Kml
+   The format constant to define using the kml format in the import and export functions.
+   \sa importLandmarks(), exportLandmarks()
+*/
 Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kml, "Kml");
+
+/*!
+   \variable QLandmarkManager::Kmz
+   The format constant to define using the kmx format in the import and export functions.
+   \sa importLandmarks(), exportLandmarks()
+*/
 Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
 
 /*!
