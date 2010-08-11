@@ -41,9 +41,15 @@
 #ifndef QFEEDBACK_SYMBIAN_H
 #define QFEEDBACK_SYMBIAN_H
 
-#include <QtCore/QElapsedTimer>
 #include <QtCore/QHash>
 #include <QtGui/QWidget>
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
+#include <QtCore/QElapsedTimer>
+#else
+#include <QtCore/QTime>
+#endif
+
 
 #include <qmobilityglobal.h>
 
@@ -110,7 +116,11 @@ private:
         {
             if (m_elapsedTimer.isValid())
                 pausedTime += m_elapsedTimer.elapsed();
+#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
             m_elapsedTimer.invalidate();
+#else
+            m_elapsedTimer = QTime();
+#endif
         }
 
         bool isPaused() const
@@ -126,7 +136,11 @@ private:
 
 
     private:
+#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
         QElapsedTimer m_elapsedTimer;
+#else
+        QTime m_elapsedTimer;
+#endif
         int pausedTime;
 
     };

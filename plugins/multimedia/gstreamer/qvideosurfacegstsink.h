@@ -90,6 +90,7 @@ private slots:
 private:
     QPointer<QAbstractVideoSurface> m_surface;
     QList<QVideoFrame::PixelFormat> m_supportedPixelFormats;
+    QList<QVideoFrame::PixelFormat> m_supportedXVideoPixelFormats;
     QMutex m_mutex;
     QWaitCondition m_setupCondition;
     QWaitCondition m_renderCondition;

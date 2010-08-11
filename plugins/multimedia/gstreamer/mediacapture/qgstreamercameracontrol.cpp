@@ -40,32 +40,26 @@
 ****************************************************************************/
 
 #include "qgstreamercameracontrol.h"
+#include "qgstreamerimageencode.h"
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qfile.h>
 
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <sys/poll.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <string.h>
-#include <stdlib.h>
-#include <sys/mman.h>
-#include <linux/videodev2.h>
-
 
 QGstreamerCameraControl::QGstreamerCameraControl(QGstreamerCaptureSession *session)
     :QCameraControl(session),
-    m_captureMode(QCamera::CaptureDisabled),
+    m_captureMode(QCamera::CaptureStillImage),
     m_session(session),
-    m_state(QCamera::StoppedState),
-    m_requestedState(QCamera::StoppedState)
+    m_state(QCamera::UnloadedState),
+    m_status(QCamera::UnloadedStatus),
+    m_reloadPending(false)
+
 {
     connect(m_session, SIGNAL(stateChanged(QGstreamerCaptureSession::State)),
-            this, SLOT(updateState()));
+            this, SLOT(updateStatus()));
+
+    connect(m_session->imageEncodeControl(), SIGNAL(settingsChanged()),
+            SLOT(reloadLater()));
 }
 
 QGstreamerCameraControl::~QGstreamerCameraControl()
@@ -74,55 +68,92 @@ QGstreamerCameraControl::~QGstreamerCameraControl()
 
 void QGstreamerCameraControl::setCaptureMode(QCamera::CaptureMode mode)
 {
-    m_captureMode = mode;
+    if (m_captureMode == mode)
+        return;
+
     switch (mode) {
     case QCamera::CaptureStillImage:
         m_session->setCaptureMode(QGstreamerCaptureSession::Image);
-        setState(QCamera::IdleState);
         break;
     case QCamera::CaptureVideo:
         m_session->setCaptureMode(QGstreamerCaptureSession::AudioAndVideo);
-        setState(QCamera::IdleState);
         break;
-    case QCamera::CaptureDisabled:
-        setState(QCamera::StoppedState);
     }
 
     emit captureModeChanged(mode);
-
-    updateState();
+    updateStatus();
+    reloadLater();
 }
 
 void QGstreamerCameraControl::setState(QCamera::State state)
 {
-    m_requestedState = state;
+    if (m_state == state)
+        return;
+
+    m_state = state;
     switch (state) {
-    case QCamera::StoppedState:
-    case QCamera::IdleState:
+    case QCamera::UnloadedState:
+    case QCamera::LoadedState:
         m_session->setState(QGstreamerCaptureSession::StoppedState);
         break;
-    case QCamera::ActiveState:
-        if (m_session->state() == QGstreamerCaptureSession::StoppedState)
-            m_session->setState(QGstreamerCaptureSession::PreviewState);
+    case QCamera::ActiveState:        
+        m_session->setState(QGstreamerCaptureSession::PreviewState);
         break;
     default:
         emit error(QCamera::NotSupportedFeatureError, tr("State not supported."));
     }
+
+    updateStatus();
+    emit stateChanged(m_state);
 }
 
 QCamera::State QGstreamerCameraControl::state() const
 {
-    if (m_session->state() == QGstreamerCaptureSession::StoppedState)
-        return m_requestedState == QCamera::StoppedState ? QCamera::StoppedState : QCamera::IdleState;
-    else
-        return QCamera::ActiveState;
+    return m_state;
 }
 
-void QGstreamerCameraControl::updateState()
+void QGstreamerCameraControl::updateStatus()
 {
-    QCamera::State newState = state();
-    if (m_state != newState) {
-        m_state = newState;
-        emit stateChanged(m_state);
+    QCamera::Status oldStatus = m_status;
+
+    switch (m_state) {
+    case QCamera::UnloadedState:
+        m_status = QCamera::UnloadedStatus;
+        break;
+    case QCamera::LoadedState:
+        m_status = QCamera::LoadedStatus;
+        break;
+    case QCamera::ActiveState:
+        if (m_session->state() == QGstreamerCaptureSession::StoppedState)
+            m_status = QCamera::StartingStatus;
+        else
+            m_status = QCamera::ActiveStatus;
+        break;
+    }
+
+    if (oldStatus != m_status) {
+        //qDebug() << "Status changed:" << m_status;
+        emit statusChanged(m_status);
+    }
+}
+
+void QGstreamerCameraControl::reloadLater()
+{
+    //qDebug() << "reload pipeline requested";
+    if (!m_reloadPending && m_state == QCamera::ActiveState) {
+        m_reloadPending = true;
+        QMetaObject::invokeMethod(this, "reloadPipeline", Qt::QueuedConnection);
+    }
+}
+
+void QGstreamerCameraControl::reloadPipeline()
+{
+    //qDebug() << "reload pipeline";
+    if (m_reloadPending) {
+        m_reloadPending = false;
+        if (m_state == QCamera::ActiveState) {
+            m_session->setState(QGstreamerCaptureSession::StoppedState);
+            m_session->setState(QGstreamerCaptureSession::PreviewState);
+        }
     }
 }

@@ -214,6 +214,48 @@ bool CntRelationship::saveRelationships(QSet<QContactLocalId> *affectedContactId
 
     *error = QContactManager::NoError;
 
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
+    TInt symbianError = KErrNone;
+    QString relationshipType;
+
+    // validate relationships
+    returnValue = validateRelationships(*relationships, relationshipType, error);
+    bool hasManyRelationshipTypes = relationshipType.isEmpty();
+
+    // if all relationships are valid and of the same type, we can try to use the batch save, which is much faster
+    if (returnValue && !hasManyRelationshipTypes) {
+        if (!relationships->isEmpty()) {
+            CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(relationshipType);
+            TRAP(symbianError, returnValue = abstractRelationship->saveRelationshipsL(affectedContactIds, relationships, &singleError));
+            returnValue = returnValue && singleError == QContactManager::NoError && symbianError == KErrNone;
+        }
+    }
+
+    // if validation or batch save failed, or if there are many different relationship types,
+    // the relationships need to be removed one by one
+    if (!returnValue || hasManyRelationshipTypes) {
+        for (int i = 0; i < relationships->count(); ++i) {
+            QContactRelationship relationship = relationships->at(i);
+            CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(relationship.relationshipType());
+            TRAP(symbianError, returnValue = abstractRelationship->saveRelationshipL(affectedContactIds, &relationship, &singleError));
+
+            if (errorMap && singleError != QContactManager::NoError) {
+                errorMap->insert(i, singleError);
+            }
+        
+            if (singleError != QContactManager::NoError) {
+                *error = singleError;
+                returnValue = false;
+            }
+
+            // if symbian error translate it into a qt error
+            if (symbianError != KErrNone){
+                CntSymbianTransformError::transformError(symbianError, error);
+                returnValue = false;
+            }
+        }
+    }
+#else
     // loop through the relationships
     for (int i = 0; i < relationships->count(); i++)
     {
@@ -230,6 +272,7 @@ bool CntRelationship::saveRelationships(QSet<QContactLocalId> *affectedContactId
         }
 
     }
+#endif
 
     return returnValue;
 }
@@ -272,24 +315,69 @@ bool CntRelationship::removeRelationship(QSet<QContactLocalId> *affectedContactI
  */
 bool CntRelationship::removeRelationships(QSet<QContactLocalId> *affectedContactIds, const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
 {
+    QContactManager::Error singleError;    
     bool returnValue(true);
-    *error = QContactManager::NoError;
-    QContactManager::Error qtError(QContactManager::NoError);
 
+    *error = QContactManager::NoError;
+
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
+    TInt symbianError = KErrNone;
+    QString relationshipType;
+
+    // validate relationships
+    returnValue = validateRelationships(relationships, relationshipType, error);
+    bool hasManyRelationshipTypes = relationshipType.isEmpty();
+
+    // if all relationships are valid and of the same type, we can try to use the batch remove, which is much faster
+    if (returnValue && !hasManyRelationshipTypes) {
+        if (!relationships.isEmpty()) {
+            CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(relationshipType);
+            TRAP(symbianError, returnValue = abstractRelationship->removeRelationshipsL(affectedContactIds, relationships, &singleError));
+            returnValue = returnValue && singleError == QContactManager::NoError && symbianError == KErrNone;
+        }
+    }
+
+    // if validation or batch remove failed, or if there are many relationship types,
+    // the relationships need to be removed one by one
+    if (!returnValue || hasManyRelationshipTypes) {
+        for (int i = 0; i < relationships.count(); ++i) {
+            QContactRelationship relationship = relationships.at(i);
+            CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(relationship.relationshipType());
+            TRAP(symbianError, returnValue = abstractRelationship->removeRelationshipL(affectedContactIds, relationship, &singleError));
+            
+            if (errorMap && singleError != QContactManager::NoError) {
+                errorMap->insert(i, singleError);
+            }
+            
+            if (singleError != QContactManager::NoError) {
+                *error = singleError;
+                returnValue = false;
+            }
+
+            // if symbian error translate it into a qt error
+            if (symbianError != KErrNone){
+                CntSymbianTransformError::transformError(symbianError, error);
+                returnValue = false;
+            }
+        }
+    }
+#else
     //loop through the relationships
     for(int i = 0; i < relationships.count(); i++)
     {
         //remove the relationships
-        removeRelationship(affectedContactIds, relationships.at(i), &qtError);
-        if (errorMap && qtError != QContactManager::NoError)
-            errorMap->insert(i, qtError);
+        removeRelationship(affectedContactIds, relationships.at(i), &singleError);
+        if (errorMap && singleError != QContactManager::NoError) {
+            errorMap->insert(i, singleError);
+        }
         
         // update the total error
-        if (qtError != QContactManager::NoError) {
+        if (singleError != QContactManager::NoError) {
             returnValue = false;
-            *error = qtError;
+            *error = singleError;
         }
     }
+#endif
     return returnValue;
 }
 
@@ -350,3 +438,45 @@ bool CntRelationship::validateRelationship(const QContactRelationship &relations
     CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(relationship.relationshipType());
     return abstractRelationship->validateRelationship(relationship, error);
 }
+
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
+/*
+ *  Validates the relationships. If all valid relationships are of the same type,
+ *  the type will be passed back in relationshipType. Otherwise it will be empty.
+ */
+bool CntRelationship::validateRelationships(const QList<QContactRelationship> &relationships, QString &relationshipType, QContactManager::Error *error)
+{
+    QContactManager::Error validationError;
+    bool hasManyRelationshipTypes = false;
+    bool returnValue = true;
+
+    foreach (QContactRelationship relationship, relationships) {
+        if (validateRelationship(relationship, &validationError)) {
+            // Update manager uri to this manager if it is empty
+            if (relationship.second().managerUri().isEmpty()) {
+                QContactId second = relationship.second();
+                second.setManagerUri(m_managerUri);
+                relationship.setSecond(second);
+            }
+            
+            // get the relationship type
+            if (relationship.relationshipType() != relationshipType && !relationshipType.isEmpty()) {
+                hasManyRelationshipTypes = true;
+            }
+            else if (relationshipType.isEmpty()) {
+                relationshipType = relationship.relationshipType();
+            }
+        }
+        else {
+            *error = validationError;
+            returnValue = false;
+        }
+    }
+
+    if (hasManyRelationshipTypes) {
+        relationshipType.clear();
+    }
+
+    return returnValue;
+}
+#endif

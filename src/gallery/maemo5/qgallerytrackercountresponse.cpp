@@ -46,13 +46,13 @@
 #include <QtCore/qdatetime.h>
 #include <QtDBus/qdbuspendingreply.h>
 
-#include "qgalleryabstractresponse_p.h"
+#include "qgalleryresultset_p.h"
 
 Q_DECLARE_METATYPE(QVector<QStringList>)
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTrackerCountResponsePrivate : public QGalleryAbstractResponsePrivate
+class QGalleryTrackerCountResponsePrivate : public QGalleryResultSetPrivate
 {
     Q_DECLARE_PUBLIC(QGalleryTrackerCountResponse)
 public:
@@ -157,11 +157,11 @@ void QGalleryTrackerCountResponsePrivate::queryFinished(const QDBusPendingCall &
             }
         }
     }
-
-    if (count > oldCount)
-        emit q_func()->inserted(oldCount, count - oldCount);
-    else if (count < oldCount)
-        emit q_func()->removed(count, oldCount - count);
+//
+//    if (count > oldCount)
+//        emit q_func()->itemsInserted(oldCount, count - oldCount);
+//    else if (count < oldCount)
+//        emit q_func()->itemsRemoved(count, oldCount - count);
 
     if (!queryWatcher)
         q_func()->finish(QGalleryAbstractRequest::Succeeded);

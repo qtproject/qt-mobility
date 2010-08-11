@@ -1581,4 +1581,9 @@ EXPORTS
 	_ZThn8_N19QCameraImageCaptureD0Ev @ 1580 NONAME
 	_ZThn8_N19QCameraImageCaptureD1Ev @ 1581 NONAME
 	_ZThn8_NK19QCameraImageCapture11mediaObjectEv @ 1582 NONAME
+	_ZN17QMediaImageViewer14setVideoOutputEP12QVideoWidget @ 1583 NONAME
+	_ZN17QMediaImageViewer14setVideoOutputEP18QGraphicsVideoItem @ 1584 NONAME
+	_ZN21QAbstractVideoSurface19setNativeResolutionERK5QSize @ 1585 NONAME
+	_ZN21QAbstractVideoSurface23nativeResolutionChangedERK5QSize @ 1586 NONAME
+	_ZNK21QAbstractVideoSurface16nativeResolutionEv @ 1587 NONAME
 

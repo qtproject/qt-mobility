@@ -66,8 +66,7 @@ class Q_GALLERY_EXPORT QGalleryAbstractRequest : public QObject
     Q_PROPERTY(int maximumProgress READ maximumProgress NOTIFY progressChanged)
     Q_ENUMS(State)
     Q_ENUMS(Result)
-    Q_ENUMS(Type)
-    Q_ENUMS(Scope)
+    Q_ENUMS(RequestType)
 public:
     enum State
     {
@@ -97,23 +96,17 @@ public:
         RequestError = 100
     };
 
-    enum Type
+    enum RequestType
     {
-        Item,
-        Url,
-        Query,
-        Count,
-        Remove
+        QueryRequest,
+        ItemRequest,
+        TypeRequest,
+        RemoveRequest
     };
 
-    enum Scope
-    {
-        AllDescendants,
-        DirectDescendants
-    };
-
-    explicit QGalleryAbstractRequest(Type type, QObject *parent = 0);
-    explicit QGalleryAbstractRequest(QAbstractGallery *gallery, Type type, QObject *parent = 0);
+    explicit QGalleryAbstractRequest(RequestType type, QObject *parent = 0);
+    explicit QGalleryAbstractRequest(
+            QAbstractGallery *gallery, RequestType type, QObject *parent = 0);
     ~QGalleryAbstractRequest();
 
     QAbstractGallery *gallery() const;
@@ -121,7 +114,7 @@ public:
 
     bool isSupported() const;
 
-    Type type() const;
+    RequestType type() const;
     State state() const;
     int result() const;
 

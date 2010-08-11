@@ -33,7 +33,6 @@
 \title Camera
 \brief An API to control camera devices.
 
-\ingroup mobility
 
 
 \note This API and documentation is a \bold {Technology Preview} and is still
@@ -80,26 +79,25 @@ the next photo.
             viewFinder->show();
 
             camera->setViewfinder(viewFinder);
-            
-            imageCapture = new QStillImageCapture(camera);
 
+            imageCapture = new QCameraImageCapture(camera);
+
+            camera->setCaptureMode(QCamera::CaptureStillImage);
             camera->start();
 
             //on half pressed shutter button
-            camera->lock();
+            camera->searchAndLock();
 
             ...
 
             //on shutter button pressed
-            imageCapture->capture("imagefile.jpg");
+            imageCapture->capture();
 
             //on shutter button released
             camera->unlock();
     \endcode
 
-Alternatively, we could have used a QVideoWidget initialized with the camera
-object to create a view finder.
-
+Alternatively, we could have used a QGraphicsVideoItem as a viewfinder.
 
 
 \section1 Video Clips
@@ -109,13 +107,17 @@ video requires the use of a \l QMediaRecorder object and a \l
 QAudioCaptureSource for sound.
 
 To record video we need to create a camera object as before but this time as
-well as creating a viewfinder, we will also initialize a media recorder object
-and an audio source object for sound configuration details.
+well as creating a viewfinder, we will also initialize a media recorder object.
 
     \code
+    camera = new QCamera;
     mediaRecorder = new QMediaRecorder(camera);
-    ...
-    audioSource = new QAudioCaptureSource(camera);
+
+    camera->setCaptureMode(QCamera::CaptureVideo);
+    camera->start();
+
+    //on shutter button pressed
+    mediaRecorder->record();
     \endcode
 
 Signals from the \i mediaRecorder can be connected to slots to react to
@@ -168,12 +170,6 @@ autoexposure or white balance cancellation can be done by calling
             \o camera
             \o the interface for system camera devices
         \row
-            \o burst control
-            \o capturing multiple images as fast as possible
-        \row
-            \o bracketing
-            \o Capture a number of images with different camera settings
-        \row
             \o exposure
             \o Includes: flash mode; flash power; metering mode; aperture; shutter speed, iso setting
         \row
@@ -185,9 +181,6 @@ autoexposure or white balance cancellation can be done by calling
         \row
             \o locks
             \o handles the locking and unlocking of camera devices
-        \row
-            \o viewfinder
-            \o used to set displayed items and resolution
     \endtable
 
 

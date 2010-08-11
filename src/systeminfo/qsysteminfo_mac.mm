@@ -1455,138 +1455,175 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     return (int)bitsPerPixel;
 }
 
-QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
-{
-    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+// QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
+// {
+//     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
 
-    if(screen < 16 && screen > -1) {
-        int rotation = (int)CGDisplayRotation(getCGId(screen));
-        switch(rotation) {
-        case 0:
-        case 360:
-            orientation = QSystemDisplayInfo::Landscape;
-            break;
-        case 90:
-            orientation = QSystemDisplayInfo::Portrait;
-            break;
-        case 180:
-            orientation = QSystemDisplayInfo::InvertedLandscape;
-            break;
-        case 270:
-            orientation = QSystemDisplayInfo::InvertedPortrait;
-            break;
-        };
-    }
-    return orientation;
-}
-
-
-float QSystemDisplayInfoPrivate::contrast(int screen)
-{
-    Q_UNUSED(screen);
-    QString accessplist = QDir::homePath() + "/Library/Preferences/com.apple.universalaccess.plist";
-    QSettings accessSettings(accessplist, QSettings::NativeFormat);
-    accessSettings.value("contrast").toFloat();
-    return accessSettings.value("contrast").toFloat();
-}
-
-static int GetIntFromDictionaryForKey(CFDictionaryRef desc, CFStringRef key)
-{
-    CFNumberRef value;
-    int resultNumber = 0;
-    if ((value = (const __CFNumber*)CFDictionaryGetValue(desc,key)) == NULL
-            || CFGetTypeID(value) != CFNumberGetTypeID())
-        return 0;
-    CFNumberGetValue(value, kCFNumberIntType, &resultNumber);
-    return resultNumber;
-}
-
-CGDisplayErr GetDisplayDPI(CFDictionaryRef displayModeDict,CGDirectDisplayID displayID,
-    double *horizontalDPI, double *verticalDPI)
-{
-    CGDisplayErr displayError = kCGErrorFailure;
-    io_connect_t ioPort;
-    CFDictionaryRef displayDict;
-
-    ioPort = CGDisplayIOServicePort(displayID);
-    if (ioPort != MACH_PORT_NULL) {
-        displayDict = IOCreateDisplayInfoDictionary(ioPort, 0);
-        if (displayDict != NULL) {
-            const double mmPerInch = 25.4;
-            double horizontalSizeInInches = (double)GetIntFromDictionaryForKey(displayDict, CFSTR(kDisplayHorizontalImageSize)) / mmPerInch;
-            double verticalSizeInInches = (double)GetIntFromDictionaryForKey(displayDict, CFSTR(kDisplayVerticalImageSize)) / mmPerInch;
-
-            CFRelease(displayDict);
-
-            *horizontalDPI = (double)GetIntFromDictionaryForKey(displayModeDict, kCGDisplayWidth) / horizontalSizeInInches;
-            *verticalDPI = (double)GetIntFromDictionaryForKey(displayModeDict, kCGDisplayHeight) / verticalSizeInInches;
-            displayError = CGDisplayNoErr;
-        }
-    }
-    return displayError;
-}
-
-int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
-{
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-        double horizontalDPI, verticalDPI;
-
-        CGDisplayErr displayError = GetDisplayDPI(CGDisplayCurrentMode(kCGDirectMainDisplay), kCGDirectMainDisplay, &horizontalDPI, &verticalDPI);
-        if (displayError == CGDisplayNoErr) {
-            dpi = horizontalDPI;
-        }
-    }
-    return dpi;
-}
-
-int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
-{
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-        double horizontalDPI, verticalDPI;
-
-        CGDisplayErr displayError = GetDisplayDPI(CGDisplayCurrentMode(kCGDirectMainDisplay),  kCGDirectMainDisplay, &horizontalDPI, &verticalDPI);
-        if (displayError == CGDisplayNoErr) {
-            dpi = verticalDPI;
-        }
-    }
-    return dpi;
-}
+//     if(screen < 16 && screen > -1) {
+//         int rotation = (int)CGDisplayRotation(getCGId(screen));
+//         switch(rotation) {
+//         case 0:
+//         case 360:
+//             orientation = QSystemDisplayInfo::Landscape;
+//             break;
+//         case 90:
+//             orientation = QSystemDisplayInfo::Portrait;
+//             break;
+//         case 180:
+//             orientation = QSystemDisplayInfo::InvertedLandscape;
+//             break;
+//         case 270:
+//             orientation = QSystemDisplayInfo::InvertedPortrait;
+//             break;
+//         };
+//     }
+//     return orientation;
+// }
 
 
-int QSystemDisplayInfoPrivate::physicalHeight(int screen)
-{
-    int height=0;
-    if(screen < 16 && screen > -1) {
-        CGSize size = CGDisplayScreenSize(getCGId(screen));
-        height = size.height;
-    }
-    return height;
-}
+// float QSystemDisplayInfoPrivate::contrast(int screen)
+// {
+//     Q_UNUSED(screen);
+//     QString accessplist = QDir::homePath() + "/Library/Preferences/com.apple.universalaccess.plist";
+//     QSettings accessSettings(accessplist, QSettings::NativeFormat);
+//     accessSettings.value("contrast").toFloat();
+//     return accessSettings.value("contrast").toFloat();
+// }
 
-int QSystemDisplayInfoPrivate::physicalWidth(int screen)
-{
-    int width=0;
-    if(screen < 16 && screen > -1) {
-        CGSize size = CGDisplayScreenSize(getCGId(screen));
-        width = size.width;
-    }
-    return width;
-}
+// static int GetIntFromDictionaryForKey(CFDictionaryRef desc, CFStringRef key)
+// {
+//     CFNumberRef value;
+//     int resultNumber = 0;
+//     if ((value = (const __CFNumber*)CFDictionaryGetValue(desc,key)) == NULL
+//             || CFGetTypeID(value) != CFNumberGetTypeID())
+//         return 0;
+//     CFNumberGetValue(value, kCFNumberIntType, &resultNumber);
+//     return resultNumber;
+// }
+
+// CGDisplayErr GetDisplayDPI(CFDictionaryRef displayModeDict,CGDirectDisplayID displayID,
+//     double *horizontalDPI, double *verticalDPI)
+// {
+//     CGDisplayErr displayError = kCGErrorFailure;
+//     io_connect_t ioPort;
+//     CFDictionaryRef displayDict;
+
+//     ioPort = CGDisplayIOServicePort(displayID);
+//     if (ioPort != MACH_PORT_NULL) {
+//         displayDict = IOCreateDisplayInfoDictionary(ioPort, 0);
+//         if (displayDict != NULL) {
+//             const double mmPerInch = 25.4;
+//             double horizontalSizeInInches = (double)GetIntFromDictionaryForKey(displayDict, CFSTR(kDisplayHorizontalImageSize)) / mmPerInch;
+//             double verticalSizeInInches = (double)GetIntFromDictionaryForKey(displayDict, CFSTR(kDisplayVerticalImageSize)) / mmPerInch;
+
+//             CFRelease(displayDict);
+
+//             *horizontalDPI = (double)GetIntFromDictionaryForKey(displayModeDict, kCGDisplayWidth) / horizontalSizeInInches;
+//             *verticalDPI = (double)GetIntFromDictionaryForKey(displayModeDict, kCGDisplayHeight) / verticalSizeInInches;
+//             displayError = CGDisplayNoErr;
+//         }
+//     }
+//     return displayError;
+// }
+
+// int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
+// {
+//     int dpi=0;
+//     if(screen < 16 && screen > -1) {
+//         double horizontalDPI, verticalDPI;
+
+//         CGDisplayErr displayError = GetDisplayDPI(CGDisplayCurrentMode(kCGDirectMainDisplay), kCGDirectMainDisplay, &horizontalDPI, &verticalDPI);
+//         if (displayError == CGDisplayNoErr) {
+//             dpi = horizontalDPI;
+//         }
+//     }
+//     return dpi;
+// }
+
+// int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
+// {
+//     int dpi=0;
+//     if(screen < 16 && screen > -1) {
+//         double horizontalDPI, verticalDPI;
+
+//         CGDisplayErr displayError = GetDisplayDPI(CGDisplayCurrentMode(kCGDirectMainDisplay),  kCGDirectMainDisplay, &horizontalDPI, &verticalDPI);
+//         if (displayError == CGDisplayNoErr) {
+//             dpi = verticalDPI;
+//         }
+//     }
+//     return dpi;
+// }
+
+
+// int QSystemDisplayInfoPrivate::physicalHeight(int screen)
+// {
+//     int height=0;
+//     if(screen < 16 && screen > -1) {
+//         CGSize size = CGDisplayScreenSize(getCGId(screen));
+//         height = size.height;
+//     }
+//     return height;
+// }
+
+// int QSystemDisplayInfoPrivate::physicalWidth(int screen)
+// {
+//     int width=0;
+//     if(screen < 16 && screen > -1) {
+//         CGSize size = CGDisplayScreenSize(getCGId(screen));
+//         width = size.width;
+//     }
+//     return width;
+// }
 
 
 DAApprovalSessionRef session = NULL;
 
-void mountCallback(DADiskRef disk, void *context)
+void mountCallback(DADiskRef disk, CFArrayRef /*keys*/, void *context)
 {
-    QString name = DADiskGetBSDName(disk);
+    NSDictionary *properties;
+    properties = (NSDictionary *)DADiskCopyDescription(disk);
+    NSURL *volumePath = [[properties objectForKey:(NSString *)kDADiskDescriptionVolumePathKey] copy];
+
+    QString name = nsstringToQString([volumePath path]);
+
     static_cast<QSystemStorageInfoPrivate*>(context)->storageChanged(true, name);
+}
+
+void mountCallback2(DADiskRef diskRef, void *context)
+{
+    DADiskRef wholeDisk;
+    wholeDisk = DADiskCopyWholeDisk(diskRef);
+// only deal with whole disks here.. i.e. cdroms
+    if (wholeDisk) {
+        io_service_t mediaService;
+
+        mediaService = DADiskCopyIOMedia(wholeDisk);
+        if (mediaService) {
+            if (IOObjectConformsTo(mediaService, kIOCDMediaClass) || IOObjectConformsTo(mediaService, kIODVDMediaClass)) {
+
+                NSDictionary *properties;
+                properties = (NSDictionary *)DADiskCopyDescription(diskRef);
+                NSURL *volumePath = [[properties objectForKey:(NSString *)kDADiskDescriptionVolumePathKey] copy];
+
+                QString name = nsstringToQString([volumePath path]);
+
+                static_cast<QSystemStorageInfoPrivate*>(context)->storageChanged(true, name);
+                CFRelease(properties);
+            }
+        }
+        IOObjectRelease(mediaService);
+        CFRelease(wholeDisk);
+    }
 }
 
 void unmountCallback(DADiskRef disk, void *context)
 {
-    QString name = DADiskGetBSDName(disk);
+    NSDictionary *properties;
+    properties = (NSDictionary *)DADiskCopyDescription(disk);
+    NSURL *volumePath = [[properties objectForKey:(NSString *)kDADiskDescriptionVolumePathKey] copy];
+
+    QString name = nsstringToQString([volumePath path]);
+
     static_cast<QSystemStorageInfoPrivate*>(context)->storageChanged(false,name);
 }
 
@@ -1607,13 +1644,48 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 
 void QSystemStorageInfoPrivate::storageChanged( bool added, const QString &vol)
 {
-    if(mountEntriesHash.contains("/dev/"+vol)) {
-        // removing
+    if(!vol.isEmpty()) {
+        QHashIterator<QString, QString> it(mountEntriesHash);
+        QString foundKey;
+        bool seen = false;
+        while (it.hasNext()) {
+            it.next();
+            if( vol == it.value()) {
+                seen = true;
+                foundKey = it.key();
+            }
+        }
+
+        if(added && !seen) {
+            Q_EMIT logicalDriveChanged(added,vol);
+            updateVolumesMap();
+        }
+        if(!added && seen) {
+            mountEntriesHash.remove(foundKey);
+            Q_EMIT logicalDriveChanged(added,vol);
+        }
+
+
     } else {
-        //adding
-        updateVolumesMap();
+        if(added) {
+
+        } else { //removed
+            // cdroms unmounting seem to not have a volume name with the notification here, so
+            // we need to manually deal with it
+            QHash <QString,QString> oldDrives = mountEntriesHash;
+            updateVolumesMap();
+            QStringList newDrives = mountEntriesHash.keys();
+            QString foundDrive;
+
+            QHashIterator<QString, QString> it(oldDrives);
+            while (it.hasNext()) {
+                it.next();
+                if(!newDrives.contains(it.key())) {
+                    Q_EMIT logicalDriveChanged(added, it.value());
+                }
+            }
+        }
     }
-    Q_EMIT logicalDriveChanged(added, mountEntriesHash["/dev/"+vol]);
 }
 
 bool QSystemStorageInfoPrivate::updateVolumesMap()
@@ -1626,8 +1698,11 @@ bool QSystemStorageInfoPrivate::updateVolumesMap()
     count = getmntinfo64(&buf, 0);
     for (i=0; i<count; i++) {
         char *volName = buf[i].f_mntonname;
-
-        mountEntriesHash.insert(buf[i].f_mntfromname,volName);
+        if(buf[i].f_type != 19
+           && buf[i].f_type != 20
+           && !mountEntriesHash.contains(volName)) {
+            mountEntriesHash.insert(buf[i].f_mntfromname,volName);
+        }
     }
     return true;
 }
@@ -1657,76 +1732,86 @@ qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 
 QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QString &driveVolume)
 {
-    OSStatus osstatusResult = noErr;
-    ItemCount volumeIndex;
+    QSystemStorageInfo::DriveType drivetype =  QSystemStorageInfo::NoDrive;
 
-    for (volumeIndex = 1; osstatusResult == noErr || osstatusResult != nsvErr; volumeIndex++) {
-        FSVolumeRefNum actualVolume;
-        HFSUniStr255 volumeName;
-        FSVolumeInfo	volumeInfo;
+    DADiskRef diskRef;
+    DASessionRef sessionRef;
+    CFBooleanRef boolRef;
+    CFBooleanRef boolRef2;
+    CFDictionaryRef descriptionDictionary;
 
-        bzero((void *) &volumeInfo, sizeof(volumeInfo));
+    sessionRef = DASessionCreate(NULL);
+    if (sessionRef == NULL) {
+        return QSystemStorageInfo::NoDrive;
+    }
 
-        osstatusResult = FSGetVolumeInfo(kFSInvalidVolumeRefNum, volumeIndex, &actualVolume, kFSVolInfoFSInfo,
-                                         &volumeInfo, &volumeName, NULL);
+    diskRef = DADiskCreateFromBSDName(NULL, sessionRef, mountEntriesHash.key(driveVolume).toLatin1());
+    if (diskRef == NULL) {
+        CFRelease(sessionRef);
+        return QSystemStorageInfo::NoDrive;
+    }
 
-        if (osstatusResult == noErr) {
-            GetVolParmsInfoBuffer volumeParmeters;
-            osstatusResult = FSGetVolumeParms(actualVolume, &volumeParmeters, sizeof(volumeParmeters));
+    descriptionDictionary = DADiskCopyDescription(diskRef);
+    if (descriptionDictionary == NULL) {
+        CFRelease(diskRef);
+        CFRelease(sessionRef);
+        return QSystemStorageInfo::RemoteDrive;
+    }
 
-            QString devId = QString((char *)volumeParmeters.vMDeviceID);
-            devId = devId.prepend(QLatin1String("/dev/"));
-            if(mountEntriesHash.value(devId) == driveVolume) {
-                if (volumeParmeters.vMServerAdr == 0) { //local drive
-                    io_service_t ioService;
-                    ioService = IOServiceGetMatchingService(kIOMasterPortDefault,
-                                                            IOBSDNameMatching(kIOMasterPortDefault,
-                                                            0,
-                                                            (char *)volumeParmeters.vMDeviceID));
-
-                    if (IOObjectConformsTo(ioService, kIOMediaClass)) {
-                        CFTypeRef wholeMedia;
-
-                        wholeMedia = IORegistryEntryCreateCFProperty(ioService,
-                                                                     CFSTR(kIOMediaContentKey),
-                                                                     kCFAllocatorDefault,
-                                                                     0);
-
-                        if((volumeParmeters.vMExtendedAttributes & (1L << bIsRemovable))) {
-                            IOObjectRelease(ioService);
-                            CFRelease(wholeMedia);
-                            return QSystemStorageInfo::RemovableDrive;
-                        } else {
-                            IOObjectRelease(ioService);
-                            CFRelease(wholeMedia);
-                            return QSystemStorageInfo::InternalDrive;
-                        }
-                    }
-                    IOObjectRelease(ioService);
-                } else {
-                    return QSystemStorageInfo::RemoteDrive;
-                }
-            }
+    boolRef = (CFBooleanRef)
+              CFDictionaryGetValue(descriptionDictionary, kDADiskDescriptionMediaRemovableKey);
+    if (boolRef) {
+        if(CFBooleanGetValue(boolRef)) {
+            drivetype = QSystemStorageInfo::RemovableDrive;
+        } else {
+            drivetype = QSystemStorageInfo::InternalDrive;
         }
     }
-    return QSystemStorageInfo::NoDrive;
+    boolRef2 = (CFBooleanRef)
+              CFDictionaryGetValue(descriptionDictionary, kDADiskDescriptionVolumeNetworkKey);
+    if (boolRef2) {
+        if(CFBooleanGetValue(boolRef2)) {
+            drivetype = QSystemStorageInfo::RemoteDrive;
+        }
+    }
+
+    DADiskRef wholeDisk;
+    wholeDisk = DADiskCopyWholeDisk(diskRef);
+
+    if (wholeDisk) {
+        io_service_t mediaService;
+
+        mediaService = DADiskCopyIOMedia(wholeDisk);
+        if (mediaService) {
+            if (IOObjectConformsTo(mediaService, kIOCDMediaClass)) {
+                drivetype = QSystemStorageInfo::CdromDrive;
+            }
+            if (IOObjectConformsTo(mediaService, kIODVDMediaClass)) {
+                drivetype = QSystemStorageInfo::CdromDrive;
+            }
+            IOObjectRelease(mediaService);
+        }
+        CFRelease(wholeDisk);
+    }
+    CFRelease(diskRef);
+    CFRelease(descriptionDictionary);
+    CFRelease(boolRef);
+    CFRelease(boolRef2);
+    CFRelease(sessionRef);
+
+    return drivetype;
 }
 
 QStringList QSystemStorageInfoPrivate::logicalDrives()
 {
+    updateVolumesMap();
     QStringList drivesList;
-
-    struct statfs64 *buf = NULL;
-    unsigned i, count = 0;
-
-    count = getmntinfo64(&buf, 0);
-    for (i=0; i<count; i++) {
-        char *volName = buf[i].f_mntonname;
-        if(buf[i].f_type != 19
-           && buf[i].f_type != 20) {
-            drivesList << volName;
-        }
-    }
+    QHashIterator<QString, QString> it(mountEntriesHash);
+     while (it.hasNext()) {
+         it.next();
+         drivesList << it.value();
+     }
+     drivesList.sort();
     return drivesList;
 }
 
@@ -1744,10 +1829,11 @@ void QSystemStorageInfoPrivate::connectNotify(const char *signal)
     if (QLatin1String(signal) ==
         QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool,const QString&))))) {
         sessionThread();
-        DARegisterDiskAppearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,mountCallback,this);
+
+        DARegisterDiskDescriptionChangedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,
+                                                 kDADiskDescriptionWatchVolumePath, mountCallback,this);
+        DARegisterDiskAppearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,mountCallback2,this);
         DARegisterDiskDisappearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,unmountCallback,this);
-//        connect(daSessionThread,SIGNAL(logicalDriveChanged(bool,const QString &)),
-//                 this,SIGNAL(logicalDriveChanged(bool,const QString &)));
     }
 }
 
@@ -1758,12 +1844,10 @@ void QSystemStorageInfoPrivate::disconnectNotify(const char *signal)
     if (QLatin1String(signal) ==
         QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool,const QString &))))) {
 #ifdef MAC_SDK_10_6
-        DAUnregisterApprovalCallback(daSessionThread->session,(void*)mountCallback,NULL);
+     //   DAUnregisterApprovalCallback(daSessionThread->session,(void*)mountCallback,NULL);
 #else
-        DAUnregisterApprovalCallback((__DAApprovalSession *)daSessionThread->session,(void*)unmountCallback,NULL);
+       // DAUnregisterApprovalCallback((__DAApprovalSession *)daSessionThread->session,(void*)unmountCallback,NULL);
 #endif
-//        disconnect(daSessionThread,SIGNAL(logicalDriveChanged(bool,const QString &)),
-//                   this,SIGNAL(logicalDriveChanged(bool,const QString &)));
     }
 }
 

@@ -4,8 +4,8 @@ TARGET=tst_qlandmarkcategory
 
 include (../../../common.pri)
 
-INCLUDEPATH += ../../../src/landmarks \
-                 ../../../src/location
+INCLUDEPATH += ../../../src/location \
+                 ../../../src/location/landmarks
 
 # Input 
 SOURCES += tst_qlandmarkcategory.cpp

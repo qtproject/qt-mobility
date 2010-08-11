@@ -45,9 +45,9 @@
 #include <e32base.h>
 #include <qtorganizer.h>
 
-//forward declarations
-class CCalEntryView; // calentryview to store/update the entries in the data base
-class OrganizerItemTransform; // organizeritemtransform to transform entries/items to and from
+// Forward declarations
+class OrganizerItemTransform; // Organizeritemtransform to transform entries/items to and from
+class QOrganizerItemSymbianEngine; // Symbian Plugin
 
 QTM_USE_NAMESPACE 
 
@@ -55,19 +55,19 @@ class COrganizerItemRequestsServiceProvider : public CActive
     {
 public: 
     // Static two phase constructor
-    static COrganizerItemRequestsServiceProvider* NewL(QOrganizerItemManagerEngine& aEntryView);
+    static COrganizerItemRequestsServiceProvider* NewL(QOrganizerItemSymbianEngine& aEntryView);
     // Destruction, cleanup
     ~COrganizerItemRequestsServiceProvider();
-    // To start an asynch request aReq
-    void StartRequest(QOrganizerItemAbstractRequest* aReq);
-    // To stop asynch request iReq
-    void StopRequest();
+    // To start an asynchronous request aReq
+    TBool StartRequest(QOrganizerItemAbstractRequest* aReq);
     // To cancel ongoing iReq request
-    void CancelRequest();
+    TBool CancelRequest();
+    // Wait for request to complete 
+    TBool waitForRequestFinished(TTimeIntervalMicroSeconds32 aInterval);
     
 private:
     // Private first phase basic constructor
-    COrganizerItemRequestsServiceProvider(QOrganizerItemManagerEngine& aEntryView);
+    COrganizerItemRequestsServiceProvider(QOrganizerItemSymbianEngine& aEntryView);
     // Second phase constructor
     void ConstructL();
     // From CActive
@@ -77,15 +77,25 @@ private:
     // From CActive
     TInt RunError(TInt aError);
     
-private: // worker functions
-    // Save Items/Entries in agenda server
+private: // Worker functions
+    // Save items/entries in agenda server
     void SaveItemsL();
-
+    // Fetch items/entries from agenda server
+    void FetchItemsL();
+    // Fetch items/entries by local Ids
+    void FetchItemsByLocalIdsL(QOrganizerItemFilter& filter, 
+            QOrganizerItemFetchHint& fetchHint);
+    // Fetch items/entries by details
+    void FetchItemsandFilterL(QOrganizerItemFilter& filter, 
+            QList<QOrganizerItemSortOrder>& sortOrder, 
+            QOrganizerItemFetchHint& fetchHint);
+    
 private:
-    QOrganizerItemManagerEngine&        iOrganizerItemManagerEngine;
+    QOrganizerItemSymbianEngine&        iOrganizerItemManagerEngine;
     QOrganizerItemAbstractRequest*      iReq; // Request to be processed
     RPointerArray<CCalEntry>            iCalEntryList; // CalEntryView
-    OrganizerItemTransform*             iOrganizerItemTransform; // transform utility to transform item/entry to & from
+    OrganizerItemTransform*             iOrganizerItemTransform; // Transform utility to transform item/entry to & from
+    QList<QOrganizerItem>               iItemList;
     };
 
 #endif /* CORGANIZERITEMREQUESTSSERVICEPROVIDER_H_ */

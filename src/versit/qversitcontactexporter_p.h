@@ -64,11 +64,12 @@
 QTM_BEGIN_NAMESPACE
 class QContact;
 class QContactDetail;
+class QVersitContactHandler;
 
 class Q_AUTOTEST_EXPORT QVersitContactExporterPrivate
 {
 public:
-    QVersitContactExporterPrivate();
+    QVersitContactExporterPrivate(const QString& profile = QString());
     ~QVersitContactExporterPrivate();
 
     bool exportContact(const QContact& contact, QVersitDocument& versitDocument,
@@ -180,6 +181,7 @@ public: // Data
     QMap<int, QVersitContactExporter::Error> mErrors;
     QVersitContactExporterDetailHandler* mDetailHandler;
     QVersitContactExporterDetailHandlerV2* mDetailHandler2;
+    QList<QVersitContactHandler*> mPluginDetailHandlers;
     int mDetailHandlerVersion;
     QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;
