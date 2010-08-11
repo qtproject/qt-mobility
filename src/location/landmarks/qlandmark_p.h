@@ -82,7 +82,7 @@ public:
     double radius;
     QHash<QString, QVariant> managerAttributes;
     QHash<QString, QVariant> customAttributes;
-    QString phone;
+    QString phoneNumber;
     QUrl url;
     QLandmarkId id;
     static QStringList commonKeys;

@@ -57,6 +57,12 @@
 #include "qlandmarkidfilter.h"
 
 QTM_USE_NAMESPACE
+
+Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Gpx, "Gpx");
+Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Lmx, "Lmx");
+Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kml, "Kml");
+Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
+
 /*!
     \class QLandmarkManager
     \brief The QLandmarkManager class provides an interface for storage
@@ -148,8 +154,8 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    \enum QLandmarkManager::ImportExportOption
-    Defines the possible import/export options of the manager.
+    \enum QLandmarkManager::TransferOption
+    Defines the possible options when transfering landmarks during import or export.
     \value IncludeCategoryData During an import category data is included.  If an imported category doesn't exist
                                the category is created.  If the imported category name matches an existing
                                category name, then the landmark is added to that category.  For exports, categories
@@ -162,7 +168,13 @@ QTM_USE_NAMESPACE
 /*!
     \enum QLandmarkManager::LandmarkFeature
     Defines the possible features the landmark manager can support.
-    \value GenericAttributes The manager supports landmarks and categories which have generic attributes
+    \value ExtendedAttributes The manager supports extra attributes above the standard cross platform attributes.
+                              These attributes are specific to the manager backend implementation.
+    \value CustomAttributes The manager supports applications associating arbitrary custom attributes to
+                            landmarks and categories.
+    \value ImportExport The manager supports import and/or export operations
+    \value Notifications The manager will emit notification signals when landmarks/categories have
+                         been added/modified/removed from the datastore it manages.
 */
 
 /*!
@@ -174,6 +186,12 @@ QTM_USE_NAMESPACE
     \value None The manager does not support the filter or sort order list at all.
 */
 
+/*!
+    \enum QLandmarkManager::TransferOperation
+    Defines the type of transfer.
+    \value ImportOperation
+    \value ExportOperation
+*/
 
 /*!
     Constructs a QLandmarkManager. The default implementation for the platform will be used.
@@ -216,32 +234,6 @@ QLandmarkManager::QLandmarkManager(const QString &managerName, const QMap<QStrin
     Q_D(QLandmarkManager);
     d->q_ptr = this;
     d->createEngine(managerName, parameters);
-
-    if (!d->engine) {
-        d->errorCode = QLandmarkManager::InvalidManagerError;
-        d->errorString = QString("Invalid Manager, name: %1").arg(managerName);
-        qWarning() << "Invalid QLandmarkManager instantiated with name: " << managerName;
-    }
-}
-
-/*!
-  Constructs a QLandmarkManager whose backend has the name \a managerName and version \a implementationVersion, where the manager
-  is constructed with the provided \a parameters.
-
-  The \a parent QObject will be used as the parent of this QLandmarkManager.
-
-  If an empty \a managerName is specified, the default implementation for the platform will be instantiated.
-  If the specified implementation version is not available, the manager with the name \a managerName with the default implementation version is instantiated.
- */
-QLandmarkManager::QLandmarkManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters, QObject* parent)
-        : QObject(parent),
-          d_ptr(new QLandmarkManagerPrivate())
-{
-    Q_D(QLandmarkManager);
-    d->q_ptr = this;
-    QMap<QString,QString> params = parameters;
-    params[QString(QTLANDMARKS_IMPLEMENTATION_VERSION_NAME)] = QString::number(implementationVersion);
-    d->createEngine(managerName, params);
 
     if (!d->engine) {
         d->errorCode = QLandmarkManager::InvalidManagerError;
@@ -465,12 +457,15 @@ QLandmarkCategory QLandmarkManager::category(const QLandmarkCategoryId &category
 }
 
 /*!
-    Returns a list of categories identified by \a categoryIds.
+     Returns a list of categories which match the given \a categoryIds.  The manager will populate \a errorMap
+    (the map of indices of the \a categoryIds list to an error) only with the indexes where the category could not
+    be retrieved.
 
-    If any of the category ids cannot be found, no categories are returned
-    and an error is set.
+    The \c QLandmarkManager::error() function will only return \c QLandmarkManager::NoError if
+    all categories were successfully retrieved.
  */
-QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCategoryId> &categoryIds) const
+QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCategoryId> &categoryIds,
+                                                      QMap<int, QLandmarkManager::Error> *errorMap) const
 {
     Q_D(const QLandmarkManager);
 
@@ -481,11 +476,9 @@ QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCateg
     }
 
     QList<QLandmarkCategory> cats = d->engine->categories(categoryIds,
+                                    errorMap,
                                     &(d->errorCode),
                                     &(d->errorString));
-
-    if (d->errorCode != NoError)
-        return QList<QLandmarkCategory>();
 
     return cats;
 }
@@ -570,8 +563,8 @@ QLandmark QLandmarkManager::landmark(const QLandmarkId &landmarkId) const
     The \a limit defines the maximum number of landmarks to return and the \a offset defines the index offset
     of the first landmark.  A \a limit of -1 means all matching landmarks should be returned.
 */
-QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder> &sortOrders,
-                                             int limit, int offset) const
+QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, int limit, int offset,
+                                             const QList<QLandmarkSortOrder> &sortOrders) const
 {
     Q_D(const QLandmarkManager);
 
@@ -582,9 +575,9 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, cons
     }
 
     QList<QLandmark> lms = d->engine->landmarks(filter,
-                           sortOrders,
                            limit,
                            offset,
+                           sortOrders,
                            &(d->errorCode),
                            &(d->errorString));
 
@@ -599,8 +592,8 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, cons
     The \a limit defines the maximum number of landmarks to return and the \a offset defines the index offset
     of the first landmark.  A \a limit of -1 means all matching landmarks should be returned.
 */
-QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, const QLandmarkSortOrder &sortOrder,
-                                             int limit, int offset) const
+QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, int limit, int offset,
+                                             const QLandmarkSortOrder &sortOrder) const
 {
     Q_D(const QLandmarkManager);
 
@@ -615,9 +608,9 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, cons
         sortOrders.append(sortOrder);
 
     QList<QLandmark> lms = d->engine->landmarks(filter,
-                           sortOrders,
                            limit,
                            offset,
+                           sortOrders,
                            &(d->errorCode),
                            &(d->errorString));
 
@@ -628,10 +621,15 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, cons
 }
 
 /*!
-    Returns a list of landmarks which match the given \a landmarkIds.
+    Returns a list of landmarks which match the given \a landmarkIds.  The manager will populate \a errorMap
+    (the map of indices of the \a landmarkIds list an error) only with the indexes where the landmark could not
+    be retrieved.
+
+    The \c QLandmarkManager::error() function will only return \c QLandmarkManager::NoError if
+    all landmarks were successfully retrieved.
 
 */
-QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkIds) const
+QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkIds, QMap<int, QLandmarkManager::Error> *errorMap) const
 {
     Q_D(const QLandmarkManager);
 
@@ -641,22 +639,10 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
         return QList<QLandmark>();
     }
 
-    QLandmarkIdFilter idFilter(landmarkIds);
-    idFilter.setMatchingScheme(QLandmarkIdFilter::MatchAll);
-    QList<QLandmarkSortOrder> sortOrders;
-
-    // use the error map to add to the error string?
-    // or use it to remove the landmarks which had errors?
-
-    QList<QLandmark> lms = d->engine->landmarks(idFilter,
-                                                sortOrders,
-                                                -1, 0,
+    QList<QLandmark> lms = d->engine->landmarks(landmarkIds,
+                                                errorMap,
                                                 &(d->errorCode),
                                                 &(d->errorString));
-
-    if (d->errorCode != NoError)
-        return QList<QLandmark>();
-
     return lms;
 }
 
@@ -667,8 +653,8 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
     A \a limit of -1 means that ids of all matching landmarks should be returned.
 */
 QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
-                                                 const QList<QLandmarkSortOrder> &sortOrders,
-                                                 int limit, int offset) const
+                                                int limit, int offset,
+                                                 const QList<QLandmarkSortOrder> &sortOrders) const
 {
     Q_D(const QLandmarkManager);
 
@@ -679,9 +665,9 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
     }
 
     QList<QLandmarkId> ids = d->engine->landmarkIds(filter,
-                             sortOrders,
                              limit,
                              offset,
+                             sortOrders,
                              &(d->errorCode),
                              &(d->errorString));
 
@@ -699,8 +685,9 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
 
     This is a convenience function.
 */
-QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter, const QLandmarkSortOrder &sortOrder,
-                                                 int limit, int offset) const
+QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
+                                                 int limit, int offset,
+                                                 const QLandmarkSortOrder &sortOrder) const
 {
     Q_D(const QLandmarkManager);
 
@@ -714,11 +701,11 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter, 
     sortOrders.append(sortOrder);
 
     QList<QLandmarkId> ids = d->engine->landmarkIds(filter,
-                             sortOrders,
-                             limit,
-                             offset,
-                             &(d->errorCode),
-                             &(d->errorString));
+                                                    limit,
+                                                    offset,
+                                                    sortOrders,
+                                                    &(d->errorCode),
+                                                    &(d->errorString));
 
     if (d->errorCode != NoError)
         return QList<QLandmarkId>();
@@ -745,7 +732,7 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter, 
     The current default managers for the maemo and desktop platforms
     support GPX version 1.1, and the format to use is \c GpxV1.1.
 */
-bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format, QLandmarkManager::ImportExportOption option, const QLandmarkCategoryId &categoryId)
+bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format, QLandmarkManager::TransferOption option, const QLandmarkCategoryId &categoryId)
 {
     Q_D(QLandmarkManager);
 
@@ -783,7 +770,7 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format,
     The current default managers for the maemo and desktop platforms
     support GPX version 1.1, and the format to use is \c GpxV1.1.
 */
-bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &format, QLandmarkManager::ImportExportOption option, const QLandmarkCategoryId &categoryId)
+bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &format, QLandmarkManager::TransferOption option, const QLandmarkCategoryId &categoryId)
 {
     QFile file(fileName);
     return importLandmarks(&file, format,option,categoryId);
@@ -799,13 +786,13 @@ bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &f
     Note that the \c AttachSingleCategory option has no meaning during
     export and the manager will export as if \a option was \c IncludeCategoryData.
     Also, be aware that some file formats may not support categories at all and for
-    these formats, the \a option is always treated as if it was \a ExcludeCategoryData.
+    these formats, the \a option is always treated as if it was \c ExcludeCategoryData.
 
     Returns true if all specified landmarks were successfully exported,
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
 */
-bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::ImportExportOption option) const
+bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::TransferOption option) const
 {
     Q_D(const QLandmarkManager);
 
@@ -823,7 +810,10 @@ bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format,
                                       &(d->errorString));
 }
 
-QStringList QLandmarkManager::supportedFormats() const
+/*!
+    Returns the file formats supported for the given transfer \a operation. ie import or export.
+*/
+QStringList QLandmarkManager::supportedFormats(QLandmarkManager::TransferOperation operation) const
 {
     Q_D(const QLandmarkManager);
 
@@ -833,7 +823,7 @@ QStringList QLandmarkManager::supportedFormats() const
         return QStringList();
     }
 
-    return d->engine->supportedFormats(&(d->errorCode), &(d->errorString));
+    return d->engine->supportedFormats(operation, &(d->errorCode), &(d->errorString));
 }
 
 /*!
@@ -846,13 +836,13 @@ QStringList QLandmarkManager::supportedFormats() const
     Note that the \c AttachSingleCategory option has no meaning during
     export and the manager will export as if \a option was \c IncludeCategoryData.
     Also, be aware that some file formats may not support categories at all and for
-    these formats, the \a option is always treated as if it was \a ExcludeCategoryData.
+    these formats, the \a option is always treated as if it was \c ExcludeCategoryData.
 
     Returns true if all specified landmarks were successfully exported,
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
 */
-bool QLandmarkManager::exportLandmarks(const QString &fileName, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::ImportExportOption option) const
+bool QLandmarkManager::exportLandmarks(const QString &fileName, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::TransferOption option) const
 {
     QFile file(fileName);
 

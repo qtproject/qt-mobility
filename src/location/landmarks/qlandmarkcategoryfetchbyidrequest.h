@@ -39,42 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKDISTANCESORT_P_H
-#define QLANDMARKDISTANCESORT_P_H
+#ifndef QLANDMARKCATEGORYFETCHBYIDREQUEST_H
+#define QLANDMARKCATEGORYFETCHBYIDREQUEST_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qlandmarksortorder_p.h"
-
-#include "qgeocoordinate.h"
+#include "qlandmarkabstractrequest.h"
+#include "qlandmarkcategoryid.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkDistanceSortPrivate : public QLandmarkSortOrderPrivate
+class QLandmarkCategoryFetchByIdRequestPrivate;
+class Q_LOCATION_EXPORT QLandmarkCategoryFetchByIdRequest : public QLandmarkAbstractRequest
 {
+    Q_OBJECT
 public:
-    QLandmarkDistanceSortPrivate();
-    QLandmarkDistanceSortPrivate(const QLandmarkDistanceSortPrivate &other);
-    virtual ~QLandmarkDistanceSortPrivate();
+    QLandmarkCategoryFetchByIdRequest(QLandmarkManager *manager, QObject *parent=0);
+    ~QLandmarkCategoryFetchByIdRequest();
 
-    virtual bool compare(const QLandmarkSortOrderPrivate *other) const
-    {   //type and superclass variables already assumed to be the same
-        const QLandmarkDistanceSortPrivate *od = static_cast<const QLandmarkDistanceSortPrivate*>(other);
-        return origin == od->origin;
-    }
+    QList<QLandmarkCategoryId> categoryIds() const;
+    void setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds);
+    void setCategoryId(const QLandmarkCategoryId &categoryId);
 
-    Q_IMPLEMENT_LANDMARKSORTORDER_VIRTUALCTORS(QLandmarkDistanceSort, QLandmarkSortOrder::DistanceSort)
+    QList<QLandmarkCategory> categories() const;
+    QMap<int, QLandmarkManager::Error> errorMap() const;
 
-    QGeoCoordinate origin;
+private:
+    Q_DISABLE_COPY(QLandmarkCategoryFetchByIdRequest)
+    Q_DECLARE_PRIVATE(QLandmarkCategoryFetchByIdRequest)
+    friend class QLandmarkManagerEngine;
 };
 
 QTM_END_NAMESPACE

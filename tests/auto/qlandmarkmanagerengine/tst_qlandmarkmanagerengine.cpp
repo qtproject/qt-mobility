@@ -63,7 +63,6 @@
 #include <qlandmarkproximityfilter.h>
 #include <qlandmarkunionfilter.h>
 
-#include <qlandmarkdistancesort.h>
 #include <qlandmarknamesort.h>
 
 QTM_USE_NAMESPACE
@@ -157,11 +156,6 @@ public:
 
     static bool testFilter(const QLandmarkFilter& filter, const QLandmark& landmark) {
         return QLandmarkManagerEngine::testFilter(filter, landmark);
-    }
-
-    static int compareDistance(const QLandmark &a, const QLandmark &b,
-                               const QLandmarkDistanceSort &distanceSort) {
-        return QLandmarkManagerEngine::compareDistance(a, b, distanceSort);
     }
 
     static int compareName(const QLandmark &a, const QLandmark &b, const QLandmarkNameSort &nameSort)
@@ -649,33 +643,6 @@ private slots:
         QVERIFY(!MockEngine::testFilter(unionFilter,lm));
     }
 
-    void testCompareDistance()
-    {
-        QLandmark lm1, lm2, lm3, lm3_0, lm5;
-        lm1.setCoordinate(QGeoCoordinate(0,10));
-        lm2.setCoordinate(QGeoCoordinate(0,20));
-        lm3.setCoordinate(QGeoCoordinate(0,30));
-        lm3_0.setCoordinate(QGeoCoordinate(0, 30.00));
-        lm5.setCoordinate(QGeoCoordinate(0,50));
-
-        //compare ascending sort
-        QLandmarkDistanceSort distanceSort;
-        distanceSort.setCoordinate(QGeoCoordinate(0,40));
-        distanceSort.setDirection(Qt::AscendingOrder);
-
-        QVERIFY(MockEngine::compareDistance(lm1, lm3 , distanceSort) > 0);
-        QVERIFY(MockEngine::compareDistance(lm3, lm1 , distanceSort) < 0);
-        QVERIFY(MockEngine::compareDistance(lm3, lm3_0 , distanceSort) == 0);
-        QVERIFY(MockEngine::compareDistance(lm3, lm5 , distanceSort) == 0);
-
-       //compare desceniding sort
-       distanceSort.setDirection(Qt::DescendingOrder);
-       QVERIFY(MockEngine::compareDistance(lm1, lm3 , distanceSort) < 0);
-       QVERIFY(MockEngine::compareDistance(lm3, lm1 , distanceSort) > 0);
-       QVERIFY(MockEngine::compareDistance(lm3, lm3_0 , distanceSort) == 0);
-       QVERIFY(MockEngine::compareDistance(lm3, lm5 , distanceSort) == 0);
-    }
-
     void testCompareName()
     {
         QLandmark lmA, lma, lmB, lmb, lmC, lmc;
@@ -737,50 +704,6 @@ private slots:
         QVERIFY(MockEngine::compareName(lmA,lmc, nameSort) > 0);
     }
 
-    void testCompareLandmark()
-    {
-        //test two of the same landmarks
-        QLandmark lm1, lm2;
-        lm1.setName("kobol");
-        lm1.setCoordinate(QGeoCoordinate(30,30));
-        lm2.setName("kobol");
-        lm2.setCoordinate(QGeoCoordinate(30,30));
-
-        QLandmarkNameSort nameSort(Qt::AscendingOrder, Qt::CaseInsensitive);
-        QLandmarkDistanceSort distanceSort(QGeoCoordinate(40,40), Qt::AscendingOrder);
-        QList<QLandmarkSortOrder> sortOrders;
-        sortOrders << nameSort << distanceSort;
-
-        QVERIFY(MockEngine::compareLandmark(lm1,lm2, sortOrders) == 0);
-
-        //test 1st sort criteria identical, 2nd sort criteria is not identical
-        lm1.setName("kobol");
-        lm2.setName("kobol");
-        lm1.setCoordinate(QGeoCoordinate(30,30));
-        lm2.setCoordinate(QGeoCoordinate(30,35));
-        QVERIFY(MockEngine::compareLandmark(lm1,lm2, sortOrders) > 0);
-
-        //test 1st sort criteria different, 2nd sort criter different
-        lm1.setName("kobol");
-        lm2.setName("picon");
-        lm1.setCoordinate(QGeoCoordinate(30,30));
-        lm2.setCoordinate(QGeoCoordinate(30,35));
-        QVERIFY(MockEngine::compareLandmark(lm1,lm2, sortOrders) < 0);
-
-        lm1.setName("tauron");
-        lm2.setName("picon");
-        lm1.setCoordinate(QGeoCoordinate(30,30));
-        lm2.setCoordinate(QGeoCoordinate(30,35));
-        QVERIFY(MockEngine::compareLandmark(lm1,lm2, sortOrders) > 0);
-
-        //test 1st sort criteria different, 2nd sort criteria identical
-        lm1.setName("tauron");
-        lm2.setName("picon");
-        lm1.setCoordinate(QGeoCoordinate(30,35));
-        lm2.setCoordinate(QGeoCoordinate(30,35));
-
-        QVERIFY(MockEngine::compareLandmark(lm1,lm2, sortOrders) > 0);
-    }
 
     void testSortLandmarks() {
         QLandmark lmA, lmB, lmC, lmD, lmZ;
@@ -814,10 +737,9 @@ private slots:
         QList<QLandmark> landmarks;
         landmarks << lmD << lmC << lmA << lmZ << lmB;
         QLandmarkNameSort nameSort;
-        QLandmarkDistanceSort distanceSort(QGeoCoordinate(0,40));
 
         QList<QLandmarkSortOrder> sortOrders;
-        sortOrders << distanceSort << nameSort;
+        sortOrders << nameSort;
         QList<QLandmarkId> landmarkIds;
         landmarkIds = MockEngine::sortLandmarks(landmarks, sortOrders);
         QVERIFY(landmarkIds.count() == 5);
@@ -827,45 +749,11 @@ private slots:
         QVERIFY(landmarkIds == expectedAscIds);
 
         //test descending order by name
-        sortOrders[1].setDirection(Qt::DescendingOrder);
+        sortOrders[0].setDirection(Qt::DescendingOrder);
         landmarkIds = MockEngine::sortLandmarks(landmarks, sortOrders);
         QList<QLandmarkId> expectedDescIds;
         expectedDescIds << idZ << idD << idC << idB << idA;
         QVERIFY(landmarkIds == expectedDescIds);
-
-        //try sorting by distance first
-        landmarkIds.clear();
-        lmA.setCoordinate(QGeoCoordinate(0, 15));
-        lmB.setCoordinate(QGeoCoordinate(0, 20));
-        lmC.setCoordinate(QGeoCoordinate(0, 41));
-        lmD.setCoordinate(QGeoCoordinate(0, 63));
-        lmZ.setCoordinate(QGeoCoordinate(0, 60));
-        landmarks.clear();
-        landmarks << lmA << lmB << lmC << lmD << lmZ;
-        sortOrders.clear();
-        sortOrders << distanceSort << nameSort;
-        landmarkIds = MockEngine::sortLandmarks(landmarks, sortOrders);
-
-        QList<QLandmarkId> expectedDistAscIds;
-        expectedDistAscIds << idC << idB << idZ << idD << idA;
-        QVERIFY(landmarkIds == expectedDistAscIds);
-
-        //change the order of the name sort
-        sortOrders[1].setDirection(Qt::DescendingOrder);
-        landmarkIds.clear();
-        landmarkIds = MockEngine::sortLandmarks(landmarks, sortOrders);
-        QList<QLandmarkId> expectedIds;
-        expectedIds  << idC << idZ << idB << idD << idA; //Z and B have the same dist, diff name.
-        QVERIFY(landmarkIds == expectedIds);
-
-        //try descending sort by distance
-        sortOrders[0].setDirection(Qt::DescendingOrder);
-        QLandmarkDistanceSort dsort = sortOrders[0];
-        landmarkIds.clear();
-        landmarkIds = MockEngine::sortLandmarks(landmarks, sortOrders);
-        QList<QLandmarkId> expectedDistDescIds;
-        expectedDistDescIds << idA << idD << idZ << idB << idC;
-        QVERIFY(landmarkIds == expectedDistDescIds);
     }
 };
 

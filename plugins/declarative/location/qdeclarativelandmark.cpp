@@ -22,14 +22,14 @@ void QDeclarativeLandmark::setName(const QString& name)
 
 QString QDeclarativeLandmark::phone()
 {
-    return m_landmark.phone();
+    return m_landmark.phoneNumber();
 }
 
 void QDeclarativeLandmark::setPhone(const QString& phone)
 {
-    if (phone == m_landmark.phone())
+    if (phone == m_landmark.phoneNumber())
         return;
-    m_landmark.setPhone(phone);
+    m_landmark.setPhoneNumber(phone);
     emit phoneChanged(phone);
 }
 

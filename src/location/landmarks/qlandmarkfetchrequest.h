@@ -43,7 +43,6 @@
 #define QLANDMARKFETCHREQUEST_H
 
 #include "qlandmarkabstractrequest.h"
-#include "qlandmarkfetchhint.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -57,8 +56,6 @@ public:
 
     QLandmarkFilter filter() const;
     void setFilter(const QLandmarkFilter &filter);
-
-    void setLandmarkIds(const QList<QLandmarkId> &ids);
 
     QList<QLandmarkSortOrder> sorting() const;
     void setSorting(const QList<QLandmarkSortOrder> &sorting);

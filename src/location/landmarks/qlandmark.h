@@ -99,8 +99,8 @@ public:
     QStringList customAttributeKeys() const;
     void removeCustomAttribute(const QString &key);
 
-    QString phone() const;
-    void setPhone(const QString &phone);
+    QString phoneNumber() const;
+    void setPhoneNumber(const QString &phoneNumber);
 
     QUrl url() const;
     void setUrl(const QUrl &url);

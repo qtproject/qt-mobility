@@ -151,7 +151,7 @@ void QLandmarkExportRequest::setFormat(const QString &format)
     QLandmarkManager::IncludeCategoryData.
 
 */
-QLandmarkManager::ImportExportOption QLandmarkExportRequest::exportOption() const
+QLandmarkManager::TransferOption QLandmarkExportRequest::transferOption() const
 {
     Q_D(const QLandmarkExportRequest);
     return d->option;
@@ -162,7 +162,7 @@ QLandmarkManager::ImportExportOption QLandmarkExportRequest::exportOption() cons
     The export \a option defines how categories are treated
     during the export operation.
 */
-void QLandmarkExportRequest::setExportOption(QLandmarkManager::ImportExportOption option)
+void QLandmarkExportRequest::setTransferOption(QLandmarkManager::TransferOption option)
 {
     Q_D(QLandmarkExportRequest);
     d->option = option;

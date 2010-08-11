@@ -59,10 +59,12 @@ class QLandmarkId;
 class QLandmarkSortOrder;
 class QLandmarkIdFetchRequest;
 class QLandmarkFetchRequest;
+class QLandmarkFetchByIdRequest;
 class QLandmarkRemoveRequest;
 class QLandmarkSaveRequest;
 class QLandmarkCategoryIdFetchRequest;
 class QLandmarkCategoryFetchRequest;
+class QLandmarkCategoryFetchByIdRequest;
 class QLandmarkCategoryRemoveRequest;
 class QLandmarkCategorySaveRequest;
 class QLandmarkImportRequest;
@@ -95,7 +97,7 @@ public:
     QString managerUri() const;
 
     /* Filtering */
-    virtual QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders, int limit, int offset,
+    virtual QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter,  int limit, int offset, const QList<QLandmarkSortOrder>& sortOrders,
                                            QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual QList<QLandmarkCategoryId> categoryIds(int limit, int offset, const QLandmarkNameSort &nameSort, QLandmarkManager::Error *error,
             QString *errorString) const = 0;
@@ -103,12 +105,14 @@ public:
     /* Retrieval */
     virtual QLandmark landmark(const QLandmarkId &landmarkId, QLandmarkManager::Error *error,
                                QString *errorString) const =0;
-    virtual QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders, int limit, int offset,
+    virtual QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds,QMap<int, QLandmarkManager::Error> *errorMap,
+                                    QLandmarkManager::Error *error, QString *errorString) const = 0;
+    virtual QList<QLandmark> landmarks(const QLandmarkFilter &filter, int limit, int offset, const QList<QLandmarkSortOrder>& sortOrders,
                                        QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual QLandmarkCategory category(const QLandmarkCategoryId &landmarkCategoryId, QLandmarkManager::Error *error,
                                        QString *errorString) const = 0;
-    virtual QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds, QLandmarkManager::Error *error,
-            QString *errorString) const = 0;
+    virtual QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds, QMap<int, QLandmarkManager::Error> *errorMap,
+                                                 QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual QList<QLandmarkCategory> categories(int limit, int offset, const QLandmarkNameSort &nameSort, QLandmarkManager::Error *error,
                                                 QString *errorString) const = 0;
 
@@ -123,11 +127,11 @@ public:
     virtual bool saveCategory(QLandmarkCategory* category, QLandmarkManager::Error *error, QString *errorString) = 0;
     virtual bool removeCategory(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error, QString *errorString) = 0;
 
-    virtual bool importLandmarks(QIODevice *device, const QString& format, QLandmarkManager::ImportExportOption option, const QLandmarkCategoryId& id,
+    virtual bool importLandmarks(QIODevice *device, const QString& format, QLandmarkManager::TransferOption option, const QLandmarkCategoryId& id,
                                 QLandmarkManager::Error *error, QString *errorString);
-    virtual bool exportLandmarks(QIODevice *device, const QString& format, QList<QLandmarkId> landmarkIds, QLandmarkManager::ImportExportOption option,
+    virtual bool exportLandmarks(QIODevice *device, const QString& format, QList<QLandmarkId> landmarkIds, QLandmarkManager::TransferOption option,
                                  QLandmarkManager::Error *error, QString *errorString) const;
-    virtual QStringList supportedFormats(QLandmarkManager::Error *error, QString *errorString) const;
+    virtual QStringList supportedFormats(QLandmarkManager::TransferOperation operation, QLandmarkManager::Error *error, QString *errorString) const;
 
     virtual QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder>& sortOrders, QLandmarkManager::Error *error, QString *errorString) const = 0;
@@ -168,15 +172,18 @@ protected:
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
     static void updateLandmarkFetchRequest(QLandmarkFetchRequest* req, const QList<QLandmark>& result,
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
+    static void updateLandmarkFetchByIdRequest(QLandmarkFetchByIdRequest* req, const QList<QLandmark>& result, QLandmarkManager::Error error,
+                                          const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState);
     static void updateLandmarkRemoveRequest(QLandmarkRemoveRequest* req, QLandmarkManager::Error error, const QString &errorString,
                                             const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState);
     static void updateLandmarkSaveRequest(QLandmarkSaveRequest* req, const QList<QLandmark>& result, QLandmarkManager::Error error,
                                           const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState);
-
     static void updateLandmarkCategoryIdFetchRequest(QLandmarkCategoryIdFetchRequest *req, const QList<QLandmarkCategoryId>& result,
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
     static void updateLandmarkCategoryFetchRequest(QLandmarkCategoryFetchRequest *req, const QList<QLandmarkCategory>& result,
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
+    static void updateLandmarkCategoryFetchByIdRequest(QLandmarkCategoryFetchByIdRequest *req, const QList<QLandmarkCategory>& result, QLandmarkManager::Error error,
+            const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState);
     static void updateLandmarkCategoryRemoveRequest(QLandmarkCategoryRemoveRequest *req, QLandmarkManager::Error error, const QString &errorString,
             const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState);
     static void updateLandmarkCategorySaveRequest(QLandmarkCategorySaveRequest *req, const QList<QLandmarkCategory>& result, QLandmarkManager::Error error,
@@ -188,7 +195,6 @@ protected:
 
     static int compareLandmark(const QLandmark& a, const QLandmark& b, const QList<QLandmarkSortOrder>& sortOrders);
     static int compareName(const QLandmark &a, const QLandmark &b, const QLandmarkNameSort &nameSort);
-    static int compareDistance(const QLandmark &a, const QLandmark &b, const QLandmarkDistanceSort &distanceSort);
 
     static void addSorted(QList<QLandmark>* sorted, const QLandmark& landmark, const QList<QLandmarkSortOrder>& sortOrders);
     static bool testFilter(const QLandmarkFilter& filter, const QLandmark& landmark);

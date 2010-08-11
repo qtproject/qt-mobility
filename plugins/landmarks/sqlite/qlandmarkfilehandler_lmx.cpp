@@ -88,7 +88,7 @@ void QLandmarkFileHandlerLmx::setLandmarks(const QList<QLandmark> &landmarks)
     m_landmarks = landmarks;
 }
 
-void QLandmarkFileHandlerLmx::setImportExportOption(QLandmarkManager::ImportExportOption option) {
+void QLandmarkFileHandlerLmx::setTransferOption(QLandmarkManager::TransferOption option) {
     m_option = option;
 }
 
@@ -643,7 +643,7 @@ bool QLandmarkFileHandlerLmx::readAddressInfo(QLandmark &landmark)
                 QString street = m_reader->readElementText();
                 address.setStreet(street);
             } else if (name == "phoneNumber") {
-                landmark.setPhone(m_reader->readElementText());
+                landmark.setPhoneNumber(m_reader->readElementText());
             } else {
                 m_reader->skipCurrentElement();
             }
@@ -915,7 +915,7 @@ bool QLandmarkFileHandlerLmx::writeAddressInfo(const QLandmark &landmark)
             && address.state().isEmpty()
             && address.country().isEmpty()
             && address.postCode().isEmpty()
-            && landmark.phone().isEmpty())
+            && landmark.phoneNumber().isEmpty())
         return true;
 
     m_writer->writeStartElement(m_ns, "addressInfo");
@@ -945,8 +945,8 @@ bool QLandmarkFileHandlerLmx::writeAddressInfo(const QLandmark &landmark)
     if (!street.isEmpty())
         m_writer->writeTextElement(m_ns, "street", street);
 
-    if (!landmark.phone().isEmpty())
-        m_writer->writeTextElement(m_ns, "phoneNumber", landmark.phone());
+    if (!landmark.phoneNumber().isEmpty())
+        m_writer->writeTextElement(m_ns, "phoneNumber", landmark.phoneNumber());
 
     m_writer->writeEndElement();
 

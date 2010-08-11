@@ -54,7 +54,6 @@
 
 #include <qlandmarksortorder.h>
 #include <qlandmarknamesort.h>
-#include <qlandmarkdistancesort.h>
 #include <qlandmarkidfilter.h>
 
 #include <qlandmarkabstractrequest.h>
@@ -363,14 +362,14 @@ bool categoryNameCompare(const QLandmarkCategory &cat1, const QLandmarkCategory 
 
 bool importLandmarksLmx(const QString &connectionName,
                         QIODevice *device,
-                        QLandmarkManager::ImportExportOption option,
+                        QLandmarkManager::TransferOption option,
                         const QLandmarkCategoryId &categoryId,
                         QLandmarkManager::Error *error,
                         QString *errorString,
                         const QString &managerUri)
 {
     QLandmarkFileHandlerLmx lmxHandler(connectionName, managerUri);
-    lmxHandler.setImportExportOption(option);
+    lmxHandler.setTransferOption(option);
     lmxHandler.setCategoryId(categoryId);
     bool result = lmxHandler.importData(device);
     if (!result) {
@@ -442,7 +441,7 @@ bool exportLandmarksGpx(const QString &connectionName,
     QList<QLandmarkSortOrder> sortOrders;
     QLandmarkFilter filter;
     if (landmarkIds.count() > 0)
-        filter = QLandmarkIdFilter (landmarkIds, QLandmarkIdFilter::MatchSubset);
+        filter = QLandmarkIdFilter (landmarkIds);
 
     QList<QLandmark> lms = ::landmarks(connectionName,filter, sortOrders, -1, 0, error, errorString, managerUri);
 
@@ -476,7 +475,7 @@ bool exportLandmarksLmx(const QString &connectionName,
 {
     QLandmarkFileHandlerLmx lmxHandler(connectionName, managerUri);
 
-    QLandmarkIdFilter idFilter(landmarkIds, QLandmarkIdFilter::MatchAll);
+    QLandmarkIdFilter idFilter(landmarkIds);
     QList<QLandmarkSortOrder> sortOrders;
     QList<QLandmark> lms = ::landmarks(connectionName, idFilter, sortOrders, -1, 0, error, errorString, managerUri);
 
@@ -765,13 +764,13 @@ QLandmark DatabaseOperations::retrieveLandmark(const QString &connectionName, co
         if (!query1.value(19).isNull())
             address.setPostCode(query1.value(19).toString());
 
-        if (!query1.value(20).isNull())
-            address.setPostOfficeBox(query1.value(20).toString());
+        //if (!query1.value(20).isNull())
+        //    address.setPostOfficeBox(query1.value(20).toString());
 
         lm.setAddress(address);
 
         if (!query1.value(21).isNull())
-            lm.setPhone(query1.value(21).toString());
+            lm.setPhoneNumber(query1.value(21).toString());
 
         if (!query1.value(22).isNull())
             lm.setUrl(query1.value(22).toString());
@@ -1345,11 +1344,6 @@ QList<QLandmark> DatabaseOperations::landmarks(const QString &connectionName, co
     bool needAll = false;
     if (filter.type() == QLandmarkFilter::LandmarkIdFilter) {
         QLandmarkIdFilter idFilter = filter;
-        if (idFilter.matchingScheme() == QLandmarkIdFilter::MatchAll)
-            needAll = true;
-        else {
-            needAll = false;
-        }
     }
 
     QLandmark lm;
@@ -1381,6 +1375,31 @@ QList<QLandmark> DatabaseOperations::landmarks(const QString &connectionName, co
 
      *error = QLandmarkManager::NoError;
      *errorString = "";
+    return result;
+}
+
+QList<QLandmark> DatabaseOperations::landmarks(const QString &connectionName, const QList<QLandmarkId> &landmarkIds,
+        QMap<int, QLandmarkManager::Error> *errorMap,
+        QLandmarkManager::Error *error,
+        QString *errorString, const QString &managerUri, QueryRun *queryRun)
+{
+    QList<QLandmark> result;
+    QLandmark lm;
+    QLandmarkManager::Error lastError = QLandmarkManager::NoError;
+    QString lastErrorString="";
+    for (int i=0; i < landmarkIds.count(); ++i){
+        lm = DatabaseOperations::retrieveLandmark(connectionName,landmarkIds.at(i),error,errorString,managerUri,queryRun);
+        if (*error = QLandmarkManager::NoError) {
+            result << lm;
+        } else {
+            if (errorMap)
+                errorMap->insert(i, *error);
+            lastError = *error;
+            lastErrorString = *errorString;
+        }
+    }
+    *error = lastError;
+    *errorString =lastErrorString;
     return result;
 }
 
@@ -1531,13 +1550,14 @@ bool DatabaseOperations::saveLandmarkHelper(const QString &connectionName, QLand
     else
         bindValues.insert("postcode", QVariant());
 
+/*
     if (!address.postOfficeBox().isEmpty())
         bindValues.insert("post_office_box", address.postOfficeBox());
     else
         bindValues.insert("post_office_box", QVariant());
-
-    if (!landmark->phone().isEmpty())
-        bindValues.insert("phone", landmark->phone());
+*/
+    if (!landmark->phoneNumber().isEmpty())
+        bindValues.insert("phone", landmark->phoneNumber());
     else
         bindValues.insert("phone", QVariant());
 
@@ -2083,6 +2103,35 @@ QList<QLandmarkCategory> DatabaseOperations::categories(const QString &connectio
     return result;
 }
 
+
+QList<QLandmarkCategory> DatabaseOperations::categories(const QString &connectionName,
+                const QList<QLandmarkCategoryId> &landmarkCategoryIds,
+                QMap<int, QLandmarkManager::Error> *errorMap,
+                QLandmarkManager::Error *error, QString *errorString,
+                const QString &managerUri,
+                QueryRun *queryRun)
+{
+    QList<QLandmarkCategory> result;
+    QLandmarkCategory cat;
+    QLandmarkManager::Error lastError = QLandmarkManager::NoError;
+    QString lastErrorString ="";
+    for (int i=0; i < landmarkCategoryIds.count(); ++i) {
+        cat = DatabaseOperations::category(connectionName, landmarkCategoryIds.at(i),error,errorString,managerUri);
+        if (*error = QLandmarkManager::NoError)
+        {
+            result << cat;
+        } else {
+            if (errorMap)
+                errorMap->insert(i, *error);
+            lastError = *error;
+            lastErrorString = *errorString;
+        }
+    }
+    *error = lastError;
+    *errorString = lastErrorString;
+
+}
+
 bool DatabaseOperations::saveCategoryHelper(const QString &connectionName, QLandmarkCategory *category,
                 QLandmarkManager::Error *error,
                 QString *errorString, const QString &managerUri)
@@ -2402,7 +2451,7 @@ bool DatabaseOperations::removeCategories(const QString &connectionName, const Q
 bool DatabaseOperations::importLandmarks(const QString &connectionName,
                      QIODevice *device,
                      const QString &format,
-                     QLandmarkManager::ImportExportOption option,
+                     QLandmarkManager::TransferOption option,
                      const QLandmarkCategoryId &categoryId,
                      QLandmarkManager::Error *error,
                      QString *errorString, const QString &managerUri,
@@ -2427,10 +2476,10 @@ bool DatabaseOperations::importLandmarks(const QString &connectionName,
         return false;
     }
 
-    if (format ==  "LmxV1.0") {
+    if (format ==  QLandmarkManager::Lmx) {
             return importLandmarksLmx(connectionName, device, option, categoryId, error, errorString, managerUri);
-    } else if (format == "GpxV1.1") {
-        return importLandmarksGpx(connectionName, device, error, errorString, managerUri, queryRun);
+    } else if (format == QLandmarkManager::Gpx) {
+           return importLandmarksGpx(connectionName, device, error, errorString, managerUri, queryRun);
     } else {
         if (error)
             *error = QLandmarkManager::NotSupportedError;
@@ -2459,11 +2508,11 @@ bool DatabaseOperations::exportLandmarks(const QString &connectionName,
     }
 
     bool result;
-    if (format ==  "LmxV1.0") {
+    if (format ==  QLandmarkManager::Lmx) {
         result = exportLandmarksLmx(connectionName, device, landmarkIds, error, errorString, managerUri);
         device->close();
         return result;
-    } else if (format == "GpxV1.1") {
+    } else if (format == QLandmarkManager::Gpx) {
         result = exportLandmarksGpx(connectionName, device, landmarkIds, error, errorString, managerUri);
         device->close();
         return result;
@@ -2600,14 +2649,12 @@ void DatabaseOperations::QueryRun::run()
         case QLandmarkAbstractRequest::CategoryFetchRequest :
             {
                 QLandmarkCategoryFetchRequest *fetchRequest = static_cast<QLandmarkCategoryFetchRequest *> (request);
-                QList<QLandmarkCategoryId> categoryIds = fetchRequest->categoryIds();
-                bool needAll = false;
-                if (categoryIds.count() > 0 && fetchRequest->matchingScheme() == QLandmarkCategoryFetchRequest::MatchAll)
-                    needAll = true;
                 QLandmarkNameSort nameSort = fetchRequest->sorting();
-                QList <QLandmarkCategory> cats = DatabaseOperations::categories(connectionName, categoryIds, nameSort,
-                                                                fetchRequest->limit(), fetchRequest->offset(),
-                                                                &error, &errorString, managerUri, needAll, this);
+                bool needAll = true;
+                QList<QLandmarkCategory> cats;
+//TODO: FIX                QList <QLandmarkCategory> cats = DatabaseOperations::categories(connectionName, categoryIds, nameSort,
+//                                                                fetchRequest->limit(), fetchRequest->offset(),
+//                                                                &error, &errorString, managerUri, needAll, this);
 
                 QMetaObject::invokeMethod(engine, "updateLandmarkCategoryFetchRequest",
                                           Q_ARG(QLandmarkCategoryFetchRequest *,fetchRequest),
@@ -2669,7 +2716,7 @@ void DatabaseOperations::QueryRun::run()
                 QLandmarkImportRequest *importRequest = static_cast<QLandmarkImportRequest *> (request);
 
                 DatabaseOperations::importLandmarks(connectionName, importRequest->device(),
-                                                    importRequest->format(), importRequest->importOption(),
+                                                    importRequest->format(), importRequest->transferOption(),
                                                     importRequest->categoryId(),
                                                     &error, &errorString,
                                                     managerUri, this);

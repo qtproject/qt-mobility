@@ -49,7 +49,6 @@
 #include "qgeoboundingcircle.h"
 
 #include "qlandmarkboxfilter.h"
-#include "qlandmarkfetchhint.h"
 #include "qlandmarkfetchrequest.h"
 #include "qlandmarkintersectionfilter.h"
 #include "qlandmarknamefilter.h"

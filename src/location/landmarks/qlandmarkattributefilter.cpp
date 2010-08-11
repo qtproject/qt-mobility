@@ -249,7 +249,7 @@ void QLandmarkAttributeFilter::setOperationType(QLandmarkAttributeFilter::Operat
 }
 
 /*!
-    Returns the match flags for a particular key.  The match flags are only take into consideration
+    Returns the match flags for a particular \a key.  The match flags are only take into consideration
     when the attribute for a particular key is a string.  In all other cases the match flags are ignored.
 */
 QLandmarkFilter::MatchFlags QLandmarkAttributeFilter::matchFlags(const QString &key) const

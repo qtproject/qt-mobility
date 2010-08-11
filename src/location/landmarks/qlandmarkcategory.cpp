@@ -51,7 +51,7 @@ QTM_USE_NAMESPACE
 // ----- QLandmarkCategoryPrivate -----
 
 QStringList QLandmarkCategoryPrivate::commonKeys = QStringList() << "name"
-                                                                 << "iconurl";
+                                                                 << "iconUrl";
 
 QLandmarkCategoryPrivate::QLandmarkCategoryPrivate()
     : QSharedData(),
@@ -253,7 +253,7 @@ QVariant QLandmarkCategory::attribute(const QString &key) const
 
     if (key.compare("name",Qt::CaseInsensitive) == 0) {
         return name();
-    } else if (key.compare("iconurl",Qt::CaseInsensitive) ==0) {
+    } else if (key.compare("iconUrl",Qt::CaseInsensitive) ==0) {
         return iconUrl();
     }
 
@@ -270,8 +270,8 @@ void QLandmarkCategory::setAttribute(const QString &key, const QVariant &value)
     if (key.compare("name",Qt::CaseInsensitive) == 0) {
         setName(value.toString());
         return;
-    } else if (key.compare("iconurl",Qt::CaseInsensitive) ==0) {
-        setIconUrl(QUrl(value.toString()));
+    } else if (key.compare("iconUrl",Qt::CaseInsensitive) ==0) {
+        setIconUrl(QUrl(value.toUrl()));
         return;
     }
 

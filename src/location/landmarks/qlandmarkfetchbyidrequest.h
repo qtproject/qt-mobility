@@ -39,36 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKDISTANCESORT_H
-#define QLANDMARKDISTANCESORT_H
+#ifndef QLANDMARKFETCHBYIDREQUEST_H
+#define QLANDMARKFETCHBYIDREQUEST_H
 
-#include "qlandmarksortorder.h"
-#include "qgeocoordinate.h"
-
-QT_BEGIN_HEADER
+#include "qlandmarkabstractrequest.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-
-class QLandmarkDistanceSortPrivate;
-class Q_LOCATION_EXPORT QLandmarkDistanceSort : public QLandmarkSortOrder
+class QLandmarkFetchByIdRequestPrivate;
+class Q_LOCATION_EXPORT QLandmarkFetchByIdRequest : public QLandmarkAbstractRequest
 {
+    Q_OBJECT
 public:
-    QLandmarkDistanceSort(const QGeoCoordinate &coordinate = QGeoCoordinate(),
-                        Qt::SortOrder direction=Qt::AscendingOrder);
-    QLandmarkDistanceSort(const QLandmarkSortOrder &other);
-    virtual ~QLandmarkDistanceSort();
+    QLandmarkFetchByIdRequest(QLandmarkManager *manager, QObject *parent = 0);
+    ~QLandmarkFetchByIdRequest();
 
-    QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate &coordinate);
+    QList<QLandmarkId> landmarkIds() const;
+    void setLandmarkIds(const QList<QLandmarkId> &ids);
+    void setLandmarkId(const QLandmarkId &id);
 
+    QList<QLandmark> landmarks() const;
+    QMap<int, QLandmarkManager::Error> errorMap() const;
 private:
-    Q_DECLARE_LANDMARKSORTORDER_PRIVATE(QLandmarkDistanceSort)
+    Q_DISABLE_COPY(QLandmarkFetchByIdRequest)
+    Q_DECLARE_PRIVATE(QLandmarkFetchByIdRequest)
+    friend class QLandmarkManagerEngine;
 };
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

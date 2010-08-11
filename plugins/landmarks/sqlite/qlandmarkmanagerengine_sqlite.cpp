@@ -200,8 +200,8 @@ int QLandmarkManagerEngineSqlite::managerVersion() const
 }
 
 QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIds(const QLandmarkFilter& filter,
-        const QList<QLandmarkSortOrder>& sortOrders,
         int limit, int offset,
+        const QList<QLandmarkSortOrder>& sortOrders,
         QLandmarkManager::Error *error,
         QString *errorString) const
 {
@@ -223,13 +223,22 @@ QLandmark QLandmarkManagerEngineSqlite::landmark(const QLandmarkId &landmarkId,
 }
 
 QList<QLandmark> QLandmarkManagerEngineSqlite::landmarks(const QLandmarkFilter &filter,
-                                                         const QList<QLandmarkSortOrder>& sortOrders,
                                                          int limit, int offset,
+                                                         const QList<QLandmarkSortOrder>& sortOrders,
                                                          QLandmarkManager::Error *error,
                                                          QString *errorString) const
 {
 
     return DatabaseOperations::landmarks(m_dbConnectionName, filter, sortOrders, limit, offset, error, errorString, managerUri());
+}
+
+QList<QLandmark> QLandmarkManagerEngineSqlite::landmarks(const QList<QLandmarkId> &landmarkIds,
+                                                         QMap<int, QLandmarkManager::Error> *errorMap,
+                                                         QLandmarkManager::Error *error,
+                                                         QString *errorString) const
+{
+
+    return DatabaseOperations::landmarks(m_dbConnectionName, landmarkIds, errorMap, error, errorString, managerUri());
 }
 
 QLandmarkCategory QLandmarkManagerEngineSqlite::category(const QLandmarkCategoryId &landmarkCategoryId,
@@ -240,11 +249,12 @@ QLandmarkCategory QLandmarkManagerEngineSqlite::category(const QLandmarkCategory
 }
 
 QList<QLandmarkCategory> QLandmarkManagerEngineSqlite::categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds,
+                                                                  QMap<int, QLandmarkManager::Error> *errorMap,
                                                                   QLandmarkManager::Error *error,
                                                                   QString *errorString) const
 {
     QLandmarkNameSort nameSort;// this should be ignored in the following call
-    return DatabaseOperations::categories(m_dbConnectionName, landmarkCategoryIds, nameSort, -1, 0, error, errorString, managerUri(), true);
+    return DatabaseOperations::categories(m_dbConnectionName, landmarkCategoryIds, errorMap, error, errorString, managerUri());
 }
 
 QList<QLandmarkCategory> QLandmarkManagerEngineSqlite::categories(int limit, int offset,
@@ -305,7 +315,7 @@ bool QLandmarkManagerEngineSqlite::removeCategory(const QLandmarkCategoryId &cat
 
 bool QLandmarkManagerEngineSqlite::importLandmarks(QIODevice *device,
                                                    const QString &format,
-                                                   QLandmarkManager::ImportExportOption option,
+                                                   QLandmarkManager::TransferOption option,
                                                    const QLandmarkCategoryId &categoryId,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString)
@@ -316,14 +326,14 @@ bool QLandmarkManagerEngineSqlite::importLandmarks(QIODevice *device,
 bool QLandmarkManagerEngineSqlite::exportLandmarks(QIODevice *device,
                                                    const QString &format,
                                                    QList<QLandmarkId> landmarkIds,
-                                                   QLandmarkManager::ImportExportOption,
+                                                   QLandmarkManager::TransferOption,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString) const
 {
     return DatabaseOperations::exportLandmarks(m_dbConnectionName, device, format, landmarkIds, error, errorString, managerUri());
 }
 
-QStringList QLandmarkManagerEngineSqlite::supportedFormats(QLandmarkManager::Error *error, QString *errorString) const
+QStringList QLandmarkManagerEngineSqlite::supportedFormats(QLandmarkManager::TransferOperation operation, QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
@@ -331,7 +341,8 @@ QStringList QLandmarkManagerEngineSqlite::supportedFormats(QLandmarkManager::Err
     *errorString ="";
 
     QStringList formats;
-    formats << "GpxV1.1";
+    formats << QLandmarkManager::Gpx;
+    formats << QLandmarkManager::Lmx;
     return formats;
 }
 
