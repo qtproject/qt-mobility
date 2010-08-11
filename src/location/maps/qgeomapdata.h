@@ -42,7 +42,7 @@
 #ifndef QGEOMAPDATA_H
 #define QGEOMAPDATA_H
 
-#include "qgeomapwidget.h"
+#include "qgraphicsgeomap.h"
 
 #include <QObject>
 #include <QSize>
@@ -63,7 +63,7 @@ class Q_LOCATION_EXPORT QGeoMapData : public QObject
     Q_OBJECT
 
 public:
-    QGeoMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
+    QGeoMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
     virtual ~QGeoMapData();
 
     virtual void setViewportSize(const QSizeF &size);
@@ -79,8 +79,8 @@ public:
     virtual void setCenter(const QGeoCoordinate &center);
     virtual QGeoCoordinate center() const;
 
-    virtual void setMapType(QGeoMapWidget::MapType mapType);
-    virtual QGeoMapWidget::MapType mapType() const;
+    virtual void setMapType(QGraphicsGeoMap::MapType mapType);
+    virtual QGraphicsGeoMap::MapType mapType() const;
 
     void addMapObject(QGeoMapObject *mapObject);
     void removeMapObject(QGeoMapObject *mapObject);
@@ -104,7 +104,7 @@ public:
 protected:
     QGeoMapData(QGeoMapDataPrivate *dd);
 
-    QGeoMapWidget* widget() const;
+    QGraphicsGeoMap* geoMap() const;
     QGeoMappingManagerEngine* engine() const;
     QGeoMapObject* containerObject();
 

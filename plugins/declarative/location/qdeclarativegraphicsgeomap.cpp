@@ -40,13 +40,13 @@
 **
 ****************************************************************************/
 
-#include "qdeclarativemapwidget_p.h"
+#include "qdeclarativegraphicsgeomap_p.h"
 
 QTM_BEGIN_NAMESPACE
 
 
-QDeclarativeMapWidget::QDeclarativeMapWidget(QGraphicsItem *parent)
-    : QGeoMapWidget(parent)
+QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QGraphicsItem *parent)
+    : QGraphicsGeoMap(parent)
 {
     connect(this,
             SIGNAL(centerChanged(QGeoCoordinate)),
@@ -54,38 +54,38 @@ QDeclarativeMapWidget::QDeclarativeMapWidget(QGraphicsItem *parent)
             SLOT(memberCenterChanged(QGeoCoordinate)));
 }
 
-QDeclarativeMapWidget::~QDeclarativeMapWidget()
+QDeclarativeGraphicsGeoMap::~QDeclarativeGraphicsGeoMap()
 {
 }
 
-void QDeclarativeMapWidget::setDeclarativeCenter(const QDeclarativeCoordinate *center)
+void QDeclarativeGraphicsGeoMap::setDeclarativeCenter(const QDeclarativeCoordinate *center)
 {
     setCenter(center->coordinate());
 }
 
-QDeclarativeCoordinate* QDeclarativeMapWidget::declarativeCenter() const
+QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::declarativeCenter() const
 {
     return new QDeclarativeCoordinate(center(),
-                                      const_cast<QDeclarativeMapWidget *const>(this));
+                                      const_cast<QDeclarativeGraphicsGeoMap *const>(this));
 }
 
-QPointF QDeclarativeMapWidget::toScreenPosition(const QDeclarativeCoordinate *coordinate) const
+QPointF QDeclarativeGraphicsGeoMap::toScreenPosition(const QDeclarativeCoordinate *coordinate) const
 {
     return coordinateToScreenPosition(coordinate->coordinate());
 }
 
-QDeclarativeCoordinate* QDeclarativeMapWidget::toCoordinate(QPointF screenPosition) const
+QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::toCoordinate(QPointF screenPosition) const
 {
     return new QDeclarativeCoordinate(screenPositionToCoordinate(screenPosition), 
-                                      const_cast<QDeclarativeMapWidget *const>(this));
+                                      const_cast<QDeclarativeGraphicsGeoMap *const>(this));
 }
 
-void QDeclarativeMapWidget::memberCenterChanged(const QGeoCoordinate &coordinate)
+void QDeclarativeGraphicsGeoMap::memberCenterChanged(const QGeoCoordinate &coordinate)
 {
     emit declarativeCenterChanged(new QDeclarativeCoordinate(coordinate, this));
 }
 
-#include "moc_qdeclarativemapwidget_p.cpp"
+#include "moc_qdeclarativegraphicsgeomap_p.cpp"
 
 QTM_END_NAMESPACE
 

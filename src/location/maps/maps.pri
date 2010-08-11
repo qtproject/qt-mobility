@@ -16,7 +16,6 @@ PUBLIC_HEADERS += \
                     maps/qgeomappolylineobject.h \
                     maps/qgeomaprectangleobject.h \
                     maps/qgeomaprouteobject.h \
-                    maps/qgeomapwidget.h \
                     maps/qgeonavigationinstruction.h \
                     maps/qgeoroute.h \
                     maps/qgeoroutereply.h \
@@ -28,7 +27,8 @@ PUBLIC_HEADERS += \
                     maps/qgeosearchmanagerengine.h \
                     maps/qgeosearchreply.h \
                     maps/qgeoserviceprovider.h \
-                    maps/qgeoserviceproviderfactory.h
+                    maps/qgeoserviceproviderfactory.h \
+                    maps/qgraphicsgeomap.h
 
 PRIVATE_HEADERS += \
                     maps/qgeomapcircleobject_p.h \
@@ -42,7 +42,6 @@ PRIVATE_HEADERS += \
                     maps/qgeomappolylineobject_p.h \
                     maps/qgeomaprectangleobject_p.h \
                     maps/qgeomaprouteobject_p.h \
-                    maps/qgeomapwidget_p.h \
                     maps/qgeonavigationinstruction_p.h \
                     maps/qgeoroute_p.h \
                     maps/qgeoroutereply_p.h \
@@ -53,7 +52,8 @@ PRIVATE_HEADERS += \
                     maps/qgeosearchmanager_p.h \
                     maps/qgeosearchmanagerengine_p.h \
                     maps/qgeosearchreply_p.h \
-                    maps/qgeoserviceprovider_p.h
+                    maps/qgeoserviceprovider_p.h \
+                    maps/qgraphicsgeomap_p.h
 
 SOURCES += \
             maps/qgeomapcircleobject.cpp \
@@ -68,7 +68,6 @@ SOURCES += \
             maps/qgeomappolylineobject.cpp \
             maps/qgeomaprectangleobject.cpp \
             maps/qgeomaprouteobject.cpp \
-            maps/qgeomapwidget.cpp \
             maps/qgeonavigationinstruction.cpp \
             maps/qgeoroute.cpp \
             maps/qgeoroutereply.cpp \
@@ -80,5 +79,6 @@ SOURCES += \
             maps/qgeosearchmanagerengine.cpp \
             maps/qgeosearchreply.cpp \
             maps/qgeoserviceprovider.cpp \
-            maps/qgeoserviceproviderfactory.cpp
+            maps/qgeoserviceproviderfactory.cpp \
+            maps/qgraphicsgeomap.cpp
 

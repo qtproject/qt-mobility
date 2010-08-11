@@ -83,8 +83,8 @@ uint qHash(const QRectF& key)
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
-        : QGeoMapData(new QGeoTiledMapDataPrivate(this, engine, widget))
+QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
+        : QGeoMapData(new QGeoTiledMapDataPrivate(this, engine, geoMap))
 {
     Q_D(QGeoTiledMapData);
 
@@ -228,7 +228,7 @@ void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
     d->updateMapImage();
 }
 
-void QGeoTiledMapData::setMapType(QGeoMapWidget::MapType mapType)
+void QGeoTiledMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 {
     Q_D(QGeoTiledMapData);
 
@@ -344,7 +344,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
         }
     }
 
-    widget()->update();
+    geoMap()->update();
 
     d->clearRequests();
     d->updateMapImage();
@@ -544,7 +544,7 @@ void QGeoTiledMapData::tileFinished()
                                int(t.width()) / d->zoomFactor,
                                int(t.height()) / d->zoomFactor);
 
-        widget()->update(target);
+        geoMap()->update(target);
     }
 
     if (d->requests.size() > 0)
@@ -673,8 +673,8 @@ int QGeoTiledMapData::zoomFactor() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
-        : QGeoMapDataPrivate(parent, engine, widget) {}
+QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
+        : QGeoMapDataPrivate(parent, engine, geoMap) {}
 
 QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
 {

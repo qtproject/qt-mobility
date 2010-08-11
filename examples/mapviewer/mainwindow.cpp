@@ -111,7 +111,7 @@ static inline qreal qPointLength(const QPointF &p) {
 }
 
 MapWidget::MapWidget(QGeoMappingManager *manager) :
-    QGeoMapWidget(manager),
+    QGraphicsGeoMap(manager),
     coordQueryState(false),
     panActive(false),
     kineticTimer(new QTimer),
@@ -286,10 +286,10 @@ void MapWidget::keyPressEvent(QKeyEvent *event)
             break;
 
         case Qt::Key_T:
-            if (mapType() == QGeoMapWidget::StreetMap)
-                setMapType(QGeoMapWidget::SatelliteMapDay);
-            else if (mapType() == QGeoMapWidget::SatelliteMapDay)
-                setMapType(QGeoMapWidget::StreetMap);
+            if (mapType() == QGraphicsGeoMap::StreetMap)
+                setMapType(QGraphicsGeoMap::SatelliteMapDay);
+            else if (mapType() == QGraphicsGeoMap::SatelliteMapDay)
+                setMapType(QGraphicsGeoMap::StreetMap);
             break;
 
         case Qt::Key_Shift:
@@ -455,21 +455,21 @@ void MainWindow::setupUi()
 
     connect(m_mapWidget, SIGNAL(mapTypeChanged(QGeoMapWidget::MapType)), this, SLOT(mapTypeChanged(QGeoMapWidget::MapType)));
 
-    QList<QGeoMapWidget::MapType> types = m_mapWidget->supportedMapTypes();
+    QList<QGraphicsGeoMap::MapType> types = m_mapWidget->supportedMapTypes();
     for (int i = 0; i < types.size(); ++i) {
         QRadioButton *radio = new QRadioButton(this);
 
         switch (types.at(i)) {
-            case QGeoMapWidget::StreetMap:
+            case QGraphicsGeoMap::StreetMap:
                 radio->setText("Street");
                 break;
-            case QGeoMapWidget::SatelliteMapDay:
+            case QGraphicsGeoMap::SatelliteMapDay:
                 radio->setText("Satellite");
                 break;
-            case QGeoMapWidget::SatelliteMapNight:
+            case QGraphicsGeoMap::SatelliteMapNight:
                 radio->setText("Satellite - Night");
                 break;
-            case QGeoMapWidget::TerrainMap:
+            case QGraphicsGeoMap::TerrainMap:
                 radio->setText("Terrain");
                 break;
         }
@@ -560,7 +560,7 @@ void MainWindow::mapTypeToggled(bool checked)
 
 }
 
-void MainWindow::mapTypeChanged(QGeoMapWidget::MapType type)
+void MainWindow::mapTypeChanged(QGraphicsGeoMap::MapType type)
 {
     int index = mapControlTypes.indexOf(type);
     if (index != -1)

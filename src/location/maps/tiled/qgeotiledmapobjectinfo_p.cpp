@@ -108,7 +108,7 @@ void QGeoTiledMapObjectInfo::updateItem()
 {
     // TODO use bounding rectangle of graphics items
     if (graphicsItem)
-        tiledMapData->widget()->update();
+        tiledMapData->geoMap()->update();
 }
 
 QPolygonF QGeoTiledMapObjectInfo::createPolygon(const QList<QGeoCoordinate> &path,

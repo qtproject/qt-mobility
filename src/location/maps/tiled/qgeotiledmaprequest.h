@@ -42,7 +42,7 @@
 #ifndef QGEOTILEDMAPREQUEST_H
 #define QGEOTILEDMAPREQUEST_H
 
-#include "qgeomapwidget.h"
+#include "qgraphicsgeomap.h"
 
 #include <QRect>
 #include <QSharedDataPointer>
@@ -69,7 +69,7 @@ public:
 
     QGeoTiledMapData *mapData() const;
 
-    QGeoMapWidget::MapType mapType() const;
+    QGraphicsGeoMap::MapType mapType() const;
     int zoomLevel() const;
 
     int row() const;

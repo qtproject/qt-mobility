@@ -44,7 +44,7 @@
 
 #include <qgeomappingmanager.h>
 #include <qgeoroutingmanager.h>
-#include <qgeomapwidget.h>
+#include <qgraphicsgeomap.h>
 #include <qgeoserviceprovider.h>
 #include <qgeomapmarkerobject.h>
 #include <qgeomapcircleobject.h>
@@ -73,7 +73,7 @@ class QToolButton;
 
 QTM_USE_NAMESPACE
 
-class MapWidget : public QGeoMapWidget
+class MapWidget : public QGraphicsGeoMap
 {
     Q_OBJECT
 public:
@@ -158,7 +158,7 @@ private slots:
     void sliderValueChanged(int zoomLevel);
     void mapZoomLevelChanged(qreal zoomLevel);
     void mapTypeToggled(bool checked);
-    void mapTypeChanged(QGeoMapWidget::MapType type);
+    void mapTypeChanged(QGraphicsGeoMap::MapType type);
     void setCoordsClicked();
     void updateCoords(const QGeoCoordinate &coords);
 
@@ -176,7 +176,7 @@ private:
     QGraphicsView* qgv;
     QSlider *slider;
     QList<QRadioButton*> mapControlButtons;
-    QList<QGeoMapWidget::MapType> mapControlTypes;
+    QList<QGraphicsGeoMap::MapType> mapControlTypes;
     QLineEdit *latitudeEdit;
     QLineEdit *longitudeEdit;
     QToolButton *captureCoordsButton;

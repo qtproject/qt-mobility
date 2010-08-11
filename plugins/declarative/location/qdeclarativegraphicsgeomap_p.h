@@ -39,11 +39,11 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEMAPWIDGET_H
-#define QDECLARATIVEMAPWIDGET_H
+#ifndef QDECLARATIVEGRAPHICSGEOMAP_H
+#define QDECLARATIVEGRAPHICSGEOMAP_H
 
 #include "qdeclarativecoordinate_p.h"
-#include "qgeomapwidget.h"
+#include "qgraphicsgeomap.h"
 
 class QGraphicsItem;
 
@@ -54,7 +54,7 @@ class QGeoMappingManager;
 class QGeoBoundingBox;
 class QGeoMapObject;
 
-class QDeclarativeMapWidget : public QGeoMapWidget
+class QDeclarativeGraphicsGeoMap : public QGraphicsGeoMap
 {
     Q_OBJECT
 
@@ -62,8 +62,8 @@ class QDeclarativeMapWidget : public QGeoMapWidget
 
 public:
 
-    QDeclarativeMapWidget(QGraphicsItem *parent = 0);
-    ~QDeclarativeMapWidget();
+    QDeclarativeGraphicsGeoMap(QGraphicsItem *parent = 0);
+    ~QDeclarativeGraphicsGeoMap();
 
     void setDeclarativeCenter(const QDeclarativeCoordinate *center);
     QDeclarativeCoordinate* declarativeCenter() const;
@@ -78,11 +78,11 @@ signals:
     void declarativeCenterChanged(const QDeclarativeCoordinate *coordinate);
 
 private:
-    Q_DISABLE_COPY(QDeclarativeMapWidget);
+    Q_DISABLE_COPY(QDeclarativeGraphicsGeoMap);
 };
 
 QTM_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeMapWidget));
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGraphicsGeoMap));
 
 #endif

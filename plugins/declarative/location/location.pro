@@ -28,7 +28,7 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativelandmarkcategory_p.h \
            qdeclarativelandmarkfilters_p.h \
            qdeclarativecoordinate_p.h \
-           qdeclarativemapwidget_p.h
+           qdeclarativegraphicsgeomap_p.h
 
 SOURCES += qdeclarativeposition.cpp \
            location.cpp \
@@ -39,7 +39,7 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativelandmarkcategory.cpp \
            qdeclarativelandmarkfilters.cpp \
            qdeclarativecoordinate.cpp \
-           qdeclarativemapwidget.cpp
+           qdeclarativegraphicsgeomap.cpp
 
 # Tell qmake to create such makefile that qmldir and target (i.e. declarative_location)
 # are both copied to qt/imports/QtMobility/location -directory,

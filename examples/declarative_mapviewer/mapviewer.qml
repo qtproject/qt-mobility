@@ -59,7 +59,7 @@ Item {
     focus: true
 
 
-    MapWidget {
+    GeoMap {
         id: map
         size.width: parent.width
         size.height: parent.height
@@ -107,10 +107,10 @@ Item {
             if (map.zoomLevel > map.minimumZoomLevel)
                 map.zoomLevel -= 1
         } else if (event.key == Qt.Key_T) {
-            if (map.mapType == MapWidget.StreetMap) {
-                map.mapType = MapWidget.SatelliteMapDay
-            } else if (map.mapType == MapWidget.SatelliteMapDay) {
-                map.mapType = MapWidget.StreetMap
+            if (map.mapType == GeoMap.StreetMap) {
+                map.mapType = GeoMap.SatelliteMapDay
+            } else if (map.mapType == GeoMap.SatelliteMapDay) {
+                map.mapType = GeoMap.StreetMap
             }
         }
     }

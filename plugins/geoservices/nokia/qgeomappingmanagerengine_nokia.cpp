@@ -65,10 +65,10 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     setMinimumZoomLevel(0.0);
     setMaximumZoomLevel(18.0);
 
-    QList<QGeoMapWidget::MapType> types;
-    types << QGeoMapWidget::StreetMap;
-    types << QGeoMapWidget::SatelliteMapDay;
-    types << QGeoMapWidget::TerrainMap;
+    QList<QGraphicsGeoMap::MapType> types;
+    types << QGraphicsGeoMap::StreetMap;
+    types << QGraphicsGeoMap::SatelliteMapDay;
+    types << QGraphicsGeoMap::TerrainMap;
     setSupportedMapTypes(types);
 
     m_nam = new QNetworkAccessManager(this);
@@ -173,14 +173,14 @@ QString QGeoMappingManagerEngineNokia::sizeToStr(const QSize &size)
         return "128";
 }
 
-QString QGeoMappingManagerEngineNokia::mapTypeToStr(QGeoMapWidget::MapType type)
+QString QGeoMappingManagerEngineNokia::mapTypeToStr(QGraphicsGeoMap::MapType type)
 {
-    if (type == QGeoMapWidget::StreetMap)
+    if (type == QGraphicsGeoMap::StreetMap)
         return "normal.day";
-    else if (type == QGeoMapWidget::SatelliteMapDay ||
-             type == QGeoMapWidget::SatelliteMapNight) {
+    else if (type == QGraphicsGeoMap::SatelliteMapDay ||
+             type == QGraphicsGeoMap::SatelliteMapNight) {
         return "satellite.day";
-    } else if (type == QGeoMapWidget::TerrainMap)
+    } else if (type == QGraphicsGeoMap::TerrainMap)
         return "terrain.day";
     else
         return "normal.day";
