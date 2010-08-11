@@ -108,14 +108,15 @@ QMessage::TypeFlags QMessageAccount::messageTypes() const
 
 QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 {
-#ifdef NCNLISTREMOVED
+#ifdef FREESTYLEMAILUSED
     if (type == QMessage::Email) {
-        return CFSEngine::instance()->defaultAccount(type);
+        QMessageAccountId id = CFSEngine::instance()->defaultAccount(type);
+        if (id.isValid())
+            return id;
+        else return CMTMEngine::instance()->defaultAccount(type);
     }
-#endif // NCNLISTREMOVED
-    
+#endif // FREESTYLEMAILUSED    
     return CMTMEngine::instance()->defaultAccount(type);
-	// or return CFSEngine::instance()->defaultAccount(type);
 }
 
 QTM_END_NAMESPACE
