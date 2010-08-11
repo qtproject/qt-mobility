@@ -289,6 +289,17 @@ void COrganizerItemRequestsServiceProvider::FetchItemsL()
             break;
          default :
             {
+            if (!iNoOfItems)
+                {
+                // Declare an invalid filter
+                QOrganizerItemFilter filter;
+                // Declare and empty sortOrder
+                QList<QOrganizerItemSortOrder> sortOrder;
+                // Fetch all the items Ids present in Data Base
+                iItemIds.append(iOrganizerItemManagerEngine.itemIds(
+                    filter, sortOrder, &iError));
+                iNoOfItems = iItemIds.count();
+                }
             FetchItemsandFilterL(filter, sortOrder, fetchHint);
             }
             break;
@@ -302,12 +313,12 @@ void COrganizerItemRequestsServiceProvider::FetchItemIdsL()
     QList<QOrganizerItemSortOrder> sortOrder(
             ((QOrganizerItemFetchRequest*)iReq)->sorting());
     
-    QList<QOrganizerItemLocalId> ids(iOrganizerItemManagerEngine.itemIds(
+    iItemIds.append(iOrganizerItemManagerEngine.itemIds(
             filter, sortOrder, &iError));
     
     QOrganizerItemManagerEngine::updateItemLocalIdFetchRequest(
             (QOrganizerItemLocalIdFetchRequest*)iReq, 
-            ids, iError, QOrganizerItemAbstractRequest::FinishedState);
+            iItemIds, iError, QOrganizerItemAbstractRequest::FinishedState);
     }
 
 // Fetch Entries by local Ids
@@ -342,12 +353,30 @@ void COrganizerItemRequestsServiceProvider::FetchItemsandFilterL(
         QOrganizerItemFilter& filter, QList<QOrganizerItemSortOrder>& sortOrder,
         QOrganizerItemFetchHint& fetchHint)
     {
-    iItemList.clear();
-    iItemList = iOrganizerItemManagerEngine.items(filter, sortOrder, 
-            fetchHint, &iError);
-    QOrganizerItemManagerEngine::updateItemFetchRequest(
-            (QOrganizerItemFetchRequest*)(iReq), iItemList, 
-            iError, QOrganizerItemAbstractRequest::FinishedState);
+    if (iIndex < iNoOfItems)
+            {
+            // update index beforehand in case itemL leaves, if so
+            // RunError would call SelfComplete() for recursive operation
+            iIndex++;
+            // Fetch the item
+            QOrganizerItem item;
+            iOrganizerItemManagerEngine.itemL(
+                    iItemIds.at(iIndex-1), &item, fetchHint);
+            // Append the fetched item to iItemList
+            iItemList << item;
+            // Calls itself recursively until all the items are deleted
+            SelfComplete();
+            }
+        else
+            {
+            // Filter & sort the items
+            QList<QOrganizerItem> items(iOrganizerItemManagerEngine.slowFilter(
+                iItemList, filter, sortOrder));
+            // Notify results
+            QOrganizerItemManagerEngine::updateItemFetchRequest(
+                    (QOrganizerItemFetchRequest*)(iReq), items, iError, 
+                    QOrganizerItemAbstractRequest::FinishedState);
+            }    
     }
 
 // Fetch detail definition

@@ -220,7 +220,7 @@ void TestFetchItems::fetchItems()
     lUids.append(3);
     lUids.append(4);
     localIdFilter.setIds(lUids);
-    m_fetchItemRequest->setFilter(localIdFilter);
+    //m_fetchItemRequest->setFilter(localIdFilter);
     // Set ItemDetailsFilter
     QOrganizerItemDetailFilter detailsFilter;
     detailsFilter.setDetailDefinitionName(
@@ -228,7 +228,7 @@ void TestFetchItems::fetchItems()
             QOrganizerItemDisplayLabel::FieldLabel); 
     detailsFilter.setValue("myDescription");
     detailsFilter.setMatchFlags(QOrganizerItemFilter::MatchContains);
-    //m_fetchItemRequest->setFilter(detailsFilter);
+    m_fetchItemRequest->setFilter(detailsFilter);
 
     // Set sorting order
     QList<QOrganizerItemSortOrder> sortOrderlist;

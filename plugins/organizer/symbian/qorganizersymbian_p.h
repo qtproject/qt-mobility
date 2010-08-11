@@ -177,10 +177,12 @@ public:
     void saveItemL(QOrganizerItem *item, QOrganizerItemChangeSet *changeSet = 0);
     void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, 
             const QOrganizerItemFetchHint& fetchHint) const;
+    QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, 
+        const QOrganizerItemFilter& filter, 
+        const QList<QOrganizerItemSortOrder>& sortOrders) const;
     
 private:
     void removeItemL(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet *changeSet);
-    QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const;
     void modifyDetailDefinitionsForEvent() const;
     void modifyDetailDefinitionsForEventOccurrence() const;
     void modifyDetailDefinitionsForTodo() const;
