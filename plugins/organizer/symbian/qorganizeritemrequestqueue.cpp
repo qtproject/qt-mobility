@@ -115,12 +115,12 @@ void QOrganizerItemRequestQueue::requestDestroyed(
     COrganizerItemRequestsServiceProvider* requestServiceProvider(
                 m_abstractRequestMap[req]);
     if (requestServiceProvider) {
-        // Delete the asynchronous service provider
-        delete requestServiceProvider;
         // Remove req request & asynchronous service provider from the map 
         // count is used only for the debugging purpose. Count should always be 
         // 1, there is a serious programming mistake if not so.
         int count(m_abstractRequestMap.remove(req));
+		// Delete the asynchronous service provider
+        delete requestServiceProvider;
         }
 } 
 
