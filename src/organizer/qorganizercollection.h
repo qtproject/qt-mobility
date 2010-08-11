@@ -70,14 +70,6 @@ public:
     QOrganizerCollectionId id() const;
     void setId(const QOrganizerCollectionId& id);
 
-    /* Every collection belongs to a datastore */
-    QString datastore() const;
-    void setDatastore(const QString& datastore);
-
-    /* Items belong to one or more collections */
-    QList<QOrganizerItemId> itemIds() const; // ignored on save, read only.
-    bool contains(const QOrganizerItemId& itemId) const;
-
     /* Metadata?  Colour?  Icon?  Haptic Feel?  etc */
     // DEFINE_LATIN1_CONSTANT(FieldName, "Name");
     // DEFINE_LATIN1_CONSTANT(FieldDescription, "Description");
@@ -101,7 +93,6 @@ Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerCollection& col
 QTM_END_NAMESPACE
 
 Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerCollection), Q_MOVABLE_TYPE);
-
 
 #endif
 

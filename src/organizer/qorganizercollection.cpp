@@ -84,26 +84,6 @@ void QOrganizerCollection::setId(const QOrganizerCollectionId& id)
     d->m_id = id;
 }
 
-/*!
-  Returns the name of the datastore in which the collection is stored.
-  Every collection is stored in exactly one datastore.  If the collection
-  has not yet been saved in a manager, the datastore will be empty.
- */
-QString QOrganizerCollection::datastore() const
-{
-    return d->m_datastore;
-}
-
-QList<QOrganizerItemId> QOrganizerCollection::itemIds() const
-{
-    return d->m_itemIds;
-}
-
-bool QOrganizerCollection::contains(const QOrganizerItemId& itemId) const
-{
-    return d->m_itemIds.contains(itemId);
-}
-
 void QOrganizerCollection::setMetaData(const QVariantMap& metaData)
 {
     d->m_metaData = metaData;
