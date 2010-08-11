@@ -822,8 +822,10 @@ void tst_QOrganizerItemManager::addExceptions()
     // save a change to an occurrence's detail (ie. create an exception)
     secondEvent.setDisplayLabel(QLatin1String("seminar"));
     QVERIFY(cm->saveItem(&secondEvent));
-    QCOMPARE(cm->itemInstances(event, QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
-                                      QDateTime(QDate(2010, 2, 1), QTime(0, 0, 0))).size(), 3); // shouldn't change the count.
+    event = cm->item(event.localId()); // reload the event to pick up any changed exception dates.
+    items = cm->itemInstances(event, QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
+                                     QDateTime(QDate(2010, 2, 1), QTime(0, 0, 0)));
+    QCOMPARE(items.size(), 3); // shouldn't change the count.
 
     // save a change to an occurrence's time
     QOrganizerEventOccurrence thirdEvent = static_cast<QOrganizerEventOccurrence>(items.at(2));
@@ -832,30 +834,45 @@ void tst_QOrganizerItemManager::addExceptions()
     thirdEvent.setStartDateTime(QDateTime(QDate(2010, 1, 15), QTime(13, 0, 0)));
     thirdEvent.setEndDateTime(QDateTime(QDate(2010, 1, 15), QTime(14, 0, 0)));
     QVERIFY(cm->saveItem(&thirdEvent));
+    event = cm->item(event.localId()); // reload the event to pick up any changed exception dates.
+    items = cm->itemInstances(event, QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
+                                     QDateTime(QDate(2010, 2, 1), QTime(0, 0, 0)));
+    QCOMPARE(items.size(), 3); // shouldn't change the count.
 
-    items =
-        cm->itemInstances(event, QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
-                                 QDateTime(QDate(2010, 2, 1), QTime(0, 0, 0)));
+    QOrganizerItem firstItem;
+    bool foundFirst = false;
+    bool foundSecond = false;
+    bool foundThird = false;
+    foreach (const QOrganizerItem& item, items) {
+        if (item.localId() == 0) {
+            foundFirst = true;
+            firstItem = item;
+        }
 
-//    foreach (const QOrganizerItem& item, items) {
-//        qDebug() << "\n" << item.id() << item.type() << ":" << item.displayLabel() << ", " << item.description();
-//    }
+        if (item.localId() == secondEvent.localId()) {
+            foundSecond = true;
+            secondEvent = item;
+        }
 
+        if (item.localId() == thirdEvent.localId()) {
+            foundThird = true;
+            thirdEvent = item;
+        }
+    }
 
-    QCOMPARE(items.size(), 3);
-    QOrganizerItem firstItem = items.at(0);
     // check that saving an exception doesn't change other items
-    QCOMPARE(firstItem.displayLabel(), QLatin1String("meeting"));
+    QVERIFY(foundFirst); // there should still be one "generated" occurrence
+    QCOMPARE(firstItem.displayLabel(), QLatin1String("meeting")); // and it should have the original label.
     // item occurrences which are not exceptions should have zero localId
     QVERIFY(firstItem.localId() == 0);
 
-    secondItem = items.at(1);
     // the exception's changes have been persisted
-    QCOMPARE(secondItem.displayLabel(), QLatin1String("seminar"));
-    // item occurrences which are exceptions should have non-zero localId
-    QVERIFY(secondItem.localId() != 0);
+    QVERIFY(foundSecond);
+    QCOMPARE(secondEvent.displayLabel(), QLatin1String("seminar"));
+    // item occurrences which are persisted exceptions should have non-zero localId
+    QVERIFY(secondEvent.localId() != 0);
 
-    thirdEvent = static_cast<QOrganizerEventOccurrence>(items.at(2));
+    QVERIFY(foundThird);
     QCOMPARE(thirdEvent.startDateTime(), QDateTime(QDate(2010, 1, 15), QTime(13, 0, 0)));
     QCOMPARE(thirdEvent.endDateTime(), QDateTime(QDate(2010, 1, 15), QTime(14, 0, 0)));
     QVERIFY(thirdEvent.localId() != 0);

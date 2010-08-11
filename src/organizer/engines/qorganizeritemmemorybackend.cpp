@@ -678,19 +678,52 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
         setDetailAccessConstraints(&ts, QOrganizerItemDetail::ReadOnly | QOrganizerItemDetail::Irremovable);
         theOrganizerItem->saveDetail(&ts);
 
-        if (theOrganizerItem->guid().isEmpty())
-            theOrganizerItem->setGuid(QUuid::createUuid().toString());
-
         // update the organizer item - set its ID
         newId.setLocalId(++d->m_nextOrganizerItemId);
         theOrganizerItem->setId(newId);
 
+        // set the guid if not set, and ensure that it's the same as parents (fix if it isn't)
+        if (theOrganizerItem->guid().isEmpty())
+            theOrganizerItem->setGuid(QUuid::createUuid().toString());
         if (!fixOccurrenceReferences(theOrganizerItem, error)) {
             return false;
         }
 
+        // if we're saving an exception occurrence, we need to add it's original date as an exdate to the parent.
+        if (theOrganizerItem->type() == QOrganizerItemType::TypeEventOccurrence) {
+            // update the event by adding an EX-DATE which corresponds to the original date of the occurrence being saved.
+            QOrganizerItemManager::Error tempError = QOrganizerItemManager::NoError;
+            QOrganizerItemInstanceOrigin origin = theOrganizerItem->detail<QOrganizerItemInstanceOrigin>();
+            QOrganizerItemLocalId parentId = origin.parentLocalId();
+            QOrganizerEvent parentEvent = item(parentId, QOrganizerItemFetchHint(), &tempError);
+            QDate originalDate = origin.originalDate();
+            QList<QDate> currentExceptionDates = parentEvent.exceptionDates();
+            if (!currentExceptionDates.contains(originalDate)) {
+                currentExceptionDates.append(originalDate);
+                parentEvent.setExceptionDates(currentExceptionDates);
+                int parentEventIndex = d->m_organizeritemIds.indexOf(parentEvent.localId());
+                d->m_organizeritems.replace(parentEventIndex, parentEvent);
+                changeSet.insertChangedItem(parentEvent.localId()); // is this correct?  it's an exception, so change parent?
+            }
+        } else if (theOrganizerItem->type() == QOrganizerItemType::TypeTodoOccurrence) {
+            // update the todo by adding an EX-DATE which corresponds to the original date of the occurrence being saved.
+            QOrganizerItemManager::Error tempError = QOrganizerItemManager::NoError;
+            QOrganizerItemInstanceOrigin origin = theOrganizerItem->detail<QOrganizerItemInstanceOrigin>();
+            QOrganizerItemLocalId parentId = origin.parentLocalId();
+            QOrganizerTodo parentTodo = item(parentId, QOrganizerItemFetchHint(), &tempError);
+            QDate originalDate = origin.originalDate();
+            QList<QDate> currentExceptionDates = parentTodo.exceptionDates();
+            if (!currentExceptionDates.contains(originalDate)) {
+                currentExceptionDates.append(originalDate);
+                parentTodo.setExceptionDates(currentExceptionDates);
+                int parentTodoIndex = d->m_organizeritemIds.indexOf(parentTodo.localId());
+                d->m_organizeritems.replace(parentTodoIndex, parentTodo);
+                changeSet.insertChangedItem(parentTodo.localId()); // is this correct?  it's an exception, so change parent?
+            }
+        }
+
         // finally, add the organizer item to our internal lists and return
-        d->m_organizeritems.append(*theOrganizerItem);                   // add organizer item to list
+        d->m_organizeritems.append(*theOrganizerItem);              // add organizer item to list
         d->m_organizeritemIds.append(theOrganizerItem->localId());  // track the organizer item id.
 
         changeSet.insertAddedItem(theOrganizerItem->localId());
