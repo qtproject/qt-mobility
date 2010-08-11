@@ -47,7 +47,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkFetchByIdRequest
-    \brief The QLandmarkFetchRequest class allows a client to asynchronously
+    \brief The QLandmarkFetchByIdRequest class allows a client to asynchronously
     request a list of landmarks by id from a landmark manager.
 
     For a QLandmarkFetchByIdRequest, the resultsAvailable() signal will be emitted when the resultant

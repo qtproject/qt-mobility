@@ -42,9 +42,9 @@
 #ifndef QGALLERYQUERYMODEL_H
 #define QGALLERYQUERYMODEL_H
 
-#include <QtCore/qabstractitemmodel.h>
-
 #include <qgalleryqueryrequest.h>
+
+#include <QtCore/qabstractitemmodel.h>
 
 QTM_BEGIN_NAMESPACE
 

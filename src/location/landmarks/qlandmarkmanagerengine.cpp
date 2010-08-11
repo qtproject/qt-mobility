@@ -237,14 +237,14 @@ QLandmarkCategory QLandmarkManagerEngine::category(const QLandmarkCategoryId &ca
 
 /*!
     Returns a list of categories which match the given \a categoryIds.  The engine will populate \a errorMap
-    (the map of indices of the \a landmarkIds list an error) for the indexes where the category could not
+    (the map of indices of the \a categoryIds list an error) for the indexes where the category could not
     be retrieved.
 
     Overall operation errors are stored in \a error and
     \a errorString.  \a error is set to QLandmarkManager::NoError, if
     all categories were successfully retrieved.
 */
-QList<QLandmarkCategory> QLandmarkManagerEngine::categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds,
+QList<QLandmarkCategory> QLandmarkManagerEngine::categories(const QList<QLandmarkCategoryId> &categoryIds,
                                                             QMap<int, QLandmarkManager::Error> *errorMap,
                                                             QLandmarkManager::Error *error, QString *errorString) const
 {
@@ -506,7 +506,7 @@ QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::TransferO
     \fn QLandmarkManager::SupportLevel QLandmarkManagerEngine::sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders,
                                                             QLandmarkManager::Error *error, QString *errorString) const
 
-    Returns the support level the manager engine provides for the given \a sort orders.  Errors are stored in \a error
+    Returns the support level the manager engine provides for the given \a sortOrders.  Errors are stored in \a error
     and \a errorString.
 */
 

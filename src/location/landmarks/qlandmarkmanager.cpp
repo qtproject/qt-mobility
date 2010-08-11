@@ -58,9 +58,32 @@
 
 QTM_USE_NAMESPACE
 
+/*!
+   \variable QLandmarkManager::Gpx
+   The format constant to define using the kml format in the import and export functions.
+   \sa importLandmarks(), exportLandmarks()
+*/
 Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Gpx, "Gpx");
+
+/*!
+   \variable QLandmarkManager::Lmx
+   The format constant to define using the kml format in the import and export functions.
+   \sa importLandmarks(), exportLandmarks()
+*/
 Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Lmx, "Lmx");
+
+/*!
+   \variable QLandmarkManager::Kml
+   The format constant to define using the kml format in the import and export functions.
+   \sa importLandmarks(), exportLandmarks()
+*/
 Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kml, "Kml");
+
+/*!
+   \variable QLandmarkManager::Kmz
+   The format constant to define using the kmx format in the import and export functions.
+   \sa importLandmarks(), exportLandmarks()
+*/
 Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
 
 /*!
@@ -461,7 +484,7 @@ QLandmarkCategory QLandmarkManager::category(const QLandmarkCategoryId &category
     (the map of indices of the \a categoryIds list to an error) only with the indexes where the category could not
     be retrieved.
 
-    The \a QLandmarkManager::error() function will only return \c QLandmarkManager::NoError if
+    The \c QLandmarkManager::error() function will only return \c QLandmarkManager::NoError if
     all categories were successfully retrieved.
  */
 QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCategoryId> &categoryIds,
@@ -625,7 +648,7 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, int 
     (the map of indices of the \a landmarkIds list an error) only with the indexes where the landmark could not
     be retrieved.
 
-    The \a QLandmarkManager::error() function will only return \c QLandmarkManager::NoError if
+    The \c QLandmarkManager::error() function will only return \c QLandmarkManager::NoError if
     all landmarks were successfully retrieved.
 
 */
@@ -786,7 +809,7 @@ bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &f
     Note that the \c AttachSingleCategory option has no meaning during
     export and the manager will export as if \a option was \c IncludeCategoryData.
     Also, be aware that some file formats may not support categories at all and for
-    these formats, the \a option is always treated as if it was \a ExcludeCategoryData.
+    these formats, the \a option is always treated as if it was \c ExcludeCategoryData.
 
     Returns true if all specified landmarks were successfully exported,
     otherwise returns false.  It may be possible that only a subset
@@ -836,7 +859,7 @@ QStringList QLandmarkManager::supportedFormats(QLandmarkManager::TransferOperati
     Note that the \c AttachSingleCategory option has no meaning during
     export and the manager will export as if \a option was \c IncludeCategoryData.
     Also, be aware that some file formats may not support categories at all and for
-    these formats, the \a option is always treated as if it was \a ExcludeCategoryData.
+    these formats, the \a option is always treated as if it was \c ExcludeCategoryData.
 
     Returns true if all specified landmarks were successfully exported,
     otherwise returns false.  It may be possible that only a subset

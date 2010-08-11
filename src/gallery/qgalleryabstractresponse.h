@@ -42,7 +42,7 @@
 #ifndef QGALLERYABSTRACTRESPONSE_H
 #define QGALLERYABSTRACTRESPONSE_H
 
-#include "qgalleryabstractrequest.h"
+#include <qgalleryabstractrequest.h>
 
 #include <QtCore/qstringlist.h>
 

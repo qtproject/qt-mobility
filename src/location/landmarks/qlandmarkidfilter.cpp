@@ -57,8 +57,7 @@ QTM_BEGIN_NAMESPACE
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkIdFilter)
 
 /*!
-    Creates a filter that selects landmarks using a list of landmark \a ids and a
-    \a matchingScheme.
+    Creates a filter that selects landmarks using a list of landmark \a ids.
 */
 QLandmarkIdFilter::QLandmarkIdFilter(const QList<QLandmarkId> &ids)
         : QLandmarkFilter(new QLandmarkIdFilterPrivate(ids)) {}

@@ -182,8 +182,9 @@ QLandmarkCategoryId QLandmarkImportRequest::categoryId() const
 }
 
 /*!
-    Sets the identifier of the category which all landmarks are assigned to
-    if QLandmarkManager::AttachSingleCategory is used as the import option.
+    Sets the identifier of the category to which all landmarks are assigned to,
+    if QLandmarkManager::AttachSingleCategory is used as the import option, to
+    \a categoryId.
 */
 void QLandmarkImportRequest::setCategoryId(const QLandmarkCategoryId &categoryId)
 {
