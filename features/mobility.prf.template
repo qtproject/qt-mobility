@@ -71,7 +71,6 @@ contains(MOBILITY, contacts) {
 contains(MOBILITY, messaging) {
     INCLUDEPATH += $${MOBILITY_INCLUDE}/QtMessaging
     qtAddLibrary(QtMessaging)
-    simulator:qtAddLibrary(qtopiamail)
 }
 
 contains(MOBILITY, versit) {

@@ -156,11 +156,7 @@
 #    else
 #      define Q_SERVICEFW_EXPORT Q_DECL_IMPORT
 #    endif
-#    ifndef SIMULATOR_APPLICATION
-#      define Q_SYSINFO_EXPORT Q_DECL_IMPORT
-#    else
-#      define Q_SYSINFO_EXPORT Q_DECL_EXPORT
-#    endif
+#    define Q_SYSINFO_EXPORT Q_DECL_IMPORT
 #    define Q_SENSORS_EXPORT Q_DECL_IMPORT
 #    define Q_FEEDBACK_EXPORT Q_DECL_IMPORT
 #    define Q_GALLERY_EXPORT Q_DECL_IMPORT

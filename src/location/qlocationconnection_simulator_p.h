@@ -39,54 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPOSITIONINFODATA_SIMULATOR_P_H
-#define QGEOPOSITIONINFODATA_SIMULATOR_P_H
+#ifndef QLOCATIONCONNECTION_H
+#define QLOCATIONCONNECTION_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qmobilityglobal.h"
-#include <QtCore/QMetaType>
-#include <QtCore/QDateTime>
+#include "qlocationdata_simulator_p.h"
+#include <mobilityconnection_p.h>
 
 QT_BEGIN_HEADER
+
 QTM_BEGIN_NAMESPACE
 
-struct QGeoPositionInfoData
+namespace Simulator
 {
-    // Coordinate information
-    double latitude;
-    double longitude;
-    double altitude;
+    class LocationConnection : public QObject
+    {
+        Q_OBJECT
+    public:
+        LocationConnection(MobilityConnection *mobilityCon);
+        virtual ~LocationConnection() {}
 
-    // DateTime info
-//    int year;
-//    int month;
-//    int day;
-//    int hour;
-//    int minutes;
-//    int seconds;
-//    int miliseconds;
-    QDateTime dateTime;
+        void getInitialData();
 
-    int minimumInterval;
-    bool enabled;
-};
+    private slots:
+        void setLocationData(const QtMobility::QGeoPositionInfoData &);
+        void setSatelliteData(const QtMobility::QGeoSatelliteInfoData &);
+        void initialLocationDataSent();
 
-void qt_registerLocationTypes();
+    private:
+        MobilityConnection *mConnection;
+        bool mInitialDataReceived;
+    };
+} // end namespace Simulator
+
+void ensureSimulatorConnection();
+QGeoPositionInfoData *qtPositionInfo();
+QGeoSatelliteInfoData *qtSatelliteInfo();
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QtMobility::QGeoPositionInfoData)
-
-QT_END_HEADER
-
-#endif // QGEOPOSITIONINFODATA_SIMULATOR_P_H
+#endif // QLOCATIONCONNECTION_H

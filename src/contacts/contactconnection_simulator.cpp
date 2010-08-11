@@ -121,7 +121,7 @@ void ContactConnection::initialContactDataSent()
 
 void ContactConnection::setContactData(const QContactSimulatorData &data)
 {
-    QContactMemoryEngineData *edata = mEngine->d;
+    QContactMemoryEngineData *edata = QContactMemoryEngineData::data(mEngine);
     edata->m_selfContactId = data.m_selfContactId;
     edata->m_contacts = data.m_contacts;
     edata->m_contactIds = data.m_contactIds;
@@ -141,13 +141,14 @@ void ContactConnection::addContact(QContact contact)
 
     // if the created contact would get a too high id, delete
     // the contacts that the simulator knows nothing about
-    if (mEngine->d->m_nextContactId + 1 > contact.localId()) {
-        for (QContactLocalId id = contact.localId(); id <= mEngine->d->m_nextContactId; ++id)
+    QContactMemoryEngineData *edata = QContactMemoryEngineData::data(mEngine);
+    if (edata->m_nextContactId + 1 > contact.localId()) {
+        for (QContactLocalId id = contact.localId(); id <= edata->m_nextContactId; ++id)
             mEngine->removeContact(id, changeSet, &error);
     }
 
     // make sure the inserted contact gets the same id as in the simulator
-    mEngine->d->m_nextContactId = contact.localId() - 1;
+    edata->m_nextContactId = contact.localId() - 1;
 
     // add (set localid to 0 first, otherwise the engine thinks we want to update a contact)
     QContactId newId = contact.id();

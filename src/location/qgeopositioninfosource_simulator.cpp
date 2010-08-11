@@ -40,8 +40,9 @@
 ****************************************************************************/
 
 #include "qgeopositioninfosource_simulator_p.h"
-#include "qgeopositioninfodata_simulator_p.h"
+#include "qlocationdata_simulator_p.h"
 #include "mobilitysimulatorglobal.h"
+#include "qlocationconnection_simulator_p.h"
 #include <mobilityconnection_p.h>
 
 #include <private/qsimulatordata_p.h>
@@ -52,8 +53,6 @@
 #include <QtNetwork/QLocalSocket>
 
 QTM_BEGIN_NAMESPACE
-
-Q_GLOBAL_STATIC(QGeoPositionInfoData, qtPositionInfo)
 
 using namespace QtSimulatorPrivate;
 
@@ -69,52 +68,7 @@ namespace Simulator
         QGeoCoordinate coord(data.latitude, data.longitude, data.altitude);
         return QGeoPositionInfo(coord, timestamp);
     }
-
-    LocationConnection::LocationConnection(MobilityConnection *mobilityCon)
-        : QObject(mobilityCon)
-        , mConnection(mobilityCon)
-        , mInitialDataReceived(false)
-    {
-        qt_registerLocationTypes();
-        mobilityCon->addMessageHandler(this);
-    }
-
-
-    void LocationConnection::getInitialData()
-    {
-        RemoteMetacall<void>::call(mConnection->sendSocket(), NoSync, "setRequestsLocationInfo");
-
-        while (!mInitialDataReceived) {
-            mConnection->receiveSocket()->waitForReadyRead(100);
-            mConnection->onReadyRead();
-        }
-    }
-
-    void LocationConnection::initialLocationDataSent()
-    {
-        mInitialDataReceived = true;
-    }
-
-    void LocationConnection::setLocationData(const QGeoPositionInfoData &data)
-    {
-        *qtPositionInfo() = data;
-    }
-
-} // namespace
-
-void ensureSimulatorConnection()
-{
-    using namespace Simulator;
-
-    static bool connected = false;
-    if (connected)
-        return;
-
-    connected = true;
-    MobilityConnection *connection = MobilityConnection::instance();
-    LocationConnection *locationConnection = new LocationConnection(connection);
-    locationConnection->getInitialData();
-}
+} //namespace
 
 // Location API
 

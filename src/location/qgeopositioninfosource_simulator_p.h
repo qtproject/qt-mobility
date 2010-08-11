@@ -44,36 +44,13 @@
 
 #include "qgeopositioninfosource.h"
 #include "qgeopositioninfo.h"
-#include "qgeopositioninfodata_simulator_p.h"
+#include "qlocationdata_simulator_p.h"
 
 QT_BEGIN_HEADER
 
 class QTimer;
 
 QTM_BEGIN_NAMESPACE
-
-namespace Simulator
-{
-    class MobilityConnection;
-
-    class LocationConnection : public QObject
-    {
-        Q_OBJECT
-    public:
-        LocationConnection(MobilityConnection *mobilityCon);
-        virtual ~LocationConnection() {}
-
-        void getInitialData();
-
-    private slots:
-        void setLocationData(const QtMobility::QGeoPositionInfoData &);
-        void initialLocationDataSent();
-
-    private:
-        MobilityConnection *mConnection;
-        bool mInitialDataReceived;
-    };
-} // end namespace Simulator
 
 class QGeoPositionInfoSourceSimulator : public QGeoPositionInfoSource
 {
