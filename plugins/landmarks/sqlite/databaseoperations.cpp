@@ -64,6 +64,7 @@
 #include <qlandmarkremoverequest.h>
 #include <qlandmarkcategoryidfetchrequest.h>
 #include <qlandmarkcategoryfetchrequest.h>
+#include <qlandmarkcategoryfetchbyidrequest.h>
 #include <qlandmarkcategorysaverequest.h>
 #include <qlandmarkcategoryremoverequest.h>
 #include <qlandmarkimportrequest.h>
@@ -2686,6 +2687,29 @@ void DatabaseOperations::QueryRun::run()
                                           Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
                 break;
             }
+        case QLandmarkAbstractRequest::CategoryFetchByIdRequest :
+            {
+                QLandmarkCategoryFetchByIdRequest *byIdRequest = static_cast<QLandmarkCategoryFetchByIdRequest *> (request);
+                QList<QLandmarkCategoryId> categoryIds = byIdRequest->categoryIds();
+                QList<QLandmarkCategory> categories =  DatabaseOperations::categories(connectionName, categoryIds,&errorMap,
+                                                                                    &error, &errorString,managerUri, this);
+
+                if (this->isCanceled) {
+                    categories.clear();
+                    error = QLandmarkManager::CancelError;
+                    errorString = "Category save request was canceled";
+                }
+
+                QMetaObject::invokeMethod(engine, "updateLandmarkCategoryFetchByIdRequest",
+                                          Q_ARG(QLandmarkCategoryFetchByIdRequest *,byIdRequest),
+                                          Q_ARG(QList<QLandmarkCategory>, categories),
+                                          Q_ARG(QLandmarkManager::Error, error),
+                                          Q_ARG(QString, errorString),
+                                          Q_ARG(ERROR_MAP, errorMap),
+                                          Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+
+                break;
+            }
         case QLandmarkAbstractRequest::CategorySaveRequest :
         {
             QLandmarkCategorySaveRequest *saveRequest = static_cast<QLandmarkCategorySaveRequest *> (request);
@@ -2698,7 +2722,6 @@ void DatabaseOperations::QueryRun::run()
                 categories.clear();
                 error = QLandmarkManager::CancelError;
                 errorString = "Category save request was canceled";
-
             }
 
             QMetaObject::invokeMethod(engine, "updateLandmarkCategorySaveRequest",

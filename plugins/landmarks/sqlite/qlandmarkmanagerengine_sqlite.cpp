@@ -79,6 +79,7 @@ Q_DECLARE_METATYPE(QLandmarkCategorySaveRequest *)
 Q_DECLARE_METATYPE(QLandmarkCategoryRemoveRequest *)
 Q_DECLARE_METATYPE(QLandmarkCategoryIdFetchRequest *)
 Q_DECLARE_METATYPE(QLandmarkCategoryFetchRequest *)
+Q_DECLARE_METATYPE(QLandmarkCategoryFetchByIdRequest *)
 Q_DECLARE_METATYPE(QLandmarkImportRequest *)
 Q_DECLARE_METATYPE(QLandmarkExportRequest *)
 Q_DECLARE_METATYPE(ERROR_MAP)
@@ -103,6 +104,7 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
     qRegisterMetaType<QLandmarkRemoveRequest *>();
     qRegisterMetaType<QLandmarkCategoryIdFetchRequest *>();
     qRegisterMetaType<QLandmarkCategoryFetchRequest *>();
+    qRegisterMetaType<QLandmarkCategoryFetchByIdRequest *>();
     qRegisterMetaType<QLandmarkCategorySaveRequest *>();
     qRegisterMetaType<QLandmarkCategoryRemoveRequest *>();
     qRegisterMetaType<QLandmarkImportRequest *>();
@@ -722,6 +724,12 @@ void QLandmarkManagerEngineSqlite::updateLandmarkCategoryFetchRequest(QLandmarkC
         QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState)
 {
     QLandmarkManagerEngine::updateLandmarkCategoryFetchRequest(req, result, error, errorString, newState);
+}
+
+void QLandmarkManagerEngineSqlite::updateLandmarkCategoryFetchByIdRequest(QLandmarkCategoryFetchByIdRequest* req, const QList<QLandmarkCategory>& result,
+                            QLandmarkManager::Error error, const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState)
+{
+    QLandmarkManagerEngine::updateLandmarkCategoryFetchByIdRequest(req, result, error, errorString, errorMap, newState);
 }
 
 void QLandmarkManagerEngineSqlite::updateLandmarkCategorySaveRequest(QLandmarkCategorySaveRequest* req, const QList<QLandmarkCategory>& result,

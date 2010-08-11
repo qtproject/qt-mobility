@@ -71,6 +71,7 @@
 #include <qlandmarkremoverequest.h>
 #include <qlandmarkcategoryidfetchrequest.h>
 #include <qlandmarkcategoryfetchrequest.h>
+#include <qlandmarkcategoryfetchbyidrequest.h>
 #include <qlandmarkcategorysaverequest.h>
 #include <qlandmarkcategoryremoverequest.h>
 #include <qlandmarkimportrequest.h>
@@ -2134,14 +2135,18 @@ void tst_QLandmarkManagerEngineSqlite::retrieveMultipleCategoriesAsync() {
     QLandmarkCategory cat1;
     cat1.setName("CAT1");
     QVERIFY(m_manager->saveCategory(&cat1));
+    catIds << cat1.categoryId();
 
     QLandmarkCategory cat3;
     cat3.setName("CAT3");
     QVERIFY(m_manager->saveCategory(&cat3));
+    catIds << cat3.categoryId();
 
     QLandmarkCategory cat2;
     cat2.setName("CAT2");
     QVERIFY(m_manager->saveCategory(&cat2));
+    catIds << cat2.categoryId();
+
 
     QLandmarkCategory cat1lc;
     cat1lc.setName("cat1");
@@ -2232,6 +2237,45 @@ void tst_QLandmarkManagerEngineSqlite::retrieveMultipleCategoriesAsync() {
     QCOMPARE(cats.at(3).name(), QString("CAT3"));
     QCOMPARE(cats.at(4).name(), QString("CAT2"));
     QCOMPARE(cats.at(5).name(), QString("CAT1"));
+
+    int i=1;
+    QList<QLandmarkCategoryId> invalidCatIds;
+    while (invalidCatIds.size() < 3) {
+        QLandmarkCategoryId id;
+        id.setManagerUri(uri);
+        id.setLocalId(QString::number(i));
+        QLandmarkCategory cat = m_manager->category(id);
+        if (!cat.categoryId().isValid()) {
+            invalidCatIds << id;
+        }
+        ++i;
+    }
+
+    catIds.insert(1, invalidCatIds.at(0));
+    catIds.insert(3, invalidCatIds.at(1));
+    catIds.insert(5, invalidCatIds.at(2));
+
+    //Use a QLandmarkCategoryFetchByIdRequest
+    QLandmarkCategoryFetchByIdRequest fetchByIdRequest(m_manager);
+    fetchByIdRequest.setCategoryIds(catIds);
+    QSignalSpy spy2(&fetchByIdRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+    fetchByIdRequest.start();
+    QVERIFY(waitForAsync(spy2, &fetchByIdRequest, QLandmarkManager::DoesNotExistError));
+
+    cats = fetchByIdRequest.categories();
+    QCOMPARE(cats.count(), 3);
+    QCOMPARE(cats.at(0).name(), QString("CAT1"));
+    QCOMPARE(cats.at(0).categoryId().isValid(), true);
+    QCOMPARE(cats.at(1).name(), QString("CAT3")); //(supposed to be 3)
+    QCOMPARE(cats.at(1).categoryId().isValid(), true);
+    QCOMPARE(cats.at(2).name(), QString("CAT2"));
+    QCOMPARE(cats.at(2).categoryId().isValid(), true);
+
+    QMap<int, QLandmarkManager::Error> errorMap = fetchByIdRequest.errorMap();
+    QCOMPARE(fetchByIdRequest.errorMap().keys().count(),3);
+    QCOMPARE(errorMap.keys().at(0), 1);
+    QCOMPARE(errorMap.keys().at(1), 3);
+    QCOMPARE(errorMap.keys().at(2), 5);
 }
 
 void tst_QLandmarkManagerEngineSqlite::retrieveMultipleLandmarks() {
