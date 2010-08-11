@@ -66,6 +66,7 @@
 #include <qlandmarkabstractrequest.h>
 #include <qlandmarkidfetchrequest.h>
 #include <qlandmarkfetchrequest.h>
+#include <qlandmarkfetchbyidrequest.h>
 #include <qlandmarksaverequest.h>
 #include <qlandmarkremoverequest.h>
 #include <qlandmarkcategoryidfetchrequest.h>
@@ -2038,6 +2039,7 @@ void tst_QLandmarkManagerEngineSqlite::retrieveMultipleCategories() {
     catIds.insert(3, invalidCatIds.at(1));
     catIds.insert(5, invalidCatIds.at(2));
 
+    //retrieve categories using a set ofids
     QMap<int, QLandmarkManager::Error> errorMap;
     cats = m_manager->categories(catIds,&errorMap);
     QCOMPARE(cats.count(), 3);
@@ -2277,7 +2279,7 @@ void tst_QLandmarkManagerEngineSqlite::retrieveMultipleLandmarks() {
     QCOMPARE(lms.at(2).name(), QString("LM3"));
     QCOMPARE(lms.at(2).landmarkId().isValid(), true);
 
-    //retrieve using invalid ids
+    //retrieve using id based landmarks function.
     lmIds.insert(1, invalidLmIds.at(0));
     lmIds.insert(3, invalidLmIds.at(1));
     lmIds.insert(5, invalidLmIds.at(2));
@@ -2293,6 +2295,15 @@ void tst_QLandmarkManagerEngineSqlite::retrieveMultipleLandmarks() {
     QLandmarkIdFilter idFilter(lmIds);
     lms = m_manager->landmarks(idFilter);
     QVERIFY(m_manager->error() == QLandmarkManager::NoError);
+    QCOMPARE(lms.size(), 3);
+    QCOMPARE(lms.at(0).name(), QString("LM1"));
+    QCOMPARE(lms.at(0).landmarkId().isValid(), true);
+    QCOMPARE(lms.at(1).name(), QString("LM2"));
+    QCOMPARE(lms.at(1).landmarkId().isValid(), true);
+    QCOMPARE(lms.at(2).name(), QString("LM3"));
+    QCOMPARE(lms.at(2).landmarkId().isValid(), true);
+
+    lms = m_manager->landmarks();
     QCOMPARE(lms.size(), 3);
     QCOMPARE(lms.at(0).name(), QString("LM1"));
     QCOMPARE(lms.at(0).landmarkId().isValid(), true);
@@ -2370,6 +2381,27 @@ void tst_QLandmarkManagerEngineSqlite::retrieveMultipleLandmarksAsync() {
     QCOMPARE(lms.at(1).landmarkId().isValid(), true);
     QCOMPARE(lms.at(2).name(), QString("LM3"));
     QCOMPARE(lms.at(2).landmarkId().isValid(), true);
+
+    QLandmarkFetchByIdRequest fetchByIdRequest(m_manager);
+    fetchByIdRequest.setLandmarkIds(lmIds);
+    QSignalSpy spy2(&fetchByIdRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+    fetchByIdRequest.start();
+    QVERIFY(waitForAsync(spy2, &fetchByIdRequest, QLandmarkManager::DoesNotExistError));
+
+    lms = fetchByIdRequest.landmarks();
+    QCOMPARE(lms.count(), 3);
+    QCOMPARE(lms.at(0).name(), QString("LM1"));
+    QCOMPARE(lms.at(0).landmarkId().isValid(), true);
+    QCOMPARE(lms.at(1).name(), QString("LM2"));
+    QCOMPARE(lms.at(1).landmarkId().isValid(), true);
+    QCOMPARE(lms.at(2).name(), QString("LM3"));
+    QCOMPARE(lms.at(2).landmarkId().isValid(), true);
+
+    QMap<int, QLandmarkManager::Error> errorMap = fetchByIdRequest.errorMap();
+    QCOMPARE(fetchByIdRequest.errorMap().keys().count(),3);
+    QCOMPARE(errorMap.keys().at(0), 1);
+    QCOMPARE(errorMap.keys().at(1), 3);
+    QCOMPARE(errorMap.keys().at(2), 5);
 }
 
 void tst_QLandmarkManagerEngineSqlite::saveMultipleLandmarks() {

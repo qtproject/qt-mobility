@@ -59,6 +59,7 @@
 #include <qlandmarkabstractrequest.h>
 #include <qlandmarkidfetchrequest.h>
 #include <qlandmarkfetchrequest.h>
+#include <qlandmarkfetchbyidrequest.h>
 #include <qlandmarksaverequest.h>
 #include <qlandmarkremoverequest.h>
 #include <qlandmarkcategoryidfetchrequest.h>
@@ -2596,6 +2597,24 @@ void DatabaseOperations::QueryRun::run()
                                           Q_ARG(QLandmarkManager::Error, error),
                                           Q_ARG(QString, errorString),
                                           Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                break;
+            }
+        case QLandmarkAbstractRequest::LandmarkFetchByIdRequest :
+            {
+
+                QLandmarkFetchByIdRequest *byIdRequest = static_cast<QLandmarkFetchByIdRequest *> (request);
+                QList<QLandmarkId> lmIds= byIdRequest->landmarkIds();
+                QList<QLandmark> lms = DatabaseOperations::landmarks(connectionName, lmIds, &errorMap,
+                                                                &error, &errorString, managerUri, this);
+
+                QMetaObject::invokeMethod(engine, "updateLandmarkFetchByIdRequest",
+                                          Q_ARG(QLandmarkFetchByIdRequest *,byIdRequest),
+                                          Q_ARG(QList<QLandmark>,lms),
+                                          Q_ARG(QLandmarkManager::Error, error),
+                                          Q_ARG(QString, errorString),
+                                          Q_ARG(ERROR_MAP, errorMap),
+                                          Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+
                 break;
             }
         case QLandmarkAbstractRequest::LandmarkSaveRequest :
