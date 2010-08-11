@@ -557,7 +557,7 @@ bool QOrganizerItemManager::removeItems(const QList<QOrganizerItemLocalId>& orga
 /*!
   Returns the id of the default collection managed by this manager
  */
-QOrganizerCollectionId QOrganizerItemManager::defaultCollectionId() const
+QOrganizerCollectionLocalId QOrganizerItemManager::defaultCollectionId() const
 {
     d->m_error = QOrganizerItemManager::NoError;
     return d->m_engine->defaultCollectionId(&d->m_error);
@@ -566,7 +566,7 @@ QOrganizerCollectionId QOrganizerItemManager::defaultCollectionId() const
 /*!
   Returns the ids of collections managed by this manager.
  */
-QList<QOrganizerCollectionId> QOrganizerItemManager::collectionIds() const
+QList<QOrganizerCollectionLocalId> QOrganizerItemManager::collectionIds() const
 {
     d->m_error = QOrganizerItemManager::NoError;
     return d->m_engine->collectionIds(&d->m_error);
@@ -579,7 +579,7 @@ QList<QOrganizerCollectionId> QOrganizerItemManager::collectionIds() const
   not specified, this function will return
   all collections managed by this manager.
  */
-QList<QOrganizerCollection> QOrganizerItemManager::collections(const QList<QOrganizerCollectionId>& collectionIds) const
+QList<QOrganizerCollection> QOrganizerItemManager::collections(const QList<QOrganizerCollectionLocalId>& collectionIds) const
 {
     d->m_error = QOrganizerItemManager::NoError;
     return d->m_engine->collections(collectionIds, &d->m_error);

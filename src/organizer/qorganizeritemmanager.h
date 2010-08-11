@@ -130,14 +130,13 @@ public:
 
     bool saveItem(QOrganizerItem* item, const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId());
     bool saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId(), QMap<int, QOrganizerItemManager::Error>* errorMap = 0);
-    //bool saveItems(QList< QPair<QOrganizerItem, QOrganizerItemId> >* itemsInCollection, QMap<int, QOrganizerItemManager::Error>* errorMap); // probably not needed.
     bool removeItem(const QOrganizerItemLocalId& itemId);
     bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap);
 
     /* Collections - every item belongs to one or more collections */
-    QOrganizerCollectionId defaultCollectionId() const;
-    QList<QOrganizerCollectionId> collectionIds() const;
-    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionId>& collectionIds = QList<QOrganizerCollectionId>()) const;
+    QOrganizerCollectionLocalId defaultCollectionId() const;
+    QList<QOrganizerCollectionLocalId> collectionIds() const;
+    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds = QList<QOrganizerCollectionLocalId>()) const;
     bool saveCollection(QOrganizerCollection* collection);
     bool removeCollection(const QOrganizerCollectionLocalId& collectionId);
 

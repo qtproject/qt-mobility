@@ -1389,22 +1389,22 @@ bool QOrganizerItemManagerEngine::removeItems(const QList<QOrganizerItemLocalId>
 /*!
   XXX TODO
  */
-QOrganizerCollectionId QOrganizerItemManagerEngine::defaultCollectionId(QOrganizerItemManager::Error* error) const
+QOrganizerCollectionLocalId QOrganizerItemManagerEngine::defaultCollectionId(QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NotSupportedError;
-    return QOrganizerCollectionId();
+    return QOrganizerCollectionLocalId();
 }
 
-QList<QOrganizerCollectionId> QOrganizerItemManagerEngine::collectionIds(QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollectionLocalId> QOrganizerItemManagerEngine::collectionIds(QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NotSupportedError;
-    return QList<QOrganizerCollectionId>();
+    return QList<QOrganizerCollectionLocalId>();
 }
 
 /*!
   XXX TODO
  */
-QList<QOrganizerCollection> QOrganizerItemManagerEngine::collections(const QList<QOrganizerCollectionId>& collectionIds, QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollection> QOrganizerItemManagerEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
 {
     Q_UNUSED(collectionIds);
 

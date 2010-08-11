@@ -103,9 +103,9 @@ public:
     virtual bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
 
     /* Collections - every item belongs to one or more collections */
-    virtual QOrganizerCollectionId defaultCollectionId(QOrganizerItemManager::Error* error) const;
-    virtual QList<QOrganizerCollectionId> collectionIds(QOrganizerItemManager::Error* error) const;
-    virtual QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionId>& collectionIds, QOrganizerItemManager::Error* error) const;
+    virtual QOrganizerCollectionLocalId defaultCollectionId(QOrganizerItemManager::Error* error) const;
+    virtual QList<QOrganizerCollectionLocalId> collectionIds(QOrganizerItemManager::Error* error) const;
+    virtual QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const;
     virtual bool saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error);
     virtual bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
 
