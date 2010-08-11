@@ -109,6 +109,11 @@ namespace DatabaseOperations {
                                QLandmarkManager::Error *error, QString *errorString,
                                const QString &managerUri, QueryRun *queryRun =0);
 
+    QList<QLandmark> landmarks(const QString &connectionName, const QList<QLandmarkId> &landmarkIds,
+                               QMap<int, QLandmarkManager::Error> *errorMap,
+                               QLandmarkManager::Error *error, QString *errorString,
+                               const QString &managerUri, QueryRun *queryRun =0);
+
     bool saveLandmarkHelper(const QString &connectionName, QLandmark* landmark,
                       QLandmarkManager::Error *error, QString *errorString,
                       const QString &managerUri);
@@ -149,6 +154,13 @@ namespace DatabaseOperations {
                                         int limit, int offset,
                                         QLandmarkManager::Error *error, QString *errorString,
                                         const QString &managerUri, bool needAll,
+                                        QueryRun *queryRun = 0);
+
+    QList<QLandmarkCategory> categories(const QString &connectionName,
+                                        const QList<QLandmarkCategoryId> &landmarkCategoryIds,
+                                        QMap<int, QLandmarkManager::Error> *errorMap,
+                                        QLandmarkManager::Error *error, QString *errorString,
+                                        const QString &managerUri,
                                         QueryRun *queryRun = 0);
 
     bool saveCategoryHelper(const QString &connectionName, QLandmarkCategory *category,

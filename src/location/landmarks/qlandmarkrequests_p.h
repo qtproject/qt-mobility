@@ -94,6 +94,20 @@ public:
     QList<QLandmark> landmarks;
 };
 
+class QLandmarkFetchByIdRequestPrivate : public QLandmarkAbstractRequestPrivate
+{
+public:
+    QLandmarkFetchByIdRequestPrivate(QLandmarkManager *mgr)
+        : QLandmarkAbstractRequestPrivate(mgr)
+    {
+        type = QLandmarkAbstractRequest::LandmarkFetchByIdRequest;
+    }
+
+    QList<QLandmarkId> landmarkIds;
+    QList<QLandmark> landmarks;
+    QMap<int, QLandmarkManager::Error> errorMap;
+};
+
 class QLandmarkRemoveRequestPrivate : public QLandmarkAbstractRequestPrivate
 {
 public:
@@ -145,17 +159,27 @@ public:
          limit(-1), offset(0)
     {
         type = QLandmarkAbstractRequest::CategoryFetchRequest;
-        matchingScheme = QLandmarkCategoryFetchRequest::MatchSubset;
     }
 
     QList<QLandmarkCategory> categories;
-    QList<QLandmarkCategoryId> categoryIds;
-    QLandmarkCategoryFetchRequest::MatchingScheme matchingScheme;
     QLandmarkNameSort sorting;
     int limit;
     int offset;
 };
 
+class QLandmarkCategoryFetchByIdRequestPrivate : public QLandmarkAbstractRequestPrivate
+{
+public:
+    QLandmarkCategoryFetchByIdRequestPrivate(QLandmarkManager *mgr)
+        :QLandmarkAbstractRequestPrivate(mgr)
+    {
+        type = QLandmarkAbstractRequest::CategoryFetchByIdRequest;
+    }
+
+    QList<QLandmarkCategoryId> categoryIds;
+    QList<QLandmarkCategory> categories;
+    QMap<int, QLandmarkManager::Error> errorMap;
+};
 
 class QLandmarkCategoryRemoveRequestPrivate : public QLandmarkAbstractRequestPrivate
 {

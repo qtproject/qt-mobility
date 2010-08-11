@@ -62,15 +62,6 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QLandmarkCategoryFetchRequest::MatchingScheme
-    Defines the matching behavior of the request when a specific set of category ids is to be retrieved.
-    \value MatchAll A category must be returned for every id assigned to the filter.
-                    Failure to match every id results in a QLandmarkManager::DoesNotExistError.
-    \value MatchSubset Every id does not have to be matched to a category.  Matching
-                       only a subset of the assigned ids is acceptable.
-*/
-
-/*!
     Creates a new category fetch request object with the given \a manager and \a parent.
 */
 QLandmarkCategoryFetchRequest::QLandmarkCategoryFetchRequest(QLandmarkManager *manager, QObject *parent)
@@ -93,63 +84,6 @@ QList<QLandmarkCategory> QLandmarkCategoryFetchRequest::categories() const
 {
     Q_D(const QLandmarkCategoryFetchRequest);
     return d->categories;
-}
-
-/*!
-    Returns a list of identifiers for categories which will be retrieved
-    by the fetch request.
-
-    By default no category ids are set, this means the fetch request
-    will fetch all categories.
-*/
-QList<QLandmarkCategoryId> QLandmarkCategoryFetchRequest::categoryIds() const
-{
-    Q_D(const QLandmarkCategoryFetchRequest);
-    return d->categoryIds;
-}
-
-/*!
-    Sets the categories to be retrieved by the request as a list of
-    \a categoryIds.
-
-    If \a categoryIds is empty, then the request will fetch all categories.
-*/
-void QLandmarkCategoryFetchRequest::setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds)
-{
-    Q_D(QLandmarkCategoryFetchRequest);
-    d->categoryIds = categoryIds;
-}
-
-/*!
-    Convenience function to set a single category identified by \a categoryId to be fetched.
-*/
-void QLandmarkCategoryFetchRequest::setCategoryId(const QLandmarkCategoryId &categoryId)
-{
-    Q_D(QLandmarkCategoryFetchRequest);
-    d->categoryIds.clear();
-    d->categoryIds.append(categoryId);
-}
-
-/*!
-    Returns the matching scheme for the fetch request.
-
-    By default the matching scheme is set to to \c MatchSubset.  The matching scheme
-    only has an effect when a particular set of category ids are assigned to the fetch request.
-    If all categories are to be retrieved, then the matching scheme is ignored.
-*/
-QLandmarkCategoryFetchRequest::MatchingScheme QLandmarkCategoryFetchRequest::matchingScheme() const
-{
-    Q_D(const QLandmarkCategoryFetchRequest);
-    return d->matchingScheme;
-}
-
-/*!
-    Sets the \a matchingScheme of the fetch request.
-*/
-void QLandmarkCategoryFetchRequest::setMatchingScheme(QLandmarkCategoryFetchRequest::MatchingScheme matchingScheme)
-{
-    Q_D(QLandmarkCategoryFetchRequest);
-    d->matchingScheme = matchingScheme;
 }
 
 /*!

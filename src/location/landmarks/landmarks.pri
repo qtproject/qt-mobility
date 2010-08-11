@@ -8,6 +8,7 @@ PUBLIC_HEADERS += \
                     landmarks/qlandmarkboxfilter.h \
                     landmarks/qlandmarkcategory.h \
                     landmarks/qlandmarkcategoryfetchrequest.h \
+                    landmarks/qlandmarkcategoryfetchbyidrequest.h \
                     landmarks/qlandmarkcategoryfilter.h \
                     landmarks/qlandmarkcategoryid.h \
                     landmarks/qlandmarkcategoryidfetchrequest.h \
@@ -15,6 +16,7 @@ PUBLIC_HEADERS += \
                     landmarks/qlandmarkcategorysaverequest.h \
                     landmarks/qlandmarkexportrequest.h \
                     landmarks/qlandmarkfetchrequest.h \
+                    landmarks/qlandmarkfetchbyidrequest.h \
                     landmarks/qlandmarkfilter.h \
                     landmarks/qlandmarkid.h \
                     landmarks/qlandmarkidfetchrequest.h \
@@ -57,6 +59,7 @@ SOURCES += \
             landmarks/qlandmarkboxfilter.cpp \
             landmarks/qlandmarkcategory.cpp \
             landmarks/qlandmarkcategoryfetchrequest.cpp \
+            landmarks/qlandmarkcategoryfetchbyidrequest.cpp \
             landmarks/qlandmarkcategoryfilter.cpp \
             landmarks/qlandmarkcategoryid.cpp \
             landmarks/qlandmarkcategoryidfetchrequest.cpp \
@@ -64,6 +67,7 @@ SOURCES += \
             landmarks/qlandmarkcategorysaverequest.cpp \
             landmarks/qlandmarkexportrequest.cpp \
             landmarks/qlandmarkfetchrequest.cpp \
+            landmarks/qlandmarkfetchbyidrequest.cpp \
             landmarks/qlandmarkfilter.cpp \
             landmarks/qlandmarkid.cpp \
             landmarks/qlandmarkidfetchrequest.cpp \

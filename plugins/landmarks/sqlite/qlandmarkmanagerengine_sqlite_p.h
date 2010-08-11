@@ -90,17 +90,22 @@ public:
     QLandmark landmark(const QLandmarkId &landmarkId,
                        QLandmarkManager::Error *error,
                        QString *errorString) const;
+    QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds,QMap<int, QLandmarkManager::Error> *errorMap,
+                                       QLandmarkManager::Error *error, QString *errorString) const;
     QList<QLandmark> landmarks(const QLandmarkFilter& filter,
                                int limit, int offset,
                                const QList<QLandmarkSortOrder>& sortOrders,
                                QLandmarkManager::Error *error,
                                QString *errorString) const;
+
     QLandmarkCategory category(const QLandmarkCategoryId &landmarkCategoryId,
                                QLandmarkManager::Error *error,
                                QString *errorString) const;
+
     QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds,
-                                        QLandmarkManager::Error *error,
-                                        QString *errorString) const;
+                                        QMap<int, QLandmarkManager::Error> *errorMap,
+                                        QLandmarkManager::Error *error, QString *errorString) const;
+
     QList<QLandmarkCategory> categories(int limit, int offset,
                                         const QLandmarkNameSort &nameSort,
                                         QLandmarkManager::Error *error,

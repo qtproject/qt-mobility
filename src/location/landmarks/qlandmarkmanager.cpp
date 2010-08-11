@@ -457,12 +457,15 @@ QLandmarkCategory QLandmarkManager::category(const QLandmarkCategoryId &category
 }
 
 /*!
-    Returns a list of categories identified by \a categoryIds.
+     Returns a list of categories which match the given \a categoryIds.  The manager will populate \a errorMap
+    (the map of indices of the \a categoryIds list to an error) only with the indexes where the category could not
+    be retrieved.
 
-    If any of the category ids cannot be found, no categories are returned
-    and an error is set.
+    The \a QLandmarkManager::error() function will only return \c QLandmarkManager::NoError if
+    all categories were successfully retrieved.
  */
-QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCategoryId> &categoryIds) const
+QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCategoryId> &categoryIds,
+                                                      QMap<int, QLandmarkManager::Error> *errorMap) const
 {
     Q_D(const QLandmarkManager);
 
@@ -473,11 +476,9 @@ QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCateg
     }
 
     QList<QLandmarkCategory> cats = d->engine->categories(categoryIds,
+                                    errorMap,
                                     &(d->errorCode),
                                     &(d->errorString));
-
-    if (d->errorCode != NoError)
-        return QList<QLandmarkCategory>();
 
     return cats;
 }
@@ -620,10 +621,15 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, int 
 }
 
 /*!
-    Returns a list of landmarks which match the given \a landmarkIds.
+    Returns a list of landmarks which match the given \a landmarkIds.  The manager will populate \a errorMap
+    (the map of indices of the \a landmarkIds list an error) only with the indexes where the landmark could not
+    be retrieved.
+
+    The \a QLandmarkManager::error() function will only return \c QLandmarkManager::NoError if
+    all landmarks were successfully retrieved.
 
 */
-QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkIds) const
+QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkIds, QMap<int, QLandmarkManager::Error> *errorMap) const
 {
     Q_D(const QLandmarkManager);
 
@@ -633,22 +639,10 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
         return QList<QLandmark>();
     }
 
-    QLandmarkIdFilter idFilter(landmarkIds);
-    idFilter.setMatchingScheme(QLandmarkIdFilter::MatchAll);
-    QList<QLandmarkSortOrder> sortOrders;
-
-    // use the error map to add to the error string?
-    // or use it to remove the landmarks which had errors?
-
-    QList<QLandmark> lms = d->engine->landmarks(idFilter,
-                                                -1, 0,
-                                                sortOrders,
+    QList<QLandmark> lms = d->engine->landmarks(landmarkIds,
+                                                errorMap,
                                                 &(d->errorCode),
                                                 &(d->errorString));
-
-    if (d->errorCode != NoError)
-        return QList<QLandmark>();
-
     return lms;
 }
 

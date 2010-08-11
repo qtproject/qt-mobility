@@ -49,7 +49,7 @@ contains(mobility_modules,location) {
     SUBDIRS +=  qlandmarkfilehandler_gpx
                 #qlandmarkfilehandler_lmx
     
-    SUBDIRS += qlandmarkmanagerengine_sqlite
+#disable for now    SUBDIRS += qlandmarkmanagerengine_sqlite
 }
 
 contains(mobility_modules,publishsubscribe) {

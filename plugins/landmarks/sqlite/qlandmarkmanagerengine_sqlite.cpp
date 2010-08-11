@@ -232,6 +232,15 @@ QList<QLandmark> QLandmarkManagerEngineSqlite::landmarks(const QLandmarkFilter &
     return DatabaseOperations::landmarks(m_dbConnectionName, filter, sortOrders, limit, offset, error, errorString, managerUri());
 }
 
+QList<QLandmark> QLandmarkManagerEngineSqlite::landmarks(const QList<QLandmarkId> &landmarkIds,
+                                                         QMap<int, QLandmarkManager::Error> *errorMap,
+                                                         QLandmarkManager::Error *error,
+                                                         QString *errorString) const
+{
+
+    return DatabaseOperations::landmarks(m_dbConnectionName, landmarkIds, errorMap, error, errorString, managerUri());
+}
+
 QLandmarkCategory QLandmarkManagerEngineSqlite::category(const QLandmarkCategoryId &landmarkCategoryId,
                                                          QLandmarkManager::Error *error,
                                                          QString *errorString) const
@@ -240,11 +249,12 @@ QLandmarkCategory QLandmarkManagerEngineSqlite::category(const QLandmarkCategory
 }
 
 QList<QLandmarkCategory> QLandmarkManagerEngineSqlite::categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds,
+                                                                  QMap<int, QLandmarkManager::Error> *errorMap,
                                                                   QLandmarkManager::Error *error,
                                                                   QString *errorString) const
 {
     QLandmarkNameSort nameSort;// this should be ignored in the following call
-    return DatabaseOperations::categories(m_dbConnectionName, landmarkCategoryIds, nameSort, -1, 0, error, errorString, managerUri(), true);
+    return DatabaseOperations::categories(m_dbConnectionName, landmarkCategoryIds, errorMap, error, errorString, managerUri());
 }
 
 QList<QLandmarkCategory> QLandmarkManagerEngineSqlite::categories(int limit, int offset,

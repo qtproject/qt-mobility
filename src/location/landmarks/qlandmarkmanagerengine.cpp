@@ -52,10 +52,12 @@
 #include "qlandmarkabstractrequest.h"
 #include "qlandmarkidfetchrequest.h"
 #include "qlandmarkfetchrequest.h"
+#include "qlandmarkfetchbyidrequest.h"
 #include "qlandmarkremoverequest.h"
 #include "qlandmarksaverequest.h"
 #include "qlandmarkcategoryidfetchrequest.h"
 #include "qlandmarkcategoryfetchrequest.h"
+#include "qlandmarkcategoryfetchbyidrequest.h"
 #include "qlandmarkcategoryremoverequest.h"
 #include "qlandmarkcategorysaverequest.h"
 #include "qlandmarkimportrequest.h"
@@ -195,6 +197,21 @@ QLandmark QLandmarkManagerEngine::landmark(const QLandmarkId &landmarkId, QLandm
 }
 
 /*!
+    Returns a list of landmarks which match the given \a landmarkIds.  The engine will populate \a errorMap
+    (the map of indices of the \a landmarkIds list an error) for the indexes where the landmark could not
+    be retrieved.
+
+    Overall operation errors are stored in \a error and
+    \a errorString.  \a error is set to QLandmarkManager::NoError, if
+    all landmarks were successfully retrieved.
+*/
+QList<QLandmark> QLandmarkManagerEngine::landmarks(const QList<QLandmarkId> &landmarkIds, QMap<int, QLandmarkManager::Error> *errorMap,
+                                        QLandmarkManager::Error *error, QString *errorString) const
+{
+    return QList<QLandmark>();
+}
+
+/*!
     Returns a list of landmarks which match the given \a filter and are sorted according to the \a sortOrders.
     The \a limit defines the maximum number of landmarks to return and the \a offset defines the index offset
     of the first landmark.  A \a limit of -1 means all matching landmarks should be returned.
@@ -219,11 +236,16 @@ QLandmarkCategory QLandmarkManagerEngine::category(const QLandmarkCategoryId &ca
 }
 
 /*!
-    Returns a list of categories identified by \a landmarkCategoryIds.
+    Returns a list of categories which match the given \a categoryIds.  The engine will populate \a errorMap
+    (the map of indices of the \a landmarkIds list an error) for the indexes where the category could not
+    be retrieved.
 
-    Overall operation errors are stored in \a error and \a errorString.
+    Overall operation errors are stored in \a error and
+    \a errorString.  \a error is set to QLandmarkManager::NoError, if
+    all categories were successfully retrieved.
 */
 QList<QLandmarkCategory> QLandmarkManagerEngine::categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds,
+                                                            QMap<int, QLandmarkManager::Error> *errorMap,
                                                             QLandmarkManager::Error *error, QString *errorString) const
 {
     return QList<QLandmarkCategory>();
@@ -843,6 +865,33 @@ void QLandmarkManagerEngine::updateLandmarkFetchRequest(QLandmarkFetchRequest* r
 }
 
 /*!
+    Updates the given QLandmarkFetchByIdRequest \a req with the latest \a result,
+    operation \a error and \a errorString and map of input index to individual errors, \a errorMap.
+     In addition, the state of the request
+    will be changed to \a newState.
+
+    It then causes the request to emit its resultsAvailable() signal to notify clients of the
+    request progress.
+
+    If the new request state is different from the previous state, the stateChanged() signal will
+    also be emitted from the request.
+ */
+void QLandmarkManagerEngine::updateLandmarkFetchByIdRequest(QLandmarkFetchByIdRequest* req, const QList<QLandmark>& result, QLandmarkManager::Error error,
+        const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState)
+{
+    QLandmarkFetchByIdRequestPrivate* rd = static_cast<QLandmarkFetchByIdRequestPrivate*>(req->d_ptr);
+    rd->error = error;
+    rd->errorString = errorString;
+    rd->errorMap = errorMap;
+    rd->landmarks = result;
+    bool emitState = rd->state != newState;
+    rd->state = newState;
+    emit req->resultsAvailable();
+    if (emitState)
+        emit req->stateChanged(newState);
+}
+
+/*!
     Updates the given QLandmarkRemoveRequest \a req with the operation \a error and
     \a errorString and map of input index to individual errors, \a errorMap.  In addition,
     the state of the request will be changed to \a newState.
@@ -939,6 +988,32 @@ void QLandmarkManagerEngine::updateLandmarkCategoryFetchRequest(QLandmarkCategor
     QLandmarkCategoryFetchRequestPrivate* rd = static_cast<QLandmarkCategoryFetchRequestPrivate*>(req->d_ptr);
     rd->error = error;
     rd->errorString = errorString;
+    rd->categories = result;
+    bool emitState = rd->state != newState;
+    rd->state = newState;
+    emit req->resultsAvailable();
+    if (emitState)
+        emit req->stateChanged(newState);
+}
+
+/*!
+    Updates the given QLandmarkCategoryFetchByIdRequest \a req with the latest \a result,
+    and operation \a error and \a errorString, and map of input index to individual errors, \a errorMap.
+   In addition, the state of the request will be changed to \a newState.
+
+    It then causes the request to emit its resultsAvailable() signal to notify clients of the
+    request progress.
+
+    If the new request state is different from the previous state, the stateChanged() signal will
+    also be emitted from the request.
+ */
+void QLandmarkManagerEngine::updateLandmarkCategoryFetchByIdRequest(QLandmarkCategoryFetchByIdRequest* req, const QList<QLandmarkCategory>& result, QLandmarkManager::Error error,
+        const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState)
+{
+    QLandmarkCategoryFetchByIdRequestPrivate* rd = static_cast<QLandmarkCategoryFetchByIdRequestPrivate*>(req->d_ptr);
+    rd->error = error;
+    rd->errorString = errorString;
+    rd->errorMap = errorMap;
     rd->categories = result;
     bool emitState = rd->state != newState;
     rd->state = newState;

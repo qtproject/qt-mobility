@@ -441,7 +441,7 @@ bool exportLandmarksGpx(const QString &connectionName,
     QList<QLandmarkSortOrder> sortOrders;
     QLandmarkFilter filter;
     if (landmarkIds.count() > 0)
-        filter = QLandmarkIdFilter (landmarkIds, QLandmarkIdFilter::MatchSubset);
+        filter = QLandmarkIdFilter (landmarkIds);
 
     QList<QLandmark> lms = ::landmarks(connectionName,filter, sortOrders, -1, 0, error, errorString, managerUri);
 
@@ -475,7 +475,7 @@ bool exportLandmarksLmx(const QString &connectionName,
 {
     QLandmarkFileHandlerLmx lmxHandler(connectionName, managerUri);
 
-    QLandmarkIdFilter idFilter(landmarkIds, QLandmarkIdFilter::MatchAll);
+    QLandmarkIdFilter idFilter(landmarkIds);
     QList<QLandmarkSortOrder> sortOrders;
     QList<QLandmark> lms = ::landmarks(connectionName, idFilter, sortOrders, -1, 0, error, errorString, managerUri);
 
@@ -1344,11 +1344,6 @@ QList<QLandmark> DatabaseOperations::landmarks(const QString &connectionName, co
     bool needAll = false;
     if (filter.type() == QLandmarkFilter::LandmarkIdFilter) {
         QLandmarkIdFilter idFilter = filter;
-        if (idFilter.matchingScheme() == QLandmarkIdFilter::MatchAll)
-            needAll = true;
-        else {
-            needAll = false;
-        }
     }
 
     QLandmark lm;
@@ -1380,6 +1375,31 @@ QList<QLandmark> DatabaseOperations::landmarks(const QString &connectionName, co
 
      *error = QLandmarkManager::NoError;
      *errorString = "";
+    return result;
+}
+
+QList<QLandmark> DatabaseOperations::landmarks(const QString &connectionName, const QList<QLandmarkId> &landmarkIds,
+        QMap<int, QLandmarkManager::Error> *errorMap,
+        QLandmarkManager::Error *error,
+        QString *errorString, const QString &managerUri, QueryRun *queryRun)
+{
+    QList<QLandmark> result;
+    QLandmark lm;
+    QLandmarkManager::Error lastError = QLandmarkManager::NoError;
+    QString lastErrorString="";
+    for (int i=0; i < landmarkIds.count(); ++i){
+        lm = DatabaseOperations::retrieveLandmark(connectionName,landmarkIds.at(i),error,errorString,managerUri,queryRun);
+        if (*error = QLandmarkManager::NoError) {
+            result << lm;
+        } else {
+            if (errorMap)
+                errorMap->insert(i, *error);
+            lastError = *error;
+            lastErrorString = *errorString;
+        }
+    }
+    *error = lastError;
+    *errorString =lastErrorString;
     return result;
 }
 
@@ -2083,6 +2103,35 @@ QList<QLandmarkCategory> DatabaseOperations::categories(const QString &connectio
     return result;
 }
 
+
+QList<QLandmarkCategory> DatabaseOperations::categories(const QString &connectionName,
+                const QList<QLandmarkCategoryId> &landmarkCategoryIds,
+                QMap<int, QLandmarkManager::Error> *errorMap,
+                QLandmarkManager::Error *error, QString *errorString,
+                const QString &managerUri,
+                QueryRun *queryRun)
+{
+    QList<QLandmarkCategory> result;
+    QLandmarkCategory cat;
+    QLandmarkManager::Error lastError = QLandmarkManager::NoError;
+    QString lastErrorString ="";
+    for (int i=0; i < landmarkCategoryIds.count(); ++i) {
+        cat = DatabaseOperations::category(connectionName, landmarkCategoryIds.at(i),error,errorString,managerUri);
+        if (*error = QLandmarkManager::NoError)
+        {
+            result << cat;
+        } else {
+            if (errorMap)
+                errorMap->insert(i, *error);
+            lastError = *error;
+            lastErrorString = *errorString;
+        }
+    }
+    *error = lastError;
+    *errorString = lastErrorString;
+
+}
+
 bool DatabaseOperations::saveCategoryHelper(const QString &connectionName, QLandmarkCategory *category,
                 QLandmarkManager::Error *error,
                 QString *errorString, const QString &managerUri)
@@ -2600,14 +2649,12 @@ void DatabaseOperations::QueryRun::run()
         case QLandmarkAbstractRequest::CategoryFetchRequest :
             {
                 QLandmarkCategoryFetchRequest *fetchRequest = static_cast<QLandmarkCategoryFetchRequest *> (request);
-                QList<QLandmarkCategoryId> categoryIds = fetchRequest->categoryIds();
-                bool needAll = false;
-                if (categoryIds.count() > 0 && fetchRequest->matchingScheme() == QLandmarkCategoryFetchRequest::MatchAll)
-                    needAll = true;
                 QLandmarkNameSort nameSort = fetchRequest->sorting();
-                QList <QLandmarkCategory> cats = DatabaseOperations::categories(connectionName, categoryIds, nameSort,
-                                                                fetchRequest->limit(), fetchRequest->offset(),
-                                                                &error, &errorString, managerUri, needAll, this);
+                bool needAll = true;
+                QList<QLandmarkCategory> cats;
+//TODO: FIX                QList <QLandmarkCategory> cats = DatabaseOperations::categories(connectionName, categoryIds, nameSort,
+//                                                                fetchRequest->limit(), fetchRequest->offset(),
+//                                                                &error, &errorString, managerUri, needAll, this);
 
                 QMetaObject::invokeMethod(engine, "updateLandmarkCategoryFetchRequest",
                                           Q_ARG(QLandmarkCategoryFetchRequest *,fetchRequest),

@@ -102,18 +102,6 @@ void QLandmarkFetchRequest::setFilter(const QLandmarkFilter &filter)
 }
 
 /*!
-    This is a convenience function which will set a QLandmarkIdFilter
-    based on the given list of landmark \a ids.
-
-    \sa setFilter()
-*/
-void QLandmarkFetchRequest::setLandmarkIds(const QList<QLandmarkId> &ids)
-{
-    Q_D(QLandmarkFetchRequest);
-    d->filter = QLandmarkIdFilter(ids);
-}
-
-/*!
     Returns the sort ordering which is used to sort the result.
 */
 QList<QLandmarkSortOrder> QLandmarkFetchRequest::sorting() const

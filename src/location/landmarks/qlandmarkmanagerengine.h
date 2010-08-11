@@ -59,10 +59,12 @@ class QLandmarkId;
 class QLandmarkSortOrder;
 class QLandmarkIdFetchRequest;
 class QLandmarkFetchRequest;
+class QLandmarkFetchByIdRequest;
 class QLandmarkRemoveRequest;
 class QLandmarkSaveRequest;
 class QLandmarkCategoryIdFetchRequest;
 class QLandmarkCategoryFetchRequest;
+class QLandmarkCategoryFetchByIdRequest;
 class QLandmarkCategoryRemoveRequest;
 class QLandmarkCategorySaveRequest;
 class QLandmarkImportRequest;
@@ -103,12 +105,14 @@ public:
     /* Retrieval */
     virtual QLandmark landmark(const QLandmarkId &landmarkId, QLandmarkManager::Error *error,
                                QString *errorString) const =0;
+    virtual QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds,QMap<int, QLandmarkManager::Error> *errorMap,
+                                    QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual QList<QLandmark> landmarks(const QLandmarkFilter &filter, int limit, int offset, const QList<QLandmarkSortOrder>& sortOrders,
                                        QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual QLandmarkCategory category(const QLandmarkCategoryId &landmarkCategoryId, QLandmarkManager::Error *error,
                                        QString *errorString) const = 0;
-    virtual QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds, QLandmarkManager::Error *error,
-            QString *errorString) const = 0;
+    virtual QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds, QMap<int, QLandmarkManager::Error> *errorMap,
+                                                 QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual QList<QLandmarkCategory> categories(int limit, int offset, const QLandmarkNameSort &nameSort, QLandmarkManager::Error *error,
                                                 QString *errorString) const = 0;
 
@@ -168,15 +172,18 @@ protected:
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
     static void updateLandmarkFetchRequest(QLandmarkFetchRequest* req, const QList<QLandmark>& result,
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
+    static void updateLandmarkFetchByIdRequest(QLandmarkFetchByIdRequest* req, const QList<QLandmark>& result, QLandmarkManager::Error error,
+                                          const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState);
     static void updateLandmarkRemoveRequest(QLandmarkRemoveRequest* req, QLandmarkManager::Error error, const QString &errorString,
                                             const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState);
     static void updateLandmarkSaveRequest(QLandmarkSaveRequest* req, const QList<QLandmark>& result, QLandmarkManager::Error error,
                                           const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState);
-
     static void updateLandmarkCategoryIdFetchRequest(QLandmarkCategoryIdFetchRequest *req, const QList<QLandmarkCategoryId>& result,
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
     static void updateLandmarkCategoryFetchRequest(QLandmarkCategoryFetchRequest *req, const QList<QLandmarkCategory>& result,
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
+    static void updateLandmarkCategoryFetchByIdRequest(QLandmarkCategoryFetchByIdRequest *req, const QList<QLandmarkCategory>& result, QLandmarkManager::Error error,
+            const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState);
     static void updateLandmarkCategoryRemoveRequest(QLandmarkCategoryRemoveRequest *req, QLandmarkManager::Error error, const QString &errorString,
             const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState);
     static void updateLandmarkCategorySaveRequest(QLandmarkCategorySaveRequest *req, const QList<QLandmarkCategory>& result, QLandmarkManager::Error error,
