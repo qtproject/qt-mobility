@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,42 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef QREMOTESERVICEADAPTOR_DBUS_P_H
-#define QREMOTESERVICEADAPTOR_DBUS_P_H
 
-#include <QtDBus>
+/*!
+    \page qml-plugins.html
+    \group plugins
 
-QTM_BEGIN_NAMESPACE
+    \title Mobility QML Plugins
 
-class DBusSession: public QObject
-{
-    Q_OBJECT
-public:
-    DBusSession(QObjecet *parent) {;}
-    ~DBusSession() {;}
+    \ingroup mobility
 
-public slots:
-    bool connect() { return true; }
-};
+    \brief A set of QML compatible plugins for the Mobility Project.
 
-/*class DBusSessionAdaptor: public QDBusAbstractAdaptor
-{
-    Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.qtmobility.DBus")
 
-public:
-    DBusSessionAdaptor(QObject *parent);
-    ~DBusSessionAdaptor();
 
-public slots:
-    bool connect() { 
-        bool ret;
-        QMetaObject::invokeMethod(parent(), "connect",
-                                  Q_RETURN_ARG(bool, ret)); 
-        return ret;
-    }
-};*/
+    \section1 List of QML Plugins for Mobility
+    \table 80%
+    \header
+        \o Plugin
+        \o Description
+    \row
+        \o \l {Gallery QML Plugin}{Gallery}
+        \o A QML plugin for the Document Gallery API.
+    \row
+        \o \l {Location QML Plugin}{Gallery}
+        \o A QML plugin for the Location API.
+    \endtable
 
-QTM_END_NAMESPACE
 
-#endif
+
+
+
+
+*/
+

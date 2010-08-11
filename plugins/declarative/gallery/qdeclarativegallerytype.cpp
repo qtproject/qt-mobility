@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
     \qmlclass GalleryType QDeclarativeGalleryType
 
     \inmodule QtGallery
+    \ingroup qml-gallery
 
     \brief The GalleryType element allows you to request information about an
     item type from a gallery
