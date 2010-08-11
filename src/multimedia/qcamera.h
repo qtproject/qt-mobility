@@ -85,6 +85,7 @@ public:
         UnloadedStatus,
         LoadingStatus,
         LoadedStatus,
+        StandbyStatus,
         StartingStatus,
         ActiveStatus
     };
