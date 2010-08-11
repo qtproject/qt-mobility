@@ -6,6 +6,8 @@
 
 TEMPLATE = subdirs
 
+include (../../../config.pri)
+
 # we include mmf only if we are not building openmaxal based backend
 contains(openmaxal_symbian_enabled, no) {
     message("Enabling mmf mediarecording, playback and radio backend")
