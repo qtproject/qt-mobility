@@ -10,8 +10,6 @@ SOURCES += qfeedback.cpp
 
 INCLUDEPATH += $$SOURCE_DIR/src/feedback
 
-target.path=$$QT_MOBILITY_PREFIX/plugins/feedback
-INSTALLS+=target
 QT += phonon
 CONFIG += mobility
 MOBILITY = feedback
