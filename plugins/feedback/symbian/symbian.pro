@@ -32,10 +32,7 @@ symbian {
     INSTALLS += target
 
     symbianplugin.sources = $${TARGET}.dll
-    symbianplugin.path = /resource/qt/plugins/feedback
+    symbianplugin.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += symbianplugin
 
 }
-
-target.path=$$QT_MOBILITY_PREFIX/plugins/feedback
-INSTALLS+=target

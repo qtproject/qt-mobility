@@ -63,7 +63,8 @@ class QGalleryAbstractRequestPrivate
 {
     Q_DECLARE_PUBLIC(QGalleryAbstractRequest)
 public:
-    QGalleryAbstractRequestPrivate(QAbstractGallery *gallery, QGalleryAbstractRequest::Type type)
+    QGalleryAbstractRequestPrivate(
+            QAbstractGallery *gallery, QGalleryAbstractRequest::RequestType type)
         : gallery(gallery)
         , response(0)
         , type(type)
@@ -86,7 +87,7 @@ public:
     QGalleryAbstractRequest *q_ptr;
     QAbstractGallery *gallery;
     QGalleryAbstractResponse *response;
-    QGalleryAbstractRequest::Type type;
+    QGalleryAbstractRequest::RequestType type;
     QGalleryAbstractRequest::State state;
     int result;
     int currentProgress;

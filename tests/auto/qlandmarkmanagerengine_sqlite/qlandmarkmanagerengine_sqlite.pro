@@ -4,7 +4,8 @@ TARGET=tst_qlandmarkmanagerengine_sqlite
 
 include (../../../common.pri)
 
-INCLUDEPATH += ../../../src/location
+INCLUDEPATH += ../../../src/location \
+                ../../../src/location/landmarks
 
 # Input
 SOURCES += tst_qlandmarkmanagerengine_sqlite.cpp

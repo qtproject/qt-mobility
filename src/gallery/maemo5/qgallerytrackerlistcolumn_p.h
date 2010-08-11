@@ -53,9 +53,12 @@
 // We mean it.
 //
 
-#include <qgalleryabstractresponse.h>
+#include <qmobilityglobal.h>
 
 #include <QtCore/qshareddata.h>
+#include <QtCore/qvariant.h>
+#include <QtCore/qvector.h>
+
 
 QTM_BEGIN_NAMESPACE
 
@@ -181,8 +184,18 @@ public:
 
     QVariant value(QVector<QVariant>::const_iterator row) const;
 
+    static QGalleryTrackerCompositeColumn *create(const QVector<int> &);
+
 private:
     const int m_column;
+};
+
+class QGalleryTrackerFilePathColumn : public QGalleryTrackerCompositeColumn
+{
+public:
+    QVariant value(QVector<QVariant>::const_iterator row) const;
+
+    static QGalleryTrackerCompositeColumn *create(const QVector<int> &columns);
 };
 
 QTM_END_NAMESPACE

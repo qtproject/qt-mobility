@@ -89,7 +89,7 @@ QAbstractGallery::~QAbstractGallery()
 }
 
 /*!
-    \fn QAbstractGallery::isRequestSupported(QGalleryAbstractRequest::Type type) const
+    \fn QAbstractGallery::isRequestSupported(QGalleryAbstractRequest::RequestType type) const
 
     Identifies if a gallery supports a request \a type.
 

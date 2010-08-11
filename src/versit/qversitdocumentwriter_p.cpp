@@ -121,6 +121,10 @@ void QVersitDocumentWriter::encodeVersitDocument(const QVersitDocument& document
             writeString(QLatin1String("VERSION:3.0"));
             writeCrlf();
             break;
+        case QVersitDocument::VCard40Type:
+            writeString(QLatin1String("VERSION:4.0"));
+            writeCrlf();
+            break;
         case QVersitDocument::ICalendar20Type:
             writeString(QLatin1String("VERSION:2.0"));
             writeCrlf();

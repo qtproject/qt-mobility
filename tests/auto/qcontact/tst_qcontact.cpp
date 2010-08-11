@@ -85,6 +85,32 @@ tst_QContact::~tst_QContact()
 
 void tst_QContact::details()
 {
+    // Check that detail keys are unique, regardless of order of initialisation
+    // First, construct the detail first, then the contact
+    QContactOrganization org;
+    org.setTitle("Example Title");
+    QContact keyTest;
+    QVERIFY(keyTest.saveDetail(&org));
+    QList<QContactDetail> allDetails = keyTest.details();
+    QList<int> detailKeys;
+    foreach (const QContactDetail& det, allDetails) {
+        int currKey = det.key();
+        QVERIFY(!detailKeys.contains(currKey));
+        detailKeys.append(currKey);
+    }
+    // Second, construct the detail after the contact has been constructed
+    QContactPhoneNumber num;
+    num.setNumber("123456");
+    QVERIFY(keyTest.saveDetail(&num));
+    allDetails = keyTest.details();
+    detailKeys.clear();
+    foreach (const QContactDetail& det, allDetails) {
+        int currKey = det.key();
+        QVERIFY(!detailKeys.contains(currKey));
+        detailKeys.append(currKey);
+    }
+
+    // now test for default construction sanity
     QContact c;
 
     // Test there are no details (apart from display label + type) by default
