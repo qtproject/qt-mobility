@@ -240,14 +240,14 @@ public:
                                 QMessageDataComparator::MatchFlags matchFlags = 0);
 
     enum Field {None = 0, Sender, Recipients, Subject, Body};
-
-    
+ 
 public slots:
     void searchOperationCompleted();
     void searchCompleted();
 
 private:
     //void getAllMessagesL();
+    void getAllMessages(NmApiMailSortCriteria& sortCriteria);
     void getFolderSpecificMessages(QMessageFolder& messageFolder);
     void getAccountSpecificMessages(QMessageAccount& messageAccount, NmApiMailSortCriteria& sortCriteria);
     
