@@ -38,22 +38,26 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#include "qtelephonycalllist.h"
-#include "qtelephonycallinfo_p.h"
-
+#include <QtCore/qglobal.h>
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-# include "qtelephonycalllist_unsupported_p.h" // TODO change back to maemo when support is added
+# include "maemo/qtelephonycallinfo_maemo_p.h"
+# include "maemo/qtelephonycalllist_maemo_p.h"
 #elif defined(Q_OS_LINUX)
+# include "qtelephonycallinfo_p.h"
 # include "linux/qtelephonycalllist_linux_p.h"
 #elif defined(Q_OS_WIN)
+# include "qtelephonycallinfo_p.h"
 # include "qtelephonycalllist_win_p.h"
 #elif defined(Q_OS_SYMBIAN)
+# include "qtelephonycallinfo_p.h"
 # include "qtelephonycalllist_symbian_p.h"
 #else
+# include "qtelephonycallinfo_p.h"
 # include "qtelephonycalllist_unsupported_p.h"
 #endif
+
+#include <QtCore/QDebug>
 
 QTM_BEGIN_NAMESPACE
 

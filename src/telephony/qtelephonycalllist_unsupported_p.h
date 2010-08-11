@@ -58,7 +58,7 @@
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-class QTelephonyCallInfoPrivate;
+struct QTelephonyCallInfoPrivate;
 class QTelephonyCallList;
 
 class QTelephonyCallListPrivate

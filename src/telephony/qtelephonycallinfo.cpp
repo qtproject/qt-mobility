@@ -39,8 +39,15 @@
 **
 ****************************************************************************/
 
+#include <QtCore/qglobal.h>
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+# include "maemo/qtelephonycallinfo_maemo_p.h"
+#else
+# include "qtelephonycallinfo_p.h"
+#endif
+
 #include "qmobilityglobal.h"
-#include "qtelephonycallinfo_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -120,7 +127,11 @@ QTelephonyCallInfo::~QTelephonyCallInfo()
 QString QTelephonyCallInfo::remotePartyIdentifier() const
 {
     if(d)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        return d->remotePartyIdentifier();
+#else
         return d->remotePartyIdentifier;
+#endif
     return QString();
 }
 
@@ -134,7 +145,11 @@ QString QTelephonyCallInfo::remotePartyIdentifier() const
 QTelephonyCallInfo::CallType QTelephonyCallInfo::type() const
 {
     if(d)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        return d->type();
+#else
         return d->type;
+#endif
     return Other;
 }
 
@@ -148,7 +163,11 @@ QTelephonyCallInfo::CallType QTelephonyCallInfo::type() const
 QString QTelephonyCallInfo::subType() const
 {
     if(d)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        return d->subType();
+#else
         return d->subType;
+#endif
     return QString();
 }
 
@@ -162,7 +181,11 @@ QString QTelephonyCallInfo::subType() const
 QTelephonyCallInfo::CallStatus QTelephonyCallInfo::status() const
 {
     if(d)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        return d->status();
+#else
         return d->status;
+#endif
     return Idle;
 }
 

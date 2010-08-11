@@ -87,7 +87,7 @@ private slots:
     void newChannelsSlot(const ChannelsArray& channelsarray);
 
 private:
-    QList<QSharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
+    QList<QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
     QTelephonyCallList* p;
     TelepathyListener* ptelepathyListener;
 };

@@ -57,21 +57,21 @@ QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
 void QTelephonyCallListPrivate::emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call)
 {
     QTelephonyCallInfo callinfo;
-    callinfo.d = QSharedDataPointer<QTelephonyCallInfoPrivate>(&call);
+    callinfo.d = QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(&call);
     emit p->activeCallStatusChanged(callinfo);
 }
 
 void QTelephonyCallListPrivate::emitActiveCallRemoved(QTelephonyCallInfoPrivate& call)
 {
     QTelephonyCallInfo callinfo;
-    callinfo.d = QSharedDataPointer<QTelephonyCallInfoPrivate>(&call);
+    callinfo.d = QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(&call);
     emit p->activeCallRemoved(callinfo);
 }
 
 void QTelephonyCallListPrivate::emitActiveCallAdded(QTelephonyCallInfoPrivate& call)
 {
     QTelephonyCallInfo callinfo;
-    callinfo.d = QSharedDataPointer<QTelephonyCallInfoPrivate>(&call);
+    callinfo.d = QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(&call);
     emit p->activeCallAdded(callinfo);
 }
 
