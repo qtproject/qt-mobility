@@ -126,10 +126,12 @@ contains(build_demos, yes):SUBDIRS+=demos
         INSTALLS += qtmheaderslocation
     }
 
-    contains(mobility_modules,messaging) {
-        qtmheadersmessaging.path = $${QT_MOBILITY_INCLUDE}/QtMessaging
-        qtmheadersmessaging.files = $${QT_MOBILITY_BUILD_TREE}/include/QtMessaging/*
-        INSTALLS += qtmheadersmessaging
+    contains(qmf_enabled, yes)|wince*|win32|maemo5 {
+        contains(mobility_modules,messaging) {
+            qtmheadersmessaging.path = $${QT_MOBILITY_INCLUDE}/QtMessaging
+            qtmheadersmessaging.files = $${QT_MOBILITY_BUILD_TREE}/include/QtMessaging/*
+            INSTALLS += qtmheadersmessaging
+        }
     }
 
     contains(mobility_modules,multimedia) {
