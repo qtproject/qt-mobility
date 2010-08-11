@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -94,6 +94,7 @@ private:
 
     IBaseFilter *m_filter;
     WId m_windowId;
+    COLORREF m_windowColor;
     DWORD m_dirtyValues;
     Qt::AspectRatioMode m_aspectRatioMode;
     QRect m_displayRect;

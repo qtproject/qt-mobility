@@ -1,5 +1,5 @@
 TARGET = tst_qaudiocapturesource
-INCLUDEPATH += ../../../src/multimedia
+INCLUDEPATH += ../../../src/multimedia ../../../src/multimedia/audio
 
 CONFIG += testcase
 

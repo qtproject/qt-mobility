@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -59,6 +59,7 @@ public:
     void prepend(const QContactFilter& filter);
     void append(const QContactFilter& filter);
     void remove(const QContactFilter& filter);
+    void clear();
 
     QContactIntersectionFilter& operator<<(const QContactFilter& filter);
 

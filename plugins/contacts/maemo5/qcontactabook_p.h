@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -75,6 +75,8 @@ public:
   bool removeContact(const QContactLocalId& contactId, QContactManager::Error* error);
   bool saveContact(QContact* contact, QContactManager::Error* error);
 
+  const QString getDisplayName(const QContact& contact) const;
+  
   QContactLocalId selfContactId(QContactManager::Error* errors) const;
 
 Q_SIGNALS:
@@ -101,6 +103,7 @@ private:
   OssoABookContact* getAContact(const QContactLocalId& contactId, QContactManager::Error* error) const;
   
   /* Filtering */
+  bool contactActionsMatch(OssoABookContact *contact, QList<QContactActionDescriptor> descriptors) const;
   EBookQuery* convert(const QContactFilter& filter) const;
   
   /* Reading - eContact/abookContact to QContact methods */
@@ -116,7 +119,9 @@ private:
   QContactGender* getGenderDetail(EContact *eContact) const;
   QContactGuid* getGuidDetail(EContact *eContact) const;
   QContactNote* getNoteDetail(EContact *eContact) const;
-  QList<QContactOnlineAccount*> getOnlineAccountDetail(EContact *eContact) const;
+  void getOnlineAccountAndPresenceDetails(EContact *eContact, 
+                                         QList<QContactOnlineAccount*>& onlineAccounts,
+                                         QList<QContactPresence*>& presences) const;
   QContactOrganization* getOrganizationDetail(EContact *eContact) const;
   QList<QContactPhoneNumber*> getPhoneDetail(EContact *eContact) const;
   QList<QContactPresence*> getPresenceDetail(EContact *eContact) const;

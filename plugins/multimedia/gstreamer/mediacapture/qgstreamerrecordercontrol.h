@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,8 +43,11 @@
 #ifndef QGSTREAMERRECORDERCONTROL_H
 #define QGSTREAMERRECORDERCONTROL_H
 
+#include <QtCore/QDir>
+
 #include <qmediarecordercontrol.h>
 #include "qgstreamercapturesession.h"
+
 QT_USE_NAMESPACE
 
 class QGstreamerRecorderControl : public QMediaRecorderControl
@@ -63,17 +66,24 @@ public:
 
     qint64 duration() const;
 
+    bool isMuted() const;
+
     void applySettings();
 
 public slots:
     void record();
     void pause();
     void stop();
+    void setMuted(bool);
 
 private slots:
     void updateState();
 
 private:
+    QDir defaultDir() const;
+    QString generateFileName(const QDir &dir, const QString &ext) const;
+
+    QUrl m_outputLocation;
     QGstreamerCaptureSession *m_session;
     QMediaRecorder::State m_state;
     bool m_hasPreviewState;

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -176,6 +176,9 @@ void ContactListPage::backendSelected()
     if (m_manager && m_manager->managerUri() == managerUri)
         return;
 
+    if (m_manager)
+        disconnect(m_manager, 0, this, 0); // we no longer want updates from the old manager
+
     // the change is real.  update.
     if (m_initialisedManagers.contains(managerUri)) {
         m_manager = m_initialisedManagers.value(managerUri);
@@ -189,6 +192,13 @@ void ContactListPage::backendSelected()
         }
         m_initialisedManagers.insert(managerUri, m_manager);
     }
+
+    connect(m_manager, SIGNAL(contactsAdded(const QList<QContactLocalId>&)),
+            this, SLOT(contactsAdded(const QList<QContactLocalId>&)));
+    connect(m_manager, SIGNAL(contactsRemoved(const QList<QContactLocalId>&)),
+            this, SLOT(contactsRemoved(const QList<QContactLocalId>&)));
+    connect(m_manager, SIGNAL(contactsChanged(const QList<QContactLocalId>&)),
+            this, SLOT(contactsChanged(const QList<QContactLocalId>&)));
 
     // signal that the manager has changed.
     emit managerChanged(m_manager);
@@ -204,15 +214,79 @@ void ContactListPage::rebuildList(const QContactFilter& filter)
     m_filterActiveLabel->setVisible(m_currentFilter != QContactFilter());
 
     m_contactsList->clear();
-    m_idToListIndex.clear();
     m_contacts = m_manager->contacts(m_currentFilter);
     foreach (QContact contact, m_contacts) {
         QListWidgetItem *currItem = new QListWidgetItem;
         currItem->setData(Qt::DisplayRole, contact.displayLabel());
         currItem->setData(Qt::UserRole, contact.localId()); // also store the id of the contact.
-        m_idToListIndex.insert(contact.localId(), m_contactsList->count());
         m_contactsList->addItem(currItem);
     }
+}
+
+void ContactListPage::contactsAdded(const QList<QContactLocalId>& ids)
+{
+    QContactIntersectionFilter qcif;
+    QContactLocalIdFilter qclif;
+    qclif.setIds(ids);
+    qcif.append(qclif);
+    qcif.append(m_currentFilter);
+    m_contacts = m_manager->contacts(qcif);
+    foreach (QContact contact, m_contacts) {
+        QListWidgetItem *currItem = new QListWidgetItem;
+        currItem->setData(Qt::DisplayRole, contact.displayLabel());
+        currItem->setData(Qt::UserRole, contact.localId()); // also store the id of the contact.
+        m_contactsList->addItem(currItem);
+    }
+}
+
+void ContactListPage::contactsRemoved(const QList<QContactLocalId>& ids)
+{
+    int i = 0;
+    while (i < m_contactsList->count()) {
+        if (ids.contains(m_contactsList->item(i)->data(Qt::UserRole).toUInt())) {
+            delete m_contactsList->takeItem(i);
+        } else {
+            i++;
+        }
+    }
+    i = 0;
+    while (i < m_contacts.count()) {
+        if (ids.contains(m_contacts[i].localId())) {
+            m_contacts.removeAt(i);
+        } else {
+            i++;
+        }
+    }
+}
+
+void ContactListPage::contactsChanged(const QList<QContactLocalId>& ids)
+{
+    int i = 0;
+    QMap<QContactLocalId, QContact> updatedContacts;
+    foreach (QContactLocalId id, ids) {
+        QContact contact = m_manager->contact(id);
+        updatedContacts.insert(id, contact);
+    }
+
+    for (i = 0; i < m_contactsList->count(); i++) {
+        QListWidgetItem* currItem = m_contactsList->item(i);
+        QContactLocalId lid = currItem->data(Qt::UserRole).toUInt();
+        if (updatedContacts.contains(lid)) {
+            currItem->setData(Qt::DisplayRole, updatedContacts.value(lid).displayLabel());
+        }
+    }
+
+    for (i = 0; i < m_contacts.count(); i++) {
+        QContactLocalId lid = m_contacts[i].localId();
+        if (updatedContacts.contains(lid)) {
+            m_contacts[i] = updatedContacts.value(lid);
+        }
+    }
+}
+
+void ContactListPage::dataChanged()
+{
+    rebuildList(m_currentFilter);
 }
 
 void ContactListPage::addClicked()
@@ -249,7 +323,8 @@ void ContactListPage::deleteClicked()
     QContactLocalId contactId = QContactLocalId(m_contactsList->currentItem()->data(Qt::UserRole).toUInt());
     bool success = m_manager->removeContact(contactId);
     if (success) {
-        delete m_contactsList->takeItem(m_contactsList->currentRow());
+        // no need to do this here - we can wait for the signal to get through to contactsRemoved()
+        // delete m_contactsList->takeItem(m_contactsList->currentRow());
     }
     else
         QMessageBox::information(this, "Failed!", "Failed to delete contact!");
@@ -280,7 +355,7 @@ void ContactListPage::importClicked()
                     it++;
                 }
                 m_manager->saveContacts(&contacts, &errorMap);
-                rebuildList(m_currentFilter);
+                //rebuildList(m_currentFilter);
             }
         }
     }

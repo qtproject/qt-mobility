@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,6 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/systeminfo
+
 #include <QtTest/QtTest>
 #include "qsysteminfo.h"
 #include "../qsysteminfotestcommon.h"
@@ -76,6 +79,7 @@ private slots:
 
     void tst_currentPowerState();
 
+    void tst_currentBluetoothPowerState();
 
     //    void tst_powerState_data();
 //    void tst_powerState();
@@ -225,7 +229,12 @@ void tst_QSystemDeviceInfo::tst_currentPowerState()
              || state == QSystemDeviceInfo::WallPowerChargingBattery);
 }
 
-
+void tst_QSystemDeviceInfo::tst_currentBluetoothPowerState()
+{
+    QSystemDeviceInfo di;
+    bool state = di.currentPowerState();
+    QVERIFY(state || !state);
+}
 
 QTEST_MAIN(tst_QSystemDeviceInfo)
 #include "tst_qsystemdeviceinfo.moc"

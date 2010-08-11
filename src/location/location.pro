@@ -1,26 +1,38 @@
 TEMPLATE = lib
 TARGET = QtLocation
-QT = core
+QT = core gui network sql
 
 include(../../common.pri)
 
 DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 
+INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
 INCLUDEPATH += .
 DEPENDPATH += .
 
-PUBLIC_HEADERS += qgeocoordinate.h \
-                  qgeopositioninfo.h \
-                  qgeosatelliteinfo.h \
-                  qgeosatelliteinfosource.h \
-                  qgeopositioninfosource.h \
-                  qgeoareamonitor.h \
-                  qnmeapositioninfosource.h
+include(landmarks/landmarks.pri)
+include(maps/maps.pri)
 
-PRIVATE_HEADERS += qlocationutils_p.h \
-                   qnmeapositioninfosource_p.h
+PUBLIC_HEADERS += \
+                    qgeoaddress.h \
+                    qgeoareamonitor.h \
+                    qgeoboundingbox.h \
+                    qgeocoordinate.h \
+                    qgeoplace.h \
+                    qgeopositioninfo.h \
+                    qgeopositioninfosource.h \
+                    qgeosatelliteinfo.h \
+                    qgeosatelliteinfosource.h \
+                    qnmeapositioninfosource.h
 
-symbian { 
+PRIVATE_HEADERS += \
+                    qgeoaddress_p.h \
+                    qgeoboundingbox_p.h \
+                    qgeoplace_p.h \
+                    qlocationutils_p.h \
+                    qnmeapositioninfosource_p.h
+
+symbian {
     PRIVATE_HEADERS += qgeopositioninfosource_s60_p.h \
                        qmlbackendao_s60_p.h \
                        qgeosatelliteinfosource_s60_p.h \
@@ -51,7 +63,7 @@ symbian {
     }
 }
 
-wince* { 
+wince* {
     PRIVATE_HEADERS += qgeopositioninfosource_wince_p.h \
                        qgeosatelliteinfosource_wince_p.h \
                        qgeoinfothread_wince_p.h
@@ -67,7 +79,7 @@ maemo6 {
                 qgeosatelliteinfosource_maemo.cpp \
                 dbuscomm_maemo.cpp \
                 dbusserver_maemo.cpp
-    HEADERS += qgeopositioninfosource_maemo_p.h \
+    PRIVATE_HEADERS += qgeopositioninfosource_maemo_p.h \
                 qgeosatelliteinfosource_maemo_p.h \
                 dbuscomm_maemo_p.h \
                 dbusserver_maemo_p.h
@@ -92,25 +104,31 @@ maemo5 {
     pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
     pkgconfig.files = QtLocation.pc
 }
-
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
-SOURCES += qlocationutils.cpp \
-           qgeocoordinate.cpp \
-           qgeopositioninfo.cpp \
-           qgeosatelliteinfo.cpp \
-           qgeosatelliteinfosource.cpp \
-           qgeopositioninfosource.cpp \
-           qgeoareamonitor.cpp \
-           qnmeapositioninfosource.cpp
-symbian { 
+SOURCES += \
+            qgeoaddress.cpp \
+            qgeoareamonitor.cpp \
+            qgeoboundingbox.cpp \
+            qgeocoordinate.cpp \
+            qgeoplace.cpp \
+            qgeopositioninfo.cpp \
+            qgeopositioninfosource.cpp \
+            qgeosatelliteinfo.cpp \
+            qgeosatelliteinfosource.cpp \
+            qlocationutils.cpp \
+            qnmeapositioninfosource.cpp
+
+symbian {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC83
+    MMP_RULES += EXPORTUNFROZEN
 
-    INCLUDEPATH += $${EPOCROOT}epoc32\include\osextensions \
-                   $${EPOCROOT}epoc32\include\LBTHeaders \
-                   $${EPOCROOT}epoc32\include\platform
+    INCLUDEPATH += $${EPOCROOT}epoc32/include/osextensions \
+                   $${EPOCROOT}epoc32/include/LBTHeaders \
+                   $${EPOCROOT}epoc32/include/platform
     LIBS += -llbs
+    LIBS += -lefsrv
     contains(lbt_enabled, yes) {
         LIBS += -llbt
     }

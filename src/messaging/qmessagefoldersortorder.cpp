@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,6 +47,9 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QMessageFolderSortOrder class defines the parameters used for sorting a subset of 
     queried folders from the messaging store.
+    
+    \inmodule QtMessaging
+    
     \ingroup messaging
 
     A QMessageFolderSortOrder is composed of a folder property to sort and a sort order. 

@@ -16,8 +16,7 @@ SOURCES = mapwindow.cpp \
 include(../examples.pri)
 
 CONFIG += mobility
-MOBILITY = location
-!maemo5:MOBILITY += bearer
+MOBILITY = location bearer
 
 symbian|wince* {
     symbian {
@@ -32,7 +31,7 @@ symbian|wince* {
         DEPLOYMENT += addFiles
     }
 } else {
-    logfile.path = $$QT_MOBILITY_PREFIX/bin
+    logfile.path = $$QT_MOBILITY_EXAMPLES
     logfile.files = nmealog.txt
     INSTALLS += logfile
 }

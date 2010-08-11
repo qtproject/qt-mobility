@@ -1,43 +1,30 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the documentation of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** $QT_BEGIN_LICENSE:FDL$
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in a
+** written agreement between you and Nokia.
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of this
+** file.
 **
 ** If you have questions regarding the use of this file, please contact
 ** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 
 /*!
     \group servicefw
@@ -67,8 +54,8 @@ arbitrary services.
 
 \section1 Namespace
 
-The QtMobility API's are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility API's into Qt. See the
+The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -102,7 +89,7 @@ QMetaObject system can be used to dynamically discover and invoke the
 service's capabilities.
 To achieve the best level of access via the Qt meta object system services
 should be implemented in such a way that their entire functionality is
-accessable via the signals, slots, properties or invokable functions
+accessible via the signals, slots, properties or invokable functions
 (see Q_INVOKABLE macro for more details).
 
 Each service plug-in implements one service only but can provide multiple
@@ -113,8 +100,12 @@ a new interface name has to be used. Existing clients can still use the
 previous version of service interface whereas new clients can utilize the
 new interface. 
 
-Future versions of this framework may also enable access to out-of-process
-service provider. 
+Services can also include remote processes.  By registering with the
+service manager processes can communicate via signals, slots,
+invokable functions and properties as if they were local objects.
+Services can choose to be either be shared between all clients, or
+unique to that client.
+
 
 \section1 Using the Framework
 
@@ -168,7 +159,7 @@ or whether it is valid for the current user only. The system default is used if 
 scope has not been defined. This enables users to customize their personal preferences.
 By default the first service installing a so far unknown interface becomes the system wide default selection.
 
-\section3 QObject based services
+\section3 \bold{QObject based services}
 
 This is the most common way of interacting with services.
 
@@ -182,14 +173,14 @@ The above invocation of the file storage object's deleteFile() function is done 
 QMetaObject. The client does not require any knowledge of the objects actual type and therefore
 does not have to link against a service specific library.
 
-\section3 Typed services
+\section3 \bold{Typed services}
 
 So far all lookup mechanism returned a QObject pointer. This pointer can be
-utilised by introspecting the object, using Qt's meta object system.
+utilized by introspecting the object, using Qt's meta object system.
 However in some use cases it may be more convenient to
 directly interact with the service object by including the service header
 and/or linking against the service provider. The main advantage is compile time checking.
-Its disdvantage is that client and service must share the implementation of the service object via a library
+Its disadvantage is that client and service must share the implementation of the service object via a library
 they link against or via a common header file. Note that such sharing breaks the fundamental ServiceFramework
 principle of separating clients from service as changes of the service type may require changes to both, services and clients.
 
@@ -312,7 +303,9 @@ The elements and attributes have the following meanings:
         \o "
         \o capabilities
         \o This property is a list of arbitrary strings which are
-           interpreted as permissions/capabilities. This list can be empty.
+           interpreted as permissions/capabilities. The list elements are
+           comma-separated and spaces after commas are not permitted.
+           This list can be empty.
     \row
         \o "
         \o name
@@ -413,7 +406,7 @@ all services that implement the interface \i com.nokia.qt.ILocation:
 \code
     QServiceManager mgr;
     QServiceFilter filter;
-    filter.setInterfaceName("com.nokia.qt.ILocation");
+    filter.setInterface("com.nokia.qt.ILocation");
     QList<QServiceInterfaceDescriptor> list = mgr.findInterfaces(filter);
     for(int i = 0; i < list.size(); i++) {
         QObject *serviceObject;
@@ -445,12 +438,25 @@ version 1.0 and version 1.1.  In this case the old service implementation
 must be first be removed using QServiceManager::removeService() to make
 way for the new service implementation.
 
+\section2 Out of process Services
+
+Out of process services behave similarly to local services, with one
+exception.  There can be IPC errors, or the remote service can
+terminate unexpectedly.  QObjects returned by the service manager for
+out of process services have an additional signal created,
+errorUnrecoverableIPCFault(QService::UnrecoverableIPCError) which the
+client must connect to.  If an error occurs the object must be
+destroyed; no further calls can be made.  The error recovery is left up to
+the client application.
+
+
 \section1 Examples
 
 \list
     \o \l{File Manager Plugin Example}
     \o \l{Bluetooth Transfer Plugin Example}
     \o \l{Service Browser Example}
+    \o \l{Service Framework Echo Example}
 \endlist
 
 

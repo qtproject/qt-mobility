@@ -1,0 +1,210 @@
+//
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description: 
+//
+
+LOAD_SUITE Te_PerformanceFunctionalitySuite
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81108
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81108
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Multiple requests within one database instance Test
+//! @SYMTestActions Open contact x
+//! Open/update/delete contact x in trap
+//! Store err in Y
+//! 
+//! Read contact h	
+//! Close contact h in a trap
+//! Store error in B
+//! Commit contact h in a trap
+//! Store error in C
+//! 
+//! Open contact h 
+//! Close/Commit contact h in a trap
+//! Store error in B2
+//! Close/Commit contact h in a trap
+//! Store error in B3 
+//! 
+//! Open contact h
+//! Read contact h
+//! Close/Commit h in a trap
+//! Store error in D
+//! @SYMTestExpectedResults Y should equal 0
+//! B should equal error 
+//! C should equal error 
+//! B2 should equal 0
+//! B3 should equal error (for commit, 0 otherwise)
+//! D should equal 0
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite RequestMixStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini SingleSession
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81108
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81109
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81109
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Multiple requests within multiple database instances Test
+//! @SYMTestActions Open Instance Q
+//! Open contact x
+//! Open Instance U
+//! Open/update/delete contact x in trap
+//! Store err in Y
+//! 
+//! Use instance Q
+//! Read contact h	
+//! Use instance U
+//! Close contact h in a trap
+//! Store error in B
+//! Commit contact h in a trap
+//! Store error in C
+//! 
+//! Use instance Q
+//! Open contact h 
+//! Use instance U
+//! Close/Commit contact h in a trap
+//! Store error in B2
+//! Close/Commit contact h in a trap
+//! Store error in B3 
+//! 
+//! Use instance Q
+//! Open contact h
+//! Use instance U 
+//! Read contact h
+//! Close/Commit read in a trap
+//! Store error in D
+//! @SYMTestExpectedResults 
+//! Y should equal 0
+//! B2 should equal 0
+//! B3 should equal error 
+//! D should equal error
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite RequestMixStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini MultipleSession
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81109
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81110
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81110
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Multiple transaction requests within one database instance Test
+//! @SYMTestActions Open contact x
+//! Start transaction
+//! Open/Commit contact x in a trap
+//! Store error in B
+//! Close transaction 
+//!
+//! Start transaction
+//! close contact x in a trap
+//! Store error in D
+//! Close transaction
+//!
+//! Read contact h
+//! Start transaction	
+//! Close contact h in a trap
+//! Store error in B2
+//! Close transaction
+//!
+//! Start transaction
+//! Commit contact h in a trap
+//! Store error in C2
+//! Close transaction
+//! @SYMTestExpectedResults B should equal lock error
+//! D should equal lock error 
+//! B2 should equal error
+//! C2 should equal error
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite RequestMixStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini SingleTransaction
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81110
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81111
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81111
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Multiple transaction requests within multiple database instances Test
+//! @SYMTestActions Open database instance Q
+//! Open contact x
+//! 
+//! Open database instance U
+//! Start transaction
+//! Open/Commit contact x in a trap
+//! Store error in B
+//! Close transaction 
+//! 
+//! Start transaction
+//! close contact x in a trap
+//! Store error in D
+//! Close transaction
+//! 
+//! Use database instance Q
+//! Read contact h
+//! Use database instance U
+//! Start transaction	
+//! Close contact h in a trap
+//! Store error in B2
+//! Close transaction
+//! 
+//! Start transaction
+//! Commit contact h in a trap
+//! Store error in C2
+//! Close transaction
+
+//! @SYMTestExpectedResults B should equal lock error
+//! D should equal lock error 
+//! B2 should equal error
+//! C2 should equal error
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite RequestMixStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini MultipleTransaction
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81111
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81154
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81154
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Multiple destroy test
+//! @SYMTestActions Open ten contacts
+//! Push locks for contacts on cleanup stack
+//! Destroy all contact objects and locks
+//! Check if lock status of contacts
+//! @SYMTestExpectedResults All contacts should be unlocked
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite RequestMixStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini MultipleDestroy
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81154
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81148
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81148
+//! @SYMTestType CIT
+//! @SYMTestPriority Low
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Indefinite Locking Test
+//! @SYMTestActions Open session
+//! Open contact A
+//! Close session
+//! Open new session
+//! Open contact A in trap
+//! @SYMTestExpectedResults Contact should not be locked
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite RequestMixStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini IndefiniteLock
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81148
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81153
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81153
+//! @SYMTestType CIT
+//! @SYMTestPriority Low
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Odd Session commit
+//! @SYMTestActions Begin transaction with session A
+//! Attempt to delete a contact
+//! Attempt to to commit transaction with session B
+//! @SYMTestExpectedResults Transaction commit should fail with kerrlocked
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite RequestMixStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini OddSession
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81153

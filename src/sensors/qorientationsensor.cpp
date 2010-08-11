@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,6 +49,7 @@ IMPLEMENT_READING(QOrientationReading)
 /*!
     \class QOrientationReading
     \ingroup sensors_reading
+    \inmodule QtSensors
 
     \brief The QOrientationReading class represents one reading from the
            orientation sensor.
@@ -107,6 +108,7 @@ void QOrientationReading::setOrientation(QOrientationReading::Orientation orient
 /*!
     \class QOrientationFilter
     \ingroup sensors_filter
+    \inmodule QtSensors
 
     \brief The QOrientationFilter class is a convenience wrapper around QSensorFilter.
 
@@ -122,11 +124,12 @@ void QOrientationReading::setOrientation(QOrientationReading::Orientation orient
     \sa QSensorFilter::filter()
 */
 
-const char *QOrientationSensor::type("QOrientationSensor");
+char const * const QOrientationSensor::type("QOrientationSensor");
 
 /*!
     \class QOrientationSensor
     \ingroup sensors_type
+    \inmodule QtSensors
 
     \brief The QOrientationSensor class is a convenience wrapper around QSensor.
 

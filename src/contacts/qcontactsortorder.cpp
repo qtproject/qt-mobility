@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,6 +47,9 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QContactSortOrder
   \brief The QContactSortOrder class defines how a list of contacts should be ordered according to some criteria
+  
+  \inmodule QtContacts
+  
  */
 
 /*!
@@ -127,6 +130,48 @@ bool QContactSortOrder::operator ==(const QContactSortOrder& other) const
         return true;
     return false;
 }
+
+
+#ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a sortOrder to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QContactSortOrder& sortOrder)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactSortOrder
+    return out << formatVersion
+               << sortOrder.detailDefinitionName()
+               << sortOrder.detailFieldName()
+               << static_cast<quint32>(sortOrder.blankPolicy())
+               << static_cast<quint32>(sortOrder.direction())
+               << static_cast<quint32>(sortOrder.caseSensitivity());
+}
+
+/*!
+ * Reads a sort order from stream \a in into \a sortOrder.
+ */
+QDataStream& operator>>(QDataStream& in, QContactSortOrder& sortOrder)
+{
+    sortOrder = QContactSortOrder();
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QString definitionName;
+        QString fieldName;
+        quint32 blankPolicy;
+        quint32 direction;
+        quint32 caseSensitivity;
+        in >> definitionName >> fieldName >> blankPolicy >> direction >> caseSensitivity;
+        sortOrder.setDetailDefinitionName(definitionName, fieldName);
+        sortOrder.setBlankPolicy(QContactSortOrder::BlankPolicy(blankPolicy));
+        sortOrder.setDirection(Qt::SortOrder(direction));
+        sortOrder.setCaseSensitivity(Qt::CaseSensitivity(caseSensitivity));
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+#endif
 
 /*!
  * Sets the definition name of the details which will be inspected to perform sorting to \a definitionName,

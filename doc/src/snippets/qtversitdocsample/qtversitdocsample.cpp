@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -60,44 +60,6 @@ void completeExample();
 void exportExample();
 void importExample();
 
-//! [Detail handler]
-class MyDetailHandler : public QVersitContactExporterDetailHandler {
-public:
-    bool preProcessDetail(const QContact& contact, const QContactDetail& detail,
-                          QVersitDocument* document) {
-        Q_UNUSED(contact) Q_UNUSED(detail) Q_UNUSED(document)
-        return false;
-    }
-    bool postProcessDetail(const QContact& contact, const QContactDetail& detail,
-                           bool alreadyProcessed, QVersitDocument* document) {
-        Q_UNUSED(contact) Q_UNUSED(document)
-        if (!alreadyProcessed)
-            mUnknownDetails.append(detail);
-        return false;
-    }
-    QList<QContactDetail> mUnknownDetails;
-};
-//! [Detail handler]
-
-//! [Property handler]
-class MyPropertyHandler : public QVersitContactImporterPropertyHandler {
-public:
-   bool preProcessProperty(const QVersitDocument& document, const QVersitProperty& property,
-                           int contactIndex, QContact* contact) {
-       Q_UNUSED(document) Q_UNUSED(property) Q_UNUSED(contactIndex) Q_UNUSED(contact)
-       return false;
-   }
-   bool postProcessProperty(const QVersitDocument& document, const QVersitProperty& property,
-                            bool alreadyProcessed, int contactIndex, QContact* contact) {
-       Q_UNUSED(document) Q_UNUSED(contactIndex) Q_UNUSED(contact)
-       if (!alreadyProcessed)
-           mUnknownProperties.append(property);
-       return false;
-   }
-   QList<QVersitProperty> mUnknownProperties;
-};
-//! [Property handler]
-
 //! [Resource handler]
 class MyResourceHandler : public QVersitDefaultResourceHandler {
 public:
@@ -130,38 +92,46 @@ int main(int argc, char *argv[])
 
 void completeExample()
 {
-    //! [Complete example]
     // Create the input vCard
+    //! [Complete example - create]
     QBuffer input;
     input.open(QBuffer::ReadWrite);
     QByteArray inputVCard =
         "BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John Citizen\r\nN:Citizen;John;Q;;\r\nEND:VCARD\r\n";
     input.write(inputVCard);
     input.seek(0);
+    //! [Complete example - create]
 
     // Parse the input into QVersitDocuments
+    //! [Complete example - read]
     // Note: we could also use the more convenient QVersitReader(QByteArray) constructor.
     QVersitReader reader;
     reader.setDevice(&input);
     reader.startReading(); // Remember to check the return value
     reader.waitForFinished();
+    QList<QVersitDocument> inputDocuments = reader.results();
+    //! [Complete example - read]
 
     // Convert the QVersitDocuments to QContacts
-    QList<QVersitDocument> inputDocuments = reader.results();
+    //! [Complete example - import]
     QVersitContactImporter importer;
     if (!importer.importDocuments(inputDocuments))
         return;
     QList<QContact> contacts = importer.contacts();
     // Note that the QContacts are not saved yet.
     // Use QContactManager::saveContacts() for saving if necessary
+    //! [Complete example - import]
 
     // Export the QContacts back to QVersitDocuments
+    //! [Complete example - export]
     QVersitContactExporter exporter;
     if (!exporter.exportContacts(contacts, QVersitDocument::VCard30Type))
         return;
     QList<QVersitDocument> outputDocuments = exporter.documents();
+    //! [Complete example - export]
 
     // Encode the QVersitDocument back to a vCard
+    //! [Complete example - write]
     // Note: we could also use the more convenient QVersitWriter(QByteArray*) constructor.
     QBuffer output;
     output.open(QBuffer::ReadWrite);
@@ -169,20 +139,14 @@ void completeExample()
     writer.setDevice(&output);
     writer.startWriting(outputDocuments); // Remember to check the return value
     writer.waitForFinished();
-
-    // Read the vCard back to a QByteArray
-    output.seek(0);
-    QByteArray outputVCard(output.readAll());
-    //! [Complete example]
+    // output.buffer() now contains a vCard
+    //! [Complete example - write]
 }
 
 void exportExample()
 {
     //! [Export example]
     QVersitContactExporter contactExporter;
-
-    MyDetailHandler detailHandler;
-    contactExporter.setDetailHandler(&detailHandler);
 
     QContact contact;
     // Create a name
@@ -195,6 +159,7 @@ void exportExample()
     QList<QVersitDocument> versitDocuments = contactExporter.documents();
 
     // detailHandler.mUnknownDetails now contains the list of unknown details
+
     //! [Export example]
 }
 
@@ -202,9 +167,6 @@ void importExample()
 {
     //! [Import example]
     QVersitContactImporter importer;
-
-    MyPropertyHandler propertyHandler;
-    importer.setPropertyHandler(&propertyHandler);
 
     QVersitDocument document;
 
@@ -222,6 +184,7 @@ void importExample()
         // contactList.first() now contains the "N" property as a QContactName
         // propertyHandler.mUnknownProperties contains the list of unknown properties
     }
+
     //! [Import example]
 }
 

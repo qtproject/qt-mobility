@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -52,6 +52,14 @@ namespace QService
         UserScope = 0,
         SystemScope
     };
+    
+    enum UnrecoverableIPCError {
+        ErrorUnknown = 0,
+        ErrorServiceNoLongerAvailable,
+        ErrorOutofMemory,
+        ErrorPermissionDenied,
+        ErrorInvalidArguments
+    };    
 }
 
 QTM_END_NAMESPACE

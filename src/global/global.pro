@@ -3,7 +3,8 @@
 TEMPLATE = subdirs
 
 include(../../common.pri)
-PUBLIC_HEADERS += qmobilityglobal.h
+PUBLIC_HEADERS += qmobilityglobal.h \
+                  qlatin1constant.h
 
 headers.files = $$PUBLIC_HEADERS
 headers.path = $$QT_MOBILITY_INCLUDE
@@ -13,7 +14,7 @@ symbian {
     path=$$MW_LAYER_PUBLIC_EXPORT_PATH("")
 
     exportPath=$$EPOCROOT"."$$dirname(path)
-    nativePath=$$replace(exportPath, /,\)
+    nativePath=$$replace(exportPath,/,\\)
     exists($$nativePath) {
     } else {
         system($$QMAKE_MKDIR $$nativePath)

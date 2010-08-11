@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,14 +46,6 @@
 
 QTM_USE_NAMESPACE
 
-QML_DECLARE_TYPE(QOrientationSensor)
-
-QML_DECLARE_TYPE(QSensorReading)
-
-QML_DECLARE_TYPE(QOrientationReading)
-//### while we don't want to explicitly create this type in QML, we need to define it so
-//    we can specify enum values like OrientationReading.LeftUp
-
 class MainWidget : public QWidget
 {
     Q_OBJECT
@@ -80,9 +72,6 @@ MainWidget::MainWidget()
 
 int main(int argc, char *argv[])
 {
-    qmlRegisterType<QOrientationReading>("Qt", 4, 6, "OrientationReading");
-    qmlRegisterType<QOrientationSensor>("Qt", 4, 6, "OrientationSensor");
-
     QApplication app(argc, argv);
 
     MainWidget mainWidget;

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -59,6 +59,14 @@ QTM_BEGIN_NAMESPACE
     friend class Class##Private;
 
 class QContactFilterPrivate;
+
+// MSVC needs the function declared before the friend declaration
+class QContactFilter;
+#ifndef QT_NO_DATASTREAM
+Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactFilter& filter);
+Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactFilter& filter);
+#endif
+
 class Q_CONTACTS_EXPORT QContactFilter
 {
 public:
@@ -103,8 +111,14 @@ protected:
 
 protected:
     friend class QContactFilterPrivate;
+#ifndef QT_NO_DATASTREAM
+    friend QDataStream& operator<<(QDataStream& out, const QContactFilter& filter);
+    friend QDataStream& operator>>(QDataStream& in, QContactFilter& filter);
+#endif
     QSharedDataPointer<QContactFilterPrivate> d_ptr;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QContactFilter::MatchFlags);
 
 const Q_CONTACTS_EXPORT QContactFilter operator&(const QContactFilter& left, const QContactFilter& right);
 const Q_CONTACTS_EXPORT QContactFilter operator|(const QContactFilter& left, const QContactFilter& right);

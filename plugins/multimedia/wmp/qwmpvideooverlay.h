@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -58,8 +58,6 @@ class QWmpVideoOverlay
 public:
     QWmpVideoOverlay(IWMPPlayer4 *player, IOleObject *object, QWmpPlayerService *service);
     ~QWmpVideoOverlay();
-
-    void setEnabled(bool enabled);
 
     WId winId() const;
     void setWinId(WId id);
@@ -137,11 +135,11 @@ private:
     IOleObject *m_object;
     IOleInPlaceObject *m_inPlaceObject;
     WId m_winId;
+    COLORREF m_windowColor;
     Qt::AspectRatioMode m_aspectRatioMode;
     QSize m_sizeHint;
     QRect m_displayRect;
     bool m_fullScreen;
-    bool m_enabled;
 };
 
 #endif

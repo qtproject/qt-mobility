@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,6 +43,7 @@
 
 #include "qtcontacts.h"
 
+//TESTED_COMPONENT=src/contacts
 //TESTED_CLASS=
 //TESTED_FILES=
 
@@ -69,6 +70,7 @@ private slots:
     void detailFilter();
     void detailRangeFilter();
     void changeLogFilter();
+    void actionFilter();
     void relationshipFilter();
     void boringFilters();
     void idListFilter();
@@ -77,6 +79,8 @@ private slots:
     void testFilter();
     void testFilter_data();
 
+    void datastream();
+    void datastream_data();
     void traits();
 
     void sortObject(); // should perhaps be in a different test :)
@@ -351,6 +355,79 @@ void tst_QContactFilter::unionFilter()
     QVERIFY(bf3.filters().at(3) == df3);
 }
 
+void tst_QContactFilter::actionFilter()
+{
+    QContactActionFilter af;
+
+    /* Test initial conditions */
+    QVERIFY(af.type() == QContactFilter::ActionFilter);
+    QVERIFY(af.actionName().isEmpty());
+    QVERIFY(af.vendorName().isEmpty());
+    QVERIFY(af.implementationVersion() == -1);
+
+    af.setActionName("Action Name");
+    QVERIFY(af.actionName() == "Action Name");
+
+    af.setActionName(QString());
+    QVERIFY(af.actionName().isEmpty());
+
+    af.setVendor("Vendor");
+    QVERIFY(af.vendorName() == "Vendor");
+    QVERIFY(af.implementationVersion() == -1);
+
+    af.setVendor(QString());
+    QVERIFY(af.vendorName().isEmpty());
+    QVERIFY(af.implementationVersion() == -1);
+
+    af.setVendor(QString(), 10);
+    QVERIFY(af.vendorName().isEmpty());
+    QVERIFY(af.implementationVersion() == -1);
+
+    af.setVendor("Vendor", 10);
+    QVERIFY(af.vendorName() == "Vendor");
+    QVERIFY(af.implementationVersion() == 10);
+
+    af.setVendor("Vendor", -1);
+    QVERIFY(af.vendorName() == "Vendor");
+    QVERIFY(af.implementationVersion() == -1);
+
+    af.setVendor("Vendor", 10);
+    QVERIFY(af.vendorName() == "Vendor");
+    QVERIFY(af.implementationVersion() == 10);
+
+    af.setVendor("Vendor");
+    QVERIFY(af.vendorName() == "Vendor");
+    QVERIFY(af.implementationVersion() == -1);
+
+    // Make sure there isn't a shadow copy
+    af.setVendor("Vendor", 10);
+    af.setVendor(QString());
+    QVERIFY(af.implementationVersion() == -1);
+    af.setVendor("Vendor");
+    QVERIFY(af.implementationVersion() == -1);
+
+    /* Test op= */
+    QContactFilter f = af;
+    QVERIFY(f == af);
+
+    QContactActionFilter af2 = f;
+    QVERIFY(af2 == af);
+
+    /* Self assignment should do nothing */
+    af2 = af2;
+    QVERIFY(af2 == af);
+
+    QContactDetailFilter dfil;
+    QContactActionFilter af3(dfil);
+    QVERIFY(af3.type() == QContactFilter::ActionFilter);
+    QContactActionFilter af4(af);
+    QVERIFY(af4 == af);
+    af = dfil;
+    QVERIFY(af == af3);
+    af = af3;
+    af.setActionName("test"); // should force a detach
+}
+
 void tst_QContactFilter::changeLogFilter()
 {
     QContactChangeLogFilter cf;
@@ -445,10 +522,58 @@ void tst_QContactFilter::detailFilter()
 
     QContactDetailFilter df2 = f;
     QVERIFY(df2 == df);
+    QVERIFY(df2.detailDefinitionName() == "Definition");
+    QVERIFY(df2.detailFieldName() == "Field");
 
     /* Self assignment should do nothing */
     df2 = df2;
     QVERIFY(df2 == df);
+
+    /* Some cross casting */
+    QContactDetailRangeFilter rf;
+
+    /* Directly */
+    df2 = rf;
+    QVERIFY(df2.type() == QContactFilter::ContactDetailFilter);
+    QVERIFY(df2.detailDefinitionName().isEmpty());
+    QVERIFY(df2.detailFieldName().isEmpty());
+    QVERIFY(df2.value().isNull());
+
+    /* reset it */
+    df2 = df;
+    QVERIFY(df2.detailDefinitionName() == "Definition");
+    QVERIFY(df2.detailFieldName() == "Field");
+
+    /* Through base class */
+    f = rf;
+    df2 = f;
+    QVERIFY(df2.detailDefinitionName().isEmpty());
+    QVERIFY(df2.detailFieldName().isEmpty());
+    QVERIFY(df2.value().isNull());
+
+    /* Now test copy ctor */
+    QContactDetailFilter df3(rf);
+    QVERIFY(df3.type() == QContactFilter::ContactDetailFilter);
+    QVERIFY(df3.detailDefinitionName().isEmpty());
+    QVERIFY(df3.detailFieldName().isEmpty());
+    QVERIFY(df3.value().isNull());
+
+    /* reset it */
+    df3 = df;
+    QVERIFY(df3.detailDefinitionName() == "Definition");
+    QVERIFY(df3.detailFieldName() == "Field");
+
+    /* Now test copy ctor through base class */
+    QContactDetailFilter df4(f);
+    QVERIFY(df4.type() == QContactFilter::ContactDetailFilter);
+    QVERIFY(df4.detailDefinitionName().isEmpty());
+    QVERIFY(df4.detailFieldName().isEmpty());
+    QVERIFY(df4.value().isNull());
+
+    /* reset it */
+    df4 = df;
+    QVERIFY(df4.detailDefinitionName() == "Definition");
+    QVERIFY(df4.detailFieldName() == "Field");
 }
 
 void tst_QContactFilter::detailRangeFilter()
@@ -485,6 +610,16 @@ void tst_QContactFilter::detailRangeFilter()
 
     rf.setMatchFlags(QContactFilter::MatchExactly);
     QVERIFY(rf.matchFlags() == QContactFilter::MatchExactly);
+
+    rf.setMatchFlags(QContactFilter::MatchCaseSensitive);
+    QVERIFY(rf.matchFlags() == QContactFilter::MatchCaseSensitive);
+
+    // Contains is not allowed
+    rf.setMatchFlags(QContactFilter::MatchCaseSensitive | QContactFilter::MatchContains);
+    QVERIFY(rf.matchFlags() == QContactFilter::MatchCaseSensitive);
+
+    rf.setMatchFlags(QContactFilter::MatchEndsWith);
+    QVERIFY(rf.matchFlags() == QContactFilter::MatchExactly); // 0
 
     rf.setRange(5, 10);
     QVERIFY(rf.minValue() == 5);
@@ -989,11 +1124,11 @@ void tst_QContactFilter::canonicalizedFilter_data()
         QContactDetailRangeFilter qcdrf;
         qcdrf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
         qcdrf.setRange(QLatin1String("a"), QLatin1String("a"));
-        qcdrf.setMatchFlags(QContactFilter::MatchStartsWith);
+        qcdrf.setMatchFlags(QContactFilter::MatchFixedString);
         QContactDetailFilter expected;
         expected.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
         expected.setValue(QLatin1String("a"));
-        expected.setMatchFlags(QContactFilter::MatchStartsWith);
+        expected.setMatchFlags(QContactFilter::MatchFixedString);
         QTest::newRow("Equal valued range filter")
                 << static_cast<QContactFilter>(qcdrf)
                 << static_cast<QContactFilter>(expected);
@@ -1004,7 +1139,7 @@ void tst_QContactFilter::canonicalizedFilter_data()
         qcdrf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
         qcdrf.setRange(QLatin1String("a"), QLatin1String("a"),
                QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper);
-        qcdrf.setMatchFlags(QContactFilter::MatchStartsWith);
+        qcdrf.setMatchFlags(QContactFilter::MatchFixedString);
         QTest::newRow("Equal valued range filter with excluded bounds")
                 << static_cast<QContactFilter>(qcdrf)
                 << static_cast<QContactFilter>(invalidFilter);
@@ -1014,7 +1149,7 @@ void tst_QContactFilter::canonicalizedFilter_data()
         QContactDetailRangeFilter qcdrf;
         qcdrf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
         qcdrf.setRange(QLatin1String("a"), QLatin1String("b"));
-        qcdrf.setMatchFlags(QContactFilter::MatchStartsWith);
+        qcdrf.setMatchFlags(QContactFilter::MatchFixedString);
         QTest::newRow("Normal range filter")
                 << static_cast<QContactFilter>(qcdrf)
                 << static_cast<QContactFilter>(qcdrf);
@@ -1024,10 +1159,10 @@ void tst_QContactFilter::canonicalizedFilter_data()
         QContactDetailRangeFilter qcdrf;
         qcdrf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
         qcdrf.setRange(QVariant(QVariant::String), QVariant(QVariant::String)); // null bounds
-        qcdrf.setMatchFlags(QContactFilter::MatchStartsWith);
+        qcdrf.setMatchFlags(QContactFilter::MatchFixedString);
         QContactDetailFilter qcdf;
         qcdf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
-        qcdf.setMatchFlags(QContactFilter::MatchStartsWith);
+        qcdf.setMatchFlags(QContactFilter::MatchFixedString);
         qcdf.setValue(QVariant(QVariant::String));
         QTest::newRow("Null valued range filter")
                 << static_cast<QContactFilter>(qcdrf)
@@ -1038,7 +1173,7 @@ void tst_QContactFilter::canonicalizedFilter_data()
         QContactDetailRangeFilter qcdrf;
         qcdrf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
         qcdrf.setRange(QVariant(QVariant::String), QLatin1String("a")); // min is null
-        qcdrf.setMatchFlags(QContactFilter::MatchStartsWith);
+        qcdrf.setMatchFlags(QContactFilter::MatchFixedString);
         QTest::newRow("One sided range filter")
                 << static_cast<QContactFilter>(qcdrf)
                 << static_cast<QContactFilter>(qcdrf);
@@ -1171,6 +1306,86 @@ void tst_QContactFilter::testFilter_data()
                 << contact
                 << QContactEmailAddress::match("bar")
                 << false;
+    }
+}
+
+void tst_QContactFilter::datastream()
+{
+    QFETCH(QContactFilter, filterIn);
+
+    QByteArray buffer;
+    QDataStream stream1(&buffer, QIODevice::WriteOnly);
+    stream1 << filterIn;
+
+    QVERIFY(buffer.size() > 0);
+
+    QDataStream stream2(buffer);
+    QContactFilter filterOut;
+    stream2 >> filterOut;
+    QCOMPARE(filterOut, filterIn);
+}
+
+void tst_QContactFilter::datastream_data()
+{
+    QTest::addColumn<QContactFilter>("filterIn");
+
+    {
+        QContactFilter filter;
+        QTest::newRow("default") << filter;
+    }
+
+    {
+        QContactActionFilter filter;
+        filter.setActionName("action name");
+        filter.setVendor("vendor", 1);
+        QTest::newRow("action") << (QContactFilter)filter;
+    }
+
+    {
+        QContactChangeLogFilter filter;
+        filter.setEventType(QContactChangeLogFilter::EventAdded);
+        filter.setSince(QDateTime(QDate(2010, 6, 1), QTime(1, 2, 3)));
+        QTest::newRow("changelog") << (QContactFilter)filter;
+    }
+
+    {
+        QContactDetailFilter filter;
+        filter.setDetailDefinitionName("detail", "field");
+        filter.setMatchFlags(QContactFilter::MatchEndsWith);
+        filter.setValue("ski");
+        QTest::newRow("detail") << (QContactFilter)filter;
+    }
+
+    {
+        QContactIntersectionFilter filter;
+        QTest::newRow("intersection") << (QContactFilter)filter;
+    }
+
+    {
+        QContactInvalidFilter filter;
+        QTest::newRow("invalid") << (QContactFilter)filter;
+    }
+
+    {
+        QContactLocalIdFilter filter;
+        filter.setIds(QList<QContactLocalId>() << 1 << 2 << 3);
+        QTest::newRow("localid") << (QContactFilter)filter;
+    }
+
+    {
+        QContactRelationshipFilter filter;
+        filter.setRelationshipType("member");
+        QContactId id;
+        id.setManagerUri("a");
+        id.setLocalId(1);
+        filter.setRelatedContactId(id);
+        filter.setRelatedContactRole(QContactRelationship::First);
+        QTest::newRow("relationship") << (QContactFilter)filter;
+    }
+
+    {
+        QContactUnionFilter filter;
+        QTest::newRow("union") << (QContactFilter)filter;
     }
 }
 

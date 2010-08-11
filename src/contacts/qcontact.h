@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -59,11 +59,21 @@
 #include "qcontactrelationshipfilter.h"
 #include "qcontacttype.h"
 
+class QDataStream;
+
 QTM_BEGIN_NAMESPACE
 
 class QContactManager;
 class QContactData;
 class QContactName;
+class QContactAction;
+
+// MSVC needs the function declared before the friend declaration
+class QContact;
+#ifndef QT_NO_DATASTREAM
+Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContact& contact);
+Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContact& contact);
+#endif
 
 class Q_CONTACTS_EXPORT QContact
 {
@@ -95,8 +105,11 @@ public:
     bool isEmpty() const;
     void clearDetails();
 
+    /* Access details of particular type or which support a particular action */
     QContactDetail detail(const QString& definitionId) const;
     QList<QContactDetail> details(const QString& definitionId = QString()) const;
+    QContactDetail detailWithAction(QContactAction* action) const;
+    QList<QContactDetail> detailsWithAction(QContactAction* action) const;
 
     QList<QContactDetail> details(const QString& definitionName, const QString& fieldName, const QString& value) const;
 
@@ -166,10 +179,21 @@ public:
     QList<QContactRelationship> relationships(const QString& relationshipType = QString()) const;
     QList<QContactId> relatedContacts(const QString& relationshipType = QString(), QContactRelationship::Role role = QContactRelationship::Either) const;
 
+    /* Actions available to be performed on this contact */
+    QList<QContactActionDescriptor> availableActions(const QString& vendorName = QString(), int implementationVersion = -1) const;
+
+    /* Preferences (eg, set a particular detail preferred for the SMS action) - subject to change! */
+    bool setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail);
+    bool isPreferredDetail(const QString& actionName, const QContactDetail& detail) const;
+    QContactDetail preferredDetail(const QString& actionName) const;
+    QMap<QString, QContactDetail> preferredDetails() const;
+
 private:
     friend class QContactManager;
     friend class QContactManagerData;
     friend class QContactManagerEngine;
+    friend QDataStream& operator<<(QDataStream& out, const QContact& contact);
+    friend QDataStream& operator>>(QDataStream& in, QContact& contact);
 
     QSharedDataPointer<QContactData> d;
 };

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,6 +49,7 @@ IMPLEMENT_READING(QTapReading)
 /*!
     \class QTapReading
     \ingroup sensors_reading
+    \inmodule QtSensors
 
     \brief The QTapReading class represents one reading from the
            tap sensor.
@@ -59,7 +60,7 @@ IMPLEMENT_READING(QTapReading)
 
     \image sensors-coordinates2.jpg
 
-    By default it returns double tap events. The QTapSensor::returnDoubleTapEvents property
+    By default it returns only double tap events. The QTapSensor::returnDoubleTapEvents property
     must be set to false to return individual tap events.
 */
 
@@ -130,6 +131,7 @@ void QTapReading::setDoubleTap(bool doubleTap)
 /*!
     \class QTapFilter
     \ingroup sensors_filter
+    \inmodule QtSensors
 
     \brief The QTapFilter class is a convenience wrapper around QSensorFilter.
 
@@ -145,11 +147,12 @@ void QTapReading::setDoubleTap(bool doubleTap)
     \sa QSensorFilter::filter()
 */
 
-const char *QTapSensor::type("QTapSensor");
+char const * const QTapSensor::type("QTapSensor");
 
 /*!
     \class QTapSensor
     \ingroup sensors_type
+    \inmodule QtSensors
 
     \brief The QTapSensor class is a convenience wrapper around QSensor.
 
@@ -186,8 +189,11 @@ const char *QTapSensor::type("QTapSensor");
     \property QTapSensor::returnDoubleTapEvents
     \brief a value indicating if double tap events should be reported.
 
-    Set to true (the default) to have the sensor report on double tap events.
-    Set to false to have the sensor report on individual tap events.
+    Set to true (the default) to have the sensor report only on double tap events.
+    Set to false to have the sensor report only on individual tap events.
+
+    It is not possible to have the sensor report both single and double tap events.
+    If both are needed the app should create 2 sensor objects.
 
     Note that you must access this property via QObject::property() and QObject::setProperty().
     The property must be set before calling start().

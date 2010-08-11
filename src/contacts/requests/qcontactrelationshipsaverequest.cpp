@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,6 +54,12 @@ QTM_BEGIN_NAMESPACE
   relationships (which may be retrieved by calling relationships()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
+  Please see the class documentation of QContactAbstractRequest for more information about
+  the usage of request classes and ownership semantics.
+
+  
+  \inmodule QtContacts
+  
   \ingroup contacts-requests
  */
 
@@ -61,6 +67,12 @@ QTM_BEGIN_NAMESPACE
 QContactRelationshipSaveRequest::QContactRelationshipSaveRequest(QObject* parent)
     : QContactAbstractRequest(new QContactRelationshipSaveRequestPrivate, parent)
 {
+}
+
+/*! Frees any memory used by this request */
+QContactRelationshipSaveRequest::~QContactRelationshipSaveRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
 }
 
 /*!
@@ -73,6 +85,7 @@ QContactRelationshipSaveRequest::QContactRelationshipSaveRequest(QObject* parent
 void QContactRelationshipSaveRequest::setRelationship(const QContactRelationship& contactRelationship)
 {
     Q_D(QContactRelationshipSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_relationships.clear();
     d->m_relationships.append(contactRelationship);
 }
@@ -81,6 +94,7 @@ void QContactRelationshipSaveRequest::setRelationship(const QContactRelationship
 void QContactRelationshipSaveRequest::setRelationships(const QList<QContactRelationship>& contactRelationships)
 {
     Q_D(QContactRelationshipSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_relationships = contactRelationships;
 }
 
@@ -89,6 +103,7 @@ void QContactRelationshipSaveRequest::setRelationships(const QList<QContactRelat
 QList<QContactRelationship> QContactRelationshipSaveRequest::relationships() const
 {
     Q_D(const QContactRelationshipSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_relationships;
 }
 
@@ -96,6 +111,7 @@ QList<QContactRelationship> QContactRelationshipSaveRequest::relationships() con
 QMap<int, QContactManager::Error> QContactRelationshipSaveRequest::errorMap() const
 {
     Q_D(const QContactRelationshipSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

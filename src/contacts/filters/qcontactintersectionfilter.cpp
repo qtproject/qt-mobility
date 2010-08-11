@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,6 +49,9 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QContactIntersectionFilter
   \brief The QContactIntersectionFilter class provides a filter which intersects the results of other filters.
+  
+  \inmodule QtContacts
+  
    \ingroup contacts-filters
  
   It may be used to select contacts which match all of the filters in the intersection
@@ -71,12 +74,22 @@ QContactIntersectionFilter::QContactIntersectionFilter()
 
 /*!
  * Sets the filters whose criteria will be intersected to \a filters
- * \sa filters()
+ * \sa filters(), clear()
  */
 void QContactIntersectionFilter::setFilters(const QList<QContactFilter>& filters)
 {
     Q_D(QContactIntersectionFilter);
     d->m_filters = filters;
+}
+
+/*!
+ * Clears the list of filters.  A cleared intersection filter will match no contacts.
+ * \sa filters(), setFilters()
+ */
+void QContactIntersectionFilter::clear()
+{
+    Q_D(QContactIntersectionFilter);
+    d->m_filters.clear();
 }
 
 /*!
@@ -101,7 +114,7 @@ void QContactIntersectionFilter::append(const QContactFilter& filter)
 
 /*!
  * Removes the given \a filter from the intersection list
- * \sa filters(), append(), prepend()
+ * \sa filters(), append(), prepend(), clear()
  */
 void QContactIntersectionFilter::remove(const QContactFilter& filter)
 {

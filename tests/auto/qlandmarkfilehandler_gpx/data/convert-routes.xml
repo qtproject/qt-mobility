@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Qt Mobility Location API" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+    <rte>
+        <rtept lat="29" lon="30"/>
+        <rtept lat="31" lon="32"/>
+        <rtept lat="33" lon="34"/>
+        <rtept lat="35" lon="36"/>
+    </rte>
+    <rte>
+        <rtept lat="37" lon="38"/>
+        <rtept lat="39" lon="40"/>
+        <rtept lat="41" lon="42"/>
+        <rtept lat="43" lon="44"/>
+    </rte>
+</gpx>

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -77,6 +77,9 @@ QTM_BEGIN_NAMESPACE
    \class QContactSyncTarget
    \brief The QContactSyncTarget class provides a sync target
    for a contact.
+  
+  \inmodule QtContacts
+  
    \ingroup contacts-details
  */
 
@@ -331,8 +334,26 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeMemorial, "Memorial");
 
 /*!
    \class QContactAvatar
-   \brief The QContactAvatar class contains the avatar of a contact.
    \ingroup contacts-details
+   \brief The QContactAvatar class contains avatar URLs of a contact.
+
+   Users can specify avatar URLs for a contact using this detail.
+   Generally, a URL will specify the location of a full-sized
+   image (or video) avatar.  Support for the detail is backend-specific;
+   some managers will automatically load the URL and synthesize a
+   (possibly scaled) thumbnail detail for the contact if no thumbnail
+   was explicitly set, while others will not.
+
+   The URLs which are contained in the detail may point to a file or
+   resource whose content may dynamically change.  This is in contrast
+   to the thumbnail detail which is static; once set it remains as
+   that image until set to something else.  That is, the content of a
+   QContactThumbnail detail is set by the user who has created the
+   contact, but the content of a resource identified by a URL specified
+   in a QContactAvatar detail is set by whoever owns the resource which
+   the URL identifies.
+
+   \sa QContactThumbnail
  */
 
 /*!
@@ -408,6 +429,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldStreet, "Street");
    \sa locality(), setLocality()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldLocality, "Locality");
+
 
 /*!
    \variable QContactAddress::FieldRegion
@@ -1328,6 +1350,17 @@ Q_DEFINE_LATIN1_CONSTANT(QContactNote::FieldNote, "Note");
    \brief The QContactTag class contains a tag associated with a
    contact.
    \ingroup contacts-details
+
+   Typically the tags associated with a contact will be distinct,
+   although this is usually only enforced when the contact is saved
+   in the manager.
+
+   Here is an example of retrieving all the tags for a contact:
+   \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Getting all tags
+
+   Here is an example of checking for a specific tag value:
+   \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Checking for a specific tag
+
  */
 
 /*!
@@ -1358,9 +1391,30 @@ Q_DEFINE_LATIN1_CONSTANT(QContactTag::FieldTag, "Tag");
 
 /*!
    \class QContactThumbnail
+   \ingroup contacts-details
    \brief The QContactThumbnail class contains a thumbnail used
    in display lists to represent the contact.
-   \ingroup contacts-details
+
+   Users can specify a thumbnail image for a contact via this detail.
+   Support for this detail is backend specific; some managers will save
+   the image as given, no matter how big it is, while other managers
+   will scale the image prior to save in order to reduce memory overhead.
+   Some managers will automatically synthesize a thumbnail detail for
+   each contact if an avatar image url is specified but no thumbnail
+   detail is specified.
+
+   The content of the thumbnail detail is static once set.  That is,
+   in order to change the thumbnail of a particular contact, the user
+   must modify the detail and update the contact.  This is in contrast
+   to the QContactAvatar detail, which contains URLs to resources;
+   the actual content of the resource might be changed dynamically by
+   person, group or organization for which the QContact is a digital
+   representation.  That is, the content of a QContactThumbnail detail
+   is set by the user who has created the contact, but the content of
+   a resource identified by a URL specified in a QContactAvatar detail
+   is set by whoever owns the resource which the URL identifies.
+
+   \sa QContactAvatar
  */
 
 /*!
@@ -1775,6 +1829,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldAssistantName, "AssistantNam
    \fn QContactOrganization::logoUrl() const
    Returns the url of the logo of the organization stored in this detail.
  */
+
 
 /*!
    \fn QContactOrganization::setDepartment(const QStringList& department)

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,6 +45,9 @@
 
     \brief The QMessageFolder class provides an interface for folders containing messages in the 
     messaging store.
+    
+    
+    \inmodule QtMessaging
     
     \ingroup messaging
  

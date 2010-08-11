@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -62,6 +62,9 @@
 #include "qcontactmanager.h"
 #include "qcontactmanagerengine.h"
 
+#include "qcontactactiondescriptor.h"
+#include "qcontactactionfactory.h"
+
 QTM_BEGIN_NAMESPACE
 
 class QContactManagerEngineFactory;
@@ -83,6 +86,8 @@ public:
 
     void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
     static QContactManagerEngine* engine(const QContactManager* manager);
+    static QList<QContactActionDescriptor> actionDescriptors(const QString& actionName = QString(), const QString& vendorName = QString(), int implementationVersion = -1);
+    static QContactAction* action(const QContactActionDescriptor& actionDescriptor);
 
     QContactManagerEngine* m_engine;
     QContactManager::Error m_error;
@@ -94,6 +99,14 @@ public:
     static QStringList m_pluginPaths;
     static void loadFactories();
     static void loadStaticFactories();
+
+    /* Action Implementations */
+    typedef QHash<QContactActionDescriptor, QContactActionFactory*> DescriptorHash;
+    static QList<QContactActionFactory*> m_actionfactories; // list of all factories
+    static QList<QContactActionDescriptor> m_descriptors; // all descriptors
+    static DescriptorHash m_descriptormap;
+    static QHash<QString, int> m_actionmap;
+    static QHash<QString, int> m_vendormap;
 
 private:
     Q_DISABLE_COPY(QContactManagerData)

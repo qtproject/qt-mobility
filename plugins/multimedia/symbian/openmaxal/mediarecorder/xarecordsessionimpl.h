@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -124,6 +124,8 @@ private:
     TInt32 setEncoderSettingsToMediaRecorder();
     TInt32 getBitratesByAudioCodecID(XAuint32 encoderId,
                           RArray<TUint32> &aBitrates);
+    TInt32 getSampleRatesByAudioCodecID(XAuint32 encoderId,
+                          RArray<TInt32> &aSampleRates);
 
 
 private:

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -59,10 +59,10 @@ Q_NOREPLY void DBusServer::positionUpdate(const QByteArray &message)
 }
 
 
-Q_NOREPLY void DBusServer::currentSettings(const QGeoPositionInfoSource::PositioningMethod methods,
-                                           int interval)
+Q_NOREPLY void DBusServer::currentSettings(quint32 methods, quint32 interval)
 {
-    interface->receiveSettings(methods, interval);
+    QGeoPositionInfoSource::PositioningMethod m = (QGeoPositionInfoSource::PositioningMethod) methods;
+    interface->receiveSettings(m, interval);
 }
 
 

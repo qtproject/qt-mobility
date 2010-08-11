@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -177,6 +177,25 @@ MessageSender::MessageSender(QWidget *parent, Qt::WindowFlags flags)
     connect(&service, SIGNAL(stateChanged(QMessageService::State)), this, SLOT(stateChanged(QMessageService::State)));
 
     QTimer::singleShot(0, this, SLOT(populateAccounts()));
+    
+    QWidgetList focusableWidgets;
+    focusableWidgets << accountCombo
+                     << toEdit
+                     << subjectEdit
+#ifdef USE_TABBED_LAYOUT
+                     << tabWidget
+#else
+                     << textEdit
+                     << attachmentsList
+#endif
+                     << addButton
+                     << removeButton
+                     << sendButton;
+
+    foreach(QWidget* w, focusableWidgets)
+        w->setContextMenuPolicy(Qt::NoContextMenu);
+
+    accountCombo->setFocus();
 }
 
 MessageSender::~MessageSender()

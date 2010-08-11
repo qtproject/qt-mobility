@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -75,6 +75,11 @@ public:
 
     QString clientName() const;
     void setClientName(const QString& name);
+
+    QVariant clientData(const QString& key) const;
+    void setClientData(const QString& key, const QVariant& value);
+    void resetClientData();
+
 private:
     QString m_id;
     QString m_displayName;

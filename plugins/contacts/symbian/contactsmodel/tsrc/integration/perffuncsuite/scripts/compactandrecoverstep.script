@@ -1,0 +1,105 @@
+//
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description: 
+//
+
+LOAD_SUITE Te_PerformanceFunctionalitySuite
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81163
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81163
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc CRUD Recovery and Compression test
+//! @SYMTestActions Add 10 contacts
+//! Set all contact fields
+//! 
+//! Start compression/recovery
+//! Perform CRUD operations
+//! Store error in X
+//! Stop compression/recovery
+//! 
+//! Perform CRUD operations
+//! Store error in Y
+//! @SYMTestExpectedResults X should equal KErrNotReady, Errors are correctly propagated to the client
+//! Y should equal KErrNone, operations can still be performed once database has transitioned into writable state
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite CompactAndRecoverStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini CRUD
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite CompactAndRecoverStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Recover_CRUD
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite CompactAndRecoverStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Complete_CRUD
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite CompactAndRecoverStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini CNR_CRUD
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81163
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81164
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81164
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Transaction Recovery and Compression test
+//! @SYMTestActions Add 10 contacts
+//! Set all contact fields
+//! 
+//! Start compression/recovery
+//! Start and End a Transaction
+//! Store error in X
+//! Stop compression/recovery
+//! 
+//! Start and End a Transaction
+//! Store error in Y
+//! @SYMTestExpectedResults X should equal KErrNotReady, Errors are correctly propagated to the client
+//! Y should equal KErrNone, operations can still be performed once database has transitioned into writable state
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite CompactAndRecoverStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Transaction
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite CompactAndRecoverStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Recover_Transaction
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite CompactAndRecoverStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Complete_Transaction
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite CompactAndRecoverStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini CNR_Transaction
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81164
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81165
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81165
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Simple operations Recovery and Compression test
+//! @SYMTestActions Add 10 contacts
+//! Set all contact fields
+//! 
+//! Start compression/recovery
+//! Perform simple operations
+//! Store error in X
+//! Stop compression/recovery
+//! 
+//! Perform simple operations
+//! Store error in Y
+//! @SYMTestExpectedResults X should equal KErrAccessDenied, Errors are correctly propagated to the client
+//! Y should equal KErrNone, operations can still be performed once database has transitioned into writable state
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite CompactAndRecoverStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Simple
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite CompactAndRecoverStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Recover_Simple
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite CompactAndRecoverStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Complete_Simple
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite CompactAndRecoverStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini CNR_Simple
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81165
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81166
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81166
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Async Open Recovery and Compression test
+//! @SYMTestActions Start compression/recovery
+//! Open database asynchronously
+//! Stop compression/recovery
+//! 
+//! Wait for open to complete
+//! Check that open completes successfully
+//! @SYMTestExpectedResults Open completes successfully, Asynchronous open should complete once database transitions to writable state.
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite CompactAndRecoverStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini AsyncOpen
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81166

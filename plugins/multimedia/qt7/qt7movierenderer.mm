@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,23 +46,26 @@
 #include "qt7playercontrol.h"
 #include "qt7movierenderer.h"
 #include "qt7playersession.h"
+#include "qt7ciimagevideobuffer.h"
 #include "qcvdisplaylink.h"
 #include <QtCore/qdebug.h>
 #include <QtCore/qcoreapplication.h>
 
 #include <QGLWidget>
 
-#include <QtMultimedia/qabstractvideobuffer.h>
-#include <QtMultimedia/qabstractvideosurface.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qabstractvideobuffer.h>
+#include <qabstractvideosurface.h>
+#include <qvideosurfaceformat.h>
 
 QT_USE_NAMESPACE
+
+//#define USE_MAIN_MONITOR_COLOR_SPACE 1
 
 class CVGLTextureVideoBuffer : public QAbstractVideoBuffer
 {
 public:
     CVGLTextureVideoBuffer(CVOpenGLTextureRef buffer)
-        : QAbstractVideoBuffer(NoHandle)
+        : QAbstractVideoBuffer(GLTextureHandle)
         , m_buffer(buffer)
         , m_mode(NotMapped)
     {
@@ -78,11 +81,6 @@ public:
     {
         GLuint id = CVOpenGLTextureGetName(m_buffer);
         return QVariant(int(id));
-    }
-
-    HandleType handleType() const
-    {
-        return GLTextureHandle;
     }
 
     MapMode mapMode() const { return m_mode; }
@@ -169,8 +167,9 @@ QT7MovieRenderer::QT7MovieRenderer(QObject *parent)
 #endif
     m_surface(0)
 {
+#ifdef QT_DEBUG_QT7
     qDebug() << "QT7MovieRenderer";
-
+#endif
     m_displayLink = new QCvDisplayLink(this);
     connect(m_displayLink, SIGNAL(tick(CVTimeStamp)), SLOT(updateVideoFrame(CVTimeStamp)));
 }
@@ -234,8 +233,23 @@ bool QT7MovieRenderer::createPixelBufferVisualContext()
                                                                              &kCFTypeDictionaryValueCallBacks);
     CFDictionarySetValue(visualContextOptions, kQTVisualContextPixelBufferAttributesKey, pixelBufferOptions);
 
-    CFDictionarySetValue(visualContextOptions, kQTVisualContextWorkingColorSpaceKey, CGColorSpaceCreateDeviceRGB());
-    CFDictionarySetValue(visualContextOptions, kQTVisualContextOutputColorSpaceKey, CGColorSpaceCreateDeviceRGB());
+    CGColorSpaceRef colorSpace = NULL;
+
+#if USE_MAIN_MONITOR_COLOR_SPACE
+    CMProfileRef sysprof = NULL;
+
+    // Get the Systems Profile for the main display
+    if (CMGetSystemProfile(&sysprof) == noErr) {
+        // Create a colorspace with the systems profile
+        colorSpace = CGColorSpaceCreateWithPlatformColorSpace(sysprof);
+        CMCloseProfile(sysprof);
+    }
+#endif
+
+    if (!colorSpace)
+        colorSpace = CGColorSpaceCreateDeviceRGB();
+
+    CFDictionarySetValue(visualContextOptions, kQTVisualContextOutputColorSpaceKey, colorSpace);
 
     OSStatus err = QTPixelBufferContextCreate(kCFAllocatorDefault,
                                                visualContextOptions,
@@ -264,14 +278,16 @@ void QT7MovieRenderer::setupVideoOutput()
 {
     AutoReleasePool pool;
 
+#ifdef QT_DEBUG_QT7
     qDebug() << "QT7MovieRenderer::setupVideoOutput" << m_movie;
+#endif
 
     if (m_movie == 0 || m_surface == 0) {
         m_displayLink->stop();
         return;
     }
 
-    NSSize size = [[(QTMovie*)m_movie attributeForKey:@"QTMovieCurrentSizeAttribute"] sizeValue];
+    NSSize size = [[(QTMovie*)m_movie attributeForKey:@"QTMovieNaturalSizeAttribute"] sizeValue];
     m_nativeSize = QSize(size.width, size.height);
 
 #ifdef QUICKTIME_C_API_AVAILABLE
@@ -288,9 +304,9 @@ void QT7MovieRenderer::setupVideoOutput()
             if (m_surface->isActive())
                 m_surface->stop();
 
-            qDebug() << "Starting the surface with format" << format;
             if (!m_surface->start(format)) {
-                qDebug() << "failed to start video surface" << m_surface->error();
+                qWarning() << "failed to start video surface" << m_surface->error();
+                qWarning() << "Surface format:" << format;
                 glSupported = false;
             } else {
                 m_usingGLContext = true;
@@ -303,14 +319,20 @@ void QT7MovieRenderer::setupVideoOutput()
             QVideoSurfaceFormat format(m_nativeSize, QVideoFrame::Format_RGB32);
 
             if (m_surface->isActive() && m_surface->surfaceFormat() != format) {
+#ifdef QT_DEBUG_QT7
                 qDebug() << "Surface format was changed, stop the surface.";
+#endif
                 m_surface->stop();
             }
 
             if (!m_surface->isActive()) {
+#ifdef QT_DEBUG_QT7
                 qDebug() << "Starting the surface with format" << format;
-                if (!m_surface->start(format))
-                    qDebug() << "failed to start video surface" << m_surface->error();
+#endif
+                if (!m_surface->start(format)) {
+                    qWarning() << "failed to start video surface" << m_surface->error();
+                    qWarning() << "Surface format:" << format;
+                }
             }
         }
     }
@@ -322,57 +344,72 @@ void QT7MovieRenderer::setupVideoOutput()
             (m_usingGLContext && (m_currentGLContext != QGLContext::currentContext())) ||
             (!m_usingGLContext && (m_pixelBufferContextGeometry != m_nativeSize))) {
             QTVisualContextRelease(m_visualContext);
+            m_pixelBufferContextGeometry = QSize();
             m_visualContext = 0;
         }
     }
 
-    if (!m_visualContext) {
-        if (m_usingGLContext) {
-            qDebug() << "Building OpenGL visual context";
-            m_currentGLContext = QGLContext::currentContext();
-            if (!createGLVisualContext()) {
-                qWarning() << "QT7MovieRenderer: failed to create visual context";
-                return;
-            }
-        } else {
-            qDebug() << "Building Pixel Buffer visual context";
-            if (!createPixelBufferVisualContext()) {
-                qWarning() << "QT7MovieRenderer: failed to create visual context";
-                return;
+    if (!m_nativeSize.isEmpty()) {
+        if (!m_visualContext) {
+            if (m_usingGLContext) {
+#ifdef QT_DEBUG_QT7
+                qDebug() << "Building OpenGL visual context" << m_nativeSize;
+#endif
+                m_currentGLContext = QGLContext::currentContext();
+                if (!createGLVisualContext()) {
+                    qWarning() << "QT7MovieRenderer: failed to create visual context";
+                    return;
+                }
+            } else {
+#ifdef QT_DEBUG_QT7
+                qDebug() << "Building Pixel Buffer visual context" << m_nativeSize;
+#endif
+                if (!createPixelBufferVisualContext()) {
+                    qWarning() << "QT7MovieRenderer: failed to create visual context";
+                    return;
+                }
             }
         }
+
+        // targets a Movie to render into a visual context
+        SetMovieVisualContext([(QTMovie*)m_movie quickTimeMovie], m_visualContext);
+
+        m_displayLink->start();
     }
-
-    // targets a Movie to render into a visual context
-    SetMovieVisualContext([(QTMovie*)m_movie quickTimeMovie], m_visualContext);
-
-
 #endif
 
-    m_displayLink->start();
-}
-
-void QT7MovieRenderer::setEnabled(bool)
-{
 }
 
 void QT7MovieRenderer::setMovie(void *movie)
 {
+#ifdef QT_DEBUG_QT7
     qDebug() << "QT7MovieRenderer::setMovie" << movie;
-
-    if (m_movie == movie)
-        return;
-
-    QMutexLocker locker(&m_mutex);
-
-#ifdef QUICKTIME_C_API_AVAILABLE
-    //ensure the old movie doesn't hold the visual context, otherwise it can't be reused
-    if (m_movie && m_visualContext)
-        SetMovieVisualContext([(QTMovie*)m_movie quickTimeMovie], 0);
 #endif
 
-    m_movie = movie;
-    setupVideoOutput();
+#ifdef QUICKTIME_C_API_AVAILABLE
+    QMutexLocker locker(&m_mutex);
+
+    if (m_movie != movie) {
+        if (m_movie) {
+            //ensure the old movie doesn't hold the visual context, otherwise it can't be reused
+            SetMovieVisualContext([(QTMovie*)m_movie quickTimeMovie], nil);
+            [(QTMovie*)m_movie release];
+        }
+
+        m_movie = movie;
+        [(QTMovie*)m_movie retain];
+
+        setupVideoOutput();
+    }
+#endif
+}
+
+void QT7MovieRenderer::updateNaturalSize(const QSize &newSize)
+{
+    if (m_nativeSize != newSize) {
+        m_nativeSize = newSize;
+        setupVideoOutput();
+    }
 }
 
 QAbstractVideoSurface *QT7MovieRenderer::surface() const
@@ -382,7 +419,9 @@ QAbstractVideoSurface *QT7MovieRenderer::surface() const
 
 void QT7MovieRenderer::setSurface(QAbstractVideoSurface *surface)
 {
+#ifdef QT_DEBUG_QT7
     qDebug() << "Set video surface" << surface;
+#endif
 
     if (surface == m_surface)
         return;
@@ -416,19 +455,18 @@ void QT7MovieRenderer::updateVideoFrame(const CVTimeStamp &ts)
         OSStatus status = QTVisualContextCopyImageForTime(m_visualContext, NULL, &ts, &imageBuffer);
 
         if (status == noErr && imageBuffer) {
-            //qDebug() << "render video frame";
             QAbstractVideoBuffer *buffer = 0;
 
             if (m_usingGLContext) {
-                buffer = new CVGLTextureVideoBuffer((CVOpenGLTextureRef)imageBuffer);
+                buffer = new QT7CIImageVideoBuffer([CIImage imageWithCVImageBuffer:imageBuffer]);
                 CVOpenGLTextureRelease((CVOpenGLTextureRef)imageBuffer);
-                //qDebug() << "render GL video frame" << buffer->handle();
             } else {
                 buffer = new CVPixelBufferVideoBuffer((CVPixelBufferRef)imageBuffer);
+                //buffer = new QT7CIImageVideoBuffer( [CIImage imageWithCVImageBuffer:imageBuffer] );
                 CVPixelBufferRelease((CVPixelBufferRef)imageBuffer);
             }
 
-            QVideoFrame frame(buffer, m_nativeSize, QVideoFrame::Format_RGB32);            
+            QVideoFrame frame(buffer, m_nativeSize, QVideoFrame::Format_RGB32);
             m_surface->present(frame);
             QTVisualContextTask(m_visualContext);
         }

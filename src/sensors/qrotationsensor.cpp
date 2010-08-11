@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,6 +49,7 @@ IMPLEMENT_READING(QRotationReading)
 /*!
     \class QRotationReading
     \ingroup sensors_reading
+    \inmodule QtSensors
 
     \brief The QRotationReading class represents one reading from the
            rotation sensor.
@@ -169,6 +170,7 @@ void QRotationReading::setZ(qreal z)
 /*!
     \class QRotationFilter
     \ingroup sensors_filter
+    \inmodule QtSensors
 
     \brief The QRotationFilter class is a convenience wrapper around QSensorFilter.
 
@@ -184,11 +186,12 @@ void QRotationReading::setZ(qreal z)
     \sa QSensorFilter::filter()
 */
 
-const char *QRotationSensor::type("QRotationSensor");
+char const * const QRotationSensor::type("QRotationSensor");
 
 /*!
     \class QRotationSensor
     \ingroup sensors_type
+    \inmodule QtSensors
 
     \brief The QRotationSensor class is a convenience wrapper around QSensor.
 

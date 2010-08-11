@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,6 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/versit
 
 #include "tst_qvcard21writer.h"
 #ifdef QT_BUILD_INTERNAL
@@ -147,7 +149,8 @@ END:VCARD\r\n\
     property.setName(QString::fromAscii("AGENT"));
     property.setValue(QString());
     property.insertParameter(QString::fromAscii("X-PARAMETER"),QString::fromAscii("VALUE"));
-    QVersitDocument document;
+    QVersitDocument document(QVersitDocument::VCard21Type);
+    document.setComponentType(QLatin1String("VCARD"));
     QVersitProperty embeddedProperty;
     embeddedProperty.setName(QString(QString::fromAscii("FN")));
     embeddedProperty.setValue(QString::fromAscii("Secret Agent"));

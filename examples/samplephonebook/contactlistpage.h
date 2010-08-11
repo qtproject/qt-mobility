@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -82,6 +82,10 @@ private slots:
     void deleteClicked();
     void importClicked();
     void exportClicked();
+    void contactsAdded(const QList<QContactLocalId>& ids);
+    void contactsRemoved(const QList<QContactLocalId>& ids);
+    void contactsChanged(const QList<QContactLocalId>& ids);
+    void dataChanged();
 
 private:
     // elements of the contact list "page"
@@ -95,7 +99,6 @@ private:
 
     // data
     QContactManager *m_manager;
-    QMap<QContactLocalId, int> m_idToListIndex;
     QMap<QString, QContactManager*> m_initialisedManagers;
     QList<QContact> m_contacts;
     QContactFilter m_currentFilter;

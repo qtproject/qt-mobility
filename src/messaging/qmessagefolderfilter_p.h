@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,7 +46,7 @@
 #include <qvariant.h>
 #include "qmessagefolder.h"
 #endif
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) && !defined(QT_SIMULATOR)
 #include "winhelpers_p.h"
 #include "qmessagemanager.h"
 #endif
@@ -139,7 +139,7 @@ public:
     QMessageFolderFilter *_folderFilter;
 #endif
 
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) && !defined(QT_SIMULATOR)
     static QMessageFolderFilter preprocess(QMessageManager::Error *error, MapiSessionPtr session, const QMessageFolderFilter &filter);
     static void preprocess(QMessageManager::Error *error, MapiSessionPtr session, QMessageFolderFilter *filter);
     static bool matchesFolder(const QMessageFolderFilter &filter, const MapiFolderPtr &folder);

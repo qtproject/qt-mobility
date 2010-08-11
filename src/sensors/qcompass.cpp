@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,6 +49,7 @@ IMPLEMENT_READING(QCompassReading)
 /*!
     \class QCompassReading
     \ingroup sensors_reading
+    \inmodule QtSensors
 
     \brief The QCompassReading class represents one reading from a
            compass.
@@ -118,6 +119,7 @@ void QCompassReading::setCalibrationLevel(qreal calibrationLevel)
 /*!
     \class QCompassFilter
     \ingroup sensors_filter
+    \inmodule QtSensors
 
     \brief The QCompassFilter class is a convenience wrapper around QSensorFilter.
 
@@ -133,11 +135,12 @@ void QCompassReading::setCalibrationLevel(qreal calibrationLevel)
     \sa QSensorFilter::filter()
 */
 
-const char *QCompass::type("QCompass");
+char const * const QCompass::type("QCompass");
 
 /*!
     \class QCompass
     \ingroup sensors_type
+    \inmodule QtSensors
 
     \brief The QCompass class is a convenience wrapper around QSensor.
 

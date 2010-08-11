@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -88,7 +88,7 @@ int main(int argc, char** argv)
         return QTest::qExec(&test, argc-1, argv);
     } else {
 #ifdef Q_OS_UNIX
-    QFile::remove("/tmp/qt-0/valuespace_shmlayer");
+        QFile::remove("/tmp/qt/valuespace_shmlayer");
 #endif
         QValueSpace::initValueSpaceServer();
         QProcess process;

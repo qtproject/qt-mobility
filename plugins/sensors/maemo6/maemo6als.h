@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,7 +45,8 @@
 #include "maemo6sensorbase.h"
 #include <qambientlightsensor.h>
 
-#include <sensord/alssensor_i.h>
+#include <alssensor_i.h>
+#include <unsigned.h>
 
 QTM_USE_NAMESPACE
 
@@ -54,8 +55,7 @@ class maemo6als : public maemo6sensorbase
     Q_OBJECT
 
 public:
-    static const char *id;
-
+    static char const * const id;
     maemo6als(QSensor *sensor);
 
 private:
@@ -63,7 +63,7 @@ private:
     static bool m_initDone;
 
 private slots:
-    void slotDataAvailable(const int& data);
+    void slotDataAvailable(const Unsigned& data);
 };
 
 #endif

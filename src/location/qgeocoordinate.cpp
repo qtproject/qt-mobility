@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -85,6 +85,9 @@ public:
 /*!
     \class QGeoCoordinate
     \brief The QGeoCoordinate class defines a geographical position on the surface of the Earth.
+
+    \inmodule QtLocation
+    
     \ingroup location
 
     A QGeoCoordinate is defined by latitude, longitude, and optionally, altitude.

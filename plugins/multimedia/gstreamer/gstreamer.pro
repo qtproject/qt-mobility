@@ -1,10 +1,12 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtmedia_gstengine)
+TARGET = $$qtLibraryTarget(qgstengine)
 PLUGIN_TYPE=mediaservice
 
 include(../../../common.pri)
-INCLUDEPATH+=../../../src/multimedia
+INCLUDEPATH+=../../../src/multimedia \
+             ../../../src/multimedia/video \
+             ../../../src/multimedia/audio
 
 CONFIG += mobility
 MOBILITY = multimedia
@@ -28,56 +30,54 @@ PKGCONFIG += \
 
 maemo* {
   PKGCONFIG +=gstreamer-plugins-bad-0.10
+
+  HEADERS += camerabuttonlistener_maemo.h
+
+  SOURCES += camerabuttonlistener_maemo.cpp
 }
 
 # Input
 HEADERS += \
     qgstreamermessage.h \
     qgstreamerbushelper.h \
-    qgstreamervideooutputcontrol.h \
     qgstreamervideorendererinterface.h \
-    qgstreamervideowidget.h \
     qgstreamerserviceplugin.h \
     qgstreameraudioinputendpointselector.h \
+    qgstreamervideorenderer.h \
+    qgstvideobuffer.h \
+    qvideosurfacegstsink.h \
     qgstreamervideoinputdevicecontrol.h
 
 SOURCES += \
     qgstreamermessage.cpp \
     qgstreamerbushelper.cpp \
-    qgstreamervideooutputcontrol.cpp \
     qgstreamervideorendererinterface.cpp \
-    qgstreamervideowidget.cpp \
     qgstreamerserviceplugin.cpp \
     qgstreameraudioinputendpointselector.cpp \
+    qgstreamervideorenderer.cpp \
+    qgstvideobuffer.cpp \
+    qvideosurfacegstsink.cpp \
     qgstreamervideoinputdevicecontrol.cpp
 
-contains(QT_CONFIG, multimedia) {
-    QT += multimedia
 
-    SOURCES += \
-        qgstreamervideooverlay.cpp \
-        qgstreamervideorenderer.cpp \
-        qgstvideobuffer.cpp \
-        qvideosurfacegstsink.cpp \
-        qx11videosurface.cpp \
-        qgstxvimagebuffer.cpp
+!win32:!embedded:!mac:!symbian {
+    LIBS += -lXv -lX11 -lXext
 
     HEADERS += \
         qgstreamervideooverlay.h \
-        qgstreamervideorenderer.h \
-        qgstvideobuffer.h \
-        qvideosurfacegstsink.h \
+        qgstreamervideowidget.h \
         qx11videosurface.h \
         qgstxvimagebuffer.h
 
-
-    LIBS += -lXv
+    SOURCES += \
+        qgstreamervideooverlay.cpp \
+        qgstreamervideowidget.cpp \
+        qx11videosurface.cpp \
+        qgstxvimagebuffer.cpp
 }
-
 include(mediaplayer/mediaplayer.pri)
-!maemo* {
-    include(mediacapture/mediacapture.pri)
-} else {
-    include(mediacapture/maemo/mediacapture_maemo.pri)
-    DEFINES += GST_USE_UNSTABLE_API #prevents warnings because of unstable photography API 
+include(mediacapture/mediacapture.pri)
+
+contains(gstreamer-photography_enabled, yes) {
+    include(camerabin/camerabin.pri)
 }

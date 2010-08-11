@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -51,8 +51,9 @@ QTM_BEGIN_NAMESPACE
 
 class QMessageService;
 
-class TelepathyEngine
+class TelepathyEngine : public QObject
 {
+     Q_OBJECT
 public:
     static TelepathyEngine* instance();
 
@@ -67,8 +68,9 @@ public:
 
 
     bool sendMessage(QMessage &message);
-
-
+public slots:
+    void onMessageSent(const Tp::Message &,TpSessionAccount *);
+    void onMessageQueued(TpSessionAccount *,bool);
 private:
 
     void updateImAccounts() const;
@@ -78,6 +80,8 @@ private: //Data
     TpSession *tpSession;
     mutable QMessageAccountId defaultSmsAccountId;
     mutable QHash<QString, QMessageAccount> iAccounts;
+    QEventLoop loop; // For making send message synchronous
+    bool opBusy;
 };
 
 QTM_END_NAMESPACE

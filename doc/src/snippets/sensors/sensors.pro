@@ -1,8 +1,7 @@
 TEMPLATE=app
-TARGET=sensors
-include(../../../../common.pri)
+TARGET=sensorsdocsnippet
+include(../../../../features/basic_examples_setup.pri)
 INCLUDEPATH += ../../../../src/sensors
-DESTDIR=$$PWD
 SOURCES+=main.cpp\
     creating.cpp\
     start.cpp\

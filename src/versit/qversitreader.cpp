@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,13 +53,15 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitReader
-  \brief The QVersitReader class reads Versit documents such as vCards from a device.
+  \brief The QVersitReader class provides an interface for reading versit
+  documents such as vCards from a Stream.
   \ingroup versit
+  \inmodule QtVersit
 
   QVersitReader concatenation of Versit documents such as vCards
   from a text stream and returns a list of QVersitDocument instances.
   QVersitReader supports reading from an abstract I/O device
-  which can be for example a file or a memory buffer.
+  which can be, for example, a file or a memory buffer.
   The reading can be done asynchronously, and the
   waitForFinished() function can be used to make a blocking
   read.
@@ -213,7 +215,8 @@ QVersitReader::Error QVersitReader::error() const
  * when the reading has finished.
  */
 bool QVersitReader::startReading()
-{    if (d->state() == ActiveState || d->isRunning()) {
+{
+    if (d->state() == ActiveState || d->isRunning()) {
         d->setError(QVersitReader::NotReadyError);
         return false;
     } else if (!d->mIoDevice || !d->mIoDevice->isReadable()) {

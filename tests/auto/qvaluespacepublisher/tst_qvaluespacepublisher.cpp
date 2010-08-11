@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,6 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/publishsubscribe
 
 #include <qvaluespacesubscriber.h>
 #include <qvaluespacemanager_p.h>
@@ -93,6 +95,9 @@ private slots:
     void testFilterConstructor_data();
     void testFilterConstructor();
     void testBaseConstructor();
+
+    void testSetValue_data();
+    void testSetValue();
 
     void testSignals_data();
     void testSignals();
@@ -294,6 +299,51 @@ void tst_QValueSpacePublisher::testBaseConstructor()
         QVERIFY(publisher.isConnected());
     }
 }
+
+void tst_QValueSpacePublisher::testSetValue_data()
+{
+    QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
+
+    QTest::addColumn<QString>("value");
+
+    QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
+
+    for (int i = 0; i < layers.count(); ++i) {
+        QAbstractValueSpaceLayer *layer = layers.at(i);
+
+        QTest::newRow("empty") << layer << QString::fromLatin1("/");
+    }
+}
+
+void tst_QValueSpacePublisher::testSetValue()
+{
+    QFETCH(QAbstractValueSpaceLayer *, layer);
+    QFETCH(QString, value);
+
+    QValueSpaceSubscriber subscriber(layer->id(), QLatin1String("/testSetValue"));
+    QVERIFY(subscriber.subPaths().isEmpty());
+
+    QValueSpacePublisher publisher(layer->id(), QLatin1String("/testSetValue"));
+
+    publisher.setValue(QLatin1String(""), QLatin1String("default data"));
+    publisher.sync();
+    QVERIFY(subscriber.subPaths().isEmpty());
+    QCOMPARE(subscriber.value(QLatin1String("")).toString(), QLatin1String("default data"));
+
+    publisher.setValue(QLatin1String("key"), QLatin1String("key data"));
+    publisher.sync();
+    QCOMPARE(subscriber.subPaths().count(), 1);
+    QCOMPARE(subscriber.subPaths().first(), QLatin1String("key"));
+    QCOMPARE(subscriber.value(QLatin1String("key")).toString(), QLatin1String("key data"));
+
+    publisher.resetValue(QLatin1String("key"));
+    publisher.resetValue(QLatin1String(""));
+    publisher.sync();
+
+    QVERIFY(!subscriber.value(QLatin1String("")).isValid());
+    QVERIFY(!subscriber.value(QLatin1String("key")).isValid());
+}
+
 
 void tst_QValueSpacePublisher::testSignals_data()
 {
