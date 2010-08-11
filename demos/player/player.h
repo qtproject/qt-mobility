@@ -46,15 +46,7 @@
 #include <qmediaplayer.h>
 #include <qmediaplaylist.h>
 #include <qvideowidget.h>
-#include <qaudioendpointselector.h>
 
-#ifdef Q_OS_SYMBIAN
-#include <QtGui/QDialog>
-#include <QtGui/QLineEdit>
-#include <QtGui/QListWidget>
-#include <QtNetwork/QHttp>
-#include "mediakeysobserver.h"
-#endif
 
 QT_BEGIN_NAMESPACE
 class QAbstractItemView;
@@ -97,64 +89,26 @@ private slots:
 
     void displayErrorMessage();
 
-#ifdef Q_OS_SYMBIAN
-    void handleFullScreen(bool isFullscreen);
-    void handleAspectRatio(bool aspectRatio);
-    void handleStateChange(QMediaPlayer::State state);
-    void handleMediaKeyEvent(MediaKeysObserver::MediaKeys key);
-    void showPlayList();
-    void hideOrShowCoverArt();
-    void launchYoutubeDialog();
-    void youtubeHttpRequestFinished(int requestId, bool error);
-    void youtubeReadResponseHeader(const QHttpResponseHeader& responseHeader);
-    void searchYoutubeVideo();
-    void addYoutubeVideo();
-    void handleAudioOutputDefault();
-    void handleAudioOutputAll();
-    void handleAudioOutputNone();
-    void handleAudioOutputEarphone();
-    void handleAudioOutputSpeaker();
-    void handleAudioOutputChangedSignal(const QString&);
-#else
     void showColorDialog();
-#endif
+    
+    void addToPlaylist(const QStringList& fileNames);
 
 private:
     void setTrackInfo(const QString &info);
     void setStatusInfo(const QString &info);
     void handleCursor(QMediaPlayer::MediaStatus status);
 
-#ifdef Q_OS_SYMBIAN
-    void createMenus();
-#endif
 
     QMediaPlayer *player;
     QMediaPlaylist *playlist;
     QVideoWidget *videoWidget;
     QLabel *coverLabel;
     QSlider *slider;
-    QAudioEndpointSelector *audioEndpointSelector;
     PlaylistModel *playlistModel;
     QAbstractItemView *playlistView;
     QString trackInfo;
     QString statusInfo;
-#ifdef Q_OS_SYMBIAN
-    MediaKeysObserver *mediaKeysObserver;
-    QDialog *playlistDialog;
-    QAction *toggleAspectRatio;
-    QAction *showYoutubeDialog;
-    QDialog *youtubeDialog;
-    QHttp http;
-    int httpGetId;
-    QMenu *audioOutputMenu;
-    QAction *setAudioOutputDefault;
-    QAction *setAudioOutputAll;
-    QAction *setAudioOutputNone;
-    QAction *setAudioOutputEarphone;
-    QAction *setAudioOutputSpeaker;
-#else
     QDialog *colorDialog;
-#endif
 };
 
 #endif

@@ -50,10 +50,12 @@
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QServiceFilter);
+
 Q_DECLARE_METATYPE(QVariant)
 
 class SharedTestService : public QObject 
 {
+    
     Q_OBJECT
     Q_SERVICE(SharedTestService, "IPCExampleService", "com.nokia.qt.ipcunittest", "3.4")
     Q_PROPERTY(QString value READ value WRITE setValue RESET resetValue NOTIFY valueChanged SCRIPTABLE true DESIGNABLE true STORED true); 
@@ -96,6 +98,7 @@ public:
     Q_INVOKABLE QVariant testFunctionWithVariantReturnValue(const QVariant& input)
     {
         qDebug() << "SharedTestService::testFunctionWithVariantReturnValue()";
+        m_hash = qHash(input.toString());
         return input;
     }
 
@@ -264,7 +267,7 @@ public:
 
     Q_INVOKABLE QServiceFilter testFunctionWithCustomReturnValue()
     {
-        qDebug() << "TestService::testFunctionWithCustomReturnValue()";
+        qDebug() << "UniqueTestService::testFunctionWithCustomReturnValue()";
         QServiceFilter f("com.nokia.qt.ipcunittest", "6.7");
         f.setServiceName("MyUniqueService");
         return f;
@@ -366,8 +369,9 @@ void registerExampleService()
         qWarning() << "Cannot register IPCExampleService" << path;
 }
 
-Q_DECLARE_METATYPE(QMetaType::Type);
+//Q_DECLARE_SERVICE_METATYPE(QServiceFilter);
 
+Q_DECLARE_METATYPE(QMetaType::Type);
 
 int main(int argc, char** argv)
 {
@@ -375,13 +379,10 @@ int main(int argc, char** argv)
 
     qRegisterMetaType<QServiceFilter>();
     qRegisterMetaTypeStreamOperators<QServiceFilter>("QServiceFilter");
-    // QVariant is built in with 4.7
-    // QTBUG-11316 causes a crash so this is a work around
-#if (QT_VERSION < QT_VERSION_CHECK(4, 7, 0))
+    
     qRegisterMetaType<QVariant>();    
     qRegisterMetaTypeStreamOperators<QVariant>("QVariant");
-#endif
-
+   
     registerExampleService();
 
     QRemoteServiceClassRegister::registerType<SharedTestService>(QRemoteServiceClassRegister::SharedInstance);
@@ -390,10 +391,6 @@ int main(int argc, char** argv)
     //this only works
     QRemoteServiceControl* control = new QRemoteServiceControl();
     control->publishServices("qt_sfw_example_ipc_unittest");
-#ifdef Q_OS_SYMBIAN
-    qDebug("OTR Calling RProcess::rendezvous TODO if needed and correct place");
-    RProcess::Rendezvous(KErrNone); 
-#endif
     int res =  app.exec();
     delete control;
     unregisterExampleService();

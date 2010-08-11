@@ -42,8 +42,8 @@
 #ifndef GALLERYQUERYREQUEST_H
 #define GALLERYQUERYREQUEST_H
 
-#include <qgalleryitemlist.h>
 #include <qgalleryqueryrequest.h>
+#include "qdeclarativegalleryfilter.h"
 
 #include <QtCore/qabstractitemmodel.h>
 #include <QtCore/qpointer.h>
@@ -66,14 +66,13 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
     Q_PROPERTY(int currentProgress READ currentProgress NOTIFY progressChanged)
     Q_PROPERTY(int maximumProgress READ maximumProgress NOTIFY progressChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames)
-    Q_PROPERTY(QStringList sortProperties READ sortPropertyNames WRITE setSortPropertyNames)
-    Q_PROPERTY(bool live READ isLive WRITE setLive)
-    Q_PROPERTY(int cursorPosition READ cursorPosition WRITE setCursorPosition NOTIFY cursorPositionChanged)
-    Q_PROPERTY(int minimumPagedItems READ minimumPagedItems WRITE setMinimumPagedItems)
-    Q_PROPERTY(bool autoUpdateCursorPosition READ autoUpdateCursorPosition WRITE setAutoUpdateCursorPosition)
-    Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
+    Q_PROPERTY(QStringList sortProperties READ sortPropertyNames WRITE setSortPropertyNames NOTIFY sortPropertyNamesChanged)
+    Q_PROPERTY(bool live READ isLive WRITE setLive NOTIFY liveChanged)
+    Q_PROPERTY(QString rootType READ rootType WRITE setRootType)
+    Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem NOTIFY rootItemChanged)
     Q_PROPERTY(Scope scope READ scope WRITE setScope)
-    Q_PROPERTY(QVariant scopeItemId READ scopeItemId WRITE setScopeItemId)
+    Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
+    Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged)
     Q_PROPERTY(QDeclarativeGalleryFilterBase* filter READ filter WRITE setFilter NOTIFY filterChanged)
 public:
     enum State
@@ -102,18 +101,14 @@ public:
 
     enum Scope
     {
-        AllDescendants,
-        DirectDescendants
+        AllDescendants = QGalleryQueryRequest::AllDescendants,
+        DirectDescendants = QGalleryQueryRequest::DirectDescendants
     };
 
     enum Roles
     {
         ItemId = 0,
         ItemType,
-        ItemUrl,
-        Reading,
-        Writing,
-        Available,
         MetaDataOffset
     };
 
@@ -135,37 +130,30 @@ public:
 
     QStringList sortPropertyNames() const { return m_request.sortPropertyNames(); }
     void setSortPropertyNames(const QStringList &names) {
-        if (!m_complete) m_request.setSortPropertyNames(names); }
+        if (!m_complete) m_request.setSortPropertyNames(names); emit sortPropertyNamesChanged(); }
 
     bool isLive() const { return m_request.isLive(); }
-    void setLive(bool live) { m_request.setLive(live); }
+    void setLive(bool live) { m_request.setLive(live); emit liveChanged(); }
 
-    int minimumPagedItems() const { return m_request.minimumPagedItems(); }
-    void setMinimumPagedItems(int items) { m_request.setMinimumPagedItems(items); }
-
-    int cursorPosition() const {
-        return m_itemList ? m_itemList->cursorPosition() : m_request.initialCursorPosition(); }
-    void setCursorPosition(int position)
-    {
-        if (m_itemList)
-            m_itemList->setCursorPosition(position);
-        else
-            m_request.setInitialCursorPosition(position);
-        emit cursorPositionChanged();
-    }
-
-    QString itemType() const { return m_request.itemType(); }
-    void setItemType(const QString &itemType) {
-        if (!m_complete) m_request.setItemType(itemType); }
+    QString rootType() const { return m_request.rootType(); }
+    void setRootType(const QString &itemType) {
+        if (!m_complete) m_request.setRootType(itemType); emit rootTypeChanged(); }
 
     Scope scope() const { return Scope(m_request.scope()); }
-    void setScope(Scope scope) { m_request.setScope(QGalleryAbstractRequest::Scope(scope)); }
+    void setScope(Scope scope) { m_request.setScope(QGalleryQueryRequest::Scope(scope)); }
 
-    QVariant scopeItemId() const { return m_request.scopeItemId(); }
-    void setScopeItemId(const QVariant &itemId) { m_request.setScopeItemId(itemId); }
+    QVariant rootItem() const { return m_request.rootItem(); }
+    void setRootItem(const QVariant &itemId) {
+        m_request.setRootItem(itemId); emit rootItemChanged(); }
 
     QDeclarativeGalleryFilterBase *filter() const { return m_filter; }
-    void setFilter(QDeclarativeGalleryFilterBase *filter) { m_filter = filter; }
+    void setFilter(QDeclarativeGalleryFilterBase *filter) { m_filter = filter; filterChanged(); }
+
+    int offset() const { return m_request.offset(); }
+    void setOffset(int offset) { m_request.setOffset(offset); emit offsetChanged(); }
+
+    int limit() const { return m_request.limit(); }
+    void setLimit(int limit) { m_request.setLimit(limit); emit limitChanged(); }
 
     int rowCount(const QModelIndex &parent) const;
 
@@ -173,9 +161,6 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role);
 
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
-
-    bool autoUpdateCursorPosition() const { return m_updateCursor; }
-    void setAutoUpdateCursorPosition(bool enabled) { m_updateCursor = enabled; }
 
     void classBegin();
     void componentComplete();
@@ -193,10 +178,16 @@ Q_SIGNALS:
     void stateChanged();
     void resultChanged();
     void progressChanged();
-    void cursorPositionChanged();
+    void sortPropertyNamesChanged();
+    void liveChanged();
+    void rootTypeChanged();
+    void rootItemChanged();
+    void filterChanged();
+    void offsetChanged();
+    void limitChanged();
 
 private Q_SLOTS:
-    void _q_setItemList(QGalleryItemList *list);
+    void _q_setResultSet(QGalleryResultSet *resultSet);
     void _q_itemsInserted(int index, int count);
     void _q_itemsRemoved(int index, int count);
     void _q_itemsMoved(int from, int to, int count);
@@ -205,11 +196,8 @@ private Q_SLOTS:
 private:
     QGalleryQueryRequest m_request;
     QPointer<QDeclarativeGalleryFilterBase> m_filter;
-    QGalleryItemList *m_itemList;
+    QGalleryResultSet *m_resultSet;
     int m_rowCount;
-    int m_lowerOffset;
-    int m_upperOffset;
-    bool m_updateCursor;
     bool m_complete;
 };
 

@@ -2,8 +2,12 @@ TARGET = tst_qradiotuner
 INCLUDEPATH += ../../../src/multimedia
 
 CONFIG += testcase
-
-SOURCES += tst_qradiotuner.cpp
+symbian {
+    HEADERS += tst_qradiotuner_s60.h
+    SOURCES += tst_qradiotuner_s60.cpp
+}
+HEADERS += tst_qradiotuner.h
+SOURCES += main.cpp tst_qradiotuner.cpp
 
 include (../../../common.pri)
 

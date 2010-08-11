@@ -133,7 +133,7 @@ QTM_BEGIN_NAMESPACE
 
 QDeclarativePositionSource::QDeclarativePositionSource()
         : m_positionSource(0), m_positioningMethod(QDeclarativePositionSource::NoPositioningMethod),
-        m_active(false), m_singleUpdate(false), m_updateInterval(0)
+        m_nmeaFile(0), m_active(false), m_singleUpdate(false), m_updateInterval(0)
 {
     m_positionSource = QGeoPositionInfoSource::createDefaultSource(this);
     if (m_positionSource) {
@@ -151,6 +151,7 @@ QDeclarativePositionSource::QDeclarativePositionSource()
 
 QDeclarativePositionSource::~QDeclarativePositionSource()
 {
+    delete m_nmeaFile;
     delete m_positionSource;
 }
 
@@ -171,17 +172,18 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
     // was an embedded resource file. QUrl loses the ':' so it is added here and checked if
     // it is available.
     QString localFileName = nmeaSource.toLocalFile();
-    QFile* file = new QFile(localFileName);
-    if (!file->exists()) {
+    delete m_nmeaFile;
+    m_nmeaFile = new QFile(localFileName);
+    if (!m_nmeaFile->exists()) {
         localFileName.prepend(":");
-        file->setFileName(localFileName);
+        m_nmeaFile->setFileName(localFileName);
     }
-    if (file->exists()) {
+    if (m_nmeaFile->exists()) {
 #ifdef QDECLARATIVE_POSITION_DEBUG
         qDebug() << "QDeclarativePositionSource NMEA File was found: " << localFileName;
 #endif
         m_positionSource = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode);
-        (qobject_cast<QNmeaPositionInfoSource*>(m_positionSource))->setDevice(file);
+        (qobject_cast<QNmeaPositionInfoSource*>(m_positionSource))->setDevice(m_nmeaFile);
         connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
         if (m_active && !m_singleUpdate) {

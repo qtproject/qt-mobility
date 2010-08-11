@@ -55,7 +55,6 @@ Rectangle {
     }
     PositionSource {
         id: positionSource
-        nmeaSource: "nmealog.txt"
         updateInterval: 1000
     }
     Column {

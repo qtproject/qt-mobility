@@ -40,7 +40,7 @@
 \ingroup mobility
 
 Bearer Management controls the connectivity state of the system so that
-the user can start or stop interfaces or roam transparently between
+the user can start or stop interfaces, or roam transparently between
 access points.
 
 \tableofcontents
@@ -49,12 +49,11 @@ access points.
 
 The Bearer Management API controls the system's connectivity state. This
 incorporates simple information such as whether the device is online and
-how many interfaces there are as well as enables the application developer
-to start, stop network interfaces and influences other connection specific
+how many interfaces exist. It also gives the application developer the ability to start and stop network interfaces and influences other connections specific
 details. Depending on the platform's capabilities it may even provide
 session management so that a network interface remains up for as long as
 clients have a registered interest in them while at the same time
-optimizes the interface's uptime.
+optimizing the interface's uptime.
 
 This API does not provide support for management of network configurations
 themselves. It is up to the platform to provide infrastructure which
@@ -65,8 +64,7 @@ enables to user to create, edit or delete network configurations.
 The Bearer API has been migrated to the Qt 4.7 QtNetwork library. This enables
 connection manager and roaming support for \l QNetworkAccessManager.
 Starting with Qt 4.7 the Mobility version has been deprecated in favor of
-Qt's Bearer API. Furthermore the roaming enabled QNetworkAccessManager cannot be used
-in connection with Mobility's Bearer API.
+Qt's Bearer API. Furthermore the roaming enabled QNetworkAccessManager cannot be used in connection with Mobility's Bearer API.
 
 The porting effort from Mobility Bearer to Qt Bearer is minimal as
 the relevant classes are source compatible. The only exception is the
@@ -82,7 +80,7 @@ will link Mobility's bearer library (even if the project links against QtNetwork
 \endcode
 
 
-\section2 The API in Detail
+\section1 The API in Detail
 
 Computer systems manage their network interfaces via a set of configurations.
 Each configuration describes a set of parameters which instruct the system
@@ -130,7 +128,7 @@ applications which intend to monitor the connectivity state but do not engage
 in network communication themselves. Any application wanting to open a socket
 to a remote address will typically use session management related functionality.
 
-\section3 Service networks
+\section2 Service networks
 
 Some mobile platforms use the concept of grouped access points (also
 called SNAP or Service Network Access Point). In principle multiple
@@ -198,7 +196,7 @@ an invalid configuration is returned. A possible workaround could be to
 implement a custom dialog which is populated based on what
 \l QNetworkConfigurationManager::allConfigurations() returns.
 
-\section3 Managing network sessions
+\section2 Managing network sessions
 
 A QNetworkSession object separates a \l {QNetworkSession::state()}{state()}
 and an \l{QNetworkSession::isOpen()}{isOpen()} condition.
@@ -233,7 +231,7 @@ detected via \l {QNetworkConfigurationManager::SystemSessionSupport}.
 If the system does not support global session calling
 \l{QNetworkSession::close()}{close()} never stops the interface.
 
-\section3 Roaming
+\section2 Roaming
 
 Roaming is the process of reconnecting a device from one network to another
 while minimizing the impact on the application. The system notifies the application
@@ -248,10 +246,10 @@ or network type (access to certain private networks may only be provided via cer
 Almost all devices providing roaming support have some form of global configuration application
 enabling the user to define such groups of access points (service networks) and priorities.
 
-This API supports two types of roaming. Application level roaming (ALR)
+This API supports two types of roaming. \i{Application level roaming} (ALR)
 provides the most control over the process. Applications will be notified about upcoming
 link layer changes and get the opportunity to test the new access point. Eventually they can
-reject or accept the link layer change. The second form of roaming is referred to as Forced Roaming.
+reject or accept the link layer change. The second form of roaming is referred to as \i{Forced Roaming}.
 The system simply changes the link layer without consulting the application. It is up to
 the application to detect that some of its internal socket may have become invalid. As a consequence
 it has to reinitialize those sockets and reestablish the previous user session without
@@ -260,7 +258,7 @@ manage the entire roaming process by themselves.
 
 QNetworkSession is the central class for managing roaming related issues.
 
-\section3 Platform capabilities
+\section2 Platform capabilities
 
 Some API features are not available on all platforms. The
 \l QNetworkConfigurationManager::Capability should be used to detect

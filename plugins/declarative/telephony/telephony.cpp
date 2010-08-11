@@ -64,8 +64,8 @@ public:
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.telephony"));
 
-        qmlRegisterType<QTelephonyCallInfoWrapper>(uri, 1, 0, "TelephonyCallInfo");
-        qmlRegisterType<QTelephonyCallListWrapper>(uri, 1, 0, "TelephonyCallList");
+        qmlRegisterType<QTelephonyCallInfoWrapper>(uri, 1, 1, "TelephonyCallInfo");
+        qmlRegisterType<QTelephonyCallListWrapper>(uri, 1, 1, "TelephonyCallList");
     }
 };
 

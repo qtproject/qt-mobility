@@ -76,7 +76,7 @@ public:
 
     virtual QGeoPlacePrivate* clone() const { return new QGeoPlacePrivate(*this); }
     QGeoPlace::PlaceType type;
-    QGeoBoundingBox boundingBox;
+    QGeoBoundingBox viewport;
     QGeoCoordinate coordinate;
     QGeoAddress address;
 };
