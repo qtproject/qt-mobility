@@ -122,7 +122,6 @@
 <div class="toc">
 <h3>Contents</h3>
 <ul>
-<li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
 </ul>
@@ -134,25 +133,17 @@
 <li><a href="qlandmarkidfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
-<a name="public-types"></a>
-<h2>Public Types</h2>
-<table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfilter.html#MatchingScheme-enum">MatchingScheme</a></b> { MatchAll, MatchSubset }</td></tr>
-</table>
-<hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfilter.html#QLandmarkIdFilter">QLandmarkIdFilter</a></b> ( const QList&lt;QLandmarkId&gt; &amp; <i>ids</i> = QList&lt;QLandmarkId&gt; (), MatchingScheme <i>matchingScheme</i> = MatchSubset )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfilter.html#QLandmarkIdFilter">QLandmarkIdFilter</a></b> ( const QList&lt;QLandmarkId&gt; &amp; <i>ids</i> = QList&lt;QLandmarkId&gt; () )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfilter.html#QLandmarkIdFilter-2">QLandmarkIdFilter</a></b> ( const QLandmarkFilter &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfilter.html#dtor.QLandmarkIdFilter">~QLandmarkIdFilter</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfilter.html#append">append</a></b> ( const QLandmarkId &amp; <i>id</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfilter.html#clear">clear</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmarkId&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfilter.html#landmarkIds">landmarkIds</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> MatchingScheme </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfilter.html#matchingScheme">matchingScheme</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfilter.html#remove">remove</a></b> ( const QLandmarkId &amp; <i>id</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfilter.html#setLandmarkIds">setLandmarkIds</a></b> ( const QList&lt;QLandmarkId&gt; &amp; <i>ids</i> )</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfilter.html#setMatchingScheme">setMatchingScheme</a></b> ( MatchingScheme <i>matchingScheme</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QLandmarkIdFilter &amp; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfilter.html#operator-lt-lt">operator&lt;&lt;</a></b> ( const QLandmarkId &amp; <i>id</i> )</td></tr>
 </table>
 <ul>
@@ -165,19 +156,9 @@
 <p>The QLandmarkIdFilter class is used to search for landmarks based on a list of landmark identifiers.</p>
 </div>
 <hr />
-<div class="types"/>
-<h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="MatchingScheme-enum"></a>enum QLandmarkIdFilter::MatchingScheme</h3>
-<p>Defines the matching behavior of the id filter.</p>
-<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
-<tr><td  class="topAlign"><tt>QLandmarkIdFilter::MatchAll</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">A landmark must be returned for every id assigned to the filter. Failure to match every id results in a <a href="qlandmarkmanager.html#Error-enum">QLandmarkManager::DoesNotExistError</a>.</td></tr>
-<tr><td  class="topAlign"><tt>QLandmarkIdFilter::MatchSubset</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Every id does not have to be matched to a landmark. Matching only a subset of the assigned ids is acceptable.</td></tr>
-</table>
-</div>
-<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QLandmarkIdFilter"></a>QLandmarkIdFilter::QLandmarkIdFilter ( const QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>ids</i> = QList&lt;QLandmarkId&gt; (), <a href="qlandmarkidfilter.html#MatchingScheme-enum">MatchingScheme</a> <i>matchingScheme</i> = MatchSubset )</h3>
+<h3 class="fn"><a name="QLandmarkIdFilter"></a>QLandmarkIdFilter::QLandmarkIdFilter ( const QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>ids</i> = QList&lt;QLandmarkId&gt; () )</h3>
 <p>Creates a filter that selects landmarks using a list of landmark <i>ids</i> and a <i>matchingScheme</i>.</p>
 <h3 class="fn"><a name="QLandmarkIdFilter-2"></a>QLandmarkIdFilter::QLandmarkIdFilter ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i> if possible, otherwise constructs a new id filter.</p>
@@ -190,18 +171,11 @@
 <h3 class="fn"><a name="landmarkIds"></a>QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkIdFilter::landmarkIds () const</h3>
 <p>Returns the list of landmark identifiers that the filter will use to determine matches.</p>
 <p>See also <a href="qlandmarkidfilter.html#setLandmarkIds">setLandmarkIds</a>().</p>
-<h3 class="fn"><a name="matchingScheme"></a><a href="qlandmarkidfilter.html#MatchingScheme-enum">MatchingScheme</a> QLandmarkIdFilter::matchingScheme () const</h3>
-<p>Returns the matching scheme of the filter.</p>
-<p>The matching scheme specifies whether the filter needs to match all landmark ids or only a subset. The default scheme is <tt>MatchSubset</tt>.</p>
-<p>See also <a href="qlandmarkidfilter.html#setMatchingScheme">setMatchingScheme</a>().</p>
 <h3 class="fn"><a name="remove"></a>void QLandmarkIdFilter::remove ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>id</i> )</h3>
 <p>Removes <i>id</i> to the list of landmark ids this filter searches for.</p>
 <h3 class="fn"><a name="setLandmarkIds"></a>void QLandmarkIdFilter::setLandmarkIds ( const QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>ids</i> )</h3>
 <p>Sets the <i>ids</i> that the filter will use to determine matches.</p>
 <p>See also <a href="qlandmarkidfilter.html#landmarkIds">landmarkIds</a>().</p>
-<h3 class="fn"><a name="setMatchingScheme"></a>void QLandmarkIdFilter::setMatchingScheme ( <a href="qlandmarkidfilter.html#MatchingScheme-enum">MatchingScheme</a> <i>matchingScheme</i> )</h3>
-<p>Sets the <i>matchingScheme</i> of the filter.</p>
-<p>See also <a href="qlandmarkidfilter.html#matchingScheme">matchingScheme</a>().</p>
 <h3 class="fn"><a name="operator-lt-lt"></a>QLandmarkIdFilter &amp; QLandmarkIdFilter::operator&lt;&lt; ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>id</i> )</h3>
 <p>Appends the given <i>id</i> to the list of landmark identifiers this filter searches for.</p>
 </div>

@@ -124,16 +124,20 @@
 <table class="propsummary">
 <tr><td  class="topAlign"><ul>
 <li class="fn">enum <b><a href="qlandmarkmanager.html#Error-enum">Error</a></b></li>
-<li class="fn">enum <b><a href="qlandmarkmanager.html#ImportExportOption-enum">ImportExportOption</a></b></li>
 <li class="fn">enum <b><a href="qlandmarkmanager.html#LandmarkFeature-enum">LandmarkFeature</a></b></li>
 <li class="fn">enum <b><a href="qlandmarkmanager.html#SupportLevel-enum">SupportLevel</a></b></li>
+<li class="fn">enum <b><a href="qlandmarkmanager.html#TransferOperation-enum">TransferOperation</a></b></li>
+<li class="fn">enum <b><a href="qlandmarkmanager.html#TransferOption-enum">TransferOption</a></b></li>
 <li class="fn"><b><a href="qlandmarkmanager.html#QLandmarkManager">QLandmarkManager</a></b> ( QObject * )</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#QLandmarkManager-2">QLandmarkManager</a></b> ( const QString &amp;, const QMap&lt;QString, QString&gt; &amp;, QObject * )</li>
-<li class="fn"><b><a href="qlandmarkmanager.html#QLandmarkManager-3">QLandmarkManager</a></b> ( const QString &amp;, int, const QMap&lt;QString, QString&gt; &amp;, QObject * )</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#dtor.QLandmarkManager">~QLandmarkManager</a></b> ()</li>
+<li class="fn"><b><a href="qlandmarkmanager.html#Gpx-var">Gpx</a></b> : const QLatin1Constant</li>
+<li class="fn"><b><a href="qlandmarkmanager.html#Kml-var">Kml</a></b> : const QLatin1Constant</li>
+<li class="fn"><b><a href="qlandmarkmanager.html#Kmz-var">Kmz</a></b> : const QLatin1Constant</li>
+<li class="fn"><b><a href="qlandmarkmanager.html#Lmx-var">Lmx</a></b> : const QLatin1Constant</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#availableManagers">availableManagers</a></b> () : QStringList</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#buildUri">buildUri</a></b> ( const QString &amp;, const QMap&lt;QString, QString&gt; &amp;, int ) : QString</li>
-<li class="fn"><b><a href="qlandmarkmanager.html#categories">categories</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; ) const : QList&lt;QLandmarkCategory&gt;</li>
+<li class="fn"><b><a href="qlandmarkmanager.html#categories">categories</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp;, QMap&lt;int, QLandmarkManager::Error&gt; * ) const : QList&lt;QLandmarkCategory&gt;</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#categories-2">categories</a></b> ( int, int, const QLandmarkNameSort &amp; ) const : QList&lt;QLandmarkCategory&gt;</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#categoriesAdded">categoriesAdded</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; )</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#categoriesChanged">categoriesChanged</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; )</li>
@@ -144,15 +148,15 @@
 <li class="fn"><b><a href="qlandmarkmanager.html#dataChanged">dataChanged</a></b> ()</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#error">error</a></b> () const : Error</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#errorString">errorString</a></b> () const : QString</li>
-<li class="fn"><b><a href="qlandmarkmanager.html#exportLandmarks">exportLandmarks</a></b> ( QIODevice *, const QString &amp;, QList&lt;QLandmarkId&gt;, QLandmarkManager::ImportExportOption ) const : bool</li>
-<li class="fn"><b><a href="qlandmarkmanager.html#exportLandmarks-2">exportLandmarks</a></b> ( const QString &amp;, const QString &amp;, QList&lt;QLandmarkId&gt;, QLandmarkManager::ImportExportOption ) const : bool</li>
+<li class="fn"><b><a href="qlandmarkmanager.html#exportLandmarks">exportLandmarks</a></b> ( QIODevice *, const QString &amp;, QList&lt;QLandmarkId&gt;, QLandmarkManager::TransferOption ) const : bool</li>
+<li class="fn"><b><a href="qlandmarkmanager.html#exportLandmarks-2">exportLandmarks</a></b> ( const QString &amp;, const QString &amp;, QList&lt;QLandmarkId&gt;, QLandmarkManager::TransferOption ) const : bool</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#filterSupportLevel">filterSupportLevel</a></b> ( const QLandmarkFilter &amp; ) const : SupportLevel</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#fromUri">fromUri</a></b> ( const QString &amp;, QObject * ) : QLandmarkManager *</li>
-<li class="fn"><b><a href="qlandmarkmanager.html#importLandmarks">importLandmarks</a></b> ( QIODevice *, const QString &amp;, QLandmarkManager::ImportExportOption, const QLandmarkCategoryId &amp; ) : bool</li>
-<li class="fn"><b><a href="qlandmarkmanager.html#importLandmarks-2">importLandmarks</a></b> ( const QString &amp;, const QString &amp;, QLandmarkManager::ImportExportOption, const QLandmarkCategoryId &amp; ) : bool</li>
+<li class="fn"><b><a href="qlandmarkmanager.html#importLandmarks">importLandmarks</a></b> ( QIODevice *, const QString &amp;, QLandmarkManager::TransferOption, const QLandmarkCategoryId &amp; ) : bool</li>
+<li class="fn"><b><a href="qlandmarkmanager.html#importLandmarks-2">importLandmarks</a></b> ( const QString &amp;, const QString &amp;, QLandmarkManager::TransferOption, const QLandmarkCategoryId &amp; ) : bool</li>
+</ul></td><td class="topAlign"><ul>
 <li class="fn"><b><a href="qlandmarkmanager.html#isCustomAttributesEnabled">isCustomAttributesEnabled</a></b> () const : bool</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#isExtendedAttributesEnabled">isExtendedAttributesEnabled</a></b> () const : bool</li>
-</ul></td><td class="topAlign"><ul>
 <li class="fn"><b><a href="qlandmarkmanager.html#isFeatureSupported">isFeatureSupported</a></b> ( LandmarkFeature ) const : bool</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#isReadOnly">isReadOnly</a></b> () const : bool</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#isReadOnly-2">isReadOnly</a></b> ( const QLandmarkId &amp; ) const : bool</li>
@@ -163,7 +167,7 @@
 <li class="fn"><b><a href="qlandmarkmanager.html#landmarkIds-2">landmarkIds</a></b> ( const QLandmarkFilter &amp;, int, int, const QLandmarkSortOrder &amp; ) const : QList&lt;QLandmarkId&gt;</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#landmarks">landmarks</a></b> ( const QLandmarkFilter &amp;, int, int, const QList&lt;QLandmarkSortOrder&gt; &amp; ) const : QList&lt;QLandmark&gt;</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#landmarks-2">landmarks</a></b> ( const QLandmarkFilter &amp;, int, int, const QLandmarkSortOrder &amp; ) const : QList&lt;QLandmark&gt;</li>
-<li class="fn"><b><a href="qlandmarkmanager.html#landmarks-3">landmarks</a></b> ( const QList&lt;QLandmarkId&gt; &amp; ) const : QList&lt;QLandmark&gt;</li>
+<li class="fn"><b><a href="qlandmarkmanager.html#landmarks-3">landmarks</a></b> ( const QList&lt;QLandmarkId&gt; &amp;, QMap&lt;int, QLandmarkManager::Error&gt; * ) const : QList&lt;QLandmark&gt;</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#landmarksAdded">landmarksAdded</a></b> ( const QList&lt;QLandmarkId&gt; &amp; )</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#landmarksChanged">landmarksChanged</a></b> ( const QList&lt;QLandmarkId&gt; &amp; )</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#landmarksRemoved">landmarksRemoved</a></b> ( const QList&lt;QLandmarkId&gt; &amp; )</li>
@@ -181,7 +185,7 @@
 <li class="fn"><b><a href="qlandmarkmanager.html#setCustomAttributesEnabled">setCustomAttributesEnabled</a></b> ( bool )</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#setExtendedAttributesEnabled">setExtendedAttributesEnabled</a></b> ( bool )</li>
 <li class="fn"><b><a href="qlandmarkmanager.html#sortOrderSupportLevel">sortOrderSupportLevel</a></b> ( const QList&lt;QLandmarkSortOrder&gt; &amp; ) const : SupportLevel</li>
-<li class="fn"><b><a href="qlandmarkmanager.html#supportedFormats">supportedFormats</a></b> () const : QStringList</li>
+<li class="fn"><b><a href="qlandmarkmanager.html#supportedFormats">supportedFormats</a></b> ( TransferOperation ) const : QStringList</li>
 </ul>
 </td></tr>
 </table>
