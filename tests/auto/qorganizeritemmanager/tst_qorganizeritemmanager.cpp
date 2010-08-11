@@ -1610,6 +1610,23 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
                 << (QList<QDate>() << QDate(2010, 1, 7) << QDate(2010, 1, 28)
                                    << QDate(2011, 1, 6) << QDate(2011, 1, 27));
         }
+
+        {
+            QOrganizerItemRecurrenceRule rrule;
+            rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+            rrule.setMonths(QList<QOrganizerItemRecurrenceRule::Month>()
+                    << QOrganizerItemRecurrenceRule::April);
+            rrule.setDaysOfWeek(QList<Qt::DayOfWeek>() << Qt::Sunday);
+            rrule.setPositions(QList<int>() << 1);
+            QTest::newRow(QString("mgr=%1, yearly recurrence, first Sunday of April").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 4, 4) << rrule // this is the first Sunday of April 2010
+                << QDate(2010, 1, 1) << QDate(2015, 1, 1)
+                << (QList<QDate>() << QDate(2010, 4, 4)
+                                   << QDate(2011, 4, 3)
+                                   << QDate(2012, 4, 1)
+                                   << QDate(2013, 4, 7)
+                                   << QDate(2014, 4, 6));
+        }
     }
 }
 

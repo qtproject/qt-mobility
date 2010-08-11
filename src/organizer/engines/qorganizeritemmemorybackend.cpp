@@ -236,7 +236,7 @@ QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QDateTime& 
     return retn;
 }
 
-QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const QDate& untilDate, const QOrganizerItemRecurrenceRule& rrule, const QDate& initialDate) const
+QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const QDate& untilDate, QOrganizerItemRecurrenceRule rrule, const QDate& initialDate) const
 {
     // gets the next date (starting from currDate INCLUSIVE) which matches the rrule but is less than untilDate
     // if none found, returns an invalid, null QDate.
@@ -250,6 +250,8 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
 
     if (currDate > realUntilDate)
         return QDate();
+
+    inferMissingCriteria(&rrule, initialDate);
 
     QList<Qt::DayOfWeek> daysOfWeek = rrule.daysOfWeek();
     qSort(daysOfWeek);
@@ -269,49 +271,15 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
 
     QDate tempDate = currDate;
     while (tempDate < realUntilDate) {
+        // FIXME: the interval-skipping code is broken for interval > 2, I think...
         // first, do FREQ+INTERVAL matching based on dateStart+rrule
         switch (freq) {
             case QOrganizerItemRecurrenceRule::Yearly:
             {
-                // first, get the tempdate to fall on the right day of the year, unless multiple days/weeks/months of the year were specified.
-                // if multiple days/weeks/months of the year were specified, we test for those instead.
-                if (daysOfYear.size() == 0  && weeksOfYear.size() == 0 && monthsOfYear.size() == 0) {
-                    if (tempDate.day() != initialDate.day() || tempDate.month() != initialDate.month()) {
-                        // we haven't reached the right day of the year yet.
-                        tempDate = tempDate.addDays(1);
-                        continue;
-                    }
-                } else {
-                    bool matchesAnyCriteria = false;
-                    if (daysOfYear.contains(tempDate.dayOfYear())) {
-                        matchesAnyCriteria = true;
-                    }
-
-                    if (weeksOfYear.contains(tempDate.weekNumber())) {
-                        // it must also be a specified day of the specified week
-                        if (daysOfWeek.contains(static_cast<Qt::DayOfWeek>(tempDate.dayOfWeek()))) {
-                            matchesAnyCriteria = true;
-                        }
-                    }
-
-                    if (monthsOfYear.contains(static_cast<QOrganizerItemRecurrenceRule::Month>(tempDate.month()))) {
-                        // it must also be a specified day of the specified month
-                        if (daysOfMonth.contains(tempDate.day())) {
-                            matchesAnyCriteria = true;
-                        }
-                    }
-
-                    // test to see whether this date matches.
-                    if (!matchesAnyCriteria) {
-                        tempDate = tempDate.addDays(1);
-                        continue;
-                    }
-                }
-
                 int yearsDelta = tempDate.year() - initialDate.year();
                 if (yearsDelta % interval > 0) {
                     // this year doesn't match the interval.
-                    tempDate = tempDate.addDays(tempDate.daysInYear() - tempDate.dayOfYear());
+                    tempDate.setDate(tempDate.year()+1, 1, 1);
                     continue;
                 }
             }
@@ -319,26 +287,12 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
 
             case QOrganizerItemRecurrenceRule::Monthly:
             {
-                // first, get the tempDate to fall on the right day of the month, unless multiple days of the month were specified.
-                // if multiple days of the month were specified, we test for daysOfMonth contains (current day of month) instead.
-                if (daysOfMonth.size() == 0) {
-                    // eg, initial date was the 3rd of june, the important day is "3rd"
-                    if (tempDate.day() != initialDate.day()) {
-                        // we haven't reached the right day of the month yet.
-                        tempDate = tempDate.addDays(1);
-                        continue;
-                    }
-                } else {
-                    if (!daysOfMonth.contains(tempDate.day())) {
-                        tempDate = tempDate.addDays(1);
-                        continue;
-                    }
-                }
-
                 int monthsDelta = tempDate.month() - initialDate.month() + (12 * (tempDate.year() - initialDate.year()));
                 if (monthsDelta % interval > 0) {
                     // this month doesn't match.
-                    tempDate = tempDate.addDays(tempDate.daysInMonth() - tempDate.day());
+                    int newMonth = tempDate.month()+1;
+                    int newYear = tempDate.year() + (newMonth==13 ? 1 : 0);
+                    tempDate.setDate(newYear, newMonth==13 ? 1 : newMonth, 1);
                     continue;
                 }
             }
@@ -346,13 +300,6 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
 
             case QOrganizerItemRecurrenceRule::Weekly:
             {
-                // first, get the tempDate to fall on a "7 days-from-startdate" multiple if no days in week were specified.
-                if (daysOfWeek.size() == 0) {
-                    while (initialDate.daysTo(tempDate) % 7 > 0) {
-                        tempDate = tempDate.addDays(1);
-                    }
-                }
-
                 // we need to adjust for the week start specified by the client if the interval is greater than 1
                 // ie, every time we hit the day specified, we increment the week count.
                 int weekCount = 0;
@@ -364,7 +311,7 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
                         weeklyDate = weeklyDate.addDays(1);
                     }
 
-                    while (weeklyDate < tempDate) {
+                    while (weeklyDate <= tempDate) {
                         if (static_cast<Qt::DayOfWeek>(weeklyDate.dayOfWeek()) == rrule.weekStart()) {
                             weekCount += 1;
                         }
@@ -372,21 +319,11 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
                     }
                 }
 
-                /* It turns out that we don't use ISO week for week interval calculations? */
-                // Weekly is a tricky one, because of ISO week stuff.
-                //int weekCount = 0;
-                //QDate weeklyDate = initialDate;
-                //while (weeklyDate < tempDate) {
-                //    int weeklyDateWeek = weeklyDate.weekNumber();
-                //    weeklyDate = weeklyDate.addDays(1);
-                //    if (weeklyDate.weekNumber() > weeklyDateWeek) {
-                //        weekCount += 1;
-                //    }
-                //}
-
                 if (weekCount % interval > 0) {
                     // this week doesn't match.
-                    tempDate = tempDate.addDays(7);
+                    do {
+                        tempDate = tempDate.addDays(1);
+                    } while (tempDate.dayOfWeek() != rrule.weekStart());
                     continue;
                 }
             }
@@ -406,32 +343,26 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
 
         // then, check months, weeksInYear, daysInMonth, daysInWeek, etc.
         if (monthsOfYear.size() > 0 && !monthsOfYear.contains(static_cast<QOrganizerItemRecurrenceRule::Month>(tempDate.month()))) {
-            // this day didn't match.
             tempDate = tempDate.addDays(1);
             continue;
         }
 
         if (weeksOfYear.size() > 0 && !weeksOfYear.contains(tempDate.weekNumber())) {
-            // this day didn't match.
             tempDate = tempDate.addDays(1);
             continue;
         }
 
-        if (daysOfYear.size() > 0 && !daysOfYear.contains(tempDate.day())) {
-            // this day didn't match.
+        if (daysOfYear.size() > 0 && !daysOfYear.contains(tempDate.dayOfYear())) {
             tempDate = tempDate.addDays(1);
             continue;
         }
 
         if (daysOfMonth.size() > 0 && !daysOfMonth.contains(tempDate.day())) {
-            // this day didn't match.
             tempDate = tempDate.addDays(1);
             continue;
         }
 
-        // XXX TODO: confirm that QDate::dayOfWeek() returns a weekday rather than weekdayNumber (ISO)
         if (daysOfWeek.size() > 0 && !daysOfWeek.contains(static_cast<Qt::DayOfWeek>(tempDate.dayOfWeek()))) {
-            // this day didn't match.
             tempDate = tempDate.addDays(1);
             continue;
         }
@@ -444,6 +375,60 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
 
     // no match.
     return QDate();
+}
+
+void QOrganizerItemMemoryEngine::inferMissingCriteria(QOrganizerItemRecurrenceRule* rrule, const QDate& initialDate) const
+{
+    switch (rrule->frequency()) {
+        case QOrganizerItemRecurrenceRule::Weekly:
+            if (rrule->daysOfWeek().isEmpty()) {
+                // derive day of week
+                QList<Qt::DayOfWeek> days;
+                days.append(static_cast<Qt::DayOfWeek>(initialDate.dayOfWeek()));
+                rrule->setDaysOfWeek(days);
+            }
+            break;
+        case QOrganizerItemRecurrenceRule::Monthly:
+            if (rrule->daysOfWeek().isEmpty() && rrule->daysOfMonth().isEmpty()) {
+                // derive day of month
+                QList<int> days;
+                days.append(initialDate.day());
+                rrule->setDaysOfMonth(days);
+            }
+            break;
+        case QOrganizerItemRecurrenceRule::Yearly:
+            if (rrule->months().isEmpty()
+                    && rrule->weeksOfYear().isEmpty()
+                    && rrule->daysOfYear().isEmpty()
+                    && rrule->daysOfMonth().isEmpty()
+                    && rrule->daysOfWeek().isEmpty()) {
+                // derive day of month and month of year
+                QList<int> daysOfMonth;
+                daysOfMonth.append(initialDate.day());
+                rrule->setDaysOfMonth(daysOfMonth);
+                QList<QOrganizerItemRecurrenceRule::Month> months;
+                months.append(static_cast<QOrganizerItemRecurrenceRule::Month>(initialDate.month()));
+                rrule->setMonths(months);
+            } else if (!rrule->months().isEmpty()
+                    && rrule->weeksOfYear().isEmpty()
+                    && rrule->daysOfYear().isEmpty()
+                    && rrule->daysOfMonth().isEmpty()
+                    && rrule->daysOfWeek().isEmpty()) {
+                // derive day of month
+                QList<int> daysOfMonth;
+                daysOfMonth.append(initialDate.day());
+                rrule->setDaysOfMonth(daysOfMonth);
+            } else if (!rrule->weeksOfYear().isEmpty()
+                    && rrule->daysOfYear().isEmpty()
+                    && rrule->daysOfMonth().isEmpty()
+                    && rrule->daysOfWeek().isEmpty()) {
+                // derive day of week
+                QList<Qt::DayOfWeek> days;
+                days.append(static_cast<Qt::DayOfWeek>(initialDate.dayOfWeek()));
+                rrule->setDaysOfWeek(days);
+            }
+            break;
+    }
 }
 
 /*! \reimp */

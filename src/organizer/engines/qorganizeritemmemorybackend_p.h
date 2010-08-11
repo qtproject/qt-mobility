@@ -207,7 +207,8 @@ private:
     static QOrganizerItem generateInstance(const QOrganizerItem& generator, const QDateTime& rdate);
 
     QList<QDateTime> generateDateTimes(const QDateTime& initialDateTime, const QOrganizerItemRecurrenceRule& rrule, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount) const;
-    QDate nextMatchingDate(const QDate& currDate, const QDate& untilDate, const QOrganizerItemRecurrenceRule& rrule, const QDate& initialDate) const;
+    QDate nextMatchingDate(const QDate& currDate, const QDate& untilDate, QOrganizerItemRecurrenceRule rrule, const QDate& initialDate) const;
+    void inferMissingCriteria(QOrganizerItemRecurrenceRule* rrule, const QDate& initialDate) const;
 
     QOrganizerItemMemoryEngineData* d;
     static QMap<QString, QOrganizerItemMemoryEngineData*> engineDatas;
