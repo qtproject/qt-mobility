@@ -2129,7 +2129,7 @@ QList<QLandmarkCategory> DatabaseOperations::categories(const QString &connectio
     }
     *error = lastError;
     *errorString = lastErrorString;
-
+    return result;
 }
 
 bool DatabaseOperations::saveCategoryHelper(const QString &connectionName, QLandmarkCategory *category,
