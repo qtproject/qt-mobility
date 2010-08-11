@@ -90,17 +90,24 @@ void QVersitPluginLoader::loadPlugins() {
 
         foreach (const QString& pluginPath, mPluginPaths) {
             QPluginLoader qpl(pluginPath);
-            QVersitContactHandlerFactory* handler =
-                qobject_cast<QVersitContactHandlerFactory*>(qpl.instance());
-            if (handler && !mLoadedFactories.contains(handler->name())) {
-                mLoadedFactories.insert(handler->name());
-                mContactHandlerFactories.append(handler);
+            QObject* plugin = qpl.instance();
+            QVersitContactHandlerFactory* contactPlugin =
+                qobject_cast<QVersitContactHandlerFactory*>(plugin);
+            if (contactPlugin && !mLoadedFactories.contains(contactPlugin->name())) {
+                mLoadedFactories.insert(contactPlugin->name());
+                mContactHandlerFactories.append(contactPlugin);
             } else {
-                QVersitOrganizerHandlerFactory* handler =
-                    qobject_cast<QVersitOrganizerHandlerFactory*>(qpl.instance());
-                if (handler && !mLoadedFactories.contains(handler->name())) {
-                    mLoadedFactories.insert(handler->name());
-                    mOrganizerHandlerFactories.append(handler);
+                QVersitOrganizerHandlerFactory* organizerPlugin =
+                    qobject_cast<QVersitOrganizerHandlerFactory*>(plugin);
+                if (organizerPlugin && !mLoadedFactories.contains(organizerPlugin->name())) {
+                    mLoadedFactories.insert(organizerPlugin->name());
+                    mOrganizerHandlerFactories.append(organizerPlugin);
+                } else if (!mTimeZoneHandler) {
+                    QVersitTimeZoneHandler* timeZonePlugin =
+                        qobject_cast<QVersitTimeZoneHandler*>(plugin);
+                    if (timeZonePlugin) {
+                        mTimeZoneHandler = timeZonePlugin;
+                    }
                 }
             }
         }
@@ -150,4 +157,11 @@ QList<QVersitOrganizerHandler*> QVersitPluginLoader::createOrganizerHandlers(con
         }
     }
     return handlers;
+}
+
+QVersitTimeZoneHandler* QVersitPluginLoader::timeZoneHandler()
+{
+    loadPlugins();
+
+    return mTimeZoneHandler;
 }

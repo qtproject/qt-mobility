@@ -34,7 +34,8 @@ PUBLIC_HEADERS +=  \
     qversitorganizerhandler.h \
     qversitorganizerexporter.h \
     qversitorganizerimporter.h \
-    qversitresourcehandler.h
+    qversitresourcehandler.h \
+    qversittimezonehandler.h
 
 # Private Headers
 PRIVATE_HEADERS += \

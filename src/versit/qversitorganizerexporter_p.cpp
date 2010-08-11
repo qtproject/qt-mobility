@@ -64,6 +64,7 @@ QVersitOrganizerExporterPrivate::QVersitOrganizerExporterPrivate(const QString& 
     }
 
     mPluginDetailHandlers = QVersitPluginLoader::instance()->createOrganizerHandlers(profile);
+    mTimeZoneHandler = QVersitPluginLoader::instance()->timeZoneHandler();
 }
 
 QVersitOrganizerExporterPrivate::~QVersitOrganizerExporterPrivate()

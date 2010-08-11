@@ -56,6 +56,7 @@
 #include "qversitorganizerimporter.h"
 #include "qorganizeritemrecurrence.h"
 #include "qversitorganizerhandler.h"
+#include "qversittimezonehandler.h"
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItem;
@@ -116,6 +117,7 @@ public:
     QMap<int, QVersitOrganizerImporter::Error> mErrors;
     QVersitOrganizerImporterPropertyHandler* mPropertyHandler;
     QList<QVersitOrganizerHandler*> mPluginPropertyHandlers;
+    QVersitTimeZoneHandler* mTimeZoneHandler;
     bool mDurationSpecified; // true iff a valid DURATION property has been seen in the current
                              // document with no subsequent DTEND property
 
@@ -167,6 +169,7 @@ private:
             const QVersitProperty& property,
             QOrganizerItem* item,
             QList<QOrganizerItemDetail>* updatedDetails);
+    QDateTime parseDateTime(const QVersitProperty& property);
     QDateTime parseDateTime(QString str);
 
     bool createRecurrenceRule(

@@ -45,6 +45,7 @@
 #include "qversitorganizerexporter.h"
 #include "qorganizeritemrecurrencerule.h"
 #include "qversitorganizerhandler.h"
+#include "qversittimezonehandler.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -62,6 +63,7 @@ public:
     QMap<int, QVersitOrganizerExporter::Error> mErrors;
     QVersitOrganizerExporterDetailHandler* mDetailHandler;
     QList<QVersitOrganizerHandler*> mPluginDetailHandlers;
+    QVersitTimeZoneHandler* mTimeZoneHandler;
 
 private:
     void exportDetail(
