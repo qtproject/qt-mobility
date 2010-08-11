@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -119,7 +120,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -128,19 +129,19 @@
 </ul>
 </div>
 <h1 class="title">QOrganizerTodoProgress Class Reference</h1>
-<!-- $$$QOrganizerTodoProgress-brief -->
 <p>The QOrganizerTodoProgress class contains information about the progress of a todo item. <a href="#details">More...</a></p>
-<!-- @@@QOrganizerTodoProgress -->
 <pre class="highlightedCode brush: cpp"> #include &lt;QOrganizerTodoProgress&gt;</pre><p>Inherits <a href="qorganizeritemdetail.html">QOrganizerItemDetail</a>.</p>
 <ul>
 <li><a href="qorganizertodoprogress-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qorganizertodoprogress.html#Status-enum">Status</a></b> { StatusNotStarted, StatusInProgress, StatusComplete }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> QDateTime </td><td class="memItemRight bottomAlign"><b><a href="qorganizertodoprogress.html#finishedDateTime">finishedDateTime</a></b> () const</td></tr>
@@ -153,7 +154,8 @@
 <ul>
 <li class="fn">21 public functions inherited from <a href="qorganizeritemdetail.html#public-functions">QOrganizerItemDetail</a></li>
 </ul>
-<a name="public-variables"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-variables"></a>
 <h2>Public Variables</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> const char * </td><td class="memItemRight bottomAlign"><b><a href="qorganizertodoprogress.html#DefinitionName-var">DefinitionName</a></b></td></tr>
@@ -161,76 +163,56 @@
 <tr><td class="memItemLeft rightAlign topAlign"> const char * </td><td class="memItemRight bottomAlign"><b><a href="qorganizertodoprogress.html#FieldPercentageComplete-var">FieldPercentageComplete</a></b></td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> const char * </td><td class="memItemRight bottomAlign"><b><a href="qorganizertodoprogress.html#FieldStatus-var">FieldStatus</a></b></td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<!-- $$$QOrganizerTodoProgress-description -->
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QOrganizerTodoProgress class contains information about the progress of a todo item.</p>
 </div>
-<!-- @@@QOrganizerTodoProgress -->
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<!-- $$$Status -->
-<h3 class="fn"><a name="Status-enum"></a>enum QOrganizerTodoProgress::Status</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Status-enum"></a>enum QOrganizerTodoProgress::Status</h3>
 <p>Enumerates the various possible types of todo item status</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QOrganizerTodoProgress::StatusNotStarted</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The todo item hasn't been started yet</td></tr>
 <tr><td  class="topAlign"><tt>QOrganizerTodoProgress::StatusInProgress</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The todo item is current in progress</td></tr>
 <tr><td  class="topAlign"><tt>QOrganizerTodoProgress::StatusComplete</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The todo item has finished</td></tr>
 </table>
-<!-- @@@Status -->
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<!-- $$$finishedDateTime[overload1]$$$finishedDateTime -->
-<h3 class="fn"><a name="finishedDateTime"></a>QDateTime QOrganizerTodoProgress::finishedDateTime () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="finishedDateTime"></a>QDateTime QOrganizerTodoProgress::finishedDateTime () const</h3>
 <p>Returns the todo progress item's finished date and timeas QDateTime.</p>
 <p>See also <a href="qorganizertodoprogress.html#setFinishedDateTime">setFinishedDateTime</a>().</p>
-<!-- @@@finishedDateTime -->
-<!-- $$$percentageComplete[overload1]$$$percentageComplete -->
-<h3 class="fn"><a name="percentageComplete"></a>int QOrganizerTodoProgress::percentageComplete () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="percentageComplete"></a>int QOrganizerTodoProgress::percentageComplete () const</h3>
 <p>Returns the todo progress item's completion percentage.</p>
 <p>See also <a href="qorganizertodoprogress.html#setPercentageComplete">setPercentageComplete</a>().</p>
-<!-- @@@percentageComplete -->
-<!-- $$$setFinishedDateTime[overload1]$$$setFinishedDateTimeconstQDateTime& -->
-<h3 class="fn"><a name="setFinishedDateTime"></a>void QOrganizerTodoProgress::setFinishedDateTime ( const QDateTime &amp; <i>finishedDateTime</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setFinishedDateTime"></a>void QOrganizerTodoProgress::setFinishedDateTime ( const QDateTime &amp; <i>finishedDateTime</i> )</h3>
 <p>Sets the todo progress item's finished date and time to <i>finishedDateTime</i>.</p>
 <p>See also <a href="qorganizertodoprogress.html#finishedDateTime">finishedDateTime</a>().</p>
-<!-- @@@setFinishedDateTime -->
-<!-- $$$setPercentageComplete[overload1]$$$setPercentageCompleteint -->
-<h3 class="fn"><a name="setPercentageComplete"></a>void QOrganizerTodoProgress::setPercentageComplete ( int <i>percentage</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setPercentageComplete"></a>void QOrganizerTodoProgress::setPercentageComplete ( int <i>percentage</i> )</h3>
 <p>Sets the todo progress item's completion percentage to <i>percentage</i>.</p>
 <p>See also <a href="qorganizertodoprogress.html#percentageComplete">percentageComplete</a>().</p>
-<!-- @@@setPercentageComplete -->
-<!-- $$$setStatus[overload1]$$$setStatusStatus -->
-<h3 class="fn"><a name="setStatus"></a>void QOrganizerTodoProgress::setStatus ( <a href="qorganizertodoprogress.html#Status-enum">Status</a> <i>status</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setStatus"></a>void QOrganizerTodoProgress::setStatus ( <a href="qorganizertodoprogress.html#Status-enum">Status</a> <i>status</i> )</h3>
 <p>Sets the todo progress item's current status to <i>status</i>.</p>
 <p>See also <a href="qorganizertodoprogress.html#status">status</a>().</p>
-<!-- @@@setStatus -->
-<!-- $$$status[overload1]$$$status -->
-<h3 class="fn"><a name="status"></a><a href="qorganizertodoprogress.html#Status-enum">Status</a> QOrganizerTodoProgress::status () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="status"></a><a href="qorganizertodoprogress.html#Status-enum">Status</a> QOrganizerTodoProgress::status () const</h3>
 <p>Returns the todo progress item's current status as <a href="qorganizertodoprogress.html#Status-enum">QOrganizerTodoProgress::Status</a>.</p>
 <p>See also <a href="qorganizertodoprogress.html#setStatus">setStatus</a>().</p>
-<!-- @@@status -->
 </div>
+<hr />
 <div class="vars"/>
 <h2>Member Variable Documentation</h2>
-<!-- $$$DefinitionName -->
-<h3 class="fn"><a name="DefinitionName-var"></a>const char * QOrganizerTodoProgress::DefinitionName</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="DefinitionName-var"></a>const char * QOrganizerTodoProgress::DefinitionName</h3>
 <p>The constant string which identifies the definition of details which contain progress information about a todo item.</p>
-<!-- @@@DefinitionName -->
-<!-- $$$FieldFinishedDateTime -->
-<h3 class="fn"><a name="FieldFinishedDateTime-var"></a>const char * QOrganizerTodoProgress::FieldFinishedDateTime</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="FieldFinishedDateTime-var"></a>const char * QOrganizerTodoProgress::FieldFinishedDateTime</h3>
 <p>The constant key of the date time value which contains the date and time at which the todo item was completed.</p>
-<!-- @@@FieldFinishedDateTime -->
-<!-- $$$FieldPercentageComplete -->
-<h3 class="fn"><a name="FieldPercentageComplete-var"></a>const char * QOrganizerTodoProgress::FieldPercentageComplete</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="FieldPercentageComplete-var"></a>const char * QOrganizerTodoProgress::FieldPercentageComplete</h3>
 <p>The constant key of the value which contains the current completion percentage of the todo item.</p>
-<!-- @@@FieldPercentageComplete -->
-<!-- $$$FieldStatus -->
-<h3 class="fn"><a name="FieldStatus-var"></a>const char * QOrganizerTodoProgress::FieldStatus</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="FieldStatus-var"></a>const char * QOrganizerTodoProgress::FieldStatus</h3>
 <p>The constant key of the value which describes the current completion status of the todo item.</p>
-<!-- @@@FieldStatus -->
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
@@ -238,15 +220,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

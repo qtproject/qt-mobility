@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -118,7 +119,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#static-public-members">Static Public Members</a></li>
@@ -126,14 +127,13 @@
 </ul>
 </div>
 <h1 class="title">QContactPhoneNumber Class Reference</h1>
-<!-- $$$QContactPhoneNumber-brief -->
 <p>The QContactPhoneNumber class provides a phone number of a contact. <a href="#details">More...</a></p>
-<!-- @@@QContactPhoneNumber -->
 <pre class="highlightedCode brush: cpp"> #include &lt;QContactPhoneNumber&gt;</pre><p>Inherits <a href="qcontactdetail.html">QContactDetail</a>.</p>
 <ul>
 <li><a href="qcontactphonenumber-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qcontactphonenumber.html#number">number</a></b> () const</td></tr>
@@ -145,7 +145,8 @@
 <ul>
 <li class="fn">29 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
 </ul>
-<a name="static-public-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> const QLatin1Constant </td><td class="memItemRight bottomAlign"><b><a href="qcontactphonenumber.html#DefinitionName-var">DefinitionName</a></b></td></tr>
@@ -165,120 +166,79 @@
 <tr><td class="memItemLeft rightAlign topAlign"> const QLatin1Constant </td><td class="memItemRight bottomAlign"><b><a href="qcontactphonenumber.html#SubTypeVoice-var">SubTypeVoice</a></b></td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QContactFilter </td><td class="memItemRight bottomAlign"><b><a href="qcontactphonenumber.html#match">match</a></b> ( const QString &amp; <i>number</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<!-- $$$QContactPhoneNumber-description -->
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactPhoneNumber class provides a phone number of a contact.</p>
 </div>
-<!-- @@@QContactPhoneNumber -->
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<!-- $$$match[overload1]$$$matchconstQString& -->
-<h3 class="fn"><a name="match"></a><a href="qcontactfilter.html">QContactFilter</a> QContactPhoneNumber::match ( const QString &amp; <i>number</i> )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="match"></a><a href="qcontactfilter.html">QContactFilter</a> QContactPhoneNumber::match ( const QString &amp; <i>number</i> )<tt> [static]</tt></h3>
 <p>Returns a filter suitable for finding contacts with a phone number containing the specified <i>number</i>.</p>
-<!-- @@@match -->
-<!-- $$$number[overload1]$$$number -->
-<h3 class="fn"><a name="number"></a>QString QContactPhoneNumber::number () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="number"></a>QString QContactPhoneNumber::number () const</h3>
 <p>Returns the phone number stored in this detail.</p>
 <p>See also <a href="qcontactphonenumber.html#setNumber">setNumber</a>().</p>
-<!-- @@@number -->
-<!-- $$$setNumber[overload1]$$$setNumberconstQString& -->
-<h3 class="fn"><a name="setNumber"></a>void QContactPhoneNumber::setNumber ( const QString &amp; <i>number</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setNumber"></a>void QContactPhoneNumber::setNumber ( const QString &amp; <i>number</i> )</h3>
 <p>Sets the phone number stored in this detail to <i>number</i>.</p>
 <p>See also <a href="qcontactphonenumber.html#number">number</a>().</p>
-<!-- @@@setNumber -->
-<!-- $$$setSubTypes[overload1]$$$setSubTypesconstQStringList& -->
-<h3 class="fn"><a name="setSubTypes"></a>void QContactPhoneNumber::setSubTypes ( const QStringList &amp; <i>subTypes</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSubTypes"></a>void QContactPhoneNumber::setSubTypes ( const QStringList &amp; <i>subTypes</i> )</h3>
 <p>Sets the subtypes which this detail implements to be those contained in the list of given <i>subTypes</i></p>
 <p>See also <a href="qcontactphonenumber.html#subTypes">subTypes</a>().</p>
-<!-- @@@setSubTypes -->
-<!-- $$$setSubTypes$$$setSubTypesconstQString& -->
-<h3 class="fn"><a name="setSubTypes-2"></a>void QContactPhoneNumber::setSubTypes ( const QString &amp; <i>subType</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSubTypes-2"></a>void QContactPhoneNumber::setSubTypes ( const QString &amp; <i>subType</i> )</h3>
 <p>Sets the subtypes which this detail implements to be just the given <i>subType</i>.</p>
-<!-- @@@setSubTypes -->
-<!-- $$$subTypes[overload1]$$$subTypes -->
-<h3 class="fn"><a name="subTypes"></a>QStringList QContactPhoneNumber::subTypes () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="subTypes"></a>QStringList QContactPhoneNumber::subTypes () const</h3>
 <p>Returns the list of subtypes that this detail implements.</p>
 <p>See also <a href="qcontactphonenumber.html#setSubTypes">setSubTypes</a>().</p>
-<!-- @@@subTypes -->
 </div>
+<hr />
 <div class="vars"/>
 <h2>Member Variable Documentation</h2>
-<!-- $$$DefinitionName -->
-<h3 class="fn"><a name="DefinitionName-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::DefinitionName</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="DefinitionName-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::DefinitionName</h3>
 <p>The string constant for the definition name of <a href="qcontactphonenumber.html">QContactPhoneNumber</a> details.</p>
-<!-- @@@DefinitionName -->
-<!-- $$$FieldNumber -->
-<h3 class="fn"><a name="FieldNumber-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::FieldNumber</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="FieldNumber-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::FieldNumber</h3>
 <p>The field key constant for the value containing the phone number.</p>
 <p>See also <a href="qcontactphonenumber.html#number">number</a>() and <a href="qcontactphonenumber.html#setNumber">setNumber</a>().</p>
-<!-- @@@FieldNumber -->
-<!-- $$$FieldSubTypes -->
-<h3 class="fn"><a name="FieldSubTypes-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::FieldSubTypes</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="FieldSubTypes-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::FieldSubTypes</h3>
 <p>The field key constant for the field that stores the sub types of a <a href="qcontactphonenumber.html">QContactPhoneNumber</a>.</p>
 <p>See also <a href="qcontactphonenumber.html#subTypes">subTypes</a>() and <a href="qcontactphonenumber.html#setSubTypes">setSubTypes</a>().</p>
-<!-- @@@FieldSubTypes -->
-<!-- $$$SubTypeAssistant -->
-<h3 class="fn"><a name="SubTypeAssistant-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeAssistant</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="SubTypeAssistant-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeAssistant</h3>
 <p>The predefined string constant for a sub type value, indicating this phone number is the number of an assistant.</p>
 <p>See also <a href="qcontactphonenumber.html#subTypes">subTypes</a>() and <a href="qcontactphonenumber.html#setSubTypes">setSubTypes</a>().</p>
-<!-- @@@SubTypeAssistant -->
-<!-- $$$SubTypeBulletinBoardSystem -->
-<h3 class="fn"><a name="SubTypeBulletinBoardSystem-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeBulletinBoardSystem</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="SubTypeBulletinBoardSystem-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeBulletinBoardSystem</h3>
 <p>The predefined string constant for a sub type value, indicating this phone number is a bulletin board system.</p>
 <p>See also <a href="qcontactphonenumber.html#subTypes">subTypes</a>() and <a href="qcontactphonenumber.html#setSubTypes">setSubTypes</a>().</p>
-<!-- @@@SubTypeBulletinBoardSystem -->
-<!-- $$$SubTypeCar -->
-<h3 class="fn"><a name="SubTypeCar-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeCar</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="SubTypeCar-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeCar</h3>
 <p>The predefined string constant for a sub type value, indicating this phone number is a car phone.</p>
 <p>See also <a href="qcontactphonenumber.html#subTypes">subTypes</a>() and <a href="qcontactphonenumber.html#setSubTypes">setSubTypes</a>().</p>
-<!-- @@@SubTypeCar -->
-<!-- $$$SubTypeDtmfMenu -->
-<h3 class="fn"><a name="SubTypeDtmfMenu-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeDtmfMenu</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="SubTypeDtmfMenu-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeDtmfMenu</h3>
 <p>The predefined string constant for a sub type value, indicating this phone number supports DTMF-controlled voice menu navigation.</p>
 <p>See also <a href="qcontactphonenumber.html#subTypes">subTypes</a>() and <a href="qcontactphonenumber.html#setSubTypes">setSubTypes</a>().</p>
-<!-- @@@SubTypeDtmfMenu -->
-<!-- $$$SubTypeFax -->
-<h3 class="fn"><a name="SubTypeFax-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeFax</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="SubTypeFax-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeFax</h3>
 <p>The predefined string constant for a sub type value, indicating this phone number is a fax number.</p>
 <p>See also <a href="qcontactphonenumber.html#subTypes">subTypes</a>() and <a href="qcontactphonenumber.html#setSubTypes">setSubTypes</a>().</p>
-<!-- @@@SubTypeFax -->
-<!-- $$$SubTypeLandline -->
-<h3 class="fn"><a name="SubTypeLandline-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeLandline</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="SubTypeLandline-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeLandline</h3>
 <p>The predefined string constant for a sub type value, indicating this phone number is a landline number.</p>
 <p>See also <a href="qcontactphonenumber.html#subTypes">subTypes</a>() and <a href="qcontactphonenumber.html#setSubTypes">setSubTypes</a>().</p>
-<!-- @@@SubTypeLandline -->
-<!-- $$$SubTypeMessagingCapable -->
-<h3 class="fn"><a name="SubTypeMessagingCapable-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeMessagingCapable</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="SubTypeMessagingCapable-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeMessagingCapable</h3>
 <p>The predefined string constant for a sub type value, indicating this phone number supports messaging services.</p>
 <p>See also <a href="qcontactphonenumber.html#subTypes">subTypes</a>() and <a href="qcontactphonenumber.html#setSubTypes">setSubTypes</a>().</p>
-<!-- @@@SubTypeMessagingCapable -->
-<!-- $$$SubTypeMobile -->
-<h3 class="fn"><a name="SubTypeMobile-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeMobile</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="SubTypeMobile-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeMobile</h3>
 <p>The predefined string constant for a sub type value, indicating this phone number is a mobile (cellular) number.</p>
 <p>See also <a href="qcontactphonenumber.html#subTypes">subTypes</a>() and <a href="qcontactphonenumber.html#setSubTypes">setSubTypes</a>().</p>
-<!-- @@@SubTypeMobile -->
-<!-- $$$SubTypeModem -->
-<h3 class="fn"><a name="SubTypeModem-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeModem</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="SubTypeModem-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeModem</h3>
 <p>The predefined string constant for a sub type value, indicating this phone number supports data transmission.</p>
 <p>See also <a href="qcontactphonenumber.html#subTypes">subTypes</a>() and <a href="qcontactphonenumber.html#setSubTypes">setSubTypes</a>().</p>
-<!-- @@@SubTypeModem -->
-<!-- $$$SubTypePager -->
-<h3 class="fn"><a name="SubTypePager-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypePager</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="SubTypePager-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypePager</h3>
 <p>The predefined string constant for a sub type value, indicating this phone number is a pager number.</p>
 <p>See also <a href="qcontactphonenumber.html#subTypes">subTypes</a>() and <a href="qcontactphonenumber.html#setSubTypes">setSubTypes</a>().</p>
-<!-- @@@SubTypePager -->
-<!-- $$$SubTypeVideo -->
-<h3 class="fn"><a name="SubTypeVideo-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeVideo</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="SubTypeVideo-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeVideo</h3>
 <p>The predefined string constant for a sub type value, indicating this phone number supports video transmission.</p>
 <p>See also <a href="qcontactphonenumber.html#subTypes">subTypes</a>() and <a href="qcontactphonenumber.html#setSubTypes">setSubTypes</a>().</p>
-<!-- @@@SubTypeVideo -->
-<!-- $$$SubTypeVoice -->
-<h3 class="fn"><a name="SubTypeVoice-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeVoice</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="SubTypeVoice-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactPhoneNumber::SubTypeVoice</h3>
 <p>The predefined string constant for a sub type value, indicating this phone number supports voice transmission.</p>
 <p>See also <a href="qcontactphonenumber.html#subTypes">subTypes</a>() and <a href="qcontactphonenumber.html#setSubTypes">setSubTypes</a>().</p>
-<!-- @@@SubTypeVoice -->
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
@@ -286,15 +246,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

@@ -56,7 +56,7 @@ class Q_GALLERY_EXPORT QGalleryRemoveRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryRemoveRequest)
-    Q_PROPERTY(QVariant itemId READ itemId WRITE setItemId);
+    Q_PROPERTY(QVariant itemId READ itemId WRITE setItemId)
 public:
     explicit QGalleryRemoveRequest(QObject *parent = 0);
     explicit QGalleryRemoveRequest(QAbstractGallery *gallery, QObject *parent = 0);

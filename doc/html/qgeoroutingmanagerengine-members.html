@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -122,20 +123,21 @@
 <p>This is the complete list of members for <a href="qgeoroutingmanagerengine.html">QGeoRoutingManagerEngine</a>, including inherited members.</p>
 <table class="propsummary">
 <tr><td  class="topAlign"><ul>
-<li class="fn"><b><a href="qgeoroutingmanagerengine.html#QGeoRoutingManagerEngine">QGeoRoutingManagerEngine</a></b> ( const QMap&lt;QString, QString&gt; &amp;, QObject * )</li>
+<li class="fn"><b><a href="qgeoroutingmanagerengine.html#QGeoRoutingManagerEngine">QGeoRoutingManagerEngine</a></b> ( const QMap&lt;QString, QVariant&gt; &amp;, QObject * )</li>
 <li class="fn"><b><a href="qgeoroutingmanagerengine.html#dtor.QGeoRoutingManagerEngine">~QGeoRoutingManagerEngine</a></b> ()</li>
 <li class="fn"><b><a href="qgeoroutingmanagerengine.html#calculateRoute">calculateRoute</a></b> ( const QGeoRouteRequest &amp; ) : QGeoRouteReply *</li>
 <li class="fn"><b><a href="qgeoroutingmanagerengine.html#error">error</a></b> ( QGeoRouteReply *, QGeoRouteReply::Error, QString )</li>
 <li class="fn"><b><a href="qgeoroutingmanagerengine.html#finished">finished</a></b> ( QGeoRouteReply * )</li>
+<li class="fn"><b><a href="qgeoroutingmanagerengine.html#locale">locale</a></b> () const : QLocale</li>
 <li class="fn"><b><a href="qgeoroutingmanagerengine.html#managerName">managerName</a></b> () const : QString</li>
-<li class="fn"><b><a href="qgeoroutingmanagerengine.html#managerParameters">managerParameters</a></b> () const : QMap&lt;QString, QString&gt;</li>
 <li class="fn"><b><a href="qgeoroutingmanagerengine.html#managerVersion">managerVersion</a></b> () const : int</li>
+<li class="fn"><b><a href="qgeoroutingmanagerengine.html#setLocale">setLocale</a></b> ( const QLocale &amp; )</li>
 <li class="fn"><b><a href="qgeoroutingmanagerengine.html#setSupportedAvoidFeatureTypes">setSupportedAvoidFeatureTypes</a></b> ( QGeoRouteRequest::AvoidFeatureTypes )</li>
 <li class="fn"><b><a href="qgeoroutingmanagerengine.html#setSupportedInstructionDetails">setSupportedInstructionDetails</a></b> ( QGeoRouteRequest::InstructionDetails )</li>
 <li class="fn"><b><a href="qgeoroutingmanagerengine.html#setSupportedRouteOptimizations">setSupportedRouteOptimizations</a></b> ( QGeoRouteRequest::RouteOptimizations )</li>
 <li class="fn"><b><a href="qgeoroutingmanagerengine.html#setSupportedSegmentDetails">setSupportedSegmentDetails</a></b> ( QGeoRouteRequest::SegmentDetails )</li>
-<li class="fn"><b><a href="qgeoroutingmanagerengine.html#setSupportedTravelModes">setSupportedTravelModes</a></b> ( QGeoRouteRequest::TravelModes )</li>
 </ul></td><td class="topAlign"><ul>
+<li class="fn"><b><a href="qgeoroutingmanagerengine.html#setSupportedTravelModes">setSupportedTravelModes</a></b> ( QGeoRouteRequest::TravelModes )</li>
 <li class="fn"><b><a href="qgeoroutingmanagerengine.html#setSupportsAlternativeRoutes">setSupportsAlternativeRoutes</a></b> ( bool )</li>
 <li class="fn"><b><a href="qgeoroutingmanagerengine.html#setSupportsExcludeAreas">setSupportsExcludeAreas</a></b> ( bool )</li>
 <li class="fn"><b><a href="qgeoroutingmanagerengine.html#setSupportsRouteUpdates">setSupportsRouteUpdates</a></b> ( bool )</li>
@@ -157,15 +159,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

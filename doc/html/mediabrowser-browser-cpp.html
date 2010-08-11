@@ -70,6 +70,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -117,7 +118,6 @@
         <div class="content">
 <h1 class="title">browser.cpp Example File</h1>
 <span class="small-subtitle">mediabrowser/browser.cpp</span>
-<!-- $$$mediabrowser/browser.cpp-description -->
 <div class="descr"/>
 <pre class="highlightedCode brush: cpp"><span class="comment"> /****************************************************************************
  **
@@ -182,30 +182,25 @@
  {
      gallery = new QDocumentGallery;
 
-     artistView = new ArtistView(QDocumentGallery::Artist);
-     artistView-&gt;setGallery(gallery);
+     artistView = new ArtistView(QDocumentGallery::Artist, gallery);
      connect(artistView, SIGNAL(showAlbums(QVariant,QString)),
              this, SLOT(showAlbums(QVariant,QString)));
      connect(artistView, SIGNAL(showSongs(QVariant,QString)),
              this, SLOT(showSongs(QVariant,QString)));
 
-     albumArtistView = new ArtistView(QDocumentGallery::AlbumArtist);
-     albumArtistView-&gt;setGallery(gallery);
+     albumArtistView = new ArtistView(QDocumentGallery::AlbumArtist, gallery);
      connect(albumArtistView, SIGNAL(showAlbums(QVariant,QString)),
              this, SLOT(showAlbums(QVariant,QString)));
      connect(albumArtistView, SIGNAL(showSongs(QVariant,QString)),
              this, SLOT(showSongs(QVariant,QString)));
 
-     albumView = new AlbumView;
-     albumView-&gt;setGallery(gallery);
+     albumView = new AlbumView(gallery);
      connect(albumView, SIGNAL(showSongs(QVariant,QString)),
              this, SLOT(showSongs(QVariant,QString)));
 
-     songView = new SongView;
-     songView-&gt;setGallery(gallery);
+     songView = new SongView(gallery);
 
-     photoView = new PhotoView;
-     photoView-&gt;setGallery(gallery);
+     photoView = new PhotoView(gallery);
 
      stack = new QStackedWidget;
      stack-&gt;addWidget(artistView);
@@ -240,8 +235,7 @@
  void Browser::showArtists(const QVariant &amp;containerId, const QString &amp;title)
  {
  #ifdef Q_WS_MAEMO_5
-     ArtistView *artistView = new ArtistView(QDocumentGallery::Artist);
-     artistView-&gt;setGallery(gallery);
+     ArtistView *artistView = new ArtistView(QDocumentGallery::Artist, gallery);
      connect(artistView, SIGNAL(showAlbums(QVariant,QString)),
              this, SLOT(showAlbums(QVariant,QString)));
      connect(artistView, SIGNAL(showSongs(QVariant,QString)),
@@ -259,8 +253,7 @@
  void Browser::showAlbumArtists(const QVariant &amp;containerId, const QString &amp;title)
  {
  #ifdef Q_WS_MAEMO_5
-     ArtistView *albumArtistView = new ArtistView(QDocumentGallery::AlbumArtist);
-     albumArtistView-&gt;setGallery(gallery);
+     ArtistView *albumArtistView = new ArtistView(QDocumentGallery::AlbumArtist, gallery);
      connect(albumArtistView, SIGNAL(showAlbums(QVariant,QString)),
              this, SLOT(showAlbums(QVariant,QString)));
      connect(albumArtistView, SIGNAL(showSongs(QVariant,QString)),
@@ -278,8 +271,7 @@
  void Browser::showAlbums(const QVariant &amp;containerId, const QString &amp;title)
  {
  #ifdef Q_WS_MAEMO_5
-     AlbumView *albumView = new AlbumView;
-     albumView-&gt;setGallery(gallery);
+     AlbumView *albumView = new AlbumView(gallery);
      connect(albumView, SIGNAL(showSongs(QVariant,QString)),
              this, SLOT(showSongs(QVariant,QString)));
  #endif
@@ -295,8 +287,7 @@
  void Browser::showSongs(const QVariant &amp;containerId, const QString &amp;title)
  {
  #ifdef Q_WS_MAEMO_5
-     SongView *songView = new SongView;
-     songView-&gt;setGallery(gallery);
+     SongView *songView = new SongView(gallery);
  #endif
 
      showView(songView, containerId, title);
@@ -310,8 +301,7 @@
  void Browser::showPhotos(const QVariant &amp;containerId, const QString &amp;title)
  {
  #ifdef Q_WS_MAEMO_5
-     PhotoView *photoView = new PhotoView;
-     photoView-&gt;setGallery(gallery);
+     PhotoView *photoView = new PhotoView(gallery);
  #endif
 
      showView(photoView, containerId, title);
@@ -345,22 +335,11 @@
  #endif
  }</pre>
 </div>
-<!-- @@@mediabrowser/browser.cpp -->
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

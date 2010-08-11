@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -118,37 +119,35 @@
         <div class="content">
 <h1 class="title">QML GalleryFilter Element</h1>
 <span class="subtitle"></span>
-<!-- $$$GalleryFilter-brief -->
 <p>The GalleryFilter element provides filtering criteria for a gallery query. <a href="#details">More...</a></p>
-<!-- @@@GalleryFilter -->
-<a name="Propertiesx"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="Propertiesx"></a>
 <h2>Properties</h2>
+<table class="qmlsummary">
 <tr class="odd topAlign"><ul>
 <li class="fn"><b><b><a href="qml-galleryfilter.html#caseSensitivity-prop">caseSensitivity</a></b></b> : enum</li>
 <li class="fn"><b><b><a href="qml-galleryfilter.html#comparator-prop">comparator</a></b></b> : enum</li>
 <li class="fn"><b><b><a href="qml-galleryfilter.html#inverted-prop">inverted</a></b></b> : bool</li>
+</ul></td><td class="topAlign"><ul>
 <li class="fn"><b><b><a href="qml-galleryfilter.html#property-prop">property</a></b></b> : string</li>
 <li class="fn"><b><b><a href="qml-galleryfilter.html#value-prop">value</a></b></b> : variant</li>
 </ul>
-<!-- $$$GalleryFilter-description -->
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+</td></tr>
+</table>
+<a name="details"></a>
 <h2>Detailed Description</h2>
 <p>This element is part of the <b>QtMobility.gallery 1.0</b> module.</p>
 <pre class="highlightedCode brush: cpp"> GalleryFilter {
      property: &quot;keywords&quot;
      value: &quot;holiday&quot;
  }</pre>
-<!-- @@@GalleryFilter -->
+<hr />
 <h2>Property Documentation</h2>
-<!-- $$$caseSensitivity -->
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="caseSensitivity-prop"></a>caseSensitivity : enum</td></tr></table></div><div class="qmldoc"><p>This property holds whether the comparison made by a <a href="qml-galleryfilter.html">GalleryFilter</a> should be case sensitive. It can be one of:</p>
 <ul>
 <li>Qt.CaseSensitive The comparison is case sensitive.</li>
 <li>Qt.CaseInsensitive The comparison is not case case sensitive.</li>
 </ul>
-</div></div><!-- @@@caseSensitivity -->
-<br/>
-<!-- $$$comparator -->
+</div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="comparator-prop"></a>comparator : enum</td></tr></table></div><div class="qmldoc"><p>This property holds the type of comparison made by a <a href="qml-galleryfilter.html">GalleryFilter</a>. It can be one of:</p>
 <ul>
 <li>Equals The filter tests if a meta-data property is equal to a value.</li>
@@ -162,35 +161,18 @@
 <li>Wildcard The filter tests if a meta-data property matches a wildcard string.</li>
 <li>RegExp The filter tests if a meta-data property matches a regular expression.</li>
 </ul>
-</div></div><!-- @@@comparator -->
-<br/>
-<!-- $$$inverted -->
+</div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="inverted-prop"></a>inverted : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether the result of a <a href="qml-galleryfilter.html">GalleryFilter</a> should be inverted.</p>
-</div></div><!-- @@@inverted -->
-<br/>
-<!-- $$$property -->
+</div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="property-prop"></a>property : string</td></tr></table></div><div class="qmldoc"><p>This property holds the name of the property to filter against.</p>
-</div></div><!-- @@@property -->
-<br/>
-<!-- $$$value -->
+</div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="value-prop"></a>value : variant</td></tr></table></div><div class="qmldoc"><p>This property holds the value to filter using.</p>
-</div></div><!-- @@@value -->
-<br/>
+</div></div><br/>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

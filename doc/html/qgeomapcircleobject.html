@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -119,71 +120,126 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
+<li class="level1"><a href="#properties">Properties</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
 </ul>
 </div>
 <h1 class="title">QGeoMapCircleObject Class Reference</h1>
-<!-- $$$QGeoMapCircleObject-brief -->
 <p>The QGeoMapCircleObject class is a <a href="qgeomapobject.html">QGeoMapObject</a> used to draw the region within a certain distance of a coordinate. <a href="#details">More...</a></p>
-<!-- @@@QGeoMapCircleObject -->
 <pre class="highlightedCode brush: cpp"> #include &lt;QGeoMapCircleObject&gt;</pre><p>Inherits <a href="qgeomapobject.html">QGeoMapObject</a>.</p>
 <ul>
 <li><a href="qgeomapcircleobject-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="properties"></a>
+<h2>Properties</h2>
+<ul>
+<li class="fn"><b><a href="qgeomapcircleobject.html#brush-prop">brush</a></b> : QBrush</li>
+<li class="fn"><b><a href="qgeomapcircleobject.html#center-prop">center</a></b> : QGeoCoordinate</li>
+<li class="fn"><b><a href="qgeomapcircleobject.html#pen-prop">pen</a></b> : QPen</li>
+<li class="fn"><b><a href="qgeomapcircleobject.html#radius-prop">radius</a></b> : qreal</li>
+</ul>
+<ul>
+<li class="fn">2 properties inherited from <a href="qgeomapobject.html#properties">QGeoMapObject</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#QGeoMapCircleObject">QGeoMapCircleObject</a></b> ( QGeoMapObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#QGeoMapCircleObject">QGeoMapCircleObject</a></b> ( const QGeoBoundingCircle &amp; <i>circle</i>, QGeoMapObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#QGeoMapCircleObject-2">QGeoMapCircleObject</a></b> ( const QGeoCoordinate &amp; <i>center</i>, qreal <i>radius</i>, QGeoMapObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#dtor.QGeoMapCircleObject">~QGeoMapCircleObject</a></b> ()</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> QGeoCoordinate </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#center">center</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> qreal </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#radius">radius</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#setCenter">setCenter</a></b> ( const QGeoCoordinate &amp; <i>center</i> )</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#setRadius">setRadius</a></b> ( qreal <i>radius</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QBrush </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#brush-prop">brush</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGeoCoordinate </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#center-prop">center</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QPen </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#pen-prop">pen</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> qreal </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#radius-prop">radius</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#brush-prop">setBrush</a></b> ( const QBrush &amp; <i>brush</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#center-prop">setCenter</a></b> ( const QGeoCoordinate &amp; <i>center</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#pen-prop">setPen</a></b> ( const QPen &amp; <i>pen</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#radius-prop">setRadius</a></b> ( qreal <i>radius</i> )</td></tr>
 </table>
 <ul>
 <li class="fn">15 public functions inherited from <a href="qgeomapobject.html#public-functions">QGeoMapObject</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<!-- $$$QGeoMapCircleObject-description -->
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#brushChanged">brushChanged</a></b> ( const QBrush &amp; <i>brush</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#centerChanged">centerChanged</a></b> ( const QGeoCoordinate &amp; <i>center</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#penChanged">penChanged</a></b> ( const QPen &amp; <i>pen</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#radiusChanged">radiusChanged</a></b> ( qreal <i>radius</i> )</td></tr>
+</table>
+<ul>
+<li class="fn">2 signals inherited from <a href="qgeomapobject.html#signals">QGeoMapObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoMapCircleObject class is a <a href="qgeomapobject.html">QGeoMapObject</a> used to draw the region within a certain distance of a coordinate.</p>
-<p>TODO add pen and brush attributes as per alignment doc</p>
 </div>
-<!-- @@@QGeoMapCircleObject -->
+<hr />
+<div class="prop"/>
+<h2>Property Documentation</h2>
+<h3 class="fn"><a name="brush-prop"></a>brush : QBrush</h3>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QBrush </td><td class="memItemRight bottomAlign"><b>brush</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setBrush</b> ( const QBrush &amp; <i>brush</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#brushChanged">brushChanged</a></b> ( const QBrush &amp; <i>brush</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="center-prop"></a>center : <a href="qgeocoordinate.html">QGeoCoordinate</a></h3>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QGeoCoordinate </td><td class="memItemRight bottomAlign"><b>center</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setCenter</b> ( const QGeoCoordinate &amp; <i>center</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#centerChanged">centerChanged</a></b> ( const QGeoCoordinate &amp; <i>center</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="pen-prop"></a>pen : QPen</h3>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QPen </td><td class="memItemRight bottomAlign"><b>pen</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setPen</b> ( const QPen &amp; <i>pen</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#penChanged">penChanged</a></b> ( const QPen &amp; <i>pen</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="radius-prop"></a>radius : qreal</h3>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> qreal </td><td class="memItemRight bottomAlign"><b>radius</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setRadius</b> ( qreal <i>radius</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapcircleobject.html#radiusChanged">radiusChanged</a></b> ( qreal <i>radius</i> )</td></tr>
+</table>
+</div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<!-- $$$QGeoMapCircleObject[overload1]$$$QGeoMapCircleObjectQGeoMapObject* -->
-<h3 class="fn"><a name="QGeoMapCircleObject"></a>QGeoMapCircleObject::QGeoMapCircleObject ( <a href="qgeomapobject.html">QGeoMapObject</a> * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoMapCircleObject"></a>QGeoMapCircleObject::QGeoMapCircleObject ( const <a href="qgeoboundingcircle.html">QGeoBoundingCircle</a> &amp; <i>circle</i>, <a href="qgeomapobject.html">QGeoMapObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a new circle object with the specified <i>parent</i>.</p>
-<!-- @@@QGeoMapCircleObject -->
-<!-- $$$~QGeoMapCircleObject[overload1]$$$~QGeoMapCircleObject -->
-<h3 class="fn"><a name="dtor.QGeoMapCircleObject"></a>QGeoMapCircleObject::~QGeoMapCircleObject ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoMapCircleObject-2"></a>QGeoMapCircleObject::QGeoMapCircleObject ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>center</i>, qreal <i>radius</i>, <a href="qgeomapobject.html">QGeoMapObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a new circle object with the specified <i>parent</i>.</p>
+<h3 class="fn"><a name="dtor.QGeoMapCircleObject"></a>QGeoMapCircleObject::~QGeoMapCircleObject ()</h3>
 <p>Destroys this circle object.</p>
-<!-- @@@~QGeoMapCircleObject -->
-<!-- $$$center[overload1]$$$center -->
-<h3 class="fn"><a name="center"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoMapCircleObject::center () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<p>Returns the center of the circle object.</p>
-<p>See also <a href="qgeomapcircleobject.html#setCenter">setCenter</a>().</p>
-<!-- @@@center -->
-<!-- $$$radius[overload1]$$$radius -->
-<h3 class="fn"><a name="radius"></a>qreal QGeoMapCircleObject::radius () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<p>Returns the radius of the circle object in metres.</p>
-<p>See also <a href="qgeomapcircleobject.html#setRadius">setRadius</a>().</p>
-<!-- @@@radius -->
-<!-- $$$setCenter[overload1]$$$setCenterconstQGeoCoordinate& -->
-<h3 class="fn"><a name="setCenter"></a>void QGeoMapCircleObject::setCenter ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>center</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<p>Sets the center of the circle object to <i>center</i>.</p>
-<p>See also <a href="qgeomapcircleobject.html#center">center</a>().</p>
-<!-- @@@setCenter -->
-<!-- $$$setRadius[overload1]$$$setRadiusqreal -->
-<h3 class="fn"><a name="setRadius"></a>void QGeoMapCircleObject::setRadius ( qreal <i>radius</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<p>Sets the radius of the circle object to <i>radius</i> metres.</p>
-<p>See also <a href="qgeomapcircleobject.html#radius">radius</a>().</p>
-<!-- @@@setRadius -->
+<h3 class="fn"><a name="brushChanged"></a>void QGeoMapCircleObject::brushChanged ( const QBrush &amp; <i>brush</i> )<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="centerChanged"></a>void QGeoMapCircleObject::centerChanged ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>center</i> )<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="penChanged"></a>void QGeoMapCircleObject::penChanged ( const QPen &amp; <i>pen</i> )<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="radiusChanged"></a>void QGeoMapCircleObject::radiusChanged ( qreal <i>radius</i> )<tt> [signal]</tt></h3>
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
@@ -191,15 +247,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

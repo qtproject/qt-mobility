@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -119,7 +120,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#related-non-members">Related Non-Members</a></li>
@@ -127,13 +128,12 @@
 </ul>
 </div>
 <h1 class="title">QOrganizerItemId Class Reference</h1>
-<!-- $$$QOrganizerItemId-brief -->
 <p>The QOrganizerItemId class provides information that uniquely identifies an organizer item in a particular manager. <a href="#details">More...</a></p>
-<!-- @@@QOrganizerItemId -->
 <pre class="highlightedCode brush: cpp"> #include &lt;QOrganizerItemId&gt;</pre><ul>
 <li><a href="qorganizeritemid-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemid.html#QOrganizerItemId">QOrganizerItemId</a></b> ()</td></tr>
@@ -148,13 +148,14 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QOrganizerItemId &amp; </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemid.html#operator-eq">operator=</a></b> ( const QOrganizerItemId &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemid.html#operator-eq-eq">operator==</a></b> ( const QOrganizerItemId &amp; <i>other</i> ) const</td></tr>
 </table>
-<a name="related-non-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="related-non-members"></a>
 <h2>Related Non-Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> typedef </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemid.html#QOrganizerItemLocalId-typedef">QOrganizerItemLocalId</a></b></td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<!-- $$$QOrganizerItemId-description -->
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QOrganizerItemId class provides information that uniquely identifies an organizer item in a particular manager.</p>
@@ -162,69 +163,46 @@
 <p>A &quot;null&quot; QOrganizerItemId has an empty manager URI, and an invalid <a href="qorganizeritemid.html#QOrganizerItemLocalId-typedef">QOrganizerItemLocalId</a> (0).</p>
 </div>
 <p>See also <a href="qorganizeritemid.html#QOrganizerItemLocalId-typedef">QOrganizerItemLocalId</a>.</p>
-<!-- @@@QOrganizerItemId -->
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<!-- $$$QOrganizerItemId[overload1]$$$QOrganizerItemId -->
-<h3 class="fn"><a name="QOrganizerItemId"></a>QOrganizerItemId::QOrganizerItemId ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemId"></a>QOrganizerItemId::QOrganizerItemId ()</h3>
 <p>Constructs a new organizer item id</p>
-<!-- @@@QOrganizerItemId -->
-<!-- $$$QOrganizerItemId$$$QOrganizerItemIdconstQOrganizerItemId& -->
-<h3 class="fn"><a name="QOrganizerItemId-2"></a>QOrganizerItemId::QOrganizerItemId ( const QOrganizerItemId &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemId-2"></a>QOrganizerItemId::QOrganizerItemId ( const QOrganizerItemId &amp; <i>other</i> )</h3>
 <p>Constructs a new organizer item id as a copy of <i>other</i></p>
-<!-- @@@QOrganizerItemId -->
-<!-- $$$~QOrganizerItemId[overload1]$$$~QOrganizerItemId -->
-<h3 class="fn"><a name="dtor.QOrganizerItemId"></a>QOrganizerItemId::~QOrganizerItemId ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QOrganizerItemId"></a>QOrganizerItemId::~QOrganizerItemId ()</h3>
 <p>Cleans up the memory in use by the organizer item id</p>
-<!-- @@@~QOrganizerItemId -->
-<!-- $$$localId[overload1]$$$localId -->
-<h3 class="fn"><a name="localId"></a><a href="qorganizeritemid.html#QOrganizerItemLocalId-typedef">QOrganizerItemLocalId</a> QOrganizerItemId::localId () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="localId"></a><a href="qorganizeritemid.html#QOrganizerItemLocalId-typedef">QOrganizerItemLocalId</a> QOrganizerItemId::localId () const</h3>
 <p>Returns the manager-local id of the organizer item identified by this organizer item id</p>
 <p>See also <a href="qorganizeritemid.html#setLocalId">setLocalId</a>().</p>
-<!-- @@@localId -->
-<!-- $$$managerUri[overload1]$$$managerUri -->
-<h3 class="fn"><a name="managerUri"></a>QString QOrganizerItemId::managerUri () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerUri"></a>QString QOrganizerItemId::managerUri () const</h3>
 <p>Returns the URI of the manager which contains the organizer item identified by this id</p>
 <p>See also <a href="qorganizeritemid.html#setManagerUri">setManagerUri</a>().</p>
-<!-- @@@managerUri -->
-<!-- $$$setLocalId[overload1]$$$setLocalIdconstQOrganizerItemLocalId& -->
-<h3 class="fn"><a name="setLocalId"></a>void QOrganizerItemId::setLocalId ( const <a href="qorganizeritemid.html#QOrganizerItemLocalId-typedef">QOrganizerItemLocalId</a> &amp; <i>id</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setLocalId"></a>void QOrganizerItemId::setLocalId ( const <a href="qorganizeritemid.html#QOrganizerItemLocalId-typedef">QOrganizerItemLocalId</a> &amp; <i>id</i> )</h3>
 <p>Sets the manager-local id of the organizer item identified by this organizer item id to <i>id</i></p>
 <p>See also <a href="qorganizeritemid.html#localId">localId</a>().</p>
-<!-- @@@setLocalId -->
-<!-- $$$setManagerUri[overload1]$$$setManagerUriconstQString& -->
-<h3 class="fn"><a name="setManagerUri"></a>void QOrganizerItemId::setManagerUri ( const QString &amp; <i>uri</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setManagerUri"></a>void QOrganizerItemId::setManagerUri ( const QString &amp; <i>uri</i> )</h3>
 <p>Sets the URI of the manager which contains the organizer item identified by this id to <i>uri</i></p>
 <p>See also <a href="qorganizeritemid.html#managerUri">managerUri</a>().</p>
-<!-- @@@setManagerUri -->
-<!-- $$$operator!=[overload1]$$$operator!=constQOrganizerItemId& -->
-<h3 class="fn"><a name="operator-not-eq"></a>bool QOrganizerItemId::operator!= ( const QOrganizerItemId &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QOrganizerItemId::operator!= ( const QOrganizerItemId &amp; <i>other</i> ) const</h3>
 <p>Returns true if either the manager URI or local id of the organizer item id is different to that of <i>other</i></p>
-<!-- @@@operator!= -->
-<!-- $$$operator<[overload1]$$$operator<constQOrganizerItemId& -->
-<h3 class="fn"><a name="operator-lt"></a>bool QOrganizerItemId::operator&lt; ( const QOrganizerItemId &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-lt"></a>bool QOrganizerItemId::operator&lt; ( const QOrganizerItemId &amp; <i>other</i> ) const</h3>
 <p>Returns true if this id is less than the <i>other</i> id. This id will be considered less than the <i>other</i> id if the manager URI of this id is alphabetically less than the manager URI of the <i>other</i> id. If both ids have the same manager URI, this id will be considered less than the <i>other</i> id if the local id of this id is less than the local id of the <i>other</i> id.</p>
 <p>The invalid, empty id consists of an empty manager URI and the invalid, zero local id, and hence will be less than any non-invalid id.</p>
 <p>This operator is provided primarily to allow use of a <a href="qorganizeritemid.html">QOrganizerItemId</a> as a key in a QMap.</p>
-<!-- @@@operator< -->
-<!-- $$$operator=[overload1]$$$operator=constQOrganizerItemId& -->
-<h3 class="fn"><a name="operator-eq"></a>QOrganizerItemId &amp; QOrganizerItemId::operator= ( const QOrganizerItemId &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QOrganizerItemId &amp; QOrganizerItemId::operator= ( const QOrganizerItemId &amp; <i>other</i> )</h3>
 <p>Assigns the organizer item id to be equal to <i>other</i></p>
-<!-- @@@operator= -->
-<!-- $$$operator==[overload1]$$$operator==constQOrganizerItemId& -->
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QOrganizerItemId::operator== ( const QOrganizerItemId &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QOrganizerItemId::operator== ( const QOrganizerItemId &amp; <i>other</i> ) const</h3>
 <p>Returns true if the organizer item id has the same manager URI and local id as <i>other</i></p>
-<!-- @@@operator== -->
 </div>
+<hr />
 <div class="relnonmem"/>
 <h2>Related Non-Members</h2>
-<!-- $$$QOrganizerItemLocalId -->
-<h3 class="fn"><a name="QOrganizerItemLocalId-typedef"></a>typedef QOrganizerItemLocalId</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemLocalId-typedef"></a>typedef QOrganizerItemLocalId</h3>
 <p>The QOrganizerItemLocalId type represents the unique id of an organizer item within its manager.</p>
 <p>Most operations within a <a href="qorganizeritemmanager.html">QOrganizerItemManager</a> accept a QOrganizerItemLocalId. Some operations (involving links to organizer items outside a particular manager) also accept a manager URI - this combination is stored in a <a href="qorganizeritemid.html">QOrganizerItemId</a>.</p>
 <p>An invalid QOrganizerItemLocalId is represented by a zero (0) value.</p>
 <p>See also <a href="qorganizeritemid.html">QOrganizerItemId</a>.</p>
-<!-- @@@QOrganizerItemLocalId -->
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
@@ -232,15 +210,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

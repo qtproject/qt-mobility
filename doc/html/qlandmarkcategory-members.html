@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -125,17 +126,20 @@
 <li class="fn"><b><a href="qlandmarkcategory.html#QLandmarkCategory">QLandmarkCategory</a></b> ()</li>
 <li class="fn"><b><a href="qlandmarkcategory.html#QLandmarkCategory-2">QLandmarkCategory</a></b> ( const QLandmarkCategory &amp; )</li>
 <li class="fn"><b><a href="qlandmarkcategory.html#dtor.QLandmarkCategory">~QLandmarkCategory</a></b> ()</li>
-<li class="fn"><b><a href="qlandmarkcategory.html#attribute">attribute</a></b> ( const QString &amp;, const QVariant &amp; ) const : QVariant</li>
+<li class="fn"><b><a href="qlandmarkcategory.html#attribute">attribute</a></b> ( const QString &amp; ) const : QVariant</li>
 <li class="fn"><b><a href="qlandmarkcategory.html#attributeKeys">attributeKeys</a></b> () const : QStringList</li>
 <li class="fn"><b><a href="qlandmarkcategory.html#categoryId">categoryId</a></b> () const : QLandmarkCategoryId</li>
 <li class="fn"><b><a href="qlandmarkcategory.html#clear">clear</a></b> ()</li>
-<li class="fn"><b><a href="qlandmarkcategory.html#description">description</a></b> () const : QString</li>
+<li class="fn"><b><a href="qlandmarkcategory.html#customAttribute">customAttribute</a></b> ( const QString &amp;, const QVariant &amp; ) const : QVariant</li>
+<li class="fn"><b><a href="qlandmarkcategory.html#customAttributeKeys">customAttributeKeys</a></b> () const : QStringList</li>
 <li class="fn"><b><a href="qlandmarkcategory.html#iconUrl">iconUrl</a></b> () const : QUrl</li>
-</ul></td><td class="topAlign"><ul>
 <li class="fn"><b><a href="qlandmarkcategory.html#name">name</a></b> () const : QString</li>
+</ul></td><td class="topAlign"><ul>
+<li class="fn"><b><a href="qlandmarkcategory.html#removeAttribute">removeAttribute</a></b> ( const QString &amp; )</li>
+<li class="fn"><b><a href="qlandmarkcategory.html#removeCustomAttribute">removeCustomAttribute</a></b> ( const QString &amp; )</li>
 <li class="fn"><b><a href="qlandmarkcategory.html#setAttribute">setAttribute</a></b> ( const QString &amp;, const QVariant &amp; )</li>
 <li class="fn"><b><a href="qlandmarkcategory.html#setCategoryId">setCategoryId</a></b> ( const QLandmarkCategoryId &amp; )</li>
-<li class="fn"><b><a href="qlandmarkcategory.html#setDescription">setDescription</a></b> ( const QString &amp; )</li>
+<li class="fn"><b><a href="qlandmarkcategory.html#setCustomAttribute">setCustomAttribute</a></b> ( const QString &amp;, const QVariant &amp; )</li>
 <li class="fn"><b><a href="qlandmarkcategory.html#setIconUrl">setIconUrl</a></b> ( const QUrl &amp; )</li>
 <li class="fn"><b><a href="qlandmarkcategory.html#setName">setName</a></b> ( const QString &amp; )</li>
 <li class="fn"><b><a href="qlandmarkcategory.html#operator-not-eq">operator!=</a></b> ( const QLandmarkCategory &amp; ) const : bool</li>
@@ -150,15 +154,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

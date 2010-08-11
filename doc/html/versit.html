@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -117,30 +118,29 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#namespace">Namespace</a></li>
 <li class="level1"><a href="#overview">Overview</a></li>
 <li class="level1"><a href="#usage">Usage</a></li>
-<li class="level1"><a href="#main-classes">Main Classes</a></li>
+<li class="level1"><a href="#classes">Classes</a></li>
 <li class="level1"><a href="#supported-features">Supported Features</a></li>
 </ul>
 </div>
 <h1 class="title">Versit</h1>
 <span class="subtitle"></span>
-<!-- $$$versit.html-description -->
 <div class="descr"/>
-<a name="namespace"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="namespace"></a>
 <h2>Namespace</h2>
 <p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
-<a name="overview"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="overview"></a>
 <h2>Overview</h2>
 <p>The Versit API provides a library to convert <a href="qcontact.html">QContacts</a> to and from <a href="http://en.wikipedia.org/wiki/Vcard">vCard</a> files, and to convert <a href="qorganizeritem.html">QOrganizerItems</a> to and from <a href="http://en.wikipedia.org/wiki/ICalendar">iCalendar</a> files.</p>
 <p>Because vCard and iCalendar share the same structure, they are represented in abstract form with a common class, namely <a href="qversitdocument.html">QVersitDocument</a>. vCard and iCalendar files can be parsed into <a href="qversitdocument.html">QVersitDocument</a> form using <a href="qversitreader.html">QVersitReader</a>. <a href="qversitdocument.html">QVersitDocument</a> objects can be written to an I/O device using <a href="qversitwriter.html">QVersitWriter</a>.</p>
 <p>A <a href="qversitdocument.html">QVersitDocument</a> object can represent either a vCard or an iCalendar. <a href="qversitdocument.html">QVersitDocuments</a> representing vCards can be converted to <a href="qcontact.html">QContacts</a> using <a href="qversitcontactimporter.html">QVersitContactImporter</a>. <a href="qversitdocument.html">QVersitDocuments</a> representing iCalendars can be converted to <a href="qorganizeritem.html">QOrganizerItems</a> using <a href="qversitorganizerimporter.html">QVersitOrganizerImporter</a>. <a href="qcontact.html">QContacts</a> and <a href="qorganizeritem.html">QOrganizerItems</a> can be converted to <a href="qversitdocument.html">QVersitDocuments</a> using <a href="qversitcontactexporter.html">QVersitContactExporter</a> and <a href="qversitorganizerexporter.html">QVersitOrganizerExporter</a>, respectively.</p>
 <p>Currently <a href="qversitreader.html">QVersitReader</a> and <a href="qversitwriter.html">QVersitWriter</a> support reading and writing vCard 2.1, vCard 3.0 and iCalendar 2.0 format documents. Please note that the Qt Mobility Organizer API is still under development, so the Qt Versit API classes related to importing and exporting organizer items is subject to change.</p>
 <p>Versit <sup>&reg;</sup> is a trademark of the Internet Mail Consortium.</p>
-<a name="usage"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="usage"></a>
 <h2>Usage</h2>
 <p>The following example goes through the process of reading a vCard and importing it to <a href="qcontact.html">QContact</a> format, then exporting and writing it back out.</p>
 <p>First, let's create some data to read. In this case, we create a QBuffer as a demonstration, but any QIODevice will work.</p>
@@ -178,8 +178,9 @@
      writer.startWriting(outputDocuments); <span class="comment">// Remember to check the return value</span>
      writer.waitForFinished();
      <span class="comment">// output.buffer() now contains a vCard</span></pre>
-<a name="main-classes"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h2>Main Classes</h2>
+<a name="classes"></a>
+<h2>Classes</h2>
+<p>The main classes for a client interested in importing or exporting vCard and iCalendar documents are:</p>
 <ul>
 <li><a href="qversitproperty.html">QVersitProperty</a></li>
 <li><a href="qversitdocument.html">QVersitDocument</a></li>
@@ -190,26 +191,24 @@
 <li><a href="qversitorganizerimporter.html">QVersitOrganizerImporter</a></li>
 <li><a href="qversitorganizerexporter.html">QVersitOrganizerExporter</a></li>
 </ul>
-<a name="supported-features"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<p>It is also possible to extend the behaviour of the importer and exporter classes by writing handlers and plugins. For more details, please see the document on <a href="versitplugins.html">Versit Plugins</a>. <table class="annotated">
+<tr class="odd topAlign"><td><p><a href="qversitcontactexporterdetailhandlerv2.html">QVersitContactExporterDetailHandlerV2</a></p></td><td><p>Interface for clients wishing to implement custom export behaviour for certain contact details</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qversitcontacthandler.html">QVersitContactHandler</a></p></td><td><p>Union of the QVersitContactImporterPropertyHandlerV2 and QVersitContactExporterDetailHandlerV2 interfaces</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qversitcontacthandlerfactory.html">QVersitContactHandlerFactory</a></p></td><td><p>The interface for Versit plugins</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qversitcontactimporterpropertyhandlerv2.html">QVersitContactImporterPropertyHandlerV2</a></p></td><td><p>Interface for clients wishing to implement custom import behaviour for vCard properties</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a></p></td><td><p>Default implementation of a Versit resource handler</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qversitresourcehandler.html">QVersitResourceHandler</a></p></td><td><p>Interface for clients wishing to implement custom behaviour for loading and saving files to disk when exporting and importing</p></td></tr>
+</table>
+</p>
+<a name="supported-features"></a>
 <h2>Supported Features</h2>
 <p>Please see the <a href="vcardsupport.html#vcardsupport">Supported vCard Features</a> document for a list of vCard features that the Versit module supports.</p>
 </div>
-<!-- @@@versit.html -->
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

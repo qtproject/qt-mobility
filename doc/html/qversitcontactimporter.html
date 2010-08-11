@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -103,7 +104,8 @@
             <ul>
               <li class="first"><a href="index.html">Home</a></li>
               <!--  Bread crumbs goes here -->
-              <li><a href="modules.html">Modules</a></li>              <li>QVersitContactImporter</li>
+              <li><a href="modules.html">Modules</a></li>              <li><a href="qtversit.html">QtVersit</a></li>
+              <li>QVersitContactImporter</li>
             </ul>
           </div>
           <div class="toolbuttons toolblock">
@@ -118,30 +120,32 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
+<li class="level2"><a href="#extension-via-handlers">Extension via handlers</a></li>
 <li class="level2"><a href="#importing-categories">Importing categories</a></li>
 </ul>
 </div>
 <h1 class="title">QVersitContactImporter Class Reference</h1>
-<!-- $$$QVersitContactImporter-brief -->
 <p>The QVersitContactImporter class converts <a href="qversitdocument.html">QVersitDocuments</a> to <a href="qcontact.html">QContacts</a>. <a href="#details">More...</a></p>
-<!-- @@@QVersitContactImporter -->
 <pre class="highlightedCode brush: cpp"> #include &lt;QVersitContactImporter&gt;</pre><ul>
 <li><a href="qversitcontactimporter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactimporter.html#Error-enum">Error</a></b> { NoError, InvalidDocumentError, EmptyDocumentError }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactimporter.html#QVersitContactImporter">QVersitContactImporter</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactimporter.html#QVersitContactImporter-2">QVersitContactImporter</a></b> ( const QString &amp; <i>profile</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactimporter.html#dtor.QVersitContactImporter">~QVersitContactImporter</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QContact&gt; </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactimporter.html#contacts">contacts</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QMap&lt;int, Error&gt; </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactimporter.html#errors">errors</a></b> () const</td></tr>
@@ -150,20 +154,14 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactimporter.html#setPropertyHandler">setPropertyHandler</a></b> ( QVersitContactImporterPropertyHandlerV2 * <i>handler</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactimporter.html#setResourceHandler">setResourceHandler</a></b> ( QVersitResourceHandler * <i>handler</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<!-- $$$QVersitContactImporter-description -->
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVersitContactImporter class converts <a href="qversitdocument.html">QVersitDocuments</a> to <a href="qcontact.html">QContacts</a>.</p>
 <p>This class is used to convert lists of <a href="qversitdocument.html">QVersitDocuments</a> (which may be produced by a <a href="qversitreader.html">QVersitReader</a>) to lists of <a href="qcontact.html">QContacts</a> (which may be saved into a <a href="qcontactmanager.html">QContactManager</a>. Unless there is an error, there is a one-to-one mapping between Versit documents and QContacts. The importer can be extended by clients by associating resource and property handlers.</p>
-<p>A <a href="qversitresourcehandler.html">QVersitResourceHandler</a> is associated with the importer to supply the behaviour for saving files to persistent storage. By default, this is set to a <a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a>, which does not save files to persistent storage. Note that although photos found in vCards are not saved to disk by default, the importer does add a <a href="qcontactthumbnail.html">QContactThumbnail</a> detail to the image. If a full-sized image needs to be loaded from a URL and persisted on disk, a custom <a href="qversitresourcehandler.html">QVersitResourceHandler</a> should be supplied which implements this.</p>
-<p>By associating a <a href="qversitcontactimporterpropertyhandlerv2.html">QVersitContactImporterPropertyHandlerV2</a> with the importer using <a href="qversitcontactimporter.html#setPropertyHandler">setPropertyHandler</a>(), the client can pass in a handler to override the processing of properties and/or handle properties that QVersitContactImporter doesn't support. A &quot;backup&quot; handler is provided by <a href="qversitcontactimporterpropertyhandlerv2.html#createBackupHandler">QVersitContactImporterPropertyHandlerV2::createBackupHandler</a>() which imports properties generated by the corresponding backup handler for the <a href="qversitcontactexporter.html">QVersitContactExporter</a>.</p>
-<p>An example usage of QVersitContactImporter:</p>
+<p>Here is a simple example of how to use QVersitContactImporter:</p>
 <pre class="highlightedCode brush: cpp">     QVersitContactImporter importer;
-
-     QVersitContactImporterPropertyHandlerV2* backupHandler =
-         QVersitContactImporterPropertyHandlerV2::createBackupHandler();
-     importer.setPropertyHandler(backupHandler);
 
      QVersitDocument document;
 
@@ -180,10 +178,14 @@
          QList&lt;QContact&gt; contactList = importer.contacts();
          <span class="comment">// contactList.first() now contains the &quot;N&quot; property as a QContactName</span>
          <span class="comment">// propertyHandler.mUnknownProperties contains the list of unknown properties</span>
-     }
-
-     delete backupHandler;</pre>
-<a name="importing-categories"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+     }</pre>
+<a name="extension-via-handlers"></a>
+<h3>Extension via handlers</h3>
+<p>A <a href="qversitresourcehandler.html">QVersitResourceHandler</a> is associated with the importer to supply the behaviour for saving files to persistent storage. By default, this is set to a <a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a>, which does not save files to persistent storage. Note that although photos found in vCards are not saved to disk by default, the importer does add a <a href="qcontactthumbnail.html">QContactThumbnail</a> detail to the image. If a full-sized image needs to be loaded from a URL and persisted on disk, a custom <a href="qversitresourcehandler.html">QVersitResourceHandler</a> should be supplied which implements this.</p>
+<p>By associating a <a href="qversitcontactimporterpropertyhandlerv2.html">QVersitContactImporterPropertyHandlerV2</a> with the importer using <a href="qversitcontactimporter.html#setPropertyHandler">setPropertyHandler</a>(), the client can pass in a handler to override the processing of properties and/or handle properties that QVersitContactImporter doesn't support. Also, handlers can be implicitly associated to an importer through the <a href="versitplugins.html">handler plugin mechanism</a>. The importer can be constructed with a profile, which gives hints about what kind of handlers should be added to it. For example, the backup profile can be used to instruct the importer to interpret properties that have been generated by a backup-profiled <a href="qversitcontactexporter.html">QVersitContactExporter</a>. To illustrate, a backup importer can be constructed with:</p>
+<pre class="highlightedCode brush: cpp"> QVersitContactImporter importer(QVersitContactHandlerFactory::ProfileBackup);</pre>
+<p>For more details on how the backup plugin works, see <a href="versitplugins.html">Versit Plugins</a></p>
+<a name="importing-categories"></a>
 <h3>Importing categories</h3>
 <p>The importer imports the vCard CATEGORIES property by converting each category to a <a href="qcontacttag.html">QContactTag</a>. Some managers may not have support for <a href="qcontacttag.html">QContactTag</a>, but instead support categorization using the <a href="qcontactrelationship.html#HasMember-var">HasMember</a> <a href="qcontactrelationship.html">QContactRelationship</a> along with contacts of type <a href="qcontacttype.html#TypeGroup-var">TypeGroup</a>. For these backends, if the categorization information needs to be retained through group relationships, extra work needs to be done to do the conversion. Below is some example code that does this translation.</p>
 <pre class="highlightedCode brush: cpp"><span class="comment"> /*! Adds contacts in  \a newContacts into \a manager, converting categories specified
@@ -248,61 +250,47 @@
  }</pre>
 </div>
 <p>See also <a href="qversitdocument.html">QVersitDocument</a>, <a href="qversitproperty.html">QVersitProperty</a>, <a href="qversitresourcehandler.html">QVersitResourceHandler</a>, and <a href="qversitcontactimporterpropertyhandlerv2.html">QVersitContactImporterPropertyHandlerV2</a>.</p>
-<!-- @@@QVersitContactImporter -->
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<!-- $$$Error -->
-<h3 class="fn"><a name="Error-enum"></a>enum QVersitContactImporter::Error</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Error-enum"></a>enum QVersitContactImporter::Error</h3>
 <p>This enum specifies an error that occurred during the most recent call to <a href="qversitcontactimporter.html#importDocuments">importDocuments</a>()</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QVersitContactImporter::NoError</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The most recent operation was successful</td></tr>
 <tr><td  class="topAlign"><tt>QVersitContactImporter::InvalidDocumentError</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">One of the documents is not a vCard</td></tr>
 <tr><td  class="topAlign"><tt>QVersitContactImporter::EmptyDocumentError</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">One of the documents is empty</td></tr>
 </table>
-<!-- @@@Error -->
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<!-- $$$QVersitContactImporter[overload1]$$$QVersitContactImporter -->
-<h3 class="fn"><a name="QVersitContactImporter"></a>QVersitContactImporter::QVersitContactImporter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QVersitContactImporter"></a>QVersitContactImporter::QVersitContactImporter ()</h3>
 <p>Constructs a new importer</p>
-<!-- @@@QVersitContactImporter -->
-<!-- $$$~QVersitContactImporter[overload1]$$$~QVersitContactImporter -->
-<h3 class="fn"><a name="dtor.QVersitContactImporter"></a>QVersitContactImporter::~QVersitContactImporter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QVersitContactImporter-2"></a>QVersitContactImporter::QVersitContactImporter ( const QString &amp; <i>profile</i> )</h3>
+<p>Constructs a new importer for the given <i>profile</i>. The profile strings should be one of those defined by <a href="qversitcontacthandlerfactory.html">QVersitContactHandlerFactory</a>, or a value otherwise agreed to by a <a href="versitplugins.html">Versit plugin</a>.</p>
+<p>The profile determines which plugins will be loaded to supplement the importer.</p>
+<h3 class="fn"><a name="dtor.QVersitContactImporter"></a>QVersitContactImporter::~QVersitContactImporter ()</h3>
 <p>Frees the memory used by the importer</p>
-<!-- @@@~QVersitContactImporter -->
-<!-- $$$contacts[overload1]$$$contacts -->
-<h3 class="fn"><a name="contacts"></a>QList&lt;<a href="qcontact.html">QContact</a>&gt; QVersitContactImporter::contacts () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contacts"></a>QList&lt;<a href="qcontact.html">QContact</a>&gt; QVersitContactImporter::contacts () const</h3>
 <p>Returns the contacts imported in the most recent call to <a href="qversitcontactimporter.html#importDocuments">importDocuments</a>().</p>
 <p>See also <a href="qversitcontactimporter.html#importDocuments">importDocuments</a>().</p>
-<!-- @@@contacts -->
-<!-- $$$errors[overload1]$$$errors -->
-<h3 class="fn"><a name="errors"></a>QMap&lt;int, <a href="qversitcontactimporter.html#Error-enum">Error</a>&gt; QVersitContactImporter::errors () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="errors"></a>QMap&lt;int, <a href="qversitcontactimporter.html#Error-enum">Error</a>&gt; QVersitContactImporter::errors () const</h3>
 <p>Returns the map of errors encountered in the most recent call to <a href="qversitcontactimporter.html#importDocuments">importDocuments</a>(). The key is the index into the input list of documents and the value is the error that occurred on that document.</p>
 <p>See also <a href="qversitcontactimporter.html#importDocuments">importDocuments</a>().</p>
-<!-- @@@errors -->
-<!-- $$$importDocuments[overload1]$$$importDocumentsconstQList<QVersitDocument>& -->
-<h3 class="fn"><a name="importDocuments"></a>bool QVersitContactImporter::importDocuments ( const QList&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt; &amp; <i>documents</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="importDocuments"></a>bool QVersitContactImporter::importDocuments ( const QList&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt; &amp; <i>documents</i> )</h3>
 <p>Converts <i>documents</i> into a corresponding list of QContacts. After calling this, the converted contacts can be retrieved by calling <a href="qversitcontactimporter.html#contacts">contacts</a>(). Returns true on success. If any of the documents cannot be imported as contacts (eg. they aren't vCards), false is returned and <a href="qversitcontactimporter.html#errors">errors</a>() will return a list describing the errors that occurred. The successfully imported documents will still be available via <a href="qversitcontactimporter.html#contacts">contacts</a>().</p>
 <p>See also <a href="qversitcontactimporter.html#contacts">contacts</a>() and <a href="qversitcontactimporter.html#errors">errors</a>().</p>
-<!-- @@@importDocuments -->
-<!-- $$$resourceHandler[overload1]$$$resourceHandler -->
-<h3 class="fn"><a name="resourceHandler"></a><a href="qversitresourcehandler.html">QVersitResourceHandler</a> * QVersitContactImporter::resourceHandler () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="resourceHandler"></a><a href="qversitresourcehandler.html">QVersitResourceHandler</a> * QVersitContactImporter::resourceHandler () const</h3>
 <p>Returns the associated resource handler.</p>
 <p>See also <a href="qversitcontactimporter.html#setResourceHandler">setResourceHandler</a>().</p>
-<!-- @@@resourceHandler -->
-<!-- $$$setPropertyHandler[overload1]$$$setPropertyHandlerQVersitContactImporterPropertyHandlerV2* -->
-<h3 class="fn"><a name="setPropertyHandler"></a>void QVersitContactImporter::setPropertyHandler ( <a href="qversitcontactimporterpropertyhandlerv2.html">QVersitContactImporterPropertyHandlerV2</a> * <i>handler</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setPropertyHandler"></a>void QVersitContactImporter::setPropertyHandler ( <a href="qversitcontactimporterpropertyhandlerv2.html">QVersitContactImporterPropertyHandlerV2</a> * <i>handler</i> )</h3>
 <p>Sets <i>handler</i> to be the handler for processing QVersitProperties, or 0 to have no handler.</p>
 <p>Does not take ownership of the handler. The client should ensure the handler remains valid for the lifetime of the exporter. This function is used for version 2 and higher handlers.</p>
 <p>Only one property handler can be set. If another property handler (of any version) was previously set, it will no longer be associated with the importer.</p>
-<!-- @@@setPropertyHandler -->
-<!-- $$$setResourceHandler[overload1]$$$setResourceHandlerQVersitResourceHandler* -->
-<h3 class="fn"><a name="setResourceHandler"></a>void QVersitContactImporter::setResourceHandler ( <a href="qversitresourcehandler.html">QVersitResourceHandler</a> * <i>handler</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setResourceHandler"></a>void QVersitContactImporter::setResourceHandler ( <a href="qversitresourcehandler.html">QVersitResourceHandler</a> * <i>handler</i> )</h3>
 <p>Sets <i>handler</i> to be the handler to save files with, or 0 to have no handler.</p>
 <p>Does not take ownership of the handler. The client should ensure the handler remains valid for the lifetime of the exporter.</p>
 <p>See also <a href="qversitcontactimporter.html#resourceHandler">resourceHandler</a>().</p>
-<!-- @@@setResourceHandler -->
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
@@ -310,15 +298,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

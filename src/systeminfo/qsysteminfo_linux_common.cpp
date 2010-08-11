@@ -983,96 +983,96 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
 }
 
 
-QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::getOrientation(int screen)
-{
-    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
-    XRRScreenConfiguration *sc;
-    Rotation cur_rotation;
-    sc = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), screen));
-    if (!sc) {
-        return orientation;
-    }
-    XRRConfigRotations(sc, &cur_rotation);
+// QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::getOrientation(int screen)
+// {
+//     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+//     XRRScreenConfiguration *sc;
+//     Rotation cur_rotation;
+//     sc = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+//     if (!sc) {
+//         return orientation;
+//     }
+//     XRRConfigRotations(sc, &cur_rotation);
 
-    if(screen < 16 && screen > -1) {
-        switch(cur_rotation) {
-        case RR_Rotate_0:
-            orientation = QSystemDisplayInfo::Landscape;
-            break;
-        case RR_Rotate_90:
-            orientation = QSystemDisplayInfo::Portrait;
-            break;
-        case RR_Rotate_180:
-            orientation = QSystemDisplayInfo::InvertedLandscape;
-            break;
-        case RR_Rotate_270:
-            orientation = QSystemDisplayInfo::InvertedPortrait;
-            break;
-        };
-    }
-    return orientation;
-}
+//     if(screen < 16 && screen > -1) {
+//         switch(cur_rotation) {
+//         case RR_Rotate_0:
+//             orientation = QSystemDisplayInfo::Landscape;
+//             break;
+//         case RR_Rotate_90:
+//             orientation = QSystemDisplayInfo::Portrait;
+//             break;
+//         case RR_Rotate_180:
+//             orientation = QSystemDisplayInfo::InvertedLandscape;
+//             break;
+//         case RR_Rotate_270:
+//             orientation = QSystemDisplayInfo::InvertedPortrait;
+//             break;
+//         };
+//     }
+//     return orientation;
+// }
 
 
-float QSystemDisplayInfoLinuxCommonPrivate::contrast(int screen)
-{
-    Q_UNUSED(screen);
+// float QSystemDisplayInfoLinuxCommonPrivate::contrast(int screen)
+// {
+//     Q_UNUSED(screen);
 
-    return 0.0;
-}
+//     return 0.0;
+// }
 
-int QSystemDisplayInfoLinuxCommonPrivate::getDPIWidth(int screen)
-{
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-        dpi = QDesktopWidget().screenGeometry().width() / (physicalWidth(0) / 25.4);
-    }
-    return dpi;
-}
+// int QSystemDisplayInfoLinuxCommonPrivate::getDPIWidth(int screen)
+// {
+//     int dpi=0;
+//     if(screen < 16 && screen > -1) {
+//         dpi = QDesktopWidget().screenGeometry().width() / (physicalWidth(0) / 25.4);
+//     }
+//     return dpi;
+// }
 
-int QSystemDisplayInfoLinuxCommonPrivate::getDPIHeight(int screen)
-{
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-        dpi = QDesktopWidget().screenGeometry().height() / (physicalHeight(0) / 25.4);
-    }
-    return dpi;
-}
+// int QSystemDisplayInfoLinuxCommonPrivate::getDPIHeight(int screen)
+// {
+//     int dpi=0;
+//     if(screen < 16 && screen > -1) {
+//         dpi = QDesktopWidget().screenGeometry().height() / (physicalHeight(0) / 25.4);
+//     }
+//     return dpi;
+// }
 
-int QSystemDisplayInfoLinuxCommonPrivate::physicalHeight(int screen)
-{
-    int height=0;
-    XRRScreenResources *sr;
+// int QSystemDisplayInfoLinuxCommonPrivate::physicalHeight(int screen)
+// {
+//     int height=0;
+//     XRRScreenResources *sr;
 
-    sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
-    for (int i = 0; i < sr->noutput; ++i) {
-        XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
-        if (output->crtc) {
-           height = output->mm_height;
-        }
-        XRRFreeOutputInfo(output);
-    }
-    XRRFreeScreenResources(sr);
-    return height;
-}
+//     sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+//     for (int i = 0; i < sr->noutput; ++i) {
+//         XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
+//         if (output->crtc) {
+//            height = output->mm_height;
+//         }
+//         XRRFreeOutputInfo(output);
+//     }
+//     XRRFreeScreenResources(sr);
+//     return height;
+// }
 
-int QSystemDisplayInfoLinuxCommonPrivate::physicalWidth(int screen)
-{
-    int width=0;
-    XRRScreenResources *sr;
+// int QSystemDisplayInfoLinuxCommonPrivate::physicalWidth(int screen)
+// {
+//     int width=0;
+//     XRRScreenResources *sr;
 
-    sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
-    for (int i = 0; i < sr->noutput; ++i) {
-        XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
-        if (output->crtc) {
-           width = output->mm_width;
-        }
-        XRRFreeOutputInfo(output);
-    }
-    XRRFreeScreenResources(sr);
+//     sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+//     for (int i = 0; i < sr->noutput; ++i) {
+//         XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
+//         if (output->crtc) {
+//            width = output->mm_width;
+//         }
+//         XRRFreeOutputInfo(output);
+//     }
+//     XRRFreeScreenResources(sr);
 
-    return width;
-}
+//     return width;
+// }
 
 QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent)
     : QObject(parent)

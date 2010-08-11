@@ -45,5 +45,3 @@ symbian {
     DEPLOYMENT += pluginDep      
 }
 
-target.path=$$QT_MOBILITY_PREFIX/plugins/$${PLUGIN_TYPE}
-INSTALLS+=target

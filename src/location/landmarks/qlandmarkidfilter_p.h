@@ -62,23 +62,19 @@ QTM_BEGIN_NAMESPACE
 class QLandmarkIdFilterPrivate : public QLandmarkFilterPrivate
 {
 public:
-    QLandmarkIdFilterPrivate(const QList<QLandmarkId> &ids =QList<QLandmarkId>(),
-                                QLandmarkIdFilter::MatchingScheme mathcingScheme = QLandmarkIdFilter::MatchSubset);
+    QLandmarkIdFilterPrivate(const QList<QLandmarkId> &ids =QList<QLandmarkId>());
     QLandmarkIdFilterPrivate(const QLandmarkIdFilterPrivate &other);
     virtual ~QLandmarkIdFilterPrivate();
 
     virtual bool compare(const QLandmarkFilterPrivate *other) const
     {
         const QLandmarkIdFilterPrivate *od = static_cast<const QLandmarkIdFilterPrivate*>(other);
-        return landmarkIds == od->landmarkIds &&
-                    matchingScheme == od->matchingScheme;
+        return landmarkIds == od->landmarkIds;
     }
 
     Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(QLandmarkIdFilter, QLandmarkFilter::LandmarkIdFilter)
 
     QList<QLandmarkId> landmarkIds;
-    QLandmarkIdFilter::MatchingScheme matchingScheme;
-
 };
 
 QTM_END_NAMESPACE

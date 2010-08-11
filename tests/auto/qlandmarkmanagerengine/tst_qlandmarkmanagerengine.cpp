@@ -63,7 +63,6 @@
 #include <qlandmarkproximityfilter.h>
 #include <qlandmarkunionfilter.h>
 
-#include <qlandmarkdistancesort.h>
 #include <qlandmarknamesort.h>
 
 QTM_USE_NAMESPACE
@@ -159,11 +158,6 @@ public:
         return QLandmarkManagerEngine::testFilter(filter, landmark);
     }
 
-    static int compareDistance(const QLandmark &a, const QLandmark &b,
-                               const QLandmarkDistanceSort &distanceSort) {
-        return QLandmarkManagerEngine::compareDistance(a, b, distanceSort);
-    }
-
     static int compareName(const QLandmark &a, const QLandmark &b, const QLandmarkNameSort &nameSort)
     {
         return QLandmarkManagerEngine::compareName(a,b,nameSort);
@@ -190,7 +184,7 @@ public:
     }
 
 private slots:
-    void testFiltterAttribute() {
+    void testFilterAttribute() {
         QLandmark lm;
         lm.setAttribute("capacity", 30);
 
@@ -210,6 +204,118 @@ private slots:
 
         lm.setAttribute("capacity", 45);
         QVERIFY(MockEngine::testFilter(filter, lm));
+
+        //test multiple manager attributes AND operation
+        lm.setAttribute("name", "LM1");
+        lm.setAttribute("capacity", 45);
+        lm.setAttribute("height", 10);
+        filter.clearAttributes();
+        filter.setAttribute("name", "LM", QLandmarkFilter::MatchStartsWith);
+        filter.setAttribute("capacity", 45);
+        filter.setAttribute("height", QVariant());
+        QVERIFY(MockEngine::testFilter(filter, lm));
+
+        //test that the AND operation fails when one attribute doesn't match
+        lm.clear();
+        lm.setAttribute("name", "LM1");
+        lm.setAttribute("capacity", 45);
+        lm.setAttribute("height", 10);
+        filter.clearAttributes();
+        filter.setAttribute("name", "LM", QLandmarkFilter::MatchEndsWith);
+        filter.setAttribute("capacity", 45);
+        filter.setAttribute("height", QVariant());
+        QVERIFY(!MockEngine::testFilter(filter, lm));
+
+        //test multiple manager attributes OR operation
+        lm.clear();
+        lm.setAttribute("name", "LM1");
+        lm.setAttribute("capacity", 45);
+        lm.setAttribute("height", 10);
+        filter.clearAttributes();
+        filter.setOperationType(QLandmarkAttributeFilter::OrOperation);
+        filter.setAttribute("name", "LANDMARK", QLandmarkFilter::MatchStartsWith);
+        filter.setAttribute("capacity",45);
+        filter.setAttribute("height", 9);
+        QVERIFY(MockEngine::testFilter(filter,lm));
+
+        //test multiple manager with an OR operation that doesn't match
+        lm.clear();
+        lm.setAttribute("name", "LM1");
+        lm.setAttribute("capacity", 45);
+        lm.setAttribute("height", 10);
+        filter.clearAttributes();
+        filter.setOperationType(QLandmarkAttributeFilter::OrOperation);
+        filter.setAttribute("name", "LANDMARK", QLandmarkFilter::MatchStartsWith);
+        filter.setAttribute("capacity",46);
+        filter.setAttribute("height", 9);
+        QVERIFY(!MockEngine::testFilter(filter,lm));
+
+
+        //test multiple custom attributes ,AND operation
+        QLandmark lm2;
+        lm2.setCustomAttribute("name", "LM1");
+        lm2.setCustomAttribute("capacity", 45);
+        lm2.setCustomAttribute("height", 10);
+        filter.clearAttributes();
+        filter.setOperationType(QLandmarkAttributeFilter::AndOperation);
+        filter.setAttributeType(QLandmarkAttributeFilter::CustomAttributes);
+        filter.setAttribute("name", "LM", QLandmarkFilter::MatchStartsWith);
+        filter.setAttribute("capacity", 45);
+        filter.setAttribute("height", QVariant());
+        QVERIFY(MockEngine::testFilter(filter, lm2));
+
+        //test that the AND operation fails when one attribute doesn't match
+        lm2.clear();
+        lm2.setCustomAttribute("name", "LM1");
+        lm2.setCustomAttribute("capacity", 45);
+        lm2.setCustomAttribute("height", 10);
+        filter.clearAttributes();
+        filter.setOperationType(QLandmarkAttributeFilter::AndOperation);
+        filter.setAttributeType(QLandmarkAttributeFilter::CustomAttributes);
+        filter.setAttribute("name", "LM", QLandmarkFilter::MatchEndsWith);
+        filter.setAttribute("capacity", 45);
+        filter.setAttribute("height", QVariant());
+        QVERIFY(!MockEngine::testFilter(filter, lm2));
+
+        //test multiple manager attributes OR operation
+        lm2.clear();
+        lm2.setCustomAttribute("name", "LM1");
+        lm2.setCustomAttribute("capacity", 45);
+        lm2.setCustomAttribute("height", 10);
+        filter.clearAttributes();
+        filter.setOperationType(QLandmarkAttributeFilter::OrOperation);
+        filter.setAttributeType(QLandmarkAttributeFilter::CustomAttributes);
+        filter.setAttribute("name", "LANDMARK", QLandmarkFilter::MatchStartsWith);
+        filter.setAttribute("capacity",45);
+        filter.setAttribute("height", 9);
+        QVERIFY(MockEngine::testFilter(filter,lm2));
+
+        //test multiple manager with an OR operation that doesn't match
+        lm2.clear();
+        lm2.setCustomAttribute("name", "LM1");
+        lm2.setCustomAttribute("capacity", 45);
+        lm2.setCustomAttribute("height", 10);
+        filter.clearAttributes();
+        filter.setOperationType(QLandmarkAttributeFilter::OrOperation);
+        filter.setAttributeType(QLandmarkAttributeFilter::CustomAttributes);
+        filter.setAttribute("name", "LANDMARK", QLandmarkFilter::MatchStartsWith);
+        filter.setAttribute("capacity",46);
+        filter.setAttribute("height", 9);
+        QVERIFY(!MockEngine::testFilter(filter,lm2));
+
+        //try landmark with the same key in both extended and custom attributes but values differ
+        //make sure the filter operates on the right attributes
+        QLandmark lm3;
+        lm3.setAttribute("capacity", 10);
+        lm3.setCustomAttribute("capcity", 5);
+        filter.clearAttributes();
+        filter.setAttribute("capacity", 10);
+        filter.setAttributeType(QLandmarkAttributeFilter::ManagerAttributes);
+        QVERIFY(MockEngine::testFilter(filter,lm3));
+        filter.setAttributeType(QLandmarkAttributeFilter::CustomAttributes);
+        QVERIFY(!MockEngine::testFilter(filter,lm3));
+        filter.setAttribute("capcity", 5);
+        QVERIFY(MockEngine::testFilter(filter,lm3));
     }
 
     void testFilterBox() {
@@ -389,25 +495,78 @@ private slots:
     {
         //test for match - case matches, filter-case insensitive
         QLandmarkNameFilter nameFilter;
-        nameFilter.setName("madara");
-
         QLandmark lm;
         lm.setName("madara");
 
-        QVERIFY(MockEngine::testFilter(nameFilter, lm));
+        //test case insensitive, start with
+        nameFilter.setName("mad");
+        nameFilter.setMatchFlags(QLandmarkFilter::MatchStartsWith);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+        nameFilter.setName("Mad");
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
 
-        //test for match, case mismatch, filter is case insensitive
-        lm.setName("Madara");
-        QVERIFY(MockEngine::testFilter(nameFilter, lm));
-
-        //test for no match,case mismatch, filter is case sensitive
-        nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
+        //test case sensitive starts with
+        nameFilter.setName("mad");
+        nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive | QLandmarkFilter::MatchStartsWith);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+        nameFilter.setName("Mad");
         QVERIFY(!MockEngine::testFilter(nameFilter,lm));
 
-        //test for match, case matches, filter is case sensitive
+        //test case insensitive, ends with
+        nameFilter.setName("ara");
+        nameFilter.setMatchFlags(QLandmarkFilter::MatchEndsWith);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+        nameFilter.setName("Ara");
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+
+        //test case sensitive, ends with
+        nameFilter.setName("ara");
+        nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive | QLandmarkFilter::MatchEndsWith);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+        nameFilter.setName("Ara");
+        QVERIFY(!MockEngine::testFilter(nameFilter,lm));
+
+        //test case insensitive, contains
+        nameFilter.setName("ada");
+        nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+        nameFilter.setName("Ada");
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+
+        //test case sensitive, contains
+        nameFilter.setName("ada");
+        nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive | QLandmarkFilter::MatchContains);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+        nameFilter.setName("Ada");
+        QVERIFY(!MockEngine::testFilter(nameFilter,lm));
+
+        //test case insensitive, fixed string
+        nameFilter.setName("madara");
+        nameFilter.setMatchFlags( QLandmarkFilter::MatchFixedString);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
         nameFilter.setName("Madara");
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+
+        //test case sensitive, fixed string
+        nameFilter.setName("madara");
+        nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive | QLandmarkFilter::MatchFixedString);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+        nameFilter.setName("Madara");
+        QVERIFY(!MockEngine::testFilter(nameFilter,lm));
+
+
+        //test case variant match
+        nameFilter.setName("madara");
+        nameFilter.setMatchFlags(0);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+        nameFilter.setName("Madara");
+        QVERIFY(!MockEngine::testFilter(nameFilter,lm));
+
+        nameFilter.setName("madara");
         nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
         QVERIFY(MockEngine::testFilter(nameFilter,lm));
+        nameFilter.setName("Madara");
+        QVERIFY(!MockEngine::testFilter(nameFilter,lm));
     }
 
     void testNearestFilter()
@@ -484,33 +643,6 @@ private slots:
         QVERIFY(!MockEngine::testFilter(unionFilter,lm));
     }
 
-    void testCompareDistance()
-    {
-        QLandmark lm1, lm2, lm3, lm3_0, lm5;
-        lm1.setCoordinate(QGeoCoordinate(0,10));
-        lm2.setCoordinate(QGeoCoordinate(0,20));
-        lm3.setCoordinate(QGeoCoordinate(0,30));
-        lm3_0.setCoordinate(QGeoCoordinate(0, 30.00));
-        lm5.setCoordinate(QGeoCoordinate(0,50));
-
-        //compare ascending sort
-        QLandmarkDistanceSort distanceSort;
-        distanceSort.setCoordinate(QGeoCoordinate(0,40));
-        distanceSort.setDirection(Qt::AscendingOrder);
-
-        QVERIFY(MockEngine::compareDistance(lm1, lm3 , distanceSort) > 0);
-        QVERIFY(MockEngine::compareDistance(lm3, lm1 , distanceSort) < 0);
-        QVERIFY(MockEngine::compareDistance(lm3, lm3_0 , distanceSort) == 0);
-        QVERIFY(MockEngine::compareDistance(lm3, lm5 , distanceSort) == 0);
-
-       //compare desceniding sort
-       distanceSort.setDirection(Qt::DescendingOrder);
-       QVERIFY(MockEngine::compareDistance(lm1, lm3 , distanceSort) < 0);
-       QVERIFY(MockEngine::compareDistance(lm3, lm1 , distanceSort) > 0);
-       QVERIFY(MockEngine::compareDistance(lm3, lm3_0 , distanceSort) == 0);
-       QVERIFY(MockEngine::compareDistance(lm3, lm5 , distanceSort) == 0);
-    }
-
     void testCompareName()
     {
         QLandmark lmA, lma, lmB, lmb, lmC, lmc;
@@ -572,50 +704,6 @@ private slots:
         QVERIFY(MockEngine::compareName(lmA,lmc, nameSort) > 0);
     }
 
-    void testCompareLandmark()
-    {
-        //test two of the same landmarks
-        QLandmark lm1, lm2;
-        lm1.setName("kobol");
-        lm1.setCoordinate(QGeoCoordinate(30,30));
-        lm2.setName("kobol");
-        lm2.setCoordinate(QGeoCoordinate(30,30));
-
-        QLandmarkNameSort nameSort(Qt::AscendingOrder, Qt::CaseInsensitive);
-        QLandmarkDistanceSort distanceSort(QGeoCoordinate(40,40), Qt::AscendingOrder);
-        QList<QLandmarkSortOrder> sortOrders;
-        sortOrders << nameSort << distanceSort;
-
-        QVERIFY(MockEngine::compareLandmark(lm1,lm2, sortOrders) == 0);
-
-        //test 1st sort criteria identical, 2nd sort criteria is not identical
-        lm1.setName("kobol");
-        lm2.setName("kobol");
-        lm1.setCoordinate(QGeoCoordinate(30,30));
-        lm2.setCoordinate(QGeoCoordinate(30,35));
-        QVERIFY(MockEngine::compareLandmark(lm1,lm2, sortOrders) > 0);
-
-        //test 1st sort criteria different, 2nd sort criter different
-        lm1.setName("kobol");
-        lm2.setName("picon");
-        lm1.setCoordinate(QGeoCoordinate(30,30));
-        lm2.setCoordinate(QGeoCoordinate(30,35));
-        QVERIFY(MockEngine::compareLandmark(lm1,lm2, sortOrders) < 0);
-
-        lm1.setName("tauron");
-        lm2.setName("picon");
-        lm1.setCoordinate(QGeoCoordinate(30,30));
-        lm2.setCoordinate(QGeoCoordinate(30,35));
-        QVERIFY(MockEngine::compareLandmark(lm1,lm2, sortOrders) > 0);
-
-        //test 1st sort criteria different, 2nd sort criteria identical
-        lm1.setName("tauron");
-        lm2.setName("picon");
-        lm1.setCoordinate(QGeoCoordinate(30,35));
-        lm2.setCoordinate(QGeoCoordinate(30,35));
-
-        QVERIFY(MockEngine::compareLandmark(lm1,lm2, sortOrders) > 0);
-    }
 
     void testSortLandmarks() {
         QLandmark lmA, lmB, lmC, lmD, lmZ;
@@ -649,10 +737,9 @@ private slots:
         QList<QLandmark> landmarks;
         landmarks << lmD << lmC << lmA << lmZ << lmB;
         QLandmarkNameSort nameSort;
-        QLandmarkDistanceSort distanceSort(QGeoCoordinate(0,40));
 
         QList<QLandmarkSortOrder> sortOrders;
-        sortOrders << distanceSort << nameSort;
+        sortOrders << nameSort;
         QList<QLandmarkId> landmarkIds;
         landmarkIds = MockEngine::sortLandmarks(landmarks, sortOrders);
         QVERIFY(landmarkIds.count() == 5);
@@ -662,45 +749,11 @@ private slots:
         QVERIFY(landmarkIds == expectedAscIds);
 
         //test descending order by name
-        sortOrders[1].setDirection(Qt::DescendingOrder);
+        sortOrders[0].setDirection(Qt::DescendingOrder);
         landmarkIds = MockEngine::sortLandmarks(landmarks, sortOrders);
         QList<QLandmarkId> expectedDescIds;
         expectedDescIds << idZ << idD << idC << idB << idA;
         QVERIFY(landmarkIds == expectedDescIds);
-
-        //try sorting by distance first
-        landmarkIds.clear();
-        lmA.setCoordinate(QGeoCoordinate(0, 15));
-        lmB.setCoordinate(QGeoCoordinate(0, 20));
-        lmC.setCoordinate(QGeoCoordinate(0, 41));
-        lmD.setCoordinate(QGeoCoordinate(0, 63));
-        lmZ.setCoordinate(QGeoCoordinate(0, 60));
-        landmarks.clear();
-        landmarks << lmA << lmB << lmC << lmD << lmZ;
-        sortOrders.clear();
-        sortOrders << distanceSort << nameSort;
-        landmarkIds = MockEngine::sortLandmarks(landmarks, sortOrders);
-
-        QList<QLandmarkId> expectedDistAscIds;
-        expectedDistAscIds << idC << idB << idZ << idD << idA;
-        QVERIFY(landmarkIds == expectedDistAscIds);
-
-        //change the order of the name sort
-        sortOrders[1].setDirection(Qt::DescendingOrder);
-        landmarkIds.clear();
-        landmarkIds = MockEngine::sortLandmarks(landmarks, sortOrders);
-        QList<QLandmarkId> expectedIds;
-        expectedIds  << idC << idZ << idB << idD << idA; //Z and B have the same dist, diff name.
-        QVERIFY(landmarkIds == expectedIds);
-
-        //try descending sort by distance
-        sortOrders[0].setDirection(Qt::DescendingOrder);
-        QLandmarkDistanceSort dsort = sortOrders[0];
-        landmarkIds.clear();
-        landmarkIds = MockEngine::sortLandmarks(landmarks, sortOrders);
-        QList<QLandmarkId> expectedDistDescIds;
-        expectedDistDescIds << idA << idD << idZ << idB << idC;
-        QVERIFY(landmarkIds == expectedDistDescIds);
     }
 };
 

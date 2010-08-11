@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -118,7 +119,6 @@
         <div class="content">
 <h1 class="title">Annotated Class List</h1>
 <span class="subtitle"></span>
-<!-- $$$annotated.html-description -->
 <div class="descr"/>
 <p>Qt Mobility Project classes with brief descriptions:</p>
 <table class="annotated">
@@ -145,108 +145,110 @@
 <tr class="odd topAlign"><td><p><a href="qcameracontrol.html">QCameraControl</a></p></td><td><p>Abstract base class for classes that control still cameras or video cameras</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qcameraexposure.html">QCameraExposure</a></p></td><td><p>Interface for exposure related camera settings</p></td></tr>
 <tr class="odd topAlign"><td><p><a href="qcameraexposurecontrol.html">QCameraExposureControl</a></p></td><td><p>Supplies control for exposure related camera parameters</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcamerafocus.html">QCameraFocus</a></p></td><td><p>Interface for focus and zoom related camera settings</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcamerafocuscontrol.html">QCameraFocusControl</a></p></td><td><p>Supplies control for focusing related camera parameters</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcameraimagecapture.html">QCameraImageCapture</a></p></td><td><p>Used for the recording of media content</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcameraimagecapturecontrol.html">QCameraImageCaptureControl</a></p></td><td><p>Control interface for image capture services</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcameraimageprocessing.html">QCameraImageProcessing</a></p></td><td><p>Interface for focus and zoom related camera settings</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcameraimageprocessingcontrol.html">QCameraImageProcessingControl</a></p></td><td><p>Abstract class for controling image processing parameters, like white balance, contrast, saturation, sharpening and denoising</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcameralockscontrol.html">QCameraLocksControl</a></p></td><td><p>Abstract base class for classes that control still cameras or video cameras</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcameraviewfinder.html">QCameraViewfinder</a></p></td><td><p>Camera viewfinder widget</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcompass.html">QCompass</a></p></td><td><p>Convenience wrapper around QSensor</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcompassfilter.html">QCompassFilter</a></p></td><td><p>Convenience wrapper around QSensorFilter</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcompassreading.html">QCompassReading</a></p></td><td><p>Represents one reading from a compass</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontact.html">QContact</a></p></td><td><p>Represents an addressbook contact</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactabstractrequest.html">QContactAbstractRequest</a></p></td><td><p>Mechanism for asynchronous requests to be made of a manager if it supports them</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactaction.html">QContactAction</a></p></td><td><p>Interface for performing an action on a QContact or QContactDetail</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactactiondescriptor.html">QContactActionDescriptor</a></p></td><td><p>Information that uniquely identifies a specific implementation of an action</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactactionfactory.html">QContactActionFactory</a></p></td><td><p>Interface for clients to retrieve instances of action implementations</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactactionfilter.html">QContactActionFilter</a></p></td><td><p>Filter based around an action availability criterion</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactaddress.html">QContactAddress</a></p></td><td><p>Contains an address of a contact</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactanniversary.html">QContactAnniversary</a></p></td><td><p>Contains an anniversary of a contact</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactavatar.html">QContactAvatar</a></p></td><td><p>Contains the avatar of a contact</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactbirthday.html">QContactBirthday</a></p></td><td><p>Contains a birthday of a contact</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactchangelogfilter.html">QContactChangeLogFilter</a></p></td><td><p>Filter based around a contact timestamp criterion</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactchangeset.html">QContactChangeSet</a></p></td><td><p>Simple API to simplify the emission of state-change signals from QContactManagerEngine implementations</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactdetail.html">QContactDetail</a></p></td><td><p>Represents a single, complete detail about a contact</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactdetaildefinition.html">QContactDetailDefinition</a></p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactdetaildefinitionfetchrequest.html">QContactDetailDefinitionFetchRequest</a></p></td><td><p>Allows a client to asynchronously request detail definitions from a contacts store manager</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactdetaildefinitionremoverequest.html">QContactDetailDefinitionRemoveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain detail definitions be removed from a contacts store</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactdetaildefinitionsaverequest.html">QContactDetailDefinitionSaveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain detail definitions be saved in a contacts store</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactdetailfielddefinition.html">QContactDetailFieldDefinition</a></p></td><td><p>Field in a QContactDetail</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactdetailfilter.html">QContactDetailFilter</a></p></td><td><p>Filter based around a detail value criterion</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactdetailrangefilter.html">QContactDetailRangeFilter</a></p></td><td><p>Filter based around a detail value range criterion</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a></p></td><td><p>The (possibly synthesized) display label of a contact</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactemailaddress.html">QContactEmailAddress</a></p></td><td><p>Contains an email address of a contact</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactfamily.html">QContactFamily</a></p></td><td><p>Contains names of family members of a contact</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactfetchhint.html">QContactFetchHint</a></p></td><td><p>Hints to the manager about which contact information needs to be retrieved in an asynchronous fetch request or a synchronous function call</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactfetchrequest.html">QContactFetchRequest</a></p></td><td><p>Allows a client to asynchronously request contacts from a contacts store manager</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactfilter.html">QContactFilter</a></p></td><td><p>Used to select contacts made available through a QContactManager</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactgender.html">QContactGender</a></p></td><td><p>Contains the gender of a contact</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactgeolocation.html">QContactGeoLocation</a></p></td><td><p>Contains a global location coordinate associated with a contact</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactglobalpresence.html">QContactGlobalPresence</a></p></td><td><p>Aggregated presence information for a contact, synthesized or supplied by the backend</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactguid.html">QContactGuid</a></p></td><td><p>Contains a globally unique Id of a contact, for use in synchronization with other datastores</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactid.html">QContactId</a></p></td><td><p>Information that uniquely identifies a contact in a particular manager</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactintersectionfilter.html">QContactIntersectionFilter</a></p></td><td><p>Filter which intersects the results of other filters</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactinvalidengine.html">QContactInvalidEngine</a></p></td><td><p>Implementation of QContactManagerEngine whose functions always return an error</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactinvalidfilter.html">QContactInvalidFilter</a></p></td><td><p>Matches no contacts</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactlocalidfetchrequest.html">QContactLocalIdFetchRequest</a></p></td><td><p>Allows a client to asynchronously request a list of contact ids from a contacts store manager</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactlocalidfilter.html">QContactLocalIdFilter</a></p></td><td><p>Filter based around a list of contact ids</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactmanager.html">QContactManager</a></p></td><td><p>Interface which allows clients with access to contact information stored in a particular backend</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactmanagerengine.html">QContactManagerEngine</a></p></td><td><p>The interface for all implementations of the contact manager backend functionality</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactmanagerenginefactory.html">QContactManagerEngineFactory</a></p></td><td><p>The interface for plugins that implement QContactManagerEngine functionality</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactmemoryengine.html">QContactMemoryEngine</a></p></td><td><p>In-memory implementation of a contacts backend</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactname.html">QContactName</a></p></td><td><p>Contains a name of a contact</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactnickname.html">QContactNickname</a></p></td><td><p>Contains a nickname of a contact</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactnote.html">QContactNote</a></p></td><td><p>Contains a note associated with a contact</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactonlineaccount.html">QContactOnlineAccount</a></p></td><td><p>Online account, which the contact uses to communicate with friends and family</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactorganization.html">QContactOrganization</a></p></td><td><p>Details about an organization that the contact is either a part of, or stands for</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactphonenumber.html">QContactPhoneNumber</a></p></td><td><p>Phone number of a contact</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactpresence.html">QContactPresence</a></p></td><td><p>Presence information for an online account of a contact</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactrelationship.html">QContactRelationship</a></p></td><td><p>Describes a one-to-one relationship between a locally-stored contact and another (possibly remote) contact</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactrelationshipfetchrequest.html">QContactRelationshipFetchRequest</a></p></td><td><p>Allows a client to asynchronously request relationships from a contacts store manager</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactrelationshipfilter.html">QContactRelationshipFilter</a></p></td><td><p>Filter based around relationship criteria</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactrelationshipremoverequest.html">QContactRelationshipRemoveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain relationships be removed from a contacts store</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactrelationshipsaverequest.html">QContactRelationshipSaveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain groups be saved to a contacts store</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactremoverequest.html">QContactRemoveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain contacts be removed from a contacts store</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactringtone.html">QContactRingtone</a></p></td><td><p>Ringtone associated with a contact</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactsaverequest.html">QContactSaveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain contacts be saved to a contacts store</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactsortorder.html">QContactSortOrder</a></p></td><td><p>Defines how a list of contacts should be ordered according to some criteria</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactsynctarget.html">QContactSyncTarget</a></p></td><td><p>Sync target for a contact</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontacttag.html">QContactTag</a></p></td><td><p>Contains a tag associated with a contact</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontactthumbnail.html">QContactThumbnail</a></p></td><td><p>Contains a thumbnail used in display lists to represent the contact</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontacttimestamp.html">QContactTimestamp</a></p></td><td><p>Contains the creation and last-modified timestamp associated with the contact</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontacttype.html">QContactType</a></p></td><td><p>Describes the type of the contact</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qcontactunionfilter.html">QContactUnionFilter</a></p></td><td><p>Filter which unions the results of other filters</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qcontacturl.html">QContactUrl</a></p></td><td><p>Contains a url associated with a contact</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qdocumentgallery.html">QDocumentGallery</a></p></td><td><p>Gallery of documents</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qfeedbackactuator.html">QFeedbackActuator</a></p></td><td><p>Describing actuators for tactile feedback</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qfeedbackeffect.html">QFeedbackEffect</a></p></td><td><p>The abstract base class for the feedback framework</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qfeedbackfileeffect.html">QFeedbackFileEffect</a></p></td><td><p>Allows to play a haptics feedback from a file</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qfeedbackfileinterface.html">QFeedbackFileInterface</a></p></td><td><p>The base class for objects providing support for effects stored in files</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qfeedbackhapticseffect.html">QFeedbackHapticsEffect</a></p></td><td><p>Allows to play a haptics feedback on an actuator</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qfeedbackhapticsinterface.html">QFeedbackHapticsInterface</a></p></td><td><p>The base class for objects providing custom haptics effects</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qfeedbackinterface.html">QFeedbackInterface</a></p></td><td><p>The base class for interfaces providing feedback</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qfeedbackthemeinterface.html">QFeedbackThemeInterface</a></p></td><td><p>The base class for objects providing themed effects</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qgalleryabstractrequest.html">QGalleryAbstractRequest</a></p></td><td><p>Base class for gallery requests</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qgalleryabstractresponse.html">QGalleryAbstractResponse</a></p></td><td><p>Base class for responses to gallery requests</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qgallerycountrequest.html">QGalleryCountRequest</a></p></td><td><p>Request for the number of items in a gallery matching some criteria</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcameraflashcontrol.html">QCameraFlashControl</a></p></td><td><p>Supplies a camera flash control</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcamerafocus.html">QCameraFocus</a></p></td><td><p>Interface for focus and zoom related camera settings</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcamerafocuscontrol.html">QCameraFocusControl</a></p></td><td><p>Supplies control for focusing related camera parameters</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcameraimagecapture.html">QCameraImageCapture</a></p></td><td><p>Used for the recording of media content</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcameraimagecapturecontrol.html">QCameraImageCaptureControl</a></p></td><td><p>Control interface for image capture services</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcameraimageprocessing.html">QCameraImageProcessing</a></p></td><td><p>Interface for focus and zoom related camera settings</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcameraimageprocessingcontrol.html">QCameraImageProcessingControl</a></p></td><td><p>Abstract class for controling image processing parameters, like white balance, contrast, saturation, sharpening and denoising</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcameralockscontrol.html">QCameraLocksControl</a></p></td><td><p>Abstract base class for classes that control still cameras or video cameras</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcameraviewfinder.html">QCameraViewfinder</a></p></td><td><p>Camera viewfinder widget</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcompass.html">QCompass</a></p></td><td><p>Convenience wrapper around QSensor</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcompassfilter.html">QCompassFilter</a></p></td><td><p>Convenience wrapper around QSensorFilter</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcompassreading.html">QCompassReading</a></p></td><td><p>Represents one reading from a compass</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontact.html">QContact</a></p></td><td><p>Represents an addressbook contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactabstractrequest.html">QContactAbstractRequest</a></p></td><td><p>Mechanism for asynchronous requests to be made of a manager if it supports them</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactaction.html">QContactAction</a></p></td><td><p>Interface for performing an action on a QContact or QContactDetail</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactactiondescriptor.html">QContactActionDescriptor</a></p></td><td><p>Information that uniquely identifies a specific implementation of an action</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactactionfactory.html">QContactActionFactory</a></p></td><td><p>Interface for clients to retrieve instances of action implementations</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactactionfilter.html">QContactActionFilter</a></p></td><td><p>Filter based around an action availability criterion</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactaddress.html">QContactAddress</a></p></td><td><p>Contains an address of a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactanniversary.html">QContactAnniversary</a></p></td><td><p>Contains an anniversary of a contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactavatar.html">QContactAvatar</a></p></td><td><p>Contains avatar URLs of a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactbirthday.html">QContactBirthday</a></p></td><td><p>Contains a birthday of a contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactchangelogfilter.html">QContactChangeLogFilter</a></p></td><td><p>Filter based around a contact timestamp criterion</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactchangeset.html">QContactChangeSet</a></p></td><td><p>Simple API to simplify the emission of state-change signals from QContactManagerEngine implementations</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactdetail.html">QContactDetail</a></p></td><td><p>Represents a single, complete detail about a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactdetaildefinition.html">QContactDetailDefinition</a></p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactdetaildefinitionfetchrequest.html">QContactDetailDefinitionFetchRequest</a></p></td><td><p>Allows a client to asynchronously request detail definitions from a contacts store manager</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactdetaildefinitionremoverequest.html">QContactDetailDefinitionRemoveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain detail definitions be removed from a contacts store</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactdetaildefinitionsaverequest.html">QContactDetailDefinitionSaveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain detail definitions be saved in a contacts store</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactdetailfielddefinition.html">QContactDetailFieldDefinition</a></p></td><td><p>Field in a QContactDetail</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactdetailfilter.html">QContactDetailFilter</a></p></td><td><p>Filter based around a detail value criterion</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactdetailrangefilter.html">QContactDetailRangeFilter</a></p></td><td><p>Filter based around a detail value range criterion</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a></p></td><td><p>The (possibly synthesized) display label of a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactemailaddress.html">QContactEmailAddress</a></p></td><td><p>Contains an email address of a contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactfamily.html">QContactFamily</a></p></td><td><p>Contains names of family members of a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactfetchhint.html">QContactFetchHint</a></p></td><td><p>Hints to the manager about which contact information needs to be retrieved in an asynchronous fetch request or a synchronous function call</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactfetchrequest.html">QContactFetchRequest</a></p></td><td><p>Allows a client to asynchronously request contacts from a contacts store manager</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactfilter.html">QContactFilter</a></p></td><td><p>Used to select contacts made available through a QContactManager</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactgender.html">QContactGender</a></p></td><td><p>Contains the gender of a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactgeolocation.html">QContactGeoLocation</a></p></td><td><p>Contains a global location coordinate associated with a contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactglobalpresence.html">QContactGlobalPresence</a></p></td><td><p>Aggregated presence information for a contact, synthesized or supplied by the backend</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactguid.html">QContactGuid</a></p></td><td><p>Contains a globally unique Id of a contact, for use in synchronization with other datastores</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactid.html">QContactId</a></p></td><td><p>Information that uniquely identifies a contact in a particular manager</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactintersectionfilter.html">QContactIntersectionFilter</a></p></td><td><p>Filter which intersects the results of other filters</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactinvalidengine.html">QContactInvalidEngine</a></p></td><td><p>Implementation of QContactManagerEngine whose functions always return an error</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactinvalidfilter.html">QContactInvalidFilter</a></p></td><td><p>Matches no contacts</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactlocalidfetchrequest.html">QContactLocalIdFetchRequest</a></p></td><td><p>Allows a client to asynchronously request a list of contact ids from a contacts store manager</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactlocalidfilter.html">QContactLocalIdFilter</a></p></td><td><p>Filter based around a list of contact ids</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactmanager.html">QContactManager</a></p></td><td><p>Interface which allows clients with access to contact information stored in a particular backend</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactmanagerengine.html">QContactManagerEngine</a></p></td><td><p>The interface for all implementations of the contact manager backend functionality</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactmanagerenginefactory.html">QContactManagerEngineFactory</a></p></td><td><p>The interface for plugins that implement QContactManagerEngine functionality</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactmemoryengine.html">QContactMemoryEngine</a></p></td><td><p>In-memory implementation of a contacts backend</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactname.html">QContactName</a></p></td><td><p>Contains a name of a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactnickname.html">QContactNickname</a></p></td><td><p>Contains a nickname of a contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactnote.html">QContactNote</a></p></td><td><p>Contains a note associated with a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactonlineaccount.html">QContactOnlineAccount</a></p></td><td><p>Online account, which the contact uses to communicate with friends and family</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactorganization.html">QContactOrganization</a></p></td><td><p>Details about an organization that the contact is either a part of, or stands for</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactphonenumber.html">QContactPhoneNumber</a></p></td><td><p>Phone number of a contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactpresence.html">QContactPresence</a></p></td><td><p>Presence information for an online account of a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactrelationship.html">QContactRelationship</a></p></td><td><p>Describes a one-to-one relationship between a locally-stored contact and another (possibly remote) contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactrelationshipfetchrequest.html">QContactRelationshipFetchRequest</a></p></td><td><p>Allows a client to asynchronously request relationships from a contacts store manager</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactrelationshipfilter.html">QContactRelationshipFilter</a></p></td><td><p>Filter based around relationship criteria</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactrelationshipremoverequest.html">QContactRelationshipRemoveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain relationships be removed from a contacts store</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactrelationshipsaverequest.html">QContactRelationshipSaveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain groups be saved to a contacts store</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactremoverequest.html">QContactRemoveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain contacts be removed from a contacts store</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactringtone.html">QContactRingtone</a></p></td><td><p>Ringtone associated with a contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactsaverequest.html">QContactSaveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain contacts be saved to a contacts store</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactsortorder.html">QContactSortOrder</a></p></td><td><p>Defines how a list of contacts should be ordered according to some criteria</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactsynctarget.html">QContactSyncTarget</a></p></td><td><p>Sync target for a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontacttag.html">QContactTag</a></p></td><td><p>Contains a tag associated with a contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactthumbnail.html">QContactThumbnail</a></p></td><td><p>Contains a thumbnail used in display lists to represent the contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontacttimestamp.html">QContactTimestamp</a></p></td><td><p>Contains the creation and last-modified timestamp associated with the contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontacttype.html">QContactType</a></p></td><td><p>Describes the type of the contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactunionfilter.html">QContactUnionFilter</a></p></td><td><p>Filter which unions the results of other filters</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontacturl.html">QContactUrl</a></p></td><td><p>Contains a url associated with a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qdocumentgallery.html">QDocumentGallery</a></p></td><td><p>Gallery of documents</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qfeedbackactuator.html">QFeedbackActuator</a></p></td><td><p>Describing actuators for tactile feedback</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qfeedbackeffect.html">QFeedbackEffect</a></p></td><td><p>The abstract base class for the feedback framework</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qfeedbackfileeffect.html">QFeedbackFileEffect</a></p></td><td><p>Allows to play a haptics feedback from a file</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qfeedbackfileinterface.html">QFeedbackFileInterface</a></p></td><td><p>The base class for objects providing support for effects stored in files</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qfeedbackhapticseffect.html">QFeedbackHapticsEffect</a></p></td><td><p>Allows to play a haptics feedback on an actuator</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qfeedbackhapticsinterface.html">QFeedbackHapticsInterface</a></p></td><td><p>The base class for objects providing custom haptics effects</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qfeedbackinterface.html">QFeedbackInterface</a></p></td><td><p>The base class for interfaces providing feedback</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qfeedbackthemeinterface.html">QFeedbackThemeInterface</a></p></td><td><p>The base class for objects providing themed effects</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qgalleryabstractrequest.html">QGalleryAbstractRequest</a></p></td><td><p>Base class for gallery requests</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qgalleryabstractresponse.html">QGalleryAbstractResponse</a></p></td><td><p>Base class for responses to gallery requests</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qgalleryfilter.html">QGalleryFilter</a></p></td><td><p>Filtering criteria for gallery requests</p></td></tr>
 <tr class="odd topAlign"><td><p><a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a></p></td><td><p>Filter which matches the intersection of two or more meta-data filters</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qgalleryitemlist.html">QGalleryItemList</a></p></td><td><p>Abstract interface for a list of gallery items from a gallery</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qgalleryitemlistmodel.html">QGalleryItemListModel</a></p></td><td><p>QAbstractItemModel wrapper for QGalleryItemList</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qgalleryitemrequest.html">QGalleryItemRequest</a></p></td><td><p>Request for an item from a gallery</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qgalleryitemrequest.html">QGalleryItemRequest</a></p></td><td><p>Request for the properties of a single item from a gallery</p></td></tr>
 <tr class="odd topAlign"><td><p><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a></p></td><td><p>Filter which accepts items with meta-data properties matching a specific value</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qgalleryproperty.html">QGalleryProperty</a></p></td><td><p>Identifier for a gallery property</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qgalleryqueryrequest.html">QGalleryQueryRequest</a></p></td><td><p>Request for a set of items from a gallery</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a></p></td><td><p>Request which removes items from a gallery</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qgalleryresource.html">QGalleryResource</a></p></td><td><p>Resource identifier for a gallery gallery item</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qgalleryquerymodel.html">QGalleryQueryModel</a></p></td><td><p>Model for the results of a gallery query</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qgalleryqueryrequest.html">QGalleryQueryRequest</a></p></td><td><p>Request for a set of items from a gallery</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a></p></td><td><p>Request which removes items from a gallery</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qgalleryresource.html">QGalleryResource</a></p></td><td><p>Resource identifier for a gallery gallery item</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qgalleryresultset.html">QGalleryResultSet</a></p></td><td><p>Interface for accessing the results of an gallery query</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qgallerytype.html">QGalleryType</a></p></td><td><p>Identifier for a gallery item type</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qgalleryunionfilter.html">QGalleryUnionFilter</a></p></td><td><p>Filter which matches the union of two or more meta-data filters</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qgalleryurlrequest.html">QGalleryUrlRequest</a></p></td><td><p>Request for an item identified by a URL from a gallery</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qgallerytyperequest.html">QGalleryTypeRequest</a></p></td><td><p>Interface for requesting the properties of a type from a gallery</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qgalleryunionfilter.html">QGalleryUnionFilter</a></p></td><td><p>Filter which matches the union of two or more meta-data filters</p></td></tr>
 <tr class="odd topAlign"><td><p><a href="qgeoaddress.html">QGeoAddress</a></p></td><td><p>Represents an address</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qgeoareamonitor.html">QGeoAreaMonitor</a></p></td><td><p>Enables the detection of proximity changes for a specified set of coordinates</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qgeoboundingbox.html">QGeoBoundingBox</a></p></td><td><p>Defines a rectangular geographic area</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qgeoboundingarea.html">QGeoBoundingArea</a></p></td><td><p>Defines a rectangular geographic area</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qgeoboundingbox.html">QGeoBoundingBox</a></p></td><td><p>Defines a rectangular geographic area</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qgeoboundingcircle.html">QGeoBoundingCircle</a></p></td><td><p>Defines a circular geographic area</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qgeocoordinate.html">QGeoCoordinate</a></p></td><td><p>Defines a geographical position on the surface of the Earth</p></td></tr>
 <tr class="odd topAlign"><td><p><a href="qgeomapcircleobject.html">QGeoMapCircleObject</a></p></td><td><p>QGeoMapObject used to draw the region within a certain distance of a coordinate</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qgeomapdata.html">QGeoMapData</a></p></td><td><p>Are used as a bridge between QGeoMapWidget and QGeoMappingManager</p></td></tr>
@@ -286,9 +288,7 @@
 <tr class="even topAlign"><td><p><a href="qlandmarkcategoryidfetchrequest.html">QLandmarkCategoryIdFetchRequest</a></p></td><td><p>Allows a client to asynchronously request a list of category identifiers from a landmark manager</p></td></tr>
 <tr class="odd topAlign"><td><p><a href="qlandmarkcategoryremoverequest.html">QLandmarkCategoryRemoveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain categories be removed from a landmark manager</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qlandmarkcategorysaverequest.html">QLandmarkCategorySaveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain categories be saved by a landmark manager</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qlandmarkdistancesort.html">QLandmarkDistanceSort</a></p></td><td><p>Used to sort landmarks by distance from a given coordinate</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qlandmarkexportrequest.html">QLandmarkExportRequest</a></p></td><td><p>Allows a client to asynchronously request that a landmark manager export a set of landmarks</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a></p></td><td><p>Miscellaneous hints to the manager when fetching landmarks</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qlandmarkexportrequest.html">QLandmarkExportRequest</a></p></td><td><p>Allows a client to asynchronously request that a landmark manager export a set of landmarks</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qlandmarkfetchrequest.html">QLandmarkFetchRequest</a></p></td><td><p>Allows a client to asynchronously request a list of landmarks from a landmark manager</p></td></tr>
 <tr class="odd topAlign"><td><p><a href="qlandmarkfilter.html">QLandmarkFilter</a></p></td><td><p>Serves as the base class for all filter classes. Also serves as the default filter which retrieves all landmarks</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qlandmarkid.html">QLandmarkId</a></p></td><td><p>Unique identifier for a landmark</p></td></tr>
@@ -455,6 +455,8 @@
 <tr class="odd topAlign"><td><p><a href="qversitcontactexporter.html">QVersitContactExporter</a></p></td><td><p>Converts QContacts into QVersitDocuments</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qversitcontactexporterdetailhandler.html">QVersitContactExporterDetailHandler</a></p></td><td><p>Interface for clients wishing to implement custom export behaviour for certain contact details</p></td></tr>
 <tr class="odd topAlign"><td><p><a href="qversitcontactexporterdetailhandlerv2.html">QVersitContactExporterDetailHandlerV2</a></p></td><td><p>Interface for clients wishing to implement custom export behaviour for certain contact details</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qversitcontacthandler.html">QVersitContactHandler</a></p></td><td><p>Union of the QVersitContactImporterPropertyHandlerV2 and QVersitContactExporterDetailHandlerV2 interfaces</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qversitcontacthandlerfactory.html">QVersitContactHandlerFactory</a></p></td><td><p>The interface for Versit plugins</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qversitcontactimporter.html">QVersitContactImporter</a></p></td><td><p>Converts QVersitDocuments to QContacts</p></td></tr>
 <tr class="odd topAlign"><td><p><a href="qversitcontactimporterpropertyhandler.html">QVersitContactImporterPropertyHandler</a></p></td><td><p>Interface for clients wishing to implement custom import behaviour for vCard properties</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qversitcontactimporterpropertyhandlerv2.html">QVersitContactImporterPropertyHandlerV2</a></p></td><td><p>Interface for clients wishing to implement custom import behaviour for vCard properties</p></td></tr>
@@ -462,37 +464,27 @@
 <tr class="even topAlign"><td><p><a href="qversitdocument.html">QVersitDocument</a></p></td><td><p>Container for a list of versit properties</p></td></tr>
 <tr class="odd topAlign"><td><p><a href="qversitorganizerexporter.html">QVersitOrganizerExporter</a></p></td><td><p>Converts QOrganizerItems into QVersitDocuments</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qversitorganizerimporter.html">QVersitOrganizerImporter</a></p></td><td><p>Converts QVersitDocuments to QOrganizerItems</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qversitproperty.html">QVersitProperty</a></p></td><td><p>Stores the name, value, groups and parameters of a Versit property</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qversitreader.html">QVersitReader</a></p></td><td><p>Reads Versit documents such as vCards from a device</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qversitresourcehandler.html">QVersitResourceHandler</a></p></td><td><p>Interface for clients wishing to implement custom behaviour for loading and saving files to disk when exporting and importing</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qversitwriter.html">QVersitWriter</a></p></td><td><p>Writes Versit documents such as vCards to a device</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qvideodevicecontrol.html">QVideoDeviceControl</a></p></td><td><p>Video device selector media control</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qvideoencodercontrol.html">QVideoEncoderControl</a></p></td><td><p>Access to the settings of a media service that performs video encoding</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qvideoencodersettings.html">QVideoEncoderSettings</a></p></td><td><p>Set of video encoder settings</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qvideoframe.html">QVideoFrame</a></p></td><td><p>Representation of a frame of video data</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qvideorenderercontrol.html">QVideoRendererControl</a></p></td><td><p>Control for rendering to a video surface</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qvideosurfaceformat.html">QVideoSurfaceFormat</a></p></td><td><p>Specifies the stream format of a video presentation surface</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qvideowidget.html">QVideoWidget</a></p></td><td><p>Widget which presents video produced by a media object</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qvideowidgetcontrol.html">QVideoWidgetControl</a></p></td><td><p>Media control which implements a video widget</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qvideowindowcontrol.html">QVideoWindowControl</a></p></td><td><p>Media control for rendering video to a window</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qversitpluginloader.html">QVersitPluginLoader</a></p></td></tr>
+<tr class="even topAlign"><td><p><a href="qversitproperty.html">QVersitProperty</a></p></td><td><p>Stores the name, value, groups and parameters of a Versit property</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qversitreader.html">QVersitReader</a></p></td><td><p>Interface for reading versit documents such as vCards from a Stream</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qversitresourcehandler.html">QVersitResourceHandler</a></p></td><td><p>Interface for clients wishing to implement custom behaviour for loading and saving files to disk when exporting and importing</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qversitwriter.html">QVersitWriter</a></p></td><td><p>Writes Versit documents such as vCards to a device</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qvideodevicecontrol.html">QVideoDeviceControl</a></p></td><td><p>Video device selector media control</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qvideoencodercontrol.html">QVideoEncoderControl</a></p></td><td><p>Access to the settings of a media service that performs video encoding</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qvideoencodersettings.html">QVideoEncoderSettings</a></p></td><td><p>Set of video encoder settings</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qvideoframe.html">QVideoFrame</a></p></td><td><p>Representation of a frame of video data</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qvideorenderercontrol.html">QVideoRendererControl</a></p></td><td><p>Control for rendering to a video surface</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qvideosurfaceformat.html">QVideoSurfaceFormat</a></p></td><td><p>Specifies the stream format of a video presentation surface</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qvideowidget.html">QVideoWidget</a></p></td><td><p>Widget which presents video produced by a media object</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qvideowidgetcontrol.html">QVideoWidgetControl</a></p></td><td><p>Media control which implements a video widget</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qvideowindowcontrol.html">QVideoWindowControl</a></p></td><td><p>Media control for rendering video to a window</p></td></tr>
 </table>
 </div>
-<!-- @@@annotated.html -->
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

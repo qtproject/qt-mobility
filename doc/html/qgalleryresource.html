@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<!-- qgalleryitemlist.cpp -->
+<!-- qgalleryresource.cpp -->
   <title>Qt 1.1: QGalleryResource Class Reference</title>
   <link rel="stylesheet" type="text/css" href="style/style.css"
  />  <!--[if IE]>
@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -119,20 +120,19 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
 </ul>
 </div>
 <h1 class="title">QGalleryResource Class Reference</h1>
-<!-- $$$QGalleryResource-brief -->
 <p>The QGalleryResource class provides a resource identifier for a gallery gallery item. <a href="#details">More...</a></p>
-<!-- @@@QGalleryResource -->
 <pre class="highlightedCode brush: cpp"> #include &lt;QGalleryResource&gt;</pre><ul>
 <li><a href="qgalleryresource-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryresource.html#QGalleryResource">QGalleryResource</a></b> ()</td></tr>
@@ -147,61 +147,39 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QGalleryResource &amp; </td><td class="memItemRight bottomAlign"><b><a href="qgalleryresource.html#operator-eq">operator=</a></b> ( const QGalleryResource &amp; <i>resource</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgalleryresource.html#operator-eq-eq">operator==</a></b> ( const QGalleryResource &amp; <i>resource</i> ) const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<!-- $$$QGalleryResource-description -->
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGalleryResource class provides a resource identifier for a gallery gallery item.</p>
 </div>
-<!-- @@@QGalleryResource -->
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<!-- $$$QGalleryResource[overload1]$$$QGalleryResource -->
-<h3 class="fn"><a name="QGalleryResource"></a>QGalleryResource::QGalleryResource ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryResource"></a>QGalleryResource::QGalleryResource ()</h3>
 <p>Constructs a null resource.</p>
-<!-- @@@QGalleryResource -->
-<!-- $$$QGalleryResource$$$QGalleryResourceconstQUrl& -->
-<h3 class="fn"><a name="QGalleryResource-2"></a>QGalleryResource::QGalleryResource ( const QUrl &amp; <i>url</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryResource-2"></a>QGalleryResource::QGalleryResource ( const QUrl &amp; <i>url</i> )</h3>
 <p>Constructs a resource from a <i>url</i>.</p>
-<!-- @@@QGalleryResource -->
-<!-- $$$QGalleryResource$$$QGalleryResourceconstQUrl&QMap<int,QVariant> -->
-<h3 class="fn"><a name="QGalleryResource-3"></a>QGalleryResource::QGalleryResource ( const QUrl &amp; <i>url</i>, QMap&lt;int, QVariant&gt; <i>attributes</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryResource-3"></a>QGalleryResource::QGalleryResource ( const QUrl &amp; <i>url</i>, QMap&lt;int, QVariant&gt; <i>attributes</i> )</h3>
 <p>Constructs a resource from a <i>url</i> and a set of <i>attributes</i>.</p>
-<!-- @@@QGalleryResource -->
-<!-- $$$QGalleryResource$$$QGalleryResourceconstQGalleryResource& -->
-<h3 class="fn"><a name="QGalleryResource-4"></a>QGalleryResource::QGalleryResource ( const QGalleryResource &amp; <i>resource</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryResource-4"></a>QGalleryResource::QGalleryResource ( const QGalleryResource &amp; <i>resource</i> )</h3>
 <p>Constructs a copy of a <i>resource</i>.</p>
-<!-- @@@QGalleryResource -->
-<!-- $$$~QGalleryResource[overload1]$$$~QGalleryResource -->
-<h3 class="fn"><a name="dtor.QGalleryResource"></a>QGalleryResource::~QGalleryResource ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QGalleryResource"></a>QGalleryResource::~QGalleryResource ()</h3>
 <p>Destroys a resource.</p>
-<!-- @@@~QGalleryResource -->
-<!-- $$$attribute[overload1]$$$attributeint -->
-<h3 class="fn"><a name="attribute"></a>QVariant QGalleryResource::attribute ( int <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="attribute"></a>QVariant QGalleryResource::attribute ( int <i>key</i> ) const</h3>
 <p>Returns the value of the resource attribute identified by <i>key</i>.</p>
-<!-- @@@attribute -->
-<!-- $$$attributes[overload1]$$$attributes -->
-<h3 class="fn"><a name="attributes"></a>QMap&lt;int, QVariant&gt; QGalleryResource::attributes () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="attributes"></a>QMap&lt;int, QVariant&gt; QGalleryResource::attributes () const</h3>
 <p>Returns the attributes of a resource.</p>
-<!-- @@@attributes -->
-<!-- $$$url[overload1]$$$url -->
-<h3 class="fn"><a name="url"></a>QUrl QGalleryResource::url () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="url"></a>QUrl QGalleryResource::url () const</h3>
 <p>Returns the URL of a resource.</p>
-<!-- @@@url -->
-<!-- $$$operator!=[overload1]$$$operator!=constQGalleryResource& -->
-<h3 class="fn"><a name="operator-not-eq"></a>bool QGalleryResource::operator!= ( const QGalleryResource &amp; <i>resource</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QGalleryResource::operator!= ( const QGalleryResource &amp; <i>resource</i> ) const</h3>
 <p>Compares <i>resource</i> to another resource.</p>
 <p>Returns true if the resource are not the same, and false otherwise.</p>
-<!-- @@@operator!= -->
-<!-- $$$operator=[overload1]$$$operator=constQGalleryResource& -->
-<h3 class="fn"><a name="operator-eq"></a>QGalleryResource &amp; QGalleryResource::operator= ( const QGalleryResource &amp; <i>resource</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QGalleryResource &amp; QGalleryResource::operator= ( const QGalleryResource &amp; <i>resource</i> )</h3>
 <p>Assigns the value of <i>resource</i> to another resource.</p>
-<!-- @@@operator= -->
-<!-- $$$operator==[overload1]$$$operator==constQGalleryResource& -->
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QGalleryResource::operator== ( const QGalleryResource &amp; <i>resource</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QGalleryResource::operator== ( const QGalleryResource &amp; <i>resource</i> ) const</h3>
 <p>Compares <i>resource</i> to another resource.</p>
 <p>Returns true if both resources are the same, and false otherwise.</p>
-<!-- @@@operator== -->
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
@@ -209,15 +187,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

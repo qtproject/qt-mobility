@@ -58,11 +58,23 @@ public:
     QLandmarkAttributeFilter(const QLandmarkFilter &other);
     virtual ~QLandmarkAttributeFilter();
 
+    enum AttributeType{ManagerAttributes, CustomAttributes};
+    enum OperationType{AndOperation, OrOperation};
+
     QVariant attribute(const QString &key) const;
-    void setAttribute(const QString &key, const QVariant &value = QVariant());
+    void setAttribute(const QString &key, const QVariant &value = QVariant(), QLandmarkFilter::MatchFlags flags =0);
+    void setAttributes(const QStringList &key, const QVariant &value = QVariant(), QLandmarkFilter::MatchFlags flags=0);
     void removeAttribute(const QString &key);
     void clearAttributes();
     QStringList attributeKeys() const;
+
+    QLandmarkFilter::MatchFlags matchFlags(const QString &key) const;
+
+    AttributeType attributeType() const;
+    void setAttributeType(AttributeType attributeType);
+
+    OperationType operationType() const;
+    void setOperationType(OperationType operationType);
 
 private:
     Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkAttributeFilter)

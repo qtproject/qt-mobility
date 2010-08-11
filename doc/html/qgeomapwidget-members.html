@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -126,31 +127,30 @@
 <li class="fn"><b><a href="qgeomapwidget.html#QGeoMapWidget">QGeoMapWidget</a></b> ( QGeoMappingManager *, QGraphicsItem * )</li>
 <li class="fn"><b><a href="qgeomapwidget.html#dtor.QGeoMapWidget">~QGeoMapWidget</a></b> ()</li>
 <li class="fn"><b><a href="qgeomapwidget.html#addMapObject">addMapObject</a></b> ( QGeoMapObject * )</li>
-<li class="fn"><b><a href="qgeomapwidget.html#center">center</a></b> () const : QGeoCoordinate</li>
-<li class="fn"><b><a href="qgeomapwidget.html#centered">centered</a></b> ( const QGeoCoordinate &amp; )</li>
+<li class="fn"><b><a href="qgeomapwidget.html#center-prop">center</a></b> () const : QGeoCoordinate</li>
+<li class="fn"><b><a href="qgeomapwidget.html#centerChanged">centerChanged</a></b> ( const QGeoCoordinate &amp; )</li>
 <li class="fn"><b><a href="qgeomapwidget.html#coordinateToScreenPosition">coordinateToScreenPosition</a></b> ( const QGeoCoordinate &amp; ) const : QPointF</li>
 <li class="fn"><b><a href="qgeomapwidget.html#mapObjects">mapObjects</a></b> () : QList&lt;QGeoMapObject *&gt;</li>
 <li class="fn"><b><a href="qgeomapwidget.html#mapObjectsAtScreenPosition">mapObjectsAtScreenPosition</a></b> ( const QPointF &amp; ) : QList&lt;QGeoMapObject *&gt;</li>
 <li class="fn"><b><a href="qgeomapwidget.html#mapObjectsInScreenRect">mapObjectsInScreenRect</a></b> ( const QRectF &amp; ) : QList&lt;QGeoMapObject *&gt;</li>
-<li class="fn"><b><a href="qgeomapwidget.html#mapType">mapType</a></b> () const : MapType</li>
+<li class="fn"><b><a href="qgeomapwidget.html#mapType-prop">mapType</a></b> () const : MapType</li>
 <li class="fn"><b><a href="qgeomapwidget.html#mapTypeChanged">mapTypeChanged</a></b> ( QGeoMapWidget::MapType )</li>
 <li class="fn"><b><a href="qgeomapwidget.html#maximumZoomLevel">maximumZoomLevel</a></b> () const : qreal</li>
 <li class="fn"><b><a href="qgeomapwidget.html#minimumZoomLevel">minimumZoomLevel</a></b> () const : qreal</li>
-<li class="fn"><b><a href="qgeomapwidget.html#paint">paint</a></b> ( QPainter *, const QStyleOptionGraphicsItem *, QWidget * )</li>
 </ul></td><td class="topAlign"><ul>
+<li class="fn"><b><a href="qgeomapwidget.html#paint">paint</a></b> ( QPainter *, const QStyleOptionGraphicsItem *, QWidget * )</li>
 <li class="fn"><b><a href="qgeomapwidget.html#pan">pan</a></b> ( int, int )</li>
 <li class="fn"><b><a href="qgeomapwidget.html#removeMapObject">removeMapObject</a></b> ( QGeoMapObject * )</li>
 <li class="fn"><b><a href="qgeomapwidget.html#resizeEvent">resizeEvent</a></b> ( QGraphicsSceneResizeEvent * )</li>
 <li class="fn"><b><a href="qgeomapwidget.html#screenPositionToCoordinate">screenPositionToCoordinate</a></b> ( QPointF ) const : QGeoCoordinate</li>
-<li class="fn"><b><a href="qgeomapwidget.html#setCenter">setCenter</a></b> ( const QGeoCoordinate &amp; )</li>
-<li class="fn"><b><a href="qgeomapwidget.html#setMapType">setMapType</a></b> ( MapType )</li>
-<li class="fn"><b><a href="qgeomapwidget.html#setZoomLevel">setZoomLevel</a></b> ( qreal )</li>
+<li class="fn"><b><a href="qgeomapwidget.html#center-prop">setCenter</a></b> ( const QGeoCoordinate &amp; )</li>
+<li class="fn"><b><a href="qgeomapwidget.html#mapType-prop">setMapType</a></b> ( MapType )</li>
+<li class="fn"><b><a href="qgeomapwidget.html#zoomLevel-prop">setZoomLevel</a></b> ( qreal )</li>
 <li class="fn"><b><a href="qgeomapwidget.html#shape">shape</a></b> () const : QPainterPath</li>
 <li class="fn"><b><a href="qgeomapwidget.html#startPanning">startPanning</a></b> ()</li>
 <li class="fn"><b><a href="qgeomapwidget.html#stopPanning">stopPanning</a></b> ()</li>
 <li class="fn"><b><a href="qgeomapwidget.html#supportedMapTypes">supportedMapTypes</a></b> () const : QList&lt;MapType&gt;</li>
-<li class="fn"><b><a href="qgeomapwidget.html#visibleMapObjects">visibleMapObjects</a></b> () : QList&lt;QGeoMapObject *&gt;</li>
-<li class="fn"><b><a href="qgeomapwidget.html#zoomLevel">zoomLevel</a></b> () const : qreal</li>
+<li class="fn"><b><a href="qgeomapwidget.html#zoomLevel-prop">zoomLevel</a></b> () const : qreal</li>
 <li class="fn"><b><a href="qgeomapwidget.html#zoomLevelChanged">zoomLevelChanged</a></b> ( qreal )</li>
 </ul>
 </td></tr>
@@ -161,15 +161,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

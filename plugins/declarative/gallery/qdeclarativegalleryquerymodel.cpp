@@ -43,14 +43,20 @@
 
 #include "qdeclarativegalleryfilter.h"
 
+#include <qgalleryresultset.h>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass GalleryQueryModel GalleryQueryRequest
+    \qmlclass GalleryQueryModel QDeclarativeGalleryQueryModel
+
+    \inmodule QtGallery
+
     \brief The GalleryQueryRequest element is used to specify a model containing
     items from a gallery.
+    \ingroup qml-gallery
 
-    This element is part of the \bold {QtMobility.gallery 1.0} module.
+    This element is part of the \bold {QtMobility.gallery 1.1} module.
 
     The properties that should be returned for each item by the query are
     specified in \l properties. In addition all queries return the following
@@ -58,19 +64,12 @@ QTM_BEGIN_NAMESPACE
 
     \list
     \o itemId The ID of an item.
-    \o itemUrl The URL of an item.
     \o itemType The type of an item.
-    \o available Whether the meta-data of an item is currently available.
-    Meta-data can be unavailable when an item is outside the loaded range.
-    \o reading Whether the model is in the process of querying new meta-data
-    values for an item.
-    \o writing Whether the model is in the process of writing changes to
-    meta-data values back to the gallery.
     \endlist
 
     \qml
     import Qt 4.7
-    import QtMobility.gallery 1.0
+    import QtMobility.gallery 1.1
 
     Rectangle {
         width: 1024
@@ -84,8 +83,8 @@ QTM_BEGIN_NAMESPACE
             model: GalleryQueryModel {
                 gallery: DocumentGallery {}
 
-                itemType: "Image"
-                properties: ["thumbnailImage"]
+                rootType: "Image"
+                properties: [ "url" ]
                 filter: GalleryFilter {
                     property: "fileName";
                     value: "*.jpg";
@@ -94,21 +93,18 @@ QTM_BEGIN_NAMESPACE
             }
 
             delegate: Image {
-                pixmap: thumbnailImage
+                source: url
             }
         }
     }
     \endqml
 
-    \sa GalleryItem, GalleryQueryCount
+    \sa GalleryItem, GalleryType
 */
 
 QDeclarativeGalleryQueryModel::QDeclarativeGalleryQueryModel(QObject *parent)
     : QAbstractListModel(parent)
-    , m_itemList(0)
-    , m_lowerOffset(0)
-    , m_upperOffset(0)
-    , m_updateCursor(true)
+    , m_resultSet(0)
     , m_complete(false)
 {
     connect(&m_request, SIGNAL(succeeded()), this, SIGNAL(succeeded()));
@@ -121,8 +117,8 @@ QDeclarativeGalleryQueryModel::QDeclarativeGalleryQueryModel(QObject *parent)
     connect(&m_request, SIGNAL(failed(int)), this, SIGNAL(failed(int)));
     connect(&m_request, SIGNAL(finished(int)), this, SIGNAL(finished(int)));
 
-    connect(&m_request, SIGNAL(itemsChanged(QGalleryItemList*)),
-            this, SLOT(_q_setItemList(QGalleryItemList*)));
+    connect(&m_request, SIGNAL(resultSetChanged(QGalleryResultSet*)),
+            this, SLOT(_q_setResultSet(QGalleryResultSet*)));
 }
 
 QDeclarativeGalleryQueryModel::~QDeclarativeGalleryQueryModel()
@@ -223,20 +219,19 @@ void QDeclarativeGalleryQueryModel::componentComplete()
 */
 
 /*!
-    \qmlproperty int GalleryQueryModel::cursorPosition
+    \qmlproperty int GalleryQueryModel::offset
 
-    This property holds the offset of a query's internal cache.
+    This property holds the offset of the first item returned by a query.
 */
 
 /*!
-    \qmlproperty int GalleryQueryModel::minimumPagedItems
+    \qmlproperty int GalleryQueryModel::limit
 
-    This property contains the minimum number of consectutive items a query
-    should retain in it's internal cache.
+    This property contains the maximum number of items returned by a query.
 */
 
 /*!
-    \qmlproperty string GalleryQueryModel::itemType
+    \qmlproperty string GalleryQueryModel::rootType
 
     This property contains the type of item a query should return.
 */
@@ -248,10 +243,10 @@ void QDeclarativeGalleryQueryModel::componentComplete()
 */
 
 /*!
-    \qmlproperty variant GalleryQueryModel::scopeItemId
+    \qmlproperty variant GalleryQueryModel::rootItem
 
-    This property contains the id of an item that a query should return a
-    count of the descendants of.
+    This property contains the id of an item that a query should return the
+    descendants of.
 */
 
 /*!
@@ -306,8 +301,6 @@ void QDeclarativeGalleryQueryModel::componentComplete()
 void QDeclarativeGalleryQueryModel::reload()
 {
     m_request.setFilter(m_filter ? m_filter->filter() : QGalleryFilter());
-    if (m_itemList)
-        m_request.setInitialCursorPosition(!m_updateCursor ? m_itemList->cursorPosition() : 0);
     m_request.execute();
 }
 
@@ -320,25 +313,20 @@ int QDeclarativeGalleryQueryModel::rowCount(const QModelIndex &parent) const
 QVariant QDeclarativeGalleryQueryModel::data(const QModelIndex &index, int role) const
 {
     if (index.isValid()) {
+        if (m_resultSet->currentIndex() != index.row())
+            m_resultSet->fetch(index.row());
+
         switch (role) {
         case ItemId:
-            return m_itemList->id(index.row());
+            return m_resultSet->itemId();
         case ItemType:
-            return m_itemList->type(index.row());
-        case ItemUrl:
-            return m_itemList->url(index.row());
-        case Reading:
-            return bool(m_itemList->status(index.row()) & QGalleryItemList::Reading);
-        case Writing:
-            return bool(m_itemList->status(index.row()) & QGalleryItemList::Writing);
-        case Available:
-            return !bool(m_itemList->status(index.row()) & QGalleryItemList::OutOfRange);
+            return m_resultSet->itemType();
         default:
             {
-                QVariant value = m_itemList->metaData(index.row(), role - MetaDataOffset);
+                QVariant value = m_resultSet->metaData(role - MetaDataOffset);
 
                 return value.isNull()
-                        ?  QVariant(m_itemList->propertyType(role - MetaDataOffset))
+                        ? QVariant(m_resultSet->propertyType(role - MetaDataOffset))
                         : value;
             }
         }
@@ -349,12 +337,11 @@ QVariant QDeclarativeGalleryQueryModel::data(const QModelIndex &index, int role)
 
 bool QDeclarativeGalleryQueryModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (index.isValid()
-            && (role -= MetaDataOffset) > 0
-            && m_itemList->propertyAttributes(role) & QGalleryProperty::CanWrite) {
-        m_itemList->setMetaData(index.row(), role, value);
+    if (index.isValid() && (role -= MetaDataOffset) > 0) {
+        if (m_resultSet->currentIndex() != index.row() && !m_resultSet->fetch(index.row()))
+            return false;
 
-        return true;
+        return m_resultSet->setMetaData(role, value);
     } else {
         return false;
     }
@@ -363,59 +350,41 @@ bool QDeclarativeGalleryQueryModel::setData(const QModelIndex &index, const QVar
 
 QModelIndex QDeclarativeGalleryQueryModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if (!parent.isValid() && row >= 0 && row < m_rowCount && column == 0) {
-        if (m_updateCursor && m_lowerOffset != m_upperOffset) {
-            const int position = m_itemList->cursorPosition();
-
-            if (row - m_lowerOffset < position && position > 0) {
-                m_itemList->setCursorPosition(qMax(0, row - m_lowerOffset));
-
-                emit const_cast<QDeclarativeGalleryQueryModel *>(this)->cursorPositionChanged();
-            } else if (row + m_upperOffset > position) {
-                m_itemList->setCursorPosition(qMax(0, row + m_upperOffset));
-
-                emit const_cast<QDeclarativeGalleryQueryModel *>(this)->cursorPositionChanged();
-            }
-        }
-
-        return createIndex(row, column);
-    } else {
-        return QModelIndex();
-    }
+    return !parent.isValid() && row >= 0 && row < m_rowCount && column == 0
+            ? createIndex(row, column)
+            : QModelIndex();
 }
 
-void QDeclarativeGalleryQueryModel::_q_setItemList(QGalleryItemList *list)
+void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet)
 {
-    m_itemList = list;
+    m_resultSet = resultSet;
 
-    if (m_itemList) {
+    if (m_resultSet) {
         QHash<int, QByteArray> roleNames;
 
-        QStringList propertyNames = m_itemList->propertyNames();
+        QStringList propertyNames = m_request.propertyNames();
 
         typedef QStringList::const_iterator iterator;
-        for (iterator it = propertyNames.constBegin(), end = propertyNames.constEnd(); it != end; ++it)
-            roleNames.insert(m_itemList->propertyKey(*it) + MetaDataOffset, it->toLatin1());
+        for (iterator it = propertyNames.constBegin(), end = propertyNames.constEnd();
+                it != end;
+                ++it)
+            roleNames.insert(m_resultSet->propertyKey(*it) + MetaDataOffset, it->toLatin1());
 
         roleNames.insert(ItemId, QByteArray("itemId"));
         roleNames.insert(ItemType, QByteArray("itemType"));
-        roleNames.insert(ItemUrl, QByteArray("url"));
-        roleNames.insert(Reading, QByteArray("reading"));
-        roleNames.insert(Writing, QByteArray("writing"));
-        roleNames.insert(Available, QByteArray("available"));
 
         setRoleNames(roleNames);
 
-        connect(m_itemList, SIGNAL(inserted(int,int)), this, SLOT(_q_itemsInserted(int,int)));
-        connect(m_itemList, SIGNAL(removed(int,int)), this, SLOT(_q_itemsRemoved(int,int)));
-        connect(m_itemList, SIGNAL(moved(int,int,int)), this, SLOT(_q_itemsMoved(int,int,int)));
-        connect(m_itemList, SIGNAL(statusChanged(int,int)), this, SLOT(_q_itemsChanged(int,int)));
-        connect(m_itemList, SIGNAL(metaDataChanged(int,int)), this, SLOT(_q_itemsChanged(int,int)));
+        connect(m_resultSet, SIGNAL(itemsInserted(int,int)),
+                this, SLOT(_q_itemsInserted(int,int)));
+        connect(m_resultSet, SIGNAL(itemsRemoved(int,int)),
+                this, SLOT(_q_itemsRemoved(int,int)));
+        connect(m_resultSet, SIGNAL(itemsMoved(int,int,int)),
+                this, SLOT(_q_itemsMoved(int,int,int)));
+        connect(m_resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)),
+                this, SLOT(_q_itemsChanged(int,int)));
 
-        m_lowerOffset = m_itemList->minimumPagedItems() / 4;
-        m_upperOffset = m_lowerOffset - m_itemList->minimumPagedItems();
-
-        m_rowCount = m_itemList->count();
+        m_rowCount = m_resultSet->itemCount();
     } else {
         m_rowCount = 0;
     }

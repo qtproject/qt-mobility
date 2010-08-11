@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qgalleryquerymodel.cpp -->
+  <title>Qt 1.1: QGalleryQueryModel Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css"
+ />  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+ <script src="./scripts/superfish.js" type="text/javascript"></script>
+ <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <link rel="stylesheet" type="text/css" href="style/narrow.css" /></head>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/">Qt 4.7</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+              <li><a href="modules.html">Modules</a></li>              <li><a href="qtgallery.html">QtGallery</a></li>
+              <li>QGalleryQueryModel</li>
+            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
+<div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#properties">Properties</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QGalleryQueryModel Class Reference</h1>
+<p>The QGalleryQueryModel class provides a model for the results of a gallery query. <a href="#details">More...</a></p>
+<pre class="highlightedCode brush: cpp"> #include &lt;QGalleryQueryModel&gt;</pre><ul>
+<li><a href="qgalleryquerymodel-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="properties"></a>
+<h2>Properties</h2>
+<table class="propsummary">
+<tr><td  class="topAlign"><ul>
+<li class="fn"><b><a href="qgalleryquerymodel.html#filter-prop">filter</a></b> : QGalleryFilter</li>
+<li class="fn"><b><a href="qgalleryquerymodel.html#gallery-prop">gallery</a></b> : QAbstractGallery *</li>
+<li class="fn"><b><a href="qgalleryquerymodel.html#limit-prop">limit</a></b> : int</li>
+<li class="fn"><b><a href="qgalleryquerymodel.html#live-prop">live</a></b> : bool</li>
+<li class="fn"><b><a href="qgalleryquerymodel.html#offset-prop">offset</a></b> : int</li>
+<li class="fn"><b><a href="qgalleryquerymodel.html#result-prop">result</a></b> : const int</li>
+</ul></td><td  class="topAlign"><ul>
+<li class="fn"><b><a href="qgalleryquerymodel.html#rootItem-prop">rootItem</a></b> : QVariant</li>
+<li class="fn"><b><a href="qgalleryquerymodel.html#rootType-prop">rootType</a></b> : QString</li>
+<li class="fn"><b><a href="qgalleryquerymodel.html#scope-prop">scope</a></b> : QGalleryQueryRequest::Scope</li>
+<li class="fn"><b><a href="qgalleryquerymodel.html#sortPropertyNames-prop">sortPropertyNames</a></b> : QStringList</li>
+<li class="fn"><b><a href="qgalleryquerymodel.html#state-prop">state</a></b> : const QGalleryAbstractRequest::State</li>
+</ul>
+</td></tr>
+</table>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#QGalleryQueryModel">QGalleryQueryModel</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#QGalleryQueryModel-2">QGalleryQueryModel</a></b> ( QAbstractGallery * <i>gallery</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#dtor.QGalleryQueryModel">~QGalleryQueryModel</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#addColumn">addColumn</a></b> ( const QHash&lt;int, QString&gt; &amp; <i>properties</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#addColumn-2">addColumn</a></b> ( const QString &amp; <i>property</i>, int <i>role</i> = Qt::DisplayRole )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#cancel">cancel</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#clear">clear</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#columnCount">columnCount</a></b> ( const QModelIndex &amp; <i>parent</i> = QModelIndex() ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QVariant </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#data">data</a></b> ( const QModelIndex &amp; <i>index</i>, int <i>role</i> = Qt::DisplayRole ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#execute">execute</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGalleryFilter </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#filter-prop">filter</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> Qt::ItemFlags </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#flags">flags</a></b> ( const QModelIndex &amp; <i>index</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QAbstractGallery * </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#gallery-prop">gallery</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QVariant </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#headerData">headerData</a></b> ( int <i>section</i>, Qt::Orientation <i>orientation</i>, int <i>role</i> = Qt::DisplayRole ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QModelIndex </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#index">index</a></b> ( int <i>row</i>, int <i>column</i>, const QModelIndex &amp; <i>parent</i> = QModelIndex() ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#insertColumn">insertColumn</a></b> ( int <i>index</i>, const QHash&lt;int, QString&gt; &amp; <i>properties</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#insertColumn-2">insertColumn</a></b> ( int <i>index</i>, const QString &amp; <i>property</i>, int <i>role</i> = Qt::DisplayRole )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#live-prop">isLive</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QVariant </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#itemId">itemId</a></b> ( const QModelIndex &amp; <i>index</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#itemType">itemType</a></b> ( const QModelIndex &amp; <i>index</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QUrl </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#itemUrl">itemUrl</a></b> ( const QModelIndex &amp; <i>index</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#limit-prop">limit</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#offset-prop">offset</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QModelIndex </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#parent">parent</a></b> ( const QModelIndex &amp; <i>index</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#removeColumn">removeColumn</a></b> ( int <i>index</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#result-prop">result</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QHash&lt;int, QString&gt; </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#roleProperties">roleProperties</a></b> ( int <i>column</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QVariant </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#rootItem-prop">rootItem</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#rootType-prop">rootType</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#rowCount">rowCount</a></b> ( const QModelIndex &amp; <i>parent</i> = QModelIndex() ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGalleryQueryRequest::Scope </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#scope-prop">scope</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#setData">setData</a></b> ( const QModelIndex &amp; <i>index</i>, const QVariant &amp; <i>value</i>, int <i>role</i> = Qt::EditRole )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#filter-prop">setFilter</a></b> ( const QGalleryFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#gallery-prop">setGallery</a></b> ( QAbstractGallery * <i>gallery</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#setHeaderData">setHeaderData</a></b> ( int <i>section</i>, Qt::Orientation <i>orientation</i>, const QVariant &amp; <i>value</i>, int <i>role</i> = Qt::EditRole )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#limit-prop">setLimit</a></b> ( int <i>limit</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#live-prop">setLive</a></b> ( bool <i>live</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#offset-prop">setOffset</a></b> ( int <i>offset</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#setRoleProperties">setRoleProperties</a></b> ( int <i>column</i>, const QHash&lt;int, QString&gt; &amp; <i>properties</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#rootItem-prop">setRootItem</a></b> ( const QVariant &amp; <i>itemId</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#rootType-prop">setRootType</a></b> ( const QString &amp; <i>itemType</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#scope-prop">setScope</a></b> ( QGalleryQueryRequest::Scope <i>scope</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#sortPropertyNames-prop">setSortPropertyNames</a></b> ( const QStringList &amp; <i>names</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#sortPropertyNames-prop">sortPropertyNames</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGalleryAbstractRequest::State </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#state-prop">state</a></b> () const</td></tr>
+</table>
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#cancelled">cancelled</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#failed">failed</a></b> ( int <i>result</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#finished">finished</a></b> ( int <i>result</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#resultChanged">resultChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#stateChanged">stateChanged</a></b> ( QGalleryAbstractRequest::State <i>state</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#succeeded">succeeded</a></b> ()</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<div class="descr"/>
+<h2>Detailed Description</h2>
+<p>The QGalleryQueryModel class provides a model for the results of a gallery query.</p>
+</div>
+<hr />
+<div class="prop"/>
+<h2>Property Documentation</h2>
+<h3 class="fn"><a name="filter-prop"></a>filter : <a href="qgalleryfilter.html">QGalleryFilter</a></h3>
+<p>This property holds a filter restricting the results of a query.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QGalleryFilter </td><td class="memItemRight bottomAlign"><b>filter</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setFilter</b> ( const QGalleryFilter &amp; <i>filter</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="gallery-prop"></a>gallery : <a href="qabstractgallery.html">QAbstractGallery</a> *</h3>
+<p>This property holds the Gallery a model executes its queries against.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QAbstractGallery * </td><td class="memItemRight bottomAlign"><b>gallery</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setGallery</b> ( QAbstractGallery * <i>gallery</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="limit-prop"></a>limit : int</h3>
+<p>This property holds the maximum number of items a query should return.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> int </td><td class="memItemRight bottomAlign"><b>limit</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setLimit</b> ( int <i>limit</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="live-prop"></a>live : bool</h3>
+<p>This property holds whether a query should continue to update its result set after the initial query succeeded.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><b>isLive</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setLive</b> ( bool <i>live</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="offset-prop"></a>offset : int</h3>
+<p>This property holds the offset of the first item a query should return.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> int </td><td class="memItemRight bottomAlign"><b>offset</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setOffset</b> ( int <i>offset</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="result-prop"></a>result : const int</h3>
+<p>This property holds the result of a query.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> int </td><td class="memItemRight bottomAlign"><b>result</b> () const</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#resultChanged">resultChanged</a></b> ()</td></tr>
+</table>
+<h3 class="fn"><a name="rootItem-prop"></a>rootItem : QVariant</h3>
+<p>This property holds the ID of the item a query should return the descendents of.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QVariant </td><td class="memItemRight bottomAlign"><b>rootItem</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setRootItem</b> ( const QVariant &amp; <i>itemId</i> )</td></tr>
+</table>
+<p>See also <a href="qgalleryquerymodel.html#scope-prop">scope</a>().</p>
+<h3 class="fn"><a name="rootType-prop"></a>rootType : QString</h3>
+<p>This property holds the root item type the results of a query should be restricted to.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QString </td><td class="memItemRight bottomAlign"><b>rootType</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setRootType</b> ( const QString &amp; <i>itemType</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="scope-prop"></a>scope : <a href="qgalleryqueryrequest.html#Scope-enum">QGalleryQueryRequest::Scope</a></h3>
+<p>This property holds whether a query will return all descendents of its root item or just the direct decendents.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QGalleryQueryRequest::Scope </td><td class="memItemRight bottomAlign"><b>scope</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setScope</b> ( QGalleryQueryRequest::Scope <i>scope</i> )</td></tr>
+</table>
+<p>See also <a href="qgalleryquerymodel.html#rootItem-prop">rootItem</a>().</p>
+<h3 class="fn"><a name="sortPropertyNames-prop"></a>sortPropertyNames : QStringList</h3>
+<p>This property holds a list of names of meta-data properties the results of a query should be sorted on.</p>
+<p>Prefixing a property name with the '+' character indicates it should be sorted in ascending order, and a '-' character prefix indicates a descending order. If there is no prefix ascending order is assumed.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QStringList </td><td class="memItemRight bottomAlign"><b>sortPropertyNames</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setSortPropertyNames</b> ( const QStringList &amp; <i>names</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="state-prop"></a>state : const <a href="qgalleryabstractrequest.html#State-enum">QGalleryAbstractRequest::State</a></h3>
+<p>This property holds the state of a query.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QGalleryAbstractRequest::State </td><td class="memItemRight bottomAlign"><b>state</b> () const</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryquerymodel.html#stateChanged">stateChanged</a></b> ( QGalleryAbstractRequest::State <i>state</i> )</td></tr>
+</table>
+</div>
+<hr />
+<div class="func"/>
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QGalleryQueryModel"></a>QGalleryQueryModel::QGalleryQueryModel ( QObject * <i>parent</i> = 0 )</h3>
+<p>Constructs a new query model.</p>
+<p>The <i>parent</i> is passed to QAbstractItemModel.</p>
+<h3 class="fn"><a name="QGalleryQueryModel-2"></a>QGalleryQueryModel::QGalleryQueryModel ( <a href="qabstractgallery.html">QAbstractGallery</a> * <i>gallery</i>, QObject * <i>parent</i> = 0 )</h3>
+<p>Constructs a new model which queries items from a <i>gallery</i>.</p>
+<p>The <i>parent</i> is passed to QAbstractItemModel.</p>
+<h3 class="fn"><a name="dtor.QGalleryQueryModel"></a>QGalleryQueryModel::~QGalleryQueryModel ()</h3>
+<h3 class="fn"><a name="addColumn"></a>void QGalleryQueryModel::addColumn ( const QHash&lt;int, QString&gt; &amp; <i>properties</i> )</h3>
+<p>Adds a column which maps the given <i>properties</i> to a query model.</p>
+<p>The column will not be populated until the query is executed.</p>
+<h3 class="fn"><a name="addColumn-2"></a>void QGalleryQueryModel::addColumn ( const QString &amp; <i>property</i>, int <i>role</i> = Qt::DisplayRole )</h3>
+<p>Adds a column which maps a meta-data <i>property</i> to <i>role</i> to a query model.</p>
+<p>The column will not be populated until the query is executed.</p>
+<h3 class="fn"><a name="cancel"></a>void QGalleryQueryModel::cancel ()</h3>
+<p>Cancels a query.</p>
+<h3 class="fn"><a name="cancelled"></a>void QGalleryQueryModel::cancelled ()<tt> [signal]</tt></h3>
+<p>Signals that the query was cancelled.</p>
+<h3 class="fn"><a name="clear"></a>void QGalleryQueryModel::clear ()</h3>
+<p>Clears the results of a query.</p>
+<h3 class="fn"><a name="columnCount"></a>int QGalleryQueryModel::columnCount ( const QModelIndex &amp; <i>parent</i> = QModelIndex() ) const</h3>
+<h3 class="fn"><a name="data"></a>QVariant QGalleryQueryModel::data ( const QModelIndex &amp; <i>index</i>, int <i>role</i> = Qt::DisplayRole ) const</h3>
+<p>See also <a href="qgalleryquerymodel.html#setData">setData</a>().</p>
+<h3 class="fn"><a name="execute"></a>void QGalleryQueryModel::execute ()</h3>
+<p>Executes a query.</p>
+<h3 class="fn"><a name="failed"></a>void QGalleryQueryModel::failed ( int <i>result</i> )<tt> [signal]</tt></h3>
+<p>Signals that the query has failed with the given <i>result</i>.</p>
+<h3 class="fn"><a name="finished"></a>void QGalleryQueryModel::finished ( int <i>result</i> )<tt> [signal]</tt></h3>
+<p>Signals that the query has finished with the given <i>result</i>.</p>
+<h3 class="fn"><a name="flags"></a>Qt::ItemFlags QGalleryQueryModel::flags ( const QModelIndex &amp; <i>index</i> ) const</h3>
+<h3 class="fn"><a name="headerData"></a>QVariant QGalleryQueryModel::headerData ( int <i>section</i>, Qt::Orientation <i>orientation</i>, int <i>role</i> = Qt::DisplayRole ) const</h3>
+<p>See also <a href="qgalleryquerymodel.html#setHeaderData">setHeaderData</a>().</p>
+<h3 class="fn"><a name="index"></a>QModelIndex QGalleryQueryModel::index ( int <i>row</i>, int <i>column</i>, const QModelIndex &amp; <i>parent</i> = QModelIndex() ) const</h3>
+<h3 class="fn"><a name="insertColumn"></a>void QGalleryQueryModel::insertColumn ( int <i>index</i>, const QHash&lt;int, QString&gt; &amp; <i>properties</i> )</h3>
+<p>Inserts a column which maps the given <i>properties</i> into a query model at <i>index</i>.</p>
+<p>The column will not be populated until the query is executed.</p>
+<h3 class="fn"><a name="insertColumn-2"></a>void QGalleryQueryModel::insertColumn ( int <i>index</i>, const QString &amp; <i>property</i>, int <i>role</i> = Qt::DisplayRole )</h3>
+<p>Inserts a column which maps a meta-data <i>property</i> to <i>role</i> into a query model at <i>index</i>.</p>
+<p>The column will not be populated until the query is executed.</p>
+<h3 class="fn"><a name="itemId"></a>QVariant QGalleryQueryModel::itemId ( const QModelIndex &amp; <i>index</i> ) const</h3>
+<p>Returns the ID of the item at <i>index</i>.</p>
+<h3 class="fn"><a name="itemType"></a>QString QGalleryQueryModel::itemType ( const QModelIndex &amp; <i>index</i> ) const</h3>
+<p>Returns the type of the item at <i>index</i>.</p>
+<h3 class="fn"><a name="itemUrl"></a>QUrl QGalleryQueryModel::itemUrl ( const QModelIndex &amp; <i>index</i> ) const</h3>
+<p>Returns the URL of the item at <i>index</i>.</p>
+<h3 class="fn"><a name="parent"></a>QModelIndex QGalleryQueryModel::parent ( const QModelIndex &amp; <i>index</i> ) const</h3>
+<h3 class="fn"><a name="removeColumn"></a>void QGalleryQueryModel::removeColumn ( int <i>index</i> )</h3>
+<p>Removes the column at <i>index</i> from a query model.</p>
+<h3 class="fn"><a name="resultChanged"></a>void QGalleryQueryModel::resultChanged ()<tt> [signal]</tt></h3>
+<p>Signals that the result of the query has changed.</p>
+<h3 class="fn"><a name="roleProperties"></a>QHash&lt;int, QString&gt; QGalleryQueryModel::roleProperties ( int <i>column</i> ) const</h3>
+<p>Returns the meta-data properties which a <i>column</i> maps to roles.</p>
+<p>See also <a href="qgalleryquerymodel.html#setRoleProperties">setRoleProperties</a>().</p>
+<h3 class="fn"><a name="rowCount"></a>int QGalleryQueryModel::rowCount ( const QModelIndex &amp; <i>parent</i> = QModelIndex() ) const</h3>
+<h3 class="fn"><a name="setData"></a>bool QGalleryQueryModel::setData ( const QModelIndex &amp; <i>index</i>, const QVariant &amp; <i>value</i>, int <i>role</i> = Qt::EditRole )</h3>
+<p>See also <a href="qgalleryquerymodel.html#data">data</a>().</p>
+<h3 class="fn"><a name="setHeaderData"></a>bool QGalleryQueryModel::setHeaderData ( int <i>section</i>, Qt::Orientation <i>orientation</i>, const QVariant &amp; <i>value</i>, int <i>role</i> = Qt::EditRole )</h3>
+<p>See also <a href="qgalleryquerymodel.html#headerData">headerData</a>().</p>
+<h3 class="fn"><a name="setRoleProperties"></a>void QGalleryQueryModel::setRoleProperties ( int <i>column</i>, const QHash&lt;int, QString&gt; &amp; <i>properties</i> )</h3>
+<p>Sets the meta-data <i>properties</i> which a <i>column</i> maps to roles.</p>
+<p>New properties will not be populated until the query is executed.</p>
+<p>See also <a href="qgalleryquerymodel.html#roleProperties">roleProperties</a>().</p>
+<h3 class="fn"><a name="stateChanged"></a>void QGalleryQueryModel::stateChanged ( <a href="qgalleryabstractrequest.html#State-enum">QGalleryAbstractRequest::State</a> <i>state</i> )<tt> [signal]</tt></h3>
+<p>Signals that the <i>state</i> of the query has changed.</p>
+<h3 class="fn"><a name="succeeded"></a>void QGalleryQueryModel::succeeded ()<tt> [signal]</tt></h3>
+<p>Signals that the query has finished successfully.</p>
+</div>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+</body>
+</html>

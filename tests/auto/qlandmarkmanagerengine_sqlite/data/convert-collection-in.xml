@@ -36,9 +36,10 @@
         </landmark>
         <landmark/>
         <landmark>
-            <name>w0</name>
+            <name>w1</name>
         </landmark>
         <landmark>
+            <name>w1</name>
             <description>Test data</description>
         </landmark>
         <landmark>
@@ -88,6 +89,7 @@
             </addressInfo>
         </landmark>
         <landmark>
+            <name>w15</name>
             <addressInfo>
                 <country>Australia</country>
                 <state>Queensland</state>
@@ -103,6 +105,7 @@
             </mediaLink>
         </landmark>
         <landmark>
+            <name>w16</name>
             <category>
                 <id>1</id>
                 <name>cat0</name>

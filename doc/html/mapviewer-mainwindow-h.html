@@ -70,6 +70,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -117,7 +118,6 @@
         <div class="content">
 <h1 class="title">mainwindow.h Example File</h1>
 <span class="small-subtitle">mapviewer/mainwindow.h</span>
-<!-- $$$mapviewer/mainwindow.h-description -->
 <div class="descr"/>
 <pre class="highlightedCode brush: cpp"><span class="comment"> /****************************************************************************
  **
@@ -168,6 +168,7 @@
  #include &lt;qgeomapwidget.h&gt;
  #include &lt;qgeoserviceprovider.h&gt;
  #include &lt;qgeomapmarkerobject.h&gt;
+ #include &lt;qgeomapcircleobject.h&gt;
  #include &lt;QMainWindow&gt;
  #include &lt;QGraphicsView&gt;
  #include &lt;QGraphicsSceneMouseEvent&gt;
@@ -239,6 +240,8 @@
 
      void panFloatWrapper(const QPointF&amp; delta);
      void applyPan(const Qt::KeyboardModifiers&amp; modifiers);
+ public:
+     QGeoMapCircleObject *lastCircle;
  };
 
  class MainWindow : public QMainWindow
@@ -259,10 +262,12 @@
      void createMarkerIcon();
 
  private slots:
+     void demo(bool checked);
      void drawRect(bool checked);
      void drawMarker(bool checked);
      void drawPolyline(bool checked);
      void drawPolygon(bool checked);
+     void drawCircle(bool checked);
      void calcRoute(bool checked);
      void customContextMenuRequest(const QPoint&amp;);
      void routeFinished();
@@ -304,22 +309,11 @@
 
  #endif <span class="comment">// MAINWINDOW_H</span></pre>
 </div>
-<!-- @@@mapviewer/mainwindow.h -->
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

@@ -109,6 +109,7 @@ public:
 
 class CCalSession;
 class CCalEntryView;
+class CCalInstanceView;
 class CActiveSchedulerWait;
 class TCalTime;
 class COrganizerItemRequestsServiceProvider;
@@ -177,17 +178,25 @@ private:
     void saveItemL(QOrganizerItem *item, QOrganizerItemChangeSet *changeSet);
     void removeItemL(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet *changeSet);
     QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const;
+    void modifyDetailDefinitionsForEvent() const;
+    void modifyDetailDefinitionsForEventOccurrence() const;
+    void modifyDetailDefinitionsForTodo() const;
+    void modifyDetailDefinitionsForTodoOccurrence() const;
+    void modifyDetailDefinitionsForNote() const;
+    void modifyDetailDefinitionsForJournal() const;
 
 private:
     QOrganizerItemSymbianEngineData *d;
     CCalSession *m_calSession;
     CCalEntryView *m_entryView;
+    CCalInstanceView *m_instanceView;
     CActiveSchedulerWait *m_activeSchedulerWait;
     COrganizerItemRequestsServiceProvider *m_requestServiceProvider;
 
     // TODO: replace this with an algorithm that generates the calendar entry UID
     int m_entrycount;
     OrganizerItemTransform m_itemTransform;
+    mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definition;
 
     friend class QOrganizerItemSymbianFactory;
 };

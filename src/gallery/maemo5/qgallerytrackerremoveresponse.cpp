@@ -77,7 +77,7 @@ public:
 
 QGalleryTrackerRemoveResponse::QGalleryTrackerRemoveResponse(
         const QGalleryDBusInterfacePointer &fileInterface, const QString &uri, QObject *parent)
-    : QGalleryBaseResponse(*new QGalleryTrackerRemoveResponsePrivate, parent)
+    : QGalleryAbstractResponse(*new QGalleryTrackerRemoveResponsePrivate, parent)
 {
     Q_D(QGalleryTrackerRemoveResponse);
 

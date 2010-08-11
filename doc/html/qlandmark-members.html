@@ -71,6 +71,7 @@
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
               <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+              <li class="defaultLink"><a href="qml-plugins.html">QML Plugins</a></li>
             </ul> 
           </div>
         </div>
@@ -122,33 +123,36 @@
 <p>This is the complete list of members for <a href="qlandmark.html">QLandmark</a>, including inherited members.</p>
 <table class="propsummary">
 <tr><td  class="topAlign"><ul>
-<li class="fn">enum <b><a href="qgeoplace.html#PlaceType-enum">PlaceType</a></b></li>
 <li class="fn"><b><a href="qlandmark.html#QLandmark">QLandmark</a></b> ()</li>
 <li class="fn"><b><a href="qlandmark.html#QLandmark-2">QLandmark</a></b> ( const QGeoPlace &amp; )</li>
 <li class="fn"><b><a href="qlandmark.html#QLandmark-3">QLandmark</a></b> ( const QLandmark &amp; )</li>
 <li class="fn"><b><a href="qlandmark.html#dtor.QLandmark">~QLandmark</a></b> ()</li>
 <li class="fn"><b><a href="qlandmark.html#addCategoryId">addCategoryId</a></b> ( const QLandmarkCategoryId &amp; )</li>
 <li class="fn"><b><a href="qgeoplace.html#address">address</a></b> () const : QGeoAddress</li>
-<li class="fn"><b><a href="qlandmark.html#attribute">attribute</a></b> ( const QString &amp;, const QVariant &amp; ) const : QVariant</li>
+<li class="fn"><b><a href="qlandmark.html#attribute">attribute</a></b> ( const QString &amp; ) const : QVariant</li>
 <li class="fn"><b><a href="qlandmark.html#attributeKeys">attributeKeys</a></b> () const : QStringList</li>
-<li class="fn"><b><a href="qgeoplace.html#boundingBox">boundingBox</a></b> () const : QGeoBoundingBox</li>
 <li class="fn"><b><a href="qlandmark.html#categoryIds">categoryIds</a></b> () const : QList&lt;QLandmarkCategoryId&gt;</li>
 <li class="fn"><b><a href="qlandmark.html#clear">clear</a></b> ()</li>
 <li class="fn"><b><a href="qgeoplace.html#coordinate">coordinate</a></b> () const : QGeoCoordinate</li>
+<li class="fn"><b><a href="qlandmark.html#customAttribute">customAttribute</a></b> ( const QString &amp;, const QVariant &amp; ) const : QVariant</li>
+<li class="fn"><b><a href="qlandmark.html#customAttributeKeys">customAttributeKeys</a></b> () const : QStringList</li>
 <li class="fn"><b><a href="qgeoplace.html#d_ptr-var">d_ptr</a></b> : QSharedDataPointer&lt;QGeoPlacePrivate&gt;</li>
 <li class="fn"><b><a href="qlandmark.html#description">description</a></b> () const : QString</li>
 <li class="fn"><b><a href="qlandmark.html#iconUrl">iconUrl</a></b> () const : QUrl</li>
+<li class="fn"><b><a href="qgeoplace.html#isLandmark">isLandmark</a></b> () const : bool</li>
 <li class="fn"><b><a href="qlandmark.html#landmarkId">landmarkId</a></b> () const : QLandmarkId</li>
 <li class="fn"><b><a href="qlandmark.html#name">name</a></b> () const : QString</li>
 <li class="fn"><b><a href="qlandmark.html#phone">phone</a></b> () const : QString</li>
-</ul></td><td class="topAlign"><ul>
 <li class="fn"><b><a href="qlandmark.html#radius">radius</a></b> () const : double</li>
+</ul></td><td class="topAlign"><ul>
+<li class="fn"><b><a href="qlandmark.html#removeAttribute">removeAttribute</a></b> ( const QString &amp; )</li>
 <li class="fn"><b><a href="qlandmark.html#removeCategoryId">removeCategoryId</a></b> ( const QLandmarkCategoryId &amp; )</li>
+<li class="fn"><b><a href="qlandmark.html#removeCustomAttribute">removeCustomAttribute</a></b> ( const QString &amp; )</li>
 <li class="fn"><b><a href="qgeoplace.html#setAddress">setAddress</a></b> ( const QGeoAddress &amp; )</li>
 <li class="fn"><b><a href="qlandmark.html#setAttribute">setAttribute</a></b> ( const QString &amp;, const QVariant &amp; )</li>
-<li class="fn"><b><a href="qgeoplace.html#setBoundingBox">setBoundingBox</a></b> ( const QGeoBoundingBox &amp; )</li>
 <li class="fn"><b><a href="qlandmark.html#setCategoryIds">setCategoryIds</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; )</li>
 <li class="fn"><b><a href="qgeoplace.html#setCoordinate">setCoordinate</a></b> ( const QGeoCoordinate &amp; )</li>
+<li class="fn"><b><a href="qlandmark.html#setCustomAttribute">setCustomAttribute</a></b> ( const QString &amp;, const QVariant &amp; )</li>
 <li class="fn"><b><a href="qlandmark.html#setDescription">setDescription</a></b> ( const QString &amp; )</li>
 <li class="fn"><b><a href="qlandmark.html#setIconUrl">setIconUrl</a></b> ( const QUrl &amp; )</li>
 <li class="fn"><b><a href="qlandmark.html#setLandmarkId">setLandmarkId</a></b> ( const QLandmarkId &amp; )</li>
@@ -156,8 +160,9 @@
 <li class="fn"><b><a href="qlandmark.html#setPhone">setPhone</a></b> ( const QString &amp; )</li>
 <li class="fn"><b><a href="qlandmark.html#setRadius">setRadius</a></b> ( double )</li>
 <li class="fn"><b><a href="qlandmark.html#setUrl">setUrl</a></b> ( const QUrl &amp; )</li>
-<li class="fn"><b><a href="qgeoplace.html#type">type</a></b> () const : PlaceType</li>
+<li class="fn"><b><a href="qgeoplace.html#setViewport">setViewport</a></b> ( const QGeoBoundingBox &amp; )</li>
 <li class="fn"><b><a href="qlandmark.html#url">url</a></b> () const : QUrl</li>
+<li class="fn"><b><a href="qgeoplace.html#viewport">viewport</a></b> () const : QGeoBoundingBox</li>
 <li class="fn"><b><a href="qlandmark.html#operator-not-eq">operator!=</a></b> ( const QLandmark &amp; ) const : bool</li>
 <li class="fn"><b><a href="qlandmark.html#operator-eq">operator=</a></b> ( const QLandmark &amp; ) : QLandmark &amp;</li>
 <li class="fn"><b><a href="qlandmark.html#operator-eq-eq">operator==</a></b> ( const QLandmark &amp; ) const : bool</li>
@@ -170,15 +175,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

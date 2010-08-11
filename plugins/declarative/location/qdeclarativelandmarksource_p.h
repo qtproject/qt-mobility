@@ -75,7 +75,6 @@ private:
     QDeclarativeLandmarkNameFilter* m_nameFilter;
     QDeclarativeLandmarkProximityFilter* m_proximityFilter;
     QLandmarkFetchRequest* m_fetchRequest;
-    QLandmarkFetchHint m_fetchHint;
     // Landmark list received from platform
     QList<QLandmark> m_landmarks;
     // Same landmark list, but as declarative classes
