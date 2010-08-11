@@ -66,32 +66,48 @@ class MockCameraControl : public QCameraControl
 public:
     MockCameraControl(QObject *parent = 0):
             QCameraControl(parent),
-            m_state(QCamera::StoppedState),
-            m_captureMode(QCamera::CaptureStillImage)
+            m_state(QCamera::UnloadedState),
+            m_captureMode(QCamera::CaptureStillImage),
+            m_status(QCamera::UnloadedStatus)
     {
     }
 
     ~MockCameraControl() {}
 
     void start() { m_state = QCamera::ActiveState; }
-    virtual void stop() { m_state = QCamera::StoppedState; }
+    virtual void stop() { m_state = QCamera::UnloadedState; }
     QCamera::State state() const { return m_state; }
     void setState(QCamera::State state) {
         if (m_state != state) {
-            if (state == QCamera::ActiveState || state == QCamera::StoppedState)
-                emit stateChanged(m_state = state);
-            else
+            m_state = state;
+
+            switch (state) {
+            case QCamera::UnloadedState:
+                m_status = QCamera::UnloadedStatus;
+                break;
+            case QCamera::LoadedState:
+                m_status = QCamera::LoadedStatus;
+                break;
+            case QCamera::ActiveState:
+                m_status = QCamera::ActiveStatus;
+                break;
+            default:
                 emit error(QCamera::NotSupportedFeatureError, "State not supported.");
+                return;
+            }
+
+            emit stateChanged(m_state);
+            emit statusChanged(m_status);
         }
     }
+
+    QCamera::Status status() const { return m_status; }
 
     QCamera::CaptureMode captureMode() const { return m_captureMode; }
     void setCaptureMode(QCamera::CaptureMode mode)
     {
-        if (m_captureMode != mode) {
-            m_captureMode = mode;
-            emit captureModeChanged(mode);
-        }
+        if (m_captureMode != mode)
+            emit captureModeChanged(m_captureMode = mode);
     }
 
     bool isCaptureModeSupported(QCamera::CaptureMode mode) const
@@ -106,6 +122,7 @@ public:
 
     QCamera::State m_state;
     QCamera::CaptureMode m_captureMode;
+    QCamera::Status m_status;
 };
 
 
@@ -873,11 +890,15 @@ void tst_QCamera::testSimpleCamera()
     QCamera camera(0, provider);
     QCOMPARE(camera.service(), (QMediaService*)mockSimpleCameraService);
 
-    QCOMPARE(camera.state(), QCamera::StoppedState);
+    QCOMPARE(camera.state(), QCamera::UnloadedState);
     camera.start();
     QCOMPARE(camera.state(), QCamera::ActiveState);
     camera.stop();
-    QCOMPARE(camera.state(), QCamera::StoppedState);
+    QCOMPARE(camera.state(), QCamera::LoadedState);
+    camera.unload();
+    QCOMPARE(camera.state(), QCamera::UnloadedState);
+    camera.load();
+    QCOMPARE(camera.state(), QCamera::LoadedState);
 }
 
 void tst_QCamera::testSimpleCameraWhiteBalance()
@@ -996,7 +1017,7 @@ void tst_QCamera::testSimpleCameraCapture()
     QCOMPARE(imageCapture.error(), QCameraImageCapture::NoError);
     QVERIFY(imageCapture.errorString().isEmpty());
 
-    QSignalSpy errorSignal(&imageCapture, SIGNAL(error(QCameraImageCapture::Error)));
+    QSignalSpy errorSignal(&imageCapture, SIGNAL(error(int, QCameraImageCapture::Error,QString)));
     imageCapture.capture(QString::fromLatin1("/dev/null"));
     QCOMPARE(errorSignal.size(), 1);
     QCOMPARE(imageCapture.error(), QCameraImageCapture::NotSupportedFeatureError);
@@ -1049,8 +1070,8 @@ void tst_QCamera::testCameraCapture()
 
     QVERIFY(!imageCapture.isReadyForCapture());
 
-    QSignalSpy capturedSignal(&imageCapture, SIGNAL(imageCaptured(int,QImage)));
-    QSignalSpy errorSignal(&imageCapture, SIGNAL(error(QCameraImageCapture::Error)));
+    QSignalSpy capturedSignal(&imageCapture, SIGNAL(imageCaptured(int,QImage)));    
+    QSignalSpy errorSignal(&imageCapture, SIGNAL(error(int, QCameraImageCapture::Error,QString)));
 
     imageCapture.capture(QString::fromLatin1("/dev/null"));
     QCOMPARE(capturedSignal.size(), 0);

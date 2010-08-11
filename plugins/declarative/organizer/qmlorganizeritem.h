@@ -53,8 +53,8 @@ QTM_USE_NAMESPACE;
 class QMLOrganizerItem : public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY (bool itemChanged READ itemChanged NOTIFY onItemChanged);
-    Q_PROPERTY (int itemId READ itemId NOTIFY onItemIdChanged);
+    Q_PROPERTY (bool itemChanged READ itemChanged NOTIFY onItemChanged)
+    Q_PROPERTY (int itemId READ itemId NOTIFY onItemIdChanged)
 public:
     enum {
         DetailNameRole = Qt::UserRole + 500,

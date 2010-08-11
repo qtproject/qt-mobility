@@ -49,27 +49,40 @@
 QTM_BEGIN_NAMESPACE
 
 class QServiceMetaObjectDBusPrivate;
-class QServiceMetaObjectDBus : public QObject
+class QServiceMetaObjectDBus : public QDBusAbstractAdaptor
 {
-    //Note: Do not put Q_OBJECT here
+
 public:
     QServiceMetaObjectDBus(QObject* service);
     virtual ~QServiceMetaObjectDBus();
 
-    //provide custom Q_OBJECT implementation
     virtual const QMetaObject* metaObject() const;
     int qt_metacall(QMetaObject::Call c, int id, void **a);
     void *qt_metacast(const char* className);
 
-/*protected:
-    void connectNotify(const char* signal);
-    void disconnectNotify(const char* signal);*/
+    const QMetaObject* dbusMetaObject() const;
+
+protected:
+    //void connectNotify(const char* signal);
+    //void disconnectNotify(const char* signal);
 
 private:
     QServiceMetaObjectDBusPrivate* d;
     QVector<bool> localSignals;
 };
 
+
+struct QServiceUserTypeDBus
+{
+    QByteArray typeName;
+    QByteArray variantBuffer;
+};
+
+QDBusArgument &operator<<(QDBusArgument &argument, const QServiceUserTypeDBus &myType);
+const QDBusArgument &operator>>(const QDBusArgument &argument, QServiceUserTypeDBus &myType);
+
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QServiceUserTypeDBus))
 
 #endif //QSERVICE_METAOBJECT_DBUS_H

@@ -44,25 +44,22 @@
 #include <QtGui>
 
 #include <qdocumentgallery.h>
-#include <qgalleryitemlist.h>
-#include <qgalleryitemlistmodel.h>
+#include <qgalleryquerymodel.h>
 
-ArtistView::ArtistView(const QString &type, QWidget *parent, Qt::WindowFlags flags)
+ArtistView::ArtistView(
+        const QString &type, QAbstractGallery *gallery, QWidget *parent, Qt::WindowFlags flags)
     : GalleryView(parent, flags)
+    , model(new QGalleryQueryModel(gallery))
 {
-    setType(type);
-    setFields(QStringList()
-            << QDocumentGallery::title
-            << QDocumentGallery::trackCount);
-    setSortFields(QStringList()
-            << QDocumentGallery::title);
-
-    model = new QGalleryItemListModel;
+    model->setRootType(type);
 
     QHash<int, QString> properties;
     properties.insert(Qt::DisplayRole, QDocumentGallery::title);
     properties.insert(ArtistDelegate::TrackCount, QDocumentGallery::trackCount);
     model->addColumn(properties);
+
+    model->setSortPropertyNames(QStringList()
+            << QDocumentGallery::title);
 
     QListView *view = new QListView;
     view->setIconSize(QSize(124, 124));
@@ -70,10 +67,9 @@ ArtistView::ArtistView(const QString &type, QWidget *parent, Qt::WindowFlags fla
     view->setViewMode(QListView::IconMode);
     view->setSpacing(4);
     view->setUniformItemSizes(true);
-    view->setModel(model);
+    view->setModel(model.data());
     view->setItemDelegate(new ArtistDelegate(this));
     connect(view, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
-
 
     QBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -85,16 +81,16 @@ ArtistView::ArtistView(const QString &type, QWidget *parent, Qt::WindowFlags fla
 
 ArtistView::~ArtistView()
 {
-    delete model;
 }
 
-void ArtistView::mediaChanged(QGalleryItemList *media)
+void ArtistView::showChildren(const QVariant &itemId)
 {
-    model->setItemList(media);
+    model->setRootItem(itemId);
+    model->execute();
 }
 
 void ArtistView::activated(const QModelIndex &index)
 {
-    emit showAlbums(media()->id(index.row()), index.data(Qt::DisplayRole).toString());
+    emit showAlbums(model->itemId(index), index.data(Qt::DisplayRole).toString());
 }
 

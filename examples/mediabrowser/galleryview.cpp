@@ -40,69 +40,11 @@
 
 #include "galleryview.h"
 
-#include <qgallerycountrequest.h>
-#include <qgalleryitemlist.h>
-#include <qgalleryqueryrequest.h>
-
 GalleryView::GalleryView(QWidget *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags)
-    , request(new QGalleryQueryRequest(this))
-    , countRequest(new QGalleryCountRequest(this))
 {
-    request->setLive(true);
-
-    connect(request, SIGNAL(itemsChanged(QGalleryItemList*)),
-            this, SLOT(mediaChanged(QGalleryItemList*)));
-    connect(countRequest, SIGNAL(countChanged()), this, SLOT(requestCountChanged()));
 }
 
 GalleryView::~GalleryView()
 {
-}
-
-QAbstractGallery *GalleryView::gallery() const
-{
-    return request->gallery();
-}
-
-void GalleryView::setGallery(QAbstractGallery *gallery)
-{
-    request->setGallery(gallery);
-    countRequest->setGallery(gallery);
-}
-
-void GalleryView::showChildren(const QVariant &containerId)
-{
-    request->setScopeItemId(containerId);
-    request->execute();
-
-    countRequest->setScopeItemId(containerId);
-    countRequest->execute();
-}
-
-void GalleryView::setType(const QString &type)
-{
-    request->setItemType(type);
-
-    countRequest->setItemType(type);
-}
-
-void GalleryView::setFields(const QStringList &fields)
-{
-    request->setPropertyNames(fields);
-}
-
-void GalleryView::setSortFields(const QStringList &fields)
-{
-    request->setSortPropertyNames(fields);
-}
-
-QGalleryItemList *GalleryView::media() const
-{
-    return request->items();
-}
-
-void GalleryView::requestCountChanged()
-{
-    emit countChanged(countRequest->count());
 }

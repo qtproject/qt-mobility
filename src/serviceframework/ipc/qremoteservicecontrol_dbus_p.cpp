@@ -93,7 +93,7 @@ protected slots:
         // Check that its of a client-server nature
         if (endType != type) {
             // Client to Server
-            if (type != 0) {
+            if (type != SERVER) {
                 readIncoming(package);
             } else {
             // Server to Client
@@ -230,7 +230,7 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& ident)
             return 0;
         }
     
-        DBusEndPoint* ipcEndPoint = new DBusEndPoint(iface, 0);
+        DBusEndPoint* ipcEndPoint = new DBusEndPoint(iface, SERVER);
         ObjectEndPoint* endpoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
     
         return true;
@@ -258,7 +258,7 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
         return 0;
     }
     
-    DBusEndPoint* ipcEndPoint = new DBusEndPoint(inface, 1);
+    DBusEndPoint* ipcEndPoint = new DBusEndPoint(inface, CLIENT);
     ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
    
     QObject *proxy = endPoint->constructProxy(typeIdent);

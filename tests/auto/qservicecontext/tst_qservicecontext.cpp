@@ -78,6 +78,7 @@ private slots:
     void setClientName_data();
 
     void notify();
+    void clientData();
 };
 
 void tst_QServiceContext::addStringData()
@@ -141,6 +142,65 @@ void tst_QServiceContext::notify()
     c.notify(QServiceContext::UserDefined, "123");
     QCOMPARE(c.contextType, QServiceContext::UserDefined);
     QCOMPARE(c.contextVariant, qVariantFromValue<QString>("123"));
+}
+
+void tst_QServiceContext::clientData()
+{
+#ifdef QT_NO_USERDATA
+    QWARN("QServiceContext::clientData() depends on QObjectUserData which is disabled in the current Qt build");
+#endif
+    MyServiceContext c1;
+    MyServiceContext c2;
+    QStringList keys;
+    keys << QString("data1")<<QString("data2")<<QString("data3")<<QString("data4")<<QString("data5");
+    QList<QVariant> values;
+    values << QVariant(QString("value1")) << QVariant(QString("value2"))
+        << QVariant(QString("value3")) << QVariant(QString("value4")) << QVariant(QString("value5"));
+
+    const int dataCount = 5;
+
+    for (int i = 0; i < dataCount; i++) {
+        c1.setClientData(keys[i], values[i]);
+        c2.setClientData(keys[i], values[(i+1)%dataCount]);
+    }
+
+    // check that stored values are properly saved and can be retrieved
+    for (int i = 0; i < dataCount; i++) {
+#ifndef QT_NO_USERDATA
+        QCOMPARE(c1.clientData(keys[i]), values[i]);
+        QCOMPARE(c1.clientData(keys[i]), c2.clientData(keys[(i+dataCount-1)%dataCount]));
+#else
+        QCOMPARE(c1.clientData(keys[i]), QVariant());
+        QCOMPARE(c1.clientData(keys[i]), QVariant());
+#endif
+    }
+
+    // reset values and recheck
+    c2.resetClientData();
+    for (int i = 0; i < dataCount; i++) {
+#ifndef QT_NO_USERDATA
+        QCOMPARE(c1.clientData(keys[i]), values[i]);
+#else
+        QCOMPARE(c1.clientData(keys[i]), QVariant());
+#endif
+        QCOMPARE(c2.clientData(keys[i]), QVariant());
+    }
+
+    //edit first three existing values
+    for (int i = 0; i < dataCount-2; i++) {
+        c1.setClientData(keys[i],QVariant(QString("custom")));
+    }
+
+    for (int i = 0; i < dataCount; i++) {
+#ifndef QT_NO_USERDATA
+        if (i<dataCount-2)
+            QCOMPARE(c1.clientData(keys[i]), QVariant(QString("custom")));
+        else
+            QCOMPARE(c1.clientData(keys[i]), values[i]);
+#else
+        QCOMPARE(c1.clientData(keys[i]), QVariant());
+#endif
+    }
 }
 
 QTEST_MAIN(tst_QServiceContext)

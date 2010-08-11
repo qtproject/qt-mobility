@@ -94,7 +94,9 @@ Conversely, QVersitContactExporter can be used to convert from QContacts to QVer
 To complete the exporting process, QVersitWriter can be used to write to an I/O device.
 \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Complete example - write
 
-\section1 Main Classes
+\section1 Classes
+The main classes for a client interested in importing or exporting vCard and
+iCalendar documents are:
 \list
     \o \l{QVersitProperty}
     \o \l{QVersitDocument}    
@@ -105,6 +107,11 @@ To complete the exporting process, QVersitWriter can be used to write to an I/O 
     \o \l{QVersitOrganizerImporter}
     \o \l{QVersitOrganizerExporter}
 \endlist
+
+It is also possible to extend the behaviour of the importer and exporter classes
+by writing handlers and plugins.  For more details, please see the document on
+\l{Versit Plugins}.
+\annotatedlist versit-extension
 
 \section1 Supported Features
 Please see the \l{vcardsupport}{Supported vCard Features} document for a list of vCard

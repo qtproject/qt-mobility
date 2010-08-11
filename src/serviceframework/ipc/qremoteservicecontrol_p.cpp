@@ -133,7 +133,7 @@ void QRemoteServiceControlPrivate::processIncoming()
     }
 }
 
-/*!
+/*
     Creates endpoint on service side.
 */
 bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& ident)
@@ -154,7 +154,7 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& ident)
     return true;
 }
 
-/*!
+/*
     Creates endpoint on client side.
 */
 QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier& typeIdent, const QString& location)

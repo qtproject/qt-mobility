@@ -77,9 +77,16 @@ public:
     QAudioEncoderSettings audioSettings() const;
     void setAudioSettings(const QAudioEncoderSettings&);
 
+
     GstElement *createEncoder();
 
     QSet<QString> supportedStreamTypes(const QString &codecName) const;
+
+    void setActualAudioSettings(const QAudioEncoderSettings&);
+    void resetActualSettings();
+
+Q_SIGNALS:
+    void settingsChanged();
 
 private:
     QStringList m_codecs;
@@ -92,6 +99,7 @@ private:
     QMap<QString, QSet<QString> > m_streamTypes;
 
     QAudioEncoderSettings m_audioSettings;
+    QAudioEncoderSettings m_userSettings;
 };
 
 #endif

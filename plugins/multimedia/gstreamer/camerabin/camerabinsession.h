@@ -89,7 +89,7 @@ public:
     QList<QSize> supportedResolutions( QPair<int,int> rate, bool *continuous) const;
 
     QCamera::CaptureMode captureMode() { return m_captureMode; }
-    void setCaptureMode(QCamera::CaptureMode mode) { m_captureMode = mode; }
+    void setCaptureMode(QCamera::CaptureMode mode);
 
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl& sink);    
@@ -166,6 +166,7 @@ private:
     QCamera::State m_state;
     QCamera::State m_pendingState;
     QString m_inputDevice;
+    bool m_pendingResolutionUpdate;
 
     bool m_muted;    
     QCamera::CaptureMode m_captureMode;

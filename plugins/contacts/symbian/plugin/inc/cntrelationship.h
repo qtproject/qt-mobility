@@ -64,7 +64,9 @@ public:
     bool removeRelationship(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship &relationship, QContactManager::Error *error);
     bool removeRelationships(QSet<QContactLocalId> *affectedContactIds, const QList<QContactRelationship> &relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error *error);
     bool validateRelationship(const QContactRelationship &relationship, QContactManager::Error *error);
-    
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
+    bool validateRelationships(const QList<QContactRelationship> &relationship, QString &relationshipType, QContactManager::Error *error);
+#endif
 private:
     CContactDatabase *m_contactDatabase;
     QString m_managerUri;
