@@ -42,13 +42,13 @@
 #ifndef QGALLERYRESULTSET_H
 #define QGALLERYRESULTSET_H
 
+#include <qgalleryabstractresponse.h>
+#include <qgalleryproperty.h>
+
 #include <QtCore/qmap.h>
 #include <QtCore/qobject.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
-
-#include <qgalleryabstractresponse.h>
-#include <qgalleryproperty.h>
 
 QTM_BEGIN_NAMESPACE
 

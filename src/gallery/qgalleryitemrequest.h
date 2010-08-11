@@ -42,7 +42,7 @@
 #ifndef QGALLERYITEMREQUEST_H
 #define QGALLERYITEMREQUEST_H
 
-#include "qgalleryabstractrequest.h"
+#include <qgalleryabstractrequest.h>
 
 #include <qgalleryproperty.h>
 
