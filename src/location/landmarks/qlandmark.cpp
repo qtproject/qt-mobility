@@ -604,7 +604,7 @@ QString QLandmark::phoneNumber() const
 }
 
 /*!
-    Sets the \a phoneNmber of the landmark.
+    Sets the \a phoneNumber of the landmark.
 */
 void QLandmark::setPhoneNumber(const QString &phoneNumber)
 {

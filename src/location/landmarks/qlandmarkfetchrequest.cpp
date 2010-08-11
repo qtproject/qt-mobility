@@ -92,8 +92,6 @@ QLandmarkFilter QLandmarkFetchRequest::filter() const
 
 /*!
     Sets the \a filter which will be used to select landmarks.
-
-    \sa setLandmarkIds()
 */
 void QLandmarkFetchRequest::setFilter(const QLandmarkFilter &filter)
 {

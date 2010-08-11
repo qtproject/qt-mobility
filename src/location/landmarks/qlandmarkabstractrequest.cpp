@@ -78,8 +78,11 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
             identifiers.
     \value  CategoryIdFetchRequest A request to fetch a list of catgory
             identifiers.
+
     \value  LandmarkFetchRequest A request to fetch a list of landmarks
+    \value  LandmarkFetchByIdRequest A request to fetch a list of landmarks by id.
     \value  CategoryFetchRequest A request to fetch a list of categories
+    \value  CategoryFetchByIdRequest A request to fetch a list of categories by id
     \value  LandmarkSaveRequest A request to save a list of landmarks.
     \value  LandmarkRemoveRequest A request to remove a list of landmarks.
     \value  CategorySaveRequest A request to save a list of categories.

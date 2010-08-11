@@ -47,7 +47,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkCategoryFetchByIdRequest
-    \brief The QLandmarkCategoryFetchRequest class allows a client to asynchronously
+    \brief The QLandmarkCategoryFetchByIdRequest class allows a client to asynchronously
     request a list of categories by id from a landmark manager.
 
     For a QLandmarkCategoryFetchByIdRequest, the resultsAvailable() signal will be emitted
