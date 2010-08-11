@@ -39,19 +39,57 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMFILTERS_H
-#define QORGANIZERITEMFILTERS_H
+#ifndef QORGANIZERITEMCOLLECTIONFILTER_P_H
+#define QORGANIZERITEMCOLLECTIONFILTER_P_H
 
-// this file includes all of the leaf filter classes
-// provided by the Qt Organizer API.
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include "qorganizeritemunionfilter.h"
-#include "qorganizeritemchangelogfilter.h"
-#include "qorganizeritemdetailfilter.h"
-#include "qorganizeritemdetailrangefilter.h"
-#include "qorganizeritemintersectionfilter.h"
-#include "qorganizeriteminvalidfilter.h"
-#include "qorganizeritemlocalidfilter.h"
-#include "qorganizeritemcollectionfilter.h"
+#include "qorganizeritemfilter_p.h"
+#include "qorganizeritemfilter.h"
+#include "qorganizercollectionid.h"
+
+#include <QString>
+#include <QVariant>
+#include <QSet>
+
+QTM_BEGIN_NAMESPACE
+
+class QOrganizerItemCollectionFilterPrivate : public QOrganizerItemFilterPrivate
+{
+public:
+    QOrganizerItemCollectionFilterPrivate()
+        : QOrganizerItemFilterPrivate()
+    {
+    }
+
+    QOrganizerItemCollectionFilterPrivate(const QOrganizerItemCollectionFilterPrivate& other)
+        : QOrganizerItemFilterPrivate(other),
+        m_ids(other.m_ids)
+    {
+    }
+
+    virtual bool compare(const QOrganizerItemFilterPrivate* other) const
+    {
+        const QOrganizerItemCollectionFilterPrivate *od = static_cast<const QOrganizerItemCollectionFilterPrivate*>(other);
+        if (m_ids != od->m_ids)
+            return false;
+        return true;
+    }
+
+    Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemCollectionFilter, QOrganizerItemFilter::CollectionFilter)
+
+    QSet<QOrganizerCollectionLocalId> m_ids;
+};
+
+QTM_END_NAMESPACE
 
 #endif

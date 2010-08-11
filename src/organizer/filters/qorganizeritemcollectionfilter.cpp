@@ -39,19 +39,55 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMFILTERS_H
-#define QORGANIZERITEMFILTERS_H
-
-// this file includes all of the leaf filter classes
-// provided by the Qt Organizer API.
-
-#include "qorganizeritemunionfilter.h"
-#include "qorganizeritemchangelogfilter.h"
-#include "qorganizeritemdetailfilter.h"
-#include "qorganizeritemdetailrangefilter.h"
-#include "qorganizeritemintersectionfilter.h"
-#include "qorganizeriteminvalidfilter.h"
-#include "qorganizeritemlocalidfilter.h"
 #include "qorganizeritemcollectionfilter.h"
+#include "qorganizeritemcollectionfilter_p.h"
+#include "qorganizeritemfilter_p.h"
+#include "qorganizeritemmanager.h"
 
-#endif
+QTM_BEGIN_NAMESPACE
+
+/*!
+  \class QOrganizerItemCollectionFilter
+  \brief The QOrganizerItemCollectionFilter class provides a filter based around a list of organizeritem ids
+ 
+  \ingroup organizeritems-filters
+  
+  It may be used to select organizeritems whose ids are contained in the given list of ids.
+ */
+
+Q_IMPLEMENT_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemCollectionFilter);
+
+/*!
+ * \fn QOrganizerItemCollectionFilter::QOrganizerItemCollectionFilter(const QOrganizerItemFilter& other)
+ * Constructs a copy of \a other if possible, otherwise constructs a new organizeritem local id filter
+ */
+
+/*!
+ * Constructs a new organizeritem local id filter
+ */
+QOrganizerItemCollectionFilter::QOrganizerItemCollectionFilter()
+    : QOrganizerItemFilter(new QOrganizerItemCollectionFilterPrivate)
+{
+}
+
+/*!
+ * Sets the list which contains the ids of possible matching organizeritems to \a ids
+ * \sa ids()
+ */
+void QOrganizerItemCollectionFilter::setCollectionIds(const QSet<QOrganizerCollectionLocalId> &ids)
+{
+    Q_D(QOrganizerItemCollectionFilter);
+    d->m_ids = ids;
+}
+
+/*!
+ * Returns the list of ids of organizeritems which match this filter
+ * \sa setIds()
+ */
+QSet<QOrganizerCollectionLocalId> QOrganizerItemCollectionFilter::collectionIds() const
+{
+    Q_D(const QOrganizerItemCollectionFilter);
+    return d->m_ids;
+}
+
+QTM_END_NAMESPACE

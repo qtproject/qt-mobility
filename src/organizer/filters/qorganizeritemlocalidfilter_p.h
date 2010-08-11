@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMIDLISTFILTER_P_H
-#define QORGANIZERITEMIDLISTFILTER_P_H
+#ifndef QORGANIZERITEMLOCALIDFILTER_P_H
+#define QORGANIZERITEMLOCALIDFILTER_P_H
 
 //
 //  W A R N I N G

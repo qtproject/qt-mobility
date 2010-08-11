@@ -76,6 +76,7 @@ public:
         IntersectionFilter,
         UnionFilter,
         LocalIdFilter,
+        CollectionFilter,
         DefaultFilter
     };
 

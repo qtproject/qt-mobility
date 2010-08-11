@@ -39,19 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMFILTERS_H
-#define QORGANIZERITEMFILTERS_H
+#ifndef QORGANIZERITEMCOLLECTIONFILTER_H
+#define QORGANIZERITEMCOLLECTIONFILTER_H
 
-// this file includes all of the leaf filter classes
-// provided by the Qt Organizer API.
+#include "qorganizeritemfilter.h"
+#include "qorganizercollectionid.h"
 
-#include "qorganizeritemunionfilter.h"
-#include "qorganizeritemchangelogfilter.h"
-#include "qorganizeritemdetailfilter.h"
-#include "qorganizeritemdetailrangefilter.h"
-#include "qorganizeritemintersectionfilter.h"
-#include "qorganizeriteminvalidfilter.h"
-#include "qorganizeritemlocalidfilter.h"
-#include "qorganizeritemcollectionfilter.h"
+QTM_BEGIN_NAMESPACE
+
+class QOrganizerItemCollectionFilterPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerItemCollectionFilter : public QOrganizerItemFilter
+{
+public:
+    QOrganizerItemCollectionFilter();
+    QOrganizerItemCollectionFilter(const QOrganizerItemFilter& other);
+
+    /* Mutators */
+    void setCollectionIds(const QSet<QOrganizerCollectionLocalId>& ids);
+
+    /* Accessors */
+    QSet<QOrganizerCollectionLocalId> collectionIds() const;
+
+private:
+    Q_DECLARE_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemCollectionFilter)
+};
+
+QTM_END_NAMESPACE
 
 #endif

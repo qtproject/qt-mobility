@@ -1903,6 +1903,16 @@ bool QOrganizerItemManagerEngine::testFilter(const QOrganizerItemFilter &filter,
                 // Fall through to end
             }
             break;
+
+    case QOrganizerItemFilter::CollectionFilter:
+            {
+                const QOrganizerItemCollectionFilter cf(filter);
+                const QSet<QOrganizerCollectionLocalId>& ids = cf.collectionIds();
+                if (ids.contains(organizeritem.collection().localId()))
+                    return true;
+                return false;
+            }
+            break;
     }
     return false;
 }
