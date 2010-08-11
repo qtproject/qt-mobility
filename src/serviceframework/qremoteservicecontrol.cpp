@@ -40,10 +40,13 @@
 ****************************************************************************/
 
 #include "qremoteservicecontrol.h"
-#ifdef Q_OS_SYMBIAN
-#include "qremoteservicecontrol_s60_p.h"
+
+#if defined(Q_OS_SYMBIAN)
+    #include "qremoteservicecontrol_s60_p.h"
+#elif defined(QT_NO_DBUS)
+    #include "qremoteservicecontrol_p.h"
 #else
-#include "qremoteservicecontrol_p.h"
+    #include "qremoteservicecontrol_dbus_p.h"
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -51,6 +54,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QRemoteServiceControl
+    \inmodule QtServiceFramework
     \ingroup servicefw
     \brief The QRemoteServiceControl class manages instances of remote service objects.
 
@@ -82,13 +86,12 @@ QRemoteServiceControl::~QRemoteServiceControl()
     Publishes every service that has been registered using
     \l QRemoteServiceClassRegister::registerType(). \a ident is the service specific
     IPC address under which the service can be reached. This address must match
-    the address provide in the services xml descriptor (see <filepath> tag).
+    the address provided in the services xml descriptor (see <filepath> tag).
 */
 void QRemoteServiceControl::publishServices( const QString& ident)
 {
     d->publishServices(ident);
 }
-
 
 #include "moc_qremoteservicecontrol.cpp"
 

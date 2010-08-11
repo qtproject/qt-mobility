@@ -1,0 +1,114 @@
+/*
+* Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: 
+* cntmodel.dll Contacts engine client interface
+*
+*/
+
+
+#include "cntmodel.mmh"
+
+target          cntmodel.dll
+targettype      DLL
+
+APP_LAYER_SYSTEMINCLUDE_SYMBIAN
+
+userinclude 	../inc
+userinclude 	../cntmodel/inc 
+userinclude 	../cntsrv/inc
+USERINCLUDE     ../cntplsql/inc
+userinclude    ../src			//for Panic code
+
+SOURCEPATH	.	
+DOCUMENT	../groupsql/release.txt
+DOCUMENT	common.inf
+
+//Contacts model next generation code
+SOURCEPATH	../cntmodel/src
+source		ccontactdatabase.cpp 
+source		ccontactprivate.cpp 
+#ifndef BUILD_SQL
+source		iteratorproxy.cpp
+source		cviewiterator.cpp
+#endif //BUILD_SQL
+source		ccntcompact.cpp
+source		ccntpackager.cpp
+source		ccntnotificationmonitor.cpp
+source		rcntmodel.cpp
+
+//Parts of original contacts model
+SOURCEPATH	../src
+source		cntitem.cpp 
+source		cntfield.cpp 
+source		cntfldst.cpp 
+source		cntdef.cpp 
+source		cntitemdef.cpp 
+source 		cntfilt.cpp 
+source		cntiter.cpp  
+source		cviewcontactextension.cpp
+source		debug.cpp
+source		cntviewstore.cpp
+
+//Contact views code
+SOURCEPATH	../cntview
+source		viewbase.cpp 
+source		remoteview.cpp 
+#ifndef BUILD_SQL
+source		localview.cpp 
+#endif //BUILD_SQL
+source		namedlocalview.cpp
+source		cntphbksyncwatcher.cpp
+
+#ifdef BUILD_SQL
+userinclude 	../cntplsql/inc
+
+SOURCEPATH 		../cntplsql/src
+source 			csqlitelocalview.cpp
+source 		    cviewcontactmanager.cpp
+source			cidlecontactsorter.cpp
+source 			clplproxyfactory.cpp
+#endif //BUILD_SQL
+
+library         euser.lib 
+library         estor.lib 
+library         bafl.lib 
+library         ecom.lib
+library         conarc.lib //for CContactTextField::EncodeL CCnaConverterList
+library		versit.lib 
+library         efsrv.lib 
+library		centralrepository.lib
+
+
+// New APIs for 9.0 are non-configurable
+// so only 2 def files are required
+
+
+
+// Remove insecure API and use ECom plugin framework
+#ifdef BUILD_SQL
+deffile                 cntmodlv2_sqlite.def
+#else //BUILD_SQL
+deffile                 cntmodlv2_pluginsv2u.def
+#endif //BUILD_SQL
+
+START WINS
+	baseaddress     0x7d3d0000
+END
+
+START MARM
+END
+
+CAPABILITY	All -TCB
+UID		0x1000008D 0x10003A71
+VENDORID 	0x70000001

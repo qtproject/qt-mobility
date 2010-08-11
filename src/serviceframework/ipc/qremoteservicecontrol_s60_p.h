@@ -47,6 +47,7 @@
 #include "qremoteservicecontrol.h"
 #include "qremoteserviceclassregister.h"
 #include "qservicepackage_p.h"
+#include "qservice.h"
 #include <e32base.h>
 
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
@@ -95,27 +96,36 @@ public:
     TInt Connect(); 
     void Close();
     TVersion Version() const;
-    bool MessageAvailable();
     void SendServicePackage(const QServicePackage& aPackage);
-
-    void ListenForPackages(TRequestStatus& aStatus); // TODO protected friend?
-    void CancelListenForPackages();
-
+    
  public:
-    TBuf8<255> iMessageFromServer; // TODO not necessarily enough (was 255)    
+    // 255 bytes seems to cover a lot of test cases in house
+    // this size might need to be increased to avoid a lot
+    // of context switches
+    TBuf8<255> iMessageFromServer; 
     TPckgBuf<TInt> iSize; // TPckgBuf type can be used directly as IPC parameter   
 
+public slots:
+     void ipcFailure(QService::UnrecoverableIPCError);
+    
 signals:
     // void ReadyRead();
     void Disconnected(); // TODO not sure if this should be done like others
+    void errorUnrecoverableIPCFault(QService::UnrecoverableIPCError);
 
+protected:
+    void ListenForPackages(TRequestStatus& aStatus);
+    void CancelListenForPackages();
+    
 private:
     TInt StartServer();
 
 private: 
     TIpcArgs iArgs; // These two are used in actively listening to server
     TError iError;
-    QString iServerAddress;    
+    QString iServerAddress;     
+    
+    friend class ServiceMessageListener;
 };
 
 // needed for creating server thread.
@@ -146,7 +156,7 @@ class CServiceProviderServerSession : public CSession2
         virtual ~CServiceProviderServerSession();
         void ServiceL(const RMessage2& aMessage);
         void SetParent(SymbianServerEndPoint* aOwner);
-        void SendServicePackage(const QServicePackage& aPackage);
+        void SendServicePackageL(const QServicePackage& aPackage);
 
         TInt HandleServicePackageL(const RMessage2& aMessage);
         void HandlePackageRequestL(const RMessage2& aMessage);
@@ -193,7 +203,7 @@ protected:
     // from CActive baseclass
     void DoCancel();
     void RunL();
-
+    
 private:
     RServiceSession* iClientSession;
     SymbianClientEndPoint* iOwnerEndPoint;

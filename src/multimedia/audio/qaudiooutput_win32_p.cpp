@@ -47,7 +47,7 @@
 // of other Qt classes.  This header file may change from version to
 // version without notice, or even be removed.
 //
-// Do not use this file directly.
+// INTERNAL USE ONLY: Do NOT use for any other purpose.
 //
 
 #include "qaudiooutput_win32_p.h"
@@ -192,7 +192,7 @@ void QAudioOutputPrivate::freeBlocks(WAVEHDR* blockArray)
 
     for(int i = 0; i < count; i++) {
         waveOutUnprepareHeader(hWaveOut,blocks, sizeof(WAVEHDR));
-        blocks+=sizeof(WAVEHDR);
+        blocks++;
     }
     HeapFree(GetProcessHeap(), 0, blockArray);
 }
@@ -706,3 +706,5 @@ qint64 OutputPrivate::writeData(const char* data, qint64 len)
 }
 
 QT_END_NAMESPACE
+
+#include "moc_qaudiooutput_win32_p.cpp"

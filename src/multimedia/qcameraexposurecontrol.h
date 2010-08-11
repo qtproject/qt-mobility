@@ -69,11 +69,12 @@ public:
         ExtendedExposureParameter = 1000
     };
 
-    virtual QCameraExposure::FlashModes flashMode() const = 0;
-    virtual void setFlashMode(QCameraExposure::FlashModes mode) = 0;
-    virtual bool isFlashModeSupported(QCameraExposure::FlashModes mode) const = 0;
-
-    virtual bool isFlashReady() const = 0;
+    enum ParameterFlag {
+        AutomaticValue = 0x01,
+        ReadOnly = 0x02,
+        ContinuousRange = 0x04
+    };
+    Q_DECLARE_FLAGS(ParameterFlags, ParameterFlag)
 
     virtual QCameraExposure::ExposureMode exposureMode() const = 0;
     virtual void setExposureMode(QCameraExposure::ExposureMode mode) = 0;
@@ -85,7 +86,8 @@ public:
 
     virtual bool isParameterSupported(ExposureParameter parameter) const = 0;
     virtual QVariant exposureParameter(ExposureParameter parameter) const = 0;
-    virtual QVariantList supportedParameterRange(ExposureParameter parameter, bool *continuous) const = 0;
+    virtual ParameterFlags exposureParameterFlags(ExposureParameter parameter) const = 0;
+    virtual QVariantList supportedParameterRange(ExposureParameter parameter) const = 0;
     virtual bool setExposureParameter(ExposureParameter parameter, const QVariant& value) = 0;
 
     virtual QString extendedParameterName(ExposureParameter parameter) = 0;
@@ -103,7 +105,9 @@ protected:
 #define QCameraExposureControl_iid "com.nokia.Qt.QCameraExposureControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QCameraExposureControl, QCameraExposureControl_iid)
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(QCameraExposureControl::ParameterFlags)
+
 QT_END_NAMESPACE
 
-#endif  // QCAMERACONTROL_H
+#endif  // QCAMERAEXPOSURECONTROL_H
 

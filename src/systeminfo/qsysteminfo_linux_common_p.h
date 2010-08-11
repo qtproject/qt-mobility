@@ -179,12 +179,12 @@ public:
     int colorDepth(int screen);
 
 
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-    float contrast(int screen);
-    int getDPIWidth(int screen);
-    int getDPIHeight(int screen);
-    int physicalHeight(int screen);
-    int physicalWidth(int screen);
+//     QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+//     float contrast(int screen);
+//     int getDPIWidth(int screen);
+//     int getDPIHeight(int screen);
+//     int physicalHeight(int screen);
+//     int physicalWidth(int screen);
 };
 
 class QSystemStorageInfoLinuxCommonPrivate : public QObject
@@ -201,7 +201,7 @@ public:
     QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 Q_SIGNALS:
-    void logicalDrivesChanged(bool);
+    void logicalDriveChanged(bool, const QString &);
 
 private:
      QMap<QString, QString> mountEntriesMap;

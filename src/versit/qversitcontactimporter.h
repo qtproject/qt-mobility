@@ -70,6 +70,30 @@ public:
                                      QContact* contact) = 0;
 };
 
+class Q_VERSIT_EXPORT QVersitContactImporterPropertyHandlerV2
+{
+public:
+    Q_DECL_DEPRECATED static QVersitContactImporterPropertyHandlerV2* createBackupHandler();
+
+    // deprecated: use the other propertyProcessed() instead
+    Q_DECL_DEPRECATED virtual void propertyProcessed(const QVersitDocument& document,
+                                   const QVersitProperty& property,
+                                   bool alreadyProcessed,
+                                   const QContact& contact,
+                                   QList<QContactDetail>* updatedDetails);
+    virtual ~QVersitContactImporterPropertyHandlerV2() {}
+
+    // made non-pure for the transition period - this will soon be made pure, so it must be
+    // overridden!  Both the below functions must be implemented to conform to this interface
+    virtual void propertyProcessed(const QVersitDocument& document,
+                                   const QVersitProperty& property,
+                                   const QContact& contact,
+                                   bool *alreadyProcessed,
+                                   QList<QContactDetail>* updatedDetails);
+    virtual void documentProcessed(const QVersitDocument& document,
+                                   QContact* contact) = 0;
+};
+
 class Q_VERSIT_EXPORT QVersitContactImporter
 {
 public:
@@ -80,17 +104,21 @@ public:
     };
 
     QVersitContactImporter();
+    QVersitContactImporter(const QString& profile);
     ~QVersitContactImporter();
 
     bool importDocuments(const QList<QVersitDocument>& documents);
     QList<QContact> contacts() const;
     QMap<int, Error> errors() const;
 
-    void setPropertyHandler(QVersitContactImporterPropertyHandler* handler);
-    QVersitContactImporterPropertyHandler* propertyHandler() const;
+    void setPropertyHandler(QVersitContactImporterPropertyHandlerV2* handler);
 
     void setResourceHandler(QVersitResourceHandler* handler);
     QVersitResourceHandler* resourceHandler() const;
+
+    /* deprecated and internal */
+    void Q_DECL_DEPRECATED setPropertyHandler(QVersitContactImporterPropertyHandler* handler);
+    Q_DECL_DEPRECATED QVersitContactImporterPropertyHandler* propertyHandler() const;
 
 private:
     QVersitContactImporterPrivate* d;

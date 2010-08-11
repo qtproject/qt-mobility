@@ -28,8 +28,7 @@ INCLUDEPATH += . \
 HEADERS += tst_qversit.h
 SOURCES += tst_qversit.cpp
 CONFIG += mobility
-MOBILITY = contacts \
-    versit
+MOBILITY += contacts versit organizer
 symbian: { 
     TARGET.CAPABILITY = ALL \
         -TCB

@@ -41,6 +41,9 @@
 
 /*!
     \namespace QMessageDataComparator
+    
+    \inmodule QtMessaging
+    
     \ingroup messaging
 
     \brief The QMessageDataComparator namespace contains types used in specifying the comparison

@@ -47,7 +47,7 @@
 // of other Qt classes.  This header file may change from version to
 // version without notice, or even be removed.
 //
-// Do not use this file directly.
+// INTERNAL USE ONLY: Do NOT use for any other purpose.
 //
 
 #include <QtCore/qstringlist.h>

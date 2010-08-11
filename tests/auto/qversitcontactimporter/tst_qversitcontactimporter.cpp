@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/versit
+
 #include "qversitdefs_p.h"
 #include "tst_qversitcontactimporter.h"
 #include "qversitcontactimporter.h"
@@ -183,7 +185,7 @@ void tst_QVersitContactImporter::init()
 void tst_QVersitContactImporter::cleanup()
 {
     QVERIFY(mImporter->propertyHandler() == mPropertyHandler);
-    mImporter->setPropertyHandler(0);
+    mImporter->setPropertyHandler(static_cast<QVersitContactImporterPropertyHandlerV2*>(0));
     delete mPropertyHandler;
     QVERIFY(mImporter->resourceHandler() == mResourceHandler);
     mImporter->setResourceHandler(0);

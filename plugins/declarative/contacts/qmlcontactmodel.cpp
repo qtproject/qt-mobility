@@ -113,6 +113,20 @@ QList<QObject*> QMLContactModel::details(int id) const
         return m_contactMap.value(id)->details();
     return QList<QObject*>();
 }
+
+QMLContact* QMLContactModel::detailModel(int id) const
+{
+    if (m_contactMap.contains(id))
+        return m_contactMap.value(id);
+    return 0;
+}
+
+QList<QObject*> QMLContactModel::detailFields(int id) const
+{
+    if (m_contactMap.contains(id))
+        return m_contactMap.value(id)->detailFields();
+    return QList<QObject*>();
+}
 void QMLContactModel::exposeContactsToQML()
 {
     foreach (const QContact& c, m_contacts) {
@@ -270,7 +284,8 @@ QVariant QMLContactModel::data(const QModelIndex &index, int role) const
             return c.localId();
         case AvatarRole:
             //Just let the imager provider deal with it
-            return QString("image://thumbnail/%1.%2").arg(manager()).arg(c.localId());
+            // return QString("image://thumbnail/%1.%2").arg(manager()).arg(c.localId());
+            return c.detail<QContactAvatar>().imageUrl();
         case Qt::DecorationRole:
             {
                 QContactThumbnail t = c.detail<QContactThumbnail>();
@@ -289,4 +304,3 @@ QVariant QMLContactModel::data(const QModelIndex &index, int role) const
     }
     return QVariant();
 }
-

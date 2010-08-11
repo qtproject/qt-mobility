@@ -1,0 +1,69 @@
+//
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description: 
+//
+
+LOAD_SUITE CntPerfTestServer
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-HW-P81118
+//! @file
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-HW-P81118
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc ViewDef tests where contact item is opened/read using ViewDef containing all possible combinations of 2 existing uids 
+//! @SYMTestActions Open and read a contact using the default ViewDefs. 
+//! then read and minimally read a contact using ViewDef X containing 2 unique existing uid.
+//! store the number of hidden/non-hidden and empty/non-empty fields after each read/open,
+//! repeat until all existing uids combinations are tested
+//! @SYMTestExpectedResults Check that the values match the expected results as constrained by the fields that are excluded / included within the ViewDef.
+RUN_TEST_STEP 100 CntPerfTestServer ViewDefCustomFieldsTest c:\CntPerfTest\configs\cntperftest.ini AllLabelUid
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-HW-P81118
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-HW-P81119
+//! @file
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-HW-P81119
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc ViewDef tests where contact item is opened/read using ViewDef containing all possible combinations of 2 identical uids 
+//! @SYMTestActions Open and read a contact using the default ViewDefs. 
+//! then read and minimally read a contact using ViewDef X containing 2 identical existing uid.
+//! store the number of hidden/non-hidden and empty/non-empty fields after each read/open.
+//! repeat until all existing uids  are tested
+//! @SYMTestExpectedResults Check that adding two identical uids to a ViewDef causes a panic in debug mode
+RUN_TEST_STEP 100 CntPerfTestServer ViewDefCustomFieldsTest c:\CntPerfTest\configs\cntperftest.ini AllNewFields
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-HW-P81119
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-HW-P81120
+//! @file
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-HW-P81120
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc ViewDef All Uids with custom fields Test
+//! @SYMTestActions Testing KUidContactFieldMatchAll in ViewDef with custom labels/uids
+//! opens contact item
+//! and adds a custom uid to each field
+//! changes label to custom label	
+//! read a contact using the default ViewDefs. 
+//! then minimally read a contact using ViewDef X containing KUidContactFieldMatchAll  
+//! store the number of hidden/non-hidden and empty/non-empty fields after each read/open.
+//! repeat test 4 times so that X excludes/includes all possible combination of fields
+//! @SYMTestExpectedResults Check that the values match the expected results as constrained by the fields that are excluded / included within the ViewDef.
+RUN_TEST_STEP 100 CntPerfTestServer ViewDefCustomFieldsTest c:\CntPerfTest\configs\cntperftest.ini AllOnlyNew
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-HW-P81120
+
+
+

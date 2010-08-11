@@ -1,0 +1,937 @@
+//
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description: 
+//
+//! @file
+//! @SYMTestSuiteName	TestContactViewSuite
+//! @SYMScriptTestEnvironment
+
+PRINT Run all TestContactView tests
+
+LOAD_SUITE CntPerfTestServer
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0035-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0035-HP
+//! @SYMTestCaseDesc 		Impact of SyncML operations on Contact views
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct multiple contact views.
+//!				2. Initiate a contact import operation.
+//!				3. Access the contact views as per 3.1.2.
+//!				4. Validate the contact view access results i.e. it is perfectly valid if the contact 
+//!				view access fails with KErrNotFound if the contact item doesn’t exist in the view, But there 
+//!				should not be any invalid error codes or panics as a result of contact view access when a syncml 
+//!				operation is initiated in parallel. 
+//! @SYMTestExpectedResults 	SyncML operations doesn’t affect contact view operations
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini createviews35 
+CONCURRENT
+
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini createviews35_1 
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini createviews35_2
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0035-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0002-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0002-HP
+//! @SYMTestCaseDesc 		Construct contact views with different view sort order.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Add contacts in the contacts database.
+//!				2. Construct a contact view.
+//!				3. During view construction, supply the desired view preference and sort order.
+//!				4. Validate the contact views related notifications or events are as per expectations.
+//!				5. Validate that the newly constructed view contains the desired view preference and sort order i.e. check that the contact ids in the view are as per the desired sort order. And the contact items in the view meet the desired view preferences.
+//!				6. Repeat the above mentioned steps for different view sort order. Refer to 1.2.2.1 for information on contact view sort order
+//! @SYMTestExpectedResults 	It is possible to construct contact views with different view sort order.
+//! @SYMTestType 		CIT
+
+CONSECUTIVE
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_2
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0002-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0003-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0003-HP
+//! @SYMTestCaseDesc 		contacts view with different contact view preferences
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Add contacts in the contacts database.
+//!				2. Construct a contact view.
+//!				3. During view construction, supply the desired view preference and sort order.				
+//!				4. Access the view as per 4.1.1.1.
+//!				5. Validate that the newly constructed view possess the desired view preference and sort order 
+//!				i.e. check that the contact ids in the view are as per the desired sort order. And the contact items in the view
+//!				are as per the desired view preferences.
+//!				6. Repeat the above mentioned steps for different view preferences. Refer to 1.2.2.2 for information on view preferences.
+//! @SYMTestExpectedResults 	It is possible to construct contact views with different view preferences.
+//! @SYMTestType 		CIT
+
+
+
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep c:\cntviewtest\configs\TestContactViewSuite.ini createviews2
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini createviews3
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0003-HP
+
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0007-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0007-HP
+//! @SYMTestCaseDesc 		Construction of a Named Remote view with desired Sort Plug-In
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a named remote view.
+//!				2.Specify the desired contacts view preference and sort order.
+//!				3.Specify the desired Sort Plugin.
+//!				4.Validate the contacts view preference and sort order after the successful completion of the view.
+//!				5.Validate that the view elements are sorted as per the desired sort plug-in i.e. check that the contact ids in the view are as per the sort plug-in criteria.
+//! @SYMTestExpectedResults 	It is possible to construct contacts named remote view with a user defined sort plugin
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_7
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep c:\cntviewtest\configs\TestContactViewSuite.ini namedremoteviewwithplugin
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0007-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0008-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0008-HP
+//! @SYMTestCaseDesc 		Test the contacts find view for basic view operations.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a find view over an existing local view.
+//!				2.Specify the desired search criteria as part of construction.				
+//!				3.Validate that the view elements meet the search criteria by checking the any of the contact item field contents of the contacts in the view possess the desired search string.
+//! @SYMTestExpectedResults 	It is possible construct and access a contacts find view.
+//! @SYMTestType 		CIT
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0008-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0010-HP-0001
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0010-HP-0001
+//! @SYMTestCaseDesc 		Update a find view indirectly and access the same
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a find view over an existing local view.
+//!				2.Validate that the find view elements meet the search criteria.
+//!				3.Modify the underlying Local view.
+//!				4.Validate that the updated contact find view items still meets the find criteria i.e. validate that the view elements meet the desired search criteria by checking the any of the contact item field contents of the contacts in the view possess the desired string.
+//! @SYMTestExpectedResults 	The find view is still accessible and updated correctly, even though the underlying view is modified. 
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_8
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep c:\cntviewtest\configs\TestContactViewSuite.ini findviewonlocalview
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0010-HP-0001
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0009-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0009-HP
+//! @SYMTestCaseDesc 		Refine the search criteria of a find view and access the same
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Perform test case APPENG-CONTACTS-VIEWS-I-0008-HP.
+//!				2.Refine the search criteria. 
+//!				3.Validate that the updated contact view items meet the find criteria i.e. Validate that the view elements meet the updated search criteria by checking the any of the contact item field contents of the contacts in the view possess the updated desired string.
+//! @SYMTestExpectedResults 	It is possible to perform construct a contacts local or remote and named local view sorted as per user defined sort plug-in
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_9
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep c:\cntviewtest\configs\TestContactViewSuite.ini refinefindview9
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0009-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0011-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0011-HP
+//! @SYMTestCaseDesc 		Test the contacts find view built on an underlying remote view for basic view operations.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a find view over an existing remote view.
+//!				2.Carry out operation specified in APPENG-CONTACTS-VIEWS-I-0001-HP.
+//!				3.Validate that the view elements meet the desired search criteria by checking the any of the contact item field contents of the contacts in the view possess the desired string.
+//! @SYMTestExpectedResults 	It is possible to construct and perform basic contacts view related operations on find view based on underlying remote view.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_11
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep c:\cntviewtest\configs\TestContactViewSuite.ini findviewonremoteview
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0011-HP
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0012-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0012-HP
+//! @SYMTestCaseDesc 		Refine the search criteria of a find view based on existing remote view and access the same.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Perform test case APPENG-CONTACTS-VIEWS-I-0011-HP.
+//!				2.Refine the search criteria and validate the view elements again.
+//!				3.Validate that the updated contact view items meet the find criteria i.e. Validate that the view elements meet the updated search criteria by checking the any of the contact item field contents of the contacts in the view, to possess the updated desired string
+//! @SYMTestExpectedResults 	It is possible to refine the search criteria of Find view based on an existing remote view.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_12
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep c:\cntviewtest\configs\TestContactViewSuite.ini refinefindviewonremoteview
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0012-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0014-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0014-HP
+//! @SYMTestCaseDesc 		OOM tests for the Find View
+//! @SYMFssID			
+//! @SYMREQ				
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Run all find view related tests listed under 3.2.1 to 3.2.6 under OOM conditions.
+//! @SYMTestExpectedResults 	Under OOM conditions, Find view related operations leave with KErrNoMemory.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_14
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini createviews_14
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0014-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0015-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0015-HP
+//! @SYMTestCaseDesc 		Create a Filtered view and access the same
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a Filtered view over a existing local view by specifying a valid  contact view filter criteria 
+//!				2.Carry out the basic operations specified in APPENG-CONTACTS-VIEWS –I-0001-HP.
+//!				3.Validate that the contact items in the view meet the view filter criteria i.e. check that the view contacts contains the desired view filter.
+//! @SYMTestExpectedResults 	It is possible to create a filtered view and carry out basic view operations.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_15
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini createfilteredview
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0015-HP
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0017-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0017-HP
+//! @SYMTestCaseDesc 		Create a filtered view over an existing remote view and access the same
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a Filtered view on the existing remote view by specifying valid filter criteria 
+//!				2.Carry out the basic operations specified in APPENG-CONTACTS-VIEWS –I-0001-HP.
+//!				3.Validate that the contact items in the view meet the view filter criteria i.e. check that the view contacts contains the desired view filter.
+//! @SYMTestExpectedResults 	It is possible to create a filtered view and access the same.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 600 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_17
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini createfilteredviewonremoteview
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0017-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0019-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0019-HP
+//! @SYMTestCaseDesc 		OOM tests for the Filtered View
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Run all filtered view related tests listed under 3.3.1 to 3.3.4 under OOM Conditions.
+//! @SYMTestExpectedResults 	Under OOM conditions, Find view related operations  leave with KErrNoMemory.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 600 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_19
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini createviews_19
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0019-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0020-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0020-HP
+//! @SYMTestCaseDesc 		Create and access a group view over an existing local view.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a Group view over an existing local view by specifying valid Group type criteria.
+//!				2.Carry out the basic view operations specified in APPENG-CONTACTS-VIEWS –I-0001-HP.
+//!				3.Validate that the contact items in the group view meet the group type criteria i.e. check that the view contacts are of desired group type.
+//! @SYMTestExpectedResults 	It is possible to create a group view over an existing local view and carry out basic view operations
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_20
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini creategroupview
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0020-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0022-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0022-HP
+//! @SYMTestCaseDesc 		Create and access a group view over an existing remote view.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a group view on a existing remote view by specifying a valid group type criteria 
+//!				2.Carry out the basic operations specified in APPENG-CONTACTS-VIEWS-I-0001-HP.
+//!				3.Validate that the contact items in the group view meet the group type criteria.
+//! @SYMTestExpectedResults 	It is possible to create and access a group view built over an existing remote view.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_22
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini creategroupviewonremoteview
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0022-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0024-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0024-HP
+//! @SYMTestCaseDesc 		OOM tests for the Group View
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Run all group view related tests listed under 3.3.1 to 3.3.4 under OOM Conditions.
+//! @SYMTestExpectedResults 	Under OOM conditions, group view related operations leave with KErrNoMemory
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_24
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini createviews7
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0024-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0025-HP-0001
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0025-HP-0001
+//! @SYMTestCaseDesc 		Create and access a sub view
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a Sub view on the existing local view by specifying valid boundary conditions.
+//!				2.Carry out the basic view operations specified in APPENG-CONTACTS-VIEWS-I-0001-HP.
+//!				3.Validate that the contact items in the group view meet the boundary criteria.
+//! @SYMTestExpectedResults 	It is possible to create and access a sub view
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_25
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini createsubviewonlocalview
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0025-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0027-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0027-HP
+//! @SYMTestCaseDesc 		Create and access a sub view based on existing remote view
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a Sub view on the existing remote view by specifying a valid boundary 
+//!				2.Validate the view elements.
+//! @SYMTestExpectedResults 	It is possible to construct and access a sub view over a remote view.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_27
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini createsubviewonremoteview
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0027-HP
+
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0029-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0029-HP
+//! @SYMTestCaseDesc 		OOM tests for the Sub View
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Run all sub view related tests listed under 3.3.1 to 3.3.4 under OOM Conditions.
+//! @SYMTestExpectedResults 	Under OOM conditions, sub view related operations leave with KErrNoMemory
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_29
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini createviews_29
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0029-HP
+
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0030-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0030-HP
+//! @SYMTestCaseDesc 		Construct a Concatenated view
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a Concatenated view over multiple existing views.
+//!				2. verify and validate whether the concatenated view is constructed properly
+//! @SYMTestExpectedResults 	View is constructed successfuly
+//! @SYMTestType 		CIT
+
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_30
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini concatenatedview
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0030-HP
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0031-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0031-HP
+//! @SYMTestCaseDesc 		User defined sort plug-in 
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a Contact local or remote and named local view.
+//!				2. During view construction, specify a user-defined sort plug-in 
+//!				3. Validate that the view is sorted as per the user defined sort plug-in by checking the order of the contact-ids in the view i.e. the indices of the contact ids in the view must meet the sort plug-in criteria.
+//! @SYMTestExpectedResults 	It is possible to perform construct a contacts local or remote and named local view sorted as per user defined sort plug-in
+//! @SYMTestType 		CIT
+
+
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep c:\cntviewtest\configs\TestContactViewSuite.ini localviewswithuserdefinesortplugin
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0031-HP
+
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0032-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0032-HP
+//! @SYMTestCaseDesc 		Default sort plug-in not available
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a Contacts local view or remote view or named remote view.
+//!				2. During view construction, don’t specify any sort plug-in.
+//!				3. At the same time, the default sort plug-must not be available.
+//!				4. Validate that the view is sorted by checking the order of the contact-ids in the view
+//!				i.e. the indices of the contact ids in the view must be sorted using CContactViewBase::CompareFieldsL()
+//!				which uses TDesC::CompareC().
+//! @SYMTestExpectedResults 	It is possible to construct a contacts local view or remote view or named local view, 
+//!				when the default sort plug-in is unavailable.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep c:\cntviewtest\configs\TestContactViewSuite.ini localviewswithdefaultsortplugin
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0032-HP
+
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0033-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0033-HP
+//! @SYMTestCaseDesc 		Empty descriptor as sort plug-in 
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a Contact local or remote or named remote view.
+//!				2. During view construction, specify a Null Descriptor as sort plug-in name.
+//!				3. Validate that the view is sorted by checking the order of the contact-ids in the view i.e.
+//!				the indices of the contact ids in the view must meet the built-in sort criteria which is based on 
+//!				TDesC::CompareC() behaviour.
+//! @SYMTestExpectedResults 	It is possible to construct a contact local or remote or named remote view by specifying an empty descriptor as the sort plug-in name.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep c:\cntviewtest\configs\TestContactViewSuite.ini localviewswithemptysortplugin
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0033-HP
+
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0034-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0034-HP
+//! @SYMTestCaseDesc 		Default sort plug-in not available
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a Contacts local view or remote view or named remote view.
+//!				2. During view construction, don’t specify any sort plug-in.
+//!				3. At the same time, the default sort plug-must not be available.
+//!				4. Validate that the view is sorted by checking the order of the contact-ids in the view
+//!				i.e. the indices of the contact ids in the view must be sorted using CContactViewBase::CompareFieldsL()
+//!				which uses TDesC::CompareC().
+//! @SYMTestExpectedResults 	It is possible to construct a contacts local view or remote view or named local view, 
+//!				when the default sort plug-in is unavailable.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP !Error=-1 300 CntPerfTestServer TestContactViewAccessStep c:\cntviewtest\configs\TestContactViewSuite.ini localviewswithinvalidplugin
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0034-HP
+
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0036-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0036-HP
+//! @SYMTestCaseDesc 		Contact views operation under low disk conditions
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct multiple contact views.
+//!				2. Set the file system to throw KErrDiskFull using RFs::SetErrorCondition API.
+//!				3. Access the contact views as per 3.1.2.
+//!				4. Validate the contact view access results i.e. it is perfectly valid if the contact 
+//!				view access which further requires disk access fails with KErrDiskFull, But there should not 
+//!				be any invalid error codes or panics as a result of contact view access under low disk conditions.
+//! @SYMTestExpectedResults 	Contact View access that involves disk access should fail none other than KErrDiskFull error
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep c:\cntviewtest\configs\TestContactViewSuite.ini lowdiskcondition
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0036-HP
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0037-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0037-HP
+//! @SYMTestCaseDesc 		Test contact view operations with media not in place.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct multiple contact views.
+//!				2.Set the file system to throw KErrNotReady using RFs::SetErrorCondition API.
+//!				3.Access the contact views as per 4.1.1.1.
+//!				4.Validate the contact view access results i.e. it is perfectly valid if the contact view access which requires disk access fails with KErrNotReady, but there should not be any invalid error codes or panics as a result of contact view access when the media is not present.
+//! @SYMTestExpectedResults 	Contact View access that involves disk access should fail with none other than KErrNotReady error, when the media doesn’t exist.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep c:\cntviewtest\configs\TestContactViewSuite.ini disknotreadycondition
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0037-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0038-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0038-HP
+//! @SYMTestCaseDesc 		Multiple views over a local view
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct at least 5 dependent contact views over an existing local view.
+//!				2.These dependent views can be any of the following - group view, sub view, concatenated view, filtered view, find view
+//!				3.Validate the contact view count
+//! @SYMTestExpectedResults 	It is possible to have multiple views over a local view and access them.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_38
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini multipleviewonlocalview
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0038-HP
+
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0039-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0039-HP
+//! @SYMTestCaseDesc 		Multiple views over an existing remote view.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct at least 5 dependent contact views over an existing remote view.
+//!				2.These dependent views can be any of the following - group view, sub view, concatenated view, filtered view, find view.
+//!				3.Validate the contact view count
+//! @SYMTestExpectedResults 	It is possible to have multiple views over a remote view and access them.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_39
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini multipleviewonremoteview
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0039-HP
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0040-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0040-HP
+//! @SYMTestCaseDesc 		Allocate concurrent views and access the same
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Launch concurrent threads and construct all possible contact views in each individual thread.
+//!				2.Perform view and database related operations simultaneously in each thread.
+//!				3.Validate the results
+//! @SYMTestExpectedResults 	It should be possible to access multiple views in multiple threads concurrently.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_39
+
+CONCURRENT
+
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini concurrentviewsaccess1
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini concurrentviewsaccess2
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini concurrentviewsaccess3
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0040-HP
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0043-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0043-HP
+//! @SYMTestCaseDesc 		Pass valid index in the API and find all the fields of a contact item in the view.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a local view or group view or find view or filtered view or sub View.
+//!				2.After the view is constructed, find all the fields of the contact item in the view by passing the valid index in the API AllFieldsLC().
+//!				3.Verify if they are returned correctly by comparing it with the expected result that is passed from the ini file.
+//! @SYMTestExpectedResults 	All the fields of the contact item in the view are returned correctly
+//! @SYMTestType 		CIT
+
+CONSECUTIVE
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_43
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini findallfieldsincontact
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0043-HP
+
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0044-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0044-HP
+//! @SYMTestCaseDesc 		Pass invalid index and find all the fields in the view. 
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a local view or group view or find view or filtered view or Sub view.
+//!				2. After the view is constructed, Call the API AllFieldsLC() by passing the invalid index. 
+//! @SYMTestExpectedResults 	The API leaves with error code KErrNotFound.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_43
+RUN_TEST_STEP !Error=-1 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini createviews11
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0044-HP
+
+//this test case should only run for urel mode
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0045-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0045-HP
+//! @SYMTestCaseDesc 		Create a sub view and find all the fields of the contact item in the view.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a sub View. During construction, don’t specify the upper and lower boundaries.
+//!				2.After the view is constructed, find all the fields of the contact item by passing the valid index in the API AllFieldsLC(). 
+//! @SYMTestExpectedResults 	Fields are not returned instead a NULL descriptor is returned for urel builds and panic occurs for udeb builds.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_25
+RUN_TEST_STEP !Result=Fail 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini findallfieldsinsubview
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0045-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0046-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0046-HP
+//! @SYMTestCaseDesc 		Create any view and retrieve the contact item id present in the particular index of the view.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a sub View or find view or group view or filtered view or concatenated view. 
+//!				2.After the view is constructed, get the contact item Id in the view by passing the valid index in the API AtL().
+//!				3.Verify if the contact item id is retrieved correctly by comparing it with the expected result that is passed from the ini file.
+//! @SYMTestExpectedResults 	Contact item id in the view is retrieved correctly.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini getvalidcontactid
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0046-HP
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0047-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0047-HP
+//! @SYMTestCaseDesc 		Create any view and retrieve the contact item id present in the particular index of the view.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a sub View or find view or group view or filtered view or concatenated view. 
+//!				2.After the view is constructed, Call the API AtL() by passing the invalid index.
+//! @SYMTestExpectedResults 	The AtL () API leaves with error code KErrNotFound if the index is out of bounds or invalid.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_8
+RUN_TEST_STEP !Error=-1 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini getinvalidcontactid
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0047-HP
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0048-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0048-HP
+//! @SYMTestCaseDesc 		Create any view and retrieve the contact item present in the particular index of the view.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a sub View or find view or group view or filtered view or concatenated view. 
+//!				2.After the view is constructed, Get the contact item in the view by passing the valid index in the API ContactAtL().
+//!				3.Verify whether the contact item is retrieved correctly by comparing it with the expected result that is passed from the ini file.
+//! @SYMTestExpectedResults 	The contact item is retrieved correctly.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini getvalidcontactitem
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0048-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0049-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0049-HP
+//! @SYMTestCaseDesc 		Create any view and retrieve the contact item present in the particular index of the view.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a sub View or find view or group view or filtered view or concatenated view. 
+//!				2.After the view is constructed, Call the API ContactAtL () by passing the valid index.
+//! @SYMTestExpectedResults 	The API leaves with error code KErrNotFound if the index is out of bounds or invalid.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP !Error=-1 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini getcontactatinvalidindex
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0049-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0050-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0050-HP
+//! @SYMTestCaseDesc 		Get the number of contact items id present in the view.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a sub View or find view or group view or filtered view or concatenated view. 
+//!				2.After the view is constructed, get the number of contact item ids present in the view.
+//!				3.Verify whether the numbers of contacts returned are correct by comparing it with the expected result that is passed from the ini file.
+//! @SYMTestExpectedResults 	The numbers of contact item ids are returned correctly from the view.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_8
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini getnumberofcontactid
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0050-HP
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0051-HP-0001
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0051-HP-0001
+//! @SYMTestCaseDesc 		Pass the valid contact item Id and find the index of the contact item id in the view
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a sub View or find view or group view or filtered view or concatenated view. 
+//!				2.After the view is constructed, Find the index of the contact item in the view by passing the valid contact item id in the API FindL(). 
+//!				3.Verify if the index is retrieved correctly by comparing it with the expected result that is passed from the ini file.
+//! @SYMTestExpectedResults 	The index of the contact item Id is retrieved correctly.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini gettheindexofcontactid
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0051-HP-0001
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0052-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0052-HP
+//! @SYMTestCaseDesc 		Pass the invalid contact item Id and find the index of the contact item id in the view
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a sub View or find view or group view or filtered view or concatenated view. 
+//!				2.After the view is constructed, Call the API FindL() by passing the invalid contact item id. 
+//! @SYMTestExpectedResults 	The API will leave with error code KErrNotFound if an invalid contact item id is passed.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini gettheindexofinvalidcontactid
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0052-HP
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0053-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0053-HP
+//! @SYMTestCaseDesc 		Refine the find view criteria by appending some characters along with the search character used during construction.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a find view by passing a search string.
+//!				2. After the view is constructed, refine the find view by appending some more characters 
+//!				along with the search string that was used during construction.
+//!				3. Verify whether the find view is refined by retrieving the contact item and comparing it with
+//!				the expected result that is passed from the ini file.
+//! @SYMTestExpectedResults 	We should be able to refine the find view.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_53
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini refinefindview_53
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0053-HP
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0054-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0054-HP
+//! @SYMTestCaseDesc 		Refine the find view criteria with entirely new characters in the search criteria
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a find view by specifying the search string.
+//!				2. After the view is constructed, refine the find view by entirely replacing the search 
+//!				string with the new string.
+//!				3. Verify whether the find view is refined by retrieving the contact item and comparing it
+//!				with the expected result that is passed from the ini file.
+//! @SYMTestExpectedResults 	We should be able to refine the find view.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_54
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini refinefindview_54
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0054-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0055-HP-0001
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0055-HP-0001
+//! @SYMTestCaseDesc 		Get the underlying views sort order
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a find view or local view or group view or filtered view or concatenated view or sub view.
+//!				2.After the view is constructed, get the underlying view’s sort order.
+//!				3.Verify whether the sort order is retrieved correctly by comparing it with the expected result that is passed from the ini file.
+//! @SYMTestExpectedResults 	The sort order of the view is retrieved correctly.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_2
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini getsortorder
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0055-HP-0001
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0056-HP-0001
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0056-HP-0001
+//! @SYMTestCaseDesc 		Get the contact view preferences
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a find view or local view or group view or filtered view or concatenated view or sub view.
+//!				2.After the view is constructed, get the contact view preferences.
+//!				3.Verify whether the contact view preference is retrieved correctly by comparing it with the expected result that is passed from the ini file.
+//! @SYMTestExpectedResults 	The contact view’s preference is retrieved correctly.
+//! @SYMTestType 		CIT
+
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_2
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini getviewpreference
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0056-HP-0001
+
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0057-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0057-HP
+//! @SYMTestCaseDesc 		Construct a filter view and get the contacts matching the criteria.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a filter view.
+//!				2. After the view is constructed, retrieve the contacts matching the specified search string.
+//!				3. Verify whether the contacts are retrieved correctly by comparing it with the expected 
+//!				result that is passed from the ini file.
+//! @SYMTestExpectedResults 	The contacts matching the specified search string are retrieved correctly.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_57
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini createviews57
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0057-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0058-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0058-HP
+//! @SYMTestCaseDesc 		Construct a filter view and get the contacts matching the prefix
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a filter view.
+//!				2. After the view is constructed, retrieve the contacts where the prefix is matching with 
+//!				the specified search string.
+//!				3. Verify whether the contacts are retrieved correctly by comparing it with the expected result 
+//!				that is passed from the ini file.
+//! @SYMTestExpectedResults 	The contacts matching the prefix are retrieved correctly
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_57
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini createviews58
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0058-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0059-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0059-HP
+//! @SYMTestCaseDesc 		Construct a filter view and get the contacts matching the prefix
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a filter view.
+//!				2.After the view is constructed, Call the API ContactsMatchingPrefixL() where the search string does not match the prefix of the contact. 
+//!				3.Verify whether the contacts are retrieved correctly by comparing it with the expected result that is passed from the ini file.
+//! @SYMTestExpectedResults 	The contacts are not retrieved where the search string is not matching with the prefix.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_57
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini createviews59
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0059-HP
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0060-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0060-HP
+//! @SYMTestCaseDesc 		Test the View API’s before the view is ready
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a local view or group view or find view or filtered view or sub view or concatenated view.
+//!				2. Before the view is constructed i.e before the view gets ready, call the API’s FindL, AtL, 
+//!				ContactAtL and AllFieldsLC.
+//!				3. Verify if these API’s leave with proper error code.
+//! @SYMTestExpectedResults 	All the API’s leave with error code KErrNotReady
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP !Error=-18 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini createviews60
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0060-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0061-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0061-HP
+//! @SYMTestCaseDesc 		Construct any view where there are no contacts for the preferences specified in the API construction.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a local view or group view or find view or filtered view or sub view or concatenated view.
+//!				2.After the view is constructed, get the number of contact items by calling the API countL().
+//! @SYMTestExpectedResults 	The countL() API returns zero as there are no contacts matching the preferences.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini createviewwithinvalidpref
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0061-HP
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0062-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0062-HP
+//! @SYMTestCaseDesc 		Test view sort during Start-Up
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Add more than thousand contacts in the database i.e. contacts in the database must be in the order of 10000,3000 …. 5000.
+//!				2.Construct a local or remote or named remote view.
+//!				3.Specify the view preferences and the view sort order such that all the contacts in the database meet the criteria.
+//!				4.Check that the contact view elements are in expected sort order by validating that contacts view item indices are in the expected order, specified in the ini file.
+//! @SYMTestExpectedResults 	The contact view elements are sorted as per expected order
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_62
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini mergesortorder
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0062-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0063-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0063-HP
+//! @SYMTestCaseDesc 		Test view sort during resort
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Add more than thousand contacts in the database i.e. contacts in the database must be in the order of 10000,3000 …. 5000.
+//!				2.Construct a named remote view.
+//!				3.Specify the view preferences and the view sort order such that all the contacts in the database meet the criteria.
+//!				4.Check that the contact view elements are in expected sort order by validating that contacts view item indices are in the expected order, specified in the ini file.
+//!				5.Now change the sort order using ChangeSortOrderL() Api
+//!				6.Check that the updated contact view elements are in expected sort order by validating that contacts view item indices are in the expected order, specified in the ini file.
+//! @SYMTestExpectedResults 	The contact view elements are sorted as per expected order
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 300 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewSuite.ini preparedata_63
+RUN_TEST_STEP 300 CntPerfTestServer TestContactViewAccessStep C:\Cntviewtest\configs\TestContactViewSuite.ini sortorderduringresort
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0063-HP
+
+PRINT Completed TestCalInterimApi_Tests
+

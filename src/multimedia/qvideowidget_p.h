@@ -207,6 +207,10 @@ public:
     void moveEvent(QMoveEvent *event);
     void paintEvent(QPaintEvent *event);
 
+#if defined(Q_WS_WIN)
+    bool winEvent(MSG *message, long *result);
+#endif
+
 private:
     QMediaService *m_service;
     QVideoWindowControl *m_windowControl;

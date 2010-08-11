@@ -43,14 +43,13 @@
 #include "qserviceplugininterface.h"
 #include "qabstractsecuritysession.h"
 #include "qserviceinterfacedescriptor_p.h"
-#ifdef Q_OS_SYMBIAN
+
+#if defined(Q_OS_SYMBIAN)
     #include "qremoteservicecontrol_s60_p.h"
-#else
-    #include "qremoteservicecontrol_p.h"
-/*#elif QT_NO_DBUS
+#elif defined(QT_NO_DBUS)
     #include "qremoteservicecontrol_p.h"
 #else
-    #include "qremoteservicecontrol_dbus_p.h"*/
+    #include "qremoteservicecontrol_dbus_p.h"
 #endif
 
 #ifdef Q_OS_SYMBIAN
@@ -68,7 +67,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-
 static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
 {
     if (QFile::exists(libNameOrPath))
@@ -81,7 +79,7 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
 #endif
     for (int i=0; i<paths.count(); i++) {
         QString libPath = QDir::toNativeSeparators(paths[i]) + QDir::separator() + libNameOrPath;
-        
+
 #ifdef Q_OS_SYMBIAN
         QFileInfo fi(libPath);
         if (fi.suffix() == QLatin1String("dll"))
@@ -300,6 +298,7 @@ QServiceManager::QServiceManager(QObject *parent)
     : QObject(parent),
       d(new QServiceManagerPrivate(this))
 {
+    qRegisterMetaType<QService::UnrecoverableIPCError>("QService::UnrecoverableIPCError");
     d->scope = QService::UserScope;
 }
 

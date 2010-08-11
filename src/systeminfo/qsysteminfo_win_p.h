@@ -175,12 +175,12 @@ public:
     int displayBrightness(int screen);
     int colorDepth(int screen);
 
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-    float contrast(int screen);
-    int getDPIWidth(int screen);
-    int getDPIHeight(int screen);
-    int physicalHeight(int screen);
-    int physicalWidth(int screen);
+//     QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+//     float contrast(int screen);
+//     int getDPIWidth(int screen);
+//     int getDPIHeight(int screen);
+//     int physicalHeight(int screen);
+//     int physicalWidth(int screen);
 };
 
 class QSystemStorageInfoPrivate : public QObject
@@ -197,12 +197,15 @@ public:
     QStringList logicalDrives();
     QTM_PREPEND_NAMESPACE(QSystemStorageInfo::DriveType) typeForDrive(const QString &driveVolume);
 
+public Q_SLOTS:
+    void notificationArrived();
+
 private:
-    QHash<QString, QString> mountEntriesHash;
+    QMap<QString, QString> mountEntriesMap;
     void mountEntries();
 
 Q_SIGNALS:
-    void logicalDrivesChanged(bool);
+    void logicalDriveChanged(bool,const QString&);
 
 };
 

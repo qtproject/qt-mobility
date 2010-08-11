@@ -43,7 +43,13 @@
 #define PROXY_OBJECT_H
 
 #include "qmobilityglobal.h"
-#include "objectendpoint_p.h"
+
+#ifdef QT_NO_DBUS
+    #include "objectendpoint_p.h"
+#else
+    #include "objectendpoint_dbus_p.h"
+#endif
+
 #include <QObject>
 
 QTM_BEGIN_NAMESPACE
@@ -66,6 +72,7 @@ public:
 
 private:
     QServiceProxyPrivate* d;
+    QVector<bool> localSignals;
 };
 
 

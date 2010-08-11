@@ -40,8 +40,14 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
     system(echo MOBILITY_LIB=$${QT_MOBILITY_LIB} >> $$PRF_OUTPUT)
 
     unix:!symbian:system(cat $${QT_MOBILITY_SOURCE_TREE}/features/mobility.prf.template >> $$PRF_OUTPUT)
-    win32:system(type $${QT_MOBILITY_SOURCE_TREE}\features\mobility.prf.template >> $$PRF_OUTPUT)
-    symbian:system(type $${QT_MOBILITY_SOURCE_TREE}\features\mobility.prf.template >> $$PRF_OUTPUT)
+    win32 {
+        nativePath=$$replace(QT_MOBILITY_SOURCE_TREE,/,\\)
+        system(type $${nativePath}\\features\\mobility.prf.template >> $$PRF_OUTPUT)
+    }
+    symbian {
+        nativePath=$$replace(QT_MOBILITY_SOURCE_TREE,/,\\)
+        system(type $${nativePath}\\features\\mobility.prf.template >> $$PRF_OUTPUT)
+    }
 
     PRF_CONFIG=$${QT_MOBILITY_BUILD_TREE}/features/mobilityconfig.prf
     system(echo MOBILITY_CONFIG=$${mobility_modules} > $$PRF_CONFIG)
@@ -52,10 +58,11 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
 
     #symbian does not generate make install rule. we have to copy prf manually 
     symbian {
-        FORMATDIR=$$[QT_INSTALL_DATA]\mkspecs\features
-        FORMATDIR=$$replace(FORMATDIR,/,\\ )
-        system(copy "$${QT_MOBILITY_BUILD_TREE}\features\mobility.prf $$FORMATDIR")
-        system(copy "$${QT_MOBILITY_BUILD_TREE}\features\mobilityconfig.prf $$FORMATDIR")
+        nativePath=$$replace(QT_MOBILITY_BUILD_TREE,/,\\)
+        FORMATDIR=$$[QT_INSTALL_DATA]\\mkspecs\\features
+        FORMATDIR=$$replace(FORMATDIR,/,\\)
+        system(copy "$${nativePath}\\features\\mobility.prf $$FORMATDIR")
+        system(copy "$${nativePath}\\features\\mobilityconfig.prf $$FORMATDIR")
     }
 
     # install config file
@@ -97,6 +104,10 @@ contains(build_docs, yes):SUBDIRS+=demos
 # install Qt style headers
 
 !symbian {
+    qtmheadersglobal.path = $${QT_MOBILITY_INCLUDE}/QtMobility
+    qtmheadersglobal.files = $${QT_MOBILITY_BUILD_TREE}/include/QtMobility/*
+    INSTALLS += qtmheadersglobal
+
     contains(mobility_modules,bearer) {
         qtmheadersbearer.path = $${QT_MOBILITY_INCLUDE}/QtBearer
         qtmheadersbearer.files = $${QT_MOBILITY_BUILD_TREE}/include/QtBearer/*
@@ -156,11 +167,48 @@ contains(build_docs, yes):SUBDIRS+=demos
         qtmheaderssensors.files = $${QT_MOBILITY_BUILD_TREE}/include/QtSensors/*
         INSTALLS += qtmheaderssensors
     }
+
+    contains(mobility_modules,organizer) {
+        qtmheadersorganizer.path = $${QT_MOBILITY_INCLUDE}/QtOrganizer
+        qtmheadersorganizer.files = $${QT_MOBILITY_BUILD_TREE}/include/QtOrganizer/*
+        INSTALLS += qtmheadersorganizer
+    }
+
+    contains(mobility_modules,telephony) {
+        qtmheaderstelephony.path = $${QT_MOBILITY_INCLUDE}/QtTelephony
+        qtmheaderstelephony.files = $${QT_MOBILITY_BUILD_TREE}/include/QtTelephony/*
+        INSTALLS += qtmheaderstelephony
+    }
+
+    contains(mobility_modules,feedback) {
+        qtmheadersfeedback.path = $${QT_MOBILITY_INCLUDE}/QtFeedback
+        qtmheadersfeedback.files = $${QT_MOBILITY_BUILD_TREE}/include/QtFeedback/*
+        INSTALLS += qtmheadersfeedback
+    }
+
+    contains(mobility_modules,gallery) {
+        qtmheadersgallery.path = $${QT_MOBILITY_INCLUDE}/QtGallery
+        qtmheadersgallery.files = $${QT_MOBILITY_BUILD_TREE}/include/QtGallery/*
+        INSTALLS += qtmheadersgallery
+    }
 } else {
     #absolute path does not work and 
     #include <QtMyLibrary/class.h> style does not work either
+    qtmGlobalHeaders = include/QtMobility/*
+    for(api, qtmGlobalHeaders) {
+        INCLUDEFILES=$$files($$api);
+        #files() attaches a ';' at the end which we need to remove
+        cleanedFiles=$$replace(INCLUDEFILES, ;,)
+        for(header, cleanedFiles) {
+            exists($$header):
+                BLD_INF_RULES.prj_exports += "$$header $$MW_LAYER_PUBLIC_EXPORT_PATH($$basename(header))"
+        }
+    }
+
+
     qtmAppHeaders = include/QtContacts/* \
-                          include/QtVersit/*
+                       include/QtVersit/* \
+                       include/Organizer/*
 
     qtmMwHeaders = include/QtBearer/* \
                        include/QtLocation/* \
@@ -169,9 +217,12 @@ contains(build_docs, yes):SUBDIRS+=demos
                        include/QtPublishSubscribe/* \
                        include/QtServiceFramework/* \
                        include/QtSystemInfo/* \
-                       include/QtSensors/*
+                       include/QtSensors/* \
+                       include/QtTelephony/* \
+                       include/QtFeedback/* \
+                       include/QtGallery/*
 
-    contains(mobility_modules,contacts|versit) {
+    contains(mobility_modules,contacts|versit|organizer) {
         for(api, qtmAppHeaders) {
             INCLUDEFILES=$$files($$api);
             #files() attaches a ';' at the end which we need to remove
@@ -183,7 +234,7 @@ contains(build_docs, yes):SUBDIRS+=demos
         }
     }
 
-    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging) {
+    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging|telephony|feedback|sensors|gallery) {
         for(api, qtmMwHeaders) {
             INCLUDEFILES=$$files($$api);
             #files() attaches a ';' at the end which we need to remove

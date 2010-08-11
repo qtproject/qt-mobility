@@ -3,13 +3,11 @@
     INCLUDEPATH += $${MOBILITY_INCLUDE}
 } else {
     load(data_caging_paths)
-    contains(MOBILITY, contacts|versit) {
+    contains(MOBILITY, contacts|versit|organizer) {
         INCLUDEPATH+=$$APP_LAYER_SYSTEMINCLUDE
     }
 
-    contains(MOBILITY,bearer|location|publishsubscribe|systeminfo|multimedia|messaging|serviceframework|sensors) {
-        INCLUDEPATH+=$$MW_LAYER_SYSTEMINCLUDE
-    }
+    INCLUDEPATH+=$$MW_LAYER_SYSTEMINCLUDE
 }
 mac: LIBS += -F$${MOBILITY_LIB}
 
@@ -17,6 +15,11 @@ LIBS+= -L$${MOBILITY_LIB}
 QMAKE_RPATHDIR+=$${MOBILITY_LIB}
 
 simulator: qtAddLibrary(QtMobilitySimulator)
+
+# versit depends on contacts and organizer
+contains(MOBILITY, versit) {
+    MOBILITY += contacts organizer
+}
 
 contains(MOBILITY, bearer) {
     DEFINES += QT_MOBILITY_BEARER
@@ -27,6 +30,9 @@ contains(MOBILITY, bearer) {
         message(Please use source compatible replacement Bearer API in QtNetwork.)
     }
 }
+
+#for includes from src/global
+INCLUDEPATH += $${MOBILITY_INCLUDE}/QtMobility
 
 contains(MOBILITY, publishsubscribe) {
     INCLUDEPATH += $${MOBILITY_INCLUDE}/QtPublishSubscribe
@@ -73,9 +79,29 @@ contains(MOBILITY, versit) {
     qtAddLibrary(QtVersit)
 }
 
+contains(MOBILITY, telephony) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtTelephony
+    qtAddLibrary(QtTelephony)
+}
+
 contains(MOBILITY, sensors) {
     INCLUDEPATH += $${MOBILITY_INCLUDE}/QtSensors
     qtAddLibrary(QtSensors)
+}
+
+contains(MOBILITY, feedback) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtFeedback
+    qtAddLibrary(QtFeedback)
+}
+
+contains(MOBILITY, gallery) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtGallery
+    qtAddLibrary(QtGallery)
+}
+
+contains(MOBILITY, organizer) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtOrganizer
+    qtAddLibrary(QtOrganizer)
 }
 
 # Add dependency to QtMobility package to all projects besides QtMobility package itself.
@@ -87,4 +113,3 @@ symbian:contains(CONFIG, mobility):!contains(TARGET.UID3, 0x2002AC89):!contains(
         "(0x2002AC89), 1, 1, 0, {\"QtMobility\"}"
     DEPLOYMENT += mobility_default_deployment
 }
-

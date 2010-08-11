@@ -86,7 +86,7 @@ class GConfItem : public QObject
 {
     Q_OBJECT
 
- public:
+public:
     /*! Initializes a GConfItem to access the GConf key denoted by
         \a key.  Key names should follow the normal GConf conventions
         like "/myapp/settings/first".
@@ -151,12 +151,12 @@ class GConfItem : public QObject
     */
     QList<QString> listEntries() const;
 
- signals:
+signals:
     /*! Emitted when the value of this item has changed.
      */
     void valueChanged();
 
- private:
+private:
     friend struct GConfItemPrivate;
     struct GConfItemPrivate *priv;
 

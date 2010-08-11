@@ -46,6 +46,7 @@
 
 #include <qmediaobject_p.h>
 #include <qcameraexposurecontrol.h>
+#include <qcameraflashcontrol.h>
 #include <qmetaobject.h>
 
 QT_BEGIN_NAMESPACE
@@ -82,6 +83,7 @@ public:
 
     QCamera *camera;
     QCameraExposureControl *exposureControl;
+    QCameraFlashControl *flashControl;
 
     void _q_exposureParameterChanged(int parameter);
     void _q_exposureParameterRangeChanged(int parameter);
@@ -95,15 +97,17 @@ void QCameraExposurePrivate::initControls()
     exposureControl = 0;
     if (service)
         exposureControl = qobject_cast<QCameraExposureControl *>(service->requestControl(QCameraExposureControl_iid));
+        flashControl = qobject_cast<QCameraFlashControl *>(service->requestControl(QCameraFlashControl_iid));
 
     if (exposureControl) {
-        q->connect(exposureControl, SIGNAL(flashReady(bool)), q, SIGNAL(flashReady(bool)));
-
         q->connect(exposureControl, SIGNAL(exposureParameterChanged(int)),
                    q, SLOT(_q_exposureParameterChanged(int)));
         q->connect(exposureControl, SIGNAL(exposureParameterRangeChanged(int)),
                    q, SLOT(_q_exposureParameterRangeChanged(int)));
     }
+
+    if (flashControl)
+        q->connect(flashControl, SIGNAL(flashReady(bool)), q, SIGNAL(flashReady(bool)));
 }
 
 void QCameraExposurePrivate::_q_exposureParameterChanged(int parameter)
@@ -183,7 +187,7 @@ bool QCameraExposure::isAvailable() const
 
 QCameraExposure::FlashModes QCameraExposure::flashMode() const
 {
-    return d_func()->exposureControl ? d_func()->exposureControl->flashMode() : QCameraExposure::FlashOff;
+    return d_func()->flashControl ? d_func()->flashControl->flashMode() : QCameraExposure::FlashOff;
 }
 
 /*!
@@ -196,8 +200,8 @@ QCameraExposure::FlashModes QCameraExposure::flashMode() const
 
 void QCameraExposure::setFlashMode(QCameraExposure::FlashModes mode)
 {
-    if (d_func()->exposureControl)
-        d_func()->exposureControl->setFlashMode(mode);
+    if (d_func()->flashControl)
+        d_func()->flashControl->setFlashMode(mode);
 }
 
 /*!
@@ -206,7 +210,7 @@ void QCameraExposure::setFlashMode(QCameraExposure::FlashModes mode)
 
 bool QCameraExposure::isFlashModeSupported(QCameraExposure::FlashModes mode) const
 {
-    return d_func()->exposureControl ? d_func()->exposureControl->isFlashModeSupported(mode) : false;
+    return d_func()->flashControl ? d_func()->flashControl->isFlashModeSupported(mode) : false;
 }
 
 /*!
@@ -215,7 +219,7 @@ bool QCameraExposure::isFlashModeSupported(QCameraExposure::FlashModes mode) con
 
 bool QCameraExposure::isFlashReady() const
 {
-    return d_func()->exposureControl ? d_func()->exposureControl->isFlashReady() : false;
+    return d_func()->flashControl ? d_func()->flashControl->isFlashReady() : false;
 }
 
 
@@ -317,21 +321,14 @@ int QCameraExposure::isoSensitivity() const
 */
 QList<int> QCameraExposure::supportedIsoSensitivities(bool *continuous) const
 {
-    bool localContinuousValue = false;
-
-    if (!continuous)
-        continuous = &localContinuousValue;
-
-    *continuous = false;
-
     QList<int> res;
+    QCameraExposureControl *control = d_func()->exposureControl;
 
-    if (!d_func()->exposureControl)
+    if (!control)
         return res;
 
     foreach (const QVariant &value,
-             d_func()->exposureControl->supportedParameterRange(QCameraExposureControl::ISO,
-                                                                continuous)) {
+             control->supportedParameterRange(QCameraExposureControl::ISO)) {
         bool ok = false;
         int intValue = value.toInt(&ok);
         if (ok)
@@ -339,6 +336,10 @@ QList<int> QCameraExposure::supportedIsoSensitivities(bool *continuous) const
         else
             qWarning() << "Incompatible ISO value type, int is expected";
     }
+
+    if (continuous)
+        *continuous = control->exposureParameterFlags(QCameraExposureControl::ISO) &
+                      QCameraExposureControl::ContinuousRange;
 
     return res;
 }
@@ -408,21 +409,14 @@ qreal QCameraExposure::aperture() const
 */
 QList<qreal> QCameraExposure::supportedApertures(bool * continuous) const
 {
-    bool localContinuousValue = false;
-
-    if (!continuous)
-        continuous = &localContinuousValue;
-
-    *continuous = false;
-
     QList<qreal> res;
+    QCameraExposureControl *control = d_func()->exposureControl;
 
-    if (!d_func()->exposureControl)
+    if (!control)
         return res;
 
     foreach (const QVariant &value,
-             d_func()->exposureControl->supportedParameterRange(QCameraExposureControl::Aperture,
-                                                                continuous)) {
+             control->supportedParameterRange(QCameraExposureControl::Aperture)) {
         bool ok = false;
         qreal realValue = value.toReal(&ok);
         if (ok)
@@ -430,6 +424,10 @@ QList<qreal> QCameraExposure::supportedApertures(bool * continuous) const
         else
             qWarning() << "Incompatible aperture value type, qreal is expected";
     }
+
+    if (continuous)
+        *continuous = control->exposureParameterFlags(QCameraExposureControl::Aperture) &
+                      QCameraExposureControl::ContinuousRange;
 
     return res;
 }
@@ -474,21 +472,14 @@ qreal QCameraExposure::shutterSpeed() const
 */
 QList<qreal> QCameraExposure::supportedShutterSpeeds(bool *continuous) const
 {
-    bool localContinuousValue = false;
-
-    if (!continuous)
-        continuous = &localContinuousValue;
-
-    *continuous = false;
-
     QList<qreal> res;
 
-    if (!d_func()->exposureControl)
+    QCameraExposureControl *control = d_func()->exposureControl;
+    if (!control)
         return res;
 
     foreach (const QVariant &value,
-             d_func()->exposureControl->supportedParameterRange(QCameraExposureControl::ShutterSpeed,
-                                                                continuous)) {
+             control->supportedParameterRange(QCameraExposureControl::ShutterSpeed)) {
         bool ok = false;
         qreal realValue = value.toReal(&ok);
         if (ok)
@@ -496,6 +487,10 @@ QList<qreal> QCameraExposure::supportedShutterSpeeds(bool *continuous) const
         else
             qWarning() << "Incompatible shutter speed value type, qreal is expected";
     }
+
+    if (continuous)
+        *continuous = control->exposureParameterFlags(QCameraExposureControl::ShutterSpeed) &
+                      QCameraExposureControl::ContinuousRange;
 
     return res;
 }
@@ -552,6 +547,7 @@ void QCameraExposure::setAutoShutterSpeed()
     \value ExposureLargeAperture Use larger aperture with small depth of field.
     \value ExposureSmallAperture Use smaller aperture.
     \value ExposurePortrait      Portrait exposure mode.
+    \value ExposureModeVendor    The base value for device specific exposure modes.
 */
 
 /*!

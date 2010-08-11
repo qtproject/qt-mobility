@@ -67,8 +67,11 @@ QString QMLContactDetailField::key() const
 QVariant QMLContactDetailField::value() const
 {
     if (m_map) {
-        qWarning() <<  "key:" << m_key << "value:" << m_map->value(m_key);
-        return m_map->value(m_key);
+        QVariant v =  m_map->value(m_key);
+        if (v.canConvert<QVariantList>()) {
+            return v.toStringList().join(",");
+        }
+        return v;
     }
     return QVariant();
 }

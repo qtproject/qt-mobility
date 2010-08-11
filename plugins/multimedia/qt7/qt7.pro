@@ -13,6 +13,8 @@ include (../../../common.pri)
 CONFIG += mobility
 MOBILITY = multimedia
 
+#DEFINES += QT_DEBUG_QT7
+
 LIBS += -framework AppKit -framework AudioUnit \
         -framework AudioToolbox -framework CoreAudio \
         -framework QuartzCore -framework QTKit
@@ -33,20 +35,12 @@ DEPENDPATH += .
 
 HEADERS += \
     qt7backend.h \
-    qt7playercontrol.h \
     qt7videooutput.h \
-    qt7playersession.h \
-    qt7playerservice.h \
-    qt7serviceplugin.h \
-    qt7playermetadata.h
+    qt7serviceplugin.h
 
 OBJECTIVE_SOURCES += \
     qt7backend.mm \
-    qt7playersession.mm \
-    qt7serviceplugin.mm \
-    qt7playermetadata.mm \
-    qt7playercontrol.mm \
-    qt7playerservice.mm
+    qt7serviceplugin.mm
 
 !simulator {
     HEADERS += \
@@ -66,3 +60,5 @@ OBJECTIVE_SOURCES += \
         qt7ciimagevideobuffer.mm \
         qcvdisplaylink.mm
 }
+
+include(mediaplayer/mediaplayer.pri)

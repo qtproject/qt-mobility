@@ -133,3 +133,5 @@ QAudioSystemPlugin::~QAudioSystemPlugin()
 
 
 QT_END_NAMESPACE
+
+#include "moc_qaudiosystemplugin.cpp"

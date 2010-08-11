@@ -53,7 +53,7 @@ class QSystemStorageInfoPrivate;
 class  Q_SYSINFO_EXPORT QSystemStorageInfo : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QStringList logicalDrives READ logicalDrives NOTIFY logicalDrivesChanged)
+    Q_PROPERTY(QStringList logicalDrives READ logicalDrives NOTIFY logicalDriveChanged)
     Q_ENUMS(DriveType)
 
 public:
@@ -76,8 +76,7 @@ public:
     Q_INVOKABLE QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
 Q_SIGNALS:
-    void logicalDrivesChanged(bool added);
-//    void storageRemoved(/*const QString &driveVolume*/);
+    void logicalDriveChanged(bool added,const QString &vol);
 
 private:
        QSystemStorageInfoPrivate *d;

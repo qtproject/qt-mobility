@@ -25,6 +25,7 @@
 **
 ****************************************************************************/
 
+
 /*!
     \group servicefw
     \title Service Frameworks Classes
@@ -88,7 +89,7 @@ QMetaObject system can be used to dynamically discover and invoke the
 service's capabilities.
 To achieve the best level of access via the Qt meta object system services
 should be implemented in such a way that their entire functionality is
-accessable via the signals, slots, properties or invokable functions
+accessible via the signals, slots, properties or invokable functions
 (see Q_INVOKABLE macro for more details).
 
 Each service plug-in implements one service only but can provide multiple
@@ -99,8 +100,12 @@ a new interface name has to be used. Existing clients can still use the
 previous version of service interface whereas new clients can utilize the
 new interface. 
 
-Future versions of this framework may also enable access to out-of-process
-service provider. 
+Services can also include remote processes.  By registering with the
+service manager processes can communicate via signals, slots,
+invokable functions and properties as if they were local objects.
+Services can choose to be either be shared between all clients, or
+unique to that client.
+
 
 \section1 Using the Framework
 
@@ -154,7 +159,7 @@ or whether it is valid for the current user only. The system default is used if 
 scope has not been defined. This enables users to customize their personal preferences.
 By default the first service installing a so far unknown interface becomes the system wide default selection.
 
-\section3 QObject based services
+\section3 \bold{QObject based services}
 
 This is the most common way of interacting with services.
 
@@ -168,7 +173,7 @@ The above invocation of the file storage object's deleteFile() function is done 
 QMetaObject. The client does not require any knowledge of the objects actual type and therefore
 does not have to link against a service specific library.
 
-\section3 Typed services
+\section3 \bold{Typed services}
 
 So far all lookup mechanism returned a QObject pointer. This pointer can be
 utilized by introspecting the object, using Qt's meta object system.
@@ -433,12 +438,25 @@ version 1.0 and version 1.1.  In this case the old service implementation
 must be first be removed using QServiceManager::removeService() to make
 way for the new service implementation.
 
+\section2 Out of process Services
+
+Out of process services behave similarly to local services, with one
+exception.  There can be IPC errors, or the remote service can
+terminate unexpectedly.  QObjects returned by the service manager for
+out of process services have an additional signal created,
+errorUnrecoverableIPCFault(QService::UnrecoverableIPCError) which the
+client must connect to.  If an error occurs the object must be
+destroyed; no further calls can be made.  The error recovery is left up to
+the client application.
+
+
 \section1 Examples
 
 \list
     \o \l{File Manager Plugin Example}
     \o \l{Bluetooth Transfer Plugin Example}
     \o \l{Service Browser Example}
+    \o \l{Service Framework Echo Example}
 \endlist
 
 

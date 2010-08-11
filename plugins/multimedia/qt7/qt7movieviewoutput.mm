@@ -179,7 +179,9 @@ void QT7MovieViewOutput::setupVideoOutput()
 {
     AutoReleasePool pool;
 
-    //qDebug() << "QT7MovieViewOutput::setupVideoOutput" << m_movie << m_winId;
+#ifdef QT_DEBUG_QT7
+    qDebug() << "QT7MovieViewOutput::setupVideoOutput" << m_movie << m_winId;
+#endif
     if (m_movie == 0 || m_winId <= 0)
         return;
 

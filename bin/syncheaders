@@ -88,6 +88,7 @@ sub processFile
 
         while (<INPUT>) {
             if ( /^\s*class\s+.*_EXPORT\s+([^\s:]+)/ ||
+                 /^\/\/\s*QTM_SYNC_HEADER_EXPORT\s+([^\s:]+)/ ||
                  ($allow_non_exported && /^\s*class\s+([^\s:<]+)/ && index($_, ";") == -1) ||
                  /syncqtopia\s+header\s+([^\s:]+)/ )
             {

@@ -79,6 +79,10 @@ tst_qnmeapositioninfosource_realtime_generic.exe
 tst_qnmeapositioninfosource_simulation.exe
 tst_qnmeapositioninfosource_simulation_generic.exe
 
+::Landmarks
+tst_qlandmark.exe
+tst_qlandmarkcategory.exe
+
 ::Publish and Subscribe
 tst_qvaluespace.exe
 tst_qvaluespaceprovider.exe

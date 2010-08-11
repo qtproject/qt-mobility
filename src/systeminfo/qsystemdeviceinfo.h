@@ -152,6 +152,9 @@ Q_SIGNALS:
 
 private:
     QSystemDeviceInfoPrivate *d;
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QSystemDeviceInfo::InputMethodFlags )

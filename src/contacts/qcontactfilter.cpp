@@ -41,6 +41,7 @@
 
 #include "qcontactfilter.h"
 #include "qcontactfilter_p.h"
+#include "qcontactfilters.h"
 
 #include "qcontactintersectionfilter.h"
 #include "qcontactunionfilter.h"
@@ -54,6 +55,8 @@
   \brief The QContactFilter class is used to select contacts made available
   through a QContactManager.
 
+  \inmodule QtContacts
+  
   \ingroup contacts-main
  
   This class is used as a parameter to various functions offered by QContactManager, to allow
@@ -67,7 +70,7 @@
   \value ContactDetailFilter A filter which matches contacts containing one or more details of a particular definition with a particular value
   \value ContactDetailRangeFilter A filter which matches contacts containing one or more details of a particular definition whose values are within a particular range
   \value ChangeLogFilter A filter which matches contacts whose timestamps have been updated since some particular date and time
-  \omitvalue ActionFilter A filter which matches contacts for which a particular action is available, or which contain a detail with a particular value for which a particular action is available
+  \value ActionFilter A filter which matches contacts for which a particular action is available, or which contain a detail with a particular value for which a particular action is available
   \value RelationshipFilter A filter which matches contacts which participate in a particular type of relationship, or relationship with a specified contact
   \value IntersectionFilter A filter which matches all contacts that are matched by all filters it includes
   \value UnionFilter A filter which matches any contact that is matched by any of the filters it includes
@@ -154,6 +157,72 @@ bool QContactFilter::operator==(const QContactFilter& other) const
     /* Otherwise, use the virtual op == */
     return d_ptr->compare(other.d_ptr);
 }
+
+#ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a filter to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QContactFilter& filter)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactDetailFilter
+    out << formatVersion << static_cast<quint32>(filter.type());
+    if (filter.d_ptr)
+        filter.d_ptr->outputToStream(out, formatVersion);
+    return out;
+}
+
+/*!
+ * Reads a contact filter from stream \a in into \a filter.
+ */
+QDataStream& operator>>(QDataStream& in, QContactFilter& filter)
+{
+    filter = QContactFilter();
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        quint32 type;
+        in >> type;
+        switch (type) {
+            case QContactFilter::InvalidFilter:
+                filter = QContactInvalidFilter();
+                break;
+            case QContactFilter::ContactDetailFilter:
+                filter = QContactDetailFilter();
+                break;
+            case QContactFilter::ContactDetailRangeFilter:
+                filter = QContactDetailRangeFilter();
+                break;
+            case QContactFilter::ChangeLogFilter:
+                filter = QContactChangeLogFilter();
+                break;
+            case QContactFilter::ActionFilter:
+                filter = QContactActionFilter();
+                break;
+            case QContactFilter::RelationshipFilter:
+                filter = QContactRelationshipFilter();
+                break;
+            case QContactFilter::IntersectionFilter:
+                filter = QContactIntersectionFilter();
+                break;
+            case QContactFilter::UnionFilter:
+                filter = QContactUnionFilter();
+                break;
+            case QContactFilter::LocalIdFilter:
+                filter = QContactLocalIdFilter();
+                break;
+            case QContactFilter::DefaultFilter:
+                filter = QContactFilter();
+                break;
+        }
+        if (filter.d_ptr)
+            filter.d_ptr->inputFromStream(in, formatVersion);
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+
+#endif
 
 /*!
   \internal

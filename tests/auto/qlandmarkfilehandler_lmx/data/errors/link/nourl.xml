@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lmx xmlns="http://www.nokia.com/schemas/location/landmarks/1/0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.nokia.com/schemas/location/landmarks/1/0/ lmx.xsd">
+    <landmark>
+        <mediaLink>
+            <name>Qt</name>
+            <mime>text/html</mime>
+        </mediaLink>
+    </landmark>
+</lmx>
