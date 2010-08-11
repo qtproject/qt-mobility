@@ -50,9 +50,6 @@ class QGraphicsItem;
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
-class QGeoMappingManager;
-class QGeoBoundingBox;
-class QGeoMapObject;
 
 class QDeclarativeGraphicsGeoMap : public QGraphicsGeoMap
 {
@@ -61,7 +58,6 @@ class QDeclarativeGraphicsGeoMap : public QGraphicsGeoMap
     Q_PROPERTY(QDeclarativeCoordinate* center READ declarativeCenter WRITE setDeclarativeCenter NOTIFY declarativeCenterChanged)
 
 public:
-
     QDeclarativeGraphicsGeoMap(QGraphicsItem *parent = 0);
     ~QDeclarativeGraphicsGeoMap();
 
@@ -78,6 +74,7 @@ signals:
     void declarativeCenterChanged(const QDeclarativeCoordinate *coordinate);
 
 private:
+    QDeclarativeCoordinate* m_center;
     Q_DISABLE_COPY(QDeclarativeGraphicsGeoMap);
 };
 

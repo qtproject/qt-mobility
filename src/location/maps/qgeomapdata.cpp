@@ -234,6 +234,20 @@ QGraphicsGeoMap::MapType QGeoMapData::mapType() const
 }
 
 /*!
+*/
+QDeclarativeListProperty<QGeoMapObject> QGeoMapData::mapObjects()
+{
+    return d_ptr->containerObject->childObjects();
+}
+
+/*!
+*/
+int QGeoMapData::mapObjectCount() const
+{
+    return d_ptr->containerObject->childObjectCount();
+}
+
+/*!
     Adds \a mapObject to the list of map objects managed by this map.
     The map will take ownership of the \a mapObject.
 */
@@ -252,11 +266,17 @@ void QGeoMapData::removeMapObject(QGeoMapObject *mapObject)
 }
 
 /*!
-    Returns the list of map objects managed by this map.
 */
-QList<QGeoMapObject*> QGeoMapData::mapObjects()
+QGeoMapObject* QGeoMapData::mapObject(int index) const
 {
-    return d_ptr->containerObject->childObjects();
+    return d_ptr->containerObject->childObject(index);
+}
+
+/*!
+*/
+void QGeoMapData::clearMapObjects()
+{
+    d_ptr->containerObject->clearChildObjects();
 }
 
 /*!
@@ -268,10 +288,12 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
     QList<QGeoMapObject*> results;
 
     QGeoCoordinate coord = screenPositionToCoordinate(screenPosition);
-    QList<QGeoMapObject*> objects = d_ptr->containerObject->childObjects();
-    for (int i = 0; i < objects.size(); ++i)
-        if (objects.at(i)->contains(coord))
-            results.append(objects.at(i));
+    int childObjectCount = d_ptr->containerObject->childObjectCount();
+    for (int i = 0; i < childObjectCount; ++i) {
+        QGeoMapObject *object = d_ptr->containerObject->childObject(i);
+        if (object->contains(coord))
+            results.append(object);
+    }
 
     return results;
 }
@@ -290,10 +312,12 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
 
     QGeoBoundingBox bounds(topLeft, bottomRight);
 
-    QList<QGeoMapObject*> objects = d_ptr->containerObject->childObjects();
-    for (int i = 0; i < objects.size(); ++i)
-        if (bounds.intersects(objects.at(i)->boundingBox()))
-            results.append(objects.at(i));
+    int childObjectCount = d_ptr->containerObject->childObjectCount();
+    for (int i = 0; i < childObjectCount; ++i) {
+        QGeoMapObject *object = d_ptr->containerObject->childObject(i);
+        if (bounds.intersects(object->boundingBox()))
+            results.append(object);
+    }
 
     return results;
 }

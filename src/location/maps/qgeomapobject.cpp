@@ -275,14 +275,53 @@ void QGeoMapObject::removeChildObject(QGeoMapObject *childObject)
     }
 }
 
-/*!
-    Returns the children of this map object.
-    The children are ordered ascendingly on their zValues.
-*/
-QList<QGeoMapObject*> QGeoMapObject::childObjects() const
+QDeclarativeListProperty<QGeoMapObject> QGeoMapObject::childObjects()
+{
+    Q_D(QGeoMapObject);
+    return QDeclarativeListProperty<QGeoMapObject>(this,
+                                                   0,
+                                                   children_append,
+                                                   children_count,
+                                                   children_at,
+                                                   children_clear);
+}
+
+void QGeoMapObject::children_append(QDeclarativeListProperty<QGeoMapObject> *prop, QGeoMapObject *mapObject)
+{
+    static_cast<QGeoMapObject*>(prop->object)->addChildObject(mapObject);
+}
+
+int QGeoMapObject::children_count(QDeclarativeListProperty<QGeoMapObject> *prop)
+{
+    return static_cast<QGeoMapObject*>(prop->object)->childObjectCount();
+}
+
+QGeoMapObject *QGeoMapObject::children_at(QDeclarativeListProperty<QGeoMapObject> *prop, int index)
+{
+    return static_cast<QGeoMapObject*>(prop->object)->childObject(index);
+}
+
+void QGeoMapObject::children_clear(QDeclarativeListProperty<QGeoMapObject> *prop)
+{
+    static_cast<QGeoMapObject*>(prop->object)->clearChildObjects();
+}
+
+int QGeoMapObject::childObjectCount() const
 {
     Q_D(const QGeoMapObject);
-    return d->children;
+    return d->children.size();
+}
+
+QGeoMapObject* QGeoMapObject::childObject(int index) const
+{
+    Q_D(const QGeoMapObject);
+    return d->children.at(index);
+}
+
+void QGeoMapObject::clearChildObjects()
+{
+    Q_D(QGeoMapObject);
+    d->children.clear();
 }
 
 void QGeoMapObject::objectUpdate()

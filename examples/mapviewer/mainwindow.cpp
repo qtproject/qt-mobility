@@ -723,7 +723,7 @@ void MainWindow::demo2(bool /*checked*/)
             i++;
         }
     }
-    qDebug("%i items added, %i items total.", i, m_mapWidget->mapObjects().size());
+    qDebug("%i items added, %i items total.", i, m_mapWidget->mapObjectCount());
 
 
     QMessageBox *mb = new QMessageBox(QMessageBox::NoIcon, "MapViewer", QString::number(i) + " items");

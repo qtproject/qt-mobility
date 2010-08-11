@@ -42,16 +42,6 @@
 import Qt 4.7
 import QtMobility.location 1.1
 
-////    MouseArea {
-////        anchors.fill: parent
-////        drag.target: parent
-////        drag.axis: Drag.XandYAxis
-////        drag.minimumX: -(parent.width * (2/3)); drag.maximumX: parent.maxX - (parent.width/3)
-////        drag.minimumY: -(parent.height/2); drag.maximumY: parent.maxY - (parent.height/2)
-////    }
-//
-//}
-
 Item {
     width: 500
     height: 500
@@ -59,11 +49,48 @@ Item {
     focus: true
 
 
-    GeoMap {
+
+    Map {
         id: map
         size.width: parent.width
         size.height: parent.height
         zoomLevel: 10
+        center: Coordinate {
+                    latitude: -27
+                    longitude: 153
+                }
+
+        MapCircleObject {
+            center: Coordinate {
+                        latitude: -27.1
+                        longitude: 153
+                    }
+            radius: 10000.0
+            color: "#808080FF"
+        }
+
+        MapCircleObject {
+            center: Coordinate {
+                        latitude: -27.1
+                        longitude: 153
+                    }
+            radius: 8000.0
+        }
+
+        MapCircleObject {
+            center: Coordinate {
+                        latitude: -27.1
+                        longitude: 153
+                    }
+            radius: 6000.0
+            color: "#80FF8080"
+        }
+
+        MapRectangleObject {
+            topLeft:        map.toCoordinate(Qt.point(map.size.width / 3.0, map.size.height * 2.0 / 3.0))        
+            bottomRight:    map.toCoordinate(Qt.point(map.size.width * 2.0 / 3.0, map.size.height / 3.0))   
+            color: "#8080FF80"
+        }
     }
 
     MouseArea {
@@ -73,7 +100,7 @@ Item {
         property int lastX : -1
         property int lastY : -1
 
-        onPressed : { 
+        onPressed : {
             mouseDown = true 
             lastX = mouse.x
             lastY = mouse.y
@@ -107,10 +134,10 @@ Item {
             if (map.zoomLevel > map.minimumZoomLevel)
                 map.zoomLevel -= 1
         } else if (event.key == Qt.Key_T) {
-            if (map.mapType == GeoMap.StreetMap) {
-                map.mapType = GeoMap.SatelliteMapDay
-            } else if (map.mapType == GeoMap.SatelliteMapDay) {
-                map.mapType = GeoMap.StreetMap
+            if (map.mapType == Map.StreetMap) {
+                map.mapType = Map.SatelliteMapDay
+            } else if (map.mapType == Map.SatelliteMapDay) {
+                map.mapType = Map.StreetMap
             }
         }
     }

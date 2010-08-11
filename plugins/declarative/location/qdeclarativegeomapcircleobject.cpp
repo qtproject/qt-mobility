@@ -40,54 +40,71 @@
 **
 ****************************************************************************/
 
-#include "qdeclarativegraphicsgeomap_p.h"
+#include "qdeclarativegeomapcircleobject_p.h"
+
+#include <QColor>
+#include <QBrush>
 
 QTM_BEGIN_NAMESPACE
 
-
-QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QGraphicsItem *parent)
-    : QGraphicsGeoMap(parent)
+QDeclarativeGeoMapCircleObject::QDeclarativeGeoMapCircleObject()
 {
     connect(this,
             SIGNAL(centerChanged(QGeoCoordinate)),
             this,
             SLOT(memberCenterChanged(QGeoCoordinate)));
+    connect(this,
+            SIGNAL(brushChanged(QBrush)),
+            this,
+            SLOT(memberBrushChanged(QBrush)));
     m_center = new QDeclarativeCoordinate(this);
 }
 
-QDeclarativeGraphicsGeoMap::~QDeclarativeGraphicsGeoMap()
+QDeclarativeGeoMapCircleObject::~QDeclarativeGeoMapCircleObject()
 {
 }
 
-void QDeclarativeGraphicsGeoMap::setDeclarativeCenter(const QDeclarativeCoordinate *center)
+void QDeclarativeGeoMapCircleObject::setDeclarativeCenter(const QDeclarativeCoordinate *center)
 {
     m_center->setCoordinate(center->coordinate());
     setCenter(center->coordinate());
 }
 
-QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::declarativeCenter() const
+QDeclarativeCoordinate* QDeclarativeGeoMapCircleObject::declarativeCenter() const
 {
     m_center->setCoordinate(center());
     return m_center;
 }
 
-QPointF QDeclarativeGraphicsGeoMap::toScreenPosition(const QDeclarativeCoordinate *coordinate) const
+void QDeclarativeGeoMapCircleObject::memberCenterChanged(const QGeoCoordinate &coordinate)
 {
-    return coordinateToScreenPosition(coordinate->coordinate());
-}
+    if (coordinate == m_center->coordinate())
+        return;
 
-QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::toCoordinate(QPointF screenPosition) const
-{
-    return new QDeclarativeCoordinate(screenPositionToCoordinate(screenPosition), 
-                                      const_cast<QDeclarativeGraphicsGeoMap *const>(this));
-}
-
-void QDeclarativeGraphicsGeoMap::memberCenterChanged(const QGeoCoordinate &coordinate)
-{
     emit declarativeCenterChanged(new QDeclarativeCoordinate(coordinate, this));
 }
 
-#include "moc_qdeclarativegraphicsgeomap_p.cpp"
+void QDeclarativeGeoMapCircleObject::setColor(const QColor &color)
+{
+    m_color = color;
+    QBrush m_brush(color);
+    setBrush(m_brush);
+}
+
+QColor QDeclarativeGeoMapCircleObject::color() const
+{
+    return brush().color();
+}
+
+void QDeclarativeGeoMapCircleObject::memberBrushChanged(const QBrush &brush)
+{
+    if (m_color == brush.color())
+        return;
+
+    emit colorChanged(brush.color());
+}
+
+#include "moc_qdeclarativegeomapcircleobject_p.cpp"
 
 QTM_END_NAMESPACE
 

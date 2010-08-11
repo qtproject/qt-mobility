@@ -44,6 +44,9 @@
 
 #include "qmobilityglobal.h"
 
+#include <QtDeclarative/qdeclarative.h>
+#include <QDeclarativeListProperty>
+
 #include <QList>
 #include <QObject>
 
@@ -64,6 +67,9 @@ class Q_LOCATION_EXPORT QGeoMapObject : public QObject
     Q_OBJECT
     Q_PROPERTY(int zValue READ zValue WRITE setZValue NOTIFY zValueChanged)
     Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QGeoMapObject> childObjects READ childObjects)
+
+    Q_CLASSINFO("DefaultProperty", "childObjects")
 
 public:
     enum Type {
@@ -93,9 +99,13 @@ public:
     bool contains(const QGeoCoordinate &coordinate) const;
 
     QGeoMapObject* parentObject() const;
+
+    QDeclarativeListProperty<QGeoMapObject> childObjects();
+    int childObjectCount() const;
     void addChildObject(QGeoMapObject *childObject);
     void removeChildObject(QGeoMapObject *childObject);
-    QList<QGeoMapObject*> childObjects() const;
+    QGeoMapObject* childObject(int index) const;
+    void clearChildObjects();
 
     void objectUpdate();
     void mapUpdate();
@@ -115,6 +125,11 @@ protected:
 private:
     QGeoMapObject(QGeoMapData *mapData);
 
+    static void children_append(QDeclarativeListProperty<QGeoMapObject> *prop, QGeoMapObject *mapObject);
+    static int children_count(QDeclarativeListProperty<QGeoMapObject> *prop);
+    static QGeoMapObject *children_at(QDeclarativeListProperty<QGeoMapObject> *prop, int index);
+    static void children_clear(QDeclarativeListProperty<QGeoMapObject> *prop);
+
     Q_DECLARE_PRIVATE(QGeoMapObject)
     Q_DISABLE_COPY(QGeoMapObject)
 
@@ -122,5 +137,7 @@ private:
 };
 
 QTM_END_NAMESPACE
+
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QGeoMapObject));
 
 #endif

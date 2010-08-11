@@ -1,4 +1,3 @@
-
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -40,54 +39,50 @@
 **
 ****************************************************************************/
 
-#include "qdeclarativegraphicsgeomap_p.h"
+#ifndef QDECLARATIVEGEOMAPCIRCLEOBJECT_H
+#define QDECLARATIVEGEOMAPCIRCLEOBJECT_H
+
+#include "qdeclarativecoordinate_p.h"
+#include "qgeomapcircleobject.h"
+
+class QColor;
+class QBrush;
 
 QTM_BEGIN_NAMESPACE
 
-
-QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QGraphicsItem *parent)
-    : QGraphicsGeoMap(parent)
+class QDeclarativeGeoMapCircleObject : public QGeoMapCircleObject
 {
-    connect(this,
-            SIGNAL(centerChanged(QGeoCoordinate)),
-            this,
-            SLOT(memberCenterChanged(QGeoCoordinate)));
-    m_center = new QDeclarativeCoordinate(this);
-}
+    Q_OBJECT
 
-QDeclarativeGraphicsGeoMap::~QDeclarativeGraphicsGeoMap()
-{
-}
+    Q_PROPERTY(QDeclarativeCoordinate* center READ declarativeCenter WRITE setDeclarativeCenter NOTIFY declarativeCenterChanged)
+    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
 
-void QDeclarativeGraphicsGeoMap::setDeclarativeCenter(const QDeclarativeCoordinate *center)
-{
-    m_center->setCoordinate(center->coordinate());
-    setCenter(center->coordinate());
-}
+public:
+    QDeclarativeGeoMapCircleObject();
+    ~QDeclarativeGeoMapCircleObject();
 
-QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::declarativeCenter() const
-{
-    m_center->setCoordinate(center());
-    return m_center;
-}
+    QDeclarativeCoordinate* declarativeCenter() const;
+    void setDeclarativeCenter(const QDeclarativeCoordinate *center);
 
-QPointF QDeclarativeGraphicsGeoMap::toScreenPosition(const QDeclarativeCoordinate *coordinate) const
-{
-    return coordinateToScreenPosition(coordinate->coordinate());
-}
+    QColor color() const;
+    void setColor(const QColor &color);
 
-QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::toCoordinate(QPointF screenPosition) const
-{
-    return new QDeclarativeCoordinate(screenPositionToCoordinate(screenPosition), 
-                                      const_cast<QDeclarativeGraphicsGeoMap *const>(this));
-}
+private slots:
+    void memberCenterChanged(const QGeoCoordinate &coordinate);
+    void memberBrushChanged(const QBrush &brush);
 
-void QDeclarativeGraphicsGeoMap::memberCenterChanged(const QGeoCoordinate &coordinate)
-{
-    emit declarativeCenterChanged(new QDeclarativeCoordinate(coordinate, this));
-}
+signals:
+    void declarativeCenterChanged(const QDeclarativeCoordinate *center);
+    void colorChanged(const QColor &color);
 
-#include "moc_qdeclarativegraphicsgeomap_p.cpp"
+private:
+    mutable QDeclarativeCoordinate* m_center;
+    mutable QColor m_color;
+    Q_DISABLE_COPY(QDeclarativeGeoMapCircleObject)
+};
 
 QTM_END_NAMESPACE
 
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapCircleObject));
+
+#endif

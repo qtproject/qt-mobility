@@ -49,6 +49,8 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
+#include <QDeclarativeListProperty>
+
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
@@ -82,9 +84,12 @@ public:
     virtual void setMapType(QGraphicsGeoMap::MapType mapType);
     virtual QGraphicsGeoMap::MapType mapType() const;
 
+    QDeclarativeListProperty<QGeoMapObject> mapObjects();
+    int mapObjectCount() const;
     void addMapObject(QGeoMapObject *mapObject);
     void removeMapObject(QGeoMapObject *mapObject);
-    QList<QGeoMapObject*> mapObjects();
+    QGeoMapObject* mapObject(int index) const;
+    void clearMapObjects();
 
     virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
     virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);

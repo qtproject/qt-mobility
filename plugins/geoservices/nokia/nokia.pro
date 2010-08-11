@@ -1,5 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
+QT += declarative
 TARGET = $$qtLibraryTarget(qtgeoservices_nokia)
 PLUGIN_TYPE=geoservices
 
