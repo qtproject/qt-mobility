@@ -834,7 +834,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemInstanceOrigin::FieldParentLocalId, f);
-    f.setDataType(QVariant::DateTime);
+    f.setDataType(QVariant::Date);
     fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalDate, f);
     d.setFields(fields);
     d.setUnique(true);
@@ -1232,7 +1232,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemInstanceOrigin::FieldParentLocalId, f);
-    f.setDataType(QVariant::DateTime);
+    f.setDataType(QVariant::Date);
     fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalDate, f);
     d.setFields(fields);
     d.setUnique(true);

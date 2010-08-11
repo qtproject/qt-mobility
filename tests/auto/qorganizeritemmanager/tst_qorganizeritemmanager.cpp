@@ -406,6 +406,7 @@ void tst_QOrganizerItemManager::addManagers()
 
     /* Known one that will not pass */
     managers.removeAll("invalid");
+    managers.removeAll("skeleton");
     managers.removeAll("testdummy");
     managers.removeAll("teststaticdummy");
     managers.removeAll("maliciousplugin");
@@ -813,13 +814,16 @@ void tst_QOrganizerItemManager::addExceptions()
     QCOMPARE(items.size(), 3);
     QOrganizerItem secondItem = items.at(1);
     QCOMPARE(secondItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
-    QOrganizerEventOccurrence secondEvent = static_cast<QOrganizerEventOccurrence>(secondItem);
+    QOrganizerEventOccurrence secondEvent = static_cast<QOrganizerEventOccurrence>(secondItem); // not sure this is the best way...
     QCOMPARE(secondEvent.startDateTime(), QDateTime(QDate(2010, 1, 8), QTime(11, 0, 0)));
     QCOMPARE(secondEvent.localId(), (unsigned int)0);
     QCOMPARE(secondEvent.parentLocalId(), event.localId());
+
     // save a change to an occurrence's detail (ie. create an exception)
     secondEvent.setDisplayLabel(QLatin1String("seminar"));
     QVERIFY(cm->saveItem(&secondEvent));
+    QCOMPARE(cm->itemInstances(event, QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
+                                      QDateTime(QDate(2010, 2, 1), QTime(0, 0, 0))).size(), 3); // shouldn't change the count.
 
     // save a change to an occurrence's time
     QOrganizerEventOccurrence thirdEvent = static_cast<QOrganizerEventOccurrence>(items.at(2));
@@ -832,6 +836,12 @@ void tst_QOrganizerItemManager::addExceptions()
     items =
         cm->itemInstances(event, QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
                                  QDateTime(QDate(2010, 2, 1), QTime(0, 0, 0)));
+
+//    foreach (const QOrganizerItem& item, items) {
+//        qDebug() << "\n" << item.id() << item.type() << ":" << item.displayLabel() << ", " << item.description();
+//    }
+
+
     QCOMPARE(items.size(), 3);
     QOrganizerItem firstItem = items.at(0);
     // check that saving an exception doesn't change other items
@@ -1568,6 +1578,7 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
                 << QDate(2010, 1, 1) << QDate(2015, 1, 1)
                 << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 3, 1)
                                    << QDate(2011, 1, 1) << QDate(2011, 3, 1));
+            // The day-of-month should be inferred from the day-of-month of the original event
         }
 
         {
