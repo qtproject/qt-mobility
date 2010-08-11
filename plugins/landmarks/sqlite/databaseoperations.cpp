@@ -1389,7 +1389,7 @@ QList<QLandmark> DatabaseOperations::landmarks(const QString &connectionName, co
     QString lastErrorString="";
     for (int i=0; i < landmarkIds.count(); ++i){
         lm = DatabaseOperations::retrieveLandmark(connectionName,landmarkIds.at(i),error,errorString,managerUri,queryRun);
-        if (*error = QLandmarkManager::NoError) {
+        if (*error == QLandmarkManager::NoError) {
             result << lm;
         } else {
             if (errorMap)
@@ -2117,7 +2117,8 @@ QList<QLandmarkCategory> DatabaseOperations::categories(const QString &connectio
     QString lastErrorString ="";
     for (int i=0; i < landmarkCategoryIds.count(); ++i) {
         cat = DatabaseOperations::category(connectionName, landmarkCategoryIds.at(i),error,errorString,managerUri);
-        if (*error = QLandmarkManager::NoError)
+
+        if (*error == QLandmarkManager::NoError)
         {
             result << cat;
         } else {
@@ -2129,6 +2130,7 @@ QList<QLandmarkCategory> DatabaseOperations::categories(const QString &connectio
     }
     *error = lastError;
     *errorString = lastErrorString;
+
     return result;
 }
 
@@ -2651,10 +2653,11 @@ void DatabaseOperations::QueryRun::run()
                 QLandmarkCategoryFetchRequest *fetchRequest = static_cast<QLandmarkCategoryFetchRequest *> (request);
                 QLandmarkNameSort nameSort = fetchRequest->sorting();
                 bool needAll = true;
-                QList<QLandmarkCategory> cats;
-//TODO: FIX                QList <QLandmarkCategory> cats = DatabaseOperations::categories(connectionName, categoryIds, nameSort,
-//                                                                fetchRequest->limit(), fetchRequest->offset(),
-//                                                                &error, &errorString, managerUri, needAll, this);
+                QList<QLandmarkCategoryId> categoryIds;
+
+                QList <QLandmarkCategory> cats = DatabaseOperations::categories(connectionName, categoryIds, nameSort,
+                                                                fetchRequest->limit(), fetchRequest->offset(),
+                                                                &error, &errorString, managerUri, needAll, this);
 
                 QMetaObject::invokeMethod(engine, "updateLandmarkCategoryFetchRequest",
                                           Q_ARG(QLandmarkCategoryFetchRequest *,fetchRequest),

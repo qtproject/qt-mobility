@@ -253,7 +253,6 @@ QList<QLandmarkCategory> QLandmarkManagerEngineSqlite::categories(const QList<QL
                                                                   QLandmarkManager::Error *error,
                                                                   QString *errorString) const
 {
-    QLandmarkNameSort nameSort;// this should be ignored in the following call
     return DatabaseOperations::categories(m_dbConnectionName, landmarkCategoryIds, errorMap, error, errorString, managerUri());
 }
 
