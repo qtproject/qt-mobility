@@ -183,6 +183,8 @@ public:
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
     void setConnection();
+    QString model();
+    QString productName();
 
 private:
 #if !defined(QT_NO_DBUS)

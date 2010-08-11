@@ -56,6 +56,7 @@ QTM_BEGIN_NAMESPACE
     single item from a gallery
 
     This element is part of the \bold {QtMobility.gallery 1.1} module.
+    
 
     \sa GalleryQueryModel, GalleryType
 */
@@ -92,7 +93,7 @@ QDeclarativeGalleryItem::~QDeclarativeGalleryItem()
 /*!
     \qmlproperty QAbstractGallery GalleryItem::gallery
 
-    This property holds the gallery an item should be requested from.
+    This property holds the gallery that an item should be requested from.
 */
 
 /*!

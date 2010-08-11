@@ -50,6 +50,7 @@ HTML.postheader         = " <div class=\"header\" id=\"qtdocheader\">\n" \
 			  "              <li class=\"defaultLink\"><a href=\"functions.html\">Function index</a></li>\n" \
               "              <li class=\"defaultLink\"><a href=\"modules.html\">Modules</a></li>\n" \
               "              <li class=\"defaultLink\"><a href=\"index.html#platform-compatibility\">Platform Compatibility</a></li>\n" \
+              "              <li class=\"defaultLink\"><a href=\"qml-plugins.html\">QML Plugins</a></li>\n" \
 			  "            </ul> \n" \
 			  "          </div>\n" \
 			  "        </div>\n" \

@@ -61,7 +61,7 @@ ThumbnailModel::~ThumbnailModel()
 {
 }
 
-#ifndef QT_NO_FUTURE
+#ifndef QT_NO_QFUTURE
 
 QVariant ThumbnailModel::data(const QModelIndex &index, int role) const
 {
