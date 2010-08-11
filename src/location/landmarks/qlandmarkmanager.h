@@ -137,7 +137,7 @@ public:
     bool removeCategory(const QLandmarkCategoryId &categoryId);
 
     QLandmarkCategory category(const QLandmarkCategoryId &categoryId) const;
-    QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &categoryIds, QMap<int, QLandmarkManager::Error> *errorMap) const;
+    QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &categoryIds, QMap<int, QLandmarkManager::Error> *errorMap=0) const;
 
     QList<QLandmarkCategory> categories( int limit=-1, int offset=0, const QLandmarkNameSort &nameSort = QLandmarkNameSort()) const;
     QList<QLandmarkCategoryId> categoryIds(int limit =-1, int offset=0, const QLandmarkNameSort &nameSort = QLandmarkNameSort()) const;
@@ -150,7 +150,7 @@ public:
                             int limit=-1, int offset=0,
                             const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder()) const;
 
-    QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds, QMap<int, QLandmarkManager::Error> *errorMap) const;
+    QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds, QMap<int, QLandmarkManager::Error> *errorMap =0) const;
     QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter,
                                     int limit, int offset,
                                    const QList<QLandmarkSortOrder> &sortOrders)const;
