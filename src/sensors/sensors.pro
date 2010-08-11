@@ -42,6 +42,7 @@ SENSORS=\
     qaccelerometer\
     qambientlightsensor\
     qcompass\
+    qlightsensor\
     qmagnetometer\
     qorientationsensor\
     qproximitysensor\

@@ -41,6 +41,7 @@
 
 #include "genericorientationsensor.h"
 #include "genericrotationsensor.h"
+#include "genericalssensor.h"
 #include <qsensorplugin.h>
 #include <qsensorbackend.h>
 #include <qsensormanager.h>
@@ -57,6 +58,7 @@ public:
         qDebug() << "loaded the Generic plugin";
         QSensorManager::registerBackend(QOrientationSensor::type, genericorientationsensor::id, this);
         QSensorManager::registerBackend(QRotationSensor::type, genericrotationsensor::id, this);
+        QSensorManager::registerBackend(QAmbientLightSensor::type, genericalssensor::id, this);
     }
 
     QSensorBackend *createBackend(QSensor *sensor)
@@ -73,6 +75,13 @@ public:
             if (!QSensor::defaultSensorForType(QAccelerometer::type).isEmpty())
                 return new genericrotationsensor(sensor);
             qDebug() << "can't make" << sensor->identifier() << "because no" << QAccelerometer::type << "sensors exist";
+        }
+
+        if (sensor->identifier() == genericalssensor::id) {
+            // Can't make this unless we have a light sensor
+            if (!QSensor::defaultSensorForType(QLightSensor::type).isEmpty())
+                return new genericalssensor(sensor);
+            qDebug() << "can't make" << sensor->identifier() << "because no" << QLightSensor::type << "sensors exist";
         }
 
         return 0;
