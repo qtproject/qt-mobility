@@ -276,10 +276,7 @@ void AddressFinder::stateChanged(QMessageService::State newState)
 //! [handle-search-result]
                 } else {
                     QMessageBox::information(0, tr("Empty"), tr("No messages found"));
-                    searchAction->setEnabled(true);
-#ifdef USE_SEARCH_BUTTON
-                    searchButton->setEnabled(true);
-#endif
+                    setSearchActionEnabled(true);
                 }
             }
         } else {
@@ -546,6 +543,10 @@ void AddressFinder::setSearchActionEnabled(bool val)
 {
     searchAction->setEnabled(val);
 #ifdef USE_SEARCH_BUTTON
+    if (val)
+        searchButton->setText(tr("Search"));
+    else
+        searchButton->setText(tr("Searching.."));
     searchButton->setEnabled(val);
 #endif
 }
