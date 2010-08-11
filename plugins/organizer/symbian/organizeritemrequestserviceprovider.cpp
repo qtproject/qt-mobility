@@ -302,14 +302,12 @@ void COrganizerItemRequestsServiceProvider::FetchItemIdsL()
     QList<QOrganizerItemSortOrder> sortOrder(
             ((QOrganizerItemFetchRequest*)iReq)->sorting());
     
-    QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
- 
     QList<QOrganizerItemLocalId> ids(iOrganizerItemManagerEngine.itemIds(
-            filter, sortOrder, &error));
+            filter, sortOrder, &iError));
     
     QOrganizerItemManagerEngine::updateItemLocalIdFetchRequest(
             (QOrganizerItemLocalIdFetchRequest*)iReq, 
-            ids, error, QOrganizerItemAbstractRequest::FinishedState);
+            ids, iError, QOrganizerItemAbstractRequest::FinishedState);
     }
 
 // Fetch Entries by local Ids
