@@ -56,7 +56,6 @@
 #include "qorganizeritemdisplaylabel.h"
 #include "qorganizeritemdescription.h"
 
-#include "qorganizeritemcollection.h"
 #include "qorganizercollection.h"
 
 QTM_BEGIN_NAMESPACE
@@ -99,7 +98,7 @@ public:
     void setDescription(const QOrganizerItemDescription& description);
 
     /* The collection to which an item belongs - read only */
-    QOrganizerItemId collection() const;
+    QOrganizerCollectionId collection() const;
 
     /* Is this an empty organizeritem? */
     bool isEmpty() const;

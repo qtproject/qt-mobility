@@ -342,9 +342,10 @@ void QOrganizerItem::setDescription(const QOrganizerItemDescription& description
   Note: only returns meaningful id if it has been saved in a manager.
       An item always belongs to exactly one collection (default, if not set).
  */
-QOrganizerItemId QOrganizerItem::collection() const
+QOrganizerCollectionId QOrganizerItem::collection() const
 {
-    return detail<QOrganizerItemCollection>().collectionId();
+    // TODO fixme
+    return QOrganizerCollectionId();
 }
 
 /*!
@@ -363,6 +364,7 @@ QOrganizerItemId QOrganizerItem::collection() const
 void QOrganizerItem::setId(const QOrganizerItemId& id)
 {
     d->m_id = id;
+    // TODO - reset collection id?
 }
 
 /*!
