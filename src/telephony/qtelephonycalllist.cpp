@@ -40,6 +40,8 @@
 ****************************************************************************/
 #include <QtCore/qglobal.h>
 
+#include "qtelephonycalllist.h"
+
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
 # include "maemo/qtelephonycallinfo_maemo_p.h"
 # include "maemo/qtelephonycalllist_maemo_p.h"

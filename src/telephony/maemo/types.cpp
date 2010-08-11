@@ -25,22 +25,6 @@
 #include "maemo/interfaces/cli-types.h"
 
 
-#ifndef HAVE_QDBUSVARIANT_OPERATOR_EQUAL
-
-/* FIXME This is a workaround that should be removed when Qt has support for
-*       this. There is already a merge request
-*       (http://qt.gitorious.org/qt/qt/merge_requests/1657) in place and the
-*       fix should be in next Qt versions.
-*/
-inline bool operator==(const QDBusVariant &v1, const QDBusVariant &v2)
-{ return v1.variant() == v2.variant(); }
-
-#endif
-
-//#include "_gen/types-body.hpp"
-
-//#include "_gen/future-types-body.hpp"
-
 namespace Tp {
     /**
     * \\ingroup types

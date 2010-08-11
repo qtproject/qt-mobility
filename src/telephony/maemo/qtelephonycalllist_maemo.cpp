@@ -39,17 +39,14 @@
 **
 ****************************************************************************/
 
+#include <qmobilityglobal.h>
 #include <QtCore/qshareddata.h>
 #include <QDebug>
 #include <QtCore/QPair>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusConnectionInterface>
 #include "maemo/qtelephonycalllist_maemo_p.h"
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-# include "maemo/qtelephonycallinfo_maemo_p.h"
-#else
-# include "qtelephonycallinfo_p.h"
-#endif
+#include "maemo/qtelephonycallinfo_maemo_p.h"
 #include "maemo/cli-constants.h"
 #include "maemo/types.h"
 #include "maemo/connection.h"
