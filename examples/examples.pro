@@ -7,7 +7,8 @@ contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
             bluetoothtransferplugin \
             notesmanagerplugin \
-            servicebrowser
+            servicebrowser \
+	    sfwecho
 
     #These examples do not work on Symbian yet
     !symbian:SUBDIRS+= sfw-notes
@@ -36,15 +37,13 @@ contains(mobility_modules,location) {
     }
 
     !symbian|contains(mobility_modules,bearer) {
-    	SUBDIRS += qgeoapiui \
+    	SUBDIRS += geoservicedemo \
                    mapviewer
 
     }
 
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo
-                   #mapviewer (disable for now) 
-                   #qgeoapiui
         
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps
@@ -115,9 +114,8 @@ contains(mobility_modules,sensors) {
 
 contains(mobility_modules,gallery) {
     SUBDIRS += \
+        documentproperties \
         mediabrowser
-
-    contains(QT_CONFIG, webkit): SUBDIRS += documentshare
 }
 
 # Organizer API examples

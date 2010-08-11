@@ -82,6 +82,12 @@ public:
 
     QSet<QString> supportedStreamTypes(const QString &codecName) const;
 
+    void setActualVideoSettings(const QVideoEncoderSettings&);
+    void resetActualSettings();
+
+Q_SIGNALS:
+    void settingsChanged();
+
 private:
     CameraBinSession *m_session;
 
@@ -90,7 +96,9 @@ private:
     QMap<QString,QByteArray> m_elementNames;
     QMap<QString,QStringList> m_codecOptions;
 
-    QVideoEncoderSettings m_videoSettings;
+    QVideoEncoderSettings m_videoSettings; // backend selected settings, using m_userSettings
+    QVideoEncoderSettings m_userSettings;
+
     QMap<QString, QMap<QString, QVariant> > m_options;
     QMap<QString, QSet<QString> > m_streamTypes;
 };

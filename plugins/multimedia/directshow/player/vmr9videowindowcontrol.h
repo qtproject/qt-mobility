@@ -94,6 +94,7 @@ private:
 
     IBaseFilter *m_filter;
     WId m_windowId;
+    COLORREF m_windowColor;
     DWORD m_dirtyValues;
     Qt::AspectRatioMode m_aspectRatioMode;
     QRect m_displayRect;

@@ -19,9 +19,6 @@ HEADERS += \
 SOURCES += \
         qorganizerskeleton.cpp
 
-target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
-INSTALLS += target
-
 symbian {
     load(data_caging_paths)
 

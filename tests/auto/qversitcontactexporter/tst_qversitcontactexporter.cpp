@@ -133,15 +133,15 @@ public:
 
     void detailProcessed(const QContact& contact,
                          const QContactDetail& detail,
-                         const QSet<QString>& processedFields,
                          const QVersitDocument& document,
+                         QSet<QString>* processedFields,
                          QList<QVersitProperty>* toBeRemoved,
                          QList<QVersitProperty>* toBeAdded)
     {
         mContact = contact;
         mDetail = detail;
-        mProcessedFields = processedFields;
         mDocument = document;
+        mProcessedFields = *processedFields;
         mToBeRemoved = *toBeRemoved;
         mToBeAdded = *toBeAdded;
     }

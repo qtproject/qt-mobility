@@ -62,6 +62,7 @@ class CameraBinImageEncoder;
 class CameraBinRecorder;
 class CameraBinContainer;
 class CameraBinExposure;
+class CameraBinFlash;
 class CameraBinFocus;
 class CameraBinImageProcessing;
 class CameraBinLocks;
@@ -88,7 +89,7 @@ public:
     QList<QSize> supportedResolutions( QPair<int,int> rate, bool *continuous) const;
 
     QCamera::CaptureMode captureMode() { return m_captureMode; }
-    void setCaptureMode(QCamera::CaptureMode mode) { m_captureMode = mode; }
+    void setCaptureMode(QCamera::CaptureMode mode);
 
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl& sink);    
@@ -100,6 +101,7 @@ public:
     CameraBinVideoEncoder *videoEncodeControl() const { return m_videoEncodeControl; }
     CameraBinImageEncoder *imageEncodeControl() const { return m_imageEncodeControl; }
     CameraBinExposure *cameraExposureControl() const  { return m_cameraExposureControl; }
+    CameraBinFlash *cameraFlashControl() const  { return m_cameraFlashControl; }
     CameraBinFocus *cameraFocusControl() const  { return m_cameraFocusControl; }
     CameraBinImageProcessing *imageProcessingControl() const { return m_imageProcessingControl; }
     CameraBinLocks *cameraLocksControl() const { return m_cameraLocksControl; }
@@ -164,6 +166,7 @@ private:
     QCamera::State m_state;
     QCamera::State m_pendingState;
     QString m_inputDevice;
+    bool m_pendingResolutionUpdate;
 
     bool m_muted;    
     QCamera::CaptureMode m_captureMode;
@@ -179,6 +182,7 @@ private:
     CameraBinRecorder *m_recorderControl;
     CameraBinContainer *m_mediaContainerControl;
     CameraBinExposure *m_cameraExposureControl;
+    CameraBinFlash *m_cameraFlashControl;
     CameraBinFocus *m_cameraFocusControl;
     CameraBinImageProcessing *m_imageProcessingControl;
     CameraBinLocks *m_cameraLocksControl;

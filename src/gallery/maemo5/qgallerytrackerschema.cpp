@@ -44,13 +44,16 @@
 #include "qgalleryabstractrequest.h"
 #include "qgallerydbusinterface_p.h"
 #include "qgallerytrackercountresponse_p.h"
-#include "qgallerytrackeritemlist_p.h"
-#include "qgallerytrackermediaartcolumn_p.h"
-#include "qgallerytrackerthumbnailcolumn_p.h"
+#include "qgallerytrackerresultset_p.h"
+#include "qgallerytrackerlistcolumn_p.h"
+#include "qgallerytrackertyperesultset_p.h"
 
 #include <QtCore/qdatetime.h>
+#include <QtCore/qdir.h>
 #include <QtCore/qmetatype.h>
+#include <QtCore/qsettings.h>
 #include <QtCore/qstringlist.h>
+#include <QtCore/qtextstream.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qxmlstream.h>
 
@@ -95,20 +98,20 @@ namespace
 
     typedef QGalleryPropertyList<QGalleryAggregateProperty> QGalleryAggregatePropertyList;
 
-    struct QGalleryThumbnailProperty
+    struct QGalleryCompositeProperty
     {
         QLatin1String name;
-        QLatin1String profile;
         QVariant::Type type;
         QGalleryItemPropertyList dependencies;
-        QGalleryTrackerImageColumn *(*createColumn)(
-                QGalleryDBusInterfaceFactory *dbus,
-                int key,
-                const QString &profile,
-                const QVector<int> &columns);
+        QGalleryTrackerCompositeColumn *(*createColumn)(const QVector<int> &columns);
+        bool (*writeFilterCondition)(
+                int *error,
+                QXmlStreamWriter *xml,
+                const QGalleryCompositeProperty &property,
+                const QGalleryMetaDataFilter &filter);
     };
 
-    typedef QGalleryPropertyList<QGalleryThumbnailProperty> QGalleryThumbnailPropertyList;
+    typedef QGalleryPropertyList<QGalleryCompositeProperty> QGalleryCompositePropertyList;
 
     enum UpdateId
     {
@@ -158,7 +161,7 @@ namespace
         QLatin1String service;
         QGalleryTypePrefix prefix;
         QGalleryItemPropertyList itemProperties;
-        QGalleryThumbnailPropertyList thumbnailProperties;
+        QGalleryCompositePropertyList compositeProperties;
         int updateId;
         int updateMask;
     };
@@ -171,7 +174,7 @@ namespace
         QGalleryItemPropertyList identity;
         QGalleryItemPropertyList properties;
         QGalleryAggregatePropertyList aggregateProperties;
-        QGalleryThumbnailPropertyList thumbnailProperties;
+        QGalleryCompositePropertyList compositeProperties;
         void (*writeIdCondition)(int *error, QXmlStreamWriter *xml, const QStringRef &itemId);
         int updateMask;
     };
@@ -267,6 +270,43 @@ namespace
     private:
         QStringList m_sortOrder;
     };
+
+    class QXmlStackStreamWriter
+    {
+    public:
+        QXmlStackStreamWriter(QXmlStreamWriter *xml)
+            : xml(xml)
+            , count(0)
+        {
+        }
+
+        ~QXmlStackStreamWriter()
+        {
+            for (int i = 0; i < count; ++i)
+                xml->writeEndElement();
+        }
+
+        void writeStartElement(const char *tag)
+        {
+            xml->writeStartElement(QLatin1String(tag));
+            count += 1;
+        }
+
+        void writeEmptyElement(const char *tag)
+        {
+            xml->writeEmptyElement(QLatin1String(tag));
+        }
+
+        void writeAttribute(const char *tag, const QString &value)
+        {
+            xml->writeAttribute(QLatin1String(tag), value);
+        }
+
+    private:
+        QXmlStreamWriter *xml;
+        int count;
+
+    };
 }
 
 #define QT_GALLERY_ITEM_PROPERTY(PropertyName, Field, Type, Attr) \
@@ -275,22 +315,19 @@ namespace
 #define QT_GALLERY_AGGREGATE_PROPERTY(PropertyName, Field, Aggregate, Type) \
 { QLatin1String(PropertyName), QLatin1String(Field), QLatin1String(Aggregate), QVariant::Type }
 
-#define QT_GALLERY_THUMBNAIL_PROPERTY(PropertyName, Profile, Type, Dependencies, Factory) \
-{ \
-    QLatin1String(PropertyName), \
-    QLatin1String(Profile), \
-    QVariant::Type, \
-    QGalleryItemPropertyList(Dependencies), \
-    Factory \
-}
+#define QT_GALLERY_COMPOSITE_PROPERTY(PropertyName, Type, Dependencies, Factory, QueryBuilder) \
+{ QLatin1String(PropertyName), QVariant::Type, QGalleryItemPropertyList(Dependencies), Factory, QueryBuilder }
 
-#define QT_GALLERY_ITEM_TYPE(Type, Service, Prefix, ItemProperties) \
+#define QT_GALLERY_COMPOSITE_PROPERTY_NO_DEPENDENCIES(PropertyName, Type, Factory, QueryBuilder) \
+{ QLatin1String(PropertyName), QVariant::Type, QGalleryItemPropertyList(), Factory, QueryBuilder }
+
+#define QT_GALLERY_ITEM_TYPE(Type, Service, Prefix, PropertyGroup) \
 { \
     QLatin1String(#Type), \
     QLatin1String(#Service), \
     QGalleryTypePrefix(#Prefix"::"), \
-    QGalleryItemPropertyList(ItemProperties), \
-    QGalleryThumbnailPropertyList(qt_galleryFileThumbnailPropertyList), \
+    QGalleryItemPropertyList(qt_gallery##PropertyGroup##PropertyList), \
+    QGalleryCompositePropertyList(qt_gallery##PropertyGroup##CompositePropertyList), \
     Type##Id, \
     Type##Mask \
 }
@@ -303,45 +340,9 @@ namespace
     QGalleryItemPropertyList(qt_gallery##Type##Identity), \
     QGalleryItemPropertyList(qt_gallery##Type##PropertyList),\
     QGalleryAggregatePropertyList(qt_gallery##Type##AggregateList), \
-    QGalleryThumbnailPropertyList(), \
+    QGalleryCompositePropertyList(), \
     qt_write##Type##IdCondition, \
     UpdateMask \
-}
-
-#define QT_GALLERY_AGGREGATE_TYPE_WITH_THUMBNAILS(Type, Service, Prefix, UpdateMask) \
-{ \
-    QLatin1String(#Type), \
-    QLatin1String(#Service), \
-    QGalleryTypePrefix(#Prefix"::"), \
-    QGalleryItemPropertyList(qt_gallery##Type##Identity), \
-    QGalleryItemPropertyList(qt_gallery##Type##PropertyList),\
-    QGalleryAggregatePropertyList(qt_gallery##Type##AggregateList), \
-    QGalleryThumbnailPropertyList(qt_gallery##Type##ThumbnailPropertyList), \
-    qt_write##Type##IdCondition, \
-    UpdateMask \
-}
-
-static bool qt_writePropertyName(
-        int *error,
-        QXmlStreamWriter *xml,
-        const QString &propertyName,
-        const QGalleryItemPropertyList &properties)
-{
-    int index = properties.indexOfProperty(propertyName);
-
-    if (index == -1) {
-        *error = QGalleryAbstractRequest::InvalidPropertyError;
-
-        return false;
-    } else {
-        do {
-            xml->writeEmptyElement(QLatin1String("rdfq:Property"));
-            xml->writeAttribute(QLatin1String("name"), properties[index].field);
-        } while (++index < properties.count && propertyName == properties[index].name);
-
-        return true;
-    }
-
 }
 
 template <typename T> bool qt_writeValue(int *error, QXmlStreamWriter *xml, const QVariant &value)
@@ -446,13 +447,15 @@ static bool qt_writeCondition(
         int *error,
         QXmlStreamWriter *xml,
         const QGalleryFilter &filter,
-        const QGalleryItemPropertyList &properties);
+        const QGalleryItemPropertyList &properties,
+        const QGalleryCompositePropertyList &composites);
 
 static bool qt_writeCondition(
         int *error,
         QXmlStreamWriter *xml,
         const QGalleryIntersectionFilter &filter,
-        const QGalleryItemPropertyList &properties)
+        const QGalleryItemPropertyList &properties,
+        const QGalleryCompositePropertyList &composites)
 {
     if (!filter.isEmpty()) {
         xml->writeStartElement(QLatin1String("rdfq:and"));
@@ -461,7 +464,7 @@ static bool qt_writeCondition(
         for (QList<QGalleryFilter>::const_iterator it = filters.begin(), end = filters.end();
                 it != end;
                 ++it) {
-            if (!qt_writeCondition(error, xml, *it, properties)) {
+            if (!qt_writeCondition(error, xml, *it, properties, composites)) {
                 xml->writeEndElement();
 
                 return false;
@@ -477,7 +480,8 @@ static bool qt_writeCondition(
         int *error,
         QXmlStreamWriter *xml,
         const QGalleryUnionFilter &filter,
-        const QGalleryItemPropertyList &properties)
+        const QGalleryItemPropertyList &properties,
+        const QGalleryCompositePropertyList &composites)
 {
     if (!filter.isEmpty()) {
         xml->writeStartElement(QLatin1String("rdfq:or"));
@@ -486,7 +490,7 @@ static bool qt_writeCondition(
         for (QList<QGalleryFilter>::const_iterator it = filters.begin(), end = filters.end();
                 it != end;
                 ++it) {
-            if (!qt_writeCondition(error, xml, *it, properties)) {
+            if (!qt_writeCondition(error, xml, *it, properties, composites)) {
                 xml->writeEndElement();
 
                 return false;
@@ -502,67 +506,70 @@ static bool qt_writeCondition(
         int *error,
         QXmlStreamWriter *xml,
         const QGalleryMetaDataFilter &filter,
-        const QGalleryItemPropertyList &properties)
+        const QGalleryItemPropertyList &properties,
+        const QGalleryCompositePropertyList &composites)
 {
-    QVariant value = filter.value();
+    QXmlStackStreamWriter writer(xml);
 
     if (filter.isInverted())
-        xml->writeStartElement(QLatin1String("rdfq:not"));
+        writer.writeStartElement("rdfq:not");
 
-    switch (filter.comparator()) {
-    case QGalleryFilter::Equals:
-        xml->writeStartElement(QLatin1String("rdfq:equals"));
-        break;
-    case QGalleryFilter::LessThan:
-        xml->writeStartElement(QLatin1String("rdfq:lessThan"));
-        break;
-    case QGalleryFilter::GreaterThan:
-        xml->writeStartElement(QLatin1String("rdfq:greaterThan"));
-        break;
-    case QGalleryFilter::LessThanEquals:
-        xml->writeStartElement(QLatin1String("rdfq:lessThanEqual"));
-        break;
-    case QGalleryFilter::GreaterThanEquals:
-        xml->writeStartElement(QLatin1String("rdfq:greaterThanEqual"));
-        break;
-    case QGalleryFilter::Contains:
-        xml->writeStartElement(QLatin1String("rdfq:contains"));
-        break;
-    case QGalleryFilter::StartsWith:
-        xml->writeStartElement(QLatin1String("rdfq:startsWith"));
-        break;
-    case QGalleryFilter::EndsWith:
-        xml->writeStartElement(QLatin1String("rdfq:equals"));
-        value = QLatin1Char('*') + value.toString();
-        break;
-    case QGalleryFilter::Wildcard:
-        xml->writeStartElement(QLatin1String("rdfq:equals"));
-        break;
-    case QGalleryFilter::RegExp:
-        xml->writeStartElement(QLatin1String("rdfq:regex"));
-        break;
-    default:
-        if (filter.isInverted())
-            xml->writeEndElement();
+    const QString propertyName = filter.propertyName();
 
-        *error = QGalleryAbstractRequest::UnsupportedFilterOptionError;
+    int index;
 
-        return false;
-    }
+    if ((index = properties.indexOfProperty(propertyName)) != -1) {
+        QVariant value = filter.value();
 
-    if (qt_writePropertyName(error, xml, filter.propertyName(), properties)
-            && qt_writeValue<QVariant>(error, xml, value)) {
-        xml->writeEndElement();
+        switch (filter.comparator()) {
+        case QGalleryFilter::Equals:
+            writer.writeStartElement("rdfq:equals");
+            break;
+        case QGalleryFilter::LessThan:
+            writer.writeStartElement("rdfq:lessThan");
+            break;
+        case QGalleryFilter::GreaterThan:
+            writer.writeStartElement("rdfq:greaterThan");
+            break;
+        case QGalleryFilter::LessThanEquals:
+            writer.writeStartElement("rdfq:lessThanEqual");
+            break;
+        case QGalleryFilter::GreaterThanEquals:
+            writer.writeStartElement("rdfq:greaterThanEqual");
+            break;
+        case QGalleryFilter::Contains:
+            writer.writeStartElement("rdfq:contains");
+            break;
+        case QGalleryFilter::StartsWith:
+            writer.writeStartElement("rdfq:startsWith");
+            break;
+        case QGalleryFilter::EndsWith:
+            writer.writeStartElement("rdfq:equals");
+            value = QLatin1Char('*') + value.toString();
+            break;
+        case QGalleryFilter::Wildcard:
+            writer.writeStartElement("rdfq:equals");
+            break;
+        case QGalleryFilter::RegExp:
+            writer.writeStartElement("rdfq:regex");
+            break;
+        default:
+            *error = QGalleryAbstractRequest::UnsupportedFilterOptionError;
 
-        if (filter.isInverted())
-            xml->writeEndElement();
+            return false;
+        }
 
-        return true;
+        do {
+            writer.writeEmptyElement("rdfq:Property");
+            writer.writeAttribute("name", properties[index].field);
+        } while (++index < properties.count && propertyName == properties[index].name);
+
+        return qt_writeValue<QVariant>(error, xml, value);
+    } else if ((index = composites.indexOfProperty(propertyName)) != -1
+            && composites[index].writeFilterCondition) {
+        return composites[index].writeFilterCondition(error, xml, composites[index], filter);
     } else {
-        xml->writeEndElement();
-
-        if (filter.isInverted())
-            xml->writeEndElement();
+        *error = QGalleryAbstractRequest::InvalidPropertyError;
 
         return false;
     }
@@ -572,22 +579,96 @@ static bool qt_writeCondition(
         int *error,
         QXmlStreamWriter *xml,
         const QGalleryFilter &filter,
-        const QGalleryItemPropertyList &properties)
+        const QGalleryItemPropertyList &properties,
+        const QGalleryCompositePropertyList &composites)
 {
     switch (filter.type()) {
     case QGalleryFilter::Invalid:
         return true;
     case QGalleryFilter::Intersection:
         return qt_writeCondition(
-                error, xml, filter.toIntersectionFilter(), properties);
+                error, xml, filter.toIntersectionFilter(), properties, composites);
     case QGalleryFilter::Union:
-        return qt_writeCondition(error, xml, filter.toUnionFilter(), properties);
+        return qt_writeCondition(error, xml, filter.toUnionFilter(), properties, composites);
     case QGalleryFilter::MetaData:
-        return qt_writeCondition(error, xml, filter.toMetaDataFilter(), properties);
+        return qt_writeCondition(error, xml, filter.toMetaDataFilter(), properties, composites);
     default:
         *error = QGalleryAbstractRequest::UnsupportedFilterTypeError;
 
         return false;
+    }
+}
+
+static bool qt_writeFilePathCondition(
+        int *error,
+        QXmlStreamWriter *xml,
+        const QGalleryCompositeProperty &,
+        const QGalleryMetaDataFilter &filter)
+{
+    if (filter.comparator() != QGalleryFilter::Equals) {
+        *error = QGalleryAbstractRequest::UnsupportedFilterOptionError;
+
+        return false;
+    } else {
+        const QString filePath = filter.value().toString();
+
+        const int separatorIndex = filePath.lastIndexOf(QLatin1Char('/'));
+
+        if (separatorIndex > 0) {
+            const QString path = filePath.mid(0, separatorIndex);
+            QString fileName = filePath.mid(separatorIndex + 1);
+
+            xml->writeStartElement(QLatin1String("rdfq:and"));
+            qt_writeEqualsCondition(xml, QLatin1String("File:Path"), path);
+            qt_writeEqualsCondition(xml, QLatin1String("File:Name"), fileName);
+            xml->writeEndElement();
+        } else {
+            xml->writeStartElement(QLatin1String("rdfq:and"));
+            qt_writeEqualsCondition(xml, QLatin1String("File:Path"), QString());
+            qt_writeEqualsCondition(xml, QLatin1String("File:Name"), QString());
+            xml->writeEndElement();
+        }
+
+        return true;
+    }
+}
+
+static bool qt_writeFileUrlCondition(
+        int *error,
+        QXmlStreamWriter *xml,
+        const QGalleryCompositeProperty &,
+        const QGalleryMetaDataFilter &filter)
+{
+    if (filter.comparator() != QGalleryFilter::Equals) {
+        *error = QGalleryAbstractRequest::UnsupportedFilterOptionError;
+
+        return false;
+    } else if (!filter.value().canConvert<QUrl>()) {
+        *error = QGalleryAbstractRequest::PropertyTypeError;
+
+        return false;
+    } else {
+        const QUrl url = filter.value().toUrl();
+        const QString filePath = url.path();
+
+        const int separatorIndex = filePath.lastIndexOf(QLatin1Char('/'));
+
+        if (separatorIndex > 0 && url.scheme() == QLatin1String("file")) {
+            const QString path = filePath.mid(0, separatorIndex);
+            QString fileName = filePath.mid(separatorIndex + 1);
+
+            xml->writeStartElement(QLatin1String("rdfq:and"));
+            qt_writeEqualsCondition(xml, QLatin1String("File:Path"), path);
+            qt_writeEqualsCondition(xml, QLatin1String("File:Name"), fileName);
+            xml->writeEndElement();
+        } else {
+            xml->writeStartElement(QLatin1String("rdfq:and"));
+            qt_writeEqualsCondition(xml, QLatin1String("File:Path"), QString());
+            qt_writeEqualsCondition(xml, QLatin1String("File:Name"), QString());
+            xml->writeEndElement();
+        }
+
+        return true;
     }
 }
 
@@ -599,9 +680,10 @@ static bool qt_writeCondition(
     QT_GALLERY_ITEM_PROPERTY("mimeType"    , "File:Mime"     , String, CanRead | CanSort | CanFilter | IsResource)
 
 // These are repeated in a few lists.
-#define QT_GALLERY_FILE_PROPERTYS \
+#define QT_GALLERY_FILE_PROPERTIES \
     QT_GALLERY_FILE_MIMETYPE_PROPERTY, \
     QT_GALLERY_ITEM_PROPERTY("fileName"    , "File:Name"     , String  , CanRead | CanSort | CanFilter), \
+    QT_GALLERY_ITEM_PROPERTY("path"        , "File:Path"     , String  , CanRead | CanSort | CanFilter), \
   /*QT_GALLERY_ITEM_PROPERTY(""            , "File:Contents" , String  , QGalleryProperty::Attributes()),*/ \
   /*QT_GALLERY_ITEM_PROPERTY(""            , "File:Link"     , String  , QGalleryProperty::Attributes()),*/ \
     QT_GALLERY_ITEM_PROPERTY("fileSize"    , "File:Size"     , Int     , QGalleryProperty::Attributes()), \
@@ -615,7 +697,7 @@ static bool qt_writeCondition(
 
 static const QGalleryItemProperty qt_galleryFilePropertyList[] =
 {
-    QT_GALLERY_FILE_PROPERTYS,
+    QT_GALLERY_FILE_PROPERTIES,
 //    QT_GALLERY_ITEM_PROPERTY(""         , "DC:Contributor", String    , QGalleryProperty::Attributes()),
 //    QT_GALLERY_ITEM_PROPERTY(""         , "DC:Coverage"   , String    , QGalleryProperty::Attributes()),
     QT_GALLERY_ITEM_PROPERTY("author"     , "DC:Creator"    , String    , CanRead | CanSort | CanFilter),
@@ -636,47 +718,15 @@ static const QGalleryItemProperty qt_galleryFilePropertyList[] =
     QT_GALLERY_ITEM_PROPERTY("keywords"   , "User:Keywords" , StringList, CanRead | CanSort | CanFilter)
 };
 
-static const QGalleryItemProperty qt_galleryFileThumbnailDependencyList[] =
+#define QT_GALLERY_FILE_COMPOSITE_PROPERTIES \
+    QT_GALLERY_COMPOSITE_PROPERTY_NO_DEPENDENCIES("filePath", String, QGalleryTrackerFilePathColumn::create, qt_writeFilePathCondition), \
+    QT_GALLERY_COMPOSITE_PROPERTY_NO_DEPENDENCIES("url", Url, QGalleryTrackerFileUrlColumn::create, qt_writeFileUrlCondition)
+
+static const QGalleryCompositeProperty qt_galleryFileCompositePropertyList[] =
 {
-    QT_GALLERY_FILE_MIMETYPE_PROPERTY
+    QT_GALLERY_FILE_COMPOSITE_PROPERTIES
 };
 
-#ifdef Q_WS_MAEMO_5
-#define QT_GALLERY_THUMBNAIL_NORMAL_PROFILE "cropped"
-#else
-#define QT_GALLERY_THUMBNAIL_NORMAL_PROFILE "normal"
-#endif
-
-static const QGalleryThumbnailProperty qt_galleryFileThumbnailPropertyList[] =
-{
-#ifndef Q_WS_MAEMO_5
-    QT_GALLERY_THUMBNAIL_PROPERTY(
-            "previewImage",
-            "large",
-            Image,
-            qt_galleryFileThumbnailDependencyList,
-            QGalleryTrackerThumbnailColumn::createImageColumn),
-    QT_GALLERY_THUMBNAIL_PROPERTY(
-            "previewPixmap",
-            "large",
-            Pixmap,
-            qt_galleryFileThumbnailDependencyList,
-            QGalleryTrackerThumbnailColumn::createPixmapColumn),
-#endif
-    QT_GALLERY_THUMBNAIL_PROPERTY(
-            "thumbnailImage",
-            QT_GALLERY_THUMBNAIL_NORMAL_PROFILE,
-            Image,
-            qt_galleryFileThumbnailDependencyList,
-            QGalleryTrackerThumbnailColumn::createImageColumn),
-    QT_GALLERY_THUMBNAIL_PROPERTY(
-            "thumbnailPixmap",
-            QT_GALLERY_THUMBNAIL_NORMAL_PROFILE,
-            Pixmap,
-            qt_galleryFileThumbnailDependencyList,
-            QGalleryTrackerThumbnailColumn::createPixmapColumn)
-
-};
 
 static void qt_writeFileIdCondition(int *error, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
@@ -721,6 +771,75 @@ static void qt_writeFileScopeCondition(int *, QXmlStreamWriter *xml, const QStri
     xml->writeEndElement();
 }
 
+static QStringList qt_trackerRootPaths()
+{
+    QString configFileName;
+    char *env = getenv("XDG_CONFIG_HOME");
+    if (!env) {
+        configFileName = QDir::homePath() + QLatin1String("/.config/tracker/tracker.cfg");
+    } else if (env[0] == '/') {
+        configFileName = QLatin1String(env) + QLatin1String("/tracker/tracker.cfg");
+    } else {
+        configFileName
+                = QDir::homePath()
+                + QLatin1Char('/')
+                + QLatin1String(env)
+                + QLatin1String("/tracker/tracker.cfg");
+    }
+
+    QStringList paths;
+
+    QFile configFile(configFileName);
+    if (configFile.open(QIODevice::ReadOnly)) {
+        QRegExp watchRegExp(QLatin1String("^WatchDirectoryRoots\\s?=\\s?"));
+        QRegExp crawlRegExp(QLatin1String("^CrawlDirectory\\s?=\\s?"));
+        QRegExp homeRegExp(QLatin1String("\\$HOME|~"));
+        QRegExp trailingRegExp(QLatin1String("/$"));
+
+        QTextStream stream(&configFile);
+
+        while (!stream.atEnd()) {
+            const QString line = stream.readLine();
+
+            if (watchRegExp.indexIn(line) == 0) {
+                paths.append(line
+                        .mid(watchRegExp.matchedLength())
+                        .remove(trailingRegExp)
+                        .replace(QLatin1String("/;"), QLatin1String(";"))
+                        .replace(homeRegExp, QDir::homePath())
+                        .split(QLatin1Char(';'), QString::SkipEmptyParts));
+            } else if (crawlRegExp.indexIn(line) == 0) {
+                paths.append(line
+                        .mid(crawlRegExp.matchedLength())
+                        .remove(trailingRegExp)
+                        .replace(QLatin1String("/;"), QLatin1String(";"))
+                        .replace(homeRegExp, QDir::homePath())
+                        .split(QLatin1Char(';'), QString::SkipEmptyParts));
+            }
+        }
+   }
+
+    qDebug("Paths %s", qPrintable(paths.join(QLatin1String(";"))));
+
+    return paths;
+}
+
+static bool qt_writeFileRootContainerCondition(int *, QXmlStreamWriter *xml)
+{
+    xml->writeStartElement(QLatin1String("rdfq:inSet"));
+
+    xml->writeEmptyElement(QLatin1String("rdfq:Property"));
+    xml->writeAttribute(QLatin1String("name"), QLatin1String("File:Path"));
+
+    xml->writeStartElement(QLatin1String("rdf:String"));
+    xml->writeCharacters(qt_trackerRootPaths().join(QLatin1String(",")));
+    xml->writeEndElement();
+
+    xml->writeEndElement();
+
+    return true;
+}
+
 ////////
 // Audio
 ////////
@@ -734,7 +853,7 @@ static void qt_writeFileScopeCondition(int *, QXmlStreamWriter *xml, const QStri
 
 static const QGalleryItemProperty qt_galleryAudioPropertyList[] =
 {
-    QT_GALLERY_FILE_PROPERTYS,
+    QT_GALLERY_FILE_PROPERTIES,
     QT_GALLERY_AUDIO_ARTIST_PROPERTY,
     QT_GALLERY_AUDIO_ALBUMTITLE_PROPERTY,
     QT_GALLERY_AUDIO_ALBUMARTIST_PROPERTY,
@@ -760,17 +879,27 @@ static const QGalleryItemProperty qt_galleryAudioPropertyList[] =
     QT_GALLERY_ITEM_PROPERTY("lyrics"      , "Audio:Lyrics"       , String    , CanRead | CanWrite | CanSort | CanFilter)
 };
 
+static const QGalleryCompositeProperty qt_galleryAudioCompositePropertyList[] =
+{
+    QT_GALLERY_FILE_COMPOSITE_PROPERTIES,
+};
+
 ///////////
 // Playlist
 ///////////
 
 static const QGalleryItemProperty qt_galleryPlaylistPropertyList[] =
 {
-    QT_GALLERY_FILE_PROPERTYS,
+    QT_GALLERY_FILE_PROPERTIES,
     QT_GALLERY_ITEM_PROPERTY("duration"  , "Playlist:Duration"     , Int, CanRead | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("trackCount", "Playlist:Songs"        , Int, CanRead | CanSort | CanFilter)
 //    QT_GALLERY_ITEM_PROPERTY(""        , "Playlist:Name"         , String, QGalleryProperty::Attributes()),
 //    QT_GALLERY_ITEM_PROPERTY(""        , "Playlist:ValidDuration", String, QGalleryProperty::Attributes())
+};
+
+static const QGalleryCompositeProperty qt_galleryPlaylistCompositePropertyList[] =
+{
+    QT_GALLERY_FILE_COMPOSITE_PROPERTIES
 };
 
 ////////
@@ -779,12 +908,12 @@ static const QGalleryItemProperty qt_galleryPlaylistPropertyList[] =
 
 static const QGalleryItemProperty qt_galleryImagePropertyList[] =
 {
-    QT_GALLERY_FILE_PROPERTYS,
+    QT_GALLERY_FILE_PROPERTIES,
     QT_GALLERY_ITEM_PROPERTY("title"             , "Image:Title"          , String    , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("keywords"          , "Image:Keywords"       , StringList, CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("height"            , "Image:Height"         , Int       , CanRead | CanSort | CanFilter | IsResource),
     QT_GALLERY_ITEM_PROPERTY("width"             , "Image:Width"          , Int       , CanRead | CanSort | CanFilter | IsResource),
-    QT_GALLERY_ITEM_PROPERTY("album"             , "Image:Album"          , String    , CanRead | CanWrite | CanSort | CanFilter),
+    //QT_GALLERY_ITEM_PROPERTY(""                , "Image:Album"          , String    , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("dateTaken"         , "Image:Date"           , DateTime  , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("author"            , "Image:Creator"        , String    , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("comment"           , "Image:Comments"       , String    , CanRead | CanWrite | CanSort | CanFilter),
@@ -809,13 +938,18 @@ static const QGalleryItemProperty qt_galleryImagePropertyList[] =
 //    QT_GALLERY_ITEM_PROPERTY(""                , "Image:HasKeywords"    , String    , QGalleryProperty::Attributes())
 };
 
+static const QGalleryCompositeProperty qt_galleryImageCompositePropertyList[] =
+{
+    QT_GALLERY_FILE_COMPOSITE_PROPERTIES
+};
+
 ////////
 // Video
 ////////
 
 static const QGalleryItemProperty qt_galleryVideoPropertyList[] =
 {
-    QT_GALLERY_FILE_PROPERTYS,
+    QT_GALLERY_FILE_PROPERTIES,
     QT_GALLERY_ITEM_PROPERTY("title"         , "Video:Title"          , String, CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("author"        , "Video:Author"         , String, CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("height"        , "Video:Height"         , Int   , CanRead | CanSort | CanFilter | IsResource),
@@ -831,13 +965,18 @@ static const QGalleryItemProperty qt_galleryVideoPropertyList[] =
 //    QT_GALLERY_ITEM_PROPERTY(""            , "Video:Source"         , String, QGalleryProperty::Attributes())
 };
 
+static const QGalleryCompositeProperty qt_galleryVideoCompositePropertyList[] =
+{
+    QT_GALLERY_FILE_COMPOSITE_PROPERTIES
+};
+
 ///////////
 // Document
 ///////////
 
 static const QGalleryItemProperty qt_galleryDocumentPropertyList[] =
 {
-    QT_GALLERY_FILE_PROPERTYS,
+    QT_GALLERY_FILE_PROPERTIES,
     QT_GALLERY_ITEM_PROPERTY("title"    , "Doc:Title"    , String    , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("subject"  , "Doc:Subject"  , String    , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("author"   , "Doc:Author"   , String    , CanRead | CanWrite | CanSort | CanFilter),
@@ -849,22 +988,27 @@ static const QGalleryItemProperty qt_galleryDocumentPropertyList[] =
 //    QT_GALLERY_ITEM_PROPERTY(""       , "Doc:URL"      , String    , QGalleryProperty::Attributes())
 };
 
+static const QGalleryCompositeProperty qt_galleryDocumentCompositePropertyList[] =
+{
+    QT_GALLERY_FILE_COMPOSITE_PROPERTIES
+};
+
 /////////////
 // File Types
 /////////////
 
 static const QGalleryItemType qt_galleryItemTypeList[] =
 {
-    QT_GALLERY_ITEM_TYPE(File       , Files        , file    , qt_galleryFilePropertyList),
-    QT_GALLERY_ITEM_TYPE(Folder     , Folders      , folder  , qt_galleryFilePropertyList),
-    QT_GALLERY_ITEM_TYPE(Document   , Documents    , document, qt_galleryDocumentPropertyList),
-    QT_GALLERY_ITEM_TYPE(Audio      , Music        , audio   , qt_galleryAudioPropertyList),
-    QT_GALLERY_ITEM_TYPE(Image      , Images       , image   , qt_galleryImagePropertyList),
-    QT_GALLERY_ITEM_TYPE(Video      , Videos       , video   , qt_galleryVideoPropertyList),
-    QT_GALLERY_ITEM_TYPE(Playlist   , Playlists    , playlist, qt_galleryPlaylistPropertyList),
-    QT_GALLERY_ITEM_TYPE(Text       , Text         , text    , qt_galleryFilePropertyList),
-    QT_GALLERY_ITEM_TYPE(File       , Development  , file    , qt_galleryFilePropertyList),
-    QT_GALLERY_ITEM_TYPE(File       , Other        , file    , qt_galleryFilePropertyList),
+    QT_GALLERY_ITEM_TYPE(File       , Files        , file    , File),
+    QT_GALLERY_ITEM_TYPE(Folder     , Folders      , folder  , File),
+    QT_GALLERY_ITEM_TYPE(Document   , Documents    , document, Document),
+    QT_GALLERY_ITEM_TYPE(Audio      , Music        , audio   , Audio),
+    QT_GALLERY_ITEM_TYPE(Image      , Images       , image   , Image),
+    QT_GALLERY_ITEM_TYPE(Video      , Videos       , video   , Video),
+    QT_GALLERY_ITEM_TYPE(Playlist   , Playlists    , playlist, Playlist),
+    QT_GALLERY_ITEM_TYPE(Text       , Text         , text    , File),
+    QT_GALLERY_ITEM_TYPE(File       , Development  , file    , File),
+    QT_GALLERY_ITEM_TYPE(File       , Other        , file    , File),
 };
 
 /////////
@@ -941,34 +1085,6 @@ static const QGalleryAggregateProperty qt_galleryAlbumAggregateList[] =
     QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , "COUNT", Int),
 };
 
-static const QGalleryThumbnailProperty qt_galleryAlbumThumbnailPropertyList[] =
-{
-    QT_GALLERY_THUMBNAIL_PROPERTY(
-            "thumbnailImage",
-            "album",
-            Image,
-            qt_galleryAlbumIdentity,
-            QGalleryTrackerMediaArtColumn::createThumbnailImageColumn),
-    QT_GALLERY_THUMBNAIL_PROPERTY(
-            "thumbnailPixmap",
-            "album",
-            Pixmap,
-            qt_galleryAlbumIdentity,
-            QGalleryTrackerMediaArtColumn::createThumbnailPixmapColumn),
-    QT_GALLERY_THUMBNAIL_PROPERTY(
-            "previewImage",
-            "album",
-            Image,
-            qt_galleryAlbumIdentity,
-            QGalleryTrackerMediaArtColumn::createPreviewImageColumn),
-    QT_GALLERY_THUMBNAIL_PROPERTY(
-            "previewPixmap",
-            "album",
-            Pixmap,
-            qt_galleryAlbumIdentity,
-            QGalleryTrackerMediaArtColumn::createPreviewPixmapColumn)
-};
-
 static void qt_writeAlbumIdCondition(
         int *error, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
@@ -1016,6 +1132,8 @@ static const QGalleryAggregateProperty qt_galleryAudioGenreAggregateList[] =
     QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , "COUNT", Int),
 };
 
+
+
 static void qt_writeAudioGenreIdCondition(int *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
     qt_writeEqualsCondition(xml, QLatin1String("Audio:Genre"), itemId.toString());
@@ -1053,7 +1171,7 @@ static const QGalleryAggregateType qt_galleryAggregateTypeList[] =
 {
     QT_GALLERY_AGGREGATE_TYPE(Artist     , Music , artist     , AudioMask),
     QT_GALLERY_AGGREGATE_TYPE(AlbumArtist, Music , albumArtist, AudioMask),
-    QT_GALLERY_AGGREGATE_TYPE_WITH_THUMBNAILS(Album      , Music , album      , AudioMask),
+    QT_GALLERY_AGGREGATE_TYPE(Album      , Music , album      , AudioMask),
     QT_GALLERY_AGGREGATE_TYPE(AudioGenre , Music , audioGenre , AudioMask),
     QT_GALLERY_AGGREGATE_TYPE(PhotoAlbum , Images, photoAlbum , ImageMask)
 
@@ -1193,8 +1311,8 @@ QStringList QGalleryTrackerSchema::supportedPropertyNames() const
         for (int i = 0; i < type.itemProperties.count; ++i)
             propertyNames.append(type.itemProperties[i].name);
 
-        for (int i = 0; i < type.thumbnailProperties.count; ++i)
-            propertyNames.append(type.thumbnailProperties[i].name);
+        for (int i = 0; i < type.compositeProperties.count; ++i)
+            propertyNames.append(type.compositeProperties[i].name);
     } else if (m_aggregateIndex >= 0) {
         const QGalleryAggregateType &type = qt_galleryAggregateTypeList[m_aggregateIndex];
 
@@ -1204,8 +1322,8 @@ QStringList QGalleryTrackerSchema::supportedPropertyNames() const
         for (int i = 0; i < type.aggregateProperties.count; ++i)
             propertyNames.append(type.aggregateProperties[i].name);
 
-        for (int i = 0; i < type.thumbnailProperties.count; ++i)
-            propertyNames.append(type.thumbnailProperties[i].name);
+        for (int i = 0; i < type.compositeProperties.count; ++i)
+            propertyNames.append(type.compositeProperties[i].name);
     }
     return propertyNames;
 }
@@ -1216,25 +1334,35 @@ QGalleryProperty::Attributes QGalleryTrackerSchema::propertyAttributes(
     if (m_itemIndex >= 0) {
         const QGalleryItemType &type = qt_galleryItemTypeList[m_itemIndex];
 
-        const int index = type.itemProperties.indexOfProperty(propertyName);
-        if (index != -1)
+        int index;
+        if ((index = type.itemProperties.indexOfProperty(propertyName)) != -1) {
             return type.itemProperties[index].attributes & PropertyMask;
+        } else if ((index = type.compositeProperties.indexOfProperty(propertyName)) != -1) {
+            QGalleryProperty::Attributes attributes = QGalleryProperty::CanRead;
+            if (type.compositeProperties[index].writeFilterCondition)
+                attributes |= QGalleryProperty::CanFilter;
+            return attributes;
+        }
     } else if (m_aggregateIndex >= 0) {
         const QGalleryAggregateType &type = qt_galleryAggregateTypeList[m_aggregateIndex];
 
-        const int index = type.properties.indexOfProperty(propertyName);
-        if (index != -1)
+        int index;
+        if ((index = type.properties.indexOfProperty(propertyName)) != -1) {
             return type.properties[index].attributes & PropertyMask;
-        else if (type.aggregateProperties.indexOfProperty(propertyName) != -1)
+        } else if (type.aggregateProperties.indexOfProperty(propertyName) != -1) {
             return QGalleryProperty::CanRead;
-        else if (type.thumbnailProperties.indexOfProperty(propertyName) != -1)
-            return QGalleryProperty::CanRead;
+        } else if ((index = type.compositeProperties.indexOfProperty(propertyName)) != -1) {
+            QGalleryProperty::Attributes attributes = QGalleryProperty::CanRead;
+            if (type.compositeProperties[index].writeFilterCondition)
+                attributes |= QGalleryProperty::CanFilter;
+            return attributes;
+        }
     }
     return QGalleryProperty::Attributes();
 }
 
 int QGalleryTrackerSchema::prepareIdResponse(
-        QGalleryTrackerItemListArguments *arguments,
+        QGalleryTrackerResultSetArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
         const QString &itemId,
         const QStringList &propertyNames) const
@@ -1283,10 +1411,10 @@ int QGalleryTrackerSchema::prepareIdResponse(
 }
 
 int QGalleryTrackerSchema::prepareFilterResponse(
-        QGalleryTrackerItemListArguments *arguments,
+        QGalleryTrackerResultSetArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
-        QGalleryAbstractRequest::Scope scope,
-        const QString &scopeItemId,
+        QGalleryQueryRequest::Scope scope,
+        const QString &rootItemId,
         const QGalleryFilter &filter,
         const QStringList &propertyNames,
         const QStringList &sortPropertyNames) const
@@ -1295,8 +1423,11 @@ int QGalleryTrackerSchema::prepareFilterResponse(
 
     QString query;
 
-    if (!scopeItemId.isEmpty() || filter.isValid())
-        result = buildFilterQuery(&query, scope, scopeItemId, filter);
+    if (!rootItemId.isEmpty()
+            || filter.isValid()
+            || (scope == QGalleryQueryRequest::DirectDescendants && m_itemIndex != -1)) {
+        result = buildFilterQuery(&query, scope, rootItemId, filter);
+    }
 
     if (result != QGalleryAbstractRequest::Succeeded) {
         return result;
@@ -1313,23 +1444,12 @@ int QGalleryTrackerSchema::prepareFilterResponse(
     }
 }
 
-int QGalleryTrackerSchema::prepareCountResponse(
-        QGalleryTrackerCountResponseArguments *arguments,
-        QGalleryDBusInterfaceFactory *dbus,
-        QGalleryAbstractRequest::Scope scope,
-        const QString &scopeItemId,
-        const QGalleryFilter &filter) const
+int QGalleryTrackerSchema::prepareTypeResponse(
+        QGalleryTrackerTypeResultSetArguments *arguments, QGalleryDBusInterfaceFactory *dbus) const
 {
-    int result = QGalleryAbstractRequest::Succeeded;
-
     QString query;
 
-    if (!scopeItemId.isEmpty() || filter.isValid())
-        result = buildFilterQuery(&query, scope, scopeItemId, filter);
-
-    if (result != QGalleryAbstractRequest::Succeeded) {
-        return result;
-    } else if (m_itemIndex >= 0) {
+    if (m_itemIndex >= 0) {
         arguments->accumulative = false;
         arguments->updateMask = qt_galleryItemTypeList[m_itemIndex].updateMask;
         arguments->queryInterface = dbus->metaDataInterface();
@@ -1380,8 +1500,8 @@ int QGalleryTrackerSchema::prepareCountResponse(
 
 int QGalleryTrackerSchema::buildFilterQuery(
         QString *query,
-        QGalleryAbstractRequest::Scope scope,
-        const QString &scopeItemId,
+        QGalleryQueryRequest::Scope scope,
+        const QString &rootItemId,
         const QGalleryFilter &filter) const
 {
     const QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
@@ -1390,34 +1510,41 @@ int QGalleryTrackerSchema::buildFilterQuery(
     int result = QGalleryAbstractRequest::Succeeded;
 
     QXmlStreamWriter xml(query);
-    xml.writeStartElement(QLatin1String("rdfq:Condition"));
+    QXmlStackStreamWriter writer(&xml);
 
-    if (!scopeItemId.isEmpty()) {
+    writer.writeStartElement("rdfq:Condition");
+
+    if (!rootItemId.isEmpty()) {
         if (filter.isValid())
-            xml.writeStartElement(QLatin1String("rdfq:and"));
+            writer.writeStartElement("rdfq:and");
 
         int index;
 
-        if ((index = itemTypes.indexOfItemId(scopeItemId)) != -1) {
+        if ((index = itemTypes.indexOfItemId(rootItemId)) != -1) {
             switch (scope) {
-            case QGalleryAbstractRequest::AllDescendants:
+            case QGalleryQueryRequest::AllDescendants:
                 qt_writeFileScopeCondition(
-                        &result, &xml, itemTypes[index].prefix.strip(scopeItemId));
+                        &result, &xml, itemTypes[index].prefix.strip(rootItemId));
                 break;
-            case QGalleryAbstractRequest::DirectDescendants:
+            case QGalleryQueryRequest::DirectDescendants:
                 qt_writeFileContainerCondition(
-                        &result, &xml, itemTypes[index].prefix.strip(scopeItemId));
+                        &result, &xml, itemTypes[index].prefix.strip(rootItemId));
                 break;
             default:
                 result = QGalleryAbstractRequest::InvalidPropertyError;
                 break;
             }
-        } else if ((index = aggregateTypes.indexOfItemId((scopeItemId))) != -1) {
+        } else if ((index = aggregateTypes.indexOfItemId((rootItemId))) != -1) {
             aggregateTypes[index].writeIdCondition(
-                    &result, &xml, aggregateTypes[index].prefix.strip(scopeItemId));
+                    &result, &xml, aggregateTypes[index].prefix.strip(rootItemId));
         } else {
             result = QGalleryAbstractRequest::InvalidItemError;
         }
+    } else if (scope == QGalleryQueryRequest::DirectDescendants && m_itemIndex != -1) {
+        if (filter.isValid())
+            writer.writeStartElement("rdfq:and");
+
+        qt_writeFileRootContainerCondition(&result, &xml);
     }
 
     if (filter.isValid()) {
@@ -1426,22 +1553,19 @@ int QGalleryTrackerSchema::buildFilterQuery(
                     &result,
                     &xml,
                     filter,
-                    itemTypes[m_itemIndex].itemProperties);
+                    itemTypes[m_itemIndex].itemProperties,
+                    itemTypes[m_itemIndex].compositeProperties);
         } else if (m_aggregateIndex != -1) {
             qt_writeCondition(
                     &result,
                     &xml,
                     filter,
-                    aggregateTypes[m_aggregateIndex].properties);
+                    aggregateTypes[m_aggregateIndex].properties,
+                    aggregateTypes[m_itemIndex].compositeProperties);
         } else {
             result = QGalleryAbstractRequest::ItemTypeError;
         }
     }
-
-    if (!scopeItemId.isEmpty() && filter.isValid())
-        xml.writeEndElement();
-
-    xml.writeEndElement();
 
     return result;
 }
@@ -1456,6 +1580,7 @@ static QVector<QGalleryTrackerValueColumn *> qt_createValueColumns(
     for (int i = 0, count = types.count(); i < count; ++i) {
         switch (types.at(i)) {
         case QVariant::String:
+        case QVariant::Url:
             columns.append(new QGalleryTrackerStringColumn);
             break;
         case QVariant::StringList:
@@ -1479,25 +1604,8 @@ static QVector<QGalleryTrackerValueColumn *> qt_createValueColumns(
     return columns;
 }
 
-static QVector<QGalleryTrackerImageColumn *> qt_createImageColumns(
-        QGalleryDBusInterfaceFactory *dbus,
-        const QVector<const QGalleryThumbnailProperty *> &properties,
-        const QVector<QVector<int> > &columns,
-        int keyOffset)
-{
-    QVector<QGalleryTrackerImageColumn *> imageColumns;
-    imageColumns.reserve(properties.count());
-
-    for (int i = 0; i < properties.count(); ++i) {
-        imageColumns.append(properties.at(i)->createColumn(
-                dbus, keyOffset + i, properties.at(i)->profile, columns.at(i)));
-    }
-
-    return imageColumns;
-}
-
 void QGalleryTrackerSchema::populateItemArguments(
-        QGalleryTrackerItemListArguments *arguments,
+        QGalleryTrackerResultSetArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
         const QString &query,
         const QStringList &propertyNames,
@@ -1511,24 +1619,22 @@ void QGalleryTrackerSchema::populateItemArguments(
 
     QStringList valueNames;
     QStringList aliasNames;
-    QStringList thumbnailNames;
+    QStringList compositeNames;
     QStringList sortFieldNames;
     QVector<QGalleryProperty::Attributes> valueAttributes;
     QVector<QGalleryProperty::Attributes> aliasAttributes;
-    QVector<QGalleryProperty::Attributes> thumbnailAttributes;
+    QVector<QGalleryProperty::Attributes> compositeAttributes;
     QVector<QVariant::Type> valueTypes;
     QVector<QVariant::Type> aliasTypes;
-    QVector<QVariant::Type> thumbnailTypes;
-    QVector<const QGalleryThumbnailProperty *> imageProperties;
-    QVector<QVector<int> > imageColumns;
+    QVector<QVariant::Type> compositeTypes;
 
     const QGalleryItemPropertyList &itemProperties
             = qt_galleryItemTypeList[m_itemIndex].itemProperties;
-    const QGalleryThumbnailPropertyList &thumbnailProperties
-            = qt_galleryItemTypeList[m_itemIndex].thumbnailProperties;
+    const QGalleryCompositePropertyList &compositeProperties
+            = qt_galleryItemTypeList[m_itemIndex].compositeProperties;
 
     for (QStringList::const_iterator it = propertyNames.begin(); it != propertyNames.end(); ++it) {
-        if (valueNames.contains(*it) || aliasNames.contains(*it) || thumbnailNames.contains(*it))
+        if (valueNames.contains(*it) || aliasNames.contains(*it))
             continue;
 
         int propertyIndex = itemProperties.indexOfProperty(*it);
@@ -1549,9 +1655,9 @@ void QGalleryTrackerSchema::populateItemArguments(
                 valueAttributes.append(itemProperties[propertyIndex].attributes);
                 valueTypes.append(itemProperties[propertyIndex].type);
             }
-        } else if ((propertyIndex = thumbnailProperties.indexOfProperty(*it)) >= 0) {
+        } else if ((propertyIndex = compositeProperties.indexOfProperty(*it)) >= 0) {
             const QGalleryItemPropertyList &dependencies
-                    = thumbnailProperties[propertyIndex].dependencies;
+                    = compositeProperties[propertyIndex].dependencies;
 
             QVector<int> columns;
             for (int i = 0; i < dependencies.count; ++i) {
@@ -1571,15 +1677,15 @@ void QGalleryTrackerSchema::populateItemArguments(
                 }
             }
 
-            thumbnailNames.append(*it);
-            thumbnailAttributes.append(QGalleryProperty::CanRead);
-            thumbnailTypes.append(thumbnailProperties[propertyIndex].type);
-            imageProperties.append(&thumbnailProperties[propertyIndex]);
-            imageColumns.append(columns);
-        } else if (*it == QLatin1String("filePath")) {
-            arguments->aliasColumns.append(0);
-            aliasNames.append(*it);
-            aliasAttributes.append(QGalleryProperty::CanRead);
+            QGalleryProperty::Attributes attributes = QGalleryProperty::CanRead;
+            if (compositeProperties[propertyIndex].writeFilterCondition)
+                attributes |= QGalleryProperty::CanFilter;
+
+            compositeNames.append(*it);
+            compositeAttributes.append(attributes);
+            compositeTypes.append(compositeProperties[propertyIndex].type);
+            arguments->compositeColumns.append(
+                    compositeProperties[propertyIndex].createColumn(columns));
         } else {
             qWarning("Unknown column: %s", qPrintable(*it));
         }
@@ -1651,11 +1757,9 @@ void QGalleryTrackerSchema::populateItemArguments(
     arguments->urlColumn = new QGalleryTrackerFileUrlColumn(0);
     arguments->typeColumn = new QGalleryTrackerServiceTypeColumn;
     arguments->valueColumns = qt_createValueColumns(valueTypes);
-    arguments->imageColumns = qt_createImageColumns(
-            dbus, imageProperties, imageColumns, 2 + valueNames.count() + aliasNames.count());
-    arguments->propertyNames = valueNames + aliasNames + thumbnailNames;
-    arguments->propertyAttributes = valueAttributes + aliasAttributes + thumbnailAttributes;
-    arguments->propertyTypes = valueTypes + aliasTypes + thumbnailTypes;
+    arguments->propertyNames = valueNames + compositeNames + aliasNames;
+    arguments->propertyAttributes = valueAttributes + compositeAttributes + aliasAttributes;
+    arguments->propertyTypes = valueTypes + compositeTypes + aliasTypes;
 
     for (int i = 0; i < arguments->propertyAttributes.count(); ++i) {
         if (arguments->propertyAttributes.at(i) & IsResource)
@@ -1665,7 +1769,7 @@ void QGalleryTrackerSchema::populateItemArguments(
 }
 
 void QGalleryTrackerSchema::populateAggregateArguments(
-        QGalleryTrackerItemListArguments *arguments,
+        QGalleryTrackerResultSetArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
         const QString &query,
         const QStringList &propertyNames,
@@ -1677,23 +1781,21 @@ void QGalleryTrackerSchema::populateAggregateArguments(
     QStringList identityNames;
     QStringList aggregateNames;
     QStringList aliasNames;
-    QStringList thumbnailNames;
+    QStringList compositeNames;
     QVector<QGalleryProperty::Attributes> identityAttributes;
     QVector<QGalleryProperty::Attributes> aggregateAttributes;
     QVector<QGalleryProperty::Attributes> aliasAttributes;
-    QVector<QGalleryProperty::Attributes> thumbnailAttributes;
+    QVector<QGalleryProperty::Attributes> compositeAttributes;
     QVector<QVariant::Type> identityTypes;
     QVector<QVariant::Type> aggregateTypes;
     QVector<QVariant::Type> aliasTypes;
-    QVector<QVariant::Type> thumbnailTypes;
-    QVector<const QGalleryThumbnailProperty *> imageProperties;
+    QVector<QVariant::Type> compositeTypes;
     QVector<int> identityColumns;
-    QVector<QVector<int> > imageColumns;
 
     const QGalleryAggregateType &type = qt_galleryAggregateTypeList[m_aggregateIndex];
     const QGalleryItemPropertyList &properties = type.properties;
     const QGalleryAggregatePropertyList &aggregateProperties = type.aggregateProperties;
-    const QGalleryThumbnailPropertyList &thumbnailProperties = type.thumbnailProperties;
+    const QGalleryCompositePropertyList &compositeProperties = type.compositeProperties;
 
     for (int i = 0; i < type.identity.count; ++i)
         identityNames.append(type.identity[i].name);
@@ -1722,8 +1824,7 @@ void QGalleryTrackerSchema::populateAggregateArguments(
             ++it) {
         if (identityNames.contains(*it)
                 || aggregateNames.contains(*it)
-                || aliasNames.contains(*it)
-                || thumbnailNames.contains(*it)) {
+                || aliasNames.contains(*it)) {
             continue;
         }
 
@@ -1745,9 +1846,9 @@ void QGalleryTrackerSchema::populateAggregateArguments(
             aggregates.append(aggregateProperties[propertyIndex].aggregate);
             aggregateAttributes.append(QGalleryProperty::CanRead);
             aggregateTypes.append(aggregateProperties[propertyIndex].type);
-        } else if ((propertyIndex = thumbnailProperties.indexOfProperty(*it)) >= 0) {
+        } else if ((propertyIndex = compositeProperties.indexOfProperty(*it)) >= 0) {
             const QGalleryItemPropertyList &dependencies
-                    = thumbnailProperties[propertyIndex].dependencies;
+                    = compositeProperties[propertyIndex].dependencies;
 
             QVector<int> columns;
             for (int i = 0; i < dependencies.count; ++i) {
@@ -1760,11 +1861,15 @@ void QGalleryTrackerSchema::populateAggregateArguments(
                 columns.append(fieldIndex);
             }
 
-            thumbnailNames.append(*it);
-            thumbnailAttributes.append(QGalleryProperty::CanRead);
-            thumbnailTypes.append(thumbnailProperties[propertyIndex].type);
-            imageProperties.append(&thumbnailProperties[propertyIndex]);
-            imageColumns.append(columns);
+            QGalleryProperty::Attributes attributes = QGalleryProperty::CanRead;
+            if (compositeProperties[propertyIndex].writeFilterCondition)
+                attributes |= QGalleryProperty::CanFilter;
+
+            compositeNames.append(*it);
+            compositeAttributes.append(attributes);
+            compositeTypes.append(compositeProperties[propertyIndex].type);
+            arguments->compositeColumns.append(
+                    compositeProperties[propertyIndex].createColumn(columns));
         }
     }
 
@@ -1819,15 +1924,13 @@ void QGalleryTrackerSchema::populateAggregateArguments(
     arguments->urlColumn = new QGalleryTrackerStaticColumn(QVariant());
     arguments->typeColumn = new QGalleryTrackerStaticColumn(type.itemType);
     arguments->valueColumns = qt_createValueColumns(identityTypes + aggregateTypes);
-    arguments->imageColumns = qt_createImageColumns(
-            dbus,
-            imageProperties,
-            imageColumns,
-            identityNames.count() + aggregateNames.count() + aliasNames.count());
-    arguments->propertyNames = identityNames + aggregateNames + aliasNames + thumbnailNames;
+    arguments->propertyNames = identityNames + aggregateNames + compositeNames + aliasNames;
     arguments->propertyAttributes
-            = identityAttributes + aggregateAttributes + aliasAttributes + thumbnailAttributes;
-    arguments->propertyTypes = identityTypes + aggregateTypes + aliasTypes + thumbnailTypes;
+            = identityAttributes
+            + aggregateAttributes
+            + compositeAttributes
+            + aliasAttributes;
+    arguments->propertyTypes = identityTypes + aggregateTypes + compositeTypes + aliasTypes;
 }
 
 QTM_END_NAMESPACE

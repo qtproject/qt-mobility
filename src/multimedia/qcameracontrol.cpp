@@ -110,7 +110,10 @@ QCameraControl::~QCameraControl()
     \fn QCameraControl::setState(QCamera::State state)
 
     Sets the camera \a state.
-    This operation is asynchronous, with state chages notified with stateChanged() signal.
+
+    States changes are synchronous and indicate more user
+    intention than the internal backen status,
+    which is synchronously reported with QCameraControl::statusChanged() signal.
 
     \sa QCamera::State
 */
@@ -119,7 +122,29 @@ QCameraControl::~QCameraControl()
     \fn void QCameraControl::stateChanged(QCamera::State state)
 
     Signal emitted when the camera \a state changes.
+
+    In most cases the state chage is caused by QCameraControl::setState(),
+    but if crytical error has occured the state changes to QCamera::UnloadedState.
 */
+
+/*!
+    \fn QCameraControl::status() const
+
+    Returns the status of the camera service.
+
+    \sa QCamera::state
+*/
+
+/*!
+    \fn void QCameraControl::statusChanged(QCamera::Status status)
+
+    Signal emitted when the camera \a status changes.
+
+    QCameraControl::state changes are synchronous and reflect user input/intention
+    while QCameraControl::status is asynchronous and used to notify application
+    about actual state of backend.
+*/
+
 
 /*!
     \fn void QCameraControl::error(int error, const QString &errorString)
@@ -138,16 +163,12 @@ QCameraControl::~QCameraControl()
     \fn void QCameraControl::setCaptureMode(QCamera::CaptureMode mode) = 0;
 
     Sets the current capture \a mode.
-
-    Setting the capture mode also triggers asynchronous camera state change to QCamera::Idle,
-    to allow capture settings configuration before the camera is activated.
 */
 
 /*!
     \fn bool QCameraControl::isCaptureModeSupported(QCamera::CaptureMode mode) const = 0;
 
     Returns true if the capture \a mode is suported.
-    QCamera::CaptureDisabled mode is always considered supported and not checked by backend.
 
     Backend should return supported modes even in Stopped state.
 */

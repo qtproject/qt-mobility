@@ -14,10 +14,12 @@ HEADERS = \
     artistdelegate.h \
     artistview.h \
     browser.h \
+    coverartmodel.h \
     galleryview.h \
     photodelegate.h \
     photoview.h \
-    songview.h
+    songview.h \
+    thumbnailmodel.h
 
 SOURCES = \
     albumdelegate.cpp \
@@ -25,8 +27,10 @@ SOURCES = \
     artistdelegate.cpp \
     artistview.cpp \
     browser.cpp \
+    coverartmodel.cpp \
     galleryview.cpp \
     main.cpp \
     photodelegate.cpp \
     photoview.cpp \
-    songview.cpp
+    songview.cpp \
+    thumbnailmodel.cpp

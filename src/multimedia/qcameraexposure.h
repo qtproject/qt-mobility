@@ -71,24 +71,25 @@ public:
     Q_DECLARE_FLAGS(FlashModes, FlashMode)
 
     enum ExposureMode {
-        ExposureManual,
-        ExposureAuto,
-        ExposureNight,
-        ExposureBacklight,
-        ExposureSpotlight,
-        ExposureSports,
-        ExposureSnow,
-        ExposureBeach,
-        ExposureLargeAperture,
-        ExposureSmallAperture,
-        ExposurePortrait
+        ExposureManual = 1,
+        ExposureAuto = 2,
+        ExposureNight = 3,
+        ExposureBacklight = 4,
+        ExposureSpotlight = 5,
+        ExposureSports = 6,
+        ExposureSnow = 7,
+        ExposureBeach = 8,
+        ExposureLargeAperture = 9,
+        ExposureSmallAperture = 10,
+        ExposurePortrait = 11,
+        ExposureModeVendor = 1000
     };
 
     enum MeteringMode {
-        MeteringMatrix,
-        MeteringAverage,
-        MeteringSpot
-    };    
+        MeteringMatrix = 1,
+        MeteringAverage = 2,
+        MeteringSpot = 3
+    };
 
     bool isAvailable() const;
 
