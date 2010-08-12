@@ -627,6 +627,7 @@ bool QOrganizerItemManager::removeCollection(const QOrganizerCollectionLocalId& 
     return d->m_engine->removeCollection(collectionId, &d->m_error);
 }
 
+/*!
   Returns a pruned or modified version of the \a original organizer item which is valid and can be saved in the manager.
   The returned organizer item might have entire details removed or arbitrarily changed.  The cache of relationships
   in the organizer item are ignored entirely when considering compatibility with the backend, as they are

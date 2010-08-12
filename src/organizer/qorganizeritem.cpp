@@ -289,6 +289,7 @@ QOrganizerCollectionId QOrganizerItem::collection() const
     return QOrganizerCollectionId();
 }
 
+/*!
  * Sets the id of this organizer item to \a id.
  *
  * Note that this only affects this object, not any corresponding structures stored
