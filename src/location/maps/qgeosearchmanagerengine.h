@@ -84,7 +84,7 @@ public:
     QList<QLandmarkManager *> additionalLandmarkManagers() const;
     void addAdditionalLandmarkManager(QLandmarkManager *landmarkManager);
 
-signals:
+Q_SIGNALS:
     void finished(QGeoSearchReply* reply);
     void error(QGeoSearchReply* reply, QGeoSearchReply::Error error, QString errorString = QString());
 

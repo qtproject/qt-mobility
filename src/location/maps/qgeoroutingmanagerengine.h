@@ -75,7 +75,7 @@ public:
     QGeoRouteRequest::SegmentDetails supportedSegmentDetails() const;
     QGeoRouteRequest::InstructionDetails supportedInstructionDetails() const;
 
-signals:
+Q_SIGNALS:
     void finished(QGeoRouteReply* reply);
     void error(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString = QString());
 

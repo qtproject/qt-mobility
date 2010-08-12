@@ -75,10 +75,10 @@ public:
     QGeoBoundingBox bounds() const;
     QList<QGeoPlace> places() const;
 
-public slots:
+public Q_SLOTS:
     virtual void abort();
 
-signals:
+Q_SIGNALS:
     void finished();
     void error(QGeoSearchReply::Error error, const QString &errorString = QString());
 

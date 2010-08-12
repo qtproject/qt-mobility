@@ -121,20 +121,20 @@ public:
       less waypoints and a new origin
     */
 
-public slots:
+public Q_SLOTS:
     void calculate(const QGeoRouteRequest &request);
     void updateRoute(const QGeoRoute &route);
 
     void depart();
     void updateRoute();
 
-private slots:
+private Q_SLOTS:
     void positionUpdated(const QGeoPositionInfo &positionInfo);
     void positionTimeout();
     void calculateRouteFinished();
     void calculateRouteError(QGeoRouteReply::Error error, const QString &errorString);
 
-signals:
+Q_SIGNALS:
     void departed();
     void offCourse();
     void onCourse();

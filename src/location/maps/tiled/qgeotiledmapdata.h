@@ -91,7 +91,7 @@ protected:
     void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
     void paintMapObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
-private slots:
+private Q_SLOTS:
     void processRequests();
     void tileFinished();
     void tileError(QGeoTiledMapReply::Error error, QString errorString);

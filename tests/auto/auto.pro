@@ -2,6 +2,8 @@ TEMPLATE = subdirs
 
 include(../../staticconfig.pri)
 
+SUBDIRS += headers
+
 contains(mobility_modules,serviceframework) {
     SUBDIRS += servicemetadata \                   #service framework
            qserviceinterfacedescriptor \

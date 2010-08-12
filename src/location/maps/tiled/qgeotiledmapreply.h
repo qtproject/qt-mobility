@@ -79,10 +79,10 @@ public:
     QByteArray mapImageData() const;
     QString mapImageFormat() const;
 
-public slots:
+public Q_SLOTS:
     virtual void abort();
 
-signals:
+Q_SIGNALS:
     void finished();
     void error(QGeoTiledMapReply::Error error, const QString &errorString = QString());
 

@@ -39,66 +39,18 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOROUTEREPLY_H
-#define QGEOROUTEREPLY_H
+#include <QtTest/QtTest>
 
-#include "qgeoroute.h"
-
-#include <QList>
-#include <QObject>
-
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
-
-class QGeoRouteRequest;
-class QGeoRouteReplyPrivate;
-
-class Q_LOCATION_EXPORT QGeoRouteReply : public QObject
+class tst_HeadersClean: public QObject
 {
     Q_OBJECT
-public:
-    enum Error {
-        NoError,
-        EngineNotSetError,
-        CommunicationError,
-        ParseError,
-        UnsupportedOptionError,
-        UnknownError
-    };
 
-    QGeoRouteReply(Error error, const QString &errorString, QObject *parent = 0);
-    virtual ~QGeoRouteReply();
-
-    bool isFinished() const;
-    Error error() const;
-    QString errorString() const;
-
-    QGeoRouteRequest request() const;
-    QList<QGeoRoute> routes() const;
-
-public Q_SLOTS:
-    virtual void abort();
-
-Q_SIGNALS:
-    void finished();
-    void error(QGeoRouteReply::Error error, const QString &errorString = QString());
-
-protected:
-    QGeoRouteReply(const QGeoRouteRequest &request, QObject *parent = 0);
-
-    void setError(Error error, const QString &errorString);
-    void setFinished(bool finished);
-
-    void setRoutes(const QList<QGeoRoute> &routes);
-
-private:
-    QGeoRouteReplyPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoRouteReply)
+private slots:
+    void mocRun()
+    {
+        QVERIFY(true);
+    }
 };
 
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif
+QTEST_MAIN(tst_HeadersClean)
+#include "tst_headers.moc"

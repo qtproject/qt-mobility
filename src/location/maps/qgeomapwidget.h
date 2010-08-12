@@ -102,7 +102,7 @@ public:
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
 
-signals:
+Q_SIGNALS:
     void zoomLevelChanged(qreal zoomLevel);
     void centered(const QGeoCoordinate &coordinate);
     void mapTypeChanged(QGeoMapWidget::MapType mapType);
