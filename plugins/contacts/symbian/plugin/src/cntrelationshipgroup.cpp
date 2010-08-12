@@ -114,6 +114,59 @@ bool CntRelationshipGroup::removeRelationshipL(QSet<QContactLocalId> *affectedCo
     return true;
 }
 
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
+/*!
+ * Save many relationships
+ * 
+ * \a affectedContactIds will include the affected contact ids 
+ * \a relationship to be saved
+ * \a error t
+ */
+bool CntRelationshipGroup::saveRelationshipsL(QSet<QContactLocalId> *affectedContactIds, QList<QContactRelationship> *relationships, QContactManager::Error* error)
+{
+    RArray<TContactItemId> idList;
+
+    if (relationships->count() == 0) {
+        return true;
+    }
+
+    QContactLocalId groupId = relationships->at(0).first().localId();
+    affectedContactIds->insert(groupId);
+    
+    foreach (QContactRelationship relationship, *relationships) {
+        affectedContactIds->insert(relationship.second().localId());
+        idList.AppendL(TContactItemId(relationship.second().localId()));
+    }
+
+    database()->AddContactsToGroupL(idList, TContactItemId(groupId));
+
+    *error = QContactManager::NoError;
+    return true;
+}
+
+bool CntRelationshipGroup::removeRelationshipsL(QSet<QContactLocalId> *affectedContactIds, const QList<QContactRelationship> &relationships, QContactManager::Error* error)
+{
+    RArray<TContactItemId> idList;
+
+    if (relationships.count() == 0) {
+        return true;
+    }
+
+    QContactLocalId groupId = relationships.at(0).first().localId();
+    affectedContactIds->insert(groupId);
+
+    foreach (QContactRelationship relationship, relationships) {
+        affectedContactIds->insert(relationship.second().localId());
+        idList.AppendL(TContactItemId(relationship.second().localId()));
+    }
+
+    database()->RemoveContactsFromGroupL(idList, TContactItemId(groupId));
+
+    *error = QContactManager::NoError;
+    return true;
+}
+#endif
+
 bool CntRelationshipGroup::validateRelationship(const QContactRelationship &relationship, QContactManager::Error* error)
 {
     // check that "second" is in this manager

@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qgalleryabstractrequest.h"
+#include "qgalleryqueryrequest.h"
 #include "qgalleryfilter.h"
 #include "qgalleryproperty.h"
 
@@ -66,8 +66,8 @@ class QGalleryDBusInterfaceFactory;
 class QGalleryTrackerImageColumn;
 class QGalleryTrackerValueColumn;
 
-struct QGalleryTrackerItemListArguments;
-struct QGalleryTrackerCountResponseArguments;
+struct QGalleryTrackerResultSetArguments;
+struct QGalleryTrackerTypeResultSetArguments;
 
 class QGalleryTrackerSchema
 {
@@ -92,26 +92,23 @@ public:
     QGalleryProperty::Attributes propertyAttributes(const QString &propertyName) const;
 
     int prepareIdResponse(
-            QGalleryTrackerItemListArguments *arguments,
+            QGalleryTrackerResultSetArguments *arguments,
             QGalleryDBusInterfaceFactory *dbus,
             const QString &itemId,
             const QStringList &propertyNames) const;
 
     int prepareFilterResponse(
-            QGalleryTrackerItemListArguments *arguments,
+            QGalleryTrackerResultSetArguments *arguments,
             QGalleryDBusInterfaceFactory *dbus,
-            QGalleryAbstractRequest::Scope scope,
+            QGalleryQueryRequest::Scope scope,
             const QString &scopeItemId,
             const QGalleryFilter &filter,
             const QStringList &propertyNames,
             const QStringList &sortPropertyNames) const;
 
-    int prepareCountResponse(
-            QGalleryTrackerCountResponseArguments *arguments,
-            QGalleryDBusInterfaceFactory *dbus,
-            QGalleryAbstractRequest::Scope scope,
-            const QString &scopeItemId,
-            const QGalleryFilter &filter) const;
+    int prepareTypeResponse(
+            QGalleryTrackerTypeResultSetArguments *arguments,
+            QGalleryDBusInterfaceFactory *dbus) const;
 
 private:
     QGalleryTrackerSchema(int itemIndex, int aggregateIndex)
@@ -119,18 +116,18 @@ private:
 
     int buildFilterQuery(
             QString *query,
-            QGalleryAbstractRequest::Scope scope,
+            QGalleryQueryRequest::Scope scope,
             const QString &scopeItemId,
             const QGalleryFilter &filter) const;
 
     void populateItemArguments(
-            QGalleryTrackerItemListArguments *arguments,
+            QGalleryTrackerResultSetArguments *arguments,
             QGalleryDBusInterfaceFactory *dbus,
             const QString &query,
             const QStringList &propertyNames,
             const QStringList &sortPropertyNames) const;
     void populateAggregateArguments(
-            QGalleryTrackerItemListArguments *arguments,
+            QGalleryTrackerResultSetArguments *arguments,
             QGalleryDBusInterfaceFactory *dbus,
             const QString &query,
             const QStringList &propertyNames,

@@ -117,10 +117,10 @@
     \l{http://library.forum.nokia.com/topic/Qt_for_Symbian_Developers_Library/GUID-7E53D0F7-72CB-41C4-8807-FE7A772B0DB4.html}{Qt For Symbian Developer's Library}
 
     \section2 Known Issues
-    For a list of known issues and an additional details on feature supported see 
-    \l {Release Notes of the QtMobility Project}.
+    For a list of known issues and additional details on supported features see
+    \l {Release Notes of the QtMobility Project release}.
 
-    For a overview of Platform Compatibility see \l {Platform Compatibility}.
+    For an overview of Platform Compatibility see \l {Platform Compatibility}.
     
     \section1 The Qt Mobility APIs
     
@@ -275,9 +275,10 @@
     \section2 Camera
 
     The Camera API provides control of system camera devices. Providing
-    support for still or video image capture with sound support.
+    support for still or video image capture with sound support. This functionality
+    is part of the Multimedia API.
 
-    For more details, see the \l {Camera}{Camera Overview}.
+    For more details, see the \l {Multimedia} {Multimedia API overview}.
     
     \section2 Landmarks
 
@@ -650,4 +651,3 @@
 
     \bold {Open Source front-end for C++ (MIT license)}, Roberto Raggi <roberto.raggi@gmail.com>, QTMOBILITY/tools/icheck/parser/src
 */
-

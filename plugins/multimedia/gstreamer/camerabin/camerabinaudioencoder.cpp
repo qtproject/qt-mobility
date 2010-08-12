@@ -150,7 +150,19 @@ QAudioEncoderSettings CameraBinAudioEncoder::audioSettings() const
 
 void CameraBinAudioEncoder::setAudioSettings(const QAudioEncoderSettings &settings)
 {
+    m_userSettings = settings;
     m_audioSettings = settings;
+    emit settingsChanged();
+}
+
+void CameraBinAudioEncoder::setActualAudioSettings(const QAudioEncoderSettings &settings)
+{
+    m_audioSettings = settings;
+}
+
+void CameraBinAudioEncoder::resetActualSettings()
+{
+    m_audioSettings = m_userSettings;
 }
 
 GstElement *CameraBinAudioEncoder::createEncoder()

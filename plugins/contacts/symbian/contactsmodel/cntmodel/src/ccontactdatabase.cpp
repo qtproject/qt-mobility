@@ -1057,6 +1057,61 @@ EXPORT_C CContactIdArray* CContactDatabase::GetGroupIdListL() const
 	return copyArray;
 	}
 
+/** 
+Sets a list of contact items in the database to be members of a contact group.
+
+The items and the group are identified by their IDs. 
+
+@capability WriteUserData
+
+@param aItemIdList The list of IDs of the items to add to the group.
+@param aGroupId  The ID of the group to which the items should be added. 
+
+@leave KErrNotFound Either the group or the item does not exist.
+@leave KErrNotSupported The group is not of type KUidContactGroup. 
+@leave KErrDiskFull The disk does not have enough free space to perform the operation.
+*/
+EXPORT_C void CContactDatabase::AddContactsToGroupL(RArray<TContactItemId>& aItemIdList, TContactItemId aGroupId)
+	{
+	//Remember if the group was already opened, if so open it at the end of the method
+	TBool isAlreadyOpened = iCntSvr->CloseContact(aGroupId);
+	CContactItem* cntGroup = OpenNoMergeLCX(aGroupId); //double push
+
+	if (cntGroup->Type() != KUidContactGroup)
+		User::Leave(KErrNotSupported);
+
+	CContactGroup* group = static_cast<CContactGroup*>(cntGroup);
+
+    TBool isGroupModified = EFalse;
+    TInt itemCount = aItemIdList.Count();
+    for (TInt i = 0; i < itemCount; ++i)
+        {
+    	TContactItemId itemId = aItemIdList[i];
+    	if (!group->ContainsItem(itemId))
+		    {
+		    group->AddContactL(itemId);
+		    isGroupModified = ETrue;
+		    }
+        }
+
+    if (isGroupModified)
+        {
+	    iCntSvr->CommitContactL(*cntGroup);
+		}
+	else
+		{
+		iCntSvr->CloseContact(cntGroup->Id());
+		}
+
+	CleanupStack::PopAndDestroy(cntGroup);	// cntGroup
+	CleanupStack::Pop(); // Pop the lock
+	cntGroup = NULL;
+	if (isAlreadyOpened)
+		{
+		CContactItem* dummy = OpenContactL(aGroupId);
+		delete dummy;				
+		}
+	}
 
 /** 
 Sets a contact item in the database to be a member of a contact group.
@@ -1245,6 +1300,67 @@ EXPORT_C void CContactDatabase::RemoveContactFromGroupL(TContactItemId aItemId, 
 	}
 
 
+/** 
+Removes the association between a list of contact items and a group.
+
+The items and the group are identified by their IDs. 
+
+@capability WriteUserData
+
+@param aItemId The list of IDs of the items to remove.
+@param aGroupId The ID of the group from which the items should be removed. 
+
+@leave KErrDiskFull The disk does not have enough free space to perform the operation.
+*/
+EXPORT_C void CContactDatabase::RemoveContactsFromGroupL(RArray<TContactItemId>& aItemIdList, TContactItemId aGroupId)
+	{
+	//Remember if the group was already opened, if so open it at the end of the method
+	TBool isAlreadyOpened = iCntSvr->CloseContact(aGroupId);
+	CContactItem* cntGroup = OpenNoMergeLCX(aGroupId); //double push
+	
+	if (cntGroup->Type() != KUidContactGroup)
+		{
+		User::Leave(KErrNotSupported);
+		}
+
+	CContactGroup* group = static_cast<CContactGroup*>(cntGroup);
+	
+    TBool isGroupModified = EFalse;
+    TInt itemCount = aItemIdList.Count();
+    for (TInt i = 0; i < itemCount; ++i)
+        {
+    	TContactItemId itemId = aItemIdList[i];
+    	if (group->ContainsItem(itemId))
+		    {
+		    group->RemoveContactL(itemId);
+		    isGroupModified = ETrue;
+		    }
+		else
+		    {
+            User::Leave(KErrNotFound);
+            }
+        }
+
+    if (isGroupModified)
+        {
+	    iCntSvr->CommitContactL(*cntGroup);
+		}
+	else
+		{
+		iCntSvr->CloseContact(cntGroup->Id());
+		}
+    
+	CleanupStack::PopAndDestroy(2); // cntGroup, CntItemClose
+	cntGroup = NULL;
+	
+	if (isAlreadyOpened)
+		{
+		CContactItem* dummy = OpenContactL(aGroupId);
+		delete dummy;				
+		}
+	}
+	
+    
 /**
 Sets a field containing a telephone number as a speed dial field. The field 
 is identified by aFieldIndex within the contact item aItem. It is assigned a 

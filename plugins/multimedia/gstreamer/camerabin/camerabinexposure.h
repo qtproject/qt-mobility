@@ -60,12 +60,6 @@ public:
     CameraBinExposure(CameraBinSession *session);
     virtual ~CameraBinExposure();
 
-    QCameraExposure::FlashModes flashMode() const;
-    void setFlashMode(QCameraExposure::FlashModes mode);
-    bool isFlashModeSupported(QCameraExposure::FlashModes mode) const;
-
-    bool isFlashReady() const;
-
     QCameraExposure::ExposureMode exposureMode() const;
     void setExposureMode(QCameraExposure::ExposureMode mode);
     bool isExposureModeSupported(QCameraExposure::ExposureMode mode) const;

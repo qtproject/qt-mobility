@@ -10,126 +10,25 @@ INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
 INCLUDEPATH += .
 DEPENDPATH += .
 
+include(landmarks/landmarks.pri)
+include(maps/maps.pri)
+
 PUBLIC_HEADERS += \
                     qgeoaddress.h \
                     qgeoareamonitor.h \
                     qgeoboundingbox.h \
                     qgeocoordinate.h \
-                    qgeomapcircleobject.h \
-                    qgeomapdata.h \
-                    qgeomapmarkerobject.h \
-                    qgeomapobject.h \
-                    qgeomappingmanager.h \
-                    qgeomappingmanagerengine.h \
-                    qgeomappolygonobject.h \
-                    qgeomappolylineobject.h \
-                    qgeomaprectangleobject.h \
-                    qgeomaprouteobject.h \
-                    qgeomapwidget.h \
-                    qgeonavigationinstruction.h \
                     qgeoplace.h \
                     qgeopositioninfo.h \
                     qgeopositioninfosource.h \
-                    qgeoroute.h \
-                    qgeoroutereply.h \
-                    qgeorouterequest.h \
-                    qgeoroutesegment.h \
-                    qgeoroutingmanager.h \
-                    qgeoroutingmanagerengine.h \
                     qgeosatelliteinfo.h \
                     qgeosatelliteinfosource.h \
-                    qgeosearchmanager.h \
-                    qgeosearchmanagerengine.h \
-                    qgeosearchreply.h \
-                    qgeoserviceprovider.h \
-                    qgeoserviceproviderfactory.h \
-                    qgeotiledmapdata.h \
-                    qgeotiledmappingmanagerengine.h \
-                    qgeotiledmapreply.h \
-                    qgeotiledmaprequest.h \
-                    qlandmark.h \
-                    qlandmarkabstractrequest.h \
-                    qlandmarkattributefilter.h \
-                    qlandmarkboxfilter.h \
-                    qlandmarkcategory.h \
-                    qlandmarkcategoryfetchrequest.h \
-                    qlandmarkcategoryfilter.h \
-                    qlandmarkcategoryid.h \
-                    qlandmarkcategoryidfetchrequest.h \
-                    qlandmarkcategoryremoverequest.h \
-                    qlandmarkcategorysaverequest.h \
-                    qlandmarkdistancesort.h \
-                    qlandmarkexportrequest.h \
-                    qlandmarkfetchhint.h \
-                    qlandmarkfetchrequest.h \
-                    qlandmarkfilter.h \
-                    qlandmarkid.h \
-                    qlandmarkidfetchrequest.h \
-                    qlandmarkidfilter.h \
-                    qlandmarkimportrequest.h \
-                    qlandmarkintersectionfilter.h \
-                    qlandmarkmanager.h \
-                    qlandmarkmanagerengine.h \
-                    qlandmarkmanagerenginefactory.h \
-                    qlandmarknamefilter.h \
-                    qlandmarknamesort.h \
-                    qlandmarkproximityfilter.h \
-                    qlandmarkremoverequest.h \
-                    qlandmarksaverequest.h \
-                    qlandmarksortorder.h \
-                    qlandmarkunionfilter.h \
                     qnmeapositioninfosource.h
 
 PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
                     qgeoboundingbox_p.h \
-                    qgeomapcircleobject_p.h \
-                    qgeomapdata_p.h \
-                    qgeomapmarkerobject_p.h \
-                    qgeomapobject_p.h \
-                    qgeomappingmanager_p.h \
-                    qgeomappingmanagerengine_p.h \
-                    qgeomappolygonobject_p.h \
-                    qgeomappolylineobject_p.h \
-                    qgeomaprectangleobject_p.h \
-                    qgeomaprouteobject_p.h \
-                    qgeomapwidget_p.h \
-                    qgeonavigationinstruction_p.h \
                     qgeoplace_p.h \
-                    qgeoroute_p.h \
-                    qgeoroutereply_p.h \
-                    qgeorouterequest_p.h \
-                    qgeoroutesegment_p.h \
-                    qgeoroutingmanager_p.h \
-                    qgeoroutingmanagerengine_p.h \
-                    qgeosearchmanager_p.h \
-                    qgeosearchmanagerengine_p.h \
-                    qgeosearchreply_p.h \
-                    qgeoserviceprovider_p.h \
-                    qgeotiledmapdata_p.h \
-                    qgeotiledmappingmanagerengine_p.h \
-                    qgeotiledmapreply_p.h \
-                    qgeotiledmaprequest_p.h \
-                    qlandmark_p.h \
-                    qlandmarkabstractrequest_p.h \
-                    qlandmarkboxfilter_p.h \
-                    qlandmarkcategory_p.h \
-                    qlandmarkcategoryfilter_p.h \
-                    qlandmarkcategoryid_p.h \
-                    qlandmarkdistancesort_p.h \
-                    qlandmarkfetchhint_p.h \
-                    qlandmarkfilehandler_gpx_p.h \
-                    qlandmarkfilehandler_lmx_p.h \
-                    qlandmarkfilter_p.h \
-                    qlandmarkid_p.h \
-                    qlandmarkidfilter_p.h \
-                    qlandmarkintersectionfilter_p.h \
-                    qlandmarkmanager_p.h \
-                    qlandmarknamefilter_p.h \
-                    qlandmarkproximityfilter_p.h \
-                    qlandmarkrequests_p.h \
-                    qlandmarksortorder_p.h \
-                    qlandmarkunionfilter_p.h \
                     qlocationutils_p.h \
                     qnmeapositioninfosource_p.h
 
@@ -212,79 +111,17 @@ SOURCES += \
             qgeoareamonitor.cpp \
             qgeoboundingbox.cpp \
             qgeocoordinate.cpp \
-            qgeomapcircleobject.cpp \
-            qgeomapdata.cpp \
-            qgeomapmarkerobject.cpp \
-            qgeomapobject.cpp \
-            qgeomappingmanager.cpp \
-            qgeomappingmanagerengine.cpp \
-            qgeomappolygonobject.cpp \
-            qgeomappolylineobject.cpp \
-            qgeomaprectangleobject.cpp \
-            qgeomaprouteobject.cpp \
-            qgeomapwidget.cpp \
-            qgeonavigationinstruction.cpp \
             qgeoplace.cpp \
             qgeopositioninfo.cpp \
             qgeopositioninfosource.cpp \
-            qgeoroute.cpp \
-            qgeoroutereply.cpp \
-            qgeorouterequest.cpp \
-            qgeoroutesegment.cpp \
-            qgeoroutingmanager.cpp \
-            qgeoroutingmanagerengine.cpp \
             qgeosatelliteinfo.cpp \
             qgeosatelliteinfosource.cpp \
-            qgeosearchmanager.cpp \
-            qgeosearchmanagerengine.cpp \
-            qgeosearchreply.cpp \
-            qgeoserviceprovider.cpp \
-            qgeoserviceproviderfactory.cpp \
-            qgeotiledmapdata.cpp \
-            qgeotiledmappingmanagerengine.cpp \
-            qgeotiledmapreply.cpp \
-            qgeotiledmaprequest.cpp \
-            qlandmark.cpp \
-            qlandmarkabstractrequest.cpp \
-            qlandmarkattributefilter.cpp \
-            qlandmarkboxfilter.cpp \
-            qlandmarkcategory.cpp \
-            qlandmarkcategoryfetchrequest.cpp \
-            qlandmarkcategoryfilter.cpp \
-            qlandmarkcategoryid.cpp \
-            qlandmarkcategoryidfetchrequest.cpp \
-            qlandmarkcategoryremoverequest.cpp \
-            qlandmarkcategorysaverequest.cpp \
-            qlandmarkdistancesort.cpp \
-            qlandmarkexportrequest.cpp \
-            qlandmarkfetchhint.cpp \
-            qlandmarkfetchrequest.cpp \
-            qlandmarkfilehandler_gpx.cpp \
-            qlandmarkfilehandler_lmx.cpp \
-            qlandmarkfilter.cpp \
-            qlandmarkid.cpp \
-            qlandmarkidfetchrequest.cpp \
-            qlandmarkidfilter.cpp \
-            qlandmarkimportrequest.cpp \
-            qlandmarkintersectionfilter.cpp \
-            qlandmarkmanager.cpp \
-            qlandmarkmanager_p.cpp \
-            qlandmarkmanagerengine.cpp \
-            qlandmarkmanagerenginefactory.cpp \
-            qlandmarknamefilter.cpp \
-            qlandmarknamesort.cpp \
-            qlandmarkproximityfilter.cpp \
-            qlandmarkremoverequest.cpp \
-            qlandmarksaverequest.cpp \
-            qlandmarksortorder.cpp \
-            qlandmarkunionfilter.cpp \
             qlocationutils.cpp \
             qnmeapositioninfosource.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC83
-    MMP_RULES += EXPORTUNFROZEN
 
     INCLUDEPATH += $${EPOCROOT}epoc32/include/osextensions \
                    $${EPOCROOT}epoc32/include/LBTHeaders \
