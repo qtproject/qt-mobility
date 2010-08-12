@@ -51,7 +51,8 @@
 QTM_USE_NAMESPACE
 
 QVersitOrganizerExporterPrivate::QVersitOrganizerExporterPrivate(const QString& profile) :
-    mDetailHandler(NULL)
+    mDetailHandler(NULL),
+    mTimeZoneHandler(NULL)
 {
     int versitPropertyCount =
         sizeof(versitOrganizerDetailMappings)/sizeof(VersitDetailMapping);

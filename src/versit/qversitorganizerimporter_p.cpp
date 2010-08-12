@@ -52,6 +52,7 @@ QTM_USE_NAMESPACE
 
 QVersitOrganizerImporterPrivate::QVersitOrganizerImporterPrivate(const QString& profile) :
     mPropertyHandler(NULL),
+    mTimeZoneHandler(NULL),
     mDurationSpecified(false)
 {
     int versitPropertyCount =

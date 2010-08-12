@@ -69,7 +69,7 @@ QVersitPluginLoader* QVersitPluginLoader::mInstance = NULL;
  * This is a singleton class that loads Versit plugins
  */
 
-QVersitPluginLoader::QVersitPluginLoader()
+QVersitPluginLoader::QVersitPluginLoader() : mTimeZoneHandler(NULL)
 {
 }
 
