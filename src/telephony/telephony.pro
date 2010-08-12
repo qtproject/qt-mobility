@@ -30,7 +30,7 @@ symbian: {
     SOURCES += qtelephonycalllist_symbian.cpp
 }
  
-linux-*: {
+linux-*:!maemo* {
     QT += dbus
     HEADERS += linux/qtelephonycalllist_linux_p.h \
                qtelephonycallinfo_p.h
