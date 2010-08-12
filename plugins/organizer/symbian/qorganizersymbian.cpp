@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -379,10 +379,12 @@ bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items, QMap<i
     for (int i(0); i < items->count(); i++) {
         QOrganizerItem item = items->at(i);
         
-        // Save
+        // Validate & save
         QOrganizerItemManager::Error saveError;
-        TRAPD(err, saveItemL(&item, &changeSet));
-        transformError(err, &saveError);
+        if (validateItem(item, &saveError)) {
+            TRAPD(err, saveItemL(&item, &changeSet));
+            transformError(err, &saveError);
+        }
         
         // Check error
         if (saveError != QOrganizerItemManager::NoError) {
@@ -404,11 +406,13 @@ bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items, QMap<i
 
 bool QOrganizerItemSymbianEngine::saveItem(QOrganizerItem *item, QOrganizerItemManager::Error* error)
 {
-    // TODO: Validate item according to the schema
-    QOrganizerItemChangeSet changeSet;
-    TRAPD(err, saveItemL(item, &changeSet));
-    transformError(err, error);
-    changeSet.emitSignals(this);
+    // Validate & save
+    if (validateItem(*item, error)) {
+        QOrganizerItemChangeSet changeSet;
+        TRAPD(err, saveItemL(item, &changeSet));
+        transformError(err, error);
+        changeSet.emitSignals(this);
+    }
     return *error == QOrganizerItemManager::NoError;
 }
 
