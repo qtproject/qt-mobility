@@ -65,10 +65,12 @@
 #include <mntent.h>
 #include <sys/stat.h>
 
+#if !defined(Q_WS_MAEMO_6)
 #ifdef Q_WS_X11
 #include <QX11Info>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
+#endif
 #endif
 
 #ifdef BLUEZ_SUPPORTED
@@ -885,10 +887,12 @@ int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
         return -1;
     }
 
+#if !defined(Q_WS_MAEMO_6)
 #ifdef Q_WS_X11
     return wid.screen(screen)->x11Info().depth();
 #else
-        return QPixmap::defaultDepth();
+#endif
+    return QPixmap::defaultDepth();
 #endif
 }
 
