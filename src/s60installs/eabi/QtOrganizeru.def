@@ -676,4 +676,26 @@ EXPORTS
 	_ZTVN10QtMobility41QOrganizerItemDetailDefinitionSaveRequestE @ 675 NONAME
 	_ZTVN10QtMobility42QOrganizerItemDetailDefinitionFetchRequestE @ 676 NONAME
 	_ZTVN10QtMobility43QOrganizerItemDetailDefinitionRemoveRequestE @ 677 NONAME
+	_ZN10QtMobility14QOrganizerTodo16setTimeSpecifiedEb @ 678 NONAME
+	_ZN10QtMobility15QOrganizerEvent16setTimeSpecifiedEb @ 679 NONAME
+	_ZN10QtMobility22QOrganizerItemReminder13FieldDateTimeE @ 680 NONAME DATA 9
+	_ZN10QtMobility22QOrganizerItemReminder14DefinitionNameE @ 681 NONAME DATA 9
+	_ZN10QtMobility22QOrganizerItemReminder14FieldTimeDeltaE @ 682 NONAME DATA 10
+	_ZN10QtMobility22QOrganizerItemReminder17FieldReminderTypeE @ 683 NONAME DATA 13
+	_ZN10QtMobility22QOrganizerItemReminder20FieldRepetitionCountE @ 684 NONAME DATA 16
+	_ZN10QtMobility22QOrganizerItemReminder20FieldRepetitionDelayE @ 685 NONAME DATA 16
+	_ZN10QtMobility23QOrganizerTodoTimeRange18FieldTimeSpecifiedE @ 686 NONAME DATA 14
+	_ZN10QtMobility24QOrganizerEventTimeRange18FieldTimeSpecifiedE @ 687 NONAME DATA 14
+	_ZN10QtMobility27QOrganizerItemEmailReminder12FieldSubjectE @ 688 NONAME DATA 8
+	_ZN10QtMobility27QOrganizerItemEmailReminder14DefinitionNameE @ 689 NONAME DATA 14
+	_ZN10QtMobility27QOrganizerItemEmailReminder15FieldRecipientsE @ 690 NONAME DATA 11
+	_ZN10QtMobility27QOrganizerItemEmailReminder16FieldAttachmentsE @ 691 NONAME DATA 12
+	_ZN10QtMobility27QOrganizerItemEmailReminder9FieldBodyE @ 692 NONAME DATA 5
+	_ZN10QtMobility28QOrganizerItemVisualReminder12FieldDataUrlE @ 693 NONAME DATA 8
+	_ZN10QtMobility28QOrganizerItemVisualReminder12FieldMessageE @ 694 NONAME DATA 8
+	_ZN10QtMobility28QOrganizerItemVisualReminder14DefinitionNameE @ 695 NONAME DATA 15
+	_ZN10QtMobility29QOrganizerItemAudibleReminder12FieldDataUrlE @ 696 NONAME DATA 8
+	_ZN10QtMobility29QOrganizerItemAudibleReminder14DefinitionNameE @ 697 NONAME DATA 16
+	_ZNK10QtMobility14QOrganizerTodo15isTimeSpecifiedEv @ 698 NONAME
+	_ZNK10QtMobility15QOrganizerEvent15isTimeSpecifiedEv @ 699 NONAME
 

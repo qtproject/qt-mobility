@@ -166,6 +166,20 @@ void tst_QVersitReader::testReading()
     QCOMPARE(mReader->error(), QVersitReader::NoError);
     QCOMPARE(results.count(),1);
 
+    // vCard 4.0
+    const QByteArray& vcard40 =
+        "BEGIN:VCARD\r\nVERSION:4.0\r\nFN:John\r\nEND:VCARD\r\n";
+    mInputDevice->close();
+    mInputDevice->setData(vcard40);
+    mInputDevice->open(QBuffer::ReadOnly);
+    mInputDevice->seek(0);
+    QVERIFY(mReader->startReading());
+    QVERIFY(mReader->waitForFinished());
+    results = mReader->results();
+    QCOMPARE(mReader->state(), QVersitReader::FinishedState);
+    QCOMPARE(mReader->error(), QVersitReader::NoError);
+    QCOMPARE(results.count(),1);
+
     // Wide charset with no byte-order mark
     QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
     QTextCodec::ConverterState converterState(QTextCodec::IgnoreHeader);
@@ -702,7 +716,7 @@ void tst_QVersitReader::testParseVersitDocument_data()
     QTest::newRow("Wrong version")
             << QByteArray(
                     "BEGIN:VCARD\r\n"
-                    "VERSION:4.0\r\n"
+                    "VERSION:1234\r\n"
                     "FN:Nobody\r\n"
                     "END:VCARD\r\n")
             << false

@@ -103,7 +103,7 @@ not derived from QObject, and hence can be used in lists, do not have parents,
 do not emit signals, and so on.  They represent data which may be manipulated
 and retrieved from a \l{QOrganizerItemManager}{manager}.
 
-\section3 Item
+\section3 \bold{Item}
 
 An \l{QOrganizerItem}{item} is the digital representation of an event, journal,
 todo, or note which is stored in a platform-specific manner.  Information
@@ -116,7 +116,7 @@ within that manager.  Note that an item stored in one manager may have the
 same local id as a different item stored in another manager; please see the
 QOrganizerItemId documentation for more information.
 
-\section3 Detail
+\section3 \bold{Detail}
 
 A \l{QOrganizerItemDetail}{detail} is a single, cohesive unit of information
 that is stored in an item.  Any detail stored in an item which is saved in a
@@ -128,7 +128,7 @@ constraints which may apply to the detail (e.g., read-only, irremovable, etc).
 There are a number of common details defined in the API which are intended
 for use by clients, as listed \l{"Organizer Item Details" Leaf Classes}{here}.
 
-\section3 Detail Definition
+\section3 \bold{Detail Definition}
 
 Each detail stored in an item has defined semantics of usage and storage.
 The Qt Organizer API allows per-datastore organizer item
@@ -159,7 +159,7 @@ provides access to detail definitions and organizer items stored in different
 datastores, in a platform and datastore independent manner.
 
 
-\section3 Meta Data API
+\section3 \bold{Meta Data API}
 
 The API offered by the QOrganizerItemManager exposes functionality which is
 implemented by plugins.  These plugins may be platform specific, and may be
@@ -206,7 +206,7 @@ The functionality that the above functions provide is only available through
 synchronous API.
 
 
-\section3 Asynchronous API
+\section3 \bold{Asynchronous API}
 
 The asynchronous API provides a way to access or modify the
 organizer item information managed by a particular backend via non-blocking,
@@ -227,7 +227,7 @@ manager capability or meta data information reporting.
 
 For more detailed documentation on the asynchronous API, see the \l{Organizer Asynchronous API}.
 
-\section3 Synchronous API
+\section3 \bold{Synchronous API}
 
 The synchronous API provides the simplest way to access or modify the
 organizer item information managed by a particular backend.  It has the
@@ -268,6 +268,19 @@ A manager backend may be implemented by subclassing
 See \l{Qt Organizer Manager Engines} for more information on available engines
 and how to write your own engine.
 
+\section1 Calendar Features
+
+\section2 Recurrences
+
+\section2 All-day and Multiple-day Event Support
+Events and Todos can be specified as all-day or multi-day by setting the
+TimeSpecified field to \tt{true}.  When this field is set to true, it means that
+the time portion of the StartDateTime and EndDateTime should be ignored.  An
+event or todo with TimeSpecified set to true should be considered to start and
+end roughly on its given start and end dates (inclusive), but without specifying
+exact times.  For example, a birthday could be specified with a QOrganizerEvent
+where the StartDateTime and EndDateTime have the same value, and TimeSpecified
+is set to true.
 
 \section1 On-going Development
 
@@ -277,7 +290,6 @@ not included in the Technical Preview.  These include:
   \o Multiple Calendar Support
   \o Timezone Support
   \o Result Pagination Support
-  \o All-day and Multiple-day Event Support
 \endlist
 
 Each of these areas is complex and may have important ramifications to related
@@ -349,21 +361,6 @@ In short, discussion about result pagination is still on-going, as it is a
 complex topic with far-reaching ramifications given that we must maintain
 consistency between the various modules of the Qt Mobility project.
 
-\section2 All-day and Multiple-day Event Support
-
-Several options for supporting all-day and multiple-day events have been
-considered.  One possible method of supporting all-day events is to allow the
-start date time of the event to be set to a date without a time component,
-while another might be to explicitly set the start and end date times to cover
-an entire 24 hour period (the currently supported solution).
-We envision that multiple-day events will be supported in the same manner as
-all-day events.
-
-Finally, the way in which all-day and multiple-day events are supported may
-depend on the way in which timezone support is implemented.  As such, this
-aspect of the API will be considered iteratively as support for timezone
-information matures.
-
 \section1 Using the API
 
 Some examples of common usage of the API may be found
@@ -431,7 +428,7 @@ For more information on this topic, see please see the documentation on
 \section2 Synchronization and Serialization
 
 The organizer API is used by another Qt Mobility module: the
-\l {Versit API} {Versit}* module.  It allows
+\l {Versit} {Versit}* module.  It allows
 serialization of a QOrganizerItem into an iCalendar document, and vice versa.
 
 [*] Versit \reg is a trademark of the Internet Mail Consortium.

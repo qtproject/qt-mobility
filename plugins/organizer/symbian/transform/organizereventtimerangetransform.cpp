@@ -64,9 +64,32 @@ void OrganizerEventTimeRangeTransform::transformToDetailL(const CCalEntry& entry
     }
 }
 
+void OrganizerEventTimeRangeTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
+{
+    if (itemInstance->type() == QOrganizerItemType::TypeEventOccurrence) // type has already been converted
+    {
+        TCalTime startTime = instance.StartTimeL();
+        TCalTime endTime = instance.EndTimeL();
+
+        QOrganizerEventTimeRange range;
+        if (startTime.TimeUtcL() != Time::NullTTime())
+            range.setStartDateTime(toQDateTimeL(startTime));
+
+        // Check if the end time is defined and if the end time is different to
+        // start time. Effectively this means that if a QtMobility Organizer API
+        // client defines an end time that is exactly the same as start time, the
+        // end time is lost.
+        if (endTime.TimeUtcL() != Time::NullTTime()
+            && endTime.TimeUtcL() != startTime.TimeUtcL())
+            range.setEndDateTime(toQDateTimeL(endTime));
+
+        itemInstance->saveDetail(&range);
+    }
+}
+
 void OrganizerEventTimeRangeTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
-    if (item.type() == QOrganizerItemType::TypeEvent)
+    if (item.type() == QOrganizerItemType::TypeEvent || item.type() == QOrganizerItemType::TypeEventOccurrence)
     {
         QOrganizerEventTimeRange range = item.detail<QOrganizerEventTimeRange>();
         // Symbian calendar server makes the client process panic in case there

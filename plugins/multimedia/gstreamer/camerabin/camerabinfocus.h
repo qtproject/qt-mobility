@@ -57,7 +57,7 @@ class CameraBinFocus  : public QCameraFocusControl
     Q_OBJECT
 
 public:
-    CameraBinFocus(GstElement &camerabin, CameraBinSession *session);
+    CameraBinFocus(CameraBinSession *session);
     virtual ~CameraBinFocus();
 
     QCameraFocus::FocusMode focusMode() const;
@@ -79,10 +79,14 @@ public:
 
     QCameraFocusZoneList focusZones() const;
 
+private Q_SLOTS:
+    void _q_updateLockStatus(QCamera::LockType, QCamera::LockStatus, QCamera::LockChangeReason);
+
 private:
     CameraBinSession *m_session;
-    GstElement &m_camerabin;
     QCameraFocus::FocusMode m_focusMode;
+    QCameraFocusZone::FocusZoneStatus m_focusZoneStatus;
+
 };
 
 #endif // CAMERABINFOCUSCONTROL_H

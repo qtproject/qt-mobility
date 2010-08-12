@@ -52,6 +52,7 @@ QTM_BEGIN_NAMESPACE
   \class QVersitProperty
   \brief The QVersitProperty class stores the name, value, groups and parameters of a Versit property.
   \ingroup versit
+  \inmodule QtVersit
 
   A vCard is represented in abstract form as a QVersitDocument that consists of a number of
   properties such as a name (N), a telephone number (TEL) and an email address (EMAIL), for

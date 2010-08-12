@@ -821,4 +821,73 @@ EXPORTS
 	?setDateTime@QOrganizerJournal@QtMobility@@QAEXABVQDateTime@@@Z @ 820 NONAME ; void QtMobility::QOrganizerJournal::setDateTime(class QDateTime const &)
 	?parseUri@QOrganizerItemManager@QtMobility@@SA_NABVQString@@PAV3@PAV?$QMap@VQString@@V1@@@@Z @ 821 NONAME ; bool QtMobility::QOrganizerItemManager::parseUri(class QString const &, class QString *, class QMap<class QString, class QString> *)
 	?address@QOrganizerItemLocation@QtMobility@@QBE?AVQString@@XZ @ 822 NONAME ; class QString QtMobility::QOrganizerItemLocation::address(void) const
+	??_EQOrganizerItemRecurrenceRule@QtMobility@@QAE@I@Z @ 823 NONAME ; QtMobility::QOrganizerItemRecurrenceRule::~QOrganizerItemRecurrenceRule(unsigned int)
+	??0QOrganizerItemComment@QtMobility@@QAE@ABV01@@Z @ 824 NONAME ; QtMobility::QOrganizerItemComment::QOrganizerItemComment(class QtMobility::QOrganizerItemComment const &)
+	??_EQOrganizerItemSortOrder@QtMobility@@QAE@I@Z @ 825 NONAME ; QtMobility::QOrganizerItemSortOrder::~QOrganizerItemSortOrder(unsigned int)
+	??_EQOrganizerItemComment@QtMobility@@QAE@I@Z @ 826 NONAME ; QtMobility::QOrganizerItemComment::~QOrganizerItemComment(unsigned int)
+	??_EQOrganizerItemFilter@QtMobility@@QAE@I@Z @ 827 NONAME ; QtMobility::QOrganizerItemFilter::~QOrganizerItemFilter(unsigned int)
+	??_EQOrganizerItemDetailDefinition@QtMobility@@QAE@I@Z @ 828 NONAME ; QtMobility::QOrganizerItemDetailDefinition::~QOrganizerItemDetailDefinition(unsigned int)
+	??_EQOrganizerItemDetail@QtMobility@@QAE@I@Z @ 829 NONAME ; QtMobility::QOrganizerItemDetail::~QOrganizerItemDetail(unsigned int)
+	??_EQOrganizerItem@QtMobility@@QAE@I@Z @ 830 NONAME ; QtMobility::QOrganizerItem::~QOrganizerItem(unsigned int)
+	??0QOrganizerItemReminder@QtMobility@@IAE@PBD@Z @ 831 NONAME ; QtMobility::QOrganizerItemReminder::QOrganizerItemReminder(char const *)
+	??4QOrganizerItemVisualReminder@QtMobility@@QAEAAV01@ABVQOrganizerItemDetail@1@@Z @ 832 NONAME ; class QtMobility::QOrganizerItemVisualReminder & QtMobility::QOrganizerItemVisualReminder::operator=(class QtMobility::QOrganizerItemDetail const &)
+	??4QOrganizerItemAudibleReminder@QtMobility@@QAEAAV01@ABVQOrganizerItemDetail@1@@Z @ 833 NONAME ; class QtMobility::QOrganizerItemAudibleReminder & QtMobility::QOrganizerItemAudibleReminder::operator=(class QtMobility::QOrganizerItemDetail const &)
+	?FieldTimeDelta@QOrganizerItemReminder@QtMobility@@2U?$QLatin1Constant@$09@2@B @ 834 NONAME ; struct QtMobility::QLatin1Constant<10> const QtMobility::QOrganizerItemReminder::FieldTimeDelta
+	?setTimeDelta@QOrganizerItemReminder@QtMobility@@QAEXH@Z @ 835 NONAME ; void QtMobility::QOrganizerItemReminder::setTimeDelta(int)
+	??0QOrganizerItemVisualReminder@QtMobility@@QAE@ABVQOrganizerItemDetail@1@@Z @ 836 NONAME ; QtMobility::QOrganizerItemVisualReminder::QOrganizerItemVisualReminder(class QtMobility::QOrganizerItemDetail const &)
+	??0QOrganizerItemEmailReminder@QtMobility@@QAE@ABVQOrganizerItemDetail@1@@Z @ 837 NONAME ; QtMobility::QOrganizerItemEmailReminder::QOrganizerItemEmailReminder(class QtMobility::QOrganizerItemDetail const &)
+	?recipients@QOrganizerItemEmailReminder@QtMobility@@QBE?AVQStringList@@XZ @ 838 NONAME ; class QStringList QtMobility::QOrganizerItemEmailReminder::recipients(void) const
+	?FieldDataUrl@QOrganizerItemVisualReminder@QtMobility@@2U?$QLatin1Constant@$07@2@B @ 839 NONAME ; struct QtMobility::QLatin1Constant<8> const QtMobility::QOrganizerItemVisualReminder::FieldDataUrl
+	?FieldRecipients@QOrganizerItemEmailReminder@QtMobility@@2U?$QLatin1Constant@$0L@@2@B @ 840 NONAME ; struct QtMobility::QLatin1Constant<11> const QtMobility::QOrganizerItemEmailReminder::FieldRecipients
+	??0QOrganizerItemEmailReminder@QtMobility@@QAE@XZ @ 841 NONAME ; QtMobility::QOrganizerItemEmailReminder::QOrganizerItemEmailReminder(void)
+	??0QOrganizerItemReminder@QtMobility@@QAE@ABVQOrganizerItemDetail@1@@Z @ 842 NONAME ; QtMobility::QOrganizerItemReminder::QOrganizerItemReminder(class QtMobility::QOrganizerItemDetail const &)
+	?setTimeSpecified@QOrganizerTodo@QtMobility@@QAEX_N@Z @ 843 NONAME ; void QtMobility::QOrganizerTodo::setTimeSpecified(bool)
+	?isTimeSpecified@QOrganizerTodo@QtMobility@@QBE_NXZ @ 844 NONAME ; bool QtMobility::QOrganizerTodo::isTimeSpecified(void) const
+	?message@QOrganizerItemVisualReminder@QtMobility@@QBE?AVQString@@XZ @ 845 NONAME ; class QString QtMobility::QOrganizerItemVisualReminder::message(void) const
+	?FieldMessage@QOrganizerItemVisualReminder@QtMobility@@2U?$QLatin1Constant@$07@2@B @ 846 NONAME ; struct QtMobility::QLatin1Constant<8> const QtMobility::QOrganizerItemVisualReminder::FieldMessage
+	?reminderType@QOrganizerItemReminder@QtMobility@@QBE?AW4ReminderType@12@XZ @ 847 NONAME ; enum QtMobility::QOrganizerItemReminder::ReminderType QtMobility::QOrganizerItemReminder::reminderType(void) const
+	?repetitionCount@QOrganizerItemReminder@QtMobility@@QBEHXZ @ 848 NONAME ; int QtMobility::QOrganizerItemReminder::repetitionCount(void) const
+	??4QOrganizerItemEmailReminder@QtMobility@@QAEAAV01@ABVQOrganizerItemDetail@1@@Z @ 849 NONAME ; class QtMobility::QOrganizerItemEmailReminder & QtMobility::QOrganizerItemEmailReminder::operator=(class QtMobility::QOrganizerItemDetail const &)
+	?setRecipients@QOrganizerItemEmailReminder@QtMobility@@QAEXABVQStringList@@@Z @ 850 NONAME ; void QtMobility::QOrganizerItemEmailReminder::setRecipients(class QStringList const &)
+	?setDataUrl@QOrganizerItemAudibleReminder@QtMobility@@QAEXABVQUrl@@@Z @ 851 NONAME ; void QtMobility::QOrganizerItemAudibleReminder::setDataUrl(class QUrl const &)
+	?setDataUrl@QOrganizerItemVisualReminder@QtMobility@@QAEXABVQUrl@@@Z @ 852 NONAME ; void QtMobility::QOrganizerItemVisualReminder::setDataUrl(class QUrl const &)
+	?FieldTimeSpecified@QOrganizerTodoTimeRange@QtMobility@@2U?$QLatin1Constant@$0O@@2@B @ 853 NONAME ; struct QtMobility::QLatin1Constant<14> const QtMobility::QOrganizerTodoTimeRange::FieldTimeSpecified
+	?DefinitionName@QOrganizerItemAudibleReminder@QtMobility@@2U?$QLatin1Constant@$0BA@@2@B @ 854 NONAME ; struct QtMobility::QLatin1Constant<16> const QtMobility::QOrganizerItemAudibleReminder::DefinitionName
+	?FieldAttachments@QOrganizerItemEmailReminder@QtMobility@@2U?$QLatin1Constant@$0M@@2@B @ 855 NONAME ; struct QtMobility::QLatin1Constant<12> const QtMobility::QOrganizerItemEmailReminder::FieldAttachments
+	?isTimeSpecified@QOrganizerEvent@QtMobility@@QBE_NXZ @ 856 NONAME ; bool QtMobility::QOrganizerEvent::isTimeSpecified(void) const
+	?timeDelta@QOrganizerItemReminder@QtMobility@@QBEHXZ @ 857 NONAME ; int QtMobility::QOrganizerItemReminder::timeDelta(void) const
+	?FieldDataUrl@QOrganizerItemAudibleReminder@QtMobility@@2U?$QLatin1Constant@$07@2@B @ 858 NONAME ; struct QtMobility::QLatin1Constant<8> const QtMobility::QOrganizerItemAudibleReminder::FieldDataUrl
+	?FieldRepetitionDelay@QOrganizerItemReminder@QtMobility@@2U?$QLatin1Constant@$0BA@@2@B @ 859 NONAME ; struct QtMobility::QLatin1Constant<16> const QtMobility::QOrganizerItemReminder::FieldRepetitionDelay
+	??0QOrganizerItemAudibleReminder@QtMobility@@QAE@ABVQOrganizerItemDetail@1@@Z @ 860 NONAME ; QtMobility::QOrganizerItemAudibleReminder::QOrganizerItemAudibleReminder(class QtMobility::QOrganizerItemDetail const &)
+	?FieldTimeSpecified@QOrganizerEventTimeRange@QtMobility@@2U?$QLatin1Constant@$0O@@2@B @ 861 NONAME ; struct QtMobility::QLatin1Constant<14> const QtMobility::QOrganizerEventTimeRange::FieldTimeSpecified
+	??0QOrganizerItemReminder@QtMobility@@IAE@ABVQOrganizerItemDetail@1@PBD@Z @ 862 NONAME ; QtMobility::QOrganizerItemReminder::QOrganizerItemReminder(class QtMobility::QOrganizerItemDetail const &, char const *)
+	?setTimeSpecified@QOrganizerTodoTimeRange@QtMobility@@QAEX_N@Z @ 863 NONAME ; void QtMobility::QOrganizerTodoTimeRange::setTimeSpecified(bool)
+	?FieldDateTime@QOrganizerItemReminder@QtMobility@@2U?$QLatin1Constant@$08@2@B @ 864 NONAME ; struct QtMobility::QLatin1Constant<9> const QtMobility::QOrganizerItemReminder::FieldDateTime
+	??0QOrganizerItemVisualReminder@QtMobility@@QAE@XZ @ 865 NONAME ; QtMobility::QOrganizerItemVisualReminder::QOrganizerItemVisualReminder(void)
+	?setTimeSpecified@QOrganizerEventTimeRange@QtMobility@@QAEX_N@Z @ 866 NONAME ; void QtMobility::QOrganizerEventTimeRange::setTimeSpecified(bool)
+	?FieldRepetitionCount@QOrganizerItemReminder@QtMobility@@2U?$QLatin1Constant@$0BA@@2@B @ 867 NONAME ; struct QtMobility::QLatin1Constant<16> const QtMobility::QOrganizerItemReminder::FieldRepetitionCount
+	?dataUrl@QOrganizerItemVisualReminder@QtMobility@@QBE?AVQUrl@@XZ @ 868 NONAME ; class QUrl QtMobility::QOrganizerItemVisualReminder::dataUrl(void) const
+	??1QOrganizerItemReminder@QtMobility@@QAE@XZ @ 869 NONAME ; QtMobility::QOrganizerItemReminder::~QOrganizerItemReminder(void)
+	?subject@QOrganizerItemEmailReminder@QtMobility@@QBE?AVQString@@XZ @ 870 NONAME ; class QString QtMobility::QOrganizerItemEmailReminder::subject(void) const
+	?DefinitionName@QOrganizerItemVisualReminder@QtMobility@@2U?$QLatin1Constant@$0P@@2@B @ 871 NONAME ; struct QtMobility::QLatin1Constant<15> const QtMobility::QOrganizerItemVisualReminder::DefinitionName
+	??0QOrganizerItemReminder@QtMobility@@QAE@XZ @ 872 NONAME ; QtMobility::QOrganizerItemReminder::QOrganizerItemReminder(void)
+	?setMessage@QOrganizerItemVisualReminder@QtMobility@@QAEXABVQString@@@Z @ 873 NONAME ; void QtMobility::QOrganizerItemVisualReminder::setMessage(class QString const &)
+	?FieldSubject@QOrganizerItemEmailReminder@QtMobility@@2U?$QLatin1Constant@$07@2@B @ 874 NONAME ; struct QtMobility::QLatin1Constant<8> const QtMobility::QOrganizerItemEmailReminder::FieldSubject
+	?dateTime@QOrganizerItemReminder@QtMobility@@QBE?AVQDateTime@@XZ @ 875 NONAME ; class QDateTime QtMobility::QOrganizerItemReminder::dateTime(void) const
+	?setTimeSpecified@QOrganizerEvent@QtMobility@@QAEX_N@Z @ 876 NONAME ; void QtMobility::QOrganizerEvent::setTimeSpecified(bool)
+	?DefinitionName@QOrganizerItemReminder@QtMobility@@2U?$QLatin1Constant@$08@2@B @ 877 NONAME ; struct QtMobility::QLatin1Constant<9> const QtMobility::QOrganizerItemReminder::DefinitionName
+	?isTimeSpecified@QOrganizerEventTimeRange@QtMobility@@QAE_NXZ @ 878 NONAME ; bool QtMobility::QOrganizerEventTimeRange::isTimeSpecified(void)
+	?repetitionDelay@QOrganizerItemReminder@QtMobility@@QBEHXZ @ 879 NONAME ; int QtMobility::QOrganizerItemReminder::repetitionDelay(void) const
+	?dataUrl@QOrganizerItemAudibleReminder@QtMobility@@QBE?AVQUrl@@XZ @ 880 NONAME ; class QUrl QtMobility::QOrganizerItemAudibleReminder::dataUrl(void) const
+	?setDateTime@QOrganizerItemReminder@QtMobility@@QAEXABVQDateTime@@@Z @ 881 NONAME ; void QtMobility::QOrganizerItemReminder::setDateTime(class QDateTime const &)
+	?DefinitionName@QOrganizerItemEmailReminder@QtMobility@@2U?$QLatin1Constant@$0O@@2@B @ 882 NONAME ; struct QtMobility::QLatin1Constant<14> const QtMobility::QOrganizerItemEmailReminder::DefinitionName
+	??4QOrganizerItemReminder@QtMobility@@QAEAAV01@ABVQOrganizerItemDetail@1@@Z @ 883 NONAME ; class QtMobility::QOrganizerItemReminder & QtMobility::QOrganizerItemReminder::operator=(class QtMobility::QOrganizerItemDetail const &)
+	?setRepetition@QOrganizerItemReminder@QtMobility@@QAEXHH@Z @ 884 NONAME ; void QtMobility::QOrganizerItemReminder::setRepetition(int, int)
+	?FieldReminderType@QOrganizerItemReminder@QtMobility@@2U?$QLatin1Constant@$0N@@2@B @ 885 NONAME ; struct QtMobility::QLatin1Constant<13> const QtMobility::QOrganizerItemReminder::FieldReminderType
+	?FieldBody@QOrganizerItemEmailReminder@QtMobility@@2U?$QLatin1Constant@$04@2@B @ 886 NONAME ; struct QtMobility::QLatin1Constant<5> const QtMobility::QOrganizerItemEmailReminder::FieldBody
+	?setContents@QOrganizerItemEmailReminder@QtMobility@@QAEXABVQString@@0ABV?$QList@VQVariant@@@@@Z @ 887 NONAME ; void QtMobility::QOrganizerItemEmailReminder::setContents(class QString const &, class QString const &, class QList<class QVariant> const &)
+	?attachments@QOrganizerItemEmailReminder@QtMobility@@QAE?AV?$QList@VQVariant@@@@XZ @ 888 NONAME ; class QList<class QVariant> QtMobility::QOrganizerItemEmailReminder::attachments(void)
+	??0QOrganizerItemAudibleReminder@QtMobility@@QAE@XZ @ 889 NONAME ; QtMobility::QOrganizerItemAudibleReminder::QOrganizerItemAudibleReminder(void)
+	?body@QOrganizerItemEmailReminder@QtMobility@@QBE?AVQString@@XZ @ 890 NONAME ; class QString QtMobility::QOrganizerItemEmailReminder::body(void) const
+	?isTimeSpecified@QOrganizerTodoTimeRange@QtMobility@@QAE_NXZ @ 891 NONAME ; bool QtMobility::QOrganizerTodoTimeRange::isTimeSpecified(void)
 

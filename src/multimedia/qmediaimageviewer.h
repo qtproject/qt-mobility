@@ -47,7 +47,9 @@
 
 QT_BEGIN_NAMESPACE
 
+class QGraphicsVideoItem;
 class QMediaPlaylist;
+class QVideoWidget;
 
 class QMediaImageViewerPrivate;
 class Q_MULTIMEDIA_EXPORT QMediaImageViewer : public QMediaObject
@@ -87,6 +89,9 @@ public:
 
     int timeout() const;
     int elapsedTime() const;
+
+    void setVideoOutput(QVideoWidget *widget);
+    void setVideoOutput(QGraphicsVideoItem *item);
 
     bool bind(QObject *);
     void unbind(QObject *);

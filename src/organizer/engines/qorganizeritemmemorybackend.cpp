@@ -196,7 +196,7 @@ QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QDateTime& 
     QList<QDateTime> retn;
 
     // call nextMatchingDate here in a loop until maxCount or rCount is reached, or until our timelimit (4yrs+periodStart) is reached.
-    bool useMaxCount = periodEnd.isNull();             // if no period end given, just return maxCount instances.
+    bool useMaxCount = periodEnd.isValid();            // if no period end given, just return maxCount instances.
     bool useRCount = rrule.count() > 0;                // if an rrule count is given, use it (as well or instead of, depending on which comes first) rrule.endDate().
     QDate realPeriodEnd = (useMaxCount ? periodStart.addDays(1461).date() : periodEnd.date()); // periodStart + 4 years
     QDate nextMatch = periodStart.date();
@@ -273,10 +273,39 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
         switch (freq) {
             case QOrganizerItemRecurrenceRule::Yearly:
             {
-                if (tempDate.day() != initialDate.day() || tempDate.month() != initialDate.month()) {
-                    // we haven't reached the right day of the year yet.
-                    tempDate = tempDate.addDays(1);
-                    continue;
+                // first, get the tempdate to fall on the right day of the year, unless multiple days/weeks/months of the year were specified.
+                // if multiple days/weeks/months of the year were specified, we test for those instead.
+                if (daysOfYear.size() == 0  && weeksOfYear.size() == 0 && monthsOfYear.size() == 0) {
+                    if (tempDate.day() != initialDate.day() || tempDate.month() != initialDate.month()) {
+                        // we haven't reached the right day of the year yet.
+                        tempDate = tempDate.addDays(1);
+                        continue;
+                    }
+                } else {
+                    bool matchesAnyCriteria = false;
+                    if (daysOfYear.contains(tempDate.dayOfYear())) {
+                        matchesAnyCriteria = true;
+                    }
+
+                    if (weeksOfYear.contains(tempDate.weekNumber())) {
+                        // it must also be a specified day of the specified week
+                        if (daysOfWeek.contains(static_cast<Qt::DayOfWeek>(tempDate.dayOfWeek()))) {
+                            matchesAnyCriteria = true;
+                        }
+                    }
+
+                    if (monthsOfYear.contains(static_cast<QOrganizerItemRecurrenceRule::Month>(tempDate.month()))) {
+                        // it must also be a specified day of the specified month
+                        if (daysOfMonth.contains(tempDate.day())) {
+                            matchesAnyCriteria = true;
+                        }
+                    }
+
+                    // test to see whether this date matches.
+                    if (!matchesAnyCriteria) {
+                        tempDate = tempDate.addDays(1);
+                        continue;
+                    }
                 }
 
                 int yearsDelta = tempDate.year() - initialDate.year();
@@ -290,10 +319,20 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
 
             case QOrganizerItemRecurrenceRule::Monthly:
             {
-                if (tempDate.day() != initialDate.day()) {
-                    // we haven't reached the right day of the month yet.
-                    tempDate = tempDate.addDays(1);
-                    continue;
+                // first, get the tempDate to fall on the right day of the month, unless multiple days of the month were specified.
+                // if multiple days of the month were specified, we test for daysOfMonth contains (current day of month) instead.
+                if (daysOfMonth.size() == 0) {
+                    // eg, initial date was the 3rd of june, the important day is "3rd"
+                    if (tempDate.day() != initialDate.day()) {
+                        // we haven't reached the right day of the month yet.
+                        tempDate = tempDate.addDays(1);
+                        continue;
+                    }
+                } else {
+                    if (!daysOfMonth.contains(tempDate.day())) {
+                        tempDate = tempDate.addDays(1);
+                        continue;
+                    }
                 }
 
                 int monthsDelta = tempDate.month() - initialDate.month() + (12 * (tempDate.year() - initialDate.year()));
@@ -307,20 +346,43 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
 
             case QOrganizerItemRecurrenceRule::Weekly:
             {
-                // Weekly is a tricky one, because of ISO week stuff.
-                // first, get the tempDate to fall on a "7 days-from-startdate" multiple
-                while (initialDate.daysTo(tempDate) % 7 > 0)
-                    tempDate = tempDate.addDays(1);
-
-                int weekCount = 0;
-                QDate weeklyDate = initialDate;
-                while (weeklyDate < tempDate) {
-                    int weeklyDateWeek = weeklyDate.weekNumber();
-                    weeklyDate = weeklyDate.addDays(1);
-                    if (weeklyDate.weekNumber() > weeklyDateWeek) {
-                        weekCount += 1;
+                // first, get the tempDate to fall on a "7 days-from-startdate" multiple if no days in week were specified.
+                if (daysOfWeek.size() == 0) {
+                    while (initialDate.daysTo(tempDate) % 7 > 0) {
+                        tempDate = tempDate.addDays(1);
                     }
                 }
+
+                // we need to adjust for the week start specified by the client if the interval is greater than 1
+                // ie, every time we hit the day specified, we increment the week count.
+                int weekCount = 0;
+                QDate weeklyDate = initialDate;
+                if (interval > 1) {
+                    if (static_cast<Qt::DayOfWeek>(weeklyDate.dayOfWeek()) == rrule.weekStart()) {
+                        // we are starting on the first day of the week.
+                        // skip this date since we don't want to increment the week count.
+                        weeklyDate = weeklyDate.addDays(1);
+                    }
+
+                    while (weeklyDate < tempDate) {
+                        if (static_cast<Qt::DayOfWeek>(weeklyDate.dayOfWeek()) == rrule.weekStart()) {
+                            weekCount += 1;
+                        }
+                        weeklyDate = weeklyDate.addDays(1);
+                    }
+                }
+
+                /* It turns out that we don't use ISO week for week interval calculations? */
+                // Weekly is a tricky one, because of ISO week stuff.
+                //int weekCount = 0;
+                //QDate weeklyDate = initialDate;
+                //while (weeklyDate < tempDate) {
+                //    int weeklyDateWeek = weeklyDate.weekNumber();
+                //    weeklyDate = weeklyDate.addDays(1);
+                //    if (weeklyDate.weekNumber() > weeklyDateWeek) {
+                //        weekCount += 1;
+                //    }
+                //}
 
                 if (weekCount % interval > 0) {
                     // this week doesn't match.
@@ -620,12 +682,48 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
         newId.setLocalId(++d->m_nextOrganizerItemId);
         theOrganizerItem->setId(newId);
 
+        // set the guid if not set, and ensure that it's the same as parents (fix if it isn't)
+        if (theOrganizerItem->guid().isEmpty())
+            theOrganizerItem->setGuid(QUuid::createUuid().toString());
         if (!fixOccurrenceReferences(theOrganizerItem, error)) {
             return false;
         }
 
+        // if we're saving an exception occurrence, we need to add it's original date as an exdate to the parent.
+        if (theOrganizerItem->type() == QOrganizerItemType::TypeEventOccurrence) {
+            // update the event by adding an EX-DATE which corresponds to the original date of the occurrence being saved.
+            QOrganizerItemManager::Error tempError = QOrganizerItemManager::NoError;
+            QOrganizerItemInstanceOrigin origin = theOrganizerItem->detail<QOrganizerItemInstanceOrigin>();
+            QOrganizerItemLocalId parentId = origin.parentLocalId();
+            QOrganizerEvent parentEvent = item(parentId, QOrganizerItemFetchHint(), &tempError);
+            QDate originalDate = origin.originalDate();
+            QList<QDate> currentExceptionDates = parentEvent.exceptionDates();
+            if (!currentExceptionDates.contains(originalDate)) {
+                currentExceptionDates.append(originalDate);
+                parentEvent.setExceptionDates(currentExceptionDates);
+                int parentEventIndex = d->m_organizeritemIds.indexOf(parentEvent.localId());
+                d->m_organizeritems.replace(parentEventIndex, parentEvent);
+                changeSet.insertChangedItem(parentEvent.localId()); // is this correct?  it's an exception, so change parent?
+            }
+        } else if (theOrganizerItem->type() == QOrganizerItemType::TypeTodoOccurrence) {
+            // update the todo by adding an EX-DATE which corresponds to the original date of the occurrence being saved.
+            QOrganizerItemManager::Error tempError = QOrganizerItemManager::NoError;
+            QOrganizerItemInstanceOrigin origin = theOrganizerItem->detail<QOrganizerItemInstanceOrigin>();
+            QOrganizerItemLocalId parentId = origin.parentLocalId();
+            QOrganizerTodo parentTodo = item(parentId, QOrganizerItemFetchHint(), &tempError);
+            QDate originalDate = origin.originalDate();
+            QList<QDate> currentExceptionDates = parentTodo.exceptionDates();
+            if (!currentExceptionDates.contains(originalDate)) {
+                currentExceptionDates.append(originalDate);
+                parentTodo.setExceptionDates(currentExceptionDates);
+                int parentTodoIndex = d->m_organizeritemIds.indexOf(parentTodo.localId());
+                d->m_organizeritems.replace(parentTodoIndex, parentTodo);
+                changeSet.insertChangedItem(parentTodo.localId()); // is this correct?  it's an exception, so change parent?
+            }
+        }
+
         // finally, add the organizer item to our internal lists and return
-        d->m_organizeritems.append(*theOrganizerItem);                   // add organizer item to list
+        d->m_organizeritems.append(*theOrganizerItem);              // add organizer item to list
         d->m_organizeritemIds.append(theOrganizerItem->localId());  // track the organizer item id.
 
         changeSet.insertAddedItem(theOrganizerItem->localId());

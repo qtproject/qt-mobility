@@ -133,7 +133,7 @@ QTM_BEGIN_NAMESPACE
 
 QDeclarativePositionSource::QDeclarativePositionSource()
         : m_positionSource(0), m_positioningMethod(QDeclarativePositionSource::NoPositioningMethod),
-        m_active(false), m_singleUpdate(false), m_updateInterval(0)
+        m_nmeaFile(0), m_active(false), m_singleUpdate(false), m_updateInterval(0)
 {
     m_positionSource = QGeoPositionInfoSource::createDefaultSource(this);
     if (m_positionSource) {
@@ -151,12 +151,13 @@ QDeclarativePositionSource::QDeclarativePositionSource()
 
 QDeclarativePositionSource::~QDeclarativePositionSource()
 {
+    delete m_nmeaFile;
     delete m_positionSource;
 }
 
 void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
 {
-    if (nmeaSource == m_nmeaSource) {
+    if (nmeaSource.toLocalFile() == m_nmeaSource.toLocalFile()) {
         return;
     }
     // The current position source needs to be deleted in any case,
@@ -171,25 +172,34 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
     // was an embedded resource file. QUrl loses the ':' so it is added here and checked if
     // it is available.
     QString localFileName = nmeaSource.toLocalFile();
-    QFile* file = new QFile(localFileName);
-    if (!file->exists()) {
+    delete m_nmeaFile;
+    m_nmeaFile = new QFile(localFileName);
+    if (!m_nmeaFile->exists()) {
         localFileName.prepend(":");
-        file->setFileName(localFileName);
+        m_nmeaFile->setFileName(localFileName);
     }
-    if (file->exists()) {
+    if (m_nmeaFile->exists()) {
 #ifdef QDECLARATIVE_POSITION_DEBUG
         qDebug() << "QDeclarativePositionSource NMEA File was found: " << localFileName;
 #endif
         m_positionSource = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode);
-        (qobject_cast<QNmeaPositionInfoSource*>(m_positionSource))->setDevice(file);
+        (qobject_cast<QNmeaPositionInfoSource*>(m_positionSource))->setDevice(m_nmeaFile);
         connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
-    }
+        if (m_active && !m_singleUpdate) {
+            // Keep on updating even though source changed
+            QTimer::singleShot(0, this, SLOT(start()));
+        }
+    } else {
 #ifdef QDECLARATIVE_POSITION_DEBUG
-    else {
         qDebug() << "QDeclarativePositionSource NMEA File was not found: " << localFileName;
-    }
 #endif
+        if (m_active) {
+            m_active = false;
+            m_singleUpdate = false;
+            emit activeChanged(m_active);
+        }
+    }
     if (m_positioningMethod != positioningMethod()) {
         m_positioningMethod = positioningMethod();
         emit positioningMethodChanged(m_positioningMethod);
@@ -272,13 +282,17 @@ QDeclarativePositionSource::PositioningMethod QDeclarativePositionSource::positi
     if (m_positionSource) {
         QGeoPositionInfoSource::PositioningMethods methods = m_positionSource->supportedPositioningMethods();
         if (methods & QGeoPositionInfoSource::SatellitePositioningMethods) {
+            //qDebug() << "Returning satellite: " << QDeclarativePositionSource::SatellitePositioningMethod;
             return QDeclarativePositionSource::SatellitePositioningMethod;
         } else if (methods & QGeoPositionInfoSource::NonSatellitePositioningMethods) {
+            //qDebug() << "Returning non-satellite: " << QDeclarativePositionSource::NonSatellitePositioningMethod;
             return QDeclarativePositionSource::NonSatellitePositioningMethod;
         } else if (methods & QGeoPositionInfoSource::AllPositioningMethods) {
+            //qDebug() << "Returning all: " << QDeclarativePositionSource::AllPositioningMethods;
             return QDeclarativePositionSource::AllPositioningMethods;
         }
     }
+    //qDebug() << "Returning no-positioning: " << QDeclarativePositionSource::NoPositioningMethod;
     return QDeclarativePositionSource::NoPositioningMethod;
 }
 

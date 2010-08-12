@@ -43,7 +43,7 @@
 
 void OrganizerTodoProgressTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
-    if (item->type() == QOrganizerItemType::TypeTodo)
+    if (item->type() == QOrganizerItemType::TypeTodo || item->type() == QOrganizerItemType::TypeTodoOccurrence)
     {
         QOrganizerTodoProgress progress;
 
@@ -65,7 +65,7 @@ void OrganizerTodoProgressTransform::transformToDetailL(const CCalEntry& entry, 
 
 void OrganizerTodoProgressTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
-    if (item.type() == QOrganizerItemType::TypeTodo)
+    if (item.type() == QOrganizerItemType::TypeTodo || item.type() == QOrganizerItemType::TypeTodoOccurrence)
     {
         QOrganizerTodoProgress progress = item.detail<QOrganizerTodoProgress>();
         if (progress.isEmpty())

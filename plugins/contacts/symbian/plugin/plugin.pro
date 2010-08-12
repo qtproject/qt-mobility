@@ -145,4 +145,9 @@ symbian: {
     symbianplugin.sources = $${TARGET}.dll
     symbianplugin.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += symbianplugin
+    
+    # Public header
+    headers.path = epoc32/include
+    headers.sources = inc/contactbackendsdefs.h
+    for(header, headers.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$headers.path/$$basename(header)"
 }

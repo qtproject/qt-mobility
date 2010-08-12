@@ -45,19 +45,18 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QOrganizerEventOccurrence
-  \brief An occurrence of an event
+  \brief The QOrganizerEvenOccurrence class provides an occurrence of an event
   \inmodule QtOrganizer
   \ingroup organizer-items
 
-  An event occurrence is an occurrence of an event where the occurrence
-  differs from the generating event in some way.  An occurrence which is
-  retrieved from a manager may not actually be persisted in that manager
-  (for example, it may be generated automatically from the recurrence rule
-  of the parent event stored in the manager), in which case it will have a
-  zero-id and differ from the parent event only in its start date.
-  Alternatively, it may be persisted in the manager (that is, the client
-  has saved the occurrence previously) where it is stored as an exception
-  to its parent event.
+  An event occurrence is where the occurrence differs from the generating
+  event in some way.  An occurrence which is retrieved from a manager may not
+  actually be persisted in that manager (for example, it may be generated
+  automatically from the recurrence rule of the parent event stored in the
+  manager), in which case it will have a zero-id and differ from the parent
+  event only in its start date. Alternatively, it may be persisted in the
+  manager (that is, the client has saved the occurrence previously) where it
+  is stored as an exception to its parent event.
  */
 
 /*!

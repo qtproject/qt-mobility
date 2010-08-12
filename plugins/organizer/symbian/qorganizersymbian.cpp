@@ -38,18 +38,27 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#include "qorganizersymbian_p.h"
-#include "qtorganizer.h"
+//system includes
+#include <calcommon.h>
+#include <calinstance.h>
 #include <calsession.h>
 #include <calchangecallback.h>
 #include <calentryview.h>
+#include <calinstanceview.h>
+
+// user includes
+#include "qorganizersymbian_p.h"
+#include "qtorganizer.h"
 #include "organizeritemdetailtransform.h"
 #include "organizeritemtypetransform.h"
 #include "organizeritemguidtransform.h"
-#include "organizeritemrequestserviceprovider.h"
+#include "qorganizeritemrequestqueue.h"
 
 //QTM_USE_NAMESPACE
+
+// Constants
+const int KOneMicroSecond = 1000;
+const int KSingleCount = 1;
 
 QOrganizerItemManagerEngine* QOrganizerItemSymbianFactory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
 {
@@ -81,15 +90,21 @@ QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
     // Open calendar session and open default file
     m_calSession = CCalSession::NewL();
     m_calSession->OpenL(KNullDesC);
+        
+    m_activeSchedulerWait = new CActiveSchedulerWait();    
+
+    m_instanceView = CCalInstanceView::NewL(*m_calSession, *this);
     
-    // Create entry view (creation is synchronized with CActiveSchedulerWait)
-    m_entryView = CCalEntryView::NewL(*m_calSession, *this);
-    m_activeSchedulerWait = new CActiveSchedulerWait();
     // TODO: The calendar session may take some time to initialize which would
     // make an UI app using symbian backend freeze. To be refactored.
     m_activeSchedulerWait->Start();
     
-    m_requestServiceProvider = COrganizerItemRequestsServiceProvider::NewL(*this);
+    // Create entry view (creation is synchronized with CActiveSchedulerWait)
+    m_entryView = CCalEntryView::NewL(*m_calSession, *this);   
+
+    m_activeSchedulerWait->Start();
+
+    m_requestServiceProviderQueue = QOrganizerItemRequestQueue::instance(*this);
     // Create change notification filter
     TCalTime minTime;
     minTime.SetTimeUtcL(TCalTime::MinTime());
@@ -110,9 +125,10 @@ QOrganizerItemSymbianEngine::~QOrganizerItemSymbianEngine()
     /* TODO clean up your stuff.  Perhaps a QScopedPointer or QSharedDataPointer would be in order */
     m_calSession->StopChangeNotification();
 
-	delete m_requestServiceProvider;
+	delete m_requestServiceProviderQueue;
     delete m_activeSchedulerWait;
     delete m_entryView;
+    delete m_instanceView;
     delete m_calSession;
 }
 
@@ -142,7 +158,7 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(const QOrganize
         This function should create a list of instances that occur in the time period from the supplied item.
         The periodStart should always be valid, and either the periodEnd or the maxCount will be valid (if periodEnd is
         valid, use that.  Otherwise use the count).  It's permissible to limit the number of items returned...
-
+          
         Basically, if the generator item is an Event, a list of EventOccurrences should be returned.  Similarly for
         Todo/TodoOccurrence.
 
@@ -155,8 +171,81 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(const QOrganize
 
         We might change the signature to split up the periodStart + periodEnd / periodStart + maxCount cases.
     */
+    QList<QOrganizerItem> occurrenceList;
+    
+    // Parent item should be an Event or a Todo.
+    if (!((generator.type()== QOrganizerItemType::TypeEvent) ||(generator.type()== QOrganizerItemType::TypeTodo))) {
+        *error = QOrganizerItemManager::InvalidItemTypeError;
+        return occurrenceList;
+    }
 
-    return QOrganizerItemManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, error);
+    //check for valid periodStart    
+    if (periodStart.isValid()&&(periodEnd.isValid() || (maxCount > 0))) {
+        
+        // End period should be greater than start period.   
+        if (periodEnd.isValid() && (periodEnd < periodStart)) {
+            *error = QOrganizerItemManager::BadArgumentError;
+            return occurrenceList;
+        }
+        RPointerArray<CCalInstance> instanceList;
+        QDateTime endDateTime(periodEnd);
+        CalCommon::TCalViewFilter filter;
+        //use maximum end date if only count is present.
+        if ((!periodEnd.isValid()) && (maxCount > 0)) {
+              TCalTime endTime; 
+              endTime.SetTimeUtcL(TCalTime::MaxTime());
+              endDateTime = OrganizerItemDetailTransform::toQDateTimeL(endTime);  
+        }
+        
+        if (generator.type()== QOrganizerItemType::TypeEvent) {
+            filter = CalCommon::EIncludeAppts; 
+        }
+        
+        TRAPD(err, m_instanceView->FindInstanceL(instanceList,filter,
+                                   CalCommon::TCalTimeRange(OrganizerItemDetailTransform::toTCalTimeL(periodStart),
+                                   OrganizerItemDetailTransform::toTCalTimeL(endDateTime))
+                                   ));
+            
+        transformError(err, error);
+   
+        if (*error == QOrganizerItemManager::NoError) {  
+            int count(instanceList.Count()); 
+            // Convert calninstance list to  QOrganizerEventOccurrence and add to QOrganizerItem list                 
+            for( int index=0; index < count;index++ ) {
+                 QOrganizerItem itemInstance;
+                 CCalInstance* calInstance = (instanceList)[index];
+                 
+                 if (QOrganizerItemType::TypeEvent == generator.type())
+                     itemInstance.setType(QOrganizerItemType::TypeEventOccurrence);
+                 else if (QOrganizerItemType::TypeTodo == generator.type())
+                     itemInstance.setType(QOrganizerItemType::TypeTodoOccurrence);
+                 else
+                     User::Leave(KErrNotSupported);
+
+                 TRAPD(err, m_itemTransform.toItemInstanceL(*calInstance, &itemInstance));
+                 transformError(err, error);
+                 if ((*error == QOrganizerItemManager::NoError)&&(generator.guid() == itemInstance.guid())) {
+                     if ((periodEnd.isValid()&& (maxCount < 0))||(maxCount > 0) && (index < maxCount)) {
+                         QOrganizerItemId id;
+                         id.setManagerUri(this->managerUri());
+                         // The instance might be modified. Then it will not point to the parent entry.
+                         // In this case local id must be set. Otherwise it should be zero.
+                         QOrganizerItemLocalId instanceEntryId = calInstance->Entry().LocalUidL();
+                         if (instanceEntryId != generator.localId())
+                             id.setLocalId(instanceEntryId);
+                         itemInstance.setId(id);
+                         occurrenceList.append(itemInstance);
+                     }
+                 }    
+            }           
+        }
+        instanceList.ResetAndDestroy();
+        
+    } else {
+        *error = QOrganizerItemManager::BadArgumentError;
+    }
+    
+    return occurrenceList;
 }
 
 QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
@@ -183,8 +272,8 @@ QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::itemIds(const QOrganiz
     ids.Close();
     
     // No filtering and sorting needed?
-    if (filter == QOrganizerItemInvalidFilter() && sortOrders.count() == 0)
-        return itemIds;    
+    if (filter.type() == QOrganizerItemFilter::InvalidFilter || filter.type() == QOrganizerItemFilter::DefaultFilter && sortOrders.count() == 0)
+        return itemIds;   
         
     // Get items for slow filter
     QOrganizerItemFetchHint fetchHint;
@@ -235,7 +324,7 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::items(const QOrganizerItemFil
     ids.Close();
     
     // No filtering and sorting needed?
-    if (filter == QOrganizerItemInvalidFilter() && sortOrders.count() == 0)
+    if (filter.type() == QOrganizerItemFilter::InvalidFilter || filter.type() == QOrganizerItemFilter::DefaultFilter && sortOrders.count() == 0)
         return items;
     
     // Use the general implementation to filter and sort items
@@ -252,6 +341,7 @@ QOrganizerItem QOrganizerItemSymbianEngine::item(const QOrganizerItemLocalId& it
 
 void QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, const QOrganizerItemFetchHint& fetchHint) const
 {
+	Q_UNUSED(fetchHint)
     // TODO: use fetch hint to optimize performance and/or memory consumption?
         /* The fetch hint suggests how much of the item to fetch.
         You can ignore the fetch hint and fetch everything (but you must
@@ -260,6 +350,10 @@ void QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& itemId, QOr
     // Fetch item
     TCalLocalUid uid(itemId);
     CCalEntry *calEntry = m_entryView->FetchL(uid);
+    if (!calEntry) {
+        User::Leave(KErrNotFound); // Leave with KErrNotFound as to indicate that the entry 
+        // is not present in the database
+    }
     CleanupStack::PushL(calEntry);
     
     // Transform CCalEntry -> QOrganizerItem
@@ -322,6 +416,8 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItem
 {
     // Check local id
     bool isNewEntry = true;
+    RPointerArray<CCalEntry> calEntryArray;
+    
     if (item->localId()) {
         // Don't allow saving with local id defined unless the item is from this manager.
         if (item->id().managerUri() != managerUri())
@@ -329,38 +425,42 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItem
         isNewEntry = false;
     }
     
-    // Get guid from item. New guid is generated if empty.
-    HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
-    CCalEntry *entry;
+    CCalEntry *entry(NULL);
     
-    // If guid was defined in item check if it matches to something
-    if (!item->guid().isEmpty()) {
-        RPointerArray<CCalEntry> calEntryArray;
-        m_entryView->FetchL(*globalUid, calEntryArray);
-        if (calEntryArray.Count()) {
-            entry = m_entryView->FetchL(TCalLocalUid(item->localId())); 
+    if (!(item->type()== QOrganizerItemType::TypeEventOccurrence || item->type()== QOrganizerItemType::TypeTodoOccurrence)) {
+        // Get guid from item. New guid is generated if empty.
+        HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
+
+        // If guid was defined in item check if it matches to something
+        if (!item->guid().isEmpty()) {
+            m_entryView->FetchL(*globalUid, calEntryArray);
+            if (calEntryArray.Count()== KSingleCount) {
+                entry = calEntryArray[0]; 
+                isNewEntry = false;
+            } else if (calEntryArray.Count() > KSingleCount) {
+                //Fetch on the basis of localid if localid is valid
+                calEntryArray.ResetAndDestroy();
+                if (!item->localId()) {
+                    User::Leave(KErrArgument);
+                }     
+            entry = m_entryView->FetchL(item->localId());
             isNewEntry = false;
+            }        
+        }    
+        if (isNewEntry) {            
+            // Create entry
+            CCalEntry::TType type = OrganizerItemTypeTransform::entryTypeL(*item);
+            CCalEntry::TMethod method = CCalEntry::EMethodAdd;
+            TInt seqNum = 0; 
+            entry = CCalEntry::NewL(type, globalUid, method, seqNum);
+             // ownership passed?
         }
-             // found at least one existing entry with this guid
-        calEntryArray.ResetAndDestroy();
-    }
-    if (isNewEntry) {
-    // Create entry
-    CCalEntry::TType type = OrganizerItemTypeTransform::entryTypeL(*item);
-    CCalEntry::TMethod method = CCalEntry::EMethodAdd; // TODO
-    TInt seqNum = 0; // TODO
-    //TCalTime recurrenceId; // TODO
-    //CalCommon::TRecurrenceRange recurrenceRange; // TODO
-    entry = CCalEntry::NewL(type, globalUid, method, seqNum);
-     // ownership passed?
-    }
-    CleanupStack::Pop(globalUid);
+        CleanupStack::Pop(globalUid);  
+    } else {
+        entry = createEntryToSaveItemInstanceL(item,isNewEntry);
+    }        
     CleanupStack::PushL(entry);
 
-    // Use old local id if we are updating and entry
-    //if (!isNewEntry)
-      //  entry->SetLocalUidL(TCalLocalUid(item->localId()));
-        
     // Transform QOrganizerItem -> CCalEntry    
     m_itemTransform.toEntryL(*item, entry);
     
@@ -369,15 +469,12 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItem
     CleanupClosePushL(entries);
     entries.AppendL(entry);
     TInt count(0);
-    if (isNewEntry) {
-    m_entryView->StoreL(entries, count);
+    if (!isNewEntry) {
+        entry->SetLastModifiedDateL();
     }
-    else {
-    entry->SetLastModifiedDateL();
     m_entryView->StoreL(entries, count);
-    }
-    const TInt expectedCount(1);
-    if (count != expectedCount) {
+
+    if (count != KSingleCount) {
         // The documentation states about count "On return, this
         // contains the number of entries which were successfully stored".
         // So it is not clear which error caused storing the entry to fail
@@ -398,12 +495,14 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItem
     // Cleanup
     CleanupStack::PopAndDestroy(&entries);
     CleanupStack::PopAndDestroy(entry);
-    
+    calEntryArray.Close();
     // Update change set
-    if (isNewEntry)
-        changeSet->insertAddedItem(item->localId());
-    else
-        changeSet->insertChangedItem(item->localId());
+    if (changeSet) {
+        if (isNewEntry)
+            changeSet->insertAddedItem(item->localId());
+        else
+            changeSet->insertChangedItem(item->localId());
+    }
 }
 
 bool QOrganizerItemSymbianEngine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
@@ -448,17 +547,22 @@ void QOrganizerItemSymbianEngine::removeItemL(const QOrganizerItemLocalId& organ
 {
     // TODO: DoesNotExistError should be used if the id refers to a non existent item.
     // TODO: How to remove item instances?
+    int sucessCount(0);
+    deleteItemL(organizeritemId, sucessCount);
+    // Update change set
+    changeSet->insertRemovedItem(organizeritemId);
+}
 
+void QOrganizerItemSymbianEngine::deleteItemL( 
+        const QOrganizerItemLocalId& organizeritemId, 
+        int& sucessCount)
+{
     // Remove
     RArray<TCalLocalUid> ids;
     CleanupClosePushL(ids);
     ids.AppendL(TCalLocalUid(organizeritemId));
-    TInt count(0);
-    m_entryView->DeleteL(ids, count);
+    m_entryView->DeleteL(ids, sucessCount);
     CleanupStack::PopAndDestroy(&ids);
-    
-    // Update change set
-    changeSet->insertRemovedItem(organizeritemId);
 }
 
 QList<QOrganizerItem> QOrganizerItemSymbianEngine::slowFilter(const QList<QOrganizerItem> &items, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
@@ -481,15 +585,123 @@ void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForEvent() const
     m_definition[QOrganizerItemType::TypeEvent].remove(QOrganizerJournalTimeRange::DefinitionName);
 }
 
+void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForEventOccurrence() const
+{
+    // Remove all the details for an event occurrence not supported on Symbian
+    m_definition[QOrganizerItemType::TypeEventOccurrence].remove(QOrganizerItemComment::DefinitionName);
+    m_definition[QOrganizerItemType::TypeEventOccurrence].remove(QOrganizerItemRecurrence::DefinitionName);
+    m_definition[QOrganizerItemType::TypeEventOccurrence].remove(QOrganizerTodoProgress::DefinitionName);
+    m_definition[QOrganizerItemType::TypeEventOccurrence].remove(QOrganizerTodoTimeRange::DefinitionName);
+    m_definition[QOrganizerItemType::TypeEventOccurrence].remove(QOrganizerJournalTimeRange::DefinitionName);
+}
+
+void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForTodo() const
+{
+    // Remove all the details for a to-do not supported on Symbian
+    m_definition[QOrganizerItemType::TypeTodo].remove(QOrganizerItemComment::DefinitionName);
+    m_definition[QOrganizerItemType::TypeTodo].remove(QOrganizerEventTimeRange::DefinitionName);
+    m_definition[QOrganizerItemType::TypeTodo].remove(QOrganizerItemInstanceOrigin::DefinitionName);
+    m_definition[QOrganizerItemType::TypeTodo].remove(QOrganizerJournalTimeRange::DefinitionName);
+    m_definition[QOrganizerItemType::TypeTodo].remove(QOrganizerItemLocation::DefinitionName);
+}
+
+void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForTodoOccurrence() const
+{
+    // Remove all the details for a to-do occurrence not supported on Symbian
+    m_definition[QOrganizerItemType::TypeTodoOccurrence].remove(QOrganizerItemComment::DefinitionName);
+    m_definition[QOrganizerItemType::TypeTodoOccurrence].remove(QOrganizerItemRecurrence::DefinitionName);
+    m_definition[QOrganizerItemType::TypeTodoOccurrence].remove(QOrganizerEventTimeRange::DefinitionName);
+    m_definition[QOrganizerItemType::TypeTodoOccurrence].remove(QOrganizerJournalTimeRange::DefinitionName);
+    m_definition[QOrganizerItemType::TypeTodoOccurrence].remove(QOrganizerItemLocation::DefinitionName);
+}
+
+void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForNote() const
+{
+    // Remove all the details for a not not supported on Symbian
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerItemDisplayLabel::DefinitionName);
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerItemComment::DefinitionName);
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerItemRecurrence::DefinitionName);
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerEventTimeRange::DefinitionName);
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerItemPriority::DefinitionName);
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerItemLocation::DefinitionName);
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerItemInstanceOrigin::DefinitionName);
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerTodoProgress::DefinitionName);
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerTodoTimeRange::DefinitionName);
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerJournalTimeRange::DefinitionName);
+}
+
+void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForJournal() const
+{
+    // Journal is not supported on Symbian. Remove the type itself
+    m_definition.remove(QOrganizerItemType::TypeJournal);
+}
+
+CCalEntry* QOrganizerItemSymbianEngine::createEntryToSaveItemInstanceL(QOrganizerItem *item, bool& isNewEntry)
+{
+    RPointerArray<CCalEntry> calEntryArray;
+    CCalEntry * entry(NULL);
+    CCalEntry *parentEntry(NULL);
+       
+    // Get guid from item. New guid is generated if empty.
+    HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
+    
+    QOrganizerItemInstanceOrigin origin = item->detail<QOrganizerItemInstanceOrigin>();
+    if (!item->guid().isEmpty()) {
+        m_entryView->FetchL(*globalUid, calEntryArray);
+        if (calEntryArray.Count()== KSingleCount) {
+                //single count hence set it to the parent. 
+                parentEntry = calEntryArray[0];            
+        } else if (calEntryArray.Count() > KSingleCount) {            
+            calEntryArray.ResetAndDestroy();
+            //Fetch on the basis of localId if localId is valid
+            if (item->localId()) {
+                entry = m_entryView->FetchL(item->localId());
+                isNewEntry = false;
+            } else {
+                if(!origin.parentLocalId()) {
+                    User::Leave(KErrArgument); 
+                }
+                //another instance of same entry is modified so search parent entry by parentlocalId. 
+                parentEntry = m_entryView->FetchL(origin.parentLocalId());
+            }                           
+       }
+    }    
+    if(isNewEntry) {
+       if (parentEntry) {
+           CleanupStack::PushL(parentEntry);
+           //create an exceptional entry and save                
+           TCalTime recurrenceId = OrganizerItemDetailTransform::toTCalTimeL(origin.originalDate());
+
+           // create the new child entry now
+           entry = CCalEntry::NewL( parentEntry->EntryTypeL(),globalUid ,
+                                    parentEntry->MethodL(),parentEntry->SequenceNumberL(),
+                                    recurrenceId,CalCommon::EThisOnly );
+       
+           entry->ClearRepeatingPropertiesL();
+           entry->SetLocalUidL( TCalLocalUid( 0 ) );
+           CleanupStack::PopAndDestroy(parentEntry);
+       } else {
+         User::Leave(KErrArgument);
+       }
+    }
+    calEntryArray.Close();
+    CleanupStack::Pop(globalUid);
+    return entry;    
+}
+
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSymbianEngine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
 {
     // Get all the detail definitions from the base implementation
     if (m_definition.isEmpty()) {
         m_definition = QOrganizerItemManagerEngine::schemaDefinitions();
+        // Add or remove definitions based on the Symbian offering
+        modifyDetailDefinitionsForEvent();
+        modifyDetailDefinitionsForEventOccurrence();
+        modifyDetailDefinitionsForTodo();
+        modifyDetailDefinitionsForTodoOccurrence();
+        modifyDetailDefinitionsForNote();
+        modifyDetailDefinitionsForJournal();
     }
-    
-    // Add or remove definitions based on the Symbian offering
-    modifyDetailDefinitionsForEvent();
     
     *error = QOrganizerItemManager::NoError;
     return m_definition.value(itemType);
@@ -515,10 +727,7 @@ bool QOrganizerItemSymbianEngine::removeDetailDefinition(const QString& definiti
 
 bool QOrganizerItemSymbianEngine::startRequest(QOrganizerItemAbstractRequest* req)
 {
-    m_requestServiceProvider->StartRequest(req);
     /*
-        TODO
-
         This is the entry point to the async API.  The request object describes the
         type of request (switch on req->type()).  Req will not be null when called
         by the framework.
@@ -553,25 +762,20 @@ bool QOrganizerItemSymbianEngine::startRequest(QOrganizerItemAbstractRequest* re
         Return true if the request can be started, false otherwise.  You can set an error
         in the request if you like.
     */
-	return true;
-    //return QOrganizerItemManagerEngine::startRequest(req);
+    return m_requestServiceProviderQueue->startRequest(req);
 }
 
 bool QOrganizerItemSymbianEngine::cancelRequest(QOrganizerItemAbstractRequest* req)
 {
     /*
-        TODO
-
         Cancel an in progress async request.  If not possible, return false from here.
     */
-    return QOrganizerItemManagerEngine::cancelRequest(req);
+    return m_requestServiceProviderQueue->cancelRequest(req);
 }
 
 bool QOrganizerItemSymbianEngine::waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs)
 {
     /*
-        TODO
-
         Wait for a request to complete (up to a max of msecs milliseconds).
 
         Return true if the request is finished (including if it was already).  False otherwise.
@@ -581,14 +785,12 @@ bool QOrganizerItemSymbianEngine::waitForRequestFinished(QOrganizerItemAbstractR
 
         It's best to avoid processing events, if you can, or at least only process non-UI events.
     */
-    return QOrganizerItemManagerEngine::waitForRequestFinished(req, msecs);
+    return m_requestServiceProviderQueue->waitForRequestFinished(req, msecs*KOneMicroSecond);
 }
 
 void QOrganizerItemSymbianEngine::requestDestroyed(QOrganizerItemAbstractRequest* req)
 {
     /*
-        TODO
-
         This is called when a request is being deleted.  It lets you know:
 
         1) the client doesn't care about the request any more.  You can still complete it if
@@ -605,7 +807,7 @@ void QOrganizerItemSymbianEngine::requestDestroyed(QOrganizerItemAbstractRequest
         ordering problems :D
 
     */
-    return QOrganizerItemManagerEngine::requestDestroyed(req);
+        m_requestServiceProviderQueue->requestDestroyed(req);
 }
 
 bool QOrganizerItemSymbianEngine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const
@@ -674,6 +876,7 @@ void QOrganizerItemSymbianEngine::Progress(TInt /*aPercentageCompleted*/)
  */
 void QOrganizerItemSymbianEngine::Completed(TInt aError)
 {
+	Q_UNUSED(aError)
     // TODO: How to handle aError? The client should be informed that the
     // initialization failed
 

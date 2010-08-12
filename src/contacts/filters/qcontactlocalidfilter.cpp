@@ -84,6 +84,39 @@ void QContactLocalIdFilter::setIds(const QList<QContactLocalId>& ids)
 }
 
 /*!
+ * Adds the id \a id into the list which contains the ids of possible matching contacts
+ * \sa setIds()
+ */
+void QContactLocalIdFilter::add(const QContactLocalId& id)
+{
+    Q_D(QContactLocalIdFilter);
+    if (!d->m_ids.contains(id))
+        d->m_ids.append(id);
+}
+
+/*!
+ * Removes the id \a id from the list which contains the ids of possible matching contacts,
+ * if it is contained in the list, otherwise has no effect.
+ * \sa clear()
+ */
+void QContactLocalIdFilter::remove(const QContactLocalId& id)
+{
+    Q_D(QContactLocalIdFilter);
+    d->m_ids.removeAll(id);
+}
+
+/*!
+ * Clears the list which contains the ids of possible matching contacts.
+ * A local id filter with a cleared list will match no contacts.
+ * \sa setIds()
+ */
+void QContactLocalIdFilter::clear()
+{
+    Q_D(QContactLocalIdFilter);
+    d->m_ids.clear();
+}
+
+/*!
  * Returns the list of ids of contacts which match this filter
  * \sa setIds()
  */

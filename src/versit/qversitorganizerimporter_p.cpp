@@ -45,14 +45,13 @@
 #include "qmobilityglobal.h"
 #include "qtorganizer.h"
 #include "qversitorganizerdefs_p.h"
+#include "qversitpluginloader_p.h"
 
 
 QTM_USE_NAMESPACE
 
-QVersitOrganizerImporterPrivate::QVersitOrganizerImporterPrivate() :
+QVersitOrganizerImporterPrivate::QVersitOrganizerImporterPrivate(const QString& profile) :
     mPropertyHandler(NULL),
-    mDefaultResourceHandler(new QVersitDefaultResourceHandler),
-    mResourceHandler(mDefaultResourceHandler),
     mDurationSpecified(false)
 {
     int versitPropertyCount =
@@ -64,11 +63,15 @@ QVersitOrganizerImporterPrivate::QVersitOrganizerImporterPrivate() :
                     QLatin1String(versitOrganizerDetailMappings[i].detailDefinitionName),
                     QLatin1String(versitOrganizerDetailMappings[i].detailFieldName)));
     }
+
+    mPluginPropertyHandlers = QVersitPluginLoader::instance()->createOrganizerHandlers(profile);
 }
 
 QVersitOrganizerImporterPrivate::~QVersitOrganizerImporterPrivate()
 {
-    delete mDefaultResourceHandler;
+    foreach (QVersitOrganizerHandler* pluginHandler, mPluginPropertyHandlers) {
+        delete pluginHandler;
+    }
 }
 
 bool QVersitOrganizerImporterPrivate::importDocument(
@@ -94,6 +97,14 @@ bool QVersitOrganizerImporterPrivate::importDocument(
 
     foreach (const QVersitProperty& property, properties) {
         importProperty(document, property, item);
+    }
+    // run plugin handlers
+    foreach (QVersitOrganizerImporterPropertyHandler* handler, mPluginPropertyHandlers) {
+        handler->documentProcessed(document, item);
+    }
+    // run property handlers
+    if (mPropertyHandler) {
+        mPropertyHandler->documentProcessed(document, item);
     }
     return true;
 }
@@ -156,6 +167,15 @@ void QVersitOrganizerImporterPrivate::importProperty(
         if (property.name() == QLatin1String("DTSTART")) {
             success = createJournalEntryDateTime(property, item, &updatedDetails);
         }
+    }
+
+    // run plugin handlers
+    foreach (QVersitOrganizerImporterPropertyHandler* handler, mPluginPropertyHandlers) {
+        handler->propertyProcessed(document, property, *item, &success, &updatedDetails);
+    }
+    // run the handler, if set
+    if (mPropertyHandler) {
+        mPropertyHandler->propertyProcessed(document, property, *item, &success, &updatedDetails);
     }
 
     foreach (QOrganizerItemDetail detail, updatedDetails) {
@@ -487,7 +507,21 @@ void QVersitOrganizerImporterPrivate::parseRecurFragment(const QString& key, con
     } else if (key == QLatin1String("BYDAY")) {
         QList<Qt::DayOfWeek> days;
         QStringList dayParts = value.split(QLatin1Char(','));
-        foreach (const QString& dayStr, dayParts) {
+        foreach (QString dayStr, dayParts) {
+            if (dayStr.length() < 2) {
+                // bad day specifier
+                continue;
+            } else if (dayStr.length() > 2) {
+                // parse something like -2SU, meaning the second-last Sunday
+                QString posStr = dayStr;
+                dayStr = dayStr.right(2); // dayStr = last two chars
+                posStr.chop(2); // posStr = all except last two chars
+                bool ok;
+                int pos = posStr.toInt(&ok);
+                if (!ok)
+                    continue;
+                rule->setPositions(QList<int>() << pos);
+            }
             int day = parseDayOfWeek(dayStr);
             if (day != -1) {
                 days << (Qt::DayOfWeek)day;
