@@ -69,7 +69,7 @@ void QGeoTiledMapTextObjectInfo::objectUpdate()
     textItem->setFont(text->font());
     textItem->setBrush(text->brush());
     textItem->setPos(position);
-    textItem->setTransformOriginPoint(position);
+    //textItem->setTransformOriginPoint(position);
 
     mapUpdate();
 
@@ -85,10 +85,6 @@ void QGeoTiledMapTextObjectInfo::mapUpdate()
 
         textItem->resetTransform();
         textItem->setScale(zoomFactor);
-
-        //QPen pen = text->pen();
-        //pen.setWidthF(pen.widthF() * zoomFactor);
-        //textItem->setPen(pen);
     }
 }
 

@@ -150,6 +150,7 @@ private slots:
     void drawPolyline(bool checked);
     void drawPolygon(bool checked);
     void drawCircle(bool checked);
+    void drawText(bool checked);
     void calcRoute(bool checked);
     void customContextMenuRequest(const QPoint&);
     void routeFinished();

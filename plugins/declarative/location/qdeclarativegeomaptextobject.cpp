@@ -1,3 +1,4 @@
+
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -39,42 +40,54 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPTEXTOBJECT_INFO_P_H
-#define QGEOTILEDMAPTEXTOBJECT_INFO_P_H
+#include "qdeclarativegeomaptextobject_p.h"
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qgeotiledmapobjectinfo_p.h"
-
-class QGraphicsSimpleTextItem;
+#include <QBrush>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapTextObject;
-
-class QGeoTiledMapTextObjectInfo : public QGeoTiledMapObjectInfo
+QDeclarativeGeoMapTextObject::QDeclarativeGeoMapTextObject()
 {
-public:
-    QGeoTiledMapTextObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
-    ~QGeoTiledMapTextObjectInfo();
+    m_coordinate = new QDeclarativeCoordinate(this);
+}
 
-    void objectUpdate();
-    void mapUpdate();
+QDeclarativeGeoMapTextObject::~QDeclarativeGeoMapTextObject()
+{
+}
 
-    QGeoMapTextObject* text;
-    QGraphicsSimpleTextItem *textItem;
-};
+void QDeclarativeGeoMapTextObject::setDeclarativeCoordinate(const QDeclarativeCoordinate *coordinate)
+{
+    if (m_coordinate->coordinate() == coordinate->coordinate())
+        return;
+
+    m_coordinate->setCoordinate(coordinate->coordinate());
+    setCoordinate(coordinate->coordinate());
+
+    emit declarativeCoordinateChanged(m_coordinate);
+}
+
+QDeclarativeCoordinate* QDeclarativeGeoMapTextObject::declarativeCoordinate() const
+{
+    return m_coordinate;
+}
+
+void QDeclarativeGeoMapTextObject::setColor(const QColor &color)
+{
+    if (m_color == color)
+        return;
+
+    m_color = color;
+    QBrush m_brush(color);
+    setBrush(m_brush);
+    emit colorChanged(m_color);
+}
+
+QColor QDeclarativeGeoMapTextObject::color() const
+{
+    return m_color;
+}
+
+#include "moc_qdeclarativegeomaptextobject_p.cpp"
 
 QTM_END_NAMESPACE
-
-#endif //QGEOTILEDMAPTEXTOBJECT_INFO_P_H
 

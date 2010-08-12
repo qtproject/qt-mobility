@@ -46,7 +46,7 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoMapPixmapObject::QGeoMapPixmapObject(QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapPixmapObjectPrivate(this, parent)) {}
+        : QGeoMapObject(new QGeoMapPixmapObjectPrivate(this, parent)) {}
 
 QGeoMapPixmapObject::QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset, const QPixmap &icon, QGeoMapObject *parent)
         : QGeoMapObject(new QGeoMapPixmapObjectPrivate(this, parent))

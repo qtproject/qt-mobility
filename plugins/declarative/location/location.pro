@@ -32,6 +32,7 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativegeomappolygonobject_p.h \
            qdeclarativegeomappolylineobject_p.h \
            qdeclarativegeomaprectangleobject_p.h \
+           qdeclarativegeomaptextobject_p.h \
            qdeclarativegraphicsgeomap_p.h
 
 SOURCES += qdeclarativeposition.cpp \
@@ -47,6 +48,7 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativegeomappolygonobject.cpp \
            qdeclarativegeomappolylineobject.cpp \
            qdeclarativegeomaprectangleobject.cpp \
+           qdeclarativegeomaptextobject.cpp \
            qdeclarativegraphicsgeomap.cpp
 
 # Tell qmake to create such makefile that qmldir and target (i.e. declarative_location)

@@ -44,14 +44,14 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoMapTextObject::QGeoMapTextObject(QGeoMapObject *parent )
-    : QGeoMapObject(new QGeoMapTextObjectPrivate(this, parent)) {}
+QGeoMapTextObject::QGeoMapTextObject(QGeoMapObject *parent)
+        : QGeoMapObject(new QGeoMapTextObjectPrivate(this, parent)) {}
 
 QGeoMapTextObject::QGeoMapTextObject(const QGeoCoordinate &coordinate,
                                      const QString &text,
                                      const QFont &font,
                                      QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapTextObjectPrivate(this, parent))
+        : QGeoMapObject(new QGeoMapTextObjectPrivate(this, parent))
 {
     Q_D(QGeoMapTextObject);
 

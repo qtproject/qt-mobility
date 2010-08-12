@@ -39,42 +39,45 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPTEXTOBJECT_INFO_P_H
-#define QGEOTILEDMAPTEXTOBJECT_INFO_P_H
+#ifndef QDECLARATIVEGEOMAPTEXTOBJECT_H
+#define QDECLARATIVEGEOMAPTEXTOBJECT_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qdeclarativecoordinate_p.h"
+#include "qgeomaptextobject.h"
 
-#include "qgeotiledmapobjectinfo_p.h"
-
-class QGraphicsSimpleTextItem;
+#include <QColor>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapTextObject;
-
-class QGeoTiledMapTextObjectInfo : public QGeoTiledMapObjectInfo
+class QDeclarativeGeoMapTextObject : public QGeoMapTextObject
 {
+    Q_OBJECT
+
+    Q_PROPERTY(QDeclarativeCoordinate* coordinate READ declarativeCoordinate WRITE setDeclarativeCoordinate NOTIFY declarativeCoordinateChanged)
+    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+
 public:
-    QGeoTiledMapTextObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
-    ~QGeoTiledMapTextObjectInfo();
+    QDeclarativeGeoMapTextObject();
+    ~QDeclarativeGeoMapTextObject();
 
-    void objectUpdate();
-    void mapUpdate();
+    QDeclarativeCoordinate* declarativeCoordinate() const;
+    void setDeclarativeCoordinate(const QDeclarativeCoordinate *coordinate);
 
-    QGeoMapTextObject* text;
-    QGraphicsSimpleTextItem *textItem;
+    QColor color() const;
+    void setColor(const QColor &color);
+
+signals:
+    void declarativeCoordinateChanged(const QDeclarativeCoordinate *coordinate);
+    void colorChanged(const QColor &color);
+
+private:
+    mutable QDeclarativeCoordinate* m_coordinate;
+    mutable QColor m_color;
+    Q_DISABLE_COPY(QDeclarativeGeoMapTextObject)
 };
 
 QTM_END_NAMESPACE
 
-#endif //QGEOTILEDMAPTEXTOBJECT_INFO_P_H
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapTextObject));
 
+#endif

@@ -68,6 +68,7 @@
 #include <qgeomappolylineobject.h>
 #include <qgeomappolygonobject.h>
 #include <qgeomaprouteobject.h>
+#include <qgeomaptextobject.h>
 #include <qgeorouterequest.h>
 
 #ifdef Q_OS_SYMBIAN
@@ -647,7 +648,7 @@ void MainWindow::createMenus()
                      this, SLOT(demo3(bool)));
 
     //**************************************************************
-    subMenuItem = new QMenu(tr("Pixmap"), this);
+    subMenuItem = new QMenu(tr("Marker"), this);
     m_popupMenu->addMenu(subMenuItem);
 
     menuItem = new QAction(tr("Set marker"), this);
@@ -688,6 +689,11 @@ void MainWindow::createMenus()
     subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawCircle(bool)));
+
+    menuItem = new QAction(tr("Text"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(drawText(bool)));
 
     //**************************************************************
     subMenuItem = new QMenu(tr("Route"), this);
@@ -815,6 +821,21 @@ void MainWindow::drawCircle(bool /*checked*/)
     m_mapWidget->addMapObject(circle);
 
     m_mapWidget->lastCircle = circle;
+}
+
+void MainWindow::drawText(bool /*checked*/)
+{
+    if (markerObjects.count() < 1) return;
+
+    QGeoMapPixmapObject* p1 = markerObjects.at(0);
+
+    // start of the text
+    QGeoCoordinate start = p1->coordinate();
+
+    QGeoMapTextObject *text = new QGeoMapTextObject(start, QString("text"));
+    QColor fill(Qt::black);
+    text->setBrush(QBrush(fill));
+    m_mapWidget->addMapObject(text);
 }
 
 void MainWindow::drawPixmap(bool /*checked*/)
