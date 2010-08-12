@@ -51,6 +51,8 @@
 #include "qdeclarativegraphicsgeomap_p.h"
 #include "qgeomapobject.h"
 #include "qdeclarativegeomapcircleobject_p.h"
+#include "qdeclarativegeomappolygonobject_p.h"
+#include "qdeclarativegeomappolylineobject_p.h"
 #include "qdeclarativegeomaprectangleobject_p.h"
 
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
@@ -79,6 +81,8 @@ public:
         qmlRegisterType<QDeclarativeGraphicsGeoMap>(uri, 1, 1, "Map");
         qmlRegisterType<QGeoMapObject>(uri, 1, 1, "MapObject");
         qmlRegisterType<QDeclarativeGeoMapCircleObject>(uri, 1, 1, "MapCircleObject");
+        qmlRegisterType<QDeclarativeGeoMapPolygonObject>(uri, 1, 1, "MapPolygonObject");
+        qmlRegisterType<QDeclarativeGeoMapPolylineObject>(uri, 1, 1, "MapPolylineObject");
         qmlRegisterType<QDeclarativeGeoMapRectangleObject>(uri, 1, 1, "MapRectangleObject");
     }
 };

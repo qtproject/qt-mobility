@@ -29,6 +29,8 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativelandmarkfilters_p.h \
            qdeclarativecoordinate_p.h \
            qdeclarativegeomapcircleobject_p.h \
+           qdeclarativegeomappolygonobject_p.h \
+           qdeclarativegeomappolylineobject_p.h \
            qdeclarativegeomaprectangleobject_p.h \
            qdeclarativegraphicsgeomap_p.h
 
@@ -42,6 +44,8 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativelandmarkfilters.cpp \
            qdeclarativecoordinate.cpp \
            qdeclarativegeomapcircleobject.cpp \
+           qdeclarativegeomappolygonobject.cpp \
+           qdeclarativegeomappolylineobject.cpp \
            qdeclarativegeomaprectangleobject.cpp \
            qdeclarativegraphicsgeomap.cpp
 

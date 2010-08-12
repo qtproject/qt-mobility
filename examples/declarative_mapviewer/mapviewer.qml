@@ -91,6 +91,37 @@ Item {
             bottomRight:    map.toCoordinate(Qt.point(map.size.width * 2.0 / 3.0, map.size.height / 3.0))   
             color: "#8080FF80"
         }
+
+        MapPolygonObject {
+            color: "#80808080"
+            Coordinate {
+                latitude: -27.1
+                longitude: 153.1
+            }
+            Coordinate {
+                latitude: -27.0
+                longitude: 153.0
+            }
+            Coordinate {
+                latitude: -27.0
+                longitude: 153.2
+            }
+        }
+
+        MapPolylineObject {
+            Coordinate {
+                latitude: -27.2
+                longitude: 153.1
+            }
+            Coordinate {
+                latitude: -27.1
+                longitude: 153.0
+            }
+            Coordinate {
+                latitude: -27.1
+                longitude: 153.2
+            }
+        }
     }
 
     MouseArea {

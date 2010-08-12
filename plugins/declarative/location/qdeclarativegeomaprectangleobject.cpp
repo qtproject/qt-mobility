@@ -51,18 +51,6 @@ QTM_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapRectangleObject::QDeclarativeGeoMapRectangleObject()
 {
-    connect(this,
-            SIGNAL(topLeftChanged(QGeoCoordinate)),
-            this,
-            SLOT(memberTopLeftChanged(QGeoCoordinate)));
-    connect(this,
-            SIGNAL(bottomRightChanged(QGeoCoordinate)),
-            this,
-            SLOT(memberBottomRightChanged(QGeoCoordinate)));
-    connect(this,
-            SIGNAL(brushChanged(QBrush)),
-            this,
-            SLOT(memberBrushChanged(QBrush)));
     m_topLeft = new QDeclarativeCoordinate(this);
     m_bottomRight = new QDeclarativeCoordinate(this);
 }
@@ -73,62 +61,50 @@ QDeclarativeGeoMapRectangleObject::~QDeclarativeGeoMapRectangleObject()
 
 void QDeclarativeGeoMapRectangleObject::setDeclarativeTopLeft(const QDeclarativeCoordinate *topLeft)
 {
+    if (m_topLeft->coordinate() == topLeft->coordinate())
+        return;
+
     m_topLeft->setCoordinate(topLeft->coordinate());
     setTopLeft(topLeft->coordinate());
+
+    emit declarativeTopLeftChanged(m_topLeft);
 }
 
 QDeclarativeCoordinate* QDeclarativeGeoMapRectangleObject::declarativeTopLeft() const
 {
-    m_topLeft->setCoordinate(topLeft());
     return m_topLeft;
-}
-
-void QDeclarativeGeoMapRectangleObject::memberTopLeftChanged(const QGeoCoordinate &coordinate)
-{
-    if (coordinate == m_topLeft->coordinate())
-        return;
-
-    emit declarativeTopLeftChanged(new QDeclarativeCoordinate(coordinate, this));
 }
 
 void QDeclarativeGeoMapRectangleObject::setDeclarativeBottomRight(const QDeclarativeCoordinate *bottomRight)
 {
+    if (m_bottomRight->coordinate() == bottomRight->coordinate())
+        return;
+
     m_bottomRight->setCoordinate(bottomRight->coordinate());
     setBottomRight(bottomRight->coordinate());
+
+    emit declarativeBottomRightChanged(m_bottomRight);
 }
 
 QDeclarativeCoordinate* QDeclarativeGeoMapRectangleObject::declarativeBottomRight() const
 {
-    m_bottomRight->setCoordinate(bottomRight());
     return m_bottomRight;
-}
-
-void QDeclarativeGeoMapRectangleObject::memberBottomRightChanged(const QGeoCoordinate &coordinate)
-{
-    if (coordinate == m_bottomRight->coordinate())
-        return;
-
-    emit declarativeBottomRightChanged(new QDeclarativeCoordinate(coordinate, this));
 }
 
 void QDeclarativeGeoMapRectangleObject::setColor(const QColor &color)
 {
+    if (m_color == color)
+        return;
+
     m_color = color;
     QBrush m_brush(color);
     setBrush(m_brush);
+    emit colorChanged(m_color);
 }
 
 QColor QDeclarativeGeoMapRectangleObject::color() const
 {
-    return brush().color();
-}
-
-void QDeclarativeGeoMapRectangleObject::memberBrushChanged(const QBrush &brush)
-{
-    if (m_color == brush.color())
-        return;
-
-    emit colorChanged(brush.color());
+    return m_color;
 }
 
 #include "moc_qdeclarativegeomaprectangleobject_p.cpp"

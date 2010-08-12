@@ -71,11 +71,6 @@ public:
     QColor color() const;
     void setColor(const QColor &color);
 
-private slots:
-    void memberTopLeftChanged(const QGeoCoordinate &coordinate);
-    void memberBottomRightChanged(const QGeoCoordinate &coordinate);
-    void memberBrushChanged(const QBrush &brush);
-
 signals:
     void declarativeTopLeftChanged(const QDeclarativeCoordinate *center);
     void declarativeBottomRightChanged(const QDeclarativeCoordinate *center);

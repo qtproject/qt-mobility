@@ -49,14 +49,6 @@ QTM_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapCircleObject::QDeclarativeGeoMapCircleObject()
 {
-    connect(this,
-            SIGNAL(centerChanged(QGeoCoordinate)),
-            this,
-            SLOT(memberCenterChanged(QGeoCoordinate)));
-    connect(this,
-            SIGNAL(brushChanged(QBrush)),
-            this,
-            SLOT(memberBrushChanged(QBrush)));
     m_center = new QDeclarativeCoordinate(this);
 }
 
@@ -66,42 +58,34 @@ QDeclarativeGeoMapCircleObject::~QDeclarativeGeoMapCircleObject()
 
 void QDeclarativeGeoMapCircleObject::setDeclarativeCenter(const QDeclarativeCoordinate *center)
 {
+    if (m_center->coordinate() == center->coordinate())
+        return;
+
     m_center->setCoordinate(center->coordinate());
     setCenter(center->coordinate());
+
+    emit declarativeCenterChanged(m_center);
 }
 
 QDeclarativeCoordinate* QDeclarativeGeoMapCircleObject::declarativeCenter() const
 {
-    m_center->setCoordinate(center());
     return m_center;
-}
-
-void QDeclarativeGeoMapCircleObject::memberCenterChanged(const QGeoCoordinate &coordinate)
-{
-    if (coordinate == m_center->coordinate())
-        return;
-
-    emit declarativeCenterChanged(new QDeclarativeCoordinate(coordinate, this));
 }
 
 void QDeclarativeGeoMapCircleObject::setColor(const QColor &color)
 {
+    if (m_color == color)
+        return;
+
     m_color = color;
     QBrush m_brush(color);
     setBrush(m_brush);
+    emit colorChanged(m_color);
 }
 
 QColor QDeclarativeGeoMapCircleObject::color() const
 {
-    return brush().color();
-}
-
-void QDeclarativeGeoMapCircleObject::memberBrushChanged(const QBrush &brush)
-{
-    if (m_color == brush.color())
-        return;
-
-    emit colorChanged(brush.color());
+    return m_color;
 }
 
 #include "moc_qdeclarativegeomapcircleobject_p.cpp"
