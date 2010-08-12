@@ -57,7 +57,6 @@
 //QTM_USE_NAMESPACE
 
 // Constants
-const int KOneMicroSecond = 1000;
 const int KSingleCount = 1;
 
 QOrganizerItemManagerEngine* QOrganizerItemSymbianFactory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
@@ -789,7 +788,7 @@ bool QOrganizerItemSymbianEngine::waitForRequestFinished(QOrganizerItemAbstractR
 
         It's best to avoid processing events, if you can, or at least only process non-UI events.
     */
-    return m_requestServiceProviderQueue->waitForRequestFinished(req, msecs*KOneMicroSecond);
+    return m_requestServiceProviderQueue->waitForRequestFinished(req, msecs);
 }
 
 void QOrganizerItemSymbianEngine::requestDestroyed(QOrganizerItemAbstractRequest* req)

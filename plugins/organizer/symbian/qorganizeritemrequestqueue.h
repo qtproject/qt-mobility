@@ -45,6 +45,8 @@
 // System includes
 #include <QObject>
 #include <QMap>
+#include <QTimer>
+#include <QEventLoop>
 
 // User includes
 #include "organizeritemrequestserviceprovider.h"
@@ -75,11 +77,15 @@ private:
     QOrganizerItemRequestQueue(
             QOrganizerItemSymbianEngine& aOrganizerItemManagerEngine);
     
+public slots:
+    void exitLoop();
+    
 private:
-    QOrganizerItemSymbianEngine&                iOrganizerItemManagerEngine;
+    QOrganizerItemSymbianEngine&                m_organizerItemManagerEngine;
     QMap<QOrganizerItemAbstractRequest*, COrganizerItemRequestsServiceProvider*>
     m_abstractRequestMap;
-    
+    QEventLoop*                                 m_eventLoop;
+    QTimer*                                     m_timer;
 };
 
 #endif /* QORGANIZERITEMREQUESTQUEUE_H_ */
