@@ -39,53 +39,42 @@
 **
 ****************************************************************************/
 
-#include "qgeotiledmapmarkerobjectinfo_p.h"
+#ifndef QGEOTILEDMAPPIXMAPOBJECT_INFO_P_H
+#define QGEOTILEDMAPPIXMAPOBJECT_INFO_P_H
 
-#include "qgeotiledmapdata.h"
-#include "qgeotiledmapdata_p.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include "qgeomapmarkerobject.h"
+#include "qgeotiledmapobjectinfo_p.h"
+
+class QGraphicsPixmapItem;
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapMarkerObjectInfo::QGeoTiledMapMarkerObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject),
-        pixmapItem(0)
+class QGeoMapPixmapObject;
 
+class QGeoTiledMapPixmapObjectInfo : public QGeoTiledMapObjectInfo
 {
-    marker = static_cast<QGeoMapMarkerObject*>(mapObject);
-}
+public:
+    QGeoTiledMapPixmapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    ~QGeoTiledMapPixmapObjectInfo();
 
-QGeoTiledMapMarkerObjectInfo::~QGeoTiledMapMarkerObjectInfo() {}
+    void objectUpdate();
+    void mapUpdate();
 
-void QGeoTiledMapMarkerObjectInfo::objectUpdate()
-{
-    QPointF position = tiledMapData->coordinateToWorldPixel(marker->coordinate());
-
-    if (!pixmapItem)
-        pixmapItem = new QGraphicsPixmapItem();
-
-    pixmapItem->setPixmap(marker->icon());
-    pixmapItem->setOffset(position);
-    pixmapItem->setTransformOriginPoint(position);
-
-    mapUpdate();
-
-    graphicsItem = pixmapItem;
-
-    updateItem();
-}
-
-void QGeoTiledMapMarkerObjectInfo::mapUpdate()
-{
-    if (pixmapItem) {
-        int zoomFactor = tiledMapData->zoomFactor();
-        pixmapItem->resetTransform();
-        pixmapItem->setScale(zoomFactor);
-        pixmapItem->translate(marker->anchor().x() * zoomFactor,
-                              marker->anchor().y() * zoomFactor);
-    }
-}
+    QGeoMapPixmapObject* pixmap;
+    QGraphicsPixmapItem *pixmapItem;
+};
 
 QTM_END_NAMESPACE
+
+#endif //QGEOTILEDMAPPIXMAPOBJECT_INFO_P_H
 

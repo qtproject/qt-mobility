@@ -78,7 +78,7 @@ public:
         CircleType,
         PolylineType,
         PolygonType,
-        MarkerType,
+        PixmapType,
         RouteType
     };
 

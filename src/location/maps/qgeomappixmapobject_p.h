@@ -39,10 +39,11 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPMARKEROBJECT_H
-#define QGEOMAPMARKEROBJECT_H
+#ifndef QGEOMAPPIXMAPOBJECT_P_H
+#define QGEOMAPPIXMAPOBJECT_P_H
 
-#include "qgeomapobject.h"
+#include "qgeomapobject_p.h"
+
 #include "qgeocoordinate.h"
 
 #include <QPixmap>
@@ -50,36 +51,15 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapMarkerObjectPrivate;
-
-class Q_LOCATION_EXPORT QGeoMapMarkerObject : public QGeoMapObject
+class QGeoMapPixmapObjectPrivate : public QGeoMapObjectPrivate
 {
-    Q_OBJECT
-    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QPixmap icon READ icon WRITE setIcon NOTIFY iconChanged)
-    Q_PROPERTY(QPoint anchor READ anchor WRITE setAnchor NOTIFY anchorChanged)
-
 public:
-    QGeoMapMarkerObject(const QGeoCoordinate &coordinate, const QPoint &anchor = QPoint(0, 0), const QPixmap &icon = QPixmap(), QGeoMapObject *parent = 0);
-    ~QGeoMapMarkerObject();
+    QGeoMapPixmapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
+    ~QGeoMapPixmapObjectPrivate();
 
-    QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate &coordinate);
-
-    QPixmap icon() const;
-    void setIcon(const QPixmap &icon);
-
-    QPoint anchor() const;
-    void setAnchor(const QPoint &anchor);
-
-signals:
-    void coordinateChanged(const QGeoCoordinate &coordinate);
-    void iconChanged(const QPixmap &pixmap);
-    void anchorChanged(const QPoint &anchor);
-
-private:
-    Q_DECLARE_PRIVATE(QGeoMapMarkerObject)
-    Q_DISABLE_COPY(QGeoMapMarkerObject)
+    QGeoCoordinate coordinate;
+    QPixmap icon;
+    QPoint offset;
 };
 
 QTM_END_NAMESPACE

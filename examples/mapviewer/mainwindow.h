@@ -46,8 +46,9 @@
 #include <qgeoroutingmanager.h>
 #include <qgraphicsgeomap.h>
 #include <qgeoserviceprovider.h>
-#include <qgeomapmarkerobject.h>
+#include <qgeomappixmapobject.h>
 #include <qgeomapcircleobject.h>
+
 #include <QMainWindow>
 #include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
@@ -138,21 +139,21 @@ private:
     void setupUi();
     void setProvider(QString providerId);
     void createMenus();
-    void createMarkerIcon();
+    void createPixmapIcon();
 
 private slots:
     void demo1(bool checked);
     void demo2(bool checked);
     void demo3(bool checked);
     void drawRect(bool checked);
-    void drawMarker(bool checked);
+    void drawPixmap(bool checked);
     void drawPolyline(bool checked);
     void drawPolygon(bool checked);
     void drawCircle(bool checked);
     void calcRoute(bool checked);
     void customContextMenuRequest(const QPoint&);
     void routeFinished();
-    void removeMarkers();
+    void removePixmaps();
     void selectObjects();
 
     void sliderValueChanged(int zoomLevel);
@@ -171,7 +172,7 @@ private:
     QMenu* m_popupMenu;
     QPixmap m_markerIcon;
     QPoint lastClicked;
-    QList<QGeoMapMarkerObject*> markerObjects;
+    QList<QGeoMapPixmapObject*> markerObjects;
 
     QGraphicsView* qgv;
     QSlider *slider;

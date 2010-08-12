@@ -39,29 +39,53 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPMARKEROBJECT_P_H
-#define QGEOMAPMARKEROBJECT_P_H
+#include "qgeotiledmappixmapobjectinfo_p.h"
 
-#include "qgeomapobject_p.h"
+#include "qgeotiledmapdata.h"
+#include "qgeotiledmapdata_p.h"
 
-#include "qgeocoordinate.h"
-
-#include <QPixmap>
-#include <QPoint>
+#include "qgeomappixmapobject.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapMarkerObjectPrivate : public QGeoMapObjectPrivate
-{
-public:
-    QGeoMapMarkerObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
-    ~QGeoMapMarkerObjectPrivate();
+QGeoTiledMapPixmapObjectInfo::QGeoTiledMapPixmapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
+        : QGeoTiledMapObjectInfo(mapData, mapObject),
+        pixmapItem(0)
 
-    QGeoCoordinate coordinate;
-    QPixmap icon;
-    QPoint anchor;
-};
+{
+    pixmap = static_cast<QGeoMapPixmapObject*>(mapObject);
+}
+
+QGeoTiledMapPixmapObjectInfo::~QGeoTiledMapPixmapObjectInfo() {}
+
+void QGeoTiledMapPixmapObjectInfo::objectUpdate()
+{
+    QPointF position = tiledMapData->coordinateToWorldPixel(pixmap->coordinate());
+
+    if (!pixmapItem)
+        pixmapItem = new QGraphicsPixmapItem();
+
+    pixmapItem->setPixmap(pixmap->icon());
+    pixmapItem->setOffset(position);
+    pixmapItem->setTransformOriginPoint(position);
+
+    mapUpdate();
+
+    graphicsItem = pixmapItem;
+
+    updateItem();
+}
+
+void QGeoTiledMapPixmapObjectInfo::mapUpdate()
+{
+    if (pixmapItem) {
+        int zoomFactor = tiledMapData->zoomFactor();
+        pixmapItem->resetTransform();
+        pixmapItem->setScale(zoomFactor);
+        pixmapItem->translate(pixmap->offset().x() * zoomFactor,
+                              pixmap->offset().y() * zoomFactor);
+    }
+}
 
 QTM_END_NAMESPACE
 
-#endif

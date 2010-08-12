@@ -50,12 +50,6 @@
 #include "qgeomapoverlay.h"
 
 #include "qgeomapobject_p.h"
-#include "qgeomaprectangleobject_p.h"
-#include "qgeomapcircleobject_p.h"
-#include "qgeomappolylineobject_p.h"
-#include "qgeomappolygonobject_p.h"
-#include "qgeomapmarkerobject_p.h"
-#include "qgeomaprouteobject_p.h"
 
 QTM_BEGIN_NAMESPACE
 

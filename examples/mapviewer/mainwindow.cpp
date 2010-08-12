@@ -64,7 +64,7 @@
 
 #include <qgeocoordinate.h>
 #include <qgeomaprectangleobject.h>
-#include <qgeomapmarkerobject.h>
+#include <qgeomappixmapobject.h>
 #include <qgeomappolylineobject.h>
 #include <qgeomappolygonobject.h>
 #include <qgeomaprouteobject.h>
@@ -427,7 +427,7 @@ void MainWindow::setupUi()
     qgv->setVisible(true);
     qgv->setInteractive(true);
 
-    createMarkerIcon();
+    createPixmapIcon();
 
     m_mapWidget = new MapWidget(m_mapManager);
     qgv->scene()->addItem(m_mapWidget);
@@ -647,18 +647,18 @@ void MainWindow::createMenus()
                      this, SLOT(demo3(bool)));
 
     //**************************************************************
-    subMenuItem = new QMenu(tr("Marker"), this);
+    subMenuItem = new QMenu(tr("Pixmap"), this);
     m_popupMenu->addMenu(subMenuItem);
 
     menuItem = new QAction(tr("Set marker"), this);
     subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
-                     this, SLOT(drawMarker(bool)));
+                     this, SLOT(drawPixmap(bool)));
 
     menuItem = new QAction(tr("Remove markers"), this);
     subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
-                     this, SLOT(removeMarkers()));
+                     this, SLOT(removePixmaps()));
 
     menuItem = new QAction(tr("Select objects"), this);
     subMenuItem->addAction(menuItem);
@@ -699,9 +699,9 @@ void MainWindow::createMenus()
                      this, SLOT(calcRoute(bool)));
 }
 
-#define MVTEST_MARK(pos) do { QGeoMapMarkerObject *marker = new QGeoMapMarkerObject(pos, QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon); m_mapWidget->addMapObject(marker); markerObjects.append(marker); } while (0)
+#define MVTEST_MARK(pos) do { QGeoMapPixmapObject *marker = new QGeoMapPixmapObject(pos, QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon); m_mapWidget->addMapObject(marker); markerObjects.append(marker); } while (0)
 #define MVTEST_MARK2(lat,lng) MVTEST_MARK(QGeoCoordinate(lat,lng))
-#define MVTEST_RECT(topleft,bottomright) removeMarkers(); MVTEST_MARK(topleft); MVTEST_MARK(bottomright); drawRect(false);
+#define MVTEST_RECT(topleft,bottomright) removePixmaps(); MVTEST_MARK(topleft); MVTEST_MARK(bottomright); drawRect(false);
 #define MVTEST_RECT2(topleftlat,topleftlng,bottomrightlat,bottomrightlng) MVTEST_RECT(QGeoCoordinate(topleftlat,topleftlng),QGeoCoordinate(bottomrightlat,bottomrightlng))
 void MainWindow::demo1(bool /*checked*/)
 {
@@ -737,8 +737,8 @@ void MainWindow::demo3(bool /*checked*/)
 void MainWindow::drawRect(bool /*checked*/)
 {
     if (markerObjects.count() < 2)  return;
-    QGeoMapMarkerObject* p1 = markerObjects.at(0);
-    QGeoMapMarkerObject* p2 = markerObjects.at(1);
+    QGeoMapPixmapObject* p1 = markerObjects.at(0);
+    QGeoMapPixmapObject* p2 = markerObjects.at(1);
     QPen pen(Qt::white);
     pen.setWidth(2);
     QColor fill(Qt::black);
@@ -754,7 +754,7 @@ void MainWindow::drawPolyline(bool /*checked*/)
     QList<QGeoCoordinate> path;
 
     for (int i = 0; i < markerObjects.size(); i++) {
-        QGeoMapMarkerObject* p = markerObjects.at(i);
+        QGeoMapPixmapObject* p = markerObjects.at(i);
         path.append(p->coordinate());
     }
 
@@ -771,7 +771,7 @@ void MainWindow::drawPolygon(bool /*checked*/)
     QList<QGeoCoordinate> path;
 
     for (int i = 0; i < markerObjects.size(); i++) {
-        QGeoMapMarkerObject* p = markerObjects.at(i);
+        QGeoMapPixmapObject* p = markerObjects.at(i);
         path.append(p->coordinate());
     }
 
@@ -790,7 +790,7 @@ void MainWindow::drawCircle(bool /*checked*/)
 {
     if (markerObjects.count() < 1) return;
 
-    QGeoMapMarkerObject* p1 = markerObjects.at(0);
+    QGeoMapPixmapObject* p1 = markerObjects.at(0);
 
     // center of the circle
     QGeoCoordinate center = p1->coordinate();
@@ -800,7 +800,7 @@ void MainWindow::drawCircle(bool /*checked*/)
 
     // if a 2nd marker object is given, evaluate its distance to the first one to get the circle's radius.
     if (markerObjects.count() >= 2) {
-        QGeoMapMarkerObject* p2 = markerObjects.at(1);
+        QGeoMapPixmapObject* p2 = markerObjects.at(1);
 
         radius = center.distanceTo(p2->coordinate());
     }
@@ -817,18 +817,18 @@ void MainWindow::drawCircle(bool /*checked*/)
     m_mapWidget->lastCircle = circle;
 }
 
-void MainWindow::drawMarker(bool /*checked*/)
+void MainWindow::drawPixmap(bool /*checked*/)
 {
-    QGeoMapMarkerObject *marker = new QGeoMapMarkerObject(m_mapWidget->screenPositionToCoordinate(lastClicked),
+    QGeoMapPixmapObject *marker = new QGeoMapPixmapObject(m_mapWidget->screenPositionToCoordinate(lastClicked),
             QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon);
     m_mapWidget->addMapObject(marker);
     markerObjects.append(marker);
 }
 
-void MainWindow::removeMarkers()
+void MainWindow::removePixmaps()
 {
     while (markerObjects.size() > 0) {
-        QGeoMapMarkerObject *marker = markerObjects.takeFirst();
+        QGeoMapPixmapObject *marker = markerObjects.takeFirst();
         m_mapWidget->removeMapObject(marker);
         marker->deleteLater();
     }
@@ -852,7 +852,7 @@ void MainWindow::customContextMenuRequest(const QPoint& point)
     }
 }
 
-void MainWindow::createMarkerIcon()
+void MainWindow::createPixmapIcon()
 {
     m_markerIcon = QPixmap(MARKER_WIDTH, MARKER_HEIGHT);
     m_markerIcon.fill(Qt::transparent);
@@ -882,7 +882,7 @@ void MainWindow::calcRoute(bool /*checked*/)
     QList<QGeoCoordinate> waypoints;
 
     for (int i = 0; i < markerObjects.count(); i++) {
-        QGeoMapMarkerObject* p = markerObjects.at(i);
+        QGeoMapPixmapObject* p = markerObjects.at(i);
         waypoints.append(p->coordinate());
     }
 
@@ -918,8 +918,8 @@ void MainWindow::selectObjects()
     if (markerObjects.count() < 2)
         return;
 
-    QGeoMapMarkerObject* bottomRight = markerObjects.takeLast();
-    QGeoMapMarkerObject* topLeft = markerObjects.takeLast();
+    QGeoMapPixmapObject* bottomRight = markerObjects.takeLast();
+    QGeoMapPixmapObject* topLeft = markerObjects.takeLast();
     m_mapWidget->removeMapObject(topLeft);
     m_mapWidget->removeMapObject(bottomRight);
     QList<QGeoMapObject*> mapObjects = m_mapWidget->mapObjectsInScreenRect(

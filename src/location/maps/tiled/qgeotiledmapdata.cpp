@@ -53,7 +53,7 @@
 #include "qgeotiledmaprectangleobjectinfo_p.h"
 #include "qgeotiledmappolylineobjectinfo_p.h"
 #include "qgeotiledmappolygonobjectinfo_p.h"
-#include "qgeotiledmapmarkerobjectinfo_p.h"
+#include "qgeotiledmappixmapobjectinfo_p.h"
 #include "qgeotiledmaprouteobjectinfo_p.h"
 
 #include <QTimer>
@@ -630,8 +630,8 @@ void QGeoTiledMapData::setupMapObject(QGeoMapObject *mapObject)
         case QGeoMapObject::PolygonType:
             info = new QGeoTiledMapPolygonObjectInfo(this, mapObject);
             break;
-        case QGeoMapObject::MarkerType:
-            info = new QGeoTiledMapMarkerObjectInfo(this, mapObject);
+        case QGeoMapObject::PixmapType:
+            info = new QGeoTiledMapPixmapObjectInfo(this, mapObject);
             break;
         case QGeoMapObject::RouteType:
             info = new QGeoTiledMapRouteObjectInfo(this, mapObject);
@@ -938,37 +938,6 @@ QList<QPair<QRect, QRect> > QGeoTiledMapDataPrivate::intersectedScreen(const QRe
 
     return result;
 }
-
-//QGeoMapObjectInfo* QGeoTiledMapDataPrivate::createRectangleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-//{
-//    return new QGeoTiledMapRectangleObjectInfo(mapObjectPrivate);
-//}
-
-//QGeoMapObjectInfo* QGeoTiledMapDataPrivate::createCircleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-//{
-//    return new QGeoTiledMapCircleObjectInfo(mapObjectPrivate);
-//}
-
-//QGeoMapObjectInfo* QGeoTiledMapDataPrivate::createPolylineObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-//{
-//    return new QGeoTiledMapPolylineObjectInfo(mapObjectPrivate);
-//}
-
-//QGeoMapObjectInfo* QGeoTiledMapDataPrivate::createPolygonObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-//{
-//    return new QGeoTiledMapPolygonObjectInfo(mapObjectPrivate);
-//}
-
-//QGeoMapObjectInfo* QGeoTiledMapDataPrivate::createMarkerObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-//{
-//    return new QGeoTiledMapMarkerObjectInfo(mapObjectPrivate);
-//}
-
-//QGeoMapObjectInfo* QGeoTiledMapDataPrivate::createRouteObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-//{
-//    return new QGeoTiledMapRouteObjectInfo(mapObjectPrivate);
-//}
-
 
 /*******************************************************************************
 *******************************************************************************/

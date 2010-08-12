@@ -6,12 +6,12 @@ include(tiled/tiled.pri)
 PUBLIC_HEADERS += \
                     maps/qgeomapcircleobject.h \
                     maps/qgeomapdata.h \
-                    maps/qgeomapmarkerobject.h \
                     maps/qgeomapobject.h \
                     maps/qgeomapobjectinfo.h \
                     maps/qgeomapoverlay.h \
                     maps/qgeomappingmanager.h \
                     maps/qgeomappingmanagerengine.h \
+                    maps/qgeomappixmapobject.h \
                     maps/qgeomappolygonobject.h \
                     maps/qgeomappolylineobject.h \
                     maps/qgeomaprectangleobject.h \
@@ -33,11 +33,11 @@ PUBLIC_HEADERS += \
 PRIVATE_HEADERS += \
                     maps/qgeomapcircleobject_p.h \
                     maps/qgeomapdata_p.h \
-                    maps/qgeomapmarkerobject_p.h \
                     maps/qgeomapobject_p.h \
                     maps/qgeomapobjectinfo_p.h \
                     maps/qgeomappingmanager_p.h \
                     maps/qgeomappingmanagerengine_p.h \
+                    maps/qgeomappixmapobject_p.h \
                     maps/qgeomappolygonobject_p.h \
                     maps/qgeomappolylineobject_p.h \
                     maps/qgeomaprectangleobject_p.h \
@@ -58,12 +58,12 @@ PRIVATE_HEADERS += \
 SOURCES += \
             maps/qgeomapcircleobject.cpp \
             maps/qgeomapdata.cpp \
-            maps/qgeomapmarkerobject.cpp \
             maps/qgeomapobject.cpp \
             maps/qgeomapobjectinfo.cpp \
             maps/qgeomapoverlay.cpp \
             maps/qgeomappingmanager.cpp \
             maps/qgeomappingmanagerengine.cpp \
+            maps/qgeomappixmapobject.cpp \
             maps/qgeomappolygonobject.cpp \
             maps/qgeomappolylineobject.cpp \
             maps/qgeomaprectangleobject.cpp \
