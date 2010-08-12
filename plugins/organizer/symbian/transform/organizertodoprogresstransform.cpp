@@ -48,7 +48,9 @@ void OrganizerTodoProgressTransform::transformToDetailL(const CCalEntry& entry, 
         QOrganizerTodoProgress progress;
 
         CCalEntry::TStatus entryStatus = entry.StatusL();
-        if (entryStatus == CCalEntry::ETodoNeedsAction || entryStatus == CCalEntry::ENullStatus) {
+        if (entryStatus == CCalEntry::ENullStatus) {
+            return; // don't save the detail if there is no status
+        } else if (entryStatus == CCalEntry::ETodoNeedsAction) {
             progress.setStatus(QOrganizerTodoProgress::StatusNotStarted);
         } else if (entryStatus == CCalEntry::ETodoInProcess) {
             progress.setStatus(QOrganizerTodoProgress::StatusInProgress);

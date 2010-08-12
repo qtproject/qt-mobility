@@ -47,6 +47,7 @@ void OrganizerItemLocationTransform::transformToDetailL(const CCalEntry& entry, 
 	QOrganizerItemLocation location;
 	if (!locationName.isEmpty()) {
 		location.setLocationName(locationName);
+		item->saveDetail(&location);
 	}	
 #ifdef SYMBIAN_CALENDAR_V2
 	QString latLongStr;
@@ -66,10 +67,9 @@ void OrganizerItemLocationTransform::transformToDetailL(const CCalEntry& entry, 
 			                  .arg(QString::number(longitude, 'f')));
 		}
 		location.setGeoLocation(latLongStr);
+		item->saveDetail(&location);
 	}
 #endif
-	item->saveDetail(&location);
-	
 }
 
 void OrganizerItemLocationTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)

@@ -59,8 +59,9 @@ void OrganizerEventTimeRangeTransform::transformToDetailL(const CCalEntry& entry
         if (endTime.TimeUtcL() != Time::NullTTime()
             && endTime.TimeUtcL() != startTime.TimeUtcL())
             range.setEndDateTime(toQDateTimeL(endTime));
-
-        item->saveDetail(&range);
+        
+        if (!range.isEmpty())
+            item->saveDetail(&range);
     }
 }
 
@@ -83,7 +84,8 @@ void OrganizerEventTimeRangeTransform::transformToDetailL(const CCalInstance& in
             && endTime.TimeUtcL() != startTime.TimeUtcL())
             range.setEndDateTime(toQDateTimeL(endTime));
 
-        itemInstance->saveDetail(&range);
+        if (!range.isEmpty())
+            itemInstance->saveDetail(&range);
     }
 }
 

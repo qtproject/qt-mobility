@@ -95,6 +95,7 @@ void tst_recurringItems::initTestCase()
     QStringList managerNames = QOrganizerItemManager::availableManagers();
     managerNames.removeAll("invalid");
     managerNames.removeAll("skeleton");
+    //managerNames.removeAll("memory");
     foreach (QString managerName, managerNames) {
         m_om = new QOrganizerItemManager(managerName);
         m_om->removeItems(m_om->itemIds(), 0);
@@ -129,6 +130,7 @@ void tst_recurringItems::addRecurrenceRule_data()
     QStringList managerNames = QOrganizerItemManager::availableManagers();
     managerNames.removeAll("invalid"); // the test cases would not pass on invalid backend
     managerNames.removeAll("skeleton"); // the test cases would not pass on skeleton backend
+    //managerNames.removeAll("memory");
 
     foreach (QString managerName, managerNames) {
         addItemsWeeklyRecurrence(managerName, QOrganizerItemType::TypeEvent);
@@ -358,32 +360,32 @@ void tst_recurringItems::removeRecurrenceRule()
     QOrganizerItemRecurrence recurrence;
     recurrence.setRecurrenceRules(rrules);
     QVERIFY(item.saveDetail(&recurrence));
-
-    // Save item with recurrence rule.
     QVERIFY(m_om->saveItem(&item));
 
-    // Fetch the saved item
+    // Fetch the saved item & check that recurrence rule was saved
     item = m_om->item(item.localId());
+    QVERIFY(item.details(QOrganizerItemRecurrence::DefinitionName).count() == 1);
 
-    // Remove a recurrence rule and save the detail to the item.
-    QOrganizerItemRecurrence chkRecurrence = item.detail<QOrganizerItemRecurrence>();
-
-    // Set an empty list.
-    chkRecurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>());
-    QVERIFY(item.saveDetail(&chkRecurrence));
-
-    //Save the item again without the recurrence rule.
+    // Remove a recurrence rule detail & save & verify it does not exist
+    recurrence = item.detail<QOrganizerItemRecurrence>();
+    item.removeDetail(&recurrence);
     QVERIFY(m_om->saveItem(&item));
-
-    // Fetch again and Verify
-    QOrganizerItem resultItem;
-    resultItem = m_om->item(item.localId());
-
-    if (item.detail(QOrganizerItemRecurrence::DefinitionName)!= resultItem.detail(QOrganizerItemRecurrence::DefinitionName)) {
-        qDebug() << "Expected: " << item.detail(QOrganizerItemRecurrence::DefinitionName);
-        qDebug() << "Actual:   " << resultItem.detail(QOrganizerItemRecurrence::DefinitionName);
-        QFAIL("Recurrence items do not match!");
-    }
+    item = m_om->item(item.localId());
+    QVERIFY(item.details(QOrganizerItemRecurrence::DefinitionName).count() == 0);
+    
+    // Save the recurrence again & fetch & verify
+    QVERIFY(item.saveDetail(&recurrence));
+    QVERIFY(m_om->saveItem(&item));
+    item = m_om->item(item.localId());
+    QVERIFY(item.details(QOrganizerItemRecurrence::DefinitionName).count() == 1);
+    
+    // Set empty recurrence rule detail & save & verify it does not exist
+    recurrence = item.detail<QOrganizerItemRecurrence>();
+    recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>());
+    QVERIFY(item.saveDetail(&recurrence));
+    QVERIFY(m_om->saveItem(&item));
+    item = m_om->item(item.localId());
+    QVERIFY(item.details(QOrganizerItemRecurrence::DefinitionName).count() == 0);
 }
 
 /*!
@@ -394,9 +396,9 @@ void tst_recurringItems::addManagers()
     QTest::addColumn<QString>("managerName");
 
     QStringList managerNames = QOrganizerItemManager::availableManagers();
-    //managerNames.removeAll("memory");
     managerNames.removeAll("invalid"); // the test cases would not pass on invalid backend
     managerNames.removeAll("skeleton"); // the test cases would not pass on skeleton backend
+    //managerNames.removeAll("memory");
 
     foreach(QString mgr, managerNames) {
         QTest::newRow(QString("[%1]").arg(mgr).toLatin1().constData()) << mgr;

@@ -54,7 +54,8 @@ void OrganizerTodoTimeRangeTransform::transformToDetailL(const CCalEntry& entry,
         if (endTime.TimeUtcL() != Time::NullTTime())
             range.setDueDateTime(toQDateTimeL(endTime));
 
-        item->saveDetail(&range);
+        if (!range.isEmpty())
+            item->saveDetail(&range);
     }
 }
 
@@ -70,8 +71,9 @@ void OrganizerTodoTimeRangeTransform::transformToDetailL(const CCalInstance& ins
             range.setStartDateTime(toQDateTimeL(startTime));
         if (endTime.TimeUtcL() != Time::NullTTime())
             range.setDueDateTime(toQDateTimeL(endTime));
-
-        itemInstance->saveDetail(&range);
+        
+        if (!range.isEmpty())
+            itemInstance->saveDetail(&range);
     }
 }
 

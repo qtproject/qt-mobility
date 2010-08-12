@@ -301,15 +301,7 @@ void tst_SymbianOm::fetchItems()
     QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
     
     // Verify
-    QStringList ignoredDetails;
-    // TODO: remove these when backend supports them properly
-    ignoredDetails << QOrganizerItemDisplayLabel::DefinitionName;
-    ignoredDetails << QOrganizerItemRecurrence::DefinitionName;
-    ignoredDetails << QOrganizerTodoTimeRange::DefinitionName;
-    ignoredDetails << QOrganizerTodoProgress::DefinitionName;
-    ignoredDetails << QOrganizerItemDescription::DefinitionName;
-    ignoredDetails << QOrganizerItemPriority::DefinitionName;
-    QVERIFY(compareItemLists(actualItems, expectedItems, ignoredDetails));
+    QVERIFY(compareItemLists(actualItems, expectedItems));
 }
 
 void tst_SymbianOm::fetchItemIds()

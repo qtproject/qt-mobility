@@ -50,26 +50,24 @@ void OrganizerItemRecurrenceTransform::transformToDetailL(const CCalEntry& entry
 
     TCalRRule calRRule;
     entry.GetRRuleL(calRRule);
-    //TODO: to put invalid rule check once remove recurrence apis are available.
-    recurrence.setRecurrenceRules(toItemRecurrenceRulesL(calRRule));
-
+    if (calRRule.Type() != TCalRRule::EInvalid)
+        recurrence.setRecurrenceRules(toItemRecurrenceRulesL(calRRule));
 
     RArray<TCalTime> calRDateList;
     entry.GetRDatesL(calRDateList);
-    if (calRDateList.Count()) {
+    if (calRDateList.Count())
         recurrence.setRecurrenceDates(toQDatesL(calRDateList));
-    }
 
     RArray<TCalTime> calExDateList;
     entry.GetExceptionDatesL(calExDateList);
-    if (calExDateList.Count()) {
+    if (calExDateList.Count())
         recurrence.setExceptionDates(toQDatesL(calExDateList));
-    }
 
     // TODO: exceptionRules
     // There is no native support for this.
 
-    item->saveDetail(&recurrence);
+    if (!recurrence.isEmpty())
+        item->saveDetail(&recurrence);
 }
 
 void OrganizerItemRecurrenceTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
@@ -81,6 +79,10 @@ void OrganizerItemRecurrenceTransform::transformToDetailL(const CCalInstance& in
 
 void OrganizerItemRecurrenceTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
+    // Clear all repeating properties from this entry.
+    // This is needed for removing recurrence rules from an existing entry.
+    entry->ClearRepeatingPropertiesL();
+    
     // *** Repeat rules / RDate / ExDate Methods ***
     QOrganizerItemRecurrence recurrence = item.detail<QOrganizerItemRecurrence>();
     if (recurrence.isEmpty())
@@ -91,11 +93,8 @@ void OrganizerItemRecurrenceTransform::transformToEntryL(const QOrganizerItem& i
     // TODO: Also other item types may have a recurrence item
     QOrganizerEventTimeRange timerange = item.detail(QOrganizerEventTimeRange::DefinitionName);
 
-    if (recurrence.recurrenceRules().count()) {
+    if (recurrence.recurrenceRules().count())
         entry->SetRRuleL(toCalRRuleL(recurrence.recurrenceRules(), timerange.startDateTime()));
-    } else {
-        entry->ClearRepeatingPropertiesL();
-    }
 
     if (recurrence.recurrenceDates().count()) {
         RArray<TCalTime> calRDates;
