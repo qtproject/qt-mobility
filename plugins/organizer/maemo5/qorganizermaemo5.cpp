@@ -135,7 +135,8 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
 {
     QList<QOrganizerItem> retn;
 
-    QList<QOrganizerItem> itemList = items(filter, sortOrders, fetchHint, error);
+    QList<QOrganizerItemSortOrder> noSorting;
+    QList<QOrganizerItem> itemList = items(QOrganizerItemFilter(), noSorting, fetchMinimalData(), error);
 
     if (*error != QOrganizerItemManager::NoError)
         return QList<QOrganizerItem>();
