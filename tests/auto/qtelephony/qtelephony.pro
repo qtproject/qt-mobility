@@ -16,11 +16,13 @@ win32 {
     SOURCES += tst_telephony_win.cpp
     MOBILITY = telephony
 }
+
 symbian {
     SOURCES += tst_telephony_s60.cpp
     MOBILITY = telephony
 } 
-linux-* {
+
+linux-*:!maemo* {
     QT += dbus
     INCLUDEPATH += ../../../src/telephony/linux
 
@@ -45,11 +47,10 @@ linux-* {
         ../../../src/telephony/linux/qtelephonycalllist_linux.cpp
 }
 
-# Not implemented
-#maemo* {
-#    SOURCES += tst_telephony_maemo.cpp
-#    MOBILITY = telephony
-#}
+maemo* {
+    SOURCES += tst_telephony_maemo.cpp
+    MOBILITY = telephony
+}
 
 addFiles.sources = testdata/*
 addFiles.path = testdata

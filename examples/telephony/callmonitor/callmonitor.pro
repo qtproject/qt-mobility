@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-linux-*: {
+linux-*:!maemo* {
 	SUBDIRS += linux
 }
 maemo* {
