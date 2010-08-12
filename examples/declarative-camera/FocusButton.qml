@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,36 +39,25 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERVIDEORENDERER_H
-#define QGSTREAMERVIDEORENDERER_H
+import Qt 4.7
+import Qt.multimedia 4.7
 
-#include <qvideorenderercontrol.h>
-#include "qvideosurfacegstsink.h"
+CameraButton {
+    property Camera camera
 
-#include "qgstreamervideorendererinterface.h"
+    onClicked: {
+        if (camera.lockStatus == Camera.Unlocked)
+            camera.searchAndLock();
+        else
+            camera.unlock();
+    }
 
-QT_USE_NAMESPACE
-
-class QGstreamerVideoRenderer : public QVideoRendererControl, public QGstreamerVideoRendererInterface
-{
-    Q_OBJECT
-    Q_INTERFACES(QGstreamerVideoRendererInterface)
-public:
-    QGstreamerVideoRenderer(QObject *parent = 0);
-    virtual ~QGstreamerVideoRenderer();
-    
-    QAbstractVideoSurface *surface() const;
-    void setSurface(QAbstractVideoSurface *surface);
-
-    GstElement *videoSink();
-    void precessNewStream() {}
-
-signals:
-    void sinkChanged();
-
-private:    
-    QVideoSurfaceGstSink *m_videoSink;
-    QAbstractVideoSurface *m_surface;
-};
-
-#endif // QGSTREAMERVIDEORENDRER_H
+    text: {
+        if (camera.lockStatus == Camera.Unlocked)
+            "Focus";
+        else if (camera.lockStatus == Camera.Searching)
+            "Focusing"
+        else
+            "Unlock"
+    }
+}

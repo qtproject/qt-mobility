@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,36 +39,56 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERVIDEORENDERER_H
-#define QGSTREAMERVIDEORENDERER_H
+import Qt 4.7
+import Qt.multimedia 4.7
 
-#include <qvideorenderercontrol.h>
-#include "qvideosurfacegstsink.h"
+Item {
+    id: wbMode
+    property int value
+    property variant values : [ Camera.WhiteBalanceAuto,
+                                Camera.WhiteBalanceSunlight,
+                                Camera.WhiteBalanceCloudy,
+                                Camera.WhiteBalanceIncandescent,
+                                Camera.WhiteBalanceFluorescent ]
 
-#include "qgstreamervideorendererinterface.h"
+    signal clicked
 
-QT_USE_NAMESPACE
+    width : 144
+    height: 70
 
-class QGstreamerVideoRenderer : public QVideoRendererControl, public QGstreamerVideoRendererInterface
-{
-    Q_OBJECT
-    Q_INTERFACES(QGstreamerVideoRendererInterface)
-public:
-    QGstreamerVideoRenderer(QObject *parent = 0);
-    virtual ~QGstreamerVideoRenderer();
-    
-    QAbstractVideoSurface *surface() const;
-    void setSurface(QAbstractVideoSurface *surface);
+    BorderImage {
+        id: buttonImage
+        source: "images/toolbutton.sci"
+        width: wbMode.width; height: wbMode.height
+    }
 
-    GstElement *videoSink();
-    void precessNewStream() {}
+    FlickableList {
+        anchors.fill: buttonImage
+        id: flickableList
+        index: 2
+        items: [
+            "images/camera_auto_mode.png",
+            "images/camera_white_balance_sunny.png",
+            "images/camera_white_balance_cloudy.png",
+            "images/camera_white_balance_incandescent.png",
+            "images/camera_white_balance_flourescent.png"
+        ]
 
-signals:
-    void sinkChanged();
+        onClicked: wbMode.clicked()
 
-private:    
-    QVideoSurfaceGstSink *m_videoSink;
-    QAbstractVideoSurface *m_surface;
-};
+        onIndexChanged: {
+            wbMode.value = wbMode.values[flickableList.index]
+        }
 
-#endif // QGSTREAMERVIDEORENDRER_H
+        delegate: Item {
+            width: flickableList.width
+            height: flickableList.height
+
+            Image {
+                source: flickableList.items[index]
+                anchors.centerIn: parent
+            }
+        }
+    }
+}
+

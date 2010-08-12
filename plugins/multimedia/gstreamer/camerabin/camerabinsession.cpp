@@ -227,8 +227,8 @@ bool CameraBinSession::setupCameraBin()
         m_videoInputHasChanged = false;
     }
 
-    if (m_viewfinder) {
-        GstElement *preview = m_viewfinder->videoSink();
+    if (m_viewfinderInterface) {
+        GstElement *preview = m_viewfinderInterface->videoSink();
         g_object_set(G_OBJECT(m_pipeline), VIEWFINDER_SINK_PROPERTY, preview, NULL);
     }
 
@@ -422,10 +422,28 @@ void CameraBinSession::setVideoInput(QGstreamerElementFactory *videoInput)
     m_videoInputHasChanged = true;
 }
 
-void CameraBinSession::setViewfinder(QGstreamerVideoRendererInterface *viewfinder)
+void CameraBinSession::setViewfinder(QObject *viewfinder)
 {
-    m_viewfinder = viewfinder;
-    m_viewfinderHasChanged = true;
+    m_viewfinderInterface = qobject_cast<QGstreamerVideoRendererInterface*>(viewfinder);
+    if (!m_viewfinderInterface)
+        viewfinder = 0;
+
+    if (m_viewfinder != viewfinder) {
+        if (m_viewfinder) {
+            disconnect(m_viewfinder, SIGNAL(sinkChanged()),
+                       this, SIGNAL(viewfinderChanged()));
+        }
+
+        m_viewfinder = viewfinder;
+        m_viewfinderHasChanged = true;
+
+        if (m_viewfinder) {
+            connect(m_viewfinder, SIGNAL(sinkChanged()),
+                       this, SIGNAL(viewfinderChanged()));
+        }
+
+        emit viewfinderChanged();
+    }
 }
 
 QCamera::State CameraBinSession::state() const
@@ -440,7 +458,9 @@ void CameraBinSession::setState(QCamera::State newState)
 
     m_pendingState = newState;
 
+#if CAMERABIN_DEBUG
     qDebug() << Q_FUNC_INFO << newState;
+#endif
 
     switch (newState) {
     case QCamera::UnloadedState:
@@ -596,7 +616,12 @@ bool CameraBinSession::processSyncMessage(const QGstreamerMessage &message)
                         gst_caps_unref(caps);
 
                         emit imageExposed(m_requestId);
-                        emit imageCaptured(m_requestId, img);
+
+                        static int signalIndex = metaObject()->indexOfSignal("imageCaptured(int,QImage)");
+                        metaObject()->method(signalIndex).invoke(this,
+                                                                 Qt::QueuedConnection,
+                                                                 Q_ARG(int,m_requestId),
+                                                                 Q_ARG(QImage,img));
                     }
 
                 }
@@ -605,8 +630,8 @@ bool CameraBinSession::processSyncMessage(const QGstreamerMessage &message)
         }
 
         if (gst_structure_has_name(gm->structure, "prepare-xwindow-id")) {
-            if (m_viewfinder)
-                m_viewfinder->precessNewStream();
+            if (m_viewfinderInterface)
+                m_viewfinderInterface->precessNewStream();
 
             return true;
         }
@@ -708,7 +733,12 @@ void CameraBinSession::busMessage(const QGstreamerMessage &message)
 
 void CameraBinSession::processSavedImage(const QString &filename)
 {
-    emit imageSaved(m_requestId, filename);
+    static int signalIndex = metaObject()->indexOfSignal("imageSaved(int,QString)");
+    metaObject()->method(signalIndex).invoke(this,
+                                             Qt::QueuedConnection,
+                                             Q_ARG(int,m_requestId),
+                                             Q_ARG(QString,filename));
+
     emit focusStatusChanged(QCamera::Unlocked, QCamera::LockLost);
 }
 

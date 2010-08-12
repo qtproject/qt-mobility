@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,36 +39,55 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERVIDEORENDERER_H
-#define QGSTREAMERVIDEORENDERER_H
+import Qt 4.7
 
-#include <qvideorenderercontrol.h>
-#include "qvideosurfacegstsink.h"
+Item {
+    id: exposureCompensation
+    property real value
+    signal clicked
 
-#include "qgstreamervideorendererinterface.h"
+    width : 144
+    height: 70
 
-QT_USE_NAMESPACE
+    BorderImage {
+        id: buttonImage
+        source: "images/toolbutton.sci"
+        width: exposureCompensation.width; height: exposureCompensation.height
+    }
 
-class QGstreamerVideoRenderer : public QVideoRendererControl, public QGstreamerVideoRendererInterface
-{
-    Q_OBJECT
-    Q_INTERFACES(QGstreamerVideoRendererInterface)
-public:
-    QGstreamerVideoRenderer(QObject *parent = 0);
-    virtual ~QGstreamerVideoRenderer();
-    
-    QAbstractVideoSurface *surface() const;
-    void setSurface(QAbstractVideoSurface *surface);
+    Text {
+        text: "Ev:"
+        x: 8
+        y: 8
+        font.pixelSize: 18
+        color: "white"
+    }
 
-    GstElement *videoSink();
-    void precessNewStream() {}
+    onValueChanged: {
+    }
 
-signals:
-    void sinkChanged();
+    FlickableList {
+        anchors.fill: buttonImage
+        id: flickableList        
+        items: ["-2", "-1.5", "-1", "-0.5", "0", "+0.5", "+1", "+1.5", "+2"]
+        index: 4
 
-private:    
-    QVideoSurfaceGstSink *m_videoSink;
-    QAbstractVideoSurface *m_surface;
-};
+        onClicked: exposureCompensation.clicked()
 
-#endif // QGSTREAMERVIDEORENDRER_H
+        onIndexChanged: {
+            exposureCompensation.value = flickableList.items[flickableList.index]
+        }
+
+        delegate: Text {
+            font.pixelSize: 22
+            color: "white"
+            styleColor: "black"
+            width: flickableList.width
+            height: flickableList.height
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            text: flickableList.items[index]
+        }
+    }
+}
+
