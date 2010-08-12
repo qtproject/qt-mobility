@@ -93,7 +93,7 @@ QPen QGeoMapPolylineObject::pen() const
 *******************************************************************************/
 
 QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::PolylineType) {}
+        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::PolylineType) {}
 
 QGeoMapPolylineObjectPrivate::~QGeoMapPolylineObjectPrivate() {}
 

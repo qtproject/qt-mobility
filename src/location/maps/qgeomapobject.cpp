@@ -279,11 +279,11 @@ QDeclarativeListProperty<QGeoMapObject> QGeoMapObject::childObjects()
 {
     Q_D(QGeoMapObject);
     return QDeclarativeListProperty<QGeoMapObject>(this,
-                                                   0,
-                                                   children_append,
-                                                   children_count,
-                                                   children_at,
-                                                   children_clear);
+            0,
+            children_append,
+            children_count,
+            children_at,
+            children_clear);
 }
 
 void QGeoMapObject::children_append(QDeclarativeListProperty<QGeoMapObject> *prop, QGeoMapObject *mapObject)

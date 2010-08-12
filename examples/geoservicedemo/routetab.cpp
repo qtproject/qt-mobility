@@ -122,8 +122,7 @@ void RouteTab::initialize(QGeoRoutingManager *routingManager)
                          SIGNAL(error(QGeoRouteReply*, QGeoRouteReply::Error, QString)), this,
                          SLOT(resultsError(QGeoRouteReply*, QGeoRouteReply::Error, QString)));
         requestBtn->setDisabled(false);
-    }
-    else
+    } else
         requestBtn->setDisabled(true);
 }
 
@@ -140,9 +139,9 @@ void RouteTab::on_btnRequest_clicked()
         QGeoCoordinate dst(m_destLat->text().toDouble(), m_destLong->text().toDouble());
 
         QGeoRouteRequest request(src, dst);
-        if((m_routingManager->supportedSegmentDetails() & QGeoRouteRequest::BasicSegmentData) != 0)
+        if ((m_routingManager->supportedSegmentDetails() & QGeoRouteRequest::BasicSegmentData) != 0)
             request.setSegmentDetail(QGeoRouteRequest::BasicSegmentData);
-        if((m_routingManager->supportedInstructionDetails() & QGeoRouteRequest::BasicInstructions) != 0)
+        if ((m_routingManager->supportedInstructionDetails() & QGeoRouteRequest::BasicInstructions) != 0)
             request.setInstructionDetail(QGeoRouteRequest::BasicInstructions);
 
         m_routingManager->calculateRoute(request);
@@ -153,14 +152,14 @@ void RouteTab::on_btnRequest_clicked()
 
 void RouteTab::on_btnUpdate_clicked()
 {
-    if (m_routingManager && routes.count()>0) {
+    if (m_routingManager && routes.count() > 0) {
         m_resultTree->clear();
         QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
         top->setText(0, tr("Route"));
         top->setText(1, tr("Updating"));
         updateBtn->setDisabled(true);
         QGeoCoordinate src(m_srcLat->text().toDouble(), m_srcLong->text().toDouble());
-        m_routingManager->updateRoute(routes[0],src);
+        m_routingManager->updateRoute(routes[0], src);
     } else {
         QMessageBox::warning(this, tr("Routing"), tr("Route update not available."));
     }
@@ -168,14 +167,14 @@ void RouteTab::on_btnUpdate_clicked()
 
 void RouteTab::replyFinished(QGeoRouteReply* reply)
 {
-    if(reply->error() == QGeoRouteReply::NoError) {
+    if (reply->error() == QGeoRouteReply::NoError) {
         routes = reply->routes();
         RoutePresenter presenter(m_resultTree, reply);
         presenter.show();
         reply->deleteLater();
-        if(routes.count()>0 && m_routingManager->supportsRouteUpdates())
+        if (routes.count() > 0 && m_routingManager->supportsRouteUpdates())
             updateBtn->setDisabled(false);
-        }
+    }
 }
 
 void RouteTab::resultsError(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString)

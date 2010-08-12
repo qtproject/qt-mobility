@@ -109,8 +109,8 @@ include some of the information provided by QGraphicsGeoMap::StreetMap.
 // Temporary constructor, for use by QML bindings until we come up
 // with the right QML / service provider mapping
 QGraphicsGeoMap::QGraphicsGeoMap(QGraphicsItem *parent)
-    : QGraphicsWidget(parent),
-      d_ptr(new QGraphicsGeoMapPrivate(0))
+        : QGraphicsWidget(parent),
+        d_ptr(new QGraphicsGeoMapPrivate(0))
 {
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 
@@ -126,8 +126,6 @@ QGraphicsGeoMap::QGraphicsGeoMap(QGraphicsItem *parent)
     setMinimumSize(QSizeF(0, 0));
     setPreferredSize(QSizeF(500, 500));
     d_ptr->mapData->setViewportSize(QSizeF(300, 300));
-
-//    setCenter(QGeoCoordinate(-27.0, 153.0));
 }
 
 /*!
@@ -510,7 +508,7 @@ Indicates that the type of the map has been changed.
 *******************************************************************************/
 
 QGraphicsGeoMapPrivate::QGraphicsGeoMapPrivate(QGeoMappingManager *manager)
-        :serviceProvider(0),
+        : serviceProvider(0),
         manager(manager),
         mapData(0),
         panActive(false) {}

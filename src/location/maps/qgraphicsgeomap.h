@@ -43,6 +43,7 @@
 #define QGRAPHICSGEOMAP_H
 
 #include "qmobilityglobal.h"
+
 #include <QGraphicsWidget>
 
 #include <QDeclarativeListProperty>

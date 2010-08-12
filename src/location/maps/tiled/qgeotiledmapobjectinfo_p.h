@@ -73,9 +73,9 @@ public:
     ~QGeoTiledMapObjectInfo();
 
     static QPolygonF createPolygon(const QList<QGeoCoordinate> & path,
-                                    QGeoTiledMapData *tiledMapData,
-                                    bool closedPath,
-                                    qreal ypole = -100);
+                                   QGeoTiledMapData *tiledMapData,
+                                   bool closedPath,
+                                   qreal ypole = -100);
 
     void addToParent();
     void removeFromParent();

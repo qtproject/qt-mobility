@@ -199,7 +199,7 @@ int QGeoSearchManagerEngine::managerVersion() const
     QGeoSearchReply::error() with deleteLater().
 */
 QGeoSearchReply* QGeoSearchManagerEngine::geocode(const QGeoAddress &address,
-                                                  QGeoBoundingArea *bounds)
+        QGeoBoundingArea *bounds)
 {
     Q_UNUSED(address)
     Q_UNUSED(bounds)
@@ -244,7 +244,7 @@ QGeoSearchReply* QGeoSearchManagerEngine::geocode(const QGeoAddress &address,
     QGeoSearchReply::error() with deleteLater().
 */
 QGeoSearchReply* QGeoSearchManagerEngine::reverseGeocode(const QGeoCoordinate &coordinate,
-                                                         QGeoBoundingArea *bounds)
+        QGeoBoundingArea *bounds)
 {
     Q_UNUSED(coordinate)
     Q_UNUSED(bounds)
@@ -291,10 +291,10 @@ QGeoSearchReply* QGeoSearchManagerEngine::reverseGeocode(const QGeoCoordinate &c
     QGeoSearchReply::error() with deleteLater().
 */
 QGeoSearchReply* QGeoSearchManagerEngine::search(const QString &searchString,
-                                                 QGeoSearchManager::SearchTypes searchTypes,
-                                                 int resultsCount,
-                                                 int resultsOffset,
-                                                 QGeoBoundingArea *bounds)
+        QGeoSearchManager::SearchTypes searchTypes,
+        int resultsCount,
+        int resultsOffset,
+        QGeoBoundingArea *bounds)
 {
     Q_UNUSED(searchString)
     Q_UNUSED(searchTypes)

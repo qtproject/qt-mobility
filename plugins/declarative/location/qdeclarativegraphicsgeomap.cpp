@@ -46,7 +46,7 @@ QTM_BEGIN_NAMESPACE
 
 
 QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QGraphicsItem *parent)
-    : QGraphicsGeoMap(parent)
+        : QGraphicsGeoMap(parent)
 {
     connect(this,
             SIGNAL(centerChanged(QGeoCoordinate)),
@@ -78,7 +78,7 @@ QPointF QDeclarativeGraphicsGeoMap::toScreenPosition(const QDeclarativeCoordinat
 
 QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::toCoordinate(QPointF screenPosition) const
 {
-    return new QDeclarativeCoordinate(screenPositionToCoordinate(screenPosition), 
+    return new QDeclarativeCoordinate(screenPositionToCoordinate(screenPosition),
                                       const_cast<QDeclarativeGraphicsGeoMap *const>(this));
 }
 

@@ -87,10 +87,10 @@ void QGeoTiledMapRectangleObjectInfo::objectUpdate()
         int width = tiledMapData->maxZoomSize().width();
 
         // lastPoint on the other side
-        QPointF point1_ = point1 - QPointF(width*dir, 0);
+        QPointF point1_ = point1 - QPointF(width * dir, 0);
 
         // point on this side
-        QPointF point2_ = point2 + QPointF(width*dir, 0);
+        QPointF point2_ = point2 + QPointF(width * dir, 0);
 
         bounds1 = QRectF(point1_, point2).normalized();
         bounds2 = QRectF(point1, point2_).normalized();

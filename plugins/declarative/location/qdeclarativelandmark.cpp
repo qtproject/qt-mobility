@@ -3,7 +3,7 @@
 QTM_BEGIN_NAMESPACE
 
 QDeclarativeLandmark::QDeclarativeLandmark(QObject* parent) :
-    QObject(parent)
+        QObject(parent)
 {
 }
 

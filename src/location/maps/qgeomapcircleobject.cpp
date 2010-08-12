@@ -59,13 +59,13 @@ QTM_BEGIN_NAMESPACE
 */
 
 QGeoMapCircleObject::QGeoMapCircleObject(QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent)) {}
+        : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent)) {}
 
 /*!
     Constructs a new circle object with the specified \a parent.
 */
 QGeoMapCircleObject::QGeoMapCircleObject(const QGeoBoundingCircle &circle, QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent))
+        : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent))
 {
     Q_D(QGeoMapCircleObject);
     d->circle = circle;
@@ -75,7 +75,7 @@ QGeoMapCircleObject::QGeoMapCircleObject(const QGeoBoundingCircle &circle, QGeoM
     Constructs a new circle object with the specified \a parent.
 */
 QGeoMapCircleObject::QGeoMapCircleObject(const QGeoCoordinate &center, qreal radius, QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent))
+        : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent))
 {
     Q_D(QGeoMapCircleObject);
     d->circle = QGeoBoundingCircle(center, radius);

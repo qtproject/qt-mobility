@@ -652,7 +652,7 @@ QPoint QGeoTiledMapData::maxZoomCenter() const
     return d->maxZoomCenter;
 }
 
-QSize QGeoTiledMapData::maxZoomSize () const
+QSize QGeoTiledMapData::maxZoomSize() const
 {
     Q_D(const QGeoTiledMapData);
     return d->maxZoomSize;
@@ -798,8 +798,8 @@ void QGeoTiledMapDataPrivate::paintMapObjects(QPainter *painter, const QStyleOpt
 
     if (worldRect.contains(maxZoomScreenRect)) {
         scene->render(painter,
-                         QRectF(targetX, targetY, targetW, targetH),
-                         maxZoomScreenRect);
+                      QRectF(targetX, targetY, targetW, targetH),
+                      maxZoomScreenRect);
         return;
     }
 
@@ -808,8 +808,8 @@ void QGeoTiledMapDataPrivate::paintMapObjects(QPainter *painter, const QStyleOpt
     qreal insideWidth = targetW * inside.width() / maxZoomScreenRect.width();
 
     scene->render(painter,
-                     QRectF(targetX, targetY, insideWidth, targetH),
-                     inside);
+                  QRectF(targetX, targetY, insideWidth, targetH),
+                  inside);
 
     QRect outside = QRect(0,
                           maxZoomScreenRect.y(),
@@ -819,8 +819,8 @@ void QGeoTiledMapDataPrivate::paintMapObjects(QPainter *painter, const QStyleOpt
     qreal outsideWidth = targetW * outside.width() / maxZoomScreenRect.width();
 
     scene->render(painter,
-                     QRectF(targetX + targetW - outsideWidth, targetY, outsideWidth, targetH),
-                     outside);
+                  QRectF(targetX + targetW - outsideWidth, targetY, outsideWidth, targetH),
+                  outside);
 }
 
 
@@ -836,9 +836,9 @@ void QGeoTiledMapDataPrivate::cleanupCaches()
     QRectF cacheRect2;
 
     cacheRect1 = maxZoomScreenRect.adjusted(-boundaryTiles * tileSize.width(),
-                 -boundaryTiles * tileSize.height(),
-                 boundaryTiles * tileSize.width(),
-                 boundaryTiles * tileSize.height());
+                                            -boundaryTiles * tileSize.height(),
+                                            boundaryTiles * tileSize.width(),
+                                            boundaryTiles * tileSize.height());
 
     if (cacheRect1.width() > maxZoomSize.width()) {
         cacheRect1.setX(0);

@@ -84,7 +84,7 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, Q
 QGeoSearchManagerEngineNokia::~QGeoSearchManagerEngineNokia() {}
 
 QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &address,
-                                                       QGeoBoundingArea *bounds)
+        QGeoBoundingArea *bounds)
 {
     Q_UNUSED(bounds)
 
@@ -134,7 +134,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
 }
 
 QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,
-                                                              QGeoBoundingArea *bounds)
+        QGeoBoundingArea *bounds)
 {
     Q_UNUSED(bounds)
 
@@ -160,10 +160,10 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordina
 }
 
 QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchString,
-                                                      QGeoSearchManager::SearchTypes searchTypes,
-                                                      int resultsCount,
-                                                      int resultsOffset,
-                                                      QGeoBoundingArea *bounds)
+        QGeoSearchManager::SearchTypes searchTypes,
+        int resultsCount,
+        int resultsOffset,
+        QGeoBoundingArea *bounds)
 {
     // NOTE this will eventually replaced by a much improved implementation
     // which will make use of the additionLandmarkManagers()

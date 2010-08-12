@@ -58,7 +58,7 @@ QDeclarativeCoordinate::QDeclarativeCoordinate(QObject* parent)
         : QObject(parent) {}
 
 QDeclarativeCoordinate::QDeclarativeCoordinate(const QGeoCoordinate &coordinate,
-                                               QObject *parent)
+        QObject *parent)
         : QObject(parent),
         m_coordinate(coordinate) {}
 

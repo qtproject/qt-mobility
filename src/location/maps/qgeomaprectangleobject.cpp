@@ -81,7 +81,7 @@ void QGeoMapRectangleObject::setBounds(const QGeoBoundingBox &bounds)
     QGeoBoundingBox oldBounds = d->bounds;
 
     if (oldBounds == bounds);
-        return;
+    return;
 
     d->bounds = bounds;
 

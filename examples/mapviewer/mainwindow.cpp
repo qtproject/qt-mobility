@@ -103,7 +103,8 @@ static const int kineticPanningResolution = 30; // temporal resolution. Smaller 
 static const int holdTimeThreshold = 100; // maximum time between last mouse move and mouse release for kinetic panning to kick in
 #endif
 
-static inline qreal qPointLength(const QPointF &p) {
+static inline qreal qPointLength(const QPointF &p)
+{
     qreal x = p.x();
     qreal y = p.y();
 
@@ -111,11 +112,11 @@ static inline qreal qPointLength(const QPointF &p) {
 }
 
 MapWidget::MapWidget(QGeoMappingManager *manager) :
-    QGraphicsGeoMap(manager),
-    coordQueryState(false),
-    panActive(false),
-    kineticTimer(new QTimer),
-    lastCircle(0)
+        QGraphicsGeoMap(manager),
+        coordQueryState(false),
+        panActive(false),
+        kineticTimer(new QTimer),
+        lastCircle(0)
 {
     for (int i = 0; i < 5; ++i) mouseHistory.append(MouseHistoryEntry());
 
@@ -135,8 +136,7 @@ void MapWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
     setFocus();
     if (event->button() == Qt::LeftButton) {
         if (event->modifiers() & Qt::ControlModifier) {
-        }
-        else {
+        } else {
             if (coordQueryState) {
                 emit coordQueryResult(screenPositionToCoordinate(event->lastPos()));
                 return;
@@ -172,7 +172,7 @@ void MapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             int entries_considered = 0;
 
             QTime currentTime = QTime::currentTime();
-            foreach (MouseHistoryEntry entry, mouseHistory) {
+            foreach(MouseHistoryEntry entry, mouseHistory) {
                 // first=speed, second=time
                 int deltaTime = entry.second.msecsTo(currentTime);
                 if (deltaTime < holdTimeThreshold) {
@@ -197,8 +197,7 @@ void MapWidget::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     if (event->modifiers() & Qt::ControlModifier) {
         if (lastCircle)
             lastCircle->setCenter(this->screenPositionToCoordinate(event->pos()));
-    }
-    else if (panActive) {
+    } else if (panActive) {
         // Calculate time delta
         QTime currentTime = QTime::currentTime();
         int deltaTime = lastMoveTime.msecsTo(currentTime);
@@ -229,7 +228,7 @@ void MapWidget::kineticTimerEvent()
     lastMoveTime = currentTime;
 
     if (panDecellerate)
-        kineticPanSpeed *= pow(qreal(0.5), qreal(deltaTime/kineticPanningHalflife));
+        kineticPanSpeed *= pow(qreal(0.5), qreal(deltaTime / kineticPanningHalflife));
 
     QPointF scaledSpeed = kineticPanSpeed * deltaTime;
 
@@ -613,13 +612,13 @@ void MainWindow::setProvider(QString providerId)
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
-    qgv->setSceneRect(QRectF(QPointF(0.0,0.0), qgv->size()));
+    qgv->setSceneRect(QRectF(QPointF(0.0, 0.0), qgv->size()));
     m_mapWidget->resize(qgv->size());
 }
 
 void MainWindow::showEvent(QShowEvent* event)
 {
-    qgv->setSceneRect(QRectF(QPointF(0.0,0.0), qgv->size()));
+    qgv->setSceneRect(QRectF(QPointF(0.0, 0.0), qgv->size()));
     m_mapWidget->resize(qgv->size());
 }
 
@@ -706,9 +705,9 @@ void MainWindow::createMenus()
 #define MVTEST_RECT2(topleftlat,topleftlng,bottomrightlat,bottomrightlng) MVTEST_RECT(QGeoCoordinate(topleftlat,topleftlng),QGeoCoordinate(bottomrightlat,bottomrightlng))
 void MainWindow::demo1(bool /*checked*/)
 {
-    MVTEST_MARK2(-30,175);
-    MVTEST_MARK2(-20,170);
-    MVTEST_MARK2(-25,-175);
+    MVTEST_MARK2(-30, 175);
+    MVTEST_MARK2(-20, 170);
+    MVTEST_MARK2(-25, -175);
     drawRect(false);
     drawPolygon(false);
     drawCircle(false);
@@ -717,9 +716,9 @@ void MainWindow::demo2(bool /*checked*/)
 {
     int i = 0;
     qreal sz = 3;
-    for (qreal lat = -90+sz; lat < 90-sz; lat += sz*3) {
-        for (qreal lng = -180+sz; lng < 180-sz; lng += sz*3) {
-            MVTEST_RECT2(lat-sz,lng-sz,lat+sz,lng+sz);
+    for (qreal lat = -90 + sz; lat < 90 - sz; lat += sz * 3) {
+        for (qreal lng = -180 + sz; lng < 180 - sz; lng += sz * 3) {
+            MVTEST_RECT2(lat - sz, lng - sz, lat + sz, lng + sz);
             i++;
         }
     }
@@ -821,7 +820,7 @@ void MainWindow::drawCircle(bool /*checked*/)
 void MainWindow::drawMarker(bool /*checked*/)
 {
     QGeoMapMarkerObject *marker = new QGeoMapMarkerObject(m_mapWidget->screenPositionToCoordinate(lastClicked),
-                                                          QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon);
+            QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon);
     m_mapWidget->addMapObject(marker);
     markerObjects.append(marker);
 }
@@ -924,7 +923,7 @@ void MainWindow::selectObjects()
     m_mapWidget->removeMapObject(topLeft);
     m_mapWidget->removeMapObject(bottomRight);
     QList<QGeoMapObject*> mapObjects = m_mapWidget->mapObjectsInScreenRect(
-                                        QRectF(m_mapWidget->coordinateToScreenPosition(topLeft->coordinate()),
-                                               m_mapWidget->coordinateToScreenPosition(bottomRight->coordinate()))
+                                           QRectF(m_mapWidget->coordinateToScreenPosition(topLeft->coordinate()),
+                                                  m_mapWidget->coordinateToScreenPosition(bottomRight->coordinate()))
                                        );
 }

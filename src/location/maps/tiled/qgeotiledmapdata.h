@@ -84,9 +84,9 @@ public:
     virtual QGeoCoordinate worldPixelToCoordinate(const QPoint &pixel) const;
 
     QPoint maxZoomCenter() const;
-    QSize maxZoomSize () const;
+    QSize maxZoomSize() const;
     QRect maxZoomScreenRect() const;
-    int zoomFactor () const;
+    int zoomFactor() const;
 
 private slots:
     void processRequests();

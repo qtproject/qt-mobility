@@ -45,6 +45,8 @@
 #include <qgeocoordinate.h>
 #include <QtDeclarative/qdeclarative.h>
 
+#include <QObject>
+
 QTM_BEGIN_NAMESPACE
 
 class QDeclarativeCoordinate : public QObject
@@ -56,7 +58,6 @@ class QDeclarativeCoordinate : public QObject
     Q_PROPERTY(double altitude READ altitude WRITE setAltitude NOTIFY altitudeChanged)
 
 public:
-
     QDeclarativeCoordinate(QObject* parent = 0);
     QDeclarativeCoordinate(const QGeoCoordinate &coordinate, QObject* parent = 0);
     ~QDeclarativeCoordinate();
@@ -83,6 +84,7 @@ private:
 };
 
 QTM_END_NAMESPACE
+
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeCoordinate));
 
 #endif

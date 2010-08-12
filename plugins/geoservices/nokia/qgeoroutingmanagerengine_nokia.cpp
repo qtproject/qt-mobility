@@ -135,7 +135,7 @@ QGeoRouteReply* QGeoRoutingManagerEngineNokia::calculateRoute(const QGeoRouteReq
 
 QGeoRouteReply* QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
 {
-    QString reqString = updateRouteRequestString(route,position);
+    QString reqString = updateRouteRequestString(route, position);
 
     if (reqString.isEmpty()) {
         QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "The given route request options are not supported by this service provider.", this);
@@ -192,8 +192,8 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
     if (numWaypoints < 2)
         return "";
 
-    for(int i=0;i<numWaypoints;++i) {
-        requestString += i==0?"?":"&";
+    for (int i = 0;i < numWaypoints;++i) {
+        requestString += i == 0 ? "?" : "&";
         requestString += "waypoint";
         requestString += QString::number(i);
         requestString += "=";
@@ -203,7 +203,7 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
     }
 
     requestString += modesRequestString(request.routeOptimization(), request.travelModes(),
-        request.avoidFeatureTypes());
+                                        request.avoidFeatureTypes());
 
     requestString += "&alternatives=";
     requestString += QString::number(request.numberAlternativeRoutes());
@@ -249,7 +249,7 @@ QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute 
     requestString += QString::number(position.longitude());
 
     requestString += modesRequestString(route.request().routeOptimization(), route.travelMode(),
-        route.request().avoidFeatureTypes());
+                                        route.request().avoidFeatureTypes());
 
     requestString += routeRequestString(route.request());
 
@@ -257,8 +257,8 @@ QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute 
 }
 
 QString QGeoRoutingManagerEngineNokia::modesRequestString(QGeoRouteRequest::RouteOptimizations optimization,
-                                                    QGeoRouteRequest::TravelModes travelModes,
-                                                    QGeoRouteRequest::AvoidFeatureTypes avoid)
+        QGeoRouteRequest::TravelModes travelModes,
+        QGeoRouteRequest::AvoidFeatureTypes avoid)
 {
     QString requestString;
 
@@ -304,8 +304,8 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(QGeoRouteRequest::Rout
             avoidTypes.append("allowHOVLanes");
     }
 
-    for(int i=0;i<types.count();++i) {
-        requestString += "&mode"+QString::number(i)+"=";
+    for (int i = 0;i < types.count();++i) {
+        requestString += "&mode" + QString::number(i) + "=";
         requestString += types[i] + ";" + modes.join(",");
         if (avoidTypes.count())
             requestString += ";" + avoidTypes.join(",");
@@ -320,8 +320,8 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
     int numAreas = request.excludeAreas().count();
     if (numAreas > 0) {
         requestString += "&avoidareas";
-        for(int i=0;i<numAreas;++i) {
-            requestString += i==0?"=":";";
+        for (int i = 0;i < numAreas;++i) {
+            requestString += i == 0 ? "=" : ";";
             QGeoBoundingBox box = request.excludeAreas().at(i);
             requestString += trimDouble(box.topLeft().latitude());
             requestString += ",";
