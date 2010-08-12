@@ -42,7 +42,7 @@
 #include "genericorientationsensor.h"
 #include <QDebug>
 
-const char *genericorientationsensor::id("generic.orientation");
+char const * const genericorientationsensor::id("generic.orientation");
 
 genericorientationsensor::genericorientationsensor(QSensor *sensor)
     : QSensorBackend(sensor)

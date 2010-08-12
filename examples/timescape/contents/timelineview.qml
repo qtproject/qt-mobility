@@ -1,17 +1,10 @@
 import Qt 4.7
-
+import "timeline.js" as Timeline
 
 Rectangle {
     id : timelineView
     anchors.fill : parent
-
-
-    Script {
-        function changeDate() {
-            //TODO
-        }
-    }
-
+    opacity : parent.opacity
 
     //Day view
     Rectangle {
@@ -20,6 +13,7 @@ Rectangle {
         anchors.left : monthView.right
         anchors.top : parent.top
         anchors.bottom : parent.bottom
+        opacity : parent.opacity
 
         ListView {
             id : dayList
@@ -27,6 +21,7 @@ Rectangle {
             anchors.fill: parent
             clip: true
             focus: true
+            opacity : parent.opacity
 
             delegate : dayDelegate
             highlight: dayHighlight
@@ -36,15 +31,10 @@ Rectangle {
             highlightMoveSpeed : 2000
             keyNavigationWraps : true
 
-            Component.onCompleted : {
-               var now = new Date();
-               var day = now.getUTCDate();
-               dayList.positionViewAtIndex(day, Center);
-               dayList.currentIndex = day;
-            }
-
-            Keys.onUpPressed : changeDate()
-            Keys.onDownPressed : changeDate()
+            Component.onCompleted : Timeline.changeToday()
+            onOpacityChanged : Timeline.changeToday()
+            Keys.onUpPressed : Timeline.changeDate()
+            Keys.onDownPressed : Timeline.changeDate()
         }
 
         Component {
@@ -234,53 +224,6 @@ Rectangle {
         }
 
 
-        Script {
-            function extendYearModel(init) {
-
-                var start = yearModel.start;
-                var end = yearModel.end;
-                var now = new Date();
-                var year = 1900 + now.getYear();
-
-                if (init) {
-                    //initializes the year model
-                    if (yearModel.count == 1) {
-                        yearModel.set(0, {"year" : year});
-                        start = year;
-                        end = year;
-                    }
-                }
-
-                if (start == 0) return;
-
-                //extends forward
-                if (yearList.currentIndex == yearList.count - 1) {
-                    for (var i = 0; i < 10; i ++) {
-                        end++;
-                        yearModel.append({"year" : end});
-                    }
-                }
-
-
-                //extends backward
-                if (yearList.currentIndex == 0) {
-                    if (start == 1900)
-                         break;
-                    for (var i = 0; i < 10; i ++) {
-                        start--;
-                        yearModel.insert(1, {"year" : start});
-                    }
-                    yearModel.move(0, 10, 1);
-                }
-                yearModel.start = start;
-                yearModel.end = end;
-                if (init) {
-                    yearList.currentIndex = year - start;
-                }
-            }
-        }
-
-
         ListView {
             id : yearList
             model : yearModel
@@ -294,8 +237,8 @@ Rectangle {
             highlightRangeMode: "StrictlyEnforceRange"
             highlightFollowsCurrentItem : true
 
-            Component.onCompleted: extendYearModel(true);
-            onCurrentIndexChanged: extendYearModel(false);
+            Component.onCompleted: Timeline.extendYearModel(true);
+            onCurrentIndexChanged: Timeline.extendYearModel(false);
         }
 
         ListModel {

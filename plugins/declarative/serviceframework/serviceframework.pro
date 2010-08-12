@@ -1,9 +1,11 @@
 INCLUDEPATH += ../../../src/serviceframework
 INCLUDEPATH += ../../../src/global
 
-TARGET  = declarative_serviceframework
+TARGET  = $$qtLibraryTarget(declarative_serviceframework)
+TEMPLATE = lib
+CONFIG += plugin
 TARGETPATH = QtMobility/serviceframework
-include(../../qimportbase.pri)
+PLUGIN_TYPE = declarative
 include(../../../common.pri)
 
 QT += declarative
@@ -11,16 +13,25 @@ QT += declarative
 HEADERS += qdeclarativeservice.h
 
 SOURCES += qdeclarativeservice.cpp \
-           serviceframework.cpp \
+           serviceframework.cpp 
 
 CONFIG += mobility
 MOBILITY += serviceframework
 
-DESTDIR = $$[QT_INSTALL_PREFIX]/imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
-INSTALLS += target qmldir
+INSTALLS += qmldir
 
+symbian {
+    TARGET.EPOCALLOWDLLDATA=1
+    TARGET.CAPABILITY = All -Tcb
+    TARGET.UID3 = 0x20021323
+    load(armcc_warnings)
+    # Specifies what files shall be deployed: the plugin itself and the qmldir file.
+    importFiles.sources = $$DESTDIR/declarative_serviceframework$${QT_LIBINFIX}.dll qmldir 
+    importFiles.path = $$QT_IMPORTS_BASE_DIR/$$TARGETPATH
+    DEPLOYMENT = importFiles
+}

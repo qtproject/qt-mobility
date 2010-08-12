@@ -26,6 +26,6 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
 
-xml.path = $$QT_MOBILITY_PREFIX/bin/xmldata
+xml.path = $$QT_MOBILITY_EXAMPLES/xmldata
 xml.files = notesmanagerservice.xml
 INSTALLS += xml

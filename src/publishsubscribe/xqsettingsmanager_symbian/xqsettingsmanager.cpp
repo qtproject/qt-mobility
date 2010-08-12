@@ -96,7 +96,7 @@ XQSettingsManager::~XQSettingsManager()
     This enum defines the possible errors for an XQSettingsManager object.
 */
 /*  \var XQSettingsManager::Error XQSettingsManager::NoError
-    No error occured.
+    No error occurred.
 */
 /*  \var XQSettingsManager::Error XQSettingsManager::OutOfMemoryError
     Not enough memory.
@@ -137,7 +137,7 @@ QVariant XQSettingsManager::readItemValue(const XQSettingsKey& key, XQSettingsMa
     \param value Value to be written into the settings item. The type is determined with
     QVariant.type() and it must be either QVariant::Int, QVariant::Double, QVariant::String or
     QVariant::ByteArray.
-    \return True if the item was written succesfully, otherwise return false.
+    \return True if the item was written successfully, otherwise return false.
     \sa error(), readItemValue()
 */
 bool XQSettingsManager::writeItemValue(const XQSettingsKey& key, const QVariant& value)
@@ -150,7 +150,7 @@ bool XQSettingsManager::writeItemValue(const XQSettingsKey& key, const QVariant&
     \param key XQSettingsKey of which changes are monitored.
     \param type Value type. Default is TypeVariant which means that the type is
     tried to detect automatically.
-    \return True if monitoring was started succesfully, otherwise return false.
+    \return True if monitoring was started successfully, otherwise return false.
     \sa error(), stopMonitoring()
 */
 bool XQSettingsManager::startMonitoring(const XQSettingsKey& key, XQSettingsManager::Type type)
@@ -161,7 +161,7 @@ bool XQSettingsManager::startMonitoring(const XQSettingsKey& key, XQSettingsMana
 /* 
     Stops monitoring a settings item.
     \param key XQSettingsKey of which changes are not monitored any more.
-    \return True if monitoring was stopped succesfully, otherwise return false.
+    \return True if monitoring was stopped successfully, otherwise return false.
     \sa error(), startMonitoring()
 */
 bool XQSettingsManager::stopMonitoring(const XQSettingsKey& key)

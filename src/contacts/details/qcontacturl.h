@@ -60,7 +60,6 @@ public:
     static const QLatin1Constant FieldSubType;
     static const QLatin1Constant SubTypeHomePage;
     static const QLatin1Constant SubTypeFavourite;
-    static const QLatin1Constant SubTypeSocialNetworking;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactUrl, "Url")
     Q_DECLARE_LATIN1_CONSTANT(FieldUrl, "Url");

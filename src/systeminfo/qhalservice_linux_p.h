@@ -112,10 +112,17 @@ public:
     QStringList findDeviceByCapability(const QString &cap);
     QStringList getAllDevices();
     bool deviceExists(const QString &path);
+Q_SIGNALS:
+    void deviceAdded(const QString &driveVolume);
+    void deviceRemoved(const QString &driveVolume);
 
+    
 private Q_SLOTS:
 private:
         QHalInterfacePrivate *d;
+protected:
+        void connectNotify(const char *signal);
+        void disconnectNotify(const char *signal);
 
 };
 
@@ -161,6 +168,9 @@ public:
 
 private:
         QHalDeviceLaptopPanelInterfacePrivate *d;
+protected:
+      //   virtual void connectNotify(const char *signal);
+      //   virtual void disconnectNotify(const char *signal);
 };
 
 class QHalDeviceKillSwitchInterfacePrivate;

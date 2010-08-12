@@ -110,3 +110,13 @@ void QXAMediaRecoderControl::applySettings()
     if (m_session)
         m_session->applySettings();
 }
+
+bool QXAMediaRecoderControl::isMuted() const
+{
+    return false;
+}
+
+void QXAMediaRecoderControl::setMuted(bool)
+{
+
+}

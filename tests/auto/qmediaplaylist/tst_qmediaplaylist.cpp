@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,6 +48,8 @@
 #include "qmediapluginloader_p.h"
 
 #include "qm3uhandler.h"
+
+//TESTED_COMPONENT=src/multimedia
 
 QT_USE_NAMESPACE
 class MockReadOnlyPlaylistProvider : public QMediaPlaylistProvider
@@ -117,11 +119,15 @@ public:
     {        
     }
 
-    QMediaControl* control(const char *iid) const
+    QMediaControl* requestControl(const char *iid)
     {
         if (qstrcmp(iid, QMediaPlaylistControl_iid) == 0)
             return mockControl;
         return 0;
+    }
+
+    void releaseControl(QMediaControl *)
+    {
     }
 
     MockPlaylistControl *mockControl;
@@ -176,7 +182,7 @@ void tst_QMediaPlaylist::initTestCase()
     content2 = QMediaContent(QUrl(QLatin1String("file:///2")));
     content3 = QMediaContent(QUrl(QLatin1String("file:///3")));
 
-    QMediaPluginLoader::setStaticPlugins(QLatin1String("/playlistformats"), QObjectList() << new QM3uPlaylistPlugin(this));
+    QMediaPluginLoader::setStaticPlugins(QLatin1String("playlistformats"), QObjectList() << new QM3uPlaylistPlugin(this));
 }
 
 void tst_QMediaPlaylist::cleanup()
@@ -443,13 +449,20 @@ void tst_QMediaPlaylist::saveAndLoad()
     QCOMPARE(playlist.media(0), playlist2.media(0));
     QCOMPARE(playlist.media(1), playlist2.media(1));
     QCOMPARE(playlist.media(3), playlist2.media(3));
-
+#ifdef Q_OS_SYMBIAN
+    res = playlist.save(QUrl(QLatin1String("file:///c:/data/test_m3u.m3u")), "m3u");
+#else
     res = playlist.save(QUrl(QLatin1String("tmp.m3u")), "m3u");
+#endif
     QVERIFY(res);
 
     playlist2.clear();
     QVERIFY(playlist2.isEmpty());
+#ifdef Q_OS_SYMBIAN
+    playlist2.load(QUrl(QLatin1String("file:///c:/data/test_m3u.m3u")), "m3u");
+#else
     playlist2.load(QUrl(QLatin1String("tmp.m3u")), "m3u");
+#endif
     QCOMPARE(playlist.error(), QMediaPlaylist::NoError);
 
     QCOMPARE(playlist.mediaCount(), playlist2.mediaCount());
@@ -465,9 +478,9 @@ void tst_QMediaPlaylist::playbackMode_data()
     QTest::addColumn<int>("pos");
     QTest::addColumn<int>("expectedNext");
 
-    QTest::newRow("Linear, 0") << QMediaPlaylist::Linear << -1 << 0 << 1;
-    QTest::newRow("Linear, 1") << QMediaPlaylist::Linear << 0 << 1 << 2;
-    QTest::newRow("Linear, 2") << QMediaPlaylist::Linear << 1 << 2 << -1;
+    QTest::newRow("Sequential, 0") << QMediaPlaylist::Sequential << -1 << 0 << 1;
+    QTest::newRow("Sequential, 1") << QMediaPlaylist::Sequential << 0 << 1 << 2;
+    QTest::newRow("Sequential, 2") << QMediaPlaylist::Sequential << 1 << 2 << -1;
 
     QTest::newRow("Loop, 0") << QMediaPlaylist::Loop << 2 << 0 << 1;
     QTest::newRow("Loop, 1") << QMediaPlaylist::Loop << 0 << 1 << 2;
@@ -490,7 +503,7 @@ void tst_QMediaPlaylist::playbackMode()
     playlist.addMedia(content2);
     playlist.addMedia(content3);
 
-    QCOMPARE(playlist.playbackMode(), QMediaPlaylist::Linear);
+    QCOMPARE(playlist.playbackMode(), QMediaPlaylist::Sequential);
     QCOMPARE(playlist.currentIndex(), -1);
 
     playlist.setPlaybackMode(playbackMode);
@@ -534,7 +547,7 @@ void tst_QMediaPlaylist::readOnlyPlaylist()
 {
     MockReadOnlyPlaylistObject mediaObject;
     QMediaPlaylist playlist;
-    playlist.setMediaObject(&mediaObject);
+    mediaObject.bind(&playlist);
 
     QVERIFY(playlist.isReadOnly());
     QVERIFY(!playlist.isEmpty());
@@ -604,17 +617,17 @@ void tst_QMediaPlaylist::setMediaObject()
     QVERIFY(playlist.mediaObject() == 0);
     QVERIFY(!playlist.isReadOnly());
 
-    playlist.setMediaObject(&mediaObject);
+    mediaObject.bind(&playlist);
     QCOMPARE(playlist.mediaObject(), qobject_cast<QMediaObject*>(&mediaObject));
     QCOMPARE(playlist.mediaCount(), 3);
     QVERIFY(playlist.isReadOnly());
 
-    playlist.setMediaObject(0);
+    mediaObject.unbind(&playlist);
     QVERIFY(playlist.mediaObject() == 0);
     QCOMPARE(playlist.mediaCount(), 0);
     QVERIFY(!playlist.isReadOnly());
 
-    playlist.setMediaObject(&mediaObject);
+    mediaObject.bind(&playlist);
     QCOMPARE(playlist.mediaObject(), qobject_cast<QMediaObject*>(&mediaObject));
     QCOMPARE(playlist.mediaCount(), 3);
     QVERIFY(playlist.isReadOnly());

@@ -61,8 +61,10 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemManagerEngine
   \brief The QOrganizerItemManagerEngine class provides the interface for all
-  implementations of the organizeritem manager backend functionality.
-  \ingroup organizeritems-backends
+  implementations of the organizer item manager backend functionality.
+
+  \inmodule QtOrganizer
+  \ingroup organizer-backends
 
   Instances of this class are usually provided by a
   \l QOrganizerItemManagerEngineFactory, which is loaded from a plugin.
@@ -70,10 +72,10 @@ QTM_BEGIN_NAMESPACE
   The default implementation of this interface provides a basic
   level of functionality for some functions so that specific engines
   can simply implement the functionality that is supported by
-  the specific organizeritems engine that is being adapted.
+  the specific organizer items engine that is being adapted.
 
-  More information on writing a organizeritems engine plugin is available in
-  the \l{Qt OrganizerItems Manager Engines} documentation.
+  More information on writing a organizer items engine plugin is available in
+  the \l{Qt Organizer Manager Engines} documentation.
 
   \sa QOrganizerItemManager, QOrganizerItemManagerEngineFactory
  */
@@ -96,46 +98,46 @@ QTM_BEGIN_NAMESPACE
   As it is possible that other processes (or other devices) may have caused the
   changes, the timing can not be determined.
 
-  \sa organizeritemsAdded(), organizeritemsChanged(), organizeritemsRemoved()
+  \sa itemsAdded(), itemsChanged(), itemsRemoved()
  */
 
 /*!
-  \fn QOrganizerItemManagerEngine::organizeritemsAdded(const QList<QOrganizerItemLocalId>& organizeritemIds);
+  \fn QOrganizerItemManagerEngine::itemsAdded(const QList<QOrganizerItemLocalId>& organizeritemIds);
 
-  This signal is emitted some time after a set of organizeritems has been added to
+  This signal is emitted some time after a set of organizer items has been added to
   this engine where the \l dataChanged() signal was not emitted for those changes.
   As it is possible that other processes (or other devices) may
-  have added the organizeritems, the timing cannot be determined.
+  have added the organizer items, the timing cannot be determined.
 
-  The list of ids of organizeritems added is given by \a organizeritemIds.  There may be one or more
+  The list of ids of organizer items added is given by \a organizeritemIds.  There may be one or more
   ids in the list.
 
   \sa dataChanged()
  */
 
 /*!
-  \fn QOrganizerItemManagerEngine::organizeritemsChanged(const QList<QOrganizerItemLocalId>& organizeritemIds);
+  \fn QOrganizerItemManagerEngine::itemsChanged(const QList<QOrganizerItemLocalId>& organizeritemIds);
 
-  This signal is emitted some time after a set of organizeritems has been modified in
+  This signal is emitted some time after a set of organizer items has been modified in
   this engine where the \l dataChanged() signal was not emitted for those changes.
   As it is possible that other processes (or other devices) may
-  have modified the organizeritems, the timing cannot be determined.
+  have modified the organizer items, the timing cannot be determined.
 
-  The list of ids of changed organizeritems is given by \a organizeritemIds.  There may be one or more
+  The list of ids of changed organizer items is given by \a organizeritemIds.  There may be one or more
   ids in the list.
 
   \sa dataChanged()
  */
 
 /*!
-  \fn QOrganizerItemManagerEngine::organizeritemsRemoved(const QList<QOrganizerItemLocalId>& organizeritemIds);
+  \fn QOrganizerItemManagerEngine::itemsRemoved(const QList<QOrganizerItemLocalId>& organizeritemIds);
 
-  This signal is emitted some time after a set of organizeritems has been removed from
+  This signal is emitted some time after a set of organizer items has been removed from
   this engine where the \l dataChanged() signal was not emitted for those changes.
   As it is possible that other processes (or other devices) may
-  have removed the organizeritems, the timing cannot be determined.
+  have removed the organizer items, the timing cannot be determined.
 
-  The list of ids of removed organizeritems is given by \a organizeritemIds.  There may be one or more
+  The list of ids of removed organizer items is given by \a organizeritemIds.  There may be one or more
   ids in the list.
 
   \sa dataChanged()
@@ -167,9 +169,24 @@ QString QOrganizerItemManagerEngine::managerUri() const
 }
 
 /*!
-  Return the list of organizer item instances which match the given \a filter, sorted according to the given \a sortOrders.
-  The client may instruct the manager that it does not require all possible information about each instance by specifying a fetch hint \a fetchHint;
-  the manager can choose to ignore the fetch hint, but if it does so, it must return all possible information about each instance.
+  Return the list of organizer item instances which match the given \a filter, sorted according to
+  the given \a sortOrders.  The client may instruct the manager that it does not require all
+  possible information about each instance by specifying a fetch hint \a fetchHint; the manager can
+  choose to ignore the fetch hint, but if it does so, it must return all possible information about
+  each instance.
+
+  Items of type QOrganizerItemType::TypeEvent or QOrganizerItemType::TypeTodo should NOT be included
+  in the list of returned items.  Instead, these items should be expanded according to their
+  recurrence specification and the resultant occurrence items (of type
+  QOrganizerItemType::TypeEventOccurrence and QOrganizerItemType::TypeTodoOccurrence) should be
+  returned.
+
+  The occurrence-typed returned items should have a QOrganizerItemInstanceOrigin detail that points
+  to the generator and the original instance that the event would have occurred on (if it is an
+  exception).  No returned item should contain a QOrganizerItemRecurrence detail.
+
+  If there are no instances matching the criteria, an empty list should be returned.
+  Any error which occurs should be saved to \a error.
   */
 QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
@@ -183,12 +200,27 @@ QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganize
 
 
 /*!
-  Return the list of a maximum of \a maxCount organizer item instances which are occurrences of the given \a generator recurring item, which
-  occur between the given \a periodStart date and the given \a periodEnd date.
+  Return the list of a maximum of \a maxCount organizer item instances which are occurrences of the
+  given \a generator recurring item, which occur between the given \a periodStart date and the given
+  \a periodEnd date.
 
-  If \a periodStart is after \a periodEnd, the operation will fail, and \a error will be set to \c QOrganizerItemManager::BadArgumentError.
+  If \a periodStart is after \a periodEnd, the operation will fail, and \a error will be set to \c
+  QOrganizerItemManager::BadArgumentError.
   If \a maxCount is negative, it is backend specific as to how many occurrences will be returned.
   Some backends may return no instances, others may return some limited number of occurrences.
+
+  If the \a generator is an item of type QOrganizerItemType::TypeEvent, a list of items of type
+  QOrganizerItemType::TypeEventOccurrence will be returned, representing the expansion of the
+  generator according to its QOrganizerItemRecurrence detail.  Similarly, a \a generator of type
+  QOrganizerItemType::TypeTodo will result in a list of QOrganizerItemType::TypeTodoOccurrence
+  items.  If the \a generator is of any other type, it is returned by itself from the backend.
+
+  The occurrence-typed items returned should have a QOrganizerItemInstanceOrigin detail that refers
+  to the generator and the original instance that the event would have occurred on (if it is an
+  exception).  No returned item should contain a QOrganizerItemRecurrence detail.
+
+  If the \a generator does not exist in the backend, or if there are no instances matching the
+  criteria, an empty list should be returned.
   */
 QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
 {
@@ -202,9 +234,9 @@ QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganize
 }
 
 /*!
-  Returns a list of organizeritem ids that match the given \a filter, sorted according to the given list of \a sortOrders.
-  Depending on the backend, this filtering operation may involve retrieving all the organizeritems.
-  Any error which occurs will be saved in \a error.
+  Returns a list of organizer item ids that match the given \a filter, sorted according to the given
+  list of \a sortOrders.  Depending on the backend, this filtering operation may involve retrieving
+  all the organizer items.  Any error which occurs will be saved in \a error.
  */
 QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
 {
@@ -216,16 +248,23 @@ QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::itemIds(const QOrganiz
 }
 
 /*!
-  Returns the list of organizeritems which match the given \a filter stored in the manager sorted according to the given list of \a sortOrders.
+  Returns the list of organizer items which match the given \a filter stored in the manager sorted according to the given list of \a sortOrders.
 
   Any operation error which occurs will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
   If the \a fetchHint is the default constructed hint, all existing details and relationships
-  in the matching organizeritems will be returned.  A client should not make changes to a organizeritem which has
+  in the matching organizer items will be returned.  A client should not make changes to an item which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the organizeritem back to the manager (as the "new" restricted organizeritem will
-  replace the previously saved organizeritem in the backend).
+  loss when saving the item back to the manager (as the "new" restricted item will
+  replace the previously saved item in the backend).
+
+  Items of type EventOccurrence and TodoOccurrence should only be returned when they represent an
+  exceptional occurrence; ie. if the client has specifically saved the item occurrence in the
+  manager.  Occurrence-typed items that are generated purely from a recurrence specification of
+  another detail should not be returned in this list.
+
+  All items returned should have a non-zero local ID.
 
   \sa QOrganizerItemFetchHint
  */
@@ -239,19 +278,19 @@ QList<QOrganizerItem> QOrganizerItemManagerEngine::items(const QOrganizerItemFil
 }
 
 /*!
-  Returns the organizeritem in the database identified by \a organizeritemId.
+  Returns the organizer item in the database identified by \a organizeritemId.
 
-  If the organizeritem does not exist, an empty, default constructed QOrganizerItem will be returned,
+  If the item does not exist, an empty, default constructed QOrganizerItem will be returned,
   and the \a error will be set to  \c QOrganizerItemManager::DoesNotExistError.
 
   Any operation error which occurs will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
   If the \a fetchHint is the default constructed hint, all existing details and relationships
-  in the matching organizeritem will be returned.  A client should not make changes to a organizeritem which has
+  in the matching item will be returned.  A client should not make changes to an item which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the organizeritem back to the manager (as the "new" restricted organizeritem will
-  replace the previously saved organizeritem in the backend).
+  loss when saving the item back to the manager (as the "new" restricted item will
+  replace the previously saved item in the backend).
 
   \sa QOrganizerItemFetchHint
  */
@@ -264,7 +303,7 @@ QOrganizerItem QOrganizerItemManagerEngine::item(const QOrganizerItemLocalId& or
 }
 
 /*!
-  Returns true if the given \a feature is supported by this engine for organizeritems of the given \a organizeritemType
+  Returns true if the given \a feature is supported by this engine for organizer items of the given \a organizeritemType
  */
 bool QOrganizerItemManagerEngine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& organizeritemType) const
 {
@@ -416,7 +455,7 @@ QList<QVariant::Type> QOrganizerItemManagerEngine::supportedDataTypes() const
 }
 
 /*!
-  Returns the list of organizeritem types which are supported by this engine.
+  Returns the list of item types which are supported by this engine.
   This is a convenience function, equivalent to retrieving the allowable values
   for the \c QOrganizerItemType::FieldType field of the QOrganizerItemType definition
   which is valid in this engine.
@@ -474,6 +513,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // guid
+    d.setName(QOrganizerItemGuid::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemGuid::FieldGuid, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
     // timestamp
     d.setName(QOrganizerItemTimestamp::DefinitionName);
     fields.clear();
@@ -505,14 +554,14 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
-    // note
-    d.setName(QOrganizerItemNote::DefinitionName);
+    // comment
+    d.setName(QOrganizerItemComment::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemNote::FieldNote, f);
+    fields.insert(QOrganizerItemComment::FieldComment, f);
     d.setFields(fields);
-    d.setUnique(true);        // note consists of a single note?  XXX TODO verify this...
+    d.setUnique(false);
     retn.insert(d.name(), d);
 
     retnSchema.insert(QOrganizerItemType::TypeNote, retn);
@@ -532,6 +581,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
                          << QString(QLatin1String(QOrganizerItemType::TypeTodo))
                          << QString(QLatin1String(QOrganizerItemType::TypeTodoOccurrence)));
     fields.insert(QOrganizerItemType::FieldType, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // guid
+    d.setName(QOrganizerItemGuid::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemGuid::FieldGuid, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -580,13 +639,88 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // reminder
+    d.setName(QOrganizerItemReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same event
+    retn.insert(d.name(), d);
+
+    // audible reminder
+    d.setName(QOrganizerItemAudibleReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::Url);
+    fields.insert(QOrganizerItemAudibleReminder::FieldDataUrl, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same event
+    retn.insert(d.name(), d);
+
+    // email reminder
+    d.setName(QOrganizerItemEmailReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QOrganizerItemEmailReminder::FieldBody, f);
+    fields.insert(QOrganizerItemEmailReminder::FieldSubject, f);
+    f.setDataType(QVariant::StringList);
+    fields.insert(QOrganizerItemEmailReminder::FieldRecipients, f);
+    f.setDataType(QVariant::List);
+    fields.insert(QOrganizerItemEmailReminder::FieldAttachments, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same event
+    retn.insert(d.name(), d);
+
+    // visual reminder
+    d.setName(QOrganizerItemVisualReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QOrganizerItemVisualReminder::FieldMessage, f);
+    f.setDataType(QVariant::Url);
+    fields.insert(QOrganizerItemVisualReminder::FieldDataUrl, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same event
+    retn.insert(d.name(), d);
+
     // event time range
-    d.setName(QOrganizerItemEventTimeRange::DefinitionName);
+    d.setName(QOrganizerEventTimeRange::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::DateTime);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemEventTimeRange::FieldStartDateTime, f);
-    fields.insert(QOrganizerItemEventTimeRange::FieldEndDateTime, f);
+    fields.insert(QOrganizerEventTimeRange::FieldStartDateTime, f);
+    fields.insert(QOrganizerEventTimeRange::FieldEndDateTime, f);
+    f.setDataType(QVariant::Bool);
+    fields.insert(QOrganizerEventTimeRange::FieldTimeSpecified, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -623,12 +757,12 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
-    // note - XXX TODO: verify that events can have notes?
-    d.setName(QOrganizerItemNote::DefinitionName);
+    // comment
+    d.setName(QOrganizerItemComment::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemNote::FieldNote, f);
+    fields.insert(QOrganizerItemComment::FieldComment, f);
     d.setFields(fields);
     d.setUnique(false);
     retn.insert(d.name(), d);
@@ -650,6 +784,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
                          << QString(QLatin1String(QOrganizerItemType::TypeTodo))
                          << QString(QLatin1String(QOrganizerItemType::TypeTodoOccurrence)));
     fields.insert(QOrganizerItemType::FieldType, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // guid
+    d.setName(QOrganizerItemGuid::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemGuid::FieldGuid, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -691,19 +835,21 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemInstanceOrigin::FieldParentLocalId, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalTimestamp, f);
+    f.setDataType(QVariant::Date);
+    fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalDate, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
 
     // event time range
-    d.setName(QOrganizerItemEventTimeRange::DefinitionName);
+    d.setName(QOrganizerEventTimeRange::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::DateTime);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemEventTimeRange::FieldStartDateTime, f);
-    fields.insert(QOrganizerItemEventTimeRange::FieldEndDateTime, f);
+    fields.insert(QOrganizerEventTimeRange::FieldStartDateTime, f);
+    fields.insert(QOrganizerEventTimeRange::FieldEndDateTime, f);
+    f.setDataType(QVariant::Bool);
+    fields.insert(QOrganizerEventTimeRange::FieldTimeSpecified, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -736,6 +882,89 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // reminder
+    d.setName(QOrganizerItemReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same event occurrence
+    retn.insert(d.name(), d);
+
+    // audible reminder
+    d.setName(QOrganizerItemAudibleReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::Url);
+    fields.insert(QOrganizerItemAudibleReminder::FieldDataUrl, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same event occurrence
+    retn.insert(d.name(), d);
+
+    // email reminder
+    d.setName(QOrganizerItemEmailReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QOrganizerItemEmailReminder::FieldBody, f);
+    fields.insert(QOrganizerItemEmailReminder::FieldSubject, f);
+    f.setDataType(QVariant::StringList);
+    fields.insert(QOrganizerItemEmailReminder::FieldRecipients, f);
+    f.setDataType(QVariant::List);
+    fields.insert(QOrganizerItemEmailReminder::FieldAttachments, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same event occurrence
+    retn.insert(d.name(), d);
+
+    // visual reminder
+    d.setName(QOrganizerItemVisualReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QOrganizerItemVisualReminder::FieldMessage, f);
+    f.setDataType(QVariant::Url);
+    fields.insert(QOrganizerItemVisualReminder::FieldDataUrl, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same event occurrence
+    retn.insert(d.name(), d);
+
+    // comment
+    d.setName(QOrganizerItemComment::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemComment::FieldComment, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    retn.insert(d.name(), d);
+
     retnSchema.insert(QOrganizerItemType::TypeEventOccurrence, retn);
 
     // and then again for TODOs =============================
@@ -753,6 +982,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
                          << QString(QLatin1String(QOrganizerItemType::TypeTodo))
                          << QString(QLatin1String(QOrganizerItemType::TypeTodoOccurrence)));
     fields.insert(QOrganizerItemType::FieldType, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // guid
+    d.setName(QOrganizerItemGuid::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemGuid::FieldGuid, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -801,13 +1040,101 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
-    // todo time range
-    d.setName(QOrganizerItemTodoTimeRange::DefinitionName);
+    // reminder
+    d.setName(QOrganizerItemReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same todo
+    retn.insert(d.name(), d);
+
+    // audible reminder
+    d.setName(QOrganizerItemAudibleReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::Url);
+    fields.insert(QOrganizerItemAudibleReminder::FieldDataUrl, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same todo
+    retn.insert(d.name(), d);
+
+    // email reminder
+    d.setName(QOrganizerItemEmailReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QOrganizerItemEmailReminder::FieldBody, f);
+    fields.insert(QOrganizerItemEmailReminder::FieldSubject, f);
+    f.setDataType(QVariant::StringList);
+    fields.insert(QOrganizerItemEmailReminder::FieldRecipients, f);
+    f.setDataType(QVariant::List);
+    fields.insert(QOrganizerItemEmailReminder::FieldAttachments, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same todo
+    retn.insert(d.name(), d);
+
+    // visual reminder
+    d.setName(QOrganizerItemVisualReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QOrganizerItemVisualReminder::FieldMessage, f);
+    f.setDataType(QVariant::Url);
+    fields.insert(QOrganizerItemVisualReminder::FieldDataUrl, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same todo
+    retn.insert(d.name(), d);
+
+    // todo progress
+    d.setName(QOrganizerTodoProgress::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::DateTime);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemTodoTimeRange::FieldNotBeforeDateTime, f);
-    fields.insert(QOrganizerItemTodoTimeRange::FieldDueDateTime, f);
+    fields.insert(QOrganizerTodoProgress::FieldFinishedDateTime, f);
+    f.setDataType(QVariant::Int);
+    fields.insert(QOrganizerTodoProgress::FieldPercentageComplete, f);
+    fields.insert(QOrganizerTodoProgress::FieldStatus, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // todo time range
+    d.setName(QOrganizerTodoTimeRange::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::DateTime);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerTodoTimeRange::FieldStartDateTime, f);
+    fields.insert(QOrganizerTodoTimeRange::FieldDueDateTime, f);
+    f.setDataType(QVariant::Bool);
+    fields.insert(QOrganizerTodoTimeRange::FieldTimeSpecified, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -828,6 +1155,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // comment
+    d.setName(QOrganizerItemComment::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemComment::FieldComment, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    retn.insert(d.name(), d);
+
     retnSchema.insert(QOrganizerItemType::TypeTodo, retn);
 
     // and then again for TODOOCCURRENCEs =============================
@@ -845,6 +1182,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
                          << QString(QLatin1String(QOrganizerItemType::TypeTodo))
                          << QString(QLatin1String(QOrganizerItemType::TypeTodoOccurrence)));
     fields.insert(QOrganizerItemType::FieldType, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // guid
+    d.setName(QOrganizerItemGuid::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemGuid::FieldGuid, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -886,33 +1233,107 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemInstanceOrigin::FieldParentLocalId, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalTimestamp, f);
+    f.setDataType(QVariant::Date);
+    fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalDate, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
 
     // todo progress
-    d.setName(QOrganizerItemTodoProgress::DefinitionName);
+    d.setName(QOrganizerTodoProgress::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::DateTime);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemTodoProgress::FieldStartedDateTime, f);
-    fields.insert(QOrganizerItemTodoProgress::FieldFinishedDateTime, f);
+    fields.insert(QOrganizerTodoProgress::FieldFinishedDateTime, f);
     f.setDataType(QVariant::Int);
-    fields.insert(QOrganizerItemTodoProgress::FieldPercentageComplete, f);
-    fields.insert(QOrganizerItemTodoProgress::FieldStatus, f);
+    fields.insert(QOrganizerTodoProgress::FieldPercentageComplete, f);
+    fields.insert(QOrganizerTodoProgress::FieldStatus, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // reminder
+    d.setName(QOrganizerItemReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same todo occurrence
+    retn.insert(d.name(), d);
+
+    // audible reminder
+    d.setName(QOrganizerItemAudibleReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::Url);
+    fields.insert(QOrganizerItemAudibleReminder::FieldDataUrl, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same todo occurrence
+    retn.insert(d.name(), d);
+
+    // email reminder
+    d.setName(QOrganizerItemEmailReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QOrganizerItemEmailReminder::FieldBody, f);
+    fields.insert(QOrganizerItemEmailReminder::FieldSubject, f);
+    f.setDataType(QVariant::StringList);
+    fields.insert(QOrganizerItemEmailReminder::FieldRecipients, f);
+    f.setDataType(QVariant::List);
+    fields.insert(QOrganizerItemEmailReminder::FieldAttachments, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same todo occurrence
+    retn.insert(d.name(), d);
+
+    // visual reminder
+    d.setName(QOrganizerItemVisualReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QOrganizerItemVisualReminder::FieldMessage, f);
+    f.setDataType(QVariant::Url);
+    fields.insert(QOrganizerItemVisualReminder::FieldDataUrl, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same todo occurrence
+    retn.insert(d.name(), d);
+
     // todo time range
-    d.setName(QOrganizerItemTodoTimeRange::DefinitionName);
+    d.setName(QOrganizerTodoTimeRange::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::DateTime);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemTodoTimeRange::FieldNotBeforeDateTime, f);
-    fields.insert(QOrganizerItemTodoTimeRange::FieldDueDateTime, f);
+    fields.insert(QOrganizerTodoTimeRange::FieldStartDateTime, f);
+    fields.insert(QOrganizerTodoTimeRange::FieldDueDateTime, f);
+    f.setDataType(QVariant::Bool);
+    fields.insert(QOrganizerTodoTimeRange::FieldTimeSpecified, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -933,6 +1354,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // comment
+    d.setName(QOrganizerItemComment::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemComment::FieldComment, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    retn.insert(d.name(), d);
+
     retnSchema.insert(QOrganizerItemType::TypeTodoOccurrence, retn);
 
     // and then again for JOURNALs =============================
@@ -950,6 +1381,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
                          << QString(QLatin1String(QOrganizerItemType::TypeTodo))
                          << QString(QLatin1String(QOrganizerItemType::TypeTodoOccurrence)));
     fields.insert(QOrganizerItemType::FieldType, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // guid
+    d.setName(QOrganizerItemGuid::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemGuid::FieldGuid, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -986,23 +1427,23 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     retn.insert(d.name(), d);
 
     // journal time range
-    d.setName(QOrganizerItemJournalTimeRange::DefinitionName);
+    d.setName(QOrganizerJournalTimeRange::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::DateTime);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemJournalTimeRange::FieldEntryDateTime, f);
+    fields.insert(QOrganizerJournalTimeRange::FieldEntryDateTime, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
 
-    // note
-    d.setName(QOrganizerItemNote::DefinitionName);
+    // comment
+    d.setName(QOrganizerItemComment::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemNote::FieldNote, f);
+    fields.insert(QOrganizerItemComment::FieldComment, f);
     d.setFields(fields);
-    d.setUnique(false);       // XXX TODO: verify that journals can have multiple notes saved...?
+    d.setUnique(false);
     retn.insert(d.name(), d);
 
     retnSchema.insert(QOrganizerItemType::TypeJournal, retn);
@@ -1011,7 +1452,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
 }
 
 /*!
-  Checks that the given organizeritem \a organizeritem does not have details which
+  Checks that the given item \a organizeritem does not have details which
   don't conform to a valid definition, violate uniqueness constraints,
   or contain values for nonexistent fields, and that the values contained are
   of the correct type for each field, and are allowable values for that field.
@@ -1095,7 +1536,7 @@ bool QOrganizerItemManagerEngine::validateItem(const QOrganizerItem& organizerit
 /*!
   Checks that the given detail definition \a definition seems valid,
   with a correct id, defined fields, and any specified value types
-  are supported by the engine.  This function is called before
+  are supported by this engine.  This function is called before
   trying to save a definition.
 
   Returns true if the \a definition seems valid, otherwise returns
@@ -1144,7 +1585,7 @@ bool QOrganizerItemManagerEngine::validateDefinition(const QOrganizerItemDetailD
 }
 
 /*!
-  Returns the registered detail definitions which are valid for organizeritems whose type is of the given \a organizeritemType in this engine.
+  Returns the registered detail definitions which are valid for organizer items whose type is of the given \a organizeritemType in this engine.
 
   Any errors encountered during this operation should be stored to
   \a error.
@@ -1158,7 +1599,7 @@ QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemManagerEngine::detai
 
 /*!
   Returns the definition identified by the given \a definitionName that
-  is valid for organizeritems whose type is of the given \a organizeritemType in this store, or a default-constructed QOrganizerItemDetailDefinition
+  is valid for organizer items whose type is of the given \a organizeritemType in this store, or a default-constructed QOrganizerItemDetailDefinition
   if no such definition exists
 
   Any errors encountered during this operation should be stored to
@@ -1177,7 +1618,7 @@ QOrganizerItemDetailDefinition QOrganizerItemManagerEngine::detailDefinition(con
 }
 
 /*!
-  Persists the given definition \a def in the database, which is valid for organizeritems whose type is the given \a organizeritemType.
+  Persists the given definition \a def in the database, which is valid for organizer items whose type is the given \a organizeritemType.
 
   Returns true if the definition was saved successfully, and otherwise returns false.
 
@@ -1197,7 +1638,7 @@ bool QOrganizerItemManagerEngine::saveDetailDefinition(const QOrganizerItemDetai
 }
 
 /*!
-  Removes the definition identified by the given \a definitionName from the database, where it was valid for organizeritems whose type was the given \a organizeritemType.
+  Removes the definition identified by the given \a definitionName from the database, where it was valid for organizer items whose type was the given \a organizeritemType.
 
   Returns true if the definition was removed successfully, otherwise returns false.
 
@@ -1237,9 +1678,9 @@ void QOrganizerItemManagerEngine::setDetailAccessConstraints(QOrganizerItemDetai
 /*!
   Adds the given \a organizeritem to the database if \a organizeritem has a
   default-constructed id, or an id with the manager URI set to the URI of
-  this manager and a local id of zero, otherwise updates the organizeritem in
+  this manager and a local id of zero, otherwise updates the organizer item in
   the database which has the same id to be the given \a organizeritem.
-  If the id is non-zero but does not identify any organizeritem stored in the
+  If the id is non-zero but does not identify any item stored in the
   manager, the function will return false and \a error will be set to
   \c QOrganizerItemManager::DoesNotExistError.
 
@@ -1259,7 +1700,7 @@ void QOrganizerItemManagerEngine::setDetailAccessConstraints(QOrganizerItemDetai
   Returns true if the save operation completed successfully, otherwise
   returns false.  Any error which occurs will be saved in \a error.
 
-  The default implementation will convert this into a call to saveOrganizerItems.
+  The default implementation will convert this into a call to saveItems.
 
   \sa managerUri()
  */
@@ -1285,14 +1726,14 @@ bool QOrganizerItemManagerEngine::saveItem(QOrganizerItem* organizeritem, const 
 }
 
 /*!
-  Remove the organizeritem identified by \a organizeritemId from the database,
-  and also removes any relationships in which the organizeritem was involved.
-  Returns true if the organizeritem was removed successfully, otherwise
+  Remove the item identified by \a organizeritemId from the database,
+  and also removes any relationships in which the item was involved.
+  Returns true if the item was removed successfully, otherwise
   returns false.
 
   Any error which occurs will be saved in \a error.
 
-  The default implementation will convert this into a call to removeOrganizerItems.
+  The default implementation will convert this into a call to removeItems.
  */
 bool QOrganizerItemManagerEngine::removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemManager::Error* error)
 {
@@ -1310,18 +1751,18 @@ bool QOrganizerItemManagerEngine::removeItem(const QOrganizerItemLocalId& organi
 }
 
 /*!
-  Adds the list of organizeritems given by \a organizeritems list to the database.
-  Returns true if the organizeritems were saved successfully, otherwise false.
+  Adds the list of organizer items given by \a organizeritems list to the database.
+  Returns true if the organizer items were saved successfully, otherwise false.
 
-  The manager might populate \a errorMap (the map of indices of the \a organizeritems list to
-  the error which occurred when saving the organizeritem at that index) for
-  every index for which the organizeritem could not be saved, if it is able.
+  The engine might populate \a errorMap (the map of indices of the \a organizeritems list to
+  the error which occurred when saving the item at that index) for
+  every index for which the item could not be saved, if it is able.
   The \l QOrganizerItemManager::error() function will only return \c QOrganizerItemManager::NoError
-  if all organizeritems were saved successfully.
+  if all organizer items were saved successfully.
 
-  For each newly saved organizeritem that was successful, the id of the organizeritem
+  For each newly saved item that was successful, the id of the item
   in the \a organizeritems list will be updated with the new value.  If a failure occurs
-  when saving a new organizeritem, the id will be cleared.
+  when saving a new item, the id will be cleared.
 
   The \a organizeritems will be added to the collection identified by the given
   \a collectionId if it exists, and the items conform to the schema supported
@@ -1340,7 +1781,7 @@ bool QOrganizerItemManagerEngine::removeItem(const QOrganizerItemLocalId& organi
   Any errors encountered during this operation should be stored to
   \a error.
 
-  \sa QOrganizerItemManager::saveOrganizerItem()
+  \sa QOrganizerItemManager::saveItem()
  */
 bool QOrganizerItemManagerEngine::saveItems(QList<QOrganizerItem>* organizeritems, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
@@ -1353,22 +1794,22 @@ bool QOrganizerItemManagerEngine::saveItems(QList<QOrganizerItem>* organizeritem
 }
 
 /*!
-  Remove every organizeritem whose id is contained in the list of organizeritems ids
-  \a organizeritemIds.  Returns true if all organizeritems were removed successfully,
+  Remove every item whose id is contained in the list of organizer items ids
+  \a organizeritemIds.  Returns true if all organizer items were removed successfully,
   otherwise false.
 
-  Any organizeritem that was removed successfully will have the relationships
+  Any item that was removed successfully will have the relationships
   in which it was involved removed also.
 
   The manager might populate \a errorMap (the map of indices of the \a organizeritemIds list to
-  the error which occurred when saving the organizeritem at that index) for every
-  index for which the organizeritem could not be removed, if it is able.
+  the error which occurred when saving the item at that index) for every
+  index for which the item could not be removed, if it is able.
   The \l QOrganizerItemManager::error() function will
-  only return \c QOrganizerItemManager::NoError if all organizeritems were removed
+  only return \c QOrganizerItemManager::NoError if all organizer items were removed
   successfully.
 
-  If the list contains ids which do not identify a valid organizeritem in the manager, the function will
-  remove any organizeritems which are identified by ids in the \a organizeritemIds list, insert
+  If the list contains ids which do not identify a valid item in the manager, the function will
+  remove any organizer items which are identified by ids in the \a organizeritemIds list, insert
   \c QOrganizerItemManager::DoesNotExist entries into the \a errorMap for the indices of invalid ids
   in the \a organizeritemIds list, return false, and set the overall operation error to
   \c QOrganizerItemManager::DoesNotExistError.
@@ -1376,7 +1817,7 @@ bool QOrganizerItemManagerEngine::saveItems(QList<QOrganizerItem>* organizeritem
   Any errors encountered during this operation should be stored to
   \a error.
 
-  \sa QOrganizerItemManager::removeOrganizerItem()
+  \sa QOrganizerItemManager::removeItem()
  */
 bool QOrganizerItemManagerEngine::removeItems(const QList<QOrganizerItemLocalId>& organizeritemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
@@ -1435,9 +1876,9 @@ bool QOrganizerItemManagerEngine::removeCollection(const QOrganizerCollectionLoc
 }
 
 /*!
-  Returns a pruned or modified version of the \a original organizeritem which is valid and can be saved in the manager.
-  The returned organizeritem might have details removed or arbitrarily changed.  The cache of relationships
-  in the organizeritem are ignored entirely when considering compatibility with the backend, as they are
+  Returns a pruned or modified version of the \a original item which is valid and can be saved in the manager.
+  The returned item might have details removed or arbitrarily changed.  The cache of relationships
+  in the item are ignored entirely when considering compatibility with the backend, as they are
   saved and validated separately.  Any error which occurs will be saved to \a error.
  */
 QOrganizerItem QOrganizerItemManagerEngine::compatibleItem(const QOrganizerItem& original, QOrganizerItemManager::Error* error) const
@@ -1449,7 +1890,7 @@ QOrganizerItem QOrganizerItemManagerEngine::compatibleItem(const QOrganizerItem&
     QList<QString> uniqueDefinitionIds;
     foreach (QOrganizerItemDetail detail, original.details()) {
         // check that the detail conforms to the definition in this manager.
-        // if so, then add it to the conforming organizeritem to be returned.  if not, prune it.
+        // if so, then add it to the conforming item to be returned.  if not, prune it.
 
         QVariantMap values = detail.variantValues();
         QOrganizerItemDetailDefinition def = detailDefinition(detail.definitionName(), original.type(), &tempError);
@@ -1505,7 +1946,7 @@ QOrganizerItem QOrganizerItemManagerEngine::compatibleItem(const QOrganizerItem&
             }
         }
 
-        // if it hasn't been pruned away to nothing, save it in the conforming organizeritem
+        // if it hasn't been pruned away to nothing, save it in the conforming item
         if (!detail.isEmpty()) {
             conforming.saveDetail(&detail);
         }
@@ -1580,7 +2021,7 @@ int QOrganizerItemManagerEngine::compareVariant(const QVariant& first, const QVa
 }
 
 /*!
-  Returns true if the supplied organizeritem \a organizeritem matches the supplied filter \a filter.
+  Returns true if the supplied item \a organizeritem matches the supplied filter \a filter.
 
   This function will test each condition in the filter, possibly recursing.
  */
@@ -1609,7 +2050,7 @@ bool QOrganizerItemManagerEngine::testFilter(const QOrganizerItemFilter &filter,
                 if (cdf.detailDefinitionName().isEmpty())
                     return false;
 
-                /* See if this organizeritem has one of these details in it */
+                /* See if this organizer item has one of these details in it */
                 const QList<QOrganizerItemDetail>& details = organizeritem.details(cdf.detailDefinitionName());
 
                 if (details.count() == 0)
@@ -1639,92 +2080,7 @@ bool QOrganizerItemManagerEngine::testFilter(const QOrganizerItemFilter &filter,
                 Qt::CaseSensitivity cs = (cdf.matchFlags() & QOrganizerItemFilter::MatchCaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
 
                 /* See what flags are requested, since we're looking at a value */
-                if (cdf.matchFlags() & QOrganizerItemFilter::MatchPhoneNumber) {
-                    /* Doing phone number filtering.  We hand roll an implementation here, backends will obviously want to override this. */
-                    QString input = cdf.value().toString();
-
-                    /* preprocess the input - ignore any non-digits (doesn't perform ITU-T collation */
-                    QString preprocessedInput;
-                    for (int i = 0; i < input.size(); i++) {
-                        QChar current = input.at(i).toLower();
-                        if (current.isDigit()) preprocessedInput.append(current);
-                        // note: we ignore characters like '+', 'p', 'w', '*' and '#' which may be important.
-                    }
-
-                    /* Look at every detail in the set of details and compare */
-                    for (int j = 0; j < details.count(); j++) {
-                        const QOrganizerItemDetail& detail = details.at(j);
-                        const QString& valueString = detail.value(cdf.detailFieldName());
-                        QString preprocessedValueString;
-                        for (int i = 0; i < valueString.size(); i++) {
-                            QChar current = valueString.at(i).toLower();
-                            if (current.isDigit()) preprocessedValueString.append(current);
-                            // note: we ignore characters like '+', 'p', 'w', '*' and '#' which may be important.
-                        }
-
-                        // if the matchflags input don't require a particular criteria to pass, we assume that it has passed.
-                        // the "default" match strategy is an "endsWith" strategy.
-                        bool me = (cdf.matchFlags() & 7) == QOrganizerItemFilter::MatchExactly;
-                        bool mc = (cdf.matchFlags() & 7) == QOrganizerItemFilter::MatchContains;
-                        bool msw = (cdf.matchFlags() & 7) == QOrganizerItemFilter::MatchStartsWith;
-                        bool mew = (cdf.matchFlags() & 7) == QOrganizerItemFilter::MatchEndsWith;
-
-                        bool mer = (me ? preprocessedValueString == preprocessedInput : true);
-                        bool mcr = (mc ? preprocessedValueString.contains(preprocessedInput) : true);
-                        bool mswr = (msw ? preprocessedValueString.startsWith(preprocessedInput) : true);
-                        bool mewr = (mew ? preprocessedValueString.endsWith(preprocessedInput) : true);
-                        if (mewr && mswr && mcr && mer) {
-                            return true; // this detail meets all of the criteria which were required, and hence must match.
-                        }
-                    }
-                } else if (cdf.matchFlags() & QOrganizerItemFilter::MatchKeypadCollation) {
-                    // XXX TODO: not sure about the filtering semantics for MatchKeypadCollation.
-                    QString input = cdf.value().toString();
-
-                    /* Look at every detail in the set of details and compare */
-                    for (int j = 0; j < details.count(); j++) {
-                        const QOrganizerItemDetail& detail = details.at(j);
-                        const QString& valueString = detail.value(cdf.detailFieldName()).toLower();
-
-                        // preprocess the valueString
-                        QString preprocessedValue;
-                        for (int i = 0; i < valueString.size(); i++) {
-                            // we use ITU-T keypad collation by default.
-                            QChar currentValueChar = valueString.at(i);
-                            if (currentValueChar == QLatin1Char('a') || currentValueChar == QLatin1Char('b') || currentValueChar == QLatin1Char('c'))
-                                preprocessedValue.append(QLatin1Char('2'));
-                            else if (currentValueChar == QLatin1Char('d') || currentValueChar == QLatin1Char('e') || currentValueChar == QLatin1Char('f'))
-                                preprocessedValue.append(QLatin1Char('3'));
-                            else if (currentValueChar == QLatin1Char('g') || currentValueChar == QLatin1Char('h') || currentValueChar == QLatin1Char('i'))
-                                preprocessedValue.append(QLatin1Char('4'));
-                            else if (currentValueChar == QLatin1Char('j') || currentValueChar == QLatin1Char('k') || currentValueChar == QLatin1Char('l'))
-                                preprocessedValue.append(QLatin1Char('5'));
-                            else if (currentValueChar == QLatin1Char('m') || currentValueChar == QLatin1Char('n') || currentValueChar == QLatin1Char('o'))
-                                preprocessedValue.append(QLatin1Char('6'));
-                            else if (currentValueChar == QLatin1Char('p') || currentValueChar == QLatin1Char('q') || currentValueChar == QLatin1Char('r') || currentValueChar == QLatin1Char('s'))
-                                preprocessedValue.append(QLatin1Char('7'));
-                            else if (currentValueChar == QLatin1Char('t') || currentValueChar == QLatin1Char('u') || currentValueChar == QLatin1Char('v'))
-                                preprocessedValue.append(QLatin1Char('8'));
-                            else if (currentValueChar == QLatin1Char('w') || currentValueChar == QLatin1Char('x') || currentValueChar == QLatin1Char('y') || currentValueChar == QLatin1Char('z'))
-                                preprocessedValue.append(QLatin1Char('9'));
-                            else
-                                preprocessedValue.append(currentValueChar);
-                        }
-
-                        bool me = (cdf.matchFlags() & 7) == QOrganizerItemFilter::MatchExactly;
-                        bool mc = (cdf.matchFlags() & 7) == QOrganizerItemFilter::MatchContains;
-                        bool msw = (cdf.matchFlags() & 7) == QOrganizerItemFilter::MatchStartsWith;
-                        bool mew = (cdf.matchFlags() & 7) == QOrganizerItemFilter::MatchEndsWith;
-
-                        bool mer = (me ? preprocessedValue == input : true);
-                        bool mcr = (mc ? preprocessedValue.contains(input) : true);
-                        bool mswr = (msw ? preprocessedValue.startsWith(input) : true);
-                        bool mewr = (mew ? preprocessedValue.endsWith(input) : true);
-                        if (mewr && mswr && mcr && mer) {
-                            return true; // this detail meets all of the criteria which were required, and hence must match.
-                        }
-                    }
-                } else if (cdf.matchFlags() & (QOrganizerItemFilter::MatchEndsWith | QOrganizerItemFilter::MatchStartsWith | QOrganizerItemFilter::MatchContains | QOrganizerItemFilter::MatchFixedString)) {
+                if (cdf.matchFlags() & (QOrganizerItemFilter::MatchEndsWith | QOrganizerItemFilter::MatchStartsWith | QOrganizerItemFilter::MatchContains | QOrganizerItemFilter::MatchFixedString)) {
                     /* We're strictly doing string comparisons here */
                     bool matchStarts = (cdf.matchFlags() & 7) == QOrganizerItemFilter::MatchStartsWith;
                     bool matchEnds = (cdf.matchFlags() & 7) == QOrganizerItemFilter::MatchEndsWith;
@@ -1758,13 +2114,56 @@ bool QOrganizerItemManagerEngine::testFilter(const QOrganizerItemFilter &filter,
             }
             break;
 
+        case QOrganizerItemFilter::OrganizerItemDateTimePeriodFilter:
+            {
+                const QOrganizerItemDateTimePeriodFilter dpf(filter);
+
+                if (organizeritem.type() == QOrganizerItemType::TypeEvent) {
+                    QOrganizerEvent event = organizeritem;
+                    return (dpf.startPeriod().isNull() || event.startDateTime() >= dpf.startPeriod())
+                            &&
+                           (dpf.endPeriod().isNull() || event.endDateTime() <= dpf.endPeriod());
+                }
+                if (organizeritem.type() == QOrganizerItemType::TypeEventOccurrence) {
+                   QOrganizerEventOccurrence eo = organizeritem;
+                   return (dpf.startPeriod().isNull() || eo.startDateTime() >= dpf.startPeriod())
+                           &&
+                          (dpf.endPeriod().isNull() || eo.endDateTime() <= dpf.endPeriod());
+                }
+                if (organizeritem.type() == QOrganizerItemType::TypeTodo) {
+                   QOrganizerTodo todo = organizeritem;
+                   return (dpf.startPeriod().isNull() || todo.startDateTime() >= dpf.startPeriod())
+                           &&
+                          (dpf.endPeriod().isNull() || todo.dueDateTime() <= dpf.endPeriod());
+                }
+                if (organizeritem.type() == QOrganizerItemType::TypeTodoOccurrence) {
+                    QOrganizerTodoOccurrence tdo = organizeritem;
+                    return (dpf.startPeriod().isNull() || tdo.startDateTime() >= dpf.startPeriod())
+                            &&
+                           (dpf.endPeriod().isNull() || tdo.dueDateTime() <= dpf.endPeriod());
+                }
+                if (organizeritem.type() == QOrganizerItemType::TypeJournal) {
+                    QOrganizerJournal journal = organizeritem;
+                    return (dpf.startPeriod().isNull() || journal.dateTime() >= dpf.startPeriod())
+                            &&
+                           (dpf.endPeriod().isNull() || journal.dateTime() <= dpf.endPeriod());
+                }
+                if (organizeritem.type() == QOrganizerItemType::TypeNote) {
+                    //for note, there is no such start/end datetime to be used, so we use the timestamp detail.
+                    QOrganizerItemTimestamp timestamp = organizeritem.detail<QOrganizerItemTimestamp>();
+                    return (dpf.startPeriod().isNull() || timestamp.lastModified() >= dpf.startPeriod())
+                            &&
+                           (dpf.endPeriod().isNull() || timestamp.lastModified() <= dpf.endPeriod());
+                }
+            }
+            break;
         case QOrganizerItemFilter::OrganizerItemDetailRangeFilter:
             {
                 const QOrganizerItemDetailRangeFilter cdf(filter);
                 if (cdf.detailDefinitionName().isEmpty())
                     return false; /* we do not know which field to check */
 
-                /* See if this organizeritem has one of these details in it */
+                /* See if this organizer item has one of these details in it */
                 const QList<QOrganizerItemDetail>& details = organizeritem.details(cdf.detailDefinitionName());
 
                 if (details.count() == 0)
@@ -1919,7 +2318,7 @@ bool QOrganizerItemManagerEngine::testFilter(const QOrganizerItemFilter &filter,
 
 
 /*!
-  Compares two organizeritems (\a a and \a b) using the given list of \a sortOrders.  Returns a negative number if \a a should appear
+  Compares two organizer items (\a a and \a b) using the given list of \a sortOrders.  Returns a negative number if \a a should appear
   before \a b according to the sort order, a positive number if \a a should appear after \a b according to the sort order,
   and zero if the two are unable to be sorted.
  */
@@ -1967,16 +2366,16 @@ int QOrganizerItemManagerEngine::compareItem(const QOrganizerItem& a, const QOrg
 
 
 /*!
-  Performs insertion sort of the organizeritem \a toAdd into the \a sorted list, according to the provided \a sortOrders list.
-  The first QOrganizerItemSortOrder in the list has the highest priority; if the organizeritem \a toAdd is deemed equal to another
-  in the \a sorted list, the second QOrganizerItemSortOrder in the list is used (and so on until either the organizeritem is inserted
+  Performs insertion sort of the item \a toAdd into the \a sorted list, according to the provided \a sortOrders list.
+  The first QOrganizerItemSortOrder in the list has the highest priority; if the item \a toAdd is deemed equal to another
+  in the \a sorted list, the second QOrganizerItemSortOrder in the list is used (and so on until either the item is inserted
   or there are no more sort order objects in the list).
  */
 void QOrganizerItemManagerEngine::addSorted(QList<QOrganizerItem>* sorted, const QOrganizerItem& toAdd, const QList<QOrganizerItemSortOrder>& sortOrders)
 {
     if (sortOrders.count() > 0) {
         for (int i = 0; i < sorted->size(); i++) {
-            // check to see if the new organizeritem should be inserted here
+            // check to see if the new item should be inserted here
             int comparison = compareItem(sorted->at(i), toAdd, sortOrders);
             if (comparison > 0) {
                 sorted->insert(i, toAdd);
@@ -1989,7 +2388,7 @@ void QOrganizerItemManagerEngine::addSorted(QList<QOrganizerItem>* sorted, const
     sorted->append(toAdd);
 }
 
-/*! Sorts the given list of organizeritems \a cs according to the provided \a sortOrders */
+/*! Sorts the given list of organizer items \a cs according to the provided \a sortOrders */
 QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::sortItems(const QList<QOrganizerItem>& cs, const QList<QOrganizerItemSortOrder>& sortOrders)
 {
     QList<QOrganizerItemLocalId> sortedIds;
@@ -2011,7 +2410,24 @@ QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::sortItems(const QList<
 }
 
 /*!
-  Notifies the manager engine that the given request \a req has been destroyed
+  Notifies the manager engine that the given request \a req has been destroyed.
+
+  This notifies the engine that:
+  \list
+  \o the client doesn't care about the request any more.  The engine can still complete it,
+     but completion is not required.
+  \o it can't reliably access any properties of the request pointer any more.  The pointer will
+     be invalid once this function returns.
+  \endlist
+  
+  This means that if there is a worker thread, the engine needs to let that thread know that the
+  request object is not valid and block until that thread acknowledges it.  One way to do this is to
+  have a QSet<QOrganizerItemAbstractRequest*> (or QMap<QOrganizerItemAbstractRequest,
+  MyCustomRequestState>) that tracks active requests, and insert into that set in startRequest, and
+  remove in requestDestroyed (or when it finishes or is cancelled).  Protect that set/map with a
+  mutex, and make sure you take the mutex in the worker thread before calling any of the
+  QOrganizerItemAbstractRequest::updateXXXXXXRequest functions.  And be careful of lock ordering
+  problems :D
  */
 void QOrganizerItemManagerEngine::requestDestroyed(QOrganizerItemAbstractRequest* req)
 {
@@ -2019,9 +2435,23 @@ void QOrganizerItemManagerEngine::requestDestroyed(QOrganizerItemAbstractRequest
 }
 
 /*!
-  Asks the manager engine to begin the given request \a req which
-  is currently in a (re)startable state.
-  Returns true if the request was started successfully, else returns false.
+  Asks the manager engine to begin the given request \a req which is currently in a (re)startable
+  state.  Returns true if the request was started successfully, else returns false.
+
+  Generally, the engine queues the request and processes it at some later time (probably in another
+  thread).
+  
+  Once a request is started, the engine should call the updateRequestState and/or the specific
+  updateXXXXXRequest functions to mark it in the active state.
+  
+  If the engine is particularly fast, or the operation involves only in memory data, the request can
+  be processed and completed without queueing it.
+  
+  Note that when the client is threaded, and the request might live on a different thread, the
+  engine needs to be careful with locking.  In particular, the request might be deleted while the
+  engine is still working on it.  In this case, the requestDestroyed function will be called while
+  the request is still valid, and that function should block until the worker thread (etc.) has been
+  notified not to touch that request any more.
 
   \sa QOrganizerItemAbstractRequest::start()
  */
@@ -2050,6 +2480,9 @@ bool QOrganizerItemManagerEngine::cancelRequest(QOrganizerItemAbstractRequest* r
   which was previously started, or until \a msecs milliseconds have passed.
   Returns true if the request was completed, and false if the request was not in the
   \c QOrganizerItemAbstractRequest::Active state or no progress could be reported.
+
+  It is important that this function is implemented by the engine, at least merely as a delay, since
+  clients may call it in a loop.
 
   \sa startRequest()
  */

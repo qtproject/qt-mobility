@@ -47,6 +47,8 @@
 #include "qgstxvimagebuffer.h"
 #include "qvideosurfacegstsink.h"
 
+#ifndef QT_NO_XVIDEO
+
 GstBufferClass *QGstXvImageBuffer::parent_class = NULL;
 
 GType QGstXvImageBuffer::get_type(void)
@@ -274,3 +276,6 @@ void QGstXvImageBufferPool::destroyBuffer(QGstXvImageBuffer *xvBuffer)
     if (m_imagesToDestroy.size() == 1)
         QMetaObject::invokeMethod(this, "queuedDestroy", Qt::QueuedConnection);
 }
+
+#endif //QT_NO_XVIDEO
+

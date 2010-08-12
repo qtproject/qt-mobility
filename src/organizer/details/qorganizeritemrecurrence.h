@@ -56,11 +56,11 @@ class Q_ORGANIZER_EXPORT QOrganizerItemRecurrence : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldRecurrenceRules;
-    const char* FieldExceptionRules;
-    const char* FieldRecurrenceDates;
-    const char* FieldExceptionDates;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldRecurrenceRules;
+    static const QLatin1Constant FieldExceptionRules;
+    static const QLatin1Constant FieldRecurrenceDates;
+    static const QLatin1Constant FieldExceptionDates;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemRecurrence, "Recurrence")
     Q_DECLARE_LATIN1_CONSTANT(FieldRecurrenceRules, "RecurrenceRules");
@@ -78,6 +78,7 @@ public:
         }
         setValue(FieldRecurrenceRules, saveList);
     }
+
     QList<QOrganizerItemRecurrenceRule> recurrenceRules() const
     {
         QList<QOrganizerItemRecurrenceRule> retn;
@@ -89,20 +90,21 @@ public:
         return retn;
     }
 
-    void setRecurrenceDates(const QList<QDateTime>& rdates)
+    void setRecurrenceDates(const QList<QDate>& rdates)
     {
         QVariantList saveList;
-        foreach (const QDateTime& currDate, rdates) {
+        foreach (const QDate& currDate, rdates) {
             saveList << currDate;
         }
         setValue(FieldRecurrenceDates, saveList);
     }
-    QList<QDateTime> recurrenceDates() const
+
+    QList<QDate> recurrenceDates() const
     {
-        QList<QDateTime> retn;
+        QList<QDate> retn;
         QVariantList loadList = variantValue(FieldRecurrenceDates).toList();
         foreach (const QVariant& currDate, loadList) {
-            retn << currDate.toDateTime();
+            retn << currDate.toDate();
         }
         return retn;
     }
@@ -115,6 +117,7 @@ public:
         }
         setValue(FieldExceptionRules, saveList);
     }
+
     QList<QOrganizerItemRecurrenceRule> exceptionRules() const
     {
         QList<QOrganizerItemRecurrenceRule> retn;
@@ -126,20 +129,21 @@ public:
         return retn;
     }
 
-    void setExceptionDates(const QList<QDateTime>& xdates)
+    void setExceptionDates(const QList<QDate>& xdates)
     {
         QVariantList saveList;
-        foreach (const QDateTime& currDate, xdates) {
+        foreach (const QDate& currDate, xdates) {
             saveList << currDate;
         }
         setValue(FieldExceptionDates, saveList);
     }
-    QList<QDateTime> exceptionDates() const
+
+    QList<QDate> exceptionDates() const
     {
-        QList<QDateTime> retn;
+        QList<QDate> retn;
         QVariantList loadList = variantValue(FieldExceptionDates).toList();
         foreach (const QVariant& currDate, loadList) {
-            retn << currDate.toDateTime();
+            retn << currDate.toDate();
         }
         return retn;
     }

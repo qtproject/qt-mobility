@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
 
 class QMediaPlaylistProvider;
 
-class Q_MEDIA_EXPORT QMediaPlaylistControl : public QMediaControl
+class Q_MULTIMEDIA_EXPORT QMediaPlaylistControl : public QMediaControl
 {
     Q_OBJECT
 

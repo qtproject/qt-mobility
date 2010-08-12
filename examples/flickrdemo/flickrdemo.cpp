@@ -212,13 +212,13 @@ void FlickrDemo::networkSessionOpened()
 void FlickrDemo::createMenus()
 {
     m_downloadAct = new QAction(tr("Download Picture List"), this);
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     menuBar()->addAction(m_downloadAct);
 #endif
     connect(m_downloadAct, SIGNAL(triggered()), this, SLOT(downloadButtonClicked()));
 
     QAction* exitAct = new QAction(tr("Exit"), this);
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     menuBar()->addAction(exitAct);
 #endif
     connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
@@ -456,7 +456,7 @@ void FlickrDemo::pictureListFinished()
     QTimer::singleShot(0, this, SLOT(clearPictureListRequest()));
 }
 
-void FlickrDemo::pictureListError(QNetworkReply::NetworkError code)
+void FlickrDemo::pictureListError(QNetworkReply::NetworkError /*code*/)
 {
     if (m_shuttingDown)
         return;
@@ -492,7 +492,7 @@ void FlickrDemo::thumbnailFinished()
     downloadNextThumbnail();
 }
 
-void FlickrDemo::thumbnailError(QNetworkReply::NetworkError code)
+void FlickrDemo::thumbnailError(QNetworkReply::NetworkError /*code*/)
 {
     if (m_shuttingDown)
         return;
@@ -540,7 +540,7 @@ void FlickrDemo::pictureFinished()
     QTimer::singleShot(0, this, SLOT(clearPictureRequest()));
 }
 
-void FlickrDemo::pictureError(QNetworkReply::NetworkError code)
+void FlickrDemo::pictureError(QNetworkReply::NetworkError /*code*/)
 {
     if (m_shuttingDown)
         return;
@@ -564,7 +564,7 @@ void FlickrDemo::clearPictureRequest()
 void FlickrDemo::displayImage(const QPixmap &pixmap)
 {
     PictureDialog dialog(pixmap, listWidget->currentItem()->text(), this);
-#if defined(Q_OS_SYMBIAN) || defined (Q_OS_WINCE)
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     dialog.showMaximized();
 #endif
     dialog.exec();

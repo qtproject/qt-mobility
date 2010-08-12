@@ -64,7 +64,7 @@ SOURCES += qmessageid.cpp \
     qmessagestore.cpp \
     qmessageservice.cpp \
     messagingutil.cpp
-symbian|win32|maemo6|maemo5|mac { 
+symbian|win32|maemo6|maemo5|mac:!simulator {
     mac|maemo6: SOURCES += qmessageid_stub.cpp \
         qmessagecontentcontainerid_stub.cpp \
         qmessagefolderid_stub.cpp \
@@ -138,6 +138,14 @@ symbian|win32|maemo6|maemo5|mac {
     }
     symbian { 
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+	contains(messaging_freestyle_enabled, yes) {
+   	CONFIG += FREESTYLEMAIL
+	DEFINES += FREESTYLEMAILUSED
+	DEFINES += FREESTYLEMAILBOXOBSERVERUSED
+	}
+	contains(messaging_ncnlist_enabled, no) {
+	DEFINES += NCNLISTREMOVED
+	}
         HEADERS -= qmessagestore_p.h \
             qmessagecontentcontainer_p.h \
             qmessage_p.h
@@ -145,8 +153,14 @@ symbian|win32|maemo6|maemo5|mac {
             qmessagestore_symbian_p.h \
             qmessageservice_symbian_p.h \
             qmessagecontentcontainer_symbian_p.h \
-            qmessage_symbian_p.h
-        SOURCES += qmtmengine_symbian.cpp \
+            qmessage_symbian_p.h \
+            maemohelpers_p.h
+
+        contains(CONFIG, FREESTYLEMAIL) {
+	    HEADERS += qfsengine_symbian_p.h
+	}
+
+    SOURCES += qmtmengine_symbian.cpp \
             qmessageid_symbian.cpp \
             qmessagecontentcontainerid_symbian.cpp \
             qmessagefolderid_symbian.cpp \
@@ -162,8 +176,13 @@ symbian|win32|maemo6|maemo5|mac {
             qmessagefilter_symbian.cpp \
             qmessagesortorder_symbian.cpp \
             qmessagestore_symbian.cpp \
-            qmessageservice_symbian.cpp
-        LIBS += -lsendas2 \
+            qmessageservice_symbian.cpp \
+            maemohelpers.cpp
+
+        contains(CONFIG, FREESTYLEMAIL) {
+	    SOURCES += qfsengine_symbian.cpp
+	}
+    LIBS += -lsendas2 \
             -lmsgs \
             -letext \
             -lefsrv \
@@ -178,7 +197,8 @@ symbian|win32|maemo6|maemo5|mac {
             -leikcore \
             -lcone \
             -lapgrfx \
-            -lapmime
+            -lapmime \
+            -lecom
         TARGET.CAPABILITY = ALL \
             -TCB
         TARGET.UID3 = 0x2002AC82
@@ -223,7 +243,8 @@ symbian|win32|maemo6|maemo5|mac {
                 win32wce/longstring_p.h \
                 win32wce/qprivateimplementation.h \
                 win32wce/qprivateimplementationdef.h
-            SOURCES += win32wce/qmailaddress.cpp \
+
+           SOURCES += win32wce/qmailaddress.cpp \
                 win32wce/qmailcodec.cpp \
                 win32wce/qmailid.cpp \
                 win32wce/qmailinstantiations.cpp \
@@ -246,7 +267,15 @@ symbian|win32|maemo6|maemo5|mac {
             user32.lib
     }
 }
-else:contains(qmf_enabled, yes) { 
+    
+simulator {
+    INCLUDEPATH += ../mobilitysimulator
+    qtAddLibrary(QtMobilitySimulator)
+    DEFINES += QTOPIAMAIL_OMIT_QCOP 
+}
+
+
+simulator|contains(qmf_enabled, yes) { 
     DEFINES += USE_QMF_IMPLEMENTATION
     
     # QMF headers must be located at $QMF_INCLUDEDIR
@@ -254,9 +283,13 @@ else:contains(qmf_enabled, yes) {
         $$(QMF_INCLUDEDIR)/support
     
     # QMF libraries must be located at $QMF_LIBDIR
-    LIBS += -L \
-        $$(QMF_LIBDIR) \
-        -lqtopiamail
+    mac {
+        QMAKE_LFLAGS += -F$$(QMF_LIBDIR)
+            LIBS += -framework qtopiamail
+    } else {
+        LIBS += -L$$(QMF_LIBDIR) -l$$qtLibraryTarget(qtopiamail)
+    }
+
     PRIVATE_HEADERS += qmfhelpers_p.h \
         qmessagestore_qmf_p.h
     SOURCES += qmessageid_qmf.cpp \
@@ -277,7 +310,8 @@ else:contains(qmf_enabled, yes) {
         qmessageservice_qmf.cpp \
         qmfhelpers.cpp
 }
-HEADERS += $$PUBLIC_HEADERS \
-    $$PRIVATE_HEADERS
+
+HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
+
 CONFIG += middleware
 include(../../features/deploy.pri)

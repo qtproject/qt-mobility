@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/multimedia
+
 #include <QtTest/QtTest>
 #include <QDebug>
 #include "qlocalmediaplaylistprovider.h"
@@ -102,7 +104,7 @@ void tst_QMediaPlaylistNavigator::linearPlayback()
     QLocalMediaPlaylistProvider playlist;
     QMediaPlaylistNavigator navigator(&playlist);
 
-    navigator.setPlaybackMode(QMediaPlaylist::Linear);
+    navigator.setPlaybackMode(QMediaPlaylist::Sequential);
     QTest::ignoreMessage(QtWarningMsg, "QMediaPlaylistNavigator: Jump outside playlist range ");
     navigator.jump(0);//it's ok to have warning here
     QVERIFY(navigator.currentItem().isNull());

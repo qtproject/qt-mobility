@@ -48,7 +48,8 @@
 #include <QList>
 
 #include "qtorganizerglobal.h"
-#include "qorganizeritemrecurrencerule_p.h"
+
+class QOrganizerItemRecurrenceRulePrivate;
 
 QTM_BEGIN_NAMESPACE
 
@@ -79,19 +80,19 @@ QTM_BEGIN_NAMESPACE
  * [frequency = Monthly, dayOfWeek = Monday,Tuesday]
  * [frequency = Yearly, dayOfWeek = Monday,Tuesday]
  * However, the frequency field may start affecting the result differently when other fields are
- * added like interval and position.
+ * added like interval and positions.
  *
- * Information not contained in the rule is in some cases derived from the startDate field for the
- * purpose of calculating occurrence dates.  There are three cases where such derivation is
- * necessary.
+ * For the purpose of calculating occurrence dates, information not contained in the rule is in some
+ * cases derived from the startDateTime field of the event that the detail is associated with.
+ * There are three cases where such derivation is necessary.
  * Case 1: frequency == Weekly.  If dayOfWeek is not specified, derive it from the week day that
- * startDate occurs on.
+ * the startDateTime occurs on.
  * Case 2: frequency == Monthly.  If neither dayOfWeek or dayOfMonth is specified, dayOfMonth should
- * be derived from the startDate
+ * be derived from the startDateTime
  * Case 3: frequency == Yearly.  If none of month, weekOfYear, dayOfYear, dayOfMonth or dayOfWeek
  * are specified, derive month and dayOfMonth.  If month is specified but not weekOfYear, dayOfYear,
  * dayOfMonth or dayOfWeek, then derive dayOfMonth.  If weekOfYear is specified but not dayOfYear,
- * dayOfWeek or dayOfMonth, derive dayOfWeek from the startDate.
+ * dayOfWeek or dayOfMonth, derive dayOfWeek from the startDateTime.
  * For any cases not covered here, do not derive any of the fields.
  */
 
@@ -99,18 +100,18 @@ class Q_ORGANIZER_EXPORT QOrganizerItemRecurrenceRule
 {
 public:
 #ifdef Q_QDOC
-    const char* FieldFrequency;
-    const char* FieldCount;
-    const char* FieldStartDate;
-    const char* FieldEndDate;
-    const char* FieldInterval;
-    const char* FieldDaysOfWeek;
-    const char* FieldDaysOfMonth;
-    const char* FieldDaysOfYear;
-    const char* FieldMonths;
-    const char* FieldWeeksOfYear;
-    const char* FieldPosition;
-    const char* FieldWeekStart;
+    static const QLatin1Constant FieldFrequency;
+    static const QLatin1Constant FieldCount;
+    static const QLatin1Constant FieldStartDate;
+    static const QLatin1Constant FieldEndDate;
+    static const QLatin1Constant FieldInterval;
+    static const QLatin1Constant FieldDaysOfWeek;
+    static const QLatin1Constant FieldDaysOfMonth;
+    static const QLatin1Constant FieldDaysOfYear;
+    static const QLatin1Constant FieldMonths;
+    static const QLatin1Constant FieldWeeksOfYear;
+    static const QLatin1Constant FieldPositions;
+    static const QLatin1Constant FieldWeekStart;
 #else
     Q_DECLARE_LATIN1_CONSTANT(FieldFrequency, "Frequency");
     Q_DECLARE_LATIN1_CONSTANT(FieldCount, "Count");
@@ -122,7 +123,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(FieldDaysOfYear, "DaysOfYear");
     Q_DECLARE_LATIN1_CONSTANT(FieldMonths, "Months");
     Q_DECLARE_LATIN1_CONSTANT(FieldWeeksOfYear, "WeeksOfYear");
-    Q_DECLARE_LATIN1_CONSTANT(FieldPosition, "Position");
+    Q_DECLARE_LATIN1_CONSTANT(FieldPositions, "Positions");
     Q_DECLARE_LATIN1_CONSTANT(FieldWeekStart, "WeekStart");
 #endif
 
@@ -133,7 +134,6 @@ public:
 
     // enums
     enum Frequency {
-        NoRegularFrequency = 0, // eg: setMonths(<Jan, Feb>), setDaysOfMonth(15,-3)); // doesn't occur monthly, so no freq.
         Daily,
         Weekly,
         Monthly,
@@ -155,16 +155,11 @@ public:
         December
     };
 
-    // Compulsory for a valid rule
-    void setStartDate(const QDate& startDate);
-    QDate startDate() const;
-
     // Default: Weekly
     void setFrequency(Frequency freq);
     Frequency frequency() const;
 
-    /* end critierion: neither, either or both of count/endDate could be set.  If both is set, the
-     * recurrence ends on whichever occurs first.  */
+    /* end critieria: count and endDate are mutually exclusive.  Setting one unsets the other.  */
     // eg: 10 means ten times, 0 means not set.
     // Default: 0
     void setCount(int count);
@@ -200,8 +195,8 @@ public:
     // of every month.
     // All other criteria are applied first, then for each time period as specified by frequency,
     // dates are selected via the 1-based indices specified by position.
-    void setPosition(const QList<int>& pos);
-    QList<int> position() const;
+    void setPositions(const QList<int>& pos);
+    QList<int> positions() const;
 
     // Default: Monday
     // sets the day that the week starts on (significant for Weekly with interval > 1, and for weekOfYear)

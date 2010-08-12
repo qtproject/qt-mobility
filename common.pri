@@ -39,7 +39,7 @@ mac {
 #one version but not the other we slently disable the impossible combination
 win32:contains(CONFIG_WIN32,build_all) {
     contains(QT_CONFIG,debug):contains(QT_CONFIG,release) {
-        contains(TEMPLATE,.*lib):!plugin {
+        contains(TEMPLATE,.*lib) {
             CONFIG += $$WAS_IN_DEBUG
             CONFIG += debug_and_release build_all
         }
@@ -88,6 +88,7 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
         contains(TEMPLATE,.*lib) {
             DESTDIR = $$OUTPUT_DIR/lib
             symbian:defFilePath=../s60installs
+            VERSION = 1.1.0
         } else {
             DESTDIR = $$OUTPUT_DIR/bin
         }
@@ -156,11 +157,19 @@ wince* {
     LOCATION.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtLocation).dll
     LOCATION.path = .
     DEPLOYMENT += LOCATION
+
+    ### Landmarks
+    LANDMARKS.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtLandmarks).dll
+    LANDMARKS.path = .
+    DEPLOYMENT += LANDMARKS
 }
 
 symbian {
     #For some reason the default include path doesn't include MOC_DIR on symbian
     INCLUDEPATH += $$MOC_DIR
+    
+    #This is supposed to be defined in symbian_os.hrh
+    #DEFINES += SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD
 }
 
 # Add the output dirs to the link path too
@@ -171,6 +180,7 @@ mac:contains(QT_CONFIG,qt_framework) {
 }
 LIBS += -L$$OUTPUT_DIR/lib
 
+linux*-g++*:QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
 
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global

@@ -48,6 +48,8 @@ QTM_BEGIN_NAMESPACE
   \class QContactDetailFieldDefinition
   \brief The QContactDetailFieldDefinition class provides a field in a QContactDetail.
  
+  \inmodule QtContacts
+  
   Encapsulates information about a particular datum which may be part of a
   QContactDetail, including the type and allowable values.
  */
@@ -137,5 +139,36 @@ bool QContactDetailFieldDefinition::operator!=(const QContactDetailFieldDefiniti
 {
     return !(*this == other);
 }
+
+#ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a definition to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QContactDetailFieldDefinition& definition)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactDetailFieldDefinition
+    return out << formatVersion << static_cast<quint32>(definition.dataType()) << definition.allowableValues();
+}
+
+/*!
+ * Reads a detail field definition from stream \a in into \a definition.
+ */
+QDataStream& operator>>(QDataStream& in, QContactDetailFieldDefinition& definition)
+{
+    definition = QContactDetailFieldDefinition();
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        quint32 dataType;
+        QVariantList allowableValues;
+        in >> dataType >> allowableValues;
+        definition.setDataType(QVariant::Type(dataType));
+        definition.setAllowableValues(allowableValues);
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+#endif
 
 QTM_END_NAMESPACE

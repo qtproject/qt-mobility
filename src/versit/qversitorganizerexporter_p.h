@@ -43,44 +43,111 @@
 #define QVERSITORGANIZEREXPORTER_P_H
 
 #include "qversitorganizerexporter.h"
+#include "qorganizeritemrecurrencerule.h"
+#include "qversitorganizerhandler.h"
+#include "qversittimezonehandler.h"
 
 QTM_BEGIN_NAMESPACE
 
 class Q_AUTOTEST_EXPORT QVersitOrganizerExporterPrivate
 {
 public:
-    QVersitOrganizerExporterPrivate();
+    QVersitOrganizerExporterPrivate(const QString& profile = QString());
     ~QVersitOrganizerExporterPrivate();
 
     bool exportItem(const QOrganizerItem& item,
                     QVersitDocument* document,
                     QVersitOrganizerExporter::Error* error);
-    void exportDetail(const QOrganizerItem& item,
-                      const QOrganizerItemDetail& detail,
-                      QVersitDocument* document);
-    void encodeDisplayLabel(const QOrganizerItemDetail& detail,
-                            const QVersitDocument& document,
-                            QList<QVersitProperty>* removedProperties,
-                            QList<QVersitProperty>* generatedProperties,
-                            QSet<QString>* processedFields);
-    void encodeTimeRange(const QOrganizerItemDetail& detail,
-                         const QVersitDocument& document,
-                         QList<QVersitProperty>* removedProperties,
-                         QList<QVersitProperty>* generatedProperties,
-                         QSet<QString>* processedFields);
-    void encodeTimestamp(const QOrganizerItemDetail& detail,
-                         const QVersitDocument& document,
-                         QList<QVersitProperty>* removedProperties,
-                         QList<QVersitProperty>* generatedProperties,
-                         QSet<QString>* processedFields);
-
-    QString encodeDateTime(const QDateTime& dateTime);
 
     QVersitDocument mResult;
     QMap<int, QVersitOrganizerExporter::Error> mErrors;
     QVersitOrganizerExporterDetailHandler* mDetailHandler;
-    QVersitDefaultResourceHandler* mDefaultResourceHandler;
-    QVersitResourceHandler* mResourceHandler;
+    QList<QVersitOrganizerHandler*> mPluginDetailHandlers;
+    QVersitTimeZoneHandler* mTimeZoneHandler;
+
+private:
+    void exportDetail(
+            const QOrganizerItem& item,
+            const QOrganizerItemDetail& detail,
+            QVersitDocument* document);
+    void encodeEventTimeRange(
+            const QOrganizerItemDetail& detail,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeTodoTimeRange(
+            const QOrganizerItemDetail& detail,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeJournalTimeRange(
+            const QOrganizerItemDetail& detail,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeTimestamp(
+            const QOrganizerItemDetail& detail,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeRecurrence(
+            const QOrganizerItem& item,
+            const QOrganizerItemDetail& detail,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeRecurRule(
+            const QString& propertyName,
+            const QOrganizerItemRecurrenceRule& rule,
+            QList<QVersitProperty>* generatedProperties);
+    void appendIntList(QString* str, const QList<int>& list);
+    QString weekString(Qt::DayOfWeek day);
+    void encodeRecurDates(
+            const QString& propertyName,
+            const QOrganizerItem& item,
+            const QList<QDate>& dates,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
+            QList<QVersitProperty>* generatedProperties);
+    void encodePriority(
+            const QOrganizerItemDetail& detail,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeInstanceOrigin(
+            const QOrganizerItemDetail& detail,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeTodoProgress(
+            const QOrganizerItemDetail& detail,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeComment(
+            const QOrganizerItemDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeSimpleProperty(
+            const QOrganizerItemDetail& detail,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    QString encodeDateTime(const QDateTime& dateTime);
+
+    bool documentContainsUidAndRecurrenceId(const QVersitDocument& document);
+
+    // definition name -> <field name, versit property name>:
+    QMap<QString, QPair<QString, QString> > mPropertyMappings;
 };
 
 QTM_END_NAMESPACE

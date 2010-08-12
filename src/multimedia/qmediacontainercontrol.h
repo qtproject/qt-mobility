@@ -47,7 +47,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_MEDIA_EXPORT QMediaContainerControl : public QMediaControl
+class Q_MULTIMEDIA_EXPORT QMediaContainerControl : public QMediaControl
 {
     Q_OBJECT
 

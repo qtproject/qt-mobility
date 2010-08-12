@@ -44,14 +44,15 @@
 
 #include <QFile>
 #include <QUrl>
+#include <QDir>
 
 #include "audioencodercontrol.h"
 #include "audioendpointselector.h"
 #include "audiomediarecordercontrol.h"
 
-#include <QtMultimedia/qaudioformat.h>
-#include <QtMultimedia/qaudioinput.h>
-#include <QtMultimedia/qaudiodeviceinfo.h>
+#include <qaudioformat.h>
+#include <qaudioinput.h>
+#include <qaudiodeviceinfo.h>
 
 QT_USE_NAMESPACE
 
@@ -93,9 +94,13 @@ private slots:
     void notify();
 
 private:
+    QDir defaultDir() const;
+    QString generateFileName(const QDir &dir, const QString &ext) const;
+
     QFile file;
     QString m_captureDevice;
     QUrl m_sink;
+    QUrl m_actualSink;
     QMediaRecorder::State m_state;
     QAudioInput *m_audioInput;
     QAudioDeviceInfo *m_deviceInfo;

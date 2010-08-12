@@ -53,6 +53,9 @@ QTM_USE_NAMESPACE
 // Some big enough value for nested versit documents to prevent infinite recursion
 #define MAX_VERSIT_DOCUMENT_NESTING_DEPTH 20
 
+QHash<QPair<QVersitDocument::VersitType,QString>, QVersitProperty::ValueType>*
+    QVersitReaderPrivate::mValueTypeMap = 0;
+
 /*!
   \class LineReader
   \brief The LineReader class is a wrapper around a QIODevice that allows line-by-line reading.
@@ -225,47 +228,73 @@ QVersitReaderPrivate::QVersitReaderPrivate()
     mError(QVersitReader::NoError),
     mIsCanceling(false)
 {
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("AGENT")),
-                         QVersitProperty::VersitDocumentType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("AGENT")),
-                         QVersitProperty::VersitDocumentType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("N")),
-                         QVersitProperty::CompoundType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("N")),
-                         QVersitProperty::CompoundType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("ADR")),
-                         QVersitProperty::CompoundType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("ADR")),
-                         QVersitProperty::CompoundType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("GEO")),
-                         QVersitProperty::CompoundType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("GEO")),
-                         QVersitProperty::CompoundType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("ORG")),
-                         QVersitProperty::CompoundType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("ORG")),
-                         QVersitProperty::CompoundType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("NICKNAME")),
-                         QVersitProperty::ListType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("NICKNAME")),
-                         QVersitProperty::ListType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("CATEGORIES")),
-                         QVersitProperty::ListType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("CATEGORIES")),
-                         QVersitProperty::ListType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("X-CHILDREN")),
-                         QVersitProperty::ListType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("X-CHILDREN")),
-                         QVersitProperty::ListType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("X-NICKNAME")),
-                         QVersitProperty::ListType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("X-NICKNAME")),
-                         QVersitProperty::ListType);
 }
 
 /*! Destroy a reader. */
 QVersitReaderPrivate::~QVersitReaderPrivate()
 {
+}
+
+QHash<QPair<QVersitDocument::VersitType,QString>, QVersitProperty::ValueType>*
+QVersitReaderPrivate::valueTypeMap() {
+    if (mValueTypeMap == 0) {
+        mValueTypeMap = new QHash<QPair<QVersitDocument::VersitType,QString>, QVersitProperty::ValueType>();
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("AGENT")),
+                             QVersitProperty::VersitDocumentType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("AGENT")),
+                             QVersitProperty::VersitDocumentType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard40Type, QString::fromAscii("AGENT")),
+                             QVersitProperty::VersitDocumentType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("N")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("N")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard40Type, QString::fromAscii("N")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("ADR")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("ADR")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard40Type, QString::fromAscii("ADR")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("GEO")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("GEO")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard40Type, QString::fromAscii("GEO")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("ORG")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("ORG")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard40Type, QString::fromAscii("ORG")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("NICKNAME")),
+                             QVersitProperty::ListType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("NICKNAME")),
+                             QVersitProperty::ListType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard40Type, QString::fromAscii("NICKNAME")),
+                             QVersitProperty::ListType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("CATEGORIES")),
+                             QVersitProperty::ListType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("CATEGORIES")),
+                             QVersitProperty::ListType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard40Type, QString::fromAscii("CATEGORIES")),
+                             QVersitProperty::ListType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("X-CHILDREN")),
+                             QVersitProperty::ListType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("X-CHILDREN")),
+                             QVersitProperty::ListType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard40Type, QString::fromAscii("X-CHILDREN")),
+                             QVersitProperty::ListType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("X-NICKNAME")),
+                             QVersitProperty::ListType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("X-NICKNAME")),
+                             QVersitProperty::ListType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard40Type, QString::fromAscii("X-NICKNAME")),
+                             QVersitProperty::ListType);
+    }
+    return mValueTypeMap;
 }
 
 /*!
@@ -457,12 +486,13 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(
     // set the propertyValueType
     QPair<QVersitDocument::VersitType, QString> key =
         qMakePair(versitType, property.name());
-    if (mValueTypeMap.contains(key))
-        property.setValueType(mValueTypeMap.value(key));
+    if (valueTypeMap()->contains(key))
+        property.setValueType(valueTypeMap()->value(key));
 
     if (versitType == QVersitDocument::VCard21Type)
         parseVCard21Property(cursor, property, lineReader);
     else if (versitType == QVersitDocument::VCard30Type
+            || versitType == QVersitDocument::VCard40Type
             || versitType == QVersitDocument::ICalendar20Type)
         parseVCard30Property(versitType, cursor, property, lineReader);
 
@@ -573,6 +603,9 @@ bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, con
     } else if (document.componentType() == QLatin1String("VCARD")
             && value == QLatin1String("3.0")) {
         document.setType(QVersitDocument::VCard30Type);
+    } else if (document.componentType() == QLatin1String("VCARD")
+            && value == QLatin1String("4.0")) {
+        document.setType(QVersitDocument::VCard40Type);
     } else if ((document.componentType() == QLatin1String("VCALENDAR")
                 || document.type() == QVersitDocument::ICalendar20Type) // covers VEVENT, etc. when nested inside a VCALENDAR
             && value == QLatin1String("2.0")) {
@@ -866,7 +899,7 @@ QString QVersitReaderPrivate::paramValue(const QByteArray& parameter, QTextCodec
     return codec->toUnicode(value);
 }
 
-/*!
+/*
  * Returns true if and only if \a text contains \a ba at \a index
  *
  * On entry, index must be >= 0

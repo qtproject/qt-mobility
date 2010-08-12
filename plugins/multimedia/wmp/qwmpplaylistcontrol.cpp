@@ -51,7 +51,7 @@ QWmpPlaylistControl::QWmpPlaylistControl(IWMPCore3 *player, QWmpEvents *events, 
     , m_player(player)
     , m_controls(0)
     , m_playlist(new QWmpPlaylist(player, events))
-    , m_playbackMode(QMediaPlaylist::Linear)
+    , m_playbackMode(QMediaPlaylist::Sequential)
 {
     m_player->get_controls(&m_controls);
 

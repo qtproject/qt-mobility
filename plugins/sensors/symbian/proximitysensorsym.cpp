@@ -45,7 +45,7 @@
 /**
  * set the id of the proximity sensor
  */
-const char *CProximitySensorSym::id("sym.proximity");
+char const * const CProximitySensorSym::id("sym.proximity");
 
 /**
  * Factory function, this is used to create the proximity sensor object

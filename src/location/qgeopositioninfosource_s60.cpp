@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -124,6 +124,9 @@ void CQGeoPositionInfoSourceS60::ConstructL()
 
         //update the list array with the available method initially
         updateDeviceStatus();
+        
+        // Set the PreferredPositioningMethods based on Supported methods
+        QGeoPositionInfoSource::setPreferredPositioningMethods( mSupportedMethods );
 
         //devStatusUpdateAO->NotifyDeviceStatus(mStatusEvent);
 
@@ -142,7 +145,6 @@ QGeoPositionInfo CQGeoPositionInfoSourceS60::lastKnownPosition(bool aFromSatelli
 
     QGeoPositionInfo posUpdate;
     TPosition pos;
-    PositioningMethod type;
     TInt error = KErrNone;
     RPositioner iLastKnownpositioner;
     TRequestStatus status;
@@ -166,18 +168,11 @@ QGeoPositionInfo CQGeoPositionInfoSourceS60::lastKnownPosition(bool aFromSatelli
         iLastKnownpositioner.Close();
 
         if ((error == KErrNone) || (error == KPositionPartialUpdate)) {
-
-            bool typeSet = false;
-            for (int i = 0;i < mListSize ;i++) {
-                if (mList[i].mUid == posInfo.ModuleId()) {
-                    type = mList[i].mPosMethod;
-                    typeSet = true;
-                    break;
-                }
-            }
-
-            if (!((aFromSatellitePositioningMethodsOnly == TRUE) && typeSet &&
-                    (type != SatellitePositioningMethods))) {
+        
+            TPositionModuleInfo modInfo;
+            mPositionServer.GetModuleInfoById(posInfo.ModuleId(), modInfo);
+            
+            if(!aFromSatellitePositioningMethodsOnly || (aFromSatellitePositioningMethodsOnly && (modInfo.Capabilities() & TPositionModuleInfo::ECapabilitySatellite))){
                 QGeoCoordinate  coord;
 
                 posInfo.GetPosition(pos);
@@ -192,7 +187,8 @@ QGeoPositionInfo CQGeoPositionInfoSourceS60::lastKnownPosition(bool aFromSatelli
                 TDateTime datetime = pos.Time().DateTime();
                 QDateTime dt(QDate(datetime.Year(), datetime.Month() + 1, datetime.Day() + 1),
                              QTime(datetime.Hour(), datetime.Minute(), datetime.Second(),
-                                   datetime.MicroSecond() / 1000));
+                                   datetime.MicroSecond() / 1000),
+                            Qt::UTC);
 
                 //store the time stamp
                 posUpdate.setTimestamp(dt);
@@ -385,11 +381,6 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TInt
 
 
     if ((i = checkModule(id)) == -1) {
-        //store the correct method in use from the mCurrentModuleId retireved earlier
-        if (id == mCurrentModuleId) {
-            mCurrentMethod = method;
-            QGeoPositionInfoSource::setPreferredPositioningMethods(mCurrentMethod);
-        }
         //update the properties of the module
 
         //TPositionModuleId of the module
@@ -415,6 +406,14 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TInt
 
         //count on the mList array size
         mListSize++;
+        
+        //update the supported source types based on the device status
+        updateAvailableTypes();
+        
+        //store the correct method in use from the mCurrentModuleId retireved earlier
+        if (id == mCurrentModuleId) {
+            mCurrentMethod = method;
+        }
     } else {
         //module's status has changed
         if (mList[i].mStatus != aStatus)
@@ -435,6 +434,9 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TInt
         //module's time to subsequent fix has changed
         if (mList[i].mTimeToNextFix != time_to_next_fix)
             mList[i].mTimeToFirstFix = time_to_next_fix;
+        
+        //update the supported source types based on the device status
+        updateAvailableTypes();
 
         //if the mCurrentModuleId is NULL, try updating the reg update with the available
         //positioning method
@@ -464,7 +466,6 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TInt
 
                 mCurrentMethod = mList[i].mPosMethod;
 
-                QGeoPositionInfoSource::setPreferredPositioningMethods(mCurrentMethod);
             }
         }
 
@@ -512,7 +513,6 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TInt
 
                     mCurrentModuleId = mList[index].mUid;
                     mCurrentMethod = mList[index].mPosMethod;
-                    QGeoPositionInfoSource::setPreferredPositioningMethods(mCurrentMethod);
 
                     mRegUpdateAO->setUpdateInterval(interval);
 
@@ -526,7 +526,7 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TInt
                     mRegUpdateAO = NULL;
                     mCurrentModuleId = TUid::Null();
                     mCurrentMethod = PositioningMethod(0);
-                    QGeoPositionInfoSource::setPreferredPositioningMethods(mCurrentMethod);
+                    
                     emit updateTimeout();
                 }
 
@@ -545,8 +545,6 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TInt
 
     }   //end else
 
-    //update the supported source types based on the device status
-    updateAvailableTypes();
 }
 
 
@@ -583,7 +581,7 @@ void CQGeoPositionInfoSourceS60::updateDeviceStatus(void)
             mModuleFlags |= (1 << i);
         }
     } else {
-        //UpdateDeviceStatus() called afetr registering for NotifyModuleStatusEvent
+        //UpdateDeviceStatus() called after registering for NotifyModuleStatusEvent
 
         //get the module id from the status event
         TPositionModuleId id = mStatusEvent.ModuleId();
@@ -626,7 +624,8 @@ void CQGeoPositionInfoSourceS60::TPositionInfo2QGeoPositionInfo(
     TDateTime datetime = pos.Time().DateTime();
     QDateTime dt(QDate(datetime.Year() , datetime.Month() + 1, datetime.Day() + 1),
                  QTime(datetime.Hour() , datetime.Minute(), datetime.Second(),
-                       datetime.MicroSecond() / 1000));
+                       datetime.MicroSecond() / 1000),
+                Qt::UTC);
 
     //store the time stamp
     aPosInfo2.setTimestamp(dt);
@@ -710,7 +709,7 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
     TInt index = -1;
     TUint8 bits;
 
-    CQMLBackendAO *temp= NULL;
+    CQMLBackendAO *temp = NULL;
 
     //return if already a request update is pending
     if (mReqUpdateAO && mReqUpdateAO->isRequestPending())
@@ -792,6 +791,8 @@ void CQGeoPositionInfoSourceS60::stopUpdates()
 
 void CQGeoPositionInfoSourceS60::setPreferredPositioningMethods(PositioningMethods aMethods)
 {
+    QGeoPositionInfoSource::setPreferredPositioningMethods(aMethods);
+    
     PositioningMethods preferredMethod(PositioningMethods(0));
     TInt index = -1;
     // the poistioning methods are not supported
@@ -851,7 +852,6 @@ void CQGeoPositionInfoSourceS60::setPreferredPositioningMethods(PositioningMetho
                 QGeoPositionInfoSource::setUpdateInterval(value);
 
         }
-        QGeoPositionInfoSource::setPreferredPositioningMethods(mCurrentMethod);
     }
 
 }

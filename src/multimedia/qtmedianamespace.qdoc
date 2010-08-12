@@ -40,15 +40,15 @@
 ****************************************************************************/
 
 /*!
-    \namespace QtMediaServices
+    \namespace QtMultimediaKit
     \ingroup multimedia
 
-    \brief The QtMediaServices namespace contains miscellaneous identifiers used throughout the Qt Media
+    \brief The QtMultimediaKit namespace contains miscellaneous identifiers used throughout the Qt Media
     services library.
 */
 
 /*!
-    \enum QtMediaServices::MetaData
+    \enum QtMultimediaKit::MetaData
 
     This enum provides identifiers for meta-data attributes.
 
@@ -169,7 +169,7 @@
 */
 
 /*!
-    \enum QtMediaServices::SupportEstimate
+    \enum QtMultimediaKit::SupportEstimate
 
     Enumerates the levels of support a media service provider may have for a feature.
 
@@ -180,7 +180,7 @@
 */
 
 /*!
-    \enum QtMediaServices::EncodingQuality
+    \enum QtMultimediaKit::EncodingQuality
 
     Enumerates quality encoding levels.
 
@@ -192,7 +192,7 @@
 */
 
 /*!
-    \enum QtMediaServices::EncodingMode
+    \enum QtMultimediaKit::EncodingMode
 
     Enumerates encoding modes.
 
@@ -203,12 +203,12 @@
 */
 
 /*!
-    \enum QtMediaServices::AvailabilityError
+    \enum QtMultimediaKit::AvailabilityError
 
     Enumerates Service status errors.
 
-    \value NoError
-    \value ServiceMissingError
-    \value ResourceError
-    \value BusyError
+    \value NoError The service is operating correctly.
+    \value ServiceMissingError There is no service available to provide the requested functionality.
+    \value ResourceError The service could not allocate resources required to function correctly.
+    \value BusyError The service must wait for access to necessary resources.
 */

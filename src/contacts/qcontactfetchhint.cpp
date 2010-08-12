@@ -48,6 +48,9 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QContactFetchHint
+  
+  \inmodule QtContacts
+  
   \brief The QContactFetchHint class provides hints to the manager about which contact
   information needs to be retrieved in an asynchronous fetch request or a synchronous
   function call.
@@ -194,5 +197,36 @@ void QContactFetchHint::setOptimizationHints(OptimizationHints hints)
 {
     d->m_optimizationHints = hints;
 }
+
+#ifndef QT_NO_DATASTREAM
+QDataStream& operator<<(QDataStream& out, const QContactFetchHint& hint)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactFetchHint
+    return out << formatVersion
+               << hint.detailDefinitionsHint()
+               << hint.relationshipTypesHint()
+               << static_cast<quint32>(hint.optimizationHints());
+}
+
+QDataStream& operator>>(QDataStream& in, QContactFetchHint& hint)
+{
+    hint = QContactFetchHint();
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QStringList detailDefinitionHints;
+        QStringList relationshipTypeHints;
+        quint32 optimizations;
+        in >> detailDefinitionHints >> relationshipTypeHints >> optimizations;
+        hint.setDetailDefinitionsHint(detailDefinitionHints);
+        hint.setRelationshipTypesHint(relationshipTypeHints);
+        hint.setOptimizationHints(QContactFetchHint::OptimizationHints(optimizations));
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+
+#endif
 
 QTM_END_NAMESPACE

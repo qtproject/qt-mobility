@@ -81,7 +81,7 @@ public:
     explicit QAccelerometer(QObject *parent = 0) : QSensor(QAccelerometer::type, parent) {}
     virtual ~QAccelerometer() {}
     QAccelerometerReading *reading() const { return static_cast<QAccelerometerReading*>(QSensor::reading()); }
-    static const char *type;
+    static char const * const type;
 };
 
 QTM_END_NAMESPACE

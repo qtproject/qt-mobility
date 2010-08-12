@@ -44,6 +44,8 @@
 
 #include "qtcontacts.h"
 #include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
+
+//TESTED_COMPONENT=src/contacts
 //TESTED_CLASS=
 //TESTED_FILES=
 
@@ -370,6 +372,11 @@ void tst_QContactManagerFiltering::detailStringFiltering_data()
             QTest::newRow("integer == 20, contains, string") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant("20") << (int)(Qt::MatchFixedString | Qt::MatchContains) << "bc";
             QTest::newRow("integer == 0, contains, string") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant("0") << (int)(Qt::MatchFixedString | Qt::MatchContains) << "abc";
         }
+
+        /* Detail filter semantics: empty definition or field */
+        newMRow("Empty Definition Name", manager) << manager << es << lastname << QVariant("A") << (int)(Qt::MatchStartsWith) << es; // empty definition name means filter matches nothing
+        newMRow("Empty Def And Field Name", manager) << manager << es << es << QVariant("A") << (int)(Qt::MatchStartsWith) << es; // as above
+        newMRow("Empty Field Name", manager) << manager << name << es << QVariant("A") << (int)(Qt::MatchStartsWith) << "abcdefghijk"; // empty field name matches any with a name detail
     }
 }
 
@@ -840,12 +847,16 @@ void tst_QContactManagerFiltering::rangeFiltering_data()
         newMRow("no min, cs, most results", manager) << manager << namedef << firstname << QVariant() << QVariant("Xambezi") << false << 0 << true << csflag << "abcdefg";
         newMRow("no min, cs, some results", manager) << manager << namedef << firstname << QVariant() << QVariant("Bob") << false << 0 << true << csflag << "a";
         newMRow("no min, cs, no results", manager) << manager << namedef << firstname << QVariant() << QVariant("Aardvark") << false << 0 << true << csflag << es;
-
-        /* due to ascii sorting, most lower case parameters give all results, which is boring */
         newMRow("no max, cs, badcase, all results", manager) << manager << namedef << firstname << QVariant("A") << QVariant() << false << 0 << true << csflag << "abcdefghijk";
+#ifdef Q_OS_SYMBIAN
+        qWarning() << "Test case \"no max, cs, badcase, some results\" will fail on symbian platform because of QString::localeAwareCompare is not actually locale aware"; 
+#endif
         newMRow("no max, cs, badcase, some results", manager) << manager << namedef << firstname << QVariant("BOB") << QVariant() << false << 0 << true << csflag << "cdefghijk";
         newMRow("no max, cs, badcase, no results", manager) << manager << namedef << firstname << QVariant("XAMBEZI") << QVariant() << false << 0 << true << csflag << "hijk";
         newMRow("no min, cs, badcase, all results", manager) << manager << namedef << firstname << QVariant() << QVariant("XAMBEZI") << false << 0 << true << csflag << "abcdefg";
+#ifdef Q_OS_SYMBIAN
+        qWarning() << "Test case \"no min, cs, badcase, some results\" will fail on symbian platform because of QString::localeAwareCompare is not actually locale aware"; 
+#endif
         newMRow("no min, cs, badcase, some results", manager) << manager << namedef << firstname << QVariant() << QVariant("BOB") << false << 0 << true << csflag << "ab";
         newMRow("no min, cs, badcase, no results", manager) << manager << namedef << firstname << QVariant() << QVariant("AARDVARK") << false << 0 << true << csflag << es;
 
@@ -2037,9 +2048,18 @@ void tst_QContactManagerFiltering::sorting_data()
         QPair<QString, QString> integerDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
         QPair<QString, QString> stringDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("String");
 
+#ifdef Q_OS_SYMBIAN
+        qWarning() << "Test case \"first ascending\" will fail on symbian platform because of QString::localeAwareCompare is not actually locale aware"; 
+#endif
         newMRow("first ascending", manager) << manager << namedef << firstname << asc << false << 0 << cs << "abcdefghjik" << "efg";  // efg have the same first name
+#ifdef Q_OS_SYMBIAN
+        qWarning() << "Test case \"first descending\" will fail on symbian platform because of QString::localeAwareCompare is not actually locale aware"; 
+#endif
         newMRow("first descending", manager) << manager << namedef << firstname << desc << false << 0 << cs << "kijhefgdcba" << "efg";// efg have the same first name
         newMRow("last ascending", manager) << manager << namedef << lastname << asc << false << 0 << cs << "bacdefghijk" << "hijk";       // all have a well defined, sortable last name except hijk
+#ifdef Q_OS_SYMBIAN
+        qWarning() << "Test case \"last descending\" will fail on symbian platform because of QString::localeAwareCompare is not actually locale aware"; 
+#endif
         newMRow("last descending", manager) << manager << namedef << lastname << desc << false << 0 << cs << "gfedcabhijk" << "hijk";     // all have a well defined, sortable last name except hijk
         if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
             newMRow("integer ascending, blanks last", manager) << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << asc << true << bll << cs << "cabgfedhijk" << "gfedhijk"; // gfedhijk have no integer
@@ -2052,8 +2072,11 @@ void tst_QContactManagerFiltering::sorting_data()
             QTest::newRow("string ascending (null value), blanks last") << manager << stringDefAndFieldNames.first << stringDefAndFieldNames.second << asc << true << bll << cs << "abcdgef" << "efhijk";   // f and e have blank string
         }
 
-        newMRow("display label insensitive", manager) << manager << dldef << dlfld << asc << false << 0 << cs << "abcdefghjik" << "efg";
-        newMRow("display label sensitive", manager) << manager << dldef << dlfld << asc << false << 0 << ci << "abcdefghjik" << "efg";
+        newMRow("display label insensitive", manager) << manager << dldef << dlfld << asc << false << 0 << ci << "abcdefghjik" << "efghji";
+#ifdef Q_OS_SYMBIAN
+        qWarning() << "Test case \"display label sensitive\" will fail on symbian platform because of QString::localeAwareCompare is not actually locale aware"; 
+#endif
+        newMRow("display label sensitive", manager) << manager << dldef << dlfld << asc << false << 0 << cs << "abcdefghjik" << "efg";
     }
 }
 
@@ -2065,12 +2088,14 @@ void tst_QContactManagerFiltering::sorting()
     QFETCH(int, directioni);
     QFETCH(bool, setbp);
     QFETCH(int, blankpolicyi);
+    QFETCH(int, casesensitivityi);    
     QFETCH(QString, expected);
     QFETCH(QString, unstable);
 
     Qt::SortOrder direction = (Qt::SortOrder)directioni;
-    QContactSortOrder::BlankPolicy blankpolicy = (QContactSortOrder::BlankPolicy)blankpolicyi;
-
+    QContactSortOrder::BlankPolicy blankpolicy = (QContactSortOrder::BlankPolicy) blankpolicyi;
+    Qt::CaseSensitivity casesensitivity = (Qt::CaseSensitivity) casesensitivityi;
+    
     QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
     QList<QContactLocalId> ids;
 
@@ -2080,6 +2105,7 @@ void tst_QContactManagerFiltering::sorting()
     s.setDirection(direction);
     if (setbp)
         s.setBlankPolicy(blankpolicy);
+    s.setCaseSensitivity(casesensitivity);
 
     ids = cm->contactIds(s);
     QString output = convertIds(contacts, ids);
@@ -2112,7 +2138,7 @@ void tst_QContactManagerFiltering::sorting()
         bool unstableElementsAreGrouped = ((lastIndex - firstIndex) == (unstable.length() - 1));
         QVERIFY(unstableElementsAreGrouped);
 
-        // now remove all unstable elements from the output except one.
+        // now remove all unstable elements from the output
         for (int i = 1; i < unstable.length(); i++) {
             output.remove(unstable.at(i));
             expected.remove(unstable.at(i));
@@ -2157,7 +2183,7 @@ void tst_QContactManagerFiltering::sorting()
         bool unstableElementsAreGrouped = ((lastIndex - firstIndex) == (unstable.length() - 1));
         QVERIFY(unstableElementsAreGrouped);
 
-        // now remove all unstable elements from the output except one.
+        // now remove all unstable elements from the output
         for (int i = 1; i < unstable.length(); i++) {
             output.remove(unstable.at(i));
             expected.remove(unstable.at(i));
@@ -2365,7 +2391,6 @@ void tst_QContactManagerFiltering::actionFiltering_data()
     QTest::addColumn<QString>("actionName");
     QTest::addColumn<QString>("vendorName");
     QTest::addColumn<int>("version");
-    QTest::addColumn<QVariant>("value");
     QTest::addColumn<QString>("expected");
 
     QString es;
@@ -2378,8 +2403,8 @@ void tst_QContactManagerFiltering::actionFiltering_data()
         QPair<QString, QString> integerDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
         QPair<QString, QString> dateDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Date");
 
-        newMRow("bad actionname", manager) << manager << "No such action" << es << -1 << ev << es;
-        newMRow("bad vendor", manager) << manager << es << "Vendor missing" << -1 << ev << es;
+        newMRow("bad actionname", manager) << manager << "No such action" << es << -1 << es;
+        newMRow("bad vendor", manager) << manager << es << "Vendor missing" << -1 << es;
 
         QString expected;
         if ( (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty())
@@ -2393,64 +2418,60 @@ void tst_QContactManagerFiltering::actionFiltering_data()
             expected = "ab";
         }
 
-        QTest::newRow("empty (any action matches)") << manager << es << es << -1 << ev << expected;
+        QTest::newRow("empty (any action matches)") << manager << es << es << -1 << expected;
         /* versions are ignored if vendors are not specified */
-        newMRow("ignored version", manager) << manager << es << es << 793434 << ev << expected;
+        newMRow("ignored version", manager) << manager << es << es << 793434 << expected;
 
         if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
-            newMRow("Number", manager) << manager << "Number" << es << -1 << ev << "abcd";
-            QTest::newRow("Number (IntegerCo)") << manager << "Number" << "IntegerCo" << -1 << ev << "abc";
-            QTest::newRow("Number (NumberCo)") << manager << "Number" << "NumberCo" << -1 << ev << "abcd";
-            QTest::newRow("Number (BooleanCo)") << manager << "Number" << "BooleanCo" << -1 << ev << es;
+            newMRow("Number", manager) << manager << "Number" << es << -1 << "abcd";
+            QTest::newRow("Number (IntegerCo)") << manager << "Number" << "IntegerCo" << -1 << "abc";
+            QTest::newRow("Number (NumberCo)") << manager << "Number" << "NumberCo" << -1 << "abcd";
+            QTest::newRow("Number (BooleanCo)") << manager << "Number" << "BooleanCo" << -1 << es;
 
-            QTest::newRow("Number (IntegerCo, good version)") << manager << "Number" << "IntegerCo" << 5 << ev << "abc";
-            QTest::newRow("Number (NumberCo, good version)") << manager << "Number" << "NumberCo" << 42 << ev << "abcd";
+            QTest::newRow("Number (IntegerCo, good version)") << manager << "Number" << "IntegerCo" << 5 << "abc";
+            QTest::newRow("Number (NumberCo, good version)") << manager << "Number" << "NumberCo" << 42 << "abcd";
 
-            QTest::newRow("Number (IntegerCo, bad version)") << manager << "Number" << "IntegerCo" << 345345 << ev << es;
-            QTest::newRow("Number (NumberCo, bad version)") << manager << "Number" << "NumberCo" << 7547544 << ev << es;
+            QTest::newRow("Number (IntegerCo, bad version)") << manager << "Number" << "IntegerCo" << 345345 << es;
+            QTest::newRow("Number (NumberCo, bad version)") << manager << "Number" << "NumberCo" << 7547544 << es;
 
             /* versions are ignored if vendors are not specified */
-            QTest::newRow("Number (ignored version)") << manager << "Number" << es << 345345 << ev << "abcd";
+            QTest::newRow("Number (ignored version)") << manager << "Number" << es << 345345 << "abcd";
 
             /* Vendor specific */
-            newMRow("NumberCo", manager) << manager << es << "NumberCo" << -1 << ev << "abcd";
-            QTest::newRow("NumberCo (good version)") << manager << es << "NumberCo" << 42 << ev << "abcd";
-            QTest::newRow("NumberCo (bad version)") << manager << es << "NumberCo" << 41 << ev << es;
+            newMRow("NumberCo", manager) << manager << es << "NumberCo" << -1 << "abcd";
+            QTest::newRow("NumberCo (good version)") << manager << es << "NumberCo" << 42 << "abcd";
+            QTest::newRow("NumberCo (bad version)") << manager << es << "NumberCo" << 41 << es;
 
-            newMRow("IntegerCo", manager) << manager << es << "IntegerCo" << -1 << ev << "abc";
-            QTest::newRow("IntegerCo (good version)") << manager << es << "IntegerCo" << 5 << ev << "abc";
-            QTest::newRow("IntegerCo (bad version)") << manager << es << "IntegerCo" << 41 << ev << es;
+            newMRow("IntegerCo", manager) << manager << es << "IntegerCo" << -1 << "abc";
+            QTest::newRow("IntegerCo (good version)") << manager << es << "IntegerCo" << 5 << "abc";
+            QTest::newRow("IntegerCo (bad version)") << manager << es << "IntegerCo" << 41 << es;
         }
 
         if (!booleanDefAndFieldNames.first.isEmpty() && !booleanDefAndFieldNames.second.isEmpty()) {
             /* Boolean testing */
-            newMRow("Boolean action", manager) << manager << "Boolean" << es << -1 << ev << "a";
-            newMRow("BooleanCo", manager) << manager << es << "BooleanCo" << -1 << ev << "a";
-            QTest::newRow("BooleanCo (good version)") << manager << es << "BooleanCo" << 3 << ev << "a";
-            QTest::newRow("BooleanCo (bad version)") << manager << es << "BooleanCo" << 3234243 << ev << es;
+            newMRow("Boolean action", manager) << manager << "Boolean" << es << -1 << "abc";
+            newMRow("BooleanCo", manager) << manager << es << "BooleanCo" << -1 << "abc";
+            QTest::newRow("BooleanCo (good version)") << manager << es << "BooleanCo" << 3 << "abc";
+            QTest::newRow("BooleanCo (bad version)") << manager << es << "BooleanCo" << 3234243 << es;
         }
 
         if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
             /* Value filtering */
-            QTest::newRow("Any action matching 20") << manager << es << es << -1 << QVariant(20) << "b";
-            QTest::newRow("Any action matching 4.0") << manager << es << es << -1 << QVariant(4.0) << "bc";
-            QTest::newRow("NumberCo with 20") << manager << es << "NumberCo" << -1 << QVariant(20) << "b";
-            QTest::newRow("NumberCo with 4.0") << manager << es << "NumberCo" << -1 << QVariant(4.0) << "bc";
-            QTest::newRow("IntegerCo with 20") << manager << es << "IntegerCo" << -1 << QVariant(20) << "b";
-            QTest::newRow("IntegerCo with 4.0") << manager << es << "IntegerCo" << -1 << QVariant(4.0) << es;
+            QTest::newRow("Any action matching") << manager << es << es << -1 << "abcd";
+            QTest::newRow("NumberCo") << manager << es << "NumberCo" << -1 << "abcd";
+            QTest::newRow("IntegerCo") << manager << es << "IntegerCo" << -1 << "abc";
         }
 
         if (!booleanDefAndFieldNames.first.isEmpty() && !booleanDefAndFieldNames.second.isEmpty()) {
-            newMRow("Boolean action matching true", manager) << manager << es << "BooleanCo" << -1 << QVariant(true) << "a";
-            newMRow("Boolean action matching false", manager) << manager << es << "BooleanCo" << -1 << QVariant(false) << es;
+            newMRow("Boolean action matching true", manager) << manager << es << "BooleanCo" << -1 << "abc";
         }
 
         /* Recursive filtering */
-        QTest::newRow("Recursive action 1") << manager << "IntersectionRecursive" << es << -1 << QVariant(false) << es;
-        QTest::newRow("Recursive action 2") << manager << "UnionRecursive" << es << -1 << QVariant(false) << es;
-        QTest::newRow("Recursive action 3") << manager << "PairRecursive" << es << -1 << QVariant(false) << es;
-        QTest::newRow("Recursive action 4") << manager << "AnotherPairRecursive" << es << -1 << QVariant(false) << es;
-        QTest::newRow("Recursive action 5") << manager << "Recursive" << es << -1 << QVariant(false) << es;
+        QTest::newRow("Recursive action 1") << manager << "IntersectionRecursive" << es << -1 << es;
+        QTest::newRow("Recursive action 2") << manager << "UnionRecursive" << es << -1 << es;
+        QTest::newRow("Recursive action 3") << manager << "PairRecursive" << es << -1 << es;
+        QTest::newRow("Recursive action 4") << manager << "AnotherPairRecursive" << es << -1 << es;
+        QTest::newRow("Recursive action 5") << manager << "Recursive" << es << -1 << es;
     }
 }
 
@@ -2460,7 +2481,6 @@ void tst_QContactManagerFiltering::actionFiltering()
     QFETCH(QString, actionName);
     QFETCH(QString, vendorName);
     QFETCH(int, version);
-    QFETCH(QVariant, value);
     QFETCH(QString, expected);
 
     /* Load the definition and field names for the various variant types for the current manager */
@@ -2468,7 +2488,6 @@ void tst_QContactManagerFiltering::actionFiltering()
     if (!defAndFieldNamesForTypeForActions.isEmpty()) {
         QContactActionFilter af;
         af.setActionName(actionName);
-        af.setValue(value);
         af.setVendor(vendorName, version);
 
         QList<QContactLocalId> ids = cm->contactIds(af);
@@ -3335,12 +3354,11 @@ public:
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Number", "IntegerCo", 5); }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
         QContactDetailFilter df;
         QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Integer");
         df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
-        df.setValue(value);
         return df;
     }
     bool isDetailSupported(const QContactDetail &detail, const QContact &) const
@@ -3365,11 +3383,10 @@ public:
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("PhoneNumber", "PhoneNumberCo", 4); }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
         QContactDetailFilter df;
         df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
-        df.setValue(value);
         return df;
     }
     bool isDetailSupported(const QContactDetail& detail, const QContact&) const
@@ -3394,12 +3411,11 @@ public:
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Date", "DateCo", 9); }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
         QContactDetailFilter df;
         QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Date");
         df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
-        df.setValue(value);
         return df;
     }
 
@@ -3424,17 +3440,15 @@ public:
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Number", "NumberCo", 42); }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
         QContactDetailFilter df;
         QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Double");
         df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
-        df.setValue(value);
 
         QContactDetailFilter df2;
         defAndFieldName = defAndFieldNamesForTypeForActions.value("Integer");
         df2.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
-        df2.setValue(value);
 
         /* We like either doubles or integers */
         return df | df2;
@@ -3472,18 +3486,13 @@ public:
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Boolean", "BooleanCo", 3); }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
-        if (value.isNull() || (value.type() == QVariant::Bool && value.toBool() == true)) {
-            /* This only likes bools that are true */
-            QContactDetailFilter df;
-            QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Bool");
-            df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
-            df.setValue(true);
-            return df;
-        } else {
-            return QContactInvalidFilter();
-        }
+        /* This only likes bool fields */
+        QContactDetailFilter df;
+        QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Bool");
+        df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
+        return df;
     }
     bool isDetailSupported(const QContactDetail &detail, const QContact &) const
     {
@@ -3506,13 +3515,12 @@ public:
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Recursive", "RecursiveCo", 3); }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
         /* Return a filter that selects us again.. */
         QContactActionFilter af;
         af.setActionName("Recursive");
         af.setVendor("RecursiveCo", 3);
-        af.setValue(value);
         return af;
     }
     bool isDetailSupported(const QContactDetail&, const QContact&) const
@@ -3530,9 +3538,8 @@ class AnotherRecursiveAction : public RecursiveAction {
 
 public:
     int implementationVersion() const {return 4;}
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
-        Q_UNUSED(value);
         /* Slightly looser filter */
         QContactActionFilter af;
         af.setActionName("Recursive");
@@ -3552,9 +3559,8 @@ public:
         return ret;
     }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
-        Q_UNUSED(value);
         /* Slightly looser filter */
         QContactActionFilter af;
         af.setActionName("AnotherPairRecursive");
@@ -3573,9 +3579,8 @@ public:
         return ret;
     }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
-        Q_UNUSED(value);
         /* Slightly looser filter */
         QContactActionFilter af;
         af.setActionName("PairRecursive");
@@ -3594,9 +3599,8 @@ public:
         return ret;
     }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
-        Q_UNUSED(value);
         /* Slightly looser filter */
         QContactActionFilter af;
         af.setActionName("PairRecursive");
@@ -3615,9 +3619,8 @@ public:
         return ret;
     }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
-        Q_UNUSED(value);
         /* Slightly looser filter */
         QContactActionFilter af;
         af.setActionName("PairRecursive");

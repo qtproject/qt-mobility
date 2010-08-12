@@ -47,15 +47,16 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemDetailDefinitionSaveRequest
   \brief The QOrganizerItemDetailDefinitionSaveRequest class allows a client to
-  asynchronously request that certain detail definitions be saved in a
-  organizeritems store.
+  asynchronously request that certain detail definitions be saved in an
+  organizer item store manager.
+  \inmodule QtOrganizer
 
   For a QOrganizerItemDetailDefinitionSaveRequest, the resultsAvailable() signal will be emitted when
   either the individual item errors (which may be retrieved by calling errorMap()), or the resultant
   detail definitions (which may be retrieved by calling definitions()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
   
-  \ingroup organizeritems-requests
+  \ingroup organizer-requests
  */
 
 /*! Constructs a new detail definition save request whose parent is the specified \a parent */
@@ -86,21 +87,21 @@ void QOrganizerItemDetailDefinitionSaveRequest::setDefinitions(const QList<QOrga
 }
 
 /*! Returns the list of definitions that will be saved if called prior to calling \c start(),
-    otherwise returns the list of detail definitions as they were saved in the organizeritems store */
+    otherwise returns the list of detail definitions as they were saved in the organizer item store */
 QList<QOrganizerItemDetailDefinition> QOrganizerItemDetailDefinitionSaveRequest::definitions() const
 {
     Q_D(const QOrganizerItemDetailDefinitionSaveRequest);
     return d->m_definitions;
 }
 
-/*! Sets the type of organizeritem for which detail definitions should be saved to \a organizeritemType */
+/*! Sets the type of organizer item for which detail definitions should be saved to \a organizeritemType */
 void QOrganizerItemDetailDefinitionSaveRequest::setItemType(const QString& organizeritemType)
 {
     Q_D(QOrganizerItemDetailDefinitionSaveRequest);
     d->m_organizeritemType = organizeritemType;
 }
 
-/*! Returns the type of organizeritem for which detail definitions will be saved */
+/*! Returns the type of organizer item for which detail definitions will be saved */
 QString QOrganizerItemDetailDefinitionSaveRequest::itemType() const
 {
     Q_D(const QOrganizerItemDetailDefinitionSaveRequest);

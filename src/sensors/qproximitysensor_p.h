@@ -53,11 +53,9 @@
 // We mean it.
 //
 
-#include "qsensor_p.h"
-
 QTM_BEGIN_NAMESPACE
 
-class QProximityReadingPrivate : public QSensorReadingPrivate
+class QProximityReadingPrivate
 {
 public:
     QProximityReadingPrivate()

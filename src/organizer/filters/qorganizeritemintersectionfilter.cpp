@@ -49,7 +49,8 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemIntersectionFilter
   \brief The QOrganizerItemIntersectionFilter class provides a filter which intersects the results of other filters.
-   \ingroup organizeritems-filters
+  \inmodule QtOrganizer
+  \ingroup organizer-filters
  
   It may be used to select organizeritems which match all of the filters in the intersection
  */
@@ -71,12 +72,22 @@ QOrganizerItemIntersectionFilter::QOrganizerItemIntersectionFilter()
 
 /*!
  * Sets the filters whose criteria will be intersected to \a filters
- * \sa filters()
+ * \sa filters(), clear()
  */
 void QOrganizerItemIntersectionFilter::setFilters(const QList<QOrganizerItemFilter>& filters)
 {
     Q_D(QOrganizerItemIntersectionFilter);
     d->m_filters = filters;
+}
+
+/*!
+ * Clears the list of filters.  A cleared intersection filter will match no items.
+ * \sa filters(), setFilters()
+ */
+void QOrganizerItemIntersectionFilter::clear()
+{
+    Q_D(QOrganizerItemIntersectionFilter);
+    d->m_filters.clear();
 }
 
 /*!
@@ -101,7 +112,7 @@ void QOrganizerItemIntersectionFilter::append(const QOrganizerItemFilter& filter
 
 /*!
  * Removes the given \a filter from the intersection list
- * \sa filters(), append(), prepend()
+ * \sa filters(), append(), prepend(), clear()
  */
 void QOrganizerItemIntersectionFilter::remove(const QOrganizerItemFilter& filter)
 {

@@ -44,7 +44,7 @@
 
 #include <QtCore/qhash.h>
 #include <QtGui/qwidget.h>
-#include <QtMultimedia/qabstractvideosurface.h>
+#include <qabstractvideosurface.h>
 
 #include <X11/Xlib.h>
 #include <sys/ipc.h>

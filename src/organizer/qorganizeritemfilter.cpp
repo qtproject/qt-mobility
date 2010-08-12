@@ -41,6 +41,7 @@
 
 #include "qorganizeritemfilter.h"
 #include "qorganizeritemfilter_p.h"
+#include "qorganizeritemfilters.h"
 
 #include "qorganizeritemintersectionfilter.h"
 #include "qorganizeritemunionfilter.h"
@@ -51,26 +52,29 @@
 
 /*!
   \class QOrganizerItemFilter
-  \brief The QOrganizerItemFilter class is used to select organizeritems made available
+  \brief The QOrganizerItemFilter class is used to select organizer items made available
   through a QOrganizerItemManager.
 
-  \ingroup organizeritems-main
+  \inmodule QtOrganizer
+
+  \ingroup organizer-main
 
   This class is used as a parameter to various functions offered by QOrganizerItemManager, to allow
-  selection of organizeritems which have certain details or properties.
+  selection of items which have certain details or properties.
  */
 
 /*!
   \enum QOrganizerItemFilter::FilterType
   Describes the type of the filter
   \value InvalidFilter An invalid filter which matches nothing
-  \value OrganizerItemDetailFilter A filter which matches organizeritems containing one or more details of a particular definition with a particular value
-  \value OrganizerItemDetailRangeFilter A filter which matches organizeritems containing one or more details of a particular definition whose values are within a particular range
-  \value ChangeLogFilter A filter which matches organizeritems whose timestamps have been updated since some particular date and time
-  \omitvalue ActionFilter A filter which matches organizeritems for which a particular action is available, or which contain a detail with a particular value for which a particular action is available
-  \value IntersectionFilter A filter which matches all organizeritems that are matched by all filters it includes
-  \value UnionFilter A filter which matches any organizeritem that is matched by any of the filters it includes
-  \value LocalIdFilter A filter which matches any organizeritem whose local id is contained in a particular list of organizeritem local ids
+  \value OrganizerItemDetailFilter A filter which matches items containing one or more details of a particular definition with a particular value
+  \value OrganizerItemDetailRangeFilter A filter which matches items containing one or more details of a particular definition whose values are within a particular range
+  \value OrganizerItemDateTimePeriodFilter A filter which matches items which occur in a given date/time period
+  \value ChangeLogFilter A filter which matches items whose timestamps have been updated since some particular date and time
+  \omitvalue ActionFilter A filter which matches items for which a particular action is available, or which contain a detail with a particular value for which a particular action is available
+  \value IntersectionFilter A filter which matches all items that are matched by all filters it includes
+  \value UnionFilter A filter which matches any organizer item that is matched by any of the filters it includes
+  \value LocalIdFilter A filter which matches any organizer item whose local id is contained in a particular list of organizer item local ids
   \value DefaultFilter A filter which matches everything
  */
 
@@ -83,11 +87,6 @@
   \value MatchEndsWith The search term matches the end of the item
   \value MatchFixedString Performs string-based matching. String-based comparisons are case-insensitive unless the \c MatchCaseSensitive flag is also specified
   \value MatchCaseSensitive The search is case sensitive
-  \value MatchPhoneNumber The search term is considered to be in the form of a phone number, and special processing (removing dialing prefixes, non significant
-         characters like '-'. ')' etc). may be performed when matching the item.
-  \value MatchKeypadCollation The search term is in the form of text entered by a numeric phone keypad (such as ITU-T E.161 compliant keypads).  Each digit in the
-         search term can represent a number of alphanumeric symbols.  For example, the search string "43556" would match items "HELLO", "GEKKO", "HELL6" and "43556" among others.
-         Accented characters and other punctuation characters may additionally be matched by the QOrganizerItemManager in a way consistent with the platform.
  */
 
 /*!
@@ -153,6 +152,70 @@ bool QOrganizerItemFilter::operator==(const QOrganizerItemFilter& other) const
     /* Otherwise, use the virtual op == */
     return d_ptr->compare(other.d_ptr);
 }
+
+#ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a filter to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QOrganizerItemFilter& filter)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItemDetailFilter
+    out << formatVersion << static_cast<quint32>(filter.type());
+    if (filter.d_ptr)
+        filter.d_ptr->outputToStream(out, formatVersion);
+    return out;
+}
+
+/*!
+ * Reads an organizer item filter from stream \a in into \a filter.
+ */
+QDataStream& operator>>(QDataStream& in, QOrganizerItemFilter& filter)
+{
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        quint32 type;
+        in >> type;
+        switch (type) {
+            case QOrganizerItemFilter::InvalidFilter:
+                filter = QOrganizerItemInvalidFilter();
+                break;
+            case QOrganizerItemFilter::OrganizerItemDetailFilter:
+                filter = QOrganizerItemDetailFilter();
+                break;
+            case QOrganizerItemFilter::OrganizerItemDetailRangeFilter:
+                filter = QOrganizerItemDetailRangeFilter();
+                break;
+            case QOrganizerItemFilter::ChangeLogFilter:
+                filter = QOrganizerItemChangeLogFilter();
+                break;
+            case QOrganizerItemFilter::IntersectionFilter:
+                filter = QOrganizerItemIntersectionFilter();
+                break;
+            case QOrganizerItemFilter::UnionFilter:
+                filter = QOrganizerItemUnionFilter();
+                break;
+            case QOrganizerItemFilter::LocalIdFilter:
+                filter = QOrganizerItemLocalIdFilter();
+                break;
+            case QOrganizerItemFilter::OrganizerItemDateTimePeriodFilter:
+                filter = QOrganizerItemDateTimePeriodFilter();
+                break;
+            case QOrganizerItemFilter::DefaultFilter:
+                filter = QOrganizerItemFilter();
+                break;
+        }
+
+        if (filter.d_ptr) {
+            filter.d_ptr->inputFromStream(in, formatVersion);
+        }
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+#endif
+
 
 /*!
   \internal

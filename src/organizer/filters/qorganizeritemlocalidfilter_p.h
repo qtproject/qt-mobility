@@ -83,6 +83,22 @@ public:
         return true;
     }
 
+    QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
+    {
+        if (formatVersion == 1) {
+            stream << m_ids;
+        }
+        return stream;
+    }
+
+    QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
+    {
+        if (formatVersion == 1) {
+            stream >> m_ids;
+        }
+        return stream;
+    }
+
     Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemLocalIdFilter, QOrganizerItemFilter::LocalIdFilter)
 
     QList<QOrganizerItemLocalId> m_ids;

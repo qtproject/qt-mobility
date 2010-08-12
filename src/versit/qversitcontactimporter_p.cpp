@@ -44,6 +44,7 @@
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
+#include "qmobilitypluginsearch.h"
 
 #include <qcontactmanagerengine.h>
 #include <qcontact.h>
@@ -68,6 +69,8 @@
 #include <qcontactdisplaylabel.h>
 #include <qcontactthumbnail.h>
 #include <qcontactringtone.h>
+#include "qversitcontacthandler.h"
+#include "qversitpluginloader_p.h"
 
 #include <QHash>
 #include <QFile>
@@ -77,7 +80,7 @@ QTM_USE_NAMESPACE
 /*!
  * Constructor.
  */
-QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
+QVersitContactImporterPrivate::QVersitContactImporterPrivate(const QString& profile) :
     mPropertyHandler(NULL),
     mPropertyHandler2(NULL),
     mPropertyHandlerVersion(0),
@@ -86,15 +89,15 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
 {
     // Contact detail mappings
     int versitPropertyCount =
-        sizeof(versitContactDetailMappings)/sizeof(VersitContactDetailMapping);
+        sizeof(versitContactDetailMappings)/sizeof(VersitDetailMapping);
     for (int i=0; i < versitPropertyCount; i++) {
         QString versitPropertyName =
             QLatin1String(versitContactDetailMappings[i].versitPropertyName);
         QPair<QString,QString> contactDetail;
         contactDetail.first =
-            QLatin1String(versitContactDetailMappings[i].contactDetailDefinitionName);
+            QLatin1String(versitContactDetailMappings[i].detailDefinitionName);
         contactDetail.second =
-            QLatin1String(versitContactDetailMappings[i].contactDetailValueKey);
+            QLatin1String(versitContactDetailMappings[i].detailFieldName);
         mDetailMappings.insert(versitPropertyName,contactDetail);
     }
 
@@ -113,6 +116,8 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
             QLatin1String(versitSubTypeMappings[i].versitString),
             QLatin1String(versitSubTypeMappings[i].contactString));
     }
+
+    mPluginPropertyHandlers = QVersitPluginLoader::instance()->createContactHandlers(profile);
 }
 
 /*!
@@ -121,6 +126,9 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
 QVersitContactImporterPrivate::~QVersitContactImporterPrivate()
 {
     delete mDefaultResourceHandler;
+    foreach (QVersitContactHandler* pluginHandler, mPluginPropertyHandlers) {
+        delete pluginHandler;
+    }
 }
 
 /*!
@@ -157,6 +165,11 @@ bool QVersitContactImporterPrivate::importContact(
     contact->setType(QContactType::TypeContact);
     QContactManagerEngine::setContactDisplayLabel(contact, QVersitContactImporterPrivate::synthesizedDisplayLabel(*contact));
 
+    // run plugin handlers
+    foreach (QVersitContactImporterPropertyHandlerV2* handler, mPluginPropertyHandlers) {
+        handler->documentProcessed(document, contact);
+    }
+    // run the v2 handler, if set
     if (mPropertyHandler2 && mPropertyHandlerVersion > 1) {
         mPropertyHandler2->documentProcessed(document, contact);
     }
@@ -217,14 +230,20 @@ void QVersitContactImporterPrivate::importProperty(
         success = createNameValueDetail(property, contact, &updatedDetails);
     }
 
+    // run plugin handlers
+    foreach (QVersitContactImporterPropertyHandlerV2* handler, mPluginPropertyHandlers) {
+        handler->propertyProcessed(document, property, *contact, &success, &updatedDetails);
+    }
+    // run the v2 handler, if set
     if (mPropertyHandler2 && mPropertyHandlerVersion > 1) {
-        mPropertyHandler2->propertyProcessed(document, property, success, *contact, &updatedDetails);
+        mPropertyHandler2->propertyProcessed(document, property, *contact, &success, &updatedDetails);
     }
 
     foreach (QContactDetail detail, updatedDetails) {
         contact->saveDetail(&detail);
     }
 
+    // run the v1 handler, if set
     if (mPropertyHandler && mPropertyHandlerVersion == 1)
         mPropertyHandler->postProcessProperty(document, property, success, contactIndex, contact);
 }

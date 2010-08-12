@@ -47,7 +47,7 @@
 #include <QtCore/qstringlist.h>
 #include <QtCore/qmap.h>
 
-#include <QtMultimedia/qaudioformat.h>
+#include <qaudioformat.h>
 
 class AudioCaptureSession;
 

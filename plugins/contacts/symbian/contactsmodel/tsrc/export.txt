@@ -1,0 +1,60 @@
+Profile viewer -- W:\EPOC32\RELEASE\WINS\UDEB\T_BENCH.exe, Thu Feb 15 10:53:59 2001
+name, total time, visits, avg. time
+
+-100% _E32Dll, , , 
+  +Thread 0x10b: 3 stopwatches, 3 visits, , , 
+  +Thread 0xec: 3 stopwatches, 3 visits, , , 
+  +Thread 0xf9: 3 stopwatches, 3 visits, , , 
+  +Thread 0xf5: 3 stopwatches, 3 visits, , , 
+  -Thread 0xe4: 20866 stopwatches, 766681 visits, , , 
+    +100% CContactDatabase::ReplaceL, 666.162, 1, 666.162
+    +100% CContactDatabase::LoadPhoneMatchesL, 324.094, 1, 324.094
+    +100% CContactDatabase::OpenL, 225.341, 1, 225.341
+    +100% CContactDatabase::SortL, 204.639, 1, 204.639
+    +100% CContactDatabase::PhoneMatchListL, 297.971, 2, 148.986
+    +100% CContactDatabase::CompactL, 137.123, 1, 137.123
+    +100% CContactDatabase::ReadContactL, 1144.334, 12, 95.361
+    +100% CContactDatabase::AddNewContactL, 1090.108, 12, 90.842
+    +100% CContactDatabase::FindLC, 205.221, 4, 51.305
+    +100% CContactDatabase::~CContactDatabase, 37.628, 1, 37.628
+    +100% CContactDatabase::ReadContactLC, 281.951, 12, 23.496
+    +100% CContactDatabase::ReadContactTextDefL, 205.116, 12, 17.093
+    +100% CContactDatabase::InitLoadPhoneMatchesL, 11.144, 1, 11.144
+    +100% CContactCard::NewL, 120.537, 24, 5.022
+    +100% CContactItem::~CContactItem, 15.945, 12, 1.329
+    +100% CContactCard::~CContactCard, 37.842, 36, 1.051
+    +100% CContactItemFieldSet::FindNext, 21.349, 212, 0.101
+    +100% CContactTextDef::NewLC, 0.054, 1, 0.054
+    +100% CContentType::NewL, 1.359, 38, 0.036
+    +100% CContactTextDef::NewL, 0.027, 1, 0.027
+    +100% _E32Dll, 0.051, 2, 0.026
+    +100% _E32Dll, 0.041, 2, 0.020
+    +100% _E32Dll, 0.037, 2, 0.019
+    +100% CContentType::~CContentType, 0.633, 38, 0.017
+    +100% CContactIdArray::~CContactIdArray, 0.082, 6, 0.014
+    +100% CContentType::AddFieldTypeL, 1.130, 128, 0.009
+    +100% CContactTextField::SetText, 0.742, 104, 0.007
+     100% operator delete, 0.381, 93, 0.004
+    +100% CContentType::FieldType, 2.571, 762, 0.003
+     100% CContactTextField::Text, 0.112, 36, 0.003
+    +100% TContactTextDefItem::TContactTextDefItem, 0.007, 3, 0.002
+    +100% CContentType::FieldTypeCount, 0.184, 148, 0.001
+     100% CContactDatabase::TemplateId, 0.007, 12, 0.001
+     100% CContactItemField::Storage, 0.065, 140, 0.000
+     100% CContactItem::CardFields, 0.065, 140, 0.000
+     100% CContactItemField::StorageType, 0.041, 140, 0.000
+     100% CContactItemField::ContentType, 0.024, 110, 0.000
+    +100% TContactTextDefItem::TContactTextDefItem, 0.000, 3, 0.000
+     100% CContactDatabase::SortedItemsL, 0.000, 1, 0.000
+     100% CContactDatabase::SetTextDefinitionL, 0.000, 1, 0.000
+  +Thread 0x136: 6 stopwatches, 6 visits, , , 
+  +Thread 0xc3: 6 stopwatches, 6 visits, , , 
+  +Thread(expired, exitCode:0x0) 0xf4: 6 stopwatches, 6 visits, , , 
+  +Thread 0x17c: 6 stopwatches, 6 visits, , , 
+  +Thread 0xf7: 6 stopwatches, 6 visits, , , 
+  +Thread 0x178: 17781 stopwatches, 1118137 visits, , , 
+  +Thread(expired, exitCode:0x0) 0x72: 7928 stopwatches, 243340 visits, , , 
+  +Thread 0x96: 2165 stopwatches, 14561 visits, , , 
+  +Thread 0x108: 3 stopwatches, 3 visits, , , 
+  +Thread 0x121: 3 stopwatches, 3 visits, , , 
+

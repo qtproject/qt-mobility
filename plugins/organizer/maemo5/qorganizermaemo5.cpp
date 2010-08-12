@@ -46,6 +46,7 @@
 #include <CEvent.h>
 #include <CJournal.h>
 #include <CTodo.h>
+#include <CRecurrence.h>
 
 QTM_USE_NAMESPACE
 
@@ -53,7 +54,6 @@ QOrganizerItemManagerEngine* QOrganizerItemMaemo5Factory::engine(const QMap<QStr
 {
     Q_UNUSED(parameters);
     Q_UNUSED(error);
-
 
     QOrganizerItemMaemo5Engine* ret = new QOrganizerItemMaemo5Engine(); // manager takes ownership and will clean up.
     return ret;
@@ -68,8 +68,6 @@ Q_EXPORT_PLUGIN2(qtorganizer_maemo5, QOrganizerItemMaemo5Factory);
 QOrganizerItemMaemo5Engine::QOrganizerItemMaemo5Engine()
     : d(new QOrganizerItemMaemo5EngineData)
 {
-    // XXX TODO: on construction, we need to enumerate all items in
-    // the database and fill out our maps of ids and calendar names.
 }
 
 QOrganizerItemMaemo5Engine::~QOrganizerItemMaemo5Engine()
@@ -94,487 +92,324 @@ int QOrganizerItemMaemo5Engine::managerVersion() const
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NoError;
-    int calError;
+    int calError = CALENDAR_OPERATION_SUCCESSFUL;
     QList<QOrganizerItem> retn;
-   
-    // try to find the native id of the generator they're referencing. 
-    QString entireId = d->m_cIdToQId.key(generator.localId());
-    if (entireId.isEmpty()) {
-        *error = QOrganizerItemManager::DoesNotExistError;
-        return QList<QOrganizerItem>();
-    }
 
-    QString cId = entireId.mid(d->m_cIdToCName.value(entireId).size()+1, -1);
-    QString calName = d->m_cIdToCName.value(entireId);
-    if (generator.type() == QOrganizerItemType::TypeTodo) {
-        // in maemo5, only one occurrence per todo.  and it has the same id as the parent.
-        CCalendar *cal = d->m_mcInstance->getCalendarByName(calName.toStdString(), calError);
-        if (!cal) {
-            *error = QOrganizerItemManager::DoesNotExistError; // XXX TODO: should be CalendarDoesNotExistError!
-            return retn;
-        }
-        CTodo *ctodo = cal->getTodo(cId.toStdString(), calError);
-        if (!ctodo) {
-            delete cal;
-            *error = QOrganizerItemManager::DoesNotExistError;
-            return retn;
-        }
-
-        QOrganizerTodoOccurrence todoocc = convertCTodoToQTodoOccurrence(ctodo, calName);
-        delete ctodo;
-        delete cal;
-        retn.append(todoocc);
-        return retn;
-    }
-
-    // if not a todo, must be an event, since no other types have occurrences.
-    if (generator.type() != QOrganizerItemType::TypeEvent) {
+    if ( periodStart > periodEnd )
+    {
         *error = QOrganizerItemManager::BadArgumentError;
-        return retn; 
-    }
-
-    // it's an event.  use native API to generate instances.
-    std::vector<time_t> resultVec;
-    bool success = d->m_mcInstance->getInstances(cId.toStdString(), periodStart.toTime_t(), periodEnd.toTime_t(), resultVec, 0);
-    if (!success) {
-        *error = QOrganizerItemManager::UnspecifiedError;
         return retn;
     }
 
-    // now instantiate the calendar and the event so we can convert required instances to QOIEOccurrences.
-    CCalendar* cal = d->m_mcInstance->getCalendarByName(calName.toStdString(), calError);
-    if (!cal) {
-        *error = QOrganizerItemManager::DoesNotExistError; // XXX TODO: should be CalendarDoesNotExistError!
-        return retn;
-    }
-    CEvent* cevent = cal->getEvent(cId.toStdString(), calError);
-    if (!cevent) {
-        delete cal;
-        *error = QOrganizerItemManager::DoesNotExistError; // XXX TODO: should be CalendarDoesNotExistError!
-        return retn;
-    }
-    
-    for (unsigned int i = 0; i < resultVec.size(); ++i) {
-        if (periodEnd.isNull()) {
-            // use count as "maximum to return"
-            unsigned int tmpMaxCount = 0;
-            if (maxCount > 0)
-                tmpMaxCount += maxCount;
+    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+    std::string nativeId = QString::number(generator.localId()).toStdString();
 
-            if (i >= tmpMaxCount) {
-                break;
+    if ( generator.type() == QOrganizerItemType::TypeEvent )
+    {
+        CEvent* cevent = cal->getEvent( nativeId, calError );
+        *error = calErrorToManagerError( calError );
+        if ( cevent && *error == QOrganizerItemManager::NoError )
+        {
+            // Get event instance times
+            std::vector< std::time_t > eventInstanceDates;
+            cevent->generateInstanceTimes( periodStart.toTime_t(), periodEnd.toTime_t(), eventInstanceDates );
+
+            // If maxCount is given, resize to maxCount
+            if ( maxCount > 0 && maxCount < eventInstanceDates.size() )
+                eventInstanceDates.resize( maxCount );
+
+            // Generate the event occurrences
+            std::vector< std::time_t >::const_iterator i;
+            for( i = eventInstanceDates.begin(); i != eventInstanceDates.end(); ++i )
+            {
+                QDateTime instanceDate = QDateTime::fromTime_t( *i );
+                QOrganizerEventOccurrence eventOcc = convertCEventToQEventOccurrence( cevent, instanceDate );
+                fillInCommonCComponentDetails( &eventOcc, cevent, false ); // false = do not set ids
+                retn << eventOcc;
             }
         }
-        QDateTime instanceDate = QDateTime::fromTime_t(resultVec[i]);
-        QOrganizerEventOccurrence eventocc = convertCEventToQEventOccurrence(cevent, instanceDate, calName);
-        retn.append(eventocc);
     }
+    else if ( generator.type() == QOrganizerItemType::TypeTodo )
+    {
+        CTodo* ctodo = cal->getTodo( nativeId, calError );
+        *error = calErrorToManagerError( calError );
+        if ( ctodo && *error == QOrganizerItemManager::NoError )
+        {
+            // TODO
+        }
+    }
+    else
+    {
+        // Other item types can't have occurrences
+        *error = QOrganizerItemManager::BadArgumentError;
+    }
+
+    cleanupCal( cal );
 
     return retn;
 }
 
-/*!
-  Loads all items from all calendars, updates the private data maps of cId to qId and cId to cName, and updates the changeset with any changes which were noticed during enumeration.  Does not emit signals.
-  */
-QList<QOrganizerItem> QOrganizerItemMaemo5Engine::enumerateAllItems(QOrganizerItemChangeSet *cs, QOrganizerItemManager::Error* error) const
-{
-    *error = QOrganizerItemManager::NoError;
-    int calError = CALENDAR_OPERATION_SUCCESSFUL; // default is no error
-
-    QList<QOrganizerItem> allItems;
-
-    // update our map arguments and changeset where needed.
-    QMap<QString, QOrganizerItemLocalId> newIdMap;
-    QMap<QString, QString> newCNameMap;
-    QString entireId;
-    
-    std::vector<CCalendar*> allCalendars = d->m_mcInstance->getListCalFromMc();
-    for (unsigned int i = 0; i < allCalendars.size(); i++) {
-        CCalendar *currCal = allCalendars[i];
-        QString calName = QString::fromStdString(currCal->getCalendarName());
-
-	// get the events
-        std::vector<CEvent*> events = currCal->getEvents(calError);
-        if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
-            *error = QOrganizerItemManager::UnspecifiedError;
-            calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-        }
-        for (unsigned int j = 0; j < events.size(); ++j) {
-            entireId = calName + ":" + QString::fromStdString(events[j]->getId());
-	    newIdMap.insert(entireId, QOrganizerItemLocalId(qHash(entireId)));
-	    newCNameMap.insert(entireId, calName);
-            allItems.append(convertCEventToQEvent(events[j], calName));
-            delete events[j];
-        }
-
-	// get the todos
-        std::vector<CTodo*> todos = currCal->getTodos(calError);
-        if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
-            *error = QOrganizerItemManager::UnspecifiedError;
-            calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-        }
-        for (unsigned int j = 0; j < todos.size(); ++j) {
-            entireId = calName + ":" + QString::fromStdString(todos[j]->getId());
-	    newIdMap.insert(entireId, QOrganizerItemLocalId(qHash(entireId)));
-	    newCNameMap.insert(entireId, calName);
-            allItems.append(convertCTodoToQTodo(todos[j], calName));
-            delete todos[j];
-        }
-
-	// get the journals
-        std::vector<CJournal*> journals = currCal->getJournals(calError);
-        if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
-            *error = QOrganizerItemManager::UnspecifiedError;
-            calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-        }
-        for (unsigned int j = 0; j < journals.size(); ++j) {
-            entireId = calName + ":" + QString::fromStdString(journals[j]->getId());
-	    newIdMap.insert(entireId, QOrganizerItemLocalId(qHash(entireId)));
-	    newCNameMap.insert(entireId, calName);
-            allItems.append(convertCJournalToQJournal(journals[j], calName));
-	    delete journals[j];
-        }
-    }
-    d->m_mcInstance->releaseListCalendars(allCalendars);
-    
-    // before returning, build the changeset and emit appropriate signals
-    // then replace our maps with our newly updated ones.
-    QStringList origKeys = d->m_cIdToQId.keys();
-    QStringList newKeys = newIdMap.keys();
-    foreach (const QString& key, origKeys) {
-        if (!newKeys.contains(key)) {
-            // this id is only in the old map (ie, has been removed)
-            cs->insertRemovedItem(d->m_cIdToQId.value(key));
-        } else {
-            // this id is in both (ie, hasn been added or removed)
-            newKeys.removeOne(key);
-        }
-    }
-
-    foreach (const QString& key, newKeys) {
-        // this id is only in the new map (ie, has been added)
-        cs->insertAddedItem(newIdMap.value(key));
-    }
-
-    // update our maps.
-    d->m_cIdToQId = newIdMap;
-    d->m_cIdToCName = newCNameMap;
-
-    // caller should emit signals from cs if they want to.
-    return allItems;
-}
-
 QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
 {
-    // build the list of items which we'll return
-    QOrganizerItemChangeSet cs;
-    QList<QOrganizerItem> allItems = enumerateAllItems(&cs, error);
+    /*
+        TODO
+
+        Given the supplied filter and sort order, fetch the list of items [not instances] that correspond, and return their ids.
+
+        If you don't support the filter or sort orders, you can fetch a partially (or un-) filtered list and ask the helper
+        functions to filter and sort it for you.
+
+        If you do have to fetch, consider setting a fetch hint that restricts the information to that needed for filtering/sorting.
+    */
+
+    *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
+
+    QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
     QList<QOrganizerItem> ret;
-    foreach(const QOrganizerItem& item, allItems) {
+
+    foreach(const QOrganizerItem& item, partiallyFilteredItems) {
         if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
             ret.append(item);
         }
     }
 
-    //cs.emitSignals(this); // XXX TODO: does this break synchronous behaviour?
-
     return QOrganizerItemManagerEngine::sortItems(ret, sortOrders);
+}
+
+void QOrganizerItemMaemo5Engine::removeAllForDebug() const
+{
+    int calError = CALENDAR_OPERATION_SUCCESSFUL;
+    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+
+    std::vector<CEvent*> events = cal->getEvents( calError );
+    for( int i = 0; i < events.size(); ++i )
+    {
+        CEvent* cevent = events[i];
+        std::string itemId = cevent->getId();
+        int calError = CALENDAR_OPERATION_SUCCESSFUL;
+        cal->deleteComponent( itemId, calError );
+        delete cevent;
+        qDebug() << "Deleted event";
+    }
+    std::vector<CTodo*> todos = cal->getTodos( calError );
+    for( int i = 0; i < todos.size(); ++i )
+    {
+        CTodo* ctodo = todos[i];
+        std::string itemId = ctodo->getId();
+        int calError = CALENDAR_OPERATION_SUCCESSFUL;
+        cal->deleteComponent( itemId, calError );
+        delete ctodo;
+        qDebug() << "Deleted todo";
+    }
+    std::vector<CJournal*> journals = cal->getJournals( calError );
+    for( int i = 0; i < journals.size(); ++i )
+    {
+        CJournal* cjournal = journals[i];
+        std::string itemId = cjournal->getId();
+        int calError = CALENDAR_OPERATION_SUCCESSFUL;
+        cal->deleteComponent( itemId, calError );
+        delete cjournal;
+        qDebug() << "Deleted journal";
+    }
 }
 
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
-    Q_UNUSED(fetchHint);
+    // TODO: This quick implementation is provided only to make the demo application to work
+    // It doesn't support any filters, sort orders or fetch hints
 
-    QOrganizerItemChangeSet cs;
-    QList<QOrganizerItem> allItems = enumerateAllItems(&cs, error);
+    *error = QOrganizerItemManager::NoError;
+    int calError = CALENDAR_OPERATION_SUCCESSFUL;
+    QList<QOrganizerItem> retn;
+    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+
+    std::vector<CEvent*> events = cal->getEvents( calError );
+    for( int i = 0; i < events.size(); ++i )
+    {
+        CEvent* cevent = events[i];
+        QOrganizerEvent event = convertCEventToQEvent( cevent );
+        fillInCommonCComponentDetails( &event, cevent );
+        delete cevent;
+        retn.append( event );
+    }
+
+    std::vector<CTodo*> todos = cal->getTodos( calError );
+    for( int i = 0; i < todos.size(); ++i )
+    {
+        CTodo* ctodo = todos[i];
+        QOrganizerTodo todo = convertCTodoToQTodo( ctodo );
+        fillInCommonCComponentDetails( &todo, ctodo );
+        delete ctodo;
+        retn.append( todo );
+    }
+
+    std::vector<CJournal*> journals = cal->getJournals( calError );
+    for( int i = 0; i < journals.size(); ++i )
+    {
+        CJournal* cjournal = journals[i];
+        QOrganizerJournal journal = convertCJournalToQJournal( cjournal );
+        fillInCommonCComponentDetails( &journal, cjournal );
+        delete cjournal;
+        retn.append( journal );
+    }
+
+    cleanupCal( cal );
+    return retn;
+
+
+
+    /*
+        TODO
+
+        Given the supplied filter and sort order, fetch the list of items [not instances] that correspond, and return them.
+
+        If you don't support the filter or sort orders, you can fetch a partially (or un-) filtered list and ask the helper
+        functions to filter and sort it for you.
+
+        The fetch hint suggests how much of the item to fetch.  You can ignore the fetch hint and fetch everything (but you must
+        fetch at least what is mentioned in the fetch hint).
+    */
+
+    /*
+
+    Q_UNUSED(fetchHint);
+    *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
+
+    QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
     QList<QOrganizerItem> ret;
-    foreach(const QOrganizerItem& item, allItems) {
+
+    foreach(const QOrganizerItem& item, partiallyFilteredItems) {
         if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
             QOrganizerItemManagerEngine::addSorted(&ret, item, sortOrders);
         }
     }
 
-    //cs.emitSignals(this); // XXX TODO: does this break synchronous behaviour?
+    /* An alternative formulation, depending on how your engine is implemented is just:
 
-    return ret;
+        foreach(const QOrganizerItemLocalId& id, itemIds(filter, sortOrders, error)) {
+            ret.append(item(id, fetchHint, error);
+        }
+     */
+
+    //return ret;
 }
 
 QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
     Q_UNUSED(fetchHint);
+    // TODO: Make this method to use the fetch hint
+
+    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+    std::string nativeId = QString::number(itemId).toStdString();
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
-    *error = QOrganizerItemManager::NoError;
 
-    QString entireItemId = d->m_cIdToQId.key(itemId);
-    if (entireItemId.isEmpty()) {
-        // user has specified a nonexistent id.
-        *error = QOrganizerItemManager::DoesNotExistError;
-        return QOrganizerItem();
-    }
-    QString calendarName = d->m_cIdToCName.value(entireItemId);
-    QString calItemId = entireItemId.mid((calendarName.size() + 1), -1); // entireItemId = calendarName:cId
-    CCalendar* calendar = d->m_mcInstance->getCalendarByName(calendarName.toStdString(), calError);
-
-    // now attempt to get the item.
-    CEvent* event = calendar->getEvent(calItemId.toStdString(), calError);
-    if (event) {
-        QOrganizerEvent retn = convertCEventToQEvent(event, calendarName);
+    CEvent* event = cal->getEvent( nativeId, calError );
+    *error = calErrorToManagerError( calError );
+    if ( event ) {
+        QOrganizerEvent retn = convertCEventToQEvent( event );
+        fillInCommonCComponentDetails( &retn, event );
         delete event;
+        cleanupCal( cal );
         return retn;
     }
-    
-    CTodo* todo = calendar->getTodo(calItemId.toStdString(), calError);
-    if (todo) {
-        QOrganizerTodo retn = convertCTodoToQTodo(todo, calendarName);
+    CTodo* todo = cal->getTodo( nativeId, calError );
+    *error = calErrorToManagerError( calError );
+    if ( todo ) {
+        QOrganizerTodo retn = convertCTodoToQTodo( todo );
+        fillInCommonCComponentDetails( &retn, todo );
         delete todo;
+        cleanupCal( cal );
         return retn;
     }
-
-    CJournal* journal = calendar->getJournal(calItemId.toStdString(), calError);
-    if (journal) {
-        QOrganizerJournal retn = convertCJournalToQJournal(journal, calendarName);
+    CJournal* journal = cal->getJournal( nativeId, calError );
+    *error = calErrorToManagerError( calError );
+    if ( journal ) {
+        QOrganizerJournal retn = convertCJournalToQJournal( journal ); // TODO: Probably this call is not needed
+        fillInCommonCComponentDetails( &retn, journal );
         delete journal;
+        cleanupCal( cal );
         return retn;
     }
 
-    // the id exists in our maps but not in the database.  we need to update our maps.
-    QOrganizerItemChangeSet cs;
-    cs.insertRemovedItem(d->m_cIdToQId.value(entireItemId));
-    d->m_cIdToQId.remove(entireItemId);
-    d->m_cIdToCName.remove(entireItemId);
-    //cs.emitSignals(this); // XXX TODO: does this break synchronous behaviour?
-    
-    // none of the above exist in the specified calendar, so return error.
+    // In an error situation return an invalid item
+    cleanupCal( cal );
     *error = QOrganizerItemManager::DoesNotExistError;
     return QOrganizerItem();
 }
 
 bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
-    *error = QOrganizerItemManager::NoError;
-    QOrganizerItemChangeSet cs;
+    // TODO: Add changeset manipulation and signal emissions
 
-    int calError = CALENDAR_OPERATION_SUCCESSFUL;
-    for (int i = 0; i < items->size(); i++) {
-        QOrganizerItem curr = items->at(i);
-        int calendarId = -1;
-	if (curr.type() == QOrganizerItemType::TypeEvent) {
-            QOrganizerEvent event = curr;
-            CEvent* cevent = convertQEventToCEvent(event);
-            calendarId = cevent->getCalendarId();
-            CCalendar *currCal = d->m_mcInstance->getCalendarById(calendarId, calError); // note: during the conversion phase we set the calendar id... likely to be very slow.
-	    QString calName = QString::fromStdString(currCal->getCalendarName());
-
-            // the convert function will set the id to empty string if has been deleted in meantime.
-	    if (!QString::fromStdString(cevent->getId()).isEmpty()) {
-                d->m_mcInstance->modifyEvent(cevent, calendarId, calError);
-                if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
-                    if (errorMap) {
-                        errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
-                    }
-                    *error = QOrganizerItemManager::UnspecifiedError;
-                    calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-                } else {
-                    // successfully update event.
-                    items->replace(i, convertCEventToQEvent(cevent, calName));
-                    cs.insertChangedItem(curr.localId());
-                }
-            } else {
-                // this is a new (or previously deleted) event.  save it new.
-                d->m_mcInstance->addEvent(cevent, calendarId, calError);
-		if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
-                    if (errorMap) {
-                        errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
-                    }
-                    *error = QOrganizerItemManager::UnspecifiedError;
-                    calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-                } else {
-                    // success.  add the details to our internal maps.
-                    QString hashKey = calName + ":" + QString::fromStdString(cevent->getId());
-                    d->m_cIdToQId.insert(hashKey, QOrganizerItemLocalId(qHash(hashKey)));
-                    d->m_cIdToCName.insert(hashKey, calName);
-                    items->replace(i, convertCEventToQEvent(cevent, calName));
-                    cs.insertAddedItem(d->m_cIdToQId.value(hashKey));
-                }
-            }
-
-            // clean up.
-	    delete cevent;
-            delete currCal;
-        } else if (curr.type() == QOrganizerItemType::TypeEventOccurrence) {
-            // check if there are any differences from the "generated" occurrence for this date
-            // if not, then save can fail (already exists error)
-            // if so, we save it as an exception.
-	} else if (curr.type() == QOrganizerItemType::TypeTodo) {
-            // some tricks here; in maemo5 there are no todoOccurrences.
-            // this means, they can modify the todo, and the (single) occurrence for it will change...
-            // other than that concern, the code for a todo is similar to that of event.
-            QOrganizerTodo todo = curr;
-            CTodo* ctodo = convertQTodoToCTodo(todo);
-            calendarId = ctodo->getCalendarId();
-            CCalendar *currCal = d->m_mcInstance->getCalendarById(calendarId, calError); // note: during the conversion phase we set the calendar id... likely to be very slow.
-	    QString calName = QString::fromStdString(currCal->getCalendarName());
-
-            // the convert function will set the id to empty string if has been deleted in meantime.
-	    if (!QString::fromStdString(ctodo->getId()).isEmpty()) {
-                d->m_mcInstance->modifyTodo(ctodo, calendarId, calError);
-                if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
-                    if (errorMap) {
-                        errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
-                    }
-                    *error = QOrganizerItemManager::UnspecifiedError;
-                    calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-                } else {
-                    // successfully updated todo item.
-                    items->replace(i, convertCTodoToQTodo(ctodo, calName));
-                    cs.insertChangedItem(curr.localId());
-                }
-            } else {
-                // this is a new (or previously deleted) event.  save it new.
-                d->m_mcInstance->addTodo(ctodo, calendarId, calError);
-		if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
-                    if (errorMap) {
-                        errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
-                    }
-                    *error = QOrganizerItemManager::UnspecifiedError;
-                    calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-                } else {
-                    // success.  add the details to our internal maps.
-                    QString hashKey = calName + ":" + QString::fromStdString(ctodo->getId());
-                    d->m_cIdToQId.insert(hashKey, QOrganizerItemLocalId(qHash(hashKey)));
-                    d->m_cIdToCName.insert(hashKey, calName);
-                    items->replace(i, convertCTodoToQTodo(ctodo, calName));
-                    cs.insertAddedItem(d->m_cIdToQId.value(hashKey));
-                }
-            }
-
-            // clean up.
-	    delete ctodo;
-            delete currCal;
-        } else if (curr.type() == QOrganizerItemType::TypeTodoOccurrence) {
-            // modifies the actual todo in the datastore...
-        } else if (curr.type() == QOrganizerItemType::TypeJournal) {
-            // basically the same as code for the event.
-            QOrganizerJournal journal = curr;
-            CJournal* cjournal = convertQJournalToCJournal(journal);
-            calendarId = cjournal->getCalendarId();
-            CCalendar *currCal = d->m_mcInstance->getCalendarById(calendarId, calError); // note: during the conversion phase we set the calendar id... likely to be very slow.
-	    QString calName = QString::fromStdString(currCal->getCalendarName());
-
-            // the convert function will set the id to empty string if has been deleted in meantime.
-	    if (!QString::fromStdString(cjournal->getId()).isEmpty()) {
-                d->m_mcInstance->modifyJournal(cjournal, calendarId, calError);
-                if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
-                    if (errorMap) {
-                        errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
-                    }
-                    *error = QOrganizerItemManager::UnspecifiedError;
-                    calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-                } else {
-                    // successfully updated journal.
-                    items->replace(i, convertCJournalToQJournal(cjournal, calName));
-                    cs.insertChangedItem(curr.localId());
-                }
-            } else {
-                // this is a new (or previously deleted) event.  save it new.
-                d->m_mcInstance->addJournal(cjournal, calendarId, calError);
-		if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
-                    if (errorMap) {
-                        errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
-                    }
-                    *error = QOrganizerItemManager::UnspecifiedError;
-                    calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-                } else {
-                    // success.  add the details to our internal maps.
-                    QString hashKey = calName + ":" + QString::fromStdString(cjournal->getId());
-                    d->m_cIdToQId.insert(hashKey, QOrganizerItemLocalId(qHash(hashKey)));
-                    d->m_cIdToCName.insert(hashKey, calName);
-                    items->replace(i, convertCJournalToQJournal(cjournal, calName));
-                    cs.insertAddedItem(d->m_cIdToQId.value(hashKey));
-                }
-            }
-
-            // clean up.
-	    delete cjournal;
-            delete currCal;
-        } else { // QOrganizerItemType::TypeNote
-            // not sure what to do here - should be similar to journal without datestart??
-        }
+    if ( !items ) {
+        *error = QOrganizerItemManager::BadArgumentError;
+        return false;
     }
 
-    // ensure that the changes are committed to the dbase.
-    d->m_mcInstance->commitAllChanges();
+    *error = QOrganizerItemManager::NoError;
+    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+    bool success = true;
 
-    // emit signals...
-    cs.emitSignals(this);
-    
-    return (*error == QOrganizerItemManager::NoError);
+    for( int i = 0; i < items->size(); ++i) {
+        QOrganizerItem curr = items->at(i);
+        int calError = doSaveItem( cal, &curr, error );
+
+        if ( calError != CALENDAR_OPERATION_SUCCESSFUL || *error != QOrganizerItemManager::NoError ) {
+            success = false;
+            curr.setId(QOrganizerItemId()); // clear ID
+            if ( errorMap ) {
+                if ( *error != QOrganizerItemManager::NoError )
+                    errorMap->insert(i, *error );
+                else
+                    errorMap->insert(i, QOrganizerItemManager::UnspecifiedError );
+            }
+        }
+
+        items->replace(i, curr);
+    }
+
+    cleanupCal( cal );
+    return success;
 }
 
 bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
-    // this is much simpler, since the maemo5 calendar-backend API
-    // supports removal by component id.  Note that while the API
-    // supports batch remove (and rolls back if fails),
-    // we want to provide fine-grained error reporting, so we do
-    // the operation one at a time...
-    // XXX TODO: check performance, change to batch if too slow.
+    // TODO: Add changeset manipulation and signal emissions
+    // TODO: Check all the dependencies of the removed item
 
     *error = QOrganizerItemManager::NoError;
-    int calError = 1; // no error.
-    QOrganizerItemChangeSet cs;
-   
-    for (int i = 0; i < itemIds.size(); ++i) {
-        QOrganizerItemLocalId currId = itemIds.at(i);
-        QString entireId = d->m_cIdToQId.key(currId);
-        if (entireId.isEmpty()) {
-            calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-            *error = QOrganizerItemManager::DoesNotExistError;
-            if (errorMap) {
-                errorMap->insert(i, QOrganizerItemManager::DoesNotExistError);
-            }
+    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+    bool success = true;
 
-            // user has specified a nonexistent id to remove.
-            continue;
-        }
-        QString calendarName = d->m_cIdToCName.value(entireId);
-        QString cId = entireId.mid((calendarName.size() + 1), -1); // entireId = calendarName:cId
-        CCalendar* calendar = d->m_mcInstance->getCalendarByName(calendarName.toStdString(), calError);
-        if (calendar) {
-            calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-            std::vector<std::string> removeItemIds;
-            removeItemIds.push_back(cId.toStdString());
-            d->m_mcInstance->deleteComponents(removeItemIds, calendar->getCalendarId(), calError);
-	    
-            if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
-                calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-                *error = QOrganizerItemManager::DoesNotExistError;
-                if (errorMap) {
-                    errorMap->insert(i, QOrganizerItemManager::DoesNotExistError);
-                }
-            } else {
-                // remove the item from our maps.
-                d->m_cIdToQId.remove(entireId);
-                d->m_cIdToCName.remove(entireId);
-                cs.insertRemovedItem(currId);
+    for( int i = 0; i < itemIds.size(); ++i ) {
+        QOrganizerItemLocalId currId = itemIds.at(i);
+
+        QOrganizerItemFetchHint::OptimizationHints optimizationHints( QOrganizerItemFetchHint::NoBinaryBlobs );
+        optimizationHints |= QOrganizerItemFetchHint::NoActionPreferences;
+        QOrganizerItemFetchHint fetchHints;
+        fetchHints.setOptimizationHints( optimizationHints );
+        QOrganizerItem currItem = item( currId, fetchHints, error );
+        if ( *error == QOrganizerItemManager::NoError ) {
+            // Item exists
+            QString itemId = QString::number( currItem.localId() );
+            int calError = CALENDAR_OPERATION_SUCCESSFUL;
+            cal->deleteComponent( itemId.toStdString(), calError );
+            *error = calErrorToManagerError( calError );
+
+            if ( calError != CALENDAR_OPERATION_SUCCESSFUL )
+            {
+                success = false;
+                if ( errorMap )
+                    errorMap->insert(i, *error);
             }
         } else {
-            // XXX TODO: make a "InvalidCalendar" error
-            calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-            *error = QOrganizerItemManager::DoesNotExistError;
-            if (errorMap) {
-                errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
-            }
+            success = false;
+            if ( errorMap )
+                errorMap->insert(i, *error);
         }
-	delete calendar;
     }
 
-    // ensure that the changes are committed to the dbase.
-    d->m_mcInstance->commitAllChanges();
-
-    // emit signals
-    cs.emitSignals(this);
-    return (*error == QOrganizerItemManager::NoError);
+    return success;
 }
 
 bool QOrganizerItemMaemo5Engine::startRequest(QOrganizerItemAbstractRequest* req)
@@ -724,25 +559,132 @@ QStringList QOrganizerItemMaemo5Engine::supportedItemTypes() const
     return ret;
 }
 
+int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar* cal, QOrganizerItem* item, QOrganizerItemManager::Error* error)
+{
+    // TODO: Add signal emissions
+    // TODO: Or might be better not to implement emissions here?
 
-QOrganizerEvent QOrganizerItemMaemo5Engine::convertCEventToQEvent(CEvent* cevent, const QString& calendarName) const
+    int calError = CALENDAR_OPERATION_SUCCESSFUL;
+    *error = QOrganizerItemManager::InvalidItemTypeError;
+
+    CComponent* component = createCComponent( cal, item );
+    if( !component )
+        return calError;
+
+    // TODO: The custom detail fields should be iterated and the corresponding
+    // fields should be set to CComponent for saving.
+
+    if (item->type() == QOrganizerItemType::TypeEvent) {
+        CEvent* cevent = static_cast<CEvent*>( component );
+        QString ceventId = QString::fromStdString( cevent->getId() );
+        if ( !ceventId.isEmpty() ) {
+            // CEvent ID is not empty, the event already exists in calendar
+            cal->modifyEvent(cevent, calError);
+            *error = calErrorToManagerError( calError );
+        } else {
+            // CEvent ID is empty, the event is new
+            cal->addEvent(cevent, calError);
+            *error = calErrorToManagerError( calError );
+            if( calError == CALENDAR_OPERATION_SUCCESSFUL ||
+                calError == CALENDAR_ENTRY_DUPLICATED )
+                // The Maemo5 calendar does not accept two items if all the
+                // time details are equal. That's so even if the item IDs differ.
+                // If the "new" item is actually a duplicate, then let
+                // the calendar to modify the existing item.
+                // TODO: Is that what we want?
+            {
+                calError = CALENDAR_OPERATION_SUCCESSFUL; // reset the error
+                *error = QOrganizerItemManager::NoError; // reset the error
+
+                QString newIdString = QString::fromStdString( cevent->getId() );
+                QOrganizerItemLocalId newId = newIdString.toUInt();
+                QOrganizerItemId id;
+                id.setLocalId( newId );
+                id.setManagerUri(managerUri());
+                item->setId( id );
+            }
+        }
+        delete cevent;
+        return calError;
+    }
+    else if (item->type() == QOrganizerItemType::TypeTodo) {
+        CTodo* ctodo = static_cast<CTodo*>( component );
+        QString ctodoId = QString::fromStdString( ctodo->getId() );
+        if ( !ctodoId.isEmpty() ) {
+            // CTodo ID is not empty, the todo already exists in calendar
+            cal->modifyTodo(ctodo, calError);
+            *error = calErrorToManagerError( calError );
+        } else {
+            // CTodo ID is empty, the todo is new
+            cal->addTodo(ctodo, calError);
+            *error = calErrorToManagerError( calError );
+            if( calError == CALENDAR_OPERATION_SUCCESSFUL ||
+                calError == CALENDAR_ENTRY_DUPLICATED )
+                // The Maemo5 calendar does not accept two items if all the
+                // time details are equal. That's so even if the item IDs differ.
+                // If the "new" item is actually a duplicate, then let
+                // the calendar to modify the existing item.
+                // TODO: Is that what we want?
+            {
+                calError = CALENDAR_OPERATION_SUCCESSFUL; // reset the error
+                *error = QOrganizerItemManager::NoError; // reset the error
+
+                QString newIdString = QString::fromStdString( ctodo->getId() );
+                QOrganizerItemLocalId newId = newIdString.toUInt();
+                QOrganizerItemId id;
+                id.setLocalId( newId );
+                id.setManagerUri(managerUri());
+                item->setId( id );
+            }
+
+        }
+        delete ctodo;
+        return calError;
+    }
+    else if (item->type() == QOrganizerItemType::TypeJournal) {
+        CJournal* cjournal = static_cast<CJournal*>( component );
+        QString cjournalId = QString::fromStdString( cjournal->getId() );
+        if ( !cjournalId.isEmpty() ) {
+            // CJournal ID is not empty, the journal already exists in calendar
+            cal->modifyJournal(cjournal, calError);
+            *error = calErrorToManagerError( calError );
+        } else {
+            // CJournal ID is empty, the journal is new
+            cal->addJournal(cjournal, calError);
+            *error = calErrorToManagerError( calError );
+            if( calError == CALENDAR_OPERATION_SUCCESSFUL ||
+                calError == CALENDAR_ENTRY_DUPLICATED )
+                // The Maemo5 calendar does not accept two items if all the
+                // time details are equal. That's so even if the item IDs differ.
+                // If the "new" item is actually a duplicate, then let
+                // the calendar to modify the existing item.
+                // TODO: Is that what we want?
+            {
+                calError = CALENDAR_OPERATION_SUCCESSFUL; // reset the error
+                *error = QOrganizerItemManager::NoError; // reset the error
+
+                QString newIdString = QString::fromStdString( cjournal->getId() );
+                QOrganizerItemLocalId newId = newIdString.toUInt();
+                QOrganizerItemId id;
+                id.setLocalId( newId );
+                id.setManagerUri(managerUri());
+                item->setId( id );
+            }
+
+        }
+        delete cjournal;
+        return calError;
+    }
+
+    return calError;
+}
+
+QOrganizerEvent QOrganizerItemMaemo5Engine::convertCEventToQEvent(CEvent* cevent) const
 {
     QOrganizerEvent ret;
-    QString tempstr = QString::fromStdString(cevent->getGeo());
-    if (!tempstr.isEmpty())
-        ret.setLocationGeoCoordinates(tempstr);
     int tempint = cevent->getPriority();
     if (tempint != -1)
         ret.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint)); // assume that the saved priority is vCal compliant.
-    tempstr = QString::fromStdString(cevent->getSummary());
-    if (!tempstr.isEmpty())
-        ret.setDisplayLabel(tempstr);
-    tempstr = QString::fromStdString(cevent->getDescription());
-    if (!tempstr.isEmpty())
-        ret.setDescription(tempstr);
-    tempstr = QString::fromStdString(cevent->getLocation());
-    if (!tempstr.isEmpty())
-        ret.setLocationName(tempstr);
     QDateTime tempdt = QDateTime::fromTime_t(cevent->getDateStart());
     if (!tempdt.isNull())
         ret.setStartDateTime(tempdt);
@@ -750,18 +692,39 @@ QOrganizerEvent QOrganizerItemMaemo5Engine::convertCEventToQEvent(CEvent* cevent
     if (!tempdt.isNull())
         ret.setEndDateTime(tempdt);
 
-    QOrganizerItemId rId;
-    rId.setManagerUri(managerUri());
-    QString hashKey = calendarName + ":" + QString::fromStdString(cevent->getId());
-    rId.setLocalId(QOrganizerItemLocalId(qHash(hashKey)));
-    ret.setId(rId);
-    // and the recurrence information...
+    // TODO: the recurrence information?
 
     return ret;
 }
 
-QOrganizerEventOccurrence QOrganizerItemMaemo5Engine::convertCEventToQEventOccurrence(CEvent* cevent, const QDateTime& instanceDate, const QString& calendarName) const
+QOrganizerEventOccurrence QOrganizerItemMaemo5Engine::convertCEventToQEventOccurrence(CEvent* cevent, const QDateTime& instanceDate) const
 {
+    QOrganizerEventOccurrence ret;
+
+    int tempint = cevent->getPriority();
+    if (tempint != -1)
+        ret.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint)); // assume that the saved priority is vCal compliant.
+    QDateTime tempdt = QDateTime::fromTime_t(cevent->getDateStart());
+    if (!tempdt.isNull())
+        ret.setStartDateTime(tempdt);
+    tempdt = QDateTime::fromTime_t(cevent->getDateEnd());
+    if (!tempdt.isNull())
+        ret.setEndDateTime(tempdt);
+
+    // Set parent id
+    QString idString = QString::fromStdString( cevent->getId() );
+    QOrganizerItemLocalId localId = idString.toUInt();
+    ret.setParentLocalId( localId );
+
+    // Set original event date
+    ret.setOriginalDate( instanceDate.date() );
+
+    return ret;
+
+    /*
+    // TODO: The code in this method is from the Proof of Concept
+    // TODO: Replace the Proof of Concept codes at some point
+
     QOrganizerEventOccurrence ret;
     QString tempstr = QString::fromStdString(cevent->getGeo());
     if (!tempstr.isEmpty())
@@ -785,13 +748,13 @@ QOrganizerEventOccurrence QOrganizerItemMaemo5Engine::convertCEventToQEventOccur
     if (!tempdt.isNull())
         ret.setEndDateTime(tempdt);
 
-    // now set the parent information (parent id and original datetime)
-    QOrganizerItemId pId;
-    pId.setManagerUri(managerUri());
+    // now set the parent information (parent id and original date)
     QString hashKey = calendarName + ":" + QString::fromStdString(cevent->getId());
-    pId.setLocalId(QOrganizerItemLocalId(qHash(hashKey)));
-    ret.setParentItemId(pId);
-    ret.setOriginalDateTime(instanceDate);
+    ret.setParentLocalId(QOrganizerItemLocalId(qHash(hashKey)));
+
+    // TODO: These were removed from API, check if these are still needed
+    //ret.setParentItemId(pId);
+    //ret.setOriginalDateTime(instanceDate);
     
     // generate a new (empty) id for the occurrence.
     QOrganizerItemId rId;
@@ -800,9 +763,10 @@ QOrganizerEventOccurrence QOrganizerItemMaemo5Engine::convertCEventToQEventOccur
     ret.setId(rId);
 
     return ret;
+    */
 }
 
-QOrganizerTodo QOrganizerItemMaemo5Engine::convertCTodoToQTodo(CTodo* ctodo, const QString& calendarName) const
+QOrganizerTodo QOrganizerItemMaemo5Engine::convertCTodoToQTodo(CTodo* ctodo ) const
 {
     QOrganizerTodo ret;
     int tempint = ctodo->getPriority();
@@ -810,33 +774,38 @@ QOrganizerTodo QOrganizerItemMaemo5Engine::convertCTodoToQTodo(CTodo* ctodo, con
         ret.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint));
     QDateTime tempdt = QDateTime::fromTime_t(ctodo->getDateStart());
     if (!tempdt.isNull())
-        ret.setNotBeforeDateTime(tempdt);
-    QString tempstr = QString::fromStdString(ctodo->getSummary());
-    if (!tempstr.isEmpty())
-        ret.setDisplayLabel(tempstr);
+        ret.setStartDateTime(tempdt);
     tempdt = QDateTime::fromTime_t(ctodo->getDue());
     if (!tempdt.isNull())
         ret.setDueDateTime(tempdt);
-
-    QOrganizerItemId rId;
-    rId.setManagerUri(managerUri());
-    QString hashKey = calendarName + ":" + QString::fromStdString(ctodo->getId());
-    rId.setLocalId(QOrganizerItemLocalId(qHash(hashKey)));
-    ret.setId(rId);
-    // and the recurrence information
+    tempint = ctodo->getPercentComplete();
+    if (tempint != -1)
+        ret.setProgressPercentage(tempint);
+    tempdt = QDateTime::fromTime_t(ctodo->getCompleted());
+    if (!tempdt.isNull())
+        ret.setFinishedDateTime(tempdt);
+    tempdt = QDateTime::fromTime_t(ctodo->getDateStart());
+    if (!tempdt.isNull())
+        ret.setStartDateTime(tempdt);
+    
+    // status is always available..
+    ret.setStatus(static_cast<QOrganizerTodoProgress::Status>(ctodo->getStatus()));
 
     return ret;
 }
 
 QOrganizerTodoOccurrence QOrganizerItemMaemo5Engine::convertCTodoToQTodoOccurrence(CTodo* ctodo, const QString& calendarName) const
 {
+    // TODO: The code in this method is from the Proof of Concept
+    // TODO: Replace the Proof of Concept codes at some point
+
     QOrganizerTodoOccurrence ret;
     int tempint = ctodo->getPriority();
     if (tempint != -1)
         ret.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint));
     QDateTime tempdt = QDateTime::fromTime_t(ctodo->getDateStart());
     if (!tempdt.isNull())
-        ret.setNotBeforeDateTime(tempdt);
+        ret.setStartDateTime(tempdt);
     QString tempstr = QString::fromStdString(ctodo->getSummary());
     if (!tempstr.isEmpty())
         ret.setDisplayLabel(tempstr);
@@ -851,28 +820,26 @@ QOrganizerTodoOccurrence QOrganizerItemMaemo5Engine::convertCTodoToQTodoOccurren
         ret.setFinishedDateTime(tempdt);
     tempdt = QDateTime::fromTime_t(ctodo->getDateStart());
     if (!tempdt.isNull())
-        ret.setStartedDateTime(tempdt);
+        ret.setStartDateTime(tempdt);
     
     // status is always available..
-    ret.setStatus(static_cast<QOrganizerItemTodoProgress::Status>(ctodo->getStatus()));
+    // TODO: Commented out, check this!
+    //ret.setStatus(static_cast<QOrganizerItemTodoProgress::Status>(ctodo->getStatus()));
     
-    QOrganizerItemId rId;
-    rId.setManagerUri(managerUri());
-    QString hashKey = calendarName + ":" + QString::fromStdString(ctodo->getId());
-    rId.setLocalId(QOrganizerItemLocalId(qHash(hashKey)));
-    ret.setId(rId);
-
     // now, in maemo, the parent id is the same as this id (todo's only have one occurrence).
-    ret.setParentItemId(rId);
-    ret.setOriginalDateTime(QDateTime::fromTime_t(ctodo->getDue())); // XXX TODO: verify this is the correct field to use as the instance date...
+
+    // TODO: These were removed from API, check if these are still needed?
+    //ret.setParentItemId(rId);
+    //ret.setOriginalDateTime(QDateTime::fromTime_t(ctodo->getDue())); // XXX TODO: verify this is the correct field to use as the instance date...
 
     return ret;
 }
 
-QOrganizerJournal QOrganizerItemMaemo5Engine::convertCJournalToQJournal(CJournal* cjournal, const QString& calendarName) const
+QOrganizerJournal QOrganizerItemMaemo5Engine::convertCJournalToQJournal(CJournal* cjournal) const
 {
-    QOrganizerJournal ret;
+    // TODO: Probably this method is not needed at all. Check if this can be removed.
 
+    QOrganizerJournal ret;
     QString tempstr = QString::fromStdString(cjournal->getDescription());
     if (!tempstr.isEmpty())
         ret.setDescription(tempstr);
@@ -880,191 +847,325 @@ QOrganizerJournal QOrganizerItemMaemo5Engine::convertCJournalToQJournal(CJournal
     if (!tempstr.isEmpty())
         ret.setDisplayLabel(tempstr);
 
-    QOrganizerItemId rId;
-    rId.setManagerUri(managerUri());
-    QString hashKey = calendarName + ":" + QString::fromStdString(cjournal->getId());
-    rId.setLocalId(QOrganizerItemLocalId(qHash(hashKey)));
-    ret.setId(rId);
-    
-    return ret;
-}
-
-CEvent* QOrganizerItemMaemo5Engine::convertQEventToCEvent(const QOrganizerEvent& event) const
-{
-    // first grab the QOILId, dehash it, find the calendar name, and then
-    // set the id and calendar id in the event item.
-    // then set all of the details and return.
-
-    QOrganizerItemLocalId eventId = event.localId();
-    QString entireId = d->m_cIdToQId.key(eventId);
-    QString calName = d->m_cIdToCName.value(entireId);
-    QString eventStrId = entireId.mid((calName.size() + 1), -1); // entireId = calendarName:cId
-
-    int calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-    bool deleteCalendar = true;
-    CCalendar* destinationCal = d->m_mcInstance->getCalendarByName(calName.toStdString(), calError);
-    if (destinationCal == 0) {
-        // the calendar does not exist.  either the item is a "new" item,
-        // or the calendar or item has been removed by another user.
-        // use the default calendar instead.
-        // XXX TODO: parametrise which calendar is default in ctor of Maemo5Engine.
-        destinationCal = d->m_mcInstance->getDefaultCalendar();
-        deleteCalendar = false; // according to docs, shouldn't delete this calendar.
-    }
-
-    int calId = destinationCal->getCalendarId(); // id of calendar in which to save the event.
-    
-    // now, check to see whether the item still exists in the calendar.
-    // if not, set the id to empty string.
-    // we'd use CCalendar::checkEntryExist() but no idea what the tableName should be...
-    CEvent *ret = destinationCal->getEvent(eventStrId.toStdString(), calError);
-    if (!ret) {
-        // if doesn't exist, clear the id, and remove the entries from the map (cache).
-        eventStrId.clear();
-        ret = new CEvent();
-        d->m_cIdToQId.remove(entireId);
-        d->m_cIdToCName.remove(entireId);
-    }
-    ret->setId(eventStrId.toStdString());
-    ret->setCalendarId(calId);
-   
-    if (!event.locationGeoCoordinates().isEmpty()) 
-        ret->setGeo(event.locationGeoCoordinates().toStdString());
-    if (!event.detail("QOrganizerItemPriority::DefinitionName").isEmpty())
-        ret->setPriority(static_cast<int>(event.priority()));
-    if (!event.displayLabel().isEmpty())
-        ret->setSummary(event.displayLabel().toStdString());
-    if (!event.description().isEmpty())
-        ret->setDescription(event.description().toStdString());
-    if (!event.startDateTime().isNull())
-        ret->setDateStart(event.startDateTime().toTime_t());
-    if (!event.endDateTime().isNull())
-        ret->setDateEnd(event.endDateTime().toTime_t());
-
-    // XXX TODO: recurrence information.
- 
-
-    if (destinationCal && deleteCalendar)
-        delete destinationCal;
+    /*
+    QString idString = QString::fromStdString( cjournal->getId() );
+    QOrganizerItemLocalId localId = idString.toUInt();
+    QOrganizerItemId id;
+    id.setLocalId( localId );
+    id.setManagerUri(managerUri());
+    ret.setId( id );
+    */
 
     return ret;
 }
 
-
-CTodo* QOrganizerItemMaemo5Engine::convertQTodoToCTodo(const QOrganizerTodo& todo) const
+void QOrganizerItemMaemo5Engine::fillInCommonCComponentDetails( QOrganizerItem* item, CComponent* component, bool setId ) const
 {
-    // first grab the QOILId, dehash it, find the calendar name, and then
-    // set the id and calendar id in the todo item.
-    // then set all of the details and return.
+    // TODO: Possible fields to add (defined in the CComponent superclass):
+    // TODO: flags, status, (datestart), (dateend), lastmodified, (comments)
+    // TODO: recurrence, until, rtype, alarm, allday, tzoffset... still others??
 
-    // suggest we also need to (find or generate) the occurrence and fill out the
-    // appropriate CTodo fields from the occurrence...
+    // TODO: What to do with attendee, instanceorigin, participation, priority, provenance
+    // TODO: rsvpinfo, timestamp... others??
 
-    QOrganizerItemLocalId todoId = todo.localId();
-    QString entireId = d->m_cIdToQId.key(todoId);
-    QString calName = d->m_cIdToCName.value(entireId);
-    QString todoStrId = entireId.mid((calName.size() + 1), -1); // entireId = calendarName:cId
+    if( item ) {
+        QString tempstr = QString::fromStdString(component->getSummary());
+        if (!tempstr.isEmpty())
+            item->setDisplayLabel(tempstr);
+        tempstr = QString::fromStdString(component->getDescription());
+        if (!tempstr.isEmpty())
+            item->setDescription(tempstr);
 
-    int calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-    bool deleteCalendar = true;
-    CCalendar* destinationCal = d->m_mcInstance->getCalendarByName(calName.toStdString(), calError);
-    if (destinationCal == 0) {
-        // the calendar does not exist.  either the item is a "new" item,
-        // or the calendar or item has been removed by another user.
-        // use the default calendar instead.
-        // XXX TODO: parametrise which calendar is default in ctor of Maemo5Engine.
-        destinationCal = d->m_mcInstance->getDefaultCalendar();
-        deleteCalendar = false; // according to docs, shouldn't delete this calendar.
+        tempstr = QString::fromStdString(component->getLocation());
+        if(!tempstr.isEmpty()) {
+            QOrganizerItemLocation il = item->detail<QOrganizerItemLocation>();
+            il.setGeoLocation( tempstr );
+            item->saveDetail(&il);
+        }
+        tempstr = QString::fromStdString(component->getGUid());
+        if(!tempstr.isEmpty()) {
+            QOrganizerItemGuid ig = item->detail<QOrganizerItemGuid>();
+            ig.setGuid( tempstr );
+            item->saveDetail(&ig);
+        }
+
+        // Set component ID
+        QOrganizerItemId id;
+        id.setManagerUri(managerUri());
+        if ( setId ) {
+            QString idString = QString::fromStdString( component->getId() );
+            QOrganizerItemLocalId localId = idString.toUInt();
+            id.setLocalId(localId);
+        }
+        else {
+            QOrganizerItemLocalId localId( 0 ); // no local id
+            id.setLocalId(localId);
+        }
+        item->setId( id );
     }
-
-    int calId = destinationCal->getCalendarId(); // id of calendar in which to save the event.
-    
-    // now, check to see whether the item still exists in the calendar.
-    // if not, set the id to empty string.
-    // we'd use CCalendar::checkEntryExist() but no idea what the tableName should be...
-    CTodo *ret = destinationCal->getTodo(todoStrId.toStdString(), calError);
-    if (!ret) {
-        // if doesn't exist, clear the id, and remove the entries from the map (cache).
-        todoStrId.clear();
-        ret = new CTodo();
-        d->m_cIdToQId.remove(entireId);
-        d->m_cIdToCName.remove(entireId);
-    }
-    ret->setId(todoStrId.toStdString());
-    ret->setCalendarId(calId);
-   
-    if (!todo.detail("QOrganizerItemPriority::DefinitionName").isEmpty())
-        ret->setPriority(static_cast<int>(todo.priority()));
-    if (!todo.displayLabel().isEmpty())
-        ret->setSummary(todo.displayLabel().toStdString());
-    if (!todo.description().isEmpty())
-        ret->setDescription(todo.description().toStdString());
-    if (!todo.notBeforeDateTime().isNull())
-        ret->setDateStart(todo.notBeforeDateTime().toTime_t());
-    if (!todo.dueDateTime().isNull())
-        ret->setDue(todo.dueDateTime().toTime_t());
-
-    // XXX TODO: generate or load the occurrence, and fill out required fields.
- 
-
-    if (destinationCal && deleteCalendar)
-        delete destinationCal;
-
-    return ret;
 }
 
-
-CJournal* QOrganizerItemMaemo5Engine::convertQJournalToCJournal(const QOrganizerJournal& journal) const
+CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const QOrganizerItem* item ) const
 {
-    // first grab the QOILId, dehash it, find the calendar name, and then
-    // set the id and calendar id in the journal item.
-    // then set all of the details and return.
+    QOrganizerItemLocalId itemId = item->localId();
+    QString itemIdStr = QString::number( itemId );
+    int calId = cal->getCalendarId();
+    int calError = CALENDAR_OPERATION_SUCCESSFUL;
+    CComponent* retn = 0; // Return null on errors
 
-    QOrganizerItemLocalId journalId = journal.localId();
-    QString entireId = d->m_cIdToQId.key(journalId);
-    QString calName = d->m_cIdToCName.value(entireId);
-    QString journalStrId = entireId.mid((calName.size() + 1), -1); // entireId = calendarName:cId
+    if (item->type() == QOrganizerItemType::TypeEvent) {
+        CEvent* cevent = cal->getEvent( itemIdStr.toStdString(), calError );
+        if ( !cevent ) {
+            // Event did not existed in calendar, create a new CEvent with an empty ID
+            cevent = new CEvent();
+        }
+        else {
+            // Event existed in calendar, use the existing event's ID
+            cevent->setId( itemIdStr.toStdString() );
+        }
+        cevent->setCalendarId( calId );
 
-    int calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-    bool deleteCalendar = true;
-    CCalendar* destinationCal = d->m_mcInstance->getCalendarByName(calName.toStdString(), calError);
-    if (destinationCal == 0) {
-        // the calendar does not exist.  either the item is a "new" item,
-        // or the calendar or item has been removed by another user.
-        // use the default calendar instead.
-        // XXX TODO: parametrise which calendar is default in ctor of Maemo5Engine.
-        destinationCal = d->m_mcInstance->getDefaultCalendar();
-        deleteCalendar = false; // according to docs, shouldn't delete this calendar.
+        // Set the event specific details:
+        const QOrganizerEvent* event = static_cast<const QOrganizerEvent*>( item );
+
+        // Location geo coordinates
+        if (!event->locationGeoCoordinates().isEmpty())
+            cevent->setGeo(event->locationGeoCoordinates().toStdString());
+
+        // Priority
+        if (!event->detail("QOrganizerItemPriority::DefinitionName").isEmpty())
+            cevent->setPriority(static_cast<int>(event->priority()));
+
+        // Start date
+        if (!event->startDateTime().isNull())
+            cevent->setDateStart(event->startDateTime().toTime_t());
+
+        // End date
+        if (!event->endDateTime().isNull())
+            cevent->setDateEnd(event->endDateTime().toTime_t());
+
+        // Build and set the recurrence information for the event
+        CRecurrence* recurrence = createCRecurrence( item );
+        cevent->setRecurrence( recurrence );
+        delete recurrence; // setting makes a copy
+        recurrence = 0;
+
+        retn = cevent;
+    }
+    else if (item->type() == QOrganizerItemType::TypeTodo) {
+        CTodo* ctodo = cal->getTodo( itemIdStr.toStdString(), calError );
+        if ( !ctodo ) {
+            // Event did not existed in calendar, create a new CEvent with an empty ID
+            ctodo = new CTodo();
+        }
+        else {
+            // Event existed in calendar, use the existing event's ID
+            ctodo->setId( itemIdStr.toStdString() );
+        }
+        ctodo->setCalendarId( calId );
+
+        // Set the todo specific details:
+        const QOrganizerTodo* todo = static_cast<const QOrganizerTodo*>( item );
+
+        // Location geo coordinates
+        if (!todo->detail("QOrganizerItemLocation::DefinitionName").isEmpty())
+            ctodo->setGeo(todo->detail<QOrganizerItemLocation>().geoLocation().toStdString());
+
+        // Priority
+        if (!todo->detail("QOrganizerItemPriority::DefinitionName").isEmpty())
+            ctodo->setPriority(static_cast<int>(todo->priority()));
+
+        // Start date
+        // TODO: ctodo->setDateStart and ctodo->setDue actually affect to the
+        // same attribute of CTodo instance... How should these be set?
+
+        // Due date
+        if (!todo->dueDateTime().isNull())
+            ctodo->setDue(todo->dueDateTime().toTime_t());
+        // TODO: CTodo::setCompleted, CTodo::setPercentComplete ??
+
+        // TODO: How shall all these time fields be set??????
+        /*
+        if (!todo->finishedDateTime().isNull())
+            ctodo->setDateStart(todo->finishedDateTime().toTime_t());
+            */
+
+        // Progress percentage
+        ctodo->setPercentComplete( todo->progressPercentage() );
+
+        // Build and set the recurrence information for the todo
+        CRecurrence* recurrence = createCRecurrence( item );
+        ctodo->setRecurrence( recurrence );
+        delete recurrence; // setting makes a copy
+        recurrence = 0;
+
+        retn = ctodo;
+    }
+    else if (item->type() == QOrganizerItemType::TypeJournal) {
+        CJournal* cjournal = cal->getJournal( itemIdStr.toStdString(), calError );
+        if ( !cjournal ) {
+            // Event did not existed in calendar, create a new CEvent with an empty ID
+            cjournal = new CJournal();
+        }
+        else {
+            // Event existed in calendar, use the existing event's ID
+            cjournal->setId( itemIdStr.toStdString() );
+        }
+        cjournal->setCalendarId( calId );
+
+        // Set journal specific details
+        // TODO: There are no journal specific details in Maemo.
+        // TODO: Maybe should be removed and should be set on the upper level?
+        const QOrganizerJournal* journal = static_cast<const QOrganizerJournal*>( item );
+        if (!journal->dateTime().isNull())
+            cjournal->setDateStart(journal->dateTime().toTime_t());
+
+        retn = cjournal;
     }
 
-    int calId = destinationCal->getCalendarId(); // id of calendar in which to save the event.
-    
-    // now, check to see whether the item still exists in the calendar.
-    // if not, set the id to empty string.
-    // we'd use CCalendar::checkEntryExist() but no idea what the tableName should be...
-    CJournal *ret = destinationCal->getJournal(journalStrId.toStdString(), calError);
-    if (!ret) {
-        // if doesn't exist, clear the id, and remove the entries from the map (cache).
-        journalStrId.clear();
-        ret = new CJournal();
-        d->m_cIdToQId.remove(entireId);
-        d->m_cIdToCName.remove(entireId);
+    if( retn ) {
+        // Set the details common for all the CComponents:
+
+        // Summary
+        if (!item->displayLabel().isEmpty())
+            retn->setSummary(item->displayLabel().toStdString());
+
+        // Descriptiom
+        if (!item->description().isEmpty())
+            retn->setDescription(item->description().toStdString());
+
+        // Location (Geo location is not set here as it's not a general CComponent detail)
+        QOrganizerItemLocation location = item->detail("QOrganizerItemLocation::DefinitionName");
+        if ( !location.isEmpty() )
+            retn->setLocation( location.locationName().toStdString() );
+
+        // dateStart and dateEnd are common fields for all CComponents, but those are set
+        // separately for each item type here, because there are independent time ranges
+        // defined for each type in the Qt Mobility API.
+
+        // (TODO: Status ?)
+
+        // (TODO: Until ?)
+
+        // GUid
+        if (!item->guid().isEmpty())
+            retn->setGUid(item->guid().toStdString());
+
+        QStringList comments = item->comments();
+        if ( !comments.isEmpty() ) {
+            // TODO: Maemo5 has only a single string for comments,
+            // map the comment list to a string some way.
+        }
     }
-    ret->setId(journalStrId.toStdString());
-    ret->setCalendarId(calId);
 
-    if (!journal.displayLabel().isEmpty())
-        ret->setSummary(journal.displayLabel().toStdString());
-    if (!journal.description().isEmpty())
-        ret->setDescription(journal.description().toStdString());
-    if (!journal.dateTime().isNull())
-        ret->setDateStart(journal.dateTime().toTime_t());
+    return retn;
+}
 
-    // XXX TODO: other fields?  notes etc?
- 
+CRecurrence* QOrganizerItemMaemo5Engine::createCRecurrence( const QOrganizerItem* item ) const
+{
+    // Only the event and todo types contain recurrence information
+    if (item->type() == QOrganizerItemType::TypeEvent) {
+        d->m_recTransformer.beginTransformToCrecurrence();
+        const QOrganizerEvent* event = static_cast<const QOrganizerEvent*>( item );
 
-    if (destinationCal && deleteCalendar)
-        delete destinationCal;
+        // Add recurrence rules
+        QList<QOrganizerItemRecurrenceRule> recurrenceRules = event->recurrenceRules();
+        foreach( QOrganizerItemRecurrenceRule rule, recurrenceRules )
+            d->m_recTransformer.addQOrganizerItemRecurrenceRule( rule );
 
-    return ret;
+        // Add exception rules
+        QList<QOrganizerItemRecurrenceRule> exceptionRules = event->exceptionRules();
+        foreach( QOrganizerItemRecurrenceRule rule, exceptionRules )
+            d->m_recTransformer.addQOrganizerItemExceptionRule( rule );
+
+        // TODO: Add recurrenceDates & exceptionDates
+
+        return d->m_recTransformer.crecurrence(); // TODO: This may need error handling?
+    }
+    else if (item->type() == QOrganizerItemType::TypeTodo) {
+        const QOrganizerTodo* todo = static_cast<const QOrganizerTodo*>( item );
+        QList<QDate> recurrenceDates = todo->recurrenceDates();
+        QList<QOrganizerItemRecurrenceRule> recurrenceRules = todo->recurrenceRules();
+
+        // TODO
+    }
+
+    return 0; // no recurrence information for this item type
+}
+
+QOrganizerItemManager::Error QOrganizerItemMaemo5Engine::calErrorToManagerError( int calError ) const
+{
+    switch( calError ) {
+    case CALENDAR_OPERATION_SUCCESSFUL:
+        {
+            return QOrganizerItemManager::NoError;
+        }
+    case CALENDAR_SYSTEM_ERROR:
+    case CALENDAR_DATABASE_ERROR:
+    // case CALENDAR_DBUS_ERROR: // CALENDAR_DBUS_ERROR and CALENDAR_FILE_ERROR has the same value 3
+    case CALENDAR_LTIME_ERROR:
+    case CALENDAR_LIBALARM_ERROR:
+    case CALENDAR_ALARM_ERROR:
+    case CALENDAR_APP_ERROR:
+    case CALENDAR_FUNC_ERROR:
+    case CALENDAR_ICAL_PARSE_ERROR:
+    case CALENDAR_INVALID_FILE:
+    case CALENDAR_INVALID_ICSFILE:
+    case CALENDAR_SCHEMA_CHANGED:
+    case CALENDAR_IMPORT_INCOMPLETE:
+        {
+            return QOrganizerItemManager::UnspecifiedError;
+        }
+    case CALENDAR_MEMORY_ERROR:
+        {
+            return QOrganizerItemManager::OutOfMemoryError;
+        }
+    case CALENDAR_FILE_ERROR:
+    case CALENDAR_DOESNOT_EXISTS:
+    case CALENDAR_NONE_INDB:
+    case NO_DUPLICATE_ITEM:
+    case CALENDAR_FETCH_NOITEMS:
+        {
+            return QOrganizerItemManager::DoesNotExistError;
+        }
+    case CALENDAR_DISK_FULL:
+    case CALENDAR_DB_FULL:
+        {
+            return QOrganizerItemManager::LimitReachedError;
+        }
+    case CALENDAR_INVALID_ARG_ERROR:
+        {
+            return QOrganizerItemManager::BadArgumentError;
+        }
+    case CALENDAR_ALREADY_EXISTS:
+    case CALENDAR_ENTRY_DUPLICATED:
+        {
+            return QOrganizerItemManager::AlreadyExistsError;
+        }
+    case CALENDAR_CANNOT_BE_DELETED:
+    case EXT_ITEM_RETAINED:
+    case LOCAL_ITEM_RETAINED:
+        {
+            return QOrganizerItemManager::PermissionsError;
+        }
+    case CALENDAR_DB_LOCKED:
+        {
+            return QOrganizerItemManager::LockedError;
+        }
+    case CALENDAR_ICS_COMPONENT_INVALID:
+    case CALENDAR_BATCH_ADD_INVALID:
+        {
+            return QOrganizerItemManager::InvalidDetailError;
+        }
+    default:
+        {
+            return QOrganizerItemManager::UnspecifiedError;
+        }
+    }
+}
+
+void QOrganizerItemMaemo5Engine::cleanupCal( CCalendar* cal ) const
+{
+    if ( cal != d->m_mcInstance->getDefaultCalendar() )
+        delete cal; // The default calendar should not be deleted
 }

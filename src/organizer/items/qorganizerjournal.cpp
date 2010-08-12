@@ -43,28 +43,30 @@
 
 QTM_USE_NAMESPACE
 
+/*!
+  \class QOrganizerJournal
+  \brief The QOrganizerJournal class supplies a journal which is associated with a particular point in time
+  \inmodule QtOrganizer
+  \ingroup organizer-items
+
+  A journal consists of personal data which is associated with a particular point in time.
+ */
+
+/*!
+  Sets the date time which this journal is associated with to \a dateTime
+ */
 void QOrganizerJournal::setDateTime(const QDateTime& dateTime)
 {
-    QOrganizerItemJournalTimeRange jtr = detail<QOrganizerItemJournalTimeRange>();
+    QOrganizerJournalTimeRange jtr = detail<QOrganizerJournalTimeRange>();
     jtr.setEntryDateTime(dateTime);
     saveDetail(&jtr);
 }
 
+/*!
+  Returns the date time associated with this journal
+ */
 QDateTime QOrganizerJournal::dateTime() const
 {
-    QOrganizerItemJournalTimeRange jtr = detail<QOrganizerItemJournalTimeRange>();
+    QOrganizerJournalTimeRange jtr = detail<QOrganizerJournalTimeRange>();
     return jtr.entryDateTime();
-}
-
-void QOrganizerJournal::setNote(const QString& note)
-{
-    QOrganizerItemNote nd = detail<QOrganizerItemNote>();
-    nd.setNote(note);
-    saveDetail(&nd);
-}
-
-QString QOrganizerJournal::note() const
-{
-    QOrganizerItemNote nd = detail<QOrganizerItemNote>();
-    return nd.note();
 }

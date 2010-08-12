@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -73,6 +73,11 @@
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
 
+#include "organizeritemtransform.h"
+
+#include <calprogresscallback.h> // MCalProgressCallBack
+#include <calchangecallback.h>
+
 QTM_USE_NAMESPACE
 
 class QOrganizerItemSymbianFactory : public QObject, public QOrganizerItemManagerEngineFactory
@@ -102,13 +107,23 @@ public:
     }
 };
 
-class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine
+class CCalSession;
+class CCalEntryView;
+class CCalInstanceView;
+class CActiveSchedulerWait;
+class TCalTime;
+class QOrganizerItemRequestQueue;
+
+class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine, 
+                                    public MCalProgressCallBack,
+                                    public MCalChangeCallBack2
 {
     Q_OBJECT
 
 public:
     static QOrganizerItemSymbianEngine *createSkeletonEngine(const QMap<QString, QString>& parameters);
 
+    QOrganizerItemSymbianEngine();
     ~QOrganizerItemSymbianEngine();
 
     /* URI reporting */
@@ -121,8 +136,11 @@ public:
     QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
 
-    bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
-    bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+    bool saveItem(QOrganizerItem *item, QOrganizerItemManager::Error *error);
+    bool saveItems(QList<QOrganizerItem> *items, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error);
+
+    bool removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemManager::Error* error);
+    bool removeItems(const QList<QOrganizerItemLocalId> &itemIds, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error);
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const;
@@ -142,8 +160,49 @@ public:
     bool cancelRequest(QOrganizerItemAbstractRequest* req);
     bool waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs);
 
+public: // MCalProgressCallBack
+    void Progress(TInt aPercentageCompleted);
+    void Completed(TInt aError);
+    TBool NotifyProgress();
+    
+public: // MCalChangeCallBack2
+    void CalChangeNotification(RArray<TCalChangeEntry>& aChangeItems);
+    
+public: 
+    /* Util functions */
+    static bool transformError(TInt symbianError, QOrganizerItemManager::Error* qtError);
+    CCalEntryView* entryView();
+    void deleteItemL(const QOrganizerItemLocalId& organizeritemId,
+            int& sucessCount);
+    void saveItemL(QOrganizerItem *item, QOrganizerItemChangeSet *changeSet = 0);
+    void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, 
+            const QOrganizerItemFetchHint& fetchHint) const;
+    QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, 
+        const QOrganizerItemFilter& filter, 
+        const QList<QOrganizerItemSortOrder>& sortOrders) const;
+    
 private:
-    QOrganizerItemSymbianEngineData* d;
+    void removeItemL(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet *changeSet);
+    void modifyDetailDefinitionsForEvent() const;
+    void modifyDetailDefinitionsForEventOccurrence() const;
+    void modifyDetailDefinitionsForTodo() const;
+    void modifyDetailDefinitionsForTodoOccurrence() const;
+    void modifyDetailDefinitionsForNote() const;
+    void modifyDetailDefinitionsForJournal() const;
+    CCalEntry* createEntryToSaveItemInstanceL(QOrganizerItem *item,bool & isNewEntry);
+	
+private:
+    QOrganizerItemSymbianEngineData *d;
+    CCalSession *m_calSession;
+    CCalEntryView *m_entryView;
+    CCalInstanceView *m_instanceView;
+    CActiveSchedulerWait *m_activeSchedulerWait;
+    QOrganizerItemRequestQueue* m_requestServiceProviderQueue;
+
+    // TODO: replace this with an algorithm that generates the calendar entry UID
+    int m_entrycount;
+    OrganizerItemTransform m_itemTransform;
+    mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definition;
 
     friend class QOrganizerItemSymbianFactory;
 };

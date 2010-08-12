@@ -47,7 +47,7 @@
 QT_BEGIN_NAMESPACE
 
 class QLocalMediaPlaylistProviderPrivate;
-class Q_MEDIA_EXPORT QLocalMediaPlaylistProvider : public QMediaPlaylistProvider
+class Q_MULTIMEDIA_EXPORT QLocalMediaPlaylistProvider : public QMediaPlaylistProvider
 {
     Q_OBJECT
 public:

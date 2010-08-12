@@ -43,7 +43,7 @@
 #define QORGANIZERTODOOCCURRENCE_H
 
 #include "qtorganizer.h"
-#include "qorganizeritemtodoprogress.h"
+#include "qorganizertodoprogress.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -53,25 +53,23 @@ public:
     Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerTodoOccurrence, QOrganizerItemType::TypeTodoOccurrence)
 
     // XXX TODO: see discussion in qorganizertodo.h
-    void setNotBeforeDateTime(const QDateTime& noteBeforeDateTime);
-    QDateTime notBeforeDateTime() const;
+    void setStartDateTime(const QDateTime& startDateTime);
+    QDateTime startDateTime() const;
     void setDueDateTime(const QDateTime& dueDateTime);
     QDateTime dueDateTime() const;
 
-    void setParentItemId(const QOrganizerItemId& parentId) const;
-    QOrganizerItemId parentItemId() const;
-    void setOriginalDateTime(const QDateTime& dateTime);
-    QDateTime originalDateTime() const;
+    void setParentLocalId(const QOrganizerItemLocalId& parentId);
+    QOrganizerItemLocalId parentLocalId() const;
+    void setOriginalDate(const QDate& date);
+    QDate originalDate() const;
 
     void setPriority(QOrganizerItemPriority::Priority);
     QOrganizerItemPriority::Priority priority() const;
 
     void setProgressPercentage(int percentage);
     int progressPercentage() const;
-    void setStatus(QOrganizerItemTodoProgress::Status status);
-    QOrganizerItemTodoProgress::Status status() const;
-    void setStartedDateTime(const QDateTime& startedDateTime);
-    QDateTime startedDateTime() const;
+    void setStatus(QOrganizerTodoProgress::Status status);
+    QOrganizerTodoProgress::Status status() const;
     void setFinishedDateTime(const QDateTime& finishedDateTime);
     QDateTime finishedDateTime() const;
 };

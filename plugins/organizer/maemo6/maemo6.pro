@@ -6,6 +6,9 @@ PLUGIN_TYPE=organizer
 CONFIG += mobility
 MOBILITY = organizer
 
+CONFIG += link_pkgconfig
+PKGCONFIG += libextendedkcal
+
 include(../../../common.pri)
 
 INCLUDEPATH += ../../../src/organizer \
@@ -15,12 +18,9 @@ INCLUDEPATH += ../../../src/organizer \
                 ../../../src/organizer/details
 
 HEADERS += \
-        qorganizermaemo6_p.h
+        qorganizermaemo6.h
 SOURCES += \
         qorganizermaemo6.cpp
-
-target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
-INSTALLS += target
 
 # Once we know what the pkgconfig deps are
 # CONFIG += link_pkgconfig

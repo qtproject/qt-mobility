@@ -43,7 +43,7 @@
 #define S60VIDEOOVERLAY_H
 
 #include <QtCore/qobject.h>
-#include <QVideoWindowControl>
+#include <qvideowindowcontrol.h>
 
 QT_USE_NAMESPACE
 

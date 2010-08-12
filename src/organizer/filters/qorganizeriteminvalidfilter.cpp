@@ -45,7 +45,8 @@
 /*!
   \class QOrganizerItemInvalidFilter
   \brief The QOrganizerItemInvalidFilter class matches no organizeritems.
-   \ingroup organizeritems-filters
+  \inmodule QtOrganizer
+  \ingroup organizer-filters
  
   This class provides a filter which will never match any organizeritems
  */
@@ -63,6 +64,18 @@ public:
     bool compare(const QOrganizerItemFilterPrivate*) const
     {
         return true; // all invalid filters are alike
+    }
+
+    QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
+    {
+        Q_UNUSED(formatVersion)
+        return stream;
+    }
+
+    QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
+    {
+        Q_UNUSED(formatVersion)
+        return stream;
     }
 
     /* There is no way this can be called - d is never detached */

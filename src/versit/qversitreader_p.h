@@ -181,6 +181,9 @@ class Q_AUTOTEST_EXPORT QVersitReaderPrivate : public QThread
 public: // Constructors and destructor
     QVersitReaderPrivate();
     ~QVersitReaderPrivate();
+
+    static QHash<QPair<QVersitDocument::VersitType,QString>, QVersitProperty::ValueType>*
+        valueTypeMap();
     void init(QVersitReader* reader);
 
 signals:
@@ -261,10 +264,8 @@ public: // New functions
                                   bool hasEscapedBackslashes);
     static void removeBackSlashEscaping(QString& text);
 
-public: // Data
-    /* key is the document type and property name, value is the type of property it is.
-       If there is no entry, assume it is a PlainType */
-    QHash<QPair<QVersitDocument::VersitType,QString>, QVersitProperty::ValueType> mValueTypeMap;
+// Data
+public:
     QPointer<QIODevice> mIoDevice;
     QScopedPointer<QBuffer> mInputBytes; // Holds the data set by setData()
     QList<QVersitDocument> mVersitDocuments;
@@ -274,6 +275,11 @@ public: // Data
     QVersitReader::Error mError;
     bool mIsCanceling;
     mutable QMutex mMutex;
+
+private:
+    /* key is the document type and property name, value is the type of property it is.
+       If there is no entry, assume it is a PlainType */
+    static QHash<QPair<QVersitDocument::VersitType,QString>, QVersitProperty::ValueType>* mValueTypeMap;
 };
 
 QTM_END_NAMESPACE

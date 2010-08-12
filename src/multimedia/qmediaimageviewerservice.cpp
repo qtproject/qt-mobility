@@ -44,12 +44,11 @@
 #include "qmediacontrol_p.h"
 #include "qmediaservice_p.h"
 
-#include "qmediacontent.h"
-#include "qmediaresource.h"
-#include "qvideooutputcontrol.h"
-#include "qmediaobject_p.h"
-#include "qvideorenderercontrol.h"
-#include "qvideowidgetcontrol.h"
+#include <qmediacontent.h>
+#include <qmediaresource.h>
+#include <qmediaobject_p.h>
+#include <qvideorenderercontrol.h>
+#include <qvideowidgetcontrol.h>
 
 #include <QtCore/qdebug.h>
 
@@ -61,8 +60,8 @@
 #include <QtNetwork/qnetworkreply.h>
 #include <QtNetwork/qnetworkrequest.h>
 
-#include <QtMultimedia/qabstractvideosurface.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qabstractvideosurface.h>
+#include <qvideosurfaceformat.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -71,7 +70,6 @@ class QMediaImageViewerServicePrivate : public QMediaServicePrivate
 public:
     QMediaImageViewerServicePrivate()
         : viewerControl(0)
-        , outputControl(0)
         , rendererControl(0)
         , network(0)
         , internalNetwork(0)
@@ -80,10 +78,8 @@ public:
 
     bool load(QIODevice *device);
     void clear();
-    void _q_outputChanged(QVideoOutputControl::Output output);
 
     QMediaImageViewerControl *viewerControl;
-    QMediaImageViewerOutputControl *outputControl;
     QMediaImageViewerRenderer *rendererControl;
     QNetworkAccessManager *network;
     QNetworkAccessManager *internalNetwork;
@@ -141,30 +137,6 @@ void QMediaImageViewerRenderer::showImage(const QImage &image)
     }
 }
 
-QMediaImageViewerOutputControl::QMediaImageViewerOutputControl(QObject *parent)
-    : QVideoOutputControl(parent)
-    , m_output(NoOutput)
-{
-}
-
-QList<QVideoOutputControl::Output> QMediaImageViewerOutputControl::availableOutputs() const
-{
-    return QList<Output>()
-            << RendererOutput;
-}
-
-void QMediaImageViewerOutputControl::setOutput(Output output)
-{
-    switch (output) {
-    case RendererOutput:
-        emit m_output = output;
-        break;
-    default:
-        m_output = NoOutput;
-    }
-    emit outputChanged(m_output);
-}
-
 bool QMediaImageViewerServicePrivate::load(QIODevice *device)
 {
     QImageReader reader(device);
@@ -175,7 +147,7 @@ bool QMediaImageViewerServicePrivate::load(QIODevice *device)
         m_image = reader.read();
     }
 
-    if (outputControl->output() == QVideoOutputControl::RendererOutput)
+    if (rendererControl)
         rendererControl->showImage(m_image);
 
     return !m_image.isNull();
@@ -185,16 +157,7 @@ void QMediaImageViewerServicePrivate::clear()
 {
     m_image = QImage();
 
-    if (outputControl->output() == QVideoOutputControl::RendererOutput)
-        rendererControl->showImage(m_image);
-}
-
-void QMediaImageViewerServicePrivate::_q_outputChanged(QVideoOutputControl::Output output)
-{
-    if (output != QVideoOutputControl::RendererOutput)
-        rendererControl->showImage(QImage());
-
-    if (output == QVideoOutputControl::RendererOutput)
+    if (rendererControl)
         rendererControl->showImage(m_image);
 }
 
@@ -211,11 +174,6 @@ QMediaImageViewerService::QMediaImageViewerService(QObject *parent)
     Q_D(QMediaImageViewerService);
 
     d->viewerControl = new QMediaImageViewerControl(this);
-    d->outputControl = new QMediaImageViewerOutputControl;
-    connect(d->outputControl, SIGNAL(outputChanged(QVideoOutputControl::Output)),
-            SLOT(_q_outputChanged(QVideoOutputControl::Output)));
-
-    d->rendererControl = new QMediaImageViewerRenderer;
 }
 
 /*!
@@ -225,24 +183,39 @@ QMediaImageViewerService::~QMediaImageViewerService()
     Q_D(QMediaImageViewerService);
 
     delete d->rendererControl;
-    delete d->outputControl;
     delete d->viewerControl;
 }
 
 /*!
 */
-QMediaControl *QMediaImageViewerService::control(const char *name) const
+QMediaControl *QMediaImageViewerService::requestControl(const char *name)
 {
-    Q_D(const QMediaImageViewerService);
+    Q_D(QMediaImageViewerService);
 
     if (qstrcmp(name, QMediaImageViewerControl_iid) == 0) {
         return d->viewerControl;
-    } else if (qstrcmp(name, QVideoOutputControl_iid) == 0) {
-        return d->outputControl;
     } else if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
-        return d->rendererControl;
-    } else {
-        return 0;
+        if (!d->rendererControl) {
+            d->rendererControl = new QMediaImageViewerRenderer;
+            d->rendererControl->showImage(d->m_image);
+
+            return d->rendererControl;
+        }
+    }
+    return 0;
+}
+
+void QMediaImageViewerService::releaseControl(QMediaControl *control)
+{
+    Q_D(QMediaImageViewerService);
+
+    if (!control) {
+        qWarning("QMediaService::releaseControl():"
+                " Attempted release of null control");
+    } else if (control == d->rendererControl) {
+        delete d->rendererControl;
+
+        d->rendererControl = 0;
     }
 }
 
@@ -456,10 +429,10 @@ void QMediaImageViewerControl::showMedia(const QMediaContent &media)
 
     if (media.isNull()) {
         d->service->d_func()->clear();
-
-        d->status = QMediaImageViewer::NoMedia;
-
-        emit mediaStatusChanged(d->status);
+        if (d->status != QMediaImageViewer::NoMedia) {
+            d->status = QMediaImageViewer::NoMedia;
+            emit mediaStatusChanged(d->status);
+        }
     } else {
         d->possibleResources = media.resources();
         d->loadImage();

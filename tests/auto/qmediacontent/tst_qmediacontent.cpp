@@ -44,6 +44,8 @@
 
 #include <qmediacontent.h>
 
+//TESTED_COMPONENT=src/multimedia
+
 QT_USE_NAMESPACE
 class tst_QMediaContent : public QObject
 {

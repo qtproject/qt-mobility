@@ -72,6 +72,8 @@
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
 
+#include "qorganizerrecurrencetransform.h"
+
 #include "qorganizerjournal.h"
 #include "qorganizertodo.h"
 #include "qorganizerevent.h"
@@ -80,6 +82,7 @@
 #include <CEvent.h>
 #include <CTodo.h>
 #include <CJournal.h>
+#include <CRecurrence.h>
 
 QTM_USE_NAMESPACE
 
@@ -115,14 +118,17 @@ public:
 
     // key = QString(QLatin1String(CEvent.id().data()));
     // value = QOrganizerItemLocalId(qHash(key));
-    QMap<QString, QOrganizerItemLocalId> m_cIdToQId;
+    QMap<QString, QOrganizerItemLocalId> m_cIdToQId; // TODO: This is not used anymore, remove
 
     // the cId consists of a calendar name and an item id
     // we need to be able to separate both of these parts.
-    QMap<QString, QString> m_cIdToCName;
+    QMap<QString, QString> m_cIdToCName; // TODO: This is not used anymore, remove
 
     // the multicalendar instance
     CMulticalendar *m_mcInstance;
+
+    // recurrence rule converter instance
+    OrganizerRecurrenceTransform m_recTransformer;
 };
 
 
@@ -140,6 +146,11 @@ public:
 
     QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const;
     QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const;
+
+    // TODO: This is temporary just to reset the calendar in error situations,
+    // use only for debugging & remove this finally!
+    void removeAllForDebug() const;
+
     QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
 
@@ -159,22 +170,31 @@ public:
     bool waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs);
 
 private:
-    // conversion functions
-    QOrganizerEvent convertCEventToQEvent(CEvent* cevent, const QString& calendarName) const;
-    QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent* cevent, const QDateTime& instanceDate, const QString& calendarName) const;
-    QOrganizerTodo convertCTodoToQTodo(CTodo* ctodo, const QString& calendarName) const;
-    QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo* ctodo, const QString& calendarName) const;
-    QOrganizerJournal convertCJournalToQJournal(CJournal* cjournal, const QString& calendarName) const;
+    // single item saving implementation
+    int doSaveItem(CCalendar* cal, QOrganizerItem* item, QOrganizerItemManager::Error* error);
 
-    CEvent* convertQEventToCEvent(const QOrganizerEvent& event) const;
-    CTodo* convertQTodoToCTodo(const QOrganizerTodo& todo) const;
-    CJournal* convertQJournalToCJournal(const QOrganizerJournal& journal) const;
+    // conversion functions
+    QOrganizerEvent convertCEventToQEvent(CEvent* cevent) const;
+    QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent* cevent, const QDateTime& instanceDate) const;
+    QOrganizerTodo convertCTodoToQTodo(CTodo* ctodo) const;
+    QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo* ctodo, const QString& calendarName) const;
+    QOrganizerJournal convertCJournalToQJournal(CJournal* cjournal ) const;
+
+    // conversions between CComponent and QOrganizerItem
+    void fillInCommonCComponentDetails( QOrganizerItem* item, CComponent* component, bool setId = true ) const;
+    CComponent* createCComponent( CCalendar* cal, const QOrganizerItem* item ) const;
+
+    // recurrence information conversions
+    CRecurrence* createCRecurrence( const QOrganizerItem* item ) const;
+
+    // error code conversion
+    QOrganizerItemManager::Error calErrorToManagerError( int calError ) const;
+
+    // calendar instance deletion helper
+    void cleanupCal( CCalendar* cal ) const;
 
     // ctor
     QOrganizerItemMaemo5Engine();
-
-    // enumerate all items
-    QList<QOrganizerItem> enumerateAllItems(QOrganizerItemChangeSet *cs, QOrganizerItemManager::Error* error) const;
 
 private:
     QOrganizerItemMaemo5EngineData* d;
@@ -183,4 +203,3 @@ private:
 };
 
 #endif
-

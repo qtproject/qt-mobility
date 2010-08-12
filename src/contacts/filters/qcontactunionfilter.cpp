@@ -51,6 +51,9 @@ QTM_BEGIN_NAMESPACE
    \brief The QContactUnionFilter class provides a filter which unions the
     results of other filters.
    
+  
+  \inmodule QtContacts
+  
    \ingroup contacts-filters
  
    It may be used to select contacts which match all of the filters in the union
@@ -82,6 +85,16 @@ void QContactUnionFilter::setFilters(const QList<QContactFilter>& filters)
 }
 
 /*!
+ * Clears the list of filters.  A cleared union filter will match no contacts.
+ * \sa filters(), remove()
+ */
+void QContactUnionFilter::clear()
+{
+    Q_D(QContactUnionFilter);
+    d->m_filters.clear();
+}
+
+/*!
  * Prepends the given \a filter to the list of unioned filters
  * \sa append(), filters()
  */
@@ -103,7 +116,7 @@ void QContactUnionFilter::append(const QContactFilter& filter)
 
 /*!
  * Removes the given \a filter from the union list
- * \sa filters(), append(), prepend()
+ * \sa filters(), append(), prepend(), clear()
  */
 void QContactUnionFilter::remove(const QContactFilter& filter)
 {

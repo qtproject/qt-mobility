@@ -50,8 +50,8 @@ QTM_BEGIN_NAMESPACE
    \class QOrganizerItemUnionFilter
    \brief The QOrganizerItemUnionFilter class provides a filter which unions the
     results of other filters.
-   
-   \ingroup organizeritems-filters
+   \inmodule QtOrganizer
+   \ingroup organizer-filters
  
    It may be used to select organizeritems which match all of the filters in the union
  */
@@ -103,12 +103,22 @@ void QOrganizerItemUnionFilter::append(const QOrganizerItemFilter& filter)
 
 /*!
  * Removes the given \a filter from the union list
- * \sa filters(), append(), prepend()
+ * \sa filters(), append(), prepend(), clear()
  */
 void QOrganizerItemUnionFilter::remove(const QOrganizerItemFilter& filter)
 {
     Q_D(QOrganizerItemUnionFilter);
     d->m_filters.removeAll(filter);
+}
+
+/*!
+ * Clears the list of filters.  A cleared union filter will match no items.
+ * \sa filters(), remove()
+ */
+void QOrganizerItemUnionFilter::clear()
+{
+    Q_D(QOrganizerItemUnionFilter);
+    d->m_filters.clear();
 }
 
 /*!

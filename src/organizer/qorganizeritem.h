@@ -55,14 +55,22 @@
 #include "qorganizeritemtype.h"
 #include "qorganizeritemdisplaylabel.h"
 #include "qorganizeritemdescription.h"
-
 #include "qorganizercollection.h"
+
+class QDataStream;
 
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemManager;
 class QOrganizerItemData;
 class QOrganizerItemName;
+
+// MSVC needs the function declared before the friend declaration
+class QOrganizerItem;
+#ifndef QT_NO_DATASTREAM
+Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerItem& item);
+Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItem& item);
+#endif
 
 class Q_ORGANIZER_EXPORT QOrganizerItem
 {
@@ -82,25 +90,10 @@ public:
     void setId(const QOrganizerItemId& id);
     QOrganizerItemLocalId localId() const;
 
-    /* Type - event, todo, journal, note... */
-    QString type() const;
-    void setType(const QString& type);
-    void setType(const QOrganizerItemType& type);
-
-    /* The display label of the organizeritem */
-    QString displayLabel() const;
-    void setDisplayLabel(const QString& label);
-    void setDisplayLabel(const QOrganizerItemDisplayLabel& label);
-
-    /* The description of the organizeritem */
-    QString description() const;
-    void setDescription(const QString& description);
-    void setDescription(const QOrganizerItemDescription& description);
-
     /* The collection to which an item belongs - read only */
     QOrganizerCollectionId collection() const;
 
-    /* Is this an empty organizeritem? */
+    /* Is this an empty organizer item? */
     bool isEmpty() const;
     void clearDetails();
 
@@ -173,8 +166,28 @@ public:
 
     // Some common convenience detail accessors
     // has to be things that all subclasses (including Occurrences) have.
-    void setNote(QString note);  // ??
-    QString note() const;        // ??
+
+    /* Type - event, todo, journal, note... */
+    QString type() const;
+    void setType(const QString& type);
+    void setType(const QOrganizerItemType& type);
+
+    /* The display label of the organizer item */
+    QString displayLabel() const;
+    void setDisplayLabel(const QString& label);
+    void setDisplayLabel(const QOrganizerItemDisplayLabel& label);
+
+    /* The description of the organizer item */
+    QString description() const;
+    void setDescription(const QString& description);
+    void setDescription(const QOrganizerItemDescription& description);
+
+    QStringList comments() const;
+    void clearComments();
+    void addComment(const QString& comment);
+
+    QString guid() const;
+    void setGuid(const QString& guid);
 
 protected:
     explicit QOrganizerItem(const char* type);
@@ -185,6 +198,8 @@ protected:
     friend class QOrganizerItemManager;
     friend class QOrganizerItemManagerData;
     friend class QOrganizerItemManagerEngine;
+    friend QDataStream& operator<<(QDataStream& out, const QOrganizerItem& item);
+    friend QDataStream& operator>>(QDataStream& in, QOrganizerItem& item);
 
     QSharedDataPointer<QOrganizerItemData> d;
 };

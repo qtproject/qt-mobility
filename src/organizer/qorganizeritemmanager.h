@@ -107,7 +107,8 @@ public:
         VersionMismatchError,
         LimitReachedError,
         InvalidItemTypeError,
-        InvalidCollectionError // maybe CollectionDoesNotExistError?
+        InvalidCollectionError, // maybe CollectionDoesNotExistError?
+        InvalidOccurrenceError
     };
 
     /* Error reporting */

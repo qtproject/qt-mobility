@@ -90,7 +90,14 @@ void QSensorPluginLoader::load()
 
             continue;
         } else {
-            qWarning() << "QSensorPluginLoader: Failed to load plugin: " << plugins.at(i) << loader->errorString();
+            qWarning() << "QSensorPluginLoader: Failed to load plugin";
+            if (o == 0) {
+                qWarning() << "Reason: o == 0";
+            } else if (o->qt_metacast(m_iid) == 0) {
+                qWarning() << "Reason: o->qt_metacast(m_iid) == 0";
+            }
+            qWarning() << "Plugin:" << plugins.at(i);
+            qWarning() << "Error:" << loader->errorString();
         }
         delete o;
         loader->unload();

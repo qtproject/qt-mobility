@@ -55,13 +55,14 @@ class Q_ORGANIZER_EXPORT QOrganizerItemType : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldType;
-    const char* TypeEvent;
-    const char* TypeTodo;
-    const char* TypeJournal;
-    const char* TypeNote;
-    // etc?
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldType;
+    static const QLatin1Constant TypeEvent;
+    static const QLatin1Constant TypeTodo;
+    static const QLatin1Constant TypeJournal;
+    static const QLatin1Constant TypeNote;
+    static const QLatin1Constant TypeEventOccurrence;
+    static const QLatin1Constant TypeTodoOccurrence;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemType, "Type")
     Q_DECLARE_LATIN1_CONSTANT(FieldType, "Type");

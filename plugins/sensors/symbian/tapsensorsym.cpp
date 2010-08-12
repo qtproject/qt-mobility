@@ -43,7 +43,7 @@
 /**
  * set the id of the Tap sensor
  */
-const char *CTapSensorSym::id("sym.tap");
+char const * const CTapSensorSym::id("sym.tap");
 
 /**
  * Factory function, this is used to create the tap sensor object

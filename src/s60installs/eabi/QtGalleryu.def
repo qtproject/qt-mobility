@@ -1,0 +1,500 @@
+EXPORTS
+	_ZN10QtMobility14QGalleryFilterC1ERKNS_19QGalleryUnionFilterE @ 1 NONAME
+	_ZN10QtMobility14QGalleryFilterC1ERKNS_22QGalleryMetaDataFilterE @ 2 NONAME
+	_ZN10QtMobility14QGalleryFilterC1ERKNS_26QGalleryIntersectionFilterE @ 3 NONAME
+	_ZN10QtMobility14QGalleryFilterC1ERKS0_ @ 4 NONAME
+	_ZN10QtMobility14QGalleryFilterC1Ev @ 5 NONAME
+	_ZN10QtMobility14QGalleryFilterC2ERKNS_19QGalleryUnionFilterE @ 6 NONAME
+	_ZN10QtMobility14QGalleryFilterC2ERKNS_22QGalleryMetaDataFilterE @ 7 NONAME
+	_ZN10QtMobility14QGalleryFilterC2ERKNS_26QGalleryIntersectionFilterE @ 8 NONAME
+	_ZN10QtMobility14QGalleryFilterC2ERKS0_ @ 9 NONAME
+	_ZN10QtMobility14QGalleryFilterC2Ev @ 10 NONAME
+	_ZN10QtMobility14QGalleryFilterD1Ev @ 11 NONAME
+	_ZN10QtMobility14QGalleryFilterD2Ev @ 12 NONAME
+	_ZN10QtMobility14QGalleryFilteraSERKS0_ @ 13 NONAME
+	_ZN10QtMobility16QAbstractGallery11qt_metacallEN11QMetaObject4CallEiPPv @ 14 NONAME
+	_ZN10QtMobility16QAbstractGallery11qt_metacastEPKc @ 15 NONAME
+	_ZN10QtMobility16QAbstractGallery16staticMetaObjectE @ 16 NONAME DATA 16
+	_ZN10QtMobility16QAbstractGallery19getStaticMetaObjectEv @ 17 NONAME
+	_ZN10QtMobility16QAbstractGalleryC2EP7QObject @ 18 NONAME
+	_ZN10QtMobility16QAbstractGalleryC2ERNS_23QAbstractGalleryPrivateEP7QObject @ 19 NONAME
+	_ZN10QtMobility16QAbstractGalleryD0Ev @ 20 NONAME
+	_ZN10QtMobility16QAbstractGalleryD1Ev @ 21 NONAME
+	_ZN10QtMobility16QAbstractGalleryD2Ev @ 22 NONAME
+	_ZN10QtMobility16QDocumentGallery10AudioGenreE @ 23 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery10PhotoAlbumE @ 24 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery10albumTitleE @ 25 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery10audioCodecE @ 26 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery10discNumberE @ 27 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery10lastPlayedE @ 28 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery10sampleRateE @ 29 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery10trackCountE @ 30 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery10videoCodecE @ 31 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery11AlbumArtistE @ 32 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery11albumArtistE @ 33 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery11cameraModelE @ 34 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery11descriptionE @ 35 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery11focalLengthE @ 36 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery11orientationE @ 37 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery11qt_metacallEN11QMetaObject4CallEiPPv @ 38 NONAME
+	_ZN10QtMobility16QDocumentGallery11qt_metacastEPKc @ 39 NONAME
+	_ZN10QtMobility16QDocumentGallery11trackNumberE @ 40 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery12audioBitRateE @ 41 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery12channelCountE @ 42 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery12exposureTimeE @ 43 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery12flashEnabledE @ 44 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery12lastAccessedE @ 45 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery12lastModifiedE @ 46 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery12meteringModeE @ 47 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery12videoBitRateE @ 48 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery12whiteBalanceE @ 49 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery13fileExtensionE @ 50 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery14createResponseEPNS_23QGalleryAbstractRequestE @ 51 NONAME
+	_ZN10QtMobility16QDocumentGallery14resumePositionE @ 52 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery15exposureProgramE @ 53 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery16staticMetaObjectE @ 54 NONAME DATA 16
+	_ZN10QtMobility16QDocumentGallery18cameraManufacturerE @ 55 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery19getStaticMetaObjectEv @ 56 NONAME
+	_ZN10QtMobility16QDocumentGallery3urlE @ 57 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery4FileE @ 58 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery4TextE @ 59 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery4pathE @ 60 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery5AlbumE @ 61 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery5AudioE @ 62 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery5ImageE @ 63 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery5VideoE @ 64 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery5genreE @ 65 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery5titleE @ 66 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery5widthE @ 67 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery6ArtistE @ 68 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery6FolderE @ 69 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery6artistE @ 70 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery6authorE @ 71 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery6heightE @ 72 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery6lyricsE @ 73 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery6ratingE @ 74 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery7createdE @ 75 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery7fNumberE @ 76 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery7subjectE @ 77 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery8DocumentE @ 78 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery8PlaylistE @ 79 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery8commentsE @ 80 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery8composerE @ 81 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery8directorE @ 82 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery8durationE @ 83 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery8fileNameE @ 84 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery8filePathE @ 85 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery8fileSizeE @ 86 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery8keywordsE @ 87 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery8languageE @ 88 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery8mimeTypeE @ 89 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery8producerE @ 90 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery9copyrightE @ 91 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery9dateTakenE @ 92 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery9frameRateE @ 93 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery9pageCountE @ 94 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery9performerE @ 95 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery9playCountE @ 96 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGallery9wordCountE @ 97 NONAME DATA 8
+	_ZN10QtMobility16QDocumentGalleryC1EP7QObject @ 98 NONAME
+	_ZN10QtMobility16QDocumentGalleryC2EP7QObject @ 99 NONAME
+	_ZN10QtMobility16QDocumentGalleryD0Ev @ 100 NONAME
+	_ZN10QtMobility16QDocumentGalleryD1Ev @ 101 NONAME
+	_ZN10QtMobility16QDocumentGalleryD2Ev @ 102 NONAME
+	_ZN10QtMobility16QGalleryResourceC1ERK4QUrl @ 103 NONAME
+	_ZN10QtMobility16QGalleryResourceC1ERK4QUrl4QMapIi8QVariantE @ 104 NONAME
+	_ZN10QtMobility16QGalleryResourceC1ERKS0_ @ 105 NONAME
+	_ZN10QtMobility16QGalleryResourceC1Ev @ 106 NONAME
+	_ZN10QtMobility16QGalleryResourceC2ERK4QUrl @ 107 NONAME
+	_ZN10QtMobility16QGalleryResourceC2ERK4QUrl4QMapIi8QVariantE @ 108 NONAME
+	_ZN10QtMobility16QGalleryResourceC2ERKS0_ @ 109 NONAME
+	_ZN10QtMobility16QGalleryResourceC2Ev @ 110 NONAME
+	_ZN10QtMobility16QGalleryResourceD1Ev @ 111 NONAME
+	_ZN10QtMobility16QGalleryResourceD2Ev @ 112 NONAME
+	_ZN10QtMobility16QGalleryResourceaSERKS0_ @ 113 NONAME
+	_ZN10QtMobility17QGalleryResultSet10fetchFirstEv @ 114 NONAME
+	_ZN10QtMobility17QGalleryResultSet10itemsMovedEiii @ 115 NONAME
+	_ZN10QtMobility17QGalleryResultSet11qt_metacallEN11QMetaObject4CallEiPPv @ 116 NONAME
+	_ZN10QtMobility17QGalleryResultSet11qt_metacastEPKc @ 117 NONAME
+	_ZN10QtMobility17QGalleryResultSet12itemsRemovedEii @ 118 NONAME
+	_ZN10QtMobility17QGalleryResultSet13fetchPreviousEv @ 119 NONAME
+	_ZN10QtMobility17QGalleryResultSet13itemsInsertedEii @ 120 NONAME
+	_ZN10QtMobility17QGalleryResultSet15metaDataChangedEiiRK5QListIiE @ 121 NONAME
+	_ZN10QtMobility17QGalleryResultSet16staticMetaObjectE @ 122 NONAME DATA 16
+	_ZN10QtMobility17QGalleryResultSet18currentItemChangedEv @ 123 NONAME
+	_ZN10QtMobility17QGalleryResultSet19currentIndexChangedEi @ 124 NONAME
+	_ZN10QtMobility17QGalleryResultSet19getStaticMetaObjectEv @ 125 NONAME
+	_ZN10QtMobility17QGalleryResultSet9fetchLastEv @ 126 NONAME
+	_ZN10QtMobility17QGalleryResultSet9fetchNextEv @ 127 NONAME
+	_ZN10QtMobility17QGalleryResultSetC2EP7QObject @ 128 NONAME
+	_ZN10QtMobility17QGalleryResultSetC2ERNS_24QGalleryResultSetPrivateEP7QObject @ 129 NONAME
+	_ZN10QtMobility17QGalleryResultSetD0Ev @ 130 NONAME
+	_ZN10QtMobility17QGalleryResultSetD1Ev @ 131 NONAME
+	_ZN10QtMobility17QGalleryResultSetD2Ev @ 132 NONAME
+	_ZN10QtMobility18QGalleryQueryModel10setGalleryEPNS_16QAbstractGalleryE @ 133 NONAME
+	_ZN10QtMobility18QGalleryQueryModel11qt_metacallEN11QMetaObject4CallEiPPv @ 134 NONAME
+	_ZN10QtMobility18QGalleryQueryModel11qt_metacastEPKc @ 135 NONAME
+	_ZN10QtMobility18QGalleryQueryModel11setRootItemERK8QVariant @ 136 NONAME
+	_ZN10QtMobility18QGalleryQueryModel11setRootTypeERK7QString @ 137 NONAME
+	_ZN10QtMobility18QGalleryQueryModel12insertColumnEiRK5QHashIi7QStringE @ 138 NONAME
+	_ZN10QtMobility18QGalleryQueryModel12insertColumnEiRK7QStringi @ 139 NONAME
+	_ZN10QtMobility18QGalleryQueryModel12removeColumnEi @ 140 NONAME
+	_ZN10QtMobility18QGalleryQueryModel12stateChangedENS_23QGalleryAbstractRequest5StateE @ 141 NONAME
+	_ZN10QtMobility18QGalleryQueryModel13resultChangedEv @ 142 NONAME
+	_ZN10QtMobility18QGalleryQueryModel13setHeaderDataEiN2Qt11OrientationERK8QVarianti @ 143 NONAME
+	_ZN10QtMobility18QGalleryQueryModel16staticMetaObjectE @ 144 NONAME DATA 16
+	_ZN10QtMobility18QGalleryQueryModel17setRolePropertiesEiRK5QHashIi7QStringE @ 145 NONAME
+	_ZN10QtMobility18QGalleryQueryModel19getStaticMetaObjectEv @ 146 NONAME
+	_ZN10QtMobility18QGalleryQueryModel20setSortPropertyNamesERK11QStringList @ 147 NONAME
+	_ZN10QtMobility18QGalleryQueryModel5clearEv @ 148 NONAME
+	_ZN10QtMobility18QGalleryQueryModel6cancelEv @ 149 NONAME
+	_ZN10QtMobility18QGalleryQueryModel6failedEi @ 150 NONAME
+	_ZN10QtMobility18QGalleryQueryModel7executeEv @ 151 NONAME
+	_ZN10QtMobility18QGalleryQueryModel7setDataERK11QModelIndexRK8QVarianti @ 152 NONAME
+	_ZN10QtMobility18QGalleryQueryModel7setLiveEb @ 153 NONAME
+	_ZN10QtMobility18QGalleryQueryModel8finishedEi @ 154 NONAME
+	_ZN10QtMobility18QGalleryQueryModel8setLimitEi @ 155 NONAME
+	_ZN10QtMobility18QGalleryQueryModel8setScopeENS_20QGalleryQueryRequest5ScopeE @ 156 NONAME
+	_ZN10QtMobility18QGalleryQueryModel9addColumnERK5QHashIi7QStringE @ 157 NONAME
+	_ZN10QtMobility18QGalleryQueryModel9addColumnERK7QStringi @ 158 NONAME
+	_ZN10QtMobility18QGalleryQueryModel9cancelledEv @ 159 NONAME
+	_ZN10QtMobility18QGalleryQueryModel9setFilterERKNS_14QGalleryFilterE @ 160 NONAME
+	_ZN10QtMobility18QGalleryQueryModel9setOffsetEi @ 161 NONAME
+	_ZN10QtMobility18QGalleryQueryModel9succeededEv @ 162 NONAME
+	_ZN10QtMobility18QGalleryQueryModelC1EP7QObject @ 163 NONAME
+	_ZN10QtMobility18QGalleryQueryModelC1EPNS_16QAbstractGalleryEP7QObject @ 164 NONAME
+	_ZN10QtMobility18QGalleryQueryModelC2EP7QObject @ 165 NONAME
+	_ZN10QtMobility18QGalleryQueryModelC2EPNS_16QAbstractGalleryEP7QObject @ 166 NONAME
+	_ZN10QtMobility18QGalleryQueryModelD0Ev @ 167 NONAME
+	_ZN10QtMobility18QGalleryQueryModelD1Ev @ 168 NONAME
+	_ZN10QtMobility18QGalleryQueryModelD2Ev @ 169 NONAME
+	_ZN10QtMobility19QGalleryItemRequest11itemChangedEv @ 170 NONAME
+	_ZN10QtMobility19QGalleryItemRequest11qt_metacallEN11QMetaObject4CallEiPPv @ 171 NONAME
+	_ZN10QtMobility19QGalleryItemRequest11qt_metacastEPKc @ 172 NONAME
+	_ZN10QtMobility19QGalleryItemRequest11setMetaDataERK7QStringRK8QVariant @ 173 NONAME
+	_ZN10QtMobility19QGalleryItemRequest11setMetaDataEiRK8QVariant @ 174 NONAME
+	_ZN10QtMobility19QGalleryItemRequest11setResponseEPNS_24QGalleryAbstractResponseE @ 175 NONAME
+	_ZN10QtMobility19QGalleryItemRequest13itemIdChangedEv @ 176 NONAME
+	_ZN10QtMobility19QGalleryItemRequest15metaDataChangedERK5QListIiE @ 177 NONAME
+	_ZN10QtMobility19QGalleryItemRequest16resultSetChangedEPNS_17QGalleryResultSetE @ 178 NONAME
+	_ZN10QtMobility19QGalleryItemRequest16setPropertyNamesERK11QStringList @ 179 NONAME
+	_ZN10QtMobility19QGalleryItemRequest16staticMetaObjectE @ 180 NONAME DATA 16
+	_ZN10QtMobility19QGalleryItemRequest19getStaticMetaObjectEv @ 181 NONAME
+	_ZN10QtMobility19QGalleryItemRequest7setLiveEb @ 182 NONAME
+	_ZN10QtMobility19QGalleryItemRequest9setItemIdERK8QVariant @ 183 NONAME
+	_ZN10QtMobility19QGalleryItemRequestC1EP7QObject @ 184 NONAME
+	_ZN10QtMobility19QGalleryItemRequestC1EPNS_16QAbstractGalleryEP7QObject @ 185 NONAME
+	_ZN10QtMobility19QGalleryItemRequestC2EP7QObject @ 186 NONAME
+	_ZN10QtMobility19QGalleryItemRequestC2EPNS_16QAbstractGalleryEP7QObject @ 187 NONAME
+	_ZN10QtMobility19QGalleryItemRequestD0Ev @ 188 NONAME
+	_ZN10QtMobility19QGalleryItemRequestD1Ev @ 189 NONAME
+	_ZN10QtMobility19QGalleryItemRequestD2Ev @ 190 NONAME
+	_ZN10QtMobility19QGalleryTypeRequest11qt_metacallEN11QMetaObject4CallEiPPv @ 191 NONAME
+	_ZN10QtMobility19QGalleryTypeRequest11qt_metacastEPKc @ 192 NONAME
+	_ZN10QtMobility19QGalleryTypeRequest11setItemTypeERK7QString @ 193 NONAME
+	_ZN10QtMobility19QGalleryTypeRequest11setResponseEPNS_24QGalleryAbstractResponseE @ 194 NONAME
+	_ZN10QtMobility19QGalleryTypeRequest11typeChangedEv @ 195 NONAME
+	_ZN10QtMobility19QGalleryTypeRequest15itemTypeChangedEv @ 196 NONAME
+	_ZN10QtMobility19QGalleryTypeRequest15metaDataChangedERK5QListIiE @ 197 NONAME
+	_ZN10QtMobility19QGalleryTypeRequest16resultSetChangedEPNS_17QGalleryResultSetE @ 198 NONAME
+	_ZN10QtMobility19QGalleryTypeRequest16setPropertyNamesERK11QStringList @ 199 NONAME
+	_ZN10QtMobility19QGalleryTypeRequest16staticMetaObjectE @ 200 NONAME DATA 16
+	_ZN10QtMobility19QGalleryTypeRequest19getStaticMetaObjectEv @ 201 NONAME
+	_ZN10QtMobility19QGalleryTypeRequest7setLiveEb @ 202 NONAME
+	_ZN10QtMobility19QGalleryTypeRequestC1EP7QObject @ 203 NONAME
+	_ZN10QtMobility19QGalleryTypeRequestC1EPNS_16QAbstractGalleryEP7QObject @ 204 NONAME
+	_ZN10QtMobility19QGalleryTypeRequestC2EP7QObject @ 205 NONAME
+	_ZN10QtMobility19QGalleryTypeRequestC2EPNS_16QAbstractGalleryEP7QObject @ 206 NONAME
+	_ZN10QtMobility19QGalleryTypeRequestD0Ev @ 207 NONAME
+	_ZN10QtMobility19QGalleryTypeRequestD1Ev @ 208 NONAME
+	_ZN10QtMobility19QGalleryTypeRequestD2Ev @ 209 NONAME
+	_ZN10QtMobility19QGalleryUnionFilter5clearEv @ 210 NONAME
+	_ZN10QtMobility19QGalleryUnionFilter6appendERKNS_22QGalleryMetaDataFilterE @ 211 NONAME
+	_ZN10QtMobility19QGalleryUnionFilter6appendERKNS_26QGalleryIntersectionFilterE @ 212 NONAME
+	_ZN10QtMobility19QGalleryUnionFilter6appendERKS0_ @ 213 NONAME
+	_ZN10QtMobility19QGalleryUnionFilter6insertEiRKNS_22QGalleryMetaDataFilterE @ 214 NONAME
+	_ZN10QtMobility19QGalleryUnionFilter6insertEiRKNS_26QGalleryIntersectionFilterE @ 215 NONAME
+	_ZN10QtMobility19QGalleryUnionFilter6insertEiRKS0_ @ 216 NONAME
+	_ZN10QtMobility19QGalleryUnionFilter7replaceEiRKNS_22QGalleryMetaDataFilterE @ 217 NONAME
+	_ZN10QtMobility19QGalleryUnionFilter7replaceEiRKNS_26QGalleryIntersectionFilterE @ 218 NONAME
+	_ZN10QtMobility19QGalleryUnionFilter8removeAtEi @ 219 NONAME
+	_ZN10QtMobility19QGalleryUnionFilterC1ERKNS_22QGalleryMetaDataFilterE @ 220 NONAME
+	_ZN10QtMobility19QGalleryUnionFilterC1ERKNS_26QGalleryIntersectionFilterE @ 221 NONAME
+	_ZN10QtMobility19QGalleryUnionFilterC1ERKS0_ @ 222 NONAME
+	_ZN10QtMobility19QGalleryUnionFilterC1Ev @ 223 NONAME
+	_ZN10QtMobility19QGalleryUnionFilterC2ERKNS_22QGalleryMetaDataFilterE @ 224 NONAME
+	_ZN10QtMobility19QGalleryUnionFilterC2ERKNS_26QGalleryIntersectionFilterE @ 225 NONAME
+	_ZN10QtMobility19QGalleryUnionFilterC2ERKS0_ @ 226 NONAME
+	_ZN10QtMobility19QGalleryUnionFilterC2Ev @ 227 NONAME
+	_ZN10QtMobility19QGalleryUnionFilterD1Ev @ 228 NONAME
+	_ZN10QtMobility19QGalleryUnionFilterD2Ev @ 229 NONAME
+	_ZN10QtMobility19QGalleryUnionFilteraSERKS0_ @ 230 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest11qt_metacallEN11QMetaObject4CallEiPPv @ 231 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest11qt_metacastEPKc @ 232 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest11setMetaDataERK7QStringRK8QVariant @ 233 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest11setMetaDataEiRK8QVariant @ 234 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest11setResponseEPNS_24QGalleryAbstractResponseE @ 235 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest11setRootItemERK8QVariant @ 236 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest11setRootTypeERK7QString @ 237 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest16resultSetChangedEPNS_17QGalleryResultSetE @ 238 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest16setPropertyNamesERK11QStringList @ 239 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest16staticMetaObjectE @ 240 NONAME DATA 16
+	_ZN10QtMobility20QGalleryQueryRequest18currentItemChangedEv @ 241 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest19getStaticMetaObjectEv @ 242 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest20setSortPropertyNamesERK11QStringList @ 243 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest4lastEv @ 244 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest4nextEv @ 245 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest4seekEib @ 246 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest5firstEv @ 247 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest7setLiveEb @ 248 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest8previousEv @ 249 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest8setLimitEi @ 250 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest8setScopeENS0_5ScopeE @ 251 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest9setFilterERKNS_14QGalleryFilterE @ 252 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest9setOffsetEi @ 253 NONAME
+	_ZN10QtMobility20QGalleryQueryRequestC1EP7QObject @ 254 NONAME
+	_ZN10QtMobility20QGalleryQueryRequestC1EPNS_16QAbstractGalleryEP7QObject @ 255 NONAME
+	_ZN10QtMobility20QGalleryQueryRequestC2EP7QObject @ 256 NONAME
+	_ZN10QtMobility20QGalleryQueryRequestC2EPNS_16QAbstractGalleryEP7QObject @ 257 NONAME
+	_ZN10QtMobility20QGalleryQueryRequestD0Ev @ 258 NONAME
+	_ZN10QtMobility20QGalleryQueryRequestD1Ev @ 259 NONAME
+	_ZN10QtMobility20QGalleryQueryRequestD2Ev @ 260 NONAME
+	_ZN10QtMobility21QGalleryRemoveRequest11qt_metacallEN11QMetaObject4CallEiPPv @ 261 NONAME
+	_ZN10QtMobility21QGalleryRemoveRequest11qt_metacastEPKc @ 262 NONAME
+	_ZN10QtMobility21QGalleryRemoveRequest11setResponseEPNS_24QGalleryAbstractResponseE @ 263 NONAME
+	_ZN10QtMobility21QGalleryRemoveRequest16staticMetaObjectE @ 264 NONAME DATA 16
+	_ZN10QtMobility21QGalleryRemoveRequest19getStaticMetaObjectEv @ 265 NONAME
+	_ZN10QtMobility21QGalleryRemoveRequest9setItemIdERK8QVariant @ 266 NONAME
+	_ZN10QtMobility21QGalleryRemoveRequestC1EP7QObject @ 267 NONAME
+	_ZN10QtMobility21QGalleryRemoveRequestC1EPNS_16QAbstractGalleryEP7QObject @ 268 NONAME
+	_ZN10QtMobility21QGalleryRemoveRequestC2EP7QObject @ 269 NONAME
+	_ZN10QtMobility21QGalleryRemoveRequestC2EPNS_16QAbstractGalleryEP7QObject @ 270 NONAME
+	_ZN10QtMobility21QGalleryRemoveRequestD0Ev @ 271 NONAME
+	_ZN10QtMobility21QGalleryRemoveRequestD1Ev @ 272 NONAME
+	_ZN10QtMobility21QGalleryRemoveRequestD2Ev @ 273 NONAME
+	_ZN10QtMobility22QGalleryMetaDataFilter11setInvertedEb @ 274 NONAME
+	_ZN10QtMobility22QGalleryMetaDataFilter13setComparatorENS_14QGalleryFilter10ComparatorE @ 275 NONAME
+	_ZN10QtMobility22QGalleryMetaDataFilter15setPropertyNameERK7QString @ 276 NONAME
+	_ZN10QtMobility22QGalleryMetaDataFilter18setCaseSensitivityEN2Qt15CaseSensitivityE @ 277 NONAME
+	_ZN10QtMobility22QGalleryMetaDataFilter8setValueERK8QVariant @ 278 NONAME
+	_ZN10QtMobility22QGalleryMetaDataFilterC1ERK7QStringRK8QVariantNS_14QGalleryFilter10ComparatorEN2Qt15CaseSensitivityE @ 279 NONAME
+	_ZN10QtMobility22QGalleryMetaDataFilterC1ERKS0_ @ 280 NONAME
+	_ZN10QtMobility22QGalleryMetaDataFilterC1Ev @ 281 NONAME
+	_ZN10QtMobility22QGalleryMetaDataFilterC2ERK7QStringRK8QVariantNS_14QGalleryFilter10ComparatorEN2Qt15CaseSensitivityE @ 282 NONAME
+	_ZN10QtMobility22QGalleryMetaDataFilterC2ERKS0_ @ 283 NONAME
+	_ZN10QtMobility22QGalleryMetaDataFilterC2Ev @ 284 NONAME
+	_ZN10QtMobility22QGalleryMetaDataFilterD1Ev @ 285 NONAME
+	_ZN10QtMobility22QGalleryMetaDataFilterD2Ev @ 286 NONAME
+	_ZN10QtMobility22QGalleryMetaDataFilteraSERKS0_ @ 287 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequest10setGalleryEPNS_16QAbstractGalleryE @ 288 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequest11qt_metacallEN11QMetaObject4CallEiPPv @ 289 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequest11qt_metacastEPKc @ 290 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequest12stateChangedENS0_5StateE @ 291 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequest13resultChangedEv @ 292 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequest15progressChangedEii @ 293 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequest15waitForFinishedEi @ 294 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequest16staticMetaObjectE @ 295 NONAME DATA 16
+	_ZN10QtMobility23QGalleryAbstractRequest16supportedChangedEv @ 296 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequest19getStaticMetaObjectEv @ 297 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequest5clearEv @ 298 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequest6cancelEv @ 299 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequest6failedEi @ 300 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequest7executeEv @ 301 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequest8finishedEi @ 302 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequest9cancelledEv @ 303 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequest9succeededEv @ 304 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequestC2ENS0_11RequestTypeEP7QObject @ 305 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequestC2EPNS_16QAbstractGalleryENS0_11RequestTypeEP7QObject @ 306 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequestC2ERNS_30QGalleryAbstractRequestPrivateEP7QObject @ 307 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequestD0Ev @ 308 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequestD1Ev @ 309 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequestD2Ev @ 310 NONAME
+	_ZN10QtMobility24QGalleryAbstractResponse11qt_metacallEN11QMetaObject4CallEiPPv @ 311 NONAME
+	_ZN10QtMobility24QGalleryAbstractResponse11qt_metacastEPKc @ 312 NONAME
+	_ZN10QtMobility24QGalleryAbstractResponse15progressChangedEii @ 313 NONAME
+	_ZN10QtMobility24QGalleryAbstractResponse15waitForFinishedEi @ 314 NONAME
+	_ZN10QtMobility24QGalleryAbstractResponse16staticMetaObjectE @ 315 NONAME DATA 16
+	_ZN10QtMobility24QGalleryAbstractResponse19getStaticMetaObjectEv @ 316 NONAME
+	_ZN10QtMobility24QGalleryAbstractResponse6cancelEv @ 317 NONAME
+	_ZN10QtMobility24QGalleryAbstractResponse6finishEib @ 318 NONAME
+	_ZN10QtMobility24QGalleryAbstractResponse8finishedEv @ 319 NONAME
+	_ZN10QtMobility24QGalleryAbstractResponseC1EP7QObject @ 320 NONAME
+	_ZN10QtMobility24QGalleryAbstractResponseC1ERNS_31QGalleryAbstractResponsePrivateEP7QObject @ 321 NONAME
+	_ZN10QtMobility24QGalleryAbstractResponseC1EiP7QObject @ 322 NONAME
+	_ZN10QtMobility24QGalleryAbstractResponseC2EP7QObject @ 323 NONAME
+	_ZN10QtMobility24QGalleryAbstractResponseC2ERNS_31QGalleryAbstractResponsePrivateEP7QObject @ 324 NONAME
+	_ZN10QtMobility24QGalleryAbstractResponseC2EiP7QObject @ 325 NONAME
+	_ZN10QtMobility24QGalleryAbstractResponseD0Ev @ 326 NONAME
+	_ZN10QtMobility24QGalleryAbstractResponseD1Ev @ 327 NONAME
+	_ZN10QtMobility24QGalleryAbstractResponseD2Ev @ 328 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilter5clearEv @ 329 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilter6appendERKNS_19QGalleryUnionFilterE @ 330 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilter6appendERKNS_22QGalleryMetaDataFilterE @ 331 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilter6appendERKS0_ @ 332 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilter6insertEiRKNS_19QGalleryUnionFilterE @ 333 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilter6insertEiRKNS_22QGalleryMetaDataFilterE @ 334 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilter6insertEiRKS0_ @ 335 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilter7replaceEiRKNS_19QGalleryUnionFilterE @ 336 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilter7replaceEiRKNS_22QGalleryMetaDataFilterE @ 337 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilter8removeAtEi @ 338 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilterC1ERKNS_19QGalleryUnionFilterE @ 339 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilterC1ERKNS_22QGalleryMetaDataFilterE @ 340 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilterC1ERKS0_ @ 341 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilterC1Ev @ 342 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilterC2ERKNS_19QGalleryUnionFilterE @ 343 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilterC2ERKNS_22QGalleryMetaDataFilterE @ 344 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilterC2ERKS0_ @ 345 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilterC2Ev @ 346 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilterD1Ev @ 347 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilterD2Ev @ 348 NONAME
+	_ZN10QtMobility26QGalleryIntersectionFilteraSERKS0_ @ 349 NONAME
+	_ZN10QtMobilityeqERKNS_14QGalleryFilterES2_ @ 350 NONAME
+	_ZN10QtMobilitylsE6QDebugRKNS_14QGalleryFilterE @ 351 NONAME
+	_ZN10QtMobilityneERKNS_14QGalleryFilterES2_ @ 352 NONAME
+	_ZNK10QtMobility12QGalleryType4nameEv @ 353 NONAME
+	_ZNK10QtMobility14QGalleryFilter13toUnionFilterEv @ 354 NONAME
+	_ZNK10QtMobility14QGalleryFilter16toMetaDataFilterEv @ 355 NONAME
+	_ZNK10QtMobility14QGalleryFilter20toIntersectionFilterEv @ 356 NONAME
+	_ZNK10QtMobility14QGalleryFilter4typeEv @ 357 NONAME
+	_ZNK10QtMobility14QGalleryFilter7isValidEv @ 358 NONAME
+	_ZNK10QtMobility16QAbstractGallery10metaObjectEv @ 359 NONAME
+	_ZNK10QtMobility16QDocumentGallery10metaObjectEv @ 360 NONAME
+	_ZNK10QtMobility16QDocumentGallery18isRequestSupportedENS_23QGalleryAbstractRequest11RequestTypeE @ 361 NONAME
+	_ZNK10QtMobility16QDocumentGallery18propertyAttributesERK7QStringS3_ @ 362 NONAME
+	_ZNK10QtMobility16QDocumentGallery21itemTypePropertyNamesERK7QString @ 363 NONAME
+	_ZNK10QtMobility16QGalleryProperty10descendingEv @ 364 NONAME
+	_ZNK10QtMobility16QGalleryProperty4nameEv @ 365 NONAME
+	_ZNK10QtMobility16QGalleryProperty9ascendingEv @ 366 NONAME
+	_ZNK10QtMobility16QGalleryPropertyeqERK8QVariant @ 367 NONAME
+	_ZNK10QtMobility16QGalleryPropertygeERK8QVariant @ 368 NONAME
+	_ZNK10QtMobility16QGalleryPropertygtERK8QVariant @ 369 NONAME
+	_ZNK10QtMobility16QGalleryPropertyleERK8QVariant @ 370 NONAME
+	_ZNK10QtMobility16QGalleryPropertyltERK8QVariant @ 371 NONAME
+	_ZNK10QtMobility16QGalleryResource10attributesEv @ 372 NONAME
+	_ZNK10QtMobility16QGalleryResource3urlEv @ 373 NONAME
+	_ZNK10QtMobility16QGalleryResource9attributeEi @ 374 NONAME
+	_ZNK10QtMobility16QGalleryResourceeqERKS0_ @ 375 NONAME
+	_ZNK10QtMobility16QGalleryResourceneERKS0_ @ 376 NONAME
+	_ZNK10QtMobility17QGalleryResultSet10metaObjectEv @ 377 NONAME
+	_ZNK10QtMobility17QGalleryResultSet7isValidEv @ 378 NONAME
+	_ZNK10QtMobility17QGalleryResultSet9resourcesEv @ 379 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel10headerDataEiN2Qt11OrientationEi @ 380 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel10metaObjectEv @ 381 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel11columnCountERK11QModelIndex @ 382 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel14rolePropertiesEi @ 383 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel17sortPropertyNamesEv @ 384 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel4dataERK11QModelIndexi @ 385 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel5flagsERK11QModelIndex @ 386 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel5indexEiiRK11QModelIndex @ 387 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel5limitEv @ 388 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel5scopeEv @ 389 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel5stateEv @ 390 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel6filterEv @ 391 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel6isLiveEv @ 392 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel6itemIdERK11QModelIndex @ 393 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel6offsetEv @ 394 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel6parentERK11QModelIndex @ 395 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel6resultEv @ 396 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel7galleryEv @ 397 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel7itemUrlERK11QModelIndex @ 398 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel8itemTypeERK11QModelIndex @ 399 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel8rootItemEv @ 400 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel8rootTypeEv @ 401 NONAME
+	_ZNK10QtMobility18QGalleryQueryModel8rowCountERK11QModelIndex @ 402 NONAME
+	_ZNK10QtMobility19QGalleryItemRequest10metaObjectEv @ 403 NONAME
+	_ZNK10QtMobility19QGalleryItemRequest11propertyKeyERK7QString @ 404 NONAME
+	_ZNK10QtMobility19QGalleryItemRequest12propertyTypeEi @ 405 NONAME
+	_ZNK10QtMobility19QGalleryItemRequest13propertyNamesEv @ 406 NONAME
+	_ZNK10QtMobility19QGalleryItemRequest18propertyAttributesEi @ 407 NONAME
+	_ZNK10QtMobility19QGalleryItemRequest6isLiveEv @ 408 NONAME
+	_ZNK10QtMobility19QGalleryItemRequest6itemIdEv @ 409 NONAME
+	_ZNK10QtMobility19QGalleryItemRequest7isValidEv @ 410 NONAME
+	_ZNK10QtMobility19QGalleryItemRequest7itemUrlEv @ 411 NONAME
+	_ZNK10QtMobility19QGalleryItemRequest8itemTypeEv @ 412 NONAME
+	_ZNK10QtMobility19QGalleryItemRequest8metaDataERK7QString @ 413 NONAME
+	_ZNK10QtMobility19QGalleryItemRequest8metaDataEi @ 414 NONAME
+	_ZNK10QtMobility19QGalleryItemRequest9resourcesEv @ 415 NONAME
+	_ZNK10QtMobility19QGalleryItemRequest9resultSetEv @ 416 NONAME
+	_ZNK10QtMobility19QGalleryTypeRequest10metaObjectEv @ 417 NONAME
+	_ZNK10QtMobility19QGalleryTypeRequest11propertyKeyERK7QString @ 418 NONAME
+	_ZNK10QtMobility19QGalleryTypeRequest12propertyTypeEi @ 419 NONAME
+	_ZNK10QtMobility19QGalleryTypeRequest13propertyNamesEv @ 420 NONAME
+	_ZNK10QtMobility19QGalleryTypeRequest18propertyAttributesEi @ 421 NONAME
+	_ZNK10QtMobility19QGalleryTypeRequest6isLiveEv @ 422 NONAME
+	_ZNK10QtMobility19QGalleryTypeRequest7isValidEv @ 423 NONAME
+	_ZNK10QtMobility19QGalleryTypeRequest8itemTypeEv @ 424 NONAME
+	_ZNK10QtMobility19QGalleryTypeRequest8metaDataERK7QString @ 425 NONAME
+	_ZNK10QtMobility19QGalleryTypeRequest8metaDataEi @ 426 NONAME
+	_ZNK10QtMobility19QGalleryTypeRequest9resultSetEv @ 427 NONAME
+	_ZNK10QtMobility19QGalleryUnionFilter11filterCountEv @ 428 NONAME
+	_ZNK10QtMobility19QGalleryUnionFilter7filtersEv @ 429 NONAME
+	_ZNK10QtMobility19QGalleryUnionFilter7isEmptyEv @ 430 NONAME
+	_ZNK10QtMobility19QGalleryUnionFilter7isValidEv @ 431 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest10metaObjectEv @ 432 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest11propertyKeyERK7QString @ 433 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest12currentIndexEv @ 434 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest12propertyTypeEi @ 435 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest13propertyNamesEv @ 436 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest17sortPropertyNamesEv @ 437 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest18propertyAttributesEi @ 438 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest5limitEv @ 439 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest5scopeEv @ 440 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest6filterEv @ 441 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest6isLiveEv @ 442 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest6itemIdEv @ 443 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest6offsetEv @ 444 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest7isValidEv @ 445 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest7itemUrlEv @ 446 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest8itemTypeEv @ 447 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest8metaDataERK7QString @ 448 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest8metaDataEi @ 449 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest8rootItemEv @ 450 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest8rootTypeEv @ 451 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest9itemCountEv @ 452 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest9resourcesEv @ 453 NONAME
+	_ZNK10QtMobility20QGalleryQueryRequest9resultSetEv @ 454 NONAME
+	_ZNK10QtMobility21QGalleryRemoveRequest10metaObjectEv @ 455 NONAME
+	_ZNK10QtMobility21QGalleryRemoveRequest6itemIdEv @ 456 NONAME
+	_ZNK10QtMobility22QGalleryMetaDataFilter10comparatorEv @ 457 NONAME
+	_ZNK10QtMobility22QGalleryMetaDataFilter10isInvertedEv @ 458 NONAME
+	_ZNK10QtMobility22QGalleryMetaDataFilter12propertyNameEv @ 459 NONAME
+	_ZNK10QtMobility22QGalleryMetaDataFilter15caseSensitivityEv @ 460 NONAME
+	_ZNK10QtMobility22QGalleryMetaDataFilter5valueEv @ 461 NONAME
+	_ZNK10QtMobility22QGalleryMetaDataFilter7isValidEv @ 462 NONAME
+	_ZNK10QtMobility22QGalleryMetaDataFilterntEv @ 463 NONAME
+	_ZNK10QtMobility23QGalleryAbstractRequest10metaObjectEv @ 464 NONAME
+	_ZNK10QtMobility23QGalleryAbstractRequest11isSupportedEv @ 465 NONAME
+	_ZNK10QtMobility23QGalleryAbstractRequest15currentProgressEv @ 466 NONAME
+	_ZNK10QtMobility23QGalleryAbstractRequest15maximumProgressEv @ 467 NONAME
+	_ZNK10QtMobility23QGalleryAbstractRequest4typeEv @ 468 NONAME
+	_ZNK10QtMobility23QGalleryAbstractRequest5stateEv @ 469 NONAME
+	_ZNK10QtMobility23QGalleryAbstractRequest6resultEv @ 470 NONAME
+	_ZNK10QtMobility23QGalleryAbstractRequest7galleryEv @ 471 NONAME
+	_ZNK10QtMobility24QGalleryAbstractResponse10metaObjectEv @ 472 NONAME
+	_ZNK10QtMobility24QGalleryAbstractResponse6isIdleEv @ 473 NONAME
+	_ZNK10QtMobility24QGalleryAbstractResponse6resultEv @ 474 NONAME
+	_ZNK10QtMobility26QGalleryIntersectionFilter11filterCountEv @ 475 NONAME
+	_ZNK10QtMobility26QGalleryIntersectionFilter7filtersEv @ 476 NONAME
+	_ZNK10QtMobility26QGalleryIntersectionFilter7isEmptyEv @ 477 NONAME
+	_ZNK10QtMobility26QGalleryIntersectionFilter7isValidEv @ 478 NONAME
+	_ZTIN10QtMobility16QAbstractGalleryE @ 479 NONAME
+	_ZTIN10QtMobility16QDocumentGalleryE @ 480 NONAME
+	_ZTIN10QtMobility17QGalleryResultSetE @ 481 NONAME
+	_ZTIN10QtMobility18QGalleryQueryModelE @ 482 NONAME
+	_ZTIN10QtMobility19QGalleryItemRequestE @ 483 NONAME
+	_ZTIN10QtMobility19QGalleryTypeRequestE @ 484 NONAME
+	_ZTIN10QtMobility20QGalleryQueryRequestE @ 485 NONAME
+	_ZTIN10QtMobility21QGalleryRemoveRequestE @ 486 NONAME
+	_ZTIN10QtMobility23QGalleryAbstractRequestE @ 487 NONAME
+	_ZTIN10QtMobility24QGalleryAbstractResponseE @ 488 NONAME
+	_ZTVN10QtMobility16QAbstractGalleryE @ 489 NONAME
+	_ZTVN10QtMobility16QDocumentGalleryE @ 490 NONAME
+	_ZTVN10QtMobility17QGalleryResultSetE @ 491 NONAME
+	_ZTVN10QtMobility18QGalleryQueryModelE @ 492 NONAME
+	_ZTVN10QtMobility19QGalleryItemRequestE @ 493 NONAME
+	_ZTVN10QtMobility19QGalleryTypeRequestE @ 494 NONAME
+	_ZTVN10QtMobility20QGalleryQueryRequestE @ 495 NONAME
+	_ZTVN10QtMobility21QGalleryRemoveRequestE @ 496 NONAME
+	_ZTVN10QtMobility23QGalleryAbstractRequestE @ 497 NONAME
+	_ZTVN10QtMobility24QGalleryAbstractResponseE @ 498 NONAME
+

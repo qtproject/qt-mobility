@@ -121,7 +121,8 @@ QWidget *KeyIdDelegate::createEditor(QWidget *parent,
     if (!item->text().isEmpty()) {
         editor->setText(item->text());
     }
-    QRegExpValidator *validator = new QRegExpValidator(QRegExp("([0-9]|[A-F]|[a-f]){1,8}"), editor);
+    QRegExpValidator *validator =
+        new QRegExpValidator(QRegExp(QLatin1String("([0-9]|[A-F]|[a-f]){1,8}")), editor);
     editor->setValidator(validator);
 
     return editor;
@@ -160,8 +161,8 @@ void PathDelegate::setModelData(QWidget *editor,
 }
 
 EditorWidget::EditorWidget():m_isModified(false) {
-    m_RPropRadio = new QRadioButton("RProperty");
-    m_CRepRadio = new QRadioButton("CRepository");
+    m_RPropRadio = new QRadioButton(QLatin1String("RProperty"));
+    m_CRepRadio = new QRadioButton(QLatin1String("CRepository"));
     QButtonGroup *targetGroup = new QButtonGroup(this);
     targetGroup->addButton(m_CRepRadio);
     targetGroup->addButton(m_RPropRadio);
@@ -173,12 +174,13 @@ EditorWidget::EditorWidget():m_isModified(false) {
     targetLayout->addWidget(m_CRepRadio);
 
     m_RPropRadio->setChecked(true);
-    m_repoLabel = new QLabel("Category ID", this);
+    m_repoLabel = new QLabel(tr("Category ID"), this);
     m_repoUID = new QLineEdit(this);
-    QRegExpValidator *validator = new QRegExpValidator(QRegExp("([0-9]|[A-F]|[a-f]){1,8}"), this);
+    QRegExpValidator *validator =
+        new QRegExpValidator(QRegExp(QLatin1String("([0-9]|[A-F]|[a-f]){1,8}")), this);
     m_repoUID->setValidator(validator);
     connect(m_repoUID, SIGNAL(textEdited(const QString &)), this, SLOT(setModified()));
-    m_repoUID->setToolTip("Must be a hexidecimal number no longer than  8 digits");
+    m_repoUID->setToolTip(tr("Must be a hexidecimal number no longer than 8 digits"));
 
     QHBoxLayout *repoLayout = new QHBoxLayout;
     repoLayout->addWidget(m_repoLabel);
@@ -241,15 +243,15 @@ void EditorWidget::addRow()
 
     QTableWidgetItem *item;
     item = new QTableWidgetItem;
-    item->setToolTip("Must be a hexidecimal number no longer than 8 digits");
+    item->setToolTip(tr("Must be a hexidecimal number no longer than 8 digits"));
     m_tableWidget->setItem(row, EditorWidget::KeyId, item);
 
-    item = new QTableWidgetItem("/");
-    item->setToolTip("Must not be empty and must start with a /");
+    item = new QTableWidgetItem(QLatin1String("/"));
+    item->setToolTip(tr("Must not be empty and must start with a /"));
     m_tableWidget->setItem(row, EditorWidget::Path, item);
 
 #ifdef INCL_TYPE
-    item = new QTableWidgetItem("int");
+    item = new QTableWidgetItem(tr("int"));
     m_tableWidget->setItem(row, EditorWidget::Type, item);
 #endif
 
@@ -293,19 +295,18 @@ void EditorWidget::save(const QString &filePath)
 #ifdef INCL_TYPE
     QString type;
 #endif
-    QString documentStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+    QString documentStart(QLatin1String("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"));
     file.write(documentStart.toUtf8());
 
-    QString repositoryElementStart("<repository target=\"%1\" uidValue=\"0x%2\">\n");
-    QString target = m_RPropRadio->isChecked()?"RProperty":"CRepository";
+    QString repositoryElementStart(QLatin1String("<repository target=\"%1\" uidValue=\"0x%2\">\n"));
+    QString target = m_RPropRadio->isChecked() ? QLatin1String("RProperty") : QLatin1String("CRepository");
     file.write(repositoryElementStart.arg(target).arg(repoUID).toUtf8());
 #ifdef INCL_TYPE
-    QString keyElementStart("    <key int=\"0x%1\" type=\"%2\" ref=\"%3\">\n");
+    QString keyElementStart(QLatin1String("    <key int=\"0x%1\" type=\"%2\" ref=\"%3\">\n"));
 #else
-
-    QString keyElementStart("    <key int=\"0x%1\" ref=\"%2\">\n");
+    QString keyElementStart(QLatin1String("    <key int=\"0x%1\" ref=\"%2\">\n"));
 #endif
-    QString keyElementEnd("    </key>\n");
+    QString keyElementEnd(QLatin1String("    </key>\n"));
 
     for(int i=0; i < m_tableWidget->rowCount(); i++) {
         keyId = m_tableWidget->item(i, EditorWidget::KeyId)->text();
@@ -320,7 +321,7 @@ void EditorWidget::save(const QString &filePath)
         file.write(keyElementEnd.toUtf8());
     }
 
-    QString repositoryElementEnd("</repository>\n");
+    QString repositoryElementEnd(QLatin1String("</repository>\n"));
     file.write(repositoryElementEnd.toUtf8());
     file.close();
     setModified(false);
@@ -414,7 +415,10 @@ bool EditorWidget::verifyContents()
 
     QString repoUID = m_repoUID->text();
     if (!checkID(repoUID)) {
-        QMessageBox::warning(this, "Invalid input", m_repoLabel->text() + "field is invalid, it must be a hexidecimal number no longer than 8 digits");
+        QMessageBox::warning(this, tr("Invalid input"),
+                             tr("The '%1' field is invalid, "
+                                "it must be a hexidecimal number no longer than 8 digits.")
+                             .arg(m_repoLabel->text()));
         m_repoUID->setFocus();
         return false;
     }
@@ -435,7 +439,7 @@ bool EditorWidget::verifyContents()
         }
 
         path = m_tableWidget->item(i, EditorWidget::Path)->text();
-        if (path.isEmpty() || !path.startsWith("/")) {
+        if (path.isEmpty() || !path.startsWith(QLatin1Char('/'))) {
             QMessageBox::warning(this, tr("Invalid Path"),
                             tr("The Key Path field is invalid, it must not be empty and start with a /"));
             m_tableWidget->setCurrentCell(i, EditorWidget::Path);
@@ -501,9 +505,9 @@ void EditorWidget::moveRowDown()
 void EditorWidget::targetChanged(QAbstractButton *button)
 {
     if (button == m_RPropRadio)
-        m_repoLabel->setText("Category ID");
+        m_repoLabel->setText(tr("Category ID"));
     else
-        m_repoLabel->setText("Repository ID");
+        m_repoLabel->setText(tr("Repository ID"));
 }
 
 QCrmlGenerator::QCrmlGenerator()
@@ -571,7 +575,7 @@ void QCrmlGenerator::saveFileAs()
 {
     if (m_editorWidget->verifyContents()) {
         QFileDialog saveDialog(this, tr("Save As"), QString(), tr("QCrml (*.qcrml);;Any Files (*)"));
-        saveDialog.setDefaultSuffix("qcrml");
+        saveDialog.setDefaultSuffix(QLatin1String("qcrml"));
         saveDialog.setFileMode(QFileDialog::AnyFile);
         saveDialog.setAcceptMode(QFileDialog::AcceptSave);
         if (saveDialog.exec() == QDialog::Accepted) {

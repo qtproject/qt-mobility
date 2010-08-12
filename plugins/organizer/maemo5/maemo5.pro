@@ -7,7 +7,7 @@ CONFIG += mobility
 MOBILITY = organizer
 
 CONFIG += link_pkgconfig
-PKGCONFIG += calendar-backend calendar-backend-dev
+PKGCONFIG += calendar-backend
 
 include(../../../common.pri)
 
@@ -18,10 +18,8 @@ INCLUDEPATH += ../../../src/organizer \
                 ../../../src/organizer/details
 
 HEADERS += \
-        qorganizermaemo5_p.h
+        qorganizermaemo5_p.h \
+        qorganizerrecurrencetransform.h
 SOURCES += \
-        qorganizermaemo5.cpp
-
-target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
-INSTALLS += target
-
+        qorganizermaemo5.cpp \
+        qorganizerrecurrencetransform.cpp

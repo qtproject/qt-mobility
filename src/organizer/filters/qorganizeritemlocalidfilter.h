@@ -56,6 +56,9 @@ public:
 
     /* Mutators */
     void setIds(const QList<QOrganizerItemLocalId>& ids);
+    void insert(const QOrganizerItemLocalId& id);
+    void remove(const QOrganizerItemLocalId& id);
+    void clear();
 
     /* Accessors */
     QList<QOrganizerItemLocalId> ids() const;

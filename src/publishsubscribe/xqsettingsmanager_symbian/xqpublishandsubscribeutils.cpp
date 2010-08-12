@@ -72,7 +72,7 @@ XQPublishAndSubscribeUtils::~XQPublishAndSubscribeUtils()
     Defines a propery
     \param key XQPublishAndSubscribeSettingsKey which defines the propery details
     \param type Propery type (NOTE: TypeDouble is not supported by Publish and Subscribe.)
-    \return True if the property was succesfully defined, otherwise return false.
+    \return True if the property was successfully defined, otherwise return false.
 */
 bool XQPublishAndSubscribeUtils::defineProperty(const XQPublishAndSubscribeSettingsKey& key, XQSettingsManager::Type type)
 {
@@ -85,7 +85,7 @@ bool XQPublishAndSubscribeUtils::defineProperty(const XQPublishAndSubscribeSetti
     \param type Propery type (NOTE: TypeDouble is not supported by Publish and Subscribe.)
     \param readPolicy Policy definition for read operations
     \param writePolicy Policy definition for write operations
-    \return True if the property was succesfully defined, otherwise return false.
+    \return True if the property was successfully defined, otherwise return false.
 */
 bool XQPublishAndSubscribeUtils::defineProperty(const XQPublishAndSubscribeSettingsKey& key, XQSettingsManager::Type type,
     const XQPublishAndSubscribeSecurityPolicy& readPolicy, const XQPublishAndSubscribeSecurityPolicy& writePolicy)
@@ -96,7 +96,7 @@ bool XQPublishAndSubscribeUtils::defineProperty(const XQPublishAndSubscribeSetti
 /* 
     Deletes a propery
     \param key XQPublishAndSubscribeSettingsKey which defines the propery details
-    \return True if the property was succesfully defined, otherwise return false.
+    \return True if the property was successfully defined, otherwise return false.
 */
 bool XQPublishAndSubscribeUtils::deleteProperty(const XQPublishAndSubscribeSettingsKey& key)
 {

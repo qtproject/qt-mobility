@@ -56,20 +56,21 @@ class Q_ORGANIZER_EXPORT QOrganizerItemInstanceOrigin : public QOrganizerItemDet
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldParentLocalId;
-    const char* FieldOriginalTimestamp;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldParentLocalId;
+    static const QLatin1Constant FieldOriginalDate;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemInstanceOrigin, "InstanceOrigin")
     Q_DECLARE_LATIN1_CONSTANT(FieldParentLocalId, "ParentLocalId");
-    Q_DECLARE_LATIN1_CONSTANT(FieldOriginalTimestamp, "OriginalTimestamp");
+    Q_DECLARE_LATIN1_CONSTANT(FieldOriginalDate, "OriginalDate");
 #endif
 
     void setParentLocalId(QOrganizerItemLocalId parentId) {setValue(FieldParentLocalId, static_cast<int>(parentId));}
     QOrganizerItemLocalId parentLocalId() const {return static_cast<QOrganizerItemLocalId>(variantValue(FieldParentLocalId).toInt());}
 
-    void setOriginalTimestamp(const QDateTime& timestamp) {setValue(FieldOriginalTimestamp, timestamp);}
-    QDateTime originalTimestamp() const {return variantValue(FieldOriginalTimestamp).toDateTime();}
+
+    void setOriginalDate(const QDate& date) {setValue(FieldOriginalDate, date);}
+    QDate originalDate() const {return variantValue(FieldOriginalDate).toDate();}
 };
 
 QTM_END_NAMESPACE

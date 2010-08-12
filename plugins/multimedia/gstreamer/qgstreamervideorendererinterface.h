@@ -52,6 +52,9 @@ public:
     virtual ~QGstreamerVideoRendererInterface();
     virtual GstElement *videoSink() = 0;
     virtual void precessNewStream() {}
+
+    //signals:
+    //void sinkChanged();
 };
 
 #define QGstreamerVideoRendererInterface_iid "com.nokia.Qt.QGstreamerVideoRendererInterface/1.0"

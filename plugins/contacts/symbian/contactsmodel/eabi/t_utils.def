@@ -1,0 +1,73 @@
+EXPORTS
+	_Z11AddContactLP16CContactDatabase4TUidS1_RK7TDesC16 @ 1 NONAME
+	_Z12InsertFieldLR12CContactItemij4TUidS1_ @ 2 NONAME
+	_Z12InsertFieldLR12CContactItemij4TUidS1_RK7TDesC16 @ 3 NONAME
+	_Z12SetUserFlagsP12CContactItemj @ 4 NONAME
+	_Z12SetUserFlagsP12CContactItemji @ 5 NONAME
+	_Z12SetUserFlagsR20CContactItemFieldSetj @ 6 NONAME
+	_Z12SetUserFlagsR20CContactItemFieldSetji @ 7 NONAME
+	_Z15ExportContactsLP16CContactDatabasePK15CContactIdArrayj15TVCardStoreTypeP3RFsi @ 8 NONAME
+	_Z15ImportContactsLP16CContactDatabaseP15CVCardTestStorej @ 9 NONAME
+	_Z15TestGroupStateLP16CContactDatabaseii @ 10 NONAME
+	_Z16CompareItemFieldRK17CContactItemFieldS1_i @ 11 NONAME
+	_Z17CompareItemFieldsP12CContactItemS0_ii @ 12 NONAME
+	_Z22CleanUpResetAndDestroyPv @ 13 NONAME
+	_Z8SetNameLR12CContactItem4TUidS1_RK7TDesC16i @ 14 NONAME
+	_Z9AddFieldLP12CContactItemj4TUidS1_ @ 15 NONAME
+	_Z9AddFieldLP20CContactItemFieldSetj4TUidS1_ @ 16 NONAME
+	_Z9FieldTextR12CContactItem4TUid @ 17 NONAME
+	_ZN15CVCardTestStore10ConstructLE15TVCardStoreTypeP3RFsi @ 18 NONAME
+	_ZN15CVCardTestStore4NewLE15TVCardStoreTypeP3RFsi @ 19 NONAME
+	_ZN15CVCardTestStore5NewLCE15TVCardStoreTypeP3RFsi @ 20 NONAME
+	_ZN15CVCardTestStoreD0Ev @ 21 NONAME
+	_ZN15CVCardTestStoreD1Ev @ 22 NONAME
+	_ZN15CVCardTestStoreD2Ev @ 23 NONAME
+	_ZN8CCntTest10ConstructLER5RTestRK7TDesC16 @ 24 NONAME
+	_ZN8CCntTest10EndTestLibEi @ 25 NONAME
+	_ZN8CCntTest12ContactUidLCElx @ 26 NONAME
+	_ZN8CCntTest12SelectDriveLEv @ 27 NONAME
+	_ZN8CCntTest13CloseDatabaseEv @ 28 NONAME
+	_ZN8CCntTest13CompareFieldsER17CContactItemFieldS1_ @ 29 NONAME
+	_ZN8CCntTest13DeleteContactEl @ 30 NONAME
+	_ZN8CCntTest13OpenDatabaseLEv @ 31 NONAME
+	_ZN8CCntTest15CreateDatabaseLEv @ 32 NONAME
+	_ZN8CCntTest15DeleteDatabaseLEv @ 33 NONAME
+	_ZN8CCntTest15ExportContactLCElj15TVCardStoreTypei @ 34 NONAME
+	_ZN8CCntTest15ImportContactsLEP15CVCardTestStorej @ 35 NONAME
+	_ZN8CCntTest15TestAccessCountEli @ 36 NONAME
+	_ZN8CCntTest16ExportContactsLCEPK15CContactIdArrayj15TVCardStoreTypei @ 37 NONAME
+	_ZN8CCntTest16ImportContactsLCEP15CVCardTestStorej @ 38 NONAME
+	_ZN8CCntTest19CheckDeletedContactEl @ 39 NONAME
+	_ZN8CCntTest19ImportContacts1by1LEP15CVCardTestStorej @ 40 NONAME
+	_ZN8CCntTest24CheckContactDoesNotExistEl @ 41 NONAME
+	_ZN8CCntTest24DeleteAllTemplateFieldsLEv @ 42 NONAME
+	_ZN8CCntTest25AdjustContactAccessCountLEli @ 43 NONAME
+	_ZN8CCntTest9TestFieldER17CContactItemFieldj4TUidS2_ @ 44 NONAME
+	_ZN8CCntTestD0Ev @ 45 NONAME
+	_ZN8CCntTestD1Ev @ 46 NONAME
+	_ZN8CCntTestD2Ev @ 47 NONAME
+	_ZNK15CVCardTestStore5StoreEv @ 48 NONAME
+	_ZNK8CCntTest13PrintfNewlineEv @ 49 NONAME
+	_ZNK8CCntTest16TestNoLockServerEv @ 50 NONAME
+	_ZNK8CCntTest20TestLockServerExistsEv @ 51 NONAME
+	_ZNK8CCntTest22LockServerProcessCountEiii @ 52 NONAME
+	_ZNK8CCntTest23LockServerSessionExistsEi @ 53 NONAME
+	_ZTI8CCntTest @ 54 NONAME ; #<TI>#
+	_ZTV8CCntTest @ 55 NONAME ; #<VT>#
+	_ZTI15CVCardTestStore @ 56 NONAME ; #<TI>#
+	_ZTV15CVCardTestStore @ 57 NONAME ; #<VT>#
+	_ZN8CCntTest10ProfileEndEi @ 58 NONAME
+	_ZN8CCntTest12ProfileResetEii @ 59 NONAME
+	_ZN8CCntTest12ProfileStartEi @ 60 NONAME
+	_ZN8CCntTest13ProfileResultEP11TCntProfileii @ 61 NONAME
+	_ZNK8CCntTest20TestLockServerClosesEv @ 62 NONAME
+	_Z13GetFullDbNameRK7TDesC16 @ 63 NONAME
+	_ZN13TCntPerfTimer10ResetTimerEv @ 64 NONAME
+	_ZN13TCntPerfTimer10StartTimerEv @ 65 NONAME
+	_ZN13TCntPerfTimer6ResultEv @ 66 NONAME
+	_ZN13TCntPerfTimer9StopTimerEv @ 67 NONAME
+	_ZN13TCntPerfTimerC1Ev @ 68 NONAME
+	_ZN13TCntPerfTimerC2Ev @ 69 NONAME
+	_Z24DbShouldBeInDamagedStateP16CContactDatabase @ 70 NONAME
+	_Z26ReadContactFromDamagedDbLCP16CContactDatabasel @ 71 NONAME
+

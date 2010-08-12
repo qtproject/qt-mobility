@@ -42,12 +42,12 @@
 #ifndef QAUDIOENDPOINTSELECTOR_H
 #define QAUDIOENDPOINTSELECTOR_H
 
-#include <QtMultimedia/qaudio.h>
-#include "qmediacontrol.h"
+#include <qaudio.h>
+#include <qmediacontrol.h>
 
 QT_BEGIN_NAMESPACE
 
-class Q_MEDIA_EXPORT QAudioEndpointSelector : public QMediaControl
+class Q_MULTIMEDIA_EXPORT QAudioEndpointSelector : public QMediaControl
 {
     Q_OBJECT
 

@@ -44,6 +44,7 @@
 
 #include "qtorganizer.h"
 #include "qorganizeritemrecurrence.h"
+#include "qorganizertodoprogress.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -53,22 +54,32 @@ public:
     Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerTodo, QOrganizerItemType::TypeTodo)
 
     // XXX TODO: some questions about "recurring periods and doneness"...
-    void setNotBeforeDateTime(const QDateTime& notBeforeDateTime);
-    QDateTime notBeforeDateTime() const;
+    void setStartDateTime(const QDateTime& dueDateTime);
+    QDateTime startDateTime() const;
     void setDueDateTime(const QDateTime& dueDateTime);
     QDateTime dueDateTime() const;
 
-    void setRecurrenceDates(const QList<QDateTime>& rdates);
-    QList<QDateTime> recurrenceDates() const;
+    void setTimeSpecified(bool isTimeSpecified);
+    bool isTimeSpecified() const;
+
+    void setRecurrenceDates(const QList<QDate>& rdates);
+    QList<QDate> recurrenceDates() const;
     void setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule>& rrules);
     QList<QOrganizerItemRecurrenceRule> recurrenceRules() const;
-    void setExceptionDates(const QList<QDateTime>& exdates);
-    QList<QDateTime> exceptionDates() const;
+    void setExceptionDates(const QList<QDate>& exdates);
+    QList<QDate> exceptionDates() const;
     void setExceptionRules(const QList<QOrganizerItemRecurrenceRule>& exrules);
     QList<QOrganizerItemRecurrenceRule> exceptionRules() const;
 
     void setPriority(QOrganizerItemPriority::Priority);
     QOrganizerItemPriority::Priority priority() const;
+
+    void setProgressPercentage(int percentage);
+    int progressPercentage() const;
+    void setStatus(QOrganizerTodoProgress::Status status);
+    QOrganizerTodoProgress::Status status() const;
+    void setFinishedDateTime(const QDateTime& finishedDateTime);
+    QDateTime finishedDateTime() const;
 };
 
 QTM_END_NAMESPACE

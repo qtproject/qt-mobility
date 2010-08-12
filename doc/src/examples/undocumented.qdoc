@@ -79,7 +79,7 @@
     \title Radio Example
 */
 
-/*!
+/*
     \example recorder
     \title Recorder Example
 */
@@ -102,5 +102,10 @@
 /*!
     \example sysinfo
     \title System Information Example
+*/
+
+/*!
+    \example landmarkbrowser
+    \title Landmark Browser Example
 */
 

@@ -42,12 +42,9 @@
 #include <QtGui/qx11info_x11.h>
 #include <QtCore/qdebug.h>
 #include <QtCore/qvariant.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qvideosurfaceformat.h>
 
 #include "qxvideosurface_maemo5_p.h"
-
-static QAbstractVideoBuffer::HandleType XvHandleType = QAbstractVideoBuffer::HandleType(4);
-
 
 struct XvFormatRgb
 {
@@ -253,7 +250,7 @@ QList<QVideoFrame::PixelFormat> QXVideoSurface::supportedPixelFormats(
         QAbstractVideoBuffer::HandleType handleType) const
 {
     if ( handleType == QAbstractVideoBuffer::NoHandle ||
-         handleType == XvHandleType )
+         handleType == QAbstractVideoBuffer::XvShmImageHandle )
         return m_supportedPixelFormats;
     else
         return QList<QVideoFrame::PixelFormat>();
@@ -366,11 +363,11 @@ bool QXVideoSurface::present(const QVideoFrame &frame)
         } else {
             bool presented = false;
 
-            if (frame.handleType() != XvHandleType &&
+            if (frame.handleType() != QAbstractVideoBuffer::XvShmImageHandle &&
                 m_image->data_size > m_lastFrame.mappedBytes()) {
                 qWarning("Insufficient frame buffer size");
                 setError(IncorrectFormatError);
-            } else if (frame.handleType() != XvHandleType &&
+            } else if (frame.handleType() != QAbstractVideoBuffer::XvShmImageHandle &&
                        m_image->num_planes > 0 &&
                        m_image->pitches[0] != m_lastFrame.bytesPerLine()) {
                 qWarning("Incompatible frame pitches");
@@ -378,7 +375,7 @@ bool QXVideoSurface::present(const QVideoFrame &frame)
             } else {
                 XvImage *img = 0;
 
-                if (frame.handleType() == XvHandleType) {
+                if (frame.handleType() == QAbstractVideoBuffer::XvShmImageHandle) {
                     img = frame.handle().value<XvImage*>();
                 } else {
                     img = m_image;

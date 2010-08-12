@@ -43,7 +43,7 @@
 #define S60VIDEORENDERER_H
 
 #include <QtCore/qobject.h>
-#include <QVideoRendererControl>
+#include <qvideorenderercontrol.h>
 
 QT_USE_NAMESPACE
 

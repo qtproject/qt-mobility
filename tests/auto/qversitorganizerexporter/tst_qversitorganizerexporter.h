@@ -61,10 +61,16 @@ private slots:
     void testExport();
     void testExport_data();
 
+    void testExportError();
+    void testExportError_data();
+
     void testExportEventDetails();
     void testExportEventDetails_data();
 
-    static QVersitProperty findPropertyByName(const QVersitDocument &document, const QString &propertyName);
+    void testExportTodoDetails();
+    void testExportTodoDetails_data();
+
+    static QList<QVersitProperty> findPropertiesByName(const QVersitDocument &document, const QString &propertyName);
 };
 
 #endif

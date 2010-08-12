@@ -59,6 +59,8 @@ QContactAction::~QContactAction()
   \ingroup contacts-main
   \ingroup contacts-actions
 
+  \inmodule QtContacts
+  
   An action is anything that can be performed on a contact, or a detail of a contact.  An example
   of an action might be "Send Email" or "Dial" or "Plot Navigation Route".  One action may be
   implemented by multiple vendors, and indeed one vendor may provide multiple implementations of
@@ -105,9 +107,8 @@ QContactAction::~QContactAction()
  */
 
 /*!
-  \fn QContactAction::contactFilter(const QVariant& value) const
+  \fn QContactAction::contactFilter() const
   Returns a filter which may be used to filter contacts by the availability of this action implementation for them.
-  If \a value is valid, only contacts which have a detail with the given value and for which the action is available are returned
  */
 
 /*!

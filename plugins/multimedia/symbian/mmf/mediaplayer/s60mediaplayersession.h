@@ -45,7 +45,7 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qpair.h>
-#include <QMediaPlayer>
+#include <qmediaplayer.h>
 #include <e32cmn.h> // for TDesC
 #include <QRect>
 #include "s60mediaplayerservice.h"

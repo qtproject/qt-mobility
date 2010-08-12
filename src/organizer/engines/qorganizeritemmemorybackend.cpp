@@ -64,7 +64,8 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemMemoryEngine
   \brief The QOrganizerItemMemoryEngine class provides an in-memory implementation
-  of a organizeritems backend.
+  of an organizer item backend.
+  \inmodule QtOrganizer
  
   It may be used as a reference implementation, or when persistent storage is not required.
  
@@ -151,7 +152,7 @@ QOrganizerItem QOrganizerItemMemoryEngine::item(const QOrganizerItemLocalId& org
     Q_UNUSED(fetchHint); // no optimisations are possible in the memory backend; ignore the fetch hint.
     int index = d->m_organizeritemIds.indexOf(organizeritemId);
     if (index != -1) {
-        // found the organizeritem successfully.
+        // found the organizer item successfully.
         *error = QOrganizerItemManager::NoError;
         return d->m_organizeritems.at(index);
     }
@@ -189,31 +190,22 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
     return QList<QOrganizerItem>();
 }
 
-QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QOrganizerItem& recurringItem, const QOrganizerItemRecurrenceRule& rrule, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount) const
+QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QDateTime& initialDateTime, const QOrganizerItemRecurrenceRule& rrule, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount) const
 {
     // If no endDateTime is given, we'll only generate items that occur within the next 4 years of periodStart.
     QList<QDateTime> retn;
 
     // call nextMatchingDate here in a loop until maxCount or rCount is reached, or until our timelimit (4yrs+periodStart) is reached.
-    bool useMaxCount = periodEnd.isNull();             // if no period end given, just return maxCount instances.
+    bool useMaxCount = periodEnd.isValid();            // if no period end given, just return maxCount instances.
     bool useRCount = rrule.count() > 0;                // if an rrule count is given, use it (as well or instead of, depending on which comes first) rrule.endDate().
     QDate realPeriodEnd = (useMaxCount ? periodStart.addDays(1461).date() : periodEnd.date()); // periodStart + 4 years
     QDate nextMatch = periodStart.date();
     while (true) {
-        nextMatch = nextMatchingDate(nextMatch, realPeriodEnd, rrule);
+        nextMatch = nextMatchingDate(nextMatch, realPeriodEnd, rrule, initialDateTime.date());
         if (!nextMatch.isNull()) {
             QDateTime nmdt;
             nmdt.setDate(nextMatch);
-            if (recurringItem.type() == QOrganizerItemType::TypeEvent) {
-                QOrganizerEvent evt = recurringItem;
-                nmdt.setTime(evt.startDateTime().time());
-            } else if (recurringItem.type() == QOrganizerItemType::TypeTodo) {
-                QOrganizerTodo todo = recurringItem;
-                nmdt.setTime(todo.notBeforeDateTime().time()); // XXX TODO: verify this is the right field to use..?
-            } else {
-                // erm... not a recurring item in our schema...
-                return QList<QDateTime>();
-            }
+            nmdt.setTime(initialDateTime.time());
 
             // XXX TODO: check that nmdt is within the required start and end times / period,
             // because our instance date generation code merely checks dates, not datetimes.
@@ -244,21 +236,22 @@ QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QOrganizerI
     return retn;
 }
 
-QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const QDate& untilDate, const QOrganizerItemRecurrenceRule& rrule) const
+QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const QDate& untilDate, QOrganizerItemRecurrenceRule rrule, const QDate& initialDate) const
 {
     // gets the next date (starting from currDate INCLUSIVE) which matches the rrule but is less than untilDate
     // if none found, returns an invalid, null QDate.
     // if currDate > untilDate OR currDate > rrule.endDate, it will return an invalid, null QDate.
-    // XXX TODO: observe the rrule.count() as well as endDate!  requires generation from startDate of rrule... hrm....
+    // XXX TODO: observe the rrule.count() as well as endDate!  requires generation from initialDate... hrm....
 
     // keep going until the untilDate or the endDate of the rrule, whichever comes first.
     QDate realUntilDate = untilDate;
     if (rrule.endDate().isValid() && rrule.endDate() < untilDate)
         realUntilDate = rrule.endDate();
-    QDate startDate = rrule.startDate();
 
     if (currDate > realUntilDate)
         return QDate();
+
+    inferMissingCriteria(&rrule, initialDate);
 
     QList<Qt::DayOfWeek> daysOfWeek = rrule.daysOfWeek();
     qSort(daysOfWeek);
@@ -277,21 +270,16 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
         interval = 1;
 
     QDate tempDate = currDate;
-    while (tempDate <= realUntilDate) {
+    while (tempDate < realUntilDate) {
+        // FIXME: the interval-skipping code is broken for interval > 2, I think...
         // first, do FREQ+INTERVAL matching based on dateStart+rrule
         switch (freq) {
             case QOrganizerItemRecurrenceRule::Yearly:
             {
-                if (tempDate.day() != startDate.day() || tempDate.month() != startDate.month()) {
-                    // we haven't reached the right day of the year yet.
-                    tempDate = tempDate.addDays(1);
-                    continue;
-                }
-
-                int yearsDelta = tempDate.year() - startDate.year();
+                int yearsDelta = tempDate.year() - initialDate.year();
                 if (yearsDelta % interval > 0) {
                     // this year doesn't match the interval.
-                    tempDate = tempDate.addDays(tempDate.daysInYear() - tempDate.dayOfYear());
+                    tempDate.setDate(tempDate.year()+1, 1, 1);
                     continue;
                 }
             }
@@ -299,16 +287,12 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
 
             case QOrganizerItemRecurrenceRule::Monthly:
             {
-                if (tempDate.day() != startDate.day()) {
-                    // we haven't reached the right day of the month yet.
-                    tempDate = tempDate.addDays(1);
-                    continue;
-                }
-
-                int monthsDelta = tempDate.month() - startDate.month() + (12 * (tempDate.year() - startDate.year()));
+                int monthsDelta = tempDate.month() - initialDate.month() + (12 * (tempDate.year() - initialDate.year()));
                 if (monthsDelta % interval > 0) {
                     // this month doesn't match.
-                    tempDate = tempDate.addDays(tempDate.daysInMonth() - tempDate.day());
+                    int newMonth = tempDate.month()+1;
+                    int newYear = tempDate.year() + (newMonth==13 ? 1 : 0);
+                    tempDate.setDate(newYear, newMonth==13 ? 1 : newMonth, 1);
                     continue;
                 }
             }
@@ -316,24 +300,30 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
 
             case QOrganizerItemRecurrenceRule::Weekly:
             {
-                // Weekly is a tricky one, because of ISO week stuff.
-                // first, get the tempDate to fall on a "7 days-from-startdate" multiple
-                while (startDate.daysTo(tempDate) % 7 > 0)
-                    tempDate = tempDate.addDays(1);
-
+                // we need to adjust for the week start specified by the client if the interval is greater than 1
+                // ie, every time we hit the day specified, we increment the week count.
                 int weekCount = 0;
-                QDate weeklyDate = startDate;
-                while (weeklyDate < tempDate) {
-                    int weeklyDateWeek = weeklyDate.weekNumber();
-                    weeklyDate = weeklyDate.addDays(1);
-                    if (weeklyDate.weekNumber() > weeklyDateWeek) {
-                        weekCount += 1;
+                QDate weeklyDate = initialDate;
+                if (interval > 1) {
+                    if (static_cast<Qt::DayOfWeek>(weeklyDate.dayOfWeek()) == rrule.weekStart()) {
+                        // we are starting on the first day of the week.
+                        // skip this date since we don't want to increment the week count.
+                        weeklyDate = weeklyDate.addDays(1);
+                    }
+
+                    while (weeklyDate <= tempDate) {
+                        if (static_cast<Qt::DayOfWeek>(weeklyDate.dayOfWeek()) == rrule.weekStart()) {
+                            weekCount += 1;
+                        }
+                        weeklyDate = weeklyDate.addDays(1);
                     }
                 }
 
                 if (weekCount % interval > 0) {
                     // this week doesn't match.
-                    tempDate = tempDate.addDays(7);
+                    do {
+                        tempDate = tempDate.addDays(1);
+                    } while (tempDate.dayOfWeek() != rrule.weekStart());
                     continue;
                 }
             }
@@ -341,7 +331,7 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
 
             default: // daily
             {
-                int daysDelta = startDate.daysTo(tempDate);
+                int daysDelta = initialDate.daysTo(tempDate);
                 if (daysDelta % interval > 0) {
                     // this day doesn't match.
                     tempDate = tempDate.addDays(daysDelta % interval);
@@ -353,44 +343,92 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
 
         // then, check months, weeksInYear, daysInMonth, daysInWeek, etc.
         if (monthsOfYear.size() > 0 && !monthsOfYear.contains(static_cast<QOrganizerItemRecurrenceRule::Month>(tempDate.month()))) {
-            // this day didn't match.
             tempDate = tempDate.addDays(1);
             continue;
         }
 
         if (weeksOfYear.size() > 0 && !weeksOfYear.contains(tempDate.weekNumber())) {
-            // this day didn't match.
             tempDate = tempDate.addDays(1);
             continue;
         }
 
-        if (daysOfYear.size() > 0 && !daysOfYear.contains(tempDate.day())) {
-            // this day didn't match.
+        if (daysOfYear.size() > 0 && !daysOfYear.contains(tempDate.dayOfYear())) {
             tempDate = tempDate.addDays(1);
             continue;
         }
 
         if (daysOfMonth.size() > 0 && !daysOfMonth.contains(tempDate.day())) {
-            // this day didn't match.
             tempDate = tempDate.addDays(1);
             continue;
         }
 
-        // XXX TODO: confirm that QDate::dayOfWeek() returns a weekday rather than weekdayNumber (ISO)
         if (daysOfWeek.size() > 0 && !daysOfWeek.contains(static_cast<Qt::DayOfWeek>(tempDate.dayOfWeek()))) {
-            // this day didn't match.
             tempDate = tempDate.addDays(1);
             continue;
         }
 
         // matches every criteria
-        if (tempDate >= startDate && tempDate <= realUntilDate)
+        if (tempDate >= initialDate && tempDate < realUntilDate)
             return tempDate;
         tempDate = tempDate.addDays(1);
     }
 
     // no match.
     return QDate();
+}
+
+void QOrganizerItemMemoryEngine::inferMissingCriteria(QOrganizerItemRecurrenceRule* rrule, const QDate& initialDate) const
+{
+    switch (rrule->frequency()) {
+        case QOrganizerItemRecurrenceRule::Weekly:
+            if (rrule->daysOfWeek().isEmpty()) {
+                // derive day of week
+                QList<Qt::DayOfWeek> days;
+                days.append(static_cast<Qt::DayOfWeek>(initialDate.dayOfWeek()));
+                rrule->setDaysOfWeek(days);
+            }
+            break;
+        case QOrganizerItemRecurrenceRule::Monthly:
+            if (rrule->daysOfWeek().isEmpty() && rrule->daysOfMonth().isEmpty()) {
+                // derive day of month
+                QList<int> days;
+                days.append(initialDate.day());
+                rrule->setDaysOfMonth(days);
+            }
+            break;
+        case QOrganizerItemRecurrenceRule::Yearly:
+            if (rrule->months().isEmpty()
+                    && rrule->weeksOfYear().isEmpty()
+                    && rrule->daysOfYear().isEmpty()
+                    && rrule->daysOfMonth().isEmpty()
+                    && rrule->daysOfWeek().isEmpty()) {
+                // derive day of month and month of year
+                QList<int> daysOfMonth;
+                daysOfMonth.append(initialDate.day());
+                rrule->setDaysOfMonth(daysOfMonth);
+                QList<QOrganizerItemRecurrenceRule::Month> months;
+                months.append(static_cast<QOrganizerItemRecurrenceRule::Month>(initialDate.month()));
+                rrule->setMonths(months);
+            } else if (!rrule->months().isEmpty()
+                    && rrule->weeksOfYear().isEmpty()
+                    && rrule->daysOfYear().isEmpty()
+                    && rrule->daysOfMonth().isEmpty()
+                    && rrule->daysOfWeek().isEmpty()) {
+                // derive day of month
+                QList<int> daysOfMonth;
+                daysOfMonth.append(initialDate.day());
+                rrule->setDaysOfMonth(daysOfMonth);
+            } else if (!rrule->weeksOfYear().isEmpty()
+                    && rrule->daysOfYear().isEmpty()
+                    && rrule->daysOfMonth().isEmpty()
+                    && rrule->daysOfWeek().isEmpty()) {
+                // derive day of week
+                QList<Qt::DayOfWeek> days;
+                days.append(static_cast<Qt::DayOfWeek>(initialDate.dayOfWeek()));
+                rrule->setDaysOfWeek(days);
+            }
+            break;
+    }
 }
 
 /*! \reimp */
@@ -423,7 +461,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
             upperBound = instance.endDateTime();
         } else {
             QOrganizerTodoOccurrence instance = currException;
-            lowerBound = instance.notBeforeDateTime();
+            lowerBound = instance.startDateTime();
             upperBound = instance.dueDateTime();
         }
 
@@ -433,28 +471,45 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
         }
     }
 
+    QDateTime initialDateTime;
+    if (generator.type() == QOrganizerItemType::TypeEvent) {
+        QOrganizerEvent evt = generator;
+        initialDateTime = evt.startDateTime();
+    } else if (generator.type() == QOrganizerItemType::TypeTodo) {
+        QOrganizerTodo todo = generator;
+        initialDateTime = todo.startDateTime();
+    } else {
+        // erm... not a recurring item in our schema...
+        return QList<QOrganizerItem>() << generator;
+    }
+
     // then, generate the required (unchanged) instances from the generator.
     // before doing that, we have to find out all of the exception dates.
-    QList<QDateTime> xdates = recur.exceptionDates();
+    QList<QDate> xdates;
+    foreach (const QDate& xdate, recur.exceptionDates()) {
+        xdates += xdate;
+    }
     QList<QOrganizerItemRecurrenceRule> xrules = recur.exceptionRules();
     foreach (const QOrganizerItemRecurrenceRule& xrule, xrules) {
-        bool xruleEndsBeforePeriodStarts = (!xrule.endDate().isNull()) && (xrule.endDate() < periodStart.date());
-        bool xruleStartsAfterPeriodEnds = (!xrule.startDate().isNull()) && (xrule.startDate() > periodEnd.date());
-        if (!xruleEndsBeforePeriodStarts && !xruleStartsAfterPeriodEnds) {
+        if ((xrule.endDate().isNull()) || (xrule.endDate() >= periodStart.date())) {
             // we cannot skip it, since it applies in the given time period.
-            xdates += generateDateTimes(generator, xrule, periodStart, periodEnd, 50); // max count of 50 is arbitrary...
+            QList<QDateTime> xdatetimes = generateDateTimes(initialDateTime, xrule, periodStart, periodEnd, 50); // max count of 50 is arbitrary...
+            foreach (const QDateTime& xdatetime, xdatetimes) {
+                xdates += xdatetime.date();
+            }
         }
     }
 
     // now generate a list of rdates (from the recurrenceDates and recurrenceRules)
-    QList<QDateTime> rdates = recur.recurrenceDates();
+    QList<QDateTime> rdates;
+    foreach (const QDate& rdate, recur.recurrenceDates()) {
+        rdates += QDateTime(rdate, initialDateTime.time());
+    }
     QList<QOrganizerItemRecurrenceRule> rrules = recur.recurrenceRules();
     foreach (const QOrganizerItemRecurrenceRule& rrule, rrules) {
-        bool rruleEndsBeforePeriodStarts = (!rrule.endDate().isNull()) && (rrule.endDate() < periodStart.date());
-        bool rruleStartsAfterPeriodEnds = (!rrule.startDate().isNull()) && (rrule.startDate() > periodEnd.date());
-        if (!rruleEndsBeforePeriodStarts && !rruleStartsAfterPeriodEnds) {
+        if ((rrule.endDate().isNull()) || (rrule.endDate() >= periodStart.date())) {
             // we cannot skip it, since it applies in the given time period.
-            rdates += generateDateTimes(generator, rrule, periodStart, periodEnd, 50); // max count of 50 is arbitrary...
+            rdates += generateDateTimes(initialDateTime, rrule, periodStart, periodEnd, 50); // max count of 50 is arbitrary...
         }
     }
 
@@ -463,7 +518,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
 
     // now for each rdate which isn't also an xdate
     foreach (const QDateTime& rdate, rdates) {
-        if (!xdates.contains(rdate)) {
+        if (!xdates.contains(rdate.date())) {
             // generate the required instance and add it to the return list.
             retn.append(generateInstance(generator, rdate));
         }
@@ -488,8 +543,8 @@ QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem
     QList<QOrganizerItemDetail> occDets;
     foreach (const QOrganizerItemDetail& det, allDets) {
         if (det.definitionName() != QOrganizerItemRecurrence::DefinitionName
-                && det.definitionName() != QOrganizerItemEventTimeRange::DefinitionName
-                && det.definitionName() != QOrganizerItemTodoTimeRange::DefinitionName) {
+                && det.definitionName() != QOrganizerEventTimeRange::DefinitionName
+                && det.definitionName() != QOrganizerTodoTimeRange::DefinitionName) {
             occDets.append(det);
         }
     }
@@ -497,18 +552,21 @@ QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem
     // add the detail which identifies exactly which instance this item is.
     QOrganizerItemInstanceOrigin currOrigin;
     currOrigin.setParentLocalId(generator.localId());
-    currOrigin.setOriginalTimestamp(rdate);
+    currOrigin.setOriginalDate(rdate.date());
     occDets.append(currOrigin);
 
     // save those details in the instance.
     foreach (const QOrganizerItemDetail& det, occDets) {
-        QOrganizerItemDetail modifiable = det;
-        instanceItem.saveDetail(&modifiable);
+        // copy every detail except the type
+        if (det.definitionName() != QOrganizerItemType::DefinitionName) {
+            QOrganizerItemDetail modifiable = det;
+            instanceItem.saveDetail(&modifiable);
+        }
     }
 
     // and update the time range in the instance based on the current instance date
     if (generator.type() == QOrganizerItemType::TypeEvent) {
-        QOrganizerItemEventTimeRange etr = generator.detail<QOrganizerItemEventTimeRange>();
+        QOrganizerEventTimeRange etr = generator.detail<QOrganizerEventTimeRange>();
         QDateTime temp = etr.startDateTime();
         temp.setDate(rdate.date());
         etr.setStartDateTime(temp);
@@ -520,13 +578,13 @@ QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem
 
     // for todo's?
     if (generator.type() == QOrganizerItemType::TypeTodo) {
-        QOrganizerItemTodoTimeRange ttr = generator.detail<QOrganizerItemTodoTimeRange>();
+        QOrganizerTodoTimeRange ttr = generator.detail<QOrganizerTodoTimeRange>();
         QDateTime temp = ttr.dueDateTime();
         temp.setDate(rdate.date());
         ttr.setDueDateTime(temp);
-        temp = ttr.notBeforeDateTime();
+        temp = ttr.startDateTime();
         temp.setDate(rdate.date());
-        ttr.setNotBeforeDateTime(temp);
+        ttr.setStartDateTime(temp);
         instanceItem.saveDetail(&ttr);
     }
 
@@ -541,7 +599,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::items(const QOrganizerItemFilt
 
     QList<QOrganizerItem> sorted;
 
-    /* First filter out organizeritems - check for default filter first */
+    /* First filter out organizer items - check for default filter first */
     if (filter.type() == QOrganizerItemFilter::DefaultFilter) {
         foreach(const QOrganizerItem&c, d->m_organizeritems) {
             QOrganizerItemManagerEngine::addSorted(&sorted,c, sortOrders);
@@ -563,12 +621,12 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, cons
     Q_UNUSED(collectionId);
     // XXX TODO: save in in-memory collection.
 
-    // ensure that the organizeritem's details conform to their definitions
+    // ensure that the organizer item's details conform to their definitions
     if (!validateItem(*theOrganizerItem, error)) {
         return false;
     }
 
-    // check to see if this organizeritem already exists
+    // check to see if this organizer item already exists
     int index = d->m_organizeritemIds.indexOf(theOrganizerItem->id().localId());
     if (index != -1) {
         /* We also need to check that there are no modified create only details */
@@ -584,6 +642,10 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, cons
         QOrganizerItemManagerEngine::setDetailAccessConstraints(&ts, QOrganizerItemDetail::ReadOnly | QOrganizerItemDetail::Irremovable);
         theOrganizerItem->saveDetail(&ts);
 
+        if (!fixOccurrenceReferences(theOrganizerItem, error)) {
+            return false;
+        }
+
         // Looks ok, so continue
         d->m_organizeritems.replace(index, *theOrganizerItem);
         changeSet.insertChangedItem(theOrganizerItem->localId());
@@ -592,25 +654,65 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, cons
         QOrganizerItemId newId;
         newId.setManagerUri(managerUri());
         if (theOrganizerItem->id() != QOrganizerItemId() && theOrganizerItem->id() != newId) {
-            // the ID is not empty, and it doesn't identify an existing organizeritem in our database either.
+            // the ID is not empty, and it doesn't identify an existing organizer item in our database either.
             *error = QOrganizerItemManager::DoesNotExistError;
             return false;
         }
 
-        /* New organizeritem */
+        /* New organizer item */
         QOrganizerItemTimestamp ts = theOrganizerItem->detail(QOrganizerItemTimestamp::DefinitionName);
         ts.setLastModified(QDateTime::currentDateTime());
         ts.setCreated(ts.lastModified());
         setDetailAccessConstraints(&ts, QOrganizerItemDetail::ReadOnly | QOrganizerItemDetail::Irremovable);
         theOrganizerItem->saveDetail(&ts);
 
-        // update the organizeritem item - set its ID
+        // update the organizer item - set its ID
         newId.setLocalId(++d->m_nextOrganizerItemId);
         theOrganizerItem->setId(newId);
 
-        // finally, add the organizeritem to our internal lists and return
-        d->m_organizeritems.append(*theOrganizerItem);                   // add organizeritem to list
-        d->m_organizeritemIds.append(theOrganizerItem->localId());  // track the organizeritem id.
+        // set the guid if not set, and ensure that it's the same as parents (fix if it isn't)
+        if (theOrganizerItem->guid().isEmpty())
+            theOrganizerItem->setGuid(QUuid::createUuid().toString());
+        if (!fixOccurrenceReferences(theOrganizerItem, error)) {
+            return false;
+        }
+
+        // if we're saving an exception occurrence, we need to add it's original date as an exdate to the parent.
+        if (theOrganizerItem->type() == QOrganizerItemType::TypeEventOccurrence) {
+            // update the event by adding an EX-DATE which corresponds to the original date of the occurrence being saved.
+            QOrganizerItemManager::Error tempError = QOrganizerItemManager::NoError;
+            QOrganizerItemInstanceOrigin origin = theOrganizerItem->detail<QOrganizerItemInstanceOrigin>();
+            QOrganizerItemLocalId parentId = origin.parentLocalId();
+            QOrganizerEvent parentEvent = item(parentId, QOrganizerItemFetchHint(), &tempError);
+            QDate originalDate = origin.originalDate();
+            QList<QDate> currentExceptionDates = parentEvent.exceptionDates();
+            if (!currentExceptionDates.contains(originalDate)) {
+                currentExceptionDates.append(originalDate);
+                parentEvent.setExceptionDates(currentExceptionDates);
+                int parentEventIndex = d->m_organizeritemIds.indexOf(parentEvent.localId());
+                d->m_organizeritems.replace(parentEventIndex, parentEvent);
+                changeSet.insertChangedItem(parentEvent.localId()); // is this correct?  it's an exception, so change parent?
+            }
+        } else if (theOrganizerItem->type() == QOrganizerItemType::TypeTodoOccurrence) {
+            // update the todo by adding an EX-DATE which corresponds to the original date of the occurrence being saved.
+            QOrganizerItemManager::Error tempError = QOrganizerItemManager::NoError;
+            QOrganizerItemInstanceOrigin origin = theOrganizerItem->detail<QOrganizerItemInstanceOrigin>();
+            QOrganizerItemLocalId parentId = origin.parentLocalId();
+            QOrganizerTodo parentTodo = item(parentId, QOrganizerItemFetchHint(), &tempError);
+            QDate originalDate = origin.originalDate();
+            QList<QDate> currentExceptionDates = parentTodo.exceptionDates();
+            if (!currentExceptionDates.contains(originalDate)) {
+                currentExceptionDates.append(originalDate);
+                parentTodo.setExceptionDates(currentExceptionDates);
+                int parentTodoIndex = d->m_organizeritemIds.indexOf(parentTodo.localId());
+                d->m_organizeritems.replace(parentTodoIndex, parentTodo);
+                changeSet.insertChangedItem(parentTodo.localId()); // is this correct?  it's an exception, so change parent?
+            }
+        }
+
+        // finally, add the organizer item to our internal lists and return
+        d->m_organizeritems.append(*theOrganizerItem);              // add organizer item to list
+        d->m_organizeritemIds.append(theOrganizerItem->localId());  // track the organizer item id.
 
         changeSet.insertAddedItem(theOrganizerItem->localId());
 
@@ -624,6 +726,83 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, cons
 
     *error = QOrganizerItemManager::NoError;     // successful.
     return true;
+}
+
+/*!
+ * For Occurrence type items, ensure the ParentLocalId and the Guid are set consistently.  Returns
+ * false and sets \a error on error, returns true otherwise.
+ */
+bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem, QOrganizerItemManager::Error* error)
+{
+    if (theItem->type() == QOrganizerItemType::TypeEventOccurrence
+            || theItem->type() == QOrganizerItemType::TypeTodoOccurrence) {
+        const QString guid = theItem->guid();
+        QOrganizerItemLocalId parentId = theItem->detail<QOrganizerItemInstanceOrigin>().parentLocalId();
+        if (!guid.isEmpty()) {
+            if (parentId != 0) {
+                QOrganizerItemManager::Error tempError;
+                QOrganizerItem parentItem = item(parentId, QOrganizerItemFetchHint(), &tempError);
+                if (guid != parentItem.guid()
+                        || !typesAreRelated(theItem->type(), parentItem.type())) {
+                    // parentId and guid are both set and inconsistent, or the parent is the wrong
+                    // type
+                    *error = QOrganizerItemManager::InvalidOccurrenceError;
+                    return false;
+                }
+            } else {
+                // guid set but not parentId
+                // find an item with the given guid
+                foreach (const QOrganizerItem& item, d->m_organizeritems) {
+                    if (item.guid() == guid) {
+                        parentId = item.localId();
+                        break;
+                    }
+                }
+                if (parentId == 0) {
+                    // couldn't find an item with the given guid
+                    *error = QOrganizerItemManager::InvalidOccurrenceError;
+                    return false;
+                }
+                QOrganizerItemManager::Error tempError;
+                QOrganizerItem parentItem = item(parentId, QOrganizerItemFetchHint(), &tempError);
+                if (!typesAreRelated(theItem->type(), parentItem.type())) {
+                    // the parent is the wrong type
+                    *error = QOrganizerItemManager::InvalidOccurrenceError;
+                    return false;
+                }
+                // found a matching item - set the parentId of the occurrence
+                QOrganizerItemInstanceOrigin origin = theItem->detail<QOrganizerItemInstanceOrigin>();
+                origin.setParentLocalId(parentId);
+                theItem->saveDetail(&origin);
+            }
+        } else if (parentId != 0) {
+            QOrganizerItemManager::Error tempError;
+            QOrganizerItem parentItem = item(parentId, QOrganizerItemFetchHint(), &tempError);
+            if (parentItem.guid().isEmpty()
+                    || !typesAreRelated(theItem->type(), parentItem.type())) {
+                // found the matching item but it has no guid, or it isn't the right type
+                *error = QOrganizerItemManager::InvalidOccurrenceError;
+                return false;
+            }
+            theItem->setGuid(parentItem.guid());
+        } else {
+            // neither parentId or guid is supplied
+            *error = QOrganizerItemManager::InvalidOccurrenceError;
+            return false;
+        }
+    }
+    return true;
+}
+
+/*!
+ * Returns true if and only if \a occurrenceType is the "Occurrence" version of \a parentType.
+ */
+bool QOrganizerItemMemoryEngine::typesAreRelated(const QString& occurrenceType, const QString& parentType)
+{
+    return ((parentType == QOrganizerItemType::TypeEvent
+                && occurrenceType == QOrganizerItemType::TypeEventOccurrence)
+            || (parentType == QOrganizerItemType::TypeTodo
+                && occurrenceType == QOrganizerItemType::TypeTodoOccurrence));
 }
 
 /*! \reimp */
@@ -657,8 +836,8 @@ bool QOrganizerItemMemoryEngine::saveItems(QList<QOrganizerItem>* organizeritems
     return (*error == QOrganizerItemManager::NoError);
 }
 
-/*! Removes the organizeritem identified by the given \a organizeritemId, storing any error to \a error and
-    filling the \a changeSet with ids of changed organizeritems and relationships as required */
+/*! Removes the organizer item identified by the given \a organizeritemId, storing any error to \a error and
+    filling the \a changeSet with ids of changed organizer items and relationships as required */
 bool QOrganizerItemMemoryEngine::removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
     int index = d->m_organizeritemIds.indexOf(organizeritemId);
@@ -668,7 +847,7 @@ bool QOrganizerItemMemoryEngine::removeItem(const QOrganizerItemLocalId& organiz
         return false;
     }
 
-    // remove the organizeritem from the lists.
+    // remove the organizer item from the lists.
     QOrganizerItemId thisOrganizerItem;
     thisOrganizerItem.setManagerUri(managerUri());
     thisOrganizerItem.setLocalId(organizeritemId);
@@ -719,7 +898,7 @@ QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemMemoryEngine::detail
 }
 
 /*! Saves the given detail definition \a def, storing any error to \a error and
-    filling the \a changeSet with ids of changed organizeritems as required */
+    filling the \a changeSet with ids of changed organizer items as required */
 bool QOrganizerItemMemoryEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
     // we should check for changes to the database in this function, and add ids of changed data to changeSet. // XXX TODO.
@@ -748,11 +927,11 @@ bool QOrganizerItemMemoryEngine::saveDetailDefinition(const QOrganizerItemDetail
 }
 
 /*! Removes the detail definition identified by \a definitionId, storing any error to \a error and
-    filling the \a changeSet with ids of changed organizeritems as required */
+    filling the \a changeSet with ids of changed organizer items as required */
 bool QOrganizerItemMemoryEngine::removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
     // we should check for changes to the database in this function, and add ids of changed data to changeSet...
-    // we should also check to see if the changes have invalidated any organizeritem data, and add the ids of those organizeritems
+    // we should also check to see if the changes have invalidated any organizer item data, and add the ids of those organizer items
     // to the change set.  TODO!
     Q_UNUSED(changeSet);
 
@@ -876,8 +1055,8 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
         case QOrganizerItemAbstractRequest::ItemRemoveRequest:
         {
             // this implementation provides scant information to the user
-            // the operation either succeeds (all organizeritems matching the filter were removed)
-            // or it fails (one or more organizeritems matching the filter could not be removed)
+            // the operation either succeeds (all organizer items matching the filter were removed)
+            // or it fails (one or more organizer items matching the filter could not be removed)
             // if a failure occurred, the request error will be set to the most recent
             // error that occurred during the remove operation.
             QOrganizerItemRemoveRequest* r = static_cast<QOrganizerItemRemoveRequest*>(currentRequest);
