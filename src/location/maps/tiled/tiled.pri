@@ -18,7 +18,8 @@ PRIVATE_HEADERS += \
                     maps/tiled/qgeotiledmaprectangleobjectinfo_p.h \
                     maps/tiled/qgeotiledmapreply_p.h \
                     maps/tiled/qgeotiledmaprequest_p.h \
-                    maps/tiled/qgeotiledmaprouteobjectinfo_p.h
+                    maps/tiled/qgeotiledmaprouteobjectinfo_p.h \
+                    maps/tiled/qgeotiledmaptextobjectinfo_p.h
 
 SOURCES += \
                     maps/tiled/qgeotiledmapcircleobjectinfo_p.cpp \
@@ -31,4 +32,5 @@ SOURCES += \
                     maps/tiled/qgeotiledmaprectangleobjectinfo_p.cpp \
                     maps/tiled/qgeotiledmapreply.cpp \
                     maps/tiled/qgeotiledmaprequest.cpp \
-                    maps/tiled/qgeotiledmaprouteobjectinfo_p.cpp
+                    maps/tiled/qgeotiledmaprouteobjectinfo_p.cpp \
+                    maps/tiled/qgeotiledmaptextobjectinfo_p.cpp

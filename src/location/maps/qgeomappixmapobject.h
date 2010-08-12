@@ -60,7 +60,8 @@ class Q_LOCATION_EXPORT QGeoMapPixmapObject : public QGeoMapObject
     Q_PROPERTY(QPoint offset READ offset WRITE setOffset NOTIFY offsetChanged)
 
 public:
-    QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &anchor = QPoint(0, 0), const QPixmap &icon = QPixmap(), QGeoMapObject *parent = 0);
+    QGeoMapPixmapObject(QGeoMapObject *parent = 0);
+    QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset = QPoint(0, 0), const QPixmap &icon = QPixmap(), QGeoMapObject *parent = 0);
     ~QGeoMapPixmapObject();
 
     QGeoCoordinate coordinate() const;
