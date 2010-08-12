@@ -2,6 +2,7 @@
 #include <qmobilityglobal.h>
 #include "ui_mainwindow.h"
 #include <QtCore/QDebug>
+#include <qtelephony.h>
 #include <qtelephonycalllist.h>
 
 using namespace QtMobility;
@@ -52,31 +53,31 @@ void MainWindow::addListEntry(QString value)
 void MainWindow::onActiveCallAdded(const QTelephonyCallInfo& call)
 {
     addListEntry("call Added: " + call.remotePartyIdentifier());
-    if(call.type() == QTelephonyCallInfo::Video)
+    if(call.type() == Telephony::Video)
         addListEntry("- type: Video");
-    else if(call.type() == QTelephonyCallInfo::Voice)
+    else if(call.type() == Telephony::Voice)
         addListEntry("- type: Voice");
-    else if(call.type() == QTelephonyCallInfo::Text)
+    else if(call.type() == Telephony::Text)
         addListEntry("- type: Text");
-    else if(call.type() == QTelephonyCallInfo::Any)
+    else if(call.type() == Telephony::Any)
         addListEntry("- type: Any");
 }
 
 void MainWindow::onActiveCallStatusChanged(const QTelephonyCallInfo& call)
 {
     addListEntry("status changed: " + call.remotePartyIdentifier());
-    if(call.status() == QTelephonyCallInfo::Idle)
+    if(call.status() == Telephony::Idle)
         addListEntry("- Idle");
-    else if(call.status() == QTelephonyCallInfo::Dialing)
+    else if(call.status() == Telephony::Dialing)
         addListEntry("- Dialing");
-    else if(call.status() == QTelephonyCallInfo::Alerting)
+    else if(call.status() == Telephony::Alerting)
         addListEntry("- Alerting");
-    else if(call.status() == QTelephonyCallInfo::Connected)
+    else if(call.status() == Telephony::Connected)
         addListEntry("- Connected");
-    else if(call.status() == QTelephonyCallInfo::Disconnecting)
+    else if(call.status() == Telephony::Disconnecting)
         addListEntry("- Disconnecting");
-    else if(call.status() == QTelephonyCallInfo::Incomming)
+    else if(call.status() == Telephony::Incomming)
         addListEntry("- Incomming");
-    else if(call.status() == QTelephonyCallInfo::OnHold)
+    else if(call.status() == Telephony::OnHold)
         addListEntry("- OnHold");
 }

@@ -45,6 +45,8 @@
 #include <QtCore/QPair>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusConnectionInterface>
+
+#include "qtelephony.h"
 #include "maemo/qtelephonycalllist_maemo_p.h"
 #include "maemo/qtelephonycallinfo_maemo_p.h"
 #include "maemo/cli-constants.h"
@@ -72,7 +74,7 @@ QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
     callInfoList.clear();
 }
 
-QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephonyCallInfo::CallType& calltype) const 
+QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const Telephony::CallType& calltype) const 
 { 
     QList<QTelephonyCallInfo> e; 
     return e; 
@@ -100,14 +102,14 @@ void QTelephonyCallListPrivate::emitActiveCallAdded(QExplicitlySharedDataPointer
     emit p->activeCallAdded(callinfo);
 }
 
-QTelephonyCallInfo::CallType QTelephonyCallListPrivate::convertToCallType(QString channeltelephatytype)
+Telephony::CallType QTelephonyCallListPrivate::convertToCallType(QString channeltelephatytype)
 {
     if(channeltelephatytype == "StreamedMedia")
-        return QTelephonyCallInfo::Voice;
+        return Telephony::Voice;
     if(channeltelephatytype == "Text")
-        return QTelephonyCallInfo::Text;
+        return Telephony::Text;
 
-    return QTelephonyCallInfo::Other;
+    return Telephony::Other;
 }
 
 void QTelephonyCallListPrivate::newChannels(Tp::ChannelPtr channelptr)
@@ -130,9 +132,8 @@ void QTelephonyCallListPrivate::channelStatusChanged(Tp::ChannelPtr channel)
         callinfo.d = callInfoList[index];
         emit p->activeCallStatusChanged(callinfo);
 
-//        emit emitActiveCallStatusChanged(*found->data());
         //check if channel must be removed from callist
-        if(callInfoList[index]->status() == QTelephonyCallInfo::Disconnecting)
+        if(callInfoList[index]->status() == Telephony::Disconnecting)
             callInfoList.removeAt(index);
     }
 }

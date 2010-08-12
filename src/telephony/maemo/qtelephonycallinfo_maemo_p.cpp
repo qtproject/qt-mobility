@@ -39,7 +39,9 @@
 **
 ****************************************************************************/
 
-#include "qmobilityglobal.h"
+#include <qmobilityglobal.h>
+
+#include "qtelephony.h"
 #include "maemo/cli-constants.h"
 #include "maemo/qtelephonycallinfo_maemo_p.h"
 
@@ -97,9 +99,9 @@ QString QTelephonyCallInfoPrivate::remotePartyIdentifier() const
     return ret;
 }
 
-QTelephonyCallInfo::CallType QTelephonyCallInfoPrivate::type() const
+Telephony::CallType QTelephonyCallInfoPrivate::type() const
 {
-    QTelephonyCallInfo::CallType ret = QTelephonyCallInfo::Any;
+    Telephony::CallType ret = Telephony::Any;
     if(telepathychannel){
         if(telepathychannel->properties().contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"))){
             QString type = telepathychannel->properties().value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString();
@@ -116,10 +118,10 @@ QTelephonyCallInfo::CallType QTelephonyCallInfoPrivate::type() const
                 if(telepathychannel->properties().contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA ".InitialVideo")))
                     initialvideo = telepathychannel->properties().value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA ".InitialVideo")).toBool();
                 if(initialvideo) {
-                    ret = QTelephonyCallInfo::Video;
+                    ret = Telephony::Video;
                 }
                 else if(initialaudio)
-                    ret = QTelephonyCallInfo::Voice;
+                    ret = Telephony::Voice;
             }
         }
     }
@@ -133,9 +135,9 @@ QString QTelephonyCallInfoPrivate::subType() const
     return _subType;
 }
 
-QTelephonyCallInfo::CallStatus QTelephonyCallInfoPrivate::status() const
+Telephony::CallStatus QTelephonyCallInfoPrivate::status() const
 {
-    QTelephonyCallInfo::CallStatus ret = QTelephonyCallInfo::Idle;
+    Telephony::CallStatus ret = Telephony::Idle;
     if(telepathychannel)
         ret = telepathychannel->getStatus();
     return ret;

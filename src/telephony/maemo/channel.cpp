@@ -1,3 +1,4 @@
+#include "qtelephony.h"
 #include "maemo/channel.h"
 #include "maemo/cli-constants.h"
 #include "maemo/qtelephonycalllist_maemo_p.h"
@@ -29,7 +30,7 @@ namespace Tp
         , pChannelTypeStreamedMediaInterface(0)
         , pChannelTypeTextInterface(0)
         , pChannelTypeTubesInterface(0)
-        , status(QTelephonyCallInfo::Idle)
+        , status(Telephony::Idle)
         , connection(conn)
         , direction(0)
     {
@@ -289,13 +290,13 @@ namespace Tp
         //check if incomming direction
         if(direction == 1){
             qDebug() << "Current Thread: " << QThread::currentThreadId();
-            status = QTelephonyCallInfo::Incomming;
+            status = Telephony::Incomming;
             connection->channelStatusChanged(this);
         }
         //check for outgoing
         else if(direction == 2){
             qDebug() << "Current Thread: " << QThread::currentThreadId();
-            status = QTelephonyCallInfo::Dialing;
+            status = Telephony::Dialing;
             connection->channelStatusChanged(this);
         }
         connectType();
@@ -320,7 +321,7 @@ namespace Tp
             //check for outgoing
             if(direction == 2){
                 qDebug() << "Current Thread: " << QThread::currentThreadId();
-                status = QTelephonyCallInfo::Alerting;
+                status = Telephony::Alerting;
                 connection->channelStatusChanged(this);
             }
         }
@@ -459,7 +460,7 @@ namespace Tp
             //check for outgoing
             if(direction == 2 || direction == 1){
                 qDebug() << "Current Thread: " << QThread::currentThreadId();
-                status = QTelephonyCallInfo::Connected;
+                status = Telephony::Connected;
                 connection->channelStatusChanged(this);
             }
         }
@@ -477,7 +478,7 @@ namespace Tp
         if(direction == 1 || direction == 2)
         {
             qDebug() << "Current hread: " << QThread::currentThreadId();
-            status = QTelephonyCallInfo::Disconnecting;
+            status = Telephony::Disconnecting;
             connection->channelStatusChanged(this);
         }
     }

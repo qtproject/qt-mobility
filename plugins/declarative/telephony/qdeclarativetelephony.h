@@ -45,6 +45,7 @@
 #include <QtCore>
 #include <qdeclarative.h>
 #include <qdeclarativelist.h>
+#include <qtelephony.h>
 #include <qtelephonycalllist.h>
 
 QT_USE_NAMESPACE
@@ -60,22 +61,22 @@ class QTelephonyCallInfoWrapper : public QObject {
 public:
 
     enum CallType {
-        Any = QTelephonyCallInfo::Any,
-        Text = QTelephonyCallInfo::Text,
-        Data = QTelephonyCallInfo::Data,
-        Video = QTelephonyCallInfo::Video,
-        Voice = QTelephonyCallInfo::Voice,
-        Other = QTelephonyCallInfo::Other,
+        Any = Telephony::Any,
+        Text = Telephony::Text,
+        Data = Telephony::Data,
+        Video = Telephony::Video,
+        Voice = Telephony::Voice,
+        Other = Telephony::Other,
     };
 
     enum CallStatus {
-        Idle = QTelephonyCallInfo::Idle,
-        Dialing = QTelephonyCallInfo::Dialing,
-        Alerting = QTelephonyCallInfo::Alerting,
-        Connected = QTelephonyCallInfo::Connected,
-        Disconnecting = QTelephonyCallInfo::Disconnecting,
-        Incomming = QTelephonyCallInfo::Incomming,
-        OnHold = QTelephonyCallInfo::OnHold
+        Idle = Telephony::Idle,
+        Dialing = Telephony::Dialing,
+        Alerting = Telephony::Alerting,
+        Connected = Telephony::Connected,
+        Disconnecting = Telephony::Disconnecting,
+        Incomming = Telephony::Incomming,
+        OnHold = Telephony::OnHold
     };
 
     QTelephonyCallInfoWrapper();

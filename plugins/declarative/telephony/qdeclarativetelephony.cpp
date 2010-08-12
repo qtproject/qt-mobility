@@ -48,7 +48,7 @@
 */
 
 /*!
-    \enum QTelephonyCallInfo::CallStatus
+    \enum Telephony::CallStatus
 
     This enum type is used to describe the status of a call.
     A QTelephonyCallInfo object can have a status of:
@@ -63,7 +63,7 @@
 */
 
 /*!
-    \enum QTelephonyCallInfo::CallType
+    \enum Telephony::CallType
 
     This enum decribes the type of the call.
     A QTelephonyCallInfo object can be a type of:
@@ -238,7 +238,7 @@ QList<QTelephonyCallInfoWrapper> QTelephonyCallListWrapper::activeCalls(const QT
     QList<QtMobility::QTelephonyCallInfo> calllist;
     QList<QTelephonyCallInfoWrapper> ret;
     if(d)
-        calllist = d->activeCalls((QTelephonyCallInfo::CallType)calltype);
+        calllist = d->activeCalls((Telephony::CallType)calltype);
 
     //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
     for( int i = 0; i < calllist.count(); i++){

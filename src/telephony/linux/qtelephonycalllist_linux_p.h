@@ -53,12 +53,14 @@
 // We mean it.
 //
 
-#include "qmobilityglobal.h"
-#include "qtelephonycalllist.h"
+#include <qmobilityglobal.h>
 #include <QObject>
 #include <QList>
 #include <QtCore/qshareddata.h>
 #include "dbusinterface.h"
+
+#include "qtelephony.h"
+#include "qtelephonycalllist.h"
 
 QT_BEGIN_HEADER
 
@@ -76,7 +78,7 @@ class QTelephonyCallListPrivate : public QObject
 public:
     QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
     virtual ~QTelephonyCallListPrivate();
-    QList<QTelephonyCallInfo> activeCalls(const QTelephonyCallInfo::CallType& calltype) const;
+    QList<QTelephonyCallInfo> activeCalls(const Telephony::CallType& calltype) const;
 
 private:
     void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);

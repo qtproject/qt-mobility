@@ -54,11 +54,13 @@
 // We mean it.
 //
 
-#include "qtelephonycallinfo.h"
 #include <QtCore/qshareddata.h>
 #include <QList>
 #include <QString>
 #include <QVariant>
+
+#include "qtelephony.h"
+#include "qtelephonycallinfo.h"
 #include "maemo/channel.h"
 
 QT_BEGIN_HEADER
@@ -74,9 +76,9 @@ public:
     QTelephonyCallInfoPrivate(Tp::ChannelPtr channel);
 
     QString remotePartyIdentifier() const;
-    QTelephonyCallInfo::CallType type() const;
+    Telephony::CallType type() const;
     QString subType() const;
-    QTelephonyCallInfo::CallStatus status() const;
+    Telephony::CallStatus status() const;
     QHash<QString, QVariant> values;
 
 private:

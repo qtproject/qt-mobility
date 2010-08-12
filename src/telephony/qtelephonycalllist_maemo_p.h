@@ -71,7 +71,7 @@ class QTelephonyCallListPrivate
 public:
     QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
     virtual ~QTelephonyCallListPrivate();
-    QList<QTelephonyCallInfo> activeCalls(const QTelephonyCallInfo::CallType& calltype) const;
+    QList<QTelephonyCallInfo> activeCalls(const Telephony::CallType& calltype) const;
 
 private:
     void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);

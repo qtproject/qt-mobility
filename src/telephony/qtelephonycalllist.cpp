@@ -40,6 +40,7 @@
 ****************************************************************************/
 #include <QtCore/qglobal.h>
 
+#include "qtelephony.h"
 #include "qtelephonycalllist.h"
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
@@ -120,12 +121,12 @@ QTelephonyCallList::~QTelephonyCallList()
 }
 
 /*!
-    \fn QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephonyCallInfo::CallType& calltype) const
+    \fn QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const Telephony::CallType& calltype) const
     \a calltype All calls in the list have this type.
 
     Gives back a list of calls from type of calltype.
 */
-QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephonyCallInfo::CallType& calltype) const
+QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const Telephony::CallType& calltype) const
 {
     if(d)
         return d->activeCalls(calltype);

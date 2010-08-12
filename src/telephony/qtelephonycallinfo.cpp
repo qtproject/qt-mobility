@@ -48,6 +48,7 @@
 #endif
 
 #include "qmobilityglobal.h"
+#include "qtelephony.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -59,7 +60,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QTelephonyCallInfo::CallStatus
+    \enum Telephony::CallStatus
 
     This enum type is used to describe the status of a call.
     A QTelephonyCallInfo object can have a status of:
@@ -74,7 +75,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QTelephonyCallInfo::CallType
+    \enum Telephony::CallType
 
     This enum decribes the type of the call.
     A QTelephonyCallInfo object can be a type of:
@@ -136,13 +137,13 @@ QString QTelephonyCallInfo::remotePartyIdentifier() const
 }
 
 /*!
-    \fn  QTelephonyCallInfo::CallType QTelephonyCallInfo::type() const
+    \fn  Telephony::CallType QTelephonyCallInfo::type() const
 
     Gives back the type of the call.
     A call can be a VOIP, Video Voice and so on.
     You can use this property to get the type of the call.
 */
-QTelephonyCallInfo::CallType QTelephonyCallInfo::type() const
+Telephony::CallType QTelephonyCallInfo::type() const
 {
     if(d)
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
@@ -172,13 +173,13 @@ QString QTelephonyCallInfo::subType() const
 }
 
 /*!
-    \fn  QTelephonyCallInfo::CallStatus QTelephonyCallInfo::status() const
+    \fn  Telephony::CallStatus QTelephonyCallInfo::status() const
 
     Gives back the status of the call.
     A call can be in different conditions like ringing, dropped and so on.
     You can use this property if you want to know about the current condition of the call.
 */
-QTelephonyCallInfo::CallStatus QTelephonyCallInfo::status() const
+Telephony::CallStatus QTelephonyCallInfo::status() const
 {
     if(d)
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)

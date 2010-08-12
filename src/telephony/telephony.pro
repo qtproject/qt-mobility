@@ -12,7 +12,8 @@ DEFINES += QT_BUILD_TELEPHONY_LIB QT_MAKEDLL
 
 # Input
 PUBLIC_HEADERS += qtelephonycalllist.h \
-                  qtelephonycallinfo.h
+                  qtelephonycallinfo.h \
+                  qtelephony.h
 
 SOURCES +=        qtelephonycalllist.cpp \
                   qtelephonycallinfo.cpp

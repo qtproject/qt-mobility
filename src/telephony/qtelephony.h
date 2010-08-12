@@ -39,56 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLLINFO_LINUX_P_H
-#define QTELEPHONYCALLLINFO_LINUX_P_H
+#ifndef QTELEPHONY_H
+#define QTELEPHONY_H
 
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <QtCore/qshareddata.h>
-#include <QList>
-#include <QString>
-#include <QVariant>
-
-#include "qtelephonycallinfo.h"
-#include "qtelephony.h"
+#include <qmobilityglobal.h>
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-using namespace Telephony;
-
-struct Q_AUTOTEST_EXPORT QTelephonyCallInfoPrivate : public QSharedData
+namespace Telephony
 {
-public:
-    QTelephonyCallInfoPrivate()
-        : type(Telephony::Other)
-        , subType("")
-        , status(Telephony::Idle) { }
-    QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other)
-        : QSharedData(other) { }
+    enum CallType {
+        Any = 0,
+        Text,
+        Data,
+        Video,
+        Voice,
+        Other
+    };
 
-    QString remotePartyIdentifier;
-    Telephony::CallType type;
-    QString subType;
-    Telephony::CallStatus status;
-    QHash<QString, QVariant> values;
-};
+    enum CallStatus {
+        Idle = 0,
+        Dialing,
+        Alerting,
+        Connected,
+        Disconnecting,
+        Incomming,
+        OnHold
+    };
+}
 
 QTM_END_NAMESPACE
-
 QT_END_HEADER
 
-#endif //QTELEPHONYCALLLINFO_LINUX_P_H
-
-// End of file
-
+#endif // QTELEPHONY_H

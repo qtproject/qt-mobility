@@ -7,6 +7,7 @@ HEADERS +=  maemo\qtelephonycalllist_maemo_p.h \
             maemo\abstractclient.h \
             maemo\clientregistrar.h \
             maemo\clientadaptor.h \
+            maemo\cli-constants.h \
             maemo\shared-ptr.h \
             maemo\types.h \
             maemo\types-internal.h \

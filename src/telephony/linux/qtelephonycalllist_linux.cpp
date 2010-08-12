@@ -94,7 +94,6 @@ void QTelephonyCallListPrivate::newChannelsSlot(const ChannelsArray& channelsarr
     //create a QTelephonyCallInfoPrivate
     if(channelsarray.channelslist.count() > 0){
         Channels chs = channelsarray.channelslist.at(0);
-        QString phonenumber;
         if(chs.map.contains("org.freedesktop.Telepathy.Channel.InitiatorID")){
             QVariant var = chs.map.value("org.freedesktop.Telepathy.Channel.InitiatorID");
             QTelephonyCallInfoPrivate* cip = new QTelephonyCallInfoPrivate();
@@ -108,13 +107,13 @@ void QTelephonyCallListPrivate::newChannelsSlot(const ChannelsArray& channelsarr
     qDebug() << "TelephonyCallListPrivate::newChannelsSlot";
 }
 
-QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephonyCallInfo::CallType& calltype) const
+QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const Telephony::CallType& calltype) const
 {
     QList<QTelephonyCallInfo> ret;
 
     //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
     for( int i = 0; i < callInfoList.count(); i++){
-        if(callInfoList.at(i).data()->type == QTelephonyCallInfo::Any
+        if(callInfoList.at(i).data()->type == Telephony::Any
             || callInfoList.at(i).data()->type == calltype)
         {
             QTelephonyCallInfo callinfo;

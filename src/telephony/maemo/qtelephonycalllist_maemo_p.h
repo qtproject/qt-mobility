@@ -55,8 +55,9 @@
 
 #include <QtCore/QList>
 #include <QtCore/QExplicitlySharedDataPointer>
+#include <qmobilityglobal.h>
 
-#include "qmobilityglobal.h"
+#include "qtelephony.h"
 #include "qtelephonycallinfo.h"
 #include "qtelephonycalllist.h"
 #include "maemo/clientregistrar.h"
@@ -78,7 +79,7 @@ class QTelephonyCallListPrivate : public QObject
 public:
     QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
     virtual ~QTelephonyCallListPrivate();
-    QList<QTelephonyCallInfo> activeCalls(const QTelephonyCallInfo::CallType& calltype) const;
+    QList<QTelephonyCallInfo> activeCalls(const Telephony::CallType& calltype) const;
 
     //for tp
     void newChannels(Tp::ChannelPtr channelptr);
@@ -88,11 +89,11 @@ private:
     void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);
     void emitActiveCallRemoved(QTelephonyCallInfoPrivate& call);
     void emitActiveCallAdded(QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>& call);
-    QTelephonyCallInfo::CallType convertToCallType(QString channeltelephatytype);
+    Telephony::CallType convertToCallType(QString channeltelephatytype);
 private:
     QList<QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
     QTelephonyCallList* p;
-    ConnectionPtr        connection;
+    ConnectionPtr connection;
 };
 
 QTM_END_NAMESPACE

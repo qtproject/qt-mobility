@@ -48,8 +48,12 @@
 #include <QString>
 #include <QVariant>
 
+#include "qtelephony.h"
+
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
+
+using namespace Telephony;
 
 struct QTelephonyCallInfoPrivate;
 class Q_TELEPHONY_EXPORT QTelephonyCallInfo
@@ -58,25 +62,6 @@ public:
     QTelephonyCallInfo();
     QTelephonyCallInfo(const QTelephonyCallInfo& other);
     ~QTelephonyCallInfo();
-
-    enum CallType {
-        Any = 0,
-        Text,
-        Data,
-        Video,
-        Voice,
-        Other
-    };
-
-    enum CallStatus {
-        Idle = 0,
-        Dialing,
-        Alerting,
-        Connected,
-        Disconnecting,
-        Incomming,
-        OnHold
-    };
 
     QString remotePartyIdentifier() const;
     CallType type() const;
