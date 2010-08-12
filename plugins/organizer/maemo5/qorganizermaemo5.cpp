@@ -155,8 +155,8 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
         // otherwise just set a large enough period
         // TODO: If absolutely needed for performace reasons the union and intersection filters could be iterated
         // TODO: too to resolve the needed period. However it is quite a laborous task and not done for now.
-        periodStart.setTime_t(0);
-        periodEnd.setTime_t(UINT_MAX);
+        periodStart = QDateTime(QDate(1970, 1, 1), QTime(0, 0, 0));
+        periodEnd = QDateTime(QDate(2037, 12, 31), QTime(23, 59, 59)); // the max year for maemo5 calendar is 2037
     }
 
     foreach (QOrganizerItem generatorItem, itemList) {
@@ -165,6 +165,8 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
             QList<QOrganizerItem> generatorInstances = itemInstances(generatorItem, periodStart, periodEnd, 0, error);
             if (*error != QOrganizerItemManager::NoError)
                 break;
+
+            qDebug() << "generator instances count = " << generatorInstances.count();
 
             foreach (QOrganizerItem instance, generatorInstances)
                 if (QOrganizerItemManagerEngine::testFilter(filter, instance))
@@ -821,7 +823,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             // CTodo ID is empty, the todo is new
 
             // set the sequence number zero
-            cevent->setSequence(0);
+            ctodo->setSequence(0);
 
             cal->addTodo(ctodo, calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
@@ -872,7 +874,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             // CJournal ID is empty, the journal is new
 
             // set the sequence number zero
-            cevent->setSequence(0);
+            cjournal->setSequence(0);
 
             cal->addJournal(cjournal, calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
