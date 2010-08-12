@@ -9,6 +9,7 @@ symbian {
         DEFINES += HAS_OPENMAXAL_RADIOTUNER_BACKEND
         HEADERS += tst_qradiotuner_xa.h
         SOURCES += tst_qradiotuner_xa.cpp
+        TARGET.CAPABILITY = ALL -TCB
     } else {
         HEADERS += tst_qradiotuner_s60.h
         SOURCES += tst_qradiotuner_s60.cpp

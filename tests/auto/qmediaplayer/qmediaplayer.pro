@@ -8,6 +8,7 @@ symbian {
         DEFINES += HAS_OPENMAXAL_MEDIAPLAY_BACKEND
         HEADERS += tst_qmediaplayer_xa.h
         SOURCES += tst_qmediaplayer_xa.cpp
+        TARGET.CAPABILITY = ALL -TCB
 
         testFiles.sources = testfiles/*
         testFiles.path = /Data/testfiles
