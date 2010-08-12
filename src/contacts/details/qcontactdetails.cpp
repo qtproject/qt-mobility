@@ -264,7 +264,12 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::DefinitionName, "Anniversary");
    \variable QContactAnniversary::FieldOriginalDate
 
    The field key constant for the original anniversary date value.
-   \sa originalDate(), setOriginalDate()
+
+   This field is either a date, or a date and time.  Some managers
+   may support either type, while others may convert the value here
+   to a specific type (either discarding the time if only a date is
+   supported, or by using midnight if a time is not supplied).
+   \sa originalDate(), setOriginalDate(), originalDateTime(), setOriginalDateTime()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::FieldOriginalDate, "OriginalDate");
 
@@ -342,12 +347,25 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeMemorial, "Memorial");
 
 /*!
    \fn QContactAnniversary::originalDate() const
-   Returns the original date of occurrence of the event stored in this detail.
+   Returns the original date of the event stored in this detail.
+   If the original event occurrence stored is a QDateTime, this returns the date portion.
  */
 
 /*!
    \fn QContactAnniversary::setOriginalDate(const QDate& date)
-   Sets the original date of occurrence of the event stored in this detail to \a date.
+   Sets the original date of the event stored in this detail to \a date.
+ */
+
+/*!
+   \fn QContactAnniversary::originalDateTime() const
+   Returns the original date and time of the event stored in this detail.
+   If the original event occurrence stored is a QDate, this returns a QDateTime with the
+   time set to midnight.
+ */
+
+/*!
+   \fn QContactAnniversary::setOriginalDateTime(const QDate& dateTime)
+   Sets the original date and time of the event stored in this detail to \a dateTime.
  */
 
 /*!
@@ -885,18 +903,37 @@ Q_DEFINE_LATIN1_CONSTANT(QContactBirthday::DefinitionName, "Birthday");
    \variable QContactBirthday::FieldBirthday
 
    The field key constant for the value containing the birthday date.
-   \sa date(), setDate()
+
+   This field is either a date, or a date and time.  Some managers
+   may support either type, while others may convert the value here
+   to a specific type (either discarding the time if only a date is
+   supported, or by using midnight if a time is not supplied).
+
+   \sa date(), setDate(), dateTime(), setDateTime()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactBirthday::FieldBirthday, "Birthday");
 
 /*!
    \fn QContactBirthday::date() const
    Returns the date of the birthday which is stored in this detail.
+   If the birthday stored is a QDateTime, this returns the date portion.
  */
 
 /*!
    \fn QContactBirthday::setDate(const QDate& date)
    Sets the date of the birthday which is stored in this detail to \a date.
+ */
+
+/*!
+   \fn QContactBirthday::dateTime() const
+   Returns the date and time of the birthday which is stored in this detail.
+   If the birthday stored is a QDate, this returns a QDateTime with the
+   time set to midnight.
+ */
+
+/*!
+   \fn QContactBirthday::setDateTime(const QDateTime& dateTime)
+   Sets the date and time of the birthday which is stored in this detail to \a dateTime.
  */
 
 /* ==================== QContactGender ======================= */
