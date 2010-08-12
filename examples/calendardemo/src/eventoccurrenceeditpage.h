@@ -37,54 +37,67 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef EVENTOCCURRENCEEDITPAGE_H_
+#define EVENTOCCURRENCEEDITPAGE_H_
 
-#ifndef CALENDARDEMO_H
-#define CALENDARDEMO_H
-
-#include <QtGui/QMainWindow>
+#include <QWidget>
 #include <QDate>
 #include <qmobilityglobal.h>
+#include <qorganizeritemid.h>
+#include <qorganizerevent.h>
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItemManager;
+class QOrganizerItemSaveRequest;
+class QOrganizerEvent;
 class QOrganizerItem;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-#define ORGANIZER_ITEM_ROLE Qt::UserRole+1
+class QComboBox;
+class QLineEdit;
+class QDateTimeEdit;
+class QVBoxLayout;
+class QString;
+class QSpinBox;
+class QDateEdit;
 
-class QStackedWidget;
-class MonthPage;
-class DayPage;
-class EventEditPage;
-class TodoEditPage;
-class EventOccurrenceEditPage;
-
-class CalendarDemo : public QMainWindow
+class EventOccurrenceEditPage : public QWidget
 {
     Q_OBJECT
 
 public:
-    CalendarDemo(QWidget *parent = 0);
-    ~CalendarDemo();
+    EventOccurrenceEditPage(QWidget *parent = 0);
+    ~EventOccurrenceEditPage();
 
 public Q_SLOTS:
-    void activateMonthPage();
-    void activateDayPage();
-    void activateNewDayPage(QOrganizerItemManager *manager, QDate date);
-    void activateEditPage(QOrganizerItemManager *manager, const QOrganizerItem &item);
-    
+    void cancelClicked();
+    void saveOrNextClicked();
+    void eventOccurrenceChanged(QOrganizerItemManager *manager, const QOrganizerEventOccurrence &eventOccurrence);
+    void handlemultipleEntriesToBeCreated(int);
+
 Q_SIGNALS:
-	void multipleEntriesToBeCreated(int);
+    void showDayPage();
+
+protected: // from QWidget
+    void showEvent(QShowEvent *event);
 
 private:
     QOrganizerItemManager *m_manager;
-    QStackedWidget *m_stackedWidget;
-    MonthPage *m_monthPage;
-    DayPage *m_dayPage;
-    EventEditPage *m_eventEditPage;
-    TodoEditPage *m_todoEditPage;
-    EventOccurrenceEditPage *m_eventOccurrenceEditPage;
+    QOrganizerEventOccurrence m_organizerEventOccurrence;
+    QList<QOrganizerItem> m_listOfEvents;
+    QOrganizerItemSaveRequest *m_saveItemRequest;
+    QVBoxLayout *m_scrollAreaLayout;
+    QAction *m_saveOrNextSoftKey;
+    QComboBox *m_typeComboBox;
+    QLineEdit *m_subjectEdit;
+    QDateTimeEdit *m_startTimeEdit;
+    QDateTimeEdit *m_endTimeEdit;
+    QSpinBox *m_countSpinBox;
+    QDateEdit *m_repeatUntilDate;
+    int m_numOfEntiresToBeCreated;
+    bool m_countFieldAdded;
+    bool m_multipleEntries;
 };
 
-#endif // CALENDARDEMO_H
+#endif // EVENTOCCURRENCEEDITPAGE_H_
