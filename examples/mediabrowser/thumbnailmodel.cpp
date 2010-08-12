@@ -61,6 +61,8 @@ ThumbnailModel::~ThumbnailModel()
 {
 }
 
+#ifndef QT_NO_QFUTURE
+
 QVariant ThumbnailModel::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::DecorationRole && index.isValid()) {
@@ -82,7 +84,9 @@ QVariant ThumbnailModel::data(const QModelIndex &index, int role) const
             cache.insert(id, future);
         }
 
-        return future->result();
+        return !future->isCanceled()
+                ? future->result()
+                : QVariant();
     } else {
         return QGalleryQueryModel::data(index, role);
     }
@@ -144,4 +148,6 @@ QImage ThumbnailModel::load(const QString &fileName)
 
     return reader.read();
 }
+
+#endif
 

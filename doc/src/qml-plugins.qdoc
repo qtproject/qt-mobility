@@ -39,21 +39,36 @@
 **
 ****************************************************************************/
 
+
 /*!
-    \example documentshare
+    \page qml-plugins.html
+    \group plugins
 
-    \ingroup gallery-examples
+    \title Mobility QML Plugins
 
-    \title Document Sharing
+    \ingroup mobility
 
-    This example demonstrates using the Document Gallery to access the meta-data
-    of a newly created file.
+    \brief A set of QML compatible plugins for the Mobility Project.
 
-    The Document Sharing example uses QGalleryUrlRequest to find the gallery
-    ID and type of a downloaded file and QGalleryItemRequest to query
-    properties of that item.
 
-    Files can be downloaded in the example by selecting a download link from
-    the embedded QWebView.  Information about a finished download can be viewed
-    by selecting the download from the list on right.
+
+    \section1 List of QML Plugins for Mobility
+    \table 80%
+    \header
+        \o Plugin
+        \o Description
+    \row
+        \o \l {Gallery QML Plugin}{Gallery}
+        \o A QML plugin for the Document Gallery API.
+    \row
+        \o \l {Location QML Plugin}{Gallery}
+        \o A QML plugin for the Location API.
+    \endtable
+
+
+
+
+
+
 */
+

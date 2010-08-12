@@ -51,11 +51,15 @@
 
 CoverArtModel::CoverArtModel(QAbstractGallery *gallery, QObject *parent)
     : ThumbnailModel(gallery, parent)
+#if defined(Q_OS_UNIX) && !(defined(Q_OS_SYMBIAN) || defined(Q_OS_MAC))
     , illegalCharacters(QLatin1String(QT_GALLERY_MEDIA_ART_ILLEGAL_CHARACTERS))
     , whitespace(QCryptographicHash::hash(" ", QCryptographicHash::Md5).toHex())
+#endif
 {
 }
 
+#ifndef QT_NO_QFUTURE
+#if defined(Q_OS_UNIX) && !(defined(Q_OS_SYMBIAN) || defined(Q_OS_MAC))
 QString CoverArtModel::imagePath(const QModelIndex &index) const
 {
     QString title = index.data(Qt::DisplayRole).toString();
@@ -81,3 +85,5 @@ QString CoverArtModel::hash(const QString &identifier) const
                 QCryptographicHash::Md5).toHex();
     }
 }
+#endif
+#endif

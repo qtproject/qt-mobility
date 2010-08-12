@@ -52,12 +52,13 @@ class ThumbnailModel : public QGalleryQueryModel
 {
     Q_OBJECT
 public:
+    static const QSize thumbnailSize;
+
     ThumbnailModel(QAbstractGallery *gallery, QObject *parent = 0);
     ~ThumbnailModel();
 
+#ifndef QT_NO_QFUTURE
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-
-    static const QSize thumbnailSize;
 
 protected:
     virtual QString imagePath(const QModelIndex &index) const;
@@ -70,6 +71,7 @@ private:
     static QImage load(const QString &fileName);
 
     mutable QCache<QString, QFutureWatcher<QImage> > cache;
+#endif
 };
 
 #endif

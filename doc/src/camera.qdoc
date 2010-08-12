@@ -33,7 +33,6 @@
 \title Camera
 \brief An API to control camera devices.
 
-\ingroup mobility
 
 
 \note This API and documentation is a \bold {Technology Preview} and is still
