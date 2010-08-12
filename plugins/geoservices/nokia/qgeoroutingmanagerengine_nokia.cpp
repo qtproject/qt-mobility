@@ -334,16 +334,16 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
     }
 
     QStringList legAttributes;
-    if (request.instructionDetail() & QGeoRouteRequest::BasicInstructions) {
-        requestString += "&linkattributes=shape,length,nextLink";
+    if (request.instructionDetail() & QGeoRouteRequest::BasicSegmentData) {
+        requestString += "&linkattributes=sh,le"; //shape,length
         legAttributes.append("links");
     }
 
-    if (request.instructionDetail() & QGeoRouteRequest::BasicSegmentData) {
+    if (request.instructionDetail() & QGeoRouteRequest::BasicInstructions) {
         legAttributes.append("maneuvers");
-        requestString += "&maneuverattributes=position";
-        if (!(request.instructionDetail() & QGeoRouteRequest::NoInstructions))
-            requestString += ",link";
+        requestString += "&maneuverattributes=po,tt,le,di"; //position,traveltime,length,direction
+        if (!(request.instructionDetail() & QGeoRouteRequest::NoSegmentData))
+            requestString += ",li"; //link
     }
 
     requestString += "&routeattributes=sm,sh,bb,lg"; //summary,shape,boundingBox,legs

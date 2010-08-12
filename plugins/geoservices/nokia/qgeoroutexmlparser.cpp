@@ -353,7 +353,7 @@ bool QGeoRouteXmlParser::parseManeuver()
             } else if (m_reader->name() == "TravelTime") {
                 instructionContainer.instruction.setTimeToNextInstruction(m_reader->readElementText().toInt());
             } else if (m_reader->name() == "Length") {
-                instructionContainer.instruction.setTimeToNextInstruction(m_reader->readElementText().toDouble());
+                instructionContainer.instruction.setDistanceToNextInstruction(m_reader->readElementText().toDouble());
             } else if (m_reader->name() == "Direction") {
                 QString value = m_reader->readElementText();
                 if (value == "forward")
@@ -408,10 +408,7 @@ bool QGeoRouteXmlParser::parseLink()
                 parseGeoPoints(m_reader->readElementText(), &path, elementName);
                 segmentContainer.segment.setPath(path);
             } else if (m_reader->name() == "Length") {
-
                 segmentContainer.segment.setDistance(m_reader->readElementText().toDouble());
-            } else if (m_reader->name() == "NextLink") {
-                segmentContainer.nextId = m_reader->readElementText();
             } else if (m_reader->name() == "Maneuver") {
                 segmentContainer.instructionId = m_reader->readElementText();
             } else {
