@@ -76,9 +76,9 @@ public:
     QTelephonyCallInfoPrivate(Tp::ChannelPtr channel);
 
     QString remotePartyIdentifier() const;
-    Telephony::CallType type() const;
+    QTelephonyEvents::CallType type() const;
     QString subType() const;
-    Telephony::CallStatus status() const;
+    QTelephonyEvents::CallStatus status() const;
     QHash<QString, QVariant> values;
 
 private:

@@ -53,31 +53,31 @@ void MainWindow::addListEntry(QString value)
 void MainWindow::onActiveCallAdded(const QTelephonyCallInfo& call)
 {
     addListEntry("call Added: " + call.remotePartyIdentifier());
-    if(call.type() == Telephony::Video)
+    if(call.type() == QTelephonyEvents::Video)
         addListEntry("- type: Video");
-    else if(call.type() == Telephony::Voice)
+    else if(call.type() == QTelephonyEvents::Voice)
         addListEntry("- type: Voice");
-    else if(call.type() == Telephony::Text)
+    else if(call.type() == QTelephonyEvents::Text)
         addListEntry("- type: Text");
-    else if(call.type() == Telephony::Any)
+    else if(call.type() == QTelephonyEvents::Any)
         addListEntry("- type: Any");
 }
 
 void MainWindow::onActiveCallStatusChanged(const QTelephonyCallInfo& call)
 {
     addListEntry("status changed: " + call.remotePartyIdentifier());
-    if(call.status() == Telephony::Idle)
+    if(call.status() == QTelephonyEvents::Idle)
         addListEntry("- Idle");
-    else if(call.status() == Telephony::Dialing)
+    else if(call.status() == QTelephonyEvents::Dialing)
         addListEntry("- Dialing");
-    else if(call.status() == Telephony::Alerting)
+    else if(call.status() == QTelephonyEvents::Alerting)
         addListEntry("- Alerting");
-    else if(call.status() == Telephony::Connected)
+    else if(call.status() == QTelephonyEvents::Connected)
         addListEntry("- Connected");
-    else if(call.status() == Telephony::Disconnecting)
+    else if(call.status() == QTelephonyEvents::Disconnecting)
         addListEntry("- Disconnecting");
-    else if(call.status() == Telephony::Incomming)
+    else if(call.status() == QTelephonyEvents::Incomming)
         addListEntry("- Incomming");
-    else if(call.status() == Telephony::OnHold)
+    else if(call.status() == QTelephonyEvents::OnHold)
         addListEntry("- OnHold");
 }

@@ -74,7 +74,7 @@ QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
     callInfoList.clear();
 }
 
-QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const Telephony::CallType& calltype) const 
+QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephonyEvents::CallType& calltype) const 
 { 
     QList<QTelephonyCallInfo> e; 
     return e; 
@@ -102,14 +102,14 @@ void QTelephonyCallListPrivate::emitActiveCallAdded(QExplicitlySharedDataPointer
     emit p->activeCallAdded(callinfo);
 }
 
-Telephony::CallType QTelephonyCallListPrivate::convertToCallType(QString channeltelephatytype)
+QTelephonyEvents::CallType QTelephonyCallListPrivate::convertToCallType(QString channeltelephatytype)
 {
     if(channeltelephatytype == "StreamedMedia")
-        return Telephony::Voice;
+        return QTelephonyEvents::Voice;
     if(channeltelephatytype == "Text")
-        return Telephony::Text;
+        return QTelephonyEvents::Text;
 
-    return Telephony::Other;
+    return QTelephonyEvents::Other;
 }
 
 void QTelephonyCallListPrivate::newChannels(Tp::ChannelPtr channelptr)
@@ -133,7 +133,7 @@ void QTelephonyCallListPrivate::channelStatusChanged(Tp::ChannelPtr channel)
         emit p->activeCallStatusChanged(callinfo);
 
         //check if channel must be removed from callist
-        if(callInfoList[index]->status() == Telephony::Disconnecting)
+        if(callInfoList[index]->status() == QTelephonyEvents::Disconnecting)
             callInfoList.removeAt(index);
     }
 }

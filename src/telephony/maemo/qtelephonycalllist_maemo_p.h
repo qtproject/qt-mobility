@@ -79,7 +79,7 @@ class QTelephonyCallListPrivate : public QObject
 public:
     QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
     virtual ~QTelephonyCallListPrivate();
-    QList<QTelephonyCallInfo> activeCalls(const Telephony::CallType& calltype) const;
+    QList<QTelephonyCallInfo> activeCalls(const QTelephonyEvents::CallType& calltype) const;
 
     //for tp
     void newChannels(Tp::ChannelPtr channelptr);
@@ -89,7 +89,7 @@ private:
     void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);
     void emitActiveCallRemoved(QTelephonyCallInfoPrivate& call);
     void emitActiveCallAdded(QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>& call);
-    Telephony::CallType convertToCallType(QString channeltelephatytype);
+    QTelephonyEvents::CallType convertToCallType(QString channeltelephatytype);
 private:
     QList<QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
     QTelephonyCallList* p;

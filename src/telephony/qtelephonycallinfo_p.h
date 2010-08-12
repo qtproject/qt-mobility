@@ -65,22 +65,22 @@
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-using namespace Telephony;
+using namespace QTelephonyEvents;
 
 struct Q_AUTOTEST_EXPORT QTelephonyCallInfoPrivate : public QSharedData
 {
 public:
     QTelephonyCallInfoPrivate()
-        : type(Telephony::Other)
+        : type(QTelephonyEvents::Other)
         , subType("")
-        , status(Telephony::Idle) { }
+        , status(QTelephonyEvents::Idle) { }
     QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other)
         : QSharedData(other) { }
 
     QString remotePartyIdentifier;
-    Telephony::CallType type;
+    QTelephonyEvents::CallType type;
     QString subType;
-    Telephony::CallStatus status;
+    QTelephonyEvents::CallStatus status;
     QHash<QString, QVariant> values;
 };
 

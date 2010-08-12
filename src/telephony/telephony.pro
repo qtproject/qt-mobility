@@ -16,7 +16,8 @@ PUBLIC_HEADERS += qtelephonycalllist.h \
                   qtelephony.h
 
 SOURCES +=        qtelephonycalllist.cpp \
-                  qtelephonycallinfo.cpp
+                  qtelephonycallinfo.cpp \
+				  qtelephony.cpp
 
 # Private Headers and sources
 win32: {

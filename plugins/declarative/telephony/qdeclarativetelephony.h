@@ -61,22 +61,22 @@ class QTelephonyCallInfoWrapper : public QObject {
 public:
 
     enum CallType {
-        Any = Telephony::Any,
-        Text = Telephony::Text,
-        Data = Telephony::Data,
-        Video = Telephony::Video,
-        Voice = Telephony::Voice,
-        Other = Telephony::Other,
+        Any = QTelephonyEvents::Any,
+        Text = QTelephonyEvents::Text,
+        Data = QTelephonyEvents::Data,
+        Video = QTelephonyEvents::Video,
+        Voice = QTelephonyEvents::Voice,
+        Other = QTelephonyEvents::Other,
     };
 
     enum CallStatus {
-        Idle = Telephony::Idle,
-        Dialing = Telephony::Dialing,
-        Alerting = Telephony::Alerting,
-        Connected = Telephony::Connected,
-        Disconnecting = Telephony::Disconnecting,
-        Incomming = Telephony::Incomming,
-        OnHold = Telephony::OnHold
+        Idle = QTelephonyEvents::Idle,
+        Dialing = QTelephonyEvents::Dialing,
+        Alerting = QTelephonyEvents::Alerting,
+        Connected = QTelephonyEvents::Connected,
+        Disconnecting = QTelephonyEvents::Disconnecting,
+        Incomming = QTelephonyEvents::Incomming,
+        OnHold = QTelephonyEvents::OnHold
     };
 
     QTelephonyCallInfoWrapper();

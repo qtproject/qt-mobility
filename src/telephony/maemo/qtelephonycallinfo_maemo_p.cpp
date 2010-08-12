@@ -99,9 +99,9 @@ QString QTelephonyCallInfoPrivate::remotePartyIdentifier() const
     return ret;
 }
 
-Telephony::CallType QTelephonyCallInfoPrivate::type() const
+QTelephonyEvents::CallType QTelephonyCallInfoPrivate::type() const
 {
-    Telephony::CallType ret = Telephony::Any;
+    QTelephonyEvents::CallType ret = QTelephonyEvents::Any;
     if(telepathychannel){
         if(telepathychannel->properties().contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"))){
             QString type = telepathychannel->properties().value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString();
@@ -118,10 +118,10 @@ Telephony::CallType QTelephonyCallInfoPrivate::type() const
                 if(telepathychannel->properties().contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA ".InitialVideo")))
                     initialvideo = telepathychannel->properties().value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA ".InitialVideo")).toBool();
                 if(initialvideo) {
-                    ret = Telephony::Video;
+                    ret = QTelephonyEvents::Video;
                 }
                 else if(initialaudio)
-                    ret = Telephony::Voice;
+                    ret = QTelephonyEvents::Voice;
             }
         }
     }
@@ -135,9 +135,9 @@ QString QTelephonyCallInfoPrivate::subType() const
     return _subType;
 }
 
-Telephony::CallStatus QTelephonyCallInfoPrivate::status() const
+QTelephonyEvents::CallStatus QTelephonyCallInfoPrivate::status() const
 {
-    Telephony::CallStatus ret = Telephony::Idle;
+    QTelephonyEvents::CallStatus ret = QTelephonyEvents::Idle;
     if(telepathychannel)
         ret = telepathychannel->getStatus();
     return ret;

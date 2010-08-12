@@ -28,7 +28,7 @@ namespace Tp
         Channel(QDBusConnection busconnection, const QString busname, const QString &objectPath, const QVariantMap &properties, Connection* connection);
         ~Channel();
         QVariantMap properties() const { return propertylist; }
-        Telephony::CallStatus getStatus() { return status; }
+        QTelephonyEvents::CallStatus getStatus() { return status; }
 
     Q_SIGNALS:
         void StatusChanged(Tp::Channel* pchannel);
@@ -137,7 +137,7 @@ namespace Tp
         Tp::Client::ChannelTypeTextInterface* pChannelTypeTextInterface;
         Tp::Client::ChannelTypeTubesInterface* pChannelTypeTubesInterface;
 
-        Telephony::CallStatus status;
+        QTelephonyEvents::CallStatus status;
         Connection* connection;
         /*
          0 = unknown

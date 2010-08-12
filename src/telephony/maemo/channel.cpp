@@ -30,7 +30,7 @@ namespace Tp
         , pChannelTypeStreamedMediaInterface(0)
         , pChannelTypeTextInterface(0)
         , pChannelTypeTubesInterface(0)
-        , status(Telephony::Idle)
+        , status(QTelephonyEvents::Idle)
         , connection(conn)
         , direction(0)
     {
@@ -290,13 +290,13 @@ namespace Tp
         //check if incomming direction
         if(direction == 1){
             qDebug() << "Current Thread: " << QThread::currentThreadId();
-            status = Telephony::Incomming;
+            status = QTelephonyEvents::Incomming;
             connection->channelStatusChanged(this);
         }
         //check for outgoing
         else if(direction == 2){
             qDebug() << "Current Thread: " << QThread::currentThreadId();
-            status = Telephony::Dialing;
+            status = QTelephonyEvents::Dialing;
             connection->channelStatusChanged(this);
         }
         connectType();
@@ -321,7 +321,7 @@ namespace Tp
             //check for outgoing
             if(direction == 2){
                 qDebug() << "Current Thread: " << QThread::currentThreadId();
-                status = Telephony::Alerting;
+                status = QTelephonyEvents::Alerting;
                 connection->channelStatusChanged(this);
             }
         }
@@ -460,7 +460,7 @@ namespace Tp
             //check for outgoing
             if(direction == 2 || direction == 1){
                 qDebug() << "Current Thread: " << QThread::currentThreadId();
-                status = Telephony::Connected;
+                status = QTelephonyEvents::Connected;
                 connection->channelStatusChanged(this);
             }
         }
@@ -478,7 +478,7 @@ namespace Tp
         if(direction == 1 || direction == 2)
         {
             qDebug() << "Current hread: " << QThread::currentThreadId();
-            status = Telephony::Disconnecting;
+            status = QTelephonyEvents::Disconnecting;
             connection->channelStatusChanged(this);
         }
     }

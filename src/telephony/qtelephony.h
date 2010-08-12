@@ -47,7 +47,7 @@
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-namespace Telephony
+namespace QTelephonyEvents
 {
     enum CallType {
         Any = 0,

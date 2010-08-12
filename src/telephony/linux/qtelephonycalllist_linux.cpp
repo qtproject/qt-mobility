@@ -107,13 +107,13 @@ void QTelephonyCallListPrivate::newChannelsSlot(const ChannelsArray& channelsarr
     qDebug() << "TelephonyCallListPrivate::newChannelsSlot";
 }
 
-QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const Telephony::CallType& calltype) const
+QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephonyEvents::CallType& calltype) const
 {
     QList<QTelephonyCallInfo> ret;
 
     //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
     for( int i = 0; i < callInfoList.count(); i++){
-        if(callInfoList.at(i).data()->type == Telephony::Any
+        if(callInfoList.at(i).data()->type == QTelephonyEvents::Any
             || callInfoList.at(i).data()->type == calltype)
         {
             QTelephonyCallInfo callinfo;

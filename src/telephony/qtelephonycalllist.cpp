@@ -88,7 +88,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QTelephonyCallList
 
-    \ingroup telephony
+    \ingroup telephonyapi
     \inmodule QtTelephony
 
     \brief The QTelephonyCallList class contains a list of active calls. This object can notify other applications about call changes.
@@ -121,12 +121,12 @@ QTelephonyCallList::~QTelephonyCallList()
 }
 
 /*!
-    \fn QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const Telephony::CallType& calltype) const
+    \fn QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephonyEvents::CallType& calltype) const
     \a calltype All calls in the list have this type.
 
     Gives back a list of calls from type of calltype.
 */
-QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const Telephony::CallType& calltype) const
+QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephonyEvents::CallType& calltype) const
 {
     if(d)
         return d->activeCalls(calltype);

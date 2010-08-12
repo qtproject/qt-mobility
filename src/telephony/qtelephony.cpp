@@ -39,50 +39,41 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLLIST_MAEMO_P_H
-#define QTELEPHONYCALLLIST_MAEMO_P_H
+/*!
+    \namespace QTelephonyEvents
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+    \inmodule QtTelephony
 
-#include "qmobilityglobal.h"
-#include "qtelephonycalllist.h"
-#include <QList>
-#include <QtCore/qshareddata.h>
+    \ingroup telephonyapienum
 
-QT_BEGIN_HEADER
-QTM_BEGIN_NAMESPACE
+    \brief The QTelephonyEvents namespace contains all enumerators for the Telephony Events API.
+*/
 
-class QTelephonyCallInfoPrivate;
-class QTelephonyCallList;
+/*!
+    \enum  QTelephonyEvents::CallStatus
 
-class QTelephonyCallListPrivate
-{
-    friend class QTelephonyCallList;
+    This enum type is used to describe the status of a call.
+    A QTelephonyCallInfo object can have a status of:
 
-public:
-    QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
-    virtual ~QTelephonyCallListPrivate();
-    QList<QTelephonyCallInfo> activeCalls(const QTelephonyEvents::CallType& calltype) const;
+    \value Idle          The call status is not defined.
+    \value Dialing       The status of the call is dialing.
+    \value Alerting      The status of the call is alerting.
+    \value Connected     The status of the call is connected.
+    \value Disconnecting The status of the call is disconnecting.
+    \value Incomming     The status of the call is incomming.
+    \value OnHold        The status of the call is on hold.
+*/
 
-private:
-    void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);
-    void emitActiveCallRemoved(QTelephonyCallInfoPrivate& call);
-    void emitActiveCallAdded(QTelephonyCallInfoPrivate& call);
+/*!
+    \enum QTelephonyEvents::CallType
 
-    QList<QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
-    QTelephonyCallList* p;
-};
+    This enum decribes the type of the call.
+    A QTelephonyCallInfo object can be a type of:
 
-QTM_END_NAMESPACE
-QT_END_HEADER
-
-#endif // QTELEPHONYCALLLIST_MAEMO_P_H
+    \value Any         The call type can be any type.
+    \value Text        The call is a text base call.
+    \value Data        The call is a data based call.
+    \value Video       The call is a video based call.
+    \value Voice       The call is a voice based call.
+    \value Other       The call is a an unknown base call.
+*/
