@@ -82,7 +82,7 @@ QDBusObjectPath QOfonoManagerInterface::currentModem()
     foreach(const QDBusObjectPath modem, modems) {
         QOfonoModemInterface device(modem.path());
         if(device.isPowered() && device.isOnline())
-        return modem;;
+        return modem;
     }
     return QDBusObjectPath();
 }

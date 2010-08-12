@@ -584,9 +584,10 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
     }
 #if !defined(QT_NO_CONNMAN)
     QString tech = modeToTechnology(mode);
-    if(tech.contains("cellular")) {
+    if(ofonoIsAvailable && tech.contains("cellular")) {
         QOfonoNetworkInterface ofonoOpNetwork(ofonoManager->currentModem().path(),this);
-        return ofonoOpNetwork.getOperatorName();
+        if(ofonoManager->isValid())
+            return ofonoOpNetwork.getOperatorName();
 
     } else {
         QDBusObjectPath path = connmanManager->lookupService(tech);
@@ -771,9 +772,10 @@ qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetwor
         qint32 sig=0;
 
         QString tech = modeToTechnology(mode);
-        if(tech.contains("cellular")) {
+        if(ofonoIsAvailable && tech.contains("cellular")) {
             QOfonoNetworkInterface ofonoNetwork(ofonoManager->currentModem().path(),this);
-            return ofonoNetwork.getSignalStrength();
+            if(ofonoManager->isValid())
+                return ofonoNetwork.getSignalStrength();
         } else {
             QDBusObjectPath path = connmanManager->lookupService(tech);
             QConnmanServiceInterface service(path.path(),this);
