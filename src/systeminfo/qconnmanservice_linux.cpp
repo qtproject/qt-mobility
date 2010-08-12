@@ -242,16 +242,12 @@ void QConnmanManagerInterface::releaseSession()
 
 QDBusObjectPath QConnmanManagerInterface::lookupService(const QString &service)
 {
-   // qDebug() << Q_FUNC_INFO << service;
 
     QDBusReply<QDBusObjectPath > reply = this->call(QLatin1String("LookupService"), QVariant::fromValue(service));
 
     if(!reply.isValid() || reply.error().message().contains("Not found")) {
-     //   qDebug() << "try harder";
-
-        foreach(const QString servicepath,getServices()) {
+        foreach(const QString servicepath,getServices()) {            
             QConnmanServiceInterface serv(servicepath,this);
-       //     qDebug() << __FUNCTION__ << serv.getName() << serv.getType();
 
             if(serv.getName() == service) {
                 return QDBusObjectPath(servicepath);
@@ -260,11 +256,9 @@ QDBusObjectPath QConnmanManagerInterface::lookupService(const QString &service)
                 return QDBusObjectPath(servicepath);
             }
             QConnmanTechnologyInterface tech(getPathForTechnology(serv.getType()));
-       //     qDebug() << "try even harder";
 
             foreach(const QString dev,tech.getDevices()) {
                 QConnmanDeviceInterface devIface(dev);
-//qDebug() << devIface.getInterface();
                 if(devIface.getInterface() == service ||
                    devIface.getName() == service)
                     return QDBusObjectPath(servicepath);
@@ -272,7 +266,7 @@ QDBusObjectPath QConnmanManagerInterface::lookupService(const QString &service)
         }
 
     }
-    return reply;
+    return reply.value();
 }
 
 // properties

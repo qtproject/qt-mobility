@@ -80,9 +80,9 @@ QDBusObjectPath QOfonoManagerInterface::currentModem()
 {
     QList<QDBusObjectPath> modems = getModems();
     foreach(const QDBusObjectPath modem, modems) {
-        QOfonoModemInterface device(modem.path());
-        if(device.isPowered() && device.isOnline())
-        return modem;;
+            QOfonoModemInterface device(modem.path());
+            if(device.isPowered() && device.isOnline())
+                return modem;
     }
     return QDBusObjectPath();
 }
@@ -126,11 +126,13 @@ void QOfonoManagerInterface::disconnectNotify(const char *signal)
 QVariant QOfonoManagerInterface::getProperty(const QString &property)
 {
     QVariant var;
-    QVariantMap map = getProperties();
-    if (map.contains(property)) {
-        var = map.value(property);
-    } else {
-        qDebug() << Q_FUNC_INFO << "does not contain" << property;
+    if(this->isValid()) {
+        QVariantMap map = getProperties();
+        if (map.contains(property)) {
+            var = map.value(property);
+        } else {
+            qDebug() << Q_FUNC_INFO << "does not contain" << property;
+        }
     }
     return var;
 }
