@@ -16,6 +16,7 @@ PUBLIC_HEADERS += \
                     maps/qgeomappolylineobject.h \
                     maps/qgeomaprectangleobject.h \
                     maps/qgeomaprouteobject.h \
+                    maps/qgeomaptextobject.h \
                     maps/qgeonavigationinstruction.h \
                     maps/qgeoroute.h \
                     maps/qgeoroutereply.h \
@@ -42,6 +43,7 @@ PRIVATE_HEADERS += \
                     maps/qgeomappolylineobject_p.h \
                     maps/qgeomaprectangleobject_p.h \
                     maps/qgeomaprouteobject_p.h \
+                    maps/qgeomaptextobject_p.h \
                     maps/qgeonavigationinstruction_p.h \
                     maps/qgeoroute_p.h \
                     maps/qgeoroutereply_p.h \
@@ -68,6 +70,7 @@ SOURCES += \
             maps/qgeomappolylineobject.cpp \
             maps/qgeomaprectangleobject.cpp \
             maps/qgeomaprouteobject.cpp \
+            maps/qgeomaptextobject.cpp \
             maps/qgeonavigationinstruction.cpp \
             maps/qgeoroute.cpp \
             maps/qgeoroutereply.cpp \

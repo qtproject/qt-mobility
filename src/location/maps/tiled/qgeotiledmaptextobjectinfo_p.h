@@ -39,50 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPIXMAPOBJECT_H
-#define QGEOMAPPIXMAPOBJECT_H
+#ifndef QGEOTILEDMAPTEXTOBJECT_INFO_P_H
+#define QGEOTILEDMAPTEXTOBJECT_INFO_P_H
 
-#include "qgeomapobject.h"
-#include "qgeocoordinate.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QPixmap>
-#include <QPoint>
+#include "qgeotiledmapobjectinfo_p.h"
+
+class QGraphicsSimpleTextItem;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapPixmapObjectPrivate;
+class QGeoMapTextObject;
 
-class Q_LOCATION_EXPORT QGeoMapPixmapObject : public QGeoMapObject
+class QGeoTiledMapTextObjectInfo : public QGeoTiledMapObjectInfo
 {
-    Q_OBJECT
-    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QPixmap icon READ icon WRITE setIcon NOTIFY iconChanged)
-    Q_PROPERTY(QPoint offset READ offset WRITE setOffset NOTIFY offsetChanged)
-
 public:
-    QGeoMapPixmapObject(QGeoMapObject *parent = 0);
-    QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset = QPoint(0, 0), const QPixmap &icon = QPixmap(), QGeoMapObject *parent = 0);
-    ~QGeoMapPixmapObject();
+    QGeoTiledMapTextObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    ~QGeoTiledMapTextObjectInfo();
 
-    QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate &coordinate);
+    void objectUpdate();
+    void mapUpdate();
 
-    QPixmap icon() const;
-    void setIcon(const QPixmap &icon);
-
-    QPoint offset() const;
-    void setOffset(const QPoint &offset);
-
-signals:
-    void coordinateChanged(const QGeoCoordinate &coordinate);
-    void iconChanged(const QPixmap &pixmap);
-    void offsetChanged(const QPoint &offset);
-
-private:
-    Q_DECLARE_PRIVATE(QGeoMapPixmapObject)
-    Q_DISABLE_COPY(QGeoMapPixmapObject)
+    QGeoMapTextObject* text;
+    QGraphicsSimpleTextItem *textItem;
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif //QGEOTILEDMAPTEXTOBJECT_INFO_P_H
+

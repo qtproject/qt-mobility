@@ -39,48 +39,57 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPIXMAPOBJECT_H
-#define QGEOMAPPIXMAPOBJECT_H
+#ifndef QGEOMAPTEXTOBJECT_H
+#define QGEOMAPTEXTOBJECT_H
 
 #include "qgeomapobject.h"
 #include "qgeocoordinate.h"
 
-#include <QPixmap>
-#include <QPoint>
+#include <QFont>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapPixmapObjectPrivate;
+class QGeoMapTextObjectPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapPixmapObject : public QGeoMapObject
+class Q_LOCATION_EXPORT QGeoMapTextObject : public QGeoMapObject
 {
     Q_OBJECT
     Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QPixmap icon READ icon WRITE setIcon NOTIFY iconChanged)
-    Q_PROPERTY(QPoint offset READ offset WRITE setOffset NOTIFY offsetChanged)
+    Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
+    Q_PROPERTY(QFont font READ font WRITE setFont NOTIFY fontChanged)
+    Q_PROPERTY(QPen pen READ pen WRITE setPen NOTIFY penChanged)
+    Q_PROPERTY(QBrush brush READ brush WRITE setBrush NOTIFY brushChanged)
 
 public:
-    QGeoMapPixmapObject(QGeoMapObject *parent = 0);
-    QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset = QPoint(0, 0), const QPixmap &icon = QPixmap(), QGeoMapObject *parent = 0);
-    ~QGeoMapPixmapObject();
+    QGeoMapTextObject(QGeoMapObject *parent = 0);
+    QGeoMapTextObject(const QGeoCoordinate &coordinate, const QString &text = QString(), const QFont &font = QFont(), QGeoMapObject *parent = 0);
+    ~QGeoMapTextObject();
 
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &coordinate);
 
-    QPixmap icon() const;
-    void setIcon(const QPixmap &icon);
+    QString text() const;
+    void setText(const QString &text);
 
-    QPoint offset() const;
-    void setOffset(const QPoint &offset);
+    QFont font() const;
+    void setFont(const QFont &font);
+
+    QPen pen() const;
+    void setPen(const QPen &pen);
+
+    QBrush brush() const;
+    void setBrush(const QBrush &brush);
 
 signals:
     void coordinateChanged(const QGeoCoordinate &coordinate);
-    void iconChanged(const QPixmap &pixmap);
-    void offsetChanged(const QPoint &offset);
+    void textChanged(const QString &text);
+    void fontChanged(const QFont &font);
+    void penChanged(const QPen &pen);
+    void brushChanged(const QBrush &brush);
 
 private:
-    Q_DECLARE_PRIVATE(QGeoMapPixmapObject)
-    Q_DISABLE_COPY(QGeoMapPixmapObject)
+    Q_DECLARE_PRIVATE(QGeoMapTextObject)
+    Q_DISABLE_COPY(QGeoMapTextObject)
 };
 
 QTM_END_NAMESPACE

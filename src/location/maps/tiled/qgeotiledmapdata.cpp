@@ -54,6 +54,7 @@
 #include "qgeotiledmappolylineobjectinfo_p.h"
 #include "qgeotiledmappolygonobjectinfo_p.h"
 #include "qgeotiledmappixmapobjectinfo_p.h"
+#include "qgeotiledmaptextobjectinfo_p.h"
 #include "qgeotiledmaprouteobjectinfo_p.h"
 
 #include <QTimer>
@@ -632,6 +633,9 @@ void QGeoTiledMapData::setupMapObject(QGeoMapObject *mapObject)
             break;
         case QGeoMapObject::PixmapType:
             info = new QGeoTiledMapPixmapObjectInfo(this, mapObject);
+            break;
+        case QGeoMapObject::TextType:
+            info = new QGeoTiledMapTextObjectInfo(this, mapObject);
             break;
         case QGeoMapObject::RouteType:
             info = new QGeoTiledMapRouteObjectInfo(this, mapObject);

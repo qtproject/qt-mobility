@@ -39,48 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPIXMAPOBJECT_H
-#define QGEOMAPPIXMAPOBJECT_H
+#ifndef QGEOMAPTEXTOBJECT_P_H
+#define QGEOMAPTEXTOBJECT_P_H
 
-#include "qgeomapobject.h"
+#include "qgeomapobject_p.h"
+
 #include "qgeocoordinate.h"
 
-#include <QPixmap>
-#include <QPoint>
+#include <QFont>
+#include <QString>
+#include <QPen>
+#include <QBrush>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapPixmapObjectPrivate;
-
-class Q_LOCATION_EXPORT QGeoMapPixmapObject : public QGeoMapObject
+class QGeoMapTextObjectPrivate : public QGeoMapObjectPrivate
 {
-    Q_OBJECT
-    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QPixmap icon READ icon WRITE setIcon NOTIFY iconChanged)
-    Q_PROPERTY(QPoint offset READ offset WRITE setOffset NOTIFY offsetChanged)
-
 public:
-    QGeoMapPixmapObject(QGeoMapObject *parent = 0);
-    QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset = QPoint(0, 0), const QPixmap &icon = QPixmap(), QGeoMapObject *parent = 0);
-    ~QGeoMapPixmapObject();
+    QGeoMapTextObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
+    ~QGeoMapTextObjectPrivate();
 
-    QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate &coordinate);
-
-    QPixmap icon() const;
-    void setIcon(const QPixmap &icon);
-
-    QPoint offset() const;
-    void setOffset(const QPoint &offset);
-
-signals:
-    void coordinateChanged(const QGeoCoordinate &coordinate);
-    void iconChanged(const QPixmap &pixmap);
-    void offsetChanged(const QPoint &offset);
-
-private:
-    Q_DECLARE_PRIVATE(QGeoMapPixmapObject)
-    Q_DISABLE_COPY(QGeoMapPixmapObject)
+    QGeoCoordinate coordinate;
+    QString text;
+    QFont font;
+    QPen pen;
+    QBrush brush;
 };
 
 QTM_END_NAMESPACE

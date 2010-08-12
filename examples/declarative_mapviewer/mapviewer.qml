@@ -122,6 +122,15 @@ Item {
                 longitude: 153.2
             }
         }
+
+        MapTextObject {
+            coordinate:     Coordinate {
+                                latitude: -27.1
+                                longitude: 153.1
+                            }
+            text: "Testing text"
+            color: "#800000"
+        }
     }
 
     MouseArea {

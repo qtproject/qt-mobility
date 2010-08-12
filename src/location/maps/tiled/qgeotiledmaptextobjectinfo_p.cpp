@@ -39,50 +39,54 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPIXMAPOBJECT_H
-#define QGEOMAPPIXMAPOBJECT_H
+#include "qgeotiledmaptextobjectinfo_p.h"
 
-#include "qgeomapobject.h"
-#include "qgeocoordinate.h"
+#include "qgeotiledmapdata.h"
+#include "qgeotiledmapdata_p.h"
 
-#include <QPixmap>
-#include <QPoint>
+#include "qgeomaptextobject.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapPixmapObjectPrivate;
+QGeoTiledMapTextObjectInfo::QGeoTiledMapTextObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
+        : QGeoTiledMapObjectInfo(mapData, mapObject),
+        textItem(0)
 
-class Q_LOCATION_EXPORT QGeoMapPixmapObject : public QGeoMapObject
 {
-    Q_OBJECT
-    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QPixmap icon READ icon WRITE setIcon NOTIFY iconChanged)
-    Q_PROPERTY(QPoint offset READ offset WRITE setOffset NOTIFY offsetChanged)
+    text = static_cast<QGeoMapTextObject*>(mapObject);
+}
 
-public:
-    QGeoMapPixmapObject(QGeoMapObject *parent = 0);
-    QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset = QPoint(0, 0), const QPixmap &icon = QPixmap(), QGeoMapObject *parent = 0);
-    ~QGeoMapPixmapObject();
+QGeoTiledMapTextObjectInfo::~QGeoTiledMapTextObjectInfo() {}
 
-    QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate &coordinate);
+void QGeoTiledMapTextObjectInfo::objectUpdate()
+{
+    QPointF position = tiledMapData->coordinateToWorldPixel(text->coordinate());
 
-    QPixmap icon() const;
-    void setIcon(const QPixmap &icon);
+    if (!textItem)
+        textItem = new QGraphicsSimpleTextItem();
 
-    QPoint offset() const;
-    void setOffset(const QPoint &offset);
+    textItem->setText(text->text());
+    textItem->setFont(text->font());
+    textItem->setBrush(text->brush());
+    textItem->setPos(position);
+    //textItem->setTransformOriginPoint(position);
 
-signals:
-    void coordinateChanged(const QGeoCoordinate &coordinate);
-    void iconChanged(const QPixmap &pixmap);
-    void offsetChanged(const QPoint &offset);
+    mapUpdate();
 
-private:
-    Q_DECLARE_PRIVATE(QGeoMapPixmapObject)
-    Q_DISABLE_COPY(QGeoMapPixmapObject)
-};
+    graphicsItem = textItem;
+
+    updateItem();
+}
+
+void QGeoTiledMapTextObjectInfo::mapUpdate()
+{
+    if (textItem) {
+        int zoomFactor = tiledMapData->zoomFactor();
+
+        textItem->resetTransform();
+        textItem->setScale(zoomFactor);
+    }
+}
 
 QTM_END_NAMESPACE
 
-#endif

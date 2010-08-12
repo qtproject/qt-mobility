@@ -79,6 +79,7 @@ public:
         PolylineType,
         PolygonType,
         PixmapType,
+        TextType,
         RouteType
     };
 

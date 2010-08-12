@@ -54,6 +54,7 @@
 #include "qdeclarativegeomappolygonobject_p.h"
 #include "qdeclarativegeomappolylineobject_p.h"
 #include "qdeclarativegeomaprectangleobject_p.h"
+#include "qdeclarativegeomaptextobject_p.h"
 
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include <QtDeclarative/qdeclarative.h>
@@ -84,6 +85,7 @@ public:
         qmlRegisterType<QDeclarativeGeoMapPolygonObject>(uri, 1, 1, "MapPolygonObject");
         qmlRegisterType<QDeclarativeGeoMapPolylineObject>(uri, 1, 1, "MapPolylineObject");
         qmlRegisterType<QDeclarativeGeoMapRectangleObject>(uri, 1, 1, "MapRectangleObject");
+        qmlRegisterType<QDeclarativeGeoMapTextObject>(uri, 1, 1, "MapTextObject");
     }
 };
 

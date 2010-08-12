@@ -1,3 +1,4 @@
+
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -39,50 +40,54 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPIXMAPOBJECT_H
-#define QGEOMAPPIXMAPOBJECT_H
+#include "qdeclarativegeomaptextobject_p.h"
 
-#include "qgeomapobject.h"
-#include "qgeocoordinate.h"
-
-#include <QPixmap>
-#include <QPoint>
+#include <QBrush>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapPixmapObjectPrivate;
-
-class Q_LOCATION_EXPORT QGeoMapPixmapObject : public QGeoMapObject
+QDeclarativeGeoMapTextObject::QDeclarativeGeoMapTextObject()
 {
-    Q_OBJECT
-    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QPixmap icon READ icon WRITE setIcon NOTIFY iconChanged)
-    Q_PROPERTY(QPoint offset READ offset WRITE setOffset NOTIFY offsetChanged)
+    m_coordinate = new QDeclarativeCoordinate(this);
+}
 
-public:
-    QGeoMapPixmapObject(QGeoMapObject *parent = 0);
-    QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset = QPoint(0, 0), const QPixmap &icon = QPixmap(), QGeoMapObject *parent = 0);
-    ~QGeoMapPixmapObject();
+QDeclarativeGeoMapTextObject::~QDeclarativeGeoMapTextObject()
+{
+}
 
-    QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate &coordinate);
+void QDeclarativeGeoMapTextObject::setDeclarativeCoordinate(const QDeclarativeCoordinate *coordinate)
+{
+    if (m_coordinate->coordinate() == coordinate->coordinate())
+        return;
 
-    QPixmap icon() const;
-    void setIcon(const QPixmap &icon);
+    m_coordinate->setCoordinate(coordinate->coordinate());
+    setCoordinate(coordinate->coordinate());
 
-    QPoint offset() const;
-    void setOffset(const QPoint &offset);
+    emit declarativeCoordinateChanged(m_coordinate);
+}
 
-signals:
-    void coordinateChanged(const QGeoCoordinate &coordinate);
-    void iconChanged(const QPixmap &pixmap);
-    void offsetChanged(const QPoint &offset);
+QDeclarativeCoordinate* QDeclarativeGeoMapTextObject::declarativeCoordinate() const
+{
+    return m_coordinate;
+}
 
-private:
-    Q_DECLARE_PRIVATE(QGeoMapPixmapObject)
-    Q_DISABLE_COPY(QGeoMapPixmapObject)
-};
+void QDeclarativeGeoMapTextObject::setColor(const QColor &color)
+{
+    if (m_color == color)
+        return;
+
+    m_color = color;
+    QBrush m_brush(color);
+    setBrush(m_brush);
+    emit colorChanged(m_color);
+}
+
+QColor QDeclarativeGeoMapTextObject::color() const
+{
+    return m_color;
+}
+
+#include "moc_qdeclarativegeomaptextobject_p.cpp"
 
 QTM_END_NAMESPACE
 
-#endif
