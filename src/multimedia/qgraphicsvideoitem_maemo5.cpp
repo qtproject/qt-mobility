@@ -556,7 +556,7 @@ void QGraphicsVideoItem::paint(
         if (widget) {
             //workaround for xvideo issue with U/V planes swapped
             QPoint topLeft = widget->mapToGlobal(overlayRect.topLeft());
-            if ((topLeft.x() & 1) == 0)
+            if ((topLeft.x() & 1) == 0 && topLeft.x() != 0)
                 overlayRect.moveLeft(overlayRect.left()-1);
         }
 
@@ -587,7 +587,7 @@ void QGraphicsVideoItem::paint(
             d->softwareRenderingTimer.start(SOFTWARE_RENDERING_DURATION, this);
 
 #ifdef DEBUG_GFX_VIDEO_ITEM
-            qDebug() << "set video display rect:" << deviceRect;
+            qDebug() << "set video display rect:" << overlayRect;
 #endif
 
         }
