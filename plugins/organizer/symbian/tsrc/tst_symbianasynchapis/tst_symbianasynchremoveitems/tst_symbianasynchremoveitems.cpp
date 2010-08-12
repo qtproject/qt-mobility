@@ -56,7 +56,7 @@ const int KNumberOfEntries = 5;
 // test data functions
 Q_DECLARE_METATYPE(QOrganizerItem)
 
-class TestFetchItems : public QObject
+class TestRemoveItems : public QObject
 {
    Q_OBJECT
    
@@ -76,19 +76,26 @@ public slots:
    void saveRequestStateChanged(
            QOrganizerItemAbstractRequest::State currentState);
    void saveRequestResultsAvailable();
+   void removeRequestStateChanged(
+           QOrganizerItemAbstractRequest::State currentState);
+   void removeRequestResultsAvailable();
 
    
 private:
    QList<QOrganizerItem> createItems(int noOfItems);
    void fetchItems();
+   void removeItems(QList<QOrganizerItemLocalId>& itemsIds);
    
 private:
-    QOrganizerItemManager*              m_om;
-    QOrganizerItemFetchRequest*         m_fetchItemRequest;
-    QOrganizerItemSaveRequest*          m_saveItemRequest;
+   QList<QOrganizerItemLocalId>        m_itemIds;
+   QOrganizerItemManager*              m_om;
+   QOrganizerItemFetchRequest*         m_fetchItemRequest;
+   QOrganizerItemSaveRequest*          m_saveItemRequest;
+   QOrganizerItemRemoveRequest*        m_removeItemRequest;
+    
 };
 
-void TestFetchItems::init()
+void TestRemoveItems::init()
 {
     // Create a new item manager instance
     m_om = new QOrganizerItemManager(managerNameSymbian);
@@ -114,9 +121,19 @@ void TestFetchItems::init()
             SLOT(fetchRequestStateChanged(QOrganizerItemAbstractRequest::State)));
     connect(m_fetchItemRequest, SIGNAL(resultsAvailable()), 
             this, SLOT(fetchRequestResultsAvailable()));
+    
+    // Create an item request to remove items
+    m_removeItemRequest = new QOrganizerItemRemoveRequest(this);
+    // Connect for the state change signals
+    connect(m_removeItemRequest, 
+            SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
+             this, 
+             SLOT(removeRequestStateChanged(QOrganizerItemAbstractRequest::State)));
+    connect(m_removeItemRequest, SIGNAL(resultsAvailable()), 
+            this, SLOT(removeRequestResultsAvailable()));
 }
 
-void TestFetchItems::cleanup()
+void TestRemoveItems::cleanup()
 {
     if (m_om) {
         delete m_om;
@@ -124,7 +141,7 @@ void TestFetchItems::cleanup()
     }
 }
 
-void TestFetchItems::saveItems()
+void TestRemoveItems::saveItems()
 {
     // Set items to be saved
     m_saveItemRequest->setItems(createItems(KNumberOfEntries));
@@ -133,11 +150,12 @@ void TestFetchItems::saveItems()
     // Start save request
     m_saveItemRequest->start();
     // Wait for the request to be completed
-    m_saveItemRequest->waitForFinished(1000);
+    // Also wait for the fetch test to complete
+    QTest::qWait(10000);
 }
    
 // Returns a list of noOfItems
-QList<QOrganizerItem> TestFetchItems::createItems(int noOfItems)
+QList<QOrganizerItem> TestRemoveItems::createItems(int noOfItems)
 {
     QList<QOrganizerItem> itemsList;
     
@@ -170,7 +188,7 @@ QList<QOrganizerItem> TestFetchItems::createItems(int noOfItems)
 }
 
 // request status changed for save request
-void TestFetchItems::saveRequestStateChanged(
+void TestRemoveItems::saveRequestStateChanged(
         QOrganizerItemAbstractRequest::State currentState)
 {
     switch(currentState) {
@@ -201,25 +219,77 @@ void TestFetchItems::saveRequestStateChanged(
 }
 
 // Save request completed/results available
-void TestFetchItems::saveRequestResultsAvailable()
+void TestRemoveItems::saveRequestResultsAvailable()
 {
     QList<QOrganizerItem> items = m_saveItemRequest->items();
-    // Compate the number of items saved
-    QCOMPARE(KNumberOfEntries, items.count());
-    
+    // compare the number of items saved
+    int count(items.count());
+    QCOMPARE(count, KNumberOfEntries);
+    // Fetch all the items ids
+    m_itemIds.clear();
+    m_itemIds.append(m_om->itemIds());
     // Start fetchItems test now
+    removeItems(m_itemIds);
+}
+
+void TestRemoveItems::removeItems(QList<QOrganizerItemLocalId>& itemsIds)
+    {
+    // Set items Ids to be deleted
+    m_removeItemRequest->setItemIds(itemsIds);
+    // Set manager
+    m_removeItemRequest->setManager(m_om);
+    // Start remove/delete request
+    m_removeItemRequest->start();
+    }
+
+// Remove request state changed
+void TestRemoveItems::removeRequestStateChanged(
+        QOrganizerItemAbstractRequest::State currentState)
+{
+    switch(currentState) {
+        case QOrganizerItemAbstractRequest::InactiveState: { 
+            // Operation not yet started start the operation
+            removeItems(m_itemIds);
+            break;
+        }
+        case QOrganizerItemAbstractRequest::ActiveState: { 
+            // Operation started, not yet finished operation already started
+        break;
+        }
+        case QOrganizerItemAbstractRequest::CanceledState: { 
+            // Operation is finished due to cancellation test not completed, 
+            // failed
+        break;
+        }
+        case QOrganizerItemAbstractRequest::FinishedState: { 
+            // Operation either completed successfully or failed.  
+            // No further results will be available.
+            // test completed, compare the results while available
+        }
+        default: {
+            // Not handled
+        }
+    }
+}
+
+// Remove request available compare results
+void TestRemoveItems::removeRequestResultsAvailable()
+{
+    // Check error map
+    QMap<int, QOrganizerItemManager::Error> erroMap;
+    erroMap = m_removeItemRequest->errorMap();
+    // Fetch db once again to cross check if the m_itemIds are still present in 
+    // db
     fetchItems();
 }
 
-
-void TestFetchItems::fetchItems()
+void TestRemoveItems::fetchItems()
 {
+    // Set items local Id filter
     QOrganizerItemLocalIdFilter localIdFilter;
-    QList<QOrganizerItemLocalId> lUids;
-    lUids.append(3);
-    lUids.append(4);
-    localIdFilter.setIds(lUids);
-    //m_fetchItemRequest->setFilter(localIdFilter);
+    localIdFilter.setIds(m_itemIds);
+    m_fetchItemRequest->setFilter(localIdFilter);
+    
     // Set ItemDetailsFilter
     QOrganizerItemDetailFilter detailsFilter;
     detailsFilter.setDetailDefinitionName(
@@ -227,26 +297,8 @@ void TestFetchItems::fetchItems()
             QOrganizerItemDisplayLabel::FieldLabel); 
     detailsFilter.setValue("myDescription");
     detailsFilter.setMatchFlags(QOrganizerItemFilter::MatchContains);
-    m_fetchItemRequest->setFilter(detailsFilter);
+    //m_fetchItemRequest->setFilter(detailsFilter);
 
-    // Set sorting order
-    QList<QOrganizerItemSortOrder> sortOrderlist;
-    QOrganizerItemSortOrder sorting;
-    sorting.setDetailDefinitionName(
-            QOrganizerItemDisplayLabel::DefinitionName, 
-            QOrganizerItemDisplayLabel::FieldLabel);
-    sorting.setBlankPolicy(QOrganizerItemSortOrder::BlanksLast);
-    //sorting.setDirection(SortOrder::AscendingOrder);
-    //sorting.setCaseSensitivity(CaseSensitivity::CaseInsensitive);
-    sortOrderlist.append(sorting);
-    m_fetchItemRequest->setSorting(sortOrderlist);
-
-    // Set fetch hint
-    QOrganizerItemFetchHint fetchHint;
-    //fetchHint.setDetailDefinitionsHint();
-    fetchHint.setOptimizationHints(QOrganizerItemFetchHint::AllRequired);
-    m_fetchItemRequest->setFetchHint(fetchHint);
-    
     // Set manager
     m_fetchItemRequest->setManager(m_om);
     // Start the request
@@ -254,7 +306,7 @@ void TestFetchItems::fetchItems()
 }
 
 // Fetch request state changed
-void TestFetchItems::fetchRequestStateChanged(
+void TestRemoveItems::fetchRequestStateChanged(
         QOrganizerItemAbstractRequest::State currentState)
 {
     switch(currentState) {
@@ -275,7 +327,7 @@ void TestFetchItems::fetchRequestStateChanged(
         case QOrganizerItemAbstractRequest::FinishedState: { 
             // Operation either completed successfully or failed.  
             // No further results will be available.
-            // test completed, compate the results while available
+            // test completed, compare the results while available
         }
         default: {
             // Not handled
@@ -284,13 +336,14 @@ void TestFetchItems::fetchRequestStateChanged(
 }
 
 // Fetch request available compare results
-void TestFetchItems::fetchRequestResultsAvailable()
+void TestRemoveItems::fetchRequestResultsAvailable()
 {
     QList<QOrganizerItem> items = m_fetchItemRequest->items();
     int count(items.count());
-    QCOMPARE(KNumberOfEntries, items.count());
+    // No entry should be found with the given ids
+    QCOMPARE(count, 0);
 }
 
-QTEST_MAIN(TestFetchItems);
+QTEST_MAIN(TestRemoveItems);
 
-#include "tst_fetchitems.moc"
+#include "tst_symbianasynchremoveitems.moc"
