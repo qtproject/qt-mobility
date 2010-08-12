@@ -398,33 +398,48 @@ void TestItemOccurrence::editOccurrence()
     QVERIFY(m_om->saveItem(&item));    
     item = m_om->item(item.localId());
 
-    //Fetch first instance of the saved entry to modify
-    QList<QOrganizerItem> instanceList = m_om->itemInstances(item,startTime,startTime);
-    QCOMPARE(instanceList.size(),1);
+    //Fetch first and third instance of the saved entry to modify
+    QList<QOrganizerItem> instanceList = m_om->itemInstances(item,startTime,QDateTime(),3);
+    QCOMPARE(instanceList.size(), 3);
+            
     QOrganizerItem firstItem = instanceList.at(0);
     QCOMPARE(firstItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
     QOrganizerEventOccurrence firstInstance = static_cast<QOrganizerEventOccurrence>(firstItem);
     QCOMPARE(firstItem.guid(), item.guid());
     
-    //Modify the instance and save it
+    QOrganizerItem thirdItem = instanceList.at(2);
+    QCOMPARE(thirdItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QOrganizerEventOccurrence thirdInstance = static_cast<QOrganizerEventOccurrence>(thirdItem);
+    
+    //Modify the first instance and save it
     firstInstance.setDescription(modifiedDescription);
     QVERIFY(m_om->saveItem(&firstInstance));    
     
-    //Fetch the instance and verify
+    //Modify the description of third instance and save it
+    thirdInstance.setDescription(modifiedDescription);
+    QVERIFY(m_om->saveItem(&thirdInstance));    
+    
+    //Fetch the first and third instances and verify
     instanceList.clear();
-    instanceList = m_om->itemInstances(item,startTime,startTime);
-    QCOMPARE(instanceList.size(),1);
-    QOrganizerItem changedItem = instanceList.at(0);
-    QCOMPARE(changedItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    instanceList = m_om->itemInstances(item,startTime,QDateTime(),3);
+    QCOMPARE(instanceList.size(),3);
+    QOrganizerItem changedFirstItem = instanceList.at(0);
+    QCOMPARE(changedFirstItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
     
     // compare start datetime,description, priority and location
-    QOrganizerEventOccurrence changedInstance = static_cast<QOrganizerEventOccurrence>(changedItem);
-    QCOMPARE(changedInstance.startDateTime(),firstInstance.startDateTime());
-    QCOMPARE(changedInstance.description(),firstInstance.description());
-    QCOMPARE(changedInstance.priority(),firstInstance.priority());
-    QCOMPARE(changedInstance.locationName(),firstInstance.locationName());
+    QOrganizerEventOccurrence changedFirstInstance = static_cast<QOrganizerEventOccurrence>(changedFirstItem);
+    QCOMPARE(changedFirstInstance.startDateTime(),firstInstance.startDateTime());
+    QCOMPARE(changedFirstInstance.description(),firstInstance.description());
+    QCOMPARE(changedFirstInstance.priority(),firstInstance.priority());
+    QCOMPARE(changedFirstInstance.locationName(),firstInstance.locationName());
     
-   //Modify the start date of the instance and verify
+    //Check for the modified third instance and verify
+    QOrganizerItem modifiedThirdItem = instanceList.at(0);
+    QCOMPARE(modifiedThirdItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QOrganizerEventOccurrence modifiedThirdInstance = static_cast<QOrganizerEventOccurrence>(modifiedThirdItem);
+    QCOMPARE(modifiedThirdInstance.description(),thirdInstance.description());
+    
+   //Modify the start date of the first instance and verify
     firstInstance.setStartDateTime(modifiedStartTime);
     QVERIFY(m_om->saveItem(&firstInstance));
     
@@ -432,7 +447,7 @@ void TestItemOccurrence::editOccurrence()
     instanceList = m_om->itemInstances(item,modifiedStartTime,modifiedStartTime);
     QCOMPARE(instanceList.size(),1);
     QOrganizerEventOccurrence newInstance = static_cast<QOrganizerEventOccurrence>(instanceList[0]);
-    QCOMPARE(newInstance.startDateTime(),firstInstance.startDateTime());  
+    QCOMPARE(newInstance.startDateTime(),firstInstance.startDateTime());
 }
 
 void TestItemOccurrence::editOccurrenceNegative_data() 
@@ -491,16 +506,17 @@ void TestItemOccurrence::editOccurrenceNegative()
     QOrganizerEventOccurrence firstInstance = static_cast<QOrganizerEventOccurrence>(firstItem);
     QString instanceGuid (firstInstance.guid());
    
-    //Try to save instance with invalid guid
+    //Try to save instance with invalid guid and parentlocalId fails
     firstInstance.setGuid(QString(""));
+    firstInstance.setParentLocalId(QOrganizerItemLocalId(-1));
     QVERIFY(!m_om->saveItem(&firstInstance));
-    QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
+    QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
     
     //change to invalid original Date of the instance and save 
     firstInstance.setGuid(instanceGuid);
     firstInstance.setOriginalDate(QDate(1000,1,1));
     QVERIFY(!m_om->saveItem(&firstInstance));
-    QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
+    QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
     
     firstInstance = static_cast<QOrganizerEventOccurrence>(firstItem);
     firstInstance.setStartDateTime(startTime.addDays(-1));
@@ -511,7 +527,7 @@ void TestItemOccurrence::editOccurrenceNegative()
     itemId.setLocalId(1);
     firstInstance.setId(itemId);
     QVERIFY(!m_om->saveItem(&firstInstance));
-    QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
+    QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
 }
 
 void TestItemOccurrence::fetchNegative_data()
