@@ -77,7 +77,6 @@ public:
     QGeoRouteRequest request() const;
     QList<QGeoRoute> routes() const;
 
-public slots:
     virtual void abort();
 
 signals:

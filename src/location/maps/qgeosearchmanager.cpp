@@ -427,8 +427,8 @@ QGeoSearchReply* QGeoSearchManager::search(const QString &searchString,
 
         QLandmarkFetchRequest* fetchRequest = new QLandmarkFetchRequest(lm, this);
         fetchRequest->setFilter(intersectFilter);
-        fetchRequest->setLimit(resultsCount);
-        fetchRequest->setOffset(resultsOffset);
+        fetchRequest->setLimit(limit);
+        fetchRequest->setOffset(offset);
         fetchRequests.append(fetchRequest);
     }
 

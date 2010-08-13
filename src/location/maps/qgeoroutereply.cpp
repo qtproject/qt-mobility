@@ -211,7 +211,7 @@ void QGeoRouteReply::setRoutes(const QList<QGeoRoute> &routes)
 }
 
 /*!
-    Cancels the operation.
+    Cancels the operation immediately.
 
     This will do nothing if the reply is finished.
 */
