@@ -80,7 +80,7 @@ public:
     {
     }
 
-    static void setCollectionId(QOrganizerItem *item, const QOrganizerCollectionId& collectionId)
+    virtual void setCollectionId(QOrganizerItem *item, const QOrganizerCollectionId& collectionId)
     {
         item->d->m_collectionId = collectionId;
     }

@@ -1680,7 +1680,7 @@ void QOrganizerItemManagerEngine::setDetailAccessConstraints(QOrganizerItemDetai
 void QOrganizerItemManagerEngine::setItemCollectionId(QOrganizerItem* item, const QOrganizerCollectionId& collectionId)
 {
     if (item) {
-        QOrganizerItemData::setCollectionId(item, collectionId);
+        item->d->setCollectionId(item, collectionId);
     }
 }
 
