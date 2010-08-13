@@ -45,7 +45,7 @@
 #include "qgraphicsgeomap.h"
 
 #include <QRect>
-#include <QSharedDataPointer>
+#include <QExplicitlySharedDataPointer>
 
 QTM_BEGIN_NAMESPACE
 
@@ -77,7 +77,7 @@ public:
     QRect tileRect() const;
 
 private:
-    QSharedDataPointer<QGeoTiledMapRequestPrivate> d_ptr;
+    QExplicitlySharedDataPointer<QGeoTiledMapRequestPrivate> d_ptr;
 };
 
 Q_LOCATION_EXPORT uint qHash(const QGeoTiledMapRequest &key);

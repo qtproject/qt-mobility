@@ -449,7 +449,7 @@ void MainWindow::setupUi()
 
     QVBoxLayout *mapControlLayout = new QVBoxLayout();
 
-    connect(m_mapWidget, SIGNAL(mapTypeChanged(QGeoMapWidget::MapType)), this, SLOT(mapTypeChanged(QGeoMapWidget::MapType)));
+    connect(m_mapWidget, SIGNAL(mapTypeChanged(QGraphicsGeoMap::MapType)), this, SLOT(mapTypeChanged(QGraphicsGeoMap::MapType)));
 
     QList<QGraphicsGeoMap::MapType> types = m_mapWidget->supportedMapTypes();
     for (int i = 0; i < types.size(); ++i) {

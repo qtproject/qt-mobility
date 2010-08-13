@@ -44,7 +44,7 @@
 
 #include "qmobilityglobal.h"
 
-#include <QSharedDataPointer>
+#include <QExplicitlySharedDataPointer>
 
 class QString;
 
@@ -100,7 +100,7 @@ public:
     qreal distanceToNextInstruction() const;
 
 private:
-    QSharedDataPointer<QGeoInstructionPrivate> d_ptr;
+    QExplicitlySharedDataPointer<QGeoInstructionPrivate> d_ptr;
 };
 
 QTM_END_NAMESPACE

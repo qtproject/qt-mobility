@@ -360,18 +360,18 @@ void QGeoTiledMapData::setViewportSize(const QSizeF &size)
     d->updateMapImage();
 }
 
-void QGeoTiledMapData::pan(qreal dx, qreal dy)
+void QGeoTiledMapData::pan(int dx, int dy)
 {
     Q_D(QGeoTiledMapData);
 
     int x = d->maxZoomCenter.x();
     int y = d->maxZoomCenter.y();
 
-    x = int(x + dx * d->zoomFactor) % d->maxZoomSize.width();
+    x = (x + dx * d->zoomFactor) % d->maxZoomSize.width();
     if (x < 0)
         x += d->maxZoomSize.width();
 
-    y = int(y + dy * d->zoomFactor);
+    y = (y + dy * d->zoomFactor);
     int height = int(d->maxZoomScreenRect.height() / 2.0);
     if (y < height)
         y = height;

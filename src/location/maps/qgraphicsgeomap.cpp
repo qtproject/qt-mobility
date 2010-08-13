@@ -110,22 +110,24 @@ include some of the information provided by QGraphicsGeoMap::StreetMap.
 // with the right QML / service provider mapping
 QGraphicsGeoMap::QGraphicsGeoMap(QGraphicsItem *parent)
         : QGraphicsWidget(parent),
-        d_ptr(new QGraphicsGeoMapPrivate(0))
+        d_ptr(new QGraphicsGeoMapPrivate())
 {
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 
     d_ptr->serviceProvider = new QGeoServiceProvider("nokia");
     d_ptr->manager = d_ptr->serviceProvider->mappingManager();
 
-    d_ptr->mapData = d_ptr->manager->createMapData(this);
-    setMapType(QGraphicsGeoMap::StreetMap);
+    setMappingManager(d_ptr->manager);
+
+//    d_ptr->mapData = d_ptr->manager->createMapData(this);
+//    setMapType(QGraphicsGeoMap::StreetMap);
 
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
 
     setMinimumSize(QSizeF(0, 0));
     setPreferredSize(QSizeF(500, 500));
-    d_ptr->mapData->setViewportSize(QSizeF(300, 300));
+//    d_ptr->mapData->setViewportSize(QSizeF(300, 300));
 }
 
 /*!
@@ -144,15 +146,16 @@ QGraphicsGeoMap::QGraphicsGeoMap(QGeoMappingManager *manager, QGraphicsItem *par
         : QGraphicsWidget(parent),
         d_ptr(new QGraphicsGeoMapPrivate(manager))
 {
-    d_ptr->mapData = d_ptr->manager->createMapData(this);
-    setMapType(QGraphicsGeoMap::StreetMap);
+    //d_ptr->mapData = d_ptr->manager->createMapData(this);
+    //setMapType(QGraphicsGeoMap::StreetMap);
+    setMappingManager(d_ptr->manager);
 
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
 
     setMinimumSize(QSizeF(0, 0));
     setPreferredSize(QSizeF(500, 500));
-    d_ptr->mapData->setViewportSize(QSizeF(300, 300));
+    //d_ptr->mapData->setViewportSize(QSizeF(300, 300));
 }
 
 /*!
@@ -163,12 +166,28 @@ QGraphicsGeoMap::~QGraphicsGeoMap()
     delete d_ptr;
 }
 
+void QGraphicsGeoMap::setMappingManager(QGeoMappingManager *manager)
+{
+    MapType type = QGraphicsGeoMap::StreetMap;
+
+    d_ptr->manager = manager;
+
+    if (d_ptr->mapData) {
+        type = d_ptr->mapData->mapType();
+        delete d_ptr->mapData;
+    }
+
+    d_ptr->mapData = d_ptr->manager->createMapData(this);
+    setMapType(type);
+    d_ptr->mapData->setViewportSize(QSizeF(300, 300));
+}
+
 /*!
   \reimp
 */
 void QGraphicsGeoMap::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
-    if (d_ptr->mapData && d_ptr->manager) {
+    if (d_ptr->mapData) {
         d_ptr->mapData->setViewportSize(event->newSize());
     }
 }
@@ -234,7 +253,7 @@ qreal QGraphicsGeoMap::maximumZoomLevel() const
 */
 void QGraphicsGeoMap::setZoomLevel(qreal zoomLevel)
 {
-    if (d_ptr->mapData && d_ptr->manager) {
+    if (d_ptr->mapData) {
         qreal oldZoom = d_ptr->mapData->zoomLevel();
         d_ptr->mapData->setZoomLevel(zoomLevel);
         qreal newZoom = d_ptr->mapData->zoomLevel();
@@ -266,18 +285,13 @@ qreal QGraphicsGeoMap::zoomLevel() const
     viewed area to the right and that positive values of \a dy move the
     viewed area down.
 */
-void QGraphicsGeoMap::pan(qreal dx, qreal dy)
+void QGraphicsGeoMap::pan(int dx, int dy)
 {
-    if (d_ptr->mapData && d_ptr->manager) {
+    if (d_ptr->mapData) {
         d_ptr->mapData->pan(dx, dy);
         update();
-        emit panned(QPointF(dx, dy));
+        emit panned(QPoint(dx, dy));
     }
-}
-
-void QGraphicsGeoMap::pan(QPointF offset)
-{
-    pan(offset.x(), offset.y());
 }
 
 /*!
@@ -285,7 +299,7 @@ void QGraphicsGeoMap::pan(QPointF offset)
 */
 void QGraphicsGeoMap::setCenter(const QGeoCoordinate &center)
 {
-    if (d_ptr->mapData && d_ptr->manager) {
+    if (d_ptr->mapData) {
         if (d_ptr->mapData->center() != center) {
             d_ptr->mapData->setCenter(center);
             emit centerChanged(center);
@@ -489,6 +503,8 @@ QGraphicsGeoMapPrivate::QGraphicsGeoMapPrivate(QGeoMappingManager *manager)
 
 QGraphicsGeoMapPrivate::~QGraphicsGeoMapPrivate()
 {
+    if (mapData)
+        delete mapData;
     if (serviceProvider)
         delete serviceProvider;
 }

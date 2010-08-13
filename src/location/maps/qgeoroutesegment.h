@@ -44,7 +44,7 @@
 
 #include "qmobilityglobal.h"
 
-#include <QSharedDataPointer>
+#include <QExplicitlySharedDataPointer>
 #include <QList>
 
 QT_BEGIN_HEADER
@@ -81,7 +81,7 @@ public:
     QGeoInstruction instruction() const;
 
 private:
-    QSharedDataPointer<QGeoRouteSegmentPrivate> d_ptr;
+    QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> d_ptr;
 };
 
 QTM_END_NAMESPACE

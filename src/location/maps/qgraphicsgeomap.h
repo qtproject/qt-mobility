@@ -78,6 +78,8 @@ public:
     QGraphicsGeoMap(QGeoMappingManager *manager, QGraphicsItem *parent = 0);
     virtual ~QGraphicsGeoMap();
 
+    void setMappingManager(QGeoMappingManager *manager);
+
     QPainterPath shape() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *parent);
 
@@ -106,8 +108,8 @@ public:
     QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;
 
 public slots:
-    void pan(qreal dx, qreal dy);
-    void pan(QPointF offset);
+    void pan(int dx, int dy);
+    //void pan(const QPoint &offset);
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
@@ -116,7 +118,7 @@ signals:
     void zoomLevelChanged(qreal zoomLevel);
     void centerChanged(const QGeoCoordinate &coordinate);
     void mapTypeChanged(QGraphicsGeoMap::MapType mapType);
-    void panned(const QPointF &offset);
+    void panned(const QPoint &offset);
 
 private:
     QGraphicsGeoMapPrivate *d_ptr;

@@ -64,7 +64,7 @@ class QGeoMapData;
 class QGraphicsGeoMapPrivate
 {
 public:
-    QGraphicsGeoMapPrivate(QGeoMappingManager *manager);
+    QGraphicsGeoMapPrivate(QGeoMappingManager *manager = 0);
     ~QGraphicsGeoMapPrivate();
 
     QGeoServiceProvider *serviceProvider;
