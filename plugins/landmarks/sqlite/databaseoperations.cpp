@@ -2544,8 +2544,22 @@ bool DatabaseOperations::exportLandmarks(const QString &connectionName,
        return false;
     }
 
-    if (!device->open(QIODevice::WriteOnly)) {
-        *error = QLandmarkManager::PermissionsError;
+    QFile *file = qobject_cast<QFile *>(device);
+    if (file) {
+
+        if (!file->open(QIODevice::WriteOnly)) {
+            if (file->error() == QFile::OpenError) {
+                *error = QLandmarkManager::PermissionsError;
+                *errorString = QString("Insufficient permissions to open file");
+                return false;
+            } else {
+                *error = QLandmarkManager::UnknownError;
+                *errorString = QString("Unable to open file for importing landmarks");
+                return false;
+            }
+        }
+    } else if (!device->open(QIODevice::WriteOnly)) {
+        *error = QLandmarkManager::UnknownError;
         *errorString = "Unable to open io device for importing landmarks";
         return false;
     }

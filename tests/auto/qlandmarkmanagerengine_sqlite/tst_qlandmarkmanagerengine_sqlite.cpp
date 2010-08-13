@@ -327,6 +327,13 @@ private:
         m_listener =0;
         QFile file("test.db");
         file.remove();
+
+        file.setFileName(exportFile);
+        file.remove();
+
+        file.setFileName("nopermfile");
+        file.setPermissions(QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther);
+        file.remove();
     }
 
     bool tablesExist() {
@@ -437,10 +444,11 @@ private slots:
 
     //TODO: Test async lmx import
 
-    void exportGpx();
+    void exportGpx(); //async testing done too
     void exportGpx_data();
 
-    void exportLmx();
+
+    void exportLmx();//async testing done too
     void exportLmx_data();
 
     void supportedFormats();
@@ -5479,6 +5487,21 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx() {
     bool idList = false;
     QFETCH(QString, type);
     if (type == "sync") {
+        QVERIFY(!m_manager->exportLandmarks(NULL,QLandmarkManager::Gpx)); //no iodevice set
+        QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
+
+        QVERIFY(!m_manager->exportLandmarks(exportFile, ""));
+        QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError); //no format
+
+        QFile *noPermFile = new QFile("nopermfile");
+        noPermFile->open(QIODevice::WriteOnly);
+        noPermFile->setPermissions(QFile::ReadOwner);
+        noPermFile->close();
+
+        QVERIFY(!m_manager->exportLandmarks(noPermFile, QLandmarkManager::Gpx));
+        QCOMPARE(m_manager->error(), QLandmarkManager::PermissionsError); // no permissions
+        noPermFile->remove();
+
         QVERIFY(m_manager->exportLandmarks(exportFile,QLandmarkManager::Gpx));
     } else if (type == "syncIdList") {
         QList<QLandmarkId> lmIds;
@@ -5501,7 +5524,28 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx() {
         lmIds << lm2.landmarkId() << lm3.landmarkId();
         QVERIFY(m_manager->exportLandmarks(exportFile, QLandmarkManager::Gpx, lmIds));
         idList = true;
+    } else if (type == "syncExcludeCategoryData") {
+        QVERIFY(m_manager->exportLandmarks(exportFile,QLandmarkManager::Gpx, QList<QLandmarkId>(), QLandmarkManager::ExcludeCategoryData));
+    } else if (type == "syncAttachSingleCategory") {
+        QVERIFY(m_manager->exportLandmarks(exportFile,QLandmarkManager::Gpx, QList<QLandmarkId>(), QLandmarkManager::AttachSingleCategory));
     } else if (type == "async"){
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest,QLandmarkManager::BadArgumentError));//no iodevice set
+        exportRequest.setFileName(exportFile);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::BadArgumentError)); //no format
+
+        QFile *noPermFile = new QFile("nopermfile");
+        noPermFile->open(QIODevice::WriteOnly);
+        noPermFile->setPermissions(QFile::ReadOwner);
+        noPermFile->close();
+
+        exportRequest.setDevice(noPermFile);
+        exportRequest.setFormat(QLandmarkManager::Gpx);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::PermissionsError));
+        noPermFile->remove();
+
         exportRequest.setFileName(exportFile);
         exportRequest.setFormat(QLandmarkManager::Gpx);
         exportRequest.start();
@@ -5537,8 +5581,17 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx() {
         exportRequest.start();
         QVERIFY(waitForAsync(spy, &exportRequest));
         idList = true;
-
-
+    } else if (type == "asyncExcludeCategoryData") {
+        exportRequest.setFileName(exportFile);
+        exportRequest.setFormat(QLandmarkManager::Gpx);
+        exportRequest.setTransferOption(QLandmarkManager::ExcludeCategoryData);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest));
+    } else if(type == "asyncAttachSingleCategory"){
+        exportRequest.setFormat(QLandmarkManager::Gpx);
+        exportRequest.setTransferOption(QLandmarkManager::AttachSingleCategory);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest));
     } else {
         qFatal("Unrecognised test row");
     }
@@ -5578,8 +5631,10 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx_data()
 
     QTest::newRow("sync") << "sync";
     QTest::newRow("syncIdList") << "syncIdList";
+    QTest::newRow("syncExcludeCategoryData") << "syncExcludeCategoryData";
     QTest::newRow("async") << "async";
     QTest::newRow("asyncIdList") << "asyncIdList";
+    QTest::newRow("asyncExcludeCategoryData") << "asyncExcludeCategoryData";
 }
 
 void tst_QLandmarkManagerEngineSqlite::exportLmx() {
@@ -5691,6 +5746,21 @@ void tst_QLandmarkManagerEngineSqlite::exportLmx() {
     bool includeCategoryData = true;
     bool idList = false;
     if (type== "sync") {
+        QVERIFY(!m_manager->exportLandmarks(NULL,QLandmarkManager::Lmx)); //no iodevice set
+        QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
+
+        QVERIFY(!m_manager->exportLandmarks(exportFile, ""));
+        QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError); //no format
+
+        QFile *noPermFile = new QFile("nopermfile");
+        noPermFile->open(QIODevice::WriteOnly);
+        noPermFile->setPermissions(QFile::ReadOwner);
+        noPermFile->close();
+
+        QVERIFY(!m_manager->exportLandmarks(noPermFile, QLandmarkManager::Lmx));
+        QCOMPARE(m_manager->error(), QLandmarkManager::PermissionsError); // no permissions
+        noPermFile->remove();
+
         QVERIFY(m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx));
     } else if (type == "syncIdList") {
         QList<QLandmarkId> lmIds;
@@ -5724,7 +5794,20 @@ void tst_QLandmarkManagerEngineSqlite::exportLmx() {
         exportRequest.setFileName(exportFile);
         exportRequest.start();
         QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::BadArgumentError)); //no format
+
+        QFile *noPermFile = new QFile("nopermfile");
+        noPermFile->open(QIODevice::WriteOnly);
+        noPermFile->setPermissions(QFile::ReadOwner);
+        noPermFile->close();
+
+        exportRequest.setDevice(noPermFile);
         exportRequest.setFormat(QLandmarkManager::Lmx);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::PermissionsError));
+        noPermFile->remove();
+
+        exportRequest.setFormat(QLandmarkManager::Lmx);
+        exportRequest.setFileName(exportFile);
         exportRequest.start();
         QVERIFY(waitForAsync(spy, &exportRequest));
     } else if (type == "asyncIdList") {
