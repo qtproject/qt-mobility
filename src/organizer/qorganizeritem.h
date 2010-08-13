@@ -195,6 +195,7 @@ protected:
     QOrganizerItem& assign(const QOrganizerItem &other, const char* expectedType);
 
 protected:
+    friend class QOrganizerItemData;
     friend class QOrganizerItemManager;
     friend class QOrganizerItemManagerData;
     friend class QOrganizerItemManagerEngine;

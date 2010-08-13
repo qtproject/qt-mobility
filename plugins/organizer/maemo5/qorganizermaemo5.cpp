@@ -439,18 +439,23 @@ QList<QOrganizerCollection> QOrganizerItemMaemo5Engine::collections(const QList<
     QOrganizerCollection defaultCollection;
     defaultCollection.setId(QOrganizerCollectionId());
     QList<QOrganizerCollection> retn;
-    retn << defaultCollection;
+
+    if (collectionIds.contains(QOrganizerCollectionLocalId(0)))
+        retn << defaultCollection;
+
     return retn;
 }
 
 bool QOrganizerItemMaemo5Engine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
 {
+    Q_UNUSED(collection)
     *error = QOrganizerItemManager::NotSupportedError;
     return false;
 }
 
 bool QOrganizerItemMaemo5Engine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
 {
+    Q_UNUSED(collectionId)
     *error = QOrganizerItemManager::NotSupportedError;
     return false;
 }
