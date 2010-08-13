@@ -52,6 +52,7 @@ PRIVATE_HEADERS += \
     qversitorganizerexporter_p.h \
     qversitorganizerimporter_p.h \
     qversitdefs_p.h \
+    qversitcontactsdefs_p.h \
     qversitorganizerdefs_p.h \
     qversitpluginloader_p.h \
     versitutils_p.h
