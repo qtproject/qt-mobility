@@ -2,7 +2,7 @@ TEMPLATE = subdirs
 
 include(../../staticconfig.pri)
 
-SUBDIRS += headers
+#SUBDIRS += headers
 
 contains(mobility_modules,serviceframework) {
     SUBDIRS += servicemetadata \                   #service framework
