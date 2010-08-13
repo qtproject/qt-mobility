@@ -45,7 +45,7 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QOrganizerJournal
-  \brief A journal which is associated with a particular point in time
+  \brief The QOrganizerJournal class supplies a journal which is associated with a particular point in time
   \inmodule QtOrganizer
   \ingroup organizer-items
 
@@ -63,7 +63,7 @@ void QOrganizerJournal::setDateTime(const QDateTime& dateTime)
 }
 
 /*!
-  Returns the date time which this journal is associated with
+  Returns the date time associated with this journal
  */
 QDateTime QOrganizerJournal::dateTime() const
 {

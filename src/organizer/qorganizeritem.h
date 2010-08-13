@@ -55,12 +55,22 @@
 #include "qorganizeritemtype.h"
 #include "qorganizeritemdisplaylabel.h"
 #include "qorganizeritemdescription.h"
+#include "qorganizercollection.h"
+
+class QDataStream;
 
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemManager;
 class QOrganizerItemData;
 class QOrganizerItemName;
+
+// MSVC needs the function declared before the friend declaration
+class QOrganizerItem;
+#ifndef QT_NO_DATASTREAM
+Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerItem& item);
+Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItem& item);
+#endif
 
 class Q_ORGANIZER_EXPORT QOrganizerItem
 {
@@ -79,6 +89,9 @@ public:
     QOrganizerItemId id() const;
     void setId(const QOrganizerItemId& id);
     QOrganizerItemLocalId localId() const;
+
+    /* The collection to which an item belongs - read only */
+    QOrganizerCollectionId collectionId() const;
 
     /* Is this an empty organizer item? */
     bool isEmpty() const;
@@ -182,9 +195,12 @@ protected:
     QOrganizerItem& assign(const QOrganizerItem &other, const char* expectedType);
 
 protected:
+    friend class QOrganizerItemData;
     friend class QOrganizerItemManager;
     friend class QOrganizerItemManagerData;
     friend class QOrganizerItemManagerEngine;
+    friend QDataStream& operator<<(QDataStream& out, const QOrganizerItem& item);
+    friend QDataStream& operator>>(QDataStream& in, QOrganizerItem& item);
 
     QSharedDataPointer<QOrganizerItemData> d;
 };

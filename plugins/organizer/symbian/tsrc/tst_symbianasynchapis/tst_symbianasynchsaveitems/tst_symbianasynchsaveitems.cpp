@@ -48,7 +48,7 @@
 QTM_USE_NAMESPACE
 
 // Constants
-const QString m_managerNameSymbian("symbian");
+const QString managerNameSymbian("symbian");
 const int KNumberOfEntries = 2; 
 
 // We need to be able to pass QOrganizerItem as parameter from
@@ -82,7 +82,7 @@ private:
 void TestSaveitems::init()
 {
     // Create a new item manager instance
-    m_om = new QOrganizerItemManager(m_managerNameSymbian);
+    m_om = new QOrganizerItemManager(managerNameSymbian);
         
     // Cleanup by deleting all items
     m_om->removeItems(m_om->itemIds(), 0);
@@ -92,9 +92,13 @@ void TestSaveitems::init()
     
      
     // Connect for the state change signal 
-    connect(m_saveItemRequest, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, SLOT(requestStateChanged(QOrganizerItemAbstractRequest::State)));
+    connect(m_saveItemRequest, 
+            SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
+            this, 
+            SLOT(requestStateChanged(QOrganizerItemAbstractRequest::State)));
     
-    connect(m_saveItemRequest, SIGNAL(resultsAvailable()), this, SLOT(requestResultsAvailable()));
+    connect(m_saveItemRequest, SIGNAL(resultsAvailable()), 
+            this, SLOT(requestResultsAvailable()));
 }
 
 void TestSaveitems::cleanup()
@@ -163,7 +167,8 @@ void TestSaveitems::saveItem_data()
     }
 }
 
-void TestSaveitems::requestStateChanged(QOrganizerItemAbstractRequest::State currentState)
+void TestSaveitems::requestStateChanged(
+        QOrganizerItemAbstractRequest::State currentState)
 {
     switch(currentState) {
         case QOrganizerItemAbstractRequest::InactiveState: { 
@@ -176,7 +181,8 @@ void TestSaveitems::requestStateChanged(QOrganizerItemAbstractRequest::State cur
         break;
         }
         case QOrganizerItemAbstractRequest::CanceledState: { 
-            // Operation is finished due to cancellation test not completed, failed
+            // Operation is finished due to cancellation test not completed, 
+            // failed
         break;
         }
         case QOrganizerItemAbstractRequest::FinishedState: { 
@@ -202,4 +208,4 @@ void TestSaveitems::requestResultsAvailable()
 
 QTEST_MAIN(TestSaveitems);
 
-#include "tst_saveitems.moc"
+#include "tst_symbianasynchsaveitems.moc"

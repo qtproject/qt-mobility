@@ -112,7 +112,7 @@ class CCalEntryView;
 class CCalInstanceView;
 class CActiveSchedulerWait;
 class TCalTime;
-class COrganizerItemRequestsServiceProvider;
+class QOrganizerItemRequestQueue;
 
 class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine, 
                                     public MCalProgressCallBack,
@@ -137,7 +137,7 @@ public:
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
 
     bool saveItem(QOrganizerItem *item, QOrganizerItemManager::Error *error);
-    bool saveItems(QList<QOrganizerItem> *items, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error);
+    bool saveItems(QList<QOrganizerItem> *items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error);
 
     bool removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemManager::Error* error);
     bool removeItems(const QList<QOrganizerItemLocalId> &itemIds, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error);
@@ -172,26 +172,33 @@ public:
     /* Util functions */
     static bool transformError(TInt symbianError, QOrganizerItemManager::Error* qtError);
     CCalEntryView* entryView();
+    void deleteItemL(const QOrganizerItemLocalId& organizeritemId,
+            int& sucessCount);
+    void saveItemL(QOrganizerItem *item, QOrganizerItemChangeSet *changeSet = 0);
+    void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, 
+            const QOrganizerItemFetchHint& fetchHint) const;
+    QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, 
+        const QOrganizerItemFilter& filter, 
+        const QList<QOrganizerItemSortOrder>& sortOrders) const;
     
 private:
-    void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, const QOrganizerItemFetchHint& fetchHint) const;
-    void saveItemL(QOrganizerItem *item, QOrganizerItemChangeSet *changeSet);
     void removeItemL(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet *changeSet);
-    QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const;
     void modifyDetailDefinitionsForEvent() const;
     void modifyDetailDefinitionsForEventOccurrence() const;
     void modifyDetailDefinitionsForTodo() const;
     void modifyDetailDefinitionsForTodoOccurrence() const;
     void modifyDetailDefinitionsForNote() const;
     void modifyDetailDefinitionsForJournal() const;
-
+    CCalEntry* createEntryToSaveItemInstanceL(QOrganizerItem *item);
+    bool checkForValidParentEntryL(QOrganizerItem *item , CCalEntry *parentEntry);
+	
 private:
     QOrganizerItemSymbianEngineData *d;
     CCalSession *m_calSession;
     CCalEntryView *m_entryView;
     CCalInstanceView *m_instanceView;
     CActiveSchedulerWait *m_activeSchedulerWait;
-    COrganizerItemRequestsServiceProvider *m_requestServiceProvider;
+    QOrganizerItemRequestQueue* m_requestServiceProviderQueue;
 
     // TODO: replace this with an algorithm that generates the calendar entry UID
     int m_entrycount;
