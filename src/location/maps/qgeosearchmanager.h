@@ -82,8 +82,8 @@ public:
 
     QGeoSearchReply* search(const QString &searchString,
                             SearchTypes searchTypes = SearchTypes(SearchAll),
-                            int resultsCount = -1,
-                            int resultsOffset = 0,
+                            int limit = -1,
+                            int offset = 0,
                             QGeoBoundingArea *bounds = 0);
 
     bool supportsGeocoding() const;

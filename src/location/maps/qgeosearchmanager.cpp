@@ -366,8 +366,8 @@ QGeoSearchReply* QGeoSearchManager::reverseGeocode(const QGeoCoordinate &coordin
 */
 QGeoSearchReply* QGeoSearchManager::search(const QString &searchString,
         QGeoSearchManager::SearchTypes searchTypes,
-        int resultsCount,
-        int resultsOffset,
+        int limit,
+        int offset,
         QGeoBoundingArea *bounds)
 {
 //    if (!d_ptr->engine)
@@ -375,8 +375,8 @@ QGeoSearchReply* QGeoSearchManager::search(const QString &searchString,
 
     QGeoSearchReply *reply = d_ptr->engine->search(searchString,
                              searchTypes,
-                             resultsCount,
-                             resultsOffset,
+                             limit,
+                             offset,
                              bounds);
 
     if ((d_ptr->engine->additionalLandmarkManagers().size() == 0)

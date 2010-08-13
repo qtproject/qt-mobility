@@ -292,8 +292,8 @@ QGeoSearchReply* QGeoSearchManagerEngine::reverseGeocode(const QGeoCoordinate &c
 */
 QGeoSearchReply* QGeoSearchManagerEngine::search(const QString &searchString,
         QGeoSearchManager::SearchTypes searchTypes,
-        int resultsCount,
-        int resultsOffset,
+        int limit,
+        int offset,
         QGeoBoundingArea *bounds)
 {
     Q_UNUSED(searchString)

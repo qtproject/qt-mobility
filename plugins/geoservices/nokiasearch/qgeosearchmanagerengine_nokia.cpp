@@ -155,8 +155,8 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
 
 QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchString,
         QGeoSearchManager::SearchTypes searchTypes,
-        int resultsCount,
-        int resultsOffset,
+        int limit,
+        int offset,
         QGeoBoundingArea *bounds)
 {
     // NOTE this will eventually replaced by a much improved implementation
