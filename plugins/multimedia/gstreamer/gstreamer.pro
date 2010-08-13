@@ -34,6 +34,8 @@ maemo* {
   HEADERS += camerabuttonlistener_maemo.h
 
   SOURCES += camerabuttonlistener_maemo.cpp
+
+  QT += dbus
 }
 
 # Input

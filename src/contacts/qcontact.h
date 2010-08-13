@@ -98,7 +98,7 @@ public:
     void setType(const QString& type);
     void setType(const QContactType& type);
 
-    /* The (backend synthesized) display label of the contact */
+    /* The (backend synthesized, or set with QCME::setContactDisplayLabel()) display label of the contact */
     QString displayLabel() const;
 
     /* Is this an empty contact? */
@@ -172,8 +172,8 @@ public:
     }
 
     /* generic detail addition/removal functions */
-    bool saveDetail(QContactDetail* detail);   // modifies the detail - sets its ID if detail already exists
-    bool removeDetail(QContactDetail* detail); // modifies the detail - unsets its ID
+    bool saveDetail(QContactDetail* detail);
+    bool removeDetail(QContactDetail* detail);
 
     /* Relationships that this contact was involved in when it was retrieved from the manager */
     QList<QContactRelationship> relationships(const QString& relationshipType = QString()) const;
