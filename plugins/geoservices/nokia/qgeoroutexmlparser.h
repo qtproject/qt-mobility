@@ -71,7 +71,6 @@ class QGeoRouteSegmentContainer
 public:
     QGeoRouteSegment segment;
     QString id;
-    QString nextId;
     QString instructionId;
 };
 
