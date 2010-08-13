@@ -428,6 +428,8 @@ void QOrganizerItemMemoryEngine::inferMissingCriteria(QOrganizerItemRecurrenceRu
                 rrule->setDaysOfWeek(days);
             }
             break;
+        default:
+            break;
     }
 }
 

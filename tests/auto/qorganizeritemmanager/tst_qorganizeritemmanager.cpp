@@ -1042,7 +1042,7 @@ void tst_QOrganizerItemManager::batch()
     QMap<int, QOrganizerItemManager::Error> errorMap;
     // Add one dummy error to test if the errors are reset
     errorMap.insert(0, QOrganizerItemManager::NoError);
-    QVERIFY(cm->saveItems(&items, &errorMap));
+    QVERIFY(cm->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap));
     QVERIFY(cm->error() == QOrganizerItemManager::NoError);
     QVERIFY(errorMap.count() == 0);
 
@@ -1074,7 +1074,7 @@ void tst_QOrganizerItemManager::batch()
     descr.setDescription("This note is a terrible note");
     QVERIFY(items[2].saveDetail(&descr));
 
-    QVERIFY(cm->saveItems(&items, &errorMap));
+    QVERIFY(cm->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap));
     QVERIFY(cm->error() == QOrganizerItemManager::NoError);
     QVERIFY(errorMap.count() == 0);
 
@@ -1134,7 +1134,7 @@ void tst_QOrganizerItemManager::batch()
     b.saveDetail(&bad);
 
     items << a << b << c;
-    QVERIFY(!cm->saveItems(&items, &errorMap));
+    QVERIFY(!cm->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap));
     /* We can't really say what the error will be.. maybe bad argument, maybe invalid detail */
     QVERIFY(cm->error() != QOrganizerItemManager::NoError);
 
@@ -1164,7 +1164,7 @@ void tst_QOrganizerItemManager::batch()
 
     /* Fix up B and re save it */
     QVERIFY(items[1].removeDetail(&bad));
-    QVERIFY(cm->saveItems(&items, &errorMap));
+    QVERIFY(cm->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap));
     QVERIFY(errorMap.count() == 0);
     QVERIFY(cm->error() == QOrganizerItemManager::NoError);
     
@@ -1243,7 +1243,7 @@ void tst_QOrganizerItemManager::invalidManager()
 
     QMap<int, QOrganizerItemManager::Error> errorMap;
     errorMap.insert(0, QOrganizerItemManager::NoError);
-    QVERIFY(!manager.saveItems(0, &errorMap));
+    QVERIFY(!manager.saveItems(0, QOrganizerCollectionLocalId(), &errorMap));
     QVERIFY(errorMap.count() == 0);
     QVERIFY(manager.error() == QOrganizerItemManager::BadArgumentError);
 
@@ -1266,7 +1266,7 @@ void tst_QOrganizerItemManager::invalidManager()
     QList<QOrganizerItem> list;
     list << foo;
 
-    QVERIFY(!manager.saveItems(&list, &errorMap));
+    QVERIFY(!manager.saveItems(&list, QOrganizerCollectionLocalId(), &errorMap));
     QVERIFY(errorMap.count() == 0);
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError);
 
@@ -1869,7 +1869,7 @@ void tst_QOrganizerItemManager::signalEmission()
     c3.setId(QOrganizerItemId());
     batchAdd << c << c2 << c3;
     QMap<int, QOrganizerItemManager::Error> errorMap;
-    QVERIFY(m1->saveItems(&batchAdd, &errorMap));
+    QVERIFY(m1->saveItems(&batchAdd, QOrganizerCollectionLocalId(), &errorMap));
 
     QVERIFY(batchAdd.count() == 3);
     c = batchAdd.at(0);
@@ -1893,7 +1893,7 @@ void tst_QOrganizerItemManager::signalEmission()
 
     batchAdd.clear();
     batchAdd << c << c2 << c3;
-    QVERIFY(m1->saveItems(&batchAdd, &errorMap));
+    QVERIFY(m1->saveItems(&batchAdd, QOrganizerCollectionLocalId(), &errorMap));
 
     sigids.clear();
     QTRY_WAIT( while(spyCM.size() > 0) {sigids += spyCM.takeFirst().at(0).value<QList<QOrganizerItemLocalId> >(); }, sigids.contains(c.localId()) && sigids.contains(c2.localId()) && sigids.contains(c3.localId()));

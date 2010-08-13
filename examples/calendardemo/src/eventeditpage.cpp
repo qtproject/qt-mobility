@@ -46,8 +46,8 @@ QTM_USE_NAMESPACE
 
 EventEditPage::EventEditPage(QWidget *parent)
     :QWidget(parent),
-     m_scrollAreaLayout(0),
     m_manager(0),
+    m_scrollAreaLayout(0),
     m_typeComboBox(0),
     m_subjectEdit(0),
     m_countSpinBox(0),
