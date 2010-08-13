@@ -314,7 +314,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
         fillInCommonCComponentDetails( &retn, event );
         delete event;
         cleanupCal( cal );
-        QOrganizerItemManagerEngine::setItemCollectionId(&retn, defaultCollection); // TODO: FIXME.
+        QOrganizerItemManagerEngine::setItemCollectionId(&retn, defaultCollection.id()); // TODO: FIXME.
         return retn;
     }
     CTodo* todo = cal->getTodo( nativeId, calError );
@@ -324,7 +324,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
         fillInCommonCComponentDetails( &retn, todo );
         delete todo;
         cleanupCal( cal );
-        QOrganizerItemManagerEngine::setItemCollectionId(&retn, defaultCollection); // TODO: FIXME.
+        QOrganizerItemManagerEngine::setItemCollectionId(&retn, defaultCollection.id()); // TODO: FIXME.
         return retn;
     }
     CJournal* journal = cal->getJournal( nativeId, calError );
@@ -334,7 +334,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
         fillInCommonCComponentDetails( &retn, journal );
         delete journal;
         cleanupCal( cal );
-        QOrganizerItemManagerEngine::setItemCollectionId(&retn, defaultCollection); // TODO: FIXME.
+        QOrganizerItemManagerEngine::setItemCollectionId(&retn, defaultCollection.id()); // TODO: FIXME.
         return retn;
     }
 
