@@ -2382,7 +2382,7 @@ void tst_QContactManagerFiltering::actionPlugins()
     QVERIFY(actions.contains("Number"));
 
     /* Ignore the version if the vendor is not set */
-    actions = QContactAction::availableActions(QString(), 555);
+    actions = QContactAction::availableActions(QString());
     QVERIFY(actions.contains("Boolean"));
     QVERIFY(actions.contains("Number"));
 
@@ -2398,21 +2398,13 @@ void tst_QContactManagerFiltering::actionPlugins()
     QVERIFY(!actions.contains("Number"));
     QVERIFY(actions.contains("Boolean"));
 
-    actions = QContactAction::availableActions("IntegerCo", 5);
+    actions = QContactAction::availableActions("IntegerCo");
     QVERIFY(actions.contains("Number"));
     QVERIFY(!actions.contains("Boolean"));
 
-    actions = QContactAction::availableActions("IntegerCo", 3);
-    QVERIFY(!actions.contains("Number"));
-    QVERIFY(!actions.contains("Boolean"));
-
-    actions = QContactAction::availableActions("BooleanCo", 3);
+    actions = QContactAction::availableActions("BooleanCo");
     QVERIFY(!actions.contains("Number"));
     QVERIFY(actions.contains("Boolean"));
-
-    actions = QContactAction::availableActions("BooleanCo", 555);
-    QVERIFY(!actions.contains("Number"));
-    QVERIFY(!actions.contains("Boolean"));
 }
 
 void tst_QContactManagerFiltering::actionFiltering_data()
