@@ -58,6 +58,7 @@ class MonthPage;
 class DayPage;
 class EventEditPage;
 class TodoEditPage;
+class JournalEditPage;
 class EventOccurrenceEditPage;
 
 class CalendarDemo : public QMainWindow
@@ -84,6 +85,7 @@ private:
     DayPage *m_dayPage;
     EventEditPage *m_eventEditPage;
     TodoEditPage *m_todoEditPage;
+    JournalEditPage *m_journalEditPage;
     EventOccurrenceEditPage *m_eventOccurrenceEditPage;
 
 #ifdef Q_WS_X11

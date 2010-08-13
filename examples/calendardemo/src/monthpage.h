@@ -71,6 +71,7 @@ public Q_SLOTS:
     void backendChanged(const QString &managerName);
     void addNewEvent();
     void addNewTodo();
+    void addNewJournal();
     void addEvents();
     void deleteAllEntries();
     void refresh();

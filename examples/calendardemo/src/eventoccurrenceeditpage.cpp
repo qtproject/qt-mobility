@@ -156,7 +156,7 @@ void EventOccurrenceEditPage::saveOrNextClicked()
         }
 
         if (m_manager->error())
-                QMessageBox::information(this, "Failed!", QString("Failed to save event!\n(error code %1)").arg(m_manager->error()));
+                QMessageBox::information(this, "Failed!", QString("Failed to save event occurrence!\n(error code %1)").arg(m_manager->error()));
         else
                 emit showDayPage();
     }

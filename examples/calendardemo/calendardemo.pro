@@ -18,6 +18,7 @@ SOURCES += src/main.cpp \
            src/daypage.cpp \
            src/eventeditpage.cpp \
            src/todoeditpage.cpp \
+           src/journaleditpage.cpp \
            src/eventoccurrenceeditpage.cpp
            
 HEADERS += src/calendardemo.h \
@@ -25,6 +26,7 @@ HEADERS += src/calendardemo.h \
            src/daypage.h \
            src/eventeditpage.h \
            src/todoeditpage.h \
+           src/journaleditpage.h \
            src/eventoccurrenceeditpage.h
 
 INCLUDEPATH += . \

@@ -75,6 +75,7 @@ public Q_SLOTS:
     void removeItem();
     void addNewEvent();
     void addNewTodo();
+    void addNewJournal();
 
 Q_SIGNALS:
     void showMonthPage();

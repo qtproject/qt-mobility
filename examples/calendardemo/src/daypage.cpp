@@ -160,7 +160,19 @@ void DayPage::refresh()
                 listItem->setData(ORGANIZER_ITEM_ROLE, data);
                 m_itemList->addItem(listItem);
             }
-        }        
+        }
+
+        QOrganizerJournalTimeRange journalTimeRange = item.detail<QOrganizerJournalTimeRange>();
+        if (!journalTimeRange.isEmpty()) {
+            if (journalTimeRange.entryDateTime().date() == m_day) {
+                QString time = journalTimeRange.entryDateTime().time().toString("hh:mm");
+                QListWidgetItem* listItem = new QListWidgetItem();
+                listItem->setText(QString("Journal:%1-%2").arg(time).arg(item.displayLabel()));
+                QVariant data = QVariant::fromValue<QOrganizerItem>(item);
+                listItem->setData(ORGANIZER_ITEM_ROLE, data);
+                m_itemList->addItem(listItem);
+            }
+        }
         
         // TODO: other item types
     }
@@ -255,6 +267,15 @@ void DayPage::addNewTodo()
     time = time.addSecs(60*30); // add 30 minutes to due time
     newTodo.setDueDateTime(time);
     emit showEditPage(m_manager, newTodo);
+}
+
+void DayPage::addNewJournal()
+{
+    // TODO: move this to CalendarDemo::addNewJournal() slot
+    QOrganizerJournal newJournal;
+    QDateTime time(m_day);
+    newJournal.setDateTime(time);
+    emit showEditPage(m_manager, newJournal);
 }
 
 void DayPage::showEvent(QShowEvent *event)
