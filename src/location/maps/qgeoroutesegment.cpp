@@ -163,7 +163,7 @@ QList<QGeoCoordinate> QGeoRouteSegment::path() const
 /*!
     Sets the instruction for this route segement to \a instruction.
 */
-void QGeoRouteSegment::setInstruction(const QGeoNavigationInstruction &instruction)
+void QGeoRouteSegment::setInstruction(const QGeoInstruction &instruction)
 {
     d_ptr->instruction = instruction;
 }
@@ -171,7 +171,7 @@ void QGeoRouteSegment::setInstruction(const QGeoNavigationInstruction &instructi
 /*!
     Returns the instruction for this route segment.
 */
-QGeoNavigationInstruction QGeoRouteSegment::instruction() const
+QGeoInstruction QGeoRouteSegment::instruction() const
 {
     return d_ptr->instruction;
 }

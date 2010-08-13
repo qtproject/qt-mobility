@@ -336,7 +336,7 @@ bool QGeoRouteXmlParser::parseManeuver()
         m_reader->raiseError("The element \"Maneuver\" did not have the required attribute \"id\".");
         return false;
     }
-    QGeoNavigationInstructionContainer instructionContainer;
+    QGeoInstructionContainer instructionContainer;
     instructionContainer.id = m_reader->attributes().value("id").toString();
 
     m_reader->readNext();
@@ -357,29 +357,29 @@ bool QGeoRouteXmlParser::parseManeuver()
             } else if (m_reader->name() == "Direction") {
                 QString value = m_reader->readElementText();
                 if (value == "forward")
-                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionForward);
+                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionForward);
                 else if (value == "bearRight")
-                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionBearRight);
+                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionBearRight);
                 else if (value == "lightRight")
-                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionLightRight);
+                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionLightRight);
                 else if (value == "right")
-                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionRight);
+                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionRight);
                 else if (value == "hardRight")
-                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionHardRight);
+                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionHardRight);
                 else if (value == "uTurnRight")
-                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionUTurnRight);
+                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionUTurnRight);
                 else if (value == "uTurnLeft")
-                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionUTurnLeft);
+                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionUTurnLeft);
                 else if (value == "hardLeft")
-                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionHardLeft);
+                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionHardLeft);
                 else if (value == "left")
-                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionLeft);
+                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionLeft);
                 else if (value == "lightLeft")
-                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionLightLeft);
+                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionLightLeft);
                 else if (value == "bearLeft")
-                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::DirectionBearLeft);
+                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionBearLeft);
                 else
-                    instructionContainer.instruction.setDirection(QGeoNavigationInstruction::NoDirection);
+                    instructionContainer.instruction.setDirection(QGeoInstruction::NoDirection);
             } else {
                 m_reader->skipCurrentElement();
             }

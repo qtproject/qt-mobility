@@ -4,6 +4,7 @@ INCLUDEPATH += maps
 include(tiled/tiled.pri)
 
 PUBLIC_HEADERS += \
+                    maps/qgeoinstruction.h \
                     maps/qgeomapcircleobject.h \
                     maps/qgeomapdata.h \
                     maps/qgeomapobject.h \
@@ -17,7 +18,6 @@ PUBLIC_HEADERS += \
                     maps/qgeomaprectangleobject.h \
                     maps/qgeomaprouteobject.h \
                     maps/qgeomaptextobject.h \
-                    maps/qgeonavigationinstruction.h \
                     maps/qgeoroute.h \
                     maps/qgeoroutereply.h \
                     maps/qgeorouterequest.h \
@@ -32,6 +32,7 @@ PUBLIC_HEADERS += \
                     maps/qgraphicsgeomap.h
 
 PRIVATE_HEADERS += \
+                    maps/qgeoinstruction_p.h \
                     maps/qgeomapcircleobject_p.h \
                     maps/qgeomapdata_p.h \
                     maps/qgeomapobject_p.h \
@@ -44,7 +45,6 @@ PRIVATE_HEADERS += \
                     maps/qgeomaprectangleobject_p.h \
                     maps/qgeomaprouteobject_p.h \
                     maps/qgeomaptextobject_p.h \
-                    maps/qgeonavigationinstruction_p.h \
                     maps/qgeoroute_p.h \
                     maps/qgeoroutereply_p.h \
                     maps/qgeorouterequest_p.h \
@@ -58,6 +58,7 @@ PRIVATE_HEADERS += \
                     maps/qgraphicsgeomap_p.h
 
 SOURCES += \
+            maps/qgeoinstruction.cpp \
             maps/qgeomapcircleobject.cpp \
             maps/qgeomapdata.cpp \
             maps/qgeomapobject.cpp \
@@ -71,7 +72,6 @@ SOURCES += \
             maps/qgeomaprectangleobject.cpp \
             maps/qgeomaprouteobject.cpp \
             maps/qgeomaptextobject.cpp \
-            maps/qgeonavigationinstruction.cpp \
             maps/qgeoroute.cpp \
             maps/qgeoroutereply.cpp \
             maps/qgeorouterequest.cpp \

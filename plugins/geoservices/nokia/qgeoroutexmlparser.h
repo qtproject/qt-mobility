@@ -54,14 +54,14 @@ class QIODevice;
 #include <qgeocoordinate.h>
 #include <qgeoboundingbox.h>
 #include <qgeorouterequest.h>
-#include <qgeonavigationinstruction.h>
+#include <qgeoinstruction.h>
 
 QTM_USE_NAMESPACE
 
-class QGeoNavigationInstructionContainer
+class QGeoInstructionContainer
 {
 public:
-    QGeoNavigationInstruction instruction;
+    QGeoInstruction instruction;
     QString id;
     QString toId;
 };
@@ -104,7 +104,7 @@ private:
     QXmlStreamReader *m_reader;
     QList<QGeoRoute> m_results;
     QString m_errorString;
-    QList<QGeoNavigationInstructionContainer> instructions;
+    QList<QGeoInstructionContainer> instructions;
     QList<QGeoRouteSegmentContainer> segments;
 };
 

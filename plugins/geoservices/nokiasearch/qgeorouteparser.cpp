@@ -121,7 +121,7 @@ bool QGeoRouteParser::parse(QIODevice* source)
                                 instructionText = man.data;
                         } else if (man.id == HL_END_OF_RECORD) {
                             if (routeSegments.count() > segmentIndex) {
-                                QGeoNavigationInstruction instruction;
+                                QGeoInstruction instruction;
                                 instruction.setInstructionText(instructionText);
                                 instruction.setPosition(routeSegments.at(segmentIndex).path().at(0));
                                 routeSegments[segmentIndex].setInstruction(instruction);

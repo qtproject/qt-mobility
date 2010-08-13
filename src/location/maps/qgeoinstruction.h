@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEONAVIGATIONINSTRUCTION_H
-#define QGEONAVIGATIONINSTRUCTION_H
+#ifndef QGEOINSTRUCTION_H
+#define QGEOINSTRUCTION_H
 
 #include "qmobilityglobal.h"
 
@@ -53,9 +53,9 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
-class QGeoNavigationInstructionPrivate;
+class QGeoInstructionPrivate;
 
-class Q_LOCATION_EXPORT QGeoNavigationInstruction
+class Q_LOCATION_EXPORT QGeoInstruction
 {
 
 public:
@@ -75,14 +75,14 @@ public:
         DirectionBearLeft
     };
 
-    QGeoNavigationInstruction();
-    QGeoNavigationInstruction(const QGeoNavigationInstruction &other);
-    ~QGeoNavigationInstruction();
+    QGeoInstruction();
+    QGeoInstruction(const QGeoInstruction &other);
+    ~QGeoInstruction();
 
-    QGeoNavigationInstruction& operator= (const QGeoNavigationInstruction &other);
+    QGeoInstruction& operator= (const QGeoInstruction &other);
 
-    bool operator== (const QGeoNavigationInstruction &other) const;
-    bool operator!= (const QGeoNavigationInstruction &other) const;
+    bool operator== (const QGeoInstruction &other) const;
+    bool operator!= (const QGeoInstruction &other) const;
 
     void setPosition(const QGeoCoordinate &position);
     QGeoCoordinate position() const;
@@ -100,7 +100,7 @@ public:
     qreal distanceToNextInstruction() const;
 
 private:
-    QSharedDataPointer<QGeoNavigationInstructionPrivate> d_ptr;
+    QSharedDataPointer<QGeoInstructionPrivate> d_ptr;
 };
 
 QTM_END_NAMESPACE

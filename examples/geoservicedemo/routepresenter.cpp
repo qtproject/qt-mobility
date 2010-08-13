@@ -43,7 +43,7 @@
 
 #include <QStringBuilder>
 #include <qgeoboundingbox.h>
-#include <qgeonavigationinstruction.h>
+#include <qgeoinstruction.h>
 
 RoutePresenter::RoutePresenter(QTreeWidget* treeWidget, const QGeoRouteReply* routeReply)
         : GeoPresenter(treeWidget), routeReply(routeReply)
@@ -153,7 +153,7 @@ void RoutePresenter::showRouteSegment(QTreeWidgetItem* routeItem, const QGeoRout
     propItem->setText(0, "distance");
     propItem->setText(1, QString().setNum(segment.distance()));
 
-    // add back in when more qgeonavigationinstruction classes are made available
+    // add back in when more qgeoinstruction classes are made available
     /*
         QString s = segment->turn();
 
