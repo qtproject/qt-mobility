@@ -1232,7 +1232,9 @@ QString QSystemDeviceInfoPrivate::model()
 {
     QString name;
     if(productName()== "RX-51")
-        name = "N900"; //fake this for now
+        return "N900";
+
+    name = "Harmattan"; //fake this for now
 
     return name;
 
