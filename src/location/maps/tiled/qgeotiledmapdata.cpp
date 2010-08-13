@@ -53,7 +53,8 @@
 #include "qgeotiledmaprectangleobjectinfo_p.h"
 #include "qgeotiledmappolylineobjectinfo_p.h"
 #include "qgeotiledmappolygonobjectinfo_p.h"
-#include "qgeotiledmapmarkerobjectinfo_p.h"
+#include "qgeotiledmappixmapobjectinfo_p.h"
+#include "qgeotiledmaptextobjectinfo_p.h"
 #include "qgeotiledmaprouteobjectinfo_p.h"
 
 #include <QTimer>
@@ -83,8 +84,8 @@ uint qHash(const QRectF& key)
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
-        : QGeoMapData(new QGeoTiledMapDataPrivate(this, engine, widget))
+QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
+        : QGeoMapData(new QGeoTiledMapDataPrivate(this, engine, geoMap))
 {
     Q_D(QGeoTiledMapData);
 
@@ -228,7 +229,7 @@ void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
     d->updateMapImage();
 }
 
-void QGeoTiledMapData::setMapType(QGeoMapWidget::MapType mapType)
+void QGeoTiledMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 {
     Q_D(QGeoTiledMapData);
 
@@ -344,7 +345,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
         }
     }
 
-    widget()->update();
+    geoMap()->update();
 
     d->clearRequests();
     d->updateMapImage();
@@ -476,20 +477,27 @@ void QGeoTiledMapData::tileFinished()
 
     QGeoTiledMapReply *reply = qobject_cast<QGeoTiledMapReply*>(sender());
 
-    if (!reply)
+    if (!reply) {
+        if (d->requests.size() > 0)
+            QTimer::singleShot(0, this, SLOT(processRequests()));
         return;
+    }
 
     d->replyRects.remove(reply->request().tileRect());
     d->replies.remove(reply);
     d->zoomCache.remove(reply->request());
 
     if (reply->error() != QGeoTiledMapReply::NoError) {
+        if (d->requests.size() > 0)
+            QTimer::singleShot(0, this, SLOT(processRequests()));
         QTimer::singleShot(0, reply, SLOT(deleteLater()));
         return;
     }
 
     if ((zoomLevel() != reply->request().zoomLevel())
             || (mapType() != reply->request().mapType())) {
+        if (d->requests.size() > 0)
+            QTimer::singleShot(0, this, SLOT(processRequests()));
         QTimer::singleShot(0, reply, SLOT(deleteLater()));
         return;
     }
@@ -498,6 +506,8 @@ void QGeoTiledMapData::tileFinished()
 
     if (!tile->loadFromData(reply->mapImageData(), reply->mapImageFormat().toAscii())) {
         delete tile;
+        if (d->requests.size() > 0)
+            QTimer::singleShot(0, this, SLOT(processRequests()));
         QTimer::singleShot(0, reply, SLOT(deleteLater()));
         return;
         //setError(QGeoTiledMapReply::ParseError, "The response from the service was not in a recognisable format.");
@@ -505,6 +515,8 @@ void QGeoTiledMapData::tileFinished()
 
     if (tile->isNull() || tile->size().isEmpty()) {
         delete tile;
+        if (d->requests.size() > 0)
+            QTimer::singleShot(0, this, SLOT(processRequests()));
         QTimer::singleShot(0, reply, SLOT(deleteLater()));
         return;
         //setError(QGeoTiledMapReply::ParseError, "The map image is empty.");
@@ -533,7 +545,7 @@ void QGeoTiledMapData::tileFinished()
                                int(t.width()) / d->zoomFactor,
                                int(t.height()) / d->zoomFactor);
 
-        widget()->update(target);
+        geoMap()->update(target);
     }
 
     if (d->requests.size() > 0)
@@ -619,8 +631,11 @@ void QGeoTiledMapData::setupMapObject(QGeoMapObject *mapObject)
         case QGeoMapObject::PolygonType:
             info = new QGeoTiledMapPolygonObjectInfo(this, mapObject);
             break;
-        case QGeoMapObject::MarkerType:
-            info = new QGeoTiledMapMarkerObjectInfo(this, mapObject);
+        case QGeoMapObject::PixmapType:
+            info = new QGeoTiledMapPixmapObjectInfo(this, mapObject);
+            break;
+        case QGeoMapObject::TextType:
+            info = new QGeoTiledMapTextObjectInfo(this, mapObject);
             break;
         case QGeoMapObject::RouteType:
             info = new QGeoTiledMapRouteObjectInfo(this, mapObject);
@@ -641,7 +656,7 @@ QPoint QGeoTiledMapData::maxZoomCenter() const
     return d->maxZoomCenter;
 }
 
-QSize QGeoTiledMapData::maxZoomSize () const
+QSize QGeoTiledMapData::maxZoomSize() const
 {
     Q_D(const QGeoTiledMapData);
     return d->maxZoomSize;
@@ -662,8 +677,8 @@ int QGeoTiledMapData::zoomFactor() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
-        : QGeoMapDataPrivate(parent, engine, widget) {}
+QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
+        : QGeoMapDataPrivate(parent, engine, geoMap) {}
 
 QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
 {
@@ -787,8 +802,8 @@ void QGeoTiledMapDataPrivate::paintMapObjects(QPainter *painter, const QStyleOpt
 
     if (worldRect.contains(maxZoomScreenRect)) {
         scene->render(painter,
-                         QRectF(targetX, targetY, targetW, targetH),
-                         maxZoomScreenRect);
+                      QRectF(targetX, targetY, targetW, targetH),
+                      maxZoomScreenRect);
         return;
     }
 
@@ -797,8 +812,8 @@ void QGeoTiledMapDataPrivate::paintMapObjects(QPainter *painter, const QStyleOpt
     qreal insideWidth = targetW * inside.width() / maxZoomScreenRect.width();
 
     scene->render(painter,
-                     QRectF(targetX, targetY, insideWidth, targetH),
-                     inside);
+                  QRectF(targetX, targetY, insideWidth, targetH),
+                  inside);
 
     QRect outside = QRect(0,
                           maxZoomScreenRect.y(),
@@ -808,8 +823,8 @@ void QGeoTiledMapDataPrivate::paintMapObjects(QPainter *painter, const QStyleOpt
     qreal outsideWidth = targetW * outside.width() / maxZoomScreenRect.width();
 
     scene->render(painter,
-                     QRectF(targetX + targetW - outsideWidth, targetY, outsideWidth, targetH),
-                     outside);
+                  QRectF(targetX + targetW - outsideWidth, targetY, outsideWidth, targetH),
+                  outside);
 }
 
 
@@ -825,9 +840,9 @@ void QGeoTiledMapDataPrivate::cleanupCaches()
     QRectF cacheRect2;
 
     cacheRect1 = maxZoomScreenRect.adjusted(-boundaryTiles * tileSize.width(),
-                 -boundaryTiles * tileSize.height(),
-                 boundaryTiles * tileSize.width(),
-                 boundaryTiles * tileSize.height());
+                                            -boundaryTiles * tileSize.height(),
+                                            boundaryTiles * tileSize.width(),
+                                            boundaryTiles * tileSize.height());
 
     if (cacheRect1.width() > maxZoomSize.width()) {
         cacheRect1.setX(0);
@@ -927,37 +942,6 @@ QList<QPair<QRect, QRect> > QGeoTiledMapDataPrivate::intersectedScreen(const QRe
 
     return result;
 }
-
-//QGeoMapObjectInfo* QGeoTiledMapDataPrivate::createRectangleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-//{
-//    return new QGeoTiledMapRectangleObjectInfo(mapObjectPrivate);
-//}
-
-//QGeoMapObjectInfo* QGeoTiledMapDataPrivate::createCircleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-//{
-//    return new QGeoTiledMapCircleObjectInfo(mapObjectPrivate);
-//}
-
-//QGeoMapObjectInfo* QGeoTiledMapDataPrivate::createPolylineObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-//{
-//    return new QGeoTiledMapPolylineObjectInfo(mapObjectPrivate);
-//}
-
-//QGeoMapObjectInfo* QGeoTiledMapDataPrivate::createPolygonObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-//{
-//    return new QGeoTiledMapPolygonObjectInfo(mapObjectPrivate);
-//}
-
-//QGeoMapObjectInfo* QGeoTiledMapDataPrivate::createMarkerObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-//{
-//    return new QGeoTiledMapMarkerObjectInfo(mapObjectPrivate);
-//}
-
-//QGeoMapObjectInfo* QGeoTiledMapDataPrivate::createRouteObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-//{
-//    return new QGeoTiledMapRouteObjectInfo(mapObjectPrivate);
-//}
-
 
 /*******************************************************************************
 *******************************************************************************/

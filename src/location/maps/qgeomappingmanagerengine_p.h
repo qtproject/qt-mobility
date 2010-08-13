@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qgeomapwidget.h"
+#include "qgraphicsgeomap.h"
 
 #include <QSize>
 #include <QList>
@@ -70,7 +70,7 @@ public:
     QString managerName;
     int managerVersion;
 
-    QList<QGeoMapWidget::MapType> supportedMapTypes;
+    QList<QGraphicsGeoMap::MapType> supportedMapTypes;
     qreal minimumZoomLevel;
     qreal maximumZoomLevel;
     QSize minimumImageSize;

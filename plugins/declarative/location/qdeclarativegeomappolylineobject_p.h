@@ -39,52 +39,45 @@
 **
 ****************************************************************************/
 
-#include "qgeotiledmapmarkerobjectinfo_p.h"
+#ifndef QDECLARATIVEGEOMAPPOLYLINEOBJECT_H
+#define QDECLARATIVEGEOMAPPOLYLINEOBJECT_H
 
-#include "qgeotiledmapdata.h"
-#include "qgeotiledmapdata_p.h"
+#include "qdeclarativecoordinate_p.h"
+#include "qgeomappolylineobject.h"
 
-#include "qgeomapmarkerobject.h"
+#include <QDeclarativeListProperty>
+
+class QColor;
+class QBrush;
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapMarkerObjectInfo::QGeoTiledMapMarkerObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject),
-        pixmapItem(0)
-
+class QDeclarativeGeoMapPolylineObject : public QGeoMapPolylineObject
 {
-    marker = static_cast<QGeoMapMarkerObject*>(mapObject);
-}
+    Q_OBJECT
 
-QGeoTiledMapMarkerObjectInfo::~QGeoTiledMapMarkerObjectInfo() {}
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ declarativePath)
 
-void QGeoTiledMapMarkerObjectInfo::objectUpdate()
-{
-    QPointF position = tiledMapData->coordinateToWorldPixel(marker->coordinate());
+    Q_CLASSINFO("DefaultProperty", "path")
 
-    if (!pixmapItem)
-        pixmapItem = new QGraphicsPixmapItem();
+public:
+    QDeclarativeGeoMapPolylineObject();
+    ~QDeclarativeGeoMapPolylineObject();
 
-    pixmapItem->setPixmap(marker->icon());
-    pixmapItem->setOffset(position);
-    pixmapItem->setTransformOriginPoint(position);
+    QDeclarativeListProperty<QDeclarativeCoordinate> declarativePath();
 
-    mapUpdate();
+private:
+    static void path_append(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);
+    static int path_count(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
+    static QDeclarativeCoordinate* path_at(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, int index);
+    static void path_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
 
-    graphicsItem1 = pixmapItem;
-    graphicsItem2 = 0;
-}
-
-void QGeoTiledMapMarkerObjectInfo::mapUpdate()
-{
-    if (pixmapItem) {
-        int zoomFactor = tiledMapData->zoomFactor();
-        pixmapItem->resetTransform();
-        pixmapItem->setScale(zoomFactor);
-        pixmapItem->translate(marker->anchor().x() * zoomFactor,
-                              marker->anchor().y() * zoomFactor);
-    }
-}
+    QList<QDeclarativeCoordinate*> m_path;
+    Q_DISABLE_COPY(QDeclarativeGeoMapPolylineObject)
+};
 
 QTM_END_NAMESPACE
 
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapPolylineObject));
+
+#endif

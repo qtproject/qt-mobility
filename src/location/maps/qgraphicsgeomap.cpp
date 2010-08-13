@@ -39,22 +39,28 @@
 **
 ****************************************************************************/
 
-#include "qgeomapwidget.h"
-#include "qgeomapwidget_p.h"
+#include "qgraphicsgeomap.h"
+#include "qgraphicsgeomap_p.h"
 
 #include "qgeocoordinate.h"
 #include "qgeomapobject.h"
 
+#include "qgeoserviceprovider.h"
+#include "qgeomappingmanager.h"
+#include "qgeomapdata.h"
+
 #include <QGraphicsSceneResizeEvent>
 #include <QTimer>
+
+#include <QNetworkProxyFactory>
 
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QGeoMapWidget
-    \brief The QGeoMapWidget class is used to display a map and manager the
+    \class QGraphicsGeoMap
+    \brief The QGraphicsGeoMap class is used to display a map and manager the
     interactions between the user and the map.
 
     \inmodule QtLocation
@@ -71,7 +77,7 @@ QTM_BEGIN_NAMESPACE
     functions can be used to convert between positions on the screen and
     global coordinates.
 
-    Mouse and keyboard events should be handled by subclassing QGeoMapWidget
+    Mouse and keyboard events should be handled by subclassing QGraphicsGeoMap
     and providing implementations of the event handling functions present in
     QGraphicsWidget.
 */
@@ -79,7 +85,7 @@ QTM_BEGIN_NAMESPACE
 // DESIGN TODO do we need a signal for when the user pans the map?
 
 /*!
-\enum QGeoMapWidget::MapType
+\enum QGraphicsGeoMap::MapType
 
 Describes a type of map data.
 
@@ -97,8 +103,30 @@ The map data is composed of images collected by satellites during the nighttime.
 
 \value TerrainMap
 The map data is a graphical representation of terrain features.  This may also
-include some of the information provided by QGeoMapWidget::StreetMap.
+include some of the information provided by QGraphicsGeoMap::StreetMap.
 */
+
+// Temporary constructor, for use by QML bindings until we come up
+// with the right QML / service provider mapping
+QGraphicsGeoMap::QGraphicsGeoMap(QGraphicsItem *parent)
+        : QGraphicsWidget(parent),
+        d_ptr(new QGraphicsGeoMapPrivate(0))
+{
+    QNetworkProxyFactory::setUseSystemConfiguration(true);
+
+    d_ptr->serviceProvider = new QGeoServiceProvider("nokia");
+    d_ptr->manager = d_ptr->serviceProvider->mappingManager();
+
+    d_ptr->mapData = d_ptr->manager->createMapData(this);
+    setMapType(QGraphicsGeoMap::StreetMap);
+
+    setFlag(QGraphicsItem::ItemIsFocusable);
+    setFocus();
+
+    setMinimumSize(QSizeF(0, 0));
+    setPreferredSize(QSizeF(500, 500));
+    d_ptr->mapData->setViewportSize(QSizeF(300, 300));
+}
 
 /*!
     Creates a new mapping widget, with the mapping operations managed by
@@ -109,15 +137,15 @@ include some of the information provided by QGeoMapWidget::StreetMap.
     \code
         QGeoServiceProvider serviceProvider("nokia");
         QGeoMappingManager *manager = serviceProvider.mappingManager();
-        QGeoMapWidget *widget = new QGeoMapWidget(manager);
+        QGraphicsGeoMap *widget = new QGraphicsGeoMap(manager);
     \endcode
 */
-QGeoMapWidget::QGeoMapWidget(QGeoMappingManager *manager, QGraphicsItem *parent)
+QGraphicsGeoMap::QGraphicsGeoMap(QGeoMappingManager *manager, QGraphicsItem *parent)
         : QGraphicsWidget(parent),
-        d_ptr(new QGeoMapWidgetPrivate(manager))
+        d_ptr(new QGraphicsGeoMapPrivate(manager))
 {
     d_ptr->mapData = d_ptr->manager->createMapData(this);
-    setMapType(QGeoMapWidget::StreetMap);
+    setMapType(QGraphicsGeoMap::StreetMap);
 
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
@@ -130,7 +158,7 @@ QGeoMapWidget::QGeoMapWidget(QGeoMappingManager *manager, QGraphicsItem *parent)
 /*!
     Destroys this map widget.
 */
-QGeoMapWidget::~QGeoMapWidget()
+QGraphicsGeoMap::~QGraphicsGeoMap()
 {
     delete d_ptr;
 }
@@ -138,7 +166,7 @@ QGeoMapWidget::~QGeoMapWidget()
 /*!
   \reimp
 */
-void QGeoMapWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
+void QGraphicsGeoMap::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     if (d_ptr->mapData && d_ptr->manager) {
         d_ptr->mapData->setViewportSize(event->newSize());
@@ -148,7 +176,7 @@ void QGeoMapWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 /*!
   \reimp
 */
-QPainterPath QGeoMapWidget::shape() const
+QPainterPath QGraphicsGeoMap::shape() const
 {
     QPainterPath path;
     path.addRect(boundingRect());
@@ -158,7 +186,7 @@ QPainterPath QGeoMapWidget::shape() const
 /*!
   \reimp
 */
-void QGeoMapWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
+void QGraphicsGeoMap::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
     if (d_ptr->mapData)
         d_ptr->mapData->paint(painter, option);
@@ -171,7 +199,7 @@ void QGeoMapWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     Larger values of the zoom level correspond to more detailed views of the
     map.
 */
-qreal QGeoMapWidget::minimumZoomLevel() const
+qreal QGraphicsGeoMap::minimumZoomLevel() const
 {
     if (d_ptr->manager)
         return d_ptr->manager->minimumZoomLevel();
@@ -186,7 +214,7 @@ qreal QGeoMapWidget::minimumZoomLevel() const
     Larger values of the zoom level correspond to more detailed views of the
     map.
 */
-qreal QGeoMapWidget::maximumZoomLevel() const
+qreal QGraphicsGeoMap::maximumZoomLevel() const
 {
     if (d_ptr->manager)
         return d_ptr->manager->maximumZoomLevel();
@@ -204,7 +232,7 @@ qreal QGeoMapWidget::maximumZoomLevel() const
     will be used, and if \a zoomLevel is  larger than
     maximumZoomLevel() then maximumZoomLevel() will be used.
 */
-void QGeoMapWidget::setZoomLevel(qreal zoomLevel)
+void QGraphicsGeoMap::setZoomLevel(qreal zoomLevel)
 {
     if (d_ptr->mapData && d_ptr->manager) {
         qreal oldZoom = d_ptr->mapData->zoomLevel();
@@ -221,7 +249,7 @@ void QGeoMapWidget::setZoomLevel(qreal zoomLevel)
     Larger values of the zoom level correspond to more detailed views of the
     map.
 */
-qreal QGeoMapWidget::zoomLevel() const
+qreal QGraphicsGeoMap::zoomLevel() const
 {
     if (d_ptr->mapData)
         return d_ptr->mapData->zoomLevel();
@@ -229,13 +257,13 @@ qreal QGeoMapWidget::zoomLevel() const
     return -1;
 }
 
-void QGeoMapWidget::startPanning()
+void QGraphicsGeoMap::startPanning()
 {
     if (d_ptr->mapData)
         d_ptr->mapData->startPanning();
 }
 
-void QGeoMapWidget::stopPanning()
+void QGraphicsGeoMap::stopPanning()
 {
     if (d_ptr->mapData)
         d_ptr->mapData->stopPanning();
@@ -250,7 +278,7 @@ void QGeoMapWidget::stopPanning()
     viewed area to the right and that positive values of \a dy move the
     viewed area down.
 */
-void QGeoMapWidget::pan(int dx, int dy)
+void QGraphicsGeoMap::pan(int dx, int dy)
 {
     if (d_ptr->mapData && d_ptr->manager) {
         d_ptr->mapData->pan(dx, dy);
@@ -261,7 +289,7 @@ void QGeoMapWidget::pan(int dx, int dy)
 /*!
     Centers the map viewport on the coordinate \a center.
 */
-void QGeoMapWidget::setCenter(const QGeoCoordinate &center)
+void QGraphicsGeoMap::setCenter(const QGeoCoordinate &center)
 {
     if (d_ptr->mapData && d_ptr->manager) {
         if (d_ptr->mapData->center() != center) {
@@ -274,7 +302,7 @@ void QGeoMapWidget::setCenter(const QGeoCoordinate &center)
 /*!
     Returns the coordinate of the point in the center of the map viewport.
 */
-QGeoCoordinate QGeoMapWidget::center() const
+QGeoCoordinate QGraphicsGeoMap::center() const
 {
     if (d_ptr->mapData)
         return d_ptr->mapData->center();
@@ -286,12 +314,12 @@ QGeoCoordinate QGeoMapWidget::center() const
     Returns the map types supported by the QGeoMappingManager associated with
     this widget.
 */
-QList<QGeoMapWidget::MapType> QGeoMapWidget::supportedMapTypes() const
+QList<QGraphicsGeoMap::MapType> QGraphicsGeoMap::supportedMapTypes() const
 {
     if (d_ptr->manager)
         return d_ptr->manager->supportedMapTypes();
 
-    return QList<QGeoMapWidget::MapType>();
+    return QList<QGraphicsGeoMap::MapType>();
 }
 
 /*!
@@ -299,7 +327,7 @@ QList<QGeoMapWidget::MapType> QGeoMapWidget::supportedMapTypes() const
 
     This will do nothing if \a mapType is not present in supportedMapTypes().
 */
-void QGeoMapWidget::setMapType(QGeoMapWidget::MapType mapType)
+void QGraphicsGeoMap::setMapType(QGraphicsGeoMap::MapType mapType)
 {
     if (d_ptr->mapData && d_ptr->manager) {
         if (!d_ptr->manager->supportedMapTypes().contains(mapType))
@@ -316,12 +344,32 @@ void QGeoMapWidget::setMapType(QGeoMapWidget::MapType mapType)
 /*!
     Returns the type of map data which is being displayed.
 */
-QGeoMapWidget::MapType QGeoMapWidget::mapType() const
+QGraphicsGeoMap::MapType QGraphicsGeoMap::mapType() const
 {
     if (d_ptr->mapData)
         return d_ptr->mapData->mapType();
 
-    return QGeoMapWidget::NoMap;
+    return QGraphicsGeoMap::NoMap;
+}
+
+/*!
+*/
+QDeclarativeListProperty<QGeoMapObject> QGraphicsGeoMap::mapObjects()
+{
+    if (!d_ptr->mapData)
+        return QDeclarativeListProperty<QGeoMapObject>();
+
+    return d_ptr->mapData->mapObjects();
+}
+
+/*!
+*/
+int QGraphicsGeoMap::mapObjectCount() const
+{
+    if (!d_ptr->mapData)
+        return 0;
+
+    return d_ptr->mapData->mapObjectCount();
 }
 
 /*!
@@ -333,13 +381,12 @@ QGeoMapWidget::MapType QGeoMapWidget::mapType() const
 
     The widget will take ownership of the \a mapObject.
 */
-void QGeoMapWidget::addMapObject(QGeoMapObject *mapObject)
+void QGraphicsGeoMap::addMapObject(QGeoMapObject *mapObject)
 {
-    if (!mapObject)
+    if (!mapObject || !d_ptr->mapData)
         return;
 
-    if (d_ptr->mapData)
-        d_ptr->mapData->addMapObject(mapObject);
+    d_ptr->mapData->addMapObject(mapObject);
 
     this->update();
 }
@@ -353,31 +400,41 @@ void QGeoMapWidget::addMapObject(QGeoMapObject *mapObject)
 
     The widget will release ownership of the \a mapObject.
 */
-void QGeoMapWidget::removeMapObject(QGeoMapObject *mapObject)
+void QGraphicsGeoMap::removeMapObject(QGeoMapObject *mapObject)
 {
-    // TODO update display if visible?
-    if (d_ptr->mapData)
-        d_ptr->mapData->removeMapObject(mapObject);
+    if (!mapObject || !d_ptr->mapData)
+        return;
+
+    d_ptr->mapData->removeMapObject(mapObject);
 
     this->update();
 }
 
 /*!
-    Returns the list of map objects managed by this widget.
 */
-QList<QGeoMapObject*> QGeoMapWidget::mapObjects()
+QGeoMapObject* QGraphicsGeoMap::mapObject(int index) const
 {
-    if (d_ptr->mapData)
-        return d_ptr->mapData->mapObjects();
+    if (!d_ptr->mapData)
+        return 0;
 
-    return QList<QGeoMapObject*>();
+    return d_ptr->mapData->mapObject(index);
+}
+
+/*!
+*/
+void QGraphicsGeoMap::clearMapObjects()
+{
+    if (!d_ptr->mapData)
+        return;
+
+    d_ptr->mapData->clearMapObjects();
 }
 
 /*!
     Returns the list of map objects managed by this widget which
     contain the point \a screenPosition within their boundaries.
 */
-QList<QGeoMapObject*> QGeoMapWidget::mapObjectsAtScreenPosition(const QPointF &screenPosition)
+QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsAtScreenPosition(const QPointF &screenPosition)
 {
     if (d_ptr->mapData)
         return d_ptr->mapData->mapObjectsAtScreenPosition(screenPosition);
@@ -390,7 +447,7 @@ QList<QGeoMapObject*> QGeoMapWidget::mapObjectsAtScreenPosition(const QPointF &s
     displayed at least partially within the on screen rectangle
     \a screenRect.
 */
-QList<QGeoMapObject*> QGeoMapWidget::mapObjectsInScreenRect(const QRectF &screenRect)
+QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsInScreenRect(const QRectF &screenRect)
 {
     if (d_ptr->mapData)
         return d_ptr->mapData->mapObjectsInScreenRect(screenRect);
@@ -404,7 +461,7 @@ QList<QGeoMapObject*> QGeoMapWidget::mapObjectsInScreenRect(const QRectF &screen
     An invalid QPointF will be returned if \a coordinate is invalid or is not
     within the current viewport.
 */
-QPointF QGeoMapWidget::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
+QPointF QGraphicsGeoMap::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
 {
     if (d_ptr->mapData)
         return d_ptr->mapData->coordinateToScreenPosition(coordinate);
@@ -419,7 +476,7 @@ QPointF QGeoMapWidget::coordinateToScreenPosition(const QGeoCoordinate &coordina
     An invalid QGeoCoordinate will be returned if \a screenPosition is invalid
     or is not within the current viewport.
 */
-QGeoCoordinate QGeoMapWidget::screenPositionToCoordinate(QPointF screenPosition) const
+QGeoCoordinate QGraphicsGeoMap::screenPositionToCoordinate(QPointF screenPosition) const
 {
     if (d_ptr->mapData)
         return d_ptr->mapData->screenPositionToCoordinate(screenPosition);
@@ -428,13 +485,13 @@ QGeoCoordinate QGeoMapWidget::screenPositionToCoordinate(QPointF screenPosition)
 }
 
 /*!
-\fn void QGeoMapWidget::zoomLevelChanged(qreal zoomLevel)
+\fn void QGraphicsGeoMap::zoomLevelChanged(qreal zoomLevel)
 
 Indicates that the zoom level has changed to \a zoomLevel.
 */
 
 /*!
-\fn void QGeoMapWidget::centered(const QGeoCoordinate &coordinate)
+\fn void QGraphicsGeoMap::centered(const QGeoCoordinate &coordinate)
 
 Indicates that the map has been centered on \a coordinate.
 
@@ -442,7 +499,7 @@ This signal will not be emitted when the user pans the map.
 */
 
 /*!
-\fn void QGeoMapWidget::mapTypeChanged(MapType mapType)
+\fn void QGraphicsGeoMap::mapTypeChanged(MapType mapType)
 
 Indicates that the type of the map has been changed.
 */
@@ -450,27 +507,18 @@ Indicates that the type of the map has been changed.
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapWidgetPrivate::QGeoMapWidgetPrivate(QGeoMappingManager *manager)
-        : manager(manager),
+QGraphicsGeoMapPrivate::QGraphicsGeoMapPrivate(QGeoMappingManager *manager)
+        : serviceProvider(0),
+        manager(manager),
         mapData(0),
         panActive(false) {}
 
-QGeoMapWidgetPrivate::QGeoMapWidgetPrivate(const QGeoMapWidgetPrivate &other)
-        : manager(other.manager),
-        mapData(other.mapData),
-        panActive(other.panActive) {}
-
-QGeoMapWidgetPrivate::~QGeoMapWidgetPrivate() {}
-
-QGeoMapWidgetPrivate& QGeoMapWidgetPrivate::operator= (const QGeoMapWidgetPrivate & other)
+QGraphicsGeoMapPrivate::~QGraphicsGeoMapPrivate()
 {
-    manager = other.manager;
-    mapData = other.mapData;
-    panActive = other.panActive;
-
-    return *this;
+    if (serviceProvider)
+        delete serviceProvider;
 }
 
-#include "moc_qgeomapwidget.cpp"
+#include "moc_qgraphicsgeomap.cpp"
 
 QTM_END_NAMESPACE

@@ -54,7 +54,7 @@ class Q_LOCATION_EXPORT QGeoTiledMapData : public QGeoMapData
     Q_OBJECT
 
 public:
-    QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
+    QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
     virtual ~QGeoTiledMapData();
 
     void setViewportSize(const QSizeF &size);
@@ -68,7 +68,7 @@ public:
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
 
-    void setMapType(QGeoMapWidget::MapType mapType);
+    void setMapType(QGraphicsGeoMap::MapType mapType);
 
     QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
     QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
@@ -84,9 +84,9 @@ public:
     virtual QGeoCoordinate worldPixelToCoordinate(const QPoint &pixel) const;
 
     QPoint maxZoomCenter() const;
-    QSize maxZoomSize () const;
+    QSize maxZoomSize() const;
     QRect maxZoomScreenRect() const;
-    int zoomFactor () const;
+    int zoomFactor() const;
 
 private slots:
     void processRequests();

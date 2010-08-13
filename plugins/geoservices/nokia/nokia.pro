@@ -1,5 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
+QT += declarative
 TARGET = $$qtLibraryTarget(qtgeoservices_nokia)
 PLUGIN_TYPE=geoservices
 
@@ -14,7 +15,6 @@ HEADERS += \
             qgeocodexmlparser.h \
             qgeomappingmanagerengine_nokia.h \
             qgeomapreply_nokia.h \
-            #qgeomapviewport_nokia.h \
             qgeoroutereply_nokia.h \
             qgeoroutexmlparser.h \
             qgeoroutingmanagerengine_nokia.h \
@@ -26,7 +26,6 @@ SOURCES += \
             qgeocodexmlparser.cpp \
             qgeomappingmanagerengine_nokia.cpp \
             qgeomapreply_nokia.cpp \
-            #qgeomapviewport_nokia.cpp \
             qgeoroutereply_nokia.cpp \
             qgeoroutexmlparser.cpp \
             qgeoroutingmanagerengine_nokia.cpp \

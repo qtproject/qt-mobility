@@ -67,9 +67,9 @@ void QGeoMapRouteObject::setRoute(const QGeoRoute &route)
 {
     Q_D(QGeoMapRouteObject);
     //if (d->route != route) {
-        d->route = route;
-        objectUpdate();
-        emit routeChanged(d->route);
+    d->route = route;
+    objectUpdate();
+    emit routeChanged(d->route);
     //}
 }
 

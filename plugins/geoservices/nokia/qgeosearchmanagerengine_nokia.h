@@ -65,8 +65,8 @@ public:
 
     QGeoSearchReply* search(const QString &searchString,
                             QGeoSearchManager::SearchTypes searchTypes,
-                            int resultsCount,
-                            int resultsOffset,
+                            int limit,
+                            int offset,
                             QGeoBoundingArea *bounds);
 
 private slots:

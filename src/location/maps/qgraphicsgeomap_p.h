@@ -39,47 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPMARKEROBJECT_H
-#define QGEOMAPMARKEROBJECT_H
+#ifndef QGRAPHICSGEOMAP_P_H
+#define QGRAPHICSGEOMAP_P_H
 
-#include "qgeomapobject.h"
-#include "qgeocoordinate.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QPixmap>
-#include <QPoint>
+#include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapMarkerObjectPrivate;
+class QGeoServiceProvider;
+class QGeoMappingManager;
+class QGeoMapData;
 
-class Q_LOCATION_EXPORT QGeoMapMarkerObject : public QGeoMapObject
+class QGraphicsGeoMapPrivate
 {
-    Q_OBJECT
-    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QPixmap icon READ icon WRITE setIcon NOTIFY iconChanged)
-    Q_PROPERTY(QPoint anchor READ anchor WRITE setAnchor NOTIFY anchorChanged)
-
 public:
-    QGeoMapMarkerObject(const QGeoCoordinate &coordinate, const QPoint &anchor = QPoint(0, 0), const QPixmap &icon = QPixmap(), QGeoMapObject *parent = 0);
-    ~QGeoMapMarkerObject();
+    QGraphicsGeoMapPrivate(QGeoMappingManager *manager);
+    ~QGraphicsGeoMapPrivate();
 
-    QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate &coordinate);
+    QGeoServiceProvider *serviceProvider;
 
-    QPixmap icon() const;
-    void setIcon(const QPixmap &icon);
-
-    QPoint anchor() const;
-    void setAnchor(const QPoint &anchor);
-
-signals:
-    void coordinateChanged(const QGeoCoordinate &coordinate);
-    void iconChanged(const QPixmap &pixmap);
-    void anchorChanged(const QPoint &anchor);
+    QGeoMappingManager *manager;
+    QGeoMapData *mapData;
+    bool panActive;
 
 private:
-    Q_DECLARE_PRIVATE(QGeoMapMarkerObject)
-    Q_DISABLE_COPY(QGeoMapMarkerObject)
+    Q_DISABLE_COPY(QGraphicsGeoMapPrivate)
 };
 
 QTM_END_NAMESPACE

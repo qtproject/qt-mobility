@@ -39,35 +39,38 @@
 **
 ****************************************************************************/
 
-#include "qgeomapmarkerobject.h"
-#include "qgeomapmarkerobject_p.h"
+#include "qgeomappixmapobject.h"
+#include "qgeomappixmapobject_p.h"
 #include "qgeoboundingbox.h"
 
 QTM_BEGIN_NAMESPACE
 
-QGeoMapMarkerObject::QGeoMapMarkerObject(const QGeoCoordinate &coordinate, const QPoint &anchor, const QPixmap &icon, QGeoMapObject *parent)
-        : QGeoMapObject(new QGeoMapMarkerObjectPrivate(this, parent))
+QGeoMapPixmapObject::QGeoMapPixmapObject(QGeoMapObject *parent)
+        : QGeoMapObject(new QGeoMapPixmapObjectPrivate(this, parent)) {}
+
+QGeoMapPixmapObject::QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset, const QPixmap &pixmap, QGeoMapObject *parent)
+        : QGeoMapObject(new QGeoMapPixmapObjectPrivate(this, parent))
 {
-    Q_D(QGeoMapMarkerObject);
+    Q_D(QGeoMapPixmapObject);
 
     d->coordinate = coordinate;
-    d->icon = icon;
-    d->anchor = anchor;
+    d->pixmap = pixmap;
+    d->offset = offset;
 }
 
-QGeoMapMarkerObject::~QGeoMapMarkerObject()
+QGeoMapPixmapObject::~QGeoMapPixmapObject()
 {
 }
 
-QGeoCoordinate QGeoMapMarkerObject::coordinate() const
+QGeoCoordinate QGeoMapPixmapObject::coordinate() const
 {
-    Q_D(const QGeoMapMarkerObject);
+    Q_D(const QGeoMapPixmapObject);
     return d->coordinate;
 }
 
-void QGeoMapMarkerObject::setCoordinate(const QGeoCoordinate &coordinate)
+void QGeoMapPixmapObject::setCoordinate(const QGeoCoordinate &coordinate)
 {
-    Q_D(QGeoMapMarkerObject);
+    Q_D(QGeoMapPixmapObject);
     if (d->coordinate != coordinate) {
         d->coordinate = coordinate;
         objectUpdate();
@@ -75,41 +78,41 @@ void QGeoMapMarkerObject::setCoordinate(const QGeoCoordinate &coordinate)
     }
 }
 
-QPixmap QGeoMapMarkerObject::icon() const
+QPixmap QGeoMapPixmapObject::pixmap() const
 {
-    Q_D(const QGeoMapMarkerObject);
-    return d->icon;
+    Q_D(const QGeoMapPixmapObject);
+    return d->pixmap;
 }
 
-void QGeoMapMarkerObject::setIcon(const QPixmap &icon)
+void QGeoMapPixmapObject::setPixmap(const QPixmap &pixmap)
 {
-    Q_D(QGeoMapMarkerObject);
+    Q_D(QGeoMapPixmapObject);
 
-    if (d->icon.isNull() && icon.isNull())
+    if (d->pixmap.isNull() && pixmap.isNull())
         return;
 
-    if ((d->icon.isNull() && !icon.isNull())
-            || (!d->icon.isNull() && icon.isNull())
-            || (d->icon.toImage() != icon.toImage())) {
-        d->icon = icon;
+    if ((d->pixmap.isNull() && !pixmap.isNull())
+            || (!d->pixmap.isNull() && pixmap.isNull())
+            || (d->pixmap.toImage() != pixmap.toImage())) {
+        d->pixmap = pixmap;
         objectUpdate();
-        emit iconChanged(d->icon);
+        emit pixmapChanged(d->pixmap);
     }
 }
 
-QPoint QGeoMapMarkerObject::anchor() const
+QPoint QGeoMapPixmapObject::offset() const
 {
-    Q_D(const QGeoMapMarkerObject);
-    return d->anchor;
+    Q_D(const QGeoMapPixmapObject);
+    return d->offset;
 }
 
-void QGeoMapMarkerObject::setAnchor(const QPoint &anchor)
+void QGeoMapPixmapObject::setOffset(const QPoint &offset)
 {
-    Q_D(QGeoMapMarkerObject);
-    if (d->anchor != anchor) {
-        d->anchor = anchor;
+    Q_D(QGeoMapPixmapObject);
+    if (d->offset != offset) {
+        d->offset = offset;
         objectUpdate();
-        emit anchorChanged(d->anchor);
+        emit offsetChanged(d->offset);
     }
 }
 
@@ -118,12 +121,12 @@ void QGeoMapMarkerObject::setAnchor(const QPoint &anchor)
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapMarkerObjectPrivate::QGeoMapMarkerObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::MarkerType) {}
+QGeoMapPixmapObjectPrivate::QGeoMapPixmapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
+        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::PixmapType) {}
 
-QGeoMapMarkerObjectPrivate::~QGeoMapMarkerObjectPrivate() {}
+QGeoMapPixmapObjectPrivate::~QGeoMapPixmapObjectPrivate() {}
 
-#include "moc_qgeomapmarkerobject.cpp"
+#include "moc_qgeomappixmapobject.cpp"
 
 QTM_END_NAMESPACE
 

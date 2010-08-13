@@ -213,7 +213,8 @@ QGeoBoundingCircle QGeoBoundingCircle::translated(double degreesLatitude, double
 *******************************************************************************/
 
 QGeoBoundingCirclePrivate::QGeoBoundingCirclePrivate()
-    : QSharedData() {}
+    : QSharedData(),
+    radius(-1.0) {}
 
 QGeoBoundingCirclePrivate::QGeoBoundingCirclePrivate(const QGeoCoordinate &center, qreal radius)
         : QSharedData(),

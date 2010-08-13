@@ -64,7 +64,8 @@
 QTM_BEGIN_NAMESPACE
 
 // TODO: replace boolean parameter by enum
-static inline void makepoly(QPolygonF &points, const QList<QGeoCoordinate> & path, const QGeoTiledMapDataPrivate * mapData, bool closedPath, qreal ypole = -100) {
+static inline void makepoly(QPolygonF &points, const QList<QGeoCoordinate> & path, const QGeoTiledMapDataPrivate * mapData, bool closedPath, qreal ypole = -100)
+{
     points.clear();
 
     QGeoCoordinate lastCoord = closedPath ? path.last() : path.first();
@@ -101,15 +102,15 @@ static inline void makepoly(QPolygonF &points, const QList<QGeoCoordinate> & pat
             const QPointF & P = point;
 
             // lastPoint on the other side
-            QPointF L_ = L - QPointF(width*dir, 0);
+            QPointF L_ = L - QPointF(width * dir, 0);
 
             // point on this side
-            QPointF P_ = P + QPointF(width*dir, 0);
+            QPointF P_ = P + QPointF(width * dir, 0);
 
             // TODO: make a better algorithm to make sure the off-screen points P' and L' are far enough from the dateline so the lines to the poles don't flicker through.
             // this works for now :)
-            L_ += (L_ - P)*7;
-            P_ += (P_ - L)*7;
+            L_ += (L_ - P) * 7;
+            P_ += (P_ - L) * 7;
 
             // pole point on this side
             QPointF O1 = QPointF(P_.x(), ypole);
@@ -122,8 +123,7 @@ static inline void makepoly(QPolygonF &points, const QList<QGeoCoordinate> & pat
             points.append(O2);
             points.append(L_); // L'
             points.append(P);
-        }
-        else {
+        } else {
             // add point to polygon
             points.append(point);
         }

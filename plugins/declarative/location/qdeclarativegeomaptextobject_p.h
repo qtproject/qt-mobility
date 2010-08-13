@@ -39,12 +39,45 @@
 **
 ****************************************************************************/
 
-/*!
-    \example fetchgooglemaps
-    \title Fetch Google Maps Example
+#ifndef QDECLARATIVEGEOMAPTEXTOBJECT_H
+#define QDECLARATIVEGEOMAPTEXTOBJECT_H
 
-    This example displays an image from Google Maps based on the 
-    current position of the user as detected by the Location API.  If 
-    the platform does not have support the Location API then position 
-    information from a log file will be replayed.
-*/
+#include "qdeclarativecoordinate_p.h"
+#include "qgeomaptextobject.h"
+
+#include <QColor>
+
+QTM_BEGIN_NAMESPACE
+
+class QDeclarativeGeoMapTextObject : public QGeoMapTextObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(QDeclarativeCoordinate* coordinate READ declarativeCoordinate WRITE setDeclarativeCoordinate NOTIFY declarativeCoordinateChanged)
+    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+
+public:
+    QDeclarativeGeoMapTextObject();
+    ~QDeclarativeGeoMapTextObject();
+
+    QDeclarativeCoordinate* declarativeCoordinate() const;
+    void setDeclarativeCoordinate(const QDeclarativeCoordinate *coordinate);
+
+    QColor color() const;
+    void setColor(const QColor &color);
+
+signals:
+    void declarativeCoordinateChanged(const QDeclarativeCoordinate *coordinate);
+    void colorChanged(const QColor &color);
+
+private:
+    mutable QDeclarativeCoordinate* m_coordinate;
+    mutable QColor m_color;
+    Q_DISABLE_COPY(QDeclarativeGeoMapTextObject)
+};
+
+QTM_END_NAMESPACE
+
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapTextObject));
+
+#endif

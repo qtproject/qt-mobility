@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPWIDGET_P_H
-#define QGEOMAPWIDGET_P_H
+#ifndef QGEOTILEDMAPPIXMAPOBJECT_INFO_P_H
+#define QGEOTILEDMAPPIXMAPOBJECT_INFO_P_H
 
 //
 //  W A R N I N G
@@ -53,24 +53,28 @@
 // We mean it.
 //
 
-#include "qgeomappingmanager.h"
-#include "qgeomapdata.h"
+#include "qgeotiledmapobjectinfo_p.h"
+
+class QGraphicsPixmapItem;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapWidgetPrivate
+class QGeoMapPixmapObject;
+
+class QGeoTiledMapPixmapObjectInfo : public QGeoTiledMapObjectInfo
 {
 public:
-    QGeoMapWidgetPrivate(QGeoMappingManager *manager);
-    QGeoMapWidgetPrivate(const QGeoMapWidgetPrivate &other);
-    ~QGeoMapWidgetPrivate();
-    QGeoMapWidgetPrivate& operator= (const QGeoMapWidgetPrivate &other);
+    QGeoTiledMapPixmapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    ~QGeoTiledMapPixmapObjectInfo();
 
-    QGeoMappingManager *manager;
-    QGeoMapData *mapData;
-    bool panActive;
+    void objectUpdate();
+    void mapUpdate();
+
+    QGeoMapPixmapObject* pixmap;
+    QGraphicsPixmapItem *pixmapItem;
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif //QGEOTILEDMAPPIXMAPOBJECT_INFO_P_H
+

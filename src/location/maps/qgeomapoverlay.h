@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 
 class QGeoMapData;
 
-class Q_LOCATION_EXPORT QGeoMapOverlay 
+class Q_LOCATION_EXPORT QGeoMapOverlay
 {
 public:
     QGeoMapOverlay(QGeoMapData *mapData);

@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
 /*!
 */
 QGeoMapObjectInfo::QGeoMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-    : d_ptr(new QGeoMapObjectInfoPrivate(mapData, mapObject)) {}
+        : d_ptr(new QGeoMapObjectInfoPrivate(mapData, mapObject)) {}
 
 /*!
 */
@@ -99,8 +99,8 @@ QGeoMapObject* QGeoMapObjectInfo::mapObject()
 *******************************************************************************/
 
 QGeoMapObjectInfoPrivate::QGeoMapObjectInfoPrivate(QGeoMapData *mapData, QGeoMapObject *mapObject)
-    : mapData(mapData),
-    mapObject(mapObject) {}
+        : mapData(mapData),
+        mapObject(mapObject) {}
 
 QGeoMapObjectInfoPrivate::~QGeoMapObjectInfoPrivate() {}
 

@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qgeomapwidget.h"
+#include "qgraphicsgeomap.h"
 
 #include <QSize>
 #include <QList>

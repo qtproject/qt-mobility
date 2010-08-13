@@ -52,8 +52,7 @@ QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
         : QGeoMapObjectInfo(mapData, mapObject),
-        graphicsItem1(0),
-        graphicsItem2(0)
+        graphicsItem(0)
 {
     tiledMapData = static_cast<QGeoTiledMapData*>(mapData);
     tiledMapDataPrivate = static_cast<QGeoTiledMapDataPrivate*>(tiledMapData->d_ptr);
@@ -61,57 +60,36 @@ QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoMapData *mapData, QGeoMapObje
 
 QGeoTiledMapObjectInfo::~QGeoTiledMapObjectInfo()
 {
-    if (graphicsItem1)
-        delete graphicsItem1;
-    if (graphicsItem2)
-        delete graphicsItem2;
+    if (graphicsItem)
+        delete graphicsItem;
 }
 
 void QGeoTiledMapObjectInfo::addToParent()
 {
-    if (graphicsItem1) {
-        tiledMapDataPrivate->scene->addItem(graphicsItem1);
-        tiledMapDataPrivate->itemMap.insert(graphicsItem1, mapObject());
-    }
-    if (graphicsItem2) {
-        tiledMapDataPrivate->scene->addItem(graphicsItem2);
-        tiledMapDataPrivate->itemMap.insert(graphicsItem2, mapObject());
+    if (graphicsItem) {
+        tiledMapDataPrivate->scene->addItem(graphicsItem);
+        tiledMapDataPrivate->itemMap.insert(graphicsItem, mapObject());
     }
 }
 
 void QGeoTiledMapObjectInfo::removeFromParent()
 {
-    if (graphicsItem1) {
-        tiledMapDataPrivate->scene->removeItem(graphicsItem1);
-        tiledMapDataPrivate->itemMap.remove(graphicsItem1);
-    }
-    if (graphicsItem2) {
-        tiledMapDataPrivate->scene->removeItem(graphicsItem2);
-        tiledMapDataPrivate->itemMap.remove(graphicsItem2);
+    if (graphicsItem) {
+        tiledMapDataPrivate->scene->removeItem(graphicsItem);
+        tiledMapDataPrivate->itemMap.remove(graphicsItem);
     }
 }
 
 QGeoBoundingBox QGeoTiledMapObjectInfo::boundingBox() const
 {
-    if (!graphicsItem1)
+    if (!graphicsItem)
         return QGeoBoundingBox();
 
-    QRectF rect1 = graphicsItem1->boundingRect();
+    QRectF rect1 = graphicsItem->boundingRect();
     QGeoCoordinate topLeft1 = tiledMapData->worldPixelToCoordinate(rect1.topLeft().toPoint());
     QGeoCoordinate bottomRight1 = tiledMapData->worldPixelToCoordinate(rect1.bottomRight().toPoint());
 
     QGeoBoundingBox box1 = QGeoBoundingBox(topLeft1, bottomRight1);
-
-    if (!graphicsItem2)
-        return box1;
-
-    QRectF rect2 = graphicsItem2->boundingRect();
-    QGeoCoordinate topLeft2 = tiledMapData->worldPixelToCoordinate(rect2.topLeft().toPoint());
-    QGeoCoordinate bottomRight2 = tiledMapData->worldPixelToCoordinate(rect2.bottomRight().toPoint());
-
-    QGeoBoundingBox box2 = QGeoBoundingBox(topLeft2, bottomRight2);
-
-    box1 |= box2;
 
     return box1;
 }
@@ -120,19 +98,23 @@ bool QGeoTiledMapObjectInfo::contains(const QGeoCoordinate &coord) const
 {
     QPoint point = tiledMapData->coordinateToWorldPixel(coord);
 
-    if (graphicsItem1 && graphicsItem1->contains(point))
-        return true;
-
-    if (graphicsItem2 && graphicsItem2->contains(point))
+    if (graphicsItem && graphicsItem->contains(point))
         return true;
 
     return false;
 }
 
+void QGeoTiledMapObjectInfo::updateItem()
+{
+    // TODO use bounding rectangle of graphics items
+    if (graphicsItem)
+        tiledMapData->geoMap()->update();
+}
+
 QPolygonF QGeoTiledMapObjectInfo::createPolygon(const QList<QGeoCoordinate> &path,
-                                                 QGeoTiledMapData *tiledMapData,
-                                                 bool closedPath,
-                                                 qreal ypole)
+        QGeoTiledMapData *tiledMapData,
+        bool closedPath,
+        qreal ypole)
 {
     QPolygonF points;
 
@@ -170,15 +152,15 @@ QPolygonF QGeoTiledMapObjectInfo::createPolygon(const QList<QGeoCoordinate> &pat
             const QPointF & P = point;
 
             // lastPoint on the other side
-            QPointF L_ = L - QPointF(width*dir, 0);
+            QPointF L_ = L - QPointF(width * dir, 0);
 
             // point on this side
-            QPointF P_ = P + QPointF(width*dir, 0);
+            QPointF P_ = P + QPointF(width * dir, 0);
 
             // TODO: make a better algorithm to make sure the off-screen points P' and L' are far enough from the dateline so the lines to the poles don't flicker through.
             // this works for now :)
-            L_ += (L_ - P)*7;
-            P_ += (P_ - L)*7;
+            L_ += (L_ - P) * 7;
+            P_ += (P_ - L) * 7;
 
             // pole point on this side
             QPointF O1 = QPointF(P_.x(), ypole);
@@ -191,8 +173,7 @@ QPolygonF QGeoTiledMapObjectInfo::createPolygon(const QList<QGeoCoordinate> &pat
             points.append(O2);
             points.append(L_); // L'
             points.append(P);
-        }
-        else {
+        } else {
             // add point to polygon
             points.append(point);
         }

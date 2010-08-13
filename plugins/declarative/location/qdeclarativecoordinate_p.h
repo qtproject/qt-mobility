@@ -37,44 +37,54 @@
 **
 ** $QT_END_LICENSE$
 **
-****************************************************************************/
+***************************************************************************/
 
-#ifndef QGEOTILEDMAPMARKEROBJECT_INFO_P_H
-#define QGEOTILEDMAPMARKEROBJECT_INFO_P_H
+#ifndef QDECLARATIVECOORDINATE_H
+#define QDECLARATIVECOORDINATE_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <qgeocoordinate.h>
+#include <QtDeclarative/qdeclarative.h>
 
-#include "qgeotiledmapobjectinfo_p.h"
-
-class QGraphicsPixmapItem;
+#include <QObject>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapMarkerObject;
-
-class QGeoTiledMapMarkerObjectInfo : public QGeoTiledMapObjectInfo
+class QDeclarativeCoordinate : public QObject
 {
+    Q_OBJECT
+
+    Q_PROPERTY(double latitude READ latitude WRITE setLatitude NOTIFY latitudeChanged)
+    Q_PROPERTY(double longitude READ longitude WRITE setLongitude NOTIFY longitudeChanged)
+    Q_PROPERTY(double altitude READ altitude WRITE setAltitude NOTIFY altitudeChanged)
+
 public:
-    QGeoTiledMapMarkerObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
-    ~QGeoTiledMapMarkerObjectInfo();
+    QDeclarativeCoordinate(QObject* parent = 0);
+    QDeclarativeCoordinate(const QGeoCoordinate &coordinate, QObject* parent = 0);
+    ~QDeclarativeCoordinate();
 
-    void objectUpdate();
-    void mapUpdate();
+    QGeoCoordinate coordinate() const;
+    void setCoordinate(const QGeoCoordinate &coordinate);
 
-    QGeoMapMarkerObject* marker;
-    QGraphicsPixmapItem *pixmapItem;
+    double latitude() const;
+    void setLatitude(double latitude);
+
+    double longitude() const;
+    void setLongitude(double longitude);
+
+    double altitude() const;
+    void setAltitude(double altitude);
+
+Q_SIGNALS:
+    void latitudeChanged(double latitude);
+    void longitudeChanged(double longitude);
+    void altitudeChanged(double altitude);
+
+private:
+    QGeoCoordinate m_coordinate;
 };
 
 QTM_END_NAMESPACE
 
-#endif //QGEOTILEDMAPMARKEROBJECT_INFO_P_H
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeCoordinate));
 
+#endif

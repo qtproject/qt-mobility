@@ -130,14 +130,14 @@ int QGeoMappingManager::managerVersion() const
 }
 
 /*!
-    Returns a new QGeoMapData instance for \a widget which will be managed by this manager.
+    Returns a new QGeoMapData instance for \a graphicsItem which will be managed by this manager.
 */
-QGeoMapData* QGeoMappingManager::createMapData(QGeoMapWidget *widget)
+QGeoMapData* QGeoMappingManager::createMapData(QGraphicsGeoMap *geoMap)
 {
 //    if (!d_ptr->engine)
 //        return 0;
 
-    return d_ptr->engine->createMapData(widget);
+    return d_ptr->engine->createMapData(geoMap);
 }
 
 /*!
@@ -165,7 +165,7 @@ void QGeoMappingManager::removeMapData(QGeoMapData *mapData)
 /*!
     Returns a list of the map types supported by this manager.
 */
-QList<QGeoMapWidget::MapType> QGeoMappingManager::supportedMapTypes() const
+QList<QGraphicsGeoMap::MapType> QGeoMappingManager::supportedMapTypes() const
 {
 //    if (!d_ptr->engine)
 //        return QList<QGeoMapWidget::MapType>();

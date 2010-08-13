@@ -8,8 +8,8 @@
 QTM_BEGIN_NAMESPACE
 
 QDeclarativeLandmarkSource::QDeclarativeLandmarkSource(QObject *parent) :
-    QAbstractListModel(parent), m_manager(0), m_nameFilter(0), m_proximityFilter(0),
-    m_fetchRequest(0), m_active(false), m_maxItems(-1)
+        QAbstractListModel(parent), m_manager(0), m_nameFilter(0), m_proximityFilter(0),
+        m_fetchRequest(0), m_active(false), m_maxItems(-1)
 {
     // Establish role names so that they can be queried from this model
     QHash<int, QByteArray> roleNames;
@@ -29,7 +29,7 @@ QDeclarativeLandmarkSource::QDeclarativeLandmarkSource(QObject *parent) :
 
 QDeclarativeLandmarkSource::~QDeclarativeLandmarkSource()
 {
-    delete m_manager; 
+    delete m_manager;
     delete m_fetchRequest;
 }
 
@@ -45,24 +45,24 @@ QVariant QDeclarativeLandmarkSource::data(const QModelIndex &index, int role) co
 {
     QLandmark landmark = m_landmarks.value(index.row());
     switch (role) {
-    //case Qt::DisplayRole:
-    //    return landmark.name();
-    case NameRole:
-        return landmark.name();
-    case PhoneRole:
-        return landmark.phoneNumber();
-    case DescriptionRole:
-        return landmark.description();
-    case RadiusRole:
-        return landmark.radius();
-    case IconUrlRole:
-        return landmark.iconUrl();
-    case UrlRole:
-        return landmark.url();
-    case LatitudeRole:
-        return landmark.coordinate().latitude();
-    case LongitudeRole:
-        return landmark.coordinate().longitude();
+            //case Qt::DisplayRole:
+            //    return landmark.name();
+        case NameRole:
+            return landmark.name();
+        case PhoneRole:
+            return landmark.phoneNumber();
+        case DescriptionRole:
+            return landmark.description();
+        case RadiusRole:
+            return landmark.radius();
+        case IconUrlRole:
+            return landmark.iconUrl();
+        case UrlRole:
+            return landmark.url();
+        case LatitudeRole:
+            return landmark.coordinate().latitude();
+        case LongitudeRole:
+            return landmark.coordinate().longitude();
     }
     return QVariant();
 }
@@ -164,16 +164,16 @@ void QDeclarativeLandmarkSource::setFetchHints()
 {
 //TODO: replace fetch hint with limit and offset
 
-/*    if (!m_fetchRequest || m_maxItems <= 0)
-        return;
-    m_fetchHint.setMaxItems(m_maxItems);
-    m_fetchRequest->setFetchHint(m_fetchHint);
-*/
+    /*    if (!m_fetchRequest || m_maxItems <= 0)
+            return;
+        m_fetchHint.setMaxItems(m_maxItems);
+        m_fetchRequest->setFetchHint(m_fetchHint);
+    */
 }
 
 void QDeclarativeLandmarkSource::convertLandmarksToDeclarative()
 {
-    foreach (const QLandmark& landmark, m_landmarks) {
+    foreach(const QLandmark& landmark, m_landmarks) {
         if (!m_landmarkMap.contains(landmark.landmarkId().localId())) {
             QDeclarativeLandmark* declarativeLandmark = new QDeclarativeLandmark(this);
             declarativeLandmark->setLandmark(landmark);

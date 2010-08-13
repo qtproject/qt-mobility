@@ -39,29 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPMARKEROBJECT_P_H
-#define QGEOMAPMARKEROBJECT_P_H
+#ifndef QDECLARATIVEGEOMAPRECTANGLEOBJECT_H
+#define QDECLARATIVEGEOMAPRECTANGLEOBJECT_H
 
-#include "qgeomapobject_p.h"
+#include "qdeclarativecoordinate_p.h"
+#include "qgeomaprectangleobject.h"
 
-#include "qgeocoordinate.h"
-
-#include <QPixmap>
-#include <QPoint>
+class QColor;
+class QBrush;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapMarkerObjectPrivate : public QGeoMapObjectPrivate
+class QDeclarativeGeoMapRectangleObject : public QGeoMapRectangleObject
 {
-public:
-    QGeoMapMarkerObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
-    ~QGeoMapMarkerObjectPrivate();
+    Q_OBJECT
 
-    QGeoCoordinate coordinate;
-    QPixmap icon;
-    QPoint anchor;
+    Q_PROPERTY(QDeclarativeCoordinate* topLeft READ declarativeTopLeft WRITE setDeclarativeTopLeft NOTIFY declarativeTopLeftChanged)
+    Q_PROPERTY(QDeclarativeCoordinate* bottomRight READ declarativeBottomRight WRITE setDeclarativeBottomRight NOTIFY declarativeBottomRightChanged)
+    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+
+public:
+    QDeclarativeGeoMapRectangleObject();
+    ~QDeclarativeGeoMapRectangleObject();
+
+    QDeclarativeCoordinate* declarativeTopLeft() const;
+    void setDeclarativeTopLeft(const QDeclarativeCoordinate *center);
+
+    QDeclarativeCoordinate* declarativeBottomRight() const;
+    void setDeclarativeBottomRight(const QDeclarativeCoordinate *center);
+
+    QColor color() const;
+    void setColor(const QColor &color);
+
+signals:
+    void declarativeTopLeftChanged(const QDeclarativeCoordinate *center);
+    void declarativeBottomRightChanged(const QDeclarativeCoordinate *center);
+    void colorChanged(const QColor &color);
+
+private:
+    mutable QDeclarativeCoordinate* m_topLeft;
+    mutable QDeclarativeCoordinate* m_bottomRight;
+    mutable QColor m_color;
+    Q_DISABLE_COPY(QDeclarativeGeoMapRectangleObject)
 };
 
 QTM_END_NAMESPACE
+
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapRectangleObject));
 
 #endif

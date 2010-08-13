@@ -155,9 +155,6 @@ void QGeoTiledMapReply::setMapImageFormat(const QString &format)
     d_ptr->mapImageFormat = format;
 }
 
-/*!
-    Cancels the receiving of this reply if the reply hasn't been received already.
-*/
 void QGeoTiledMapReply::abort() {}
 
 /*!

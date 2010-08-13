@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = QtLocation
-QT = core gui network sql
+QT = core gui network sql declarative
 
 include(../../common.pri)
 

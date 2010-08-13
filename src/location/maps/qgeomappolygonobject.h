@@ -42,7 +42,7 @@
 #ifndef QGEOMAPPOLYGONOBJECT_H
 #define QGEOMAPPOLYGONOBJECT_H
 
-#include "qgeomappolylineobject.h"
+#include "qgeomapobject.h"
 
 #include <QList>
 #include <QPen>

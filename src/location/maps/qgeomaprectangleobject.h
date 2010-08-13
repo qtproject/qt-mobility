@@ -56,17 +56,25 @@ class QGeoCoordinate;
 class Q_LOCATION_EXPORT QGeoMapRectangleObject : public QGeoMapObject
 {
     Q_OBJECT
-    Q_PROPERTY(QGeoBoundingBox bounds READ bounds WRITE setBounds NOTIFY boundsChanged)
+    Q_PROPERTY(QGeoCoordinate topLeft READ topLeft WRITE setTopLeft NOTIFY topLeftChanged)
+    Q_PROPERTY(QGeoCoordinate bottomRight READ bottomRight WRITE setBottomRight NOTIFY bottomRightChanged)
     Q_PROPERTY(QPen pen READ pen WRITE setPen NOTIFY penChanged)
     Q_PROPERTY(QBrush brush READ brush WRITE setBrush NOTIFY brushChanged)
 
 public:
+    QGeoMapRectangleObject(QGeoMapObject *parent = 0);
     QGeoMapRectangleObject(const QGeoBoundingBox &boundingBox, QGeoMapObject *parent = 0);
     QGeoMapRectangleObject(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight, QGeoMapObject *parent = 0);
     ~QGeoMapRectangleObject();
 
     QGeoBoundingBox bounds() const;
     void setBounds(const QGeoBoundingBox &bounds);
+
+    QGeoCoordinate topLeft() const;
+    void setTopLeft(const QGeoCoordinate &topLeft);
+
+    QGeoCoordinate bottomRight() const;
+    void setBottomRight(const QGeoCoordinate &bottomRight);
 
     QPen pen() const;
     void setPen(const QPen &pen);
@@ -75,7 +83,8 @@ public:
     void setBrush(const QBrush &brush);
 
 signals:
-    void boundsChanged(const QGeoBoundingBox &bounds);
+    void topLeftChanged(const QGeoCoordinate &topLeft);
+    void bottomRightChanged(const QGeoCoordinate &bottomRight);
     void penChanged(const QPen &pen);
     void brushChanged(const QBrush &brush);
 

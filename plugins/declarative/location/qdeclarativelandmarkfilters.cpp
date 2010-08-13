@@ -4,7 +4,7 @@
 QTM_BEGIN_NAMESPACE
 
 QDeclarativeLandmarkNameFilter::QDeclarativeLandmarkNameFilter(QObject *parent) :
-    QObject(parent)
+        QObject(parent)
 {
 }
 
@@ -30,7 +30,7 @@ QLandmarkNameFilter* QDeclarativeLandmarkNameFilter::filter()
 }
 
 QDeclarativeLandmarkProximityFilter::QDeclarativeLandmarkProximityFilter(QObject *parent) :
-    QObject(parent)
+        QObject(parent)
 {
 }
 

@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qgeomapwidget.h"
+#include "qgraphicsgeomap.h"
 
 #include <QSharedData>
 
@@ -71,7 +71,7 @@ public:
     QGeoTiledMapRequestPrivate& operator= (const QGeoTiledMapRequestPrivate &other);
 
     QGeoTiledMapData *mapData;
-    QGeoMapWidget::MapType mapType;
+    QGraphicsGeoMap::MapType mapType;
     int zoomLevel;
     int row;
     int column;

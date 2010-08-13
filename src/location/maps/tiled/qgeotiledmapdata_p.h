@@ -76,7 +76,7 @@ class QGeoTiledMapReply;
 class QGeoTiledMapDataPrivate : public QGeoMapDataPrivate
 {
 public:
-    QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
+    QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
     ~QGeoTiledMapDataPrivate();
 
     void updateMapImage();

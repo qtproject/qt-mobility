@@ -61,14 +61,14 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
         : QGeoTiledMappingManagerEngine(parameters),
         m_host("loc.desktop.maps.svc.ovi.com")
 {
-    setTileSize(QSize(128,128));
+    setTileSize(QSize(128, 128));
     setMinimumZoomLevel(0.0);
     setMaximumZoomLevel(18.0);
 
-    QList<QGeoMapWidget::MapType> types;
-    types << QGeoMapWidget::StreetMap;
-    types << QGeoMapWidget::SatelliteMapDay;
-    types << QGeoMapWidget::TerrainMap;
+    QList<QGraphicsGeoMap::MapType> types;
+    types << QGraphicsGeoMap::StreetMap;
+    types << QGraphicsGeoMap::SatelliteMapDay;
+    types << QGraphicsGeoMap::TerrainMap;
     setSupportedMapTypes(types);
 
     m_nam = new QNetworkAccessManager(this);
@@ -116,7 +116,7 @@ QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMa
 {
     QString rawRequest = getRequestString(request);
 
-    QNetworkRequest netRequest = QNetworkRequest(QUrl(rawRequest));
+    QNetworkRequest netRequest((QUrl(rawRequest))); // The extra pair of parens disambiguates this from a function declaration
     netRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
     m_cache->metaData(netRequest.url()).setLastModified(QDateTime::currentDateTime());
 
@@ -124,8 +124,10 @@ QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMa
 
     QGeoTiledMapReply* mapReply = new QGeoMapReplyNokia(netReply, request, this);
 
-        // TODO goes badly on linux
+    // TODO goes badly on linux
     //qDebug() << "request: " << QString::number(reinterpret_cast<int>(mapReply), 16) << " " << request.row() << "," << request.column();
+    // this one might work better. It follows defined behaviour, unlike reinterpret_cast
+    //qDebug("request: %p %i,%i @ %i", mapReply, request.row(), request.column(), request.zoomLevel());
     return mapReply;
 }
 
@@ -171,14 +173,14 @@ QString QGeoMappingManagerEngineNokia::sizeToStr(const QSize &size)
         return "128";
 }
 
-QString QGeoMappingManagerEngineNokia::mapTypeToStr(QGeoMapWidget::MapType type)
+QString QGeoMappingManagerEngineNokia::mapTypeToStr(QGraphicsGeoMap::MapType type)
 {
-    if (type == QGeoMapWidget::StreetMap)
+    if (type == QGraphicsGeoMap::StreetMap)
         return "normal.day";
-    else if (type == QGeoMapWidget::SatelliteMapDay ||
-             type == QGeoMapWidget::SatelliteMapNight) {
+    else if (type == QGraphicsGeoMap::SatelliteMapDay ||
+             type == QGraphicsGeoMap::SatelliteMapNight) {
         return "satellite.day";
-    } else if (type == QGeoMapWidget::TerrainMap)
+    } else if (type == QGraphicsGeoMap::TerrainMap)
         return "terrain.day";
     else
         return "normal.day";

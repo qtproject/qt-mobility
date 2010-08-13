@@ -39,45 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef QGEONAVIGATIONINSTRUCTION_P_H
-#define QGEONAVIGATIONINSTRUCTION_P_H
+#ifndef QDECLARATIVEGRAPHICSGEOMAP_H
+#define QDECLARATIVEGRAPHICSGEOMAP_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qdeclarativecoordinate_p.h"
+#include "qgraphicsgeomap.h"
 
-#include "qgeonavigationinstruction.h"
-#include "qgeocoordinate.h"
-
-#include <QSharedData>
-#include <QString>
+class QGraphicsItem;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoNavigationInstructionPrivate : public QSharedData
+class QGeoCoordinate;
+
+class QDeclarativeGraphicsGeoMap : public QGraphicsGeoMap
 {
+    Q_OBJECT
+
+    Q_PROPERTY(QDeclarativeCoordinate* center READ declarativeCenter WRITE setDeclarativeCenter NOTIFY declarativeCenterChanged)
+
 public:
-    QGeoNavigationInstructionPrivate();
-    QGeoNavigationInstructionPrivate(const QGeoNavigationInstructionPrivate &other);
-    ~QGeoNavigationInstructionPrivate();
+    QDeclarativeGraphicsGeoMap(QGraphicsItem *parent = 0);
+    ~QDeclarativeGraphicsGeoMap();
 
-    bool operator== (const QGeoNavigationInstructionPrivate &other) const;
+    void setDeclarativeCenter(const QDeclarativeCoordinate *center);
+    QDeclarativeCoordinate* declarativeCenter() const;
 
-    QString id;
-    QGeoCoordinate position;
-    QString text;
-    QGeoNavigationInstruction::InstructionDirection direction;
-    int timeToNextInstruction;
-    qreal distanceToNextInstruction;
+    Q_INVOKABLE QPointF toScreenPosition(const QDeclarativeCoordinate *coordinate) const;
+    Q_INVOKABLE QDeclarativeCoordinate* toCoordinate(QPointF screenPosition) const;
+
+private slots:
+    void memberCenterChanged(const QGeoCoordinate &coordinate);
+
+signals:
+    void declarativeCenterChanged(const QDeclarativeCoordinate *coordinate);
+
+private:
+    QDeclarativeCoordinate* m_center;
+    Q_DISABLE_COPY(QDeclarativeGraphicsGeoMap);
 };
 
 QTM_END_NAMESPACE
+
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGraphicsGeoMap));
 
 #endif
