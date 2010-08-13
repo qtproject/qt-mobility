@@ -80,6 +80,9 @@ public:
 
     void setOriginalDate(const QDate& date) {setValue(FieldOriginalDate, date);}
     QDate originalDate() const {return value<QDate>(FieldOriginalDate);}
+    void setOriginalDateTime(const QDateTime& dateTime) {setValue(FieldOriginalDate, dateTime);}
+    QDateTime originalDateTime() const {return value<QDateTime>(FieldOriginalDate);}
+
     void setCalendarId(const QString& calendarId) {setValue(FieldCalendarId, calendarId);}
     QString calendarId() const {return value(FieldCalendarId);}
     void setEvent(const QString& event) {setValue(FieldEvent, event);}
