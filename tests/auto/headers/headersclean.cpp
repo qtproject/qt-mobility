@@ -399,7 +399,6 @@
 #include <qsystemdisplayinfo.h>
 #include <qsystemdeviceinfo.h>
 #include <qsystemscreensaver.h>
-#include <qsysteminfocommon.h>
 #include <qsystemstorageinfo.h>
 
 //QtTelephony

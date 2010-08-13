@@ -41,7 +41,7 @@
 
 #include "qmobilityglobal.h"
 #include "qsystemgeneralinfo.h"
-#include "qsysteminfocommon.h"
+#include "qsysteminfocommon_p.h"
 
 #include <QStringList>
 #include <QSize>
