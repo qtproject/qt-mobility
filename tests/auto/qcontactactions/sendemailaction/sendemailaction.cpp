@@ -79,7 +79,7 @@ Q_EXPORT_PLUGIN2(contacts_sendemailaction, QContactSendEmailActionPlugin);
 
 QContactSendEmailActionFactory::QContactSendEmailActionFactory() : QContactActionFactory()
 {
-    m_sendEmailDescriptor = createDescriptor("SendEmail", "tst_qcontactactions:sendemailaction", 1, QVariantMap(), this);
+    m_sendEmailDescriptor = createDescriptor("SendEmail", "tst_qcontactactions:sendemailaction", "sendemailaction", 1);
 }
 
 QContactSendEmailActionFactory::~QContactSendEmailActionFactory()

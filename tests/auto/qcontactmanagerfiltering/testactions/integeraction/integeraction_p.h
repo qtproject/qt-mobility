@@ -110,7 +110,7 @@ class QIntegerActionFactory : public QContactActionFactory
 public:
     QIntegerActionFactory(QObject* parent = 0) : QContactActionFactory(parent)
     {
-        m_actionDescriptor = createDescriptor("IntegerAction", "tst_qcontactmanagerfiltering:integeraction", 1, QVariantMap(), this);
+        m_actionDescriptor = createDescriptor("IntegerAction", "tst_qcontactmanagerfiltering:integeraction", "integeraction", 1);
     }
 
     ~QIntegerActionFactory()

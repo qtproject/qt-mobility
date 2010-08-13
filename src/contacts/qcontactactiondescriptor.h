@@ -68,10 +68,10 @@ public:
     bool isValid() const;
     bool operator==(const QContactActionDescriptor& other) const;
     bool operator!=(const QContactActionDescriptor& other) const;
-    bool operator<(const QContactActionDescriptor& other) const;
 
     QString actionName() const;
     QString serviceName() const;
+    QString actionIdentifier() const;
     int implementationVersion() const;
 
     /* The descriptor provides the client with all information required in UI. */
@@ -97,7 +97,8 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(MetaDataMandatoryParameterKeys, "MandatoryParameterKeys");
 
 protected:
-    QContactActionDescriptor(const QString& actionName, const QString& serviceName, int implementationVersion, const QVariantMap& staticMetaData, QContactActionFactory* factory);
+    // XXX remove this from here and put it in the private class
+    QContactActionDescriptor(const QString& actionName, const QString& serviceName, const QString& serviceIdentifier, int implementationVersion, const QContactActionFactory* factory);
 
 private:
     QSharedDataPointer<QContactActionDescriptorPrivate> d;

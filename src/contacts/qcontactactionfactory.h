@@ -68,6 +68,7 @@ public:
     virtual QList<QContactActionDescriptor> actionDescriptors() const = 0;
     virtual QContactAction* create(const QContactActionDescriptor& which) const = 0;
 
+    // Backend functionality for QCAD
     virtual QSet<QContactActionTarget> supportedTargets(const QContact& contact, const QContactActionDescriptor& which) const = 0;
     virtual QContactFilter contactFilter(const QContactActionDescriptor& which) const = 0;
     virtual QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters, const QContactActionDescriptor& which) const = 0;
@@ -77,8 +78,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(InterfaceName, "com.nokia.qt.mobility.contacts.action");
 
 protected:
-    QContactActionDescriptor createDescriptor(const QString& actionName, const QString& serviceName, int implementationVersion, const QVariantMap& staticMetaData, QContactActionFactory* factory) const;
-    QVariantMap staticMetaData(const QContactActionDescriptor& descriptor) const;
+    QContactActionDescriptor createDescriptor(const QString& actionName, const QString& serviceName, const QString& actionIdentifier, int implementationVersion) const;
 };
 
 QTM_END_NAMESPACE

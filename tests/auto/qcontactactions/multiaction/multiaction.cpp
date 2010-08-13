@@ -81,13 +81,8 @@ Q_EXPORT_PLUGIN2(contacts_multiaction, QContactMultiActionPlugin);
 QContactMultiActionFactory::QContactMultiActionFactory()
     : QContactActionFactory()
 {
-    QVariantMap actionOneStaticMetaData;
-    actionOneStaticMetaData.insert("Provider", QString("sip"));
-    m_actionOneDescriptor = createDescriptor("call", "tst_qcontactactions:multiaction", 1, actionOneStaticMetaData, this);
-
-    QVariantMap actionTwoStaticMetaData;
-    actionTwoStaticMetaData.insert("Provider", QString("example proprietary protocol"));
-    m_actionTwoDescriptor = createDescriptor("call", "tst_qcontactactions:multiaction", 1, actionTwoStaticMetaData, this);
+    m_actionOneDescriptor = createDescriptor("call", "tst_qcontactactions:multiaction", "sip", 1);
+    m_actionTwoDescriptor = createDescriptor("call", "tst_qcontactactions:multiaction", "prop", 1);
 }
 
 QContactMultiActionFactory::~QContactMultiActionFactory()
@@ -144,11 +139,12 @@ QVariant QContactMultiActionFactory::metaData(const QString& key, const QList<QC
     Q_UNUSED(targets)
     Q_UNUSED(parameters)
 
-    // this is how action one differs from action two - the value for the "provider" key in the static meta data is different.
-    if (which == m_actionOneDescriptor) {
-        return staticMetaData(m_actionOneDescriptor).value(key);
-    } else if (which == m_actionTwoDescriptor) {
-        return staticMetaData(m_actionTwoDescriptor).value(key);
+    if (key == QContactActionDescriptor::MetaDataLabel)
+        return QString("Call with VoIP");
+    // Label etc
+
+    if (key == QLatin1String("Provider")) {// our custom metadata - just return which.actionIdentifier
+        return which.actionIdentifier();
     }
 
     return QVariant();

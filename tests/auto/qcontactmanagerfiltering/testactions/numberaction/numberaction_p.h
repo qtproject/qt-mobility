@@ -111,7 +111,7 @@ class QNumberActionFactory : public QContactActionFactory
 public:
     QNumberActionFactory(QObject* parent = 0) : QContactActionFactory(parent)
     {
-        m_actionDescriptor = createDescriptor("NumberAction", "tst_qcontactmanagerfiltering:numberaction", 1, QVariantMap(), this);
+        m_actionDescriptor = createDescriptor("NumberAction", "tst_qcontactmanagerfiltering:numberaction", "numberaction", 1);
     }
 
     ~QNumberActionFactory()

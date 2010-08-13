@@ -94,14 +94,9 @@ bool QContactActionFactory::supportsContact(const QContact& contact, const QCont
     return !supportedTargets(contact, which).isEmpty();
 }
 
-QContactActionDescriptor QContactActionFactory::createDescriptor(const QString& actionName, const QString& serviceName, int implementationVersion, const QVariantMap& staticMetaData, QContactActionFactory* factory) const
+QContactActionDescriptor QContactActionFactory::createDescriptor(const QString& actionName, const QString& serviceName, const QString& actionIdentifier, int implementationVersion) const
 {
-    return QContactActionDescriptor(actionName, serviceName, implementationVersion, staticMetaData, factory);
-}
-
-QVariantMap QContactActionFactory::staticMetaData(const QContactActionDescriptor& descriptor) const
-{
-    return descriptor.d->m_staticMetaData;
+    return QContactActionDescriptor(actionName, serviceName, actionIdentifier, implementationVersion, this);
 }
 
 #include "moc_qcontactactionfactory.cpp"

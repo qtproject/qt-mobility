@@ -109,7 +109,7 @@ class QBooleanActionFactory : public QContactActionFactory
 public:
     QBooleanActionFactory(QObject* parent = 0) : QContactActionFactory(parent)
     {
-        m_actionDescriptor = createDescriptor("BooleanAction", "tst_qcontactmanagerfiltering:booleanaction", 1, QVariantMap(), this);
+        m_actionDescriptor = createDescriptor("BooleanAction", "tst_qcontactmanagerfiltering:booleanaction", "booleanaction", 1);
     }
 
     ~QBooleanActionFactory()

@@ -112,7 +112,7 @@ class QDateActionFactory : public QContactActionFactory
 public:
     QDateActionFactory(QObject* parent = 0) : QContactActionFactory(parent)
     {
-        m_actionDescriptor = createDescriptor("DateAction", "tst_qcontactmanagerfiltering:dateaction", 1, QVariantMap(), this);
+        m_actionDescriptor = createDescriptor("DateAction", "tst_qcontactmanagerfiltering:dateaction", "dateaction", 1);
     }
 
     ~QDateActionFactory()

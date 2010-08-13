@@ -60,7 +60,7 @@ QTM_BEGIN_NAMESPACE
  * Constructs a new, invalid action descriptor
  */
 QContactActionDescriptor::QContactActionDescriptor()
-        : d(new QContactActionDescriptorPrivate(QString(), QString(), -1, QVariantMap(), 0))
+        : d(new QContactActionDescriptorPrivate())
 {
 }
 
@@ -68,8 +68,8 @@ QContactActionDescriptor::QContactActionDescriptor()
  * Constructs a new action descriptor for the implementation of the action identified by the given \a actionName
  * of the given implementation \a implementationVersion, as implemented by the service identified by the given \a serviceName
  */
-QContactActionDescriptor::QContactActionDescriptor(const QString& actionName, const QString& serviceName, int implementationVersion, const QVariantMap& staticMetaData, QContactActionFactory* factory)
-        : d(new QContactActionDescriptorPrivate(actionName, serviceName, implementationVersion, staticMetaData, factory))
+QContactActionDescriptor::QContactActionDescriptor(const QString& actionName, const QString& serviceName, const QString& serviceIdentifier, int implementationVersion, const QContactActionFactory* factory)
+        : d(new QContactActionDescriptorPrivate(actionName, serviceName, serviceIdentifier, implementationVersion, factory))
 {
 }
 
@@ -105,12 +105,21 @@ QString QContactActionDescriptor::actionName() const
     return d->m_actionName;
 }
 
+
 /*!
  * Returns the name of the service of the action implementation which is identified by the action descriptor
  */
 QString QContactActionDescriptor::serviceName() const
 {
     return d->m_serviceName;
+}
+
+/*!
+ * Returns the identifier of the action, within the service.
+ */
+QString QContactActionDescriptor::actionIdentifier() const
+{
+    return d->m_identifier;
 }
 
 /*!
@@ -233,11 +242,12 @@ bool QContactActionDescriptor::isValid() const
         return false;
     if (d->m_serviceName.isEmpty())
         return false;
+    if (d->m_identifier.isEmpty())
+        return false;
     if (d->m_implementationVersion <= 0)
         return false;
     if (d->m_factory == 0)
         return false;
-    // if (d->m_staticMetaData.isEmpty()) is fine.  there may be none for this action.
     return true;
 }
 
@@ -250,7 +260,7 @@ bool QContactActionDescriptor::isValid() const
  */
 bool QContactActionDescriptor::operator==(const QContactActionDescriptor& other) const
 {
-    return (d->m_factory == other.d->m_factory && d->m_staticMetaData == other.d->m_staticMetaData);
+    return (d->m_factory == other.d->m_factory && d->m_identifier == other.d->m_identifier);
 }
 
 /*!
@@ -262,34 +272,14 @@ bool QContactActionDescriptor::operator!=(const QContactActionDescriptor& other)
     return !(*this == other);
 }
 
-/*!
- * Returns true if the action descriptor is less than the \a other action descriptor.  The
- * comparison is performed first on the service name, then the action name, then the implementation
- * version.
- */
-bool QContactActionDescriptor::operator<(const QContactActionDescriptor& other) const
-{
-    int comp = d->m_serviceName.compare(other.d->m_serviceName);
-    if (comp != 0)
-        return comp < 0;
-    comp = d->m_actionName.compare(other.d->m_actionName);
-    if (comp != 0)
-        return comp < 0;
-    return d->m_implementationVersion < other.d->m_implementationVersion;
-}
-
 /*! Returns the hash value for \a key. */
 uint qHash(const QContactActionDescriptor& key)
 {
     uint ret = 0;
-    QStringList staticMetaDataKeys = key.d->m_staticMetaData.keys();
-    foreach (const QString& mapkey, staticMetaDataKeys) {
-        ret += QT_PREPEND_NAMESPACE(qHash)(mapkey);
-        ret += QT_PREPEND_NAMESPACE(qHash)(key.d->m_staticMetaData.value(mapkey).toString());
-    }
 
     ret += QT_PREPEND_NAMESPACE(qHash)(key.serviceName())
             + QT_PREPEND_NAMESPACE(qHash)(key.actionName())
+            + QT_PREPEND_NAMESPACE(qHash)(key.d->m_identifier)
             + QT_PREPEND_NAMESPACE(qHash)(key.implementationVersion())
             + QT_PREPEND_NAMESPACE(qHash)(key.d->m_factory);
 

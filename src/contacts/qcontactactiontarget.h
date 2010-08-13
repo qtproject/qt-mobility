@@ -56,9 +56,11 @@ class QContactActionTargetPrivate;
 class Q_CONTACTS_EXPORT QContactActionTarget
 {
 public:
-    QContactActionTarget(const QContact& contact = QContact(), const QList<QContactDetail>& details = QList<QContactDetail>());
+    explicit QContactActionTarget(const QContact& contact = QContact(), const QList<QContactDetail>& details = QList<QContactDetail>());
     QContactActionTarget(const QContact& contact, const QContactDetail& detail);
+
     QContactActionTarget(const QContactActionTarget& other);
+
     QContactActionTarget& operator=(const QContactActionTarget& other);
     ~QContactActionTarget();
 
