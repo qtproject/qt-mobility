@@ -385,8 +385,8 @@ echo isEmpty($$QT_MOBILITY_EXAMPLES):QT_MOBILITY_EXAMPLES=$$QT_MOBILITY_PREFIX/b
 echo isEmpty($$QT_MOBILITY_DEMOS):QT_MOBILITY_DEMOS=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
-echo contains(mobility_modules,contacts): mobility_modules *= serviceframework  >> %PROJECT_CONFIG%
 echo contains(mobility_modules,versit): mobility_modules *= contacts organizer  >> %PROJECT_CONFIG%
+echo contains(mobility_modules,contacts): mobility_modules *= serviceframework  >> %PROJECT_CONFIG%
 
 echo Checking available Qt
 call %QT_PATH%qmake -v >> %PROJECT_LOG% 2>&1
