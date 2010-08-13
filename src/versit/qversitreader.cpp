@@ -242,6 +242,8 @@ void QVersitReader::cancel()
 /*!
  * If the state is ActiveState, blocks until the reader has finished reading or \a msec milliseconds
  * has elapsed, returning true if it successfully finishes or is cancelled by the user.
+ * If \m msec is negative or zero, the function blocks until the writer has finished, regardless of
+ * how long it takes.
  * If the state is FinishedState, returns true immediately.
  * Otherwise, returns false immediately.
  */
@@ -249,7 +251,10 @@ bool QVersitReader::waitForFinished(int msec)
 {
     State state = d->state();
     if (state == ActiveState) {
-        return d->wait(msec);
+        if (msec <= 0)
+            return d->wait(ULONG_MAX);
+        else
+            return d->wait(msec);
     } else if (state == FinishedState) {
         return true;
     } else {

@@ -39,37 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTDETAILS_H
-#define QCONTACTDETAILS_H
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Contacts API.
+#ifndef QCONTACTFAVORITE_H
+#define QCONTACTFAVORITE_H
 
-#include "qcontactaddress.h"
-#include "qcontactanniversary.h"
-#include "qcontactavatar.h"
-#include "qcontactbirthday.h"
-#include "qcontactdisplaylabel.h"
-#include "qcontactemailaddress.h"
-#include "qcontactfamily.h"
-#include "qcontactfavorite.h"
-#include "qcontactgender.h"
-#include "qcontactgeolocation.h"
-#include "qcontactglobalpresence.h"
-#include "qcontactguid.h"
-#include "qcontactname.h"
-#include "qcontactnickname.h"
-#include "qcontactnote.h"
-#include "qcontactonlineaccount.h"
-#include "qcontactorganization.h"
-#include "qcontactphonenumber.h"
-#include "qcontactpresence.h"
-#include "qcontactringtone.h"
-#include "qcontactsynctarget.h"
-#include "qcontacttag.h"
-#include "qcontactthumbnail.h"
-#include "qcontacttimestamp.h"
-#include "qcontacttype.h"
-#include "qcontacturl.h"
+#include "qtcontactsglobal.h"
+#include "qcontactdetail.h"
+#include "qcontact.h"
+
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_CONTACTS_EXPORT QContactFavorite : public QContactDetail
+{
+public:
+#ifdef Q_QDOC
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldFavorite;
+    static const QLatin1Constant FieldIndex;
+#else
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactFavorite, "Favorite")
+    Q_DECLARE_LATIN1_CONSTANT(FieldFavorite, "Favorite");
+    Q_DECLARE_LATIN1_CONSTANT(FieldIndex, "Index");
+#endif
+
+    void setFavorite(bool isFavorite) {setValue(FieldFavorite, isFavorite);}
+    bool isFavorite() const {return variantValue(FieldFavorite).toBool();}
+    void setIndex(int index) {setValue(FieldIndex, index);}
+    int index() const {return variantValue(FieldIndex).toInt();}
+};
+
+QTM_END_NAMESPACE
 
 #endif
