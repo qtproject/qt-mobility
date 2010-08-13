@@ -116,21 +116,15 @@ contains(mobility_modules,versit) {
     SUBDIRS += \
             qvcard21writer \
             qvcard30writer \
+            qversit \
+            qversitcontactexporter \
+            qversitcontactimporter \
             qversitdocument \
+            qversitorganizerexporter \
+            qversitorganizerimporter \
             qversitproperty \
             qversitreader \
             qversitwriter
-    contains(mobility_modules,contacts) {
-        SUBDIRS += \
-            qversit \
-            qversitcontactexporter \
-            qversitcontactimporter
-    }
-    contains(mobility_modules,organizer) {
-        SUBDIRS += \
-            qversitorganizerexporter \
-            qversitorganizerimporter
-    }
 }
 
 contains(mobility_modules,telephony) {

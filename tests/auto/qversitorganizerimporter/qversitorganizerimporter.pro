@@ -21,7 +21,7 @@ HEADERS += tst_qversitorganizerimporter.h
 SOURCES += tst_qversitorganizerimporter.cpp
 
 CONFIG += mobility
-MOBILITY += organizer versit
+MOBILITY += organizer versit contacts
 
 symbian: { 
     TARGET.CAPABILITY = ALL \

@@ -8,13 +8,7 @@ include(../../common.pri)
 DEFINES += QT_BUILD_VERSIT_LIB QT_MAKEDLL QT_ASCII_CAST_WARNINGS
 
 CONFIG += mobility
-
-contains(mobility_modules,contacts) {
-    MOBILITY += contacts
-}
-contains(mobility_modules,organizer) {
-    MOBILITY += organizer
-}
+MOBILITY = contacts organizer
 
 # Contacts Includepath
 INCLUDEPATH += . \
@@ -34,18 +28,12 @@ PUBLIC_HEADERS +=  \
     qversitproperty.h \
     qversitreader.h \
     qversitwriter.h \
+    qversitcontactexporter.h \
+    qversitcontactimporter.h \
+    qversitcontacthandler.h \
+    qversitorganizerexporter.h \
+    qversitorganizerimporter.h \
     qversitresourcehandler.h
-contains(mobility_modules,contacts) {
-    PUBLIC_HEADERS +=  \
-        qversitcontactexporter.h \
-        qversitcontactimporter.h \
-        qversitcontacthandler.h
-}
-contains(mobility_modules,organizer) {
-    PUBLIC_HEADERS +=  \
-        qversitorganizerexporter.h \
-        qversitorganizerimporter.h
-}
 
 # Private Headers
 PRIVATE_HEADERS += \
@@ -62,7 +50,6 @@ PRIVATE_HEADERS += \
     qversitorganizerexporter_p.h \
     qversitorganizerimporter_p.h \
     qversitdefs_p.h \
-    qversitcontactsdefs_p.h \
     qversitorganizerdefs_p.h \
     qversitpluginloader_p.h \
     versitutils_p.h
@@ -78,25 +65,19 @@ SOURCES += qversitdocument.cpp \
     qversitwriter_p.cpp \
     qvcard21writer.cpp \
     qvcard30writer.cpp \
+    qversitcontactexporter.cpp \
+    qversitcontactexporter_p.cpp \
+    qversitcontactimporter.cpp \
+    qversitcontactimporter_p.cpp \
+    qversitorganizerexporter.cpp \
+    qversitorganizerexporter_p.cpp \
+    qversitorganizerimporter.cpp \
+    qversitorganizerimporter_p.cpp \
+    qvcardbackuphandlers_p.cpp \
     qversitresourcehandler.cpp \
+    qversitcontacthandler.cpp \
     qversitpluginloader_p.cpp \
     versitutils.cpp
-contains(mobility_modules,contacts) {
-    SOURCES += \
-        qversitcontactexporter.cpp \
-        qversitcontactexporter_p.cpp \
-        qversitcontactimporter.cpp \
-        qversitcontactimporter_p.cpp \
-        qversitcontacthandler.cpp \
-        qvcardbackuphandlers_p.cpp
-}
-contains(mobility_modules,organizer) {
-    SOURCES += \
-        qversitorganizerexporter.cpp \
-        qversitorganizerexporter_p.cpp \
-        qversitorganizerimporter.cpp \
-        qversitorganizerimporter_p.cpp
-}
 
 HEADERS += \
     $$PUBLIC_HEADERS \

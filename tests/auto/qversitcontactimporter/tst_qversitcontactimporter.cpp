@@ -41,13 +41,32 @@
 
 //TESTED_COMPONENT=src/versit
 
+#include "qversitdefs_p.h"
 #include "tst_qversitcontactimporter.h"
 #include "qversitcontactimporter.h"
 #include "qversitcontactimporter_p.h"
 #include <qversitproperty.h>
 #include <qversitdocument.h>
-#include <qtcontacts.h>
 #include <QtTest/QtTest>
+#include <qcontact.h>
+#include <qcontactdetail.h>
+#include <qcontactname.h>
+#include <qcontactaddress.h>
+#include <qcontactphonenumber.h>
+#include <qcontactemailaddress.h>
+#include <qcontacturl.h>
+#include <qcontactguid.h>
+#include <qcontactorganization.h>
+#include <qcontacttimestamp.h>
+#include <qcontactanniversary.h>
+#include <qcontactbirthday.h>
+#include <qcontactgender.h>
+#include <qcontactnickname.h>
+#include <qcontactavatar.h>
+#include <qcontactgeolocation.h>
+#include <qcontactnote.h>
+#include <qcontactonlineaccount.h>
+#include <qcontactfamily.h>
 #include <QDir>
 
 QTM_BEGIN_NAMESPACE

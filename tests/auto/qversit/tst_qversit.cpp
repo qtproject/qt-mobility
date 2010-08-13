@@ -49,7 +49,9 @@
 #include "qversitcontactexporter.h"
 #include "qversitcontactimporter.h"
 #include "qversitcontacthandler.h"
-#include "qtcontacts.h"
+#include "qcontact.h"
+#include "qcontactmanager.h"
+#include "qcontactmanagerengine.h"
 
 #include <QtTest/QtTest>
 #include <QDebug>

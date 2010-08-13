@@ -16,17 +16,10 @@ INCLUDEPATH += . \
                ../../src/versit
 
 CONFIG += mobility
-MOBILITY += contacts
+MOBILITY = contacts
 contains(mobility_modules,versit) {
     MOBILITY += versit
     DEFINES += BUILD_VERSIT
-
-# Building this example before Qt Mobility has been installed requires us to
-# specifically link to organizer.  Normal clients of the versit library don't need to
-# do this if they don't use organizer:
-    contains(mobility_modules, organizer) {
-        MOBILITY += organizer
-    }
 }
 
 # Input

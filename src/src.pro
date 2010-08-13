@@ -36,12 +36,7 @@ contains(mobility_modules,sensors): SUBDIRS += sensors
 # Versit depends on Contacts & Organizer
 versit.subdir=versit
 versit.target=sub-versit
-contains(mobility_modules,contacts) {
-    versit.depends+=contacts
-}
-contains(mobility_modules,organizer) {
-    versit.depends+=organizer
-}
+versit.depends=contacts organizer
 
 contains(qmf_enabled, yes)|wince*|win32|symbian|maemo5 {
     contains(mobility_modules,messaging) {
