@@ -56,7 +56,6 @@
 
 #include <QtCore/qdatetime.h>
 #include <QtCore/qurl.h>
-#include <QtCore/qresource.h>
 
 #include <QtCore/qdebug.h>
 
@@ -450,6 +449,7 @@ void QT7PlayerSession::openMovie(bool tryAsync)
                 [NSNumber numberWithBool:YES], QTMovieResolveDataRefsAttribute,
                 [NSNumber numberWithBool:YES], QTMovieDontInteractWithUserAttribute,
                 nil];
+
 
     if (requestUrl.scheme() == QLatin1String("qrc")) {
         // Load from Qt resource

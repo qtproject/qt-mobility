@@ -43,15 +43,15 @@
 
 /*!
     \class QTelephonyCallInfoWrapper
-    \ingroup telephony
+    \ingroup telephonyapi
     \brief The QTelephonyCallInfoWrapper class for a QTelephonyCallInfo object. This wrapper class can be used in QML to work with telephony.
 */
 
 /*!
-    \enum QTelephonyCallInfo::CallStatus
+    \enum QTelephonyCallInfoWrapper::CallStatus
 
     This enum type is used to describe the status of a call.
-    A QTelephonyCallInfo object can have a status of:
+    A QTelephonyCallInfoWrapper object can have a status of:
 
     \value Idle          The call status is not defined.
     \value Dialing       The status of the call is dialing.
@@ -63,10 +63,10 @@
 */
 
 /*!
-    \enum QTelephonyCallInfo::CallType
+    \enum QTelephonyCallInfoWrapper::CallType
 
     This enum decribes the type of the call.
-    A QTelephonyCallInfo object can be a type of:
+    A QTelephonyCallInfoWrapper object can be a type of:
 
     \value Any         The call type can be any type.
     \value Text        The call is a text base call.
@@ -194,7 +194,7 @@ QVariant QTelephonyCallInfoWrapper::value(const QString& param) const
 
 /*!
     \class QTelephonyCallListWrapper
-    \ingroup telephony
+    \ingroup telephonyapi
     \brief The QTelephonyCallListWrapper class for a QTelephonyCallList object. This wrapper class can be used in QML to work with telephony.
 */
 
@@ -238,7 +238,7 @@ QList<QTelephonyCallInfoWrapper> QTelephonyCallListWrapper::activeCalls(const QT
     QList<QtMobility::QTelephonyCallInfo> calllist;
     QList<QTelephonyCallInfoWrapper> ret;
     if(d)
-        calllist = d->activeCalls((QTelephonyCallInfo::CallType)calltype);
+        calllist = d->activeCalls((QTelephonyEvents::CallType)calltype);
 
     //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
     for( int i = 0; i < calllist.count(); i++){

@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsysteminfocommon.h"
+#include "qsysteminfocommon_p.h"
 #include <qsysteminfo_linux_p.h>
 
 #include <unistd.h> // for getppid
@@ -157,7 +157,7 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,
                 }
             }
             break;
-#endif            
+#endif
         }
         default:
             return QSystemInfoLinuxCommonPrivate::version(type, parameter);
@@ -527,7 +527,7 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 }
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
-{    
+{
     QSystemScreenSaverPrivate priv;
 
     if(priv.isScreenLockEnabled()

@@ -56,9 +56,9 @@ class Q_ORGANIZER_EXPORT QOrganizerItemInstanceOrigin : public QOrganizerItemDet
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldParentLocalId;
-    const char* FieldOriginalDate;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldParentLocalId;
+    static const QLatin1Constant FieldOriginalDate;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemInstanceOrigin, "InstanceOrigin")
     Q_DECLARE_LATIN1_CONSTANT(FieldParentLocalId, "ParentLocalId");

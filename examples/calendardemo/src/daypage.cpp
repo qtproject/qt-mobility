@@ -162,6 +162,9 @@ void DayPage::dayChanged(QOrganizerItemManager *manager, QDate date)
 
 void DayPage::itemDoubleClicked(QListWidgetItem *listItem)
 {
+    if (!listItem)
+        return;
+
     QOrganizerItem organizerItem = listItem->data(ORGANIZER_ITEM_ROLE).value<QOrganizerItem>();
     if (!organizerItem.isEmpty())
         emit showEditPage(m_manager, organizerItem);
@@ -175,6 +178,9 @@ void DayPage::backClicked()
 void DayPage::editItem()
 {
     QListWidgetItem *listItem = m_itemList->currentItem();
+    if (!listItem)
+        return;
+
     QOrganizerItem organizerItem = listItem->data(ORGANIZER_ITEM_ROLE).value<QOrganizerItem>();
     if (!organizerItem.isEmpty())
         emit showEditPage(m_manager, organizerItem);

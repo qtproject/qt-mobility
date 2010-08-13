@@ -57,9 +57,7 @@
 #include <QObject>
 #include <QSize>
 #include <QHash>
-#include "qsysteminfocommon.h"
-
-//#include "qmobilityglobal.h"
+#include "qsysteminfocommon_p.h"
 
 #include "qsysteminfo.h"
 

@@ -140,8 +140,8 @@ public:
     {
         QList<QContactDetail> props = details(T::DefinitionName.latin1());
         QList<T> ret;
-        foreach(QContactDetail prop, props)
-            ret.append(T(prop));
+        for (int i=0; i<props.count(); i++)
+            ret.append(T(props.at(i)));
         return ret;
     }
 
@@ -150,8 +150,8 @@ public:
     {
         QList<QContactDetail> props = details(T::DefinitionName, fieldName, value);
         QList<T> ret;
-        foreach(QContactDetail prop, props)
-            ret.append(T(prop));
+        for (int i=0; i<props.count(); i++)
+            ret.append(T(props.at(i)));
         return ret;
     }
 
@@ -159,8 +159,8 @@ public:
     {
         QList<QContactDetail> props = details(T::DefinitionName.latin1(), fieldName, value);
         QList<T> ret;
-        foreach(QContactDetail prop, props)
-            ret.append(T(prop));
+        for (int i=0; i<props.count(); i++)
+            ret.append(T(props.at(i)));
         return ret;
     }
 

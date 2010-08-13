@@ -63,7 +63,7 @@ QTM_BEGIN_NAMESPACE
 class QLandmarkNameFilterPrivate : public QLandmarkFilterPrivate
 {
 public:
-    QLandmarkNameFilterPrivate(const QString &name = QString(), Qt::CaseSensitivity sensitivity = Qt::CaseInsensitive);
+    QLandmarkNameFilterPrivate(const QString &name = QString());
     QLandmarkNameFilterPrivate(const QLandmarkNameFilterPrivate &other);
     virtual ~QLandmarkNameFilterPrivate();
 
@@ -71,13 +71,13 @@ public:
     {
         const QLandmarkNameFilterPrivate *od = static_cast<const QLandmarkNameFilterPrivate*>(other);
         return (name == od->name)
-            && (sensitivity == od->sensitivity);
+            && (flags == od->flags);
     }
 
     Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(QLandmarkNameFilter, QLandmarkFilter::NameFilter)
 
     QString name;
-    Qt::CaseSensitivity sensitivity;
+    QLandmarkFilter::MatchFlags flags;
 };
 
 QTM_END_NAMESPACE
