@@ -65,7 +65,7 @@ void QGeoTiledMapPixmapObjectInfo::objectUpdate()
     if (!pixmapItem)
         pixmapItem = new QGraphicsPixmapItem();
 
-    pixmapItem->setPixmap(pixmap->icon());
+    pixmapItem->setPixmap(pixmap->pixmap());
     pixmapItem->setOffset(position);
     pixmapItem->setTransformOriginPoint(position);
 

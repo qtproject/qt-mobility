@@ -48,13 +48,13 @@ QTM_BEGIN_NAMESPACE
 QGeoMapPixmapObject::QGeoMapPixmapObject(QGeoMapObject *parent)
         : QGeoMapObject(new QGeoMapPixmapObjectPrivate(this, parent)) {}
 
-QGeoMapPixmapObject::QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset, const QPixmap &icon, QGeoMapObject *parent)
+QGeoMapPixmapObject::QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset, const QPixmap &pixmap, QGeoMapObject *parent)
         : QGeoMapObject(new QGeoMapPixmapObjectPrivate(this, parent))
 {
     Q_D(QGeoMapPixmapObject);
 
     d->coordinate = coordinate;
-    d->icon = icon;
+    d->pixmap = pixmap;
     d->offset = offset;
 }
 
@@ -78,25 +78,25 @@ void QGeoMapPixmapObject::setCoordinate(const QGeoCoordinate &coordinate)
     }
 }
 
-QPixmap QGeoMapPixmapObject::icon() const
+QPixmap QGeoMapPixmapObject::pixmap() const
 {
     Q_D(const QGeoMapPixmapObject);
-    return d->icon;
+    return d->pixmap;
 }
 
-void QGeoMapPixmapObject::setIcon(const QPixmap &icon)
+void QGeoMapPixmapObject::setPixmap(const QPixmap &pixmap)
 {
     Q_D(QGeoMapPixmapObject);
 
-    if (d->icon.isNull() && icon.isNull())
+    if (d->pixmap.isNull() && pixmap.isNull())
         return;
 
-    if ((d->icon.isNull() && !icon.isNull())
-            || (!d->icon.isNull() && icon.isNull())
-            || (d->icon.toImage() != icon.toImage())) {
-        d->icon = icon;
+    if ((d->pixmap.isNull() && !pixmap.isNull())
+            || (!d->pixmap.isNull() && pixmap.isNull())
+            || (d->pixmap.toImage() != pixmap.toImage())) {
+        d->pixmap = pixmap;
         objectUpdate();
-        emit iconChanged(d->icon);
+        emit pixmapChanged(d->pixmap);
     }
 }
 

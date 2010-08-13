@@ -129,6 +129,7 @@ Item {
                                 longitude: 153.1
                             }
             text: "Testing text"
+            font.underline: true
             color: "#800000"
         }
     }

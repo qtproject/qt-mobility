@@ -56,26 +56,26 @@ class Q_LOCATION_EXPORT QGeoMapPixmapObject : public QGeoMapObject
 {
     Q_OBJECT
     Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QPixmap icon READ icon WRITE setIcon NOTIFY iconChanged)
+    Q_PROPERTY(QPixmap pixmap  READ pixmap WRITE setPixmap NOTIFY pixmapChanged)
     Q_PROPERTY(QPoint offset READ offset WRITE setOffset NOTIFY offsetChanged)
 
 public:
     QGeoMapPixmapObject(QGeoMapObject *parent = 0);
-    QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset = QPoint(0, 0), const QPixmap &icon = QPixmap(), QGeoMapObject *parent = 0);
+    QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset = QPoint(0, 0), const QPixmap &pixmap = QPixmap(), QGeoMapObject *parent = 0);
     ~QGeoMapPixmapObject();
 
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &coordinate);
 
-    QPixmap icon() const;
-    void setIcon(const QPixmap &icon);
+    QPixmap pixmap() const;
+    void setPixmap(const QPixmap &pixmap);
 
     QPoint offset() const;
     void setOffset(const QPoint &offset);
 
 signals:
     void coordinateChanged(const QGeoCoordinate &coordinate);
-    void iconChanged(const QPixmap &pixmap);
+    void pixmapChanged(const QPixmap &pixmap);
     void offsetChanged(const QPoint &offset);
 
 private:

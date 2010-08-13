@@ -1,3 +1,4 @@
+
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -39,29 +40,53 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPIXMAPOBJECT_P_H
-#define QGEOMAPPIXMAPOBJECT_P_H
+#include "qdeclarativegeomappixmapobject_p.h"
 
-#include "qgeomapobject_p.h"
-
-#include "qgeocoordinate.h"
-
-#include <QPixmap>
-#include <QPoint>
+#include <QBrush>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapPixmapObjectPrivate : public QGeoMapObjectPrivate
+QDeclarativeGeoMapPixmapObject::QDeclarativeGeoMapPixmapObject()
 {
-public:
-    QGeoMapPixmapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
-    ~QGeoMapPixmapObjectPrivate();
+    m_coordinate = new QDeclarativeCoordinate(this);
+}
 
-    QGeoCoordinate coordinate;
-    QPixmap pixmap;
-    QPoint offset;
-};
+QDeclarativeGeoMapPixmapObject::~QDeclarativeGeoMapPixmapObject()
+{
+}
+
+void QDeclarativeGeoMapPixmapObject::setDeclarativeCoordinate(const QDeclarativeCoordinate *coordinate)
+{
+    if (m_coordinate->coordinate() == coordinate->coordinate())
+        return;
+
+    m_coordinate->setCoordinate(coordinate->coordinate());
+    setCoordinate(coordinate->coordinate());
+
+    emit declarativeCoordinateChanged(m_coordinate);
+}
+
+QDeclarativeCoordinate* QDeclarativeGeoMapPixmapObject::declarativeCoordinate() const
+{
+    return m_coordinate;
+}
+
+void QDeclarativeGeoMapPixmapObject::setPixmapUrl(const QUrl &pixmapUrl)
+{
+    if (m_pixmapUrl == pixmapUrl)
+        return;
+
+    m_pixmapUrl = pixmapUrl;
+
+    emit pixmapUrlChanged(pixmapUrl);
+}
+
+QUrl QDeclarativeGeoMapPixmapObject::pixmapUrl() const
+{
+    return m_pixmapUrl;
+}
+
+#include "moc_qdeclarativegeomappixmapobject_p.cpp"
 
 QTM_END_NAMESPACE
 
-#endif

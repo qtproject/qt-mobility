@@ -39,29 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPIXMAPOBJECT_P_H
-#define QGEOMAPPIXMAPOBJECT_P_H
+#ifndef QDECLARATIVEGEOMAPPIXMAPOBJECT_H
+#define QDECLARATIVEGEOMAPPIXMAPOBJECT_H
 
-#include "qgeomapobject_p.h"
+#include "qdeclarativecoordinate_p.h"
+#include "qgeomappixmapobject.h"
 
-#include "qgeocoordinate.h"
-
-#include <QPixmap>
-#include <QPoint>
+#include <QColor>
+#include <QUrl>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapPixmapObjectPrivate : public QGeoMapObjectPrivate
+class QDeclarativeGeoMapPixmapObject : public QGeoMapPixmapObject
 {
-public:
-    QGeoMapPixmapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
-    ~QGeoMapPixmapObjectPrivate();
+    Q_OBJECT
 
-    QGeoCoordinate coordinate;
-    QPixmap pixmap;
-    QPoint offset;
+    Q_PROPERTY(QDeclarativeCoordinate* coordinate READ declarativeCoordinate WRITE setDeclarativeCoordinate NOTIFY declarativeCoordinateChanged)
+    Q_PROPERTY(QUrl pixmap READ pixmapUrl WRITE setPixmapUrl NOTIFY pixmapUrlChanged)
+
+public:
+    QDeclarativeGeoMapPixmapObject();
+    ~QDeclarativeGeoMapPixmapObject();
+
+    QDeclarativeCoordinate* declarativeCoordinate() const;
+    void setDeclarativeCoordinate(const QDeclarativeCoordinate *coordinate);
+
+    QUrl pixmapUrl() const;
+    void setPixmapUrl(const QUrl &pixmapUrl);
+
+signals:
+    void declarativeCoordinateChanged(const QDeclarativeCoordinate *coordinate);
+    void pixmapUrlChanged(const QUrl &pixmapUrl);
+
+private:
+    mutable QDeclarativeCoordinate* m_coordinate;
+    mutable QUrl m_pixmapUrl;
+    Q_DISABLE_COPY(QDeclarativeGeoMapPixmapObject)
 };
 
 QTM_END_NAMESPACE
+
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapPixmapObject));
 
 #endif
