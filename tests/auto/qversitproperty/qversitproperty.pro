@@ -20,7 +20,7 @@ HEADERS += tst_qversitproperty.h
 SOURCES += tst_qversitproperty.cpp
 
 CONFIG += mobility
-MOBILITY = contacts versit
+MOBILITY += versit
 
 symbian: { 
     TARGET.CAPABILITY = ALL \

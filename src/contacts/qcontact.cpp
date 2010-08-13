@@ -41,6 +41,7 @@
 
 #include <QSet>
 #include <QDebug>
+#include <QDataStream>
 
 #include "qcontact.h"
 #include "qcontact_p.h"
@@ -56,6 +57,8 @@ QTM_BEGIN_NAMESPACE
  
   \brief The QContact class represents an addressbook contact.
 
+  \inmodule QtContacts
+  
   \ingroup contacts-main
 
   Individual contacts, groups, and other types of contacts are represented with
@@ -177,14 +180,12 @@ void QContact::clearDetails()
     // insert the contact's display label detail.
     QContactDisplayLabel contactLabel;
     contactLabel.setValue(QContactDisplayLabel::FieldLabel, QString());
-    contactLabel.d->m_id = 1;
     contactLabel.d->m_access = QContactDetail::Irremovable | QContactDetail::ReadOnly;
     d->m_details.insert(0, contactLabel);
 
     // and the contact type detail.
     QContactType contactType;
     contactType.setType(QContactType::TypeContact);
-    contactType.d->m_id = 2;
     contactType.d->m_access = QContactDetail::Irremovable;
     d->m_details.insert(1, contactType);
 }
@@ -377,10 +378,15 @@ QContactDetail QContact::detail(const QString& definitionName) const
 /*! Returns a list of details with the given \a definitionName
     The definitionName string can be determined by the DefinitionName attribute
     of defined objects (e.g. QContactPhoneNumber::DefinitionName) or by
-    requesting a list of all the definition names using
-    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or the
-    asynchronous \l
-    {QContactDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.*/
+    requesting a list of all the definitions synchronously with
+    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or
+    asynchronously with a
+    \l {QContactDetailDefinitionFetchRequest}{detail definition fetch request},
+    and then inspecting the
+    \l{QContactDetailDefinition::name()}{name()} of each
+    definition.  If \a definitionName is empty, all details of any definition
+    will be returned.
+ */
 QList<QContactDetail> QContact::details(const QString& definitionName) const
 {
     // build the sub-list of matching details.
@@ -405,10 +411,15 @@ QList<QContactDetail> QContact::details(const QString& definitionName) const
     Returns a list of details of the given \a definitionName, with fields named \a fieldName and with value \a value.
     The definitionName string can be determined by the DefinitionName attribute
     of defined objects (e.g. QContactPhoneNumber::DefinitionName) or by
-    requesting a list of all the definition names using
-    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or the
-    asynchronous \l
-    {QContactDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.*/
+    requesting a list of all the definitions synchronously with
+    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or
+    asynchronously with a
+    \l {QContactDetailDefinitionFetchRequest}{detail definition fetch request},
+    and then inspecting the
+    \l{QContactDetailDefinition::name()}{name()} of each
+    definition.  If \a definitionName is empty, all details of any definition
+    will be returned.
+ */
 QList<QContactDetail> QContact::details(const QString& definitionName, const QString& fieldName, const QString& value) const
 {
     // build the sub-list of matching details.
@@ -523,6 +534,12 @@ QList<QContactDetail> QContact::details(const char* definitionName, const char* 
  * to each manager, use the QContactManager::synthesizeContactDisplayLabel() function
  * instead.
  *
+ * Be aware that if a contact is retrieved (or reloaded) from the backend, the
+ * keys of any details it contains may have been changed by the backend, or other
+ * threads may have modified the contact details in the backend.  Therefore,
+ * clients should reload the detail that they wish to save in a contact after retrieving
+ * the contact, in order to avoid creating unwanted duplicated details.
+ *
  * Returns true if the detail was saved successfully, otherwise returns false.
  *
  * Note that the caller retains ownership of the detail.
@@ -571,6 +588,12 @@ bool QContact::saveDetail(QContactDetail* detail)
  * information in the detail may be different.
  *
  * Any action preferences for the matching detail is also removed.
+ *
+ * Be aware that if a contact is retrieved (or reloaded) from the backend, the
+ * keys of any details it contains may have been changed by the backend, or other
+ * threads may have modified the contact details in the backend.  Therefore,
+ * clients should reload the detail that they wish to remove from a contact after retrieving
+ * the contact, in order to ensure that the remove operation is successful.
  *
  * If the detail's access constraint includes \c QContactDetail::Irremovable,
  * this function will return false.
@@ -637,6 +660,7 @@ uint qHash(const QContact &key)
     return hash;
 }
 
+#ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QContact& contact)
 {
     dbg.nospace() << "QContact(" << contact.id() << ")";
@@ -645,6 +669,39 @@ QDebug operator<<(QDebug dbg, const QContact& contact)
     }
     return dbg.maybeSpace();
 }
+#endif
+
+#ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a contact to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QContact& contact)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QContact
+    return out << formatVersion << contact.id() << contact.details() << contact.d->m_preferences;
+}
+
+/*!
+ * Reads a contact from stream \a in into \a contact.
+ */
+QDataStream& operator>>(QDataStream& in, QContact& contact)
+{
+    contact = QContact();
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QContactId id;
+        QList<QContactDetail> details;
+        QMap<QString, int> preferences;
+        in >> id >> contact.d->m_details >> contact.d->m_preferences;
+        contact.setId(id);
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+
+#endif
 
 /*!
     Returns a list of relationships of the given \a relationshipType in which this contact is a participant.
@@ -675,51 +732,6 @@ QList<QContactRelationship> QContact::relationships(const QString& relationshipT
     }
 
     return retn;
-}
-
-/*!
-  \deprecated
-  Returns a list of ids of contacts which are related to this contact in a relationship of the
-  given \a relationshipType, where those other contacts participate in the relationship in the
-  given \a role.
-
-  This function is deprecated and will be removed after the transition period has elapsed.
-  Use the relatedContacts() function which takes a QContactRelationship::Role argument instead!
- */
-QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QContactRelationshipFilter::Role role) const
-{
-    QList<QContactId> retn;
-    for (int i = 0; i < d->m_relationshipsCache.size(); i++) {
-        QContactRelationship curr = d->m_relationshipsCache.at(i);
-        if (curr.relationshipType() == relationshipType || relationshipType.isEmpty()) {
-            // check that the other contacts fill the given role
-            if (role == QContactRelationshipFilter::First) {
-                if (curr.first() != d->m_id) {
-                    retn.append(curr.first());
-                }
-            } else if (role == QContactRelationshipFilter::Second) {
-                if (curr.first() == d->m_id) {
-                    retn.append(curr.second());
-                }
-            } else { // role == Either.
-                if (curr.first() == d->m_id) {
-                    retn.append(curr.second());
-                } else {
-                    retn.append(curr.first());
-                }
-            }
-        }
-    }
-
-    QList<QContactId> removeDuplicates;
-    for (int i = 0; i < retn.size(); i++) {
-        QContactId curr = retn.at(i);
-        if (!removeDuplicates.contains(curr)) {
-            removeDuplicates.append(curr);
-        }
-    }
-
-    return removeDuplicates;
 }
 
 /*!
@@ -770,40 +782,6 @@ QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QCo
     }
 
     return retn;
-}
-
-/*!
- * \deprecated
- * Sets the order of importance of the relationships for this contact by saving a \a reordered list of relationships which involve the contact.
- * The list must include all of the relationships in which the contact is involved, and must not include any relationships which do
- * not involve the contact.  In order for the ordering preference to be persisted, the contact must be saved in its manager.
- *
- * It is possible that relationships will have been added or removed from the contact stored in the manager,
- * thus rendering the relationship cache of the contact in memory stale.   If this happens, attempting to save the contact after reordering
- * its relationships will result in an error occurring. The updated relationships list must be retrieved from the manager, reordered and set
- * in the contact before the contact can be saved successfully.
- *
- * This function is deprecated and will be removed after the transition period has elapsed.
- *
- * \sa relationships(), relationshipOrder()
- */
-void QContact::setRelationshipOrder(const QList<QContactRelationship>& reordered)
-{
-    d->m_reorderedRelationshipsCache = reordered;
-}
-
-/*!
- * \deprecated
- * Returns the ordered list of relationships in which the contact is involved.  By default, this list is equal to the cached
- * list of relationships which is available by calling relationships().
- *
- * This function is deprecated and will be removed after the transition period has elapsed.
- *
- * \sa setRelationshipOrder()
- */
-QList<QContactRelationship> QContact::relationshipOrder() const
-{
-    return d->m_reorderedRelationshipsCache;
 }
 
 /*!

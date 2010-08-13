@@ -56,105 +56,7 @@
 
 #include "qmobilityglobal.h"
 
-#include <qcontactdetail.h>
-#include <qcontactname.h>
-#include <qcontactemailaddress.h>
-#include <qcontactphonenumber.h>
-#include "qcontactaddress.h"
-#include <qcontacturl.h>
-#include <qcontactguid.h>
-#include <qcontactorganization.h>
-#include <qcontacttimestamp.h>
-#include <qcontactbirthday.h>
-#include <qcontactnote.h>
-#include <qcontactgeolocation.h>
-#include <qcontactavatar.h>
-#include <qcontactgender.h>
-#include <qcontactnickname.h>
-#include <qcontactanniversary.h>
-#include <qcontactonlineaccount.h>
-#include <qcontactfamily.h>
-#include <qcontactdisplaylabel.h>
-#include <qcontacttag.h>
-#include <qcontactringtone.h>
-#include <qcontactthumbnail.h>
-
 QTM_BEGIN_NAMESPACE
-
-// Mapping between a string in versit specifications and Qt contact details
-struct VersitContactDetailMapping {
-    const char* versitPropertyName;
-    const char* contactDetailDefinitionName;
-    const char* contactDetailValueKey;
-};
-
-//! [Property name mappings]
-// Mappings from versit property names to Qt contact details
-const VersitContactDetailMapping versitContactDetailMappings[] = {
-    {"ADR",           QContactAddress::DefinitionName.latin1(),
-                      ""},
-    {"BDAY",          QContactBirthday::DefinitionName.latin1(),
-                      QContactBirthday::FieldBirthday.latin1()},
-    {"CATEGORIES",    QContactTag::DefinitionName.latin1(),
-                      QContactTag::FieldTag.latin1()},
-    {"FN",            QContactDisplayLabel::DefinitionName.latin1(),
-                      ""},
-    {"GEO",           QContactGeoLocation::DefinitionName.latin1(),
-                      ""},
-    {"EMAIL",         QContactEmailAddress::DefinitionName.latin1(),
-                      QContactEmailAddress::FieldEmailAddress.latin1()},
-    {"IMPP",          QContactOnlineAccount::DefinitionName.latin1(),
-                      QContactOnlineAccount::SubTypeImpp.latin1()},
-    {"LOGO",          QContactOrganization::DefinitionName.latin1(),
-                      QContactOrganization::FieldLogoUrl.latin1()},
-    {"N",             QContactName::DefinitionName.latin1(),
-                      ""},
-    {"NICKNAME",      QContactNickname::DefinitionName.latin1(),
-                      QContactNickname::FieldNickname.latin1()},
-    {"NOTE",          QContactNote::DefinitionName.latin1(),
-                      QContactNote::FieldNote.latin1()},
-    {"ORG",           QContactOrganization::DefinitionName.latin1(),
-                      QContactOrganization::FieldName.latin1()},
-    {"PHOTO",         QContactThumbnail::DefinitionName.latin1(),
-                      ""},
-    {"REV",           QContactTimestamp::DefinitionName.latin1(),
-                      ""},
-    {"ROLE",          QContactOrganization::DefinitionName.latin1(),
-                      QContactOrganization::FieldRole.latin1()},
-    {"SOUND",         QContactRingtone::DefinitionName.latin1(),
-                      QContactRingtone::FieldAudioRingtoneUrl.latin1()},
-    {"TEL",           QContactPhoneNumber::DefinitionName.latin1(),
-                      QContactPhoneNumber::FieldNumber.latin1()},
-    {"TITLE",         QContactOrganization::DefinitionName.latin1(),
-                      QContactOrganization::FieldTitle.latin1()},
-    {"UID",           QContactGuid::DefinitionName.latin1(),
-                      QContactGuid::FieldGuid.latin1()},
-    {"URL",           QContactUrl::DefinitionName.latin1(),
-                      QContactUrl::FieldUrl.latin1()},
-    {"X-ANNIVERSARY", QContactAnniversary::DefinitionName.latin1(),
-                      ""},
-    {"X-ASSISTANT",   QContactOrganization::DefinitionName.latin1(),
-                      QContactOrganization::FieldAssistantName.latin1()},
-    {"X-ASSISTANT-TEL", QContactPhoneNumber::DefinitionName.latin1(),
-                      QContactPhoneNumber::SubTypeAssistant.latin1()},
-    {"X-CHILDREN",    QContactFamily::DefinitionName.latin1(),
-                      QContactFamily::FieldChildren.latin1()},
-    {"X-EPOCSECONDNAME",QContactNickname::DefinitionName.latin1(),
-                      QContactNickname::FieldNickname.latin1()},
-    {"X-GENDER",      QContactGender::DefinitionName.latin1(),
-                      QContactGender::FieldGender.latin1()},
-    {"X-IMPP",        QContactOnlineAccount::DefinitionName.latin1(),
-                      QContactOnlineAccount::SubTypeImpp.latin1()},
-    {"X-JABBER",      QContactOnlineAccount::DefinitionName.latin1(),
-                      QContactOnlineAccount::SubTypeImpp.latin1()},
-    {"X-NICKNAME",    QContactNickname::DefinitionName.latin1(),
-                      QContactNickname::FieldNickname.latin1()},
-    {"X-SIP",         QContactOnlineAccount::DefinitionName.latin1(),
-                      ""},
-    {"X-SPOUSE",      QContactFamily::DefinitionName.latin1(),
-                      QContactFamily::FieldSpouse.latin1()}
-};
-//! [Property name mappings]
 
 // Mapping between a string in versit specifications and Qt contacts
 struct VersitMapping {
@@ -162,31 +64,12 @@ struct VersitMapping {
     const char* contactString;
 };
 
-// Mappings from versit TYPE parameters to Qt contact detail contexts
-const VersitMapping versitContextMappings[] = {
-    {"HOME", QContactDetail::ContextHome.latin1()},
-    {"WORK", QContactDetail::ContextWork.latin1()},
+// Mapping between a string in versit specifications and Qt contact details
+struct VersitDetailMapping {
+    const char* versitPropertyName;
+    const char* detailDefinitionName;
+    const char* detailFieldName;
 };
-
-//! [Property type parameter mappings]
-// Mappings from versit TYPE parameters to Qt contact detail subtypes
-const VersitMapping versitSubTypeMappings[] = {
-    {"DOM",    QContactAddress::SubTypeDomestic.latin1()},
-    {"INTL",   QContactAddress::SubTypeInternational.latin1()},
-    {"POSTAL", QContactAddress::SubTypePostal.latin1()},
-    {"PARCEL", QContactAddress::SubTypeParcel.latin1()},
-    {"VOICE",  QContactPhoneNumber::SubTypeVoice.latin1()},
-    {"CELL",   QContactPhoneNumber::SubTypeMobile.latin1()},
-    {"MODEM",  QContactPhoneNumber::SubTypeModem.latin1()},
-    {"CAR",    QContactPhoneNumber::SubTypeCar.latin1()},
-    {"VIDEO",  QContactPhoneNumber::SubTypeVideo.latin1()},
-    {"FAX",    QContactPhoneNumber::SubTypeFax.latin1()},
-    {"BBS",    QContactPhoneNumber::SubTypeBulletinBoardSystem.latin1()},
-    {"PAGER",  QContactPhoneNumber::SubTypePager.latin1()},
-    {"SWIS",   QContactOnlineAccount::SubTypeVideoShare.latin1()},
-    {"VOIP",   QContactOnlineAccount::SubTypeSipVoip.latin1()}
-};
-//! [Property type parameter mappings]
 
 //! [File extension mappings]
 // Mappings from mime types to file extensions

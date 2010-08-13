@@ -43,7 +43,6 @@
 #include "qmessagecontentcontainer_symbian_p.h"
 #include "qmessagemanager.h"
 
-
 QTM_BEGIN_NAMESPACE
 
 QMessagePrivate::QMessagePrivate(QMessage *message)

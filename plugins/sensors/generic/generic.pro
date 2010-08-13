@@ -11,13 +11,13 @@ include(generic.pri)
 include(../../../common.pri)
 
 symbian {
-   TARGET.EPOCALLOWDLLDATA = 1
-   TARGET.UID3 = 0x2002BFC3
-   TARGET.CAPABILITY = ALL -TCB
+    TARGET.EPOCALLOWDLLDATA = 1
+    TARGET.UID3 = 0x2002BFC3
+    TARGET.CAPABILITY = ALL -TCB
 
-   pluginDep.sources = $${TARGET}.dll
-   pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
-   DEPLOYMENT += pluginDep
+    pluginDep.sources = $${TARGET}.dll
+    pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
+    DEPLOYMENT += pluginDep
 }
 
 QT=core

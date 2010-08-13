@@ -54,6 +54,7 @@ QTM_USE_NAMESPACE
   \class QVersitWriter
   \brief The QVersitWriter class writes Versit documents such as vCards to a device.
   \ingroup versit
+  \inmodule QtVersit
 
   QVersitWriter converts a QVersitDocument into its textual representation.
   QVersitWriter supports writing to an abstract I/O device
@@ -228,6 +229,8 @@ void QVersitWriter::cancel()
 /*!
  * If the state is ActiveState, blocks until the writer has finished writing or \a msec milliseconds
  * has elapsed, returning true if it successfully finishes or is cancelled by the user.
+ * If \m msec is negative or zero, the function blocks until the writer has finished, regardless of
+ * how long it takes.
  * If the state is FinishedState, returns true immediately.
  * Otherwise, returns false immediately.
  */
@@ -235,7 +238,10 @@ bool QVersitWriter::waitForFinished(int msec)
 {
     State state = d->state();
     if (state == ActiveState) {
-        return d->wait(msec);
+        if (msec <= 0)
+            return d->wait(ULONG_MAX);
+        else
+            return d->wait(msec);
     } else if (state == FinishedState) {
         return true;
     } else {

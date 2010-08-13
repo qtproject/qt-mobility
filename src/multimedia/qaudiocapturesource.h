@@ -46,7 +46,7 @@
 #include <QtCore/qpair.h>
 #include <QtCore/qsize.h>
 
-#include <QtMultimedia/qaudioformat.h>
+#include <qaudioformat.h>
 
 #include "qmediarecorder.h"
 #include "qmediacontrol.h"
@@ -59,18 +59,16 @@ QT_BEGIN_NAMESPACE
 
 class QAudioCaptureSourcePrivate;
 
-class Q_MEDIA_EXPORT QAudioCaptureSource : public QMediaObject
+class Q_MULTIMEDIA_EXPORT QAudioCaptureSource : public QMediaObject
 {
     Q_OBJECT
 
 public:
     QAudioCaptureSource(QObject *parent = 0, QMediaServiceProvider *service = QMediaServiceProvider::defaultServiceProvider());
-    QAudioCaptureSource(QMediaObject *mediaObject, QObject *parent = 0);
-
     ~QAudioCaptureSource();
 
     bool isAvailable() const;
-    QtMediaServices::AvailabilityError availabilityError() const;
+    QtMultimediaKit::AvailabilityError availabilityError() const;
 
     QList<QString> audioInputs() const;
 

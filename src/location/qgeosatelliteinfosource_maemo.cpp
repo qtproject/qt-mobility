@@ -43,15 +43,17 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoSatelliteInfoSourceMaemo::QGeoSatelliteInfoSourceMaemo(QObject *parent) : QGeoSatelliteInfoSource(parent)
+QGeoSatelliteInfoSourceMaemo::QGeoSatelliteInfoSourceMaemo(QObject *parent) : QGeoSatelliteInfoSource(parent),
+                                                                              running(false), satInViewSeen(false)
 {
-    registered = false;
+    requestTimer = new QTimer(this);
+    QObject::connect(requestTimer, SIGNAL(timeout()), this, SLOT(requestTimerExpired()));
 }
 
 
 int QGeoSatelliteInfoSourceMaemo::init()
 {
-    dbusComm = new DBusComm();
+    dbusComm = new DBusComm(this);
     int status = dbusComm->init();
 
     if (status == 0) {
@@ -59,6 +61,10 @@ int QGeoSatelliteInfoSourceMaemo::init()
                          this, SLOT(newSatellitesInView(const QList<QGeoSatelliteInfo> &)));
         QObject::connect(dbusComm, SIGNAL(receivedSatellitesInUse(const QList<QGeoSatelliteInfo> &)),
                          this, SLOT(newSatellitesInUse(const QList<QGeoSatelliteInfo> &)));
+        QObject::connect(dbusComm, SIGNAL(serviceConnected()),
+                         this, SLOT(onServiceConnect()));
+        QObject::connect(dbusComm, SIGNAL(serviceDisconnected()),
+                         this, SLOT(onServiceDisconnect()));
     }
 
     return status;
@@ -67,41 +73,80 @@ int QGeoSatelliteInfoSourceMaemo::init()
 
 void QGeoSatelliteInfoSourceMaemo::startUpdates()
 {
-    if (registered == false)
-        registered = dbusComm->sendDBusRegister();
-
-    dbusComm->sendConfigRequest(DBusComm::CommandSatStart, 0, 0);
+    if ( !requestTimer->isActive() )
+        dbusComm->sendConfigRequest(DBusComm::CommandSatStart, 0, 0);
+    running = true;
 }
 
 
 void QGeoSatelliteInfoSourceMaemo::stopUpdates()
 {
-    if (registered == false)
-        registered = dbusComm->sendDBusRegister();
-
-    dbusComm->sendConfigRequest(DBusComm::CommandSatStop, 0, 0);
+    if ( !requestTimer->isActive() )
+        dbusComm->sendConfigRequest(DBusComm::CommandSatStop, 0, 0);
+    running = false;
 }
 
 
 void QGeoSatelliteInfoSourceMaemo::requestUpdate(int timeout)
 {
-    if (registered == false)
-        registered = dbusComm->sendDBusRegister();
+    if ( !running )
+        dbusComm->sendConfigRequest(DBusComm::CommandSatStart, 0, 0);
 
-    dbusComm->sendConfigRequest(DBusComm::CommandSatOneShot, 0, timeout);
+    requestTimer->start(timeout);
+    satInViewSeen = false;
 }
 
 
 void QGeoSatelliteInfoSourceMaemo::newSatellitesInView(const QList<QGeoSatelliteInfo> &update)
 {
-    emit satellitesInViewUpdated(update);
+    if ( requestTimer->isActive() && satInViewSeen ) {
+        requestTimer->stop();
+        if ( !running )
+            dbusComm->sendConfigRequest(DBusComm::CommandSatStop, 0, 0);
+        else 
+            emit satellitesInViewUpdated(update);
+    } else {
+        emit satellitesInViewUpdated(update);
+    }
+
+    satInViewSeen = true;
 }
 
 
 void QGeoSatelliteInfoSourceMaemo::newSatellitesInUse(const QList<QGeoSatelliteInfo> &update)
 {
+    if ( requestTimer->isActive() ) {
+        requestTimer->stop();
+        if ( !running )
+            dbusComm->sendConfigRequest(DBusComm::CommandSatStop, 0, 0);
+    }
+
     emit satellitesInUseUpdated(update);
 }
+
+void QGeoSatelliteInfoSourceMaemo::requestTimerExpired()
+{
+    requestTimer->stop();
+
+    if ( !running )
+        dbusComm->sendConfigRequest(DBusComm::CommandSatStop, 0, 0);
+
+    emit requestTimeout();
+}
+
+void QGeoSatelliteInfoSourceMaemo::onServiceDisconnect()
+{
+    //
+}
+
+
+void QGeoSatelliteInfoSourceMaemo::onServiceConnect()
+{
+    if (running) {
+        dbusComm->sendConfigRequest(DBusComm::CommandSatStart, 0, 0);
+    }
+}
+
 
 #include "moc_qgeosatelliteinfosource_maemo_p.cpp"
 QTM_END_NAMESPACE

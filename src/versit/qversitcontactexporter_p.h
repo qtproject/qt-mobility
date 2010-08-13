@@ -56,6 +56,7 @@
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
+#include "qvcardbackuphandlers_p.h"
 
 #include <QHash>
 #include <QObject>
@@ -63,11 +64,12 @@
 QTM_BEGIN_NAMESPACE
 class QContact;
 class QContactDetail;
+class QVersitContactHandler;
 
 class Q_AUTOTEST_EXPORT QVersitContactExporterPrivate
 {
 public:
-    QVersitContactExporterPrivate();
+    QVersitContactExporterPrivate(const QString& profile = QString());
     ~QVersitContactExporterPrivate();
 
     bool exportContact(const QContact& contact, QVersitDocument& versitDocument,
@@ -77,7 +79,8 @@ protected:
     static bool documentContainsName(const QVersitDocument& document);
     void encodeName(
             const QContactDetail& detail,
-            QVersitDocument* document,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
             QList<QVersitProperty>* generatedProperties,
             QSet<QString>* processedFields);
     void encodePhoneNumber(
@@ -138,12 +141,14 @@ protected:
             QSet<QString>* processedFields);
     void encodeNickname(
             const QContactDetail &detail,
-            QVersitDocument* document,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
             QList<QVersitProperty>* generatedProperties,
             QSet<QString>* processedFields);
     void encodeTag(
             const QContactDetail &detail,
-            QVersitDocument* document,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
             QList<QVersitProperty>* generatedProperties,
             QSet<QString>* processedFields);
     void encodeAnniversary(
@@ -160,10 +165,11 @@ protected:
             QSet<QString>* processedFields);
     void encodeDisplayLabel(
             const QContactDetail &detail,
-            QVersitDocument* document,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
             QList<QVersitProperty>* generatedProperties,
             QSet<QString>* processedFields);
-    QVersitProperty takeProperty(QVersitDocument* document, const QString& propertyName);
+
     bool isValidRemoteUrl(const QString& resourceIdentifier);
     void encodeParameters(QVersitProperty& property,
         const QStringList& contexts,
@@ -175,12 +181,12 @@ public: // Data
     QMap<int, QVersitContactExporter::Error> mErrors;
     QVersitContactExporterDetailHandler* mDetailHandler;
     QVersitContactExporterDetailHandlerV2* mDetailHandler2;
+    QList<QVersitContactHandler*> mPluginDetailHandlers;
     int mDetailHandlerVersion;
     QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;
     QHash<QString,QString> mPropertyMappings;
     QHash<QString,QString> mParameterMappings;
-    QVersitDocument::VersitType mVersitType;
 };
 
 QTM_END_NAMESPACE

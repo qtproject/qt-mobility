@@ -49,9 +49,9 @@
 #include <qmediaplayer.h>
 
 #include <QtGui/qmacdefines_mac.h>
-#include "qt7videooutputcontrol.h"
+#include "qt7videooutput.h"
 
-#include <CoreVideo/CVOpenGLTexture.h>
+#include <QuartzCore/CVOpenGLTexture.h>
 #include <QuickTime/QuickTime.h>
 
 class GLVideoWidget;
@@ -69,8 +69,8 @@ public:
     QT7MovieVideoWidget(QObject *parent = 0);
     virtual ~QT7MovieVideoWidget();
 
-    void setEnabled(bool);
     void setMovie(void *movie);
+    void updateNaturalSize(const QSize &newSize);
 
     QWidget *videoWidget();
 

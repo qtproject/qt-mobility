@@ -39,13 +39,14 @@
 **
 ****************************************************************************/
 
-#include "qpaintervideosurface_p.h"
+#include <qpaintervideosurface_p.h>
+#include <qpaintervideosurface_mac_p.h>
 
 #include <qmath.h>
 
 #include <qpainter.h>
 #include <qvariant.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qvideosurfaceformat.h>
 
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
 #include <qglshaderprogram.h>
@@ -54,36 +55,14 @@
 #include <QtDebug>
 QT_BEGIN_NAMESPACE
 
-class QVideoSurfacePainter
-{
-public:
-    virtual ~QVideoSurfacePainter();
-
-    virtual QList<QVideoFrame::PixelFormat> supportedPixelFormats(
-            QAbstractVideoBuffer::HandleType handleType) const = 0;
-
-    virtual bool isFormatSupported(
-            const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar) const = 0;
-
-    virtual QAbstractVideoSurface::Error start(const QVideoSurfaceFormat &format) = 0;
-    virtual void stop() = 0;
-
-    virtual QAbstractVideoSurface::Error setCurrentFrame(const QVideoFrame &frame) = 0;
-
-    virtual QAbstractVideoSurface::Error paint(
-            const QRectF &target, QPainter *painter, const QRectF &source) = 0;
-
-    virtual void updateColors(int brightness, int contrast, int hue, int saturation) = 0;
-};
-
 QVideoSurfacePainter::~QVideoSurfacePainter()
 {
 }
 
-class QVideoSurfaceRasterPainter : public QVideoSurfacePainter
+class QVideoSurfaceGenericPainter : public QVideoSurfacePainter
 {
 public:
-    QVideoSurfaceRasterPainter();
+    QVideoSurfaceGenericPainter();
 
     QList<QVideoFrame::PixelFormat> supportedPixelFormats(
             QAbstractVideoBuffer::HandleType handleType) const;
@@ -109,7 +88,7 @@ private:
     QVideoSurfaceFormat::Direction m_scanLineDirection;
 };
 
-QVideoSurfaceRasterPainter::QVideoSurfaceRasterPainter()
+QVideoSurfaceGenericPainter::QVideoSurfaceGenericPainter()
     : m_imageFormat(QImage::Format_Invalid)
     , m_scanLineDirection(QVideoSurfaceFormat::TopToBottom)
 {
@@ -122,52 +101,69 @@ QVideoSurfaceRasterPainter::QVideoSurfaceRasterPainter()
         << QVideoFrame::Format_RGB565;
 }
 
-QList<QVideoFrame::PixelFormat> QVideoSurfaceRasterPainter::supportedPixelFormats(
+QList<QVideoFrame::PixelFormat> QVideoSurfaceGenericPainter::supportedPixelFormats(
         QAbstractVideoBuffer::HandleType handleType) const
 {
-    return handleType == QAbstractVideoBuffer::NoHandle
-        ? m_imagePixelFormats
-        : QList<QVideoFrame::PixelFormat>();
+    switch (handleType) {
+    case QAbstractVideoBuffer::QPixmapHandle:
+    case QAbstractVideoBuffer::NoHandle:
+        return m_imagePixelFormats;
+    default:
+        ;
+    }
+    return QList<QVideoFrame::PixelFormat>();
 }
 
-bool QVideoSurfaceRasterPainter::isFormatSupported(
+bool QVideoSurfaceGenericPainter::isFormatSupported(
         const QVideoSurfaceFormat &format, QVideoSurfaceFormat *) const
 {
-    return format.handleType() == QAbstractVideoBuffer::NoHandle
-            && m_imagePixelFormats.contains(format.pixelFormat())
-            && !format.frameSize().isEmpty();
+    switch (format.handleType()) {
+    case QAbstractVideoBuffer::QPixmapHandle:
+        return true;
+    case QAbstractVideoBuffer::NoHandle:
+        return m_imagePixelFormats.contains(format.pixelFormat())
+               && !format.frameSize().isEmpty();
+    default:
+        ;
+    }
+    return false;
 }
 
-QAbstractVideoSurface::Error QVideoSurfaceRasterPainter::start(const QVideoSurfaceFormat &format)
+QAbstractVideoSurface::Error QVideoSurfaceGenericPainter::start(const QVideoSurfaceFormat &format)
 {
     m_frame = QVideoFrame();
     m_imageFormat = QVideoFrame::imageFormatFromPixelFormat(format.pixelFormat());
     m_imageSize = format.frameSize();
     m_scanLineDirection = format.scanLineDirection();
 
-    return format.handleType() == QAbstractVideoBuffer::NoHandle
-            && m_imageFormat != QImage::Format_Invalid
-            && !m_imageSize.isEmpty()
-            ? QAbstractVideoSurface::NoError
-            : QAbstractVideoSurface::UnsupportedFormatError;
+    const QAbstractVideoBuffer::HandleType t = format.handleType();
+    if (t == QAbstractVideoBuffer::NoHandle) {
+        if (m_imageFormat != QImage::Format_Invalid && !m_imageSize.isEmpty())
+            return QAbstractVideoSurface::NoError;
+    } else if (t == QAbstractVideoBuffer::QPixmapHandle) {
+        return QAbstractVideoSurface::NoError;
+    }
+    return QAbstractVideoSurface::UnsupportedFormatError;
 }
 
-void QVideoSurfaceRasterPainter::stop()
+void QVideoSurfaceGenericPainter::stop()
 {
     m_frame = QVideoFrame();
 }
 
-QAbstractVideoSurface::Error QVideoSurfaceRasterPainter::setCurrentFrame(const QVideoFrame &frame)
+QAbstractVideoSurface::Error QVideoSurfaceGenericPainter::setCurrentFrame(const QVideoFrame &frame)
 {
     m_frame = frame;
 
     return QAbstractVideoSurface::NoError;
 }
 
-QAbstractVideoSurface::Error QVideoSurfaceRasterPainter::paint(
+QAbstractVideoSurface::Error QVideoSurfaceGenericPainter::paint(
             const QRectF &target, QPainter *painter, const QRectF &source)
 {
-    if (m_frame.map(QAbstractVideoBuffer::ReadOnly)) {
+    if (m_frame.handleType() == QAbstractVideoBuffer::QPixmapHandle) {
+        painter->drawPixmap(target, m_frame.handle().value<QPixmap>(), source);
+    } else if (m_frame.map(QAbstractVideoBuffer::ReadOnly)) {
         QImage image(
                 m_frame.bits(),
                 m_imageSize.width(),
@@ -196,7 +192,7 @@ QAbstractVideoSurface::Error QVideoSurfaceRasterPainter::paint(
     return QAbstractVideoSurface::NoError;
 }
 
-void QVideoSurfaceRasterPainter::updateColors(int, int, int, int)
+void QVideoSurfaceGenericPainter::updateColors(int, int, int, int)
 {
 }
 
@@ -242,7 +238,11 @@ public:
 
     QAbstractVideoSurface::Error setCurrentFrame(const QVideoFrame &frame);
 
+    QAbstractVideoSurface::Error paint(
+            const QRectF &target, QPainter *painter, const QRectF &source);
+
     void updateColors(int brightness, int contrast, int hue, int saturation);
+    void viewportDestroyed();
 
 protected:
     void initRgbTextureInfo(GLenum internalFormat, GLuint format, GLenum type, const QSize &size);
@@ -262,6 +262,7 @@ protected:
     QGLContext *m_context;
     QAbstractVideoBuffer::HandleType m_handleType;
     QVideoSurfaceFormat::Direction m_scanLineDirection;
+    QVideoSurfaceFormat::YCbCrColorSpace m_colorSpace;
     GLenum m_textureFormat;
     GLuint m_textureInternalFormat;
     GLenum m_textureType;
@@ -277,6 +278,7 @@ QVideoSurfaceGLPainter::QVideoSurfaceGLPainter(QGLContext *context)
     : m_context(context)
     , m_handleType(QAbstractVideoBuffer::NoHandle)
     , m_scanLineDirection(QVideoSurfaceFormat::TopToBottom)
+    , m_colorSpace(QVideoSurfaceFormat::YCbCr_BT601)
     , m_textureFormat(0)
     , m_textureInternalFormat(0)
     , m_textureType(0)
@@ -292,17 +294,24 @@ QVideoSurfaceGLPainter::~QVideoSurfaceGLPainter()
 {
 }
 
+void QVideoSurfaceGLPainter::viewportDestroyed()
+{
+    m_context = 0;
+}
+
 QList<QVideoFrame::PixelFormat> QVideoSurfaceGLPainter::supportedPixelFormats(
         QAbstractVideoBuffer::HandleType handleType) const
 {
     switch (handleType) {
     case QAbstractVideoBuffer::NoHandle:
         return m_imagePixelFormats;
+    case QAbstractVideoBuffer::QPixmapHandle:
     case QAbstractVideoBuffer::GLTextureHandle:
         return m_glPixelFormats;
     default:
-        return QList<QVideoFrame::PixelFormat>();
+        ;
     }
+    return QList<QVideoFrame::PixelFormat>();
 }
 
 bool QVideoSurfaceGLPainter::isFormatSupported(
@@ -314,12 +323,14 @@ bool QVideoSurfaceGLPainter::isFormatSupported(
         switch (format.handleType()) {
         case QAbstractVideoBuffer::NoHandle:
             return m_imagePixelFormats.contains(format.pixelFormat());
+        case QAbstractVideoBuffer::QPixmapHandle:
         case QAbstractVideoBuffer::GLTextureHandle:
             return m_glPixelFormats.contains(format.pixelFormat());
         default:
-            return false;
+            ;
         }
     }
+    return false;
 }
 
 QAbstractVideoSurface::Error QVideoSurfaceGLPainter::setCurrentFrame(const QVideoFrame &frame)
@@ -349,10 +360,23 @@ QAbstractVideoSurface::Error QVideoSurfaceGLPainter::setCurrentFrame(const QVide
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         }
         m_frame.unmap();
-    } else if (m_frame.isValid()) {
+    } else if (m_handleType != QAbstractVideoBuffer::QPixmapHandle && m_frame.isValid()) {
         return QAbstractVideoSurface::IncorrectFormatError;
     }
 
+    return QAbstractVideoSurface::NoError;
+}
+
+QAbstractVideoSurface::Error QVideoSurfaceGLPainter::paint(
+        const QRectF &target, QPainter *painter, const QRectF &source)
+{
+    if (m_frame.handleType() == QAbstractVideoBuffer::QPixmapHandle) {
+        painter->drawPixmap(target, m_frame.handle().value<QPixmap>(), source);
+    } else if (m_frame.isValid()) {
+        return QAbstractVideoSurface::IncorrectFormatError;
+    } else {
+        painter->fillRect(target, Qt::black);
+    }
     return QAbstractVideoSurface::NoError;
 }
 
@@ -409,11 +433,33 @@ void QVideoSurfaceGLPainter::updateColors(int brightness, int contrast, int hue,
     m_colorMatrix(3, 3) = 1.0;
 
     if (m_yuv) {
-        m_colorMatrix = m_colorMatrix * QMatrix4x4(
-                1.0,  0.000,  1.140, -0.5700,
-                1.0, -0.394, -0.581,  0.4875,
-                1.0,  2.028,  0.000, -1.0140,
-                0.0,  0.000,  0.000,  1.0000);
+        QMatrix4x4 colorSpaceMatrix;
+
+        switch (m_colorSpace) {
+        case QVideoSurfaceFormat::YCbCr_JPEG:
+            colorSpaceMatrix = QMatrix4x4(
+                        1.0,  0.000,  1.402, -0.701,
+                        1.0, -0.344, -0.714,  0.529,
+                        1.0,  1.772,  0.000, -0.886,
+                        0.0,  0.000,  0.000,  1.0000);
+            break;
+        case QVideoSurfaceFormat::YCbCr_BT709:
+        case QVideoSurfaceFormat::YCbCr_xvYCC709:
+            colorSpaceMatrix = QMatrix4x4(
+                        1.164,  0.000,  1.793, -0.5727,
+                        1.164, -0.534, -0.213,  0.3007,
+                        1.164,  2.115,  0.000, -1.1302,
+                        0.0,    0.000,  0.000,  1.0000);
+            break;
+        default: //BT 601:
+            colorSpaceMatrix = QMatrix4x4(
+                        1.164,  0.000,  1.596, -0.8708,
+                        1.164, -0.392, -0.813,  0.5296,
+                        1.164,  2.017,  0.000, -1.081,
+                        0.0,    0.000,  0.000,  1.0000);
+        }
+
+        m_colorMatrix = m_colorMatrix * colorSpaceMatrix;
     }
 }
 
@@ -432,38 +478,44 @@ void QVideoSurfaceGLPainter::initRgbTextureInfo(
 
 void QVideoSurfaceGLPainter::initYuv420PTextureInfo(const QSize &size)
 {
+    int bytesPerLine = (size.width() + 3) & ~3;
+    int bytesPerLine2 = (size.width() / 2 + 3) & ~3;
+
     m_yuv = true;
     m_textureInternalFormat = GL_LUMINANCE;
     m_textureFormat = GL_LUMINANCE;
     m_textureType = GL_UNSIGNED_BYTE;
     m_textureCount = 3;
-    m_textureWidths[0] = size.width();
+    m_textureWidths[0] = bytesPerLine;
     m_textureHeights[0] = size.height();
     m_textureOffsets[0] = 0;
-    m_textureWidths[1] = size.width() / 2;
+    m_textureWidths[1] = bytesPerLine2;
     m_textureHeights[1] = size.height() / 2;
-    m_textureOffsets[1] = size.width() * size.height();
-    m_textureWidths[2] = size.width() / 2;
+    m_textureOffsets[1] = bytesPerLine * size.height();
+    m_textureWidths[2] = bytesPerLine2;
     m_textureHeights[2] = size.height() / 2;
-    m_textureOffsets[2] = size.width() * size.height() * 5 / 4;
+    m_textureOffsets[2] = bytesPerLine * size.height() + bytesPerLine2 * size.height()/2;
 }
 
 void QVideoSurfaceGLPainter::initYv12TextureInfo(const QSize &size)
 {
+    int bytesPerLine = (size.width() + 3) & ~3;
+    int bytesPerLine2 = (size.width() / 2 + 3) & ~3;
+
     m_yuv = true;
     m_textureInternalFormat = GL_LUMINANCE;
     m_textureFormat = GL_LUMINANCE;
     m_textureType = GL_UNSIGNED_BYTE;
     m_textureCount = 3;
-    m_textureWidths[0] = size.width();
+    m_textureWidths[0] = bytesPerLine;
     m_textureHeights[0] = size.height();
     m_textureOffsets[0] = 0;
-    m_textureWidths[1] = size.width() / 2;
+    m_textureWidths[1] = bytesPerLine2;
     m_textureHeights[1] = size.height() / 2;
-    m_textureOffsets[1] = size.width() * size.height() * 5 / 4;
-    m_textureWidths[2] = size.width() / 2;
+    m_textureOffsets[1] = bytesPerLine * size.height() + bytesPerLine2 * size.height()/2;
+    m_textureWidths[2] = bytesPerLine2;
     m_textureHeights[2] = size.height() / 2;
-    m_textureOffsets[2] = size.width() * size.height();
+    m_textureOffsets[2] = bytesPerLine * size.height();
 }
 
 #ifndef QT_OPENGL_ES
@@ -685,6 +737,9 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::start(const QVideoSurfac
         default:
             break;
         }
+    } else if (format.handleType() == QAbstractVideoBuffer::QPixmapHandle) {
+        m_handleType = QAbstractVideoBuffer::QPixmapHandle;
+        return QAbstractVideoSurface::NoError;
     }
 
     if (!program) {
@@ -723,6 +778,7 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::start(const QVideoSurfac
                 m_handleType = format.handleType();
                 m_scanLineDirection = format.scanLineDirection();
                 m_frameSize = format.frameSize();
+                m_colorSpace = format.yCbCrColorSpace();
 
                 if (m_handleType == QAbstractVideoBuffer::NoHandle)
                     glGenTextures(m_textureCount, m_textureIds);
@@ -735,11 +791,13 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::start(const QVideoSurfac
 
 void QVideoSurfaceArbFpPainter::stop()
 {
-    m_context->makeCurrent();
+    if (m_context) {
+        m_context->makeCurrent();
 
-    if (m_handleType != QAbstractVideoBuffer::GLTextureHandle)
-        glDeleteTextures(m_textureCount, m_textureIds);
-    glDeleteProgramsARB(1, &m_programId);
+        if (m_handleType != QAbstractVideoBuffer::GLTextureHandle)
+            glDeleteTextures(m_textureCount, m_textureIds);
+        glDeleteProgramsARB(1, &m_programId);
+    }
 
     m_textureCount = 0;
     m_programId = 0;
@@ -749,11 +807,17 @@ void QVideoSurfaceArbFpPainter::stop()
 QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::paint(
         const QRectF &target, QPainter *painter, const QRectF &source)
 {
-    if (m_frame.isValid()) {
+    const QAbstractVideoBuffer::HandleType h = m_frame.handleType();
+    if (h == QAbstractVideoBuffer::NoHandle || h == QAbstractVideoBuffer::GLTextureHandle) {
+        bool stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
+        bool scissorTestEnabled = glIsEnabled(GL_SCISSOR_TEST);
+
         painter->beginNativePainting();
 
-        glEnable(GL_STENCIL_TEST);
-        glEnable(GL_SCISSOR_TEST);
+        if (stencilTestEnabled)
+            glEnable(GL_STENCIL_TEST);
+        if (scissorTestEnabled)
+            glEnable(GL_SCISSOR_TEST);
 
         const float txLeft = source.left() / m_frameSize.width();
         const float txRight = source.right() / m_frameSize.width();
@@ -781,10 +845,10 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::paint(
 
         const GLfloat v_array[] =
         {
-            target.left()     , vBottom,
-            target.right() + 1, vBottom,
-            target.left()     , vTop,
-            target.right() + 1, vTop
+            GLfloat(target.left())     , GLfloat(vBottom),
+            GLfloat(target.right() + 1), GLfloat(vBottom),
+            GLfloat(target.left())     , GLfloat(vTop),
+            GLfloat(target.right() + 1), GLfloat(vTop)
         };
 
         glEnable(GL_FRAGMENT_PROGRAM_ARB);
@@ -835,12 +899,12 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::paint(
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisable(GL_FRAGMENT_PROGRAM_ARB);
 
-        glDisable(GL_STENCIL_TEST);
-        glDisable(GL_SCISSOR_TEST);
-
         painter->endNativePainting();
+
+        return QAbstractVideoSurface::NoError;
     }
-    return QAbstractVideoSurface::NoError;
+
+    return QVideoSurfaceGLPainter::paint(target, painter, source);
 }
 
 #endif
@@ -1039,6 +1103,9 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::start(const QVideoSurface
         default:
             break;
         }
+    } else if (format.handleType() == QAbstractVideoBuffer::QPixmapHandle) {
+        m_handleType = QAbstractVideoBuffer::QPixmapHandle;
+        return QAbstractVideoSurface::NoError;
     }
 
     if (!fragmentProgram) {
@@ -1059,6 +1126,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::start(const QVideoSurface
         m_handleType = format.handleType();
         m_scanLineDirection = format.scanLineDirection();
         m_frameSize = format.frameSize();
+        m_colorSpace = format.yCbCrColorSpace();
 
         if (m_handleType == QAbstractVideoBuffer::NoHandle)
             glGenTextures(m_textureCount, m_textureIds);
@@ -1069,10 +1137,13 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::start(const QVideoSurface
 
 void QVideoSurfaceGlslPainter::stop()
 {
-    m_context->makeCurrent();
+    if (m_context) {
+        m_context->makeCurrent();
 
-    if (m_handleType != QAbstractVideoBuffer::GLTextureHandle)
-        glDeleteTextures(m_textureCount, m_textureIds);
+        if (m_handleType != QAbstractVideoBuffer::GLTextureHandle)
+            glDeleteTextures(m_textureCount, m_textureIds);
+    }
+
     m_program.removeAllShaders();
 
     m_textureCount = 0;
@@ -1082,11 +1153,17 @@ void QVideoSurfaceGlslPainter::stop()
 QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
         const QRectF &target, QPainter *painter, const QRectF &source)
 {
-    if (m_frame.isValid()) {
+    const QAbstractVideoBuffer::HandleType h = m_frame.handleType();
+    if (h == QAbstractVideoBuffer::NoHandle || h == QAbstractVideoBuffer::GLTextureHandle) {
+        bool stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
+        bool scissorTestEnabled = glIsEnabled(GL_SCISSOR_TEST);
+
         painter->beginNativePainting();
 
-        glEnable(GL_STENCIL_TEST);
-        glEnable(GL_SCISSOR_TEST);
+        if (stencilTestEnabled)
+            glEnable(GL_STENCIL_TEST);
+        if (scissorTestEnabled)
+            glEnable(GL_SCISSOR_TEST);
 
         const int width = QGLContext::currentContext()->device()->width();
         const int height = QGLContext::currentContext()->device()->height();
@@ -1099,25 +1176,25 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
         const GLfloat positionMatrix[4][4] =
         {
             {
-                /*(0,0)*/ wfactor * transform.m11() - transform.m13(),
-                /*(0,1)*/ hfactor * transform.m12() + transform.m13(),
+                /*(0,0)*/ GLfloat(wfactor * transform.m11() - transform.m13()),
+                /*(0,1)*/ GLfloat(hfactor * transform.m12() + transform.m13()),
                 /*(0,2)*/ 0.0,
-                /*(0,3)*/ transform.m13()
+                /*(0,3)*/ GLfloat(transform.m13())
             }, {
-                /*(1,0)*/ wfactor * transform.m21() - transform.m23(),
-                /*(1,1)*/ hfactor * transform.m22() + transform.m23(),
+                /*(1,0)*/ GLfloat(wfactor * transform.m21() - transform.m23()),
+                /*(1,1)*/ GLfloat(hfactor * transform.m22() + transform.m23()),
                 /*(1,2)*/ 0.0,
-                /*(1,3)*/ transform.m23()
+                /*(1,3)*/ GLfloat(transform.m23())
             }, {
                 /*(2,0)*/ 0.0,
                 /*(2,1)*/ 0.0,
                 /*(2,2)*/ -1.0,
                 /*(2,3)*/ 0.0
             }, {
-                /*(3,0)*/ wfactor * transform.dx() - transform.m33(),
-                /*(3,1)*/ hfactor * transform.dy() + transform.m33(),
+                /*(3,0)*/ GLfloat(wfactor * transform.dx() - transform.m33()),
+                /*(3,1)*/ GLfloat(hfactor * transform.dy() + transform.m33()),
                 /*(3,2)*/ 0.0,
-                /*(3,3)*/ transform.m33()
+                /*(3,3)*/ GLfloat(transform.m33())
             }
         };
 
@@ -1131,10 +1208,10 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
 
         const GLfloat vertexCoordArray[] =
         {
-            target.left()     , vBottom,
-            target.right() + 1, vBottom,
-            target.left()     , vTop,
-            target.right() + 1, vTop
+            GLfloat(target.left())     , GLfloat(vBottom),
+            GLfloat(target.right() + 1), GLfloat(vBottom),
+            GLfloat(target.left())     , GLfloat(vTop),
+            GLfloat(target.right() + 1), GLfloat(vTop)
         };
 
         const GLfloat txLeft = source.left() / m_frameSize.width();
@@ -1186,12 +1263,12 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
 
         m_program.release();
 
-
-        glDisable(GL_SCISSOR_TEST);
-        glDisable(GL_STENCIL_TEST);
         painter->endNativePainting();
+
+        return QAbstractVideoSurface::NoError;
     }
-    return QAbstractVideoSurface::NoError;
+
+    return QVideoSurfaceGLPainter::paint(target, painter, source);
 }
 
 #endif
@@ -1547,9 +1624,29 @@ void QPainterVideoSurface::setShaderType(ShaderType type)
 
 #endif
 
+void QPainterVideoSurface::viewportDestroyed()
+{
+    if (m_painter) {
+        m_painter->viewportDestroyed();
+
+        setError(ResourceError);
+        stop();
+        delete m_painter;
+        m_painter = 0;
+    }
+}
+
 void QPainterVideoSurface::createPainter()
 {
     Q_ASSERT(!m_painter);
+
+#ifdef Q_WS_MAC
+    if (m_glContext)
+        m_glContext->makeCurrent();
+
+    m_painter = new QVideoSurfaceCoreGraphicsPainter(m_glContext != 0);
+    return;
+#endif
 
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
     switch (m_shaderType) {
@@ -1566,11 +1663,11 @@ void QPainterVideoSurface::createPainter()
         m_painter = new QVideoSurfaceGlslPainter(m_glContext);
         break;
     default:
-        m_painter = new QVideoSurfaceRasterPainter;
+        m_painter = new QVideoSurfaceGenericPainter;
         break;
     }
 #else
-    m_painter = new QVideoSurfaceRasterPainter;
+    m_painter = new QVideoSurfaceGenericPainter;
 #endif
 }
 

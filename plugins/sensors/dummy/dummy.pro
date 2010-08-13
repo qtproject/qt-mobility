@@ -10,7 +10,6 @@ include(../../../common.pri)
 
 
 TARGET = $$qtLibraryTarget(qtsensors_dummy)
-symbian:TARGET.EPOCALLOWDLLDATA = 1
 
 QT=core
 CONFIG+=mobility

@@ -131,7 +131,7 @@ public:
     {
         QMediaPlaylistProvider *playlist = new QLocalMediaPlaylistProvider(this);
         m_navigator = new QMediaPlaylistNavigator(playlist,this);
-        m_navigator->setPlaybackMode(QMediaPlaylist::Linear);
+        m_navigator->setPlaybackMode(QMediaPlaylist::Sequential);
 
         connect(m_navigator, SIGNAL(currentIndexChanged(int)), SIGNAL(currentIndexChanged(int)));
         connect(m_navigator, SIGNAL(activated(QMediaContent)), SIGNAL(currentMediaChanged(QMediaContent)));

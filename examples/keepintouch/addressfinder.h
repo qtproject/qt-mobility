@@ -40,7 +40,7 @@
 #ifndef ADDRESSFINDER_H
 #define ADDRESSFINDER_H
 
-#include "qtmessaging.h"
+#include "qmessageservice.h"
 
 #include <QMap>
 #include <QObject>
@@ -60,6 +60,10 @@ QT_END_NAMESPACE
 #if !defined(Q_OS_WIN) || !defined(_WIN32_WCE)
 // Don't use a 'Search' Button in CE
 #define USE_SEARCH_BUTTON
+#endif
+
+#ifdef Q_WS_MAEMO_5
+#define USE_CONTACTS_COMBOBOX
 #endif
 
 QTM_USE_NAMESPACE
@@ -100,7 +104,11 @@ private:
     QAction *searchAction;
     QPushButton *searchButton;
 
+#ifdef USE_CONTACTS_COMBOBOX
+    QComboBox *contactList;
+#else
     QListWidget *contactList;
+#endif
     QComboBox *messageCombo;
     QPushButton *showButton;
     QPushButton *forwardButton;

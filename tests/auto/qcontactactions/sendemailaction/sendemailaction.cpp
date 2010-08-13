@@ -159,6 +159,13 @@ QContactSendEmailAction::~QContactSendEmailAction()
 {
 }
 
+QContactFilter QContactSendEmailAction::contactFilter() const
+{
+    QContactDetailFilter retn;
+    retn.setDetailDefinitionName(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress);
+    return retn;
+}
+
 bool QContactSendEmailAction::isTargetSupported(const QContactActionTarget &target) const
 {
     QList<QContactDetail> dets = target.details();

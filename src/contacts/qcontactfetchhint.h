@@ -45,6 +45,7 @@
 #include <QVariant>
 #include <QList>
 #include <QSharedData>
+#include <QSize>
 
 #include "qtcontactsglobal.h"
 #include "qcontactdetaildefinition.h"
@@ -65,6 +66,9 @@ public:
     QStringList relationshipTypesHint() const;
     void setRelationshipTypesHint(const QStringList& relationshipTypes);
 
+    QSize preferredImageSize() const;
+    void setPreferredImageSize(const QSize& size);
+
     enum OptimizationHint {
         AllRequired = 0x0,
         NoRelationships = 0x1,
@@ -80,6 +84,11 @@ public:
 private:
     QSharedDataPointer<QContactFetchHintPrivate> d;
 };
+
+#ifndef QT_NO_DATASTREAM
+Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactFetchHint& hint);
+Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactFetchHint& hint);
+#endif
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QContactFetchHint::OptimizationHints);
 

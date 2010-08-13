@@ -39,15 +39,17 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/versit
+
 #include "qversitdefs_p.h"
 #include "tst_qversit.h"
+#include "qversitwriter.h"
 #include "qversitreader.h"
 #include "qversitreader_p.h"
 #include "qversitcontactexporter.h"
 #include "qversitcontactimporter.h"
-#include "qcontact.h"
-#include "qcontactmanager.h"
-#include "qcontactmanagerengine.h"
+#include "qversitcontacthandler.h"
+#include "qtcontacts.h"
 
 #include <QtTest/QtTest>
 #include <QDebug>
@@ -93,6 +95,19 @@ QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QList<QContact>)
 Q_DECLARE_METATYPE(QContact)
+
+class tst_QVersit : public QObject
+{
+    Q_OBJECT
+
+private slots: // Tests
+    void testImportFiles();
+    void testImportFiles_data();
+    void testExportImport();
+    void testExportImport_data();
+
+private:
+};
 
 void tst_QVersit::testImportFiles()
 {
@@ -245,4 +260,133 @@ void tst_QVersit::testImportFiles_data()
     }
 }
 
+void tst_QVersit::testExportImport()
+{
+    // Test that using the backup profile, a contact, when exported and imported again, is unaltered.
+    QFETCH(QContact, contact);
+
+    QVersitContactExporter exporter(QVersitContactHandlerFactory::ProfileBackup);
+    QVERIFY(exporter.exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
+    QList<QVersitDocument> documents = exporter.documents();
+    QCOMPARE(documents.size(), 1);
+
+    QByteArray documentBytes;
+    QVersitWriter writer(&documentBytes);
+    writer.startWriting(documents);
+    writer.waitForFinished();
+
+    QVersitReader reader(documentBytes);
+    reader.startReading();
+    reader.waitForFinished();
+    QList<QVersitDocument> parsedDocuments = reader.results();
+    QCOMPARE(parsedDocuments.size(), 1);
+
+    QVersitContactImporter importer(QVersitContactHandlerFactory::ProfileBackup);
+    QVERIFY(importer.importDocuments(parsedDocuments));
+    QList<QContact> contacts = importer.contacts();
+    QCOMPARE(contacts.size(), 1);
+    if (contacts.first().details() != contact.details()) {
+        qDebug() << "Versit documents:" << documentBytes;
+        qDebug() << "Actual:" << contacts.first();
+        qDebug() << "Expected:" << contact;
+        QCOMPARE(contacts.first().details(), contact.details());
+    }
+}
+
+enum Color { RED, GREEN, BLUE };
+
+void tst_QVersit::testExportImport_data()
+{
+    QTest::addColumn<QContact>("contact");
+
+    // The test contacts need at least a name (so the resulting vCard is valid and a display label (because
+    // otherwise, the imported display label will be set from the name or something)
+    {
+        QContact contact;
+        QContactName name;
+        name.setCustomLabel(QLatin1String("name"));
+        contact.saveDetail(&name);
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
+        QTest::newRow("just a name") << contact;
+    }
+
+    {
+        QContact contact;
+        QContactName name;
+        name.setFirstName(QLatin1String("first"));
+        name.setLastName(QLatin1String("last"));
+        name.setCustomLabel(QLatin1String("custom"));
+        name.setValue(QLatin1String("RandomField1"), QLatin1String("RandomValue1"));
+        name.setValue(QLatin1String("RandomField2"), QLatin1String("RandomValue1"));
+        contact.saveDetail(&name);
+        QContactDetail customDetail1("CustomDetail");
+        customDetail1.setValue(QLatin1String("CustomField11"), QLatin1String("Value11"));
+        customDetail1.setValue(QLatin1String("CustomField12"), QLatin1String("Value12"));
+        contact.saveDetail(&customDetail1);
+        QContactDetail customDetail2("CustomDetail");
+        customDetail2.setValue(QLatin1String("CustomField21"), QLatin1String("Value21"));
+        contact.saveDetail(&customDetail2);
+        contact.setType(QContactType::TypeContact);
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("custom"));
+        QTest::newRow("custom detail grouping") << contact;
+    }
+
+    // Test of some non-string fields
+    QContact contact;
+    QContactName name;
+    name.setCustomLabel(QLatin1String("name"));
+    contact.saveDetail(&name);
+    QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
+    QContactDetail customDetail("CustomDetail");
+    customDetail.setValue(QLatin1String("CustomField"), QByteArray("blob"));
+    contact.saveDetail(&customDetail);
+    QTest::newRow("binary field") << contact;
+
+    customDetail.setValue(QLatin1String("CustomField"), QDate(2010, 5, 18));
+    contact.saveDetail(&customDetail);
+    QTest::newRow("date field") << contact;
+
+    customDetail.setValue(QLatin1String("CustomField"), QTime(11, 25));
+    contact.saveDetail(&customDetail);
+    QTest::newRow("time field") << contact;
+
+    customDetail.setValue(QLatin1String("CustomField"), QDateTime(QDate(2010, 5, 18), QTime(11, 25)));
+    contact.saveDetail(&customDetail);
+    QTest::newRow("datetime field") << contact;
+
+    customDetail.setValue(QLatin1String("CustomField"), (int)42);
+    contact.saveDetail(&customDetail);
+    QTest::newRow("integer field") << contact;
+
+    customDetail.setValue(QLatin1String("CustomField"), UINT_MAX);
+    contact.saveDetail(&customDetail);
+    QTest::newRow("unsigned integer field") << contact;
+
+    customDetail.setValue(QLatin1String("CustomField"), QUrl(QLatin1String("http://www.nokia.com/")));
+    contact.saveDetail(&customDetail);
+    QTest::newRow("url field") << contact;
+
+    customDetail.setValue(QLatin1String("CustomField"), (bool)true);
+    contact.saveDetail(&customDetail);
+    QTest::newRow("bool field") << contact;
+
+    customDetail.setValue(QLatin1String("CustomField"), (bool)false);
+    contact.saveDetail(&customDetail);
+    QTest::newRow("false bool field") << contact;
+
+    customDetail.setValue(QLatin1String("CustomField"), (double)3.14159265);
+    contact.saveDetail(&customDetail);
+    QTest::newRow("double field") << contact;
+
+    customDetail.setValue(QLatin1String("CustomField"), (float)3.14159265);
+    contact.saveDetail(&customDetail);
+    QTest::newRow("float field") << contact;
+
+    customDetail.setValue(QLatin1String("CustomField"), RED);
+    contact.saveDetail(&customDetail);
+    QTest::newRow("enum field") << contact;
+}
+
 QTEST_MAIN(tst_QVersit)
+
+#include "tst_qversit.moc"

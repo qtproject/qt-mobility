@@ -41,7 +41,6 @@
 
 #include "qversitresourcehandler.h"
 #include "qversitproperty.h"
-#include "qversitdefaultresourcehandler_p.h"
 #include "qversitdefs_p.h"
 #include <QFile>
 
@@ -51,7 +50,8 @@ QTM_USE_NAMESPACE
   \class QVersitResourceHandler
   \brief The QVersitResourceHandler class is an interface for clients wishing to implement custom
   behaviour for loading and saving files to disk when exporting and importing.
-  \ingroup versit
+  \ingroup versit-extension
+  \inmodule QtVersit
 
   \sa QVersitContactImporter
   \sa QVersitContactExporter
@@ -86,13 +86,21 @@ QTM_USE_NAMESPACE
  
   \brief The QVersitDefaultResourceHandler class provides a default implementation of a Versit
   resource handler.
+  \ingroup versit-extension
  
   An example resource handler implementation:
   \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Resource handler
-  \ingroup versit
  
   \sa QVersitContactImporter, QVersitContactExporter, QVersitResourceHandler
  */
+
+
+QTM_BEGIN_NAMESPACE
+class QVersitDefaultResourceHandlerPrivate {
+public:
+    QMap<QString,QString> mFileExtensionMapping;
+};
+QTM_END_NAMESPACE
 
 /*!
   Constructs a QVersitDefaultResourceHandler.
@@ -131,7 +139,8 @@ bool QVersitDefaultResourceHandler::loadResource(const QString& location,
     if (location.isEmpty())
         return false;
     QFile file(location);
-    file.open(QIODevice::ReadOnly);
+    if (!file.open(QIODevice::ReadOnly))
+        return false;
     if (!file.isReadable())
         return false;
     *contents = file.readAll();

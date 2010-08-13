@@ -53,6 +53,12 @@ QTM_BEGIN_NAMESPACE
   the individual item errors (which may be retrieved by calling errorMap()) are updated, or if the overall
   operation error (which may be retrieved by calling error()) is updated.
 
+  Please see the class documentation of QContactAbstractRequest for more information about
+  the usage of request classes and ownership semantics.
+
+  
+  \inmodule QtContacts
+  
   \ingroup contacts-requests
  */
 
@@ -62,26 +68,10 @@ QContactRemoveRequest::QContactRemoveRequest(QObject* parent)
 {
 }
 
-/*!
-  \deprecated
-  Sets the filter which will be used to select the contacts to remove to \a filter.
-  This function is obsolete; set the list of contacts that will be removed by calling setContactIds().
- */
-void QContactRemoveRequest::setFilter(const QContactFilter& filter)
+/*! Frees any memory used by this request */
+QContactRemoveRequest::~QContactRemoveRequest()
 {
-    Q_D(QContactRemoveRequest);
-    d->m_filter = filter;
-}
-
-/*!
-  \deprecated
-  Returns the filter which will be used to select the contacts to remove.
-  This function is obsolete; retrieve the list of contacts that will be removed by calling contactIds().
- */
-QContactFilter QContactRemoveRequest::filter() const
-{
-    Q_D(const QContactRemoveRequest);
-    return d->m_filter;
+    QContactAbstractRequestPrivate::notifyEngine(this);
 }
 
 /*!

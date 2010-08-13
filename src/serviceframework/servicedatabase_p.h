@@ -66,11 +66,7 @@ QTM_BEGIN_NAMESPACE
 
 class QServiceInterfaceDescriptor;
 
-#if defined(Q_OS_SYMBIAN) && defined(DATABASEMANAGERSERVER_NO_LIBRARY)
-class Q_SERVICEFW_EXPORT ServiceDatabase : public QObject
-#else
 class Q_AUTOTEST_EXPORT ServiceDatabase : public QObject
-#endif
 {
     Q_OBJECT
 
@@ -88,6 +84,7 @@ class Q_AUTOTEST_EXPORT ServiceDatabase : public QObject
 
         bool registerService(const ServiceMetaDataResults &service, const QString &securityToken = QString());
         bool unregisterService(const QString &serviceName, const QString &securityToken = QString());
+        bool serviceInitialized(const QString &serviceName, const QString &securityToken = QString());
 
         QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter);
         QServiceInterfaceDescriptor getInterface(const QString &interfaceID);

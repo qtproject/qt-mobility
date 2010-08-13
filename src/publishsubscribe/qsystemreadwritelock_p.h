@@ -63,7 +63,7 @@ public:
         UnknownError
     };
 
-    QSystemReadWriteLock(const QString &key, AccessMode mode = Open);
+    explicit QSystemReadWriteLock(const QString &key, AccessMode mode = Open);
     ~QSystemReadWriteLock();
 
     bool lockForRead();

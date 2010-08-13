@@ -106,6 +106,7 @@ private:
     RTelServer m_etelServer;
     RMobilePhone m_etelPhone;
     RMobilePhoneBookStore m_etelStore;
+    RMobileONStore m_etelOnStore;
     SimStoreInfo m_storeInfo;
     RBuf8 m_buffer;
     QContact m_convertedContact;

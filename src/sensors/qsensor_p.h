@@ -109,8 +109,6 @@ public:
     {
     }
 
-    size_t size;
-
     // sensor data cache
     qtimestamp timestamp;
 };

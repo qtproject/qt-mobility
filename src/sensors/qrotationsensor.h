@@ -84,7 +84,7 @@ public:
     explicit QRotationSensor(QObject *parent = 0) : QSensor(QRotationSensor::type, parent) {}
     virtual ~QRotationSensor() {}
     QRotationReading *reading() const { return static_cast<QRotationReading*>(QSensor::reading()); }
-    static const char *type;
+    static char const * const type;
 };
 
 QTM_END_NAMESPACE

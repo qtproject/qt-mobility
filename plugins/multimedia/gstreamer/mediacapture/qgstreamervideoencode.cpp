@@ -171,8 +171,8 @@ GstElement *QGstreamerVideoEncode::createEncoder()
     gst_object_unref(GST_OBJECT(pad));
 
     if (encoderElement) {
-        if (m_videoSettings.encodingMode() == QtMediaServices::ConstantQualityEncoding) {
-            QtMediaServices::EncodingQuality qualityValue = m_videoSettings.quality();
+        if (m_videoSettings.encodingMode() == QtMultimediaKit::ConstantQualityEncoding) {
+            QtMultimediaKit::EncodingQuality qualityValue = m_videoSettings.quality();
 
             if (codec == QLatin1String("video/h264")) {
                 //constant quantizer mode

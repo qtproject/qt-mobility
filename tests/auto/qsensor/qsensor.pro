@@ -11,6 +11,8 @@ CONFIG += mobility
 MOBILITY = sensors
 INCLUDEPATH += ../../../src/sensors
 
+#symbian:DEFINES += WAIT_AT_END
+
 SOURCES += \
     tst_qsensor.cpp
 
@@ -34,3 +36,4 @@ SOURCES += \
     dummyaccelerometer.cpp\
     dummycommon.cpp
 
+symbian:TARGET.CAPABILITY = ALL -TCB

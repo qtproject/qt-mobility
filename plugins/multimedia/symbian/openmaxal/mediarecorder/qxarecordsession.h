@@ -130,6 +130,7 @@ private:
     XARecordSessionImpl *m_impl;
     QUrl m_outputLocation;
     QMediaRecorder::State m_state;
+    QMediaRecorder::State m_previousState;
     QStringList m_codecs;
     QAudioEncoderSettings m_audioencodersettings;
     QAudioEncoderSettings m_appliedaudioencodersettings;

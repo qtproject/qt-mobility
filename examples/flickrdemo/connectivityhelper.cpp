@@ -44,7 +44,7 @@
 #include <QWidget>
 #include <QTimer>
 
-ConnectivityHelper::ConnectivityHelper(QtMobility::QNetworkSession *session, QWidget *parent) : QObject(parent),
+ConnectivityHelper::ConnectivityHelper(QNetworkSession *session, QWidget *parent) : QObject(parent),
         m_session(session)
 {
     connect(m_session,

@@ -61,13 +61,18 @@
 
 #include <QMutex>
 #include <QMutexLocker>
+#include <QWeakPointer>
 
 QTM_BEGIN_NAMESPACE
+
+static bool validateActionFilter(const QContactFilter& filter);
 
 /*!
   \class QContactManagerEngine
   \brief The QContactManagerEngine class provides the interface for all
   implementations of the contact manager backend functionality.
+  \inmodule QtContacts
+  
   \ingroup contacts-backends
 
   Instances of this class are usually provided by a
@@ -329,6 +334,9 @@ QList<QContactRelationship> QContactManagerEngine::relationships(const QString& 
   with the key being the index into the input relationships list, and the value being the error which
   occurred for that index.
 
+  The supplied \a errorMap parameter may be null, if the client does not desire detailed error information.
+  If supplied, it will be empty upon entry to this function.
+
   The overall operation error will be saved in \a error.
  */
 bool QContactManagerEngine::saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
@@ -403,6 +411,9 @@ bool QContactManagerEngine::removeRelationship(const QContactRelationship& relat
   For any relationship which was unable to be removed, an entry into the \a errorMap will be created,
   with the key being the index into the input relationships list, and the value being the error which
   occurred for that index.
+
+  The supplied \a errorMap parameter may be null, if the client does not desire detailed error information.
+  If supplied, it will be empty upon entry to this function.
 
   The overall operation error will be saved in \a error.
  */
@@ -495,22 +506,6 @@ void QContactManagerEngine::setContactDisplayLabel(QContact* contact, const QStr
     contact->d->m_details.replace(0, dl);
 }
 
-/*!  
-  \deprecated
-
-  Returns a copy of \a contact with the contact display label set to the supplied \a displayLabel.
-
-  This function does not touch the database in any way, and is purely a convenience to allow engine implementations to set the display label.
-
-  This function has been deprecated - use the function with the same name that accepts different parameters.
-*/
-QContact QContactManagerEngine::setContactDisplayLabel(const QString& displayLabel, const QContact& contact)
-{
-    QContact newContact = contact;
-    setContactDisplayLabel(&newContact, displayLabel);
-    return newContact;
-}
-
 /*!
   Returns true if the given \a feature is supported by this engine for contacts of the given \a contactType
  */
@@ -554,12 +549,9 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
 
             QList<QContactFilter> filters;
             for (int j = 0; j < descriptors.count(); j++) {
-                QContactAction* action = QContactAction::action(descriptors.at(j));
-
                 // Action filters are not allowed to return action filters, at all
                 // it's too annoying to check for recursion
                 QContactFilter d = descriptors.at(j).contactFilter();
-                delete action; // clean up.
                 if (!validateActionFilter(d))
                     continue;
 
@@ -954,6 +946,21 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     subTypes << QString(QLatin1String(QContactUrl::SubTypeHomePage));
     f.setAllowableValues(subTypes);
     fields.insert(QContactUrl::FieldSubType, f);
+    f.setDataType(QVariant::StringList);
+    f.setAllowableValues(contexts);
+    fields.insert(QContactDetail::FieldContext, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    retn.insert(d.name(), d);
+
+    // favorite
+    d.setName(QContactFavorite::DefinitionName);
+    fields.clear();
+    f.setAllowableValues(QVariantList());
+    f.setDataType(QVariant::Bool);
+    fields.insert(QContactFavorite::FieldFavorite, f);
+    f.setDataType(QVariant::Int);
+    fields.insert(QContactFavorite::FieldIndex, f);
     f.setDataType(QVariant::StringList);
     f.setAllowableValues(contexts);
     fields.insert(QContactDetail::FieldContext, f);
@@ -1469,6 +1476,10 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
   The manager might populate \a errorMap (the map of indices of the \a contacts list to
   the error which occurred when saving the contact at that index) for
   every index for which the contact could not be saved, if it is able.
+
+  The supplied \a errorMap parameter may be null, if the client does not desire detailed error information.
+  If supplied, it will be empty upon entry to this function.
+
   The \l QContactManager::error() function will only return \c QContactManager::NoError
   if all contacts were saved successfully.
 
@@ -1500,6 +1511,10 @@ bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QC
   The manager might populate \a errorMap (the map of indices of the \a contactIds list to
   the error which occurred when saving the contact at that index) for every
   index for which the contact could not be removed, if it is able.
+
+  The supplied \a errorMap parameter may be null, if the client does not desire detailed error information.
+  If supplied, it will be empty upon entry to this function.
+
   The \l QContactManager::error() function will
   only return \c QContactManager::NoError if all contacts were removed
   successfully.
@@ -2110,7 +2125,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
   Returns true if \a filter seems ok, or false otherwise.
  */
 
-bool QContactManagerEngine::validateActionFilter(const QContactFilter& filter)
+bool validateActionFilter(const QContactFilter& filter)
 {
     QList<QContactFilter> toVerify;
     toVerify << filter;
@@ -2134,7 +2149,6 @@ bool QContactManagerEngine::validateActionFilter(const QContactFilter& filter)
 void QContactManagerEngine::setContactRelationships(QContact* contact, const QList<QContactRelationship>& relationships)
 {
     contact->d->m_relationshipsCache = relationships;
-    contact->d->m_reorderedRelationshipsCache = relationships;
 }
 
 
@@ -2298,169 +2312,6 @@ void QContactManagerEngine::updateRequestState(QContactAbstractRequest* req, QCo
     }
 }
 
-/*!
-  \deprecated
-
-  Updates the given QContactLocalIdFetchRequest \a req with the latest results \a result, and operation error \a error.
-  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
-
-  This function has been deprecated - use the function with the same name that accepts the new state of the request.
- */
-void QContactManagerEngine::updateContactLocalIdFetchRequest(QContactLocalIdFetchRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error)
-{
-    QContactLocalIdFetchRequestPrivate* rd = static_cast<QContactLocalIdFetchRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_ids = result;
-    emit req->resultsAvailable();
-}
-
-/*!
-  \deprecated
-
-  Updates the given QContactFetchRequest \a req with the latest results \a result, and operation error \a error.
-  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
-
-  This function has been deprecated - use the function with the same name that accepts the new state of the request.
- */
-void QContactManagerEngine::updateContactFetchRequest(QContactFetchRequest* req, const QList<QContact>& result, QContactManager::Error error)
-{
-    QContactFetchRequestPrivate* rd = static_cast<QContactFetchRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_contacts = result;
-    emit req->resultsAvailable();
-}
-
-/*!
-  \deprecated
-
-  Updates the given QContactRemoveRequest \a req with the operation error \a error, and map of input index to individual error \a errorMap.
-  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
-
-  This function has been deprecated - use the function with the same name that accepts the new state of the request.
- */
-void QContactManagerEngine::updateContactRemoveRequest(QContactRemoveRequest* req, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap)
-{
-    QContactRemoveRequestPrivate* rd = static_cast<QContactRemoveRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_errors = errorMap;
-    emit req->resultsAvailable();
-}
-
-/*!
-  \deprecated
-
-  Updates the given QContactSaveRequest \a req with the latest results \a result, operation error \a error, and map of input index to individual error \a errorMap.
-  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
-
-  This function has been deprecated - use the function with the same name that accepts the new state of the request.
- */
-void QContactManagerEngine::updateContactSaveRequest(QContactSaveRequest* req, const QList<QContact>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap)
-{
-    QContactSaveRequestPrivate* rd = static_cast<QContactSaveRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_errors = errorMap;
-    rd->m_contacts = result;
-    emit req->resultsAvailable();
-}
-
-/*!
-  \deprecated
-
-  Updates the given QContactDetailDefinitionSaveRequest \a req with the latest results \a result, operation error \a error, and map of input index to individual error \a errorMap.
-  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
-
-  This function has been deprecated - use the function with the same name that accepts the new state of the request.
- */
-void QContactManagerEngine::updateDefinitionSaveRequest(QContactDetailDefinitionSaveRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap)
-{
-    QContactDetailDefinitionSaveRequestPrivate* rd = static_cast<QContactDetailDefinitionSaveRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_errors = errorMap;
-    rd->m_definitions = result;
-    emit req->resultsAvailable();
-}
-
-/*!
-  \deprecated
-
-  Updates the given QContactDetailDefinitionRemoveRequest \a req with the operation error \a error, and map of input index to individual error \a errorMap.
-  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
-
-  This function has been deprecated - use the function with the same name that accepts the new state of the request.
- */
-void QContactManagerEngine::updateDefinitionRemoveRequest(QContactDetailDefinitionRemoveRequest* req, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap)
-{
-    QContactDetailDefinitionRemoveRequestPrivate* rd = static_cast<QContactDetailDefinitionRemoveRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_errors = errorMap;
-    emit req->resultsAvailable();
-}
-
-/*!
-  \deprecated
-
-  Updates the given QContactDetailDefinitionFetchRequest \a req with the latest results \a result, operation error \a error, and map of input index to individual error \a errorMap.
-  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
-
-  This function has been deprecated - use the function with the same name that accepts the new state of the request.
- */
-void QContactManagerEngine::updateDefinitionFetchRequest(QContactDetailDefinitionFetchRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap)
-{
-    QContactDetailDefinitionFetchRequestPrivate* rd = static_cast<QContactDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_errors = errorMap;
-    rd->m_definitions = result;
-    emit req->resultsAvailable();
-}
-
-/*!
-  \deprecated
-
-  Updates the given QContactRelationshipSaveRequest \a req with the latest results \a result, operation error \a error, and map of input index to individual error \a errorMap.
-  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
-
-  This function has been deprecated - use the function with the same name that accepts the new state of the request.
- */
-void QContactManagerEngine::updateRelationshipSaveRequest(QContactRelationshipSaveRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap)
-{
-    QContactRelationshipSaveRequestPrivate* rd = static_cast<QContactRelationshipSaveRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_errors = errorMap;
-    rd->m_relationships = result;
-    emit req->resultsAvailable();
-}
-
-/*!
-  \deprecated
-
-  Updates the given QContactRelationshipRemoveRequest \a req with the operation error \a error, and map of input index to individual error \a errorMap.
-  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
-
-  This function has been deprecated - use the function with the same name that accepts the new state of the request.
- */
-void QContactManagerEngine::updateRelationshipRemoveRequest(QContactRelationshipRemoveRequest* req, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap)
-{
-    QContactRelationshipRemoveRequestPrivate* rd = static_cast<QContactRelationshipRemoveRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_errors = errorMap;
-    emit req->resultsAvailable();
-}
-
-/*!
-  \deprecated
-
-  Updates the given QContactRelationshipFetchRequest \a req with the latest results \a result, and operation error \a error.
-  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
-
-  This function has been deprecated - use the function with the same name that accepts the new state of the request.
- */
-void QContactManagerEngine::updateRelationshipFetchRequest(QContactRelationshipFetchRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error)
-{
-    QContactRelationshipFetchRequestPrivate* rd = static_cast<QContactRelationshipFetchRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_relationships = result;
-    emit req->resultsAvailable();
-}
 
 /*!
   Updates the given QContactLocalIdFetchRequest \a req with the latest results \a result, and operation error \a error.
@@ -2473,17 +2324,17 @@ void QContactManagerEngine::updateRelationshipFetchRequest(QContactRelationshipF
 void QContactManagerEngine::updateContactLocalIdFetchRequest(QContactLocalIdFetchRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactLocalIdFetchRequest> ireq(req); // Take this in case the first emit deletes us
-        QContactLocalIdFetchRequestPrivate* rd = static_cast<QContactLocalIdFetchRequestPrivate*>(ireq->d_ptr);
+        QWeakPointer<QContactLocalIdFetchRequest> ireq(req); // Take this in case the first emit deletes us
+        QContactLocalIdFetchRequestPrivate* rd = static_cast<QContactLocalIdFetchRequestPrivate*>(ireq.data()->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
         rd->m_ids = result;
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 
@@ -2498,17 +2349,17 @@ void QContactManagerEngine::updateContactLocalIdFetchRequest(QContactLocalIdFetc
 void QContactManagerEngine::updateContactFetchRequest(QContactFetchRequest* req, const QList<QContact>& result, QContactManager::Error error, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactFetchRequest> ireq(req); // Take this in case the first emit deletes us
-        QContactFetchRequestPrivate* rd = static_cast<QContactFetchRequestPrivate*>(ireq->d_ptr);
+        QWeakPointer<QContactFetchRequest> ireq(req); // Take this in case the first emit deletes us
+        QContactFetchRequestPrivate* rd = static_cast<QContactFetchRequestPrivate*>(ireq.data()->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
         rd->m_contacts = result;
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 
@@ -2523,17 +2374,17 @@ void QContactManagerEngine::updateContactFetchRequest(QContactFetchRequest* req,
 void QContactManagerEngine::updateContactRemoveRequest(QContactRemoveRequest* req, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactRemoveRequest> ireq(req); // Take this in case the first emit deletes us
-        QContactRemoveRequestPrivate* rd = static_cast<QContactRemoveRequestPrivate*>(ireq->d_ptr);
+        QWeakPointer<QContactRemoveRequest> ireq(req); // Take this in case the first emit deletes us
+        QContactRemoveRequestPrivate* rd = static_cast<QContactRemoveRequestPrivate*>(ireq.data()->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
         rd->m_errors = errorMap;
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 
@@ -2548,8 +2399,8 @@ void QContactManagerEngine::updateContactRemoveRequest(QContactRemoveRequest* re
 void QContactManagerEngine::updateContactSaveRequest(QContactSaveRequest* req, const QList<QContact>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactSaveRequest> ireq(req); // Take this in case the first emit deletes us
-        QContactSaveRequestPrivate* rd = static_cast<QContactSaveRequestPrivate*>(ireq->d_ptr);
+        QWeakPointer<QContactSaveRequest> ireq(req); // Take this in case the first emit deletes us
+        QContactSaveRequestPrivate* rd = static_cast<QContactSaveRequestPrivate*>(ireq.data()->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
         rd->m_contacts = result;
@@ -2557,9 +2408,9 @@ void QContactManagerEngine::updateContactSaveRequest(QContactSaveRequest* req, c
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 
@@ -2574,7 +2425,7 @@ void QContactManagerEngine::updateContactSaveRequest(QContactSaveRequest* req, c
 void QContactManagerEngine::updateDefinitionSaveRequest(QContactDetailDefinitionSaveRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactDetailDefinitionSaveRequest> ireq(req); // Take this in case the first emit deletes us
+        QWeakPointer<QContactDetailDefinitionSaveRequest> ireq(req); // Take this in case the first emit deletes us
         QContactDetailDefinitionSaveRequestPrivate* rd = static_cast<QContactDetailDefinitionSaveRequestPrivate*>(req->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
@@ -2583,9 +2434,9 @@ void QContactManagerEngine::updateDefinitionSaveRequest(QContactDetailDefinition
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 
@@ -2600,7 +2451,7 @@ void QContactManagerEngine::updateDefinitionSaveRequest(QContactDetailDefinition
 void QContactManagerEngine::updateDefinitionRemoveRequest(QContactDetailDefinitionRemoveRequest* req, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactDetailDefinitionRemoveRequest> ireq(req); // Take this in case the first emit deletes us
+        QWeakPointer<QContactDetailDefinitionRemoveRequest> ireq(req); // Take this in case the first emit deletes us
         QContactDetailDefinitionRemoveRequestPrivate* rd = static_cast<QContactDetailDefinitionRemoveRequestPrivate*>(req->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
@@ -2608,9 +2459,9 @@ void QContactManagerEngine::updateDefinitionRemoveRequest(QContactDetailDefiniti
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 
@@ -2625,7 +2476,7 @@ void QContactManagerEngine::updateDefinitionRemoveRequest(QContactDetailDefiniti
 void QContactManagerEngine::updateDefinitionFetchRequest(QContactDetailDefinitionFetchRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactDetailDefinitionFetchRequest> ireq(req); // Take this in case the first emit deletes us
+        QWeakPointer<QContactDetailDefinitionFetchRequest> ireq(req); // Take this in case the first emit deletes us
         QContactDetailDefinitionFetchRequestPrivate* rd = static_cast<QContactDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
@@ -2634,9 +2485,9 @@ void QContactManagerEngine::updateDefinitionFetchRequest(QContactDetailDefinitio
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 
@@ -2651,7 +2502,7 @@ void QContactManagerEngine::updateDefinitionFetchRequest(QContactDetailDefinitio
 void QContactManagerEngine::updateRelationshipSaveRequest(QContactRelationshipSaveRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactRelationshipSaveRequest> ireq(req); // Take this in case the first emit deletes us
+        QWeakPointer<QContactRelationshipSaveRequest> ireq(req); // Take this in case the first emit deletes us
         QContactRelationshipSaveRequestPrivate* rd = static_cast<QContactRelationshipSaveRequestPrivate*>(req->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
@@ -2660,9 +2511,9 @@ void QContactManagerEngine::updateRelationshipSaveRequest(QContactRelationshipSa
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 
@@ -2677,7 +2528,7 @@ void QContactManagerEngine::updateRelationshipSaveRequest(QContactRelationshipSa
 void QContactManagerEngine::updateRelationshipRemoveRequest(QContactRelationshipRemoveRequest* req, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactRelationshipRemoveRequest> ireq(req); // Take this in case the first emit deletes us
+        QWeakPointer<QContactRelationshipRemoveRequest> ireq(req); // Take this in case the first emit deletes us
         QContactRelationshipRemoveRequestPrivate* rd = static_cast<QContactRelationshipRemoveRequestPrivate*>(req->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
@@ -2685,9 +2536,9 @@ void QContactManagerEngine::updateRelationshipRemoveRequest(QContactRelationship
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 
@@ -2702,7 +2553,7 @@ void QContactManagerEngine::updateRelationshipRemoveRequest(QContactRelationship
 void QContactManagerEngine::updateRelationshipFetchRequest(QContactRelationshipFetchRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactRelationshipFetchRequest> ireq(req); // Take this in case the first emit deletes us
+        QWeakPointer<QContactRelationshipFetchRequest> ireq(req); // Take this in case the first emit deletes us
         QContactRelationshipFetchRequestPrivate* rd = static_cast<QContactRelationshipFetchRequestPrivate*>(req->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
@@ -2710,9 +2561,9 @@ void QContactManagerEngine::updateRelationshipFetchRequest(QContactRelationshipF
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 

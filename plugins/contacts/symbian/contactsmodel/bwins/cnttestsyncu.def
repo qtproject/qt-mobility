@@ -1,0 +1,3 @@
+EXPORTS
+	?NewSynchroniser@@YAPAVMContactSynchroniser@@XZ @ 1 NONAME ; class MContactSynchroniser * __cdecl NewSynchroniser(void)
+

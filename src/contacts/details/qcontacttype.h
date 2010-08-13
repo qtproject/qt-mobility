@@ -46,7 +46,6 @@
 
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
-#include "qcontact.h"
 
 QTM_BEGIN_NAMESPACE
 

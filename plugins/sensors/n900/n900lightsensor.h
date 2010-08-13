@@ -50,8 +50,8 @@ QTM_USE_NAMESPACE
 class n900lightsensor : public n900filebasedsensor
 {
 public:
-    static const char *id;
-    static const char *filename;
+    static char const * const id;
+    static char const * const filename;
 
     n900lightsensor(QSensor *sensor);
 

@@ -54,6 +54,7 @@ QTM_BEGIN_NAMESPACE
   \brief The QContactActionDescriptor class provides information that
   uniquely identifies a specific implementation of an action
   \ingroup contacts-actions
+  \inmodule QtContacts
 */
 
 /*!

@@ -46,45 +46,78 @@
 #include <QtCore/qdir.h>
 #include <QtCore/qdebug.h>
 
+#include <apgcli.h>
+
+static const TInt KMimeTypePrefixLength = 6; // "audio/" or "video/"
+_LIT(KMimeTypePrefixAudio, "audio/");
+_LIT(KMimeTypePrefixVideo, "video/");
+
 S60MediaRecognizer::S60MediaRecognizer(QObject *parent) : QObject(parent)
 {
-	TRAP_IGNORE(m_recognizer = MobilityMediaRecognizer::NewL());
 }
 
 S60MediaRecognizer::~S60MediaRecognizer()
 {
-	delete m_recognizer;
-	m_recognizer = NULL;
+    m_file.Close();
+    m_fileServer.Close();
+    m_recognizer.Close();
 }
 
-S60MediaRecognizer::MediaType S60MediaRecognizer::IdentifyMediaType(const QUrl &url)
-{    
-	MobilityMediaType type = MobilityMediaRecognizer::EUnidentified;
-	QString filePath = QDir::toNativeSeparators(url.toLocalFile());
-	if (filePath.isNull()) {
-		filePath = url.toString();		
-	}
-	TPtrC16 urlPtr(reinterpret_cast<const TUint16*>(filePath.utf16()));
+S60MediaRecognizer::MediaType S60MediaRecognizer::mediaType(const QUrl &url)
+{
+    bool isStream = (url.scheme() == "file")?false:true;
 
-	TRAP_IGNORE(type = m_recognizer->IdentifyMediaTypeL(urlPtr, ETrue);)
-	m_recognizer->FreeFilehandle();
-	
-	switch (type) {
-	   case MobilityMediaRecognizer::ELocalAudioFile:
-		   return Audio;
-	   case MobilityMediaRecognizer::ELocalVideoFile:
-		   return Video;
-	   case MobilityMediaRecognizer::EUrl:
-		   return Url;
-	   case MobilityMediaRecognizer::ELocalAudioPlaylist:
-	   // TODO: Must be considered when streams will be implemented
-	   case MobilityMediaRecognizer::ELocalRamFile:
-	   case MobilityMediaRecognizer::ELocalSdpFile:
-	   // case CMPMediaRecognizer::EProgressiveDownload:
-	   case MobilityMediaRecognizer::EUnidentified:
-	   default:
-		   break;
-	}
+    if (isStream)
+        return Url;
+    else
+        return identifyMediaType(url.toLocalFile());
+}
 
-	return NotSupported; 
+S60MediaRecognizer::MediaType S60MediaRecognizer::identifyMediaType(const QString& fileName)
+{
+    S60MediaRecognizer::MediaType result = Video; // default to videoplayer
+    bool recognizerOpened = false;
+
+    TInt err = m_recognizer.Connect();
+    if (err == KErrNone) {
+        recognizerOpened = true;
+    }
+
+    err = m_fileServer.Connect();
+    if (err == KErrNone) {
+        recognizerOpened = true;
+    }
+
+    // This is needed for sharing file handles for the recognizer
+    err = m_fileServer.ShareProtected();
+    if (err == KErrNone) {
+        recognizerOpened = true;
+    }
+
+    if (recognizerOpened) {
+        m_file.Close();
+        err = m_file.Open(m_fileServer, QString2TPtrC(QDir::toNativeSeparators(fileName)), EFileRead |
+            EFileShareReadersOnly);
+
+        if (err == KErrNone) {
+            TDataRecognitionResult recognizerResult;
+            err = m_recognizer.RecognizeData(m_file, recognizerResult);
+            if (err == KErrNone) {
+                const TPtrC mimeType = recognizerResult.iDataType.Des();
+
+                if (mimeType.Left(KMimeTypePrefixLength).Compare(KMimeTypePrefixAudio) == 0) {
+                    result = Audio;
+                } else if (mimeType.Left(KMimeTypePrefixLength).Compare(KMimeTypePrefixVideo) == 0) {
+                    result = Video;
+                }
+            }
+        }
+    }
+    return result;
+}
+
+TPtrC S60MediaRecognizer::QString2TPtrC( const QString& string )
+{
+    // Returned TPtrC is valid as long as the given parameter is valid and unmodified
+    return TPtrC16(static_cast<const TUint16*>(string.utf16()), string.length());
 }

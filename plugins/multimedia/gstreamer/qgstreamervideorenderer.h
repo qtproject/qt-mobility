@@ -63,8 +63,11 @@ public:
     GstElement *videoSink();
     void precessNewStream() {}
 
+signals:
+    void sinkChanged();
+
 private:    
-    GstElement *m_videoSink;
+    QVideoSurfaceGstSink *m_videoSink;
     QAbstractVideoSurface *m_surface;
 };
 

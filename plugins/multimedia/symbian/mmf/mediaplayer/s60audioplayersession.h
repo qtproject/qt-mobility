@@ -42,6 +42,7 @@
 #ifndef S60AUDIOPLAYERSESSION_H
 #define S60AUDIOPLAYERSESSION_H
 
+#include <QtCore/qobject.h>
 #include "s60mediaplayersession.h"
 
 #ifdef S60_DRM_SUPPORTED
@@ -49,21 +50,24 @@
 typedef CDrmPlayerUtility CAudioPlayer;
 typedef MDrmAudioPlayerCallback MAudioPlayerObserver;
 #else
-#include <mdaaudiosampleplayer.h>  
+#include <mdaaudiosampleplayer.h>
 typedef CMdaAudioPlayerUtility CAudioPlayer;
 typedef MMdaAudioPlayerCallback MAudioPlayerObserver;
 #endif
 
+#ifdef HAS_AUDIOROUTING
 #include <AudioOutput.h>
 #include <MAudioOutputObserver.h>
+#endif //HAS_AUDIOROUTING
 
 class S60AudioPlayerSession : public S60MediaPlayerSession
                             , public MAudioPlayerObserver
-                            , public MAudioLoadingObserver 
+                            , public MAudioLoadingObserver
+#ifdef HAS_AUDIOROUTING
                             , public MAudioOutputObserver
+#endif
 {
     Q_OBJECT
-
 public:
     S60AudioPlayerSession(QObject *parent);
     ~S60AudioPlayerSession();
@@ -76,9 +80,11 @@ public:
     void MaloLoadingStarted();
     void MaloLoadingComplete();
     
+#ifdef HAS_AUDIOROUTING    
     // From MAudioOutputObserver
     void DefaultAudioOutputChanged( CAudioOutput& aAudioOutput,
         CAudioOutput::TAudioOutputPreference aNewDefault );
+#endif //HAS_AUDIOROUTING    
 
 public:
     // From S60MediaPlayerAudioEndpointSelector
@@ -86,8 +92,6 @@ public:
     QString defaultEndpoint() const;
 public Q_SLOTS:
     void setActiveEndpoint(const QString& name);
-Q_SIGNALS:
-    void activeEndpointChanged(const QString & name);
 
 protected:
     //From S60MediaPlayerSession
@@ -114,11 +118,16 @@ private:
     void MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration);
     void MapcPlayComplete(TInt aError);
 #endif
+    
+#ifdef HAS_AUDIOROUTING    
     QString qStringFromTAudioOutputPreference(CAudioOutput::TAudioOutputPreference output) const;
+#endif //HAS_AUDIOROUTING
     
 private:
     CAudioPlayer *m_player;
+#ifdef HAS_AUDIOROUTING
     CAudioOutput *m_audioOutput;
+#endif //HAS_AUDIOROUTING
     QString m_audioEndpoint;
 };
 

@@ -64,13 +64,14 @@
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
     #include <comms-infras/cs_mobility_apiext.h>
 #endif
-#ifdef OCC_FUNCTIONALITY_AVAILABLE
+#if defined(OCC_FUNCTIONALITY_AVAILABLE) && defined(SNAP_FUNCTIONALITY_AVAILABLE)
     #include <extendedconnpref.h>
 #endif
 
 QTM_BEGIN_NAMESPACE
 
 class ConnectionProgressNotifier;
+typedef void (*TOpenCUnSetdefaultifFunction)();
 
 class QNetworkSessionPrivate : public QObject, public CActive
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
@@ -131,6 +132,7 @@ protected: // From CActive
 private Q_SLOTS:
     void configurationStateChanged(TUint32 accessPointId, TUint32 connMonId, QNetworkSession::State newState);
     void configurationRemoved(const QNetworkConfiguration& config);
+    void configurationAdded(const QNetworkConfiguration& config);
     
 private:
     TUint iapClientCount(TUint aIAPId) const;
@@ -162,6 +164,9 @@ private: // data
     QNetworkSession* q;
     QDateTime startTime;
 
+    RLibrary iOpenCLibrary;
+    TOpenCUnSetdefaultifFunction iDynamicUnSetdefaultif;
+
     mutable RSocketServ iSocketServ;
     mutable RConnection iConnection;
     mutable RConnectionMonitor iConnectionMonitor;
@@ -171,7 +176,6 @@ private: // data
     bool iFirstSync;
     bool iStoppedByUser;
     bool iClosedByUser;
-    TUint32 iDeprecatedConnectionId;
     
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE    
     CActiveCommsMobilityApiExt* iMobility;
@@ -186,6 +190,8 @@ private: // data
     
     TUint32 iOldRoamingIap;
     TUint32 iNewRoamingIap;
+
+    bool isOpening;
 
     friend class QNetworkSession;
     friend class ConnectionProgressNotifier;

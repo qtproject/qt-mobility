@@ -55,14 +55,16 @@ class maemo6magnetometer : public maemo6sensorbase
     Q_OBJECT
 
 public:
-    static const char *id;
-
+    static char const * const id;
     maemo6magnetometer(QSensor *sensor);
+
+protected:
+    virtual void start();
 
 private:
     QMagnetometerReading m_reading;
     static bool m_initDone;
-    QSensor *m_sensor;
+    bool m_isGeoMagnetometer;
 
 private slots:
     void slotDataAvailable(const MagneticField& data);

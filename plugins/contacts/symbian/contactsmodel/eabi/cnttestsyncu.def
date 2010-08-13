@@ -1,0 +1,5 @@
+EXPORTS
+	_Z15NewSynchroniserv @ 1 NONAME
+	_ZTI24CContactTestSynchroniser @ 2 NONAME ; #<TI>#
+	_ZTV24CContactTestSynchroniser @ 3 NONAME ; #<VT>#
+

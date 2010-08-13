@@ -42,9 +42,11 @@
 #include "qgstreamervideooverlay.h"
 #include "qvideosurfacegstsink.h"
 
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qvideosurfaceformat.h>
 
 #include "qx11videosurface.h"
+
+#ifndef QT_NO_XVIDEO
 
 QGstreamerVideoOverlay::QGstreamerVideoOverlay(QObject *parent)
     : QVideoWindowControl(parent)
@@ -195,7 +197,7 @@ void QGstreamerVideoOverlay::setScaledDisplayRect()
     switch (m_aspectRatioMode) {
     case Qt::KeepAspectRatio:
         {
-            QSize size = formatViewport.size();
+            QSize size = m_surface->surfaceFormat().sizeHint();
             size.scale(m_displayRect.size(), Qt::KeepAspectRatio);
 
             QRect rect(QPoint(0, 0), size);
@@ -212,14 +214,15 @@ void QGstreamerVideoOverlay::setScaledDisplayRect()
     case Qt::KeepAspectRatioByExpanding:
         {
             QSize size = m_displayRect.size();
-            size.scale(formatViewport.size(), Qt::KeepAspectRatio);
+            size.scale(m_surface->surfaceFormat().sizeHint(), Qt::KeepAspectRatio);
 
             QRect viewport(QPoint(0, 0), size);
             viewport.moveCenter(formatViewport.center());
-
             m_surface->setDisplayRect(m_displayRect);
             m_surface->setViewport(viewport);
         }
         break;
     };
 }
+
+#endif //QT_NO_XVIDEO

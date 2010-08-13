@@ -39,37 +39,20 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/versit
+
 #include "tst_qversitcontactexporter.h"
 #include "qversitcontactexporter.h"
 #include "qversitcontactexporter_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
-#include "qversitdefs_p.h"
 #include <QString>
 #include <QStringList>
 #include <QList>
 #include <QPixmap>
 #include <QImageWriter>
 #include <QtTest/QtTest>
-#include <qcontact.h>
-#include <qcontactaddress.h>
-#include <qcontactemailaddress.h>
-#include <qcontactname.h>
-#include <qcontactphonenumber.h>
-#include <qcontacturl.h>
-#include <qcontactguid.h>
-#include <qcontacttimestamp.h>
-#include <qcontactbirthday.h>
-#include <qcontactnote.h>
-#include <qcontactgeolocation.h>
-#include <qcontactorganization.h>
-#include <qcontactavatar.h>
-#include <qcontactgender.h>
-#include <qcontactnickname.h>
-#include <qcontactanniversary.h>
-#include <qcontactonlineaccount.h>
-#include <qcontactfamily.h>
-#include <qcontactdisplaylabel.h>
+#include <qtcontacts.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -129,34 +112,36 @@ public:
     {
     }
 
-    bool preProcessDetail(const QContact& contact,
-                          const QContactDetail& detail,
-                          QVersitDocument* document)
-    {
-        Q_UNUSED(contact) Q_UNUSED(detail) Q_UNUSED(document)
-        return false;
-    }
-
-    bool postProcessDetail(const QContact& contact,
-                           const QContactDetail& detail,
-                           const QSet<QString>& processedFields,
-                           QVersitDocument* document,
-                           QList<QVersitProperty>* toBeAdded)
+    void detailProcessed(const QContact& contact,
+                         const QContactDetail& detail,
+                         const QVersitDocument& document,
+                         QSet<QString>* processedFields,
+                         QList<QVersitProperty>* toBeRemoved,
+                         QList<QVersitProperty>* toBeAdded)
     {
         mContact = contact;
         mDetail = detail;
-        mProcessedFields = processedFields;
-        mDocument = *document;
+        mDocument = document;
+        mProcessedFields = *processedFields;
+        mToBeRemoved = *toBeRemoved;
         mToBeAdded = *toBeAdded;
-        return false;
+    }
+
+    void contactProcessed(const QContact& contact, QVersitDocument* document)
+    {
+        mEndContact = contact;
+        mEndDocument = *document;
     }
 
     QContact mContact;
     QContactDetail mDetail;
     QSet<QString> mProcessedFields;
     QVersitDocument mDocument;
+    QList<QVersitProperty> mToBeRemoved;
     QList<QVersitProperty> mToBeAdded;
 
+    QContact mEndContact;
+    QVersitDocument mEndDocument;
 };
 
 class MyQVersitResourceHandler : public QVersitResourceHandler

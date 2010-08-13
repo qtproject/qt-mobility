@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
 
 class QVideoWidgetControlPrivate;
 
-class Q_MEDIA_EXPORT QVideoWidgetControl : public QMediaControl
+class Q_MULTIMEDIA_EXPORT QVideoWidgetControl : public QMediaControl
 {
     Q_OBJECT
 

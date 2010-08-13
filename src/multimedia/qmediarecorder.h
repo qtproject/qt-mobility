@@ -42,9 +42,10 @@
 #ifndef QMEDIARECORDER_H
 #define QMEDIARECORDER_H
 
-#include "qmediaobject.h"
-#include "qmediaserviceprovider.h"
-#include "qmediaencodersettings.h"
+#include <qmediaobject.h>
+#include <qmediaserviceprovider.h>
+#include <qmediaencodersettings.h>
+#include <qmediabindableinterface.h>
 
 #include <QtCore/qpair.h>
 
@@ -61,13 +62,17 @@ class QAudioEncoderSettings;
 class QVideoEncoderSettings;
 
 class QMediaRecorderPrivate;
-class Q_MEDIA_EXPORT QMediaRecorder : public QMediaObject
+class Q_MULTIMEDIA_EXPORT QMediaRecorder : public QObject, public QMediaBindableInterface
 {
     Q_OBJECT
+    Q_INTERFACES(QMediaBindableInterface)
     Q_ENUMS(State)
-    Q_ENUMS(Error)    
+    Q_ENUMS(Error)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(QUrl outputLocation READ outputLocation WRITE setOutputLocation)
+    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
+    Q_PROPERTY(bool metaDataAvailable READ isMetaDataAvailable NOTIFY metaDataAvailableChanged)
+    Q_PROPERTY(bool metaDataWritable READ isMetaDataWritable NOTIFY metaDataWritableChanged)
 public:
 
     enum State
@@ -87,8 +92,10 @@ public:
     QMediaRecorder(QMediaObject *mediaObject, QObject *parent = 0);
     ~QMediaRecorder();
 
+    QMediaObject *mediaObject() const;
+
     bool isAvailable() const;
-    QtMediaServices::AvailabilityError availabilityError() const;
+    QtMultimediaKit::AvailabilityError availabilityError() const;
 
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl &location);
@@ -99,6 +106,8 @@ public:
     QString errorString() const;
 
     qint64 duration() const;
+
+    bool isMuted() const;
 
     QStringList supportedContainers() const;
     QString containerDescription(const QString &containerMimeType) const;
@@ -126,22 +135,47 @@ public:
                              const QVideoEncoderSettings &videoSettings = QVideoEncoderSettings(),
                              const QString &containerMimeType = QString());
 
+
+    bool isMetaDataAvailable() const;
+    bool isMetaDataWritable() const;
+
+    QVariant metaData(QtMultimediaKit::MetaData key) const;
+    void setMetaData(QtMultimediaKit::MetaData key, const QVariant &value);
+    QList<QtMultimediaKit::MetaData> availableMetaData() const;
+
+    QVariant extendedMetaData(const QString &key) const;
+    void setExtendedMetaData(const QString &key, const QVariant &value);
+    QStringList availableExtendedMetaData() const;
+
 public Q_SLOTS:
     void record();
     void pause();
     void stop();
+    void setMuted(bool muted);
 
 Q_SIGNALS:
     void stateChanged(QMediaRecorder::State state);
     void durationChanged(qint64 duration);
+    void mutedChanged(bool muted);
 
     void error(QMediaRecorder::Error error);
 
+    void metaDataAvailableChanged(bool available);
+    void metaDataWritableChanged(bool writable);
+    void metaDataChanged();
+
+protected:
+    bool setMediaObject(QMediaObject *object);
+
 private:
+    QMediaRecorderPrivate *d_ptr;
     Q_DISABLE_COPY(QMediaRecorder)
     Q_DECLARE_PRIVATE(QMediaRecorder)
     Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(QMediaRecorder::State))
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
+    Q_PRIVATE_SLOT(d_func(), void _q_serviceDestroyed())
+    Q_PRIVATE_SLOT(d_func(), void _q_notify())
+    Q_PRIVATE_SLOT(d_func(), void _q_updateNotifyInterval(int))
 };
 
 QT_END_NAMESPACE

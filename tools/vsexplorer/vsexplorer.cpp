@@ -160,7 +160,7 @@ private:
 };
 
 VSExplorer::VSExplorer()
-: isSuppress(false), pwd("/"), prov("/")
+: isSuppress(false), pwd(QLatin1String("/")), prov(QLatin1String("/"))
 {
 }
 
@@ -178,7 +178,7 @@ void VSExplorer::interestChanged(const QString &attribute, bool interested)
 static QString variantToString( const QVariant& var )
 {
     if ( var.type() == QVariant::StringList )
-        return var.toStringList().join(", ");
+        return var.toStringList().join(QLatin1String(", "));
     else
         return var.toString();
 }
@@ -234,8 +234,6 @@ void VSExplorer::ls(const QString &abs, bool all)
 
 void VSExplorer::lsPath(QValueSpaceSubscriber * p, int indent, bool showHidden)
 {
-    QStringList paths = p->subPaths();
-
     QVariant var = p->value();
     bool spaceRequired = false;
     if(!var.isNull()) {
@@ -244,8 +242,8 @@ void VSExplorer::lsPath(QValueSpaceSubscriber * p, int indent, bool showHidden)
         spaceRequired = true;
     }
 
-    foreach(QString path, paths) {
-        if(!showHidden && path.startsWith("."))
+    foreach (const QString &path, p->subPaths()) {
+        if (!showHidden && path.startsWith(QLatin1Char('.')))
             continue;
 
         if(spaceRequired) {
@@ -370,142 +368,146 @@ void VSExplorer::suppress()
 
 void VSExplorer::set(const QString &name, const QString &value)
 {
-    if('/' == *name.constData())
+    if (name.startsWith(QLatin1Char('/')))
         prov.setValue(name, value);
-    else if(pwd.path().endsWith("/"))
+    else if (pwd.path().endsWith(QLatin1Char('/')))
         prov.setValue(pwd.path() + name, value);
     else
-        prov.setValue(pwd.path() + "/" + name, value);
+        prov.setValue(pwd.path() + QLatin1Char('/') + name, value);
 }
 
 void VSExplorer::clear(const QString &name)
 {
-    if('/' == *name.constData())
+    if (name.startsWith(QLatin1Char('/')))
         prov.resetValue(name);
-    else if(pwd.path().endsWith("/"))
+    else if (pwd.path().endsWith(QLatin1Char('/')))
         prov.resetValue(pwd.path() + name);
     else
-        prov.resetValue(pwd.path() + "/" + name);
+        prov.resetValue(pwd.path() + QLatin1Char('/') + name);
 }
 
 void VSExplorer::processLine(const QString &line)
 {
-    QStringList cmds = line.trimmed().split(' ');
+    QStringList cmds = line.trimmed().split(QLatin1Char(' '));
 
     if(cmds.isEmpty()) {
         return;
     }
 
     const QString & cmd = cmds.at(0);
-    if(cmd == "ls" && 1 == cmds.count()) {
+    if (cmd.isEmpty()) {
+
+    } else if (cmd == QLatin1String("ls") && 1 == cmds.count()) {
         ls();
-    } else if(cmd == "dump") {
+    } else if (cmd == QLatin1String("dump")) {
         dump();
-    } else if(cmd == "pwd") {
+    } else if (cmd == QLatin1String("pwd")) {
         pwdCmd();
-    } else if(cmd == "ls" && 2 <= cmds.count()) {
+    } else if (cmd == QLatin1String("ls") && 2 <= cmds.count()) {
         QStringList newCmds = cmds;
         newCmds.removeFirst();
         bool lsAll = false;
-        if(newCmds.first() == "-a") {
+        if (newCmds.first() == QLatin1String("-a")) {
             lsAll = true;
             newCmds.removeFirst();
         }
-        QString newPath = newCmds.join(" ");
-        if(newPath.startsWith("\"") && newPath.endsWith("\"")) {
+        QString newPath = newCmds.join(QLatin1String(" "));
+        if (newPath.startsWith(QLatin1Char('"')) && newPath.endsWith(QLatin1Char('"'))) {
             newPath = newPath.mid(1);
             newPath = newPath.left(newPath.length() - 1);
         }
         if(newPath.isEmpty()) {
-            ls(pwd.path().toAscii(), lsAll);
-        } else if(newPath.startsWith("/")) {
-            ls(newPath.toAscii(), lsAll);
+            ls(pwd.path(), lsAll);
+        } else if (newPath.startsWith(QLatin1Char('/'))) {
+            ls(newPath, lsAll);
         } else {
             QString oldPath = pwd.path();
-            if(!oldPath.endsWith("/"))
-                oldPath.append("/");
+            if (!oldPath.endsWith(QLatin1Char('/')))
+                oldPath.append(QLatin1Char('/'));
             oldPath.append(newPath);
             oldPath = QDir::cleanPath(oldPath);
-            ls(oldPath.toAscii(), lsAll);
+            ls(oldPath, lsAll);
         }
 
-    } else if(cmd == "cd" && 2 <= cmds.count()) {
+    } else if (cmd == QLatin1String("cd") && 2 <= cmds.count()) {
         QStringList newCmds = cmds;
         newCmds.removeFirst();
-        QString newPath = newCmds.join(" ");
-        if(newPath.startsWith("\"") && newPath.endsWith("\"")) {
+        QString newPath = newCmds.join(QLatin1String(" "));
+        if (newPath.startsWith(QLatin1Char('"')) && newPath.endsWith(QLatin1Char('"'))) {
             newPath = newPath.mid(1);
             newPath = newPath.left(newPath.length() - 1);
         }
-        if(newPath.startsWith("/")) {
+        if (newPath.startsWith(QLatin1Char('/'))) {
             pwd.setPath(newPath);
         } else {
             QString oldPath = pwd.path();
-            if(!oldPath.endsWith("/"))
-                oldPath.append("/");
+            if (!oldPath.endsWith(QLatin1Char('/')))
+                oldPath.append(QLatin1Char('/'));
             oldPath.append(newPath);
             oldPath = QDir::cleanPath(oldPath);
             pwd.setPath(oldPath);
         }
-    } else if(cmd == "unwatch" && 2 <= cmds.count()) {
+    } else if (cmd == QLatin1String("unwatch") && 2 <= cmds.count()) {
         QStringList newCmds = cmds;
         newCmds.removeFirst();
-        QString newPath = newCmds.join(" ");
+        QString newPath = newCmds.join(QLatin1String(" "));
         QString finalPath;
-        if(newPath.startsWith("\"") && newPath.endsWith("\"")) {
+        if (newPath.startsWith(QLatin1Char('"')) && newPath.endsWith(QLatin1Char('"'))) {
             newPath = newPath.mid(1);
             newPath = newPath.left(newPath.length() - 1);
         }
-        if(newPath.startsWith("/")) {
+        if (newPath.startsWith(QLatin1Char('/'))) {
             finalPath = QValueSpaceSubscriber(newPath).path();
         } else {
             QString oldPath = pwd.path();
-            if(!oldPath.endsWith("/"))
-                oldPath.append("/");
+            if (!oldPath.endsWith(QLatin1Char('/')))
+                oldPath.append(QLatin1Char('/'));
             oldPath.append(newPath);
             oldPath = QDir::cleanPath(oldPath);
             finalPath = QValueSpaceSubscriber(oldPath).path();
         }
-        unwatch(finalPath.toUtf8());
-    } else if(cmd == "watch" && 2 <= cmds.count()) {
+        unwatch(finalPath);
+    } else if (cmd == QLatin1String("watch") && 2 <= cmds.count()) {
         QStringList newCmds = cmds;
         newCmds.removeFirst();
-        QString newPath = newCmds.join(" ");
+        QString newPath = newCmds.join(QLatin1String(" "));
         QString finalPath;
-        if(newPath.startsWith("\"") && newPath.endsWith("\"")) {
+        if (newPath.startsWith(QLatin1Char('"')) && newPath.endsWith(QLatin1Char('"'))) {
             newPath = newPath.mid(1);
             newPath = newPath.left(newPath.length() - 1);
         }
-        if(newPath.startsWith("/")) {
+        if (newPath.startsWith(QLatin1Char('/'))) {
             finalPath = QValueSpaceSubscriber(newPath).path();
         } else {
             QString oldPath = pwd.path();
-            if(!oldPath.endsWith("/"))
-                oldPath.append("/");
+            if (!oldPath.endsWith(QLatin1Char('/')))
+                oldPath.append(QLatin1Char('/'));
             oldPath.append(newPath);
             oldPath = QDir::cleanPath(oldPath);
             finalPath = QValueSpaceSubscriber(oldPath).path();
         }
-        watch(finalPath.toUtf8());
-    } else if(cmd == "set" && 3 == cmds.count()) {
+        watch(finalPath);
+    } else if (cmd == QLatin1String("set") && 3 == cmds.count()) {
         set(cmds.at(1).trimmed(), cmds.at(2).trimmed());
-    } else if(cmd == "clear" && 2 == cmds.count()) {
+    } else if (cmd == QLatin1String("clear") && 2 == cmds.count()) {
         clear(cmds.at(1).trimmed());
-    } else if((cmd == "subscribe" || cmd == "sub") && 1 == cmds.count()) {
+    } else if ((cmd == QLatin1String("subscribe") || cmd == QLatin1String("sub")) &&
+               1 == cmds.count()) {
         subscribe();
-    } else if((cmd == "unsubscribe" || cmd == "unsub") && 1 == cmds.count()) {
+    } else if ((cmd == QLatin1String("unsubscribe") || cmd == QLatin1String("unsub")) &&
+               1 == cmds.count()) {
         unsubscribe();
-    } else if((cmd == "?" || cmd == "help") && 1 == cmds.count()) {
+    } else if ((cmd == QLatin1String("?") || cmd == QLatin1String("help")) && 1 == cmds.count()) {
         printHelp();
-    } else if((cmd == "quit" || cmd == "exit") && 1 == cmds.count()) {
+    } else if ((cmd == QLatin1String("quit") || cmd == QLatin1String("exit")) &&
+               1 == cmds.count()) {
         quit();
-    } else if((cmd == "suppress") && 1 == cmds.count()) {
+    } else if (cmd == QLatin1String("suppress") && 1 == cmds.count()) {
         suppress();
-    } else if((cmd == "watchers") && 1 == cmds.count()) {
+    } else if (cmd == QLatin1String("watchers") && 1 == cmds.count()) {
         listwatchers();
-    } else if((cmd == "subscriptions") && 1 == cmds.count()) {
+    } else if (cmd == QLatin1String("subscriptions") && 1 == cmds.count()) {
         subscriptions();
-    } else if(cmd.isEmpty()) {
     } else {
         printError();
     }
@@ -666,10 +668,10 @@ char * item_generator(const char * t, int num)
 
         QString vsBase;
 
-        if(*textBase.constData() != '/') {
+        if (!textBase.startsWith(QLatin1Char('/'))) {
             QString in = vse->path();
-            if(!in.endsWith("/"))
-                vsBase = in + "/" + textBase;
+            if (!in.endsWith(QLatin1Char('/')))
+                vsBase = in + QLatin1Char('/') + textBase;
             else
                 vsBase = in + textBase;
         } else {
@@ -685,9 +687,9 @@ char * item_generator(const char * t, int num)
                 QString completion;
                 completion.append(textBase);
                 if(!completion.isEmpty())
-                    completion.append("/");
+                    completion.append(QLatin1Char('/'));
                 completion.append(child.toAscii());
-                completion.append("/");
+                completion.append(QLatin1Char('/'));
                 children.append(completion);
             }
         }
@@ -808,7 +810,7 @@ int main(int argc, char ** argv)
         QValueSpace::initValueSpaceServer();
 
     if(dump) {
-        QValueSpaceSubscriber subscriber("/");
+        QValueSpaceSubscriber subscriber(QLatin1String("/"));
         dodump(&subscriber);
         return 0;
     } else {

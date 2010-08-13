@@ -49,7 +49,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_MEDIA_EXPORT QMediaStreamsControl : public QMediaControl
+class Q_MULTIMEDIA_EXPORT QMediaStreamsControl : public QMediaControl
 {
     Q_OBJECT
 
@@ -61,7 +61,7 @@ public:
     virtual int streamCount() = 0;
     virtual StreamType streamType(int streamNumber) = 0;
 
-    virtual QVariant metaData(int streamNumber, QtMediaServices::MetaData key) = 0;
+    virtual QVariant metaData(int streamNumber, QtMultimediaKit::MetaData key) = 0;
 
     virtual bool isActive(int streamNumber) = 0;
     virtual void setActive(int streamNumber, bool state) = 0;

@@ -88,12 +88,12 @@ bool V4LRadioControl::isAvailable() const
     return available;
 }
 
-QtMediaServices::AvailabilityError V4LRadioControl::availabilityError() const
+QtMultimediaKit::AvailabilityError V4LRadioControl::availabilityError() const
 {
     if (fd > 0)
-        return QtMediaServices::NoError;
+        return QtMultimediaKit::NoError;
     else
-        return QtMediaServices::ResourceError;
+        return QtMultimediaKit::ResourceError;
 }
 
 QRadioTuner::State V4LRadioControl::state() const

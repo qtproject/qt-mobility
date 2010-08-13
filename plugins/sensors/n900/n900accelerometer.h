@@ -50,10 +50,10 @@ QTM_USE_NAMESPACE
 class n900accelerometer : public n900filebasedsensor
 {
 public:
-    static const char *id;
-    static const char *filename;
-    static const char *range;
-    static const char *rate;
+    static char const * const id;
+    static char const * const filename;
+    static char const * const range;
+    static char const * const rate;
 
     n900accelerometer(QSensor *sensor);
 

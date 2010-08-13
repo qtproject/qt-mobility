@@ -42,6 +42,7 @@
 #include "qmessageaccount_p.h"
 #include "qmessagemanager.h"
 #include "modestengine_maemo_p.h"
+#include "telepathyengine_maemo_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -114,8 +115,9 @@ QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
     if (type == QMessage::Email) {
         accountId = ModestEngine::instance()->defaultAccount();
     }
-    //TODO: Default SMS Account
-
+    if (type == QMessage::Sms || type == QMessage::InstantMessage) {
+        accountId = TelepathyEngine::instance()->defaultAccount(type);  //TODO: Default SMS Account
+    }
     return accountId;
 }
 

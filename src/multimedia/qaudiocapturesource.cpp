@@ -48,6 +48,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QAudioCaptureSource
     \brief The QAudioCaptureSource class provides an interface to query and select an audio input endpoint.
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \preliminary
@@ -87,7 +88,7 @@ public:
         Q_Q(QAudioCaptureSource);
 
         if (service != 0)
-            audioEndpointSelector = qobject_cast<QAudioEndpointSelector*>(service->control(QAudioEndpointSelector_iid));
+            audioEndpointSelector = qobject_cast<QAudioEndpointSelector*>(service->requestControl(QAudioEndpointSelector_iid));
 
         if (audioEndpointSelector) {
             q->connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)),
@@ -96,14 +97,14 @@ public:
                        SIGNAL(availableAudioInputsChanged()));
             q->connect(audioEndpointSelector, SIGNAL(availableEndpointsChanged()),
                        SLOT(statusChanged()));
-            errorState = QtMediaServices::NoError;
+            errorState = QtMultimediaKit::NoError;
         }
     }
 
-    QAudioCaptureSourcePrivate():provider(0), audioEndpointSelector(0), errorState(QtMediaServices::ServiceMissingError) {}
+    QAudioCaptureSourcePrivate():provider(0), audioEndpointSelector(0), errorState(QtMultimediaKit::ServiceMissingError) {}
     QMediaServiceProvider *provider;
     QAudioEndpointSelector   *audioEndpointSelector;
-    QtMediaServices::AvailabilityError errorState;
+    QtMultimediaKit::AvailabilityError errorState;
 };
 
 /*!
@@ -120,25 +121,15 @@ QAudioCaptureSource::QAudioCaptureSource(QObject *parent, QMediaServiceProvider 
 }
 
 /*!
-    Construct a QAudioCaptureSource using the QMediaObject \a mediaObject, with \a parent.
-*/
-
-QAudioCaptureSource::QAudioCaptureSource(QMediaObject *mediaObject, QObject *parent)
-    :QMediaObject(*new QAudioCaptureSourcePrivate, parent, mediaObject->service())
-{
-    Q_D(QAudioCaptureSource);
-
-    d->provider = 0;
-    d->initControls();
-}
-
-/*!
     Destroys the audiocapturesource object.
 */
 
 QAudioCaptureSource::~QAudioCaptureSource()
 {
     Q_D(QAudioCaptureSource);
+
+    if (d->service && d->audioEndpointSelector)
+        d->service->releaseControl(d->audioEndpointSelector);
 
     if (d->provider)
         d->provider->releaseService(d->service);
@@ -148,7 +139,7 @@ QAudioCaptureSource::~QAudioCaptureSource()
     Returns the error state of the audio capture service.
 */
 
-QtMediaServices::AvailabilityError QAudioCaptureSource::availabilityError() const
+QtMultimediaKit::AvailabilityError QAudioCaptureSource::availabilityError() const
 {
     Q_D(const QAudioCaptureSource);
 
@@ -260,14 +251,14 @@ void QAudioCaptureSource::statusChanged()
 
     if (d->audioEndpointSelector) {
         if (d->audioEndpointSelector->availableEndpoints().size() > 0) {
-            d->errorState = QtMediaServices::NoError;
+            d->errorState = QtMultimediaKit::NoError;
             emit availabilityChanged(true);
         } else {
-            d->errorState = QtMediaServices::BusyError;
+            d->errorState = QtMultimediaKit::BusyError;
             emit availabilityChanged(false);
         }
     } else {
-        d->errorState = QtMediaServices::ServiceMissingError;
+        d->errorState = QtMultimediaKit::ServiceMissingError;
         emit availabilityChanged(false);
     }
 }

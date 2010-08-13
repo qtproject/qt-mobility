@@ -1,0 +1,41 @@
+EXPORTS
+	_ZN15CContactSubView4NewLER20MContactViewObserverRK16CContactDatabaseR16CContactViewBaseRK7TDesC16 @ 1 NONAME
+	_ZN15CContactSubView4NewLER20MContactViewObserverRK16CContactDatabaseR16CContactViewBaseRK7TDesC16S9_ @ 2 NONAME
+	_ZN16CContactFindView15RefineFindViewLEP12MDesC16Array @ 3 NONAME
+	_ZN16CContactFindView15UpdateFindViewLEv @ 4 NONAME
+	_ZN16CContactFindView4NewLERK16CContactDatabaseR16CContactViewBaseR20MContactViewObserverP12MDesC16Array @ 5 NONAME
+	_ZN16CContactFindView4NewLERK16CContactDatabaseR16CContactViewBaseR20MContactViewObserverP12MDesC16ArrayNS3_11TSearchTypeE @ 6 NONAME
+	_ZN17CContactGroupView16UpdateGroupViewLEv @ 7 NONAME
+	_ZN17CContactGroupView4NewLERK16CContactDatabaseR16CContactViewBaseR20MContactViewObserverRK7TDesC16NS_10TGroupTypeE @ 8 NONAME
+	_ZN17CContactGroupView4NewLERK16CContactDatabaseR16CContactViewBaseR20MContactViewObserverlNS_10TGroupTypeE @ 9 NONAME
+	_ZN17CContactViewRange4NewLERK16CContactViewBaseRK7TDesC16N21CContactViewRangeBase9TCriteriaES5_S7_ @ 10 NONAME
+	_ZN20CContactFilteredView4NewLER20MContactViewObserverRK16CContactDatabaseR16CContactViewBasei @ 11 NONAME
+	_ZN20CContactViewLowRange4NewLERK16CContactViewBaseRK7TDesC16N21CContactViewRangeBase9TCriteriaE @ 12 NONAME
+	_ZN21CContactViewHighRange4NewLERK16CContactViewBaseRK7TDesC16N21CContactViewRangeBase9TCriteriaE @ 13 NONAME
+	_ZN24CContactConcatenatedView4NewLER20MContactViewObserverRK16CContactDatabaseR13RPointerArrayI16CContactViewBaseE @ 14 NONAME
+	_ZNK21CContactViewRangeBase12IndicesValidEv @ 15 NONAME
+	_ZTI16CContactFindView @ 16 NONAME ; #<TI>#
+	_ZTI17CContactGroupView @ 17 NONAME ; #<TI>#
+	_ZTV16CContactFindView @ 18 NONAME ; #<VT>#
+	_ZTV17CContactGroupView @ 19 NONAME ; #<VT>#
+	_ZTI15CContactSubView @ 20 NONAME ; #<TI>#
+	_ZTI17CContactViewRange @ 21 NONAME ; #<TI>#
+	_ZTI20CContactFilteredView @ 22 NONAME ; #<TI>#
+	_ZTI20CContactViewLowRange @ 23 NONAME ; #<TI>#
+	_ZTI21CContactViewHighRange @ 24 NONAME ; #<TI>#
+	_ZTI21CContactViewRangeBase @ 25 NONAME ; #<TI>#
+	_ZTI24CContactConcatenatedView @ 26 NONAME ; #<TI>#
+	_ZTV15CContactSubView @ 27 NONAME ; #<VT>#
+	_ZTV17CContactViewRange @ 28 NONAME ; #<VT>#
+	_ZTV20CContactFilteredView @ 29 NONAME ; #<VT>#
+	_ZTV20CContactViewLowRange @ 30 NONAME ; #<VT>#
+	_ZTV21CContactViewHighRange @ 31 NONAME ; #<VT>#
+	_ZTV21CContactViewRangeBase @ 32 NONAME ; #<VT>#
+	_ZTV24CContactConcatenatedView @ 33 NONAME ; #<VT>#
+	_ZN15CContactSubView4NewLER16CContactViewBaseRK16CContactDatabaseR20MContactViewObserverRK7TDesC16 @ 34 NONAME
+	_ZN15CContactSubView4NewLER16CContactViewBaseRK16CContactDatabaseR20MContactViewObserverRK7TDesC16S9_ @ 35 NONAME
+	_ZN16CContactFindView4NewLER16CContactViewBaseRK16CContactDatabaseR20MContactViewObserverP12MDesC16Array @ 36 NONAME
+	_ZN16CContactFindView4NewLER16CContactViewBaseRK16CContactDatabaseR20MContactViewObserverP12MDesC16ArrayNS0_11TSearchTypeE @ 37 NONAME
+	_ZN17CContactGroupView4NewLER16CContactViewBaseRK16CContactDatabaseR20MContactViewObserverRK7TDesC16NS_10TGroupTypeE @ 38 NONAME
+	_ZN17CContactGroupView4NewLER16CContactViewBaseRK16CContactDatabaseR20MContactViewObserverlNS_10TGroupTypeE @ 39 NONAME
+	_ZN20CContactFilteredView4NewLER16CContactViewBaseRK16CContactDatabaseR20MContactViewObserveri @ 40 NONAME

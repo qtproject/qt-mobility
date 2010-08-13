@@ -41,7 +41,7 @@
 #include "gruesensorimpl.h"
 #include <QDebug>
 
-const char *gruesensorimpl::id("grue.gruesensor");
+char const * const gruesensorimpl::id("grue.gruesensor");
 
 gruesensorimpl::gruesensorimpl(QSensor *sensor)
     : QSensorBackend(sensor)

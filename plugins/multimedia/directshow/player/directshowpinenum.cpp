@@ -41,7 +41,6 @@
 
 #include "directshowpinenum.h"
 
-#include <QtMultimedia>
 
 DirectShowPinEnum::DirectShowPinEnum(const QList<IPin *> &pins)
     : m_ref(1)

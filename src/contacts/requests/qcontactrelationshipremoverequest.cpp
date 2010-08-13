@@ -55,6 +55,12 @@ QTM_BEGIN_NAMESPACE
   the individual item errors (which may be retrieved by calling errorMap()) are updated, or if the overall
   operation error (which may be retrieved by calling error()) is updated.
 
+  Please see the class documentation of QContactAbstractRequest for more information about
+  the usage of request classes and ownership semantics.
+
+  
+  \inmodule QtContacts
+  
   \ingroup contacts-requests
  */
 
@@ -64,79 +70,11 @@ QContactRelationshipRemoveRequest::QContactRelationshipRemoveRequest(QObject* pa
 {
 }
 
-/*!
-  \deprecated
-   Sets the first contact criterion of the remove request to \a firstId.
-   If \a firstId is the default-constructed id, or the first contact is not set,
-   the request will remove relationships involving any first contact.
 
-   This function is obsolete; set the list of relationships to remove by calling setRelationships() instead.
- */
-void QContactRelationshipRemoveRequest::setFirst(const QContactId& firstId)
+/*! Frees any memory used by this request */
+QContactRelationshipRemoveRequest::~QContactRelationshipRemoveRequest()
 {
-    Q_D(QContactRelationshipRemoveRequest);
-    d->m_first = firstId;
-}
-
-/*!
-  \deprecated
-  Returns the first contact criterion of the remove request.
-  This function is obsolete; retrieve the lists of relationships that will be removed by calling relationships() instead.
- */
-QContactId QContactRelationshipRemoveRequest::first() const
-{
-    Q_D(const QContactRelationshipRemoveRequest);
-    return d->m_first;
-}
-
-/*!
-  \deprecated
-   Sets the relationship type criterion of the remove request to \a relationshipType.
-   If \a relationshipType is empty, or the relationship type is not set,
-   the request will remove relationships of any type.
-
-   This function is obsolete; set the list of relationships to remove by calling setRelationships() instead.
- */
-void QContactRelationshipRemoveRequest::setRelationshipType(const QString& relationshipType)
-{
-    Q_D(QContactRelationshipRemoveRequest);
-    d->m_relationshipType = relationshipType;
-}
-
-/*!
-  \deprecated
-  Returns the relationship type criterion of the fetch request.
-  This function is obsolete; retrieve the lists of relationships that will be removed by calling relationships() instead.
- */
-QString QContactRelationshipRemoveRequest::relationshipType() const
-{
-    Q_D(const QContactRelationshipRemoveRequest);
-    return d->m_relationshipType;
-}
-
-/*!
-  \deprecated
-  Sets the second contact criterion of the remove request to \a secondId.
-  If \a secondId is the default-constructed id, or the second contact is not set,
-  the request will remove relationships involving any second contact.
-
-   This function is obsolete; set the list of relationships to remove by calling setRelationships() instead.
- */
-void QContactRelationshipRemoveRequest::setSecond(const QContactId& secondId)
-{
-    Q_D(QContactRelationshipRemoveRequest);
-    d->m_second = secondId;
-}
-
-/*!
-  \deprecated
-  Returns the second contact criterion of the remove request.
-  This function is obsolete; retrieve the lists of relationships that will be removed by calling relationships() instead.
- */
-QContactId QContactRelationshipRemoveRequest::second() const
-{
-    Q_D(const QContactRelationshipRemoveRequest);
-    return d->m_second;
+    QContactAbstractRequestPrivate::notifyEngine(this);
 }
 
 /*!
