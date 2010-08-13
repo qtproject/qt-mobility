@@ -87,6 +87,11 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     m_stackedWidget->setCurrentIndex(0);
 
     setCentralWidget(m_stackedWidget);
+
+#ifdef Q_WS_X11
+    m_appMenu = menuBar()->addMenu(QString());
+    activateMonthPage(); // set the menu
+#endif // Q_WS_X11
 }
 
 CalendarDemo::~CalendarDemo()
@@ -98,12 +103,36 @@ void CalendarDemo::activateMonthPage()
 {
     m_monthPage->refresh();
     m_stackedWidget->setCurrentWidget(m_monthPage);
+
+#ifdef Q_WS_X11
+    QAction *addEvent = new QAction(tr("Add event"), this);
+    QAction *addTodo = new QAction(tr("Add todo"), this);
+    QAction *addJournal = new QAction(tr("Add journal"), this);
+    m_appMenu->clear();
+    m_appMenu->addAction(addEvent);
+    m_appMenu->addAction(addTodo);
+    m_appMenu->addAction(addJournal);
+    connect(addEvent, SIGNAL(triggered()), m_monthPage, SLOT(addNewEvent()));
+    connect(addTodo, SIGNAL(triggered()), m_monthPage, SLOT(addNewTodo()));
+#endif // Q_WS_X11
 }
 
 void CalendarDemo::activateDayPage()
 {
     m_dayPage->refresh();
     m_stackedWidget->setCurrentWidget(m_dayPage);
+
+#ifdef Q_WS_X11
+    QAction *addEvent = new QAction(tr("Add event"), this);
+    QAction *addTodo = new QAction(tr("Add todo"), this);
+    QAction *addJournal = new QAction(tr("Add journal"), this);
+    m_appMenu->clear();
+    m_appMenu->addAction(addEvent);
+    m_appMenu->addAction(addTodo);
+    m_appMenu->addAction(addJournal);
+    connect(addEvent, SIGNAL(triggered()), m_dayPage, SLOT(addNewEvent()));
+    connect(addTodo, SIGNAL(triggered()), m_dayPage, SLOT(addNewTodo()));
+#endif // Q_WS_X11
 }
 
 void CalendarDemo::activateNewDayPage(QOrganizerItemManager *manager, QDate date)
@@ -111,6 +140,18 @@ void CalendarDemo::activateNewDayPage(QOrganizerItemManager *manager, QDate date
     m_dayPage->dayChanged(manager, date);
     m_dayPage->refresh();
     m_stackedWidget->setCurrentWidget(m_dayPage);
+
+#ifdef Q_WS_X11
+    QAction *addEvent = new QAction(tr("Add event"), this);
+    QAction *addTodo = new QAction(tr("Add todo"), this);
+    QAction *addJournal = new QAction(tr("Add journal"), this);
+    m_appMenu->clear();
+    m_appMenu->addAction(addEvent);
+    m_appMenu->addAction(addTodo);
+    m_appMenu->addAction(addJournal);
+    connect(addEvent, SIGNAL(triggered()), m_dayPage, SLOT(addNewEvent()));
+    connect(addTodo, SIGNAL(triggered()), m_dayPage, SLOT(addNewTodo()));
+#endif // Q_WS_X11
 }
 
 void CalendarDemo::activateEditPage(QOrganizerItemManager *manager, const QOrganizerItem &item)
@@ -144,4 +185,8 @@ void CalendarDemo::activateEditPage(QOrganizerItemManager *manager, const QOrgan
     // TODO:
     //else if (item.type() == QOrganizerItemType::TypeJournal)
     //else if (item.type() == QOrganizerItemType::TypeNote)
+
+#ifdef Q_WS_X11
+    m_appMenu->clear();
+#endif // Q_WS_X11
 }

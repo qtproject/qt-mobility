@@ -85,6 +85,10 @@ private:
     EventEditPage *m_eventEditPage;
     TodoEditPage *m_todoEditPage;
     EventOccurrenceEditPage *m_eventOccurrenceEditPage;
+
+#ifdef Q_WS_X11
+    QMenu *m_appMenu;
+#endif // Q_WS_X11
 };
 
 #endif // CALENDARDEMO_H

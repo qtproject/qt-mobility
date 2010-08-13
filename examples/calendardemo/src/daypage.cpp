@@ -74,9 +74,6 @@ DayPage::DayPage(QWidget *parent)
     QPushButton* removeEventButton = new QPushButton("Remove",this);
     connect(removeEventButton,SIGNAL(clicked()),this,SLOT(removeItem()));
     hbLayout->addWidget(removeEventButton);
-    QPushButton* addEventButton = new QPushButton("Add Event",this);
-    connect(addEventButton,SIGNAL(clicked()),this,SLOT(addNewEvent()));
-    hbLayout->addWidget(addEventButton);
     QPushButton* backButton = new QPushButton("Back",this);
     connect(backButton,SIGNAL(clicked()),this,SLOT(backClicked()));
     hbLayout->addWidget(backButton);
