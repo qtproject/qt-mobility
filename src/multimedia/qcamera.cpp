@@ -501,6 +501,7 @@ void QCamera::stop()
 
 /*!
     Open the camera device.
+    The camera state is changed to QCamera::LoadedStatus.
 
     It's not necessary to explcitly load the camera,
     unless unless the application have to read the supported camera
@@ -523,6 +524,7 @@ void QCamera::load()
 
 /*!
     Close the camera device and deallocate the related resources.
+    The camera state is changed to QCamera::UnloadedStatus.
 */
 void QCamera::unload()
 {
@@ -706,12 +708,14 @@ void QCamera::unlock()
 
 /*!
     \enum QCamera::State
-    \value ActiveState
-           The camera has been started and can produce data.
-           The viewfinder displays video frames in active state.
+    \value UnloadedState
+           The initial camera state, with camera not loaded,
+           the camera capabilities except of supported capture modes
+           are unknown.
 
-           It may be not allowed to change some camera settings,
-           like image resolution or codec in the active state.
+           While the supported settings are unknown in this state,
+           it's allowed to set the camera capture settings like codec,
+           resolution, or frame rate.
 
     \value LoadedState
            The camera is loaded and ready to be configured.
@@ -719,12 +723,12 @@ void QCamera::unlock()
            In the Idle state it's allowed to query camera capabilities,
            set capture resolution, codecs, etc.
 
-           The camera state is asyncronyously changed to IdleState
-           with QCamera::setCaptureMode().
+           The viewfinder is not active in the loaded state.
 
-    \value StoppedState
-           The initial camera state, with camera not loaded,
-           the camera capabilities except of supported capture modes are unknown.
+    \value ActiveState
+           In the active state as soon as camera is started
+           the viewfinder displays video frames and the
+           camera is ready for capture.
 */
 
 
@@ -738,6 +742,11 @@ void QCamera::unlock()
     \value ActiveStatus
            The camera has been started and can produce data.
            The viewfinder displays video frames in active state.
+
+           Depending on backend, changins some comera settings like
+           capture mode, codecs or resolution in ActiveState may lead
+           to changing the camera status to LoadingStatus while the settings are
+           applied and back to ActiveStatus when the camera is ready.
 
     \value StartingStatus
            The camera is starting in result of state transition
