@@ -133,8 +133,7 @@ void TestFetchItems::saveItems()
     // Start save request
     m_saveItemRequest->start();
     // Wait for the request to be completed
-    // Also wait for the fetch test to complete
-    QTest::qWait(10000);
+    m_saveItemRequest->waitForFinished(1000);
 }
    
 // Returns a list of noOfItems
@@ -294,4 +293,4 @@ void TestFetchItems::fetchRequestResultsAvailable()
 
 QTEST_MAIN(TestFetchItems);
 
-#include "tst_fetchitems.moc"
+#include "tst_symbianasynchfetchitems.moc"

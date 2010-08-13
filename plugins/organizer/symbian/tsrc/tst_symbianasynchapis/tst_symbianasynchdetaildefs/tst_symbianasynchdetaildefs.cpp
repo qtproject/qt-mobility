@@ -359,4 +359,4 @@ void TestDetailDefs::detailDefsFetchRequestResultsAvailable()
 
 QTEST_MAIN(TestDetailDefs);
 
-#include "tst_detaildefs.moc"
+#include "tst_symbianasynchdetaildefs.moc"

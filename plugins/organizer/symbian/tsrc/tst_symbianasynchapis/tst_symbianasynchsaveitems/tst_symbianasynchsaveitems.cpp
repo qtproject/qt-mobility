@@ -208,4 +208,4 @@ void TestSaveitems::requestResultsAvailable()
 
 QTEST_MAIN(TestSaveitems);
 
-#include "tst_saveitems.moc"
+#include "tst_symbianasynchsaveitems.moc"

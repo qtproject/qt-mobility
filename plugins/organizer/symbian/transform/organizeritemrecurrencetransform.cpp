@@ -177,6 +177,26 @@ QList<QOrganizerItemRecurrenceRule> OrganizerItemRecurrenceTransform::toItemRecu
             rrule.setDaysOfMonth(daysOfMonth);
         }
 
+        // Convert TDayOfMonth array into days-of-week and positions
+        RArray<TCalRRule::TDayOfMonth> tDayOfMonthArray;
+        CleanupClosePushL(tDayOfMonthArray);
+        calrrule.GetByDayL(tDayOfMonthArray);
+        for (TInt i(0); i < tDayOfMonthArray.Count(); i++) {
+            TCalRRule::TDayOfMonth dayOfMonth = tDayOfMonthArray[i];
+            // Append the day-of-week part of the day-of-month to the
+            // recurrence rule if it does not exist already (do not add
+            // duplicates)
+            QList<Qt::DayOfWeek> daysOfWeek = rrule.daysOfWeek();
+            if (!daysOfWeek.contains(toDayOfWeekL(dayOfMonth.Day()))) {
+                daysOfWeek.append(toDayOfWeekL(dayOfMonth.Day()));
+                rrule.setDaysOfWeek(daysOfWeek);
+            }
+            // Append the position part of day-of-month to the recurrence rule
+            QList<int> positions = rrule.positions();
+            positions.insert(0, dayOfMonth.WeekInMonth());
+            rrule.setPositions(positions);
+        }
+        CleanupStack::PopAndDestroy(&tDayOfMonthArray);
     } else if(calrrule.Type() == TCalRRule::EYearly) {
         rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
 
@@ -186,13 +206,17 @@ QList<QOrganizerItemRecurrenceRule> OrganizerItemRecurrenceTransform::toItemRecu
         calrrule.GetByDayL(daysOfMonth);
         for (TInt i(0); i < daysOfMonth.Count(); i++) {
             TCalRRule::TDayOfMonth dayOfMonth = daysOfMonth[i];
-            // Append the day-of-week part of the day-of-month to the recurrence rule
+            // Append the day-of-week part of the day-of-month to the
+            // recurrence rule if it does not exist already (do not add
+            // duplicates)
             QList<Qt::DayOfWeek> daysOfWeek = rrule.daysOfWeek();
-            daysOfWeek.append(toDayOfWeekL(dayOfMonth.Day()));
-            rrule.setDaysOfWeek(daysOfWeek);
+            if (!daysOfWeek.contains(toDayOfWeekL(dayOfMonth.Day()))) {
+                daysOfWeek.append(toDayOfWeekL(dayOfMonth.Day()));
+                rrule.setDaysOfWeek(daysOfWeek);
+            }
             // Append the position part of day-of-month to the recurrence rule
             QList<int> positions = rrule.positions();
-            positions.append(dayOfMonth.WeekInMonth());
+            positions.insert(0, dayOfMonth.WeekInMonth());
             rrule.setPositions(positions);
         }
         CleanupStack::PopAndDestroy(&daysOfMonth);
@@ -288,12 +312,36 @@ TCalRRule OrganizerItemRecurrenceTransform::toCalRRuleL(QList<QOrganizerItemRecu
                     // symbian calendar server uses 0-based month days
                     byMonthDay.AppendL(dayOfMonth - 1);
                 }
+            } else if (!rrule.daysOfWeek().isEmpty()) {
+                // Convert days-of-week and positions into TDayOfMonth array and
+                // store it to the by-day of the TCalRRule
+                QList<int> positions = rrule.positions();
+                if (positions.isEmpty()) {
+                    // TODO: If the position is not available, the default is to use
+                    // all positions (according to the RFC-2445)
+                    User::Leave(KErrArgument);
+                }
+                RArray<TCalRRule::TDayOfMonth> dayArray;
+                CleanupClosePushL(dayArray);
+                foreach (Qt::DayOfWeek dayOfWeek, rrule.daysOfWeek()) {
+                    foreach (int position, positions) {
+                        TCalRRule::TDayOfMonth dayOfMonth(toTDayL(dayOfWeek), position);
+                        dayArray.AppendL(dayOfMonth);
+                    }
+                }
+                if (dayArray.Count()) {
+                    calRule.SetByDay(dayArray);
+                }
+                CleanupStack::PopAndDestroy(&dayArray);
             } else {
                 int day = startDateTime.date().day();
                 byMonthDay.AppendL(day - 1);
             }
+
+            if (byMonthDay.Count()) {
                 calRule.SetByMonthDay(byMonthDay);
-                CleanupStack::PopAndDestroy(&byMonthDay);
+            }
+            CleanupStack::PopAndDestroy(&byMonthDay);
         } else if (rrule.frequency() == QOrganizerItemRecurrenceRule::Yearly) {
             calRule.SetType(TCalRRule::EYearly);
 
@@ -301,13 +349,14 @@ TCalRRule OrganizerItemRecurrenceTransform::toCalRRuleL(QList<QOrganizerItemRecu
             // store it to the by-day of the TCalRRule
             if (!rrule.daysOfWeek().isEmpty()) {
                 QList<int> positions = rrule.positions();
-                if (positions.isEmpty()) {
+                if (positions.count() != 1) {
                     // If the position is not available, the default is to use
                     // all positions (according to the RFC-2445)
-                    // TODO: this will cause the following issue for Qt
-                    // Organizer API clients: If an item does not have the
-                    // positions field it will appear during save
-                    positions << 1 << 2 << 3 << 4 << -1;
+                    // Symbian calendar server supports storing only one
+                    // position for a yearly recurring event (see the
+                    // documentation of TCalRRule::SetByDay), so we must give
+                    // an error.
+                    User::Leave(KErrArgument);
                 }
                 RArray<TCalRRule::TDayOfMonth> dayArray;
                 CleanupClosePushL(dayArray);
@@ -338,7 +387,7 @@ TCalRRule OrganizerItemRecurrenceTransform::toCalRRuleL(QList<QOrganizerItemRecu
         } else if (rrule.frequency() == QOrganizerItemRecurrenceRule::Daily) {
             calRule.SetType(TCalRRule::EDaily);
         } else {
-            User::Leave(KErrNotReady);
+            User::Leave(KErrNotSupported);
         }
     }
     return calRule;

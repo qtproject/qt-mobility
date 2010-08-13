@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,7 +57,6 @@
 //QTM_USE_NAMESPACE
 
 // Constants
-const int KOneMicroSecond = 1000;
 const int KSingleCount = 1;
 
 QOrganizerItemManagerEngine* QOrganizerItemSymbianFactory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
@@ -381,10 +380,12 @@ bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items, const 
     for (int i(0); i < items->count(); i++) {
         QOrganizerItem item = items->at(i);
         
-        // Save
+        // Validate & save
         QOrganizerItemManager::Error saveError;
-        TRAPD(err, saveItemL(&item, &changeSet));
-        transformError(err, &saveError);
+        if (validateItem(item, &saveError)) {
+            TRAPD(err, saveItemL(&item, &changeSet));
+            transformError(err, &saveError);
+        }
         
         // Check error
         if (saveError != QOrganizerItemManager::NoError) {
@@ -406,61 +407,72 @@ bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items, const 
 
 bool QOrganizerItemSymbianEngine::saveItem(QOrganizerItem *item, QOrganizerItemManager::Error* error)
 {
-    // TODO: Validate item according to the schema
-    QOrganizerItemChangeSet changeSet;
-    TRAPD(err, saveItemL(item, &changeSet));
-    transformError(err, error);
-    changeSet.emitSignals(this);
+    // Validate & save
+    if (validateItem(*item, error)) {
+        QOrganizerItemChangeSet changeSet;
+        TRAPD(err, saveItemL(item, &changeSet));
+        if ((item->type()== QOrganizerItemType::TypeEventOccurrence || 
+            item->type()== QOrganizerItemType::TypeTodoOccurrence)&& 
+            err == KErrArgument) {
+            *error = QOrganizerItemManager::InvalidOccurrenceError; 
+        } else {
+            transformError(err, error);
+	    }	
+        changeSet.emitSignals(this);
+    }
     return *error == QOrganizerItemManager::NoError;
 }
 
 void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItemChangeSet *changeSet)
 {
     // Check local id
-    bool isNewEntry = true;
-    RPointerArray<CCalEntry> calEntryArray;
+    bool isNewEntry = true;    
+    CCalEntry *entry(NULL);
     
+    // Search if the entry is existing based on local id   
     if (item->localId()) {
         // Don't allow saving with local id defined unless the item is from this manager.
         if (item->id().managerUri() != managerUri())
-            User::Leave(KErrArgument);
+            User::Leave(KErrArgument);        
+        entry = m_entryView->FetchL(item->localId());   
         isNewEntry = false;
     }
     
-    CCalEntry *entry(NULL);
-    
-    if (!(item->type()== QOrganizerItemType::TypeEventOccurrence || item->type()== QOrganizerItemType::TypeTodoOccurrence)) {
-        // Get guid from item. New guid is generated if empty.
-        HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
+    if (isNewEntry) {
+        if ((item->type()== QOrganizerItemType::TypeEventOccurrence || 
+             item->type()== QOrganizerItemType::TypeTodoOccurrence)) {
+             entry = createEntryToSaveItemInstanceL(item);
+        } else {
+            RPointerArray<CCalEntry> calEntryArray;
+            // Get guid from item. New guid is generated if empty.
+            HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
 
-        // If guid was defined in item check if it matches to something
-        if (!item->guid().isEmpty()) {
-            m_entryView->FetchL(*globalUid, calEntryArray);
-            if (calEntryArray.Count()== KSingleCount) {
-                entry = calEntryArray[0]; 
-                isNewEntry = false;
-            } else if (calEntryArray.Count() > KSingleCount) {
-                //Fetch on the basis of localid if localid is valid
-                calEntryArray.ResetAndDestroy();
-                if (!item->localId()) {
+            // Search for an existing entry based on guid
+            if (!item->guid().isEmpty()) {
+                m_entryView->FetchL(*globalUid, calEntryArray);
+                if (calEntryArray.Count()== KSingleCount) {
+                    //existing entry found for updating.
+                    entry = calEntryArray[0];
+                    calEntryArray.Close();
+                    isNewEntry = false;
+                } else if(calEntryArray.Count() > KSingleCount) {
+                    //invalid item arguments.
+                    CleanupStack::PopAndDestroy(globalUid);  
+                    calEntryArray.ResetAndDestroy();
                     User::Leave(KErrArgument);
                 }     
-            entry = m_entryView->FetchL(item->localId());
-            isNewEntry = false;
-            }        
-        }    
-        if (isNewEntry) {            
-            // Create entry
-            CCalEntry::TType type = OrganizerItemTypeTransform::entryTypeL(*item);
-            CCalEntry::TMethod method = CCalEntry::EMethodAdd;
-            TInt seqNum = 0; 
-            entry = CCalEntry::NewL(type, globalUid, method, seqNum);
-             // ownership passed?
+            } 
+            if (isNewEntry) {       
+                // Create a new entry to save.                      
+                CCalEntry::TType type = OrganizerItemTypeTransform::entryTypeL(*item);
+                CCalEntry::TMethod method = CCalEntry::EMethodAdd;
+                TInt seqNum = 0; 
+                entry = CCalEntry::NewL(type, globalUid, method, seqNum);
+                // ownership passed?
+            }
+            CleanupStack::Pop(globalUid);  
         }
-        CleanupStack::Pop(globalUid);  
-    } else {
-        entry = createEntryToSaveItemInstanceL(item,isNewEntry);
-    }        
+    }
     CleanupStack::PushL(entry);
 
     // Transform QOrganizerItem -> CCalEntry    
@@ -496,8 +508,7 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItem
 
     // Cleanup
     CleanupStack::PopAndDestroy(&entries);
-    CleanupStack::PopAndDestroy(entry);
-    calEntryArray.Close();
+    CleanupStack::PopAndDestroy(entry);   
     // Update change set
     if (changeSet) {
         if (isNewEntry)
@@ -638,57 +649,99 @@ void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForJournal() const
     m_definition.remove(QOrganizerItemType::TypeJournal);
 }
 
-CCalEntry* QOrganizerItemSymbianEngine::createEntryToSaveItemInstanceL(QOrganizerItem *item, bool& isNewEntry)
-{
-    RPointerArray<CCalEntry> calEntryArray;
+CCalEntry* QOrganizerItemSymbianEngine::createEntryToSaveItemInstanceL(QOrganizerItem *item)
+{  
     CCalEntry * entry(NULL);
     CCalEntry *parentEntry(NULL);
-       
-    // Get guid from item. New guid is generated if empty.
-    HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
+    HBufC8* globalUid(NULL);
     
     QOrganizerItemInstanceOrigin origin = item->detail<QOrganizerItemInstanceOrigin>();
+   
+    //Search parent based on guid
+    globalUid = OrganizerItemGuidTransform::guidLC(*item);    
     if (!item->guid().isEmpty()) {
+        RPointerArray<CCalEntry> calEntryArray;
         m_entryView->FetchL(*globalUid, calEntryArray);
+    
         if (calEntryArray.Count()== KSingleCount) {
-                //single count hence set it to the parent. 
-                parentEntry = calEntryArray[0];            
-        } else if (calEntryArray.Count() > KSingleCount) {            
-            calEntryArray.ResetAndDestroy();
-            //Fetch on the basis of localId if localId is valid
-            if (item->localId()) {
-                entry = m_entryView->FetchL(item->localId());
-                isNewEntry = false;
-            } else {
-                if(!origin.parentLocalId()) {
-                    User::Leave(KErrArgument); 
-                }
-                //another instance of same entry is modified so search parent entry by parentlocalId. 
-                parentEntry = m_entryView->FetchL(origin.parentLocalId());
-            }                           
-       }
-    }    
-    if(isNewEntry) {
-       if (parentEntry) {
-           CleanupStack::PushL(parentEntry);
-           //create an exceptional entry and save                
-           TCalTime recurrenceId = OrganizerItemDetailTransform::toTCalTimeL(origin.originalDate());
-
-           // create the new child entry now
-           entry = CCalEntry::NewL( parentEntry->EntryTypeL(),globalUid ,
-                                    parentEntry->MethodL(),parentEntry->SequenceNumberL(),
-                                    recurrenceId,CalCommon::EThisOnly );
-       
-           entry->ClearRepeatingPropertiesL();
-           entry->SetLocalUidL( TCalLocalUid( 0 ) );
-           CleanupStack::PopAndDestroy(parentEntry);
-       } else {
-         User::Leave(KErrArgument);
-       }
+           //single count hence set it to the parent. 
+           parentEntry = calEntryArray[0];
+           calEntryArray.Close();
+        } else {
+		    calEntryArray.ResetAndDestroy();
+		}
     }
-    calEntryArray.Close();
+    // Search on the basis of parentLocalId
+    if (!parentEntry && origin.parentLocalId()) {        
+        //another instance of same entry is modified.
+        //so search parent entry by parentlocalId. 
+        parentEntry = m_entryView->FetchL(origin.parentLocalId());    
+    } 
+       
+    if (parentEntry && checkForValidParentEntryL(item,parentEntry)) {
+        CleanupStack::PushL(parentEntry);
+        //create an exceptional entry to save                
+        TCalTime recurrenceId;
+        recurrenceId = OrganizerItemDetailTransform::toTCalTimeL(origin.originalDate());
+         
+        // create the new child entry now
+        entry = CCalEntry::NewL( parentEntry->EntryTypeL(),globalUid ,
+                                 parentEntry->MethodL(),
+                                 parentEntry->SequenceNumberL(),
+                                 recurrenceId,CalCommon::EThisOnly );
+       
+        entry->ClearRepeatingPropertiesL();
+        entry->SetLocalUidL( TCalLocalUid( 0 ) );
+        CleanupStack::PopAndDestroy(parentEntry);
+    } else {
+        CleanupStack::PopAndDestroy(globalUid);
+        delete parentEntry;
+        User::Leave(KErrArgument);
+    }
+          
     CleanupStack::Pop(globalUid);
     return entry;    
+}
+
+bool QOrganizerItemSymbianEngine::checkForValidParentEntryL(QOrganizerItem *item , CCalEntry *parentEntry)
+{    
+    QOrganizerItemInstanceOrigin origin;
+        bool validParentEntry = true;
+    origin = item->detail<QOrganizerItemInstanceOrigin>();
+    HBufC8* globalUid  = OrganizerItemGuidTransform::guidLC(*item);
+    
+    //Check if item type is consistent with parentEntry type
+    switch(parentEntry->EntryTypeL()) 
+    {
+        case CCalEntry::EAppt:
+        {    
+            if (item->type()!= QOrganizerItemType::TypeEventOccurrence) {            
+                // For an eventOccurrence the parentEntry type should be EAppt
+                validParentEntry = false;
+            }    
+            break;
+        }
+        case CCalEntry::ETodo:
+        {    
+            if (item->type()!= QOrganizerItemType::TypeTodoOccurrence) {
+                // For an todoOccurrence the parentEntry type should be ETodo
+                validParentEntry = false;
+            }    
+            break;
+        }    
+    }
+    //Check for UID  consistency for item with parentEntry.
+    if (!item->guid().isEmpty() && 
+       (globalUid->Compare(parentEntry->UidL()))) {
+        //Guid is not consistent with parentEntry UID.
+        validParentEntry = false;
+    } else if(origin.parentLocalId() && 
+        (origin.parentLocalId()!= parentEntry->LocalUidL())) {
+        // parentLocalId is not consistent with parentEntry localUID.
+        validParentEntry = false;
+    }
+    CleanupStack::PopAndDestroy(globalUid);
+    return validParentEntry;        
 }
 
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSymbianEngine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
@@ -787,7 +840,7 @@ bool QOrganizerItemSymbianEngine::waitForRequestFinished(QOrganizerItemAbstractR
 
         It's best to avoid processing events, if you can, or at least only process non-UI events.
     */
-    return m_requestServiceProviderQueue->waitForRequestFinished(req, msecs*KOneMicroSecond);
+    return m_requestServiceProviderQueue->waitForRequestFinished(req, msecs);
 }
 
 void QOrganizerItemSymbianEngine::requestDestroyed(QOrganizerItemAbstractRequest* req)

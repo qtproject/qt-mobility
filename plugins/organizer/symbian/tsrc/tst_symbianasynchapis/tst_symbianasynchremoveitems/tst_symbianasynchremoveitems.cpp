@@ -346,4 +346,4 @@ void TestRemoveItems::fetchRequestResultsAvailable()
 
 QTEST_MAIN(TestRemoveItems);
 
-#include "tst_removeitems.moc"
+#include "tst_symbianasynchremoveitems.moc"

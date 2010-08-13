@@ -860,11 +860,15 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList()
                          << static_cast<int>(QOrganizerItemPriority::UnknownPriority)
-                         << static_cast<int>(QOrganizerItemPriority::VeryLowPriority)
-                         << static_cast<int>(QOrganizerItemPriority::LowPriority)
-                         << static_cast<int>(QOrganizerItemPriority::MediumPriority)
+                         << static_cast<int>(QOrganizerItemPriority::HighestPriority)
+                         << static_cast<int>(QOrganizerItemPriority::ExtremelyHighPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryHighPriority)
                          << static_cast<int>(QOrganizerItemPriority::HighPriority)
-                         << static_cast<int>(QOrganizerItemPriority::VeryHighPriority));
+                         << static_cast<int>(QOrganizerItemPriority::MediumPriority)
+                         << static_cast<int>(QOrganizerItemPriority::LowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryLowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::ExtremelyLowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::LowestPriority));
     fields.insert(QOrganizerItemPriority::FieldPriority, f);
     d.setFields(fields);
     d.setUnique(true);
@@ -1145,11 +1149,15 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList()
                          << static_cast<int>(QOrganizerItemPriority::UnknownPriority)
-                         << static_cast<int>(QOrganizerItemPriority::VeryLowPriority)
-                         << static_cast<int>(QOrganizerItemPriority::LowPriority)
-                         << static_cast<int>(QOrganizerItemPriority::MediumPriority)
+                         << static_cast<int>(QOrganizerItemPriority::HighestPriority)
+                         << static_cast<int>(QOrganizerItemPriority::ExtremelyHighPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryHighPriority)
                          << static_cast<int>(QOrganizerItemPriority::HighPriority)
-                         << static_cast<int>(QOrganizerItemPriority::VeryHighPriority));
+                         << static_cast<int>(QOrganizerItemPriority::MediumPriority)
+                         << static_cast<int>(QOrganizerItemPriority::LowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryLowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::ExtremelyLowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::LowestPriority));
     fields.insert(QOrganizerItemPriority::FieldPriority, f);
     d.setFields(fields);
     d.setUnique(true);
@@ -1344,11 +1352,15 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList()
                          << static_cast<int>(QOrganizerItemPriority::UnknownPriority)
-                         << static_cast<int>(QOrganizerItemPriority::VeryLowPriority)
-                         << static_cast<int>(QOrganizerItemPriority::LowPriority)
-                         << static_cast<int>(QOrganizerItemPriority::MediumPriority)
+                         << static_cast<int>(QOrganizerItemPriority::HighestPriority)
+                         << static_cast<int>(QOrganizerItemPriority::ExtremelyHighPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryHighPriority)
                          << static_cast<int>(QOrganizerItemPriority::HighPriority)
-                         << static_cast<int>(QOrganizerItemPriority::VeryHighPriority));
+                         << static_cast<int>(QOrganizerItemPriority::MediumPriority)
+                         << static_cast<int>(QOrganizerItemPriority::LowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryLowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::ExtremelyLowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::LowestPriority));
     fields.insert(QOrganizerItemPriority::FieldPriority, f);
     d.setFields(fields);
     d.setUnique(true);

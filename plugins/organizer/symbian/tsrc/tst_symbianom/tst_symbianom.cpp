@@ -145,7 +145,9 @@ private slots:  // Test cases
     void addItem_data();
     void addItem();
     void signalEmission_data(){ addManagers(); };
-    void signalEmission(); 
+    void signalEmission();
+    void invalidDetail();
+    void invalidDetail_data(){ addManagers(); };
 
 private:
     // TODO: enable the following test cases by moving them to "private slots"
@@ -637,6 +639,19 @@ void tst_SymbianOm::signalEmission()
     itemsRemoved = 2;
     QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
+}
+
+void tst_SymbianOm::invalidDetail()
+{
+    // NOTE: There is an auto test about this (tst_QOrganizerItemManager::itemValidation)
+    // but its not working currently on symbian backend. This test can be removed
+    // when it's compatible with symbian backend.
+    QOrganizerTodo todo;
+    QOrganizerItemDetail invalidDetail("invalid");
+    invalidDetail.setValue("foo", "bar");
+    QVERIFY(todo.saveDetail(&invalidDetail));
+    QVERIFY(!m_om->saveItem(&todo));
+    QVERIFY(m_om->error() == QOrganizerItemManager::InvalidDetailError);
 }
 
 /*!

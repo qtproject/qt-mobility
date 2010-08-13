@@ -189,7 +189,8 @@ private:
     void modifyDetailDefinitionsForTodoOccurrence() const;
     void modifyDetailDefinitionsForNote() const;
     void modifyDetailDefinitionsForJournal() const;
-    CCalEntry* createEntryToSaveItemInstanceL(QOrganizerItem *item,bool & isNewEntry);
+    CCalEntry* createEntryToSaveItemInstanceL(QOrganizerItem *item);
+    bool checkForValidParentEntryL(QOrganizerItem *item , CCalEntry *parentEntry);
 	
 private:
     QOrganizerItemSymbianEngineData *d;

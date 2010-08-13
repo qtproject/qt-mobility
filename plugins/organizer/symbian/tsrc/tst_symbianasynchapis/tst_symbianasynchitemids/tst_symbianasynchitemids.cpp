@@ -411,4 +411,4 @@ void TestItemIds::fetchRequestResultsAvailable()
 
 QTEST_MAIN(TestItemIds);
 
-#include "tst_itemids.moc"
+#include "tst_symbianasynchitemids.moc"

@@ -70,14 +70,14 @@ bool QOrganizerItemRequestQueue::startRequest(
     // Find m_abstractRequestMap if an asynchronous service provider for request
     // req already exists
     COrganizerItemRequestsServiceProvider* requestServiceProvider(
-            m_abstractRequestMap[req]);
+        m_abstractRequestMap[req]);
     // asynchronous service provider does not exist, create a new one
     if (!requestServiceProvider) {
-            requestServiceProvider = 
-                    COrganizerItemRequestsServiceProvider::NewL(
-                    iOrganizerItemManagerEngine);
-            m_abstractRequestMap.insert(req, requestServiceProvider);
-        }
+        requestServiceProvider = 
+            COrganizerItemRequestsServiceProvider::NewL(
+                m_organizerItemManagerEngine);
+        m_abstractRequestMap.insert(req, requestServiceProvider);
+    }
     // Start the request
     return requestServiceProvider->StartRequest(req);
 }
@@ -101,10 +101,24 @@ bool QOrganizerItemRequestQueue::cancelRequest(
 bool QOrganizerItemRequestQueue::waitForRequestFinished(
         QOrganizerItemAbstractRequest* req, int msecs)
 {
-    Q_UNUSED(req)
-    Q_UNUSED(msecs)
-    // Not supported 
-    return false;
+    // TODO create a seperate timer and event loop for all requests
+    m_timer->start(msecs);
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(exitLoop()));
+    m_eventLoop->exec();
+    if (QOrganizerItemAbstractRequest::FinishedState == req->state()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void QOrganizerItemRequestQueue::exitLoop()
+{
+    disconnect(m_timer, SIGNAL(timeout()), this, SLOT(exitLoop()));
+    // TODO:
+    // Exit the respective event loop for the request for which this loop was 
+    // started
+    m_eventLoop->exit();
 }
 
 // Request is not more a valid request
@@ -126,7 +140,8 @@ void QOrganizerItemRequestQueue::requestDestroyed(
 
 QOrganizerItemRequestQueue::QOrganizerItemRequestQueue(
         QOrganizerItemSymbianEngine& aOrganizerItemManagerEngine) : 
-        iOrganizerItemManagerEngine(aOrganizerItemManagerEngine)
+        m_organizerItemManagerEngine(aOrganizerItemManagerEngine)
 {
-    // C++ constructor
+    m_eventLoop = new QEventLoop(this);
+    m_timer = new QTimer(this);
 }
