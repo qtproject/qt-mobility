@@ -436,16 +436,19 @@ bool exportLandmarksGpx(const QString &connectionName,
                         QList<QLandmarkId> landmarkIds,
                         QLandmarkManager::Error *error,
                         QString *errorString,
-                        const QString &managerUri)
+                        const QString &managerUri,
+                        QueryRun *queryRun)
 {
     QLandmarkFileHandlerGpx gpxHandler;
 
     QList<QLandmarkSortOrder> sortOrders;
     QLandmarkFilter filter;
-    if (landmarkIds.count() > 0)
-        filter = QLandmarkIdFilter (landmarkIds);
 
-    QList<QLandmark> lms = ::landmarks(connectionName,filter, sortOrders, -1, 0, error, errorString, managerUri);
+    QList<QLandmark> lms;
+    if (landmarkIds.count() > 0)
+        lms = ::landmarks(connectionName, landmarkIds,0,error, errorString,managerUri,queryRun);
+    else
+        lms = ::landmarks(connectionName,filter, sortOrders, -1, 0, error, errorString, managerUri);
 
     if (error && *error != QLandmarkManager::NoError)
         return false;
@@ -2553,7 +2556,7 @@ bool DatabaseOperations::exportLandmarks(const QString &connectionName,
         device->close();
         return result;
     } else if (format == QLandmarkManager::Gpx) {
-        result = exportLandmarksGpx(connectionName, device, landmarkIds, error, errorString, managerUri);
+        result = exportLandmarksGpx(connectionName, device, landmarkIds, error, errorString, managerUri, queryRun);
         device->close();
         return result;
     }  else if (format =="") {

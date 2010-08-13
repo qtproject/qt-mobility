@@ -5476,63 +5476,100 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx() {
         file.remove();
     QVERIFY(!file.exists());
 
+    bool idList = false;
     QFETCH(QString, type);
     if (type == "sync") {
         QVERIFY(m_manager->exportLandmarks(exportFile,QLandmarkManager::Gpx));
-    }
-    else if (type == "async"){
+    } else if (type == "syncIdList") {
+        QList<QLandmarkId> lmIds;
+
+         //try an empty local id
+        QLandmarkId fakeId;
+        fakeId.setManagerUri(lm1.landmarkId().managerUri());
+        lmIds << lm1.landmarkId() << lm2.landmarkId() << fakeId << lm3.landmarkId();
+        QVERIFY(!m_manager->exportLandmarks(exportFile, QLandmarkManager::Gpx, lmIds));
+        QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);//Local id is emtpy
+
+        //try a non-existent id
+        lmIds.clear();
+        fakeId.setLocalId("1000");
+        lmIds << lm1.landmarkId() << lm2.landmarkId() << fakeId << lm3.landmarkId();
+        QVERIFY(!m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx, lmIds));
+        QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);//id does not exist
+
+        lmIds.clear();
+        lmIds << lm2.landmarkId() << lm3.landmarkId();
+        QVERIFY(m_manager->exportLandmarks(exportFile, QLandmarkManager::Gpx, lmIds));
+        idList = true;
+    } else if (type == "async"){
         exportRequest.setFileName(exportFile);
         exportRequest.setFormat(QLandmarkManager::Gpx);
         exportRequest.start();
         QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::NoError));
+    } else if (type == "asyncIdList") {
+        QList<QLandmarkId> lmIds;
+
+         //try an empty local id
+        QLandmarkId fakeId;
+        fakeId.setManagerUri(lm1.landmarkId().managerUri());
+        lmIds << lm1.landmarkId() << lm2.landmarkId() << fakeId << lm3.landmarkId();
+        exportRequest.setFileName(exportFile);
+        exportRequest.setFormat(QLandmarkManager::Gpx);
+        exportRequest.setLandmarkIds(lmIds);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::BadArgumentError)); //local id is empty
+
+        //try a non-existent id
+        lmIds.clear();
+        fakeId.setLocalId("1000");
+        lmIds << lm1.landmarkId() << lm2.landmarkId() << fakeId << lm3.landmarkId();
+        exportRequest.setFileName(exportFile);
+        exportRequest.setFormat(QLandmarkManager::Gpx);
+        exportRequest.setLandmarkIds(lmIds);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::DoesNotExistError)); //local id is empty
+
+        lmIds.clear();
+        lmIds << lm2.landmarkId() << lm3.landmarkId();
+        exportRequest.setFileName(exportFile);
+        exportRequest.setFormat(QLandmarkManager::Gpx);
+        exportRequest.setLandmarkIds(lmIds);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest));
+        idList = true;
+
+
     } else {
-        qFatal("Unrecognised type");
+        qFatal("Unrecognised test row");
     }
 
-    QVERIFY(file.exists());
+    QVERIFY(QFile::exists(exportFile));
 
     QVERIFY(m_manager->importLandmarks(exportFile, QLandmarkManager::Gpx));
     QList<QLandmark> lms = m_manager->landmarks();
-    QCOMPARE(lms.count(), 7);
     QLandmarkNameFilter nameFilter;
-    nameFilter.setName("lm1");
-    QCOMPARE(m_manager->landmarks(nameFilter).count(),2);
-    nameFilter.setName("lm2");
-    QCOMPARE(m_manager->landmarks(nameFilter).count(),2);
-    nameFilter.setName("lm3");
-    QCOMPARE(m_manager->landmarks(nameFilter).count(),2);
-    nameFilter.setName("lm4");
-    QCOMPARE(m_manager->landmarks(nameFilter).count(),1);
 
-    //try supplying a list of landmark ids
-    QList<QLandmarkId> lmIds;
-    lmIds << lm1.landmarkId();
-    lmIds << lm3.landmarkId();
-    QVERIFY(QFile::remove(exportFile));
-
-    if (type =="sync") {
-        QVERIFY(m_manager->exportLandmarks(exportFile, QLandmarkManager::Gpx, lmIds));
-    } else if (type == "async"){
-        exportRequest.setLandmarkIds(lmIds);
-        exportRequest.start();
-        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::NoError));
-    } else {
-        qFatal("Unrecognised type");
+    if (!idList) {
+        QCOMPARE(lms.count(), 7);
+        nameFilter.setName("lm1");
+        QCOMPARE(m_manager->landmarks(nameFilter).count(),2);
+        nameFilter.setName("lm2");
+        QCOMPARE(m_manager->landmarks(nameFilter).count(),2);
+        nameFilter.setName("lm3");
+        QCOMPARE(m_manager->landmarks(nameFilter).count(),2);
+        nameFilter.setName("lm4");
+        QCOMPARE(m_manager->landmarks(nameFilter).count(),1);
+    } else if (idList) {
+        QCOMPARE(lms.count(), 6);
+        nameFilter.setName("lm1");
+        QCOMPARE(m_manager->landmarks(nameFilter).count(),1);
+        nameFilter.setName("lm2");
+        QCOMPARE(m_manager->landmarks(nameFilter).count(),2);
+        nameFilter.setName("lm3");
+        QCOMPARE(m_manager->landmarks(nameFilter).count(),2);
+        nameFilter.setName("lm4");
+        QCOMPARE(m_manager->landmarks(nameFilter).count(),1);
     }
-
-    QVERIFY(m_manager->importLandmarks(exportFile, QLandmarkManager::Gpx));
-    lms = m_manager->landmarks();
-    QCOMPARE(lms.count(), 9);
-
-    nameFilter.setName("lm1");
-    QCOMPARE(m_manager->landmarks(nameFilter).count(),3);
-    nameFilter.setName("lm2");
-    QCOMPARE(m_manager->landmarks(nameFilter).count(),2);
-    nameFilter.setName("lm3");
-    QCOMPARE(m_manager->landmarks(nameFilter).count(),3);
-    nameFilter.setName("lm4");
-    QCOMPARE(m_manager->landmarks(nameFilter).count(),1);
-    QVERIFY(QFile::remove(exportFile));
 }
 
 void tst_QLandmarkManagerEngineSqlite::exportGpx_data()
@@ -5540,7 +5577,9 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx_data()
     QTest::addColumn<QString>("type");
 
     QTest::newRow("sync") << "sync";
+    QTest::newRow("syncIdList") << "syncIdList";
     QTest::newRow("async") << "async";
+    QTest::newRow("asyncIdList") << "asyncIdList";
 }
 
 void tst_QLandmarkManagerEngineSqlite::exportLmx() {
