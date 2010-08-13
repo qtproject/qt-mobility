@@ -368,8 +368,10 @@ void QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& itemId, QOr
     CleanupStack::PopAndDestroy(calEntry);
 }
 
-bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error* error)
 {
+    Q_UNUSED(collectionId) // TODO: multiple collection (calendar) support
+
     // TODO: the performance would be probably better, if we had a separate
     // implementation for the case with a list of items that would save all
     // the items

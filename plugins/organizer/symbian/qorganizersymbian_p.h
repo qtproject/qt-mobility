@@ -137,7 +137,7 @@ public:
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
 
     bool saveItem(QOrganizerItem *item, QOrganizerItemManager::Error *error);
-    bool saveItems(QList<QOrganizerItem> *items, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error);
+    bool saveItems(QList<QOrganizerItem> *items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error);
 
     bool removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemManager::Error* error);
     bool removeItems(const QList<QOrganizerItemLocalId> &itemIds, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error);

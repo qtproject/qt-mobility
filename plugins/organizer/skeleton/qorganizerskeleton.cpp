@@ -249,6 +249,80 @@ bool QOrganizerItemSkeletonEngine::removeDetailDefinition(const QString& definit
     return QOrganizerItemManagerEngine::removeDetailDefinition(definitionId, itemType, error);
 }
 
+
+QOrganizerCollectionLocalId QOrganizerItemSkeletonEngine::defaultCollectionId(QOrganizerItemManager::Error* error) const
+{
+    /*
+        TODO
+
+        This allows clients to determine which collection an item will be saved,
+        if the item is saved via saveItems() without specifying a collection id
+        of a collection in which to save the item.
+
+        If the backend does not support multiple collections (calendars) it may
+        return the default constructed collection id.
+
+        There is always at least one collection in a manager, and all items are
+        saved in exactly one collection.
+     */
+    return QOrganizerItemManagerEngine::defaultCollectionId(error);
+}
+
+QList<QOrganizerCollectionLocalId> QOrganizerItemSkeletonEngine::collectionIds(QOrganizerItemManager::Error* error) const
+{
+    /*
+        TODO
+
+        This allows clients to retrieve the ids of all collections currently
+        in this manager.  Some backends will have a prepopulated list of valid
+        collections, others will not.
+     */
+    return QOrganizerItemManagerEngine::collectionIds(error);
+}
+
+QList<QOrganizerCollection> QOrganizerItemSkeletonEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
+{
+    /*
+        TODO
+
+        This allows clients to retrieve the collections which correspond
+        to the given collection ids.  A collection can have properties
+        like colour, description, perhaps a priority, etc etc.
+     */
+    return QOrganizerItemManagerEngine::collections(collectionIds, error);
+}
+
+bool QOrganizerItemSkeletonEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
+{
+    /*
+        TODO
+
+        This allows clients to create or update collections if the backend supports
+        mutable collections.  If the backend does support mutable collections, it
+        should report that it supports the MutableCollections manager feature.
+     */
+    return QOrganizerItemManagerEngine::saveCollection(collection, error);
+}
+
+bool QOrganizerItemSkeletonEngine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
+{
+    /*
+        TODO
+
+        This allows clients to remove collections if the backend supports mutable
+        collections.  If the backend does support mutable collections, it should
+        report that it supports the MutableCollections manager feature.
+
+        When a collection is removed, all items in the collection are removed.
+        That is, they are _not_ transferred to another collection.
+
+        If the user attempts to remove the collection which is the default collection,
+        the backend may decide whether to fail (with a permissions error) or to
+        succeed and arbitrarily choose another collection to be the default collection.
+     */
+    return QOrganizerItemManagerEngine::removeCollection(collectionId, error);
+}
+
 bool QOrganizerItemSkeletonEngine::startRequest(QOrganizerItemAbstractRequest* req)
 {
     /*
