@@ -9,6 +9,7 @@ INCLUDEPATH += ../../../src/contacts \
                 ../../../src/gallery \
                 ../../../src/location \
                 ../../../src/location/maps \
+                ../../../src/location/maps/tiled \
                 ../../../src/location/landmarks \
                 ../../../src/messaging\ 
                 ../../../src/multimedia \
