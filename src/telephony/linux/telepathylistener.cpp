@@ -39,12 +39,13 @@
 **
 ****************************************************************************/
 
+#include <QDebug>
+
 #include "telepathylistener_p.h"
 #include "telepathy_p.h"
 #include "dbusadaptor_p.h"
 #include "dbusinterface_p.h"
 #include "message_p.h"
-#include <QDebug>
 
 #define DBUS_SERVICE "org.freedesktop.Telepathy.Connection.Interface.Requests"
 #define DBUS_PATH "/org/freedesktop/Telepathy/Connection/ring/tel/ring"

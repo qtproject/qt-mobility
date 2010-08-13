@@ -125,7 +125,7 @@ contains(mobility_modules, organizer) {
 
 # Telephony API examples
 contains(mobility_modules,telephony) {
-    unix:!mac:!maemo* {SUBDIRS += telephony}
+    unix:!mac {SUBDIRS += telephony}
 }
 
 # Feedback API examples
