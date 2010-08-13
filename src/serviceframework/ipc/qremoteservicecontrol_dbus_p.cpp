@@ -220,7 +220,7 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& /*ident*
         DBusSession *session = new DBusSession();
         new DBusSessionAdaptor(session);
 
-        QString path = "/" + list[0].interface + "/DBusSession";
+        QString path = "/" + list[0].iface + "/DBusSession";
         path.replace(QString("."), QString("/"));
         connection->registerObject(path, session);
 
@@ -244,7 +244,7 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& /*ident*
 QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier& typeIdent, const QString& /*location*/)
 {
     QString serviceName = "com.nokia.qtmobility.sfw." + typeIdent.name;
-    QString path = "/" + typeIdent.interface + "/DBusSession";
+    QString path = "/" + typeIdent.iface + "/DBusSession";
     path.replace(QString("."), QString("/"));
 
     QDBusConnection *connection = new QDBusConnection(QDBusConnection::sessionBus());
