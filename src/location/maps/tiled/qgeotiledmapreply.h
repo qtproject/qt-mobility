@@ -79,7 +79,6 @@ public:
     QByteArray mapImageData() const;
     QString mapImageFormat() const;
 
-public Q_SLOTS:
     virtual void abort();
 
 Q_SIGNALS:

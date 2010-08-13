@@ -48,6 +48,8 @@
 #include <QObject>
 #include <QMap>
 
+class QLocale;
+
 QTM_BEGIN_NAMESPACE
 
 class QGeoRoutingManagerEngine;
@@ -60,7 +62,6 @@ public:
     ~QGeoRoutingManager();
 
     QString managerName() const;
-    QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
     QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request);
@@ -74,6 +75,9 @@ public:
     QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations() const;
     QGeoRouteRequest::SegmentDetails supportedSegmentDetails() const;
     QGeoRouteRequest::InstructionDetails supportedInstructionDetails() const;
+
+    void setLocale(const QLocale &locale);
+    QLocale locale() const;
 
 Q_SIGNALS:
     void finished(QGeoRouteReply* reply);

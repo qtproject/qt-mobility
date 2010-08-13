@@ -145,6 +145,30 @@ void QLandmarkExportRequest::setFormat(const QString &format)
 }
 
 /*!
+    Returns the export option of the export request.
+    The export option defines how categories are treated
+    during the export operation.  The default option is
+    QLandmarkManager::IncludeCategoryData.
+
+*/
+QLandmarkManager::TransferOption QLandmarkExportRequest::transferOption() const
+{
+    Q_D(const QLandmarkExportRequest);
+    return d->option;
+}
+
+/*!
+    Sets the export \a option of the export request.
+    The export \a option defines how categories are treated
+    during the export operation.
+*/
+void QLandmarkExportRequest::setTransferOption(QLandmarkManager::TransferOption option)
+{
+    Q_D(QLandmarkExportRequest);
+    d->option = option;
+}
+
+/*!
     Returns the list of identifiers of landmarks that will be exported.
 */
 QList<QLandmarkId> QLandmarkExportRequest::landmarkIds() const

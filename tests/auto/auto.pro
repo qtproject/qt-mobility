@@ -37,7 +37,9 @@ contains(mobility_modules,location) {
           qlocationutils \
           qnmeapositioninfosource \
           #qlandmarkmanagerplugins \
-          qlandmarkmanagerengine
+          qlandmarkmanagerengine \
+          qlandmark \
+          qlandmarkcategory
 
      contains(QT_CONFIG, declarative) {
          SUBDIRS += qdeclarativeposition
@@ -46,15 +48,10 @@ contains(mobility_modules,location) {
         SUBDIRS += qgeoinfosources_wince
     }
 
-    SUBDIRS +=  qlandmarkfilehandler_gpx \
-                qlandmarkfilehandler_lmx
+    SUBDIRS +=  qlandmarkfilehandler_gpx
+                #qlandmarkfilehandler_lmx
     
-    SUBDIRS += qlandmarkmanagerengine_sqlite
-}
-
-contains(mobility_modules,landmarks) {
-    SUBDIRS += qlandmark \                      #Landmark
-            qlandmarkcategory
+#disable for now    SUBDIRS += qlandmarkmanagerengine_sqlite
 }
 
 contains(mobility_modules,publishsubscribe) {

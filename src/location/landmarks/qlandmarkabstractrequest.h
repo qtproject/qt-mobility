@@ -64,7 +64,9 @@ public:
         LandmarkIdFetchRequest,
         CategoryIdFetchRequest,
         LandmarkFetchRequest,
+        LandmarkFetchByIdRequest,
         CategoryFetchRequest,
+        CategoryFetchByIdRequest,
         LandmarkSaveRequest,
         LandmarkRemoveRequest,
         CategorySaveRequest,
@@ -103,6 +105,7 @@ protected:
 private:
     Q_DISABLE_COPY(QLandmarkAbstractRequest)
     friend class QLandmarkManagerEngine;
+    friend class QLandmarkAbstractRequestPrivate;
 };
 
 QTM_END_NAMESPACE

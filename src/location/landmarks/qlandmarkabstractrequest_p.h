@@ -42,6 +42,8 @@
 #ifndef QLANDMARKABSTRACTREQUEST_P_H
 #define QLANDMARKABSTRACTREQUEST_P_H
 
+#include <QMutex>
+
 //
 //  W A R N I N G
 //  -------------
@@ -62,11 +64,15 @@ class QLandmarkAbstractRequestPrivate
 public:
     QLandmarkAbstractRequestPrivate(QLandmarkManager *mgr);
 
+    virtual ~QLandmarkAbstractRequestPrivate();
+     static void notifyEngine(QLandmarkAbstractRequest* request);
+
     QLandmarkAbstractRequest::RequestType type;
     QLandmarkAbstractRequest::State state;
     QLandmarkManager::Error error;
     QString errorString;
     QLandmarkManager *manager;
+    mutable QMutex mutex;
 };
 
 QTM_END_NAMESPACE
