@@ -42,6 +42,7 @@
 #define QT_STATICPLUGIN
 #include <QtTest/QtTest>
 
+#include "qservicemanager.h"
 #include "qtcontacts.h"
 #include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 
@@ -211,7 +212,25 @@ void tst_QContactManagerFiltering::initTestCase()
         }
     }
 
-    qDebug() << "Finished preparing each manager for test!";
+    qDebug() << "Finished preparing each manager for test!  About to load test actions:";
+    QServiceManager sm;
+    QStringList allServices = sm.findServices();
+    foreach(const QString& serv, allServices) {
+        if (serv.startsWith("tst_qcontactmanagerfiltering:")) {
+            if (!sm.removeService(serv)) {
+                qDebug() << " tst_qca: ctor: cleaning up test service" << serv << "failed:" << sm.error();
+            }
+        }
+    }
+    QStringList myServices;
+    myServices << "BooleanAction" << "DateAction" << "IntegerAction" << "NumberAction" << "PhoneNumberAction";
+    foreach (const QString& serv, myServices) {
+        QString builtPath = QCoreApplication::applicationDirPath() + "/plugins/contacts/xmldata/" + serv.toLower() + "service.xml";
+        if (!sm.addService(builtPath)) {
+            qDebug() << " tst_qca: ctor: unable to add" << serv << "service:" << sm.error();
+        }
+    }
+    qDebug() << "Done!";
 }
 
 void tst_QContactManagerFiltering::cleanupTestCase()
@@ -239,6 +258,17 @@ void tst_QContactManagerFiltering::cleanupTestCase()
 
     // And restore old contacts
     managerDataHolder.reset(0);
+
+    // clean up any actions/services.
+    QServiceManager sm;
+    QStringList allServices = sm.findServices();
+    foreach(const QString& serv, allServices) {
+        if (serv.startsWith("tst_qcontactmanagerfiltering:")) {
+            if (!sm.removeService(serv)) {
+                qDebug() << " tst_qca: ctor: cleaning up test service" << serv << "failed:" << sm.error();
+            }
+        }
+    }
 }
 
 QString tst_QContactManagerFiltering::convertIds(QList<QContactLocalId> allIds, QList<QContactLocalId> ids)
@@ -2352,7 +2382,7 @@ void tst_QContactManagerFiltering::actionPlugins()
     QVERIFY(actions.contains("Number"));
 
     /* Ignore the version if the vendor is not set */
-    actions = QContactAction::availableActions(QString(), 555);
+    actions = QContactAction::availableActions(QString());
     QVERIFY(actions.contains("Boolean"));
     QVERIFY(actions.contains("Number"));
 
@@ -2368,34 +2398,22 @@ void tst_QContactManagerFiltering::actionPlugins()
     QVERIFY(!actions.contains("Number"));
     QVERIFY(actions.contains("Boolean"));
 
-    actions = QContactAction::availableActions("IntegerCo", 5);
+    actions = QContactAction::availableActions("IntegerCo");
     QVERIFY(actions.contains("Number"));
     QVERIFY(!actions.contains("Boolean"));
 
-    actions = QContactAction::availableActions("IntegerCo", 3);
-    QVERIFY(!actions.contains("Number"));
-    QVERIFY(!actions.contains("Boolean"));
-
-    actions = QContactAction::availableActions("BooleanCo", 3);
+    actions = QContactAction::availableActions("BooleanCo");
     QVERIFY(!actions.contains("Number"));
     QVERIFY(actions.contains("Boolean"));
-
-    actions = QContactAction::availableActions("BooleanCo", 555);
-    QVERIFY(!actions.contains("Number"));
-    QVERIFY(!actions.contains("Boolean"));
 }
 
 void tst_QContactManagerFiltering::actionFiltering_data()
 {
     QTest::addColumn<QContactManager *>("cm");
     QTest::addColumn<QString>("actionName");
-    QTest::addColumn<QString>("vendorName");
-    QTest::addColumn<int>("version");
     QTest::addColumn<QString>("expected");
 
     QString es;
-    QVariant ev;
-
 
     for (int i = 0; i < managers.size(); i++) {
         QContactManager *manager = managers.at(i);
@@ -2403,8 +2421,7 @@ void tst_QContactManagerFiltering::actionFiltering_data()
         QPair<QString, QString> integerDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
         QPair<QString, QString> dateDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Date");
 
-        newMRow("bad actionname", manager) << manager << "No such action" << es << -1 << es;
-        newMRow("bad vendor", manager) << manager << es << "Vendor missing" << -1 << es;
+        newMRow("bad actionname", manager) << manager << "No such action"  << "";
 
         QString expected;
         if ( (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty())
@@ -2418,60 +2435,30 @@ void tst_QContactManagerFiltering::actionFiltering_data()
             expected = "ab";
         }
 
-        QTest::newRow("empty (any action matches)") << manager << es << es << -1 << expected;
-        /* versions are ignored if vendors are not specified */
-        newMRow("ignored version", manager) << manager << es << es << 793434 << expected;
+        QTest::newRow("empty (any action matches)") << manager << es << expected;
 
         if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
-            newMRow("Number", manager) << manager << "Number" << es << -1 << "abcd";
-            QTest::newRow("Number (IntegerCo)") << manager << "Number" << "IntegerCo" << -1 << "abc";
-            QTest::newRow("Number (NumberCo)") << manager << "Number" << "NumberCo" << -1 << "abcd";
-            QTest::newRow("Number (BooleanCo)") << manager << "Number" << "BooleanCo" << -1 << es;
-
-            QTest::newRow("Number (IntegerCo, good version)") << manager << "Number" << "IntegerCo" << 5 << "abc";
-            QTest::newRow("Number (NumberCo, good version)") << manager << "Number" << "NumberCo" << 42 << "abcd";
-
-            QTest::newRow("Number (IntegerCo, bad version)") << manager << "Number" << "IntegerCo" << 345345 << es;
-            QTest::newRow("Number (NumberCo, bad version)") << manager << "Number" << "NumberCo" << 7547544 << es;
-
-            /* versions are ignored if vendors are not specified */
-            QTest::newRow("Number (ignored version)") << manager << "Number" << es << 345345 << "abcd";
-
-            /* Vendor specific */
-            newMRow("NumberCo", manager) << manager << es << "NumberCo" << -1 << "abcd";
-            QTest::newRow("NumberCo (good version)") << manager << es << "NumberCo" << 42 << "abcd";
-            QTest::newRow("NumberCo (bad version)") << manager << es << "NumberCo" << 41 << es;
-
-            newMRow("IntegerCo", manager) << manager << es << "IntegerCo" << -1 << "abc";
-            QTest::newRow("IntegerCo (good version)") << manager << es << "IntegerCo" << 5 << "abc";
-            QTest::newRow("IntegerCo (bad version)") << manager << es << "IntegerCo" << 41 << es;
+            newMRow("Number", manager) << manager << "NumberAction" << "abcd";
+            QTest::newRow("Number (NumberCo)") << manager << "NumberAction" << "abcd";
         }
 
         if (!booleanDefAndFieldNames.first.isEmpty() && !booleanDefAndFieldNames.second.isEmpty()) {
             /* Boolean testing */
-            newMRow("Boolean action", manager) << manager << "Boolean" << es << -1 << "abc";
-            newMRow("BooleanCo", manager) << manager << es << "BooleanCo" << -1 << "abc";
-            QTest::newRow("BooleanCo (good version)") << manager << es << "BooleanCo" << 3 << "abc";
-            QTest::newRow("BooleanCo (bad version)") << manager << es << "BooleanCo" << 3234243 << es;
-        }
-
-        if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
-            /* Value filtering */
-            QTest::newRow("Any action matching") << manager << es << es << -1 << "abcd";
-            QTest::newRow("NumberCo") << manager << es << "NumberCo" << -1 << "abcd";
-            QTest::newRow("IntegerCo") << manager << es << "IntegerCo" << -1 << "abc";
+            newMRow("Boolean action", manager) << manager << "BooleanAction" << "a";
+            newMRow("BooleanCo", manager) << manager << es << "a";
         }
 
         if (!booleanDefAndFieldNames.first.isEmpty() && !booleanDefAndFieldNames.second.isEmpty()) {
-            newMRow("Boolean action matching true", manager) << manager << es << "BooleanCo" << -1 << "abc";
+            newMRow("Boolean action matching true", manager) << manager << es << "a";
+            newMRow("Boolean action matching false", manager) << manager << es << es;
         }
 
         /* Recursive filtering */
-        QTest::newRow("Recursive action 1") << manager << "IntersectionRecursive" << es << -1 << es;
-        QTest::newRow("Recursive action 2") << manager << "UnionRecursive" << es << -1 << es;
-        QTest::newRow("Recursive action 3") << manager << "PairRecursive" << es << -1 << es;
-        QTest::newRow("Recursive action 4") << manager << "AnotherPairRecursive" << es << -1 << es;
-        QTest::newRow("Recursive action 5") << manager << "Recursive" << es << -1 << es;
+        QTest::newRow("Recursive action 1") << manager << "IntersectionRecursive" << es;
+        QTest::newRow("Recursive action 2") << manager << "UnionRecursive" << es;
+        QTest::newRow("Recursive action 3") << manager << "PairRecursive" << es;
+        QTest::newRow("Recursive action 4") << manager << "AnotherPairRecursive" << es;
+        QTest::newRow("Recursive action 5") << manager << "Recursive" << es;
     }
 }
 
@@ -2479,19 +2466,24 @@ void tst_QContactManagerFiltering::actionFiltering()
 {
     QFETCH(QContactManager*, cm);
     QFETCH(QString, actionName);
-    QFETCH(QString, vendorName);
-    QFETCH(int, version);
     QFETCH(QString, expected);
+
+    // only test the memory engine - action filtering + service framework plugin loading
+    // codepaths are tested fully this way since the codepath for other engines is that of
+    // the memory engine, and only the memory engine has the required definitions and fields.
+    if (cm->managerName() != QString(QLatin1String("memory")))
+        return;
 
     /* Load the definition and field names for the various variant types for the current manager */
     defAndFieldNamesForTypeForActions = defAndFieldNamesForTypePerManager.value(cm);
     if (!defAndFieldNamesForTypeForActions.isEmpty()) {
         QContactActionFilter af;
         af.setActionName(actionName);
-        af.setVendor(vendorName, version);
 
         QList<QContactLocalId> ids = cm->contactIds(af);
         QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
+
+qDebug() << "   actionName =" << actionName;
 
         QString output = convertIds(contacts, ids);
         QCOMPARE_UNSORTED(output, expected);
@@ -2822,6 +2814,62 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     bool supportsChangelog = cm->hasFeature(QContactManager::ChangeLogs);
     int napTime = supportsChangelog ? 2000 : 1;
 
+
+    /* For our test actions: memory engine, add the "special" definitions. */
+    if (cm->managerName() == QString(QLatin1String("memory"))) {
+        QContactDetailDefinition def;
+        QContactDetailFieldDefinition field;
+        QMap<QString, QContactDetailFieldDefinition> fields;
+
+        // integer
+        def.setName("IntegerDefinition");
+        field.setDataType(QVariant::Int);
+        field.setAllowableValues(QVariantList());
+        fields.clear();
+        fields.insert("IntegerField", field);
+        def.setFields(fields);
+        defAndFieldNames = QPair<QString, QString>("IntegerDefinition", "IntegerField");
+        definitionDetails.insert("Integer", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+        cm->saveDetailDefinition(def, QContactType::TypeContact);
+
+        // double
+        def.setName("DoubleDefinition");
+        field.setDataType(QVariant::Double);
+        field.setAllowableValues(QVariantList());
+        fields.clear();
+        fields.insert("DoubleField", field);
+        def.setFields(fields);
+        defAndFieldNames = QPair<QString, QString>("DoubleDefinition", "DoubleField");
+        definitionDetails.insert("Double", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+        cm->saveDetailDefinition(def, QContactType::TypeContact);
+
+        // boolean
+        def.setName("BooleanDefinition");
+        field.setDataType(QVariant::Bool);
+        field.setAllowableValues(QVariantList());
+        fields.clear();
+        fields.insert("BooleanField", field);
+        def.setFields(fields);
+        defAndFieldNames = QPair<QString, QString>("BooleanDefinition", "BooleanField");
+        definitionDetails.insert("Boolean", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+        cm->saveDetailDefinition(def, QContactType::TypeContact);
+
+        // date
+        def.setName("DateDefinition");
+        field.setDataType(QVariant::Date);
+        field.setAllowableValues(QVariantList());
+        fields.clear();
+        fields.insert("DateField", field);
+        def.setFields(fields);
+        defAndFieldNames = QPair<QString, QString>("DateDefinition", "DateField");
+        definitionDetails.insert("Date", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+        cm->saveDetailDefinition(def, QContactType::TypeContact);
+    }
+
     /* String */
     defAndFieldNames = definitionAndField(cm, QVariant::String, &nativelyFilterable);
     if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
@@ -2833,7 +2881,8 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
 
     /* Integer */
     defAndFieldNames = definitionAndField(cm, QVariant::Int, &nativelyFilterable);
-    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+    if (cm->managerName() != "memory" && !defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        // we don't insert for memory engine, as we already handled this above (for action filtering)
         definitionDetails.insert("Integer", defAndFieldNames);
         defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
     }
@@ -2851,7 +2900,8 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
 
     /* double detail */
     defAndFieldNames = definitionAndField(cm, QVariant::Double, &nativelyFilterable);
-    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+    if (cm->managerName() != "memory" && !defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        // we don't insert for memory engine, as we already handled this above (for action filtering)
         definitionDetails.insert("Double", defAndFieldNames);
         defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
     }
@@ -2860,7 +2910,8 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
 
     /* bool */
     defAndFieldNames = definitionAndField(cm, QVariant::Bool, &nativelyFilterable);
-    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+    if (cm->managerName() != "memory" && !defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        // we don't insert for memory engine, as we already handled this above (for action filtering)
         definitionDetails.insert("Bool", defAndFieldNames);
         defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
     }
@@ -2887,7 +2938,8 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
 
     /* date */
     defAndFieldNames = definitionAndField(cm, QVariant::Date, &nativelyFilterable);
-    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+    if (cm->managerName() != "memory" && !defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        // we don't insert for memory engine, as we already handled this above (for action filtering)
         definitionDetails.insert("Date", defAndFieldNames);
         defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
     }
@@ -3125,14 +3177,10 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     i = cm->compatibleContact(i);
     j = cm->compatibleContact(j);
     k = cm->compatibleContact(k);
-    successfulSave = cm->saveContact(&h);
-    Q_ASSERT(successfulSave);
-    successfulSave = cm->saveContact(&i);
-    Q_ASSERT(successfulSave);
-    successfulSave = cm->saveContact(&j);
-    Q_ASSERT(successfulSave);
-    successfulSave = cm->saveContact(&k);
-    Q_ASSERT(successfulSave);
+    Q_ASSERT(cm->saveContact(&h));
+    Q_ASSERT(cm->saveContact(&i));
+    Q_ASSERT(cm->saveContact(&j));
+    Q_ASSERT(cm->saveContact(&k));
 
     /* Ensure the last modified times are different */
     QTest::qSleep(napTime);
@@ -3320,386 +3368,6 @@ void tst_QContactManagerFiltering::dumpContacts()
         dumpContact(c);
     }
 }
-
-/* Static actions for testing matching */
-
-class DummyAction : public QContactAction
-{
-public:
-    QVariantMap metaData() const {return QVariantMap();}
-
-    bool invokeAction(const QContact&, const QContactDetail&, const QVariantMap&)
-    {
-        // Well, do something
-        emit stateChanged(QContactAction::FinishedState);
-        return true;
-    }
-
-    QVariantMap results() const
-    {
-        return QVariantMap();
-    }
-
-    State state() const {return QContactAction::FinishedState;}
-
-};
-
-class QIntegerAction : public DummyAction
-{
-    Q_OBJECT
-
-public:
-    QIntegerAction() {}
-    ~QIntegerAction() {}
-
-    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Number", "IntegerCo", 5); }
-
-    QContactFilter contactFilter() const
-    {
-        QContactDetailFilter df;
-        QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Integer");
-        df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
-        return df;
-    }
-    bool isDetailSupported(const QContactDetail &detail, const QContact &) const
-    {
-        return detail.definitionName() == defAndFieldNamesForTypeForActions.value("Integer").first
-                && !detail.variantValue(defAndFieldNamesForTypeForActions.value("Integer").second).isNull();
-    }
-    QList<QContactDetail> supportedDetails(const QContact& contact) const
-    {
-        return contact.details(defAndFieldNamesForTypeForActions.value("Integer").first);
-    }
-};
-
-/* Static actions for testing matching */
-class QPhoneNumberAction : public DummyAction
-{
-    Q_OBJECT
-
-public:
-    QPhoneNumberAction() {}
-    ~QPhoneNumberAction() {}
-
-    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("PhoneNumber", "PhoneNumberCo", 4); }
-
-    QContactFilter contactFilter() const
-    {
-        QContactDetailFilter df;
-        df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
-        return df;
-    }
-    bool isDetailSupported(const QContactDetail& detail, const QContact&) const
-    {
-        return detail.definitionName() == QContactPhoneNumber::DefinitionName
-                && !detail.variantValue(QContactPhoneNumber::FieldNumber).isNull();
-    }
-    QList<QContactDetail> supportedDetails(const QContact& contact) const
-    {
-        return contact.details(QContactPhoneNumber::DefinitionName);
-    }
-};
-
-/* Static actions for testing matching */
-class QDateAction : public DummyAction
-{
-    Q_OBJECT
-
-public:
-    QDateAction() {}
-    ~QDateAction() {}
-
-    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Date", "DateCo", 9); }
-
-    QContactFilter contactFilter() const
-    {
-        QContactDetailFilter df;
-        QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Date");
-        df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
-        return df;
-    }
-
-    bool isDetailSupported(const QContactDetail &detail, const QContact &) const
-    {
-        return detail.definitionName() == defAndFieldNamesForTypeForActions.value("Date").first
-                && !detail.variantValue(defAndFieldNamesForTypeForActions.value("Date").second).isNull();
-    }
-    QList<QContactDetail> supportedDetails(const QContact& contact) const
-    {
-        return contact.details(defAndFieldNamesForTypeForActions.value("Date").first);
-    }
-};
-
-class QNumberAction : public DummyAction
-{
-    Q_OBJECT
-
-public:
-    QNumberAction() {}
-    ~QNumberAction() {}
-
-    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Number", "NumberCo", 42); }
-
-    QContactFilter contactFilter() const
-    {
-        QContactDetailFilter df;
-        QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Double");
-        df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
-
-        QContactDetailFilter df2;
-        defAndFieldName = defAndFieldNamesForTypeForActions.value("Integer");
-        df2.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
-
-        /* We like either doubles or integers */
-        return df | df2;
-    }
-
-    bool isDetailSupported(const QContactDetail &detail, const QContact &) const
-    {
-        if (detail.definitionName() == defAndFieldNamesForTypeForActions.value("Double").first
-                && !detail.variantValue(defAndFieldNamesForTypeForActions.value("Double").second).isNull()) {
-            return true;
-        }
-
-        if (detail.definitionName() == defAndFieldNamesForTypeForActions.value("Integer").first
-                && !detail.variantValue(defAndFieldNamesForTypeForActions.value("Integer").second).isNull()) {
-            return true;
-        }
-
-        return false;
-    }
-    QList<QContactDetail> supportedDetails(const QContact& contact) const
-    {
-        QList<QContactDetail> retn = contact.details(defAndFieldNamesForTypeForActions.value("Integer").first);
-        retn.append(contact.details(defAndFieldNamesForTypeForActions.value("Double").first));
-        return retn;
-    }
-};
-
-class QBooleanAction : public DummyAction
-{
-    Q_OBJECT
-
-public:
-    QBooleanAction() {}
-    ~QBooleanAction() {}
-
-    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Boolean", "BooleanCo", 3); }
-
-    QContactFilter contactFilter() const
-    {
-        /* This only likes bool fields */
-        QContactDetailFilter df;
-        QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Bool");
-        df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
-        return df;
-    }
-    bool isDetailSupported(const QContactDetail &detail, const QContact &) const
-    {
-        return detail.definitionName() == defAndFieldNamesForTypeForActions.value("Bool").first
-                && (detail.value<bool>(defAndFieldNamesForTypeForActions.value("Bool").second) == true);
-    }
-    QList<QContactDetail> supportedDetails(const QContact& contact) const
-    {
-        return contact.details(defAndFieldNamesForTypeForActions.value("Bool").first);
-    }
-};
-
-class RecursiveAction : public DummyAction
-{
-    Q_OBJECT
-
-public:
-    RecursiveAction() {}
-    ~RecursiveAction() {}
-
-    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Recursive", "RecursiveCo", 3); }
-
-    QContactFilter contactFilter() const
-    {
-        /* Return a filter that selects us again.. */
-        QContactActionFilter af;
-        af.setActionName("Recursive");
-        af.setVendor("RecursiveCo", 3);
-        return af;
-    }
-    bool isDetailSupported(const QContactDetail&, const QContact&) const
-    {
-        return false;
-    }
-    QList<QContactDetail> supportedDetails(const QContact&) const
-    {
-        return QList<QContactDetail>();
-    }
-};
-
-class AnotherRecursiveAction : public RecursiveAction {
-    Q_OBJECT
-
-public:
-    int implementationVersion() const {return 4;}
-    QContactFilter contactFilter() const
-    {
-        /* Slightly looser filter */
-        QContactActionFilter af;
-        af.setActionName("Recursive");
-        return af;
-    }
-};
-
-/* A pair that reference each other */
-class PairRecursiveAction : public RecursiveAction {
-    Q_OBJECT
-
-public:
-    QContactActionDescriptor actionDescriptor() const
-    {
-        QContactActionDescriptor ret = RecursiveAction::actionDescriptor();
-        ret.setActionName("PairRecursive");
-        return ret;
-    }
-
-    QContactFilter contactFilter() const
-    {
-        /* Slightly looser filter */
-        QContactActionFilter af;
-        af.setActionName("AnotherPairRecursive");
-        return af;
-    }
-};
-
-class AnotherPairRecursiveAction : public RecursiveAction {
-    Q_OBJECT
-
-public:
-    QContactActionDescriptor actionDescriptor() const
-    {
-        QContactActionDescriptor ret = RecursiveAction::actionDescriptor();
-        ret.setActionName("AnotherPairRecursive");
-        return ret;
-    }
-
-    QContactFilter contactFilter() const
-    {
-        /* Slightly looser filter */
-        QContactActionFilter af;
-        af.setActionName("PairRecursive");
-        return af;
-    }
-};
-
-class IntersectionRecursiveAction : public RecursiveAction {
-    Q_OBJECT
-
-public:
-    QContactActionDescriptor actionDescriptor() const
-    {
-        QContactActionDescriptor ret = RecursiveAction::actionDescriptor();
-        ret.setActionName("IntersectionRecursive");
-        return ret;
-    }
-
-    QContactFilter contactFilter() const
-    {
-        /* Slightly looser filter */
-        QContactActionFilter af;
-        af.setActionName("PairRecursive");
-        return af & QContactFilter() & af;
-    }
-};
-
-class UnionRecursiveAction : public RecursiveAction {
-    Q_OBJECT
-
-public:
-    QContactActionDescriptor actionDescriptor() const
-    {
-        QContactActionDescriptor ret = RecursiveAction::actionDescriptor();
-        ret.setActionName("UnionRecursive");
-        return ret;
-    }
-
-    QContactFilter contactFilter() const
-    {
-        /* Slightly looser filter */
-        QContactActionFilter af;
-        af.setActionName("PairRecursive");
-        return af | QContactInvalidFilter() | af;
-    }
-};
-
-class FilterActionFactory : public QContactActionFactory
-{
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QContactActionFactory)
-
-public:
-    FilterActionFactory() {}
-    ~FilterActionFactory() {}
-
-    QString name() const
-    {
-        return QString("FilterActionFactory");
-    }
-
-    QList<QContactActionDescriptor> actionDescriptors() const
-    {
-        QList<QContactActionDescriptor> ret;
-
-        ret << QContactActionDescriptor("Number", "NumberCo", 42)
-                << QContactActionDescriptor("Number", "IntegerCo", 5)
-                << QContactActionDescriptor("Boolean", "BooleanCo", 3)
-                << QContactActionDescriptor("Date", "DateCo", 9)
-                << QContactActionDescriptor("PhoneNumber", "PhoneNumberCo", 4)
-                << QContactActionDescriptor("Recursive", "RecursiveCo", 3)
-                << QContactActionDescriptor("Recursive", "RecursiveCo", 4)
-                << QContactActionDescriptor("PairRecursive", "RecursiveCo", 3)
-                << QContactActionDescriptor("AnotherPairRecursive", "RecursiveCo", 3)
-                << QContactActionDescriptor("IntersectionRecursive", "RecursiveCo", 3)
-                << QContactActionDescriptor("UnionRecursive", "RecursiveCo", 3);
-
-        return ret;
-    }
-
-    QContactAction* instance(const QContactActionDescriptor& descriptor) const
-    {
-        if (descriptor.actionName() == "Number") {
-            if (descriptor.vendorName() == "IntegerCo")
-                return new QIntegerAction;
-            else
-                return new QNumberAction;
-        } else if (descriptor.actionName() == "Boolean") {
-            return new QBooleanAction;
-        } else if (descriptor.actionName() == "Date") {
-            return new QDateAction;
-        } else if (descriptor.actionName() == "PhoneNumber") {
-            return new QPhoneNumberAction;
-        } else if (descriptor.actionName() == "Recursive") {
-            if (descriptor.implementationVersion() == 3)
-                return new RecursiveAction;
-            else
-                return new AnotherRecursiveAction;
-        } else if (descriptor.actionName() == "PairRecursive") {
-            return new PairRecursiveAction;
-        } else if (descriptor.actionName() == "AnotherPairRecursive") {
-            return new AnotherPairRecursiveAction;
-        } else if (descriptor.actionName() == "IntersectionRecursive") {
-            return new IntersectionRecursiveAction;
-        } else {
-            return new UnionRecursiveAction;
-        }
-    }
-
-    QVariantMap actionMetadata(const QContactActionDescriptor& descriptor) const
-    {
-        Q_UNUSED(descriptor);
-        return QVariantMap();
-    }
-};
-
-/* Statically import it (and a duplicate copy of it, purely for testing purposes) */
-Q_EXPORT_PLUGIN2(contacts_testFilterActionFactory, FilterActionFactory)
-Q_IMPORT_PLUGIN(contacts_testFilterActionFactory)
 
 QTEST_MAIN(tst_QContactManagerFiltering)
 #include "tst_qcontactmanagerfiltering.moc"
