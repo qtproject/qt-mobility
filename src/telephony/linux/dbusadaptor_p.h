@@ -39,37 +39,55 @@
 **
 ****************************************************************************/
 
-#ifndef TELEPATHYLISTENER_H
-#define TELEPATHYLISTENER_H
+#ifndef DBUSADAPTOR_H_1275967717
+#define DBUSADAPTOR_H_1275967717
 
 #include "qmobilityglobal.h"
-#include <QObject>
-#include "dbusinterface.h"
+#include <QtCore/QObject>
+#include <QtDBus/QtDBus>
+#include "message_p.h"
 
 QT_BEGIN_HEADER
-QTM_BEGIN_NAMESPACE
 
-class Telepathy;
-class TelepathyAdaptor;
-class TelepathyListener : public QObject
+class QByteArray;
+template<class T> class QList;
+template<class Key, class Value> class QMap;
+class QString;
+class QStringList;
+class QVariant;
+
+QTM_BEGIN_NAMESPACE
+/*
+ * Adaptor class for interface org.freedesktop.Telepathy.Connection.Interface.Requests
+ */
+class TelepathyAdaptor: public QDBusAbstractAdaptor
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.freedesktop.Telepathy.Connection.Interface.Requests")
+    Q_CLASSINFO("D-Bus Introspection", ""
+"  <interface name=\"org.freedesktop.Telepathy.Connection.Interface.Requests\" >\n"
+"    <signal name=\"NewChannels\" >\n"
+"      <arg direction=\"out\" type=\"a(i)\" name=\"channelsarray\" />\n"
+"      <annotation value=\"ChannelsArray\" name=\"com.trolltech.QtDBus.QtTypeName.In0\" />\n"
+"    </signal>\n"
+"    <method name=\"createNewChannels\" >\n"
+"      <arg direction=\"in\" type=\"a(i)\" name=\"channelsarray\" />\n"
+"      <annotation value=\"ChannelsArray\" name=\"com.trolltech.QtDBus.QtTypeName.In0\" />\n"
+"    </method>\n"
+"  </interface>\n"
+        "")
 public:
-    TelepathyListener(QObject* parent = 0);
-    virtual ~TelepathyListener();
+    TelepathyAdaptor(QObject *parent);
+    virtual ~TelepathyAdaptor();
 
-private slots:
-    void newChannelsSlot(const ChannelsArray& channelsarray);
-signals:
+public Q_SLOTS: // METHODS
+    void createNewChannels(const ChannelsArray& channelsarray);
+   
+Q_SIGNALS: // SIGNALS
     void NewChannels(const ChannelsArray& channelsarray);
-
-private:
-    Telepathy* ptelepathy;
-    TelepathyAdaptor* ptelepathyAdaptor;
-    org::freedesktop::Telepathy::Connection::Interface::Requests* prequestInterface;
 };
 
 QTM_END_NAMESPACE
 QT_END_HEADER
 
-#endif // TELEPATHYLISTENER_H
+#endif //DBUSADAPTOR_H_1275967717

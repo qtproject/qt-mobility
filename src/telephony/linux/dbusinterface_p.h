@@ -39,55 +39,62 @@
 **
 ****************************************************************************/
 
-#ifndef DBUSADAPTOR_H_1275967717
-#define DBUSADAPTOR_H_1275967717
+#ifndef INTERFACE_H_1275967729
+#define INTERFACE_H_1275967729
 
 #include "qmobilityglobal.h"
 #include <QtCore/QObject>
+#include <QtCore/QByteArray>
+#include <QtCore/QList>
+#include <QtCore/QMap>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
+#include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
-#include "message.h"
+#include "message_p.h"
 
 QT_BEGIN_HEADER
-
-class QByteArray;
-template<class T> class QList;
-template<class Key, class Value> class QMap;
-class QString;
-class QStringList;
-class QVariant;
-
 QTM_BEGIN_NAMESPACE
 /*
- * Adaptor class for interface org.freedesktop.Telepathy.Connection.Interface.Requests
+ * Proxy class for interface org.freedesktop.Telepathy.Connection.Interface.Requests
  */
-class TelepathyAdaptor: public QDBusAbstractAdaptor
+class Requests: public QDBusAbstractInterface
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.freedesktop.Telepathy.Connection.Interface.Requests")
-    Q_CLASSINFO("D-Bus Introspection", ""
-"  <interface name=\"org.freedesktop.Telepathy.Connection.Interface.Requests\" >\n"
-"    <signal name=\"NewChannels\" >\n"
-"      <arg direction=\"out\" type=\"a(i)\" name=\"channelsarray\" />\n"
-"      <annotation value=\"ChannelsArray\" name=\"com.trolltech.QtDBus.QtTypeName.In0\" />\n"
-"    </signal>\n"
-"    <method name=\"createNewChannels\" >\n"
-"      <arg direction=\"in\" type=\"a(i)\" name=\"channelsarray\" />\n"
-"      <annotation value=\"ChannelsArray\" name=\"com.trolltech.QtDBus.QtTypeName.In0\" />\n"
-"    </method>\n"
-"  </interface>\n"
-        "")
 public:
-    TelepathyAdaptor(QObject *parent);
-    virtual ~TelepathyAdaptor();
+    static inline const char *staticInterfaceName()
+    { return "org.freedesktop.Telepathy.Connection.Interface.Requests"; }
+
+public:
+    Requests(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);
+
+    ~Requests();
 
 public Q_SLOTS: // METHODS
-    void createNewChannels(const ChannelsArray& channelsarray);
-   
+    inline QDBusPendingReply<> createNewChannels(ChannelsArray channelsarray)
+    {
+        QList<QVariant> argumentList;
+        argumentList << qVariantFromValue(channelsarray);
+        return asyncCallWithArgumentList(QLatin1String("createNewChannels"), argumentList);
+    }
+
 Q_SIGNALS: // SIGNALS
-    void NewChannels(const ChannelsArray& channelsarray);
+    void NewChannels(ChannelsArray channelsarray);
 };
+
+namespace org {
+    namespace freedesktop {
+        namespace Telepathy {
+            namespace Connection {
+                namespace Interface {
+                    typedef QTM_PREPEND_NAMESPACE(Requests) Requests;
+                }
+            }
+        }
+    }
+}
 
 QTM_END_NAMESPACE
 QT_END_HEADER
 
-#endif //DBUSADAPTOR_H_1275967717
+#endif //INTERFACE_H_1275967729

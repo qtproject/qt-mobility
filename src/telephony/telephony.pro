@@ -38,11 +38,11 @@ linux-*: {
                 linux/message.cpp \
                 linux/dbusadaptor.cpp \
                 linux/dbusinterface.cpp
-    HEADERS +=  linux/telepathy.h \
-                linux/telepathylistener.h \
-                linux/message.h \
-                linux/dbusadaptor.h \
-                linux/dbusinterface.h
+    HEADERS +=  linux/telepathy_p.h \
+                linux/telepathylistener_p.h \
+                linux/message_p.h \
+                linux/dbusadaptor_p.h \
+                linux/dbusinterface_p.h
 }
 # TODO: remove comment to enable maemo
 #        maemo* {

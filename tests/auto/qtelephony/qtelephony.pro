@@ -28,11 +28,11 @@ linux-* {
         ../../../src/telephony/qtelephonycallinfo.h \
         ../../../src/telephony/qtelephonycallinfo_p.h \
         ../../../src/telephony/linux/qtelephonycalllist_linux_p.h \
-        ../../../src/telephony/linux/telepathy.h \
-        ../../../src/telephony/linux/telepathylistener.h \
-        ../../../src/telephony/linux/message.h \
-        ../../../src/telephony/linux/dbusadaptor.h \
-        ../../../src/telephony/linux/dbusinterface.h
+        ../../../src/telephony/linux/telepathy_p.h \
+        ../../../src/telephony/linux/telepathylistener_p.h \
+        ../../../src/telephony/linux/message_p.h \
+        ../../../src/telephony/linux/dbusadaptor_p.h \
+        ../../../src/telephony/linux/dbusinterface_p.h
 
     SOURCES += tst_telephony_linux.cpp \
         ../../../src/telephony/qtelephonycalllist.cpp \

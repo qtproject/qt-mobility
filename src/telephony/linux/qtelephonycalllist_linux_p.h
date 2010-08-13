@@ -58,7 +58,7 @@
 #include <QObject>
 #include <QList>
 #include <QtCore/qshareddata.h>
-#include "dbusinterface.h"
+#include "dbusinterface_p.h"
 
 QT_BEGIN_HEADER
 
