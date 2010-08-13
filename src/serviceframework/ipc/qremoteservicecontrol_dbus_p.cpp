@@ -192,7 +192,7 @@ void QRemoteServiceControlPrivate::publishServices(const QString& ident)
 /*!
     Creates endpoint on service side.
 */
-bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& ident)
+bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& /*ident*/)
 {
     InstanceManager *iManager = InstanceManager::instance();
     QList<QRemoteServiceIdentifier> list = iManager->allIdents();
@@ -232,15 +232,16 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& ident)
     
         DBusEndPoint* ipcEndPoint = new DBusEndPoint(iface, SERVER);
         ObjectEndPoint* endpoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
-    
+        Q_UNUSED(endpoint);
         return true;
     }
+    return false;
 }
 
 /*!
     Creates endpoint on client side.
 */
-QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier& typeIdent, const QString& location)
+QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier& typeIdent, const QString& /*location*/)
 {
     QString serviceName = "com.nokia.qtmobility.sfw." + typeIdent.name;
     QString path = "/" + typeIdent.interface + "/DBusSession";
