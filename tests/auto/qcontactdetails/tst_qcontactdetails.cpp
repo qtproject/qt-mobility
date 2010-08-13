@@ -43,6 +43,7 @@
 
 #include "qtcontacts.h"
 
+//TESTED_COMPONENT=src/contacts
 //TESTED_CLASS=
 //TESTED_FILES=
 
@@ -191,7 +192,9 @@ void tst_QContactDetails::anniversary()
 {
     QContact c;
     QContactAnniversary a1, a2;
-    QDate currDate = QDate::currentDate();
+    QDateTime currDateTime = QDateTime::currentDateTime();
+    QDate currDate = currDateTime.date();
+    QDateTime snippedDateTime = QDateTime(currDate);
 
     // test property set
     a1.setCalendarId("1234");
@@ -200,12 +203,21 @@ void tst_QContactDetails::anniversary()
     a1.setEvent("4321");
     QCOMPARE(a1.event(), QString("4321"));
     QCOMPARE(a1.value(QContactAnniversary::FieldEvent), QString("4321"));
-    a1.setOriginalDate(currDate);
-    QCOMPARE(a1.originalDate(), currDate);
-    QCOMPARE(a1.value<QDate>(QContactAnniversary::FieldOriginalDate), currDate);
     a1.setSubType(QContactAnniversary::SubTypeWedding);
     QCOMPARE(a1.subType(), QString(QLatin1String(QContactAnniversary::SubTypeWedding)));
     QCOMPARE(a1.value(QContactAnniversary::FieldSubType), QString(QLatin1String(QContactAnniversary::SubTypeWedding)));
+
+    a1.setOriginalDate(currDate);
+    QCOMPARE(a1.originalDate(), currDate);
+    QCOMPARE(a1.originalDateTime(), snippedDateTime);
+    QCOMPARE(a1.value<QDate>(QContactAnniversary::FieldOriginalDate), currDate);
+    QCOMPARE(a1.value<QDateTime>(QContactAnniversary::FieldOriginalDate), snippedDateTime);
+
+    a1.setOriginalDateTime(currDateTime);
+    QCOMPARE(a1.originalDate(), currDate);
+    QCOMPARE(a1.originalDateTime(), currDateTime);
+    QCOMPARE(a1.value<QDate>(QContactAnniversary::FieldOriginalDate), currDate);
+    QCOMPARE(a1.value<QDateTime>(QContactAnniversary::FieldOriginalDate), currDateTime);
 
     // test property add
     QVERIFY(c.saveDetail(&a1));
@@ -273,12 +285,22 @@ void tst_QContactDetails::birthday()
 {
     QContact c;
     QContactBirthday b1, b2;
-    QDate currDate = QDate::currentDate();
+    QDateTime currDateTime = QDateTime::currentDateTime();
+    QDate currDate = currDateTime.date();
+    QDateTime snippedDateTime = QDateTime(currDate);
 
     // test property set
     b1.setDate(currDate);
     QCOMPARE(b1.date(), currDate);
+    QCOMPARE(b1.dateTime(), snippedDateTime);
     QCOMPARE(b1.value<QDate>(QContactBirthday::FieldBirthday), currDate);
+    QCOMPARE(b1.value<QDateTime>(QContactBirthday::FieldBirthday), snippedDateTime);
+
+    b1.setDateTime(currDateTime);
+    QCOMPARE(b1.date(), currDate);
+    QCOMPARE(b1.dateTime(), currDateTime);
+    QCOMPARE(b1.value<QDate>(QContactBirthday::FieldBirthday), currDate);
+    QCOMPARE(b1.value<QDateTime>(QContactBirthday::FieldBirthday), currDateTime);
 
     // test property add
     QVERIFY(c.saveDetail(&b1));

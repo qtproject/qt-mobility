@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/multimedia
+
 #include <qmobilityglobal.h>
 #include "qgraphicsvideoitem.h"
 #include <QtTest/QtTest>

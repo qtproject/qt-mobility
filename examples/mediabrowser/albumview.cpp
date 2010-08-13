@@ -45,42 +45,33 @@
 #include <QtGui>
 
 #include <qdocumentgallery.h>
-#include <qgalleryitemlist.h>
-#include <qgalleryitemlistmodel.h>
 
-AlbumView::AlbumView(QWidget *parent)
-    : GalleryView(parent)
+#include "coverartmodel.h"
+
+AlbumView::AlbumView(QAbstractGallery *gallery, QWidget *parent, Qt::WindowFlags flags)
+    : GalleryView(parent, flags)
+    , model(new CoverArtModel(gallery))
 {
-    setType(QDocumentGallery::Album);
-    setFields(QStringList()
-            << QDocumentGallery::title
-            << QDocumentGallery::artist
-            << QDocumentGallery::trackCount
-            << QDocumentGallery::duration
-            << QDocumentGallery::rating
-            << QDocumentGallery::thumbnailImage);
-    setSortFields(QStringList()
-            << QDocumentGallery::title);
-
+    model->setRootType(QDocumentGallery::Album);
 
     QHash<int, QString> properties;
     properties.insert(Qt::DisplayRole, QDocumentGallery::title);
-    properties.insert(Qt::DecorationRole, QDocumentGallery::thumbnailImage);
     properties.insert(AlbumDelegate::Artist, QDocumentGallery::artist);
-
-    model = new QGalleryItemListModel;
+    properties.insert(AlbumDelegate::TrackCount, QDocumentGallery::trackCount);
     model->addColumn(properties);
 
+    model->setSortPropertyNames(QStringList()
+            << QDocumentGallery::title);
+
     QListView *view = new QListView;
-    view->setIconSize(QSize(124, 124));
+    view->setIconSize(CoverArtModel::thumbnailSize);
     view->setFlow(QListView::LeftToRight);
     view->setViewMode(QListView::IconMode);
     view->setSpacing(4);
     view->setUniformItemSizes(true);
-    view->setModel(model);
+    view->setModel(model.data());
     view->setItemDelegate(new AlbumDelegate(this));
     connect(view, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
-
 
     QBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -92,16 +83,16 @@ AlbumView::AlbumView(QWidget *parent)
 
 AlbumView::~AlbumView()
 {
-    delete model;
 }
 
-void AlbumView::mediaChanged(QGalleryItemList *media)
+void AlbumView::showChildren(const QVariant &itemId)
 {
-    model->setItemList(media);
+    model->setRootItem(itemId);
+    model->execute();
 }
 
 void AlbumView::activated(const QModelIndex &index)
 {
-    emit showSongs(media()->id(index.row()), index.data(Qt::DisplayRole).toString());
+    emit showSongs(model->itemId(index), index.data(Qt::DisplayRole).toString());
 }
 

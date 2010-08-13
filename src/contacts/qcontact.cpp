@@ -41,11 +41,13 @@
 
 #include <QSet>
 #include <QDebug>
+#include <QDataStream>
 
 #include "qcontact.h"
 #include "qcontact_p.h"
 #include "qcontactdetail_p.h"
 #include "qcontactmanager_p.h"
+#include "qcontactactionservicemanager_p.h"
 #include "qcontactaction.h"
 
 QTM_BEGIN_NAMESPACE
@@ -376,10 +378,15 @@ QContactDetail QContact::detail(const QString& definitionName) const
 /*! Returns a list of details with the given \a definitionName
     The definitionName string can be determined by the DefinitionName attribute
     of defined objects (e.g. QContactPhoneNumber::DefinitionName) or by
-    requesting a list of all the definition names using
-    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or the
-    asynchronous \l
-    {QContactDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.*/
+    requesting a list of all the definitions synchronously with
+    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or
+    asynchronously with a
+    \l {QContactDetailDefinitionFetchRequest}{detail definition fetch request},
+    and then inspecting the
+    \l{QContactDetailDefinition::name()}{name()} of each
+    definition.  If \a definitionName is empty, all details of any definition
+    will be returned.
+ */
 QList<QContactDetail> QContact::details(const QString& definitionName) const
 {
     // build the sub-list of matching details.
@@ -404,10 +411,15 @@ QList<QContactDetail> QContact::details(const QString& definitionName) const
     Returns a list of details of the given \a definitionName, with fields named \a fieldName and with value \a value.
     The definitionName string can be determined by the DefinitionName attribute
     of defined objects (e.g. QContactPhoneNumber::DefinitionName) or by
-    requesting a list of all the definition names using
-    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or the
-    asynchronous \l
-    {QContactDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.*/
+    requesting a list of all the definitions synchronously with
+    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or
+    asynchronously with a
+    \l {QContactDetailDefinitionFetchRequest}{detail definition fetch request},
+    and then inspecting the
+    \l{QContactDetailDefinition::name()}{name()} of each
+    definition.  If \a definitionName is empty, all details of any definition
+    will be returned.
+ */
 QList<QContactDetail> QContact::details(const QString& definitionName, const QString& fieldName, const QString& value) const
 {
     // build the sub-list of matching details.
@@ -648,6 +660,7 @@ uint qHash(const QContact &key)
     return hash;
 }
 
+#ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QContact& contact)
 {
     dbg.nospace() << "QContact(" << contact.id() << ")";
@@ -656,82 +669,39 @@ QDebug operator<<(QDebug dbg, const QContact& contact)
     }
     return dbg.maybeSpace();
 }
+#endif
 
-
+#ifndef QT_NO_DATASTREAM
 /*!
-  \deprecated
-*/
-QContactDetail QContact::detailWithAction(const QString& actionName) const
+ * Writes \a contact to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QContact& contact)
 {
-    qWarning("QContact::detailWithAction(const QString&) This function is deprecated and will be removed after the transition period has elapsed.  Use the function which takes a pointer to an action implementation instance instead!");
-    return QContactDetail();
+    quint8 formatVersion = 1; // Version of QDataStream format for QContact
+    return out << formatVersion << contact.id() << contact.details() << contact.d->m_preferences;
 }
 
 /*!
-  \deprecated
-*/
-QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) const
+ * Reads a contact from stream \a in into \a contact.
+ */
+QDataStream& operator>>(QDataStream& in, QContact& contact)
 {
-    qWarning("QContact::detailsWithAction(const QString&) This function is deprecated and will be removed after the transition period has elapsed.  Use the function which takes a pointer to an action implementation instance instead!");
-    return QList<QContactDetail>();
-}
-
-/*!
-    Retrieve the first detail in this contact supported by the given \a action.
-
-    If there is a preferred detail set for this action name, and that detail is
-    supported by the given \a action, that preferred detail will be returned.
-
-    Otherwise, the first detail in the list returned by detailsWithAction() will
-    be returned.
-
-    \sa detailsWithAction()
-*/
-QContactDetail QContact::detailWithAction(QContactAction* action) const
-{
-    if (action) {
-        QContactDetail pref = preferredDetail(action->actionDescriptor().actionName());
-        if (!pref.isEmpty() && action->isDetailSupported(pref, *this))
-            return pref;
-        foreach (const QContactDetail& detail, d->m_details) {
-            if (action->isDetailSupported(detail, *this)) {
-                return detail;
-            }
-        }
+    contact = QContact();
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QContactId id;
+        QList<QContactDetail> details;
+        QMap<QString, int> preferences;
+        in >> id >> contact.d->m_details >> contact.d->m_preferences;
+        contact.setId(id);
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
     }
-    return QContactDetail();
+    return in;
 }
 
-/*!
-    Retrieve any details supported by the given \a action.
-
-    If the action does not exist, an empty list will be returned.  Otherwise,
-    the details in this contact will be tested by the action and a list of the
-    details supported will be returned.
-
-    If a preferred detail for this action name has been set, and it is supported
-    by the given \a action, that detail will be the first detail returned in the list.
-
-    See this example for usage:
-    \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Details with action
-*/
-QList<QContactDetail> QContact::detailsWithAction(QContactAction* action) const
-{
-    QList<QContactDetail> retn;
-
-    if (action) {
-        QContactDetail preferred = preferredDetail(action->actionDescriptor().actionName());
-        foreach (const QContactDetail& detail, d->m_details) {
-            if (action->isDetailSupported(detail, *this)) {
-                if (detail == preferred)
-                    retn.prepend(detail);
-                else
-                    retn.append(detail);
-            }
-        }
-    }
-    return retn;
-}
+#endif
 
 /*!
     Returns a list of relationships of the given \a relationshipType in which this contact is a participant.
@@ -762,51 +732,6 @@ QList<QContactRelationship> QContact::relationships(const QString& relationshipT
     }
 
     return retn;
-}
-
-/*!
-  \deprecated
-  Returns a list of ids of contacts which are related to this contact in a relationship of the
-  given \a relationshipType, where those other contacts participate in the relationship in the
-  given \a role.
-
-  This function is deprecated and will be removed after the transition period has elapsed.
-  Use the relatedContacts() function which takes a QContactRelationship::Role argument instead!
- */
-QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QContactRelationshipFilter::Role role) const
-{
-    QList<QContactId> retn;
-    for (int i = 0; i < d->m_relationshipsCache.size(); i++) {
-        QContactRelationship curr = d->m_relationshipsCache.at(i);
-        if (curr.relationshipType() == relationshipType || relationshipType.isEmpty()) {
-            // check that the other contacts fill the given role
-            if (role == QContactRelationshipFilter::First) {
-                if (curr.first() != d->m_id) {
-                    retn.append(curr.first());
-                }
-            } else if (role == QContactRelationshipFilter::Second) {
-                if (curr.first() == d->m_id) {
-                    retn.append(curr.second());
-                }
-            } else { // role == Either.
-                if (curr.first() == d->m_id) {
-                    retn.append(curr.second());
-                } else {
-                    retn.append(curr.first());
-                }
-            }
-        }
-    }
-
-    QList<QContactId> removeDuplicates;
-    for (int i = 0; i < retn.size(); i++) {
-        QContactId curr = retn.at(i);
-        if (!removeDuplicates.contains(curr)) {
-            removeDuplicates.append(curr);
-        }
-    }
-
-    return removeDuplicates;
 }
 
 /*!
@@ -860,70 +785,27 @@ QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QCo
 }
 
 /*!
- * \deprecated
- * Sets the order of importance of the relationships for this contact by saving a \a reordered list of relationships which involve the contact.
- * The list must include all of the relationships in which the contact is involved, and must not include any relationships which do
- * not involve the contact.  In order for the ordering preference to be persisted, the contact must be saved in its manager.
- *
- * It is possible that relationships will have been added or removed from the contact stored in the manager,
- * thus rendering the relationship cache of the contact in memory stale.   If this happens, attempting to save the contact after reordering
- * its relationships will result in an error occurring. The updated relationships list must be retrieved from the manager, reordered and set
- * in the contact before the contact can be saved successfully.
- *
- * This function is deprecated and will be removed after the transition period has elapsed.
- *
- * \sa relationships(), relationshipOrder()
- */
-void QContact::setRelationshipOrder(const QList<QContactRelationship>& reordered)
-{
-    d->m_reorderedRelationshipsCache = reordered;
-}
-
-/*!
- * \deprecated
- * Returns the ordered list of relationships in which the contact is involved.  By default, this list is equal to the cached
- * list of relationships which is available by calling relationships().
- *
- * This function is deprecated and will be removed after the transition period has elapsed.
- *
- * \sa setRelationshipOrder()
- */
-QList<QContactRelationship> QContact::relationshipOrder() const
-{
-    return d->m_reorderedRelationshipsCache;
-}
-
-/*!
  * Return a list of descriptors for the actions available to be performed on this contact.
  *
  * The actions considered can be restricted by the optional parameters
- * \list
- *  \o The actions can be restricted to those provided by a specific vendor with the \a vendorName parameter.
- * If \a vendorName is empty, actions from all vendors will be considered.
- *  \o A specific version of an action can also be requested with \a implementationVersion.  If \c -1 is
- * passed (the default), all versions will be considered.  This is usually useful in conjunction with a specific vendor.
- * \endlist
+ * The actions can be restricted to those provided by a specific service with the \a serviceName parameter.
+ * If \a serviceName is empty, actions provided by any service will be returned if the
+ * contact meets the required criteria (contains details of the correct type, etc).
  *
  * Each action that matches the above criteria will be tested to see if this contact is supported
  * by the action, and a list of the action descriptors that are supported will be returned.
  */
-QList<QContactActionDescriptor> QContact::availableActions(const QString& vendorName, int implementationVersion) const
+QList<QContactActionDescriptor> QContact::availableActions(const QString& serviceName) const
 {
-    // check every action implementation to see if it supports me.
-    QSet<QContactActionDescriptor> retn;
-    QList<QContactActionDescriptor> descriptors = QContactManagerData::actionDescriptors();
-    for (int i = 0; i < descriptors.size(); i++) {
-        QContactActionDescriptor currDescriptor = descriptors.at(i);
-        if ((vendorName.isEmpty() || currDescriptor.vendorName() == vendorName) &&
-            (implementationVersion == -1 || currDescriptor.implementationVersion() == implementationVersion)) {
-            QScopedPointer<QContactAction> currImpl(QContactManagerData::action(currDescriptor));
-            if (QContactManagerEngine::testFilter(currImpl->contactFilter(), *this)) {
-                retn.insert(currDescriptor);
-            }
+    QList<QContactActionDescriptor> ret;
+    QList<QContactActionDescriptor> allds = QContactActionServiceManager::instance()->availableActions(*this);
+    foreach (const QContactActionDescriptor& d, allds) {
+        if (serviceName.isEmpty() || d.serviceName() == serviceName) {
+            ret.append(d);
         }
     }
 
-    return retn.toList();
+    return ret;
 }
 
 /*!

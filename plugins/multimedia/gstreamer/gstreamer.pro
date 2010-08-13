@@ -30,13 +30,17 @@ PKGCONFIG += \
 
 maemo* {
   PKGCONFIG +=gstreamer-plugins-bad-0.10
+
+  HEADERS += camerabuttonlistener_maemo.h
+
+  SOURCES += camerabuttonlistener_maemo.cpp
 }
 
 # Input
 HEADERS += \
     qgstreamermessage.h \
     qgstreamerbushelper.h \
-    qgstreamervideorendererinterface.h \    
+    qgstreamervideorendererinterface.h \
     qgstreamerserviceplugin.h \
     qgstreameraudioinputendpointselector.h \
     qgstreamervideorenderer.h \
@@ -47,7 +51,7 @@ HEADERS += \
 SOURCES += \
     qgstreamermessage.cpp \
     qgstreamerbushelper.cpp \
-    qgstreamervideorendererinterface.cpp \    
+    qgstreamervideorendererinterface.cpp \
     qgstreamerserviceplugin.cpp \
     qgstreameraudioinputendpointselector.cpp \
     qgstreamervideorenderer.cpp \
@@ -71,12 +75,9 @@ SOURCES += \
         qx11videosurface.cpp \
         qgstxvimagebuffer.cpp
 }
-
 include(mediaplayer/mediaplayer.pri)
-!maemo* {
-    include(mediacapture/mediacapture.pri)
-} else {
-    INCLUDEPATH += mediacapture/maemo
-    include(mediacapture/maemo/mediacapture_maemo.pri)
-    DEFINES += GST_USE_UNSTABLE_API #prevents warnings because of unstable photography API 
+include(mediacapture/mediacapture.pri)
+
+contains(gstreamer-photography_enabled, yes) {
+    include(camerabin/camerabin.pri)
 }

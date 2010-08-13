@@ -23,10 +23,10 @@ CAPABILITY	ReadUserData WriteUserData
 UID		0x102731D4
 VENDORID 	0x70000001
 
-systeminclude   /EPOC32/INCLUDE 
-systeminclude 	../NbCntTestLib
+APP_LAYER_SYSTEMINCLUDE
 
 userinclude 	.
+userinclude 	../NbCntTestLib
 
 SOURCEPATH	.
 source          T_DBTransactionTest.cpp

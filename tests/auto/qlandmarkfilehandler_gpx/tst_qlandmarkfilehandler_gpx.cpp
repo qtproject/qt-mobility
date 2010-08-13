@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/location
+
 #include "qgeocoordinate.h"
 
 #include <qtest.h>
@@ -49,8 +51,8 @@
 
 #define private public
 #include <qlandmarkmanager.h>
-#include "../../../src/location/qlandmarkmanager_p.h"
-#include "../../../src/location/qlandmarkfilehandler_gpx_p.h"
+#include "qlandmarkfilehandler_gpx_p.h"
+
 
 QTM_USE_NAMESPACE
 

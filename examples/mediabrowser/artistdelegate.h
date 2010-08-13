@@ -49,7 +49,7 @@ class ArtistDelegate : public QAbstractItemDelegate
 public:
     enum
     {
-        TrackCount
+        TrackCount = Qt::UserRole
     };
 
     ArtistDelegate(QObject *parent = 0);

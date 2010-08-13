@@ -22,11 +22,11 @@ CAPABILITY   	ReadUserData WriteUserData
 UID				0x1027289C
 VENDORID 		0x70000001
  
-systeminclude	/EPOC32/INCLUDE 
-systeminclude 	../../CNTMODEL/INC 
-systeminclude 	../NbCntTestLib
+APP_LAYER_SYSTEMINCLUDE 
 
 userinclude 	. 
+userinclude 	../../CNTMODEL/INC 
+userinclude 	../NbCntTestLib
 
 SOURCEPATH	.
 source		T_CStatesTest.cpp 

@@ -38,6 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/messaging
+
 #include <QObject>
 #include <QTest>
 #include <QDebug>
@@ -461,7 +464,7 @@ void tst_QMessageService::testQueryMessages()
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
 #else
             while(testService->state() == QMessageService::ActiveState)
-				QTest::qWait(1000);
+				QTest::qWait(50);
 #endif
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),ids.toSet());
 
@@ -472,7 +475,7 @@ void tst_QMessageService::testQueryMessages()
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
 #else
             while(testService->state() == QMessageService::ActiveState)
-                QTest::qWait(1000);
+                QTest::qWait(50);
 #endif
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),negatedIds.toSet());
 
@@ -485,7 +488,7 @@ void tst_QMessageService::testQueryMessages()
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
 #else
             while(testService->state() == QMessageService::ActiveState)
-                QTest::qWait(1000);
+                QTest::qWait(50);
 #endif
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),ids.toSet());
 
@@ -496,7 +499,7 @@ void tst_QMessageService::testQueryMessages()
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
 #else
             while(testService->state() == QMessageService::ActiveState)
-                QTest::qWait(1000);
+                QTest::qWait(50);
 #endif
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),negatedIds.toSet());
         }
@@ -1955,7 +1958,7 @@ void tst_QMessageService::testCountMessages()
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
 #else
             while(testService->state() == QMessageService::ActiveState)
-				QTest::qWait(1000);
+				QTest::qWait(50);
 #endif
             QCOMPARE(sc.count-existingMessageIds.count(), ids.count());
 
@@ -1964,7 +1967,7 @@ void tst_QMessageService::testCountMessages()
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
 #else
             while(testService->state() == QMessageService::ActiveState)
-                QTest::qWait(1000);
+                QTest::qWait(50);
 #endif
             QCOMPARE(sc.count-existingMessageIds.count(), negatedIds.count());
         }

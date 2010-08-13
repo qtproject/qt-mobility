@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/versit
+
 #include "qversitdefs_p.h"
 #include "tst_qversit.h"
 #include "qversitwriter.h"
@@ -46,6 +48,7 @@
 #include "qversitreader_p.h"
 #include "qversitcontactexporter.h"
 #include "qversitcontactimporter.h"
+#include "qversitcontacthandler.h"
 #include "qcontact.h"
 #include "qcontactmanager.h"
 #include "qcontactmanagerengine.h"
@@ -94,6 +97,19 @@ QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QList<QContact>)
 Q_DECLARE_METATYPE(QContact)
+
+class tst_QVersit : public QObject
+{
+    Q_OBJECT
+
+private slots: // Tests
+    void testImportFiles();
+    void testImportFiles_data();
+    void testExportImport();
+    void testExportImport_data();
+
+private:
+};
 
 void tst_QVersit::testImportFiles()
 {
@@ -248,11 +264,10 @@ void tst_QVersit::testImportFiles_data()
 
 void tst_QVersit::testExportImport()
 {
-    // Test that using the backup handler, a contact, when exported and imported again, is unaltered.
+    // Test that using the backup profile, a contact, when exported and imported again, is unaltered.
     QFETCH(QContact, contact);
 
-    QVersitContactExporter exporter;
-    exporter.setDetailHandler(QVersitContactExporterDetailHandlerV2::createBackupHandler());
+    QVersitContactExporter exporter(QVersitContactHandlerFactory::ProfileBackup);
     QVERIFY(exporter.exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     QList<QVersitDocument> documents = exporter.documents();
     QCOMPARE(documents.size(), 1);
@@ -268,8 +283,7 @@ void tst_QVersit::testExportImport()
     QList<QVersitDocument> parsedDocuments = reader.results();
     QCOMPARE(parsedDocuments.size(), 1);
 
-    QVersitContactImporter importer;
-    importer.setPropertyHandler(QVersitContactImporterPropertyHandlerV2::createBackupHandler());
+    QVersitContactImporter importer(QVersitContactHandlerFactory::ProfileBackup);
     QVERIFY(importer.importDocuments(parsedDocuments));
     QList<QContact> contacts = importer.contacts();
     QCOMPARE(contacts.size(), 1);
@@ -376,3 +390,5 @@ void tst_QVersit::testExportImport_data()
 }
 
 QTEST_MAIN(tst_QVersit)
+
+#include "tst_qversit.moc"

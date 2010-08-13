@@ -27,28 +27,30 @@ win32: {
 symbian: {
     HEADERS += qtelephonycalllist_symbian_p.h
     SOURCES += qtelephonycalllist_symbian.cpp
-} else {
-    unix: {
-        !maemo* {
-            QT += dbus
-            HEADERS += linux/qtelephonycalllist_linux_p.h
-            SOURCES += linux/qtelephonycalllist_linux.cpp
-            SOURCES +=  linux/telepathy.cpp \
-                        linux/telepathylistener.cpp \
-                        linux/message.cpp \
-                        linux/dbusadaptor.cpp \
-                        linux/dbusinterface.cpp
-            HEADERS +=  linux/telepathy.h \
-                        linux/telepathylistener.h \
-                        linux/message.h \
-                        linux/dbusadaptor.h \
-                        linux/dbusinterface.h
-        }
-        maemo* {
-            HEADERS += qtelephonycalllist_maemo_p.h
-            SOURCES += qtelephonycalllist_maemo.cpp
-        }
-    }
+}
+ 
+linux-*: {
+    QT += dbus
+    HEADERS += linux/qtelephonycalllist_linux_p.h
+    SOURCES += linux/qtelephonycalllist_linux.cpp
+    SOURCES +=  linux/telepathy.cpp \
+                linux/telepathylistener.cpp \
+                linux/message.cpp \
+                linux/dbusadaptor.cpp \
+                linux/dbusinterface.cpp
+    HEADERS +=  linux/telepathy.h \
+                linux/telepathylistener.h \
+                linux/message.h \
+                linux/dbusadaptor.h \
+                linux/dbusinterface.h
+}
+# TODO: remove comment to enable maemo
+#        maemo* {
+#            HEADERS += qtelephonycalllist_maemo_p.h
+#            SOURCES += qtelephonycalllist_maemo.cpp
+#        }
+mac|maemo* {
+    HEADERS += qtelephonycalllist_unsupported_p.h
 }
 
 HEADERS += $$PUBLIC_HEADERS

@@ -68,8 +68,8 @@ if exist "%QMAKE_CACHE%" del /Q %QMAKE_CACHE%
 if exist "%PROJECT_LOG%" del /Q %PROJECT_LOG%
 if exist "%PROJECT_CONFIG%" del /Q %PROJECT_CONFIG%
 
-echo QT_MOBILITY_SOURCE_TREE = %SOURCE_PATH% > %QMAKE_CACHE%
-echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH% >> %QMAKE_CACHE%
+echo QT_MOBILITY_SOURCE_TREE = %SOURCE_PATH:\=/% > %QMAKE_CACHE%
+echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH:\=/% >> %QMAKE_CACHE%
 set QMAKE_CACHE=
 
 :cmdline_parsing
@@ -287,7 +287,7 @@ for /f "tokens=1,*" %%a in ("%MOBILITY_MODULES_UNPARSED%") do (
 if %FIRST% == bearer (
     echo     Bearer Management selected
 ) else if %FIRST% == contacts (
-    echo     Contacts selected
+    echo     Contacts selected ^(implies ServiceFramework^)
 ) else if %FIRST% == location (
     echo     Location selected
 ) else if %FIRST% == messaging (
@@ -358,7 +358,7 @@ set QT_MOBILITY_PREFIX=%CD%
 cd /D %CURRENTDIR%
 
 :endprefixProcessing
-echo QT_MOBILITY_PREFIX = %QT_MOBILITY_PREFIX% >> %PROJECT_CONFIG%
+echo QT_MOBILITY_PREFIX = %QT_MOBILITY_PREFIX:\=/% >> %PROJECT_CONFIG%
 
 echo build_unit_tests = %BUILD_UNITTESTS% >> %PROJECT_CONFIG%
 set BUILD_UNITTESTS=
@@ -386,6 +386,7 @@ echo isEmpty($$QT_MOBILITY_DEMOS):QT_MOBILITY_DEMOS=$$QT_MOBILITY_PREFIX/bin >> 
 
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
 echo contains(mobility_modules,versit): mobility_modules *= contacts organizer  >> %PROJECT_CONFIG%
+echo contains(mobility_modules,contacts): mobility_modules *= serviceframework  >> %PROJECT_CONFIG%
 
 echo Checking available Qt
 call %QT_PATH%qmake -v >> %PROJECT_LOG% 2>&1
@@ -488,7 +489,7 @@ setlocal
     ) else if "%MOBILITY_BUILDSYSTEM%" == "symbian-abld" (
         call %MOBILITY_MAKE% release-gcce >> %PROJECT_LOG% 2>&1
         for /f "tokens=2" %%i in ('%MOBILITY_MAKE% release-gcce ABLD^="@ABLD.BAT -c" 2^>^&1') do if not %%i == bldfiles set FAILED=1
-    ) else {
+    ) else (
         REM Make for other builds
         call %MOBILITY_MAKE% >> %PROJECT_LOG% 2>&1
         REM have to check error level for windows / other builds to be sure.
@@ -516,9 +517,10 @@ REM compile tests go here.
 for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\make\make.pro 2^>^&1 1^>NUL') do set BUILDSYSTEM=%%i
 if "%BUILDSYSTEM%" == "symbian-abld" goto symbianTests
 if "%BUILDSYSTEM%" == "symbian-sbsv2" goto symbianTests
-goto noTests
+goto windowsTests
 
 :symbianTests
+
 call :compileTest LBT lbt
 call :compileTest SNAP snap
 call :compileTest OCC occ
@@ -531,10 +533,20 @@ call :compileTest Symbian_Hb hb_symbian
 call :compileTest Audiorouting_s60 audiorouting_s60
 call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
 call :compileTest RadioUtility_for_post_3.1 radioutility_s60
-REM call :compileTest OpenMaxAl_support openmaxal_symbian
+call :compileTest OpenMaxAl_support openmaxal_symbian
 call :compileTest Surfaces_s60 surfaces_s60
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
 call :compileTest IMMERSION immersion
+
+goto noTests
+
+:windowsTests
+
+call :compileTest DirectShow directshow
+call :compileTest WindowsMediaSDK wmsdk
+call :compileTest WindowMediaPlayer wmp
+call :compileTest EnhancedVideoRenderer evr
+
 :noTests
 
 echo End of compile tests
@@ -561,12 +573,17 @@ for /f "tokens=1,*" %%a in ("%MODULES_TEMP%") do (
 if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtBearer %SOURCE_PATH%\src\bearer
 ) else if %FIRST% == contacts (
+    REM contacts implies service framework
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\requests
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\filters
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\details
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtServiceFramework %SOURCE_PATH%\src\serviceframework
 ) else if %FIRST% == location (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtLocation %SOURCE_PATH%\src\location
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtLocation %SOURCE_PATH%\src\location\landmarks
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtLocation %SOURCE_PATH%\src\location\maps
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtLocation %SOURCE_PATH%\src\location\maps\tiled
 ) else if %FIRST% == messaging (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMessaging %SOURCE_PATH%\src\messaging
 ) else if %FIRST% == multimedia (
@@ -582,7 +599,7 @@ if %FIRST% == bearer (
 ) else if %FIRST% == telephony (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtTelephony %SOURCE_PATH%\src\telephony
 ) else if %FIRST% == versit (
-    REM versit implies contacts and organizer
+    REM versit implies contacts and organizer, which implies SFW
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersit %SOURCE_PATH%\src\versit
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\requests
@@ -593,6 +610,7 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\requests
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\filters
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\details
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmServiceFramework %SOURCE_PATH%\src\serviceframework
 ) else if %FIRST% == sensors (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSensors %SOURCE_PATH%\src\sensors
 ) else if %FIRST% == gallery (

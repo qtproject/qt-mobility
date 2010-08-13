@@ -39,13 +39,14 @@
 **
 ****************************************************************************/
 
-#include <QtTest/QtTest>
+//TESTED_COMPONENT=src/documentgallery
 
 #include <qgalleryabstractrequest.h>
 
 #include <qabstractgallery.h>
 #include <qgalleryabstractresponse.h>
 
+#include <QtTest/QtTest>
 
 QTM_USE_NAMESPACE
 
@@ -86,24 +87,6 @@ public:
             finish(result, idle);
     }
 
-    QStringList propertyNames() const { return QStringList(); }
-    int propertyKey(const QString &) const { return -1; }
-    QGalleryProperty::Attributes propertyAttributes(int) const {
-        return QGalleryProperty::Attributes(); }
-    QVariant::Type propertyType(int) const { return QVariant::Invalid; }
-
-    int count() const { return 0; }
-
-    QVariant id(int) const { return QVariant(); }
-    QUrl url(int) const { return QUrl(); }
-    QString type(int) const { return QString(); }
-    QString parentId(int) const { return QString(); }
-    QList<QGalleryResource> resources(int) const { return QList<QGalleryResource>(); }
-    ItemStatus status(int) const { return ItemStatus(); }
-
-    QVariant metaData(int, int) const { return QVariant(); }
-    void setMetaData(int, int, const QVariant &) {}
-
     bool waitForFinished(int)
     {
         if (m_finishInWait) {
@@ -130,14 +113,14 @@ private:
 class QtGalleryTestRequest : public QGalleryAbstractRequest
 {
 public:
-    QtGalleryTestRequest(QGalleryAbstractRequest::Type type)
+    QtGalleryTestRequest(QGalleryAbstractRequest::RequestType type)
         : QGalleryAbstractRequest(type)
         , m_response(0)
     {
     }
 
     QtGalleryTestRequest(
-            QAbstractGallery *gallery, QGalleryAbstractRequest::Type type)
+            QAbstractGallery *gallery, QGalleryAbstractRequest::RequestType type)
         : QGalleryAbstractRequest(gallery, type)
         , m_response(0)
     {
@@ -158,13 +141,13 @@ class QtTestGallery : public QAbstractGallery
 public:
     QtTestGallery() : m_result(QGalleryAbstractRequest::NoResult), m_idle(false) {}
 
-    bool isRequestSupported(QGalleryAbstractRequest::Type type) const {
+    bool isRequestSupported(QGalleryAbstractRequest::RequestType type) const {
         return m_supportedRequests.contains(type); }
 
     void setResult(int result) { m_result = result; }
     void setIdle(bool idle) { m_idle = idle; }
 
-    void setSupportedRequests(const QList<QGalleryAbstractRequest::Type> &requests) {
+    void setSupportedRequests(const QList<QGalleryAbstractRequest::RequestType> &requests) {
         m_supportedRequests = requests; }
 
 protected:
@@ -176,18 +159,18 @@ protected:
     }
 
 private:
-    QList<QGalleryAbstractRequest::Type> m_supportedRequests;
+    QList<QGalleryAbstractRequest::RequestType> m_supportedRequests;
     int m_result;
     bool m_idle;
 };
 
 void tst_QGalleryAbstractRequest::type()
 {
-    QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::Item).type(),
-             QGalleryAbstractRequest::Item);
+    QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::QueryRequest).type(),
+             QGalleryAbstractRequest::QueryRequest);
 
-    QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::Url).type(),
-             QGalleryAbstractRequest::Url);
+    QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::RemoveRequest).type(),
+             QGalleryAbstractRequest::RemoveRequest);
 }
 
 void tst_QGalleryAbstractRequest::initTestCase()
@@ -198,18 +181,16 @@ void tst_QGalleryAbstractRequest::initTestCase()
 void tst_QGalleryAbstractRequest::isSupported()
 {
     QtTestGallery gallery;
-    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::Type>()
-            << QGalleryAbstractRequest::Remove
-            << QGalleryAbstractRequest::Url);
+    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
+            << QGalleryAbstractRequest::RemoveRequest);
 
-    QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::Item).isSupported(), false);
-    QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::Url).isSupported(), true);
-    QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::Remove).isSupported(), true);
+    QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::QueryRequest).isSupported(), false);
+    QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::RemoveRequest).isSupported(), true);
 }
 
 void tst_QGalleryAbstractRequest::executeNoGallery()
 {
-    QtGalleryTestRequest request(QGalleryAbstractRequest::Remove);
+    QtGalleryTestRequest request(QGalleryAbstractRequest::RemoveRequest);
 
     QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
@@ -234,7 +215,7 @@ void tst_QGalleryAbstractRequest::executeNoGallery()
 void tst_QGalleryAbstractRequest::executeUnsupported()
 {
     QtTestGallery gallery;
-    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::Remove);
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::RemoveRequest);
 
     QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
@@ -259,10 +240,10 @@ void tst_QGalleryAbstractRequest::executeUnsupported()
 void tst_QGalleryAbstractRequest::executeSync()
 {
     QtTestGallery gallery;
-    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::Type>()
-            << QGalleryAbstractRequest::Remove);
+    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
+            << QGalleryAbstractRequest::RemoveRequest);
 
-    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::Remove);
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::RemoveRequest);
 
     QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
@@ -332,7 +313,7 @@ void tst_QGalleryAbstractRequest::executeSync()
              QGalleryAbstractRequest::Idle);
 
     // Execute unsupported.
-    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::Type>());
+    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>());
     request.execute();
     QVERIFY(request.response() == 0);
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::NotSupported));
@@ -353,10 +334,10 @@ void tst_QGalleryAbstractRequest::executeSync()
 void tst_QGalleryAbstractRequest::executeAsync()
 {
     QtTestGallery gallery;
-    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::Type>()
-            << QGalleryAbstractRequest::Remove);
+    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
+            << QGalleryAbstractRequest::RemoveRequest);
 
-    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::Remove);
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::RemoveRequest);
 
     QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
@@ -505,10 +486,10 @@ void tst_QGalleryAbstractRequest::executeAsync()
 void tst_QGalleryAbstractRequest::cancelActive()
 {
     QtTestGallery gallery;
-    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::Type>()
-            << QGalleryAbstractRequest::Remove);
+    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
+            << QGalleryAbstractRequest::RemoveRequest);
 
-    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::Remove);
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::RemoveRequest);
 
     QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
@@ -616,12 +597,12 @@ void tst_QGalleryAbstractRequest::cancelActive()
 void tst_QGalleryAbstractRequest::cancelIdle()
 {
     QtTestGallery gallery;
-    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::Type>()
-            << QGalleryAbstractRequest::Remove);
+    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
+            << QGalleryAbstractRequest::RemoveRequest);
     gallery.setResult(QGalleryAbstractRequest::Succeeded);
     gallery.setIdle(true);
 
-    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::Remove);
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::RemoveRequest);
 
     QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
@@ -703,10 +684,10 @@ void tst_QGalleryAbstractRequest::cancelIdle()
 void tst_QGalleryAbstractRequest::clear()
 {
     QtTestGallery gallery;
-    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::Type>()
-            << QGalleryAbstractRequest::Remove);
+    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
+            << QGalleryAbstractRequest::RemoveRequest);
 
-    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::Remove);
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::RemoveRequest);
 
     QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
@@ -807,15 +788,41 @@ void tst_QGalleryAbstractRequest::clear()
     QCOMPARE(stateSpy.count(), 4);
     QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
              QGalleryAbstractRequest::Inactive);
+
+
+    // Clear error response.
+    gallery.setResult(QGalleryAbstractRequest::ConnectionError);
+    gallery.setIdle(false);
+    request.execute();
+    QVERIFY(request.response() == 0);
+    QCOMPARE(request.result(), int(QGalleryAbstractRequest::ConnectionError));
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(succeededSpy.count(), 2);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(failedSpy.count(), 1);
+    QCOMPARE(finishedSpy.count(), 3);
+    QCOMPARE(resultSpy.count(), 5);
+    QCOMPARE(stateSpy.count(), 4);
+
+    request.clear();
+    QVERIFY(request.response() == 0);
+    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(succeededSpy.count(), 2);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(failedSpy.count(), 1);
+    QCOMPARE(finishedSpy.count(), 3);
+    QCOMPARE(resultSpy.count(), 6);
+    QCOMPARE(stateSpy.count(), 4);
 }
 
 void tst_QGalleryAbstractRequest::waitForFinished()
 {
     QtTestGallery gallery;
-    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::Type>()
-            << QGalleryAbstractRequest::Remove);
+    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
+            << QGalleryAbstractRequest::RemoveRequest);
 
-    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::Remove);
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::RemoveRequest);
 
     QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
@@ -911,10 +918,10 @@ void tst_QGalleryAbstractRequest::waitForFinished()
 void tst_QGalleryAbstractRequest::progress()
 {
     QtTestGallery gallery;
-    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::Type>()
-            << QGalleryAbstractRequest::Remove);
+    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
+            << QGalleryAbstractRequest::RemoveRequest);
 
-    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::Remove);
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::RemoveRequest);
 
     QSignalSpy spy(&request, SIGNAL(progressChanged(int,int)));
 
@@ -1003,15 +1010,15 @@ void tst_QGalleryAbstractRequest::progress()
 void tst_QGalleryAbstractRequest::setGallery()
 {
     QtTestGallery copyGallery;
-    copyGallery.setSupportedRequests(QList<QGalleryAbstractRequest::Type>()
-            << QGalleryAbstractRequest::Remove);
+    copyGallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
+            << QGalleryAbstractRequest::RemoveRequest);
 
     QtTestGallery moveGallery;
-    moveGallery.setSupportedRequests(QList<QGalleryAbstractRequest::Type>()
-            << QGalleryAbstractRequest::Url);
+    moveGallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
+            << QGalleryAbstractRequest::QueryRequest);
 
-    QtGalleryTestRequest copyRequest(QGalleryAbstractRequest::Remove);
-    QtGalleryTestRequest moveRequest(QGalleryAbstractRequest::Url);
+    QtGalleryTestRequest copyRequest(QGalleryAbstractRequest::RemoveRequest);
+    QtGalleryTestRequest moveRequest(QGalleryAbstractRequest::QueryRequest);
 
     QSignalSpy copySpy(&copyRequest, SIGNAL(supportedChanged()));
     QSignalSpy moveSpy(&moveRequest, SIGNAL(supportedChanged()));
@@ -1062,10 +1069,10 @@ void tst_QGalleryAbstractRequest::setGallery()
 void tst_QGalleryAbstractRequest::clearGallery()
 {
     QtTestGallery gallery;
-    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::Type>()
-            << QGalleryAbstractRequest::Remove);
+    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
+            << QGalleryAbstractRequest::RemoveRequest);
 
-    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::Remove);
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::RemoveRequest);
 
     QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
@@ -1168,7 +1175,7 @@ void tst_QGalleryAbstractRequest::deleteGallery()
 {
     QtTestGallery *gallery = 0;
 
-    QtGalleryTestRequest request(QGalleryAbstractRequest::Remove);
+    QtGalleryTestRequest request(QGalleryAbstractRequest::RemoveRequest);
 
     QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
@@ -1178,8 +1185,8 @@ void tst_QGalleryAbstractRequest::deleteGallery()
 
     // No response.
     gallery = new QtTestGallery;
-    gallery->setSupportedRequests(QList<QGalleryAbstractRequest::Type>()
-            << QGalleryAbstractRequest::Remove);
+    gallery->setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
+            << QGalleryAbstractRequest::RemoveRequest);
 
     request.setGallery(gallery);
     delete gallery;
@@ -1194,8 +1201,8 @@ void tst_QGalleryAbstractRequest::deleteGallery()
 
     // Finished response.
     gallery = new QtTestGallery;
-    gallery->setSupportedRequests(QList<QGalleryAbstractRequest::Type>()
-            << QGalleryAbstractRequest::Remove);
+    gallery->setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
+            << QGalleryAbstractRequest::RemoveRequest);
     gallery->setResult(QGalleryAbstractRequest::Succeeded);
 
     request.setGallery(gallery);
@@ -1220,8 +1227,8 @@ void tst_QGalleryAbstractRequest::deleteGallery()
 
     // Idle response.
     gallery = new QtTestGallery;
-    gallery->setSupportedRequests(QList<QGalleryAbstractRequest::Type>()
-            << QGalleryAbstractRequest::Remove);
+    gallery->setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
+            << QGalleryAbstractRequest::RemoveRequest);
     gallery->setResult(QGalleryAbstractRequest::Succeeded);
     gallery->setIdle(true);
 
@@ -1247,8 +1254,8 @@ void tst_QGalleryAbstractRequest::deleteGallery()
 
     // Clear active response.
     gallery = new QtTestGallery;
-    gallery->setSupportedRequests(QList<QGalleryAbstractRequest::Type>()
-            << QGalleryAbstractRequest::Remove);
+    gallery->setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
+            << QGalleryAbstractRequest::RemoveRequest);
 
     request.setGallery(gallery);
     request.execute();

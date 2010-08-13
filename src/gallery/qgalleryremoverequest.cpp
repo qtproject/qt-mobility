@@ -49,7 +49,7 @@ class QGalleryRemoveRequestPrivate : public QGalleryAbstractRequestPrivate
 {
 public:
     QGalleryRemoveRequestPrivate(QAbstractGallery *gallery)
-        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Remove)
+        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::RemoveRequest)
     {
     }
 
@@ -61,6 +61,8 @@ public:
 
     \ingroup gallery
     \ingroup gallery-requests
+
+    \inmodule QtGallery
 
     \brief The QGalleryRemoveRequest class provides a request which removes
     items from a gallery.

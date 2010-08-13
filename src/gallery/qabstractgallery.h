@@ -55,7 +55,7 @@ public:
     QAbstractGallery(QObject *parent = 0);
     ~QAbstractGallery();
 
-    virtual bool isRequestSupported(QGalleryAbstractRequest::Type type) const = 0;
+    virtual bool isRequestSupported(QGalleryAbstractRequest::RequestType type) const = 0;
 
 protected:
     virtual QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request) = 0;

@@ -273,7 +273,7 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(QGeoRouteRequest::Rout
 
     QStringList types;
     if ((optimization & QGeoRouteRequest::ShortestRoute) != 0)
-        types.append("directDrive");  // TODO: check difference to "shortest" once data available
+        types.append("directDrive");
     if ((optimization & QGeoRouteRequest::FastestRoute) != 0)
         types.append("fastestNow");
     if ((optimization & QGeoRouteRequest::MostEconomicRoute) != 0)
@@ -350,31 +350,6 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
     }
 
     QStringList responseAttributes;
-    // Not sure what definition of Basic/Detailed Instructions/Segments was being
-    // used here
-    // For reference - the enum doc stated the difference was that Basic used
-    // the regular classes and that Detailed needed to use a subclass
-    /*
-    if (request.instructionDetail() & QGeoRouteRequest::BasicInstructions) {
-        requestString += "&linkattribute=shape,nextLink";
-        responseAttributes.append("links");
-    }
-    else if (request.instructionDetail() & QGeoRouteRequest::DetailedInstructions) {
-        requestString += "&linkattribute=shape,length,nextLink";
-        responseAttributes.append("links");
-    }
-
-    if (request.instructionDetail() & QGeoRouteRequest::BasicSegmentData) {
-        responseAttributes.append("maneuvers");
-        requestString += "&maneuverattribute=position";
-    }
-    else if (request.instructionDetail() & QGeoRouteRequest::DetailedSegmentData) {
-        responseAttributes.append("maneuvers");
-        requestString += "&maneuverattribute=position";
-        if (!(request.instructionDetail() & QGeoRouteRequest::NoInstructions))
-            requestString += ",link";
-    }
-    */
     if (request.instructionDetail() & QGeoRouteRequest::BasicInstructions) {
         requestString += "&linkattribute=shape,length,nextLink";
         responseAttributes.append("links");
@@ -386,7 +361,6 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
         if (!(request.instructionDetail() & QGeoRouteRequest::NoInstructions))
             requestString += ",link";
     }
-
 
     requestString += "&routeattribute=waypoints,summary,shape,boundingBox";
     if (responseAttributes.count() > 0) {

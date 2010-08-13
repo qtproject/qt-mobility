@@ -155,28 +155,23 @@ QCameraImageProcessingControl::~QCameraImageProcessingControl()
 */
 
 /*!
-    \fn QCameraImageProcessingControl::supportedPresets() const
+  \enum QCameraImageProcessingControl::ProcessingParameter
 
-    Returns the list of image processing presets camera supports.
-*/
-
-/*!
-    \fn QCameraImageProcessingControl::presetDescription(const QByteArray &preset) const
-
-    Returns the image processing \a preset description.
-*/
-
-/*!
-    \fn QCameraImageProcessingControl::preset() const = 0;
-
-    Retuns the current image processing preset.
-*/
-
-/*!
-    \fn QCameraImageProcessingControl::setPreset(const QByteArray &preset) = 0;
-
-    Sets the current image processing \a preset.
-*/
+  \value Contrast
+    Image contrast.
+  \value Saturation
+    Image saturation.
+  \value Brightness
+    Image brightness.
+  \value Sharpening
+    Amount of sharpening applied.
+  \value Denoising
+    Amount of denoising applied.
+  \value ColorTemperature
+    Color temperature in K. This value is used when the manual white balance mode is selected.
+  \value ExtendedParameter
+    The base value for platform specific extended parameters.
+ */
 
 #include "moc_qcameraimageprocessingcontrol.cpp"
 QT_END_NAMESPACE

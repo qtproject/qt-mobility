@@ -61,6 +61,9 @@ QList<QByteArray> charsets;
 
     \brief The QMessage class provides a convenient interface for working with messages.
     
+    
+    \inmodule QtMessaging
+    
     \ingroup messaging
    
     QMessage supports a number of types. Including internet email messages, 

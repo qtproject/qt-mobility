@@ -120,6 +120,7 @@ PUBLIC_HEADERS += \
     qcameralockscontrol.h \
     qcameraexposurecontrol.h \
     qcamerafocuscontrol.h \
+    qcameraflashcontrol.h \
     qcameraimageprocessingcontrol.h
 
 SOURCES += \
@@ -134,6 +135,7 @@ SOURCES += \
     qcameralockscontrol.cpp \
     qcameraexposurecontrol.cpp \
     qcamerafocuscontrol.cpp \
+    qcameraflashcontrol.cpp \
     qcameraimageprocessingcontrol.cpp
 
 include(audio/audio.pri)
@@ -148,7 +150,7 @@ mac {
 }
 
 maemo5 {
-    QMAKE_CXXFLAGS += -march=armv7a -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon
+    isEqual(QT_ARCH,armv6):QMAKE_CXXFLAGS += -march=armv7a -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon
     HEADERS += qxvideosurface_maemo5_p.h
     SOURCES += qxvideosurface_maemo5.cpp
     SOURCES += qgraphicsvideoitem_maemo5.cpp

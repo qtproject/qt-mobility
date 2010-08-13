@@ -47,23 +47,24 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemLocalIdFetchRequest
   \brief The QOrganizerItemLocalIdFetchRequest class allows a client to asynchronously
-    request a list of organizeritem ids from a organizeritems store manager.
+    request a list of organizer item ids from a organizer item store manager.
+  \inmodule QtOrganizer
 
 
   For a QOrganizerItemLocalIdFetchRequest, the resultsAvailable() signal will be emitted when the resultant
-  manager-local organizeritem ids (which may be retrieved by calling ids()), are updated, as well as if
+  manager-local organizer item ids (which may be retrieved by calling ids()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
-  \ingroup organizeritems-requests
+  \ingroup organizer-requests
  */
 
-/*! Constructs a new organizeritem id fetch request whose parent is the specified \a parent */
+/*! Constructs a new organizer item id fetch request whose parent is the specified \a parent */
 QOrganizerItemLocalIdFetchRequest::QOrganizerItemLocalIdFetchRequest(QObject* parent)
     : QOrganizerItemAbstractRequest(new QOrganizerItemLocalIdFetchRequestPrivate, parent)
 {
 }
 
-/*! Sets the filter which will be used to select the organizeritems whose ids will be returned to \a filter */
+/*! Sets the filter which will be used to select the organizer items whose ids will be returned to \a filter */
 void QOrganizerItemLocalIdFetchRequest::setFilter(const QOrganizerItemFilter& filter)
 {
     Q_D(QOrganizerItemLocalIdFetchRequest);
@@ -78,7 +79,7 @@ void QOrganizerItemLocalIdFetchRequest::setSorting(const QList<QOrganizerItemSor
     d->m_sorting = sorting;
 }
 
-/*! Returns the filter which will be used to select the organizeritems whose ids will be returned */
+/*! Returns the filter which will be used to select the organizer items whose ids will be returned */
 QOrganizerItemFilter QOrganizerItemLocalIdFetchRequest::filter() const
 {
     Q_D(const QOrganizerItemLocalIdFetchRequest);
@@ -92,7 +93,7 @@ QList<QOrganizerItemSortOrder> QOrganizerItemLocalIdFetchRequest::sorting() cons
     return d->m_sorting;
 }
 
-/*! Returns the list of ids of organizeritems which matched the request */
+/*! Returns the list of ids of organizer items which matched the request */
 QList<QOrganizerItemLocalId> QOrganizerItemLocalIdFetchRequest::itemIds() const
 {
     Q_D(const QOrganizerItemLocalIdFetchRequest);

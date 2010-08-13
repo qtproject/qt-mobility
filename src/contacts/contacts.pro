@@ -15,6 +15,12 @@ include(engines/engines.pri)
 include(filters/filters.pri)
 include(requests/requests.pri)
 
+CONFIG += mobility
+MOBILITY = serviceframework
+
+# contacts depends on service framework (for actions)
+INCLUDEPATH += ../serviceframework
+
 # Input
 PUBLIC_HEADERS += \
     qcontact.h \
@@ -22,6 +28,7 @@ PUBLIC_HEADERS += \
     qcontactaction.h \
     qcontactactiondescriptor.h \
     qcontactactionfactory.h \
+    qcontactactiontarget.h \
     qcontactchangeset.h \
     qcontactdetail.h \
     qcontactdetaildefinition.h \
@@ -42,6 +49,8 @@ PRIVATE_HEADERS += \
     qcontact_p.h \
     qcontactabstractrequest_p.h \
     qcontactactiondescriptor_p.h \
+    qcontactactionservicemanager_p.h \
+    qcontactactiontarget_p.h \
     qcontactchangeset_p.h \
     qcontactdetail_p.h \
     qcontactdetaildefinition_p.h \
@@ -59,6 +68,8 @@ SOURCES += \
     qcontactaction.cpp \
     qcontactactiondescriptor.cpp \
     qcontactactionfactory.cpp \
+    qcontactactionservicemanager_p.cpp \
+    qcontactactiontarget.cpp \
     qcontactchangeset.cpp \
     qcontactdetail.cpp \
     qcontactdetaildefinition.cpp \
@@ -110,7 +121,7 @@ symbian {
     ### Contacts
     # Main library
     CONTACTS_DEPLOYMENT.sources = QtContacts.dll
-    CONTACTS_DEPLOYMENT.path = \sys\bin
+    CONTACTS_DEPLOYMENT.path = /sys/bin
     DEPLOYMENT += CONTACTS_DEPLOYMENT
 }
 

@@ -48,6 +48,8 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup gallery
 
+    \inmodule QtGallery
+
     \brief The QGalleryAbstractResponse class provides a base class for
     responses to gallery requests.
 */
@@ -59,8 +61,26 @@ QTM_BEGIN_NAMESPACE
 */
 
 QGalleryAbstractResponse::QGalleryAbstractResponse(QObject *parent)
-    : QGalleryItemList(*new QGalleryAbstractResponsePrivate, parent)
+    : QObject(parent)
+    , d_ptr(new QGalleryAbstractResponsePrivate)
 {
+    d_ptr->q_ptr = this;
+}
+
+/*!
+    Constructs a new gallery response, for a request that has finished with the
+    given \a result.
+
+    The \a parent is passed to QObject.
+*/
+
+QGalleryAbstractResponse::QGalleryAbstractResponse(int result, QObject *parent)
+    : QObject(parent)
+    , d_ptr(new QGalleryAbstractResponsePrivate)
+{
+    d_ptr->q_ptr = this;
+
+    finish(result, false);
 }
 
 /*!
@@ -69,8 +89,10 @@ QGalleryAbstractResponse::QGalleryAbstractResponse(QObject *parent)
 
 QGalleryAbstractResponse::QGalleryAbstractResponse(
         QGalleryAbstractResponsePrivate &dd, QObject *parent)
-    : QGalleryItemList(dd, parent)
+    : QObject(parent)
+    , d_ptr(&dd)
 {
+    d_ptr->q_ptr = this;
 }
 
 /*!
@@ -102,13 +124,18 @@ int QGalleryAbstractResponse::result() const
 }
 
 /*!
-    \fn QGalleryAbstractResponse::waitForFinished(int msecs)
-
     Waits for \a msecs for the a response to finish.
 
     Returns true if the response has finished on return, and returns false if
     the wait time expires or the request is inactive or idle.
 */
+
+bool QGalleryAbstractResponse::waitForFinished(int msecs)
+{
+    Q_UNUSED(msecs);
+
+    return true;
+}
 
 /*!
     Cancels an active or idle gallery response.

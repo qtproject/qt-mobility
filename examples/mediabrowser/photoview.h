@@ -43,29 +43,34 @@
 
 #include "galleryview.h"
 
+#include <qmobilityglobal.h>
+
 QT_BEGIN_NAMESPACE
 class QModelIndex;
 QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
-class QGalleryItemListModel;
+class QAbstractGallery;
+class QGalleryQueryModel;
 QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class PhotoView : public GalleryView
 {
     Q_OBJECT
 public:
-    PhotoView(QWidget *parent = 0);
+    PhotoView(QAbstractGallery *gallery, QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~PhotoView();
 
-protected slots:
-    void mediaChanged(QGalleryItemList *media);
+public slots:
+    void showChildren(const QVariant &itemId);
 
 private slots:
     void activated(const QModelIndex &index);
 
 private:
-    QGalleryItemListModel *model;
+    QScopedPointer<QGalleryQueryModel> model;
 };
 
 #endif

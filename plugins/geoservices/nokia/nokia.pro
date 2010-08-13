@@ -34,8 +34,9 @@ SOURCES += \
             qgeosearchreply_nokia.cpp \
             qgeoserviceproviderplugin_nokia.cpp
 
-INCLUDEPATH += $$QT_MOBILITY_BUILD_TREE/include/QtmLocation
-INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/src/location
+INCLUDEPATH += $$SOURCE_DIR/src/location \
+                $$SOURCE_DIR/src/location/maps \
+                $$SOURCE_DIR/src/location/maps/tiled
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
@@ -46,5 +47,3 @@ symbian {
     DEPLOYMENT += pluginDep      
 }
 
-target.path=$$QT_MOBILITY_PREFIX/plugins/$${PLUGIN_TYPE}
-INSTALLS+=target

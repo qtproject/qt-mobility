@@ -43,6 +43,8 @@
 #include "qcontactmanager_p.h"
 #include "qcontactactiondescriptor.h"
 
+#include "qcontactactionservicemanager_p.h"
+
 #include <QSet>
 #include <QString>
 
@@ -102,43 +104,21 @@ QContactAction::~QContactAction()
  */
 
 /*!
-  \fn QContactAction::metaData() const
-  Returns the meta-data associated with this action, such as icons, labels or sound cues
- */
-
-/*!
-  \fn QContactAction::contactFilter(const QVariant& value) const
+  \fn QContactAction::contactFilter() const
   Returns a filter which may be used to filter contacts by the availability of this action implementation for them.
-  If \a value is valid, only contacts which have a detail with the given value and for which the action is available are returned
  */
 
 /*!
-  \fn QContactAction::isDetailSupported(const QContactDetail &detail, const QContact &contact = QContact()) const
-  Returns true if the provided \a detail contains the fields required for this action to be
+  \fn QContactAction::isTargetSupported(const QContactActionTarget& target) const
+  Returns true if the provided \a target contains the information required for this action to be
   performed on it; otherwise, returns false.
-  Some actions may require other information to be available in order to complete successfully; in that case,
-  the action will also inspect the given \a contact to ensure that it contains the information required.
-  If the contact contains the required information, the function will return true; otherwise, returns false.
+  Some actions may require no details to be specified (e.g., serialize entire contact), some may require
+  exactly one detail (e.g., email this specific email account of the given contact), some may require
+  zero or one detail (e.g., email exactly on email account of the given contact, but the action can choose
+  which email account to email), some may require multiple details (e.g., email all specified email accounts
+  of the given contact).  In all cases, it is the action which decides how much information it needs.
+  If the target contains the required information, the function will return true; otherwise, returns false.
  */
-
-/*!
-  \fn QContactAction::supportedDetails(const QContact& contact) const
-  Returns a list of the details saved in the given \a contact which contain the fields required
-  for this action to be performed on them.
-
-  The default implementation of this function simply tests all the details in the contact
-  using \l isDetailSupported()
- */
-QList<QContactDetail> QContactAction::supportedDetails(const QContact& contact) const
-{
-    QList<QContactDetail> ret;
-    QList<QContactDetail> details = contact.details();
-    for (int j=0; j < details.count(); j++) {
-        if (isDetailSupported(details.at(j), contact))
-            ret.append(details.at(j));
-    }
-    return ret;
-}
 
 /*!
   \fn QContactAction::invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap())
@@ -190,45 +170,133 @@ QList<QContactDetail> QContactAction::supportedDetails(const QContact& contact) 
  */
 
 /*!
-  Returns a list of identifiers of the available actions which are provided by the given \a vendor and of the given \a implementationVersion.
-  If \a vendor is empty, actions from all vendors and of any implementation version are returned; if \a implementationVersion is empty,
-  any actions from the given \a vendor (regardless of implementation version) are returned.
+  Returns a list of identifiers of the available actions which are provided by the service provider with the given \a serviceName.
+  If \a serviceName is empty, actions from all service providers and of any implementation version are returned.
  */
-QStringList QContactAction::availableActions(const QString& vendor, int implementationVersion)
+QStringList QContactAction::availableActions(const QString& serviceName)
 {
     // SLOW naive implementation...
     QSet<QString> ret;
     QContactManagerData::loadFactories();
-    QList<QContactActionDescriptor> actionDescriptors = QContactManagerData::actionDescriptors(QString(), vendor, implementationVersion);
+    QList<QContactActionDescriptor> actionDescriptors = QContactActionServiceManager::instance()->actionDescriptors();
     for (int i = 0; i < actionDescriptors.size(); i++) {
         QContactActionDescriptor descriptor = actionDescriptors.at(i);
-        ret.insert(descriptor.actionName());
+        if (serviceName.isEmpty() || serviceName == descriptor.serviceName()) {
+            ret.insert(descriptor.actionName());
+        }
     }
 
     return ret.toList();
 }
 
+
 /*!
-  Returns a list of QContactActionDescriptor instances which identified implementations of the given \a actionName which are provided by the
-  given \a vendorName and are of the given \a implementationVersion.  If \a actionName is empty, descriptors for
-  implementations of all actions are returned; if \a vendorName is empty, descriptors for implementations provided by any vendor and
-  of any implementation version are returned; if \a implementationVersion is empty, descriptors for any implementations provided by the
-  given \a vendorName of the given \a actionName are returned.
+   \variable QContactAction::ActionCall
+   The name of the default call action.
+   Actions of this name will allow the client to call
+   the specified action target (contact or detail of a contact).
+   \sa actionDescriptors()
  */
-QList<QContactActionDescriptor> QContactAction::actionDescriptors(const QString& actionName, const QString& vendorName, int implementationVersion)
+Q_DEFINE_LATIN1_CONSTANT(QContactAction::ActionCall, "Call");
+
+/*!
+   \variable QContactAction::ActionEmail
+   The name of the default send email action.
+   Actions of this name will either open a graphical element
+   which allows the client to send the specified action
+   target an email, or directly send the specified action
+   target an email if the correct parameters to invocation
+   are specified.
+   \sa actionDescriptors()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactAction::ActionEmail, "email");
+
+/*!
+   \variable QContactAction::ActionSms
+   The name of the default send sms action.
+   Actions of this name will allow the client to send
+   the specified action target an sms.
+   \sa actionDescriptors()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactAction::ActionSms, "sms");
+
+/*!
+   \variable QContactAction::ActionMms
+   The name of the default send mms action.
+   Actions of this name will allow the client to send
+   the specified action target an mms.
+   \sa actionDescriptors()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactAction::ActionMms, "mms");
+
+/*!
+   \variable QContactAction::ActionChat
+   The name of the default IM chat action.
+   Actions of this name will allow the client to begin
+   an IM chat session with the specified action target.
+   \sa actionDescriptors()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactAction::ActionChat, "chat");
+
+/*!
+   \variable QContactAction::ActionVideoCall
+   The name of the default video call action.
+   Actions of this name will allow clients to initiate
+   a video call with the specified action target.
+   \sa actionDescriptors()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactAction::ActionVideoCall, "videocall");
+
+/*!
+   \variable QContactAction::ActionOpenInEditor
+   The name of the default "edit contact" action.
+   Actions of this name will open a graphical element
+   which allows the user to edit the contact.
+   \sa actionDescriptors()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactAction::ActionOpenInEditor, "edit");
+
+/*!
+   \variable QContactAction::ActionOpenInViewer
+   The name of the default view contact action.
+   Actions of this name will open a graphical element
+   which allows the user to view the contact.
+   \sa actionDescriptors()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactAction::ActionOpenInViewer, "view");
+
+/*!
+  Returns a list of QContactActionDescriptor instances which identified implementations of the given \a actionName.
+  The action name may either be one of the default action names, or any other arbitrary string.
+
+  Example:
+  \code
+      QList<QContactActionDescriptor> availableCallActions = QContactAction::actionDescriptors(QContactAction::ActionCall);
+  \endcode
+
+  Example 2:
+  \code
+      QList<QContactActionDescriptor> customActions = QContactAction::actionDescriptors("customActionName");
+  \endcode
+
+  The actions which are available depend on which action plugins have been installed.  For more information
+  on this topic (for example, if you are interested in providing an action plugin for third-party developers
+  to use) please see the relevant documentation for \l{Qt Contacts Action API}{action providers}.
+ */
+QList<QContactActionDescriptor> QContactAction::actionDescriptors(const QString& actionName)
 {
-    QContactManagerData::loadFactories();
-    return QContactManagerData::actionDescriptors(actionName, vendorName, implementationVersion);
+    QContactActionServiceManager* qcasm = QContactActionServiceManager::instance();
+    return qcasm->actionDescriptors(actionName);
 }
 
 /*!
   Returns a pointer to a new instance of the action implementation identified by the given \a descriptor.
-  The caller takes ownership of the action implementation and must delete it to avoid leaking memory.
+  The caller does NOT take ownership of the action implementation and must not delete it or undefined behaviour will occur.
  */
 QContactAction* QContactAction::action(const QContactActionDescriptor& descriptor)
 {
-    QContactManagerData::loadFactories();
-    return QContactManagerData::action(descriptor);
+    QContactActionServiceManager* qcasm = QContactActionServiceManager::instance();
+    return qcasm->action(descriptor);
 }
 
 #include "moc_qcontactaction.cpp"

@@ -59,12 +59,21 @@
 #include "qcontactrelationshipfilter.h"
 #include "qcontacttype.h"
 
+class QDataStream;
+
 QTM_BEGIN_NAMESPACE
 
 class QContactManager;
 class QContactData;
 class QContactName;
 class QContactAction;
+
+// MSVC needs the function declared before the friend declaration
+class QContact;
+#ifndef QT_NO_DATASTREAM
+Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContact& contact);
+Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContact& contact);
+#endif
 
 class Q_CONTACTS_EXPORT QContact
 {
@@ -89,22 +98,16 @@ public:
     void setType(const QString& type);
     void setType(const QContactType& type);
 
-    /* The (backend synthesized) display label of the contact */
+    /* The (backend synthesized, or set with QCME::setContactDisplayLabel()) display label of the contact */
     QString displayLabel() const;
 
     /* Is this an empty contact? */
     bool isEmpty() const;
     void clearDetails();
 
-    /* deprecated */
-    QContactDetail Q_DECL_DEPRECATED detailWithAction(const QString& actionName) const;
-    QList<QContactDetail> Q_DECL_DEPRECATED detailsWithAction(const QString& actionName) const;
-
-    /* Access details of particular type or which support a particular action */
+    /* Access details of particular type */
     QContactDetail detail(const QString& definitionId) const;
     QList<QContactDetail> details(const QString& definitionId = QString()) const;
-    QContactDetail detailWithAction(QContactAction* action) const;
-    QList<QContactDetail> detailsWithAction(QContactAction* action) const;
 
     QList<QContactDetail> details(const QString& definitionName, const QString& fieldName, const QString& value) const;
 
@@ -167,18 +170,15 @@ public:
     }
 
     /* generic detail addition/removal functions */
-    bool saveDetail(QContactDetail* detail);   // modifies the detail - sets its ID if detail already exists
-    bool removeDetail(QContactDetail* detail); // modifies the detail - unsets its ID
+    bool saveDetail(QContactDetail* detail);
+    bool removeDetail(QContactDetail* detail);
 
     /* Relationships that this contact was involved in when it was retrieved from the manager */
     QList<QContactRelationship> relationships(const QString& relationshipType = QString()) const;
     QList<QContactId> relatedContacts(const QString& relationshipType = QString(), QContactRelationship::Role role = QContactRelationship::Either) const;
-    QList<QContactId> Q_DECL_DEPRECATED relatedContacts(const QString& relationshipType, QContactRelationshipFilter::Role role) const;
-    void Q_DECL_DEPRECATED setRelationshipOrder(const QList<QContactRelationship>& reordered);
-    QList<QContactRelationship> Q_DECL_DEPRECATED relationshipOrder() const;
 
     /* Actions available to be performed on this contact */
-    QList<QContactActionDescriptor> availableActions(const QString& vendorName = QString(), int implementationVersion = -1) const;
+    QList<QContactActionDescriptor> availableActions(const QString& serviceName = QString()) const;
 
     /* Preferences (eg, set a particular detail preferred for the SMS action) - subject to change! */
     bool setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail);
@@ -190,6 +190,8 @@ private:
     friend class QContactManager;
     friend class QContactManagerData;
     friend class QContactManagerEngine;
+    friend QDataStream& operator<<(QDataStream& out, const QContact& contact);
+    friend QDataStream& operator>>(QDataStream& in, QContact& contact);
 
     QSharedDataPointer<QContactData> d;
 };

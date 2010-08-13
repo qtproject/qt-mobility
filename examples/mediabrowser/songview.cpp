@@ -43,42 +43,39 @@
 #include <QtGui>
 
 #include <qdocumentgallery.h>
-#include <qgalleryitemlistmodel.h>
+#include <qgalleryquerymodel.h>
 
-SongView::SongView(QWidget *parent)
-    : GalleryView(parent)
-    , model(0)
+SongView::SongView(QAbstractGallery *gallery, QWidget *parent, Qt::WindowFlags flags)
+    : GalleryView(parent, flags)
+    , model(new QGalleryQueryModel(gallery))
 {
-    setType(QDocumentGallery::Audio);
-    setFields(QStringList()
-            << QDocumentGallery::trackNumber
-            << QDocumentGallery::title
-            << QDocumentGallery::duration
-            << QDocumentGallery::artist
-            << QDocumentGallery::albumArtist);
-    setSortFields(QStringList()
+    model->setRootType(QDocumentGallery::Audio);
+
+    model->addColumn(QDocumentGallery::trackNumber);
+    model->setHeaderData(0, Qt::Horizontal, tr("Track"));
+
+    model->addColumn(QDocumentGallery::title);
+    model->setHeaderData(1, Qt::Horizontal, tr("Title"));
+
+    model->addColumn(QDocumentGallery::duration);
+    model->setHeaderData(2, Qt::Horizontal, tr("Duration"));
+
+    model->addColumn(QDocumentGallery::artist);
+    model->setHeaderData(3, Qt::Horizontal, tr("Artist"));
+
+    model->addColumn(QDocumentGallery::albumArtist);
+    model->setHeaderData(4, Qt::Horizontal, tr("Album Artist"));
+
+    model->setSortPropertyNames(QStringList()
             << QDocumentGallery::artist
             << QDocumentGallery::albumTitle
             << QDocumentGallery::trackNumber);
-
-    model = new QGalleryItemListModel;
-    model->addColumn(QDocumentGallery::trackNumber);
-    model->addColumn(QDocumentGallery::title);
-    model->addColumn(QDocumentGallery::duration);
-    model->addColumn(QDocumentGallery::artist);
-    model->addColumn(QDocumentGallery::albumArtist);
-
-    model->setHeaderData(0, Qt::Horizontal, tr("Track"));
-    model->setHeaderData(1, Qt::Horizontal, tr("Title"));
-    model->setHeaderData(2, Qt::Horizontal, tr("Duration"));
-    model->setHeaderData(3, Qt::Horizontal, tr("Artist"));
-    model->setHeaderData(4, Qt::Horizontal, tr("Album Artist"));
 
     QTableView *view = new QTableView;
     view->setShowGrid(false);
     view->verticalHeader()->setVisible(false);
     view->setSelectionBehavior(QAbstractItemView::SelectRows);
-    view->setModel(model);
+    view->setModel(model.data());
     connect(view, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
 
     QBoxLayout *layout = new QVBoxLayout;
@@ -91,12 +88,12 @@ SongView::SongView(QWidget *parent)
 
 SongView::~SongView()
 {
-    delete model;
 }
 
-void SongView::mediaChanged(QGalleryItemList *media)
+void SongView::showChildren(const QVariant &itemId)
 {
-    model->setItemList(media);
+    model->setRootItem(itemId);
+    model->execute();
 }
 
 void SongView::activated(const QModelIndex &)

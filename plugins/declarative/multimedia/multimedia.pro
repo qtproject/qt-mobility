@@ -16,6 +16,7 @@ HEADERS += \
         qdeclarativeaudio_p.h \
         qdeclarativemediabase_p.h \
         qdeclarativevideo_p.h \
+        qdeclarativecamera_p.h \
         qmetadatacontrolmetaobject_p.h \
 
 SOURCES += \
@@ -23,6 +24,7 @@ SOURCES += \
         qdeclarativeaudio.cpp \
         qdeclarativemediabase.cpp \
         qdeclarativevideo.cpp \
+        qdeclarativecamera.cpp \
         qmetadatacontrolmetaobject.cpp
 
 CONFIG += mobility
@@ -33,6 +35,15 @@ target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
-INSTALLS += qmldir
+INSTALLS += target qmldir
 
-symbian:TARGET.EPOCALLOWDLLDATA=1
+symbian {
+    # In Symbian, a library should enjoy _largest_ possible capability set.
+    TARGET.CAPABILITY = ALL -TCB
+    TARGET.UID3 = 0x20021313
+    TARGET.EPOCALLOWDLLDATA=1
+    # Specifies what files shall be deployed: the plugin itself and the qmldir file.
+    importFiles.sources = $$DESTDIR/declarative_multimedia$${QT_LIBINFIX}.dll qmldir 
+    importFiles.path = $$QT_IMPORTS_BASE_DIR/$$TARGETPATH
+    DEPLOYMENT = importFiles
+}

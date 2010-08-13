@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qgeosearchreply_nokia.h"
+#include "qgeocodeparser.h"
 
 QGeoSearchReplyNokia::QGeoSearchReplyNokia(QNetworkReply *reply, QObject *parent)
         : QGeoSearchReply(parent),
@@ -75,16 +76,16 @@ void QGeoSearchReplyNokia::networkFinished()
         return;
     }
 
-//    QGeoCodeXmlParser parser;
+    QGeoCodeParser parser;
 
-//    if (parser.parse(m_reply)) {
+    if (parser.parse(m_reply)) {
         // TODO trim results based on bounds
-//        setPlaces(parser.results());
-//        setFinished(true);
-//    } else {
+        setPlaces(parser.results());
+        setFinished(true);
+    } else {
         // add a qWarning with the actual parser.errorString()
         setError(QGeoSearchReply::ParseError, "The response from the service was not in a recognisable format.");
-//    }
+    }
 
     m_reply->deleteLater();
 }

@@ -45,9 +45,11 @@
 #include <QStringList>
 #include <QString>
 
-const quint8 HL_DURATION=0xB3;
+const quint8 HL_STREETNAME=0x8;
+const quint8 HL_ROUTENAME=0x18;
 const quint8 HL_POINTCOUNT=0x19;
 const quint8 HL_POINT=0x1A;
+const quint8 HL_DURATION=0xB3;
 
 const quint8 HL_MAN_INFO=0x8C;
 const quint8 HL_MAN_COUNT=0x8D;
@@ -76,8 +78,6 @@ bool QGeoRouteParser::parse(QIODevice* source)
         return false;
     }
 
-    QList<QGeoRouteSegment> segments;
-
     QGeoRoute route;
     QList<QGeoRouteSegment> routeSegments;
     route.setRequest(m_request);
@@ -96,7 +96,6 @@ bool QGeoRouteParser::parse(QIODevice* source)
             QGeoRouteSegment segment;
             segment.setPath(path);
             routeSegments.append(segment);
-            //route.appendRouteSegment(segment);
             }
         else if(cont.id == HL_DURATION) {
             route.setTravelTime(int32FromByteArray(cont.data));
@@ -108,30 +107,33 @@ bool QGeoRouteParser::parse(QIODevice* source)
                 if (man.id == HL_MAN_COUNT) {
                     int count = int32FromByteArray(man.data);
                     ++manCount; // step to next from HL_MAN_COUNT
-                    QGeoNavigationInstruction instruction;
-                    int segmentIndex = 0;
+                    int segmentIndex = -1;
+                    QString instructionText;
                     for (int i = 0; i < count && manCount < decoded.count(); ++i, ++manCount) {
                         man = decodedMan[manCount];
-                        if (man.id == HL_MAN_ACTION_ID) {
-                            instruction = QGeoNavigationInstruction();
-                            segmentIndex = 0;
-                        }
-                        else if (man.id == HL_MAN_STARTSEGMENT_INDEX) {
+                        if (man.id == HL_MAN_STARTSEGMENT_INDEX) {
                             segmentIndex = int32FromByteArray(man.data);
                         }
                         else if (man.id == HL_MAN_DIRECTIONS) {
-                            instruction.setInstructionText(QString(man.data));
+                            instructionText=man.data;
+                        }
+                        else if (man.id == HL_STREETNAME) {
+                            if(instructionText.isEmpty())
+                                instructionText=man.data;
+                        }
+                        else if (man.id == HL_ROUTENAME) {
+                            if(instructionText.isEmpty())
+                                instructionText=man.data;
                         }
                         else if (man.id == HL_END_OF_RECORD) {
-                            if (segments.count() > segmentIndex) {
-                                QGeoRouteSegment segment = segments.at(segmentIndex);
-                                instruction.setPosition(segment.path().at(0));
-                                segment.setInstruction(instruction);
-                                instruction = QGeoNavigationInstruction();
+                            if (routeSegments.count() > segmentIndex) {
+                                QGeoNavigationInstruction instruction;
+                                instruction.setInstructionText(instructionText);
+                                instruction.setPosition(routeSegments.at(segmentIndex).path().at(0));
+                                routeSegments[segmentIndex].setInstruction(instruction);
                             }
-                            else {
-                                instruction = QGeoNavigationInstruction();
-                            }
+                            instructionText.clear();
+                            segmentIndex = -1;
                         }
                     }
                 }

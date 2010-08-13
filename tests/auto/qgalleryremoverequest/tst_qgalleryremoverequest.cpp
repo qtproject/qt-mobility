@@ -39,12 +39,14 @@
 **
 ****************************************************************************/
 
-#include <QtTest/QtTest>
+//TESTED_COMPONENT=src/documentgallery
 
 #include <qgalleryremoverequest.h>
 
 #include <qabstractgallery.h>
 #include <qgalleryabstractresponse.h>
+
+#include <QtTest/QtTest>
 
 QTM_USE_NAMESPACE
 
@@ -68,24 +70,6 @@ public:
             finish(result, idle);
     }
 
-    QStringList propertyNames() const { return QStringList(); }
-    int propertyKey(const QString &) const { return -1; }
-    QGalleryProperty::Attributes propertyAttributes(int) const {
-        return QGalleryProperty::Attributes(); }
-    QVariant::Type propertyType(int) const { return QVariant::Invalid; }
-
-    int count() const { return 0; }
-
-    QVariant id(int) const { return QVariant(); }
-    QUrl url(int) const { return QUrl(); }
-    QString type(int) const { return QString(); }
-    QString parentId(int) const { return QString(); }
-    QList<QGalleryResource> resources(int) const { return QList<QGalleryResource>(); }
-    ItemStatus status(int) const { return ItemStatus(); }
-
-    QVariant metaData(int, int) const { return QVariant(); }
-    void setMetaData(int, int, const QVariant &) {}
-
     bool waitForFinished(int) { return false; }
 
 public Q_SLOTS:
@@ -100,8 +84,8 @@ class QtTestGallery : public QAbstractGallery
 public:
     QtTestGallery() : m_result(QGalleryAbstractRequest::NoResult), m_idle(false) {}
 
-    bool isRequestSupported(QGalleryAbstractRequest::Type type) const {
-        return type == QGalleryAbstractRequest::Remove; }
+    bool isRequestSupported(QGalleryAbstractRequest::RequestType type) const {
+        return type == QGalleryAbstractRequest::RemoveRequest; }
 
     void setResult(int result) { m_result = result; }
     void setIdle(bool idle) { m_idle = idle; }
@@ -114,7 +98,7 @@ Q_SIGNALS:
 protected:
     QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request)
     {
-        if (request->type() == QGalleryAbstractRequest::Remove) {
+        if (request->type() == QGalleryAbstractRequest::RemoveRequest) {
             QtGalleryTestResponse *response = new QtGalleryTestResponse(m_result, m_idle);
 
             connect(this, SIGNAL(finish(int,bool)), response, SLOT(doFinish(int,bool)));

@@ -61,7 +61,8 @@ public:
     const char* TypeTodo;
     const char* TypeJournal;
     const char* TypeNote;
-    // etc?
+    const char* TypeEventOccurrence;
+    const char* TypeTodoOccurrence;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemType, "Type")
     Q_DECLARE_LATIN1_CONSTANT(FieldType, "Type");

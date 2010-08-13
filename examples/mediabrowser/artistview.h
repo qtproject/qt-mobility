@@ -43,33 +43,42 @@
 
 #include "galleryview.h"
 
+#include <qmobilityglobal.h>
+
 QT_BEGIN_NAMESPACE
 class QModelIndex;
 QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
-class QGalleryItemListModel;
+class QAbstractGallery;
+class QGalleryQueryModel;
 QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class ArtistView : public GalleryView
 {
     Q_OBJECT
 public:
-    ArtistView(const QString &type, QWidget *parent = 0);
+    ArtistView(
+            const QString &type,
+            QAbstractGallery *gallery,
+            QWidget *parent = 0,
+            Qt::WindowFlags flags = 0);
     ~ArtistView();
 
 signals:
-    void showAlbums(const QVariant &containerId, const QString &title);
-    void showSongs(const QVariant &containerId, const QString &title);
+    void showAlbums(const QVariant &artistId, const QString &title);
+    void showSongs(const QVariant &artistId, const QString &title);
 
-protected slots:
-    void mediaChanged(QGalleryItemList *media);
+public slots:
+    void showChildren(const QVariant &itemId);
 
 private slots:
     void activated(const QModelIndex &index);
 
 private:
-    QGalleryItemListModel *model;
+    QScopedPointer<QGalleryQueryModel> model;
 };
 
 #endif

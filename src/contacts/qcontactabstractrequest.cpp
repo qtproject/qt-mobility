@@ -238,16 +238,6 @@ QContactManager::Error QContactAbstractRequest::error() const
 }
 
 /*!
-  \deprecated
-  Returns the list of errors which occurred during the most recent asynchronous operation.  Each individual error in the list corresponds to a result in the result list.
-  This function is deprecated and will be removed after the transition period has elapsed.  Use errorMap() instead.
- */
-QList<QContactManager::Error> QContactAbstractRequest::errors() const
-{
-    return QList<QContactManager::Error>();
-}
-
-/*!
   Returns the type of this asynchronous request
  */
 QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
@@ -317,9 +307,13 @@ bool QContactAbstractRequest::cancel()
 }
 
 /*! Blocks until the request has been completed by the manager engine, or until \a msecs milliseconds has elapsed.
-    If \a msecs is zero, this function will block indefinitely.
+    If \a msecs is zero or negative, this function will block until the request is complete, regardless of how long it takes.
     Returns true if the request was cancelled or completed successfully within the given period, otherwise false.
     Some backends are unable to support this operation safely, and will return false immediately.
+
+    Note that any signals generated while waiting for the request to complete may be queued and delivered
+    some time after this function has returned, when the calling thread's event loop is dispatched.  If your code
+    depends on your slots being invoked, you may need to process events after calling this function.
  */
 bool QContactAbstractRequest::waitForFinished(int msecs)
 {

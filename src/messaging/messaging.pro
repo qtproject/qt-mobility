@@ -64,7 +64,7 @@ SOURCES += qmessageid.cpp \
     qmessagestore.cpp \
     qmessageservice.cpp \
     messagingutil.cpp
-symbian|win32|maemo6|maemo5|mac { 
+symbian|win32|maemo6|maemo5|mac:!simulator {
     mac|maemo6: SOURCES += qmessageid_stub.cpp \
         qmessagecontentcontainerid_stub.cpp \
         qmessagefolderid_stub.cpp \
@@ -142,6 +142,9 @@ symbian|win32|maemo6|maemo5|mac {
    	CONFIG += FREESTYLEMAIL
 	DEFINES += FREESTYLEMAILUSED
 	DEFINES += FREESTYLEMAILBOXOBSERVERUSED
+	}
+	contains(messaging_ncnlist_enabled, no) {
+	DEFINES += NCNLISTREMOVED
 	}
         HEADERS -= qmessagestore_p.h \
             qmessagecontentcontainer_p.h \
@@ -240,7 +243,8 @@ symbian|win32|maemo6|maemo5|mac {
                 win32wce/longstring_p.h \
                 win32wce/qprivateimplementation.h \
                 win32wce/qprivateimplementationdef.h
-            SOURCES += win32wce/qmailaddress.cpp \
+
+           SOURCES += win32wce/qmailaddress.cpp \
                 win32wce/qmailcodec.cpp \
                 win32wce/qmailid.cpp \
                 win32wce/qmailinstantiations.cpp \
@@ -263,7 +267,15 @@ symbian|win32|maemo6|maemo5|mac {
             user32.lib
     }
 }
-else:contains(qmf_enabled, yes) { 
+    
+simulator {
+    INCLUDEPATH += ../mobilitysimulator
+    qtAddLibrary(QtMobilitySimulator)
+    DEFINES += QTOPIAMAIL_OMIT_QCOP 
+}
+
+
+simulator|contains(qmf_enabled, yes) { 
     DEFINES += USE_QMF_IMPLEMENTATION
     
     # QMF headers must be located at $QMF_INCLUDEDIR
@@ -271,9 +283,13 @@ else:contains(qmf_enabled, yes) {
         $$(QMF_INCLUDEDIR)/support
     
     # QMF libraries must be located at $QMF_LIBDIR
-    LIBS += -L \
-        $$(QMF_LIBDIR) \
-        -lqtopiamail
+    mac {
+        QMAKE_LFLAGS += -F$$(QMF_LIBDIR)
+            LIBS += -framework qtopiamail
+    } else {
+        LIBS += -L$$(QMF_LIBDIR) -l$$qtLibraryTarget(qtopiamail)
+    }
+
     PRIVATE_HEADERS += qmfhelpers_p.h \
         qmessagestore_qmf_p.h
     SOURCES += qmessageid_qmf.cpp \
@@ -294,7 +310,8 @@ else:contains(qmf_enabled, yes) {
         qmessageservice_qmf.cpp \
         qmfhelpers.cpp
 }
-HEADERS += $$PUBLIC_HEADERS \
-    $$PRIVATE_HEADERS
+
+HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
+
 CONFIG += middleware
 include(../../features/deploy.pri)

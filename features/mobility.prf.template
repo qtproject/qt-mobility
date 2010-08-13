@@ -7,13 +7,16 @@
         INCLUDEPATH+=$$APP_LAYER_SYSTEMINCLUDE
     }
 
-    contains(MOBILITY,bearer|location|publishsubscribe|systeminfo|multimedia|messaging|serviceframework|sensors|telephony) {
-        INCLUDEPATH+=$$MW_LAYER_SYSTEMINCLUDE
-    }
+    INCLUDEPATH+=$$MW_LAYER_SYSTEMINCLUDE
 }
 mac: LIBS += -F$${MOBILITY_LIB}
 LIBS+= -L$${MOBILITY_LIB}
 QMAKE_RPATHDIR+=$${MOBILITY_LIB}
+
+# versit depends on contacts and organizer
+contains(MOBILITY, versit) {
+    MOBILITY += contacts organizer
+}
 
 contains(MOBILITY, bearer) {
     DEFINES += QT_MOBILITY_BEARER
@@ -24,6 +27,9 @@ contains(MOBILITY, bearer) {
         message(Please use source compatible replacement Bearer API in QtNetwork.)
     }
 }
+
+#for includes from src/global
+INCLUDEPATH += $${MOBILITY_INCLUDE}/QtMobility
 
 contains(MOBILITY, publishsubscribe) {
     INCLUDEPATH += $${MOBILITY_INCLUDE}/QtPublishSubscribe
@@ -70,6 +76,7 @@ contains(MOBILITY, versit) {
 }
 
 contains(MOBILITY, telephony) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtTelephony
     qtAddLibrary(QtTelephony)
 }
 

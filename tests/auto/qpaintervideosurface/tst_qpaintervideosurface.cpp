@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/multimedia
 
 #include <qpaintervideosurface_p.h>
 #include <QtTest/QtTest>
@@ -315,6 +316,20 @@ void tst_QPainterVideoSurface::supportedFormat_data()
             << QSize(256, 256)
             << false
             << false;
+#if !defined(Q_OS_MAC)
+    QTest::newRow("Pixmap: rgb32 640x480")
+            << QAbstractVideoBuffer::QPixmapHandle
+            << QVideoFrame::Format_RGB32
+            << QSize(640, 480)
+            << true
+            << true;
+    QTest::newRow("Pixmap: YUV420P 640x480")
+            << QAbstractVideoBuffer::QPixmapHandle
+            << QVideoFrame::Format_YUV420P
+            << QSize(640, 480)
+            << false
+            << true;
+#endif
 }
 
 void tst_QPainterVideoSurface::supportedFormat()

@@ -225,6 +225,8 @@ public:
     \ingroup gallery
     \ingroup gallery-filters
 
+    \inmodule QtGallery
+
     \brief The QGalleryIntersectionFilter class provides a filter which matches
     the intersection of two or more meta-data filters.
 */
@@ -457,6 +459,8 @@ void QGalleryIntersectionFilter::clear()
     \ingroup gallery
     \ingroup gallery-filters
 
+    \inmodule QtGallery
+
     \brief The QGalleryUnionFilter class provides a filter which matches the
     union of two or more meta-data filters.
 */
@@ -683,6 +687,8 @@ void QGalleryUnionFilter::clear()
     \ingroup gallery
     \ingroup gallery-filters
 
+    \inmodule QtGallery
+
     \brief The QGalleryMetaDataFilter class provides a filter which accepts
     items with meta-data properties matching a specific value.
 */
@@ -697,22 +703,23 @@ QGalleryMetaDataFilter::QGalleryMetaDataFilter()
 }
 
 /*!
-    Constructs a meta-data filter which matches items with a \a property value
-    which matches \a value.
+    Constructs a meta-data filter which tests if a meta-data \a property
+    matches a \a value according to a \a comparison operator.
 
-    The type of comparison made is determined by the match \a flags.
+    The \a caseSensitivity determines whether or not a case-sensitive
+    comparison is made.
 */
 
 QGalleryMetaDataFilter::QGalleryMetaDataFilter(
         const QString &property,
         const QVariant &value,
-        QGalleryFilter::Comparator comparator,
+        QGalleryFilter::Comparator comparison,
         Qt::CaseSensitivity caseSensitivity)
             : d(new QGalleryMetaDataFilterPrivate)
 {
     d->property = property;
     d->value = value;
-    d->comparator = comparator;
+    d->comparator = comparison;
     d->caseSensitivity = caseSensitivity;
 }
 
@@ -860,7 +867,7 @@ bool QGalleryMetaDataFilter::isInverted() const
 }
 
 /*!
-    Sets whether the result of a meta-data filter should be inverted.
+    Sets whether the result of a meta-data filter should be \a inverted.
 */
 
 void QGalleryMetaDataFilter::setInverted(bool inverted)
@@ -885,6 +892,8 @@ QGalleryMetaDataFilter QGalleryMetaDataFilter::operator !() const
     \ingroup gallery
     \ingroup gallery-filters
 
+    \inmodule QtGallery
+
     \brief The QGalleryFilter class provides filtering criteria for gallery
     requests.
 */
@@ -901,7 +910,7 @@ QGalleryMetaDataFilter QGalleryMetaDataFilter::operator !() const
 */
 
 /*!
-    \enum Comparator
+    \enum QGalleryFilter::Comparator
 
     Identifies the comparison made by a QGalleryMetaDataFilter.
 
@@ -1059,35 +1068,27 @@ QDebug operator <<(QDebug debug, const QGalleryFilter &filter)
 }
 #endif
 
-QTM_END_NAMESPACE
-
 /*!
-    \fn operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2)
-
     Compares \a filter1 to filter2.
 
     Returns true if the filters are identical, and false otherwise.
 */
 
-bool operator ==(
-        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
-        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2)
+bool operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2)
 {
     return filter1.d == filter2.d || filter1.d->isEqual(*filter2.d);
 }
 
 /*!
-    \fn operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2)
-
     Compares \a filter1 to filter2.
 
     Returns true if the filters are not identical, and false otherwise.
 */
 
-bool operator !=(
-        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
-        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2)
+bool operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2)
 {
     return filter1.d != filter2.d && !filter1.d->isEqual(*filter2.d);
 }
+
+QTM_END_NAMESPACE
 

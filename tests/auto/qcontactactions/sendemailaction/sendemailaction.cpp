@@ -51,49 +51,107 @@
 #include "qcontactemailaddress.h"
 #include "qcontactfilters.h"
 
+#include <QDebug>
 #include <QMessageBox>
 #include <QTimer>
 
 #define makestr(x) (#x)
 #define makename(x) makestr(x)
 
-QContactSendEmailActionFactory::QContactSendEmailActionFactory()
+QObject* QContactSendEmailActionPlugin::createInstance(const QServiceInterfaceDescriptor& descriptor,
+                        QServiceContext* context,
+                        QAbstractSecuritySession* session)
 {
+    Q_UNUSED(context);
+    Q_UNUSED(session);
+    if (descriptor.interfaceName() == QContactActionFactory::InterfaceName
+            && descriptor.serviceName() == QString(QLatin1String("tst_qcontactactions:sendemailaction"))
+            && descriptor.majorVersion() == 1
+            && descriptor.minorVersion() == 1
+            && descriptor.customAttribute("ActionName") == QString(QLatin1String("SendEmail"))) {
+        return new QContactSendEmailActionFactory();
+    } else {
+        return 0;
+    }
+}
+
+Q_EXPORT_PLUGIN2(contacts_sendemailaction, QContactSendEmailActionPlugin);
+
+QContactSendEmailActionFactory::QContactSendEmailActionFactory() : QContactActionFactory()
+{
+    m_sendEmailDescriptor = createDescriptor("SendEmail", "tst_qcontactactions:sendemailaction", "sendemailaction", 1);
 }
 
 QContactSendEmailActionFactory::~QContactSendEmailActionFactory()
 {
 }
 
-QString QContactSendEmailActionFactory::name() const
-{
-    return QString(makename(ACTIONFACTORYPLUGINNAME));
-}
-Q_EXPORT_PLUGIN2(ACTIONFACTORYPLUGINTARGET, QContactSendEmailActionFactory);
-
 QList<QContactActionDescriptor> QContactSendEmailActionFactory::actionDescriptors() const
 {
-    return QList<QContactActionDescriptor>() << QContactActionDescriptor("SendEmail", "Test", 1);
+    QList<QContactActionDescriptor> retn;
+    retn << m_sendEmailDescriptor;
+    return retn;
 }
 
-QContactAction* QContactSendEmailActionFactory::instance(const QContactActionDescriptor& descriptor) const
+QContactAction* QContactSendEmailActionFactory::create(const QContactActionDescriptor& which) const
 {
-    if (descriptor.actionName() != QString("SendEmail") || descriptor.vendorName() != QString("Test") || descriptor.implementationVersion() != 1)
-        return 0;
-    return new QContactSendEmailAction;
+    // note: if the action factory only ever creates one action, this check can be skipped
+    if (which == m_sendEmailDescriptor)
+        return new QContactSendEmailAction;
+    return 0;
 }
 
-QVariantMap QContactSendEmailActionFactory::actionMetadata(const QContactActionDescriptor& descriptor) const
+QSet<QContactActionTarget> QContactSendEmailActionFactory::supportedTargets(const QContact& contact, const QContactActionDescriptor& which) const
 {
-    if (descriptor.actionName() != "SendEmail")
-        return QVariantMap();
+    QSet<QContactActionTarget> retn;
 
-    QVariantMap ret;
-    ret.insert("Label", "Email Contact!");
-    return ret;
+    // note: if the action factory only ever creates one action, this check can be skipped
+    if (which != m_sendEmailDescriptor)
+        return retn;
+
+    QList<QContactEmailAddress> emdets = contact.details<QContactEmailAddress>();
+    for (int i = 0; i < emdets.size(); ++i) {
+        QContactActionTarget curr;
+        curr.setContact(contact);
+        curr.setDetails(QList<QContactDetail>() << emdets.at(i));
+        retn << curr;
+    }
+
+    return retn;
 }
 
-QContactSendEmailAction::QContactSendEmailAction() : QContactAction()
+QContactFilter QContactSendEmailActionFactory::contactFilter(const QContactActionDescriptor& which) const
+{
+    // note: if the action factory only ever creates one action, this check can be skipped
+    if (which != m_sendEmailDescriptor)
+        return QContactFilter();
+
+    QContactDetailFilter retn;
+    retn.setDetailDefinitionName(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress);
+    return retn;
+}
+
+QVariant QContactSendEmailActionFactory::metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters, const QContactActionDescriptor& which) const
+{
+    Q_UNUSED(key);
+    Q_UNUSED(targets);
+    Q_UNUSED(parameters);
+    Q_UNUSED(which);
+    return QVariant();
+}
+
+bool QContactSendEmailActionFactory::supportsContact(const QContact& contact, const QContactActionDescriptor& which) const
+{
+    // note: if the action factory only ever creates one action, this check can be skipped
+    if (which != m_sendEmailDescriptor)
+        return false;
+    return !contact.details<QContactEmailAddress>().isEmpty();
+}
+
+
+
+
+QContactSendEmailAction::QContactSendEmailAction()
 {
 }
 
@@ -101,42 +159,31 @@ QContactSendEmailAction::~QContactSendEmailAction()
 {
 }
 
-QContactActionDescriptor QContactSendEmailAction::actionDescriptor() const
+bool QContactSendEmailAction::isTargetSupported(const QContactActionTarget &target) const
 {
-    QContactActionDescriptor ret;
-    ret.setActionName("SendEmail");
-    ret.setVendorName("Test");
-    ret.setImplementationVersion(1);
-    return ret;
+    QList<QContactDetail> dets = target.details();
+    if (dets.size() != 1 || !target.isValid())
+        return false;
+    return (dets.at(0).definitionName() == QContactEmailAddress::DefinitionName);
 }
 
-QVariantMap QContactSendEmailAction::metaData() const
+bool QContactSendEmailAction::invokeAction(const QContactActionTarget& target, const QVariantMap& )
 {
-    return QVariantMap();
+    if (!isTargetSupported(target))
+        return false;
+
+    QTimer::singleShot(1, this, SLOT(performAction()));
+    return true;
 }
 
-QContactFilter QContactSendEmailAction::contactFilter(const QVariant& value) const
+bool QContactSendEmailAction::invokeAction(const QList<QContactActionTarget>& targets, const QVariantMap& )
 {
-    QContactDetailFilter retn;
-    retn.setDetailDefinitionName(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress);
-    retn.setValue(value);
-    return retn;
-}
+    foreach (const QContactActionTarget& target, targets) {
+        if (!isTargetSupported(target)) {
+            return false;
+        }
+    }
 
-bool QContactSendEmailAction::isDetailSupported(const QContactDetail &detail, const QContact &) const
-{
-    return (detail.definitionName() == QContactEmailAddress::DefinitionName);
-}
-
-QList<QContactDetail> QContactSendEmailAction::supportedDetails(const QContact& contact) const
-{
-    return contact.details(QContactEmailAddress::DefinitionName);
-}
-
-bool QContactSendEmailAction::invokeAction(const QContact& contact, const QContactDetail& detail, const QVariantMap& )
-{
-    Q_UNUSED(contact);
-    Q_UNUSED(detail);
     QTimer::singleShot(1, this, SLOT(performAction()));
     return true;
 }

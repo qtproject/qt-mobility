@@ -1,16 +1,11 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2010-06-28T16:36:21
-#
-#-------------------------------------------------
-
 TARGET = dialer
 TEMPLATE = app
+DEPENDPATH += .
+INCLUDEPATH += .
 
-SOURCES += main.cpp\
-        dialog.cpp
-
-HEADERS  += dialog.h
+HEADERS += dialog.h
+SOURCES += dialog.cpp main.cpp
+FORMS   += dialog.ui
 
 win32: {
     SOURCES += dialer_win.cpp
@@ -22,11 +17,11 @@ symbian: {
     HEADERS += dialer_symbian.h
 
 } else {
-    unix: {
+    unix:!mac {
         !maemo* {
             QT += dbus
-            DEPENDPATH += /linux
-            INCLUDEPATH += /linux
+            DEPENDPATH += ./linux
+            INCLUDEPATH += ./linux
             include(./linux/dialer.pri)
         }
         maemo* {
@@ -36,8 +31,7 @@ symbian: {
     }
 }
 
-FORMS    += dialog.ui
+CONFIG += mobility
+mobility += telephony
 
 include(../../examples.pri)
-CONFIG += mobility
-MOBILITY = telephony

@@ -70,15 +70,16 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
 /*!
   \class QOrganizerItemDetail
 
-  \brief The QOrganizerItemDetail class represents a single, complete detail about a organizeritem.
-  \ingroup organizeritems-main
+  \brief The QOrganizerItemDetail class represents a single, complete detail about an organizer item.
+  \inmodule QtOrganizer
+  \ingroup organizer-main
 
-  All of the information for a organizeritem is stored in one or more QOrganizerItemDetail objects.
+  All of the information for an organizer item is stored in one or more QOrganizerItemDetail objects.
 
   A detail is a group of logically related bits of data - for example, a street address is a single
   detail that has multiple fields (number, region, country etc).  Every QOrganizerItemDetail has the name of an
   associated QOrganizerItemDetailDefinition that describes the fields, their data type, and any
-  restrictions on their values.  Different organizeritem managers might have different detail definitions
+  restrictions on their values.  Different organizer item managers might have different detail definitions
   for the same name, depending on their capabilities.  For example, for the QOrganizerItemGeoLocation definition name,
   one manager might not support the altitude field, while a different manager may add an extra field for
   specific extra information not present in the default schema.
@@ -91,7 +92,7 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
   access constraints provided with it, like \l ReadOnly or \l Irremovable.  This might mean that the
   supplied detail is calculated or otherwise not modifiable by the user.
   Also, some details may be marked \l Irremovable.  These are typically things that
-  a organizeritem has to have - like a QOrganizerItemType.
+  an organizer item has to have - like a QOrganizerItemType.
 
   It is possible to inherit from QOrganizerItemDetail to provide convenience or
   standardized access to values.  For example, \l QOrganizerEventTimeRange provides
@@ -104,8 +105,8 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
     of a field start with the name of that field
   (e.g. \c TypeEvent is a predefined constant for \c FieldType).
 
-  If you wish to create your own, customized organizeritem detail, you should use
-  the \l Q_DECLARE_CUSTOM_CONTACT_DETAIL macro in order to ensure proper
+  If you wish to create your own, customized organizer item detail, you should use
+  the \l Q_DECLARE_CUSTOM_ORGANIZER_DETAIL macro in order to ensure proper
   operation, and declare your own field constants with \l Q_DECLARE_LATIN1_CONSTANT.
   See the predefined detail subclasses (like \l QOrganizerEventTimeRange,
   \l QOrganizerItemType) for more information.
@@ -115,35 +116,35 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
 
   \code
 
-  QOrganizerItemPhoneNumber number;
-  number.setNumber("555-1212");
-  // number.value(QOrganizerItemPhoneNumber::FieldNumber) == "555-1212";
-  // number.definitionName() == QOrganizerItemPhoneNumber::DefinitionName
+  QOrganizerItemDescription description;
+  description.setDescription("Some descriptive text");
+  // description.value(QOrganizerItemDescription::FieldDescription) == "Some descriptive text";
+  // description.definitionName() == QOrganizerItemDescription::DefinitionName
 
-  QOrganizerItemDetail detail = number;
-  // detail.value(QOrganizerItemPhoneNumber::FieldNumber) == "555-1212";
-  // detail.definitionName() == QOrganizerItemPhoneNumber::DefinitionName
+  QOrganizerItemDetail detail = description;
+  // detail.value(QOrganizerItemDescription::FieldDescription) == "Some descriptive text";
+  // detail.definitionName() == QOrganizerItemDescription::DefinitionName
 
-  QOrganizerItemPhoneNumber otherNumber = detail;
-  // otherNumber.number() == "555-1212";
-  // otherNumber.definitionName() == QOrganizerItemPhoneNumber::DefinitionName
+  QOrganizerItemDescription otherDescription = detail;
+  // otherDescription.description() == "Some descriptive text";
+  // otherDescription.definitionName() == QOrganizerItemDescription::DefinitionName
 
-  QOrganizerItemAddress address = detail;
-  // address is now a default constructed QOrganizerItemAddress
-  // address.value(QOrganizerItemPhoneNumber::FieldNumber) is empty
-  // address.definitionName() == QOrganizerItemAddress::DefinitionName
+  QOrganizerItemDisplayLabel label = detail;
+  // label is now a default constructed QOrganizerItemDisplayLabel
+  // label.value(QOrganizerItemDescription::FieldDescription) is empty
+  // label.definitionName() == QOrganizerItemDisplayLabel::DefinitionName
 
-  QOrganizerItemAddress otherAddress = number;
-  // otherAddress is now a default constructed QOrganizerItemAddress
-  // otherAddress.value(QOrganizerItemPhoneNumber::FieldNumber) is empty
-  // otherAddress.definitionName() == QOrganizerItemAddress::DefinitionName
+  QOrganizerItemDisplayLabel otherLabel = description;
+  // otherLabel is now a default constructed QOrganizerItemDisplayLabel
+  // otherLabel.value(QOrganizerItemDescription::FieldDescription) is empty
+  // otherLabel.definitionName() == QOrganizerItemDisplayLabel::DefinitionName
   \endcode
 
-  \sa QOrganizerItem, QOrganizerItemDetailDefinition, QOrganizerItemDetailFilter, QOrganizerItemDetailRangeFilter, Q_DECLARE_CUSTOM_CONTACT_DETAIL
+  \sa QOrganizerItem, QOrganizerItemDetailDefinition, QOrganizerItemDetailFilter, QOrganizerItemDetailRangeFilter, Q_DECLARE_CUSTOM_ORGANIZER_DETAIL
  */
 
 /*!
-  \macro Q_DECLARE_CUSTOM_CONTACT_DETAIL
+  \macro Q_DECLARE_CUSTOM_ORGANIZER_DETAIL
   \relates QOrganizerItemDetail
 
   Macro for simplifying declaring custom (leaf) detail classes.
@@ -153,106 +154,14 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
 
   If you are creating a convenience class for a type of QOrganizerItemDetail,
   you should use this macro when declaring your class to ensure that
-  it interoperates with other organizeritem functionality.
+  it interoperates with other organizer item functionality.
 
-  Here is an example of a class (\l QOrganizerItemPhoneNumber) using this macro.
+  Here is an example of a class (\l QOrganizerItemDescription) using this macro.
   Note that the class provides some predefined constants
   and some convenience methods that return values associated with schema
   fields.
-
-  \snippet ../../src/organizeritems/details/qorganizeritemphonenumber.h 0
  */
 
-/*!
-    \class QLatin1Constant
-    \headerfile
-    \brief The QLatin1Constant class holds a Latin 1 string constant
-
-*/
-
-/*!
-    \fn QLatin1Constant::operator QString() const
-    \internal
- */
-/*!
-    \fn QLatin1Constant::operator QLatin1String() const
-    \internal
- */
-/*!
-    \fn QLatin1Constant::operator QVariant() const
-    \internal
- */
-/*!
-    \fn bool QLatin1Constant::operator ==(const QLatin1Constant& other) const
-
-    Returns true if this QLatin1Constant is the same as \a other (either same object or
-    same string literal), and false otherwise.
- */
-/*!
-    \fn bool QLatin1Constant::operator !=(const QLatin1Constant& other) const
-
-    Returns false if this QLatin1Constant is the same as \a other (either same object or
-    same string literal), and true otherwise.
-*/
-/*!
-    \fn inline const char * QLatin1Constant::latin1() const
-
-    Returns the value of this literal as a C style string (null terminated).
-*/
-
-
-/*!
-  \macro Q_DECLARE_LATIN1_CONSTANT
-  \relates QLatin1Constant
-
-  This macro, along with the related Q_DEFINE_LATIN1_CONSTANT macro,
-  allows you to describe a "Latin 1 string constant".
-
-  The resulting constant can be passed to functions accepting a
-  QLatin1String, a QString, or a QVariant.
-
-  The first parameter is the name of the variable to declare.  The
-  second parameter is the value of the constant, as a string literal.
-
-  For example:
-  \code
-  // in a header file
-  Q_DECLARE_LATIN1_CONSTANT(MyConstant, "MYCONSTANT");
-  \endcode
-
-  The declaration should be paired with a matching Q_DEFINE_LATIN1_CONSTANT
-  with the same arguments to actually define the constant.
-
-  \sa Q_DEFINE_LATIN1_CONSTANT
-*/
-
-/*!
-  \macro Q_DEFINE_LATIN1_CONSTANT
-  \relates QLatin1Constant
-
-  This macro, along with the related Q_DECLARE_LATIN1_CONSTANT macro,
-  allows you to describe a "Latin 1 string constant".
-
-  The resulting constant can be passed to functions accepting a
-  QLatin1String, a QString, or a QVariant.
-
-  The first parameter is the name of the variable to define.  The
-  second parameter is the value of the constant, as a string literal.
-
-  For example:
-  \code
-  // in a header file
-  Q_DECLARE_LATIN1_CONSTANT(MyConstant, "MYCONSTANT");
-
-  // in source file
-  Q_DEFINE_LATIN1_CONSTANT(MyConstant, "MYCONSTANT");
-  \endcode
-
-  You can use this macro without the matching DECLARE macro if
-  you are using the constant only in a single compilation unit.
-
-  \sa Q_DECLARE_LATIN1_CONSTANT
-*/
 
 /*!
   \fn QOrganizerItemDetail::operator!=(const QOrganizerItemDetail& other) const
@@ -396,7 +305,7 @@ QString QOrganizerItemDetail::definitionName() const
 
 /*!
     Compares this detail to \a other.  Returns true if the definition, access constraints and values of \a other are equal to those of this detail.
-    The keys of each detail are not considered during the comparison, in order to allow details from different organizeritems to
+    The keys of each detail are not considered during the comparison, in order to allow details from different organizer items to
     be compared according to their values.
  */
 bool QOrganizerItemDetail::operator==(const QOrganizerItemDetail& other) const
@@ -653,11 +562,11 @@ QVariantMap QOrganizerItemDetail::variantValues() const
   \enum QOrganizerItemDetail::AccessConstraint
 
   This enum defines the access constraints for a detail.  This information is typically provided by
-  the manager when a organizeritem is retrieved.
+  the manager when an organizer item is retrieved.
 
   \value NoConstraint Users can read, write, and otherwise modify this detail in any manner.
   \value ReadOnly Users cannot write or modify values in this detail.
-  \value Irremovable Users cannot remove this detail from a organizeritem.
+  \value Irremovable Users cannot remove this detail from an organizer item.
  */
 
 
@@ -665,7 +574,7 @@ QVariantMap QOrganizerItemDetail::variantValues() const
   Returns the access constraints associated with the detail.
 
   Some details may not be written to, while other details may
-  not be removed from a organizeritem.
+  not be removed from an organizer item.
 
   \sa QOrganizerItemDetail::AccessConstraints
  */

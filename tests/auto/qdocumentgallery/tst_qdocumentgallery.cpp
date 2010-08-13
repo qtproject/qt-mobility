@@ -39,9 +39,11 @@
 **
 ****************************************************************************/
 
-#include <QtTest/QtTest>
+//TESTED_COMPONENT=src/documentgallery
 
 #include <qdocumentgallery.h>
+
+#include <QtTest/QtTest>
 
 QTM_USE_NAMESPACE
 
@@ -69,11 +71,9 @@ void tst_QDocumentGallery::isRequestSupported()
     const bool platformSupported = false;
 #endif
 
-    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::Item), platformSupported);
-    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::Query), platformSupported);
-    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::Count), platformSupported);
-    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::Url), platformSupported);
-    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::Remove), platformSupported);
+    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::QueryRequest), platformSupported);
+    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::RemoveRequest), platformSupported);
+    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::RequestType(1000)), false);
 }
 
 void tst_QDocumentGallery::itemTypeProperties_data()
@@ -88,20 +88,16 @@ void tst_QDocumentGallery::itemTypeProperties_data()
 #if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
             << QDocumentGallery::copyright
             << QDocumentGallery::fileName
+            << QDocumentGallery::path
+            << QDocumentGallery::filePath
+            << QDocumentGallery::url
             << QDocumentGallery::fileSize
             << QDocumentGallery::language
             << QDocumentGallery::lastAccessed
             << QDocumentGallery::lastModified
-            << QDocumentGallery::mimeType
-#ifndef Q_WS_MAEMO_5
-            << QDocumentGallery::previewImage
-            << QDocumentGallery::previewPixmap
-#endif
-            << QDocumentGallery::thumbnailImage
-            << QDocumentGallery::thumbnailPixmap
+            << QDocumentGallery::mimeType;
 #endif
             ;
-
     QTest::newRow("File") << QString(QDocumentGallery::File) << (QStringList(fileProperties)
 #if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
             << QDocumentGallery::author
@@ -197,6 +193,15 @@ void tst_QDocumentGallery::propertyAttributes_data()
 #else
             << QGalleryProperty::Attributes();
 #endif
+    QTest::newRow("File.filePath")
+                    << QString(QDocumentGallery::File)
+                    << QString(QDocumentGallery::filePath)
+#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
+                    << (QGalleryProperty::CanRead | QGalleryProperty::CanFilter);
+#else
+                    << QGalleryProperty::Attributes();
+#endif
+
     QTest::newRow("Audio.albumTitle")
             << QString(QDocumentGallery::Audio)
             << QString(QDocumentGallery::albumTitle)

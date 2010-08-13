@@ -39,10 +39,11 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/documentgallery
+
+#include <qgalleryresource.h>
+
 #include <QtTest/QtTest>
-
-#include <qgalleryitemlist.h>
-
 
 Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGalleryResource))
 

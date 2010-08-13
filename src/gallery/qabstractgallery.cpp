@@ -50,6 +50,8 @@ QTM_BEGIN_NAMESPACE
     \ingroup gallery
     \ingroup gallery-galleries
 
+    \inmodule QtGallery
+
     \brief The QAbstractGallery class provides a base class for gallery
     implementations.
 */
@@ -87,7 +89,7 @@ QAbstractGallery::~QAbstractGallery()
 }
 
 /*!
-    \fn QAbstractGallery::isRequestSupported(QGalleryAbstractRequest::Type type) const
+    \fn QAbstractGallery::isRequestSupported(QGalleryAbstractRequest::RequestType type) const
 
     Identifies if a gallery supports a request \a type.
 

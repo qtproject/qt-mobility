@@ -14,10 +14,10 @@ symbian{
     TARGET.CAPABILITY = ALL -TCB
 
     testplugin.sources = $${TARGET}.dll
-    testplugin.path = plugins\contacts
+    testplugin.path = plugins/contacts
     DEPLOYMENT += testplugin
 
-    target.path = plugins\contacts
+    target.path = plugins/contacts
     INSTALLS += target
 }
 
@@ -32,6 +32,6 @@ wince* {
 
 # Add this too
 CONFIG += mobility
-MOBILITY = contacts
+MOBILITY = contacts serviceframework
 
 
