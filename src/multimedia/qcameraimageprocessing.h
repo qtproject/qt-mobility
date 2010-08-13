@@ -61,17 +61,17 @@ class Q_MULTIMEDIA_EXPORT QCameraImageProcessing : public QObject
 {
     Q_OBJECT
 public:
-    enum WhiteBalanceMode {
-        WhiteBalanceManual,
-        WhiteBalanceAuto,
-        WhiteBalanceSunlight,
-        WhiteBalanceCloudy,
-        WhiteBalanceShade,
-        WhiteBalanceTungsten,
-        WhiteBalanceFluorescent,
-        WhiteBalanceIncandescent,
-        WhiteBalanceFlash,
-        WhiteBalanceSunset,
+    enum WhiteBalanceMode {        
+        WhiteBalanceAuto = 0,
+        WhiteBalanceManual = 1,
+        WhiteBalanceSunlight = 2,
+        WhiteBalanceCloudy = 3,
+        WhiteBalanceShade = 4,
+        WhiteBalanceTungsten = 5,
+        WhiteBalanceFluorescent = 6,
+        WhiteBalanceIncandescent = 7,
+        WhiteBalanceFlash = 8,
+        WhiteBalanceSunset = 9,
         WhiteBalanceVendor = 1000
     };
 

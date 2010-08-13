@@ -48,9 +48,9 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QContactFetchHint
-  
+
   \inmodule QtContacts
-  
+
   \brief The QContactFetchHint class provides hints to the manager about which contact
   information needs to be retrieved in an asynchronous fetch request or a synchronous
   function call.
@@ -67,10 +67,11 @@ QTM_BEGIN_NAMESPACE
   (empty if interested in all relationships)
    \o some optimization flags which allow the client to tell the backend if they are
   not interested in any relationships, any action preferences, or any binary blobs (images etc).
+   \o a preferred size for any images, if the backend supports multiple sizes or scaling
   \endlist
 
   Important note: a client should not make changes to a contact which has been retrieved
-  using a fetch hint other than the default fetch hint.  Doing so will result in information
+  using a fetch hint other than the default fetch hint.  Doing so can result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
   replace the previously saved contact in the backend).
  */
@@ -173,6 +174,40 @@ void QContactFetchHint::setRelationshipTypesHint(const QStringList& relationship
 }
 
 /*!
+  Returns the preferred pixel dimensions for any images returned
+  by the manager for a given request.  This hint may be ignored
+  by the manager.
+
+  This is useful when the backend supports multiple sizes of an
+  image (or the image is natively scaleable) in order to get an
+  image that will look good at the indicated dimensions.
+
+  The caller should be prepared for images of any dimensions,
+  in any case.
+ */
+QSize QContactFetchHint::preferredImageSize() const
+{
+    return d->m_preferredImageSize;
+}
+
+/*!
+  Sets the preferred pixel dimensions for any images returned
+  by the manager for the given request to \a size.  This hint
+  may be ignored by the manager.
+
+  This is useful when the backend supports multiple sizes of an
+  image (or the image is natively scaleable) in order to get an
+  image that will look good at the indicated dimensions.
+
+  The caller should be prepared for images of any dimensions,
+  in any case.
+ */
+void QContactFetchHint::setPreferredImageSize(const QSize& size)
+{
+    d->m_preferredImageSize = size;
+}
+
+/*!
   Returns the optimization hint flags specified by the client.
   These hints may be ignored by the backend, in which case it will return
   the full set of information accessible in a contact, including
@@ -205,7 +240,8 @@ QDataStream& operator<<(QDataStream& out, const QContactFetchHint& hint)
     return out << formatVersion
                << hint.detailDefinitionsHint()
                << hint.relationshipTypesHint()
-               << static_cast<quint32>(hint.optimizationHints());
+               << static_cast<quint32>(hint.optimizationHints())
+               << hint.preferredImageSize();
 }
 
 QDataStream& operator>>(QDataStream& in, QContactFetchHint& hint)
@@ -217,10 +253,12 @@ QDataStream& operator>>(QDataStream& in, QContactFetchHint& hint)
         QStringList detailDefinitionHints;
         QStringList relationshipTypeHints;
         quint32 optimizations;
-        in >> detailDefinitionHints >> relationshipTypeHints >> optimizations;
+        QSize dimensions;
+        in >> detailDefinitionHints >> relationshipTypeHints >> optimizations >> dimensions;
         hint.setDetailDefinitionsHint(detailDefinitionHints);
         hint.setRelationshipTypesHint(relationshipTypeHints);
         hint.setOptimizationHints(QContactFetchHint::OptimizationHints(optimizations));
+        hint.setPreferredImageSize(dimensions);
     } else {
         in.setStatus(QDataStream::ReadCorruptData);
     }

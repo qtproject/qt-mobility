@@ -622,12 +622,9 @@ public:
     void setSupportedWhiteBalanceModes(QSet<QCameraImageProcessing::WhiteBalanceMode> modes) {
         m_supportedWhiteBalance = modes; }
 
-    int manualWhiteBalance() const { return m_manualWhiteBalance; }
-    void setManualWhiteBalance(int colorTemperature) { m_manualWhiteBalance = colorTemperature; }
-
     bool isProcessingParameterSupported(ProcessingParameter parameter) const
     {
-        return parameter == Contrast ||  parameter == Sharpening;
+        return parameter == Contrast ||  parameter == Sharpening || parameter == ColorTemperature;
     }
     QVariant processingParameter(ProcessingParameter parameter) const
     {
@@ -636,6 +633,8 @@ public:
             return m_contrast;
         case Sharpening:
             return m_sharpeningLevel;
+        case ColorTemperature:
+            return m_manualWhiteBalance;
         default:
             return QVariant();
         }
@@ -649,6 +648,9 @@ public:
         case Sharpening:
             m_sharpeningLevel = value;
             break;
+        case ColorTemperature:
+            m_manualWhiteBalance = value;
+            break;
         default:
             break;
         }
@@ -658,7 +660,7 @@ public:
 private:
     QCameraImageProcessing::WhiteBalanceMode m_whiteBalanceMode;
     QSet<QCameraImageProcessing::WhiteBalanceMode> m_supportedWhiteBalance;
-    int m_manualWhiteBalance;
+    QVariant m_manualWhiteBalance;
     QVariant m_contrast;
     QVariant m_sharpeningLevel;
 };
@@ -911,9 +913,9 @@ void tst_QCamera::testSimpleCameraWhiteBalance()
     QCOMPARE(camera.imageProcessing()->whiteBalanceMode(), QCameraImageProcessing::WhiteBalanceAuto);
     camera.imageProcessing()->setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceCloudy);
     QCOMPARE(camera.imageProcessing()->whiteBalanceMode(), QCameraImageProcessing::WhiteBalanceAuto);
-    QCOMPARE(camera.imageProcessing()->manualWhiteBalance(), -1);
+    QCOMPARE(camera.imageProcessing()->manualWhiteBalance(), 0);
     camera.imageProcessing()->setManualWhiteBalance(5000);
-    QCOMPARE(camera.imageProcessing()->manualWhiteBalance(), -1);
+    QCOMPARE(camera.imageProcessing()->manualWhiteBalance(), 0);
 }
 
 void tst_QCamera::testSimpleCameraExposure()
@@ -1105,7 +1107,9 @@ void tst_QCamera::testCameraWhiteBalance()
     MockCameraService service;
     service.mockImageProcessingControl->setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceFlash);
     service.mockImageProcessingControl->setSupportedWhiteBalanceModes(whiteBalanceModes);
-    service.mockImageProcessingControl->setManualWhiteBalance(34);
+    service.mockImageProcessingControl->setProcessingParameter(
+                QCameraImageProcessingControl::ColorTemperature,
+                QVariant(34));
 
     MockProvider provider;
     provider.service = &service;

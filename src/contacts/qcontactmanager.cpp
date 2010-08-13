@@ -314,6 +314,72 @@ QContactManager::~QContactManager()
     delete d;
 }
 
+
+/*!
+   \variable QContactManager::ParameterKeySignalSources
+   The string constant for the parameter key which holds the value for signal sources.
+   If a manager supports suppressing change signals depending on the value given for
+   this construction parameter, clients can request that signals be suppressed if the
+   changes which might cause a signal to be emitted do not match particular criteria.
+
+   If the parameter (or value given for the parameter) is not supported by the manager,
+   the manager may still be constructed, however the parameter will not be reported
+   to the client if the client calls managerParameters() subsequent to manager construction.
+
+   The default (assumed) value for this parameter, if this parameter is not given,
+   is that the client wants to be notified of all changes to the data, regardless of
+   the source of the change.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactManager::ParameterSignalSources, "SignalSources");
+
+/*!
+   \variable QContactManager::ParameterKeySignalDefinitions
+   The string constant for the parameter key which holds the names of detail definitions.
+   If a manager supports suppressing change signals depending on the value given for
+   this construction parameter, clients can request that signals be suppressed if the
+   changes which might otherwise cause a signal to be emitted, involve details whose
+   definition name is not contained in the given list.
+
+   That is, if a detail in a contact is changed, but that detail's definition name is
+   not listed in the value for this parameter, the manager will not emit a change signal
+   for that change.
+
+   If this parameter is not specified at construction time, changes to any detail of a contact
+   will cause a change signal to be emitted.
+
+   The value of this parameter should be a comma (,) separated list of definition names.  Any
+   commas which might be part of a definition name must be escaped with a single backslash
+   (\) character prior to concatenation.  Any backslash character which might be part of a
+   definition name must also be escaped with a backslash.
+
+   If the parameter (or value given for the parameter) is not supported by the manager,
+   the manager may still be constructed, however the parameter will not be reported
+   to the client if the client calls managerParameters() subsequent to manager construction.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactManager::ParameterSignalDefinitions, "SignalDefinitions");
+
+/*!
+   \variable QContactManager::ParameterValueOnlyOtherManagers
+   This value tells the manager to only emit signals for changes which
+   are made in other manager instances.  That is, the client wishes to receive
+   change signals when another client (or background service) changes
+   the data as it is stored in the backend, but does not wish to be
+   notified of changes (or side effects) which it has caused itself.
+ */
+Q_DEFINE_LATIN1_CONSTANT(ParameterValueOnlyOtherManagers, "OnlyOtherManagers");
+
+/*!
+   \variable QContactManager::ParameterValueOnlyOtherProcesses
+   This value tells the manager to only emit signals for changes which
+   are made in other processes.  That is, the client wishes to receive
+   change signals when a client (or background service) in another process changes
+   the data as it is stored in the backend, but does not wish to be
+   notified of changes (or side effects) which were caused in the current client's
+   process, even if those changes were made in a different manager instance to this
+   one.
+ */
+Q_DEFINE_LATIN1_CONSTANT(ParameterValueOnlyOtherProcesses, "OnlyOtherProcesses");
+
 /*!
   \enum QContactManager::Error
 

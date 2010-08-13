@@ -214,7 +214,9 @@ void QVideoSurfaceGstDelegate::queuedRender()
             m_renderReturn = GST_FLOW_OK;
             break;
         case QAbstractVideoSurface::StoppedError:
-            m_renderReturn = GST_FLOW_NOT_NEGOTIATED;
+            //It's likely we are in process of changing video output
+            //and the surface is already stopped, ignore the frame
+            m_renderReturn = GST_FLOW_OK;
             break;
         default:
             m_renderReturn = GST_FLOW_ERROR;
