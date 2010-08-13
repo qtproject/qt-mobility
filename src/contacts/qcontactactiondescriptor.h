@@ -57,6 +57,11 @@ QTM_BEGIN_NAMESPACE
 class QContact;
 class QContactActionFactory;
 class QContactActionDescriptorPrivate;
+
+// MSVC needs the declaration before the friend statement
+class QContactActionDescriptor;
+Q_CONTACTS_EXPORT uint qHash(const QContactActionDescriptor& key);
+
 class Q_CONTACTS_EXPORT QContactActionDescriptor
 {
 public:
@@ -106,8 +111,6 @@ private:
     friend class QContactActionServiceManager;
     friend uint qHash(const QContactActionDescriptor& key);
 };
-
-Q_CONTACTS_EXPORT uint qHash(const QContactActionDescriptor& key);
 
 QTM_END_NAMESPACE
 
