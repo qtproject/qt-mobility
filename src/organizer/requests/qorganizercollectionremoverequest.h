@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERCOLLECTIONFETCHREQUEST_H
-#define QORGANIZERCOLLECTIONFETCHREQUEST_H
+#ifndef QORGANIZERCOLLECTIONREMOVEREQUEST_H
+#define QORGANIZERCOLLECTIONREMOVEREQUEST_H
 
 #include "qtorganizerglobal.h"
 #include "qorganizeritemabstractrequest.h"

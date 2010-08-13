@@ -274,24 +274,24 @@ public:
     QList<QOrganizerCollection> m_collections;
 };
 
-class QOrganizerCollectionIdFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+class QOrganizerCollectionLocalIdFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate
 {
 public:
-    QOrganizerCollectionIdFetchRequestPrivate()
+    QOrganizerCollectionLocalIdFetchRequestPrivate()
         : QOrganizerItemAbstractRequestPrivate()
     {
     }
 
-    ~QOrganizerCollectionIdFetchRequestPrivate()
+    ~QOrganizerCollectionLocalIdFetchRequestPrivate()
     {
     }
 
     QOrganizerItemAbstractRequest::RequestType type() const
     {
-        return QOrganizerItemAbstractRequest::CollectionIdFetchRequest;
+        return QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest;
     }
 
-    QList<QOrganizerCollectionId> m_collectionIds;
+    QList<QOrganizerCollectionLocalId> m_collectionIds;
 };
 
 class QOrganizerCollectionRemoveRequestPrivate : public QOrganizerItemAbstractRequestPrivate

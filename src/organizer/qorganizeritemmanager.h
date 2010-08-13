@@ -169,6 +169,9 @@ Q_SIGNALS:
     void itemsAdded(const QList<QOrganizerItemLocalId>& itemIds);
     void itemsChanged(const QList<QOrganizerItemLocalId>& itemIds);
     void itemsRemoved(const QList<QOrganizerItemLocalId>& itemIds);
+    void collectionsAdded(const QList<QOrganizerCollectionLocalId>& collectionIds);
+    void collectionsChanged(const QList<QOrganizerCollectionLocalId>& collectionIds);
+    void collectionsRemoved(const QList<QOrganizerCollectionLocalId>& collectionIds);
 
 private:
     friend class QOrganizerItemManagerData;

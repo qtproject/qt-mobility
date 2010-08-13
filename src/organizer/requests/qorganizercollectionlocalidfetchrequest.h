@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERCOLLECTIONIDFETCHREQUEST_H
-#define QORGANIZERCOLLECTIONIDFETCHREQUEST_H
+#ifndef QORGANIZERCOLLECTIONLOCALIDFETCHREQUEST_H
+#define QORGANIZERCOLLECTIONLOCALIDFETCHREQUEST_H
 
 #include "qtorganizerglobal.h"
 #include "qorganizeritemabstractrequest.h"
@@ -51,25 +51,24 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerCollectionIdFetchRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerCollectionIdFetchRequest : public QOrganizerItemAbstractRequest
+class QOrganizerCollectionLocalIdFetchRequestPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerCollectionLocalIdFetchRequest : public QOrganizerItemAbstractRequest
 {
     Q_OBJECT
 
 public:
-    QOrganizerCollectionIdFetchRequest(QObject* parent = 0);
+    QOrganizerCollectionLocalIdFetchRequest(QObject* parent = 0);
 
     /* Selection, restriction and sorting */
     // none planned - do we need to add some sort of metadata filtering criteria?
 
     /* Results */
-    //QOrganizerCollectionId defaultCollectionId() const; // XXX TODO: need this function?
-    QList<QOrganizerCollectionId> collectionIds() const;
+    QList<QOrganizerCollectionLocalId> collectionIds() const;
 
 private:
-    Q_DISABLE_COPY(QOrganizerCollectionIdFetchRequest)
+    Q_DISABLE_COPY(QOrganizerCollectionLocalIdFetchRequest)
     friend class QOrganizerItemManagerEngine;
-    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerCollectionIdFetchRequest)
+    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerCollectionLocalIdFetchRequest)
 };
 
 QTM_END_NAMESPACE

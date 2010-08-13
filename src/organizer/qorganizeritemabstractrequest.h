@@ -83,7 +83,7 @@ public:
         DetailDefinitionRemoveRequest,
         DetailDefinitionSaveRequest,
         CollectionFetchRequest,
-        CollectionIdFetchRequest,
+        CollectionLocalIdFetchRequest,
         CollectionRemoveRequest,
         CollectionSaveRequest
     };

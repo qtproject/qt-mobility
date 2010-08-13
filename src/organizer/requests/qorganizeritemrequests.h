@@ -56,7 +56,7 @@
 #include "qorganizeritemsaverequest.h"
 
 #include "qorganizercollectionfetchrequest.h"
-#include "qorganizercollectionidfetchrequest.h"
+#include "qorganizercollectionlocalidfetchrequest.h"
 #include "qorganizercollectionremoverequest.h"
 #include "qorganizercollectionsaverequest.h"
 

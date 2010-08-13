@@ -262,6 +262,9 @@ void QOrganizerItemManager::createEngine(const QString& managerName, const QMap<
     connect(d->m_engine, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)), this, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
     connect(d->m_engine, SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)), this, SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)));
     connect(d->m_engine, SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)), this, SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)));
+    connect(d->m_engine, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)), this, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
+    connect(d->m_engine, SIGNAL(collectionsChanged(QList<QOrganizerCollectionLocalId>)), this, SIGNAL(collectionsChanged(QList<QOrganizerCollectionLocalId>)));
+    connect(d->m_engine, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)), this, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)));
 }
 
 /*!

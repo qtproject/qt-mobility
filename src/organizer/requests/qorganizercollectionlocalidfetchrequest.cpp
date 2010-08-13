@@ -39,18 +39,18 @@
 **
 ****************************************************************************/
 
-#include "qorganizercollectionidfetchrequest.h"
+#include "qorganizercollectionlocalidfetchrequest.h"
 #include "qorganizeritemrequests_p.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-  \class QOrganizerCollectionIdFetchRequest
-  \brief The QOrganizerCollectionIdFetchRequest class allows a client to asynchronously
+  \class QOrganizerCollectionLocalIdFetchRequest
+  \brief The QOrganizerCollectionLocalIdFetchRequest class allows a client to asynchronously
     request collection ids from an organizer manager.
 
 
-  For a QOrganizerCollectionIdFetchRequest, the resultsAvailable() signal will be emitted when the resultant
+  For a QOrganizerCollectionLocalIdFetchRequest, the resultsAvailable() signal will be emitted when the resultant
   collection ids (which may be retrieved by calling collectionIds()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
@@ -58,18 +58,18 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*! Constructs a new organizeritem fetch request whose parent is the specified \a parent */
-QOrganizerCollectionIdFetchRequest::QOrganizerCollectionIdFetchRequest(QObject* parent)
-    : QOrganizerItemAbstractRequest(new QOrganizerCollectionIdFetchRequestPrivate, parent)
+QOrganizerCollectionLocalIdFetchRequest::QOrganizerCollectionLocalIdFetchRequest(QObject* parent)
+    : QOrganizerItemAbstractRequest(new QOrganizerCollectionLocalIdFetchRequestPrivate, parent)
 {
 }
 
 /*! Returns the list of collection ids retrieved by this request */
-QList<QOrganizerCollectionId> QOrganizerCollectionIdFetchRequest::collectionIds() const
+QList<QOrganizerCollectionLocalId> QOrganizerCollectionLocalIdFetchRequest::collectionIds() const
 {
-    Q_D(const QOrganizerCollectionIdFetchRequest);
+    Q_D(const QOrganizerCollectionLocalIdFetchRequest);
     return d->m_collectionIds;
 }
 
-#include "moc_qorganizercollectionidfetchrequest.cpp"
+#include "moc_qorganizercollectionlocalidfetchrequest.cpp"
 
 QTM_END_NAMESPACE
