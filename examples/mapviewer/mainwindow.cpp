@@ -150,8 +150,6 @@ void MapWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
             kineticPanSpeed = QPointF();
 
             lastMoveTime = QTime::currentTime();
-            // TODO: Maybe call stopPanning or skip the call to startPanning if the timer was still running.
-            startPanning();
         }
     }
 
@@ -165,7 +163,6 @@ void MapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             panActive = false;
 
             if (!enableKineticPanning || lastMoveTime.msecsTo(QTime::currentTime()) > holdTimeThreshold) {
-                stopPanning();
                 return;
             }
 
@@ -236,7 +233,6 @@ void MapWidget::kineticTimerEvent()
     if (kineticPanSpeed.manhattanLength() < kineticPanSpeedThreshold) {
         // Kinetic panning is almost halted -> stop it.
         kineticTimer->stop();
-        stopPanning();
         return;
     }
     panFloatWrapper(scaledSpeed);
@@ -728,7 +724,7 @@ void MainWindow::demo2(bool /*checked*/)
             i++;
         }
     }
-    qDebug("%i items added, %i items total.", i, m_mapWidget->mapObjectCount());
+    qDebug("%i items added, %i items total.", i, m_mapWidget->mapObjects().count());
 
 
     QMessageBox *mb = new QMessageBox(QMessageBox::NoIcon, "MapViewer", QString::number(i) + " items");

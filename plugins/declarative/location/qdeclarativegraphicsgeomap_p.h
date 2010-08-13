@@ -56,10 +56,15 @@ class QDeclarativeGraphicsGeoMap : public QGraphicsGeoMap
     Q_OBJECT
 
     Q_PROPERTY(QDeclarativeCoordinate* center READ declarativeCenter WRITE setDeclarativeCenter NOTIFY declarativeCenterChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QGeoMapObject> objects READ objects)
+
+    Q_CLASSINFO("DefaultProperty", "objects")
 
 public:
     QDeclarativeGraphicsGeoMap(QGraphicsItem *parent = 0);
     ~QDeclarativeGraphicsGeoMap();
+
+    QDeclarativeListProperty<QGeoMapObject> objects();
 
     void setDeclarativeCenter(const QDeclarativeCoordinate *center);
     QDeclarativeCoordinate* declarativeCenter() const;
@@ -74,6 +79,11 @@ signals:
     void declarativeCenterChanged(const QDeclarativeCoordinate *coordinate);
 
 private:
+    static void object_append(QDeclarativeListProperty<QGeoMapObject> *prop, QGeoMapObject *mapObject);
+    static int object_count(QDeclarativeListProperty<QGeoMapObject> *prop);
+    static QGeoMapObject* object_at(QDeclarativeListProperty<QGeoMapObject> *prop, int index);
+    static void object_clear(QDeclarativeListProperty<QGeoMapObject> *prop);
+
     QDeclarativeCoordinate* m_center;
     Q_DISABLE_COPY(QDeclarativeGraphicsGeoMap);
 };

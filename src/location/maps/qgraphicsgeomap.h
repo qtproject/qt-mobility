@@ -46,8 +46,6 @@
 
 #include <QGraphicsWidget>
 
-#include <QDeclarativeListProperty>
-
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
@@ -66,9 +64,6 @@ class Q_LOCATION_EXPORT QGraphicsGeoMap : public QGraphicsWidget
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
     Q_PROPERTY(MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
     Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QGeoMapObject> mapObjects READ mapObjects)
-
-    Q_CLASSINFO("DefaultProperty", "mapObjects")
 
 public:
     enum MapType {
@@ -99,14 +94,9 @@ public:
     void setMapType(MapType mapType);
     MapType mapType() const;
 
-    void startPanning();
-    void stopPanning();
-
-    QDeclarativeListProperty<QGeoMapObject> mapObjects();
-    int mapObjectCount() const;
+    QList<QGeoMapObject*> mapObjects() const;
     void addMapObject(QGeoMapObject *mapObject);
     void removeMapObject(QGeoMapObject *mapObject);
-    QGeoMapObject* mapObject(int index) const;
     void clearMapObjects();
 
     QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);

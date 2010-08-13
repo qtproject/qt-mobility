@@ -49,8 +49,6 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
-#include <QDeclarativeListProperty>
-
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
@@ -74,8 +72,6 @@ public:
     virtual void setZoomLevel(qreal zoomLevel);
     virtual qreal zoomLevel() const;
 
-    virtual void startPanning();
-    virtual void stopPanning();
     virtual void pan(int dx, int dy);
 
     virtual void setCenter(const QGeoCoordinate &center);
@@ -84,11 +80,9 @@ public:
     virtual void setMapType(QGraphicsGeoMap::MapType mapType);
     virtual QGraphicsGeoMap::MapType mapType() const;
 
-    QDeclarativeListProperty<QGeoMapObject> mapObjects();
-    int mapObjectCount() const;
+    QList<QGeoMapObject*> mapObjects() const;
     void addMapObject(QGeoMapObject *mapObject);
     void removeMapObject(QGeoMapObject *mapObject);
-    QGeoMapObject* mapObject(int index) const;
     void clearMapObjects();
 
     virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);

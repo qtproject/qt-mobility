@@ -136,7 +136,7 @@ void QGeoMapObject::setZValue(int zValue)
             d->parent->removeChildObject(this);
             d->parent->addChildObject(this);
         }
-        emit zValueChanged();
+        emit zValueChanged(d->zValue);
     }
 }
 
@@ -166,7 +166,7 @@ void QGeoMapObject::setVisible(bool visible)
     Q_D(QGeoMapObject);
     if (d->isVisible != visible) {
         d->isVisible = visible;
-        emit visibleChanged();
+        emit visibleChanged(d->isVisible);
     }
 }
 
@@ -180,6 +180,21 @@ bool QGeoMapObject::isVisible() const
 {
     Q_D(const QGeoMapObject);
     return d->isVisible;
+}
+
+void QGeoMapObject::setSelected(bool selected)
+{
+    Q_D(QGeoMapObject);
+    if (d->isSelected != selected) {
+        d->isSelected = selected;
+        emit selectedChanged(d->isSelected);
+    }
+}
+
+bool QGeoMapObject::isSelected() const
+{
+    Q_D(const QGeoMapObject);
+    return d->isSelected;
 }
 
 /*!
@@ -275,47 +290,10 @@ void QGeoMapObject::removeChildObject(QGeoMapObject *childObject)
     }
 }
 
-QDeclarativeListProperty<QGeoMapObject> QGeoMapObject::childObjects()
-{
-    Q_D(QGeoMapObject);
-    return QDeclarativeListProperty<QGeoMapObject>(this,
-            0,
-            children_append,
-            children_count,
-            children_at,
-            children_clear);
-}
-
-void QGeoMapObject::children_append(QDeclarativeListProperty<QGeoMapObject> *prop, QGeoMapObject *mapObject)
-{
-    static_cast<QGeoMapObject*>(prop->object)->addChildObject(mapObject);
-}
-
-int QGeoMapObject::children_count(QDeclarativeListProperty<QGeoMapObject> *prop)
-{
-    return static_cast<QGeoMapObject*>(prop->object)->childObjectCount();
-}
-
-QGeoMapObject *QGeoMapObject::children_at(QDeclarativeListProperty<QGeoMapObject> *prop, int index)
-{
-    return static_cast<QGeoMapObject*>(prop->object)->childObject(index);
-}
-
-void QGeoMapObject::children_clear(QDeclarativeListProperty<QGeoMapObject> *prop)
-{
-    static_cast<QGeoMapObject*>(prop->object)->clearChildObjects();
-}
-
-int QGeoMapObject::childObjectCount() const
+QList<QGeoMapObject*> QGeoMapObject::childObjects() const
 {
     Q_D(const QGeoMapObject);
-    return d->children.size();
-}
-
-QGeoMapObject* QGeoMapObject::childObject(int index) const
-{
-    Q_D(const QGeoMapObject);
-    return d->children.at(index);
+    return d->children;
 }
 
 void QGeoMapObject::clearChildObjects()
@@ -354,6 +332,9 @@ bool QGeoMapObject::operator>(const QGeoMapObject &other) const
 QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent, QGeoMapObject::Type type)
         : type(type),
         parent(parent),
+        zValue(0),
+        isVisible(false),
+        isSelected(false),
         info(0),
         q_ptr(impl),
         mapData(0)
@@ -367,6 +348,9 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *p
 QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapData *mapData, QGeoMapObject::Type type)
         : type(type),
         parent(0),
+        zValue(0),
+        isVisible(false),
+        isSelected(false),
         info(0),
         q_ptr(impl),
         mapData(mapData) {}

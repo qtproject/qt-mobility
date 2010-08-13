@@ -71,6 +71,36 @@ QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::declarativeCenter() const
     return m_center;
 }
 
+QDeclarativeListProperty<QGeoMapObject> QDeclarativeGraphicsGeoMap::objects()
+{
+    return QDeclarativeListProperty<QGeoMapObject>(this,
+                                                   0,
+                                                   object_append,
+                                                   object_count,
+                                                   object_at,
+                                                   object_clear);
+}
+
+void QDeclarativeGraphicsGeoMap::object_append(QDeclarativeListProperty<QGeoMapObject> *prop, QGeoMapObject *mapObject)
+{
+    static_cast<QDeclarativeGraphicsGeoMap*>(prop->object)->addMapObject(mapObject);
+}
+
+int QDeclarativeGraphicsGeoMap::object_count(QDeclarativeListProperty<QGeoMapObject> *prop)
+{
+    return static_cast<QDeclarativeGraphicsGeoMap*>(prop->object)->mapObjects().size();
+}
+
+QGeoMapObject *QDeclarativeGraphicsGeoMap::object_at(QDeclarativeListProperty<QGeoMapObject> *prop, int index)
+{
+    return static_cast<QDeclarativeGraphicsGeoMap*>(prop->object)->mapObjects().at(index);
+}
+
+void QDeclarativeGraphicsGeoMap::object_clear(QDeclarativeListProperty<QGeoMapObject> *prop)
+{
+    static_cast<QDeclarativeGraphicsGeoMap*>(prop->object)->clearMapObjects();
+}
+
 QPointF QDeclarativeGraphicsGeoMap::toScreenPosition(const QDeclarativeCoordinate *coordinate) const
 {
     return coordinateToScreenPosition(coordinate->coordinate());

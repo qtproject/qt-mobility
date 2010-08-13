@@ -257,18 +257,6 @@ qreal QGraphicsGeoMap::zoomLevel() const
     return -1;
 }
 
-void QGraphicsGeoMap::startPanning()
-{
-    if (d_ptr->mapData)
-        d_ptr->mapData->startPanning();
-}
-
-void QGraphicsGeoMap::stopPanning()
-{
-    if (d_ptr->mapData)
-        d_ptr->mapData->stopPanning();
-}
-
 /*!
     Pans the map view \a dx pixels in the x direction and \a dy pixels
     in the y direction.
@@ -354,22 +342,12 @@ QGraphicsGeoMap::MapType QGraphicsGeoMap::mapType() const
 
 /*!
 */
-QDeclarativeListProperty<QGeoMapObject> QGraphicsGeoMap::mapObjects()
+QList<QGeoMapObject*> QGraphicsGeoMap::mapObjects() const
 {
     if (!d_ptr->mapData)
-        return QDeclarativeListProperty<QGeoMapObject>();
+        return QList<QGeoMapObject*>();
 
     return d_ptr->mapData->mapObjects();
-}
-
-/*!
-*/
-int QGraphicsGeoMap::mapObjectCount() const
-{
-    if (!d_ptr->mapData)
-        return 0;
-
-    return d_ptr->mapData->mapObjectCount();
 }
 
 /*!
@@ -408,16 +386,6 @@ void QGraphicsGeoMap::removeMapObject(QGeoMapObject *mapObject)
     d_ptr->mapData->removeMapObject(mapObject);
 
     this->update();
-}
-
-/*!
-*/
-QGeoMapObject* QGraphicsGeoMap::mapObject(int index) const
-{
-    if (!d_ptr->mapData)
-        return 0;
-
-    return d_ptr->mapData->mapObject(index);
 }
 
 /*!
