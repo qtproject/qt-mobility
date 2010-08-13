@@ -13,9 +13,10 @@ mac: LIBS += -F$${MOBILITY_LIB}
 LIBS+= -L$${MOBILITY_LIB}
 QMAKE_RPATHDIR+=$${MOBILITY_LIB}
 
-# versit depends on contacts and organizer
-contains(MOBILITY, versit) {
-    MOBILITY += contacts organizer
+# versit needs contacts and/or organizer
+contains(MOBILITY, versit) : !contains(MOBILITY, contacts) : !contains(MOBILITY, organizer) {
+    warning(MOBILITY=versit is specified but neither contacts or organizer are added.  Assuming MOBILITY+=contacts)
+    MOBILITY += contacts
 }
 
 contains(MOBILITY, bearer) {

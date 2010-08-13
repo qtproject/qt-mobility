@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qversitdefs_p.h"
+#include "qversitcontactsdefs_p.h"
 #include "qversitcontactimporter_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"

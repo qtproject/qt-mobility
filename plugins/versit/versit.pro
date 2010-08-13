@@ -4,4 +4,6 @@ CONFIG += ordered
 
 include(../../common.pri)
 
-SUBDIRS += backuphandler
+contains(mobility_modules,contacts) {
+    SUBDIRS += backuphandler
+}
