@@ -471,27 +471,35 @@ bool exportLandmarksGpx(const QString &connectionName,
 bool exportLandmarksLmx(const QString &connectionName,
                         QIODevice *device,
                         QList<QLandmarkId> landmarkIds,
+                        QLandmarkManager::TransferOption option,
                         QLandmarkManager::Error *error,
                         QString *errorString,
-                        const QString &managerUri)
+                        const QString &managerUri,
+                        QueryRun *queryRun =0)
 {
     QLandmarkFileHandlerLmx lmxHandler(connectionName, managerUri);
 
-    QLandmarkIdFilter idFilter(landmarkIds);
-    QList<QLandmarkSortOrder> sortOrders;
-    QList<QLandmark> lms = ::landmarks(connectionName, idFilter, sortOrders, -1, 0, error, errorString, managerUri);
+    QLandmarkFilter filter;
+    QList<QLandmark> lms;
+    if (landmarkIds.count() >0)
+        lms = DatabaseOperations::landmarks(connectionName, landmarkIds, 0, error, errorString, managerUri, queryRun);
+    else {
+        QList<QLandmarkSortOrder> sortOrders;
+        lms = ::landmarks(connectionName, filter, sortOrders, -1, 0, error, errorString, managerUri, queryRun);
+    }
 
     if (error && *error != QLandmarkManager::NoError)
         return false;
 
+    lmxHandler.setTransferOption(option);
     lmxHandler.setLandmarks(lms);
 
     bool result = lmxHandler.exportData(device);
 
     if (!result) {
         if (errorString)
+            *error = lmxHandler.errorCode();
             *errorString = lmxHandler.errorString();
-        // TODO set error code
     } else {
         if (error)
             *error = QLandmarkManager::NoError;
@@ -528,6 +536,12 @@ QLandmark DatabaseOperations::retrieveLandmark(const QString &connectionName, co
             *error = QLandmarkManager::BadArgumentError;
         if (errorString)
             *errorString = "Landmark id comes from different landmark manager.";
+        return QLandmark();
+    }
+
+    if (landmarkId.localId().isEmpty()) {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString = "Landmark local id is empty";
         return QLandmark();
     }
 
@@ -2464,6 +2478,12 @@ bool DatabaseOperations::importLandmarks(const QString &connectionName,
     Q_ASSERT(error);
     Q_ASSERT(errorString);
 
+    if (!device) {
+       *error = QLandmarkManager::BadArgumentError;
+       *errorString = "Invalid io device pointer";
+       return false;
+    }
+
     QFile *file = qobject_cast<QFile *>(device);
     if (file)
     {
@@ -2479,16 +2499,26 @@ bool DatabaseOperations::importLandmarks(const QString &connectionName,
         *errorString = "Unable to open io device for importing landmarks";
         return false;
     }
-
+    bool result = false;
     if (format ==  QLandmarkManager::Lmx) {
-            return importLandmarksLmx(connectionName, device, option, categoryId, error, errorString, managerUri);
+            result = importLandmarksLmx(connectionName, device, option, categoryId, error, errorString, managerUri);
+            device->close();
+            return result;
     } else if (format == QLandmarkManager::Gpx) {
-           return importLandmarksGpx(connectionName, device, error, errorString, managerUri, queryRun);
+           result = importLandmarksGpx(connectionName, device, error, errorString, managerUri, queryRun);
+           device->close();
+           return result;
+    }  else if (format =="") {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString =  "No format provided";
+        device->close();
+         return false;
     } else {
         if (error)
             *error = QLandmarkManager::NotSupportedError;
         if (errorString)
             *errorString = "The given format is not supported at this time";
+        device->close();
         return false;
     }
 }
@@ -2497,34 +2527,46 @@ bool DatabaseOperations::exportLandmarks(const QString &connectionName,
                      QIODevice *device,
                      const QString &format,
                      QList<QLandmarkId> landmarkIds,
+                     QLandmarkManager::TransferOption option,
                      QLandmarkManager::Error *error,
                      QString *errorString,
-                     const QString &managerUri)
+                     const QString &managerUri,
+                     QueryRun *queryRun)
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
+    if (!device) {
+       *error = QLandmarkManager::BadArgumentError;
+       *errorString = "Invalid io device pointer";
+       return false;
+    }
 
-    QFile *file = qobject_cast<QFile *>(device);
     if (!device->open(QIODevice::WriteOnly)) {
         *error = QLandmarkManager::PermissionsError;
         *errorString = "Unable to open io device for importing landmarks";
         return false;
     }
 
-    bool result;
+    bool result = false;
     if (format ==  QLandmarkManager::Lmx) {
-        result = exportLandmarksLmx(connectionName, device, landmarkIds, error, errorString, managerUri);
+        result = exportLandmarksLmx(connectionName, device, landmarkIds, option, error, errorString, managerUri, queryRun);
         device->close();
         return result;
     } else if (format == QLandmarkManager::Gpx) {
         result = exportLandmarksGpx(connectionName, device, landmarkIds, error, errorString, managerUri);
         device->close();
         return result;
+    }  else if (format =="") {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString =  "No format provided";
+        device->close();
+         return false;
     } else {
         if (error)
             *error = QLandmarkManager::NotSupportedError;
         if (errorString)
             *errorString = "The given format is not supported at this time";
+        device->close();
         return false;
     }
 }
@@ -2790,6 +2832,7 @@ void DatabaseOperations::QueryRun::run()
 
                 DatabaseOperations::exportLandmarks(connectionName, exportRequest->device(),
                                                     exportRequest->format(), exportRequest->landmarkIds(),
+                                                    exportRequest->transferOption(),
                                                     &error, &errorString, managerUri);
 
                 if (this->isCanceled) {

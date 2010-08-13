@@ -329,11 +329,11 @@ bool QLandmarkManagerEngineSqlite::importLandmarks(QIODevice *device,
 bool QLandmarkManagerEngineSqlite::exportLandmarks(QIODevice *device,
                                                    const QString &format,
                                                    QList<QLandmarkId> landmarkIds,
-                                                   QLandmarkManager::TransferOption,
+                                                   QLandmarkManager::TransferOption option,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString) const
 {
-    return DatabaseOperations::exportLandmarks(m_dbConnectionName, device, format, landmarkIds, error, errorString, managerUri());
+    return DatabaseOperations::exportLandmarks(m_dbConnectionName, device, format, landmarkIds, option, error, errorString, managerUri());
 }
 
 QStringList QLandmarkManagerEngineSqlite::supportedFormats(QLandmarkManager::TransferOperation operation, QLandmarkManager::Error *error, QString *errorString) const

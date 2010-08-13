@@ -198,9 +198,11 @@ namespace DatabaseOperations {
                          QIODevice *device,
                          const QString &format,
                          QList<QLandmarkId> landmarkIds,
+                         QLandmarkManager::TransferOption,
                          QLandmarkManager::Error *error,
                          QString *errorString,
-                         const QString &managerUri);
+                         const QString &managerUri,
+                         QueryRun *queryRun =0);
 }
 
 #endif
