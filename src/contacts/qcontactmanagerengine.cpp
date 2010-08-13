@@ -958,6 +958,21 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     d.setUnique(false);
     retn.insert(d.name(), d);
 
+    // favorite
+    d.setName(QContactFavorite::DefinitionName);
+    fields.clear();
+    f.setAllowableValues(QVariantList());
+    f.setDataType(QVariant::Bool);
+    fields.insert(QContactFavorite::FieldFavorite, f);
+    f.setDataType(QVariant::Int);
+    fields.insert(QContactFavorite::FieldIndex, f);
+    f.setDataType(QVariant::StringList);
+    f.setAllowableValues(contexts);
+    fields.insert(QContactDetail::FieldContext, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    retn.insert(d.name(), d);
+
     // gender
     d.setName(QContactGender::DefinitionName);
     fields.clear();
