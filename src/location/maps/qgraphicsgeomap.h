@@ -106,7 +106,8 @@ public:
     QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;
 
 public slots:
-    void pan(int dx, int dy);
+    void pan(qreal dx, qreal dy);
+    void pan(QPointF offset);
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
@@ -115,10 +116,11 @@ signals:
     void zoomLevelChanged(qreal zoomLevel);
     void centerChanged(const QGeoCoordinate &coordinate);
     void mapTypeChanged(QGraphicsGeoMap::MapType mapType);
+    void panned(const QPointF &offset);
 
 private:
     QGraphicsGeoMapPrivate *d_ptr;
-    Q_DISABLE_COPY(QGraphicsGeoMap);
+    Q_DISABLE_COPY(QGraphicsGeoMap)
 };
 
 QTM_END_NAMESPACE

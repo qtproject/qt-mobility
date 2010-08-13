@@ -335,9 +335,9 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *p
         zValue(0),
         isVisible(false),
         isSelected(false),
+        mapData(0),
         info(0),
-        q_ptr(impl),
-        mapData(0)
+        q_ptr(impl)
 {
     if (parent) {
         mapData = parent->d_ptr->mapData;
@@ -351,9 +351,9 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapData *map
         zValue(0),
         isVisible(false),
         isSelected(false),
+        mapData(mapData),
         info(0),
-        q_ptr(impl),
-        mapData(mapData) {}
+        q_ptr(impl) {}
 
 QGeoMapObjectPrivate::~QGeoMapObjectPrivate()
 {

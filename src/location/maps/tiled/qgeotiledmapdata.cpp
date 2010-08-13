@@ -360,28 +360,18 @@ void QGeoTiledMapData::setViewportSize(const QSizeF &size)
     d->updateMapImage();
 }
 
-void QGeoTiledMapData::startPanning()
-{
-    //setImageChangesTriggerUpdates(false);
-}
-
-void QGeoTiledMapData::stopPanning()
-{
-    //setImageChangesTriggerUpdates(true);
-}
-
-void QGeoTiledMapData::pan(int dx, int dy)
+void QGeoTiledMapData::pan(qreal dx, qreal dy)
 {
     Q_D(QGeoTiledMapData);
 
     int x = d->maxZoomCenter.x();
     int y = d->maxZoomCenter.y();
 
-    x = (x + dx * d->zoomFactor) % d->maxZoomSize.width();
+    x = int(x + dx * d->zoomFactor) % d->maxZoomSize.width();
     if (x < 0)
         x += d->maxZoomSize.width();
 
-    y = (y + dy * d->zoomFactor);
+    y = int(y + dy * d->zoomFactor);
     int height = int(d->maxZoomScreenRect.height() / 2.0);
     if (y < height)
         y = height;

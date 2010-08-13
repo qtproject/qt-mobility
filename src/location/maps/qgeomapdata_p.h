@@ -74,6 +74,8 @@ public:
 
     void setObjectInfo(QGeoMapObject *object, QGeoMapObjectInfo *info);
 
+    QGeoMapData *q_ptr;
+
     QGeoMappingManagerEngine *engine;
     QGraphicsGeoMap *geoMap;
     QGeoMapObject* containerObject;
@@ -85,7 +87,6 @@ public:
 
     QList<QGeoMapOverlay*> overlays;
 
-    QGeoMapData *q_ptr;
     Q_DECLARE_PUBLIC(QGeoMapData)
 private:
     Q_DISABLE_COPY(QGeoMapDataPrivate)

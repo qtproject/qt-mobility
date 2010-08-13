@@ -266,12 +266,18 @@ qreal QGraphicsGeoMap::zoomLevel() const
     viewed area to the right and that positive values of \a dy move the
     viewed area down.
 */
-void QGraphicsGeoMap::pan(int dx, int dy)
+void QGraphicsGeoMap::pan(qreal dx, qreal dy)
 {
     if (d_ptr->mapData && d_ptr->manager) {
         d_ptr->mapData->pan(dx, dy);
         update();
+        emit panned(QPointF(dx, dy));
     }
+}
+
+void QGraphicsGeoMap::pan(QPointF offset)
+{
+    pan(offset.x(), offset.y());
 }
 
 /*!

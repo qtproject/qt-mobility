@@ -185,7 +185,7 @@ qreal QGeoMapData::zoomLevel() const
     viewed area to the right and that positive values of \a dy move the
     viewed area down.
 */
-void QGeoMapData::pan(int dx, int dy)
+void QGeoMapData::pan(qreal dx, qreal dy)
 {
     QPointF pos = coordinateToScreenPosition(center());
     setCenter(screenPositionToCoordinate(QPointF(pos.x() + dx, pos.y() + dy)));

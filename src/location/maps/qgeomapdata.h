@@ -72,7 +72,7 @@ public:
     virtual void setZoomLevel(qreal zoomLevel);
     virtual qreal zoomLevel() const;
 
-    virtual void pan(int dx, int dy);
+    virtual void pan(qreal dx, qreal dy);
 
     virtual void setCenter(const QGeoCoordinate &center);
     virtual QGeoCoordinate center() const;
