@@ -283,10 +283,9 @@ QOrganizerItemLocalId QOrganizerItem::localId() const
   Note: only returns meaningful id if it has been saved in a manager.
       An item always belongs to exactly one collection (default, if not set).
  */
-QOrganizerCollectionId QOrganizerItem::collection() const
+QOrganizerCollectionId QOrganizerItem::collectionId() const
 {
-    // TODO fixme
-    return QOrganizerCollectionId();
+    return d->m_collectionId;
 }
 
 /*!

@@ -102,7 +102,7 @@ public:
     virtual bool saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
     virtual bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
 
-    /* Collections - every item belongs to one or more collections */
+    /* Collections - every item belongs to exactly one collection */
     virtual QOrganizerCollectionLocalId defaultCollectionId(QOrganizerItemManager::Error* error) const;
     virtual QList<QOrganizerCollectionLocalId> collectionIds(QOrganizerItemManager::Error* error) const;
     virtual QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const;
@@ -158,6 +158,7 @@ public:
 
     // Other protected area update functions
     static void setDetailAccessConstraints(QOrganizerItemDetail* detail, QOrganizerItemDetail::AccessConstraints constraints);
+    static void setItemCollectionId(QOrganizerItem* item, const QOrganizerCollectionId& collectionId); // XXX TODO: setting in QOrganizerItem instead?
 
     /* Helper functions */
     static int compareItem(const QOrganizerItem& a, const QOrganizerItem& b, const QList<QOrganizerItemSortOrder>& sortOrders);

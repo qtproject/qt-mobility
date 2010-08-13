@@ -75,6 +75,7 @@ public:
     QOrganizerItemData(const QOrganizerItemData& other)
         : QSharedData(other),
         m_id(other.m_id),
+        m_collectionId(other.m_collectionId),
         m_details(other.m_details)
     {
     }
@@ -82,6 +83,7 @@ public:
     ~QOrganizerItemData() {}
 
     QOrganizerItemId m_id;
+    QOrganizerCollectionId m_collectionId;
     QList<QOrganizerItemDetail> m_details;
 };
 

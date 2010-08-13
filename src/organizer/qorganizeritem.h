@@ -91,7 +91,7 @@ public:
     QOrganizerItemLocalId localId() const;
 
     /* The collection to which an item belongs - read only */
-    QOrganizerCollectionId collection() const;
+    QOrganizerCollectionId collectionId() const;
 
     /* Is this an empty organizer item? */
     bool isEmpty() const;

@@ -80,6 +80,11 @@ Q_ORGANIZER_EXPORT uint qHash(const QOrganizerCollectionId& key);
 Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerCollectionId& id);
 #endif
 
+#ifndef QT_NO_DATASTREAM
+Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionId& collectionId);
+Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& collectionId);
+#endif
+
 QTM_END_NAMESPACE
 
 Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerCollectionId), Q_MOVABLE_TYPE);

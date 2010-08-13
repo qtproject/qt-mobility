@@ -1674,6 +1674,16 @@ void QOrganizerItemManagerEngine::setDetailAccessConstraints(QOrganizerItemDetai
     }
 }
 
+/*!
+  Sets the collection id of \a item to the supplied \a collectionId.
+ */
+void QOrganizerItemManagerEngine::setItemCollectionId(QOrganizerItem* item, const QOrganizerCollectionId& collectionId)
+{
+    if (item) {
+        item->d->m_collectionId = collectionId;
+    }
+}
+
 
 /*!
   Adds the given \a organizeritem to the database if \a organizeritem has a
@@ -2307,7 +2317,7 @@ bool QOrganizerItemManagerEngine::testFilter(const QOrganizerItemFilter &filter,
             {
                 const QOrganizerItemCollectionFilter cf(filter);
                 const QSet<QOrganizerCollectionLocalId>& ids = cf.collectionIds();
-                if (ids.contains(organizeritem.collection().localId()))
+                if (ids.contains(organizeritem.collectionId().localId()))
                     return true;
                 return false;
             }

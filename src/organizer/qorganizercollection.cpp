@@ -42,6 +42,9 @@
 
 #include "qorganizercollection.h"
 #include "qorganizercollection_p.h"
+#include "qorganizercollectionid.h"
+
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -103,5 +106,72 @@ QVariant QOrganizerCollection::metaData(const QString& key)
 {
     return d->m_metaData.value(key);
 }
+
+/*! Returns the hash value for \a key. */
+uint qHash(const QOrganizerCollection &key)
+{
+    uint hash = qHash(key.id());
+    QVariantMap metadata = key.metaData();
+    QVariantMap::const_iterator it;
+    for (it = metadata.constBegin(); it != metadata.constEnd(); ++it) {
+        hash += qHash(it.key())
+                + QT_PREPEND_NAMESPACE(qHash)(it.value().toString());
+    }
+
+    return hash;
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QOrganizerCollection& collection)
+{
+    dbg.nospace() << "QOrganizerCollection(id=" << collection.id();
+    QVariantMap metadata = collection.metaData();
+    QVariantMap::const_iterator it;
+    for (it = metadata.constBegin(); it != metadata.constEnd(); ++it) {
+        dbg.nospace() << ", " << it.key() << '=' << it.value();
+    }
+    dbg.nospace() << ')';
+    return dbg.maybeSpace();
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a collection to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QOrganizerCollection& collection)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerCollection
+    return out << formatVersion
+               << collection.id()
+               << collection.metaData();
+}
+
+/*!
+ * Reads an organizer collection from stream \a in into \a collection.
+ */
+QDataStream& operator>>(QDataStream& in, QOrganizerCollection& collection)
+{
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QOrganizerCollectionId id;
+        QVariantMap metadata;
+        in >> id >> metadata;
+
+        collection = QOrganizerCollection();
+        collection.setId(id);
+
+        QMapIterator<QString, QVariant> it(metadata);
+        while (it.hasNext()) {
+            it.next();
+            collection.setMetaData(it.key(), it.value());
+        }
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+#endif
 
 QTM_END_NAMESPACE

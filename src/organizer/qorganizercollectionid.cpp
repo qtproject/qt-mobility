@@ -157,6 +157,39 @@ QDebug operator<<(QDebug dbg, const QOrganizerCollectionId& id)
 }
 #endif
 
+#ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a collectionId to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionId& collectionId)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerCollectionId
+    return out << formatVersion
+               << collectionId.managerUri()
+               << collectionId.localId();
+}
+
+/*!
+ * Reads an organizer collection id from stream \a in into \a collectionId.
+ */
+QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& collectionId)
+{
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QString managerUri;
+        QOrganizerCollectionLocalId lid;
+        in >> managerUri >> lid;
+        collectionId = QOrganizerCollectionId();
+        collectionId.setManagerUri(managerUri);
+        collectionId.setLocalId(lid);
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+#endif
+
 /*!
  * Returns the URI of the manager which contains the organizeritem identified by this id
  */
