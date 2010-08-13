@@ -14,7 +14,7 @@ INCLUDEPATH += ../../../../src/global \
 INCLUDEPATH += ../../
 
 CONFIG += mobility
-MOBILITY = contact serviceframework
+MOBILITY = contacts serviceframework
 SOURCES  += tst_qcontactmanagerfiltering.cpp
 HEADERS += ../../qcontactmanagerdataholder.h
 
