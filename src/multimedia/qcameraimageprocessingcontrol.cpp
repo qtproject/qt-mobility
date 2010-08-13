@@ -154,6 +154,25 @@ QCameraImageProcessingControl::~QCameraImageProcessingControl()
     and 100 for maximum sharpening/denoising applied.
 */
 
+/*!
+  \enum QCameraImageProcessingControl::ProcessingParameter
+
+  \value Contrast
+    Image contrast.
+  \value Saturation
+    Image saturation.
+  \value Brightness
+    Image brightness.
+  \value Sharpening
+    Amount of sharpening applied.
+  \value Denoising
+    Amount of denoising applied.
+  \value ColorTemperature
+    Color temperature in K. This value is used when the manual white balance mode is selected.
+  \value ExtendedParameter
+    The base value for platform specific extended parameters.
+ */
+
 #include "moc_qcameraimageprocessingcontrol.cpp"
 QT_END_NAMESPACE
 

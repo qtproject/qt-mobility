@@ -86,9 +86,21 @@ Q_DEFINE_LATIN1_CONSTANT(KParameterKeySimStoreName, "store");
 Q_DEFINE_LATIN1_CONSTANT(KParameterValueSimStoreNameAdn, "ADN");
 Q_DEFINE_LATIN1_CONSTANT(KParameterValueSimStoreNameSdn, "SDN");
 Q_DEFINE_LATIN1_CONSTANT(KParameterValueSimStoreNameFdn, "FDN");
+Q_DEFINE_LATIN1_CONSTANT(KParameterValueSimStoreNameOn, "ON");
 
 class CntSimStore;
 class CntAbstractSimRequest;
+
+class CntSymbianSimPhoneNumberMatching
+{
+public:
+    enum TNumberType { ENotInitialized, EUnknown, EDigit, EPlus, EOneZero, ETwoZeros };
+    static TBool isBestMatchL(const QString& numberToMatch, const QString& matchingNumber);
+    static TBool validateBestMatchingRulesL(const TDesC& phoneNumber, const TDesC& matchNumber);
+    static TBool checkBestMatchingRules(const TDesC& numberA, TNumberType numberAType,
+                                             const TDesC& numberB, TNumberType numberBType);
+    static TInt formatAndCheckNumberType(TDes& number);
+};
 
 class CntSymbianSimEngineData : public QSharedData
 {

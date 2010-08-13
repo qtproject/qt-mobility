@@ -50,7 +50,6 @@ SYMBIAN_HEADERS += \
         ../../inc/cntsymbiandatabase.h \
         ../../inc/cntdisplaylabel.h \
         ../../inc/filtering/cntdisplaylabelsqlfilter.h \
-        ../../inc/filtering/cntsqlsearch.h \
         ../../inc/filtering/cntdbinfo.h \
         ../../inc/filtering/cntfilterdetail.h \
         ../../inc/filtering/cntfilterdefault.h \
@@ -98,7 +97,6 @@ SYMBIAN_SOURCES += \
         ../../src/cntsymbiandatabase.cpp \
         ../../src/cntdisplaylabel.cpp \
         ../../src/filtering/cntdisplaylabelsqlfilter.cpp \
-        ../../src/filtering/cntsqlsearch.cpp \
         ../../src/filtering/cntdbinfo.cpp \
         ../../src/filtering/cntfilterdetail.cpp \
         ../../src/filtering/cntfilterdefault.cpp \
