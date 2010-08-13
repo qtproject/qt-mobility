@@ -193,7 +193,7 @@ QList<QOrganizerItemRecurrenceRule> OrganizerItemRecurrenceTransform::toItemRecu
             }
             // Append the position part of day-of-month to the recurrence rule
             QList<int> positions = rrule.positions();
-            positions.insert(0, dayOfMonth.WeekInMonth());
+            positions.append(dayOfMonth.WeekInMonth());
             rrule.setPositions(positions);
         }
         CleanupStack::PopAndDestroy(&tDayOfMonthArray);
@@ -216,7 +216,7 @@ QList<QOrganizerItemRecurrenceRule> OrganizerItemRecurrenceTransform::toItemRecu
             }
             // Append the position part of day-of-month to the recurrence rule
             QList<int> positions = rrule.positions();
-            positions.insert(0, dayOfMonth.WeekInMonth());
+            positions.append(dayOfMonth.WeekInMonth());
             rrule.setPositions(positions);
         }
         CleanupStack::PopAndDestroy(&daysOfMonth);
@@ -317,9 +317,12 @@ TCalRRule OrganizerItemRecurrenceTransform::toCalRRuleL(QList<QOrganizerItemRecu
                 // store it to the by-day of the TCalRRule
                 QList<int> positions = rrule.positions();
                 if (positions.isEmpty()) {
-                    // TODO: If the position is not available, the default is to use
+                    // If the position is not available, the default is to use
                     // all positions (according to the RFC-2445)
-                    User::Leave(KErrArgument);
+                    // Note: this will cause the following issue for Qt
+                    // Organizer API clients: If an item does not have the
+                    // positions field it will appear during save
+                    positions << 1 << 2 << 3 << 4 << -1;
                 }
                 RArray<TCalRRule::TDayOfMonth> dayArray;
                 CleanupClosePushL(dayArray);
