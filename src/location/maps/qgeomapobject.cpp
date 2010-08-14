@@ -136,7 +136,7 @@ void QGeoMapObject::setZValue(int zValue)
             d->parent->removeChildObject(this);
             d->parent->addChildObject(this);
         }
-        emit zValueChanged();
+        emit zValueChanged(d->zValue);
     }
 }
 
@@ -166,7 +166,7 @@ void QGeoMapObject::setVisible(bool visible)
     Q_D(QGeoMapObject);
     if (d->isVisible != visible) {
         d->isVisible = visible;
-        emit visibleChanged();
+        emit visibleChanged(d->isVisible);
     }
 }
 
@@ -180,6 +180,21 @@ bool QGeoMapObject::isVisible() const
 {
     Q_D(const QGeoMapObject);
     return d->isVisible;
+}
+
+void QGeoMapObject::setSelected(bool selected)
+{
+    Q_D(QGeoMapObject);
+    if (d->isSelected != selected) {
+        d->isSelected = selected;
+        emit selectedChanged(d->isSelected);
+    }
+}
+
+bool QGeoMapObject::isSelected() const
+{
+    Q_D(const QGeoMapObject);
+    return d->isSelected;
 }
 
 /*!
@@ -275,14 +290,16 @@ void QGeoMapObject::removeChildObject(QGeoMapObject *childObject)
     }
 }
 
-/*!
-    Returns the children of this map object.
-    The children are ordered ascendingly on their zValues.
-*/
 QList<QGeoMapObject*> QGeoMapObject::childObjects() const
 {
     Q_D(const QGeoMapObject);
     return d->children;
+}
+
+void QGeoMapObject::clearChildObjects()
+{
+    Q_D(QGeoMapObject);
+    d->children.clear();
 }
 
 void QGeoMapObject::objectUpdate()
@@ -315,9 +332,12 @@ bool QGeoMapObject::operator>(const QGeoMapObject &other) const
 QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent, QGeoMapObject::Type type)
         : type(type),
         parent(parent),
+        zValue(0),
+        isVisible(false),
+        isSelected(false),
+        mapData(0),
         info(0),
-        q_ptr(impl),
-        mapData(0)
+        q_ptr(impl)
 {
     if (parent) {
         mapData = parent->d_ptr->mapData;
@@ -328,9 +348,12 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *p
 QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapData *mapData, QGeoMapObject::Type type)
         : type(type),
         parent(0),
+        zValue(0),
+        isVisible(false),
+        isSelected(false),
+        mapData(mapData),
         info(0),
-        q_ptr(impl),
-        mapData(mapData) {}
+        q_ptr(impl) {}
 
 QGeoMapObjectPrivate::~QGeoMapObjectPrivate()
 {
@@ -380,18 +403,14 @@ void QGeoMapObjectPrivate::removeFromParent()
 
 void QGeoMapObjectPrivate::objectUpdate()
 {
-    if (!info)
-        return;
-
-    info->objectUpdate();
+    if (info)
+        info->objectUpdate();
 }
 
 void QGeoMapObjectPrivate::mapUpdate()
 {
-    if (!info)
-        return;
-
-    info->mapUpdate();
+    if (info)
+        info->mapUpdate();
 
     for (int i = 0; i < children.size(); ++i)
         children[i]->mapUpdate();

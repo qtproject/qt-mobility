@@ -365,19 +365,19 @@ QGeoSearchReply* QGeoSearchManager::reverseGeocode(const QGeoCoordinate &coordin
     resultCount = -1 -> grab all results
 */
 QGeoSearchReply* QGeoSearchManager::search(const QString &searchString,
-                                           QGeoSearchManager::SearchTypes searchTypes,
-                                           int resultsCount,
-                                           int resultsOffset,
-                                           QGeoBoundingArea *bounds)
+        QGeoSearchManager::SearchTypes searchTypes,
+        int limit,
+        int offset,
+        QGeoBoundingArea *bounds)
 {
 //    if (!d_ptr->engine)
 //        return new QGeoSearchReply(QGeoSearchReply::EngineNotSetError, "The search manager was not created with a valid engine.", this);
 
     QGeoSearchReply *reply = d_ptr->engine->search(searchString,
-                                                   searchTypes,
-                                                   resultsCount,
-                                                   resultsOffset,
-                                                   bounds);
+                             searchTypes,
+                             limit,
+                             offset,
+                             bounds);
 
     if ((d_ptr->engine->additionalLandmarkManagers().size() == 0)
             || (searchTypes == QGeoSearchManager::SearchNone)
@@ -400,25 +400,25 @@ QGeoSearchReply* QGeoSearchManager::search(const QString &searchString,
         QGeoBoundingBox* box = 0;
         QGeoBoundingCircle* circle = 0;
         switch (bounds->type()) {
-        case QGeoBoundingArea::BoxType:
-            box = static_cast<QGeoBoundingBox*>(bounds);
-            if (box->isValid() && !box->isEmpty()) {
-                QLandmarkBoxFilter boxFilter;
-                boxFilter.setBoundingBox(*box);
-                intersectFilter.append(boxFilter);
-            }
-            break;
-        case QGeoBoundingArea::CircleType:
-            circle = static_cast<QGeoBoundingCircle*>(bounds);
-            if (circle->isValid() && !circle->isEmpty()) {
-                QLandmarkProximityFilter proximityFilter(circle->center(),
-                                                         circle->radius());
-                proximityFilter.setSelection(QLandmarkProximityFilter::SelectAll);
-                intersectFilter.append(proximityFilter);
-            }
-            break;
-        default:
-            break;
+            case QGeoBoundingArea::BoxType:
+                box = static_cast<QGeoBoundingBox*>(bounds);
+                if (box->isValid() && !box->isEmpty()) {
+                    QLandmarkBoxFilter boxFilter;
+                    boxFilter.setBoundingBox(*box);
+                    intersectFilter.append(boxFilter);
+                }
+                break;
+            case QGeoBoundingArea::CircleType:
+                circle = static_cast<QGeoBoundingCircle*>(bounds);
+                if (circle->isValid() && !circle->isEmpty()) {
+                    QLandmarkProximityFilter proximityFilter(circle->center(),
+                            circle->radius());
+                    proximityFilter.setSelection(QLandmarkProximityFilter::SelectAll);
+                    intersectFilter.append(proximityFilter);
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -427,8 +427,8 @@ QGeoSearchReply* QGeoSearchManager::search(const QString &searchString,
 
         QLandmarkFetchRequest* fetchRequest = new QLandmarkFetchRequest(lm, this);
         fetchRequest->setFilter(intersectFilter);
-        fetchRequest->setLimit(resultsCount);
-        fetchRequest->setOffset(resultsOffset);
+        fetchRequest->setLimit(limit);
+        fetchRequest->setOffset(offset);
         fetchRequests.append(fetchRequest);
     }
 
@@ -582,11 +582,11 @@ QGeoSearchManagerPrivate::~QGeoSearchManagerPrivate()
 
 
 QGeoCombiningSearchReply::QGeoCombiningSearchReply(QGeoSearchReply* searchReply,
-                                                   QList<QLandmarkFetchRequest*> fetchRequests,
-                                                   QObject *parent)
-    : QGeoSearchReply(parent),
-      searchReply(searchReply),
-      fetchRequests(fetchRequests)
+        QList<QLandmarkFetchRequest*> fetchRequests,
+        QObject *parent)
+        : QGeoSearchReply(parent),
+        searchReply(searchReply),
+        fetchRequests(fetchRequests)
 {
     connect(searchReply,
             SIGNAL(finished()),
@@ -616,7 +616,7 @@ void QGeoCombiningSearchReply::searchReplyFinished()
             addPlace(searchReplyPlaces.at(i));
 
         if (fetchRequests.size() == 0)
-           emit finished();
+            emit finished();
     } else {
         emit error(error(), errorString());
         qDeleteAll(fetchRequests);
@@ -635,7 +635,7 @@ void QGeoCombiningSearchReply::landmarkFetchStateChanged(QLandmarkAbstractReques
 
             QList<QLandmark> landmarks = req->landmarks();
             for (int i = 0; i < landmarks.size(); ++i)
-                 addPlace(landmarks.at(i));
+                addPlace(landmarks.at(i));
 
             fetchRequests.removeAll(req);
             delete req;

@@ -45,7 +45,7 @@
 #include "qmobilityglobal.h"
 
 #include <QList>
-#include <QSharedDataPointer>
+#include <QExplicitlySharedDataPointer>
 #include <QDateTime>
 
 QT_BEGIN_HEADER
@@ -144,7 +144,7 @@ public:
     InstructionDetail instructionDetail() const;
 
 private:
-    QSharedDataPointer<QGeoRouteRequestPrivate> d_ptr;
+    QExplicitlySharedDataPointer<QGeoRouteRequestPrivate> d_ptr;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::TravelModes)

@@ -77,10 +77,12 @@ void QGeoTiledMapPolylineObjectInfo::objectUpdate()
         pathItem = new QGraphicsPathItem();
 
     pathItem->setPath(painterPath);
+
     mapUpdate();
 
-    graphicsItem1 = pathItem;
-    graphicsItem2 = 0;
+    graphicsItem = pathItem;
+
+    updateItem();
 }
 
 void QGeoTiledMapPolylineObjectInfo::mapUpdate()

@@ -16,6 +16,7 @@ HEADERS += \
         qdeclarativeaudio_p.h \
         qdeclarativemediabase_p.h \
         qdeclarativevideo_p.h \
+        qdeclarativecamera_p.h \
         qmetadatacontrolmetaobject_p.h \
 
 SOURCES += \
@@ -23,6 +24,7 @@ SOURCES += \
         qdeclarativeaudio.cpp \
         qdeclarativemediabase.cpp \
         qdeclarativevideo.cpp \
+        qdeclarativecamera.cpp \
         qmetadatacontrolmetaobject.cpp
 
 CONFIG += mobility

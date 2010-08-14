@@ -41,7 +41,6 @@
 
 #include "qgeoserviceproviderplugin_nokia.h"
 
-#include <qgeomappingmanagerengine.h>
 #include "qgeosearchmanagerengine_nokia.h"
 #include "qgeoroutingmanagerengine_nokia.h"
 

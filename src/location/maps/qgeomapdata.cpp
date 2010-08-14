@@ -44,18 +44,12 @@
 
 #include "qgeoboundingbox.h"
 #include "qgeocoordinate.h"
-#include "qgeomapwidget.h"
+#include "qgraphicsgeomap.h"
 #include "qgeomapobject.h"
 #include "qgeomappingmanagerengine.h"
 #include "qgeomapoverlay.h"
 
 #include "qgeomapobject_p.h"
-#include "qgeomaprectangleobject_p.h"
-#include "qgeomapcircleobject_p.h"
-#include "qgeomappolylineobject_p.h"
-#include "qgeomappolygonobject_p.h"
-#include "qgeomapmarkerobject_p.h"
-#include "qgeomaprouteobject_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -88,8 +82,8 @@ QTM_BEGIN_NAMESPACE
     Constructs a new map data object, which stores the map data required by
     \a widget and makes use of the functionality provided by \a engine.
 */
-QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
-        : d_ptr(new QGeoMapDataPrivate(this, engine, widget)) {}
+QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
+        : d_ptr(new QGeoMapDataPrivate(this, engine, geoMap)) {}
 
 /*!
   \internal
@@ -110,11 +104,11 @@ QGeoMapData::~QGeoMapData()
 }
 
 /*!
-    Returns the widget that this map data object is associated with.
+    Returns the QGraphicsGeoMap instance that this map data object is associated with.
 */
-QGeoMapWidget* QGeoMapData::widget() const
+QGraphicsGeoMap* QGeoMapData::geoMap() const
 {
-    return d_ptr->widget;
+    return d_ptr->geoMap;
 }
 
 /*!
@@ -182,10 +176,6 @@ qreal QGeoMapData::zoomLevel() const
     return d_ptr->zoomLevel;
 }
 
-void QGeoMapData::startPanning() {}
-
-void QGeoMapData::stopPanning() {}
-
 /*!
     Pans the map view \a dx pixels in the x direction and \a dy pixels
     in the y direction.
@@ -220,7 +210,7 @@ QGeoCoordinate QGeoMapData::center() const
 /*!
     Changes the type of map data to display to \a mapType.
 */
-void QGeoMapData::setMapType(QGeoMapWidget::MapType mapType)
+void QGeoMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 {
     d_ptr->mapType = mapType;
 }
@@ -228,9 +218,16 @@ void QGeoMapData::setMapType(QGeoMapWidget::MapType mapType)
 /*!
     Returns the type of map data which is being displayed.
 */
-QGeoMapWidget::MapType QGeoMapData::mapType() const
+QGraphicsGeoMap::MapType QGeoMapData::mapType() const
 {
     return d_ptr->mapType;
+}
+
+/*!
+*/
+QList<QGeoMapObject*> QGeoMapData::mapObjects() const
+{
+    return d_ptr->containerObject->childObjects();
 }
 
 /*!
@@ -252,11 +249,10 @@ void QGeoMapData::removeMapObject(QGeoMapObject *mapObject)
 }
 
 /*!
-    Returns the list of map objects managed by this map.
 */
-QList<QGeoMapObject*> QGeoMapData::mapObjects()
+void QGeoMapData::clearMapObjects()
 {
-    return d_ptr->containerObject->childObjects();
+    d_ptr->containerObject->clearChildObjects();
 }
 
 /*!
@@ -268,10 +264,12 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
     QList<QGeoMapObject*> results;
 
     QGeoCoordinate coord = screenPositionToCoordinate(screenPosition);
-    QList<QGeoMapObject*> objects = d_ptr->containerObject->childObjects();
-    for (int i = 0; i < objects.size(); ++i)
-        if (objects.at(i)->contains(coord))
-            results.append(objects.at(i));
+    int childObjectCount = d_ptr->containerObject->childObjects().count();
+    for (int i = 0; i < childObjectCount; ++i) {
+        QGeoMapObject *object = d_ptr->containerObject->childObjects().at(i);
+        if (object->contains(coord))
+            results.append(object);
+    }
 
     return results;
 }
@@ -290,10 +288,12 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
 
     QGeoBoundingBox bounds(topLeft, bottomRight);
 
-    QList<QGeoMapObject*> objects = d_ptr->containerObject->childObjects();
-    for (int i = 0; i < objects.size(); ++i)
-        if (bounds.intersects(objects.at(i)->boundingBox()))
-            results.append(objects.at(i));
+    int childObjectCount = d_ptr->containerObject->childObjects().count();
+    for (int i = 0; i < childObjectCount; ++i) {
+        QGeoMapObject *object = d_ptr->containerObject->childObjects().at(i);
+        if (bounds.intersects(object->boundingBox()))
+            results.append(object);
+    }
 
     return results;
 }
@@ -367,10 +367,10 @@ void QGeoMapData::setupMapObject(QGeoMapObject *mapObject) {}
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
+QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
         : q_ptr(parent),
         engine(engine),
-        widget(widget),
+        geoMap(geoMap),
         zoomLevel(-1.0)
 {
     Q_Q(QGeoMapData);

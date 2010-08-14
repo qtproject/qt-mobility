@@ -8,7 +8,7 @@
 QTM_BEGIN_NAMESPACE
 
 QDeclarativeLandmarkCategorySource::QDeclarativeLandmarkCategorySource(QObject *parent) :
-    QAbstractListModel(parent), m_manager(0), m_fetchRequest(0), m_active(false)
+        QAbstractListModel(parent), m_manager(0), m_fetchRequest(0), m_active(false)
 {
     // Establish role names so that they can be queried from this model
     QHash<int, QByteArray> roleNames;
@@ -23,7 +23,7 @@ QDeclarativeLandmarkCategorySource::QDeclarativeLandmarkCategorySource(QObject *
 
 QDeclarativeLandmarkCategorySource::~QDeclarativeLandmarkCategorySource()
 {
-    delete m_manager; 
+    delete m_manager;
     delete m_fetchRequest;
 }
 
@@ -42,10 +42,10 @@ QVariant QDeclarativeLandmarkCategorySource::data(const QModelIndex &index, int 
     QLandmarkCategory category = m_categories.value(index.row());
 
     switch (role) {
-    case NameRole:
-        return category.name();
-    case IconUrlRole:
-        return category.iconUrl();
+        case NameRole:
+            return category.name();
+        case IconUrlRole:
+            return category.iconUrl();
     }
     return QVariant();
 }
@@ -107,7 +107,7 @@ void QDeclarativeLandmarkCategorySource::cancelUpdate()
 void QDeclarativeLandmarkCategorySource::convertCategoriesToDeclarative()
 {
     qDebug("convertCategoriesToDeclarative enter");
-    foreach (const QLandmarkCategory& category, m_categories) {
+    foreach(const QLandmarkCategory& category, m_categories) {
         if (!m_categoryMap.contains(category.categoryId().localId())) {
             qDebug() << "convertCategoriesToDeclarative entering new: " << category.name();
             QDeclarativeLandmarkCategory* declarativeLandmarkCategory = new QDeclarativeLandmarkCategory(this);

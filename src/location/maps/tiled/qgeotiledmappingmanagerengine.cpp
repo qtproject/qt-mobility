@@ -74,9 +74,9 @@ QGeoTiledMappingManagerEngine::~QGeoTiledMappingManagerEngine()
     // deleted in superclass destructor
 }
 
-QGeoMapData* QGeoTiledMappingManagerEngine::createMapData(QGeoMapWidget *widget)
+QGeoMapData* QGeoTiledMappingManagerEngine::createMapData(QGraphicsGeoMap *geoMap)
 {
-    return new QGeoTiledMapData(this, widget);
+    return new QGeoTiledMapData(this, geoMap);
 }
 
 void QGeoTiledMappingManagerEngine::removeMapData(QGeoMapData* mapData) {}

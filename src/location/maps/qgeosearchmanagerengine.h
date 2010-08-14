@@ -72,8 +72,8 @@ public:
 
     virtual QGeoSearchReply* search(const QString &searchString,
                                     QGeoSearchManager::SearchTypes searchTypes,
-                                    int resultsCount,
-                                    int resultsOffset,
+                                    int limit,
+                                    int offset,
                                     QGeoBoundingArea *bounds);
 
     bool supportsGeocoding() const;

@@ -9,7 +9,7 @@ include(../../../common.pri)
 include(s60_sensor_api.pri)
 include(version.pri)
 
-TARGET = $$qtLibraryTarget(qtsensors_s60sensorapi)
+TARGET = $$qtLibraryTarget(qtsensors_sym)
 TARGET.EPOCALLOWDLLDATA = 1
 TARGET.UID3 = 0x2002BFC1
 TARGET.CAPABILITY = ALL -TCB

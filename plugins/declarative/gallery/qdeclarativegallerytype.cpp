@@ -81,9 +81,6 @@ QDeclarativeGalleryType::QDeclarativeGalleryType(QObject *parent)
             this, SLOT(_q_resultSetChanged(QGalleryResultSet*)));
 
     m_metaData = new QDeclarativePropertyMap(this);
-
-    connect(m_metaData, SIGNAL(valueChanged(QString,QVariant)),
-            this, SLOT(_q_valueChanged(QString,QVariant)));
 }
 
 QDeclarativeGalleryType::~QDeclarativeGalleryType()
@@ -256,8 +253,8 @@ void QDeclarativeGalleryType::_q_resultSetChanged(QGalleryResultSet *resultSet)
             }
         }
 
-        connect(m_resultSet, SIGNAL(inserted(int,int)), this, SLOT(_q_itemsInserted(int,int)));
-        connect(m_resultSet, SIGNAL(removed(int,int)), this, SLOT(_q_itemsRemoved(int,int)));
+        connect(m_resultSet, SIGNAL(itemsInserted(int,int)), this, SLOT(_q_itemsInserted(int,int)));
+        connect(m_resultSet, SIGNAL(itemsRemoved(int,int)), this, SLOT(_q_itemsRemoved(int,int)));
         connect(m_resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)),
                 this, SLOT(_q_metaDataChanged(int,int,QList<int>)));
     }

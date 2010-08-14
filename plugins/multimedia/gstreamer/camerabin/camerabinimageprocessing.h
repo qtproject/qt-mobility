@@ -67,9 +67,6 @@ public:
     void setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode mode);
     bool isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode mode) const;
 
-    int manualWhiteBalance() const;
-    void setManualWhiteBalance(int colorTemperature);
-
     bool isProcessingParameterSupported(ProcessingParameter) const;
     QVariant processingParameter(ProcessingParameter parameter) const;
     void setProcessingParameter(ProcessingParameter parameter, QVariant value);

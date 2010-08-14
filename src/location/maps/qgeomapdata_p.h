@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qgeomapwidget.h"
+#include "qgraphicsgeomap.h"
 #include "qgeomapobject.h"
 
 #include "qgeocoordinate.h"
@@ -69,23 +69,24 @@ class QGeoMapOverlay;
 class QGeoMapDataPrivate
 {
 public:
-    QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
+    QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
     virtual ~QGeoMapDataPrivate();
 
     void setObjectInfo(QGeoMapObject *object, QGeoMapObjectInfo *info);
 
+    QGeoMapData *q_ptr;
+
     QGeoMappingManagerEngine *engine;
-    QGeoMapWidget *widget;
+    QGraphicsGeoMap *geoMap;
     QGeoMapObject* containerObject;
 
     qreal zoomLevel;
     QGeoCoordinate center;
     QSizeF viewportSize;
-    QGeoMapWidget::MapType mapType;
+    QGraphicsGeoMap::MapType mapType;
 
     QList<QGeoMapOverlay*> overlays;
 
-    QGeoMapData *q_ptr;
     Q_DECLARE_PUBLIC(QGeoMapData)
 private:
     Q_DISABLE_COPY(QGeoMapDataPrivate)

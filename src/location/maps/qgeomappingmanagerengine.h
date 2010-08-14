@@ -42,7 +42,7 @@
 #ifndef QGEOMAPPINGMANAGERENGINE_H
 #define QGEOMAPPINGMANAGERENGINE_H
 
-#include "qgeomapwidget.h"
+#include "qgraphicsgeomap.h"
 
 #include <QObject>
 #include <QSize>
@@ -71,12 +71,12 @@ public:
     QString managerName() const;
     int managerVersion() const;
 
-    virtual QGeoMapData* createMapData(QGeoMapWidget *widget) = 0;
+    virtual QGeoMapData* createMapData(QGraphicsGeoMap *geoMap) = 0;
     virtual void removeMapData(QGeoMapData *mapData);
 
     //virtual void updateMapImage(QGeoMapData *mapData) = 0;
 
-    QList<QGeoMapWidget::MapType> supportedMapTypes() const;
+    QList<QGraphicsGeoMap::MapType> supportedMapTypes() const;
 
     QSize minimumImageSize() const;
     QSize maximumImageSize() const;
@@ -90,7 +90,7 @@ public:
 protected:
     QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent = 0);
 
-    void setSupportedMapTypes(const QList<QGeoMapWidget::MapType> &mapTypes);
+    void setSupportedMapTypes(const QList<QGraphicsGeoMap::MapType> &mapTypes);
 
     void setMinimumZoomLevel(qreal minimumZoom);
     void setMaximumZoomLevel(qreal maximumZoom);

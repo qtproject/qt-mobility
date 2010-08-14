@@ -63,9 +63,13 @@ public:
     Q_PROPERTY(QPen pen READ pen WRITE setPen NOTIFY penChanged)
     Q_PROPERTY(QBrush brush READ brush WRITE setBrush NOTIFY brushChanged)
 
+    QGeoMapCircleObject(QGeoMapObject *parent = 0);
     QGeoMapCircleObject(const QGeoBoundingCircle &circle, QGeoMapObject *parent = 0);
     QGeoMapCircleObject(const QGeoCoordinate &center, qreal radius, QGeoMapObject *parent = 0);
     ~QGeoMapCircleObject();
+
+    QGeoBoundingCircle circle() const;
+    void setCircle(const QGeoBoundingCircle &circle);
 
     QGeoCoordinate center() const;
     void setCenter(const QGeoCoordinate &center);

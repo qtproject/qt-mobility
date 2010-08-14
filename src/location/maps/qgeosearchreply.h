@@ -79,7 +79,6 @@ public:
     int resultsCount() const;
     int resultsOffset() const;
 
-public slots:
     virtual void abort();
 
 signals:

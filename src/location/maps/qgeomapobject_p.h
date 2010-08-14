@@ -113,8 +113,10 @@ public:
     QGeoMapObject::Type type;
     QGeoMapObject *parent;
     QList<QGeoMapObject *> children;
+
     int zValue;
     bool isVisible;
+    bool isSelected;
 
     QGeoMapData *mapData;
     mutable QGeoMapObjectInfo *info;

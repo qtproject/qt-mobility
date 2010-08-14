@@ -73,9 +73,9 @@ public:
     ~QGeoTiledMapObjectInfo();
 
     static QPolygonF createPolygon(const QList<QGeoCoordinate> & path,
-                                    QGeoTiledMapData *tiledMapData,
-                                    bool closedPath,
-                                    qreal ypole = -100);
+                                   QGeoTiledMapData *tiledMapData,
+                                   bool closedPath,
+                                   qreal ypole = -100);
 
     void addToParent();
     void removeFromParent();
@@ -83,10 +83,11 @@ public:
     QGeoBoundingBox boundingBox() const;
     bool contains(const QGeoCoordinate &coord) const;
 
+    void updateItem();
+
     QRectF bounds;
 
-    QGraphicsItem *graphicsItem1;
-    QGraphicsItem *graphicsItem2;
+    QGraphicsItem *graphicsItem;
     QGeoTiledMapData *tiledMapData;
 private:
     QGeoTiledMapDataPrivate *tiledMapDataPrivate;
