@@ -56,7 +56,6 @@
 #include <qlandmarkattributefilter.h>
 #include <qlandmarksortorder.h>
 #include <qlandmarknamesort.h>
-#include <qlandmarkdistancesort.h>
 #include <qlandmarkidfilter.h>
 #include <qlandmarkabstractrequest.h>
 #include <qlandmarkidfetchrequest.h>
