@@ -87,11 +87,10 @@ public:
     bool exportData(QIODevice *device, const QString &nsPrefix = QString());
 
     QString errorString() const;
-    void setAsync(bool async);
-
-    void setBehavior(Behavior behavior);
-
     QLandmarkManager::Error error();
+
+    void setAsync(bool async);
+    void setBehavior(Behavior behavior);
 
 public slots:
     void cancel();
