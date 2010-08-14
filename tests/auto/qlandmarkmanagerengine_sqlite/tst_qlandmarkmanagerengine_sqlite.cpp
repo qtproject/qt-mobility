@@ -135,10 +135,13 @@ public:
     qRegisterMetaType<QLandmarkCategoryRemoveRequest *>();
     qRegisterMetaType<QLandmarkManager::Error>();
 
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE","landmarks");
-    db.setDatabaseName("test.db");
     exportFile = "exportfile";
     QFile::remove(exportFile);
+    QFile::remove("test.db");
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE","landmarks");
+    db.setDatabaseName("test.db");
+
     }
 
 private:
@@ -5191,23 +5194,121 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
     QLandmarkImportRequest importRequest(m_manager);
     QSignalSpy spy(&importRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
 
+    QLandmarkCategory cat1;
+    cat1.setName("CAT1");
+    QVERIFY(m_manager->saveCategory(&cat1));
+
+    QLandmarkCategory cat2;
+    cat2.setName("CAT2");
+    QVERIFY(m_manager->saveCategory(&cat2));
+
+    QLandmarkCategory cat3;
+    cat3.setName("CAT3");
+    QVERIFY(m_manager->saveCategory(&cat3));
+    QVERIFY(m_manager->removeCategory(cat3.categoryId()));
+
     QFETCH(QString, type);
     if (type == "sync")  {
+        QVERIFY(!m_manager->importLandmarks(NULL, QLandmarkManager::Gpx)); //no iodevice set
+        QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
+
+        QFile *noPermFile = new QFile("nopermfile");
+        noPermFile->open(QIODevice::WriteOnly);
+        noPermFile->setPermissions(QFile::WriteOwner);
+        noPermFile->close();
+
+        QVERIFY(!m_manager->importLandmarks(noPermFile, QLandmarkManager::Gpx));
+        QCOMPARE(m_manager->error(), QLandmarkManager::PermissionsError); // no permissions
+        noPermFile->remove();
+
+        QVERIFY(!m_manager->importLandmarks("doesnotexist", QLandmarkManager::Gpx));
+        QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError); // file does not exist.
+
         QVERIFY(m_manager->importLandmarks(":data/McDonalds-AUS-Queensland.gpx", QLandmarkManager::Gpx));
-    }
-    else if (type == "async") {
-    importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
-    importRequest.setFormat(QLandmarkManager::Gpx);
-    importRequest.start();
+        QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    } else if (type == "syncExcludeCategoryData") {
+            QVERIFY(m_manager->importLandmarks(":data/McDonalds-AUS-Queensland.gpx", QLandmarkManager::Gpx,
+                                                QLandmarkManager::ExcludeCategoryData));
+            QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    } else if (type == "syncAttachSingleCategory") {
+        QVERIFY(!m_manager->importLandmarks(":data/McDonalds-AUS-Queensland.gpx", QLandmarkManager::Gpx,
+                                           QLandmarkManager::AttachSingleCategory));
+        QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError); //No category id provided
 
-    QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError,2000));
+        QVERIFY(!m_manager->importLandmarks(":data/McDonalds-AUS-Queensland.gpx", QLandmarkManager::Gpx,
+                                           QLandmarkManager::AttachSingleCategory, cat3.categoryId()));
+        QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError); //Category id doesn't exist
 
+        QVERIFY(m_manager->importLandmarks(":data/McDonalds-AUS-Queensland.gpx", QLandmarkManager::Gpx,
+                                           QLandmarkManager::AttachSingleCategory, cat2.categoryId()));
+        QCOMPARE(m_manager->error(), QLandmarkManager::NoError); //valid id
+    } else if (type == "async") {
+        importRequest.setFormat(QLandmarkManager::Gpx);
+        importRequest.start();
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::BadArgumentError)); //no io device set
+
+        QFile *noPermFile = new QFile("nopermfile");
+        noPermFile->open(QIODevice::WriteOnly);
+        noPermFile->setPermissions(QFile::WriteOwner);
+        noPermFile->close();
+
+        importRequest.setFormat(QLandmarkManager::Gpx);
+        importRequest.setFileName("nopermfile");
+        importRequest.start();
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::PermissionsError)); //no permissions
+        noPermFile->remove();
+
+        importRequest.setFormat(QLandmarkManager::Gpx);
+        importRequest.setFileName("doesnotexist");
+        importRequest.start();
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::DoesNotExistError)); //does not exist
+
+        importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
+        importRequest.setFormat(QLandmarkManager::Gpx);
+        importRequest.start();
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError,2000));
+    } else if (type == "asyncExcludeCategoryData") {
+        importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
+        importRequest.setFormat(QLandmarkManager::Gpx);
+        importRequest.setTransferOption(QLandmarkManager::ExcludeCategoryData);
+        importRequest.start();
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError,2000));
+    } else if (type == "asyncAttachSingleCategory") {
+        importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
+        importRequest.setFormat(QLandmarkManager::Gpx);
+        importRequest.setTransferOption(QLandmarkManager::AttachSingleCategory);
+        importRequest.start();
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::BadArgumentError)); //no category id provided
+
+        importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
+        importRequest.setFormat(QLandmarkManager::Gpx);
+        importRequest.setTransferOption(QLandmarkManager::AttachSingleCategory);
+        importRequest.setCategoryId(cat3.categoryId()); //category id doesn't exist
+        importRequest.start();
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::DoesNotExistError));
+
+        importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
+        importRequest.setFormat(QLandmarkManager::Gpx);
+        importRequest.setTransferOption(QLandmarkManager::AttachSingleCategory);
+        importRequest.setCategoryId(cat2.categoryId()); //valid id
+        importRequest.start();
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError));
     } else {
         qFatal("Unknown row test type");
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     }
 
     QList<QLandmark> landmarks = m_manager->landmarks(QLandmarkFilter());
+    QCOMPARE(m_manager->categories().count(),2);
+
+    if ((type=="syncAttachSingleCategory") || (type== "asyncAttachSingleCategory")) {
+        foreach(const QLandmark &landmark,landmarks) {
+            QCOMPARE(landmark.categoryIds().count(),1);
+            QCOMPARE(landmark.categoryIds().at(0), cat2.categoryId());
+        }
+        landmarks.first().setCategoryIds(QList<QLandmarkCategoryId>());
+        landmarks.last().setCategoryIds(QList<QLandmarkCategoryId>());
+    }
 
     QLandmark lmFirst;
     lmFirst.setName("McDonald s Airlie Beac... (sample)");
@@ -5233,11 +5334,33 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
     if (type == "sync") {
         QVERIFY(m_manager->importLandmarks(":data/test.gpx", QLandmarkManager::Gpx));
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    } else if (type == "syncExcludeCategoryData"){
+        QVERIFY(m_manager->importLandmarks(":data/test.gpx", QLandmarkManager::Gpx,
+                                            QLandmarkManager::ExcludeCategoryData));
+        QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    } else if (type == "syncAttachSingleCategory") {
+        QVERIFY(m_manager->importLandmarks(":data/test.gpx", QLandmarkManager::Gpx,
+                                           QLandmarkManager::AttachSingleCategory, cat1.categoryId()));
     } else if (type == "async") {
         importRequest.setFileName(":data/test.gpx");
         importRequest.setFormat(QLandmarkManager::Gpx);
         importRequest.start();
         QVERIFY(waitForAsync(spy, &importRequest));
+    } else if (type == "asyncExcludeCategoryData") {
+        importRequest.setFileName(":data/test.gpx");
+        importRequest.setFormat(QLandmarkManager::Gpx);
+        importRequest.setTransferOption(QLandmarkManager::ExcludeCategoryData);
+        importRequest.start();
+        QVERIFY(waitForAsync(spy, &importRequest));
+    } else if (type == "asyncAttachSingleCategory") {
+        importRequest.setFileName(":data/test.gpx");
+        importRequest.setFormat(QLandmarkManager::Gpx);
+        importRequest.setTransferOption(QLandmarkManager::AttachSingleCategory);
+        importRequest.setCategoryId(cat1.categoryId());
+        importRequest.start();
+        QVERIFY(waitForAsync(spy, &importRequest));
+    } else {
+        qFatal("Unknown test row type");
     }
     QTest::qWait(10);
     QCOMPARE(spyRemove.count(), 0);
@@ -5258,6 +5381,13 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
     QVERIFY(lmNames.contains("test1"));
     QVERIFY(lmNames.contains("test2"));
     QVERIFY(lmNames.contains("test3"));
+
+    if ((type=="syncAttachSingleCategory") || (type == "asyncAttachSingleCategory")) {
+        foreach(const QLandmark &landmark,lms) {
+            QCOMPARE(landmark.categoryIds().count(),1);
+            QCOMPARE(landmark.categoryIds().at(0), cat1.categoryId());
+        }
+    }
 }
 
 void tst_QLandmarkManagerEngineSqlite::importGpx_data()
@@ -5265,7 +5395,11 @@ void tst_QLandmarkManagerEngineSqlite::importGpx_data()
     QTest::addColumn<QString>("type");
 
     QTest::newRow("sync") << "sync";
+    QTest::newRow("syncExcludeCategoryData") << "syncExcludeCategoryData";
+    QTest::newRow("syncAttachSingleCategory") << "syncAttachSingleCategory";
     QTest::newRow("async") << "async";
+    QTest::newRow("asyncExcludeCategoryData") << "asyncExcludeCategoryData";
+    QTest::newRow("asyncAttachSingleCategory") << "asyncAttachSingleCategory";
 }
 
 void tst_QLandmarkManagerEngineSqlite::importLmx() {
@@ -5465,6 +5599,13 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx() {
         QVERIFY(!m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx, lmIds));
         QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);//id does not exist
 
+        //try an id which refers to a landmark with doesn't have a valid coordinate for gpx
+        //this should fail since we expliclty provided the id
+        lmIds.clear();
+        lmIds << lm1.landmarkId() << lm2.landmarkId() << lm4.landmarkId();
+        QVERIFY(!m_manager->exportLandmarks(exportFile, QLandmarkManager::Gpx, lmIds));
+        QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);//id does not exist
+
         lmIds.clear();
         lmIds << lm2.landmarkId() << lm3.landmarkId();
         QVERIFY(m_manager->exportLandmarks(exportFile, QLandmarkManager::Gpx, lmIds));
@@ -5518,6 +5659,16 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx() {
         exportRequest.start();
         QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::DoesNotExistError)); //local id is empty
 
+        //try an id which refers to a landmark with doesn't have a valid coordinate for gpx
+        //this should fail since we expliclty provided the id
+        lmIds.clear();
+        lmIds << lm1.landmarkId() << lm2.landmarkId() << lm4.landmarkId();
+        exportRequest.setFileName(exportFile);
+        exportRequest.setFormat(QLandmarkManager::Gpx);
+        exportRequest.setLandmarkIds(lmIds);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::BadArgumentError));
+
         lmIds.clear();
         lmIds << lm2.landmarkId() << lm3.landmarkId();
         exportRequest.setFileName(exportFile);
@@ -5544,6 +5695,7 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx() {
     QVERIFY(QFile::exists(exportFile));
 
     QVERIFY(m_manager->importLandmarks(exportFile, QLandmarkManager::Gpx));
+
     QList<QLandmark> lms = m_manager->landmarks();
     QLandmarkNameFilter nameFilter;
 

@@ -387,6 +387,8 @@ bool importLandmarksLmx(const QString &connectionName,
 
 bool importLandmarksGpx(const QString &connectionName,
                         QIODevice *device,
+                        QLandmarkManager::TransferOption option,
+                        const QLandmarkCategoryId &categoryId,
                         QLandmarkManager::Error *error,
                         QString *errorString,
                         const QString &managerUri,
@@ -395,16 +397,30 @@ bool importLandmarksGpx(const QString &connectionName,
     Q_ASSERT(error);
     Q_ASSERT(errorString);
 
+    QLandmarkCategory category;
+    if (option == QLandmarkManager::AttachSingleCategory) {
+        category = DatabaseOperations::category(connectionName, categoryId, error, errorString, managerUri);
+        if ((*error) != QLandmarkManager::NoError) {
+            return false;
+        }
+    }
+
     QLandmarkFileHandlerGpx *gpxHandler = new QLandmarkFileHandlerGpx;
     if (queryRun) {
         queryRun->gpxHandler = gpxHandler;
         queryRun->gpxHandler->setAsync(true);
     }
 
-    QLandmarkFileHandlerGpx::State state = gpxHandler->importData(device);
     bool result = false;
-    if (state == QLandmarkFileHandlerGpx::DoneState) {
-            saveLandmarks(connectionName, &(gpxHandler->waypoints()), 0, error, errorString, managerUri);
+    if (gpxHandler->importData(device)) {
+            QList<QLandmark> landmarks = gpxHandler->waypoints();
+            if (option == QLandmarkManager::AttachSingleCategory) {
+
+                for (int i =0; i < landmarks.count(); ++i) {
+                    landmarks[i].addCategoryId(categoryId);
+                }
+            }
+            saveLandmarks(connectionName, &landmarks, 0, error, errorString, managerUri);
 
         if (*error != QLandmarkManager::NoError) {
             result = false;
@@ -413,17 +429,12 @@ bool importLandmarksGpx(const QString &connectionName,
                 *errorString = "";
             result = true;
         }
-    } else if (state == QLandmarkFileHandlerGpx::ErrorState){
-        if (errorString)
-            *errorString = gpxHandler->errorString();
-        if (error)
-            *error = QLandmarkManager::ParsingError;
-            result = false;
-    } else if (state == QLandmarkFileHandlerGpx::CanceledState) {
-        *error = QLandmarkManager::CancelError;
-        *errorString = "Import request was canceled";
+    } else {
+        *error = QLandmarkManager::ParsingError;
+        *errorString = gpxHandler->errorString();
         result = false;
     }
+
     if (!queryRun)
         delete gpxHandler;
    //the query run will delete it's own gpx handler
@@ -445,10 +456,12 @@ bool exportLandmarksGpx(const QString &connectionName,
     QLandmarkFilter filter;
 
     QList<QLandmark> lms;
-    if (landmarkIds.count() > 0)
+    if (landmarkIds.count() > 0) {
         lms = ::landmarks(connectionName, landmarkIds,0,error, errorString,managerUri,queryRun);
-    else
+        gpxHandler.setBehavior(QLandmarkFileHandlerGpx::ExportAll);
+    } else {
         lms = ::landmarks(connectionName,filter, sortOrders, -1, 0, error, errorString, managerUri);
+    }
 
     if (error && *error != QLandmarkManager::NoError)
         return false;
@@ -458,9 +471,8 @@ bool exportLandmarksGpx(const QString &connectionName,
     bool result = gpxHandler.exportData(device);
 
     if (!result) {
-        if (errorString)
-            *errorString = gpxHandler.errorString();
-        // TODO set error code
+        *error = gpxHandler.error();
+        *errorString = gpxHandler.errorString();
     } else {
         if (error)
             *error = QLandmarkManager::NoError;
@@ -1993,11 +2005,11 @@ QLandmarkCategory DatabaseOperations::category(const QString &connectionName, co
               QLandmarkManager::Error *error,
               QString *errorString, const QString &managerUri)
 {
-    if (landmarkCategoryId.managerUri() != managerUri) {
+    if (!landmarkCategoryId.isValid() || landmarkCategoryId.managerUri() != managerUri) {
         if (error)
             *error = QLandmarkManager::BadArgumentError;
         if (errorString)
-            *errorString = "Category id comes from different landmark manager.";
+            *errorString = "Category id is not valid for this manager";
         return QLandmarkCategory();
     }
 
@@ -2495,20 +2507,31 @@ bool DatabaseOperations::importLandmarks(const QString &connectionName,
             *errorString = QString("Import operation failed, file does not exist: %1").arg(file->fileName());
             return false;
         }
-    }
 
-    if (!device->open(QIODevice::ReadOnly)) {
-        *error = QLandmarkManager::PermissionsError;
+        if (!file->open(QIODevice::ReadOnly)) {
+            if (file->error() == QFile::OpenError) {
+                *error = QLandmarkManager::PermissionsError;
+                *errorString = QString("Insufficient permissions to open file");
+                return false;
+            } else {
+                *error = QLandmarkManager::UnknownError;
+                *errorString = QString("Unable to open file for importing landmarks");
+                return false;
+            }
+        }
+    } else if(!device->open(QIODevice::ReadOnly)) {
+        *error = QLandmarkManager::UnknownError;
         *errorString = "Unable to open io device for importing landmarks";
         return false;
     }
+
     bool result = false;
     if (format ==  QLandmarkManager::Lmx) {
             result = importLandmarksLmx(connectionName, device, option, categoryId, error, errorString, managerUri);
             device->close();
             return result;
     } else if (format == QLandmarkManager::Gpx) {
-           result = importLandmarksGpx(connectionName, device, error, errorString, managerUri, queryRun);
+           result = importLandmarksGpx(connectionName, device, option, categoryId, error, errorString, managerUri, queryRun);
            device->close();
            return result;
     }  else if (format =="") {
