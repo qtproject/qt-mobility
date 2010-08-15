@@ -38,46 +38,51 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEACCOUNT_H
-#define QMESSAGEACCOUNT_H
-#include <QString>
-#include <QList>
-#include <qmessageglobal.h>
-#include <qmessage.h>
 
-QTM_BEGIN_NAMESPACE
+#ifndef SMSMODEL_MAEMO6_P_H
+#define SMSMODEL_MAEMO6_P_H
 
-class QMessageAccountPrivate;
+#include <CommHistory/EventModel>
+#include <CommHistory/Event>
 
-class Q_MESSAGING_EXPORT QMessageAccount
+class SMSModelPrivate;
+
+/*!
+ * \class SMSModel
+ *
+ * Model for accessing SMS messages. Initialize with getEvents().
+ */
+class SMSModel: public CommHistory::EventModel
 {
-    friend class QMessageAccountPrivate;
+    Q_OBJECT
 
 public:
-    QMessageAccount();
-    QMessageAccount(const QMessageAccountId &id);
-    QMessageAccount(const QMessageAccount &other);
-    virtual ~QMessageAccount();
+    /*!
+     * Model constructor.
+     *
+     * \param parent Parent object.
+     */
+    SMSModel(QObject *parent = 0);
 
-    QMessageAccount& operator=(const QMessageAccount &other);
+    /*!
+     * Destructor.
+     */
+    ~SMSModel();
 
-    QMessageAccountId id() const;
-    QString name() const;
-    QMessage::TypeFlags messageTypes() const;
+    /*!
+     * Reset model and fetch draft events.
+     *
+     * \return true if successful, Sets lastError() on failure.
+     */
+    bool getEvents();
 
-    static QMessageAccountId defaultAccount(QMessage::Type type);
+signals:
+    void eventsAdded(const QList<CommHistory::Event> &events);
+    void eventsUpdated(const QList<CommHistory::Event> &events);
+    void eventDeleted(int id);
 
 private:
-    QMessageAccountPrivate *d_ptr;
-#ifdef Q_OS_SYMBIAN
-    friend class CMTMEngine;
-#ifdef FREESTYLEMAILUSED
-    friend class CFSEngine;
-#endif
-
-    friend class CMessagesFindOperation;
-#endif
+    Q_DECLARE_PRIVATE(SMSModel);
 };
 
-QTM_END_NAMESPACE
-#endif
+#endif // SMSMODEL_MAEMO6_P_H

@@ -38,59 +38,44 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEFOLDERIDPRIVATE_H
-#define QMESSAGEFOLDERIDPRIVATE_H
-#include "qmessagefolderid.h"
-#if defined(Q_OS_WIN)
-#include "winhelpers_p.h"
-#endif
 
-#define FOLDER_PREFIX_SMS   "SMS_"
+#ifndef TPSESSIONCHANNEL_H
+#define TPSESSIONCHANNEL_H
 
-#define FOLDER_ID_INBOX     "SMS_InboxFolder"
-#define FOLDER_ID_OUTBOX    "SMS_OutboxFolder"
-#define FOLDER_ID_DRAFTS    "SMS_DraftsFolder"
-#define FOLDER_ID_SENT      "SMS_SentFolder"
-#define FOLDER_ID_TRASH     "SMS_TrashFolder"
+#include <QObject>
+#include <TelepathyQt4/Types>
+#include <TelepathyQt4/Types>
+#include <TelepathyQt4/Message>
+#include <TelepathyQt4/PendingChannel>
+#include <TelepathyQt4/ChannelRequest>
+#include <TelepathyQt4/Channel>
+#include <TelepathyQt4/TextChannel>
+#include <TelepathyQt4/PendingReady>
+#include <TelepathyQt4/ContactManager>
+#include <TelepathyQt4/Connection>
 
-QTM_BEGIN_NAMESPACE
-
-class QMessageFolderIdPrivate
+class TpSessionChannel : public QObject
 {
-    Q_DECLARE_PUBLIC(QMessageFolderId)
-
+    Q_OBJECT
 public:
-    QMessageFolderIdPrivate(QMessageFolderId *folderId)
-        :q_ptr(folderId)
-    {
-    }
-
+    TpSessionChannel(Tp::TextChannelPtr);
+    TpSessionChannel(Tp::ConnectionPtr conn, const Tp::ContactPtr &contact);
+    Tp::PendingSendMessage *sendMessage(const QString &message);
+    QString peerId() const;
+signals:
+    void channelReady(TpSessionChannel *);
+    void channelDestroyed(TpSessionChannel *);
+    void messageReceived(const Tp::ReceivedMessage &, TpSessionChannel *);
+    void messageSent(const Tp::Message &, Tp::MessageSendingFlags, const QString &, TpSessionChannel *);
+public slots:
+    void onChannelCreated(Tp::PendingOperation *op);
+    void onChannelReady(Tp::PendingOperation *op);
+    void onChannelDestroyed(QObject *);
+    void onMessageReceived(const Tp::ReceivedMessage &);
+    void onMessageSent(const Tp::Message &, Tp::MessageSendingFlags, const QString &);
 public:
-    QMessageFolderId *q_ptr;
-#if defined(Q_OS_WIN)
-
-#ifdef _WIN32_WCE
-    MapiEntryId _storeRecordKey;
-    static QMessageFolderId from(const MapiRecordKey &folderKey, const MapiEntryId &storeKey, const MapiEntryId &entryId);
-    static MapiEntryId storeRecordKey(const QMessageFolderId &id);
-#else
-    MapiRecordKey _storeRecordKey;
-    static QMessageFolderId from(const MapiRecordKey &folderKey, const MapiRecordKey &storeKey, const MapiEntryId &entryId = MapiEntryId());
-    static MapiRecordKey storeRecordKey(const QMessageFolderId &id);
-#endif
-
-    bool _valid;
-    MapiEntryId _entryId;
-    MapiRecordKey _folderRecordKey;
-    static MapiRecordKey folderRecordKey(const QMessageFolderId &id);
-    static MapiEntryId entryId(const QMessageFolderId &id);
-
-#endif
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    QString _id;
-#endif    
+    Tp::ContactPtr peerContact;
+    Tp::TextChannelPtr channel;
 };
 
-QTM_END_NAMESPACE
-
-#endif
+#endif // TPSESSIONCHANNEL_H

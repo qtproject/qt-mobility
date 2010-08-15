@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,46 +38,13 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEACCOUNT_H
-#define QMESSAGEACCOUNT_H
-#include <QString>
-#include <QList>
-#include <qmessageglobal.h>
-#include <qmessage.h>
 
-QTM_BEGIN_NAMESPACE
+#ifndef _TELEPATHYHELPERS_MAEMO6_H_
+#define _TELEPATHYHELPERS_MAEMO6_H_
 
-class QMessageAccountPrivate;
+#include <QDebug>
 
-class Q_MESSAGING_EXPORT QMessageAccount
-{
-    friend class QMessageAccountPrivate;
+#define QDEBUG_FUNCTION_BEGIN qDebug() << __PRETTY_FUNCTION__ << "begin" << endl;
+#define QDEBUG_FUNCTION_END qDebug() << __PRETTY_FUNCTION__ << "end" << endl;
 
-public:
-    QMessageAccount();
-    QMessageAccount(const QMessageAccountId &id);
-    QMessageAccount(const QMessageAccount &other);
-    virtual ~QMessageAccount();
-
-    QMessageAccount& operator=(const QMessageAccount &other);
-
-    QMessageAccountId id() const;
-    QString name() const;
-    QMessage::TypeFlags messageTypes() const;
-
-    static QMessageAccountId defaultAccount(QMessage::Type type);
-
-private:
-    QMessageAccountPrivate *d_ptr;
-#ifdef Q_OS_SYMBIAN
-    friend class CMTMEngine;
-#ifdef FREESTYLEMAILUSED
-    friend class CFSEngine;
-#endif
-
-    friend class CMessagesFindOperation;
-#endif
-};
-
-QTM_END_NAMESPACE
-#endif
+#endif //_TELEPATHYHELPERS_MAEMO6_H_
