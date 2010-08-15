@@ -50,8 +50,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-#define DEBUG
-
 class Response
 {
 public:
