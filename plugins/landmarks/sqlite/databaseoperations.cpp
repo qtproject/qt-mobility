@@ -930,67 +930,214 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName
                 QSqlQuery query(db);
                 QMap<QString, QVariant> bindValues;
 
+                QString queryString;
+                QString key;
+                QStringList filterKeys = attributeFilter.attributeKeys();
+
                 if (attributeFilter.attributeType() ==  QLandmarkAttributeFilter::ManagerAttributes) {
-                    /*QStringList filterKeys = attributeFilter.attributeKeys();
                     foreach(const QString key, filterKeys) {
-                        if (supportedSearchableAttributes.contains(key)) {
+                        if (!supportedSearchableAttributes.contains(key)) {
                             *error = QLandmarkManager::NotSupportedError;
                             *errorString = QString("Attribute key not searchable: ").arg(key);
                             return QList<QLandmarkId>();
                         }
                     }
-                    QString queryString = "SELECT landmarkId FROM landmarks WHERE "
-                    */
-                } else { //must be custom attributes
-                    bindValues.insert("key", attributeKeys.at(0));
-                    if (!executeQuery(&query,"SELECT landmarkId FROM landmark_attribute WHERE landmark_attribute.key = :key",
+                    QString attributeValue;
+
+                    //try to see if we need to select all landmarks
+                    //ie OR operation with a single invalid QVariant parameter
+                    //AND operation with all invalid QVariant parameter
+                    bool selectAll =false;
+                    for ( int i = 0; i < filterKeys.count(); ++i) {
+                        key = filterKeys.at(i);
+                        attributeValue = attributeFilter.attribute(key).toString();
+                        if (!attributeFilter.attribute(key).isValid()) {
+                            if( attributeFilter.operationType() == QLandmarkAttributeFilter::OrOperation) {
+                                selectAll = true;
+                                break;
+                            } else {
+                                selectAll = true;
+                                continue;
+                            }
+                        } else {
+                            if (attributeFilter.operationType() == QLandmarkAttributeFilter::OrOperation)
+                                continue;
+                            else{
+                                selectAll = false;
+                                break;
+                           }
+                        }
+                    }
+
+                    if (selectAll) {
+                        queryString = QString("SELECT id FROM landmark");
+                    } else {
+                        queryString = QString("SELECT id FROM landmark WHERE ");
+                        for ( int i = 0; i < filterKeys.count(); ++i) {
+                            key = filterKeys.at(i);
+                            attributeValue = attributeFilter.attribute(key).toString();
+
+                            //if we're doing an or operation with an invalid attribute value we need to return all landmarks
+                            //since all landmarks will have that attribute key
+
+                            if (!attributeFilter.attribute(key).isValid()) {
+                                if( attributeFilter.operationType() == QLandmarkAttributeFilter::OrOperation) {
+                                    queryString = "SELECT id FROM landmark";
+                                    break;
+                                } else {
+                                    continue;
+                                }
+                            }
+
+
+                            if (attributeFilter.matchFlags(key) == QLandmarkFilter::MatchExactly) {
+                                queryString.append(key + " = :" + key + " ");
+                                bindValues.insert(key, attributeValue);
+                            } else {
+                                queryString.append(key + " LIKE :" + key + " ");
+
+                                if ((attributeFilter.matchFlags(key) & 3) == QLandmarkFilter::MatchEndsWith)
+                                    bindValues.insert(key, QString("%") + attributeValue);
+                                else if ((attributeFilter.matchFlags(key) & 3) == QLandmarkFilter::MatchStartsWith)
+                                    bindValues.insert(key, attributeValue + "%");
+                                else if ((attributeFilter.matchFlags(key) & 3) == QLandmarkFilter::MatchContains)
+                                    bindValues.insert(key, QString("%") + attributeValue + "%");
+                                else if (attributeFilter.matchFlags(key) == QLandmarkFilter::MatchFixedString)
+                                    bindValues.insert(key, attributeValue);
+                            }
+
+                            if (i < (filterKeys.count() -1)) {
+                                if (attributeFilter.operationType() == QLandmarkAttributeFilter::AndOperation)
+                                    queryString.append(" AND ");
+                                else
+                                    queryString.append(" OR ");
+                            }
+                        }
+                    }
+                    queryString.append(";");
+
+                    if (!executeQuery(&query, queryString,
                                       bindValues,error,errorString)) {
                         return QList<QLandmarkId>();
                     }
 
-                    QStringList lmLocalIds;
+                    QLandmarkId landmarkId;
                     while(query.next()) {
-                        lmLocalIds << query.value(0).toString();
+                        landmarkId.setLocalId(query.value(0).toString());
+                        landmarkId.setManagerUri(managerUri);
+                        result << landmarkId;
+                        idsFound = true;
                     }
 
-                    QLandmarkId id;
-                    id.setManagerUri(managerUri);
-                    for (int i=0; i < lmLocalIds.count(); ++i) {
-                        bindValues.clear();
-                        bindValues.insert("lmId", lmLocalIds.at(i));
-                        if (!executeQuery(&query, "SELECT key, value FROM landmark_attribute WHERE landmarkId=:lmId",
-                                          bindValues, error, errorString)) {
+                } else { //must be custom attributes
+                    if (attributeFilter.attributeType() == QLandmarkAttributeFilter::AndOperation) {
+                        bindValues.insert("key", attributeKeys.at(0));
+                        queryString = "SELECT landmarkId FROM landmark_attribute WHERE landmark_attribute.key = :key";
+                        if (!executeQuery(&query, queryString,
+                                          bindValues,error,errorString)) {
                             return QList<QLandmarkId>();
                         }
 
-                        QMap<QString,QVariant> lmAttributes;
+                        QStringList lmLocalIds;
                         while(query.next()) {
-                            lmAttributes.insert(query.value(0).toString(), query.value(1));
+                            lmLocalIds << query.value(0).toString();
                         }
 
-                        bool isMatch = true;
-                        foreach(const QString &filterAttributeKey, attributeKeys) {
-                            if (!lmAttributes.contains(filterAttributeKey)) {
-                                isMatch = false;
-                                break;
+                        QLandmarkId id;
+                        id.setManagerUri(managerUri);
+                        queryString = "SELECT key, value FROM landmark_attribute WHERE landmarkId=:lmId";
+                        for (int i=0; i < lmLocalIds.count(); ++i) {
+                            bindValues.clear();
+                            bindValues.insert("lmId", lmLocalIds.at(i));
+                            if (!executeQuery(&query, queryString,
+                                              bindValues, error, errorString)) {
+                                return QList<QLandmarkId>();
                             }
 
-                            if (!attributeFilter.attribute(filterAttributeKey).isValid()) {
-                                continue;
-                            } else if (attributeFilter.attribute(filterAttributeKey) != lmAttributes.value(filterAttributeKey)) {
-                                isMatch = false;
-                                break;
+                            QMap<QString,QVariant> lmAttributes;
+                            while(query.next()) {
+                                lmAttributes.insert(query.value(0).toString(), query.value(1));
+                            }
+
+                            bool isMatch = true;
+                            foreach(const QString &filterAttributeKey, attributeKeys) {
+                                if (!lmAttributes.contains(filterAttributeKey)) {
+                                    isMatch = false;
+                                    break;
+                                }
+
+                                if (!attributeFilter.attribute(filterAttributeKey).isValid()) {
+                                    continue;
+                                } else if (attributeFilter.attribute(filterAttributeKey) != lmAttributes.value(filterAttributeKey)) {
+                                    isMatch = false;
+                                    break;
+                                }
+                            }
+
+                            if (isMatch) {
+                                id.setLocalId(lmLocalIds.at(i));
+                                result << id;
                             }
                         }
 
-                        if (isMatch) {
-                            id.setLocalId(lmLocalIds.at(i));
-                            result << id;
+                    } else {
+                        queryString = "SELECT landmarkId FROM landmark_attribute WHERE ";
+
+                        QVariant attributeValue;
+                        for (int i=0; i < filterKeys.count(); ++i) {
+                            key = filterKeys.at(i);
+                            attributeValue = attributeFilter.attribute(key);
+
+                            queryString.append(QString("(key = :key_") + key + " ");
+                            bindValues.insert(QString("key_")+key, key);
+                            if (attributeValue.isValid()) {
+                                queryString.append("AND ");
+                                if (attributeValue.type() == QVariant::String) {
+                                    if (attributeFilter.matchFlags(key) == QLandmarkFilter::MatchExactly) {
+                                        queryString.append("value  = :" + key + " ");
+                                        bindValues.insert(key, attributeValue);
+                                    } else {
+                                        queryString.append("value LIKE :" + key + " ");
+
+                                        if ((attributeFilter.matchFlags(key) & 3) == QLandmarkFilter::MatchEndsWith)
+                                            bindValues.insert(key, QString("%") + attributeValue.toString());
+                                        else if ((attributeFilter.matchFlags(key) & 3) == QLandmarkFilter::MatchStartsWith)
+                                            bindValues.insert(key, attributeValue.toString() + "%");
+                                        else if ((attributeFilter.matchFlags(key) & 3) == QLandmarkFilter::MatchContains)
+                                            bindValues.insert(key, QString("%") + attributeValue.toString() + "%");
+                                        else if (attributeFilter.matchFlags(key) == QLandmarkFilter::MatchFixedString)
+                                            bindValues.insert(key, attributeValue.toString());
+                                    }
+                                } else {
+                                    queryString.append("value  = :" + key + " ");
+                                    bindValues.insert(key, attributeValue);
+                                }
+                            }
+                            queryString.append(")");
+
+                            if (i < (filterKeys.count() -1)) {
+                                queryString.append(" OR ");
+                            }
+                        }
+                        queryString.append(";");
+
+                        if (!executeQuery(&query, queryString,
+                                          bindValues,error,errorString)) {
+                            return QList<QLandmarkId>();
+                        }
+
+                        QLandmarkId landmarkId;
+                        while(query.next()) {
+                            landmarkId.setLocalId(query.value(0).toString());
+                            landmarkId.setManagerUri(managerUri);
+                            if (!result.contains(landmarkId))
+                                result << landmarkId;
                         }
                     }
                 }
             }
         idsFound = true;
+        break;
     }
     case QLandmarkFilter::NameFilter: {
             QLandmarkNameFilter nameFilter;
@@ -1212,6 +1359,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName
                 queryString.append("ASC ");
             else
                 queryString.append("DESC ");
+             alreadySorted = true;
         }
 
         queryString.append(";");

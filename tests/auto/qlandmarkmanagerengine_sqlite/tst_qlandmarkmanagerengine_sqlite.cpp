@@ -431,7 +431,7 @@ private slots:
     void filterLandmarksUnionAsync();
 
     void filterAttribute();
-    void filterAttributeAsync();
+    //void filterAttributeAsync();
 
     void sortLandmarksNull();
 
@@ -4808,37 +4808,198 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksUnionAsync() {
 
 void tst_QLandmarkManagerEngineSqlite::filterAttribute() {
     QLandmark lm1;
-    lm1.setName("LM1");
+    lm1.setName("Adelaide");
+    lm1.setDescription("The description of adelaide");
     lm1.setCustomAttribute("one",1);
     lm1.setCustomAttribute("two", 2);
     lm1.setCustomAttribute("three",3);
+    lm1.setCustomAttribute("alphabet", "alpha");
+    lm1.setCustomAttribute("number", "san");
     QVERIFY(m_manager->saveLandmark(&lm1));
 
     QLandmark lm2;
-    lm2.setName("LM2");
+    lm2.setName("Adel");
+    lm2.setDescription("The description of adel");
     lm2.setCustomAttribute("two", 22);
+    lm2.setCustomAttribute("alphabet", "alpha");
+    lm2.setCustomAttribute("number", "roku");
     QVERIFY(m_manager->saveLandmark(&lm2));
 
     QLandmark lm3;
-    lm3.setName("LM3");
+    lm3.setName("Brisbane");
+    lm3.setDescription("The chronicles of brisbane");
     lm3.setCustomAttribute("three", 3);
     lm3.setCustomAttribute("four", 4);
     QVERIFY(m_manager->saveLandmark(&lm3));
 
     QLandmark lm4;
-    lm4.setName("LM4");
+    lm4.setName("Perth");
+    lm4.setDescription("The summary of perth");
     lm4.setCustomAttribute("three", 3);
     lm4.setCustomAttribute("four", 44);
     QVERIFY(m_manager->saveLandmark(&lm4));
 
     QLandmark lm5;
-    lm5.setName("LM5");
+    lm5.setName("Canberra");
+    lm5.setDescription("The chronicles of canberra");
     lm5.setCustomAttribute("three", 33);
     lm5.setCustomAttribute("four", 4);
     lm5.setCustomAttribute("five", 5);
     QVERIFY(m_manager->saveLandmark(&lm5));
 
+    QLandmark lm6;
+    lm6.setName("Tinberra");
+    lm6.setDescription("The chronicles of tinberra");
+    lm6.setCustomAttribute("three", 33);
+    lm6.setCustomAttribute("four", 4);
+    lm6.setCustomAttribute("five", 5);
+    QVERIFY(m_manager->saveLandmark(&lm6));
+
+    QLandmark lm7;
+    lm7.setName("Madelaide");
+    lm7.setDescription("The summary of madelaide");
+    lm7.setCustomAttribute("three", 33);
+    lm7.setCustomAttribute("five", 5);
+    QVERIFY(m_manager->saveLandmark(&lm7));
+
+    QLandmark lm8;
+    lm8.setName("Terran");
+    lm8.setDescription("Summary of terran");
+    lm8.setCustomAttribute("three", 33);
+    lm8.setCustomAttribute("five", 5);
+    QVERIFY(m_manager->saveLandmark(&lm8));
+
+    QLandmark lm9;
+    lm9.setName("ADEL");
+    lm9.setDescription("The summary of ADEL");
+    lm9.setCustomAttribute("three", 33);
+    lm9.setCustomAttribute("five", 5);
+    QVERIFY(m_manager->saveLandmark(&lm9));
+
+    //test starts with
     QLandmarkAttributeFilter attributeFilter;
+    attributeFilter.setAttribute("name", "adel",QLandmarkFilter::MatchStartsWith);
+    QList<QLandmark> lms = m_manager->landmarks(attributeFilter);
+    QCOMPARE(lms.count(), 3);
+
+    QCOMPARE(lms.at(0), lm1);
+    QCOMPARE(lms.at(1), lm2);
+    QCOMPARE(lms.at(2), lm9);
+
+    //test contains
+    attributeFilter.setAttribute("name", "err", QLandmarkFilter::MatchContains);
+    lms = m_manager->landmarks(attributeFilter);
+    QCOMPARE(lms.count(),3);
+    QCOMPARE(lms.at(0), lm5);
+    QCOMPARE(lms.at(1), lm6);
+    QCOMPARE(lms.at(2), lm8);
+
+     //test ends with
+    attributeFilter.setAttribute("name", "ra", QLandmarkFilter::MatchEndsWith);
+    lms = m_manager->landmarks(attributeFilter);
+    QCOMPARE(lms.count(),2);
+    QCOMPARE(lms.at(0), lm5);
+    QCOMPARE(lms.at(1), lm6);
+
+    //test fixed string
+    attributeFilter.setAttribute("name", "adel", QLandmarkFilter::MatchFixedString);
+    lms = m_manager->landmarks(attributeFilter);
+    QCOMPARE(lms.count(), 2);
+    QCOMPARE(lms.at(0), lm2);
+    QCOMPARE(lms.at(1), lm9);
+
+    //test match exactly
+    attributeFilter.setAttribute("name", "Adel", QLandmarkFilter::MatchExactly);
+    lms = m_manager->landmarks(attributeFilter);
+    QCOMPARE(lms.count(), 1);
+    QCOMPARE(lms.at(0), lm2);
+
+    //try ANDing multiple criteria
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::AndOperation);
+    attributeFilter.setAttribute("name", "adel", QLandmarkFilter::MatchStartsWith);
+    attributeFilter.setAttribute("description", "descript", QLandmarkFilter::MatchContains);
+    lms = m_manager->landmarks(attributeFilter);
+
+    QCOMPARE(lms.count(),2);
+    QCOMPARE(lms.at(0), lm1);
+    QCOMPARE(lms.at(1), lm2);
+
+    //try ORing multiple criteria
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::OrOperation);
+    attributeFilter.setAttribute("name", "adel", QLandmarkFilter::MatchFixedString);
+    attributeFilter.setAttribute("description", "the summary", QLandmarkFilter::MatchStartsWith);
+    lms = m_manager->landmarks(attributeFilter);
+    QCOMPARE(lms.count(), 4);
+    QCOMPARE(lms.at(0), lm2);
+    QCOMPARE(lms.at(1), lm4);
+    QCOMPARE(lms.at(2), lm7);
+    QCOMPARE(lms.at(3), lm9);
+
+    //try an single empty qvariant for and and or
+    //should return all landmarks since all landmark will the values
+    attributeFilter.clearAttributes();
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::AndOperation);
+    attributeFilter.setAttribute("street");
+    lms = m_manager->landmarks(attributeFilter);
+    QCOMPARE(lms.count(), 9);
+
+    attributeFilter.clearAttributes();
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::OrOperation);
+    attributeFilter.setAttribute("street");
+    lms = m_manager->landmarks(attributeFilter);
+    QCOMPARE(lms.count(), 9);
+
+    //try  with an empty qvariant, AND operation with multiple attributes
+    attributeFilter.clearAttributes();
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::AndOperation);
+    attributeFilter.setAttribute("street");
+    attributeFilter.setAttribute("name", "Adelaide");
+    lms = m_manager->landmarks(attributeFilter);
+    QCOMPARE(lms.count(),1);
+
+    //try to return with an empty qvariant, OR operation with multiple attribute
+    attributeFilter.clearAttributes();
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::OrOperation);
+    attributeFilter.setAttribute("street");
+    attributeFilter.setAttribute("name", "Adelaide");
+    lms = m_manager->landmarks(attributeFilter);
+    QCOMPARE(lms.count(),9);
+
+    //try all empty qvariatns AND operation with multiple attributes
+    attributeFilter.clearAttributes();
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::AndOperation);
+    attributeFilter.setAttribute("street");
+    attributeFilter.setAttribute("description");
+    attributeFilter.setAttribute("country");
+    lms = m_manager->landmarks(attributeFilter);
+    QCOMPARE(lms.count(), 9);
+
+
+    //========== test custom attributes =====
+    //try and OR operation
+    attributeFilter.clearAttributes();
+    attributeFilter.setAttributeType(QLandmarkAttributeFilter::CustomAttributes);
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::OrOperation);
+    attributeFilter.setAttribute("alphabet");
+    attributeFilter.setAttribute("number", "rok", QLandmarkFilter::MatchStartsWith);
+    lms = m_manager->landmarks(attributeFilter);
+    QCOMPARE(lms.count(),2);
+
+    QCOMPARE(lms.at(0), lm1);
+    QCOMPARE(lms.at(1), lm2);
+
+    /*//try an AND operation
+    attributeFilter.clearAttributes();
+    attributeFilter.setAttributeType(QLandmarkAttributeFilter::CustomAttributes);
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::AndOperation);
+    attributeFilter.setAttribute("alphabet","alpha");
+    attributeFilter.setAttribute("number", "rok", QLandmarkFilter::MatchStartsWith);
+    lms = m_manager->landmarks(attributeFilter);
+    QCOMPARE(lms.count(), 1);
+    QCOMPARE(lms.at(0), lm2);*/
+
+    //========= test custom attributes ================
+    /*QLandmarkAttributeFilter attributeFilter;
     attributeFilter.setAttributeType(QLandmarkAttributeFilter::CustomAttributes);
     //try matching any landmark that has an attribute key
     attributeFilter.setAttribute("two");
@@ -4893,13 +5054,35 @@ void tst_QLandmarkManagerEngineSqlite::filterAttribute() {
     //try a filter with no attributes
     attributeFilter.clearAttributes();
     lms = m_manager->landmarks(attributeFilter);
+    attributeFilter.setAttribute("name", "LM", QLandmarkFilter::MatchStartsWith);
+    attributeFilter.setAttribute("description", "test", QLandmarkFilter::MatchStartsWith);
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     lmIds = m_manager->landmarkIds(attributeFilter);
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     QVERIFY(checkIds(lms, lmIds));
     QCOMPARE(lms.count(),0);
-}
 
+    //clear all landmarks to try new search with manager attributes
+
+    //try manager attributes;
+    //test an AND match
+    attributeFilter.clearAttributes();
+    attributeFilter.setAttribute("name", "LM", QLandmarkFilter::MatchStartsWith);
+    attributeFilter.setAttribute("description", "test", QLandmarkFilter::MatchStartsWith);
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::AndOperation);
+    attributeFilter.setAttributeType(QLandmarkAttributeFilter::ManagerAttributes);
+    lms = m_manager->landmarks(attributeFilter);
+
+    //test an AND fail
+
+
+
+
+
+    QCOMPARE(lms.count(), 1);
+    */
+}
+/*
 void tst_QLandmarkManagerEngineSqlite::filterAttributeAsync() {
     QLandmark lm1;
     lm1.setName("LM1");
@@ -5004,7 +5187,7 @@ void tst_QLandmarkManagerEngineSqlite::filterAttributeAsync() {
     QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
     QVERIFY(checkIdFetchRequest(lms, fetchRequest.filter()));
     QCOMPARE(lms.count(),0);
-}
+}*/
 
 void tst_QLandmarkManagerEngineSqlite::sortLandmarksNull() {
     QLandmark lm1;
