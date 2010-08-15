@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -97,7 +97,7 @@ QMessage::StandardFolder QMessagePrivate::standardFolder(QMessageFolderId folder
         }
     }
 
-    return QMessage::DraftsFolder;
+    return QMessage::InboxFolder;
 }
 
 QMessage QMessagePrivate::convert(const QMailMessage &message)
@@ -294,6 +294,8 @@ QMessageFolderId QMessage::parentFolderId() const
 
 QMessage::StandardFolder QMessage::standardFolder() const
 {
+    if (!d_ptr->_message.parentFolderId().isValid())
+        return QMessage::DraftsFolder;
     return QMessagePrivate::standardFolder(convert(d_ptr->_message.parentFolderId()));
 }
 

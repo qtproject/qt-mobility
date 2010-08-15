@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,6 +44,7 @@
 #include <QDataStream>
 #include <MAPIUtil.h>
 #include <QDebug>
+#include <messagingutil_p.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -108,7 +109,7 @@ QMessageFolderId::QMessageFolderId(const QMessageFolderId& other)
 QMessageFolderId::QMessageFolderId(const QString& id)
     : d_ptr(new QMessageFolderIdPrivate(this))
 {
-    QDataStream idStream(QByteArray::fromBase64(id.toLatin1()));
+	QDataStream idStream(QByteArray::fromBase64(MessagingUtil::stripIdPrefix(id).toLatin1()));
     d_ptr->_valid = true;
 #ifdef _WIN32_WCE
     idStream >> d_ptr->_entryId;
@@ -185,7 +186,7 @@ bool QMessageFolderId::operator<(const QMessageFolderId& other) const
 QString QMessageFolderId::toString() const
 {
     if (!isValid())
-        return QString();
+        return MessagingUtil::addIdPrefix(QString());
     QByteArray encodedId;
     QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
 #ifdef _WIN32_WCE
@@ -201,7 +202,7 @@ QString QMessageFolderId::toString() const
     if (d_ptr->_entryId.count())
         encodedIdStream << d_ptr->_entryId;
 #endif
-    return encodedId.toBase64();
+	return MessagingUtil::addIdPrefix(encodedId.toBase64());
 }
 
 bool QMessageFolderId::isValid() const

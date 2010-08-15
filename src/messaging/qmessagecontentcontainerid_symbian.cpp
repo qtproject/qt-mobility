@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,20 +39,15 @@
 **
 ****************************************************************************/
 #include "qmessagecontentcontainerid.h"
+#include <messagingutil_p.h>
+
 
 QTM_BEGIN_NAMESPACE
 
 class QMessageContentContainerIdPrivate
 {
 public:
-    enum {
-		Invalid = -1, 
-		Body = 0 
-	};
-
-    int _number;
-
-    QMessageContentContainerIdPrivate() : _number(Invalid) {}
+    QString _id;
 };
 
 QMessageContentContainerId::QMessageContentContainerId()
@@ -69,9 +64,8 @@ QMessageContentContainerId::QMessageContentContainerId(const QMessageContentCont
 QMessageContentContainerId::QMessageContentContainerId(const QString& id)
 : d_ptr(new QMessageContentContainerIdPrivate)
 {
-	if (!id.isEmpty()) {
-		d_ptr->_number = id.toUInt();
-	}
+    if(!SymbianHelpers::stripIdPrefix(id).isEmpty())
+        d_ptr->_id = id;
 }
 
 QMessageContentContainerId::~QMessageContentContainerId()
@@ -81,26 +75,29 @@ QMessageContentContainerId::~QMessageContentContainerId()
 
 bool QMessageContentContainerId::operator==(const QMessageContentContainerId& other) const
 {
-	return (d_ptr->_number == other.d_ptr->_number);
+	return (d_ptr->_id == other.d_ptr->_id);
 }
 
 QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessageContentContainerId& other)
 {
 	if (&other != this) {
-		d_ptr->_number = other.d_ptr->_number;
+		d_ptr->_id = other.d_ptr->_id;
 	}
-	
-	return *this;
+
+    return *this;
 }
 
 QString QMessageContentContainerId::toString() const
 {
-	return QString::number(d_ptr->_number);
+    if(!isValid())
+        return QString();
+
+	return d_ptr->_id;
 }
 
 bool QMessageContentContainerId::isValid() const
 {
-	return (d_ptr->_number != QMessageContentContainerIdPrivate::Invalid);
+	return !d_ptr->_id.isEmpty();
 }
 
 QTM_END_NAMESPACE

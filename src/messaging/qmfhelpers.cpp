@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,6 +43,10 @@
 #include "qmessagemanager.h"
 
 #include <QRegExp>
+#ifdef QT_SIMULATOR
+#include <private/qsimulatordata_p.h>
+#include <QtCore/QCoreApplication>
+#endif
 
 
 QTM_BEGIN_NAMESPACE
@@ -59,34 +63,58 @@ quint64 messageStatusMask(const QString &field)
 
 namespace QmfHelpers {
 
+QMailStore *mailStoreInstance()
+{
+#ifdef QT_SIMULATOR
+    if (QMailStore::initializationState() == QMailStore::Uninitialized) {
+        QtSimulatorPrivate::qt_setQmfPaths();
+#ifdef QTM_PLUGIN_PATH
+        QCoreApplication::addLibraryPath(QTM_PLUGIN_PATH +
+                                         QLatin1String("/plugins"));
+#endif
+    }
+#endif
+    return QMailStore::instance();
+}
+
+QString stripIdentifierPrefix(const QString &s)
+{
+    return s.mid(4);
+}
+    
+QString prefixIdentifier(const QString &s)
+{
+    return "QMF_" + s;
+}
+    
 QMessageId convert(const QMailMessageId &id)
 {
-    return QMessageId(QString::number(id.toULongLong()));
+    return QMessageId(prefixIdentifier(QString::number(id.toULongLong())));
 }
 
 QMailMessageId convert(const QMessageId &id)
 {
-    return QMailMessageId(id.toString().toULongLong());
+    return QMailMessageId(stripIdentifierPrefix(id.toString()).toULongLong());
 }
 
 QMessageAccountId convert(const QMailAccountId &id)
 {
-    return QMessageAccountId(QString::number(id.toULongLong()));
+    return QMessageAccountId(prefixIdentifier(QString::number(id.toULongLong())));
 }
 
 QMailAccountId convert(const QMessageAccountId &id)
 {
-    return QMailAccountId(id.toString().toULongLong());
+    return QMailAccountId(stripIdentifierPrefix(id.toString()).toULongLong());
 }
 
 QMessageFolderId convert(const QMailFolderId &id)
 {
-    return QMessageFolderId(QString::number(id.toULongLong()));
+    return QMessageFolderId(prefixIdentifier(QString::number(id.toULongLong())));
 }
 
 QMailFolderId convert(const QMessageFolderId &id)
 {
-    return QMailFolderId(id.toString().toULongLong());
+    return QMailFolderId(stripIdentifierPrefix(id.toString()).toULongLong());
 }
 
 /* in qmessagecontentcontainerid_qmf.cpp
@@ -335,7 +363,7 @@ QMessage::StatusFlags convert(quint64 v)
 quint64 convert(QMessage::Status v)
 {
     // We cannot rely on the QMailMessage status masks until the store has been initialized
-    static QMailStore *store = QMailStore::instance();
+    static QMailStore *store = mailStoreInstance();
     Q_UNUSED(store);
 
     quint64 result(0);

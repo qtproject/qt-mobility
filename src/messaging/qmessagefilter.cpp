@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,9 +46,11 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QMessageFilter
 
-    \preliminary
     \brief The QMessageFilter class defines the parameters used for querying a subset of
     all available messages from the messaging store.
+    
+    \inmodule QtMessaging
+    
     \ingroup messaging
 
     A QMessageFilter is composed of a message property, an optional comparison operator
@@ -321,7 +323,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     \fn QMessageFilter::byPriority(QMessage::Priority value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a filter matching messages whose priority matches \a value, according to \a cmp.
-
+    
     \sa QMessage::priority()
 */
 
