@@ -235,6 +235,7 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& /*ident*
         Q_UNUSED(endpoint);
         return true;
     }
+
     return false;
 }
 

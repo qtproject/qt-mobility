@@ -43,13 +43,14 @@
 #include "instancemanager_p.h"
 #include "qmetaobjectbuilder_p.h"
 #include "proxyobject_p.h"
-#include "qservicemetaobject_dbus_p.h"
 #include "qsignalintercepter_p.h"
 #include <QTimer>
 #include <QEventLoop>
 #include <QVarLengthArray>
 
 QTM_BEGIN_NAMESPACE
+
+#define DEBUG
 
 class Response
 {
@@ -63,6 +64,32 @@ public:
 
 typedef QHash<QUuid, Response*> Replies;
 Q_GLOBAL_STATIC(Replies, openRequests);
+
+class ServiceSignalIntercepter : public QSignalIntercepter
+{
+    //Do not put Q_OBJECT here
+public:
+    ServiceSignalIntercepter(QObject* sender, const QByteArray& signal,
+            ObjectEndPoint* parent)
+        : QSignalIntercepter(sender, signal, parent), endPoint(parent)
+    {
+        
+    }
+
+    void setMetaIndex(int index)
+    {
+        metaIndex = index;
+    }
+
+protected:
+    void activated( const QList<QVariant>& args )
+    {
+        endPoint->invokeRemote(metaIndex, args, QMetaType::Void);
+    }
+private:
+    ObjectEndPoint* endPoint;
+    int metaIndex;
+};
 
 class ObjectEndPointPrivate
 {
@@ -172,35 +199,36 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceIdentifier& ident)
         if (mm.methodType() == QMetaMethod::Signal) {
             QByteArray sig(mm.signature());
 
-            /*
-               bool customType = false;
-               QList<QByteArray> params = mm.parameterTypes();
-               for (int i=0; i < params.size(); i++) {
-               const QByteArray& type = params[i];
-               int variantType = QVariant::nameToType(type);
-               if (variantType == QVariant::UserType) {
-               sig.replace(QByteArray(type), QByteArray("QDBusVariant")); 
-            //customType = true;
+            bool customType = false;
+
+            QList<QByteArray> params = mm.parameterTypes();
+            for (int arg = 0; arg < params.size(); arg++) {
+                const QByteArray& type = params[arg];
+                int variantType = QVariant::nameToType(type);
+                if (variantType == QVariant::UserType) {
+                    sig.replace(QByteArray(type), QByteArray("QDBusVariant")); 
+                    customType = true;
+                }
             }
-            }
-            */
 
             int serviceIndex = iface->metaObject()->indexOfSignal(sig);
+            QByteArray signal = QByteArray("2").append(sig);
+            QByteArray method = QByteArray("1").append(sig);
+
             if (serviceIndex > 0) {
-                /*  
-                    if (customType) {
-                    ServiceSignalIntercepter* intercept = 
-                    new ServiceSignalIntercepter((QObject*)iface, "2"+sig, this);
-                    continue;
-                    }
-                    */
-                QByteArray signal = QByteArray("2").append(sig);
-                QByteArray method = QByteArray("1").append(sig);
-                QObject::connect(iface, signal.constData(), service, method.constData());
+                if (customType) {
+                    QObject::connect(iface, signal.constData(), signalsObject, signal.constData());
+                    
+                    ServiceSignalIntercepter *intercept = 
+                        new ServiceSignalIntercepter((QObject*)signalsObject, signal, this);
+                    intercept->setMetaIndex(i);
+                } else {
+                    QObject::connect(iface, signal.constData(), service, method.constData());
+                }
             }
         }
     }
-    
+
     return service;
 }
 
@@ -266,7 +294,9 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
 #ifdef DEBUG
         qDebug() << "Client Interface ObjectPath:" << objPath;
 #endif
+        // Instantiate our DBus interface and its corresponding signals object 
         iface = new QDBusInterface(serviceName, objPath, "", QDBusConnection::sessionBus(), this);
+        signalsObject = new QServiceMetaObjectDBus(iface, true);
 
         // Wake up waiting proxy construction code
         QTimer::singleShot(0, this, SIGNAL(pendingRequestFinished()));
@@ -434,6 +464,43 @@ QVariant ObjectEndPoint::invokeRemoteProperty(int metaIndex, const QVariant& arg
 }
 
 /*!
+    Client side method call that converts an argument of type to its corresponding value as a
+    valid type supported by the QtDBus type system. 
+    
+    Supports conversion from a QVariant, QList, QMap, QHash, and custom user-defined types. 
+*/
+QVariant ObjectEndPoint::toDBusVariant(const QByteArray& type, const QVariant& arg)
+{
+    QVariant dbusVariant = arg;
+
+    int variantType = QVariant::nameToType(type);
+    if (variantType == QVariant::UserType) {
+        variantType = QMetaType::type(type);
+
+        if (type == "QVariant") {
+            // Wrap QVariants in a QDBusVariant
+            QDBusVariant replacement(arg);
+            dbusVariant = QVariant::fromValue(replacement);
+        } else {
+            // Wrap custom types in a QDBusVariant of the type name and 
+            // a buffer of its variant-wrapped data
+            QByteArray buffer;
+            QDataStream stream(&buffer, QIODevice::ReadWrite | QIODevice::Append);
+            stream << arg;
+
+            QServiceUserTypeDBus customType;
+            customType.typeName = type;
+            customType.variantBuffer = buffer;
+
+            QDBusVariant replacement(QVariant::fromValue(customType));
+            dbusVariant = QVariant::fromValue(replacement);
+        }
+    }
+
+    return dbusVariant;
+}
+
+/*!
     Client side method call that directly accesses the object through the DBus interface.
     All arguments and return types are processed and converted accordingly so that all functions
     satisfy the QtDBus type system.
@@ -443,35 +510,60 @@ QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, i
     QMetaMethod method = service->metaObject()->method(metaIndex);
 
     Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
-    
-    // Process arguments
-    QVariantList convertedList = args;
-    QList<QByteArray> params = method.parameterTypes();
-    for (int i=0; i < params.size(); i++) {
-        const QByteArray& type = params[i];
-        int variantType = QVariant::nameToType(type);
-        if (variantType == QVariant::UserType) {
-            variantType = QMetaType::type(type);
-        
-            if (type == "QVariant") {
-                // Wrap QVariants in a QDBusVariant
-                QDBusVariant replacement(args[i]);
-                convertedList.replace(i, QVariant::fromValue(replacement));
+   
+    // Check is this is a signal relay
+    if (method.methodType() == QMetaMethod::Signal) {
+        // Convert custom arguments
+        QVariantList convertedList;
+        QList<QByteArray> params = method.parameterTypes();
+        for (int i = 0; i < params.size(); i++) {
+            const QByteArray& type = params[i];
+            int variantType = QVariant::nameToType(type);
+            if (variantType == QVariant::UserType) {
+                variantType = QMetaType::type(type);
+                
+                QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(args[i]);
+                QVariant variant = dbusVariant.variant();
+
+                if (type == "QVariant") {
+                    convertedList << variant; 
+                } else {
+                    QByteArray buffer = variant.toByteArray();
+                    QDataStream stream(&buffer, QIODevice::ReadWrite);
+                    QVariant *customType = new QVariant(variantType, (const void*)0);
+                    QMetaType::load(stream, QMetaType::type("QVariant"), customType);
+                    convertedList << *customType;
+                }
             } else {
-                // Wrap custom types in a QDBusVariant of the type name and 
-                // a buffer of its variant-wrapped data
-                QByteArray buffer;
-                QDataStream stream(&buffer, QIODevice::ReadWrite | QIODevice::Append);
-                stream << args[i];
-
-                QServiceUserTypeDBus customType;
-                customType.typeName = type;
-                customType.variantBuffer = buffer;
-
-                QDBusVariant replacement(QVariant::fromValue(customType));
-                convertedList.replace(i, QVariant::fromValue(replacement));
+                convertedList << args[i];
             }
         }
+
+        // Signal relay
+        const int numArgs = convertedList.size();
+        QVarLengthArray<void *, 32> a( numArgs+1 );
+        a[0] = 0;
+
+        const QList<QByteArray> pTypes = method.parameterTypes();
+        for ( int arg = 0; arg < numArgs; ++arg ) {
+            if (pTypes.at(arg) == "QVariant") {
+                a[arg+1] = (void *)&( convertedList[arg] );
+            } else {
+                a[arg+1] = (void *)( convertedList[arg].data() );
+            }
+        }
+
+        // Activate the service proxy signal call
+        QMetaObject::activate(service, metaIndex, a.data());
+        return QVariant();
+    }
+
+    // Method call so process arguments and convert if not a supported DBus type
+    QVariantList convertedList;
+    QList<QByteArray> params = method.parameterTypes();
+    for (int i = 0; i < params.size(); i++) {
+        QVariant converted = toDBusVariant(params[i], args[i]);
+        convertedList << converted;
     }
 
     bool validDBus = false;
@@ -487,24 +579,6 @@ QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, i
         if (msg.type() == QDBusMessage::ReplyMessage) { 
             validDBus = true;
         }
-
-    } else if (method.methodType() == QMetaMethod::Signal) {
-        // Signal relay
-        const int numArgs = args.size();
-        QVarLengthArray<void *, 32> a( numArgs+1 );
-        a[0] = 0;
-
-        const QList<QByteArray> pTypes = method.parameterTypes();
-        for ( int arg = 0; arg < numArgs; ++arg ) {
-            if (pTypes.at(arg) == "QVariant")
-                a[arg+1] = (void *)&( args[arg] );
-            else
-                a[arg+1] = (void *)( args[arg].data() );
-        }
-
-        // Activate the service proxy signal call
-        QMetaObject::activate(service, metaIndex, a.data());
-        return QVariant();
     }
 
     // DBus call should only fail for methods with invalid type definitions 
