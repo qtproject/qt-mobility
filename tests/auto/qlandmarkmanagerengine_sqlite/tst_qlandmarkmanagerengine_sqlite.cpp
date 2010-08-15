@@ -1622,11 +1622,11 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryId() {
     db.open();
     QSqlQuery query(db);
 
-    query.exec(QString("SELECT * FROM category_attribute WHERE category_id=%1").arg(cat4.categoryId().localId()));
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
     QVERIFY(query.next());
-    query.exec(QString("SELECT * FROM category_attribute WHERE category_id=%1").arg(cat5.categoryId().localId()));
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
     QVERIFY(query.next());
-    query.exec(QString("SELECT * FROM category_attribute WHERE category_id=%1").arg(cat6.categoryId().localId()));
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
     query.finish();
 
@@ -1635,11 +1635,11 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryId() {
     QCOMPARE(m_manager->category(cat5.categoryId()), QLandmarkCategory());
     QCOMPARE(m_manager->category(cat6.categoryId()),cat6);
 
-    query.exec(QString("SELECT * FROM category_attribute WHERE category_id=%1").arg(cat4.categoryId().localId()));
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
     QVERIFY(query.next());
-    query.exec(QString("SELECT * FROM category_attribute WHERE category_id=%1").arg(cat5.categoryId().localId()));
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
     QVERIFY(!query.next());
-    query.exec(QString("SELECT * FROM category_attribute WHERE category_id=%1").arg(cat6.categoryId().localId()));
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
     }
 
@@ -1773,11 +1773,11 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryIdAsync() {
     db.open();
     QSqlQuery query(db);
 
-    query.exec(QString("SELECT * FROM category_attribute WHERE category_id=%1").arg(cat4.categoryId().localId()));
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
     QVERIFY(query.next());
-    query.exec(QString("SELECT * FROM category_attribute WHERE category_id=%1").arg(cat5.categoryId().localId()));
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
     QVERIFY(query.next());
-    query.exec(QString("SELECT * FROM category_attribute WHERE category_id=%1").arg(cat6.categoryId().localId()));
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
     query.finish();
 
@@ -1789,11 +1789,11 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryIdAsync() {
     QCOMPARE(m_manager->category(cat5.categoryId()), QLandmarkCategory());
     QCOMPARE(m_manager->category(cat6.categoryId()),cat6);
 
-    query.exec(QString("SELECT * FROM category_attribute WHERE category_id=%1").arg(cat4.categoryId().localId()));
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
     QVERIFY(query.next());
-    query.exec(QString("SELECT * FROM category_attribute WHERE category_id=%1").arg(cat5.categoryId().localId()));
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
     QVERIFY(!query.next());
-    query.exec(QString("SELECT * FROM category_attribute WHERE category_id=%1").arg(cat6.categoryId().localId()));
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
     }
 
@@ -1873,11 +1873,11 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmark() {
     db.open();
     QSqlQuery query(db);
 
-    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmark_id=%1").arg(lm4.landmarkId().localId()));
+    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm4.landmarkId().localId()));
     QVERIFY(query.next());
-    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmark_id=%1").arg(lm5.landmarkId().localId()));
+    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm5.landmarkId().localId()));
     QVERIFY(query.next());
-    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmark_id=%1").arg(lm6.landmarkId().localId()));
+    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
     query.finish();
 
@@ -1886,11 +1886,11 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmark() {
     QCOMPARE(m_manager->landmark(lm5.landmarkId()), QLandmark());
     QCOMPARE(m_manager->landmark(lm6.landmarkId()),lm6);
 
-    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmark_id=%1").arg(lm4.landmarkId().localId()));
+    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm4.landmarkId().localId()));
     QVERIFY(query.next());
-    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmark_id=%1").arg(lm5.landmarkId().localId()));
+    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm5.landmarkId().localId()));
     QVERIFY(!query.next());
-    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmark_id=%1").arg(lm6.landmarkId().localId()));
+    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
     }
 
@@ -1988,11 +1988,11 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmarkAsync() {
     db.open();
     QSqlQuery query(db);
 
-    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmark_id=%1").arg(lm4.landmarkId().localId()));
+    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm4.landmarkId().localId()));
     QVERIFY(query.next());
-    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmark_id=%1").arg(lm5.landmarkId().localId()));
+    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm5.landmarkId().localId()));
     QVERIFY(query.next());
-    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmark_id=%1").arg(lm6.landmarkId().localId()));
+    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
     query.finish();
 
@@ -2004,11 +2004,11 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmarkAsync() {
     QCOMPARE(m_manager->landmark(lm5.landmarkId()), QLandmark());
     QCOMPARE(m_manager->landmark(lm6.landmarkId()),lm6);
 
-    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmark_id=%1").arg(lm4.landmarkId().localId()));
+    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm4.landmarkId().localId()));
     QVERIFY(query.next());
-    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmark_id=%1").arg(lm5.landmarkId().localId()));
+    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm5.landmarkId().localId()));
     QVERIFY(!query.next());
-    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmark_id=%1").arg(lm6.landmarkId().localId()));
+    query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
     }
 

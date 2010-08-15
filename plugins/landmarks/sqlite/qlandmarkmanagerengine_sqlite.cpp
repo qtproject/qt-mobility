@@ -526,7 +526,7 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
 
     qreal latestLandmarkTimestamp = m_latestTimestamp;
     QSqlQuery query(db);
-    if (!query.prepare("SELECT landmark_id,action, timestamp FROM landmark_notification WHERE timestamp > ?")) {
+    if (!query.prepare("SELECT landmarkId,action, timestamp FROM landmark_notification WHERE timestamp > ?")) {
 #ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
         qWarning() << "Could not prepare statement: " << query.lastQuery() << " \nReason:" << query.lastError().text();
 #endif
@@ -581,7 +581,7 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
 
     //now check for added/modified/removed categories
     qreal latestCategoryTimestamp = m_latestTimestamp;
-    if (!query.prepare("SELECT category_id,action, timestamp FROM category_notification WHERE timestamp > ?")) {
+    if (!query.prepare("SELECT categoryId,action, timestamp FROM category_notification WHERE timestamp > ?")) {
 #ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
         qWarning() << "Could not prepare statement: " << query.lastQuery() << " \nReason:" << query.lastError().text();
 #endif
