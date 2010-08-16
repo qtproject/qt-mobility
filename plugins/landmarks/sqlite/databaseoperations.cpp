@@ -82,6 +82,7 @@
 #include <QSet>
 #include <QMetaMethod>
 #include <qnumeric.h>
+#include <QXmlStreamReader>
 
 QTM_USE_NAMESPACE
 
@@ -2737,20 +2738,38 @@ bool DatabaseOperations::importLandmarks(const QString &connectionName,
         return false;
     }
 
+    QString detectedFormat = format;
+    if (detectedFormat == "") {
+        QXmlStreamReader reader(device);
+        if (!reader.readNextStartElement()) {
+            *error = QLandmarkManager::ParsingError;
+            *errorString = "Could not read root element of io device";
+            device->reset();
+            return false;
+        } else {
+            if (reader.name() == "lmx")
+                detectedFormat = (const QLatin1String)QLandmarkManager::Lmx;
+            else if (reader.name() == "gpx")
+                detectedFormat = (const QLatin1String)QLandmarkManager::Gpx;
+            else {
+                *error = QLandmarkManager::NotSupportedError;
+                *errorString = "Unknown import file format";
+                device->reset();
+                return false;
+            }
+        }
+        device->reset();
+    }
+
     bool result = false;
-    if (format ==  QLandmarkManager::Lmx) {
+    if (detectedFormat ==  QLandmarkManager::Lmx) {
             result = importLandmarksLmx(connectionName, device, option, categoryId, error, errorString, managerUri);
             device->close();
             return result;
-    } else if (format == QLandmarkManager::Gpx) {
+    } else if (detectedFormat == QLandmarkManager::Gpx) {
            result = importLandmarksGpx(connectionName, device, option, categoryId, error, errorString, managerUri, queryRun);
            device->close();
            return result;
-    }  else if (format =="") {
-        *error = QLandmarkManager::BadArgumentError;
-        *errorString =  "No format provided";
-        device->close();
-         return false;
     } else {
         if (error)
             *error = QLandmarkManager::NotSupportedError;

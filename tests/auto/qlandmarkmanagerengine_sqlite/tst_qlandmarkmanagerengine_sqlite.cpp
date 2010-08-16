@@ -198,6 +198,29 @@ private:
         return result;
     }
 
+    bool doImport(const QString &type, const QString filename,
+                  QLandmarkManager::Error error =QLandmarkManager::NoError){
+        bool result =false;
+        if (type== "sync") {
+            if (error == QLandmarkManager::NoError)    {
+                result = (m_manager->importLandmarks(filename))
+                         && (m_manager->error() == QLandmarkManager::NoError);
+            } else {
+                result = (!m_manager->importLandmarks(filename))
+                        && (m_manager->error() == error);
+            }
+        } else if (type == "async") {
+            QLandmarkImportRequest importRequest(m_manager);
+            QSignalSpy spy(&importRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+            importRequest.setFileName(filename);
+            importRequest.start();
+            result = waitForAsync(spy, &importRequest,error,100);
+        } else {
+            qFatal("Unknown test row type");
+        }
+        return result;
+    }
+
     bool checkIds(const QList<QLandmark> &lms, const QList<QLandmarkId> &lmIds)
     {
         if (lms.count() != lmIds.count())
@@ -471,6 +494,9 @@ private slots:
 
     void exportLmx();//async testing done too
     void exportLmx_data();
+
+    void importFile();
+    void importFile_data();
 
     void supportedFormats();
 
@@ -6220,6 +6246,42 @@ void tst_QLandmarkManagerEngineSqlite::exportLmx_data()
     QTest::newRow("asyncAttachSingleCategory") << "asyncAttachSingleCategory";
 
     //TODO: tests for id list excluding category data
+}
+
+void tst_QLandmarkManagerEngineSqlite::importFile()
+{
+    QFETCH(QString, type);
+    //try a gpx file
+    doImport(type, ":data/test.gpx");
+    QCOMPARE(m_manager->landmarks().count(), 3);
+    QVERIFY(m_manager->removeLandmarks(m_manager->landmarkIds()));
+    QCOMPARE(m_manager->landmarks().count(), 0);
+
+    //try an lmx file
+    doImport(type,":data/convert-collection-in.xml");
+    QCOMPARE(m_manager->landmarks().count(), 16);
+    QCOMPARE(m_manager->categories().count(), 3);
+    QVERIFY(m_manager->removeLandmarks(m_manager->landmarkIds()));
+    QCOMPARE(m_manager->landmarks().count(), 0);
+    QList<QLandmarkCategoryId> catIds = m_manager->categoryIds();
+    for (int i=0; i < catIds.count() ; ++i) {
+        QVERIFY(m_manager->removeCategory(catIds.at(i)));
+    }
+    QCOMPARE(m_manager->categories().count(), 0);
+
+    //try an invalid format
+    doImport(type, ":data/file.omg", QLandmarkManager::NotSupportedError);
+
+    //try an invalid file
+    doImport(type, ":data/garbage.xml", QLandmarkManager::ParsingError);
+}
+
+void tst_QLandmarkManagerEngineSqlite::importFile_data()
+{
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
 }
 
 void tst_QLandmarkManagerEngineSqlite::supportedFormats() {
