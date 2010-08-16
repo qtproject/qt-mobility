@@ -118,14 +118,6 @@ public:
             delete m_mcInstance;
     }
 
-    // key = QString(QLatin1String(CEvent.id().data()));
-    // value = QOrganizerItemLocalId(qHash(key));
-    QMap<QString, QOrganizerItemLocalId> m_cIdToQId; // TODO: This is not used anymore, remove
-
-    // the cId consists of a calendar name and an item id
-    // we need to be able to separate both of these parts.
-    QMap<QString, QString> m_cIdToCName; // TODO: This is not used anymore, remove
-
     // the multicalendar instance
     CMulticalendar *m_mcInstance;
 

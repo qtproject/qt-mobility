@@ -251,7 +251,6 @@ QString OrganizerRecurrenceTransform::qintervalToIcalInterval(int interval) cons
 
 QString OrganizerRecurrenceTransform::qendDateToIcalUntil(QDate endDate) const
 {
-    // TODO: Check the correctness of this conversion, is there any situation when this is not correct?
     return QString("UNTIL=") + endDate.toString("yyyyMMdd") + "T235959Z";
 }
 

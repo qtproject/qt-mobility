@@ -248,7 +248,7 @@ QOrganizerTodoOccurrence OrganizerItemTransform::convertCTodoToQTodoOccurrence(C
     retn.setParentLocalId(QString::fromStdString(ctodo->getId()).toUInt());
 
     // Original date
-    retn.setOriginalDate(retn.startDateTime().date()); // XXX TODO: verify this is the correct field to use as the instance date...
+    retn.setOriginalDate(retn.startDateTime().date());
 
     return retn;
 }
@@ -256,8 +256,6 @@ QOrganizerTodoOccurrence OrganizerItemTransform::convertCTodoToQTodoOccurrence(C
 QOrganizerJournal OrganizerItemTransform::convertCJournalToQJournal(CJournal *cjournal)
 {
     QOrganizerJournal retn;
-
-    // TODO: What else should be set for a journal?
 
     // Start time
     QDateTime tempdt = QDateTime::fromTime_t(cjournal->getDateStart());
@@ -269,13 +267,6 @@ QOrganizerJournal OrganizerItemTransform::convertCJournalToQJournal(CJournal *cj
 
 void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item, CComponent *component, bool setId)
 {
-    // TODO: Possible fields to add (defined in the CComponent superclass):
-    // TODO: flags, status, (datestart), (dateend), lastmodified, (comments)
-    // TODO: recurrence, until, rtype, alarm, allday, tzoffset... still others??
-
-    // TODO: What to do with attendee, instanceorigin, participation, priority, provenance
-    // TODO: rsvpinfo, timestamp... others??
-
     if (item) {
         // Summary
         QString tempstr = QString::fromStdString(component->getSummary());
@@ -467,8 +458,6 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         cjournal->setCalendarId(calId);
 
         // Set journal specific details
-        // TODO: There are no journal specific details in Maemo.
-        // TODO: Maybe should be removed and should be set on the upper level?
         const QOrganizerJournal *journal = static_cast<const QOrganizerJournal *>(item);
         if (!journal->dateTime().isNull())
             cjournal->setDateStart(journal->dateTime().toTime_t());
@@ -501,10 +490,6 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         // dateStart and dateEnd are common fields for all CComponents, but those are set
         // separately for each item type here, because there are independent time ranges
         // defined for each type in the Qt Mobility API.
-
-        // (TODO: Status ?)
-
-        // (TODO: Until ?)
 
         // GUid
         if (!item->guid().isEmpty())
@@ -574,7 +559,7 @@ CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* ite
             m_recTransformer.addQOrganizerItemExceptionDate(exceptionDate);
         }
 
-        return m_recTransformer.crecurrence(); // TODO: This may need error handling?
+        return m_recTransformer.crecurrence();
     }
     else if (item->type() == QOrganizerItemType::TypeTodo) {
         const QOrganizerTodo *todo = static_cast<const QOrganizerTodo *>(item);

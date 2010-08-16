@@ -167,8 +167,6 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
             if (*error != QOrganizerItemManager::NoError)
                 break;
 
-            qDebug() << "generator instances count = " << generatorInstances.count();
-
             foreach (QOrganizerItem instance, generatorInstances)
                 if (QOrganizerItemManagerEngine::testFilter(filter, instance))
                     QOrganizerItemManagerEngine::addSorted(&retn, instance, sortOrders);
@@ -311,8 +309,6 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
 
 QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, QOrganizerItemManager::Error *error) const
 {
-    // TODO: Make this method to use filters and sortorders
-
     *error = QOrganizerItemManager::NoError;
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     QList<QOrganizerItemLocalId> retn;
@@ -475,7 +471,6 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId> 
 
                 if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
                     // Success, update the changeset
-                    qDebug() << "DELETED " << itemId;
                     cs.insertRemovedItem(currItem.localId());
                 }
                 else {
