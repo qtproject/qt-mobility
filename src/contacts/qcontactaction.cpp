@@ -74,7 +74,9 @@ QContactAction::~QContactAction()
   by calling \l results(), and as results become available the action will emit \l resultsAvailable().
 
   Each instance of a QContactAction is created by a \l QContactActionFactory when
-  \l QContactActionFactory::instance() is called; the caller takes ownership of the action instance.
+  \l QContactAction::action() is called; the caller takes ownership of the action instance.
+  Each action is uniquely described by a \l QContactActionDescriptor, which is passed to the
+  \l QContactAction::action() function to instantiate an action.
  
   \sa QContactActionFactory, QContactActionFilter
  */
@@ -291,7 +293,9 @@ QList<QContactActionDescriptor> QContactAction::actionDescriptors(const QString&
 
 /*!
   Returns a pointer to a new instance of the action implementation identified by the given \a descriptor.
-  The caller does NOT take ownership of the action implementation and must not delete it or undefined behaviour will occur.
+  The caller takes ownership of the action implementation and must delete it to avoid leaking memory.
+  The caller is able to delete the action at any time, however doing so prior to when the action
+  transitions to a finished state may have an undefined outcome depending on the implementation of the action.
  */
 QContactAction* QContactAction::action(const QContactActionDescriptor& descriptor)
 {
