@@ -290,7 +290,8 @@ void CFSEngine::updateEmailAccounts() const
 bool CFSEngine::sendEmail(QMessage &message)
 {
     EmailClientApi::NmApiMessage* newMessage = NULL;
-    newMessage = createFSMessage(message); // save and send
+    newMessage = createFSMessage(message); 
+    // save and send
     if (m_createMessageError == true)
         return false;
     else
@@ -301,6 +302,7 @@ bool CFSEngine::addMessage(QMessage* message)
 {
     EmailClientApi::NmApiMessage* newMessage = NULL;
     newMessage = createFSMessage(*message);
+    // save
     if (m_createMessageError == true)
         return false;
     else
@@ -408,63 +410,65 @@ EmailClientApi::NmApiMessage* CFSEngine::createFSMessage(QMessage& message)
     
     fsMessage->setEnvelope(*fsMessageEnvelope);
     
-    if (message.bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
-        // Message contains only body (not attachments)
-        QString messageBody = message.textContent();
-        if (!messageBody.isEmpty()) {
-            QByteArray type = message.contentType();
-            QByteArray subType = message.contentSubType();
-            NmApiTextContent content;
-            content.setContent(message.textContent());
-            if (type == "text" && subType == "plain")
-                fsMessage->setPlainTextContent(content);
-            else if (type == "text" && subType == "html")
-                fsMessage->setHtmlContent(content);
-            else
-                fsMessageEnvelope->setPlainText(messageBody);
-        }
-    }/* else {
-        // Message contains body and attachments
-        QMessageContentContainerIdList contentIds = message.contentIds();
-        foreach (QMessageContentContainerId id, contentIds){
-            QMessageContentContainer container = message.find(id);
-            MEmailMessageContent* content = fsMessage->ContentL(); 
-            QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
-            if (pPrivateContainer->_id == message.bodyId()) {
-                // ContentContainer is body
-                if (!container.textContent().isEmpty()) {               
-                    MEmailTextContent* textContent = content->AsTextContentOrNull();
-                    if (textContent) {
-                        QByteArray type = container.contentType();
-                        QByteArray subType = container.contentSubType();
-                        if (type == "text" && subType == "plain") {
-                            textContent->SetTextL(MEmailTextContent::EPlainText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
-                        }
-                        else if (type == "text" && subType == "html") {
-                            textContent->SetTextL(MEmailTextContent::EHtmlText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
-                        } 
-                    }
+    QMessageContentContainerIdList contentIds = message.contentIds();
+    foreach (QMessageContentContainerId id, contentIds){
+        QMessageContentContainer container = message.find(id);
+        QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
+        if (message.bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
+            // Message contains only body (not attachments)
+            QString messageBody = message.textContent();
+            if (!messageBody.isEmpty()) {
+                QByteArray type = message.contentType();
+                QByteArray subType = message.contentSubType();
+                NmApiTextContent content;
+                content.setContent(message.textContent());
+                if (type == "text" && subType == "plain")
+                    fsMessage->setPlainTextContent(content);
+                else if (type == "text" && subType == "html")
+                    fsMessage->setHtmlContent(content);
+                else
+                    fsMessageEnvelope->setPlainText(messageBody);
+            }
+        } else {
+            // Message contains body and attachments
+            QMessageContentContainerIdList contentIds = message.contentIds();
+            foreach (QMessageContentContainerId id, contentIds){
+                QMessageContentContainer container = message.find(id);
+               // MEmailMessageContent* content = fsMessage->ContentL(); 
+                QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
+                if (pPrivateContainer->_id == message.bodyId()) {
+                    // ContentContainer is body
+                    if (!container.textContent().isEmpty()) {               
+                    QByteArray type = message.contentType();
+                    QByteArray subType = message.contentSubType();
+                    NmApiTextContent content;
+                    content.setContent(container.textContent());
+                    if (type == "text" && subType == "plain")
+                        fsMessage->setPlainTextContent(content);
+                    else if (type == "text" && subType == "html")
+                        fsMessage->setHtmlContent(content);
                     else
-                        fsMessage->SetPlainTextBodyL(TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
-                }
-            } else {
-                // ContentContainer is attachment
-                QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
-                // Replace Qt style path separator "/" with Symbian path separator "\"
-                filePath.replace(QByteArray("/"), QByteArray("\\"));
-                QString temp_path = QString(filePath);
-                TPtrC16 attachmentPath(KNullDesC);
-                attachmentPath.Set(reinterpret_cast<const TUint16*>(temp_path.utf16()));
-                fsMessage->AddAttachmentL(attachmentPath);
-            }        
+                        fsMessageEnvelope->setPlainText(container.textContent());
+                    }
+                } else {
+                    // ContentContainer is attachment
+                    QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
+                    // Replace Qt style path separator "/" with Symbian path separator "\"
+                    //filePath.replace(QByteArray("/"), QByteArray("\\"));
+                    NmApiAttachment attachment;
+                    QString temp_path = QString(filePath);
+                    attachment.setFileName(temp_path);
+                    fsMessage->addAttachment(attachment);
+                }        
+            }
         }
     }
-    fsMessage->SetSubjectL(TPtrC(reinterpret_cast<const TUint16*>(message.subject().utf16())));
+    fsMessageEnvelope->setSubject(message.subject());
     
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-    privateMessage->_id = QMessageId(addIdPrefix(QString::number(fsMessage->MessageId().iId),SymbianHelpers::EngineTypeFreestyle));
+    privateMessage->_id = QMessageId(addIdPrefix(QString::number(fsMessageEnvelope->id()), SymbianHelpers::EngineTypeFreestyle));
     
-    fsMessage->SaveChangesL();*/
+    //TODO: save fsMessage
 
     return fsMessage;
 }
