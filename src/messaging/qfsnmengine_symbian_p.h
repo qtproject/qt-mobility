@@ -51,6 +51,7 @@
 
 #include <e32base.h>
 #include <nmapimailbox.h>
+#include <nmapimessage.h>
 #include <nmapimessageenvelope.h>
 #include <nmapifolder.h>
 #include <nmapimailboxlisting.h>
@@ -128,6 +129,7 @@ public:
     int countFolders(const QMessageFolderFilter &filter) const;
     QMessageFolder folder(const QMessageFolderId &id) const;
     
+    bool sendEmail(QMessage &message);
     bool addMessage(QMessage *m);
     bool updateMessage(QMessage *m);
     bool removeMessage(const QMessageId &id, QMessageManager::RemovalOption option);
@@ -138,7 +140,6 @@ public:
     bool showMessage(const QMessageId &id);
     bool composeMessage(const QMessage &message);   
     QMessage message(const QMessageId& id) const;
-    bool sendEmail(QMessage &message);
    
     bool retrieve(QMessageServicePrivate& privateService, const QMessageId &messageId, const QMessageContentContainerId& id);
     bool retrieveBody(QMessageServicePrivate& privateService, const QMessageId& id);
@@ -161,9 +162,10 @@ private:
     void countMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter);
     
     QMessageAccountIdList accountsByType(QMessage::Type type) const;
-    void updateEmailAccountsL() const;
+    void updateEmailAccounts() const;
     void updateMessageL(QMessage* message);
-    NmApiMessageEnvelope* createFSMessageL(const QMessage &message/*, const NmApiMailbox* mailbox*/);
+    EmailClientApi::NmApiMessage* createFSMessage(QMessage& message);
+    
     QMessageFolderIdList folderIdsByAccountId(const QMessageAccountId& accountId) const;
     QMessageFolderIdList filterMessageFoldersL(const QMessageFolderFilter& filter, bool& filterHandled) const;
     QMessageFolderIdList allFolders() const;
@@ -194,8 +196,7 @@ private:
 
     void handleNestedFiltersFromMessageFilter(QMessageFilter &filter) const;
     void exportUpdatesL(const QMessageAccountId &id);
-    
-    
+       
     friend class QMessageService;
     friend class CMessagesFindOperation;
     
@@ -212,6 +213,7 @@ private:
     QMap<QMessageManager::NotificationFilterId, QMessageFilter> m_filters;
     QMessageAccount m_account;
     QMessageServicePrivate* m_privateService;
+    bool m_createMessageError;
     friend class QMessageService;
     friend class CFSMessagesFindOperation;
     

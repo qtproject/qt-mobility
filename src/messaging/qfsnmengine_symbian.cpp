@@ -62,11 +62,14 @@
 #include <nmapimessagesearch.h>
 #include <nmapiemailaddress.h>
 #include <nmapimessagebody.h>
+#include <nmapimessagemanager.h>
+#include <nmapimessage.h>
 
 
 #include <QTextCodec>
 #include <QEventLoop>
 #include <QTimer>
+#include <QSignalSpy>
 
 using namespace EmailClientApi;
 
@@ -150,8 +153,7 @@ QMessageAccountIdList CFSEngine::queryAccounts(const QMessageAccountFilter &filt
 {
     QMessageAccountIdList accountIds;
 
-    TRAPD(err, updateEmailAccountsL());
-    Q_UNUSED(err);
+    updateEmailAccounts();
     
     QMessageAccountFilterPrivate* privateMessageAccountFilter = QMessageAccountFilterPrivate::implementation(filter);
     if (filter.isEmpty()) {
@@ -211,8 +213,8 @@ int CFSEngine::countAccounts(const QMessageAccountFilter &filter) const
 
 QMessageAccount CFSEngine::account(const QMessageAccountId &id) const
 {
-    TRAPD(err, updateEmailAccountsL());
-    Q_UNUSED(err)
+    updateEmailAccounts();
+
     return m_accounts[id.toString()];
 }
 
@@ -237,7 +239,7 @@ QMessageAccountIdList CFSEngine::accountsByType(QMessage::Type type) const
 }
 
 
-void CFSEngine::updateEmailAccountsL() const
+void CFSEngine::updateEmailAccounts() const
 {
     QStringList keys = m_accounts.keys();
 
@@ -250,7 +252,6 @@ void CFSEngine::updateEmailAccountsL() const
 
     QList<NmApiMailbox> mailboxes;
     mailboxlisting->getMailboxes(mailboxes);
-    //cleanup..
     int count = mailboxes.count();
     
     for (TInt i = 0; i < mailboxes.count(); i++) {
@@ -286,105 +287,143 @@ void CFSEngine::updateEmailAccountsL() const
     //delete mailboxlisting; //TODO: Deleting causes KERN-EXEC 3
 }
 
-NmApiMessageEnvelope* CFSEngine::createFSMessageL(const QMessage &message/*, const MEmailMailbox* mailbox*/)
+bool CFSEngine::sendEmail(QMessage &message)
 {
-  /*  MEmailMessage* fsMessage = mailbox->CreateDraftMessageL();
-    CleanupReleasePushL(*fsMessage);
+    EmailClientApi::NmApiMessage* newMessage = NULL;
+    newMessage = createFSMessage(message); // save and send
+    if (m_createMessageError == true)
+        return false;
+    else
+        return true;
+}
+
+bool CFSEngine::addMessage(QMessage* message)
+{
+    EmailClientApi::NmApiMessage* newMessage = NULL;
+    newMessage = createFSMessage(*message);
+    if (m_createMessageError == true)
+        return false;
+    else
+        return true;
+}
+
+EmailClientApi::NmApiMessage* CFSEngine::createFSMessage(QMessage& message)
+{   
+    m_createMessageError = false;
+    quint64 mailboxId = stripIdPrefix(message.parentAccountId().toString()).toULongLong();
+    NmApiMessageManager* manager = new NmApiMessageManager(0, mailboxId);
+    QPointer<NmApiOperation> operation = manager->createDraftMessage(0);
     
+    QEventLoop eventloop;
+    QTimer timer;
+    connect(operation, SIGNAL(operationComplete(QVariant, int)), &eventloop, SLOT(quit()));
+    connect(&timer, SIGNAL(timeout()), &eventloop, SLOT(quit()));
+    
+    QSignalSpy timeoutSpy(&timer, SIGNAL(timeout()));
+    QSignalSpy operationSpy(operation, SIGNAL(operationComplete(QVariant, int)));
+    timer.setSingleShot(true);
+    timer.start(3000);
+    eventloop.exec();
+    
+    if (!timeoutSpy.isEmpty()){
+        m_createMessageError = true;
+        return NULL;
+    }
+    
+    QList<QVariant> arguments2 = operationSpy.takeLast();
+    //int c;
+    if(arguments2.at(0).canConvert<int>()) {
+        // result code
+        int c = arguments2.at(0).toInt();
+        if (c > 0) {
+            m_createMessageError = true;
+            return NULL;
+        }
+    }
+    
+    QVariant data = operationSpy.takeFirst().at(0);
+    EmailClientApi::NmApiMessage* fsMessage = NULL;
+    NmApiMessageEnvelope* fsMessageEnvelope = NULL;
+    
+    // TODO: QVariant conver
+    /*if(data.canConvert<EmailClientApi::NmApiMessage>()) {
+        fsMessage = data.value<EmailClientApi::NmApiMessage>;
+    }*/
+
     switch (message.priority()) {
         case QMessage::HighPriority:
-            fsMessage->SetFlag(EmailInterface::EFlag_Important);
-            fsMessage->ResetFlag(EmailInterface::EFlag_Low);
+            fsMessageEnvelope->setPriority(EmailClientApi::NmApiMessagePriorityHigh);
             break;
         case QMessage::NormalPriority:
-            fsMessage->ResetFlag(EmailInterface::EFlag_Important);
-            fsMessage->ResetFlag(EmailInterface::EFlag_Low);
+            fsMessageEnvelope->setPriority(EmailClientApi::NmApiMessagePriorityNormal);
             break;
         case QMessage::LowPriority:
-            fsMessage->SetFlag(EmailInterface::EFlag_Low);
-            fsMessage->ResetFlag(EmailInterface::EFlag_Important);
+            fsMessageEnvelope->setPriority(EmailClientApi::NmApiMessagePriorityLow);
             break;            
         }
-        if (message.status() & QMessage::Read) {
-            fsMessage->SetFlag(EmailInterface::EFlag_Read);
-        } else {
-            fsMessage->ResetFlag(EmailInterface::EFlag_Read);
-        }
     
-    MEmailAddress* sender = mailbox->AddressL();
-    sender->SetRole(MEmailAddress::ESender);
-    fsMessage->SetReplyToAddressL(*sender);
+    if (message.status() & QMessage::Read)
+        fsMessageEnvelope->setIsRead(true);
+    else
+        fsMessageEnvelope->setIsRead(false);
+        
+    
+    // TODO: setSender 
         
     QList<QMessageAddress> toList(message.to());
     if (toList.count() > 0) {
-        TPtrC16 receiver(KNullDesC);
-        QString qreceiver;
-        REmailAddressArray toAddress;
+        QList<EmailClientApi::NmApiEmailAddress> toRecipients;
         for (int i = 0; i < toList.size(); ++i) {
-            qreceiver = toList.at(i).addressee();
-            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
-            MEmailAddress* address = mailbox->AddressL();
-            address->SetAddressL(receiver);
-            address->SetDisplayNameL(receiver);
-            address->SetRole(MEmailAddress::ETo);
-            toAddress.Append(address);
+            NmApiEmailAddress address;
+            address.setAddress(toList.at(i).addressee());
+            address.setDisplayName(toList.at(i).addressee());
+            toRecipients.append(address);
         }
-        fsMessage->SetRecipientsL(MEmailAddress::ETo, toAddress);
+        fsMessageEnvelope->setToRecipients(toRecipients);
     }
     
     QList<QMessageAddress> ccList(message.cc());
     if (ccList.count() > 0) {
-        TPtrC16 receiver(KNullDesC);
-        QString qreceiver;
-        REmailAddressArray ccAddress;
+        QList<EmailClientApi::NmApiEmailAddress> ccRecipients;
         for (int i = 0; i < ccList.size(); ++i) {
-            qreceiver = ccList.at(i).addressee();
-            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
-            MEmailAddress* address = mailbox->AddressL();
-            address->SetDisplayNameL(receiver);
-            address->SetRole(MEmailAddress::ECc);
-            address->SetAddressL(receiver);
-            ccAddress.Append(address);
+            NmApiEmailAddress address;
+            address.setAddress(ccList.at(i).addressee());
+            address.setDisplayName(ccList.at(i).addressee());
+            ccRecipients.append(address);
         }
-        fsMessage->SetRecipientsL(MEmailAddress::ECc, ccAddress);
+        fsMessageEnvelope->setCcRecipients(ccRecipients);
     }
         
     QList<QMessageAddress> bccList(message.bcc());
     if (bccList.count() > 0) {
-        TPtrC16 receiver(KNullDesC);
-        QString qreceiver;
-        REmailAddressArray bccAddress;
+        QList<EmailClientApi::NmApiEmailAddress> bccRecipients;
         for (int i = 0; i < bccList.size(); ++i) {
-            qreceiver = bccList.at(i).addressee();
-            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
-            MEmailAddress* address = mailbox->AddressL();
-            address->SetDisplayNameL(receiver);
-            address->SetRole(MEmailAddress::EBcc);
-            address->SetAddressL(receiver);
-            bccAddress.Append(address);
+            NmApiEmailAddress address;
+            address.setAddress(bccList.at(i).addressee());
+            address.setDisplayName(bccList.at(i).addressee());
+            bccRecipients.append(address);
         }
-        fsMessage->SetRecipientsL(MEmailAddress::EBcc, bccAddress);
+        fsMessageEnvelope->setBccRecipients(bccRecipients);
     }
+    
+    fsMessage->setEnvelope(*fsMessageEnvelope);
+    
     if (message.bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
         // Message contains only body (not attachments)
         QString messageBody = message.textContent();
         if (!messageBody.isEmpty()) {
             QByteArray type = message.contentType();
             QByteArray subType = message.contentSubType();
-            MEmailMessageContent* content = fsMessage->ContentL();
-            MEmailTextContent* textContent = content->AsTextContentOrNull();
-            if (textContent) {
-                if (type == "text" && subType == "plain") {
-                    textContent->SetTextL(MEmailTextContent::EPlainText, TPtrC(reinterpret_cast<const TUint16*>(message.textContent().utf16())));
-                } 
-               else if (type == "text" && subType == "html") {
-                    textContent->SetTextL(MEmailTextContent::EHtmlText, TPtrC(reinterpret_cast<const TUint16*>(message.textContent().utf16())));
-                }
-            }
+            NmApiTextContent content;
+            content.setContent(message.textContent());
+            if (type == "text" && subType == "plain")
+                fsMessage->setPlainTextContent(content);
+            else if (type == "text" && subType == "html")
+                fsMessage->setHtmlContent(content);
             else
-                fsMessage->SetPlainTextBodyL(TPtrC(reinterpret_cast<const TUint16*>(message.textContent().utf16())));
+                fsMessageEnvelope->setPlainText(messageBody);
         }
-    } else {
+    }/* else {
         // Message contains body and attachments
         QMessageContentContainerIdList contentIds = message.contentIds();
         foreach (QMessageContentContainerId id, contentIds){
@@ -426,29 +465,8 @@ NmApiMessageEnvelope* CFSEngine::createFSMessageL(const QMessage &message/*, con
     privateMessage->_id = QMessageId(addIdPrefix(QString::number(fsMessage->MessageId().iId),SymbianHelpers::EngineTypeFreestyle));
     
     fsMessage->SaveChangesL();
-    CleanupStack::Pop(fsMessage);
-    return fsMessage;*/
-}
-
-bool CFSEngine::addMessage(QMessage* message)
-{
-/*    TMailboxId mailboxId(stripIdPrefix(message->parentAccountId().toString()).toInt());
-    MEmailMailbox* mailbox = NULL;
-    TRAPD(mailerr, mailbox = m_clientApi->MailboxL(mailboxId));
-    if (mailerr != KErrNone)
-        return false;
-
-    MEmailMessage* fsMessage = NULL;
-    TRAPD(err, fsMessage = createFSMessageL(*message, mailbox));
-    if (fsMessage)
-        fsMessage->Release();
-    if (mailbox)
-        mailbox->Release();
-    
-    if (err != KErrNone)
-        return false;
-    else*/
-        return true;
+    CleanupStack::Pop(fsMessage);*/
+    return fsMessage;
 }
 
 bool CFSEngine::updateMessage(QMessage* message)
@@ -1286,8 +1304,8 @@ QMessageFolder CFSEngine::folder(const QMessageFolderId &id) const
     QMessageAccountId accountId;
 
     // get account containing folder
-    TRAPD(err, updateEmailAccountsL());
-    Q_UNUSED(err)
+    updateEmailAccounts();
+
     foreach (QMessageAccount account, m_accounts) {
         accountId = account.id();
         quint64 mailboxId(stripIdPrefix(accountId.toString()).toULongLong());
@@ -1557,8 +1575,8 @@ QMessageFolderIdList CFSEngine::filterMessageFoldersL(const QMessageFolderFilter
 QMessageFolderIdList CFSEngine::allFolders() const
 {
     QMessageFolderIdList ids;
-    TRAPD(err, updateEmailAccountsL());
-    Q_UNUSED(err)
+    updateEmailAccounts();
+
     foreach (QMessageAccount value, m_accounts) {
         QMessageFolderIdList ids2 = folderIdsByAccountId(value.id());
         ids << ids2;
@@ -1648,11 +1666,6 @@ QMessage CFSEngine::messageL(const QMessageId& id) const
 {
     QMessage message = QMessage();
     return message;
-}
-
-bool CFSEngine::sendEmail(QMessage &message)
-{
-    return false;
 }
 
 QMessage CFSEngine::CreateQMessageL(NmApiMessageEnvelope* aMessage) const
