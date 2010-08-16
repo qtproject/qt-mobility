@@ -631,12 +631,16 @@ bool QLandmarkFileHandlerLmx::readAddressInfo(QLandmark &landmark)
             }
             counts[name] = 1;
 
-            if (name == "country") {
+            if (name == "county") {
+                address.setCounty(m_reader->readElementText());
+            } else if (name == "country") {
                 address.setCountry(m_reader->readElementText());
             } else if (name == "state") {
                 address.setState(m_reader->readElementText());
             } else if (name == "city") {
                 address.setCity(m_reader->readElementText());
+            } else if (name == "district") {
+                address.setDistrict(m_reader->readElementText());
             } else if (name == "postalCode") {
                 address.setPostCode(m_reader->readElementText());
             } else if (name == "street") {
@@ -869,9 +873,11 @@ bool QLandmarkFileHandlerLmx::writeLandmark(const QLandmark &landmark)
         if (!writeMediaLink(landmark))
             return false;
 
-    for (int i = 0; i < landmark.categoryIds().size(); ++i) {
-        if (!writeCategory(landmark.categoryIds().at(i)))
-            return false;
+    if (m_option != QLandmarkManager::ExcludeCategoryData) {
+        for (int i = 0; i < landmark.categoryIds().size(); ++i) {
+            if (!writeCategory(landmark.categoryIds().at(i)))
+                return false;
+        }
     }
 
     m_writer->writeEndElement();
@@ -926,18 +932,19 @@ bool QLandmarkFileHandlerLmx::writeAddressInfo(const QLandmark &landmark)
     if (!address.state().isEmpty())
         m_writer->writeTextElement(m_ns, "state", address.state());
 
+    if (!address.county().isEmpty())
+        m_writer->writeTextElement(m_ns, "county", address.county());
+
     if (!address.city().isEmpty())
         m_writer->writeTextElement(m_ns, "city", address.city());
+
+    if (!address.district().isEmpty())
+        m_writer->writeTextElement(m_ns, "district", address.district());
 
     if (!address.postCode().isEmpty())
         m_writer->writeTextElement(m_ns, "postalCode", address.postCode());
 
     QString street;
-    if (!address.streetNumber().isEmpty())
-        street.append(address.streetNumber());
-
-    if (!address.streetNumber().isEmpty() && !address.street().isEmpty())
-        street.append(" ");
 
     if (!address.street().isEmpty())
         street.append(address.street());
@@ -964,23 +971,22 @@ bool QLandmarkFileHandlerLmx::writeMediaLink(const QLandmark &landmark)
 
 bool QLandmarkFileHandlerLmx::writeCategory(const QLandmarkCategoryId &id)
 {
-/*TODO: category handling
     if (!id.isValid()) {
+        m_errorCode = QLandmarkManager::BadArgumentError;
         m_error = QString("The category with id \"%1\" from manager \"%2\" is invalid.").arg(id.localId()).arg(id.managerUri());
         return false;
     }
 
     QLandmarkManager::Error error;
-    QLandmarkCategory cat = m_engine->category(id, &error, &m_error);
-    if (error != QLandmarkManager::NoError) {
+    QLandmarkCategory cat = DatabaseOperations::category(m_connectionName,id,&m_errorCode, &m_error, m_managerUri);
+    if (m_errorCode != QLandmarkManager::NoError) {
         return false;
     }
 
     m_writer->writeStartElement(m_ns, "category");
-    m_writer->writeTextElement(m_ns, "id", cat.categoryId().localId());
     m_writer->writeTextElement(m_ns, "name", cat.name());
     m_writer->writeEndElement();
-*/
+
     return true;
 }
 
