@@ -141,10 +141,10 @@ Rectangle {
             }
         }
 
-        Component { id: albumView; AlbumView { anchors.fill: parent } }
-        Component { id: artistView; ArtistView { anchors.fill: parent } }
-        Component { id: genreView; GenreView { anchors.fill: parent } }
-        Component { id: songView; SongView { anchors.fill: parent } }
+        Component { id: albumView; AlbumView {} }
+        Component { id: artistView; ArtistView {} }
+        Component { id: genreView; GenreView {} }
+        Component { id: songView; SongView {} }
 
         transform: Rotation {
             origin.x: menu.width / 2; origin.y: menu.height / 2;

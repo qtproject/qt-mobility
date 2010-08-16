@@ -42,86 +42,136 @@ import Qt 4.7
 import QtMobility.gallery 1.1
 import "script/mediaart.js" as Script
 
-Item {
-    width: parent.width
-    height: songView.height > 192 ? songView.height : 192
+Package {
+    property alias state: albumWrapper.state
+
+    Item { id: stackItem; Package.name: 'stack'; width: 128; height: 128; }
+    Item { id: listItem; Package.name: 'list'; width: parent.width; height: 192 }
+    Item { id: gridItem; Package.name: 'grid'; width: 192; height: 192 }
 
     Item {
-        id: albumInfo
-        width: 192
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
+        id: albumWrapper
+        anchors.fill: parent
 
-        Image {
-            id: albumImage
-            width: 128
-            height: 128
-            fillMode: Image.PreserveAspectFit
-            asynchronous: true
-            source: Script.getAlbumArtUrl(artist, title)
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-        }
-
-        Image {
-            anchors.fill: albumImage
-            source: albumImage.status == Image.Error ? "images/nocover.png" : ""
-        }
-
-        Text {
-            id: titleLabel
+        Item {
+            id: albumInfo
+            width: parent.width
             anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: albumImage.bottom
-            text: title
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.WordWrap
-            color: "white"
+            anchors.top: parent.top
+
+            Image {
+                id: albumImage
+                width: 128
+                height: 128
+                fillMode: Image.PreserveAspectFit
+                asynchronous: true
+                source: Script.getAlbumArtUrl(artist, title)
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+            }
+
+            Image {
+                anchors.fill: albumImage
+                source: albumImage.status == Image.Error ? "images/nocover.png" : ""
+            }
+
+            Text {
+                id: titleLabel
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: albumImage.bottom
+                text: title
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+                color: "white"
+                visible: false
+            }
+
+            Text {
+                id: artistLabel
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: titleLabel.bottom
+                text: artist
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+                color: "white"
+                visible: false
+            }
         }
+
+        Loader {
+            id: songsLoader
+            anchors.top: parent.top
+            anchors.left: albumInfo.right
+            anchors.right: parent.right
+            sourceComponent: undefined
+        }
+
+        states: [
+            State {
+                name: 'inStack'
+                ParentChange { target: albumWrapper; parent: stackItem }
+            },
+            State {
+                name: 'inGrid'
+                ParentChange { target: albumWrapper; parent: gridItem }
+                PropertyChanges { target: titleLabel; visible: true }
+                PropertyChanges { target: artistLabel; visible: true }
+            },
+            State {
+                name: 'inList'
+                ParentChange { target: albumWrapper; parent: listItem; }
+                PropertyChanges { target: songsLoader; sourceComponent: songView; }
+                PropertyChanges { target: albumInfo; width: 192 }
+                PropertyChanges { target: listItem; height: songsLoader.height > 192 ? songsLoader.height : 192 }
+                PropertyChanges { target: titleLabel; visible: true }
+            }
+        ]
     }
 
-    Column {
+    Component {
         id: songView
-        anchors.left: albumInfo.right
-        anchors.right: parent.right
-        anchors.top: parent.top
 
-        Repeater {
-            model: GalleryQueryModel {
-                gallery: DocumentGallery {}
-                rootType: "Audio"
-                rootItem: itemId
-                properties: [ "trackNumber", "title", "duration" ]
-                sortProperties: [ "trackNumber" ]
-            }
-            delegate: Item {
-                width: parent.width
-                height: 32
+        Column {
+            id: songColumn
 
-                Text {
-                    id: trackLabel
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    width: 48
-                    text: trackNumber
-                    color: "white"
+            Repeater {
+                model: GalleryQueryModel {
+                    gallery: DocumentGallery {}
+                    rootType: "Audio"
+                    rootItem: itemId
+                    properties: [ "trackNumber", "title", "duration" ]
+                    sortProperties: [ "trackNumber" ]
                 }
+                delegate: Item {
+                    width: songColumn.width
+                    height: 32
 
-                Text {
-                    id: titleLabel
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: trackLabel.right
-                    text: title
-                    color: "white"
-                }
+                    Text {
+                        id: trackLabel
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        width: 48
+                        text: trackNumber
+                        color: "white"
+                    }
 
-                Text {
-                    id: durationLabel
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.right: parent.right
-                    text: Script.formatDuration(duration)
-                    color: "white"
+                    Text {
+                        id: titleLabel
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: trackLabel.right
+                        text: title
+                        color: "white"
+                    }
+
+                    Text {
+                        id: durationLabel
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                        text: Script.formatDuration(duration)
+                        color: "white"
+                    }
                 }
             }
         }

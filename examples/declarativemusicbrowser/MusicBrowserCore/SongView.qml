@@ -46,14 +46,21 @@ ListView {
     anchors.fill: parent
     clip: true
     cacheBuffer: 960
-    model: GalleryQueryModel {
-        id: galleryModel
-        gallery: DocumentGallery {}
-        rootType: "Album"
-        properties: [ "artist", "title" ]
-        sortProperties: [ "artist", "title" ]
+
+    VisualDataModel {
+        id: visualModel
+
+        model: GalleryQueryModel {
+            id: galleryModel
+            gallery: DocumentGallery {}
+            rootType: "Album"
+            properties: [ "artist", "title" ]
+            sortProperties: [ "artist", "title" ]
+        }
+        delegate: AlbumDelegate { state: 'inList' }
     }
-    delegate: AlbumDelegate {}
+
+    model: visualModel.parts.list
 
     section.property: "artist"
     section.delegate: Item {

@@ -40,7 +40,6 @@
 
 import Qt 4.7
 import QtMobility.gallery 1.1
-import "script/mediaart.js" as Script
 
 GridView {
     anchors.fill: parent
@@ -65,28 +64,22 @@ GridView {
             anchors.left: parent.left
             anchors.right: parent.right
 
-            model: GalleryQueryModel {
-                gallery: DocumentGallery {}
-                rootType: "Album"
-                rootItem: itemId
-                properties: [ "title", "artist" ]
-                sortProperties: [ "artist", "title" ]
-            }
-            delegate: Item {
-                width: 128; height: 128
+            VisualDataModel {
+                id: visualModel
 
-                Image {
-                    id: albumImage
-                    anchors.fill: parent
-                    source: Script.getAlbumArtUrl(artist, title)
-                    fillMode: Image.PreserveAspectFit
-                    asynchronous: true
+                model: GalleryQueryModel {
+                    id: galleryModel
+                    gallery: DocumentGallery {}
+                    rootType: "Album"
+                    rootItem: itemId
+                    properties: [ "artist", "title" ]
+                    sortProperties: [ "artist", "title" ]
                 }
-                Image {
-                    anchors.fill: parent
-                    source: albumImage.status == Image.Error ? "images/nocover.png" : ""
-                }
+                delegate: AlbumDelegate { state: 'inStack' }
             }
+
+            model: visualModel.parts.stack
+
             path: Path {
                 startX: 64
                 startY: 64
