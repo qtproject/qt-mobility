@@ -45,7 +45,7 @@
 #include "qgeocoordinate.h"
 #include "qgeorouterequest.h"
 
-#include <QSharedDataPointer>
+#include <QExplicitlySharedDataPointer>
 #include <QList>
 #include <QHash>
 
@@ -66,6 +66,9 @@ public:
     ~QGeoRoute();
 
     QGeoRoute& operator = (const QGeoRoute &other);
+
+    bool operator == (const QGeoRoute &other) const;
+    bool operator != (const QGeoRoute &other) const;
 
     void setRouteId(const QString &id);
     QString routeId() const;
@@ -92,7 +95,7 @@ public:
     QList<QGeoCoordinate> path() const;
 
 private:
-    QSharedDataPointer<QGeoRoutePrivate> d_ptr;
+    QExplicitlySharedDataPointer<QGeoRoutePrivate> d_ptr;
 };
 
 QTM_END_NAMESPACE

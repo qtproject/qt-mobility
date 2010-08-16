@@ -58,6 +58,7 @@ CoverArtModel::CoverArtModel(QAbstractGallery *gallery, QObject *parent)
 {
 }
 
+#ifndef QT_NO_QFUTURE
 #if defined(Q_OS_UNIX) && !(defined(Q_OS_SYMBIAN) || defined(Q_OS_MAC))
 QString CoverArtModel::imagePath(const QModelIndex &index) const
 {
@@ -84,4 +85,5 @@ QString CoverArtModel::hash(const QString &identifier) const
                 QCryptographicHash::Md5).toHex();
     }
 }
+#endif
 #endif

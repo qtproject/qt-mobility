@@ -41,8 +41,6 @@
 
 //TESTED_COMPONENT=src/documentgallery
 
-#include <QtTest/QtTest>
-
 #include <maemo5/qgallerytrackerresultset_p.h>
 #include <maemo5/qgallerytrackerlistcolumn_p.h>
 
@@ -50,6 +48,8 @@
 
 #include <QtDBus/qdbusabstractadaptor.h>
 #include <QtDBus/qdbusmetatype.h>
+
+#include <QtTest/QtTest>
 
 Q_DECLARE_METATYPE(QVector<QStringList>)
 
@@ -77,7 +77,6 @@ public Q_SLOTS:
     void cleanup();
 
 private Q_SLOTS:
-//private:
     void query();
     void refresh();
     void reset();

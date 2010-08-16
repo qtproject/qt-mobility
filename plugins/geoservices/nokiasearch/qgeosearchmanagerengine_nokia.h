@@ -53,19 +53,19 @@ class QGeoSearchManagerEngineNokia : public QGeoSearchManagerEngine
 {
     Q_OBJECT
 public:
-    QGeoSearchManagerEngineNokia(const QMap<QString, QString> &parameters,
+    QGeoSearchManagerEngineNokia(const QMap<QString, QVariant> &parameters,
                                  QGeoServiceProvider::Error *error,
                                  QString *errorString);
     ~QGeoSearchManagerEngineNokia();
 
     QGeoSearchReply* geocode(const QGeoAddress &address,
-                             const QGeoBoundingBox &bounds);
-    QGeoSearchReply* reverseGeocode(const QGeoCoordinate &coordinate,
-                             const QGeoBoundingBox &bounds);
+                             QGeoBoundingArea *bounds);
 
     QGeoSearchReply* search(const QString &searchString,
-                                  QGeoSearchManager::SearchTypes searchTypes,
-                                  const QGeoBoundingBox &bounds);
+                            QGeoSearchManager::SearchTypes searchTypes,
+                            int limit,
+                            int offset,
+                            QGeoBoundingArea *bounds);
 
 private slots:
     void placesFinished();

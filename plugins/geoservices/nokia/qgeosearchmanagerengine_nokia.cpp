@@ -47,7 +47,7 @@
 #include <QNetworkProxy>
 #include <QMap>
 
-QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoSearchManagerEngine(parameters),
         m_host("loc.desktop.maps.svc.ovi.com")
 {
@@ -56,18 +56,19 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, Q
     QList<QString> keys = parameters.keys();
 
     if (keys.contains("places.proxy")) {
-        QString proxy = parameters.value("places.proxy");
+        QString proxy = parameters.value("places.proxy").toString();
         if (!proxy.isEmpty())
             m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
     }
 
     if (keys.contains("places.host")) {
-        QString host = parameters.value("places.host");
+        QString host = parameters.value("places.host").toString();
         if (!host.isEmpty())
             m_host = host;
     }
 
     setSupportsGeocoding(true);
+    setSupportsReverseGeocoding(true);
 
     QGeoSearchManager::SearchTypes supportedSearchTypes;
     supportedSearchTypes |= QGeoSearchManager::SearchGeocode;
@@ -82,7 +83,8 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, Q
 
 QGeoSearchManagerEngineNokia::~QGeoSearchManagerEngineNokia() {}
 
-QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &address, const QGeoBoundingBox &bounds)
+QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &address,
+        QGeoBoundingArea *bounds)
 {
     Q_UNUSED(bounds)
 
@@ -131,11 +133,12 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
     return search(requestString);
 }
 
-QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate, const QGeoBoundingBox &bounds)
+QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,
+        QGeoBoundingArea *bounds)
 {
     Q_UNUSED(bounds)
 
-    if (!supportsGeocoding()) {
+    if (!supportsReverseGeocoding()) {
         QGeoSearchReply *reply = new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError, "Reverse geocoding is not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
         return reply;
@@ -156,7 +159,11 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordina
     return search(requestString);
 }
 
-QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchString, QGeoSearchManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
+QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchString,
+        QGeoSearchManager::SearchTypes searchTypes,
+        int limit,
+        int offset,
+        QGeoBoundingArea *bounds)
 {
     // NOTE this will eventually replaced by a much improved implementation
     // which will make use of the additionLandmarkManagers()

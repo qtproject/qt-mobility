@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qsystemscreensaver.h"
-#include "qsysteminfocommon.h"
+#include "qsysteminfocommon_p.h"
 
 QTM_BEGIN_NAMESPACE
 

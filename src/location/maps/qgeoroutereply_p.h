@@ -67,10 +67,7 @@ class QGeoRouteReplyPrivate
 public:
     QGeoRouteReplyPrivate(const QGeoRouteRequest &request);
     QGeoRouteReplyPrivate(QGeoRouteReply::Error error, QString errorString);
-    QGeoRouteReplyPrivate(const QGeoRouteReplyPrivate &other);
     ~QGeoRouteReplyPrivate();
-
-    QGeoRouteReplyPrivate& operator= (const QGeoRouteReplyPrivate &other);
 
     QGeoRouteReply::Error error;
     QString errorString;
@@ -78,6 +75,9 @@ public:
 
     QGeoRouteRequest request;
     QList<QGeoRoute> routes;
+
+private:
+    Q_DISABLE_COPY(QGeoRouteReplyPrivate)
 };
 
 QTM_END_NAMESPACE

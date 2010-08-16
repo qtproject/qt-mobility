@@ -33,6 +33,11 @@ contains(mobility_modules,publishsubscribe) {
 contains(mobility_modules,systeminfo): SUBDIRS += systeminfo
 contains(mobility_modules,sensors): SUBDIRS += sensors
 
+# Contacts depends on ServiceFramework
+contacts.subdir=contacts
+contacts.target=sub-contacts
+contacts.depends=serviceframework
+
 # Versit depends on Contacts & Organizer
 versit.subdir=versit
 versit.target=sub-versit

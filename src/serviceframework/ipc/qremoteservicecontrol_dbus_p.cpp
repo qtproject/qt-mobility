@@ -93,7 +93,7 @@ protected slots:
         // Check that its of a client-server nature
         if (endType != type) {
             // Client to Server
-            if (type != 0) {
+            if (type != SERVER) {
                 readIncoming(package);
             } else {
             // Server to Client
@@ -189,10 +189,10 @@ void QRemoteServiceControlPrivate::publishServices(const QString& ident)
     createServiceEndPoint(ident);
 }
 
-/*
+/*!
     Creates endpoint on service side.
 */
-bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& ident)
+bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& /*ident*/)
 {
     InstanceManager *iManager = InstanceManager::instance();
     QList<QRemoteServiceIdentifier> list = iManager->allIdents();
@@ -220,7 +220,7 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& ident)
         DBusSession *session = new DBusSession();
         new DBusSessionAdaptor(session);
 
-        QString path = "/" + list[0].interface + "/DBusSession";
+        QString path = "/" + list[0].iface + "/DBusSession";
         path.replace(QString("."), QString("/"));
         connection->registerObject(path, session);
 
@@ -230,20 +230,21 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& ident)
             return 0;
         }
     
-        DBusEndPoint* ipcEndPoint = new DBusEndPoint(iface, 0);
+        DBusEndPoint* ipcEndPoint = new DBusEndPoint(iface, SERVER);
         ObjectEndPoint* endpoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
-    
+        Q_UNUSED(endpoint);
         return true;
     }
+    return false;
 }
 
-/*
+/*!
     Creates endpoint on client side.
 */
-QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier& typeIdent, const QString& location)
+QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier& typeIdent, const QString& /*location*/)
 {
     QString serviceName = "com.nokia.qtmobility.sfw." + typeIdent.name;
-    QString path = "/" + typeIdent.interface + "/DBusSession";
+    QString path = "/" + typeIdent.iface + "/DBusSession";
     path.replace(QString("."), QString("/"));
 
     QDBusConnection *connection = new QDBusConnection(QDBusConnection::sessionBus());
@@ -258,7 +259,7 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
         return 0;
     }
     
-    DBusEndPoint* ipcEndPoint = new DBusEndPoint(inface, 1);
+    DBusEndPoint* ipcEndPoint = new DBusEndPoint(inface, CLIENT);
     ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
    
     QObject *proxy = endPoint->constructProxy(typeIdent);

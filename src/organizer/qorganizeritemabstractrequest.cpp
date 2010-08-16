@@ -242,7 +242,7 @@ bool QOrganizerItemAbstractRequest::cancel()
 }
 
 /*! Blocks until the request has been completed by the manager engine, or until \a msecs milliseconds has elapsed.
-    If \a msecs is zero, this function will block indefinitely.
+    If \a msecs is zero or negative, this function will block until the request is complete, regardless of how long it takes.
     Returns true if the request was cancelled or completed successfully within the given period, otherwise false.
     Some backends are unable to support this operation safely, and will return false immediately.
  */

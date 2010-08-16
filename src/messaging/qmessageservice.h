@@ -83,10 +83,10 @@ public:
     State state() const;
     QMessageManager::Error error() const;
 
-public slots:
+public Q_SLOTS:
     void cancel();
 
-signals:
+Q_SIGNALS:
     void stateChanged(QMessageService::State newState);
     void messagesFound(const QMessageIdList &ids);
     void messagesCounted(int count);

@@ -62,6 +62,27 @@ void OrganizerItemTypeTransform::transformToDetailL(const CCalEntry& entry, QOrg
     item->setType(itemType);
 }
 
+void OrganizerItemTypeTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
+{
+    CCalEntry::TType entryType = instance.Entry().EntryTypeL();
+    QString itemType;
+
+    if (entryType == CCalEntry::ETodo)
+        itemType = QLatin1String(QOrganizerItemType::TypeTodoOccurrence);
+    else if (entryType == CCalEntry::EEvent)
+        itemType = QLatin1String(QOrganizerItemType::TypeEventOccurrence);
+    else if (entryType == CCalEntry::EAppt)
+        itemType = QLatin1String(QOrganizerItemType::TypeEventOccurrence);
+    else if (entryType == CCalEntry::EAnniv)
+        itemType = QLatin1String(QOrganizerItemType::TypeEventOccurrence);
+    else
+        User::Leave(KErrUnknown); // unknown type
+
+    // TODO: CCalEntry::EReminder
+
+    itemInstance->setType(itemType);
+}
+
 void OrganizerItemTypeTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
     Q_UNUSED(item);
@@ -79,9 +100,9 @@ CCalEntry::TType OrganizerItemTypeTransform::entryTypeL(const QOrganizerItem &it
     QString itemType = item.type();
     CCalEntry::TType entryType;
 
-    if (itemType == QOrganizerItemType::TypeTodo)
+    if (itemType == QOrganizerItemType::TypeTodo || itemType == QOrganizerItemType::TypeTodoOccurrence)
         entryType = CCalEntry::ETodo;
-    else if (itemType == QOrganizerItemType::TypeEvent)
+    else if (itemType == QOrganizerItemType::TypeEvent || itemType == QOrganizerItemType::TypeEventOccurrence)
         entryType = CCalEntry::EAppt;
     else
         User::Leave(KErrUnknown); // unknown type

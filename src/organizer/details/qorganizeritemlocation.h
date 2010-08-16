@@ -56,10 +56,10 @@ class Q_ORGANIZER_EXPORT QOrganizerItemLocation : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldGeoLocation;
-    const char* FieldAddress;
-    const char* FieldLocationName;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldGeoLocation;
+    static const QLatin1Constant FieldAddress;
+    static const QLatin1Constant FieldLocationName;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemLocation, "Location")
     Q_DECLARE_LATIN1_CONSTANT(FieldGeoLocation, "GeoLocation");

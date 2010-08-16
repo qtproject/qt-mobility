@@ -43,8 +43,6 @@
 
 #include "qmobilityglobal.h"
 
-//#include "qsysteminfocommon.h"
-
 #include <QObject>
 #include <QSize>
 #include <QPair>

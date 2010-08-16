@@ -39,45 +39,24 @@
 **
 ****************************************************************************/
 
+#include <QtCore/qglobal.h>
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+# include "maemo/qtelephonycallinfo_maemo_p.h"
+#else
+# include "qtelephonycallinfo_p.h"
+#endif
+
 #include "qmobilityglobal.h"
-#include "qtelephonycallinfo_p.h"
+#include "qtelephony.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
     \class QTelephonyCallInfo
-    \ingroup telephony
+    \ingroup telephonyapi
     \inmodule QtTelephony
     \brief The QTelephonyCallInfo class represents a call including the type, status and other information of the call.
-*/
-
-/*!
-    \enum QTelephonyCallInfo::CallStatus
-
-    This enum type is used to describe the status of a call.
-    A QTelephonyCallInfo object can have a status of:
-
-    \value Idle          The call status is not defined.
-    \value Dialing       The status of the call is dialing.
-    \value Alerting      The status of the call is alerting.
-    \value Connected     The status of the call is connected.
-    \value Disconnecting The status of the call is disconnected.
-    \value Incomming     The status of the call is incomming.
-    \value OnHold        The status of the call is on hold.
-*/
-
-/*!
-    \enum QTelephonyCallInfo::CallType
-
-    This enum decribes the type of the call.
-    A QTelephonyCallInfo object can be a type of:
-
-    \value Any         The call type can be any type.
-    \value Text        The call is a text base call.
-    \value Data        The call is a data based call.
-    \value Video       The call is a video based call.
-    \value Voice       The call is a voice based call.
-    \value Other       The call is a an unknown base call.
 */
 
 /*!
@@ -120,21 +99,29 @@ QTelephonyCallInfo::~QTelephonyCallInfo()
 QString QTelephonyCallInfo::remotePartyIdentifier() const
 {
     if(d)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        return d->remotePartyIdentifier();
+#else
         return d->remotePartyIdentifier;
+#endif
     return QString();
 }
 
 /*!
-    \fn  QTelephonyCallInfo::CallType QTelephonyCallInfo::type() const
+    \fn  QTelephonyEvents::CallType QTelephonyCallInfo::type() const
 
     Gives back the type of the call.
     A call can be a VOIP, Video Voice and so on.
     You can use this property to get the type of the call.
 */
-QTelephonyCallInfo::CallType QTelephonyCallInfo::type() const
+QTelephonyEvents::CallType QTelephonyCallInfo::type() const
 {
     if(d)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        return d->type();
+#else
         return d->type;
+#endif
     return Other;
 }
 
@@ -148,21 +135,29 @@ QTelephonyCallInfo::CallType QTelephonyCallInfo::type() const
 QString QTelephonyCallInfo::subType() const
 {
     if(d)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        return d->subType();
+#else
         return d->subType;
+#endif
     return QString();
 }
 
 /*!
-    \fn  QTelephonyCallInfo::CallStatus QTelephonyCallInfo::status() const
+    \fn  QTelephonyEvents::CallStatus QTelephonyCallInfo::status() const
 
     Gives back the status of the call.
     A call can be in different conditions like ringing, dropped and so on.
     You can use this property if you want to know about the current condition of the call.
 */
-QTelephonyCallInfo::CallStatus QTelephonyCallInfo::status() const
+QTelephonyEvents::CallStatus QTelephonyCallInfo::status() const
 {
     if(d)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        return d->status();
+#else
         return d->status;
+#endif
     return Idle;
 }
 

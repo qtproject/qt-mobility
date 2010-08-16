@@ -44,6 +44,8 @@
 
 QTM_BEGIN_NAMESPACE
 
+//QTM_SYNC_HEADER_EXPORT QMessageDataComparator
+
 namespace QMessageDataComparator {
 
     enum EqualityComparator
