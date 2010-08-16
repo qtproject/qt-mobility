@@ -128,7 +128,7 @@ public:
 class CLandmarkRequestAO: public CActive
 {
 public:
-    TBool StartRequest();
+    TBool StartRequest(CPosLandmarkSearch *aLandmarkSearch);
     TBool CancelRequest();
     TBool WaitForFinished(TInt);
     static CLandmarkRequestAO* NewL(MLandmarkRequestObserver*, CPosLmOperation* aOp = NULL);

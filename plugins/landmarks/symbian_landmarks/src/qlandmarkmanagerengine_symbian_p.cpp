@@ -218,8 +218,6 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
         }
     }
 
-    int maxMatches = limit + offset;
-
     switch (filter.type()) {
     case QLandmarkFilter::DefaultFilter:
     case QLandmarkFilter::NameFilter:
@@ -234,6 +232,8 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
             result = lmIdFilter.landmarkIds();
             break;
         }
+
+        int maxMatches = limit + offset;
         int err;
         if (sortOrders.size() > 0) {
             TRAP(err, result = searchWithFilterL(filter,sortOrders.at(0),maxMatches);)
@@ -1251,6 +1251,8 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
             CleanupStack::PushL(landmarkSearch);
             CPosLmOperation* lmOperation = landmarkSearch->StartCategorySearchL(*catNameCriteria,
                 sortPref);
+            CleanupStack::Pop(landmarkSearch);
+            CleanupStack::PopAndDestroy(catNameCriteria);
 
             // create request AO and start async request
             CLandmarkRequestAO* requestAO = CLandmarkRequestAO::NewL(this, lmOperation);
@@ -1259,18 +1261,9 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
             if (retn != KErrNone) {
                 return false;
             }
-
-            // start the request
-            requestAO->StartRequest();
-
+            // start the request & transfer landmarkSearch object ownership
+            requestAO->StartRequest(landmarkSearch);
             CleanupStack::Pop(requestAO);
-            CleanupStack::Pop(landmarkSearch);
-            CleanupStack::PopAndDestroy(catNameCriteria);
-
-            // take ownership of search object
-            CLandmarkRequestData* requestData = m_RequestHandler.FetchAsyncRequest(request);
-            // ownership transfered
-            requestData->iLandmarkSearch = landmarkSearch;
 
             result = true;
             break;
@@ -1281,15 +1274,17 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
     case QLandmarkAbstractRequest::LandmarkFetchRequest:
     {
         QLandmarkFilter filter;
-        QList<QLandmarkSortOrder> sortOrders;
         int maxMatches = 0;
+
+        QList<QLandmarkSortOrder> sortOrders;
 
         if (request->type() == QLandmarkAbstractRequest::LandmarkIdFetchRequest) {
             QLandmarkIdFetchRequest *lmIdFetchRequest =
                 static_cast<QLandmarkIdFetchRequest *> (request);
 
             filter = lmIdFetchRequest->filter();
-            sortOrders = lmIdFetchRequest->sorting();
+            if (!lmIdFetchRequest->sorting().isEmpty())
+                sortOrders = lmIdFetchRequest->sorting();
             maxMatches = lmIdFetchRequest->limit() + lmIdFetchRequest->offset();
         }
 
@@ -1298,7 +1293,8 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
             QLandmarkFetchRequest *lmFetchRequest = static_cast<QLandmarkFetchRequest *> (request);
 
             filter = lmFetchRequest->filter();
-            sortOrders = lmFetchRequest->sorting();
+            if (!lmFetchRequest->sorting().isEmpty())
+                sortOrders = lmFetchRequest->sorting();
             maxMatches = lmFetchRequest->limit() + lmFetchRequest->offset();
         }
 
@@ -1307,7 +1303,7 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
             bool sortRequired = false;
 
             // check emulated sorting is required or not
-            if (sortOrders.size() > 1) {
+            if (!sortOrders.isEmpty()) {
                 for (int i = 0; i < sortOrders.size(); ++i) {
                     if (sortOrders.at(i).type() != QLandmarkSortOrder::NameSort) {
                         sortRequired = true;
@@ -1327,7 +1323,7 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
                     return false;
                 }
                 // start the request
-                requestAO->StartRequest();
+                requestAO->StartRequest(NULL);
                 CleanupStack::Pop(requestAO);
                 break;
             }
@@ -1336,31 +1332,32 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
         CPosLmSearchCriteria* searchCriteria = getSearchCriteriaL(filter);
         if (!searchCriteria)
             return false;
-
-        CPosLandmarkSearch* landmarkSearch = NULL;
-        CPosLmOperation* lmOperation = getOperationL(landmarkSearch, searchCriteria, sortOrders.at(
-            0), maxMatches);
+        CPosLandmarkSearch* landmarkSearch = CPosLandmarkSearch::NewL(*m_LandmarkDb);
+        CPosLmOperation* lmOperation = NULL;
+        if (sortOrders.isEmpty())
+            lmOperation = getOperationL(landmarkSearch, searchCriteria, QLandmarkSortOrder(),
+                maxMatches);
+        else
+            lmOperation = getOperationL(landmarkSearch, searchCriteria, sortOrders.at(0),
+                maxMatches);
+        if (lmOperation == NULL) {
+            delete landmarkSearch;
+            landmarkSearch = NULL;
+        }
+        delete searchCriteria;
 
         // create request AO and start async request
         CLandmarkRequestAO* requestAO = CLandmarkRequestAO::NewL(this, lmOperation);
         CleanupStack::PushL(requestAO);
-
         TInt retn = m_RequestHandler.AddAsyncRequest(request, requestAO);
         if (retn != KErrNone) {
             return false;
         }
 
-        // start the request
-        requestAO->StartRequest();
+        // start the request & transfer landmarkSearch object ownership
+        requestAO->StartRequest(landmarkSearch);
 
         CleanupStack::Pop(requestAO);
-        delete searchCriteria;
-
-        // take ownership of search object
-        CLandmarkRequestData* requestData = m_RequestHandler.FetchAsyncRequest(request);
-        // ownership transfered
-        requestData->iLandmarkSearch = landmarkSearch;
-
         result = true;
         break;
     }
@@ -1377,7 +1374,7 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
             CleanupStack::Pop(requestAO);
             return false;
         }
-        requestAO->StartRequest();
+        requestAO->StartRequest(NULL);
         CleanupStack::Pop(requestAO);
         result = true;
         break;
@@ -1906,8 +1903,15 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
         QLandmarkProximityFilter proximityFilter = filter;
         // set the coordinate values
         TCoordinate symbianCoord;
+
         QGeoCoordinate qCoord = proximityFilter.coordinate();
-        symbianCoord.SetCoordinate(qCoord.latitude(), qCoord.longitude());
+        if (LandmarkUtility::isValidLat(qCoord.latitude()) && LandmarkUtility::isValidLong(
+            qCoord.longitude())) {
+            symbianCoord.SetCoordinate(qCoord.latitude(), qCoord.longitude());
+        }
+        else {
+            User::Leave(KErrArgument);
+        }
 
         // set the nearest criteria
         CPosLmNearestCriteria* nearestCriteria = CPosLmNearestCriteria::NewLC(symbianCoord);
@@ -1927,6 +1931,11 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
         const TReal64& southlat = boxFilter.boundingBox().bottomLeft().latitude();
         const TReal64& northlat = boxFilter.boundingBox().topRight().latitude();
         const TReal64& westlong = boxFilter.boundingBox().topLeft().longitude();
+
+        if (!LandmarkUtility::isValidLong(eastlong) && !LandmarkUtility::isValidLat(southlat)
+            && !LandmarkUtility::isValidLat(northlat) && !LandmarkUtility::isValidLong(westlong)) {
+            User::Leave(KErrArgument);            
+        }
 
         CPosLmAreaCriteria* areaCriteria = CPosLmAreaCriteria::NewLC(southlat, northlat, westlong,
             eastlong);
@@ -2351,14 +2360,15 @@ CPosLmOperation* LandmarkManagerEngineSymbianPrivate::getOperationL(
 
     if (!landmarkSearch) {
         landmarkSearch = CPosLandmarkSearch::NewL(*m_LandmarkDb);
-        CleanupStack::PushL(landmarkSearch);
+        //CleanupStack::PushL(landmarkSearch);
         isOwned = true;
     }
 
     CPosLmPartialReadParameters* readParams = CPosLmPartialReadParameters::NewLC();
     readParams->SetRequestedAttributes(CPosLandmark::ELandmarkName);
     m_LandmarkDb->SetPartialReadParametersL(*readParams);
-    landmarkSearch->SetMaxNumOfMatches(maxMatches);
+    if (maxMatches > 0)
+        landmarkSearch->SetMaxNumOfMatches(maxMatches);
 
     if (qtSortOrder.type() == QLandmarkSortOrder::NameSort) {
         if (qtSortOrder.direction() == Qt::AscendingOrder) {
@@ -2374,8 +2384,10 @@ CPosLmOperation* LandmarkManagerEngineSymbianPrivate::getOperationL(
         operation = landmarkSearch->StartLandmarkSearchL(*searchCriteria);
 
     CleanupStack::Pop(readParams);
-    if (isOwned)
-        CleanupStack::Pop(landmarkSearch);
+
+    if (isOwned) {
+        //CleanupStack::Pop(landmarkSearch);
+    }
 
     return operation;
 }
@@ -2497,17 +2509,11 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletion(CLandmarkRequestData*
 
     handleSymbianError(aData->iErrorId, &error, &errorString);
 
-    // for stateChanged signal
-    QLandmarkManagerEngineSymbian::updateRequestState(request,
-        QLandmarkAbstractRequest::FinishedState);
-
     switch (request->type()) {
     case QLandmarkAbstractRequest::LandmarkIdFetchRequest:
     {
         QLandmarkIdFetchRequest *lmIdFetchRequest =
             static_cast<QLandmarkIdFetchRequest *> (request);
-
-        QList<QLandmarkId> landmarkIds;
 
         if (aData->iLandmarkSearch) {
             TRAP_IGNORE(
@@ -2516,18 +2522,17 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletion(CLandmarkRequestData*
                 if (iterator->NumOfItemsL() > 0) {
                     iterator->GetItemIdsL(symbianLmIds, 0, iterator->NumOfItemsL());
                 }
-
-                landmarkIds = LandmarkUtility::convertToQtLandmarkIds(managerUri(), symbianLmIds);
+                aData->iLandmarkIds = LandmarkUtility::convertToQtLandmarkIds(managerUri(), symbianLmIds);
                 symbianLmIds.Close();
             )
         }
 
         sortFetchedLmIds(lmIdFetchRequest->limit(), lmIdFetchRequest->offset(),
-            lmIdFetchRequest->sorting(), landmarkIds, &error, &errorString);
+            lmIdFetchRequest->sorting(), aData->iLandmarkIds, &error, &errorString);
 
         // for resultsAvailable signal
-        QLandmarkManagerEngineSymbian::updateLandmarkIdFetchRequest(lmIdFetchRequest, landmarkIds,
-            error, errorString, QLandmarkAbstractRequest::FinishedState);
+        QLandmarkManagerEngineSymbian::updateLandmarkIdFetchRequest(lmIdFetchRequest,
+            aData->iLandmarkIds, error, errorString, QLandmarkAbstractRequest::FinishedState);
 
         break;
     }
@@ -2536,8 +2541,6 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletion(CLandmarkRequestData*
         QLandmarkCategoryIdFetchRequest *catIdFetchRequest =
             static_cast<QLandmarkCategoryIdFetchRequest*> (request);
 
-        QList<QLandmarkCategoryId> qtCatIds;
-
         if (aData->iLandmarkSearch) {
             TRAP_IGNORE(
                 CPosLmItemIterator *iterator = aData->iLandmarkSearch->MatchIteratorL();
@@ -2545,14 +2548,13 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletion(CLandmarkRequestData*
                 if (iterator->NumOfItemsL() > 0) {
                     iterator->GetItemIdsL(symbianCatIds, 0, iterator->NumOfItemsL());
                 }
-
-                qtCatIds = LandmarkUtility::convertToQtLandmarkCategoryIds(managerUri(), symbianCatIds);
+                aData->iCategoryIds = LandmarkUtility::convertToQtLandmarkCategoryIds(managerUri(), symbianCatIds);
                 symbianCatIds.Close();
             )
         }
         // for resultsAvailable signal
         QLandmarkManagerEngineSymbian::updateLandmarkCategoryIdFetchRequest(catIdFetchRequest,
-            qtCatIds, error, errorString, QLandmarkAbstractRequest::FinishedState);
+            aData->iCategoryIds, error, errorString, QLandmarkAbstractRequest::FinishedState);
 
         break;
     }
@@ -2560,43 +2562,38 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletion(CLandmarkRequestData*
     {
         QLandmarkFetchRequest *lmfetchRequest = static_cast<QLandmarkFetchRequest*> (request);
 
-        QList<QLandmark> landmarks;
-        QList<QLandmarkId> landmarkIds;
-
         if (aData->iLandmarkSearch) {
             TRAP_IGNORE(
-
                 CPosLmItemIterator *iterator = aData->iLandmarkSearch->MatchIteratorL();
                 RArray<TPosLmItemId> symbianLmIds;
                 if (iterator->NumOfItemsL() > 0) {
                     iterator->GetItemIdsL(symbianLmIds, 0, iterator->NumOfItemsL());
                 }
-
-                landmarkIds = LandmarkUtility::convertToQtLandmarkIds(managerUri(), symbianLmIds);
+                aData->iLandmarkIds = LandmarkUtility::convertToQtLandmarkIds(managerUri(), symbianLmIds);
                 symbianLmIds.Close();
             )
-        }
 
-        if (sortFetchedLmIds(lmfetchRequest->limit(), lmfetchRequest->offset(),
-            lmfetchRequest->sorting(), landmarkIds, &error, &errorString)) {
+            if (sortFetchedLmIds(lmfetchRequest->limit(), lmfetchRequest->offset(),
+                lmfetchRequest->sorting(), aData->iLandmarkIds, &error, &errorString)) {
 
-            // get all landmark data
-            QLandmark qtLandmark;
-            foreach (const QLandmarkId& lmId,landmarkIds)
-                {
-                    // use landmark fetch method to get landmark from landmark id
-                    qtLandmark = landmark(lmId, &error, &errorString);
-                    if (error != QLandmarkManager::NoError) {
-                        landmarks.clear();
-                        break;
+                // get all landmark data
+                QLandmark qtLandmark;
+                foreach (const QLandmarkId& lmId,aData->iLandmarkIds)
+                    {
+                        // use landmark fetch method to get landmark from landmark id
+                        qtLandmark = landmark(lmId, &error, &errorString);
+                        if (error != QLandmarkManager::NoError) {
+                            aData->iLandmarks.clear();
+                            break;
+                        }
+                        aData->iLandmarks.append(qtLandmark);
                     }
-                    landmarks.append(qtLandmark);
-                }
+            }
         }
 
         // for resultsAvailable signal
-        QLandmarkManagerEngineSymbian::updateLandmarkFetchRequest(lmfetchRequest, landmarks, error,
-            errorString, QLandmarkAbstractRequest::FinishedState);
+        QLandmarkManagerEngineSymbian::updateLandmarkFetchRequest(lmfetchRequest,
+            aData->iLandmarks, error, errorString, QLandmarkAbstractRequest::FinishedState);
 
         break;
     }
@@ -2605,9 +2602,6 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletion(CLandmarkRequestData*
         QLandmarkCategoryFetchRequest *catFetchRequest =
             static_cast<QLandmarkCategoryFetchRequest*> (request);
 
-        QList<QLandmarkCategoryId> qtCatIds;
-        QList<QLandmarkCategory> qtCategories;
-
         if (aData->iLandmarkSearch) {
             TRAP_IGNORE(
                 CPosLmItemIterator *iterator = aData->iLandmarkSearch->MatchIteratorL();
@@ -2615,28 +2609,27 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletion(CLandmarkRequestData*
                 if (iterator->NumOfItemsL() > 0) {
                     iterator->GetItemIdsL(symbianCatIds, 0, iterator->NumOfItemsL());
                 }
-                qtCatIds = LandmarkUtility::convertToQtLandmarkCategoryIds(managerUri(), symbianCatIds);
+                aData->iCategoryIds = LandmarkUtility::convertToQtLandmarkCategoryIds(managerUri(), symbianCatIds);
                 symbianCatIds.Close();
             )
         }
 
-        if (qtCatIds.size() > 0) {
-
-            for (int i = 0; i < qtCatIds.size(); ++i) {
-                QLandmarkCategory cat = fetchCategory(qtCatIds.operator[](i), &error, &errorString);
-
+        // get all landmark category data
+        QLandmarkCategory qtLmCategory;
+        foreach (const QLandmarkCategoryId& lmCatId,aData->iCategoryIds)
+            {
+                // use landmark fetch method to get landmark from landmark id
+                qtLmCategory = fetchCategory(lmCatId, &error, &errorString);
                 if (error != QLandmarkManager::NoError) {
-                    qtCategories.clear();
+                    aData->iCategories.clear();
                     break;
                 }
-
-                qtCategories.append(cat);
+                aData->iCategories.append(qtLmCategory);
             }
-        }
 
         // for resultsAvailable signal
         QLandmarkManagerEngineSymbian::updateLandmarkCategoryFetchRequest(catFetchRequest,
-            qtCategories, error, errorString, QLandmarkAbstractRequest::FinishedState);
+            aData->iCategories, error, errorString, QLandmarkAbstractRequest::FinishedState);
 
         break;
     }
@@ -2855,7 +2848,7 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
     bool sortRequired = false;
 
     // check emulated sorting is required or not
-    if (sortOrders.size() > 1) {
+    if (!sortOrders.isEmpty()) {
         for (int i = 0; i < sortOrders.size(); ++i) {
             if (sortOrders.at(i).type() != QLandmarkSortOrder::NameSort) {
                 sortRequired = true;
@@ -2882,20 +2875,21 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
 
         landmarkIds.clear();
         landmarkIds = QLandmarkManagerEngineSymbian::sortLandmarks(landmarks, sortOrders);
+    }
 
-        int resultcount = landmarkIds.size();
-        if (offset < resultcount) {
-            // do fetch based on offset and max items
-            if (limit > 0) {
-                if (offset < 0)
-                    offset = 0;
-                landmarkIds = landmarkIds.mid(offset, limit);
-            }
-            else if (offset > 0) {
-                landmarkIds = landmarkIds.mid(offset, resultcount);
-            }
+    int resultcount = landmarkIds.size();
+    if (offset < resultcount) {
+        // do fetch based on offset and max items
+        if (limit > 0) {
+            if (offset < 0)
+                offset = 0;
+            landmarkIds = landmarkIds.mid(offset, limit);
+        }
+        else if (offset > 0) {
+            landmarkIds = landmarkIds.mid(offset, resultcount);
         }
     }
+
     return true;
 }
 

@@ -212,8 +212,11 @@ CLandmarkRequestAO::~CLandmarkRequestAO()
     }
 }
 
-TBool CLandmarkRequestAO::StartRequest()
+TBool CLandmarkRequestAO::StartRequest(CPosLandmarkSearch *aLandmarkSearch)
 {
+    if (aLandmarkSearch)
+        iParent->iLandmarkSearch = aLandmarkSearch;
+
     iCancelRequest = iIsComplete = EFalse;
 
     // Case where owned CPosLmOperation.
@@ -349,11 +352,11 @@ CLandmarkRequestData::~CLandmarkRequestData()
         delete Ptr;
     }
 
-    if (iOwnerAO)
-        delete iOwnerAO;
-
     if (iLandmarkSearch)
         delete iLandmarkSearch;
+
+    if (iOwnerAO)
+        delete iOwnerAO;
 
     iLock.Signal();
     iLock.Close();
