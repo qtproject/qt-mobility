@@ -60,10 +60,12 @@
 #include <qlandmarkabstractrequest.h>
 #include <qlandmarkidfetchrequest.h>
 #include <qlandmarkfetchrequest.h>
+#include <qlandmarkfetchbyidrequest.h>
 #include <qlandmarksaverequest.h>
 #include <qlandmarkremoverequest.h>
 #include <qlandmarkcategoryidfetchrequest.h>
 #include <qlandmarkcategoryfetchrequest.h>
+#include <qlandmarkcategoryfetchbyidrequest.h>
 #include <qlandmarkcategorysaverequest.h>
 #include <qlandmarkcategoryremoverequest.h>
 #include <qlandmarkimportrequest.h>
@@ -1365,6 +1367,8 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
     case QLandmarkAbstractRequest::LandmarkRemoveRequest:
     case QLandmarkAbstractRequest::CategorySaveRequest:
     case QLandmarkAbstractRequest::CategoryRemoveRequest:
+    case QLandmarkAbstractRequest::LandmarkFetchByIdRequest:
+    case QLandmarkAbstractRequest::CategoryFetchByIdRequest:
     {
         CLandmarkRequestAO* requestAO = CLandmarkRequestAO::NewL(this);
         CleanupStack::PushL(requestAO);
@@ -2633,6 +2637,26 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletion(CLandmarkRequestData*
 
         break;
     }
+    case QLandmarkAbstractRequest::LandmarkFetchByIdRequest:
+    {
+        QLandmarkFetchByIdRequest *lmFetchRequest = static_cast<QLandmarkFetchByIdRequest*> (request);
+
+        // for resultsAvailable signal
+        QLandmarkManagerEngineSymbian::updateLandmarkFetchByIdRequest(lmFetchRequest, aData->iLandmarks,
+            error, errorString, aData->iErrorMap, QLandmarkAbstractRequest::FinishedState);
+
+        break;
+    }
+    case QLandmarkAbstractRequest::CategoryFetchByIdRequest:
+    {
+        QLandmarkCategoryFetchByIdRequest *catFetchRequest = static_cast<QLandmarkCategoryFetchByIdRequest*> (request);
+
+        // for resultsAvailable signal
+        QLandmarkManagerEngineSymbian::updateLandmarkCategoryFetchByIdRequest(catFetchRequest, aData->iCategories,
+            error, errorString, aData->iErrorMap, QLandmarkAbstractRequest::FinishedState);
+
+        break;
+    }
     case QLandmarkAbstractRequest::LandmarkSaveRequest:
     {
         QLandmarkSaveRequest *lmSaveRequest = static_cast<QLandmarkSaveRequest*> (request);
@@ -2737,7 +2761,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecution(CLandmarkRequestData* 
             if (!saveResult) {
                 aData->iErrorMap.insert(aData->iOpCount, error);
             }
-            aData->iLandmarks.append(qtLm);
+            else
+                aData->iLandmarks.append(qtLm);
 
             aRequest = KPosLmOperationNotComplete;
             aData->iOpCount++;
@@ -2759,7 +2784,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecution(CLandmarkRequestData* 
             if (!removeResult) {
                 aData->iErrorMap.insert(aData->iOpCount, error);
             }
-            aData->iLandmarkIds.append(qtLmId);
+            else
+                aData->iLandmarkIds.append(qtLmId);
 
             aRequest = KPosLmOperationNotComplete;
             aData->iOpCount++;
@@ -2781,7 +2807,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecution(CLandmarkRequestData* 
             if (!saveResult) {
                 aData->iErrorMap.insert(aData->iOpCount, error);
             }
-            aData->iCategories.append(qtCat);
+            else
+                aData->iCategories.append(qtCat);
 
             aRequest = KPosLmOperationNotComplete;
             aData->iOpCount++;
@@ -2803,7 +2830,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecution(CLandmarkRequestData* 
             if (!removeResult) {
                 aData->iErrorMap.insert(aData->iOpCount, error);
             }
-            aData->iCategoryIds.append(qtCatId);
+            else
+                aData->iCategoryIds.append(qtCatId);
 
             aRequest = KPosLmOperationNotComplete;
             aData->iOpCount++;
@@ -2812,6 +2840,60 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecution(CLandmarkRequestData* 
             // Set Complete.
             aRequest = KErrNone;
         }
+        break;
+    }
+    case QLandmarkAbstractRequest::LandmarkFetchByIdRequest:
+    {
+        QLandmarkFetchByIdRequest *fetchRequest =
+            static_cast<QLandmarkFetchByIdRequest *> (landmarkRequest);
+
+        if (aData->iOpCount < fetchRequest->landmarkIds().size()) {
+
+            QLandmarkId qtLmId = fetchRequest->landmarkIds().at(aData->iOpCount);
+            QLandmark fetchedLandmark = landmark(qtLmId, &error,
+                &errorString);
+
+            if (error != QLandmarkManager::NoError ) {
+                aData->iErrorMap.insert(aData->iOpCount, error);
+            }
+            else 
+                aData->iLandmarks.append(fetchedLandmark);
+
+            aRequest = KPosLmOperationNotComplete;
+            aData->iOpCount++;
+        }
+        else {
+            // Set Complete.
+            aRequest = KErrNone;
+        }
+
+        break;
+    }
+    case QLandmarkAbstractRequest::CategoryFetchByIdRequest:
+    {
+        QLandmarkCategoryFetchByIdRequest *fetchRequest =
+            static_cast<QLandmarkCategoryFetchByIdRequest *> (landmarkRequest);
+
+        if (aData->iOpCount < fetchRequest->categoryIds().size()) {
+
+            QLandmarkCategoryId qtCatId = fetchRequest->categoryIds().at(aData->iOpCount);
+            QLandmarkCategory fetchedQtCategory = fetchCategory(qtCatId, &error,
+                &errorString);
+
+            if (error != QLandmarkManager::NoError ) {
+                aData->iErrorMap.insert(aData->iOpCount, error);
+            }
+            else 
+                aData->iCategories.append(fetchedQtCategory);
+
+            aRequest = KPosLmOperationNotComplete;
+            aData->iOpCount++;
+        }
+        else {
+            // Set Complete.
+            aRequest = KErrNone;
+        }
+
         break;
     }
     case QLandmarkAbstractRequest::ImportRequest:
