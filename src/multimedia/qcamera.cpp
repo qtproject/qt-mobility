@@ -116,6 +116,7 @@ class QCameraPrivate : public QMediaObjectPrivate
 public:
     QCameraPrivate():
         QMediaObjectPrivate(),
+        provider(0),
         control(0),        
         viewfinder(0),
         capture(0),
@@ -129,6 +130,8 @@ public:
     }
 
     void initControls();
+
+    QMediaServiceProvider *provider;
 
     QCameraControl *control;
     QCameraLocksControl *locksControl;    
@@ -274,6 +277,7 @@ QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
     QMediaObject(*new QCameraPrivate, parent, provider->requestService(Q_MEDIASERVICE_CAMERA))
 {
     Q_D(QCamera);
+    d->provider = provider;
     d->initControls();
     d->cameraExposure = new QCameraExposure(this);
     d->cameraFocus = new QCameraFocus(this);
@@ -289,6 +293,7 @@ QCamera::QCamera(const QByteArray& device, QObject *parent):
                   QMediaServiceProvider::defaultServiceProvider()->requestService(Q_MEDIASERVICE_CAMERA, QMediaServiceProviderHint(device)))
 {
     Q_D(QCamera);
+    d->provider = QMediaServiceProvider::defaultServiceProvider();
     d->initControls();
 
     if (d->service != 0) {
@@ -326,6 +331,15 @@ QCamera::~QCamera()
     d->cameraFocus = 0;
     delete d->imageProcessing;
     d->imageProcessing = 0;
+
+    if (d->service) {
+        if (d->control)
+            d->service->releaseControl(d->control);
+        if (d->locksControl)
+            d->service->releaseControl(d->locksControl);
+
+        d->provider->releaseService(d->service);
+    }
 }
 
 
