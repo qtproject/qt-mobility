@@ -500,6 +500,8 @@ private slots:
 
     void supportedFormats();
 
+    void filterSupportLevel();
+
     void categoryLimitOffset();
     //TODO: void categoryLimitOffsetAsync()
 };
@@ -6294,6 +6296,117 @@ void tst_QLandmarkManagerEngineSqlite::supportedFormats() {
         QCOMPARE(formats.count(), 2);
         QVERIFY(formats.at(0) == QLandmarkManager::Gpx);
         QVERIFY(formats.at(1) == QLandmarkManager::Lmx);
+}
+
+void tst_QLandmarkManagerEngineSqlite::filterSupportLevel() {
+    QLandmarkFilter filter;
+    QCOMPARE(m_manager->filterSupportLevel(filter), QLandmarkManager::Native);
+    //TODO: Invalid filter?
+
+    //name filter
+    QLandmarkNameFilter nameFilter;
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::Native);
+    nameFilter.setMatchFlags(QLandmarkFilter::MatchStartsWith);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::Native);
+    nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::Native);
+    nameFilter.setMatchFlags(QLandmarkFilter::MatchEndsWith);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::Native);
+    nameFilter.setMatchFlags(QLandmarkFilter::MatchFixedString);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::Native);
+    nameFilter.setMatchFlags(QLandmarkFilter::MatchExactly);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::Native);
+    nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::None);
+    nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive | QLandmarkFilter::MatchStartsWith);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::None);
+
+    //proximity filter
+    QLandmarkProximityFilter proximityFilter;
+    QCOMPARE(m_manager->filterSupportLevel(proximityFilter), QLandmarkManager::Native);
+
+    //box filter
+    QLandmarkBoxFilter boxFilter;
+    QCOMPARE(m_manager->filterSupportLevel(boxFilter), QLandmarkManager::Native);
+
+    //AND filter
+    QLandmarkIntersectionFilter andFilter;
+    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::Native);
+    andFilter.append(boxFilter);
+    andFilter.append(proximityFilter);
+    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::Native);
+    nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
+    andFilter.append(nameFilter);
+    andFilter.append(filter);
+    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::None);
+    andFilter.clear();
+
+    QLandmarkIntersectionFilter andFilter2;//try multi level intersection
+    andFilter2.append(filter);             //that has native support
+    andFilter.append(boxFilter);
+    andFilter.append(andFilter2);
+    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::Native);
+    andFilter2.append(nameFilter);  //try a multi level intersection with no
+    andFilter.clear();              //support
+    andFilter.append(boxFilter);
+    andFilter.append(andFilter2);
+    andFilter.append(proximityFilter);
+    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::None);
+
+
+    //union filter
+    QLandmarkUnionFilter orFilter;
+    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::Native);
+    orFilter.append(boxFilter);
+    orFilter.append(proximityFilter);
+    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::Native);
+    nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
+    orFilter.append(nameFilter);
+    orFilter.append(filter);
+    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::None);
+    orFilter.clear();
+
+    QLandmarkUnionFilter orFilter2;//try multi level Union
+    orFilter2.append(filter);             //that has native support
+    orFilter.append(boxFilter);
+    orFilter.append(orFilter2);
+    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::Native);
+    orFilter2.append(nameFilter);  //try a multi level Union with no
+    orFilter.clear();              //support
+    orFilter.append(boxFilter);
+    orFilter.append(orFilter2);
+    orFilter.append(proximityFilter);
+    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::None);
+
+    //attribute filter
+    //manager attributes that exist
+    QLandmarkAttributeFilter attributeFilter;
+    attributeFilter.setAttribute("name", "jack");
+    attributeFilter.setAttribute("description", "colonel");
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::Native);
+
+    //try a manager attribute that doesn't exist
+    attributeFilter.setAttribute("weapon", "staff");
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::None);
+
+    //try an attribute with case sensitive matching(not supported
+    attributeFilter.clearAttributes();
+    attributeFilter.setAttribute("description", "desc", QLandmarkFilter::MatchCaseSensitive);
+    attributeFilter.setAttribute("street", "abydos");
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::None);
+    attributeFilter.setAttribute("description", "desc",
+                    QLandmarkFilter::MatchCaseSensitive | QLandmarkFilter::MatchStartsWith);
+    attributeFilter.setAttribute("street", "abydos");
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::None);
+
+    //try see if other match flags will give native support
+    attributeFilter.setAttribute("description", "desc");
+    attributeFilter.setAttribute("street", "abydos", QLandmarkFilter::MatchStartsWith);
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::Native);
+
+    //try a landmark id filter
+    QLandmarkIdFilter idFilter;
+    QCOMPARE(m_manager->filterSupportLevel(idFilter), QLandmarkManager::Native);
 }
 
 void tst_QLandmarkManagerEngineSqlite::categoryLimitOffset() {

@@ -356,7 +356,7 @@ QLandmarkManager::SupportLevel QLandmarkManagerEngineSqlite::filterSupportLevel(
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    return QLandmarkManager::Native;
+    return DatabaseOperations::filterSupportLevel(filter);
 }
 
 QLandmarkManager::SupportLevel QLandmarkManagerEngineSqlite::sortOrderSupportLevel(const QList<QLandmarkSortOrder>&, QLandmarkManager::Error *error, QString *errorString) const

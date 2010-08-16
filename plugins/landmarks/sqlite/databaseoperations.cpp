@@ -2842,6 +2842,96 @@ bool DatabaseOperations::exportLandmarks(const QString &connectionName,
     }
 }
 
+QLandmarkManager::SupportLevel DatabaseOperations::filterSupportLevel(const QLandmarkFilter &filter)
+{
+    switch(filter.type()) {
+        case QLandmarkFilter::DefaultFilter:
+            return QLandmarkManager::Native;
+        case QLandmarkFilter::AttributeFilter:
+        {
+            const QLandmarkAttributeFilter attribFilter(filter);
+            QStringList filterKeys = attribFilter.attributeKeys();
+
+            QStringList landmarkKeys;
+            if (attribFilter.attributeType() == QLandmarkAttributeFilter::ManagerAttributes) {
+                foreach(const QString key, filterKeys) {
+                    if (!supportedSearchableAttributes.contains(key))
+                        return QLandmarkManager::None;
+                }
+            }
+            foreach (const QString &key, filterKeys) {
+                if (attribFilter.matchFlags(key) & QLandmarkFilter::MatchCaseSensitive)
+                    return QLandmarkManager::None;
+            }
+        }
+        case QLandmarkFilter::BoxFilter:
+        {
+            return QLandmarkManager::Native;
+        }
+        case QLandmarkFilter::CategoryFilter:
+        {
+            return QLandmarkManager::Native;
+        }
+        case QLandmarkFilter::IntersectionFilter:
+        {
+            const QLandmarkIntersectionFilter andFilter(filter);
+            const QList<QLandmarkFilter>& terms = andFilter.filters();
+            QLandmarkManager::SupportLevel currentLevel = QLandmarkManager::Native;
+            if (terms.count() ==0)
+                return currentLevel;
+
+            for(int i=0; i < terms.count();i++) {
+                    if (filterSupportLevel(terms.at(i)) == QLandmarkManager::None)
+                        return QLandmarkManager::None;
+                    else if (filterSupportLevel(terms.at(i)) == QLandmarkManager::Emulated)
+                        currentLevel = QLandmarkManager::Emulated;
+            }
+            return currentLevel;
+        }
+        case QLandmarkFilter::LandmarkIdFilter:
+        {
+            return QLandmarkManager::Native;
+        }
+        case QLandmarkFilter::InvalidFilter:
+        {
+            return QLandmarkManager::Native;
+        }
+        case QLandmarkFilter::NameFilter:
+        {
+            const QLandmarkNameFilter nameFilter(filter);
+            if (nameFilter.matchFlags() & QLandmarkFilter::MatchCaseSensitive)
+                return QLandmarkManager::None;
+            else
+                return QLandmarkManager::Native;
+        }
+        case QLandmarkFilter::ProximityFilter:
+        {
+            return QLandmarkManager::Native;
+        }
+        case QLandmarkFilter::UnionFilter:
+        {
+            const QLandmarkUnionFilter orFilter(filter);
+            const QList<QLandmarkFilter>& terms = orFilter.filters();
+            QLandmarkManager::SupportLevel currentLevel = QLandmarkManager::Native;
+            if (terms.count() == 0)
+                return currentLevel;
+
+            for (int i=0; i < terms.count(); i++) {
+                if (filterSupportLevel(terms.at(i)) == QLandmarkManager::None)
+                    return QLandmarkManager::None;
+                else if (filterSupportLevel(terms.at(i)) == QLandmarkManager::Emulated)
+                    currentLevel = QLandmarkManager::Emulated;
+            }
+
+            return currentLevel;
+        }
+        default: {
+            return QLandmarkManager::None;
+        }
+    }
+    return QLandmarkManager::None;
+}
+
 DatabaseOperations::QueryRun::QueryRun(QLandmarkAbstractRequest *req, const QString &uri, QLandmarkManagerEngineSqlite *eng)
     : request(req),
       error(QLandmarkManager::NoError),

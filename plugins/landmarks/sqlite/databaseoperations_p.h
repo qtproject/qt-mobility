@@ -203,6 +203,8 @@ namespace DatabaseOperations {
                          QString *errorString,
                          const QString &managerUri,
                          QueryRun *queryRun =0);
+
+    QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter);
 }
 
 #endif
