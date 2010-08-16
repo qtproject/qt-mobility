@@ -85,8 +85,8 @@ void snippets()
     recEvent.setLocationName("Meeting Room 8");
     recEvent.setDescription("A meeting every wednesday to discuss the vitally important topic of marshmallows");
     recEvent.setDisplayLabel("Marshmallow Conference");
-    if (!defaultManager.saveItem(&recEvent))
-        qDebug() << "Failed to save the recurrent event; error:" << defaultManager.error();
+    /*if (!defaultManager.saveItem(&recEvent))
+        qDebug() << "Failed to save the recurrent event; error:" << defaultManager.error();*/
     //! [Creating a recurrent event]
 
     //! [Retrieving occurrences of a particular recurrent event within a time period]
@@ -117,12 +117,12 @@ foreach(const QOrganizerItem& currInst, instances)
                     "increase our intake of marshmallows.  Several action points were assigned "\
                     "to various members of the group; I have been tasked with finding a good "\
                     "recipe that combines both marshmallows and chocolate, by next Wednesday.");
-    defaultManager.saveItem(&journal);
+    //defaultManager.saveItem(&journal);
     //! [Creating a non-recurrent entry]
 
     //! [Editing a non-recurrent entry]
     journal.addComment("Serves: 8.  Ingredients: 500g Milk Chocolate, 500g Marshmallows.  Step 1: Put the marshmallows into 8 separate bowls.  Step 2: Melt the chocolate.  Step 3: Pour the chocolate over the marshmallows in the bowls.  Step 4: Put the bowls into the refrigerator for 20 minutes; serve chilled.");
-    if (!defaultManager.saveItem(&journal)) qDebug() << "Unable to save updated journal!  Error:" << defaultManager.error();
+    //if (!defaultManager.saveItem(&journal)) qDebug() << "Unable to save updated journal!  Error:" << defaultManager.error();
     //! [Editing a non-recurrent entry]
 
     //! [Retrieving any entry (not occurrence) which matches a search criteria]
@@ -143,7 +143,7 @@ foreach(const QOrganizerItem& currInst, instances)
                                       "hour earlier than usual), since we have scheduled one hour"\
                                       "to taste the results of the recipe that I will be presenting "\
                                       "at the meeting.");
-    defaultManager.saveItem(&nextMarshmallowMeeting);
+    //defaultManager.saveItem(&nextMarshmallowMeeting);
     //! [Creating an exception to a particular recurrent event]
 
     dumpItems(&defaultManager);

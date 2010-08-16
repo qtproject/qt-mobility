@@ -147,7 +147,7 @@ void EventOccurrenceEditPage::saveOrNextClicked()
     } else {
         if(!m_multipleEntries){
                 // If single entry
-                m_manager->saveItem(&m_organizerEventOccurrence);
+                //m_manager->saveItem(&m_organizerEventOccurrence);
         } else {
                 // If multiple entries, save asynchronously.
                 m_saveItemRequest->setItems(m_listOfEvents);

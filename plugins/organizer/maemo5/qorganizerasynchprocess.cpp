@@ -272,7 +272,8 @@ void OrganizerAsynchProcess::handleSaveRequest(QOrganizerItemSaveRequest *req)
     QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
     QMap<int, QOrganizerItemManager::Error> errorMap;
     QList<QOrganizerItem> items = req->items();
-    m_engine->saveItems(&items, &errorMap, &err);
+    QOrganizerCollectionLocalId collectionLocalId; // TODO: Make support for this
+    m_engine->saveItems(&items, collectionLocalId, &errorMap, &err);
     QOrganizerItemManagerEngine::updateItemSaveRequest(req, items, err, errorMap, QOrganizerItemAbstractRequest::FinishedState);
 }
 
