@@ -121,19 +121,13 @@ Player::Player(QWidget *parent)
     QPushButton *fullScreenButton = new QPushButton(tr("FullScreen"), this);
     fullScreenButton->setCheckable(true);
 
-    if (videoWidget != 0) {
-        connect(fullScreenButton, SIGNAL(clicked(bool)), videoWidget, SLOT(setFullScreen(bool)));
-        connect(videoWidget, SIGNAL(fullScreenChanged(bool)),
-                fullScreenButton, SLOT(setChecked(bool)));
-    } else {
-        fullScreenButton->setEnabled(false);
-    }
+
+    connect(fullScreenButton, SIGNAL(clicked(bool)), videoWidget, SLOT(setFullScreen(bool)));
+    connect(videoWidget, SIGNAL(fullScreenChanged(bool)),
+            fullScreenButton, SLOT(setChecked(bool)));
 
     QPushButton *colorButton = new QPushButton(tr("Color Options..."), this);
-    if (videoWidget)
-        connect(colorButton, SIGNAL(clicked()), this, SLOT(showColorDialog()));
-    else
-        colorButton->setEnabled(false);
+    connect(colorButton, SIGNAL(clicked()), this, SLOT(showColorDialog()));
 
     QBoxLayout *displayLayout = new QHBoxLayout;
     if (videoWidget)
