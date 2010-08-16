@@ -1783,7 +1783,7 @@ void tst_QOrganizerItemManager::signalEmission()
 
     QList<QVariant> args;
     QList<QOrganizerItemLocalId> arg;
-    QOrganizerItem c;
+    QOrganizerTodo todo;
     QList<QOrganizerItem> batchAdd;
     QList<QOrganizerItemLocalId> batchRemove;
     QList<QOrganizerItemLocalId> sigids;
@@ -1794,8 +1794,9 @@ void tst_QOrganizerItemManager::signalEmission()
     // verify add emits signal added
     QOrganizerItemDisplayLabel nc;
     nc.setLabel("label me this");
-    QVERIFY(m1->saveItem(&c));
-    QOrganizerItemLocalId cid = c.id().localId();
+    QVERIFY(todo.saveDetail(&nc));
+    QVERIFY(m1->saveItem(&todo));
+    QOrganizerItemLocalId cid = todo.id().localId();
     addSigCount += 1;
     QTRY_COMPARE(spyCA.count(), addSigCount);
     args = spyCA.takeFirst();
@@ -1806,7 +1807,8 @@ void tst_QOrganizerItemManager::signalEmission()
 
     // verify save modified emits signal changed
     nc.setLabel("label me that");
-    QVERIFY(m1->saveItem(&c));
+    QVERIFY(todo.saveDetail(&nc));
+    QVERIFY(m1->saveItem(&todo));
     modSigCount += 1;
     QTRY_COMPARE(spyCM.count(), modSigCount);
     args = spyCM.takeFirst();
@@ -1816,7 +1818,7 @@ void tst_QOrganizerItemManager::signalEmission()
     QCOMPARE(QOrganizerItemLocalId(arg.at(0)), cid);
 
     // verify remove emits signal removed
-    m1->removeItem(c.id().localId());
+    QVERIFY(m1->removeItem(todo.id().localId()));
     remSigCount += 1;
     QTRY_COMPARE(spyCR.count(), remSigCount);
     args = spyCR.takeFirst();
@@ -1826,37 +1828,42 @@ void tst_QOrganizerItemManager::signalEmission()
     QCOMPARE(QOrganizerItemLocalId(arg.at(0)), cid);
 
     // verify multiple adds works as advertised
-    QOrganizerItem c2, c3;
+    QOrganizerTodo todo2, todo3;
     QOrganizerItemDisplayLabel nc2, nc3;
     nc2.setLabel("Mark");
     nc3.setLabel("Garry");
-    QVERIFY(m1->saveItem(&c2));
+    QVERIFY(todo2.saveDetail(&nc2));
+    QVERIFY(todo3.saveDetail(&nc3));
+    QVERIFY(m1->saveItem(&todo2));
     addSigCount += 1;
-    QVERIFY(m1->saveItem(&c3));
+    QVERIFY(m1->saveItem(&todo3));
     addSigCount += 1;
     QTRY_COMPARE(spyCM.count(), modSigCount);
     QTRY_COMPARE(spyCA.count(), addSigCount);
 
     // verify multiple modifies works as advertised
     nc2.setLabel("M.");
-    QVERIFY(m1->saveItem(&c2));
+    QVERIFY(todo2.saveDetail(&nc2));
+    QVERIFY(m1->saveItem(&todo2));
     modSigCount += 1;
     nc2.setLabel("Mark");
     nc3.setLabel("G.");
-    QVERIFY(m1->saveItem(&c2));
+    QVERIFY(todo2.saveDetail(&nc2));
+    QVERIFY(todo3.saveDetail(&nc3));
+    QVERIFY(m1->saveItem(&todo2));
     modSigCount += 1;
-    QVERIFY(m1->saveItem(&c3));
+    QVERIFY(m1->saveItem(&todo3));
     modSigCount += 1;
     QTRY_COMPARE(spyCM.count(), modSigCount);
 
     // verify multiple removes works as advertised
-    m1->removeItem(c3.id().localId());
+    m1->removeItem(todo3.id().localId());
     remSigCount += 1;
-    m1->removeItem(c2.id().localId());
+    m1->removeItem(todo2.id().localId());
     remSigCount += 1;
     QTRY_COMPARE(spyCR.count(), remSigCount);
 
-    QVERIFY(!m1->removeItem(c.id().localId())); // not saved.
+    QVERIFY(!m1->removeItem(todo.id().localId())); // not saved.
 
     /* Now test the batch equivalents */
     spyCA.clear();
@@ -1864,81 +1871,68 @@ void tst_QOrganizerItemManager::signalEmission()
     spyCR.clear();
 
     /* Batch adds - set ids to zero so add succeeds. */
-    c.setId(QOrganizerItemId());
-    c2.setId(QOrganizerItemId());
-    c3.setId(QOrganizerItemId());
-    batchAdd << c << c2 << c3;
+    todo.setId(QOrganizerItemId());
+    todo2.setId(QOrganizerItemId());
+    todo3.setId(QOrganizerItemId());
+    batchAdd << todo << todo2 << todo3;
     QMap<int, QOrganizerItemManager::Error> errorMap;
     QVERIFY(m1->saveItems(&batchAdd, QOrganizerCollectionLocalId(), &errorMap));
 
     QVERIFY(batchAdd.count() == 3);
-    c = batchAdd.at(0);
-    c2 = batchAdd.at(1);
-    c3 = batchAdd.at(2);
+    todo = batchAdd.at(0);
+    todo2 = batchAdd.at(1);
+    todo3 = batchAdd.at(2);
 
     /* We basically loop, processing events, until we've seen an Add signal for each item */
     sigids.clear();
 
-    QTRY_WAIT( while(spyCA.size() > 0) {sigids += spyCA.takeFirst().at(0).value<QList<QOrganizerItemLocalId> >(); }, sigids.contains(c.localId()) && sigids.contains(c2.localId()) && sigids.contains(c3.localId()));
+    QTRY_WAIT( while(spyCA.size() > 0) {sigids += spyCA.takeFirst().at(0).value<QList<QOrganizerItemLocalId> >(); }, sigids.contains(todo.localId()) && sigids.contains(todo2.localId()) && sigids.contains(todo3.localId()));
     QTRY_COMPARE(spyCM.count(), 0);
     QTRY_COMPARE(spyCR.count(), 0);
 
     /* Batch modifies */
-    QOrganizerItemDisplayLabel modifiedName = c.detail(QOrganizerItemDisplayLabel::DefinitionName);
+    QOrganizerItemDisplayLabel modifiedName = todo.detail(QOrganizerItemDisplayLabel::DefinitionName);
     modifiedName.setLabel("Modified number 1");
-    modifiedName = c2.detail(QOrganizerItemDisplayLabel::DefinitionName);
+    modifiedName = todo2.detail(QOrganizerItemDisplayLabel::DefinitionName);
     modifiedName.setLabel("Modified number 2");
-    modifiedName = c3.detail(QOrganizerItemDisplayLabel::DefinitionName);
+    modifiedName = todo3.detail(QOrganizerItemDisplayLabel::DefinitionName);
     modifiedName.setLabel("Modified number 3");
 
     batchAdd.clear();
-    batchAdd << c << c2 << c3;
+    batchAdd << todo << todo2 << todo3;
     QVERIFY(m1->saveItems(&batchAdd, QOrganizerCollectionLocalId(), &errorMap));
 
     sigids.clear();
-    QTRY_WAIT( while(spyCM.size() > 0) {sigids += spyCM.takeFirst().at(0).value<QList<QOrganizerItemLocalId> >(); }, sigids.contains(c.localId()) && sigids.contains(c2.localId()) && sigids.contains(c3.localId()));
+    QTRY_WAIT( while(spyCM.size() > 0) {sigids += spyCM.takeFirst().at(0).value<QList<QOrganizerItemLocalId> >(); }, sigids.contains(todo.localId()) && sigids.contains(todo2.localId()) && sigids.contains(todo3.localId()));
 
     /* Batch removes */
-    batchRemove << c.id().localId() << c2.id().localId() << c3.id().localId();
+    batchRemove << todo.id().localId() << todo2.id().localId() << todo3.id().localId();
     QVERIFY(m1->removeItems(batchRemove, &errorMap));
 
     sigids.clear();
-    QTRY_WAIT( while(spyCR.size() > 0) {sigids += spyCR.takeFirst().at(0).value<QList<QOrganizerItemLocalId> >(); }, sigids.contains(c.localId()) && sigids.contains(c2.localId()) && sigids.contains(c3.localId()));
+    QTRY_WAIT( while(spyCR.size() > 0) {sigids += spyCR.takeFirst().at(0).value<QList<QOrganizerItemLocalId> >(); }, sigids.contains(todo.localId()) && sigids.contains(todo2.localId()) && sigids.contains(todo3.localId()));
 
     QTRY_COMPARE(spyCA.count(), 0);
     QTRY_COMPARE(spyCM.count(), 0);
 
     QScopedPointer<QOrganizerItemManager> m2(QOrganizerItemManager::fromUri(uri));
-    
-    // During construction SIM backend (m2) will try writing items with
-    // nickname, email and additional number to find out if the SIM card
-    // will support these fields. The other backend (m1) will then receive
-    // signals about that. These need to be caught so they don't interfere
-    // with the tests. (This trial and error method is used because existing
-    // API for checking the availability of these fields is not public.)
-	// NOTE: This applies only to pre 10.1 platforms (S60 3.1, 3.2, ect.)
-    if (uri.contains("symbiansim")) {
-        QTest::qWait(0);
-        spyCA.clear();
-        spyCM.clear();
-        spyCR.clear();
-    }
-
     QVERIFY(m1->hasFeature(QOrganizerItemManager::Anonymous) ==
         m2->hasFeature(QOrganizerItemManager::Anonymous));
 
     /* Now some cross manager testing */
     if (!m1->hasFeature(QOrganizerItemManager::Anonymous)) {
         // verify that signals are emitted for modifications made to other managers (same id).
-        QOrganizerItemDisplayLabel ncs = c.detail(QOrganizerItemDisplayLabel::DefinitionName);
+        QOrganizerItemDisplayLabel ncs = todo.detail(QOrganizerItemDisplayLabel::DefinitionName);
         ncs.setLabel("Test");
-        c.setId(QOrganizerItemId()); // reset id so save can succeed.
-        QVERIFY(m2->saveItem(&c));
+        QVERIFY(todo.saveDetail(&ncs));
+        todo.setId(QOrganizerItemId()); // reset id so save can succeed.
+        QVERIFY(m2->saveItem(&todo));
         ncs.setLabel("Test2");
-        QVERIFY(m2->saveItem(&c));
+        QVERIFY(todo.saveDetail(&ncs));
+        QVERIFY(m2->saveItem(&todo));
         QTRY_COMPARE(spyCA.count(), 1); // check that we received the update signals.
         QTRY_COMPARE(spyCM.count(), 1); // check that we received the update signals.
-        m2->removeItem(c.localId());
+        m2->removeItem(todo.localId());
         QTRY_COMPARE(spyCR.count(), 1); // check that we received the remove signal.
     }
 }
