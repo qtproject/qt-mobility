@@ -559,24 +559,36 @@ bool QOrganizerItemSymbianEngine::removeItem(const QOrganizerItemLocalId& organi
 
 void QOrganizerItemSymbianEngine::removeItemL(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet *changeSet)
 {
-    // TODO: DoesNotExistError should be used if the id refers to a non existent item.
     // TODO: How to remove item instances?
-    int sucessCount(0);
-    deleteItemL(organizeritemId, sucessCount);
+    deleteItemL(organizeritemId);
     // Update change set
     changeSet->insertRemovedItem(organizeritemId);
 }
 
-void QOrganizerItemSymbianEngine::deleteItemL( 
-        const QOrganizerItemLocalId& organizeritemId, 
-        int& sucessCount)
+void QOrganizerItemSymbianEngine::deleteItemL(const QOrganizerItemLocalId& organizeritemId)
 {
+#ifdef __WINSCW__
+    // There seems to be a bug with symbian calendar. It will not report any
+    // error when removing a nonexisting entry. So we need to make this check
+    // ourselfs.
+    // TODO: check if this is true also in hardware
+    CCalEntry *entry = m_entryView->FetchL(TCalLocalUid(organizeritemId));
+    if (!entry)
+        User::Leave(KErrNotFound);
+    CleanupStack::PushL(entry);
+    m_entryView->DeleteL(*entry);
+    CleanupStack::PopAndDestroy(entry);
+#else
     // Remove
     RArray<TCalLocalUid> ids;
     CleanupClosePushL(ids);
     ids.AppendL(TCalLocalUid(organizeritemId));
-    m_entryView->DeleteL(ids, sucessCount);
-    CleanupStack::PopAndDestroy(&ids);
+    int successCount = 0;
+    m_entryView->DeleteL(ids, successCount);
+    if (successCount != 1)
+        User::Leave(KErrNotFound);
+    CleanupStack::PopAndDestroy(&ids);    
+#endif
 }
 
 QList<QOrganizerItem> QOrganizerItemSymbianEngine::slowFilter(const QList<QOrganizerItem> &items, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const

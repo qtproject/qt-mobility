@@ -261,6 +261,9 @@ void tst_SymbianOm::removeSimpleItem()
 
     // Remove
     QVERIFY(m_om->removeItem(item.localId()));
+    
+    // Remove again. Should fail.
+    QVERIFY(!m_om->removeItem(item.localId()));
 
     // Remove list
     QOrganizerItem item2;

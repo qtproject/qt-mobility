@@ -220,20 +220,9 @@ void COrganizerItemRequestsServiceProvider::RemoveItemL()
         // RunError would call SelfComplete() for recursive operation
         iIndex++;
         // Delete an item
-        iOrganizerItemManagerEngine.deleteItemL(
-                iItemIds.at(iIndex-1), sucessCount);
+        iOrganizerItemManagerEngine.deleteItemL(iItemIds.at(iIndex-1));
         // Calls itself recursively until all the items are deleted
         SelfComplete();
-
-        if (!sucessCount) // Entry not deleted successfully
-            {
-            // Entry is not deleted, but the error is not known.
-            // So set the error to General Error and transform this error 
-            // to corresponding Qt error
-            iOrganizerItemManagerEngine.transformError(KErrGeneral, &iError);
-            // Insert error map
-            iErrorMap.insert(iIndex, iError);
-            }
         }
     else
         {

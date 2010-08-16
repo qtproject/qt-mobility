@@ -172,8 +172,7 @@ public:
     /* Util functions */
     static bool transformError(TInt symbianError, QOrganizerItemManager::Error* qtError);
     CCalEntryView* entryView();
-    void deleteItemL(const QOrganizerItemLocalId& organizeritemId,
-            int& sucessCount);
+    void deleteItemL(const QOrganizerItemLocalId& organizeritemId);
     void saveItemL(QOrganizerItem *item, QOrganizerItemChangeSet *changeSet = 0);
     void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, 
             const QOrganizerItemFetchHint& fetchHint) const;
