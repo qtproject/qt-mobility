@@ -61,13 +61,17 @@
 #include "qservice.h"
 #include "qservicemanager.h"
 
-#include "qtcontacts.h"
+#include "qcontactactionmanager_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QContactActionServiceManager : public QObject
+class QContactAction;
+class QContactActionFactory;
+
+class QContactActionServiceManager : public QObject, public QContactActionManagerPlugin
 {
     Q_OBJECT
+    Q_INTERFACES(QtMobility::QContactActionManagerPlugin)
 public:
     static QContactActionServiceManager* instance();
 
@@ -75,9 +79,8 @@ public:
     QContactActionServiceManager();
     ~QContactActionServiceManager();
 
-    QList<QContactActionDescriptor> availableActions(const QContact& contact);
-    QList<QContactActionDescriptor> actionDescriptors(const QString& actionName = QString());
-    QContactAction* action(const QContactActionDescriptor& descriptor);
+    QHash<QContactActionDescriptor, QContactActionFactory*> actionFactoryHash();
+    QMultiHash<QString, QContactActionDescriptor> descriptorHash();
 
 public slots:
     void serviceAdded(const QString& serviceName);

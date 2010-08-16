@@ -43,7 +43,7 @@
 #include "qcontactmanager_p.h"
 #include "qcontactactiondescriptor.h"
 
-#include "qcontactactionservicemanager_p.h"
+#include "qcontactactionmanager_p.h"
 
 #include <QSet>
 #include <QString>
@@ -180,7 +180,7 @@ QStringList QContactAction::availableActions(const QString& serviceName)
     // SLOW naive implementation...
     QSet<QString> ret;
     QContactManagerData::loadFactories();
-    QList<QContactActionDescriptor> actionDescriptors = QContactActionServiceManager::instance()->actionDescriptors();
+    QList<QContactActionDescriptor> actionDescriptors = QContactActionManager::instance()->actionDescriptors();
     for (int i = 0; i < actionDescriptors.size(); i++) {
         QContactActionDescriptor descriptor = actionDescriptors.at(i);
         if (serviceName.isEmpty() || serviceName == descriptor.serviceName()) {
@@ -287,8 +287,8 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAction::ActionOpenInViewer, "view");
  */
 QList<QContactActionDescriptor> QContactAction::actionDescriptors(const QString& actionName)
 {
-    QContactActionServiceManager* qcasm = QContactActionServiceManager::instance();
-    return qcasm->actionDescriptors(actionName);
+    QContactActionManager* qcam = QContactActionManager::instance();
+    return qcam->actionDescriptors(actionName);
 }
 
 /*!
@@ -299,8 +299,8 @@ QList<QContactActionDescriptor> QContactAction::actionDescriptors(const QString&
  */
 QContactAction* QContactAction::action(const QContactActionDescriptor& descriptor)
 {
-    QContactActionServiceManager* qcasm = QContactActionServiceManager::instance();
-    return qcasm->action(descriptor);
+    QContactActionManager* qcam = QContactActionManager::instance();
+    return qcam->action(descriptor);
 }
 
 #include "moc_qcontactaction.cpp"

@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTMANAGER_P_H
-#define QCONTACTMANAGER_P_H
+#ifndef QCONTACTACTIONMANAGER_P_H
+#define QCONTACTACTIONMANAGER_P_H
 
 //
 //  W A R N I N G
@@ -54,54 +54,54 @@
 // We mean it.
 //
 
-#include <QMap>
-#include <QMultiMap>
-#include <QList>
-#include <QString>
+#include <QMultiHash>
+#include <QHash>
+#include <QMutex>
 
-#include "qcontactmanager.h"
-#include "qcontactmanagerengine.h"
-#include "qcontactactionmanager_p.h"
+#include "qmobilityglobal.h"
+#include "qcontact.h"
+#include "qcontactactiondescriptor.h"
+
 
 QTM_BEGIN_NAMESPACE
 
-class QContactManagerEngineFactory;
+class QContactAction;
+class QContactActionFactory;
 
-/* Data and stuff that is shared amongst all backends */
-class QContactManagerData
-{
+// For now this is a very direct interface, not really designed for extensibility
+class QContactActionManagerPlugin {
 public:
-    QContactManagerData()
-        : m_engine(0),
-        m_error(QContactManager::NoError)
-    {
-    }
-
-    ~QContactManagerData()
-    {
-        delete m_engine;
-    }
-
-    void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
-    static QContactManagerEngine* engine(const QContactManager* manager);
-
-    QContactManagerEngine* m_engine;
-    QContactManager::Error m_error;
-
-    /* Manager plugins */
-    static QHash<QString, QContactManagerEngineFactory*> m_engines;
-    static QList<QContactActionManagerPlugin*> m_actionManagers;
-    static bool m_discovered;
-    static bool m_discoveredStatic;
-    static QStringList m_pluginPaths;
-    static void loadFactories();
-    static void loadStaticFactories();
-
-private:
-    Q_DISABLE_COPY(QContactManagerData)
+    virtual QHash<QContactActionDescriptor, QContactActionFactory*> actionFactoryHash() = 0; // descriptor to action factory ptr.
+    virtual QMultiHash<QString, QContactActionDescriptor> descriptorHash() = 0;  // action name to descriptor
 };
 
+class QContactActionManager : public QObject
+{
+    Q_OBJECT
+public:
+    static QContactActionManager* instance();
+
+    // this is a private class, so despite being a singleton we make this ctor public.
+    QContactActionManager();
+    ~QContactActionManager();
+
+    QList<QContactActionDescriptor> availableActions(const QContact& contact);
+    QList<QContactActionDescriptor> actionDescriptors(const QString& actionName = QString());
+    QContactAction* action(const QContactActionDescriptor& descriptor);
+
+private:
+    void init();
+    QMutex m_instanceMutex;
+    QContactActionManagerPlugin* m_plugin;
+};
 
 QTM_END_NAMESPACE
 
+
+QT_BEGIN_NAMESPACE
+#define QT_CONTACTS_ACTION_MANAGER_PLUGIN "com.nokia.qt.mobility.contacts.actionmanagerplugin/1.0"
+Q_DECLARE_INTERFACE(QtMobility::QContactActionManagerPlugin, QT_CONTACTS_ACTION_MANAGER_PLUGIN);
+QT_END_NAMESPACE
+
 #endif
+
