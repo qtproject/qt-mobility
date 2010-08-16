@@ -39,39 +39,28 @@
 **
 ****************************************************************************/
 
-
 /*!
-    \page qml-plugins.html
-    \group plugins
-
-    \title Mobility QML Plugins
-
-    \ingroup mobility
-
-    \brief A set of QML compatible plugins for the Mobility Project.
-
-
-
-    \section1 List of QML Plugins for Mobility
-    \table 80%
-    \header
-        \o Plugin
-        \o Description
-    \row
-        \o \l {Gallery QML Plugin}{Gallery}
-        \o A QML plugin for the Document Gallery API.
-    \row
-        \o \l {Location QML Plugin}{Location}
-        \o A QML plugin for the Location API.
-    \row
-        \o \l {Multimedia QML Plugin}{Multimedia}
-        \o A QML plugin for the Multimedia API: includes audio and video.
-    \endtable
-
-
-
-
-
+    \group qml-location
+    \title QML Location Plugin
+    QML Support for the Mobility Project Location API.
 
 */
+
+/*!
+    \page qml-location.html
+
+    \title Location QML Plugin
+
+    \brief A QML plugin for the Mobility Project Location API.
+
+
+    \section1 Overview
+
+    \section1 Elements
+
+    
+    \annotatedlist qml-location
+
+*/
+
 
