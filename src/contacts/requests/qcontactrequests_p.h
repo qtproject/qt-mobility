@@ -84,6 +84,7 @@ public:
 
     QList<QContact> m_contacts;
     QMap<int, QContactManager::Error> m_errors;
+    QStringList m_definitionMask;
 };
 
 class QContactFetchRequestPrivate : public QContactAbstractRequestPrivate

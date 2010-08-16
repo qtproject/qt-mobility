@@ -2567,6 +2567,37 @@ void QContactManagerEngine::updateRelationshipFetchRequest(QContactRelationshipF
     }
 }
 
+
+QContactManagerEngineV2::~QContactManagerEngineV2()
+{
+
+}
+
+bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStringList &definitionMask, QMap<int, QContactManager::Error> *errorMap, QContactManager::Error *error)
+{
+    // Default implementation returns false
+    Q_UNUSED(contacts);
+    Q_UNUSED(definitionMask);
+    Q_UNUSED(errorMap);
+    *error = QContactManager::NotSupportedError;
+    return false;
+}
+
+
+/* Wrapper class */
+QContactManagerEngineV2Wrapper::QContactManagerEngineV2Wrapper(QContactManagerEngine *wrappee)
+    : m_engine(wrappee)
+{
+    Q_ASSERT(wrappee);
+}
+
+QContactManagerEngineV2Wrapper::~QContactManagerEngineV2Wrapper()
+{
+
+}
+
+
 #include "moc_qcontactmanagerengine.cpp"
+#include "moc_qcontactmanager_p.cpp"
 
 QTM_END_NAMESPACE

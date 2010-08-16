@@ -576,6 +576,35 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
 }
 
 /*!
+  Adds the list of contacts given by \a contacts list to the database.
+  Returns true if the contacts were saved successfully, otherwise false.
+
+  The manager might populate \a errorMap (the map of indices of the \a contacts list to
+  the error which occurred when saving the contact at that index) for
+  every index for which the contact could not be saved, if it is able.
+  The \l QContactManager::error() function will only return \c QContactManager::NoError
+  if all contacts were saved successfully.
+
+  For each newly saved contact that was successful, the id of the contact
+  in the \a contacts list will be updated with the new value.  If a failure occurs
+  when saving a new contact, the id will be cleared.
+
+  \sa QContactManager::saveContact()
+ */
+bool QContactManager::saveContacts(QList<QContact>* contacts, const QStringList& definitionMask, QMap<int, QContactManager::Error>* errorMap)
+{
+    if (errorMap)
+        errorMap->clear();
+    if (!contacts) {
+        d->m_error =QContactManager::BadArgumentError;
+        return false;
+    }
+
+    d->m_error = QContactManager::NoError;
+    return d->m_engine->saveContacts(contacts, definitionMask, errorMap, &d->m_error);
+}
+
+/*!
   Remove every contact whose id is contained in the list of contacts ids
   \a contactIds.  Returns true if all contacts were removed successfully,
   otherwise false.
@@ -852,6 +881,7 @@ bool QContactManager::removeDetailDefinition(const QString& definitionName, cons
   \value SelfContact The manager supports the concept of saving a contact which represents the current user
   \value ChangeLogs The manager supports reporting of timestamps of changes, and filtering and sorting by those timestamps
   \value Anonymous The manager is isolated from other managers
+  \value PartialSaves The manager supports partial saves natively.  If not present, this functionality is emulated.
  */
 
 /*!

@@ -175,6 +175,24 @@ private:
     friend class QContactChangeSet;
 };
 
+
+
+class Q_CONTACTS_EXPORT QContactManagerEngineV2 : public QContactManagerEngine
+{
+    Q_OBJECT
+public:
+    QContactManagerEngineV2() : QContactManagerEngine() {}
+    ~QContactManagerEngineV2();
+
+    // This is the V1 function - c++ overloading rules require this here, or to use "using"
+    bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error) {return QContactManagerEngine::saveContacts(contacts, errorMap, error);}
+    virtual bool saveContacts(QList<QContact>* contacts,  const QStringList& definitionMask, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
+};
+
 QTM_END_NAMESPACE
 
+QT_BEGIN_NAMESPACE
+#define QT_CONTACTS_ENGINEV2_INTERFACE "com.nokia.qt.mobility.contacts.engine/2.0"
+Q_DECLARE_INTERFACE(QtMobility::QContactManagerEngineV2, QT_CONTACTS_ENGINEV2_INTERFACE);
+QT_END_NAMESPACE
 #endif

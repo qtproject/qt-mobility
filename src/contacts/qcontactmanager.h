@@ -135,6 +135,7 @@ public:
     bool removeContact(const QContactLocalId& contactId);      // remove the contact from the persistent store
 
     bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap); // batch API - save.
+    bool saveContacts(QList<QContact>* contacts, const QStringList& definitionMask, QMap<int, QContactManager::Error>* errorMap); // Partial save
     bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap); // batch API - remove.
 
     /* Return a pruned or modified contact which is valid and can be saved in the manager */
@@ -172,7 +173,8 @@ public:
         DetailOrdering,
         SelfContact,
         Anonymous,
-        ChangeLogs
+        ChangeLogs,
+        PartialSaves
     };
     bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType = QContactType::TypeContact) const;
     bool isRelationshipTypeSupported(const QString& relationshipType, const QString& contactType = QContactType::TypeContact) const;

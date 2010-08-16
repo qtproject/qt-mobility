@@ -129,7 +129,13 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
                 if (implementationVersion == -1 ||//no given implementation version required
                         versions.isEmpty() || //the manager engine factory does not report any version
                         versions.contains(implementationVersion)) {
-                    m_engine = f->engine(parameters, &m_error);
+                    QContactManagerEngine* engine = f->engine(parameters, &m_error);
+                    // if it's a V2, use it
+                    m_engine = qobject_cast<QContactManagerEngineV2*>(engine);
+                    if (!m_engine && engine) {
+                        // Nope, v1, so wrap it
+                        m_engine = new QContactManagerEngineV2Wrapper(engine);
+                    }
                     found = true;
                     break;
                 }
@@ -279,7 +285,7 @@ void QContactManagerData::loadFactories()
 }
 
 // trampoline for private classes
-QContactManagerEngine* QContactManagerData::engine(const QContactManager* manager)
+QContactManagerEngineV2* QContactManagerData::engine(const QContactManager* manager)
 {
     if (manager)
         return manager->d->m_engine;
