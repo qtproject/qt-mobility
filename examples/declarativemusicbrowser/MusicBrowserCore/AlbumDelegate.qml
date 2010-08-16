@@ -81,47 +81,48 @@ Item {
         }
     }
 
-    ListView {
+    Column {
         id: songView
         anchors.left: albumInfo.right
         anchors.right: parent.right
         anchors.top: parent.top
-        height: count * 32
 
-        model: GalleryQueryModel {
-            gallery: DocumentGallery {}
-            rootType: "Audio"
-            rootItem: itemId
-            properties: [ "trackNumber", "title", "duration" ]
-            sortProperties: [ "trackNumber" ]
-        }
-        delegate: Item {
-            width: parent.width
-            height: 32
-
-            Text {
-                id: trackLabel
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                width: 48
-                text: trackNumber
-                color: "white"
+        Repeater {
+            model: GalleryQueryModel {
+                gallery: DocumentGallery {}
+                rootType: "Audio"
+                rootItem: itemId
+                properties: [ "trackNumber", "title", "duration" ]
+                sortProperties: [ "trackNumber" ]
             }
+            delegate: Item {
+                width: parent.width
+                height: 32
 
-            Text {
-                id: titleLabel
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: trackLabel.right
-                text: title
-                color: "white"
-            }
+                Text {
+                    id: trackLabel
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    width: 48
+                    text: trackNumber
+                    color: "white"
+                }
 
-            Text {
-                id: durationLabel
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.right: parent.right
-                text: Script.formatDuration(duration)
-                color: "white"
+                Text {
+                    id: titleLabel
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: trackLabel.right
+                    text: title
+                    color: "white"
+                }
+
+                Text {
+                    id: durationLabel
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    text: Script.formatDuration(duration)
+                    color: "white"
+                }
             }
         }
     }
