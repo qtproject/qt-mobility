@@ -54,11 +54,11 @@ Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
 
 class QDeclarativeService : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QString interfaceName READ interfaceName WRITE setInterfaceName);
-    Q_PROPERTY(QString serviceName READ serviceName);
-    Q_PROPERTY(QString versionNumber READ versionNumber);
-    Q_PROPERTY(bool valid READ isValid NOTIFY validChanged);
-    Q_PROPERTY(QObject* serviceObject READ serviceObject NOTIFY serviceObjectChanged);
+    Q_PROPERTY(QString interfaceName READ interfaceName WRITE setInterfaceName)
+    Q_PROPERTY(QString serviceName READ serviceName)
+    Q_PROPERTY(QString versionNumber READ versionNumber)
+    Q_PROPERTY(bool valid READ isValid NOTIFY validChanged)
+    Q_PROPERTY(QObject* serviceObject READ serviceObject NOTIFY serviceObjectChanged)
 
 public:
     QDeclarativeService();
@@ -90,9 +90,9 @@ QML_DECLARE_TYPE(QDeclarativeService)
 
 class QDeclarativeServiceList : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QString interfaceName READ interfaceName WRITE setInterfaceName);
-    Q_PROPERTY(QString minVersion READ minVersion WRITE setMinVersion);
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeService> services READ services NOTIFY servicesChanged);
+    Q_PROPERTY(QString interfaceName READ interfaceName WRITE setInterfaceName)
+    Q_PROPERTY(QString minVersion READ minVersion WRITE setMinVersion)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeService> services READ services NOTIFY servicesChanged)
 
 public:
     QDeclarativeServiceList();

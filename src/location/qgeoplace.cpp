@@ -64,29 +64,21 @@ QTM_BEGIN_NAMESPACE
     with an optional bounding box describing the minimum viewport necessary
     to display the entirety of the place.
 
-    The subclasses of QGeoPlace can provide further place information.  It is
-    possible to convert instance of QGeoPlace subclasses to and from QGeoPlace
-    instances.
+    A QGeoPlace may contain an QLandmark instance.  The isLandmark() function
+    can be used to determine if this is the case, and the
+    QLandmark(const QGeoPlace &place) constructor can be used to restore
+    access to the landmark data.
 
-    DESIGN NOTE
-
-    The type() method and PlaceType enum could be made protected, and a public
-    bool isLandmark() method could be provided in their place, in order to
-    simplify the conversion from QGeoPlace to QLandmark for the user.
+    For example:
+    \code
+    QGeoPlace p;
+    QLandmark l;
+    ...
+    if (p.isLandmark())
+        l = QLandmark(p)
+    \endcode
 
     \sa type()
-*/
-
-// TODO
-// Consider making the type enum and method protected
-// Provide a public bool isLandmark() const method instead
-
-/*!
-    \enum QGeoPlace::PlaceType
-
-    \value GeoPlaceType
-
-    \value LandmarkType
 */
 
 /*!
@@ -154,42 +146,39 @@ bool QGeoPlace::operator!= (const QGeoPlace &other) const
 }
 
 /*!
-    Returns type information about this place instance.
+    This function returns whether this QGeoPlace instance contain all of the
+    information required to construct a QLandmark instance.
 
-    An instance of a subclass of QGeoPlace can be converted to a
-    QGeoPlace instance and back without losing any data.  The
-    QGeoPlace::PlaceType enum is used to indicate which subclass initially
-    created this QGeoPlace instance.
-
-    If the type corresponds to a subclass of QGeoPlace then this place
-    object can be converted back by using the subclass constructor which takes
-    a QGeoPlace object as an argument.  If the type is QGeoPlace::GeoPlaceType
-    then using this place in the same subclass constructor will only initialize
-    the coordinate, address and bounding box of the subclass.
+    If so, the QLandmark(const QGeoPlace &place) constructor can be used to
+    restore access to the landmark data.
 */
-QGeoPlace::PlaceType QGeoPlace::type() const
+bool QGeoPlace::isLandmark() const
 {
-    return d_ptr->type;
+    return (d_ptr->type == QGeoPlacePrivate::LandmarkType);
 }
 
 /*!
-    Returns a bounding box that completely encloses this place.
+    Returns the viewport associated with this place.
+
+    The viewport is a suggestion for a size and position of a map window
+    which aims to view this palce.
 */
-QGeoBoundingBox QGeoPlace::boundingBox() const
+QGeoBoundingBox QGeoPlace::viewport() const
 {
     Q_D(const QGeoPlace);
-    return d->boundingBox;
+    return d->viewport;
 }
 
 /*!
-    Sets the \a boundingBox of this place.
+    Sets the viewport associated with this place to \a viewport.
 
-    The \a boundingBox should completely enclose this place.
+    The viewport is a suggestion for a size and position of a map window
+    which aims to view this palce.
 */
-void QGeoPlace::setBoundingBox(const QGeoBoundingBox &boundingBox)
+void QGeoPlace::setViewport(const QGeoBoundingBox &viewport)
 {
     Q_D(QGeoPlace);
-    d->boundingBox = boundingBox;
+    d->viewport = viewport;
 }
 
 /*!
@@ -233,12 +222,12 @@ void QGeoPlace::setAddress(const QGeoAddress &address)
 
 QGeoPlacePrivate::QGeoPlacePrivate()
         : QSharedData(),
-        type(QGeoPlace::GeoPlaceType) {}
+        type(QGeoPlacePrivate::GeoPlaceType) {}
 
 QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
         : QSharedData(other),
         type(other.type),
-        boundingBox(other.boundingBox),
+        viewport(other.viewport),
         coordinate(other.coordinate),
         address(other.address) {}
 
@@ -247,7 +236,7 @@ QGeoPlacePrivate::~QGeoPlacePrivate() {}
 QGeoPlacePrivate& QGeoPlacePrivate::operator= (const QGeoPlacePrivate & other)
 {
     type = other.type;
-    boundingBox = other.boundingBox;
+    viewport = other.viewport;
     coordinate = other.coordinate;
     address = other.address;
 
@@ -257,7 +246,7 @@ QGeoPlacePrivate& QGeoPlacePrivate::operator= (const QGeoPlacePrivate & other)
 bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
 {
     return ((type == other.type)
-            && (boundingBox == other.boundingBox)
+            && (viewport == other.viewport)
             && (coordinate == other.coordinate)
             && (address == other.address));
 }

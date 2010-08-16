@@ -47,7 +47,6 @@
 #include "qlandmarknamefilter.h"
 #include "qlandmarknamesort.h"
 #include "qlandmarkproximityfilter.h"
-#include "qlandmarkdistancesort.h"
 #include "qlandmarkcategoryid.h"
 #include "qgeocoordinate.h"
 #include "qlandmarkcategory.h"
@@ -72,7 +71,6 @@ void RequestExample::categorySaveRequest()
 {
     QLandmarkCategory cafes;
     cafes.setName("Cafes");
-    cafes.setDescription("Small diners");
     cafes.setIconUrl(QUrl("cafe.png"));
 
     //catSaveRequest was created with catSaveRequest = new QLandmarkCategorySaveRequest(lmManager)
@@ -111,7 +109,7 @@ void RequestExample::landmarkSaveRequest()
     monks.setCoordinate(QGeoCoordinate(40.81, 73.97));
 
     QGeoAddress address;
-    address.setThoroughfareNumber("2880");
+    address.setStreetNumber("2880");
     // ...
     address.setCountryCode("US");
     monks.setAddress(address);
@@ -295,7 +293,6 @@ void addLandmarkAndCategory(QLandmarkManager *lm)
 //! [Add category synchronously]
     QLandmarkCategory cafes;
     cafes.setName("Cafes");
-    cafes.setDescription("Small diners");
     cafes.setIconUrl(QUrl("cafe.png"));
     lm->saveCategory(&cafes);  //lm is a QLandmarkManager *
 //! [Add category synchronously]
@@ -306,8 +303,8 @@ void addLandmarkAndCategory(QLandmarkManager *lm)
     monks.setCoordinate(QGeoCoordinate(40.81, 73.97));
 
     QGeoAddress address;
-    address.setThoroughfareNumber("2880");
-    address.setThoroughfareName("112th Street");
+    address.setStreetNumber("2880");
+    address.setStreet("112th Street");
     address.setCity("New York City");
     address.setState("New York");
     address.setCountry("United States");
@@ -365,7 +362,7 @@ void landmarkFetch(QLandmarkManager *lm)
     //retrieval via ids
     QList<QLandmarkId> landmarkIds;
     QLandmarkNameSort sortOrder(Qt::AscendingOrder);
-    landmarkIds = lm->landmarkIds(filter, sortOrder);
+    landmarkIds = lm->landmarkIds(filter, -1, 0, sortOrder);
     foreach(QLandmarkId id, landmarkIds) {
         qDebug() << "Found landmark:" << lm->landmark(id).name();
     }
@@ -373,7 +370,7 @@ void landmarkFetch(QLandmarkManager *lm)
 
     //! [Retrieve landmarks synchronously]
     QList<QLandmark> landmarks;
-    landmarks = lm->landmarks(filter, sortOrder);
+    landmarks = lm->landmarks(filter, -1, 0, sortOrder);
     foreach(QLandmark landmark, landmarks) {
         qDebug() << "Found landmark:" << landmark.name();
     }
@@ -388,14 +385,10 @@ void landmarkFetch(QLandmarkManager *lm)
         filter.setCoordinate(coordinate);
         filter.setRadius(5000);
 
-        QLandmarkDistanceSort distanceSort;
-        distanceSort.setCoordinate(coordinate);
-        distanceSort.setDirection(Qt::AscendingOrder);
+        QLandmarkNameSort nameSort;
+        nameSort.setDirection(Qt::AscendingOrder);
 
-        QLandmarkFetchHint fetchHint;
-        fetchHint.setMaxItems(5);
-
-        landmarkManager->landmarks(filter, sortOrder, fetchHint);
+        landmarkManager->landmarks(filter, 5, 0, sortOrder);
         //! [Retrieve landmarks by proximity synchronously]
 
         //! [Retrieve all landmarks synchronously]
@@ -421,8 +414,8 @@ void filterByProximity(QLandmarkManager *lm)
 {
     QGeoCoordinate origin(41,74);
     QLandmarkProximityFilter filter(origin, 5000);
-    QLandmarkDistanceSort sort(origin, Qt::AscendingOrder);
-    QList<QLandmarkId> matchingIds = lm->landmarkIds(filter, sort);
+    QLandmarkNameSort sort(Qt::AscendingOrder);
+    QList<QLandmarkId> matchingIds = lm->landmarkIds(filter, -1, 0, sort);
 
     if(matchingIds.count() == 0) {
         qDebug() << "No matches found";
@@ -473,7 +466,7 @@ void importExportLandmark() {
     //! [ImportExport landmark simple]
     landmarkManager->importLandmarks("places.gpx");
 
-    landmarkManager->exportLandmarks("myplaces.gpx");
+    landmarkManager->exportLandmarks("myplaces.gpx","GpxV1.1");
     //! [ImportExport landmark simple]
 }
 

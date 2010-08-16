@@ -59,6 +59,7 @@ public:
     void prepend(const QContactFilter& filter);
     void append(const QContactFilter& filter);
     void remove(const QContactFilter& filter);
+    void clear();
 
     QContactIntersectionFilter& operator<<(const QContactFilter& filter);
 

@@ -1,3 +1,6 @@
 TEMPLATE = subdirs
-SUBDIRS = dialer \
-	  callmonitor \
+
+SUBDIRS += callmonitor
+SUBDIRS += dialer
+
+

@@ -196,6 +196,56 @@ Q_DEFINE_LATIN1_CONSTANT(QContactFamily::FieldChildren, "Children");
    Sets the names of the children of the contact which is stored in this detail to \a childrenNames.
  */
 
+/* ==================== QContactFavorite ======================= */
+/*!
+   \class QContactFavorite
+   \brief The QContactFavorite class indicates if a contact is a favorite contact as well as the
+   position it should appear in an ordered list of favorites.
+   \ingroup contacts-details
+ */
+
+/*!
+   \variable QContactFavorite::DefinitionName
+   The string constant for the definition name of QContactFavorite details.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactFavorite::DefinitionName, "Favorite");
+
+/*!
+   \variable QContactFavorite::FieldIndex
+
+   The field key constant for the value that indicates whether a contact is a favorite.
+   \sa index(), setIndex()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactFavorite::FieldFavorite, "Favorite");
+
+/*!
+   \variable QContactFavorite::FieldIndex
+
+   The field key constant for the value containing the index of the favorite contact (which determines the order they appear)
+   \sa index(), setIndex()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactFavorite::FieldIndex, "Index");
+
+/*!
+   \fn bool QContactFavorite::isFavorite() const
+   Returns true if the contact is a favorite, false otherwise.
+ */
+
+/*!
+   \fn QContactFavorite::setFavorite(bool isFavorite) const
+   If \a isFavorite is true, marks the contact as a favorite.  Otherwise, marks the contact as not a favorite.
+ */
+
+/*!
+   \fn int QContactFavorite::index() const
+   Returns the index of the favorite contact.
+ */
+
+/*!
+   \fn QContactFavorite::setIndex(int index) const
+   Sets the index of the favorite contact to \a index.
+ */
+
 /* ==================== QContactAnniversary ======================= */
 
 /*!
@@ -214,7 +264,12 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::DefinitionName, "Anniversary");
    \variable QContactAnniversary::FieldOriginalDate
 
    The field key constant for the original anniversary date value.
-   \sa originalDate(), setOriginalDate()
+
+   This field is either a date, or a date and time.  Some managers
+   may support either type, while others may convert the value here
+   to a specific type (either discarding the time if only a date is
+   supported, or by using midnight if a time is not supplied).
+   \sa originalDate(), setOriginalDate(), originalDateTime(), setOriginalDateTime()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::FieldOriginalDate, "OriginalDate");
 
@@ -292,12 +347,25 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeMemorial, "Memorial");
 
 /*!
    \fn QContactAnniversary::originalDate() const
-   Returns the original date of occurrence of the event stored in this detail.
+   Returns the original date of the event stored in this detail.
+   If the original event occurrence stored is a QDateTime, this returns the date portion.
  */
 
 /*!
    \fn QContactAnniversary::setOriginalDate(const QDate& date)
-   Sets the original date of occurrence of the event stored in this detail to \a date.
+   Sets the original date of the event stored in this detail to \a date.
+ */
+
+/*!
+   \fn QContactAnniversary::originalDateTime() const
+   Returns the original date and time of the event stored in this detail.
+   If the original event occurrence stored is a QDate, this returns a QDateTime with the
+   time set to midnight.
+ */
+
+/*!
+   \fn QContactAnniversary::setOriginalDateTime(const QDate& dateTime)
+   Sets the original date and time of the event stored in this detail to \a dateTime.
  */
 
 /*!
@@ -334,8 +402,26 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeMemorial, "Memorial");
 
 /*!
    \class QContactAvatar
-   \brief The QContactAvatar class contains the avatar of a contact.
    \ingroup contacts-details
+   \brief The QContactAvatar class contains avatar URLs of a contact.
+
+   Users can specify avatar URLs for a contact using this detail.
+   Generally, a URL will specify the location of a full-sized
+   image (or video) avatar.  Support for the detail is backend-specific;
+   some managers will automatically load the URL and synthesize a
+   (possibly scaled) thumbnail detail for the contact if no thumbnail
+   was explicitly set, while others will not.
+
+   The URLs which are contained in the detail may point to a file or
+   resource whose content may dynamically change.  This is in contrast
+   to the thumbnail detail which is static; once set it remains as
+   that image until set to something else.  That is, the content of a
+   QContactThumbnail detail is set by the user who has created the
+   contact, but the content of a resource identified by a URL specified
+   in a QContactAvatar detail is set by whoever owns the resource which
+   the URL identifies.
+
+   \sa QContactThumbnail
  */
 
 /*!
@@ -817,18 +903,37 @@ Q_DEFINE_LATIN1_CONSTANT(QContactBirthday::DefinitionName, "Birthday");
    \variable QContactBirthday::FieldBirthday
 
    The field key constant for the value containing the birthday date.
-   \sa date(), setDate()
+
+   This field is either a date, or a date and time.  Some managers
+   may support either type, while others may convert the value here
+   to a specific type (either discarding the time if only a date is
+   supported, or by using midnight if a time is not supplied).
+
+   \sa date(), setDate(), dateTime(), setDateTime()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactBirthday::FieldBirthday, "Birthday");
 
 /*!
    \fn QContactBirthday::date() const
    Returns the date of the birthday which is stored in this detail.
+   If the birthday stored is a QDateTime, this returns the date portion.
  */
 
 /*!
    \fn QContactBirthday::setDate(const QDate& date)
    Sets the date of the birthday which is stored in this detail to \a date.
+ */
+
+/*!
+   \fn QContactBirthday::dateTime() const
+   Returns the date and time of the birthday which is stored in this detail.
+   If the birthday stored is a QDate, this returns a QDateTime with the
+   time set to midnight.
+ */
+
+/*!
+   \fn QContactBirthday::setDateTime(const QDateTime& dateTime)
+   Sets the date and time of the birthday which is stored in this detail to \a dateTime.
  */
 
 /* ==================== QContactGender ======================= */
@@ -1373,9 +1478,30 @@ Q_DEFINE_LATIN1_CONSTANT(QContactTag::FieldTag, "Tag");
 
 /*!
    \class QContactThumbnail
+   \ingroup contacts-details
    \brief The QContactThumbnail class contains a thumbnail used
    in display lists to represent the contact.
-   \ingroup contacts-details
+
+   Users can specify a thumbnail image for a contact via this detail.
+   Support for this detail is backend specific; some managers will save
+   the image as given, no matter how big it is, while other managers
+   will scale the image prior to save in order to reduce memory overhead.
+   Some managers will automatically synthesize a thumbnail detail for
+   each contact if an avatar image url is specified but no thumbnail
+   detail is specified.
+
+   The content of the thumbnail detail is static once set.  That is,
+   in order to change the thumbnail of a particular contact, the user
+   must modify the detail and update the contact.  This is in contrast
+   to the QContactAvatar detail, which contains URLs to resources;
+   the actual content of the resource might be changed dynamically by
+   person, group or organization for which the QContact is a digital
+   representation.  That is, the content of a QContactThumbnail detail
+   is set by the user who has created the contact, but the content of
+   a resource identified by a URL specified in a QContactAvatar detail
+   is set by whoever owns the resource which the URL identifies.
+
+   \sa QContactAvatar
  */
 
 /*!

@@ -57,9 +57,7 @@
 #include <QObject>
 #include <QSize>
 #include <QHash>
-#include "qsysteminfocommon.h"
-
-//#include "qmobilityglobal.h"
+#include "qsysteminfocommon_p.h"
 
 #include "qsysteminfo.h"
 
@@ -201,12 +199,12 @@ public:
     int displayBrightness(int screen);
     int colorDepth(int screen);
 
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-    float contrast(int screen);
-    int getDPIWidth(int screen);
-    int getDPIHeight(int screen);
-    int physicalHeight(int screen);
-    int physicalWidth(int screen);
+//     QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+//     float contrast(int screen);
+//     int getDPIWidth(int screen);
+//     int getDPIHeight(int screen);
+//     int physicalHeight(int screen);
+//     int physicalWidth(int screen);
 };
 
 class QDASessionThread;

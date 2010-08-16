@@ -39,12 +39,13 @@
 **
 ****************************************************************************/
 
-#include "telepathylistener.h"
-#include "telepathy.h"
-#include "dbusadaptor.h"
-#include "dbusinterface.h"
-#include "message.h"
 #include <QDebug>
+
+#include "telepathylistener_p.h"
+#include "telepathy_p.h"
+#include "dbusadaptor_p.h"
+#include "dbusinterface_p.h"
+#include "message_p.h"
 
 #define DBUS_SERVICE "org.freedesktop.Telepathy.Connection.Interface.Requests"
 #define DBUS_PATH "/org/freedesktop/Telepathy/Connection/ring/tel/ring"
@@ -91,6 +92,6 @@ void TelepathyListener::newChannelsSlot(const ChannelsArray& channelsarray)
     emit NewChannels(channelsarray);
 }
 
-#include "moc_telepathylistener.cpp"
+#include "moc_telepathylistener_p.cpp"
 
 QTM_END_NAMESPACE

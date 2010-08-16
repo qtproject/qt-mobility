@@ -60,11 +60,6 @@ class QGeoPlacePrivate;
 class Q_LOCATION_EXPORT QGeoPlace
 {
 public:
-    enum PlaceType {
-        GeoPlaceType,
-        LandmarkType
-    };
-
     QGeoPlace();
     QGeoPlace(const QGeoPlace &other);
     virtual ~QGeoPlace();
@@ -74,10 +69,10 @@ public:
     bool operator==(const QGeoPlace &other) const;
     bool operator!=(const QGeoPlace &other) const;
 
-    PlaceType type() const;
+    bool isLandmark() const;
 
-    QGeoBoundingBox boundingBox() const;
-    void setBoundingBox(const QGeoBoundingBox &boundingBox);
+    QGeoBoundingBox viewport() const;
+    void setViewport(const QGeoBoundingBox &viewport);
 
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &coordinate);
@@ -87,6 +82,7 @@ public:
 
 protected:
     QGeoPlace(QGeoPlacePrivate *dd);
+
     QSharedDataPointer<QGeoPlacePrivate> d_ptr;
 
 private:

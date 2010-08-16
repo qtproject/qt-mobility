@@ -29,6 +29,16 @@
 
 
 /*!
+\module QtPublishSubscribe
+\title  QtPublishSubscribe Module
+\brief  The Publish and Subscribe API, containing Value Space, enables
+applications to read item values, navigate through and subscribe
+to change notifications.
+
+*/
+
+
+/*!
 \page publ-subs.html
 
 \title Publish and Subscribe
@@ -179,7 +189,7 @@ exactly what has changed without the need for a bulkier change notification prot
 Publish and Subscribe API can be used to access Symbian OS' Properties (RProperty) as well as
 Central Repository files (CRepository).
 
-\section3 Declaring Value Space Paths
+\section3 \bold{Declaring Value Space Paths}
 
 Since Publish and Subscribe API is based on Value Space that is accessed via textual path we need
 to somehow specify how particular paths are turned into RPropery or CRepository key definitions.
@@ -211,7 +221,7 @@ Repository:
 
 The \c qcrmlgen tool located in the \c tools directory can be used to create QCRML files.
 
-\section3 Location of QCRML Files
+\section3 \bold{Location of QCRML Files}
 
 All the QCRML files need to be located in \c {\resource\qt\crml} directory (in any available drive)
 in Symbian file system.
@@ -228,7 +238,7 @@ symbian {
 }
 \endcode
 
-\section3 Limitations
+\section3 \bold{Limitations}
 
 The underlying Symbian APIs limit the data types that can be stored natively in available backing stores.
 In practice this is not a problem since the unsupported data types are automatically serialized in
@@ -240,7 +250,7 @@ that access the same data directly. The maximum size of the bytearray is 65535 f
 
 Publish and Subscribe API can be used to access the GConf configuration system.
 
-\section3 Limitations
+\section3 \bold{Limitations}
 
 GConf can natively store only a limited set of QVariant data types. These types are Bool, Int, Double,
 String, StringList and List. When publishing other data types the values are automatically serialized

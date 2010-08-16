@@ -452,6 +452,18 @@ bool RegistryLayer::value(Handle handle, const QString &subPath, QVariant *data)
         while (path.startsWith(QLatin1Char('/')))
             path = path.mid(1);
 
+    Handle fullHandle = item(handle, subPath);
+    if (fullHandle != InvalidHandle) {
+        RegistryHandle *rh = registryHandle(fullHandle);
+        if (rh) {
+            openRegistryKey(rh);
+            if (!rh->valueHandle) {
+                handle = fullHandle;
+                path.clear();
+            }
+        }
+    }
+
     int index = path.lastIndexOf(QLatin1Char('/'), -1);
 
     bool createdHandle = false;
@@ -463,6 +475,8 @@ bool RegistryLayer::value(Handle handle, const QString &subPath, QVariant *data)
         // want a value that is in a sub path under handle
         value = path.mid(index + 1);
         path.truncate(index);
+        if (path.isEmpty())
+            path = QLatin1String("/");
 
         handle = item(handle, path);
         createdHandle = true;
@@ -605,7 +619,10 @@ QSet<QString> RegistryLayer::children(Handle handle)
         if (result != ERROR_SUCCESS)
             break;
 
-        foundChildren << QString::fromWCharArray(valueName, valueNameSize);
+        QString value = QString::fromWCharArray(valueName, valueNameSize);
+        if (!value.isEmpty())
+            foundChildren << value;
+
         ++i;
     } while (result == ERROR_SUCCESS);
 
@@ -955,6 +972,19 @@ bool RegistryLayer::setValue(QValueSpacePublisher *creator, Handle handle, const
 
         rh = registryHandle(item(Handle(rh), path));
         createdHandle = true;
+    }
+
+    if (!value.isEmpty()) {
+        QString fullPath = rh->path;
+        if (!fullPath.endsWith(QLatin1Char('/')))
+            fullPath.append(QLatin1Char('/'));
+        fullPath.append(value);
+
+        RegistryHandle *fullHandle = registryHandle(item(InvalidHandle, fullPath));
+        if (fullHandle) {
+            fullHandle->valueHandle = true;
+            removeHandle(Handle(fullHandle));
+        }
     }
 
     if (createRegistryKey(rh)) {

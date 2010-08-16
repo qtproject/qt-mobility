@@ -14,7 +14,6 @@ HEADERS += \
             qgeocodexmlparser.h \
             qgeomappingmanagerengine_nokia.h \
             qgeomapreply_nokia.h \
-            #qgeomapviewport_nokia.h \
             qgeoroutereply_nokia.h \
             qgeoroutexmlparser.h \
             qgeoroutingmanagerengine_nokia.h \
@@ -26,7 +25,6 @@ SOURCES += \
             qgeocodexmlparser.cpp \
             qgeomappingmanagerengine_nokia.cpp \
             qgeomapreply_nokia.cpp \
-            #qgeomapviewport_nokia.cpp \
             qgeoroutereply_nokia.cpp \
             qgeoroutexmlparser.cpp \
             qgeoroutingmanagerengine_nokia.cpp \
@@ -34,8 +32,9 @@ SOURCES += \
             qgeosearchreply_nokia.cpp \
             qgeoserviceproviderplugin_nokia.cpp
 
-INCLUDEPATH += $$QT_MOBILITY_BUILD_TREE/include/QtmLocation
-INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/src/location
+INCLUDEPATH += $$SOURCE_DIR/src/location \
+                $$SOURCE_DIR/src/location/maps \
+                $$SOURCE_DIR/src/location/maps/tiled
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
@@ -46,5 +45,3 @@ symbian {
     DEPLOYMENT += pluginDep      
 }
 
-target.path=$$QT_MOBILITY_PREFIX/plugins/$${PLUGIN_TYPE}
-INSTALLS+=target

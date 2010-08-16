@@ -85,7 +85,9 @@ public:
 
     ~SymbianClientEndPoint()
     {
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "Symbian IPC client endpoint destroyed.";
+#endif
     }
 
     void PackageReceived(QServicePackage package)
@@ -130,7 +132,9 @@ public:
 
     ~SymbianServerEndPoint()
     {
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
         qDebug() << "Symbian IPC server endpoint destroyed.";
+#endif
     }
 
     void packageReceived(QServicePackage package)
@@ -181,6 +185,9 @@ void QRemoteServiceControlPrivate::publishServices(const QString &ident)
         qDebug("GTR QRemoteServiceControlPrivate::server providing service started successfully");
     }
 #endif
+    // If we're started by the client, notify them we're running
+    qDebug() << "Service fired rendezvous";
+    RProcess::Rendezvous(KErrNone);
 }
 
 void QRemoteServiceControlPrivate::processIncoming(CServiceProviderServerSession* newSession)
@@ -304,15 +311,6 @@ void RServiceSession::SendServicePackage(const QServicePackage& aPackage)
     }
 }
 
-bool RServiceSession::MessageAvailable()
-{
-#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-  // TODO look into this
-    qDebug("RServiceSession::MessageAvailable OTR TODO");
-#endif
-    return false;
-}
-
 // StartServer() checks if the service is already published by someone (i.e. can be found
 // from Kernel side). If not, it will start the process that provides the service.
 TInt RServiceSession::StartServer()
@@ -332,13 +330,13 @@ TInt RServiceSession::StartServer()
         qWarning("WINS Support for QSFW OOP not implemented.");
 #else
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-        qDebug() << "RServiceSession::StartServer() GTR Service not found from Kernel. Starting a process.";
-        qDebug() << "RServiceSession::StartServer() OTR TODO hard coded to start test service: " << "qservicemanager_ipc_service";
+        qDebug() << "RServiceSession::StartServer() GTR Service not found from Kernel. Starting a process. 2";
+        qDebug() << "RServiceSession::StartServer() OTR TODO hard coded to start test service: " << iServerAddress;
 #endif
         TRequestStatus status;
         RProcess serviceServerProcess;
-        _LIT(KServiceProviderServer, "qservicemanager_ipc_service");
-        ret = serviceServerProcess.Create(KServiceProviderServer, KNullDesC);
+        //_LIT(KServiceProviderServer, "qservicemanager_ipc_service");
+        ret = serviceServerProcess.Create(serviceAddressPtr, KNullDesC);
         if (ret != KErrNone) {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
             qDebug() << "RTR RProcess::Create failed";
@@ -348,6 +346,7 @@ TInt RServiceSession::StartServer()
         // Point of synchronization. Waits until the started process calls
         // counterpart of this function (quits wait also if process dies / panics).
         serviceServerProcess.Rendezvous(status);
+
         if (status != KRequestPending) {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
             qDebug() << "RTR Service Server Process Rendezvous() failed, killing process.";
@@ -386,10 +385,8 @@ void RServiceSession::ListenForPackages(TRequestStatus& aStatus)
     iArgs.Set(0, &iMessageFromServer);
     // Total Size of returned messaage,which might differ from the amount of data in iMessageFromServer
     iArgs.Set(1, &iSize); 
-    iArgs.Set(2, &iError); // TODO Not sure if needed
-    // TODO needs to be enough room for response, currently is not
-    // and also the possibility for error codes needs to be analyzed -
-    // is there need for communicating errors here.
+    iArgs.Set(2, &iError);
+    
     SendReceive(EPackageRequest, iArgs, aStatus);
 }
 

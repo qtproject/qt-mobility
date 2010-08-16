@@ -54,6 +54,7 @@
 // We mean it.
 //
 
+#include "qcontactactiondescriptor.h"
 #include "qcontactdetail.h"
 
 #include <QSharedData>

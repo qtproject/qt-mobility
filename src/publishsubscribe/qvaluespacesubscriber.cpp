@@ -57,6 +57,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QValueSpaceSubscriber class allows applications to read and subscribe to Value Space
            paths.
 
+    \inmodule QtPublishSubscribe
     \ingroup publishsubscribe
 
     By default QValueSpaceSubscriber can read values from and report change notifications for all
@@ -451,10 +452,10 @@ bool QValueSpaceSubscriber::isConnected() const
 
     \code
         QValueSpaceSubscriber base("/Settings");
-        QValueSpaceSubscriber equiv("/Settings/Nokia/General/Mappings);
+        QValueSpaceSubscriber equiv("/Settings/Nokia/General/Mappings");
 
         // Is true
-        equiv.value() == base.value("Nokia/General/Mapping");
+        equiv.value() == base.value("Nokia/General/Mappings");
     \endcode
 */
 QVariant QValueSpaceSubscriber::value(const QString & subPath, const QVariant &def) const

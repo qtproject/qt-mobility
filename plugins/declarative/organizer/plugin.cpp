@@ -59,11 +59,11 @@ public:
     void registerTypes(const char *uri)
     {
         Q_ASSERT(uri == QLatin1String("QtMobility.organizer"));
-        qmlRegisterType<QMLOrganizerModel>(uri, 1, 0, "QmlOrganizerModel");
-        qmlRegisterType<QMLOrganizerItem>(uri, 1, 0, "QmlOrganizerItem");
-        qmlRegisterType<QMLOrganizer>(uri, 1, 0, "QmlOrganizer");
-        qmlRegisterType<QMLOrganizerItemDetail>(uri, 1, 0, "QmlOrganizerItemDetail");
-        qmlRegisterType<QMLOrganizerItemDetailField>(uri, 1, 0, "QmlOrganizerItemDetailField");
+        qmlRegisterType<QMLOrganizerModel>(uri, 1, 1, "QmlOrganizerModel");
+        qmlRegisterType<QMLOrganizerItem>(uri, 1, 1, "QmlOrganizerItem");
+        qmlRegisterType<QMLOrganizer>(uri, 1, 1, "QmlOrganizer");
+        qmlRegisterType<QMLOrganizerItemDetail>(uri, 1, 1, "QmlOrganizerItemDetail");
+        qmlRegisterType<QMLOrganizerItemDetailField>(uri, 1, 1, "QmlOrganizerItemDetailField");
     }
 };
 
