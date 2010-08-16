@@ -78,10 +78,10 @@ public:
 
     void sync();
 
-signals:
+Q_SIGNALS:
     void interestChanged(const QString &attribute, bool interested);
 
-public slots:
+public Q_SLOTS:
     void setValue(const QString &name, const QVariant &data);
     void resetValue(const QString &name);
 

@@ -51,6 +51,8 @@ QTM_BEGIN_NAMESPACE
     \brief The GalleryFilter element provides filtering criteria for a gallery
     query.
 
+    \ingroup qml-gallery
+    
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
     \qml
@@ -131,6 +133,8 @@ QGalleryFilter QDeclarativeGalleryFilter::filter() const
 
     \brief The GalleryFilterUnion elements provides a union of gallery filters.
 
+    \ingroup qml-gallery
+
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 */
 
@@ -169,6 +173,8 @@ QGalleryFilter QDeclarativeGalleryFilterUnion::filter() const
 
     \brief The GalleryFilterIntersection elements provides a intersection of
     gallery filters.
+
+    \ingroup qml-gallery
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 */

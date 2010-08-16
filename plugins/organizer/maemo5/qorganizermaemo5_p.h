@@ -154,8 +154,15 @@ public:
     QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
 
-    bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+    bool saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
     bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+
+    /* Collections - every item belongs to exactly one collection */
+    QOrganizerCollectionLocalId defaultCollectionId(QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerCollectionLocalId> collectionIds(QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const;
+    bool saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error);
+    bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
 
     /* Capabilities reporting */
     bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const;

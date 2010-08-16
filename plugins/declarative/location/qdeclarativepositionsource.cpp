@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
 
     The PositionSource element allows you to get information about your current position.
     You can receive information about things such as \l Position::latitude,
-    \l Position::longtitude, \l Position::speed, and
+    \l Position::longitude, \l Position::speed, and
     \l Position::altitude. This element is part of the \bold{QtMobility.location 1.0} module.
 
     Support for location sources are platform dependant. When declaring a PositionSource element, a
@@ -98,12 +98,12 @@ QTM_BEGIN_NAMESPACE
             Text {text: "active: "     + positionSource.active}
             Text {text: "<==== Position ====>"}
             Text {text: "latitude: "   + positionSource.position.latitude}
-            Text {text: "longtitude: "   + positionSource.position.longtitude}
+            Text {text: "longitude: "   + positionSource.position.longitude}
             Text {text: "altitude: "   + positionSource.position.altitude}
             Text {text: "speed: " + positionSource.position.speed}
             Text {text: "timestamp: "  + positionSource.position.timestamp}
             Text {text: "altitudeValid: "  + positionSource.position.altitudeValid}
-            Text {text: "longtitudeValid: "  + positionSource.position.longtitudeValid}
+            Text {text: "longitudeValid: "  + positionSource.position.longitudeValid}
             Text {text: "latitudeValid: "  + positionSource.position.latitudeValid}
             Text {text: "speedValid: "     + positionSource.position.speedValid}
         }
@@ -133,7 +133,7 @@ QTM_BEGIN_NAMESPACE
 
 QDeclarativePositionSource::QDeclarativePositionSource()
         : m_positionSource(0), m_positioningMethod(QDeclarativePositionSource::NoPositioningMethod),
-        m_active(false), m_singleUpdate(false), m_updateInterval(0)
+        m_nmeaFile(0), m_active(false), m_singleUpdate(false), m_updateInterval(0)
 {
     m_positionSource = QGeoPositionInfoSource::createDefaultSource(this);
     if (m_positionSource) {
@@ -151,12 +151,13 @@ QDeclarativePositionSource::QDeclarativePositionSource()
 
 QDeclarativePositionSource::~QDeclarativePositionSource()
 {
+    delete m_nmeaFile;
     delete m_positionSource;
 }
 
 void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
 {
-    if (nmeaSource == m_nmeaSource) {
+    if (nmeaSource.toLocalFile() == m_nmeaSource.toLocalFile()) {
         return;
     }
     // The current position source needs to be deleted in any case,
@@ -171,25 +172,34 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
     // was an embedded resource file. QUrl loses the ':' so it is added here and checked if
     // it is available.
     QString localFileName = nmeaSource.toLocalFile();
-    QFile* file = new QFile(localFileName);
-    if (!file->exists()) {
+    delete m_nmeaFile;
+    m_nmeaFile = new QFile(localFileName);
+    if (!m_nmeaFile->exists()) {
         localFileName.prepend(":");
-        file->setFileName(localFileName);
+        m_nmeaFile->setFileName(localFileName);
     }
-    if (file->exists()) {
+    if (m_nmeaFile->exists()) {
 #ifdef QDECLARATIVE_POSITION_DEBUG
         qDebug() << "QDeclarativePositionSource NMEA File was found: " << localFileName;
 #endif
         m_positionSource = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode);
-        (qobject_cast<QNmeaPositionInfoSource*>(m_positionSource))->setDevice(file);
+        (qobject_cast<QNmeaPositionInfoSource*>(m_positionSource))->setDevice(m_nmeaFile);
         connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
-    }
+        if (m_active && !m_singleUpdate) {
+            // Keep on updating even though source changed
+            QTimer::singleShot(0, this, SLOT(start()));
+        }
+    } else {
 #ifdef QDECLARATIVE_POSITION_DEBUG
-    else {
         qDebug() << "QDeclarativePositionSource NMEA File was not found: " << localFileName;
-    }
 #endif
+        if (m_active) {
+            m_active = false;
+            m_singleUpdate = false;
+            emit activeChanged(m_active);
+        }
+    }
     if (m_positioningMethod != positioningMethod()) {
         m_positioningMethod = positioningMethod();
         emit positioningMethodChanged(m_positioningMethod);
@@ -272,13 +282,17 @@ QDeclarativePositionSource::PositioningMethod QDeclarativePositionSource::positi
     if (m_positionSource) {
         QGeoPositionInfoSource::PositioningMethods methods = m_positionSource->supportedPositioningMethods();
         if (methods & QGeoPositionInfoSource::SatellitePositioningMethods) {
+            //qDebug() << "Returning satellite: " << QDeclarativePositionSource::SatellitePositioningMethod;
             return QDeclarativePositionSource::SatellitePositioningMethod;
         } else if (methods & QGeoPositionInfoSource::NonSatellitePositioningMethods) {
+            //qDebug() << "Returning non-satellite: " << QDeclarativePositionSource::NonSatellitePositioningMethod;
             return QDeclarativePositionSource::NonSatellitePositioningMethod;
         } else if (methods & QGeoPositionInfoSource::AllPositioningMethods) {
+            //qDebug() << "Returning all: " << QDeclarativePositionSource::AllPositioningMethods;
             return QDeclarativePositionSource::AllPositioningMethods;
         }
     }
+    //qDebug() << "Returning no-positioning: " << QDeclarativePositionSource::NoPositioningMethod;
     return QDeclarativePositionSource::NoPositioningMethod;
 }
 
@@ -353,7 +367,7 @@ void QDeclarativePositionSource::stop()
 
     This signal is sent when a position update has been received
     from the location source. Upon receiving this signal, at least
-    \l Position::latitude, \l Position::longtitude, and \l Position::timestamp
+    \l Position::latitude, \l Position::longitude, and \l Position::timestamp
     members of the \l position have been update.
 
     \sa updateInterval
@@ -397,7 +411,7 @@ bool QDeclarativePositionSource::isActive() const
     (e.g. sometimes an update does not have speed or altitude data).
 
     However, whenever a \l positionChanged signal has been received, at least
-    \l Position::latitude, \l Position::longtitude, and \l Position::timestamp can
+    \l Position::latitude, \l Position::longitude, and \l Position::timestamp can
     be assumed to be valid.
 
     \sa start, stop, update
@@ -414,7 +428,7 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo& 
     if (update.isValid()) {
         m_position.setTimestamp(update.timestamp());
         m_position.setLatitude(update.coordinate().latitude());
-        m_position.setLongtitude(update.coordinate().longitude());
+        m_position.setlongitude(update.coordinate().longitude());
 
         if (update.coordinate().type() == QGeoCoordinate::Coordinate3D) {
             m_position.setAltitude(update.coordinate().altitude());
@@ -436,5 +450,3 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo& 
 #include "moc_qdeclarativepositionsource_p.cpp"
 
 QTM_END_NAMESPACE
-
-

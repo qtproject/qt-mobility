@@ -81,7 +81,11 @@ public:
         ItemSaveRequest,
         DetailDefinitionFetchRequest,
         DetailDefinitionRemoveRequest,
-        DetailDefinitionSaveRequest
+        DetailDefinitionSaveRequest,
+        CollectionFetchRequest,
+        CollectionLocalIdFetchRequest,
+        CollectionRemoveRequest,
+        CollectionSaveRequest
     };
 
     RequestType type() const;

@@ -96,7 +96,7 @@ contains(build_docs, yes) {
 
 contains(build_unit_tests, yes):SUBDIRS+=tests
 contains(build_examples, yes):SUBDIRS+=examples
-contains(build_docs, yes):SUBDIRS+=demos
+contains(build_demos, yes):SUBDIRS+=demos
 
 #updating and deployment of translations requires Qt 4.6.3/qtPrepareTool
 !symbian:defined(qtPrepareTool):SUBDIRS += translations
@@ -104,6 +104,10 @@ contains(build_docs, yes):SUBDIRS+=demos
 # install Qt style headers
 
 !symbian {
+    qtmheadersglobal.path = $${QT_MOBILITY_INCLUDE}/QtMobility
+    qtmheadersglobal.files = $${QT_MOBILITY_BUILD_TREE}/include/QtMobility/*
+    INSTALLS += qtmheadersglobal
+
     contains(mobility_modules,bearer) {
         qtmheadersbearer.path = $${QT_MOBILITY_INCLUDE}/QtBearer
         qtmheadersbearer.files = $${QT_MOBILITY_BUILD_TREE}/include/QtBearer/*
@@ -122,10 +126,12 @@ contains(build_docs, yes):SUBDIRS+=demos
         INSTALLS += qtmheaderslocation
     }
 
-    contains(mobility_modules,messaging) {
-        qtmheadersmessaging.path = $${QT_MOBILITY_INCLUDE}/QtMessaging
-        qtmheadersmessaging.files = $${QT_MOBILITY_BUILD_TREE}/include/QtMessaging/*
-        INSTALLS += qtmheadersmessaging
+    contains(qmf_enabled, yes)|wince*|win32|maemo5 {
+        contains(mobility_modules,messaging) {
+            qtmheadersmessaging.path = $${QT_MOBILITY_INCLUDE}/QtMessaging
+            qtmheadersmessaging.files = $${QT_MOBILITY_BUILD_TREE}/include/QtMessaging/*
+            INSTALLS += qtmheadersmessaging
+        }
     }
 
     contains(mobility_modules,multimedia) {
@@ -169,11 +175,42 @@ contains(build_docs, yes):SUBDIRS+=demos
         qtmheadersorganizer.files = $${QT_MOBILITY_BUILD_TREE}/include/QtOrganizer/*
         INSTALLS += qtmheadersorganizer
     }
+
+    contains(mobility_modules,telephony) {
+        qtmheaderstelephony.path = $${QT_MOBILITY_INCLUDE}/QtTelephony
+        qtmheaderstelephony.files = $${QT_MOBILITY_BUILD_TREE}/include/QtTelephony/*
+        INSTALLS += qtmheaderstelephony
+    }
+
+    contains(mobility_modules,feedback) {
+        qtmheadersfeedback.path = $${QT_MOBILITY_INCLUDE}/QtFeedback
+        qtmheadersfeedback.files = $${QT_MOBILITY_BUILD_TREE}/include/QtFeedback/*
+        INSTALLS += qtmheadersfeedback
+    }
+
+    contains(mobility_modules,gallery) {
+        qtmheadersgallery.path = $${QT_MOBILITY_INCLUDE}/QtGallery
+        qtmheadersgallery.files = $${QT_MOBILITY_BUILD_TREE}/include/QtGallery/*
+        INSTALLS += qtmheadersgallery
+    }
 } else {
     #absolute path does not work and 
     #include <QtMyLibrary/class.h> style does not work either
+    qtmGlobalHeaders = include/QtMobility/*
+    for(api, qtmGlobalHeaders) {
+        INCLUDEFILES=$$files($$api);
+        #files() attaches a ';' at the end which we need to remove
+        cleanedFiles=$$replace(INCLUDEFILES, ;,)
+        for(header, cleanedFiles) {
+            exists($$header):
+                BLD_INF_RULES.prj_exports += "$$header $$MW_LAYER_PUBLIC_EXPORT_PATH($$basename(header))"
+        }
+    }
+
+
     qtmAppHeaders = include/QtContacts/* \
-                          include/QtVersit/*
+                       include/QtVersit/* \
+                       include/Organizer/*
 
     qtmMwHeaders = include/QtBearer/* \
                        include/QtLocation/* \
@@ -183,9 +220,11 @@ contains(build_docs, yes):SUBDIRS+=demos
                        include/QtServiceFramework/* \
                        include/QtSystemInfo/* \
                        include/QtSensors/* \
-                       include/QtOrganizer/*
+                       include/QtTelephony/* \
+                       include/QtFeedback/* \
+                       include/QtGallery/*
 
-    contains(mobility_modules,contacts|versit) {
+    contains(mobility_modules,contacts|versit|organizer) {
         for(api, qtmAppHeaders) {
             INCLUDEFILES=$$files($$api);
             #files() attaches a ';' at the end which we need to remove
@@ -197,7 +236,7 @@ contains(build_docs, yes):SUBDIRS+=demos
         }
     }
 
-    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging|organizer) {
+    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging|telephony|feedback|sensors|gallery) {
         for(api, qtmMwHeaders) {
             INCLUDEFILES=$$files($$api);
             #files() attaches a ';' at the end which we need to remove

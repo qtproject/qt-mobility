@@ -49,7 +49,7 @@ class QGalleryRemoveRequestPrivate : public QGalleryAbstractRequestPrivate
 {
 public:
     QGalleryRemoveRequestPrivate(QAbstractGallery *gallery)
-        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Remove)
+        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::RemoveRequest)
     {
     }
 

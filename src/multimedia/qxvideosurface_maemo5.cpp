@@ -46,8 +46,7 @@
 
 #include "qxvideosurface_maemo5_p.h"
 
-static QAbstractVideoBuffer::HandleType XvHandleType = QAbstractVideoBuffer::HandleType(4);
-
+//#define DEBUG_XV_SURFACE
 
 struct XvFormatRgb
 {
@@ -165,6 +164,10 @@ void QXVideoSurface::setWinId(WId id)
     if (id == m_winId)
         return;
 
+#ifdef DEBUG_XV_SURFACE
+    qDebug() << "QXVideoSurface::setWinId" << id;
+#endif
+
     if (m_image)
         XFree(m_image);
 
@@ -176,6 +179,7 @@ void QXVideoSurface::setWinId(WId id)
     if (m_portId != 0)
         XvUngrabPort(QX11Info::display(), m_portId, 0);
 
+    QList<QVideoFrame::PixelFormat> prevFormats = m_supportedPixelFormats;
     m_supportedPixelFormats.clear();
     m_formatIds.clear();
 
@@ -198,7 +202,12 @@ void QXVideoSurface::setWinId(WId id)
         QAbstractVideoSurface::stop();
     }
 
-    emit supportedFormatsChanged();
+    if (m_supportedPixelFormats != prevFormats) {
+#ifdef DEBUG_XV_SURFACE
+        qDebug() << "QXVideoSurface: supportedFormatsChanged";
+#endif
+        emit supportedFormatsChanged();
+    }
 }
 
 QRect QXVideoSurface::displayRect() const
@@ -253,7 +262,7 @@ QList<QVideoFrame::PixelFormat> QXVideoSurface::supportedPixelFormats(
         QAbstractVideoBuffer::HandleType handleType) const
 {
     if ( handleType == QAbstractVideoBuffer::NoHandle ||
-         handleType == XvHandleType )
+         handleType == QAbstractVideoBuffer::XvShmImageHandle )
         return m_supportedPixelFormats;
     else
         return QList<QVideoFrame::PixelFormat>();
@@ -261,7 +270,9 @@ QList<QVideoFrame::PixelFormat> QXVideoSurface::supportedPixelFormats(
 
 bool QXVideoSurface::start(const QVideoSurfaceFormat &format)
 {
-    //qDebug() << "QXVideoSurface::start" << format;
+#ifdef DEBUG_XV_SURFACE
+    qDebug() << "QXVideoSurface::start" << format;
+#endif
 
     m_lastFrame = QVideoFrame();
 
@@ -299,7 +310,7 @@ bool QXVideoSurface::start(const QVideoSurfaceFormat &format)
         m_shminfo.readOnly = False;
 
         if (!XShmAttach(QX11Info::display(), &m_shminfo)) {
-            //qDebug() << "XShmAttach failed";
+            qWarning() << "XShmAttach failed" << format;
             return false;
         }
 
@@ -366,11 +377,11 @@ bool QXVideoSurface::present(const QVideoFrame &frame)
         } else {
             bool presented = false;
 
-            if (frame.handleType() != XvHandleType &&
+            if (frame.handleType() != QAbstractVideoBuffer::XvShmImageHandle &&
                 m_image->data_size > m_lastFrame.mappedBytes()) {
                 qWarning("Insufficient frame buffer size");
                 setError(IncorrectFormatError);
-            } else if (frame.handleType() != XvHandleType &&
+            } else if (frame.handleType() != QAbstractVideoBuffer::XvShmImageHandle &&
                        m_image->num_planes > 0 &&
                        m_image->pitches[0] != m_lastFrame.bytesPerLine()) {
                 qWarning("Incompatible frame pitches");
@@ -378,7 +389,7 @@ bool QXVideoSurface::present(const QVideoFrame &frame)
             } else {
                 XvImage *img = 0;
 
-                if (frame.handleType() == XvHandleType) {
+                if (frame.handleType() == QAbstractVideoBuffer::XvShmImageHandle) {
                     img = frame.handle().value<XvImage*>();
                 } else {
                     img = m_image;
@@ -434,7 +445,10 @@ bool QXVideoSurface::findPort()
             }
         }
         XvFreeAdaptorInfo(adaptors);
-    }
+    }    
+
+    if (!portFound)
+        qWarning() << "QXVideoSurface::findPort: failed to find XVideo port";
 
     return portFound;
 }
@@ -475,4 +489,9 @@ void QXVideoSurface::querySupportedFormats()
         }
         XFree(imageFormats);
     }
+
+#ifdef DEBUG_XV_SURFACE
+    qDebug() << "Supported pixel formats:" << m_supportedPixelFormats;
+#endif
+
 }

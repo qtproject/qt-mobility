@@ -8,6 +8,7 @@ QT += testlib declarative
 SOURCES += tst_qdeclarativeposition.cpp
 
 INCLUDEPATH += ../../../src/location
+INCLUDEPATH += ../../../plugins/declarative/location
 INCLUDEPATH += ../../../src/global
 
 CONFIG += mobility

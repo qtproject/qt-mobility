@@ -262,6 +262,9 @@ void QOrganizerItemManager::createEngine(const QString& managerName, const QMap<
     connect(d->m_engine, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)), this, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
     connect(d->m_engine, SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)), this, SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)));
     connect(d->m_engine, SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)), this, SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)));
+    connect(d->m_engine, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)), this, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
+    connect(d->m_engine, SIGNAL(collectionsChanged(QList<QOrganizerCollectionLocalId>)), this, SIGNAL(collectionsChanged(QList<QOrganizerCollectionLocalId>)));
+    connect(d->m_engine, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)), this, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)));
 }
 
 /*!
@@ -294,10 +297,10 @@ QOrganizerItemManager::~QOrganizerItemManager()
   This enum specifies an error that occurred during the most recent operation:
 
   \value NoError The most recent operation was successful
-  \value DoesNotExistError The most recent operation failed because the requested organizeritem or detail definition does not exist
-  \value AlreadyExistsError The most recent operation failed because the specified organizeritem or detail definition already exists
-  \value InvalidDetailError The most recent operation failed because the specified organizeritem contains details which do not conform to their definition
-  \value InvalidItemTypeError The most recent operation failed because the organizeritem type specified was not valid for the operation
+  \value DoesNotExistError The most recent operation failed because the requested organizer item or detail definition does not exist
+  \value AlreadyExistsError The most recent operation failed because the specified organizer item or detail definition already exists
+  \value InvalidDetailError The most recent operation failed because the specified organizer item contains details which do not conform to their definition
+  \value InvalidItemTypeError The most recent operation failed because the organizer item type specified was not valid for the operation
   \value LockedError The most recent operation failed because the datastore specified is currently locked
   \value DetailAccessError The most recent operation failed because a detail was modified or removed and its access method does not allow that
   \value PermissionsError The most recent operation failed because the caller does not have permission to perform the operation
@@ -343,7 +346,7 @@ QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItem&
 
 
 /*!
-  Return the list of organizeritem ids, sorted according to the given list of \a sortOrders
+  Return the list of organizer item ids, sorted according to the given list of \a sortOrders
  */
 QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QList<QOrganizerItemSortOrder>& sortOrders) const
 {
@@ -352,7 +355,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QList<QOrganiz
 }
 
 /*!
-  Returns a list of organizeritem ids that match the given \a filter, sorted according to the given list of \a sortOrders.
+  Returns a list of organizer item ids that match the given \a filter, sorted according to the given list of \a sortOrders.
   Depending on the backend, this filtering operation may involve retrieving all the organizeritems.
  */
 QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
@@ -366,10 +369,10 @@ QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QOrganizerItem
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
   If the \a fetchHint is the default constructed hint, all existing details and relationships
-  in the matching organizeritems will be returned.  A client should not make changes to a organizeritem which has
+  in the matching organizeritems will be returned.  A client should not make changes to an organizer item which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the organizeritem back to the manager (as the "new" restricted organizeritem will
-  replace the previously saved organizeritem in the backend).
+  loss when saving the organizer item back to the manager (as the "new" restricted organizer item will
+  replace the previously saved organizer item in the backend).
 
   \sa QOrganizerItemFetchHint
  */
@@ -387,10 +390,10 @@ QList<QOrganizerItem> QOrganizerItemManager::items(const QList<QOrganizerItemSor
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
   If the \a fetchHint is the default constructed hint, all existing details and relationships
-  in the matching organizeritems will be returned.  A client should not make changes to a organizeritem which has
+  in the matching organizeritems will be returned.  A client should not make changes to an organizer item which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the organizeritem back to the manager (as the "new" restricted organizeritem will
-  replace the previously saved organizeritem in the backend).
+  loss when saving the organizer item back to the manager (as the "new" restricted organizer item will
+  replace the previously saved organizer item in the backend).
 
   \sa QOrganizerItemFetchHint
  */
@@ -401,17 +404,17 @@ QList<QOrganizerItem> QOrganizerItemManager::items(const QOrganizerItemFilter& f
 }
 
 /*!
-  Returns the organizeritem in the database identified by \a organizeritemId.
+  Returns the organizer item in the database identified by \a organizeritemId.
 
-  If the organizeritem does not exist, an empty, default constructed QOrganizerItem will be returned,
+  If the organizer item does not exist, an empty, default constructed QOrganizerItem will be returned,
   and the error returned by \l error() will be \c QOrganizerItemManager::DoesNotExistError.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
   If the \a fetchHint is the default constructed hint, all existing details and relationships
-  in the matching organizeritem will be returned.  A client should not make changes to a organizeritem which has
+  in the matching organizer item will be returned.  A client should not make changes to an organizer item which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the organizeritem back to the manager (as the "new" restricted organizeritem will
-  replace the previously saved organizeritem in the backend).
+  loss when saving the organizer item back to the manager (as the "new" restricted organizer item will
+  replace the previously saved organizer item in the backend).
 
   \sa QOrganizerItemFetchHint
  */
@@ -424,14 +427,23 @@ QOrganizerItem QOrganizerItemManager::item(const QOrganizerItemLocalId& organize
 /*!
   Adds the given \a organizeritem to the database if \a organizeritem has a
   default-constructed id, or an id with the manager URI set to the URI of
-  this manager and a local id of zero.
+  this manager and a local id of zero.  It will be saved in the collection specified
+  by \a collectionId if the specified collection exists, or if no \a collectionId is
+  specified, or the \a collectionId is the default (zero) collection id, it will be
+  saved in the collection in which the item is currently saved (if it is not a new
+  item) or in the default collection (if it is a new item).
+
+  Each collection may have a different schema, so if the item cannot be saved
+  in the given collection due to invalid details, the function will return false.
+  An item which is valid in one collection may be invalid in another collection, in the
+  same manager.
 
   If the manager URI of the id of the \a organizeritem is neither empty nor equal to the URI of
   this manager, or local id of the \a organizeritem is non-zero but does not exist in the
   manager, the operation will fail and calling error() will return
   \c QOrganizerItemManager::DoesNotExistError.
 
-  Alternatively, the function will update the existing organizeritem in the database if \a organizeritem
+  Alternatively, the function will update the existing organizer item in the database if \a organizeritem
   has a non-zero id and currently exists in the database.
 
   If the \a organizeritem contains one or more details whose definitions have
@@ -439,21 +451,21 @@ QOrganizerItem QOrganizerItemManager::item(const QOrganizerItemLocalId& organize
   error() will return \c QOrganizerItemManager::UnsupportedError.
 
   Returns false on failure, or true on
-  success.  On successful save of a organizeritem with an id of zero, its
+  success.  On successful save of an organizer item with an id of zero, its
   id will be set to a new, valid id with the manager URI set to the URI of
   this manager, and the local id set to a new, valid local id.
-  The manager will automatically synthesize the display label of the organizeritem when it is saved.
-  The manager is not required to fetch updated details of the organizeritem on save,
-  and as such, clients should fetch a organizeritem if they want the most up-to-date information
+  The manager will automatically synthesize the display label of the organizer item when it is saved.
+  The manager is not required to fetch updated details of the organizer item on save,
+  and as such, clients should fetch an organizer item if they want the most up-to-date information
   by calling \l QOrganizerItemManager::item().
 
   \sa managerUri()
  */
-bool QOrganizerItemManager::saveItem(QOrganizerItem* organizeritem)
+bool QOrganizerItemManager::saveItem(QOrganizerItem* organizeritem, const QOrganizerCollectionLocalId& collectionId)
 {
     if (organizeritem) {
         d->m_error = QOrganizerItemManager::NoError;
-        return d->m_engine->saveItem(organizeritem, &d->m_error);
+        return d->m_engine->saveItem(organizeritem, collectionId, &d->m_error);
     } else {
         d->m_error = QOrganizerItemManager::BadArgumentError;
         return false;
@@ -461,8 +473,8 @@ bool QOrganizerItemManager::saveItem(QOrganizerItem* organizeritem)
 }
 
 /*!
-  Remove the organizeritem identified by \a organizeritemId from the database.
-  Returns true if the organizeritem was removed successfully, otherwise
+  Remove the organizer item identified by \a organizeritemId from the database.
+  Returns true if the organizer item was removed successfully, otherwise
   returns false.
  */
 bool QOrganizerItemManager::removeItem(const QOrganizerItemLocalId& organizeritemId)
@@ -472,22 +484,35 @@ bool QOrganizerItemManager::removeItem(const QOrganizerItemLocalId& organizerite
 }
 
 /*!
-  Adds the list of organizeritems given by \a organizeritems list to the database.
+  Adds the list of organizeritems given by \a organizeritems list to the database, in
+  the collection identified by the given \a collectionId.
   Returns true if the organizeritems were saved successfully, otherwise false.
 
+  If the given \a collectionId does not exist, the function will return false.
+  If the given \a collectionId is the default (zero) id, the items will be saved
+  in the collection in which they are currently saved (if they are not new items) or
+  in the default collection (if they are new items).
+  If the given \a collectionId does exist, all items will be saved in the collection
+  identified by the given \a collectionId.
+
+  Each collection may have a different schema, so if any of the items cannot be saved
+  in the given collection due to invalid details, the function will return false.
+  An item which is valid in one collection may be invalid in another collection, in the
+  same manager.
+
   The manager might populate \a errorMap (the map of indices of the \a organizeritems list to
-  the error which occurred when saving the organizeritem at that index) for
-  every index for which the organizeritem could not be saved, if it is able.
+  the error which occurred when saving the organizer item at that index) for
+  every index for which the organizer item could not be saved, if it is able.
   The \l QOrganizerItemManager::error() function will only return \c QOrganizerItemManager::NoError
   if all organizeritems were saved successfully.
 
-  For each newly saved organizeritem that was successful, the id of the organizeritem
+  For each newly saved organizer item that was successful, the id of the organizeritem
   in the \a organizeritems list will be updated with the new value.  If a failure occurs
   when saving a new organizeritem, the id will be cleared.
 
   \sa QOrganizerItemManager::saveItem()
  */
-bool QOrganizerItemManager::saveItems(QList<QOrganizerItem>* organizeritems, QMap<int, QOrganizerItemManager::Error>* errorMap)
+bool QOrganizerItemManager::saveItems(QList<QOrganizerItem>* organizeritems, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap)
 {
     if (errorMap)
         errorMap->clear();
@@ -497,24 +522,24 @@ bool QOrganizerItemManager::saveItems(QList<QOrganizerItem>* organizeritems, QMa
     }
 
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->saveItems(organizeritems, errorMap, &d->m_error);
+    return d->m_engine->saveItems(organizeritems, collectionId, errorMap, &d->m_error);
 }
 
 /*!
-  Remove every organizeritem whose id is contained in the list of organizeritems ids
+  Remove every organizer item whose id is contained in the list of organizeritems ids
   \a organizeritemIds.  Returns true if all organizeritems were removed successfully,
   otherwise false.
 
   The manager might populate \a errorMap (the map of indices of the \a organizeritemIds list to
-  the error which occurred when saving the organizeritem at that index) for every
-  index for which the organizeritem could not be removed, if it is able.
+  the error which occurred when saving the organizer item at that index) for every
+  index for which the organizer item could not be removed, if it is able.
   The \l QOrganizerItemManager::error() function will
   only return \c QOrganizerItemManager::NoError if all organizeritems were removed
   successfully.
 
-  If the given list of organizeritem ids \a organizeritemIds is empty, the function will return false
+  If the given list of organizer item ids \a organizeritemIds is empty, the function will return false
   and calling error() will return \c QOrganizerItemManager::BadArgumentError.  If the list is non-empty
-  and contains ids which do not identify a valid organizeritem in the manager, the function will
+  and contains ids which do not identify a valid organizer item in the manager, the function will
   remove any organizeritems which are identified by ids in the \a organizeritemIds list, insert
   \c QOrganizerItemManager::DoesNotExist entries into the \a errorMap for the indices of invalid ids
   in the \a organizeritemIds list, return false, and set the overall operation error to
@@ -536,9 +561,79 @@ bool QOrganizerItemManager::removeItems(const QList<QOrganizerItemLocalId>& orga
 }
 
 /*!
-  Returns a pruned or modified version of the \a original organizeritem which is valid and can be saved in the manager.
-  The returned organizeritem might have entire details removed or arbitrarily changed.  The cache of relationships
-  in the organizeritem are ignored entirely when considering compatibility with the backend, as they are
+  Returns the id of the default collection managed by this manager
+ */
+QOrganizerCollectionLocalId QOrganizerItemManager::defaultCollectionId() const
+{
+    d->m_error = QOrganizerItemManager::NoError;
+    return d->m_engine->defaultCollectionId(&d->m_error);
+}
+
+/*!
+  Returns the ids of collections managed by this manager.
+ */
+QList<QOrganizerCollectionLocalId> QOrganizerItemManager::collectionIds() const
+{
+    d->m_error = QOrganizerItemManager::NoError;
+    return d->m_engine->collectionIds(&d->m_error);
+}
+
+/*!
+  Returns the collections managed by this manager which
+  have an id contained in the list of collection ids \a collectionIds.
+  If the list of collection ids \a collectionIds is empty or
+  not specified, this function will return
+  all collections managed by this manager.
+ */
+QList<QOrganizerCollection> QOrganizerItemManager::collections(const QList<QOrganizerCollectionLocalId>& collectionIds) const
+{
+    d->m_error = QOrganizerItemManager::NoError;
+    return d->m_engine->collections(collectionIds, &d->m_error);
+}
+
+/*!
+  Saves the given \a collection in the manager.
+  Returns true on success, false on failure.
+
+  Some managers do not allow modifications to collections,
+  and thus attempting to save a collection will always fail
+  when attempted in such a manager.
+
+  Some managers do not allow adding new collections,
+  and thus attempting to save a new collection will always fail
+  when attempted in such a manager.
+
+  Some managers provide front-ends to read-only datastores, and
+  attempting to save a new collection in such a manager will
+  always fail.
+ */
+bool QOrganizerItemManager::saveCollection(QOrganizerCollection* collection)
+{
+    d->m_error = QOrganizerItemManager::NoError;
+    return d->m_engine->saveCollection(collection, &d->m_error);
+}
+
+/*!
+  Removes the collection identified by the given \a collectionId (and all items in the collection)
+  from the manager if the given \a collectionId exists.
+  Returns true on success, false on failure.
+
+  XXX TODO:
+  What happens if you attempt to remove the default collection?
+  Fails?  Or sets next collection to be the default?  Or..?
+  Do we need functions: setDefaultCollection(collection)?
+  etc.
+ */
+bool QOrganizerItemManager::removeCollection(const QOrganizerCollectionLocalId& collectionId)
+{
+    d->m_error = QOrganizerItemManager::NoError;
+    return d->m_engine->removeCollection(collectionId, &d->m_error);
+}
+
+/*!
+  Returns a pruned or modified version of the \a original organizer item which is valid and can be saved in the manager.
+  The returned organizer item might have entire details removed or arbitrarily changed.  The cache of relationships
+  in the organizer item are ignored entirely when considering compatibility with the backend, as they are
   saved and validated separately.
  */
 QOrganizerItem QOrganizerItemManager::compatibleItem(const QOrganizerItem& original)
@@ -607,7 +702,7 @@ bool QOrganizerItemManager::removeDetailDefinition(const QString& definitionName
  */
 
 /*!
-  Returns true if the given feature \a feature is supported by the manager, for the specified type of organizeritem \a organizeritemType
+  Returns true if the given feature \a feature is supported by the manager, for the specified type of organizer item \a organizeritemType
  */
 bool QOrganizerItemManager::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& organizeritemType) const
 {
@@ -637,7 +732,7 @@ bool QOrganizerItemManager::isFilterSupported(const QOrganizerItemFilter& filter
 }
 
 /*!
-  Returns the list of organizeritem types which are supported by this manager.
+  Returns the list of organizer item types which are supported by this manager.
   This is a convenience function, equivalent to retrieving the allowable values
   for the \c QOrganizerItemType::FieldType field of the QOrganizerItemType definition
   which is valid in this manager.

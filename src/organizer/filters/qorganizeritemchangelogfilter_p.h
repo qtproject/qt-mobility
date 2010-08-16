@@ -88,6 +88,24 @@ public:
         return true;
     }
 
+    QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
+    {
+        if (formatVersion == 1) {
+            stream << static_cast<quint32>(m_eventType) << m_since;
+        }
+        return stream;
+    }
+
+    QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
+    {
+        if (formatVersion == 1) {
+            quint32 eventType;
+            stream >> eventType >> m_since;
+            m_eventType = static_cast<QOrganizerItemChangeLogFilter::EventType>(eventType);
+        }
+        return stream;
+    }
+
     Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemChangeLogFilter, QOrganizerItemFilter::ChangeLogFilter)
 
     QOrganizerItemChangeLogFilter::EventType m_eventType;

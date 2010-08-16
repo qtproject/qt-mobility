@@ -46,14 +46,14 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QOrganizerItemSortOrder
-  \brief The QOrganizerItemSortOrder class defines how a list of organizeritems should be ordered according to some criteria
+  \brief The QOrganizerItemSortOrder class defines how a list of organizer items should be ordered according to some criteria
 
   \inmodule QtOrganizer
  */
 
 /*!
  * \enum QOrganizerItemSortOrder::BlankPolicy
- * Enumerates the ways in which the sort order interprets blanks when sorting organizeritems
+ * Enumerates the ways in which the sort order interprets blanks when sorting organizer items
  * \value BlanksFirst Considers blank values to evaluate to less than all other values in comparisons
  * \value BlanksLast Considers blank values to evaluate to greater than all other values in comparisons
  */
@@ -105,7 +105,7 @@ QOrganizerItemSortOrder& QOrganizerItemSortOrder::operator=(const QOrganizerItem
 }
 
 /*!
- * Returns true if the sort order is able to be used to sort a list of organizeritems; otherwise, returns false
+ * Returns true if the sort order is able to be used to sort a list of organizer items; otherwise, returns false
  */
 bool QOrganizerItemSortOrder::isValid() const
 {
@@ -130,9 +130,49 @@ bool QOrganizerItemSortOrder::operator ==(const QOrganizerItemSortOrder& other) 
     return false;
 }
 
+#ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a sortOrder to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QOrganizerItemSortOrder& sortOrder)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItemSortOrder
+    return out << formatVersion
+               << sortOrder.detailDefinitionName()
+               << sortOrder.detailFieldName()
+               << static_cast<quint32>(sortOrder.blankPolicy())
+               << static_cast<quint32>(sortOrder.direction())
+               << static_cast<quint32>(sortOrder.caseSensitivity());
+}
+
+/*!
+ * Reads a sort order from stream \a in into \a sortOrder.
+ */
+QDataStream& operator>>(QDataStream& in, QOrganizerItemSortOrder& sortOrder)
+{
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QString definitionName;
+        QString fieldName;
+        quint32 blankPolicy;
+        quint32 direction;
+        quint32 caseSensitivity;
+        in >> definitionName >> fieldName >> blankPolicy >> direction >> caseSensitivity;
+        sortOrder.setDetailDefinitionName(definitionName, fieldName);
+        sortOrder.setBlankPolicy(static_cast<QOrganizerItemSortOrder::BlankPolicy>(blankPolicy));
+        sortOrder.setDirection(static_cast<Qt::SortOrder>(direction));
+        sortOrder.setCaseSensitivity(static_cast<Qt::CaseSensitivity>(caseSensitivity));
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+#endif
+
 /*!
  * Sets the definition name of the details which will be inspected to perform sorting to \a definitionName,
- * and the name of those details' fields which contains the value which organizeritems will be sorted by to \a fieldName
+ * and the name of those details' fields which contains the value which organizer items will be sorted by to \a fieldName
  * \sa detailDefinitionName(), detailFieldName()
  */
 void QOrganizerItemSortOrder::setDetailDefinitionName(const QString& definitionName, const QString& fieldName)
@@ -166,7 +206,7 @@ void QOrganizerItemSortOrder::setDirection(Qt::SortOrder direction)
 
 /*!
  * Returns the definition name of the details which will be inspected to perform sorting.
- * Note that if a organizeritem has multiple details of the definition, the result of the sorting
+ * Note that if an organizer item has multiple details of the definition, the result of the sorting
  * is undefined.
  * \sa setDetailDefinitionName()
  */

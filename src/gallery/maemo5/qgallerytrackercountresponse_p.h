@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qgallerybaseresponse_p.h"
+#include "qgalleryabstractresponse_p.h"
 
 #include "qgallerydbusinterface_p.h"
 
@@ -75,7 +75,7 @@ struct QGalleryTrackerCountResponseArguments
 
 class QGalleryTrackerCountResponsePrivate;
 
-class QGalleryTrackerCountResponse : public QGalleryBaseResponse
+class QGalleryTrackerCountResponse : public QGalleryAbstractResponse
 {
     Q_OBJECT
 public:

@@ -55,12 +55,22 @@
 #include "qorganizeritemtype.h"
 #include "qorganizeritemdisplaylabel.h"
 #include "qorganizeritemdescription.h"
+#include "qorganizercollection.h"
+
+class QDataStream;
 
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemManager;
 class QOrganizerItemData;
 class QOrganizerItemName;
+
+// MSVC needs the function declared before the friend declaration
+class QOrganizerItem;
+#ifndef QT_NO_DATASTREAM
+Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerItem& item);
+Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItem& item);
+#endif
 
 class Q_ORGANIZER_EXPORT QOrganizerItem
 {
@@ -80,7 +90,10 @@ public:
     void setId(const QOrganizerItemId& id);
     QOrganizerItemLocalId localId() const;
 
-    /* Is this an empty organizeritem? */
+    /* The collection to which an item belongs - read only */
+    QOrganizerCollectionId collectionId() const;
+
+    /* Is this an empty organizer item? */
     bool isEmpty() const;
     void clearDetails();
 
@@ -118,8 +131,8 @@ public:
     {
         QList<QOrganizerItemDetail> props = details(T::DefinitionName.latin1());
         QList<T> ret;
-        foreach(QOrganizerItemDetail prop, props)
-            ret.append(T(prop));
+        for (int i = 0; i < props.count(); i++)
+            ret.append(T(props.at(i)));
         return ret;
     }
 
@@ -128,8 +141,8 @@ public:
     {
         QList<QOrganizerItemDetail> props = details(T::DefinitionName, fieldName, value);
         QList<T> ret;
-        foreach(QOrganizerItemDetail prop, props)
-            ret.append(T(prop));
+        for (int i = 0; i < props.count(); i++)
+            ret.append(T(props.at(i)));
         return ret;
     }
 
@@ -137,8 +150,8 @@ public:
     {
         QList<QOrganizerItemDetail> props = details(T::DefinitionName.latin1(), fieldName, value);
         QList<T> ret;
-        foreach(QOrganizerItemDetail prop, props)
-            ret.append(T(prop));
+        for (int i = 0; i < props.count(); i++)
+            ret.append(T(props.at(i)));
         return ret;
     }
 
@@ -159,12 +172,12 @@ public:
     void setType(const QString& type);
     void setType(const QOrganizerItemType& type);
 
-    /* The display label of the organizeritem */
+    /* The display label of the organizer item */
     QString displayLabel() const;
     void setDisplayLabel(const QString& label);
     void setDisplayLabel(const QOrganizerItemDisplayLabel& label);
 
-    /* The description of the organizeritem */
+    /* The description of the organizer item */
     QString description() const;
     void setDescription(const QString& description);
     void setDescription(const QOrganizerItemDescription& description);
@@ -182,9 +195,12 @@ protected:
     QOrganizerItem& assign(const QOrganizerItem &other, const char* expectedType);
 
 protected:
+    friend class QOrganizerItemData;
     friend class QOrganizerItemManager;
     friend class QOrganizerItemManagerData;
     friend class QOrganizerItemManagerEngine;
+    friend QDataStream& operator<<(QDataStream& out, const QOrganizerItem& item);
+    friend QDataStream& operator>>(QDataStream& in, QOrganizerItem& item);
 
     QSharedDataPointer<QOrganizerItemData> d;
 };

@@ -85,7 +85,8 @@ CntSimStorePrivate::CntSimStorePrivate(CntSymbianSimEngine &engine, CntSimStore 
     m_storeInfo.m_emailSupported            = false;
     
     // SDN store is allways read only
-    if (m_storeInfo.m_storeName == KParameterValueSimStoreNameSdn)
+    if (m_storeInfo.m_storeName == KParameterValueSimStoreNameSdn ||
+        m_storeInfo.m_storeName == KParameterValueSimStoreNameOn)
         m_storeInfo.m_readOnlyAccess = true;
 }
 
@@ -104,13 +105,23 @@ void CntSimStorePrivate::ConstructL()
     User::LeaveIfError(m_etelPhone.Open(m_etelServer, info.iName));
     
     // Open Etel store
-    User::LeaveIfError(m_etelStore.Open(m_etelPhone, storeName));
+    if (m_storeInfo.m_storeName == KParameterValueSimStoreNameOn) {
+        User::LeaveIfError(m_etelOnStore.Open(m_etelPhone));
+    }
+    else {
+        User::LeaveIfError(m_etelStore.Open(m_etelPhone, storeName));        
+    }
 
     // Update store info
     updateStoreInfoL();
     
     // Start listening for events
-    m_listener = new (ELeave) CntSimStoreEventListener(m_engine, m_etelStore);
+    if (m_storeInfo.m_storeName == KParameterValueSimStoreNameOn) {
+        m_listener = new (ELeave) CntSimStoreEventListener(m_engine, m_etelOnStore);
+    }
+    else {
+        m_listener = new (ELeave) CntSimStoreEventListener(m_engine, m_etelStore);
+    }
     m_listener->start();
 }
 
@@ -119,6 +130,7 @@ CntSimStorePrivate::~CntSimStorePrivate()
     Cancel();
     delete m_listener;
     m_etelStore.Close();
+    m_etelOnStore.Close();
     m_etelPhone.Close();
     m_etelServer.Close();
 }
@@ -139,6 +151,8 @@ void CntSimStorePrivate::convertStoreNameL(TDes &storeName)
         storeName.Copy(KETelIccAdnPhoneBook);
     } else if (m_storeInfo.m_storeName == KParameterValueSimStoreNameSdn) {
         storeName.Copy(KETelIccSdnPhoneBook);
+    } else if (m_storeInfo.m_storeName == KParameterValueSimStoreNameOn) {
+        storeName.Copy(KETelOwnNumberStore);
     }
 
     // Check that we got a valid store name
@@ -154,10 +168,48 @@ bool CntSimStorePrivate::read(int index, int numSlots, QContactManager::Error *e
         return false;
     }
     
+    // ON store requires different read approach.
+    // fetch ON contacts synchronously since there are usually only couple of them  
+    if (m_storeInfo.m_storeName == KParameterValueSimStoreNameOn) {
+
+        TRequestStatus status;
+        QList<QContact> fetchedContacts; 
+        for (int i = index; i <= numSlots; i++) {
+            RMobileONStore::TMobileONEntryV1 onEntry;
+            onEntry.iIndex = i;         
+            RMobileONStore::TMobileONEntryV1Pckg onEntryPkg(onEntry);
+            m_etelOnStore.Read(status, onEntryPkg);
+            User::WaitForRequest(status);
+            if (status.Int() == KErrNone) {
+                QContact c;
+                c.setType(QContactType::TypeContact);
+                QContactName name;
+                name.setCustomLabel(QString::fromUtf16(onEntry.iText.Ptr(),
+                        onEntry.iText.Length()));
+                c.saveDetail(&name);
+                
+                QContactPhoneNumber number;
+                number.setNumber(QString::fromUtf16(onEntry.iNumber.iTelNumber.Ptr(),
+                        onEntry.iNumber.iTelNumber.Length()));
+                c.saveDetail(&number);
+                
+                QScopedPointer<QContactId> contactId(new QContactId());
+                contactId->setLocalId(i);
+                contactId->setManagerUri(m_managerUri);
+                c.setId(*contactId);
+                fetchedContacts.append(c);
+            }
+        }
+        emit m_simStore.readComplete(fetchedContacts, QContactManager::NoError);
+        *error = QContactManager::NoError;
+        return true;
+    }        
+    
     // start reading
     m_buffer.Zero();
     m_buffer.ReAlloc(KOneSimContactBufferSize*numSlots);
     m_etelStore.Read(iStatus, index, numSlots, m_buffer);
+    
     SetActive();
     m_state = ReadState;
     
@@ -170,6 +222,11 @@ bool CntSimStorePrivate::write(const QContact &contact, QContactManager::Error *
     if (IsActive()) {
         *error = QContactManager::LockedError;
         return false;
+    }
+    
+    if (m_storeInfo.m_readOnlyAccess) {
+        *error = QContactManager::NotSupportedError;
+        return false;    
     }
     
     // get index
@@ -208,6 +265,11 @@ bool CntSimStorePrivate::remove(int index, QContactManager::Error *error)
         return false;
     }
     
+    if (m_storeInfo.m_readOnlyAccess) {
+        *error = QContactManager::NotSupportedError;
+        return false;    
+    }
+    
     // NOTE:
     // If index points to an empty slot and running in hardware the 
     // delete operation will not return any error.
@@ -225,6 +287,13 @@ bool CntSimStorePrivate::getReservedSlots(QContactManager::Error *error)
     if (IsActive()) {
         *error = QContactManager::LockedError;
         return false;
+    }
+    
+    // reserved slots are checked for sim contacts removing, 
+    // this operation is not supported for read only stores
+    if (m_storeInfo.m_readOnlyAccess) {
+        *error = QContactManager::NotSupportedError;
+        return false;    
     }
     
     // start reading
@@ -664,6 +733,10 @@ void CntSimStorePrivate::writeL(QContact *contact)
     if (IsActive())
         User::Leave(KErrLocked);
     
+    if (m_storeInfo.m_readOnlyAccess) {
+        User::Leave(KErrNotSupported);
+    }
+    
     // get index
     int index = KErrNotFound;
     if (contact->id().managerUri() == m_managerUri &&
@@ -694,6 +767,10 @@ void CntSimStorePrivate::removeL(int index)
     if (IsActive())
         User::Leave(KErrLocked);
     
+    if (m_storeInfo.m_readOnlyAccess) {
+        User::Leave(KErrNotSupported);
+    }
+    
     // NOTE:
     // If index points to an empty slot and running in hardware the 
     // delete operation will not return any error.
@@ -707,23 +784,41 @@ void CntSimStorePrivate::removeL(int index)
 void CntSimStorePrivate::updateStoreInfoL()
 {
 #ifdef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
+    TRequestStatus status;
     RMobilePhoneBookStore::TMobilePhoneBookInfoV1 info;
     RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg infoPckg(info);
-#else
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV5 info;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg infoPckg(info);
-#endif
-
-    // Get info
-    TRequestStatus status;
     m_etelStore.GetInfo(status, infoPckg);
     User::WaitForRequest(status);
     User::LeaveIfError(status.Int());
-
-    // Update entry counts
     m_storeInfo.m_totalEntries = info.iTotalEntries;
     m_storeInfo.m_usedEntries  = info.iUsedEntries;
-    
+#else
+    // Get info
+    TRequestStatus status;
+    if (m_storeInfo.m_storeName == KParameterValueSimStoreNameOn) {
+        RMobileONStore::TMobileONStoreInfoV1 onInfo;
+        RMobileONStore::TMobileONStoreInfoV1Pckg onInfoPckg(onInfo);
+        m_etelOnStore.GetInfo(status, onInfoPckg);
+        User::WaitForRequest(status);
+        User::LeaveIfError(status.Int());
+
+        // Update entry counts
+        m_storeInfo.m_totalEntries = onInfo.iTotalEntries;
+        m_storeInfo.m_usedEntries  = onInfo.iUsedEntries;
+    }
+    else {
+        RMobilePhoneBookStore::TMobilePhoneBookInfoV5 info;
+        RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg infoPckg(info);
+        m_etelStore.GetInfo(status, infoPckg);
+        User::WaitForRequest(status);
+        User::LeaveIfError(status.Int());
+
+        // Update entry counts
+        m_storeInfo.m_totalEntries = info.iTotalEntries;
+        m_storeInfo.m_usedEntries  = info.iUsedEntries;
+    }
+#endif
+
 #ifdef SYMBIANSIM_BACKEND_TEST_EXTRADETAILS
     // Check if store supports the extra details
     //
@@ -734,7 +829,7 @@ void CntSimStorePrivate::updateStoreInfoL()
     //
     // There is an API for checking these but it's Nokia internal so we must
     // do it this way - by checking if saving these details is possible.
-    
+
     // Have we checked these already?
     if (m_extraDetailsChecked == false)
     {

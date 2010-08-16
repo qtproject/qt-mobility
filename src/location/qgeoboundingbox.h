@@ -42,7 +42,7 @@
 #ifndef QGEOBOUNDINGBOX_H
 #define QGEOBOUNDINGBOX_H
 
-#include "qmobilityglobal.h"
+#include "qgeoboundingarea.h"
 
 #include <QSharedDataPointer>
 
@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
 class QGeoCoordinate;
 class QGeoBoundingBoxPrivate;
 
-class Q_LOCATION_EXPORT QGeoBoundingBox
+class Q_LOCATION_EXPORT QGeoBoundingBox : public QGeoBoundingArea
 {
 public:
     QGeoBoundingBox();
@@ -68,12 +68,21 @@ public:
     bool operator == (const QGeoBoundingBox &other) const;
     bool operator != (const QGeoBoundingBox &other) const;
 
+    QGeoBoundingArea::AreaType type() const;
+
     bool isValid() const;
     bool isEmpty() const;
 
+    void setTopLeft(const QGeoCoordinate &topLeft);
     QGeoCoordinate topLeft() const;
+
+    void setTopRight(const QGeoCoordinate &topRight);
     QGeoCoordinate topRight() const;
+
+    void setBottomLeft(const QGeoCoordinate &bottomLeft);
     QGeoCoordinate bottomLeft() const;
+
+    void setBottomRight(const QGeoCoordinate &bottomRight);
     QGeoCoordinate bottomRight() const;
 
     void setCenter(const QGeoCoordinate &center);
@@ -96,14 +105,14 @@ public:
     QGeoBoundingBox operator | (const QGeoBoundingBox &boundingBox) const;
     QGeoBoundingBox& operator |= (const QGeoBoundingBox &boundingBox);
 
-    QGeoBoundingBox intersected(const QGeoBoundingBox &boundingBox) const;
-    QGeoBoundingBox operator & (const QGeoBoundingBox &boundingBox) const;
-    QGeoBoundingBox& operator &= (const QGeoBoundingBox &boundingBox);
-
-
 private:
     QSharedDataPointer<QGeoBoundingBoxPrivate> d_ptr;
 };
+
+inline QGeoBoundingBox QGeoBoundingBox::operator | (const QGeoBoundingBox &boundingBox) const
+{
+    return united(boundingBox);
+}
 
 QTM_END_NAMESPACE
 

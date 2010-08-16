@@ -77,7 +77,7 @@ forth).  Clients can retrieve the organizer item types supported by an engine by
 The Organizer module of the Qt Mobility project includes several backends already, some of which
 are designed to interface with the default calendar on their particular platform.
 
-\section3 In-Memory Example Engine
+\section3 \bold{In-Memory Example Engine}
 
 The in-memory engine identifies itself as the "memory" engine.  It is available on all platforms
 which are supported by the Qt Mobility project.
@@ -86,7 +86,7 @@ The in-memory engine supports the default schema, and provides almost all functi
 the Qt Mobility Organizer API; however, all data is stored in-memory and is not persisted in any
 way.
 
-\section3 Symbian Engine
+\section3 \bold{Symbian Engine}
 
 The Symbian engine identifies itself as the "symbian" engine, and is only available on the
 Symbian S60 3.1, S60 3.2, S60 5.0 and Symbian^3 platforms.
@@ -97,7 +97,7 @@ by the Symbian engine depends on which version of the platform is being used.
 The Symbian engine allows clients to use both the asynchronous and synchronous interfaces,
 and persists all saved data to the system calendar.
 
-\section3 Maemo 5 (Fremantle) Engine
+\section3 \bold{Maemo 5 (Fremantle) Engine}
 
 The Maemo 5 (Fremantle) engine identifies itself as the "maemo5" engine, but is only available
 on the Maemo 5 (Fremantle) platform which has the correct libraries installed (including
@@ -122,7 +122,7 @@ The default implementation for most functions will set the error to
 \c QOrganizerItemManager::NotSupportedError and return the value which indicates that an error has
 occurred.
 
-\section3 Mandatory Functions
+\section3 \bold{Mandatory Functions}
 
 All engines must implement the following functions:
 
@@ -173,7 +173,7 @@ It is recommended that all engine implementations support asynchronous requests,
 use a "dummy" implementation which services the request synchronously during startRequest, and then
 emit the appropriate signals from the request via a zero-millisecond timeout timer.
 
-\section3 Optional Functionality
+\section3 \bold{Optional Functionality}
 
 The rest of the virtual functions are optional, and should be implemented only if the engine
 supports the operations.
@@ -216,7 +216,7 @@ via QOrganizerItemManagerEngine::hasFeature(), and must also implement:
 \endlist
 
 
-\section3 Optional Implementation
+\section3 \bold{Optional Implementation}
 
 Apart from areas of functionality which may be optionally implemented by the engine or not,
 the default implementation provides several functions which operate in a naive, in-memory

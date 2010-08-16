@@ -59,6 +59,9 @@ public:
     void setDueDateTime(const QDateTime& dueDateTime);
     QDateTime dueDateTime() const;
 
+    void setTimeSpecified(bool isTimeSpecified);
+    bool isTimeSpecified() const;
+
     void setRecurrenceDates(const QList<QDate>& rdates);
     QList<QDate> recurrenceDates() const;
     void setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule>& rrules);

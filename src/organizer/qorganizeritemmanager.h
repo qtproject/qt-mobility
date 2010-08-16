@@ -58,6 +58,9 @@
 #include "qorganizeritemfetchhint.h"
 #include "qorganizeritemfilter.h"
 
+#include "qorganizercollection.h"
+#include "qorganizercollectionid.h"
+
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemAction;
@@ -104,6 +107,7 @@ public:
         VersionMismatchError,
         LimitReachedError,
         InvalidItemTypeError,
+        InvalidCollectionError, // maybe CollectionDoesNotExistError?
         InvalidOccurrenceError
     };
 
@@ -125,13 +129,20 @@ public:
     QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;  // retrieve an item
 
-    bool saveItem(QOrganizerItem* item);
-    bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap);
+    bool saveItem(QOrganizerItem* item, const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId());
+    bool saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId(), QMap<int, QOrganizerItemManager::Error>* errorMap = 0);
     bool removeItem(const QOrganizerItemLocalId& itemId);
     bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap);
 
+    /* Collections - every item belongs to one or more collections */
+    QOrganizerCollectionLocalId defaultCollectionId() const;
+    QList<QOrganizerCollectionLocalId> collectionIds() const;
+    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds = QList<QOrganizerCollectionLocalId>()) const;
+    bool saveCollection(QOrganizerCollection* collection);
+    bool removeCollection(const QOrganizerCollectionLocalId& collectionId);
+
     /* Return a pruned or modified item which is valid and can be saved in the manager */
-    QOrganizerItem compatibleItem(const QOrganizerItem& original); // Preliminary function!
+    QOrganizerItem compatibleItem(const QOrganizerItem& original);
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType = QOrganizerItemType::TypeEvent) const;
@@ -158,6 +169,9 @@ Q_SIGNALS:
     void itemsAdded(const QList<QOrganizerItemLocalId>& itemIds);
     void itemsChanged(const QList<QOrganizerItemLocalId>& itemIds);
     void itemsRemoved(const QList<QOrganizerItemLocalId>& itemIds);
+    void collectionsAdded(const QList<QOrganizerCollectionLocalId>& collectionIds);
+    void collectionsChanged(const QList<QOrganizerCollectionLocalId>& collectionIds);
+    void collectionsRemoved(const QList<QOrganizerCollectionLocalId>& collectionIds);
 
 private:
     friend class QOrganizerItemManagerData;

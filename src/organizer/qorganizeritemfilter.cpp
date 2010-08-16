@@ -41,6 +41,7 @@
 
 #include "qorganizeritemfilter.h"
 #include "qorganizeritemfilter_p.h"
+#include "qorganizeritemfilters.h"
 
 #include "qorganizeritemintersectionfilter.h"
 #include "qorganizeritemunionfilter.h"
@@ -72,8 +73,8 @@
   \value ChangeLogFilter A filter which matches items whose timestamps have been updated since some particular date and time
   \omitvalue ActionFilter A filter which matches items for which a particular action is available, or which contain a detail with a particular value for which a particular action is available
   \value IntersectionFilter A filter which matches all items that are matched by all filters it includes
-  \value UnionFilter A filter which matches any organizeritem that is matched by any of the filters it includes
-  \value LocalIdFilter A filter which matches any organizeritem whose local id is contained in a particular list of organizeritem local ids
+  \value UnionFilter A filter which matches any organizer item that is matched by any of the filters it includes
+  \value LocalIdFilter A filter which matches any organizer item whose local id is contained in a particular list of organizer item local ids
   \value DefaultFilter A filter which matches everything
  */
 
@@ -151,6 +152,70 @@ bool QOrganizerItemFilter::operator==(const QOrganizerItemFilter& other) const
     /* Otherwise, use the virtual op == */
     return d_ptr->compare(other.d_ptr);
 }
+
+#ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a filter to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QOrganizerItemFilter& filter)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItemDetailFilter
+    out << formatVersion << static_cast<quint32>(filter.type());
+    if (filter.d_ptr)
+        filter.d_ptr->outputToStream(out, formatVersion);
+    return out;
+}
+
+/*!
+ * Reads an organizer item filter from stream \a in into \a filter.
+ */
+QDataStream& operator>>(QDataStream& in, QOrganizerItemFilter& filter)
+{
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        quint32 type;
+        in >> type;
+        switch (type) {
+            case QOrganizerItemFilter::InvalidFilter:
+                filter = QOrganizerItemInvalidFilter();
+                break;
+            case QOrganizerItemFilter::OrganizerItemDetailFilter:
+                filter = QOrganizerItemDetailFilter();
+                break;
+            case QOrganizerItemFilter::OrganizerItemDetailRangeFilter:
+                filter = QOrganizerItemDetailRangeFilter();
+                break;
+            case QOrganizerItemFilter::ChangeLogFilter:
+                filter = QOrganizerItemChangeLogFilter();
+                break;
+            case QOrganizerItemFilter::IntersectionFilter:
+                filter = QOrganizerItemIntersectionFilter();
+                break;
+            case QOrganizerItemFilter::UnionFilter:
+                filter = QOrganizerItemUnionFilter();
+                break;
+            case QOrganizerItemFilter::LocalIdFilter:
+                filter = QOrganizerItemLocalIdFilter();
+                break;
+            case QOrganizerItemFilter::OrganizerItemDateTimePeriodFilter:
+                filter = QOrganizerItemDateTimePeriodFilter();
+                break;
+            case QOrganizerItemFilter::DefaultFilter:
+                filter = QOrganizerItemFilter();
+                break;
+        }
+
+        if (filter.d_ptr) {
+            filter.d_ptr->inputFromStream(in, formatVersion);
+        }
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+#endif
+
 
 /*!
   \internal

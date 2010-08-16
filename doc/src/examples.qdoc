@@ -43,14 +43,13 @@
 
     \list
     \o \l{samplephonebook}{Sample Phonebook}
-    \o \l{qmlcontacts}{QML-based Sample Phonebook}
     \endlist
 
     \section2 Document Gallery
 
     \list
     \o \l{mediabrowser}{Media Browser}
-    \o \l{documentshare}{Document Share}
+    \o \l{documentproperties}{Document Properties}
     \endlist
 
     \section2 Feedback
@@ -63,14 +62,13 @@
     \section2 Location
 
     \list
-    \o \l{fetchgooglemaps}{Fetch Google Maps}
     \o \l{logfilepositionsource}{Log File Position Source}
     \o \l{weatherinfo}{Weather Info}
     \o \l{lightmaps}{LightMaps}
     \o \l{flickrdemo}{Flickr Demo}
     \o \l{landmarkbrowser}{Landmark Browser}
     \o \l{mapviewer}{Map Viewer}
-    \o \l{qgeoapiui}{QGeoApiUi}
+    \o \l{geoservicedemo}{Geo Service Demo}
     \endlist
 
     \section2 Messaging
