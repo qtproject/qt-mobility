@@ -1182,7 +1182,23 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName
     case QLandmarkFilter::NameFilter: {
             QLandmarkNameFilter nameFilter;
             nameFilter = filter;
-            queryString = landmarkIdsNameQueryString(nameFilter);
+            if (DatabaseOperations::filterSupportLevel(nameFilter)== QLandmarkManager::None) {
+                *error = QLandmarkManager::NotSupportedError;
+                *errorString = "The name filter's configuration is not supported";
+                return result;
+            }
+
+            //TODO: optimization
+            QLandmarkAttributeFilter attributeFilter;
+            attributeFilter.setAttributeType(QLandmarkAttributeFilter::ManagerAttributes);
+            attributeFilter.setAttribute("name", nameFilter.name(),nameFilter.matchFlags());
+            QList<QLandmarkId> lmIds = ::landmarkIds(connectionName,  attributeFilter,sortOrders,limit,offset,error,errorString,managerUri,queryRun);
+            if (*error != QLandmarkManager::NoError) {
+                return result;
+            } else {
+                result.append(lmIds);
+            }
+            idsFound = true;
             break;
         }
     case QLandmarkFilter::LandmarkIdFilter: {

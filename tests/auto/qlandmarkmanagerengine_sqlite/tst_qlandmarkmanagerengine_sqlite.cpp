@@ -451,7 +451,6 @@ private slots:
     void filterLandmarksDefault();
 
     void filterLandmarksName();
-    void filterLandmarksNameAsync();
 
     void filterLandmarksProximity();
     void filterLandmarksProximityAsync();
@@ -3105,50 +3104,101 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksDefault() {
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksName() {
     QLandmark lm1;
-    lm1.setName("test");
-    QVERIFY(m_manager->saveLandmark(&lm1));
+    lm1.setName("Adelaide");
+    m_manager->saveLandmark(&lm1);
 
     QLandmark lm2;
-    lm2.setName("junk1");
-    QVERIFY(m_manager->saveLandmark(&lm2));
+    lm2.setName("Adel");
+    m_manager->saveLandmark(&lm2);
 
     QLandmark lm3;
-    lm3.setName("TEST");
-    QVERIFY(m_manager->saveLandmark(&lm3));
+    lm3.setName("Brisbane");
+    m_manager->saveLandmark(&lm3);
 
     QLandmark lm4;
-    lm4.setName("junk2");
+    lm4.setName("Perth");
     QVERIFY(m_manager->saveLandmark(&lm4));
 
     QLandmark lm5;
-    lm5.setName("tEsT");
+    lm5.setName("Canberra");
     QVERIFY(m_manager->saveLandmark(&lm5));
 
     QLandmark lm6;
-    lm6.setName("junk3");
+    lm6.setName("Tinberra");
     QVERIFY(m_manager->saveLandmark(&lm6));
 
-    QLandmarkNameFilter filter("TEST");
-    filter.setMatchFlags(0);
+    QLandmark lm7;
+    lm7.setName("Madelaide");
+    QVERIFY(m_manager->saveLandmark(&lm7));
 
-    QList<QLandmarkId> ids1 = m_manager->landmarkIds(filter);
+    QLandmark lm8;
+    lm8.setName("Terran");
+    QVERIFY(m_manager->saveLandmark(&lm8));
 
-    QCOMPARE(ids1.size(), 3);
-    QCOMPARE(ids1.at(0), lm1.landmarkId());
-    QCOMPARE(ids1.at(1), lm3.landmarkId());
-    QCOMPARE(ids1.at(2), lm5.landmarkId());
+    QLandmark lm9;
+    lm9.setName("ADEL");
+    QVERIFY(m_manager->saveLandmark(&lm9));
 
-    filter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
-    QList<QLandmarkId> ids2 = m_manager->landmarkIds(filter);
+    QList<QLandmark> lms;
 
-    QCOMPARE(ids2.size(), 1);
-    QCOMPARE(ids2.at(0), lm3.landmarkId());
+    //test starts with
+    QLandmarkNameFilter nameFilter;
+    nameFilter.setName("adel");
+    nameFilter.setMatchFlags(QLandmarkFilter::MatchStartsWith);
+    lms = m_manager->landmarks(nameFilter);
+    QCOMPARE(lms.count(), 3);
 
-    filter.setName("No match");
-    QList<QLandmarkId> ids3 = m_manager->landmarkIds(filter);
-    QCOMPARE(ids3.size(), 0);
+    QCOMPARE(lms.at(0), lm1);
+    QCOMPARE(lms.at(1), lm2);
+    QCOMPARE(lms.at(2), lm9);
+
+    //test contains
+    nameFilter.setName("err");
+    nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
+    lms = m_manager->landmarks(nameFilter);
+    QCOMPARE(lms.count(),3);
+    QCOMPARE(lms.at(0), lm5);
+    QCOMPARE(lms.at(1), lm6);
+    QCOMPARE(lms.at(2), lm8);
+
+       //test fixed string
+    nameFilter.setName("adel");
+    nameFilter.setMatchFlags(QLandmarkFilter::MatchFixedString);
+    lms = m_manager->landmarks(nameFilter);
+    QCOMPARE(lms.count(), 2);
+    QCOMPARE(lms.at(0), lm2);
+    QCOMPARE(lms.at(1), lm9);
+
+    //test match exactly
+    nameFilter.setName("Adel");
+    nameFilter.setMatchFlags(QLandmarkFilter::MatchExactly);
+    lms = m_manager->landmarks(nameFilter);
+    QCOMPARE(lms.count(), 1);
+    QCOMPARE(lms.at(0), lm2);
+
+    //test no match
+    nameFilter.setName("Washington");
+    nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
+    lms = m_manager->landmarks(nameFilter);
+    QCOMPARE(lms.count(),0);
+
+    //test that can't support case sensitive matching
+    nameFilter.setName("ADEL");
+    nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
+    lms = m_manager->landmarks(nameFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NotSupportedError);
+    QCOMPARE(lms.count(),0);
+
+    nameFilter.setName("ADEL");
+    nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive | QLandmarkFilter::MatchContains);
+    lms = m_manager->landmarks(nameFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NotSupportedError);
+    QCOMPARE(lms.count(),0);
+
+    //TODO:Async testing
 }
 
+/*
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksNameAsync() {
     QLandmark lm1;
     lm1.setName("test");
@@ -3227,7 +3277,7 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksNameAsync() {
     QCOMPARE(lms3.size(), 0);
 
     QVERIFY(checkIdFetchRequest(lms3,filter));
-}
+}*/
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
     QList<QGeoCoordinate> greenwhichFilterCoords;
