@@ -501,6 +501,7 @@ private slots:
     void supportedFormats();
 
     void filterSupportLevel();
+    void sortOrderSupportLevel();
 
     void categoryLimitOffset();
     //TODO: void categoryLimitOffsetAsync()
@@ -6407,6 +6408,25 @@ void tst_QLandmarkManagerEngineSqlite::filterSupportLevel() {
     //try a landmark id filter
     QLandmarkIdFilter idFilter;
     QCOMPARE(m_manager->filterSupportLevel(idFilter), QLandmarkManager::Native);
+}
+
+void tst_QLandmarkManagerEngineSqlite::sortOrderSupportLevel() {
+    //default sort order
+    QLandmarkSortOrder defaultSort;
+    QList<QLandmarkSortOrder> sortOrders;
+    sortOrders << defaultSort;
+    QCOMPARE(m_manager->sortOrderSupportLevel(sortOrders), QLandmarkManager::Native);
+
+    //name sort order
+    QLandmarkNameSort nameSort;
+    sortOrders.clear();
+    sortOrders << nameSort;
+    QCOMPARE(m_manager->sortOrderSupportLevel(sortOrders), QLandmarkManager::Native);
+
+    //try a list
+    sortOrders.clear();
+    sortOrders << defaultSort << nameSort << defaultSort;
+    QCOMPARE(m_manager->sortOrderSupportLevel(sortOrders), QLandmarkManager::Native);
 }
 
 void tst_QLandmarkManagerEngineSqlite::categoryLimitOffset() {

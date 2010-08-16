@@ -205,6 +205,7 @@ namespace DatabaseOperations {
                          QueryRun *queryRun =0);
 
     QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter);
+    QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders);
 }
 
 #endif

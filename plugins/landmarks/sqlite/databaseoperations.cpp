@@ -2932,6 +2932,22 @@ QLandmarkManager::SupportLevel DatabaseOperations::filterSupportLevel(const QLan
     return QLandmarkManager::None;
 }
 
+QLandmarkManager::SupportLevel DatabaseOperations::sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders)
+{
+    QLandmarkManager::SupportLevel currentLevel = QLandmarkManager::Native;
+    foreach(const QLandmarkSortOrder &sortOrder, sortOrders){
+        switch(sortOrder.type()) {
+            case (QLandmarkSortOrder::DefaultSort):
+                continue;
+            case (QLandmarkSortOrder::NameSort):
+                continue;
+            default:
+                currentLevel = QLandmarkManager::None;
+        }
+    }
+    return currentLevel;
+}
+
 DatabaseOperations::QueryRun::QueryRun(QLandmarkAbstractRequest *req, const QString &uri, QLandmarkManagerEngineSqlite *eng)
     : request(req),
       error(QLandmarkManager::NoError),
