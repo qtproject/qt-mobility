@@ -357,7 +357,14 @@ QModelIndex QDeclarativeGalleryQueryModel::index(int row, int column, const QMod
 
 void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet)
 {
-    m_resultSet = resultSet;
+    if (m_rowCount > 0) {
+        beginRemoveRows(QModelIndex(), 0, m_rowCount);
+        m_rowCount = 0;
+        m_resultSet = resultSet;
+        endRemoveRows();
+    } else {
+        m_resultSet = resultSet;
+    }
 
     if (m_resultSet) {
         QHash<int, QByteArray> roleNames;
@@ -384,12 +391,13 @@ void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet
         connect(m_resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)),
                 this, SLOT(_q_itemsChanged(int,int)));
 
-        m_rowCount = m_resultSet->itemCount();
-    } else {
-        m_rowCount = 0;
+        const int rowCount = m_resultSet->itemCount();
+        if (rowCount > 0) {
+            beginInsertRows(QModelIndex(), 0, rowCount - 1);
+            m_rowCount = rowCount;
+            endInsertRows();
+        }
     }
-
-    reset();
 }
 
 void QDeclarativeGalleryQueryModel::_q_itemsInserted(int index, int count)

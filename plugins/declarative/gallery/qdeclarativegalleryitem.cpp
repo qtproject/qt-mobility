@@ -288,8 +288,8 @@ void QDeclarativeGalleryItem::_q_resultSetChanged(QGalleryResultSet *resultSet)
             }
         }
 
-        connect(m_resultSet, SIGNAL(inserted(int,int)), this, SLOT(_q_itemsInserted(int,int)));
-        connect(m_resultSet, SIGNAL(removed(int,int)), this, SLOT(_q_itemsRemoved(int,int)));
+        connect(m_resultSet, SIGNAL(itemsInserted(int,int)), this, SLOT(_q_itemsInserted(int,int)));
+        connect(m_resultSet, SIGNAL(itemsRemoved(int,int)), this, SLOT(_q_itemsRemoved(int,int)));
         connect(m_resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)),
                 this, SLOT(_q_metaDataChanged(int,int,QList<int>)));
     }

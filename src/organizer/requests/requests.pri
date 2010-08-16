@@ -2,6 +2,10 @@ INCLUDEPATH += requests \
     ./
 
 PUBLIC_HEADERS += requests/qorganizeritemrequests.h \
+    requests/qorganizercollectionfetchrequest.h \
+    requests/qorganizercollectionlocalidfetchrequest.h \
+    requests/qorganizercollectionremoverequest.h \
+    requests/qorganizercollectionsaverequest.h \
     requests/qorganizeritemdetaildefinitionfetchrequest.h \
     requests/qorganizeritemdetaildefinitionremoverequest.h \
     requests/qorganizeritemdetaildefinitionsaverequest.h \
@@ -14,6 +18,10 @@ PUBLIC_HEADERS += requests/qorganizeritemrequests.h \
 PRIVATE_HEADERS += requests/qorganizeritemrequests_p.h
 
 SOURCES += \
+    requests/qorganizercollectionfetchrequest.cpp \
+    requests/qorganizercollectionlocalidfetchrequest.cpp \
+    requests/qorganizercollectionremoverequest.cpp \
+    requests/qorganizercollectionsaverequest.cpp \
     requests/qorganizeritemdetaildefinitionfetchrequest.cpp \
     requests/qorganizeritemdetaildefinitionremoverequest.cpp \
     requests/qorganizeritemdetaildefinitionsaverequest.cpp \

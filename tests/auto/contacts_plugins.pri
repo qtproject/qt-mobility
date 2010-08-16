@@ -31,7 +31,7 @@ wince* {
 }
 
 # Add this too
-CONFIG += mobility
-MOBILITY = contacts
+CONFIG *= mobility
+MOBILITY *= contacts
 
 

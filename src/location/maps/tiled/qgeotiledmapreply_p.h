@@ -63,10 +63,7 @@ class QGeoTiledMapReplyPrivate
 public:
     QGeoTiledMapReplyPrivate(const QGeoTiledMapRequest &request);
     QGeoTiledMapReplyPrivate(QGeoTiledMapReply::Error error, const QString& errorString);
-    QGeoTiledMapReplyPrivate(const QGeoTiledMapReplyPrivate &other);
     ~QGeoTiledMapReplyPrivate();
-
-    QGeoTiledMapReplyPrivate& operator= (const QGeoTiledMapReplyPrivate &other);
 
     QGeoTiledMapReply::Error error;
     QString errorString;

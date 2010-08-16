@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/foreshore_final.jpg</file>
+        <file>images/koskipuisto_pieni.jpg</file>
+    </qresource>
+</RCC>

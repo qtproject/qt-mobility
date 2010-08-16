@@ -99,7 +99,7 @@ QGeoTiledMapData* QGeoTiledMapRequest::mapData() const
 
 /*!
 */
-QGeoMapWidget::MapType QGeoTiledMapRequest::mapType() const
+QGraphicsGeoMap::MapType QGeoTiledMapRequest::mapType() const
 {
     return d_ptr->mapType;
 }

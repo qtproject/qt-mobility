@@ -49,9 +49,11 @@
 #include <QPointer>
 #include <QHash>
 #include <QtDBus>
+#include "qservicemetaobject_dbus_p.h"
 
 QTM_BEGIN_NAMESPACE
 
+class QServiceMetaObjectDBus;
 class ObjectEndPointPrivate;
 class ObjectEndPoint : public QObject
 {
@@ -67,9 +69,6 @@ public:
 
     QObject* constructProxy(const QRemoteServiceIdentifier& ident);
     
-    // DBUS OVERLOAD
-    //QObject* constructProxy();
-
     void objectRequest(const QServicePackage& p);
     void methodCall(const QServicePackage& p);
     void propertyCall(const QServicePackage& p);
@@ -77,8 +76,6 @@ public:
     QVariant invokeRemote(int metaIndex, const QVariantList& args, int returnType);
     QVariant invokeRemoteProperty(int metaIndex, const QVariant& arg, int returnType, QMetaObject::Call c);
     
-    QUuid myInstanceID();
-
 Q_SIGNALS:
     void pendingRequestFinished();
 
@@ -86,9 +83,9 @@ public Q_SLOTS:
     void newPackageReady();
     void disconnected();
 
-//private:
-public:
+private:
     void waitForResponse(const QUuid& requestId);
+    QVariant toDBusVariant(const QByteArray& type, const QVariant& arg);
 
     QServiceIpcEndPoint* dispatch;
     QPointer<QObject> service;
@@ -96,6 +93,7 @@ public:
     
     QDBusConnection *connection;
     QDBusInterface *iface;
+    QServiceMetaObjectDBus *signalsObject;
 };
 
 QTM_END_NAMESPACE

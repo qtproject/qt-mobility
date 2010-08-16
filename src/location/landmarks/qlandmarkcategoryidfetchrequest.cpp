@@ -107,6 +107,41 @@ void QLandmarkCategoryIdFetchRequest::setSorting(const QLandmarkNameSort &nameSo
     d->sorting = nameSort;
 }
 
+/*!
+    Returns the maximum number of category ids to be returned.
+*/
+int QLandmarkCategoryIdFetchRequest::limit() const
+{
+    Q_D(const QLandmarkCategoryIdFetchRequest);
+    return d->limit;
+}
+
+/*!
+    Sets the maximum number of category ids to be returned to \a limit.
+ */
+void QLandmarkCategoryIdFetchRequest::setLimit(int limit)
+{
+    Q_D(QLandmarkCategoryIdFetchRequest);
+    d->limit = limit;
+}
+
+/*!
+    Returns the index offset for the request.
+*/
+int QLandmarkCategoryIdFetchRequest::offset() const
+{
+    Q_D(const QLandmarkCategoryIdFetchRequest);
+    return d->offset;
+}
+
+/*!
+    Sets the index \a offset for the request.
+*/
+void QLandmarkCategoryIdFetchRequest::setOffset(int offset) {
+    Q_D(QLandmarkCategoryIdFetchRequest);
+    d->offset = offset;
+}
+
 #include "moc_qlandmarkcategoryidfetchrequest.cpp"
 
 QTM_END_NAMESPACE

@@ -138,4 +138,34 @@ bool QOrganizerItemDetailFieldDefinition::operator!=(const QOrganizerItemDetailF
     return !(*this == other);
 }
 
+#ifndef QT_NO_DATASTREAM
+/*!
+ * Writes the detail field definition \a definition to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QOrganizerItemDetailFieldDefinition& definition)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItemDetailFieldDefinition
+    return out << formatVersion << static_cast<quint32>(definition.dataType()) << definition.allowableValues();
+}
+
+/*!
+ * Reads a detail field definition from stream \a in into \a definition.
+ */
+QDataStream& operator>>(QDataStream& in, QOrganizerItemDetailFieldDefinition& definition)
+{
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        quint32 dataType;
+        QVariantList allowableValues;
+        in >> dataType >> allowableValues;
+        definition.setDataType(QVariant::Type(dataType));
+        definition.setAllowableValues(allowableValues);
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+#endif
+
 QTM_END_NAMESPACE

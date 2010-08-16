@@ -69,7 +69,7 @@ QVersitPluginLoader* QVersitPluginLoader::mInstance = NULL;
  * This is a singleton class that loads Versit plugins
  */
 
-QVersitPluginLoader::QVersitPluginLoader()
+QVersitPluginLoader::QVersitPluginLoader() : mTimeZoneHandler(NULL)
 {
 }
 
@@ -90,14 +90,28 @@ void QVersitPluginLoader::loadPlugins() {
 
         foreach (const QString& pluginPath, mPluginPaths) {
             QPluginLoader qpl(pluginPath);
-            QVersitContactHandlerFactory* handler =
-                qobject_cast<QVersitContactHandlerFactory*>(qpl.instance());
-            if (handler && !mLoadedFactories.contains(handler->name())) {
-                mLoadedFactories.insert(handler->name());
-                mFactories.append(handler);
+            QObject* plugin = qpl.instance();
+            QVersitContactHandlerFactory* contactPlugin =
+                qobject_cast<QVersitContactHandlerFactory*>(plugin);
+            if (contactPlugin && !mLoadedFactories.contains(contactPlugin->name())) {
+                mLoadedFactories.insert(contactPlugin->name());
+                mContactHandlerFactories.append(contactPlugin);
+            } else {
+                QVersitOrganizerHandlerFactory* organizerPlugin =
+                    qobject_cast<QVersitOrganizerHandlerFactory*>(plugin);
+                if (organizerPlugin && !mLoadedFactories.contains(organizerPlugin->name())) {
+                    mLoadedFactories.insert(organizerPlugin->name());
+                    mOrganizerHandlerFactories.append(organizerPlugin);
+                } else if (!mTimeZoneHandler) {
+                    QVersitTimeZoneHandler* timeZonePlugin =
+                        qobject_cast<QVersitTimeZoneHandler*>(plugin);
+                    if (timeZonePlugin) {
+                        mTimeZoneHandler = timeZonePlugin;
+                    }
+                }
             }
         }
-        qSort(mFactories.begin(), mFactories.end(), factoryLessThan);
+        qSort(mContactHandlerFactories.begin(), mContactHandlerFactories.end(), factoryLessThan);
     }
 }
 
@@ -108,12 +122,12 @@ void QVersitPluginLoader::loadPlugins() {
  *
  * The caller is responsible for deleting all returned handlers.
  */
-QList<QVersitContactHandler*> QVersitPluginLoader::createHandlers(const QString& profile)
+QList<QVersitContactHandler*> QVersitPluginLoader::createContactHandlers(const QString& profile)
 {
     loadPlugins();
 
     QList<QVersitContactHandler*> handlers;
-    foreach (const QVersitContactHandlerFactory* factory, mFactories) {
+    foreach (const QVersitContactHandlerFactory* factory, mContactHandlerFactories) {
         if (factory->profiles().isEmpty() ||
                 (!profile.isEmpty() && factory->profiles().contains(profile))) {
             QVersitContactHandler* handler = factory->createHandler();
@@ -121,4 +135,33 @@ QList<QVersitContactHandler*> QVersitPluginLoader::createHandlers(const QString&
         }
     }
     return handlers;
+}
+
+/*!
+ * Creates and returns handlers from the plugin.  If \a profile is the empty string, only handlers
+ * with an empty profile list are returned.  If \a profile is nonempty, only handlers with either
+ * an empty profile list or a profile list that contains the given \a profile are returned.
+ *
+ * The caller is responsible for deleting all returned handlers.
+ */
+QList<QVersitOrganizerHandler*> QVersitPluginLoader::createOrganizerHandlers(const QString& profile)
+{
+    loadPlugins();
+
+    QList<QVersitOrganizerHandler*> handlers;
+    foreach (const QVersitOrganizerHandlerFactory* factory, mOrganizerHandlerFactories) {
+        if (factory->profiles().isEmpty() ||
+                (!profile.isEmpty() && factory->profiles().contains(profile))) {
+            QVersitOrganizerHandler* handler = factory->createHandler();
+            handlers.append(handler);
+        }
+    }
+    return handlers;
+}
+
+QVersitTimeZoneHandler* QVersitPluginLoader::timeZoneHandler()
+{
+    loadPlugins();
+
+    return mTimeZoneHandler;
 }

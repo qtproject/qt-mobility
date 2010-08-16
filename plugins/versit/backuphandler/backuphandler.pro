@@ -20,6 +20,3 @@ MOBILITY = versit contacts
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
 }
-
-target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
-INSTALLS += target

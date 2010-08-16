@@ -48,6 +48,8 @@
 
 #include "qmobilityglobal.h"
 #include "qversitcontacthandler.h"
+#include "qversitorganizerhandler.h"
+#include "qversittimezonehandler.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -58,14 +60,18 @@ class QVersitPluginLoader
 
     public:
         static QVersitPluginLoader* instance();
-        QList<QVersitContactHandler*> createHandlers(const QString& profile);
+        QList<QVersitContactHandler*> createContactHandlers(const QString& profile);
+        QList<QVersitOrganizerHandler*> createOrganizerHandlers(const QString& profile);
+        QVersitTimeZoneHandler* timeZoneHandler();
 
     private:
         void loadPlugins();
 
         static QVersitPluginLoader* mInstance;
         QSet<QString> mLoadedFactories;
-        QList<QVersitContactHandlerFactory*> mFactories;
+        QList<QVersitContactHandlerFactory*> mContactHandlerFactories;
+        QList<QVersitOrganizerHandlerFactory*> mOrganizerHandlerFactories;
+        QVersitTimeZoneHandler* mTimeZoneHandler;
         QStringList mPluginPaths;
 };
 
