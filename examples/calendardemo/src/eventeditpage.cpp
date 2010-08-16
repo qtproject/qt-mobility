@@ -179,7 +179,7 @@ void EventEditPage::saveOrNextClicked()
     } else {
     	if(!m_multipleEntries){
     		// If single entry
-//    		m_manager->saveItem(&m_organizerEvent);
+                m_manager->saveItem(&m_organizerEvent);
     	} else {
     		// If multiple entries, save asynchronously.
     		m_saveItemRequest->setItems(m_listOfEvents);

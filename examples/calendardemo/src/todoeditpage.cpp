@@ -173,7 +173,7 @@ void TodoEditPage::saveClicked()
     m_organizerTodo.setStatus(currentStatus);
     
     // Save
-    //m_manager->saveItem(&m_organizerTodo);
+    m_manager->saveItem(&m_organizerTodo);
     if (m_manager->error())
         QMessageBox::information(this, "Failed!", QString("Failed to save todo!\n(error code %1)").arg(m_manager->error()));
     else
