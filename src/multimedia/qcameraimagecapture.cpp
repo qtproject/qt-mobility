@@ -229,8 +229,8 @@ bool QCameraImageCapture::setMediaObject(QMediaObject *mediaObject)
                         this, SIGNAL(imageSaved(int, QString)));
                 connect(d->control, SIGNAL(readyForCaptureChanged(bool)),
                         this, SLOT(_q_readyChanged(bool)));
-                connect(d->control, SIGNAL(error(int,QString)),
-                        this, SLOT(_q_error(int,QString)));
+                connect(d->control, SIGNAL(error(int,int,QString)),
+                        this, SLOT(_q_error(int,int,QString)));
 
                 return true;
             }

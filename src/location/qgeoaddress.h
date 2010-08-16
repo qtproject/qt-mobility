@@ -81,17 +81,14 @@ public:
     QString district() const;
     void setDistrict(const QString &district);
 
-    QString thoroughfareName() const;
-    void setThoroughfareName(const QString &thoroughfareName);
+    QString street() const;
+    void setStreet(const QString &street);
 
-    QString thoroughfareNumber() const;
-    void setThoroughfareNumber(const QString &thoroughfareNumber);
+    QString streetNumber() const;
+    void setStreetNumber(const QString &streetNumber);
 
     QString postCode() const;
     void setPostCode(const QString &postCode);
-
-    QString postOfficeBox() const;
-    void setPostOfficeBox(const QString &postOfficeBox);
 
     bool isEmpty() const;
     void clear();

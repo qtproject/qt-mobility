@@ -53,10 +53,12 @@
 // We mean it.
 //
 
-#include "qmobilityglobal.h"
-#include "qtelephonycalllist.h"
+#include <qmobilityglobal.h>
 #include <QList>
 #include <QtCore/qshareddata.h>
+
+#include "qtelephony.h"
+#include "qtelephonycalllist.h"
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
@@ -71,14 +73,14 @@ class Q_AUTOTEST_EXPORT QTelephonyCallListPrivate
 public:
     QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
     virtual ~QTelephonyCallListPrivate();
-    QList<QTelephonyCallInfo> activeCalls(const QTelephonyCallInfo::CallType& calltype) const;
+    QList<QTelephonyCallInfo> activeCalls(const QTelephonyEvents::CallType& calltype) const;
 
 private:
     void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);
     void emitActiveCallRemoved(QTelephonyCallInfoPrivate& call);
     void emitActiveCallAdded(QTelephonyCallInfoPrivate& call);
 
-    QList<QSharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
+    QList<QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
     QTelephonyCallList* p;
     friend class tst_Telephony;
     friend class tst_TelefonyCallList;

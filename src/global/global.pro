@@ -3,10 +3,11 @@
 TEMPLATE = subdirs
 
 include(../../common.pri)
-PUBLIC_HEADERS += qmobilityglobal.h
+PUBLIC_HEADERS += qmobilityglobal.h \
+                  qlatin1constant.h
 
 headers.files = $$PUBLIC_HEADERS
-headers.path = $$QT_MOBILITY_INCLUDE
+headers.path = $$QT_MOBILITY_INCLUDE/QtMobility
 INSTALLS+= headers
 
 symbian {

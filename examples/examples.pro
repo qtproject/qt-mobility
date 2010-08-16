@@ -7,7 +7,8 @@ contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
             bluetoothtransferplugin \
             notesmanagerplugin \
-            servicebrowser
+            servicebrowser \
+	    sfwecho
 
     #These examples do not work on Symbian yet
     !symbian:SUBDIRS+= sfw-notes
@@ -36,22 +37,18 @@ contains(mobility_modules,location) {
     }
 
     !symbian|contains(mobility_modules,bearer) {
-    	SUBDIRS += qgeoapiui \
+    	SUBDIRS += geoservicedemo \
                    mapviewer
 
     }
 
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo
-                   #mapviewer (disable for now) 
-                   #qgeoapiui
         
-        contains(QT_CONFIG, webkit) {
-            SUBDIRS += fetchgooglemaps
+        contains(QT_CONFIG, declarative) {
+            sources.files += declarative_loc_flickr
+            sources.files += declarative_mapviewer
         }
-	contains(QT_CONFIG, declarative) {
-	        sources.files += declarative_loc_flickr
-	}
     }
 }
 
@@ -91,7 +88,7 @@ contains(mobility_modules,multimedia) {
 
 
 #Messaging examples
-contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
+contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5|maemo6 {
     contains(mobility_modules,messaging) {
         !win32-g++ {
 	    SUBDIRS += \
@@ -103,7 +100,7 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
             }
 
             # MessagingEx lives in tests for some reason
-            maemo5:SUBDIRS += ../tests/messagingex
+            maemo5|maemo6:SUBDIRS += ../tests/messagingex
          }
     }
 }
@@ -115,9 +112,8 @@ contains(mobility_modules,sensors) {
 
 contains(mobility_modules,gallery) {
     SUBDIRS += \
+        documentproperties \
         mediabrowser
-
-    contains(QT_CONFIG, webkit): SUBDIRS += documentshare
 }
 
 # Organizer API examples
@@ -127,7 +123,7 @@ contains(mobility_modules, organizer) {
 
 # Telephony API examples
 contains(mobility_modules,telephony) {
-    unix:!mac:!maemo* {SUBDIRS += telephony}
+    unix:!mac {SUBDIRS += telephony}
 }
 
 # Feedback API examples

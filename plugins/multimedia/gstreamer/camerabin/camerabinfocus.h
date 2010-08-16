@@ -79,9 +79,14 @@ public:
 
     QCameraFocusZoneList focusZones() const;
 
+private Q_SLOTS:
+    void _q_updateLockStatus(QCamera::LockType, QCamera::LockStatus, QCamera::LockChangeReason);
+
 private:
     CameraBinSession *m_session;
     QCameraFocus::FocusMode m_focusMode;
+    QCameraFocusZone::FocusZoneStatus m_focusZoneStatus;
+
 };
 
 #endif // CAMERABINFOCUSCONTROL_H

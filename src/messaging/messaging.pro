@@ -195,52 +195,29 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             dbus-glib-1 \
             gconf-2.0 \
             libosso \
-            TelepathyQt4
+            TelepathyQt4 \
+            qtopiamail \
+            commhistory \
+            meegotouch \
+            qttracker \
+            messagingif0
         CONFIG += create_pc \
             create_prl
         QMAKE_PKGCONFIG_REQUIRES = glib-2.0 \
             dbus-glib-1 \
             gconf-2.0 \
             osso \            
-            TelepathyQt4
+            TelepathyQt4 \
+            qtopiamail \
+            commhistory \
+            meegotouch \
+            qttracker \
+            messagingif0
         pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
         pkgconfig.files = QtMessaging.pc
         INSTALLS += pkgconfig \
             documentation
-        LIBS += -lgconf-2 \
-            -losso \
-            -ldbus-glib-1 \
-            -ldbus-1 \
-            -lgobject-2.0 \
-            -lglib-2.0 \
-            -lcommhistory \
-            -ltelepathy-qt4 \
-            -lmessagingif0
-
-        # QMF headers must be located at $QMF_INCLUDEDIR
-        INCLUDEPATH += $$(QMF_INCLUDEDIR) \
-            $$(QMF_INCLUDEDIR)/support
-
-        
-        # QMF libraries must be located at $QMF_LIBDIR
-        LIBS += -L \
-            $$(QMF_LIBDIR) \
-            -lqtopiamail
-
-        # libcommhistory support
-        INCLUDEPATH += "/usr/include/commhistory"
-        # libmessagingif-dev support
-        INCLUDEPATH += "/usr/include/messaging-service"
-        INCLUDEPATH += "/usr/include/meegotouch"
     }
-    maemo6:LIBS += -lgconf-2 \
-        -losso \
-        -ldbus-glib-1 \
-        -ldbus-1 \
-        -lgobject-2.0 \
-        -lglib-2.0 \
-        -lcommhistory \
-        -ltelepathy-qt4
     symbian { 
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 	contains(messaging_freestyle_enabled, yes) {

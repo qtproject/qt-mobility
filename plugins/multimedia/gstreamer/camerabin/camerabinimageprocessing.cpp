@@ -132,16 +132,6 @@ bool CameraBinImageProcessing::isWhiteBalanceModeSupported(QCameraImageProcessin
     return m_mappedWbValues.values().contains(mode);
 }
 
-int CameraBinImageProcessing::manualWhiteBalance() const
-{
-    return 0;
-}
-
-void CameraBinImageProcessing::setManualWhiteBalance(int colorTemperature)
-{
-    Q_UNUSED(colorTemperature);
-}
-
 bool CameraBinImageProcessing::isProcessingParameterSupported(QCameraImageProcessingControl::ProcessingParameter parameter) const
 {
     return parameter == QCameraImageProcessingControl::Contrast
@@ -179,25 +169,3 @@ void CameraBinImageProcessing::setProcessingParameter(
     updateColorBalanceValues();
 }
 
-QList<QByteArray> CameraBinImageProcessing::supportedPresets() const
-{
-    return m_presets;
-}
-
-QString CameraBinImageProcessing::presetDescription(const QByteArray &preset) const
-{
-    return QString::fromLatin1(preset);
-}
-
-QByteArray CameraBinImageProcessing::preset() const
-{
-    return m_preset;
-}
-
-void CameraBinImageProcessing::setPreset(const QByteArray &preset)
-{
-    if (m_presets.contains(preset))
-        m_preset = preset;
-    else
-        m_preset.clear();
-}

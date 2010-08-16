@@ -58,6 +58,9 @@ public:
     void setEndDateTime(const QDateTime& endDateTime);
     QDateTime endDateTime() const;
 
+    void setTimeSpecified(bool isTimeSpecified);
+    bool isTimeSpecified() const;
+
     void setRecurrenceDates(const QList<QDate>& rdates);
     QList<QDate> recurrenceDates() const;
     void setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule>& rrules);

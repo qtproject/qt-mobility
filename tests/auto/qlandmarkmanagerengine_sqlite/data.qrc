@@ -2,5 +2,7 @@
 <qresource>
     <file>data/McDonalds-AUS-Queensland.gpx</file>
     <file>data/long.gpx</file>
+    <file>data/test.gpx</file>
+    <file>data/convert-collection-in.xml</file>
     </qresource>
 </RCC>

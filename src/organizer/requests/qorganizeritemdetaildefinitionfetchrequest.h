@@ -45,6 +45,7 @@
 #include "qtorganizerglobal.h"
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemdetaildefinition.h"
+#include "qorganizercollectionid.h"
 
 #include <QList>
 #include <QStringList>

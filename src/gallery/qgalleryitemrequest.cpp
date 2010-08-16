@@ -40,8 +40,10 @@
 ****************************************************************************/
 
 #include "qgalleryitemrequest.h"
-
 #include "qgalleryabstractrequest_p.h"
+
+#include "qgallerynullresultset_p.h"
+#include "qgalleryresource.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -50,14 +52,53 @@ class QGalleryItemRequestPrivate : public QGalleryAbstractRequestPrivate
     Q_DECLARE_PUBLIC(QGalleryItemRequest)
 public:
     QGalleryItemRequestPrivate(QAbstractGallery *gallery)
-        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Item)
+        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::ItemRequest)
         , live(false)
+        , resultSet(0)
+        , internalResultSet(0)
     {
+        internalResultSet = &nullResultSet;
+    }
+
+    void _q_itemsInserted(int index, int)
+    {
+        if (index == 0)
+            resultSet->fetch(0);
+    }
+
+    void _q_itemsRemoved(int index, int)
+    {
+        if (index == 0)
+            resultSet->fetch(0);
+    }
+
+    void _q_itemsMoved(int from, int to, int)
+    {
+        if (from == 0 || to == 0)
+            resultSet->fetch(0);
+    }
+
+    void _q_currentItemChanged()
+    {
+        emit q_func()->itemChanged();
+
+        if (!propertyKeys.isEmpty())
+            emit q_func()->metaDataChanged(propertyKeys);
+    }
+
+    void _q_metaDataChanged(int index, int, const QList<int> &keys)
+    {
+        if (index == 0)
+            emit q_func()->metaDataChanged(keys);
     }
 
     bool live;
+    QGalleryResultSet *resultSet;
+    QGalleryResultSet *internalResultSet;
+    QGalleryNullResultSet nullResultSet;
     QStringList propertyNames;
     QVariant itemId;
+    QList<int> propertyKeys;
 };
 
 /*!
@@ -68,21 +109,21 @@ public:
 
     \inmodule QtGallery
 
-    \brief The QGalleryItemRequest class provides a request for an item from a
-    gallery.
-*/
+    \brief The QGalleryItemRequest class provides a request for the properties
+    of a single item from a gallery.
 
+*/
 /*!
     Constructs a new gallery item request.
 
     The \a parent is passed to QObject.
 */
 
+
 QGalleryItemRequest::QGalleryItemRequest(QObject *parent)
     : QGalleryAbstractRequest(*new QGalleryItemRequestPrivate(0), parent)
 {
 }
-
 /*!
     Contructs a new item request for the given \a gallery.
 
@@ -101,21 +142,21 @@ QGalleryItemRequest::QGalleryItemRequest(QAbstractGallery *gallery, QObject *par
 QGalleryItemRequest::~QGalleryItemRequest()
 {
 }
-
 /*!
     \property QGalleryItemRequest::propertyNames
 
     \brief A list of names of meta-data properties a request should return values for.
 */
 
+
 QStringList QGalleryItemRequest::propertyNames() const
 {
     return d_func()->propertyNames;
 }
 
-void QGalleryItemRequest::setPropertyNames(const QStringList &propertyNames)
+void QGalleryItemRequest::setPropertyNames(const QStringList &names)
 {
-    d_func()->propertyNames = propertyNames;
+    d_func()->propertyNames = names;
 }
 
 /*!
@@ -127,6 +168,7 @@ void QGalleryItemRequest::setPropertyNames(const QStringList &propertyNames)
     If this is true the request will go into the Idle state when the request has
     finished rather than returning to Inactive.
 */
+
 
 bool QGalleryItemRequest::isLive() const
 {
@@ -141,7 +183,7 @@ void QGalleryItemRequest::setLive(bool live)
 /*!
     \property QGalleryItemRequest::itemId
 
-    \brief The ID of a item a item request should return.
+    \brief the ID of an item the request should return the properties of.
 */
 
 QVariant QGalleryItemRequest::itemId() const
@@ -149,26 +191,161 @@ QVariant QGalleryItemRequest::itemId() const
     return d_func()->itemId;
 }
 
-void QGalleryItemRequest::setItemId(const QVariant &id)
+void QGalleryItemRequest::setItemId(const QVariant &itemId)
 {
-    d_func()->itemId = id;
+    d_func()->itemId = itemId;
+
+    emit itemIdChanged();
 }
 
 /*!
-    \property QGalleryItemRequest::item
+    \fn QGalleryItemRequest::itemIdChanged()
 
-    \brief The item returned by a request.
+    Signals that the value of the \l itemId property has changed.
 */
 
-QGalleryItemList *QGalleryItemRequest::item() const
+/*!
+    Returns the result set containing the meta-data of a type.
+*/
+
+QGalleryResultSet *QGalleryItemRequest::resultSet() const
 {
-    return d_func()->response;
+    return d_func()->resultSet;
 }
 
 /*!
-    \fn QGalleryItemRequest::itemChanged(QGalleryItemList *item)
+    \fn QGalleryItemRequest::resultSetChanged(QGalleryResultSet *resultSet)
 
-    Signals that the \a item list returned by a request has changed.
+    Signals that the \a resultSet containing the meta-data of an item has
+    changed.
+*/
+
+/*!
+    \fn QGalleryItemRequest::itemChanged()
+
+    Signals that the properties of an item have changed.
+*/
+
+/*!
+    Returns the key of \a property.
+*/
+
+int QGalleryItemRequest::propertyKey(const QString &property) const
+{
+    return d_func()->internalResultSet->propertyKey(property);
+}
+
+/*!
+    Returns the attributes of the property identified by \a key.
+*/
+
+QGalleryProperty::Attributes QGalleryItemRequest::propertyAttributes(int key) const
+{
+    return d_func()->internalResultSet->propertyAttributes(key);
+}
+
+/*!
+    Returns the type of the property identified by \a key.
+*/
+
+QVariant::Type QGalleryItemRequest::propertyType(int key) const
+{
+    return d_func()->internalResultSet->propertyType(key);
+}
+
+/*!
+    \property QGalleryItemRequest::valid
+
+    \brief Whether the request currently holds valid type information.
+*/
+
+bool QGalleryItemRequest::isValid() const
+{
+    return d_func()->internalResultSet->isValid();
+}
+
+/*!
+    \property QGalleryItemRequest::itemUrl
+
+    \brief The URL of an item.
+*/
+
+QUrl QGalleryItemRequest::itemUrl() const
+{
+    return d_func()->internalResultSet->itemUrl();
+}
+
+/*!
+    \property QGalleryItemRequest::itemType
+
+    \brief the type of an item.
+*/
+
+QString QGalleryItemRequest::itemType() const
+{
+    return d_func()->internalResultSet->itemType();
+}
+
+/*!
+    \property QGalleryItemRequest::resources
+
+    \brief the resources of an item.
+*/
+
+QList<QGalleryResource> QGalleryItemRequest::resources() const
+{
+    return d_func()->internalResultSet->resources();
+}
+
+/*!
+    Returns the value of a meta-data property identified by \a key.
+*/
+
+
+QVariant QGalleryItemRequest::metaData(int key) const
+{
+    return d_func()->internalResultSet->metaData(key);
+}
+
+/*!
+    Sets the \a value of a meta-data property identified by \a key.
+
+    Returns true if the value was changed; otherwise returns false.
+*/
+
+bool QGalleryItemRequest::setMetaData(int key, const QVariant &value)
+{
+    return d_func()->internalResultSet->setMetaData(key, value);
+}
+
+/*!
+    Returns the value of a meta-data \a property.
+*/
+
+
+QVariant QGalleryItemRequest::metaData(const QString &property) const
+{
+    return d_func()->internalResultSet->metaData(
+            d_func()->internalResultSet->propertyKey(property));
+}
+
+/*!
+    Sets the \value of a meta-data \a property.
+
+    Returns true if the value was changed; otherwise returns false.
+*/
+
+bool QGalleryItemRequest::setMetaData(const QString &property, const QVariant &value)
+{
+    return d_func()->internalResultSet->setMetaData(
+            d_func()->internalResultSet->propertyKey(property), value);
+}
+
+/*!
+    \fn QGalleryItemRequest::metaDataChanged(const QList<int> &keys)
+
+    Signals that the values of meta-data properties identified by \a keys
+    have changed.
 */
 
 /*!
@@ -177,7 +354,43 @@ QGalleryItemList *QGalleryItemRequest::item() const
 
 void QGalleryItemRequest::setResponse(QGalleryAbstractResponse *response)
 {
-    emit itemChanged(response);
+    Q_D(QGalleryItemRequest);
+
+    const bool wasValid = d->internalResultSet->isValid();
+
+    d->resultSet = qobject_cast<QGalleryResultSet *>(response);
+    d->propertyKeys.clear();
+
+    if (d->resultSet) {
+        d->internalResultSet = d->resultSet;
+
+        connect(d->resultSet, SIGNAL(itemsInserted(int,int)), this, SLOT(_q_itemsInserted(int,int)));
+        connect(d->resultSet, SIGNAL(itemsRemoved(int,int)), this, SLOT(_q_itemsRemoved(int,int)));
+        connect(d->resultSet, SIGNAL(itemsMoved(int,int,int)),
+                this, SLOT(_q_itemsMoved(int,int,int)));
+        connect(d->resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)),
+                this, SLOT(_q_metaDataChanged(int,int,QList<int>)));
+        connect(d->resultSet, SIGNAL(currentItemChanged()), this, SLOT(_q_currentItemChanged()));
+
+        typedef QStringList::const_iterator iterator;
+        for (iterator it = d->propertyNames.constBegin(), end = d->propertyNames.constEnd();
+                it != end;
+                ++it) {
+            const int propertyKey = d->resultSet->propertyKey(*it);
+
+            if (propertyKey != -1)
+                d->propertyKeys.append(propertyKey);
+        }
+    } else {
+        d->internalResultSet = &d->nullResultSet;
+    }
+
+    emit resultSetChanged(d->resultSet);
+
+    if (d->internalResultSet->itemCount() > 0)
+        d->internalResultSet->fetch(0);
+    else if (wasValid)
+        emit itemChanged();
 }
 
 #include "moc_qgalleryitemrequest.cpp"

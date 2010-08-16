@@ -55,8 +55,8 @@ class Q_ORGANIZER_EXPORT QOrganizerJournalTimeRange : public QOrganizerItemDetai
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldEntryDateTime;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldEntryDateTime;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerJournalTimeRange, "JournalTimeRange")
     Q_DECLARE_LATIN1_CONSTANT(FieldEntryDateTime, "EntryDateTime");

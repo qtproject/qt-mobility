@@ -62,21 +62,21 @@ int QGeoServiceProviderFactoryNokia::providerVersion() const
     return 1;
 }
 
-QGeoSearchManagerEngine* QGeoServiceProviderFactoryNokia::createSearchManagerEngine(const QMap<QString, QString> &parameters,
+QGeoSearchManagerEngine* QGeoServiceProviderFactoryNokia::createSearchManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
     return new QGeoSearchManagerEngineNokia(parameters, error, errorString);
 }
 
-QGeoMappingManagerEngine* QGeoServiceProviderFactoryNokia::createMappingManagerEngine(const QMap<QString, QString> &parameters,
+QGeoMappingManagerEngine* QGeoServiceProviderFactoryNokia::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString)const
 {
     return new QGeoMappingManagerEngineNokia(parameters, error, errorString);
 }
 
-QGeoRoutingManagerEngine* QGeoServiceProviderFactoryNokia::createRoutingManagerEngine(const QMap<QString, QString> &parameters,
+QGeoRoutingManagerEngine* QGeoServiceProviderFactoryNokia::createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {

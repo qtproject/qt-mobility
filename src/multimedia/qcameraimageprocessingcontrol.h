@@ -57,27 +57,22 @@ public:
     ~QCameraImageProcessingControl();
 
     enum ProcessingParameter {
-        Contrast,
-        Saturation,
-        Brightness,
-        Sharpening,
-        Denoising
+        Contrast = 0,
+        Saturation = 1,
+        Brightness = 2,
+        Sharpening = 3,
+        Denoising = 4,
+        ColorTemperature = 5,
+        ExtendedParameter = 1000
     };
 
     virtual QCameraImageProcessing::WhiteBalanceMode whiteBalanceMode() const = 0;
     virtual void setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode mode) = 0;
     virtual bool isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode) const = 0;
-    virtual int manualWhiteBalance() const = 0;
-    virtual void setManualWhiteBalance(int colorTemperature) = 0;
 
     virtual bool isProcessingParameterSupported(ProcessingParameter) const = 0;
     virtual QVariant processingParameter(ProcessingParameter parameter) const = 0;
     virtual void setProcessingParameter(ProcessingParameter parameter, QVariant value) = 0;
-
-    virtual QList<QByteArray> supportedPresets() const = 0;
-    virtual QString presetDescription(const QByteArray &preset) const = 0;
-    virtual QByteArray preset() const = 0;
-    virtual void setPreset(const QByteArray &preset) = 0;
 
 protected:
     QCameraImageProcessingControl(QObject* parent = 0);

@@ -6,16 +6,13 @@
 
 TEMPLATE = app
 TARGET = qtorganizerdocsample
-include(../../../../common.pri)
+include(../../../../features/basic_examples_setup.pri)
 INCLUDEPATH += ../../../../src/global \
                ../../../../src/organizer \
                ../../../../src/organizer/details \
                ../../../../src/organizer/requests \
                ../../../../src/organizer/items \
                ../../../../src/organizer/filters
-
-DESTDIR = $$QT_MOBILITY_BUILD_TREE/bin
-QMAKE_RPATHDIR+=$$OUTPUT_DIR/lib
 
 CONFIG += mobility console
 MOBILITY = organizer

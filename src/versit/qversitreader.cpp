@@ -53,8 +53,10 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitReader
-  \brief The QVersitReader class reads Versit documents such as vCards from a device.
+  \brief The QVersitReader class provides an interface for reading versit
+  documents such as vCards from a Stream.
   \ingroup versit
+  \inmodule QtVersit
 
   QVersitReader concatenation of Versit documents such as vCards
   from a text stream and returns a list of QVersitDocument instances.
@@ -213,7 +215,8 @@ QVersitReader::Error QVersitReader::error() const
  * when the reading has finished.
  */
 bool QVersitReader::startReading()
-{    if (d->state() == ActiveState || d->isRunning()) {
+{
+    if (d->state() == ActiveState || d->isRunning()) {
         d->setError(QVersitReader::NotReadyError);
         return false;
     } else if (!d->mIoDevice || !d->mIoDevice->isReadable()) {
@@ -239,6 +242,8 @@ void QVersitReader::cancel()
 /*!
  * If the state is ActiveState, blocks until the reader has finished reading or \a msec milliseconds
  * has elapsed, returning true if it successfully finishes or is cancelled by the user.
+ * If \m msec is negative or zero, the function blocks until the writer has finished, regardless of
+ * how long it takes.
  * If the state is FinishedState, returns true immediately.
  * Otherwise, returns false immediately.
  */
@@ -246,7 +251,10 @@ bool QVersitReader::waitForFinished(int msec)
 {
     State state = d->state();
     if (state == ActiveState) {
-        return d->wait(msec);
+        if (msec <= 0)
+            return d->wait(ULONG_MAX);
+        else
+            return d->wait(msec);
     } else if (state == FinishedState) {
         return true;
     } else {

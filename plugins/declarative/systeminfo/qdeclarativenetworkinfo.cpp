@@ -296,31 +296,22 @@ QString QDeclarativeNetworkInfo::statusToString(QSystemNetworkInfo::NetworkStatu
     switch(status) {
     case QSystemNetworkInfo::UndefinedStatus:
         return "Undefined";
-        break;
     case QSystemNetworkInfo::NoNetworkAvailable:
         return "No Network Available";
-        break;
     case QSystemNetworkInfo::EmergencyOnly:
         return "Emergency Only";
-        break;
     case QSystemNetworkInfo::Searching:
         return "Searching";
-        break;
     case QSystemNetworkInfo::Busy:
         return "Busy";
-        break;
     case QSystemNetworkInfo::Connected:
         return "Connected";
-        break;
     case QSystemNetworkInfo::HomeNetwork:
         return "Home Network";
-        break;
     case QSystemNetworkInfo::Denied:
         return "Denied";
-        break;
     case QSystemNetworkInfo::Roaming:
         return "Roaming";
-        break;
     }
     return QString();
 }
@@ -330,28 +321,20 @@ QString QDeclarativeNetworkInfo::modeToString(QSystemNetworkInfo::NetworkMode mo
     switch(mode) {
     case QSystemNetworkInfo::UnknownMode:
         return "Unknown";
-        break;
     case QSystemNetworkInfo::GsmMode:
         return "Gsm";
-        break;
     case QSystemNetworkInfo::CdmaMode:
         return "Cdma";
-        break;
     case QSystemNetworkInfo::WcdmaMode:
         return "Wcdma";
-        break;
     case QSystemNetworkInfo::WlanMode:
         return "Wlan";
-        break;
     case QSystemNetworkInfo::EthernetMode:
         return "Ethernet";
-        break;
     case QSystemNetworkInfo::BluetoothMode:
         return "Bluetooth";
-        break;
     case QSystemNetworkInfo::WimaxMode:
         return "Wimax";
-        break;
     };
     return QString();
 }

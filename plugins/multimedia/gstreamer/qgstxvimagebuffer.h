@@ -76,10 +76,7 @@ struct QGstXvImageBuffer {
     static GstBufferClass *parent_class;
 };
 
-const QAbstractVideoBuffer::HandleType XvHandleType = QAbstractVideoBuffer::HandleType(4);
-
 Q_DECLARE_METATYPE(XvImage*)
-
 
 class QGstXvImageBufferPool : public QObject {
 Q_OBJECT

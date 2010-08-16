@@ -66,6 +66,8 @@
 #include <qcontactfamily.h>
 #include <qcontactdisplaylabel.h>
 #include <qcontactthumbnail.h>
+#include "qversitcontacthandler.h"
+#include "qversitpluginloader_p.h"
 
 #include <QUrl>
 #include <QBuffer>
@@ -75,7 +77,7 @@ QTM_USE_NAMESPACE
 /*!
  * Constructor.
  */
-QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
+QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QString& profile) :
     mDetailHandler(NULL),
     mDetailHandler2(NULL),
     mDetailHandlerVersion(0),
@@ -106,6 +108,8 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
                 QLatin1String(versitSubTypeMappings[i].contactString),
                 QLatin1String(versitSubTypeMappings[i].versitString));
     }
+
+    mPluginDetailHandlers = QVersitPluginLoader::instance()->createContactHandlers(profile);
 }
 
 /*!
@@ -184,9 +188,15 @@ bool QVersitContactExporterPrivate::exportContact(
             encodeDisplayLabel(detail, document, &removedProperties, &generatedProperties, &processedFields);
         }
 
+        // run plugin handlers
+        foreach (QVersitContactExporterDetailHandlerV2* handler, mPluginDetailHandlers) {
+            handler->detailProcessed(contact, detail, document,
+                                     &processedFields, &removedProperties, &generatedProperties);
+        }
+        // run the v2 handler, if set
         if (mDetailHandler2 && mDetailHandlerVersion > 1) {
-            mDetailHandler2->detailProcessed(contact, detail, processedFields, document,
-                                             &removedProperties, &generatedProperties);
+            mDetailHandler2->detailProcessed(contact, detail, document,
+                                             &processedFields, &removedProperties, &generatedProperties);
         }
 
         foreach(const QVersitProperty& property, removedProperties) {
@@ -201,6 +211,11 @@ bool QVersitContactExporterPrivate::exportContact(
         }
     }
 
+    // run plugin handlers
+    foreach (QVersitContactExporterDetailHandlerV2* handler, mPluginDetailHandlers) {
+        handler->contactProcessed(contact, &document);
+    }
+    // run the v2 handler, if set
     if (mDetailHandler2 && mDetailHandlerVersion > 1) {
         mDetailHandler2->contactProcessed(contact, &document);
     }
