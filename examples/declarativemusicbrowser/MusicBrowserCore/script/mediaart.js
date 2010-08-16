@@ -1,6 +1,6 @@
 .pragma library
 
-var homePath = "file:///home/denexter";
+var homePath = "file:///home/user";
 var illegalCharacters = /(\(.*\)|\{.*\}|\[.*\]|<.*>|[\(\)_\{\}\[\]\!@#$^&*+=|\/"'?~`])/g
 var whitespace = /\s+/g
 
