@@ -387,8 +387,6 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId &ite
 
 bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem> *items, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error* error)
 {
-    // TODO: Add changeset manipulation and signal emissions
-
     if (!items || items->isEmpty()) {
         *error = QOrganizerItemManager::BadArgumentError;
         return false;
@@ -425,7 +423,6 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem> *items, QMap<in
 
 bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId> &itemIds, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error)
 {
-    // TODO: How should the errormap updated for the child events?
     *error = QOrganizerItemManager::NoError;
     CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
     bool success = true;
@@ -1054,13 +1051,11 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
             id.setManagerUri(managerUri());
             occurrence->setId(id);
 
-            /*
             // Update changeset
             if (calError == CALENDAR_ENTRY_DUPLICATED)
-                cs.insertChangedItem(item->localId());
+                cs.insertChangedItem(occurrence->localId());
             else
-                cs.insertAddedItem(item->localId());
-                */
+                cs.insertAddedItem(occurrence->localId());
 
             calError = CALENDAR_OPERATION_SUCCESSFUL; // reset the error
             *error = QOrganizerItemManager::NoError; // reset the error
