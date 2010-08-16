@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,16 +54,5 @@ class QVersitReader;
 
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
-
-class tst_QVersit : public QObject
-{
-    Q_OBJECT
-
-private slots: // Tests
-    void testImportFiles();
-    void testImportFiles_data();
-
-private:
-};
 
 #endif // tst_QVERSIT_H

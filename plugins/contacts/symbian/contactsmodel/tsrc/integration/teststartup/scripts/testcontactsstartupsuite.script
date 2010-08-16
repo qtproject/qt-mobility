@@ -1,0 +1,267 @@
+//
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description: 
+//
+
+LOAD_SUITE TestStartUpSuite -sharedData
+
+START_TESTCASE PIM-APPENG-CNTS-TestStartUpSuite-1192-0001
+//! @file
+//! @SYMTestCaseID PIM-APPENG-CNTS-TestStartUpSuite-1192-0001
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1192
+//! @SYMFssID App-Engines>/<CntModel>/ CP.1
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Contacts start-up with valid database and valid default start-up view definitions
+//! @SYMTestActions Create a default db if one doesnt exist, launch the contacts server, check the view settings
+//! @SYMTestExpectedResults A named remote contact view has been created based on the default view settings stored in central repository
+
+RUN_TEST_STEP 100 TestStartUpSuite TestCntsDbStep              c:\test\data\StartUpData.ini create_default_cnts_db
+RUN_TEST_STEP 100 TestStartUpSuite TestCntsDbStep              c:\test\data\StartUpData.ini add_20_contacts_to_default_db
+DELAY 6000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini launch_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini check_cnts_server_is_ok
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini initial_view_settings_in_centralrep_ROM
+RUN_TEST_STEP 100 TestStartUpSuite TestCntsDbStep              c:\test\data\StartUpData.ini initial_view_settings_in_centralrep_ROM
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini terminate_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini check_cnts_server_has_terminated_ok
+END_TESTCASE PIM-APPENG-CNTS-TestStartUpSuite-1192-0001
+
+
+
+
+START_TESTCASE PIM-APPENG-CNTS-TestStartUpSuite-1192-0002
+//! @file
+//! @SYMTestCaseID PIM-APPENG-CNTS-TestStartUpSuite-1192-0002
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1192
+//! @SYMFssID App-Engines>/<CntModel>/ CP.1 <App-Engines>/<CntModel>/ CV.12
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Contacts start-up with valid database and valid modified start-up view definitions
+//! @SYMTestActions Modify the default view settings with the set API, launch the cnts server and check created views
+//! @SYMTestExpectedResults Views are created based on the stored modified view setting
+
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini set_4_default_view_settings_in_centralrep
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini check_4_default_view_settings_in_centralrep
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini launch_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini check_cnts_server_is_ok
+RUN_TEST_STEP 100 TestStartUpSuite TestCntsDbStep              c:\test\data\StartUpData.ini check_4_default_view_settings_in_centralrep
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini terminate_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini check_cnts_server_has_terminated_ok
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini set_initial_view_settings_in_centralrep
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini initial_view_settings_in_centralrep_ROM
+END_TESTCASE PIM-APPENG-CNTS-TestStartUpSuite-1192-0002
+
+
+
+
+START_TESTCASE PIM-APPENG-CNTS-1192-0003
+//! @file
+//! @SYMTestCaseID PIM-APPENG-CNTS-1192-0003
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1192
+//! @SYMFssID App-Engines>/<CntModel>/ CP.1 <App-Engines>/<CntModel>/ CV.12
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Contacts start-up with valid database and valid modified start-up view definitions
+//! @SYMTestActions Modify the default view settings with the set API, restart the contacts server, delete the
+//                  default view settings with the Set API, check the created views
+//! @SYMTestExpectedResults A view is created and remains valid untill the contacts server is re-started in which case
+//!                         it wont use the deleted default settings
+
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini set_initial_view_settings_in_centralrep
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini initial_view_settings_in_centralrep_ROM
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini delete_default_view
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini launch_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini check_cnts_server_is_ok
+RUN_TEST_STEP 100 TestStartUpSuite TestCntsDbStep              c:\test\data\StartUpData.ini check_empty_view_defs
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini terminate_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini check_cnts_server_has_terminated_ok
+DELAY 1000
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini set_initial_view_settings_in_centralrep
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini initial_view_settings_in_centralrep_ROM
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini Append_View_Setting_To_View_Setting_List
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini check_appended_view_Setting
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini launch_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini check_cnts_server_is_ok
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini delete_named_view_setting
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini initial_view_settings_in_centralrep_ROM
+RUN_TEST_STEP 100 TestStartUpSuite TestCntsDbStep              c:\test\data\StartUpData.ini check_appended_view_Setting
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini terminate_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini check_cnts_server_has_terminated_ok
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini set_initial_view_settings_in_centralrep
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini initial_view_settings_in_centralrep_ROM
+END_TESTCASE PIM-APPENG-CNTS-1192-0003
+
+
+
+
+START_TESTCASE PIM-APPENG-CNTS-1192-0005
+//! @file
+//! @SYMTestCaseID PIM-APPENG-CNTS-1192-0005
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1192
+//! @SYMFssID <App-Engines>/<CntModel>/ CP.1 <App-Engines>/<CntModel>/ CV.12
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Contacts start-up with valid database and invalid view setting stored by set API
+//! @SYMTestActions Store a number of invalid view settings with the Set API, then start contacts server
+//! @SYMTestExpectedResults Contacts server starts up, no views created
+
+//Set invalid preferance
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep             c:\test\data\StartUpData.ini set_invalid_preferance
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep             c:\test\data\StartUpData.ini check_invalid_preferance
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep                    c:\test\data\StartUpData.ini launch_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep                    c:\test\data\StartUpData.ini check_cnts_server_is_ok
+RUN_TEST_STEP 100 TestStartUpSuite TestCntsDbStep                        c:\test\data\StartUpData.ini check_empty_view_defs
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep                    c:\test\data\StartUpData.ini terminate_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep                    c:\test\data\StartUpData.ini check_cnts_server_has_terminated_ok
+
+//Store invalid view type
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep             c:\test\data\StartUpData.ini set_invalid_view_type
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep             c:\test\data\StartUpData.ini check_invalid_view_type
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep                    c:\test\data\StartUpData.ini launch_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep                    c:\test\data\StartUpData.ini check_cnts_server_is_ok
+RUN_TEST_STEP 100 TestStartUpSuite TestCntsDbStep                        c:\test\data\StartUpData.ini check_empty_view_defs
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep                    c:\test\data\StartUpData.ini terminate_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep                    c:\test\data\StartUpData.ini check_cnts_server_has_terminated_ok
+
+//Store invalid plugin name
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep             c:\test\data\StartUpData.ini store_invalid_plugin_name
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep             c:\test\data\StartUpData.ini check_invalid_plugin_name
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep                    c:\test\data\StartUpData.ini launch_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep                    c:\test\data\StartUpData.ini check_cnts_server_is_ok
+RUN_TEST_STEP 100 TestStartUpSuite TestCntsDbStep                        c:\test\data\StartUpData.ini check_empty_view_defs
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep                    c:\test\data\StartUpData.ini terminate_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep                    c:\test\data\StartUpData.ini check_cnts_server_has_terminated_ok
+
+//Store invalid sort orders 
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep             c:\test\data\StartUpData.ini store_invalid_sort_orders
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep             c:\test\data\StartUpData.ini check_invalid_sort_orders
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep                    c:\test\data\StartUpData.ini launch_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep                    c:\test\data\StartUpData.ini check_cnts_server_is_ok
+RUN_TEST_STEP 100 TestStartUpSuite TestCntsDbStep                        c:\test\data\StartUpData.ini check_invalid_sort_orders
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep                    c:\test\data\StartUpData.ini terminate_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep                    c:\test\data\StartUpData.ini check_cnts_server_has_terminated_ok
+
+//Store initial valid view settings
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep             c:\test\data\StartUpData.ini set_initial_view_settings_in_centralrep
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep             c:\test\data\StartUpData.ini initial_view_settings_in_centralrep_ROM
+END_TESTCASE PIM-APPENG-CNTS-1192-0005
+
+
+
+
+START_TESTCASE PIM-APPENG-CNTS-1192-0006
+//! @file
+//! @SYMTestCaseID PIM-APPENG-CNTS-1192-0006
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1192
+//! @SYMFssID App-Engines>/<CntModel>/ CP.1
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Contacts start-up with no default database and valid default start-up view definitions
+//! @SYMTestActions Replace then Delete the database when server is up and running, terminate server and then re-start with no database
+//! @SYMTestExpectedResults The first database replace and delete will be allowed, when the contacts server startup again with
+//!                         no database no remote views have been created. Attempting to open the db confirms no db available.
+
+//Store a valid view definition
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini set_initial_view_settings_in_centralrep
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini initial_view_settings_in_centralrep_ROM
+DELAY 5000
+//launch the contacts server with a valid database then check that the database
+// can be replaced and then deleted while held open by the contacts server
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini launch_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini check_cnts_server_is_ok
+RUN_TEST_STEP 100 TestStartUpSuite TestCntsDbStep              c:\test\data\StartUpData.ini initial_view_settings_in_centralrep_ROM
+RUN_TEST_STEP 100 TestStartUpSuite TestCntsDbStep              c:\test\data\StartUpData.ini replace_default_cnts_db
+RUN_TEST_STEP 100 TestStartUpSuite TestCntsDbStep              c:\test\data\StartUpData.ini add_20_contacts_to_default_db
+RUN_TEST_STEP 100 TestStartUpSuite TestCntsDbStep              c:\test\data\StartUpData.ini check_empty_view_defs
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestCntsDbStep              c:\test\data\StartUpData.ini delete_default_cnts_db
+RUN_TEST_STEP 100 TestStartUpSuite TestCntsDbStep              c:\test\data\StartUpData.ini check_empty_view_defs
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini terminate_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini check_cnts_server_has_terminated_ok
+
+//Launch the contacts server with no database but valid view definitions
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini launch_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini check_cnts_server_is_ok
+RUN_TEST_STEP_RESULT 106 100 TestStartUpSuite TestCntsDbStep   c:\test\data\StartUpData.ini open_default_cnts_db
+RUN_TEST_STEP 100 TestStartUpSuite TestCntsDbStep              c:\test\data\StartUpData.ini check_empty_view_defs
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini terminate_cnts_server
+DELAY 5000
+RUN_TEST_STEP 100 TestStartUpSuite TestStartUpExeStep          c:\test\data\StartUpData.ini check_cnts_server_has_terminated_ok
+END_TESTCASE PIM-APPENG-CNTS-1192-0006
+
+
+
+START_TESTCASE PIM-APPENG-CNTS-1192-0007
+//! @file
+//! @SYMTestCaseID PIM-APPENG-CNTS-1192-0007
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1192
+//! @SYMFssID <App-Engines>/<CntModel>/ CV.12
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Out of Memory Test for CContactDatabase::SetDefaultViewsL()
+//! @SYMTestActions Set the default views inside an OOM loop
+//! @SYMTestExpectedResults Successful storage fo view definitions under OOM conditions
+
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini OOM_Test_SetDefaultView
+END_TESTCASE PIM-APPENG-CNTS-1192-0007
+
+
+
+
+START_TESTCASE PIM-APPENG-CNTS-1192-0008
+//! @file
+//! @SYMTestCaseID PIM-APPENG-CNTS-1192-0008
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1192
+//! @SYMFssID <App-Engines>/<CntModel>/ CV.12
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Out of Memory Test for CContactDatabase::GetDefaultViewsL()
+//! @SYMTestActions Get the default views inside an OOM loop
+//! @SYMTestExpectedResults Default views are returned
+
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini OOM_Test_GetDefaultView
+//Reset the view definitions
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini set_initial_view_settings_in_centralrep
+RUN_TEST_STEP 100 TestStartUpSuite TestGetSetViewSettingStep   c:\test\data\StartUpData.ini initial_view_settings_in_centralrep_ROM
+END_TESTCASE PIM-APPENG-CNTS-1192-0008
+
+
+

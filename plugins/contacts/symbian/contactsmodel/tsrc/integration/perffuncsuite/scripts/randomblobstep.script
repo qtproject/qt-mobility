@@ -1,0 +1,52 @@
+//
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description: 
+//
+
+LOAD_SUITE Te_PerformanceFunctionalitySuite
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81156
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81156
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Blob range test
+//! @SYMTestActions Create blob (binary object) of size X
+//! Populate X with random data
+//! Set all blobs in contact to X
+//! Commit contact
+//! Check value of all blob fields in contact 
+//! Repeat for where X equal 1 byte, 1kbyte, 50 kbyte, 100kbyte
+//! @SYMTestExpectedResults All stored blob fields should equal X
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite RandomBlobStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini BlobTests
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81156
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81157
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81157
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Maximum Blob size test
+//! @SYMTestActions Create blob (binary object) of size X
+//! Populate X with random data
+//! Set all blobs in contact to X
+//! Commit contact
+//! Check error
+//! If KErrNoMemory error stop test and print X
+//! Check value of all blob fields in contact 
+//! Repeat for where X = X+1
+//! @SYMTestExpectedResults All stored blob fields should equal X
+//! Print Maximum possible blob size
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite RandomBlobStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini MaxBlob
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81157

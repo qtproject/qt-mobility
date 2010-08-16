@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -61,8 +61,8 @@ public:
     static QString userDirectory();
     static QString systemDirectory();
 
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    static void removeDatabases();
+#if defined(Q_OS_SYMBIAN)
+    static void removeDatabases_symbian();
 #endif
 };
 

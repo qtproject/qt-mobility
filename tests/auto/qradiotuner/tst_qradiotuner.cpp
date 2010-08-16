@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/multimedia
+
 #include <QtTest/QtTest>
 #include <QDebug>
 #include <QTimer>
@@ -70,9 +72,9 @@ public:
     {
         return true;
     }
-    QtMediaServices::AvailabilityError availabilityError() const
+    QtMultimediaKit::AvailabilityError availabilityError() const
     {
-        return QtMediaServices::NoError;
+        return QtMultimediaKit::NoError;
     }
 
     QRadioTuner::Band band() const
@@ -231,10 +233,12 @@ public:
         QMediaService(parent),
         mockControl(control) {}
 
-    QMediaControl* control(const char *) const
+    QMediaControl* requestControl(const char *)
     {
         return mockControl;
     }
+
+    void releaseControl(QMediaControl*) {}
 
     QMediaControl   *mockControl;
 };

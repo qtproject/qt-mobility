@@ -1,0 +1,47 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>data/invalid.xml</file>
+    <file>data/convert-empty.xml</file>
+    <file>data/convert-waypoints.xml</file>
+    <file>data/convert-tracks-in.xml</file>
+    <file>data/convert-tracks-out.xml</file>
+    <file>data/convert-routes.xml</file>
+    <file>data/convert-all-in.xml</file>
+    <file>data/convert-all-in-prefixed.xml</file>
+    <file>data/convert-all-out.xml</file>
+    <file>data/convert-all-out-prefixed.xml</file>
+    <file>data/errors/gpx/noroot.xml</file>
+    <file>data/errors/gpx/wrongroot.xml</file>
+    <file>data/errors/gpx/tworoots.xml</file>
+    <file>data/errors/gpx/noversion.xml</file>
+    <file>data/errors/gpx/wrongversion.xml</file>
+    <file>data/errors/gpx/nocreator.xml</file>
+    <file>data/errors/gpx/wrongorder.xml</file>
+    <file>data/errors/gpx/invalidfirst.xml</file>
+    <file>data/errors/gpx/invalidmid.xml</file>
+    <file>data/errors/gpx/invalidlast.xml</file>
+    <file>data/errors/wpt/nolat.xml</file>
+    <file>data/errors/wpt/nolon.xml</file>
+    <file>data/errors/wpt/nondoublelat.xml</file>
+    <file>data/errors/wpt/nondoublelon.xml</file>
+    <file>data/errors/wpt/outofrangelat.xml</file>
+    <file>data/errors/wpt/outofrangelon.xml</file>
+    <file>data/errors/wpt/nondoubleele.xml</file>
+    <file>data/errors/wpt/wrongorder.xml</file>
+    <file>data/errors/wpt/invalidfirst.xml</file>
+    <file>data/errors/wpt/invalidmid.xml</file>
+    <file>data/errors/wpt/invalidlast.xml</file>
+    <file>data/errors/rte/wrongorder.xml</file>
+    <file>data/errors/rte/invalidfirst.xml</file>
+    <file>data/errors/rte/invalidmid.xml</file>
+    <file>data/errors/rte/invalidlast.xml</file>
+    <file>data/errors/trk/wrongorder.xml</file>
+    <file>data/errors/trk/invalidfirst.xml</file>
+    <file>data/errors/trk/invalidmid.xml</file>
+    <file>data/errors/trk/invalidlast.xml</file>
+    <file>data/errors/trkseg/wrongorder.xml</file>
+    <file>data/errors/trkseg/invalidfirst.xml</file>
+    <file>data/errors/trkseg/invalidmid.xml</file>
+    <file>data/errors/trkseg/invalidlast.xml</file>
+</qresource>
+</RCC>

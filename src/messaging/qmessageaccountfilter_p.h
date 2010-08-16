@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -41,7 +41,7 @@
 #ifndef QMESSAGEACCOUNTFILTERPRIVATE_H
 #define QMESSAGEACCOUNTFILTERPRIVATE_H
 #include "qmessageaccountfilter.h"
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) && !defined(QT_SIMULATOR)
 #include "winhelpers_p.h"
 #endif
 
@@ -98,7 +98,7 @@ public:
     QList<SortedMessageAccountFilterList> _filterList;
 #endif
 
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) && !defined(QT_SIMULATOR)
     QMessageAccountFilterPrivate &operator=(const QMessageAccountFilterPrivate &other);
     bool operator==(const QMessageAccountFilterPrivate &other);
     static bool isNonMatching(const QMessageAccountFilter &filter);

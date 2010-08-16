@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,6 +54,12 @@ QTM_BEGIN_NAMESPACE
   contacts (which may be retrieved by calling contacts()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
+  Please see the class documentation of QContactAbstractRequest for more information about
+  the usage of request classes and ownership semantics.
+
+  
+  \inmodule QtContacts
+  
   \ingroup contacts-requests
  */
 
@@ -61,6 +67,12 @@ QTM_BEGIN_NAMESPACE
 QContactSaveRequest::QContactSaveRequest(QObject* parent)
     : QContactAbstractRequest(new QContactSaveRequestPrivate, parent)
 {
+}
+
+/*! Frees any memory used by this request */
+QContactSaveRequest::~QContactSaveRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
 }
 
 /*!
@@ -73,6 +85,7 @@ QContactSaveRequest::QContactSaveRequest(QObject* parent)
 void QContactSaveRequest::setContact(const QContact& contact)
 {
     Q_D(QContactSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_contacts.clear();
     d->m_contacts.append(contact);
 }
@@ -81,6 +94,7 @@ void QContactSaveRequest::setContact(const QContact& contact)
 void QContactSaveRequest::setContacts(const QList<QContact>& contacts)
 {
     Q_D(QContactSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_contacts = contacts;
 }
 
@@ -89,6 +103,7 @@ void QContactSaveRequest::setContacts(const QList<QContact>& contacts)
 QList<QContact> QContactSaveRequest::contacts() const
 {
     Q_D(const QContactSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_contacts;
 }
 
@@ -96,6 +111,7 @@ QList<QContact> QContactSaveRequest::contacts() const
 QMap<int, QContactManager::Error> QContactSaveRequest::errorMap() const
 {
     Q_D(const QContactSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,7 +42,9 @@
 #include <QtCore/qvariant.h>
 #include <QtCore/qdebug.h>
 #include <QtGui/qx11info_x11.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qvideosurfaceformat.h>
+
+#ifndef QT_NO_XVIDEO
 
 #include "qx11videosurface.h"
 
@@ -530,3 +532,6 @@ void QX11VideoSurface::querySupportedFormats()
         XFree(attributes);
     }
 }
+
+#endif //QT_NO_XVIDEO
+

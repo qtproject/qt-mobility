@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Qt Mobility Location API" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+    <wpt lat="1" lon="2">
+        <ele>3</ele>
+        <name>w0</name>
+        <desc>Test data</desc>
+    </wpt>
+    <wpt lat="4" lon="5">
+        <name>w1</name>
+    </wpt>
+    <wpt lat="6" lon="7">
+        <desc>Test data</desc>
+    </wpt>
+    <wpt lat="8" lon="9">
+        <ele>10</ele>
+    </wpt>
+    <wpt lat="11" lon="12"/>
+    <rte>
+        <rtept lat="29" lon="30"/>
+        <rtept lat="31" lon="32"/>
+        <rtept lat="33" lon="34"/>
+        <rtept lat="35" lon="36"/>
+    </rte>
+    <rte>
+        <rtept lat="37" lon="38"/>
+        <rtept lat="39" lon="40"/>
+        <rtept lat="41" lon="42"/>
+        <rtept lat="43" lon="44"/>
+    </rte>
+    <trk>
+        <trkseg>
+            <trkpt lat="13" lon="14"/>
+            <trkpt lat="15" lon="16"/>
+            <trkpt lat="17" lon="18"/>
+            <trkpt lat="19" lon="20"/>
+        </trkseg>
+    </trk>
+    <trk>
+        <trkseg>
+            <trkpt lat="21" lon="22"/>
+            <trkpt lat="23" lon="24"/>
+            <trkpt lat="25" lon="26"/>
+            <trkpt lat="27" lon="28"/>
+        </trkseg>
+    </trk>
+</gpx>

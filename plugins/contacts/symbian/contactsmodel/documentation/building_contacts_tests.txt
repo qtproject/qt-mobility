@@ -1,0 +1,28 @@
+=====================================
+Contacts model test harness resources
+=====================================
+Some of the contacts model tests require that a specific contacts model resource file is used.  This resource file is located in \app-engines\cntmodel\group\cntmodel.rss. The main difference from the default resource, provided by Contacts application is the presence of 2 fields with EContactFieldFlagFilterable flag set. 
+
+Because the resource file is not owned by us, we provide a testing-only version of the cntmodel.rss. And it is only built for test builds (abld test build). The test version of cntmodel.rss in included in cnttutil test library,  which is used by most of the contacts test harnesses including T_Custfilter.exe.
+
+Cntmodel.rss defines two new fields for custom filtering, and three new fields for pronunciation.  If these fields are missing from the compiled cntmodel resources (eg \epoc32\release\winscw\udeb\z\resource\cntmodel\cntmodel.rsc) then you will see error messages such as:
+ 
+====================================
+..\TSRC\T_custfilter.cpp(281) : runtime error: Statement 'iCustom1View->CountL()
+ == iTestConductor->iAcceptCount + iTestConductor->iAskCount' equals 0
+
+..\TSRC\T_custfilter.cpp(299) : runtime error: Statement 'iTestConductor->iAcceptCount == 0' equals 0
+
+..\TSRC\T_custfilter.cpp(301) : runtime error: Statement 'iTestConductor->iAskCount == 0' equals 0
+==== Exercise Nickname View
+
+..\TSRC\T_custfilter.cpp(308) : runtime error: Statement 'iCustom2View->CountL() == KNickname' equals 0
+==== Filter View Finished
+**  Total amount of time taken [0s0us]  **
+: FAIL : T_CustFilter failed check 2 at line Number: 444
+RTEST: Checkpoint-fail
+====================================
+
+The solution is to make sure that you build the contact resources from \group\cntmodel.rss by building cnttutil, or to add these fields into the existing cntmodel.rss file and rebuild the resources.
+ 
+To make sure that you're using the proper version of the resource file go to \epoc32\release\winscw\udeb\z\resource\cntmodel\ directory (armv5 and/or urel for other configurations) and delete cntmodel.rsc manually.  "abld test reallyclean" may do it for you, but if often fails. Then build all the contacts model test code and check that the cntmodel.rsc was created after that.

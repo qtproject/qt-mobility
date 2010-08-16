@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,6 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/versit
 
 #include "tst_qversitproperty.h"
 #include "qversitproperty.h"
@@ -95,18 +97,18 @@ void tst_QVersitProperty::testParameters()
     mVersitProperty->insertParameter(name,value1);
     QMultiHash<QString,QString> parameters = mVersitProperty->parameters();
     QCOMPARE(parameters.count(), 1);
-    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("HOME")));
+    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("home")));
 
     QString value2(QString::fromAscii("voice"));
     mVersitProperty->insertParameter(name,value2);
     parameters = mVersitProperty->parameters();
     QCOMPARE(parameters.count(), 2);
-    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("HOME")));
-    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("VOICE")));
+    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("home")));
+    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("voice")));
 
     mVersitProperty->removeParameter(name,value1);
     QCOMPARE(mVersitProperty->parameters().count(), 1);
-    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("HOME")));
+    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("home")));
 
     mVersitProperty->removeParameter(name,value2);
     QCOMPARE(mVersitProperty->parameters().count(), 0);

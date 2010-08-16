@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,6 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/multimedia
 
 #include <QtTest/QtTest>
 #include <QDebug>
@@ -102,7 +104,7 @@ void tst_QMediaPlaylistNavigator::linearPlayback()
     QLocalMediaPlaylistProvider playlist;
     QMediaPlaylistNavigator navigator(&playlist);
 
-    navigator.setPlaybackMode(QMediaPlaylist::Linear);
+    navigator.setPlaybackMode(QMediaPlaylist::Sequential);
     QTest::ignoreMessage(QtWarningMsg, "QMediaPlaylistNavigator: Jump outside playlist range ");
     navigator.jump(0);//it's ok to have warning here
     QVERIFY(navigator.currentItem().isNull());

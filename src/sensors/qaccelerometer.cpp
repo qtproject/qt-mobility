@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,6 +49,7 @@ IMPLEMENT_READING(QAccelerometerReading)
 /*!
     \class QAccelerometerReading
     \ingroup sensors_reading
+    \inmodule QtSensors
 
     \brief The QAccelerometerReading class reports on linear acceleration
            along the X, Y and Z axes.
@@ -57,29 +58,11 @@ IMPLEMENT_READING(QAccelerometerReading)
     The scale of the values is meters per second squared.
     The axes are arranged as follows.
 
-\code
-             +z
-              |
-              |      +y
-              |     /
-              |----/----
-             /| NOKIA  /|
-            //|--/--- / |
-           // | /   //  /
-          //  |/   //  /
-         //   '--------------- +x
-        //       //  /
-       //       //  /
-      /---------/  /
-     /    O    /  /
-    /         /  /
-    ----------  /
-    |_________!/
-\endcode
+    \image sensors-coordinates2.jpg
 
     A monoblock device sitting at rest, face up on a desk will experience
     a force of approximately 9.8 on the Z axis (ie. towards the roof).
-    This is the proper acceleration the device experiences relative to 
+    This is the proper acceleration the device experiences relative to
     freefall.
 */
 
@@ -151,6 +134,7 @@ void QAccelerometerReading::setZ(qreal z)
 /*!
     \class QAccelerometerFilter
     \ingroup sensors_filter
+    \inmodule QtSensors
 
     \brief The QAccelerometerFilter class is a convenience wrapper around QSensorFilter.
 
@@ -166,11 +150,12 @@ void QAccelerometerReading::setZ(qreal z)
     \sa QSensorFilter::filter()
 */
 
-const char *QAccelerometer::type("QAccelerometer");
+char const * const QAccelerometer::type("QAccelerometer");
 
 /*!
     \class QAccelerometer
     \ingroup sensors_type
+    \inmodule QtSensors
 
     \brief The QAccelerometer class is a convenience wrapper around QSensor.
 

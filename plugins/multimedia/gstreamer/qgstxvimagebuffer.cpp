@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,6 +46,8 @@
 
 #include "qgstxvimagebuffer.h"
 #include "qvideosurfacegstsink.h"
+
+#ifndef QT_NO_XVIDEO
 
 GstBufferClass *QGstXvImageBuffer::parent_class = NULL;
 
@@ -274,3 +276,6 @@ void QGstXvImageBufferPool::destroyBuffer(QGstXvImageBuffer *xvBuffer)
     if (m_imagesToDestroy.size() == 1)
         QMetaObject::invokeMethod(this, "queuedDestroy", Qt::QueuedConnection);
 }
+
+#endif //QT_NO_XVIDEO
+

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,8 +44,8 @@
 #include <QDebug>
 #include <time.h>
 
-const char *n900lightsensor::id("n900.ambientlight");
-const char *n900lightsensor::filename("/sys/class/i2c-adapter/i2c-2/2-0029/lux");
+char const * const n900lightsensor::id("n900.ambientlight");
+char const * const n900lightsensor::filename("/sys/class/i2c-adapter/i2c-2/2-0029/lux");
 
 n900lightsensor::n900lightsensor(QSensor *sensor)
     : n900filebasedsensor(sensor)
@@ -55,7 +55,6 @@ n900lightsensor::n900lightsensor(QSensor *sensor)
     // a read of the /sys file (no interrupt/timing loop/etc. is used).
     // Since no continuous operation is possible, don't set a data rate.
     addDataRate(2, 2); // Close enough to 2 Hz
-    sensor->setDataRate(2);
     setDescription(QLatin1String("tsl2563"));
 }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -109,4 +109,14 @@ void QXAMediaRecoderControl::applySettings()
 {
     if (m_session)
         m_session->applySettings();
+}
+
+bool QXAMediaRecoderControl::isMuted() const
+{
+    return false;
+}
+
+void QXAMediaRecoderControl::setMuted(bool)
+{
+
 }

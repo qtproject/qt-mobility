@@ -1,0 +1,9 @@
+This example requires the example Dialer services to be registered in order 
+for the application to obtain the default interface. This can be done by using the 
+service framework command line tool to add the corresponding service XML file:
+
+./servicefw add landlinedialerservice.xml
+./servicefw add voipdialerservice.xml
+
+The XML files for all example services can be found in the QtMobility build directory
+under install/bin/xmldata

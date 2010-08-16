@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,6 +53,9 @@
 
 QTM_USE_NAMESPACE
 
+typedef QList<QContactLocalId> QContactIds;
+Q_DECLARE_METATYPE(QContactIds);
+
 #ifndef QTRY_COMPARE
 #define QTRY_COMPARE(__expr, __expected) \
     do { \
@@ -82,8 +85,6 @@ public:
     virtual ~tst_SimCM();
 
 public slots:
-    void init();
-    void cleanup();
     void initTestCase();
     void cleanupTestCase();
 
@@ -105,18 +106,28 @@ private slots:
     void updateContactDetail();
     void batchOperations_data();
     void batchOperations();
+    void detailFilter_data();
+    void detailFilter();
+    void sortingAdn_data();
+    void sortingAdn();
 
     /* Test cases that take no data */
     void signalEmission();
     void sdnContacts();
+    void fillSlots();
 
 private:
     void initManager(QString simStore);
     void getEtelStoreInfoL(const TDesC &phonebook, TDes8 &infoPckg) const;
     bool isContactSupported(QContact contact);
     void parseDetails(QContact &contact, QStringList details, QList<QContactDetail> &parsedDetails);
-    void compareDetails(QContact contact, QList<QContactDetail> expectedDetails);
+    bool compareDetails(QContact contact, QList<QContactDetail> expectedDetails);
     QContact createContact(QString name, QString number);
+    QContact saveContact(QString name, QString number);
+    void dumpStoreInfo();
+    bool compareContactLists(QList<QContact> lista, QList<QContact> listb);
+    bool compareContacts(QContact ca, QContact cb);
+    
 
 private:
     QContactManager* m_cm;
@@ -139,20 +150,6 @@ tst_SimCM::~tst_SimCM()
 {
 }
 
-void tst_SimCM::init()
-{
-    // remove all contacts
-    QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(ids, 0);   
-}
-
-void tst_SimCM::cleanup()
-{
-    // remove all contacts
-    QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(ids, 0);   
-}
-
 void tst_SimCM::initTestCase()
 {
     initManager(QString());
@@ -160,10 +157,15 @@ void tst_SimCM::initTestCase()
     // TODO: how about other stores?
     TRAPD(err, getEtelStoreInfoL(KETelIccAdnPhoneBook, m_etelStoreInfoPckg));
     QCOMPARE(err, KErrNone);
+
+    // remove all contacts
+    m_cm->removeContacts(m_cm->contactIds(), 0);   
 }
 
 void tst_SimCM::cleanupTestCase()
 {
+    // remove all contacts
+    m_cm->removeContacts(m_cm->contactIds(), 0);   
     delete m_cm;
     m_cm = 0;
 }
@@ -354,11 +356,13 @@ void tst_SimCM::addContact_data()
     QTest::addColumn<int>("expectedResult"); // 1 = pass, 0 = fail, -1 = depends on the SIM card
     QTest::addColumn<QString>("expectedDisplayLabel");
     QTest::addColumn<QStringList>("details"); // format is <detail definition name>:<field name>:<value>
-    QString unnamedLabel("Unnamed");
     QString es;
     QString tooLongText("James Hunt the 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890th");
 
-    // TODO: what name field to use for a sim contact name?
+#ifdef __WINS__
+    qWarning("Etel test server (emulator) does report an error when saving if contact has too long details!");
+#endif
+
     // Note: With the current implementation the value must not contain a ':' character
     QTest::newRow("ADN custom label")
         << QString("ADN")
@@ -391,7 +395,11 @@ void tst_SimCM::addContact_data()
 
     QTest::newRow("ADN too long custom label")
         << QString("ADN")
-        << 1 // expected to pass. Note: too long display label is truncated
+#ifdef __WINS__
+        << 1 // Etel test server does not enforce the max lengths
+#else
+        << 0 // expected to fail
+#endif
         << tooLongText
         << (QStringList()
             << (QString("Name:CustomLabel:").append(tooLongText)));
@@ -406,7 +414,11 @@ void tst_SimCM::addContact_data()
 
     QTest::newRow("ADN custom label and too long nick name")
         << QString("ADN")
-        << -1 // Depends on SIM card support (some cards support second name)
+#ifdef __WINS__
+        << 1 // Etel test server does not enforce the max lengths
+#else
+        << 0 // expected to fail
+#endif
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James Hunt"
@@ -415,8 +427,16 @@ void tst_SimCM::addContact_data()
     QTest::newRow("ADN phone number")
         << QString("ADN")
         << 1
-        << unnamedLabel
+        << es
         << (QStringList()
+            << "PhoneNumber:PhoneNumber:+44752222222");
+
+    QTest::newRow("ADN empty name and phone number")
+        << QString("ADN")
+        << 1
+        << es
+        << (QStringList()
+            << "Name:CustomLabel:"
             << "PhoneNumber:PhoneNumber:+44752222222");
 
     QTest::newRow("ADN custom label and phone number")
@@ -514,7 +534,11 @@ void tst_SimCM::addContact_data()
 
     QTest::newRow("ADN custom label and too long email")
         << QString("ADN")
+#ifdef __WINS__
+        << 1 // Etel test server does not enforce the max lengths
+#else
         << 0 // long enough e-mail to fail on any SIM card
+#endif
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James Hunt"
@@ -620,13 +644,18 @@ void tst_SimCM::addContact()
         QVERIFY(contact.id() != QContactId());
 
         // verify that the details were saved as expected
-        compareDetails(contact, expectedDetails);
+        QVERIFY(compareDetails(contact, expectedDetails));
 
-        // verify display label, allow truncating to the max text length
-        QCOMPARE(contact.displayLabel(), expectedDisplayLabel.left(m_etelStoreInfo.iMaxTextLength));
+        // verify display label
+        QCOMPARE(contact.displayLabel(), expectedDisplayLabel);
 
         // TODO: verify that no extra details were added?
         //?QCOMPARE(contact.details().count(), detailsUnderTest.count() + 2);
+
+        // Read the contact from SIM and re-verify the result
+        contact = m_cm->contact(contact.localId());
+        QVERIFY(compareDetails(contact, expectedDetails));
+        QCOMPARE(contact.displayLabel(), expectedDisplayLabel);
 
         // verify contact removal
         QVERIFY(m_cm->removeContact(contact.localId()));
@@ -659,7 +688,8 @@ void tst_SimCM::fetchContacts_data()
         << QString("SDN")
         << int(0); // You cannot save a contact to SDN
 
-    // TODO: How to save to FDN? A dialog for PIN2 should be shown...
+    // Requires that PIN2 has been given (for example by activating and
+    // de-activating FDN via S60 Phonebook)
     QTest::newRow("FDN")
         << QString("FDN")
         << int(1);
@@ -848,7 +878,7 @@ void tst_SimCM::updateContactDetail()
     }
     QVERIFY(m_cm->saveContact(&contact));
     QCOMPARE(m_cm->error(), QContactManager::NoError);
-    compareDetails(contact, parsedDetails);
+    QVERIFY(compareDetails(contact, parsedDetails));
 
     // 3. Update contact detail and verify result
     foreach (const QContactDetail& detail, parsedDetails) {
@@ -862,7 +892,7 @@ void tst_SimCM::updateContactDetail()
     }
     QVERIFY(m_cm->saveContact(&contact));
     QCOMPARE(m_cm->error(), QContactManager::NoError);
-    compareDetails(contact, parsedDetails);
+    QVERIFY(compareDetails(contact, parsedDetails));
 
     // 4. Remove the contact
     QVERIFY(m_cm->removeContact(contact.localId()));
@@ -884,7 +914,8 @@ void tst_SimCM::batchOperations_data()
         << 10
         << false; // You cannot save contacts to SDN
 
-    // TODO: How to save to FDN? A dialog for PIN2 should be shown...
+    // Requires that PIN2 has been given (for example by activating and
+    // de-activating FDN via S60 Phonebook)
     QTest::newRow("FDN")
         << QString("FDN")
         << 10
@@ -961,6 +992,122 @@ void tst_SimCM::batchOperations()
     }
 }
 
+void tst_SimCM::detailFilter_data()
+{
+    QTest::addColumn<QString>("detailName");
+    QTest::addColumn<QString>("detailField");
+    QTest::addColumn<QString>("value");
+    QTest::addColumn<int>("flags");
+    QTest::addColumn<bool>("filterSupported");
+    QTest::addColumn<QString>("expected");
+
+    // Phone number
+    
+    QString detail = QContactPhoneNumber::DefinitionName;
+    QString field = QContactPhoneNumber::FieldNumber;
+    
+    QTest::newRow("phonenumber=123456789, flags=MatchExactly")
+        << detail << field << "123456789" << (int) QContactFilter::MatchExactly << false << "a";
+    
+    QTest::newRow("phonenumber=123456789, flags=MatchContains")
+        << detail << field << "123456789" << (int) QContactFilter::MatchContains << false << "abc";
+    
+    QTest::newRow("phonenumber=#, flags=MatchContains")
+        << detail << field << "#" << (int) QContactFilter::MatchContains << false << "f";
+    
+    QTest::newRow("phonenumber=p, flags=MatchContains")
+        << detail << field << "p" << (int) QContactFilter::MatchContains << false << "e";
+        
+    QTest::newRow("phonenumber=0, flags=MatchStartsWith")
+        << detail << field << "0" << (int) QContactFilter::MatchStartsWith << false << "defi";    
+    
+    QTest::newRow("phonenumber=012, flags=MatchEndsWith")
+        << detail << field << "012" << (int) QContactFilter::MatchEndsWith << false << "c";
+    
+    QTest::newRow("phonenumber=+358505555555, flags=MatchPhoneNumber")
+        << detail << field << "+358505555555" << (int) QContactFilter::MatchPhoneNumber << true << "ij";
+    
+    QTest::newRow("phonenumber=313, flags=MatchPhoneNumber")
+        << detail << field << "313" << (int) QContactFilter::MatchPhoneNumber << true << "h";
+    
+    // Custom label
+    detail = (QLatin1String) QContactName::DefinitionName;
+    field = (QLatin1String) QContactName::FieldCustomLabel;
+    
+    QTest::newRow("customlabel=frederik")
+            << detail << field << "frederik" << 0 << false << "c";
+    
+    QTest::newRow("customlabel=Kallasvuo flags=MatchContains")
+            << detail << field << "Kallasvuo" << (int) (QContactFilter::MatchContains) << false << "d";
+    
+    QTest::newRow("customlabel=Matti flags=MatchStartsWith")
+            << detail << field << "Matti" << (int) (QContactFilter::MatchStartsWith) << false << "b";
+    
+    QTest::newRow("customlabel=co flags=MatchEndsWith")
+            << detail << field << "co" << (int) (QContactFilter::MatchEndsWith) << false << "f";
+    
+    // ITU-T standard keypad collation:
+    // 2 = abc, 3 = def, 4 = ghi, 5 = jkl, 6 = mno, 7 = pqrs, 8 = tuv, 9 = wxyz, 0 = space
+    
+    QTest::newRow("customlabel T9 olli, flags=MatchKeypadCollation|MatchExactly")
+        << detail << field << "6554" << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchExactly) << false << "g";
+
+    QTest::newRow("customlabel T9 olli, flags=MatchKeypadCollation|MatchContains")
+        << detail << field << "6554" << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchContains) << false << "adg";
+    
+    QTest::newRow("customlabel T9 jorma, flags=MatchKeypadCollation|MatchStartsWith")
+        << detail << field << "56762" << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchStartsWith) << false << "a";
+
+    QTest::newRow("customlabel T9 nen, flags=MatchKeypadCollation|MatchEndsWith")
+        << detail << field << "636" << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchEndsWith) << false << "b";
+}
+
+void tst_SimCM::detailFilter()
+{
+    QFETCH(QString, detailName);
+    QFETCH(QString, detailField);
+    QFETCH(QString, value);
+    QFETCH(int, flags);
+    QFETCH(bool, filterSupported);
+    QFETCH(QString, expected);
+
+    initManager("ADN");
+    QVERIFY(m_cm->error() == QContactManager::NoError);
+
+    QMap<QContactLocalId, QString> saved;
+    saved.insert(saveContact("Jorma Ollila", "123456789").localId(), "a");
+    saved.insert(saveContact("Matti Nykänen", "+123456789").localId(), "b");
+    saved.insert(saveContact("Frederik", "+123456789012").localId(), "c");
+    saved.insert(saveContact("Olli-Pekka Kallasvuo", "0718008000").localId(), "d");
+    saved.insert(saveContact("Foobar", "0987654321p").localId(), "e");
+    saved.insert(saveContact("Telco", "0718008000#1234#123").localId(), "f");
+    saved.insert(saveContact("Olli", "543253425").localId(), "g");
+    saved.insert(saveContact("Donald Duck", "313").localId(), "h");
+    saved.insert(saveContact("Daisy Duck", "0505555555").localId(), "i");
+    saved.insert(saveContact("Daisy Duck (int)", "+358505555555").localId(), "j");
+
+    QContactDetailFilter f;
+    f.setDetailDefinitionName(detailName, detailField);
+    f.setMatchFlags(QContactFilter::MatchFlags(flags));
+    f.setValue(value);
+    
+    QVERIFY(m_cm->isFilterSupported(f) == filterSupported);
+
+    QList<QContactLocalId> ids = m_cm->contactIds(f);
+    QVERIFY(m_cm->error() == QContactManager::NoError);
+
+    QString result;
+    foreach (QContactLocalId id, ids)
+        result += saved.value(id);
+
+    // Remove all 
+    m_cm->removeContacts(m_cm->contactIds(), 0);   
+
+    QCOMPARE(result, expected);
+}
+
+
+
 /*
  * Test if signals contactsAdded, contactsChanged and contactsRemoved are
  * emitted correctly.
@@ -1035,7 +1182,6 @@ void tst_SimCM::sdnContacts()
     foreach(const QContact& c, contacts) {
         // Assume a valid SDN contact always has a display label and a phone number
         QVERIFY(!c.displayLabel().isEmpty());
-        QVERIFY(!c.displayLabel().contains("unnamed", Qt::CaseInsensitive));
         QVERIFY(!c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
         foreach(const QContactDetail& d, c.details()) {
             qDebug() << "Detail: " << d.definitionName();
@@ -1051,6 +1197,321 @@ void tst_SimCM::sdnContacts()
     // Writing should fail
     QContact c = createContact("foo", "1234567");
     QVERIFY(!cm->saveContact(&c));
+}
+
+void tst_SimCM::fillSlots()
+{
+    initManager("ADN");
+    
+    // remove all contacts
+    QList<QContactLocalId> ids = m_cm->contactIds();
+    m_cm->removeContacts(ids, 0); 
+        
+    // Update store info for empty sim card
+    TRAPD(err, getEtelStoreInfoL(KETelIccAdnPhoneBook, m_etelStoreInfoPckg));
+    QVERIFY(err == KErrNone);
+    //dumpStoreInfo();
+    
+    // Get detail definitions
+    QMap<QString, QContactDetailDefinition> defs = m_cm->detailDefinitions();
+    bool nicknameSupported = defs.contains(QContactNickname::DefinitionName);
+    bool additionalNumberSupported = !defs.value(QContactPhoneNumber::DefinitionName).isUnique();
+    bool emailSupported = defs.contains(QContactNickname::DefinitionName);
+    
+    // Fill all slots with a name
+    QList<QContact> savedContacts;
+    int i;
+    for (i=0; i<m_etelStoreInfo.iTotalEntries; i++)
+    {
+        QContact c;
+        QString label;
+        label.fill('x', 10);
+        QString tmp = QString("%1-").arg(i);
+        label.replace(0, tmp.size(), tmp);
+        QContactName name;
+        name.setCustomLabel(label);
+        c.saveDetail(&name);
+        QVERIFY(m_cm->saveContact(&c));
+        savedContacts << c;        
+    }
+    qDebug() << QString("Wrote %1 contacts with a name").arg(i);
+    
+    // Sim card should be full now. Try writing one more.
+    {
+        QContact c;
+        QContactName name;
+        name.setCustomLabel("foobar");
+        c.saveDetail(&name);
+        QVERIFY(!m_cm->saveContact(&c));
+    }
+         
+    // Write all slots with a number
+    for (i=0; i<m_etelStoreInfo.iTotalEntries; i++)
+    {
+        QContact &c = savedContacts[i];
+        QString num;
+        num.fill('0', 10);
+        QString tmp = QString("%1#").arg(i);
+        num.replace(0, tmp.size(), tmp);
+        QContactPhoneNumber number;
+        number.setNumber(num);
+        c.saveDetail(&number);
+        QVERIFY(m_cm->saveContact(&c));
+    }
+    qDebug() << QString("Wrote %1 contacts with a number").arg(i);
+    
+    // Write all slots with a nickname
+    for (i=0; i<m_etelStoreInfo.iTotalEntries && nicknameSupported; i++)
+    {
+        QContact c = savedContacts[i];
+        QContactNickname nickname;
+        QString nick;
+        nick.fill('x', 10);
+        QString tmp = QString("%1-").arg(i);
+        nick.replace(0, tmp.size(), tmp);
+        nickname.setNickname(nick);
+        c.saveDetail(&nickname);
+        if (!m_cm->saveContact(&c)) {
+            if (m_cm->error() == QContactManager::LimitReachedError)
+                break;
+            else
+                QFAIL("Failed to write nickname");
+        }
+        savedContacts[i] = c;
+    }
+    qDebug() << QString("Wrote %1 contacts with a nickname").arg(i);
+    
+    // Write all slots with a additional number
+    for (i=0; i<m_etelStoreInfo.iTotalEntries && additionalNumberSupported; i++)
+    {
+        QContact c = savedContacts[i];
+        QString num;
+        num.fill('0', 10);
+        QString tmp = QString("%1#1").arg(i);
+        num.replace(0, tmp.size(), tmp);
+        QContactPhoneNumber additionalNumber;
+        additionalNumber.setNumber(num);
+        c.saveDetail(&additionalNumber);
+        if (!m_cm->saveContact(&c)) {
+            if (m_cm->error() == QContactManager::LimitReachedError)
+                break;
+            else
+                QFAIL("Failed to write additional number");
+        }
+        savedContacts[i] = c;
+    }
+    qDebug() << QString("Wrote %1 contacts with additional number").arg(i);
+    
+    // Write all slots with a email
+    for (i=0; i<m_etelStoreInfo.iTotalEntries && emailSupported; i++)
+    {
+        QContact c = savedContacts[i];
+        QContactEmailAddress emailAddress;
+        QString email;
+        email.fill('x', 10);
+        QString tmp = QString("%1@").arg(i);
+        email.replace(0, tmp.size(), tmp);
+        emailAddress.setEmailAddress(email);
+        c.saveDetail(&emailAddress);
+        if (!m_cm->saveContact(&c)) {
+            if (m_cm->error() == QContactManager::LimitReachedError)
+                break;
+            else
+                QFAIL("Failed to write email");
+        }
+        savedContacts[i] = c;
+    }
+    qDebug() << QString("Wrote %1 contacts with an email").arg(i);
+    
+    TRAP(err, getEtelStoreInfoL(KETelIccAdnPhoneBook, m_etelStoreInfoPckg));
+    QVERIFY(err == KErrNone);
+    //dumpStoreInfo();
+
+    QList<QContact> contacts = m_cm->contacts();
+#ifdef __WINS__
+    // Cannot do full compare in emulator because of etel test server bug.
+    // If saving for example nickname fails with QContactManager::LimitReachedError
+    // it will still save the contact.
+    QVERIFY(contacts.count() == savedContacts.count());
+#else
+    QVERIFY(compareContactLists(contacts, savedContacts));
+#endif
+    QVERIFY(m_cm->removeContacts(m_cm->contactIds(), 0));
+}
+
+void tst_SimCM::sortingAdn_data()
+{
+    QTest::addColumn<QString>("definitionName");
+    QTest::addColumn<QString>("fieldName");
+    QTest::addColumn<int>("direction");
+    QTest::addColumn<int>("caseSensitivity");
+    QTest::addColumn<int>("blankPolicy");
+    QTest::addColumn<QContactIds>("expectedResult");
+    QTest::addColumn<QContactIds>("unknownResult");
+
+    initManager("ADN");
+    QContact blankName = createContact(QString(""), QString("+44752222222"));
+    QVERIFY(m_cm->saveContact(&blankName));
+    QContact james = createContact(QString("James Hunt"), QString("+44753333333"));
+    QVERIFY(m_cm->saveContact(&james));
+    QContact kimi = createContact(QString("Kimi Räikkönen"), QString("+358441111111"));
+    QVERIFY(m_cm->saveContact(&kimi));
+    QContact kimiNoCaps = createContact(QString("kimi räikkönen"), QString("+358442222222"));
+    QVERIFY(m_cm->saveContact(&kimiNoCaps));
+    QContact sebastianNoPhone = createContact(QString("Sebastian Vettel"), QString(""));
+    QVERIFY(m_cm->saveContact(&sebastianNoPhone));
+
+    QString contactNameDef = QContactName::DefinitionName;
+    QString customLabel = QContactName::FieldCustomLabel;
+    QString phoneNumberDef = QContactPhoneNumber::DefinitionName;
+    QString phoneNumber = QContactPhoneNumber::FieldNumber;
+
+    // The relative order of "kimi" and "Kimi" are undefined in this case
+    QTest::newRow("custom label, ascending, case insensitive, blanks first")
+        << contactNameDef
+        << customLabel
+        << (int) Qt::AscendingOrder
+        << (int) Qt::CaseInsensitive
+        << (int) QContactSortOrder::BlanksFirst
+        << (QContactIds()
+            << blankName.localId()
+            << james.localId()
+            << kimi.localId()
+            << kimiNoCaps.localId()
+            << sebastianNoPhone.localId())
+        << (QContactIds()
+            << kimi.localId()
+            << kimiNoCaps.localId());
+
+    QTest::newRow("custom label, ascending, case sensitive, blanks first")
+        << contactNameDef
+        << customLabel
+        << (int) Qt::AscendingOrder
+        << (int) Qt::CaseSensitive
+        << (int) QContactSortOrder::BlanksFirst
+        << (QContactIds()
+            << blankName.localId()
+            << james.localId()
+            << kimiNoCaps.localId()
+            << kimi.localId()
+            << sebastianNoPhone.localId())
+        << QContactIds();
+
+    // The relative order of "kimi" and "Kimi" are undefined in this case
+    QTest::newRow("custom label, descending, case insensitive, blanks first")
+        << contactNameDef
+        << customLabel
+        << (int) Qt::DescendingOrder
+        << (int) Qt::CaseInsensitive
+        << (int) QContactSortOrder::BlanksFirst
+        << (QContactIds()
+            << blankName.localId()
+            << sebastianNoPhone.localId()
+            << kimi.localId()
+            << kimiNoCaps.localId()
+            << james.localId())
+        << (QContactIds()
+            << kimi.localId()
+            << kimiNoCaps.localId());
+
+    QTest::newRow("phone number, ascending, case insensitive, blanks first")
+        << phoneNumberDef
+        << phoneNumber
+        << (int) Qt::AscendingOrder
+        << (int) Qt::CaseInsensitive
+        << (int) QContactSortOrder::BlanksFirst
+        << (QContactIds()
+            << sebastianNoPhone.localId()
+            << kimi.localId()
+            << kimiNoCaps.localId()
+            << blankName.localId()
+            << james.localId())
+        << QContactIds();
+
+    QTest::newRow("phone number, ascending, case sensitive, blanks last")
+        << phoneNumberDef
+        << phoneNumber
+        << (int) Qt::AscendingOrder
+        << (int) Qt::CaseSensitive
+        << (int) QContactSortOrder::BlanksLast
+        << (QContactIds()
+            << kimi.localId()
+            << kimiNoCaps.localId()
+            << blankName.localId()
+            << james.localId()
+            << sebastianNoPhone.localId())
+        << QContactIds();
+
+    QTest::newRow("phone number, descending, case insensitive, blanks first")
+        << phoneNumberDef
+        << phoneNumber
+        << (int) Qt::DescendingOrder
+        << (int) Qt::CaseInsensitive
+        << (int) QContactSortOrder::BlanksFirst
+        << (QContactIds()
+            << sebastianNoPhone.localId()
+            << james.localId()
+            << blankName.localId()
+            << kimiNoCaps.localId()
+            << kimi.localId())
+        << QContactIds();
+}
+
+/*!
+ * Contact sorting needs to be tested here, because the system tests in
+ * \tests\auto\qcontactmanagerfiltering\tst_QContactManagerFiltering are not
+ * compatible with the sim backend.
+ */
+void tst_SimCM::sortingAdn()
+{
+    QFETCH(QString, definitionName);
+    QFETCH(QString, fieldName);
+    QFETCH(int, direction);
+    QFETCH(int, caseSensitivity);
+    QFETCH(int, blankPolicy);
+    QFETCH(QContactIds, expectedResult);
+    QFETCH(QContactIds, unknownResult);
+
+    QContactSortOrder sortOrder;
+    sortOrder.setDetailDefinitionName(definitionName, fieldName);
+    sortOrder.setDirection((Qt::SortOrder) direction);
+    sortOrder.setCaseSensitivity((Qt::CaseSensitivity) caseSensitivity);
+    sortOrder.setBlankPolicy((QContactSortOrder::BlankPolicy) blankPolicy);
+    QVERIFY(sortOrder.isValid());
+
+    QList<QContactSortOrder> sortOrders;
+    sortOrders.append(sortOrder);
+
+    /*
+    TODO
+    QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QContactFetchHint& fetchHint = QContactFetchHint()) const;
+    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QContactFetchHint& fetchHint = QContactFetchHint()) const;
+    */
+
+    // First variant
+    QList<QContactLocalId> ids = m_cm->contactIds(sortOrders);
+    qDebug() << "result: " << ids;
+    qDebug() << "expected: " << expectedResult;
+    QCOMPARE(m_cm->error(), QContactManager::NoError);
+    if (unknownResult.count()) {
+        // TODO: how to check all possible alternatives?
+        foreach (QContactLocalId id, unknownResult) {
+            QVERIFY(expectedResult.removeOne(id));
+            QVERIFY(ids.removeOne(id));
+        }
+    }
+    QCOMPARE(ids, expectedResult);
+
+    // Second variant with filter
+    ids = m_cm->contactIds(QContactFilter(), sortOrders);
+    QCOMPARE(m_cm->error(), QContactManager::NoError);
+    if (unknownResult.count()) {
+        // TODO: how to check all possible alternatives?
+        foreach (QContactLocalId id, unknownResult) {
+            QVERIFY(ids.removeOne(id));
+        }
+    }
+    QCOMPARE(ids, expectedResult);
 }
 
 /*!
@@ -1158,11 +1619,11 @@ void tst_SimCM::parseDetails(QContact &contact, QStringList details, QList<QCont
             contactDetail = contact.detail(detailParts[0]);
         }
 
-        // Set the field value only if not empty (do not add empty fields)  
-        if (!detailParts[2].isEmpty()) {
+        if (detailParts[2].isNull()) {
+            QVERIFY(contactDetail.setValue(detailParts[1], QString("")));
+        } else {
             QVERIFY(contactDetail.setValue(detailParts[1], detailParts[2]));
         }
-
         QVERIFY(contact.saveDetail(&contactDetail));
         parsedDetails.append(contactDetail);
     }
@@ -1171,36 +1632,45 @@ void tst_SimCM::parseDetails(QContact &contact, QStringList details, QList<QCont
 /*
  * Private helper function for comparing QContact details to a well-known set
  * of QContactDetails.
- * \return true if all the expected contact details have a match in the \contact.
  */
-void tst_SimCM::compareDetails(QContact contact, QList<QContactDetail> expectedDetails)
+bool tst_SimCM::compareDetails(QContact contact, QList<QContactDetail> expectedDetails)
 {
+    bool result(true);
+
     foreach (QContactDetail expectedDetail, expectedDetails) {
-        QContactDetail actualDetail = contact.detail(expectedDetail.definitionName());
-        QVERIFY(!actualDetail.isEmpty());
+        QString detailName = expectedDetail.definitionName();
+        foreach (const QString& key, expectedDetail.variantValues().keys()) {
+            bool match(false);
+            // Go through the actual details to see if the expected detail is included there
+            foreach (QContactDetail actualDetail, contact.details(expectedDetail.definitionName())) {
+                QString a = actualDetail.variantValue(key).toString();
+                QString b = expectedDetail.variantValue(key).toString();
+                if (!actualDetail.variantValues().contains(key)) {
+                    qDebug() << "field does not exist, detail:"
+                        << detailName
+                        << "key:"
+                        << key
+                        << " value: "
+                        << expectedDetail.variantValue(key);
+                } else if (actualDetail.variantValue(key) != expectedDetail.variantValue(key)) {
+                    qDebug() << "Detail found, but value does not match. Detail:"
+                        << detailName
+                        << "Expected: "
+                        << expectedDetail.variantValue(key)
+                        << " actual: "
+                        << actualDetail.variantValue(key);
+                } else {
+                    match = true;
+                }
+            }
 
-        // Allow truncating the custom label to the max text length
-        if (expectedDetail.definitionName() == QContactName::DefinitionName) {
-            QContactName nameDetail = static_cast<QContactName>(expectedDetail);
-            nameDetail.setCustomLabel(nameDetail.customLabel().left(m_etelStoreInfo.iMaxTextLength));
-            expectedDetail = static_cast<QContactDetail>(nameDetail);
-        // Allow truncating the nick name to the max text length
-        } else if (expectedDetail.definitionName() == QContactNickname::DefinitionName) {
-                QContactNickname nick = static_cast<QContactNickname>(expectedDetail);
-                nick.setNickname(nick.nickname().left(m_etelStoreInfo.iMaxTextLength));
-                expectedDetail = static_cast<QContactDetail>(nick);
-        }
-
-        if(!contact.details().contains(expectedDetail)) {
-            // FAIL! Make it easier to debug the output by
-            // comparing the contact detail field contents
-            foreach (const QString& key, expectedDetail.variantValues().keys()) {
-                QVariant value1 = actualDetail.value(key);
-                QVariant value2 = expectedDetail.value(key);
-                QCOMPARE(actualDetail.value(key), expectedDetail.value(key));
+            // Allow empty details, since they are not saved
+            if (!match && !expectedDetail.variantValue(key).toString().isEmpty()) {
+                result = false;
             }
         }
     }
+    return result;
 }
 
 QContact tst_SimCM::createContact(QString name, QString number)
@@ -1216,6 +1686,106 @@ QContact tst_SimCM::createContact(QString name, QString number)
     c.saveDetail(&nb);
 
     return c;
+}
+
+QContact tst_SimCM::saveContact(QString name, QString number)
+{
+    QContact c;
+    
+    QContactName n;
+    n.setCustomLabel(name);
+    c.saveDetail(&n);
+    
+    QContactPhoneNumber nb;
+    nb.setNumber(number);
+    c.saveDetail(&nb);
+    
+    if (!m_cm->saveContact(&c)) {
+        qWarning() << 
+            QString("Failed to save a contact! (name=%1,number=%2) error:%3")
+                .arg(name).arg(number).arg(m_cm->error());
+    }
+
+    return c;
+}
+
+void tst_SimCM::dumpStoreInfo()
+{
+    TPtrC name = m_etelStoreInfo.iName;
+    TPtrC8 identity = m_etelStoreInfo.iIdentity;
+    
+    qDebug() << "Store info:"
+        << "\nType                         " << m_etelStoreInfo.iType
+        << "\nTotalEntries                 " << m_etelStoreInfo.iTotalEntries
+        << "\nUsedEntries                  " << m_etelStoreInfo.iUsedEntries
+        << "\nCaps                         " << m_etelStoreInfo.iCaps
+        << "\nName                         " << QString::fromUtf16(name.Ptr(), name.Length())
+        << "\nMaxNumLength                 " << m_etelStoreInfo.iMaxNumLength
+        << "\nMaxTextLength                " << m_etelStoreInfo.iMaxTextLength
+        << "\nLocation                     " << m_etelStoreInfo.iLocation
+        << "\nChangeCounter                " << m_etelStoreInfo.iChangeCounter
+        << "\nIdentity                     " << QString::fromUtf8((const char*)identity.Ptr(), identity.Length())
+#ifdef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
+        ;
+#else
+        << "\nMaxSecondNames               " << m_etelStoreInfo.iMaxSecondNames
+        << "\nMaxTextLengthSecondName      " << m_etelStoreInfo.iMaxTextLengthSecondName
+        << "\nMaxAdditionalNumbers         " << m_etelStoreInfo.iMaxAdditionalNumbers
+        << "\nMaxNumLengthAdditionalNumber " << m_etelStoreInfo.iMaxNumLengthAdditionalNumber
+        << "\nMaxTextLengthAdditionalNumber" << m_etelStoreInfo.iMaxTextLengthAdditionalNumber
+        << "\nMaxGroupNames                " << m_etelStoreInfo.iMaxGroupNames
+        << "\nMaxTextLengthGroupName       " << m_etelStoreInfo.iMaxTextLengthGroupName
+        << "\nMaxEmailAddr                 " << m_etelStoreInfo.iMaxEmailAddr
+        << "\nMaxTextLengthEmailAddr       " << m_etelStoreInfo.iMaxTextLengthEmailAddr;    
+#endif
+}
+
+bool tst_SimCM::compareContactLists(QList<QContact> lista, QList<QContact> listb)
+{
+    // NOTE: This compare is contact order insensitive.  
+    
+    // Remove matching contacts
+    foreach (QContact a, lista) {
+        foreach (QContact b, listb) {
+            if (compareContacts(a, b)) {
+                lista.removeOne(a);
+                listb.removeOne(b);
+                break;
+            }
+        }
+    }
+    
+    //if (lista.count() != 0) qDebug() << "\nList A:\n" << lista;
+    //if (listb.count() != 0) qDebug() << "\nList B:\n" << listb;
+        
+    return (lista.count() == 0 && listb.count() == 0);
+}
+
+bool tst_SimCM::compareContacts(QContact ca, QContact cb)
+{
+    // NOTE: This compare is contact detail order insensitive.
+    
+    if (ca.localId() != cb.localId())
+        return false;
+    
+    QList<QContactDetail> aDetails = ca.details();
+    QList<QContactDetail> bDetails = cb.details();
+
+    // Remove matching details
+    foreach (QContactDetail ad, aDetails) {
+        foreach (QContactDetail bd, bDetails) {
+            if (ad == bd) {
+                ca.removeDetail(&ad);
+                cb.removeDetail(&bd);
+                break;
+            }
+        }
+    }
+    
+    if (ca != cb)
+        qDebug() << "\nCompare failed:\n" << "A:\n" << ca << "\nB:\n" << cb;
+    
+    return (ca == cb);
 }
 
 QTEST_MAIN(tst_SimCM)

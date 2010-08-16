@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -41,7 +41,7 @@
 #ifndef QMESSAGESORTORDERPRIVATE_H
 #define QMESSAGESORTORDERPRIVATE_H
 #include "qmessagesortorder.h"
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && !defined(QT_SIMULATOR)
 #include "qmessagemanager.h"
 #include "qmessagefilter.h"
 #include <qpair.h>
@@ -63,7 +63,7 @@ public:
 
     QMessageSortOrder *q_ptr;
     bool _valid;
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && !defined(QT_SIMULATOR)
     enum Field { Type = 0, Sender, Recipients, Subject, TimeStamp, ReceptionTimeStamp, Read, HasAttachments, Incoming, Removed, Priority, Size };
     QList<QPair<Field, Qt::SortOrder> > _fieldOrderList;
     static bool lessThan(const QMessageSortOrder &sortOrder, const QMessage &left, const QMessage &right);

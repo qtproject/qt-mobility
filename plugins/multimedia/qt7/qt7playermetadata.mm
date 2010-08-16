@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,7 +54,7 @@
 QT_USE_NAMESPACE
 
 QT7PlayerMetaDataControl::QT7PlayerMetaDataControl(QT7PlayerSession *session, QObject *parent)
-    :QMetaDataControl(parent), m_session(session)
+    :QMetaDataReaderControl(parent), m_session(session)
 {
 }
 
@@ -72,18 +72,12 @@ bool QT7PlayerMetaDataControl::isWritable() const
     return false;
 }
 
-QVariant QT7PlayerMetaDataControl::metaData(QtMediaServices::MetaData key) const
+QVariant QT7PlayerMetaDataControl::metaData(QtMultimediaKit::MetaData key) const
 {
     return m_tags.value(key);
 }
 
-void QT7PlayerMetaDataControl::setMetaData(QtMediaServices::MetaData key, QVariant const &value)
-{
-    Q_UNUSED(key);
-    Q_UNUSED(value);
-}
-
-QList<QtMediaServices::MetaData> QT7PlayerMetaDataControl::availableMetaData() const
+QList<QtMultimediaKit::MetaData> QT7PlayerMetaDataControl::availableMetaData() const
 {
     return m_tags.keys();
 }
@@ -92,12 +86,6 @@ QVariant QT7PlayerMetaDataControl::extendedMetaData(const QString &key) const
 {
     Q_UNUSED(key);
     return QVariant();
-}
-
-void QT7PlayerMetaDataControl::setExtendedMetaData(const QString &key, QVariant const &value)
-{
-    Q_UNUSED(key);
-    Q_UNUSED(value);
 }
 
 QStringList QT7PlayerMetaDataControl::availableExtendedMetaData() const
@@ -132,15 +120,19 @@ static OSStatus readMetaValue(QTMetaDataRef metaDataRef, QTMetaDataItem item, QT
     UInt32 propFlags;
     OSStatus err = QTMetaDataGetItemPropertyInfo(metaDataRef, item, propClass, id, &type, &propSize, &propFlags);
 
+    if (err == noErr) {
+        *value = malloc(propSize);
+        if (*value != 0) {
+            err = QTMetaDataGetItemProperty(metaDataRef, item, propClass, id, propSize, *value, size);
 
-    *value = malloc(propSize);
-
-    err = QTMetaDataGetItemProperty(metaDataRef, item, propClass, id, propSize, *value, size);
-
-    if (type == 'code' || type == 'itsk' || type == 'itlk') {
-        // convert from native endian to big endian
-        OSTypePtr pType = (OSTypePtr)*value;
-        *pType = EndianU32_NtoB(*pType);
+            if (err == noErr && (type == 'code' || type == 'itsk' || type == 'itlk')) {
+                // convert from native endian to big endian
+                OSTypePtr pType = (OSTypePtr)*value;
+                *pType = EndianU32_NtoB(*pType);
+            }
+        }
+        else
+            return -1;
     }
 
     return err;
@@ -153,10 +145,14 @@ static UInt32 getMetaType(QTMetaDataRef metaDataRef, QTMetaDataItem item)
     OSStatus err = readMetaValue(
             metaDataRef, item, kPropertyClass_MetaDataItem, kQTMetaDataItemPropertyID_DataType, &value, &ignore);
 
-    UInt32 type = *((UInt32 *) value);
-    if (value)
-        free(value);
-    return type;
+    if (err == noErr) {
+        UInt32 type = *((UInt32 *) value);
+        if (value)
+            free(value);
+        return type;
+    }
+
+    return 0;
 }
 
 static QString cFStringToQString(CFStringRef str)
@@ -179,23 +175,26 @@ static QString getMetaValue(QTMetaDataRef metaDataRef, QTMetaDataItem item, SInt
     QTPropertyValuePtr value = 0;
     ByteCount size = 0;
     OSStatus err = readMetaValue(metaDataRef, item, kPropertyClass_MetaDataItem, id, &value, &size);
-
     QString string;
-    UInt32 dataType = getMetaType(metaDataRef, item);
-    switch (dataType){
-    case kQTMetaDataTypeUTF8:
-    case kQTMetaDataTypeMacEncodedText:
-        string = cFStringToQString(CFStringCreateWithBytes(0, (UInt8*)value, size, kCFStringEncodingUTF8, false));
-        break;
-    case kQTMetaDataTypeUTF16BE:
-        string = cFStringToQString(CFStringCreateWithBytes(0, (UInt8*)value, size, kCFStringEncodingUTF16BE, false));
-        break;
-    default:
-        break;
+
+    if (err == noErr) {
+        UInt32 dataType = getMetaType(metaDataRef, item);
+        switch (dataType){
+        case kQTMetaDataTypeUTF8:
+        case kQTMetaDataTypeMacEncodedText:
+            string = cFStringToQString(CFStringCreateWithBytes(0, (UInt8*)value, size, kCFStringEncodingUTF8, false));
+            break;
+        case kQTMetaDataTypeUTF16BE:
+            string = cFStringToQString(CFStringCreateWithBytes(0, (UInt8*)value, size, kCFStringEncodingUTF16BE, false));
+            break;
+        default:
+            break;
+        }
+
+        if (value)
+            free(value);
     }
 
-    if (value)
-        free(value);
     return string;
 }
 
@@ -234,22 +233,24 @@ void QT7PlayerMetaDataControl::updateTags()
 #ifdef QUICKTIME_C_API_AVAILABLE
         QTMetaDataRef metaDataRef;
         OSStatus err = QTCopyMovieMetaData([movie quickTimeMovie], &metaDataRef);
-
-        readFormattedData(metaDataRef, kQTMetaDataStorageFormatUserData, metaMap);
-        readFormattedData(metaDataRef, kQTMetaDataStorageFormatQuickTime, metaMap);
-        readFormattedData(metaDataRef, kQTMetaDataStorageFormatiTunes, metaMap);
+        if (err == noErr) {
+            readFormattedData(metaDataRef, kQTMetaDataStorageFormatUserData, metaMap);
+            readFormattedData(metaDataRef, kQTMetaDataStorageFormatQuickTime, metaMap);
+            readFormattedData(metaDataRef, kQTMetaDataStorageFormatiTunes, metaMap);
+        }
 #else
+        AutoReleasePool pool;
         NSString *name = [movie attributeForKey:@"QTMovieDisplayNameAttribute"];
         metaMap.insert(QLatin1String("nam"), QString::fromUtf8([name UTF8String]));
 #endif // QUICKTIME_C_API_AVAILABLE
 
-        m_tags.insert(QtMediaServices::AlbumArtist, metaMap.value(QLatin1String("ART")));
-        m_tags.insert(QtMediaServices::AlbumTitle, metaMap.value(QLatin1String("alb")));
-        m_tags.insert(QtMediaServices::Title, metaMap.value(QLatin1String("nam")));
-        m_tags.insert(QtMediaServices::Date, metaMap.value(QLatin1String("day")));
-        m_tags.insert(QtMediaServices::Genre, metaMap.value(QLatin1String("gnre")));
-        m_tags.insert(QtMediaServices::TrackNumber, metaMap.value(QLatin1String("trk")));
-        m_tags.insert(QtMediaServices::Description, metaMap.value(QLatin1String("des")));
+        m_tags.insert(QtMultimediaKit::AlbumArtist, metaMap.value(QLatin1String("ART")));
+        m_tags.insert(QtMultimediaKit::AlbumTitle, metaMap.value(QLatin1String("alb")));
+        m_tags.insert(QtMultimediaKit::Title, metaMap.value(QLatin1String("nam")));
+        m_tags.insert(QtMultimediaKit::Date, metaMap.value(QLatin1String("day")));
+        m_tags.insert(QtMultimediaKit::Genre, metaMap.value(QLatin1String("gnre")));
+        m_tags.insert(QtMultimediaKit::TrackNumber, metaMap.value(QLatin1String("trk")));
+        m_tags.insert(QtMultimediaKit::Description, metaMap.value(QLatin1String("des")));
     }
 
     if (!wasEmpty || !m_tags.isEmpty())

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,7 +55,7 @@ EventLoggerEngine* EventLoggerEngine::instance()
 }
 
 
-EventLoggerEngine::EventLoggerEngine(QObject *parent):QObject(parent)
+EventLoggerEngine::EventLoggerEngine(QObject *parent):QObject(parent), _filterId(0)
 {
   //    qDebug() << "EventLoggerEngine::EventLoggerEngine";
     DBusError err=DBUS_ERROR_INIT;

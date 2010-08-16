@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -131,12 +131,10 @@ private:
 
     void setupNmConnections();
     bool isDefaultConnectionPath(const QString &path);
-    QString getNetworkNameForConnectionPath(const QString &path);
 
     QMap <QString, QString> activePaths;
     void updateActivePaths();
     
-    QString getNmNetName(QSystemNetworkInfo::NetworkMode mode);
 
     inline QSystemNetworkInfo::NetworkMode deviceTypeToMode(quint32 type);
 

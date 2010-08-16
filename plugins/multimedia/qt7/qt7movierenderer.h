@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -51,9 +51,9 @@
 #include <qmediaplayer.h>
 
 #include <QtGui/qmacdefines_mac.h>
-#include "qt7videooutputcontrol.h"
+#include "qt7videooutput.h"
 
-#include <CoreVideo/CVOpenGLTexture.h>
+#include <QuartzCore/CVOpenGLTexture.h>
 #include <QuickTime/QuickTime.h>
 
 QT_BEGIN_NAMESPACE
@@ -71,8 +71,8 @@ public:
     QT7MovieRenderer(QObject *parent = 0);
     virtual ~QT7MovieRenderer();
 
-    void setEnabled(bool);
     void setMovie(void *movie);
+    void updateNaturalSize(const QSize &newSize);
 
     QAbstractVideoSurface *surface() const;
     void setSurface(QAbstractVideoSurface *surface);

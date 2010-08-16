@@ -17,6 +17,3 @@ HEADERS += v4lserviceplugin.h
 SOURCES += v4lserviceplugin.cpp
 
 include(radio/radio.pri)
-
-target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
-INSTALLS+=target

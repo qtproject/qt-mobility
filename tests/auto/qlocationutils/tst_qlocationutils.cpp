@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,6 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/location
+
 //#include "../../../src/location/qlocationutils_p.h"
 #include "qlocationutils_p.h"
 #include "qgeopositioninfo.h"
@@ -308,7 +311,7 @@ private slots:
         QTest::newRow("too short") << trimmed.mid(0, trimmed.length()-1) << false;
         QTest::newRow("no asterisk") << s.replace("*", "") << false; // modifies test data!
     }
-
+#ifdef QT_BUILD_INTERNAL
     void getNmeaTime()
     {
         QFETCH(QString, str);
@@ -408,6 +411,7 @@ private slots:
                 << "2734.7964,S,15306.0124,W" 
                 << -lat << -lng << true;
     }
+#endif
 
 };
 

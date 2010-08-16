@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,7 +38,8 @@
 **
 ****************************************************************************/
 
-import Qt 4.6
+import Qt 4.7
+import QtMobility.sensors 1.0
 
 Rectangle {
     width: 800
@@ -47,6 +48,7 @@ Rectangle {
 
     OrientationSensor {
         id: orientation
+        active: true
 
         onReadingChanged: {
             if (reading.orientation == OrientationReading.TopUp)
@@ -65,11 +67,9 @@ Rectangle {
                 content.state = "";
         }
     }
-    Component.onCompleted: orientation.start()
 
     Item {
         id: content
-        transformOrigin: Item.Center
         anchors.centerIn: parent
         Text {
             id: text
@@ -122,9 +122,8 @@ Rectangle {
         ]
 
         transitions: Transition {
-            NumberAnimation { matchProperties: "rotation"; easing: "InOutQuad"; duration: 400 }
+            NumberAnimation { properties: "rotation"; easing.type: Easing.OutBounce; duration: 400 }
         }
     }
-
-
 }
+

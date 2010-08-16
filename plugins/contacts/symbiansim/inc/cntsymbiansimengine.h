@@ -97,7 +97,8 @@ public:
     ~CntSymbianSimEngineData();
     
     CntSimStore *m_simStore;
-    QMap<QContactAbstractRequest *, CntAbstractSimRequest *> m_asyncRequests;    
+    QMap<QContactAbstractRequest *, CntAbstractSimRequest *> m_asyncRequests;
+    int m_phoneNumberMatchLen;
 };
 
 class CntSymbianSimEngine : public QContactManagerEngine
@@ -141,15 +142,18 @@ public:
     
     /* Capabilities reporting */
     bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType = QContactType::TypeContact) const;
+    bool isFilterSupported(const QContactFilter& filter) const;
     QStringList supportedContactTypes() const;
 
 public:
     void updateDisplayLabel(QContact& contact) const;
     CntSimStore* simStore() { return d->m_simStore; }
     void setReadOnlyAccessConstraint(QContactDetail* detail) const;
+    bool filter(const QContactFilter &filter, const QContact &contact);
 
 private:
     bool executeRequest(QContactAbstractRequest *req, QContactManager::Error* qtError) const;
+    void getMatchLengthL(int &matchLength);
 
 private:
     QExplicitlySharedDataPointer<CntSymbianSimEngineData> d;

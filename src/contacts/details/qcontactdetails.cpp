@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -77,6 +77,9 @@ QTM_BEGIN_NAMESPACE
    \class QContactSyncTarget
    \brief The QContactSyncTarget class provides a sync target
    for a contact.
+  
+  \inmodule QtContacts
+  
    \ingroup contacts-details
  */
 
@@ -408,6 +411,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldStreet, "Street");
    \sa locality(), setLocality()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldLocality, "Locality");
+
 
 /*!
    \variable QContactAddress::FieldRegion
@@ -1328,6 +1332,17 @@ Q_DEFINE_LATIN1_CONSTANT(QContactNote::FieldNote, "Note");
    \brief The QContactTag class contains a tag associated with a
    contact.
    \ingroup contacts-details
+
+   Typically the tags associated with a contact will be distinct,
+   although this is usually only enforced when the contact is saved
+   in the manager.
+
+   Here is an example of retrieving all the tags for a contact:
+   \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Getting all tags
+
+   Here is an example of checking for a specific tag value:
+   \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Checking for a specific tag
+
  */
 
 /*!
@@ -1775,6 +1790,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldAssistantName, "AssistantNam
    \fn QContactOrganization::logoUrl() const
    Returns the url of the logo of the organization stored in this detail.
  */
+
 
 /*!
    \fn QContactOrganization::setDepartment(const QStringList& department)

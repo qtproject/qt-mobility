@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>453</width>
-    <height>239</height>
+    <height>339</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -85,6 +85,12 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>basePath</tabstop>
+  <tabstop>connectButton</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>tableWidget</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

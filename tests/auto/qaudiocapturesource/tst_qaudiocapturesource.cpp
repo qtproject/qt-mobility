@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,12 +42,14 @@
 #include <QtTest/QtTest>
 #include <QDebug>
 
-#include <QtMultimedia/qaudioformat.h>
+#include <qaudioformat.h>
 
 #include <qaudiocapturesource.h>
 #include <qaudioencodercontrol.h>
 #include <qmediarecordercontrol.h>
 #include <qaudioendpointselector.h>
+
+//TESTED_COMPONENT=src/multimedia
 
 QT_USE_NAMESPACE
 class MockAudioEncoderControl : public QAudioEncoderControl
@@ -101,7 +103,8 @@ public:
     MockMediaRecorderControl(QObject *parent = 0):
             QMediaRecorderControl(parent),
             m_state(QMediaRecorder::StoppedState),
-            m_position(0) {}
+            m_position(0),
+            m_muted(false) {}
 
     ~MockMediaRecorderControl() {}
 
@@ -110,6 +113,7 @@ public:
     QMediaRecorder::State state() const { return m_state; }
     qint64 duration() const { return m_position; }
     void applySettings() {}
+    bool isMuted() const { return m_muted; }
 
 public slots:
     void record()
@@ -132,10 +136,17 @@ public slots:
         emit stateChanged(m_state);
     }
 
+    void setMuted(bool muted)
+    {
+        if (m_muted != muted)
+            emit mutedChanged(m_muted = muted);
+    }
+
 public:
     QUrl       m_sink;
     QMediaRecorder::State m_state;
     qint64     m_position;
+    bool m_muted;
 };
 
 class MockAudioEndpointSelector : public QAudioEndpointSelector
@@ -213,7 +224,7 @@ public:
         delete mockAudioEndpointSelector;
     }
 
-    QMediaControl* control(const char *iid) const
+    QMediaControl* requestControl(const char *iid)
     {
         if (qstrcmp(iid, QAudioEncoderControl_iid) == 0)
             return mockAudioEncoderControl;
@@ -226,6 +237,8 @@ public:
 
         return 0;
     }
+
+    void releaseControl(QMediaControl*) {}
 
     MockAudioEncoderControl *mockAudioEncoderControl;
     MockMediaRecorderControl *mockMediaRecorderControl;

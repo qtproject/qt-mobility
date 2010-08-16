@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,6 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/versit
 
 #include "tst_qvcard30writer.h"
 #ifdef QT_BUILD_INTERNAL
@@ -150,7 +152,8 @@ void tst_QVCard30Writer::testEncodeVersitProperty_data()
     expectedResult = "AGENT:BEGIN:VCARD\\nVERSION:3.0\\nFN:Secret Agent\\nEND:VCARD\\n\r\n";
     property.setName(QString::fromAscii("AGENT"));
     property.setValue(QString());
-    QVersitDocument document;
+    QVersitDocument document(QVersitDocument::VCard30Type);
+    document.setComponentType(QLatin1String("VCARD"));
     QVersitProperty embeddedProperty;
     embeddedProperty.setName(QString(QString::fromAscii("FN")));
     embeddedProperty.setValue(QString::fromAscii("Secret Agent"));
@@ -160,7 +163,7 @@ void tst_QVCard30Writer::testEncodeVersitProperty_data()
 
     // Value is base64 encoded.
     QByteArray value("value");
-    expectedResult = "Springfield.HOUSE.PHOTO;ENCODING=B:" + value.toBase64() + "\r\n";
+    expectedResult = "Springfield.HOUSE.PHOTO;ENCODING=b:" + value.toBase64() + "\r\n";
     QStringList groups(QString::fromAscii("Springfield"));
     groups.append(QString::fromAscii("HOUSE"));
     property.setGroups(groups);

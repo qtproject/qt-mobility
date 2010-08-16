@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -361,34 +361,7 @@ void MessagingEx::on_sendMmsButton_clicked()
 
 void MessagingEx::messageReceived(const QMessageId& aId)
 {
-    bool canShow = true;
-    if (m_manager.message(aId).type() == QMessage::NoType) {
-        // Message can not be read/shown
-        // Wait message availability for 5 seconds at maximum
-        canShow = false;
-        int tries = 0;
-        QEventLoop* loop = new QEventLoop(this);
-        while (tries < 50) {
-            // => Wait for 0.1 seconds and try to read message again
-            QTimer::singleShot(100, loop, SLOT(quit()));
-            loop->exec();
-            if (m_manager.message(aId).type() != QMessage::NoType) {
-                // Message can be read/shown
-                canShow = true;
-                break;
-            } else {
-                // Message can not be read/shown
-                // => Continue waiting
-                tries++;
-            }
-        }
-        loop->disconnect();
-        loop->deleteLater();
-    }
-
-    if (canShow) {
-        m_service.show(aId);
-    }
+    m_service.show(aId);
 }
 
 void MessagingEx::messageRemoved(const QMessageId& aId)

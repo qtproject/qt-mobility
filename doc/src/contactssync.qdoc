@@ -1,43 +1,31 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the documentation of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** $QT_BEGIN_LICENSE:FDL$
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in a
+** written agreement between you and Nokia.
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of this
+** file.
 **
 ** If you have questions regarding the use of this file, please contact
 ** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+
 
 /*!
 
@@ -52,7 +40,7 @@
 
 The Contacts Synchronous API enables a client to synchronously fetch, update, or remove
 contact data from a contact manager.  A synchronous API is of most use to clients who wish
-to perform simple requests where performance or UI responsiveness is not critical.
+to perform simple requests where performance or user interface responsiveness is not critical.
 Synchronous calls to a contact manager will block until they are completed, and therefore
 should not be performed in the GUI thread if the manager is a frontend to an online service
 or long-latency datastore.  The main advantage of the synchronous API is its simplicity and
@@ -101,7 +89,7 @@ A contact is identified by its QContactId.  This id consists of two parts: a URI
 which stores the contact, and the local id of the contact in that manager.  Some operations which take a pointer
 to a contact as an argument may modify the contact during the operation; updating the contact id is a common example.
 
-The QContactManager class provides API for accessing the ids of contacts which are stored in the manager:
+The QContactManager class provides API for accessing the IDs of contacts which are stored in the manager:
 \list
   \o contactIds(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const
   \o contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const
@@ -234,10 +222,10 @@ datastores.
 The client creates a new contact, adds a name and a phone number, and
 saves it to the default store of the default manager.
 
-We assume the existence of a specialised leaf-class that allows simple
+We assume the existence of a specialized leaf-class that allows simple
 access to details of the definition identified by the "PhoneNumber"
 identifier, and another that allows simple access to details of the
-definition identified by the "Name" identifier.  These specialised leaf
+definition identified by the "Name" identifier.  These specialized leaf
 classes may be written by anyone, and simply wrap the functionality
 provided by QContactDetail in order to allow simpler access to fields
 supported by a particular definition.
@@ -246,7 +234,7 @@ supported by a particular definition.
 
 \section2 Filtering by detail definition and value
 
-The client utilises a default manager and asks for any contacts with a
+The client utilizes a default manager and asks for any contacts with a
 particular phone number.  The example assumes that the default manager
 supports the provided QContactPhoneNumber detail leaf class (which
 implements the default definition for phone number details).
