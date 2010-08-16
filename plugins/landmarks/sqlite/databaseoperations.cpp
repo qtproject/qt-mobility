@@ -112,6 +112,26 @@ QString quoteString(const QString &s)
     return q;
 }
 
+bool matchString(const QString &sourceString, const QString &matchString, QLandmarkFilter::MatchFlags matchFlags )
+{
+    Qt::CaseSensitivity cs;
+    if (matchFlags & QLandmarkFilter::MatchCaseSensitive)
+        cs = Qt::CaseSensitive;
+    else
+        cs = Qt::CaseInsensitive;
+    if ((matchFlags & 3) == QLandmarkFilter::MatchEndsWith) {
+        return sourceString.endsWith(matchString, cs);
+    } else if ((matchFlags & 3) == QLandmarkFilter::MatchStartsWith) {
+        return sourceString.startsWith(matchString, cs);
+    } else if ((matchFlags & 3) == QLandmarkFilter::MatchContains) {
+        return sourceString.contains(matchString,cs);
+    } else if (matchFlags & QLandmarkFilter::MatchFixedString) {
+        return sourceString.compare(matchString,cs) == 0;
+    } else {
+        return QVariant(sourceString) == QVariant(matchString);
+    }
+}
+
 /*
     \internal
     Returns true if value is in between min and max(inclusive of min and max)
@@ -1030,7 +1050,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName
                     }
 
                 } else { //must be custom attributes
-                    if (attributeFilter.attributeType() == QLandmarkAttributeFilter::AndOperation) {
+                    if (attributeFilter.operationType() == QLandmarkAttributeFilter::AndOperation) {
                         bindValues.insert("key", attributeKeys.at(0));
                         queryString = "SELECT landmarkId FROM landmark_attribute WHERE landmark_attribute.key = :key";
                         if (!executeQuery(&query, queryString,
@@ -1060,6 +1080,8 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName
                             }
 
                             bool isMatch = true;
+                            QVariant lmAttributeValue;
+                            QVariant filterAttributeValue;
                             foreach(const QString &filterAttributeKey, attributeKeys) {
                                 if (!lmAttributes.contains(filterAttributeKey)) {
                                     isMatch = false;
@@ -1068,7 +1090,24 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName
 
                                 if (!attributeFilter.attribute(filterAttributeKey).isValid()) {
                                     continue;
-                                } else if (attributeFilter.attribute(filterAttributeKey) != lmAttributes.value(filterAttributeKey)) {
+                                } else  {
+                                    lmAttributeValue = lmAttributes.value(filterAttributeKey);
+
+                                    filterAttributeValue = attributeFilter.attribute(filterAttributeKey);
+
+                                    if (filterAttributeValue.type() == QVariant::String) {
+
+                                        if (matchString(lmAttributeValue.toString(),
+                                                        filterAttributeValue.toString(),
+                                                        attributeFilter.matchFlags(filterAttributeKey))) {
+                                            continue;
+                                        }
+                                    } else {
+                                        if (lmAttributeValue == filterAttributeValue) {
+                                            continue;
+                                        }
+                                    }
+                                    //didn't find a match
                                     isMatch = false;
                                     break;
                                 }

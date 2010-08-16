@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS landmark (
 CREATE TABLE IF NOT EXISTS landmark_attribute (
     landmarkId INTEGER,
     key TEXT,
-    value TEXT,
+    value BLOB,
     PRIMARY KEY (landmarkId,key),
     FOREIGN KEY (landmarkId) REFERENCES landmark(id)
 );
