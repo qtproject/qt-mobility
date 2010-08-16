@@ -2,6 +2,8 @@ TEMPLATE = subdirs
 
 include(../../staticconfig.pri)
 
+#SUBDIRS += headers
+
 contains(mobility_modules,serviceframework) {
     SUBDIRS += servicemetadata \                   #service framework
            qserviceinterfacedescriptor \
@@ -35,7 +37,9 @@ contains(mobility_modules,location) {
           qlocationutils \
           qnmeapositioninfosource \
           #qlandmarkmanagerplugins \
-          qlandmarkmanagerengine
+          qlandmarkmanagerengine \
+          qlandmark \
+          qlandmarkcategory
 
      contains(QT_CONFIG, declarative) {
          SUBDIRS += qdeclarativeposition
@@ -44,14 +48,10 @@ contains(mobility_modules,location) {
         SUBDIRS += qgeoinfosources_wince
     }
 
-    SUBDIRS +=  qlandmarkfilehandler_gpx \
-                qlandmarkfilehandler_lmx
-    SUBDIRS += qlandmarkmanagerengine_sqlite
-}
-
-contains(mobility_modules,landmarks) {
-    SUBDIRS += qlandmark \                      #Landmark
-            qlandmarkcategory
+    SUBDIRS +=  qlandmarkfilehandler_gpx
+                #qlandmarkfilehandler_lmx
+    
+#disable for now    SUBDIRS += qlandmarkmanagerengine_sqlite
 }
 
 contains(mobility_modules,publishsubscribe) {
@@ -158,16 +158,6 @@ contains(mobility_modules,multimedia) {
         qaudioformat \
         qvideoframe \
         qvideosurfaceformat
-
-    symbian: {
-        #symbian spesific autotests
-        SUBDIRS += symbian 
-        SUBDIRS -= \
-                qmediaplayer_s60 \
-                qradiotuner_s60 \
-                qmediaobject_s60 \
-                qmediarecorder_s60
-    }
 }
 #Messaging
 contains(mobility_modules,messaging) {
@@ -191,21 +181,15 @@ contains(mobility_modules,gallery) {
         qdocumentgallery \
         qgalleryabstractrequest \
         qgalleryabstractresponse \
-        qgallerybaseresponse \
-        qgallerycountrequest \
-        qgalleryitemlist \
-        qgalleryitemlistmodel \
         qgalleryitemrequest \
+        qgalleryquerymodel \
         qgalleryqueryrequest \
         qgalleryremoverequest \
         qgalleryresource \
-        qgalleryurlrequest
+        qgallerytyperequest
 
     !unix: SUBDIRS += qgalleryfilter
 
-    unix: contains(QT_CONFIG, dbus) {
-        SUBDIRS += \
-                qgallerytrackeritemlist_maemo5
-    }
+    unix: contains(QT_CONFIG, dbus): SUBDIRS += qgallerytrackerresultset_maemo5
 }
 

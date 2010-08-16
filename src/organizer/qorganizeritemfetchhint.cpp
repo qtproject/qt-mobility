@@ -168,4 +168,31 @@ void QOrganizerItemFetchHint::setOptimizationHints(OptimizationHints hints)
     d->m_optimizationHints = hints;
 }
 
+#ifndef QT_NO_DATASTREAM
+QDataStream& operator<<(QDataStream& out, const QOrganizerItemFetchHint& hint)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItemFetchHint
+    return out << formatVersion
+               << hint.detailDefinitionsHint()
+               << static_cast<quint32>(hint.optimizationHints());
+}
+
+QDataStream& operator>>(QDataStream& in, QOrganizerItemFetchHint& hint)
+{
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QStringList detailDefinitionHints;
+        quint32 optimizations;
+        in >> detailDefinitionHints >> optimizations;
+        hint.setDetailDefinitionsHint(detailDefinitionHints);
+        hint.setOptimizationHints(static_cast<QOrganizerItemFetchHint::OptimizationHints>(optimizations));
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+#endif
+
+
 QTM_END_NAMESPACE

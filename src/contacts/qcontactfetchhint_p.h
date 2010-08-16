@@ -83,6 +83,7 @@ public:
 
     QStringList m_definitionsHint;
     QStringList m_relationshipsHint;
+    QSize m_preferredImageSize;
     QContactFetchHint::OptimizationHints m_optimizationHints;
 };
 

@@ -101,8 +101,7 @@ bool QGeoCodeParser::parseRootElement()
                             return false;
                         }
                     }
-                }
-                else {
+                } else {
                     m_reader->raiseError("The place not found, request needs more attributes or there is error in request.");
                     return false;
                 }
@@ -171,52 +170,40 @@ bool QGeoCodeParser::parsePlace(QGeoPlace *place)
             if (m_reader->name() == "property") {
                 if (m_reader->attributes().value("name").toString() == "ADDR_CITY_NAME") {
                     address.setCity(m_reader->readElementText());
-                }
-                else if (m_reader->attributes().value("name").toString() == "ADDR_COUNTRY_NAME") {
+                } else if (m_reader->attributes().value("name").toString() == "ADDR_COUNTRY_NAME") {
                     address.setCountry(m_reader->readElementText());
-                }
-                else if (m_reader->attributes().value("name").toString() == "ADDR_STREET_NAME") {
-                    address.setThoroughfareName(m_reader->readElementText());
-                }
-                else if (m_reader->attributes().value("name").toString() == "ADDR_HOUSE_NUMBER") {
-                    address.setThoroughfareNumber(m_reader->readElementText());
-                }
-                else if (m_reader->attributes().value("name").toString() == "ADDR_POSTAL_CODE") {
+                } else if (m_reader->attributes().value("name").toString() == "ADDR_STREET_NAME") {
+                    address.setStreet(m_reader->readElementText());
+                } else if (m_reader->attributes().value("name").toString() == "ADDR_HOUSE_NUMBER") {
+                    address.setStreetNumber(m_reader->readElementText());
+                } else if (m_reader->attributes().value("name").toString() == "ADDR_POSTAL_CODE") {
                     address.setPostCode(m_reader->readElementText());
-                }
-                else if (m_reader->attributes().value("name").toString() == "ADDR_STATE_NAME") {
+                } else if (m_reader->attributes().value("name").toString() == "ADDR_STATE_NAME") {
                     address.setState(m_reader->readElementText());
-                }
-                else if (m_reader->attributes().value("name").toString() == "ADDR_COUNTY_NAME") {
+                } else if (m_reader->attributes().value("name").toString() == "ADDR_COUNTY_NAME") {
                     address.setCounty(m_reader->readElementText());
                 }
 
 
                 else if (m_reader->attributes().value("name").toString() == "GEO_BBX_LATITUDE_2") {
                     bBoxTopLeft.setLatitude((m_reader->readElementText()).toDouble());
-                }
-                else if (m_reader->attributes().value("name").toString() == "GEO_BBX_LONGITUDE_1") {
+                } else if (m_reader->attributes().value("name").toString() == "GEO_BBX_LONGITUDE_1") {
                     bBoxTopLeft.setLongitude((m_reader->readElementText()).toDouble());
-                }
-                else if (m_reader->attributes().value("name").toString() == "GEO_BBX_LATITUDE_1") {
+                } else if (m_reader->attributes().value("name").toString() == "GEO_BBX_LATITUDE_1") {
                     bBoxBottomRight.setLatitude((m_reader->readElementText()).toDouble());
-                }
-                else if (m_reader->attributes().value("name").toString() == "GEO_BBX_LONGITUDE_2") {
+                } else if (m_reader->attributes().value("name").toString() == "GEO_BBX_LONGITUDE_2") {
                     bBoxBottomRight.setLongitude((m_reader->readElementText()).toDouble());
                 }
 
 
                 else if (m_reader->attributes().value("name").toString() == "GEO_LATITUDE") {
                     coordinate.setLatitude((m_reader->readElementText()).toDouble());
-                }
-                else if (m_reader->attributes().value("name").toString() == "GEO_LONGITUDE") {
+                } else if (m_reader->attributes().value("name").toString() == "GEO_LONGITUDE") {
                     coordinate.setLongitude((m_reader->readElementText()).toDouble());
-                }
-                else {
+                } else {
                     m_reader->skipCurrentElement();
                 }
-            }
-            else {
+            } else {
                 m_reader->skipCurrentElement();
             }
         }
@@ -226,8 +213,8 @@ bool QGeoCodeParser::parsePlace(QGeoPlace *place)
     place->setAddress(address);
     place->setCoordinate(coordinate);
 
-    if(bBoxTopLeft.isValid() && bBoxBottomRight.isValid()) {
-        place->setBoundingBox(QGeoBoundingBox(bBoxTopLeft,bBoxBottomRight));
+    if (bBoxTopLeft.isValid() && bBoxBottomRight.isValid()) {
+        place->setViewport(QGeoBoundingBox(bBoxTopLeft, bBoxBottomRight));
     }
     return true;
 }

@@ -97,6 +97,7 @@ RELEASEMODE=
 BUILD_SILENT=
 LINUX_TARGET=
 QMAKE_CACHE="$shadowpath/.qmake.cache"
+QMAKE_EXEC=qmake
 LIB_PATH="lib"
 BIN_PATH="bin"
 PLUGIN_PATH="plugins"
@@ -120,13 +121,13 @@ usage()
     echo "-headerdir <dir> .. Header files will be installed to <dir>"
     echo "                    (default prefix: PREFIX/include)"
     echo "-libdir <dir> ..... Libraries will be installed to <dir>"
-    echo "                    (default PREFIX/lib)"
+    echo "                    (default: PREFIX/lib)"
     echo "-bindir <dir> ..... Executables will be installed to <dir>"
-    echo "                    (default PREFIX/bin)"
+    echo "                    (default: PREFIX/bin)"
     echo "-plugindir <dir> .. Plug-ins will be installed to <dir>"
-    echo "                    (default PREFIX/plugins)"
+    echo "                    (default: PREFIX/plugins)"
     echo "-demosdir <dir> ... Demos will be installed to <dir>"
-    echo "                    (default PREFIX/bin)"
+    echo "                    (default: PREFIX/bin)"
     echo "-examplesdir <dir>  Examples will be installed to <dir>"
     echo "                    (default PREFIX/bin)"
     echo "-debug ............ Build with debugging symbols"
@@ -148,8 +149,10 @@ usage()
     echo "                    those modules (and their dependencies) will automatically be enabled."
     echo "-maemo6 ........... Build Qt Mobility for Maemo6 (Harmattan)."
     echo "-maemo5 ........... Build Qt Mobility for Maemo5 (Fremantle)."
-    echo "-sdk <sdk>......... Build using Apple provided SDK <path/to/sdk>."
+    echo "-sdk <sdk> ........ Build using Apple provided SDK <path/to/sdk>."
     echo "                    example: -sdk /Developer/SDKs/MacOSX10.6.sdk"
+    echo "-qmake-exec <name>  Sets custom binary name for qmake binary"
+    echo "                    (default: qmake)"
     echo
     
     rm -f "$CONFIG_IN"
@@ -227,6 +230,10 @@ while [ "$#" -gt 0 ]; do
             MAC_SDK="$2"
             shift
             ;;
+        -qmake-exec)
+            QMAKE_EXEC="$2"
+            shift
+            ;;
         -modules)
             MOBILITY_MODULES_UNPARSED=$2
             #reset default selection
@@ -275,7 +282,7 @@ findframeworks()
 # if so, install in the correct place.
 # and fix rpath
     echo "contains(QT_CONFIG,qt_framework):message(1)" > 1.pro
-    SOMETHING=`qmake -spec macx-g++ 1.pro 2>&1`
+    SOMETHING=`$QMAKE_EXEC -spec macx-g++ 1.pro 2>&1`
         if [ "$SOMETHING" = "Project MESSAGE: 1" ]; then
             LIB_PATH="Library/Frameworks"
             BIN_PATH="Applications"
@@ -293,7 +300,7 @@ findUniversal()
     echo "contains(QT_CONFIG,ppc): system(echo CONFIG+=ppc >> mac.inc)" >> 2.pro
     echo "contains(QT_CONFIG,ppc64): system(echo CONFIG+=ppc64 >> mac.inc)" >> 2.pro
     echo "contains(QT_CONFIG,x86_64): system(echo CONFIG+=x86_64 >> mac.inc)" >> 2.pro
-    SOMETIME=`qmake -spec macx-g++ 2.pro 2>&1`
+    SOMETIME=`$QMAKE_EXEC -spec macx-g++ 2.pro 2>&1`
     rm 2.pro
     if [ -e "mac.inc" ]; then
          echo "exists(mac.inc): include(mac.inc)" >> "$CONFIG_IN"
@@ -447,14 +454,27 @@ echo
 WHICH="$relpath/config.tests/tools/which.test"
 
 printf "Checking available Qt"
-if ! "$WHICH" qmake 2>/dev/null 1>&2; then
-    printf " ... Not found\n\n" >&2
-    echo >&2 "Cannot find 'qmake' in your PATH.";
-    echo >&2 "Aborting." 
-else
-    printf " ... "
-    qmake -query QT_VERSION
+if ! "$WHICH" $QMAKE_EXEC 2>/dev/null 1>&2; then
+    QMAKE_EXEC_ALTERNATIVE=
+    if "$WHICH" qmake4 2>/dev/null 1>&2; then
+        QMAKE_EXEC_ALTERNATIVE=qmake4
+    elif "$WHICH" qmake-qt4 2>/dev/null 1>&2; then
+        QMAKE_EXEC_ALTERNATIVE=qmake-qt4
+    fi
+
+    if [ -z "$QMAKE_EXEC_ALTERNATIVE" ]; then
+        printf " ... Not found\n\n" >&2
+        echo >&2 "Cannot find "$QMAKE_EXEC" in your PATH.";
+        echo >&2 "Aborting."
+        exit 1
+    else
+        QMAKE_EXEC="$QMAKE_EXEC_ALTERNATIVE"
+    fi
 fi
+
+#we found a qmake binary
+printf " ... "
+$QMAKE_EXEC -query QT_VERSION
 
 # find out which make we want to use
 MAKE=
@@ -466,7 +486,8 @@ for m in make gmake; do
 done
 if [ -z "$MAKE" ]; then
     echo >&2 "Cannot find 'make' or 'gmake' in your PATH";
-    echo >&2 "Aborting." 
+    echo >&2 "Aborting."
+    exit 1
 fi
 
 compileTest()
@@ -485,7 +506,7 @@ compileTest()
         cd config.tests/$2
     fi
 
-    qmake $QMKSPEC "$relpath/config.tests/$2/$2.pro" 2>> "$CONFIG_LOG" >> "$CONFIG_LOG"
+    $QMAKE_EXEC $QMKSPEC "$relpath/config.tests/$2/$2.pro" 2>> "$CONFIG_LOG" >> "$CONFIG_LOG"
     printf  " ."
     "$MAKE" clean >> "$CONFIG_LOG"
     printf "."
@@ -521,17 +542,19 @@ fi
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts organizer" >> "$CONFIG_IN"
+echo "contains(mobility_modules,contacts): mobility_modules *= serviceframework" >> "$CONFIG_IN"
 echo "maemo5|maemo6:contains(maemo-icd_enabled, no): mobility_modules -= bearer" >> "$CONFIG_IN"
 
 # If libicd-network-wlan-dev.h is not present, use own copy.
 # At time of writing, libicd-network-wlan-dev is not released for maemo5.
 echo "maemo5:contains(maemo-icd-network-wlan_enabled, no): INCLUDEPATH += $relpath/src/3rdparty/icd-network-wlan" >> "$CONFIG_IN"
 
-# Ideally we'd skip generating headers for modules that are not enabled
 echo "Generating Mobility Headers..."
 #remove old headers
 rm -rf $shadowpath/include
 mkdir $shadowpath/include
+
+$relpath/bin/syncheaders $shadowpath/include/QtMobility $relpath/src/global
 for module in $MOBILITY_MODULES; do
     case "$module" in 
         bearer)
@@ -542,6 +565,9 @@ for module in $MOBILITY_MODULES; do
             ;;
         location)
             $relpath/bin/syncheaders $shadowpath/include/QtLocation $relpath/src/location
+            $relpath/bin/syncheaders $shadowpath/include/QtLocation $relpath/src/location/landmarks
+            $relpath/bin/syncheaders $shadowpath/include/QtLocation $relpath/src/location/maps
+            $relpath/bin/syncheaders $shadowpath/include/QtLocation $relpath/src/location/maps/tiled
             ;;
         serviceframework)
             $relpath/bin/syncheaders $shadowpath/include/QtServiceFramework $relpath/src/serviceframework
@@ -550,6 +576,8 @@ for module in $MOBILITY_MODULES; do
             $relpath/bin/syncheaders $shadowpath/include/QtSystemInfo $relpath/src/systeminfo
             ;;
         contacts)
+            #contacts implies serviceframework
+            $relpath/bin/syncheaders $shadowpath/include/QtServiceFramework $relpath/src/serviceframework
             $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts
             $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/details
             $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/requests
@@ -574,6 +602,7 @@ for module in $MOBILITY_MODULES; do
             $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/requests
             $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/filters
             $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer
+            $relpath/bin/syncheaders $shadowpath/include/QtServiceFramework $relpath/src/serviceframework
             ;;
         sensors)
             $relpath/bin/syncheaders $shadowpath/include/QtSensors $relpath/src/sensors
@@ -599,8 +628,8 @@ if [ "$shadowpath" != "$relpath" ]; then
     cp -f "$relpath/features/strict_flags.prf" "$shadowpath/features"
 fi
 
-echo "Running qmake..."
-if qmake -makefile $QMKSPEC -recursive "$relpath/qtmobility.pro"; then
+echo "Running $QMAKE_EXEC..."
+if $QMAKE_EXEC -makefile $QMKSPEC -recursive "$relpath/qtmobility.pro"; then
     echo ""
     echo "configure has finished. You may run make or gmake to build the project now."
 else

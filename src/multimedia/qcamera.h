@@ -68,19 +68,36 @@ class Q_MULTIMEDIA_EXPORT QCamera : public QMediaObject
 {
     Q_OBJECT
     Q_PROPERTY(QCamera::State state READ state NOTIFY stateChanged)
+    Q_PROPERTY(QCamera::Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(QCamera::CaptureMode captureMode READ captureMode WRITE setCaptureMode NOTIFY captureModeChanged)
     Q_PROPERTY(QCamera::LockStatus lockStatus READ lockStatus NOTIFY lockStatusChanged)
 
+    Q_ENUMS(Status)
+    Q_ENUMS(State)
+    Q_ENUMS(CaptureMode)
+    Q_ENUMS(Error)
+    Q_ENUMS(LockStatus)
+    Q_ENUMS(LockChangeReason)
+    Q_ENUMS(LockType)
 public:
+    enum Status {
+        UnavailableStatus,
+        UnloadedStatus,
+        LoadingStatus,
+        LoadedStatus,
+        StandbyStatus,
+        StartingStatus,
+        ActiveStatus
+    };
+
     enum State {
-        StoppedState,
-        IdleState,
+        UnloadedState,
+        LoadedState,
         ActiveState
     };
 
     enum CaptureMode
     {
-        CaptureDisabled,
         CaptureStillImage,
         CaptureVideo
     };
@@ -129,6 +146,7 @@ public:
     QtMultimediaKit::AvailabilityError availabilityError() const;
 
     State state() const;
+    Status status() const;
 
     CaptureMode captureMode() const;
     bool isCaptureModeSupported(CaptureMode mode) const;
@@ -151,6 +169,10 @@ public:
 
 public Q_SLOTS:
     void setCaptureMode(QCamera::CaptureMode mode);
+
+    void load();
+    void unload();
+
     void start();
     void stop();
 
@@ -184,6 +206,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::LockTypes)
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QCamera::State)
+Q_DECLARE_METATYPE(QCamera::Status)
 Q_DECLARE_METATYPE(QCamera::Error)
 Q_DECLARE_METATYPE(QCamera::LockType)
 Q_DECLARE_METATYPE(QCamera::LockStatus)

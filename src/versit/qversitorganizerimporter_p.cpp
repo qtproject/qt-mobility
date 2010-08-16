@@ -45,14 +45,14 @@
 #include "qmobilityglobal.h"
 #include "qtorganizer.h"
 #include "qversitorganizerdefs_p.h"
+#include "qversitpluginloader_p.h"
 
 
 QTM_USE_NAMESPACE
 
-QVersitOrganizerImporterPrivate::QVersitOrganizerImporterPrivate() :
+QVersitOrganizerImporterPrivate::QVersitOrganizerImporterPrivate(const QString& profile) :
     mPropertyHandler(NULL),
-    mDefaultResourceHandler(new QVersitDefaultResourceHandler),
-    mResourceHandler(mDefaultResourceHandler),
+    mTimeZoneHandler(NULL),
     mDurationSpecified(false)
 {
     int versitPropertyCount =
@@ -64,11 +64,16 @@ QVersitOrganizerImporterPrivate::QVersitOrganizerImporterPrivate() :
                     QLatin1String(versitOrganizerDetailMappings[i].detailDefinitionName),
                     QLatin1String(versitOrganizerDetailMappings[i].detailFieldName)));
     }
+
+    mPluginPropertyHandlers = QVersitPluginLoader::instance()->createOrganizerHandlers(profile);
+    mTimeZoneHandler = QVersitPluginLoader::instance()->timeZoneHandler();
 }
 
 QVersitOrganizerImporterPrivate::~QVersitOrganizerImporterPrivate()
 {
-    delete mDefaultResourceHandler;
+    foreach (QVersitOrganizerHandler* pluginHandler, mPluginPropertyHandlers) {
+        delete pluginHandler;
+    }
 }
 
 bool QVersitOrganizerImporterPrivate::importDocument(
@@ -94,6 +99,14 @@ bool QVersitOrganizerImporterPrivate::importDocument(
 
     foreach (const QVersitProperty& property, properties) {
         importProperty(document, property, item);
+    }
+    // run plugin handlers
+    foreach (QVersitOrganizerImporterPropertyHandler* handler, mPluginPropertyHandlers) {
+        handler->documentProcessed(document, item);
+    }
+    // run property handlers
+    if (mPropertyHandler) {
+        mPropertyHandler->documentProcessed(document, item);
     }
     return true;
 }
@@ -158,6 +171,15 @@ void QVersitOrganizerImporterPrivate::importProperty(
         }
     }
 
+    // run plugin handlers
+    foreach (QVersitOrganizerImporterPropertyHandler* handler, mPluginPropertyHandlers) {
+        handler->propertyProcessed(document, property, *item, &success, &updatedDetails);
+    }
+    // run the handler, if set
+    if (mPropertyHandler) {
+        mPropertyHandler->propertyProcessed(document, property, *item, &success, &updatedDetails);
+    }
+
     foreach (QOrganizerItemDetail detail, updatedDetails) {
         item->saveDetail(&detail);
     }
@@ -187,7 +209,7 @@ bool QVersitOrganizerImporterPrivate::createTimestampCreated(
         QList<QOrganizerItemDetail>* updatedDetails) {
     if (property.value().isEmpty())
         return false;
-    QDateTime datetime = parseDateTime(property.value());
+    QDateTime datetime = parseDateTime(property);
     if (!datetime.isValid())
         return false;
     QOrganizerItemTimestamp timestamp(item->detail<QOrganizerItemTimestamp>());
@@ -202,7 +224,7 @@ bool QVersitOrganizerImporterPrivate::createTimestampModified(
         QList<QOrganizerItemDetail>* updatedDetails) {
     if (property.value().isEmpty())
         return false;
-    QDateTime datetime = parseDateTime(property.value());
+    QDateTime datetime = parseDateTime(property);
     if (!datetime.isValid())
         return false;
     QOrganizerItemTimestamp timestamp(item->detail<QOrganizerItemTimestamp>());
@@ -262,7 +284,7 @@ bool QVersitOrganizerImporterPrivate::createStartDateTime(
         QList<QOrganizerItemDetail>* updatedDetails) {
     if (property.value().isEmpty())
         return false;
-    QDateTime newStart = parseDateTime(property.value());
+    QDateTime newStart = parseDateTime(property);
     if (!newStart.isValid())
         return false;
     QOrganizerEventTimeRange etr(item->detail<QOrganizerEventTimeRange>());
@@ -294,7 +316,7 @@ bool QVersitOrganizerImporterPrivate::createEndDateTime(
         QList<QOrganizerItemDetail>* updatedDetails) {
     if (property.value().isEmpty())
         return false;
-    QDateTime newEnd = parseDateTime(property.value());
+    QDateTime newEnd = parseDateTime(property);
     if (!newEnd.isValid())
         return false;
     QOrganizerEventTimeRange etr(item->detail<QOrganizerEventTimeRange>());
@@ -338,7 +360,7 @@ bool QVersitOrganizerImporterPrivate::createTodoStartDateTime(
         QList<QOrganizerItemDetail>* updatedDetails) {
     if (property.value().isEmpty())
         return false;
-    QDateTime newStart = parseDateTime(property.value());
+    QDateTime newStart = parseDateTime(property);
     if (!newStart.isValid())
         return false;
     QOrganizerTodoTimeRange ttr(item->detail<QOrganizerTodoTimeRange>());
@@ -355,7 +377,7 @@ bool QVersitOrganizerImporterPrivate::createDueDateTime(
         QList<QOrganizerItemDetail>* updatedDetails) {
     if (property.value().isEmpty())
         return false;
-    QDateTime newEnd = parseDateTime(property.value());
+    QDateTime newEnd = parseDateTime(property);
     if (!newEnd.isValid())
         return false;
     QOrganizerTodoTimeRange ttr(item->detail<QOrganizerTodoTimeRange>());
@@ -373,13 +395,31 @@ bool QVersitOrganizerImporterPrivate::createJournalEntryDateTime(
         QList<QOrganizerItemDetail>* updatedDetails) {
     if (property.value().isEmpty())
         return false;
-    QDateTime dateTime = parseDateTime(property.value());
+    QDateTime dateTime = parseDateTime(property);
     if (!dateTime.isValid())
         return false;
     QOrganizerJournalTimeRange jtr(item->detail<QOrganizerJournalTimeRange>());
     jtr.setEntryDateTime(dateTime);
     updatedDetails->append(jtr);
     return true;
+}
+
+/*! Parses a datetime stored in the \a property as an ISO 8601 datetime in basic format, either in
+ * UTC time zone, floating time zone, or (if a TZID parameter exists in \a property), as a foreign
+ * time zone (returned as a UTC datetime).  Returns an invalid QDateTime if the string cannot be
+ * parsed.
+ */
+QDateTime QVersitOrganizerImporterPrivate::parseDateTime(const QVersitProperty& property)
+{
+    QDateTime datetime = parseDateTime(property.value());
+    if (datetime.isValid() && datetime.timeSpec() == Qt::LocalTime && mTimeZoneHandler) {
+        QMultiHash<QString, QString> params = property.parameters();
+        QString tzid = params.value(QLatin1String("TZID"));
+        if (!tzid.isEmpty()) {
+            datetime = mTimeZoneHandler->convertTimeZoneToUtc(datetime, tzid);
+        }
+    }
+    return datetime;
 }
 
 /*! Parses \a str as an ISO 8601 datetime in basic format, either in UTC timezone or floating
@@ -691,7 +731,7 @@ bool QVersitOrganizerImporterPrivate::createFinishedDateTime(
         QList<QOrganizerItemDetail>* updatedDetails) {
     if (property.value().isEmpty())
         return false;
-    QDateTime datetime = parseDateTime(property.value());
+    QDateTime datetime = parseDateTime(property);
     if (!datetime.isValid())
         return false;
     QOrganizerTodoProgress progress(item->detail<QOrganizerTodoProgress>());

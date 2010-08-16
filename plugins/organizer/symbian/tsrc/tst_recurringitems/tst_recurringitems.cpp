@@ -47,7 +47,7 @@
 
 QTM_USE_NAMESPACE
 
-const QString m_managerNameSymbian("symbian");
+const QString managerNameSymbian("symbian");
 
 // We need to be able to pass QOrganizerItemRecurrenceRule as parameter from
 // test data functions
@@ -95,6 +95,7 @@ void tst_recurringItems::initTestCase()
     QStringList managerNames = QOrganizerItemManager::availableManagers();
     managerNames.removeAll("invalid");
     managerNames.removeAll("skeleton");
+    //managerNames.removeAll("memory");
     foreach (QString managerName, managerNames) {
         m_om = new QOrganizerItemManager(managerName);
         m_om->removeItems(m_om->itemIds(), 0);
@@ -129,6 +130,7 @@ void tst_recurringItems::addRecurrenceRule_data()
     QStringList managerNames = QOrganizerItemManager::availableManagers();
     managerNames.removeAll("invalid"); // the test cases would not pass on invalid backend
     managerNames.removeAll("skeleton"); // the test cases would not pass on skeleton backend
+    //managerNames.removeAll("memory");
 
     foreach (QString managerName, managerNames) {
         addItemsWeeklyRecurrence(managerName, QOrganizerItemType::TypeEvent);
@@ -193,50 +195,139 @@ bool tst_recurringItems::verifyRecurrenceRule(
         match = false;
     }
 
-    if (expectedRRule.count()&&(expectedRRule.count()!= actualRRule.count())) {
-        match = false;
-    }
-
-    if ((!expectedRRule.endDate().isNull())&&(expectedRRule.endDate()!= actualRRule.endDate())) {
-        if (!actualRRule.count()) {
+    if (expectedRRule.count() != actualRRule.count()) {
+        // Allow counts to be different in case the expected count is zero.
+        // This exception is needed because symbian calendar server calculates
+        // the count based on the end date in this case.
+        if (expectedRRule.count() > 0) {
+            qDebug() << "expected count" << expectedRRule.count();
+            qDebug() << "actual count" << actualRRule.count();
             match = false;
         }
     }
 
-    if (expectedRRule.interval()&&(expectedRRule.interval()!= actualRRule.interval())) {
-        match = false;
-    }
+    // Verifying end date is not straightforward
+    if (expectedRRule.endDate() != actualRRule.endDate()) {
+        bool endDateVerified (false);
 
-    if (expectedRRule.months().count()&&(expectedRRule.months()!= actualRRule.months())) {
-        match = false;
-    }
+        // Allow the exceptional case with no end time and no count set (in
+        // that case the end date is set to year 2100 by symbian calendar server)
+        if (expectedRRule.count() == 0
+            && expectedRRule.endDate().isNull()
+            && actualRRule.endDate() == QDate(2100, 12, 31)) {
+            endDateVerified = true;
+        }
 
-    if (expectedRRule.daysOfWeek().count()&&(expectedRRule.daysOfWeek()!= actualRRule.daysOfWeek())) {
-        match = false;
-    }
+        // Symbian calendar server sets both count and end date during save,
+        // but count has higher priority. In practice this means that setting
+        // end date for an item results in an item with count set.
+        if (actualRRule.count() > 0
+            && !actualRRule.endDate().isValid()) {
+            endDateVerified = true;
+        }
 
-    if (expectedRRule.daysOfMonth().count()&&(expectedRRule.daysOfMonth()!= actualRRule.daysOfMonth())) {
-        match = false;
-    }
+        // Symbian calendar server may have updated the end date to match
+        // the actual date of the last item instance -> Allow end date that
+        // is before the expected end date
+        // Note: this rule is not needed in the verification, because end date
+        // will never be set on symbian backend. The rule is here for future
+        // reference. See the previous verification rule for more details on
+        // why end date is not set.
+        /*
+        if (expectedRRule.endDate().isValid()
+            && actualRRule.endDate().isValid()
+            && actualRRule.endDate() < expectedRRule.endDate()) {
+            endDateVerified = true;
+        }
+        */
 
-    if (expectedRRule.positions().count()&&(expectedRRule.positions()!= actualRRule.positions())) {
-        //calentry fetches positions in ascending order
-        QList<int>orginalPosition(expectedRRule.positions());
-        qSort(orginalPosition);
-        if (orginalPosition!= actualRRule.positions()) {
+        if (!endDateVerified) {
+            qDebug() << "expected end date" << expectedRRule.endDate();
+            qDebug() << "actual end date" << actualRRule.endDate();
             match = false;
         }
     }
 
-    if (expectedRRule.daysOfYear().count()&&(expectedRRule.daysOfYear()!= actualRRule.daysOfYear())) {
+    if (expectedRRule.interval() != actualRRule.interval()) {
+        qDebug() << "expected interval" << expectedRRule.interval();
+        qDebug() << "actual interval" << actualRRule.interval();
         match = false;
     }
 
-    if (expectedRRule.weeksOfYear().count()&&(expectedRRule.weeksOfYear()!= actualRRule.weeksOfYear())) {
+    if (expectedRRule.months() != actualRRule.months()) {
+        qDebug() << "expected months" << expectedRRule.months();
+        qDebug() << "actual months" << actualRRule.months();
         match = false;
     }
 
-    if (expectedRRule.weekStart()&&(expectedRRule.weekStart()!= actualRRule.weekStart())) {
+    if (expectedRRule.daysOfWeek() != actualRRule.daysOfWeek()) {
+        // Allow days of week to be different in case the expected days of week
+        // is empty. This exception is needed because symbian calendar server
+        // does not allow weekly recurring items without days of week. So the
+        // solution in symbian backend is to generate days of week based on the
+        // start date in this case. The end result from Qt Organizer API client
+        // point of view is that the days of week will appear during saving.
+        if (expectedRRule.daysOfWeek().isEmpty()
+            && actualRRule.daysOfWeek().count() == 1) {
+            // do nothing
+        } else {
+            qDebug() << "expected daysOfWeek" << expectedRRule.daysOfWeek();
+            qDebug() << "actual daysOfWeek" << actualRRule.daysOfWeek();
+            match = false;
+        }
+    }
+
+    if (expectedRRule.daysOfMonth()!= actualRRule.daysOfMonth()) {
+        qDebug() << "expected daysOfMonth" << expectedRRule.daysOfMonth();
+        qDebug() << "actual daysOfMonth" << actualRRule.daysOfMonth();
+        match = false;
+    }
+
+    if (expectedRRule.positions() != actualRRule.positions()) {
+        QList<int> expectedPositions = expectedRRule.positions();
+        QList<int> actualPositions = actualRRule.positions();
+
+        // Allow different sortings, symbian calendar server does not preserve
+        // the original sorting, it returns positions in ascending order
+        qSort(expectedPositions);
+        qSort(actualPositions);
+
+        if (expectedPositions != actualPositions) {
+            // Allow empty positions to be converted into "all positions", this
+            // is needed because symbian calendar server does not allow storing
+            // monthly recurring items with days-of-week but without positions.
+            // So the work-around is to convert empty positions into "all
+            // positions" as defined by RFC-2445. From Qt client point of view
+            // this means that saving monthly recurring item with "days-of-week"
+            // and empty positions will have the positions set to "all
+            // positions".
+            QList<int> allPositions;
+            allPositions << 1 << 2 << 3 << 4 << -1;
+            qSort(allPositions);
+            if (!expectedPositions.isEmpty()
+                || actualPositions != allPositions) {
+                qDebug() << "expected positions" << expectedPositions;
+                qDebug() << "actual positions" << actualPositions;
+                match = false;
+            }
+        }
+    }
+
+    if (expectedRRule.daysOfYear()!= actualRRule.daysOfYear()) {
+        qDebug() << "expected daysOfYear" << expectedRRule.daysOfYear();
+        qDebug() << "actual daysOfYear" << actualRRule.daysOfYear();
+        match = false;
+    }
+
+    if (expectedRRule.weeksOfYear()!= actualRRule.weeksOfYear()) {
+        qDebug() << "expected weeksOfYear" << expectedRRule.weeksOfYear();
+        qDebug() << "actual weeksOfYear" << actualRRule.weeksOfYear();
+        match = false;
+    }
+
+    if (expectedRRule.weekStart()!= actualRRule.weekStart()) {
+        qDebug() << "expected weekStart" << expectedRRule.weekStart();
+        qDebug() << "actual weekStart" << actualRRule.weekStart();
         match = false;
     }
 
@@ -269,32 +360,32 @@ void tst_recurringItems::removeRecurrenceRule()
     QOrganizerItemRecurrence recurrence;
     recurrence.setRecurrenceRules(rrules);
     QVERIFY(item.saveDetail(&recurrence));
-
-    // Save item with recurrence rule.
     QVERIFY(m_om->saveItem(&item));
 
-    // Fetch the saved item
+    // Fetch the saved item & check that recurrence rule was saved
     item = m_om->item(item.localId());
+    QVERIFY(item.details(QOrganizerItemRecurrence::DefinitionName).count() == 1);
 
-    // Remove a recurrence rule and save the detail to the item.
-    QOrganizerItemRecurrence chkRecurrence = item.detail<QOrganizerItemRecurrence>();
-
-    // Set an empty list.
-    chkRecurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>());
-    QVERIFY(item.saveDetail(&chkRecurrence));
-
-    //Save the item again without the recurrence rule.
+    // Remove a recurrence rule detail & save & verify it does not exist
+    recurrence = item.detail<QOrganizerItemRecurrence>();
+    item.removeDetail(&recurrence);
     QVERIFY(m_om->saveItem(&item));
-
-    // Fetch again and Verify
-    QOrganizerItem resultItem;
-    resultItem = m_om->item(item.localId());
-
-    if (item.detail(QOrganizerItemRecurrence::DefinitionName)!= resultItem.detail(QOrganizerItemRecurrence::DefinitionName)) {
-        qDebug() << "Expected: " << item.detail(QOrganizerItemRecurrence::DefinitionName);
-        qDebug() << "Actual:   " << resultItem.detail(QOrganizerItemRecurrence::DefinitionName);
-        QFAIL("Recurrence items do not match!");
-    }
+    item = m_om->item(item.localId());
+    QVERIFY(item.details(QOrganizerItemRecurrence::DefinitionName).count() == 0);
+    
+    // Save the recurrence again & fetch & verify
+    QVERIFY(item.saveDetail(&recurrence));
+    QVERIFY(m_om->saveItem(&item));
+    item = m_om->item(item.localId());
+    QVERIFY(item.details(QOrganizerItemRecurrence::DefinitionName).count() == 1);
+    
+    // Set empty recurrence rule detail & save & verify it does not exist
+    recurrence = item.detail<QOrganizerItemRecurrence>();
+    recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>());
+    QVERIFY(item.saveDetail(&recurrence));
+    QVERIFY(m_om->saveItem(&item));
+    item = m_om->item(item.localId());
+    QVERIFY(item.details(QOrganizerItemRecurrence::DefinitionName).count() == 0);
 }
 
 /*!
@@ -305,9 +396,9 @@ void tst_recurringItems::addManagers()
     QTest::addColumn<QString>("managerName");
 
     QStringList managerNames = QOrganizerItemManager::availableManagers();
-    //managerNames.removeAll("memory");
     managerNames.removeAll("invalid"); // the test cases would not pass on invalid backend
     managerNames.removeAll("skeleton"); // the test cases would not pass on skeleton backend
+    //managerNames.removeAll("memory");
 
     foreach(QString mgr, managerNames) {
         QTest::newRow(QString("[%1]").arg(mgr).toLatin1().constData()) << mgr;
@@ -321,10 +412,20 @@ void tst_recurringItems::addManagers()
 void tst_recurringItems::addItemsWeeklyRecurrence(QString managerName, QString itemType)
 {
     QOrganizerItemRecurrenceRule rrule;
+    QList<Qt::DayOfWeek> daysOfWeek;
+
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    QTest::newRow(QString("[%1] weekly forever").arg(managerName).toLatin1().constData())
+        << managerName
+        << QString("weekly 0")
+        << itemType
+        << QDateTime::currentDateTime().addSecs(3600)
+        << rrule;
+
+    rrule = QOrganizerItemRecurrenceRule(); // reset
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
     rrule.setCount(10);
-
-    if (!managerName.contains(m_managerNameSymbian)) {
+    if (!managerName.contains(managerNameSymbian)) {
         // TODO: Symbian calendar server does not allow saving weekly entries
         // without "by day" data. To be studied if this could be implemented
         // on symbian with some work-around. But for now, let's just disable
@@ -337,8 +438,10 @@ void tst_recurringItems::addItemsWeeklyRecurrence(QString managerName, QString i
             << rrule;
     }
 
+    rrule = QOrganizerItemRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
     rrule.setCount(3);
-    QList<Qt::DayOfWeek> daysOfWeek;
+    daysOfWeek.clear(); // reset
     daysOfWeek.append(Qt::Tuesday);
     rrule.setDaysOfWeek(daysOfWeek);
     QTest::newRow(QString("[%1] weekly on Tuesday for 3 weeks").arg(managerName).toLatin1().constData())
@@ -348,8 +451,10 @@ void tst_recurringItems::addItemsWeeklyRecurrence(QString managerName, QString i
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
 
+    rrule = QOrganizerItemRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
     rrule.setCount(5);
-    daysOfWeek.clear();
+    daysOfWeek.clear(); // reset
     daysOfWeek.append(Qt::Tuesday);
     daysOfWeek.append(Qt::Thursday);
     rrule.setDaysOfWeek(daysOfWeek);
@@ -361,10 +466,9 @@ void tst_recurringItems::addItemsWeeklyRecurrence(QString managerName, QString i
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
 
-    //Every other week on monday,wednesday and friday until 24th dec 2010 starting on september 1 2010
-    rrule.setCount(0);
+    rrule = QOrganizerItemRecurrenceRule(); // reset
     rrule.setInterval(2);
-    daysOfWeek.clear();
+    daysOfWeek.clear(); // reset
     daysOfWeek.append(Qt::Monday);
     daysOfWeek.append(Qt::Wednesday);
     daysOfWeek.append(Qt::Friday);
@@ -377,19 +481,19 @@ void tst_recurringItems::addItemsWeeklyRecurrence(QString managerName, QString i
         << QDateTime(QDate(QDate::currentDate().year() , 9, 1))
         << rrule;
 
-    if (!managerName.contains(m_managerNameSymbian)) {
-        // TODO: fails on symbian backend because symbian calendar server sets
-        // both count and end date for a saved item (otherwise the item is
-        // saved ok)
-        QOrganizerItemRecurrenceRule rrule2 = rrule;
-        rrule2.setEndDate(QDate(QDate::currentDate().year() + 1, 1, 24));
-        QTest::newRow(QString("[%1] weekly on Tuesday and Thursday until 12/24 of next year").arg(managerName).toLatin1().constData())
-            << managerName
-            << QString("weekly 5")
-            << itemType
-            << QDateTime::currentDateTime().addSecs(3600)
-            << rrule2;
-    }
+    rrule = QOrganizerItemRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    daysOfWeek.clear(); // reset
+    daysOfWeek.append(Qt::Tuesday);
+    daysOfWeek.append(Qt::Thursday);
+    rrule.setDaysOfWeek(daysOfWeek);
+    rrule.setEndDate(QDate(QDate::currentDate().year() + 1, 1, 24));
+    QTest::newRow(QString("[%1] weekly on Tuesday and Thursday until 12/24 of next year").arg(managerName).toLatin1().constData())
+        << managerName
+        << QString("weekly 5")
+        << itemType
+        << QDateTime::currentDateTime().addSecs(3600)
+        << rrule;
 }
 
 /*!
@@ -412,67 +516,74 @@ void tst_recurringItems::addItemsMonthlyRecurrence(QString managerName, QString 
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
 
-    // Symbian recurrence rule does not support positions in this context so
-    // the test case is disabled
-    if (!managerName.contains(m_managerNameSymbian)) {
-        // Every other Month on first and last Sunday for 10 occurances
-        QOrganizerItemRecurrenceRule rrule1;
-        QList<Qt::DayOfWeek> daysOfWeek;
-        rrule1.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
-        rrule1.setCount(10);
-        rrule1.setInterval(2);
-        daysOfWeek.append(Qt::Sunday);
-        rrule1.setDaysOfWeek(daysOfWeek);
-        QList<int> positions;
-        positions.append(1);
-        positions.append(-1);
-        rrule1.setPositions(positions);
-        QTest::newRow(QString("[%1] Every other Month on first and last Sunday for 10 occurances").arg(managerName).toLatin1().constData())
-            << managerName
-            << QString("monthly 2")
-            << itemType
-            << QDateTime::currentDateTime().addSecs(3600)
-            << rrule1;
-    }
+    // Every other Month on first and last Sunday for 10 occurances
+    rrule = QOrganizerItemRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+    rrule.setCount(10);
+    rrule.setInterval(2);
+    QList<Qt::DayOfWeek> daysOfWeek;
+    daysOfWeek.append(Qt::Sunday);
+    rrule.setDaysOfWeek(daysOfWeek);
+    QList<int> positions;
+    positions.append(1);
+    positions.append(-1);
+    rrule.setPositions(positions);
+    QTest::newRow(QString("[%1] Every other Month on first and last Sunday for 10 occurances").arg(managerName).toLatin1().constData())
+        << managerName
+        << QString("monthly 2")
+        << itemType
+        << QDateTime::currentDateTime().addSecs(3600)
+        << rrule;
 
-    // Symbian recurrence rule does not support days-of-week for monthly
-    // recurring items so the test case is disabled
-    if (!managerName.contains(m_managerNameSymbian)) {
-        QList<Qt::DayOfWeek> daysOfWeek;
-        // Every other month every tuesday
-        QOrganizerItemRecurrenceRule rrule2;
-        rrule2.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
-        rrule2.setInterval(2);
-        daysOfWeek.clear();
-        daysOfWeek.append(Qt::Tuesday);
-        rrule2.setDaysOfWeek(daysOfWeek);
-        QTest::newRow(QString("[%1] Every other month every tuesday").arg(managerName).toLatin1().constData())
-            << managerName
-            << QString("monthly 3")
-            << itemType
-            << QDateTime::currentDateTime().addSecs(3600)
-            << rrule2;
-    }
+    // Every third Month on first and third Sunday for 10 occurances
+    rrule = QOrganizerItemRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+    rrule.setCount(10);
+    rrule.setInterval(3);
+    daysOfWeek.clear();
+    daysOfWeek.append(Qt::Sunday);
+    rrule.setDaysOfWeek(daysOfWeek);
+    positions.clear();
+    positions.append(1);
+    positions.append(3);
+    rrule.setPositions(positions);
+    QTest::newRow(QString("[%1] Every third Month on first and third Sunday for 10 occurances").arg(managerName).toLatin1().constData())
+        << managerName
+        << QString("monthly 3")
+        << itemType
+        << QDateTime::currentDateTime().addSecs(3600)
+        << rrule;
 
-    // Symbian recurrence rule does not support positions in this context so
-    // the test case is disabled
-    if (!managerName.contains(m_managerNameSymbian)) {
-        rrule.setDaysOfMonth(QList<int>()); // clear days of month
-        QList<Qt::DayOfWeek> daysOfWeek;
-        daysOfWeek.append(Qt::Sunday);
-        rrule.setDaysOfWeek(daysOfWeek);
-        rrule.setCount(3);
-        QList<int> positions;
-        positions.clear();
-        positions.append(1);
-        rrule.setPositions(positions);
-        QTest::newRow(QString("[%1] the 1st Sunday of the month for 3 months").arg(managerName).toLatin1().constData())
-            << managerName
-            << QString("monthly 4")
-            << itemType
-            << QDateTime::currentDateTime().addSecs(3600)
-            << rrule;
-    }
+    // Every other month every tuesday
+    rrule = QOrganizerItemRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+    rrule.setInterval(2);
+    daysOfWeek.clear();
+    daysOfWeek.append(Qt::Tuesday);
+    rrule.setDaysOfWeek(daysOfWeek);
+    QTest::newRow(QString("[%1] Every other month every tuesday").arg(managerName).toLatin1().constData())
+        << managerName
+        << QString("monthly 4")
+        << itemType
+        << QDateTime::currentDateTime().addSecs(3600)
+        << rrule;
+
+    // The 2nd Sunday of the month for 3 months
+    rrule = QOrganizerItemRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+    daysOfWeek.clear();
+    daysOfWeek.append(Qt::Sunday);
+    rrule.setDaysOfWeek(daysOfWeek);
+    rrule.setCount(3);
+    positions.clear();
+    positions.append(2);
+    rrule.setPositions(positions);
+    QTest::newRow(QString("[%1] the 2nd Sunday of the month for 3 months").arg(managerName).toLatin1().constData())
+        << managerName
+        << QString("monthly 5")
+        << itemType
+        << QDateTime::currentDateTime().addSecs(3600)
+        << rrule;
 }
 
 /*!
@@ -576,25 +687,57 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
 
-    // yearly on every Monday of January
-    rrule = QOrganizerItemRecurrenceRule();
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-    months = QList<QOrganizerItemRecurrenceRule::Month>();
-    months.append(QOrganizerItemRecurrenceRule::January);
-    rrule.setMonths(months);
-    daysOfWeek = QList<Qt::DayOfWeek>();
-    daysOfWeek.append(Qt::Monday);
-    rrule.setDaysOfWeek(daysOfWeek);
-    QTest::newRow(QString("[%1] yearly on Mondays of January").arg(managerName).toLatin1().constData())
-        << managerName
-        << QString("yearly 3")
-        << itemType
-        << QDateTime::currentDateTime().addSecs(3600)
-        << rrule;
+    // Symbian recurrence rule supports only one position for a yearly
+    // recurrence so the test case is disabled.
+    if (!managerName.contains(managerNameSymbian)) {
+        // Yearly on first and third Monday of January for 2 occurrences
+        rrule = QOrganizerItemRecurrenceRule();
+        rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+        rrule.setCount(2);
+        months.clear();
+        months.append(QOrganizerItemRecurrenceRule::January);
+        rrule.setMonths(months);
+        daysOfWeek.clear();
+        daysOfWeek.append(Qt::Monday);
+        rrule.setDaysOfWeek(daysOfWeek);
+        positions.clear();
+        positions.append(1);
+        positions.append(3);
+        rrule.setPositions(positions);
+        QTest::newRow(QString("[%1] yearly on first and third Monday of January").arg(managerName).toLatin1().constData())
+            << managerName
+            << QString("yearly 3")
+            << itemType
+            << QDateTime::currentDateTime().addSecs(3600)
+            << rrule;
+    }
+
+    // Symbian recurrence rule does not support yearly recurrence with days of
+    // week defined but positions left empty, so the test case is disabled.
+    // According to the RFC-2445 the default would be to use all positions if
+    // the position is not available.
+    if (!managerName.contains(managerNameSymbian)) {
+        // yearly on every Monday of January
+        rrule = QOrganizerItemRecurrenceRule();
+        rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+        months = QList<QOrganizerItemRecurrenceRule::Month>();
+        months.append(QOrganizerItemRecurrenceRule::January);
+        rrule.setMonths(months);
+        daysOfWeek = QList<Qt::DayOfWeek>();
+        daysOfWeek.append(Qt::Monday);
+        rrule.setDaysOfWeek(daysOfWeek);
+        QTest::newRow(QString("[%1] yearly on every Monday of January").arg(managerName).toLatin1().constData())
+            << managerName
+            << QString("yearly 4")
+            << itemType
+            << QDateTime::currentDateTime().addSecs(3600)
+            << rrule;
+    }
 
     // Yearly on 15th day of January
-    // Note: Symbian calendar server does not support yearly events with days-of-month
-    if (!managerName.contains(m_managerNameSymbian)) {
+    // Note: Symbian calendar server does not support yearly events with
+    // days-of-month so the test case is disabled
+    if (!managerName.contains(managerNameSymbian)) {
         rrule = QOrganizerItemRecurrenceRule();
         rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
         rrule.setCount(2);
@@ -606,7 +749,7 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
         rrule.setDaysOfMonth(daysOfMonth);
         QTest::newRow(QString("[%1] yearly on 15th day of January").arg(managerName).toLatin1().constData())
             << managerName
-            << QString("yearly 4")
+            << QString("yearly 5")
             << itemType
             << QDateTime::currentDateTime().addSecs(3600)
             << rrule;
@@ -626,7 +769,7 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
     rrule.setMonths(months);
     QTest::newRow(QString("[%1] yearly on January and March").arg(managerName).toLatin1().constData())
         << managerName
-        << QString("yearly 5")
+        << QString("yearly 6")
         << itemType
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
@@ -643,7 +786,7 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
     rrule.setMonths(months);
     QTest::newRow(QString("[%1] every other year on January Feburary and March").arg(managerName).toLatin1().constData())
         << managerName
-        << QString("yearly 6")
+        << QString("yearly 7")
         << itemType
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
@@ -660,7 +803,7 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
     rrule.setDaysOfYear(daysOfYear);
     QTest::newRow(QString("[%1] every 3rd year on 1st,100th and 200th day for 10 occurances").arg(managerName).toLatin1().constData())
         << managerName
-        << QString("yearly 7")
+        << QString("yearly 8")
         << itemType
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
@@ -678,7 +821,7 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
     rrule.setPositions(pos);
     QTest::newRow(QString("[%1] Every 20th monday of the year,forever").arg(managerName).toLatin1().constData())
         << managerName
-        << QString("yearly 8")
+        << QString("yearly 9")
         << itemType
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
@@ -692,7 +835,7 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
     rrule.setDaysOfWeek(daysOfWeek);
     QTest::newRow(QString("[%1] Monday of week number 20 forever").arg(managerName).toLatin1().constData())
         << managerName
-        << QString("yearly 9")
+        << QString("yearly 10")
         << itemType
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
@@ -706,7 +849,7 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
     rrule.setDaysOfWeek(daysOfWeek);
     QTest::newRow(QString("[%1] Every Monday in march forever").arg(managerName).toLatin1().constData())
         << managerName
-        << QString("yearly 10")
+        << QString("yearly 11")
         << itemType
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
@@ -720,7 +863,7 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
     //Occurs every 1st day of the month for 4 occurances
     QTest::newRow(QString("[%1] Days of Month=1, Count=4").arg(managerName).toLatin1().constData())
         << managerName
-        << QString("yearly 11")
+        << QString("yearly 12")
         << itemType
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
@@ -733,7 +876,7 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
     rrule.setCount(1);
     QTest::newRow(QString("[%1] Days of Year=32, Count=1").arg(managerName).toLatin1().constData())
         << managerName
-        << QString("yearly 12")
+        << QString("yearly 13")
         << itemType
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;

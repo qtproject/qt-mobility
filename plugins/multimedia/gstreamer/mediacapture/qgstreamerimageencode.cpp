@@ -83,5 +83,8 @@ QImageEncoderSettings QGstreamerImageEncode::imageSettings() const
 
 void QGstreamerImageEncode::setImageSettings(const QImageEncoderSettings &settings)
 {
-    m_settings = settings;
+    if (m_settings != settings) {
+        m_settings = settings;
+        emit settingsChanged();
+    }
 }

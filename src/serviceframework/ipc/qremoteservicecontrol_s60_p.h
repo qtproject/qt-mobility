@@ -96,12 +96,8 @@ public:
     TInt Connect(); 
     void Close();
     TVersion Version() const;
-    bool MessageAvailable();
     void SendServicePackage(const QServicePackage& aPackage);
-
-    void ListenForPackages(TRequestStatus& aStatus); // TODO protected friend?
-    void CancelListenForPackages();
-
+    
  public:
     // 255 bytes seems to cover a lot of test cases in house
     // this size might need to be increased to avoid a lot
@@ -117,13 +113,19 @@ signals:
     void Disconnected(); // TODO not sure if this should be done like others
     void errorUnrecoverableIPCFault(QService::UnrecoverableIPCError);
 
+protected:
+    void ListenForPackages(TRequestStatus& aStatus);
+    void CancelListenForPackages();
+    
 private:
     TInt StartServer();
 
 private: 
     TIpcArgs iArgs; // These two are used in actively listening to server
     TError iError;
-    QString iServerAddress;    
+    QString iServerAddress;     
+    
+    friend class ServiceMessageListener;
 };
 
 // needed for creating server thread.

@@ -58,15 +58,15 @@ public:
     QString providerName() const;
     int providerVersion() const;
 
-    QGeoSearchManagerEngine* createSearchManagerEngine(const QMap<QString, QString> &parameters,
-                                                       QGeoServiceProvider::Error *error,
-                                                       QString *errorString) const;
-    QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QString> &parameters,
-                                                         QGeoServiceProvider::Error *error,
-                                                         QString *errorString) const;
-    QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QString> &parameters,
-                                                         QGeoServiceProvider::Error *error,
-                                                         QString *errorString) const;
+    QGeoSearchManagerEngine* createSearchManagerEngine(const QMap<QString, QVariant> &parameters,
+            QGeoServiceProvider::Error *error,
+            QString *errorString) const;
+    QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
+            QGeoServiceProvider::Error *error,
+            QString *errorString) const;
+    QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
+            QGeoServiceProvider::Error *error,
+            QString *errorString) const;
 };
 
 #endif

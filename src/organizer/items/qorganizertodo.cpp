@@ -99,6 +99,21 @@ QDateTime QOrganizerTodo::dueDateTime() const
     return ttr.dueDateTime();
 }
 
+/*! Sets whether the time component of the start datetime or end datetime are significant. */
+void QOrganizerTodo::setTimeSpecified(bool isTimeSpecified)
+{
+    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    ttr.setTimeSpecified(isTimeSpecified);
+    saveDetail(&ttr);
+}
+
+/*! Returns whether the time component of the start datetime or end datetime are significant. */
+bool QOrganizerTodo::isTimeSpecified() const
+{
+    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    return ttr.isTimeSpecified();
+}
+
 /*!
   Sets the dates on which the todo reoccurs to \a rdates
  */

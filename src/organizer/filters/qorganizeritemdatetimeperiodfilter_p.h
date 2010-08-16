@@ -88,6 +88,22 @@ public:
         return true;
     }
 
+    QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
+    {
+        if (formatVersion == 1) {
+            stream << m_start << m_end;
+        }
+        return stream;
+    }
+
+    QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
+    {
+        if (formatVersion == 1) {
+            stream >> m_start >> m_end;
+        }
+        return stream;
+    }
+
     Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemDateTimePeriodFilter, QOrganizerItemFilter::OrganizerItemDateTimePeriodFilter)
 
     QDateTime  m_start;

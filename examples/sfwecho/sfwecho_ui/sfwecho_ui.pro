@@ -6,8 +6,6 @@ QT = core gui
 CONFIG +=
 TEMPLATE = app
 
-include(../../../common.pri)
-
 include(../../examples.pri)
 
 CONFIG += mobility

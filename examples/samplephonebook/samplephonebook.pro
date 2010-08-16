@@ -16,7 +16,7 @@ INCLUDEPATH += . \
                ../../src/versit
 
 CONFIG += mobility
-MOBILITY = contacts
+MOBILITY = contacts serviceframework
 contains(mobility_modules,versit) {
     MOBILITY += versit
     DEFINES += BUILD_VERSIT

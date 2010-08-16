@@ -32,6 +32,6 @@ wince* {
 
 # Add this too
 CONFIG += mobility
-MOBILITY = contacts
+MOBILITY = contacts serviceframework
 
 

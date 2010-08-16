@@ -164,6 +164,14 @@ const QGalleryType QDocumentGallery::PhotoAlbum("PhotoAlbum");
 // Common
 
 /*!
+    \variable QDocumentGallery::url
+
+    This property contains canonical url of an item in the document gallery.
+*/
+
+const QGalleryProperty QDocumentGallery::url("url");
+
+/*!
     \variable QDocumentGallery::author
 
     This property contains the name of the author of an item in the document gallery.
@@ -234,64 +242,6 @@ const QGalleryProperty QDocumentGallery::keywords("keywords");
 */
 
 const QGalleryProperty QDocumentGallery::language("language");
-
-/*!
-    \variable QDocumentGallery::iconImage
-
-    This property contains a QImage icon representation of an item in the
-    document gallery.
-
-    \sa iconPixmap, thumbnailImage, previewImage
-*/
-
-const QGalleryProperty QDocumentGallery::iconImage("iconImage");
-
-/*!
-    \variable QDocumentGallery::iconPixmap
-
-    This property contains a QPixmap icon representation of an item in the
-    document gallery.
-
-    \sa iconImage, thumbnailPixmap, previewPixmap
-*/
-
-const QGalleryProperty QDocumentGallery::iconPixmap("iconPixmap");
-
-/*!
-    \variable QDocumentGallery::thumbnailImage
-
-    This property contains a QImage thumbnail representation of an item in the
-    document gallery.
-*/
-
-const QGalleryProperty QDocumentGallery::thumbnailImage("thumbnailImage");
-
-/*!
-    \variable QDocumentGallery::thumbnailPixmap
-
-    This property contains a QPixmap thumbnail representation of an item in the
-    document gallery.
-*/
-
-const QGalleryProperty QDocumentGallery::thumbnailPixmap("thumbnailPixmap");
-
-/*!
-    \variable QDocumentGallery::previewImage
-
-    This property contains a QImage preview representation of an item in the
-    document gallery.
-*/
-
-const QGalleryProperty QDocumentGallery::previewImage("previewImage");
-
-/*!
-    \variable QDocumentGallery::previewPixmap
-
-    This property contains a QPixmap preview representation of an item in the
-    document gallery.
-*/
-
-const QGalleryProperty QDocumentGallery::previewPixmap("previewPixmap");
 
 // File
 
@@ -563,13 +513,6 @@ const QGalleryProperty QDocumentGallery::height("height");
 const QGalleryProperty QDocumentGallery::orientation("orientation");
 
 // Photo
-/*!
-    \variable QDocumentGallery::photoAlbum
-
-    This property contains the name of the album a photo belongs to.
-*/
-
-const QGalleryProperty QDocumentGallery::photoAlbum("photoAlbum");
 
 /*!
     \variable QDocumentGallery::dateTaken
@@ -708,7 +651,7 @@ const QGalleryProperty QDocumentGallery::director("director");
 */
 
 /*!
-    \fn QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) const
+    \fn QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::RequestType type) const
 
     \reimp
 */
@@ -745,7 +688,7 @@ QDocumentGallery::~QDocumentGallery()
 
 }
 
-bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type) const
+bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::RequestType) const
 {
     return false;
 }

@@ -62,6 +62,8 @@ public:
     QCamera::State state() const;
     void setState(QCamera::State state);
 
+    QCamera::Status status() const { return m_status; }
+
     QCamera::CaptureMode captureMode() const { return m_captureMode; }
     void setCaptureMode(QCamera::CaptureMode mode);
 
@@ -75,14 +77,21 @@ public:
         return QCamera::NoLock;
     }
 
+
+public slots:
+    void reloadLater();
+
 private slots:
-    void updateState();
+    void updateStatus();
+    void reloadPipeline();
+
 
 private:
     QCamera::CaptureMode m_captureMode;
     QGstreamerCaptureSession *m_session;
     QCamera::State m_state;
-    QCamera::State m_requestedState;
+    QCamera::Status m_status;
+    bool m_reloadPending;
 };
 
 #endif // QGSTREAMERCAMERACONTROL_H

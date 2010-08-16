@@ -41,9 +41,9 @@
 
 //TESTED_COMPONENT=src/documentgallery
 
-#include <QtTest/QtTest>
-
 #include <qgalleryabstractresponse.h>
+
+#include <QtTest/QtTest>
 
 QTM_USE_NAMESPACE
 
@@ -55,31 +55,12 @@ private Q_SLOTS:
     void finish();
     void cancel();
     void idle();
+    void immediateResponse();
 };
 
 class QtGalleryTestResponse : public QGalleryAbstractResponse
 {
 public:
-    QStringList propertyNames() const { return QStringList(); }
-    int propertyKey(const QString &) const { return -1; }
-    QGalleryProperty::Attributes propertyAttributes(int) const {
-        return QGalleryProperty::Attributes(); }
-    QVariant::Type propertyType(int) const { return QVariant::Invalid; }
-
-    int count() const { return 0; }
-
-    QVariant id(int) const { return QVariant(); }
-    QUrl url(int) const { return QUrl(); }
-    QString type(int) const { return QString(); }
-    QString parentId(int) const { return QString(); }
-    QList<QGalleryResource> resources(int) const { return QList<QGalleryResource>(); }
-    ItemStatus status(int) const { return ItemStatus(); }
-
-    QVariant metaData(int, int) const { return QVariant(); }
-    void setMetaData(int, int, const QVariant &) {}
-
-    bool waitForFinished(int) { return true; }
-
     void doFinish(int result, bool idle) { finish(result, idle); }
 };
 
@@ -208,6 +189,15 @@ void tst_QGalleryAbstractResponse::idle()
     QCOMPARE(response.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(response.isIdle(), false);
     QCOMPARE(spy.count(), 2);
+}
+
+void tst_QGalleryAbstractResponse::immediateResponse()
+{
+    QGalleryAbstractResponse response(QGalleryAbstractRequest::Succeeded);
+
+    QCOMPARE(response.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(response.waitForFinished(300), true);
 }
 
 #include "tst_qgalleryabstractresponse.moc"

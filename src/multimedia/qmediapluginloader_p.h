@@ -54,13 +54,11 @@
 //
 
 #include <qmobilityglobal.h>
-#include <QObject>
+#include <QtCore/qobject.h>
 #include <QtCore/qstring.h>
+#include <QtCore/qstringlist.h>
 #include <QtCore/qmap.h>
 
-QT_BEGIN_NAMESPACE
-class QObject;
-QT_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
 
@@ -81,6 +79,7 @@ public:
 
 private:
     void load();
+    QStringList availablePlugins() const;
 
     QByteArray  m_iid;
     QString     m_location;

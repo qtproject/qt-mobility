@@ -62,6 +62,7 @@ QTM_BEGIN_NAMESPACE
  * initialiser list in default ctor (POD requires default ctor).
  */
 
+//QTM_SYNC_HEADER_EXPORT QLatin1Constant
 template <int N> struct QLatin1Constant
 {
     char chars[N];

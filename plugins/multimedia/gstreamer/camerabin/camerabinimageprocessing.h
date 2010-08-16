@@ -67,17 +67,9 @@ public:
     void setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode mode);
     bool isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode mode) const;
 
-    int manualWhiteBalance() const;
-    void setManualWhiteBalance(int colorTemperature);
-
     bool isProcessingParameterSupported(ProcessingParameter) const;
     QVariant processingParameter(ProcessingParameter parameter) const;
     void setProcessingParameter(ProcessingParameter parameter, QVariant value);
-
-    QList<QByteArray> supportedPresets() const;
-    QString presetDescription(const QByteArray &preset) const;
-    QByteArray preset() const;
-    void setPreset(const QByteArray &preset);
 
 private:
     bool setColorBalanceValue(const QString& channel, int value);
@@ -87,8 +79,6 @@ private:
     CameraBinSession *m_session;
     QMap<QCameraImageProcessingControl::ProcessingParameter, int> m_values;
     QMap<GstWhiteBalanceMode, QCameraImageProcessing::WhiteBalanceMode> m_mappedWbValues;
-    QList<QByteArray> m_presets;
-    QByteArray m_preset;
 };
 
 #endif // CAMERABINIMAGEPROCESSINGCONTROL_H

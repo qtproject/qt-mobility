@@ -383,9 +383,16 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilt
 QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId &itemId, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error) const
 {
     return internalFetchItem(itemId, fetchHint, error, true);
+    // TODO: Do multicalendar (collection) support properly
+    QOrganizerCollection defaultCollection;
+    defaultCollection.setId(QOrganizerCollectionId());
+
+        QOrganizerItemManagerEngine::setItemCollectionId(&retn, defaultCollection.id()); // TODO: FIXME.
+        QOrganizerItemManagerEngine::setItemCollectionId(&retn, defaultCollection.id()); // TODO: FIXME.
+        QOrganizerItemManagerEngine::setItemCollectionId(&retn, defaultCollection.id()); // TODO: FIXME.
 }
 
-bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem> *items, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
     if (!items || items->isEmpty()) {
         *error = QOrganizerItemManager::BadArgumentError;
@@ -494,6 +501,47 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId> 
     cs.emitSignals(this);
     cleanupCal(cal);
     return success;
+}
+
+QOrganizerCollectionLocalId QOrganizerItemMaemo5Engine::defaultCollectionId(QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NoError;
+    return QOrganizerCollectionLocalId(0);
+}
+
+QList<QOrganizerCollectionLocalId> QOrganizerItemMaemo5Engine::collectionIds(QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NoError;
+    QList<QOrganizerCollectionLocalId> retn;
+    retn << QOrganizerCollectionLocalId(0);
+    return retn;
+}
+
+QList<QOrganizerCollection> QOrganizerItemMaemo5Engine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NoError;
+    QOrganizerCollection defaultCollection;
+    defaultCollection.setId(QOrganizerCollectionId());
+    QList<QOrganizerCollection> retn;
+
+    if (collectionIds.contains(QOrganizerCollectionLocalId(0)))
+        retn << defaultCollection;
+
+    return retn;
+}
+
+bool QOrganizerItemMaemo5Engine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
+{
+    Q_UNUSED(collection)
+    *error = QOrganizerItemManager::NotSupportedError;
+    return false;
+}
+
+bool QOrganizerItemMaemo5Engine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
+{
+    Q_UNUSED(collectionId)
+    *error = QOrganizerItemManager::NotSupportedError;
+    return false;
 }
 
 bool QOrganizerItemMaemo5Engine::startRequest(QOrganizerItemAbstractRequest* req)

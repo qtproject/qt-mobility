@@ -47,6 +47,7 @@
 #include <qcameracontrol.h>
 #include <qcameralockscontrol.h>
 #include <qcameraexposurecontrol.h>
+#include <qcameraflashcontrol.h>
 #include <qcamerafocuscontrol.h>
 #include <qcameraimagecapturecontrol.h>
 #include <qimageencodercontrol.h>
@@ -65,32 +66,48 @@ class MockCameraControl : public QCameraControl
 public:
     MockCameraControl(QObject *parent = 0):
             QCameraControl(parent),
-            m_state(QCamera::StoppedState),
-            m_captureMode(QCamera::CaptureStillImage)
+            m_state(QCamera::UnloadedState),
+            m_captureMode(QCamera::CaptureStillImage),
+            m_status(QCamera::UnloadedStatus)
     {
     }
 
     ~MockCameraControl() {}
 
     void start() { m_state = QCamera::ActiveState; }
-    virtual void stop() { m_state = QCamera::StoppedState; }
+    virtual void stop() { m_state = QCamera::UnloadedState; }
     QCamera::State state() const { return m_state; }
     void setState(QCamera::State state) {
         if (m_state != state) {
-            if (state == QCamera::ActiveState || state == QCamera::StoppedState)
-                emit stateChanged(m_state = state);
-            else
+            m_state = state;
+
+            switch (state) {
+            case QCamera::UnloadedState:
+                m_status = QCamera::UnloadedStatus;
+                break;
+            case QCamera::LoadedState:
+                m_status = QCamera::LoadedStatus;
+                break;
+            case QCamera::ActiveState:
+                m_status = QCamera::ActiveStatus;
+                break;
+            default:
                 emit error(QCamera::NotSupportedFeatureError, "State not supported.");
+                return;
+            }
+
+            emit stateChanged(m_state);
+            emit statusChanged(m_status);
         }
     }
+
+    QCamera::Status status() const { return m_status; }
 
     QCamera::CaptureMode captureMode() const { return m_captureMode; }
     void setCaptureMode(QCamera::CaptureMode mode)
     {
-        if (m_captureMode != mode) {
-            m_captureMode = mode;
-            emit captureModeChanged(mode);
-        }
+        if (m_captureMode != mode)
+            emit captureModeChanged(m_captureMode = mode);
     }
 
     bool isCaptureModeSupported(QCamera::CaptureMode mode) const
@@ -105,6 +122,7 @@ public:
 
     QCamera::State m_state;
     QCamera::CaptureMode m_captureMode;
+    QCamera::Status m_status;
 };
 
 
@@ -434,6 +452,45 @@ private:
     QCameraExposure::FlashModes m_flashMode;
 };
 
+class MockCameraFlashControl : public QCameraFlashControl
+{
+    Q_OBJECT
+public:
+    MockCameraFlashControl(QObject *parent = 0):
+        QCameraFlashControl(parent),
+        m_flashMode(QCameraExposure::FlashAuto)
+    {
+    }
+
+    ~MockCameraFlashControl() {}
+
+    QCameraExposure::FlashModes flashMode() const
+    {
+        return m_flashMode;
+    }
+
+    void setFlashMode(QCameraExposure::FlashModes mode)
+    {
+        if (isFlashModeSupported(mode)) {
+            m_flashMode = mode;
+        }
+    }
+
+    bool isFlashModeSupported(QCameraExposure::FlashModes mode) const
+    {
+        return mode & (QCameraExposure::FlashAuto | QCameraExposure::FlashOff | QCameraExposure::FlashOn);
+    }
+
+    bool isFlashReady() const
+    {
+        return true;
+    }
+
+private:
+    QCameraExposure::FlashModes m_flashMode;
+};
+
+
 class MockCameraFocusControl : public QCameraFocusControl
 {
     Q_OBJECT
@@ -565,12 +622,9 @@ public:
     void setSupportedWhiteBalanceModes(QSet<QCameraImageProcessing::WhiteBalanceMode> modes) {
         m_supportedWhiteBalance = modes; }
 
-    int manualWhiteBalance() const { return m_manualWhiteBalance; }
-    void setManualWhiteBalance(int colorTemperature) { m_manualWhiteBalance = colorTemperature; }
-
     bool isProcessingParameterSupported(ProcessingParameter parameter) const
     {
-        return parameter == Contrast ||  parameter == Sharpening;
+        return parameter == Contrast ||  parameter == Sharpening || parameter == ColorTemperature;
     }
     QVariant processingParameter(ProcessingParameter parameter) const
     {
@@ -579,6 +633,8 @@ public:
             return m_contrast;
         case Sharpening:
             return m_sharpeningLevel;
+        case ColorTemperature:
+            return m_manualWhiteBalance;
         default:
             return QVariant();
         }
@@ -592,43 +648,21 @@ public:
         case Sharpening:
             m_sharpeningLevel = value;
             break;
+        case ColorTemperature:
+            m_manualWhiteBalance = value;
+            break;
         default:
             break;
         }
-    }
-
-    QList<QByteArray> supportedPresets() const
-    {
-        return m_presets;
-    }
-
-    QString presetDescription(const QByteArray &preset) const
-    {
-        return QString::fromLatin1(preset);
-    }
-
-    QByteArray preset() const
-    {
-        return m_preset;
-    }
-    void setPreset(const QByteArray &preset)
-    {
-        if (m_presets.contains(preset))
-            m_preset = preset;
-        else
-            m_preset.clear();
     }
 
 
 private:
     QCameraImageProcessing::WhiteBalanceMode m_whiteBalanceMode;
     QSet<QCameraImageProcessing::WhiteBalanceMode> m_supportedWhiteBalance;
-    int m_manualWhiteBalance;
+    QVariant m_manualWhiteBalance;
     QVariant m_contrast;
     QVariant m_sharpeningLevel;
-
-    QList<QByteArray> m_presets;
-    QByteArray m_preset;
 };
 
 class MockImageEncoderControl : public QImageEncoderControl
@@ -706,6 +740,7 @@ public:
         mockControl = new MockCameraControl(this);
         mockLocksControl = new MockCameraLocksControl(this);
         mockExposureControl = new MockCameraExposureControl(this);
+        mockFlashControl = new MockCameraFlashControl(this);
         mockFocusControl = new MockCameraFocusControl(this);
         mockCaptureControl = new MockCaptureControl(mockControl, this);
         mockImageProcessingControl = new MockImageProcessingControl(this);
@@ -726,6 +761,9 @@ public:
 
         if (qstrcmp(iid, QCameraExposureControl_iid) == 0)
             return mockExposureControl;
+
+        if (qstrcmp(iid, QCameraFlashControl_iid) == 0)
+            return mockFlashControl;
 
         if (qstrcmp(iid, QCameraFocusControl_iid) == 0)
             return mockFocusControl;
@@ -748,6 +786,7 @@ public:
     MockCameraLocksControl *mockLocksControl;
     MockCaptureControl *mockCaptureControl;
     MockCameraExposureControl *mockExposureControl;
+    MockCameraFlashControl *mockFlashControl;
     MockCameraFocusControl *mockFocusControl;
     MockImageProcessingControl *mockImageProcessingControl;
     MockImageEncoderControl *mockImageEncoderControl;
@@ -853,11 +892,15 @@ void tst_QCamera::testSimpleCamera()
     QCamera camera(0, provider);
     QCOMPARE(camera.service(), (QMediaService*)mockSimpleCameraService);
 
-    QCOMPARE(camera.state(), QCamera::StoppedState);
+    QCOMPARE(camera.state(), QCamera::UnloadedState);
     camera.start();
     QCOMPARE(camera.state(), QCamera::ActiveState);
     camera.stop();
-    QCOMPARE(camera.state(), QCamera::StoppedState);
+    QCOMPARE(camera.state(), QCamera::LoadedState);
+    camera.unload();
+    QCOMPARE(camera.state(), QCamera::UnloadedState);
+    camera.load();
+    QCOMPARE(camera.state(), QCamera::LoadedState);
 }
 
 void tst_QCamera::testSimpleCameraWhiteBalance()
@@ -870,9 +913,9 @@ void tst_QCamera::testSimpleCameraWhiteBalance()
     QCOMPARE(camera.imageProcessing()->whiteBalanceMode(), QCameraImageProcessing::WhiteBalanceAuto);
     camera.imageProcessing()->setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceCloudy);
     QCOMPARE(camera.imageProcessing()->whiteBalanceMode(), QCameraImageProcessing::WhiteBalanceAuto);
-    QCOMPARE(camera.imageProcessing()->manualWhiteBalance(), -1);
+    QCOMPARE(camera.imageProcessing()->manualWhiteBalance(), 0);
     camera.imageProcessing()->setManualWhiteBalance(5000);
-    QCOMPARE(camera.imageProcessing()->manualWhiteBalance(), -1);
+    QCOMPARE(camera.imageProcessing()->manualWhiteBalance(), 0);
 }
 
 void tst_QCamera::testSimpleCameraExposure()
@@ -976,7 +1019,7 @@ void tst_QCamera::testSimpleCameraCapture()
     QCOMPARE(imageCapture.error(), QCameraImageCapture::NoError);
     QVERIFY(imageCapture.errorString().isEmpty());
 
-    QSignalSpy errorSignal(&imageCapture, SIGNAL(error(QCameraImageCapture::Error)));
+    QSignalSpy errorSignal(&imageCapture, SIGNAL(error(int, QCameraImageCapture::Error,QString)));
     imageCapture.capture(QString::fromLatin1("/dev/null"));
     QCOMPARE(errorSignal.size(), 1);
     QCOMPARE(imageCapture.error(), QCameraImageCapture::NotSupportedFeatureError);
@@ -1029,8 +1072,8 @@ void tst_QCamera::testCameraCapture()
 
     QVERIFY(!imageCapture.isReadyForCapture());
 
-    QSignalSpy capturedSignal(&imageCapture, SIGNAL(imageCaptured(int,QImage)));
-    QSignalSpy errorSignal(&imageCapture, SIGNAL(error(QCameraImageCapture::Error)));
+    QSignalSpy capturedSignal(&imageCapture, SIGNAL(imageCaptured(int,QImage)));    
+    QSignalSpy errorSignal(&imageCapture, SIGNAL(error(int, QCameraImageCapture::Error,QString)));
 
     imageCapture.capture(QString::fromLatin1("/dev/null"));
     QCOMPARE(capturedSignal.size(), 0);
@@ -1064,7 +1107,9 @@ void tst_QCamera::testCameraWhiteBalance()
     MockCameraService service;
     service.mockImageProcessingControl->setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceFlash);
     service.mockImageProcessingControl->setSupportedWhiteBalanceModes(whiteBalanceModes);
-    service.mockImageProcessingControl->setManualWhiteBalance(34);
+    service.mockImageProcessingControl->setProcessingParameter(
+                QCameraImageProcessingControl::ColorTemperature,
+                QVariant(34));
 
     MockProvider provider;
     provider.service = &service;

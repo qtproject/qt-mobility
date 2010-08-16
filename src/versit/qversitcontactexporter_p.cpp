@@ -109,7 +109,7 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QString& prof
                 QLatin1String(versitSubTypeMappings[i].versitString));
     }
 
-    mPluginDetailHandlers = QVersitPluginLoader::instance()->createHandlers(profile);
+    mPluginDetailHandlers = QVersitPluginLoader::instance()->createContactHandlers(profile);
 }
 
 /*!

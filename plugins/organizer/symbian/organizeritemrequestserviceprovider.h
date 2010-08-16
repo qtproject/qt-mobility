@@ -89,8 +89,7 @@ private: // Worker functions
     // Fetch items/entries from agenda server
     void FetchItemsL();
     // Fetch items/entries by local Ids
-    void FetchItemsByLocalIdsL(QOrganizerItemFilter& filter, 
-            QOrganizerItemFetchHint& fetchHint);
+    void FetchItemsByLocalIdsL();
     // Fetch items/entries by details
     void FetchItemsandFilterL(QOrganizerItemFilter& filter, 
             QList<QOrganizerItemSortOrder>& sortOrder, 

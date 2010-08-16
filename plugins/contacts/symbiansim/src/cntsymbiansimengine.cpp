@@ -529,17 +529,46 @@ bool CntSymbianSimEngine::filter(const QContactFilter &filter, const QContact &c
             f.detailFieldName() == QContactPhoneNumber::FieldNumber &&
             f.matchFlags() == QContactFilter::MatchPhoneNumber) 
         {
-            QString matchNumber = f.value().toString().right(d->m_phoneNumberMatchLen);
             QList<QContactPhoneNumber> pns = contact.details<QContactPhoneNumber>();
             foreach (QContactPhoneNumber pn, pns) {
-                QString number = pn.number().right(d->m_phoneNumberMatchLen);
-                if (number == matchNumber)
-                    return true;
+                // Best matching enabled
+                if(d->m_phoneNumberMatchLen == 0) {
+                    bool bestMatchFound(false);
+                    QString matchingNumber = f.value().toString();
+                    QString numberToMatch = pn.number();
+                    TRAP_IGNORE(
+                            bestMatchFound = CntSymbianSimPhoneNumberMatching::isBestMatchL(numberToMatch,matchingNumber);
+                    )
+                    if (bestMatchFound)
+                        return true;
+                }
+                else {
+                    // Default matching
+                    QString matchNumber = f.value().toString().right(d->m_phoneNumberMatchLen);
+                    QString number = pn.number().right(d->m_phoneNumberMatchLen);
+                    if (number == matchNumber)
+                        return true;
+                }
             }
             return false;
         }
     }
     return QContactManagerEngine::testFilter(filter, contact);
+}
+
+/*!
+  Returns whether the supplied \a phonenumber is the best matching number.
+ */
+TBool CntSymbianSimPhoneNumberMatching::isBestMatchL(const QString& numberToMatch, const QString& matchingNumber)
+{
+    bool bestMatchFound(false);
+    TPtrC numberPtr(reinterpret_cast<const TUint16*>(numberToMatch.utf16()));
+    TPtrC matchNumberPtr(reinterpret_cast<const TUint16*>(matchingNumber.utf16()));
+    
+    if (CntSymbianSimPhoneNumberMatching::validateBestMatchingRulesL(numberPtr,matchNumberPtr)) {
+        bestMatchFound = true;
+    }
+    return bestMatchFound;
 }
 
 /*!
@@ -592,6 +621,197 @@ void CntSymbianSimEngine::getMatchLengthL(int &matchLength)
     User::LeaveIfError(repository->Get(KTelMatchDigits, matchLength));
     CleanupStack::PopAndDestroy(repository);
 }
+
+/*!
+  Validates the supplied \a phonenumber against best matching rules.
+ */
+TBool CntSymbianSimPhoneNumberMatching::validateBestMatchingRulesL(const TDesC& phoneNumber, const TDesC& matchNumber)
+    {
+    RBuf numberA;
+    numberA.CleanupClosePushL();
+    numberA.CreateL(matchNumber);
+    TNumberType numberAType = (TNumberType) CntSymbianSimPhoneNumberMatching::formatAndCheckNumberType(numberA);
+    RBuf numberB;
+    numberB.CleanupClosePushL();
+    numberB.CreateL(phoneNumber);
+    TNumberType numberBType = (TNumberType) CntSymbianSimPhoneNumberMatching::formatAndCheckNumberType(numberB);
+
+    TBool match = (!numberB.Compare(numberA) ||
+                    CntSymbianSimPhoneNumberMatching::checkBestMatchingRules(numberA, numberAType, numberB, numberBType) ||
+                    CntSymbianSimPhoneNumberMatching::checkBestMatchingRules(numberB, numberBType, numberA, numberAType));
+    
+    // cleanup
+    CleanupStack::PopAndDestroy(2);
+    return match;
+    }
+
+/*!
+  Removes non-digit chars except plus form the beginning.
+  Checks if number matches to one of defined types.
+ */
+TInt CntSymbianSimPhoneNumberMatching::formatAndCheckNumberType(TDes& number)
+    {
+    _LIT( KOneZeroPattern, "0*" );
+    _LIT( KTwoZerosPattern, "00*" );
+    _LIT( KPlusPattern, "+*" );
+    const TChar KPlus = TChar('+');
+    const TChar KZero = TChar('0');
+    const TChar KAsterisk = TChar('*');
+    const TChar KHash = TChar('#');
+    
+    for( TInt pos = 0; pos < number.Length(); ++pos ) {
+        TChar chr = number[pos];
+        if ( !chr.IsDigit() && !( pos == 0 && chr == KPlus  )
+                && !( chr == KAsterisk ) && !( chr == KHash ) ) {
+            number.Delete( pos, 1 );
+            --pos;
+        }
+    }
+    
+    TInt format;
+    
+    if (!number.Match(KTwoZerosPattern) && number.Length() > 2 && number[2] != KZero) {
+        format = ETwoZeros;
+    }
+    else if (!number.Match(KOneZeroPattern)&& number.Length() > 1 && number[1] != KZero) {
+        format = EOneZero;
+    }
+    else if (!number.Match(KPlusPattern) && number.Length() > 1 && number[1] != KZero) {
+        format = EPlus;
+    }
+    else if (number.Length() > 0 && number[0] != KZero && ( ( TChar ) number[0] ).IsDigit()) {
+        format = EDigit;
+    }
+    else {
+        format = EUnknown;
+    }
+
+    return format;
+    }
+
+TBool CntSymbianSimPhoneNumberMatching::checkBestMatchingRules(
+        const TDesC& numberA, TNumberType numberAType,
+        const TDesC& numberB, TNumberType numberBType  )
+    {
+    TBool result = EFalse;
+    
+    // Rules for matching not identical numbers
+    // Rules details are presented in Best_Number_Matching_Algorithm_Description.doc
+    
+    // rule International-International 1
+    if (!result && numberAType == EPlus && numberBType == ETwoZeros) {
+        TPtrC numberAPtr = numberA.Right(numberA.Length() - 1);
+        TPtrC numberBPtr = numberB.Right(numberB.Length() - 2);
+        result = !(numberAPtr.Compare(numberBPtr));
+        if (result) {
+            return result;
+        }
+    }
+
+    // rule International-International 2
+    if (numberAType == EPlus && numberBType == EDigit) {
+        TPtrC numberAPtr = numberA.Right( numberA.Length() - 1 );
+        if (numberAPtr.Length() < numberB.Length()) {
+            TPtrC numberBPtr = numberB.Right( numberAPtr.Length() );
+            result = !(numberAPtr.Compare(numberBPtr));
+            if (result) {
+                return result;
+            }
+        }
+    }
+
+    // rule International-International 3
+    if (numberAType == ETwoZeros && numberBType == EDigit) {
+        TPtrC numberAPtr = numberA.Right(numberA.Length() - 2);
+        if (numberAPtr.Length() < numberB.Length()) {
+            TPtrC numberBPtr = numberB.Right(numberAPtr.Length());
+            result = !(numberAPtr.Compare(numberBPtr));
+            if (result) {
+                return result;
+            }
+        }
+    }
+
+    // rule International-Operator 1
+    if (numberAType == EOneZero && numberBType == EPlus
+            || numberAType == EDigit && numberBType == EPlus) {
+        TPtrC numberAPtr;
+        if (numberAType == EOneZero) {
+            numberAPtr.Set(numberA.Right(numberA.Length() - 1));
+        }
+        else {
+            numberAPtr.Set(numberA);
+        }
+        if (numberAPtr.Length() < numberB.Length() - 1) {
+            TPtrC numberBPtr = numberB.Right(numberAPtr.Length());
+            result = !(numberAPtr.Compare(numberBPtr));
+            if (result) {
+                return result;
+            }
+        }
+    }
+
+    // rule International-Operator 2
+    if (numberAType == EOneZero && numberBType == ETwoZeros
+            || numberAType == EDigit && numberBType == ETwoZeros) {
+        TPtrC numberAPtr;
+        if (numberAType == EOneZero) {
+            numberAPtr.Set(numberA.Right(numberA.Length() - 1));
+        }
+        else {
+            numberAPtr.Set(numberA);
+        }
+        if (numberAPtr.Length() < numberB.Length() - 2) {
+            TPtrC numberBPtr = numberB.Right(numberAPtr.Length());
+            result = !(numberAPtr.Compare(numberBPtr));
+            if (result) {
+                return result;
+            }
+        }
+    }
+
+    // rule International-Operator 3
+    if (numberAType == EOneZero && numberBType == EDigit
+            || numberAType == EDigit && numberBType == EDigit) {
+        TPtrC numberAPtr;
+        if (numberAType == EOneZero) {
+            numberAPtr.Set(numberA.Right( numberA.Length() - 1));
+        }
+        else {
+            numberAPtr.Set(numberA);
+        }
+        if (numberAPtr.Length() < numberB.Length()) {
+            TPtrC numberBPtr = numberB.Right(numberAPtr.Length());
+            result = !(numberAPtr.Compare(numberBPtr));
+            if (result) {
+                return result;
+            }
+        }
+    }
+
+    // rule Operator-Operator 1
+    if (numberAType == EOneZero && numberBType == EDigit) {
+        TPtrC numberAPtr = numberA.Right(numberA.Length() - 1);
+        result = !(numberAPtr.Compare(numberB));
+        if (result) {
+            return result;
+        }
+    }
+    
+    // rule North America Numbering Plan 1
+    if (numberAType == EDigit && numberBType == EPlus) {
+        TPtrC numberBPtr = numberB.Right(numberB.Length() - 1);
+        result = !(numberA.Compare(numberBPtr));
+        if (result) {
+            return result;
+        }
+    }
+
+    // More exceptional acceptance rules can be added here
+    // Keep rules updated in the document Best_Number_Matching_Algorithm_Description.doc
+
+    return result;
+    }
 
 QContactManagerEngine* CntSymbianSimFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error* error)
 {
