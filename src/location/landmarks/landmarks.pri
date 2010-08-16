@@ -8,17 +8,16 @@ PUBLIC_HEADERS += \
                     landmarks/qlandmarkboxfilter.h \
                     landmarks/qlandmarkcategory.h \
                     landmarks/qlandmarkcategoryfetchrequest.h \
+                    landmarks/qlandmarkcategoryfetchbyidrequest.h \
                     landmarks/qlandmarkcategoryfilter.h \
                     landmarks/qlandmarkcategoryid.h \
                     landmarks/qlandmarkcategoryidfetchrequest.h \
                     landmarks/qlandmarkcategoryremoverequest.h \
                     landmarks/qlandmarkcategorysaverequest.h \
-                    landmarks/qlandmarkdistancesort.h \
                     landmarks/qlandmarkexportrequest.h \
-                    landmarks/qlandmarkfetchhint.h \
                     landmarks/qlandmarkfetchrequest.h \
+                    landmarks/qlandmarkfetchbyidrequest.h \
                     landmarks/qlandmarkfilter.h \
-                    landmarks/qlandmarkfreetextfilter.h \
                     landmarks/qlandmarkid.h \
                     landmarks/qlandmarkidfetchrequest.h \
                     landmarks/qlandmarkidfilter.h \
@@ -42,10 +41,7 @@ PRIVATE_HEADERS += \
                     landmarks/qlandmarkcategory_p.h \
                     landmarks/qlandmarkcategoryfilter_p.h \
                     landmarks/qlandmarkcategoryid_p.h \
-                    landmarks/qlandmarkdistancesort_p.h \
-                    landmarks/qlandmarkfetchhint_p.h \
                     landmarks/qlandmarkfilter_p.h \
-                    landmarks/qlandmarkfreetextfilter_p.h \
                     landmarks/qlandmarkid_p.h \
                     landmarks/qlandmarkidfilter_p.h \
                     landmarks/qlandmarkintersectionfilter_p.h \
@@ -63,17 +59,16 @@ SOURCES += \
             landmarks/qlandmarkboxfilter.cpp \
             landmarks/qlandmarkcategory.cpp \
             landmarks/qlandmarkcategoryfetchrequest.cpp \
+            landmarks/qlandmarkcategoryfetchbyidrequest.cpp \
             landmarks/qlandmarkcategoryfilter.cpp \
             landmarks/qlandmarkcategoryid.cpp \
             landmarks/qlandmarkcategoryidfetchrequest.cpp \
             landmarks/qlandmarkcategoryremoverequest.cpp \
             landmarks/qlandmarkcategorysaverequest.cpp \
-            landmarks/qlandmarkdistancesort.cpp \
             landmarks/qlandmarkexportrequest.cpp \
-            landmarks/qlandmarkfetchhint.cpp \
             landmarks/qlandmarkfetchrequest.cpp \
+            landmarks/qlandmarkfetchbyidrequest.cpp \
             landmarks/qlandmarkfilter.cpp \
-            landmarks/qlandmarkfreetextfilter.cpp \
             landmarks/qlandmarkid.cpp \
             landmarks/qlandmarkidfetchrequest.cpp \
             landmarks/qlandmarkidfilter.cpp \

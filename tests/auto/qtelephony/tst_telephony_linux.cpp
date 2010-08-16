@@ -128,7 +128,7 @@ void tst_Telephony::checkSharedPointer()
     pCallList->pcallInfoPrivate = new QTelephonyCallInfoPrivate();
 
     //Adding to list should increment the ref counter to 1
-    p->callInfoList.append(QSharedDataPointer<QTelephonyCallInfoPrivate>(pCallList->pcallInfoPrivate));
+    p->callInfoList.append(QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(pCallList->pcallInfoPrivate));
     QVERIFY(pCallList->pcallInfoPrivate->ref == 1);
 
     int refcount = -1;

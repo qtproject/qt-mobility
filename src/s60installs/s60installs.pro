@@ -43,7 +43,7 @@ isEmpty(QT_LIBINFIX):symbian {
 
     contains(mobility_modules, messaging): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtMessaging.dll
-	
+    
     contains(mobility_modules, serviceframework) { 
         qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtServiceFramework.dll \
@@ -70,7 +70,7 @@ isEmpty(QT_LIBINFIX):symbian {
     contains(mobility_modules, systeminfo) { 
         qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtSystemInfo.dll
-	contains(QT_CONFIG, declarative): {
+    contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_systeminfo.dll
             pluginstubs += \
@@ -99,44 +99,44 @@ isEmpty(QT_LIBINFIX):symbian {
 
     contains(mobility_modules, feedback): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtFeedback.dll
-	
+    
     contains(mobility_modules, organizer) { 
         qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtOrganizer.dll
-	contains(QT_CONFIG, declarative): {
+    contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_organizer.dll
             pluginstubs += \
             "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\organizer\\qmakepluginstubs\\declarative_organizer.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\organizer\\declarative_organizer.qtplugin\""
             qmldirs += \
             "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\organizer\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\organizer\\qmldir\""
-        }	
+        }   
     }
 
     contains(mobility_modules, telephony) { 
         qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtTelephony.dll
-	contains(QT_CONFIG, declarative): {
+    contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_telephony.dll
             pluginstubs += \
             "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\telephony\\qmakepluginstubs\\declarative_telephony.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\telephony\\declarative_telephony.qtplugin\""
             qmldirs += \
             "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\telephony\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\telephony\\qmldir\""
-        }	
+        }   
     }
 
     contains(mobility_modules, gallery) { 
         qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll
-	contains(QT_CONFIG, declarative): {
+    contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_gallery.dll
             pluginstubs += \
             "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\gallery\\qmakepluginstubs\\declarative_gallery.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\gallery\\declarative_gallery.qtplugin\""
             qmldirs += \
             "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\gallery\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\gallery\\qmldir\""
-        }	
+        }   
     }
 
     contains(mobility_modules, bearer) {
@@ -192,7 +192,7 @@ isEmpty(QT_LIBINFIX):symbian {
 
             qtmobilitydeployment.pkg_postrules += symbiancntsim
         }
-	 contains(QT_CONFIG, declarative): {
+     contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_contacts.dll
             pluginstubs += \
@@ -239,8 +239,8 @@ isEmpty(QT_LIBINFIX):symbian {
         pluginstubs += \
             "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
             "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/qtmultimediakit_m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\qtmultimediakit_m3u.qtplugin\"" \
-	    
-	contains(QT_CONFIG, declarative): {
+        
+    contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_multimedia.dll
             pluginstubs += \

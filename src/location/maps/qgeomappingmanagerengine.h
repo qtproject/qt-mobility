@@ -42,11 +42,13 @@
 #ifndef QGEOMAPPINGMANAGERENGINE_H
 #define QGEOMAPPINGMANAGERENGINE_H
 
-#include "qgeomapwidget.h"
+#include "qgraphicsgeomap.h"
 
 #include <QObject>
 #include <QSize>
 #include <QPair>
+
+class QLocale;
 
 QTM_BEGIN_NAMESPACE
 
@@ -63,19 +65,18 @@ class Q_LOCATION_EXPORT QGeoMappingManagerEngine : public QObject
     Q_OBJECT
 
 public:
-    QGeoMappingManagerEngine(const QMap<QString, QString> &parameters, QObject *parent = 0);
+    QGeoMappingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent = 0);
     virtual ~QGeoMappingManagerEngine();
 
     QString managerName() const;
-    QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
-    virtual QGeoMapData* createMapData(QGeoMapWidget *widget) = 0;
+    virtual QGeoMapData* createMapData(QGraphicsGeoMap *geoMap) = 0;
     virtual void removeMapData(QGeoMapData *mapData);
 
     //virtual void updateMapImage(QGeoMapData *mapData) = 0;
 
-    QList<QGeoMapWidget::MapType> supportedMapTypes() const;
+    QList<QGraphicsGeoMap::MapType> supportedMapTypes() const;
 
     QSize minimumImageSize() const;
     QSize maximumImageSize() const;
@@ -83,10 +84,13 @@ public:
     qreal minimumZoomLevel() const;
     qreal maximumZoomLevel() const;
 
+    void setLocale(const QLocale &locale);
+    QLocale locale() const;
+
 protected:
     QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent = 0);
 
-    void setSupportedMapTypes(const QList<QGeoMapWidget::MapType> &mapTypes);
+    void setSupportedMapTypes(const QList<QGraphicsGeoMap::MapType> &mapTypes);
 
     void setMinimumZoomLevel(qreal minimumZoom);
     void setMaximumZoomLevel(qreal maximumZoom);

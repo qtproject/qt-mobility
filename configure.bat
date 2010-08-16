@@ -287,7 +287,7 @@ for /f "tokens=1,*" %%a in ("%MOBILITY_MODULES_UNPARSED%") do (
 if %FIRST% == bearer (
     echo     Bearer Management selected
 ) else if %FIRST% == contacts (
-    echo     Contacts selected
+    echo     Contacts selected ^(implies ServiceFramework^)
 ) else if %FIRST% == location (
     echo     Location selected
 ) else if %FIRST% == messaging (
@@ -386,6 +386,7 @@ echo isEmpty($$QT_MOBILITY_DEMOS):QT_MOBILITY_DEMOS=$$QT_MOBILITY_PREFIX/bin >> 
 
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
 echo contains(mobility_modules,versit): mobility_modules *= contacts organizer  >> %PROJECT_CONFIG%
+echo contains(mobility_modules,contacts): mobility_modules *= serviceframework  >> %PROJECT_CONFIG%
 
 echo Checking available Qt
 call %QT_PATH%qmake -v >> %PROJECT_LOG% 2>&1
@@ -572,10 +573,12 @@ for /f "tokens=1,*" %%a in ("%MODULES_TEMP%") do (
 if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtBearer %SOURCE_PATH%\src\bearer
 ) else if %FIRST% == contacts (
+    REM contacts implies service framework
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\requests
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\filters
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\details
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtServiceFramework %SOURCE_PATH%\src\serviceframework
 ) else if %FIRST% == location (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtLocation %SOURCE_PATH%\src\location
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtLocation %SOURCE_PATH%\src\location\landmarks
@@ -596,7 +599,7 @@ if %FIRST% == bearer (
 ) else if %FIRST% == telephony (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtTelephony %SOURCE_PATH%\src\telephony
 ) else if %FIRST% == versit (
-    REM versit implies contacts and organizer
+    REM versit implies contacts and organizer, which implies SFW
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersit %SOURCE_PATH%\src\versit
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\requests
@@ -607,6 +610,7 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\requests
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\filters
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\details
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmServiceFramework %SOURCE_PATH%\src\serviceframework
 ) else if %FIRST% == sensors (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSensors %SOURCE_PATH%\src\sensors
 ) else if %FIRST% == gallery (

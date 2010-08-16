@@ -41,7 +41,9 @@
 #include "qlandmarkabstractrequest.h"
 #include "qlandmarkabstractrequest_p.h"
 #include "qlandmarkmanagerengine.h"
+#include "qlandmarkmanager_p.h"
 #include <QDebug>
+#include <QMutexLocker>
 
 QTM_USE_NAMESPACE
 
@@ -76,8 +78,11 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
             identifiers.
     \value  CategoryIdFetchRequest A request to fetch a list of catgory
             identifiers.
+
     \value  LandmarkFetchRequest A request to fetch a list of landmarks
+    \value  LandmarkFetchByIdRequest A request to fetch a list of landmarks by id.
     \value  CategoryFetchRequest A request to fetch a list of categories
+    \value  CategoryFetchByIdRequest A request to fetch a list of categories by id
     \value  LandmarkSaveRequest A request to save a list of landmarks.
     \value  LandmarkRemoveRequest A request to remove a list of landmarks.
     \value  CategorySaveRequest A request to save a list of categories.
@@ -85,6 +90,23 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
     \value  ImportRequest A request import landmarks.
     \value  ExportRequest A request export landmarks.
 */
+QLandmarkAbstractRequestPrivate::~QLandmarkAbstractRequestPrivate()
+{
+}
+
+void QLandmarkAbstractRequestPrivate::notifyEngine(QLandmarkAbstractRequest* request)
+{
+        Q_ASSERT(request);
+        QLandmarkAbstractRequestPrivate* d = request->d_ptr;
+        if (d) {
+            QMutexLocker ml(&d->mutex);
+            QLandmarkManagerEngine *engine = QLandmarkManagerPrivate::getEngine(d->manager);
+            ml.unlock();
+            if (engine) {
+                engine->requestDestroyed(request);
+            }
+        }
+}
 
 /*!
     \enum QLandmarkAbstractRequest::State
@@ -118,6 +140,7 @@ QLandmarkAbstractRequest::QLandmarkAbstractRequest(QLandmarkAbstractRequestPriva
 */
 QLandmarkAbstractRequest::~QLandmarkAbstractRequest()
 {
+    QLandmarkAbstractRequestPrivate::notifyEngine(this);
     delete d_ptr;
 }
 
