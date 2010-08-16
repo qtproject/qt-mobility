@@ -69,7 +69,7 @@
 #include <QTextCodec>
 #include <QEventLoop>
 #include <QTimer>
-#include <QSignalSpy>
+#include <QtTest\qsignalspy.h>
 
 using namespace EmailClientApi;
 
@@ -464,8 +464,8 @@ EmailClientApi::NmApiMessage* CFSEngine::createFSMessage(QMessage& message)
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
     privateMessage->_id = QMessageId(addIdPrefix(QString::number(fsMessage->MessageId().iId),SymbianHelpers::EngineTypeFreestyle));
     
-    fsMessage->SaveChangesL();
-    CleanupStack::Pop(fsMessage);*/
+    fsMessage->SaveChangesL();*/
+
     return fsMessage;
 }
 
