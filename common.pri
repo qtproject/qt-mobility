@@ -36,7 +36,7 @@ mac {
 #didn't select a version - if Qt is build in debug_and_release
 #this avoids problems for third party as qmake build debug by default
 #If mobility selected debug_and_release but Qt only supports
-#one version but not the other we slently disable the impossible combination
+#one version but not the other we silently disable the impossible combination
 win32:contains(CONFIG_WIN32,build_all) {
     contains(QT_CONFIG,debug):contains(QT_CONFIG,release) {
         contains(TEMPLATE,.*lib):!plugin {

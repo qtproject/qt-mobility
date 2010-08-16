@@ -253,6 +253,8 @@
         else
             finalOpacity = 1.0;
 
+    #if !defined(Q_WS_MAEMO_5) &amp;&amp; !defined(Q_WS_MAEMO_6) &amp;&amp; \
+        !defined(Q_OS_SYMBIAN) &amp;&amp; !defined(Q_OS_WINCE)
         QString tooltip;
 
         if (configuration.name().isEmpty())
@@ -308,6 +310,9 @@
         tooltip += tr(&quot;&lt;br&gt;Sent data: %1 bytes&quot;).arg(session-&gt;bytesWritten());
 
         setToolTip(tooltip);
+    #else
+        Q_UNUSED(state);
+    #endif
     }
 
     void Cloud::newConfigurationActivated()

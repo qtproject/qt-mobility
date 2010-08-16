@@ -917,7 +917,10 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
-    Q_UNUSED(screen);
+    QDesktopWidget wid;
+    if(wid.screenCount() - 1 < screen) {
+        return -1;
+    }
     GConfItem currentBrightness("/system/osso/dsm/display/display_brightness");
     GConfItem maxBrightness("/system/osso/dsm/display/max_display_brightness_levels");
     if(maxBrightness.value().toInt()) {
@@ -1223,6 +1226,35 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
         if (previousProfile != newProfile)
            emit currentProfileChanged(newProfile);
     }
+}
+
+QString QSystemDeviceInfoPrivate::model()
+{
+    QString name;
+    if(productName()== "RX-51")
+        name = "N900"; //fake this for now
+
+    return name;
+
+}
+
+QString QSystemDeviceInfoPrivate::productName()
+{
+#if !defined(QT_NO_DBUS)
+#if defined(Q_WS_MAEMO_6)
+    QString dBusService = "com.nokia.SystemInfo";
+#else
+    /* Maemo 5 */
+    QString dBusService = "com.nokia.SystemInfo";
+#endif
+    QDBusInterface connectionInterface(dBusService,
+                                       "/com/nokia/SystemInfo",
+                                       "com.nokia.SystemInfo",
+                                       QDBusConnection::systemBus());
+
+    QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue","/component/product");
+    return reply.value();
+#endif
 }
 
 #endif
