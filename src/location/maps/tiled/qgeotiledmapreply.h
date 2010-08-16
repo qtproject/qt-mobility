@@ -81,7 +81,7 @@ public:
 
     virtual void abort();
 
-signals:
+Q_SIGNALS:
     void finished();
     void error(QGeoTiledMapReply::Error error, const QString &errorString = QString());
 

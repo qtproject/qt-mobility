@@ -99,7 +99,7 @@ public:
     void setLocale(const QLocale &locale);
     QLocale locale() const;
 
-signals:
+Q_SIGNALS:
     void finished(QGeoSearchReply* reply);
     void error(QGeoSearchReply* reply, QGeoSearchReply::Error error, QString errorString = QString());
 

@@ -130,6 +130,7 @@ void QRemoteServiceControlPrivate::processIncoming()
         //LocalSocketEndPoint owns socket 
         LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(s);
         ObjectEndPoint* endpoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
+        Q_UNUSED(endpoint);
     }
 }
 

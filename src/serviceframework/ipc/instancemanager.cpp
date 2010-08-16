@@ -84,7 +84,7 @@ bool InstanceManager::addType(const QMetaObject* meta,
     QMutexLocker ml(&lock);
 
     if (metaMap.contains(ident)) {
-        qWarning() << "Service" << ident.name << "(" << ident.interface << ", " << ident.version << ")"
+        qWarning() << "Service" << ident.name << "(" << ident.iface << ", " << ident.version << ")"
             << "already registered";
     } else {
         ServiceIdentDescriptor d;

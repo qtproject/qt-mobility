@@ -152,7 +152,7 @@ void tst_QRemoteServiceClassRegister::testRegistration()
     QVERIFY(idents.count() == 3);
     QSet<QByteArray> discoveredValues;
     foreach(QRemoteServiceIdentifier type, idents) {
-        discoveredValues.insert(type.interface+'-'+type.version);
+        discoveredValues.insert(type.iface+'-'+type.version);
         const QMetaObject* meta = reg.metaObject(type);
         if (type.version == QByteArray("2.1"))
             QCOMPARE(meta->className(), UniqueService::staticMetaObject.className());
@@ -161,7 +161,7 @@ void tst_QRemoteServiceClassRegister::testRegistration()
         else if (type.version == QByteArray("2.3"))
             QCOMPARE(meta->className(), DefaultService::staticMetaObject.className());
         else {
-            QString msg = type.interface+'-'+type.version;
+            QString msg = type.iface+'-'+type.version;
             QFAIL("Unknown type: " + msg.toLatin1());
         }
     }

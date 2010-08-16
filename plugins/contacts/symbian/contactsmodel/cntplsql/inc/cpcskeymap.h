@@ -41,6 +41,9 @@
 // FORWARD DECLARATIONS
 class QString;
 class QChar;
+#if defined(USE_ORBIT_KEYMAP)
+class HbKeymap;
+#endif
 
 
 // CLASS DECLARATION
@@ -151,6 +154,14 @@ NONSHARABLE_CLASS(CPcsKeyMap) : public CBase
          * Returns the key into which the given character is mapped.
          */
 		const QChar MappedKeyForChar(const QChar aChar) const;
+		
+		/**
+         * Read the keymap's keys and append them to the internal keymap
+         * (iKeyMapping).
+         * Returns they amount of keys appended to the iKeyMapping.
+         */
+		TInt ReadKeymapCharacters(HbKeyboardType aKeyboardType,
+                                  const HbKeymap& aKeymap);
 #endif // #if defined(USE_ORBIT_KEYMAP)
 
 #if defined(USE_ORBIT_KEYMAP)

@@ -81,7 +81,7 @@ public:
 
     virtual void abort();
 
-signals:
+Q_SIGNALS:
     void finished();
     void error(QGeoSearchReply::Error error, const QString &errorString = QString());
 

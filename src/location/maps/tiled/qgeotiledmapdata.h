@@ -86,7 +86,7 @@ public:
     QRect maxZoomScreenRect() const;
     int zoomFactor() const;
 
-private slots:
+private Q_SLOTS:
     void processRequests();
     void tileFinished();
     void tileError(QGeoTiledMapReply::Error error, QString errorString);

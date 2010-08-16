@@ -55,19 +55,23 @@ class Q_ORGANIZER_EXPORT QOrganizerEventTimeRange : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldStartDateTime;
-    const char* FieldEndDateTime;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldStartDateTime;
+    static const QLatin1Constant FieldEndDateTime;
+    static const QLatin1Constant FieldTimeSpecified;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerEventTimeRange, "EventTimeRange")
     Q_DECLARE_LATIN1_CONSTANT(FieldStartDateTime, "StartDateTime");
     Q_DECLARE_LATIN1_CONSTANT(FieldEndDateTime, "EndDateTime");
+    Q_DECLARE_LATIN1_CONSTANT(FieldTimeSpecified, "TimeSpecified");
 #endif
 
     void setStartDateTime(const QDateTime& startDateTime) {setValue(FieldStartDateTime, startDateTime);}
     QDateTime startDateTime() const {return value<QDateTime>(FieldStartDateTime);}
     void setEndDateTime(const QDateTime& endDateTime) {setValue(FieldEndDateTime, endDateTime);}
     QDateTime endDateTime() const {return value<QDateTime>(FieldEndDateTime);}
+    void setTimeSpecified(bool isTimeSpecified) {setValue(FieldTimeSpecified, isTimeSpecified);}
+    bool isTimeSpecified() {return value<bool>(FieldTimeSpecified);}
 };
 
 QTM_END_NAMESPACE

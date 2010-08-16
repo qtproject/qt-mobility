@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsysteminfocommon.h"
+#include "qsysteminfocommon_p.h"
 #include <qsysteminfo_maemo_p.h>
 #include <QStringList>
 #include <QSize>
@@ -221,7 +221,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     case QSystemNetworkInfo::GsmMode:
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::WcdmaMode:
-        {    
+        {
             switch(currentCellNetworkStatus) {
                 case 0: return QSystemNetworkInfo::HomeNetwork; // CS is registered to home network
                 case 1: return QSystemNetworkInfo::Roaming; // CS is registered to some other network than home network
@@ -260,7 +260,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
 }
 
 qint32 QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
-{ 
+{
     switch(mode) {
     case QSystemNetworkInfo::GsmMode:
     case QSystemNetworkInfo::CdmaMode:
@@ -633,7 +633,7 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                        "radio_access_technology_change",
                        this, SLOT(networkModeChanged(int)))) {
         qWarning() << "unable to connect to radio_access_technology_change";
-    }   
+    }
     if(!systemDbusConnection.connect("com.nokia.icd",
                               "/com/nokia/icd",
                               "com.nokia.icd",
@@ -1229,7 +1229,9 @@ QString QSystemDeviceInfoPrivate::model()
 {
     QString name;
     if(productName()== "RX-51")
-        name = "N900"; //fake this for now
+        return "N900";
+
+    name = "Harmattan"; //fake this for now
 
     return name;
 

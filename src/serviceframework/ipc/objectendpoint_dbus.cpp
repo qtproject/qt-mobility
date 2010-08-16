@@ -260,7 +260,7 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         // Create DBUS interface by using a hash of the service instance ID
         QString serviceName = "com.nokia.qtmobility.sfw." + p.d->typeId.name; 
         uint hash = qHash(d->serviceInstanceId.toString());
-        QString objPath = "/" + p.d->typeId.interface + "/" + p.d->typeId.version + "/" + QString::number(hash);
+        QString objPath = "/" + p.d->typeId.iface + "/" + p.d->typeId.version + "/" + QString::number(hash);
         objPath.replace(QString("."), QString("/"));
      
 #ifdef DEBUG
@@ -295,7 +295,7 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         // DBus registration path uses a hash of the service instance ID
         QString serviceName = "com.nokia.qtmobility.sfw." + p.d->typeId.name; 
         uint hash = qHash(d->serviceInstanceId.toString());
-        QString objPath = "/" + p.d->typeId.interface + "/" + p.d->typeId.version + "/" + QString::number(hash);
+        QString objPath = "/" + p.d->typeId.iface + "/" + p.d->typeId.version + "/" + QString::number(hash);
         objPath.replace(QString("."), QString("/"));
 
         QServiceMetaObjectDBus *serviceDBus = new QServiceMetaObjectDBus(service);

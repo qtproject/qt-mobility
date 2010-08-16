@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qsysteminfocommon.h"
+#include "qsysteminfocommon_p.h"
 #include "qsysteminfo_mac_p.h"
 
 #include <QStringList>

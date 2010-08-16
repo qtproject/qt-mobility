@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "message.h"
+#include "message_p.h"
  
 Channels::Channels() :
         m_objPath("/")

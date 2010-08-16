@@ -61,6 +61,8 @@ public:
     /* Selection */
     void setItem(const QOrganizerItem& organizeritem);
     void setItems(const QList<QOrganizerItem>& organizeritems);
+    void setCollectionId(const QOrganizerCollectionLocalId& collectionId);
+    QOrganizerCollectionLocalId collectionId() const;
 
     /* Results */
     QList<QOrganizerItem> items() const;
