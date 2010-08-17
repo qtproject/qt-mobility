@@ -430,12 +430,18 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItem
     bool isNewEntry = true;    
     CCalEntry *entry(NULL);
     
-    // Search if the entry is existing based on local id   
+    // There must be an existing entry if local id is provided   
     if (item->localId()) {
+        
         // Don't allow saving with local id defined unless the item is from this manager.
         if (item->id().managerUri() != managerUri())
-            User::Leave(KErrArgument);        
-        entry = m_entryView->FetchL(item->localId());   
+            User::Leave(KErrArgument);
+        
+        // Fetch the item
+        entry = m_entryView->FetchL(item->localId());
+        if (!entry)
+            User::Leave(KErrNotFound); // FetchL will not leave if the localid is not found...
+        
         isNewEntry = false;
     }
     
