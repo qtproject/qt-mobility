@@ -87,6 +87,8 @@ bool QVersitOrganizerImporterPrivate::importDocument(
         item->setType(QOrganizerItemType::TypeTodo);
     } else if (document.componentType() == QLatin1String("VJOURNAL")) {
         item->setType(QOrganizerItemType::TypeJournal);
+    } else if (document.componentType() == QLatin1String("VTIMEZONE")) {
+        // TODO
     } else {
         *error = QVersitOrganizerImporter::InvalidDocumentError;
         return false;
