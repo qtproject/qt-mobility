@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qdeclarativemessagefilter.h>
+#include "qdeclarativemessagefilter.h"
 #include <qdeclarativeinfo.h>
 #include <QDebug>
 

@@ -42,8 +42,8 @@
 #include <QThread>
 #include <QMutex>
 #include <QCache>
-#include <qdeclarativemessagemodel.h>
-#include <qdeclarativemessagefilter.h>
+#include "qdeclarativemessagemodel.h"
+#include "qdeclarativemessagefilter.h"
 #include <qdeclarativeinfo.h>
 #include <qmessagecontentcontainer.h>
 #include <QDebug>
