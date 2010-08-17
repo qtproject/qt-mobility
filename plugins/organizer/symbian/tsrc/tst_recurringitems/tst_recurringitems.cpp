@@ -74,7 +74,6 @@ private slots:  // Test cases
     void addRecurrenceRule();
     void removeRecurrenceRule_data();
     void removeRecurrenceRule();
-    void illegalRecurrenceRules();
 
 private: // util functions
     void addManagers();
@@ -394,18 +393,6 @@ void tst_recurringItems::removeRecurrenceRule()
     QVERIFY(m_om->saveItem(&item));
     item = m_om->item(item.localId());
     QVERIFY(item.details(QOrganizerItemRecurrence::DefinitionName).count() == 0);
-}
-
-/*!
- * Test with illegal recurrence rules that the backend handles erroneous data
- * correctly.
- */
-void tst_recurringItems::illegalRecurrenceRules()
-{
-    // TODO: test symbian backed fails if you give multiple recurrence rules
-    // TODO: try to save items with recurrence rules that Symbian backend does
-    // not support to make sure that no crashes occur, but the client gets an
-    // error code as a result
 }
 
 /*!
