@@ -1672,21 +1672,24 @@ QMessage CFSEngine::messageL(const QMessageId& id) const
     return message;
 }
 
-QMessage CFSEngine::CreateQMessageL(NmApiMessageEnvelope* aMessage) const
+QMessage CFSEngine::CreateQMessage(EmailClientApi::NmApiMessage* aMessage) const
 {
     QMessage message;
     int size = 0;
     message.setType(QMessage::Email);
+    
+    NmApiMessageEnvelope envelope = aMessage->envelope();
 
-    message.setDate(aMessage->sentTime());
-    message.setReceivedDate(aMessage->sentTime());
+    message.setDate(envelope.sentTime());
+    message.setReceivedDate(envelope.sentTime());
     
-    quint64 parentFolderId = aMessage->parentFolder();
     
-  /*  const TFolderId& folderId = aMessage->ParentFolderId();
-    TMailboxId mailboxId = folderId.iMailboxId;
+    quint64 parentFolderId = envelope.parentFolder();
+    
+   /* quint64 mailboxId = parentFolderId.mailboxId;
     const QMessageAccountId accountId = QMessageAccountId(QString::number(mailboxId.iId));
     message.setParentAccountId(accountId);*/
+    
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
     privateMessage->_parentFolderId = QMessageFolderId(QString::number(parentFolderId));
     
@@ -1703,44 +1706,38 @@ QMessage CFSEngine::CreateQMessageL(NmApiMessageEnvelope* aMessage) const
     folder->Release();
     mailbox->Release();
 */
-    if (aMessage->isRead()) {
+    if (envelope.isRead()) {
         privateMessage->_status = privateMessage->_status | QMessage::Read; 
     }
 
     // bodytext and attachment(s)
-    NmApiMessageBody body;
-    aMessage->getPlainTextBody(body);
-    QString content = body.content();
-    message.setBody(content, "text/plain");
+    QString contentType = envelope.contentType();
+    if (contentType == "text/html")
+        message.setBody(aMessage->htmlContent().content(), "text/html");
+    else 
+        message.setBody(aMessage->plainTextContent().content(), "text/plain");
   
-    if (aMessage->hasAttachments()) {
+    if (envelope.hasAttachments())
         privateMessage->_status = privateMessage->_status | QMessage::HasAttachments;
-        
-    }
-    /*REmailAttachmentArray attachments;                  
-    CleanupResetAndRelease<MEmailAttachment>::PushL(attachments);
-    TInt count = aMessage->GetAttachmentsL(attachments);
-    if (count > 0)
-        privateMessage->_status = privateMessage->_status | QMessage::HasAttachments;  
     
-    for(TInt i = 0; i < count; i++) {
-        TInt availableSize = attachments[i]->AvailableSize();       
-        QByteArray name = QString::fromUtf16(attachments[i]->FileNameL().Ptr(), attachments[i]->FileNameL().Length()).toLocal8Bit();
+   // QList<NmApiAttachment> attachments = aMessage->getAttachments();
+    foreach (NmApiAttachment attachment, aMessage->getAttachments()) {
+      //  int size = attachment.size;
+        QByteArray name = attachment.fileName().toUtf8();
+        QString contentType = attachment.contentType(); // ??
         QByteArray mimeType; // TODO: email client api doesn't offer information about attachment mimetype
-        QByteArray mimeSubType; // TODO;
-        int size = attachments[i]->TotalSize();
-        QMessageContentContainer attachment = QMessageContentContainerPrivate::from(
-                                                aMessage->MessageId().iId, 
-                                                attachments[i]->Id().iId, 
-                                                name, mimeType, 
-                                                mimeSubType, size);
-        addAttachmentToMessage(message, attachment);       
+        QByteArray mimeSubType; // TODO:
+        QMessageContentContainer att = QMessageContentContainerPrivate::from(
+                                                        envelope.id(), 
+                                                        attachment.id(), 
+                                                        name, mimeType, 
+                                                        mimeSubType, attachment.size());
+        addAttachmentToMessage(message, att);
     }
-    CleanupStack::PopAndDestroy();
-    attachments.Close();
-    */
+
+
     //from
-    QString from = aMessage->sender();
+    QString from = envelope.sender();
     if (!from.isEmpty()) {
         message.setFrom(QMessageAddress(QMessageAddress::Email, from));
         QMessagePrivate::setSenderName(message, from);
@@ -1748,7 +1745,7 @@ QMessage CFSEngine::CreateQMessageL(NmApiMessageEnvelope* aMessage) const
     
     //to
     QList<EmailClientApi::NmApiEmailAddress> toRecipients;
-    aMessage->getToRecipients(toRecipients);
+    envelope.getToRecipients(toRecipients);
     QList<QMessageAddress> toList;
     for(TInt i = 0; i < toRecipients.count(); i++) {
         QString to = toRecipients[i].address();
@@ -1759,7 +1756,7 @@ QMessage CFSEngine::CreateQMessageL(NmApiMessageEnvelope* aMessage) const
     
     //cc
     QList<EmailClientApi::NmApiEmailAddress> ccRecipients;
-    aMessage->getCcRecipients(ccRecipients);
+    envelope.getCcRecipients(ccRecipients);
     QList<QMessageAddress> ccList;
     for(TInt i = 0; i < ccRecipients.count(); i++) {
         QString cc = ccRecipients[i].address();
@@ -1768,13 +1765,23 @@ QMessage CFSEngine::CreateQMessageL(NmApiMessageEnvelope* aMessage) const
     message.setCc(ccList); 
     ccRecipients.clear();
     
-    //bcc not supported by nmail client api..
+    //bcc
+    QList<EmailClientApi::NmApiEmailAddress> bccRecipients;
+    envelope.getBccRecipients(bccRecipients);
+    QList<QMessageAddress> bccList;
+    for(TInt i = 0; i < bccRecipients.count(); i++) {
+        QString bcc = bccRecipients[i].address();
+        bccList.append(QMessageAddress(QMessageAddress::Email, bcc));
+    }
+    message.setBcc(bccList); 
+    bccRecipients.clear();
     
     // Read message subject   
-    QString subject = aMessage->subject();
+    QString subject = envelope.subject();
     if (!subject.isEmpty()) {
         message.setSubject(subject);
     }
+    
     // TODO: size
     privateMessage->_size = size;
 

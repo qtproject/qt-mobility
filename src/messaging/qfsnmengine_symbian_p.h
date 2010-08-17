@@ -174,7 +174,7 @@ private:
     //TFolderType standardFolderId(QMessage::StandardFolder standardFolder);
     
     QMessageFolderIdList filterMessageFolders(const QMessageFolderFilter& filter, bool& filterHandled) const;
-    QMessage CreateQMessageL(NmApiMessageEnvelope* aMessage) const; 
+    QMessage CreateQMessage(EmailClientApi::NmApiMessage* aMessage) const; 
 
     void addAttachmentToMessage(QMessage& message, QMessageContentContainer& attachment) const;
     QDateTime symbianTTimetoQDateTime(const TTime& time) const;
