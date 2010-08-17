@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,20 +44,19 @@
 
 #include <QtCore/qdir.h>
 
-#include "../../../src/multimedia/qmediaimageviewer.h"
-#include "../../../src/multimedia/qmediaimageviewerservice_p.h"
-#include "../../../src/multimedia/qmediaplaylist.h"
-#include "../../../src/multimedia/qmediaservice.h"
-#include "../../../src/multimedia/qvideooutputcontrol.h"
-#include "../../../src/multimedia/qvideorenderercontrol.h"
-#include "../../../src/multimedia/qvideowidgetcontrol.h"
+#include <qmediaimageviewer.h>
+#include <qmediaimageviewerservice_p.h>
+#include <qmediaplaylist.h>
+#include <qmediaservice.h>
+#include <qvideorenderercontrol.h>
+#include <qvideowidgetcontrol.h>
 
 #include <QtCore/qfile.h>
 #include <QtNetwork/qnetworkaccessmanager.h>
 #include <QtNetwork/qnetworkreply.h>
 
-#include <QtMultimedia/qabstractvideosurface.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qabstractvideosurface.h>
+#include <qvideosurfaceformat.h>
 
 #if defined(Q_OS_SYMBIAN)
 # define TESTDATA_DIR "./tst_qmediaimageviewer_images"
@@ -82,7 +81,6 @@ private slots:
     void multiplePlaylists();
     void invalidPlaylist();
     void elapsedTime();
-    void outputControl();
     void rendererControl();
 
 public:
@@ -100,7 +98,7 @@ private:
 };
 
 Q_DECLARE_METATYPE(QMediaImageViewer::State)
-Q_DECLARE_METATYPE(QMediaImageViewer::MediaStatus);
+Q_DECLARE_METATYPE(QMediaImageViewer::MediaStatus)
 
 class QtTestVideoSurface : public QAbstractVideoSurface
 {
@@ -533,7 +531,7 @@ void tst_QMediaImageViewer::playlist()
     QCOMPARE(stateSpy.count(), 0);
 
     QMediaPlaylist playlist;
-    playlist.setMediaObject(&viewer);
+    viewer.setPlaylist(&playlist);
 
     // Empty playlist so can't exit stopped state.
     viewer.play();
@@ -704,7 +702,7 @@ void tst_QMediaImageViewer::multiplePlaylists()
     QMediaImageViewer viewer;
 
     QMediaPlaylist *playlist1 = new QMediaPlaylist;
-    playlist1->setMediaObject(&viewer);
+    viewer.setPlaylist(playlist1);
     playlist1->addMedia(imageMedia);
     playlist1->addMedia(posterMedia);
 
@@ -713,13 +711,8 @@ void tst_QMediaImageViewer::multiplePlaylists()
 
     QMediaPlaylist *playlist2 = new QMediaPlaylist;
 
-    QTest::ignoreMessage(QtWarningMsg,
-                         "QMediaImageViewer::bind(): already bound to a playlist, detaching the current one");
-    playlist2->setMediaObject(&viewer);
+    viewer.setPlaylist(playlist2);
     playlist2->addMedia(coverArtMedia);
-
-    //the first playlist is detached
-    QVERIFY(playlist1->mediaObject() == 0);
 
     QVERIFY(viewer.media().isNull());
 
@@ -730,7 +723,7 @@ void tst_QMediaImageViewer::multiplePlaylists()
     QVERIFY(viewer.media().isNull());
     QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
 
-    playlist1->setMediaObject(&viewer);
+    viewer.setPlaylist(playlist1);
     playlist1->setCurrentIndex(0);
     QCOMPARE(viewer.media(), imageMedia);
 
@@ -757,7 +750,7 @@ void tst_QMediaImageViewer::invalidPlaylist()
     QSignalSpy statusSpy(&viewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)));
 
     QMediaPlaylist playlist;
-    playlist.setMediaObject(&viewer);
+    viewer.setPlaylist(&playlist);
     playlist.addMedia(invalidMedia);
     playlist.addMedia(imageMedia);
     playlist.addMedia(invalidMedia);
@@ -819,7 +812,7 @@ void tst_QMediaImageViewer::elapsedTime()
 
 
     QMediaPlaylist playlist;
-    playlist.setMediaObject(&viewer);
+    viewer.setPlaylist(&playlist);
     playlist.addMedia(imageMedia);
 
     QCOMPARE(viewer.elapsedTime(), 0);
@@ -888,35 +881,6 @@ void tst_QMediaImageViewer::elapsedTime()
 
 }
 
-void tst_QMediaImageViewer::outputControl()
-{
-    QMediaImageViewer viewer;
-
-    QMediaService *service = viewer.service();
-    if (service == 0)
-        QSKIP("Image viewer object has no service.", SkipSingle);
-
-    QVideoOutputControl *outputControl = qobject_cast<QVideoOutputControl *>(
-            service->control(QVideoOutputControl_iid));
-
-    QVERIFY(outputControl != 0);
-
-    QVERIFY(outputControl->availableOutputs().contains(QVideoOutputControl::RendererOutput));
-    QVERIFY(!outputControl->availableOutputs().contains(QVideoOutputControl::WidgetOutput));
-    QVERIFY(!outputControl->availableOutputs().contains(QVideoOutputControl::UserOutput));
-
-    QCOMPARE(outputControl->output(), QVideoOutputControl::NoOutput);
-
-    outputControl->setOutput(QVideoOutputControl::WidgetOutput);
-    QCOMPARE(outputControl->output(), QVideoOutputControl::NoOutput);
-
-    outputControl->setOutput(QVideoOutputControl::RendererOutput);
-    QCOMPARE(outputControl->output(), QVideoOutputControl::RendererOutput);
-
-    outputControl->setOutput(QVideoOutputControl::UserOutput);
-    QCOMPARE(outputControl->output(), QVideoOutputControl::NoOutput);
-}
-
 void tst_QMediaImageViewer::rendererControl()
 {
     QtTestVideoSurface surfaceA;
@@ -929,19 +893,14 @@ void tst_QMediaImageViewer::rendererControl()
     if (service == 0)
         QSKIP("Image viewer object has no service.", SkipSingle);
 
-    QVideoOutputControl *outputControl = qobject_cast<QVideoOutputControl *>(
-            service->control(QVideoOutputControl_iid));
-    if (outputControl == 0)
-        QSKIP("Image viewer object has no video output control.", SkipSingle);
+    QMediaControl *mediaControl = service->requestControl(QVideoRendererControl_iid);
+    QVERIFY(mediaControl != 0);
 
-    QVideoRendererControl *rendererControl = qobject_cast<QVideoRendererControl *>(
-            service->control(QVideoRendererControl_iid));
+    QVideoRendererControl *rendererControl = qobject_cast<QVideoRendererControl *>(mediaControl);
     QVERIFY(rendererControl != 0);
 
     rendererControl->setSurface(&surfaceA);
     QCOMPARE(rendererControl->surface(), (QAbstractVideoSurface *)&surfaceA);
-
-    outputControl->setOutput(QVideoOutputControl::RendererOutput);
 
     // Load an image so the viewer has some dimensions to work with.
     viewer.setMedia(QMediaContent(imageUrl("image.png")));
@@ -967,11 +926,16 @@ void tst_QMediaImageViewer::rendererControl()
         QCOMPARE(frame.size(), QSize(75, 50));
     }
     // Test clearing the output stops the video surface.
-    outputControl->setOutput(QVideoOutputControl::NoOutput);
+    service->releaseControl(rendererControl);
     QCOMPARE(surfaceA.isActive(), false);
 
     // Test reseting the output restarts it.
-    outputControl->setOutput(QVideoOutputControl::RendererOutput);
+    mediaControl = service->requestControl(QVideoRendererControl_iid);
+    QVERIFY(mediaControl != 0);
+
+    rendererControl = qobject_cast<QVideoRendererControl *>(mediaControl);
+    rendererControl->setSurface(&surfaceA);
+    QVERIFY(rendererControl != 0);
     {
         QVideoSurfaceFormat format = surfaceA.surfaceFormat();
         QCOMPARE(format.handleType(), QAbstractVideoBuffer::NoHandle);

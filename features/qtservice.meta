@@ -1,0 +1,3 @@
+platform    win32
+makefile    gnumake
+techstream  qt

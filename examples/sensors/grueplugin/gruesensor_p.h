@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -52,9 +52,7 @@
 // We mean it.
 //
 
-#include "qsensor_p.h"
-
-class GrueSensorReadingPrivate : public QSensorReadingPrivate
+class GrueSensorReadingPrivate
 {
 public:
     GrueSensorReadingPrivate()

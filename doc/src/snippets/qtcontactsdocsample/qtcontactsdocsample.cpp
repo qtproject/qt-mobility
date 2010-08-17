@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -583,6 +583,17 @@ void shortsnippets()
             QList<QContactId> therapists = contact.relatedContacts("HasTherapist", QContactRelationship::Second);
         }
         //! [6]
+        //! [Getting all tags]
+        QSet<QString> tags;
+        foreach(const QContactTag& tag, contact.details<QContactTag>()) {
+             tags.insert(tag.tag());
+        }
+        //! [Getting all tags]
+        //! [Checking for a specific tag]
+        if (contact.details<QContactTag>(QContactTag::FieldTag, "MyTag").count() > 0) {
+            // Do something with it
+        }
+        //! [Checking for a specific tag]
     }
 }
 

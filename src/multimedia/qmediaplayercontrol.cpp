@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,7 +48,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlayerControl
-    \ingroup multimedia-serv
+    \ingroup multimedia
 
     \preliminary
     \brief The QMediaPlayerControl class provides access to the media playing
@@ -68,7 +68,7 @@ QT_BEGIN_NAMESPACE
     The interface name of QMediaPlayerControl is \c com.nokia.Qt.QMediaPlayerControl/1.0 as
     defined in QMediaPlayerControl_iid.
 
-    \sa QMediaService::control(), QMediaPlayer
+    \sa QMediaService::requestControl(), QMediaPlayer
 */
 
 /*!

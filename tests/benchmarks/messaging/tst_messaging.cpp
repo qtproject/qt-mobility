@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -56,15 +56,15 @@
 #include <txtrich.h>  // CRichText
 #include <cemailaccounts.h>
 #include <mmsconst.h>
-#include <MIUTMSG.H>
-#include <MSVFIND.H>  
-#include <IMPCMTM.H>
+#include <miutmsg.h>
+#include <msvfind.h>  
+#include <impcmtm.h>
 #include <mmsclient.h>
 #include <etelmm.h>
 #include <msvapi.h>
-#include <IAPPrefs.h>
-#include <SMTCMTM.H>
-#include <SMUTHDR.H>
+#include <iapprefs.h>
+#include <smtcmtm.h>
+#include <smuthdr.h>
 #endif
 
 #include <qdebug.h>

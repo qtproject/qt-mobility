@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -101,83 +101,55 @@ class QtTestMediaControlE : public QMediaControl
     Q_OBJECT
 };
 
-struct QtTestDevice
-{
-    QtTestDevice() {}
-    QtTestDevice(const QString &name, const QString &description, const QIcon &icon)
-        : name(name), description(description), icon(icon)
-    {
-    }
-
-    QString name;
-    QString description;
-    QIcon icon;
-};
-
-class QtTestVideoDeviceControl : public QVideoDeviceControl
-{
-public:
-    QtTestVideoDeviceControl(QObject *parent = 0)
-        : QVideoDeviceControl(parent)
-        , m_selectedDevice(-1)
-        , m_defaultDevice(-1)
-    {
-    }
-
-    int deviceCount() const { return devices.count(); }
-
-    QString deviceName(int index) const { return devices.value(index).name; }
-    QString deviceDescription(int index) const { return devices.value(index).description; }
-    QIcon deviceIcon(int index) const { return devices.value(index).icon; }
-
-    int defaultDevice() const { return m_defaultDevice; }
-    void setDefaultDevice(int index) { m_defaultDevice = index; }
-
-    int selectedDevice() const { return m_selectedDevice; }
-    void setSelectedDevice(int index)
-    {
-        emit selectedDeviceChanged(m_selectedDevice = index);
-        emit selectedDeviceChanged(devices.value(index).name);
-    }
-
-    QList<QtTestDevice> devices;
-
-private:
-    int m_selectedDevice;
-    int m_defaultDevice;
-};
-
 class QtTestMediaService : public QMediaService
 {
     Q_OBJECT
 public:
     QtTestMediaService()
         : QMediaService(0)
-        , hasDeviceControls(false)
+        , refA(0)
+        , refB(0)
+        , refC(0)
     {
     }
 
-    QMediaControl* control(const char *name) const
+    QMediaControl *requestControl(const char *name)
     {
-        if (strcmp(name, QtTestMediaControlA_iid) == 0)
-            return const_cast<QtTestMediaControlA *>(&controlA);
-        else if (strcmp(name, QtTestMediaControlB_iid) == 0)
-            return const_cast<QtTestMediaControlB *>(&controlB);
-        else if (strcmp(name, QtTestMediaControlC_iid) == 0)
-            return const_cast<QtTestMediaControlC *>(&controlC);
-        else if (hasDeviceControls && strcmp(name, QVideoDeviceControl_iid) == 0)
-            return const_cast<QtTestVideoDeviceControl *>(&videoDeviceControl);
-        else
+        if (strcmp(name, QtTestMediaControlA_iid) == 0) {
+            refA += 1;
+
+            return &controlA;
+        } else if (strcmp(name, QtTestMediaControlB_iid) == 0) {
+            refB += 1;
+
+            return &controlB;
+        } else if (strcmp(name, QtTestMediaControlC_iid) == 0) {
+            refA += 1;
+
+            return &controlA;
+        } else {
             return 0;
+        }
     }
 
-    using QMediaService::control;
+    void releaseControl(QMediaControl *control)
+    {
+        if (control == &controlA)
+            refA -= 1;
+        else if (control == &controlB)
+            refB -= 1;
+        else if (control == &controlC)
+            refC -= 1;
+    }
 
+    using QMediaService::requestControl;
+
+    int refA;
+    int refB;
+    int refC;
     QtTestMediaControlA controlA;
     QtTestMediaControlB controlB;
     QtTestMediaControlC controlC;
-    QtTestVideoDeviceControl videoDeviceControl;
-    bool hasDeviceControls;
 };
 
 void tst_QMediaService::initTestCase()
@@ -199,10 +171,18 @@ void tst_QMediaService::control()
 {
     QtTestMediaService service;
 
-    QCOMPARE(service.control<QtTestMediaControlA *>(), &service.controlA);
-    QCOMPARE(service.control<QtTestMediaControlB *>(), &service.controlB);
-    QVERIFY(!service.control<QtTestMediaControlC *>());  // Faulty implementation returns A.
-    QVERIFY(!service.control<QtTestMediaControlD *>());  // No control of that type.
+    QtTestMediaControlA *controlA = service.requestControl<QtTestMediaControlA *>();
+    QCOMPARE(controlA, &service.controlA);
+    service.releaseControl(controlA);
+
+    QtTestMediaControlB *controlB = service.requestControl<QtTestMediaControlB *>();
+    QCOMPARE(controlB, &service.controlB);
+    service.releaseControl(controlB);
+
+    QVERIFY(!service.requestControl<QtTestMediaControlC *>());  // Faulty implementation returns A.
+    QCOMPARE(service.refA, 0);  // Verify the control was released.
+
+    QVERIFY(!service.requestControl<QtTestMediaControlD *>());  // No control of that type.
 }
 
 QT_END_NAMESPACE

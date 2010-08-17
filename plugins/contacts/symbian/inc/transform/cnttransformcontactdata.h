@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -67,8 +67,14 @@ protected:
 public:
 	virtual QList<CContactItemField *> transformDetailL(const QContactDetail &detail) = 0;
 	virtual QContactDetail* transformItemField(const CContactItemField& field, const QContact &contact) = 0;
-	virtual bool supportsField(TUint32 fieldType) const = 0;
+	virtual bool supportsField(TUint32 fieldType) const
+	{
+	    TUid fieldTypeUid;
+	    fieldTypeUid.iUid = fieldType;
+	    return supportedFields().contains(fieldTypeUid);
+	};
 	virtual bool supportsDetail(QString detailName) const = 0;
+    virtual QList<TUid> supportedFields() const = 0;
 	virtual QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const = 0;
 	virtual bool supportsSubType(const QString& detailName) const = 0;
 	virtual quint32 getIdForField(const QString& detailName) const = 0;

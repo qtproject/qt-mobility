@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -249,6 +249,8 @@ QTM_BEGIN_NAMESPACE
     Retrieve the body of the message identified by \a id.  
 
     If the message can not be found on the originating server it will be marked as removed.
+
+    On the Symbian^3 platform this function is not yet supported.
 
     Returns true if the operation can be initiated; otherwise returns false.
     

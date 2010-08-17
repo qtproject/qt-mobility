@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -199,17 +199,6 @@ QContactDetail *CntTransformPhoneNumber::transformItemField(const CContactItemFi
 	return phoneNumber;
 }
 
-bool CntTransformPhoneNumber::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldPhoneNumber.iUid ||
-        fieldType == KUidContactFieldFax.iUid ||
-        fieldType == KUidContactFieldDTMF.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformPhoneNumber::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -217,6 +206,14 @@ bool CntTransformPhoneNumber::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformPhoneNumber::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldPhoneNumber
+        << KUidContactFieldFax
+        << KUidContactFieldDTMF;
 }
 
 QList<TUid> CntTransformPhoneNumber::supportedSortingFieldTypes(QString detailFieldName) const

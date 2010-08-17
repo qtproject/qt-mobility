@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,9 +45,41 @@
 #endif
 #include <QEvent>
 #include <coemain.h>    // For CCoeEnv
+#include <coecntrl.h>   // For CCoeControl
+
+QAbstractVideoWidget::QAbstractVideoWidget(QWidget *parent)
+    : QWidget(parent)
+{
+}
+
+QAbstractVideoWidget::~QAbstractVideoWidget()
+{
+}
+
+QBlackSurface::QBlackSurface(QWidget *parent)
+    : QAbstractVideoWidget(parent)
+{
+#ifdef USE_PRIVATE_QWIDGET_METHODS
+#if QT_VERSION >= 0x040601 && !defined(__WINSCW__)
+    qt_widget_private(this)->createExtra();
+    qt_widget_private(this)->extraData()->nativePaintMode = QWExtra::Disable;
+#endif
+#endif
+    winId();
+}
+
+QBlackSurface::~QBlackSurface()
+{
+}
+
+void QBlackSurface::paintEvent(QPaintEvent *event)
+{
+    Q_UNUSED(event);
+    // Do nothing
+}
 
 QBlackWidget::QBlackWidget(QWidget *parent)
-    : QWidget(parent)
+    : QAbstractVideoWidget(parent)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setAttribute(Qt::WA_OpaquePaintEvent, true);
@@ -60,6 +92,7 @@ QBlackWidget::QBlackWidget(QWidget *parent)
     qt_widget_private(this)->extraData()->receiveNativePaintEvents = true;
 #endif
 #endif
+    winId();
 }
 
 QBlackWidget::~QBlackWidget()
@@ -88,16 +121,23 @@ S60VideoWidgetControl::S60VideoWidgetControl(QObject *parent)
     , m_widget(0)
     , m_aspectRatioMode(Qt::KeepAspectRatio)
 {
+    initializeVideoOutput();
+}
+
+void S60VideoWidgetControl::initializeVideoOutput()
+{
+#ifdef MMF_VIDEO_SURFACES_SUPPORTED
+    m_widget = new QBlackSurface();
+#else
     m_widget = new QBlackWidget();
     connect(m_widget, SIGNAL(beginVideoWindowNativePaint()), this, SIGNAL(beginVideoWindowNativePaint()));
     connect(m_widget, SIGNAL(endVideoWindowNativePaint()), this, SIGNAL(endVideoWindowNativePaint()));
+#endif
     m_widget->installEventFilter(this);
-    m_widget->winId();
 }
 
 S60VideoWidgetControl::~S60VideoWidgetControl()
 {
-    delete m_widget;
 }
 
 QWidget *S60VideoWidgetControl::videoWidget()
@@ -176,7 +216,7 @@ bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
             || e->type() == QEvent::Move 
             || e->type() == QEvent::WinIdChange
             || e->type() == QEvent::ParentChange 
-            || e->type() == QEvent::Show) 
+            || e->type() == QEvent::Show)
             emit widgetUpdated();
     }    
     return false;
@@ -193,11 +233,26 @@ WId S60VideoWidgetControl::videoWidgetWId()
     return NULL;
 }
 
+QSize S60VideoWidgetControl::videoWidgetSize()
+{
+    QSize result;
+    RWindowBase *window = NULL;
+    CCoeControl *control = videoWidgetWId();
+    if (control)
+        window = control->DrawableWindow();
+    if (window) {
+        const TSize size = window->Size();
+        result = QSize(size.iWidth, size.iHeight);
+    }
+    return result;
+}
+
 void S60VideoWidgetControl::videoStateChanged(QMediaPlayer::State state)
 {
     if (state == QMediaPlayer::StoppedState) {
 #ifdef USE_PRIVATE_QWIDGET_METHODS
 #if QT_VERSION <= 0x040600 && !defined(FF_QT)
+        qDebug()<<"S60VideoPlayerSession::videoStateChanged() - state == QMediaPlayer::StoppedState";
         qt_widget_private(m_widget)->extraData()->disableBlit = false;
 #endif        
 #endif
@@ -205,6 +260,7 @@ void S60VideoWidgetControl::videoStateChanged(QMediaPlayer::State state)
     } else if (state == QMediaPlayer::PlayingState) {
 #ifdef USE_PRIVATE_QWIDGET_METHODS
 #if QT_VERSION <= 0x040600 && !defined(FF_QT)       
+        qDebug()<<"S60VideoPlayerSession::videoStateChanged() - state == QMediaPlayer::PlayingState";
         qt_widget_private(m_widget)->extraData()->disableBlit = true;
 #endif  
 #endif

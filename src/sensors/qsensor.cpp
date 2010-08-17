@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -179,10 +179,7 @@ bool QSensor::connectToBackend()
     if (d->backend)
         return true;
 
-    int rate = d->dataRate;
     d->backend = QSensorManager::createBackend(this);
-    if (rate != 0)
-        setDataRate(rate);
     return (d->backend != 0);
 }
 
@@ -230,6 +227,8 @@ bool QSensor::isActive() const
     \brief the data rates that the sensor supports.
 
     This is a list of the data rates that the sensor supports.
+    Measured in Hertz.
+
     Entries in the list can represent discrete rates or a
     continuous range of rates.
     A discrete rate is noted by having both values the same.
@@ -249,10 +248,24 @@ qrangelist QSensor::availableDataRates() const
     \property QSensor::dataRate
     \brief the data rate that the sensor should be run at.
 
-    The default value is determined by the backend.
+    Measured in Hertz.
+
+    The data rate is the maximum frequency at which the sensor can detect changes.
+
+    Setting this property is not portable and can cause conflicts with other
+    applications. Check with the sensor backend and platform documentation for
+    any policy regarding multiple applications requesting a data rate.
+
+    The default value (0) means that the app does not care what the data rate is.
+    Applications should consider using a timer-based poll of the current value or
+    ensure that the code that processes values can run very quickly as the platform
+    may provide updates hundreds of times each second.
 
     This should be set before calling start() because the sensor may not
     notice changes to this value while it is running.
+
+    Note that there is no mechanism to determine the current data rate in use by the
+    platform.
 
     \sa QSensor::availableDataRates
 */
@@ -264,6 +277,10 @@ int QSensor::dataRate() const
 
 void QSensor::setDataRate(int rate)
 {
+    if (rate == 0) {
+        d->dataRate = rate;
+        return;
+    }
     bool warn = true;
     Q_FOREACH (const qrange &range, d->availableDataRates) {
         if (rate >= range.first && rate <= range.second) {
@@ -290,8 +307,6 @@ bool QSensor::start()
     if (d->active)
         return true;
     if (!connectToBackend())
-        return false;
-    if (d->availableDataRates.count() == 0)
         return false;
     // Set these flags to their defaults
     d->active = true;
@@ -394,8 +409,16 @@ qoutputrangelist QSensor::outputRanges() const
     \property QSensor::outputRange
     \brief the output range in use by the sensor.
 
-    A sensor may have more than one output range. Typically this is done
-    to give a greater measurement range at the cost of lowering accuracy.
+    This value represents the index in the QSensor::outputRanges list to use.
+
+    Setting this property is not portable and can cause conflicts with other
+    applications. Check with the sensor backend and platform documentation for
+    any policy regarding multiple applications requesting an output range.
+
+    The default value (-1) means that the app does not care what the output range is.
+
+    Note that there is no mechanism to determine the current output range in use by the
+    platform.
 
     \sa QSensor::outputRanges
 */
@@ -407,7 +430,7 @@ int QSensor::outputRange() const
 
 void QSensor::setOutputRange(int index)
 {
-    if (index < 0 || index >= d->outputRanges.count()) {
+    if (index < -1 || index >= d->outputRanges.count()) {
         qWarning() << "ERROR: Output range" << index << "is not valid";
         return;
     }
@@ -525,14 +548,9 @@ void QSensorFilter::setSensor(QSensor *sensor)
 */
 QSensorReading::QSensorReading(QObject *parent, QSensorReadingPrivate *_d)
     : QObject(parent)
-    , d(_d)
+    , d(_d?_d:new QSensorReadingPrivate)
 {
 }
-
-/*!
-    \fn QSensorReading::d_ptr()
-    \internal
-*/
 
 /*!
     \internal
@@ -634,6 +652,13 @@ QVariant QSensorReading::value(int index) const
 
     Note that this method should only be called by QSensorBackend.
 */
+void QSensorReading::copyValuesFrom(QSensorReading *other)
+{
+    QSensorReadingPrivate *my_ptr = d.data();
+    QSensorReadingPrivate *other_ptr = other->d.data();
+    /* Do a direct copy of the private class */
+    *(my_ptr) = *(other_ptr);
+}
 
 /*!
     \macro DECLARE_READING(classname)

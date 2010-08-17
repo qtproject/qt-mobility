@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -856,6 +856,14 @@ bool QMessageService::retrieveHeader(const QMessageId& id)
         return false;
     }
 
+	if(!id.isValid())
+	{
+		qWarning() << "Invalid QMessageId";
+		d_ptr->_error = QMessageManager::InvalidId;
+		d_ptr->setFinished(true);
+		return false;
+	}
+
     d_ptr->_error = QMessageManager::NoError;
     d_ptr->setFinished(true);
 
@@ -864,7 +872,6 @@ bool QMessageService::retrieveHeader(const QMessageId& id)
 
 bool QMessageService::retrieveBody(const QMessageId& id)
 {
-
     if(d_ptr->_active) {
         qWarning() << "Service is currently busy";
         return false;

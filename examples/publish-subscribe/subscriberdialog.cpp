@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -103,6 +103,13 @@ SubscriberDialog::SubscriberDialog(QWidget *parent) :
 #endif
     connect(ui->connectButton, SIGNAL(clicked()), this, SLOT(changeSubscriberPath()));
     changeSubscriberPath();
+
+    // if the default path does not exist reset it to /
+    QVariant value = subscriber->value();
+    if (!subscriber->value().isValid() && subscriber->subPaths().isEmpty()) {
+        ui->basePath->setText(QLatin1String("/"));
+        changeSubscriberPath();
+    }
 }
 
 SubscriberDialog::~SubscriberDialog()

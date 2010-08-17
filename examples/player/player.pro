@@ -3,7 +3,7 @@ TARGET = player
 QT += network \
       xml
 
-INCLUDEPATH += ../../src/multimedia
+INCLUDEPATH += ../../src/multimedia ../../src/multimedia/audio
 
 include(../examples.pri)
 CONFIG += mobility

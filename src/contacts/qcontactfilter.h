@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -105,6 +105,8 @@ protected:
     friend class QContactFilterPrivate;
     QSharedDataPointer<QContactFilterPrivate> d_ptr;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QContactFilter::MatchFlags);
 
 const Q_CONTACTS_EXPORT QContactFilter operator&(const QContactFilter& left, const QContactFilter& right);
 const Q_CONTACTS_EXPORT QContactFilter operator|(const QContactFilter& left, const QContactFilter& right);

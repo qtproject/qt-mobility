@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -83,16 +83,6 @@ QContactDetail *CntTransformFamily::transformItemField(const CContactItemField& 
 	return family;
 }
 
-bool CntTransformFamily::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldSpouse.iUid ||
-        fieldType == KUidContactFieldChildren.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformFamily::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -100,6 +90,13 @@ bool CntTransformFamily::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformFamily::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldSpouse
+        << KUidContactFieldChildren;
 }
 
 QList<TUid> CntTransformFamily::supportedSortingFieldTypes(QString /*detailFieldName*/) const

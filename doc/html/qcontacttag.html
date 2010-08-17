@@ -40,6 +40,16 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QContactTag class contains a tag associated with a contact.</p>
+<p>Typically the tags associated with a contact will be distinct, although this is usually only enforced when the contact is saved in the manager.</p>
+<p>Here is an example of retrieving all the tags for a contact:</p>
+<pre>            QSet&lt;QString&gt; tags;
+            foreach(const QContactTag&amp; tag, contact.details&lt;QContactTag&gt;()) {
+                 tags.insert(tag.tag());
+            }</pre>
+<p>Here is an example of checking for a specific tag value:</p>
+<pre>            if (contact.details&lt;QContactTag&gt;(QContactTag::FieldTag, &quot;MyTag&quot;).count() &gt; 0) {
+                <span class="comment">// Do something with it</span>
+            }</pre>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactTag/setTag"></a>
@@ -61,8 +71,8 @@
 <p>See also <a href="qcontacttag.html#tag">tag</a>() and <a href="qcontacttag.html#setTag">setTag</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

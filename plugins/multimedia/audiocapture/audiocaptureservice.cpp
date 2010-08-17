@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -65,7 +65,7 @@ AudioCaptureService::~AudioCaptureService()
     delete m_session;
 }
 
-QMediaControl *AudioCaptureService::control(const char *name) const
+QMediaControl *AudioCaptureService::requestControl(const char *name)
 {
     if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
         return m_mediaControl;
@@ -81,4 +81,10 @@ QMediaControl *AudioCaptureService::control(const char *name) const
 
     return 0;
 }
+
+void AudioCaptureService::releaseControl(QMediaControl *control)
+{
+    Q_UNUSED(control)
+}
+
 

@@ -30,8 +30,5 @@ DEPLOYMENT += QCONTACTASYNC_PLUGINS_DEPLOY
 
 symbian: {
     TARGET.CAPABILITY = ReadUserData \
-                        WriteUserData \
-                        ReadDeviceData \
-                        WriteDeviceData \
-                        AllFiles \
+                        WriteUserData
 }

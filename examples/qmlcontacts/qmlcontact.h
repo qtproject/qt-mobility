@@ -41,61 +41,27 @@
 #ifndef QMLCONTACT_H
 #define QMLCONTACT_H
 
-#include <qmobilityglobal.h>
-#include <QObject>
-#include <QContact>
-#include <qdeclarative.h>
+#include <QDeclarativePropertyMap>
+#include "qcontact.h"
 
-QTM_USE_NAMESPACE
+QTM_USE_NAMESPACE;
 
-class QmlContact : public QObject {
-Q_OBJECT
-Q_PROPERTY(QContact contact READ contact WRITE setContact NOTIFY contactChanged)
-Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-Q_PROPERTY(QString email READ email WRITE setEmail NOTIFY emailChanged)
-Q_PROPERTY(QString avatar READ avatar NOTIFY avatarChanged)
-Q_PROPERTY(QPixmap thumbnail READ thumbnail)
-Q_PROPERTY(bool hasThumbnail READ hasThumbnail)
-Q_PROPERTY(QStringList details READ details)
-Q_PROPERTY(QStringList contexts READ contexts)
-Q_PROPERTY(QString interest READ interest)
-Q_PROPERTY(QString interestLabel READ interestLabel)
+class QMLContact : public QObject
+{
+    Q_OBJECT
 public:
-    explicit QmlContact(const QContact& contact, QObject *parent = 0);
-    QmlContact();
-    ~QmlContact();
-
-    QContact& contact();
-    void setContact(QContact& contact);
-
-    QString name() const;
-    void setName(QString name);
-
-    QString email() const;
-    void setEmail(QString email);
-
-    bool hasThumbnail() const;
-    QString avatar() const;
-    QPixmap thumbnail() const;
-
-    QString interest() const;
-    QString interestLabel() const;
-
-    QStringList details();
-
-    QStringList contexts();
-
-    Q_INVOKABLE QVariantMap values(QString definitionId);
-
-signals:
-    void contactChanged(QmlContact* qmlcontact);
-    void nameChanged(QmlContact* qmlcontact);
-    void emailChanged(QmlContact* qmlcontact);
+    explicit QMLContact(QObject *parent = 0);
+    void setContact(const QContact& c);
+    QContact contact() const;
+    QVariant contactMap() const;
+    Q_INVOKABLE QList<QObject*> details() const;
 
 private:
-    QContact m_contact;
-};
 
-QML_DECLARE_TYPE(QmlContact)
+    QContact m_contact;
+    QDeclarativePropertyMap* m_contactMap;
+    QList<QDeclarativePropertyMap*> m_detailMaps;
+    QList<QObject*> m_details;
+};
 
 #endif // QMLCONTACT_H

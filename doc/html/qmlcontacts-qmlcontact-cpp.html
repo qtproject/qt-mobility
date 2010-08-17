@@ -53,106 +53,90 @@
     **
     ****************************************************************************/</span>
 
-    #include &quot;qmlcontact.h&quot;
     #include &lt;qcontactdetails.h&gt;
-    #include &lt;QtDebug&gt;
-    #include &lt;QStringList&gt;
+    #include &quot;qmlcontact.h&quot;
+    #include &quot;qmlcontactdetail.h&quot;
+    #include &lt;QDebug&gt;
 
-    QT_USE_NAMESPACE
-    QTM_USE_NAMESPACE
-
-    QmlContact::QmlContact(const QContact&amp; contact, QObject *parent)
-        : QObject(parent), m_contact(contact)
+    static QString normalizePropertyName(const QString&amp; name)
     {
+       if (!name.isEmpty())
+         return name.mid(1).prepend(name[0].toLower());
+       return QString();
     }
 
-    QmlContact::QmlContact()
-    {
-
-    }
-
-    QmlContact::~QmlContact()
+    QMLContact::QMLContact(QObject *parent)
+        :QObject(parent),
+        m_contactMap(0)
     {
 
     }
 
-    QContact &amp;QmlContact::contact()
+    void QMLContact::setContact(const QContact&amp; c)
     {
-        return m_contact;
-    }
+        m_contact = c;
 
-    void QmlContact::setContact(QContact&amp; contact)
-    {
-        m_contact = contact;
-        emit contactChanged(this);
-    }
-
-    QString QmlContact::name()
-    {
-        return m_contact.displayLabel();
-    }
-
-    void QmlContact::setName(QString name)
-    {
-        Q_UNUSED(name);
-        qWarning() &lt;&lt; &quot;Not implemented yet&quot;;
-        emit nameChanged(this);
-    }
-
-    QString QmlContact::email()
-    {
-        QList&lt;QContactDetail&gt; allEmails = m_contact.details(QContactEmailAddress::DefinitionName);
-
-        QStringList emails;
-        foreach (const QContactDetail&amp; email, allEmails) {
-            emails &lt;&lt; email.value(QContactEmailAddress::FieldEmailAddress);
+        if (m_contactMap) {
+            delete m_contactMap;
+            m_detailMaps.clear();
         }
-        return emails.join(QString::fromLatin1(&quot;,&quot;));
-    }
 
-    void QmlContact::setEmail(QString email)
-    {
-        Q_UNUSED(email);
-        qWarning() &lt;&lt; &quot;Not implemented yet&quot;;
-        emit emailChanged(this);
-    }
-
-    QStringList QmlContact::details()
-    {
-        QStringList dets;
-        QList&lt;QContactDetail&gt; ld = m_contact.details();
-        QContactDetail d;
-        foreach(d, ld){
-            dets += d.definitionName();
+        foreach (QObject* detail, m_details) {
+            delete detail;
         }
-        return dets;
-    }
+        m_details.clear();
 
-    QStringList QmlContact::contexts()
-    {
-        QStringList dets;
-        QList&lt;QContactDetail&gt; ld = m_contact.details();
-        QContactDetail d;
-        foreach(d, ld){
-            dets += d.contexts();
+        m_contactMap = new QDeclarativePropertyMap(this);
+
+        QList&lt;QContactDetail&gt; details = m_contact.details();
+        foreach (const QContactDetail&amp; detail, details) {
+          QMLContactDetail* qd = new QMLContactDetail(this);
+
+          QDeclarativePropertyMap* dm = new QDeclarativePropertyMap(m_contactMap);
+
+          connect(dm, SIGNAL(valueChanged(QString,QVariant)), qd, SLOT(detailChanged(QString,QVariant)));
+
+          QVariantMap values = detail.variantValues();
+          foreach (const QString&amp; key, values.keys()) {
+              dm-&gt;insert(normalizePropertyName(key), values.value(key));
+          }
+          qd-&gt;setName(normalizePropertyName(detail.definitionName()));
+          m_details.append(qd);
+          qd-&gt;setDetailPropertyMap(dm);
+          m_detailMaps.append(dm);;
+          m_contactMap-&gt;insert(normalizePropertyName(detail.definitionName()), QVariant::fromValue(static_cast&lt;QObject*&gt;(dm)));
         }
-        return dets;
     }
 
-    QVariantMap QmlContact::values(QString definitionId)
+    QContact QMLContact::contact() const
     {
-        QStringList strlist;
-        QContactDetail detail = m_contact.detail(definitionId);
+        QContact c(m_contact);
+        foreach (QObject* o, m_details) {
+            QMLContactDetail* d = qobject_cast&lt;QMLContactDetail*&gt;(o);
+            if (d &amp;&amp; d-&gt;isDetailChanged()) {
+                QContactDetail detail = d-&gt;detail();
+                c.saveDetail(&amp;detail);
+            }
+        }
 
-        QVariantMap map = detail.variantValues();
-        return map;
+        return c;
     }
 
-    #include &quot;moc_qmlcontact.cpp&quot;</pre>
+    QList&lt;QObject*&gt; QMLContact::details() const
+    {
+        return m_details;
+    }
+
+    QVariant QMLContact::contactMap() const
+    {
+        if (m_contactMap)
+            return QVariant::fromValue(static_cast&lt;QObject*&gt;(m_contactMap));
+        return QVariant();
+    }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -77,9 +77,9 @@
 #include <smuthdr.h>
 #include <mtuireg.h> // CMtmUiRegistry
 #include <mtmuibas.h> // CBaseMtmUi
-#include <SendUiConsts.h>
+#include <senduiconsts.h>
 #include <sendui.h>    // SendUi API
-#include <CMessageData.h> //CMessageData
+#include <cmessagedata.h> //CMessageData
 #include <apgcli.h>
 #include <rsendas.h>
 #include <rsendasmessage.h>
@@ -3763,6 +3763,30 @@ QMessage CMTMEngine::mmsMessageL(CMsvEntry& receivedEntry, long int messageId) c
     ipMmsMtm->LoadMessageL();
     message.setFrom(QMessageAddress(QMessageAddress::Phone, QString::fromUtf16(ipMmsMtm->Sender().Ptr(), ipMmsMtm->Sender().Length())));
     QMessagePrivate::setSenderName(message, QString::fromUtf16(ipMmsMtm->Sender().Ptr(), ipMmsMtm->Sender().Length()));
+
+    // Read message recipients
+    const CMsvRecipientList&  recipients = ipMmsMtm->AddresseeList();
+    QMessageAddressList toList;
+    QMessageAddressList ccList;
+    QMessageAddressList bccList;
+    for (int i=0; i < recipients.Count(); i++) {
+        switch (recipients.Type(i)) {
+        case EMsvRecipientCc:
+            ccList.append(QMessageAddress(QMessageAddress::Phone, QString::fromUtf16(recipients[i].Ptr(), recipients[i].Length())));
+            break;
+        case EMsvRecipientBcc:
+            bccList.append(QMessageAddress(QMessageAddress::Phone, QString::fromUtf16(recipients[i].Ptr(), recipients[i].Length())));
+            break;
+        case EMsvRecipientTo:
+        default:
+            toList.append(QMessageAddress(QMessageAddress::Phone, QString::fromUtf16(recipients[i].Ptr(), recipients[i].Length())));
+            break;
+        }
+    }
+    message.setTo(toList);
+    message.setCc(ccList);
+    message.setBcc(bccList);
+
     
     // Read message subject
     if (receivedEntry.Entry().iDescription.Length() > 0)  {
