@@ -104,8 +104,8 @@ QTM_BEGIN_NAMESPACE
                                         the service.
     \value      InterfaceDescription    This attribute provides a description for the interface 
                                         implementation.
-    \value      ServiceType             This attribute specifies the type of service being 
-                                        published. It is either 
+    \value      ServiceType             This attribute specifies the QServiceInterfaceDescriptor::Type
+                                        of the service being published.
 */
 
 /*!
@@ -114,8 +114,9 @@ QTM_BEGIN_NAMESPACE
     This enum describes the type of service specified in the attached 
     QServiceInterfaceDescriptor::ServiceType attribute.
 
-    \value      Plugin    This type denotes that the service is plug-in based.
-    \value      IPC       This type denotes that the service is published as an IPC service.
+    \value      Plugin       This type denotes that the service is plug-in based.
+    \value      SharedIPC    This type denotes that the service is published as a shared IPC instance.
+    \value      UniqueIPC    This type denotes that the service is published as unique IPC instances.
 */
 
 /*!
