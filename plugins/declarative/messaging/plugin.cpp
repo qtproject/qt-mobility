@@ -1,8 +1,8 @@
 
 #include <qdeclarative.h>
 #include <QDeclarativeExtensionPlugin>
-#include <qdeclarativemessagefilter.h>
-#include <qdeclarativemessagemodel.h>
+#include "qdeclarativemessagefilter.h"
+#include "qdeclarativemessagemodel.h"
 
 class QDeclarativeMessageModelPlugin : public QDeclarativeExtensionPlugin
 {
