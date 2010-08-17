@@ -154,7 +154,7 @@ public:
 
 
 #if !defined(QT_NO_CONNMAN)
-    QSystemNetworkInfo::NetworkStatus getOfonoStatus();
+    QSystemNetworkInfo::NetworkStatus getOfonoStatus(QSystemNetworkInfo::NetworkMode mode);
 #endif
 //public Q_SLOTS:
 //    void getPrimaryMode();

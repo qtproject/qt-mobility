@@ -137,6 +137,10 @@ public:
     bool isPowered();
     bool isOnline();
     QString getName();
+    QString getManufacturer();
+    QString getModel();
+    QString getRevision();
+    QString getSerial();
     QStringList getFeatures(); //sms, sim
     QStringList getInterfaces();
     QString defaultInterface();
@@ -151,14 +155,14 @@ Q_SIGNALS:
 };
 
 
-class QOfonoNetworkInterface : public QDBusAbstractInterface
+class QOfonoNetworkRegistrationInterface : public QDBusAbstractInterface
 {
     Q_OBJECT
 
 public:
 
-    QOfonoNetworkInterface(const QString &dbusModemPathName, QObject *parent = 0);
-    ~QOfonoNetworkInterface();
+    QOfonoNetworkRegistrationInterface(const QString &dbusModemPathName, QObject *parent = 0);
+    ~QOfonoNetworkRegistrationInterface();
 
     QVariantMap getProperties();
 
