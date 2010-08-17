@@ -114,7 +114,7 @@ public slots:
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
 
-signals:
+Q_SIGNALS:
     void zoomLevelChanged(qreal zoomLevel);
     void centerChanged(const QGeoCoordinate &coordinate);
     void mapTypeChanged(QGraphicsGeoMap::MapType mapType);

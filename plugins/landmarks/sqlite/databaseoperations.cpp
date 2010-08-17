@@ -82,6 +82,7 @@
 #include <QSet>
 #include <QMetaMethod>
 #include <qnumeric.h>
+#include <QXmlStreamReader>
 
 QTM_USE_NAMESPACE
 
@@ -110,6 +111,26 @@ QString quoteString(const QString &s)
     q += s;
     q += "\"";
     return q;
+}
+
+bool matchString(const QString &sourceString, const QString &matchString, QLandmarkFilter::MatchFlags matchFlags )
+{
+    Qt::CaseSensitivity cs;
+    if (matchFlags & QLandmarkFilter::MatchCaseSensitive)
+        cs = Qt::CaseSensitive;
+    else
+        cs = Qt::CaseInsensitive;
+    if ((matchFlags & 3) == QLandmarkFilter::MatchEndsWith) {
+        return sourceString.endsWith(matchString, cs);
+    } else if ((matchFlags & 3) == QLandmarkFilter::MatchStartsWith) {
+        return sourceString.startsWith(matchString, cs);
+    } else if ((matchFlags & 3) == QLandmarkFilter::MatchContains) {
+        return sourceString.contains(matchString,cs);
+    } else if (matchFlags & QLandmarkFilter::MatchFixedString) {
+        return sourceString.compare(matchString,cs) == 0;
+    } else {
+        return QVariant(sourceString) == QVariant(matchString);
+    }
 }
 
 /*
@@ -1030,7 +1051,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName
                     }
 
                 } else { //must be custom attributes
-                    if (attributeFilter.attributeType() == QLandmarkAttributeFilter::AndOperation) {
+                    if (attributeFilter.operationType() == QLandmarkAttributeFilter::AndOperation) {
                         bindValues.insert("key", attributeKeys.at(0));
                         queryString = "SELECT landmarkId FROM landmark_attribute WHERE landmark_attribute.key = :key";
                         if (!executeQuery(&query, queryString,
@@ -1060,6 +1081,8 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName
                             }
 
                             bool isMatch = true;
+                            QVariant lmAttributeValue;
+                            QVariant filterAttributeValue;
                             foreach(const QString &filterAttributeKey, attributeKeys) {
                                 if (!lmAttributes.contains(filterAttributeKey)) {
                                     isMatch = false;
@@ -1068,7 +1091,24 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName
 
                                 if (!attributeFilter.attribute(filterAttributeKey).isValid()) {
                                     continue;
-                                } else if (attributeFilter.attribute(filterAttributeKey) != lmAttributes.value(filterAttributeKey)) {
+                                } else  {
+                                    lmAttributeValue = lmAttributes.value(filterAttributeKey);
+
+                                    filterAttributeValue = attributeFilter.attribute(filterAttributeKey);
+
+                                    if (filterAttributeValue.type() == QVariant::String) {
+
+                                        if (matchString(lmAttributeValue.toString(),
+                                                        filterAttributeValue.toString(),
+                                                        attributeFilter.matchFlags(filterAttributeKey))) {
+                                            continue;
+                                        }
+                                    } else {
+                                        if (lmAttributeValue == filterAttributeValue) {
+                                            continue;
+                                        }
+                                    }
+                                    //didn't find a match
                                     isMatch = false;
                                     break;
                                 }
@@ -1142,7 +1182,23 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QString &connectionName
     case QLandmarkFilter::NameFilter: {
             QLandmarkNameFilter nameFilter;
             nameFilter = filter;
-            queryString = landmarkIdsNameQueryString(nameFilter);
+            if (DatabaseOperations::filterSupportLevel(nameFilter)== QLandmarkManager::None) {
+                *error = QLandmarkManager::NotSupportedError;
+                *errorString = "The name filter's configuration is not supported";
+                return result;
+            }
+
+            //TODO: optimization
+            QLandmarkAttributeFilter attributeFilter;
+            attributeFilter.setAttributeType(QLandmarkAttributeFilter::ManagerAttributes);
+            attributeFilter.setAttribute("name", nameFilter.name(),nameFilter.matchFlags());
+            QList<QLandmarkId> lmIds = ::landmarkIds(connectionName,  attributeFilter,sortOrders,limit,offset,error,errorString,managerUri,queryRun);
+            if (*error != QLandmarkManager::NoError) {
+                return result;
+            } else {
+                result.append(lmIds);
+            }
+            idsFound = true;
             break;
         }
     case QLandmarkFilter::LandmarkIdFilter: {
@@ -2698,20 +2754,38 @@ bool DatabaseOperations::importLandmarks(const QString &connectionName,
         return false;
     }
 
+    QString detectedFormat = format;
+    if (detectedFormat == "") {
+        QXmlStreamReader reader(device);
+        if (!reader.readNextStartElement()) {
+            *error = QLandmarkManager::ParsingError;
+            *errorString = "Could not read root element of io device";
+            device->reset();
+            return false;
+        } else {
+            if (reader.name() == "lmx")
+                detectedFormat = (const QLatin1String)QLandmarkManager::Lmx;
+            else if (reader.name() == "gpx")
+                detectedFormat = (const QLatin1String)QLandmarkManager::Gpx;
+            else {
+                *error = QLandmarkManager::NotSupportedError;
+                *errorString = "Unknown import file format";
+                device->reset();
+                return false;
+            }
+        }
+        device->reset();
+    }
+
     bool result = false;
-    if (format ==  QLandmarkManager::Lmx) {
+    if (detectedFormat ==  QLandmarkManager::Lmx) {
             result = importLandmarksLmx(connectionName, device, option, categoryId, error, errorString, managerUri);
             device->close();
             return result;
-    } else if (format == QLandmarkManager::Gpx) {
+    } else if (detectedFormat == QLandmarkManager::Gpx) {
            result = importLandmarksGpx(connectionName, device, option, categoryId, error, errorString, managerUri, queryRun);
            device->close();
            return result;
-    }  else if (format =="") {
-        *error = QLandmarkManager::BadArgumentError;
-        *errorString =  "No format provided";
-        device->close();
-         return false;
     } else {
         if (error)
             *error = QLandmarkManager::NotSupportedError;
@@ -2782,6 +2856,112 @@ bool DatabaseOperations::exportLandmarks(const QString &connectionName,
         device->close();
         return false;
     }
+}
+
+QLandmarkManager::SupportLevel DatabaseOperations::filterSupportLevel(const QLandmarkFilter &filter)
+{
+    switch(filter.type()) {
+        case QLandmarkFilter::DefaultFilter:
+            return QLandmarkManager::Native;
+        case QLandmarkFilter::AttributeFilter:
+        {
+            const QLandmarkAttributeFilter attribFilter(filter);
+            QStringList filterKeys = attribFilter.attributeKeys();
+
+            QStringList landmarkKeys;
+            if (attribFilter.attributeType() == QLandmarkAttributeFilter::ManagerAttributes) {
+                foreach(const QString key, filterKeys) {
+                    if (!supportedSearchableAttributes.contains(key))
+                        return QLandmarkManager::None;
+                }
+            }
+            foreach (const QString &key, filterKeys) {
+                if (attribFilter.matchFlags(key) & QLandmarkFilter::MatchCaseSensitive)
+                    return QLandmarkManager::None;
+            }
+        }
+        case QLandmarkFilter::BoxFilter:
+        {
+            return QLandmarkManager::Native;
+        }
+        case QLandmarkFilter::CategoryFilter:
+        {
+            return QLandmarkManager::Native;
+        }
+        case QLandmarkFilter::IntersectionFilter:
+        {
+            const QLandmarkIntersectionFilter andFilter(filter);
+            const QList<QLandmarkFilter>& terms = andFilter.filters();
+            QLandmarkManager::SupportLevel currentLevel = QLandmarkManager::Native;
+            if (terms.count() ==0)
+                return currentLevel;
+
+            for(int i=0; i < terms.count();i++) {
+                    if (filterSupportLevel(terms.at(i)) == QLandmarkManager::None)
+                        return QLandmarkManager::None;
+                    else if (filterSupportLevel(terms.at(i)) == QLandmarkManager::Emulated)
+                        currentLevel = QLandmarkManager::Emulated;
+            }
+            return currentLevel;
+        }
+        case QLandmarkFilter::LandmarkIdFilter:
+        {
+            return QLandmarkManager::Native;
+        }
+        case QLandmarkFilter::InvalidFilter:
+        {
+            return QLandmarkManager::Native;
+        }
+        case QLandmarkFilter::NameFilter:
+        {
+            const QLandmarkNameFilter nameFilter(filter);
+            if (nameFilter.matchFlags() & QLandmarkFilter::MatchCaseSensitive)
+                return QLandmarkManager::None;
+            else
+                return QLandmarkManager::Native;
+        }
+        case QLandmarkFilter::ProximityFilter:
+        {
+            return QLandmarkManager::Native;
+        }
+        case QLandmarkFilter::UnionFilter:
+        {
+            const QLandmarkUnionFilter orFilter(filter);
+            const QList<QLandmarkFilter>& terms = orFilter.filters();
+            QLandmarkManager::SupportLevel currentLevel = QLandmarkManager::Native;
+            if (terms.count() == 0)
+                return currentLevel;
+
+            for (int i=0; i < terms.count(); i++) {
+                if (filterSupportLevel(terms.at(i)) == QLandmarkManager::None)
+                    return QLandmarkManager::None;
+                else if (filterSupportLevel(terms.at(i)) == QLandmarkManager::Emulated)
+                    currentLevel = QLandmarkManager::Emulated;
+            }
+
+            return currentLevel;
+        }
+        default: {
+            return QLandmarkManager::None;
+        }
+    }
+    return QLandmarkManager::None;
+}
+
+QLandmarkManager::SupportLevel DatabaseOperations::sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders)
+{
+    QLandmarkManager::SupportLevel currentLevel = QLandmarkManager::Native;
+    foreach(const QLandmarkSortOrder &sortOrder, sortOrders){
+        switch(sortOrder.type()) {
+            case (QLandmarkSortOrder::DefaultSort):
+                continue;
+            case (QLandmarkSortOrder::NameSort):
+                continue;
+            default:
+                currentLevel = QLandmarkManager::None;
+        }
+    }
+    return currentLevel;
 }
 
 DatabaseOperations::QueryRun::QueryRun(QLandmarkAbstractRequest *req, const QString &uri, QLandmarkManagerEngineSqlite *eng)

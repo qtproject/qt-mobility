@@ -79,7 +79,7 @@ public:
     void setLocale(const QLocale &locale);
     QLocale locale() const;
 
-signals:
+Q_SIGNALS:
     void finished(QGeoRouteReply* reply);
     void error(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString = QString());
 

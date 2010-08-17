@@ -50,6 +50,12 @@ OrganizerItemDetailTransform::~OrganizerItemDetailTransform()
 
 }
 
+void OrganizerItemDetailTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
+{
+    // In most cases we can use the other transformToDetailL function without modification
+    transformToDetailL(instance.Entry(), itemInstance);
+}
+
 void OrganizerItemDetailTransform::transformToDetailPostSaveL(const CCalEntry& entry, QOrganizerItem *item)
 {
     Q_UNUSED(entry);

@@ -54,29 +54,33 @@
 // We mean it.
 //
 
-#include "qtelephonycallinfo.h"
 #include <QtCore/qshareddata.h>
 #include <QList>
 #include <QString>
 #include <QVariant>
 
+#include "qtelephonycallinfo.h"
+#include "qtelephony.h"
+
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
+
+using namespace QTelephonyEvents;
 
 struct Q_AUTOTEST_EXPORT QTelephonyCallInfoPrivate : public QSharedData
 {
 public:
     QTelephonyCallInfoPrivate()
-        : type(QTelephonyCallInfo::Other)
+        : type(QTelephonyEvents::Other)
         , subType("")
-        , status(QTelephonyCallInfo::Idle) { }
+        , status(QTelephonyEvents::Idle) { }
     QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other)
         : QSharedData(other) { }
 
     QString remotePartyIdentifier;
-    QTelephonyCallInfo::CallType type;
+    QTelephonyEvents::CallType type;
     QString subType;
-    QTelephonyCallInfo::CallStatus status;
+    QTelephonyEvents::CallStatus status;
     QHash<QString, QVariant> values;
 };
 

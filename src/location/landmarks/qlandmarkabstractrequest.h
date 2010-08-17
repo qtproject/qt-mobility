@@ -91,12 +91,12 @@ public:
     QLandmarkManager * manager() const;
     void setManager(QLandmarkManager *manager);
 
-public slots:
+public Q_SLOTS:
     bool start();
     bool cancel();
     bool waitForFinished(int msecs = 0);
 
-signals:
+Q_SIGNALS:
     void resultsAvailable();
     void stateChanged(QLandmarkAbstractRequest::State newState);
 protected:

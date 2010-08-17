@@ -2,7 +2,7 @@ TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtorganizer_symbian)
 PLUGIN_TYPE=organizer
-    
+ 
 CONFIG += mobility
 MOBILITY = organizer
 
@@ -25,6 +25,7 @@ symbian: {
     INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
 
     HEADERS += \
+    	qorganizeritemrequestqueue.h \
     	organizeritemrequestserviceprovider.h \
         qorganizersymbian_p.h \
         organizeritemtransform.h \
@@ -33,6 +34,7 @@ symbian: {
         transform/organizeritemdescriptiontransform.h \
         transform/organizeritemdisplaylabeltransform.h \
         transform/organizeritemguidtransform.h \
+        transform/organizeriteminstanceorigintransform.h \
         transform/organizeritemlocationtransform.h \
         transform/organizeritemprioritytransform.h \
         transform/organizeritemrecurrencetransform.h \
@@ -42,6 +44,7 @@ symbian: {
         transform/organizertodoprogresstransform.h \
         transform/organizertodotimerangetransform.h
     SOURCES += \
+    	qorganizeritemrequestqueue.cpp \
     	organizeritemrequestserviceprovider.cpp \
         qorganizersymbian.cpp \
         organizeritemtransform.cpp \
@@ -50,6 +53,7 @@ symbian: {
         transform/organizeritemdescriptiontransform.cpp \
         transform/organizeritemdisplaylabeltransform.cpp \
         transform/organizeritemguidtransform.cpp \
+        transform/organizeriteminstanceorigintransform.cpp \
         transform/organizeritemlocationtransform.cpp \
         transform/organizeritemprioritytransform.cpp \
         transform/organizeritemrecurrencetransform.cpp \

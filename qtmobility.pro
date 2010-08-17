@@ -96,7 +96,7 @@ contains(build_docs, yes) {
 
 contains(build_unit_tests, yes):SUBDIRS+=tests
 contains(build_examples, yes):SUBDIRS+=examples
-contains(build_docs, yes):SUBDIRS+=demos
+contains(build_demos, yes):SUBDIRS+=demos
 
 #updating and deployment of translations requires Qt 4.6.3/qtPrepareTool
 !symbian:defined(qtPrepareTool):SUBDIRS += translations
@@ -126,10 +126,12 @@ contains(build_docs, yes):SUBDIRS+=demos
         INSTALLS += qtmheaderslocation
     }
 
-    contains(mobility_modules,messaging) {
-        qtmheadersmessaging.path = $${QT_MOBILITY_INCLUDE}/QtMessaging
-        qtmheadersmessaging.files = $${QT_MOBILITY_BUILD_TREE}/include/QtMessaging/*
-        INSTALLS += qtmheadersmessaging
+    contains(qmf_enabled, yes)|wince*|win32|maemo5 {
+        contains(mobility_modules,messaging) {
+            qtmheadersmessaging.path = $${QT_MOBILITY_INCLUDE}/QtMessaging
+            qtmheadersmessaging.files = $${QT_MOBILITY_BUILD_TREE}/include/QtMessaging/*
+            INSTALLS += qtmheadersmessaging
+        }
     }
 
     contains(mobility_modules,multimedia) {

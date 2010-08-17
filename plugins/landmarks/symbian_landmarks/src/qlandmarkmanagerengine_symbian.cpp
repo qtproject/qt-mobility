@@ -597,6 +597,23 @@ void QLandmarkManagerEngineSymbian::updateLandmarkCategoryRemoveRequest(
         newState);
 }
 
+void QLandmarkManagerEngineSymbian::updateLandmarkFetchByIdRequest(QLandmarkFetchByIdRequest* req,
+    const QList<QLandmark>& result, QLandmarkManager::Error error, const QString &errorString,
+    const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState)
+{
+    QLandmarkManagerEngine::updateLandmarkFetchByIdRequest(req, result, error, errorString,
+        errorMap, newState);
+}
+
+void QLandmarkManagerEngineSymbian::updateLandmarkCategoryFetchByIdRequest(
+    QLandmarkCategoryFetchByIdRequest *req, const QList<QLandmarkCategory>& result,
+    QLandmarkManager::Error error, const QString &errorString, const ERROR_MAP &errorMap,
+    QLandmarkAbstractRequest::State newState)
+{
+    QLandmarkManagerEngine::updateLandmarkCategoryFetchByIdRequest(req, result, error, errorString,
+        errorMap, newState);
+}
+
 void QLandmarkManagerEngineSymbian::updateLandmarkImportRequest(QLandmarkImportRequest *req,
     QLandmarkManager::Error error, const QString &errorString,
     QLandmarkAbstractRequest::State newState)

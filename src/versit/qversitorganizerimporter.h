@@ -43,7 +43,6 @@
 #define QVERSITORGANIZERIMPORTER_H
 
 #include "qmobilityglobal.h"
-#include "qversitresourcehandler.h"
 
 #include <qorganizeritem.h>
 
@@ -58,16 +57,14 @@ class QVersitProperty;
 class Q_VERSIT_EXPORT QVersitOrganizerImporterPropertyHandler
 {
 public:
-    static QVersitOrganizerImporterPropertyHandler* createBackupHandler();
     virtual ~QVersitOrganizerImporterPropertyHandler() {}
     virtual void propertyProcessed(const QVersitDocument& document,
                                    const QVersitProperty& property,
-                                   bool alreadyProcessed,
                                    const QOrganizerItem& item,
+                                   bool *alreadyProcessed,
                                    QList<QOrganizerItemDetail>* updatedDetails) = 0;
     virtual void documentProcessed(const QVersitDocument& document,
                                    QOrganizerItem* item) = 0;
-    virtual int version() const { return 1; }
 };
 
 class Q_VERSIT_EXPORT QVersitOrganizerImporter
@@ -80,6 +77,7 @@ public:
     };
 
     QVersitOrganizerImporter();
+    QVersitOrganizerImporter(const QString& profile);
     ~QVersitOrganizerImporter();
 
     bool importDocument(const QVersitDocument& documents);
@@ -87,9 +85,6 @@ public:
     QMap<int, Error> errors() const;
 
     void setPropertyHandler(QVersitOrganizerImporterPropertyHandler* handler);
-
-    void setResourceHandler(QVersitResourceHandler* handler);
-    QVersitResourceHandler* resourceHandler() const;
 
 private:
     QVersitOrganizerImporterPrivate* d;

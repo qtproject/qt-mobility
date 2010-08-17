@@ -299,6 +299,10 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
     Q_UNUSED(fetchHint);
     // TODO: Make this method to use the fetch hint
 
+    // TODO: Do multicalendar (collection) support properly
+    QOrganizerCollection defaultCollection;
+    defaultCollection.setId(QOrganizerCollectionId());
+
     CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
     std::string nativeId = QString::number(itemId).toStdString();
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
@@ -310,6 +314,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
         fillInCommonCComponentDetails( &retn, event );
         delete event;
         cleanupCal( cal );
+        QOrganizerItemManagerEngine::setItemCollectionId(&retn, defaultCollection.id()); // TODO: FIXME.
         return retn;
     }
     CTodo* todo = cal->getTodo( nativeId, calError );
@@ -319,6 +324,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
         fillInCommonCComponentDetails( &retn, todo );
         delete todo;
         cleanupCal( cal );
+        QOrganizerItemManagerEngine::setItemCollectionId(&retn, defaultCollection.id()); // TODO: FIXME.
         return retn;
     }
     CJournal* journal = cal->getJournal( nativeId, calError );
@@ -328,6 +334,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
         fillInCommonCComponentDetails( &retn, journal );
         delete journal;
         cleanupCal( cal );
+        QOrganizerItemManagerEngine::setItemCollectionId(&retn, defaultCollection.id()); // TODO: FIXME.
         return retn;
     }
 
@@ -337,11 +344,11 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
     return QOrganizerItem();
 }
 
-bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
     // TODO: Add changeset manipulation and signal emissions
 
-    if ( !items ) {
+    if ( !items || collectionId != QOrganizerCollectionLocalId()) {
         *error = QOrganizerItemManager::BadArgumentError;
         return false;
     }
@@ -410,6 +417,47 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId>&
     }
 
     return success;
+}
+
+QOrganizerCollectionLocalId QOrganizerItemMaemo5Engine::defaultCollectionId(QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NoError;
+    return QOrganizerCollectionLocalId(0);
+}
+
+QList<QOrganizerCollectionLocalId> QOrganizerItemMaemo5Engine::collectionIds(QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NoError;
+    QList<QOrganizerCollectionLocalId> retn;
+    retn << QOrganizerCollectionLocalId(0);
+    return retn;
+}
+
+QList<QOrganizerCollection> QOrganizerItemMaemo5Engine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NoError;
+    QOrganizerCollection defaultCollection;
+    defaultCollection.setId(QOrganizerCollectionId());
+    QList<QOrganizerCollection> retn;
+
+    if (collectionIds.contains(QOrganizerCollectionLocalId(0)))
+        retn << defaultCollection;
+
+    return retn;
+}
+
+bool QOrganizerItemMaemo5Engine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
+{
+    Q_UNUSED(collection)
+    *error = QOrganizerItemManager::NotSupportedError;
+    return false;
+}
+
+bool QOrganizerItemMaemo5Engine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
+{
+    Q_UNUSED(collectionId)
+    *error = QOrganizerItemManager::NotSupportedError;
+    return false;
 }
 
 bool QOrganizerItemMaemo5Engine::startRequest(QOrganizerItemAbstractRequest* req)

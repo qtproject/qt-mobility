@@ -114,9 +114,8 @@ public:
         QString *errorString) const;
 
     QList<QLandmark>
-        landmarks(const QList<QLandmarkId> &landmarkIds,
-            QMap<int, QLandmarkManager::Error> *errorMap, QLandmarkManager::Error *error,
-            QString *errorString) const;
+    landmarks(const QList<QLandmarkId> &landmarkIds, QMap<int, QLandmarkManager::Error> *errorMap,
+        QLandmarkManager::Error *error, QString *errorString) const;
     QList<QLandmark> landmarks(const QLandmarkFilter &filter, int limit, int offset, const QList<
         QLandmarkSortOrder>& sortOrders, QLandmarkManager::Error *error, QString *errorString) const;
 
@@ -218,6 +217,15 @@ public:
 
     static void updateLandmarkCategoryRemoveRequest(QLandmarkCategoryRemoveRequest* req,
         QLandmarkManager::Error error, const QString &errorString, const ERROR_MAP &errorMap,
+        QLandmarkAbstractRequest::State newState);
+
+    static void updateLandmarkFetchByIdRequest(QLandmarkFetchByIdRequest* req, const QList<
+        QLandmark>& result, QLandmarkManager::Error error, const QString &errorString,
+        const ERROR_MAP & errorMap, QLandmarkAbstractRequest::State newState);
+
+    static void updateLandmarkCategoryFetchByIdRequest(QLandmarkCategoryFetchByIdRequest *req,
+        const QList<QLandmarkCategory>& result, QLandmarkManager::Error error,
+        const QString &errorString, const ERROR_MAP & errorMap,
         QLandmarkAbstractRequest::State newState);
 
     static void updateLandmarkImportRequest(QLandmarkImportRequest *req,

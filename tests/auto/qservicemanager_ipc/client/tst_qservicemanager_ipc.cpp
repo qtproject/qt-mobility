@@ -870,8 +870,10 @@ void tst_QServiceManager_IPC::testSignalling()
     //signal with custom types
     QSignalSpy variousSpy(serviceUnique, SIGNAL(signalWithVariousParam(QVariant,QString,QServiceFilter,QVariant)));
     QMetaObject::invokeMethod(serviceUnique, "triggerSignalWithVariousParam");
-    
+
+#ifndef QT_NO_DBUS
     QEXPECT_FAIL("", "Serviceframework IPC over QtDBus doesn't yet support signals with custom arguments", Abort);
+#endif
     QTRY_VERIFY(variousSpy.count() == 1);
 
     QCOMPARE(variousSpy.at(0).count(), 4);
