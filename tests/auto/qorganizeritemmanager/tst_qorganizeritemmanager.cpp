@@ -667,39 +667,50 @@ void tst_QOrganizerItemManager::add()
 {
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+    
+    // Use note & todo item depending on backend support
+    QString type;
+    if (cm->detailDefinitions(QOrganizerItemType::TypeNote).count())
+        type = QLatin1String(QOrganizerItemType::TypeNote);
+    else if (cm->detailDefinitions(QOrganizerItemType::TypeTodo).count())
+        type = QLatin1String(QOrganizerItemType::TypeTodo);
+    else
+        QSKIP("This manager does not support note or todo item", SkipSingle);
 
-    QOrganizerNote note;
-    note.setDisplayLabel("This is a note");
-    note.setDescription("This note is a particularly notey note");
+    QOrganizerItem item;
+    item.setType(type);
+    item.setDisplayLabel("This is a note");
+    item.setDescription("This note is a particularly notey note");
     int currCount = cm->itemIds().count();
-    QVERIFY(cm->saveItem(&note));
+    QVERIFY(cm->saveItem(&item));
     QVERIFY(cm->error() == QOrganizerItemManager::NoError);
 
-    QVERIFY(!note.id().managerUri().isEmpty());
-    QVERIFY(note.id().localId() != 0);
+    QVERIFY(!item.id().managerUri().isEmpty());
+    QVERIFY(item.id().localId() != 0);
     QCOMPARE(cm->itemIds().count(), currCount+1);
 
-    QOrganizerItem added = cm->item(note.id().localId());
-    QVERIFY(added.id() == note.id());
+    QOrganizerItem added = cm->item(item.id().localId());
+    QVERIFY(added.id() == item.id());
     
-    if (!isSuperset(added, note)) {
+    if (!isSuperset(added, item)) {
         // XXX TODO: fix the isSuperset so that it ignores timestamps.
         //dumpOrganizerItems(cm.data());
         //dumpOrganizerItemDifferences(added, note);
-        QCOMPARE(added, QOrganizerItem(note));
+        QCOMPARE(added, item);
     }
 
     // now try adding an item that does not exist in the database with non-zero id
-    QOrganizerNote nonexistent;
-    nonexistent.setDisplayLabel("Another note.");
-    nonexistent.setDescription("This is `another note`'s description");
-    QVERIFY(cm->saveItem(&nonexistent));       // should work
-    QVERIFY(cm->removeItem(nonexistent.id().localId())); // now nonexistent has an id which does not exist
-    QVERIFY(!cm->saveItem(&nonexistent));      // hence, should fail
+    QOrganizerItem nonexistentItem;
+    nonexistentItem.setType(type);
+    nonexistentItem.setDisplayLabel("Another note.");
+    nonexistentItem.setDescription("This is `another note`'s description");
+    QVERIFY(cm->saveItem(&nonexistentItem));       // should work
+    QVERIFY(cm->removeItem(nonexistentItem.id().localId())); // now nonexistentItem has an id which does not exist
+    QVERIFY(!cm->saveItem(&nonexistentItem));      // hence, should fail
     QCOMPARE(cm->error(), QOrganizerItemManager::DoesNotExistError);
-    nonexistent.setId(QOrganizerItemId());
-    QVERIFY(cm->saveItem(&nonexistent));       // after setting id to zero, should save
-    QVERIFY(cm->removeItem(nonexistent.id().localId()));
+    nonexistentItem.setId(QOrganizerItemId());
+    QVERIFY(cm->saveItem(&nonexistentItem));       // after setting id to zero, should save
+    QVERIFY(cm->removeItem(nonexistentItem.id().localId()));
 
     // now try adding a "megaevent"
     // - get list of all definitions supported by the manager
@@ -964,25 +975,35 @@ void tst_QOrganizerItemManager::update()
 {
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+    
+    // Use note & todo item depending on backend support
+    QString type;
+    if (cm->detailDefinitions(QOrganizerItemType::TypeNote).count())
+        type = QLatin1String(QOrganizerItemType::TypeNote);
+    else if (cm->detailDefinitions(QOrganizerItemType::TypeTodo).count())
+        type = QLatin1String(QOrganizerItemType::TypeTodo);
+    else
+        QSKIP("This manager does not support note or todo item", SkipSingle);
 
     /* Save a new item first */
-    QOrganizerNote note;
-    note.setDisplayLabel("Yet another note");
-    note.setDescription("Surprisingly, this note is not a particularly notey note");
-    QVERIFY(cm->saveItem(&note));
+    QOrganizerItem item;
+    item.setType(type);
+    item.setDisplayLabel("Yet another note");
+    item.setDescription("Surprisingly, this note is not a particularly notey note");
+    QVERIFY(cm->saveItem(&item));
     QVERIFY(cm->error() == QOrganizerItemManager::NoError);
 
     /* Update name */
-    QOrganizerItemDescription descr = note.detail(QOrganizerItemDescription::DefinitionName);
+    QOrganizerItemDescription descr = item.detail(QOrganizerItemDescription::DefinitionName);
     descr.setDescription("This note is now slightly noteworthy");
-    note.saveDetail(&descr);
-    QVERIFY(cm->saveItem(&note));
+    item.saveDetail(&descr);
+    QVERIFY(cm->saveItem(&item));
     QVERIFY(cm->error() == QOrganizerItemManager::NoError);
     descr.setDescription("This is a very noteworthy note");
-    note.saveDetail(&descr);
-    QVERIFY(cm->saveItem(&note));
+    item.saveDetail(&descr);
+    QVERIFY(cm->saveItem(&item));
     QVERIFY(cm->error() == QOrganizerItemManager::NoError);
-    QOrganizerItem updated = cm->item(note.localId());
+    QOrganizerItem updated = cm->item(item.localId());
     QOrganizerItemDescription updatedDescr = updated.detail(QOrganizerItemDescription::DefinitionName);
     QCOMPARE(updatedDescr, descr);
 }
@@ -991,20 +1012,30 @@ void tst_QOrganizerItemManager::remove()
 {
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+    
+    // Use note & todo item depending on backend support
+    QString type;
+    if (cm->detailDefinitions(QOrganizerItemType::TypeNote).count())
+        type = QLatin1String(QOrganizerItemType::TypeNote);
+    else if (cm->detailDefinitions(QOrganizerItemType::TypeTodo).count())
+        type = QLatin1String(QOrganizerItemType::TypeTodo);
+    else
+        QSKIP("This manager does not support note or todo item", SkipSingle);
 
     /* Save a new item first */
-    QOrganizerItem note;
-    note.setDisplayLabel("Not another note");
-    note.setDescription("Yes, another note!");
-    QVERIFY(cm->saveItem(&note));
+    QOrganizerItem item;
+    item.setType(type);
+    item.setDisplayLabel("Not another note");
+    item.setDescription("Yes, another note!");
+    QVERIFY(cm->saveItem(&item));
     QVERIFY(cm->error() == QOrganizerItemManager::NoError);
-    QVERIFY(note.id() != QOrganizerItemId());
+    QVERIFY(item.id() != QOrganizerItemId());
 
     /* Remove the created item */
     const int itemCount = cm->itemIds().count();
-    QVERIFY(cm->removeItem(note.localId()));
+    QVERIFY(cm->removeItem(item.localId()));
     QCOMPARE(cm->itemIds().count(), itemCount - 1);
-    QVERIFY(cm->item(note.localId()).isEmpty());
+    QVERIFY(cm->item(item.localId()).isEmpty());
     QCOMPARE(cm->error(), QOrganizerItemManager::DoesNotExistError);
 }
 
@@ -1019,19 +1050,32 @@ void tst_QOrganizerItemManager::batch()
 
     QVERIFY(!cm->removeItems(QList<QOrganizerItemLocalId>(), NULL));
     QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
-
+    
+    // Use note & todo item depending on backend support
+    QString type;
+    if (cm->detailDefinitions(QOrganizerItemType::TypeNote).count())
+        type = QLatin1String(QOrganizerItemType::TypeNote);
+    else if (cm->detailDefinitions(QOrganizerItemType::TypeTodo).count())
+        type = QLatin1String(QOrganizerItemType::TypeTodo);
+    else
+        QSKIP("This manager does not support note or todo item", SkipSingle);
+    
+    QOrganizerItem a;
+    QOrganizerItem b;
+    QOrganizerItem c;
+    a.setType(type);
+    b.setType(type);
+    c.setType(type);
+    
     /* Now add 3 items, all valid */
-    QOrganizerNote a;
     QOrganizerItemDisplayLabel da;
     da.setValue(QOrganizerItemDisplayLabel::FieldLabel, "XXXXXX A Note");
     a.saveDetail(&da);
 
-    QOrganizerNote b;
     QOrganizerItemDisplayLabel db;
     db.setValue(QOrganizerItemDisplayLabel::FieldLabel, "XXXXXX B Note");
     b.saveDetail(&db);
 
-    QOrganizerNote c;
     QOrganizerItemDisplayLabel dc;
     dc.setValue(QOrganizerItemDisplayLabel::FieldLabel, "XXXXXX C Note");
     c.saveDetail(&dc);
@@ -1169,9 +1213,11 @@ void tst_QOrganizerItemManager::batch()
     QVERIFY(cm->error() == QOrganizerItemManager::NoError);
     
     // Save and remove a fourth item. Store the id.
-    a.setId(QOrganizerItemId());
-    QVERIFY(cm->saveItem(&a));
-    QOrganizerItemLocalId removedId = a.localId();
+    QOrganizerItem d;
+    d.setType(type);
+    d.setDisplayLabel("XXXXXX D Note");
+    QVERIFY(cm->saveItem(&d));
+    QOrganizerItemLocalId removedId = d.localId();
     QVERIFY(cm->removeItem(removedId));
 
     /* Now delete 3 items, but with one bad argument */
@@ -2287,7 +2333,10 @@ void tst_QOrganizerItemManager::detailOrders()
 {
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
-
+    
+    if (cm->managerName() == "symbian")
+        QSKIP("symbian manager does not support detail ordering", SkipSingle);
+    
     QOrganizerEvent a;
 
     // comments
