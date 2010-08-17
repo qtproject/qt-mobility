@@ -111,7 +111,7 @@ public:
     enum ServiceMetadataErr {
         SFW_ERROR_NO_SERVICE = 0,                           /* Can not find service root node in XML file*/
         SFW_ERROR_NO_SERVICE_NAME,                          /* Can not find service name in XML file */
-        SFW_ERROR_NO_SERVICE_FILEPATH,                      /* Can not find service filepath in XML file */
+        SFW_ERROR_NO_SERVICE_PATH,                          /* Can not find service filepath in XML file */
         SFW_ERROR_NO_SERVICE_INTERFACE,                     /* No interface for the service in XML file*/
         SFW_ERROR_NO_INTERFACE_VERSION,                     /* Can not find interface version in XML file */
         SFW_ERROR_NO_INTERFACE_NAME,                        /* Can not find interface name in XML file*/
@@ -123,7 +123,9 @@ public:
         SFW_ERROR_INVALID_VERSION,
         SFW_ERROR_DUPLICATED_TAG,                           /* The tag appears twice */
         SFW_ERROR_INVALID_CUSTOM_TAG,                       /* The customproperty tag is not corectly formatted or otherwise incorrect*/
-        SFW_ERROR_DUPLICATED_CUSTOM_KEY                     /* The customproperty appears twice*/
+        SFW_ERROR_DUPLICATED_CUSTOM_KEY,                    /* The customproperty appears twice*/
+        SFW_ERROR_MULTIPLE_SERVICE_TYPES,                   /* Both filepath and ipcpath found in the XML file */
+        SFW_ERROR_INVALID_IPC_TYPE                          /* IPC service type is not 'unique' or 'shared' */
     };
 
 public:
@@ -164,6 +166,7 @@ private:
     QString serviceName;
     QString serviceLocation;
     QString serviceDescription;
+    QServiceInterfaceDescriptor::Type serviceType;
     QList<QServiceInterfaceDescriptor> serviceInterfaces;
     QSet<QString> duplicates;
     int latestError;

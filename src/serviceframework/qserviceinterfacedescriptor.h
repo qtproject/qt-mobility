@@ -72,7 +72,14 @@ public:
         Capabilities = 0,
         Location, 
         ServiceDescription,
-        InterfaceDescription
+        InterfaceDescription,
+        ServiceType
+    };
+
+    enum Type {
+        Plugin = 0,
+        SharedIPC,
+        UniqueIPC
     };
 
     QServiceInterfaceDescriptor();

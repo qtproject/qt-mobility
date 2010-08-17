@@ -52,6 +52,7 @@
 //Service related
 #define SERVICE_TAG "service" 
 #define SERVICE_FILEPATH "filepath"
+#define SERVICE_IPCPATH "ipcpath"
 
 //Interface related
 #define INTERFACE_TAG "interface"
@@ -251,8 +252,8 @@ bool ServiceMetaData::extractMetadata()
             case SFW_ERROR_NO_SERVICE_NAME:                          /* Can not find service name in XML file */
                 qDebug() << "Missing or empty <name> tag within <service>";
                 break;
-            case SFW_ERROR_NO_SERVICE_FILEPATH:                      /* Can not find service filepath in XML file */
-                qDebug() << "Missing or empty <filepath> tag within <service>";
+            case SFW_ERROR_NO_SERVICE_PATH:                          /* Can not find service filepath or ipcpath in XML file */
+                qDebug() << "Missing or empty <filepath> or <ipcpath tag within <service>";
                 break;
             case SFW_ERROR_NO_SERVICE_INTERFACE:                     /* No interface for the service in XML file*/
                 qDebug() << "Missing <interface> tag";
@@ -290,6 +291,12 @@ bool ServiceMetaData::extractMetadata()
             case SFW_ERROR_DUPLICATED_CUSTOM_KEY:                    /* The customproperty appears twice*/
                 qDebug() << "Same custom property appears multiple times";
                 break;
+            case SFW_ERROR_MULTIPLE_SERVICE_TYPES:                   /* Both filepath and ipcpath found in the XML file */
+                qDebug() << "Cannot specify both <filepath> and <ipcpath> tags within <service>";
+                break;
+            case SFW_ERROR_INVALID_IPC_TYPE:                         /* IPC service type is not 'unique' or 'shared'  */
+                qDebug() << "Invalid attribute 'type' within IPC <interface> tag. Value must be 'unique' or 'shared'";
+                break;
         }
     }
     return !parseError;
@@ -312,29 +319,35 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
     Q_ASSERT(aXMLReader.isStartElement() && aXMLReader.name() == SERVICE_TAG);
     bool parseError = false;
 
-    int dupSTags[3] = {0 //->tag name
+    int dupSTags[4] = {0 //->tag name
         ,0 //-> service description
         ,0 //-> filepath
+        ,0 //-> ipcpath
     };
     while(!parseError && !aXMLReader.atEnd()) {
         aXMLReader.readNext();
-        if (aXMLReader.isStartElement() && aXMLReader.name() == DESCRIPTION_TAG) {
+        if (aXMLReader.isStartElement() && aXMLReader.name() == NAME_TAG) {
+            //Found <name> tag
+            serviceName = aXMLReader.readElementText();
+            dupSTags[0]++;
+        } else if (aXMLReader.isStartElement() && aXMLReader.name() == DESCRIPTION_TAG) {
             //Found <description> tag
             serviceDescription = aXMLReader.readElementText();
             dupSTags[1]++;
-        } else if (aXMLReader.isStartElement() && aXMLReader.name() == NAME_TAG) {
-            serviceName = aXMLReader.readElementText();
-            dupSTags[0]++;
-        } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_TAG) {
-            //Found a <interface> node, read module related metadata  
-            if (!processInterfaceElement(aXMLReader)) 
-                parseError = true;
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == SERVICE_FILEPATH ) {
-            //Found <filepath> tag
+            //Found <filepath> tag for plugin service
             dupSTags[2]++;
             serviceLocation = aXMLReader.readElementText();
+        } else if (aXMLReader.isStartElement() && aXMLReader.name() == SERVICE_IPCPATH ) {
+            //Found <ipcpath>> tag for IPC service
+            dupSTags[3]++;
+            serviceLocation = aXMLReader.readElementText();
+        } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_TAG) {
+            //Found interface> node, read module related metadata  
+            if (!processInterfaceElement(aXMLReader)) 
+                parseError = true;
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == "version") {
-            //FOUND <version> tag on service level. We ignore this for now
+            //Found <version> tag on service level. We ignore this for now
             aXMLReader.readElementText();
         } else if (aXMLReader.isEndElement() && aXMLReader.name() == SERVICE_TAG) {
             //Found </service>, leave the loop
@@ -347,20 +360,26 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
             parseError = true;
         }
     }
+
     if ( !parseError ) {
         if (serviceName.isEmpty()) {
             latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE_NAME;
             parseError = true;
         } else if (serviceLocation.isEmpty()) {
-            latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE_FILEPATH;
+            latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE_PATH;
             parseError = true;
         }
     }
 
-    for(int i=0;!parseError && i<3;i++) {
+    if ((dupSTags[2] > 0) && (dupSTags[3] > 0)) {
+        latestError = SFW_ERROR_MULTIPLE_SERVICE_TYPES;
+        parseError = true;
+    }
+
+    for(int i=0;!parseError && i<4;i++) {
         if (dupSTags[i] > 1) {
-            parseError = true;
             latestError = SFW_ERROR_DUPLICATED_TAG;
+            parseError = true;
             break;
         }
     }
@@ -375,6 +394,11 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
         serviceInterfaces.at(i).d->serviceName = serviceName;
         serviceInterfaces.at(i).d->attributes[QServiceInterfaceDescriptor::Location] = serviceLocation;
         serviceInterfaces.at(i).d->attributes[QServiceInterfaceDescriptor::ServiceDescription] = serviceDescription;
+    
+        if (dupSTags[2] == 1) {
+            serviceType = QServiceInterfaceDescriptor::Plugin;
+            serviceInterfaces.at(i).d->attributes[QServiceInterfaceDescriptor::ServiceType] = serviceType;
+        }
     }
 
     if (parseError) {
@@ -388,8 +412,10 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
 */
 bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
 {
-    Q_ASSERT(aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_TAG);
+    //interface tag may have IPC type attributes and previously parsed
+    //Q_ASSERT(aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_TAG);
     bool parseError = false;
+    bool invalidType = false;
 
     //Read interface parameter
     QString tmp;
@@ -401,6 +427,32 @@ bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
         0   //->description
     };
     aInterface.d = new QServiceInterfaceDescriptorPrivate;
+           
+    //Read IPC interface instance type attribute (if any)
+    if (aXMLReader.attributes().hasAttribute("type")) {
+        const QString type = aXMLReader.attributes().value("type").toString();
+        if (!type.isEmpty()) {
+            if (type == "shared") {
+                serviceType = QServiceInterfaceDescriptor::SharedIPC;
+            } else if (type == "unique") {
+                serviceType = QServiceInterfaceDescriptor::UniqueIPC;
+            } else {
+                invalidType = true;
+            }
+        } else {
+            invalidType = true;
+        }
+    } else {
+        serviceType = QServiceInterfaceDescriptor::SharedIPC;
+    }
+
+    if (!invalidType) {
+        aInterface.d->attributes[QServiceInterfaceDescriptor::ServiceType] = serviceType;
+    } else {
+        latestError = ServiceMetaData::SFW_ERROR_INVALID_IPC_TYPE;
+        parseError = true;
+    }
+
     while (!parseError && !aXMLReader.atEnd()) {
         aXMLReader.readNext();
         //Read interface description
