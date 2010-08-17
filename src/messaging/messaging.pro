@@ -181,7 +181,7 @@ symbian|win32|maemo6|maemo5|mac {
             maemohelpers.cpp
         contains(CONFIG, FREESTYLEMAIL):SOURCES += qfsengine_symbian.cpp
         contains(CONFIG, FREESTYLENMAIL):SOURCES += qfsnmengine_symbian.cpp
-        contains(CONFIG, FREESTYLENMAIL):LIBS += -lnmailclientapi \	
+        contains(CONFIG, FREESTYLENMAIL):LIBS += -lnmailclientapi \	    
     LIBS += -lsendas2 \
             -lmsgs \
             -letext \

@@ -171,7 +171,7 @@ private:
     QMessageFolderIdList allFolders() const;
     bool fsFolderL(const QMessageFolderId& id, NmApiMailbox* mailbox, NmApiFolder* folder) const;
     QList<NmApiFolder> getFolderListByAccountId(const quint64 mailboxId) const;
-    //TFolderType standardFolderId(QMessage::StandardFolder standardFolder);
+    NmApiEmailFolderType standardFolderId(QMessage::StandardFolder standardFolder);
     
     QMessageFolderIdList filterMessageFolders(const QMessageFolderFilter& filter, bool& filterHandled) const;
     QMessage CreateQMessage(EmailClientApi::NmApiMessage* aMessage) const; 

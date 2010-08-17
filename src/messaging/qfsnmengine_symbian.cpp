@@ -1720,9 +1720,8 @@ QMessage CFSEngine::CreateQMessage(EmailClientApi::NmApiMessage* aMessage) const
     if (envelope.hasAttachments())
         privateMessage->_status = privateMessage->_status | QMessage::HasAttachments;
     
-   // QList<NmApiAttachment> attachments = aMessage->getAttachments();
-    foreach (NmApiAttachment attachment, aMessage->getAttachments()) {
-      //  int size = attachment.size;
+    QList<NmApiAttachment> attachments = aMessage->getAttachments();
+    foreach (NmApiAttachment attachment, attachments) {
         QByteArray name = attachment.fileName().toUtf8();
         QString contentType = attachment.contentType(); // ??
         QByteArray mimeType; // TODO: email client api doesn't offer information about attachment mimetype
@@ -1839,17 +1838,17 @@ TTime CFSEngine::qDateTimeToSymbianTTime(const QDateTime& date) const
     return TTime(dateTime);
 }
 
-/*TFolderType CFSEngine::standardFolderId(QMessage::StandardFolder standardFolder)
+NmApiEmailFolderType CFSEngine::standardFolderId(QMessage::StandardFolder standardFolder)
 {
     switch(standardFolder) {
-        case QMessage::InboxFolder: return EInbox;
-        case QMessage::OutboxFolder: return EOutbox;
-        case QMessage::DraftsFolder: return EDrafts;
-        case QMessage::SentFolder: return ESent;
-        case QMessage::TrashFolder: return EDeleted;
+        case QMessage::InboxFolder: return Inbox;
+        case QMessage::OutboxFolder: return Outbox;
+        case QMessage::DraftsFolder: return Drafts;
+        case QMessage::SentFolder: return Sent;
+        case QMessage::TrashFolder: return Deleted;
         default: return EOther;
     }
-}*/
+}
 
 CFSMessagesFindOperation::CFSMessagesFindOperation(CFSEngine& aOwner, int aOperationId)
     : m_owner(aOwner), 
