@@ -78,6 +78,8 @@ private slots:  // Test cases
     void getItems();
     void getItemInstances();
 
+    void setRecurrenceDates();
+
     // TODO: Asynchronous requests testing
 
 private:
@@ -915,6 +917,32 @@ void tst_Maemo5Om::fetchItem()
     QOrganizerItem fetchedItem = m_om->item(item.localId());
     QVERIFY(fetchedItem.id() != QOrganizerItemId());
     // TODO: TDD cases for other verifications
+}
+
+void tst_Maemo5Om::setRecurrenceDates()
+{
+    // Create an event with recurrence dates
+    QOrganizerEvent event;
+    event.setStartDateTime(QDateTime(QDate(2010, 8, 22), QTime(12, 0, 0)));
+    event.setEndDateTime(QDateTime(QDate(2010, 8, 22), QTime(13, 0, 0)));
+
+    QList<QDate> recurrenceDates;
+    recurrenceDates << QDate(2010, 8, 30);
+    recurrenceDates << QDate(2010, 9, 7);
+
+    event.setRecurrenceDates(recurrenceDates);
+
+    // Save event
+    QVERIFY(m_om->saveItem(&event));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QVERIFY(event.id().localId() != 0);
+    QVERIFY(event.id().managerUri().contains(managerName));
+    QVERIFY(!event.guid().isEmpty());
+
+    QOrganizerEvent fetchedEvent = static_cast<QOrganizerEvent>(m_om->item(event.id().localId()));
+    QList<QDate> fetchedRecurrenceDates = fetchedEvent.recurrenceDates();
+
+    QCOMPARE(recurrenceDates, fetchedRecurrenceDates);
 }
 
 void tst_Maemo5Om::fetchItemIds()

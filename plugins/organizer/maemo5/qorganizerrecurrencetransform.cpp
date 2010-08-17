@@ -372,7 +372,7 @@ void OrganizerRecurrenceTransform::transformToQrecurrence(CRecurrence *crecurren
     std::vector< std::string >::const_iterator recurrenceDate;
     for (recurrenceDate = recurrenceDates.begin(); recurrenceDate != recurrenceDates.end(); ++recurrenceDate)
     {
-        // TODO: Here RDATE type from string should be parsed to QDate...
+        m_lRecurrenceDates << convertRDate(QString::fromStdString(*recurrenceDate));
     }
 
     // Exception dates
@@ -380,8 +380,60 @@ void OrganizerRecurrenceTransform::transformToQrecurrence(CRecurrence *crecurren
     std::vector< std::string >::const_iterator exceptionDate;
     for (exceptionDate = exceptionDates.begin(); exceptionDate != exceptionDates.end(); ++exceptionDate)
     {
-        // TODO: Here RDATE type from string should be parsed to QDate...
+        m_lExceptionDates << convertRDate(QString::fromStdString(*exceptionDate));
     }
+}
+
+QList<QDate> OrganizerRecurrenceTransform::convertRDate(const QString &rdate) const
+{
+    QStringList splitted = rdate.split(":");
+    QList<QDate> dates;
+
+    if (splitted.first().contains("VALUE=DATE")) {
+        QStringList values = splitted.last().split(",");
+        for (int i = 0; i < values.count(); i++) {
+            QDate date = convertString(values[i]);
+            dates << date;
+        }
+    } else if (splitted.first().contains("VALUE=PERIOD")) {
+        QStringList values = splitted.last().split(",");
+        for (int i = 0; i < values.count(); i++) {
+            QString value = values[i].split('/').first();
+            if (!values.isEmpty()) {
+                QDate date = convertString(value);
+                dates << date;
+            }
+        }
+    } else if (splitted.first().startsWith("RDATE:")) {
+         QDate date = convertString(splitted.last());
+         dates << date;
+    }
+    // TODO: What to do if a timezone has also been defined f.ex "RDATE;TZID=US-EASTERN:19970714T083000"?
+
+    return dates;
+}
+
+QDate OrganizerRecurrenceTransform::convertString(const QString &rdate) const
+{
+    QString time = rdate;
+    bool isUtc = false;
+    if (time.endsWith('Z')) {
+        time.chop(1);
+        isUtc = true;
+    }
+
+    QDateTime dateTime;
+    if (time.contains('T')) {
+        time.remove('T');
+        dateTime = QDateTime::fromString(time, "yyyyMMddHHmmss");
+    } else {
+        dateTime = QDateTime::fromString(time, "yyyyMMdd");
+    }
+
+    if (isUtc)
+        dateTime = dateTime.toUTC();
+
+    return dateTime.date();
 }
 
 QList<QOrganizerItemRecurrenceRule> OrganizerRecurrenceTransform::recurrenceRules() const
