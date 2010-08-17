@@ -185,6 +185,7 @@ void QCameraPrivate::initControls()
 
         if (control) {
             q->connect(control, SIGNAL(stateChanged(QCamera::State)), q, SIGNAL(stateChanged(QCamera::State)));
+            q->connect(control, SIGNAL(statusChanged(QCamera::Status)), q, SIGNAL(statusChanged(QCamera::Status)));
             q->connect(control, SIGNAL(captureModeChanged(QCamera::CaptureMode)),
                        q, SIGNAL(captureModeChanged(QCamera::CaptureMode)));
             q->connect(control, SIGNAL(error(int,QString)), q, SLOT(_q_error(int,QString)));
