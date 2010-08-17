@@ -246,6 +246,61 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(const QOrganize
     
     return occurrenceList;
 }
+QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint,QOrganizerItemManager::Error* error) const
+{
+    QList<QOrganizerItem> occurrenceList;
+    TCalTime startTime;
+    startTime.SetTimeUtcL(TCalTime::MinTime());
+
+    TCalTime endTime;
+    endTime.SetTimeUtcL(TCalTime::MaxTime());
+
+    RPointerArray<CCalInstance> instanceList;
+    TRAPD(err, m_instanceView->FindInstanceL(instanceList,CalCommon::EIncludeAll,
+                                   CalCommon::TCalTimeRange(startTime,endTime)));
+            
+    transformError(err, error);
+    //Convert instance list to list of QOrganizerItem    
+    if (*error == QOrganizerItemManager::NoError) {  
+        int count(instanceList.Count()); 
+        // Convert calninstance list to  QOrganizerEventOccurrence and add to QOrganizerItem list                 
+        for( int index=0; index < count;index++ ) {
+             QOrganizerItem itemInstance;
+             CCalInstance* calInstance = (instanceList)[index];
+                                 
+             TRAPD(err, m_itemTransform.toItemInstanceL(*calInstance, &itemInstance));
+             transformError(err, error);
+             if (*error == QOrganizerItemManager::NoError) {
+                 QOrganizerItemId id;
+                 id.setManagerUri(this->managerUri());
+                 
+                 // The instance might be modified. Then it will not point to the parent entry.
+                 // In this case local id must be set. Otherwise it should be zero.                                                  
+                 if (calInstance->Entry().RecurrenceIdL().TimeUtcL() != Time::NullTTime()) {
+                     QOrganizerItemLocalId instanceEntryId = calInstance->Entry().LocalUidL();    
+                     id.setLocalId(instanceEntryId);
+                     itemInstance.setId(id);
+                 }                                                                      
+                 occurrenceList.append(itemInstance);
+             }    
+        }           
+    } else {
+        instanceList.ResetAndDestroy();
+        return occurrenceList;
+    }
+    instanceList.ResetAndDestroy();
+    
+    //Check whether no filtering and sorting needed.Return complete list.
+    if (filter == QOrganizerItemInvalidFilter() && sortOrders.count() == 0)
+        return occurrenceList;    
+            
+    // Use the general implementation to filter and sort items
+    QList<QOrganizerItem> filteredAndSortedItemList = slowFilter(occurrenceList, filter, sortOrders);
+    occurrenceList.clear();
+    occurrenceList.append(filteredAndSortedItemList);
+                   
+    return occurrenceList;
+}
 
 QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
 {
@@ -600,9 +655,17 @@ void QOrganizerItemSymbianEngine::deleteItemL(const QOrganizerItemLocalId& organ
 QList<QOrganizerItem> QOrganizerItemSymbianEngine::slowFilter(const QList<QOrganizerItem> &items, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
 {
     QList<QOrganizerItem> filteredAndSorted;
-    foreach(const QOrganizerItem& item, items) {
-        if (QOrganizerItemManagerEngine::testFilter(filter, item))
-            QOrganizerItemManagerEngine::addSorted(&filteredAndSorted, item, sortOrders);
+    
+    if (filter != QOrganizerItemInvalidFilter()) {
+        foreach(const QOrganizerItem& item, items) {
+            if (QOrganizerItemManagerEngine::testFilter(filter, item))
+                QOrganizerItemManagerEngine::addSorted(&filteredAndSorted, item, sortOrders);
+        }     
+    } else {
+	    // Only sort items.
+        foreach(const QOrganizerItem& item, items) {
+            QOrganizerItemManagerEngine::addSorted(&filteredAndSorted, item, sortOrders); 
+        }
     }
     return filteredAndSorted;
 }
