@@ -1687,7 +1687,7 @@ bool DatabaseOperations::saveLandmarkHelper(const QString &connectionName, QLand
     if ((landmark->customAttributeKeys().count() > 0) && (!DatabaseOperations::isCustomAttributesEnabled))
     {
         *error = QLandmarkManager::BadArgumentError;
-        *errorString = "Landmark contains custom attributes but the manager does not support or "
+        *errorString = "Landmark contains custom attributes but the manager does not support "
                  "them or has them enabled";
         return false;
     }
@@ -2295,14 +2295,17 @@ QLandmarkCategory DatabaseOperations::category(const QString &connectionName, co
         if (errorString)
             *errorString = "None of the existing categories match the given category id.";
     } else {
-        QMap<QString,QVariant> bindValues;
-        bindValues.insert("catId", cat.categoryId().localId());
-        if (!executeQuery(&query, "SELECT key, value from category_attribute WHERE categoryId=:catId",bindValues, error, errorString )) {
-            return QLandmarkCategory();
-         }
 
-        while(query.next()) {
-            cat.setCustomAttribute(query.value(0).toString(),query.value(1));
+        if (DatabaseOperations::isCustomAttributesEnabled) {
+            QMap<QString,QVariant> bindValues;
+            bindValues.insert("catId", cat.categoryId().localId());
+            if (!executeQuery(&query, "SELECT key, value from category_attribute WHERE categoryId=:catId",bindValues, error, errorString )) {
+                return QLandmarkCategory();
+            }
+
+            while(query.next()) {
+                cat.setCustomAttribute(query.value(0).toString(),query.value(1));
+            }
         }
 
         if (error)
@@ -2422,6 +2425,14 @@ bool DatabaseOperations::saveCategoryHelper(const QString &connectionName, QLand
             *error = QLandmarkManager::DoesNotExistError;
         if (errorString)
             *errorString = "Category id comes from different landmark manager.";
+        return false;
+    }
+
+    if ((category->customAttributeKeys().count() >0) && (!DatabaseOperations::isCustomAttributesEnabled))
+    {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString = "Category contains custom attributes but the manager does not support "
+                       "them or has them enabled";
         return false;
     }
 
