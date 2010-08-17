@@ -42,6 +42,9 @@ import Qt 4.7
 import QtMobility.gallery 1.1
 
 ListView {
+    property string title: ""
+    property bool backEnabled: false
+
     property alias rootItem: galleryModel.rootItem
     anchors.fill: parent
     clip: true

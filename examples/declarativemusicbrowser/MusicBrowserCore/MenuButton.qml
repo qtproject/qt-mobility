@@ -39,66 +39,36 @@
 ****************************************************************************/
 
 import Qt 4.7
-import QtMobility.gallery 1.1
 
-GridView {
-    anchors.fill: parent
-    cellWidth: 256
-    cellHeight: 192
-    clip: true
+Item {
+    property alias text: label.text
+    property bool enabled: true
+    signal clicked
 
-    model: GalleryQueryModel {
-        gallery: DocumentGallery {}
-        rootType: "Artist"
-        properties: [ "artist" ]
+    id: button
+
+    width: label.x + label.width
+    height: label.height
+
+    Image {
+        id: icon
+        source: "images/arrow.png"
+        anchors.verticalCenter: label.verticalCenter
+        anchors.leftMargin: 5
+        anchors.left: parent.left
+
     }
-    delegate: Item {
-        width: 256
-        height: 192
 
-        PathView {
-            id: albumView
-            width: 256
-            height: 128
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
+    Text {
+        id: label
+        anchors.leftMargin: 5
+        anchors.left: icon.right
+        color: button.enabled ? "grey" : "white"
+        font.pointSize: 20
+    }
 
-            VisualDataModel {
-                id: visualModel
-
-                model: GalleryQueryModel {
-                    id: galleryModel
-                    gallery: DocumentGallery {}
-                    rootType: "Album"
-                    rootItem: itemId
-                    properties: [ "artist", "title" ]
-                    sortProperties: [ "artist", "title" ]
-                }
-                delegate: AlbumDelegate { state: 'inStack' }
-            }
-
-            model: visualModel.parts.stack
-
-            path: Path {
-                startX: 64
-                startY: 64
-                PathLine { x: 192; y: 64 }
-            }
-        }
-
-        Text {
-            id: artistLabel
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: albumView.bottom
-            anchors.bottom: parent.bottom
-            text: artist
-            verticalAlignment: Text.AlignVCenter
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.WordWrap
-            color: "white"
-            font.pointSize: 15
-        }
+    MouseArea {
+        anchors.fill: label
+        onClicked: button.clicked()
     }
 }

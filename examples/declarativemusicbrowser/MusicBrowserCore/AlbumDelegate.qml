@@ -121,11 +121,11 @@ Package {
             },
             State {
                 name: 'inList'
-                ParentChange { target: albumWrapper; parent: listItem; }
                 PropertyChanges { target: songsLoader; sourceComponent: songView; }
                 PropertyChanges { target: albumInfo; width: 192 }
                 PropertyChanges { target: listItem; height: songsLoader.height > 192 ? songsLoader.height : 192 }
                 PropertyChanges { target: titleLabel; visible: true }
+                ParentChange { target: albumWrapper; parent: listItem; x: 0; y: 0 }
             }
         ]
     }

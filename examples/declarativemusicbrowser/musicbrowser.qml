@@ -43,6 +43,7 @@ import QtMobility.gallery 1.0
 import "MusicBrowserCore"
 
 Rectangle {
+    id: browser
     width: 800
     height: 480
     color: "black"
@@ -66,7 +67,7 @@ Rectangle {
                     text: qsTr("Albums")
                     onClicked: {
                         viewLoader.sourceComponent = albumView
-                        viewLabel.text = text
+                        viewButton.text = text
                         menu.state = "showView"
                     }
                 }
@@ -77,7 +78,7 @@ Rectangle {
                     text: qsTr("Artists")
                     onClicked: {
                         viewLoader.sourceComponent = artistView
-                        viewLabel.text = text
+                        viewButton.text = text
                         menu.state = "showView"
                     }
                 }
@@ -88,7 +89,7 @@ Rectangle {
                     text: qsTr("Genres")
                     onClicked: {
                         viewLoader.sourceComponent = genreView;
-                        viewLabel.text = text
+                        viewButton.text = text
                         menu.state = "showView"
                     }
                 }
@@ -99,7 +100,7 @@ Rectangle {
                     text: qsTr("Songs")
                     onClicked: {
                         viewLoader.sourceComponent = songView;
-                        viewLabel.text = text
+                        viewButton.text = text
                         menu.state = "showView"
                     }
                 }
@@ -110,21 +111,12 @@ Rectangle {
             height: 480
 
             Text {
-                id: viewLabel
-                color: "white"
+                id: menuButton
+                color: "grey"
                 font.pointSize: 20
                 anchors.top: parent.top
                 anchors.left: parent.left
-
-            }
-
-            Text {
-                id: backButton
-                color: "gray"
-                font.pointSize: 20
-                anchors.top: parent.top
-                anchors.right: parent.right
-                text: qsTr("Back")
+                text: qsTr("Menu")
 
                 MouseArea {
                     anchors.fill: parent
@@ -132,9 +124,27 @@ Rectangle {
                 }
             }
 
+            MenuButton {
+                id: viewButton
+                anchors.left: menuButton.right
+                anchors.top: parent.top
+                enabled: viewLoader.status == Loader.Ready && viewLoader.item.backEnabled
+
+                onClicked: viewLoader.item.back();
+            }
+
+            MenuButton {
+                id: viewBackButton
+                anchors.left: viewButton.right
+                anchors.top: parent.top
+                visible: viewLoader.status == Loader.Ready && viewLoader.item.backEnabled
+                text: viewLoader.status == Loader.Ready ? viewLoader.item.title : ""
+                enabled: false
+            }
+
             Loader {
                 id: viewLoader
-                anchors.top: viewLabel.bottom
+                anchors.top: menuButton.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
@@ -142,8 +152,8 @@ Rectangle {
         }
 
         Component { id: albumView; AlbumView {} }
-        Component { id: artistView; ArtistView {} }
-        Component { id: genreView; GenreView {} }
+        Component { id: artistView; CategoryView { categoryType: "Artist" } }
+        Component { id: genreView; CategoryView { categoryType: "AudioGenre" } }
         Component { id: songView; SongView {} }
 
         transform: Rotation {
