@@ -643,17 +643,13 @@ void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForTodoOccurrence() con
 
 void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForNote() const
 {
-    // Remove all the details for a not not supported on Symbian
-    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerItemDisplayLabel::DefinitionName);
-    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerItemComment::DefinitionName);
-    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerItemRecurrence::DefinitionName);
-    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerEventTimeRange::DefinitionName);
-    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerItemPriority::DefinitionName);
-    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerItemLocation::DefinitionName);
-    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerItemInstanceOrigin::DefinitionName);
-    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerTodoProgress::DefinitionName);
-    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerTodoTimeRange::DefinitionName);
-    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerJournalTimeRange::DefinitionName);
+    // TODO: We need a flag to determine the if we are supporting note    
+ //#ifdef __ORGANIZERSYMBIAN_NOTE_SUPPORTED__ ?
+    // TODO: detail definition modifications
+ //#else
+    // Note is not supported on legacy platforms.
+    m_definition.remove(QOrganizerItemType::TypeNote);
+ //#endif    
 }
 
 void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForJournal() const
