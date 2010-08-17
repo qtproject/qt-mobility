@@ -867,23 +867,25 @@ QLandmark DatabaseOperations::retrieveLandmark(const QString &connectionName, co
             lm.addCategoryId(id);
         }
 
-        QSqlQuery query(db);
-        if (!query.prepare("SELECT key, value from landmark_attribute WHERE landmarkId=:lmId")) {
+        if (DatabaseOperations::isCustomAttributesEnabled) {
+            QSqlQuery query(db);
+            if (!query.prepare("SELECT key, value from landmark_attribute WHERE landmarkId=:lmId")) {
                 *error = QLandmarkManager::UnknownError;
                 *errorString = QString("Query Failed: \n Query: %1 \n Reason: %2").arg(query.lastQuery()).arg(query.lastError().text());
                 return QLandmark();
-        }
+            }
 
-        query.bindValue(":lmId", lm.landmarkId().localId());
+            query.bindValue(":lmId", lm.landmarkId().localId());
 
-        if (!query.exec()) {
-            *error = QLandmarkManager::UnknownError;
-            *errorString = QString("Query Failed: \n Query: %1 \n Reason: %2").arg(query.lastQuery()).arg(query.lastError().text());
-            return QLandmark();
-        }
+            if (!query.exec()) {
+                *error = QLandmarkManager::UnknownError;
+                *errorString = QString("Query Failed: \n Query: %1 \n Reason: %2").arg(query.lastQuery()).arg(query.lastError().text());
+                return QLandmark();
+            }
 
-        while(query.next()) {
-            lm.setCustomAttribute(query.value(0).toString(),query.value(1));
+            while(query.next()) {
+                lm.setCustomAttribute(query.value(0).toString(),query.value(1));
+            }
         }
 
         if (transacting)
@@ -1679,6 +1681,14 @@ bool DatabaseOperations::saveLandmarkHelper(const QString &connectionName, QLand
             *error = QLandmarkManager::DoesNotExistError;
         if (errorString)
             *errorString = "Landmark id comes from different landmark manager.";
+        return false;
+    }
+
+    if ((landmark->customAttributeKeys().count() > 0) && (!DatabaseOperations::isCustomAttributesEnabled))
+    {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString = "Landmark contains custom attributes but the manager does not support or "
+                 "them or has them enabled";
         return false;
     }
 
@@ -3248,3 +3258,6 @@ void DatabaseOperations::QueryRun::run()
     }
     QSqlDatabase::removeDatabase(connectionName);
 }
+
+volatile bool DatabaseOperations::isCustomAttributesEnabled = false;
+volatile bool DatabaseOperations::isExtendedAttributesEnabled = false;

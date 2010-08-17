@@ -378,10 +378,12 @@ bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::Landmark
     *errorString = "";
 
     switch(feature) {
-        case (QLandmarkManager::ExtendedAttributes):
         case (QLandmarkManager::CustomAttributes):
+        case (QLandmarkManager::Notifications):
+        case (QLandmarkManager::ImportExport):
             return true;
-            break;
+        case (QLandmarkManager::ExtendedAttributes):
+            return false;
         default:
             return false;
     }
@@ -440,20 +442,19 @@ bool QLandmarkManagerEngineSqlite::isExtendedAttributesEnabled(QLandmarkManager:
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
-    *error = QLandmarkManager::NoError;
-    *errorString = "";
+    *error = QLandmarkManager::NotSupportedError;
+    *errorString = "Extended attributes are not supported";
 
-    return m_isExtendedAttributesEnabled;
+    return DatabaseOperations::isExtendedAttributesEnabled;
 }
 
 void QLandmarkManagerEngineSqlite::setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString)
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
-    *error = QLandmarkManager::NoError;
-    *errorString = "";
-
-    m_isExtendedAttributesEnabled = enabled;
+    *error = QLandmarkManager::NotSupportedError;
+    *errorString = "Extended attributes are not supported";
+    return;
 }
 
 bool QLandmarkManagerEngineSqlite::isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const
@@ -463,7 +464,7 @@ bool QLandmarkManagerEngineSqlite::isCustomAttributesEnabled(QLandmarkManager::E
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    return m_isCustomAttributesEnabled;
+    return DatabaseOperations::isCustomAttributesEnabled;
 }
 
 void QLandmarkManagerEngineSqlite::setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString)
@@ -473,7 +474,7 @@ void QLandmarkManagerEngineSqlite::setCustomAttributesEnabled(bool enabled, QLan
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    m_isCustomAttributesEnabled = enabled;
+    DatabaseOperations::isCustomAttributesEnabled = enabled;
 }
 
 /* Asynchronous Request Support */

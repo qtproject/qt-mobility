@@ -198,11 +198,55 @@ private:
         return result;
     }
 
+     bool doFetchById(const QString type, const QList<QLandmarkId>lmIds, QList<QLandmark> *lms,
+                        QLandmarkManager::Error error = QLandmarkManager::NoError){
+        bool result =false;
+        if (type== "sync") {
+            *lms = m_manager->landmarks(lmIds);
+            result = (m_manager->error() == error);
+        } else if (type == "async") {
+            QLandmarkFetchByIdRequest fetchRequest(m_manager);
+            QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+            fetchRequest.setLandmarkIds(lmIds);
+            fetchRequest.start();
+            result = waitForAsync(spy, &fetchRequest,error,100);
+            *lms = fetchRequest.landmarks();
+        } else {
+            qFatal("Unknown test row type");
+        }
+        return result;
+    }
+
+     bool doSave(const QString &type, QList<QLandmark> *lms,
+                 QLandmarkManager::Error error = QLandmarkManager::NoError)
+     {
+         bool result = false;
+         if (type == "sync") {
+             if (error == QLandmarkManager::NoError) {
+                 result = m_manager->saveLandmarks(lms)
+                          && (m_manager->error() == QLandmarkManager::NoError);
+             } else {
+                 result = (!m_manager->saveLandmarks(lms))
+                          && (m_manager->error() == error);
+             }
+         } else if (type == "async") {
+             QLandmarkSaveRequest saveRequest(m_manager);
+             QSignalSpy spy(&saveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+             saveRequest.setLandmarks(*lms);
+             saveRequest.start();
+             result = waitForAsync(spy, &saveRequest,error,100);
+             *lms = saveRequest.landmarks();
+         } else {
+             qFatal("Unknown test row type");
+         }
+         return result;
+     }
+
     bool doImport(const QString &type, const QString filename,
                   QLandmarkManager::Error error =QLandmarkManager::NoError){
         bool result =false;
         if (type== "sync") {
-            if (error == QLandmarkManager::NoError)    {
+            if (error == QLandmarkManager::NoError) {
                 result = (m_manager->importLandmarks(filename))
                          && (m_manager->error() == QLandmarkManager::NoError);
             } else {
@@ -501,6 +545,12 @@ private slots:
 
     void filterSupportLevel();
     void sortOrderSupportLevel();
+
+    void isFeatureSupported();
+    void extendedAttributes();
+
+    void customAttributes();
+    void customAttributes_data();
 
     void categoryLimitOffset();
     //TODO: void categoryLimitOffsetAsync()
@@ -6477,6 +6527,71 @@ void tst_QLandmarkManagerEngineSqlite::sortOrderSupportLevel() {
     sortOrders.clear();
     sortOrders << defaultSort << nameSort << defaultSort;
     QCOMPARE(m_manager->sortOrderSupportLevel(sortOrders), QLandmarkManager::Native);
+}
+
+void tst_QLandmarkManagerEngineSqlite::isFeatureSupported()
+{
+    QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::Notifications));
+    QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::ImportExport));
+    QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::CustomAttributes));
+    QVERIFY(!m_manager->isFeatureSupported(QLandmarkManager::ExtendedAttributes));
+}
+
+void tst_QLandmarkManagerEngineSqlite::extendedAttributes()
+{
+    m_manager->setExtendedAttributesEnabled(true);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NotSupportedError);
+    QVERIFY(!m_manager->isExtendedAttributesEnabled());
+    QCOMPARE(m_manager->error(), QLandmarkManager::NotSupportedError);
+}
+
+void tst_QLandmarkManagerEngineSqlite::customAttributes()
+{
+    QFETCH(QString, type);
+    QVERIFY(!m_manager->isCustomAttributesEnabled());
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    m_manager->setCustomAttributesEnabled(true);
+    QVERIFY(m_manager->isCustomAttributesEnabled());
+    m_manager->setCustomAttributesEnabled(false);
+
+    QLandmark lm1;
+    lm1.setName("LM1");
+    lm1.setCustomAttribute("height", 110);
+    QList<QLandmark> lms;
+    lms << lm1;
+    QVERIFY(doSave(type, &lms, QLandmarkManager::BadArgumentError));
+    lms[0].removeCustomAttribute("height");
+    QVERIFY(doSave(type, &lms));
+
+    QLandmark lm2;
+    lm2.setName("LM2");
+    lm2.setCustomAttribute("height", 50);
+    lm2.setCustomAttribute("weight", 50);
+    m_manager->setCustomAttributesEnabled(true);
+    lms.clear();
+    lms << lm2;
+    QVERIFY(doSave(type, &lms));
+
+    QList<QLandmark> lmsRetrieved;
+    QList<QLandmarkId> lmsIds;
+    lmsIds << lms.at(0).landmarkId();
+    QVERIFY(doFetchById(type,lmsIds,&lmsRetrieved));
+    QCOMPARE(lmsRetrieved.at(0), lms.at(0));
+
+    m_manager->setCustomAttributesEnabled(false);
+    QVERIFY(doFetchById(type, lmsIds, &lmsRetrieved));
+    QVERIFY(lmsRetrieved.at(0) != lms.at(0));
+    lms[0].removeCustomAttribute("height");
+    lms[0].removeCustomAttribute("weight");
+    QVERIFY(lmsRetrieved.at(0) == lms.at(0));
+}
+
+void tst_QLandmarkManagerEngineSqlite::customAttributes_data()
+{
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
 }
 
 void tst_QLandmarkManagerEngineSqlite::categoryLimitOffset() {
