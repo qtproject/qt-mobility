@@ -212,8 +212,6 @@ void COrganizerItemRequestsServiceProvider::RunL()
 // Delete item
 void COrganizerItemRequestsServiceProvider::RemoveItemL()
     {
-    TInt sucessCount(0);
-
     if (iIndex < iNoOfItems)
         {
         // update index beforehand in case deleteItemL leaves, if so

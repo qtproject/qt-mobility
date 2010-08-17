@@ -41,6 +41,8 @@
 #include "organizeritemrecurrencetransform.h"
 #include "qorganizeritemrecurrence.h"
 #include "qorganizereventtimerange.h"
+#include "QOrganizerTodoTimeRange"
+
 #include <calrrule.h>
 
 void OrganizerItemRecurrenceTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
@@ -91,10 +93,19 @@ void OrganizerItemRecurrenceTransform::transformToEntryL(const QOrganizerItem& i
     // TODO: can we have recurrenceRules and recurrenceDates at the same time?
 
     // TODO: Also other item types may have a recurrence item
-    QOrganizerEventTimeRange timerange = item.detail(QOrganizerEventTimeRange::DefinitionName);
+    QDateTime startDateTime;
+    if (QOrganizerItemType::TypeTodo == item.type()) {
+        startDateTime = ((QOrganizerTodoTimeRange)
+            (item.detail(QOrganizerTodoTimeRange::DefinitionName))).
+            startDateTime();
+    } else { 
+        startDateTime = ((QOrganizerEventTimeRange)
+            item.detail(QOrganizerEventTimeRange::DefinitionName)).
+            startDateTime();
+    }
 
     if (recurrence.recurrenceRules().count())
-        entry->SetRRuleL(toCalRRuleL(recurrence.recurrenceRules(), timerange.startDateTime()));
+        entry->SetRRuleL(toCalRRuleL(recurrence.recurrenceRules(), startDateTime));
 
     if (recurrence.recurrenceDates().count()) {
         RArray<TCalTime> calRDates;
