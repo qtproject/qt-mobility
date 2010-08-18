@@ -17,7 +17,7 @@ PUBLIC_HEADERS += qtelephonycalllist.h \
 
 SOURCES +=        qtelephonycalllist.cpp \
                   qtelephonycallinfo.cpp \
-				  qtelephony.cpp
+                  qtelephony.cpp
 
 # Private Headers and sources
 win32 {
@@ -27,9 +27,24 @@ win32 {
 }
 
 symbian {
-    HEADERS += qtelephonycalllist_symbian_p.h \
-               qtelephonycallinfo_p.h
-    SOURCES += qtelephonycalllist_symbian.cpp
+
+
+    # Implementation which is used with symbian^3 and symbian^4
+    exists($${MW_LAYER_PLATFORM_EXPORT_PATH(ccallinformation.h)}) {
+        HEADERS += symbian/qtelephonycalllist_symbian_p.h \
+                   symbian/qtelephonycallinfo_symbian_p.h
+        SOURCES += symbian/qtelephonycalllist_symbian_p.cpp \
+                   symbian/qtelephonycallinfo_symbian_p.cpp
+               
+        LIBS += -ltelephonyservice -lserviceprovidersettings
+    } else {
+        HEADERS += qtelephonycalllist_symbian_p.h \
+                   qtelephonycallinfo_p.h
+        SOURCES += qtelephonycalllist_symbian.cpp
+    }
+    
+    # Export headers to middleware
+    CONFIG += middleware
 
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x200315FB
