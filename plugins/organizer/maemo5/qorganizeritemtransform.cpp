@@ -561,13 +561,6 @@ CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* ite
 
         return m_recTransformer.crecurrence();
     }
-    else if (item->type() == QOrganizerItemType::TypeTodo) {
-        const QOrganizerTodo *todo = static_cast<const QOrganizerTodo *>(item);
-        QList<QDate> recurrenceDates = todo->recurrenceDates();
-        QList<QOrganizerItemRecurrenceRule> recurrenceRules = todo->recurrenceRules();
-
-        // TODO
-    }
 
     return 0; // no recurrence information for this item type
 }
