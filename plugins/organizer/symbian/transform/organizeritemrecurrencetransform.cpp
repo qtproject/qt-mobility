@@ -258,6 +258,16 @@ TCalRRule OrganizerItemRecurrenceTransform::toCalRRuleL(QList<QOrganizerItemRecu
         // TODO: only taking the first available into account
         QOrganizerItemRecurrenceRule rrule = recrules[0];
 
+        // daysOfYear is not supported by symbian calendar server
+        if (!rrule.daysOfYear().isEmpty()) {
+            User::Leave(KErrNotSupported);
+        }
+
+        // weeksOfYear is not supported by symbian calendar server
+        if (!rrule.weeksOfYear().isEmpty()) {
+            User::Leave(KErrNotSupported);
+        }
+
         // Convert frequency to recurrence rule type
         calRule.SetType(toTypeL(rrule.frequency()));
 
@@ -452,6 +462,13 @@ void OrganizerItemRecurrenceTransform::toMonthDaysL(QList<int> daysOfMonth, TCal
  */
 void OrganizerItemRecurrenceTransform::toTMonthsL(QList<QOrganizerItemRecurrenceRule::Month> months, TCalRRule &calRRule) const
 {
+    if (months.count() > 1) {
+        // Symbian recurrence rule only supports one month, all the others
+        // are ignored. It is better to leave in such case to keep the
+        // clients informed of the constraint.
+        User::Leave(KErrNotSupported);
+    }
+
     if (months.count()) {
         RArray<TMonth> byMonth;
         CleanupClosePushL(byMonth);
