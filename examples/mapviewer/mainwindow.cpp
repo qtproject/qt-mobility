@@ -751,6 +751,7 @@ void MainWindow::drawRect(bool /*checked*/)
     QGeoMapPixmapObject* p2 = markerObjects.at(1);
     QPen pen(Qt::white);
     pen.setWidth(2);
+    pen.setCosmetic(true);
     QColor fill(Qt::black);
     fill.setAlpha(65);
     QGeoMapRectangleObject *rectangle = new QGeoMapRectangleObject(p1->coordinate(), p2->coordinate());
@@ -770,6 +771,7 @@ void MainWindow::drawPolyline(bool /*checked*/)
 
     QPen pen(Qt::white);
     pen.setWidth(2);
+    pen.setCosmetic(true);
     QGeoMapPolylineObject *polyline = new QGeoMapPolylineObject();
     polyline->setPen(pen);
     polyline->setPath(path);
@@ -787,6 +789,7 @@ void MainWindow::drawPolygon(bool /*checked*/)
 
     QPen pen(Qt::white);
     pen.setWidth(2);
+    pen.setCosmetic(true);
     QGeoMapPolygonObject *polygon = new QGeoMapPolygonObject();
     polygon->setPen(pen);
     QColor fill(Qt::black);
@@ -817,6 +820,7 @@ void MainWindow::drawCircle(bool /*checked*/)
 
     QPen pen(Qt::white);
     pen.setWidth(2);
+    pen.setCosmetic(true);
     QGeoMapCircleObject *circle = new QGeoMapCircleObject(center, radius);
     circle->setPen(pen);
     QColor fill(Qt::black);
@@ -887,6 +891,7 @@ void MainWindow::createPixmapIcon()
     QPointF p2(MARKER_WIDTH / 2, MARKER_HEIGHT - 1 - MARKER_PIN_LEN);
     QPen pen(Qt::black);
     pen.setWidth(2);
+    pen.setCosmetic(true);
     painter.setPen(pen);
     painter.drawLine(p1, p2);
     QRectF ellipse(0, 0, MARKER_WIDTH - 1, MARKER_WIDTH - 1);
@@ -933,6 +938,7 @@ void MainWindow::routeFinished()
     routeColor.setAlpha(127); //semi-transparent
     QPen pen(routeColor);
     pen.setWidth(7);
+    pen.setCosmetic(true);
     pen.setCapStyle(Qt::RoundCap);
     route->setPen(pen);
     m_mapWidget->addMapObject(route);
