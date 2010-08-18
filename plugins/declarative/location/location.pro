@@ -23,8 +23,8 @@ INCLUDEPATH += .
 HEADERS += qdeclarativeposition_p.h \
            qdeclarativepositionsource_p.h \
            qdeclarativelandmark_p.h \
-           qdeclarativelandmarksource_p.h \
-           qdeclarativelandmarkcategorysource_p.h \
+           qdeclarativelandmarkmodel_p.h \
+           qdeclarativelandmarkcategorymodel_p.h \
            qdeclarativelandmarkcategory_p.h \
            qdeclarativelandmarkfilters_p.h \
            qdeclarativecoordinate_p.h \
@@ -40,8 +40,8 @@ SOURCES += qdeclarativeposition.cpp \
            location.cpp \
            qdeclarativepositionsource.cpp \
            qdeclarativelandmark.cpp \
-           qdeclarativelandmarksource.cpp \
-           qdeclarativelandmarkcategorysource.cpp \
+           qdeclarativelandmarkmodel.cpp \
+           qdeclarativelandmarkcategorymodel.cpp \
            qdeclarativelandmarkcategory.cpp \
            qdeclarativelandmarkfilters.cpp \
            qdeclarativecoordinate.cpp \

@@ -26,7 +26,7 @@ signals:
     void filterChanged();
 private:
     QLandmarkNameFilter m_filter;
-    friend class QDeclarativeLandmarkSource;
+    friend class QDeclarativeLandmarkModel;
     QLandmarkNameFilter* filter();
 };
 
@@ -54,7 +54,7 @@ signals:
     void filterChanged();
 private:
     QLandmarkProximityFilter m_filter;
-    friend class QDeclarativeLandmarkSource;
+    friend class QDeclarativeLandmarkModel;
     QLandmarkProximityFilter* filter();
     QGeoCoordinate m_coordinate;
 };

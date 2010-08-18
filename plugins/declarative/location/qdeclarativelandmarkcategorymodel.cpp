@@ -1,4 +1,4 @@
-#include "qdeclarativelandmarkcategorysource_p.h"
+#include "qdeclarativelandmarkcategorymodel_p.h"
 #include <QTimer>
 
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
@@ -7,60 +7,58 @@
 
 QTM_BEGIN_NAMESPACE
 
-QDeclarativeLandmarkCategorySource::QDeclarativeLandmarkCategorySource(QObject *parent) :
-    QAbstractListModel(parent), m_manager(0), m_fetchRequest(0), m_autoUpdate(false)
+QDeclarativeLandmarkCategoryModel::QDeclarativeLandmarkCategoryModel(QObject *parent) :
+        QAbstractListModel(parent), m_manager(0), m_fetchRequest(0), m_autoUpdate(false)
 {
     // Establish role names so that they can be queried from this model
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
     roleNames.insert(NameRole, "name");
     roleNames.insert(DescriptionRole, "description");
-    roleNames.insert(IconUrlRole, "iconUrl");
+    roleNames.insert(IconSourceRole, "iconSource");
     setRoleNames(roleNames);
     // Instantiate default manager
     m_manager = new QLandmarkManager();
 }
 
-QDeclarativeLandmarkCategorySource::~QDeclarativeLandmarkCategorySource()
+QDeclarativeLandmarkCategoryModel::~QDeclarativeLandmarkCategoryModel()
 {
-    delete m_manager; 
+    delete m_manager;
     delete m_fetchRequest;
 }
 
 // When the parent is valid it means that rowCount is returning the number of children of parent.
-int QDeclarativeLandmarkCategorySource::rowCount(const QModelIndex &parent) const
+int QDeclarativeLandmarkCategoryModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return m_categories.count();
 }
 
 // Returns the stored under the given role for the item referred to by the index.
-QVariant QDeclarativeLandmarkCategorySource::data(const QModelIndex &index, int role) const
+QVariant QDeclarativeLandmarkCategoryModel::data(const QModelIndex &index, int role) const
 {
     QLandmarkCategory category = m_categories.value(index.row());
 
     switch (role) {
-    case NameRole:
-        return category.name();
-    case IconUrlRole:
-        return category.iconUrl();
+        case NameRole:
+            return category.name();
+        case IconSourceRole:
+            return category.iconUrl();
     }
     return QVariant();
 }
 
-QString QDeclarativeLandmarkCategorySource::name()
+int QDeclarativeLandmarkCategoryModel::count()
 {
-    if (m_manager)
-        return m_manager->managerName() ;
-    return QString();
+    return m_categories.count();
 }
 
-QString QDeclarativeLandmarkCategorySource::error()
+QString QDeclarativeLandmarkCategoryModel::error()
 {
     return m_error;
 }
 
-void QDeclarativeLandmarkCategorySource::setAutoUpdate(bool autoUpdate)
+void QDeclarativeLandmarkCategoryModel::setAutoUpdate(bool autoUpdate)
 {
     if (autoUpdate == m_autoUpdate)
         return;
@@ -70,15 +68,15 @@ void QDeclarativeLandmarkCategorySource::setAutoUpdate(bool autoUpdate)
         cancelUpdate();
 }
 
-bool QDeclarativeLandmarkCategorySource::autoUpdate() const
+bool QDeclarativeLandmarkCategoryModel::autoUpdate() const
 {
     return m_autoUpdate;
 }
 
-void QDeclarativeLandmarkCategorySource::update()
+void QDeclarativeLandmarkCategoryModel::update()
 {
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
-    qDebug("QDeclarativeLandmarkCategorySource::update()");
+    qDebug("QDeclarativeLandmarkCategoryModel::update()");
 #endif
     if (!m_manager)
         return;
@@ -86,11 +84,10 @@ void QDeclarativeLandmarkCategorySource::update()
     cancelUpdate();
     m_fetchRequest = new QLandmarkCategoryFetchRequest(m_manager, this);
     QObject::connect(m_fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this, SLOT(fetchRequestStateChanged(QLandmarkAbstractRequest::State)));
-    // Set filters and hints. Fetch orders are not currently supported.
     m_fetchRequest->start();
 }
 
-void QDeclarativeLandmarkCategorySource::cancelUpdate()
+void QDeclarativeLandmarkCategoryModel::cancelUpdate()
 {
     if (m_fetchRequest) {
         delete m_fetchRequest;
@@ -98,9 +95,9 @@ void QDeclarativeLandmarkCategorySource::cancelUpdate()
     }
 }
 
-void QDeclarativeLandmarkCategorySource::convertCategoriesToDeclarative()
+void QDeclarativeLandmarkCategoryModel::convertCategoriesToDeclarative()
 {
-    foreach (const QLandmarkCategory& category, m_categories) {
+    foreach(const QLandmarkCategory& category, m_categories) {
         if (!m_categoryMap.contains(category.categoryId().localId())) {
             QDeclarativeLandmarkCategory* declarativeLandmarkCategory = new QDeclarativeLandmarkCategory(this);
             declarativeLandmarkCategory->setCategory(category);
@@ -112,10 +109,10 @@ void QDeclarativeLandmarkCategorySource::convertCategoriesToDeclarative()
     }
 }
 
-void QDeclarativeLandmarkCategorySource::fetchRequestStateChanged(QLandmarkAbstractRequest::State state)
+void QDeclarativeLandmarkCategoryModel::fetchRequestStateChanged(QLandmarkAbstractRequest::State state)
 {
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
-    qDebug() << "QDeclarativeLandmarkCategorySource::Fetch request finished with state: " << state;
+    qDebug() << "QDeclarativeLandmarkCategoryModel::Fetch request finished with state: " << state;
     if (m_fetchRequest)
         qDebug() << "and related request error code is: " << m_fetchRequest->errorString();
 #endif
@@ -125,8 +122,11 @@ void QDeclarativeLandmarkCategorySource::fetchRequestStateChanged(QLandmarkAbstr
     if (m_fetchRequest->error() == QLandmarkManager::NoError) {
         // TODO Later improvement item is to make udpate incremental by connecting to resultsAvailable() -function.
         beginInsertRows(QModelIndex(), 0, m_categories.count());
+        int oldCount = m_categories.count();
         m_categories = m_fetchRequest->categories();
         endInsertRows();
+        if (oldCount != m_categories.count())
+            emit countChanged(m_categories.count());
     } else if (m_error != m_fetchRequest->errorString()) {
         m_error = m_fetchRequest->errorString();
         emit errorChanged(m_error);
@@ -135,6 +135,6 @@ void QDeclarativeLandmarkCategorySource::fetchRequestStateChanged(QLandmarkAbstr
     convertCategoriesToDeclarative();
 }
 
-#include "moc_qdeclarativelandmarkcategorysource_p.cpp"
+#include "moc_qdeclarativelandmarkcategorymodel_p.cpp"
 
 QTM_END_NAMESPACE

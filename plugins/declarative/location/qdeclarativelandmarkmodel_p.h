@@ -1,5 +1,5 @@
-#ifndef QDECLARATIVELANDMARKSOURCE_P_H
-#define QDECLARATIVELANDMARKSOURCE_P_H
+#ifndef QDECLARATIVELANDMARKMODEL_P_H
+#define QDECLARATIVELANDMARKMODEL_P_H
 
 #include <qdeclarativelandmark_p.h>
 #include <qdeclarativelandmarkfilters_p.h>
@@ -13,21 +13,21 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeLandmarkSource: public QAbstractListModel
+class QDeclarativeLandmarkModel: public QAbstractListModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString name READ name NOTIFY nameChanged)
     Q_PROPERTY(QString error READ error NOTIFY errorChanged)
     Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QObject* nameFilter READ nameFilter WRITE setFilter NOTIFY nameFilterChanged)
     Q_PROPERTY(QObject* proximityFilter READ proximityFilter WRITE setFilter NOTIFY proximityFilterChanged)
     Q_PROPERTY(int landmarksPerUpdate READ landmarksPerUpdate WRITE setLandmarksPerUpdate NOTIFY landmarksPerUpdateChanged)
     Q_PROPERTY(int landmarksOffset READ landmarksOffset WRITE setLandmarksOffset NOTIFY landmarksOffsetChanged)
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
 
 public:
-    explicit QDeclarativeLandmarkSource(QObject* parent = 0);
-    ~QDeclarativeLandmarkSource();
+    explicit QDeclarativeLandmarkModel(QObject* parent = 0);
+    ~QDeclarativeLandmarkModel();
 
     // From QAbstractListModel
     int rowCount(const QModelIndex &parent) const;
@@ -36,15 +36,16 @@ public:
     // Roles for exposing data via model
     enum {
         NameRole = Qt::UserRole + 500, // Check
-        PhoneRole,
+        PhoneNumberRole,
         DescriptionRole,
         RadiusRole,
-        IconUrlRole,
+        IconSourceRole,
         UrlRole,
         LatitudeRole,
         LongitudeRole
     };
-    QString name();
+
+    int count();
     int landmarksPerUpdate();
     void setLandmarksPerUpdate(int landmarksPerUpdate);
     int landmarksOffset();
@@ -57,13 +58,13 @@ public:
     void setFilter(QObject* filter);
 
 signals:
-    void nameChanged(QString name);
     void errorChanged(QString error);
     void autoUpdateChanged(bool autoUpdate);
     void nameFilterChanged(QObject* nameFilter);
     void proximityFilterChanged(QObject* nameFilter);
     void landmarksPerUpdateChanged(int landmarksPerUpdate);
     void landmarksOffsetChanged(int landmarksOffset);
+    void countChanged(int count);
 
 private slots:
     void update();
@@ -90,6 +91,6 @@ private:
 };
 
 QTM_END_NAMESPACE
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkSource));
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkModel));
 
-#endif // QDECLARATIVELANDMARKSOURCE_P_H
+#endif // QDECLARATIVELANDMARKMODEL_P_H

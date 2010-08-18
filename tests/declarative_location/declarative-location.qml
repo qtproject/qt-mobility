@@ -40,7 +40,7 @@
 
 import "content" as Content
 import Qt 4.7
-import QtMobility.location 1.0
+import QtMobility.location 1.1
 
 Rectangle {
     id: page
