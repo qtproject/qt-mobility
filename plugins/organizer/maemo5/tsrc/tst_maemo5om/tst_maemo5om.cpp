@@ -255,10 +255,9 @@ void tst_Maemo5Om::addEvent() {
     QCOMPARE(fetchEvent.displayLabel(), event.displayLabel());
     QCOMPARE(fetchEvent.description(), event.description());
     QCOMPARE(fetchEvent.guid(), event.guid());
-    //QCOMPARE(fetchEvent.locationAddress(), event.locationAddress()); // TODO: Location disappears?
+    QCOMPARE(fetchEvent.locationAddress(), event.locationAddress());
     QCOMPARE(fetchEvent.locationGeoCoordinates(), event.locationGeoCoordinates());
-    //QCOMPARE(fetchEvent.locationName(), event.locationName()); // TODO: Location disappears?
-
+    QCOMPARE(fetchEvent.locationName(), event.locationName());
     QCOMPARE(fetchEvent.priority(), event.priority());
 }
 
