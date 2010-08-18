@@ -48,6 +48,7 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <QAction>
+#include <QMenuBar>
 #include <QPainter>
 #include <QDesktopWidget>
 
@@ -415,6 +416,13 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupUi()
 {
+    // setup exit menu for devices
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    QAction* exitAction = new QAction(tr("Exit"), this);
+    menuBar()->addAction(exitAction);
+    connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
+#endif
+
     // setup graphics view containing map widget
 
     QGraphicsScene* scene = new QGraphicsScene(this);

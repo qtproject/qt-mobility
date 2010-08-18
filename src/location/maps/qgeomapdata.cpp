@@ -96,10 +96,6 @@ QGeoMapData::QGeoMapData(QGeoMapDataPrivate *dd) : d_ptr(dd) {}
 QGeoMapData::~QGeoMapData()
 {
     Q_D(QGeoMapData);
-
-    if (d->engine)
-        d->engine->removeMapData(this);
-
     delete d;
 }
 
