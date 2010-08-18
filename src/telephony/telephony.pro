@@ -27,20 +27,18 @@ win32 {
 }
 
 symbian {
-
-
-    # Implementation which is used with symbian^3 and symbian^4
-    exists($${MW_LAYER_PLATFORM_EXPORT_PATH(ccallinformation.h)}) {
+    contains(S60_VERSION, 3.1)|contains(S60_VERSION, 3.2)|contains(S60_VERSION, 5.0) {
+        HEADERS += qtelephonycalllist_symbian_p.h \
+                   qtelephonycallinfo_p.h
+        SOURCES += qtelephonycalllist_symbian.cpp
+    } else {
+        # Implementation which is used with Symbian^3 and Symbian^4
         HEADERS += symbian/qtelephonycalllist_symbian_p.h \
                    symbian/qtelephonycallinfo_symbian_p.h
         SOURCES += symbian/qtelephonycalllist_symbian_p.cpp \
                    symbian/qtelephonycallinfo_symbian_p.cpp
                
         LIBS += -ltelephonyservice -lserviceprovidersettings
-    } else {
-        HEADERS += qtelephonycalllist_symbian_p.h \
-                   qtelephonycallinfo_p.h
-        SOURCES += qtelephonycalllist_symbian.cpp
     }
     
     # Export headers to middleware
