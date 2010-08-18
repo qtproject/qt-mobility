@@ -42,7 +42,7 @@
 #ifndef QGEOMAPDATA_H
 #define QGEOMAPDATA_H
 
-#include "qgeomapwidget.h"
+#include "qgraphicsgeomap.h"
 
 #include <QObject>
 #include <QSize>
@@ -56,13 +56,14 @@ class QGeoBoundingBox;
 class QGeoMappingManagerEngine;
 class QGeoMapObject;
 class QGeoMapDataPrivate;
+class QGeoMapOverlay;
 
 class Q_LOCATION_EXPORT QGeoMapData : public QObject
 {
     Q_OBJECT
 
 public:
-    QGeoMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
+    QGeoMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
     virtual ~QGeoMapData();
 
     virtual void setViewportSize(const QSizeF &size);
@@ -71,33 +72,38 @@ public:
     virtual void setZoomLevel(qreal zoomLevel);
     virtual qreal zoomLevel() const;
 
-    virtual void startPanning();
-    virtual void stopPanning();
     virtual void pan(int dx, int dy);
 
     virtual void setCenter(const QGeoCoordinate &center);
     virtual QGeoCoordinate center() const;
 
-    virtual void setMapType(QGeoMapWidget::MapType mapType);
-    virtual QGeoMapWidget::MapType mapType() const;
+    virtual void setMapType(QGraphicsGeoMap::MapType mapType);
+    virtual QGraphicsGeoMap::MapType mapType() const;
 
+    QList<QGeoMapObject*> mapObjects() const;
     void addMapObject(QGeoMapObject *mapObject);
     void removeMapObject(QGeoMapObject *mapObject);
-    QList<QGeoMapObject*> mapObjects();
+    void clearMapObjects();
 
-    virtual QList<QGeoMapObject*> visibleMapObjects();
     virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
     virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
+
+    QList<QGeoMapOverlay*> mapOverlays() const;
+    void addMapOverlay(QGeoMapOverlay *overlay);
+    void removeMapOverlay(QGeoMapOverlay *overlay);
+    void clearMapOverlays();
 
     virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
     virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const = 0;
 
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
+    virtual void setupMapObject(QGeoMapObject *mapObject);
+
 protected:
     QGeoMapData(QGeoMapDataPrivate *dd);
 
-    QGeoMapWidget* widget() const;
+    QGraphicsGeoMap* geoMap() const;
     QGeoMappingManagerEngine* engine() const;
     QGeoMapObject* containerObject();
 

@@ -59,6 +59,7 @@ public:
     void prepend(const QOrganizerItemFilter& filter);
     void append(const QOrganizerItemFilter& filter);
     void remove(const QOrganizerItemFilter& filter);
+    void clear();
 
     QOrganizerItemIntersectionFilter& operator<<(const QOrganizerItemFilter& filter);
 

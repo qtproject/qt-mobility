@@ -59,6 +59,8 @@ class QLineEdit;
 class QDateTimeEdit;
 class QVBoxLayout;
 class QString;
+class QSpinBox;
+class QDateEdit;
 
 class EventEditPage : public QWidget
 {
@@ -75,6 +77,9 @@ public Q_SLOTS:
     void handleRepeatIndexChanged(const QString);
     void handlemultipleEntriesToBeCreated(int);
     void handleCountChanged(int);
+    void handleRepeatUntilChanged(QDate);
+    void setCountField();
+    void setRepeatUntilField();
 
 Q_SIGNALS:
     void showDayPage();
@@ -93,6 +98,8 @@ private:
     QLineEdit *m_subjectEdit;
     QDateTimeEdit *m_startTimeEdit;
     QDateTimeEdit *m_endTimeEdit;
+    QSpinBox *m_countSpinBox;
+    QDateEdit *m_repeatUntilDate;
     int m_numOfEntiresToBeCreated;
     bool m_countFieldAdded;
     bool m_multipleEntries;

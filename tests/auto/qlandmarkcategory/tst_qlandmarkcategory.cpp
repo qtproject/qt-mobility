@@ -42,6 +42,7 @@
 //TESTED_COMPONENT=src/location
 
 #include <qlandmark.h>
+#include <qlandmarkcategory.h>
 
 #include <qtest.h>
 #include <QMetaType>
@@ -55,7 +56,24 @@ class tst_QLandmarkCategory : public QObject
     Q_OBJECT
 
 private slots:
-    void settersAndGetters() {
+    void setViaAttribute() {
+        QLandmarkCategory cat;
+        cat.setAttribute("name", "CAT1");
+        cat.setAttribute("iconurl", "CAT1 icon url");
+
+        QCOMPARE(cat.name(), QString("CAT1"));
+        QCOMPARE(cat.iconUrl().toString(), QString("CAT1 icon url"));
+
+
+        QCOMPARE(cat.attribute("name").toString(), QString("CAT1"));
+        QCOMPARE(cat.attribute("iconurl").toString(), QString("CAT1 icon url"));
+
+        QStringList keys = cat.attributeKeys();
+        QVERIFY(keys.contains("name"));
+        QVERIFY(keys.contains("iconurl"));
+    }
+
+ /* void settersAndGetters() {
         QFETCH(QString, name);
         QFETCH(QString, icon);
         QFETCH(QString, description);
@@ -176,7 +194,7 @@ private:
         QTest::newRow("Row5") << "categoryName" << "" << "categoryDescription";
         QTest::newRow("Row6") << "" << "categoryIcon" << "categoryDescription";
         QTest::newRow("Row7") << "categoryName" << "categoryIcon" << "categoryDescription";
-    }
+    }*/
 };
 
 QTEST_MAIN(tst_QLandmarkCategory)

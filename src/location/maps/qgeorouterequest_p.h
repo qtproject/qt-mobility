@@ -68,6 +68,8 @@ public:
     QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &other);
     ~QGeoRouteRequestPrivate();
 
+    bool operator ==(const QGeoRouteRequestPrivate &other) const;
+
     QList<QGeoCoordinate> waypoints;
     QList<QGeoBoundingBox> excludeAreas;
     int numberAlternativeRoutes;

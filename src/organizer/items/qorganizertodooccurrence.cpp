@@ -45,7 +45,7 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QOrganizerTodoOccurrence
-  \brief An occurrence of a task which should be completed
+  \brief The QOrganizerTodoOccurrence class provides an occurrence of a task which should be completed
   \inmodule QtOrganizer
   \ingroup organizer-items
 

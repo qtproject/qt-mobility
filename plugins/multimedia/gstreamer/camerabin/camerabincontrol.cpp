@@ -60,6 +60,8 @@
 #include <sys/mman.h>
 #include <linux/videodev2.h>
 
+//#define CAMEABIN_DEBUG
+
 CameraBinControl::CameraBinControl(CameraBinSession *session)
     :QCameraControl(session),
     m_session(session),
@@ -76,6 +78,8 @@ CameraBinControl::CameraBinControl(CameraBinSession *session)
     connect(m_session->mediaContainerControl(), SIGNAL(settingsChanged()),
             SLOT(reloadLater()));
     connect(m_session->imageEncodeControl(), SIGNAL(settingsChanged()),
+            SLOT(reloadLater()));
+    connect(m_session, SIGNAL(viewfinderChanged()),
             SLOT(reloadLater()));
 }
 

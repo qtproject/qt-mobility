@@ -53,31 +53,33 @@
 // We mean it.
 //
 
-#include "qgeomapwidget.h"
+#include "qgraphicsgeomap.h"
 
 #include <QSize>
 #include <QList>
+#include <QLocale>
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoMappingManagerEnginePrivate
 {
 public:
-    QGeoMappingManagerEnginePrivate(const QMap<QString, QString> &parameters);
-    QGeoMappingManagerEnginePrivate(const QGeoMappingManagerEnginePrivate &other);
+    QGeoMappingManagerEnginePrivate();
     virtual ~QGeoMappingManagerEnginePrivate();
 
-    QGeoMappingManagerEnginePrivate& operator= (const QGeoMappingManagerEnginePrivate &other);
-
     QString managerName;
-    QMap<QString, QString> managerParameters;
     int managerVersion;
 
-    QList<QGeoMapWidget::MapType> supportedMapTypes;
+    QList<QGraphicsGeoMap::MapType> supportedMapTypes;
     qreal minimumZoomLevel;
     qreal maximumZoomLevel;
     QSize minimumImageSize;
     QSize maximumImageSize;
+
+    QLocale locale;
+
+private:
+    Q_DISABLE_COPY(QGeoMappingManagerEnginePrivate)
 };
 
 QTM_END_NAMESPACE

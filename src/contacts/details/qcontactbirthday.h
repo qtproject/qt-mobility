@@ -64,6 +64,8 @@ public:
 
     void setDate(const QDate& date) {setValue(FieldBirthday, date);}
     QDate date() const {return value<QDate>(FieldBirthday);}
+    void setDateTime(const QDateTime& dateTime) {setValue(FieldBirthday, dateTime);}
+    QDateTime dateTime() const {return value<QDateTime>(FieldBirthday);}
 };
 
 QTM_END_NAMESPACE

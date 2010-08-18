@@ -45,7 +45,7 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QOrganizerNote
-  \brief A note which is not associated with any particular point in time
+  \brief The QOrganizerNote class provides a note which is not associated with any particular point in time
   \inmodule QtOrganizer
   \ingroup organizer-items
 

@@ -67,7 +67,6 @@ void QGalleryTrackerChangeNotifier::statisticsChanged(const QVector<QStringList>
 
     typedef QVector<QStringList>::const_iterator iterator;
     for (iterator it = statistics.begin(), end = statistics.end(); it != end; ++it) {
-        qDebug("%s", qPrintable(it->join(QLatin1String(": "))));
         updateId |= QGalleryTrackerSchema::serviceUpdateId(it->value(0));
     }
 

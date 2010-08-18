@@ -48,6 +48,7 @@
 #include "qcontactfilter.h"
 #include "qcontactdetail.h"
 #include "qcontact.h"
+#include "qcontactactiontarget.h"
 
 #include <QObject>
 
@@ -60,27 +61,10 @@ class Q_CONTACTS_EXPORT QContactAction : public QObject
     Q_OBJECT
 
 public:
-    /* return a list of names of actions which are available */
-    static QStringList availableActions(const QString& vendorName = QString(), int implementationVersion = -1);
-
-    /* return a list of descriptors for action implementations matching the given criteria */
-    static QList<QContactActionDescriptor> actionDescriptors(const QString& actionName = QString(), const QString& vendorName = QString(), int implementationVersion = -1);
-
-    /* return a pointer to an implementation of the action identified by the given descriptor */
-    static QContactAction* action(const QContactActionDescriptor& descriptor);
-
-public:
     virtual ~QContactAction() = 0;
 
-    virtual QContactActionDescriptor actionDescriptor() const = 0;          // the descriptor which uniquely identifies this action
-    virtual QVariantMap metaData() const = 0;
-
-    virtual QContactFilter contactFilter() const = 0; // use for matching
-    virtual bool isDetailSupported(const QContactDetail &detail, const QContact &contact = QContact()) const = 0;
-    virtual QList<QContactDetail> supportedDetails(const QContact& contact) const = 0;
-
-    /* Initiate the asynchronous action on the given contact (and optionally detail) */
-    virtual bool invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap()) = 0;
+    /* Initiate the asynchronous action on the given list of contacts (and optionally, per-contact-details) with the given parameters */
+    virtual bool invokeAction(const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) = 0;
 
     /* The possible states of an action */
     enum State {
@@ -96,9 +80,39 @@ public:
     /* Returns the most recently received result, or an empty QVariantMap if no results received */
     virtual QVariantMap results() const = 0;
 
+    /* Convenience functions */
+    bool invokeAction(const QContactActionTarget& target, const QVariantMap& parameters = QVariantMap())
+    {
+        return invokeAction(QList<QContactActionTarget>() << target, parameters);
+    }
+    bool invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap())
+    {
+        return invokeAction(QList<QContactActionTarget>() << QContactActionTarget(contact, detail), parameters);
+    }
+
+    // common actions
+    Q_DECLARE_LATIN1_CONSTANT(ActionCall, "call");
+    Q_DECLARE_LATIN1_CONSTANT(ActionEmail, "email");
+    Q_DECLARE_LATIN1_CONSTANT(ActionSms, "sms");
+    Q_DECLARE_LATIN1_CONSTANT(ActionMms, "mms");
+    Q_DECLARE_LATIN1_CONSTANT(ActionChat, "chat");
+    Q_DECLARE_LATIN1_CONSTANT(ActionVideoCall, "videocall");
+    Q_DECLARE_LATIN1_CONSTANT(ActionOpenInEditor, "edit");
+    Q_DECLARE_LATIN1_CONSTANT(ActionOpenInViewer, "view");
+
 Q_SIGNALS:
     void stateChanged(QContactAction::State);
     void resultsAvailable();
+
+public:
+    /* return a list of names of actions which are available */
+    static QStringList availableActions(const QString& serviceName = QString());
+
+    /* return a list of descriptors for action implementations matching the given criteria */
+    static QList<QContactActionDescriptor> actionDescriptors(const QString& actionName = QString());
+
+    /* return a pointer to an implementation of the action identified by the given descriptor */
+    static QContactAction* action(const QContactActionDescriptor& descriptor);
 };
 
 QTM_END_NAMESPACE

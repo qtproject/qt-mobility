@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "telepathy.h"
+#include "telepathy_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -57,6 +57,6 @@ void Telepathy::createNewChannels(const ChannelsArray& channelsarray)
     Q_EMIT NewChannels(channelsarray);
 }
 
-#include "moc_telepathy.cpp"
+#include "moc_telepathy_p.cpp"
 
 QTM_END_NAMESPACE

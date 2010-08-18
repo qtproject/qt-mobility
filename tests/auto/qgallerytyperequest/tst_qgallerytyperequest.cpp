@@ -41,8 +41,6 @@
 
 //TESTED_COMPONENT=src/documentgallery
 
-#include <QtTest/QtTest>
-
 #include <qgallerytyperequest.h>
 
 #include <qabstractgallery.h>
@@ -50,6 +48,8 @@
 #include <qgalleryresultset.h>
 #include <qgalleryresource.h>
 #include <qgallerytype.h>
+
+#include <QtTest/QtTest>
 
 QTM_USE_NAMESPACE
 

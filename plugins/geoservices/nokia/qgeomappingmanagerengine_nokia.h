@@ -54,7 +54,7 @@ class QGeoMappingManagerEngineNokia : public QGeoTiledMappingManagerEngine
 {
     Q_OBJECT
 public:
-    QGeoMappingManagerEngineNokia(const QMap<QString, QString> &parameters,
+    QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters,
                                   QGeoServiceProvider::Error *error,
                                   QString *errorString);
     ~QGeoMappingManagerEngineNokia();
@@ -67,9 +67,8 @@ private:
     QString getRequestString(const QGeoTiledMapRequest &request) const;
 
     static QString sizeToStr(const QSize &size);
-    static QString mapTypeToStr(QGeoMapWidget::MapType type);
+    static QString mapTypeToStr(QGraphicsGeoMap::MapType type);
 
-    QMap<QString, QString> m_parameters;
     QNetworkAccessManager *m_nam;
     QNetworkDiskCache *m_cache;
     QString m_host;
