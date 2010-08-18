@@ -236,6 +236,9 @@ void QGeoTiledMapData::setMapType(QGraphicsGeoMap::MapType mapType)
     QGeoMapData::setMapType(mapType);
 
     d->clearRequests();
+    d->cache.clear();
+    d->zoomCache.clear();
+    geoMap()->update();
     d->updateMapImage();
 }
 
@@ -377,7 +380,6 @@ void QGeoTiledMapData::pan(int dx, int dy)
         y = height;
     if (y > d->maxZoomSize.height() - height)
         y = d->maxZoomSize.height() - height;
-
 
     d->maxZoomCenter.setX(x);
     d->maxZoomCenter.setY(y);
@@ -878,6 +880,9 @@ void QGeoTiledMapDataPrivate::updateScreenRect()
         x += maxZoomSize.width();
 
     int y = maxZoomCenter.y() - (height / 2);
+
+    if (height == maxZoomSize.height())
+        y = 0;
 
     maxZoomScreenRect = QRect(x, y, width, height);
 
