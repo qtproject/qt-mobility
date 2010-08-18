@@ -30,9 +30,12 @@ PUBLIC_HEADERS +=  \
     qversitwriter.h \
     qversitcontactexporter.h \
     qversitcontactimporter.h \
+    qversitcontacthandler.h \
+    qversitorganizerhandler.h \
     qversitorganizerexporter.h \
     qversitorganizerimporter.h \
-    qversitresourcehandler.h
+    qversitresourcehandler.h \
+    qversittimezonehandler.h
 
 # Private Headers
 PRIVATE_HEADERS += \
@@ -50,6 +53,7 @@ PRIVATE_HEADERS += \
     qversitorganizerimporter_p.h \
     qversitdefs_p.h \
     qversitorganizerdefs_p.h \
+    qversitpluginloader_p.h \
     versitutils_p.h
 
 # Implementation
@@ -73,6 +77,9 @@ SOURCES += qversitdocument.cpp \
     qversitorganizerimporter_p.cpp \
     qvcardbackuphandlers_p.cpp \
     qversitresourcehandler.cpp \
+    qversitcontacthandler.cpp \
+    qversitorganizerhandler.cpp \
+    qversitpluginloader_p.cpp \
     versitutils.cpp
 
 HEADERS += \
@@ -82,8 +89,13 @@ HEADERS += \
 symbian { 
     TARGET.UID3 = 0x2002BFBF
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = ALL \
-        -TCB
+    TARGET.CAPABILITY = ALL -TCB
+
+    LIBS += -lefsrv
+
+    VERSIT_DEPLOYMENT.sources = QtVersit.dll
+    VERSIT_DEPLOYMENT.path = /sys/bin
+    DEPLOYMENT += VERSIT_DEPLOYMENT
 }
 
 maemo5|maemo6 {

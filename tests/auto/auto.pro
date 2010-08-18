@@ -2,6 +2,8 @@ TEMPLATE = subdirs
 
 include(../../staticconfig.pri)
 
+#SUBDIRS += headers
+
 contains(mobility_modules,serviceframework) {
     SUBDIRS += servicemetadata \                   #service framework
            qserviceinterfacedescriptor \
@@ -46,8 +48,8 @@ contains(mobility_modules,location) {
         SUBDIRS += qgeoinfosources_wince
     }
 
-    SUBDIRS +=  qlandmarkfilehandler_gpx \
-                qlandmarkfilehandler_lmx
+    SUBDIRS +=  qlandmarkfilehandler_gpx
+                #qlandmarkfilehandler_lmx
     
     SUBDIRS += qlandmarkmanagerengine_sqlite
 }
@@ -179,21 +181,15 @@ contains(mobility_modules,gallery) {
         qdocumentgallery \
         qgalleryabstractrequest \
         qgalleryabstractresponse \
-        qgallerybaseresponse \
-        qgallerycountrequest \
-        qgalleryitemlist \
-        qgalleryitemlistmodel \
         qgalleryitemrequest \
+        qgalleryquerymodel \
         qgalleryqueryrequest \
         qgalleryremoverequest \
         qgalleryresource \
-        qgalleryurlrequest
+        qgallerytyperequest
 
     !unix: SUBDIRS += qgalleryfilter
 
-    unix: contains(QT_CONFIG, dbus) {
-        SUBDIRS += \
-                qgallerytrackeritemlist_maemo5
-    }
+    unix: contains(QT_CONFIG, dbus): SUBDIRS += qgallerytrackerresultset_maemo5
 }
 

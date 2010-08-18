@@ -441,12 +441,12 @@ way for the new service implementation.
 \section2 Out of process Services
 
 Out of process services behave similarly to local services, with one
-exception.  There can be IPC errors, or the remote service can be 
+exception.  There can be IPC errors, or the remote service can
 terminate unexpectedly.  QObjects returned by the service manager for
 out of process services have an additional signal created,
 errorUnrecoverableIPCFault(QService::UnrecoverableIPCError) which the
 client must connect to.  If an error occurs the object must be
-destroyed, no further calls can be made.  Error recovery is left up to
+destroyed; no further calls can be made.  The error recovery is left up to
 the client application.
 
 

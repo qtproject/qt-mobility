@@ -46,84 +46,143 @@
 
 #include <QGraphicsScene>
 
+#include <QPolygonF>
+
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate)
-        : QGeoMapObjectInfo(mapObjectPrivate),
-        graphicsItem1(0),
-        graphicsItem2(0)
+QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
+        : QGeoMapObjectInfo(mapData, mapObject),
+        graphicsItem(0)
 {
-    mapData = static_cast<QGeoTiledMapDataPrivate*>(mapObjectPrivate->mapData);
+    tiledMapData = static_cast<QGeoTiledMapData*>(mapData);
+    tiledMapDataPrivate = static_cast<QGeoTiledMapDataPrivate*>(tiledMapData->d_ptr);
 }
 
 QGeoTiledMapObjectInfo::~QGeoTiledMapObjectInfo()
 {
-    if (graphicsItem1)
-        delete graphicsItem1;
-    if (graphicsItem2)
-        delete graphicsItem2;
+    if (graphicsItem)
+        delete graphicsItem;
 }
 
 void QGeoTiledMapObjectInfo::addToParent()
 {
-    if (graphicsItem1) {
-        mapData->scene->addItem(graphicsItem1);
-        mapData->itemMap.insert(graphicsItem1, mapObjectPrivate->q_ptr);
-    }
-    if (graphicsItem2) {
-        mapData->scene->addItem(graphicsItem2);
-        mapData->itemMap.insert(graphicsItem2, mapObjectPrivate->q_ptr);
+    if (graphicsItem) {
+        tiledMapDataPrivate->scene->addItem(graphicsItem);
+        tiledMapDataPrivate->itemMap.insert(graphicsItem, mapObject());
     }
 }
 
 void QGeoTiledMapObjectInfo::removeFromParent()
 {
-    if (graphicsItem1) {
-        mapData->scene->removeItem(graphicsItem1);
-        mapData->itemMap.remove(graphicsItem1);
-    }
-    if (graphicsItem2) {
-        mapData->scene->removeItem(graphicsItem2);
-        mapData->itemMap.remove(graphicsItem2);
+    if (graphicsItem) {
+        tiledMapDataPrivate->scene->removeItem(graphicsItem);
+        tiledMapDataPrivate->itemMap.remove(graphicsItem);
     }
 }
 
 QGeoBoundingBox QGeoTiledMapObjectInfo::boundingBox() const
 {
-    if (!graphicsItem1)
+    if (!graphicsItem)
         return QGeoBoundingBox();
 
-    QRectF rect1 = graphicsItem1->boundingRect();
-    QGeoCoordinate topLeft1 = mapData->q_ptr->worldPixelToCoordinate(rect1.topLeft().toPoint());
-    QGeoCoordinate bottomRight1 = mapData->q_ptr->worldPixelToCoordinate(rect1.bottomRight().toPoint());
+    QRectF rect1 = graphicsItem->boundingRect();
+    QGeoCoordinate topLeft1 = tiledMapData->worldPixelToCoordinate(rect1.topLeft().toPoint());
+    QGeoCoordinate bottomRight1 = tiledMapData->worldPixelToCoordinate(rect1.bottomRight().toPoint());
 
     QGeoBoundingBox box1 = QGeoBoundingBox(topLeft1, bottomRight1);
-
-    if (!graphicsItem2)
-        return box1;
-
-    QRectF rect2 = graphicsItem2->boundingRect();
-    QGeoCoordinate topLeft2 = mapData->q_ptr->worldPixelToCoordinate(rect2.topLeft().toPoint());
-    QGeoCoordinate bottomRight2 = mapData->q_ptr->worldPixelToCoordinate(rect2.bottomRight().toPoint());
-
-    QGeoBoundingBox box2 = QGeoBoundingBox(topLeft2, bottomRight2);
-
-    box1 |= box2;
 
     return box1;
 }
 
 bool QGeoTiledMapObjectInfo::contains(const QGeoCoordinate &coord) const
 {
-    QPoint point = mapData->q_ptr->coordinateToWorldPixel(coord);
+    QPoint point = tiledMapData->coordinateToWorldPixel(coord);
 
-    if (graphicsItem1 && graphicsItem1->contains(point))
-        return true;
-
-    if (graphicsItem2 && graphicsItem2->contains(point))
+    if (graphicsItem && graphicsItem->contains(point))
         return true;
 
     return false;
+}
+
+void QGeoTiledMapObjectInfo::updateItem()
+{
+    // TODO use bounding rectangle of graphics items
+    if (graphicsItem)
+        tiledMapData->geoMap()->update();
+}
+
+QPolygonF QGeoTiledMapObjectInfo::createPolygon(const QList<QGeoCoordinate> &path,
+        QGeoTiledMapData *tiledMapData,
+        bool closedPath,
+        qreal ypole)
+{
+    QPolygonF points;
+
+    QGeoCoordinate lastCoord = closedPath ? path.last() : path.first();
+    QPointF lastPoint = tiledMapData->coordinateToWorldPixel(lastCoord);
+
+    int width = tiledMapData->maxZoomSize().width();
+
+    for (int i = 0; i < path.size(); ++i) {
+        const QGeoCoordinate &coord = path.at(i);
+
+        if (!coord.isValid())
+            continue;
+
+        const qreal lng = coord.longitude();
+        const qreal lastLng = lastCoord.longitude();
+
+        // is the dateline crossed = different sign AND gap is large enough
+        const bool crossesDateline = lastLng * lng < 0 && abs(lastLng - lng) > 180;
+
+        // calculate base point
+        QPointF point = tiledMapData->coordinateToWorldPixel(coord);
+
+        // if the dateline is crossed, draw "around" the map over the chosen pole
+        if (crossesDateline) {
+            // is the shortest route east = dateline crossed XOR longitude is east by simple comparison
+            const bool goesEast = crossesDateline != (lng > lastLng);
+            // direction = positive if east, negative otherwise
+            const qreal dir = goesEast ? 1 : -1;
+
+            // lastPoint on this side
+            const QPointF & L = lastPoint;
+
+            // point on the other side
+            const QPointF & P = point;
+
+            // lastPoint on the other side
+            QPointF L_ = L - QPointF(width * dir, 0);
+
+            // point on this side
+            QPointF P_ = P + QPointF(width * dir, 0);
+
+            // TODO: make a better algorithm to make sure the off-screen points P' and L' are far enough from the dateline so the lines to the poles don't flicker through.
+            // this works for now :)
+            L_ += (L_ - P) * 7;
+            P_ += (P_ - L) * 7;
+
+            // pole point on this side
+            QPointF O1 = QPointF(P_.x(), ypole);
+            // pole point on the other side
+            QPointF O2 = QPointF(L_.x(), ypole);
+
+            //points.append(L); // implicit
+            points.append(P_); // P'
+            points.append(O1);
+            points.append(O2);
+            points.append(L_); // L'
+            points.append(P);
+        } else {
+            // add point to polygon
+            points.append(point);
+        }
+
+        lastCoord = coord;
+        lastPoint = point;
+    }
+
+    return points;
 }
 
 QTM_END_NAMESPACE

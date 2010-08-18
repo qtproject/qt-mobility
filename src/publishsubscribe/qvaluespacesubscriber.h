@@ -87,7 +87,7 @@ public:
     QVariant value(const QString &subPath = QString(), const QVariant &def = QVariant()) const;
 
 
-signals:
+Q_SIGNALS:
     void contentsChanged();
 
 protected:

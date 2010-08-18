@@ -74,9 +74,9 @@ QGeoTiledMappingManagerEngine::~QGeoTiledMappingManagerEngine()
     // deleted in superclass destructor
 }
 
-QGeoMapData* QGeoTiledMappingManagerEngine::createMapData(QGeoMapWidget *widget)
+QGeoMapData* QGeoTiledMappingManagerEngine::createMapData(QGraphicsGeoMap *geoMap)
 {
-    return new QGeoTiledMapData(this, widget);
+    return new QGeoTiledMapData(this, geoMap);
 }
 
 void QGeoTiledMappingManagerEngine::removeMapData(QGeoMapData* mapData) {}
@@ -164,22 +164,7 @@ void QGeoTiledMappingManagerEngine::setTileSize(const QSize &tileSize)
 QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate()
         : QGeoMappingManagerEnginePrivate() {}
 
-QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate(const QGeoTiledMappingManagerEnginePrivate &other)
-        : QGeoMappingManagerEnginePrivate(other),
-        supportedImageFormats(other.supportedImageFormats),
-        tileSize(other.tileSize) {}
-
 QGeoTiledMappingManagerEnginePrivate::~QGeoTiledMappingManagerEnginePrivate() {}
-
-QGeoTiledMappingManagerEnginePrivate& QGeoTiledMappingManagerEnginePrivate::operator= (const QGeoTiledMappingManagerEnginePrivate & other)
-{
-    QGeoMappingManagerEnginePrivate::operator =(other);
-
-    supportedImageFormats = other.supportedImageFormats;
-    tileSize = other.tileSize;
-
-    return *this;
-}
 
 /*******************************************************************************
 *******************************************************************************/

@@ -43,6 +43,8 @@
 #include "qgeoroutingmanager_p.h"
 #include "qgeoroutingmanagerengine.h"
 
+#include <QLocale>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -373,6 +375,20 @@ QGeoRouteRequest::InstructionDetails QGeoRoutingManager::supportedInstructionDet
 }
 
 /*!
+*/
+void QGeoRoutingManager::setLocale(const QLocale &locale)
+{
+    d_ptr->engine->setLocale(locale);
+}
+
+/*!
+*/
+QLocale QGeoRoutingManager::locale() const
+{
+    return d_ptr->engine->locale();
+}
+
+/*!
 \fn void QGeoRoutingManager::finished(QGeoRouteReply* reply)
 
 This signal is emitted when \a reply has finished processing.
@@ -407,19 +423,10 @@ Use deleteLater() instead.
 QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate()
         : engine(0) {}
 
-QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate(const QGeoRoutingManagerPrivate &other)
-        : engine(other.engine) {}
-
 QGeoRoutingManagerPrivate::~QGeoRoutingManagerPrivate()
 {
-    delete engine;
-}
-
-QGeoRoutingManagerPrivate& QGeoRoutingManagerPrivate::operator= (const QGeoRoutingManagerPrivate & other)
-{
-    engine = other.engine;
-
-    return *this;
+    if (engine)
+        delete engine;
 }
 
 #include "moc_qgeoroutingmanager.cpp"

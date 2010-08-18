@@ -371,6 +371,20 @@ QGeoRouteRequest::InstructionDetails QGeoRoutingManagerEngine::supportedInstruct
 }
 
 /*!
+*/
+void QGeoRoutingManagerEngine::setLocale(const QLocale &locale)
+{
+    d_ptr->locale = locale;
+}
+
+/*!
+*/
+QLocale QGeoRoutingManagerEngine::locale() const
+{
+    return d_ptr->locale;
+}
+
+/*!
 \fn void QGeoRoutingManagerEngine::finished(QGeoRouteReply* reply)
 
 This signal is emitted when \a reply has finished processing.
@@ -408,35 +422,7 @@ QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate()
         supportsAlternativeRoutes(false),
         supportsExcludeAreas(false) {}
 
-QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate(const QGeoRoutingManagerEnginePrivate &other)
-        : managerName(other.managerName),
-        managerVersion(other.managerVersion),
-        supportsRouteUpdates(other.supportsRouteUpdates),
-        supportsAlternativeRoutes(other.supportsAlternativeRoutes),
-        supportsExcludeAreas(other.supportsExcludeAreas),
-        supportedTravelModes(other.supportedTravelModes),
-        supportedAvoidFeatureTypes(other.supportedAvoidFeatureTypes),
-        supportedRouteOptimizations(other.supportedRouteOptimizations),
-        supportedSegmentDetails(other.supportedSegmentDetails),
-        supportedInstructionDetails(other.supportedInstructionDetails) {}
-
 QGeoRoutingManagerEnginePrivate::~QGeoRoutingManagerEnginePrivate() {}
-
-QGeoRoutingManagerEnginePrivate& QGeoRoutingManagerEnginePrivate::operator= (const QGeoRoutingManagerEnginePrivate & other)
-{
-    managerName = other.managerName;
-    managerVersion = other.managerVersion;
-    supportsRouteUpdates = other.supportsRouteUpdates;
-    supportsAlternativeRoutes = other.supportsAlternativeRoutes;
-    supportsExcludeAreas = other.supportsExcludeAreas;
-    supportedTravelModes = other.supportedTravelModes;
-    supportedAvoidFeatureTypes = other.supportedAvoidFeatureTypes;
-    supportedRouteOptimizations = other.supportedRouteOptimizations;
-    supportedSegmentDetails = other.supportedSegmentDetails;
-    supportedInstructionDetails = other.supportedInstructionDetails;
-
-    return *this;
-}
 
 #include "moc_qgeoroutingmanagerengine.cpp"
 

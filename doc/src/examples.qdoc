@@ -49,7 +49,7 @@
 
     \list
     \o \l{mediabrowser}{Media Browser}
-    \o \l{documentshare}{Document Share}
+    \o \l{documentproperties}{Document Properties}
     \endlist
 
     \section2 Feedback
@@ -62,7 +62,6 @@
     \section2 Location
 
     \list
-    \o \l{fetchgooglemaps}{Fetch Google Maps}
     \o \l{logfilepositionsource}{Log File Position Source}
     \o \l{weatherinfo}{Weather Info}
     \o \l{lightmaps}{LightMaps}

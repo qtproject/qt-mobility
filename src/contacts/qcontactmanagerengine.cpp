@@ -57,6 +57,7 @@
 
 #include "qcontact_p.h"
 #include "qcontactdetail_p.h"
+#include "qcontactactionservicemanager_p.h"
 
 #include <QMutex>
 #include <QMutexLocker>
@@ -544,19 +545,13 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
         {
             // Find any matching actions, and do a union filter on their filter objects
             QContactActionFilter af(filter);
-            QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
+            QList<QContactActionDescriptor> descriptors = QContactActionServiceManager::instance()->actionDescriptors(af.actionName());
 
             QList<QContactFilter> filters;
-            // There's a small wrinkle if there's a value specified in the action filter
-            // we have to adjust any contained QContactDetailFilters to have that value
-            // or test if a QContactDetailRangeFilter contains this value already
             for (int j = 0; j < descriptors.count(); j++) {
-                QContactAction* action = QContactAction::action(descriptors.at(j));
-
                 // Action filters are not allowed to return action filters, at all
                 // it's too annoying to check for recursion
-                QContactFilter d = action->contactFilter();
-                delete action; // clean up.
+                QContactFilter d = descriptors.at(j).contactFilter();
                 if (!validateActionFilter(d))
                     continue;
 
@@ -951,6 +946,21 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     subTypes << QString(QLatin1String(QContactUrl::SubTypeHomePage));
     f.setAllowableValues(subTypes);
     fields.insert(QContactUrl::FieldSubType, f);
+    f.setDataType(QVariant::StringList);
+    f.setAllowableValues(contexts);
+    fields.insert(QContactDetail::FieldContext, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    retn.insert(d.name(), d);
+
+    // favorite
+    d.setName(QContactFavorite::DefinitionName);
+    fields.clear();
+    f.setAllowableValues(QVariantList());
+    f.setDataType(QVariant::Bool);
+    fields.insert(QContactFavorite::FieldFavorite, f);
+    f.setDataType(QVariant::Int);
+    fields.insert(QContactFavorite::FieldIndex, f);
     f.setDataType(QVariant::StringList);
     f.setAllowableValues(contexts);
     fields.insert(QContactDetail::FieldContext, f);
@@ -2048,18 +2058,15 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             {
                 // Find any matching actions, and do a union filter on their filter objects
                 QContactActionFilter af(filter);
-                QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
+                QList<QContactActionDescriptor> descriptors = QContactActionServiceManager::instance()->actionDescriptors(af.actionName());
 
                 // There's a small wrinkle if there's a value specified in the action filter
                 // we have to adjust any contained QContactDetailFilters to have that value
                 // or test if a QContactDetailRangeFilter contains this value already
                 for (int j = 0; j < descriptors.count(); j++) {
-                    QContactAction* action = QContactAction::action(descriptors.at(j));
-
                     // Action filters are not allowed to return action filters, at all
                     // it's too annoying to check for recursion
-                    QContactFilter d = action->contactFilter();
-                    delete action; // clean up.
+                    QContactFilter d = descriptors.at(j).contactFilter();
                     if (!validateActionFilter(d))
                         return false;
 

@@ -40,44 +40,49 @@
 ****************************************************************************/
 
 #include "qgeotiledmappolygonobjectinfo_p.h"
-#include "makepoly_p.h"
+//#include "makepoly_p.h"
 
 #include "qgeotiledmapdata.h"
 #include "qgeotiledmapdata_p.h"
 
-#include "qgeomappolygonobject_p.h"
+#include "qgeomappolygonobject.h"
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapPolygonObjectInfo::QGeoTiledMapPolygonObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate)
-        : QGeoTiledMapObjectInfo(mapObjectPrivate),
+QGeoTiledMapPolygonObjectInfo::QGeoTiledMapPolygonObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
+        : QGeoTiledMapObjectInfo(mapData, mapObject),
         polygonItem(0)
 {
-    polygon = static_cast<const QGeoMapPolygonObjectPrivate*>(mapObjectPrivate);
+    polygon = static_cast<QGeoMapPolygonObject*>(mapObject);
 }
 
 QGeoTiledMapPolygonObjectInfo::~QGeoTiledMapPolygonObjectInfo() {}
 
 void QGeoTiledMapPolygonObjectInfo::objectUpdate()
 {
-    QList<QGeoCoordinate> path = polygon->path;
+    QList<QGeoCoordinate> path = polygon->path();
 
-    makepoly(*this, path, polygon, points, true);
+    points = createPolygon(path, tiledMapData, true);
+    //makepoly(points, path, mapData, true);
 
     if (!polygonItem)
         polygonItem = new QGraphicsPolygonItem();
 
     polygonItem->setPolygon(points);
-    polygonItem->setBrush(polygon->brush);
+    polygonItem->setBrush(polygon->brush());
 
-    graphicsItem1 = polygonItem;
+    mapUpdate();
+
+    graphicsItem = polygonItem;
+
+    updateItem();
 }
 
 void QGeoTiledMapPolygonObjectInfo::mapUpdate()
 {
     if (polygonItem) {
-        QPen pen = polygon->pen;
-        pen.setWidthF(pen.widthF() * mapData->zoomFactor);
+        QPen pen = polygon->pen();
+        pen.setWidthF(pen.widthF() * tiledMapData->zoomFactor());
         polygonItem->setPen(pen);
     }
 }

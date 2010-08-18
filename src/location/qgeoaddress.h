@@ -90,9 +90,6 @@ public:
     QString postCode() const;
     void setPostCode(const QString &postCode);
 
-    QString postOfficeBox() const;
-    void setPostOfficeBox(const QString &postOfficeBox);
-
     bool isEmpty() const;
     void clear();
 

@@ -53,6 +53,8 @@
 // We mean it.
 //
 
+#include "qgeotiledmapdata.h"
+#include "qgeotiledmapdata_p.h"
 #include "qgeocoordinate.h"
 
 #include <QList>
@@ -62,13 +64,14 @@
 QTM_BEGIN_NAMESPACE
 
 // TODO: replace boolean parameter by enum
-template<typename Info, typename Private> void makepoly(Info & self, const QList<QGeoCoordinate> & path, const Private *polygon, QPolygonF &points, bool closedPath, qreal ypole = -100) {
+static inline void makepoly(QPolygonF &points, const QList<QGeoCoordinate> & path, const QGeoTiledMapDataPrivate * mapData, bool closedPath, qreal ypole = -100)
+{
     points.clear();
 
     QGeoCoordinate lastCoord = closedPath ? path.last() : path.first();
-    QPointF lastPoint = self.mapData->q_ptr->coordinateToWorldPixel(lastCoord);
+    QPointF lastPoint = mapData->q_ptr->coordinateToWorldPixel(lastCoord);
 
-    int width = self.mapData->maxZoomSize.width();
+    int width = mapData->maxZoomSize.width();
 
     for (int i = 0; i < path.size(); ++i) {
         const QGeoCoordinate &coord = path.at(i);
@@ -82,16 +85,16 @@ template<typename Info, typename Private> void makepoly(Info & self, const QList
         // is the dateline crossed = different sign AND gap is large enough
         const bool crossesDateline = lastLng * lng < 0 && abs(lastLng - lng) > 180;
 
-        // is the shortest route east = dateline crossed XOR longitude is east by simple comparison
-        const bool goesEast = crossesDateline != (lng > lastLng);
-        // direction = positive if east, negative otherwise
-        const qreal dir = goesEast ? 1 : -1;
-
         // calculate base point
-        QPointF point = self.mapData->q_ptr->coordinateToWorldPixel(coord);
+        QPointF point = mapData->q_ptr->coordinateToWorldPixel(coord);
 
         // if the dateline is crossed, draw "around" the map over the chosen pole
         if (crossesDateline) {
+            // is the shortest route east = dateline crossed XOR longitude is east by simple comparison
+            const bool goesEast = crossesDateline != (lng > lastLng);
+            // direction = positive if east, negative otherwise
+            const qreal dir = goesEast ? 1 : -1;
+
             // lastPoint on this side
             const QPointF & L = lastPoint;
 
@@ -99,15 +102,15 @@ template<typename Info, typename Private> void makepoly(Info & self, const QList
             const QPointF & P = point;
 
             // lastPoint on the other side
-            QPointF L_ = L - QPointF(width*dir, 0);
+            QPointF L_ = L - QPointF(width * dir, 0);
 
             // point on this side
-            QPointF P_ = P + QPointF(width*dir, 0);
+            QPointF P_ = P + QPointF(width * dir, 0);
 
             // TODO: make a better algorithm to make sure the off-screen points P' and L' are far enough from the dateline so the lines to the poles don't flicker through.
             // this works for now :)
-            L_ += (L_ - P)*7;
-            P_ += (P_ - L)*7;
+            L_ += (L_ - P) * 7;
+            P_ += (P_ - L) * 7;
 
             // pole point on this side
             QPointF O1 = QPointF(P_.x(), ypole);
@@ -120,8 +123,7 @@ template<typename Info, typename Private> void makepoly(Info & self, const QList
             points.append(O2);
             points.append(L_); // L'
             points.append(P);
-        }
-        else {
+        } else {
             // add point to polygon
             points.append(point);
         }

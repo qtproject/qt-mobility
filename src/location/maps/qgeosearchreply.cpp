@@ -91,6 +91,8 @@ QTM_BEGIN_NAMESPACE
     \value UnsupportedOptionError
         The requested operation or one of the options for the operation are not
         supported by the service provider.
+    \value CombinationError
+        An error occurred while results where being combined from multiple sources.
     \value UnknownError
         An error occurred which does not fit into any of the other categories.
 */
@@ -186,7 +188,7 @@ QString QGeoSearchReply::errorString() const
 /*!
     Sets the viewport which contains the results to \a viewport.
 */
-void QGeoSearchReply::setViewport(const QGeoBoundingBox &viewport)
+void QGeoSearchReply::setViewport(QGeoBoundingArea *viewport)
 {
     d_ptr->viewport = viewport;
 }
@@ -194,10 +196,10 @@ void QGeoSearchReply::setViewport(const QGeoBoundingBox &viewport)
 /*!
     Returns the viewport which contains the results.
 
-    This function will return an invalid QGeoBoundingBox if no viewport bias
+    This function will return 0 if no viewport bias
     was specified in the QGeoSearchManager function which created this reply.
 */
-QGeoBoundingBox QGeoSearchReply::viewport() const
+QGeoBoundingArea* QGeoSearchReply::viewport() const
 {
     return d_ptr->viewport;
 }
@@ -230,7 +232,7 @@ void QGeoSearchReply::setPlaces(const QList<QGeoPlace> &places)
 }
 
 /*!
-    Cancels the operation.
+    Cancels the operation immediately.
 
     This will do nothing if the reply is finished.
 */
@@ -238,6 +240,34 @@ void QGeoSearchReply::abort()
 {
     if (!isFinished())
         setFinished(true);
+}
+
+/*!
+*/
+int QGeoSearchReply::resultsCount() const
+{
+    return d_ptr->resultsCount;
+}
+
+/*!
+*/
+int QGeoSearchReply::resultsOffset() const
+{
+    return d_ptr->resultsOffset;
+}
+
+/*!
+*/
+void QGeoSearchReply::setResultsCount(int resultsCount)
+{
+    d_ptr->resultsCount = resultsCount;
+}
+
+/*!
+*/
+void QGeoSearchReply::setResultsOffset(int resultsOffset)
+{
+    d_ptr->resultsOffset = resultsOffset;
 }
 
 /*!
@@ -275,32 +305,19 @@ void QGeoSearchReply::abort()
 QGeoSearchReplyPrivate::QGeoSearchReplyPrivate()
         : error(QGeoSearchReply::NoError),
         errorString(""),
-        isFinished(false) {}
+        isFinished(false),
+        resultsCount(-1),
+        resultsOffset(0) {}
 
 QGeoSearchReplyPrivate::QGeoSearchReplyPrivate(QGeoSearchReply::Error error, const QString &errorString)
         : error(error),
         errorString(errorString),
-        isFinished(true) {}
-
-QGeoSearchReplyPrivate::QGeoSearchReplyPrivate(const QGeoSearchReplyPrivate &other)
-        : error(error),
-        errorString(errorString),
-        isFinished(isFinished),
-        viewport(other.viewport),
-        places(other.places) {}
+        isFinished(true),
+        resultsCount(-1),
+        resultsOffset(0) {}
 
 QGeoSearchReplyPrivate::~QGeoSearchReplyPrivate() {}
 
-QGeoSearchReplyPrivate& QGeoSearchReplyPrivate::operator= (const QGeoSearchReplyPrivate & other)
-{
-    error = other.error;
-    errorString = other.errorString;
-    isFinished = other.isFinished;
-    viewport = other.viewport;
-    places = other.places;
-
-    return *this;
-}
 
 #include "moc_qgeosearchreply.cpp"
 

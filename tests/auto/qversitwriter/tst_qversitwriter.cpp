@@ -318,6 +318,15 @@ void tst_QVersitWriter::testWritingDocument_data()
             "END:VCARD\r\n"
             );
 
+    document.setComponentType(QLatin1String("VCARD"));
+    document.setType(QVersitDocument::VCard40Type);
+    QTest::newRow("basic vCard 4.0") << document << QByteArray(
+            "BEGIN:VCARD\r\n"
+            "VERSION:4.0\r\n"
+            "FN:Bob\r\n"
+            "END:VCARD\r\n"
+            );
+
     {
     QVersitDocument document(QVersitDocument::ICalendar20Type);
     document.setComponentType(QLatin1String("VCALENDAR"));

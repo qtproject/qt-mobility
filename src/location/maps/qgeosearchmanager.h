@@ -49,6 +49,8 @@
 #include <QList>
 #include <QMap>
 
+class QLocale;
+
 QTM_BEGIN_NAMESPACE
 
 class QLandmarkManager;
@@ -74,15 +76,18 @@ public:
     int managerVersion() const;
 
     QGeoSearchReply* geocode(const QGeoAddress &address,
-                             const QGeoBoundingBox &bounds = QGeoBoundingBox());
+                             QGeoBoundingArea *bounds = 0);
     QGeoSearchReply* reverseGeocode(const QGeoCoordinate &coordinate,
-                                    const QGeoBoundingBox &bounds = QGeoBoundingBox());
+                                    QGeoBoundingArea *bounds = 0);
 
     QGeoSearchReply* search(const QString &searchString,
                             SearchTypes searchTypes = SearchTypes(SearchAll),
-                            const QGeoBoundingBox &bounds = QGeoBoundingBox());
+                            int limit = -1,
+                            int offset = 0,
+                            QGeoBoundingArea *bounds = 0);
 
     bool supportsGeocoding() const;
+    bool supportsReverseGeocoding() const;
     SearchTypes supportedSearchTypes() const;
 
     QLandmarkManager* defaultLandmarkManager() const;
@@ -91,7 +96,10 @@ public:
     QList<QLandmarkManager *> additionalLandmarkManagers() const;
     void addAdditionalLandmarkManager(QLandmarkManager *landmarkManager);
 
-signals:
+    void setLocale(const QLocale &locale);
+    QLocale locale() const;
+
+Q_SIGNALS:
     void finished(QGeoSearchReply* reply);
     void error(QGeoSearchReply* reply, QGeoSearchReply::Error error, QString errorString = QString());
 

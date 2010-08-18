@@ -56,6 +56,7 @@
 #include "qgeosearchmanagerengine.h"
 
 #include <QList>
+#include <QLocale>
 
 QTM_BEGIN_NAMESPACE
 
@@ -65,10 +66,7 @@ class QGeoSearchManagerEnginePrivate
 {
 public:
     QGeoSearchManagerEnginePrivate();
-    QGeoSearchManagerEnginePrivate(const QGeoSearchManagerEnginePrivate &other);
     ~QGeoSearchManagerEnginePrivate();
-
-    QGeoSearchManagerEnginePrivate& operator= (const QGeoSearchManagerEnginePrivate &other);
 
     QString managerName;
     int managerVersion;
@@ -77,7 +75,13 @@ public:
     QList<QLandmarkManager*> additionalLandmarkManagers;
 
     bool supportsGeocoding;
+    bool supportsReverseGeocoding;
     QGeoSearchManager::SearchTypes supportedSearchTypes;
+
+    QLocale locale;
+
+private:
+    Q_DISABLE_COPY(QGeoSearchManagerEnginePrivate)
 };
 
 QTM_END_NAMESPACE

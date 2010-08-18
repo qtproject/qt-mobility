@@ -983,96 +983,96 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
 }
 
 
-QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::getOrientation(int screen)
-{
-    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
-    XRRScreenConfiguration *sc;
-    Rotation cur_rotation;
-    sc = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), screen));
-    if (!sc) {
-        return orientation;
-    }
-    XRRConfigRotations(sc, &cur_rotation);
+// QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::getOrientation(int screen)
+// {
+//     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+//     XRRScreenConfiguration *sc;
+//     Rotation cur_rotation;
+//     sc = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+//     if (!sc) {
+//         return orientation;
+//     }
+//     XRRConfigRotations(sc, &cur_rotation);
 
-    if(screen < 16 && screen > -1) {
-        switch(cur_rotation) {
-        case RR_Rotate_0:
-            orientation = QSystemDisplayInfo::Landscape;
-            break;
-        case RR_Rotate_90:
-            orientation = QSystemDisplayInfo::Portrait;
-            break;
-        case RR_Rotate_180:
-            orientation = QSystemDisplayInfo::InvertedLandscape;
-            break;
-        case RR_Rotate_270:
-            orientation = QSystemDisplayInfo::InvertedPortrait;
-            break;
-        };
-    }
-    return orientation;
-}
+//     if(screen < 16 && screen > -1) {
+//         switch(cur_rotation) {
+//         case RR_Rotate_0:
+//             orientation = QSystemDisplayInfo::Landscape;
+//             break;
+//         case RR_Rotate_90:
+//             orientation = QSystemDisplayInfo::Portrait;
+//             break;
+//         case RR_Rotate_180:
+//             orientation = QSystemDisplayInfo::InvertedLandscape;
+//             break;
+//         case RR_Rotate_270:
+//             orientation = QSystemDisplayInfo::InvertedPortrait;
+//             break;
+//         };
+//     }
+//     return orientation;
+// }
 
 
-float QSystemDisplayInfoLinuxCommonPrivate::contrast(int screen)
-{
-    Q_UNUSED(screen);
+// float QSystemDisplayInfoLinuxCommonPrivate::contrast(int screen)
+// {
+//     Q_UNUSED(screen);
 
-    return 0.0;
-}
+//     return 0.0;
+// }
 
-int QSystemDisplayInfoLinuxCommonPrivate::getDPIWidth(int screen)
-{
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-        dpi = QDesktopWidget().screenGeometry().width() / (physicalWidth(0) / 25.4);
-    }
-    return dpi;
-}
+// int QSystemDisplayInfoLinuxCommonPrivate::getDPIWidth(int screen)
+// {
+//     int dpi=0;
+//     if(screen < 16 && screen > -1) {
+//         dpi = QDesktopWidget().screenGeometry().width() / (physicalWidth(0) / 25.4);
+//     }
+//     return dpi;
+// }
 
-int QSystemDisplayInfoLinuxCommonPrivate::getDPIHeight(int screen)
-{
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-        dpi = QDesktopWidget().screenGeometry().height() / (physicalHeight(0) / 25.4);
-    }
-    return dpi;
-}
+// int QSystemDisplayInfoLinuxCommonPrivate::getDPIHeight(int screen)
+// {
+//     int dpi=0;
+//     if(screen < 16 && screen > -1) {
+//         dpi = QDesktopWidget().screenGeometry().height() / (physicalHeight(0) / 25.4);
+//     }
+//     return dpi;
+// }
 
-int QSystemDisplayInfoLinuxCommonPrivate::physicalHeight(int screen)
-{
-    int height=0;
-    XRRScreenResources *sr;
+// int QSystemDisplayInfoLinuxCommonPrivate::physicalHeight(int screen)
+// {
+//     int height=0;
+//     XRRScreenResources *sr;
 
-    sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
-    for (int i = 0; i < sr->noutput; ++i) {
-        XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
-        if (output->crtc) {
-           height = output->mm_height;
-        }
-        XRRFreeOutputInfo(output);
-    }
-    XRRFreeScreenResources(sr);
-    return height;
-}
+//     sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+//     for (int i = 0; i < sr->noutput; ++i) {
+//         XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
+//         if (output->crtc) {
+//            height = output->mm_height;
+//         }
+//         XRRFreeOutputInfo(output);
+//     }
+//     XRRFreeScreenResources(sr);
+//     return height;
+// }
 
-int QSystemDisplayInfoLinuxCommonPrivate::physicalWidth(int screen)
-{
-    int width=0;
-    XRRScreenResources *sr;
+// int QSystemDisplayInfoLinuxCommonPrivate::physicalWidth(int screen)
+// {
+//     int width=0;
+//     XRRScreenResources *sr;
 
-    sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
-    for (int i = 0; i < sr->noutput; ++i) {
-        XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
-        if (output->crtc) {
-           width = output->mm_width;
-        }
-        XRRFreeOutputInfo(output);
-    }
-    XRRFreeScreenResources(sr);
+//     sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+//     for (int i = 0; i < sr->noutput; ++i) {
+//         XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
+//         if (output->crtc) {
+//            width = output->mm_width;
+//         }
+//         XRRFreeOutputInfo(output);
+//     }
+//     XRRFreeScreenResources(sr);
 
-    return width;
-}
+//     return width;
+// }
 
 QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent)
     : QObject(parent)
@@ -1445,102 +1445,6 @@ QString QSystemDeviceInfoLinuxCommonPrivate::manufacturer()
     return QString();
 }
 
-QString QSystemDeviceInfoLinuxCommonPrivate::model()
-{
-    if(halIsAvailable) {
-#if !defined(QT_NO_DBUS)
-        QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
-        QString model;
-        if (iface.isValid()) {
-            model = iface.getPropertyString("system.kernel.machine");
-            if(!model.isEmpty())
-                model += " ";
-            model += iface.getPropertyString("system.chassis.type");
-            if(!model.isEmpty())
-                return model;
-        }
-#endif
-    }
-    QFile file("/proc/cpuinfo");
-    if (!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "Could not open /proc/cpuinfo";
-    } else {
-        QTextStream cpuinfo(&file);
-        QString line = cpuinfo.readLine();
-        while (!line.isNull()) {
-            line = cpuinfo.readLine();
-            if(line.contains("model name")) {
-                return line.split(": ").at(1).trimmed();
-            }
-        }
-    }
-    return QString();
-}
-
-QString QSystemDeviceInfoLinuxCommonPrivate::productName()
-{
-    if(halIsAvailable) {
-#if !defined(QT_NO_DBUS)
-        QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
-        QString productName;
-        if (iface.isValid()) {
-            productName = iface.getPropertyString("info.product");
-            if(productName.isEmpty()) {
-                productName = iface.getPropertyString("system.product");
-                if(!productName.isEmpty())
-                    return productName;
-            } else {
-                return productName;
-            }
-        }
-#endif
-    }
-    const QDir dir("/etc");
-    if(dir.exists()) {
-        QStringList langList;
-        QFileInfoList localeList = dir.entryInfoList(QStringList() << "*release",
-                                                     QDir::Files | QDir::NoDotAndDotDot,
-                                                     QDir::Name);
-        foreach(const QFileInfo fileInfo, localeList) {
-            const QString filepath = fileInfo.filePath();
-            QFile file(filepath);
-            if (file.open(QIODevice::ReadOnly)) {
-                QTextStream prodinfo(&file);
-                QString line = prodinfo.readLine();
-                while (!line.isNull()) {
-                    if(filepath.contains("lsb.release")) {
-                        if(line.contains("DISTRIB_DESCRIPTION")) {
-                            return line.split("=").at(1).trimmed();
-                        }
-                    } else {
-                        return line;
-                    }
-                    line = prodinfo.readLine();
-                }
-            }
-        } //end foreach
-    }
-
-    QFile file("/etc/issue");
-    if (!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "Could not open /proc/cpuinfo";
-    } else {
-        QTextStream prodinfo(&file);
-        QString line = prodinfo.readLine();
-        while (!line.isNull()) {
-            line = prodinfo.readLine();
-            if(!line.isEmpty()) {
-                QStringList lineList = line.split(" ");
-                for(int i = 0; i < lineList.count(); i++) {
-                    if(lineList.at(i).toFloat()) {
-                        return lineList.at(i-1) + " "+ lineList.at(i);
-                    }
-                }
-            }
-        }
-    }
-    return QString();
-}
 
 QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMethodType()
 {

@@ -61,18 +61,18 @@ class QGraphicsPolygonItem;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapPolygonObjectPrivate;
+class QGeoMapPolygonObject;
 
 class QGeoTiledMapPolygonObjectInfo : public QGeoTiledMapObjectInfo
 {
 public:
-    QGeoTiledMapPolygonObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
+    QGeoTiledMapPolygonObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapPolygonObjectInfo();
 
     void objectUpdate();
     void mapUpdate();
 
-    const QGeoMapPolygonObjectPrivate *polygon;
+    QGeoMapPolygonObject *polygon;
     QGraphicsPolygonItem *polygonItem;
 
     QPolygonF points;

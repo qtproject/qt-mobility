@@ -47,19 +47,19 @@
 #include <QNetworkProxy>
 #include <qgeoboundingbox.h>
 
-const quint8 ID_REQUEST_TYPE=0x1;
-const quint8 ID_REQUEST_UNICODE=0x63;
-const quint8 ID_REQUEST_ZLIB=0x59;
-const quint8 ID_REQUEST_BASE64=0x58;
-const quint8 ID_REQUEST_MANEUVER_INFO=0x9c;
-const quint8 ID_REQUEST_JUNCTION_INFO=0x47;
-const quint8 ID_REQUEST_ROUTE_START_POSITION=0x1f;
-const quint8 ID_REQUEST_ROUTE_END_POSITION=0x20;
-const quint8 ID_REQUEST_ROUTE_FLAGS=0x23;
-const quint8 ID_REQUEST_ROUTE_GUIDANCE_LANGUAGE=0x78;
-const quint16 ID_REQUEST_ROUTE=0x2;
-const quint8 ID_REQUEST_TRUE=0xff;
-const quint8 ID_REQUEST_FALSE=0x0;
+const quint8 ID_REQUEST_TYPE = 0x1;
+const quint8 ID_REQUEST_UNICODE = 0x63;
+const quint8 ID_REQUEST_ZLIB = 0x59;
+const quint8 ID_REQUEST_BASE64 = 0x58;
+const quint8 ID_REQUEST_MANEUVER_INFO = 0x9c;
+const quint8 ID_REQUEST_JUNCTION_INFO = 0x47;
+const quint8 ID_REQUEST_ROUTE_START_POSITION = 0x1f;
+const quint8 ID_REQUEST_ROUTE_END_POSITION = 0x20;
+const quint8 ID_REQUEST_ROUTE_FLAGS = 0x23;
+const quint8 ID_REQUEST_ROUTE_GUIDANCE_LANGUAGE = 0x78;
+const quint16 ID_REQUEST_ROUTE = 0x2;
+const quint8 ID_REQUEST_TRUE = 0xff;
+const quint8 ID_REQUEST_FALSE = 0x0;
 
 QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoRoutingManagerEngine(parameters),
@@ -195,8 +195,8 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
     requestString += encodeTLV(ID_REQUEST_MANEUVER_INFO, ID_REQUEST_TRUE);
     requestString += encodeTLV(ID_REQUEST_JUNCTION_INFO, ID_REQUEST_TRUE);
 
-    requestString += encodeTLV(ID_REQUEST_ROUTE_START_POSITION,coordinateToByteArray(request.waypoints().at(0)));
-    requestString += encodeTLV(ID_REQUEST_ROUTE_END_POSITION,coordinateToByteArray(request.waypoints().at(numWaypoints-1)));
+    requestString += encodeTLV(ID_REQUEST_ROUTE_START_POSITION, coordinateToByteArray(request.waypoints().at(0)));
+    requestString += encodeTLV(ID_REQUEST_ROUTE_END_POSITION, coordinateToByteArray(request.waypoints().at(numWaypoints - 1)));
 
     quint32 flags = Default;
     if ((request.routeOptimization() & QGeoRouteRequest::ShortestRoute) != 0)
@@ -212,8 +212,8 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
     if ((request.avoidFeatureTypes() & QGeoRouteRequest::AvoidTunnels) != 0)
         flags |= AvoidTunnels;
 
-    requestString += encodeTLV(ID_REQUEST_ROUTE_FLAGS,flags);
-    requestString += encodeTLV(ID_REQUEST_ROUTE_GUIDANCE_LANGUAGE,QByteArray::fromRawData("DEF\x0",4));
+    requestString += encodeTLV(ID_REQUEST_ROUTE_FLAGS, flags);
+    requestString += encodeTLV(ID_REQUEST_ROUTE_GUIDANCE_LANGUAGE, QByteArray::fromRawData("DEF\x0", 4));
 
     return requestString;
 }
@@ -221,7 +221,7 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
 QString QGeoRoutingManagerEngineNokia::encodeTLV(quint8 id, QByteArray data)
 {
     QByteArray dataArray;
-    QDataStream dataStream(&dataArray,QIODevice::WriteOnly);
+    QDataStream dataStream(&dataArray, QIODevice::WriteOnly);
     dataStream.setByteOrder(QDataStream::LittleEndian);
     dataStream << id << quint16(data.length());
     dataArray.append(data);
@@ -232,7 +232,7 @@ QString QGeoRoutingManagerEngineNokia::encodeTLV(quint8 id, QByteArray data)
 QString QGeoRoutingManagerEngineNokia::encodeTLV(quint8 id, quint8 data)
 {
     QByteArray dataArray;
-    QDataStream dataStream(&dataArray,QIODevice::WriteOnly);
+    QDataStream dataStream(&dataArray, QIODevice::WriteOnly);
     dataStream.setByteOrder(QDataStream::LittleEndian);
     dataStream << id << quint16(1) << data;  //data length 1 bytes
 
@@ -242,7 +242,7 @@ QString QGeoRoutingManagerEngineNokia::encodeTLV(quint8 id, quint8 data)
 QString QGeoRoutingManagerEngineNokia::encodeTLV(quint8 id, quint16 data)
 {
     QByteArray dataArray;
-    QDataStream dataStream(&dataArray,QIODevice::WriteOnly);
+    QDataStream dataStream(&dataArray, QIODevice::WriteOnly);
     dataStream.setByteOrder(QDataStream::LittleEndian);
     dataStream << id << quint16(2) << data;  //data length 2 bytes
 
@@ -252,7 +252,7 @@ QString QGeoRoutingManagerEngineNokia::encodeTLV(quint8 id, quint16 data)
 QString QGeoRoutingManagerEngineNokia::encodeTLV(quint8 id, quint32 data)
 {
     QByteArray dataArray;
-    QDataStream dataStream(&dataArray,QIODevice::WriteOnly);
+    QDataStream dataStream(&dataArray, QIODevice::WriteOnly);
     dataStream.setByteOrder(QDataStream::LittleEndian);
     dataStream << id << quint16(4) << data; //data length 4 bytes
 
@@ -262,16 +262,16 @@ QString QGeoRoutingManagerEngineNokia::encodeTLV(quint8 id, quint32 data)
 QByteArray QGeoRoutingManagerEngineNokia::coordinateToByteArray(QGeoCoordinate coord)
 {
     QByteArray array;
-    QDataStream dataStream(&array,QIODevice::WriteOnly);
+    QDataStream dataStream(&array, QIODevice::WriteOnly);
     dataStream.setByteOrder(QDataStream::LittleEndian);
-    dataStream << toInt32(coord.latitude()+90) << toInt32(coord.longitude()+180);
+    dataStream << toInt32(coord.latitude() + 90) << toInt32(coord.longitude() + 180);
     return array;
 }
 
 quint32 QGeoRoutingManagerEngineNokia::toInt32(double value)
 {
     value *= 0xB60B60; // 0x100000000 / 360;
-    value -= (value > 0x7fffffff ? 2^32 : 0);
+    value -= (value > 0x7fffffff ? 2 ^ 32 : 0);
     return quint32(value);
 }
 

@@ -143,9 +143,9 @@ int QGeoMappingManagerEngine::managerVersion() const
 }
 
 /*!
-\fn QGeoMapData* QGeoMappingManagerEngine::createMapData(QGeoMapWidget *widget)
+\fn QGeoMapData* QGeoMappingManagerEngine::createMapData(QGraphicsGeoMap *geoMap)
 
-    Returns a new QGeoMapData instance for \a widget which will be managed by
+    Returns a new QGeoMapData instance for \a geoMap, which will be managed by
     this manager.
 
     A QGeoMapData instance contains and manages the information about
@@ -184,7 +184,7 @@ void QGeoMappingManagerEngine::removeMapData(QGeoMapData *mapData)
 /*!
     Returns a list of the map types supported by this engine.
 */
-QList<QGeoMapWidget::MapType> QGeoMappingManagerEngine::supportedMapTypes() const
+QList<QGraphicsGeoMap::MapType> QGeoMappingManagerEngine::supportedMapTypes() const
 {
     Q_D(const QGeoMappingManagerEngine);
     return d->supportedMapTypes;
@@ -244,11 +244,8 @@ QSize QGeoMappingManagerEngine::maximumImageSize() const
 
     Subclasses of QGeoMappingManagerEngine should use this function to ensure
     that supportedMapTypes() provides accurate information.
-
-    \sa QGeoMapWidget::MapType
-    \sa QGeoMappingManagerEngine::supportedMapTypes()
 */
-void QGeoMappingManagerEngine::setSupportedMapTypes(const QList<QGeoMapWidget::MapType> &mapTypes)
+void QGeoMappingManagerEngine::setSupportedMapTypes(const QList<QGraphicsGeoMap::MapType> &mapTypes)
 {
     Q_D(QGeoMappingManagerEngine);
     d->supportedMapTypes = mapTypes;
@@ -316,6 +313,19 @@ void QGeoMappingManagerEngine::setMaximumImageSize(const QSize &maximumImageSize
     d->maximumImageSize = maximumImageSize;
 }
 
+/*!
+*/
+void QGeoMappingManagerEngine::setLocale(const QLocale &locale)
+{
+    d_ptr->locale = locale;
+}
+
+/*!
+*/
+QLocale QGeoMappingManagerEngine::locale() const
+{
+    return d_ptr->locale;
+}
 
 /*******************************************************************************
 *******************************************************************************/
@@ -323,29 +333,7 @@ void QGeoMappingManagerEngine::setMaximumImageSize(const QSize &maximumImageSize
 QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
         : managerVersion(-1) {}
 
-QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate(const QGeoMappingManagerEnginePrivate &other)
-        : managerName(other.managerName),
-        managerVersion(other.managerVersion),
-        supportedMapTypes(other.supportedMapTypes),
-        minimumZoomLevel(other.minimumZoomLevel),
-        maximumZoomLevel(other.maximumZoomLevel),
-        minimumImageSize(other.minimumImageSize),
-        maximumImageSize(other.maximumImageSize) {}
-
 QGeoMappingManagerEnginePrivate::~QGeoMappingManagerEnginePrivate() {}
-
-QGeoMappingManagerEnginePrivate& QGeoMappingManagerEnginePrivate::operator= (const QGeoMappingManagerEnginePrivate & other)
-{
-    managerName = other.managerName;
-    managerVersion = other.managerVersion;
-    supportedMapTypes = other.supportedMapTypes;
-    minimumZoomLevel = other.minimumZoomLevel;
-    maximumZoomLevel = other.maximumZoomLevel;
-    minimumImageSize = other.minimumImageSize;
-    maximumImageSize = other.maximumImageSize;
-
-    return *this;
-}
 
 #include "moc_qgeomappingmanagerengine.cpp"
 

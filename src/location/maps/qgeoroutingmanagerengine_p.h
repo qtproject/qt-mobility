@@ -56,6 +56,7 @@
 #include "qgeorouterequest.h"
 
 #include <QMap>
+#include <QLocale>
 
 QTM_BEGIN_NAMESPACE
 
@@ -63,10 +64,7 @@ class QGeoRoutingManagerEnginePrivate
 {
 public:
     QGeoRoutingManagerEnginePrivate();
-    QGeoRoutingManagerEnginePrivate(const QGeoRoutingManagerEnginePrivate &other);
     ~QGeoRoutingManagerEnginePrivate();
-
-    QGeoRoutingManagerEnginePrivate& operator= (const QGeoRoutingManagerEnginePrivate &other);
 
     QString managerName;
     int managerVersion;
@@ -79,6 +77,11 @@ public:
     QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations;
     QGeoRouteRequest::SegmentDetails supportedSegmentDetails;
     QGeoRouteRequest::InstructionDetails supportedInstructionDetails;
+
+    QLocale locale;
+
+private:
+    Q_DISABLE_COPY(QGeoRoutingManagerEnginePrivate)
 };
 
 QTM_END_NAMESPACE

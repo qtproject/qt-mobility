@@ -85,13 +85,13 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(
 QGeoSearchManagerEngineNokia::~QGeoSearchManagerEngineNokia() {}
 
 QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &address,
-    const QGeoBoundingBox &bounds)
+        QGeoBoundingArea *bounds)
 {
     Q_UNUSED(bounds)
 
     if (!supportsGeocoding()) {
         QGeoSearchReply *reply = new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
-            "Geocoding is not supported by this service provider.", this);
+                "Geocoding is not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
         return reply;
     }
@@ -133,26 +133,31 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
     return search(requestString);
 }
 
-QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,
-    const QGeoBoundingBox &bounds)
-{
-    Q_UNUSED(bounds)
+// NOTE: reverse geocoding is not supported and the default implementation
+// same error message, so this function is not needed.
+//QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,
+//    const QGeoBoundingBox &bounds)
+//{
+//    Q_UNUSED(bounds)
 
-    if (!supportsGeocoding()) {
-        QGeoSearchReply *reply = new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
-            "Reverse geocoding is not supported by this service provider.", this);
-        emit error(reply, reply->error(), reply->errorString());
-        return reply;
-    }
+//    if (!supportsReverseGeocoding()) {
+//        QGeoSearchReply *reply = new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
+//            "Reverse geocoding is not supported by this service provider.", this);
+//        emit error(reply, reply->error(), reply->errorString());
+//        return reply;
+//    }
 
-    QString requestString = "http://";
-    requestString += m_host;
+//    QString requestString = "http://";
+//    requestString += m_host;
 
-    return search(requestString);
-}
+//    return search(requestString);
+//}
 
 QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchString,
-    QGeoSearchManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
+        QGeoSearchManager::SearchTypes searchTypes,
+        int limit,
+        int offset,
+        QGeoBoundingArea *bounds)
 {
     // NOTE this will eventually replaced by a much improved implementation
     // which will make use of the additionLandmarkManagers()
@@ -160,7 +165,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchStrin
             && ((searchTypes & supportedSearchTypes()) != searchTypes)) {
 
         QGeoSearchReply *reply = new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
-            "The selected search type is not supported by this service provider.", this);
+                "The selected search type is not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
         return reply;
     }
@@ -169,7 +174,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchStrin
 
     if (!supportsGeocoding()) {
         QGeoSearchReply *reply = new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
-            "Geocoding is not supported by this service provider.", this);
+                "Geocoding is not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
         return reply;
     }

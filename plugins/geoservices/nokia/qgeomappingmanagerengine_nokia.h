@@ -67,7 +67,7 @@ private:
     QString getRequestString(const QGeoTiledMapRequest &request) const;
 
     static QString sizeToStr(const QSize &size);
-    static QString mapTypeToStr(QGeoMapWidget::MapType type);
+    static QString mapTypeToStr(QGraphicsGeoMap::MapType type);
 
     QNetworkAccessManager *m_nam;
     QNetworkDiskCache *m_cache;

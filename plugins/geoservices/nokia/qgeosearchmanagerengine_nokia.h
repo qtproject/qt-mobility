@@ -59,13 +59,15 @@ public:
     ~QGeoSearchManagerEngineNokia();
 
     QGeoSearchReply* geocode(const QGeoAddress &address,
-                             const QGeoBoundingBox &bounds);
+                             QGeoBoundingArea *bounds);
     QGeoSearchReply* reverseGeocode(const QGeoCoordinate &coordinate,
-                             const QGeoBoundingBox &bounds);
+                                    QGeoBoundingArea *bounds);
 
     QGeoSearchReply* search(const QString &searchString,
-                                  QGeoSearchManager::SearchTypes searchTypes,
-                                  const QGeoBoundingBox &bounds);
+                            QGeoSearchManager::SearchTypes searchTypes,
+                            int limit,
+                            int offset,
+                            QGeoBoundingArea *bounds);
 
 private slots:
     void placesFinished();

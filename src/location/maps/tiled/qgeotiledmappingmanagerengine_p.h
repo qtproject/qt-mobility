@@ -72,13 +72,13 @@ class QGeoTiledMappingManagerEnginePrivate : public QGeoMappingManagerEnginePriv
 {
 public:
     QGeoTiledMappingManagerEnginePrivate();
-    QGeoTiledMappingManagerEnginePrivate(const QGeoTiledMappingManagerEnginePrivate &other);
     ~QGeoTiledMappingManagerEnginePrivate();
-
-    QGeoTiledMappingManagerEnginePrivate& operator= (const QGeoTiledMappingManagerEnginePrivate &other);
 
     QList<QString> supportedImageFormats;
     QSize tileSize;
+
+private:
+    Q_DISABLE_COPY(QGeoTiledMappingManagerEnginePrivate)
 };
 
 QTM_END_NAMESPACE

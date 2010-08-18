@@ -53,16 +53,15 @@
 // We mean it.
 //
 
-#include "qlandmarkmanagerengine.h"
+#include <qlandmarkmanagerengine.h>
 #include "databasefilewatcher_p.h"
 
 #include <QSqlDatabase>
 #include <QHash>
+#include "databaseoperations_p.h"
 
 QTM_USE_NAMESPACE
-typedef QMap<int, QLandmarkManager::Error>  ERROR_MAP;
-
-class QueryRun;
+using namespace DatabaseOperations;
 
 class QLandmarkManagerEngineSqlite : public QLandmarkManagerEngine
 {
@@ -78,11 +77,12 @@ public:
 
     /* Filtering */
     QList<QLandmarkId> landmarkIds(const QLandmarkFilter& filter,
+                                   int limit, int offset,
                                    const QList<QLandmarkSortOrder>& sortOrders,
-                                   const QLandmarkFetchHint &fetchHint,
                                    QLandmarkManager::Error *error,
                                    QString *errorString) const;
-    QList<QLandmarkCategoryId> categoryIds(const QLandmarkNameSort &nameSort,
+    QList<QLandmarkCategoryId> categoryIds(int limit, int offset,
+                                           const QLandmarkNameSort &nameSort,
                                            QLandmarkManager::Error *error,
                                            QString *errorString) const;
 
@@ -90,18 +90,24 @@ public:
     QLandmark landmark(const QLandmarkId &landmarkId,
                        QLandmarkManager::Error *error,
                        QString *errorString) const;
+    QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds,QMap<int, QLandmarkManager::Error> *errorMap,
+                                       QLandmarkManager::Error *error, QString *errorString) const;
     QList<QLandmark> landmarks(const QLandmarkFilter& filter,
+                               int limit, int offset,
                                const QList<QLandmarkSortOrder>& sortOrders,
-                               const QLandmarkFetchHint &fetchHint,
                                QLandmarkManager::Error *error,
                                QString *errorString) const;
+
     QLandmarkCategory category(const QLandmarkCategoryId &landmarkCategoryId,
                                QLandmarkManager::Error *error,
                                QString *errorString) const;
+
     QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds,
-                                        QLandmarkManager::Error *error,
-                                        QString *errorString) const;
-    QList<QLandmarkCategory> categories(const QLandmarkNameSort &nameSort,
+                                        QMap<int, QLandmarkManager::Error> *errorMap,
+                                        QLandmarkManager::Error *error, QString *errorString) const;
+
+    QList<QLandmarkCategory> categories(int limit, int offset,
+                                        const QLandmarkNameSort &nameSort,
                                         QLandmarkManager::Error *error,
                                         QString *errorString) const;
 
@@ -130,21 +136,30 @@ public:
 
     bool importLandmarks(QIODevice *device,
                          const QString &format,
+                         QLandmarkManager::TransferOption option,
+                         const QLandmarkCategoryId &categoryId,
                          QLandmarkManager::Error *error,
                          QString *errorString);
     bool exportLandmarks(QIODevice *device,
                          const QString &format,
                          QList<QLandmarkId> landmarkIds,
+                         QLandmarkManager::TransferOption option,
                          QLandmarkManager::Error *error,
                          QString *errorString) const;
-    QStringList supportedFormats(QLandmarkManager::Error *error, QString *errorString) const;
+    QStringList supportedFormats(QLandmarkManager::TransferOperation operation, QLandmarkManager::Error *error, QString *errorString) const;
 
     QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const;
     QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders, QLandmarkManager::Error *error, QString *errorString) const;
     bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const;
 
-    QStringList platformLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
-    QStringList platformCategoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
+    QStringList landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
+    QStringList categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
+
+    bool isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;;
+    void setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString);
+
+    bool isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
+    void setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString);
 
     virtual bool isReadOnly(QLandmarkManager::Error *error, QString *errorString) const;
     virtual bool isReadOnly(const QLandmarkId &landmarkId, QLandmarkManager::Error *error, QString *errorString) const;
@@ -161,6 +176,8 @@ public slots:
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
     void updateLandmarkFetchRequest(QLandmarkFetchRequest* req, const QList<QLandmark>& result,
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
+    void updateLandmarkFetchByIdRequest(QLandmarkFetchByIdRequest* req, const QList<QLandmark>& result,
+                                   QLandmarkManager::Error error, const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState);
     void updateLandmarkSaveRequest(QLandmarkSaveRequest* req, const QList<QLandmark>& result,
                                     QLandmarkManager::Error error, const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState);
     void updateLandmarkRemoveRequest(QLandmarkRemoveRequest* req, QLandmarkManager::Error error,
@@ -169,6 +186,8 @@ public slots:
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
     void updateLandmarkCategoryFetchRequest(QLandmarkCategoryFetchRequest *req, const QList<QLandmarkCategory>& result,
                                                    QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
+    void updateLandmarkCategoryFetchByIdRequest(QLandmarkCategoryFetchByIdRequest* req, const QList<QLandmarkCategory> &categories, QLandmarkManager::Error error,
+                                     const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState);
     void updateLandmarkCategorySaveRequest(QLandmarkCategorySaveRequest* req, const QList<QLandmarkCategory> &categories, QLandmarkManager::Error error,
                                      const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState);
     void updateLandmarkCategoryRemoveRequest(QLandmarkCategoryRemoveRequest* req, QLandmarkManager::Error error,
@@ -192,15 +211,6 @@ protected:
     void disconnectNotify(const char *signal);
 
 private:
-    bool saveLandmarkInternal(QLandmark* landmark,
-                              QLandmarkManager::Error *error,
-                              QString *errorString,
-                              bool *added,
-                              bool *changed);
-    bool removeLandmarkInternal(const QLandmarkId &landmarkId,
-                                QLandmarkManager::Error *error,
-                                QString *errorString,
-                                bool *removed);
 
     void setChangeNotificationsEnabled(bool enabled);
 
@@ -209,7 +219,7 @@ private:
     QHash<QLandmarkAbstractRequest *, QueryRun *> m_requestRunHash;
     DatabaseFileWatcher *m_dbWatcher;
     qreal m_latestTimestamp;
-    friend class QueryRun;
+    friend class DatabaseOperations::QueryRun;
 };
 
 #endif // QLANDMARKMANAGERENGINE_SQLITE_P_H

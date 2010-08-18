@@ -67,9 +67,9 @@ void QGeoMapRouteObject::setRoute(const QGeoRoute &route)
 {
     Q_D(QGeoMapRouteObject);
     //if (d->route != route) {
-        d->route = route;
-        objectUpdate();
-        emit routeChanged(d->route);
+    d->route = route;
+    objectUpdate();
+    emit routeChanged(d->route);
     //}
 }
 
@@ -109,7 +109,7 @@ void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
 *******************************************************************************/
 
 QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::GeoRouteType)
+        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::RouteType)
 {
     detailLevel = DEFAULT_ROUTE_DETAIL_LEVEL;
 }

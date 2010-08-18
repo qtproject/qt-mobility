@@ -12,8 +12,7 @@ PUBLIC_HEADERS +=   qsysteminfo.h \
     qsystemdisplayinfo.h \
     qsystemnetworkinfo.h \
     qsystemscreensaver.h \
-    qsystemstorageinfo.h \
-    qsysteminfocommon.h
+    qsystemstorageinfo.h 
 
 SOURCES += qsystemgeneralinfo.cpp \
     qsystemdeviceinfo.cpp \
@@ -21,6 +20,8 @@ SOURCES += qsystemgeneralinfo.cpp \
     qsystemnetworkinfo.cpp \
     qsystemscreensaver.cpp \
     qsystemstorageinfo.cpp
+
+PRIVATE_HEADERS += qsysteminfocommon_p.h
 
 DEFINES += QT_BUILD_SYSINFO_LIB QT_MAKEDLL
 

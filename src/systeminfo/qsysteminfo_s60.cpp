@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsysteminfocommon.h"
+#include "qsysteminfocommon_p.h"
 #include "qsysteminfo_s60_p.h"
 
 #include <QStringList>
@@ -94,7 +94,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QStringList languages;
     QList<HbInputLanguage> hblanguages = HbKeymapFactory::availableLanguages();
-    foreach(HbInputLanguage lang, hblanguages) {       
+    foreach(HbInputLanguage lang, hblanguages) {
         QString language = QLocaleToISO639_1(lang.language());
         if (!language.isEmpty()) {
             languages << language;
@@ -102,7 +102,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     }
     languages.removeDuplicates();
     return languages;
-}  
+}
 #else
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
@@ -126,7 +126,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 }
 #endif //HB_SUPPORTED
 
-QString QSystemInfoPrivate::QLocaleToISO639_1(QLocale::Language language) const    
+QString QSystemInfoPrivate::QLocaleToISO639_1(QLocale::Language language) const
 {
        switch(language) {
        case QLocale::English: return "en";
@@ -172,11 +172,11 @@ QString QSystemInfoPrivate::QLocaleToISO639_1(QLocale::Language language) const
        case QLocale::Galician: return "gl";
        case QLocale::Basque: return "eu";
        case QLocale::Marathi: return "mr";
-       case QLocale::Korean: return "ko";       
+       case QLocale::Korean: return "ko";
        default:
            break;
        }
-    return "";        
+    return "";
 }
 
 QString QSystemInfoPrivate::TLanguageToISO639_1(TLanguage language) const
@@ -709,71 +709,71 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 }
 
 
-QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
-{
-    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+// QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
+// {
+//     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
 
-    if(screen < 16 && screen > -1) {
-        int rotation = 0;
-        switch(rotation) {
-        case 0:
-        case 360:
-            orientation = QSystemDisplayInfo::Landscape;
-            break;
-        case 90:
-            orientation = QSystemDisplayInfo::Portrait;
-            break;
-        case 180:
-            orientation = QSystemDisplayInfo::InvertedLandscape;
-            break;
-        case 270:
-            orientation = QSystemDisplayInfo::InvertedPortrait;
-            break;
-        };
-    }
-    return orientation;
-}
-
-
-float QSystemDisplayInfoPrivate::contrast(int screen)
-{
-    Q_UNUSED(screen);
-
-    return 0.0;
-}
-
-int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
-{
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-
-        }
-    return dpi;
-}
-
-int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
-{
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-
-    }
-    return dpi;
-}
+//     if(screen < 16 && screen > -1) {
+//         int rotation = 0;
+//         switch(rotation) {
+//         case 0:
+//         case 360:
+//             orientation = QSystemDisplayInfo::Landscape;
+//             break;
+//         case 90:
+//             orientation = QSystemDisplayInfo::Portrait;
+//             break;
+//         case 180:
+//             orientation = QSystemDisplayInfo::InvertedLandscape;
+//             break;
+//         case 270:
+//             orientation = QSystemDisplayInfo::InvertedPortrait;
+//             break;
+//         };
+//     }
+//     return orientation;
+// }
 
 
-int QSystemDisplayInfoPrivate::physicalHeight(int screen)
-{
-    int height=0;
+// float QSystemDisplayInfoPrivate::contrast(int screen)
+// {
+//     Q_UNUSED(screen);
 
-    return height;
-}
+//     return 0.0;
+// }
 
-int QSystemDisplayInfoPrivate::physicalWidth(int screen)
-{
-    int width=0;
+// int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
+// {
+//     int dpi=0;
+//     if(screen < 16 && screen > -1) {
 
-    return width;
-}
+//         }
+//     return dpi;
+// }
+
+// int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
+// {
+//     int dpi=0;
+//     if(screen < 16 && screen > -1) {
+
+//     }
+//     return dpi;
+// }
+
+
+// int QSystemDisplayInfoPrivate::physicalHeight(int screen)
+// {
+//     int height=0;
+
+//     return height;
+// }
+
+// int QSystemDisplayInfoPrivate::physicalWidth(int screen)
+// {
+//     int width=0;
+
+//     return width;
+// }
 
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)

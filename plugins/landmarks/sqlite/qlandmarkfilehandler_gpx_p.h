@@ -63,14 +63,13 @@ class QIODevice;
 
 QTM_USE_NAMESPACE
 
-class QLandmarkManagerEngine;
-
 class QLandmarkFileHandlerGpx : public QObject
 {
     Q_OBJECT
 
 public:
-    enum State{DoneState, ErrorState, CanceledState};
+    enum Behavior{ExportAll, ExportSubset};//requirement whether we need to export all landmarks given
+                                         //or only those that are capable of being exported ie have valid coords.
 
     QLandmarkFileHandlerGpx();
     ~QLandmarkFileHandlerGpx();
@@ -84,17 +83,15 @@ public:
     QList<QList<QLandmark> > routes() const;
     void setRoutes(const QList<QList<QLandmark> > &routes);
 
-    State importData(QIODevice *device);
+    bool importData(QIODevice *device);
     bool exportData(QIODevice *device, const QString &nsPrefix = QString());
 
     QString errorString() const;
-    void setAsync(bool async);
+    QLandmarkManager::Error error();
 
-signals:
-    void error(const QString &error);
-    void canceled();
-    void finishedImport();
-    void finishedExport();
+    void setAsync(bool async);
+    void setBehavior(Behavior behavior);
+
 public slots:
     void cancel();
 
@@ -120,8 +117,10 @@ private:
     QXmlStreamReader *m_reader;
     QXmlStreamWriter *m_writer;
 
-    QString m_error;
+    QLandmarkManager::Error m_errorCode;
+    QString m_errorString;
     bool m_isAsync;
+    Behavior m_behavior;
 public:
     volatile bool m_isCanceled;
 };

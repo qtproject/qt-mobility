@@ -60,8 +60,7 @@ QGeoAddressPrivate::QGeoAddressPrivate(const QGeoAddressPrivate &other)
         sDistrict(other.sDistrict),
         sStreet(other.sStreet),
         sStreetNumber(other.sStreetNumber),
-        sPostCode(other.sPostCode),
-        sPostOfficeBox(other.sPostOfficeBox)
+        sPostCode(other.sPostCode)
 {
 }
 
@@ -127,8 +126,7 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
            d->sDistrict == other.district() &&
            d->sStreet == other.street() &&
            d->sStreetNumber == other.streetNumber() &&
-           d->sPostCode == other.postCode() &&
-           d->sPostOfficeBox == other.postOfficeBox();
+           d->sPostCode == other.postCode();
 }
 
 /*!
@@ -283,22 +281,6 @@ void QGeoAddress::setPostCode(const QString &postCode)
 }
 
 /*!
-   Returns the post office box.
-*/
-QString QGeoAddress::postOfficeBox() const
-{
-    return d->sPostOfficeBox;
-}
-
-/*!
-   Sets the \a postOfficeBox.
-*/
-void QGeoAddress::setPostOfficeBox(const QString &postOfficeBox)
-{
-    d->sPostOfficeBox = postOfficeBox;
-}
-
-/*!
     Returns whether this address is empty. An address is considered empty
     if \i all of its fields are empty.
 */
@@ -312,8 +294,7 @@ bool QGeoAddress::isEmpty() const
            d->sDistrict.isEmpty() &&
            d->sStreet.isEmpty() &&
            d->sStreetNumber.isEmpty() &&
-           d->sPostCode.isEmpty() &&
-           d->sPostOfficeBox.isEmpty();
+           d->sPostCode.isEmpty();
 }
 /*!
     Clears the all the address' data fields.
@@ -329,7 +310,6 @@ void QGeoAddress::clear()
     d->sStreet.clear();
     d->sStreetNumber.clear();
     d->sPostCode.clear();
-    d->sPostOfficeBox.clear();
 }
 
 QTM_END_NAMESPACE

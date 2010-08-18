@@ -81,6 +81,39 @@ void QOrganizerItemLocalIdFilter::setIds(const QList<QOrganizerItemLocalId>& ids
 }
 
 /*!
+ * Inserts the id \a id into the list which contains the ids of possible matching items
+ * \sa setIds()
+ */
+void QOrganizerItemLocalIdFilter::insert(const QOrganizerItemLocalId& id)
+{
+    Q_D(QOrganizerItemLocalIdFilter);
+    if (!d->m_ids.contains(id))
+        d->m_ids.append(id);
+}
+
+/*!
+ * Removes the id \a id from the list which contains the ids of possible matching items,
+ * if it is contained in the list, otherwise has no effect.
+ * \sa clear()
+ */
+void QOrganizerItemLocalIdFilter::remove(const QOrganizerItemLocalId& id)
+{
+    Q_D(QOrganizerItemLocalIdFilter);
+    d->m_ids.removeAll(id);
+}
+
+/*!
+ * Clears the list which contains the ids of possible matching items.
+ * A local id filter with a cleared list will match no items.
+ * \sa setIds()
+ */
+void QOrganizerItemLocalIdFilter::clear()
+{
+    Q_D(QOrganizerItemLocalIdFilter);
+    d->m_ids.clear();
+}
+
+/*!
  * Returns the list of ids of organizer items which match this filter
  * \sa setIds()
  */

@@ -816,8 +816,10 @@ public:
 	IMPORT_C void AddContactToGroupL(TContactItemId aItemId, TContactItemId aGroupId);
 	IMPORT_C void AddContactToGroupL(CContactItem& aItem, CContactItem& aGroup);
 	IMPORT_C void AddContactToGroupL(TContactItemId aItemId, TContactItemId aGroupId,TBool aInTransaction);
+    IMPORT_C void AddContactsToGroupL(RArray<TContactItemId>& aItemIdList, TContactItemId aGroupId);
 	IMPORT_C void RemoveContactFromGroupL(CContactItem& aItem, CContactItem& aGroup);
 	IMPORT_C void RemoveContactFromGroupL(TContactItemId aItemId, TContactItemId aGroupId);
+    IMPORT_C void RemoveContactsFromGroupL(RArray<TContactItemId>& aItemIdList, TContactItemId aGroupId);
 	inline TInt GroupCount() const;
 	inline TInt TemplateCount() const;
 

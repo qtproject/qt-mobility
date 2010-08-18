@@ -48,7 +48,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QTelephonyDeclarativeModule
-    \ingroup telephony
+    \ingroup telephonyapi
     \brief The QTelephonyDeclarativeModule class contains one function to register the telephony QML objects.
 */
 class QTelephonyDeclarativeModule : public QDeclarativeExtensionPlugin

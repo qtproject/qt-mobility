@@ -76,13 +76,18 @@ class QGeoTiledMapReply;
 class QGeoTiledMapDataPrivate : public QGeoMapDataPrivate
 {
 public:
-    QGeoTiledMapDataPrivate(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget, QGeoTiledMapData *q);
-    QGeoTiledMapDataPrivate(const QGeoTiledMapDataPrivate &other);
+    QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
     ~QGeoTiledMapDataPrivate();
-    QGeoTiledMapDataPrivate& operator= (const QGeoTiledMapDataPrivate &other);
+
+    void updateMapImage();
+    void clearRequests();
+
+    void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    void paintMapObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
+
+    void cleanupCaches();
 
     bool intersects(QGeoMapObject *mapObject, const QRectF &rect);
-
     void updateScreenRect();
 
     bool containedInScreen(const QPoint &point) const;
@@ -112,16 +117,9 @@ public:
 
     QHash<QGraphicsItem*, QGeoMapObject*> itemMap;
 
-    QGeoTiledMapData* q_ptr;
     Q_DECLARE_PUBLIC(QGeoTiledMapData)
-
-protected:
-    QGeoMapObjectInfo* createRectangleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
-    QGeoMapObjectInfo* createCircleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
-    QGeoMapObjectInfo* createPolylineObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
-    QGeoMapObjectInfo* createPolygonObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
-    QGeoMapObjectInfo* createMarkerObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
-    QGeoMapObjectInfo* createRouteObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
+private:
+    Q_DISABLE_COPY(QGeoTiledMapDataPrivate)
 };
 
 class QGeoTileIterator

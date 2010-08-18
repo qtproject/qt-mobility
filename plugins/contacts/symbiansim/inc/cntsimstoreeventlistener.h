@@ -45,12 +45,12 @@
 #include <e32base.h>
 
 class CntSymbianSimEngine;
-class RMobilePhoneBookStore;
+class RMobilePhoneStore;
 
 class CntSimStoreEventListener : public CActive
 {
 public:
-    CntSimStoreEventListener(CntSymbianSimEngine &engine, RMobilePhoneBookStore& store);
+    CntSimStoreEventListener(CntSymbianSimEngine &engine, RMobilePhoneStore& store);
     ~CntSimStoreEventListener();
     
     void start();
@@ -61,7 +61,7 @@ public:
     
 private:
     CntSymbianSimEngine &m_engine;
-    RMobilePhoneBookStore &m_store;
+    RMobilePhoneStore &m_store;
     TUint32 m_event;
     TInt m_index;
 };

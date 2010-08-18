@@ -80,7 +80,7 @@ QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
     Also serves as the default filter which retrieves all landmarks.
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-filter
 
     This class is used as a parameter to search for landmarks, it allows selection of
@@ -110,6 +110,17 @@ QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
     \value DefaultFilter A filter which matches all landmarks.
     \value AttributeFilter A filter which matches landmarks based on generic attributes.
     \value LandmarkIdFilter A filter which matches landmarks based on a list of landmark ids.
+*/
+
+/*!
+    \enum QLandmarkFilter::MatchFlag
+    Describes the semantics of matching followed by the filter.
+    \value MatchExactly Performs QVariant-based matching.
+    \value MatchContains The search term is contained in the item.
+    \value MatchStartsWith The search term matches the start of the item.
+    \value MatchEndsWith The search term matches the end of the item.
+    \value MatchFixedString  Performs string-based matching. String-based comparisons are case-insensitive unless the MatchCaseSensitive flag is also specified.
+    \value MatchCaseSensitive The search is case sensitive.
 */
 
 /*!

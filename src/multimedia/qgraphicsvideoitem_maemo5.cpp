@@ -62,6 +62,8 @@
 
 QT_BEGIN_NAMESPACE
 
+//#define DEBUG_GFX_VIDEO_ITEM
+
 //update overlay geometry slightly later,
 //to ensure color key is alredy replaced with static frame
 #define GEOMETRY_UPDATE_DELAY 20
@@ -514,7 +516,10 @@ QRectF QGraphicsVideoItem::boundingRect() const
 void QGraphicsVideoItem::paint(
         QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+#ifdef DEBUG_GFX_VIDEO_ITEM
     qDebug() << "QGraphicsVideoItem::paint";
+#endif
+
     Q_UNUSED(option);
     Q_D(QGraphicsVideoItem);
 
@@ -551,7 +556,7 @@ void QGraphicsVideoItem::paint(
         if (widget) {
             //workaround for xvideo issue with U/V planes swapped
             QPoint topLeft = widget->mapToGlobal(overlayRect.topLeft());
-            if ((topLeft.x() & 1) == 0)
+            if ((topLeft.x() & 1) == 0 && topLeft.x() != 0)
                 overlayRect.moveLeft(overlayRect.left()-1);
         }
 
@@ -581,7 +586,9 @@ void QGraphicsVideoItem::paint(
             geometryChanged = true;
             d->softwareRenderingTimer.start(SOFTWARE_RENDERING_DURATION, this);
 
-            //qDebug() << "set video display rect:" << deviceRect;
+#ifdef DEBUG_GFX_VIDEO_ITEM
+            qDebug() << "set video display rect:" << overlayRect;
+#endif
 
         }
 

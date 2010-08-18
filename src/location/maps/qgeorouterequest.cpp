@@ -168,7 +168,7 @@ enum SegmentDetail {
         No segment data should be included with the route.  A route requested
         with this level of segment detail will initialise
         QGeoRouteSegment::path() as a straight line between the positions of
-        the previous and next QGeoNavigationInstructions.
+        the previous and next QGeoInstructions.
 
     \value BasicSegmentData
         Basic segment data will be included with the route.  This will include
@@ -186,7 +186,7 @@ enum SegmentDetail {
 
     \value BasicInstructions
         Basic instructions will be included with the route. This will
-        include QGeoNavigationInstruction::instructionText().
+        include QGeoInstruction::instructionText().
 */
 
 /*!
