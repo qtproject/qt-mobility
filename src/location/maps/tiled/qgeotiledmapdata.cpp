@@ -778,43 +778,52 @@ void QGeoTiledMapDataPrivate::paintMapObjects(QPainter *painter, const QStyleOpt
     updateScreenRect();
 
     qreal targetX = ((viewportSize.width() * zoomFactor) - maxZoomScreenRect.width()) / 2.0;
-    if (targetX < 0.0)
-        targetX = 0.0;
+    Q_ASSERT(targetX >= 0.0); // This should not be possible
     targetX /= zoomFactor;
+
     qreal targetY = ((viewportSize.height() * zoomFactor) - maxZoomScreenRect.height()) / 2.0;
-    if (targetY < 0.0)
-        targetY = 0.0;
+    Q_ASSERT(targetY >= 0.0); // This should not be possible
     targetY /= zoomFactor;
-    qreal targetW = viewportSize.width() - 2 * targetX;
-    qreal targetH = viewportSize.height() - 2 * targetY;
+
+    qreal targetW = qreal(maxZoomScreenRect.width())/zoomFactor;
+    qreal targetH = qreal(maxZoomScreenRect.height())/zoomFactor;
 
     QRect worldRect = QRect(QPoint(0.0, 0.0), maxZoomSize);
 
     if (worldRect.contains(maxZoomScreenRect)) {
+        // the screen is completely contained inside the map, which means we can just draw once and be done.
         scene->render(painter,
                       QRectF(targetX, targetY, targetW, targetH),
-                      maxZoomScreenRect);
+                      maxZoomScreenRect,
+                      Qt::IgnoreAspectRatio);
         return;
     }
 
-    QRect inside = maxZoomScreenRect.intersected(worldRect);
+    // cut off the part east of the dateline
+    QRect westside = maxZoomScreenRect.intersected(worldRect);
 
-    qreal insideWidth = targetW * inside.width() / maxZoomScreenRect.width();
+    qreal westsideWidth = floor(qreal(westside.width()) / zoomFactor);
+
+    westside.setWidth(westsideWidth*zoomFactor);
+    westside.setHeight(maxZoomScreenRect.height());
 
     scene->render(painter,
-                  QRectF(targetX, targetY, insideWidth, targetH),
-                  inside);
+                  QRectF(targetX, targetY, westsideWidth, targetH),
+                  westside,
+                  Qt::IgnoreAspectRatio);
 
-    QRect outside = QRect(0,
+    qreal eastsideWidth = targetW-westsideWidth;
+
+    QRect eastside = QRect(0,
                           maxZoomScreenRect.y(),
-                          maxZoomScreenRect.width() - inside.width(),
+                          eastsideWidth*zoomFactor,
                           maxZoomScreenRect.height());
 
-    qreal outsideWidth = targetW * outside.width() / maxZoomScreenRect.width();
-
     scene->render(painter,
-                  QRectF(targetX + targetW - outsideWidth, targetY, outsideWidth, targetH),
-                  outside);
+                  QRectF(targetX + targetW - eastsideWidth, targetY, eastsideWidth, targetH),
+                  eastside,
+                  Qt::IgnoreAspectRatio);
+    // TODO: call this recursively to draw more than 2 sets of objects
 }
 
 
