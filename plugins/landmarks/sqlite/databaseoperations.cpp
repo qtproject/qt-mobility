@@ -2050,7 +2050,7 @@ bool DatabaseOperations::saveLandmarks(const QString &connectionName, QList<QLan
             result = saveLandmarkHelper(connectionName, &(landmark->operator [](i)), &loopError, &loopErrorString, managerUri);
         }
 
-        if (errorMap)
+        if (errorMap && (loopError != QLandmarkManager::NoError))
             errorMap->insert(i, loopError);
 
         if (!result) {
