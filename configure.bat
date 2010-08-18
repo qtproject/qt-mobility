@@ -535,8 +535,8 @@ call :compileTest RadioUtility_for_post_3.1 radioutility_s60
 call :compileTest OpenMaxAl_support openmaxal_symbian
 call :compileTest Surfaces_s60 surfaces_s60
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
+call :compileTest callinformation_symbian callinformation_symbian
 call :compileTest IMMERSION immersion
-
 goto noTests
 
 :windowsTests
