@@ -100,8 +100,6 @@ QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGe
     // TODO get this from the engine, which should give different values depending on if this is running on a device or not
     d->cache.setMaxCost(10 * 1024 * 1024);
     d->zoomCache.setMaxCost(10 * 1024 * 1024);
-    d->emptyTile = QPixmap(tileEngine->tileSize());
-    d->emptyTile.fill(Qt::lightGray);
 }
 
 QGeoTiledMapData::~QGeoTiledMapData()
@@ -768,7 +766,7 @@ void QGeoTiledMapDataPrivate::paintMap(QPainter *painter, const QStyleOptionGrap
                 if (zoomCache.contains(req)) {
                     painter->drawPixmap(target, *zoomCache.object(req), source);
                 } else {
-                    painter->drawPixmap(target, emptyTile, source);
+                    painter->fillRect(target, Qt::lightGray);
                 }
             }
         }
@@ -792,7 +790,7 @@ void QGeoTiledMapDataPrivate::paintMapObjects(QPainter *painter, const QStyleOpt
 
     QRect worldRect = QRect(QPoint(0.0, 0.0), maxZoomSize);
 
-    if (worldRect.contains(maxZoomScreenRect)) {
+    /*if (worldRect.contains(maxZoomScreenRect))*/ {
         scene->render(painter,
                       QRectF(targetX, targetY, targetW, targetH),
                       maxZoomScreenRect);
