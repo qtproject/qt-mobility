@@ -141,20 +141,35 @@ unix: {
 
     symbian:{
         contains(S60_VERSION, 3.1){
-            DEFINES += SYMBIAN_3_1
+            DEFINES += SYMBIAN_3
         }        
+
+        contains(S60_VERSION, 3.2){
+            DEFINES += SYMBIAN_3
+        }
+        contains(hb_symbian_enabled,yes) {
+            CONFIG += qt hb
+            DEFINES += HB_SUPPORTED
+            message("s60_HbKeymap enabled")
+            LIBS += -lhbcore \
+        } else {
+            LIBS += -lptiengine \
+        }
+
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE        
         DEPENDPATH += symbian
         
         SOURCES += qsysteminfo_s60.cpp \
             telephonyinfo_s60.cpp \
             chargingstatus_s60.cpp \
-            wlaninfo_s60.cpp
+            wlaninfo_s60.cpp \
+            storagestatus_s60.cpp
 
         HEADERS += qsysteminfo_s60_p.h \
             telephonyinfo_s60.h \
             chargingstatus_s60.h \
-            wlaninfo_s60.h
+            wlaninfo_s60.h \
+            storagestatus_s60.h
 
         LIBS += -lprofileengine \
             -letel3rdparty \
@@ -172,6 +187,7 @@ unix: {
             -lbluetooth \
             -lgdi \
             -lecom \
+            -lplatformenv
 
         contains(hb_symbian_enabled,yes) {
                 CONFIG += qt hb

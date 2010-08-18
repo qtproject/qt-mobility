@@ -818,30 +818,7 @@ void Dialog::updateSimStatus()
 void Dialog::storageChanged(bool added,const QString &volName)
 {
     if(added) {
-        QString type;
-        QSystemStorageInfo::DriveType volType;
-        volType = sti->typeForDrive(volName);
-        if(volType == QSystemStorageInfo::InternalDrive) {
-            type =  "Internal";
-        }
-
-        if(volType == QSystemStorageInfo::RemovableDrive) {
-            type = "Removable";
-        }
-        if(volType == QSystemStorageInfo::CdromDrive) {
-            type =  "CDRom";
-        }
-        if(volType == QSystemStorageInfo::RemoteDrive) {
-            type =  "Network";
-        }
-        QStringList items;
-        items << volName;
-        items << type;
-        items << QString::number(sti->totalDiskSpace(volName));
-        items << QString::number(sti->availableDiskSpace(volName));
-        QTreeWidgetItem *item = new QTreeWidgetItem(items);
-        storageTreeWidget->addTopLevelItem(item);
-
+        updateStorage();
     } else {
         storageTreeWidget->takeTopLevelItem( storageTreeWidget->indexOfTopLevelItem(storageTreeWidget->findItems(volName,Qt::MatchExactly).at(0)));
     }
