@@ -66,6 +66,9 @@ public:
     long int _folderEntryId;
     static QMessageFolder from(const QMessageFolderId &id, const QMessageAccountId &accountId, const QMessageFolderId &parentId, const QString &name, const QString &path);
 #endif
+#if defined(Q_WS_MAEMO_6)
+    void setParentAccountId(QMessageFolder &folder, const QMessageAccountId &accountId);
+#endif
 };
 
 QTM_END_NAMESPACE

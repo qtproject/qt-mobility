@@ -14,7 +14,7 @@ INCLUDEPATH += ../../../../src/serviceframework \
 INCLUDEPATH += ../../
 
 CONFIG += mobility
-MOBILITY = contacts
+MOBILITY = contacts serviceframework
 
 DEFINES += ACTIONPLUGINTARGET=contacts_multiaction
 DEFINES += ACTIONPLUGINNAME=MultiAction
