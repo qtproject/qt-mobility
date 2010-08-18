@@ -790,7 +790,7 @@ void QGeoTiledMapDataPrivate::paintMapObjects(QPainter *painter, const QStyleOpt
 
     QRect worldRect = QRect(QPoint(0.0, 0.0), maxZoomSize);
 
-    /*if (worldRect.contains(maxZoomScreenRect))*/ {
+    if (worldRect.contains(maxZoomScreenRect)) {
         scene->render(painter,
                       QRectF(targetX, targetY, targetW, targetH),
                       maxZoomScreenRect);
