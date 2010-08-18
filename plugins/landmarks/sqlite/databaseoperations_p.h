@@ -206,6 +206,8 @@ namespace DatabaseOperations {
 
     QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter);
     QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders);
+    extern volatile bool isCustomAttributesEnabled;
+    extern volatile bool isExtendedAttributesEnabled;
 }
 
 #endif

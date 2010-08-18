@@ -220,8 +220,6 @@ private:
     DatabaseFileWatcher *m_dbWatcher;
     qreal m_latestTimestamp;
     friend class DatabaseOperations::QueryRun;
-    bool m_isExtendedAttributesEnabled;
-    bool m_isCustomAttributesEnabled;
 };
 
 #endif // QLANDMARKMANAGERENGINE_SQLITE_P_H
