@@ -55,6 +55,7 @@
 #include "qmessagefilter_p.h"
 #include "qmessagefolderfilter.h"
 #include "qmessageservice.h"
+#include <xqappmgr.h>
 
 
 class CRichText;
@@ -313,6 +314,8 @@ private:
     mutable QMessageAccountSortOrder iCurrentAccountOrdering;
     mutable QMessageFolderSortOrder iCurrentFolderOrdering;
     mutable QMessageSortOrder iCurrentMessageOrdering;
+    
+    XQApplicationManager iAiwMgr;
     
     friend class QMessageService;
     friend class CMessagesFindOperation;

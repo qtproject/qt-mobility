@@ -198,7 +198,9 @@ symbian|win32|maemo6|maemo5|mac {
             -lcone \
             -lapgrfx \
             -lapmime \
-            -lecom
+            -lecom \
+            -lxqservice \
+            -lxqserviceutil
         TARGET.CAPABILITY = ALL \
             -TCB
         TARGET.UID3 = 0x2002AC82

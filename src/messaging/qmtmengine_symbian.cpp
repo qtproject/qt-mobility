@@ -93,6 +93,14 @@
 #include <QTextCodec>
 #include <messagingutil_p.h>
 
+#include <xqaiwdecl.h>
+#include <xqaiwdeclplat.h>
+#include <xqaiwrequest.h>
+#include <xqservicerequest.h>
+
+#ifdef FREESTYLENMAIL
+#include <email_services_api.h>
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -811,8 +819,38 @@ bool CMTMEngine::composeSMSL(const QMessage &message)
     
     sendUi->CreateAndSendMessageL(KSenduiMtmSmsUid, messageData, KNullUid, ETrue);
     CleanupStack::PopAndDestroy(3); //bd, messageData and sendUi
+    CleanupStack::PopAndDestroy(2);
+    
     return true;
 }
+
+#ifdef FREESTYLENMAIL
+
+bool CMTMEngine::composeSMSL(const QMessage &message)
+{
+    bool embedded = false;
+    
+    XQAiwRequest* request = iAiwMgr.create("com.nokia.symbian.IMessageSend",
+            "send(QVariantMap, QString)",
+            embedded);
+    
+    QMap<QString, QVariant> map;
+    
+    foreach (QMessageAddress recipient,message.to()) {
+        map.insert(recipient.addressee(), QString(""));
+    }
+    
+    QList<QVariant> data;
+    data.append(map);
+    data.append(message.textContent());
+    request->setArguments(data);
+
+    request->send();
+
+    return true;
+}
+
+#endif 
 
 bool CMTMEngine::composeMMSL(const QMessage &message)
 {
@@ -883,6 +921,50 @@ bool CMTMEngine::composeMMSL(const QMessage &message)
     CleanupStack::PopAndDestroy(2); //messageData and sendUi
     return true;
 }
+
+#ifdef FREESTYLENMAIL
+
+bool CMTMEngine::composeEmailL(const QMessage &message)
+{
+    bool embedded = false;
+    
+    XQAiwRequest* request = iAiwMgr.create(XQI_EMAIL_MESSAGE_SEND,
+            "send(QVariant)",//XQOP_EMAIL_MESSAGE_SEND,
+            embedded);
+    
+    QMap<QString,QVariant> map;
+
+    // Add receivers
+    QStringList toRecipients;
+    QStringList ccRecipients;
+    QStringList bccRecipients;
+
+    foreach(QMessageAddress address, message.to())
+        toRecipients.append(address.addressee());
+
+    foreach(QMessageAddress address, message.cc())
+        ccRecipients.append(address.addressee());
+
+    foreach(QMessageAddress address, message.bcc())
+        bccRecipients.append(address.addressee());
+
+    map.insert(emailSendToKey, toRecipients);
+    map.insert(emailSendCcKey, ccRecipients);
+    map.insert(emailSendBccKey, bccRecipients);
+    map.insert(emailSendSubjectKey, message.subject());
+    
+    map.insert(emailSendBodyTextKey, message.textContent());
+    
+    QList<QVariant> data;
+    data.append(map);
+    request->setArguments(data);
+        
+    bool res = request->send();
+   
+    return res;
+}
+
+#else
 
 bool CMTMEngine::composeEmailL(const QMessage &message)
 {
@@ -970,6 +1052,8 @@ bool CMTMEngine::composeEmailL(const QMessage &message)
     CleanupStack::PopAndDestroy(2); //messageData and sendUi
     return true;
 }
+
+#endif
 
 bool CMTMEngine::retrieve(QMessageServicePrivate& privateService, const QMessageId &messageId, const QMessageContentContainerId& id)
 {
