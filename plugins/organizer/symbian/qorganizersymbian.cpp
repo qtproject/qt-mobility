@@ -670,63 +670,6 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::slowFilter(const QList<QOrgan
     return filteredAndSorted;
 }
 
-void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForEvent() const
-{
-    // Remove all the details for an event not supported on Symbian
-    m_definition[QOrganizerItemType::TypeEvent].remove(QOrganizerItemComment::DefinitionName);
-    m_definition[QOrganizerItemType::TypeEvent].remove(QOrganizerItemInstanceOrigin::DefinitionName);
-    m_definition[QOrganizerItemType::TypeEvent].remove(QOrganizerTodoProgress::DefinitionName);
-    m_definition[QOrganizerItemType::TypeEvent].remove(QOrganizerTodoTimeRange::DefinitionName);
-    m_definition[QOrganizerItemType::TypeEvent].remove(QOrganizerJournalTimeRange::DefinitionName);
-}
-
-void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForEventOccurrence() const
-{
-    // Remove all the details for an event occurrence not supported on Symbian
-    m_definition[QOrganizerItemType::TypeEventOccurrence].remove(QOrganizerItemComment::DefinitionName);
-    m_definition[QOrganizerItemType::TypeEventOccurrence].remove(QOrganizerItemRecurrence::DefinitionName);
-    m_definition[QOrganizerItemType::TypeEventOccurrence].remove(QOrganizerTodoProgress::DefinitionName);
-    m_definition[QOrganizerItemType::TypeEventOccurrence].remove(QOrganizerTodoTimeRange::DefinitionName);
-    m_definition[QOrganizerItemType::TypeEventOccurrence].remove(QOrganizerJournalTimeRange::DefinitionName);
-}
-
-void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForTodo() const
-{
-    // Remove all the details for a to-do not supported on Symbian
-    m_definition[QOrganizerItemType::TypeTodo].remove(QOrganizerItemComment::DefinitionName);
-    m_definition[QOrganizerItemType::TypeTodo].remove(QOrganizerEventTimeRange::DefinitionName);
-    m_definition[QOrganizerItemType::TypeTodo].remove(QOrganizerItemInstanceOrigin::DefinitionName);
-    m_definition[QOrganizerItemType::TypeTodo].remove(QOrganizerJournalTimeRange::DefinitionName);
-    m_definition[QOrganizerItemType::TypeTodo].remove(QOrganizerItemLocation::DefinitionName);
-}
-
-void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForTodoOccurrence() const
-{
-    // Remove all the details for a to-do occurrence not supported on Symbian
-    m_definition[QOrganizerItemType::TypeTodoOccurrence].remove(QOrganizerItemComment::DefinitionName);
-    m_definition[QOrganizerItemType::TypeTodoOccurrence].remove(QOrganizerItemRecurrence::DefinitionName);
-    m_definition[QOrganizerItemType::TypeTodoOccurrence].remove(QOrganizerEventTimeRange::DefinitionName);
-    m_definition[QOrganizerItemType::TypeTodoOccurrence].remove(QOrganizerJournalTimeRange::DefinitionName);
-    m_definition[QOrganizerItemType::TypeTodoOccurrence].remove(QOrganizerItemLocation::DefinitionName);
-}
-
-void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForNote() const
-{
-    // TODO: We need a flag to determine the if we are supporting note    
- //#ifdef __ORGANIZERSYMBIAN_NOTE_SUPPORTED__ ?
-    // TODO: detail definition modifications
- //#else
-    // Note is not supported on legacy platforms.
-    m_definition.remove(QOrganizerItemType::TypeNote);
- //#endif    
-}
-
-void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForJournal() const
-{
-    // Journal is not supported on Symbian. Remove the type itself
-    m_definition.remove(QOrganizerItemType::TypeJournal);
-}
-
 CCalEntry* QOrganizerItemSymbianEngine::createEntryToSaveItemInstanceL(QOrganizerItem *item)
 {  
     CCalEntry * entry(NULL);
@@ -824,38 +767,22 @@ bool QOrganizerItemSymbianEngine::checkForValidParentEntryL(QOrganizerItem *item
 
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSymbianEngine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
 {
-    // Get all the detail definitions from the base implementation
     if (m_definition.isEmpty()) {
+        // Get all the detail definitions from the base implementation
         m_definition = QOrganizerItemManagerEngine::schemaDefinitions();
-        // Add or remove definitions based on the Symbian offering
-        modifyDetailDefinitionsForEvent();
-        modifyDetailDefinitionsForEventOccurrence();
-        modifyDetailDefinitionsForTodo();
-        modifyDetailDefinitionsForTodoOccurrence();
-        modifyDetailDefinitionsForNote();
-        modifyDetailDefinitionsForJournal();
+        
+        // Modify the base schema to match backend support
+        m_itemTransform.modifyBaseSchemaDefinitions(m_definition);
+    }
+    
+    // Check if we support the item type
+    if (!m_definition.contains(itemType)) {
+        *error = QOrganizerItemManager::NotSupportedError;
+        return QMap<QString, QOrganizerItemDetailDefinition>();
     }
     
     *error = QOrganizerItemManager::NoError;
     return m_definition.value(itemType);
-}
-
-QOrganizerItemDetailDefinition QOrganizerItemSymbianEngine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const
-{
-    /* TODO - the default implementation just calls the base detailDefinitions function.  If that's inefficent, implement this */
-    return QOrganizerItemManagerEngine::detailDefinition(definitionId, itemType, error);
-}
-
-bool QOrganizerItemSymbianEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerItemManager::Error* error)
-{
-    /* TODO - if you support adding custom fields, do that here.  Otherwise call the base functionality. */
-    return QOrganizerItemManagerEngine::saveDetailDefinition(def, itemType, error);
-}
-
-bool QOrganizerItemSymbianEngine::removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error)
-{
-    /* TODO - if you support removing custom fields, do that here.  Otherwise call the base functionality. */
-    return QOrganizerItemManagerEngine::removeDetailDefinition(definitionId, itemType, error);
 }
 
 bool QOrganizerItemSymbianEngine::startRequest(QOrganizerItemAbstractRequest* req)

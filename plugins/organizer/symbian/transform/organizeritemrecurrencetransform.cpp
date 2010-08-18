@@ -45,6 +45,20 @@
 
 #include <calrrule.h>
 
+void OrganizerItemRecurrenceTransform::modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const
+{
+    // Find recurrence details
+    foreach (QString itemTypeName, schemaDefs.keys()) {
+        QMap<QString, QOrganizerItemDetailDefinition> details = schemaDefs.value(itemTypeName);
+        if (details.contains(QOrganizerItemRecurrence::DefinitionName)) {
+            // Remove not supported details and replace the original detail definition
+            QOrganizerItemDetailDefinition d = details.value(QOrganizerItemRecurrence::DefinitionName);
+            d.removeField(QOrganizerItemRecurrence::FieldExceptionRules);
+            schemaDefs[itemTypeName].insert(d.name(), d);
+        }
+    }
+}
+
 void OrganizerItemRecurrenceTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
     // *** Repeat rules / RDate / ExDate Methods ***
