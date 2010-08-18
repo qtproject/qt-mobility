@@ -610,13 +610,11 @@ QList<QVariant::Type> QOrganizerItemMaemo5Engine::supportedDataTypes() const
 
 QStringList QOrganizerItemMaemo5Engine::supportedItemTypes() const
 {
-    // TODO - return which [predefined] types this engine supports
     QStringList retn;
 
     retn << QOrganizerItemType::TypeEvent;
     retn << QOrganizerItemType::TypeEventOccurrence;
     retn << QOrganizerItemType::TypeJournal;
-    retn << QOrganizerItemType::TypeNote;
     retn << QOrganizerItemType::TypeTodo;
     retn << QOrganizerItemType::TypeTodoOccurrence;
 
@@ -950,9 +948,6 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
 
         delete cjournal;
         return calError;
-    }
-    else if (item->type() == QOrganizerItemType::TypeNote) {
-        // TODO
     }
 
     return calError;
