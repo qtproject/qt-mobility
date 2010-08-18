@@ -41,7 +41,7 @@
 #include "organizeritemrecurrencetransform.h"
 #include "qorganizeritemrecurrence.h"
 #include "qorganizereventtimerange.h"
-#include "QOrganizerTodoTimeRange"
+#include "qorganizertodotimerange.h"
 
 #include <calrrule.h>
 
