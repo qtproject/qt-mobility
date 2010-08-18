@@ -149,6 +149,7 @@ usage()
     echo "                    those modules (and their dependencies) will automatically be enabled."
     echo "-maemo6 ........... Build Qt Mobility for Maemo6 (Harmattan)."
     echo "-maemo5 ........... Build Qt Mobility for Maemo5 (Fremantle)."
+    echo "-meego ............ Build Qt Mobility for Meego."
     echo "-sdk <sdk> ........ Build using Apple provided SDK <path/to/sdk>."
     echo "                    example: -sdk /Developer/SDKs/MacOSX10.6.sdk"
     echo "-qmake-exec <name>  Sets custom binary name for qmake binary"
@@ -530,7 +531,6 @@ compileTest()
 #compile tests
 compileTest QMF qmf
 compileTest NetworkManager networkmanager
-compileTest connman connman
 compileTest "CoreWLAN (MacOS 10.6)" corewlan
 compileTest Immersion immersion
 compileTest "Maemo ICD" maemo-icd
@@ -543,6 +543,7 @@ if [ "$LINUX_TARGET" = maemo6 ]; then
     compileTest sensord sensord
 else
     echo "sensord_enabled = no" >> "$CONFIG_IN"
+    compileTest connman connman
 fi
 
 # It's a lot easier to make qmake do the dependency checking...

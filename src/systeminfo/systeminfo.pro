@@ -72,9 +72,6 @@ unix: {
                 SOURCES += qhalservice_linux.cpp
                 HEADERS += qhalservice_linux_p.h
 
-                SOURCES += qdevicekitservice_linux.cpp
-                HEADERS += qdevicekitservice_linux_p.h
-                
                 contains(networkmanager_enabled, yes): {
                     SOURCES += qnetworkmanagerservice_linux.cpp qnmdbushelper.cpp
                     HEADERS += qnetworkmanagerservice_linux_p.h qnmdbushelper_p.h
@@ -83,6 +80,9 @@ unix: {
                 }
                 
                 contains(connman_enabled, yes): {
+                    SOURCES += qdevicekitservice_linux.cpp
+                    HEADERS += qdevicekitservice_linux_p.h
+
                     SOURCES+= qconnmanservice_linux.cpp qofonoservice_linux.cpp
                     HEADERS+= qconnmanservice_linux_p.h qofonoservice_linux_p.h
                 } else {
@@ -99,6 +99,7 @@ unix: {
             LIBS += -lXrandr
             SOURCES += qsysteminfo_maemo.cpp gconfitem.cpp
             HEADERS += qsysteminfo_maemo_p.h gconfitem_p.h
+                    DEFINES += QT_NO_CONNMAN
         contains(QT_CONFIG,dbus): {
                 QT += dbus
                 SOURCES += qhalservice_linux.cpp

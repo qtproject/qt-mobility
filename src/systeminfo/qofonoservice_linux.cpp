@@ -80,9 +80,9 @@ QDBusObjectPath QOfonoManagerInterface::currentModem()
 {
     QList<QDBusObjectPath> modems = getModems();
     foreach(const QDBusObjectPath modem, modems) {
-        QOfonoModemInterface device(modem.path());
-        if(device.isPowered() && device.isOnline())
-        return modem;;
+            QOfonoModemInterface device(modem.path());
+            if(device.isPowered() && device.isOnline())
+                return modem;
     }
     return QDBusObjectPath();
 }
@@ -126,11 +126,13 @@ void QOfonoManagerInterface::disconnectNotify(const char *signal)
 QVariant QOfonoManagerInterface::getProperty(const QString &property)
 {
     QVariant var;
-    QVariantMap map = getProperties();
-    if (map.contains(property)) {
-        var = map.value(property);
-    } else {
-        qDebug() << Q_FUNC_INFO << "does not contain" << property;
+    if(this->isValid()) {
+        QVariantMap map = getProperties();
+        if (map.contains(property)) {
+            var = map.value(property);
+        } else {
+            qDebug() << Q_FUNC_INFO << "does not contain" << property;
+        }
     }
     return var;
 }
@@ -184,6 +186,31 @@ bool QOfonoModemInterface::isOnline()
 QString QOfonoModemInterface::getName()
 {
     QVariant var = getProperty("Name");
+    return qdbus_cast<QString>(var);
+}
+
+QString QOfonoModemInterface::getManufacturer()
+{
+    QVariant var = getProperty("Manufacturer");
+    return qdbus_cast<QString>(var);
+}
+
+QString QOfonoModemInterface::getModel()
+{
+
+    QVariant var = getProperty("Model");
+    return qdbus_cast<QString>(var);
+}
+
+QString QOfonoModemInterface::getRevision()
+{
+    QVariant var = getProperty("Revision");
+    return qdbus_cast<QString>(var);
+}
+
+QString QOfonoModemInterface::getSerial()
+{
+    QVariant var = getProperty("Serial");
     return qdbus_cast<QString>(var);
 }
 
@@ -262,7 +289,7 @@ QVariant QOfonoModemInterface::getProperty(const QString &property)
 }
 
 
-QOfonoNetworkInterface::QOfonoNetworkInterface(const QString &dbusPathName, QObject *parent)
+QOfonoNetworkRegistrationInterface::QOfonoNetworkRegistrationInterface(const QString &dbusPathName, QObject *parent)
     : QDBusAbstractInterface(QLatin1String(OFONO_SERVICE),
                              dbusPathName,
                              OFONO_NETWORK_REGISTRATION_INTERFACE,
@@ -270,11 +297,11 @@ QOfonoNetworkInterface::QOfonoNetworkInterface(const QString &dbusPathName, QObj
 {
 }
 
-QOfonoNetworkInterface::~QOfonoNetworkInterface()
+QOfonoNetworkRegistrationInterface::~QOfonoNetworkRegistrationInterface()
 {
 }
 
-QString QOfonoNetworkInterface::getStatus()
+QString QOfonoNetworkRegistrationInterface::getStatus()
 {
     /*
                 "unregistered"  Not registered to any network
@@ -287,52 +314,52 @@ QString QOfonoNetworkInterface::getStatus()
     return qdbus_cast<QString>(var);
 }
 
-quint16 QOfonoNetworkInterface::getLac()
+quint16 QOfonoNetworkRegistrationInterface::getLac()
 {
     QVariant var = getProperty("LocationAreaCode");
     return qdbus_cast<quint16>(var);
 }
 
 
-quint16 QOfonoNetworkInterface::getCellId()
+quint16 QOfonoNetworkRegistrationInterface::getCellId()
 {
     QVariant var = getProperty("CellId");
     return qdbus_cast<quint16>(var);
 }
 
-QString QOfonoNetworkInterface::getTechnology()
+QString QOfonoNetworkRegistrationInterface::getTechnology()
 {
     // "gsm", "edge", "umts", "hspa","lte"
     QVariant var = getProperty("Technology");
     return qdbus_cast<QString>(var);
 }
 
-QString QOfonoNetworkInterface::getOperatorName()
+QString QOfonoNetworkRegistrationInterface::getOperatorName()
 {
     QVariant var = getProperty("Name");
     return qdbus_cast<QString>(var);
 }
 
-int QOfonoNetworkInterface::getSignalStrength()
+int QOfonoNetworkRegistrationInterface::getSignalStrength()
 {
     QVariant var = getProperty("Strength");
     return qdbus_cast<int>(var);
 
 }
 
-QString QOfonoNetworkInterface::getBaseStation()
+QString QOfonoNetworkRegistrationInterface::getBaseStation()
 {
     QVariant var = getProperty("BaseStation");
     return qdbus_cast<QString>(var);
 }
 
-QList <QDBusObjectPath> QOfonoNetworkInterface::getOperators()
+QList <QDBusObjectPath> QOfonoNetworkRegistrationInterface::getOperators()
 {
     QVariant var = getProperty("Operators");
     return qdbus_cast<QList <QDBusObjectPath> >(var);
 }
 
-void QOfonoNetworkInterface::connectNotify(const char *signal)
+void QOfonoNetworkRegistrationInterface::connectNotify(const char *signal)
 {
 if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QDBusVariant))) {
         if(!connection().connect(QLatin1String(OFONO_SERVICE),
@@ -360,14 +387,14 @@ if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QDBusVariant))) {
     }
 }
 
-void QOfonoNetworkInterface::disconnectNotify(const char *signal)
+void QOfonoNetworkRegistrationInterface::disconnectNotify(const char *signal)
 {
     if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QVariant))) {
 
     }
 }
 
-QVariant QOfonoNetworkInterface::getProperty(const QString &property)
+QVariant QOfonoNetworkRegistrationInterface::getProperty(const QString &property)
 {
     QVariant var;
     QVariantMap map = getProperties();
@@ -379,7 +406,7 @@ QVariant QOfonoNetworkInterface::getProperty(const QString &property)
     return var;
 }
 
-QVariantMap QOfonoNetworkInterface::getProperties()
+QVariantMap QOfonoNetworkRegistrationInterface::getProperties()
 {
     QDBusReply<QVariantMap > reply =  this->call(QLatin1String("GetProperties"));
     return reply.value();
