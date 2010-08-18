@@ -2149,7 +2149,7 @@ bool DatabaseOperations::removeLandmarks(const QString &connectionName, const QL
             result = removeLandmarkHelper(connectionName, landmarkIds.at(i), &loopError, &loopErrorString, managerUri);
         }
 
-        if (errorMap)
+        if (errorMap && loopError != QLandmarkManager::NoError)
             errorMap->insert(i, loopError);
 
         if (!result) {
