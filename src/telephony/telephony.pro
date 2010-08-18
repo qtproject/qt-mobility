@@ -20,16 +20,23 @@ SOURCES +=        qtelephonycalllist.cpp \
 				  qtelephony.cpp
 
 # Private Headers and sources
-win32: {
+win32 {
     HEADERS += qtelephonycalllist_win_p.h \
                qtelephonycallinfo_p
     SOURCES += qtelephonycalllist_win.cpp
 }
 
-symbian: {
+symbian {
     HEADERS += qtelephonycalllist_symbian_p.h \
                qtelephonycallinfo_p.h
     SOURCES += qtelephonycalllist_symbian.cpp
+
+    TARGET.CAPABILITY = ALL -TCB
+    TARGET.UID3 = 0x200315FB
+
+    QtTelephony.sources = QtTelephony.dll
+    QtTelephony.path = /sys/bin
+    DEPLOYMENT += QtTelephony
 }
  
 linux-*:!maemo* {
@@ -43,11 +50,11 @@ linux-*:!maemo* {
                 linux/message.cpp \
                 linux/dbusadaptor.cpp \
                 linux/dbusinterface.cpp
-    HEADERS +=  linux/telepathy.h \
-                linux/telepathylistener.h \
-                linux/message.h \
-                linux/dbusadaptor.h \
-                linux/dbusinterface.h
+    HEADERS +=  linux/telepathy_p.h \
+                linux/telepathylistener_p.h \
+                linux/message_p.h \
+                linux/dbusadaptor_p.h \
+                linux/dbusinterface_p.h
 }
 maemo* {
     QT += dbus

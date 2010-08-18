@@ -75,8 +75,10 @@ public:
     QString name;
     QUrl iconUrl;
     QString description;
-    QHash<QString, QVariant> attributes;
+    QHash<QString, QVariant> managerAttributes;
+    QHash<QString, QVariant> customAttributes;
     QLandmarkCategoryId id;
+    static QStringList commonKeys;
 };
 
 

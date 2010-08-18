@@ -31,9 +31,11 @@ PUBLIC_HEADERS +=  \
     qversitcontactexporter.h \
     qversitcontactimporter.h \
     qversitcontacthandler.h \
+    qversitorganizerhandler.h \
     qversitorganizerexporter.h \
     qversitorganizerimporter.h \
-    qversitresourcehandler.h
+    qversitresourcehandler.h \
+    qversittimezonehandler.h
 
 # Private Headers
 PRIVATE_HEADERS += \
@@ -76,6 +78,7 @@ SOURCES += qversitdocument.cpp \
     qvcardbackuphandlers_p.cpp \
     qversitresourcehandler.cpp \
     qversitcontacthandler.cpp \
+    qversitorganizerhandler.cpp \
     qversitpluginloader_p.cpp \
     versitutils.cpp
 

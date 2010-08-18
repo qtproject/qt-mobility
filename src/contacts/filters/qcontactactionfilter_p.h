@@ -65,16 +65,13 @@ class QContactActionFilterPrivate : public QContactFilterPrivate
 {
 public:
     QContactActionFilterPrivate()
-        : QContactFilterPrivate(),
-        m_implementationVersion(-1)
+        : QContactFilterPrivate()
     {
     }
 
     QContactActionFilterPrivate(const QContactActionFilterPrivate& other)
         : QContactFilterPrivate(other),
-        m_action(other.m_action),
-        m_vendorName(other.m_vendorName),
-        m_implementationVersion(other.m_implementationVersion)
+        m_action(other.m_action)
     {
     }
 
@@ -83,17 +80,13 @@ public:
         const QContactActionFilterPrivate *od = static_cast<const QContactActionFilterPrivate*>(other);
         if (m_action != od->m_action)
             return false;
-        if (m_vendorName != od->m_vendorName)
-            return false;
-        if (m_implementationVersion != od->m_implementationVersion)
-            return false;
         return true;
     }
 
     QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
     {
         if (formatVersion == 1) {
-            stream << m_action << m_vendorName << m_implementationVersion;
+            stream << m_action;
         }
         return stream;
     }
@@ -101,7 +94,7 @@ public:
     QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
     {
         if (formatVersion == 1) {
-            stream >> m_action >> m_vendorName >> m_implementationVersion;
+            stream >> m_action;
         }
         return stream;
     }
@@ -110,8 +103,6 @@ public:
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactActionFilter, QContactFilter::ActionFilter)
 
     QString m_action;
-    QString m_vendorName;
-    int m_implementationVersion;
 };
 
 QTM_END_NAMESPACE

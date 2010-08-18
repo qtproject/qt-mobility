@@ -63,8 +63,6 @@ class QIODevice;
 
 QTM_USE_NAMESPACE
 
-class QLandmarkManagerEngine;
-
 class QLandmarkFileHandlerGpx : public QObject
 {
     Q_OBJECT

@@ -16,7 +16,9 @@ include(maps/maps.pri)
 PUBLIC_HEADERS += \
                     qgeoaddress.h \
                     qgeoareamonitor.h \
+                    qgeoboundingarea.h \
                     qgeoboundingbox.h \
+                    qgeoboundingcircle.h \
                     qgeocoordinate.h \
                     qgeoplace.h \
                     qgeopositioninfo.h \
@@ -28,6 +30,7 @@ PUBLIC_HEADERS += \
 PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
                     qgeoboundingbox_p.h \
+                    qgeoboundingcircle_p.h \
                     qgeoplace_p.h \
                     qlocationutils_p.h \
                     qnmeapositioninfosource_p.h
@@ -109,7 +112,9 @@ HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 SOURCES += \
             qgeoaddress.cpp \
             qgeoareamonitor.cpp \
+            qgeoboundingarea.cpp \
             qgeoboundingbox.cpp \
+            qgeoboundingcircle.cpp \
             qgeocoordinate.cpp \
             qgeoplace.cpp \
             qgeopositioninfo.cpp \
@@ -122,7 +127,6 @@ SOURCES += \
 symbian {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC83
-    MMP_RULES += EXPORTUNFROZEN
 
     INCLUDEPATH += $${EPOCROOT}epoc32/include/osextensions \
                    $${EPOCROOT}epoc32/include/LBTHeaders \

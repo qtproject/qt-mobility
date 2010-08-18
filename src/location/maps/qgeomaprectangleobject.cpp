@@ -41,20 +41,27 @@
 
 #include "qgeomaprectangleobject.h"
 #include "qgeomaprectangleobject_p.h"
+
+#include "qgeocoordinate.h"
 #include "qgeoboundingbox.h"
 
 QTM_BEGIN_NAMESPACE
 
+QGeoMapRectangleObject::QGeoMapRectangleObject(QGeoMapObject *parent)
+        : QGeoMapObject(new QGeoMapRectangleObjectPrivate(this, parent)) {}
+
 QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoBoundingBox &boundingBox, QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapRectangleObjectPrivate(this, parent))
+        : QGeoMapObject(new QGeoMapRectangleObjectPrivate(this, parent))
 {
-    d_ptr->bounds = boundingBox;
+    Q_D(QGeoMapRectangleObject);
+    d->bounds = boundingBox;
 }
 
 QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight, QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapRectangleObjectPrivate(this, parent))
+        : QGeoMapObject(new QGeoMapRectangleObjectPrivate(this, parent))
 {
-    d_ptr->bounds = QGeoBoundingBox(topLeft, bottomRight);
+    Q_D(QGeoMapRectangleObject);
+    d->bounds = QGeoBoundingBox(topLeft, bottomRight);
 }
 
 QGeoMapRectangleObject::~QGeoMapRectangleObject()
@@ -70,7 +77,51 @@ QGeoBoundingBox QGeoMapRectangleObject::bounds() const
 void QGeoMapRectangleObject::setBounds(const QGeoBoundingBox &bounds)
 {
     Q_D(QGeoMapRectangleObject);
+
+    QGeoBoundingBox oldBounds = d->bounds;
+
+    if (oldBounds == bounds);
+    return;
+
     d->bounds = bounds;
+
+    if (d->bounds.topLeft() != oldBounds.topLeft())
+        emit topLeftChanged(d->bounds.topLeft());
+
+    if (d->bounds.bottomRight() != oldBounds.bottomRight())
+        emit bottomRightChanged(d->bounds.bottomRight());
+}
+
+QGeoCoordinate QGeoMapRectangleObject::topLeft() const
+{
+    Q_D(const QGeoMapRectangleObject);
+    return d->bounds.topLeft();
+}
+
+void QGeoMapRectangleObject::setTopLeft(const QGeoCoordinate &topLeft)
+{
+    Q_D(QGeoMapRectangleObject);
+    if (d->bounds.topLeft() != topLeft) {
+        d->bounds.setTopLeft(topLeft);
+        objectUpdate();
+        emit topLeftChanged(d->bounds.topLeft());
+    }
+}
+
+QGeoCoordinate QGeoMapRectangleObject::bottomRight() const
+{
+    Q_D(const QGeoMapRectangleObject);
+    return d->bounds.bottomRight();
+}
+
+void QGeoMapRectangleObject::setBottomRight(const QGeoCoordinate &bottomRight)
+{
+    Q_D(QGeoMapRectangleObject);
+    if (d->bounds.bottomRight() != bottomRight) {
+        d->bounds.setBottomRight(bottomRight);
+        objectUpdate();
+        emit bottomRightChanged(d->bounds.bottomRight());
+    }
 }
 
 QPen QGeoMapRectangleObject::pen() const
@@ -82,7 +133,11 @@ QPen QGeoMapRectangleObject::pen() const
 void QGeoMapRectangleObject::setPen(const QPen &pen)
 {
     Q_D(QGeoMapRectangleObject);
-    d->pen = pen;
+    if (d->pen != pen) {
+        d->pen = pen;
+        objectUpdate();
+        emit penChanged(d->pen);
+    }
 }
 
 QBrush QGeoMapRectangleObject::brush() const
@@ -94,16 +149,22 @@ QBrush QGeoMapRectangleObject::brush() const
 void QGeoMapRectangleObject::setBrush(const QBrush &brush)
 {
     Q_D(QGeoMapRectangleObject);
-    d->brush = brush;
+    if (d->brush != brush) {
+        d->brush = brush;
+        objectUpdate();
+        emit brushChanged(d->brush);
+    }
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoMapRectangleObjectPrivate::QGeoMapRectangleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::RectangleType) {}
+        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::RectangleType) {}
 
 QGeoMapRectangleObjectPrivate::~QGeoMapRectangleObjectPrivate() {}
+
+#include "moc_qgeomaprectangleobject.cpp"
 
 QTM_END_NAMESPACE
 

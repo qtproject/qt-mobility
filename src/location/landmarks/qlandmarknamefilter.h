@@ -53,15 +53,15 @@ class QLandmarkNameFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkNameFilter : public QLandmarkFilter
 {
 public:
-    QLandmarkNameFilter(const QString &name = QString(), Qt::CaseSensitivity sensitivity = Qt::CaseInsensitive);
+    QLandmarkNameFilter(const QString &name = QString());
     QLandmarkNameFilter(const QLandmarkFilter &other);
     virtual ~QLandmarkNameFilter();
 
     QString name() const;
     void setName(const QString &name);
 
-    Qt::CaseSensitivity caseSensitivity() const;
-    void setCaseSensitivity(Qt::CaseSensitivity sensitivity);
+    QLandmarkFilter::MatchFlags matchFlags() const;
+    void setMatchFlags(QLandmarkFilter::MatchFlags flags);
 
 private:
     Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkNameFilter)

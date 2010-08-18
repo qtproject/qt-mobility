@@ -504,7 +504,24 @@ void tst_QVersitOrganizerImporter::testImportEventProperties_data()
                 << Qt::Monday << Qt::Tuesday << Qt::Wednesday << Qt::Thursday << Qt::Friday);
         recurrenceRule.setPositions(QList<int>() << -1);
         recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
-        QTest::newRow("rrule setbypos")
+        QTest::newRow("rrule bysetpos")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+    }
+
+    {
+        QVersitProperty rrule;
+        rrule.setName(QLatin1String("RRULE"));
+        rrule.setValue(QLatin1String("FREQ=YEARLY;BYMONTH=4;BYDAY=1SU"));
+        QOrganizerItemRecurrence recurrence;
+        QOrganizerItemRecurrenceRule recurrenceRule;
+        recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+        recurrenceRule.setMonths(QList<QOrganizerItemRecurrenceRule::Month>()
+                << QOrganizerItemRecurrenceRule::April);
+        recurrenceRule.setDaysOfWeek(QList<Qt::DayOfWeek>() << Qt::Sunday);
+        recurrenceRule.setPositions(QList<int>() << 1);
+        recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+        QTest::newRow("rrule byday with position")
             << (QList<QVersitProperty>() << rrule)
             << (QList<QOrganizerItemDetail>() << recurrence);
     }

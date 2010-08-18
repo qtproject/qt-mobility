@@ -41,8 +41,8 @@
 
 #include "qtelephonycalllist_linux_p.h"
 #include "qtelephonycallinfo_p.h"
-#include "telepathylistener.h"
-#include "message.h"
+#include "telepathylistener_p.h"
+#include "message_p.h"
 #include <QtCore/qshareddata.h>
 #include <QDebug>
 

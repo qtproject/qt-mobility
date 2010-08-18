@@ -45,18 +45,18 @@
 #include <QStringList>
 #include <QString>
 
-const quint8 HL_STREETNAME=0x8;
-const quint8 HL_ROUTENAME=0x18;
-const quint8 HL_POINTCOUNT=0x19;
-const quint8 HL_POINT=0x1A;
-const quint8 HL_DURATION=0xB3;
+const quint8 HL_STREETNAME = 0x8;
+const quint8 HL_ROUTENAME = 0x18;
+const quint8 HL_POINTCOUNT = 0x19;
+const quint8 HL_POINT = 0x1A;
+const quint8 HL_DURATION = 0xB3;
 
-const quint8 HL_MAN_INFO=0x8C;
-const quint8 HL_MAN_COUNT=0x8D;
-const quint8 HL_MAN_ACTION_ID=0x8E;
-const quint8 HL_MAN_STARTSEGMENT_INDEX=0x95;
-const quint8 HL_MAN_DIRECTIONS=0xB1;
-const quint8 HL_END_OF_RECORD=0xFE;
+const quint8 HL_MAN_INFO = 0x8C;
+const quint8 HL_MAN_COUNT = 0x8D;
+const quint8 HL_MAN_ACTION_ID = 0x8E;
+const quint8 HL_MAN_STARTSEGMENT_INDEX = 0x95;
+const quint8 HL_MAN_DIRECTIONS = 0xB1;
+const quint8 HL_END_OF_RECORD = 0xFE;
 
 
 
@@ -73,7 +73,7 @@ bool QGeoRouteParser::parse(QIODevice* source)
 {
     QList<QGeoRouteDataContainer> decoded = decodeTLV(QByteArray::fromHex(source->readAll()));
 
-    if (decoded.count()==0) {
+    if (decoded.count() == 0) {
         m_errorString = "Unknown response format";
         return false;
     }
@@ -83,7 +83,7 @@ bool QGeoRouteParser::parse(QIODevice* source)
     route.setRequest(m_request);
     for (int itemCount = 0; itemCount < decoded.count(); ++itemCount) {
         QGeoRouteDataContainer cont = decoded[itemCount];
-        if(cont.id == HL_POINTCOUNT) {
+        if (cont.id == HL_POINTCOUNT) {
             int pointcount = int32FromByteArray(cont.data);
             ++itemCount; // step to next from HL_POINTCOUNT
             QList<QGeoCoordinate> path;
@@ -91,16 +91,14 @@ bool QGeoRouteParser::parse(QIODevice* source)
                 QGeoRouteDataContainer cont = decoded[itemCount];
                 if (cont.id == HL_POINT) {
                     path.append(coordinateFromByteArray(cont.data));
-                    }
+                }
             }
             QGeoRouteSegment segment;
             segment.setPath(path);
             routeSegments.append(segment);
-            }
-        else if(cont.id == HL_DURATION) {
+        } else if (cont.id == HL_DURATION) {
             route.setTravelTime(int32FromByteArray(cont.data));
-            }
-        else if(cont.id == HL_MAN_INFO) {
+        } else if (cont.id == HL_MAN_INFO) {
             QList<QGeoRouteDataContainer> decodedMan = decodeTLV(cont.data);
             for (int manCount = 0; manCount < decodedMan.count(); ++manCount) {
                 QGeoRouteDataContainer man = decodedMan[manCount];
@@ -113,21 +111,17 @@ bool QGeoRouteParser::parse(QIODevice* source)
                         man = decodedMan[manCount];
                         if (man.id == HL_MAN_STARTSEGMENT_INDEX) {
                             segmentIndex = int32FromByteArray(man.data);
-                        }
-                        else if (man.id == HL_MAN_DIRECTIONS) {
-                            instructionText=man.data;
-                        }
-                        else if (man.id == HL_STREETNAME) {
-                            if(instructionText.isEmpty())
-                                instructionText=man.data;
-                        }
-                        else if (man.id == HL_ROUTENAME) {
-                            if(instructionText.isEmpty())
-                                instructionText=man.data;
-                        }
-                        else if (man.id == HL_END_OF_RECORD) {
+                        } else if (man.id == HL_MAN_DIRECTIONS) {
+                            instructionText = man.data;
+                        } else if (man.id == HL_STREETNAME) {
+                            if (instructionText.isEmpty())
+                                instructionText = man.data;
+                        } else if (man.id == HL_ROUTENAME) {
+                            if (instructionText.isEmpty())
+                                instructionText = man.data;
+                        } else if (man.id == HL_END_OF_RECORD) {
                             if (routeSegments.count() > segmentIndex) {
-                                QGeoNavigationInstruction instruction;
+                                QGeoInstruction instruction;
                                 instruction.setInstructionText(instructionText);
                                 instruction.setPosition(routeSegments.at(segmentIndex).path().at(0));
                                 routeSegments[segmentIndex].setInstruction(instruction);
@@ -162,11 +156,11 @@ QString QGeoRouteParser::errorString() const
 QList<QGeoRouteDataContainer> QGeoRouteParser::decodeTLV(QByteArray data)
 {
     QList<QGeoRouteDataContainer> decoded;
-    QDataStream dataStream(&data,QIODevice::ReadOnly);
+    QDataStream dataStream(&data, QIODevice::ReadOnly);
     dataStream.setByteOrder(QDataStream::LittleEndian);
     quint8 id;
     quint16 dataLen;
-    while(!dataStream.atEnd()) {
+    while (!dataStream.atEnd()) {
         dataStream >> id >> dataLen;
         char* dataPtr = new char[dataLen];
         dataStream.readRawData(dataPtr, dataLen);
@@ -181,17 +175,17 @@ QList<QGeoRouteDataContainer> QGeoRouteParser::decodeTLV(QByteArray data)
 
 QGeoCoordinate QGeoRouteParser::coordinateFromByteArray(QByteArray array)
 {
-    QDataStream dataStream(&array,QIODevice::ReadOnly);
+    QDataStream dataStream(&array, QIODevice::ReadOnly);
     dataStream.setByteOrder(QDataStream::LittleEndian);
     quint32 latitude;
     quint32 longitude;
     dataStream >> longitude >> latitude;
-    return QGeoCoordinate(fromInt32(latitude)-90,fromInt32(longitude)-180);
+    return QGeoCoordinate(fromInt32(latitude) - 90, fromInt32(longitude) - 180);
 }
 
 quint32 QGeoRouteParser::int32FromByteArray(QByteArray array)
 {
-    QDataStream dataStream(&array,QIODevice::ReadOnly);
+    QDataStream dataStream(&array, QIODevice::ReadOnly);
     dataStream.setByteOrder(QDataStream::LittleEndian);
     quint32 value;
     dataStream >> value;
@@ -201,7 +195,7 @@ quint32 QGeoRouteParser::int32FromByteArray(QByteArray array)
 
 double QGeoRouteParser::fromInt32(quint32 value)
 {
-    double converted = value + (value < 0 ? 2^32 : 0);
+    double converted = value + (value < 0 ? 2 ^ 32 : 0);
     converted /= 0xB60B60; // 0x100000000/360;
     return converted;
 }

@@ -42,7 +42,7 @@
 #ifndef QGEOBOUNDINGBOX_H
 #define QGEOBOUNDINGBOX_H
 
-#include "qmobilityglobal.h"
+#include "qgeoboundingarea.h"
 
 #include <QSharedDataPointer>
 
@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
 class QGeoCoordinate;
 class QGeoBoundingBoxPrivate;
 
-class Q_LOCATION_EXPORT QGeoBoundingBox
+class Q_LOCATION_EXPORT QGeoBoundingBox : public QGeoBoundingArea
 {
 public:
     QGeoBoundingBox();
@@ -67,6 +67,8 @@ public:
 
     bool operator == (const QGeoBoundingBox &other) const;
     bool operator != (const QGeoBoundingBox &other) const;
+
+    QGeoBoundingArea::AreaType type() const;
 
     bool isValid() const;
     bool isEmpty() const;

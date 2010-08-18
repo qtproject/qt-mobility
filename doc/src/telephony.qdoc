@@ -43,7 +43,7 @@
 \page telephony.html
 \ingroup mobility
 
-\title Telephony Events API
+\title Telephony Events
 
 \brief The Telephony Events API enables access to the telephony event services.
 

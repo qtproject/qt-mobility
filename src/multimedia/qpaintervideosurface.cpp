@@ -59,10 +59,10 @@ QVideoSurfacePainter::~QVideoSurfacePainter()
 {
 }
 
-class QVideoSurfaceRasterPainter : public QVideoSurfacePainter
+class QVideoSurfaceGenericPainter : public QVideoSurfacePainter
 {
 public:
-    QVideoSurfaceRasterPainter();
+    QVideoSurfaceGenericPainter();
 
     QList<QVideoFrame::PixelFormat> supportedPixelFormats(
             QAbstractVideoBuffer::HandleType handleType) const;
@@ -88,7 +88,7 @@ private:
     QVideoSurfaceFormat::Direction m_scanLineDirection;
 };
 
-QVideoSurfaceRasterPainter::QVideoSurfaceRasterPainter()
+QVideoSurfaceGenericPainter::QVideoSurfaceGenericPainter()
     : m_imageFormat(QImage::Format_Invalid)
     , m_scanLineDirection(QVideoSurfaceFormat::TopToBottom)
 {
@@ -101,52 +101,69 @@ QVideoSurfaceRasterPainter::QVideoSurfaceRasterPainter()
         << QVideoFrame::Format_RGB565;
 }
 
-QList<QVideoFrame::PixelFormat> QVideoSurfaceRasterPainter::supportedPixelFormats(
+QList<QVideoFrame::PixelFormat> QVideoSurfaceGenericPainter::supportedPixelFormats(
         QAbstractVideoBuffer::HandleType handleType) const
 {
-    return handleType == QAbstractVideoBuffer::NoHandle
-        ? m_imagePixelFormats
-        : QList<QVideoFrame::PixelFormat>();
+    switch (handleType) {
+    case QAbstractVideoBuffer::QPixmapHandle:
+    case QAbstractVideoBuffer::NoHandle:
+        return m_imagePixelFormats;
+    default:
+        ;
+    }
+    return QList<QVideoFrame::PixelFormat>();
 }
 
-bool QVideoSurfaceRasterPainter::isFormatSupported(
+bool QVideoSurfaceGenericPainter::isFormatSupported(
         const QVideoSurfaceFormat &format, QVideoSurfaceFormat *) const
 {
-    return format.handleType() == QAbstractVideoBuffer::NoHandle
-            && m_imagePixelFormats.contains(format.pixelFormat())
-            && !format.frameSize().isEmpty();
+    switch (format.handleType()) {
+    case QAbstractVideoBuffer::QPixmapHandle:
+        return true;
+    case QAbstractVideoBuffer::NoHandle:
+        return m_imagePixelFormats.contains(format.pixelFormat())
+               && !format.frameSize().isEmpty();
+    default:
+        ;
+    }
+    return false;
 }
 
-QAbstractVideoSurface::Error QVideoSurfaceRasterPainter::start(const QVideoSurfaceFormat &format)
+QAbstractVideoSurface::Error QVideoSurfaceGenericPainter::start(const QVideoSurfaceFormat &format)
 {
     m_frame = QVideoFrame();
     m_imageFormat = QVideoFrame::imageFormatFromPixelFormat(format.pixelFormat());
     m_imageSize = format.frameSize();
     m_scanLineDirection = format.scanLineDirection();
 
-    return format.handleType() == QAbstractVideoBuffer::NoHandle
-            && m_imageFormat != QImage::Format_Invalid
-            && !m_imageSize.isEmpty()
-            ? QAbstractVideoSurface::NoError
-            : QAbstractVideoSurface::UnsupportedFormatError;
+    const QAbstractVideoBuffer::HandleType t = format.handleType();
+    if (t == QAbstractVideoBuffer::NoHandle) {
+        if (m_imageFormat != QImage::Format_Invalid && !m_imageSize.isEmpty())
+            return QAbstractVideoSurface::NoError;
+    } else if (t == QAbstractVideoBuffer::QPixmapHandle) {
+        return QAbstractVideoSurface::NoError;
+    }
+    return QAbstractVideoSurface::UnsupportedFormatError;
 }
 
-void QVideoSurfaceRasterPainter::stop()
+void QVideoSurfaceGenericPainter::stop()
 {
     m_frame = QVideoFrame();
 }
 
-QAbstractVideoSurface::Error QVideoSurfaceRasterPainter::setCurrentFrame(const QVideoFrame &frame)
+QAbstractVideoSurface::Error QVideoSurfaceGenericPainter::setCurrentFrame(const QVideoFrame &frame)
 {
     m_frame = frame;
 
     return QAbstractVideoSurface::NoError;
 }
 
-QAbstractVideoSurface::Error QVideoSurfaceRasterPainter::paint(
+QAbstractVideoSurface::Error QVideoSurfaceGenericPainter::paint(
             const QRectF &target, QPainter *painter, const QRectF &source)
 {
-    if (m_frame.map(QAbstractVideoBuffer::ReadOnly)) {
+    if (m_frame.handleType() == QAbstractVideoBuffer::QPixmapHandle) {
+        painter->drawPixmap(target, m_frame.handle().value<QPixmap>(), source);
+    } else if (m_frame.map(QAbstractVideoBuffer::ReadOnly)) {
         QImage image(
                 m_frame.bits(),
                 m_imageSize.width(),
@@ -175,7 +192,7 @@ QAbstractVideoSurface::Error QVideoSurfaceRasterPainter::paint(
     return QAbstractVideoSurface::NoError;
 }
 
-void QVideoSurfaceRasterPainter::updateColors(int, int, int, int)
+void QVideoSurfaceGenericPainter::updateColors(int, int, int, int)
 {
 }
 
@@ -220,6 +237,9 @@ public:
             const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar) const;
 
     QAbstractVideoSurface::Error setCurrentFrame(const QVideoFrame &frame);
+
+    QAbstractVideoSurface::Error paint(
+            const QRectF &target, QPainter *painter, const QRectF &source);
 
     void updateColors(int brightness, int contrast, int hue, int saturation);
     void viewportDestroyed();
@@ -285,11 +305,13 @@ QList<QVideoFrame::PixelFormat> QVideoSurfaceGLPainter::supportedPixelFormats(
     switch (handleType) {
     case QAbstractVideoBuffer::NoHandle:
         return m_imagePixelFormats;
+    case QAbstractVideoBuffer::QPixmapHandle:
     case QAbstractVideoBuffer::GLTextureHandle:
         return m_glPixelFormats;
     default:
-        return QList<QVideoFrame::PixelFormat>();
+        ;
     }
+    return QList<QVideoFrame::PixelFormat>();
 }
 
 bool QVideoSurfaceGLPainter::isFormatSupported(
@@ -301,12 +323,14 @@ bool QVideoSurfaceGLPainter::isFormatSupported(
         switch (format.handleType()) {
         case QAbstractVideoBuffer::NoHandle:
             return m_imagePixelFormats.contains(format.pixelFormat());
+        case QAbstractVideoBuffer::QPixmapHandle:
         case QAbstractVideoBuffer::GLTextureHandle:
             return m_glPixelFormats.contains(format.pixelFormat());
         default:
-            return false;
+            ;
         }
     }
+    return false;
 }
 
 QAbstractVideoSurface::Error QVideoSurfaceGLPainter::setCurrentFrame(const QVideoFrame &frame)
@@ -336,10 +360,23 @@ QAbstractVideoSurface::Error QVideoSurfaceGLPainter::setCurrentFrame(const QVide
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         }
         m_frame.unmap();
-    } else if (m_frame.isValid()) {
+    } else if (m_handleType != QAbstractVideoBuffer::QPixmapHandle && m_frame.isValid()) {
         return QAbstractVideoSurface::IncorrectFormatError;
     }
 
+    return QAbstractVideoSurface::NoError;
+}
+
+QAbstractVideoSurface::Error QVideoSurfaceGLPainter::paint(
+        const QRectF &target, QPainter *painter, const QRectF &source)
+{
+    if (m_frame.handleType() == QAbstractVideoBuffer::QPixmapHandle) {
+        painter->drawPixmap(target, m_frame.handle().value<QPixmap>(), source);
+    } else if (m_frame.isValid()) {
+        return QAbstractVideoSurface::IncorrectFormatError;
+    } else {
+        painter->fillRect(target, Qt::black);
+    }
     return QAbstractVideoSurface::NoError;
 }
 
@@ -700,6 +737,9 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::start(const QVideoSurfac
         default:
             break;
         }
+    } else if (format.handleType() == QAbstractVideoBuffer::QPixmapHandle) {
+        m_handleType = QAbstractVideoBuffer::QPixmapHandle;
+        return QAbstractVideoSurface::NoError;
     }
 
     if (!program) {
@@ -767,7 +807,8 @@ void QVideoSurfaceArbFpPainter::stop()
 QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::paint(
         const QRectF &target, QPainter *painter, const QRectF &source)
 {
-    if (m_frame.isValid()) {
+    const QAbstractVideoBuffer::HandleType h = m_frame.handleType();
+    if (h == QAbstractVideoBuffer::NoHandle || h == QAbstractVideoBuffer::GLTextureHandle) {
         bool stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
         bool scissorTestEnabled = glIsEnabled(GL_SCISSOR_TEST);
 
@@ -859,8 +900,11 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::paint(
         glDisable(GL_FRAGMENT_PROGRAM_ARB);
 
         painter->endNativePainting();
+
+        return QAbstractVideoSurface::NoError;
     }
-    return QAbstractVideoSurface::NoError;
+
+    return QVideoSurfaceGLPainter::paint(target, painter, source);
 }
 
 #endif
@@ -1059,6 +1103,9 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::start(const QVideoSurface
         default:
             break;
         }
+    } else if (format.handleType() == QAbstractVideoBuffer::QPixmapHandle) {
+        m_handleType = QAbstractVideoBuffer::QPixmapHandle;
+        return QAbstractVideoSurface::NoError;
     }
 
     if (!fragmentProgram) {
@@ -1106,7 +1153,8 @@ void QVideoSurfaceGlslPainter::stop()
 QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
         const QRectF &target, QPainter *painter, const QRectF &source)
 {
-    if (m_frame.isValid()) {
+    const QAbstractVideoBuffer::HandleType h = m_frame.handleType();
+    if (h == QAbstractVideoBuffer::NoHandle || h == QAbstractVideoBuffer::GLTextureHandle) {
         bool stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
         bool scissorTestEnabled = glIsEnabled(GL_SCISSOR_TEST);
 
@@ -1216,8 +1264,11 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
         m_program.release();
 
         painter->endNativePainting();
+
+        return QAbstractVideoSurface::NoError;
     }
-    return QAbstractVideoSurface::NoError;
+
+    return QVideoSurfaceGLPainter::paint(target, painter, source);
 }
 
 #endif
@@ -1612,11 +1663,11 @@ void QPainterVideoSurface::createPainter()
         m_painter = new QVideoSurfaceGlslPainter(m_glContext);
         break;
     default:
-        m_painter = new QVideoSurfaceRasterPainter;
+        m_painter = new QVideoSurfaceGenericPainter;
         break;
     }
 #else
-    m_painter = new QVideoSurfaceRasterPainter;
+    m_painter = new QVideoSurfaceGenericPainter;
 #endif
 }
 

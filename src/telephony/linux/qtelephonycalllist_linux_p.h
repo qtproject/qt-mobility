@@ -57,7 +57,7 @@
 #include <QObject>
 #include <QList>
 #include <QtCore/qshareddata.h>
-#include "dbusinterface.h"
+#include "dbusinterface_p.h"
 
 #include "qtelephony.h"
 #include "qtelephonycalllist.h"

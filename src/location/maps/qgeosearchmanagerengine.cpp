@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup maps-impl
 
     In the default implementation, supportsGeocoding() returns false while
@@ -109,9 +109,9 @@ QTM_BEGIN_NAMESPACE
     Constructs a new engine with the specified \a parent, using \a parameters
     to pass any implementation specific data to the engine.
 */
-QGeoSearchManagerEngine::QGeoSearchManagerEngine(const QMap<QString, QString> &parameters, QObject *parent)
+QGeoSearchManagerEngine::QGeoSearchManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoSearchManagerEnginePrivate(parameters)) {}
+        d_ptr(new QGeoSearchManagerEnginePrivate()) {}
 
 /*!
     Destroys this engine.
@@ -120,7 +120,6 @@ QGeoSearchManagerEngine::~QGeoSearchManagerEngine()
 {
     delete d_ptr;
 }
-
 
 /*!
     Sets the name which this engine implementation uses to distinguish itself
@@ -144,14 +143,6 @@ void QGeoSearchManagerEngine::setManagerName(const QString &managerName)
 QString QGeoSearchManagerEngine::managerName() const
 {
     return d_ptr->managerName;
-}
-
-/*!
-    Returns the parameters used in the creation of this engine object.
-*/
-QMap<QString, QString> QGeoSearchManagerEngine::managerParameters() const
-{
-    return d_ptr->managerParameters;
 }
 
 /*!
@@ -208,12 +199,12 @@ int QGeoSearchManagerEngine::managerVersion() const
     QGeoSearchReply::error() with deleteLater().
 */
 QGeoSearchReply* QGeoSearchManagerEngine::geocode(const QGeoAddress &address,
-                                                  const QGeoBoundingBox &bounds)
+        QGeoBoundingArea *bounds)
 {
     Q_UNUSED(address)
     Q_UNUSED(bounds)
     return new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
-                              "Geocoding is not supported by this service provider.", this);
+                               "Geocoding is not supported by this service provider.", this);
 }
 
 /*!
@@ -253,12 +244,12 @@ QGeoSearchReply* QGeoSearchManagerEngine::geocode(const QGeoAddress &address,
     QGeoSearchReply::error() with deleteLater().
 */
 QGeoSearchReply* QGeoSearchManagerEngine::reverseGeocode(const QGeoCoordinate &coordinate,
-                                                  const QGeoBoundingBox &bounds)
+        QGeoBoundingArea *bounds)
 {
     Q_UNUSED(coordinate)
     Q_UNUSED(bounds)
     return new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
-                              "Reverse geocoding is not supported by this service provider.", this);
+                               "Reverse geocoding is not supported by this service provider.", this);
 }
 
 /*!
@@ -300,23 +291,25 @@ QGeoSearchReply* QGeoSearchManagerEngine::reverseGeocode(const QGeoCoordinate &c
     QGeoSearchReply::error() with deleteLater().
 */
 QGeoSearchReply* QGeoSearchManagerEngine::search(const QString &searchString,
-                                                       QGeoSearchManager::SearchTypes searchTypes,
-                                                       const QGeoBoundingBox &bounds)
+        QGeoSearchManager::SearchTypes searchTypes,
+        int limit,
+        int offset,
+        QGeoBoundingArea *bounds)
 {
     Q_UNUSED(searchString)
     Q_UNUSED(searchTypes)
     Q_UNUSED(bounds)
 
     return new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
-                              "Searching is not supported by this service provider.", this);
+                               "Searching is not supported by this service provider.", this);
 }
 
 /*!
-    Sets whether this engine supports geocoding operations to \a supported.
+    Sets whether geocoding is supported by this engine to \a supported.
 
     It is important that subclasses use this method to ensure that the engine
     reports its capabilities correctly.  If this function is not used the
-    engine will report that it does not support geocoding operations.
+    engine will report that it does not support geocoding.
 */
 void QGeoSearchManagerEngine::setSupportsGeocoding(bool supported)
 {
@@ -324,11 +317,31 @@ void QGeoSearchManagerEngine::setSupportsGeocoding(bool supported)
 }
 
 /*!
-    Returns whether this engine supports geocoding operations.
+    Returns whether this engine supports geocoding.
 */
 bool QGeoSearchManagerEngine::supportsGeocoding() const
 {
     return d_ptr->supportsGeocoding;
+}
+
+/*!
+    Sets whether reverse geocoding is supported by this engine to \a supported.
+
+    It is important that subclasses use this method to ensure that the engine
+    reports its capabilities correctly.  If this function is not used the
+    engine will report that it does not support reverse geocoding.
+*/
+void QGeoSearchManagerEngine::setSupportsReverseGeocoding(bool supported)
+{
+    d_ptr->supportsReverseGeocoding = supported;
+}
+
+/*!
+    Returns whether this engine supports reverse geocoding.
+*/
+bool QGeoSearchManagerEngine::supportsReverseGeocoding() const
+{
+    return d_ptr->supportsReverseGeocoding;
 }
 
 /*!
@@ -418,6 +431,20 @@ void QGeoSearchManagerEngine::addAdditionalLandmarkManager(QLandmarkManager *lan
 }
 
 /*!
+*/
+void QGeoSearchManagerEngine::setLocale(const QLocale &locale)
+{
+    d_ptr->locale = locale;
+}
+
+/*!
+*/
+QLocale QGeoSearchManagerEngine::locale() const
+{
+    return d_ptr->locale;
+}
+
+/*!
 \fn void QGeoSearchManagerEngine::finished(QGeoSearchReply* reply)
 
     This signal is emitted when \a reply has finished processing.
@@ -450,20 +477,11 @@ void QGeoSearchManagerEngine::addAdditionalLandmarkManager(QLandmarkManager *lan
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoSearchManagerEnginePrivate::QGeoSearchManagerEnginePrivate(const QMap<QString, QString> &parameters)
-        : managerParameters(parameters),
-        managerVersion(-1),
+QGeoSearchManagerEnginePrivate::QGeoSearchManagerEnginePrivate()
+        : managerVersion(-1),
         defaultLandmarkManager(0),
-        supportsGeocoding(false) {}
-
-QGeoSearchManagerEnginePrivate::QGeoSearchManagerEnginePrivate(const QGeoSearchManagerEnginePrivate &other)
-        : managerName(other.managerName),
-        managerParameters(other.managerParameters),
-        managerVersion(other.managerVersion),
-        defaultLandmarkManager(other.defaultLandmarkManager),
-        additionalLandmarkManagers(other.additionalLandmarkManagers),
-        supportsGeocoding(other.supportsGeocoding),
-        supportedSearchTypes(other.supportedSearchTypes) {}
+        supportsGeocoding(false),
+        supportsReverseGeocoding(false) {}
 
 QGeoSearchManagerEnginePrivate::~QGeoSearchManagerEnginePrivate()
 {
@@ -471,19 +489,6 @@ QGeoSearchManagerEnginePrivate::~QGeoSearchManagerEnginePrivate()
         delete defaultLandmarkManager;
     // TODO check for null? or do that in the setter?
     qDeleteAll(additionalLandmarkManagers);
-}
-
-QGeoSearchManagerEnginePrivate& QGeoSearchManagerEnginePrivate::operator= (const QGeoSearchManagerEnginePrivate & other)
-{
-    managerName = other.managerName;
-    managerParameters = other.managerParameters;
-    managerVersion = other.managerVersion;
-    defaultLandmarkManager = other.defaultLandmarkManager;
-    additionalLandmarkManagers = other.additionalLandmarkManagers;
-    supportsGeocoding = other.supportsGeocoding;
-    supportedSearchTypes = other.supportedSearchTypes;
-
-    return *this;
 }
 
 #include "moc_qgeosearchmanagerengine.cpp"

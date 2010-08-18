@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoRoute class represents a route between two points.
 
     \inmodule QtLocation
-    
+
     \ingroup maps-routing
 
     A QGeoRoute object contains high level information about a route, such
@@ -103,6 +103,22 @@ QGeoRoute& QGeoRoute::operator= (const QGeoRoute & other)
 {
     d_ptr = other.d_ptr;
     return *this;
+}
+
+/*!
+    Returns whether this route and \a other are equal.
+*/
+bool QGeoRoute::operator ==(const QGeoRoute &other) const
+{
+    return (d_ptr.constData() == other.d_ptr.constData());
+}
+
+/*!
+    Returns whether this route and \a other are not equal.
+*/
+bool QGeoRoute::operator !=(const QGeoRoute &other) const
+{
+    return (d_ptr.constData() != other.d_ptr.constData());
 }
 
 /*!
@@ -278,8 +294,8 @@ QList<QGeoCoordinate> QGeoRoute::path() const
 *******************************************************************************/
 
 QGeoRoutePrivate::QGeoRoutePrivate()
-    : travelTime(0),
-    distance(0.0){}
+        : travelTime(0),
+        distance(0.0) {}
 
 QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
         : QSharedData(other),
@@ -294,5 +310,16 @@ QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
 
 QGeoRoutePrivate::~QGeoRoutePrivate() {}
 
+bool QGeoRoutePrivate::operator ==(const QGeoRoutePrivate &other) const
+{
+    return ((id == other.id)
+            && (request == other.request)
+            && (bounds == other.bounds)
+            && (routeSegments == other.routeSegments)
+            && (travelTime == other.travelTime)
+            && (distance == other.distance)
+            && (travelMode == other.travelMode)
+            && (path == other.path));
+}
 
 QTM_END_NAMESPACE

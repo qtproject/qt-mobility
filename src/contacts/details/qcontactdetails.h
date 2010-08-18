@@ -52,6 +52,7 @@
 #include "qcontactdisplaylabel.h"
 #include "qcontactemailaddress.h"
 #include "qcontactfamily.h"
+#include "qcontactfavorite.h"
 #include "qcontactgender.h"
 #include "qcontactgeolocation.h"
 #include "qcontactglobalpresence.h"

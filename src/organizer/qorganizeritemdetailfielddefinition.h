@@ -48,6 +48,8 @@
 
 #include "qtorganizerglobal.h"
 
+class QDataStream;
+
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemDetailFieldDefinitionPrivate;
@@ -72,6 +74,11 @@ public:
 private:
     QSharedDataPointer<QOrganizerItemDetailFieldDefinitionPrivate> d;
 };
+
+#ifndef QT_NO_DATASTREAM
+Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerItemDetailFieldDefinition& definition);
+Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItemDetailFieldDefinition& definition);
+#endif
 
 QTM_END_NAMESPACE
 

@@ -58,7 +58,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-request
 */
 
@@ -133,21 +133,38 @@ void QLandmarkIdFetchRequest::setSorting(const QLandmarkSortOrder &sorting)
 }
 
 /*!
-    Returns the request's fetch hint.
+    Returns the maximum number of landmark ids to be returned.
 */
-QLandmarkFetchHint QLandmarkIdFetchRequest::fetchHint() const
+int QLandmarkIdFetchRequest::limit() const
 {
     Q_D(const QLandmarkIdFetchRequest);
-    return d->fetchHint;
+    return d->limit;
 }
 
 /*!
-    Sets the request's \a fetchHint.
-*/
-void QLandmarkIdFetchRequest::setFetchHint(const QLandmarkFetchHint &fetchHint)
+    Sets the maximum number of landmarks to be returned to \a limit.
+ */
+void QLandmarkIdFetchRequest::setLimit(int limit)
 {
     Q_D(QLandmarkIdFetchRequest);
-    d->fetchHint = fetchHint;
+    d->limit = limit;
+}
+
+/*!
+    Returns the index offset for the request.
+*/
+int QLandmarkIdFetchRequest::offset() const
+{
+    Q_D(const QLandmarkIdFetchRequest);
+    return d->offset;
+}
+
+/*!
+    Sets the index \a offset for the request.
+*/
+void QLandmarkIdFetchRequest::setOffset(int offset) {
+    Q_D(QLandmarkIdFetchRequest);
+    d->offset = offset;
 }
 
 /*!
