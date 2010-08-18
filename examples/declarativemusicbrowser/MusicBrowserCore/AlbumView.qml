@@ -41,13 +41,14 @@
 import Qt 4.7
 import QtMobility.gallery 1.1
 
-GridView {
-    property string title: ""
+Item {
+    property string subTitle: ""
     property bool backEnabled: false
 
-    anchors.fill: parent
-    cellWidth: 256
-    cellHeight: 192
+    function back() { albumView.state = 'inGrid' }
+
+    id: albumView
+
     clip: true
 
     VisualDataModel {
@@ -55,13 +56,60 @@ GridView {
 
         model: GalleryQueryModel {
             id: galleryModel
-            gallery: DocumentGallery {}
+            gallery: documentGallery
             rootType: "Album"
             properties: [ "artist", "title" ]
             sortProperties: [ "title" ]
         }
-        delegate: AlbumDelegate { state: 'inGrid' }
+        delegate: AlbumDelegate {
+            state: albumView.state
+            viewWidth: listView.width
+            viewHeight: listView.height
+            onClicked: {
+                listView.positionViewAtIndex(index, ListView.Contain)
+                albumView.state = 'inHorizontalList'
+            }
+        }
     }
 
-    model: visualModel.parts.grid
+    GridView {
+        id: gridView
+        anchors.fill: parent
+        cellWidth: 256
+        cellHeight: 192
+
+        model: visualModel.parts.grid
+    }
+
+    ListView {
+        id: listView
+        anchors.fill: parent
+        orientation: ListView.Horizontal
+        snapMode: ListView.SnapOneItem
+        highlightRangeMode: ListView.StrictlyEnforceRange
+
+        model: visualModel.parts.horizontalList
+
+        onCurrentIndexChanged: {
+            gridView.positionViewAtIndex(currentIndex, GridView.Contain)
+            subTitle = currentItem.albumTitle
+        }
+
+    }
+
+    state: 'inGrid'
+
+    states: [
+        State {
+            name: 'inGrid'
+            PropertyChanges { target: albumView; backEnabled: false }
+            PropertyChanges { target: listView; interactive: false; }
+        },
+        State {
+            name: 'inHorizontalList'
+            PropertyChanges { target: albumView; backEnabled: true }
+            PropertyChanges { target: gridView; interactive: false }
+            PropertyChanges { target: listView; interactive: true }
+        }
+    ]
 }

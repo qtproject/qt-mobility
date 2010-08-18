@@ -44,8 +44,10 @@ import QtMobility.gallery 1.1
 ListView {
     property string title: ""
     property bool backEnabled: false
-
     property alias rootItem: galleryModel.rootItem
+
+    id: albumView
+
     anchors.fill: parent
     clip: true
     cacheBuffer: 960
@@ -55,15 +57,19 @@ ListView {
 
         model: GalleryQueryModel {
             id: galleryModel
-            gallery: DocumentGallery {}
+            gallery: documentGallery
             rootType: "Album"
             properties: [ "artist", "title" ]
             sortProperties: [ "artist", "title" ]
         }
-        delegate: AlbumDelegate { state: 'inList' }
+        delegate: AlbumDelegate {
+            state: 'inVerticalList'
+            viewWidth: albumView.width
+            viewHeight: albumView.height
+        }
     }
 
-    model: visualModel.parts.list
+    model: visualModel.parts.verticalList
 
     section.property: "artist"
     section.delegate: Item {

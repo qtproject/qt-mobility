@@ -40,50 +40,33 @@
 
 import Qt 4.7
 import QtMobility.gallery 1.1
+import "script/mediaart.js" as Script
 
 Item {
-    property alias itemType: typeInfo.itemType
-    property alias icon: typeIcon.source
-    property alias text: typeLabel.text
-    signal clicked
-
-    width: 192
-    height: 192
-
-    GalleryType {
-        id: typeInfo
-        gallery: documentGallery
-        properties: [ "count" ]
-        live: true
-    }
-
-    Image {
-        id: typeIcon
-        width: 128
-        height: 128
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
-    }
+    height: 32
 
     Text {
-        id: countLabel
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: typeIcon.bottom
-        text: typeInfo.metaData.count
-        font.pointSize: 30
-        color: "gray"
-    }
-
-    Text {
-        id: typeLabel
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        font.pointSize: 20
+        id: trackLabel
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        width: 48
+        text: trackNumber
         color: "white"
     }
 
-    MouseArea {
-        anchors.fill: parent
-        onClicked: parent.clicked()
+    Text {
+        id: titleLabel
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: trackLabel.right
+        text: title
+        color: "white"
+    }
+
+    Text {
+        id: durationLabel
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
+        text: Script.formatDuration(duration)
+        color: "white"
     }
 }

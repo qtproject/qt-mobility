@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 import Qt 4.7
-import QtMobility.gallery 1.0
+import QtMobility.gallery 1.1
 import "MusicBrowserCore"
 
 Rectangle {
@@ -47,6 +47,8 @@ Rectangle {
     width: 800
     height: 480
     color: "black"
+
+    DocumentGallery { id: documentGallery }
 
     Flipable {
         property real angle: 0
@@ -138,7 +140,7 @@ Rectangle {
                 anchors.left: viewButton.right
                 anchors.top: parent.top
                 visible: viewLoader.status == Loader.Ready && viewLoader.item.backEnabled
-                text: viewLoader.status == Loader.Ready ? viewLoader.item.title : ""
+                text: viewLoader.status == Loader.Ready ? viewLoader.item.subTitle : ""
                 enabled: false
             }
 

@@ -42,14 +42,13 @@ import Qt 4.7
 import QtMobility.gallery 1.1
 
 Item {
-    property string title: ""
+    property string subTitle: ""
     property bool backEnabled: false
     property alias categoryType: categoryModel.rootType
 
-    function back() { state = 'inStack' }
+    function back() { state = 'categories'}
 
     id: categoryView
-    anchors.fill: parent
     clip: true
 
     GridView {
@@ -58,89 +57,109 @@ Item {
         cellWidth: 256
         cellHeight: 192
 
-
-        model: GalleryQueryModel {
+        model:  GalleryQueryModel {
             id: categoryModel
-            gallery: DocumentGallery {}
+            gallery: documentGallery
             properties: [ "title" ]
+            sortProperties: [ "title" ]
         }
         delegate: Item {
+            id: categoryDelegate
+
             width: 256
             height: 192
 
-            PathView {
-                id: albumView
-                height: 128
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
+            VisualDataModel {
+                id: visualModel
 
-                VisualDataModel {
-                    id: visualModel
-
-                    model: GalleryQueryModel {
-                        id: galleryModel
-                        gallery: DocumentGallery {}
-                        rootType: "Album"
-                        rootItem: itemId
-                        properties: [ "artist", "title" ]
-                        sortProperties: [ "artist", "title" ]
-                    }
-                    delegate: AlbumDelegate { state: categoryView.state }
+                model: GalleryQueryModel {
+                    id: galleryModel
+                    gallery: documentGallery
+                    rootType: "Album"
+                    rootItem: itemId
+                    properties: [ "artist", "title" ]
+                    sortProperties: [ "artist", "title" ]
                 }
-
-                model: visualModel.parts.stack
-
-                path: Path {
-                    startX: 64
-                    startY: 64
-                    PathLine { x: 192; y: 64 }
+                delegate: AlbumDelegate {
+                    state: categoryDelegate.state
+                    viewWidth: songsView.width
+                    viewHeight: songsView.height
                 }
             }
 
-            Text {
-                id: categoryLabel
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: albumView.bottom
-                anchors.bottom: parent.bottom
-                text: title
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.WordWrap
-                color: "white"
-                font.pointSize: 15
-            }
-
-            MouseArea {
+            Item {
                 anchors.fill: parent
-                onClicked: {
-                    songList.model = visualModel.parts.list
-                    categoryView.title = title
-                    categoryView.state = 'inList'
+                visible: categoryView.state == 'categories'
+
+                PathView {
+                    id: albumView
+                    anchors.top: parent.top
+                    anchors.bottom: categoryLabel.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+
+                    model: visualModel.parts.stack
+
+                    path: Path {
+                        startX: 64
+                        startY: height / 2
+                        PathLine { x: width - 64; y: height / 2 }
+                    }
+                }
+
+                Text {
+                    id: categoryLabel
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    text: title
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.WordWrap
+                    color: "white"
+                    font.pointSize: 15
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        categoryView.state = 'albums'
+                        categoryDelegate.state = 'inVerticalList'
+                    }
                 }
             }
+
+            ListView {
+                id: songsView
+                anchors.fill: parent
+                model: visualModel.parts.verticalList
+                interactive: false
+            }
+
+            states: [
+                State {
+                    name: "inStack"
+                    when: categoryView.state == 'categories'
+                },
+                State {
+                    name: "inVerticalList"
+                    PropertyChanges { target: categoryView; subTitle: title }
+                    PropertyChanges { target: songsView; interactive: true }
+                    ParentChange { target: songsView; parent: categoryView }
+                }
+            ]
         }
     }
 
-    ListView {
-        id: songList
-        anchors.fill: parent
-        interactive: false
-        cacheBuffer: 960
-    }
-
-    state: 'inStack'
+    state: 'categories'
     states: [
         State {
-            name: 'inStack'
+            name: 'categories'
             PropertyChanges { target: categoryView; backEnabled: false }
         },
         State {
-            name: 'inList'
+            name: 'albums'
             PropertyChanges { target: categoryView; backEnabled: true }
-            PropertyChanges { target: categoryList; interactive: false; visible: false }
-            PropertyChanges { target: songList; interactive: true; }
         }
     ]
 }

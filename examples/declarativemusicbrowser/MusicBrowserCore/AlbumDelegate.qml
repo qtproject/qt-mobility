@@ -43,137 +43,175 @@ import QtMobility.gallery 1.1
 import "script/mediaart.js" as Script
 
 Package {
-    property alias state: albumWrapper.state
+    property alias state: albumInfo.state
+    property int viewWidth: 0
+    property int viewHeight: 0
+
+    signal clicked
+
+
+    id: albumDelegate
 
     Item { id: stackItem; Package.name: 'stack'; width: 128; height: 128; }
-    Item { id: listItem; Package.name: 'list'; width: parent.width; height: 192 }
     Item { id: gridItem; Package.name: 'grid'; width: 192; height: 192 }
-
     Item {
-        id: albumWrapper
-        anchors.fill: parent
+
+        Package.name: 'verticalList'
+        width: viewWidth
+        height: verticalSongsLoader.height > 192 ? verticalSongsLoader.height : 192
 
         Item {
-            id: albumInfo
-            width: parent.width
+            id: verticalListItem
             anchors.left: parent.left
             anchors.top: parent.top
-
-            Image {
-                id: albumImage
-                width: 128
-                height: 128
-                fillMode: Image.PreserveAspectFit
-                asynchronous: true
-                source: Script.getAlbumArtUrl(artist, title)
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.top
-            }
-
-            Image {
-                anchors.fill: albumImage
-                source: albumImage.status == Image.Error ? "images/nocover.png" : ""
-            }
-
-            Text {
-                id: titleLabel
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: albumImage.bottom
-                text: title
-                horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.WordWrap
-                color: "white"
-                visible: false
-            }
-
-            Text {
-                id: artistLabel
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: titleLabel.bottom
-                text: artist
-                horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.WordWrap
-                color: "white"
-                visible: false
-            }
+            anchors.bottom: parent.bottom
+            width: 192
         }
 
         Loader {
-            id: songsLoader
-            anchors.top: parent.top
-            anchors.left: albumInfo.right
+            id: verticalSongsLoader
+            anchors.left: verticalListItem.right
             anchors.right: parent.right
-            sourceComponent: undefined
+            anchors.top: parent.top
+        }
+    }
+
+    Item {
+        property string albumTitle: title
+
+        Package.name: 'horizontalList'
+        width: viewWidth
+        height: viewHeight
+
+        Item {
+            id: horizontalListItem
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: 192
+        }
+
+        Loader {
+            id: horizontalSongsLoader
+            anchors.left: horizontalListItem.right
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+        }
+    }
+
+    Item {
+        id: albumInfo
+        anchors.fill: parent
+
+        Image {
+            id: albumImage
+            width: 128
+            height: 128
+            fillMode: Image.PreserveAspectFit
+            asynchronous: true
+            source: Script.getAlbumArtUrl(artist, title)
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
+        }
+
+        Image {
+            anchors.fill: albumImage
+            source: albumImage.status == Image.Error ? "images/nocover.png" : ""
+        }
+
+        Text {
+            id: titleLabel
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: albumImage.bottom
+            text: title
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.WordWrap
+            color: "white"
+            visible: false
+        }
+
+        Text {
+            id: artistLabel
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: titleLabel.bottom
+            text: artist
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.WordWrap
+            color: "white"
+            visible: false
+        }
+
+        MouseArea {
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: artistLabel.bottom
+            onClicked: albumDelegate.clicked()
         }
 
         states: [
             State {
                 name: 'inStack'
-                ParentChange { target: albumWrapper; parent: stackItem }
+                ParentChange { target: albumInfo; parent: stackItem }
+                PropertyChanges { target: songsLoader; sourceComponent: undefined }
             },
             State {
                 name: 'inGrid'
-                ParentChange { target: albumWrapper; parent: gridItem }
+                ParentChange { target: albumInfo; parent: gridItem }
                 PropertyChanges { target: titleLabel; visible: true }
                 PropertyChanges { target: artistLabel; visible: true }
+                PropertyChanges { target: verticalSongsLoader; sourceComponent: undefined }
+                PropertyChanges { target: horizontalSongsLoader; sourceComponent: undefined }
             },
             State {
-                name: 'inList'
-                PropertyChanges { target: songsLoader; sourceComponent: songView; }
-                PropertyChanges { target: albumInfo; width: 192 }
-                PropertyChanges { target: listItem; height: songsLoader.height > 192 ? songsLoader.height : 192 }
+                name: 'inVerticalList'
+                ParentChange { target: albumInfo; parent: verticalListItem }
+                PropertyChanges { target: verticalSongsLoader; sourceComponent: verticalSongView }
                 PropertyChanges { target: titleLabel; visible: true }
-                ParentChange { target: albumWrapper; parent: listItem; x: 0; y: 0 }
+            },
+            State {
+                name: 'inHorizontalList'
+                ParentChange { target: albumInfo; parent: horizontalListItem }
+                PropertyChanges { target: horizontalSongsLoader; sourceComponent: horizontalSongView }
+                PropertyChanges { target: titleLabel; visible: true }
             }
         ]
     }
 
     Component {
-        id: songView
+        id: verticalSongView
 
         Column {
             id: songColumn
 
             Repeater {
                 model: GalleryQueryModel {
-                    gallery: DocumentGallery {}
+                    gallery: documentGallery
                     rootType: "Audio"
                     rootItem: itemId
                     properties: [ "trackNumber", "title", "duration" ]
                     sortProperties: [ "trackNumber" ]
                 }
-                delegate: Item {
-                    width: songColumn.width
-                    height: 32
-
-                    Text {
-                        id: trackLabel
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.left: parent.left
-                        width: 48
-                        text: trackNumber
-                        color: "white"
-                    }
-
-                    Text {
-                        id: titleLabel
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.left: trackLabel.right
-                        text: title
-                        color: "white"
-                    }
-
-                    Text {
-                        id: durationLabel
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.right: parent.right
-                        text: Script.formatDuration(duration)
-                        color: "white"
-                    }
-                }
+                delegate: SongDelegate { width: songColumn.width }
             }
+        }
+    }
+
+    Component {
+        id: horizontalSongView
+
+        ListView {
+            model: GalleryQueryModel {
+                gallery: documentGallery
+                rootType: "Audio"
+                rootItem: itemId
+                properties: [ "trackNumber", "title", "duration" ]
+                sortProperties: [ "trackNumber" ]
+            }
+            delegate: SongDelegate { width: parent.width }
         }
     }
 }

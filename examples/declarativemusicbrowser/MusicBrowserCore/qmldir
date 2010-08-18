@@ -1,0 +1,6 @@
+AlbumDelegate AlbumDelegate.qml
+AlbumView AlbumView.qml
+CategoryView CategoryView.qml
+MenuButton MenuButton.qml
+SongView SongView.qml
+TypeDelegate TypeDelegate.qml
