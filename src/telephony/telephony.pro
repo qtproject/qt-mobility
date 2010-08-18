@@ -47,7 +47,7 @@ symbian {
     CONFIG += middleware
 
     TARGET.CAPABILITY = ALL -TCB
-    TARGET.UID3 = 0x200315FB
+    TARGET.UID3 = 0x2002BFCF
 
     QtTelephony.sources = QtTelephony.dll
     QtTelephony.path = /sys/bin
