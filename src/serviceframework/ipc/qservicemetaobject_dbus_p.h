@@ -53,20 +53,23 @@ class QServiceMetaObjectDBus : public QDBusAbstractAdaptor
 {
 
 public:
-    QServiceMetaObjectDBus(QObject* service);
+    QServiceMetaObjectDBus(QObject* service, bool signalsObject=false);
     virtual ~QServiceMetaObjectDBus();
 
     virtual const QMetaObject* metaObject() const;
     int qt_metacall(QMetaObject::Call c, int id, void **a);
     void *qt_metacast(const char* className);
-
-    const QMetaObject* dbusMetaObject() const;
+    
+    void activateMetaSignal(int id, const QVariantList& args);
 
 protected:
     //void connectNotify(const char* signal);
     //void disconnectNotify(const char* signal);
 
 private:
+    const QMetaObject* dbusMetaObject(bool signalsObject) const;
+    void connectMetaSignals(bool signalsObject);
+
     QServiceMetaObjectDBusPrivate* d;
     QVector<bool> localSignals;
 };

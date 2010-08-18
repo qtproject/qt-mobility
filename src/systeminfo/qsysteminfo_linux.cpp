@@ -794,7 +794,23 @@ QString QSystemDeviceInfoPrivate::productName()
          }
 #endif
      }
+#ifdef Q_WS_X11
+     changeTimeout(-1);
+#endif
  }
+
+#ifdef Q_WS_X11
+ int QSystemScreenSaverPrivate::changeTimeout(int timeout)
+ {
+     int ttime;
+     int interval;
+     int preferBlank;
+     int allowExp;
+     XGetScreenSaver(QX11Info::display(), &ttime, &interval, &preferBlank, &allowExp);
+     int result = XSetScreenSaver(QX11Info::display(), timeout, interval, preferBlank, allowExp);
+     return result;
+ }
+#endif
 
  bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
  {
@@ -825,13 +841,8 @@ QString QSystemDeviceInfoPrivate::productName()
 #endif
      } else {
 #ifdef Q_WS_X11
-         int timeout;
-         int interval;
-         int preferBlank;
-         int allowExp;
-         XGetScreenSaver(QX11Info::display(), &timeout, &interval, &preferBlank, &allowExp);
-             timeout = -1;
-         XSetScreenSaver(QX11Info::display(), timeout, interval, preferBlank, allowExp);
+         changeTimeout(0);
+         screenSaverIsInhibited = true;
 #endif
      }
     return false;
@@ -854,7 +865,7 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
     int preferBlank;
     int allowExp;
     XGetScreenSaver(QX11Info::display(), &timeout, &interval, &preferBlank, &allowExp);
-    if(timeout != 0) {
+    if(preferBlank == DontPreferBlanking || timeout == 0) {
         return true;
     }
 
