@@ -1711,29 +1711,35 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator()
     event.setStartDateTime(QDateTime(eventDate, QTime(11, 0, 0)));
     event.setEndDateTime(QDateTime(eventDate, QTime(11, 30, 0)));
     event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
-    QVERIFY(cm->saveItem(&event));
-    QList<QOrganizerItem> items = cm->itemInstances(event,
-            QDateTime(startDate, QTime(0, 0, 0)),
-            QDateTime(endDate.addDays(1), QTime(0, 0, 0)));
 
-    QList<QDate> actualDates;
-    for (int i = 0; i < items.size(); i++) {
-        QOrganizerItem item = items.at(i);
-        QCOMPARE(item.type(), QString(QLatin1String(QOrganizerItemType::TypeEventOccurrence)));
-        QDate occurrenceDate;
-        if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
-            occurrenceDate = item.detail<QOrganizerEventTimeRange>().startDateTime().date();
-        } else if (item.type() == QOrganizerItemType::TypeTodoOccurrence) {
-            occurrenceDate = item.detail<QOrganizerTodoTimeRange>().startDateTime().date();
+    if (cm->saveItem(&event)) {
+        QList<QOrganizerItem> items = cm->itemInstances(event,
+                QDateTime(startDate, QTime(0, 0, 0)),
+                QDateTime(endDate.addDays(1), QTime(0, 0, 0)));
+
+        QList<QDate> actualDates;
+        for (int i = 0; i < items.size(); i++) {
+            QOrganizerItem item = items.at(i);
+            QCOMPARE(item.type(), QString(QLatin1String(QOrganizerItemType::TypeEventOccurrence)));
+            QDate occurrenceDate;
+            if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
+                occurrenceDate = item.detail<QOrganizerEventTimeRange>().startDateTime().date();
+            } else if (item.type() == QOrganizerItemType::TypeTodoOccurrence) {
+                occurrenceDate = item.detail<QOrganizerTodoTimeRange>().startDateTime().date();
+            }
+            //QCOMPARE(occurrenceDate, occurrenceDates.at(i));
+            actualDates << occurrenceDate;
         }
-        //QCOMPARE(occurrenceDate, occurrenceDates.at(i));
-        actualDates << occurrenceDate;
-    }
 
-    if (actualDates != occurrenceDates) {
-        qDebug() << "Actual: " << actualDates;
-        qDebug() << "Expected: " << occurrenceDates;
-        QCOMPARE(actualDates, occurrenceDates);
+        if (actualDates != occurrenceDates) {
+            qDebug() << "Actual: " << actualDates;
+            qDebug() << "Expected: " << occurrenceDates;
+            QCOMPARE(actualDates, occurrenceDates);
+        }
+    } else {
+        // Allow backend specific limitations
+        QCOMPARE(cm->error(), QOrganizerItemManager::NotSupportedError);
+        qWarning() << "The event not supported by the backend";
     }
 }
 
