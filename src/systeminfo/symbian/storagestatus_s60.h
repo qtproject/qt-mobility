@@ -38,46 +38,46 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEACCOUNT_H
-#define QMESSAGEACCOUNT_H
-#include <QString>
+
+#ifndef STORAGESTATUS_S60_H
+#define STORAGESTATUS_S60_H
+
 #include <QList>
-#include <qmessageglobal.h>
-#include <qmessage.h>
+#include <QString>
 
-QTM_BEGIN_NAMESPACE
+#include <e32base.h>
+#include <f32file.h>
 
-class QMessageAccountPrivate;
-
-class Q_MESSAGING_EXPORT QMessageAccount
+class MStorageStatusObserver
 {
-    friend class QMessageAccountPrivate;
-
 public:
-    QMessageAccount();
-    QMessageAccount(const QMessageAccountId &id);
-    QMessageAccount(const QMessageAccount &other);
-    virtual ~QMessageAccount();
-
-    QMessageAccount& operator=(const QMessageAccount &other);
-
-    QMessageAccountId id() const;
-    QString name() const;
-    QMessage::TypeFlags messageTypes() const;
-
-    static QMessageAccountId defaultAccount(QMessage::Type type);
-
-private:
-    QMessageAccountPrivate *d_ptr;
-#ifdef Q_OS_SYMBIAN
-    friend class CMTMEngine;
-#ifdef FREESTYLEMAILUSED
-    friend class CFSEngine;
-#endif
-
-    friend class CMessagesFindOperation;
-#endif
+    virtual void storageStatusChanged(bool, const QString &) = 0;
 };
 
-QTM_END_NAMESPACE
-#endif
+class CMMCStorageStatus : public CActive
+{
+public:
+    CMMCStorageStatus();
+    ~CMMCStorageStatus();
+
+    void addObserver(MStorageStatusObserver *observer);
+    void removeObserver(MStorageStatusObserver *observer);
+
+protected:  //from CActive
+    void DoCancel();
+    void RunL();
+
+private:
+    void startMonitoring();
+#ifndef SYMBIAN_3_1
+    TDriveList PopulateDriveList();
+    void CompareDriveLists(const TDriveList &aList);
+#endif //SYMBIAN_3_1
+
+private:
+    RFs iFs;
+    QList<MStorageStatusObserver *> m_observers;
+    TDriveList m_previousDriveList;
+};
+
+#endif // STORAGESTATUS_S60_H
