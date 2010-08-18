@@ -66,7 +66,10 @@ public:
 #endif
 #if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     static bool lessThan(const QMessageFolderSortOrder &sortOrder, const QMessageFolder &folder1, const QMessageFolder &folder2);
-#endif    
+#endif
+#if defined(Q_WS_MAEMO_6)
+    static QMessageFolderSortOrderPrivate *implementation(const QMessageFolderSortOrder &sortOrder);
+#endif
 };
 
 QTM_END_NAMESPACE

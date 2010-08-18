@@ -60,4 +60,9 @@
 #include "qorganizertodoprogress.h"
 #include "qorganizertodotimerange.h"
 
+#include "qorganizeritemreminder.h"
+#include "qorganizeritemaudiblereminder.h"
+#include "qorganizeritememailreminder.h"
+#include "qorganizeritemvisualreminder.h"
+
 #endif

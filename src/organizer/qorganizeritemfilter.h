@@ -49,6 +49,8 @@
 
 #include "qtorganizerglobal.h"
 
+class QDataStream;
+
 QTM_BEGIN_NAMESPACE
 
 /* Manual Q_DECLARE_ORGANIZERITEMFILTER_PRIVATE macro */
@@ -59,6 +61,14 @@ QTM_BEGIN_NAMESPACE
     friend class Class##Private;
 
 class QOrganizerItemFilterPrivate;
+
+// MSVC needs the function declared before the friend declaration
+class QOrganizerItemFilter;
+#ifndef QT_NO_DATASTREAM
+Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerItemFilter& filter);
+Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItemFilter& filter);
+#endif
+
 class Q_ORGANIZER_EXPORT QOrganizerItemFilter
 {
 public:
@@ -77,6 +87,7 @@ public:
         IntersectionFilter,
         UnionFilter,
         LocalIdFilter,
+        CollectionFilter,
         DefaultFilter
     };
 
@@ -101,6 +112,10 @@ protected:
 
 protected:
     friend class QOrganizerItemFilterPrivate;
+#ifndef QT_NO_DATASTREAM
+    friend QDataStream& operator<<(QDataStream& out, const QOrganizerItemFilter& filter);
+    friend QDataStream& operator>>(QDataStream& in, QOrganizerItemFilter& filter);
+#endif
     QSharedDataPointer<QOrganizerItemFilterPrivate> d_ptr;
 };
 

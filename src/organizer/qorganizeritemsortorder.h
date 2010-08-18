@@ -48,6 +48,8 @@
 #include <QSharedData>
 #include <QList>
 
+class QDataStream;
+
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemSortOrderPrivate;
@@ -89,6 +91,11 @@ public:
 private:
     QSharedDataPointer<QOrganizerItemSortOrderPrivate> d;
 };
+
+#ifndef QT_NO_DATASTREAM
+Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerItemSortOrder& sortOrder);
+Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItemSortOrder& sortOrder);
+#endif
 
 QTM_END_NAMESPACE
 

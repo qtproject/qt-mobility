@@ -55,8 +55,8 @@ class Q_ORGANIZER_EXPORT QOrganizerItemComment : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldComment;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldComment;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemComment, "Comment")
     Q_DECLARE_LATIN1_CONSTANT(FieldComment, "Comment");

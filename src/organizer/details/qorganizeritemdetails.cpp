@@ -161,6 +161,14 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTimeRange::FieldEndDateTime, "EndDateTim
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTimeRange::FieldStartDateTime, "StartDateTime");
 
+/*!
+   \variable QOrganizerEventTimeRange::FieldTimeSpecified
+
+   The constant key for the specification of whether the time is significant in the
+   start datetime of the QOrganizerEventTimeRange type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTimeRange::FieldTimeSpecified, "TimeSpecified");
+
 
 /*!
     \fn QOrganizerEventTimeRange::startDateTime() const
@@ -417,6 +425,8 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemComment::FieldComment, "Comment");
    Returns a string for a comment associated with an organizer item.
  */
 
+
+
 /* ==================== QOrganizerItemPriority ======================= */
 /*!
    \class QOrganizerItemPriority
@@ -573,7 +583,347 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "Excepti
 
 
 
+/* ==================== QOrganizerItemReminder ======================= */
+/*!
+   \class QOrganizerItemReminder
+   \brief The QOrganizerItemReminder class contains information about when and how the user wants to reminded of the item
+   \inmodule QtOrganizer
+   \ingroup organizer-details
 
+   Note that the Organizer API does not enforce that the user is reminded of the item;
+   rather, it simply allows clients to store and manipulate data which might be used
+   by the platform to implement alarms and reminders.
+ */
+
+/*!
+   \enum QOrganizerItemReminder::ReminderType
+   \value NoReminder This reminder is entirely unobtrusive
+   \value AudibleReminder This reminder has an audible element
+   \value VisualReminder This reminder has a visual element
+   \value TactileReminder This reminder has a tactile element
+*/
+
+/*!
+   \variable QOrganizerItemReminder::DefinitionName
+   The constant string which identifies the definition of details which contain reminder information of an organizer item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::DefinitionName, "Reminder");
+
+/*!
+   \variable QOrganizerItemReminder::FieldReminderType
+
+   The constant key for which the reminder type value is stored in details of
+   the QOrganizerItemReminder type (and its subclasses).
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldReminderType, "ReminderType");
+
+/*!
+   \variable QOrganizerItemReminder::FieldTimeDelta
+
+   The constant key for which time delta (in seconds prior to the item activation time)
+   at which the user should be reminded of the item is stored in details of the QOrganizerItemReminder type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldTimeDelta, "TimeDelta");
+
+/*!
+   \variable QOrganizerItemReminder::FieldDateTime
+
+   The constant key for which the date time at which the user should be reminded of the item
+   is stored in details of the QOrganizerItemReminder type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldDateTime, "DateTime");
+
+/*!
+   \variable QOrganizerItemReminder::FieldRepetitionCount
+
+   The constant key for which the number of repetitions of the reminder
+   is stored in details of the QOrganizerItemReminder type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionCount, "RepetitionCount");
+
+/*!
+   \variable QOrganizerItemReminder::FieldRepetitionDelay
+
+   The constant key for which the delay (in seconds) between repetitions of the reminder
+   is stored in details of the QOrganizerItemReminder type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "RepetitionDelay");
+
+/*!
+   \fn ReminderTypes QOrganizerItemReminder::reminderType() const
+
+   Returns the reminder type of this reminder for an organizer item.
+ */
+
+/*!
+   \fn QOrganizerItemReminder::setTimeDelta(int secondsBefore)
+
+   Sets the number of seconds prior to the activation of the item
+   at which the user wants to be reminded of the item to \a secondsBefore.
+   The exact datetime of activation of the item depends on the type of
+   item: for a QOrganizerTodo or QOrganizerTodoOccurrence it is the
+   due date time; for a QOrganizerEvent or QOrganizerEventOccurrence
+   it is the start date time.
+
+   Calling this function will clear the absolute date time, if set.
+
+   \sa setDateTime()
+ */
+
+/*!
+   \fn int QOrganizerItemReminder::timeDelta() const
+
+   Returns the number of seconds prior to the activation of the item
+   at which the user wants to be reminded of the item.
+   The exact datetime of activation of the item depends on the type of
+   item: for a QOrganizerTodo or QOrganizerTodoOccurrence it is the
+   due date time; for a QOrganizerEvent or QOrganizerEventOccurrence
+   it is the start date time.
+ */
+
+/*!
+   \fn QOrganizerItemReminder::setDateTime(const QDateTime& dateTime)
+
+   Sets the date time at which the user should be reminded of the item
+   to \a dateTime.
+
+   Calling this function will clear the time delta, if set.
+
+   \sa setTimeDelta()
+*/
+
+/*!
+   \fn QDateTime QOrganizerItemReminder::dateTime() const
+
+   Returns the date time at which the user should be reminded of the item.
+*/
+
+/*!
+   \fn QOrganizerItemReminder::setRepetitionCount(int count)
+
+   Sets the number of times the user should be reminded of the item to \a count.
+
+   \sa setRepetitionDelay()
+*/
+
+/*!
+   \fn int QOrganizerItemReminder::repetitionCount() const
+
+   Returns the number of times the user should be reminded of the item.
+
+   \sa repetitionDelay()
+*/
+
+/*!
+   \fn QOrganizerItemReminder::setRepetitionDelay(int delay)
+
+   Sets the delay (in seconds) between each repetition of the reminder to \a delay.
+
+   \sa setRepetitionCount()
+*/
+
+/*!
+   \fn int QOrganizerItemReminder::repetitionDelay() const
+
+   Returns the delay (in seconds) between each repetition of the reminder.
+
+   \sa repetitionCount()
+*/
+
+/*!
+  \macro Q_DECLARE_CUSTOM_ORGANIZER_REMINDER_DETAIL
+  \relates QOrganizerItemReminder
+
+  Macro for simplifying declaring custom (leaf) reminder detail classes.
+
+  The first argument is the name of the class, and the second argument
+  is a Latin-1 string literal naming the detail type, and the third argument
+  is the reminder type of the leaf reminder detail class.
+
+  If you are creating a convenience class for a type of QOrganizerItemReminder,
+  you should use this macro when declaring your class to ensure that
+  it interoperates with other organizer item functionality.
+ */
+
+
+/* ==================== QOrganizerItemAudibleReminder ======================= */
+
+/*!
+   \class QOrganizerItemAudibleReminder
+   \brief The QOrganizerItemAudibleReminder class contains information about an audible reminder of an item.
+   \inmodule QtOrganizer
+   \ingroup organizer-details
+
+   An audible reminder is a reminder which alerts the user about the item, with sound.
+   Note that the Organizer API does not enforce that the sound data is played,
+   or that any other sort of reminder occurs; rather, it simply allows clients
+   to store and manipulate data which might be used by the platform to
+   implement alarms and reminders.
+ */
+
+/*!
+   \variable QOrganizerItemAudibleReminder::DefinitionName
+   The constant string which identifies the definition of details which contain audible reminder information of an organizer item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::DefinitionName, "AudibleReminder");
+
+/*!
+   \variable QOrganizerItemAudibleReminder::DataUrl
+   The constant key for which the value of the sound data url is stored.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::FieldDataUrl, "DataUrl");
+
+/*!
+   \fn QOrganizerItemAudibleReminder::setDataUrl(const QUrl& dataUrl)
+
+   Sets the url of the audible data which should be played to \a dataUrl.
+*/
+
+/*!
+   \fn QUrl QOrganizerItemAudibleReminder::dataUrl() const
+
+   Returns the url of the audible data which should be played.
+*/
+
+/* ==================== QOrganizerItemEmailReminder ======================= */
+
+/*!
+   \class QOrganizerItemEmailReminder
+   \brief The QOrganizerItemEmailReminder class contains information about an email reminder of an item.
+   \inmodule QtOrganizer
+   \ingroup organizer-details
+
+   An email reminder is a reminder which alerts the user (or other users) about the item,
+   by sending an email.
+   Note that the Organizer API does not enforce that the email is sent,
+   or that any other sort of reminder occurs; rather, it simply allows clients
+   to store and manipulate data which might be used by the platform to
+   implement alarms and reminders.
+ */
+
+/*!
+   \variable QOrganizerItemEmailReminder::DefinitionName
+   The constant string which identifies the definition of details which contain email reminder information of an organizer item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::DefinitionName, "EmailReminder");
+
+/*!
+   \variable QOrganizerItemEmailReminder::FieldSubject
+   The constant key for which the subject field of the email which the user wishes to be sent as a reminder, is stored.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::FieldSubject, "Subject");
+
+/*!
+   \variable QOrganizerItemEmailReminder::FieldBody
+   The constant key for which the body field of the email which the user wishes to be sent as a reminder, is stored.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::FieldBody, "Body");
+
+/*!
+   \variable QOrganizerItemEmailReminder::FieldAttachments
+   The constant key for which the attachments of the email which the user wishes to be sent as a reminder, is stored.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::FieldAttachments, "Attachments");
+
+/*!
+   \variable QOrganizerItemEmailReminder::FieldRecipients
+   The constant key for which the recipients field of the email which the user wishes to be sent as a reminder, is stored.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::FieldRecipients, "Recipients");
+
+/*!
+   \fn QOrganizerItemEmailReminder::setContents(const QString& subject, const QString& body, const QVariantList& attachments)
+
+   Sets the contents of the email reminder to be the given \a subject, \a body and \a attachments.
+*/
+
+/*!
+   \fn QString QOrganizerItemEmailReminder::subject() const
+
+   Returns the subject of the email.
+*/
+
+/*!
+   \fn QString QOrganizerItemEmailReminder::body() const
+
+   Returns the body of the email.
+*/
+
+/*!
+   \fn QVariantList QOrganizerItemEmailReminder::attachments() const
+
+   Retruns the attachments of the email.
+*/
+
+/*!
+   \fn QOrganizerItemEmailReminder::setRecipients(const QStringList& recipients)
+
+   Sets the list of recipients that the user wishes to be sent an email as part of the reminder
+   to \a recipients.
+*/
+
+/*!
+   \fn QStringList QOrganizerItemEmailReminder::recipients() const
+
+   Returns the list of recipients that the user wishes to be sent an email as part of the reminder.
+*/
+
+/* ==================== QOrganizerItemVisualReminder ======================= */
+
+/*!
+   \class QOrganizerItemVisualReminder
+   \brief The QOrganizerItemVisualReminder class contains information about a visual reminder of an item.
+   \inmodule QtOrganizer
+   \ingroup organizer-details
+
+   A visual reminder is a reminder which alerts the user about the item, with a message, image or video.
+   Note that the Organizer API does not enforce that the visual data is displayed,
+   or that any other sort of reminder occurs; rather, it simply allows clients
+   to store and manipulate data which might be used by the platform to
+   implement alarms and reminders.
+ */
+
+/*!
+   \variable QOrganizerItemVisualReminder::DefinitionName
+   The constant string which identifies the definition of details which contain visual reminder information of an organizer item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisualReminder::DefinitionName, "VisualReminder");
+
+/*!
+   \variable QOrganizerItemVisualReminder::FieldMessage
+   The constant key for which the value of the message to be displayed is stored in details of the QOrganizerItemVisualReminder type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisualReminder::FieldMessage, "Message");
+
+/*!
+   \variable QOrganizerItemVisualReminder::FieldDataUrl
+   The constant key for which the value of the visual data url is stored.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisualReminder::FieldDataUrl, "DataUrl");
+
+/*!
+   \fn QOrganizerItemVisualReminder::setMessage(const QString& message)
+
+   Sets the message which the user wishes to be displayed as part of the reminder to \a message.
+*/
+
+/*!
+   \fn QString QOrganizerItemVisualReminder::message() const
+
+   Returns the message which the user wishes to be displayed as part of the reminder.
+*/
+
+/*!
+   \fn QOrganizerItemVisualReminder::setDataUrl(const QUrl& dataUrl)
+
+   Sets the url of the visual data which the user wishes to be displayed as part of the reminder to \a dataUrl.
+*/
+
+/*!
+   \fn QUrl QOrganizerItemVisualReminder::dataUrl() const
+
+   Returns the url of the visual data which the user wishes to be displayed as part of the reminder.
+*/
 
 
 /* ==================== QOrganizerItemTimestamp ======================= */
@@ -736,6 +1086,14 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldStartDateTime, "StartDate
    the todo should be completed.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldDueDateTime, "DueDateTime");
+
+/*!
+   \variable QOrganizerTodoTimeRange::FieldTimeSpecified
+
+   The constant key for the specification of whether the time is significant in the
+   start datetime of the QOrganizerTodoTimeRange type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldTimeSpecified, "TimeSpecified");
 
 /*!
     \fn QOrganizerTodoTimeRange::startDateTime() const

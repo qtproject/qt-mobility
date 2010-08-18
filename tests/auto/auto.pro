@@ -90,7 +90,6 @@ contains(mobility_modules,systeminfo) {
 contains(mobility_modules,contacts) {
     #Contacts
     SUBDIRS +=  qcontact \
-            qcontactactions \
             qcontactasync \
             qcontactdetail \
             qcontactdetaildefinition \
@@ -98,11 +97,16 @@ contains(mobility_modules,contacts) {
             qcontactfilter \
             qcontactmanager \
             qcontactmanagerplugins \
-            qcontactmanagerfiltering \
             qcontactrelationship \
             qlatin1constant
     # This needs glibc:
     linux*: SUBDIRS += qcontactmemusage
+
+    contains(mobility_modules,serviceframework){
+            SUBDIRS += qcontactmanagerfiltering \
+            qcontactactions
+    } else: warning(Some contacts unit tests depend on service framework too)
+
 }
 
 contains(mobility_modules,organizer) {

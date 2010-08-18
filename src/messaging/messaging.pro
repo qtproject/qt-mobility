@@ -42,8 +42,8 @@ PRIVATE_HEADERS += addresshelper_p.h \
     qmessagefilter_p.h \
     qmessagesortorder_p.h \
     qmessagestore.h \
-    qmessagestore_p.h \
-    messagingutil_p.h
+    messagingutil_p.h \
+    qmessagestore_p.h
 SOURCES += qmessageid.cpp \
     qmessagecontentcontainerid.cpp \
     qmessagefolderid.cpp \
@@ -65,7 +65,7 @@ SOURCES += qmessageid.cpp \
     qmessageservice.cpp \
     messagingutil.cpp
 symbian|win32|maemo6|maemo5|mac:!simulator {
-    mac|maemo6: SOURCES += qmessageid_stub.cpp \
+    mac: SOURCES += qmessageid_stub.cpp \
         qmessagecontentcontainerid_stub.cpp \
         qmessagefolderid_stub.cpp \
         qmessageaccountid_stub.cpp \
@@ -90,7 +90,7 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             qmessageservice_maemo_p.h \
             modestengine_maemo_p.h \
             telepathyengine_maemo_p.h \
-            maemohelpers_p.h\
+            maemohelpers_p.h \
             eventloggerengine_maemo_p.h
         SOURCES += qmessageid_maemo.cpp \
             qmessagecontentcontainerid_maemo.cpp \
@@ -110,7 +110,7 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             qmessageservice_maemo.cpp \
             modestengine_maemo.cpp \
             telepathyengine_maemo.cpp \
-            maemohelpers.cpp\
+            maemohelpers.cpp \
             eventloggerengine_maemo.cpp
         documentation.path = $$QT_MOBILITY_PREFIX/doc
         documentation.files = doc/html
@@ -134,7 +134,89 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
         pkgconfig.files = QtMessaging.pc
         INSTALLS += pkgconfig \
             documentation
-        LIBS += -lgconf-2 -lrtcom-eventlogger -lmodest-dbus-client-1.0 -losso -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0 -ltpsession -ltelepathy-qt4 -lhildonmime
+        LIBS += -lgconf-2 \
+            -lrtcom-eventlogger \
+            -lmodest-dbus-client-1.0 \
+            -losso \
+            -ldbus-glib-1 \
+            -ldbus-1 \
+            -lgobject-2.0 \
+            -lglib-2.0 \
+            -ltpsession \
+            -ltelepathy-qt4 \
+            -lhildonmime
+    }
+    maemo6 { 
+        QT += dbus
+        QT += sql
+        CONFIG += link_pkgconfig
+        PUBLIC_HEADERS -= qmessagecontentcontainer_p.h
+        PRIVATE_HEADERS -= qmessagecontentcontainer_p.h
+        HEADERS += qmessagecontentcontainer_maemo6_p.h
+        PRIVATE_HEADERS += qmfhelpers_maemo6_p.h \
+            telepathyhelpers_maemo6_p.h \
+            telepathyengine_maemo6_p.h \
+            tpsessionaccount_p.h \
+            tpsessionchannel_p.h \
+            qmfservice_maemo6_p.h \
+            qmfstore_maemo6_p.h \
+            qmessageservice_maemo6_p.h \
+            maemo6helpers_p.h \
+            smsmodel_maemo6_p.h \
+            storageengine_maemo6_p.h
+        SOURCES += qmessageid_maemo6.cpp \
+            qmessagecontentcontainerid_maemo6.cpp \
+            qmessagefolderid_maemo6.cpp \
+            qmessageaccountid_maemo6.cpp \
+            qmessagecontentcontainer_maemo6.cpp \
+            qmessage_maemo6.cpp \
+            qmessagefolder_maemo6.cpp \
+            qmessageaccount_maemo6.cpp \
+            qmessageaccountfilter_maemo6.cpp \
+            qmessageaccountsortorder_maemo6.cpp \
+            qmessagefolderfilter_maemo6.cpp \
+            qmessagefoldersortorder_maemo6.cpp \
+            qmessagefilter_maemo6.cpp \
+            qmessagesortorder_maemo6.cpp \
+            qmessagestore_maemo6.cpp \
+            qmessageservice_maemo6.cpp \
+            qmfhelpers_maemo6.cpp \
+            telepathyengine_maemo6.cpp \
+            maemo6helpers.cpp \
+            storageengine_maemo6.cpp \
+            smsmodel_maemo6.cpp \
+            qmfstore_maemo6.cpp \
+            qmfservice_maemo6.cpp \
+            tpsessionaccount.cpp \
+            tpsessionchannel.cpp
+        documentation.path = $$QT_MOBILITY_PREFIX/doc
+        documentation.files = doc/html
+        PKGCONFIG += glib-2.0 \
+            dbus-glib-1 \
+            gconf-2.0 \
+            libosso \
+            TelepathyQt4 \
+            qtopiamail \
+            commhistory \
+            meegotouch \
+            qttracker \
+            messagingif0
+        CONFIG += create_pc \
+            create_prl
+        QMAKE_PKGCONFIG_REQUIRES = glib-2.0 \
+            dbus-glib-1 \
+            gconf-2.0 \
+            osso \            
+            TelepathyQt4 \
+            qtopiamail \
+            commhistory \
+            meegotouch \
+            qttracker \
+            messagingif0
+        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+        pkgconfig.files = QtMessaging.pc
+        INSTALLS += pkgconfig \
+            documentation
     }
     symbian { 
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
@@ -155,12 +237,11 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             qmessagecontentcontainer_symbian_p.h \
             qmessage_symbian_p.h \
             maemohelpers_p.h
+            contains(CONFIG, FREESTYLEMAIL) {
+               HEADERS += qfsengine_symbian_p.h
+            }
 
-        contains(CONFIG, FREESTYLEMAIL) {
-	    HEADERS += qfsengine_symbian_p.h
-	}
-
-    SOURCES += qmtmengine_symbian.cpp \
+        SOURCES += qmtmengine_symbian.cpp \
             qmessageid_symbian.cpp \
             qmessagecontentcontainerid_symbian.cpp \
             qmessagefolderid_symbian.cpp \
@@ -178,11 +259,12 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             qmessagestore_symbian.cpp \
             qmessageservice_symbian.cpp \
             maemohelpers.cpp
-
+            
         contains(CONFIG, FREESTYLEMAIL) {
-	    SOURCES += qfsengine_symbian.cpp
-	}
-    LIBS += -lsendas2 \
+        SOURCES += qfsengine_symbian.cpp
+        }
+
+        LIBS += -lsendas2 \
             -lmsgs \
             -letext \
             -lefsrv \

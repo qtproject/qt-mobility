@@ -49,6 +49,8 @@
 #include "qtorganizerglobal.h"
 #include "qorganizeritemdetaildefinition.h"
 
+class QDataStream;
+
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemFetchHintPrivate;
@@ -76,6 +78,11 @@ public:
 private:
     QSharedDataPointer<QOrganizerItemFetchHintPrivate> d;
 };
+
+#ifndef QT_NO_DATASTREAM
+Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerItemFetchHint& hint);
+Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItemFetchHint& hint);
+#endif
 
 QTM_END_NAMESPACE
 
