@@ -81,13 +81,15 @@ public:
 
     ServiceMetaDataResults(const ServiceMetaDataResults& other)
     {
-        description = other.description;
+        type = other.type;;
         location = other.location;
         name = other.name;
+        description = other.description;
         interfaces = other.interfaces;
         latestInterfaces = other.latestInterfaces;
     }
-    
+   
+    int type;
     QString location;
     QString name;
     QString description;
@@ -124,8 +126,7 @@ public:
         SFW_ERROR_DUPLICATED_TAG,                           /* The tag appears twice */
         SFW_ERROR_INVALID_CUSTOM_TAG,                       /* The customproperty tag is not corectly formatted or otherwise incorrect*/
         SFW_ERROR_DUPLICATED_CUSTOM_KEY,                    /* The customproperty appears twice*/
-        SFW_ERROR_MULTIPLE_SERVICE_TYPES,                   /* Both filepath and ipcpath found in the XML file */
-        SFW_ERROR_INVALID_IPC_TYPE                          /* IPC service type is not 'unique' or 'shared' */
+        SFW_ERROR_MULTIPLE_SERVICE_TYPES,                   /* Both filepath and ipcaddress found in the XML file */
     };
 
 public:
@@ -150,9 +151,7 @@ private:
     QList<QServiceInterfaceDescriptor> latestInterfaces() const;
     QServiceInterfaceDescriptor latestInterfaceVersion(const QString &interfaceName);
     bool processServiceElement(QXmlStreamReader &aXMLReader);
-    
     bool processInterfaceElement(QXmlStreamReader &aXMLReader);
-
     void clearMetadata();
 
 private:
@@ -166,7 +165,7 @@ private:
     QString serviceName;
     QString serviceLocation;
     QString serviceDescription;
-    QServiceInterfaceDescriptor::Type serviceType;
+    QService::Type serviceType;
     QList<QServiceInterfaceDescriptor> serviceInterfaces;
     QSet<QString> duplicates;
     int latestError;

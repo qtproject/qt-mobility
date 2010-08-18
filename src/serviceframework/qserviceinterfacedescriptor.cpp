@@ -109,17 +109,6 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QServiceInterfaceDescriptor::Type
-
-    This enum describes the type of service specified in the attached 
-    QServiceInterfaceDescriptor::ServiceType attribute.
-
-    \value      Plugin       This type denotes that the service is plug-in based.
-    \value      SharedIPC    This type denotes that the service is published as a shared IPC instance.
-    \value      UniqueIPC    This type denotes that the service is published as unique IPC instances.
-*/
-
-/*!
     Creates a new QServiceInterfaceDescriptor.
 */
 QServiceInterfaceDescriptor::QServiceInterfaceDescriptor()

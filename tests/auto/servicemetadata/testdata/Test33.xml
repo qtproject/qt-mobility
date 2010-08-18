@@ -2,7 +2,7 @@
 <service>
     <name>TestService</name>
     <filepath>C:/TestData/testservice.dll</filepath>
-    <ipcpath>test_service</ipcpath>
+    <ipcaddress>test_service</ipcaddress>
     <description>Test service description</description>
     <interface>
         <name>com.nokia.qt.tests.IDownloader</name>

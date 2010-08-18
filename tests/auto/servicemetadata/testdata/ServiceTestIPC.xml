@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <service>
     <name>TestIPCService</name>
-    <ipcpath>test_service</ipcpath>
+    <ipcaddress>test_service</ipcaddress>
     <description>Test IPC service description</description>
     <interface>
         <name>com.nokia.qt.tests.IDownloader</name>
         <version>1.4</version>
         <description>Interface that provides download support</description>
     </interface>
-    <interface type="unique">
+    <interface>
         <name>com.nokia.qt.tests.ILocation</name>
         <version>1.4</version>
         <capabilities></capabilities>
         <description>Interface that provides location support</description>
     </interface>
-    <interface type="shared">
+    <interface>
         <name>com.nokia.qt.tests.ISysInfo</name>
         <capabilities>ReadUserData</capabilities>
         <version>2.3</version>

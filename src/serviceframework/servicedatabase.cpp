@@ -73,6 +73,7 @@
 #define INTERFACE_DESCRIPTION_KEY "DESCRIPTION"
 #define SERVICE_INITIALIZED_KEY SERVICE_INITIALIZED_ATTR
 #define INTERFACE_CAPABILITY_KEY "CAPABILITIES"
+#define INTERFACE_SERVICETYPE_KEY "SERVICETYPE"
 
 QTM_BEGIN_NAMESPACE
 
@@ -219,6 +220,14 @@ bool ServiceDatabase::open()
 //bool ServiceDatabase::registerService(ServiceMetaData &service)
 bool ServiceDatabase::registerService(const ServiceMetaDataResults &service, const QString &securityToken)
 {
+    // Derive the location name with the service type prefix to be stored
+    QString locationPrefix;
+    int type = service.interfaces[0].d->attributes[QServiceInterfaceDescriptor::ServiceType].toInt();
+    if (type == QService::Plugin)
+        locationPrefix = "p_" + service.location;
+    else
+        locationPrefix = "i_" + service.location;
+
 #ifndef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
     Q_UNUSED(securityToken);
 #else
@@ -256,7 +265,7 @@ bool ServiceDatabase::registerService(const ServiceMetaDataResults &service, con
     //See if the service's location has already been previously registered
     QString statement("SELECT Name from Service WHERE Location=? COLLATE NOCASE");
     QList<QVariant> bindValues;
-    bindValues.append(service.location);
+    bindValues.append(locationPrefix);
     if (!executeQuery(&query, statement, bindValues)) {
         rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
@@ -332,7 +341,7 @@ bool ServiceDatabase::registerService(const ServiceMetaDataResults &service, con
     bindValues.clear();
     bindValues.append(serviceID);
     bindValues.append(service.name);
-    bindValues.append(service.location);
+    bindValues.append(locationPrefix);
 
     if (!executeQuery(&query, statement, bindValues)) {
         rollbackTransaction(&query);
@@ -655,6 +664,7 @@ bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfa
     statement = "INSERT INTO InterfaceProperty(InterfaceID, Key, Value) VALUES(?,?,?)";
     QHash<QServiceInterfaceDescriptor::Attribute, QVariant>::const_iterator iter = interface.d->attributes.constBegin();
     bool isValidInterfaceProperty;
+    int serviceType;
     QString capabilities;
     QString interfaceDescription;
     while (iter != interface.d->attributes.constEnd()) {
@@ -718,6 +728,7 @@ bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfa
         ++customIter;
     }
     m_lastError.setError(DBError::NoError);
+
     return true;
 }
 
@@ -897,8 +908,14 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
         interface.d->major = query.value(EBindIndex2).toInt();
         interface.d->minor = query.value(EBindIndex3).toInt();
 
+        QString location = query.value(EBindIndex4).toString();
+        if (location.startsWith("i_"))
+            interface.d->attributes[QServiceInterfaceDescriptor::ServiceType] = QService::InterProcess;
+        else 
+            interface.d->attributes[QServiceInterfaceDescriptor::ServiceType] = QService::Plugin;
+
         interface.d->attributes[QServiceInterfaceDescriptor::Location]
-            = query.value(EBindIndex4).toString();
+            = location.remove(0,2);
 
         serviceID = query.value(EBindIndex5).toString();
         if (!populateServiceProperties(&interface, serviceID)) {
@@ -1018,8 +1035,15 @@ QServiceInterfaceDescriptor ServiceDatabase::getInterface(const QString &interfa
     interface.d->serviceName = query.value(EBindIndex1).toString();
     interface.d->major = query.value(EBindIndex2).toInt();
     interface.d->minor = query.value(EBindIndex3).toInt();
+    
+    QString location = query.value(EBindIndex4).toString();
+    if (location.startsWith("i_"))
+        interface.d->attributes[QServiceInterfaceDescriptor::ServiceType] = QService::InterProcess;
+    else 
+        interface.d->attributes[QServiceInterfaceDescriptor::ServiceType] = QService::Plugin;
+
     interface.d->attributes[QServiceInterfaceDescriptor::Location]
-        = query.value(EBindIndex4).toString();
+        = location.remove(0,2);
 
     QString serviceID = query.value(EBindIndex5).toString();
     if (!populateServiceProperties(&interface, serviceID)) {
@@ -1208,8 +1232,14 @@ QServiceInterfaceDescriptor ServiceDatabase::interfaceDefault(const QString &int
     interface.d->major = query.value(EBindIndex2).toInt();
     interface.d->minor = query.value(EBindIndex3).toInt();
 
+    QString location = query.value(EBindIndex4).toString();
+    if (location.startsWith("i_"))
+        interface.d->attributes[QServiceInterfaceDescriptor::ServiceType] = QService::InterProcess;
+    else 
+        interface.d->attributes[QServiceInterfaceDescriptor::ServiceType] = QService::Plugin;
+
     interface.d->attributes[QServiceInterfaceDescriptor::Location]
-        = query.value(EBindIndex4).toString();
+        = location.remove(0,2);
 
     QString serviceID = query.value(EBindIndex5).toString();
     if (!populateServiceProperties(&interface, serviceID)) {
@@ -2209,7 +2239,7 @@ bool ServiceDatabase::populateInterfaceProperties(QServiceInterfaceDescriptor *i
         } else if (attribute == INTERFACE_DESCRIPTION_KEY) {
             interface->d->attributes[QServiceInterfaceDescriptor::InterfaceDescription]
                = query.value(EBindIndex1).toString();
-        } else if (attribute.startsWith("c_")) {
+        } else if (attribute.startsWith("__")) {
             interface->d->customAttributes[attribute.mid(2)]
                = query.value(EBindIndex1).toString();
         }

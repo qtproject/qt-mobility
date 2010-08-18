@@ -121,7 +121,7 @@ void ServiceMetadataTest::parseValidServiceXML()
     QCOMPARE(aInterface.minorVersion(), 4);
     QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList().count() == 0);
     QCOMPARE(aInterface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides download support"));
-    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::ServiceType) ==  QServiceInterfaceDescriptor::Plugin);
+    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::ServiceType) ==  QService::Plugin);
 
     aInterface = allInterfaces.at(1);
     QCOMPARE(aInterface.interfaceName(),QString("com.nokia.qt.tests.ILocation"));
@@ -129,7 +129,7 @@ void ServiceMetadataTest::parseValidServiceXML()
     QCOMPARE(aInterface.minorVersion(), 4);
     QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList().count() == 0);
     QCOMPARE(aInterface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides location support"));
-    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::ServiceType) ==  QServiceInterfaceDescriptor::Plugin);
+    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::ServiceType) ==  QService::Plugin);
     
     aInterface = allInterfaces.at(2);
     QCOMPARE(aInterface.interfaceName(),QString("com.nokia.qt.tests.ISysInfo"));
@@ -138,7 +138,7 @@ void ServiceMetadataTest::parseValidServiceXML()
     QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList().count() == 1);
     QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList().contains("ReadUserData"));
     QCOMPARE(aInterface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides system information support"));
-    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::ServiceType) ==  QServiceInterfaceDescriptor::Plugin);
+    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::ServiceType) ==  QService::Plugin);
 
     aInterface = allInterfaces.at(3);
     QCOMPARE(aInterface.interfaceName(),QString("com.nokia.qt.tests.ISendMessage"));
@@ -149,7 +149,7 @@ void ServiceMetadataTest::parseValidServiceXML()
     QVERIFY(capabilities.contains("ReadUserData"));
     QVERIFY(capabilities.contains("WriteUserData"));
     QCOMPARE(aInterface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides message sending support"));
-    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::ServiceType) ==  QServiceInterfaceDescriptor::Plugin);
+    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::ServiceType) ==  QService::Plugin);
 
     aInterface = allInterfaces.at(4);
     QCOMPARE(aInterface.interfaceName(), QString("com.nokia.qt.tests.IReceiveMessage"));
@@ -165,7 +165,7 @@ void ServiceMetadataTest::parseValidServiceXML()
     QCOMPARE(aInterface.customAttribute("key2"), QString("value2"));
     QCOMPARE(aInterface.customAttribute("key3"), QString(""));
     QCOMPARE(aInterface.customAttribute("key4"), QString());
-    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::ServiceType) ==  QServiceInterfaceDescriptor::Plugin);
+    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::ServiceType) ==  QService::Plugin);
     
     aInterface = allInterfaces.at(5);
     QCOMPARE(aInterface.interfaceName(),QString("com.nokia.qt.tests.IDownloader"));
@@ -173,7 +173,7 @@ void ServiceMetadataTest::parseValidServiceXML()
     QCOMPARE(aInterface.minorVersion(), 4);
     QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList().count() == 0);
     QCOMPARE(aInterface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides download support"));
-    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::ServiceType) ==  QServiceInterfaceDescriptor::SharedIPC);
+    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::ServiceType) ==  QService::InterProcess);
 
     aInterface = allInterfaces.at(6);
     QCOMPARE(aInterface.interfaceName(),QString("com.nokia.qt.tests.ILocation"));
@@ -181,7 +181,7 @@ void ServiceMetadataTest::parseValidServiceXML()
     QCOMPARE(aInterface.minorVersion(), 4);
     QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList().count() == 0);
     QCOMPARE(aInterface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides location support"));
-    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::ServiceType) ==  QServiceInterfaceDescriptor::UniqueIPC);
+    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::ServiceType) ==  QService::InterProcess);
     
     aInterface = allInterfaces.at(7);
     QCOMPARE(aInterface.interfaceName(),QString("com.nokia.qt.tests.ISysInfo"));
@@ -190,7 +190,7 @@ void ServiceMetadataTest::parseValidServiceXML()
     QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList().count() == 1);
     QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList().contains("ReadUserData"));
     QCOMPARE(aInterface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides system information support"));
-    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::ServiceType) ==  QServiceInterfaceDescriptor::SharedIPC);
+    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::ServiceType) ==  QService::InterProcess);
     
     ServiceMetaData parser1(dir.absoluteFilePath("WrongOrder.xml"));
     QCOMPARE(parser1.extractMetadata(),true);
@@ -259,10 +259,6 @@ void ServiceMetadataTest::parseInvalidServiceXML_data()
     QTest::newRow("Test32.xml") << "Test32.xml" << (int)ServiceMetaData::SFW_ERROR_DUPLICATED_CUSTOM_KEY;
     //multiple definitions of the service type
     QTest::newRow("Test33.xml") << "Test33.xml" << (int)ServiceMetaData::SFW_ERROR_MULTIPLE_SERVICE_TYPES;
-    //empty IPC interface instance type
-    QTest::newRow("Test34.xml") << "Test34.xml" << (int)ServiceMetaData::SFW_ERROR_INVALID_IPC_TYPE;
-    //invalid IPC interface instance type
-    QTest::newRow("Test35.xml") << "Test35.xml" << (int)ServiceMetaData::SFW_ERROR_INVALID_IPC_TYPE;
 }
 
 void ServiceMetadataTest::parseInvalidServiceXML()

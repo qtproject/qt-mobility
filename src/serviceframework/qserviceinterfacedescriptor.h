@@ -76,12 +76,6 @@ public:
         ServiceType
     };
 
-    enum Type {
-        Plugin = 0,
-        SharedIPC,
-        UniqueIPC
-    };
-
     QServiceInterfaceDescriptor();
     QServiceInterfaceDescriptor(const QServiceInterfaceDescriptor& other);
     ~QServiceInterfaceDescriptor();
