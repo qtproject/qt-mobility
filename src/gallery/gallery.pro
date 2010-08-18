@@ -49,6 +49,7 @@ SOURCES = \
 
 
 unix: contains(QT_CONFIG, dbus): include (maemo5/maemo5.pri)
+symbian: include (symbian/symbian.pri)
 else: DEFINES += QT_DOCUMENT_GALLERY_NULL
 
 HEADERS = $$PUBLIC_HEADERS $$PRIVATE_HEADERS
