@@ -52,8 +52,19 @@ Package {
 
     id: albumDelegate
 
-    Item { id: stackItem; Package.name: 'stack'; width: 128; height: 128; }
-    Item { id: gridItem; Package.name: 'grid'; width: 192; height: 192 }
+    Item {
+        id: stackItem
+        Package.name: 'stack'
+        width: 128
+        height: 128
+        transform: Rotation { axis { x: 0; y: 1; z: 0} origin { x: 64; y: 64 } angle: -30 }
+    }
+    Item {
+        id: gridItem;
+        Package.name: 'grid';
+        width: 192;
+        height: 192
+    }
     Item {
 
         Package.name: 'verticalList'
@@ -156,7 +167,8 @@ Package {
             State {
                 name: 'inStack'
                 ParentChange { target: albumInfo; parent: stackItem }
-                PropertyChanges { target: songsLoader; sourceComponent: undefined }
+                PropertyChanges { target: verticalSongsLoader; sourceComponent: undefined }
+                PropertyChanges { target: horizontalSongsLoader; sourceComponent: undefined }
             },
             State {
                 name: 'inGrid'

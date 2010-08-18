@@ -48,7 +48,6 @@ ListView {
 
     id: albumView
 
-    anchors.fill: parent
     clip: true
     cacheBuffer: 960
 

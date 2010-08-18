@@ -100,6 +100,8 @@ Item {
 
                     model: visualModel.parts.stack
 
+                    offset: Math.min(2.5, count / 2)
+                    pathItemCount: 5;
                     path: Path {
                         startX: 64
                         startY: height / 2
