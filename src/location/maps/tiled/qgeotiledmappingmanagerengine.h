@@ -67,7 +67,6 @@ public:
     virtual QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request) = 0;
 
     virtual QGeoMapData* createMapData(QGraphicsGeoMap *geoMap);
-    virtual void removeMapData(QGeoMapData* mapData);
 
     QList<QString> supportedImageFormats() const;
     QSize tileSize() const;

@@ -54,8 +54,6 @@
 #include <QDebug>
 
 #define LARGE_TILE_DIMENSION 256
-#define PI 3.14159265
-#include <math.h>
 
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),

@@ -44,6 +44,8 @@
 
 #include <QApplication>
 #include <QTabWidget>
+#include <QAction>
+#include <QMenuBar>
 #include <QVBoxLayout>
 #include <QTimer>
 #include <QMessageBox>
@@ -78,6 +80,13 @@ TabbedWindow::TabbedWindow(QWidget *parent)
 #endif
 
     QNetworkProxyFactory::setUseSystemConfiguration(true);
+
+    // setup exit menu for devices
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    QAction* exitAction = new QAction(tr("Exit"), this);
+    menuBar()->addAction(exitAction);
+    connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
+#endif
 
     ServicesTab* servicesTab = new ServicesTab();
 
