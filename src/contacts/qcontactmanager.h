@@ -129,6 +129,8 @@ public:
 
     QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QContactFetchHint& fetchHint = QContactFetchHint()) const;
     QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QContactFetchHint& fetchHint = QContactFetchHint()) const;
+    QList<QContact> contacts(const QList<QContactLocalId>& localIds, QMap<int, QContactManager::Error>* errorMap = 0, const QContactFetchHint& fetchHint = QContactFetchHint()) const;
+
     QContact contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint = QContactFetchHint()) const;  // retrieve a contact
 
     bool saveContact(QContact* contact);                 // note: MODIFIES contact (sets the contactId)

@@ -115,7 +115,9 @@ public:
     virtual bool startRequest(QContactAbstractRequest* req);
     virtual bool cancelRequest(QContactAbstractRequest* req);
     virtual bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
-    virtual bool saveContacts(QList<QContact>* contacts,  const QStringList& definitionMask, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
+
+    /* This goes to the default V2 implementation */
+    // contacts(list of ids)
 
     /* All of the following are simply proxied to the wrapped engine */
     virtual QString managerName() const {return m_engine->managerName();}

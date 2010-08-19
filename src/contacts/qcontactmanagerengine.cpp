@@ -2573,16 +2573,68 @@ QContactManagerEngineV2::~QContactManagerEngineV2()
 
 }
 
+// TODO should the default implementation do the right thing, or return false?
 bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStringList &definitionMask, QMap<int, QContactManager::Error> *errorMap, QContactManager::Error *error)
 {
-    // Default implementation returns false
-    Q_UNUSED(contacts);
-    Q_UNUSED(definitionMask);
-    Q_UNUSED(errorMap);
-    *error = QContactManager::NotSupportedError;
-    return false;
+    if (definitionMask.isEmpty()) {
+        // Non partial, just pass it on
+        return saveContacts(contacts, errorMap, error);
+    } else {
+        // Partial contact save.
+        // Basically
+
+        // Need to:
+        // 1) fetch existing contacts
+        // 2) strip out details in definitionMask for existing contacts
+        // 3) copy the details from the passed in list for existing contacts
+        // 4) for any new contacts, copy the masked details to a blank contact
+        // 5) save the modified ones
+        // 6) update the id of any new contacts
+
+
+        // These are the ones we're going to save
+        QList<QContact> contactsToSave;
+        QList<QContactLocalId> existingContactIds;
+
+        // Try to figure out which of our arguments are new contacts
+        for(int i = 0; i < contacts->count(); i++) {
+            // See if there's a contactId that's not from this manager
+            const QContact c = contacts->at(i);
+            if (c.id().managerUri() == managerUri()) {
+                if (c.localId() != 0) {
+                    existingContactIds.append(c.localId());
+                } else {
+                    // Strange. it's just a new contact
+                }
+            } else {
+                // Hmm, error.
+                if (errorMap)
+                    (*errorMap)[i] = QContactManager::BadArgumentError;
+            }
+        }
+
+        // Now fetch those contacts
+        QMap<int, QContactManager::Error> fetchErrors;
+        QContactManager::Error fetchError = QContactManager::NoError;
+        QList<QContact> existingContacts = this->contacts(existingContactIds, &fetchErrors, QContactFetchHint() , &fetchError);
+
+        // For ones that actually fetched,
+
+        // Strip out the
+
+        return false;
+    }
 }
 
+QList<QContact> QContactManagerEngineV2::contacts(const QList<QContactLocalId> &localIds, QMap<int, QContactManager::Error> *errorMap, const QContactFetchHint &fetchHint, QContactManager::Error *error) const
+{
+    // Default implementation
+    Q_UNUSED(localIds);
+    Q_UNUSED(errorMap);
+    Q_UNUSED(fetchHint);
+    *error = QContactManager::NotSupportedError;
+    return QList<QContact>();
+}
 
 /* Wrapper class */
 QContactManagerEngineV2Wrapper::QContactManagerEngineV2Wrapper(QContactManagerEngine *wrappee)
@@ -2627,56 +2679,6 @@ bool QContactManagerEngineV2Wrapper::waitForRequestFinished(QContactAbstractRequ
 {
     // TODO - see if we know about this request
     return m_engine->waitForRequestFinished(req, msecs);
-}
-
-bool QContactManagerEngineV2Wrapper::saveContacts(QList<QContact>* contacts,  const QStringList& definitionMask, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
-{
-    if (definitionMask.isEmpty()) {
-        // Non partial, just pass it on
-        return m_engine->saveContacts(contacts, errorMap, error);
-    } else {
-        // Partial contact save.
-        // Basically
-
-        // Need to:
-        // 1) fetch existing contacts
-        // 2) strip out details in definitionMask for existing contacts
-        // 3) copy the details from the passed in list for existing contacts
-        // 4) for any new contacts, copy the masked details to a blank contact
-        // 5) save the modified ones
-        // 6) update the id of any new contacts
-
-
-        // These are the ones we're going to save
-        QList<QContact> contactsToSave;
-        QContactLocalIdFilter f;
-        QList<QContactLocalId> existingContactIds;
-
-        // Try to figure out which of our arguments are new contacts
-        for(int i = 0; i < contacts->count(); i++) {
-            // See if there's a contactId that's not from this manager
-            const QContact c = contacts->at(i);
-            if (c.id().managerUri() == m_engine->managerUri()) {
-                if (c.localId() != 0) {
-                    existingContactIds.append(c.localId());
-                } else {
-                    // Strange. it's just a new contact
-                }
-            } else {
-                // Hmm, error.
-                if (errorMap)
-                    errorMap[i] = QContactManager::BadArgumentError;
-            }
-        }
-
-        // Now fetch those contacts
-        f.setIds(existingContactIds);
-        existingContacts = m_engine->contacts(f, QList<QContactSortOrder>(), QContactFetchHint(), error);
-
-        // Blargh
-
-        // Strip out the
-    }
 }
 
 #include "moc_qcontactmanagerengine.cpp"
