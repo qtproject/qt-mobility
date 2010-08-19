@@ -219,6 +219,14 @@ QString OrganizerRecurrenceTransform::qrecurrenceRuleToIcalRecurrenceRule(const 
     if (!daysOfYear.isEmpty())
         icalRule << qdaysOfYearToIcalByYearDay(daysOfYear);
 
+    QList<int> weeksOfYear(rule.weeksOfYear());
+    QList<int>::iterator weekOfYear;
+    for (weekOfYear = weeksOfYear.begin(); weekOfYear != weeksOfYear.end(); ++weekOfYear)
+        --(*weekOfYear); // in Maemo5 the week numbers start from zero
+
+    if (!weeksOfYear.isEmpty())
+        icalRule << qweeksOfYearToIcalByWeekNo(weeksOfYear);
+
     QList<int> positions(rule.positions());
     if (!positions.isEmpty())
         icalRule << qpositionsToIcalBySetPos(positions);
@@ -510,7 +518,7 @@ QOrganizerItemRecurrenceRule OrganizerRecurrenceTransform::icalRecurrenceRuleToQ
     std::vector< short > weekNumbers = rule->getWeekNumber();
     std::vector< short >::const_iterator weekNumber;
     for (weekNumber = weekNumbers.begin(); weekNumber != weekNumbers.end(); ++weekNumber)
-        qWeeksOfYear << static_cast<int>(*weekNumber);
+        qWeeksOfYear << static_cast<int>(*weekNumber + 1); // in Maemo5 the week numbers start from zero
     retn.setWeeksOfYear(qWeeksOfYear);
 
     QList<int> qPositions;
