@@ -42,7 +42,7 @@ import Qt 4.7
 
 Rectangle {
     property alias font: input.font
-    property alias text: input.text
+    property string text: ""
 
     id: lineEdit
     height: input.height + 6
@@ -57,6 +57,13 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 3
         color: "white"
+
+        text: lineEdit.text
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: input.focus = true
     }
 
     states: [
@@ -70,4 +77,13 @@ Rectangle {
             PropertyChanges { target: lineEdit; border.color: "grey" }
         }
     ]
+
+//    onFocusChanged: {
+//        if (!focus)
+//            text = input.text
+//    }
+
+    Keys.onReturnPressed: { text = input.text; input.focus = false; event.accepted = true }
+    Keys.onEscapePressed: { input.text = text; input.focus = false; event.accepted = true }
+
 }

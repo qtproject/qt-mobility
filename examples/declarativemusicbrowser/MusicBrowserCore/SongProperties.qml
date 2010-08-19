@@ -66,6 +66,11 @@ Rectangle {
     Flickable {
         anchors.fill: parent
 
+        MouseArea {
+            anchors.fill: parent
+            onClicked: focus = true
+        }
+
         Item {
             anchors.left: parent.left
             anchors.right: parent.right
@@ -100,6 +105,8 @@ Rectangle {
                 font.pointSize: 20
 
                 text: song.metaData.title
+
+                onTextChanged: song.metaData.title = text
             }
 
             Text {
@@ -117,7 +124,7 @@ Rectangle {
 
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: songProperties.close()
+                    onClicked: { focus = true; songProperties.close() }
                 }
             }
 
@@ -162,6 +169,8 @@ Rectangle {
                     font.pointSize: 15
 
                     text: song.metaData.albumTitle
+
+                    onTextChanged: song.metaData.albumTitle = text
                 }
 
                 LineEdit {
@@ -175,6 +184,8 @@ Rectangle {
                     font.pointSize: 12
 
                     text: song.metaData.albumArtist
+
+                    onTextChanged: song.metaData.albumArtist = text
                 }
             }
 
@@ -206,6 +217,8 @@ Rectangle {
                 font.pointSize: 12
 
                 text: song.metaData.artist
+
+                onTextChanged: song.metaData.artist = text
             }
 
             Text {
@@ -236,6 +249,8 @@ Rectangle {
                 font.pointSize: 12
 
                 text: song.metaData.genre
+
+                onTextChanged: song.metaData.genre = text
             }
 
 
