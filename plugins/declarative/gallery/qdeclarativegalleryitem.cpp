@@ -180,6 +180,12 @@ QDeclarativeGalleryItem::~QDeclarativeGalleryItem()
 */
 
 /*!
+    \qmlproperty bool GalleryType::available
+
+    This property holds whether the meta-data of an item is available.
+*/
+
+/*!
     \qmlproperty string GalleryItem::itemType
 
     This property holds the type of a gallery item.

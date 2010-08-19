@@ -65,6 +65,7 @@ class QDeclarativeGalleryItem : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(bool live READ isLive WRITE setLive NOTIFY liveChanged)
     Q_PROPERTY(QVariant item READ itemId WRITE setItemId NOTIFY itemIdChanged)
+    Q_PROPERTY(bool available READ available NOTIFY avaialbleChanged)
     Q_PROPERTY(QString itemType READ itemType NOTIFY availableChanged)
     Q_PROPERTY(QUrl itemUrl READ itemUrl NOTIFY availableChanged)
     Q_PROPERTY(QObject *metaData READ metaData NOTIFY metaDataChanged)
@@ -111,6 +112,8 @@ public:
     QVariant itemId() const { return m_request.itemId(); }
     void setItemId(const QVariant &itemId) {
         m_request.setItemId(itemId); if (m_complete) m_request.execute(); emit itemIdChanged(); }
+
+    bool available() const { return m_request.isValid(); }
 
     QString itemType() const { return m_request.itemType(); }
     QUrl itemUrl() const { return m_request.itemUrl(); }

@@ -157,6 +157,12 @@ QDeclarativeGalleryType::~QDeclarativeGalleryType()
 */
 
 /*!
+    \qmlproperty bool GalleryType::available
+
+    This property holds whether the meta-data of a type is available.
+*/
+
+/*!
     \qmlproperty object GalleryType::metaData
 
     This property holds the meta-data of an item type/
