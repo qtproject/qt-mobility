@@ -49,6 +49,7 @@
 #include <CJournal.h>
 #include <CRecurrence.h>
 #include <CComponentDetails.h>
+#include <CAlarm.h>
 
 QTM_USE_NAMESPACE
 
@@ -338,6 +339,39 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
                     item->addComment(comment);
             }
         }
+
+        // Reminder (alarm)
+        CAlarm *alarm = component->getAlarm();
+        if (alarm) {
+            // TODO: Only visual remainders are supported
+            QOrganizerItemVisualReminder reminder = item->detail<QOrganizerItemVisualReminder>();
+            reminder.setRepetition(alarm->getRepeat(), reminder.repetitionDelay());
+            reminder.setTimeDelta(alarm->getTimeBefore());
+
+            // Alarm time and messages can't be read with CAlarm,
+            // read them straight from the alarm framework:
+            // TODO: This does not work, but it seems that it doesn't work in Maemo5 the calendar
+            // backend either. Maybe it's not possible to implement alarm fetch?
+
+            /*
+            // Get the cookie
+            std::vector<long> cookies = alarm->getCookie();
+            if (cookies.size() > 0) {
+                cookie_t cookie = static_cast<cookie_t>(cookies[0]); // only one alarm supported
+
+                alarm_event_t *eve = 0;
+                if ((eve = alarmd_event_get(cookie)) != 0) {
+                    QString message = QString::fromStdString(alarm_event_get_message(eve));
+                    reminder.setMessage(message);
+                    time_t alarmTime = alarm_event_get_trigger(eve);
+                    reminder.setDateTime(QDateTime::fromTime_t(alarmTime));
+                    alarm_event_delete(eve);
+                }
+            }
+            */
+
+            item->saveDetail(&reminder);
+        }
     }
 }
 
@@ -508,6 +542,20 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
             if (componentDetails)
                 componentDetails->setComments(comments);
         }
+
+        // Visual reminder (alarm)
+        QOrganizerItemVisualReminder reminder = item->detail<QOrganizerItemVisualReminder>();
+        if (reminder.dateTime() != QDateTime()) {
+            // Set alarm for the ccomponent
+            CAlarm alarm;
+
+            alarm.setTimeBefore(reminder.timeDelta());
+            alarm.setRepeat(reminder.repetitionCount());
+            retn->setAlarmBefore(reminder.timeDelta());
+
+            if (calError == CALENDAR_OPERATION_SUCCESSFUL)
+                retn->setAlarm(&alarm); // makes a copy
+        }
     }
 
     return retn;
@@ -563,6 +611,29 @@ CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* ite
     }
 
     return 0; // no recurrence information for this item type
+}
+
+void OrganizerItemTransform::setAlarm(CCalendar *cal, QOrganizerItem *item, CComponent *component)
+{
+    CAlarm *alarm = component->getAlarm();
+    if (alarm) {
+        // Delete all the previous alarms
+        std::vector<long> cookies = alarm->getCookie();
+        std::vector<long>::iterator cookie;
+        int ignoreErrors = 0;
+        for (cookie = cookies.begin(); cookie != cookies.end(); ++cookie)
+            alarm->deleteAlarmEvent(*cookie, ignoreErrors);
+
+        // Set alarm
+        QOrganizerItemVisualReminder reminder = item->detail<QOrganizerItemVisualReminder>();
+        if (reminder.dateTime() != QDateTime()) {
+            alarm->addAlarmEvent(reminder.dateTime().toTime_t(), reminder.message().toStdString(),
+                                 component->getLocation(), component->getDateStart(), component->getDateEnd(),
+                                 component->getId(), cal->getCalendarId(), component->getDescription(),
+                                 component->getType(), component->getAllDay(), QString("").toStdString(),
+                                 ignoreErrors);
+        }
+    }
 }
 
 QOrganizerItemManager::Error OrganizerItemTransform::calErrorToManagerError(int calError) const

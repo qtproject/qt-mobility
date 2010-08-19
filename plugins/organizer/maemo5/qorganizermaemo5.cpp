@@ -178,8 +178,6 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
 
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizerItem &generator, const QDateTime &periodStart, const QDateTime &periodEnd, int maxCount, QOrganizerItemManager::Error *error) const
 {
-    //qDebug() << "itemInstances(" << generator.localId() << ", " << periodStart << ", " << periodEnd << ", " << maxCount << ")";
-
     *error = QOrganizerItemManager::NoError;
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     QList<QOrganizerItem> retn;
@@ -365,7 +363,6 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilt
 {
     *error = QOrganizerItemManager::NoError;
     QList<QOrganizerItem> retn;
-    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
 
     // Get item ids
     QList<QOrganizerItemLocalId> ids = itemIds(filter, sortOrders, error);
@@ -766,8 +763,12 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
 
             cal->modifyEvent(cevent, calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
-            if (*error == QOrganizerItemManager::NoError)
+            if (*error == QOrganizerItemManager::NoError) {
+                // Set alarm (must always be set only after the component is saved)
+                d->m_itemTransformer.setAlarm(cal, item, component);
+
                 cs.insertChangedItem(item->localId());
+            }
         }
         else {
             // CEvent ID is empty, the event is new
@@ -791,6 +792,9 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
                 id.setLocalId(newId);
                 id.setManagerUri(managerUri());
                 item->setId(id);
+
+                // Set alarm (must always be set only after the component is saved)
+                d->m_itemTransformer.setAlarm(cal, item, component);
 
                 // Update changeset
                 if (calError == CALENDAR_ENTRY_DUPLICATED)
@@ -858,8 +862,12 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
 
             cal->modifyTodo(ctodo, calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
-            if (*error == QOrganizerItemManager::NoError)
+            if (*error == QOrganizerItemManager::NoError) {
+                // Set alarm (must always be set only after the component is saved)
+                d->m_itemTransformer.setAlarm(cal, item, component);
+
                 cs.insertChangedItem(item->localId());
+            }
         }
         else {
             // CTodo ID is empty, the todo is new
@@ -883,6 +891,9 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
                 id.setLocalId(newId);
                 id.setManagerUri(managerUri());
                 item->setId(id);
+
+                // Set alarm (must always be set only after the component is saved)
+                d->m_itemTransformer.setAlarm(cal, item, component);
 
                 // Update changeset
                 if (calError == CALENDAR_ENTRY_DUPLICATED)
@@ -909,8 +920,12 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
 
             cal->modifyJournal(cjournal, calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
-            if (*error == QOrganizerItemManager::NoError)
+            if (*error == QOrganizerItemManager::NoError) {
+                // Set alarm (must always be set only after the component is saved)
+                d->m_itemTransformer.setAlarm(cal, item, component);
+
                 cs.insertChangedItem(item->localId());
+            }
         }
         else {
             // CJournal ID is empty, the journal is new
@@ -934,6 +949,9 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
                 id.setLocalId(newId);
                 id.setManagerUri(managerUri());
                 item->setId(id);
+
+                // Set alarm (must always be set only after the component is saved)
+                d->m_itemTransformer.setAlarm(cal, item, component);
 
                 // Update changeset
                 if (calError == CALENDAR_ENTRY_DUPLICATED)

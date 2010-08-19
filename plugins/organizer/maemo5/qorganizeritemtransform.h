@@ -90,6 +90,9 @@ public: // transform functions
     // recurrence information conversions
     CRecurrence* createCRecurrence(const QOrganizerItem *item, QOrganizerItemManager::Error *error);
 
+    // alarm setting
+    void setAlarm(CCalendar *cal, QOrganizerItem *item, CComponent *component);
+
     // error code conversion
     QOrganizerItemManager::Error calErrorToManagerError(int calError) const;
 
