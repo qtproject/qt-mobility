@@ -35,6 +35,7 @@ namespace Tp
         }
 
         //check if is a call
+        bool iscall = false;
         if(propertylist.contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"))){
             QString type = propertylist.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString();
             qDebug() << "- check mediatype " << type;
@@ -50,12 +51,12 @@ namespace Tp
             else
                 direction = 1;
 
-            qDebug() << "- direction " << direction;
+            qDebug() << "- direction 1=incomming, 2=outgoing " << direction;
         }
 
         //if its not a call we don't need to go further
         if(iscall){
-            qDebug() << "- it is media type";
+            qDebug() << "- it is a call";
             //set remote id
             remoteIdentifier = pChannelInterface->TargetID();
             qDebug() << "remoteIdentifier " << remoteIdentifier;
@@ -72,7 +73,8 @@ namespace Tp
         /**************************
         check for Mediastream
         **************************/
-        if(channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA){
+        if(channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA
+           || channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT){
             return true;
         }
         return false;
@@ -81,6 +83,7 @@ namespace Tp
     void Channel::init()
     {
         pChannelInterface = 0;
+        pChannelInterfaceCallStateInterface = 0;
         pChannelInterfaceChatStateInterface = 0;
         pChannelInterfaceDTMFInterface = 0;
         pChannelInterfaceGroupInterface = 0;
@@ -100,7 +103,6 @@ namespace Tp
         direction = 0;
         wasExistingChannel = false;
         remoteIdentifier = "";
-        iscall = false;
     }
 
     Channel::~Channel()
@@ -390,35 +392,43 @@ namespace Tp
     QTelephonyEvents::CallType Channel::getCalltype()
     {
         qDebug() << "Channel::getCalltype()";
-        qDebug() << "- Listing Streams";
-        QDBusPendingReply<Tp::MediaStreamInfoList> lst = pChannelTypeStreamedMediaInterface->ListStreams();
-        lst.waitForFinished();
-        //Type 0=Audio, 1=Video
-        QTelephonyEvents::CallType tmpcalltype = QTelephonyEvents::Other;
-        foreach(const Tp::MediaStreamInfo& info, lst.value()){
-            qDebug() << "-- Stream:";
-            qDebug() << "--- Contact " << info.contact;
-            qDebug() << "--- Direction " << info.direction;
-            qDebug() << "--- State " << info.state;
-            qDebug() << "--- Type " << info.type;
-            if(info.type == 0 && tmpcalltype == QTelephonyEvents::Other)
-                tmpcalltype = QTelephonyEvents::Voice;
-            if(info.type == 1)
-                tmpcalltype = QTelephonyEvents::Video;
+        QTelephonyEvents::CallType ret = QTelephonyEvents::Other;
+        if(pChannelTypeStreamedMediaInterface){
+            qDebug() << "- Listing Streams";
+            QDBusPendingReply<Tp::MediaStreamInfoList> lst = pChannelTypeStreamedMediaInterface->ListStreams();
+            lst.waitForFinished();
+            //Type 0=Audio, 1=Video
+            foreach(const Tp::MediaStreamInfo& info, lst.value()){
+                qDebug() << "-- Stream:";
+                qDebug() << "--- Contact " << info.contact;
+                qDebug() << "--- Direction " << info.direction;
+                qDebug() << "--- State " << info.state;
+                qDebug() << "--- Type " << info.type;
+                if(info.type == 0 && ret == QTelephonyEvents::Other)
+                    ret = QTelephonyEvents::Voice;
+                if(info.type == 1)
+                    ret = QTelephonyEvents::Video;
+
+            }
         }
-        return tmpcalltype;
+        else if(pChannelTypeTextInterface)
+            ret = QTelephonyEvents::Text;
+
+        return ret;
     }
 
     //for ReadyObject
     void Channel::onChannelReady(Tp::PendingOperation* operation)
     {
         qDebug() << "Channel::onChannelReady(...)";
+        QTelephonyEvents::CallStatus newstatus = status;
+
         //check if incomming direction
-        if(direction == 1)
-            status = QTelephonyEvents::Incomming;
-        //check for outgoing
-        else if(direction == 2)
-            status = QTelephonyEvents::Dialing;
+        if(isIncomming())
+            newstatus = QTelephonyEvents::Incomming;
+        //check for outgoing, don't make status changed in sms calls otherwise this status change would be to early
+        else if(isOutgoing() && !isText())
+            newstatus = QTelephonyEvents::Dialing;
 
         if(wasExistingChannel){
             //check for call state if its ringing (call state 0bit = 1)
@@ -434,7 +444,7 @@ namespace Tp
                          while (i.hasNext()) {
                              i.next();
                              if(i.value() & 0x01){
-                                 status = QTelephonyEvents::Alerting;
+                                 newstatus = QTelephonyEvents::Alerting;
                                  break;
                              }
                         }
@@ -452,7 +462,7 @@ namespace Tp
                     {
                         qDebug() << "- msi.direction " << msi.direction;
                         if(msi.direction == 3){
-                            status = QTelephonyEvents::Connected;
+                            newstatus = QTelephonyEvents::Connected;
                             break;
                         }
                     }
@@ -460,15 +470,20 @@ namespace Tp
             }
         }
         qDebug() << "- direction " << direction;
-        qDebug() << "- status " << status;
-        connection->channelStatusChanged(this);
+        qDebug() << "- newstatus " << newstatus;
+
+        //Only emmit this status change if not sms call
+        if(status != newstatus){
+            status = newstatus;
+            connection->channelStatusChanged(this);
+        }
     }
 
     //for ChannelInterface signals
     void Channel::onClose()
     {
         qDebug() << "ChannelInterface - Channel::onClose()";
-        if(direction == 1 || direction == 2)
+        if(isIncomming() || isOutgoing())
         {
             if(status != QTelephonyEvents::Disconnecting){
                 status = QTelephonyEvents::Disconnecting;
@@ -486,7 +501,7 @@ namespace Tp
         //Check if its ringing
         if(state & 0x01){
             //check for outgoing
-            if(direction == 2 && status != QTelephonyEvents::Alerting){
+            if(isOutgoing() && status != QTelephonyEvents::Alerting){
                 status = QTelephonyEvents::Alerting;
                 connection->channelStatusChanged(this);
             }
@@ -624,7 +639,7 @@ namespace Tp
         //streamDirection: 0=None, 1=Send, 2=Receive, 3=Bidirectional
         if(streamDirection == 3){
             //check for outgoing
-            if(direction == 2 || direction == 1){
+            if(isIncomming() || isOutgoing()){
                 if(status != QTelephonyEvents::Connected){
                     status = QTelephonyEvents::Connected;
                     connection->channelStatusChanged(this);
@@ -659,6 +674,12 @@ namespace Tp
     void Channel::onReceived(uint ID, uint timestamp, uint sender, uint type, uint flags, const QString& text)
     {
         qDebug() << "ChannelTypeTextInterface - Channel::onReceived()";
+        if(isIncomming() || isOutgoing()){
+            if(status != QTelephonyEvents::Connected){
+                status = QTelephonyEvents::Connected;
+                connection->channelStatusChanged(this);
+            }
+        }
     }
 
     void Channel::onSendError(uint error, uint timestamp, uint type, const QString& text)
@@ -669,6 +690,21 @@ namespace Tp
     void Channel::onSent(uint timestamp, uint type, const QString& text)
     {
         qDebug() << "ChannelTypeTextInterface - Channel::onSent()";
+
+        //check if incomming direction
+        if(isIncomming()){
+            if(status != QTelephonyEvents::Connected){
+                status = QTelephonyEvents::Connected;
+                connection->channelStatusChanged(this);
+            }
+        }
+        //check for outgoing, don't make status changed in sms calls otherwise this status change would be to early
+        else if(isOutgoing()){
+            if(status != QTelephonyEvents::Alerting){
+                status = QTelephonyEvents::Alerting;
+                connection->channelStatusChanged(this);
+            }
+        }
     }
 
     //for ChannelTypeTubesInterface signals

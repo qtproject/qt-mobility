@@ -36,7 +36,15 @@ namespace Tp
         QString getRemotePartyIdentifier() { return remoteIdentifier; }
         QTelephonyEvents::CallType getCalltype();
         QString getSubType() { return subtype; }
-        bool isCall() { return iscall; }
+
+        bool isCall() {
+            if(pChannelTypeStreamedMediaInterface || pChannelTypeTextInterface)
+                return true;
+            return false;
+        }
+        bool isOutgoing() { return ( direction == 2 ? true : false); }
+        bool isIncomming() { return ( direction == 1 ? true : false); }
+        bool isText() { return (pChannelTypeTextInterface == 0 ? false : true); }
 
     Q_SIGNALS:
         void StatusChanged(Tp::Channel* pchannel);
@@ -161,7 +169,6 @@ namespace Tp
         bool wasExistingChannel;
         QString remoteIdentifier;
         QString subtype;
-        bool iscall;
     };
     typedef SharedPtr<Channel> ChannelPtr;
 }
