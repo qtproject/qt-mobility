@@ -83,7 +83,7 @@ Q_SIGNALS:
     void activeAudioInputChanged(const QString& name);
     void availableAudioInputsChanged();
 
-private slots:
+private Q_SLOTS:
     void statusChanged();
 
 private:

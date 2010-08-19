@@ -260,20 +260,18 @@ void CQwertyPredictiveSearchTable::FillKeyboardSpecificFieldsL(
 * Fetch up to 3 mail addresses
 */
 QStringList CQwertyPredictiveSearchTable::GetTableSpecificFields(
-	const CContactItem& aItem,
-	TBool& aMandatoryFieldsPresent) const
+	const CContactItem& aItem) const
 	{
 	PRINT(_L("CQwertyPredictiveSearchTable::GetTableSpecificFields"));
 
 	QStringList mailAddresses;
 	
-	// Check that the contact item is a card, own card or ICC entry.
+	// Check the contact item is a card, own card or ICC entry.
 	const TUid KType = aItem.Type();
 	if (KType != KUidContactCard &&
 		KType != KUidContactOwnCard &&
 		KType != KUidContactICCEntry)
 		{
-		aMandatoryFieldsPresent = EFalse;
 		return mailAddresses;
 		}
 
@@ -318,7 +316,6 @@ QStringList CQwertyPredictiveSearchTable::GetTableSpecificFields(
 		}
 	PRINT1(_L("CQwertyPredictiveSearchTable::GetTableSpecificFields found %d mail addrs"),
 		   mailAddresses.count());
-	aMandatoryFieldsPresent = (mailAddresses.count() > 0);
 	return mailAddresses;
 	}
 

@@ -54,6 +54,20 @@
 
 QT_BEGIN_NAMESPACE
 
+namespace
+{
+class CameraFocusRegisterMetaTypes
+{
+public:
+    CameraFocusRegisterMetaTypes()
+    {
+        qRegisterMetaType<QCameraFocus::FocusModes>("QCameraFocus::FocusModes");
+        qRegisterMetaType<QCameraFocus::FocusPointMode>("QCameraFocus::FocusPointMode");
+    }
+} _registerCameraFocusMetaTypes;
+}
+
+
 class QCameraFocusZoneData : public QSharedData
 {
 public:
@@ -227,17 +241,16 @@ bool QCameraFocus::isAvailable() const
 }
 
 /*!
-    Returns the focus mode being used.
+  \property QCameraFocus::focusMode
+  \brief The current camera focus mode.
+
+  \sa QCameraFocus::isFocusModeSupported()
 */
 
 QCameraFocus::FocusMode QCameraFocus::focusMode() const
 {
     return d_func()->focusControl ? d_func()->focusControl->focusMode() : QCameraFocus::AutoFocus;
 }
-
-/*!
-    Set the focus mode to \a mode
-*/
 
 void QCameraFocus::setFocusMode(QCameraFocus::FocusMode mode)
 {
@@ -256,7 +269,9 @@ bool QCameraFocus::isFocusModeSupported(QCameraFocus::FocusMode mode) const
 
 /*!
   \property QCameraFocus::focusPointMode
-  The camera focus point selection mode.
+  \brief The current camera focus point selection mode.
+
+  \sa QCameraFocus::isFocusPointModeSupported()
 */
 
 QCameraFocus::FocusPointMode QCameraFocus::focusPointMode() const
@@ -347,9 +362,10 @@ qreal QCameraFocus::maximumDigitalZoom() const
 }
 
 /*!
-    Returns the current optical zoom value.
+  \property QCameraFocus::opticalZoom
+  \brief The current optical zoom value.
 
-    \sa QCameraFocus::digitalZoom()
+  \sa QCameraFocus::digitalZoom
 */
 
 qreal QCameraFocus::opticalZoom() const
@@ -358,9 +374,10 @@ qreal QCameraFocus::opticalZoom() const
 }
 
 /*!
-    Returns the current digital zoom value.
+  \property QCameraFocus::digitalZoom
+  \brief The current digital zoom value.
 
-    \sa QCameraFocus::opticalZoom()
+  \sa QCameraFocus::opticalZoom
 */
 qreal QCameraFocus::digitalZoom() const
 {

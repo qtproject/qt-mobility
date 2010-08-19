@@ -41,10 +41,10 @@
 
 //TESTED_COMPONENT=src/documentgallery
 
-#include <QtTest/QtTest>
-
 #include <qgalleryfilter.h>
 #include <qgalleryproperty.h>
+
+#include <QtTest/QtTest>
 
 Q_DECLARE_METATYPE(Qt::CaseSensitivity);
 Q_DECLARE_METATYPE(QVariant);

@@ -76,6 +76,7 @@ QMessageId& QMessageId::operator=(const QMessageId& other)
 {
     if (!other.d_ptr) {
         delete d_ptr;
+        d_ptr = 0;
         return *this;
     }
 

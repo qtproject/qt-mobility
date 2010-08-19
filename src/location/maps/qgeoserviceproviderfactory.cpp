@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup maps-impl
 
     Implementers must provide a unique combination of providerName() and
@@ -100,9 +100,9 @@ amongst the plugins.
     The default implementation returns 0, which causes a
     QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
 */
-QGeoSearchManagerEngine* QGeoServiceProviderFactory::createSearchManagerEngine(const QMap<QString, QString> &parameters,
-                                               QGeoServiceProvider::Error *error,
-                                               QString *errorString) const
+QGeoSearchManagerEngine* QGeoServiceProviderFactory::createSearchManagerEngine(const QMap<QString, QVariant> &parameters,
+        QGeoServiceProvider::Error *error,
+        QString *errorString) const
 {
     Q_UNUSED(parameters)
     Q_UNUSED(error)
@@ -125,9 +125,9 @@ QGeoSearchManagerEngine* QGeoServiceProviderFactory::createSearchManagerEngine(c
     The default implementation returns 0, which causes a
     QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
 */
-QGeoMappingManagerEngine* QGeoServiceProviderFactory::createMappingManagerEngine(const QMap<QString, QString> &parameters,
-                                               QGeoServiceProvider::Error *error,
-                                               QString *errorString) const
+QGeoMappingManagerEngine* QGeoServiceProviderFactory::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
+        QGeoServiceProvider::Error *error,
+        QString *errorString) const
 {
     Q_UNUSED(parameters)
     Q_UNUSED(error)
@@ -150,9 +150,9 @@ QGeoMappingManagerEngine* QGeoServiceProviderFactory::createMappingManagerEngine
     The default implementation returns 0, which causes a
     QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
 */
-QGeoRoutingManagerEngine* QGeoServiceProviderFactory::createRoutingManagerEngine(const QMap<QString, QString> &parameters,
-                                               QGeoServiceProvider::Error *error,
-                                               QString *errorString) const
+QGeoRoutingManagerEngine* QGeoServiceProviderFactory::createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
+        QGeoServiceProvider::Error *error,
+        QString *errorString) const
 
 {
     Q_UNUSED(parameters)

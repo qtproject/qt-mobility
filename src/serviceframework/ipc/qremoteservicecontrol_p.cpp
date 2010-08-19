@@ -130,10 +130,11 @@ void QRemoteServiceControlPrivate::processIncoming()
         //LocalSocketEndPoint owns socket 
         LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(s);
         ObjectEndPoint* endpoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
+        Q_UNUSED(endpoint);
     }
 }
 
-/*!
+/*
     Creates endpoint on service side.
 */
 bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& ident)
@@ -154,7 +155,7 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& ident)
     return true;
 }
 
-/*!
+/*
     Creates endpoint on client side.
 */
 QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier& typeIdent, const QString& location)

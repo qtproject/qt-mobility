@@ -84,7 +84,8 @@ language                = Cpp
 
 imagedirs = images
 
-headerdirs = ../../src/bearer \
+headerdirs = ../../src/global \
+             ../../src/bearer \
              ../../src/feedback \
              ../../src/serviceframework \
              ../../src/location \
@@ -106,7 +107,8 @@ headerdirs = ../../src/bearer \
              ../../src/connectivity \
              .
 
-sourcedirs = ../../src/bearer \
+sourcedirs = ../../src/global \
+             ../../src/bearer \
              ../../src/feedback \
              ../../src/serviceframework \
              ../../src/location \
@@ -117,6 +119,7 @@ sourcedirs = ../../src/bearer \
              ../../src/multimedia \
              ../../plugins/declarative/multimedia \
 	     ../../plugins/declarative/location \
+	     ../../plugins/declarative/messaging \
              ../../src/messaging \
              ../../src/versit \
              ../../src/telephony \

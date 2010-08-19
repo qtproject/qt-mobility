@@ -38,96 +38,93 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QCoreApplication>
-#include <QTimer>
-#include <QDateTime>
 #include <qremoteserviceclassregister.h>
 #include <qremoteservicecontrol.h>
 #include "qservicemanager.h"
+#include <QCoreApplication>
+#include <QDateTime>
 #include <QDebug>
-
-
-#include "qservicefilter.h" //only used to test custom metatype
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QServiceFilter);
-Q_DECLARE_METATYPE(QVariant)
-
-class EchoTestService : public QObject
+class EchoSharedService : public QObject
 {
     Q_OBJECT
-    Q_SERVICE(EchoTestService, "EchoService", "com.nokia.qt.example.sfwecho", "1.0")
+    Q_SERVICE(EchoSharedService, "EchoService", "com.nokia.qt.example.sfwecho", "1.1")
 
 public:
-    EchoTestService(QObject* parent = 0)
+    EchoSharedService(QObject* parent = 0)
         : QObject(parent)
     {
-        QTimer *timer = new QTimer(this);
-        connect(timer, SIGNAL(timeout()), this, SLOT(timeout()));
-        timer->start(1000);
     }
-
 
 Q_SIGNALS:
-    void echoSignal(QString);
-    void echoClicked(bool);
-    void tick(QDateTime);
-    void down(bool);
+    void broadcastMessage(const QString &msg, const QDateTime &timestamp);
 
 public slots:
-
-    void inputSignal(QString str)
+    void sendMessage(const QString &msg)
     {
-        emit echoSignal(str);
+        emit broadcastMessage(msg, QDateTime::currentDateTime());
     }
-
-    void timeout()
-    {
-        emit tick(QDateTime::currentDateTime());
-    }
-
-    void pressed()
-    {
-        emit down(true);
-    }
-
-    void released()
-    {
-        emit down(false);
-    }
-
 
 private:
 
 };
 
-Q_DECLARE_METATYPE(QMetaType::Type);
+class EchoUniqueService : public QObject
+{
+    Q_OBJECT
+    Q_SERVICE(EchoUniqueService, "EchoService", "com.nokia.qt.example.sfwecho", "1.0")
 
+public:
+    EchoUniqueService(QObject* parent = 0)
+        : QObject(parent)
+    {
+    }
+
+Q_SIGNALS:
+    void broadcastMessage(const QString &msg, const QDateTime &timestamp);
+
+public slots:
+    void sendMessage(const QString &msg)
+    {
+        emit broadcastMessage(msg, QDateTime::currentDateTime());
+    }
+
+private:
+
+};
+
+void unregisterExampleService()
+{
+    QServiceManager m;
+    m.removeService("EchoService");
+}
+
+void registerExampleService()
+{
+    unregisterExampleService();
+    QServiceManager m;
+    const QString path = QCoreApplication::applicationDirPath() + "/xmldata/sfwechoservice.xml";
+    if (!m.addService(path)) {
+        qWarning() << "Cannot register EchoService" << path;
+    } else {
+        qDebug() << "Registered: " << path;
+    }
+}
+
+Q_DECLARE_METATYPE(QMetaType::Type);
 
 int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
 
-    QServiceManager m;
-    const QString path = QCoreApplication::applicationDirPath() + "/xmldata/sfwechoservice.xml";
+    registerExampleService();
 
-    bool r = m.addService(path);
-    if (!r) {
-        qWarning() << "Cannot register EchoService" << path;
-    }
-
-    qDebug() << "Registered: " << path;
-
-    //QRemoteServiceClassRegister::registerType<SharedTestService>(QRemoteServiceClassRegister::SharedInstance);
-    QRemoteServiceClassRegister::registerType<EchoTestService>(QRemoteServiceClassRegister::SharedInstance);
-
-    //this only works
+    QRemoteServiceClassRegister::registerType<EchoSharedService>(QRemoteServiceClassRegister::SharedInstance);
+    QRemoteServiceClassRegister::registerType<EchoUniqueService>(QRemoteServiceClassRegister::UniqueInstance);
     QRemoteServiceControl* control = new QRemoteServiceControl();
     control->publishServices("sfwecho_service");
-#ifdef Q_OS_SYMBIAN
-    RProcess::Rendezvous(KErrNone);
-#endif
 
     int res =  app.exec();
     delete control;    

@@ -55,6 +55,10 @@ class QGeoMapPolylineObjectPrivate;
 
 class Q_LOCATION_EXPORT QGeoMapPolylineObject : public QGeoMapObject
 {
+    Q_OBJECT
+    Q_PROPERTY(QList<QGeoCoordinate> path READ path WRITE setPath NOTIFY pathChanged)
+    Q_PROPERTY(QPen pen READ pen WRITE setPen NOTIFY penChanged)
+
 public:
     QGeoMapPolylineObject(QGeoMapObject *parent = 0);
     ~QGeoMapPolylineObject();
@@ -65,8 +69,9 @@ public:
     void setPen(const QPen &pen);
     QPen pen() const;
 
-protected:
-    QGeoMapPolylineObject(QGeoMapPolylineObjectPrivate* dd);
+signals:
+    void pathChanged(const QList<QGeoCoordinate> &path);
+    void penChanged(const QPen &pen);
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapPolylineObject)

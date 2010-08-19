@@ -170,6 +170,18 @@ QVideoEncoderSettings CameraBinVideoEncoder::videoSettings() const
 void CameraBinVideoEncoder::setVideoSettings(const QVideoEncoderSettings &settings)
 {
     m_videoSettings = settings;
+    m_userSettings = settings;
+    emit settingsChanged();
+}
+
+void CameraBinVideoEncoder::setActualVideoSettings(const QVideoEncoderSettings &settings)
+{
+    m_videoSettings = settings;
+}
+
+void CameraBinVideoEncoder::resetActualSettings()
+{
+    m_videoSettings = m_userSettings;
 }
 
 GstElement *CameraBinVideoEncoder::createEncoder()

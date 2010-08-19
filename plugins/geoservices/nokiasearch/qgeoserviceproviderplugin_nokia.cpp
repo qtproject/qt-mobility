@@ -41,7 +41,6 @@
 
 #include "qgeoserviceproviderplugin_nokia.h"
 
-#include <qgeomappingmanagerengine.h>
 #include "qgeosearchmanagerengine_nokia.h"
 #include "qgeoroutingmanagerengine_nokia.h"
 
@@ -62,7 +61,7 @@ int QGeoServiceProviderFactoryNokia::providerVersion() const
     return 1;
 }
 
-QGeoSearchManagerEngine* QGeoServiceProviderFactoryNokia::createSearchManagerEngine(const QMap<QString, QString> &parameters,
+QGeoSearchManagerEngine* QGeoServiceProviderFactoryNokia::createSearchManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
@@ -70,7 +69,7 @@ QGeoSearchManagerEngine* QGeoServiceProviderFactoryNokia::createSearchManagerEng
     //return 0;
 }
 
-QGeoMappingManagerEngine* QGeoServiceProviderFactoryNokia::createMappingManagerEngine(const QMap<QString, QString> &parameters,
+QGeoMappingManagerEngine* QGeoServiceProviderFactoryNokia::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString)const
 {
@@ -81,7 +80,7 @@ QGeoMappingManagerEngine* QGeoServiceProviderFactoryNokia::createMappingManagerE
     return 0;
 }
 
-QGeoRoutingManagerEngine* QGeoServiceProviderFactoryNokia::createRoutingManagerEngine(const QMap<QString, QString> &parameters,
+QGeoRoutingManagerEngine* QGeoServiceProviderFactoryNokia::createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {

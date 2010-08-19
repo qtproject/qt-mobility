@@ -464,6 +464,7 @@ QStringList QOrganizerItemManagerEngine::supportedItemTypes() const
 {
     QOrganizerItemManager::Error error;
     // XXX TODO: ensure that the TYPE field value for EVERY SINGLE TYPE contains all possible types...
+    // XXX TODO: don't use TypeNote because some collections won't support Notes, only Journals / Events...
     QList<QVariant> allowableVals = detailDefinition(QOrganizerItemType::DefinitionName, QOrganizerItemType::TypeNote, &error).fields().value(QOrganizerItemType::FieldType).allowableValues();
     QStringList retn;
     for (int i = 0; i < allowableVals.size(); i++)
@@ -638,6 +639,79 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // reminder
+    d.setName(QOrganizerItemReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same event
+    retn.insert(d.name(), d);
+
+    // audible reminder
+    d.setName(QOrganizerItemAudibleReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::Url);
+    fields.insert(QOrganizerItemAudibleReminder::FieldDataUrl, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same event
+    retn.insert(d.name(), d);
+
+    // email reminder
+    d.setName(QOrganizerItemEmailReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QOrganizerItemEmailReminder::FieldBody, f);
+    fields.insert(QOrganizerItemEmailReminder::FieldSubject, f);
+    f.setDataType(QVariant::StringList);
+    fields.insert(QOrganizerItemEmailReminder::FieldRecipients, f);
+    f.setDataType(QVariant::List);
+    fields.insert(QOrganizerItemEmailReminder::FieldAttachments, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same event
+    retn.insert(d.name(), d);
+
+    // visual reminder
+    d.setName(QOrganizerItemVisualReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QOrganizerItemVisualReminder::FieldMessage, f);
+    f.setDataType(QVariant::Url);
+    fields.insert(QOrganizerItemVisualReminder::FieldDataUrl, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same event
+    retn.insert(d.name(), d);
+
     // event time range
     d.setName(QOrganizerEventTimeRange::DefinitionName);
     fields.clear();
@@ -645,6 +719,8 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerEventTimeRange::FieldStartDateTime, f);
     fields.insert(QOrganizerEventTimeRange::FieldEndDateTime, f);
+    f.setDataType(QVariant::Bool);
+    fields.insert(QOrganizerEventTimeRange::FieldTimeSpecified, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -759,7 +835,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemInstanceOrigin::FieldParentLocalId, f);
-    f.setDataType(QVariant::DateTime);
+    f.setDataType(QVariant::Date);
     fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalDate, f);
     d.setFields(fields);
     d.setUnique(true);
@@ -772,6 +848,8 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerEventTimeRange::FieldStartDateTime, f);
     fields.insert(QOrganizerEventTimeRange::FieldEndDateTime, f);
+    f.setDataType(QVariant::Bool);
+    fields.insert(QOrganizerEventTimeRange::FieldTimeSpecified, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -782,11 +860,15 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList()
                          << static_cast<int>(QOrganizerItemPriority::UnknownPriority)
-                         << static_cast<int>(QOrganizerItemPriority::VeryLowPriority)
-                         << static_cast<int>(QOrganizerItemPriority::LowPriority)
-                         << static_cast<int>(QOrganizerItemPriority::MediumPriority)
+                         << static_cast<int>(QOrganizerItemPriority::HighestPriority)
+                         << static_cast<int>(QOrganizerItemPriority::ExtremelyHighPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryHighPriority)
                          << static_cast<int>(QOrganizerItemPriority::HighPriority)
-                         << static_cast<int>(QOrganizerItemPriority::VeryHighPriority));
+                         << static_cast<int>(QOrganizerItemPriority::MediumPriority)
+                         << static_cast<int>(QOrganizerItemPriority::LowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryLowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::ExtremelyLowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::LowestPriority));
     fields.insert(QOrganizerItemPriority::FieldPriority, f);
     d.setFields(fields);
     d.setUnique(true);
@@ -802,6 +884,79 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     fields.insert(QOrganizerItemLocation::FieldLocationName, f);
     d.setFields(fields);
     d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // reminder
+    d.setName(QOrganizerItemReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same event occurrence
+    retn.insert(d.name(), d);
+
+    // audible reminder
+    d.setName(QOrganizerItemAudibleReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::Url);
+    fields.insert(QOrganizerItemAudibleReminder::FieldDataUrl, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same event occurrence
+    retn.insert(d.name(), d);
+
+    // email reminder
+    d.setName(QOrganizerItemEmailReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QOrganizerItemEmailReminder::FieldBody, f);
+    fields.insert(QOrganizerItemEmailReminder::FieldSubject, f);
+    f.setDataType(QVariant::StringList);
+    fields.insert(QOrganizerItemEmailReminder::FieldRecipients, f);
+    f.setDataType(QVariant::List);
+    fields.insert(QOrganizerItemEmailReminder::FieldAttachments, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same event occurrence
+    retn.insert(d.name(), d);
+
+    // visual reminder
+    d.setName(QOrganizerItemVisualReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QOrganizerItemVisualReminder::FieldMessage, f);
+    f.setDataType(QVariant::Url);
+    fields.insert(QOrganizerItemVisualReminder::FieldDataUrl, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same event occurrence
     retn.insert(d.name(), d);
 
     // comment
@@ -889,6 +1044,79 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // reminder
+    d.setName(QOrganizerItemReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same todo
+    retn.insert(d.name(), d);
+
+    // audible reminder
+    d.setName(QOrganizerItemAudibleReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::Url);
+    fields.insert(QOrganizerItemAudibleReminder::FieldDataUrl, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same todo
+    retn.insert(d.name(), d);
+
+    // email reminder
+    d.setName(QOrganizerItemEmailReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QOrganizerItemEmailReminder::FieldBody, f);
+    fields.insert(QOrganizerItemEmailReminder::FieldSubject, f);
+    f.setDataType(QVariant::StringList);
+    fields.insert(QOrganizerItemEmailReminder::FieldRecipients, f);
+    f.setDataType(QVariant::List);
+    fields.insert(QOrganizerItemEmailReminder::FieldAttachments, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same todo
+    retn.insert(d.name(), d);
+
+    // visual reminder
+    d.setName(QOrganizerItemVisualReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QOrganizerItemVisualReminder::FieldMessage, f);
+    f.setDataType(QVariant::Url);
+    fields.insert(QOrganizerItemVisualReminder::FieldDataUrl, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same todo
+    retn.insert(d.name(), d);
+
     // todo progress
     d.setName(QOrganizerTodoProgress::DefinitionName);
     fields.clear();
@@ -909,6 +1137,8 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerTodoTimeRange::FieldStartDateTime, f);
     fields.insert(QOrganizerTodoTimeRange::FieldDueDateTime, f);
+    f.setDataType(QVariant::Bool);
+    fields.insert(QOrganizerTodoTimeRange::FieldTimeSpecified, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -919,11 +1149,15 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList()
                          << static_cast<int>(QOrganizerItemPriority::UnknownPriority)
-                         << static_cast<int>(QOrganizerItemPriority::VeryLowPriority)
-                         << static_cast<int>(QOrganizerItemPriority::LowPriority)
-                         << static_cast<int>(QOrganizerItemPriority::MediumPriority)
+                         << static_cast<int>(QOrganizerItemPriority::HighestPriority)
+                         << static_cast<int>(QOrganizerItemPriority::ExtremelyHighPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryHighPriority)
                          << static_cast<int>(QOrganizerItemPriority::HighPriority)
-                         << static_cast<int>(QOrganizerItemPriority::VeryHighPriority));
+                         << static_cast<int>(QOrganizerItemPriority::MediumPriority)
+                         << static_cast<int>(QOrganizerItemPriority::LowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryLowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::ExtremelyLowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::LowestPriority));
     fields.insert(QOrganizerItemPriority::FieldPriority, f);
     d.setFields(fields);
     d.setUnique(true);
@@ -1007,7 +1241,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemInstanceOrigin::FieldParentLocalId, f);
-    f.setDataType(QVariant::DateTime);
+    f.setDataType(QVariant::Date);
     fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalDate, f);
     d.setFields(fields);
     d.setUnique(true);
@@ -1026,6 +1260,79 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // reminder
+    d.setName(QOrganizerItemReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same todo occurrence
+    retn.insert(d.name(), d);
+
+    // audible reminder
+    d.setName(QOrganizerItemAudibleReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::Url);
+    fields.insert(QOrganizerItemAudibleReminder::FieldDataUrl, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same todo occurrence
+    retn.insert(d.name(), d);
+
+    // email reminder
+    d.setName(QOrganizerItemEmailReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QOrganizerItemEmailReminder::FieldBody, f);
+    fields.insert(QOrganizerItemEmailReminder::FieldSubject, f);
+    f.setDataType(QVariant::StringList);
+    fields.insert(QOrganizerItemEmailReminder::FieldRecipients, f);
+    f.setDataType(QVariant::List);
+    fields.insert(QOrganizerItemEmailReminder::FieldAttachments, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same todo occurrence
+    retn.insert(d.name(), d);
+
+    // visual reminder
+    d.setName(QOrganizerItemVisualReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
+    fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QOrganizerItemVisualReminder::FieldMessage, f);
+    f.setDataType(QVariant::Url);
+    fields.insert(QOrganizerItemVisualReminder::FieldDataUrl, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same todo occurrence
+    retn.insert(d.name(), d);
+
     // todo time range
     d.setName(QOrganizerTodoTimeRange::DefinitionName);
     fields.clear();
@@ -1033,6 +1340,8 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerTodoTimeRange::FieldStartDateTime, f);
     fields.insert(QOrganizerTodoTimeRange::FieldDueDateTime, f);
+    f.setDataType(QVariant::Bool);
+    fields.insert(QOrganizerTodoTimeRange::FieldTimeSpecified, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -1043,11 +1352,15 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList()
                          << static_cast<int>(QOrganizerItemPriority::UnknownPriority)
-                         << static_cast<int>(QOrganizerItemPriority::VeryLowPriority)
-                         << static_cast<int>(QOrganizerItemPriority::LowPriority)
-                         << static_cast<int>(QOrganizerItemPriority::MediumPriority)
+                         << static_cast<int>(QOrganizerItemPriority::HighestPriority)
+                         << static_cast<int>(QOrganizerItemPriority::ExtremelyHighPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryHighPriority)
                          << static_cast<int>(QOrganizerItemPriority::HighPriority)
-                         << static_cast<int>(QOrganizerItemPriority::VeryHighPriority));
+                         << static_cast<int>(QOrganizerItemPriority::MediumPriority)
+                         << static_cast<int>(QOrganizerItemPriority::LowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryLowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::ExtremelyLowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::LowestPriority));
     fields.insert(QOrganizerItemPriority::FieldPriority, f);
     d.setFields(fields);
     d.setUnique(true);
@@ -1373,6 +1686,16 @@ void QOrganizerItemManagerEngine::setDetailAccessConstraints(QOrganizerItemDetai
     }
 }
 
+/*!
+  Sets the collection id of \a item to the supplied \a collectionId.
+ */
+void QOrganizerItemManagerEngine::setItemCollectionId(QOrganizerItem* item, const QOrganizerCollectionId& collectionId)
+{
+    if (item) {
+        QOrganizerItemData::setCollectionId(item, collectionId);
+    }
+}
+
 
 /*!
   Adds the given \a organizeritem to the database if \a organizeritem has a
@@ -1383,6 +1706,19 @@ void QOrganizerItemManagerEngine::setDetailAccessConstraints(QOrganizerItemDetai
   manager, the function will return false and \a error will be set to
   \c QOrganizerItemManager::DoesNotExistError.
 
+  The \a organizeritem will be added to the collection identified by the given
+  \a collectionId if it exists, and the item conforms to the schema supported
+  for that collection.  If the collection exists but the item does not conform
+  to the schema supported for that collection, the function will return false,
+  and the \a error will be set to QOrganizerItemManager::InvalidDetailError.
+
+  If the given \a collectionId is not the default (zero) id, but does not identify
+  a valid collection, the function will return false, and \a error will be set
+  to QOrganizerItemManager::InvalidCollectionError.  If the given \a collectionId
+  is the default (zero) id, the item should be saved in the collection in which
+  it is already saved (if it is already saved in this manager), or in the default
+  collection (if it is a new item in this manager).
+
   Returns true if the save operation completed successfully, otherwise
   returns false.  Any error which occurs will be saved in \a error.
 
@@ -1390,7 +1726,7 @@ void QOrganizerItemManagerEngine::setDetailAccessConstraints(QOrganizerItemDetai
 
   \sa managerUri()
  */
-bool QOrganizerItemManagerEngine::saveItem(QOrganizerItem* organizeritem, QOrganizerItemManager::Error* error)
+bool QOrganizerItemManagerEngine::saveItem(QOrganizerItem* organizeritem, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
 {
     // Convert to a list op
     if (organizeritem) {
@@ -1398,7 +1734,7 @@ bool QOrganizerItemManagerEngine::saveItem(QOrganizerItem* organizeritem, QOrgan
         list.append(*organizeritem);
 
         QMap<int, QOrganizerItemManager::Error> errors;
-        bool ret = saveItems(&list, &errors, error);
+        bool ret = saveItems(&list, collectionId, &errors, error);
 
         if (errors.count() > 0)
             *error = errors.begin().value();
@@ -1450,15 +1786,31 @@ bool QOrganizerItemManagerEngine::removeItem(const QOrganizerItemLocalId& organi
   in the \a organizeritems list will be updated with the new value.  If a failure occurs
   when saving a new item, the id will be cleared.
 
+  The \a organizeritems will be added to the collection identified by the given
+  \a collectionId if it exists, and the items conform to the schema supported
+  for that collection.  If the collection exists but an item does not conform
+  to the schema supported for that collection, the function will return false,
+  and the error in the \a errorMap for the item at that index will be set to
+  QOrganizerItemManager::InvalidDetailError.
+
+  If the given \a collectionId is not the default (zero) id, but does not identify
+  a valid collection, the function will return false, and \a error will be set
+  to QOrganizerItemManager::InvalidCollectionError.  If the given \a collectionId
+  is the default (zero) id, the items should be saved in the collection in which
+  they is already saved (if they are already saved in this manager), or in the default
+  collection (if they are new items in this manager).
+
   Any errors encountered during this operation should be stored to
   \a error.
 
   \sa QOrganizerItemManager::saveItem()
  */
-bool QOrganizerItemManagerEngine::saveItems(QList<QOrganizerItem>* organizeritems, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemManagerEngine::saveItems(QList<QOrganizerItem>* organizeritems, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(organizeritems);
+    Q_UNUSED(collectionId);
     Q_UNUSED(errorMap);
+
     *error = QOrganizerItemManager::NotSupportedError;
     return false;
 }
@@ -1493,6 +1845,54 @@ bool QOrganizerItemManagerEngine::removeItems(const QList<QOrganizerItemLocalId>
 {
     Q_UNUSED(organizeritemIds);
     Q_UNUSED(errorMap);
+    *error = QOrganizerItemManager::NotSupportedError;
+    return false;
+}
+
+/*!
+  XXX TODO
+ */
+QOrganizerCollectionLocalId QOrganizerItemManagerEngine::defaultCollectionId(QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NotSupportedError;
+    return QOrganizerCollectionLocalId();
+}
+
+QList<QOrganizerCollectionLocalId> QOrganizerItemManagerEngine::collectionIds(QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NotSupportedError;
+    return QList<QOrganizerCollectionLocalId>();
+}
+
+/*!
+  XXX TODO
+ */
+QList<QOrganizerCollection> QOrganizerItemManagerEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
+{
+    Q_UNUSED(collectionIds);
+
+    *error = QOrganizerItemManager::NotSupportedError;
+    return QList<QOrganizerCollection>();
+}
+
+/*!
+  XXX TODO
+ */
+bool QOrganizerItemManagerEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
+{
+    Q_UNUSED(collection);
+
+    *error = QOrganizerItemManager::NotSupportedError;
+    return false;
+}
+
+/*!
+  XXX TODO
+ */
+bool QOrganizerItemManagerEngine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
+{
+    Q_UNUSED(collectionId);
+
     *error = QOrganizerItemManager::NotSupportedError;
     return false;
 }
@@ -1924,6 +2324,16 @@ bool QOrganizerItemManagerEngine::testFilter(const QOrganizerItemFilter &filter,
                 // Fall through to end
             }
             break;
+
+    case QOrganizerItemFilter::CollectionFilter:
+            {
+                const QOrganizerItemCollectionFilter cf(filter);
+                const QSet<QOrganizerCollectionLocalId>& ids = cf.collectionIds();
+                if (ids.contains(organizeritem.collectionId().localId()))
+                    return true;
+                return false;
+            }
+            break;
     }
     return false;
 }
@@ -2274,6 +2684,83 @@ void QOrganizerItemManagerEngine::updateDefinitionFetchRequest(QOrganizerItemDet
     req->d_ptr->m_error = error;
     rd->m_errors = errorMap;
     rd->m_definitions = result;
+    bool emitState = rd->m_state != newState;
+    rd->m_state = newState;
+    emit req->resultsAvailable();
+    if (emitState)
+        emit req->stateChanged(newState);
+}
+
+/*!
+  Updates the given QOrganizerCollectionFetchRequest \a req with the latest results \a result, and operation error \a error.
+  In addition, the state of the request will be changed to \a newState.
+
+  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
+  If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+ */
+void QOrganizerItemManagerEngine::updateCollectionFetchRequest(QOrganizerCollectionFetchRequest* req, const QList<QOrganizerCollection>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
+{
+    QOrganizerCollectionFetchRequestPrivate* rd = static_cast<QOrganizerCollectionFetchRequestPrivate*>(req->d_ptr);
+    req->d_ptr->m_error = error;
+    rd->m_collections = result;
+    bool emitState = rd->m_state != newState;
+    rd->m_state = newState;
+    emit req->resultsAvailable();
+    if (emitState)
+        emit req->stateChanged(newState);
+}
+
+/*!
+  Updates the given QOrganizerCollectionLocalIdFetchRequest \a req with the latest results \a result, and operation error \a error.
+  In addition, the state of the request will be changed to \a newState.
+
+  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
+  If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+ */
+void QOrganizerItemManagerEngine::updateCollectionLocalIdFetchRequest(QOrganizerCollectionLocalIdFetchRequest* req, const QList<QOrganizerCollectionLocalId>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
+{
+    QOrganizerCollectionLocalIdFetchRequestPrivate* rd = static_cast<QOrganizerCollectionLocalIdFetchRequestPrivate*>(req->d_ptr);
+    req->d_ptr->m_error = error;
+    rd->m_collectionIds = result;
+    bool emitState = rd->m_state != newState;
+    rd->m_state = newState;
+    emit req->resultsAvailable();
+    if (emitState)
+        emit req->stateChanged(newState);
+}
+
+/*!
+  Updates the given QOrganizerCollectionRemoveRequest \a req with the operation error \a error, and map of input index to individual error \a errorMap.
+  In addition, the state of the request will be changed to \a newState.
+
+  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
+  If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+ */
+void QOrganizerItemManagerEngine::updateCollectionRemoveRequest(QOrganizerCollectionRemoveRequest* req, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
+{
+    QOrganizerCollectionRemoveRequestPrivate* rd = static_cast<QOrganizerCollectionRemoveRequestPrivate*>(req->d_ptr);
+    req->d_ptr->m_error = error;
+    rd->m_errors = errorMap;
+    bool emitState = rd->m_state != newState;
+    rd->m_state = newState;
+    emit req->resultsAvailable();
+    if (emitState)
+        emit req->stateChanged(newState);
+}
+
+/*!
+  Updates the given QOrganizerCollectionSaveRequest \a req with the latest results \a result, operation error \a error, and map of input index to individual error \a errorMap.
+  In addition, the state of the request will be changed to \a newState.
+
+  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
+  If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+ */
+void QOrganizerItemManagerEngine::updateCollectionSaveRequest(QOrganizerCollectionSaveRequest* req, const QList<QOrganizerCollection>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
+{
+    QOrganizerCollectionSaveRequestPrivate* rd = static_cast<QOrganizerCollectionSaveRequestPrivate*>(req->d_ptr);
+    req->d_ptr->m_error = error;
+    rd->m_errors = errorMap;
+    rd->m_collections = result;
     bool emitState = rd->m_state != newState;
     rd->m_state = newState;
     emit req->resultsAvailable();

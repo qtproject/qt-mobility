@@ -46,10 +46,12 @@ QTM_USE_NAMESPACE
 
 EventEditPage::EventEditPage(QWidget *parent)
     :QWidget(parent),
-     m_scrollAreaLayout(0),
     m_manager(0),
+    m_scrollAreaLayout(0),
     m_typeComboBox(0),
-    m_subjectEdit(0)
+    m_subjectEdit(0),
+    m_countSpinBox(0),
+    m_repeatUntilDate(0)
 {
     //create asynch request to save an item
 	m_saveItemRequest = new QOrganizerItemSaveRequest(this);
@@ -198,14 +200,19 @@ void EventEditPage::handleRepeatIndexChanged(const QString frequency)
 	QList<QOrganizerItemRecurrenceRule> listOfRRules;
 	listOfRRules.clear();
 	if (frequency != "None" && m_countFieldAdded == false) {
-		QFormLayout *formLayout = new QFormLayout();
-		QSpinBox *countSpinBox = new QSpinBox(this);
-		countSpinBox->setRange(1, 100);
-		countSpinBox->setSingleStep(1);
-		countSpinBox->setValue(5);
-		formLayout->addRow("Count", countSpinBox);
-		formLayout->setFormAlignment(Qt::AlignBottom);
-		m_scrollAreaLayout->addLayout(formLayout);
+		// Query user if user wants to set count or repeat until date.
+		QPushButton *countButton = new QPushButton(tr("&Set count"));
+		QPushButton *repeatUntilButton = new QPushButton(tr("Set repeat until date"));
+		QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Vertical);
+		buttonBox->addButton(countButton, QDialogButtonBox::AcceptRole);
+		buttonBox->addButton(repeatUntilButton, QDialogButtonBox::AcceptRole);
+		connect(countButton, SIGNAL(pressed()), this, SLOT(setCountField()));
+		connect(repeatUntilButton, SIGNAL(pressed()), this, SLOT(setRepeatUntilField()));
+		connect(countButton, SIGNAL(pressed()), buttonBox, SLOT(close()));
+		connect(repeatUntilButton, SIGNAL(pressed()), buttonBox, SLOT(close()));
+		m_scrollAreaLayout->addWidget(buttonBox);
+		buttonBox->setLayout(m_scrollAreaLayout);
+
 		if (frequency == "Daily") {
 			rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
 		} else if (frequency == "Weekly") {
@@ -215,22 +222,9 @@ void EventEditPage::handleRepeatIndexChanged(const QString frequency)
 		} else if (frequency == "Yearly") {
 			rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
 		}
-		// If displaying for an existing entry then read count from event.
-		if(m_organizerEvent.recurrenceRules().count() != 0) {
-			if (m_organizerEvent.recurrenceRules().at(0).count() != 0){
-				countSpinBox->setValue(m_organizerEvent.recurrenceRules().at(0).count());
-			} else {
-				rrule.setCount(5);
-			}
-		}
-		m_countFieldAdded =true;
 		listOfRRules.append(rrule);
-		connect(countSpinBox, SIGNAL(valueChanged(int)), this, SLOT(handleCountChanged(int)));
-	} else {
-		m_scrollAreaLayout->removeItem(m_scrollAreaLayout->itemAt(4));
-		m_countFieldAdded = false;
+		m_organizerEvent.setRecurrenceRules(listOfRRules);
 	}
-	m_organizerEvent.setRecurrenceRules(listOfRRules);
 }
 
 void EventEditPage::showEvent(QShowEvent *event)
@@ -257,4 +251,46 @@ void EventEditPage::handleCountChanged(int i)
 	rrule.setCount(i);
 	listOfRRules.append(rrule);
 	m_organizerEvent.setRecurrenceRules(listOfRRules);
+}
+
+void EventEditPage::handleRepeatUntilChanged(QDate date)
+{
+	QOrganizerItemRecurrenceRule rrule;
+	QList<QOrganizerItemRecurrenceRule> listOfRRules;
+	listOfRRules.clear();
+	rrule.setFrequency(m_organizerEvent.recurrenceRules().at(0).frequency());
+	rrule.setEndDate(date);
+	listOfRRules.append(rrule);
+	m_organizerEvent.setRecurrenceRules(listOfRRules);
+}
+
+void EventEditPage::setCountField()
+{
+	if(!m_countFieldAdded) {
+		m_countFieldAdded = true;
+		QFormLayout *formLayout = new QFormLayout();
+		m_countSpinBox = new QSpinBox(this);
+		m_countSpinBox->setRange(1, 100);
+		m_countSpinBox->setSingleStep(1);
+		m_countSpinBox->setValue(5);
+		formLayout->addRow("Count", m_countSpinBox);
+		formLayout->setFormAlignment(Qt::AlignBottom);
+		m_scrollAreaLayout->addLayout(formLayout);
+		// set the default value.
+		handleCountChanged(5);
+		connect(m_countSpinBox, SIGNAL(valueChanged(int)), this, SLOT(handleCountChanged(int)));
+	}
+}
+
+void EventEditPage::setRepeatUntilField()
+{
+	m_countFieldAdded = false;
+	m_repeatUntilDate = new QDateEdit(this);
+	QLabel *repeatUntilLabel = new QLabel("Repeat until:", this);
+	m_repeatUntilDate->setDate(m_endTimeEdit->date());
+	m_scrollAreaLayout->addWidget(repeatUntilLabel);
+	m_scrollAreaLayout->addWidget(m_repeatUntilDate);
+	// set the default value.
+	handleRepeatUntilChanged(m_endTimeEdit->date());
+	connect(m_repeatUntilDate, SIGNAL(dateChanged(QDate)), this, SLOT(handleRepeatUntilChanged(QDate)));
 }

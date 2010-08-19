@@ -49,9 +49,9 @@
 #include <QtCore/qdatetime.h>
 #include <QtCore/qdebug.h>
 
-//#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || (GST_VERSION_MICRO > 20)
 #define USE_PLAYBIN2
-//#endif
+#endif
 
 QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
     :QObject(parent),

@@ -71,11 +71,11 @@ public:
     QGeoServiceProviderPrivate();
     ~QGeoServiceProviderPrivate();
 
-    void loadPlugin(const QString &providerName, const QMap<QString, QString> &parameters);
+    void loadPlugin(const QString &providerName, const QMap<QString, QVariant> &parameters);
 
     QGeoServiceProviderFactory *factory;
 
-    QMap<QString, QString> parameterMap;
+    QMap<QString, QVariant> parameterMap;
 
     QGeoSearchManager *searchManager;
     QGeoRoutingManager *routingManager;

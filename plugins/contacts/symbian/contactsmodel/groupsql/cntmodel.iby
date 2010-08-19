@@ -33,9 +33,9 @@ REM Configurable heap size for contact server.
 #define CONTACT_SERVER_MAX_HEAPSIZE  0x100000
 #endif
 
-file=ABI_DIR\BUILD_DIR\cntsrv.exe		System\Programs\cntsrv.exe       heapmax=CONTACT_SERVER_MAX_HEAPSIZE
-file=ABI_DIR\BUILD_DIR\cntmodel.dll		System\Libs\cntmodel.dll
-file=ABI_DIR\BUILD_DIR\cntview.dll		System\Libs\cntview.dll
+file=ABI_DIR/BUILD_DIR/cntsrv.exe		System/Programs/cntsrv.exe       heapmax=CONTACT_SERVER_MAX_HEAPSIZE
+file=ABI_DIR/BUILD_DIR/cntmodel.dll		System/Libs/cntmodel.dll
+file=ABI_DIR/BUILD_DIR/cntview.dll		System/Libs/cntview.dll
 
 ECOM_PLUGIN(cntvcard.dll,102035f8.rsc)
 ECOM_PLUGIN(cntphone.dll,102035fb.rsc)

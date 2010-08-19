@@ -55,10 +55,10 @@ class Q_ORGANIZER_EXPORT QOrganizerTodoProgress : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldFinishedDateTime;
-    const char* FieldPercentageComplete;
-    const char* FieldStatus;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldFinishedDateTime;
+    static const QLatin1Constant FieldPercentageComplete;
+    static const QLatin1Constant FieldStatus;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerTodoProgress, "TodoProgress")
     Q_DECLARE_LATIN1_CONSTANT(FieldFinishedDateTime, "FinishedDateTime");

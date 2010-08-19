@@ -43,6 +43,8 @@
 #include "qgeoroutingmanager_p.h"
 #include "qgeoroutingmanagerengine.h"
 
+#include <QLocale>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -53,7 +55,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup maps-routing
 
     The calculateRoute() and updateRoute() methods function QGeoRouteReply
@@ -201,17 +203,6 @@ QString QGeoRoutingManager::managerName() const
 //        return QString();
 
     return d_ptr->engine->managerName();
-}
-
-/*!
-    Returns the parameters used in the creation of this routing manager.
-*/
-QMap<QString, QString> QGeoRoutingManager::managerParameters() const
-{
-//    if (!d_ptr->engine)
-//        return QMap<QString, QString>();
-
-    return d_ptr->engine->managerParameters();
 }
 
 /*!
@@ -384,6 +375,20 @@ QGeoRouteRequest::InstructionDetails QGeoRoutingManager::supportedInstructionDet
 }
 
 /*!
+*/
+void QGeoRoutingManager::setLocale(const QLocale &locale)
+{
+    d_ptr->engine->setLocale(locale);
+}
+
+/*!
+*/
+QLocale QGeoRoutingManager::locale() const
+{
+    return d_ptr->engine->locale();
+}
+
+/*!
 \fn void QGeoRoutingManager::finished(QGeoRouteReply* reply)
 
 This signal is emitted when \a reply has finished processing.
@@ -418,19 +423,10 @@ Use deleteLater() instead.
 QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate()
         : engine(0) {}
 
-QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate(const QGeoRoutingManagerPrivate &other)
-        : engine(other.engine) {}
-
 QGeoRoutingManagerPrivate::~QGeoRoutingManagerPrivate()
 {
-    delete engine;
-}
-
-QGeoRoutingManagerPrivate& QGeoRoutingManagerPrivate::operator= (const QGeoRoutingManagerPrivate & other)
-{
-    engine = other.engine;
-
-    return *this;
+    if (engine)
+        delete engine;
 }
 
 #include "moc_qgeoroutingmanager.cpp"

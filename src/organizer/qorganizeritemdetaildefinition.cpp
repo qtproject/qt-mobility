@@ -46,7 +46,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QOrganizerItemDetailDefinition
-  \brief Provides the specification for fields in a detail
+  \brief The QOrganizerItemDetailDefintion class provides the specification for fields in a detail.
   \inmodule QtOrganizer
 
   The QOrganizerItemDetailDefinition class provides the specification for
@@ -106,6 +106,41 @@ bool QOrganizerItemDetailDefinition::isEmpty() const
         return false;
     return true;
 }
+
+#ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a definition to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QOrganizerItemDetailDefinition& definition)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItemDetailDefinition
+    return out << formatVersion
+               << definition.name()
+               << definition.isUnique()
+               << definition.fields();
+}
+
+/*!
+ * Reads a detail definition from stream \a in into \a definition.
+ */
+QDataStream& operator>>(QDataStream& in, QOrganizerItemDetailDefinition& definition)
+{
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QString name;
+        bool unique;
+        QMap<QString, QOrganizerItemDetailFieldDefinition> fields;
+        in >> name >> unique >> fields;
+        definition.setName(name);
+        definition.setUnique(unique);
+        definition.setFields(fields);
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+#endif
 
 /*! Sets the unique identifier of this detail type to \a definitionName. */
 void QOrganizerItemDetailDefinition::setName(const QString& definitionName)

@@ -12,8 +12,7 @@ PUBLIC_HEADERS +=   qsysteminfo.h \
     qsystemdisplayinfo.h \
     qsystemnetworkinfo.h \
     qsystemscreensaver.h \
-    qsystemstorageinfo.h \
-    qsysteminfocommon.h
+    qsystemstorageinfo.h 
 
 SOURCES += qsystemgeneralinfo.cpp \
     qsystemdeviceinfo.cpp \
@@ -21,6 +20,8 @@ SOURCES += qsystemgeneralinfo.cpp \
     qsystemnetworkinfo.cpp \
     qsystemscreensaver.cpp \
     qsystemstorageinfo.cpp
+
+PRIVATE_HEADERS += qsysteminfocommon_p.h
 
 DEFINES += QT_BUILD_SYSINFO_LIB QT_MAKEDLL
 
@@ -127,20 +128,35 @@ LIBS+=-lX11 -lXrandr
 
     symbian:{
         contains(S60_VERSION, 3.1){
-            DEFINES += SYMBIAN_3_1
+            DEFINES += SYMBIAN_3
         }        
+
+        contains(S60_VERSION, 3.2){
+            DEFINES += SYMBIAN_3
+        }
+        contains(hb_symbian_enabled,yes) {
+            CONFIG += qt hb
+            DEFINES += HB_SUPPORTED
+            message("s60_HbKeymap enabled")
+            LIBS += -lhbcore \
+        } else {
+            LIBS += -lptiengine \
+        }
+
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE        
         DEPENDPATH += symbian
         
         SOURCES += qsysteminfo_s60.cpp \
             telephonyinfo_s60.cpp \
             chargingstatus_s60.cpp \
-            wlaninfo_s60.cpp
+            wlaninfo_s60.cpp \
+            storagestatus_s60.cpp
 
         HEADERS += qsysteminfo_s60_p.h \
             telephonyinfo_s60.h \
             chargingstatus_s60.h \
-            wlaninfo_s60.h
+            wlaninfo_s60.h \
+            storagestatus_s60.h
 
         LIBS += -lprofileengine \
             -letel3rdparty \
@@ -158,16 +174,8 @@ LIBS+=-lX11 -lXrandr
             -lbluetooth \
             -lgdi \
             -lecom \
+            -lplatformenv
 
-	    contains(hb_symbian_enabled,yes) {	    	
-	    		CONFIG += qt hb        
-	        	DEFINES += HB_SUPPORTED        
-	        	message("s60_HbKeymap enabled")	            	            
-	        	LIBS += -lhbcore	        
-    	} else {
-            LIBS += -lptiengine 
-        }
-        
         TARGET.CAPABILITY = ALL -TCB
 #        TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location ReadDeviceData TrustedUI
 

@@ -308,7 +308,7 @@ void Dialog::updateStorage()
             type = "Removable";
         }
         if(volType == QSystemStorageInfo::CdromDrive) {
-            type =  "Cdrom";
+            type =  "CDRom";
         }
         if(volType == QSystemStorageInfo::RemoteDrive) {
             type =  "Network";
@@ -815,9 +815,13 @@ void Dialog::updateSimStatus()
 }
 
 
-void Dialog::storageChanged(bool added,const QString &vol)
+void Dialog::storageChanged(bool added,const QString &volName)
 {
-    setupStorage();
+    if(added) {
+        updateStorage();
+    } else {
+        storageTreeWidget->takeTopLevelItem( storageTreeWidget->indexOfTopLevelItem(storageTreeWidget->findItems(volName,Qt::MatchExactly).at(0)));
+    }
 }
 
 void Dialog::bluetoothChanged(bool b)

@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qgallerybaseresponse_p.h"
+#include "qgalleryabstractresponse_p.h"
 
 #include "qgallerydbusinterface_p.h"
 
@@ -65,7 +65,7 @@ QTM_BEGIN_NAMESPACE
 
 class QGalleryTrackerRemoveResponsePrivate;
 
-class QGalleryTrackerRemoveResponse : public QGalleryBaseResponse
+class QGalleryTrackerRemoveResponse : public QGalleryAbstractResponse
 {
     Q_OBJECT
 public:

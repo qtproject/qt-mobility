@@ -51,6 +51,7 @@
 #include "organizeritemdetailtransform.h"
 #include "organizeritemdisplaylabeltransform.h"
 #include "organizeritemguidtransform.h"
+#include "organizeriteminstanceorigintransform.h"
 #include "organizeritemlocationtransform.h"
 #include "organizeritemprioritytransform.h"
 #include "organizeritemrecurrencetransform.h"
@@ -59,6 +60,7 @@
 #include "organizerjournaltimerangetransform.h"
 #include "organizertodoprogresstransform.h"
 #include "organizertodotimerangetransform.h"
+#include "qorganizereventoccurrence.h"
 
 QTM_USE_NAMESPACE
 
@@ -69,13 +71,14 @@ OrganizerItemTransform::OrganizerItemTransform()
     m_detailTransforms.append(new OrganizerItemDescriptionTransform());
     m_detailTransforms.append(new OrganizerItemDisplayLabelTransform());
     m_detailTransforms.append(new OrganizerItemGuidTransform());
+    m_detailTransforms.append(new OrganizerItemInstanceOriginTransform());
     m_detailTransforms.append(new OrganizerItemLocationTransform());
     m_detailTransforms.append(new OrganizerItemPriorityTransform());
     m_detailTransforms.append(new OrganizerItemRecurrenceTransform());
     m_detailTransforms.append(new OrganizerItemTimeStampTransform());
     m_detailTransforms.append(new OrganizerJournalTimeRangeTransform());
     m_detailTransforms.append(new OrganizerTodoProgressTransform());
-    m_detailTransforms.append(new OrganizerTodoTimeRangeTransform());    
+    m_detailTransforms.append(new OrganizerTodoTimeRangeTransform());
 }
 
 OrganizerItemTransform::~OrganizerItemTransform()
@@ -100,6 +103,8 @@ void OrganizerItemTransform::toEntryL(const QOrganizerItem &item, CCalEntry *ent
 
 void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *item) const
 {
+    //debugEntryL(entry);
+    
     // Loop through transform objects
     foreach (OrganizerItemDetailTransform *i, m_detailTransforms) {
         // TODO: This is just for debugging. Remove before release.
@@ -113,6 +118,7 @@ void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *ite
 
 void OrganizerItemTransform::toItemPostSaveL(const CCalEntry &entry, QOrganizerItem *item) const
 {
+    //debugEntryL(entry);
     // Loop through transform objects
     foreach (OrganizerItemDetailTransform *i, m_detailTransforms) {
         // TODO: This is just for debugging. Remove before release.
@@ -124,22 +130,44 @@ void OrganizerItemTransform::toItemPostSaveL(const CCalEntry &entry, QOrganizerI
     }
 }
 
-void OrganizerItemTransform::toItemL(const CCalInstance &instance, QOrganizerItem *item) const
+void OrganizerItemTransform::toItemInstanceL(const CCalInstance &instance, QOrganizerItem *itemInstance) const
 {
-    toItemL(instance.Entry(), item);
-    // TODO: strip recurrence stuff
-    // TODO: set item instance origin
-    // TODO: transform  CCalInstance::Time()
-    // TODO: transform  CCalInstance::StartTimeL()
-    // TODO: transform  CCalInstance::EndTimeL()
-}
+    //debugInstanceL(instance);
+
+    // Loop through transform objects
+    foreach (OrganizerItemDetailTransform *i, m_detailTransforms) 
+    {
+        TRAPD(err, i->transformToDetailL(instance, itemInstance));
+        if (err) {
+            // TODO: This is just for debugging. Remove before release.
+            qDebug() << "toItemInstanceL failed! detail:" << i->detailDefinitionName() << "err:" << err;
+            User::Leave(err);
+        }
+    }
+}       
 
 void OrganizerItemTransform::debugEntryL(const CCalEntry &entry) const
 {
     qDebug() << QString("CCalEntry uid-%1 localUid-%2")
         .arg(OrganizerItemDetailTransform::toQString(entry.UidL()))
         .arg(entry.LocalUidL());
-    qDebug() << "Type        :" << entry.EntryTypeL();
-    qDebug() << "Summary     :" << OrganizerItemDetailTransform::toQString(entry.SummaryL());
-    qDebug() << "Desription  :" << OrganizerItemDetailTransform::toQString(entry.DescriptionL());
+    qDebug() << "Type            :" << entry.EntryTypeL();
+    qDebug() << "Summary         :" << OrganizerItemDetailTransform::toQString(entry.SummaryL());
+    qDebug() << "Description     :" << OrganizerItemDetailTransform::toQString(entry.DescriptionL());
+    qDebug() << "Method          :" << entry.MethodL();
+    qDebug() << "SequenceNumber  :" << entry.SequenceNumberL();
+    qDebug() << "RecurrenceId    :" << OrganizerItemDetailTransform::toQDateTimeL(entry.RecurrenceIdL());
+    qDebug() << "RecurrenceRange :" << entry.RecurrenceRangeL();
+    qDebug() << "StartTime       :" << OrganizerItemDetailTransform::toQDateTimeL(entry.StartTimeL());
+    qDebug() << "EndTime         :" << OrganizerItemDetailTransform::toQDateTimeL(entry.EndTimeL());
 }
+
+void OrganizerItemTransform::debugInstanceL(const CCalInstance &instance) const
+{
+    qDebug() << QString("CCalInstance time:%1 starttime:%2 endtime:%3")
+        .arg(OrganizerItemDetailTransform::toQDateTimeL(instance.Time()).toString())
+        .arg(OrganizerItemDetailTransform::toQDateTimeL(instance.StartTimeL()).toString())
+        .arg(OrganizerItemDetailTransform::toQDateTimeL(instance.EndTimeL()).toString());
+    debugEntryL(instance.Entry());
+}
+
