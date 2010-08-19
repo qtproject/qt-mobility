@@ -665,7 +665,6 @@ bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfa
     statement = "INSERT INTO InterfaceProperty(InterfaceID, Key, Value) VALUES(?,?,?)";
     QHash<QServiceInterfaceDescriptor::Attribute, QVariant>::const_iterator iter = interface.d->attributes.constBegin();
     bool isValidInterfaceProperty;
-    int serviceType;
     QString capabilities;
     QString interfaceDescription;
     while (iter != interface.d->attributes.constEnd()) {

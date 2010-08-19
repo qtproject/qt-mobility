@@ -298,8 +298,8 @@ bool ServiceMetaData::extractMetadata()
             case SFW_ERROR_MULTIPLE_SERVICE_TYPES:                   /* Both filepath and ipcaddress found in the XML file */
                 qDebug() << "Cannot specify both <filepath> and <ipcaddress> tags within <service>";
                 break;
-            case SFW_ERROR_INVALID_FILEPATH:                         /* Plugin library path cannot contain IPC prefix */
-                qDebug() << "Invalid service filepath, avoid private prefixes";
+            case SFW_ERROR_INVALID_FILEPATH:                         /* Service path cannot contain IPC prefix */
+                qDebug() << "Invalid service location, avoid private prefixes";
                 break;
         }
     }
@@ -342,7 +342,7 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
             //Found <filepath> tag for plugin service
             dupSTags[2]++;
             serviceLocation = aXMLReader.readElementText();
-
+            //Check if IPC prefix was used incorrectly here
             if (serviceLocation.startsWith(SERVICE_IPC_PREFIX)) {
                 latestError = ServiceMetaData::SFW_ERROR_INVALID_FILEPATH;
                 parseError = true;
@@ -351,6 +351,11 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
             //Found <ipcaddress>> tag for IPC service
             dupSTags[3]++;
             serviceLocation = aXMLReader.readElementText();
+            //Check if IPC prefix was used incorrectly here
+            if (serviceLocation.startsWith(SERVICE_IPC_PREFIX)) {
+                latestError = ServiceMetaData::SFW_ERROR_INVALID_FILEPATH;
+                parseError = true;
+            }
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_TAG) {
             //Found interface> node, read module related metadata  
             if (!processInterfaceElement(aXMLReader)) 
