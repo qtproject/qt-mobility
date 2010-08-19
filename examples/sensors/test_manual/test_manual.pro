@@ -1,8 +1,9 @@
-include(../../../common.pri)
-TEMPLATE = app
+INCLUDEPATH += ../../../src/sensors
+QT += core
 QT += testlib
+CONFIG += qt
 CONFIG += testcase
 CONFIG += mobility
-MOBILITY += sensors
 HEADERS += sensorslotclass.h
 SOURCES += test_manual.cpp
+MOBILITY += sensors
