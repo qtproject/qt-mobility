@@ -42,7 +42,7 @@ import Qt 4.7
 import QtMobility.gallery 1.1
 
 ListView {
-    property string title: ""
+    property string subTitle: ""
     property bool backEnabled: false
     property alias rootItem: galleryModel.rootItem
 

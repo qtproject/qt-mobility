@@ -178,4 +178,36 @@ Rectangle {
             NumberAnimation { properties: "angle"; duration: 1000 }
         }
     }
+
+    SongProperties {
+        id: songProperties
+
+        width: parent.width
+        height: parent.height
+        x: 0
+        y: parent.height
+
+        function show(itemId) { songId = itemId; state = 'visible' }
+        function close() { songId = undefined; state = "" }
+
+        states: [
+            State {
+                name: "visible"
+                PropertyChanges { target: songProperties; y: 0 }
+            }
+        ]
+
+        transitions: [
+            Transition {
+                from: ""
+                to: "visible"
+                PropertyAnimation { target: songProperties; property: "y"; duration: 300 }
+            },
+            Transition {
+                from: "visible"
+                to: ""
+                PropertyAnimation { target: songProperties; property: "y"; duration: 200 }
+            }
+        ]
+    }
 }

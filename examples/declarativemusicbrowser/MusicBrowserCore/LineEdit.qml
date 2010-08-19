@@ -39,39 +39,35 @@
 ****************************************************************************/
 
 import Qt 4.7
-import QtMobility.gallery 1.1
-import "script/mediaart.js" as Script
 
-Item {
-    height: 32
+Rectangle {
+    property alias font: input.font
+    property alias text: input.text
 
-    Text {
-        id: trackLabel
-        anchors.verticalCenter: parent.verticalCenter
+    id: lineEdit
+    height: input.height + 6
+    color: "transparent"
+
+    TextInput {
+        id: input
         anchors.left: parent.left
-        width: 48
-        text: trackNumber
+        anchors.leftMargin: 3
+        anchors.top: parent.top
+        anchors.topMargin: 3
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 3
         color: "white"
     }
 
-    Text {
-        id: titleLabel
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: trackLabel.right
-        text: title
-        color: "white"
-    }
-
-    Text {
-        id: durationLabel
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
-        text: Script.formatDuration(duration)
-        color: "white"
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        onClicked: songProperties.show(itemId)
-    }
+    states: [
+        State {
+            when: input.cursorVisible
+            PropertyChanges { target: lineEdit; color: "white" }
+            PropertyChanges { target: input; color: "black" }
+        },
+        State {
+            when: text == ""
+            PropertyChanges { target: lineEdit; border.color: "grey" }
+        }
+    ]
 }
