@@ -25,31 +25,12 @@ namespace Tp
         qDebug() << "- DBusProxy.busName: " << this->busName();
         qDebug() << "- DBusProxy.objectPath: " << this->objectPath();
 
-        int idx = this->objectPath().indexOf(QString("/org/freedesktop/Telepathy/Connection/ring/tel/ring/incoming"));
-        qDebug() << "idx: " << idx;
-        if(idx == 0)
-            direction = 1;
-        else{
-            idx = this->objectPath().indexOf(QString("/org/freedesktop/Telepathy/Connection/ring/tel/ring/outgoing"));
-            if(idx == 0)
-                direction = 2;
-        }
-
         //Create Channel interface
         pChannelInterface = new Tp::Client::ChannelInterface(this->dbusConnection(),this->busName(), this->objectPath());
 
         //Set flag to indicate if values must be read
         if(propertylist.count() <= 0){
-            qDebug() << "read Channel interfaces";
-            //read the channel interfaces
-            QStringList interfaces = pChannelInterface->Interfaces();
-            propertylist.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".Interfaces"), QVariant(interfaces));
-
-            qDebug() << "read Channel type interfaces";
-            //read the channel interfaces
-            QString channeltype = pChannelInterface->ChannelType();
-            qDebug() << "- Add ChannelType " << channeltype;
-            propertylist.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"), QVariant(channeltype));
+            createPropertiyList();
             wasExistingChannel = true;
         }
 
@@ -57,29 +38,44 @@ namespace Tp
         if(propertylist.contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"))){
             QString type = propertylist.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString();
             qDebug() << "- check mediatype " << type;
-            /**************************
-            check for Mediastream
-            **************************/
-            if(type == TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA){
-                iscall = true;
-            }
-            /************************************************************
-            check for Text Telephony API doesn't care about SMS (no call)
-            *************************************************************/
-            else if(type == TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT){
-                iscall =  false;
-            }
+            iscall = Channel::isCall(type);
+        }
+
+        //get direction by chjecking the requested flag
+        //if Requested then this channel was created in response to a local request => outgoing
+        if(propertylist.contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".Requested"))){
+            bool requested = propertylist.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".Requested")).toBool();
+            if(requested)
+                direction = 2;
+            else
+                direction = 1;
+
+            qDebug() << "- direction " << direction;
         }
 
         //if its not a call we don't need to go further
         if(iscall){
-            //get the remote id
+            qDebug() << "- it is media type";
+            //set remote id
             remoteIdentifier = pChannelInterface->TargetID();
+            qDebug() << "remoteIdentifier " << remoteIdentifier;
             connect(pChannelInterface, SIGNAL(Closed()), SLOT(onClose()));
             connectType();
             connectInterfaces();
             connect((QObject*)this->becomeReady(), SIGNAL(finished(Tp::PendingOperation *)), SLOT(onChannelReady(Tp::PendingOperation*)));
         }
+    }
+
+    bool Channel::isCall(QString channeltype)
+    {
+        qDebug() << "- check mediatype " << channeltype;
+        /**************************
+        check for Mediastream
+        **************************/
+        if(channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA){
+            return true;
+        }
+        return false;
     }
 
     void Channel::init()
@@ -104,7 +100,6 @@ namespace Tp
         direction = 0;
         wasExistingChannel = false;
         remoteIdentifier = "";
-        calltype = QTelephonyEvents::Other;
         iscall = false;
     }
 
@@ -147,6 +142,24 @@ namespace Tp
             delete pChannelTypeTubesInterface;
         if(pChannelInterface)
             delete pChannelInterface;
+    }
+
+    void Channel::createPropertiyList()
+    {
+        qDebug() << "Channel::createPropertiyList";
+        //read the channel interfaces
+        QStringList interfaces = pChannelInterface->Interfaces();
+        propertylist.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".Interfaces"), QVariant(interfaces));
+
+        qDebug() << "read Channel type interfaces";
+        QString channeltype = pChannelInterface->ChannelType();
+        qDebug() << "- Add ChannelType " << channeltype;
+        propertylist.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"), QVariant(channeltype));
+
+        qDebug() << "read Channel Requested flag to identicate the direction";
+        bool requested = pChannelInterface->Requested();
+        qDebug() << "- Add Channel requested Flag " << requested;
+        propertylist.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".Requested"), QVariant(requested));
     }
 
     void Channel::connectInterfaces()
@@ -283,16 +296,6 @@ namespace Tp
             else if(subtype == Tp::Client::ChannelTypeStreamedMediaInterface::staticInterfaceName()){
                 //read the type of the call before the signals get connected
                 pChannelTypeStreamedMediaInterface = new Tp::Client::ChannelTypeStreamedMediaInterface(this->dbusConnection(), this->busName(), this->objectPath());
-                QString channeltype = pChannelInterface->ChannelType();
-                if(channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA){
-                    bool initialAudio = pChannelTypeStreamedMediaInterface->InitialAudio();
-                    bool initialVideo = pChannelTypeStreamedMediaInterface->InitialVideo();
-                    if(initialVideo) {
-                        calltype = QTelephonyEvents::Video;
-                    }
-                    else if(initialAudio)
-                        calltype = QTelephonyEvents::Voice;
-                }
             }
             else if(subtype == Tp::Client::ChannelTypeTextInterface::staticInterfaceName()){
                 pChannelTypeTextInterface = new Tp::Client::ChannelTypeTextInterface(this->dbusConnection(), this->busName(), this->objectPath());
@@ -384,6 +387,28 @@ namespace Tp
         }
     }
 
+    QTelephonyEvents::CallType Channel::getCalltype()
+    {
+        qDebug() << "Channel::getCalltype()";
+        qDebug() << "- Listing Streams";
+        QDBusPendingReply<Tp::MediaStreamInfoList> lst = pChannelTypeStreamedMediaInterface->ListStreams();
+        lst.waitForFinished();
+        //Type 0=Audio, 1=Video
+        QTelephonyEvents::CallType tmpcalltype = QTelephonyEvents::Other;
+        foreach(const Tp::MediaStreamInfo& info, lst.value()){
+            qDebug() << "-- Stream:";
+            qDebug() << "--- Contact " << info.contact;
+            qDebug() << "--- Direction " << info.direction;
+            qDebug() << "--- State " << info.state;
+            qDebug() << "--- Type " << info.type;
+            if(info.type == 0 && tmpcalltype == QTelephonyEvents::Other)
+                tmpcalltype = QTelephonyEvents::Voice;
+            if(info.type == 1)
+                tmpcalltype = QTelephonyEvents::Video;
+        }
+        return tmpcalltype;
+    }
+
     //for ReadyObject
     void Channel::onChannelReady(Tp::PendingOperation* operation)
     {
@@ -443,6 +468,13 @@ namespace Tp
     void Channel::onClose()
     {
         qDebug() << "ChannelInterface - Channel::onClose()";
+        if(direction == 1 || direction == 2)
+        {
+            if(status != QTelephonyEvents::Disconnecting){
+                status = QTelephonyEvents::Disconnecting;
+                connection->channelStatusChanged(this);
+            }
+        }
     }
 
     //for ChannelInterfaceCallStateInterface signals
@@ -609,13 +641,6 @@ namespace Tp
     void Channel::onStreamRemoved(uint streamID)
     {
         qDebug() << "ChannelTypeStreamedMediaInterface - Channel::onStreamRemoved() " << streamID;
-        if(direction == 1 || direction == 2)
-        {
-            if(status != QTelephonyEvents::Disconnecting){
-                status = QTelephonyEvents::Disconnecting;
-                connection->channelStatusChanged(this);
-            }
-        }
     }
 
     void Channel::onStreamStateChanged(uint streamID, uint streamState)

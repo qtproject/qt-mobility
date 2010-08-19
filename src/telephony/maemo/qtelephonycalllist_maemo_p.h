@@ -61,6 +61,7 @@
 #include "qtelephonycallinfo.h"
 #include "qtelephonycalllist.h"
 #include "maemo/clientregistrar.h"
+#include "maemo/accountmanager.h"
 #include "maemo/connection.h"
 #include "maemo/channel.h"
 
@@ -92,7 +93,8 @@ private:
 private:
     QList<QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
     QTelephonyCallList* p;
-    ConnectionPtr connection;
+    QList<ConnectionPtr> connections;
+    AccountManager* accountManager;
 };
 
 QTM_END_NAMESPACE

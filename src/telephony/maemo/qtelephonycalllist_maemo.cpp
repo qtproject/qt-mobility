@@ -53,6 +53,7 @@
 #include "maemo/types.h"
 #include "maemo/connection.h"
 #include "maemo/channel.h"
+#include "maemo/accountmanager.h"
 
 QT_USE_NAMESPACE
 
@@ -60,18 +61,21 @@ QTM_BEGIN_NAMESPACE
 
 QTelephonyCallListPrivate::QTelephonyCallListPrivate(QTelephonyCallList *parent)
     : p(parent)
+    , accountManager(0)
 {
     Tp::registerTypes();
     qDebug() << "QTelephonyCallListPrivate::QTelephonyCallListPrivate(QTelephonyCallList *parent)";
-    //now Create Connection Request interface
-    QString path = "/org/freedesktop/Telepathy/Connection/ring/tel/ring";
-    connection = ConnectionPtr(new Connection(QDBusConnection::sessionBus(), path.mid(1).replace(QLatin1String("/"), QLatin1String(".")), path, this));
+
+    qDebug() << "create Account Manager";
+    accountManager = new AccountManager(QDBusConnection::sessionBus(), TELEPATHY_ACCOUNT_MANAGER_BUS_NAME, TELEPATHY_ACCOUNT_MANAGER_OBJECT_PATH, this);
 }
 
 QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
 {
     qDebug() << "QTelephonyCallListPrivate::~QTelephonyCallListPrivate() for maemo";
     callInfoList.clear();
+    if(accountManager)
+        delete accountManager;
 }
 
 QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephonyEvents::CallType& calltype) const 

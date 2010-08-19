@@ -26,13 +26,15 @@ namespace Tp
         Q_DISABLE_COPY(Channel)
     public:
         static const Feature FeatureCore;
+        static bool isCall(QString channeltype);
+
         Channel(QDBusConnection busconnection, const QString busname, const QString &objectPath, const QVariantMap &properties, Connection* connection);
         ~Channel();
         QVariantMap properties() const { return propertylist; }
         QTelephonyEvents::CallStatus getStatus() { return status; }
         int getDirection() { return direction; }
         QString getRemotePartyIdentifier() { return remoteIdentifier; }
-        QTelephonyEvents::CallType getCalltype() { return calltype; }
+        QTelephonyEvents::CallType getCalltype();
         QString getSubType() { return subtype; }
         bool isCall() { return iscall; }
 
@@ -124,6 +126,7 @@ namespace Tp
         void connectType();
         void disconnectType();
         void init();
+        void createPropertiyList();
 
         QVariantMap propertylist;
 
@@ -157,7 +160,6 @@ namespace Tp
         int direction;
         bool wasExistingChannel;
         QString remoteIdentifier;
-        QTelephonyEvents::CallType calltype;
         QString subtype;
         bool iscall;
     };
