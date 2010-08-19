@@ -76,6 +76,20 @@
 #endif
 
 QTM_BEGIN_NAMESPACE
+static bool halAvailable()
+{
+#if !defined(QT_NO_DBUS)
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    if (dbusConnection.isConnected()) {
+        QDBusConnectionInterface *dbiface = dbusConnection.interface();
+        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.Hal");
+        if (reply.isValid() && reply.value()) {
+            return reply.value();
+        }
+    }
+#endif
+    return false;
+}
 
 QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
  : QSystemInfoLinuxCommonPrivate(parent)
@@ -524,9 +538,9 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
     return false;
 }
 
-QString QSystemDeviceInfoLinuxCommonPrivate::model()
+QString QSystemDeviceInfoPrivate::model()
 {
-    if(halIsAvailable) {
+    if(halAvailable()) {
 #if !defined(QT_NO_DBUS)
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
         QString model;
@@ -556,9 +570,9 @@ QString QSystemDeviceInfoLinuxCommonPrivate::model()
     return QString();
 }
 
-QString QSystemDeviceInfoLinuxCommonPrivate::productName()
+QString QSystemDeviceInfoPrivate::productName()
 {
-    if(halIsAvailable) {
+    if(halAvailable()) {
 #if !defined(QT_NO_DBUS)
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
         QString productName;
