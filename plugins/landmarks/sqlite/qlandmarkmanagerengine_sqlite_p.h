@@ -61,7 +61,6 @@
 #include "databaseoperations_p.h"
 
 QTM_USE_NAMESPACE
-using namespace DatabaseOperations;
 
 class QLandmarkManagerEngineSqlite : public QLandmarkManagerEngine
 {
@@ -219,7 +218,10 @@ private:
     QHash<QLandmarkAbstractRequest *, QueryRun *> m_requestRunHash;
     DatabaseFileWatcher *m_dbWatcher;
     qreal m_latestTimestamp;
-    friend class DatabaseOperations::QueryRun;
+    volatile bool m_isExtendedAttributesEnabled;
+    volatile bool m_isCustomAttributesEnabled;
+    DatabaseOperations m_databaseOperations;
+    friend class QueryRun;
 };
 
 #endif // QLANDMARKMANAGERENGINE_SQLITE_P_H
