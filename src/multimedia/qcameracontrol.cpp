@@ -111,9 +111,9 @@ QCameraControl::~QCameraControl()
 
     Sets the camera \a state.
 
-    States changes are synchronous and indicate more user
-    intention than the internal backen status,
-    which is synchronously reported with QCameraControl::statusChanged() signal.
+    State changes are synchronous and indicate user intention,
+    while camera status is used as a feedback mechanism to inform application about backend status.
+    Status changes are reported asynchronously with QCameraControl::statusChanged() signal.
 
     \sa QCamera::State
 */
@@ -124,7 +124,7 @@ QCameraControl::~QCameraControl()
     Signal emitted when the camera \a state changes.
 
     In most cases the state chage is caused by QCameraControl::setState(),
-    but if crytical error has occured the state changes to QCamera::UnloadedState.
+    but if critical error has occured the state changes to QCamera::UnloadedState.
 */
 
 /*!
@@ -139,10 +139,6 @@ QCameraControl::~QCameraControl()
     \fn void QCameraControl::statusChanged(QCamera::Status status)
 
     Signal emitted when the camera \a status changes.
-
-    QCameraControl::state changes are synchronous and reflect user input/intention
-    while QCameraControl::status is asynchronous and used to notify application
-    about actual state of backend.
 */
 
 
@@ -163,14 +159,21 @@ QCameraControl::~QCameraControl()
     \fn void QCameraControl::setCaptureMode(QCamera::CaptureMode mode) = 0;
 
     Sets the current capture \a mode.
+
+    The capture mode changes are synchronous and allowed in any camera state.
+
+    If the capture mode is changed while camera is active,
+    it's recommended to change status to QCamera::LoadedStatus
+    and start activating the camera in the next event loop
+    with the status changed to QCamera::StartingStatus.
+    This allows the capture settings to be applied before camera is started.
+    Than change the status to QCamera::StartedStatus when the capture mode change is done.
 */
 
 /*!
     \fn bool QCameraControl::isCaptureModeSupported(QCamera::CaptureMode mode) const = 0;
 
     Returns true if the capture \a mode is suported.
-
-    Backend should return supported modes even in Stopped state.
 */
 
 /*!

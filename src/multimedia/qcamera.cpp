@@ -458,6 +458,12 @@ bool QCamera::isCaptureModeSupported(QCamera::CaptureMode mode) const
 
   The type of media (video or still images),
   the camera is configured to capture.
+
+  It's allowed to change capture mode in any camera state,
+  but if the camera is currently active,
+  chaging capture mode is likely to lead to camera status
+  chaged to QCamera::LoadedStatus, QCamera::LoadingStatus,
+  and when the camera is ready to QCamera::ActiveStatus.
 */
 
 QCamera::CaptureMode QCamera::captureMode() const
@@ -758,14 +764,13 @@ void QCamera::unlock()
            The camera has been started and can produce data.
            The viewfinder displays video frames in active state.
 
-           Depending on backend, changins some comera settings like
+           Depending on backend, changing some camera settings like
            capture mode, codecs or resolution in ActiveState may lead
-           to changing the camera status to LoadingStatus while the settings are
-           applied and back to ActiveStatus when the camera is ready.
+           to changing the camera status to LoadedStatus and StartingStatus while
+           the settings are applied and back to ActiveStatus when the camera is ready.
 
     \value StartingStatus
-           The camera is starting in result of state transition
-           to QCamera::ActiveState.
+           The camera is starting in result of state transition to QCamera::ActiveState.
            The camera service is not ready to capture yet.
 
     \value StandbyStatus
@@ -784,8 +789,11 @@ void QCamera::unlock()
            QCamera::UnloadedState to QCamera::LoadedState or QCamera::ActiveState.
 
     \value UnloadedStatus
-           The initial camera state, with camera not loaded.
-           The camera capabilities except of supported capture modes may be unknown.
+           The initial camera status, with camera not loaded.
+           The camera capabilities including supported capture settings may be unknown.
+
+    \value UnavailableStatus
+           The camera or camera backend is not available.
 */
 
 
