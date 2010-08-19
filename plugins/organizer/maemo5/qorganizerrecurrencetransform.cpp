@@ -199,7 +199,7 @@ QString OrganizerRecurrenceTransform::qrecurrenceRuleToIcalRecurrenceRule(const 
     if (rule.count() > 0)
         icalRule << qcountToIcalCount(rule.count());
     else if (rule.endDate() != QDate())
-        icalRule << qendDateToIcalUntil(rule.endDate());
+        icalRule << qendDateToIcalUntil(rule.endDate().addDays(-1)); // in Maemo5 the end date is inclusive
 
     icalRule << qintervalToIcalInterval(rule.interval());
 
@@ -469,7 +469,7 @@ QOrganizerItemRecurrenceRule OrganizerRecurrenceTransform::icalRecurrenceRuleToQ
     time_t until = rule->getUntil();
     if (until > 0) {
         QDateTime endDate(QDateTime::fromTime_t(until));
-        retn.setEndDate(endDate.date());
+        retn.setEndDate(endDate.date().addDays(1)); // in Maemo5 the end date is inclusive
     }
 
     int count = rule->getCount();
