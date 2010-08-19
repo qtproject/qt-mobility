@@ -43,7 +43,6 @@
 
 #include "qgalleryabstractrequest.h"
 #include "qgallerydbusinterface_p.h"
-#include "qgallerytrackercountresponse_p.h"
 #include "qgallerytrackerresultset_p.h"
 #include "qgallerytrackerlistcolumn_p.h"
 #include "qgallerytrackertyperesultset_p.h"
