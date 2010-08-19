@@ -55,7 +55,7 @@
 
 #include "qgeosearchreply.h"
 
-#include "qgeoboundingbox.h"
+#include "qgeoboundingarea.h"
 
 #include <QList>
 
@@ -68,17 +68,19 @@ class QGeoSearchReplyPrivate
 public:
     QGeoSearchReplyPrivate();
     QGeoSearchReplyPrivate(QGeoSearchReply::Error error, const QString& errorString);
-    QGeoSearchReplyPrivate(const QGeoSearchReplyPrivate &other);
     ~QGeoSearchReplyPrivate();
-
-    QGeoSearchReplyPrivate& operator= (const QGeoSearchReplyPrivate &other);
 
     QGeoSearchReply::Error error;
     QString errorString;
     bool isFinished;
 
-    QGeoBoundingBox bounds;
+    QGeoBoundingArea* viewport;
     QList<QGeoPlace> places;
+
+    int resultsCount;
+    int resultsOffset;
+private:
+    Q_DISABLE_COPY(QGeoSearchReplyPrivate)
 };
 
 QTM_END_NAMESPACE

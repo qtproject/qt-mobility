@@ -67,7 +67,7 @@ class Q_LOCATION_EXPORT QLandmarkSortOrder
 friend class QLandmarkSortOrderPrivate;
 
 public:
-    enum SortType {DefaultSort, NameSort, DistanceSort};
+    enum SortType {DefaultSort, NameSort};
 
     QLandmarkSortOrder();
     QLandmarkSortOrder(const QLandmarkSortOrder &other);

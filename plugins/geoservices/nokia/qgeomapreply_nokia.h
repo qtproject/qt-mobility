@@ -43,7 +43,6 @@
 #define QGEOMAPREPLY_NOKIA_H
 
 #include <qgeotiledmapreply.h>
-#include <qgeomapwidget.h>
 #include <QNetworkReply>
 
 QTM_USE_NAMESPACE

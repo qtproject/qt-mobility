@@ -105,11 +105,9 @@ public:
     bool isEmpty() const;
     void clearDetails();
 
-    /* Access details of particular type or which support a particular action */
+    /* Access details of particular type */
     QContactDetail detail(const QString& definitionId) const;
     QList<QContactDetail> details(const QString& definitionId = QString()) const;
-    QContactDetail detailWithAction(QContactAction* action) const;
-    QList<QContactDetail> detailsWithAction(QContactAction* action) const;
 
     QList<QContactDetail> details(const QString& definitionName, const QString& fieldName, const QString& value) const;
 
@@ -142,8 +140,8 @@ public:
     {
         QList<QContactDetail> props = details(T::DefinitionName.latin1());
         QList<T> ret;
-        foreach(QContactDetail prop, props)
-            ret.append(T(prop));
+        for (int i=0; i<props.count(); i++)
+            ret.append(T(props.at(i)));
         return ret;
     }
 
@@ -152,8 +150,8 @@ public:
     {
         QList<QContactDetail> props = details(T::DefinitionName, fieldName, value);
         QList<T> ret;
-        foreach(QContactDetail prop, props)
-            ret.append(T(prop));
+        for (int i=0; i<props.count(); i++)
+            ret.append(T(props.at(i)));
         return ret;
     }
 
@@ -161,8 +159,8 @@ public:
     {
         QList<QContactDetail> props = details(T::DefinitionName.latin1(), fieldName, value);
         QList<T> ret;
-        foreach(QContactDetail prop, props)
-            ret.append(T(prop));
+        for (int i=0; i<props.count(); i++)
+            ret.append(T(props.at(i)));
         return ret;
     }
 
@@ -180,7 +178,7 @@ public:
     QList<QContactId> relatedContacts(const QString& relationshipType = QString(), QContactRelationship::Role role = QContactRelationship::Either) const;
 
     /* Actions available to be performed on this contact */
-    QList<QContactActionDescriptor> availableActions(const QString& vendorName = QString(), int implementationVersion = -1) const;
+    QList<QContactActionDescriptor> availableActions(const QString& serviceName = QString()) const;
 
     /* Preferences (eg, set a particular detail preferred for the SMS action) - subject to change! */
     bool setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail);

@@ -46,7 +46,7 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QOrganizerEvent
-  \brief An event in time which may reoccur
+  \brief The QOrganizerEvent class provides an event in time which may reoccur
   \inmodule QtOrganizer
   \ingroup organizer-items
 
@@ -84,6 +84,21 @@ QDateTime QOrganizerEvent::endDateTime() const
 {
     QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
     return etr.endDateTime();
+}
+
+/*! Sets whether the time component of the start datetime or end datetime are significant. */
+void QOrganizerEvent::setTimeSpecified(bool isTimeSpecified)
+{
+    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
+    etr.setTimeSpecified(isTimeSpecified);
+    saveDetail(&etr);
+}
+
+/*! Returns whether the time component of the start datetime or end datetime are significant. */
+bool QOrganizerEvent::isTimeSpecified() const
+{
+    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
+    return etr.isTimeSpecified();
 }
 
 /*! Sets the list of dates \a rdates to be dates on which the event occurs */

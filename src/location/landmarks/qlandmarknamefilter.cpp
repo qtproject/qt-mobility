@@ -49,19 +49,17 @@ QTM_BEGIN_NAMESPACE
     \brief The QLandmarkNameFilter class is used to search for landmarks by name.
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-filter
 */
 
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkNameFilter)
 
 /*!
-    Creates a filter that selects landmarks by \a name, according to the given
-    case \a sensitivity.
+    Creates a filter that selects landmarks by \a name.
 */
-QLandmarkNameFilter::QLandmarkNameFilter(const QString &name,
-        Qt::CaseSensitivity sensitivity)
-        : QLandmarkFilter(new QLandmarkNameFilterPrivate(name, sensitivity)) {}
+QLandmarkNameFilter::QLandmarkNameFilter(const QString &name)
+        : QLandmarkFilter(new QLandmarkNameFilterPrivate(name)) {}
 
 /*!
     \fn QLandmarkNameFilter::QLandmarkNameFilter(const QLandmarkFilter &other)
@@ -95,30 +93,29 @@ void QLandmarkNameFilter::setName(const QString &name)
 }
 
 /*!
-    Returns the case sensitivity of the filter.
+    Returns the matching criteria of the filter.
 */
-Qt::CaseSensitivity QLandmarkNameFilter::caseSensitivity() const
+QLandmarkFilter::MatchFlags QLandmarkNameFilter::matchFlags() const
 {
     Q_D(const QLandmarkNameFilter);
-    return d->sensitivity;
+    return d->flags;
 }
 
 /*!
-    Sets the the \a caseSensitivity of the filter.
+    Sets the matching criteria to those defined in \a flags.
 */
-void QLandmarkNameFilter::setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)
+void QLandmarkNameFilter::setMatchFlags(QLandmarkFilter::MatchFlags flags)
 {
     Q_D(QLandmarkNameFilter);
-    d->sensitivity = caseSensitivity;
+    d->flags = flags;
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
-QLandmarkNameFilterPrivate::QLandmarkNameFilterPrivate(const QString &name,
-        Qt::CaseSensitivity sensitivity)
+QLandmarkNameFilterPrivate::QLandmarkNameFilterPrivate(const QString &name)
         : name(name),
-        sensitivity(sensitivity)
+          flags(0)
 {
     type = QLandmarkFilter::NameFilter;
 }
@@ -126,7 +123,7 @@ QLandmarkNameFilterPrivate::QLandmarkNameFilterPrivate(const QString &name,
 QLandmarkNameFilterPrivate::QLandmarkNameFilterPrivate(const QLandmarkNameFilterPrivate &other)
         : QLandmarkFilterPrivate(other),
         name(other.name),
-        sensitivity(other.sensitivity) {}
+        flags(other.flags) {}
 
 QLandmarkNameFilterPrivate::~QLandmarkNameFilterPrivate() {}
 

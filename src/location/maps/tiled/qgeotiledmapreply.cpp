@@ -155,9 +155,6 @@ void QGeoTiledMapReply::setMapImageFormat(const QString &format)
     d_ptr->mapImageFormat = format;
 }
 
-/*!
-    Cancels the receiving of this reply if the reply hasn't been received already.
-*/
 void QGeoTiledMapReply::abort() {}
 
 /*!
@@ -187,29 +184,7 @@ QGeoTiledMapReplyPrivate::QGeoTiledMapReplyPrivate(QGeoTiledMapReply::Error erro
         isFinished(true),
         isCached(false) {}
 
-QGeoTiledMapReplyPrivate::QGeoTiledMapReplyPrivate(const QGeoTiledMapReplyPrivate &other)
-        : error(other.error),
-        errorString(other.errorString),
-        isFinished(other.isFinished),
-        isCached(other.isCached),
-        request(other.request),
-        mapImageData(other.mapImageData),
-        mapImageFormat(other.mapImageFormat) {}
-
 QGeoTiledMapReplyPrivate::~QGeoTiledMapReplyPrivate() {}
-
-QGeoTiledMapReplyPrivate& QGeoTiledMapReplyPrivate::operator= (const QGeoTiledMapReplyPrivate & other)
-{
-    error = other.error;
-    errorString = other.errorString;
-    isFinished = other.isFinished;
-    isCached = other.isCached;
-    request = other.request;
-    mapImageData = other.mapImageData;
-    mapImageFormat = other.mapImageFormat;
-
-    return *this;
-}
 
 #include "moc_qgeotiledmapreply.cpp"
 

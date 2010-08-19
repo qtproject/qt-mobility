@@ -47,6 +47,7 @@ class OrganizerTodoTimeRangeTransform : public OrganizerItemDetailTransform
 {
 public:
     void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item);
+    void transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance);
     void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry);
     QString detailDefinitionName();
 };

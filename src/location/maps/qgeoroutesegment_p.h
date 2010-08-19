@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qgeonavigationinstruction.h"
+#include "qgeoinstruction.h"
 
 #include <QSharedData>
 #include <QList>
@@ -70,10 +70,12 @@ public:
     QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other);
     ~QGeoRouteSegmentPrivate();
 
+    bool operator ==(const QGeoRouteSegmentPrivate &other) const;
+
     int travelTime;
     qreal distance;
     QList<QGeoCoordinate> path;
-    QGeoNavigationInstruction instruction;
+    QGeoInstruction instruction;
 };
 
 QTM_END_NAMESPACE

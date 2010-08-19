@@ -61,6 +61,9 @@
 #include "qorganizeritemrecurrencerule.h"             // a single recurrence rule
 #include "qorganizeritemsortorder.h"                  // organizer item sorting
 
+#include "qorganizercollection.h"                     // collection of items
+#include "qorganizercollectionid.h"                   // collection identifier
+
 #include "qorganizeritems.h"                          // item derived classes
 #include "qorganizeritemdetails.h"                    // detail derived classes
 #include "qorganizeritemrequests.h"                   // request derived classes

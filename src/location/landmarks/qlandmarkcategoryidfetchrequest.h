@@ -60,6 +60,12 @@ public:
     void setSorting(const QLandmarkNameSort &nameSort);
     QLandmarkNameSort sorting() const;
 
+    int limit() const;
+    void setLimit(int limit);
+
+    int offset() const;
+    void setOffset(int offset);
+
 private:
     Q_DISABLE_COPY(QLandmarkCategoryIdFetchRequest)
     Q_DECLARE_PRIVATE(QLandmarkCategoryIdFetchRequest)

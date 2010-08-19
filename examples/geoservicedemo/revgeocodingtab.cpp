@@ -103,10 +103,9 @@ void ReverseGeocodingTab::initialize(QGeoSearchManager *searchManager)
         QObject::connect(m_searchManager,
                          SIGNAL(error(QGeoSearchReply*, QGeoSearchReply::Error, QString)), this,
                          SLOT(resultsError(QGeoSearchReply*, QGeoSearchReply::Error, QString)));
-        if(m_searchManager->supportsGeocoding())
+        if (m_searchManager->supportsGeocoding())
             requestBtn->setDisabled(false);
-    }
-    else
+    } else
         requestBtn->setDisabled(true);
 
 }

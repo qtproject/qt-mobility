@@ -43,6 +43,7 @@
 
 #include <caltime.h>
 #include <calentry.h>
+#include <calinstance.h>
 #include "qorganizeritem.h"
 
 QTM_USE_NAMESPACE
@@ -54,6 +55,7 @@ public:
     virtual ~OrganizerItemDetailTransform();
 
     virtual void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item) = 0;
+    virtual void transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance);
     virtual void transformToDetailPostSaveL(const CCalEntry& entry, QOrganizerItem *item);
     virtual void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry) = 0;
     virtual QString detailDefinitionName() = 0;
