@@ -66,11 +66,6 @@ Rectangle {
     Flickable {
         anchors.fill: parent
 
-        MouseArea {
-            anchors.fill: parent
-            onClicked: focus = true
-        }
-
         Item {
             anchors.left: parent.left
             anchors.right: parent.right

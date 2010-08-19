@@ -43,6 +43,7 @@ import Qt 4.7
 Rectangle {
     property alias font: input.font
     property string text: ""
+    signal textChanged(string text)
 
     id: lineEdit
     height: input.height + 6
@@ -78,12 +79,16 @@ Rectangle {
         }
     ]
 
-//    onFocusChanged: {
-//        if (!focus)
-//            text = input.text
-//    }
-
-    Keys.onReturnPressed: { text = input.text; input.focus = false; event.accepted = true }
-    Keys.onEscapePressed: { input.text = text; input.focus = false; event.accepted = true }
-
+    Keys.onReturnPressed: {
+        lineEdit.textChanged(input.text)
+        lineEdit.focus = true
+    }
+    Keys.onEnterPressed: {
+        lineEdit.textChanged(input.text)
+        lineEdit.focus = true
+    }
+    Keys.onEscapePressed: {
+        input.text = text
+        lineEdit.focus = true
+    }
 }
