@@ -104,8 +104,8 @@ QTM_BEGIN_NAMESPACE
                                         the service.
     \value      InterfaceDescription    This attribute provides a description for the interface 
                                         implementation.
-    \value      ServiceType             This attribute specifies the QServiceInterfaceDescriptor::Type
-                                        of the service being published.
+    \value      ServiceType             This attribute specifies the QService::Type that the 
+                                        service is being provided.
 */
 
 /*!

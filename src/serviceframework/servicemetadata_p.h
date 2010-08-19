@@ -127,6 +127,7 @@ public:
         SFW_ERROR_INVALID_CUSTOM_TAG,                       /* The customproperty tag is not corectly formatted or otherwise incorrect*/
         SFW_ERROR_DUPLICATED_CUSTOM_KEY,                    /* The customproperty appears twice*/
         SFW_ERROR_MULTIPLE_SERVICE_TYPES,                   /* Both filepath and ipcaddress found in the XML file */
+        SFW_ERROR_INVALID_FILEPATH,                         /* Plugin library path cannot contain IPC prefix */
     };
 
 public:

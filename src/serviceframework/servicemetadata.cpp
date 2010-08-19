@@ -60,6 +60,9 @@
 #define INTERFACE_CAPABILITY "capabilities"
 #define INTERFACE_CUSTOM_PROPERTY "customproperty"
 
+//Service type prefix
+#define SERVICE_IPC_PREFIX "_q_ipc_addr:"
+
 QTM_BEGIN_NAMESPACE
 
 #ifndef QT_NO_DATASTREAM
@@ -295,6 +298,9 @@ bool ServiceMetaData::extractMetadata()
             case SFW_ERROR_MULTIPLE_SERVICE_TYPES:                   /* Both filepath and ipcaddress found in the XML file */
                 qDebug() << "Cannot specify both <filepath> and <ipcaddress> tags within <service>";
                 break;
+            case SFW_ERROR_INVALID_FILEPATH:                         /* Plugin library path cannot contain IPC prefix */
+                qDebug() << "Invalid service filepath, avoid private prefixes";
+                break;
         }
     }
     return !parseError;
@@ -336,6 +342,11 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
             //Found <filepath> tag for plugin service
             dupSTags[2]++;
             serviceLocation = aXMLReader.readElementText();
+
+            if (serviceLocation.startsWith(SERVICE_IPC_PREFIX)) {
+                latestError = ServiceMetaData::SFW_ERROR_INVALID_FILEPATH;
+                parseError = true;
+            }
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == SERVICE_IPCADDRESS ) {
             //Found <ipcaddress>> tag for IPC service
             dupSTags[3]++;

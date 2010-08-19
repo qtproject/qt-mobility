@@ -259,6 +259,8 @@ void ServiceMetadataTest::parseInvalidServiceXML_data()
     QTest::newRow("Test32.xml") << "Test32.xml" << (int)ServiceMetaData::SFW_ERROR_DUPLICATED_CUSTOM_KEY;
     //multiple definitions of the service type
     QTest::newRow("Test33.xml") << "Test33.xml" << (int)ServiceMetaData::SFW_ERROR_MULTIPLE_SERVICE_TYPES;
+    //invalid filepath from ipc service type prefix
+    QTest::newRow("Test34.xml") << "Test34.xml" << (int)ServiceMetaData::SFW_ERROR_INVALID_FILEPATH;
 }
 
 void ServiceMetadataTest::parseInvalidServiceXML()
