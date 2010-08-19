@@ -111,7 +111,7 @@ struct FSSearchOperation
 
 class CFSEngine: public QObject
 {
-    Q_OBJECT;
+    Q_OBJECT
     
 public: 
     
@@ -163,7 +163,7 @@ private:
     
     QMessageAccountIdList accountsByType(QMessage::Type type) const;
     void updateEmailAccounts() const;
-    void updateMessageL(QMessage* message);
+    void updateFsMessage(QMessage* message);
     EmailClientApi::NmApiMessage* createFSMessage(QMessage& message);
     
     QMessageFolderIdList folderIdsByAccountId(const QMessageAccountId& accountId) const;
@@ -214,6 +214,7 @@ private:
     QMessageAccount m_account;
     QMessageServicePrivate* m_privateService;
     bool m_createMessageError;
+    bool m_updateMessageError;
     friend class QMessageService;
     friend class CFSMessagesFindOperation;
     
