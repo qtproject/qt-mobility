@@ -101,4 +101,23 @@ EXPORTS
 	?trUtf8@QAbstractSecuritySession@QtMobility@@SA?AVQString@@PBD0H@Z @ 100 NONAME ; class QString QtMobility::QAbstractSecuritySession::trUtf8(char const *, char const *, int)
 	?setCustomAttribute@QServiceFilter@QtMobility@@QAEXABVQString@@0@Z @ 101 NONAME ; void QtMobility::QServiceFilter::setCustomAttribute(class QString const &, class QString const &)
 	?qt_metacall@QServiceManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 102 NONAME ; int QtMobility::QServiceManager::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?staticMetaObject@QRemoteServiceControl@QtMobility@@2UQMetaObject@@B @ 103 NONAME ; struct QMetaObject const QtMobility::QRemoteServiceControl::staticMetaObject
+	?registerType@QRemoteServiceClassRegister@QtMobility@@SA_NPBUQMetaObject@@P6APAVQObject@@XZP6A?AUQRemoteServiceIdentifier@2@XZW4InstanceType@12@@Z @ 104 NONAME ; bool QtMobility::QRemoteServiceClassRegister::registerType(struct QMetaObject const *, class QObject * (*)(void), struct QtMobility::QRemoteServiceIdentifier (*)(void), enum QtMobility::QRemoteServiceClassRegister::InstanceType)
+	?qt_metacall@QRemoteServiceControl@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 105 NONAME ; int QtMobility::QRemoteServiceControl::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?publishServices@QRemoteServiceControl@QtMobility@@QAEXABVQString@@@Z @ 106 NONAME ; void QtMobility::QRemoteServiceControl::publishServices(class QString const &)
+	?tr@QRemoteServiceControl@QtMobility@@SA?AVQString@@PBD0@Z @ 107 NONAME ; class QString QtMobility::QRemoteServiceControl::tr(char const *, char const *)
+	?getStaticMetaObject@QRemoteServiceControl@QtMobility@@SAABUQMetaObject@@XZ @ 108 NONAME ; struct QMetaObject const & QtMobility::QRemoteServiceControl::getStaticMetaObject(void)
+	??_EQRemoteServiceControl@QtMobility@@UAE@I@Z @ 109 NONAME ; QtMobility::QRemoteServiceControl::~QRemoteServiceControl(unsigned int)
+	?trUtf8@QRemoteServiceControl@QtMobility@@SA?AVQString@@PBD0@Z @ 110 NONAME ; class QString QtMobility::QRemoteServiceControl::trUtf8(char const *, char const *)
+	?tr@QRemoteServiceControl@QtMobility@@SA?AVQString@@PBD0H@Z @ 111 NONAME ; class QString QtMobility::QRemoteServiceControl::tr(char const *, char const *, int)
+	??1QRemoteServiceControl@QtMobility@@UAE@XZ @ 112 NONAME ; QtMobility::QRemoteServiceControl::~QRemoteServiceControl(void)
+	?metaObject@QRemoteServiceControl@QtMobility@@UBEPBUQMetaObject@@XZ @ 113 NONAME ; struct QMetaObject const * QtMobility::QRemoteServiceControl::metaObject(void) const
+	?qt_metacast@QRemoteServiceControl@QtMobility@@UAEPAXPBD@Z @ 114 NONAME ; void * QtMobility::QRemoteServiceControl::qt_metacast(char const *)
+	?types@QRemoteServiceClassRegister@QtMobility@@QBE?AV?$QList@UQRemoteServiceIdentifier@QtMobility@@@@XZ @ 115 NONAME ; class QList<struct QtMobility::QRemoteServiceIdentifier> QtMobility::QRemoteServiceClassRegister::types(void) const
+	?setClientData@QServiceContext@QtMobility@@QAEXABVQString@@ABVQVariant@@@Z @ 116 NONAME ; void QtMobility::QServiceContext::setClientData(class QString const &, class QVariant const &)
+	?trUtf8@QRemoteServiceControl@QtMobility@@SA?AVQString@@PBD0H@Z @ 117 NONAME ; class QString QtMobility::QRemoteServiceControl::trUtf8(char const *, char const *, int)
+	?clientData@QServiceContext@QtMobility@@QBE?AVQVariant@@ABVQString@@@Z @ 118 NONAME ; class QVariant QtMobility::QServiceContext::clientData(class QString const &) const
+	??0QRemoteServiceControl@QtMobility@@QAE@PAVQObject@@@Z @ 119 NONAME ; QtMobility::QRemoteServiceControl::QRemoteServiceControl(class QObject *)
+	?resetClientData@QServiceContext@QtMobility@@QAEXXZ @ 120 NONAME ; void QtMobility::QServiceContext::resetClientData(void)
+	?metaObject@QRemoteServiceClassRegister@QtMobility@@QBEPBUQMetaObject@@ABUQRemoteServiceIdentifier@2@@Z @ 121 NONAME ; struct QMetaObject const * QtMobility::QRemoteServiceClassRegister::metaObject(struct QtMobility::QRemoteServiceIdentifier const &) const
 
