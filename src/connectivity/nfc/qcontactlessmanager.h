@@ -61,20 +61,33 @@ public:
     explicit QContactlessManager(QObject *parent = 0);
     ~QContactlessManager();
 
-    // (dis)connect to targetDetected signal
-    bool connect(QContactlessTarget::TagType type, const QObject *object, const char *slot);
-    bool disconnect(QContactlessTarget::TagType type, const QObject *object, const char *slot);
+    template<typename T>
+    int registerTargetDetectedHandler(QContactlessTarget::TagType tagType,
+                                      const QObject *object, const char *slot);
+    int registerTargetDetectedHandler(QContactlessTarget::TagType tagType,
+                                      QNdefRecord::TypeNameFormat typeNameFormat,
+                                      const QByteArray &type,
+                                      const QObject *object, const char *slot);
+    int registerTargetDetectedHandler(QContactlessTarget::TagType tagType,
+                                      quint8 typeNameFormat, const QByteArray &type,
+                                      const QObject *object, const char *slot);
 
-    // (dis)connect to ndefRecordDetected signal
-    bool connect(QNdefRecord::TypeNameFormat typeNameFormat,
-                 const QObject *object, const char *slot);
-    bool disconnect(QNdefRecord::TypeNameFormat typeNameFormat,
-                    const QObject *object, const char *slot);
+    bool unregisterTargetDetectedHandler(int handlerId);
 
 signals:
     void targetDetected(const QContactlessTarget &target);
     void transactionDetected(const QByteArray &applicationIdentifier);
 };
+
+template<typename T>
+int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::TagType tagType,
+                                                        const QObject *object, const char *slot)
+{
+    T record;
+
+    return registerTargetDetectedHandler(tagType, record.userTypeNameFormat(), record.type(),
+                                         object, slot);
+}
 
 QTM_END_NAMESPACE
 

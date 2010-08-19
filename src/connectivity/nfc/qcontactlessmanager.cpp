@@ -49,6 +49,25 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
+
+    NFC Forum devices support two modes of communications.  The first mode, peer-to-peer
+    communications, is used to communicate between two NFC Forum devices.  The second mode,
+    master/slave communications, is used to communicate between an NFC Forum device and an NFC
+    Forum Tag or Contactess Card.  The targetDetected() signal is emitted when a target device
+    enters communications range.  Communications can be initiated from the slot connected to this
+    signal.
+
+    NFC Forum devices generally operate as the master in master/slave communications.  Some devices
+    are capable of operate as the slave, so called Card Emulation mode.  In this mode the local NFC
+    device emulates a NFC Forum Tag or Contactless Card and can be used to perform transactions.
+    The transaction happens entirely within a secure element on the device and only a notification
+    of the transaction is provided.  The transactionDetected() signal is emitted whenever a
+    transaction occurs.
+
+    NFC Forum Tags can contain one or more messages in a standardized format.  These messages are
+    encapsulated in the QNdefMessage class.  Use the registerTargetDetectedHandler() functions to
+    register message handlers with particular criteria.  Handlers can be unregistered with the
+    unregisterTargetDetectedHandler() function.
 */
 
 /*!
@@ -57,8 +76,7 @@ QTM_BEGIN_NAMESPACE
     This signal is emitted whenever a target is detected. The \a target parameter represents the
     detected target.
 
-    This signal will be emitted for all detected targets. To receive signals only for desired
-    targets use the connect() member function.
+    This signal will be emitted for all detected targets.
 */
 
 /*!
@@ -70,6 +88,19 @@ QTM_BEGIN_NAMESPACE
     The \a applicationIdentifier is a byte array of up to 16 bytes as defined by ISO 7816-4 and
     uniquely identifies the application and application vendor that was involved in the
     transaction.
+*/
+
+/*!
+    \fn int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::TagType tagType,
+                                                               const QObject *object, const char *slot)
+
+    Registers \a object to receive notifications on \a slot when a tag with a tag type of
+    \a tagType has been detected and has an NDEF record that matches template argument.  The
+    \a slot method on \a object should have the prototype
+    'void targetDetected(const QNdefMessage &message, const QContactlessTarget &target)'.
+
+    Returns an identifier, which can be used to unregister the handler, on success; otherwise
+    returns -1.
 */
 
 /*!
@@ -88,65 +119,59 @@ QContactlessManager::~QContactlessManager()
 }
 
 /*!
-    Registers for notifications when a target of \a type is detected. The \a slot method on
-    \a object will be called and should have the prototype
-    'void targetDetected(const QContactlessTarget &target)'.
+    Registers \a object to receive notifications on \a slot when a tag with a tag type of
+    \a tagType has been detected and has an NDEF record that matchings \a typeNameFormat and
+    \a type.  The \a slot method on \a object should have the prototype
+    'void targetDetected(const QNdefMessage &message, const QContactlessTarget &target)'.
 
-    Returns true of success; other returns false.
+    Returns an identifier, which can be used to unregister the handler, on success; otherwise
+    returns -1.
 */
-bool QContactlessManager::connect(QContactlessTarget::TagType type,
-                                  const QObject *object,
-                                  const char *slot)
+
+int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::TagType tagType,
+                                                        QNdefRecord::TypeNameFormat typeNameFormat,
+                                                        const QByteArray &type,
+                                                        const QObject *object, const char *slot)
 {
+    return registerTargetDetectedHandler(tagType, quint8(typeNameFormat), type, object, slot);
+}
+
+/*!
+    Registers \a object to receive notifications on \a slot when a tag with a tag type of
+    \a tagType has been detected and has an NDEF record that matchings \a typeNameFormat and
+    \a type.  The \a slot method on \a object should have the prototype
+    'void targetDetected(const QNdefMessage &message, const QContactlessTarget &target)'.
+
+    Returns an identifier, which can be used to unregister the handler, on success; otherwise
+    returns -1.
+*/
+int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::TagType tagType,
+                                                        quint8 typeNameFormat,
+                                                        const QByteArray &type,
+                                                        const QObject *object, const char *slot)
+{
+    if (!QMetaObject::checkConnectArgs(SIGNAL(targetDetected(QNdefMessage,QContactlessTarget)),
+                                       QMetaObject::normalizedSignature(slot))) {
+        qWarning("Signatures do not match: %s:%d\n", __FILE__, __LINE__);
+        return -1;
+    }
+
+    Q_UNUSED(tagType);
+    Q_UNUSED(typeNameFormat);
     Q_UNUSED(type);
     Q_UNUSED(object);
-    Q_UNUSED(slot);
 
-    return false;
+    return -1;
 }
 
 /*!
-    Unregisters notifications for targets of \a type to \a slot on \a object. Returns true on
-    success; otherwise returns false.
+    Unregisters the target detect handler identified by \a handlerId.
+
+    Returns true on success; otherwise returns false.
 */
-bool QContactlessManager::disconnect(QContactlessTarget::TagType type,
-                                     const QObject *object,
-                                     const char *slot)
+bool QContactlessManager::unregisterTargetDetectedHandler(int handlerId)
 {
-    Q_UNUSED(type);
-    Q_UNUSED(object);
-    Q_UNUSED(slot);
-
-    return false;
-}
-
-/*!
-    Registers for notifications when an NDEF message contains a record that matches
-    \a typeNameFormat is detected. The \a slot method on \a object will be called and should have
-    the prototype 'void ndefRecordDetected(const QNdefMessage &message)'.
-
-    Returns true on success; otherwise return false.
-*/
-bool QContactlessManager::connect(QNdefRecord::TypeNameFormat typeNameFormat,
-                                  const QObject *object, const char *slot)
-{
-    Q_UNUSED(typeNameFormat);
-    Q_UNUSED(object);
-    Q_UNUSED(slot);
-
-    return false;
-}
-
-/*!
-    Unregisters notifications for when an NDEF message contains a record that match
-    \a typeNameFormat to \a slot on \a object. Returns true o success; otherwise returns false.
-*/
-bool QContactlessManager::disconnect(QNdefRecord::TypeNameFormat typeNameFormat,
-                                     const QObject *object, const char *slot)
-{
-    Q_UNUSED(typeNameFormat);
-    Q_UNUSED(object);
-    Q_UNUSED(slot);
+    Q_UNUSED(handlerId);
 
     return false;
 }
