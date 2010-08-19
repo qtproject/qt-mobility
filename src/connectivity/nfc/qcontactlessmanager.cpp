@@ -91,11 +91,11 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::TagType tagType,
+    \fn int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::Type targetType,
                                                                const QObject *object, const char *slot)
 
     Registers \a object to receive notifications on \a slot when a tag with a tag type of
-    \a tagType has been detected and has an NDEF record that matches template argument.  The
+    \a targetType has been detected and has an NDEF record that matches template argument.  The
     \a slot method on \a object should have the prototype
     'void targetDetected(const QNdefMessage &message, const QContactlessTarget &target)'.
 
@@ -120,7 +120,7 @@ QContactlessManager::~QContactlessManager()
 
 /*!
     Registers \a object to receive notifications on \a slot when a tag with a tag type of
-    \a tagType has been detected and has an NDEF record that matchings \a typeNameFormat and
+    \a targetType has been detected and has an NDEF record that matchings \a typeNameFormat and
     \a type.  The \a slot method on \a object should have the prototype
     'void targetDetected(const QNdefMessage &message, const QContactlessTarget &target)'.
 
@@ -128,24 +128,24 @@ QContactlessManager::~QContactlessManager()
     returns -1.
 */
 
-int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::TagType tagType,
+int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::Type targetType,
                                                         QNdefRecord::TypeNameFormat typeNameFormat,
                                                         const QByteArray &type,
                                                         const QObject *object, const char *slot)
 {
-    return registerTargetDetectedHandler(tagType, quint8(typeNameFormat), type, object, slot);
+    return registerTargetDetectedHandler(targetType, quint8(typeNameFormat), type, object, slot);
 }
 
 /*!
     Registers \a object to receive notifications on \a slot when a tag with a tag type of
-    \a tagType has been detected and has an NDEF record that matchings \a typeNameFormat and
+    \a targetType has been detected and has an NDEF record that matchings \a typeNameFormat and
     \a type.  The \a slot method on \a object should have the prototype
     'void targetDetected(const QNdefMessage &message, const QContactlessTarget &target)'.
 
     Returns an identifier, which can be used to unregister the handler, on success; otherwise
     returns -1.
 */
-int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::TagType tagType,
+int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::Type targetType,
                                                         quint8 typeNameFormat,
                                                         const QByteArray &type,
                                                         const QObject *object, const char *slot)
@@ -156,7 +156,7 @@ int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::TagTy
         return -1;
     }
 
-    Q_UNUSED(tagType);
+    Q_UNUSED(targetType);
     Q_UNUSED(typeNameFormat);
     Q_UNUSED(type);
     Q_UNUSED(object);

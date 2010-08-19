@@ -56,30 +56,53 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtConnectivity
 
     QContactlessTarget provides a generic interface for communicating with an NFC target device.
-    All target specific classes subclass this class.
+    Both NFC Forum devices and NFC Forum Tag targets are supported by this class.  All target
+    specific classes subclass this class.
+
+    The type() function can be used to get the type of the target device.  The uid() function
+    returns the unique identifier of the target.  The AccessMethods flags returns from the
+    accessMethods() function can be tested to determine which access methods are supported by the
+    target.
+
+    If the target supports NdefAccess, hasNdefMessage() can be called to test if the target has a
+    stored NDEF message, ndefMessage() and setNdefMessage() functions can be used to get and set
+    the NDEF message.
+
+    If the target supports ApduAccess, sendApduCommand() can be used to send a single APDU command
+    to the target and retrieve the response.  sendApduCommands() can be used to send
+    multiple APDU commands to the target and retrieve all of the responses.
+
+    If the target supports TagTypeSpecificAccess, sendCommand() can be used to send a single
+    proprietary command to the target and retrieve the response.  sendCommands() can be used to
+    send multiple proprietary commands to the target and retrieve all of the responses.
+
+    If the target supports LlcpAccess, the QContactlessSocket class can be used to connected to a
+    service provided by the target.
 */
 
 /*!
-    \enum QContactlessTarget::TagType
+    \enum QContactlessTarget::Type
 
     This enum describes the type of tag the target is detected as.
 
-    \value NfcTagType1  An NFC tag type 1 target
-    \value NfcTagType2  An NFC tag type 2 target
-    \value NfcTagType3  An NFC tag type 3 target
-    \value NfcTagType4  An NFC tag type 4 target
-    \value Mifare       A Mifare target
-    \value Proprietary  An unidentified proprietary target tag.
+    \value AnyTarget        This value is only used when registering handlers to indicate that any
+                            compatible target can be used.
+    \value ProprietaryTag   An unidentified proprietary target tag.
+    \value NfcTagType1      An NFC tag type 1 target.
+    \value NfcTagType2      An NFC tag type 2 target.
+    \value NfcTagType3      An NFC tag type 3 target.
+    \value NfcTagType4      An NFC tag type 4 target.
+    \value MifareTag        A Mifare target.
 */
 
 /*!
-    \enum QContactlessTarget::TagAccessMethod
+    \enum QContactlessTarget::AccessMethod
 
     This enum describes the access methods a contactless target supports.
 
     \value NdefAccess               The target supports NDEF records using ndefMessage() and
                                     setNdefMessage().
-    \value AdpuAccess               The target supports ADPU access using sendAdpuCommand() and
+    \value ApduAccess               The target supports APDU access using sendApduCommand() and
                                     sendApduCommands().
     \value TagTypeSpecificAccess    The target supports sending tag type specific commands using
                                     sendCommand() and sendCommands().
@@ -91,8 +114,8 @@ class QContactlessTargetPrivate
 public:
     QString uid;
     QUrl url;
-    QContactlessTarget::TagType tagType;
-    QContactlessTarget::TagAccessMethods accessMethods;
+    QContactlessTarget::Type tagType;
+    QContactlessTarget::AccessMethods accessMethods;
 };
 
 /*!
@@ -124,7 +147,7 @@ QUrl QContactlessTarget::url() const
 /*!
     Returns the type of tag type of this contactless target.
 */
-QContactlessTarget::TagType QContactlessTarget::type() const
+QContactlessTarget::Type QContactlessTarget::type() const
 {
     return d->tagType;
 }
@@ -132,7 +155,7 @@ QContactlessTarget::TagType QContactlessTarget::type() const
 /*!
     Returns the access methods support by this contactless target.
 */
-QContactlessTarget::TagAccessMethods QContactlessTarget::accessMethods() const
+QContactlessTarget::AccessMethods QContactlessTarget::accessMethods() const
 {
     return d->accessMethods;
 }

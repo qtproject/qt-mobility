@@ -62,13 +62,13 @@ public:
     ~QContactlessManager();
 
     template<typename T>
-    int registerTargetDetectedHandler(QContactlessTarget::TagType tagType,
+    int registerTargetDetectedHandler(QContactlessTarget::Type targetType,
                                       const QObject *object, const char *slot);
-    int registerTargetDetectedHandler(QContactlessTarget::TagType tagType,
+    int registerTargetDetectedHandler(QContactlessTarget::Type targetType,
                                       QNdefRecord::TypeNameFormat typeNameFormat,
                                       const QByteArray &type,
                                       const QObject *object, const char *slot);
-    int registerTargetDetectedHandler(QContactlessTarget::TagType tagType,
+    int registerTargetDetectedHandler(QContactlessTarget::Type targetType,
                                       quint8 typeNameFormat, const QByteArray &type,
                                       const QObject *object, const char *slot);
 
@@ -80,12 +80,12 @@ signals:
 };
 
 template<typename T>
-int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::TagType tagType,
+int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::Type targetType,
                                                         const QObject *object, const char *slot)
 {
     T record;
 
-    return registerTargetDetectedHandler(tagType, record.userTypeNameFormat(), record.type(),
+    return registerTargetDetectedHandler(targetType, record.userTypeNameFormat(), record.type(),
                                          object, slot);
 }
 

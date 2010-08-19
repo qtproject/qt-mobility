@@ -61,30 +61,31 @@ class QNdefMessage;
 class Q_CONNECTIVITY_EXPORT QContactlessTarget
 {
 public:
-    enum TagType {
-        Proprietary,
+    enum Type {
+        AnyTarget,
+        ProprietaryTag,
         NfcTagType1,
         NfcTagType2,
         NfcTagType3,
         NfcTagType4,
-        Mifare
+        MifareTag
     };
 
-    enum TagAccessMethod {
+    enum AccessMethod {
         NdefAccess,
-        AdpuAccess,
+        ApduAccess,
         TagTypeSpecificAccess,
         LlcpAccess
     };
-    Q_DECLARE_FLAGS(TagAccessMethods, TagAccessMethod)
+    Q_DECLARE_FLAGS(AccessMethods, AccessMethod)
 
     QContactlessTarget();
 
     QString uid() const;
     QUrl url() const;
 
-    TagType type() const;
-    TagAccessMethods accessMethods() const;
+    Type type() const;
+    AccessMethods accessMethods() const;
 
     // NdefAccess
     virtual bool hasNdefMessage() const;
