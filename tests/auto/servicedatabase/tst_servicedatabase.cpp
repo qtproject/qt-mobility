@@ -208,8 +208,6 @@ void ServiceDatabaseUnitTest::testRegistration()
 
 void ServiceDatabaseUnitTest::getInterfaces()
 {
-    qDebug() << "HELLO";
-
     QServiceFilter filter;
     QList<QServiceInterfaceDescriptor> interfaces;
 

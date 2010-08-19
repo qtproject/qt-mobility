@@ -903,7 +903,7 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
         difference.clear();
         interface.d->customAttributes.clear();
         interface.d->attributes.clear();
-        interface.d->interfaceName =query.value(EBindIndex).toString();
+        interface.d->interfaceName = query.value(EBindIndex).toString();
         interface.d->serviceName = query.value(EBindIndex1).toString();
         interface.d->major = query.value(EBindIndex2).toInt();
         interface.d->minor = query.value(EBindIndex3).toInt();
@@ -2236,7 +2236,7 @@ bool ServiceDatabase::populateInterfaceProperties(QServiceInterfaceDescriptor *i
         } else if (attribute == INTERFACE_DESCRIPTION_KEY) {
             interface->d->attributes[QServiceInterfaceDescriptor::InterfaceDescription]
                = query.value(EBindIndex1).toString();
-        } else if (attribute.startsWith("__")) {
+        } else if (attribute.startsWith("c_")) {
             interface->d->customAttributes[attribute.mid(2)]
                = query.value(EBindIndex1).toString();
         }
