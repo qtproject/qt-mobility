@@ -646,6 +646,12 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerI
 
     // Event occurrence validity checks:
     if (eventOccurrence) {
+        // Original date must be set
+        if (eventOccurrence->originalDate() == QDate()) {
+            *error = QOrganizerItemManager::InvalidOccurrenceError;
+            return;
+        }
+
         // Either parent id or GUID (or both) must be set
         if (!eventOccurrence->parentLocalId() && eventOccurrence->guid().isEmpty()) {
             *error = QOrganizerItemManager::InvalidOccurrenceError;
@@ -694,6 +700,12 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerI
 
     // Todo occurrence validity checks:
     if (todoOccurrence) {
+        // Original date must be set
+        if (todoOccurrence->originalDate() == QDate()) {
+            *error = QOrganizerItemManager::InvalidOccurrenceError;
+            return;
+        }
+
         // Either parent id or GUID (or both) must be set
         if (!todoOccurrence->parentLocalId() && todoOccurrence->guid().isEmpty()) {
             *error = QOrganizerItemManager::InvalidOccurrenceError;
