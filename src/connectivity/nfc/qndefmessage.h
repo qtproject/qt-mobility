@@ -47,6 +47,7 @@
 #include <qndefrecord.h>
 
 #include <QtCore/QList>
+#include <QtCore/QMetaType>
 
 QT_BEGIN_HEADER
 
@@ -72,6 +73,8 @@ private:
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QtMobility::QNdefMessage)
 
 QT_END_HEADER
 

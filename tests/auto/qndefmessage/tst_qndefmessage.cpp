@@ -49,8 +49,6 @@
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QNdefMessage)
-
 class tst_QNdefMessage : public QObject
 {
     Q_OBJECT
