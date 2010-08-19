@@ -628,28 +628,15 @@ void QOrganizerItemSymbianEngine::removeItemL(const QOrganizerItemLocalId& organ
 
 void QOrganizerItemSymbianEngine::deleteItemL(const QOrganizerItemLocalId& organizeritemId)
 {
-#ifdef __WINSCW__
-    // There seems to be a bug with symbian calendar. It will not report any
-    // error when removing a nonexisting entry. So we need to make this check
-    // ourselfs.
-    // TODO: check if this is true also in hardware
+    // There is a bug in symbian calendar API. It will not report any error
+    // when removing a nonexisting entry. So we need to check if the item
+    // really exists before deleting it.
     CCalEntry *entry = m_entryView->FetchL(TCalLocalUid(organizeritemId));
     if (!entry)
         User::Leave(KErrNotFound);
     CleanupStack::PushL(entry);
     m_entryView->DeleteL(*entry);
     CleanupStack::PopAndDestroy(entry);
-#else
-    // Remove
-    RArray<TCalLocalUid> ids;
-    CleanupClosePushL(ids);
-    ids.AppendL(TCalLocalUid(organizeritemId));
-    int successCount = 0;
-    m_entryView->DeleteL(ids, successCount);
-    if (successCount != 1)
-        User::Leave(KErrNotFound);
-    CleanupStack::PopAndDestroy(&ids);    
-#endif
 }
 
 QList<QOrganizerItem> QOrganizerItemSymbianEngine::slowFilter(const QList<QOrganizerItem> &items, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
