@@ -146,16 +146,13 @@ Q_SIGNALS:
 
 
 private Q_SLOTS:
-    void _q_resultSetChanged(QGalleryResultSet *resultSet);
-    void _q_itemsInserted(int index, int count);
-    void _q_itemsRemoved(int index, int count);
-    void _q_metaDataChanged(int index, int count, const QList<int> &keys);
+    void _q_itemChanged();
+    void _q_metaDataChanged(const QList<int> &keys);
     void _q_valueChanged(const QString &key, const QVariant &value) {
         m_request.setMetaData(key, value); }
 
 private:
     QGalleryItemRequest m_request;
-    QGalleryResultSet *m_resultSet;
     QDeclarativePropertyMap *m_metaData;
     QHash<int, QString> m_propertyKeys;
     bool m_complete;
