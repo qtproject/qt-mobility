@@ -288,7 +288,7 @@ private:
             QSignalSpy spy(&importRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
             importRequest.setFileName(filename);
             importRequest.start();
-            result = waitForAsync(spy, &importRequest,error,100);
+            result = waitForAsync(spy, &importRequest,error,150);
         } else {
             qFatal("Unknown test row type");
         }
