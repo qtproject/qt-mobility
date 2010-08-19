@@ -139,14 +139,14 @@ private:
 public slots:
     void initTestCase();
     void cleanupTestCase();
-private:
+private slots:
 
     void doDump();
     void doDump_data() {addManagers();}
 
     void doDumpSchema();
     void doDumpSchema_data() {addManagers();}
-private:
+
     /* Special test with special data */
     void uriParsing();
     void compatibleItem();
@@ -156,12 +156,8 @@ private:
     void metadata();
     void nullIdOperations();
     void add();
-
-private slots:
     void addExceptions();
-private slots:
     void addExceptionsWithGuid();
-private:
     void update();
     void remove();
     void batch();
@@ -179,7 +175,6 @@ private:
     void changeSet();
     void fetchHint();
 
-private slots:
     /* Special test with special data */
     void uriParsing_data();
     void compatibleItem_data();
@@ -415,8 +410,6 @@ void tst_QOrganizerItemManager::addManagers()
     managers.removeAll("testdummy");
     managers.removeAll("teststaticdummy");
     managers.removeAll("maliciousplugin");
-    managers.removeAll("memory");
-    managers.removeAll("skeleton");
 
     foreach(QString mgr, managers) {
         QMap<QString, QString> params;
@@ -849,7 +842,7 @@ void tst_QOrganizerItemManager::addExceptions()
     QOrganizerEventOccurrence thirdEvent = static_cast<QOrganizerEventOccurrence>(items.at(2));
     QCOMPARE(thirdEvent.localId(), (unsigned int)0);
     QCOMPARE(thirdEvent.parentLocalId(), event.localId());
-    thirdEvent.setStartDateTime(QDateTime(QDate(2010, 1, 15), QTime(10, 0, 0)));
+    thirdEvent.setStartDateTime(QDateTime(QDate(2010, 1, 15), QTime(13, 0, 0)));
     thirdEvent.setEndDateTime(QDateTime(QDate(2010, 1, 15), QTime(14, 0, 0)));
     QVERIFY(cm->saveItem(&thirdEvent));
     event = cm->item(event.localId()); // reload the event to pick up any changed exception dates.
@@ -891,7 +884,7 @@ void tst_QOrganizerItemManager::addExceptions()
     QVERIFY(secondEvent.localId() != 0);
 
     QVERIFY(foundThird);
-    QCOMPARE(thirdEvent.startDateTime(), QDateTime(QDate(2010, 1, 15), QTime(10, 0, 0)));
+    QCOMPARE(thirdEvent.startDateTime(), QDateTime(QDate(2010, 1, 15), QTime(13, 0, 0)));
     QCOMPARE(thirdEvent.endDateTime(), QDateTime(QDate(2010, 1, 15), QTime(14, 0, 0)));
     QVERIFY(thirdEvent.localId() != 0);
 }
@@ -918,7 +911,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     QVERIFY(cm->saveItem(&christmas));
     QVERIFY(!christmas.id().managerUri().isEmpty());
     QVERIFY(christmas.id().localId() != 0);
-/*
+
     QOrganizerEvent newYearsDay;
     newYearsDay.setGuid("newyear");
     newYearsDay.setStartDateTime(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)));
@@ -927,22 +920,19 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     newYearsDay.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
     QVERIFY(cm->saveItem(&newYearsDay));
 
-    qDebug() << "*******************************************REPORT SAVING STARTS";
     QOrganizerTodo report;
     report.setGuid("report");
     report.setDueDateTime(QDateTime(QDate(2010, 1, 11), QTime(0, 0, 0)));
     report.setDisplayLabel(QLatin1String("Report"));
     QVERIFY(cm->saveItem(&report));
-    qDebug() << "report local id = " << report.localId();
+
     // The tests:
-*/
     // exception with no guid or parentId fails
     QOrganizerEventOccurrence exception;
     exception.setOriginalDate(QDate(2010, 12, 25));
-    exception.setEndDateTime(QDateTime(QDate(2014, 12, 26), QTime(0, 0, 0)));
+    exception.setStartDateTime(QDateTime(QDate(2010, 12, 25), QTime(0, 0, 0)));
     exception.setEndDateTime(QDateTime(QDate(2010, 12, 26), QTime(0, 0, 0)));
     exception.setDisplayLabel(QLatin1String("Christmas"));
-    exception.setDescription(QLatin1String("With the in-laws"));
     exception.addComment(QLatin1String("With the in-laws"));
     QVERIFY(!cm->saveItem(&exception));
     QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
@@ -958,7 +948,6 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     exception.setGuid(QLatin1String("christmas"));
     QVERIFY(cm->saveItem(&exception));
     QVERIFY(exception.localId() != 0);
-    qDebug() << "Test: parent local id: " << exception.parentLocalId();
     QOrganizerEventOccurrence savedException = cm->item(exception.localId());
     QCOMPARE(savedException.parentLocalId(), christmas.localId()); // parentLocalId should be set by manager
 
@@ -969,7 +958,6 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     QCOMPARE(savedException.parentLocalId(), christmas.localId());
 
     // Make a fresh exception object on a fresh date to avoid clashing with the previously saved one
-    qDebug() << "***********************************";
     // can't set parentId to a non-event
     QOrganizerEventOccurrence exception2;
     exception2.setOriginalDate(QDate(2011, 12, 25));
