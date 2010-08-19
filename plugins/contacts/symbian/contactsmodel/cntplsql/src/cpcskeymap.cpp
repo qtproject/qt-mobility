@@ -34,7 +34,7 @@ const QChar KSpaceChar = ' ';
 const QChar KSeparatorChar = ' ';
 
 // Code using the new API (wk32 onwards) is put here. Remove old API code afterwards
-// #define NEW_KEYMAP_FACTORY_API
+#define NEW_KEYMAP_FACTORY_API
 
 
 // ============================== MEMBER FUNCTIONS ============================
@@ -269,16 +269,6 @@ void CPcsKeyMap::ConstructLanguageMappings(HbKeyboardType aKeyboardType)
     PRINT1(_L("build keymap from %d language(s)"), languages.count());
 
 	TInt languageCount = languages.size();
-#if !defined(NEW_KEYMAP_FACTORY_API)
-	// Latest SDKs have so many keymaps contact server runs out of stack.
-	// So limit the amount of keymaps.
-	const TInt KMaxKeymapCount = 10;
-	if (languageCount > KMaxKeymapCount)
-	    {
-        languageCount = KMaxKeymapCount;
-	    }
-#endif
-
 	for (TInt lang = 0; lang < languageCount; ++lang)
 		{
         PRINT2(_L("(%d) handle language %d"), lang, languages[lang].language());
@@ -287,27 +277,17 @@ void CPcsKeyMap::ConstructLanguageMappings(HbKeyboardType aKeyboardType)
 			PRINT2(_L("Constructing keymap for lang=%d,var=%d"),
 				   languages[lang].language(),
 				   languages[lang].variant());
-#if defined(NEW_KEYMAP_FACTORY_API)
 			// Gets ownership of keymap
 			const HbKeymap* keymap =
 			    HbKeymapFactory::instance()->keymap(languages[lang],  
                                                     HbKeymapFactory::NoCaching);
-#else
-			// Does not get ownership of keymap
-			const HbKeymap* keymap =
-				HbKeymapFactory::instance()->keymap(languages[lang].language(),
-                                                    languages[lang].variant());
-#endif
 			if (keymap)
 			    {
 #if defined(WRITE_PRED_SEARCH_LOGS)
                 count +=
 #endif
                 ReadKeymapCharacters(aKeyboardType, *keymap);
-				
-#if defined(NEW_KEYMAP_FACTORY_API)
 				delete keymap;
-#endif
 			    }
 			else
                 {
