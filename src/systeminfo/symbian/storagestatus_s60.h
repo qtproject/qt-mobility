@@ -38,95 +38,46 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageid.h"
 
-#include <qhash.h>
+#ifndef STORAGESTATUS_S60_H
+#define STORAGESTATUS_S60_H
 
-QTM_BEGIN_NAMESPACE
+#include <QList>
+#include <QString>
 
-class QMessageIdPrivate
+#include <e32base.h>
+#include <f32file.h>
+
+class MStorageStatusObserver
 {
 public:
-    QString _id;
+    virtual void storageStatusChanged(bool, const QString &) = 0;
 };
 
-QMessageId::QMessageId()
- : d_ptr(0)
+class CMMCStorageStatus : public CActive
 {
-}
+public:
+    CMMCStorageStatus();
+    ~CMMCStorageStatus();
 
-QMessageId::QMessageId(const QMessageId& other)
- : d_ptr(0)
-{
-        this->operator=(other);
-}
+    void addObserver(MStorageStatusObserver *observer);
+    void removeObserver(MStorageStatusObserver *observer);
 
-QMessageId::QMessageId(const QString& id)
-{
-    d_ptr = new QMessageIdPrivate;
-    d_ptr->_id = id;
-}
+protected:  //from CActive
+    void DoCancel();
+    void RunL();
 
-QMessageId::~QMessageId()
-{
-        delete d_ptr;
-}
+private:
+    void startMonitoring();
+#ifndef SYMBIAN_3_1
+    TDriveList PopulateDriveList();
+    void CompareDriveLists(const TDriveList &aList);
+#endif //SYMBIAN_3_1
 
-QMessageId& QMessageId::operator=(const QMessageId& other)
-{
-    if (!other.d_ptr) {
-        delete d_ptr;
-        d_ptr = 0;
-        return *this;
-    }
+private:
+    RFs iFs;
+    QList<MStorageStatusObserver *> m_observers;
+    TDriveList m_previousDriveList;
+};
 
-    if (!d_ptr)
-        d_ptr = new QMessageIdPrivate;
-
-    d_ptr->_id = other.d_ptr->_id;
-
-    return *this;
-}
-
-bool QMessageId::operator==(const QMessageId& other) const
-{
-    if (!other.d_ptr && !d_ptr)
-        return true;
-
-    if (!other.d_ptr || !d_ptr)
-        return false;
-
-    return (d_ptr->_id == other.d_ptr->_id);
-}
-
-bool QMessageId::operator<(const QMessageId& other) const
-{
-    long left = 0;
-    long right = 0;
-    if (d_ptr) {
-        left = d_ptr->_id.toLong();
-    }
-    if (other.d_ptr) {
-        right = other.d_ptr->_id.toLong();
-    }
-
-    return (left < right);
-}
-
-QString QMessageId::toString() const
-{
-    return d_ptr ? d_ptr->_id : QString();
-}
-
-bool QMessageId::isValid() const
-{
-    return d_ptr ? true : false;
-}
-
-uint qHash(const QMessageId &id)
-{
-    return qHash(id.toString());
-}
-
-QTM_END_NAMESPACE
-
+#endif // STORAGESTATUS_S60_H

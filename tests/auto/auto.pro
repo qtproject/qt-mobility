@@ -165,7 +165,7 @@ contains(mobility_modules,multimedia) {
 }
 #Messaging
 contains(mobility_modules,messaging) {
-    contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
+    contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5|maemo6 {
     !win32-g++:SUBDIRS += \
         qmessagestore \
         qmessagestorekeys \
