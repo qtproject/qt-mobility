@@ -165,6 +165,32 @@ int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::Type 
 }
 
 /*!
+    Registers \a object to receive notifications on \a slot when a tag with a tag type of
+    \a targetType has been detected and has an NDEF message that matches \a filter is detected. The
+    \a slot method on \a object should have the prototype
+    'void targetDetected(const QNdefMessage &message, const QContactlessTarget &target)'.
+
+    Returns an identifier, which can be used to unregister the handler, on success; otherwise
+    returns -1.
+*/
+int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::Type targetType,
+                                                       const QNdefFilter &filter,
+                                                       const QObject *object, const char *slot)
+{
+    if (!QMetaObject::checkConnectArgs(SIGNAL(targetDetected(QNdefMessage,QContactlessTarget)),
+                                       QMetaObject::normalizedSignature(slot))) {
+        qWarning("Signatures do not match: %s:%d\n", __FILE__, __LINE__);
+        return -1;
+    }
+
+    Q_UNUSED(targetType);
+    Q_UNUSED(filter);
+    Q_UNUSED(object);
+
+    return -1;
+}
+
+/*!
     Unregisters the target detect handler identified by \a handlerId.
 
     Returns true on success; otherwise returns false.

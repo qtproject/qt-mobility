@@ -48,6 +48,7 @@
 
 #include <qcontactlesstarget.h>
 #include <qndefrecord.h>
+#include <qndeffilter.h>
 
 QT_BEGIN_HEADER
 
@@ -70,6 +71,9 @@ public:
                                       const QObject *object, const char *slot);
     int registerTargetDetectedHandler(QContactlessTarget::Type targetType,
                                       quint8 typeNameFormat, const QByteArray &type,
+                                      const QObject *object, const char *slot);
+    int registerTargetDetectedHandler(QContactlessTarget::Type targetType,
+                                      const QNdefFilter &filter,
                                       const QObject *object, const char *slot);
 
     bool unregisterTargetDetectedHandler(int handlerId);
