@@ -70,7 +70,7 @@
 #include <qcontactthumbnail.h>
 #include <qcontactringtone.h>
 #include "qversitcontacthandler.h"
-#include "qversitpluginloader_p.h"
+#include "qversitcontactpluginloader_p.h"
 
 #include <QHash>
 #include <QFile>
@@ -117,7 +117,7 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate(const QString& prof
             QLatin1String(versitSubTypeMappings[i].contactString));
     }
 
-    mPluginPropertyHandlers = QVersitPluginLoader::instance()->createContactHandlers(profile);
+    mPluginPropertyHandlers = QVersitContactPluginLoader::instance()->createContactHandlers(profile);
 }
 
 /*!

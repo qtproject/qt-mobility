@@ -303,7 +303,7 @@ if %FIRST% == bearer (
 ) else if %FIRST% == telephony (
     echo     Telephony selected
 ) else if %FIRST% == versit (
-    echo     Versit selected ^(implies Contacts and Organizer^)
+    echo     Versit selected ^(implies Contacts^)
 ) else if %FIRST% == organizer (
     echo     Organizer selected
 ) else if %FIRST% == feedback (
@@ -385,7 +385,7 @@ echo isEmpty($$QT_MOBILITY_EXAMPLES):QT_MOBILITY_EXAMPLES=$$QT_MOBILITY_PREFIX/b
 echo isEmpty($$QT_MOBILITY_DEMOS):QT_MOBILITY_DEMOS=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
-echo contains(mobility_modules,versit): mobility_modules *= contacts organizer  >> %PROJECT_CONFIG%
+echo contains(mobility_modules,versit): mobility_modules *= contacts >> %PROJECT_CONFIG%
 
 echo Checking available Qt
 call %QT_PATH%qmake -v >> %PROJECT_LOG% 2>&1
@@ -596,7 +596,7 @@ if %FIRST% == bearer (
 ) else if %FIRST% == telephony (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtTelephony %SOURCE_PATH%\src\telephony
 ) else if %FIRST% == versit (
-    REM versit implies contacts and organizer
+    REM versit implies contacts.  organizer includes might also be necessary
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersit %SOURCE_PATH%\src\versit
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\requests

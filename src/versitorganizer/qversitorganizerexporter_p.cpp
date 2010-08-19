@@ -46,7 +46,7 @@
 #include "qversitorganizerdefs_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
-#include "qversitpluginloader_p.h"
+#include "qversitorganizerpluginloader_p.h"
 
 QTM_USE_NAMESPACE
 
@@ -64,8 +64,8 @@ QVersitOrganizerExporterPrivate::QVersitOrganizerExporterPrivate(const QString& 
                     QLatin1String(versitOrganizerDetailMappings[i].versitPropertyName)));
     }
 
-    mPluginDetailHandlers = QVersitPluginLoader::instance()->createOrganizerHandlers(profile);
-    mTimeZoneHandler = QVersitPluginLoader::instance()->timeZoneHandler();
+    mPluginDetailHandlers = QVersitOrganizerPluginLoader::instance()->createOrganizerHandlers(profile);
+    mTimeZoneHandler = QVersitOrganizerPluginLoader::instance()->timeZoneHandler();
 }
 
 QVersitOrganizerExporterPrivate::~QVersitOrganizerExporterPrivate()
