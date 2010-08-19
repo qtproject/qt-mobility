@@ -164,7 +164,7 @@ void COrganizerItemRequestsServiceProvider::RunL()
         {
         case QOrganizerItemAbstractRequest::ItemInstanceFetchRequest: 
             {
-            
+            FetchInstanceL();
             }
             break;
         case QOrganizerItemAbstractRequest::ItemFetchRequest: 
@@ -209,11 +209,24 @@ void COrganizerItemRequestsServiceProvider::RunL()
         }
     }
 
+//Fetch item instances
+void COrganizerItemRequestsServiceProvider::FetchInstanceL()
+    {
+    // Fetch ItemInstancesList
+    iItemList = iOrganizerItemManagerEngine.itemInstances(
+        ((QOrganizerItemFetchRequest*)iReq)->filter(), 
+        ((QOrganizerItemFetchRequest*)iReq)->sorting(), 
+        ((QOrganizerItemFetchRequest*)iReq)->fetchHint(),
+        &iError);
+    // Update the request status
+    QOrganizerItemManagerEngine::updateItemInstanceFetchRequest(
+        (QOrganizerItemInstanceFetchRequest*)(iReq), iItemList, 
+        iError, QOrganizerItemAbstractRequest::FinishedState);
+    }
+
 // Delete item
 void COrganizerItemRequestsServiceProvider::RemoveItemL()
     {
-    TInt sucessCount(0);
-
     if (iIndex < iNoOfItems)
         {
         // update index beforehand in case deleteItemL leaves, if so

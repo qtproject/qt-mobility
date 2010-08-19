@@ -507,6 +507,8 @@ void TestDetailDef::fetchTodoOccDetailDef()
 
 void TestDetailDef::fetchNoteDetailDef()
 {
+    QSKIP("Note support not yet implemented", SkipSingle);
+    
     QMap<QString, QOrganizerItemDetailDefinition> detailDef = m_om->detailDefinitions(QOrganizerItemType::TypeNote);
     QVERIFY(!detailDef.isEmpty());
     

@@ -80,7 +80,7 @@ public:
     QVersitOrganizerImporter(const QString& profile);
     ~QVersitOrganizerImporter();
 
-    bool importDocument(const QVersitDocument& documents);
+    bool importDocument(const QVersitDocument& document);
     QList<QOrganizerItem> items() const;
     QMap<int, Error> errors() const;
 
