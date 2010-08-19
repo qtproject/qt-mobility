@@ -891,13 +891,19 @@ void tst_QOrganizerItemManager::addExceptions()
 
 void tst_QOrganizerItemManager::addExceptionsWithGuid()
 {
+    // It should be possible to save an exception that has at least an originalDate and either a
+    // guid or a parentLocalId.  If guid and parentLocalId are both specified, the client should
+    // ensure they are consistent and the manager should fail if they are not.  If only one of the
+    // guid or parentLocalId are specified, the manager should generate the other one.
+    // This test case tests all of this.
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
 
+    // Set up some recurring items
     QOrganizerEvent christmas;
     christmas.setGuid("christmas");
     christmas.setStartDateTime(QDateTime(QDate(2009, 12, 25), QTime(0, 0, 0)));
-    christmas.setStartDateTime(QDateTime(QDate(2009, 12, 26), QTime(0, 0, 0)));
+    christmas.setEndDateTime(QDateTime(QDate(2009, 12, 26), QTime(0, 0, 0)));
     christmas.setDisplayLabel(QLatin1String("Christmas"));
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
@@ -909,7 +915,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     QOrganizerEvent newYearsDay;
     newYearsDay.setGuid("newyear");
     newYearsDay.setStartDateTime(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)));
-    newYearsDay.setStartDateTime(QDateTime(QDate(2010, 1, 2), QTime(0, 0, 0)));
+    newYearsDay.setEndDateTime(QDateTime(QDate(2010, 1, 2), QTime(0, 0, 0)));
     newYearsDay.setDisplayLabel(QLatin1String("New Years Day"));
     newYearsDay.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
     QVERIFY(cm->saveItem(&newYearsDay));
@@ -920,55 +926,86 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     report.setDisplayLabel(QLatin1String("Report"));
     QVERIFY(cm->saveItem(&report));
 
+    // The tests:
     // exception with no guid or parentId fails
     QOrganizerEventOccurrence exception;
+    exception.setOriginalDate(QDate(2010, 12, 25));
     exception.setStartDateTime(QDateTime(QDate(2010, 12, 25), QTime(0, 0, 0)));
-    exception.setStartDateTime(QDateTime(QDate(2010, 12, 26), QTime(0, 0, 0)));
+    exception.setEndDateTime(QDateTime(QDate(2010, 12, 26), QTime(0, 0, 0)));
     exception.setDisplayLabel(QLatin1String("Christmas"));
     exception.addComment(QLatin1String("With the in-laws"));
     QVERIFY(!cm->saveItem(&exception));
     QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
 
     // exception with invalid guid fails
+    exception.setId(QOrganizerItemId());
     exception.setGuid(QLatin1String("halloween"));
     QVERIFY(!cm->saveItem(&exception));
     QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
     
     // with the guid set, it should work
+    exception.setId(QOrganizerItemId());
     exception.setGuid(QLatin1String("christmas"));
     QVERIFY(cm->saveItem(&exception));
     QVERIFY(exception.localId() != 0);
     QOrganizerEventOccurrence savedException = cm->item(exception.localId());
-    QCOMPARE(savedException.parentLocalId(), christmas.localId());
+    QCOMPARE(savedException.parentLocalId(), christmas.localId()); // parentLocalId should be set by manager
 
-    // with the guid and the parentId both set and consistent, it should work
+    // with the localId, guid and the parentId all set and consistent, it should work
     exception = savedException;
     QVERIFY(cm->saveItem(&exception));
     savedException = cm->item(exception.localId());
     QCOMPARE(savedException.parentLocalId(), christmas.localId());
 
-    // with the guid inconsistent with the parentId, it should fail
-    exception.setParentLocalId(newYearsDay.localId());
-    QVERIFY(!cm->saveItem(&exception));
-
-    // with just the parentId set, it should work
-    exception.setGuid(QLatin1String(""));
-    QVERIFY(cm->saveItem(&exception));
-    savedException = cm->item(exception.localId());
-    QCOMPARE(savedException.parentLocalId(), newYearsDay.localId());
-    QCOMPARE(savedException.guid(), QLatin1String("newyear"));
-
+    // Make a fresh exception object on a fresh date to avoid clashing with the previously saved one
     // can't set parentId to a non-event
-    exception.setGuid(QLatin1String(""));
-    exception.setParentLocalId(report.localId());
-    QVERIFY(!cm->saveItem(&exception));
+    QOrganizerEventOccurrence exception2;
+    exception2.setOriginalDate(QDate(2011, 12, 25));
+    exception2.setStartDateTime(QDateTime(QDate(2011, 12, 25), QTime(0, 0, 0)));
+    exception2.setEndDateTime(QDateTime(QDate(2011, 12, 26), QTime(0, 0, 0)));
+    exception2.setDisplayLabel(QLatin1String("Christmas"));
+    exception2.addComment(QLatin1String("With the in-laws"));
+    exception2.setParentLocalId(report.localId()); // report is not an event
+    QVERIFY(!cm->saveItem(&exception2));
     QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
 
     // can't set guid to a non-event
-    exception.setGuid(QLatin1String("report"));
-    exception.setParentLocalId(0);
-    QVERIFY(!cm->saveItem(&exception));
+    exception2.setGuid(QLatin1String("report"));
+    exception2.setParentLocalId(0);
+    QVERIFY(!cm->saveItem(&exception2));
     QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
+
+    // can't make the guid inconsistent with the parentId
+    exception2.setParentLocalId(christmas.localId());
+    exception2.setGuid(QLatin1String("newyear"));
+    QVERIFY(!cm->saveItem(&exception2));
+    QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
+
+    // with just the parentId set to a valid parent, it should work
+    exception2.setGuid(QLatin1String(""));
+    QVERIFY(cm->saveItem(&exception2));
+    savedException = cm->item(exception2.localId());
+    QCOMPARE(savedException.parentLocalId(), christmas.localId());
+    QCOMPARE(savedException.guid(), QLatin1String("christmas")); // guid should be set by manager
+
+    // Make a fresh exception object on a fresh date to avoid clashing with the previously saved one
+    // exception without originalDate fails
+    QOrganizerEventOccurrence exception3;
+    exception3.setStartDateTime(QDateTime(QDate(2012, 12, 25), QTime(0, 0, 0)));
+    exception3.setEndDateTime(QDateTime(QDate(2012, 12, 26), QTime(0, 0, 0)));
+    exception3.setDisplayLabel(QLatin1String("Christmas"));
+    exception3.addComment(QLatin1String("With the in-laws"));
+    exception3.setParentLocalId(christmas.localId());
+    exception3.setGuid(QLatin1String("christmas"));
+    QVERIFY(!cm->saveItem(&exception3));
+    QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
+
+    // with original date, guid and parentId set and consistent, and localId=0, it should work
+    exception3.setOriginalDate(QDate(2012, 12, 25));
+    QVERIFY(cm->saveItem(&exception3));
+    QVERIFY(exception3.localId() != 0);
+    savedException = cm->item(exception3.localId());
+    QCOMPARE(savedException.parentLocalId(), christmas.localId());
 }
 
 void tst_QOrganizerItemManager::update()

@@ -709,12 +709,12 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, cons
         newId.setLocalId(++d->m_nextOrganizerItemId);
         theOrganizerItem->setId(newId);
 
-        // set the guid if not set, and ensure that it's the same as parents (fix if it isn't)
-        if (theOrganizerItem->guid().isEmpty())
-            theOrganizerItem->setGuid(QUuid::createUuid().toString());
         if (!fixOccurrenceReferences(theOrganizerItem, error)) {
             return false;
         }
+        // set the guid if not set, and ensure that it's the same as the parent's
+        if (theOrganizerItem->guid().isEmpty())
+            theOrganizerItem->setGuid(QUuid::createUuid().toString());
 
         // if we're saving an exception occurrence, we need to add it's original date as an exdate to the parent.
         if (theOrganizerItem->type() == QOrganizerItemType::TypeEventOccurrence) {
@@ -776,7 +776,12 @@ bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem
     if (theItem->type() == QOrganizerItemType::TypeEventOccurrence
             || theItem->type() == QOrganizerItemType::TypeTodoOccurrence) {
         const QString guid = theItem->guid();
-        QOrganizerItemLocalId parentId = theItem->detail<QOrganizerItemInstanceOrigin>().parentLocalId();
+        QOrganizerItemInstanceOrigin instanceOrigin = theItem->detail<QOrganizerItemInstanceOrigin>();
+        if (!instanceOrigin.originalDate().isValid()) {
+            *error = QOrganizerItemManager::InvalidOccurrenceError;
+            return false;
+        }
+        QOrganizerItemLocalId parentId = instanceOrigin.parentLocalId();
         if (!guid.isEmpty()) {
             if (parentId != 0) {
                 QOrganizerItemManager::Error tempError;
