@@ -690,7 +690,10 @@ CCalEntry* QOrganizerItemSymbianEngine::createEntryToSaveItemInstanceL(QOrganize
         CleanupStack::PushL(parentEntry);
         //create an exceptional entry to save                
         TCalTime recurrenceId;
-        recurrenceId = OrganizerItemDetailTransform::toTCalTimeL(origin.originalDate());
+        TCalTime parentRecurrenceId = parentEntry->RecurrenceIdL();
+        QDateTime parentDateTime = OrganizerItemDetailTransform::toQDateTimeL(parentRecurrenceId);
+        QDateTime originalDateTime = QDateTime(origin.originalDate(), parentDateTime.time());
+        recurrenceId = OrganizerItemDetailTransform::toTCalTimeL(originalDateTime);
          
         // create the new child entry now
         entry = CCalEntry::NewL( parentEntry->EntryTypeL(),globalUid ,
