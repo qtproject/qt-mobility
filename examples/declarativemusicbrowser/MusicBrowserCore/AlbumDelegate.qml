@@ -138,7 +138,6 @@ Package {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             color: "white"
-            visible: false
         }
 
         Text {
@@ -150,7 +149,6 @@ Package {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             color: "white"
-            visible: false
         }
 
         MouseArea {
@@ -165,24 +163,21 @@ Package {
             State {
                 when: albumDelegate.state == 'cover'
                 ParentChange { target: albumInfo; parent: coversItem }
+                PropertyChanges { target: titleLabel; visible: false }
+                PropertyChanges { target: artistLabel; visible: false }
             },
             State {
                 when: albumDelegate.state == 'grid'
                 ParentChange { target: albumInfo; parent: gridItem }
-                PropertyChanges { target: titleLabel; visible: true }
-                PropertyChanges { target: artistLabel; visible: true }
             },
             State {
                 when: albumDelegate.state == 'list'
                 ParentChange { target: albumInfo; parent: listItem }
                 PropertyChanges { target: listLoader; sourceComponent: listView }
-                PropertyChanges { target: titleLabel; visible: true }
             },
             State {
                 when: albumDelegate.state == 'fullScreen' && fullScreenItem.parent.ListView.isCurrentItem
                 PropertyChanges { target: fullScreenLoader; sourceComponent: fullScreenView }
-                PropertyChanges { target: titleLabel; visible: true }
-                PropertyChanges { target: artistLabel; visible: true }
                 ParentChange { target: albumInfo; parent: fullScreenItem }
             },
             State {
