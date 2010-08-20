@@ -50,9 +50,11 @@ QTM_BEGIN_NAMESPACE
 /*!
     \qmlclass Position
 
-    \brief The Position element holds various positional data, such as \l latitude,
-    \l longitude, \l altitude and \l speed.
+    \brief The Position element holds various positional data, such as \l
+    latitude, \l longitude, \l altitude and \l speed.
     \inherits QObject
+
+    \ingroup qml-location
 
     The Position element holds various positional data, such as \l latitude,
     \l longitude, \l altitude and \l speed. Not all of these are always available

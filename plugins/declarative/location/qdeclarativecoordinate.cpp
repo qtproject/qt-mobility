@@ -47,9 +47,11 @@ QTM_BEGIN_NAMESPACE
 /*!
     \qmlclass Coordinate
 
-    \brief The Coordinate element holds various positional data, such as \l latitude,
-    \l longitude and \l altitude.
+    \brief The Coordinate element holds various positional data, such as \l
+    latitude, \l longitude and \l altitude.
     \inherits QObject
+
+    \ingroup qml-location
 
     The Coordinate element is part of the \bold{QtMobility.location 1.0} module.
 */
