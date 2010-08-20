@@ -62,7 +62,7 @@
 
 #include <QtGui/qimage.h>
 
-#define CAMERABIN_DEBUG 1
+//#define CAMERABIN_DEBUG 1
 
 #ifdef Q_WS_MAEMO_5
 #define FILENAME_PROPERTY "filename"
@@ -123,9 +123,8 @@
 #define gstUnref(element) { if (element) { gst_object_unref(GST_OBJECT(element)); element = 0; } }
 
 #define PREVIEW_CAPS \
-    "video/x-raw-rgb, width = (int) [640, 800], height = (int) [320, 480]"
+    "video/x-raw-rgb, width = (int) [640, 848], height = (int) [320, 480]"
 
-// Function prototypes
 static gboolean imgCaptured(GstElement *camera, const gchar *filename, gpointer user_data);
 
 CameraBinSession::CameraBinSession(QObject *parent)
@@ -465,7 +464,7 @@ void CameraBinSession::setState(QCamera::State newState)
     switch (newState) {
     case QCamera::UnloadedState:
     case QCamera::LoadedState:
-        //focus is lost when the state is changed from Active to Idle
+        //focus is lost at least on n900 when the state is changed from Active to Idle
         if (m_state == QCamera::ActiveState)
             emit focusStatusChanged(QCamera::Unlocked, QCamera::LockLost);
 
@@ -484,11 +483,6 @@ void CameraBinSession::setState(QCamera::State newState)
             m_pendingResolutionUpdate = true;
             gst_element_set_state(m_pipeline, GST_STATE_READY);
         }
-
-        /*bool continuous = false;
-        supportedFrameRates(QSize(), &continuous);
-        supportedResolutions(QPair<int,int>(0,0), &continuous);
-        break;*/
     }
 }
 
@@ -811,6 +805,11 @@ static void readValue(const GValue *value, QList< QPair<int,int> > *res, bool *c
     }
 }
 
+static bool rateLessThan(const QPair<int,int> &r1, const QPair<int,int> &r2)
+{
+     return r1.first*r2.second < r2.first*r1.second;
+}
+
 QList< QPair<int,int> > CameraBinSession::supportedFrameRates(const QSize &frameSize, bool *continuous) const
 {
     QList< QPair<int,int> > res;
@@ -864,6 +863,8 @@ QList< QPair<int,int> > CameraBinSession::supportedFrameRates(const QSize &frame
         readValue(rateValue, &res, continuous);
     }
 
+    qSort(res.begin(), res.end(), rateLessThan);
+
 #if CAMERABIN_DEBUG
     qDebug() << "Supported rates:" << gst_caps_to_string(caps);
     qDebug() << res;
@@ -873,6 +874,13 @@ QList< QPair<int,int> > CameraBinSession::supportedFrameRates(const QSize &frame
 
     return res;
 }
+
+static bool resolutionLessThan(const QSize &r1, const QSize &r2)
+{
+     return r1.width() < r2.width() ||
+            (r1.width() == r2.width() && r1.height() < r2.height());
+}
+
 
 QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate, bool *continuous) const
 {
@@ -884,7 +892,12 @@ QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate, bool *c
     if (!m_sourceCaps)
         return res;
 
+#if CAMERABIN_DEBUG
+    qDebug() << "Source caps:" << gst_caps_to_string(m_sourceCaps);
+#endif
+
     GstCaps *caps = 0;
+    bool isContinuous = false;
 
     if (rate.first <= 0 || rate.second <= 0) {
         caps = gst_caps_copy(m_sourceCaps);
@@ -942,13 +955,59 @@ QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate, bool *c
             int hMin = gst_value_get_int_range_min(hValue);
             int hMax = gst_value_get_int_range_max(hValue);
 
-            if (continuous)
-                *continuous = true;
+            isContinuous = true;
 
             res << QSize(wMin,hMin);
             res << QSize(wMax,hMax);
         } else if (GST_VALUE_HOLDS_LIST(wValue)) {
         }
+    }
+
+    qSort(res.begin(), res.end(), resolutionLessThan);
+
+    //if the range is continuos, populate is with the common rates
+    if (isContinuous && res.size() >= 2) {
+        //fill the ragne with common value
+        static QList<QSize> commonSizes =
+                QList<QSize>() << QSize(128, 96)
+                               << QSize(160,120)
+                               << QSize(176, 144)
+                               << QSize(320, 240)
+                               << QSize(352, 288)
+                               << QSize(640, 480)
+                               << QSize(848, 480)
+                               << QSize(854, 480)
+                               << QSize(1024, 768)
+                               << QSize(1280, 720) // HD 720
+                               << QSize(1280, 1024)
+                               << QSize(1600, 1200)
+                               << QSize(1920, 1080) // HD
+                               << QSize(1920, 1200)
+                               << QSize(2048, 1536)
+                               << QSize(2560, 1600)
+                               << QSize(2580, 1936);
+        const QSize minSize = res.first();
+        const QSize maxSize = res.last();
+
+        res.clear();
+
+        foreach (const QSize &candidate, commonSizes) {
+            int w = candidate.width();
+            int h = candidate.height();
+
+            if (w > maxSize.width() && h > maxSize.height())
+                break;
+
+            if (w >= minSize.width() && h >= minSize.height() &&
+                w <= maxSize.width() && h <= maxSize.height())
+                res << candidate;
+        }
+
+        if (res.isEmpty() || res.first() != minSize)
+            res.prepend(minSize);
+
+        if (res.last() != maxSize)
+            res.append(maxSize);
     }
 
 #if CAMERABIN_DEBUG
@@ -957,6 +1016,9 @@ QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate, bool *c
 #endif
 
     gst_caps_unref(caps);
+
+    if (continuous)
+        *continuous = isContinuous;
 
     return res;
 }

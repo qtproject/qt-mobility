@@ -94,4 +94,6 @@ symbian {
     # export headers into EPOCROOT
     for(header, exportheaders.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
 }
+
+CONFIG += app
 include(../../features/deploy.pri)

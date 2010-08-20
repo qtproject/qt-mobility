@@ -81,8 +81,10 @@ Finally, once the client has selected a particular implementation of the action,
 the action descriptor (from which they can retrieve meta-data and check that it supports the
 contact that they wish to perform the action on), the client may request a pointer to the
 action implementation by calling \l QContactAction::action() and passing the action descriptor
-as a parameter.  Note that the client does NOT take ownership of the returned QContactAction
-pointer.
+as a parameter.  Note that the client takes ownership of the returned QContactAction
+pointer and must delete it to avoid leaking memory.  The caller is able to delete the action
+at any time, however doing so prior to when the action transitions to a finished state may
+have an undefined outcome depending on the implementation of the action.
 
 \section1 Information For Action Implementors
 

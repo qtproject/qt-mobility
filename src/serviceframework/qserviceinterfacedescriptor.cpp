@@ -94,14 +94,18 @@ QTM_BEGIN_NAMESPACE
                                         describes the capabilities that a service client
                                         would require to use the service if capability 
                                         checks are enforced.
-    \value      Location                This attribute points to the location
-                                        where the plug-in providing this service is stored.
+    \value      Location                This attribute points to either the location
+                                        where the plug-in providing this service is stored or
+                                        where the name of the service IPC path is found.
                                         If the service is plug-in based the location is the
-                                        name and/or path of the plugin.
+                                        name and/or path of the plugin. If the service is 
+                                        IPC based the location is the name of the socket address.
     \value      ServiceDescription      This attribute provides a general description for
                                         the service.
     \value      InterfaceDescription    This attribute provides a description for the interface 
                                         implementation.
+    \value      ServiceType             This attribute specifies the QService::Type that the 
+                                        service is being provided.
 */
 
 /*!
