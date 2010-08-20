@@ -31,10 +31,10 @@ namespace Tp
         Channel(QDBusConnection busconnection, const QString busname, const QString &objectPath, const QVariantMap &properties, Connection* connection);
         ~Channel();
         QVariantMap properties() const { return propertylist; }
-        QTelephonyEvents::CallStatus getStatus() { return status; }
+        QTelephony::CallStatus getStatus() { return status; }
         int getDirection() { return direction; }
         QString getRemotePartyIdentifier() { return remoteIdentifier; }
-        QTelephonyEvents::CallType getCalltype();
+        QTelephony::CallType getCalltype();
         QString getSubType() { return subtype; }
 
         bool isCall() {
@@ -158,7 +158,7 @@ namespace Tp
         Tp::Client::ChannelTypeTubesInterface* pChannelTypeTubesInterface;
 
     private:
-        QTelephonyEvents::CallStatus status;
+        QTelephony::CallStatus status;
         Connection* connection;
         /*
          0 = unknown

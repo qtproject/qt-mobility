@@ -64,7 +64,7 @@ void QTelephonyCallListPrivate::updateCallInformation()
     foreach (QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> existingCall, callInfoList) {
         if (!allOngoingCalls.contains(existingCall->m_index)) {
             // Make sure that status is changed to idle
-            existingCall->status = QTelephonyEvents::Idle;
+            existingCall->status = QTelephony::Idle;
             callInfoList.removeOne(existingCall);
             emitActiveCallRemoved(*existingCall);
             // Call should be deleted after there are no references to it
@@ -143,49 +143,49 @@ void QTelephonyCallListPrivate::fillCallRemoteInfo(
     );
 }
 
-QTelephonyEvents::CallStatus QTelephonyCallListPrivate::mapStatus(
+QTelephony::CallStatus QTelephonyCallListPrivate::mapStatus(
         CCPCall::TCallState aStatus)
 {
     switch(aStatus) {
         case CCPCall::EStateIdle: 
-            return QTelephonyEvents::Idle;
+            return QTelephony::Idle;
         case CCPCall::EStateDialling: 
-            return QTelephonyEvents::Dialing;
+            return QTelephony::Dialing;
         case CCPCall::EStateRinging: 
-            return QTelephonyEvents::Incomming;
+            return QTelephony::Incomming;
         case CCPCall::EStateQueued:
-            return QTelephonyEvents::Incomming;
+            return QTelephony::Incomming;
         case CCPCall::EStateAnswering: 
-            return QTelephonyEvents::Incomming;
+            return QTelephony::Incomming;
         case CCPCall::EStateConnecting: 
-            return QTelephonyEvents::Alerting;
+            return QTelephony::Alerting;
         case CCPCall::EStateConnected: 
-            return QTelephonyEvents::Connected;
+            return QTelephony::Connected;
         case CCPCall::EStateDisconnecting: 
-            return QTelephonyEvents::Disconnecting;    
+            return QTelephony::Disconnecting;    
         case CCPCall::EStateHold: 
-            return QTelephonyEvents::OnHold;    
+            return QTelephony::OnHold;    
         case CCPCall::EStateForwarding: 
-            return QTelephonyEvents::Alerting;
+            return QTelephony::Alerting;
         case CCPCall::EStateTransferring: 
-            return QTelephonyEvents::Alerting;   
+            return QTelephony::Alerting;   
         default:
-            return QTelephonyEvents::Idle;
+            return QTelephony::Idle;
     };    
 }
 
-QTelephonyEvents::CallType QTelephonyCallListPrivate::mapType(
+QTelephony::CallType QTelephonyCallListPrivate::mapType(
         CCPCall::TCallType aType)
 {
     switch (aType) {
         case CCPCall::ECallTypeCSVoice:
-            return QTelephonyEvents::Voice;
+            return QTelephony::Voice;
         case CCPCall::ECallTypePS:
-            return QTelephonyEvents::Voice;
+            return QTelephony::Voice;
         case CCPCall::ECallTypeVideo:
-            return QTelephonyEvents::Video;
+            return QTelephony::Video;
         default:
-            return QTelephonyEvents::Any;
+            return QTelephony::Any;
     };
 }
 
@@ -246,14 +246,14 @@ void QTelephonyCallListPrivate::emitActiveCallAdded(QTelephonyCallInfoPrivate& c
     emit p->activeCallAdded(callinfo);
 }
 
-QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephonyEvents::CallType& calltype) const
+QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephony::CallType& calltype) const
 {
     QList<QTelephonyCallInfo> ret;
 
-    //call copy constructor so the caller has to delete the QTelephonyEvents pointers
+    //call copy constructor so the caller has to delete the QTelephony pointers
     for( int i = 0; i < callInfoList.count(); i++){
-        if(callInfoList[i]->type == QTelephonyEvents::Any
-            || QTelephonyEvents::Any == calltype
+        if(callInfoList[i]->type == QTelephony::Any
+            || QTelephony::Any == calltype
             || callInfoList[i]->type == calltype)
         {
             QTelephonyCallInfo callinfo;

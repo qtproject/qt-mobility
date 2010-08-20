@@ -74,9 +74,9 @@ QString QTelephonyCallInfoPrivate::remotePartyIdentifier() const
     return QString("");
 }
 
-QTelephonyEvents::CallType QTelephonyCallInfoPrivate::type() const
+QTelephony::CallType QTelephonyCallInfoPrivate::type() const
 {
-    QTelephonyEvents::CallType ret = QTelephonyEvents::Other;
+    QTelephony::CallType ret = QTelephony::Other;
     if(telepathychannel)
         ret =   telepathychannel->getCalltype();
     return ret;
@@ -90,9 +90,9 @@ QString QTelephonyCallInfoPrivate::subType() const
     return ret;
 }
 
-QTelephonyEvents::CallStatus QTelephonyCallInfoPrivate::status() const
+QTelephony::CallStatus QTelephonyCallInfoPrivate::status() const
 {
-    QTelephonyEvents::CallStatus ret = QTelephonyEvents::Idle;
+    QTelephony::CallStatus ret = QTelephony::Idle;
     if(telepathychannel)
         ret = telepathychannel->getStatus();
     return ret;

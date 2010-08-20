@@ -79,7 +79,7 @@ class QTelephonyCallListPrivate :
 public:
     QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
     virtual ~QTelephonyCallListPrivate();
-    QList<QTelephonyCallInfo> activeCalls(const QTelephonyEvents::CallType& calltype) const;
+    QList<QTelephonyCallInfo> activeCalls(const QTelephony::CallType& calltype) const;
 
     
 private slots:
@@ -95,8 +95,8 @@ private:
             QTelephonyCallInfoPrivate &callInfo, const MCall& fromCall);
     void fillCallRemoteInfo(
             QTelephonyCallInfoPrivate &callInfo, const MCall& fromCall);
-    QTelephonyEvents::CallStatus mapStatus(CCPCall::TCallState aStatus);
-    QTelephonyEvents::CallType mapType(CCPCall::TCallType aType);
+    QTelephony::CallStatus mapStatus(CCPCall::TCallState aStatus);
+    QTelephony::CallType mapType(CCPCall::TCallType aType);
     QString mapSubType(ulong aServiceId);
     
 private:

@@ -78,13 +78,13 @@ QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
         delete accountManager;
 }
 
-QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephonyEvents::CallType& calltype) const 
+QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephony::CallType& calltype) const 
 { 
     QList<QTelephonyCallInfo> ret;
 
     //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
     for( int i = 0; i < callInfoList.count(); i++){
-        if(calltype == QTelephonyEvents::Any || callInfoList.at(i).data()->type() == calltype)
+        if(calltype == QTelephony::Any || callInfoList.at(i).data()->type() == calltype)
         {
             QTelephonyCallInfo callinfo;
             callinfo.d = callInfoList.at(i);
@@ -137,7 +137,7 @@ void QTelephonyCallListPrivate::channelStatusChanged(Tp::ChannelPtr channel)
         emit p->activeCallStatusChanged(callinfo);
 
         //check if channel must be removed from callist
-        if(callInfoList[index]->status() == QTelephonyEvents::Disconnecting)
+        if(callInfoList[index]->status() == QTelephony::Disconnecting)
             callInfoList.removeAt(index);
     }
 }

@@ -47,9 +47,9 @@ QTM_BEGIN_NAMESPACE
 
 QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate()
     : remotePartyIdentifier("")
-    , type(QTelephonyEvents::Other)
+    , type(QTelephony::Other)
     , subType("")
-    , status(QTelephonyEvents::Idle)
+    , status(QTelephony::Idle)
     , m_index(-1)
 {
 }

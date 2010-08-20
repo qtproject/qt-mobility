@@ -40,17 +40,17 @@
 ****************************************************************************/
 
 /*!
-    \namespace QTelephonyEvents
+    \namespace QTelephony
 
     \inmodule QtTelephony
 
     \ingroup telephonyapienum
 
-    \brief The QTelephonyEvents namespace contains all enumerators for the Telephony Events API.
+    \brief The QTelephony namespace contains all enumerators for the Telephony Events API.
 */
 
 /*!
-    \enum  QTelephonyEvents::CallStatus
+    \enum  QTelephony::CallStatus
 
     This enum type is used to describe the status of a call.
     A QTelephonyCallInfo object can have a status of:
@@ -65,7 +65,7 @@
 */
 
 /*!
-    \enum QTelephonyEvents::CallType
+    \enum QTelephony::CallType
 
     This enum decribes the type of the call.
     A QTelephonyCallInfo object can be a type of:
