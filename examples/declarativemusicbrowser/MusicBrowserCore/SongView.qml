@@ -62,13 +62,13 @@ ListView {
             sortProperties: [ "artist", "title" ]
         }
         delegate: AlbumDelegate {
-            state: 'inVerticalList'
+            state: 'list'
             viewWidth: albumView.width
             viewHeight: albumView.height
         }
     }
 
-    model: visualModel.parts.verticalList
+    model: visualModel.parts.list
 
     section.property: "artist"
     section.delegate: Item {

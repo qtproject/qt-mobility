@@ -45,7 +45,7 @@ Item {
     property string subTitle: ""
     property bool backEnabled: false
 
-    function back() { albumView.state = 'inGrid' }
+    function back() { albumView.state = 'grid' }
 
     id: albumView
 
@@ -67,8 +67,9 @@ Item {
             viewHeight: listView.height
             onClicked: {
                 listView.positionViewAtIndex(index, ListView.Contain)
-                albumView.state = 'inHorizontalList'
+                albumView.state = 'fullScreen'
             }
+
         }
     }
 
@@ -88,7 +89,7 @@ Item {
         snapMode: ListView.SnapOneItem
         highlightRangeMode: ListView.StrictlyEnforceRange
 
-        model: visualModel.parts.horizontalList
+        model: visualModel.parts.fullScreen
 
         onCurrentIndexChanged: {
             gridView.positionViewAtIndex(currentIndex, GridView.Contain)
@@ -97,16 +98,16 @@ Item {
 
     }
 
-    state: 'inGrid'
+    state: 'grid'
 
     states: [
         State {
-            name: 'inGrid'
+            name: 'grid'
             PropertyChanges { target: albumView; backEnabled: false }
             PropertyChanges { target: listView; interactive: false; }
         },
         State {
-            name: 'inHorizontalList'
+            name: 'fullScreen'
             PropertyChanges { target: albumView; backEnabled: true }
             PropertyChanges { target: gridView; interactive: false }
             PropertyChanges { target: listView; interactive: true }

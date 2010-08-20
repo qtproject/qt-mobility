@@ -43,18 +43,17 @@ import QtMobility.gallery 1.1
 import "script/mediaart.js" as Script
 
 Package {
-    property alias state: albumInfo.state
+    property string state
     property int viewWidth: 0
     property int viewHeight: 0
 
     signal clicked
 
-
     id: albumDelegate
 
     Item {
-        id: stackItem
-        Package.name: 'stack'
+        id: coversItem
+        Package.name: 'covers'
         width: 128
         height: 128
         transform: Rotation { axis { x: 0; y: 1; z: 0} origin { x: 64; y: 64 } angle: -30 }
@@ -66,13 +65,12 @@ Package {
         height: 192
     }
     Item {
-
-        Package.name: 'verticalList'
+        Package.name: 'list'
         width: viewWidth
-        height: verticalSongsLoader.height > 192 ? verticalSongsLoader.height : 192
+        height: listLoader.height > 192 ? listLoader.height : 192
 
         Item {
-            id: verticalListItem
+            id: listItem
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
@@ -80,8 +78,8 @@ Package {
         }
 
         Loader {
-            id: verticalSongsLoader
-            anchors.left: verticalListItem.right
+            id: listLoader
+            anchors.left: listItem.right
             anchors.right: parent.right
             anchors.top: parent.top
         }
@@ -90,12 +88,12 @@ Package {
     Item {
         property string albumTitle: title
 
-        Package.name: 'horizontalList'
+        Package.name: 'fullScreen'
         width: viewWidth
         height: viewHeight
 
         Item {
-            id: horizontalListItem
+            id: fullScreenItem
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
@@ -103,8 +101,8 @@ Package {
         }
 
         Loader {
-            id: horizontalSongsLoader
-            anchors.left: horizontalListItem.right
+            id: fullScreenLoader
+            anchors.left: fullScreenItem.right
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.bottom: parent.bottom
@@ -165,36 +163,37 @@ Package {
 
         states: [
             State {
-                name: 'inStack'
-                ParentChange { target: albumInfo; parent: stackItem }
-                PropertyChanges { target: verticalSongsLoader; sourceComponent: undefined }
-                PropertyChanges { target: horizontalSongsLoader; sourceComponent: undefined }
+                when: albumDelegate.state == 'cover'
+                ParentChange { target: albumInfo; parent: coversItem }
             },
             State {
-                name: 'inGrid'
+                when: albumDelegate.state == 'grid'
                 ParentChange { target: albumInfo; parent: gridItem }
                 PropertyChanges { target: titleLabel; visible: true }
                 PropertyChanges { target: artistLabel; visible: true }
-                PropertyChanges { target: verticalSongsLoader; sourceComponent: undefined }
-                PropertyChanges { target: horizontalSongsLoader; sourceComponent: undefined }
             },
             State {
-                name: 'inVerticalList'
-                ParentChange { target: albumInfo; parent: verticalListItem }
-                PropertyChanges { target: verticalSongsLoader; sourceComponent: verticalSongView }
+                when: albumDelegate.state == 'list'
+                ParentChange { target: albumInfo; parent: listItem }
+                PropertyChanges { target: listLoader; sourceComponent: listView }
                 PropertyChanges { target: titleLabel; visible: true }
             },
             State {
-                name: 'inHorizontalList'
-                ParentChange { target: albumInfo; parent: horizontalListItem }
-                PropertyChanges { target: horizontalSongsLoader; sourceComponent: horizontalSongView }
+                when: albumDelegate.state == 'fullScreen' && fullScreenItem.parent.ListView.isCurrentItem
+                PropertyChanges { target: fullScreenLoader; sourceComponent: fullScreenView }
                 PropertyChanges { target: titleLabel; visible: true }
+                PropertyChanges { target: artistLabel; visible: true }
+                ParentChange { target: albumInfo; parent: fullScreenItem }
+            },
+            State {
+                when: albumDelegate.state == 'fullScreen'
+                PropertyChanges { target: albumInfo; visible: false; }
             }
         ]
     }
 
     Component {
-        id: verticalSongView
+        id: listView
 
         Column {
             id: songColumn
@@ -213,7 +212,7 @@ Package {
     }
 
     Component {
-        id: horizontalSongView
+        id: fullScreenView
 
         ListView {
             model: GalleryQueryModel {

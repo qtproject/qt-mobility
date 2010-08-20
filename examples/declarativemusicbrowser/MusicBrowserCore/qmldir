@@ -1,5 +1,6 @@
 AlbumDelegate AlbumDelegate.qml
 AlbumView AlbumView.qml
+CategoryDelegate CategoryDelegate.qml
 CategoryView CategoryView.qml
 LineEdit LineEdit.qml
 MenuButton MenuButton.qml

@@ -41,75 +41,89 @@
 import Qt 4.7
 import QtMobility.gallery 1.1
 
-Item {
-    property string subTitle: ""
-    property bool backEnabled: false
-    property alias categoryType: categoryModel.rootType
+Package {
+    property string state
+    property int viewWidth: 0
+    property int viewHeight: 0
 
-    function back() { state = "grid" }
+    signal clicked
 
-    id: categoryView
-    clip: true
+    id: categoryDelegate
 
     VisualDataModel {
         id: visualModel
 
         model: GalleryQueryModel {
-            id: categoryModel
+            id: galleryModel
             gallery: documentGallery
-            properties: [ "title" ]
-            sortProperties: [ "title" ]
+            rootType: "Album"
+            rootItem: itemId
+            properties: [ "artist", "title" ]
+            sortProperties: [ "artist", "title" ]
         }
-        delegate: CategoryDelegate {
-            viewWidth: categoryView.width
-            viewHeight: categoryView.height
-
-            state: categoryView.state == "grid" ? "cover" : "list"
-
-            onClicked: {
-                listView.positionViewAtIndex(index, ListView.Contain)
-                categoryView.state = "fullScreen"
-            }
+        delegate: AlbumDelegate {
+            state: categoryDelegate.state
+            viewWidth: categoryDelegate.viewWidth
+            viewHeight: categoryDelegate.viewHeight
         }
     }
 
-    GridView {
-        id: gridView
-        anchors.fill: parent
-        cellWidth: 256
-        cellHeight: 192
+    Item {
+        Package.name: "grid"
 
-        model: visualModel.parts.grid
+        width: 256
+        height: 192
+
+        PathView {
+            id: albumView
+            anchors.top: parent.top
+            anchors.bottom: categoryLabel.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+
+            model: visualModel.parts.covers
+
+            offset: Math.min(2.5, count / 2)
+            pathItemCount: 5;
+            path: Path {
+                startX: 64
+                startY: albumView.height / 2
+                PathLine { x: albumView.width - 64; y: albumView.height / 2 }
+            }
+        }
+
+        Text {
+            id: categoryLabel
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            text: title
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.WordWrap
+            color: "white"
+            font.pointSize: 15
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: categoryDelegate.clicked()
+        }
+
+        visible: categoryDelegate.state == "cover"
     }
 
     ListView {
-        id: listView
-        anchors.fill: parent
+        width: categoryDelegate.viewWidth
+        height: categoryDelegate.viewHeight
 
-        orientation: ListView.Horizontal
-        snapMode: ListView.SnapOneItem
-        highlightRangeMode: ListView.StrictlyEnforceRange
+        property string categoryTitle: title
 
-        model: visualModel.parts.fullScreen
-        interactive: false
+        id: songsView
 
-        onCurrentIndexChanged: {
-            gridView.positionViewAtIndex(currentIndex, GridView.Contain)
-            subTitle = currentItem.categoryTitle
-        }
+        Package.name: "fullScreen"
+
+        model: visualModel.parts.list
+        interactive: categoryDelegate.state == "list"
     }
-
-    state: 'grid'
-    states: [
-        State {
-            name: 'grid'
-            PropertyChanges { target: categoryView; backEnabled: false }
-        },
-        State {
-            name: 'fullScreen'
-            PropertyChanges { target: categoryView; backEnabled: true }
-            PropertyChanges { target: gridView; interactive: false }
-            PropertyChanges { target: listView; interactive: true }
-        }
-    ]
 }

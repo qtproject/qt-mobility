@@ -70,7 +70,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
 
-            height: ratingEdit.x + ratingEdit.height + 5
+            height: durationEdit.x + durationEdit.height + 5
 
             Text {
                 id: trackEdit
