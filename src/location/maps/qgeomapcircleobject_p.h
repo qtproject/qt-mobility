@@ -44,10 +44,10 @@
 
 #include "qgeomapobject_p.h"
 
-#include "qgeocoordinate.h"
-
 #include <QPen>
 #include <QBrush>
+
+#include "qgeoboundingcircle.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -57,11 +57,9 @@ public:
     QGeoMapCircleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
     ~QGeoMapCircleObjectPrivate();
 
+    QGeoBoundingCircle circle;
     QPen pen;
     QBrush brush;
-
-    QGeoCoordinate center;
-    qreal radius;
 };
 
 QTM_END_NAMESPACE

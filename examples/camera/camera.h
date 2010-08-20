@@ -101,6 +101,10 @@ private slots:
     void displayViewfinder();
     void displayCapturedImage();
 
+protected:
+    void keyPressEvent(QKeyEvent * event);
+    void keyReleaseEvent(QKeyEvent * event);
+
 private:
     Ui::Camera *ui;
 

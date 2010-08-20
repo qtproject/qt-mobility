@@ -30,6 +30,12 @@ PKGCONFIG += \
 
 maemo* {
   PKGCONFIG +=gstreamer-plugins-bad-0.10
+
+  HEADERS += camerabuttonlistener_maemo.h
+
+  SOURCES += camerabuttonlistener_maemo.cpp
+
+  QT += dbus
 }
 
 # Input
@@ -77,4 +83,3 @@ include(mediacapture/mediacapture.pri)
 contains(gstreamer-photography_enabled, yes) {
     include(camerabin/camerabin.pri)
 }
-

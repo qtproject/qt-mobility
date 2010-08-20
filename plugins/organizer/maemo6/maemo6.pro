@@ -22,9 +22,6 @@ HEADERS += \
 SOURCES += \
         qorganizermaemo6.cpp
 
-target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
-INSTALLS += target
-
 # Once we know what the pkgconfig deps are
 # CONFIG += link_pkgconfig
 PKGCONFIG += 

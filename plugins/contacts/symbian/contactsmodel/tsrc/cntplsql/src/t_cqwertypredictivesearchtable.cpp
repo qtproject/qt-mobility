@@ -245,14 +245,14 @@ void UT_CQwertyPredictiveSearchTable::UT_DeleteLL()
 //
 void UT_CQwertyPredictiveSearchTable::UT_UnmappedMailAddressL()
     {
-    // All mail addresses begin with unmapped characters, so the contact should
-    // not be stored to QWERTY tables at all.
-    _LIT(KNameWithUnmappedChars, "rname28afternbr");
+    // All names and mail addresses begin with unmapped characters, so contact
+    // is not stored to QWERTY tables at all.
+    _LIT(KUnmappedName, "8nbrAtStart");
+    _LIT(KNameWithUnmappedChars, "rname28afterNbr");
     _LIT(KUnmappedMail, "mailto:123user@domain");
     _LIT(KUnmappedMail2, "800@call.id");
-    AddContactL(KTestContactId, KNameWithUnmappedChars, KLastName, 
-                KUnmappedMail, KUnmappedMail2);
-    
+    _LIT(KUnmappedMail3, "5begins@by.nbr");
+    AddContactL(KTestContactId, KUnmappedName, KNullDesC, KUnmappedMail, KUnmappedMail2); 
     // Check tables are empty
     CheckItemCountL(InitTableVector());
     
@@ -264,6 +264,16 @@ void UT_CQwertyPredictiveSearchTable::UT_UnmappedMailAddressL()
     QVector<TInt> result = InitTableVector();
     result[3] = 1; // KNameWithUnmappedChars
     result[4] = 1; // KMail
+    CheckItemCountL(result);
+    
+   
+    // All mail addresses begin with unmapped characters, but contact can be
+    // searched by first name and last name. Contact is stored to QWERTY tables.
+    AddContactL(KTestContactId3, KNameWithUnmappedChars, KLastName, 
+                KUnmappedMail, KUnmappedMail2, KUnmappedMail3);
+    
+    result[2] = 1; // KLastName
+    result[3] = 2; // Second KNameWithUnmappedChars
     CheckItemCountL(result);
     }
 

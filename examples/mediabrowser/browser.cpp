@@ -61,30 +61,25 @@ Browser::Browser(QWidget *parent, Qt::WindowFlags flags)
 {
     gallery = new QDocumentGallery;
 
-    artistView = new ArtistView(QDocumentGallery::Artist);
-    artistView->setGallery(gallery);
+    artistView = new ArtistView(QDocumentGallery::Artist, gallery);
     connect(artistView, SIGNAL(showAlbums(QVariant,QString)),
             this, SLOT(showAlbums(QVariant,QString)));
     connect(artistView, SIGNAL(showSongs(QVariant,QString)),
             this, SLOT(showSongs(QVariant,QString)));
 
-    albumArtistView = new ArtistView(QDocumentGallery::AlbumArtist);
-    albumArtistView->setGallery(gallery);
+    albumArtistView = new ArtistView(QDocumentGallery::AlbumArtist, gallery);
     connect(albumArtistView, SIGNAL(showAlbums(QVariant,QString)),
             this, SLOT(showAlbums(QVariant,QString)));
     connect(albumArtistView, SIGNAL(showSongs(QVariant,QString)),
             this, SLOT(showSongs(QVariant,QString)));
 
-    albumView = new AlbumView;
-    albumView->setGallery(gallery);
+    albumView = new AlbumView(gallery);
     connect(albumView, SIGNAL(showSongs(QVariant,QString)),
             this, SLOT(showSongs(QVariant,QString)));
 
-    songView = new SongView;
-    songView->setGallery(gallery);
+    songView = new SongView(gallery);
 
-    photoView = new PhotoView;
-    photoView->setGallery(gallery);
+    photoView = new PhotoView(gallery);
 
     stack = new QStackedWidget;
     stack->addWidget(artistView);
@@ -119,8 +114,7 @@ void Browser::showArtists()
 void Browser::showArtists(const QVariant &containerId, const QString &title)
 {
 #ifdef Q_WS_MAEMO_5
-    ArtistView *artistView = new ArtistView(QDocumentGallery::Artist);
-    artistView->setGallery(gallery);
+    ArtistView *artistView = new ArtistView(QDocumentGallery::Artist, gallery);
     connect(artistView, SIGNAL(showAlbums(QVariant,QString)),
             this, SLOT(showAlbums(QVariant,QString)));
     connect(artistView, SIGNAL(showSongs(QVariant,QString)),
@@ -138,8 +132,7 @@ void Browser::showAlbumArtists()
 void Browser::showAlbumArtists(const QVariant &containerId, const QString &title)
 {
 #ifdef Q_WS_MAEMO_5
-    ArtistView *albumArtistView = new ArtistView(QDocumentGallery::AlbumArtist);
-    albumArtistView->setGallery(gallery);
+    ArtistView *albumArtistView = new ArtistView(QDocumentGallery::AlbumArtist, gallery);
     connect(albumArtistView, SIGNAL(showAlbums(QVariant,QString)),
             this, SLOT(showAlbums(QVariant,QString)));
     connect(albumArtistView, SIGNAL(showSongs(QVariant,QString)),
@@ -157,8 +150,7 @@ void Browser::showAlbums()
 void Browser::showAlbums(const QVariant &containerId, const QString &title)
 {
 #ifdef Q_WS_MAEMO_5
-    AlbumView *albumView = new AlbumView;
-    albumView->setGallery(gallery);
+    AlbumView *albumView = new AlbumView(gallery);
     connect(albumView, SIGNAL(showSongs(QVariant,QString)),
             this, SLOT(showSongs(QVariant,QString)));
 #endif
@@ -174,8 +166,7 @@ void Browser::showSongs()
 void Browser::showSongs(const QVariant &containerId, const QString &title)
 {
 #ifdef Q_WS_MAEMO_5
-    SongView *songView = new SongView;
-    songView->setGallery(gallery);
+    SongView *songView = new SongView(gallery);
 #endif
 
     showView(songView, containerId, title);
@@ -189,8 +180,7 @@ void Browser::showPhotos()
 void Browser::showPhotos(const QVariant &containerId, const QString &title)
 {
 #ifdef Q_WS_MAEMO_5
-    PhotoView *photoView = new PhotoView;
-    photoView->setGallery(gallery);
+    PhotoView *photoView = new PhotoView(gallery);
 #endif
 
     showView(photoView, containerId, title);

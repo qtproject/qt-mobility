@@ -183,6 +183,8 @@ public:
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
     void setConnection();
+    QString model();
+    QString productName();
 
 private:
 #if !defined(QT_NO_DBUS)
@@ -217,7 +219,10 @@ private:
     bool kdeIsRunning;
     bool gnomeIsRunning;
     void whichWMRunning();
-
+    bool screenSaverIsInhibited;
+#ifdef Q_WS_X11
+     int changeTimeout(int timeout);
+#endif
 };
 
 QTM_END_NAMESPACE

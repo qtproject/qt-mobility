@@ -49,9 +49,19 @@
 #include <QStringList>
 #include <QVariant>
 
+class QDataStream;
+
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemDetailPrivate;
+
+// MSVC needs the function declared before the friend declaration
+class QOrganizerItemDetail;
+#ifndef QT_NO_DATASTREAM
+Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerItemDetail& detail);
+Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItemDetail& detail);
+#endif
+
 class Q_ORGANIZER_EXPORT QOrganizerItemDetail
 {
 public:
@@ -146,6 +156,9 @@ protected:
 private:
     friend class QOrganizerItem;
     friend class QOrganizerItemDetailPrivate;
+#ifndef QT_NO_DATASTREAM
+    friend QDataStream& operator>>(QDataStream& in, QOrganizerItemDetail& detail);
+#endif
     QSharedDataPointer<QOrganizerItemDetailPrivate> d;
 };
 

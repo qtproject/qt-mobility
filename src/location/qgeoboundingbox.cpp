@@ -80,7 +80,8 @@ QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate &topLeft, const QGeoCoordi
 /*!
 */
 QGeoBoundingBox::QGeoBoundingBox(const QGeoBoundingBox &other)
-        : d_ptr(other.d_ptr) {}
+        : QGeoBoundingArea(other),
+          d_ptr(other.d_ptr) {}
 
 /*!
 */
@@ -90,6 +91,7 @@ QGeoBoundingBox::~QGeoBoundingBox() {}
 */
 QGeoBoundingBox& QGeoBoundingBox::operator = (const QGeoBoundingBox & other)
 {
+    QGeoBoundingArea::operator=(other);
     d_ptr = other.d_ptr;
     return *this;
 }
@@ -106,6 +108,13 @@ bool QGeoBoundingBox::operator == (const QGeoBoundingBox &other) const
 bool QGeoBoundingBox::operator != (const QGeoBoundingBox &other) const
 {
     return !(this->operator==(other));
+}
+
+/*!
+*/
+QGeoBoundingArea::AreaType QGeoBoundingBox::type() const
+{
+    return QGeoBoundingArea::BoxType;
 }
 
 /*!

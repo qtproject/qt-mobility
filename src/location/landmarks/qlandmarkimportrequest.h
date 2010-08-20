@@ -63,6 +63,12 @@ public:
     QString format() const;
     void setFormat(const QString &format);
 
+    QLandmarkManager::TransferOption transferOption() const;
+    void setTransferOption(QLandmarkManager::TransferOption option);
+
+    QLandmarkCategoryId categoryId() const;
+    void setCategoryId(const QLandmarkCategoryId &categoryId);
+
     QList<QLandmarkId> landmarkIds() const;
 private:
     Q_DISABLE_COPY(QLandmarkImportRequest)

@@ -275,9 +275,10 @@
     \section2 Camera
 
     The Camera API provides control of system camera devices. Providing
-    support for still or video image capture with sound support.
+    support for still or video image capture with sound support. This functionality
+    is part of the Multimedia API.
 
-    For more details, see the \l {Camera}{Camera Overview}.
+    For more details, see the \l {Multimedia} {Multimedia API overview}.
     
     \section2 Landmarks
 

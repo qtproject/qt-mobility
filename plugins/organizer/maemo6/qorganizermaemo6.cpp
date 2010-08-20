@@ -213,8 +213,12 @@ QOrganizerItem QOrganizerItemMaemo6Engine::item(const QOrganizerItemLocalId& ite
     }
 }
 
-bool QOrganizerItemMaemo6Engine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemMaemo6Engine::saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
+    if (!items || collectionId != QOrganizerCollectionLocalId()) {
+        *error = QOrganizerItemManager::BadArgumentError;
+    }
+
     /*
         TODO
         The item passed in should be validated according to the schema.
@@ -298,6 +302,47 @@ bool QOrganizerItemMaemo6Engine::removeDetailDefinition(const QString& definitio
 {
     /* TODO - if you support removing custom fields, do that here.  Otherwise call the base functionality. */
     return QOrganizerItemManagerEngine::removeDetailDefinition(definitionId, itemType, error);
+}
+
+QOrganizerCollectionLocalId QOrganizerItemMaemo6Engine::defaultCollectionId(QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NoError;
+    return QOrganizerCollectionLocalId(0);
+}
+
+QList<QOrganizerCollectionLocalId> QOrganizerItemMaemo6Engine::collectionIds(QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NoError;
+    QList<QOrganizerCollectionLocalId> retn;
+    retn << QOrganizerCollectionLocalId(0);
+    return retn;
+}
+
+QList<QOrganizerCollection> QOrganizerItemMaemo6Engine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NoError;
+    QOrganizerCollection defaultCollection;
+    defaultCollection.setId(QOrganizerCollectionId());
+    QList<QOrganizerCollection> retn;
+
+    if (collectionIds.contains(QOrganizerCollectionLocalId(0)))
+        retn << defaultCollection;
+
+    return retn;
+}
+
+bool QOrganizerItemMaemo6Engine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
+{
+    Q_UNUSED(collection)
+    *error = QOrganizerItemManager::NotSupportedError;
+    return false;
+}
+
+bool QOrganizerItemMaemo6Engine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
+{
+    Q_UNUSED(collectionId)
+    *error = QOrganizerItemManager::NotSupportedError;
+    return false;
 }
 
 bool QOrganizerItemMaemo6Engine::startRequest(QOrganizerItemAbstractRequest* req)

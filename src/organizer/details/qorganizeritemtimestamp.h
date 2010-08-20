@@ -55,9 +55,9 @@ class Q_ORGANIZER_EXPORT QOrganizerItemTimestamp : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldModificationTimestamp;
-    const char* FieldCreationTimestamp;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldModificationTimestamp;
+    static const QLatin1Constant FieldCreationTimestamp;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemTimestamp, "Timestamp")
     Q_DECLARE_LATIN1_CONSTANT(FieldModificationTimestamp, "ModificationTimestamp");

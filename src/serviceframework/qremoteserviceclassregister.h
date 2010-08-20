@@ -58,19 +58,19 @@ QTM_BEGIN_NAMESPACE
 struct QRemoteServiceIdentifier
 {
     QByteArray name;
-    QByteArray interface;
+    QByteArray iface;
     QByteArray version;
 
-    QRemoteServiceIdentifier() : name(QByteArray()), interface(QByteArray()), version(QByteArray()) {}
+    QRemoteServiceIdentifier() : name(QByteArray()), iface(QByteArray()), version(QByteArray()) {}
 
     QRemoteServiceIdentifier(const QByteArray &n, const QByteArray &i, const QByteArray &v) :
-        name(n), interface(i), version(v) {}
+        name(n), iface(i), version(v) {}
 
     QRemoteServiceIdentifier& operator=(const QRemoteServiceIdentifier& other)
-    { name = other.name; interface = other.interface; version = other.version; return *this; }
+    { name = other.name; iface = other.iface; version = other.version; return *this; }
 
     bool operator==(const QRemoteServiceIdentifier& other) const {
-        if ( name == other.name && interface == other.interface && version == other.version ) return true;
+        if ( name == other.name && iface == other.iface && version == other.version ) return true;
         return false;
     }
 
@@ -78,17 +78,17 @@ struct QRemoteServiceIdentifier
 };
 
 inline uint qHash(const QRemoteServiceIdentifier& key) { 
-    return ( qHash(key.name) + qHash(key.interface) + qHash(key.version) );
+    return ( qHash(key.name) + qHash(key.iface) + qHash(key.version) );
 }
 
 #ifndef QT_NO_DATASTREAM
 inline QDataStream& operator>>(QDataStream& s, QRemoteServiceIdentifier& ident) {
-    s >> ident.name >> ident.interface >> ident.version;
+    s >> ident.name >> ident.iface >> ident.version;
     return s;
 }
 
 inline QDataStream& operator<<(QDataStream& s, const QRemoteServiceIdentifier& ident) {
-    s << ident.name << ident.interface << ident.version;
+    s << ident.name << ident.iface << ident.version;
     return s;
 }
 #endif
@@ -97,7 +97,7 @@ inline QDataStream& operator<<(QDataStream& s, const QRemoteServiceIdentifier& i
 inline QDebug operator<<(QDebug dbg, const QRemoteServiceIdentifier& ident) {
     dbg.nospace() << "QRemoteServiceIdentifier(" 
                   << ident.name << ", "
-                  << ident.interface << ", "
+                  << ident.iface << ", "
                   << ident.version << ")";
     return dbg.space();
 }

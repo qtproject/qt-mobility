@@ -159,26 +159,14 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
 */
 
 /*!
-    \enum QGalleryAbstractRequest::Type
+    \enum QGalleryAbstractRequest::RequestType
 
     Identifies the type of a request.
 
-    \value Item The request is a QGalleryItemRequest.
-    \value Url The request is a QGalleryUrlRequest.
-    \value Query The request is a QGalleryQueryRequest.
-    \value Count The request is a QGalleryCountRequest.
-    \value Remove The request is a QGalleryRemoveRequest.
-*/
-
-/*!
-    \enum QGalleryAbstractRequest::Scope
-
-    Identifies the scope of query.
-
-    \value AllDescendants The query will return all descendents of the scope
-    item.
-    \value DirectDescendants The query will return only direct descendents of
-    the scope item.
+    \value QueryRequest The request is a QGalleryQueryRequest.
+    \value ItemRequest The request is a QGalleryItemRequest.
+    \value TypeRequest The request is a QGalleryTypeRequest
+    \value RemoveReqest The request is a QGalleryRemoveRequest.
 */
 
 /*!
@@ -187,7 +175,7 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
     The \a parent is passed to QObject.
 */
 
-QGalleryAbstractRequest::QGalleryAbstractRequest(Type type, QObject *parent)
+QGalleryAbstractRequest::QGalleryAbstractRequest(RequestType type, QObject *parent)
     : QObject(parent)
     , d_ptr(new QGalleryAbstractRequestPrivate(0, type))
 {
@@ -201,7 +189,7 @@ QGalleryAbstractRequest::QGalleryAbstractRequest(Type type, QObject *parent)
 */
 
 QGalleryAbstractRequest::QGalleryAbstractRequest(
-        QAbstractGallery *gallery, Type type, QObject *parent)
+        QAbstractGallery *gallery, RequestType type, QObject *parent)
     : QObject(parent)
     , d_ptr(new QGalleryAbstractRequestPrivate(gallery, type))
 {
@@ -277,7 +265,7 @@ bool QGalleryAbstractRequest::isSupported() const
 /*!
     Returns the type of a request.
 */
-QGalleryAbstractRequest::Type QGalleryAbstractRequest::type() const
+QGalleryAbstractRequest::RequestType QGalleryAbstractRequest::type() const
 {
     return d_ptr->type;
 }
@@ -504,6 +492,10 @@ void QGalleryAbstractRequest::clear()
 
         if (wasActive && d_ptr->state == Inactive)
             emit stateChanged(d_ptr->state);
+    } else if (d_ptr->result != NoResult) {
+        d_ptr->result = NoResult;
+
+        emit resultChanged();
     }
 }
 

@@ -65,14 +65,16 @@ class QLandmarkIdFetchRequestPrivate : public QLandmarkAbstractRequestPrivate
 {
 public:
     QLandmarkIdFetchRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr)
+        : QLandmarkAbstractRequestPrivate(mgr),
+          limit(-1), offset(0)
     {
         type = QLandmarkAbstractRequest::LandmarkIdFetchRequest;
     }
 
     QLandmarkFilter filter;
     QList<QLandmarkSortOrder>sorting;
-    QLandmarkFetchHint fetchHint;
+    int limit;
+    int offset;
     QList<QLandmarkId> landmarkIds;
 };
 
@@ -80,14 +82,30 @@ class QLandmarkFetchRequestPrivate : public QLandmarkAbstractRequestPrivate
 {
 public:
     QLandmarkFetchRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr)
+        : QLandmarkAbstractRequestPrivate(mgr),
+        limit(-1), offset(0)
     {
         type = QLandmarkAbstractRequest::LandmarkFetchRequest;
     }
     QLandmarkFilter filter;
     QList<QLandmarkSortOrder> sorting;
-    QLandmarkFetchHint fetchHint;
+    int limit;
+    int offset;
     QList<QLandmark> landmarks;
+};
+
+class QLandmarkFetchByIdRequestPrivate : public QLandmarkAbstractRequestPrivate
+{
+public:
+    QLandmarkFetchByIdRequestPrivate(QLandmarkManager *mgr)
+        : QLandmarkAbstractRequestPrivate(mgr)
+    {
+        type = QLandmarkAbstractRequest::LandmarkFetchByIdRequest;
+    }
+
+    QList<QLandmarkId> landmarkIds;
+    QList<QLandmark> landmarks;
+    QMap<int, QLandmarkManager::Error> errorMap;
 };
 
 class QLandmarkRemoveRequestPrivate : public QLandmarkAbstractRequestPrivate
@@ -121,31 +139,47 @@ class QLandmarkCategoryIdFetchRequestPrivate: public QLandmarkAbstractRequestPri
 {
 public:
     QLandmarkCategoryIdFetchRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr)
+        : QLandmarkAbstractRequestPrivate(mgr),
+          limit(-1), offset(0)
     {
         type = QLandmarkAbstractRequest::CategoryIdFetchRequest;
     }
 
     QList<QLandmarkCategoryId> categoryIds;
     QLandmarkNameSort sorting;
+    int limit;
+    int offset;
 };
 
 class QLandmarkCategoryFetchRequestPrivate : public QLandmarkAbstractRequestPrivate
 {
 public:
     QLandmarkCategoryFetchRequestPrivate(QLandmarkManager *mgr)
-        :QLandmarkAbstractRequestPrivate(mgr)
+        :QLandmarkAbstractRequestPrivate(mgr),
+         limit(-1), offset(0)
     {
         type = QLandmarkAbstractRequest::CategoryFetchRequest;
-        matchingScheme = QLandmarkCategoryFetchRequest::MatchSubset;
     }
 
     QList<QLandmarkCategory> categories;
-    QList<QLandmarkCategoryId> categoryIds;
-    QLandmarkCategoryFetchRequest::MatchingScheme matchingScheme;
     QLandmarkNameSort sorting;
+    int limit;
+    int offset;
 };
 
+class QLandmarkCategoryFetchByIdRequestPrivate : public QLandmarkAbstractRequestPrivate
+{
+public:
+    QLandmarkCategoryFetchByIdRequestPrivate(QLandmarkManager *mgr)
+        :QLandmarkAbstractRequestPrivate(mgr)
+    {
+        type = QLandmarkAbstractRequest::CategoryFetchByIdRequest;
+    }
+
+    QList<QLandmarkCategoryId> categoryIds;
+    QList<QLandmarkCategory> categories;
+    QMap<int, QLandmarkManager::Error> errorMap;
+};
 
 class QLandmarkCategoryRemoveRequestPrivate : public QLandmarkAbstractRequestPrivate
 {
@@ -186,6 +220,8 @@ public:
     QIODevice *device;
     QString fileName;
     QString format;
+    QLandmarkManager::TransferOption option;
+    QLandmarkCategoryId categoryId;
     QList<QLandmarkId> landmarkIds;
 };
 
@@ -201,6 +237,7 @@ public:
     QIODevice *device;
     QString fileName;
     QString format;
+    QLandmarkManager::TransferOption option;
     QList<QLandmarkId> landmarkIds;
 };
 

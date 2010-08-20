@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsysteminfocommon.h"
+#include "qsysteminfocommon_p.h"
 #include "qsysteminfo_s60_p.h"
 
 #include <QStringList>
@@ -780,11 +780,13 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     : QObject(parent)
 {
     iFs.Connect();
+    DeviceInfo::instance()->mmcStorageStatus()->addObserver(this);
 }
 
 QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
     iFs.Close();
+    DeviceInfo::instance()->mmcStorageStatus()->removeObserver(this);
 }
 
 qlonglong QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
@@ -878,6 +880,11 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
     }
 
     return QSystemStorageInfo::NoDrive;
+}
+
+void QSystemStorageInfoPrivate::storageStatusChanged(bool added, const QString &aDriveVolume)
+{
+    emit logicalDriveChanged(added, aDriveVolume);
 };
 
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)

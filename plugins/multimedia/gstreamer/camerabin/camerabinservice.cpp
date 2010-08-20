@@ -67,6 +67,11 @@
 #include <qmediaserviceprovider.h>
 
 #include <QtCore/qdebug.h>
+#include <QtCore/qprocess.h>
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#include "camerabuttonlistener_maemo.h"
+#endif
 
 
 CameraBinService::CameraBinService(const QString &service, QObject *parent):
@@ -83,7 +88,7 @@ CameraBinService::CameraBinService(const QString &service, QObject *parent):
     m_videoRenderer = 0;
     m_videoWindow = 0;
     m_videoWidgetControl = 0;
-    m_imageCaptureControl = 0;
+    m_imageCaptureControl = 0;   
 
     if (service == Q_MEDIASERVICE_CAMERA) {
         m_captureSession = new CameraBinSession(this);
@@ -118,10 +123,21 @@ CameraBinService::CameraBinService(const QString &service, QObject *parent):
     m_metaDataControl = new CameraBinMetaData(this);
     connect(m_metaDataControl, SIGNAL(metaDataChanged(QMap<QByteArray,QVariant>)),
             m_captureSession, SLOT(setMetaData(QMap<QByteArray,QVariant>)));
+
+#if defined(Q_WS_MAEMO_5)
+    new CameraButtonListener(this);
+
+    //disable the system camera application
+    QProcess::execute("/usr/sbin/dsmetool -k /usr/bin/camera-ui");
+#endif
 }
 
 CameraBinService::~CameraBinService()
 {
+#if defined(Q_WS_MAEMO_5)
+    //restore the system camera application
+    QProcess::execute("/usr/sbin/dsmetool -U user -o /usr/bin/camera-ui");
+#endif
 }
 
 QMediaControl *CameraBinService::requestControl(const char *name)

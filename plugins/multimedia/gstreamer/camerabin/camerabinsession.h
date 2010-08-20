@@ -89,7 +89,7 @@ public:
     QList<QSize> supportedResolutions( QPair<int,int> rate, bool *continuous) const;
 
     QCamera::CaptureMode captureMode() { return m_captureMode; }
-    void setCaptureMode(QCamera::CaptureMode mode) { m_captureMode = mode; }
+    void setCaptureMode(QCamera::CaptureMode mode);
 
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl& sink);    
@@ -115,8 +115,8 @@ public:
     QGstreamerElementFactory *videoInput() const { return m_videoInputFactory; }
     void setVideoInput(QGstreamerElementFactory *videoInput);
 
-    QGstreamerVideoRendererInterface *videoPreview() const { return m_viewfinder; }
-    void setViewfinder(QGstreamerVideoRendererInterface *viewfinder);
+    QObject *viewfinder() const { return m_viewfinder; }
+    void setViewfinder(QObject *viewfinder);
 
     void captureImage(int requestId, const QString &fileName);
 
@@ -142,6 +142,7 @@ signals:
     void imageSaved(int requestId, const QString &fileName);
     void focusStatusChanged(QCamera::LockStatus status, QCamera::LockChangeReason reason);
     void mutedChanged(bool);
+    void viewfinderChanged();
 
 public slots:
     void setDevice(const QString &device);
@@ -166,6 +167,7 @@ private:
     QCamera::State m_state;
     QCamera::State m_pendingState;
     QString m_inputDevice;
+    bool m_pendingResolutionUpdate;
 
     bool m_muted;    
     QCamera::CaptureMode m_captureMode;
@@ -173,7 +175,8 @@ private:
 
     QGstreamerElementFactory *m_audioInputFactory;
     QGstreamerElementFactory *m_videoInputFactory;
-    QGstreamerVideoRendererInterface *m_viewfinder;
+    QObject *m_viewfinder;
+    QGstreamerVideoRendererInterface *m_viewfinderInterface;
 
     CameraBinAudioEncoder *m_audioEncodeControl;
     CameraBinVideoEncoder *m_videoEncodeControl;

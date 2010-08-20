@@ -76,14 +76,10 @@ QMediaRecorder::State CameraBinRecorder::state() const
 
 void CameraBinRecorder::updateState()
 {
-    QMediaRecorder::State newState = m_state;
-
-    if (m_session->state() != QCamera::ActiveState)
-        newState = QMediaRecorder::StoppedState;
-
-    if (m_state != newState) {
-        m_state = newState;
-        emit stateChanged(m_state);
+    if (m_session->state() != QCamera::ActiveState &&
+            m_state != QMediaRecorder::StoppedState) {
+        m_session->stopVideoRecording();
+        emit stateChanged(m_state = QMediaRecorder::StoppedState);
     }
 }
 
@@ -128,6 +124,10 @@ bool CameraBinRecorder::findCodecs()
     CameraBinAudioEncoder *audioEncodeControl = m_session->audioEncodeControl();
     CameraBinVideoEncoder *videoEncodeControl = m_session->videoEncodeControl();
     CameraBinContainer *mediaContainerControl = m_session->mediaContainerControl();
+
+    audioEncodeControl->resetActualSettings();
+    videoEncodeControl->resetActualSettings();
+    mediaContainerControl->resetActualContainer();
 
     QStringList containerCandidates;
     if (mediaContainerControl->containerMimeType().isEmpty())
@@ -194,15 +194,15 @@ bool CameraBinRecorder::findCodecs()
         emit error(QMediaRecorder::FormatError, tr("Not compatible codecs and container format."));
         return false;
     } else {
-        mediaContainerControl->setContainerMimeType(container);
+        mediaContainerControl->setActualContainer(container);
 
         QAudioEncoderSettings audioSettings = audioEncodeControl->audioSettings();
         audioSettings.setCodec(audioCodec);
-        audioEncodeControl->setAudioSettings(audioSettings);
+        audioEncodeControl->setActualAudioSettings(audioSettings);
 
         QVideoEncoderSettings videoSettings = videoEncodeControl->videoSettings();
         videoSettings.setCodec(videoCodec);
-        videoEncodeControl->setVideoSettings(videoSettings);
+        videoEncodeControl->setActualVideoSettings(videoSettings);
     }
 
     return true;

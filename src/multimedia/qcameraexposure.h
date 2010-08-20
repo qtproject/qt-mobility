@@ -55,12 +55,20 @@ class Q_MULTIMEDIA_EXPORT QCameraExposure : public QObject
     Q_PROPERTY(qreal aperture READ aperture WRITE setManualAperture NOTIFY apertureChanged)
     Q_PROPERTY(qreal shutterSpeed READ shutterSpeed WRITE setManualShutterSpeed NOTIFY shutterSpeedChanged)
     Q_PROPERTY(int isoSensitivity READ isoSensitivity WRITE setManualIsoSensitivity NOTIFY isoSensitivityChanged)
-    Q_PROPERTY(qreal exposureCompensation READ exposureCompensation WRITE setExposureCompensation)
+    Q_PROPERTY(qreal exposureCompensation READ exposureCompensation WRITE setExposureCompensation NOTIFY exposureCompensationChanged)
+    Q_PROPERTY(bool flashReady READ isFlashReady NOTIFY flashReady)
+    Q_PROPERTY(QCameraExposure::FlashModes flashMode READ flashMode WRITE setFlashMode)
+    Q_PROPERTY(QCameraExposure::ExposureMode exposureMode READ exposureMode WRITE setExposureMode)
+    Q_PROPERTY(QCameraExposure::MeteringMode meteringMode READ meteringMode WRITE setMeteringMode)
+
+    Q_ENUMS(FlashMode)
+    Q_ENUMS(ExposureMode)
+    Q_ENUMS(MeteringMode)
 public:
     enum FlashMode {
-        FlashOff = 0x1,
-        FlashOn = 0x2,
-        FlashAuto = 0x4,
+        FlashAuto = 0x1,
+        FlashOff = 0x2,
+        FlashOn = 0x4,
         FlashRedEyeReduction  = 0x8,
         FlashFill = 0x10,
         FlashTorch = 0x20,
@@ -71,24 +79,25 @@ public:
     Q_DECLARE_FLAGS(FlashModes, FlashMode)
 
     enum ExposureMode {
-        ExposureManual,
-        ExposureAuto,
-        ExposureNight,
-        ExposureBacklight,
-        ExposureSpotlight,
-        ExposureSports,
-        ExposureSnow,
-        ExposureBeach,
-        ExposureLargeAperture,
-        ExposureSmallAperture,
-        ExposurePortrait
+        ExposureAuto = 0,
+        ExposureManual = 1,
+        ExposurePortrait = 2,
+        ExposureNight = 3,
+        ExposureBacklight = 4,
+        ExposureSpotlight = 5,
+        ExposureSports = 6,
+        ExposureSnow = 7,
+        ExposureBeach = 8,
+        ExposureLargeAperture = 9,
+        ExposureSmallAperture = 10,
+        ExposureModeVendor = 1000
     };
 
     enum MeteringMode {
-        MeteringMatrix,
-        MeteringAverage,
-        MeteringSpot
-    };    
+        MeteringMatrix = 1,
+        MeteringAverage = 2,
+        MeteringSpot = 3
+    };
 
     bool isAvailable() const;
 
@@ -139,6 +148,7 @@ Q_SIGNALS:
     void shutterSpeedChanged(qreal);
     void shutterSpeedRangeChanged();
     void isoSensitivityChanged(int);
+    void exposureCompensationChanged(qreal);
 
 private:
     friend class QCamera;
@@ -155,5 +165,9 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCameraExposure::FlashModes)
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QCameraExposure::ExposureMode)
+Q_DECLARE_METATYPE(QCameraExposure::FlashModes)
+Q_DECLARE_METATYPE(QCameraExposure::MeteringMode)
 
 #endif // QCAMERAEXPOSURE_H

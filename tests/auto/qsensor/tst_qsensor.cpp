@@ -45,6 +45,7 @@
 #include <QTest>
 #include <QDebug>
 #include <QSettings>
+#include <QFile>
 
 #include "qsensor.h"
 #include "test_sensor.h"
@@ -52,7 +53,7 @@
 
 QTM_USE_NAMESPACE
 
-        class MyFilter : public TestSensorFilter
+class MyFilter : public TestSensorFilter
 {
     bool filter(TestSensorReading *reading)
     {
@@ -83,6 +84,11 @@ private slots:
     {
         QSettings settings(QLatin1String("Nokia"), QLatin1String("Sensors"));
         settings.clear();
+#ifdef WAIT_AT_END
+        QFile _stdin;
+        _stdin.open(1, QIODevice::ReadOnly);
+        _stdin.readLine();
+#endif
     }
 
 

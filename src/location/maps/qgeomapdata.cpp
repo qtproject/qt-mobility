@@ -44,17 +44,12 @@
 
 #include "qgeoboundingbox.h"
 #include "qgeocoordinate.h"
-#include "qgeomapwidget.h"
+#include "qgraphicsgeomap.h"
 #include "qgeomapobject.h"
 #include "qgeomappingmanagerengine.h"
+#include "qgeomapoverlay.h"
 
 #include "qgeomapobject_p.h"
-#include "qgeomaprectangleobject_p.h"
-#include "qgeomapcircleobject_p.h"
-#include "qgeomappolylineobject_p.h"
-#include "qgeomappolygonobject_p.h"
-#include "qgeomapmarkerobject_p.h"
-#include "qgeomaprouteobject_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -66,7 +61,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup maps-impl
 
     Instances of QGeoMapData are created with
@@ -87,8 +82,8 @@ QTM_BEGIN_NAMESPACE
     Constructs a new map data object, which stores the map data required by
     \a widget and makes use of the functionality provided by \a engine.
 */
-QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
-        : d_ptr(new QGeoMapDataPrivate(engine, widget)) {}
+QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
+        : d_ptr(new QGeoMapDataPrivate(this, engine, geoMap)) {}
 
 /*!
   \internal
@@ -109,11 +104,11 @@ QGeoMapData::~QGeoMapData()
 }
 
 /*!
-    Returns the widget that this map data object is associated with.
+    Returns the QGraphicsGeoMap instance that this map data object is associated with.
 */
-QGeoMapWidget* QGeoMapData::widget() const
+QGraphicsGeoMap* QGeoMapData::geoMap() const
 {
-    return d_ptr->widget;
+    return d_ptr->geoMap;
 }
 
 /*!
@@ -181,13 +176,9 @@ qreal QGeoMapData::zoomLevel() const
     return d_ptr->zoomLevel;
 }
 
-void QGeoMapData::startPanning() {}
-
-void QGeoMapData::stopPanning() {}
-
 /*!
     Pans the map view \a dx pixels in the x direction and \a dy pixels
-    in they y direction.
+    in the y direction.
 
     The x and y axes are specified in Graphics View Framework coordinates.
     By default this will mean that positive values of \a dx move the
@@ -219,7 +210,7 @@ QGeoCoordinate QGeoMapData::center() const
 /*!
     Changes the type of map data to display to \a mapType.
 */
-void QGeoMapData::setMapType(QGeoMapWidget::MapType mapType)
+void QGeoMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 {
     d_ptr->mapType = mapType;
 }
@@ -227,9 +218,16 @@ void QGeoMapData::setMapType(QGeoMapWidget::MapType mapType)
 /*!
     Returns the type of map data which is being displayed.
 */
-QGeoMapWidget::MapType QGeoMapData::mapType() const
+QGraphicsGeoMap::MapType QGeoMapData::mapType() const
 {
     return d_ptr->mapType;
+}
+
+/*!
+*/
+QList<QGeoMapObject*> QGeoMapData::mapObjects() const
+{
+    return d_ptr->containerObject->childObjects();
 }
 
 /*!
@@ -251,36 +249,14 @@ void QGeoMapData::removeMapObject(QGeoMapObject *mapObject)
 }
 
 /*!
-    Returns the list of map objects managed by this map.
 */
-QList<QGeoMapObject*> QGeoMapData::mapObjects()
+void QGeoMapData::clearMapObjects()
 {
-    return d_ptr->containerObject->childObjects();
+    d_ptr->containerObject->clearChildObjects();
 }
 
 /*!
-    Returns the list of map objects managed by this map which are currently
-    visible and at least partially within the viewport of the map.
-*/
-QList<QGeoMapObject*> QGeoMapData::visibleMapObjects()
-{
-    QList<QGeoMapObject*> objectsOnScreen
-            = mapObjectsInScreenRect(QRectF(0.0,
-                                            0.0,
-                                            d_ptr->viewportSize.width(),
-                                            d_ptr->viewportSize.height()));
-
-    QList<QGeoMapObject*> visibleObjects;
-
-    for (int i = 0; i < objectsOnScreen.size(); ++i)
-        if (objectsOnScreen.at(i)->isVisible())
-            visibleObjects.append(objectsOnScreen.at(i));
-
-    return visibleObjects;
-}
-
-/*!
-    Returns the list of map objects managed by this map which are visible and
+    Returns the list of map objects managed by this map which
     contain the point \a screenPosition within their boundaries.
 */
 QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition)
@@ -288,18 +264,19 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
     QList<QGeoMapObject*> results;
 
     QGeoCoordinate coord = screenPositionToCoordinate(screenPosition);
-    QList<QGeoMapObject*> objects = d_ptr->containerObject->childObjects();
-    for (int i = 0; i < objects.size(); ++i)
-        if (objects.at(i)->contains(coord))
-            results.append(objects.at(i));
+    int childObjectCount = d_ptr->containerObject->childObjects().count();
+    for (int i = 0; i < childObjectCount; ++i) {
+        QGeoMapObject *object = d_ptr->containerObject->childObjects().at(i);
+        if (object->contains(coord))
+            results.append(object);
+    }
 
     return results;
 }
 
 /*!
-    Returns the list of map objects managed by this map which are visible and
-    which are displayed at least partially within the on screen rectangle
-    \a screenRect.
+    Returns the list of map objects managed by this map which are displayed at
+    least partially within the on screen rectangle \a screenRect.
 */
 QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRect)
 {
@@ -311,10 +288,12 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
 
     QGeoBoundingBox bounds(topLeft, bottomRight);
 
-    QList<QGeoMapObject*> objects = d_ptr->containerObject->childObjects();
-    for (int i = 0; i < objects.size(); ++i)
-        if (bounds.intersects(objects.at(i)->boundingBox()))
-            results.append(objects.at(i));
+    int childObjectCount = d_ptr->containerObject->childObjects().count();
+    for (int i = 0; i < childObjectCount; ++i) {
+        QGeoMapObject *object = d_ptr->containerObject->childObjects().at(i);
+        if (bounds.intersects(object->boundingBox()))
+            results.append(object);
+    }
 
     return results;
 }
@@ -338,107 +317,75 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
     or is not within the current viewport.
 */
 
-void QGeoMapData::paint(QPainter *painter, const QStyleOptionGraphicsItem *option) {}
+/*!
+*/
+void QGeoMapData::paint(QPainter *painter, const QStyleOptionGraphicsItem *option)
+{
+    for (int i = 0; i < d_ptr->overlays.size(); ++i)
+        d_ptr->overlays[i]->paint(painter, option);
+}
+
+/*!
+*/
+QList<QGeoMapOverlay*> QGeoMapData::mapOverlays() const
+{
+    return d_ptr->overlays;
+}
+
+/*!
+*/
+void QGeoMapData::addMapOverlay(QGeoMapOverlay *overlay)
+{
+    if (!overlay)
+        return;
+
+    d_ptr->overlays.append(overlay);
+}
+
+/*!
+*/
+void QGeoMapData::removeMapOverlay(QGeoMapOverlay *overlay)
+{
+    if (!overlay)
+        return;
+
+    d_ptr->overlays.removeAll(overlay);
+}
+
+/*!
+*/
+void QGeoMapData::clearMapOverlays()
+{
+    qDeleteAll(d_ptr->overlays);
+    d_ptr->overlays.clear();
+}
+
+/*!
+*/
+void QGeoMapData::setupMapObject(QGeoMapObject *mapObject) {}
 
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
-    : engine(engine),
-    widget(widget),
-    zoomLevel(-1.0)
+QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
+        : q_ptr(parent),
+        engine(engine),
+        geoMap(geoMap),
+        zoomLevel(-1.0)
 {
-    containerObject = new QGeoMapObject(this);
+    Q_Q(QGeoMapData);
+    containerObject = new QGeoMapObject(q);
 }
-
-QGeoMapDataPrivate::QGeoMapDataPrivate(const QGeoMapDataPrivate &other)
-        : engine(other.engine),
-        widget(other.widget),
-        containerObject(other.containerObject),
-        zoomLevel(other.zoomLevel),
-        center(other.center),
-        viewportSize(other.viewportSize),
-        mapType(other.mapType) {}
 
 QGeoMapDataPrivate::~QGeoMapDataPrivate()
 {
     delete containerObject;
+    qDeleteAll(overlays);
 }
 
-QGeoMapDataPrivate& QGeoMapDataPrivate::operator= (const QGeoMapDataPrivate & other)
+void QGeoMapDataPrivate::setObjectInfo(QGeoMapObject *object, QGeoMapObjectInfo *info)
 {
-    engine = other.engine;
-    widget = other.widget;
-    containerObject = other.containerObject;
-    zoomLevel = other.zoomLevel;
-    center = other.center;
-    viewportSize = other.viewportSize;
-    mapType = other.mapType;
-
-    return *this;
-}
-
-QGeoMapObjectInfo* QGeoMapDataPrivate::createObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-{
-    QGeoMapObjectInfo* info = 0;
-
-    switch(mapObjectPrivate->type) {
-        case QGeoMapObject::RectangleType:
-            info = createRectangleObjectInfo(mapObjectPrivate);
-            break;
-        case QGeoMapObject::CircleType:
-            info = createCircleObjectInfo(mapObjectPrivate);
-            break;
-        case QGeoMapObject::PolylineType:
-            info = createPolylineObjectInfo(mapObjectPrivate);
-            break;
-        case QGeoMapObject::PolygonType:
-            info = createPolygonObjectInfo(mapObjectPrivate);
-            break;
-        case QGeoMapObject::MarkerType:
-            info = createMarkerObjectInfo(mapObjectPrivate);
-            break;
-        case QGeoMapObject::GeoRouteType:
-            info = createRouteObjectInfo(mapObjectPrivate);
-            break;
-        default:
-            info = 0;
-    }
-
-    if (info)
-        info->objectUpdate();
-
-    return info;
-}
-
-QGeoMapObjectInfo* QGeoMapDataPrivate::createRectangleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-{
-    return 0;
-}
-
-QGeoMapObjectInfo* QGeoMapDataPrivate::createCircleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-{
-    return 0;
-}
-
-QGeoMapObjectInfo* QGeoMapDataPrivate::createPolylineObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-{
-    return 0;
-}
-
-QGeoMapObjectInfo* QGeoMapDataPrivate::createPolygonObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-{
-    return 0;
-}
-
-QGeoMapObjectInfo* QGeoMapDataPrivate::createMarkerObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-{
-    return 0;
-}
-
-QGeoMapObjectInfo* QGeoMapDataPrivate::createRouteObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
-{
-    return 0;
+    object->d_ptr->info = info;
 }
 
 #include "moc_qgeomapdata.cpp"
