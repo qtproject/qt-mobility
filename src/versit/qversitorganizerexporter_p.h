@@ -49,7 +49,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QVersitOrganizerExporterPrivate
+class QM_AUTOTEST_EXPORT QVersitOrganizerExporterPrivate
 {
 public:
     QVersitOrganizerExporterPrivate(const QString& profile = QString());

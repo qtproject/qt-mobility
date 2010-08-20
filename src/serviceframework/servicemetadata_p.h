@@ -61,8 +61,8 @@
 #include "qserviceinterfacedescriptor.h"
 
 #ifdef SERVICE_XML_GENERATOR
-#undef Q_AUTOTEST_EXPORT
-#define Q_AUTOTEST_EXPORT
+#undef QM_AUTOTEST_EXPORT
+#define QM_AUTOTEST_EXPORT
 #endif
 
 QT_BEGIN_NAMESPACE
@@ -98,11 +98,11 @@ public:
 };
 
 #ifndef QT_NO_DATASTREAM
-Q_AUTOTEST_EXPORT QDataStream &operator<<(QDataStream &, const ServiceMetaDataResults &);
-Q_AUTOTEST_EXPORT QDataStream &operator>>(QDataStream &, ServiceMetaDataResults &);
+QM_AUTOTEST_EXPORT QDataStream &operator<<(QDataStream &, const ServiceMetaDataResults &);
+QM_AUTOTEST_EXPORT QDataStream &operator>>(QDataStream &, ServiceMetaDataResults &);
 #endif
 
-class Q_AUTOTEST_EXPORT ServiceMetaData 
+class QM_AUTOTEST_EXPORT ServiceMetaData
 {
 public:
 

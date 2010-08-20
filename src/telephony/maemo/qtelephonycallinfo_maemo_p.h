@@ -66,7 +66,7 @@
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QTelephonyCallInfoPrivate : public QSharedData
+class QM_AUTOTEST_EXPORT QTelephonyCallInfoPrivate : public QSharedData
 {
 public:
     static bool isCall( const QVariantMap &properties);
