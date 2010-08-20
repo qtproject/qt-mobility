@@ -160,7 +160,7 @@ Rectangle {
                     anchors.top: parent.top
                     anchors.right: parent.right
 
-                    font.pointSize: 15
+                    font.pointSize: 18
 
                     text: song.metaData.albumTitle
 
@@ -175,7 +175,7 @@ Rectangle {
                     anchors.top: albumTitleEdit.bottom
                     anchors.right: parent.right
 
-                    font.pointSize: 12
+                    font.pointSize: 15
 
                     text: song.metaData.albumArtist
 
@@ -193,7 +193,7 @@ Rectangle {
                 width: 128
 
                 color: "grey"
-                font.pointSize: 12
+                font.pointSize: 15
 
                 text: qsTr("Artist")
             }
@@ -208,7 +208,7 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.rightMargin: 2
 
-                font.pointSize: 12
+                font.pointSize: 15
 
                 text: song.metaData.artist
 
@@ -225,7 +225,7 @@ Rectangle {
                 width: 128
 
                 color: "grey"
-                font.pointSize: 12
+                font.pointSize: 15
 
                 text: qsTr("Genre")
             }
@@ -240,7 +240,7 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.rightMargin: 2
 
-                font.pointSize: 12
+                font.pointSize: 15
 
                 text: song.metaData.genre
 
@@ -258,7 +258,7 @@ Rectangle {
                 width: 128
 
                 color: "grey"
-                font.pointSize: 12
+                font.pointSize: 15
 
                 text: qsTr("Duration")
             }
@@ -274,7 +274,7 @@ Rectangle {
                 anchors.rightMargin: 5
 
                 color: "white"
-                font.pointSize: 12
+                font.pointSize: 15
 
                 text: Script.formatDuration(song.metaData.duration)
             }
