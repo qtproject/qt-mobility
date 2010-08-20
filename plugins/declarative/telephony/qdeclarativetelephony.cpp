@@ -238,7 +238,7 @@ QList<QTelephonyCallInfoWrapper> QTelephonyCallListWrapper::activeCalls(const QT
     QList<QtMobility::QTelephonyCallInfo> calllist;
     QList<QTelephonyCallInfoWrapper> ret;
     if(d)
-        calllist = d->activeCalls((QTelephonyEvents::CallType)calltype);
+        calllist = d->activeCalls((QTelephony::CallType)calltype);
 
     //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
     for( int i = 0; i < calllist.count(); i++){

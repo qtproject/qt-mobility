@@ -72,7 +72,7 @@ public:
     QTelephonyCallListPrivate(QTelephonyCallList *parent = 0) { qWarning("Telephone is not supported on this platform"); }
 
     virtual ~QTelephonyCallListPrivate() { }
-    QList<QTelephonyCallInfo> activeCalls(const QTelephonyEvents::CallType& calltype) const { return QList<QTelephonyCallInfo>(); }
+    QList<QTelephonyCallInfo> activeCalls(const QTelephony::CallType& calltype) const { return QList<QTelephonyCallInfo>(); }
 
 private:
 };

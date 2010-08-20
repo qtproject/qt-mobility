@@ -20,6 +20,8 @@ HEADERS +=  maemo\qtelephonycalllist_maemo_p.h \
             maemo\simple-pending-operations.h \
             maemo\connection.h \
             maemo\channel.h \
+            maemo\accountmanager.h \
+            maemo\account.h \
             maemo\interfaces\cli-types.h \
             maemo\interfaces\cli-account-manager.h \
             maemo\interfaces\cli-account.h \
@@ -46,6 +48,8 @@ SOURCES +=  maemo\qtelephonycalllist_maemo.cpp \
             maemo\pending-operation.cpp \
             maemo\connection.cpp \
             maemo\channel.cpp \
+            maemo\accountmanager.cpp \
+            maemo\account.cpp \
             maemo\interfaces\cli-types.cpp \
             maemo\interfaces\cli-account-body.cpp \
             maemo\interfaces\cli-account-manager-body.cpp \

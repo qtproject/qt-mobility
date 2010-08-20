@@ -1,3 +1,4 @@
+#include "maemo/cli-constants.h"
 #include "maemo/connection.h"
 #include "maemo/channel.h"
 #include <QtCore/QDebug>
@@ -13,6 +14,13 @@ namespace Tp
         , ReadyObject(this, FeatureCore)
         , ptelephonyCallList(callList)
     {
+        qDebug() << "Connection::Connection(...)";
+        qDebug() << "- QDBusConnection base service: " << busconnection.baseService();
+        qDebug() << "- QDBusConnection name: " << busconnection.name();
+        qDebug() << "- objectPath: " << objectPath;
+        qDebug() << "- DBusProxy.busName: " << this->busName();
+        qDebug() << "- DBusProxy.objectPath: " << this->objectPath();
+
         pConnectioninterface = new Tp::Client::ConnectionInterface(busconnection, busName, objectPath);
         connect(pConnectioninterface, SIGNAL(SelfHandleChanged(uint)), SLOT(onSelfHandleChanged(uint)));
         connect(pConnectioninterface, SIGNAL(NewChannel(QDBusObjectPath,QString,uint,uint,bool)), SLOT(onNewChannel(QDBusObjectPath,QString,uint,uint,bool)));
@@ -46,22 +54,26 @@ namespace Tp
     void Connection::readCurrentChannels()
     {
         qDebug() << "Connection::readCurrentChannels()";
+
         if(pConnectioninterface){
             QDBusPendingReply<Tp::ChannelInfoList> dbrlistchannels = pConnectioninterface->ListChannels();
             dbrlistchannels.waitForFinished();
             Tp::ChannelInfoList channellist = dbrlistchannels.value();
             foreach(const Tp::ChannelInfo& chi, channellist){
-                QString connectionbusname = "org.freedesktop.Telepathy.Connection.ring.tel.ring";
+                qDebug() << "==============================================>";
+                QString connectionbusname = PATH2BUS(this->objectPath());
                 qDebug() << "- current Channel found";
                 qDebug() << "-- Path " << chi.channel.path();
                 qDebug() << "-- connectionbusname: " << connectionbusname;
                 qDebug() << "-- channelType " << chi.channelType;
-                qDebug() << "";
-                Channel* pchannel = new Channel(QDBusConnection::sessionBus(), connectionbusname,  chi.channel.path(), QVariantMap(), this);
-                if(pchannel->isCall())
+                if(Channel::isCall(chi.channelType)){
+                    qDebug() << "-- is call";
+                    Channel* pchannel = new Channel(QDBusConnection::sessionBus(), connectionbusname,  chi.channel.path(), QVariantMap(), this);
                     ptelephonyCallList->newChannels(ChannelPtr(pchannel));
+                }
                 else
-                    delete pchannel;
+                    qDebug() << "-- is no call";
+                qDebug() << "==============================================<";
             }
         }
     }
@@ -92,16 +104,17 @@ namespace Tp
     {
         qDebug() << "Connection::ConnectionInterfaceRequestsInterface::onNewChannels(...)";
         foreach (const ChannelDetails &channelDetails, channels) {
-            QString connectionbusname = "org.freedesktop.Telepathy.Connection.ring.tel.ring";
+            QString connectionbusname = PATH2BUS(this->objectPath());
             qDebug() << "- object Path: " << channelDetails.channel.path();
             qDebug() << "- connectionbusname: " << connectionbusname;
             qDebug() << "- check if call";
             qDebug() << "- Creating QTelephonyCallInfoPrivate";
-            Channel* pchannel = new Channel(QDBusConnection::sessionBus(), connectionbusname, channelDetails.channel.path(), channelDetails.properties, this);
-            if(pchannel->isCall())
+
+            if( channelDetails.properties.contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"))
+                && Channel::isCall(channelDetails.properties.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString())){
+                Channel* pchannel = new Channel(QDBusConnection::sessionBus(), connectionbusname, channelDetails.channel.path(), channelDetails.properties, this);
                 ptelephonyCallList->newChannels(ChannelPtr(pchannel));
-            else
-                delete pchannel;
+            }
         }
     }
 
