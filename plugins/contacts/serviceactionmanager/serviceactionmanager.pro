@@ -14,3 +14,9 @@ INCLUDEPATH += $$SOURCE_DIR/src/contacts $$SOURCE_DIR/src/contacts/details $$SOU
 
 CONFIG += mobility
 MOBILITY = contacts serviceframework
+
+
+symbian: {
+    TARGET.CAPABILITY = ALL -TCB
+    TARGET.EPOCALLOWDLLDATA = 1
+}
