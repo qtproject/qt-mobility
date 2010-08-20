@@ -53,6 +53,9 @@ QTM_BEGIN_NAMESPACE
 class QValueSpacePublisher;
 
 QString qCanonicalPath(const QString &path);
+#ifdef QT_SIMULATOR
+QString qAddSimulatorPrefix(const QString &path);
+#endif
 
 class QM_AUTOTEST_EXPORT QAbstractValueSpaceLayer : public QObject
 {
