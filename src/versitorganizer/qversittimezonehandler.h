@@ -46,7 +46,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_VERSIT_EXPORT QVersitTimeZoneHandler
+class Q_VERSIT_ORGANIZER_EXPORT QVersitTimeZoneHandler
 {
 public:
     virtual ~QVersitTimeZoneHandler() {}

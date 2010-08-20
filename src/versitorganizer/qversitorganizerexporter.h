@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
 
 class QVersitOrganizerExporterPrivate;
 
-class Q_VERSIT_EXPORT QVersitOrganizerExporterDetailHandler
+class Q_VERSIT_ORGANIZER_EXPORT QVersitOrganizerExporterDetailHandler
 {
 public:
     virtual ~QVersitOrganizerExporterDetailHandler() {}
@@ -65,7 +65,7 @@ public:
                                QVersitDocument* document) = 0;
 };
 
-class Q_VERSIT_EXPORT QVersitOrganizerExporter
+class Q_VERSIT_ORGANIZER_EXPORT QVersitOrganizerExporter
 {
 public:
     enum Error {

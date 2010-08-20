@@ -54,7 +54,7 @@ class QVersitDocument;
 class QVersitOrganizerImporterPrivate;
 class QVersitProperty;
 
-class Q_VERSIT_EXPORT QVersitOrganizerImporterPropertyHandler
+class Q_VERSIT_ORGANIZER_EXPORT QVersitOrganizerImporterPropertyHandler
 {
 public:
     virtual ~QVersitOrganizerImporterPropertyHandler() {}
@@ -67,7 +67,7 @@ public:
                                    QOrganizerItem* item) = 0;
 };
 
-class Q_VERSIT_EXPORT QVersitOrganizerImporter
+class Q_VERSIT_ORGANIZER_EXPORT QVersitOrganizerImporter
 {
 public:
     enum Error {

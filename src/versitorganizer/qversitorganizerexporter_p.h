@@ -145,6 +145,10 @@ private:
     QString encodeDateTime(const QDateTime& dateTime);
 
     bool documentContainsUidAndRecurrenceId(const QVersitDocument& document);
+    QVersitProperty takeProperty(
+            const QVersitDocument& document,
+            const QString& propertyName,
+            QList<QVersitProperty>* toBeRemoved);
 
     // definition name -> <field name, versit property name>:
     QMap<QString, QPair<QString, QString> > mPropertyMappings;

@@ -42,7 +42,6 @@
 #include "qversitorganizerexporter.h"
 #include "qversitorganizerexporter_p.h"
 #include "qtorganizer.h"
-#include "versitutils_p.h"
 #include "qversitorganizerdefs_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
@@ -173,13 +172,13 @@ void QVersitOrganizerExporterPrivate::encodeEventTimeRange(
 {
     QOrganizerEventTimeRange etr = static_cast<QOrganizerEventTimeRange>(detail);
     QVersitProperty property =
-        VersitUtils::takeProperty(document, QLatin1String("DTSTART"), removedProperties);
+        takeProperty(document, QLatin1String("DTSTART"), removedProperties);
     property.setName(QLatin1String("DTSTART"));
     property.setValue(encodeDateTime(etr.startDateTime()));
     *generatedProperties << property;
 
     property =
-        VersitUtils::takeProperty(document, QLatin1String("DTEND"), removedProperties);
+        takeProperty(document, QLatin1String("DTEND"), removedProperties);
     property.setName(QLatin1String("DTEND"));
     property.setValue(encodeDateTime(etr.endDateTime()));
     *generatedProperties << property;
@@ -196,13 +195,13 @@ void QVersitOrganizerExporterPrivate::encodeTodoTimeRange(
 {
     QOrganizerTodoTimeRange ttr = static_cast<QOrganizerTodoTimeRange>(detail);
     QVersitProperty property =
-        VersitUtils::takeProperty(document, QLatin1String("DTSTART"), removedProperties);
+        takeProperty(document, QLatin1String("DTSTART"), removedProperties);
     property.setName(QLatin1String("DTSTART"));
     property.setValue(encodeDateTime(ttr.startDateTime()));
     *generatedProperties << property;
 
     property =
-        VersitUtils::takeProperty(document, QLatin1String("DUE"), removedProperties);
+        takeProperty(document, QLatin1String("DUE"), removedProperties);
     property.setName(QLatin1String("DUE"));
     property.setValue(encodeDateTime(ttr.dueDateTime()));
     *generatedProperties << property;
@@ -219,7 +218,7 @@ void QVersitOrganizerExporterPrivate::encodeJournalTimeRange(
 {
     QOrganizerJournalTimeRange jtr = static_cast<QOrganizerJournalTimeRange>(detail);
     QVersitProperty property =
-        VersitUtils::takeProperty(document, QLatin1String("DTSTART"), removedProperties);
+        takeProperty(document, QLatin1String("DTSTART"), removedProperties);
     property.setName(QLatin1String("DTSTART"));
     property.setValue(encodeDateTime(jtr.entryDateTime()));
     *generatedProperties << property;
@@ -235,13 +234,13 @@ void QVersitOrganizerExporterPrivate::encodeTimestamp(
 {
     QOrganizerItemTimestamp timestamp = static_cast<QOrganizerItemTimestamp>(detail);
     QVersitProperty property =
-        VersitUtils::takeProperty(document, QLatin1String("CREATED"), removedProperties);
+        takeProperty(document, QLatin1String("CREATED"), removedProperties);
     property.setName(QLatin1String("CREATED"));
     property.setValue(encodeDateTime(timestamp.created().toUTC()));
     *generatedProperties << property;
 
     property =
-        VersitUtils::takeProperty(document, QLatin1String("LAST-MODIFIED"), removedProperties);
+        takeProperty(document, QLatin1String("LAST-MODIFIED"), removedProperties);
     property.setName(QLatin1String("LAST-MODIFIED"));
     property.setValue(encodeDateTime(timestamp.lastModified().toUTC()));
     *generatedProperties << property;
@@ -406,7 +405,7 @@ void QVersitOrganizerExporterPrivate::encodeRecurDates(
         QList<QVersitProperty>* generatedProperties)
 {
     QVersitProperty property;
-    property = VersitUtils::takeProperty(document, propertyName, removedProperties);
+    property = takeProperty(document, propertyName, removedProperties);
     property.setName(propertyName);
     property.insertParameter(QLatin1String("VALUE"), QLatin1String("DATE"));
     QString value = property.value();
@@ -436,7 +435,7 @@ void QVersitOrganizerExporterPrivate::encodePriority(
 {
     QOrganizerItemPriority priority = static_cast<QOrganizerItemPriority>(detail);
     QVersitProperty property =
-        VersitUtils::takeProperty(document, QLatin1String("PRIORITY"), removedProperties);
+        takeProperty(document, QLatin1String("PRIORITY"), removedProperties);
     property.setName(QLatin1String("PRIORITY"));
     property.setValue(QString::number(priority.priority()));
     *generatedProperties << property;
@@ -452,7 +451,7 @@ void QVersitOrganizerExporterPrivate::encodeInstanceOrigin(
 {
     QOrganizerItemInstanceOrigin instanceOrigin = static_cast<QOrganizerItemInstanceOrigin>(detail);
     QVersitProperty property =
-        VersitUtils::takeProperty(document, QLatin1String("RECURRENCE-ID"), removedProperties);
+        takeProperty(document, QLatin1String("RECURRENCE-ID"), removedProperties);
     property.setName(QLatin1String("RECURRENCE-ID"));
     property.setValue(instanceOrigin.originalDate().toString(QLatin1String("yyyyMMdd")));
     *generatedProperties << property;
@@ -470,7 +469,7 @@ void QVersitOrganizerExporterPrivate::encodeTodoProgress(
 
     if (todoProgress.finishedDateTime().isValid()) {
         QVersitProperty property =
-            VersitUtils::takeProperty(document, QLatin1String("COMPLETED"), removedProperties);
+            takeProperty(document, QLatin1String("COMPLETED"), removedProperties);
         property.setName(QLatin1String("COMPLETED"));
         property.setValue(todoProgress.finishedDateTime().toString(QLatin1String("yyyyMMddTHHmmss")));
         *generatedProperties << property;
@@ -479,7 +478,7 @@ void QVersitOrganizerExporterPrivate::encodeTodoProgress(
 
     if (todoProgress.hasValue(QOrganizerTodoProgress::FieldPercentageComplete)) {
         QVersitProperty property =
-            VersitUtils::takeProperty(document, QLatin1String("PERCENT-COMPLETE"), removedProperties);
+            takeProperty(document, QLatin1String("PERCENT-COMPLETE"), removedProperties);
         property.setName(QLatin1String("PERCENT-COMPLETE"));
         property.setValue(QString::number(todoProgress.percentageComplete()));
         *generatedProperties << property;
@@ -488,7 +487,7 @@ void QVersitOrganizerExporterPrivate::encodeTodoProgress(
 
     if (todoProgress.hasValue(QOrganizerTodoProgress::FieldStatus)) {
         QVersitProperty property =
-            VersitUtils::takeProperty(document, QLatin1String("STATUS"), removedProperties);
+            takeProperty(document, QLatin1String("STATUS"), removedProperties);
         property.setName(QLatin1String("STATUS"));
         switch (todoProgress.status()) {
             case QOrganizerTodoProgress::StatusNotStarted:
@@ -532,7 +531,7 @@ void QVersitOrganizerExporterPrivate::encodeSimpleProperty(
     const QString& fieldName = fieldPropertyMap.first;
     const QString& propertyName = fieldPropertyMap.second;
     QVersitProperty property =
-        VersitUtils::takeProperty(document, propertyName, removedProperties);
+        takeProperty(document, propertyName, removedProperties);
     property.setName(propertyName);
     property.setValue(detail.value(fieldName));
     *generatedProperties << property;
@@ -568,4 +567,21 @@ bool QVersitOrganizerExporterPrivate::documentContainsUidAndRecurrenceId(const Q
         }
     }
     return false;
+}
+
+/*!
+ * Finds a property in the \a document with the given \a propertyName, adds it to \a toBeRemoved,
+ * and returns it.
+ */
+QVersitProperty QVersitOrganizerExporterPrivate::takeProperty(
+        const QVersitDocument& document,
+        const QString& propertyName,
+        QList<QVersitProperty>* toBeRemoved) {
+    foreach (const QVersitProperty& currentProperty, document.properties()) {
+        if (currentProperty.name() == propertyName) {
+            *toBeRemoved << currentProperty;
+            return currentProperty;
+        }
+    }
+    return QVersitProperty();
 }
