@@ -365,7 +365,7 @@ bool removeLandmarkHelper(const QString &connectionName, const QLandmarkId &land
     QStringList queryStrings;
     queryStrings << "DELETE FROM landmark WHERE id = :lmId;";
     queryStrings << "DELETE FROM landmark_category WHERE landmarkId = :lmId;";
-    queryStrings << "DELETE FROM landmark_attribute WHERE landmarkId=:lmId";
+    queryStrings << "DELETE FROM landmark_custom_attribute WHERE landmarkId=:lmId";
 
     foreach(const QString &queryString, queryStrings) {
         if(!query.prepare(queryString)) {
@@ -716,7 +716,7 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
 
         if (DatabaseOperations::isCustomAttributesEnabled) {
             QSqlQuery query(db);
-            if (!query.prepare("SELECT key, value from landmark_attribute WHERE landmarkId=:lmId")) {
+            if (!query.prepare("SELECT key, value from landmark_custom_attribute WHERE landmarkId=:lmId")) {
                 *error = QLandmarkManager::UnknownError;
                 *errorString = QString("Query Failed: \n Query: %1 \n Reason: %2").arg(query.lastQuery()).arg(query.lastError().text());
                 return QLandmark();
@@ -902,7 +902,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                 } else { //must be custom attributes
                     if (attributeFilter.operationType() == QLandmarkAttributeFilter::AndOperation) {
                         bindValues.insert("key", attributeKeys.at(0));
-                        queryString = "SELECT landmarkId FROM landmark_attribute WHERE landmark_attribute.key = :key";
+                        queryString = "SELECT landmarkId FROM landmark_custom_attribute WHERE landmark_custom_attribute.key = :key";
                         if (!executeQuery(&query, queryString,
                                           bindValues,error,errorString)) {
                             return QList<QLandmarkId>();
@@ -915,7 +915,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
 
                         QLandmarkId id;
                         id.setManagerUri(managerUri);
-                        queryString = "SELECT key, value FROM landmark_attribute WHERE landmarkId=:lmId";
+                        queryString = "SELECT key, value FROM landmark_custom_attribute WHERE landmarkId=:lmId";
                         for (int i=0; i < lmLocalIds.count(); ++i) {
                             bindValues.clear();
                             bindValues.insert("lmId", lmLocalIds.at(i));
@@ -970,7 +970,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                         }
 
                     } else {
-                        queryString = "SELECT landmarkId FROM landmark_attribute WHERE ";
+                        queryString = "SELECT landmarkId FROM landmark_custom_attribute WHERE ";
 
                         QVariant attributeValue;
                         for (int i=0; i < filterKeys.count(); ++i) {
@@ -1773,7 +1773,7 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
 
     QStringList attributekeys = landmark->customAttributeKeys();
     QSqlQuery query(db);
-    if( !query.prepare("DELETE FROM landmark_attribute WHERE landmarkId= :lmId"))
+    if( !query.prepare("DELETE FROM landmark_custom_attribute WHERE landmarkId= :lmId"))
     {
         *error = QLandmarkManager::UnknownError;
         *errorString = QString("Unable to prepare statement: %1 \nReason: %2")
@@ -1791,7 +1791,7 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
     }
 
     for (int i =0; i < attributekeys.count(); ++i) {
-        if (!query.prepare("INSERT INTO landmark_attribute (landmarkId,key,value) VALUES(:lmId,:key,:value)")) {
+        if (!query.prepare("INSERT INTO landmark_custom_attribute (landmarkId,key,value) VALUES(:lmId,:key,:value)")) {
             *error = QLandmarkManager::UnknownError;
             *errorString = QString("Unable to prepare statement: %1 \nReason: %2")
                            .arg(query.lastQuery()).arg(query.lastError().text());
@@ -2135,7 +2135,7 @@ QLandmarkCategory DatabaseOperations::category(const QLandmarkCategoryId &landma
         if (DatabaseOperations::isCustomAttributesEnabled) {
             QMap<QString,QVariant> bindValues;
             bindValues.insert("catId", cat.categoryId().localId());
-            if (!executeQuery(&query, "SELECT key, value from category_attribute WHERE categoryId=:catId",bindValues, error, errorString )) {
+            if (!executeQuery(&query, "SELECT key, value from category_custom_attribute WHERE categoryId=:catId",bindValues, error, errorString )) {
                 return QLandmarkCategory();
             }
 
@@ -2351,7 +2351,7 @@ bool DatabaseOperations::saveCategoryHelper(QLandmarkCategory *category,
     bindValues.clear();
     bindValues.insert("catId",category->categoryId().localId());
     QStringList attributekeys = category->customAttributeKeys();
-    if (!executeQuery(&query,"DELETE FROM category_attribute WHERE categoryId= :catId", bindValues, error, errorString)) {
+    if (!executeQuery(&query,"DELETE FROM category_custom_attribute WHERE categoryId= :catId", bindValues, error, errorString)) {
         return false;
     }
 
@@ -2361,7 +2361,7 @@ bool DatabaseOperations::saveCategoryHelper(QLandmarkCategory *category,
         bindValues.insert("key",attributekeys[i]);
         bindValues.insert("value",category->customAttribute(attributekeys.at(i)));
 
-        if (!executeQuery(&query,"INSERT INTO category_attribute (categoryId,key,value) VALUES(:catId,:key,:value)", bindValues,
+        if (!executeQuery(&query,"INSERT INTO category_custom_attribute (categoryId,key,value) VALUES(:catId,:key,:value)", bindValues,
                          error, errorString)) {
             return false;
         }
@@ -2495,7 +2495,7 @@ bool DatabaseOperations::removeCategory(const QLandmarkCategoryId &categoryId,
     QStringList queryStrings;
     queryStrings << "DELETE FROM category WHERE id = :catId";
     queryStrings << "DELETE FROM landmark_category WHERE categoryId = :catId";
-    queryStrings << "DELETE FROM category_attribute WHERE categoryId= :catId";
+    queryStrings << "DELETE FROM category_custom_attribute WHERE categoryId= :catId";
 
     foreach(const QString &queryString, queryStrings) {
         if (!executeQuery(&query, queryString, bindValues, error,errorString)) {
