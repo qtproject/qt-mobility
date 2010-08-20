@@ -279,38 +279,6 @@ Rectangle {
 
                 text: Script.formatDuration(song.metaData.duration)
             }
-
-
-            Text {
-                id: ratingLabel
-
-                anchors.left: parent.left
-                anchors.leftMargin: 5
-                anchors.top: durationLabel.bottom
-                anchors.topMargin: 5
-                width: 128
-
-                color: "grey"
-                font.pointSize: 12
-
-                text: qsTr("Rating")
-            }
-
-            Text {
-                id: ratingEdit
-
-                anchors.left: ratingLabel.right
-                anchors.leftMargin: 5
-                anchors.top: durationEdit.bottom
-                anchors.topMargin: 5
-                anchors.right: parent.right
-                anchors.rightMargin: 5
-
-                color: "white"
-                font.pointSize: 12
-
-                text: song.metaData.rating
-            }
         }
     }
 }
