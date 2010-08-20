@@ -58,7 +58,6 @@ Rectangle {
             "albumArtist",
             "genre",
             "duration",
-            "rating",
             "trackNumber"
         ]
     }
