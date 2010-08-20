@@ -57,7 +57,11 @@
 //QTM_USE_NAMESPACE
 
 // Constants
-const int KSingleCount = 1;
+const int KSingleCount(1);
+// Special (internal) error code to be used when an item occurrence is not
+// valid. The error code is not expected to clash with any symbian calendar
+// API errors.
+const TInt KErrInvalidOccurrence(-32768);
 
 QOrganizerItemManagerEngine* QOrganizerItemSymbianFactory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
 {
@@ -467,13 +471,7 @@ bool QOrganizerItemSymbianEngine::saveItem(QOrganizerItem* item, const QOrganize
     if (validateItem(*item, error)) {
         QOrganizerItemChangeSet changeSet;
         TRAPD(err, saveItemL(item, &changeSet));
-        if ((item->type()== QOrganizerItemType::TypeEventOccurrence || 
-            item->type()== QOrganizerItemType::TypeTodoOccurrence)&& 
-            err == KErrArgument) {
-            *error = QOrganizerItemManager::InvalidOccurrenceError; 
-        } else {
-            transformError(err, error);
-	    }	
+        transformError(err, error);
         changeSet.emitSignals(this);
     }
     return *error == QOrganizerItemManager::NoError;
@@ -707,7 +705,7 @@ CCalEntry* QOrganizerItemSymbianEngine::createEntryToSaveItemInstanceL(QOrganize
     } else {
         CleanupStack::PopAndDestroy(globalUid);
         delete parentEntry;
-        User::Leave(KErrArgument);
+        User::Leave(KErrInvalidOccurrence);
     }
           
     CleanupStack::Pop(globalUid);
@@ -1032,6 +1030,13 @@ bool QOrganizerItemSymbianEngine::transformError(TInt symbianError, QOrganizerIt
         case KErrArgument:
         {
             *qtError = QOrganizerItemManager::BadArgumentError;
+            break;
+        }
+        // KErrInvalidOccurrence is a special error code defined for Qt
+        // Organizer API implementation purpose only
+        case KErrInvalidOccurrence:
+        {
+            *qtError = QOrganizerItemManager::InvalidOccurrenceError;
             break;
         }
         default:
