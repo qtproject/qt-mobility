@@ -74,6 +74,7 @@ private:
 #ifdef FREESTYLEMAILUSED
     friend class CFSEngine;
 #endif
+
     friend class CMessagesFindOperation;
 #endif
 };

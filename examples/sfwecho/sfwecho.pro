@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS += sfwecho_ui sfwecho_service
+SUBDIRS += sfwecho_client sfwecho_service
 

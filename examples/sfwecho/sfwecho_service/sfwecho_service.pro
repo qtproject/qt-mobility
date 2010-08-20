@@ -2,16 +2,16 @@ TARGET = sfwecho_service
 INCLUDEPATH += ../../../src/serviceframework
 DEPENDPATH += ../../../src/serviceframework
 
+include(../../examples.pri)
+
 QT = core
 TEMPLATE=app
-
-include(../../examples.pri)
 
 CONFIG += mobility
 MOBILITY = serviceframework
 
-SOURCES += main.cpp
 HEADERS += 
+SOURCES += main.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
