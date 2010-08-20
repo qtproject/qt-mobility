@@ -99,7 +99,7 @@ protected:
         for (int i=0; i<l; i++){
             qreal rangeMin = ((DataRange)(m_sensorInterface->getAvailableDataRanges().at(i))).min;
             qreal rangeMax =((DataRange)(m_sensorInterface->getAvailableDataRanges().at(i))).max;
-            qreal resolution = ((DataRange)(m_sensorInterface->getAvailableDataRanges().at(i))).min;
+            qreal resolution = ((DataRange)(m_sensorInterface->getAvailableDataRanges().at(i))).resolution;
             addOutputRange(rangeMin, rangeMax, resolution);
         }
         setDescription(m_sensorInterface->property("description").toString());
