@@ -229,8 +229,9 @@ public:
         , typeColumn(arguments.typeColumn)
         , updateMask(arguments.updateMask)
         , identityWidth(arguments.identityWidth)
+        , tableWidth(arguments.tableWidth)
         , valueOffset(arguments.valueOffset)
-        , compositeOffset(arguments.valueOffset + arguments.valueColumns.count())
+        , compositeOffset(arguments.compositeOffset)
         , aliasOffset(compositeOffset + arguments.compositeColumns.count())
         , columnCount(aliasOffset + arguments.aliasColumns.count())
         , queryOffset(offset)
@@ -268,12 +269,9 @@ public:
 
     const int updateMask;
     const int identityWidth;
+    const int tableWidth;
     const int valueOffset;
-    const union
-    {
-        int compositeOffset;
-        int tableWidth;
-    };
+    const int compositeOffset;
     const int aliasOffset;
     const int columnCount;
     const int queryOffset;
