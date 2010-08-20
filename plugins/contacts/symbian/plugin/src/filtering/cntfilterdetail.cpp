@@ -122,6 +122,11 @@ bool CntFilterDetail::filterSupported(const QContactFilter& filter)
                 detailFilter.detailFieldName())) {
             result = true;
         }
+        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName &&
+            detailFilter.detailFieldName() == QContactPhoneNumber::FieldNumber) {
+            //cpecial case - phone number matching 
+            result = true;
+        }
     }
     return result;
 }

@@ -260,6 +260,7 @@ void CommandProcessor::showAllEntries()
         *stdoutStream << "Found 1 service.\n\n";
     else
         *stdoutStream << "Found " << services.count() << " services.\n\n";
+    
     foreach (const QString &service, services)
         showServiceInfo(service);
 }
@@ -300,10 +301,16 @@ void CommandProcessor::showServiceInfo(const QString &service)
     *stdoutStream << service << ":\n";
     if (!description.isEmpty())
         *stdoutStream << '\t' << description << '\n';
-    *stdoutStream << "\tLibrary: " << descriptors[0].attribute(
-                    QServiceInterfaceDescriptor::Location).toString() << '\n'
-            << "\tCapabilities: " << (capabilities.isEmpty() ? "" : capabilities.join(", ")) << '\n'
-            << "\tImplements:\n";
+    
+    int serviceType = descriptors[0].attribute(QServiceInterfaceDescriptor::ServiceType).toInt(); 
+    if (serviceType == QService::Plugin)
+        *stdoutStream << "\tPlugin Library: ";
+    else
+        *stdoutStream << "\tIPC Address: ";
+
+    *stdoutStream << descriptors[0].attribute(QServiceInterfaceDescriptor::Location).toString() << '\n'
+        << "\tCapabilities: " << (capabilities.isEmpty() ? "" : capabilities.join(", ")) << '\n'
+        << "\tImplements:\n";
 
     foreach (const QServiceInterfaceDescriptor &desc, descriptors) {
         *stdoutStream << "\t\t" << desc.interfaceName() << ' '
