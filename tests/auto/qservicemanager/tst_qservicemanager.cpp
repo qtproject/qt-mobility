@@ -97,6 +97,7 @@ static DescriptorAttributes defaultDescriptorAttributes()
     props[QServiceInterfaceDescriptor::Location] = "";
     props[QServiceInterfaceDescriptor::ServiceDescription] = "";
     props[QServiceInterfaceDescriptor::InterfaceDescription] = "";
+    props[QServiceInterfaceDescriptor::ServiceType] = QService::Plugin;
     return props;
 }
 static const DescriptorAttributes DEFAULT_DESCRIPTOR_PROPERTIES = defaultDescriptorAttributes();
@@ -112,7 +113,7 @@ static QStringList validPluginFiles()
 static const QStringList VALID_PLUGIN_FILES = validPluginFiles();
 
 // Helper function for debugging. Useful e.g. for checking what is difference between
-// two descriptors (in addition to attributes printed below, the \
+// two descriptors (in addition to attributes printed below, the 
 // QServiceInterfaceDescriptor::== operator also compares
 // attributes.
 static void printDescriptor (QServiceInterfaceDescriptor &desc) {
@@ -493,6 +494,7 @@ void tst_QServiceManager::findInterfaces_filter()
     QVERIFY2(mgr.addService(&buffer), PRINT_ERR(mgr));
 
     QList<QServiceInterfaceDescriptor> result = mgr.findInterfaces(filter);
+
     QCOMPARE(result.toSet(), expectedInterfaces.toSet());
 }
 
@@ -505,6 +507,7 @@ void tst_QServiceManager::findInterfaces_filter_data()
     QString serviceName = "SomeTestService";
     DescriptorAttributes attributes;
     attributes[QServiceInterfaceDescriptor::Location] = VALID_PLUGIN_FILES.first();
+    //attributes[QServiceInterfaceDescriptor::ServiceType] = QService::Plugin;
 
     QList<QServiceInterfaceDescriptor> descriptors;
     descriptors << createDescriptor("com.nokia.qt.TestInterfaceA", 1, 0, serviceName, attributes);
@@ -771,6 +774,9 @@ void tst_QServiceManager::loadInterface_string()
     // Add first service. Adds the service described in
     // c/Private/<uid3 of this executable>/plugins/xmldata/sampleservice.xml
     QVERIFY2(mgr.addService(xmlTestDataPath("sampleservice.xml")), PRINT_ERR(mgr));
+
+
+
     obj = mgr.loadInterface(commonInterface, 0, 0);
     QVERIFY(obj != 0);
     QCOMPARE(QString(obj->metaObject()->className()), serviceAClassName);

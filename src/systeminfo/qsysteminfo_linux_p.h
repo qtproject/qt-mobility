@@ -219,7 +219,10 @@ private:
     bool kdeIsRunning;
     bool gnomeIsRunning;
     void whichWMRunning();
-
+    bool screenSaverIsInhibited;
+#ifdef Q_WS_X11
+     int changeTimeout(int timeout);
+#endif
 };
 
 QTM_END_NAMESPACE

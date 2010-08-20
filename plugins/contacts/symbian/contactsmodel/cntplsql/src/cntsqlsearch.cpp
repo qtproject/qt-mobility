@@ -502,15 +502,15 @@ QString CntSqlSearch::IdenticalTokensSearch(const QString& pattern,
 QString CntSqlSearch::TwoDifferentTokensSearch(const QString& pattern, const QStringList& tokens) const
         {
         QString token = tokens.at(0);
-        QString sortPatern = pattern;
-        sortPatern.truncate(pattern.length()-1);
+        /*QString sortPatern = pattern;
+        sortPatern.truncate(pattern.length()-1);*/
 #if defined(USE_DEMORGAN)
         QString query(SELECT_CONTACT_ID + SelectTable(pattern) + " WHERE NOT(NOT" +
-            ExactMatch(sortPatern) +
+            ExactMatch(token) +
         " AND NOT" + ExactMatch(pattern) + ")");
 #else
         QString query(SELECT_CONTACT_ID + SelectTable(pattern) + " WHERE (" +
-            ExactMatch(sortPatern) +  // exact match (e.g. "2")
+            ExactMatch(token) +  // exact match (e.g. "2")
         ") OR " + ExactMatch(pattern)); // exact match (e.g. "20")
 #endif
         query += Order(tokens);
@@ -1012,8 +1012,8 @@ bool CntSqlSearch::TestPattern( const QString &pattern, SearchMethod searchMetho
         {
         if (CntSqlSearch::ZerosEndOfFirstToken == searchMethod)
             {
-            if( tokens.count() == KOneToken && !tokens.at(0).contains("0")
-                && !pattern.startsWith('0') && pattern.count('0') == 1
+            if( tokens.count() == KOneToken /*&& !tokens.at(0).contains("0")*/
+                && !pattern.startsWith('0') /*&& pattern.count('0') == 1*/
                 && pattern.endsWith('0'))
                 {
                 return true;
