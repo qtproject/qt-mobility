@@ -468,6 +468,18 @@ namespace Tp
                     }
                 }
             }
+            //Check if status is OnHold
+            if(this->pChannelInterfaceHoldInterface)
+            {
+                qDebug() << "- pChannelInterfaceHoldInterface->GetHoldState()";
+                QDBusPendingReply<uint, uint> holdingstate = pChannelInterfaceHoldInterface->GetHoldState();
+                holdingstate.waitForFinished();
+                if(holdingstate.isValid()){
+                    uint holdstate = holdingstate.argumentAt<0>();
+                    if(holdstate == 1)
+                        newstatus = QTelephonyEvents::OnHold;
+                }
+            }
         }
         qDebug() << "- direction " << direction;
         qDebug() << "- newstatus " << newstatus;
@@ -543,6 +555,18 @@ namespace Tp
     void  Channel::onHoldStateChanged(uint holdState, uint reason)
     {
         qDebug() << "ChannelInterfaceHoldInterface - Channel::onHoldStateChanged() ";
+        if(holdState == 1){ //Held
+            if(status != QTelephonyEvents::OnHold){
+                status = QTelephonyEvents::OnHold;
+                connection->channelStatusChanged(this);
+            }
+        }
+        else if(holdState == 0){ //Unheld
+            if(status != QTelephonyEvents::Connected){
+                status = QTelephonyEvents::Connected;
+                connection->channelStatusChanged(this);
+            }
+        }
     }
 
     //for ChannelInterfaceMediaSignallingInterface signals
