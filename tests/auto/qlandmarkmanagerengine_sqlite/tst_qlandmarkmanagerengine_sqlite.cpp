@@ -460,9 +460,11 @@ private:
 
         QStringList knownTables;
         knownTables << "category";
+        knownTables << "category_attribute";
         knownTables << "category_custom_attribute";
         knownTables << "category_notification";
         knownTables << "landmark";
+        knownTables << "landmark_attribute";
         knownTables << "landmark_category";
         knownTables << "landmark_custom_attribute";
         knownTables << "landmark_notification";
@@ -475,6 +477,7 @@ private slots:
 
     void init();
     void cleanup();
+
     void createDbNew();
     void createDbExists();
 
@@ -5030,10 +5033,11 @@ void tst_QLandmarkManagerEngineSqlite::filterAttribute() {
     attributeFilter.setAttribute("description", "the summary", QLandmarkFilter::MatchStartsWith);
     QVERIFY(doFetch(type,attributeFilter,&lms));
     QCOMPARE(lms.count(), 4);
-    QCOMPARE(lms.at(0), lm2);
-    QCOMPARE(lms.at(1), lm4);
-    QCOMPARE(lms.at(2), lm7);
-    QCOMPARE(lms.at(3), lm9);
+
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm4));
+    QVERIFY(lms.contains(lm7));
+    QVERIFY(lms.contains(lm9));
 
     //try an single empty qvariant for and and or
     //should return all landmarks since all landmark will the values

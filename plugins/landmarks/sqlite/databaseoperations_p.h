@@ -213,6 +213,11 @@ class DatabaseOperations {
 
     const volatile bool &isExtendedAttributesEnabled;
     const volatile bool &isCustomAttributesEnabled;
+
+    static const QStringList coreAttributes;
+    static const QStringList coreGenericAttributes;
+    static const QStringList extendedGenericAttributes;
+    static const QStringList supportedSearchableAttributes;
 };
 
 #endif
