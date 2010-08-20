@@ -646,7 +646,7 @@ void MainWindow::createMenus()
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(demo2(bool)));
 
-    menuItem = new QAction(tr("Random items"), this);
+    menuItem = new QAction(tr("Clusters"), this);
     subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(demo3(bool)));
@@ -741,7 +741,25 @@ void MainWindow::demo2(bool /*checked*/)
 }
 void MainWindow::demo3(bool /*checked*/)
 {
+    int i = 0;
+    qreal density = 10;
+    qreal clusterSize = 2;
+    qreal clusterDensity = 0.1*clusterSize;
+    for (qreal latm = -90 + density; latm < 90 - density; latm += density * 3) {
+        for (qreal lngm = -180 + density; lngm < 180 - density; lngm += density * 3) {
+            for (qreal lat = latm-clusterSize+clusterDensity; lat < latm+clusterSize-clusterDensity; lat += clusterDensity * 3) {
+                for (qreal lng = lngm-clusterSize+clusterDensity; lng < lngm+clusterSize-clusterDensity; lng += clusterDensity * 3) {
+                    MVTEST_RECT2(lat - clusterDensity, lng - clusterDensity, lat + clusterDensity, lng + clusterDensity);
+                    i++;
+                }
+            }
+        }
+    }
+    qDebug("%i items added, %i items total.", i, m_mapWidget->mapObjects().count());
 
+
+    QMessageBox *mb = new QMessageBox(QMessageBox::NoIcon, "MapViewer", QString::number(i) + " items");
+    mb->open();
 }
 
 void MainWindow::drawRect(bool /*checked*/)
