@@ -18,6 +18,21 @@ CONFIG += mobility
 FORMS += landmarkbrowser.ui \
     landmarkadddialog.ui
 MOBILITY += location
-samplegpx.path = $$QT_MOBILITY_PREFIX/bin
-samplegpx.files = places.gpx
-INSTALLS += samplegpx
+
+symbian|wince* {
+    symbian {
+        addFiles.sources = places.gpx
+        DEPLOYMENT += addFiles
+
+        TARGET.CAPABILITY = Location
+    }
+    wince* {
+        addFiles.sources = ./places.gpx
+        addFiles.path = .
+        DEPLOYMENT += addFiles
+    }
+} else {
+    samplegpx.path = $$QT_MOBILITY_EXAMPLES
+    samplegpx.files = places.gpx
+    INSTALLS += samplegpx
+}

@@ -70,7 +70,7 @@ public:
         echo = 0;
 
         // Set default connection to the echo shared server
-        connectToChat();
+        on_sharedChat_toggled(true);
     }
 
     ~EchoClient()
