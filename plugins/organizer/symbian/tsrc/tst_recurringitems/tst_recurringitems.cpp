@@ -721,11 +721,21 @@ void tst_recurringItems::addItemsDailyRecurrence(QString managerName, QString it
 
 void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString itemType)
 {
-    // Every year for 3 occurances
+    // Every year
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-    rrule.setCount(3);
     QTest::newRow(QString("[%1] yearly").arg(managerName).toLatin1().constData())
+        << managerName
+        << QString("yearly 0")
+        << itemType
+        << QDateTime::currentDateTime().addSecs(3600)
+        << rrule;
+
+    // Every year for 3 occurances
+    rrule = QOrganizerItemRecurrenceRule();
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    rrule.setCount(3);
+    QTest::newRow(QString("[%1] yearly for three years").arg(managerName).toLatin1().constData())
         << managerName
         << QString("yearly 1")
         << itemType

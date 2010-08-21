@@ -180,9 +180,11 @@ public:
         const QList<QOrganizerItemSortOrder>& sortOrders) const;
     
 private:
+    CCalEntry* entryForItemOccurrenceL(QOrganizerItem *item, bool &isNewEntry) const;
+    CCalEntry* entryForItemL(QOrganizerItem *item, bool &isNewEntry) const;
+    void findEntryL(CCalEntry *&entry, QOrganizerItemLocalId localId, QString manageruri, const TDesC8& globalUid) const;
     void removeItemL(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet *changeSet);
-    CCalEntry* createEntryToSaveItemInstanceL(QOrganizerItem *item);
-    bool checkForValidParentEntryL(QOrganizerItem *item , CCalEntry *parentEntry);
+    void checkForValidParentEntryL(QOrganizerItem *item , CCalEntry *parentEntry) const;
 	
 private:
     QOrganizerItemSymbianEngineData *d;

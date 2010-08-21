@@ -165,6 +165,8 @@ void OrganizerItemTransform::toEntryL(const QOrganizerItem &item, CCalEntry *ent
             User::Leave(err);
         }
     }
+
+    entry->SetLastModifiedDateL();
 }
 
 void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *item) const
@@ -182,7 +184,7 @@ void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *ite
     }
 }
 
-void OrganizerItemTransform::toItemPostSaveL(const CCalEntry &entry, QOrganizerItem *item) const
+void OrganizerItemTransform::toItemPostSaveL(const CCalEntry &entry, QOrganizerItem *item, QString managerUri) const
 {
     //debugEntryL(entry);
     // Loop through transform objects
@@ -194,6 +196,13 @@ void OrganizerItemTransform::toItemPostSaveL(const CCalEntry &entry, QOrganizerI
             User::Leave(err);
         }
     }
+
+    // Update local id
+    QOrganizerItemId itemId;
+    TCalLocalUid localUid = entry.LocalUidL();
+    itemId.setLocalId(localUid);
+    itemId.setManagerUri(managerUri);
+    item->setId(itemId);
 }
 
 void OrganizerItemTransform::toItemInstanceL(const CCalInstance &instance, QOrganizerItem *itemInstance) const
