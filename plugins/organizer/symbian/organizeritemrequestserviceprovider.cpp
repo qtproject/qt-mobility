@@ -164,7 +164,7 @@ void COrganizerItemRequestsServiceProvider::RunL()
         {
         case QOrganizerItemAbstractRequest::ItemInstanceFetchRequest: 
             {
-            
+            FetchInstanceL();
             }
             break;
         case QOrganizerItemAbstractRequest::ItemFetchRequest: 
@@ -209,31 +209,33 @@ void COrganizerItemRequestsServiceProvider::RunL()
         }
     }
 
+//Fetch item instances
+void COrganizerItemRequestsServiceProvider::FetchInstanceL()
+    {
+    // Fetch ItemInstancesList
+    iItemList = iOrganizerItemManagerEngine.itemInstances(
+        ((QOrganizerItemFetchRequest*)iReq)->filter(), 
+        ((QOrganizerItemFetchRequest*)iReq)->sorting(), 
+        ((QOrganizerItemFetchRequest*)iReq)->fetchHint(),
+        &iError);
+    // Update the request status
+    QOrganizerItemManagerEngine::updateItemInstanceFetchRequest(
+        (QOrganizerItemInstanceFetchRequest*)(iReq), iItemList, 
+        iError, QOrganizerItemAbstractRequest::FinishedState);
+    }
+
 // Delete item
 void COrganizerItemRequestsServiceProvider::RemoveItemL()
     {
-    TInt sucessCount(0);
-
     if (iIndex < iNoOfItems)
         {
         // update index beforehand in case deleteItemL leaves, if so
         // RunError would call SelfComplete() for recursive operation
         iIndex++;
         // Delete an item
-        iOrganizerItemManagerEngine.deleteItemL(
-                iItemIds.at(iIndex-1), sucessCount);
+        iOrganizerItemManagerEngine.deleteItemL(iItemIds.at(iIndex-1));
         // Calls itself recursively until all the items are deleted
         SelfComplete();
-
-        if (!sucessCount) // Entry not deleted successfully
-            {
-            // Entry is not deleted, but the error is not known.
-            // So set the error to General Error and transform this error 
-            // to corresponding Qt error
-            iOrganizerItemManagerEngine.transformError(KErrGeneral, &iError);
-            // Insert error map
-            iErrorMap.insert(iIndex, iError);
-            }
         }
     else
         {
