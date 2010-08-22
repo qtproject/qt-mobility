@@ -73,8 +73,13 @@
 #define OFONO_NETWORK_OPERATOR_INTERFACE         "org.ofono.NetworkOperator"
 #define OFONO_DATA_CONNECTION_MANAGER_INTERFACE  "org.ofono.DataConnectionManager"
 #define OFONO_SIM_MANAGER_INTERFACE              "org.ofono.SimManager"
-#define OFONO_DATA_CONNECTION_MANAGER_INTERFACE  "org.ofono.DataConnectionManager"
 #define OFONO_DATA_CONTEXT_INTERFACE             "org.ofono.PrimaryDataContext"
+
+#define OFONO_SMS_MANAGER_INTERFACE              "org.ofono.SmsManager"
+#define OFONO_PHONEBOOK_INTERFACE                "org.ofono.Phonebook"
+#define OFONO_MESSAGE_WAITING_INTERFACE          "org.ofono.MessageWaiting"
+
+
 
 QT_BEGIN_NAMESPACE
 
@@ -141,6 +146,7 @@ public:
     QString getModel();
     QString getRevision();
     QString getSerial();
+
     QStringList getFeatures(); //sms, sim
     QStringList getInterfaces();
     QString defaultInterface();
@@ -169,7 +175,7 @@ public:
     //properties
     QString getStatus();
     quint16 getLac();
-    quint16 getCellId();
+    quint32 getCellId();
     QString getTechnology();
     QString getOperatorName();
     int getSignalStrength();
@@ -238,22 +244,24 @@ protected:
 };
 
 
-class QOfonoDataConnectionInterface : public QDBusAbstractInterface
+class QOfonoDataConnectionManagerInterface : public QDBusAbstractInterface
 {
     Q_OBJECT
 
 public:
 
-    QOfonoDataConnectionInterface(const QString &dbusPathName, QObject *parent = 0);
-    ~QOfonoDataConnectionInterface();
+    QOfonoDataConnectionManagerInterface(const QString &dbusPathName, QObject *parent = 0);
+    ~QOfonoDataConnectionManagerInterface();
 
     QVariantMap getProperties();
 
     //properties
     QList<QDBusObjectPath> getPrimaryContexts();
     bool isAttached();
-    bool roamingAttached();
+    bool isRoamingAllowed();
     bool isPowered();
+
+    bool setPower(bool on);
 
 protected:
     void connectNotify(const char *signal);
@@ -280,11 +288,45 @@ public:
     QString getName();
     QVariantMap getSettings();
     QString getInterface();
+    QString getAddress();
+
+    bool setActive(bool on);
+    bool setApn(const QString &name);
+
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+    QVariant getProperty(const QString &);
+    bool setProp(const QString &, const QVariant &var);
+};
+
+class QOfonoSmsInterface : public QDBusAbstractInterface
+{
+    Q_OBJECT
+
+public:
+
+    QOfonoSmsInterface(const QString &dbusModemPathName, QObject *parent = 0);
+    ~QOfonoSmsInterface();
+
+    QVariantMap getProperties();
+    void sendMessage(const QString &to, const QString &message);
+
+    //properties
+    QString  serviceCenterAddress();
+    bool useDeliveryReports();
+    QString bearer();
 
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
     QVariant getProperty(const QString &);
 
+Q_SIGNALS:
+    void propertyChanged(const QString &, const QDBusVariant &value);
+    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
+    void immediateMessage(const QString &message, const QVariantMap &info);
+    void incomingMessage(const QString &message, const QVariantMap &info);
 };
+
 #endif //QOFONOSERVICE_H
