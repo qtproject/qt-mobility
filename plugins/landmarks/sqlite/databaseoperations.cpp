@@ -3003,8 +3003,10 @@ void QueryRun::run()
 
                 }
 
+                QList<QLandmarkId> landmarkIds;//TODO: populate this list
                 QMetaObject::invokeMethod(engine, "updateLandmarkImportRequest",
                                           Q_ARG(QLandmarkImportRequest *, importRequest),
+                                          Q_ARG(QList<QLandmarkId>, landmarkIds),
                                           Q_ARG(QLandmarkManager::Error, error),
                                           Q_ARG(QString, errorString),
                                           Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));

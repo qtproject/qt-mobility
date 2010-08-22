@@ -749,10 +749,10 @@ void QLandmarkManagerEngineSqlite::updateLandmarkCategoryRemoveRequest(QLandmark
     QLandmarkManagerEngine::updateLandmarkCategoryRemoveRequest(req, error, errorString, errorMap, newState);
 }
 
-void QLandmarkManagerEngineSqlite::updateLandmarkImportRequest(QLandmarkImportRequest *req, QLandmarkManager::Error error, const QString &errorString,
+void QLandmarkManagerEngineSqlite::updateLandmarkImportRequest(QLandmarkImportRequest *req, const QList<QLandmarkId> &ids, QLandmarkManager::Error error, const QString &errorString,
                                  QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkManagerEngine::updateLandmarkImportRequest(req, error, errorString, newState);
+    QLandmarkManagerEngine::updateLandmarkImportRequest(req, ids, error, errorString, newState);
 }
 
 void QLandmarkManagerEngineSqlite::updateLandmarkExportRequest(QLandmarkExportRequest *req, QLandmarkManager::Error error, const QString &errorString,
