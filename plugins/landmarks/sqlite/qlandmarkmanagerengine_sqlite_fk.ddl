@@ -29,15 +29,13 @@ CREATE INDEX IF NOT EXISTS landmark_custom_attribute_fk_index ON landmark_custom
 @@@
 CREATE TABLE IF NOT EXISTS category (
     id INTEGER PRIMARY KEY,
-    name TEXT,
-    description TEXT,
-    iconUrl TEXT
+    name TEXT
 );
 @@@
 CREATE TABLE IF NOT EXISTS category_attribute(
     categoryId INTEGER,
     key TEXT,
-    value TEXT,
+    value BLOB,
     PRIMARY KEY (categoryId,key),
     FOREIGN KEY (categoryID) REFERENCES category(id)
 );

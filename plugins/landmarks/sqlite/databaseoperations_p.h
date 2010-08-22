@@ -218,6 +218,10 @@ class DatabaseOperations {
     static const QStringList coreGenericAttributes;
     static const QStringList extendedGenericAttributes;
     static const QStringList supportedSearchableAttributes;
+
+    static const QStringList coreCategoryAttributes;
+    static const QStringList coreGenericCategoryAttributes;
+    static const QStringList extendedGenericCategoryAttributes;
 };
 
 #endif

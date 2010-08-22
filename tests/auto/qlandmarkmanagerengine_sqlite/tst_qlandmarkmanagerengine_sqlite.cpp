@@ -894,6 +894,7 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
      // add - no attributes
      QLandmarkCategory cat1;
      cat1.setName("CAT1");
+     cat1.setIconUrl(QUrl("www.cat1.com"));
      QVERIFY(m_manager->saveCategory(&cat1));
      QCOMPARE(cat1, m_manager->category(cat1.categoryId()));
 
@@ -1074,6 +1075,7 @@ void tst_QLandmarkManagerEngineSqlite::updateCategory() {
     // add - with attributes
     QLandmarkCategory cat1;
     cat1.setName("CAT1");
+    cat1.setIconUrl(QUrl("cat1 icon url"));
     //cat1.setCustomAttribute("Key1", "Value1");
     QVERIFY(m_manager->saveCategory(&cat1));
     QCOMPARE(cat1, m_manager->category(cat1.categoryId()));
@@ -1143,6 +1145,7 @@ void tst_QLandmarkManagerEngineSqlite::updateCategoryAsync() {
     // add - with attributes
     QLandmarkCategory cat1;
     cat1.setName("CAT1");
+    cat1.setIconUrl(QUrl("cat1 icon url"));
     //cat1.setCustomAttribute("Key1", "Value1");
 
     saveCategoryRequest.setCategory(cat1);
@@ -1165,6 +1168,7 @@ void tst_QLandmarkManagerEngineSqlite::updateCategoryAsync() {
     // update core
     cat1.setCategoryId(cat1new.categoryId());
     cat1.setName("CAT1Changed");
+    cat1.setIconUrl(QUrl("CAT1Changed url"));
     saveCategoryRequest.setCategory(cat1);
     saveCategoryRequest.start();
     QVERIFY(waitForAsync(spy, &saveCategoryRequest));
@@ -1754,6 +1758,13 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryId() {
     db.open();
     QSqlQuery query(db);
 
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
+    QVERIFY(query.next());
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
+    QVERIFY(query.next());
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
+    QVERIFY(query.next());
+
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
@@ -1766,6 +1777,13 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryId() {
     QCOMPARE(m_manager->category(cat4.categoryId()),cat4);
     QCOMPARE(m_manager->category(cat5.categoryId()), QLandmarkCategory());
     QCOMPARE(m_manager->category(cat6.categoryId()),cat6);
+
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
+    QVERIFY(query.next());
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
+    QVERIFY(!query.next());
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
+    QVERIFY(query.next());
 
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
     QVERIFY(query.next());
@@ -1907,6 +1925,13 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryIdAsync() {
     db.open();
     QSqlQuery query(db);
 
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
+    QVERIFY(query.next());
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
+    QVERIFY(query.next());
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
+    QVERIFY(query.next());
+
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
@@ -1922,6 +1947,13 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryIdAsync() {
     QCOMPARE(m_manager->category(cat4.categoryId()),cat4);
     QCOMPARE(m_manager->category(cat5.categoryId()), QLandmarkCategory());
     QCOMPARE(m_manager->category(cat6.categoryId()),cat6);
+
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
+    QVERIFY(query.next());
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
+    QVERIFY(!query.next());
+    query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
+    QVERIFY(query.next());
 
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
     QVERIFY(query.next());

@@ -1887,8 +1887,6 @@ QLandmarkCategory DatabaseOperations::category(const QLandmarkCategoryId &landma
 
     QStringList columns;
     columns << "name";
-    columns << "description";
-    columns << "iconUrl";
 
     QSqlDatabase db = QSqlDatabase::database(connectionName);
 
@@ -1926,9 +1924,26 @@ QLandmarkCategory DatabaseOperations::category(const QLandmarkCategoryId &landma
         if (errorString)
             *errorString = "None of the existing categories match the given category id.";
     } else {
+        query.finish();
+        query.clear();
+        QMap<QString,QVariant> bindValues;
+        bindValues.insert("catId", landmarkCategoryId.localId());
+        if (!executeQuery(&query,"SELECT key,value FROM category_attribute WHERE categoryId = :catId", bindValues, error, errorString)){
+            return QLandmarkCategory();
+        }
+
+        while(query.next()) {
+            QString key = query.value(0).toString();
+            if (coreGenericCategoryAttributes.contains(key)) {
+                cat.setAttribute(key, query.value(1));
+            } else if (extendedGenericCategoryAttributes.contains(key) && isExtendedAttributesEnabled) {
+                cat.setAttribute(key, query.value(1));
+            } else {
+                qWarning() << "Database is corrupt it contains an unrecognised generic key: " << key;
+            }
+        }
 
         if (DatabaseOperations::isCustomAttributesEnabled) {
-            QMap<QString,QVariant> bindValues;
             bindValues.insert("catId", cat.categoryId().localId());
             if (!executeQuery(&query, "SELECT key, value from category_custom_attribute WHERE categoryId=:catId",bindValues, error, errorString )) {
                 return QLandmarkCategory();
@@ -2107,16 +2122,6 @@ bool DatabaseOperations::saveCategoryHelper(QLandmarkCategory *category,
         }
     }
 
-//    if (!category->description().isEmpty())
-//        bindValues.insert("description", category->description());
-//    else
-//        bindValues.insert("description", QVariant());
-
-    if (!category->iconUrl().isEmpty())
-        bindValues.insert("iconUrl", category->iconUrl().toString());
-    else
-        bindValues.insert("iconUrl", QVariant());
-
     QString q1;
     QStringList keys = bindValues.keys();
 
@@ -2143,18 +2148,38 @@ bool DatabaseOperations::saveCategoryHelper(QLandmarkCategory *category,
         category->setCategoryId(id);
     }
 
+    query.clear();
+    query.finish();
     bindValues.clear();
     bindValues.insert("catId",category->categoryId().localId());
-    QStringList attributekeys = category->customAttributeKeys();
+    QStringList attributeKeys = coreGenericCategoryAttributes;
+    if (this->isExtendedAttributesEnabled)
+        attributeKeys << extendedGenericCategoryAttributes;
+
+    foreach(const QString &key, attributeKeys) {
+        if (!category->attributeKeys().contains(key))
+            continue;
+        bindValues.clear();
+        bindValues.insert(":catId", category->categoryId().localId());
+        bindValues.insert(":key", key);
+        bindValues.insert(":value", category->attribute(key));
+        if (!executeQuery(&query, "REPLACE INTO category_attribute(categoryId,key,value) VALUES(:catId,:key,:value)", bindValues,error,errorString)) {
+            return false;
+        }
+    }
+
+    attributeKeys = category->customAttributeKeys();
+    bindValues.clear();
+    bindValues.insert("catId", category->categoryId().localId());
     if (!executeQuery(&query,"DELETE FROM category_custom_attribute WHERE categoryId= :catId", bindValues, error, errorString)) {
         return false;
     }
 
-    for (int i =0; i < attributekeys.count(); ++i) {
+    for (int i =0; i < attributeKeys.count(); ++i) {
         bindValues.clear();
         bindValues.insert("catId",category->categoryId().localId());
-        bindValues.insert("key",attributekeys[i]);
-        bindValues.insert("value",category->customAttribute(attributekeys.at(i)));
+        bindValues.insert("key",attributeKeys[i]);
+        bindValues.insert("value",category->customAttribute(attributeKeys.at(i)));
 
         if (!executeQuery(&query,"INSERT INTO category_custom_attribute (categoryId,key,value) VALUES(:catId,:key,:value)", bindValues,
                          error, errorString)) {
@@ -2290,6 +2315,7 @@ bool DatabaseOperations::removeCategory(const QLandmarkCategoryId &categoryId,
     QStringList queryStrings;
     queryStrings << "DELETE FROM category WHERE id = :catId";
     queryStrings << "DELETE FROM landmark_category WHERE categoryId = :catId";
+    queryStrings << "DELETE FROM category_attribute WHERE categoryId= :catId";
     queryStrings << "DELETE FROM category_custom_attribute WHERE categoryId= :catId";
 
     foreach(const QString &queryString, queryStrings) {
@@ -3064,9 +3090,7 @@ const QStringList DatabaseOperations::coreGenericAttributes = QStringList()
                                                               << "postCode"
                                                               << "phoneNumber"
                                                               << "url";
-const QStringList DatabaseOperations::extendedGenericAttributes = QStringList()
-                                                                  << "haccurcy"
-                                                                  << "vaccuracy";
+const QStringList DatabaseOperations::extendedGenericAttributes = QStringList();
 
 const QStringList DatabaseOperations::supportedSearchableAttributes = QStringList() << "name"
                                                          << "description"
@@ -3079,3 +3103,11 @@ const QStringList DatabaseOperations::supportedSearchableAttributes = QStringLis
                                                          << "street"
                                                          << "postCode"
                                                          << "phoneNumber";
+
+const QStringList DatabaseOperations::coreCategoryAttributes = QStringList()
+                                                      << "name";
+
+const QStringList DatabaseOperations::coreGenericCategoryAttributes = QStringList()
+                                                               << "iconUrl";
+
+const QStringList DatabaseOperations::extendedGenericCategoryAttributes = QStringList();
