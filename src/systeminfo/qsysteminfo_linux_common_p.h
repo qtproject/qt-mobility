@@ -137,7 +137,7 @@ public:
 
     virtual QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
-    virtual int cellId();
+    virtual qint32 cellId();
     virtual int locationAreaCode();
 
     virtual QString currentMobileCountryCode();

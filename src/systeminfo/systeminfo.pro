@@ -78,10 +78,11 @@ unix: {
                 } else {
                     DEFINES += QT_NO_NETWORKMANAGER
                 }
-                
-                contains(connman_enabled, yes): {
+                contains(CONFIG,meego): { #for now... udisks
                     SOURCES += qdevicekitservice_linux.cpp
                     HEADERS += qdevicekitservice_linux_p.h
+                }
+                contains(connman_enabled, yes): {
 
                     SOURCES+= qconnmanservice_linux.cpp qofonoservice_linux.cpp
                     HEADERS+= qconnmanservice_linux_p.h qofonoservice_linux_p.h
