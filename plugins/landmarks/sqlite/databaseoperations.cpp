@@ -1527,27 +1527,10 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
 
     QSqlQuery query(db);
 
-    if( !query.prepare("DELETE FROM landmark_attribute WHERE landmarkId= :lmId"))
-    {
-        *error = QLandmarkManager::UnknownError;
-        *errorString = QString("Unable to prepare statement: %1 \nReason: %2")
-                       .arg(query.lastQuery()).arg(query.lastError().text());
-        return false;
-    }
-
-    query.bindValue(":lmId", landmark->landmarkId().localId());
-
-    if (!query.exec()) {
-        *error = QLandmarkManager::UnknownError;
-        *errorString = QString("Unable to execute statement: %1\nReason:%2")
-                       .arg(query.lastQuery()).arg(query.lastError().text());
-        return false;
-    }
-
     foreach(const QString &key, attributeKeys) {
         if (!landmark->attributeKeys().contains(key))
             continue;
-        if (!query.prepare("INSERT INTO landmark_attribute (landmarkId,key,value) VALUES(:lmId,:key,:value)")) {
+        if (!query.prepare("REPLACE INTO landmark_attribute (landmarkId,key,value) VALUES(:lmId,:key,:value)")) {
             *error = QLandmarkManager::UnknownError;
             *errorString = QString("Unable to prepare statement: %1 \nReason: %2")
                            .arg(query.lastQuery()).arg(query.lastError().text());

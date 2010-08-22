@@ -1545,6 +1545,9 @@ void tst_QLandmarkManagerEngineSqlite::updateLandmark() {
     // add - with attributes
     QLandmark lm1;
     lm1.setName("LM1");
+    lm1.setDescription("LM1 description");
+    lm1.setPhoneNumber("LM1 phone");
+    lm1.setAttribute("street", "LM1 street");
     //lm1.setCustomAttribute("Key1", "Value1");
     QVERIFY(m_manager->saveLandmark(&lm1));
     QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
@@ -1557,6 +1560,7 @@ void tst_QLandmarkManagerEngineSqlite::updateLandmark() {
 
     // update core
     lm1.setName("LM1New");
+    lm1.setAttribute("phoneNumber", "LM1phonenew");
     QVERIFY(m_manager->saveLandmark(&lm1));
     QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
