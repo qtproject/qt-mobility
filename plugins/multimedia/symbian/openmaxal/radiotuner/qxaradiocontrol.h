@@ -38,40 +38,58 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtCore/qcoreapplication.h>
-#include <QtTest/QtTest>
 
-#include "tst_qmediaplayer.h"
+#ifndef QXARADIOCONTROL_H
+#define QXARADIOCONTROL_H
 
-#ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_MEDIAPLAY_BACKEND
-#include "tst_qmediaplayer_xa.h"
-#else
-#include "tst_qmediaplayer_s60.h"
-#endif
-#endif
+#include <QObject>
+#include <QRadioTunerControl>
 
-int main(int argc, char**argv)
+QT_USE_NAMESPACE
+
+class QXARadioSession;
+
+class QXARadioControl : public QRadioTunerControl
 {
-    QApplication app(argc,argv);
-    int ret;
-    tst_QMediaPlayer test_api;
-    ret = QTest::qExec(&test_api, argc, argv);
-#ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_MEDIAPLAY_BACKEND
-    char *new_argv[3];
-    QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log";
-    QByteArray   bytes  = str.toAscii();
-    char arg1[] = "-o";
-    new_argv[0] = argv[0];
-    new_argv[1] = arg1;
-    new_argv[2] = bytes.data();
-    tst_QMediaPlayer_xa test_xa;
-    ret = QTest::qExec(&test_xa, 3, new_argv);
-#else
-    tst_QMediaPlayer_s60 test_s60;
-    ret = QTest::qExec(&test_s60, argc, argv);
-#endif
-#endif
-    return ret;
-}
+    Q_OBJECT
+
+public:
+    QXARadioControl(QXARadioSession *session, QObject *parent = 0);
+    virtual ~QXARadioControl();
+    QRadioTuner::State state() const;
+
+    QRadioTuner::Band band() const;
+    void setBand(QRadioTuner::Band band);
+    bool isBandSupported(QRadioTuner::Band band) const;
+    int frequency() const;
+    int frequencyStep(QRadioTuner::Band band) const;
+    QPair<int,int> frequencyRange(QRadioTuner::Band band) const;
+    void setFrequency(int freq);
+    bool isStereo() const;
+    QRadioTuner::StereoMode stereoMode() const;
+    void setStereoMode(QRadioTuner::StereoMode stereoMode);
+    int signalStrength() const;
+    int volume() const;
+    void setVolume(int volume);
+    bool isMuted() const;
+    void setMuted(bool muted);
+    bool isSearching() const;
+    void searchForward();
+    void searchBackward();
+    void cancelSearch();
+    bool isValid() const;
+    bool isAvailable() const;
+    QtMultimediaKit::AvailabilityError availabilityError() const;
+    void start();
+    void stop();
+    QRadioTuner::Error error() const;
+    QString errorString() const;
+
+private:
+    QXARadioSession *m_session;
+
+protected:
+    QXARadioControl(QObject* parent = 0);
+};
+
+#endif /* QXARADIOCONTROL_H */

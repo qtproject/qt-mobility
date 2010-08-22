@@ -39,31 +39,26 @@
 **
 ****************************************************************************/
 
-#include <QString>
-#include "qxarecordmediaserviceproviderplugin.h"
-#include "qxarecordmediaservice.h"
-#include "qxacommon.h"
+#include "qxawidget.h"
+#include <coemain.h>
 
-QStringList QXARecordMediaServiceProviderPlugin::keys() const
+QXAWidget::QXAWidget(QWidget *parent)
+    : QWidget(parent)
 {
-    return QStringList()
-            << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    setAttribute(Qt::WA_OpaquePaintEvent, true);
+    setAttribute(Qt::WA_NoSystemBackground, true);
+    setAutoFillBackground(false);
+    setPalette(QPalette(Qt::black));
+    /* Initialize the native window*/
+    winId();
 }
 
-QMediaService* QXARecordMediaServiceProviderPlugin::create(QString const& key)
+QXAWidget::~QXAWidget()
 {
-    if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
-        return new QXARecodMediaService;
-    else
-        QT_TRACE2("unsupported key:", key);
-    return 0;
 }
 
-void QXARecordMediaServiceProviderPlugin::release(QMediaService *service)
+void QXAWidget::paintEvent(QPaintEvent *event)
 {
-    QT_TRACE_FUNCTION_ENTRY;
-    delete service;
-    QT_TRACE_FUNCTION_EXIT;
+    Q_UNUSED(event);
 }
-
-Q_EXPORT_PLUGIN2(qtmultimediakit_xarecordservice, QXARecordMediaServiceProviderPlugin);

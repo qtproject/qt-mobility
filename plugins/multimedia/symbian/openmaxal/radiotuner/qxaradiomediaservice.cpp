@@ -38,40 +38,35 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtCore/qcoreapplication.h>
-#include <QtTest/QtTest>
 
-#include "tst_qmediaplayer.h"
+#include <QString>
 
-#ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_MEDIAPLAY_BACKEND
-#include "tst_qmediaplayer_xa.h"
-#else
-#include "tst_qmediaplayer_s60.h"
-#endif
-#endif
+#include "qxaradiomediaservice.h"
+#include "qxaradiosession.h"
+#include "qxaradiocontrol.h"
+#include <qradiotunercontrol.h>
 
-int main(int argc, char**argv)
+QXARadioMediaService::QXARadioMediaService(QObject *parent)
+    : QMediaService(parent)
 {
-    QApplication app(argc,argv);
-    int ret;
-    tst_QMediaPlayer test_api;
-    ret = QTest::qExec(&test_api, argc, argv);
-#ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_MEDIAPLAY_BACKEND
-    char *new_argv[3];
-    QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log";
-    QByteArray   bytes  = str.toAscii();
-    char arg1[] = "-o";
-    new_argv[0] = argv[0];
-    new_argv[1] = arg1;
-    new_argv[2] = bytes.data();
-    tst_QMediaPlayer_xa test_xa;
-    ret = QTest::qExec(&test_xa, 3, new_argv);
-#else
-    tst_QMediaPlayer_s60 test_s60;
-    ret = QTest::qExec(&test_s60, argc, argv);
-#endif
-#endif
-    return ret;
+    m_session = new QXARadioSession(this);
+    m_control = new QXARadioControl(m_session, this);
+}
+
+QXARadioMediaService::~QXARadioMediaService()
+{
+}
+
+QMediaControl* QXARadioMediaService::requestControl(const char *name)
+{
+
+    if (qstrcmp(name, QRadioTunerControl_iid) == 0) {
+        return m_control;
+    }
+    return 0;
+}
+
+void QXARadioMediaService::releaseControl(QMediaControl *control)
+{
+    Q_UNUSED(control)
 }

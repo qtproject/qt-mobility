@@ -38,40 +38,61 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtCore/qcoreapplication.h>
-#include <QtTest/QtTest>
 
-#include "tst_qmediaplayer.h"
 
-#ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_MEDIAPLAY_BACKEND
-#include "tst_qmediaplayer_xa.h"
-#else
-#include "tst_qmediaplayer_s60.h"
-#endif
-#endif
+#include <QtCore/qurl.h>
 
-int main(int argc, char**argv)
+#include "qxamediastreamscontrol.h"
+#include "qxaplaysession.h"
+#include "qxacommon.h"
+
+QXAMediaStreamsControl::QXAMediaStreamsControl(QXAPlaySession *session, QObject *parent)
+   :QMediaStreamsControl(parent), mSession(session)
 {
-    QApplication app(argc,argv);
-    int ret;
-    tst_QMediaPlayer test_api;
-    ret = QTest::qExec(&test_api, argc, argv);
-#ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_MEDIAPLAY_BACKEND
-    char *new_argv[3];
-    QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log";
-    QByteArray   bytes  = str.toAscii();
-    char arg1[] = "-o";
-    new_argv[0] = argv[0];
-    new_argv[1] = arg1;
-    new_argv[2] = bytes.data();
-    tst_QMediaPlayer_xa test_xa;
-    ret = QTest::qExec(&test_xa, 3, new_argv);
-#else
-    tst_QMediaPlayer_s60 test_s60;
-    ret = QTest::qExec(&test_s60, argc, argv);
-#endif
-#endif
-    return ret;
+    QT_TRACE_FUNCTION_ENTRY;
+    connect(mSession, SIGNAL(activeStreamsChanged()),
+            this, SIGNAL(activeStreamsChanged()));
+    connect(mSession, SIGNAL(streamsChanged()),
+            this, SIGNAL(streamsChanged()));
+    QT_TRACE_FUNCTION_EXIT;
 }
+
+QXAMediaStreamsControl::~QXAMediaStreamsControl()
+{
+    QT_TRACE_FUNCTION_ENTRY_EXIT;
+}
+
+bool  QXAMediaStreamsControl::isActive (int stream)
+{
+    RET_s_IF_p_IS_NULL(mSession, false);
+    return mSession->isStreamActive(stream);
+}
+
+QVariant  QXAMediaStreamsControl::metaData (int stream, QtMultimediaKit::MetaData key)
+{
+    QVariant var;
+    RET_s_IF_p_IS_NULL(mSession, var);
+    QT_TRACE_FUNCTION_ENTRY;
+    var = mSession->metaData(stream, key);
+    QT_TRACE_FUNCTION_EXIT;
+    return var;
+}
+
+void  QXAMediaStreamsControl::setActive (int stream, bool state)
+{
+    Q_UNUSED(stream);
+    Q_UNUSED(state);
+}
+
+int  QXAMediaStreamsControl::streamCount()
+{
+    RET_s_IF_p_IS_NULL(mSession, 0);
+    return mSession->streamCount();
+}
+
+QMediaStreamsControl::StreamType QXAMediaStreamsControl::streamType (int stream)
+{
+    RET_s_IF_p_IS_NULL(mSession, QMediaStreamsControl::UnknownStream);
+    return mSession->streamType(stream);
+}
+

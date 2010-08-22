@@ -38,40 +38,56 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtCore/qcoreapplication.h>
-#include <QtTest/QtTest>
 
-#include "tst_qmediaplayer.h"
+#ifndef QXAVIDEOWIDGETCONTROL_H
+#define QXAVIDEOWIDGETCONTROL_H
 
-#ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_MEDIAPLAY_BACKEND
-#include "tst_qmediaplayer_xa.h"
-#else
-#include "tst_qmediaplayer_s60.h"
-#endif
-#endif
+#include <QObject>
+#include <qvideowidgetcontrol.h>
+#include "qxaplaysession.h"
 
-int main(int argc, char**argv)
+QT_USE_NAMESPACE
+
+class QXAWidget;
+
+class QXAVideoWidgetControl : public QVideoWidgetControl
 {
-    QApplication app(argc,argv);
-    int ret;
-    tst_QMediaPlayer test_api;
-    ret = QTest::qExec(&test_api, argc, argv);
-#ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_MEDIAPLAY_BACKEND
-    char *new_argv[3];
-    QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log";
-    QByteArray   bytes  = str.toAscii();
-    char arg1[] = "-o";
-    new_argv[0] = argv[0];
-    new_argv[1] = arg1;
-    new_argv[2] = bytes.data();
-    tst_QMediaPlayer_xa test_xa;
-    ret = QTest::qExec(&test_xa, 3, new_argv);
-#else
-    tst_QMediaPlayer_s60 test_s60;
-    ret = QTest::qExec(&test_s60, argc, argv);
-#endif
-#endif
-    return ret;
-}
+    Q_OBJECT
+public:
+    QXAVideoWidgetControl(QXAPlaySession *session, QObject *parent = 0);
+    ~QXAVideoWidgetControl();
+
+    QWidget *videoWidget();
+
+    Qt::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(Qt::AspectRatioMode mode);
+
+    bool isFullScreen() const;
+    void setFullScreen(bool fullScreen);
+
+    int brightness() const;
+    void setBrightness(int brightness);
+
+    int contrast() const;
+    void setContrast(int contrast);
+
+    int hue() const;
+    void setHue(int hue);
+
+    int saturation() const;
+    void setSaturation(int saturation);
+
+    bool eventFilter(QObject *object, QEvent *event);
+
+    WId videoWidgetWId();
+
+Q_SIGNALS:
+    void widgetUpdated();
+
+private:
+	QXAPlaySession *mSession;
+    QXAWidget *mWidget;
+
+};
+
+#endif // QXAVIDEOWIDGETCONTROL_H 

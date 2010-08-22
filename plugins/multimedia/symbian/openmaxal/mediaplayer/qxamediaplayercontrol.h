@@ -39,28 +39,62 @@
 **
 ****************************************************************************/
 
-#ifndef QXARECORDMEDIASERVICEPROVIDERPLUGIN_H
-#define QXARECORDMEDIASERVICEPROVIDERPLUGIN_H
+#ifndef QXAMEDIAPLAYERCONTROL_H
+#define QXAMEDIAPLAYERCONTROL_H
 
-#include <qmediaservice.h>
-#include <qmediaserviceproviderplugin.h>
+#include "qmediaplayercontrol.h"
+#include "qmediaplayer.h"
 
 QT_USE_NAMESPACE
 
-/*
- * This class implements QMediaServiceProviderPlugin interface.
- * This plug-in is a factory interface where individual services are created and
- * deleted.
- */
+class QXAPlaySession;
 
-class QXARecordMediaServiceProviderPlugin : public QMediaServiceProviderPlugin
+class QXAMediaPlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
-
+    Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    QXAMediaPlayerControl(QXAPlaySession *session, QObject *parent = 0);
+    ~QXAMediaPlayerControl();
+
+    QMediaPlayer::State state() const;
+    QMediaPlayer::MediaStatus mediaStatus() const;
+
+    qint64 duration() const;
+
+    qint64 position() const;
+    void setPosition(qint64 position);
+
+    int volume() const;
+    void setVolume(int volume);
+
+    bool isMuted() const;
+    void setMuted(bool muted);
+
+    int bufferStatus() const;
+
+    bool isAudioAvailable() const;
+    bool isVideoAvailable() const;
+
+    bool isSeekable() const;
+
+    QMediaTimeRange availablePlaybackRanges() const;
+
+    float playbackRate() const;
+    void setPlaybackRate(float rate);
+
+    QMediaContent media() const;
+    const QIODevice *mediaStream() const;
+    void setMedia(const QMediaContent&, QIODevice *);
+
+    void play();
+    void pause();
+    void stop();
+
+
+private:
+    QXAPlaySession *mSession;
+    QIODevice *mStream;
 };
 
-#endif /* QXARECORDMEDIASERVICEPROVIDERPLUGIN_H */
+#endif /* QXAMEDIAPLAYERCONTROL_H */

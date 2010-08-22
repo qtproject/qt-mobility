@@ -38,40 +38,21 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtCore/qcoreapplication.h>
-#include <QtTest/QtTest>
 
-#include "tst_qmediaplayer.h"
+#ifndef XAPLAYSESSIONCOMMON_H
+#define XAPLAYSESSIONCOMMON_H
 
-#ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_MEDIAPLAY_BACKEND
-#include "tst_qmediaplayer_xa.h"
-#else
-#include "tst_qmediaplayer_s60.h"
-#endif
-#endif
+#include <e32base.h>
 
-int main(int argc, char**argv)
-{
-    QApplication app(argc,argv);
-    int ret;
-    tst_QMediaPlayer test_api;
-    ret = QTest::qExec(&test_api, argc, argv);
-#ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_MEDIAPLAY_BACKEND
-    char *new_argv[3];
-    QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log";
-    QByteArray   bytes  = str.toAscii();
-    char arg1[] = "-o";
-    new_argv[0] = argv[0];
-    new_argv[1] = arg1;
-    new_argv[2] = bytes.data();
-    tst_QMediaPlayer_xa test_xa;
-    ret = QTest::qExec(&test_xa, 3, new_argv);
-#else
-    tst_QMediaPlayer_s60 test_s60;
-    ret = QTest::qExec(&test_s60, argc, argv);
-#endif
-#endif
-    return ret;
-}
+class XAPlayObserver
+    {
+public:
+    virtual void cbDurationChanged(TInt64 new_dur) = 0;
+    virtual void cbPositionChanged(TInt64 new_pos) = 0;
+    virtual void cbSeekableChanged(TBool seekable) = 0;
+    virtual void cbPlaybackStopped_EOS() = 0;
+    virtual void cbPrefetchStatusChanged() = 0;
+    virtual void cbStreamInformation(TBool bFirstTime) = 0;
+  };
+    
+#endif /*XAPLAYSESSIONCOMMON_H*/

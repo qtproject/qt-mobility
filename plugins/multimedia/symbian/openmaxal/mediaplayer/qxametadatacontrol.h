@@ -38,40 +38,41 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtCore/qcoreapplication.h>
-#include <QtTest/QtTest>
 
-#include "tst_qmediaplayer.h"
+#ifndef QXAMETADATACONTROL_H
+#define QXAMETADATACONTROL_H
 
-#ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_MEDIAPLAY_BACKEND
-#include "tst_qmediaplayer_xa.h"
-#else
-#include "tst_qmediaplayer_s60.h"
-#endif
-#endif
 
-int main(int argc, char**argv)
+
+#include <QStringList>
+#include <QList>
+#include <QVariant>
+#include <QString>
+
+#include <qmetadatareadercontrol.h>
+#include <qtmedianamespace.h>
+QT_USE_NAMESPACE
+
+class QXAPlaySession;
+
+class QXAMetaDataControl : public QMetaDataReaderControl
 {
-    QApplication app(argc,argv);
-    int ret;
-    tst_QMediaPlayer test_api;
-    ret = QTest::qExec(&test_api, argc, argv);
-#ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_MEDIAPLAY_BACKEND
-    char *new_argv[3];
-    QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log";
-    QByteArray   bytes  = str.toAscii();
-    char arg1[] = "-o";
-    new_argv[0] = argv[0];
-    new_argv[1] = arg1;
-    new_argv[2] = bytes.data();
-    tst_QMediaPlayer_xa test_xa;
-    ret = QTest::qExec(&test_xa, 3, new_argv);
-#else
-    tst_QMediaPlayer_s60 test_s60;
-    ret = QTest::qExec(&test_s60, argc, argv);
-#endif
-#endif
-    return ret;
-}
+    Q_OBJECT
+public:
+    QXAMetaDataControl(QXAPlaySession *session, QObject *parent = 0);
+    ~QXAMetaDataControl();
+
+    QStringList availableExtendedMetaData () const;
+    QList<QtMultimediaKit::MetaData>  availableMetaData () const;
+    QVariant extendedMetaData(const QString & key ) const;
+    bool isMetaDataAvailable() const; 
+    bool isWritable() const; 
+    QVariant metaData( QtMultimediaKit::MetaData key ) const;
+    void setExtendedMetaData( const QString & key, const QVariant & value );
+    void setMetaData( QtMultimediaKit::MetaData key, const QVariant & value ); 
+
+private:
+    QXAPlaySession *mSession;
+};
+
+#endif //QXAMETADATACONTROL_H
