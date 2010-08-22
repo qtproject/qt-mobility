@@ -355,6 +355,7 @@ bool removeLandmarkHelper(const QString &connectionName, const QLandmarkId &land
     QStringList queryStrings;
     queryStrings << "DELETE FROM landmark WHERE id = :lmId;";
     queryStrings << "DELETE FROM landmark_category WHERE landmarkId = :lmId;";
+    queryStrings << "DELETE FROM landmark_attribute WHERE landmarkId=:lmId";
     queryStrings << "DELETE FROM landmark_custom_attribute WHERE landmarkId=:lmId";
 
     foreach(const QString &queryString, queryStrings) {
