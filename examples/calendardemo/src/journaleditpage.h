@@ -70,6 +70,7 @@ public Q_SLOTS:
     void cancelClicked();
     void saveClicked();
     void journalChanged(QOrganizerItemManager *manager, const QOrganizerJournal &journal);
+    void handleAlarmIndexChanged(const QString);
 
 Q_SIGNALS:
     void showDayPage();
@@ -82,6 +83,8 @@ private:
     QOrganizerJournal m_organizerJournal;
     QLineEdit *m_subjectEdit;
     QDateTimeEdit *m_timeEdit;
+    QComboBox *m_alarmComboBox;
+
 };
 
 #endif // JOURNALEDITPAGE_H_

@@ -52,7 +52,8 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     m_startTimeEdit(0),
     m_dueTimeEdit(0),
     m_priorityEdit(0),
-    m_statusEdit(0)
+    m_statusEdit(0),
+    m_alarmComboBox(0)
 {
     // Create widgets
     QLabel *subjectLabel = new QLabel("Subject:", this);
@@ -65,6 +66,19 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     m_priorityEdit = new QComboBox(this);
     QLabel *statusLabel = new QLabel("Status:", this);
     m_statusEdit = new QComboBox(this);
+    QLabel *alarmLabel = new QLabel("Alarm:", this);
+    m_alarmComboBox = new QComboBox(this);
+
+    QStringList alarmList;
+    alarmList  << "None"
+                << "0 minutes before"
+                << "5 minutes before"
+                << "15 minutes before"
+                << "30 minutes before"
+                << "1 hour before";
+    m_alarmComboBox->addItems(alarmList);
+    connect(m_alarmComboBox, SIGNAL(currentIndexChanged(const QString)), this,
+                        SLOT(handleAlarmIndexChanged(const QString)));
 
 #ifdef Q_WS_X11
     // Add push buttons for Maemo as it does not support soft keys
@@ -88,6 +102,8 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(m_priorityEdit);
     scrollAreaLayout->addWidget(statusLabel);
     scrollAreaLayout->addWidget(m_statusEdit);
+    scrollAreaLayout->addWidget(alarmLabel);
+    scrollAreaLayout->addWidget(m_alarmComboBox);
 #ifdef Q_WS_X11
     scrollAreaLayout->addLayout(hbLayout);
 #endif
@@ -185,3 +201,32 @@ void TodoEditPage::showEvent(QShowEvent *event)
     window()->setWindowTitle("Edit todo");
     QWidget::showEvent(event);
 }
+
+void TodoEditPage::handleAlarmIndexChanged(const QString time)
+{
+    QOrganizerItemVisualReminder reminder;
+    reminder.setMessage(m_subjectEdit->text());
+
+    if (time == "None") {
+         QOrganizerItemVisualReminder fetchedReminder = m_organizerTodo.detail(QOrganizerItemVisualReminder::DefinitionName);
+         m_organizerTodo.removeDetail(&fetchedReminder);
+        return;
+    } else if (time == "0 minutes before") {
+        reminder.setDateTime(m_startTimeEdit->dateTime());
+    } else if (time == "5 minutes before") {
+        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(5*60));
+        reminder.setDateTime(reminderTime);
+    } else if (time == "15 minutes before") {
+        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(15*60));
+        reminder.setDateTime(reminderTime);
+    } else if (time == "30 minutes before") {
+        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(30*60));
+        reminder.setDateTime(reminderTime);
+    } else if (time == "1 hour before") {
+        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(60*60));
+        reminder.setDateTime(reminderTime);
+    }
+
+    m_organizerTodo.saveDetail(&reminder);
+}
+
