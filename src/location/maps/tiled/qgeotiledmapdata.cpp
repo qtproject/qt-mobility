@@ -404,7 +404,7 @@ void QGeoTiledMapData::processRequests()
     Q_D(QGeoTiledMapData);
 
     QMutableSetIterator<QGeoTiledMapReply*> replyIter(d->replies);
-    //Kill off screen replies
+    // Abort off-screen replies
     while (replyIter.hasNext()) {
         QGeoTiledMapReply *reply = replyIter.next();
         if (!d->intersectsScreen(reply->request().tileRect())
@@ -418,7 +418,7 @@ void QGeoTiledMapData::processRequests()
     }
 
     QGeoTiledMappingManagerEngine *tiledEngine
-    = static_cast<QGeoTiledMappingManagerEngine*>(engine());
+        = static_cast<QGeoTiledMappingManagerEngine*>(engine());
 
     QMutableListIterator<QGeoTiledMapRequest> requestIter(d->requests);
     while (requestIter.hasNext()) {
@@ -673,10 +673,9 @@ QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoM
 
 QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
 {
-    QList<QGeoTiledMapReply*> replyList = replies.toList();
-    for (int i = 0; i < replyList.size(); ++i) {
-        replyList.at(i)->abort();
-        replyList.at(i)->deleteLater();
+    foreach(QGeoTiledMapReply *reply, replies) {
+        reply->abort();
+        reply->deleteLater();
     }
 }
 
