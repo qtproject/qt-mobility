@@ -121,25 +121,19 @@ Player::Player(QWidget *parent)
     QPushButton *fullScreenButton = new QPushButton(tr("FullScreen"), this);
     fullScreenButton->setCheckable(true);
 
-    if (videoWidget != 0) {
-        connect(fullScreenButton, SIGNAL(clicked(bool)), videoWidget, SLOT(setFullScreen(bool)));
-        connect(videoWidget, SIGNAL(fullScreenChanged(bool)),
-                fullScreenButton, SLOT(setChecked(bool)));
-    } else {
-        fullScreenButton->setEnabled(false);
-    }
 
-    QPushButton *colorButton = new QPushButton(tr("Color Options..."), this);
-    if (videoWidget)
-        connect(colorButton, SIGNAL(clicked()), this, SLOT(showColorDialog()));
-    else
-        colorButton->setEnabled(false);
+    connect(fullScreenButton, SIGNAL(clicked(bool)), videoWidget, SLOT(setFullScreen(bool)));
+    connect(videoWidget, SIGNAL(fullScreenChanged(bool)),
+            fullScreenButton, SLOT(setChecked(bool)));
+
+    QPushButton *colorButton = 0;
+#ifndef Q_WS_MAEMO_5
+    colorButton = new QPushButton(tr("Color Options..."), this);
+    connect(colorButton, SIGNAL(clicked()), this, SLOT(showColorDialog()));
+#endif
 
     QBoxLayout *displayLayout = new QHBoxLayout;
-    if (videoWidget)
-        displayLayout->addWidget(videoWidget, 2);
-    else
-        displayLayout->addWidget(coverLabel, 2);
+    displayLayout->addWidget(videoWidget, 2);
     displayLayout->addWidget(playlistView);
 
     QBoxLayout *controlLayout = new QHBoxLayout;
@@ -149,7 +143,8 @@ Player::Player(QWidget *parent)
     controlLayout->addWidget(controls);
     controlLayout->addStretch(1);
     controlLayout->addWidget(fullScreenButton);
-    controlLayout->addWidget(colorButton);
+    if (colorButton)
+        controlLayout->addWidget(colorButton);
 
     QBoxLayout *layout = new QVBoxLayout;
     layout->addLayout(displayLayout);
@@ -166,7 +161,8 @@ Player::Player(QWidget *parent)
         controls->setEnabled(false);
         playlistView->setEnabled(false);
         openButton->setEnabled(false);
-        colorButton->setEnabled(false);
+        if (colorButton)
+            colorButton->setEnabled(false);
         fullScreenButton->setEnabled(false);
     }
 
