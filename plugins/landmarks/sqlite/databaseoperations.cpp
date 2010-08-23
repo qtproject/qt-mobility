@@ -1340,6 +1340,7 @@ QList<QLandmark> DatabaseOperations::landmarks(const QList<QLandmarkId> &landmar
                 errorMap->insert(i, *error);
             lastError = *error;
             lastErrorString = *errorString;
+            result << QLandmark();
         }
     }
     *error = lastError;
@@ -2019,6 +2020,7 @@ QList<QLandmarkCategory> DatabaseOperations::categories(const QList<QLandmarkCat
         {
             result << cat;
         } else {
+            result << QLandmarkCategory();
             if (errorMap)
                 errorMap->insert(i, *error);
             lastError = *error;

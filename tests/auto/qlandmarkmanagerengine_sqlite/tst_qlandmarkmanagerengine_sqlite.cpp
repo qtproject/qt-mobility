@@ -2265,7 +2265,17 @@ void tst_QLandmarkManagerEngineSqlite::retrieveMultipleCategories() {
     //retrieve categories using a set ofids
     QMap<int, QLandmarkManager::Error> errorMap;
     cats = m_manager->categories(catIds,&errorMap);
-    QCOMPARE(cats.count(), 3);
+    QCOMPARE(cats.count(), 6);
+    QCOMPARE(cats.at(0).name(), QString("CAT1"));
+    QCOMPARE(cats.at(0).categoryId().isValid(), true);
+    QCOMPARE(cats.at(1).categoryId().isValid(), false);
+    QCOMPARE(cats.at(2).name(), QString("CAT3")); //(supposed to be 3)
+    QCOMPARE(cats.at(2).categoryId().isValid(), true);
+    QCOMPARE(cats.at(3).categoryId().isValid(), false);
+    QCOMPARE(cats.at(4).name(), QString("CAT2"));
+    QCOMPARE(cats.at(4).categoryId().isValid(), true);
+    QCOMPARE(cats.at(5).categoryId().isValid(), false);
+
     QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
     QCOMPARE(errorMap.keys().count(),3);
     QCOMPARE(errorMap.keys().at(0),1);
@@ -2485,13 +2495,16 @@ void tst_QLandmarkManagerEngineSqlite::retrieveMultipleCategoriesAsync() {
     QVERIFY(waitForAsync(spy2, &fetchByIdRequest, QLandmarkManager::DoesNotExistError));
 
     cats = fetchByIdRequest.categories();
-    QCOMPARE(cats.count(), 3);
+    QCOMPARE(cats.count(), 6);
     QCOMPARE(cats.at(0).name(), QString("CAT1"));
     QCOMPARE(cats.at(0).categoryId().isValid(), true);
-    QCOMPARE(cats.at(1).name(), QString("CAT3")); //(supposed to be 3)
-    QCOMPARE(cats.at(1).categoryId().isValid(), true);
-    QCOMPARE(cats.at(2).name(), QString("CAT2"));
+    QCOMPARE(cats.at(1).categoryId().isValid(), false);
+    QCOMPARE(cats.at(2).name(), QString("CAT3")); //(supposed to be 3)
     QCOMPARE(cats.at(2).categoryId().isValid(), true);
+    QCOMPARE(cats.at(3).categoryId().isValid(), false);
+    QCOMPARE(cats.at(4).name(), QString("CAT2"));
+    QCOMPARE(cats.at(4).categoryId().isValid(), true);
+    QCOMPARE(cats.at(5).categoryId().isValid(), false);
 
     QMap<int, QLandmarkManager::Error> errorMap = fetchByIdRequest.errorMap();
     QCOMPARE(fetchByIdRequest.errorMap().keys().count(),3);
@@ -2551,7 +2564,18 @@ void tst_QLandmarkManagerEngineSqlite::retrieveMultipleLandmarks() {
     lmIds.insert(5, invalidLmIds.at(2));
     QMap<int, QLandmarkManager::Error> errorMap;
     lms = m_manager->landmarks(lmIds, &errorMap);
-    QCOMPARE(lms.count(), 3);
+    QCOMPARE(lms.count(), 6);
+
+    QCOMPARE(lms.at(0).name(), QString("LM1"));
+    QCOMPARE(lms.at(0).landmarkId().isValid(), true);
+    QCOMPARE(lms.at(1).landmarkId().isValid(), false);
+    QCOMPARE(lms.at(2).name(), QString("LM2"));
+    QCOMPARE(lms.at(2).landmarkId().isValid(), true);
+    QCOMPARE(lms.at(3).landmarkId().isValid(), false);
+    QCOMPARE(lms.at(4).name(), QString("LM3"));
+    QCOMPARE(lms.at(4).landmarkId().isValid(), true);
+    QCOMPARE(lms.at(5).landmarkId().isValid(), false);
+
     QVERIFY(m_manager->error() == QLandmarkManager::DoesNotExistError);
     QCOMPARE(errorMap.keys().count(), 3);
     QCOMPARE(errorMap.keys().at(0), 1);
@@ -2655,13 +2679,16 @@ void tst_QLandmarkManagerEngineSqlite::retrieveMultipleLandmarksAsync() {
     QVERIFY(waitForAsync(spy2, &fetchByIdRequest, QLandmarkManager::DoesNotExistError));
 
     lms = fetchByIdRequest.landmarks();
-    QCOMPARE(lms.count(), 3);
+    QCOMPARE(lms.count(), 6);
     QCOMPARE(lms.at(0).name(), QString("LM1"));
     QCOMPARE(lms.at(0).landmarkId().isValid(), true);
-    QCOMPARE(lms.at(1).name(), QString("LM2"));
-    QCOMPARE(lms.at(1).landmarkId().isValid(), true);
-    QCOMPARE(lms.at(2).name(), QString("LM3"));
+    QCOMPARE(lms.at(1).landmarkId().isValid(), false);
+    QCOMPARE(lms.at(2).name(), QString("LM2"));
     QCOMPARE(lms.at(2).landmarkId().isValid(), true);
+    QCOMPARE(lms.at(3).landmarkId().isValid(), false);
+    QCOMPARE(lms.at(4).name(), QString("LM3"));
+    QCOMPARE(lms.at(4).landmarkId().isValid(), true);
+    QCOMPARE(lms.at(5).landmarkId().isValid(), false);
 
     QMap<int, QLandmarkManager::Error> errorMap = fetchByIdRequest.errorMap();
     QCOMPARE(fetchByIdRequest.errorMap().keys().count(),3);
