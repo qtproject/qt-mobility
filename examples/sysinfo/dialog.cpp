@@ -348,15 +348,9 @@ void Dialog::setupNetwork()
     connect(ni,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
             this,SLOT(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
 
-    cellIdLabel->setText(QString::number(ni->cellId()));
-    locationAreaCodeLabel->setText(QString::number(ni->locationAreaCode()));
-    currentMMCLabel->setText(ni->currentMobileCountryCode());
-    currentMNCLabel->setText(ni->currentMobileNetworkCode());
-
-    homeMMCLabel->setText(ni->homeMobileCountryCode());
-    homeMNCLabel->setText(ni->homeMobileNetworkCode());
-
     networkModeChanged(ni->currentMode());
+    netStatusComboBox->setCurrentIndex((int)ni->currentMode());
+    netStatusComboActivated((int)ni->currentMode());
 
 }
 void Dialog::netStatusComboActivated(int index)
@@ -376,6 +370,26 @@ void Dialog::netStatusComboActivated(int index)
     InterfaceLabel->setText(ni->interfaceForMode((QSystemNetworkInfo::NetworkMode)reIndex).humanReadableName());
 
     operatorNameLabel->setText(ni->networkName((QSystemNetworkInfo::NetworkMode)reIndex));
+
+    if((index == 1 || index == 2 || index == 3)
+        && ni->networkStatus((QSystemNetworkInfo::NetworkMode)reIndex)
+                             != QSystemNetworkInfo::UndefinedStatus) {
+
+        cellIdLabel->setText(QString::number(ni->cellId()));
+        locationAreaCodeLabel->setText(QString::number(ni->locationAreaCode()));
+        currentMMCLabel->setText(ni->currentMobileCountryCode());
+        currentMNCLabel->setText(ni->currentMobileNetworkCode());
+
+        homeMMCLabel->setText(ni->homeMobileCountryCode());
+        homeMNCLabel->setText(ni->homeMobileNetworkCode());
+    } else {
+        cellIdLabel->setText("");
+        locationAreaCodeLabel->setText("");
+        currentMMCLabel->setText("");
+        currentMNCLabel->setText("");
+        homeMMCLabel->setText("");
+        homeMNCLabel->setText("");
+    }
 }
 
 void Dialog::getVersion(int index)
