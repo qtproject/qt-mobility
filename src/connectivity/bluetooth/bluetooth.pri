@@ -12,7 +12,10 @@ HEADERS += \
     bluetooth/qbluetooth.h \
     bluetooth/qbluetoothlocaldevice.h \
     bluetooth/ql2capsocket.h \
-    bluetooth/qrfcommsocket.h
+    bluetooth/qrfcommsocket.h \
+    bluetooth/qbluetoothtransfermanager.h \
+    bluetooth/qbluetoothtransferrequest.h \
+    bluetooth/qbluetoothtransferreply.h
 
 PRIVATE_HEADERS += \
     bluetooth/qbluetoothuuid_p.h\
@@ -36,7 +39,10 @@ SOURCES += \
     bluetooth/qbluetoothlocaldevice.cpp \
     bluetooth/qbluetooth.cpp \
     bluetooth/ql2capsocket.cpp \
-    bluetooth/qrfcommsocket.cpp
+    bluetooth/qrfcommsocket.cpp \
+    bluetooth/qbluetoothtransfermanager.cpp \
+    bluetooth/qbluetoothtransferrequest.cpp \
+    bluetooth/qbluetoothtransferreply.cpp
 
 symbian {
     PRIVATE_HEADERS += \
