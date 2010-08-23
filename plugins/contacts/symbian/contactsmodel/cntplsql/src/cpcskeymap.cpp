@@ -33,7 +33,8 @@ const QChar KSpaceChar = ' ';
 // Separator character stored in predictive search table columns
 const QChar KSeparatorChar = ' ';
 
-// Code using the new API (wk32 onwards) is put here. Remove old API code afterwards
+// Code using the new API (wk32 onwards) is put here. Remove old API code
+// when wk30 is no longer used.
 // #define NEW_KEYMAP_FACTORY_API
 
 
@@ -352,6 +353,9 @@ const QChar CPcsKeyMap::MappedKeyForChar(const QChar aChar) const
 	return iPadChar;
     }
 
+// ----------------------------------------------------------------------------
+// CPcsKeyMap::ReadKeymapCharacters
+// ----------------------------------------------------------------------------
 TInt CPcsKeyMap::ReadKeymapCharacters(HbKeyboardType aKeyboardType,
                                       const HbKeymap& aKeymap)
     {

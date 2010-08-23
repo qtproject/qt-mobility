@@ -380,7 +380,7 @@ ORDER BY predictivesearch5.first_name, predictivesearch5.last_name ASC;");
 
     pattern = QString("200");
 #if defined(USE_DEMORGAN)
-        reference = QString("SELECT contact_id FROM predictivesearch2 WHERE (NOT(NOT(nbr>144115188075855871 AND nbr<144396663052566528) AND NOT(nbr2>144115188075855871 AND nbr2<144396663052566528) AND NOT(nbr3>144115188075855871 AND nbr3<144396663052566528) AND NOT(nbr4>144115188075855871 AND nbr4<144396663052566528))) ORDER BY first_name, last_name ASC;");
+        reference = QString("SELECT contact_id FROM predictivesearch2 WHERE NOT(NOT(NOT(NOT(nbr>144115188075855871 AND nbr<216172782113783808) AND NOT(nbr2>144115188075855871 AND nbr2<216172782113783808) AND NOT(nbr3>144115188075855871 AND nbr3<216172782113783808) AND NOT(nbr4>144115188075855871 AND nbr4<216172782113783808))) AND NOT(NOT(NOT(nbr>144115188075855871 AND nbr<144396663052566528) AND NOT(nbr2>144115188075855871 AND nbr2<144396663052566528) AND NOT(nbr3>144115188075855871 AND nbr3<144396663052566528) AND NOT(nbr4>144115188075855871 AND nbr4<144396663052566528)))) ORDER BY first_name, last_name ASC;");
 #else
     // TODO: add non-De Morgan case
 #endif
@@ -1369,6 +1369,10 @@ void UT_CntSqlSearch::testGetTokens()
     tokens = mCntSqlSearch->GetTokens("000019700");
     QVERIFY(tokens.count() == 1);
     QVERIFY(tokens.at(0) == "197");
+    
+    tokens = mCntSqlSearch->GetTokens("200");
+    QVERIFY(tokens.count() == 1);
+    QVERIFY(tokens.at(0) == "2");
 
     tokens = mCntSqlSearch->GetTokens("101");
     QVERIFY(tokens.count() == 2);
@@ -1438,12 +1442,12 @@ void UT_CntSqlSearch::testTestPattern()
     QCOMPARE( result, reference );
 
     pattern = QString("200");
-    reference = false;
+    reference = true;
     result = mCntSqlSearch->TestPattern(pattern, CntSqlSearch::ZerosEndOfFirstToken);
     QCOMPARE( result, reference );
 
     pattern = QString("2000");
-    reference = false;
+    reference = true;
     result = mCntSqlSearch->TestPattern(pattern, CntSqlSearch::ZerosEndOfFirstToken);
     QCOMPARE( result, reference );
 
