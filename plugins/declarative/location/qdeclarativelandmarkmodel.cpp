@@ -1,4 +1,4 @@
-#include "qdeclarativelandmarksource_p.h"
+#include "qdeclarativelandmarkmodel_p.h"
 #include <QTimer>
 
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
@@ -7,18 +7,18 @@
 
 QTM_BEGIN_NAMESPACE
 
-QDeclarativeLandmarkSource::QDeclarativeLandmarkSource(QObject *parent) :
+QDeclarativeLandmarkModel::QDeclarativeLandmarkModel(QObject *parent) :
         QAbstractListModel(parent), m_manager(0), m_nameFilter(0), m_proximityFilter(0),
-        m_fetchRequest(0), m_active(false), m_maxItems(-1)
+        m_fetchRequest(0), m_autoUpdate(false), m_landmarksPerUpdate(-1), m_landmarksOffset(-1)
 {
     // Establish role names so that they can be queried from this model
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
     roleNames.insert(NameRole, "name");
-    roleNames.insert(PhoneRole, "phone");
+    roleNames.insert(PhoneNumberRole, "phoneNumber");
     roleNames.insert(DescriptionRole, "description");
     roleNames.insert(RadiusRole, "radius");
-    roleNames.insert(IconUrlRole, "iconUrl");
+    roleNames.insert(IconSourceRole, "iconSource");
     roleNames.insert(UrlRole, "url");
     roleNames.insert(LatitudeRole, "latitude");
     roleNames.insert(LongitudeRole, "longitude");
@@ -27,35 +27,35 @@ QDeclarativeLandmarkSource::QDeclarativeLandmarkSource(QObject *parent) :
     m_manager = new QLandmarkManager();
 }
 
-QDeclarativeLandmarkSource::~QDeclarativeLandmarkSource()
+QDeclarativeLandmarkModel::~QDeclarativeLandmarkModel()
 {
     delete m_manager;
     delete m_fetchRequest;
 }
 
 // When the parent is valid it means that rowCount is returning the number of children of parent.
-int QDeclarativeLandmarkSource::rowCount(const QModelIndex &parent) const
+int QDeclarativeLandmarkModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return m_landmarks.count();
 }
 
 // Returns the stored under the given role for the item referred to by the index.
-QVariant QDeclarativeLandmarkSource::data(const QModelIndex &index, int role) const
+QVariant QDeclarativeLandmarkModel::data(const QModelIndex &index, int role) const
 {
     QLandmark landmark = m_landmarks.value(index.row());
     switch (role) {
-            //case Qt::DisplayRole:
-            //    return landmark.name();
+        case Qt::DisplayRole:
+            return landmark.name();
         case NameRole:
             return landmark.name();
-        case PhoneRole:
+        case PhoneNumberRole:
             return landmark.phoneNumber();
         case DescriptionRole:
             return landmark.description();
         case RadiusRole:
             return landmark.radius();
-        case IconUrlRole:
+        case IconSourceRole:
             return landmark.iconUrl();
         case UrlRole:
             return landmark.url();
@@ -67,39 +67,32 @@ QVariant QDeclarativeLandmarkSource::data(const QModelIndex &index, int role) co
     return QVariant();
 }
 
-QString QDeclarativeLandmarkSource::name()
-{
-    if (m_manager)
-        return m_manager->managerName() ;
-    return QString();
-}
-
-QString QDeclarativeLandmarkSource::error()
+QString QDeclarativeLandmarkModel::error()
 {
     return m_error;
 }
 
-void QDeclarativeLandmarkSource::setActive(bool active)
+void QDeclarativeLandmarkModel::setAutoUpdate(bool autoUpdate)
 {
-    if (active == m_active)
+    if (autoUpdate == m_autoUpdate)
         return;
-    if (active)
+    if (autoUpdate)
         QTimer::singleShot(0, this, SLOT(update())); // delay ensures all properties have been set
     else
         cancelUpdate();
 }
 
-bool QDeclarativeLandmarkSource::isActive() const
+bool QDeclarativeLandmarkModel::autoUpdate() const
 {
-    return m_active;
+    return m_autoUpdate;
 }
 
-QObject* QDeclarativeLandmarkSource::nameFilter()
+QObject* QDeclarativeLandmarkModel::nameFilter()
 {
     return m_nameFilter;
 }
 
-void QDeclarativeLandmarkSource::setFilter(QObject* filter)
+void QDeclarativeLandmarkModel::setFilter(QObject* filter)
 {
     if (qobject_cast<QDeclarativeLandmarkNameFilter*>(filter)) {
         m_nameFilter = qobject_cast<QDeclarativeLandmarkNameFilter*>(filter);
@@ -110,15 +103,15 @@ void QDeclarativeLandmarkSource::setFilter(QObject* filter)
     }
 }
 
-QObject* QDeclarativeLandmarkSource::proximityFilter()
+QObject* QDeclarativeLandmarkModel::proximityFilter()
 {
     return m_proximityFilter;
 }
 
-void QDeclarativeLandmarkSource::update()
+void QDeclarativeLandmarkModel::update()
 {
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
-    qDebug("QDeclarativeLandmarkSource::update()");
+    qDebug("QDeclarativeLandmarkModel::update()");
 #endif
     if (!m_manager)
         return;
@@ -133,13 +126,9 @@ void QDeclarativeLandmarkSource::update()
         m_fetchRequest->setFilter(*m_proximityFilter->filter());
     setFetchHints();
     m_fetchRequest->start();
-    if (!m_active) {
-        m_active = true;
-        emit activeChanged(m_active);
-    }
 }
 
-void QDeclarativeLandmarkSource::cancelUpdate()
+void QDeclarativeLandmarkModel::cancelUpdate()
 {
     if (m_fetchRequest) {
         delete m_fetchRequest;
@@ -147,31 +136,48 @@ void QDeclarativeLandmarkSource::cancelUpdate()
     }
 }
 
-int QDeclarativeLandmarkSource::maxItems()
+int QDeclarativeLandmarkModel::count()
 {
-    return m_maxItems;
+    return m_landmarks.count();
 }
 
-void QDeclarativeLandmarkSource::setMaxItems(int maxItems)
+int QDeclarativeLandmarkModel::landmarksPerUpdate()
 {
-    if (maxItems == m_maxItems)
+    return m_landmarksPerUpdate;
+}
+
+void QDeclarativeLandmarkModel::setLandmarksPerUpdate(int landmarksPerUpdate)
+{
+    if (landmarksPerUpdate == m_landmarksPerUpdate)
         return;
-    m_maxItems = maxItems;
-    emit maxItemsChanged(maxItems);
+    m_landmarksPerUpdate = landmarksPerUpdate;
+    emit landmarksPerUpdateChanged(landmarksPerUpdate);
 }
 
-void QDeclarativeLandmarkSource::setFetchHints()
+int QDeclarativeLandmarkModel::landmarksOffset()
 {
-//TODO: replace fetch hint with limit and offset
-
-    /*    if (!m_fetchRequest || m_maxItems <= 0)
-            return;
-        m_fetchHint.setMaxItems(m_maxItems);
-        m_fetchRequest->setFetchHint(m_fetchHint);
-    */
+    return m_landmarksOffset;
 }
 
-void QDeclarativeLandmarkSource::convertLandmarksToDeclarative()
+void QDeclarativeLandmarkModel::setLandmarksOffset(int landmarksOffset)
+{
+    if (landmarksOffset == m_landmarksOffset)
+        return;
+    m_landmarksOffset = landmarksOffset;
+    emit landmarksOffsetChanged(landmarksOffset);
+}
+
+void QDeclarativeLandmarkModel::setFetchHints()
+{
+    if (!m_fetchRequest || ((m_landmarksPerUpdate <= 0) && (m_landmarksOffset <= 0)))
+        return;
+    if (m_landmarksPerUpdate > 0)
+        m_fetchRequest->setLimit(m_landmarksPerUpdate);
+    if ((m_landmarksOffset > 0))
+        m_fetchRequest->setOffset(m_landmarksOffset);
+}
+
+void QDeclarativeLandmarkModel::convertLandmarksToDeclarative()
 {
     foreach(const QLandmark& landmark, m_landmarks) {
         if (!m_landmarkMap.contains(landmark.landmarkId().localId())) {
@@ -185,10 +191,10 @@ void QDeclarativeLandmarkSource::convertLandmarksToDeclarative()
     }
 }
 
-void QDeclarativeLandmarkSource::fetchRequestStateChanged(QLandmarkAbstractRequest::State state)
+void QDeclarativeLandmarkModel::fetchRequestStateChanged(QLandmarkAbstractRequest::State state)
 {
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
-    qDebug() << "QDeclarativeLandmarkSource::Fetch request finished with state: " << state;
+    qDebug() << "QDeclarativeLandmarkModel::Fetch request finished with state: " << state;
     if (m_fetchRequest)
         qDebug() << "and related request error code is: " << m_fetchRequest->errorString();
 #endif
@@ -198,8 +204,11 @@ void QDeclarativeLandmarkSource::fetchRequestStateChanged(QLandmarkAbstractReque
     if (m_fetchRequest->error() == QLandmarkManager::NoError) {
         // TODO Later improvement item is to make udpate incremental by connecting to resultsAvailable() -function.
         beginInsertRows(QModelIndex(), 0, m_landmarks.count());
+        int oldCount = m_landmarks.count();
         m_landmarks = m_fetchRequest->landmarks();
         endInsertRows();
+        if (oldCount != m_landmarks.count())
+            emit countChanged(m_landmarks.count());
     } else if (m_error != m_fetchRequest->errorString()) {
         m_error = m_fetchRequest->errorString();
         emit errorChanged(m_error);
@@ -208,6 +217,6 @@ void QDeclarativeLandmarkSource::fetchRequestStateChanged(QLandmarkAbstractReque
     convertLandmarksToDeclarative();
 }
 
-#include "moc_qdeclarativelandmarksource_p.cpp"
+#include "moc_qdeclarativelandmarkmodel_p.cpp"
 
 QTM_END_NAMESPACE

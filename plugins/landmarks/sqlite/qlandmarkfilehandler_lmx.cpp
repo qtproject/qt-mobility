@@ -60,13 +60,12 @@
 
 QTM_USE_NAMESPACE
 
-QLandmarkFileHandlerLmx::QLandmarkFileHandlerLmx(const QString &connectionName, const QString &managerUri)
+QLandmarkFileHandlerLmx::QLandmarkFileHandlerLmx(const DatabaseOperations *databaseOperations)
     : QObject(),
     m_writer(0),
     m_reader(0),
     m_option(QLandmarkManager::IncludeCategoryData),
-    m_connectionName(connectionName),
-    m_managerUri(managerUri)
+    m_databaseOperations(const_cast<DatabaseOperations *> (databaseOperations))
 {
 }
 
@@ -104,7 +103,7 @@ bool QLandmarkFileHandlerLmx::importData(QIODevice *device)
 
     m_reader = new QXmlStreamReader(device);
 
-     QSqlDatabase db = QSqlDatabase::database(m_connectionName);
+     QSqlDatabase db = QSqlDatabase::database(m_databaseOperations->connectionName);
     if (!db.transaction()) {
         m_errorCode = QLandmarkManager::UnknownError;
         m_error = QString("Import operation failed, unable to begin transaction, reason: %1")
@@ -113,7 +112,7 @@ bool QLandmarkFileHandlerLmx::importData(QIODevice *device)
     }
 
     if (m_option == QLandmarkManager::AttachSingleCategory) {
-        if (m_categoryId.managerUri() != m_managerUri) {
+        if (m_categoryId.managerUri() != m_databaseOperations->managerUri) {
             db.rollback();
             m_errorCode = QLandmarkManager::BadArgumentError;
             m_error = "Category Id manager URI does not refer to this manager";
@@ -123,8 +122,8 @@ bool QLandmarkFileHandlerLmx::importData(QIODevice *device)
         QList<QLandmarkCategoryId> catIdList;
         catIdList << m_categoryId;
         QList<QLandmarkCategory> categories;
-        categories = DatabaseOperations::categories(m_connectionName, catIdList, QLandmarkNameSort(),
-                                        -1, 0, &m_errorCode, &m_error,m_managerUri, true);
+        categories = m_databaseOperations->categories(catIdList, QLandmarkNameSort(),
+                                        -1, 0, &m_errorCode, &m_error, true);
         if (m_errorCode != QLandmarkManager::NoError) {
             db.rollback();
             return false;
@@ -139,13 +138,11 @@ bool QLandmarkFileHandlerLmx::importData(QIODevice *device)
     }
 
     if (m_option == QLandmarkManager::IncludeCategoryData) {
-        QList<QLandmarkCategory> categories = DatabaseOperations::categories(m_connectionName,
-                                                                             QList<QLandmarkCategoryId>(),
+        QList<QLandmarkCategory> categories = m_databaseOperations->categories(QList<QLandmarkCategoryId>(),
                                                                              QLandmarkNameSort(),
                                                                              -1, 0,
                                                                              &m_errorCode,
                                                                              &m_error,
-                                                                             m_managerUri,
                                                                              true);
         if (m_errorCode != QLandmarkManager::NoError) {
             db.rollback();
@@ -179,7 +176,7 @@ bool QLandmarkFileHandlerLmx::importData(QIODevice *device)
             lm.addCategoryId(m_categoryId);
         }
 
-        if (!DatabaseOperations::saveLandmarkHelper(m_connectionName, &lm, &m_errorCode, &m_error, m_managerUri)){
+        if (!m_databaseOperations->saveLandmarkHelper(&lm, &m_errorCode, &m_error)){
             db.rollback();
             return false;
         }
@@ -757,7 +754,7 @@ bool QLandmarkFileHandlerLmx::readCategory(QLandmarkCategoryId &categoryId)
                 } else {
                     QLandmarkCategory cat;
                     cat.setName(name);
-                    if (!DatabaseOperations::saveCategoryHelper(m_connectionName,&cat,&m_errorCode, &m_error, m_managerUri))
+                    if (!m_databaseOperations->saveCategoryHelper(&cat,&m_errorCode, &m_error))
                         return false;
                     else {
                         categoryId = cat.categoryId();
@@ -978,7 +975,7 @@ bool QLandmarkFileHandlerLmx::writeCategory(const QLandmarkCategoryId &id)
     }
 
     QLandmarkManager::Error error;
-    QLandmarkCategory cat = DatabaseOperations::category(m_connectionName,id,&m_errorCode, &m_error, m_managerUri);
+    QLandmarkCategory cat = m_databaseOperations->category(id,&m_errorCode, &m_error);
     if (m_errorCode != QLandmarkManager::NoError) {
         return false;
     }

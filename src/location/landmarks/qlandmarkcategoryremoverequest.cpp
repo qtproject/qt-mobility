@@ -59,7 +59,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-request
 */
 
@@ -84,6 +84,7 @@ QLandmarkCategoryRemoveRequest::~QLandmarkCategoryRemoveRequest()
 QList<QLandmarkCategoryId> QLandmarkCategoryRemoveRequest::categoryIds() const
 {
     Q_D(const QLandmarkCategoryRemoveRequest);
+    QMutexLocker ml(&d->mutex);
     return d->categoryIds;
 }
 
@@ -95,6 +96,7 @@ QList<QLandmarkCategoryId> QLandmarkCategoryRemoveRequest::categoryIds() const
 void QLandmarkCategoryRemoveRequest::setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds)
 {
     Q_D(QLandmarkCategoryRemoveRequest);
+    QMutexLocker ml(&d->mutex);
     d->categoryIds = categoryIds;
 }
 
@@ -106,6 +108,7 @@ void QLandmarkCategoryRemoveRequest::setCategoryIds(const QList<QLandmarkCategor
 void QLandmarkCategoryRemoveRequest::setCategoryId(const QLandmarkCategoryId &categoryId)
 {
     Q_D(QLandmarkCategoryRemoveRequest);
+    QMutexLocker ml(&d->mutex);
     d->categoryIds.clear();
     d->categoryIds.append(categoryId);
 }
@@ -117,6 +120,7 @@ void QLandmarkCategoryRemoveRequest::setCategoryId(const QLandmarkCategoryId &ca
 QMap<int, QLandmarkManager::Error> QLandmarkCategoryRemoveRequest::errorMap() const
 {
     Q_D(const QLandmarkCategoryRemoveRequest);
+    QMutexLocker ml(&d->mutex);
     return d->errorMap;
 }
 

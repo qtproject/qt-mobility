@@ -88,7 +88,7 @@ contains(mobility_modules,multimedia) {
 
 
 #Messaging examples
-contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
+contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5|maemo6 {
     contains(mobility_modules,messaging) {
         !win32-g++ {
 	    SUBDIRS += \
@@ -100,7 +100,7 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
             }
 
             # MessagingEx lives in tests for some reason
-            maemo5:SUBDIRS += ../tests/messagingex
+            maemo5|maemo6:SUBDIRS += ../tests/messagingex
          }
     }
 }

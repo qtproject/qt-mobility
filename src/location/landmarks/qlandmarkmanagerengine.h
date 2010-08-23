@@ -188,7 +188,7 @@ protected:
             const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState);
     static void updateLandmarkCategorySaveRequest(QLandmarkCategorySaveRequest *req, const QList<QLandmarkCategory>& result, QLandmarkManager::Error error,
             const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState);
-    static void updateLandmarkImportRequest(QLandmarkImportRequest *req, QLandmarkManager::Error error, const QString &errorString,
+    static void updateLandmarkImportRequest(QLandmarkImportRequest *req, const QList<QLandmarkId> &ids, QLandmarkManager::Error error, const QString &errorString,
                                             QLandmarkAbstractRequest::State newState);
     static void updateLandmarkExportRequest(QLandmarkExportRequest *req, QLandmarkManager::Error error, const QString &errorString,
                                             QLandmarkAbstractRequest::State newState);

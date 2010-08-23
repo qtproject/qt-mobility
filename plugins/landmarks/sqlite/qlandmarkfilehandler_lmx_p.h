@@ -56,6 +56,7 @@
 #include <qlandmark.h>
 #include <qlandmarkmanager.h>
 #include <qlandmarkcategoryid.h>
+#include "databaseoperations_p.h"
 
 class QXmlStreamReader;
 class QXmlStreamWriter;
@@ -69,7 +70,7 @@ class QLandmarkFileHandlerLmx : public QObject
     Q_OBJECT
 
 public:
-    QLandmarkFileHandlerLmx(const QString &connectionName, const QString &managerUri);
+    QLandmarkFileHandlerLmx(const DatabaseOperations *databaseOperations);
     ~QLandmarkFileHandlerLmx();
 
     QList<QLandmark> landmarks() const;
@@ -122,6 +123,7 @@ private:
     QString m_error;
     QLandmarkManager::Error m_errorCode;
     QHash<QString, QLandmarkCategoryId> m_catIdLookup;//<name,id>
+    DatabaseOperations *m_databaseOperations;
 };
 
 #endif // #ifndef QLANDMARKFILEHANDLER_LMX_P_H

@@ -224,6 +224,15 @@ only one thread may access the data concurrently.
 
 The library abstracts the storage method used to store messaging data.
 
+\section1 QML Messaging Elements
+\list
+\o \l MessageModel
+\o \l MessageFilter
+\o \l MessageUnionFilter
+\o \l MessageIntersectionFilter
+\endlist
+
+
 \section1 Examples
 
 \section2 Keep In Touch

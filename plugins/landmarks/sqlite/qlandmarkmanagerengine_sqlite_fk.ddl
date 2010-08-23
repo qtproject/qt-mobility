@@ -4,31 +4,20 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS landmark (
     id INTEGER PRIMARY KEY,
     name TEXT,
-    description TEXT,
-    iconUrl TEXT,
     latitude REAL,
     longitude REAL,
-    altitude REAL,
-    radius REAL,
-    topLeftLat REAL,
-    topLeftLon REAL,
-    bottomRightLat REAL,
-    bottomRightLon REAL,
-    country TEXT,
-    countryCode TEXT,
-    state TEXT,
-    county TEXT,
-    district TEXT,
-    city TEXT,
-    street TEXT,
-    streetNumber TEXT,
-    postCode TEXT,
-    postOfficeBox TEXT,
-    phoneNumber TEXT,
-    url TEXT
+    altitude REAL
+);
+@@@ 
+CREATE TABLE IF NOT EXISTS landmark_attribute(
+    landmarkID INTEGER,
+    key TEXT,
+    value BLOB,
+    PRIMARY KEY(landmarkId,key),
+    FOREIGN KEY(landmarkId) REFERENCES landmark(id)
 );
 @@@
-CREATE TABLE IF NOT EXISTS landmark_attribute (
+CREATE TABLE IF NOT EXISTS landmark_custom_attribute (
     landmarkId INTEGER,
     key TEXT,
     value BLOB,
@@ -36,16 +25,22 @@ CREATE TABLE IF NOT EXISTS landmark_attribute (
     FOREIGN KEY (landmarkId) REFERENCES landmark(id)
 );
 @@@
-CREATE INDEX IF NOT EXISTS landmark_attribute_fk_index ON landmark_attribute(landmarkId);
+CREATE INDEX IF NOT EXISTS landmark_custom_attribute_fk_index ON landmark_custom_attribute(landmarkId);
 @@@
 CREATE TABLE IF NOT EXISTS category (
     id INTEGER PRIMARY KEY,
-    name TEXT,
-    description TEXT,
-    iconUrl TEXT
+    name TEXT
 );
 @@@
-CREATE TABLE IF NOT EXISTS category_attribute (
+CREATE TABLE IF NOT EXISTS category_attribute(
+    categoryId INTEGER,
+    key TEXT,
+    value BLOB,
+    PRIMARY KEY (categoryId,key),
+    FOREIGN KEY (categoryID) REFERENCES category(id)
+);
+@@@
+CREATE TABLE IF NOT EXISTS category_custom_attribute (
     categoryId INTEGER,
     key TEXT,
     value TEXT,
@@ -53,7 +48,7 @@ CREATE TABLE IF NOT EXISTS category_attribute (
     FOREIGN KEY (categoryId) REFERENCES category(id)
 );
 @@@
-CREATE INDEX IF NOT EXISTS category_attribute_fk_index ON category_attribute(categoryId);
+CREATE INDEX IF NOT EXISTS category_custom_attribute_fk_index ON category_custom_attribute(categoryId);
 @@@
 CREATE TABLE IF NOT EXISTS landmark_category (
     landmarkId INTEGER,

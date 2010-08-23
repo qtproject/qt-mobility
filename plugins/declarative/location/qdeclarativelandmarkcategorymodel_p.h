@@ -1,5 +1,5 @@
-#ifndef QDECLARATIVELANDMARKCATEGORYSOURCE_P_H
-#define QDECLARATIVELANDMARKCATEGORYSOURCE_P_H
+#ifndef QDECLARATIVELANDMARKCATEGORYMODEL_P_H
+#define QDECLARATIVELANDMARKCATEGORYMODEL_P_H
 
 #include <qdeclarativelandmark_p.h>
 #include <qdeclarativelandmarkcategory_p.h>
@@ -14,17 +14,17 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeLandmarkCategorySource: public QAbstractListModel
+class QDeclarativeLandmarkCategoryModel: public QAbstractListModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString name READ name NOTIFY nameChanged)
     Q_PROPERTY(QString error READ error NOTIFY errorChanged)
-    Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
 
 public:
-    explicit QDeclarativeLandmarkCategorySource(QObject* parent = 0);
-    ~QDeclarativeLandmarkCategorySource();
+    explicit QDeclarativeLandmarkCategoryModel(QObject* parent = 0);
+    ~QDeclarativeLandmarkCategoryModel();
 
     // From QAbstractListModel
     int rowCount(const QModelIndex &parent) const;
@@ -34,17 +34,17 @@ public:
     enum {
         NameRole = Qt::UserRole + 500, // Check
         DescriptionRole,
-        IconUrlRole,
+        IconSourceRole,
     };
-    QString name();
+    int count();
     QString error();
-    void setActive(bool active);
-    bool isActive() const;
+    void setAutoUpdate(bool autoUpdate);
+    bool autoUpdate() const;
 
 signals:
-    void nameChanged(QString name);
     void errorChanged(QString error);
-    void activeChanged(bool active);
+    void autoUpdateChanged(bool autoUpdate);
+    void countChanged(int count);
 
 private slots:
     void update();
@@ -63,10 +63,10 @@ private:
     // Same category list, but as declarative classes
     QMap<QString, QDeclarativeLandmarkCategory*> m_categoryMap;
     QString m_error;
-    bool m_active;
+    bool m_autoUpdate;
 };
 
 QTM_END_NAMESPACE
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkCategorySource));
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkCategoryModel));
 
-#endif // QDECLARATIVELANDMARKCATEGORYSOURCE_P_H
+#endif // QDECLARATIVELANDMARKCATEGORYMODEL_P_H

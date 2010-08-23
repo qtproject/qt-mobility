@@ -1,19 +1,21 @@
-TARGET = sfwecho_ui
+TARGET = sfwecho_client
 INCLUDEPATH += ../../../src/serviceframework
 DEPENDPATH += ../../../src/serviceframework
 
-QT = core gui
-CONFIG +=
-TEMPLATE = app
-
 include(../../examples.pri)
+
+QT = core gui
+TEMPLATE = app
 
 CONFIG += mobility
 MOBILITY = serviceframework
 
-SOURCES += main.cpp
 HEADERS += 
+SOURCES += main.cpp
+FORMS += sfwecho_client.ui
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
+
+
