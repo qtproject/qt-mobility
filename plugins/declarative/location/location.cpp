@@ -75,10 +75,12 @@ public:
         qmlRegisterType<QDeclarativePositionSource>(uri, 1, 1, "PositionSource");
         qmlRegisterType<QDeclarativeLandmark>(uri, 1, 1, "Landmark");
         qmlRegisterType<QDeclarativeLandmarkModel>(uri, 1, 1, "LandmarkModel");
-        qmlRegisterType<QDeclarativeLandmarkNameFilter>(uri, 1, 1, "LandmarkNameFilter");
-        qmlRegisterType<QDeclarativeLandmarkProximityFilter>(uri, 1, 1, "LandmarkProximityFilter");
+        qmlRegisterType<QDeclarativeLandmarkFilter>(uri, 1, 1, "LandmarkFilter");
+        qmlRegisterType<QDeclarativeLandmarkFilter>(uri, 1, 1, "LandmarkUnionFilter");
+        qmlRegisterType<QDeclarativeLandmarkFilter>(uri, 1, 1, "LandmarkIntersectionFilter");
         qmlRegisterType<QDeclarativeLandmarkCategory>(uri, 1, 1, "LandmarkCategory");
         qmlRegisterType<QDeclarativeLandmarkCategoryModel>(uri, 1, 1, "LandmarkCategoryModel");
+        qmlRegisterUncreatableType<QDeclarativeLandmarkFilterBase>(uri,1,1,"LandmarkFilterBase",QDeclarativeLandmarkFilterBase::tr("LandmarkFilterBase is an abstract class"));
         qmlRegisterType<QDeclarativeCoordinate>(uri, 1, 1, "Coordinate");
         qmlRegisterType<QDeclarativeGraphicsGeoMap>(uri, 1, 1, "Map");
         qmlRegisterType<QGeoMapObject>(uri, 1, 1, "MapObject");

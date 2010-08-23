@@ -6,24 +6,28 @@
 
 #include <qlandmark.h>
 #include <qlandmarkmanager.h>
+#include <qlandmarksortorder.h>
 #include <qlandmarkfetchrequest.h>
 
 #include <QtDeclarative/qdeclarative.h>
+#include <QDeclarativeParserStatus>
 #include <QAbstractListModel>
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeLandmarkModel: public QAbstractListModel
+class QDeclarativeLandmarkModel: public QAbstractListModel, public QDeclarativeParserStatus
 {
     Q_OBJECT
 
     Q_PROPERTY(QString error READ error NOTIFY errorChanged)
     Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
-    Q_PROPERTY(QObject* nameFilter READ nameFilter WRITE setFilter NOTIFY nameFilterChanged)
-    Q_PROPERTY(QObject* proximityFilter READ proximityFilter WRITE setFilter NOTIFY proximityFilterChanged)
-    Q_PROPERTY(int landmarksPerUpdate READ landmarksPerUpdate WRITE setLandmarksPerUpdate NOTIFY landmarksPerUpdateChanged)
-    Q_PROPERTY(int landmarksOffset READ landmarksOffset WRITE setLandmarksOffset NOTIFY landmarksOffsetChanged)
+    Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged)
+    Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
     Q_PROPERTY(int count READ count NOTIFY countChanged)
+    Q_PROPERTY(QDeclarativeLandmarkFilterBase* filter READ filter WRITE setFilter NOTIFY filterChanged)
+    Q_PROPERTY(SortKey sortBy READ sortBy WRITE setSortBy NOTIFY sortByChanged)
+    Q_PROPERTY(SortOrder sortOrder READ sortOrder WRITE setSortOrder NOTIFY sortOrderChanged)
+    Q_INTERFACES(QDeclarativeParserStatus)
 
 public:
     explicit QDeclarativeLandmarkModel(QObject* parent = 0);
@@ -33,8 +37,12 @@ public:
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
 
+    // From QDeclarativeParserStatus
+    void classBegin() {}
+    void componentComplete();
+
     // Roles for exposing data via model
-    enum {
+    enum Roles {
         NameRole = Qt::UserRole + 500, // Check
         PhoneNumberRole,
         DescriptionRole,
@@ -44,50 +52,68 @@ public:
         LatitudeRole,
         LongitudeRole
     };
+    enum SortOrder {
+        AscendingOrder = Qt::AscendingOrder,
+        DescendingOrder = Qt::DescendingOrder
+    };
+    enum SortKey {
+        DefaultSort = QLandmarkSortOrder::DefaultSort,
+        NameSort = QLandmarkSortOrder::NameSort
+    };
 
+    SortKey sortBy() const;
+    void setSortBy(SortKey key);
+    SortOrder sortOrder() const;
+    void setSortOrder(SortOrder order);
     int count();
-    int landmarksPerUpdate();
-    void setLandmarksPerUpdate(int landmarksPerUpdate);
-    int landmarksOffset();
-    void setLandmarksOffset(int landmarksOffset);
+    int limit();
+    void setLimit(int limit);
+    int offset();
+    void setOffset(int offset);
     QString error();
     void setAutoUpdate(bool autoUpdate);
     bool autoUpdate() const;
-    QObject* nameFilter();
-    QObject* proximityFilter();
-    void setFilter(QObject* filter);
+    QDeclarativeLandmarkFilterBase* filter();
+    void setFilter(QDeclarativeLandmarkFilterBase* filter);
 
 signals:
     void errorChanged(QString error);
     void autoUpdateChanged(bool autoUpdate);
-    void nameFilterChanged(QObject* nameFilter);
-    void proximityFilterChanged(QObject* nameFilter);
-    void landmarksPerUpdateChanged(int landmarksPerUpdate);
-    void landmarksOffsetChanged(int landmarksOffset);
+    void limitChanged(int limit);
+    void offsetChanged(int offset);
     void countChanged(int count);
+    void filterChanged();
+    void sortByChanged();
+    void sortOrderChanged();
 
 private slots:
     void update();
     void cancelUpdate();
+    void scheduleUpdate();
     void fetchRequestStateChanged(QLandmarkAbstractRequest::State);
 
 private:
     void convertLandmarksToDeclarative();
-    void setFetchHints();
+    void setFetchRange();
+    void setFetchOrder();
 
 private:
     QLandmarkManager* m_manager;
-    QDeclarativeLandmarkNameFilter* m_nameFilter;
-    QDeclarativeLandmarkProximityFilter* m_proximityFilter;
+    QDeclarativeLandmarkFilterBase* m_filter;
     QLandmarkFetchRequest* m_fetchRequest;
+    QLandmarkSortOrder* m_sortingOrder;
     // Landmark list received from platform
     QList<QLandmark> m_landmarks;
     // Same landmark list, but as declarative classes
     QMap<QString, QDeclarativeLandmark*> m_landmarkMap;
+    SortOrder m_sortOrder;
+    SortKey m_sortKey;
     QString m_error;
-    bool m_autoUpdate;
-    int m_landmarksPerUpdate;
-    int m_landmarksOffset;
+    bool m_componentCompleted : 1;
+    bool m_updatePending : 1;
+    bool m_autoUpdate : 1;
+    int m_limit;
+    int m_offset;
 };
 
 QTM_END_NAMESPACE

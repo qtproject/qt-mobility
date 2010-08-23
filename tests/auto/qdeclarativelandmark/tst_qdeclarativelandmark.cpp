@@ -183,7 +183,7 @@ void tst_QDeclarativeLandmark::construction_data()
     // LandmarkModel
     QTest::newRow("LandmarkModel: No properties") <<  "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {}" << true;
     QTest::newRow("LandmarkModel: Only id property") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId}" << true;
-    QTest::newRow("LandmarkModel: Valuetype properties") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; autoUpdate:true; landmarksPerUpdate: 5; landmarksOffset: 2}" << true;
+    QTest::newRow("LandmarkModel: Valuetype properties") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; autoUpdate:true; limit: 5; offset: 2}" << true;
     // TODO create a row with filters here
     // Landmark
     QTest::newRow("Landmark: No properties") << "QDeclarativeLandmark" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Landmark {}" << true;
@@ -217,16 +217,31 @@ void tst_QDeclarativeLandmark::defaultProperties()
     QVERIFY(filter_obj == 0); delete filter_obj;
     filter_obj = source_obj->property("proximityFilter").value<QObject*>();
     QVERIFY(filter_obj == 0); delete filter_obj;
-    QCOMPARE(source_obj->property("landmarksPerUpdate").toInt(), -1);
-    QCOMPARE(source_obj->property("landmarksOffset").toInt(), -1);
+    QCOMPARE(source_obj->property("limit").toInt(), -1);
+    QCOMPARE(source_obj->property("offset").toInt(), -1);
     QCOMPARE(source_obj->property("count").toInt(), 0);
-
-
     delete source_obj;
+    
     source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n Landmark {id: landmark }");
-    // TODO rest of the components
+    QCOMPARE(source_obj->property("name").toString(), QString());
+    QCOMPARE(source_obj->property("phoneNumber").toString(), QString());
+    QCOMPARE(source_obj->property("description").toString(), QString());
+    QCOMPARE(source_obj->property("radius").toDouble(), -1.0);
+    QCOMPARE(source_obj->property("iconSource").toUrl(), QUrl());
+    QCOMPARE(source_obj->property("url").toUrl(), QUrl());
+    delete source_obj;
+    
+    source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategory {id: landmark }");
+    QCOMPARE(source_obj->property("name").toString(), QString());
+    QCOMPARE(source_obj->property("iconSource").toUrl(), QUrl());
+    delete source_obj;
 
-
+    source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {id: landmark }");
+    QCOMPARE(source_obj->property("error").toString(), QString());
+    QCOMPARE(source_obj->property("count").toInt(), 0);
+    QCOMPARE(source_obj->property("autoUpdate").toBool(), false);
+    QCOMPARE(source_obj->property("limit").toInt(), -1);
+    QCOMPARE(source_obj->property("offset").toInt(), -1);
     delete source_obj;
 }
 
