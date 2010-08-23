@@ -932,8 +932,9 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     exception.setOriginalDate(QDate(2010, 12, 25));
     exception.setStartDateTime(QDateTime(QDate(2010, 12, 25), QTime(0, 0, 0)));
     exception.setEndDateTime(QDateTime(QDate(2010, 12, 26), QTime(0, 0, 0)));
-    exception.setDisplayLabel(QLatin1String("Christmas"));
-    exception.addComment(QLatin1String("With the in-laws"));
+    exception.setDisplayLabel(QLatin1String("Xmass"));
+    if (cm->detailDefinitions(QOrganizerItemType::TypeEventOccurrence).contains(QOrganizerItemComment::DefinitionName))
+        exception.addComment(QLatin1String("With the in-laws"));
     QVERIFY(!cm->saveItem(&exception));
     QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
 
