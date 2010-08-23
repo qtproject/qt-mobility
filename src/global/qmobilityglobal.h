@@ -57,7 +57,7 @@
 #define QTM_PACKAGE_TAG ""
 
 #include <QtCore/qglobal.h>
-#if defined(QTM_BUILD_UNITTEST) && (defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)) && defined(QT_MAKEDLL)
+#if defined(QTM_BUILD_UNITTESTS) && (defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)) && defined(QT_MAKEDLL)
 #    define QM_AUTOTEST_EXPORT Q_DECL_EXPORT
 #elif defined(QTM_BUILD_UNITTESTS) && (defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)) && defined(QT_DLL)
 #    define QM_AUTOTEST_EXPORT Q_DECL_IMPORT
