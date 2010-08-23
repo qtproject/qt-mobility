@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
     \qmlclass GalleryItem QDeclarativeGalleryItem
 
     \inmodule QtGallery
+    \ingroup qml-gallery
 
     \brief The GalleryItem element allows you to request information about a
     single item from a gallery
