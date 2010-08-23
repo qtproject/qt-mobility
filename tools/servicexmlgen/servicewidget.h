@@ -49,6 +49,7 @@
 
 QT_BEGIN_NAMESPACE
 class QLabel;
+class QComboBox;
 QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
@@ -75,6 +76,7 @@ signals:
 
 private slots:
     void setTitle(const QString &text);
+    void serviceTypeChanged(int type);
 
 private:
     InterfacesTabWidget *m_ifacesTabs;
@@ -83,6 +85,8 @@ private:
     MandatoryLineEdit *m_name;
     MandatoryLineEdit *m_path;
     QLineEdit *m_desc;
+    QComboBox *m_type;
+    QString m_text;
 };
 
 
