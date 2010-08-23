@@ -62,7 +62,12 @@ namespace QService
         ErrorOutofMemory,
         ErrorPermissionDenied,
         ErrorInvalidArguments
-    };    
+    };   
+
+    enum Type {
+        Plugin = 0,
+        InterProcess
+    };
 }
 
 QTM_END_NAMESPACE

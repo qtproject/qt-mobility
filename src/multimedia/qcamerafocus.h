@@ -95,10 +95,15 @@ class Q_MULTIMEDIA_EXPORT QCameraFocus : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(FocusMode focusMode READ focusMode WRITE setFocusMode)
     Q_PROPERTY(FocusPointMode focusPointMode READ focusPointMode WRITE setFocusPointMode)
     Q_PROPERTY(QPointF customFocusPoint READ customFocusPoint WRITE setCustomFocusPoint)
     Q_PROPERTY(QCameraFocusZoneList focusZones READ focusZones NOTIFY focusZonesChanged)
+    Q_PROPERTY(qreal opticalZoom READ opticalZoom NOTIFY opticalZonesChanged)
+    Q_PROPERTY(qreal digitalZoom READ digitalZoom NOTIFY digitalZonesChanged)
 
+    Q_ENUMS(FocusMode)
+    Q_ENUMS(FocusPointMode)
 public:
     enum FocusMode {
         ManualFocus = 0x1,
@@ -157,5 +162,8 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCameraFocus::FocusModes)
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QCameraFocus::FocusModes)
+Q_DECLARE_METATYPE(QCameraFocus::FocusPointMode)
 
 #endif  // QCAMERAFOCUS_H

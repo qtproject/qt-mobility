@@ -39,62 +39,50 @@
 **
 ****************************************************************************/
 
+#ifndef SMSMODEL_MAEMO6_P_H
+#define SMSMODEL_MAEMO6_P_H
 
-#ifndef QCONTACTACTIONSERVICEMANAGER_P_H
-#define QCONTACTACTIONSERVICEMANAGER_P_H
+#include <CommHistory/EventModel>
+#include <CommHistory/Event>
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+class SMSModelPrivate;
 
-#include <QMultiHash>
-#include <QHash>
-#include <QMutex>
-
-#include "qservice.h"
-#include "qservicemanager.h"
-
-#include "qtcontacts.h"
-
-QTM_BEGIN_NAMESPACE
-
-class QContactActionServiceManager : public QObject
+/*!
+ * \class SMSModel
+ *
+ * Model for accessing SMS messages. Initialize with getEvents().
+ */
+class SMSModel: public CommHistory::EventModel
 {
     Q_OBJECT
+
 public:
-    static QContactActionServiceManager* instance();
+    /*!
+     * Model constructor.
+     *
+     * \param parent Parent object.
+     */
+    SMSModel(QObject *parent = 0);
 
-    // this is a private class, so despite being a singleton we make this ctor public.
-    QContactActionServiceManager();
-    ~QContactActionServiceManager();
+    /*!
+     * Destructor.
+     */
+    ~SMSModel();
 
-    QList<QContactActionDescriptor> availableActions(const QContact& contact);
-    QList<QContactActionDescriptor> actionDescriptors(const QString& actionName = QString());
-    QContactAction* action(const QContactActionDescriptor& descriptor);
+    /*!
+     * Reset model and fetch draft events.
+     *
+     * \return true if successful, Sets lastError() on failure.
+     */
+    bool getEvents();
 
-public slots:
-    void serviceAdded(const QString& serviceName);
-    void serviceRemoved(const QString& serviceName);
+signals:
+    void eventsAdded(const QList<CommHistory::Event> &events);
+    void eventsUpdated(const QList<CommHistory::Event> &events);
+    void eventDeleted(int id);
 
 private:
-    void init();
-    bool initLock;
-
-    QMutex m_instanceMutex;
-    QServiceManager m_serviceManager;
-
-    QHash<QContactActionDescriptor, QContactActionFactory*> m_actionFactoryHash; // descriptor to action factory ptr.
-    QMultiHash<QString, QContactActionDescriptor> m_descriptorHash;  // action name to descriptor
+    Q_DECLARE_PRIVATE(SMSModel);
 };
 
-QTM_END_NAMESPACE
-
-#endif
-
+#endif // SMSMODEL_MAEMO6_P_H

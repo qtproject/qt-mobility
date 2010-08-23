@@ -53,6 +53,7 @@
 QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(QContactActionServiceManager, contactActionServiceManagerInstance)
+Q_EXPORT_PLUGIN2(qtcontacts_serviceactionmanager, QContactActionServiceManager);
 
 /*!
   \internal
@@ -112,40 +113,18 @@ void QContactActionServiceManager::init()
     }
 }
 
-QList<QContactActionDescriptor> QContactActionServiceManager::availableActions(const QContact &contact)
+QHash<QContactActionDescriptor, QContactActionFactory*> QContactActionServiceManager::actionFactoryHash()
 {
     QMutexLocker locker(&m_instanceMutex);
     init();
-    QList<QContactActionDescriptor> ret;
-    QList<QContactActionDescriptor> keys = m_actionFactoryHash.keys();
-    for (int i = 0; i < keys.size(); ++i) {
-        QContactActionDescriptor currKey = keys.at(i);
-        QContactActionFactory* curr = m_actionFactoryHash.value(currKey);
-        if (curr->supportsContact(contact, currKey)) {
-            ret.append(currKey);
-        }
-    }
-
-    return ret;
+    return m_actionFactoryHash;
 }
 
-QList<QContactActionDescriptor> QContactActionServiceManager::actionDescriptors(const QString& actionName)
+QMultiHash<QString, QContactActionDescriptor> QContactActionServiceManager::descriptorHash()
 {
     QMutexLocker locker(&m_instanceMutex);
     init();
-    if (actionName.isEmpty())
-        return m_descriptorHash.values();
-    return m_descriptorHash.values(actionName);
-}
-
-/*! The caller takes ownership of the returned action pointer, and must delete it to avoid leaking memory. */
-QContactAction* QContactActionServiceManager::action(const QContactActionDescriptor& descriptor)
-{
-    QMutexLocker locker(&m_instanceMutex);
-    init();
-    if (m_actionFactoryHash.contains(descriptor))
-        return m_actionFactoryHash.value(descriptor)->create(descriptor);
-    return 0;
+    return m_descriptorHash;
 }
 
 void QContactActionServiceManager::serviceAdded(const QString& serviceName)

@@ -33,17 +33,12 @@ contains(mobility_modules,publishsubscribe) {
 contains(mobility_modules,systeminfo): SUBDIRS += systeminfo
 contains(mobility_modules,sensors): SUBDIRS += sensors
 
-# Contacts depends on ServiceFramework
-contacts.subdir=contacts
-contacts.target=sub-contacts
-contacts.depends=serviceframework
-
 # Versit depends on Contacts & Organizer
 versit.subdir=versit
 versit.target=sub-versit
 versit.depends=contacts organizer
 
-contains(qmf_enabled, yes)|wince*|win32|symbian|maemo5 {
+contains(qmf_enabled, yes)|wince*|win32|symbian|maemo5|maemo6 {
     contains(mobility_modules,messaging) {
         !win32-g++:SUBDIRS += messaging
     }

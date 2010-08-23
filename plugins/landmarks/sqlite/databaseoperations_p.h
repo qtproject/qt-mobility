@@ -72,142 +72,165 @@ typedef QMap<int, QLandmarkManager::Error>  ERROR_MAP;
 class QLandmarkManagerEngineSqlite;
 class QLandmarkFileHandlerGpx;
 
-namespace DatabaseOperations {
-    class QueryRun : public QRunnable
-    {
+class QueryRun : public QRunnable
+{
+public:
+    QueryRun(QLandmarkAbstractRequest *req =0,
+             const QString &uri=QString(),
+             QLandmarkManagerEngineSqlite *eng =0);
+    ~QueryRun();
+    void run();
+
+    QLandmarkAbstractRequest *request;
+    QString connectionName;
+    QLandmarkManager::Error error;
+    QString errorString;
+    QMap<int, QLandmarkManager::Error> errorMap;
+    QString managerUri;
+    volatile bool isCanceled;
+    QLandmarkManagerEngineSqlite *engine;
+    QLandmarkFileHandlerGpx *gpxHandler;
+};
+
+class DatabaseOperations {
     public:
-        QueryRun(QLandmarkAbstractRequest *req =0,
-                 const QString &uri=QString(),
-                 QLandmarkManagerEngineSqlite *eng =0);
-        ~QueryRun();
-        void run();
+    QString connectionName;
+    QString managerUri;
+    QueryRun *queryRun;
 
-        QLandmarkAbstractRequest *request;
-        QString connectionName;
-        QLandmarkManager::Error error;
-        QString errorString;
-        QMap<int, QLandmarkManager::Error> errorMap;
-        QString managerUri;
-        volatile bool isCanceled;
-        QLandmarkManagerEngineSqlite *engine;
-        QLandmarkFileHandlerGpx *gpxHandler;
-    };
+    DatabaseOperations(const volatile bool &isExtendedAttribsEnabled, const volatile bool &isCustomAttribsEnabled);
+    QLandmark retrieveLandmark(const QLandmarkId &landmarkId,
+                               QLandmarkManager::Error *error, QString *errorString) const;
 
-    QLandmark retrieveLandmark(const QString &connectionName, const QLandmarkId &landmarkId,
-                               QLandmarkManager::Error *error, QString *errorString,
-                               const QString &managerUri, QueryRun *queryRun=0);
-
-    QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFilter& filter,
+    QList<QLandmarkId> landmarkIds(const QLandmarkFilter& filter,
                                    const QList<QLandmarkSortOrder>& sortOrders,
                                    int limit, int offset,
-                                   QLandmarkManager::Error *error, QString *errorString,
-                                   const QString &managerUri, QueryRun * queryRun =0);
+                                   QLandmarkManager::Error *error, QString *errorString) const;
 
-    QList<QLandmark> landmarks(const QString &connectionName, const QLandmarkFilter& filter,
+    QList<QLandmark> landmarks(const QLandmarkFilter& filter,
                                const QList<QLandmarkSortOrder>& sortOrders,
                                int limit, int offset,
-                               QLandmarkManager::Error *error, QString *errorString,
-                               const QString &managerUri, QueryRun *queryRun =0);
+                               QLandmarkManager::Error *error, QString *errorString) const ;
 
-    QList<QLandmark> landmarks(const QString &connectionName, const QList<QLandmarkId> &landmarkIds,
+    QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds,
                                QMap<int, QLandmarkManager::Error> *errorMap,
-                               QLandmarkManager::Error *error, QString *errorString,
-                               const QString &managerUri, QueryRun *queryRun =0);
+                               QLandmarkManager::Error *error, QString *errorString) const;
 
-    bool saveLandmarkHelper(const QString &connectionName, QLandmark* landmark,
-                      QLandmarkManager::Error *error, QString *errorString,
-                      const QString &managerUri);
+    bool saveLandmarkHelper(QLandmark* landmark,
+                      QLandmarkManager::Error *error, QString *errorString);
 
-    bool saveLandmark(const QString &connectionName, QLandmark* landmark,
-                      QLandmarkManager::Error *error, QString *errorString,
-                      const QString &managerUri);
+    bool saveLandmark(QLandmark* landmark,
+                      QLandmarkManager::Error *error, QString *errorString);
 
-    bool saveLandmarks(const QString &connectionName, QList<QLandmark> * landmark,
+    bool saveLandmarks(QList<QLandmark> * landmark,
                        QMap<int, QLandmarkManager::Error> *errorMap,
-                       QLandmarkManager::Error *error, QString *errorString,
-                       const QString &managerUri, QueryRun *queryRun =0);
+                       QLandmarkManager::Error *error, QString *errorString);
 
-    bool removeLandmark(const QString &connectionName, const QLandmarkId &landmarkId,
-                        QLandmarkManager::Error *error, QString *errorString,
-                        const QString &managerUri);
+    bool removeLandmark(const QLandmarkId &landmarkId,
+                        QLandmarkManager::Error *error, QString *errorString);
 
-    bool removeLandmarks(const QString &connectionName, const QList<QLandmarkId> &landmarkIds,
+    bool removeLandmarks(const QList<QLandmarkId> &landmarkIds,
                          QMap<int, QLandmarkManager::Error> *errorMap,
                          QLandmarkManager::Error *error,
-                         QString *errorString, const QString &managerUri,
-                         QueryRun *queryRun = 0);
+                         QString *errorString);
 
-    QList<QLandmarkCategoryId> categoryIds(const QString &connectionName,
-                                           const QLandmarkNameSort &nameSort,
+    QList<QLandmarkCategoryId> categoryIds(const QLandmarkNameSort &nameSort,
                                            int limit, int offet,
-                                           QLandmarkManager::Error *error, QString *errorString,
-                                           const QString &managerUri,
-                                           QueryRun *queryRun = 0);
+                                           QLandmarkManager::Error *error, QString *errorString) const;
 
-    QLandmarkCategory category(const QString &connectionName, const QLandmarkCategoryId &landmarkCategoryId,
+    QLandmarkCategory category(const QLandmarkCategoryId &landmarkCategoryId,
                                QLandmarkManager::Error *error,
-                               QString *errorString, const QString &managerUri);
+                               QString *errorString) const;
 
-    QList<QLandmarkCategory> categories(const QString &connectionName,
-                                        const QList<QLandmarkCategoryId> &landmarkCategoryIds,
+    QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds,
                                         const QLandmarkNameSort &nameSort,
                                         int limit, int offset,
                                         QLandmarkManager::Error *error, QString *errorString,
-                                        const QString &managerUri, bool needAll,
-                                        QueryRun *queryRun = 0);
+                                        bool needAll) const;
 
-    QList<QLandmarkCategory> categories(const QString &connectionName,
-                                        const QList<QLandmarkCategoryId> &landmarkCategoryIds,
+    QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds,
                                         QMap<int, QLandmarkManager::Error> *errorMap,
-                                        QLandmarkManager::Error *error, QString *errorString,
-                                        const QString &managerUri,
-                                        QueryRun *queryRun = 0);
+                                        QLandmarkManager::Error *error, QString *errorString) const;
 
-    bool saveCategoryHelper(const QString &connectionName, QLandmarkCategory *category,
-                      QLandmarkManager::Error *error, QString *errorString,
-                      const QString &managerUri);
+    bool saveCategoryHelper(QLandmarkCategory *category,
+                      QLandmarkManager::Error *error, QString *errorString);
 
-    bool saveCategory(const QString &connectionName, QLandmarkCategory *category,
-                      QLandmarkManager::Error *error, QString *errorString,
-                      const QString &managerUri);
+    bool saveCategory(QLandmarkCategory *category,
+                      QLandmarkManager::Error *error, QString *errorString);
 
-    bool saveCategories(const QString &connectionName, QList<QLandmarkCategory> * categories,
+    bool saveCategories(QList<QLandmarkCategory> * categories,
                         QMap<int, QLandmarkManager::Error> *errorMap,
-                        QLandmarkManager::Error *error, QString *errorString,
-                        const QString &managerUri);
+                        QLandmarkManager::Error *error, QString *errorString);
 
-    bool removeCategory(const QString &connectionName, const QLandmarkCategoryId &categoryId,
+    bool removeCategory(const QLandmarkCategoryId &categoryId,
                         QLandmarkManager::Error *error,
-                        QString *errorString, const QString &managerUri);
+                        QString *errorString);
 
-    bool removeCategories(const QString &connectionName, const QList<QLandmarkCategoryId> &categoryIds,
+    bool removeCategories(const QList<QLandmarkCategoryId> &categoryIds,
                           QMap<int, QLandmarkManager::Error> *errorMap,
                           QLandmarkManager::Error *error,
-                          QString *errorString, const QString &managerUri);
+                          QString *errorString);
 
-    bool importLandmarks(const QString &connectionName,
-                         QIODevice *device,
+    bool importLandmarks(QIODevice *device,
                          const QString &format,
                          QLandmarkManager::TransferOption option,
                          const QLandmarkCategoryId &categoryId,
                          QLandmarkManager::Error *error,
-                         QString *errorString, const QString &managerUri,
-                         QueryRun *queryRun = 0);
+                         QString *errorString,
+                         QueryRun *queryRun =0,
+                         QList<QLandmarkId> *landmarkIds = 0);
 
-    bool exportLandmarks(const QString &connectionName,
-                         QIODevice *device,
+    bool exportLandmarks(QIODevice *device,
                          const QString &format,
                          QList<QLandmarkId> landmarkIds,
                          QLandmarkManager::TransferOption,
                          QLandmarkManager::Error *error,
                          QString *errorString,
-                         const QString &managerUri,
-                         QueryRun *queryRun =0);
+                         QueryRun *queryRun =0) const;
 
-    QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter);
-    QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders);
-    extern volatile bool isCustomAttributesEnabled;
-    extern volatile bool isExtendedAttributesEnabled;
-}
+    bool importLandmarksLmx(QIODevice *device,
+                            QLandmarkManager::TransferOption option,
+                            const QLandmarkCategoryId &categoryId,
+                            QLandmarkManager::Error *error,
+                            QString *errorString,
+                            QueryRun *queryRun=0,
+                            QList<QLandmarkId> *landmarkIds = 0);
+
+    bool importLandmarksGpx(QIODevice *device,
+                            QLandmarkManager::TransferOption option,
+                            const QLandmarkCategoryId &categoryId,
+                            QLandmarkManager::Error *error,
+                            QString *errorString,
+                            QueryRun *queryRun =0,
+                            QList<QLandmarkId> *landmarkIds = 0);
+
+    bool exportLandmarksLmx(QIODevice *device,
+                            QList<QLandmarkId> landmarkIds,
+                            QLandmarkManager::TransferOption option,
+                            QLandmarkManager::Error *error,
+                            QString *errorString,
+                            QueryRun *queryRun =0) const ;
+
+    bool exportLandmarksGpx(QIODevice *device,
+                            QList<QLandmarkId> landmarkIds,
+                            QLandmarkManager::Error *error,
+                            QString *errorString,
+                            QueryRun *queryRun =0) const;
+
+    QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
+    QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders) const;
+
+    const volatile bool &isExtendedAttributesEnabled;
+    const volatile bool &isCustomAttributesEnabled;
+
+    static const QStringList coreAttributes;
+    static const QStringList coreGenericAttributes;
+    static const QStringList extendedGenericAttributes;
+    static const QStringList supportedSearchableAttributes;
+
+    static const QStringList coreCategoryAttributes;
+    static const QStringList coreGenericCategoryAttributes;
+    static const QStringList extendedGenericCategoryAttributes;
+};
 
 #endif

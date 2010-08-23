@@ -67,11 +67,26 @@ The API exposed by the classes in this component are not stable, and will
 undergo modification or removal prior to the final release of Qt Mobility.
 */
 
-#define DEBUG_EXPOSURE_CHANGES 1
+//#define DEBUG_EXPOSURE_CHANGES 1
 
 #ifdef DEBUG_EXPOSURE_CHANGES
 #define ENUM_NAME(c,e,v) (c::staticMetaObject.enumerator(c::staticMetaObject.indexOfEnumerator(e)).valueToKey((v)))
 #endif
+
+namespace
+{
+class CameraExposureRegisterMetaTypes
+{
+public:
+    CameraExposureRegisterMetaTypes()
+    {
+        qRegisterMetaType<QCameraExposure::ExposureMode>("QCameraExposure::ExposureMode");
+        qRegisterMetaType<QCameraExposure::FlashModes>("QCameraExposure::FlashModes");
+        qRegisterMetaType<QCameraExposure::MeteringMode>("QCameraExposure::MeteringMode");
+    }
+} _registerCameraExposureMetaTypes;
+}
+
 
 
 class QCameraExposurePrivate
@@ -182,21 +197,20 @@ bool QCameraExposure::isAvailable() const
 
 
 /*!
-    Returns the flash mode being used.
+  \property QCameraExposure::flashMode
+  \brief The flash mode being used.
+
+  Usually the single QCameraExposure::FlashMode flag is used,
+  but some non conflicting flags combination are also allowed,
+  like QCameraExposure::FlashManual | QCameraExposure::FlashSlowSyncRearCurtain.
+
+  \sa QCameraExposure::isFlashModeSupported(), QCameraExposure::isFlashReady()
 */
 
 QCameraExposure::FlashModes QCameraExposure::flashMode() const
 {
     return d_func()->flashControl ? d_func()->flashControl->flashMode() : QCameraExposure::FlashOff;
 }
-
-/*!
-    Set the flash mode to \a mode.
-
-    Usually the single QCameraExposure::FlashMode flag is used,
-    but some non conflicting flags combination are also allowed,
-    like QCameraExposure::FlashManual | QCameraExposure::FlashSlowSyncRearCurtain.
-*/
 
 void QCameraExposure::setFlashMode(QCameraExposure::FlashModes mode)
 {
@@ -224,17 +238,16 @@ bool QCameraExposure::isFlashReady() const
 
 
 /*!
-    Returns the exposure mode being used.
+  \property QCameraExposure::exposureMode
+  \brief The exposure mode being used.
+
+  \sa QCameraExposure::isExposureModeSupported()
 */
 
 QCameraExposure::ExposureMode QCameraExposure::exposureMode() const
 {
     return d_func()->exposureControl ? d_func()->exposureControl->exposureMode() : QCameraExposure::ExposureAuto;
 }
-
-/*!
-    Set exposure mode to \a mode
-*/
 
 void QCameraExposure::setExposureMode(QCameraExposure::ExposureMode mode)
 {
@@ -253,7 +266,10 @@ bool QCameraExposure::isExposureModeSupported(QCameraExposure::ExposureMode mode
 }
 
 /*!
-    Returns the exposure compensation.
+  \property QCameraExposure::exposureCompensation
+  \brief Exposure compensation in EV units.
+
+  Exposure compensation property allows to adjust the automatically calculated exposure.
 */
 
 qreal QCameraExposure::exposureCompensation() const
@@ -264,10 +280,6 @@ qreal QCameraExposure::exposureCompensation() const
         return 0;
 }
 
-/*!
-    Sets the exposure compensation to \a ev
-*/
-
 void QCameraExposure::setExposureCompensation(qreal ev)
 {
     if (d_func()->exposureControl)
@@ -275,17 +287,16 @@ void QCameraExposure::setExposureCompensation(qreal ev)
 }
 
 /*!
-    Returns the metering mode being used.
+  \property QCameraExposure::meteringMode
+  \brief The metering mode being used.
+
+  \sa QCameraExposure::isMeteringModeSupported()
 */
 
 QCameraExposure::MeteringMode QCameraExposure::meteringMode() const
 {
     return d_func()->exposureControl ? d_func()->exposureControl->meteringMode() : QCameraExposure::MeteringMatrix;
 }
-
-/*!
-    Sets the metering mode to \a mode.
-*/
 
 void QCameraExposure::setMeteringMode(QCameraExposure::MeteringMode mode)
 {
@@ -300,10 +311,6 @@ bool QCameraExposure::isMeteringModeSupported(QCameraExposure::MeteringMode mode
 {
     return d_func()->exposureControl ? d_func()->exposureControl->isMeteringModeSupported(mode) : false;
 }
-
-/*!
-    Returns the ISO sensitivity.
-*/
 
 int QCameraExposure::isoSensitivity() const
 {
@@ -378,16 +385,13 @@ void QCameraExposure::setAutoIsoSensitivity()
 /*!
     \property QCameraExposure::isoSensitivity
     \brief The sensor ISO sensitivity.
+
+    \sa QCameraExposure::supportedIsoSensitivities(), QCameraExposure::setAutoIsoSensitivity()
 */
 
 /*!
     \property QCameraExposure::aperture
     \brief Lens aperture is specified as an F number, the ratio of the focal length to effective aperture diameter.
-*/
-
-/*!
-    \property QCameraExposure::exposureCompensation
-    \brief Camera exposure compensation, in EV.
 */
 
 
@@ -559,9 +563,8 @@ void QCameraExposure::setAutoShutterSpeed()
 */
 
 /*!
-    \fn void QCameraExposure::flashReady(bool ready)
-
-    Signal emitted when flash status changed, flash is ready if \a ready true.
+    \property QCameraExposure::flashReady
+    \brief Indicates if the flash is charged and ready to use.
 */
 
 /*!
@@ -588,6 +591,12 @@ void QCameraExposure::setAutoShutterSpeed()
     \fn void QCameraExposure::isoSensitivityChanged(int value)
 
     Signal emitted when sensitivity changes to \a value.
+*/
+
+/*!
+    \fn void QCameraExposure::exposureCompensationChanged(qreal value)
+
+    Signal emitted when the exposure compensation changes to \a value.
 */
 
 #include "moc_qcameraexposure.cpp"

@@ -91,7 +91,6 @@ contains(mobility_modules,systeminfo) {
 contains(mobility_modules,contacts) {
     #Contacts
     SUBDIRS +=  qcontact \
-            qcontactactions \
             qcontactasync \
             qcontactdetail \
             qcontactdetaildefinition \
@@ -99,11 +98,16 @@ contains(mobility_modules,contacts) {
             qcontactfilter \
             qcontactmanager \
             qcontactmanagerplugins \
-            qcontactmanagerfiltering \
             qcontactrelationship \
             qlatin1constant
     # This needs glibc:
     linux*: SUBDIRS += qcontactmemusage
+
+    contains(mobility_modules,serviceframework){
+            SUBDIRS += qcontactmanagerfiltering \
+            qcontactactions
+    } else: warning(Some contacts unit tests depend on service framework too)
+
 }
 
 contains(mobility_modules,organizer) {
@@ -162,7 +166,7 @@ contains(mobility_modules,multimedia) {
 }
 #Messaging
 contains(mobility_modules,messaging) {
-    contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
+    contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5|maemo6 {
     !win32-g++:SUBDIRS += \
         qmessagestore \
         qmessagestorekeys \
