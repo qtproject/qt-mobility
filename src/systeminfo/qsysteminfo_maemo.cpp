@@ -1261,7 +1261,7 @@ QString QSystemDeviceInfoPrivate::productName()
 //////////////
 ///////
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
-        : QSystemScreenSaverLinuxCommonPrivate(parent)
+        : QSystemScreenSaverLinuxCommonPrivate(parent),isInhibited(0)
 {
     ssTimer = new QTimer(this);
 #if !defined(QT_NO_DBUS)
@@ -1291,7 +1291,10 @@ bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
         // The reason for this is to avoid the situation where
         // a crashed/hung application keeps the display on.
         ssTimer->start(30000);
-     }
+        isInhibited = true;
+    } else {
+        isInhibited = false;
+    }
      return screenSaverInhibited();
 }
 
@@ -1308,17 +1311,37 @@ void QSystemScreenSaverPrivate::wakeUpDisplay()
 bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
     bool displayOn = false;
+    GConfItem screenBlankItem("/system/osso/dsm/display/inhibit_blank_mode");
+    /* 0 - no inhibit
+       1 - inhibit dim with charger
+       2 - inhibit blank with charger (display still dims)
+       3 - inhibit dim (always)
+       4 - inhibit blank (always; display still dims)
+*/
+    int blankingItem = screenBlankItem.value().toInt();
+
+    bool isBlankingInhibited = false;
+    QSystemDeviceInfo devInfo(this);
+    QSystemDeviceInfo::PowerState batState = devInfo.currentPowerState();
+
+    if( ((batState == QSystemDeviceInfo::WallPower || batState == QSystemDeviceInfo::WallPowerChargingBattery)
+       && blankingItem == 2) || blankingItem == 4) {
+        isBlankingInhibited = true;
+    }
+
 #if !defined(QT_NO_DBUS)
     if (mceConnectionInterface->isValid()) {
         // The most educated guess for the screen saver being inhibited is to determine
         // whether the display is on. That is because the QSystemScreenSaver cannot
         // prevent other processes from blanking the screen (like, if
         // MCE decides to blank the screen for some reason).
+        // but that means it reports to be inhibited when display is on. meaning
+        // effectly always inhibited by default. so we try a bit harder
         QDBusReply<QString> reply = mceConnectionInterface->call("get_display_status");
         displayOn = ("on" == reply.value());
     }
 #endif
-    return displayOn;
+    return (displayOn && isBlankingInhibited && isInhibited);
 }
 
 #include "moc_qsysteminfo_maemo_p.cpp"
