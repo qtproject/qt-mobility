@@ -124,6 +124,8 @@ bool QBluetoothLocalDevice::isValid() const
 */
 void QBluetoothLocalDevice::setPairing(const QBluetoothAddress &address, Pairing pairing)
 {
+    Q_UNUSED(address);
+    Q_UNUSED(pairing);
 }
 
 /*!
@@ -132,6 +134,8 @@ void QBluetoothLocalDevice::setPairing(const QBluetoothAddress &address, Pairing
 */
 QBluetoothLocalDevice::Pairing QBluetoothLocalDevice::pairing(const QBluetoothAddress &address) const
 {
+    Q_UNUSED(address);
+
     return Unpaired;
 }
 
