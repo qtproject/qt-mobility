@@ -77,7 +77,7 @@ public slots:
 
 private slots:
     void updateStatus();
-    void reloadPipeline();
+    void delayedReload();
 
 private:
     void updateSupportedResolutions(const QString &device);

@@ -60,7 +60,7 @@
 #include <sys/mman.h>
 #include <linux/videodev2.h>
 
-//#define CAMEABIN_DEBUG
+#define CAMEABIN_DEBUG
 
 CameraBinControl::CameraBinControl(CameraBinSession *session)
     :QCameraControl(session),
@@ -150,7 +150,6 @@ void CameraBinControl::updateStatus()
 #endif
         emit statusChanged(m_status);
     }
-
 }
 
 void CameraBinControl::reloadLater()
@@ -160,19 +159,19 @@ void CameraBinControl::reloadLater()
 #endif
     if (!m_reloadPending && m_state == QCamera::ActiveState) {
         m_reloadPending = true;
-        QMetaObject::invokeMethod(this, "reloadPipeline", Qt::QueuedConnection);
+        m_session->setState(QCamera::LoadedState);
+        QMetaObject::invokeMethod(this, "delayedReload", Qt::QueuedConnection);
     }
 }
 
-void CameraBinControl::reloadPipeline()
+void CameraBinControl::delayedReload()
 {
 #ifdef CAMEABIN_DEBUG
     qDebug() << "reload pipeline";
 #endif
     if (m_reloadPending) {
         m_reloadPending = false;
-        if (m_state == QCamera::ActiveState) {
-            m_session->setState(QCamera::LoadedState);
+        if (m_state == QCamera::ActiveState) {            
             m_session->setState(QCamera::ActiveState);
         }
     }
