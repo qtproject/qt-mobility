@@ -36,7 +36,7 @@ contains(mobility_modules,location) {
         SUBDIRS += landmarkbrowser
     }
 
-    !symbian|contains(mobility_modules,bearer) {
+    contains(mobility_modules,bearer)|contains(QT_MAJOR_VERSION, 4):greaterThan(QT_MINOR_VERSION, 6) {
     	SUBDIRS += geoservicedemo \
                    mapviewer
 
