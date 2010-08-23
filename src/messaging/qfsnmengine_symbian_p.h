@@ -108,7 +108,6 @@ struct FSSearchOperation
     FSSearchOperationStatus m_Status;
 };
 
-
 class CFSEngine: public QObject
 {
     Q_OBJECT
@@ -164,7 +163,9 @@ private:
     QMessageAccountIdList accountsByType(QMessage::Type type) const;
     void updateEmailAccounts() const;
     void updateFsMessage(QMessage* message);
-    EmailClientApi::NmApiMessage* createFSMessage(QMessage& message);
+    NmApiMessage createFSMessage(QMessage& message);
+    NmApiMessage message(const quint64 messageId) const;
+    bool saveMessage(NmApiMessage message, quint64 mailboxId);
     
     QMessageFolderIdList folderIdsByAccountId(const QMessageAccountId& accountId) const;
     QMessageFolderIdList filterMessageFoldersL(const QMessageFolderFilter& filter, bool& filterHandled) const;
@@ -174,13 +175,12 @@ private:
     NmApiEmailFolderType standardFolderId(QMessage::StandardFolder standardFolder);
     
     QMessageFolderIdList filterMessageFolders(const QMessageFolderFilter& filter, bool& filterHandled) const;
-    QMessage CreateQMessage(EmailClientApi::NmApiMessage* aMessage) const; 
+    QMessage CreateQMessage(NmApiMessage* aMessage) const; 
 
     void addAttachmentToMessage(QMessage& message, QMessageContentContainer& attachment) const;
     QDateTime symbianTTimetoQDateTime(const TTime& time) const;
     TTime qDateTimeToSymbianTTime(const QDateTime& date) const;
-    
-    QMessage messageL(const QMessageId& id) const;
+
     static bool accountLessThan(const QMessageAccountId accountId1, const QMessageAccountId accountId2);
     void orderAccounts(QMessageAccountIdList& accountIds,  const QMessageAccountSortOrder &sortOrder) const;
     void applyOffsetAndLimitToAccountIds(QMessageAccountIdList& idList, int offset, int limit) const;

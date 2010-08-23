@@ -63,6 +63,8 @@
 #include <nmapimessagemanager.h>
 #include <nmapimessage.h>
 
+#include <XQServiceRequest.h>
+#include "email_services_api.h"
 
 #include <QTextCodec>
 #include <QEventLoop>
@@ -287,20 +289,20 @@ void CFSEngine::updateEmailAccounts() const
 
 bool CFSEngine::sendEmail(QMessage &message)
 {
-    EmailClientApi::NmApiMessage* newMessage = NULL;
+    NmApiMessage newMessage;
     newMessage = createFSMessage(message); 
     if (m_createMessageError == true)
         return false;
     else {
         NmApiMessageManager* manager = new NmApiMessageManager(0, message.parentAccountId().toString().toULongLong());
-        QPointer<NmApiOperation> operation = manager->sendMessage(*newMessage);
+        QPointer<NmApiOperation> operation = manager->sendMessage(newMessage);
     }
     return true;
 }
 
 bool CFSEngine::addMessage(QMessage* message)
 {
-    EmailClientApi::NmApiMessage* newMessage = NULL;
+    NmApiMessage newMessage;
     newMessage = createFSMessage(*message);
     if (m_createMessageError == true)
         return false;
@@ -308,65 +310,72 @@ bool CFSEngine::addMessage(QMessage* message)
         return true;
 }
 
-EmailClientApi::NmApiMessage* CFSEngine::createFSMessage(QMessage& message)
+NmApiMessage CFSEngine::createFSMessage(QMessage& message)
 {   
     m_createMessageError = false;
     quint64 mailboxId = stripIdPrefix(message.parentAccountId().toString()).toULongLong();
-    NmApiMessageManager* manager = new NmApiMessageManager(0, mailboxId);
-    QPointer<NmApiOperation> operation = manager->createDraftMessage(0);
+    NmApiMessageManager* manager = new NmApiMessageManager(this, mailboxId);
+    QPointer<NmApiOperation> operation = manager->createDraftMessage(NULL);
+    NmApiMessage fsMessage = NmApiMessage();
     
     QEventLoop eventloop;
     QTimer timer;
+    qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
     connect(operation, SIGNAL(operationComplete(QVariant, int)), &eventloop, SLOT(quit()));
     connect(&timer, SIGNAL(timeout()), &eventloop, SLOT(quit()));
     
     QSignalSpy timeoutSpy(&timer, SIGNAL(timeout()));
-    QSignalSpy operationSpy(operation, SIGNAL(operationComplete(QVariant, int)));
+    QSignalSpy operationSpy(operation, SIGNAL(operationComplete(NmApiMessage, int)));
     timer.setSingleShot(true);
     timer.start(3000);
     eventloop.exec();
     
     if (!timeoutSpy.isEmpty()){
         m_createMessageError = true;
-        return NULL;
+        return fsMessage;
     }
     
-    QList<QVariant> arguments2 = operationSpy.takeLast();
-    //int c;
-    if(arguments2.at(0).canConvert<int>()) {
-        // result code
-        int c = arguments2.at(0).toInt();
-        if (c > 0) {
+    if (!operationSpy.isEmpty()) {
+        QList<QVariant> firstSignal = operationSpy.takeFirst();
+        QVariant argument1 = firstSignal.at(0);
+        if(argument1.canConvert<int>()) {
+            // result code
+            int c = argument1.toInt();
+            if (c > 0) {
+                m_createMessageError = true;
+                return fsMessage;
+            }
+        }
+        
+        QVariant argument2 = firstSignal.at(1);
+        if (argument2.isNull()) {
             m_createMessageError = true;
-            return NULL;
+            return fsMessage;
+        }
+
+        if (argument2.canConvert<NmApiMessage>()) {
+            fsMessage = qvariant_cast<NmApiMessage>(argument2);
         }
     }
     
-    QVariant data = operationSpy.takeFirst().at(0);
-    EmailClientApi::NmApiMessage* fsMessage = NULL;
-    NmApiMessageEnvelope* fsMessageEnvelope = NULL;
+    NmApiMessageEnvelope fsMessageEnvelope = fsMessage.envelope();
     
-    // TODO: QVariant conver
-    /*if(data.canConvert<EmailClientApi::NmApiMessage>()) {
-        fsMessage = data.value<EmailClientApi::NmApiMessage>;
-    }*/
-
     switch (message.priority()) {
         case QMessage::HighPriority:
-            fsMessageEnvelope->setPriority(EmailClientApi::NmApiMessagePriorityHigh);
+            fsMessageEnvelope.setPriority(EmailClientApi::NmApiMessagePriorityHigh);
             break;
         case QMessage::NormalPriority:
-            fsMessageEnvelope->setPriority(EmailClientApi::NmApiMessagePriorityNormal);
+            fsMessageEnvelope.setPriority(EmailClientApi::NmApiMessagePriorityNormal);
             break;
         case QMessage::LowPriority:
-            fsMessageEnvelope->setPriority(EmailClientApi::NmApiMessagePriorityLow);
+            fsMessageEnvelope.setPriority(EmailClientApi::NmApiMessagePriorityLow);
             break;            
         }
     
     if (message.status() & QMessage::Read)
-        fsMessageEnvelope->setIsRead(true);
+        fsMessageEnvelope.setIsRead(true);
     else
-        fsMessageEnvelope->setIsRead(false);
+        fsMessageEnvelope.setIsRead(false);
         
     
     // TODO: setSender 
@@ -380,7 +389,7 @@ EmailClientApi::NmApiMessage* CFSEngine::createFSMessage(QMessage& message)
             address.setDisplayName(toList.at(i).addressee());
             toRecipients.append(address);
         }
-        fsMessageEnvelope->setToRecipients(toRecipients);
+        fsMessageEnvelope.setToRecipients(toRecipients);
     }
     
     QList<QMessageAddress> ccList(message.cc());
@@ -392,7 +401,7 @@ EmailClientApi::NmApiMessage* CFSEngine::createFSMessage(QMessage& message)
             address.setDisplayName(ccList.at(i).addressee());
             ccRecipients.append(address);
         }
-        fsMessageEnvelope->setCcRecipients(ccRecipients);
+        fsMessageEnvelope.setCcRecipients(ccRecipients);
     }
         
     QList<QMessageAddress> bccList(message.bcc());
@@ -404,10 +413,10 @@ EmailClientApi::NmApiMessage* CFSEngine::createFSMessage(QMessage& message)
             address.setDisplayName(bccList.at(i).addressee());
             bccRecipients.append(address);
         }
-        fsMessageEnvelope->setBccRecipients(bccRecipients);
+        fsMessageEnvelope.setBccRecipients(bccRecipients);
     }
     
-    fsMessage->setEnvelope(*fsMessageEnvelope);
+    fsMessage.setEnvelope(fsMessageEnvelope);
     
     QMessageContentContainerIdList contentIds = message.contentIds();
     foreach (QMessageContentContainerId id, contentIds){
@@ -422,11 +431,11 @@ EmailClientApi::NmApiMessage* CFSEngine::createFSMessage(QMessage& message)
                 NmApiTextContent content;
                 content.setContent(message.textContent());
                 if (type == "text" && subType == "plain")
-                    fsMessage->setPlainTextContent(content);
+                    fsMessage.setPlainTextContent(content);
                 else if (type == "text" && subType == "html")
-                    fsMessage->setHtmlContent(content);
+                    fsMessage.setHtmlContent(content);
                 else
-                    fsMessageEnvelope->setPlainText(messageBody);
+                    fsMessageEnvelope.setPlainText(messageBody);
             }
         } else {
             // Message contains body and attachments
@@ -443,11 +452,11 @@ EmailClientApi::NmApiMessage* CFSEngine::createFSMessage(QMessage& message)
                     NmApiTextContent content;
                     content.setContent(container.textContent());
                     if (type == "text" && subType == "plain")
-                        fsMessage->setPlainTextContent(content);
+                        fsMessage.setPlainTextContent(content);
                     else if (type == "text" && subType == "html")
-                        fsMessage->setHtmlContent(content);
+                        fsMessage.setHtmlContent(content);
                     else
-                        fsMessageEnvelope->setPlainText(container.textContent());
+                        fsMessageEnvelope.setPlainText(container.textContent());
                     }
                 } else {
                     // ContentContainer is attachment
@@ -457,17 +466,31 @@ EmailClientApi::NmApiMessage* CFSEngine::createFSMessage(QMessage& message)
                     NmApiAttachment attachment;
                     QString temp_path = QString(filePath);
                     attachment.setFileName(temp_path);
-                    fsMessage->addAttachment(attachment);
+                    fsMessage.addAttachment(attachment);
                 }        
             }
         }
     }
-    fsMessageEnvelope->setSubject(message.subject());
+    fsMessageEnvelope.setSubject(message.subject());
     
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-    privateMessage->_id = QMessageId(addIdPrefix(QString::number(fsMessageEnvelope->id()), SymbianHelpers::EngineTypeFreestyle));
+    privateMessage->_id = QMessageId(addIdPrefix(QString::number(fsMessageEnvelope.id()), SymbianHelpers::EngineTypeFreestyle));
     
-    QPointer<NmApiOperation> saveOperation = manager->saveMessage(*fsMessage);       
+    bool saveSuccess = saveMessage(fsMessage, mailboxId);
+    if (!saveSuccess)
+        m_createMessageError = true;
+    else
+        m_createMessageError = false;
+        
+    return fsMessage;
+}
+
+bool CFSEngine::saveMessage(NmApiMessage message, quint64 mailboxId)
+{
+    NmApiMessageManager* manager = new NmApiMessageManager(0, mailboxId);
+    QPointer<NmApiOperation> saveOperation = manager->saveMessage(message);
+    QEventLoop eventloop;
+    QTimer timer;
     connect(saveOperation, SIGNAL(operationComplete(QVariant, int)), &eventloop, SLOT(quit()));
     connect(&timer, SIGNAL(timeout()), &eventloop, SLOT(quit()));  
     QSignalSpy timeoutSpy2(&timer, SIGNAL(timeout()));
@@ -480,7 +503,7 @@ EmailClientApi::NmApiMessage* CFSEngine::createFSMessage(QMessage& message)
         return false;
     }
     
-    arguments2 = saveOperationSpy.takeLast();
+    QList<QVariant> arguments2 = saveOperationSpy.takeLast();
     if(arguments2.at(0).canConvert<int>()) {
         // result code
         int c = arguments2.at(0).toInt();
@@ -488,8 +511,7 @@ EmailClientApi::NmApiMessage* CFSEngine::createFSMessage(QMessage& message)
             return false;
         }
     }
-
-    return fsMessage;
+    return true;
 }
 
 bool CFSEngine::updateMessage(QMessage* message)
@@ -502,17 +524,11 @@ bool CFSEngine::updateMessage(QMessage* message)
 
 void CFSEngine::updateFsMessage(QMessage* message)
 {
-    NmApiMessage* fsMessage = NULL;
+    quint64 messageId = stripIdPrefix(message->id().toString()).toULongLong();
+    NmApiMessage fsMessage = this->message(messageId);
     m_updateMessageError = false;
-    quint64 mailboxId = stripIdPrefix(message->parentAccountId().toString()).toULongLong();
-    NmApiMessageManager* manager = new NmApiMessageManager(0, mailboxId);
+    NmApiMessageEnvelope envelope = fsMessage.envelope();
     
-    // TODO:
-    /* Use NmApiEmailService::getMessage() to find NmApiMessage by messageId.
-    fsMessage = ...
-    */
-    
-    NmApiMessageEnvelope envelope = fsMessage->envelope();
     switch (message->priority()) {
         case QMessage::HighPriority:
             envelope.setPriority(EmailClientApi::NmApiMessagePriorityHigh);
@@ -581,9 +597,9 @@ void CFSEngine::updateFsMessage(QMessage* message)
                 NmApiTextContent content;
                 content.setContent(message->textContent());
                 if (type == "text" && subType == "plain")
-                    fsMessage->setPlainTextContent(content);
+                    fsMessage.setPlainTextContent(content);
                 else if (type == "text" && subType == "html")
-                    fsMessage->setHtmlContent(content);
+                    fsMessage.setHtmlContent(content);
                 else
                     envelope.setPlainText(messageBody);
             }
@@ -602,9 +618,9 @@ void CFSEngine::updateFsMessage(QMessage* message)
                     NmApiTextContent content;
                     content.setContent(container.textContent());
                     if (type == "text" && subType == "plain")
-                        fsMessage->setPlainTextContent(content);
+                        fsMessage.setPlainTextContent(content);
                     else if (type == "text" && subType == "html")
-                        fsMessage->setHtmlContent(content);
+                        fsMessage.setHtmlContent(content);
                     else
                         envelope.setPlainText(container.textContent());
                     }
@@ -616,7 +632,7 @@ void CFSEngine::updateFsMessage(QMessage* message)
                     NmApiAttachment attachment;
                     QString temp_path = QString(filePath);
                     attachment.setFileName(temp_path);
-                    fsMessage->addAttachment(attachment);
+                    fsMessage.addAttachment(attachment);
                 }        
             }
         }
@@ -626,29 +642,26 @@ void CFSEngine::updateFsMessage(QMessage* message)
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(*message);
     privateMessage->_id = QMessageId(addIdPrefix(QString::number(envelope.id()), SymbianHelpers::EngineTypeFreestyle));
     
-    QEventLoop eventloop;
-    QTimer timer;
-    QPointer<NmApiOperation> saveOperation = manager->saveMessage(*fsMessage);       
-    connect(saveOperation, SIGNAL(operationComplete(QVariant, int)), &eventloop, SLOT(quit()));
-    connect(&timer, SIGNAL(timeout()), &eventloop, SLOT(quit()));  
-    QSignalSpy timeoutSpy2(&timer, SIGNAL(timeout()));
-    QSignalSpy saveOperationSpy(saveOperation, SIGNAL(operationComplete(QVariant, int)));
-    timer.setSingleShot(true);
-    timer.start(3000);
-    eventloop.exec();
-    
-    if (!timeoutSpy2.isEmpty()){
+    quint64 mailboxId = stripIdPrefix(message->parentAccountId().toString()).toULongLong();
+    bool saveSuccess = saveMessage(fsMessage, mailboxId);
+    if (!saveSuccess)
         m_updateMessageError = true;
-    }
+  
+}
+
+NmApiMessage CFSEngine::message(const quint64 messageId) const
+{
+    NmApiMessage fsMessage;
+    // TODO:
+    /* Use NmApiEmailService::getMessage() to find NmApiMessage by messageId.
+    fsMessage = ...
+    */
+    return fsMessage;
+}
+
+QMessage CFSEngine::message(const QMessageId &id) const
+{
     
-    QList<QVariant> arguments2 = saveOperationSpy.takeLast();
-    if(arguments2.at(0).canConvert<int>()) {
-        // result code
-        int c = arguments2.at(0).toInt();
-        if (c > 0) {
-        m_updateMessageError = true;
-        }
-    }
 }
 
 bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOption option)
@@ -688,30 +701,22 @@ bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOpti
 
 bool CFSEngine::showMessage(const QMessageId &id)
 {
-    bool retVal = false;
-/*    foreach (QMessageAccount account, m_accounts) {
-        MEmailMessage* message = NULL;
-        TMailboxId mailboxId(stripIdPrefix(account.id().toString()).toInt());
-        MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
-        
-        TMessageId messageId(
-            stripIdPrefix(id.toString()).toInt(),
-            0, 
-            mailboxId);
-        
-        TRAPD(err, message = mailbox->MessageL(messageId));
+    bool syncronous;
 
-        if (err == KErrNone) {
-            TRAPD(err2, message->ShowMessageViewerL());
-            if (err2 == KErrNone)
-                retVal = true;
-            message->Release();
-            mailbox->Release();
-            break; // no need to continue
-        }
-        mailbox->Release();
-    } */
-    return retVal;
+    XQServiceRequest request(
+       emailInterfaceNameMessage,
+       emailOperationViewMessage,
+       syncronous );
+
+/*    QList<QVariant> list;
+    list.append(mailboxId);
+    list.append(folderId);
+    list.append(messageId);
+    request.setArguments(list);*/
+
+    QVariant returnValue;
+    bool rval = request.send(returnValue);
+    return rval;
 }
 
 bool CFSEngine::composeMessage(const QMessage &message)
@@ -1697,22 +1702,7 @@ bool CFSEngine::fsFolderL(const QMessageFolderId& id, NmApiMailbox* mailbox, NmA
     return false;
 }
 
-
-QMessage CFSEngine::message(const QMessageId& id) const
-{
-    QMessage message = QMessage();
-    TRAPD(err, message = messageL(id));
-    Q_UNUSED(err);
-    return message;
-}
-
-QMessage CFSEngine::messageL(const QMessageId& id) const
-{
-    QMessage message = QMessage();
-    return message;
-}
-
-QMessage CFSEngine::CreateQMessage(EmailClientApi::NmApiMessage* aMessage) const
+QMessage CFSEngine::CreateQMessage(NmApiMessage* aMessage) const
 {
     QMessage message;
     int size = 0;

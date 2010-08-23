@@ -149,6 +149,8 @@ symbian|win32|maemo6|maemo5|mac {
 				DEFINES += FREESTYLEMAILBOXOBSERVERUSED
 			}
 		}
+	INCLUDEPATH += /sf/mw/qtextensions/qthighway/inc
+	LIBS += -lxqservice 
 	contains(messaging_ncnlist_enabled, no) : DEFINES += NCNLISTREMOVED
         HEADERS -= qmessagestore_p.h \
             qmessagecontentcontainer_p.h \
