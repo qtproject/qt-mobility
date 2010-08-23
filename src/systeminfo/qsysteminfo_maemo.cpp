@@ -1228,6 +1228,35 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
     }
 }
 
+QString QSystemDeviceInfoPrivate::model()
+{
+    QString name;
+    if(productName()== "RX-51")
+        name = "N900"; //fake this for now
+
+    return name;
+
+}
+
+QString QSystemDeviceInfoPrivate::productName()
+{
+#if !defined(QT_NO_DBUS)
+#if defined(Q_WS_MAEMO_6)
+    QString dBusService = "com.nokia.SystemInfo";
+#else
+    /* Maemo 5 */
+    QString dBusService = "com.nokia.SystemInfo";
+#endif
+    QDBusInterface connectionInterface(dBusService,
+                                       "/com/nokia/SystemInfo",
+                                       "com.nokia.SystemInfo",
+                                       QDBusConnection::systemBus());
+
+    QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue","/component/product");
+    return reply.value();
+#endif
+}
+
 #endif
 
 //////////////
