@@ -7310,6 +7310,13 @@
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_CONTEXTKIT_LAYER" href="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_CONTEXTKIT_LAYER()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_SYMBIAN_SETTINGS_LAYER" href="qvaluespace.html#QVALUESPACE_SYMBIAN_SETTINGS_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_SYMBIAN_SETTINGS_LAYER()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaStreamsControl_iid" href="qmediastreamscontrol.html#QMediaStreamsControl_iid" location="qmediastreamscontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaStreamsControl" type="" signature="QMediaStreamsControl_iid()"/>
+        <page access="public" status="commendable" name="messaging-installation-on-windows-mobile.html" href="messaging-installation-on-windows-mobile.html" subtype="page" title="Messaging Installation On Windows Mobile" fulltitle="Messaging Installation On Windows Mobile" subtitle="" location="messaging-installation-on-windows-mobile.qdoc">
+            <contents name="get-qt-mobility-and-qt-packages" title="Get Qt Mobility and Qt packages" level="1"/>
+            <contents name="install-pre-requisites" title="Install pre-requisites" level="1"/>
+            <contents name="build-qt" title="Build Qt" level="1"/>
+            <contents name="build-mobility-messaging" title="Build Mobility Messaging" level="1"/>
+            <contents name="deploy" title="Deploy" level="1"/>
+        </page>
         <page access="public" status="commendable" name="fetchgooglemaps" href="fetchgooglemaps.html" subtype="example" title="Fetch Google Maps Example" fulltitle="Fetch Google Maps Example" subtitle="" location="fetchgooglemaps.qdoc">
             <page access="public" status="commendable" name="fetchgooglemaps/mapwindow.cpp" href="fetchgooglemaps-mapwindow-cpp.html" subtype="file" title="" fulltitle="mapwindow.cpp Example File" subtitle="fetchgooglemaps/mapwindow.cpp" location=""/>
             <page access="public" status="commendable" name="fetchgooglemaps/mapwindow.h" href="fetchgooglemaps-mapwindow-h.html" subtype="file" title="" fulltitle="mapwindow.h Example File" subtitle="fetchgooglemaps/mapwindow.h" location=""/>
@@ -7431,6 +7438,7 @@
             <contents name="overview" title="Overview" level="1"/>
             <contents name="usage" title="Usage" level="1"/>
             <contents name="main-classes" title="Main Classes" level="1"/>
+            <contents name="supported-features" title="Supported Features" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="DECLARE_READING" href="qsensorreading.html#DECLARE_READING" location="" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QSensorReading" type="" signature="DECLARE_READING( classname)">
             <parameter left="" right="" name="classname" default=""/>
@@ -7691,6 +7699,8 @@
             <contents name="examples" title="Examples" level="1"/>
             <contents name="system-information-example" title="System Information Example" level="2"/>
         </page>
+        <page access="public" status="commendable" name="http://bugreports.qt.nokia.com" href="http-bugreports-qt-nokia-com.html" subtype="externalpage" title="QtMobility Project Bug Tracker" fulltitle="QtMobility Project Bug Tracker" subtitle="" location="qtmobility-release-notes.qdoc"/>
+        <page access="public" status="commendable" name="qtmobility-release-notes.html" href="qtmobility-release-notes.html" subtype="page" title="Release Notes of the QtMobility Project 1.0.2 patch release" fulltitle="Release Notes of the QtMobility Project 1.0.2 patch release" subtitle="" location="qtmobility-release-notes.qdoc"/>
         <page access="public" status="commendable" name="audiorecorder" href="audiorecorder.html" subtype="example" title="Audio Recorder Example" fulltitle="Audio Recorder Example" subtitle="" location="audiorecorder.qdoc">
             <page access="public" status="commendable" name="audiorecorder/audiorecorder.cpp" href="audiorecorder-audiorecorder-cpp.html" subtype="file" title="" fulltitle="audiorecorder.cpp Example File" subtitle="audiorecorder/audiorecorder.cpp" location=""/>
             <page access="public" status="commendable" name="audiorecorder/audiorecorder.h" href="audiorecorder-audiorecorder-h.html" subtype="file" title="" fulltitle="audiorecorder.h Example File" subtitle="audiorecorder/audiorecorder.h" location=""/>
@@ -7767,25 +7777,6 @@
             <page access="public" status="commendable" name="battery-charge/battery-publisher/main.cpp" href="battery-charge-battery-publisher-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="battery-charge/battery-publisher/main.cpp" location=""/>
             <page access="public" status="commendable" name="battery-charge/battery-charge.pro" href="battery-charge-battery-charge-pro.html" subtype="file" title="" fulltitle="battery-charge.pro Example File" subtitle="battery-charge/battery-charge.pro" location=""/>
             <page access="public" status="commendable" name="battery-charge/battery-publisher/battery-publisher.pro" href="battery-charge-battery-publisher-battery-publisher-pro.html" subtype="file" title="" fulltitle="battery-publisher.pro Example File" subtitle="battery-charge/battery-publisher/battery-publisher.pro" location=""/>
-        </page>
-        <page access="public" status="commendable" name="qmlcontacts" href="qmlcontacts.html" subtype="example" title="Sample QML-based Phonebook Example" fulltitle="Sample QML-based Phonebook Example" subtitle="" location="qmlcontacts.qdoc">
-            <contents name="phone-book" title="Phone Book" level="1"/>
-            <contents name="motivation" title="Motivation" level="2"/>
-            <contents name="interface" title="Interface" level="2"/>
-            <contents name="known-issues" title="Known Issues" level="2"/>
-            <page access="public" status="commendable" name="qmlcontacts/imageprovider.cpp" href="qmlcontacts-imageprovider-cpp.html" subtype="file" title="" fulltitle="imageprovider.cpp Example File" subtitle="qmlcontacts/imageprovider.cpp" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/imageprovider.h" href="qmlcontacts-imageprovider-h.html" subtype="file" title="" fulltitle="imageprovider.h Example File" subtitle="qmlcontacts/imageprovider.h" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/plugin.cpp" href="qmlcontacts-plugin-cpp.html" subtype="file" title="" fulltitle="plugin.cpp Example File" subtitle="qmlcontacts/plugin.cpp" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontact.cpp" href="qmlcontacts-qmlcontact-cpp.html" subtype="file" title="" fulltitle="qmlcontact.cpp Example File" subtitle="qmlcontacts/qmlcontact.cpp" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontact.h" href="qmlcontacts-qmlcontact-h.html" subtype="file" title="" fulltitle="qmlcontact.h Example File" subtitle="qmlcontacts/qmlcontact.h" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontactdetail.cpp" href="qmlcontacts-qmlcontactdetail-cpp.html" subtype="file" title="" fulltitle="qmlcontactdetail.cpp Example File" subtitle="qmlcontacts/qmlcontactdetail.cpp" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontactdetail.h" href="qmlcontacts-qmlcontactdetail-h.html" subtype="file" title="" fulltitle="qmlcontactdetail.h Example File" subtitle="qmlcontacts/qmlcontactdetail.h" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontactdetailfield.cpp" href="qmlcontacts-qmlcontactdetailfield-cpp.html" subtype="file" title="" fulltitle="qmlcontactdetailfield.cpp Example File" subtitle="qmlcontacts/qmlcontactdetailfield.cpp" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontactdetailfield.h" href="qmlcontacts-qmlcontactdetailfield-h.html" subtype="file" title="" fulltitle="qmlcontactdetailfield.h Example File" subtitle="qmlcontacts/qmlcontactdetailfield.h" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontactmodel.cpp" href="qmlcontacts-qmlcontactmodel-cpp.html" subtype="file" title="" fulltitle="qmlcontactmodel.cpp Example File" subtitle="qmlcontacts/qmlcontactmodel.cpp" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontactmodel.h" href="qmlcontacts-qmlcontactmodel-h.html" subtype="file" title="" fulltitle="qmlcontactmodel.h Example File" subtitle="qmlcontacts/qmlcontactmodel.h" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/contents/default.svg" href="qmlcontacts-contents-default-svg.html" subtype="file" title="" fulltitle="default.svg Example File" subtitle="qmlcontacts/contents/default.svg" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontacts.pro" href="qmlcontacts-qmlcontacts-pro.html" subtype="file" title="" fulltitle="qmlcontacts.pro Example File" subtitle="qmlcontacts/qmlcontacts.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="servicefw" href="servicefw.html" subtype="group" title="Service Frameworks Classes" fulltitle="Service Frameworks Classes" subtitle="" location="sf.qdoc"/>
         <page access="public" status="commendable" name="service-frameworks.html" href="service-frameworks.html" subtype="page" title="Qt Service Framework" fulltitle="Qt Service Framework" subtitle="" location="sf.qdoc">
@@ -7875,29 +7866,15 @@
             <contents name="modifying-the-schema-supported-by-a-manager" title="Modifying the schema supported by a manager" level="2"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QAudioEndpointSelector_iid" href="qaudioendpointselector.html#QAudioEndpointSelector_iid" location="qaudioendpointselector.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QAudioEndpointSelector" type="" signature="QAudioEndpointSelector_iid()"/>
-        <page access="public" status="commendable" name="http://bugreports.qt.nokia.com" href="http-bugreports-qt-nokia-com.html" subtype="externalpage" title="QtMobility Project Bug Tracker" fulltitle="QtMobility Project Bug Tracker" subtitle="" location="qtmobility-known-issues.qdoc"/>
-        <page access="public" status="commendable" name="qtmobility-known-issues.html" href="qtmobility-known-issues.html" subtype="page" title="Release Notes of the QtMobility Project" fulltitle="Release Notes of the QtMobility Project" subtitle="" location="qtmobility-known-issues.qdoc">
-            <contents name="new-features" title="New Features" level="1"/>
-            <contents name="detailed-feature-support-symbian-s60" title="Detailed Feature support - Symbian/S60" level="2"/>
-            <contents name="bearer-management-api" title="Bearer Management API" level="3"/>
-            <contents name="contacts-api" title="Contacts API" level="3"/>
-            <contents name="messaging-api" title="Messaging API" level="3"/>
-            <contents name="multimedia-api" title="Multimedia API" level="3"/>
-            <contents name="service-framework-api" title="Service Framework API" level="3"/>
-            <contents name="system-info-api" title="System Info API" level="3"/>
-            <contents name="known-issues" title="Known Issues" level="1"/>
-            <contents name="non-api-specific-issues" title="Non-API specific issues" level="2"/>
-            <contents name="bearer-management-api" title="Bearer Management API" level="2"/>
-            <contents name="contacts-api" title="Contacts API" level="2"/>
-            <contents name="bearer-management-api" title="Bearer Management API" level="2"/>
-            <contents name="messaging-api" title="Messaging API" level="2"/>
-            <contents name="multimedia-api" title="Multimedia API" level="2"/>
-            <contents name="system-info-api" title="System Info API" level="2"/>
-        </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoEncoderControl_iid" href="qvideoencodercontrol.html#QVideoEncoderControl_iid" location="qvideoencodercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoEncoderControl" type="" signature="QVideoEncoderControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaPlaylistControl_iid" href="qmediaplaylistcontrol.html#QMediaPlaylistControl_iid" location="qmediaplaylistcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaPlaylistControl" type="" signature="QMediaPlaylistControl_iid()"/>
         <page access="public" status="commendable" name="opensourceedition.html" href="opensourceedition.html" subtype="page" title="Open Source Versions of Qt" fulltitle="Open Source Versions of Qt" subtitle="" location="opensourceedition.qdoc"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoRendererControl_iid" href="qvideorenderercontrol.html#QVideoRendererControl_iid" location="qvideorenderercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoRendererControl" type="" signature="QVideoRendererControl_iid()"/>
+        <page access="public" status="commendable" name="vcardsupport.html" href="vcardsupport.html" subtype="page" title="Supported vCard Features" fulltitle="Supported vCard Features" subtitle="" location="vcardsupport.qdoc">
+            <target name="vcardsupport"/>
+            <contents name="properties" title="Properties" level="1"/>
+            <contents name="parameters" title="Parameters" level="1"/>
+        </page>
         <page access="public" status="commendable" name="service-framework-on-symbian.html" href="service-framework-on-symbian.html" subtype="page" title="Qt Service Framework on Symbian" fulltitle="Qt Service Framework on Symbian" subtitle="" location="sfw_s60.qdoc">
             <contents name="how-to-register-and-unregister-service-plugins-in-s60" title="How to register and unregister service plugins in S60?" level="1"/>
             <contents name="what-s-special-from-the-security-perspective" title="What's special from the security perspective?" level="1"/>

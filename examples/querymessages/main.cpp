@@ -41,6 +41,7 @@
 #include <QCoreApplication>
 #include <qmessagemanager.h>
 #include <qdebug.h>
+#include <QMap>
 #ifdef Q_OS_SYMBIAN
 #include <iostream>
 #endif
@@ -56,15 +57,83 @@ static void printMessage(const QString& msg)
 #endif
 }
 
+void usage()
+{
+    QString msg("Usage: [<options>] [<datafields>]\n"
+                  " Where <options> limit the types of messages shown, valid choices: -all, -sms, -mms, -email, -instantmessage, -incoming, -read, -inboxfolder, -draftsfolder, -outboxfolder, -sentfolder, -trashfolder\n"
+                  "         To join options by logical OR use +, for option, eg \"+sms +mms\" will return sms OR mms messages\n"
+                  " Where <datafields> specify what fields to print from matched messages, valid choices are: subject, date, receivedDate, status, size, priority, to, cc, bcc, from, type, body, attachments");
+    printMessage(msg);
+}
+
+// create message filter as requested by command line options
+QMessageFilter createFilter(QStringList args)
+{
+    QMessageFilter filter(QMessageFilter::byStatus(QMessage::Incoming));
+    QMessageFilter customfilter;
+    bool setCustomFilter = false;
+    QMap<QString, QMessageFilter> filterMap;
+    filterMap.insert(QLatin1String("all"), QMessageFilter());
+    filterMap.insert(QLatin1String("sms"), QMessageFilter::byType(QMessage::Sms));
+    filterMap.insert(QLatin1String("mms"), QMessageFilter::byType(QMessage::Mms));
+    filterMap.insert(QLatin1String("email"), QMessageFilter::byType(QMessage::Email));
+    filterMap.insert(QLatin1String("instantmessage"), QMessageFilter::byType(QMessage::InstantMessage));
+    filterMap.insert(QLatin1String("incoming"), QMessageFilter::byStatus(QMessage::Incoming));
+    filterMap.insert(QLatin1String("read"), QMessageFilter::byStatus(QMessage::Read));
+    filterMap.insert(QLatin1String("inboxfolder"), QMessageFilter::byStandardFolder(QMessage::InboxFolder));
+    filterMap.insert(QLatin1String("draftsfolder"), QMessageFilter::byStandardFolder(QMessage::DraftsFolder));
+    filterMap.insert(QLatin1String("outboxfolder"), QMessageFilter::byStandardFolder(QMessage::OutboxFolder));
+    filterMap.insert(QLatin1String("sentfolder"), QMessageFilter::byStandardFolder(QMessage::SentFolder));
+    filterMap.insert(QLatin1String("trashfolder"), QMessageFilter::byStandardFolder(QMessage::TrashFolder));
+
+    // process command line options after the application name
+    foreach (const QString &arg, args.mid(1)){
+        QMap<QString, QMessageFilter>::const_iterator iterator = filterMap.find(arg.toLower().mid(1));
+        if (iterator != filterMap.end()){
+            setCustomFilter = true;
+            // use AND logic when compounding filter?
+            if (arg[0] == '-' )
+                customfilter = customfilter & iterator.value();
+            else
+                customfilter = customfilter | iterator.value();
+        }
+    }
+
+    if (setCustomFilter)
+        filter = customfilter;
+
+    return filter;
+}
+
+
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
     printMessage("Querying messages...");
 
+    // determine what data options were requested and if help was requested
+    // if no data options were provided default to "subject"
+    QStringList dataOptions;
+    QStringList validDataOptions = QStringList() << "subject" << "date" << "receivedDate" << "status"
+                    << "size" << "priority" << "to" << "cc" << "bcc" << "from"
+                    << "type" << "body" << "attachments";
+    foreach (const QString &arg, app.arguments()){
+        if (arg == "-help"){
+            usage();
+            exit(1);
+        }
+        if (validDataOptions.contains(arg))
+            dataOptions.append(arg);
+    }
+    if (dataOptions.isEmpty())
+        dataOptions.append("subject");
+
 //! [setup-query]
-    // Match all messages whose status field includes the Incoming flag
-    QMessageFilter filter(QMessageFilter::byStatus(QMessage::Incoming));
+    // Create filter to match required messages
+    QMessageFilter filter = createFilter(app.arguments());
+    // instead of the above use the following for a simple filter of all messages whose status field have the Incoming flag to be set, eg incoming emails
+    //QMessageFilter filter(QMessageFilter::byStatus(QMessage::Incoming));
 
     // Order the matching results by their reception timestamp, in descending order
     QMessageSortOrder sortOrder(QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder));
@@ -90,43 +159,40 @@ int main(int argc, char *argv[])
         if (manager.error() == QMessageManager::NoError) {
             QStringList result;
 
-            if (app.arguments().count() < 2) {
-                // Default to printing only the subject
-                result.append(message.subject());
-            } else {
 //! [generate-output]
-                // Extract the requested data items from this message
-                foreach (const QString &arg, app.arguments().mid(1)) {
-                    if (arg == "subject") {
-                        result.append(message.subject());
-                    } else if (arg == "date") {
-                        result.append(message.date().toLocalTime().toString());
+            // Extract the requested data items from this message
+            foreach (const QString &arg, dataOptions) {
+                if (arg == "subject") {
+                    result.append(message.subject());
+                } else if (arg == "date") {
+                    result.append(message.date().toLocalTime().toString());
 //! [generate-output]
-                    } else if (arg == "receivedDate") {
-                        result.append(message.receivedDate().toLocalTime().toString());
-                    } else if (arg == "size") {
-                        result.append(QString::number(message.size()));
-                    } else if (arg == "priority") {
+                } else if (arg == "receivedDate") {
+                    result.append(message.receivedDate().toLocalTime().toString());
+                } else if (arg == "size") {
+                    result.append(QString::number(message.size()));
+                } else if (arg == "priority") {
                         result.append(message.priority() == QMessage::HighPriority ? "High" : (message.priority() == QMessage::LowPriority ? "Low" : "Normal"));
-                    } else if ((arg == "to") || (arg == "cc") || (arg == "bcc")) {
-                        QStringList addresses;
-                        foreach (const QMessageAddress &addr, (arg == "to" ? message.to() : (arg == "cc" ? message.cc() : message.bcc()))) {
-                            addresses.append(addr.addressee());
-                        }
-                        result.append(addresses.join(","));
-                    } else if (arg == "from") {
-                        result.append(message.from().addressee());
-                    } else if (arg == "type") {
-                        result.append(message.contentType() + '/' + message.contentSubType());
-                    } else if (arg == "body") {
-                        result.append(message.find(message.bodyId()).textContent());
-                    } else if (arg == "attachments") {
-                        QStringList fileNames;
-                        foreach (const QMessageContentContainerId &id, message.attachmentIds()) {
-                            fileNames.append(message.find(id).suggestedFileName());
-                        }
-                        result.append(fileNames.join(","));
+                } else if ((arg == "to") || (arg == "cc") || (arg == "bcc")) {
+                    QStringList addresses;
+                    foreach (const QMessageAddress &addr, (arg == "to" ? message.to() : (arg == "cc" ? message.cc() : message.bcc()))) {
+                        addresses.append(addr.addressee());
                     }
+                    result.append(addresses.join(","));
+                } else if (arg == "from") {
+                    result.append(message.from().addressee());
+                } else if (arg == "type") {
+                    result.append(message.contentType() + '/' + message.contentSubType());
+                } else if (arg == "body") {
+                    result.append(message.find(message.bodyId()).textContent());
+                } else if (arg == "status") {
+                    result.append(QString("0x%1").arg(QString::number(message.status())));
+                } else if (arg == "attachments") {
+                    QStringList fileNames;
+                    foreach (const QMessageContentContainerId &id, message.attachmentIds()) {
+                        fileNames.append(message.find(id).suggestedFileName());
+                    }
+                    result.append(fileNames.join(","));
                 }
             }
 

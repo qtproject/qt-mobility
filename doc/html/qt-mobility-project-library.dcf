@@ -3590,6 +3590,9 @@
     <section ref="messaging.html" title="Messaging">
         <keyword ref="messaging.html">Messaging</keyword>
     </section>
+    <section ref="messaging-installation-on-windows-mobile.html" title="Messaging Installation On Windows Mobile">
+        <keyword ref="messaging-installation-on-windows-mobile.html">Messaging Installation On Windows Mobile</keyword>
+    </section>
     <section ref="multimedia.html" title="Mobility Multimedia">
         <keyword ref="multimedia.html">Mobility Multimedia</keyword>
     </section>
@@ -3629,8 +3632,8 @@
     <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian">
         <keyword ref="service-framework-on-symbian.html">Qt Service Framework on Symbian</keyword>
     </section>
-    <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project">
-        <keyword ref="qtmobility-known-issues.html">Release Notes of the QtMobility Project</keyword>
+    <section ref="qtmobility-release-notes.html" title="Release Notes of the QtMobility Project 1.0&#x2e;2 patch release">
+        <keyword ref="qtmobility-release-notes.html">Release Notes of the QtMobility Project 1.0&#x2e;2 patch release</keyword>
     </section>
     <section ref="sensors-api.html" title="Sensors API">
         <keyword ref="sensors-api.html">Sensors API</keyword>
@@ -3640,6 +3643,9 @@
     </section>
     <section ref="servicefw.html" title="Service Frameworks Classes">
         <keyword ref="servicefw.html">Service Frameworks Classes</keyword>
+    </section>
+    <section ref="vcardsupport.html" title="Supported vCard Features">
+        <keyword ref="vcardsupport.html">Supported vCard Features</keyword>
     </section>
     <section ref="systeminfo.html" title="System Information">
         <keyword ref="systeminfo.html">System Information</keyword>
@@ -3741,9 +3747,6 @@
     </section>
     <section ref="samplephonebook.html" title="Sample Phonebook Example">
         <keyword ref="samplephonebook.html">Sample Phonebook Example</keyword>
-    </section>
-    <section ref="qmlcontacts.html" title="Sample QML-based Phonebook Example">
-        <keyword ref="qmlcontacts.html">Sample QML-based Phonebook Example</keyword>
     </section>
     <section ref="serviceactions.html" title="Service Actions Example">
         <keyword ref="serviceactions.html">Service Actions Example</keyword>

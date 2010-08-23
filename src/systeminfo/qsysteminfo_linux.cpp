@@ -76,6 +76,20 @@
 #endif
 
 QTM_BEGIN_NAMESPACE
+static bool halAvailable()
+{
+#if !defined(QT_NO_DBUS)
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    if (dbusConnection.isConnected()) {
+        QDBusConnectionInterface *dbiface = dbusConnection.interface();
+        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.Hal");
+        if (reply.isValid() && reply.value()) {
+            return reply.value();
+        }
+    }
+#endif
+    return false;
+}
 
 QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
  : QSystemInfoLinuxCommonPrivate(parent)
@@ -522,6 +536,103 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
     }
 
     return false;
+}
+
+QString QSystemDeviceInfoPrivate::model()
+{
+    if(halAvailable()) {
+#if !defined(QT_NO_DBUS)
+        QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
+        QString model;
+        if (iface.isValid()) {
+            model = iface.getPropertyString("system.kernel.machine");
+            if(!model.isEmpty())
+                model += " ";
+            model += iface.getPropertyString("system.chassis.type");
+            if(!model.isEmpty())
+                return model;
+        }
+#endif
+    }
+    QFile file("/proc/cpuinfo");
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Could not open /proc/cpuinfo";
+    } else {
+        QTextStream cpuinfo(&file);
+        QString line = cpuinfo.readLine();
+        while (!line.isNull()) {
+            line = cpuinfo.readLine();
+            if(line.contains("model name")) {
+                return line.split(": ").at(1).trimmed();
+            }
+        }
+    }
+    return QString();
+}
+
+QString QSystemDeviceInfoPrivate::productName()
+{
+    if(halAvailable()) {
+#if !defined(QT_NO_DBUS)
+        QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
+        QString productName;
+        if (iface.isValid()) {
+            productName = iface.getPropertyString("info.product");
+            if(productName.isEmpty()) {
+                productName = iface.getPropertyString("system.product");
+                if(!productName.isEmpty())
+                    return productName;
+            } else {
+                return productName;
+            }
+        }
+#endif
+    }
+    const QDir dir("/etc");
+    if(dir.exists()) {
+        QStringList langList;
+        QFileInfoList localeList = dir.entryInfoList(QStringList() << "*release",
+                                                     QDir::Files | QDir::NoDotAndDotDot,
+                                                     QDir::Name);
+        foreach(const QFileInfo fileInfo, localeList) {
+            const QString filepath = fileInfo.filePath();
+            QFile file(filepath);
+            if (file.open(QIODevice::ReadOnly)) {
+                QTextStream prodinfo(&file);
+                QString line = prodinfo.readLine();
+                while (!line.isNull()) {
+                    if(filepath.contains("lsb.release")) {
+                        if(line.contains("DISTRIB_DESCRIPTION")) {
+                            return line.split("=").at(1).trimmed();
+                        }
+                    } else {
+                        return line;
+                    }
+                    line = prodinfo.readLine();
+                }
+            }
+        } //end foreach
+    }
+
+    QFile file("/etc/issue");
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Could not open /proc/cpuinfo";
+    } else {
+        QTextStream prodinfo(&file);
+        QString line = prodinfo.readLine();
+        while (!line.isNull()) {
+            line = prodinfo.readLine();
+            if(!line.isEmpty()) {
+                QStringList lineList = line.split(" ");
+                for(int i = 0; i < lineList.count(); i++) {
+                    if(lineList.at(i).toFloat()) {
+                        return lineList.at(i-1) + " "+ lineList.at(i);
+                    }
+                }
+            }
+        }
+    }
+    return QString();
 }
 
  QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
