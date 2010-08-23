@@ -2453,7 +2453,7 @@ bool DatabaseOperations::importLandmarks(QIODevice *device,
         device->close();
         return result;
     } else if (detectedFormat == QLandmarkManager::Gpx) {
-           result = importLandmarksGpx(device, option, categoryId, error, errorString);
+           result = importLandmarksGpx(device, option, categoryId, error, errorString, queryRun, landmarkIds);
            device->close();
            return result;
     } else {
@@ -2617,7 +2617,8 @@ bool DatabaseOperations::importLandmarksGpx(QIODevice *device,
                         const QLandmarkCategoryId &categoryId,
                         QLandmarkManager::Error *error,
                         QString *errorString,
-                        QueryRun *queryRun)
+                        QueryRun *queryRun,
+                        QList<QLandmarkId> *landmarkIds)
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
@@ -2645,13 +2646,18 @@ bool DatabaseOperations::importLandmarksGpx(QIODevice *device,
                     landmarks[i].addCategoryId(categoryId);
                 }
             }
-            saveLandmarks(&landmarks, 0, error, errorString);
+
+        saveLandmarks(&landmarks, 0, error, errorString);
+
 
         if (*error != QLandmarkManager::NoError) {
             result = false;
         } else  {
-            if (errorString)
-                *errorString = "";
+            foreach(const QLandmark &landmark, landmarks) {
+                if (landmarkIds && landmark.landmarkId().isValid()) {
+                    landmarkIds->append(landmark.landmarkId());
+                }
+            }
             result = true;
         }
     } else {
@@ -3083,11 +3089,11 @@ void QueryRun::run()
         case QLandmarkAbstractRequest::ImportRequest :
             {
                 QLandmarkImportRequest *importRequest = static_cast<QLandmarkImportRequest *> (request);
-
+                QList<QLandmarkId> landmarkIds;
                 databaseOperations.importLandmarks( importRequest->device(),
                                                     importRequest->format(), importRequest->transferOption(),
                                                     importRequest->categoryId(),
-                                                    &error, &errorString);
+                                                    &error, &errorString, this, &landmarkIds);
                 if (this->gpxHandler) {
                     delete gpxHandler;
                     gpxHandler = 0;
@@ -3099,7 +3105,6 @@ void QueryRun::run()
 
                 }
 
-                QList<QLandmarkId> landmarkIds;//TODO: populate this list
                 QMetaObject::invokeMethod(engine, "updateLandmarkImportRequest",
                                           Q_ARG(QLandmarkImportRequest *, importRequest),
                                           Q_ARG(QList<QLandmarkId>, landmarkIds),

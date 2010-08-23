@@ -5610,12 +5610,14 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
         importRequest.setFormat(QLandmarkManager::Gpx);
         importRequest.start();
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError,2000));
+        QCOMPARE(importRequest.landmarkIds().count(),149);
     } else if (type == "asyncExcludeCategoryData") {
         importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
         importRequest.setFormat(QLandmarkManager::Gpx);
         importRequest.setTransferOption(QLandmarkManager::ExcludeCategoryData);
         importRequest.start();
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError,2000));
+        QCOMPARE(importRequest.landmarkIds().count(),149);
     } else if (type == "asyncAttachSingleCategory") {
         importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
         importRequest.setFormat(QLandmarkManager::Gpx);
@@ -5636,6 +5638,7 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
         importRequest.setCategoryId(cat2.categoryId()); //valid id
         importRequest.start();
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError));
+        QCOMPARE(importRequest.landmarkIds().count(),149);
     } else {
         qFatal("Unknown row test type");
     }
@@ -5766,6 +5769,7 @@ void tst_QLandmarkManagerEngineSqlite::importLmx() {
         importRequest.setFormat(QLandmarkManager::Lmx);
         importRequest.start();
         QVERIFY(waitForAsync(spy, &importRequest,QLandmarkManager::NoError));
+        QCOMPARE(importRequest.landmarkIds().count(), 16);
     } else if (type == "syncExcludeCategoryData") {
         QVERIFY(m_manager->importLandmarks(":data/convert-collection-in.xml",  QLandmarkManager::Lmx,QLandmarkManager::ExcludeCategoryData));
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
@@ -5775,6 +5779,7 @@ void tst_QLandmarkManagerEngineSqlite::importLmx() {
         importRequest.setTransferOption(QLandmarkManager::ExcludeCategoryData);
         importRequest.start();
         QVERIFY(waitForAsync(spy, &importRequest,QLandmarkManager::NoError));
+        QCOMPARE(importRequest.landmarkIds().count(), 16);
     } else if (type == "syncAttachSingleCategory") {
         QVERIFY(m_manager->saveCategory(&catAlpha));
 
@@ -5800,7 +5805,6 @@ void tst_QLandmarkManagerEngineSqlite::importLmx() {
         //try with a valid category id
         QVERIFY(m_manager->importLandmarks(":data/convert-collection-in.xml", QLandmarkManager::Lmx, QLandmarkManager::AttachSingleCategory,catAlpha.categoryId()));
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
-
     } else if (type == "asyncAttachSingleCategory") {
         QVERIFY(m_manager->saveCategory(&catAlpha));
 
@@ -5842,6 +5846,7 @@ void tst_QLandmarkManagerEngineSqlite::importLmx() {
         importRequest.setCategoryId(catAlpha.categoryId());
         importRequest.start();
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError));
+        QCOMPARE(importRequest.landmarkIds().count(), 16);
     } else {
         qFatal("Unknown row test type");
     }

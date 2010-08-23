@@ -201,7 +201,8 @@ class DatabaseOperations {
                             const QLandmarkCategoryId &categoryId,
                             QLandmarkManager::Error *error,
                             QString *errorString,
-                            QueryRun *queryRun =0);
+                            QueryRun *queryRun =0,
+                            QList<QLandmarkId> *landmarkIds = 0);
 
     bool exportLandmarksLmx(QIODevice *device,
                             QList<QLandmarkId> landmarkIds,
