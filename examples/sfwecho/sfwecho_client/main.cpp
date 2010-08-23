@@ -52,16 +52,22 @@
 #include <qservice.h>
 #include <qservicemanager.h>
 
+#if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#include "ui_sfwecho_client_mobile.h"
+#else
 #include "ui_sfwecho_client.h"
+#endif
+
+
 
 QTM_USE_NAMESPACE
 
-class EchoClient : public QWidget, public Ui_EchoClient
+class EchoClient : public QMainWindow, public Ui_EchoClient
 {
     Q_OBJECT
 public:
     EchoClient(QWidget *parent = 0, Qt::WindowFlags flags = 0)
-        : QWidget(parent, flags)
+        : QMainWindow(parent, flags)
     {
         setupUi(this);
 
@@ -89,6 +95,7 @@ public slots:
 
     void on_sharedChat_toggled(bool checked)
     {
+        uniqueChat->setChecked(!checked);
         if (checked) {
             if (!connectToChat())
                 echoBox->append("**Unable to connect to shared Echo Chat server**");
@@ -99,6 +106,7 @@ public slots:
     
     void on_uniqueChat_toggled(bool checked)
     {
+        sharedChat->setChecked(!checked);
         if (checked) {
             if (!connectToChat())
                 echoBox->append("**Unable to connect to unique Echo Chat server**");
