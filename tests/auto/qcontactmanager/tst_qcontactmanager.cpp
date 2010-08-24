@@ -3360,6 +3360,10 @@ void tst_QContactManager::benchmarking()
 
     qDebug() << "Performing Benchmark Test: this may take some time, please be patient...";
 
+    // we aggregate results from multiple runs of each benchmark
+    int AGGREGATION_LIMIT = 5;
+    int NUMBER_OF_CONTACTS = 500;
+
     // benchmark 1: save 500 new contacts.
     // benchmark 2: update 500 existing contacts.
     // benchmark 3: retrieve all contact ids.
@@ -3469,10 +3473,6 @@ void tst_QContactManager::benchmarking()
         Q_UINT64_C(0),
         Q_UINT64_C(0)
     };
-
-    // we aggregate results from multiple runs of each benchmark
-    int AGGREGATION_LIMIT = 50;
-    int NUMBER_OF_CONTACTS = 500;
 
     // define some details which we'll use.
     QContactName name;
