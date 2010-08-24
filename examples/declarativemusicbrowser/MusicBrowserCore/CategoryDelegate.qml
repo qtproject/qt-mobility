@@ -62,7 +62,7 @@ Package {
             sortProperties: [ "artist", "title" ]
         }
         delegate: AlbumDelegate {
-            state: categoryDelegate.state
+            state: categoryDelegate.state == "list" && songsView.ListView.isCurrentItem ? "list" : "cover"
             viewWidth: categoryDelegate.viewWidth
             viewHeight: categoryDelegate.viewHeight
         }
