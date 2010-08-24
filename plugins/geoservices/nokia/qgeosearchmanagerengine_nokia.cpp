@@ -49,7 +49,8 @@
 
 QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoSearchManagerEngine(parameters),
-        m_host("loc.desktop.maps.svc.ovi.com")
+        m_host("loc.desktop.maps.svc.ovi.com"),
+        m_referer("localhost")
 {
     m_networkManager = new QNetworkAccessManager(this);
 
@@ -65,6 +66,18 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, Q
         QString host = parameters.value("places.host").toString();
         if (!host.isEmpty())
             m_host = host;
+    }
+
+    if (keys.contains("places.referer")) {
+        QString referer = parameters.value("places.referer").toString();
+        if (!referer.isEmpty())
+            m_referer = referer;
+    }
+
+    if (keys.contains("places.token")) {
+        QString token = parameters.value("places.token").toString();
+        if (!token.isEmpty())
+            m_token = token;
     }
 
     setSupportsGeocoding(true);
@@ -96,7 +109,10 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
 
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/geocoder/gc/1.0?referer=localhost";
+    requestString += "/geocoder/gc/1.0?referer=" + m_referer;
+    
+    if (!m_token.isNull())
+        requestString += "&token=" + m_token;
 
     // TODO locale / language handling
     //requestString += "&lg=";
@@ -146,7 +162,9 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordina
 
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/geocoder/rgc/1.0?referer=localhost";
+    requestString += "/geocoder/rgc/1.0?referer=" + m_referer;
+    if (!m_token.isNull())
+        requestString += "&token=" + m_token;
     requestString += "&long=";
     requestString += trimDouble(coordinate.longitude());
     requestString += "&lat=";
@@ -179,7 +197,10 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchStrin
 
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/geocoder/gc/1.0?referer=localhost";
+    requestString += "/geocoder/gc/1.0?referer=" + m_referer;
+
+    if (!m_token.isNull())
+        requestString += "&token=" + m_token;
 
     // TODO locale / language handling
     //requestString += "&lg=";

@@ -120,7 +120,7 @@ QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMa
 
     QNetworkReply* netReply = m_nam->get(netRequest);
 
-    QGeoTiledMapReply* mapReply = new QGeoMapReplyNokia(netReply, request, this);
+    QGeoTiledMapReply* mapReply = new QGeoMapReplyNokia(netReply, request);
 
     // TODO goes badly on linux
     //qDebug() << "request: " << QString::number(reinterpret_cast<int>(mapReply), 16) << " " << request.row() << "," << request.column();

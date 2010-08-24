@@ -204,9 +204,7 @@ void QGeoTiledMapCircleObjectInfo::objectUpdate()
 void QGeoTiledMapCircleObjectInfo::mapUpdate()
 {
     if (polygonItem) {
-        QPen pen = circle->pen();
-        pen.setWidthF(pen.widthF() * tiledMapData->zoomFactor());
-        polygonItem->setPen(pen);
+        polygonItem->setPen(circle->pen());
     }
 }
 

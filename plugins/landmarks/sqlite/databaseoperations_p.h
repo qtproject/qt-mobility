@@ -176,37 +176,46 @@ class DatabaseOperations {
                          QLandmarkManager::TransferOption option,
                          const QLandmarkCategoryId &categoryId,
                          QLandmarkManager::Error *error,
-                         QString *errorString);
+                         QString *errorString,
+                         QueryRun *queryRun =0,
+                         QList<QLandmarkId> *landmarkIds = 0);
 
     bool exportLandmarks(QIODevice *device,
                          const QString &format,
                          QList<QLandmarkId> landmarkIds,
                          QLandmarkManager::TransferOption,
                          QLandmarkManager::Error *error,
-                         QString *errorString) const;
+                         QString *errorString,
+                         QueryRun *queryRun =0) const;
 
     bool importLandmarksLmx(QIODevice *device,
                             QLandmarkManager::TransferOption option,
                             const QLandmarkCategoryId &categoryId,
                             QLandmarkManager::Error *error,
-                            QString *errorString);
+                            QString *errorString,
+                            QueryRun *queryRun=0,
+                            QList<QLandmarkId> *landmarkIds = 0);
 
     bool importLandmarksGpx(QIODevice *device,
                             QLandmarkManager::TransferOption option,
                             const QLandmarkCategoryId &categoryId,
                             QLandmarkManager::Error *error,
-                            QString *errorString);
+                            QString *errorString,
+                            QueryRun *queryRun =0,
+                            QList<QLandmarkId> *landmarkIds = 0);
 
     bool exportLandmarksLmx(QIODevice *device,
                             QList<QLandmarkId> landmarkIds,
                             QLandmarkManager::TransferOption option,
                             QLandmarkManager::Error *error,
-                            QString *errorString) const ;
+                            QString *errorString,
+                            QueryRun *queryRun =0) const ;
 
     bool exportLandmarksGpx(QIODevice *device,
                             QList<QLandmarkId> landmarkIds,
                             QLandmarkManager::Error *error,
-                            QString *errorString) const;
+                            QString *errorString,
+                            QueryRun *queryRun =0) const;
 
     QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
     QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders) const;

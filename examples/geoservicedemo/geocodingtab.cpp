@@ -78,10 +78,10 @@ GeocodingTab::GeocodingTab(QWidget *parent) :
     m_streetNumber = new QLineEdit("");
     m_streetNumber->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    requestBtn = new QPushButton(tr("Geocoding"));
-    requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
-    requestBtn->setDisabled(true);
-    QObject::connect(requestBtn, SIGNAL(clicked(bool)), this, SLOT(on_btnRequest_clicked()));
+    m_requestBtn = new QPushButton(tr("Geocoding"));
+    m_requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    m_requestBtn->setDisabled(true);
+    QObject::connect(m_requestBtn, SIGNAL(clicked(bool)), this, SLOT(on_btnRequest_clicked()));
 
     m_resultTree = new QTreeWidget();
     QStringList labels;
@@ -94,7 +94,7 @@ GeocodingTab::GeocodingTab(QWidget *parent) :
     firstrow->setSpacing(0);
     firstrow->setContentsMargins(0, 0, 0, 0);
     firstrow->addWidget(m_obloc);
-    firstrow->addWidget(requestBtn);
+    firstrow->addWidget(m_requestBtn);
 
     QHBoxLayout *secondrow = new QHBoxLayout;
     secondrow->setSpacing(0);
@@ -141,9 +141,9 @@ void GeocodingTab::initialize(QGeoSearchManager *searchManager)
                          SIGNAL(error(QGeoSearchReply*, QGeoSearchReply::Error, QString)), this,
                          SLOT(resultsError(QGeoSearchReply*, QGeoSearchReply::Error, QString)));
         if (m_searchManager->supportsGeocoding())
-            requestBtn->setDisabled(false);
+            m_requestBtn->setDisabled(false);
     } else
-        requestBtn->setDisabled(true);
+        m_requestBtn->setDisabled(true);
 
 }
 
@@ -184,8 +184,8 @@ void GeocodingTab::resultsError(QGeoSearchReply* reply, QGeoSearchReply::Error e
 {
     Q_UNUSED(errorCode)
 
-    QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
-    top->setText(0, tr("Error"));
-    top->setText(1, errorString);
+    QTreeWidgetItem* errorResultItem = new QTreeWidgetItem(m_resultTree);
+    errorResultItem->setText(0, tr("Error"));
+    errorResultItem->setText(1, errorString);
     reply->deleteLater();
 }
