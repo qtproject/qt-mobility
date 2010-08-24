@@ -23,9 +23,7 @@
 
 // SYSTEM INCLUDES
 #include <digia/eunit/eunitmacros.h>
-#if defined(USE_ORBIT_KEYMAP)
 #include <hbinputkeymapfactory.h>
-#endif
 
 
 // 10.1 wk12 SDK's Thai keymap does not map anything to *,# keys
@@ -134,11 +132,9 @@ void UT_CPcsKeyMap::ConstructL()
 //
 void UT_CPcsKeyMap::SetupL()
     {
-#if defined(USE_ORBIT_KEYMAP)
     // Create singleton outside actual test cases so that it is not treated as
     // resource leak, since it can't be deleted.
     HbKeymapFactory::instance();
-#endif
     }
 
 // -----------------------------------------------------------------------------
@@ -158,7 +154,6 @@ void UT_CPcsKeyMap::Teardown()
 //
 void UT_CPcsKeyMap::UT_NewLL()
     {
-#if defined(USE_ORBIT_KEYMAP)
 	// Must be same as in c12keykeymap.cpp
 	const TInt KAmountOfKeys = 12;
 
@@ -168,7 +163,6 @@ void UT_CPcsKeyMap::UT_NewLL()
         {
         EUNIT_ASSERT( iKeyMap->iKeyMapping.at(i).length() > 0 );
         }
-#endif
     }
 
 // -----------------------------------------------------------------------------
