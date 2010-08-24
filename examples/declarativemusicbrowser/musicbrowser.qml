@@ -57,8 +57,7 @@ Rectangle {
         anchors.fill: parent
 
         front: Item {
-            width: 800
-            height: 480
+            anchors.fill: parent
 
             Row {
                 anchors.centerIn: parent
@@ -107,10 +106,26 @@ Rectangle {
                     }
                 }
             }
+
+            Text {
+                anchors.top: parent.top
+                anchors.topMargin: 5
+                anchors.right: parent.right
+                anchors.rightMargin: 5
+
+                color: "grey"
+                font.pointSize: 20
+
+                text: qsTr("Close")
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: Qt.quit()
+                }
+            }
         }
         back: Item {
-            width: 800
-            height: 480
+            anchors.fill: parent
 
             Text {
                 id: menuButton
@@ -142,6 +157,28 @@ Rectangle {
                 visible: viewLoader.status == Loader.Ready && viewLoader.item.backEnabled
                 text: viewLoader.status == Loader.Ready ? viewLoader.item.subTitle : ""
                 enabled: false
+            }
+
+            Text {
+                anchors.top: parent.top
+                anchors.topMargin: 5
+                anchors.right: parent.right
+                anchors.rightMargin: 5
+
+                color: "grey"
+                font.pointSize: 20
+
+                text: qsTr("Back")
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        if (viewButton.enabled)
+                            viewLoader.item.back()
+                        else
+                            menu.state = ""
+                    }
+                }
             }
 
             Loader {
