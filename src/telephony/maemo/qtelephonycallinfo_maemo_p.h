@@ -69,8 +69,6 @@ QTM_BEGIN_NAMESPACE
 class QM_AUTOTEST_EXPORT QTelephonyCallInfoPrivate : public QSharedData
 {
 public:
-    static bool isCall( const QVariantMap &properties);
-
     QTelephonyCallInfoPrivate();
     QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other);
     QTelephonyCallInfoPrivate(Tp::ChannelPtr channel);
@@ -80,9 +78,6 @@ public:
     QString subType() const;
     QTelephonyEvents::CallStatus status() const;
     QHash<QString, QVariant> values;
-
-private:
-    QString _subType;
 
 public:
     Tp::ChannelPtr telepathychannel;

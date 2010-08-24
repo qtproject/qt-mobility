@@ -243,7 +243,9 @@ void tst_QGalleryTrackerResultSet::populateArguments(
     arguments->typeColumn = new QtTestIdentityColumn(2);
     arguments->updateMask = 0x01;
     arguments->identityWidth = 1;
+    arguments->tableWidth = 6;
     arguments->valueOffset = 2;
+    arguments->compositeOffset = 6;
     arguments->queryInterface = m_queryInterface;
     arguments->queryMethod = QLatin1String("GetResults");
     arguments->queryArguments = QVariantList()

@@ -82,6 +82,7 @@ QLandmarkFetchByIdRequest::~QLandmarkFetchByIdRequest()
 QList<QLandmarkId> QLandmarkFetchByIdRequest::landmarkIds() const
 {
     Q_D(const QLandmarkFetchByIdRequest);
+    QMutexLocker ml(&d->mutex);
     return d->landmarkIds;
 }
 
@@ -91,6 +92,7 @@ QList<QLandmarkId> QLandmarkFetchByIdRequest::landmarkIds() const
 void QLandmarkFetchByIdRequest::setLandmarkIds(const QList<QLandmarkId> &landmarkIds)
 {
     Q_D(QLandmarkFetchByIdRequest);
+    QMutexLocker ml(&d->mutex);
     d->landmarkIds = landmarkIds;
 }
 
@@ -100,6 +102,7 @@ void QLandmarkFetchByIdRequest::setLandmarkIds(const QList<QLandmarkId> &landmar
 void QLandmarkFetchByIdRequest::setLandmarkId(const QLandmarkId &landmarkId)
 {
     Q_D(QLandmarkFetchByIdRequest);
+    QMutexLocker ml(&d->mutex);
     d->landmarkIds.clear();
     d->landmarkIds.append(landmarkId);
 }
@@ -111,6 +114,7 @@ void QLandmarkFetchByIdRequest::setLandmarkId(const QLandmarkId &landmarkId)
 QList<QLandmark> QLandmarkFetchByIdRequest::landmarks() const
 {
     Q_D(const QLandmarkFetchByIdRequest);
+    QMutexLocker ml(&d->mutex);
     return d->landmarks;
 }
 
@@ -121,6 +125,7 @@ QList<QLandmark> QLandmarkFetchByIdRequest::landmarks() const
 QMap<int, QLandmarkManager::Error> QLandmarkFetchByIdRequest::errorMap() const
 {
     Q_D(const QLandmarkFetchByIdRequest);
+    QMutexLocker ml(&d->mutex);
     return d->errorMap;
 }
 

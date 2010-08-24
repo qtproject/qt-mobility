@@ -60,30 +60,22 @@ QGeoTiledMapPixmapObjectInfo::~QGeoTiledMapPixmapObjectInfo() {}
 
 void QGeoTiledMapPixmapObjectInfo::objectUpdate()
 {
-    QPointF position = tiledMapData->coordinateToWorldPixel(pixmap->coordinate());
-
     if (!pixmapItem)
         pixmapItem = new QGraphicsPixmapItem();
 
     pixmapItem->setPixmap(pixmap->pixmap());
-    pixmapItem->setOffset(position);
-    pixmapItem->setTransformOriginPoint(position);
-
     mapUpdate();
-
     graphicsItem = pixmapItem;
-
     updateItem();
 }
 
 void QGeoTiledMapPixmapObjectInfo::mapUpdate()
 {
     if (pixmapItem) {
-        int zoomFactor = tiledMapData->zoomFactor();
-        pixmapItem->resetTransform();
+        qreal zoomFactor = tiledMapData->zoomFactor();
         pixmapItem->setScale(zoomFactor);
-        pixmapItem->translate(pixmap->offset().x() * zoomFactor,
-                              pixmap->offset().y() * zoomFactor);
+        pixmapItem->setPos(tiledMapData->coordinateToWorldPixel(pixmap->coordinate()));
+        pixmapItem->setTransform(QTransform::fromTranslate(pixmap->offset().x() * zoomFactor, pixmap->offset().y() * zoomFactor));
     }
 }
 

@@ -71,7 +71,6 @@ public:
     int managerVersion() const;
 
     QGeoMapData* createMapData(QGraphicsGeoMap *geoMap);
-    void removeMapData(QGeoMapData *mapData);
 
     QList<QGraphicsGeoMap::MapType> supportedMapTypes() const;
 

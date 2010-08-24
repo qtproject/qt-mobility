@@ -22,9 +22,7 @@
 
 // SYSTEM INCLUDES
 #include <digia/eunit/eunitmacros.h>
-#if defined(USE_ORBIT_KEYMAP)
 #include <hbinputkeymapfactory.h>
-#endif
 
     
 // -----------------------------------------------------------------------------
@@ -89,11 +87,9 @@ void UT_CQwertyKeyMap::ConstructL()
 //
 void UT_CQwertyKeyMap::SetupL()
     {
-#if defined(USE_ORBIT_KEYMAP)
     // Create singleton outside actual test cases so that it is not treated as
     // resource leak, since it can't be deleted.
     HbKeymapFactory::instance();
-#endif
     }
     
 // -----------------------------------------------------------------------------
@@ -113,7 +109,6 @@ void UT_CQwertyKeyMap::Teardown()
 //
 void UT_CQwertyKeyMap::UT_NewLL()
     {
-#if defined(USE_ORBIT_KEYMAP)
     // Check each key has been mapped
 	EUNIT_ASSERT_EQUALS(CQwertyKeyMap::EAmountOfKeysInQwertyKeypad,
 					    iKeyMap->iKeyMapping.count());
@@ -125,7 +120,6 @@ void UT_CQwertyKeyMap::UT_NewLL()
         {
         EUNIT_ASSERT(iKeyMap->iKeyMapping.at(i).length() > 0);
         }
-#endif
     }
 
 // -----------------------------------------------------------------------------

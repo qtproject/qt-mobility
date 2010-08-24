@@ -46,32 +46,13 @@
 #include "qversitcontactexporter_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
-#include "qversitdefs_p.h"
 #include <QString>
 #include <QStringList>
 #include <QList>
 #include <QPixmap>
 #include <QImageWriter>
 #include <QtTest/QtTest>
-#include <qcontact.h>
-#include <qcontactaddress.h>
-#include <qcontactemailaddress.h>
-#include <qcontactname.h>
-#include <qcontactphonenumber.h>
-#include <qcontacturl.h>
-#include <qcontactguid.h>
-#include <qcontacttimestamp.h>
-#include <qcontactbirthday.h>
-#include <qcontactnote.h>
-#include <qcontactgeolocation.h>
-#include <qcontactorganization.h>
-#include <qcontactavatar.h>
-#include <qcontactgender.h>
-#include <qcontactnickname.h>
-#include <qcontactanniversary.h>
-#include <qcontactonlineaccount.h>
-#include <qcontactfamily.h>
-#include <qcontactdisplaylabel.h>
+#include <qtcontacts.h>
 
 QTM_BEGIN_NAMESPACE
 

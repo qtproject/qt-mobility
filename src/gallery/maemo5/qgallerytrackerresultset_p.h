@@ -96,6 +96,9 @@ struct QGalleryTrackerResultSetArguments
         , typeColumn(0)
         , updateMask(0)
         , identityWidth(0)
+        , tableWidth(0)
+        , valueOffset(0)
+        , compositeOffset(0)
     {
     }
 
@@ -104,7 +107,9 @@ struct QGalleryTrackerResultSetArguments
     QGalleryTrackerCompositeColumn *typeColumn;
     int updateMask;
     int identityWidth;
+    int tableWidth;
     int valueOffset;
+    int compositeOffset;
     QGalleryDBusInterfacePointer queryInterface;
     QString queryMethod;
     QVariantList queryArguments;
