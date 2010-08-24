@@ -103,7 +103,7 @@ CntSqlSearch::~CntSqlSearch()
 // Just one digit. Select all contact ids from the table. No need to compare
 // values.
 //
-// 2: "123", "01", "10", "010", "00"
+// 2: "123", "01", "10", "00"
 // No zeros which have non-zeros in their both sides
 // One or zero tokens, when pattern is split using '0'.
 //
@@ -118,7 +118,7 @@ CntSqlSearch::~CntSqlSearch()
 // and those digits are not the same.
 // Two tokens, each with length of 1 and tokens are different.
 //
-// 5: "1023", "0102", "1010", "00100200", "10203", "01020304050"
+// 5: "1023", "1010", "00100200", "10203", "01020304050"
 // Two tokens, at least one of them has length > 1.
 // If tokens are identical, handle as case 3, otherwise handle as case 4.
 // ("10203" -> tokens "1" and "203"
@@ -127,7 +127,11 @@ CntSqlSearch::~CntSqlSearch()
 // 6: "10", "1000"
 // One token, ends with zero.
 // In this case, query should look-up first toke and number ("10", "1000").
-
+//
+// 7: "0102"
+// Same case 5, but first zero is remover in order to get more matches. 
+// e.g. 0102 is 01 AND 2 or 1 AND 2.
+//
 QString CntSqlSearch::CreatePredictiveSearch(const QString &pattern)
 	{
 	int len = pattern.length();
@@ -334,7 +338,7 @@ QString CntSqlSearch::CreateQuery(const QString& pattern) const
             }
         else
             {
-            return IntersectionSearch(pattern, tokens); // Case 4
+            return IntersectionSearch(pattern, tokens); // Case 4 or 5 first token start with multible zeros.
             }
         }
 	}
@@ -546,13 +550,33 @@ QString CntSqlSearch::CompareTwoColumnsWithModifiedPattern(const QString& patter
     QString upper2;
     QString lower_without_zero;
     QString upper_without_zero;
+    QString lower2_without_zero;
+    QString upper2_without_zero;
     int err;
+    int i(0);
     
-    QString tokenWithoutZeros = tokens.at(0);
-    tokenWithoutZeros.remove(QChar('0'), Qt::CaseInsensitive);
+    QString firstTokenWithoutZeros = tokens.at(0);
+    firstTokenWithoutZeros.remove(QChar('0'), Qt::CaseInsensitive);
 
     QString firstTable = SelectTable(pattern);
-    QString secondTable = SelectTable(tokenWithoutZeros);
+    QString secondTable = SelectTable(firstTokenWithoutZeros);
+    
+    QString secondTokenWithoutZeros;
+    
+    if(tokens.count() > 1)
+        {
+        secondTokenWithoutZeros = tokens.at(1);
+        i = pattern.length()-1;
+        while (pattern[i] == '0') 
+               {
+               --i;
+               }
+        if(pattern.length()-1 != i)
+            {
+            pattern.leftRef(i);
+            }
+        //secondTokenWithoutZeros.remove(QChar('0'), Qt::CaseInsensitive);
+        }
     
     // Case like 05
     if (tokens.at(0).count() == 1 && pattern.length() == 2)
@@ -561,8 +585,8 @@ QString CntSqlSearch::CompareTwoColumnsWithModifiedPattern(const QString& patter
                                 + " UNION SELECT " + firstTable + ".contact_id, " + firstTable + ".first_name, " + firstTable + ".last_name FROM " + firstTable 
                                 + " WHERE " + ModifiedMatchColumns( pattern) + ") AS PR ORDER BY PR.first_name, PR.last_name ASC;");
         }
-    //case like 05055 or 0506
-    else if (tokens.count() >= 2)
+    //case like 05055 or 0506 or 00506 
+    else if (tokens.count() > 1)
         { 
         err = mkeyKeyMap->GetNumericLimits(tokens.at(0), lower, upper);
         if(err)
@@ -575,15 +599,21 @@ QString CntSqlSearch::CompareTwoColumnsWithModifiedPattern(const QString& patter
             return QString("");
             }
         
-        err = mkeyKeyMap->GetNumericLimits(tokenWithoutZeros, lower_without_zero, upper_without_zero);
+        err = mkeyKeyMap->GetNumericLimits(firstTokenWithoutZeros, lower_without_zero, upper_without_zero);
         if(err)
             {
             return QString("");
             }
+        
+        err = mkeyKeyMap->GetNumericLimits(secondTokenWithoutZeros, lower2_without_zero, upper2_without_zero);
+        if(err)
+           {
+           return QString("");
+           }
 
         queryString = QString("SELECT contact_id FROM (SELECT " + secondTable + ".contact_id, " + secondTable + ".first_name, " + secondTable + ".last_name FROM " + secondTable + 
-                                   + " WHERE (" + CompareTwoColumns(lower_without_zero, upper_without_zero, lower2, upper2) + " OR" +
-                                   CompareTwoColumns(lower2, upper2, lower_without_zero, upper_without_zero) + ")" +
+                                   + " WHERE (" + CompareTwoColumns(lower_without_zero, upper_without_zero, lower2_without_zero, upper2_without_zero) + " OR" +
+                                   CompareTwoColumns(lower2_without_zero, upper2_without_zero, lower_without_zero, upper_without_zero) + ")" +
                               " UNION" +
                                    " SELECT " + firstTable + ".contact_id, " + firstTable + ".first_name, " + firstTable + ".last_name FROM " + firstTable 
                                    + " WHERE " + ModifiedMatchColumns( pattern) + " OR"
@@ -610,7 +640,7 @@ QString CntSqlSearch::CompareTwoColumnsWithModifiedPattern(const QString& patter
         {
         //case like 055
         queryString = QString("SELECT contact_id FROM (SELECT " + secondTable + ".contact_id, " + secondTable + ".first_name, " + secondTable + ".last_name FROM " + secondTable 
-                                + " WHERE " + ModifiedMatchColumns( tokenWithoutZeros) + 
+                                + " WHERE " + ModifiedMatchColumns( firstTokenWithoutZeros) + 
                                 + " UNION SELECT " + firstTable + ".contact_id, " + firstTable + ".first_name, " + firstTable + ".last_name FROM " + firstTable 
                                 + " WHERE " + ModifiedMatchColumns( pattern) + ") AS PR ORDER BY PR.first_name, PR.last_name ASC;");
         }

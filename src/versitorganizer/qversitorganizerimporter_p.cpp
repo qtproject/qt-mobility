@@ -45,7 +45,7 @@
 #include "qmobilityglobal.h"
 #include "qtorganizer.h"
 #include "qversitorganizerdefs_p.h"
-#include "qversitpluginloader_p.h"
+#include "qversitorganizerpluginloader_p.h"
 
 
 QTM_USE_NAMESPACE
@@ -65,8 +65,8 @@ QVersitOrganizerImporterPrivate::QVersitOrganizerImporterPrivate(const QString& 
                     QLatin1String(versitOrganizerDetailMappings[i].detailFieldName)));
     }
 
-    mPluginPropertyHandlers = QVersitPluginLoader::instance()->createOrganizerHandlers(profile);
-    mTimeZoneHandler = QVersitPluginLoader::instance()->timeZoneHandler();
+    mPluginPropertyHandlers = QVersitOrganizerPluginLoader::instance()->createOrganizerHandlers(profile);
+    mTimeZoneHandler = QVersitOrganizerPluginLoader::instance()->timeZoneHandler();
 }
 
 QVersitOrganizerImporterPrivate::~QVersitOrganizerImporterPrivate()

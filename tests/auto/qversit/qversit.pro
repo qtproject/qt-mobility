@@ -21,6 +21,7 @@ DEPENDPATH += .
 INCLUDEPATH += . \
     ../../ \
     ../../../src/versit \
+    ../../../src/versitorganizer \
     ../../../src/contacts \
     ../../../src/contacts/details \
     ../../../src/contacts/requests \
