@@ -774,6 +774,7 @@ void tst_Maemo5Om::getItemInstances()
         occ.setGuid(event.guid());
         occ.setStartDateTime(QDateTime(QDate(2010,1,20+i), QTime(14, 0, 0)));
         occ.setEndDateTime(QDateTime(QDate(2010,1,20+i), QTime(15, 0, 0)));
+        occ.setOriginalDate(event.startDateTime().date());
         occ.setDisplayLabel("Exception occurrence");
         occ.setDescription("Exception occurrence");
         QVERIFY(m_om->saveItem(&occ));
