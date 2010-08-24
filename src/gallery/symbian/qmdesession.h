@@ -45,7 +45,8 @@
 
 #include <qmobilityglobal.h>
 
-#include <QtCore/qobject.h>
+#include <QObject>
+#include <QEventloop>
 #include <mdesession.h>
 #include <mdequery.h>
 #include <e32std.h>
@@ -88,7 +89,7 @@ public: // From MMdESessionObserver
 
 private:
 
-    CActiveSchedulerWait m_activeSchedulerWait;
+    QEventLoop m_eventLoop;
     CMdESession *m_cmdeSession;
 };
 QTM_END_NAMESPACE

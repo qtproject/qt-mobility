@@ -53,10 +53,7 @@ QMdeSession::QMdeSession(QObject *parent)
 ,m_cmdeSession(NULL)
 {
     TRAP_IGNORE( m_cmdeSession = CMdESession::NewL( *this ) );
-    if( !m_activeSchedulerWait.IsStarted() )
-        {
-        m_activeSchedulerWait.Start();
-        }
+    m_eventLoop.exec();
 }
 
 QMdeSession::~QMdeSession()
@@ -68,12 +65,12 @@ QMdeSession::~QMdeSession()
 
 void QMdeSession::HandleSessionOpened(CMdESession& /*aSession*/, int /*aError*/)
 {
-    m_activeSchedulerWait.AsyncStop();
+    m_eventLoop.quit();
 }
 
 void QMdeSession::HandleSessionError(CMdESession& /*aSession*/, int /*aError*/)
 {
-    m_activeSchedulerWait.AsyncStop();
+    m_eventLoop.quit();
 }
 
 CMdENamespaceDef& QMdeSession::GetDefaultNamespaceDefL()
