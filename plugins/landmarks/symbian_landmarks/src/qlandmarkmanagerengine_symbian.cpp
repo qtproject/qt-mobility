@@ -615,10 +615,11 @@ void QLandmarkManagerEngineSymbian::updateLandmarkCategoryFetchByIdRequest(
 }
 
 void QLandmarkManagerEngineSymbian::updateLandmarkImportRequest(QLandmarkImportRequest *req,
+    const QList<QLandmarkId> &landmarkIds,
     QLandmarkManager::Error error, const QString &errorString,
     QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkManagerEngine::updateLandmarkImportRequest(req, error, errorString, newState);
+    QLandmarkManagerEngine::updateLandmarkImportRequest(req, landmarkIds, error, errorString, newState);
 }
 
 void QLandmarkManagerEngineSymbian::updateLandmarkExportRequest(QLandmarkExportRequest *req,
