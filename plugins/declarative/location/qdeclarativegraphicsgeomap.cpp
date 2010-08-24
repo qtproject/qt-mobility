@@ -74,11 +74,11 @@ QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::declarativeCenter() const
 QDeclarativeListProperty<QGeoMapObject> QDeclarativeGraphicsGeoMap::objects()
 {
     return QDeclarativeListProperty<QGeoMapObject>(this,
-                                                   0,
-                                                   object_append,
-                                                   object_count,
-                                                   object_at,
-                                                   object_clear);
+            0,
+            object_append,
+            object_count,
+            object_at,
+            object_clear);
 }
 
 void QDeclarativeGraphicsGeoMap::object_append(QDeclarativeListProperty<QGeoMapObject> *prop, QGeoMapObject *mapObject)

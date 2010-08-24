@@ -139,29 +139,29 @@ void ServicesTab::listServiceProviders()
         top->setText(0, providerId);
         QGeoServiceProvider* serviceProvider = new QGeoServiceProvider(providerId);
 
-        QTreeWidgetItem* prop = new QTreeWidgetItem(top);
-        prop->setText(0, "Search");
+        QTreeWidgetItem* searchItem = new QTreeWidgetItem(top);
+        searchItem->setText(0, "Search");
         QGeoSearchManager* searchManager = serviceProvider->searchManager();
         if (searchManager)
-            prop->setText(1, tr("true"));
+            searchItem->setText(1, tr("true"));
         else
-            prop->setText(1, tr("false"));
+            searchItem->setText(1, tr("false"));
 
-        prop = new QTreeWidgetItem(top);
-        prop->setText(0, "Mapping");
+        QTreeWidgetItem* mappingItem = new QTreeWidgetItem(top);
+        mappingItem->setText(0, "Mapping");
         QGeoMappingManager* mappingManager = serviceProvider->mappingManager();
         if (mappingManager)
-            prop->setText(1, tr("true"));
+            mappingItem->setText(1, tr("true"));
         else
-            prop->setText(1, tr("false"));
+            mappingItem->setText(1, tr("false"));
 
-        prop = new QTreeWidgetItem(top);
-        prop->setText(0, "Routing");
+        QTreeWidgetItem* routingItem = new QTreeWidgetItem(top);
+        routingItem->setText(0, "Routing");
         QGeoRoutingManager* routingManager = serviceProvider->routingManager();
         if (routingManager)
-            prop->setText(1, tr("true"));
+            routingItem->setText(1, tr("true"));
         else
-            prop->setText(1, tr("false"));
+            routingItem->setText(1, tr("false"));
 
         delete serviceProvider;
     }

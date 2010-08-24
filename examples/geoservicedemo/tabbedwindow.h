@@ -45,14 +45,12 @@
 #include "routetab.h"
 #include "geocodingtab.h"
 #include "revgeocodingtab.h"
+#include "servicestab.h"
+
+#include <qnetworksession.h>
 
 #include <QMainWindow>
 #include <QTabWidget>
-
-class QTabWidget;
-#ifdef Q_OS_SYMBIAN
-#include <QNetworkSession>
-#endif
 
 #include <qgeoserviceprovider.h>
 
@@ -68,16 +66,17 @@ public:
 
 public slots:
     void setProvider(QString providerId);
+    void networkSessionOpened();
+    void error(QNetworkSession::SessionError error);
 
 private:
     QTabWidget *m_tabWidget;
-#ifdef Q_OS_SYMBIAN
     QNetworkSession *m_session;
-#endif
     QGeoServiceProvider *m_serviceProvider;
     GeocodingTab* m_geocodingTab;
     ReverseGeocodingTab* m_reverseTab;
     RouteTab* m_routingTab;
+    ServicesTab* m_servicesTab;
 };
 
 #endif /* TABBEDWINDOW_H_ */

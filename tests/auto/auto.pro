@@ -43,6 +43,7 @@ contains(mobility_modules,location) {
 
      contains(QT_CONFIG, declarative) {
          SUBDIRS += qdeclarativeposition
+	 SUBDIRS += qdeclarativelandmark
      }
     wince* {
         SUBDIRS += qgeoinfosources_wince
