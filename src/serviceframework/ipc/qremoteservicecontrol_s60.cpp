@@ -209,7 +209,7 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
     // provide. If service provider is not up, it will be started.
     // Connecting is tried few times in a loop, because if service starting is
     // done at device startup, everything may not be ready yet.
-    RServiceSession *session = new RServiceSession(location.section(':', 1, 1));
+    RServiceSession *session = new RServiceSession(location);
     int err = session->Connect();
     int i = 0;
     while (err != KErrNone) {

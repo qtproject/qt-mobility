@@ -67,7 +67,7 @@ QTM_BEGIN_NAMESPACE
 
 using namespace QTelephonyEvents;
 
-struct Q_AUTOTEST_EXPORT QTelephonyCallInfoPrivate : public QSharedData
+struct QM_AUTOTEST_EXPORT QTelephonyCallInfoPrivate : public QSharedData
 {
 public:
     QTelephonyCallInfoPrivate()

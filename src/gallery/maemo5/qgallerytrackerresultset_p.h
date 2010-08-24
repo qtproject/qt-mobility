@@ -119,7 +119,7 @@ struct QGalleryTrackerResultSetArguments
     QVector<int> resourceKeys;
 };
 
-class Q_AUTOTEST_EXPORT QGalleryTrackerResultSet : public QGalleryResultSet
+class QM_AUTOTEST_EXPORT QGalleryTrackerResultSet : public QGalleryResultSet
 {
     Q_OBJECT
 public:

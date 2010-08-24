@@ -1,21 +1,17 @@
 TARGET = sfwecho_client
 INCLUDEPATH += ../../../src/serviceframework
 DEPENDPATH += ../../../src/serviceframework
-
 include(../../examples.pri)
-
-QT = core gui
+QT = core \
+    gui
 TEMPLATE = app
-
 CONFIG += mobility
 MOBILITY = serviceframework
-
 HEADERS += 
 SOURCES += main.cpp
-FORMS += sfwecho_client.ui
-
-symbian {
-    TARGET.CAPABILITY = ALL -TCB
+symbian { 
+    TARGET.CAPABILITY = ALL \
+        -TCB
+    FORMS += sfwecho_client_mobile.ui
 }
-
-
+else:FORMS += sfwecho_client.ui

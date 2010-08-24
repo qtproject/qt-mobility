@@ -3,6 +3,8 @@ include(../staticconfig.pri)
 TEMPLATE = subdirs
 SUBDIRS += global
 
+simulator:SUBDIRS += mobilitysimulator
+
 contains(mobility_modules,serviceframework) {
     SUBDIRS += serviceframework
     symbian {
@@ -38,9 +40,9 @@ versit.subdir=versit
 versit.target=sub-versit
 versit.depends=contacts organizer
 
-contains(qmf_enabled, yes)|wince*|win32|symbian|maemo5|maemo6 {
+simulator|contains(qmf_enabled, yes)|wince*|win32|symbian|maemo5|maemo6 {
     contains(mobility_modules,messaging) {
-        !win32-g++:SUBDIRS += messaging
+        simulator|!win32-g++:SUBDIRS += messaging
     }
 }
 
