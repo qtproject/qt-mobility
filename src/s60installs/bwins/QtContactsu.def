@@ -1125,4 +1125,13 @@ EXPORTS
 	??8QContactActionTarget@QtMobility@@QBE_NABV01@@Z @ 1124 NONAME ; bool QtMobility::QContactActionTarget::operator==(class QtMobility::QContactActionTarget const &) const
 	?FieldFavorite@QContactFavorite@QtMobility@@2U?$QLatin1Constant@$08@2@B @ 1125 NONAME ; struct QtMobility::QLatin1Constant<9> const QtMobility::QContactFavorite::FieldFavorite
 	?details@QContactActionTarget@QtMobility@@QBE?AV?$QList@VQContactDetail@QtMobility@@@@XZ @ 1126 NONAME ; class QList<class QtMobility::QContactDetail> QtMobility::QContactActionTarget::details(void) const
+	??_EQContactId@QtMobility@@QAE@I@Z @ 1127 NONAME ; QtMobility::QContactId::~QContactId(unsigned int)
+	??_EQContactRelationship@QtMobility@@QAE@I@Z @ 1128 NONAME ; QtMobility::QContactRelationship::~QContactRelationship(unsigned int)
+	??_EQContactFilter@QtMobility@@QAE@I@Z @ 1129 NONAME ; QtMobility::QContactFilter::~QContactFilter(unsigned int)
+	??_EQContactDetailDefinition@QtMobility@@QAE@I@Z @ 1130 NONAME ; QtMobility::QContactDetailDefinition::~QContactDetailDefinition(unsigned int)
+	??_EQContact@QtMobility@@QAE@I@Z @ 1131 NONAME ; QtMobility::QContact::~QContact(unsigned int)
+	??_EQContactActionTarget@QtMobility@@QAE@I@Z @ 1132 NONAME ; QtMobility::QContactActionTarget::~QContactActionTarget(unsigned int)
+	??_EQContactSortOrder@QtMobility@@QAE@I@Z @ 1133 NONAME ; QtMobility::QContactSortOrder::~QContactSortOrder(unsigned int)
+	??_EQContactActionDescriptor@QtMobility@@QAE@I@Z @ 1134 NONAME ; QtMobility::QContactActionDescriptor::~QContactActionDescriptor(unsigned int)
+	??_EQContactDetail@QtMobility@@QAE@I@Z @ 1135 NONAME ; QtMobility::QContactDetail::~QContactDetail(unsigned int)
 

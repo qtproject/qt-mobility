@@ -1,3 +1,4 @@
+
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -39,57 +40,39 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITORGANIZERIMPORTER_H
-#define QVERSITORGANIZERIMPORTER_H
+#ifndef QVERSITORGANIZERPLUGINLOADER_P_H
+#define QVERSITORGANIZERPLUGINLOADER_P_H
+
+#include <QMap>
+#include <QStringList>
+#include <QList>
 
 #include "qmobilityglobal.h"
-
-#include <qorganizeritem.h>
-
-#include <QList>
+#include "qversitorganizerhandler.h"
+#include "qversittimezonehandler.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitDocument;
-class QVersitOrganizerImporterPrivate;
-class QVersitProperty;
-
-class Q_VERSIT_EXPORT QVersitOrganizerImporterPropertyHandler
+class QVersitOrganizerPluginLoader
 {
-public:
-    virtual ~QVersitOrganizerImporterPropertyHandler() {}
-    virtual void propertyProcessed(const QVersitDocument& document,
-                                   const QVersitProperty& property,
-                                   const QOrganizerItem& item,
-                                   bool *alreadyProcessed,
-                                   QList<QOrganizerItemDetail>* updatedDetails) = 0;
-    virtual void documentProcessed(const QVersitDocument& document,
-                                   QOrganizerItem* item) = 0;
-};
+    private:
+        QVersitOrganizerPluginLoader();
 
-class Q_VERSIT_EXPORT QVersitOrganizerImporter
-{
-public:
-    enum Error {
-        NoError = 0,
-        InvalidDocumentError,
-        EmptyDocumentError
-    };
+    public:
+        static QVersitOrganizerPluginLoader* instance();
+        QList<QVersitOrganizerHandler*> createOrganizerHandlers(const QString& profile);
+        QVersitTimeZoneHandler* timeZoneHandler();
 
-    QVersitOrganizerImporter();
-    QVersitOrganizerImporter(const QString& profile);
-    ~QVersitOrganizerImporter();
+    private:
+        void loadPlugins();
 
-    bool importDocument(const QVersitDocument& document);
-    QList<QOrganizerItem> items() const;
-    QMap<int, Error> errors() const;
-
-    void setPropertyHandler(QVersitOrganizerImporterPropertyHandler* handler);
-
-private:
-    QVersitOrganizerImporterPrivate* d;
+        static QVersitOrganizerPluginLoader* mInstance;
+        QSet<QString> mLoadedFactories;
+        QList<QVersitOrganizerHandlerFactory*> mOrganizerHandlerFactories;
+        QVersitTimeZoneHandler* mTimeZoneHandler;
+        QStringList mPluginPaths;
 };
 
 QTM_END_NAMESPACE
 
-#endif // QVERSITORGANIZERIMPORTER_H
+#endif

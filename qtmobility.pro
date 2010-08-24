@@ -156,6 +156,12 @@ contains(build_demos, yes):SUBDIRS+=demos
         qtmheadersversit.path = $${QT_MOBILITY_INCLUDE}/QtVersit
         qtmheadersversit.files = $${QT_MOBILITY_BUILD_TREE}/include/QtVersit/*
         INSTALLS += qtmheadersversit
+
+        contains(mobility_modules,organizer) {
+        qtmheadersversitorg.path = $${QT_MOBILITY_INCLUDE}/QtVersitOrganizer
+        qtmheadersversitorg.files = $${QT_MOBILITY_BUILD_TREE}/include/QtVersitOrganizer/*
+        INSTALLS += qtmheadersversitorg
+        }
     }
 
     contains(mobility_modules,systeminfo) {

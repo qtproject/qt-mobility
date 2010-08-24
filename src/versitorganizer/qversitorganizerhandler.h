@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
 // declaration
 class QVersitOrganizerHandler;
 
-class Q_VERSIT_EXPORT QVersitOrganizerHandlerFactory
+class Q_VERSIT_ORGANIZER_EXPORT QVersitOrganizerHandlerFactory
 {
 public:
     virtual ~QVersitOrganizerHandlerFactory() {}
@@ -69,7 +69,7 @@ public:
 #endif
 };
 
-class Q_VERSIT_EXPORT QVersitOrganizerHandler : public QVersitOrganizerImporterPropertyHandler,
+class Q_VERSIT_ORGANIZER_EXPORT QVersitOrganizerHandler : public QVersitOrganizerImporterPropertyHandler,
                                                 public QVersitOrganizerExporterDetailHandler
 {
 public:
