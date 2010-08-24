@@ -106,9 +106,6 @@ NONSHARABLE_CLASS(CQwertyKeyMap) : public CPcsKeyMap
 
 	public: // From CPcsKeyMap
 		virtual const QChar ArrayIndexToMappedChar(TInt aArrayIndex) const;
-#if !defined(USE_ORBIT_KEYMAP)
-		virtual const QChar UseHardcodedKeyMap(const QChar input) const;
-#endif
 
 	private: // From CPcsKeyMap
 		virtual TInt ComputeValue(QString aString,
@@ -116,9 +113,8 @@ NONSHARABLE_CLASS(CQwertyKeyMap) : public CPcsKeyMap
 								  QString& aValue) const;
 
 	public:
-#if defined(USE_ORBIT_KEYMAP)
 		bool IsValidChar(const QChar aChar) const;
-#endif
+
 		TInt MapKeyNameToValue(const QChar aKeyName) const;
 
 	private: // Constructors
