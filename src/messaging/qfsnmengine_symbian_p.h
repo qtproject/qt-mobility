@@ -161,6 +161,7 @@ public slots:
     void sendCompleted(int success, CFSAsynchronousSendOperation *operation);
     void addMessageCompleted(int success, CFSAsynchronousAddOperation *operation);
     void saveCompleted(QVariant variant, int success);
+    void deleteCompleted(QVariant variant, int success);
       
 private:
 
@@ -224,6 +225,7 @@ private:
     bool m_createMessageError;
     bool m_updateMessageError;
     bool m_addMessageError;
+    bool m_deleteMessageError;
     friend class QMessageService;
     friend class CFSMessagesFindOperation;
     

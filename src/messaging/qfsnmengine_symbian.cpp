@@ -633,39 +633,38 @@ QMessage CFSEngine::message(const QMessageId &id) const
     
 }
 
-bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOption option)
+bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOption /*option*/)
 {
-    Q_UNUSED(option);
-    bool retVal = false;
-/*    foreach (QMessageAccount account, m_accounts) {
-        MEmailMessage* message = NULL;
-        TMailboxId mailboxId(stripIdPrefix(account.id().toString()).toInt());
-        MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
-        
-        TMessageId messageId(
-            stripIdPrefix(id.toString()).toInt(),
-            0, 
-            mailboxId);
-        
-        TRAPD(err, message = mailbox->MessageL(messageId));
+    m_deleteMessageError = false;
+    QList<quint64> messageIds;
+    quint64 messageId = stripIdPrefix(id.toString()).toULongLong();
+    messageIds.append(messageId);
 
-        if (err == KErrNone) {
-            TFolderId folderId(message->ParentFolderId());
-            TRAPD(err2,
-                MEmailFolder* folder = mailbox->FolderL(folderId);
-                REmailMessageIdArray messageIds;
-                messageIds.Append(message->MessageId());
-                folder->DeleteMessagesL(messageIds);
-                folder->Release();
-                );
-            if (err2 == KErrNone)
-                retVal = true;
-            mailbox->Release();
-            break; // no need to continue
-        }
-        mailbox->Release();
-    }*/
-    return retVal;
+    QMessage qmessage = message(id);
+    quint64 mailboxId = stripIdPrefix(qmessage.parentAccountId().toString()).toULongLong();
+    NmApiMessageManager* manager = new NmApiMessageManager(0, mailboxId);
+    QPointer<NmApiOperation> deleteOperation = manager->deleteMessages(messageIds);
+    QEventLoop* eventloop = new QEventLoop();
+
+    connect(deleteOperation, SIGNAL(operationComplete(QVariant, int)), this, SLOT(deleteCompleted(QVariant, int)));
+    connect(deleteOperation, SIGNAL(operationComplete(QVariant, int)), eventloop, SLOT(quit()));
+    eventloop->exec();
+    
+    delete manager;
+    delete eventloop;
+    
+    if (m_deleteMessageError)
+        return false;
+    else 
+        return true;
+}
+
+void CFSEngine::deleteCompleted(QVariant variant, int success)
+{
+    if (success == 0)
+        m_deleteMessageError = false;
+    else
+        m_deleteMessageError = true;
 }
 
 bool CFSEngine::showMessage(const QMessageId &id)
