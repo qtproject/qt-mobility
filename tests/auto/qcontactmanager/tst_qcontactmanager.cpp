@@ -1233,6 +1233,16 @@ void tst_QContactManager::batch()
     QVERIFY(b.details<QContactPhoneNumber>().at(0).number() == "234567");
     QVERIFY(c.details<QContactPhoneNumber>().at(0).number() == "34567");
 
+    /* Retrieve them with the batch API */
+    QList<QContactLocalId> batchIds;
+    batchIds << a.localId() << b.localId() << c.localId();
+    QList<QContact> batchFetch = cm->contacts(batchIds, 0, QContactFetchHint());
+    QVERIFY(batchFetch.at(0).detail(QContactName::DefinitionName) == na);
+    QVERIFY(batchFetch.at(1).detail(QContactName::DefinitionName) == nb);
+    QVERIFY(batchFetch.at(2).detail(QContactName::DefinitionName) == nc);
+    // TODO verify more
+
+
     /* Now delete them all */
     QList<QContactLocalId> ids;
     ids << a.id().localId() << b.id().localId() << c.id().localId();

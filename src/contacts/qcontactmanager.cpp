@@ -488,6 +488,24 @@ QContact QContactManager::contact(const QContactLocalId& contactId, const QConta
 }
 
 /*!
+  Returns a list of contacts given a list of local ids (\a localIds).
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
+  in the matching contacts will be returned.  A client should not make changes to a contact which has
+  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
+  loss when saving the contact back to the manager (as the "new" restricted contact will
+  replace the previously saved contact in the backend).
+
+  \sa QContactFetchHint
+ */
+QList<QContact> QContactManager::contacts(const QList<QContactLocalId>& localIds, QMap<int, QContactManager::Error> *errorMap, const QContactFetchHint &fetchHint) const
+{
+    d->m_error = QContactManager::NoError;
+    return d->m_engine->contacts(localIds, errorMap, fetchHint, &d->m_error);
+}
+
+/*!
   Adds the given \a contact to the database if \a contact has a
   default-constructed id, or an id with the manager URI set to the URI of
   this manager and a local id of zero.

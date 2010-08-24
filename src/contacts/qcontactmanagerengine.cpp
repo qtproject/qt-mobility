@@ -2676,6 +2676,8 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
 
         // Now update the passed in arguments, where necessary
 
+        // TODO First, any successful contacts
+
 
 
         return false;
@@ -2684,12 +2686,21 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
 
 QList<QContact> QContactManagerEngineV2::contacts(const QList<QContactLocalId> &localIds, QMap<int, QContactManager::Error> *errorMap, const QContactFetchHint &fetchHint, QContactManager::Error *error) const
 {
-    // Default implementation
-    Q_UNUSED(localIds);
-    Q_UNUSED(errorMap);
-    Q_UNUSED(fetchHint);
-    *error = QContactManager::NotSupportedError;
-    return QList<QContact>();
+    // Default implementation is to fetch one by one
+    QList<QContact> ret;
+
+    for(int idx=0; idx < localIds.count(); idx++) {
+        QContactManager::Error localError = QContactManager::NoError;
+        ret.append(contact(localIds.at(idx), fetchHint, &localError));
+
+        if (localError != QContactManager::NoError) {
+            *error = localError;
+            if (errorMap)
+                errorMap->insert(idx, localError);
+        }
+    }
+
+    return ret;
 }
 
 /* These convenience functions are mostly so you don't need the boilerplate in the old startRequest */
