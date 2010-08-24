@@ -37,8 +37,8 @@ contains(mobility_modules,location) {
     }
 
     !symbian|contains(mobility_modules,bearer) {
-    	SUBDIRS += geoservicedemo \
-                   mapviewer
+    	SUBDIRS += geoservicedemo 
+#Disable for now   mapviewer
 
     }
 
