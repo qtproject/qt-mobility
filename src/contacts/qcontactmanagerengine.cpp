@@ -2591,10 +2591,20 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
         // 5) save the modified ones
         // 6) update the id of any new contacts
 
-
-        // These are the ones we're going to save
-        QList<QContact> contactsToSave;
         QList<QContactLocalId> existingContactIds;
+        QSet<QString> mask = definitionMask.toSet();
+
+        if (errorMap)
+            errorMap->clear();
+
+        // Error conditions:
+        // 1) bad id passed in (can't save that at all)
+        // 2) bad fetch (can't save partial update at all)
+        // 3) bad save error
+        // all of which needs to be returned in the error map
+
+        QHash<int, int> existingIdMap; // contacts index to existingContacts index
+        QSet<int> badArgumentSet; // contacts indices that are bad
 
         // Try to figure out which of our arguments are new contacts
         for(int i = 0; i < contacts->count(); i++) {
@@ -2602,15 +2612,15 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
             const QContact c = contacts->at(i);
             if (c.id().managerUri() == managerUri()) {
                 if (c.localId() != 0) {
+                    existingIdMap.insert(i, existingContactIds.count());
                     existingContactIds.append(c.localId());
                 } else {
                     // Strange. it's just a new contact
                 }
-            } else {
-                // Hmm, error.
-                if (errorMap)
-                    (*errorMap)[i] = QContactManager::BadArgumentError;
-            }
+            } else if (!c.id().managerUri().isEmpty()){
+                // Hmm, error (wrong manager)
+                badArgumentSet.insert(i);
+            } // else {new contact}
         }
 
         // Now fetch those contacts
@@ -2618,9 +2628,55 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
         QContactManager::Error fetchError = QContactManager::NoError;
         QList<QContact> existingContacts = this->contacts(existingContactIds, &fetchErrors, QContactFetchHint() , &fetchError);
 
-        // For ones that actually fetched,
+        // Prepare the list to save
+        QList<QContact> contactsToSave;
+        QHash<int, int> savedToOriginalMap; // contactsToSave index to contacts index
 
-        // Strip out the
+        for (int i = 0; i < contacts->count(); i++) {
+            // See if this is an existing contact or a new one
+            const int fetchedIdx = existingIdMap.value(i, -1);
+            const int saveIdx = contactsToSave.count(); // The index into contactsToSave for this contact
+            if (fetchedIdx >= 0) {
+                // See if we had an error
+                // Existing contact we should have fetched
+                QContact victim = existingContacts.at(fetchedIdx);
+
+                QSharedDataPointer<QContactData>& cd = QContactData::contactData(victim);
+                cd->removeOnly(mask);
+
+                // make sure we can get from this index to the original
+                contactsToSave.append(victim);
+            } else if (!badArgumentSet.contains(i)) {
+                // New contact
+                contactsToSave.append(QContact());
+            }
+
+            // If we decided to save something..
+            if (contactsToSave.count() != saveIdx) {
+                savedToOriginalMap.insert(saveIdx, i);
+
+                // Now copy in the details from the arguments
+                const QContact& c = contacts->at(i);
+
+                // Perhaps this could do this directly rather than through saveDetail
+                // but that would duplicate the checks for display label etc
+                foreach (const QString& name, mask) {
+                    QList<QContactDetail> details = c.details(name);
+                    foreach(QContactDetail detail, details) {
+                        contactsToSave[saveIdx].saveDetail(&detail);
+                    }
+                }
+            }
+        }
+
+        // Now save them
+        QMap<int, QContactManager::Error> saveErrors;
+        QContactManager::Error saveError = QContactManager::NoError;
+        saveContacts(&contactsToSave, &saveErrors, &saveError);
+
+        // Now update the passed in arguments, where necessary
+
+
 
         return false;
     }
@@ -2634,6 +2690,57 @@ QList<QContact> QContactManagerEngineV2::contacts(const QList<QContactLocalId> &
     Q_UNUSED(fetchHint);
     *error = QContactManager::NotSupportedError;
     return QList<QContact>();
+}
+
+/* These convenience functions are mostly so you don't need the boilerplate in the old startRequest */
+bool QContactManagerEngineV2::startContactIdFetchRequest(QContactLocalIdFetchRequest* request)
+{
+    return startRequest(request);
+}
+
+bool QContactManagerEngineV2::startContactFetchRequest(QContactFetchRequest* request)
+{
+    return startRequest(request);
+}
+
+bool QContactManagerEngineV2::startContactSaveRequest(QContactSaveRequest* request)
+{
+    return startRequest(request);
+}
+
+bool QContactManagerEngineV2::startContactRemoveRequest(QContactRemoveRequest* request)
+{
+    return startRequest(request);
+}
+
+bool QContactManagerEngineV2::startRelationshipFetchRequest(QContactRelationshipFetchRequest* request)
+{
+    return startRequest(request);
+}
+
+bool QContactManagerEngineV2::startRelationshipSaveRequest(QContactRelationshipSaveRequest* request)
+{
+    return startRequest(request);
+}
+
+bool QContactManagerEngineV2::startRelationshipRemoveRequest(QContactRelationshipRemoveRequest* request)
+{
+    return startRequest(request);
+}
+
+bool QContactManagerEngineV2::startDetailDefinitionFetchRequest(QContactDetailDefinitionFetchRequest* request)
+{
+    return startRequest(request);
+}
+
+bool QContactManagerEngineV2::startDetailDefinitionSaveRequest(QContactDetailDefinitionSaveRequest* request)
+{
+    return startRequest(request);
+}
+
+bool QContactManagerEngineV2::startDetailDefinitionRemoveRequest(QContactDetailDefinitionRemoveRequest* request)
+{
+    return startRequest(request);
 }
 
 /* Wrapper class */
@@ -2655,10 +2762,9 @@ void QContactManagerEngineV2Wrapper::requestDestroyed(QContactAbstractRequest* r
     return m_engine->requestDestroyed(req);
 }
 
-bool QContactManagerEngineV2Wrapper::startRequest(QContactAbstractRequest* req)
+bool QContactManagerEngineV2Wrapper::startContactSaveRequest(QContactSaveRequest* req)
 {
-    if (req && req->type() == QContactAbstractRequest::ContactSaveRequest) {
-        QContactSaveRequest* req = static_cast<QContactSaveRequest*>(req);
+    if (req) {
         if (!req->definitionMask().isEmpty()) {
             // This is a partial save
             // TODO do something

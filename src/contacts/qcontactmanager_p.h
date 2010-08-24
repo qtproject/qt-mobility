@@ -111,8 +111,8 @@ public:
     ~QContactManagerEngineV2Wrapper();
 
     /* Overridden functions */
+    virtual bool startContactSaveRequest(QContactSaveRequest* req); // from V2
     virtual void requestDestroyed(QContactAbstractRequest* req);
-    virtual bool startRequest(QContactAbstractRequest* req);
     virtual bool cancelRequest(QContactAbstractRequest* req);
     virtual bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
 
@@ -120,6 +120,7 @@ public:
     // contacts(list of ids)
 
     /* All of the following are simply proxied to the wrapped engine */
+    virtual bool startRequest(QContactAbstractRequest* req) const {return m_engine->startRequest(req);}
     virtual QString managerName() const {return m_engine->managerName();}
     virtual QMap<QString, QString> managerParameters() const {return m_engine->managerParameters();}
     virtual int managerVersion() const {return m_engine->managerVersion();}

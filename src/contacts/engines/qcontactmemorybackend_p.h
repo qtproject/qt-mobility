@@ -143,8 +143,8 @@ public:
     virtual QContact contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
 
     virtual bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
-    virtual bool saveContacts(QList<QContact>* contacts, const QStringList& definitionRestriction, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
     virtual bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
+    virtual QList<QContact> contacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error) const;
 
     /*! \reimp */
     virtual QContact compatibleContact(const QContact& original, QContactManager::Error* error) const

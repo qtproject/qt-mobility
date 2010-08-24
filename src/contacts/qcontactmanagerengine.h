@@ -176,6 +176,16 @@ private:
 };
 
 
+class QContactLocalIdFetchRequest;
+class QContactFetchRequest;
+class QContactSaveRequest;
+class QContactRemoveRequest;
+class QContactDetailDefinitionFetchRequest;
+class QContactDetailDefinitionRemoveRequest;
+class QContactDetailDefinitionSaveRequest;
+class QContactRelationshipFetchRequest;
+class QContactRelationshipSaveRequest;
+class QContactRelationshipRemoveRequest;
 
 class Q_CONTACTS_EXPORT QContactManagerEngineV2 : public QContactManagerEngine
 {
@@ -185,12 +195,26 @@ public:
     ~QContactManagerEngineV2();
 
     // This is the V1 function - c++ overloading rules require this here, or to use "using"
+    /*! \reimp */
     bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error) {return QContactManagerEngine::saveContacts(contacts, errorMap, error);}
     virtual bool saveContacts(QList<QContact>* contacts,  const QStringList& definitionMask, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
 
     // Again, this is the v1 function
+    /*! \reimp */
     QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error) const {return QContactManagerEngine::contacts(filter, sortOrders, fetchHint, error);}
     virtual QList<QContact> contacts(const QList<QContactLocalId>& localIds, QMap<int, QContactManager::Error>* errorMap, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
+
+    // Convenience request functions
+    virtual bool startContactIdFetchRequest(QContactLocalIdFetchRequest* request);
+    virtual bool startContactFetchRequest(QContactFetchRequest* request);
+    virtual bool startContactSaveRequest(QContactSaveRequest* request);
+    virtual bool startContactRemoveRequest(QContactRemoveRequest* request);
+    virtual bool startRelationshipFetchRequest(QContactRelationshipFetchRequest* request);
+    virtual bool startRelationshipSaveRequest(QContactRelationshipSaveRequest* request);
+    virtual bool startRelationshipRemoveRequest(QContactRelationshipRemoveRequest* request);
+    virtual bool startDetailDefinitionFetchRequest(QContactDetailDefinitionFetchRequest* request);
+    virtual bool startDetailDefinitionSaveRequest(QContactDetailDefinitionSaveRequest* request);
+    virtual bool startDetailDefinitionRemoveRequest(QContactDetailDefinitionRemoveRequest* request);
 };
 
 QTM_END_NAMESPACE
