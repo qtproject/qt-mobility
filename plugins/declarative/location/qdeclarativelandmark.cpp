@@ -20,17 +20,17 @@ void QDeclarativeLandmark::setName(const QString& name)
     emit nameChanged(name);
 }
 
-QString QDeclarativeLandmark::phone()
+QString QDeclarativeLandmark::phoneNumber()
 {
     return m_landmark.phoneNumber();
 }
 
-void QDeclarativeLandmark::setPhone(const QString& phone)
+void QDeclarativeLandmark::setPhoneNumber(const QString& phoneNumber)
 {
-    if (phone == m_landmark.phoneNumber())
+    if (phoneNumber == m_landmark.phoneNumber())
         return;
-    m_landmark.setPhoneNumber(phone);
-    emit phoneChanged(phone);
+    m_landmark.setPhoneNumber(phoneNumber);
+    emit phoneNumberChanged(phoneNumber);
 }
 
 QString QDeclarativeLandmark::description()
@@ -59,17 +59,17 @@ void QDeclarativeLandmark::setRadius(const double& radius)
     emit radiusChanged(radius);
 }
 
-QUrl QDeclarativeLandmark::iconUrl()
+QUrl QDeclarativeLandmark::iconSource()
 {
     return m_landmark.iconUrl();
 }
 
-void QDeclarativeLandmark::setIconUrl(const QUrl& iconUrl)
+void QDeclarativeLandmark::setIconSource(const QUrl& iconSource)
 {
-    if (iconUrl == m_landmark.iconUrl())
+    if (iconSource == m_landmark.iconUrl())
         return;
-    m_landmark.setIconUrl(iconUrl);
-    emit iconUrlChanged(iconUrl);
+    m_landmark.setIconUrl(iconSource);
+    emit iconSourceChanged(iconSource);
 }
 
 QUrl QDeclarativeLandmark::url()

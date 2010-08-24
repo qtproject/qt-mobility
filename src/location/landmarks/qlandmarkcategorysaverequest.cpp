@@ -58,7 +58,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-request
 */
 
@@ -85,6 +85,7 @@ QLandmarkCategorySaveRequest::~QLandmarkCategorySaveRequest()
 QList<QLandmarkCategory> QLandmarkCategorySaveRequest::categories() const
 {
     Q_D(const QLandmarkCategorySaveRequest);
+    QMutexLocker ml(&d->mutex);
    return d->categories;
 }
 
@@ -95,6 +96,7 @@ QList<QLandmarkCategory> QLandmarkCategorySaveRequest::categories() const
 void QLandmarkCategorySaveRequest::setCategories(const QList<QLandmarkCategory> &categories)
 {
     Q_D(QLandmarkCategorySaveRequest);
+    QMutexLocker ml(&d->mutex);
     d->categories = categories;
 }
 
@@ -106,6 +108,7 @@ void QLandmarkCategorySaveRequest::setCategories(const QList<QLandmarkCategory> 
 void QLandmarkCategorySaveRequest::setCategory(const QLandmarkCategory& category)
 {
     Q_D(QLandmarkCategorySaveRequest);
+    QMutexLocker ml(&d->mutex);
     d->categories.clear();
     d->categories.append(category);
 }
@@ -117,6 +120,7 @@ void QLandmarkCategorySaveRequest::setCategory(const QLandmarkCategory& category
 QMap<int, QLandmarkManager::Error> QLandmarkCategorySaveRequest::errorMap() const
 {
     Q_D(const QLandmarkCategorySaveRequest);
+    QMutexLocker ml(&d->mutex);
     return d->errorMap;
 }
 

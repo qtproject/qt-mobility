@@ -42,8 +42,6 @@ import "content" as Content
 import Qt 4.7
 import QtMobility.location 1.1
 
-
-
 Rectangle {
     id: page
     width: 350
@@ -85,28 +83,28 @@ Rectangle {
 	radius: 100 // metres
     }
     // The model where data stems
-    LandmarkSource {
-        id: lmsource
-        active: true
+    LandmarkModel {
+        id: lmmodel
+        autoUpdate: true
 	nameFilter: townFilter
 	//proximityFilter: myPositionFilter
 	//proximityFilter: existingCityPositionFilter
-        maxItems: 15
+        landmarksPerUpdate: 15
     }
     
-    LandmarkCategorySource {
-         id: lmcatsource
-         active: true
+    LandmarkCategoryModel {
+         id: lmcatmodel
+         autoUpdate: true
     }
     
     // The view which lays the overall view
     ListView {
         id: mainList
         
-        model: lmsource
+        model: lmmodel
         delegate: landmarklistdelegate
         
-        //model: lmcatsource
+        //model: lmcatmodel
         //delegate: categorylistdelegate
         
         anchors {top: title.bottom; left: title.left}
@@ -123,8 +121,8 @@ Rectangle {
 	Item {
 	    width: 200; height: 50
 	    Text { id: nameField; text: name }
-	    //Text { id: nameFiedld; text: lmsource.nameFilter.name }
-	    Text { id: phoneField; text: "  tel:"  + phone; anchors.left: nameField.right }
+	    //Text { id: nameFiedld; text: lmmodel.nameFilter.name }
+	    Text { id: phoneField; text: "  tel:"  + phoneNumber; anchors.left: nameField.right }
 	    Text { id: latitudeField; text: "  lat:"  + latitude;  anchors.left: phoneField.right }
 	    Text { id: longitudeField; text: "  lon:"  + longitude;  anchors.left: latitudeField.right }
 	}
@@ -137,8 +135,6 @@ Rectangle {
 	}
     }
 
-
-
     /*
     Column {
         id: data
@@ -147,9 +143,8 @@ Rectangle {
         Text {text: "name: " + lm.name}
         Text {text: "<==== Landmark category ====>"}
         Text {text: "name: " + lmcat.name}
-        Text {text: "<==== LandmarkSource ====>"}
-        Text {text: "name: " + lmsource.name}
-        Text {text: "active: " + lmsource.active}
+        Text {text: "<==== LandmarkModel ====>"}
+        Text {text: "autoUpdate: " + lmmodel.autoUpdate}
         
     }
     

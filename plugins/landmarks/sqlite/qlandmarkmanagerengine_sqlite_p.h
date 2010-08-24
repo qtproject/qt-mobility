@@ -61,7 +61,6 @@
 #include "databaseoperations_p.h"
 
 QTM_USE_NAMESPACE
-using namespace DatabaseOperations;
 
 class QLandmarkManagerEngineSqlite : public QLandmarkManagerEngine
 {
@@ -192,7 +191,7 @@ public slots:
                                      const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState);
     void updateLandmarkCategoryRemoveRequest(QLandmarkCategoryRemoveRequest* req, QLandmarkManager::Error error,
                                            const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState);
-    void updateLandmarkImportRequest(QLandmarkImportRequest *req, QLandmarkManager::Error error, const QString &errorString,
+    void updateLandmarkImportRequest(QLandmarkImportRequest *req, const QList<QLandmarkId> &ids, QLandmarkManager::Error error, const QString &errorString,
                                             QLandmarkAbstractRequest::State newState);
     void updateLandmarkExportRequest(QLandmarkExportRequest *req, QLandmarkManager::Error error, const QString &errorString,
                                      QLandmarkAbstractRequest::State newState);
@@ -219,9 +218,10 @@ private:
     QHash<QLandmarkAbstractRequest *, QueryRun *> m_requestRunHash;
     DatabaseFileWatcher *m_dbWatcher;
     qreal m_latestTimestamp;
-    friend class DatabaseOperations::QueryRun;
-    bool m_isExtendedAttributesEnabled;
-    bool m_isCustomAttributesEnabled;
+    volatile bool m_isExtendedAttributesEnabled;
+    volatile bool m_isCustomAttributesEnabled;
+    DatabaseOperations m_databaseOperations;
+    friend class QueryRun;
 };
 
 #endif // QLANDMARKMANAGERENGINE_SQLITE_P_H

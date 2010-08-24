@@ -41,6 +41,17 @@
 
 #include "organizeritemtypetransform.h"
 
+void OrganizerItemTypeTransform::modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const
+{
+    // Note not supported on legacy platforms
+    schemaDefs.remove(QOrganizerItemType::TypeNote);
+    
+    // TODO: 10.1 will probably support notes. We will need some compilation flag for this.
+    
+    // Journal is not supported on Symbian. Remove the type itself
+    schemaDefs.remove(QOrganizerItemType::TypeJournal);
+}
+
 void OrganizerItemTypeTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
     CCalEntry::TType entryType = entry.EntryTypeL();

@@ -48,6 +48,7 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <QAction>
+#include <QMenuBar>
 #include <QPainter>
 #include <QDesktopWidget>
 
@@ -415,6 +416,13 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupUi()
 {
+    // setup exit menu for devices
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    QAction* exitAction = new QAction(tr("Exit"), this);
+    menuBar()->addAction(exitAction);
+    connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
+#endif
+
     // setup graphics view containing map widget
 
     QGraphicsScene* scene = new QGraphicsScene(this);
@@ -638,7 +646,7 @@ void MainWindow::createMenus()
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(demo2(bool)));
 
-    menuItem = new QAction(tr("Random items"), this);
+    menuItem = new QAction(tr("Clusters"), this);
     subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(demo3(bool)));
@@ -733,7 +741,25 @@ void MainWindow::demo2(bool /*checked*/)
 }
 void MainWindow::demo3(bool /*checked*/)
 {
+    int i = 0;
+    qreal density = 10;
+    qreal clusterSize = 2;
+    qreal clusterDensity = 0.1*clusterSize;
+    for (qreal latm = -90 + density; latm < 90 - density; latm += density * 3) {
+        for (qreal lngm = -180 + density; lngm < 180 - density; lngm += density * 3) {
+            for (qreal lat = latm-clusterSize+clusterDensity; lat < latm+clusterSize-clusterDensity; lat += clusterDensity * 3) {
+                for (qreal lng = lngm-clusterSize+clusterDensity; lng < lngm+clusterSize-clusterDensity; lng += clusterDensity * 3) {
+                    MVTEST_RECT2(lat - clusterDensity, lng - clusterDensity, lat + clusterDensity, lng + clusterDensity);
+                    i++;
+                }
+            }
+        }
+    }
+    qDebug("%i items added, %i items total.", i, m_mapWidget->mapObjects().count());
 
+
+    QMessageBox *mb = new QMessageBox(QMessageBox::NoIcon, "MapViewer", QString::number(i) + " items");
+    mb->open();
 }
 
 void MainWindow::drawRect(bool /*checked*/)
@@ -743,6 +769,7 @@ void MainWindow::drawRect(bool /*checked*/)
     QGeoMapPixmapObject* p2 = markerObjects.at(1);
     QPen pen(Qt::white);
     pen.setWidth(2);
+    pen.setCosmetic(true);
     QColor fill(Qt::black);
     fill.setAlpha(65);
     QGeoMapRectangleObject *rectangle = new QGeoMapRectangleObject(p1->coordinate(), p2->coordinate());
@@ -762,6 +789,7 @@ void MainWindow::drawPolyline(bool /*checked*/)
 
     QPen pen(Qt::white);
     pen.setWidth(2);
+    pen.setCosmetic(true);
     QGeoMapPolylineObject *polyline = new QGeoMapPolylineObject();
     polyline->setPen(pen);
     polyline->setPath(path);
@@ -779,6 +807,7 @@ void MainWindow::drawPolygon(bool /*checked*/)
 
     QPen pen(Qt::white);
     pen.setWidth(2);
+    pen.setCosmetic(true);
     QGeoMapPolygonObject *polygon = new QGeoMapPolygonObject();
     polygon->setPen(pen);
     QColor fill(Qt::black);
@@ -809,6 +838,7 @@ void MainWindow::drawCircle(bool /*checked*/)
 
     QPen pen(Qt::white);
     pen.setWidth(2);
+    pen.setCosmetic(true);
     QGeoMapCircleObject *circle = new QGeoMapCircleObject(center, radius);
     circle->setPen(pen);
     QColor fill(Qt::black);
@@ -879,6 +909,7 @@ void MainWindow::createPixmapIcon()
     QPointF p2(MARKER_WIDTH / 2, MARKER_HEIGHT - 1 - MARKER_PIN_LEN);
     QPen pen(Qt::black);
     pen.setWidth(2);
+    pen.setCosmetic(true);
     painter.setPen(pen);
     painter.drawLine(p1, p2);
     QRectF ellipse(0, 0, MARKER_WIDTH - 1, MARKER_WIDTH - 1);
@@ -925,6 +956,7 @@ void MainWindow::routeFinished()
     routeColor.setAlpha(127); //semi-transparent
     QPen pen(routeColor);
     pen.setWidth(7);
+    pen.setCosmetic(true);
     pen.setCapStyle(Qt::RoundCap);
     route->setPen(pen);
     m_mapWidget->addMapObject(route);

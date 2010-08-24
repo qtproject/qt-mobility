@@ -64,6 +64,8 @@ private slots:
 private slots:
     void addOccurrenceDetail_data();
     void addOccurrenceDetail();
+    void fetchOccurrenceByFilterSort_data();
+    void fetchOccurrenceByFilterSort();
     void addOccurrenceWithException_data();
     void addOccurrenceWithException();
     void editOccurrence_data();
@@ -191,6 +193,131 @@ void TestItemOccurrence::addOccurrenceDetail()
     QCOMPARE(secondEvent.startDateTime(), QDateTime(QDate(QDate::currentDate().year() , 9, 8)));
     QCOMPARE(secondEvent.localId(), (unsigned int)0);
     QCOMPARE(secondEvent.parentLocalId(), item.localId());    
+}
+
+void TestItemOccurrence::fetchOccurrenceByFilterSort_data() 
+{
+    QStringList availableManagers = getAvailableManagers();    
+    QTest::addColumn<QString>("managerName");
+    QTest::addColumn<QString>("itemType");
+    QTest::addColumn<QDateTime>("startTime");
+    QTest::addColumn<QOrganizerItemRecurrenceRule>("rrule");
+    QTest::addColumn<QString>("label");
+    QTest::addColumn<QString>("modifiedLabel");
+    
+    QString label("label");
+    QString modifiedLabel("newLabel");
+    QString itemType = QOrganizerItemType::TypeEvent;
+    
+    foreach(QString manager, availableManagers) {
+        QOrganizerItemRecurrenceRule rrule;
+        rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+        rrule.setCount(3);
+        QList<Qt::DayOfWeek> daysOfWeek;
+        daysOfWeek.append(Qt::Wednesday);
+        rrule.setDaysOfWeek(daysOfWeek);
+        QTest::newRow(QString("[%1] weekly on Wednesday for 3 weeks").arg(manager).toLatin1().constData())
+            << manager
+            << itemType
+            << QDateTime(QDate(QDate::currentDate().year() , 9, 1))
+            << rrule
+            << label
+            << modifiedLabel;
+    }    
+}
+
+void TestItemOccurrence::fetchOccurrenceByFilterSort()
+{
+    QFETCH(QString, managerName);
+    QFETCH(QString, itemType);
+    QFETCH(QDateTime, startTime);
+    QFETCH(QOrganizerItemRecurrenceRule, rrule);
+    QFETCH(QString, label);
+    QFETCH(QString, modifiedLabel);
+    
+    // Set the item type
+    QOrganizerItem item;
+    item.setType(itemType);
+    QDateTime endTime(QDate(QDate::currentDate().year() , 9, 30));
+    QOrganizerEventTimeRange timeRange;
+    timeRange.setStartDateTime(startTime);
+    QVERIFY(item.saveDetail(&timeRange));
+    item.setDisplayLabel(label); 
+    // Add recurrence rules to the item
+    QList<QOrganizerItemRecurrenceRule> rrules;
+    rrules.append(rrule);
+    QOrganizerItemRecurrence recurrence;
+    recurrence.setRecurrenceRules(rrules);
+    QVERIFY(item.saveDetail(&recurrence));
+    
+    // Save item with recurrence rule.
+    QVERIFY(m_om->saveItem(&item));
+    
+    //fetch instances and modify displaylabel for second and third instance
+    QList<QOrganizerItem> instanceList;
+    instanceList = m_om->itemInstances(item,startTime,QDateTime(),10);
+    instanceList[1].setDisplayLabel(modifiedLabel);
+    instanceList[2].setDisplayLabel(modifiedLabel);
+    QVERIFY(m_om->saveItem(&instanceList[1]));
+    QVERIFY(m_om->saveItem(&instanceList[2]));
+    
+    // Fetch iteminstance using sort and filter.
+    /* filters */
+    QOrganizerItemFilter f; // matches everything
+    QOrganizerItemDetailFilter df;
+    df.setDetailDefinitionName(QOrganizerItemDisplayLabel::DefinitionName,
+                               QOrganizerItemDisplayLabel::FieldLabel);
+
+    df.setMatchFlags(QOrganizerItemFilter::MatchExactly);     
+    df.setValue(instanceList[1].detail(            
+                QOrganizerItemDisplayLabel::DefinitionName).value(
+                QOrganizerItemDisplayLabel::FieldLabel));
+    
+    QOrganizerItemSortOrder sortOrder;
+    sortOrder.setDirection(Qt::DescendingOrder);
+    sortOrder.setDetailDefinitionName(QOrganizerEventTimeRange::DefinitionName,
+                                     QOrganizerEventTimeRange::FieldStartDateTime);
+    QList<QOrganizerItemSortOrder> sortList;
+    sortList.append(sortOrder);
+    instanceList.clear();
+    QOrganizerItemFetchHint fetchHint;
+    instanceList = m_om->itemInstances(df,sortList,fetchHint);
+    QCOMPARE(instanceList.size(), 2);
+    
+    QOrganizerItem firstItem = instanceList.at(0);
+    QCOMPARE(firstItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QOrganizerEventOccurrence firstEvent = static_cast<QOrganizerEventOccurrence>(firstItem);
+    QCOMPARE(firstEvent.startDateTime(), QDateTime(QDate(QDate::currentDate().year() , 9, 15)));
+    QCOMPARE(firstEvent.displayLabel(), instanceList[1].displayLabel());
+    
+    //Search without filtering and sorting.Full instanceList is returned
+    instanceList.clear();
+    sortList.clear();    
+    QOrganizerItemInvalidFilter invalidFilter;
+    instanceList = m_om->itemInstances(invalidFilter,sortList,fetchHint);
+    QCOMPARE(instanceList.size(), 3);
+    
+    //Search full instance list in descending order without filtering
+    instanceList.clear();
+    sortList.append(sortOrder);
+    instanceList = m_om->itemInstances(invalidFilter,sortList,fetchHint);
+    QCOMPARE(instanceList.size(), 3);
+    QOrganizerItem thirdItem = instanceList.at(2);
+    QCOMPARE(thirdItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QOrganizerEventOccurrence thirdEvent = static_cast<QOrganizerEventOccurrence>(thirdItem);
+    QCOMPARE(thirdEvent.startDateTime(), startTime);
+    
+    // Save another item with same attributes as first item
+    QOrganizerItem secondItem;    
+    secondItem.setType(itemType);
+    QVERIFY(secondItem.saveDetail(&timeRange));
+    secondItem.setDisplayLabel(modifiedLabel); 
+    QVERIFY(secondItem.saveDetail(&recurrence));
+    QVERIFY(m_om->saveItem(&secondItem));
+    
+    instanceList.clear();
+    instanceList = m_om->itemInstances(df,sortList,fetchHint);
+    QCOMPARE(instanceList.size(), 5);    
 }
 
 void TestItemOccurrence::addOccurrenceWithException_data()

@@ -1075,7 +1075,8 @@ void QLandmarkManagerEngine::updateLandmarkCategorySaveRequest(QLandmarkCategory
 
 /*!
     Updates the given QLandmarkImportRequest \a req with the operation \a error and \a errorString.
-    In addition the state of the request is changed to \a newState.
+    In addition the state of the request is changed to \a newState.  This function may also be used
+    to update the \a ids of the landmarks which have been imported.
 
     It then causes the request to emit its resultsAvailable() signal to notify the clients of the request
     progress.
@@ -1083,12 +1084,13 @@ void QLandmarkManagerEngine::updateLandmarkCategorySaveRequest(QLandmarkCategory
     If the new request state is different from the previous state, the stateChanged() signal will
     also be emitted from the request.
 */
-void QLandmarkManagerEngine::updateLandmarkImportRequest(QLandmarkImportRequest *req, QLandmarkManager::Error error, const QString &errorString,
+void QLandmarkManagerEngine::updateLandmarkImportRequest(QLandmarkImportRequest *req, const QList<QLandmarkId> &ids, QLandmarkManager::Error error, const QString &errorString,
         QLandmarkAbstractRequest::State newState)
 {
     QLandmarkImportRequestPrivate* rd = static_cast<QLandmarkImportRequestPrivate*>(req->d_ptr);
     rd->error = error;
     rd->errorString = errorString;
+    rd->landmarkIds = ids;
     bool emitState = rd->state != newState;
     rd->state = newState;
     emit req->resultsAvailable();

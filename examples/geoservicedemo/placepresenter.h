@@ -55,12 +55,11 @@ public:
     virtual void show();
 
 private:
-    QTreeWidgetItem* showPlaces();
     void showPlace(QTreeWidgetItem* top, const QGeoPlace& place);
     void showAddress(QTreeWidgetItem* addrItem, const QGeoAddress& address);
 
 private:
-    const QGeoSearchReply* codingReply;
+    const QGeoSearchReply* m_codingReply;
 };
 
 #endif

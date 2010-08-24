@@ -56,6 +56,7 @@
 #include <qlandmark.h>
 #include <qlandmarkmanager.h>
 #include <qlandmarkcategoryid.h>
+#include "databaseoperations_p.h"
 
 class QXmlStreamReader;
 class QXmlStreamWriter;
@@ -69,14 +70,14 @@ class QLandmarkFileHandlerLmx : public QObject
     Q_OBJECT
 
 public:
-    QLandmarkFileHandlerLmx(const QString &connectionName, const QString &managerUri);
+    QLandmarkFileHandlerLmx(const DatabaseOperations *databaseOperations, volatile const bool *cancel=0);
     ~QLandmarkFileHandlerLmx();
 
     QList<QLandmark> landmarks() const;
     void setLandmarks(const QList<QLandmark> &landmarks);
+    QList<QStringList> landmarkCategoryNames();
 
     void setTransferOption(QLandmarkManager::TransferOption option);
-    void setCategoryId(const QLandmarkCategoryId &categoryId);
 
     bool importData(QIODevice *device);
     bool exportData(QIODevice *device, const QString &nsPrefix = QString());
@@ -97,7 +98,7 @@ private:
     bool readCoordinates(QLandmark &landmark);
     bool readAddressInfo(QLandmark &landmark);
     bool readMediaLink(QLandmark &landmark);
-    bool readCategory(QLandmarkCategoryId &categoryId);
+    bool readCategory(QString &name);
 
     bool writeLmx();
     bool writeLandmarkCollection(const QList<QLandmark> &landmarkCollection);
@@ -116,12 +117,11 @@ private:
     QXmlStreamWriter *m_writer;
 
     QLandmarkManager::TransferOption m_option;
-    QLandmarkCategoryId m_categoryId;
-    QString m_connectionName;
-    QString m_managerUri;
     QString m_error;
     QLandmarkManager::Error m_errorCode;
-    QHash<QString, QLandmarkCategoryId> m_catIdLookup;//<name,id>
+    DatabaseOperations *m_databaseOperations;
+    volatile const bool *m_cancel;
+    QList<QStringList> m_landmarkCategoryNames;
 };
 
 #endif // #ifndef QLANDMARKFILEHANDLER_LMX_P_H
