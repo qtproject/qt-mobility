@@ -76,8 +76,8 @@ public:
         qmlRegisterType<QDeclarativeLandmark>(uri, 1, 1, "Landmark");
         qmlRegisterType<QDeclarativeLandmarkModel>(uri, 1, 1, "LandmarkModel");
         qmlRegisterType<QDeclarativeLandmarkFilter>(uri, 1, 1, "LandmarkFilter");
-        qmlRegisterType<QDeclarativeLandmarkFilter>(uri, 1, 1, "LandmarkUnionFilter");
-        qmlRegisterType<QDeclarativeLandmarkFilter>(uri, 1, 1, "LandmarkIntersectionFilter");
+        qmlRegisterType<QDeclarativeLandmarkUnionFilter>(uri, 1, 1, "LandmarkUnionFilter");
+        qmlRegisterType<QDeclarativeLandmarkIntersectionFilter>(uri, 1, 1, "LandmarkIntersectionFilter");
         qmlRegisterType<QDeclarativeLandmarkCategory>(uri, 1, 1, "LandmarkCategory");
         qmlRegisterType<QDeclarativeLandmarkCategoryModel>(uri, 1, 1, "LandmarkCategoryModel");
         qmlRegisterUncreatableType<QDeclarativeLandmarkFilterBase>(uri,1,1,"LandmarkFilterBase",QDeclarativeLandmarkFilterBase::tr("LandmarkFilterBase is an abstract class"));

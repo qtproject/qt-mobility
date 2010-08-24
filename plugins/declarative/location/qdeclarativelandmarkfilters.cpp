@@ -4,7 +4,7 @@
 QTM_BEGIN_NAMESPACE
 
 QDeclarativeLandmarkFilter::QDeclarativeLandmarkFilter(QObject *parent) :
-        QDeclarativeLandmarkFilterBase(parent), m_type(Name), m_filter(0)
+        QDeclarativeLandmarkFilterBase(parent), m_type(Name), m_filter(new QLandmarkNameFilter())
 {
 }
 
@@ -57,14 +57,17 @@ void QDeclarativeLandmarkFilter::setValue(const QVariant& value)
 QLandmarkFilter* QDeclarativeLandmarkFilter::filter()
 {
     qDebug() << "QDeclarativeLandmarkFilter filter() enter";
-    if (!m_filter || !m_value.isValid())
+    if (!m_filter || !m_value.isValid()) {
+        qDebug() << "QDeclarativeLandmarkFilter no filter or m_value is not valid" ;
         return 0;
+    }
     // Set value for filter here so we are not dependant of in
     // which order the 'type' and 'value' were set.
     switch (m_filter->type())
     {
     case QLandmarkFilter::NameFilter:
         {
+        qDebug() << "Match QDeclarativeLandmarkFilter filter() for name: " << m_value.toString();
         QLandmarkNameFilter* filter = static_cast<QLandmarkNameFilter*>(m_filter);
         filter->setName(m_value.toString());
         }
@@ -73,7 +76,7 @@ QLandmarkFilter* QDeclarativeLandmarkFilter::filter()
         {
         QLandmarkProximityFilter* filter = static_cast<QLandmarkProximityFilter*>(m_filter);
         QDeclarativePosition* position = qobject_cast<QDeclarativePosition*>(m_value.value<QObject*>());
-        qDebug() << "QDeclarativeLandmarkFilter filter(), value for proximity: " << m_value.value<QObject*>();
+        qDebug() << "Match QDeclarativeLandmarkFilter filter(), value for proximity: " << m_value.value<QObject*>();
         qDebug() << "QDeclarativeLandmarkFilter filter() lat lon rad: " << position->latitude() << position->longitude() << position->radius();
         filter->setCoordinate(QGeoCoordinate(position->latitude(), position->longitude()));
         filter->setRadius(position->radius());
@@ -81,6 +84,7 @@ QLandmarkFilter* QDeclarativeLandmarkFilter::filter()
         break;
     default:
         // Other filters are not currently supported
+        qDebug() << "QDeclarativeLandmarkFilter filter type not supported" ;
         return 0;
     }
     qDebug() << "QDeclarativeLandmarkFilter filter() exit. Was there a match?";
