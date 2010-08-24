@@ -18,10 +18,12 @@ SOURCES = \
 
 maemo*: {
     FORMS += audiorecorder_small.ui
-} else {
+}else:symbian:contains(S60_VERSION, 3.2) {
+    DEFINES += SYMBIAN_S60_32
+    FORMS += audiorecorder_small.ui
+}else {
     FORMS += audiorecorder.ui
 }
-
 symbian: {
     TARGET.CAPABILITY = UserEnvironment ReadDeviceData WriteDeviceData 
 }
