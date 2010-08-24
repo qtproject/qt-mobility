@@ -72,6 +72,7 @@ QTM_BEGIN_NAMESPACE
 
 class CFSMessagesFindOperation;
 class CFSAsynchronousSendOperation;
+class CFSAsynchronousAddOperation;
 class QMessageId;
 class QMessageAccount;
 
@@ -129,73 +130,75 @@ public:
     int countFolders(const QMessageFolderFilter &filter) const;
     QMessageFolder folder(const QMessageFolderId &id) const;
     
-    bool sendEmail(QMessage &message);
+    bool sendEmail(QMessageServicePrivate &privateService, QMessage &message);
     bool addMessage(QMessage *m);
     bool updateMessage(QMessage *m);
     bool removeMessage(const QMessageId &id, QMessageManager::RemovalOption option);
     bool removeMessages(const QMessageFilter &filter, QMessageManager::RemovalOption option);
-    bool queryMessages(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
-    bool queryMessages(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
-    bool countMessages(QMessageServicePrivate& privateService, const QMessageFilter &filter);
+    bool queryMessages(QMessageServicePrivate &privateService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    bool queryMessages(QMessageServicePrivate &privateService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    bool countMessages(QMessageServicePrivate &privateService, const QMessageFilter &filter);
     bool showMessage(const QMessageId &id);
     bool composeMessage(const QMessage &message);   
-    QMessage message(const QMessageId& id) const;
+    QMessage message(const QMessageId &id) const;
    
-    bool retrieve(QMessageServicePrivate& privateService, const QMessageId &messageId, const QMessageContentContainerId& id);
-    bool retrieveBody(QMessageServicePrivate& privateService, const QMessageId& id);
-    bool retrieveHeader(QMessageServicePrivate& privateService, const QMessageId& id);
+    bool retrieve(QMessageServicePrivate &privateService, const QMessageId &messageId, const QMessageContentContainerId &id);
+    bool retrieveBody(QMessageServicePrivate &privateService, const QMessageId &id);
+    bool retrieveHeader(QMessageServicePrivate &privateService, const QMessageId &id);
     bool exportUpdates(const QMessageAccountId &id);
     
-    QMessageManager::NotificationFilterId registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
-                                        const QMessageFilter& filter, QMessageManager::NotificationFilterId aId);
+    QMessageManager::NotificationFilterId registerNotificationFilter(QMessageStorePrivate &aPrivateStore,
+                                        const QMessageFilter &filter, QMessageManager::NotificationFilterId aId);
     void unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId);
 
     void filterAndOrderMessagesReady(bool success, int operationId, QMessageIdList ids, int numberOfHandledFilters,
                                      bool resultSetOrdered);
     
     void setMtmAccountIdList(QMessageAccountIdList accountList);
-    void createFSMessage(QMessage& message, NmApiMessage& fsMessage);
+    void createFSMessage(QMessage &message, NmApiMessage &fsMessage);
     
 public slots:
-    void sendCompleted(int success, CFSAsynchronousSendOperation* operation);
+    void sendCompleted(int success, CFSAsynchronousSendOperation *operation);
+    void addMessageCompleted(int success, CFSAsynchronousAddOperation *operation);
+    void saveCompleted(QVariant variant, int success);
       
 private:
 
-    void queryMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
-    void queryMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
-    void countMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter);
+    void queryMessagesL(QMessageServicePrivate &privateService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    void queryMessagesL(QMessageServicePrivate &privateService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    void countMessagesL(QMessageServicePrivate &privateService, const QMessageFilter &filter);
     
     QMessageAccountIdList accountsByType(QMessage::Type type) const;
     void updateEmailAccounts() const;
-    void updateFsMessage(QMessage* message);
+    NmApiMessage updateFsMessage(QMessage *message);
     NmApiMessage message(const quint64 messageId) const;
     
-    QMessageFolderIdList folderIdsByAccountId(const QMessageAccountId& accountId) const;
-    QMessageFolderIdList filterMessageFoldersL(const QMessageFolderFilter& filter, bool& filterHandled) const;
+    QMessageFolderIdList folderIdsByAccountId(const QMessageAccountId &accountId) const;
+    QMessageFolderIdList filterMessageFoldersL(const QMessageFolderFilter &filter, bool &filterHandled) const;
     QMessageFolderIdList allFolders() const;
-    bool fsFolderL(const QMessageFolderId& id, NmApiMailbox* mailbox, NmApiFolder* folder) const;
+    bool fsFolderL(const QMessageFolderId &id, NmApiMailbox *mailbox, NmApiFolder *folder) const;
     QList<NmApiFolder> getFolderListByAccountId(const quint64 mailboxId) const;
     NmApiEmailFolderType standardFolderId(QMessage::StandardFolder standardFolder);
     
-    QMessageFolderIdList filterMessageFolders(const QMessageFolderFilter& filter, bool& filterHandled) const;
-    QMessage CreateQMessage(NmApiMessage* aMessage) const; 
+    QMessageFolderIdList filterMessageFolders(const QMessageFolderFilter &filter, bool &filterHandled) const;
+    QMessage CreateQMessage(NmApiMessage *aMessage) const; 
 
-    void addAttachmentToMessage(QMessage& message, QMessageContentContainer& attachment) const;
-    QDateTime symbianTTimetoQDateTime(const TTime& time) const;
-    TTime qDateTimeToSymbianTTime(const QDateTime& date) const;
+    void addAttachmentToMessage(QMessage &message, QMessageContentContainer &attachment) const;
+    QDateTime symbianTTimetoQDateTime(const TTime &time) const;
+    TTime qDateTimeToSymbianTTime(const QDateTime &date) const;
 
     static bool accountLessThan(const QMessageAccountId accountId1, const QMessageAccountId accountId2);
-    void orderAccounts(QMessageAccountIdList& accountIds,  const QMessageAccountSortOrder &sortOrder) const;
-    void applyOffsetAndLimitToAccountIds(QMessageAccountIdList& idList, int offset, int limit) const;
+    void orderAccounts(QMessageAccountIdList &accountIds,  const QMessageAccountSortOrder &sortOrder) const;
+    void applyOffsetAndLimitToAccountIds(QMessageAccountIdList &idList, int offset, int limit) const;
     
     static bool folderLessThan(const QMessageFolderId folderId1, const QMessageFolderId folderId2);
-    void orderFolders(QMessageFolderIdList& folderIds,  const QMessageFolderSortOrder &sortOrder) const;
-    void applyOffsetAndLimitToMsgFolderIds(QMessageFolderIdList& idList, int offset, int limit) const;
+    void orderFolders(QMessageFolderIdList &folderIds,  const QMessageFolderSortOrder &sortOrder) const;
+    void applyOffsetAndLimitToMsgFolderIds(QMessageFolderIdList &idList, int offset, int limit) const;
     void handleNestedFiltersFromFolderFilter(QMessageFolderFilter &filter) const;
 
-    static bool messageLessThan(const QMessage& message1, const QMessage& message2);
-    void orderMessages(QMessageIdList& messageIds,  const QMessageSortOrder &sortOrder) const;
-    void applyOffsetAndLimitToMsgIds(QMessageIdList& idList, int offset, int limit) const;
+    static bool messageLessThan(const QMessage &message1, const QMessage &message2);
+    void orderMessages(QMessageIdList &messageIds,  const QMessageSortOrder &sortOrder) const;
+    void applyOffsetAndLimitToMsgIds(QMessageIdList &idList, int offset, int limit) const;
 
     void handleNestedFiltersFromMessageFilter(QMessageFilter &filter) const;
     void exportUpdatesL(const QMessageAccountId &id);
@@ -210,15 +213,17 @@ private:
     mutable QList<FSMessageQueryInfo> m_messageQueries;
     QMessageAccountIdList m_mtmAccountList;
 
-    QMessageStorePrivate* ipMessageStorePrivate;
+    QMessageStorePrivate *ipMessageStorePrivate;
     bool iListenForNotifications;
     QMessageManager::NotificationFilterId m_filterId;
     QMap<QMessageManager::NotificationFilterId, QMessageFilter> m_filters;
     QMessageAccount m_account;
-    QMessageServicePrivate* m_privateService;
+    QMessageServicePrivate *m_privateService;
     QList<CFSAsynchronousSendOperation*> m_sendList;
+    QList<CFSAsynchronousAddOperation*> m_addList;
     bool m_createMessageError;
     bool m_updateMessageError;
+    bool m_addMessageError;
     friend class QMessageService;
     friend class CFSMessagesFindOperation;
     
@@ -289,7 +294,7 @@ public:
     CFSAsynchronousSendOperation(); 
     ~CFSAsynchronousSendOperation();
 
-    void sendMessage(QMessage &message);
+    void sendMessage(QMessageServicePrivate &privateService, QMessage &message);
     
 public slots:
     void createDraftMessageCompleted(QVariant message, int success);
@@ -303,6 +308,34 @@ private:
     void saveMessage();
     void createDraftMessage();
     void sendMessage();
+    
+private:
+    NmApiMessage m_fsMessage;
+    QMessageServicePrivate *m_privateService;
+    QMessage m_qMessage;
+
+};
+
+class CFSAsynchronousAddOperation : public QObject
+{
+    Q_OBJECT
+    
+public:
+    CFSAsynchronousAddOperation(); 
+    ~CFSAsynchronousAddOperation();
+
+    void addMessage(QMessage &message);
+    
+public slots:
+    void createDraftMessageCompleted(QVariant message, int success);
+    void saveCompleted(QVariant variant, int success);
+    
+signals:    
+    void messageAdded(int success);
+    
+private:
+    void saveMessage();
+    void createDraftMessage();
     
 private:
     NmApiMessage m_fsMessage;

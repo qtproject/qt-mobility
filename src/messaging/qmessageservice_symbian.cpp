@@ -90,7 +90,7 @@ bool QMessageServicePrivate::sendEmail(QMessage &message)
     switch (idType(message.parentAccountId())) {
         case EngineTypeFreestyle:
 #if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-            return CFSEngine::instance()->sendEmail(message);
+            return CFSEngine::instance()->sendEmail(*this, message);
 #else
             return false;
 #endif
