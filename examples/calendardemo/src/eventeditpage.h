@@ -78,6 +78,7 @@ public Q_SLOTS:
     void handlemultipleEntriesToBeCreated(int);
     void handleCountChanged(int);
     void handleRepeatUntilChanged(QDate);
+    void handleAlarmIndexChanged(const QString);
     void setCountField();
     void setRepeatUntilField();
 
@@ -94,6 +95,7 @@ private:
     QOrganizerItemSaveRequest *m_saveItemRequest;
     QVBoxLayout *m_scrollAreaLayout;
     QAction *m_saveOrNextSoftKey;
+    QComboBox *m_alarmComboBox;
     QComboBox *m_typeComboBox;
     QLineEdit *m_subjectEdit;
     QDateTimeEdit *m_startTimeEdit;

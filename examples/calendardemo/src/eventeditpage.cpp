@@ -51,7 +51,8 @@ EventEditPage::EventEditPage(QWidget *parent)
     m_typeComboBox(0),
     m_subjectEdit(0),
     m_countSpinBox(0),
-    m_repeatUntilDate(0)
+    m_repeatUntilDate(0),
+    m_alarmComboBox(0)
 {
     //create asynch request to save an item
 	m_saveItemRequest = new QOrganizerItemSaveRequest(this);
@@ -63,7 +64,20 @@ EventEditPage::EventEditPage(QWidget *parent)
     QLabel *endTimeLabel = new QLabel("End time:", this);
     m_endTimeEdit = new QDateTimeEdit(this);
     QLabel *repeatLabel = new QLabel("Repeat:", this);
+    QLabel *alarmLabel = new QLabel("Alarm:", this);
+    m_alarmComboBox = new QComboBox(this);
     m_typeComboBox = new QComboBox(this);
+    QStringList alarmList;
+    alarmList	<< "None"
+                << "0 minutes before"
+                << "5 minutes before"
+                << "15 minutes before"
+                << "30 minutes before"
+                << "1 hour before";
+    m_alarmComboBox->addItems(alarmList);
+    connect(m_alarmComboBox, SIGNAL(currentIndexChanged(const QString)), this,
+                        SLOT(handleAlarmIndexChanged(const QString)));
+
     QStringList repeatList;
     repeatList	<< "None"
 				<< "Daily"
@@ -92,6 +106,8 @@ EventEditPage::EventEditPage(QWidget *parent)
     m_scrollAreaLayout->addWidget(m_startTimeEdit);
     m_scrollAreaLayout->addWidget(endTimeLabel);
     m_scrollAreaLayout->addWidget(m_endTimeEdit);
+    m_scrollAreaLayout->addWidget(alarmLabel);
+    m_scrollAreaLayout->addWidget(m_alarmComboBox);
     m_scrollAreaLayout->addWidget(repeatLabel);
     m_scrollAreaLayout->addWidget(m_typeComboBox);
 
@@ -225,6 +241,34 @@ void EventEditPage::handleRepeatIndexChanged(const QString frequency)
 		listOfRRules.append(rrule);
 		m_organizerEvent.setRecurrenceRules(listOfRRules);
 	}
+}
+
+void EventEditPage::handleAlarmIndexChanged(const QString time)
+{
+    QOrganizerItemVisualReminder reminder;
+    reminder.setMessage(m_subjectEdit->text());
+
+    if (time == "None") {
+         QOrganizerItemVisualReminder fetchedReminder = m_organizerEvent.detail(QOrganizerItemVisualReminder::DefinitionName);
+         m_organizerEvent.removeDetail(&fetchedReminder);
+        return;
+    } else if (time == "0 minutes before") {
+        reminder.setDateTime(m_startTimeEdit->dateTime());
+    } else if (time == "5 minutes before") {
+        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(5*60));
+        reminder.setDateTime(reminderTime);
+    } else if (time == "15 minutes before") {
+        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(15*60));
+        reminder.setDateTime(reminderTime);
+    } else if (time == "30 minutes before") {
+        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(30*60));
+        reminder.setDateTime(reminderTime);
+    } else if (time == "1 hour before") {
+        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(60*60));
+        reminder.setDateTime(reminderTime);
+    }
+
+    m_organizerEvent.saveDetail(&reminder);
 }
 
 void EventEditPage::showEvent(QShowEvent *event)

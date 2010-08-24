@@ -1216,7 +1216,7 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
         // but as an event to the calendar DB. Add an exception rule to the parent item
         // to leave out this one when generating occurrences.
 
-        if (occurrence->originalDate().isValid()) {
+        if (occurrence->originalDate().isValid() && occurrence->originalDate() != parent->startDateTime().date()) {
             // The original date is valid => this is a generated occurrence
             // First solve the original occurrence, using this occurrence's original date.
             // We need that to know the original length of the generated occurrence

@@ -619,6 +619,7 @@ void tst_Maemo5Om::removeEventExceptions()
         extraOccurrence.setEndDateTime(QDateTime(QDate(2010,12,1), QTime(10, 0, 0)));
         extraOccurrence.setDisplayLabel("Extra occurrence");
         extraOccurrence.setDescription("Created an extra occurrence");
+        extraOccurrence.setOriginalDate(event.startDateTime().date());
 
         // Save it
         QVERIFY(m_om->saveItem(&extraOccurrence));
@@ -793,6 +794,7 @@ void tst_Maemo5Om::getItemInstances()
         occ.setGuid(event.guid());
         occ.setStartDateTime(QDateTime(QDate(2010,1,20+i), QTime(14, 0, 0)));
         occ.setEndDateTime(QDateTime(QDate(2010,1,20+i), QTime(15, 0, 0)));
+        occ.setOriginalDate(event.startDateTime().date());
         occ.setDisplayLabel("Exception occurrence");
         occ.setDescription("Exception occurrence");
         QVERIFY(m_om->saveItem(&occ));
