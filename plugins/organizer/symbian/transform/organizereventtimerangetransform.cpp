@@ -94,16 +94,24 @@ void OrganizerEventTimeRangeTransform::transformToEntryL(const QOrganizerItem& i
     if (item.type() == QOrganizerItemType::TypeEvent || item.type() == QOrganizerItemType::TypeEventOccurrence)
     {
         QOrganizerEventTimeRange range = item.detail<QOrganizerEventTimeRange>();
+        
         // Symbian calendar server makes the client process panic in case there
         // is no start time for an event. As a work-around let's check the
         // parameters and leave in that case.
+        if (!range.startDateTime().isValid())
+            User::Leave(KErrArgument);
+
+        // On some platforms symbian calendar server makes the client process panic
+        // when start date is more than end date. We don't want that.
+        if (range.endDateTime().isValid()) {
+            if (range.startDateTime() > range.endDateTime())
+                User::Leave(KErrArgument);
+        }
+        
         // TODO: A VEVENT with empty start time is allowed by the iCalendar
         // specification (RFC2445); file a bug report against symbian calendar
         // server in 10.1 or later platforms.
-        if (!range.isEmpty() && range.startDateTime().isValid())
-            entry->SetStartAndEndTimeL(toTCalTimeL(range.startDateTime()), toTCalTimeL(range.endDateTime()));
-        else
-            User::Leave(KErrArgument);        
+        entry->SetStartAndEndTimeL(toTCalTimeL(range.startDateTime()), toTCalTimeL(range.endDateTime()));
     }
 }
 
