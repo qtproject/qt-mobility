@@ -45,6 +45,7 @@
 #include <calentry.h>
 #include <calinstance.h>
 #include "qorganizeritem.h"
+#include "qorganizeritemdetaildefinition.h"
 
 QTM_USE_NAMESPACE
 
@@ -53,6 +54,8 @@ class OrganizerItemDetailTransform
 public:
     OrganizerItemDetailTransform();
     virtual ~OrganizerItemDetailTransform();
+    
+    virtual void modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const;
 
     virtual void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item) = 0;
     virtual void transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance);
