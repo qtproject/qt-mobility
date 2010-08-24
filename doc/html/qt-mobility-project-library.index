@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QDOCINDEX>
-<INDEX url="" title="Qt Mobility Project Library Reference Documentation" version="Mobility Project 1.0.2">
+<INDEX url="" title="Qt Mobility Project Library Reference Documentation" version="Mobility Project 1.0.3">
     <namespace access="public" threadsafety="unspecified" status="commendable" name="" href="" location="" module="">
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactRelationship" href="qcontactrelationship.html" location="qcontactrelationship.h" bases="" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="HasMember" fullname="QContactRelationship::HasMember" href="qcontactrelationship.html#HasMember-var" location="qcontactrelationship.h" type="const QLatin1Constant" static="true"/>
@@ -7197,8 +7197,6 @@
             <page access="public" status="commendable" name="logfilepositionsource/logfilepositionsource.pro" href="logfilepositionsource-logfilepositionsource-pro.html" subtype="file" title="" fulltitle="logfilepositionsource.pro Example File" subtitle="logfilepositionsource/logfilepositionsource.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="player" href="player.html" subtype="example" title="Player Example" fulltitle="Player Example" subtitle="" location="undocumented.qdoc">
-            <page access="public" status="commendable" name="player/mediakeysobserver.cpp" href="player-mediakeysobserver-cpp.html" subtype="file" title="" fulltitle="mediakeysobserver.cpp Example File" subtitle="player/mediakeysobserver.cpp" location=""/>
-            <page access="public" status="commendable" name="player/mediakeysobserver.h" href="player-mediakeysobserver-h.html" subtype="file" title="" fulltitle="mediakeysobserver.h Example File" subtitle="player/mediakeysobserver.h" location=""/>
             <page access="public" status="commendable" name="player/player.cpp" href="player-player-cpp.html" subtype="file" title="" fulltitle="player.cpp Example File" subtitle="player/player.cpp" location=""/>
             <page access="public" status="commendable" name="player/player.h" href="player-player-h.html" subtype="file" title="" fulltitle="player.h Example File" subtitle="player/player.h" location=""/>
             <page access="public" status="commendable" name="player/playercontrols.cpp" href="player-playercontrols-cpp.html" subtype="file" title="" fulltitle="playercontrols.cpp Example File" subtitle="player/playercontrols.cpp" location=""/>
@@ -7894,8 +7892,6 @@
             <page access="public" status="commendable" name="serviceactions/serviceactions.pro" href="serviceactions-serviceactions-pro.html" subtype="file" title="" fulltitle="serviceactions.pro Example File" subtitle="serviceactions/serviceactions.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="player" href="player.html" subtype="example" title="Media Player Example" fulltitle="Media Player Example" subtitle="" location="player.qdoc">
-            <page access="public" status="commendable" name="player/mediakeysobserver.cpp" href="player-mediakeysobserver-cpp.html" subtype="file" title="" fulltitle="mediakeysobserver.cpp Example File" subtitle="player/mediakeysobserver.cpp" location=""/>
-            <page access="public" status="commendable" name="player/mediakeysobserver.h" href="player-mediakeysobserver-h.html" subtype="file" title="" fulltitle="mediakeysobserver.h Example File" subtitle="player/mediakeysobserver.h" location=""/>
             <page access="public" status="commendable" name="player/player.cpp" href="player-player-cpp.html" subtype="file" title="" fulltitle="player.cpp Example File" subtitle="player/player.cpp" location=""/>
             <page access="public" status="commendable" name="player/player.h" href="player-player-h.html" subtype="file" title="" fulltitle="player.h Example File" subtitle="player/player.h" location=""/>
             <page access="public" status="commendable" name="player/playercontrols.cpp" href="player-playercontrols-cpp.html" subtype="file" title="" fulltitle="playercontrols.cpp Example File" subtitle="player/playercontrols.cpp" location=""/>

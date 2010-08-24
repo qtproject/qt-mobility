@@ -4040,7 +4040,6 @@
             <file>qcontactrelationshipfetchrequest.html</file>
             <file>qmediaobject.html</file>
             <file>filemanagerplugin-filemanagertransfer-cpp.html</file>
-            <file>player-mediakeysobserver-h.html</file>
             <file>qgeoareamonitor-members.html</file>
             <file>qmediatimerange-members.html</file>
             <file>contactsasync.html</file>
@@ -4134,8 +4133,8 @@
             <file>images/publish-subscribe-subscriber.png</file>
             <file>qversitcontactimporterpropertyhandler-members.html</file>
             <file>qvideowidgetcontrol-members.html</file>
-            <file>bearermonitor-bearermonitor-pro.html</file>
             <file>qcontactmanagerengine-members.html</file>
+            <file>bearermonitor-bearermonitor-pro.html</file>
             <file>qvideorenderercontrol.html</file>
             <file>bearer.html</file>
             <file>qcontactonlineaccount.html</file>
@@ -4300,7 +4299,6 @@
             <file>qcontactinvalidfilter-members.html</file>
             <file>qmagnetometerfilter-members.html</file>
             <file>qtmultimediakit.html</file>
-            <file>player-mediakeysobserver-cpp.html</file>
             <file>qmediaserviceprovider.html</file>
             <file>qcontactabstractrequest.html</file>
             <file>qgeopositioninfosource.html</file>
