@@ -53,13 +53,14 @@ class QMDEGalleryItemResultSet : public QMDEGalleryResultSet
     Q_OBJECT
 public:
 
-     QMDEGalleryItemResultSet(QObject *parent = 0);
+     QMDEGalleryItemResultSet(QMdeSession *session, QObject *parent = 0);
     ~QMDEGalleryItemResultSet();
 
     void createQuery();
 
 private:
     QGalleryItemRequest *m_request;
+    CMdEObject *m_resultObject;
 };
 
 QTM_END_NAMESPACE

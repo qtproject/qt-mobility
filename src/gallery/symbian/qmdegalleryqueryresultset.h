@@ -39,58 +39,39 @@
 **
 ****************************************************************************/
 
+#ifndef QMDEGALLERYQUERYRESULTSET_H
+#define QMDEGALLERYQUERYRESULTSET_H
 
-#ifndef QMDESESSION_H
-#define QMDESESSION_H
+#include "qmdegalleryresultset.h"
 
-#include <qmobilityglobal.h>
-
-#include <QtCore/qobject.h>
-#include <mdesession.h>
 #include <mdequery.h>
-#include <e32std.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryAbstractResponse;
+class QGalleryQueryRequest;
 
-class QMdeSession : public QObject, public MMdESessionObserver
-{
+class QMDEGalleryQueryResultSet : public QMDEGalleryResultSet,
+                                  public MMdEQueryObserver
+    {
     Q_OBJECT
 public:
 
-    QMdeSession(QObject *parent = 0);
-    virtual ~QMdeSession();
+     QMDEGalleryQueryResultSet(QMdeSession *session, QObject *parent = 0);
+    ~QMDEGalleryQueryResultSet();
 
-public: // From MMdESessionObserver
-    /**
-     * For checking MdE initialization status
-     * @param aSession  MdE Session which was opened
-     * @param aError  Error code from the opening
-     */
-    void HandleSessionOpened( CMdESession &aSession, int aError );
+    void HandleQueryNewResults( CMdEQuery &aQuery,
+                                int aFirstNewItemIndex,
+                                int aNewItemCount );
 
-    /**
-     * For checking MdE session errors
-     * @param aSession  MdE Session which was opened
-     * @param aError  Error which has occurred
-     */
-    void HandleSessionError( CMdESession &aSession, int aError );
+    void HandleQueryCompleted( CMdEQuery& aQuery, int aError );
 
-    CMdENamespaceDef& GetDefaultNamespaceDefL();
-
-    CMdEObject* GetFullObjectL( const unsigned int aId );
-
-    CMdEObjectQuery* NewObjectQueryL( CMdENamespaceDef &aNamespaceDef,
-        CMdEObjectDef &aObjectDef, MMdEQueryObserver *aObserver );
-
-    int RemoveObject( const unsigned int aItemId );
+    void createQuery();
 
 private:
-
-    CActiveSchedulerWait m_activeSchedulerWait;
-    CMdESession *m_cmdeSession;
+    QGalleryQueryRequest *m_request;
+    CMdEObjectQuery *m_query;
 };
+
 QTM_END_NAMESPACE
 
-#endif // QMDESESSION_H
+#endif // QMDEGALLERYQUERYRESULTSET_H

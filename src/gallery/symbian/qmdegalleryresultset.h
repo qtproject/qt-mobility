@@ -66,20 +66,19 @@ public:
 
     ~QMDEGalleryResultSet();
 
-    virtual QUrl url(int index) const;
     virtual int propertyKey(const QString &property) const;
     virtual QGalleryProperty::Attributes propertyAttributes(int key) const;
     virtual QVariant::Type propertyType(int key) const;
 
     virtual int itemCount() const;
     // non pure virtual
-    //virtual bool isValid() const;
+    virtual bool isValid() const;
 
     virtual QVariant itemId() const;
     virtual QUrl itemUrl() const;
     virtual QString itemType() const;
     // non pure virtual
-    //virtual QList<QGalleryResource> resources() const;
+    virtual QList<QGalleryResource> resources() const;
 
     virtual QVariant metaData(int key) const;
     virtual bool setMetaData(int key, const QVariant &value);
@@ -87,26 +86,16 @@ public:
     virtual int currentIndex() const;
     virtual bool fetch(int index);
     /* non pure virtual */
-//    virtual bool fetchNext();
-//    virtual bool fetchPrevious();
-//    virtual bool fetchFirst();
-//    virtual bool fetchLast();
+    virtual bool fetchNext();
+    virtual bool fetchPrevious();
+    virtual bool fetchFirst();
+    virtual bool fetchLast();
 
 public: //MDS spesific
 
     virtual void createQuery() = 0;
 
-    void queryProgressed( int current, int maximum );
-    /**
-     * This property holds the minimum number of consecutive items loaded in a list.
-     *
-     * @return Minimum number of consecutive items loaded in a list
-     */
-    virtual int minimumPagedItems() const;
-
     void appendItem( CMdEObject* item );
-
-    QVariant metaData(int key, const QString& property) const;
 
     // Signals to send
     //        void currentItemChanged();
@@ -120,15 +109,14 @@ public: //MDS spesific
 protected:
     QMdeSession *m_session;
 
-private:
+protected:
 
     int m_cursorPosition;
-    QString m_containerId;
     //QGalleryFilter m_filter;
-    bool m_live;
-    QVariant m_itemId;
+    //bool m_live;
     int m_result;
-    int m_itemcount;
+    QString m_itemType;
+    bool m_isValid;
 
     RPointerArray<CMdEObject> m_itemArray;
 

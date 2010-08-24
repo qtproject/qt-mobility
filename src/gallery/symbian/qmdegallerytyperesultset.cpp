@@ -39,22 +39,22 @@
 **
 ****************************************************************************/
 
+//Backend
 #include "qmdegallerytyperesultset.h"
-//backend
 #include "qgallerymdsutility.h"
 #include "qmdesession.h"
-#include "qmdequery.h"
 //API
-#include "qgalleryitemrequest.h"
-//Symbian
-#include <mdeconstants.h>
+#include "qgallerytyperequest.h"
 
 QTM_BEGIN_NAMESPACE
 
-QMDEGalleryTypeResultSet::QMDEGalleryTypeResultSet(QObject *parent)
+QMDEGalleryTypeResultSet::QMDEGalleryTypeResultSet(QMdeSession *session, QObject *parent)
 : QMDEGalleryResultSet(parent)
 {
     m_request = static_cast<QGalleryTypeRequest *>(parent);
+    if (m_request)
+        m_itemType = m_request->itemType();
+    m_session = session;
 }
 
 QMDEGalleryTypeResultSet::~QMDEGalleryTypeResultSet()
@@ -64,12 +64,118 @@ QMDEGalleryTypeResultSet::~QMDEGalleryTypeResultSet()
 
 void QMDEGalleryTypeResultSet::createQuery()
 {
-    CMdENamespaceDef& defaultNamespace = m_session->GetDefaultNamespaceDefL();
-    CMdEObjectDef& objdef = QDocumentGalleryMDSUtility::ObjDefFromItemType(defaultNamespace, m_request->itemType() );
+    QDocumentGalleryMDSUtility::GetDataFieldsForItemType( m_propertyList, m_request->itemType() );
+    // TODO notify request complete here
+}
 
-    QMdeQuery *query = m_session->NewObjectQueryL( defaultNamespace, objdef, this);
-    query->SetQueryType( QMdeQuery::Count );
-    query->FindL();
+int QMDEGalleryTypeResultSet::itemCount() const
+{
+    return m_propertyList.count();
+}
+
+QVariant QMDEGalleryTypeResultSet::itemId() const
+{
+    int unvalidId = -1;
+    QVariant id( unvalidId );
+    return id;
+}
+
+QUrl QMDEGalleryTypeResultSet::itemUrl() const
+{
+    QUrl url;
+    url.clear();
+    return url;
+}
+
+QVariant QMDEGalleryTypeResultSet::metaData(int key) const
+{
+    QVariant tempNull;
+    tempNull.clear();
+    return tempNull;
+}
+
+bool QMDEGalleryTypeResultSet::setMetaData(int key, const QVariant &value)
+{
+    return false;
+}
+
+bool QMDEGalleryTypeResultSet::fetch(int index)
+{
+    if( m_propertyList.count() <= 0 || index < 0 || index > m_propertyList.count() )
+        {
+        return false;
+        }
+    else
+        {
+        m_cursorPosition = index;
+        m_isValid = true;
+        return true;
+        }
+    return false;
+}
+
+bool QMDEGalleryTypeResultSet::fetchNext()
+{
+    int newIndex = m_cursorPosition + 1;
+    if( m_propertyList.count() <= 0 || newIndex < 0 || newIndex > m_propertyList.count() )
+        {
+        return false;
+        }
+    else
+        {
+        m_cursorPosition = newIndex;
+        m_isValid = true;
+        return true;
+        }
+    return false;
+}
+
+bool QMDEGalleryTypeResultSet::fetchPrevious()
+{
+    int newIndex = m_cursorPosition - 1;
+    if( m_propertyList.count() <= 0 || newIndex < 0 || newIndex > m_propertyList.count() )
+        {
+        return false;
+        }
+    else
+        {
+        m_cursorPosition = newIndex;
+        m_isValid = true;
+        return true;
+        }
+    return false;
+}
+
+bool QMDEGalleryTypeResultSet::fetchFirst()
+{
+    int newIndex = 0; // first item
+    if( m_propertyList.count() <= 0 )
+        {
+        return false;
+        }
+    else
+        {
+        m_cursorPosition = newIndex;
+        m_isValid = true;
+        return true;
+        }
+    return false;
+}
+
+bool QMDEGalleryTypeResultSet::fetchLast()
+{
+    int newIndex = m_itemArray.Count() - 1; // last item
+    if( m_propertyList.count() <= 0 || newIndex < 0 || newIndex > m_propertyList.count() )
+        {
+        return false;
+        }
+    else
+        {
+        m_cursorPosition = newIndex;
+        m_isValid = true;
+        return true;
+        }
+    return false;
 }
 
 #include "moc_qmdegallerytyperesultset.cpp"

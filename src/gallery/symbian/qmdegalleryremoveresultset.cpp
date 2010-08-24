@@ -39,78 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef QMDEQUERY_H
-#define QMDEQUERY_H
-
-#include <qmobilityglobal.h>
-
-#include <QtCore/qobject.h>
-#include <e32std.h>
-#include <mdequery.h>
+//Backend
+#include "qmdegalleryremoveresultset.h"
+#include "qmdesession.h"
+//API
+#include "qgalleryremoverequest.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryAbstractResponse;
-
-class QMdeQuery: public QObject, public MMdEQueryObserver
+QMDEGalleryRemoveResultSet::QMDEGalleryRemoveResultSet(QMdeSession *session, QObject *parent)
+:QMDEGalleryResultSet(parent)
 {
-    Q_OBJECT
+    m_request = static_cast<QGalleryRemoveRequest *>(parent);
+    m_session = session;
+}
 
-public:
+QMDEGalleryRemoveResultSet::~QMDEGalleryRemoveResultSet()
+{
 
-    enum QueryType
-    {
-        Item = 0, // The query is for actual metadata objects
-        Id, // The query is for the ids of the metadata objects
-        Count, // The query if for the count of metadata objects
-        Distinct,
-    // The query is for distinct items
-    };
+}
+void QMDEGalleryRemoveResultSet::createQuery()
+{
+    m_result = m_session->RemoveObject( m_request->itemId().toUInt() );
+    // TODO this call only removes the entry from MDS DB. Should the actual binary
+    // be deleted from disk?
+    // After that m_ret contains error code from request
+    // TODO notify request complete here
+}
 
-    QMdeQuery(QGalleryAbstractResponse *aResponse = 0, QObject *parent = 0);
-    virtual ~QMdeQuery();
-
-    /**
-     * Set query
-     */
-    void SetQuery(CMdEObjectQuery* aQuery);
-
-    /**
-     * Launch query
-     */
-    void FindL();
-
-    /**
-     * Set query type
-     */
-    void SetQueryType(QueryType aType);
-
-    /**
-     * Set limit to the query, for example only one object wanted
-     */
-    void SetLimit(TInt aLimit);
-
-private:
-    // from MMdEQueryObserver
-    /**
-     * See @ref MMdEQueryObserver::HandleQueryNewResults
-     */
-    void HandleQueryNewResults(CMdEQuery& aQuery, TInt aFirstNewItemIndex, TInt aNewItemCount);
-
-    /**
-     * See @ref MMdEQueryObserver::HandleQueryCompleted
-     */
-    void HandleQueryCompleted(CMdEQuery& aQuery, TInt aError);
-
-private:
-
-    CMdEObjectQuery* iQuery;
-    TBool iResultModeSet;
-    TInt iLimit;
-    QGalleryAbstractResponse *m_response;
-
-};
-
+#include "moc_qmdegalleryremoveresultset.cpp"
 QTM_END_NAMESPACE
-
-#endif // QMDEQUERY_H

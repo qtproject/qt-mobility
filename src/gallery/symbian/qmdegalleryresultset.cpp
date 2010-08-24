@@ -39,8 +39,10 @@
 **
 ****************************************************************************/
 
-#include "qmdegalleryresultset.h"
+#include "qgalleryresource.h"
 //Backend
+#include "qmdegalleryresultset.h"
+#include "qgallerymdsutility.h"
 #include "qmdesession.h"
 //Symbian
 #include <mdeproperty.h>
@@ -52,12 +54,11 @@ QTM_BEGIN_NAMESPACE
 QMDEGalleryResultSet::QMDEGalleryResultSet(QObject *parent)
 : QGalleryResultSet(parent)
 , m_cursorPosition(0)
+, m_isValid( false )
+, m_itemType (NULL)
 {
     // TODO: RArray should be map so that key based find is easier?
     m_itemArray.Reset();
-    // create a query session, provide this pointer to take create of deletion of m_session
-    m_session = new QMdeSession(this);
-
 }
 
 QMDEGalleryResultSet::~QMDEGalleryResultSet()
@@ -65,93 +66,178 @@ QMDEGalleryResultSet::~QMDEGalleryResultSet()
     m_itemArray.ResetAndDestroy();
 }
 
-QUrl QMDEGalleryResultSet::url(int index) const
-{
-
-}
 int QMDEGalleryResultSet::propertyKey(const QString &property) const
 {
-
+    return QDocumentGalleryMDSUtility::GetPropertyKey( property );
 }
+
 QGalleryProperty::Attributes QMDEGalleryResultSet::propertyAttributes(int key) const
 {
-
+    if( key == QDocumentGalleryMDSUtility::EUri )
+        {
+        return (QGalleryProperty::CanRead | QGalleryProperty::CanSort | QGalleryProperty::CanFilter );
+        }
+    else
+        {
+        return (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanSort | QGalleryProperty::CanFilter );
+        }
 }
+
 QVariant::Type QMDEGalleryResultSet::propertyType(int key) const
 {
-
+    return QDocumentGalleryMDSUtility::GetPropertyType( key );
 }
 
 int QMDEGalleryResultSet::itemCount() const
 {
+    return m_itemArray.Count();
+}
 
+bool QMDEGalleryResultSet::isValid() const
+{
+    return m_isValid;
 }
 
 QVariant QMDEGalleryResultSet::itemId() const
 {
-
+    uint idVar = m_itemArray[m_cursorPosition]->Id();
+    QVariant id( idVar );
+    return id;
 }
+
 QUrl QMDEGalleryResultSet::itemUrl() const
 {
-
+    return QUrl( QDocumentGalleryMDSUtility::s60DescToQString( m_itemArray[m_cursorPosition]->Uri() ));
 }
+
 QString QMDEGalleryResultSet::itemType() const
 {
-
+    return QDocumentGalleryMDSUtility::GetItemTypeFromMDEObject( m_itemArray[m_cursorPosition] );
 }
+
+QList<QGalleryResource> QMDEGalleryResultSet::resources() const
+{
+    // TODO
+    QList<QGalleryResource> tempNull;
+    return tempNull;
+}
+
 QVariant QMDEGalleryResultSet::metaData(int key) const
 {
+    //TODO:: remove replace old index based metada function. Use Map?
 
+    QVariant retval;
+
+    if( !m_isValid )
+        {
+        retval.clear();
+        return retval;
+        }
+
+    CMdEObject *item = m_itemArray[m_cursorPosition];
+    if (item)
+        {
+        QDocumentGalleryMDSUtility::GetMetaDataField( item, retval, key );
+        }
+
+    return retval;
 }
+
 bool QMDEGalleryResultSet::setMetaData(int key, const QVariant &value)
 {
     // TODO - should this save data instantly to mds database?
+    // To be implemented after queries are working
+    return false;
 }
+
 int QMDEGalleryResultSet::currentIndex() const
 {
-
+    return m_cursorPosition;
 }
+
 bool QMDEGalleryResultSet::fetch(int index)
 {
-
+    if( m_itemArray.Count() <= 0 || index < 0 || index > m_itemArray.Count() )
+        {
+        return false;
+        }
+    else
+        {
+        m_cursorPosition = index;
+        m_isValid = true;
+        return true;
+        }
+    return false;
 }
 
-QVariant QMDEGalleryResultSet::metaData(int key, const QString& property) const
+bool QMDEGalleryResultSet::fetchNext()
 {
-    //TODO:: remove replace old index based metada function. Use Map?
-    QVariant retval;
-
-    //    CMdEObject* item = m_itemArray[index];
-    //    if (item) {
-    //        RBuf buf;
-    //        //        TRAP_IGNORE(
-    //        CleanupClosePushL(buf);
-    //        buf.CreateL(property.length());
-    //        buf.Copy(property.utf16(), property.length());
-    //        CMdEPropertyDef& mdsPropertyDef = item->Def().GetPropertyDefL(buf);
-    //        CMdEProperty* mdsProperty;
-    //        TInt propertyIndex = item->Property(mdsPropertyDef, mdsProperty);
-    //        if (KErrNotFound != propertyIndex) {
-    //            //retval = static_cast<CMdEUint16Property*>(mdsProperty)->Value();
-    //            const TDesC& descr = static_cast<CMdETextProperty*> (mdsProperty)->Value();
-    //            QString qString((QChar*) descr.Ptr(), descr.Length());
-    //            retval = QVariant(qString);
-    //        }
-    //        CleanupStack::PopAndDestroy(&buf);
-    //        //        );
-    //    }
-    //
-    //    return retval;
+    int newIndex = m_cursorPosition + 1;
+    if( m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count() )
+        {
+        return false;
+        }
+    else
+        {
+        m_cursorPosition = newIndex;
+        m_isValid = true;
+        return true;
+        }
+    return false;
 }
 
-int QMDEGalleryResultSet::minimumPagedItems() const
+bool QMDEGalleryResultSet::fetchPrevious()
 {
-
+    int newIndex = m_cursorPosition - 1;
+    if( m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count() )
+        {
+        return false;
+        }
+    else
+        {
+        m_cursorPosition = newIndex;
+        m_isValid = true;
+        return true;
+        }
+    return false;
 }
 
-void QMDEGalleryResultSet::appendItem(CMdEObject* item)
+bool QMDEGalleryResultSet::fetchFirst()
 {
-
+    int newIndex = 0; // first item
+    if( m_itemArray.Count() <= 0 )
+        {
+        return false;
+        }
+    else
+        {
+        m_cursorPosition = newIndex;
+        m_isValid = true;
+        return true;
+        }
+    return false;
 }
+
+bool QMDEGalleryResultSet::fetchLast()
+{
+    int newIndex = m_itemArray.Count() - 1; // last item
+    if( m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count() )
+        {
+        return false;
+        }
+    else
+        {
+        m_cursorPosition = newIndex;
+        m_isValid = true;
+        return true;
+        }
+    return false;
+}
+
+void QMDEGalleryResultSet::appendItem( CMdEObject *item )
+{
+    m_itemArray.Append( item );
+}
+
 #include "moc_qmdegalleryresultset.cpp"
 QTM_END_NAMESPACE

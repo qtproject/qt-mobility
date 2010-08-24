@@ -42,15 +42,54 @@
 #ifndef QDOCUMENTGALLERYMDSUTILITY_H
 #define QDOCUMENTGALLERYMDSUTILITY_H
 
+#include <QString.h>
+
 #include <qobject.h>
 #include <qdocumentgallery.h>
-#include <mdequery.h>
+#include <mdeobject.h>
 
 QTM_BEGIN_NAMESPACE
 
 class QDocumentGalleryMDSUtility
 {
 public:
+
+    enum KPropertyKeys
+        {
+        EUri = 0,
+        EFileSize,
+        ELastModified,
+        ETitle,
+        EMime,
+        EAuthor,
+        ECopyright,
+        EDescription,
+        EComments,
+        ERating,
+        EDuration,
+        EPerformer,
+        EAudioCodec,
+        EAudioBitrate,
+        EPlayCount,
+        ESampleRate,
+        EWidth,
+        EHeight,
+        EOrientation,
+        EDateTaken,
+        ECameraManufacturer,
+        ECameraModel,
+        EExposureProgram,
+        EExposureTime,
+        EFNumber,
+        EFlashEnabled,
+        EFocalLength,
+        EMeteringMode,
+        EWhiteBalance,
+        EVideoBitrate,
+        ELanguage,
+        EFrameRate,
+        EResumePosition
+        };
 
     QDocumentGalleryMDSUtility();
     ~QDocumentGalleryMDSUtility();
@@ -59,7 +98,19 @@ public:
      * Maps Document Gallery itemtype to MdE object class
      *
      */
-    static CMdEObjectDef& ObjDefFromItemType(CMdENamespaceDef& nameSpace, QString itemType);
+    static CMdEObjectDef& ObjDefFromItemType( CMdENamespaceDef &nameSpace, QString itemType );
+    static void GetDataFieldsForItemType( QStringList &propertyList, QString itemType );
+    static void GetMetaDataField( CMdEObject *inputItem, QVariant &output, int key );
+    static QString GetItemTypeFromMDEObject( CMdEObject *inputItem );
+    static int GetPropertyKey( const QString &property );
+    static QVariant::Type GetPropertyType( int key );
+
+    static QString s60DescToQString(const TDesC& desc);
+    static HBufC* qStringToS60Desc(const QString& string);
+    static QString s60Desc8ToQString(const TDesC8& desc);
+    static HBufC8* qStringToS60Desc8(const QString& string);
+    static QByteArray s60Desc8ToQByteArray(const TDesC8& desc);
+    static HBufC8* qByteArrayToS60Desc8(const QByteArray& string);
 };
 
 QTM_END_NAMESPACE

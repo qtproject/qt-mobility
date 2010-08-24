@@ -39,58 +39,30 @@
 **
 ****************************************************************************/
 
+#ifndef QMDEGALLERYREMOVERESULTSET_H
+#define QMDEGALLERYREMOVERESULTSET_H
 
-#ifndef QMDESESSION_H
-#define QMDESESSION_H
-
-#include <qmobilityglobal.h>
-
-#include <QtCore/qobject.h>
-#include <mdesession.h>
-#include <mdequery.h>
-#include <e32std.h>
+#include "qmdegalleryresultset.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryAbstractResponse;
+class QGalleryRemoveRequest;
 
-class QMdeSession : public QObject, public MMdESessionObserver
-{
+class QMDEGalleryRemoveResultSet : public QMDEGalleryResultSet
+    {
     Q_OBJECT
 public:
 
-    QMdeSession(QObject *parent = 0);
-    virtual ~QMdeSession();
+     QMDEGalleryRemoveResultSet(QMdeSession *session, QObject *parent = 0);
+    ~QMDEGalleryRemoveResultSet();
 
-public: // From MMdESessionObserver
-    /**
-     * For checking MdE initialization status
-     * @param aSession  MdE Session which was opened
-     * @param aError  Error code from the opening
-     */
-    void HandleSessionOpened( CMdESession &aSession, int aError );
-
-    /**
-     * For checking MdE session errors
-     * @param aSession  MdE Session which was opened
-     * @param aError  Error which has occurred
-     */
-    void HandleSessionError( CMdESession &aSession, int aError );
-
-    CMdENamespaceDef& GetDefaultNamespaceDefL();
-
-    CMdEObject* GetFullObjectL( const unsigned int aId );
-
-    CMdEObjectQuery* NewObjectQueryL( CMdENamespaceDef &aNamespaceDef,
-        CMdEObjectDef &aObjectDef, MMdEQueryObserver *aObserver );
-
-    int RemoveObject( const unsigned int aItemId );
+    void createQuery();
 
 private:
+    QGalleryRemoveRequest *m_request;
 
-    CActiveSchedulerWait m_activeSchedulerWait;
-    CMdESession *m_cmdeSession;
 };
+
 QTM_END_NAMESPACE
 
-#endif // QMDESESSION_H
+#endif // QMDEGALLERYREMOVERESULTSET_H

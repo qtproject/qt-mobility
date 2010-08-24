@@ -39,6 +39,9 @@
 **
 ****************************************************************************/
 
+
+
+//API
 #include "qdocumentgallery.h"
 #include "qabstractgallery_p.h"
 
@@ -46,11 +49,17 @@
 #include "qgalleryqueryrequest.h"
 #include "qgalleryremoverequest.h"
 #include "qgallerytyperequest.h"
+//Qt
+#include <QtCore/qmetaobject.h>
 
+//Backend
+#include "qgallerymdsutility.h"
 #include "qmdegallerytyperesultset.h"
 #include "qmdegalleryitemresultset.h"
+#include "qmdegalleryremoveresultset.h"
+#include "qmdegalleryqueryresultset.h"
+#include "qmdesession.h"
 
-#include <QtCore/qmetaobject.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -59,40 +68,62 @@ class QDocumentGalleryPrivate : public QAbstractGalleryPrivate
 public:
     QGalleryAbstractResponse* createTypeResponse(QGalleryTypeRequest *request);
     QGalleryAbstractResponse* createItemResponse(QGalleryItemRequest *request);
+    QGalleryAbstractResponse* createRemoveResponse(QGalleryRemoveRequest *request);
+    QGalleryAbstractResponse* createQueryResponse(QGalleryQueryRequest *request);
+
+    QMdeSession *m_session;
 
 };
 
 QGalleryAbstractResponse* QDocumentGalleryPrivate::createTypeResponse(QGalleryTypeRequest *request)
 {
     // Fill up response class with with request data (create proper query)
-    QMDEGalleryTypeResultSet *response = new QMDEGalleryTypeResultSet(request);
+    QMDEGalleryTypeResultSet *response = new QMDEGalleryTypeResultSet(m_session, request);
     return response;
 
 }
+
 QGalleryAbstractResponse* QDocumentGalleryPrivate::createItemResponse(QGalleryItemRequest *request)
 {
     // Fill up response class with with request data (create proper query)
-    QMDEGalleryItemResultSet *response = new QMDEGalleryItemResultSet(request);
+    QMDEGalleryItemResultSet *response = new QMDEGalleryItemResultSet(m_session, request);
+    return response;
+}
+
+QGalleryAbstractResponse* QDocumentGalleryPrivate::createRemoveResponse(QGalleryRemoveRequest *request)
+{
+    // Fill up response class with with request data (create proper query)
+    QMDEGalleryRemoveResultSet *response = new QMDEGalleryRemoveResultSet(m_session, request);
+    return response;
+
+}
+
+QGalleryAbstractResponse* QDocumentGalleryPrivate::createQueryResponse(QGalleryQueryRequest *request)
+{
+    // Fill up response class with with request data (create proper query)
+    QMDEGalleryQueryResultSet *response = new QMDEGalleryQueryResultSet(m_session, request);
     return response;
 }
 
 QDocumentGallery::QDocumentGallery(QObject *parent)
 : QAbstractGallery(*new QDocumentGalleryPrivate, parent)
 {
-
+    Q_D(QDocumentGallery); // access to private class
+    d->m_session = new QMdeSession(this);
 }
 
 QDocumentGallery::~QDocumentGallery()
 {
+
 }
 
 bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::RequestType type) const
 {
     switch (type) {
-        //case QGalleryAbstractRequest::QueryRequest:
+        case QGalleryAbstractRequest::QueryRequest:
         case QGalleryAbstractRequest::ItemRequest:
         case QGalleryAbstractRequest::TypeRequest:
-        //case QGalleryAbstractRequest::RemoveRequest:
+        case QGalleryAbstractRequest::RemoveRequest:
         return true;
         default:
         return false;
@@ -101,14 +132,22 @@ bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::RequestType t
 
 QStringList QDocumentGallery::itemTypePropertyNames(const QString &itemType) const
 {
-    //TODO return proper types
-    return QStringList();
+    QStringList list;
+    QDocumentGalleryMDSUtility::GetDataFieldsForItemType( list, itemType );
+    return list;
 }
 
 QGalleryProperty::Attributes QDocumentGallery::propertyAttributes(
-    const QString &propertyName, const QString &itemType) const
+    const QString &propertyName, const QString &/*itemType*/) const
 {
-    //TODO return proper types
+    if( propertyName == QDocumentGallery::url.name() )
+        {
+        return (QGalleryProperty::CanRead | QGalleryProperty::CanSort | QGalleryProperty::CanFilter );
+        }
+    else
+        {
+        return (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanSort | QGalleryProperty::CanFilter );
+        }
 }
 
 QGalleryAbstractResponse* QDocumentGallery::createResponse(QGalleryAbstractRequest *request)
@@ -120,6 +159,10 @@ QGalleryAbstractResponse* QDocumentGallery::createResponse(QGalleryAbstractReque
         return d->createItemResponse(static_cast<QGalleryItemRequest *>(request));
         case QGalleryAbstractRequest::TypeRequest:
         return d->createTypeResponse(static_cast<QGalleryTypeRequest *>(request));
+        case QGalleryAbstractRequest::RemoveRequest:
+        return d->createRemoveResponse(static_cast<QGalleryRemoveRequest *>(request));
+        case QGalleryAbstractRequest::QueryRequest:
+        return d->createQueryResponse(static_cast<QGalleryQueryRequest *>(request));
         default:
         return 0;
     }

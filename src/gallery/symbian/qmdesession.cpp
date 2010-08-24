@@ -39,10 +39,11 @@
 **
 ****************************************************************************/
 
+// Backend
 #include "qmdesession.h"
+// API
 #include "qgalleryabstractrequest.h"
-
-#include "qmdequery.h"
+// Symbian
 #include <e32base.h>
 
 QTM_BEGIN_NAMESPACE
@@ -52,6 +53,10 @@ QMdeSession::QMdeSession(QObject *parent)
 ,m_cmdeSession(NULL)
 {
     TRAP_IGNORE( m_cmdeSession = CMdESession::NewL( *this ) );
+    if( !m_activeSchedulerWait.IsStarted() )
+        {
+        m_activeSchedulerWait.Start();
+        }
 }
 
 QMdeSession::~QMdeSession()
@@ -61,14 +66,14 @@ QMdeSession::~QMdeSession()
     }
 }
 
-void QMdeSession::HandleSessionOpened(CMdESession& /*aSession*/, TInt /*aError*/)
+void QMdeSession::HandleSessionOpened(CMdESession& /*aSession*/, int /*aError*/)
 {
-
+    m_activeSchedulerWait.AsyncStop();
 }
 
-void QMdeSession::HandleSessionError(CMdESession& /*aSession*/, TInt /*aError*/)
+void QMdeSession::HandleSessionError(CMdESession& /*aSession*/, int /*aError*/)
 {
-
+    m_activeSchedulerWait.AsyncStop();
 }
 
 CMdENamespaceDef& QMdeSession::GetDefaultNamespaceDefL()
@@ -76,17 +81,22 @@ CMdENamespaceDef& QMdeSession::GetDefaultNamespaceDefL()
     return m_cmdeSession->GetDefaultNamespaceDefL();
 }
 
-QMdeQuery* QMdeSession::NewObjectQueryL(CMdENamespaceDef &aNamespaceDef,
-    CMdEObjectDef& aObjectDef, QGalleryAbstractResponse *aResponse)
+CMdEObject* QMdeSession::GetFullObjectL( const unsigned int aId  )
 {
-    QMdeQuery* ret = new QMdeQuery(aResponse, this);
-    CMdEObjectQuery* mdeQuery = m_cmdeSession->NewObjectQueryL(aNamespaceDef, aObjectDef, ret);
-    ret->SetQuery(mdeQuery);
+    CMdEObject* ret = m_cmdeSession->GetFullObjectL( aId );
 
     return ret;
 }
 
-int QMdeSession::RemoveObject(TInt aItemId)
+CMdEObjectQuery* QMdeSession::NewObjectQueryL( CMdENamespaceDef &aNamespaceDef,
+        CMdEObjectDef &aObjectDef, MMdEQueryObserver *aResponse )
+{
+    CMdEObjectQuery* mdeQuery = m_cmdeSession->NewObjectQueryL(aNamespaceDef, aObjectDef, aResponse);
+
+    return mdeQuery;
+}
+
+int QMdeSession::RemoveObject( const unsigned int aItemId )
 {
     TItemId result = 0;
     int ret = QGalleryAbstractRequest::NoResult;
@@ -107,5 +117,6 @@ int QMdeSession::RemoveObject(TInt aItemId)
 
     return ret;
 }
+
 #include "moc_qmdesession.cpp"
 QTM_END_NAMESPACE

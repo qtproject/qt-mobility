@@ -39,20 +39,23 @@
 **
 ****************************************************************************/
 
-#include "qmdegalleryitemresultset.h"
+
 //Backend
+#include "qmdegalleryitemresultset.h"
 #include "qgallerymdsutility.h"
 #include "qmdesession.h"
-#include "qmdequery.h"
 //API
 #include "qgalleryitemrequest.h"
 
 QTM_BEGIN_NAMESPACE
 
-QMDEGalleryItemResultSet::QMDEGalleryItemResultSet(QObject *parent)
+QMDEGalleryItemResultSet::QMDEGalleryItemResultSet(QMdeSession *session, QObject *parent)
 :QMDEGalleryResultSet(parent)
 {
     m_request = static_cast<QGalleryItemRequest *>(parent);
+    if (m_request)
+        m_itemType = m_request->itemType();
+    m_session = session;
 }
 
 QMDEGalleryItemResultSet::~QMDEGalleryItemResultSet()
@@ -61,14 +64,9 @@ QMDEGalleryItemResultSet::~QMDEGalleryItemResultSet()
 }
 void QMDEGalleryItemResultSet::createQuery()
 {
-    CMdENamespaceDef& defaultNamespace = m_session->GetDefaultNamespaceDefL();
-    CMdEObjectDef& objdef = QDocumentGalleryMDSUtility::ObjDefFromItemType(defaultNamespace, m_request->itemType() );
-
-    QMdeQuery *query = m_session->NewObjectQueryL( defaultNamespace, objdef, this);
-    query->SetQueryType( QMdeQuery::Item );
-    query->SetLimit( 1 );
-    query->FindL();
-
+    m_resultObject = m_session->GetFullObjectL( m_request->itemId().toUInt() );
+    // After that resultObject contains NULL or the needed item
+    // TODO notify request complete here
 }
 
 #include "moc_qmdegalleryitemresultset.cpp"

@@ -42,13 +42,9 @@
 #ifndef QMDEGALLERYTYPERESULTSET_H
 #define QMDEGALLERYTYPERESULTSET_H
 
-#include "qmdegalleryresultset.h"
-
-#include "qgallerytyperequest.h"
-#include "qgalleryabstractresponse.h"
-
 #include <qstringlist.h>
-#include "qgalleryfilter.h"
+
+#include "qmdegalleryresultset.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -58,14 +54,32 @@ class QMDEGalleryTypeResultSet : public QMDEGalleryResultSet
 {
     Q_OBJECT
 public:
-    QMDEGalleryTypeResultSet(QObject *parent = 0);
+    QMDEGalleryTypeResultSet(QMdeSession *session, QObject *parent = 0);
     ~QMDEGalleryTypeResultSet();
 
     void createQuery();
 
+public: // from QGalleryResultSet
+
+    virtual int itemCount() const;
+
+    virtual QVariant itemId() const;
+    virtual QUrl itemUrl() const;
+
+    virtual QVariant metaData(int key) const;
+    virtual bool setMetaData(int key, const QVariant &value);
+
+    virtual bool fetch(int index);
+    /* non pure virtual */
+    virtual bool fetchNext();
+    virtual bool fetchPrevious();
+    virtual bool fetchFirst();
+    virtual bool fetchLast();
+
 private:
 
     QGalleryTypeRequest *m_request;
+    QStringList m_propertyList;
 
 };
 
