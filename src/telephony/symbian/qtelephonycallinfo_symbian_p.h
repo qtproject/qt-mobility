@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLLINFO_LINUX_P_H
-#define QTELEPHONYCALLLINFO_LINUX_P_H
+#ifndef QTELEPHONYCALLLINFO_SYMBIAN_P_H
+#define QTELEPHONYCALLLINFO_SYMBIAN_P_H
 
 
 //
@@ -59,35 +59,34 @@
 #include <QString>
 #include <QVariant>
 
-#include "qtelephony.h"
 #include "qtelephonycallinfo.h"
-#include "maemo/channel.h"
+#include "qtelephony.h"
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QTelephonyCallInfoPrivate : public QSharedData
+using namespace QTelephonyEvents;
+
+NONSHARABLE_CLASS( QTelephonyCallInfoPrivate ): public QSharedData
 {
 public:
     QTelephonyCallInfoPrivate();
     QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other);
-    QTelephonyCallInfoPrivate(Tp::ChannelPtr channel);
 
-    QString remotePartyIdentifier() const;
-    QTelephonyEvents::CallType type() const;
-    QString subType() const;
-    QTelephonyEvents::CallStatus status() const;
+    QString remotePartyIdentifier;
+    QTelephonyEvents::CallType type;
+    QString subType;
+    QTelephonyEvents::CallStatus status;
     QHash<QString, QVariant> values;
-
-public:
-    Tp::ChannelPtr telepathychannel;
+    
+    int m_index;
 };
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif //QTELEPHONYCALLLINFO_LINUX_P_H
+#endif //QTELEPHONYCALLLINFO_SYMBIAN_P_H
 
 // End of file
 

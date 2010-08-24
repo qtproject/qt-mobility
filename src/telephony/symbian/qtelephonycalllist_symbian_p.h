@@ -39,9 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLLINFO_LINUX_P_H
-#define QTELEPHONYCALLLINFO_LINUX_P_H
-
+#ifndef QTELEPHONYCALLLIST_SYMBIAN_P_H
+#define QTELEPHONYCALLLIST_SYMBIAN_P_H
 
 //
 //  W A R N I N G
@@ -54,40 +53,66 @@
 // We mean it.
 //
 
-#include <QtCore/qshareddata.h>
 #include <QList>
-#include <QString>
-#include <QVariant>
-
-#include "qtelephony.h"
-#include "qtelephonycallinfo.h"
-#include "maemo/channel.h"
+#include <QtCore/qshareddata.h>
+#include <mcallinformationobserver.h>
+#include <ccpdefs.h>
+#include "qmobilityglobal.h"
+#include "qtelephonycalllist.h"
 
 QT_BEGIN_HEADER
+
+class CCallRemotePartyInformation;
+class CCallInformation;
+class MCall;
+
 QTM_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QTelephonyCallInfoPrivate : public QSharedData
+
+class QTelephonyCallListPrivate :
+    public QObject,
+    public MCallInformationObserver
 {
-public:
-    QTelephonyCallInfoPrivate();
-    QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other);
-    QTelephonyCallInfoPrivate(Tp::ChannelPtr channel);
-
-    QString remotePartyIdentifier() const;
-    QTelephonyEvents::CallType type() const;
-    QString subType() const;
-    QTelephonyEvents::CallStatus status() const;
-    QHash<QString, QVariant> values;
+    Q_OBJECT
+    friend class QTelephonyCallList;
 
 public:
-    Tp::ChannelPtr telepathychannel;
+    QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
+    virtual ~QTelephonyCallListPrivate();
+    QList<QTelephonyCallInfo> activeCalls(const QTelephonyEvents::CallType& calltype) const;
+
+    
+private slots:
+    void updateCallInformation();
+    
+private: // From MCallInformationObserver
+    void CallInformationChanged();
+
+private:
+    void IterateCallInformationListL(QList<int> &existingCalls);
+    
+    void fillCallInfo(
+            QTelephonyCallInfoPrivate &callInfo, const MCall& fromCall);
+    void fillCallRemoteInfo(
+            QTelephonyCallInfoPrivate &callInfo, const MCall& fromCall);
+    QTelephonyEvents::CallStatus mapStatus(CCPCall::TCallState aStatus);
+    QTelephonyEvents::CallType mapType(CCPCall::TCallType aType);
+    QString mapSubType(ulong aServiceId);
+    
+private:
+    void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);
+    void emitActiveCallRemoved(QTelephonyCallInfoPrivate& call);
+    void emitActiveCallAdded(QTelephonyCallInfoPrivate& call);
+
+    QList<QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
+    QTelephonyCallList* p;
+    
+    
+private:
+    CCallInformation *m_CallInformation;
 };
 
 QTM_END_NAMESPACE
-
 QT_END_HEADER
 
-#endif //QTELEPHONYCALLLINFO_LINUX_P_H
-
-// End of file
-
+#endif // QTELEPHONYCALLLIST_SYMBIAN_P_H

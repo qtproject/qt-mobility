@@ -212,7 +212,8 @@ class QLandmarkImportRequestPrivate : public QLandmarkAbstractRequestPrivate
 {
 public:
     QLandmarkImportRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr)
+        : QLandmarkAbstractRequestPrivate(mgr),
+        device(0)
     {
         type = QLandmarkAbstractRequest::ImportRequest;
     }
@@ -229,7 +230,8 @@ class QLandmarkExportRequestPrivate : public QLandmarkAbstractRequestPrivate
 {
 public:
     QLandmarkExportRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr)
+        : QLandmarkAbstractRequestPrivate(mgr),
+          device(0)
     {
         type = QLandmarkAbstractRequest::ExportRequest;
     }
