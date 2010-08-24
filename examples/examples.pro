@@ -114,6 +114,10 @@ contains(mobility_modules,gallery) {
     SUBDIRS += \
         documentproperties \
         mediabrowser
+
+    contains(QT_CONFIG, declarative) {
+        sources.files += declarativemusicbrowser
+    }
 }
 
 # Organizer API examples

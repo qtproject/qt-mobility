@@ -64,11 +64,11 @@ public:
 class QDeclarativeGalleryFilter : public QDeclarativeGalleryFilterBase
 {
     Q_OBJECT
-    Q_PROPERTY(QString property READ propertyName WRITE setPropertyName)
-    Q_PROPERTY(QVariant value READ value WRITE setValue)
-    Q_PROPERTY(Comparator comparator READ comparator WRITE setComparator)
-    Q_PROPERTY(Qt::CaseSensitivity caseSensitivity READ caseSensitivity WRITE setCaseSensitivity)
-    Q_PROPERTY(bool inverted READ isInverted WRITE setInverted)
+    Q_PROPERTY(QString property READ propertyName WRITE setPropertyName NOTIFY propertyNameChanged)
+    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
+    Q_PROPERTY(Comparator comparator READ comparator WRITE setComparator NOTIFY comparatorChanged)
+    Q_PROPERTY(Qt::CaseSensitivity caseSensitivity READ caseSensitivity WRITE setCaseSensitivity NOTIFY caseSensitivityChanged)
+    Q_PROPERTY(bool inverted READ isInverted WRITE setInverted NOTIFY invertedChanged)
     Q_ENUMS(Comparator comparator)
 public:
     enum Comparator
@@ -91,23 +91,31 @@ public:
     }
 
     QString propertyName() const { return m_filter.propertyName(); }
-    void setPropertyName(const QString &name) { m_filter.setPropertyName(name); }
+    void setPropertyName(const QString &name) {
+        m_filter.setPropertyName(name); emit propertyNameChanged(); }
 
     QVariant value() const { return m_filter.value(); }
-    void setValue(const QVariant &value) { m_filter.setValue(value); }
+    void setValue(const QVariant &value) { m_filter.setValue(value); emit valueChanged(); }
 
     Comparator comparator() const { return Comparator(m_filter.comparator()); }
     void setComparator(Comparator comparator) {
-        m_filter.setComparator(QGalleryFilter::Comparator(comparator)); }
+        m_filter.setComparator(QGalleryFilter::Comparator(comparator)); emit comparatorChanged(); }
 
     Qt::CaseSensitivity caseSensitivity() const { return m_filter.caseSensitivity(); }
     void setCaseSensitivity(Qt::CaseSensitivity sensitivity) {
-        m_filter.setCaseSensitivity(sensitivity); }
+        m_filter.setCaseSensitivity(sensitivity); emit caseSensitivityChanged(); }
 
     bool isInverted() const { return m_filter.isInverted(); }
-    void setInverted(bool inverted) { m_filter.setInverted(inverted); }
+    void setInverted(bool inverted) { m_filter.setInverted(inverted); emit invertedChanged(); }
 
     QGalleryFilter filter() const;
+
+Q_SIGNALS:
+    void propertyNameChanged();
+    void valueChanged();
+    void comparatorChanged();
+    void caseSensitivityChanged();
+    void invertedChanged();
 
 private:
     QGalleryMetaDataFilter m_filter;
