@@ -77,9 +77,7 @@
 #include <smuthdr.h>
 #include <mtuireg.h> // CMtmUiRegistry
 #include <mtmuibas.h> // CBaseMtmUi
-#include <senduiconsts.h>
-#include <sendui.h>    // SendUi API
-#include <cmessagedata.h> //CMessageData
+#include <CMessageData.h> //CMessageData
 #include <apgcli.h>
 #include <rsendas.h>
 #include <rsendasmessage.h>
@@ -93,13 +91,16 @@
 #include <QTextCodec>
 #include <messagingutil_p.h>
 
+#ifdef QTHIGHWAYUSED
 #include <xqaiwdecl.h>
 #include <xqaiwdeclplat.h>
 #include <xqaiwrequest.h>
 #include <xqservicerequest.h>
 
-#ifdef FREESTYLENMAIL
 #include <email_services_api.h>
+#else
+#include <SendUiConsts.h>
+#include <sendui.h>    // SendUi API
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -789,6 +790,25 @@ bool CMTMEngine::composeMessage(const QMessage &message)
     return retVal;
 }
 
+#ifdef QTHIGHWAYUSED
+bool CMTMEngine::composeSMSL(const QMessage &message)
+{
+    bool embedded = false;
+    XQAiwRequest* request = iAiwMgr.create("com.nokia.symbian.IMessageSend",
+            "send(QVariantMap, QString)",
+            embedded);
+    QMap<QString, QVariant> map;
+    foreach (QMessageAddress recipient,message.to()) {
+        map.insert(recipient.addressee(), QString(""));
+    }
+    QList<QVariant> data;
+    data.append(map);
+    data.append(message.textContent());
+    request->setArguments(data);
+    request->send();
+    return true;
+}
+#else
 bool CMTMEngine::composeSMSL(const QMessage &message)
 {
     CSendUi *sendUi = CSendUi::NewL();
@@ -819,14 +839,14 @@ bool CMTMEngine::composeSMSL(const QMessage &message)
     
     sendUi->CreateAndSendMessageL(KSenduiMtmSmsUid, messageData, KNullUid, ETrue);
     CleanupStack::PopAndDestroy(3); //bd, messageData and sendUi
-    CleanupStack::PopAndDestroy(2);
     
     return true;
 }
 
-#ifdef FREESTYLENMAIL
+#endif 
+#ifdef QTHIGHWAYUSED
 
-bool CMTMEngine::composeSMSL(const QMessage &message)
+bool CMTMEngine::composeMMSL(const QMessage &message)
 {
     bool embedded = false;
     
@@ -850,7 +870,7 @@ bool CMTMEngine::composeSMSL(const QMessage &message)
     return true;
 }
 
-#endif 
+#else
 
 bool CMTMEngine::composeMMSL(const QMessage &message)
 {
@@ -922,7 +942,8 @@ bool CMTMEngine::composeMMSL(const QMessage &message)
     return true;
 }
 
-#ifdef FREESTYLENMAIL
+#endif 
+#ifdef QTHIGHWAYUSED
 
 bool CMTMEngine::composeEmailL(const QMessage &message)
 {
