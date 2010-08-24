@@ -88,7 +88,7 @@ public: // From MMdESessionObserver
 
 private:
 
-    CActiveSchedulerWait m_activeSchedulerWait;
+    CActiveSchedulerWait *m_activeSchedulerWait;
     CMdESession *m_cmdeSession;
 };
 QTM_END_NAMESPACE

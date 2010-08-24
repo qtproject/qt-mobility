@@ -52,9 +52,9 @@ QMDEGalleryQueryResultSet::QMDEGalleryQueryResultSet(QMdeSession *session, QObje
 :QMDEGalleryResultSet(parent)
 {
     m_request = static_cast<QGalleryQueryRequest *>(parent);
-    if (m_request)
-        m_itemType = m_request->itemType();
     m_session = session;
+
+    createQuery();
 }
 
 QMDEGalleryQueryResultSet::~QMDEGalleryQueryResultSet()
@@ -99,7 +99,10 @@ void QMDEGalleryQueryResultSet::HandleQueryCompleted( CMdEQuery &aQuery, int aEr
 void QMDEGalleryQueryResultSet::createQuery()
 {
     CMdENamespaceDef& defaultNamespace = m_session->GetDefaultNamespaceDefL();
-    CMdEObjectDef& objdef = QDocumentGalleryMDSUtility::ObjDefFromItemType(defaultNamespace, m_request->itemType() );
+    // TODO item type should come from root item type or filters
+	// TODO implement filters, hard coded here only for development
+    QString type( QDocumentGallery::Image.name() );
+    CMdEObjectDef& objdef = QDocumentGalleryMDSUtility::ObjDefFromItemType(defaultNamespace, type );
 
     CMdEObjectQuery *m_query = m_session->NewObjectQueryL( defaultNamespace, objdef, this );
     m_query->FindL();

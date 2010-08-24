@@ -52,10 +52,11 @@ QMdeSession::QMdeSession(QObject *parent)
 :QObject(parent)
 ,m_cmdeSession(NULL)
 {
+    m_activeSchedulerWait = new (ELeave) CActiveSchedulerWait();
     TRAP_IGNORE( m_cmdeSession = CMdESession::NewL( *this ) );
-    if( !m_activeSchedulerWait.IsStarted() )
+    if( !m_activeSchedulerWait->IsStarted() )
         {
-        m_activeSchedulerWait.Start();
+        m_activeSchedulerWait->Start();
         }
 }
 
@@ -68,12 +69,14 @@ QMdeSession::~QMdeSession()
 
 void QMdeSession::HandleSessionOpened(CMdESession& /*aSession*/, int /*aError*/)
 {
-    m_activeSchedulerWait.AsyncStop();
+    m_activeSchedulerWait->AsyncStop();
+    delete m_activeSchedulerWait;
 }
 
 void QMdeSession::HandleSessionError(CMdESession& /*aSession*/, int /*aError*/)
 {
-    m_activeSchedulerWait.AsyncStop();
+    m_activeSchedulerWait->AsyncStop();
+    delete m_activeSchedulerWait;
 }
 
 CMdENamespaceDef& QMdeSession::GetDefaultNamespaceDefL()

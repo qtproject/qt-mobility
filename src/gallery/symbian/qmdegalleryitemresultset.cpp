@@ -53,9 +53,9 @@ QMDEGalleryItemResultSet::QMDEGalleryItemResultSet(QMdeSession *session, QObject
 :QMDEGalleryResultSet(parent)
 {
     m_request = static_cast<QGalleryItemRequest *>(parent);
-    if (m_request)
-        m_itemType = m_request->itemType();
     m_session = session;
+
+    createQuery();
 }
 
 QMDEGalleryItemResultSet::~QMDEGalleryItemResultSet()
@@ -67,6 +67,12 @@ void QMDEGalleryItemResultSet::createQuery()
     m_resultObject = m_session->GetFullObjectL( m_request->itemId().toUInt() );
     // After that resultObject contains NULL or the needed item
     // TODO notify request complete here
+    if( m_resultObject ){
+        finish(QGalleryAbstractRequest::Succeeded, false);
+    }
+    else {
+        finish(QGalleryAbstractRequest::RequestError, false);
+    }
 }
 
 #include "moc_qmdegalleryitemresultset.cpp"
