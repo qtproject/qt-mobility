@@ -71,6 +71,7 @@ using namespace EmailClientApi;
 QTM_BEGIN_NAMESPACE
 
 class CFSMessagesFindOperation;
+class CFSAsynchronousSendOperation;
 class QMessageId;
 class QMessageAccount;
 
@@ -153,6 +154,10 @@ public:
                                      bool resultSetOrdered);
     
     void setMtmAccountIdList(QMessageAccountIdList accountList);
+    void createFSMessage(QMessage& message, NmApiMessage& fsMessage);
+    
+public slots:
+    void sendCompleted(int success, CFSAsynchronousSendOperation* operation);
       
 private:
 
@@ -163,9 +168,7 @@ private:
     QMessageAccountIdList accountsByType(QMessage::Type type) const;
     void updateEmailAccounts() const;
     void updateFsMessage(QMessage* message);
-    NmApiMessage createFSMessage(QMessage& message);
     NmApiMessage message(const quint64 messageId) const;
-    bool saveMessage(NmApiMessage message, quint64 mailboxId);
     
     QMessageFolderIdList folderIdsByAccountId(const QMessageAccountId& accountId) const;
     QMessageFolderIdList filterMessageFoldersL(const QMessageFolderFilter& filter, bool& filterHandled) const;
@@ -213,6 +216,7 @@ private:
     QMap<QMessageManager::NotificationFilterId, QMessageFilter> m_filters;
     QMessageAccount m_account;
     QMessageServicePrivate* m_privateService;
+    QList<CFSAsynchronousSendOperation*> m_sendList;
     bool m_createMessageError;
     bool m_updateMessageError;
     friend class QMessageService;
@@ -277,6 +281,34 @@ private: // Data
     QString m_searchKey;
 };
 
+class CFSAsynchronousSendOperation : public QObject
+{
+    Q_OBJECT
+    
+public:
+    CFSAsynchronousSendOperation(); 
+    ~CFSAsynchronousSendOperation();
+
+    void sendMessage(QMessage &message);
+    
+public slots:
+    void createDraftMessageCompleted(QVariant message, int success);
+    void saveCompleted(QVariant variant, int success);
+    void sendCompleted(QVariant variant, int success);
+    
+signals:    
+    void messageSend(int success, CFSAsynchronousSendOperation *operation);
+    
+private:
+    void saveMessage();
+    void createDraftMessage();
+    void sendMessage();
+    
+private:
+    NmApiMessage m_fsMessage;
+    QMessage m_qMessage;
+
+};
 
 QTM_END_NAMESPACE
 
