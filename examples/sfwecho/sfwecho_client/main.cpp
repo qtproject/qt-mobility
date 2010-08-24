@@ -148,6 +148,11 @@ private:
         // No connection established yet
         QServiceManager manager;
         QList<QServiceInterfaceDescriptor> list = manager.findInterfaces("EchoService");
+        if(list.count() < version+1){
+            echoBox->append("Unable to find a registered service");
+            return false;
+        }
+
         QServiceInterfaceDescriptor desc = list[version];
         if (!desc.isValid()) {            
             qWarning() << "EchoService interface not found";
@@ -167,7 +172,7 @@ private:
             sharedEcho = service;
             echo = sharedEcho;
         }
-           
+
         // Connect echo message broadcasts
         QObject::connect(echo, SIGNAL(broadcastMessage(QString,QDateTime)),
                          this, SLOT(receivedMessage(QString,QDateTime)));
