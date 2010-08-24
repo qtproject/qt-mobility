@@ -400,7 +400,18 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, const Q
     }
 
     *error = QOrganizerItemManager::NoError;
-    CCalendar *cal = d->m_mcInstance->getDefaultCalendar();
+    CCalendar *cal = 0;
+    int calError = CALENDAR_OPERATION_SUCCESSFUL;
+    if (collectionId == QOrganizerCollectionLocalId(0))
+        cal = d->m_mcInstance->getDefaultCalendar();
+    else
+        cal = d->m_mcInstance->getCalendarById(static_cast<int>(collectionId), calError);
+
+    if (!cal || calError != CALENDAR_OPERATION_SUCCESSFUL) {
+        *error = QOrganizerItemManager::InvalidCollectionError;
+        return false;
+    }
+
     bool success = true;
     QOrganizerItemChangeSet cs;
 

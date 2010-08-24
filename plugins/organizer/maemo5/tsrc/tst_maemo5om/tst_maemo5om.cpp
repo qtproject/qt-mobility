@@ -79,11 +79,12 @@ private slots:  // Test cases
     void getItemInstances();
 
     void setRecurrenceDates();
-
+private:
     void getCollectionIds();
     void getCollections();
     void saveCollection();
     void removeCollection();
+    void saveItemsToNewCollection();
 
     // TODO: Asynchronous requests testing
 
@@ -106,7 +107,7 @@ void tst_Maemo5Om::init()
 {
     m_om = new QOrganizerItemManager(managerName);
     // Remove all organizer items first (Note: ignores possible errors)
-    m_om->removeItems(m_om->itemIds(), 0);
+    //m_om->removeItems(m_om->itemIds(), 0);
 }
 
 void tst_Maemo5Om::cleanup()
@@ -1028,6 +1029,123 @@ void tst_Maemo5Om::removeCollection()
 
     // Not possible to remove again
     QVERIFY(!m_om->removeCollection(newCollection.id().localId()));
+}
+
+void tst_Maemo5Om::saveItemsToNewCollection()
+{
+    QOrganizerCollection newCollection;
+    newCollection.setMetaData("Name", "New items");
+    newCollection.setMetaData("Color", "White");
+    QVERIFY(m_om->saveCollection(&newCollection));
+    QOrganizerCollectionLocalId collId = newCollection.id().localId();
+
+    // Save an item to the new collection
+    QDate startDate1(2010, 8, 3);
+    QDate endDate1(startDate1);
+    QTime startTime1(10, 0, 0);
+    QTime endTime1(11, 30, 0);
+
+    QDate startDate2(2010, 8, 10);
+    QDate endDate2(startDate2);
+    QTime startTime2(12, 30, 0);
+    QTime endTime2(13, 0, 28);
+
+    QDate startDate3(2010, 8, 15);
+    QDate endDate3(startDate3);
+    QTime startTime3(12, 30, 0);
+    QTime endTime3(13, 0, 28);
+
+    // Create a simple event
+    QOrganizerEvent event1;
+    event1.setStartDateTime(QDateTime(startDate1, startTime1));
+    event1.setEndDateTime(QDateTime(endDate1, endTime1));
+    event1.setDisplayLabel("Simple test event");
+    event1.setDescription("Simple test event description");
+
+    // Save
+    QVERIFY(m_om->saveItem(&event1, collId));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QVERIFY(event1.id().localId() != 0);
+    QVERIFY(event1.id().managerUri().contains(managerName));
+    QVERIFY(!event1.guid().isEmpty());
+
+    // Create another event
+    QOrganizerEvent event2;
+    event2.setStartDateTime(QDateTime(startDate2, startTime2));
+    event2.setEndDateTime(QDateTime(endDate2, endTime2));
+    event2.setDisplayLabel("Simple test event, save with list parameter");
+    event2.setDescription("Save with list parameter");
+
+    // Save with list parameter
+    QList<QOrganizerItem> items;
+    items.append(event2);
+    QVERIFY(m_om->saveItems(&items, collId, 0));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    foreach (QOrganizerItem item, items) {
+        QVERIFY(item.id().localId() != 0);
+        QVERIFY(item.id().managerUri().contains(managerName));
+        QVERIFY(!item.guid().isEmpty());
+    }
+
+    // Create still one event
+    QOrganizerEvent event3;
+    event3.setStartDateTime(QDateTime(startDate3, startTime3));
+    event3.setEndDateTime(QDateTime(endDate3, endTime3));
+    event3.setDisplayLabel("Simple test event, save with list parameter and error map");
+    event3.setDescription("Save with list parameter and error map");
+
+    // Save with list parameter and error map parameter
+    QList<QOrganizerItem> items2;
+    items2.append(event3);
+    QMap<int, QOrganizerItemManager::Error> errorMap;
+    QVERIFY(m_om->saveItems(&items2, collId, &errorMap));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QVERIFY(errorMap.count() == 0);
+    foreach ( QOrganizerItem item2, items ) {
+        QVERIFY(item2.id().localId() != 0);
+        QVERIFY(item2.id().managerUri().contains(managerName));
+        QVERIFY(!item2.guid().isEmpty());
+    }
+
+    // Save with recurrence
+    QOrganizerEvent recurrenceEvent;
+
+    recurrenceEvent.setStartDateTime(QDateTime(QDate(2010, 8, 22), QTime(12, 0, 0)));
+    recurrenceEvent.setEndDateTime(QDateTime(QDate(2010, 8, 22), QTime(13, 0, 0)));
+    recurrenceEvent.setDisplayLabel("Weekly recurring event");
+    recurrenceEvent.setDescription("A weekly recurring event");
+
+    // Create recurrence
+    QOrganizerItemRecurrenceRule recurrenceRule;
+    recurrenceRule.setCount(10);
+    recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+
+    QList<QOrganizerItemRecurrenceRule> recurrenceRules;
+    recurrenceRules << recurrenceRule;
+
+    // Set recurrence
+    recurrenceEvent.setRecurrenceRules(recurrenceRules);
+
+    // Save event
+    QVERIFY(m_om->saveItem(&recurrenceEvent, collId));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QVERIFY(recurrenceEvent.id().localId() != 0);
+    QVERIFY(recurrenceEvent.id().managerUri().contains(managerName));
+    QVERIFY(!recurrenceEvent.guid().isEmpty());
+
+    // Save an extra occurrence to the reccurring event
+    QOrganizerEventOccurrence recurrenceEventOccurrence;
+
+    recurrenceEventOccurrence.setOriginalDate(recurrenceEvent.startDateTime().date());
+    recurrenceEventOccurrence.setParentLocalId(recurrenceEvent.localId());
+    recurrenceEventOccurrence.setStartDateTime(QDateTime(QDate(2010,8,31), QTime(14,0,0)));
+    recurrenceEventOccurrence.setEndDateTime(QDateTime(QDate(2010,8,31), QTime(15,0,0)));
+    recurrenceEventOccurrence.setDisplayLabel("Extra occurrence");
+    recurrenceEventOccurrence.setDescription("Extra occurrence test");
+
+    // Save event occurrence
+    QVERIFY(m_om->saveItem(&recurrenceEventOccurrence, collId));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
 }
 
 void tst_Maemo5Om::fetchItemIds()
