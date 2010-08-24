@@ -13,7 +13,7 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
 
-symbian:maemo*:wince* {
+symbian|maemo*|wince* {
     FORMS += sfwecho_client_mobile.ui
 }
 else {
