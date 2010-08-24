@@ -155,7 +155,7 @@ void CameraBinControl::updateStatus()
 void CameraBinControl::reloadLater()
 {
 #ifdef CAMEABIN_DEBUG
-    qDebug() << "reload pipeline requested";
+    qDebug() << "reload pipeline requested" << m_state;
 #endif
     if (!m_reloadPending && m_state == QCamera::ActiveState) {
         m_reloadPending = true;
@@ -174,5 +174,20 @@ void CameraBinControl::delayedReload()
         if (m_state == QCamera::ActiveState) {            
             m_session->setState(QCamera::ActiveState);
         }
+    }
+}
+
+bool CameraBinControl::canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const
+{
+    Q_UNUSED(status);
+
+    switch (changeType) {
+    case QCameraControl::CaptureMode:
+    case QCameraControl::ImageEncodingSettings:
+    case QCameraControl::VideoEncodingSettings:
+    case QCameraControl::Viewfinder:
+        return true;
+    default:
+        return false;
     }
 }

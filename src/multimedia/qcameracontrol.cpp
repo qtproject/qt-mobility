@@ -182,5 +182,26 @@ QCameraControl::~QCameraControl()
     Signal emitted when the camera capture \a mode changes.
  */
 
+/*!
+    \fn bool QCameraControl::canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const
+
+    Returns true if backend can effectively apply changing camera properties of \a changeType type
+    while the camera state is QCamera::Active and camera status matches \a status parameter.
+
+    If backend doesn't support applying this change in the active state, it will be stopped
+    before the settings are changed and restarted after.
+    Otherwise the backend should apply the change in the current state,
+    with the camera status indicating the progress, if necessary.
+*/
+
+/*!
+  \enum QCameraControl::PropertyChangeType
+
+  \value CaptureMode Indicates the capture mode is changed.
+  \value ImageEncodingSettings Image encoder settings are changed, including resolution.
+  \value VideoEncodingSettings Video encoder settings are changed.
+  \value Viewfinder Viewfinder is changed.
+*/
+
 #include "moc_qcameracontrol.cpp"
 QT_END_NAMESPACE
