@@ -10,8 +10,12 @@ MOBILITY = serviceframework
 HEADERS += 
 SOURCES += main.cpp
 symbian { 
-    TARGET.CAPABILITY = ALL \
-        -TCB
+    TARGET.CAPABILITY = ALL -TCB
+}
+
+symbian:maemo*:wince* {
     FORMS += sfwecho_client_mobile.ui
 }
-else:FORMS += sfwecho_client.ui
+else {
+    FORMS += sfwecho_client.ui
+}
