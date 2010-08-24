@@ -106,6 +106,7 @@ QTM_BEGIN_NAMESPACE
 QTelephonyCallList::QTelephonyCallList(QObject *parent)
     : QObject(parent)
 {
+    qDebug() << "QTelephonyCallList::QTelephonyCallList(QObject *parent)";
     d = new QTelephonyCallListPrivate(this);
 }
 
@@ -116,6 +117,7 @@ QTelephonyCallList::QTelephonyCallList(QObject *parent)
 */
 QTelephonyCallList::~QTelephonyCallList()
 {
+    qDebug() << "QTelephonyCallList::~QTelephonyCallList()";
     if(d)
         delete d;
 }

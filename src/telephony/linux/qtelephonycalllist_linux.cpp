@@ -103,7 +103,6 @@ void QTelephonyCallListPrivate::newChannelsSlot(const ChannelsArray& channelsarr
         }
     }
 
-
     qDebug() << "TelephonyCallListPrivate::newChannelsSlot";
 }
 
