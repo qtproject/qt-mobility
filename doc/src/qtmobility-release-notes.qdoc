@@ -78,7 +78,7 @@
     <h2>Known issues</h2>
     <h3>Messaging</h3>
     <ul>
-    <li>S60 3.2 and Symbian^3: Not able to send an MMS with an attachment using writemessage or serviceaction applications</li>
+    <li>S60 The messaging library does not support FreeStyle Email on S60 based devices.
     </ul>
 
     <h3>Multimedia</h3>
