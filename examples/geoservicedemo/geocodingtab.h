@@ -77,6 +77,6 @@ private:
     QLineEdit *m_street;
     QLineEdit *m_streetNumber;
     QTreeWidget *m_resultTree;
-    QPushButton *requestBtn;
+    QPushButton *m_requestBtn;
 };
 #endif /* ROUTETAB_H_ */
