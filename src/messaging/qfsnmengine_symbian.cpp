@@ -63,7 +63,10 @@
 #include <nmapimessagemanager.h>
 #include <nmapimessage.h>
 
-#include <XQServiceRequest.h>
+#include <xqaiwdecl.h>
+#include <xqaiwdeclplat.h>
+#include <xqaiwrequest.h>
+#include <xqservicerequest.h>
 #include "email_services_api.h"
 
 #include <QTextCodec>
@@ -630,7 +633,12 @@ NmApiMessage CFSEngine::message(const quint64 messageId) const
 
 QMessage CFSEngine::message(const QMessageId &id) const
 {
-    
+    // TODO:
+    /* Use NmApiEmailService::getMessage() to find NmApiMessage by messageId.
+    fsMessage = ...
+    conver fsMessage to qmessage, using CreateQMessage()
+    */
+    return QMessage();
 }
 
 bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOption /*option*/)
@@ -675,12 +683,14 @@ bool CFSEngine::showMessage(const QMessageId &id)
        emailInterfaceNameMessage,
        emailOperationViewMessage,
        syncronous );
-
-/*    QList<QVariant> list;
-    list.append(mailboxId);
-    list.append(folderId);
-    list.append(messageId);
-    request.setArguments(list);*/
+    
+    QMessage qmessage = message(id);
+   
+    QList<QVariant> list;
+    list.append(stripIdPrefix(qmessage.parentAccountId().toString()).toLongLong());
+    list.append(stripIdPrefix(qmessage.parentFolderId().toString()).toLongLong());
+    list.append(stripIdPrefix(qmessage.id().toString()).toLongLong());
+    request.setArguments(list);
 
     QVariant returnValue;
     bool rval = request.send(returnValue);
@@ -689,17 +699,42 @@ bool CFSEngine::showMessage(const QMessageId &id)
 
 bool CFSEngine::composeMessage(const QMessage &message)
 {
-    bool retVal = false;
- /*   MEmailMailbox* mailbox = NULL;
-    TMailboxId mailboxId(stripIdPrefix(message.parentAccountId().toString()).toInt());
-    TRAPD(err, mailbox = m_clientApi->MailboxL(mailboxId));
-    if (err == KErrNone) {
-        TRAPD(err2, mailbox->EditNewMessageL());
-        if (err2 == KErrNone)
-            retVal = true;
-        mailbox->Release();
-    }*/
-    return retVal;
+    bool embedded = false;
+    
+    XQAiwRequest* request = m_applicationManager.create(XQI_EMAIL_MESSAGE_SEND,
+            "send(QVariant)",//XQOP_EMAIL_MESSAGE_SEND,
+            embedded);
+    
+    QMap<QString,QVariant> map;
+
+    // Add receivers
+    QStringList toRecipients;
+    QStringList ccRecipients;
+    QStringList bccRecipients;
+
+    foreach(QMessageAddress address, message.to())
+        toRecipients.append(address.addressee());
+
+    foreach(QMessageAddress address, message.cc())
+        ccRecipients.append(address.addressee());
+
+    foreach(QMessageAddress address, message.bcc())
+        bccRecipients.append(address.addressee());
+
+    map.insert(emailSendToKey, toRecipients);
+    map.insert(emailSendCcKey, ccRecipients);
+    map.insert(emailSendBccKey, bccRecipients);
+    map.insert(emailSendSubjectKey, message.subject());
+    
+    map.insert(emailSendBodyTextKey, message.textContent());
+    
+    QList<QVariant> data;
+    data.append(map);
+    request->setArguments(data);
+        
+    bool res = request->send();
+   
+    return res;
 }
 
 bool CFSEngine::retrieve(QMessageServicePrivate &privateService, const QMessageId &messageId, const QMessageContentContainerId &id)
@@ -726,17 +761,7 @@ bool CFSEngine::retrieveHeader(QMessageServicePrivate &privateService, const QMe
 
 bool CFSEngine::exportUpdates(const QMessageAccountId &id)
 {
-    TRAPD(err, exportUpdatesL(id));
-    if (err != KErrNone) {
-        return false;
-    } else {
-        return true;
-    }
-}
-
-void CFSEngine::exportUpdatesL(const QMessageAccountId &id)
-{
-
+    return false;
 }
 
 bool CFSEngine::removeMessages(const QMessageFilter& /*filter*/, QMessageManager::RemovalOption /*option*/)

@@ -58,6 +58,7 @@
 #include <nmapienvelopelisting.h>
 #include <nmapimessagesearch.h>
 #include <nmapicommon.h>
+#include <xqappmgr.h>
 
 #include "qmessagemanager.h"
 #include "qmessagestore_symbian_p.h"
@@ -202,7 +203,6 @@ private:
     void applyOffsetAndLimitToMsgIds(QMessageIdList &idList, int offset, int limit) const;
 
     void handleNestedFiltersFromMessageFilter(QMessageFilter &filter) const;
-    void exportUpdatesL(const QMessageAccountId &id);
        
     friend class QMessageService;
     friend class CMessagesFindOperation;
@@ -226,6 +226,7 @@ private:
     bool m_updateMessageError;
     bool m_addMessageError;
     bool m_deleteMessageError;
+    XQApplicationManager m_applicationManager;
     friend class QMessageService;
     friend class CFSMessagesFindOperation;
     
