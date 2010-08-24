@@ -96,6 +96,16 @@ public: // transform functions
     // error code conversion
     QOrganizerItemManager::Error calErrorToManagerError(int calError) const;
 
+    // calendar (collection) metadata conversions
+    QString fromCalendarColour(CalendarColour calendarColour);
+    CalendarColour toCalendarColour(QString calendarColour);
+    QMap<CalendarColour, QString> calendarColourMap() const;
+
+    // calendar (collection) type conversions
+    QString fromCalendarType(CalendarType calendarType);
+    CalendarType toCalendarType(QString calendarType);
+    QMap<CalendarType, QString> calendarTypeMap() const;
+
 private:
     // random GUID generation
     QString randomGuid() const;

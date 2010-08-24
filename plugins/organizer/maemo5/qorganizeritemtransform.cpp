@@ -695,6 +695,70 @@ QOrganizerItemManager::Error OrganizerItemTransform::calErrorToManagerError(int 
     }
 }
 
+QString OrganizerItemTransform::fromCalendarColour(CalendarColour calendarColour)
+{
+    QMap<CalendarColour, QString> colourMap = calendarColourMap();
+    if (colourMap.contains(calendarColour))
+        return colourMap[calendarColour];
+    else
+        return QString();
+}
+
+CalendarColour OrganizerItemTransform::toCalendarColour(QString calendarColour)
+{
+    QMap<CalendarColour, QString> colourMap = calendarColourMap();
+    if (colourMap.values().contains(calendarColour))
+        return colourMap.key(calendarColour);
+    else
+        return COLOUR_DARKBLUE; // default color
+}
+
+QMap<CalendarColour, QString> OrganizerItemTransform::calendarColourMap() const
+{
+    QMap<CalendarColour, QString> retn;
+    retn[COLOUR_DARKBLUE] = "Dark blue";
+    retn[COLOUR_DARKGREEN] = "Dark green";
+    retn[COLOUR_DARKRED] = "Dark red";
+    retn[COLOUR_ORANGE] = "Orange";
+    retn[COLOUR_VIOLET] = "Violet";
+    retn[COLOUR_YELLOW] = "Yellow";
+    retn[COLOUR_WHITE] = "White";
+    retn[COLOUR_RED] = "Red";
+    retn[COLOUR_GREEN] = "Green";
+    retn[COLOUR_BLUE] = "Blue";
+    retn[COLOUR_NEXT_FREE] = "Next free";
+    return retn;
+}
+
+QString OrganizerItemTransform::fromCalendarType(CalendarType calendarType)
+{
+    QMap<CalendarType, QString> typeMap = calendarTypeMap();
+    if (typeMap.contains(calendarType))
+        return typeMap[calendarType];
+    else
+        return QString();
+}
+
+CalendarType OrganizerItemTransform::toCalendarType(QString calendarType)
+{
+    QMap<CalendarType, QString> typeMap = calendarTypeMap();
+    if (typeMap.values().contains(calendarType))
+        return typeMap.key(calendarType);
+    else
+        return LOCAL_CALENDAR; // default type
+}
+
+QMap<CalendarType, QString> OrganizerItemTransform::calendarTypeMap() const
+{
+    QMap<CalendarType, QString> retn;
+    retn[LOCAL_CALENDAR] = "Local";
+    retn[BIRTHDAY_CALENDAR] = "Birthday";
+    retn[SYNC_CALENDAR] = "Sync";
+    retn[DEFAULT_PRIVATE] = "Default private";
+    retn[DEFAULT_SYNC] = "Default sync";
+    return retn;
+}
+
 QString OrganizerItemTransform::randomGuid() const
 {
     QUuid guid = QUuid::createUuid();

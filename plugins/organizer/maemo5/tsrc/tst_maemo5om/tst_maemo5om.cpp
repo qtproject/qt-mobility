@@ -80,6 +80,11 @@ private slots:  // Test cases
 
     void setRecurrenceDates();
 
+    void getCollectionIds();
+    void getCollections();
+    void saveCollection();
+    void removeCollection();
+
     // TODO: Asynchronous requests testing
 
 private:
@@ -598,11 +603,18 @@ void tst_Maemo5Om::removeEventExceptions()
         instances = m_om->itemInstances(event, QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,12,31), QTime(23,59,59)), 0);
 
         // Should still get 10
-        QVERIFY(instances.count() == 10);
+        QCOMPARE(instances.count(), 10);
+
+        /*
+        foreach(QOrganizerItem i, instances) {
+            qDebug() << i.localId();
+            qDebug() << static_cast<QOrganizerEventOccurrence>(i).startDateTime();
+        }*/
 
         // Create one extra occurrence
         QOrganizerEventOccurrence extraOccurrence;
         extraOccurrence.setGuid(event.guid());
+        extraOccurrence.setOriginalDate(event.startDateTime().date().addDays(-1));
         extraOccurrence.setStartDateTime(QDateTime(QDate(2010,12,1), QTime(9, 0, 0)));
         extraOccurrence.setEndDateTime(QDateTime(QDate(2010,12,1), QTime(10, 0, 0)));
         extraOccurrence.setDisplayLabel("Extra occurrence");
@@ -611,11 +623,19 @@ void tst_Maemo5Om::removeEventExceptions()
         // Save it
         QVERIFY(m_om->saveItem(&extraOccurrence));
 
+        qDebug() << "-- " << extraOccurrence.localId();
+
         // Fetch all event instances
         instances = m_om->itemInstances(event, QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,12,31), QTime(23,59,59)), 0);
 
+        /*
+        foreach(QOrganizerItem i, instances) {
+            qDebug() << i.localId();
+            qDebug() << static_cast<QOrganizerEventOccurrence>(i).startDateTime();
+        }*/
+
         // Should now get 11
-        QVERIFY(instances.count() == 11);
+        QCOMPARE(instances.count(), 11);
 
         // Delete event
         QVERIFY(m_om->removeItem(event.id().localId()));
@@ -942,6 +962,70 @@ void tst_Maemo5Om::setRecurrenceDates()
     QList<QDate> fetchedRecurrenceDates = fetchedEvent.recurrenceDates();
 
     QCOMPARE(recurrenceDates, fetchedRecurrenceDates);
+}
+
+void tst_Maemo5Om::getCollectionIds()
+{
+    QOrganizerCollectionLocalId defaultCollectionId = m_om->defaultCollectionId();
+    QList<QOrganizerCollectionLocalId> collectionIds = m_om->collectionIds();
+    QVERIFY(collectionIds.contains(defaultCollectionId));
+    qDebug() << defaultCollectionId;
+    qDebug() << collectionIds;
+
+    // TODO: Test case not ready
+}
+
+void tst_Maemo5Om::getCollections()
+{
+    QOrganizerCollectionLocalId defaultCollectionId = m_om->defaultCollectionId();
+    QList<QOrganizerCollectionLocalId> collectionIds = m_om->collectionIds();
+    QList<QOrganizerCollection> collections = m_om->collections();
+
+    bool defaultCollectionExists = false;
+    bool allCollectionIds = true;
+    foreach(QOrganizerCollection collection, collections) {
+        if (collection.id().localId() == defaultCollectionId)
+            defaultCollectionExists = true;
+        if (!collectionIds.contains(collection.id().localId()))
+            allCollectionIds = false;
+
+        qDebug() << "\n";
+        qDebug() << collection.metaData();
+    }
+
+    QVERIFY(defaultCollectionExists);
+    QVERIFY(allCollectionIds);
+
+    // TODO: Test case not ready
+}
+
+void tst_Maemo5Om::saveCollection()
+{
+    QOrganizerCollection newCollection;
+    newCollection.setMetaData("Name", "New calendar");
+    newCollection.setMetaData("Color", "Red");
+    newCollection.setMetaData("Readonly", "1");
+
+    QVERIFY(m_om->saveCollection(&newCollection));
+
+    // TODO: Test case not ready
+}
+
+void tst_Maemo5Om::removeCollection()
+{
+    QOrganizerCollection newCollection;
+    newCollection.setMetaData("Name", "Temporary calendar");
+    newCollection.setMetaData("Color", "Red");
+
+    QVERIFY(m_om->saveCollection(&newCollection));
+
+    QVERIFY(m_om->collectionIds().contains(newCollection.id().localId()));
+
+    QVERIFY(m_om->removeCollection(newCollection.id().localId()));
+    QVERIFY(!m_om->collectionIds().contains(newCollection.id().localId()));
+
+    // Not possible to remove again
+    QVERIFY(!m_om->removeCollection(newCollection.id().localId()));
 }
 
 void tst_Maemo5Om::fetchItemIds()
