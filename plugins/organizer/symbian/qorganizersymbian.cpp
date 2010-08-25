@@ -200,8 +200,11 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(const QOrganize
               endDateTime = OrganizerItemDetailTransform::toQDateTimeL(endTime);  
         }
         
-        if (generator.type()== QOrganizerItemType::TypeEvent) {
-            filter = CalCommon::EIncludeAppts; 
+        if (generator.type() == QOrganizerItemType::TypeEvent) {
+        	filter = CalCommon::EIncludeAppts; 
+        } else if (generator.type() ==  QOrganizerItemType::TypeTodo) {
+        	filter = (CalCommon::EIncludeCompletedTodos |
+        	CalCommon::EIncludeIncompletedTodos);
         }
         
         TRAPD(err, m_instanceView->FindInstanceL(instanceList,filter,

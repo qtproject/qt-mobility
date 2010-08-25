@@ -113,11 +113,11 @@ OrganizerItemTransform::OrganizerItemTransform()
     m_detailTransforms.append(new OrganizerItemInstanceOriginTransform());
     m_detailTransforms.append(new OrganizerItemLocationTransform());
     m_detailTransforms.append(new OrganizerItemPriorityTransform());
-    m_detailTransforms.append(new OrganizerItemRecurrenceTransform());
     m_detailTransforms.append(new OrganizerItemTimeStampTransform());
     m_detailTransforms.append(new OrganizerJournalTimeRangeTransform());
     m_detailTransforms.append(new OrganizerTodoProgressTransform());
     m_detailTransforms.append(new OrganizerTodoTimeRangeTransform());
+    m_detailTransforms.append(new OrganizerItemRecurrenceTransform());
 }
 
 OrganizerItemTransform::~OrganizerItemTransform()
