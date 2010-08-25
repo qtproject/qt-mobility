@@ -68,3 +68,9 @@ void TelepathyAdaptor::createNewChannels(const ChannelsArray& channelsarray)
     // handle method call org.freedesktop.Telepathy.Connection.Interface.Requests.createNewChannels
     QMetaObject::invokeMethod(parent(), "createNewChannels", Q_ARG(ChannelsArray, channelsarray));
 }
+
+void TelepathyAdaptor::emitStatusChanged(const QString& status)
+{
+    // handle method call org.freedesktop.Telepathy.Connection.Interface.Requests.createNewChannels
+    QMetaObject::invokeMethod(parent(), "emitStatusChanged", Q_ARG(QString, status));
+}

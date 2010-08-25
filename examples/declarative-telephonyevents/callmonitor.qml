@@ -39,15 +39,22 @@
 ***********************************/
 
 import Qt 4.7
-import QtMobility.systeminfo 1.1
 import QtMobility.telephony 1.1
+import "content"
 
+//Main window
 Rectangle {
     width: 640
     height: 480
     id: screen
     color: "#000000"
+    gradient: Gradient {
+         GradientStop { position: 0.0; color: "#000000" }
+         GradientStop { position: 0.5; color: "#888888" }
+         GradientStop { position: 1.0; color: "#000000" }
+     }
     
+    //Setting title
     Text {
         id: title
         text: "Call Monitor"
@@ -55,20 +62,180 @@ Rectangle {
         font.bold: true
         font.pointSize: 24
     }
-
-    StorageInfo {
-        id: storageinfo
-        onLogicalDrivesChanged: updateList;
-    }
     
+    //Assign Telephony Events signals to slots
     TelephonyCallList {
         id: telephonycallist
-	onEvActiveCallAdded: screen.evActiveCallAdded(call)
+        onEvActiveCallAdded: screen.evAddItem(call, "call added")
+        onEvActiveCallStatusChanged: screen.evAddItem(call, "status changed")
+        onEvActiveCallRemoved: screen.evAddItem(call, "call removed")
     }
 
-    function evActiveCallAdded(call)
+    //Adds a new call item into the list
+    function evAddItem(call, eventstr)
     {
+
         console.log(call.remotePartyIdentifier)
+        console.log(call.status)
+        var statusstr = "";
+        var typestr = "";
+
+        //Convert status value to a string
+        switch(call.status){
+          case 0:
+                statusstr = "Idle";      
+                break;
+          case 1:
+                statusstr = "Dialing";      
+                break;
+          case 2:
+                statusstr = "Alerting";      
+                break;
+          case 3:
+                statusstr = "Connected";      
+                break;
+          case 4:
+                statusstr = "Disconnecting";      
+                break;
+          case 5:
+                statusstr = "Incomming";      
+                break;
+          case 6:
+                statusstr = "OnHold";      
+                break;
+          default:
+                statusstr = "Unknown";      
+        }
+        
+        //Convert type value to a string
+        switch(call.type){
+          case 0:
+                statusstr = "Any";      
+                break;
+          case 1:
+                statusstr = "Text";      
+                break;
+          case 2:
+                statusstr = "Data";      
+                break;
+          case 3:
+                statusstr = "Video";      
+                break;
+          case 4:
+                statusstr = "Voice";      
+                break;
+          case 5:
+                statusstr = "Other";      
+                break;
+          default:
+                statusstr = "Unknown";      
+        }
+        
+        //Add new call into the list model
+        callModel.append({
+                    "name": call.remotePartyIdentifier,
+                    "status": statusstr,
+                    "event": eventstr,
+                    "type": statusstr
+                })
+    }
+    
+    ListModel {
+        id: callModel
+
+        ListElement {
+            name: "RemoteID"
+            status: "Status"
+            event: "Event"
+            type: "Type"
+        }
+    }
+    
+    
+    // The delegate for each fruit in the model:
+    Component {
+        id: listDelegate
+        
+        Item {
+            id: delegateItem
+            width: listView.width; height: 55
+            clip: true
+
+            //Row design for a list item
+            Row {
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 10
+
+                Column {
+                    anchors.verticalCenter: parent.verticalCenter
+                    Text { 
+                        text: name
+                        font.pixelSize: 15
+                        color: "#FF9900"
+                        font.bold: true
+                    }
+                }
+                Column {
+                    anchors.verticalCenter: parent.verticalCenter
+                    Text { 
+                        text: event
+                        font.pixelSize: 15
+                        color: "#FFBB00"
+                    }
+                }
+                Column {
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    Text { 
+                        text: "-" + status
+                        font.pixelSize: 15
+                        color: "#FFDD00"
+                    }
+                }
+                
+                Column {
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    Text { 
+                        text: type + " call"
+                        font.pixelSize: 15
+                        color: "#FFFF00"
+                    }
+                }
+            }
+
+            // Animate adding and removing of items:
+            ListView.onAdd: SequentialAnimation {
+                PropertyAction { target: delegateItem; property: "height"; value: 0 }
+                NumberAnimation { target: delegateItem; property: "height"; to: 55; duration: 250; easing.type: Easing.InOutQuad }
+            }
+
+            ListView.onRemove: SequentialAnimation {
+                PropertyAction { target: delegateItem; property: "ListView.delayRemove"; value: true }
+                NumberAnimation { target: delegateItem; property: "height"; to: 0; duration: 250; easing.type: Easing.InOutQuad }
+                // Make sure delayRemove is set back to false so that the item can be destroyed
+                PropertyAction { target: delegateItem; property: "ListView.delayRemove"; value: false }
+            }
+        }
+    }
+
+
+        // The view:
+    ListView {
+        id: listView
+        anchors.fill: parent; anchors.margins: 20
+        model: callModel
+        delegate: listDelegate
+    }
+    
+    Row {
+        anchors { left: parent.left; bottom: parent.bottom; margins: 20 }
+        spacing: 10
+
+        TextButton { 
+            text: "Remove all items" 
+            onClicked: callModel.clear()
+        }
     }
 }
 
