@@ -29,7 +29,6 @@ PUBLIC_HEADERS +=  \
 
 # Private Headers
 PRIVATE_HEADERS += \
-    qvcardbackuphandlers_p.h \
     qversitdocument_p.h \
     qversitdocumentwriter_p.h \
     qversitproperty_p.h \
@@ -60,7 +59,6 @@ SOURCES += \
     qversitcontactexporter_p.cpp \
     qversitcontactimporter.cpp \
     qversitcontactimporter_p.cpp \
-    qvcardbackuphandlers_p.cpp \
     qversitresourcehandler.cpp \
     qversitcontacthandler.cpp \
     qversitcontactpluginloader_p.cpp \
