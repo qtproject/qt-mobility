@@ -60,8 +60,10 @@ public:
 
 private slots:
     void newChannelsSlot(const ChannelsArray& channelsarray);
+    void statusChangedSlot(const QString& status);
 signals:
     void NewChannels(const ChannelsArray& channelsarray);
+    void StatusChangedSlot(const QString& status);
 
 private:
     Telepathy* ptelepathy;

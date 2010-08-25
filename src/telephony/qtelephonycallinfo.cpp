@@ -108,13 +108,13 @@ QString QTelephonyCallInfo::remotePartyIdentifier() const
 }
 
 /*!
-    \fn  QTelephonyEvents::CallType QTelephonyCallInfo::type() const
+    \fn  QTelephony::CallType QTelephonyCallInfo::type() const
 
     Gives back the type of the call.
     A call can be a VOIP, Video Voice and so on.
     You can use this property to get the type of the call.
 */
-QTelephonyEvents::CallType QTelephonyCallInfo::type() const
+QTelephony::CallType QTelephonyCallInfo::type() const
 {
     if(d)
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
@@ -144,13 +144,13 @@ QString QTelephonyCallInfo::subType() const
 }
 
 /*!
-    \fn  QTelephonyEvents::CallStatus QTelephonyCallInfo::status() const
+    \fn  QTelephony::CallStatus QTelephonyCallInfo::status() const
 
     Gives back the status of the call.
     A call can be in different conditions like ringing, dropped and so on.
     You can use this property if you want to know about the current condition of the call.
 */
-QTelephonyEvents::CallStatus QTelephonyCallInfo::status() const
+QTelephony::CallStatus QTelephonyCallInfo::status() const
 {
     if(d)
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)

@@ -55,9 +55,11 @@ class Telepathy : public QObject
 
 signals:
     void NewChannels(const ChannelsArray& channelsarray);
+    void StatusChanged(const QString& status);
 
 public slots:
     void createNewChannels(const ChannelsArray& channelsarray);
+    void emitStatusChanged(const QString& status);
 
 public:
     Telepathy(QObject* parent = 0);

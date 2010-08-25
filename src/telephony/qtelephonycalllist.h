@@ -68,7 +68,7 @@ Q_SIGNALS:
     void activeCallAdded(const QTelephonyCallInfo& call);
 
 public:
-    QList<QTelephonyCallInfo > activeCalls(const QTelephonyEvents::CallType& calltype = QTelephonyEvents::Any) const;
+    QList<QTelephonyCallInfo > activeCalls(const QTelephony::CallType& calltype = QTelephony::Any) const;
 
 protected:
     QTelephonyCallListPrivate* d;

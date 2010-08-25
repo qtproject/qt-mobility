@@ -2,6 +2,10 @@
  */
 
 #include <QtCore/QFlags>
+#include <QtCore/QString>
+
+#define PATH2BUS(path) path.mid(1).replace(QLatin1String("/"), QLatin1String("."))
+
 
 /**
  * \addtogroup typesconstants Types and constants
@@ -3075,3 +3079,20 @@ const int NUM_MEDIA_STREAM_TRANSPORT_TYPES = (2+1);
  */
 #define TELEPATHY_QT4_ERROR_INCONSISTENT \
     "org.freedesktop.Telepathy.Qt4.Error.Inconsistent"
+
+/**
+ * The well-known bus name of the Account Manager.
+ *
+ * \see Tp::AccountManager
+ */
+#define TELEPATHY_ACCOUNT_MANAGER_BUS_NAME \
+    "org.freedesktop.Telepathy.AccountManager"
+
+/**
+ * The object path of the Account Manager object.
+ *
+ * \see Tp::AccountManager
+ */
+#define TELEPATHY_ACCOUNT_MANAGER_OBJECT_PATH \
+    "/org/freedesktop/Telepathy/AccountManager"
+

@@ -74,8 +74,16 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QLatin1String("createNewChannels"), argumentList);
     }
 
+    inline QDBusPendingReply<> emitStatusChanged(QString status)
+    {
+        QList<QVariant> argumentList;
+        argumentList << status;
+        return asyncCallWithArgumentList(QLatin1String("emitStatusChanged"), argumentList);
+    }
+
 Q_SIGNALS: // SIGNALS
     void NewChannels(ChannelsArray channelsarray);
+    void StatusChanged(QString status);
 };
 
 namespace org {
