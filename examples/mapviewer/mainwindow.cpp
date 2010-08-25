@@ -488,7 +488,7 @@ void MainWindow::setupUi()
     createPixmapIcon();
 
     m_mapWidget = new MapWidget(m_mapManager);
-    m_qgv->scene()->addItem(m_mapWidget);
+    scene->addItem(m_mapWidget);
     //m_mapWidget->setCenter(QGeoCoordinate(52.5,13.0));
     //temporary change for dateline testing
     m_mapWidget->setCenter(QGeoCoordinate(-27.0, 152.0));
@@ -552,14 +552,22 @@ void MainWindow::setupUi()
     formLayout->addRow("Longitude", m_longitudeEdit);
 
     m_captureCoordsButton = new QToolButton();
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    m_captureCoordsButton->setText("Get coords");
+#else
     m_captureCoordsButton->setText("Capture coordinates");
+#endif
     m_captureCoordsButton->setCheckable(true);
 
     connect(m_captureCoordsButton, SIGNAL(toggled(bool)), m_mapWidget, SLOT(setMouseClickCoordQuery(bool)));
     connect(m_mapWidget, SIGNAL(coordQueryResult(QGeoCoordinate)), this, SLOT(updateCoords(QGeoCoordinate)));
 
     m_setCoordsButton = new QPushButton();
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    m_captureCoordsButton->setText("Set coords");
+#else
     m_setCoordsButton->setText("Set coordinates");
+#endif
 
     connect(m_setCoordsButton, SIGNAL(clicked()), this, SLOT(setCoordsClicked()));
 
@@ -578,6 +586,25 @@ void MainWindow::setupUi()
 
     layout->setRowStretch(0, 1);
     layout->setRowStretch(1, 0);
+#if 1
+    QGridLayout *topLayout = new QGridLayout();
+    QGridLayout *bottomLayout = new QGridLayout();
+
+    topLayout->setColumnStretch(0, 0);
+    topLayout->setColumnStretch(1, 1);
+
+    bottomLayout->setColumnStretch(0, 0);
+    bottomLayout->setColumnStretch(1, 1);
+
+    topLayout->addWidget(m_slider, 0, 0);
+    topLayout->addWidget(m_qgv, 0, 1);
+
+    bottomLayout->addLayout(mapControlLayout, 0, 0);
+    bottomLayout->addLayout(coordControlLayout, 0, 1);
+
+    layout->addLayout(topLayout,0,0);
+    layout->addLayout(bottomLayout,1,0);
+#else
     layout->setColumnStretch(0, 0);
     layout->setColumnStretch(1, 1);
 
@@ -585,6 +612,7 @@ void MainWindow::setupUi()
     layout->addWidget(m_qgv, 0, 1);
     layout->addLayout(mapControlLayout, 1, 0);
     layout->addLayout(coordControlLayout, 1, 1);
+#endif
 
     widget->setLayout(layout);
     setCentralWidget(widget);
