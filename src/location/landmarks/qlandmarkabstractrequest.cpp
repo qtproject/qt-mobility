@@ -283,7 +283,7 @@ bool QLandmarkAbstractRequest::cancel()
     if(d_ptr->state == QLandmarkAbstractRequest::ActiveState)
         return engine->cancelRequest(this);
     else
-        return true;
+        return false;
 }
 
 /*!

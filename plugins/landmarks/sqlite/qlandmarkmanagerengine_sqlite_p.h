@@ -57,7 +57,9 @@
 #include "databasefilewatcher_p.h"
 
 #include <QSqlDatabase>
-#include <QHash>
+#include <QHash>QLandmarkAbsractRequest
+#include <QSet>
+#include <QMutex>
 #include "databaseoperations_p.h"
 
 QTM_USE_NAMESPACE
@@ -216,12 +218,14 @@ private:
     QString m_dbFilename;
     QString m_dbConnectionName;
     QHash<QLandmarkAbstractRequest *, QueryRun *> m_requestRunHash;
+    QSet<QLandmarkAbstractRequest *> m_activeRequests;
     DatabaseFileWatcher *m_dbWatcher;
     qreal m_latestTimestamp;
     volatile bool m_isExtendedAttributesEnabled;
     volatile bool m_isCustomAttributesEnabled;
     DatabaseOperations m_databaseOperations;
     friend class QueryRun;
+    QMutex m_mutex;//protects m_requestRunHash and m_activeRequests
 };
 
 #endif // QLANDMARKMANAGERENGINE_SQLITE_P_H
