@@ -222,6 +222,19 @@ isEmpty(QT_LIBINFIX):symbian {
 
         qtmobilitydeployment.pkg_postrules += multimedia
 
+        camera = \
+            "IF package(0x1028315F)" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_ecamengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_ecamengine.dll\"" \
+            "ELSEIF package(0x102752AE)" \
+            "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_ecamengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_ecamengine.dll\"" \
+            "ELSEIF package(0x102032BE)" \
+            "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_ecamengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_ecamengine.dll\"" \
+            "ELSEIF package(0x20022E6D)" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_ecamengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_ecamengine.dll\"" \
+            "ENDIF"
+
+        qtmobilitydeployment.pkg_postrules += camera
+
         contains(openmaxal_symbian_enabled, yes) {
             openmax = \
                 "IF package(0x20022E6D)" \
@@ -250,6 +263,7 @@ isEmpty(QT_LIBINFIX):symbian {
             "ELSEIF package(0x20022E6D)" \
                 "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
             "ENDIF" \
+            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/ecam/qmakepluginstubs/qtmultimediakit_ecamengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_ecamengine.qtplugin\"" \
             "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/qtmultimediakit_m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\qtmultimediakit_m3u.qtplugin\"" 
 	    
 	contains(QT_CONFIG, declarative): {

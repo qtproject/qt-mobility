@@ -18,3 +18,5 @@ else {
     symbian:SUBDIRS += openmaxal
 }
 
+symbian:SUBDIRS += ecam
+
