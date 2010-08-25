@@ -82,6 +82,7 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     m_stackedWidget->setCurrentIndex(0);
 
     setCentralWidget(m_stackedWidget);
+    setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
 }
 
 CalendarDemo::~CalendarDemo()
