@@ -542,20 +542,19 @@ QVariant ObjectEndPoint::invokeRemoteProperty(int metaIndex, const QVariant& arg
         waitForResponse(p.d->messageId);
    
         QVariant result;
-        QVariant* resultPointer; 
         if (response->isFinished) {
             if (response->result == 0) {
                 qWarning() << "Service property call failed";
             } else {
-                resultPointer = reinterpret_cast<QVariant* >(response->result);
+                QVariant* resultPointer = reinterpret_cast<QVariant* >(response->result);
                 result = (*resultPointer);
+                delete resultPointer;
             }
         } else {
             qDebug() << "response passed but not finished";
         }
          
         openRequests()->take(p.d->messageId);
-        delete resultPointer;
         delete response;
 
         return result;
@@ -596,20 +595,19 @@ QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, i
         waitForResponse(p.d->messageId);
    
         QVariant result;
-        QVariant* resultPointer; 
         if (response->isFinished) {
             if (response->result == 0) {
                 qWarning() << "Remote function call failed";
             } else {
-                resultPointer = reinterpret_cast<QVariant* >(response->result);
+                QVariant* resultPointer = reinterpret_cast<QVariant* >(response->result);
                 result = (*resultPointer);
+                delete resultPointer;
             }
         } else {
             qDebug() << "response passed but not finished";
         }
          
         openRequests()->take(p.d->messageId);
-        delete resultPointer;
         delete response;
 
         return result;
