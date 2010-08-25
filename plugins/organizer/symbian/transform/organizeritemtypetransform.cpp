@@ -43,11 +43,10 @@
 
 void OrganizerItemTypeTransform::modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const
 {
+#ifndef AGENDA_EXT_SUPPORT
     // Note not supported on legacy platforms
     schemaDefs.remove(QOrganizerItemType::TypeNote);
-    
-    // TODO: 10.1 will probably support notes. We will need some compilation flag for this.
-    
+#endif    
     // Journal is not supported on Symbian. Remove the type itself
     schemaDefs.remove(QOrganizerItemType::TypeJournal);
 }
@@ -65,6 +64,11 @@ void OrganizerItemTypeTransform::transformToDetailL(const CCalEntry& entry, QOrg
         itemType = QLatin1String(QOrganizerItemType::TypeEvent);
     else if (entryType == CCalEntry::EAnniv)
         itemType = QLatin1String(QOrganizerItemType::TypeEvent);
+#ifdef AGENDA_EXT_SUPPORT
+    else if (CCalEntry::ENote == entryType) {
+        itemType = QLatin1String(QOrganizerItemType::TypeNote);
+    }
+#endif
     else
         User::Leave(KErrUnknown); // unknown type
 
@@ -115,8 +119,16 @@ CCalEntry::TType OrganizerItemTypeTransform::entryTypeL(const QOrganizerItem &it
         entryType = CCalEntry::ETodo;
     else if (itemType == QOrganizerItemType::TypeEvent || itemType == QOrganizerItemType::TypeEventOccurrence)
         entryType = CCalEntry::EAppt;
-    else
+#ifdef AGENDA_EXT_SUPPORT
+    else if (QOrganizerItemType::TypeNote == itemType) {
+        entryType = CCalEntry::ENote;
+    }
+#endif
+    else {
         User::Leave(KErrUnknown); // unknown type
+    }
+        
+        
 
     // TODO: CCalEntry::EEvent???
     // TODO: CCalEntry::EReminder
