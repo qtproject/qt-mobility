@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITPLUGINLOADER_P_H
-#define QVERSITPLUGINLOADER_P_H
+#ifndef QVERSITCONTACTPLUGINLOADER_P_H
+#define QVERSITCONTACTPLUGINLOADER_P_H
 
 #include <QMap>
 #include <QStringList>
@@ -48,30 +48,24 @@
 
 #include "qmobilityglobal.h"
 #include "qversitcontacthandler.h"
-#include "qversitorganizerhandler.h"
-#include "qversittimezonehandler.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitPluginLoader
+class QVersitContactPluginLoader
 {
     private:
-        QVersitPluginLoader();
+        QVersitContactPluginLoader();
 
     public:
-        static QVersitPluginLoader* instance();
+        static QVersitContactPluginLoader* instance();
         QList<QVersitContactHandler*> createContactHandlers(const QString& profile);
-        QList<QVersitOrganizerHandler*> createOrganizerHandlers(const QString& profile);
-        QVersitTimeZoneHandler* timeZoneHandler();
 
     private:
         void loadPlugins();
 
-        static QVersitPluginLoader* mInstance;
+        static QVersitContactPluginLoader* mInstance;
         QSet<QString> mLoadedFactories;
         QList<QVersitContactHandlerFactory*> mContactHandlerFactories;
-        QList<QVersitOrganizerHandlerFactory*> mOrganizerHandlerFactories;
-        QVersitTimeZoneHandler* mTimeZoneHandler;
         QStringList mPluginPaths;
 };
 

@@ -42,6 +42,8 @@ namespace Tp
         void onChannelClosed(const QDBusObjectPath& removed);
 
     private: 
+        void readCurrentChannels();
+
         Tp::Client::ConnectionInterface* pConnectioninterface;
         Tp::Client::ConnectionInterfaceRequestsInterface* pConnectionInterfaceRequestsInterface;
         QTelephonyCallListPrivate* ptelephonyCallList;

@@ -39,57 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITORGANIZERIMPORTER_H
-#define QVERSITORGANIZERIMPORTER_H
+#ifndef QVERSITORGANIZERHANDLER_H
+#define QVERSITORGANIZERHANDLER_H
 
-#include "qmobilityglobal.h"
-
-#include <qorganizeritem.h>
-
-#include <QList>
+#include "qversitorganizerimporter.h"
+#include "qversitorganizerexporter.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitDocument;
-class QVersitOrganizerImporterPrivate;
-class QVersitProperty;
+// qdoc seems to not find QVersitOrganizerHandler if it is declared first, hence this forward
+// declaration
+class QVersitOrganizerHandler;
 
-class Q_VERSIT_EXPORT QVersitOrganizerImporterPropertyHandler
+class Q_VERSIT_ORGANIZER_EXPORT QVersitOrganizerHandlerFactory
 {
 public:
-    virtual ~QVersitOrganizerImporterPropertyHandler() {}
-    virtual void propertyProcessed(const QVersitDocument& document,
-                                   const QVersitProperty& property,
-                                   const QOrganizerItem& item,
-                                   bool *alreadyProcessed,
-                                   QList<QOrganizerItemDetail>* updatedDetails) = 0;
-    virtual void documentProcessed(const QVersitDocument& document,
-                                   QOrganizerItem* item) = 0;
+    virtual ~QVersitOrganizerHandlerFactory() {}
+    virtual QSet<QString> profiles() const { return QSet<QString>(); }
+    virtual QString name() const = 0;
+    virtual int index() const { return 0; }
+    virtual QVersitOrganizerHandler* createHandler() const = 0;
+
+#ifdef Q_QDOC
+    static const QLatin1Constant ProfileSync;
+    static const QLatin1Constant ProfileBackup;
+#else
+    Q_DECLARE_LATIN1_CONSTANT(ProfileSync, "Sync");
+    Q_DECLARE_LATIN1_CONSTANT(ProfileBackup, "Backup");
+#endif
 };
 
-class Q_VERSIT_EXPORT QVersitOrganizerImporter
+class Q_VERSIT_ORGANIZER_EXPORT QVersitOrganizerHandler : public QVersitOrganizerImporterPropertyHandler,
+                                                public QVersitOrganizerExporterDetailHandler
 {
 public:
-    enum Error {
-        NoError = 0,
-        InvalidDocumentError,
-        EmptyDocumentError
-    };
-
-    QVersitOrganizerImporter();
-    QVersitOrganizerImporter(const QString& profile);
-    ~QVersitOrganizerImporter();
-
-    bool importDocument(const QVersitDocument& documents);
-    QList<QOrganizerItem> items() const;
-    QMap<int, Error> errors() const;
-
-    void setPropertyHandler(QVersitOrganizerImporterPropertyHandler* handler);
-
-private:
-    QVersitOrganizerImporterPrivate* d;
+    virtual ~QVersitOrganizerHandler() {}
 };
 
 QTM_END_NAMESPACE
 
-#endif // QVERSITORGANIZERIMPORTER_H
+#define QT_VERSIT_ORGANIZER_HANDLER_INTERFACE "com.nokia.qt.mobility.versit.organizerhandlerfactory/1.0"
+Q_DECLARE_INTERFACE(QtMobility::QVersitOrganizerHandlerFactory, QT_VERSIT_ORGANIZER_HANDLER_INTERFACE);
+
+#endif

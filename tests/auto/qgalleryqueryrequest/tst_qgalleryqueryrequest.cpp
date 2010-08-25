@@ -297,24 +297,33 @@ void tst_QGalleryQueryRequest::executeSynchronous()
 
     QCOMPARE(request.seek(0, false), true);
     QCOMPARE(request.currentIndex(), 0);
+    QCOMPARE(request.isValid(), true);
     QCOMPARE(request.seek(1, true), true);
     QCOMPARE(request.currentIndex(), 1);
+    QCOMPARE(request.isValid(), true);
     QCOMPARE(request.seek(-1, true), true);
     QCOMPARE(request.currentIndex(), 0);
+    QCOMPARE(request.isValid(), true);
     QCOMPARE(request.seek(-1, false), false);
     QCOMPARE(request.currentIndex(), -1);
+    QCOMPARE(request.isValid(), false);
     QCOMPARE(request.last(), true);
     QCOMPARE(request.currentIndex(), 9);
+    QCOMPARE(request.isValid(), true);
     QCOMPARE(request.next(), false);
     QCOMPARE(request.currentIndex(), 10);
+    QCOMPARE(request.isValid(), false);
     QCOMPARE(request.previous(), true);
     QCOMPARE(request.currentIndex(), 9);
+    QCOMPARE(request.isValid(), true);
     QCOMPARE(request.first(), true);
     QCOMPARE(request.currentIndex(), 0);
     QCOMPARE(request.previous(), false);
     QCOMPARE(request.currentIndex(), -1);
+    QCOMPARE(request.isValid(), false);
     QCOMPARE(request.next(), true);
     QCOMPARE(request.currentIndex(), 0);
+    QCOMPARE(request.isValid(), true);
 
     QCOMPARE(request.itemId(), QVariant(1));
     QCOMPARE(request.itemUrl(), QUrl(QLatin1String("http://example.com")));

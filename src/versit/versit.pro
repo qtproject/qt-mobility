@@ -7,20 +7,14 @@ include(../../common.pri)
 
 DEFINES += QT_BUILD_VERSIT_LIB QT_MAKEDLL QT_ASCII_CAST_WARNINGS
 
-CONFIG += mobility
-MOBILITY = contacts organizer
+qtAddLibrary(QtContacts)
 
 # Contacts Includepath
 INCLUDEPATH += . \
                ../contacts \
                ../contacts/requests \
                ../contacts/filters \
-               ../contacts/details \
-               ../organizer \
-               ../organizer/requests \
-               ../organizer/filters \
-               ../organizer/details \
-               ../organizer/items
+               ../contacts/details
 
 # Input
 PUBLIC_HEADERS +=  \
@@ -31,11 +25,7 @@ PUBLIC_HEADERS +=  \
     qversitcontactexporter.h \
     qversitcontactimporter.h \
     qversitcontacthandler.h \
-    qversitorganizerhandler.h \
-    qversitorganizerexporter.h \
-    qversitorganizerimporter.h \
     qversitresourcehandler.h \
-    qversittimezonehandler.h
 
 # Private Headers
 PRIVATE_HEADERS += \
@@ -49,15 +39,14 @@ PRIVATE_HEADERS += \
     qvcard30writer_p.h \
     qversitcontactexporter_p.h \
     qversitcontactimporter_p.h \
-    qversitorganizerexporter_p.h \
-    qversitorganizerimporter_p.h \
     qversitdefs_p.h \
-    qversitorganizerdefs_p.h \
-    qversitpluginloader_p.h \
+    qversitcontactsdefs_p.h \
+    qversitcontactpluginloader_p.h \
     versitutils_p.h
 
 # Implementation
-SOURCES += qversitdocument.cpp \
+SOURCES += \
+    qversitdocument.cpp \
     qversitdocument_p.cpp \
     qversitdocumentwriter_p.cpp \
     qversitproperty.cpp \
@@ -71,15 +60,10 @@ SOURCES += qversitdocument.cpp \
     qversitcontactexporter_p.cpp \
     qversitcontactimporter.cpp \
     qversitcontactimporter_p.cpp \
-    qversitorganizerexporter.cpp \
-    qversitorganizerexporter_p.cpp \
-    qversitorganizerimporter.cpp \
-    qversitorganizerimporter_p.cpp \
     qvcardbackuphandlers_p.cpp \
     qversitresourcehandler.cpp \
     qversitcontacthandler.cpp \
-    qversitorganizerhandler.cpp \
-    qversitpluginloader_p.cpp \
+    qversitcontactpluginloader_p.cpp \
     versitutils.cpp
 
 HEADERS += \
