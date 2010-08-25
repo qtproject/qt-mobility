@@ -66,36 +66,103 @@ Rectangle {
         id: lmcat
         name: "just to see if this categoary element instantiates"
     }
-    LandmarkNameFilter {
-	id: townFilter
-	name: "Orgrimmar" // needs to be exact match
+    LandmarkIntersectionFilter {
+        id : landmarkIntersectionFilterInstantiation
     }
-    LandmarkProximityFilter {
-	id: myPositionFilter
-	longitude: positionSource.position.longitude
-	latitude: positionSource.position.latitude
-	radius: 100
+    LandmarkUnionFilter {
+        id : landmarUnionFilterInstantiation
     }
-    LandmarkProximityFilter {
-	id: existingCityPositionFilter
-	longitude: 12
-	latitude: 85
-	radius: 100 // metres
+    LandmarkFilter {
+        id : landmarkFilterName
+	type: LandmarkFilter.Name
+	//value: "Perth"
+	value: "Landmark 1"
     }
+    
+    LandmarkFilter {
+        id: landmarkFilterProximity
+	type: LandmarkFilter.Proximity
+	value: Position {
+            id: position
+	    longitude:  10
+	    latitude: 20
+	    radius: 500
+	}
+    }
+    
+    LandmarkUnionFilter {
+        id : landmarkUnionFilterNameAndProxy
+	LandmarkFilter {
+	    type: LandmarkFilter.Name
+	    value: "Landmark 1"
+        }
+	LandmarkFilter {
+	    type: LandmarkFilter.Proximity
+	    value: Position {
+	        longitude:  10
+	        latitude: 20
+	        radius: 50000
+	    }
+        }
+    }
+    
+    LandmarkIntersectionFilter {
+        id : landmarkIntersectionFilterNameAndProxy
+	LandmarkFilter {
+	    type: LandmarkFilter.Name
+	    value: "Landmark 1"
+        }
+	LandmarkFilter {
+	    type: LandmarkFilter.Proximity
+	    value: Position {
+	        longitude:  10
+	        latitude: 20
+	        radius: 500
+	    }
+        }
+    }
+    
+    
     // The model where data stems
     LandmarkModel {
         id: lmmodel
         autoUpdate: true
-	nameFilter: townFilter
-	//proximityFilter: myPositionFilter
-	//proximityFilter: existingCityPositionFilter
-        landmarksPerUpdate: 15
+	
+	//filter: landmarkFilterName
+	//filter: landmarkFilterProximity
+	filter: landmarkUnionFilterNameAndProxy
+	
+	/*
+	filter: LandmarkIntersectionFilter {
+	    LandmarkFilter {
+	        type: LandmarkFilter.Proximity
+		value: 1500
+	    }
+	    LandmarkUnionFilter {
+	        LandmarkIntersectionFilter {
+		    LandmarkFilter {
+		        type: LandmarkFilter.Name
+			value: "Brisbane"
+		    }
+		    LandmarkFilter {
+	                type: LandmarkFilter.Name
+			value: "Gold Coast"
+		    }
+		    
+		    
+		}
+	    }
+	} // LandmarkIntersectionFilter
+	*/
+	
+        limit: 15
+	offset: 0
     }
     
-    LandmarkCategoryModel {
-         id: lmcatmodel
-         autoUpdate: true
-    }
+    //LandmarkCategoryModel {
+    //    id: lmcatmodel
+    //     autoUpdate: true
+    //	}
     
     // The view which lays the overall view
     ListView {

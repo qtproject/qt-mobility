@@ -20,6 +20,8 @@ class QDeclarativeLandmarkCategoryModel: public QAbstractListModel
 
     Q_PROPERTY(QString error READ error NOTIFY errorChanged)
     Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
+    Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged)
+    Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 
 public:
@@ -37,6 +39,10 @@ public:
         IconSourceRole,
     };
     int count();
+    int limit();
+    void setLimit(int limit);
+    int offset();
+    void setOffset(int offset);
     QString error();
     void setAutoUpdate(bool autoUpdate);
     bool autoUpdate() const;
@@ -44,6 +50,8 @@ public:
 signals:
     void errorChanged(QString error);
     void autoUpdateChanged(bool autoUpdate);
+    void limitChanged(int limit);
+    void offsetChanged(int offset);
     void countChanged(int count);
 
 private slots:
@@ -53,6 +61,7 @@ private slots:
 
 private:
     void convertCategoriesToDeclarative();
+    void setFetchHints();
 
 private:
     QLandmarkManager* m_manager;
@@ -64,6 +73,8 @@ private:
     QMap<QString, QDeclarativeLandmarkCategory*> m_categoryMap;
     QString m_error;
     bool m_autoUpdate;
+    int m_limit;
+    int m_offset;
 };
 
 QTM_END_NAMESPACE

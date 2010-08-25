@@ -37,8 +37,8 @@ contains(mobility_modules,location) {
     }
 
     contains(mobility_modules,bearer)|contains(QT_MAJOR_VERSION, 4):greaterThan(QT_MINOR_VERSION, 6) {
-    	SUBDIRS += geoservicedemo
-#disable for now                   mapviewer
+    	SUBDIRS += geoservicedemo \
+                   mapviewer
 
     }
 

@@ -45,7 +45,8 @@ QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTiledMapReq
         : QGeoTiledMapReply(request, parent),
         m_reply(reply)
 {
-    QVariant fromCache = reply->attribute(QNetworkRequest::SourceIsFromCacheAttribute);
+    m_reply->setParent(this);
+    QVariant fromCache = m_reply->attribute(QNetworkRequest::SourceIsFromCacheAttribute);
     setCached(fromCache.toBool());
 
     connect(m_reply,
@@ -66,10 +67,6 @@ QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTiledMapReq
 
 QGeoMapReplyNokia::~QGeoMapReplyNokia()
 {
-    if (!m_reply)
-        return;
-
-    m_reply->deleteLater();
 }
 
 QNetworkReply* QGeoMapReplyNokia::networkReply() const
@@ -104,23 +101,6 @@ void QGeoMapReplyNokia::networkFinished()
     setMapImageData(m_reply->readAll());
     setMapImageFormat("PNG");
     setFinished(true);
-
-    /*
-    QPixmap tile;
-
-    if (!tile.loadFromData(m_reply->readAll(), "PNG")) {
-        // add a qWarning with the actual parser.errorString()
-        setError(QGeoTiledMapReply::ParseError, "The response from the service was not in a recognisable format.");
-    }
-
-    if (!tile.isNull() && !tile.size().isEmpty()) {
-        setMapImage(tile);
-        setFinished(true);
-    } else {
-        // add a qWarning with the actual parser.errorString()
-        setError(QGeoTiledMapReply::ParseError, "The map image is empty.");
-    }
-    */
 
     m_reply->deleteLater();
     m_reply = 0;
