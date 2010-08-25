@@ -52,9 +52,9 @@ QMDEGalleryTypeResultSet::QMDEGalleryTypeResultSet(QMdeSession *session, QObject
 : QMDEGalleryResultSet(parent)
 {
     m_request = static_cast<QGalleryTypeRequest *>(parent);
-    if (m_request)
-        m_itemType = m_request->itemType();
     m_session = session;
+
+    createQuery();
 }
 
 QMDEGalleryTypeResultSet::~QMDEGalleryTypeResultSet()
@@ -66,6 +66,7 @@ void QMDEGalleryTypeResultSet::createQuery()
 {
     QDocumentGalleryMDSUtility::GetDataFieldsForItemType( m_propertyList, m_request->itemType() );
     // TODO notify request complete here
+    finish(QGalleryAbstractRequest::Succeeded, false);
 }
 
 int QMDEGalleryTypeResultSet::itemCount() const

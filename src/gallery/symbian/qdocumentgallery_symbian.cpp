@@ -101,7 +101,6 @@ QGalleryAbstractResponse* QDocumentGalleryPrivate::createQueryResponse(QGalleryQ
 {
     // Fill up response class with with request data (create proper query)
     QMDEGalleryQueryResultSet *response = new QMDEGalleryQueryResultSet(m_session, request);
-    response->createQuery();
     return response;
 }
 

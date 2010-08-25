@@ -52,6 +52,8 @@ QMDEGalleryRemoveResultSet::QMDEGalleryRemoveResultSet(QMdeSession *session, QOb
 {
     m_request = static_cast<QGalleryRemoveRequest *>(parent);
     m_session = session;
+
+    createQuery();
 }
 
 QMDEGalleryRemoveResultSet::~QMDEGalleryRemoveResultSet()
@@ -65,6 +67,7 @@ void QMDEGalleryRemoveResultSet::createQuery()
     // be deleted from disk?
     // After that m_ret contains error code from request
     // TODO notify request complete here
+    finish(m_result, false);
 }
 
 #include "moc_qmdegalleryremoveresultset.cpp"

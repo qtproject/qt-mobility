@@ -62,11 +62,14 @@ QDocumentGalleryMDSUtility::~QDocumentGalleryMDSUtility()
 
 CMdEObjectDef& QDocumentGalleryMDSUtility::ObjDefFromItemType( CMdENamespaceDef &nameSpace, QString itemType )
 {
-    if (itemType == QDocumentGallery::Album.name())
+    if (itemType == QDocumentGallery::Audio.name())
     {
-        return nameSpace.GetObjectDefL( MdeConstants::Album::KAlbumObject );
+        return nameSpace.GetObjectDefL( MdeConstants::Audio::KAudioObject );
     }
-
+    //else if (itemType == QDocumentGallery::Album.name())
+    //{
+    //    return nameSpace.GetObjectDefL( MdeConstants::Album::KAlbumObject );
+    //}
     //    else if (itemType == QDocumentGallery::AlbumArtist.name())
     //        {
     //        return nameSpace.GetObjectDefL( MdeConstants:::: );
@@ -75,11 +78,6 @@ CMdEObjectDef& QDocumentGalleryMDSUtility::ObjDefFromItemType( CMdENamespaceDef 
     //        {
     //        return nameSpace.GetObjectDefL( MdeConstants:::: );
     //        }
-
-    else if (itemType == QDocumentGallery::Audio.name())
-    {
-        return nameSpace.GetObjectDefL( MdeConstants::Audio::KAudioObject );
-    }
     //    else if (itemType == QDocumentGallery::AudioGenre.name())
     //        {
     //        return nameSpace.GetObjectDefL( MdeConstants:::: );
@@ -102,10 +100,10 @@ CMdEObjectDef& QDocumentGalleryMDSUtility::ObjDefFromItemType( CMdENamespaceDef 
     {
         return nameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
     }
-    //    else if (itemType == QDocumentGallery::PhotoAlbum.name())
-    //        {
-    //        return nameSpace.GetObjectDefL( MdeConstants:::: );
-    //        }
+    else if (itemType == QDocumentGallery::PhotoAlbum.name())
+    {
+        return nameSpace.GetObjectDefL( MdeConstants::Album::KAlbumObject );
+    }
     //    else if (itemType == QDocumentGallery::Playlist.name())
     //        {
     //        return nameSpace.GetObjectDefL( MdeConstants:::: );
@@ -903,7 +901,7 @@ QString QDocumentGalleryMDSUtility::GetItemTypeFromMDEObject( CMdEObject *inputI
 {
     if( inputItem->Def().Name() == MdeConstants::Album::KAlbumObject )
         {
-        return QDocumentGallery::Album.name();
+        return QDocumentGallery::PhotoAlbum.name();
         }
     else if( inputItem->Def().Name() == MdeConstants::Audio::KAudioObject )
         {
