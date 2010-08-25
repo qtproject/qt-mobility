@@ -60,8 +60,13 @@ void OrganizerItemTypeTransform::transformToDetailL(const CCalEntry& entry, QOrg
         itemType = QLatin1String(QOrganizerItemType::TypeTodo);
     else if (entryType == CCalEntry::EEvent)
         itemType = QLatin1String(QOrganizerItemType::TypeEvent);
-    else if (entryType == CCalEntry::EAppt)
-        itemType = QLatin1String(QOrganizerItemType::TypeEvent);
+    else if (entryType == CCalEntry::EAppt) {
+        // Assume this is an event occurrence if the recurrence id is set
+        if (entry.RecurrenceIdL().TimeUtcL() != Time::NullTTime())
+            itemType = QLatin1String(QOrganizerItemType::TypeEventOccurrence);
+        else
+            itemType = QLatin1String(QOrganizerItemType::TypeEvent);
+    }
     else if (entryType == CCalEntry::EAnniv)
         itemType = QLatin1String(QOrganizerItemType::TypeEvent);
 #ifdef AGENDA_EXT_SUPPORT

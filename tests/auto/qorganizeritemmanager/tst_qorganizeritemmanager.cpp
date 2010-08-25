@@ -932,7 +932,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     exception.setOriginalDate(QDate(2010, 12, 25));
     exception.setStartDateTime(QDateTime(QDate(2010, 12, 25), QTime(0, 0, 0)));
     exception.setEndDateTime(QDateTime(QDate(2010, 12, 26), QTime(0, 0, 0)));
-    exception.setDisplayLabel(QLatin1String("Xmass"));
+    exception.setDisplayLabel(QLatin1String("Xmas"));
     if (cm->detailDefinitions(QOrganizerItemType::TypeEventOccurrence).contains(QOrganizerItemComment::DefinitionName))
         exception.addComment(QLatin1String("With the in-laws"));
     QVERIFY(!cm->saveItem(&exception));
@@ -964,8 +964,9 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     exception2.setOriginalDate(QDate(2011, 12, 25));
     exception2.setStartDateTime(QDateTime(QDate(2011, 12, 25), QTime(0, 0, 0)));
     exception2.setEndDateTime(QDateTime(QDate(2011, 12, 26), QTime(0, 0, 0)));
-    exception2.setDisplayLabel(QLatin1String("Christmas"));
-    exception2.addComment(QLatin1String("With the in-laws"));
+    exception2.setDisplayLabel(QLatin1String("XMas"));
+    if (cm->detailDefinitions(QOrganizerItemType::TypeEventOccurrence).contains(QOrganizerItemComment::DefinitionName))
+        exception2.addComment(QLatin1String("With the in-laws"));
     exception2.setParentLocalId(report.localId()); // report is not an event
     QVERIFY(!cm->saveItem(&exception2));
     QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
@@ -994,8 +995,9 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     QOrganizerEventOccurrence exception3;
     exception3.setStartDateTime(QDateTime(QDate(2012, 12, 25), QTime(0, 0, 0)));
     exception3.setEndDateTime(QDateTime(QDate(2012, 12, 26), QTime(0, 0, 0)));
-    exception3.setDisplayLabel(QLatin1String("Christmas"));
-    exception3.addComment(QLatin1String("With the in-laws"));
+    exception3.setDisplayLabel(QLatin1String("XMas"));
+    if (cm->detailDefinitions(QOrganizerItemType::TypeEventOccurrence).contains(QOrganizerItemComment::DefinitionName))
+        exception3.addComment(QLatin1String("With the in-laws"));
     exception3.setParentLocalId(christmas.localId());
     exception3.setGuid(QLatin1String("christmas"));
     QVERIFY(!cm->saveItem(&exception3));

@@ -43,7 +43,9 @@
 
 void OrganizerEventTimeRangeTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
-    if (item->type() == QOrganizerItemType::TypeEvent) // type has already been converted
+    // pre-condition: type has already been converted
+    if (item->type() == QOrganizerItemType::TypeEvent
+        || item->type() == QOrganizerItemType::TypeEventOccurrence)
     {
         TCalTime startTime = entry.StartTimeL();
         TCalTime endTime = entry.EndTimeL();
