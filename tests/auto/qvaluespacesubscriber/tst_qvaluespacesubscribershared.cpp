@@ -545,6 +545,23 @@ void tst_QValueSpaceSubscriber::testPathChanges()
     QVERIFY(subscriber.subPaths().toSet().contains(homeUserPaths.toSet()));
 }
 
+void tst_QValueSpaceSubscriber::testInvalidPath_data()
+{
+    QTest::addColumn<QString>("subscriber_path");
+    QTest::newRow("One char missing") << "/hom";
+    QTest::newRow("Two chars missing") << "/ho";
+    QTest::newRow("One char missing in subdir") << "/home/use";
+    QTest::newRow("Two chars missing in subdir") << "/home/us";
+}
+
+void tst_QValueSpaceSubscriber::testInvalidPath()
+{
+    QFETCH(QString, subscriber_path);
+
+    QValueSpaceSubscriber subscriber(subscriber_path);
+    QVERIFY(subscriber.subPaths().isEmpty());
+}
+
 void tst_QValueSpaceSubscriber::contentsChanged_data()
 {
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
