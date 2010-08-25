@@ -88,9 +88,7 @@ CMdEObject* QMdeSession::GetFullObjectL( const unsigned int aId  )
 CMdEObjectQuery* QMdeSession::NewObjectQueryL( CMdENamespaceDef &aNamespaceDef,
         CMdEObjectDef &aObjectDef, MMdEQueryObserver *aResponse )
 {
-    CMdEObjectQuery* mdeQuery = m_cmdeSession->NewObjectQueryL(aNamespaceDef, aObjectDef, aResponse);
-
-    return mdeQuery;
+    return m_cmdeSession->NewObjectQueryL(aNamespaceDef, aObjectDef, aResponse);
 }
 
 int QMdeSession::RemoveObject( const unsigned int aItemId )

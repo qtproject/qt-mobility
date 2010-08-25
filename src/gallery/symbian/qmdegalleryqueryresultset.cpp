@@ -54,6 +54,7 @@ QMDEGalleryQueryResultSet::QMDEGalleryQueryResultSet(QMdeSession *session, QObje
     m_request = static_cast<QGalleryQueryRequest *>(parent);
     if (m_request)
         m_itemType = m_request->itemType();
+
     m_session = session;
 }
 
@@ -63,37 +64,38 @@ QMDEGalleryQueryResultSet::~QMDEGalleryQueryResultSet()
 }
 
 void QMDEGalleryQueryResultSet::HandleQueryNewResults( CMdEQuery &aQuery,
-                                                       int /*aFirstNewItemIndex*/,
-                                                       int /*aNewItemCount*/ )
+                                                       int firstNewItemIndex,
+                                                       int newItemCount )
 {
-    emit progressChanged(aQuery.Count(), KMdEQueryDefaultMaxCount );
+    m_eventLoop.quit(); // end eventloop
+    //Signals that items have been inserted into a result set at
+    emit itemsInserted(firstNewItemIndex, newItemCount);
+
+    emit progressChanged(aQuery.Count(), aQuery.Count());
 }
 
 void QMDEGalleryQueryResultSet::HandleQueryCompleted( CMdEQuery &aQuery, int aError )
 {
-    // TODO implement notifications about query progress
 
-    //((QGalleryAbstractResponse*)parent())->progressChanged(aQuery.Count(), aQuery.Count());
-    emit progressChanged(aQuery.Count(), aQuery.Count());
-
+    m_eventLoop.quit(); // end eventloop
     // All results appended when query is ready
     if( aQuery.ResultMode() == EQueryResultModeItem ) {
         int max = aQuery.Count();
         for ( TInt i = 0; ++i < max; ) {
-            ((QMDEGalleryResultSet *)parent())->appendItem( static_cast<CMdEObject *>(aQuery.TakeOwnershipOfResult( i )) );
+            appendItem( static_cast<CMdEObject *>(aQuery.TakeOwnershipOfResult( i )) );
         }
     }
 
     if( aError == KErrNone )
     {
-        //((QGalleryAbstractResponse *)parent())->finish(QGalleryAbstractRequest::Succeeded, false);
-        finish(QGalleryAbstractRequest::Succeeded, false);
+        finish(QGalleryAbstractRequest::Succeeded, m_live);
     }
     else
     {
-        //((QGalleryAbstractResponse *)parent())->finish(QGalleryAbstractRequest::RequestError, false);
-        finish(QGalleryAbstractRequest::RequestError, false);
+        finish(QGalleryAbstractRequest::RequestError, m_live);
+        emit finished();
     }
+
 }
 
 void QMDEGalleryQueryResultSet::createQuery()
@@ -101,8 +103,9 @@ void QMDEGalleryQueryResultSet::createQuery()
     CMdENamespaceDef& defaultNamespace = m_session->GetDefaultNamespaceDefL();
     CMdEObjectDef& objdef = QDocumentGalleryMDSUtility::ObjDefFromItemType(defaultNamespace, m_request->itemType() );
 
-    CMdEObjectQuery *m_query = m_session->NewObjectQueryL( defaultNamespace, objdef, this );
+    m_query = m_session->NewObjectQueryL( defaultNamespace, objdef, this );
     m_query->FindL();
+    m_eventLoop.exec(); // start eventloop to wait async callbacks to return
 }
 
 #include "moc_qmdegalleryqueryresultset.cpp"

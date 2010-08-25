@@ -43,7 +43,7 @@
 #define QMDEGALLERYQUERYRESULTSET_H
 
 #include "qmdegalleryresultset.h"
-
+#include <qeventloop.h>
 #include <mdequery.h>
 
 QTM_BEGIN_NAMESPACE
@@ -70,6 +70,7 @@ public:
 private:
     QGalleryQueryRequest *m_request;
     CMdEObjectQuery *m_query;
+    QEventLoop m_eventLoop;
 };
 
 QTM_END_NAMESPACE
