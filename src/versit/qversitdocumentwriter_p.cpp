@@ -65,6 +65,7 @@ QVersitDocumentWriter::QVersitDocumentWriter(
     const QByteArray& version)
     : mDocumentType(documentType),
     mVersion(version),
+    mDevice(0),
     mCodec(0),
     mEncoder(0),
     mUtf8Encoder(QTextCodec::codecForName("UTF-8")->makeEncoder()),
