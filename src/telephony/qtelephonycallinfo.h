@@ -53,7 +53,7 @@
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-using namespace QTelephonyEvents;
+using namespace QTelephony;
 
 struct QTelephonyCallInfoPrivate;
 class Q_TELEPHONY_EXPORT QTelephonyCallInfo

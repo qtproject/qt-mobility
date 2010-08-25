@@ -43,15 +43,19 @@
 
 #include "dbusinterface.h"
 #include <QString>
+#include <QTimer>
+#include <QObject>
 
 class Telepathy;
 class TelepathyAdaptor;
-class Dialer
+class Dialer : public QObject
 {
+    Q_OBJECT
 public:
-    Dialer();
+    Dialer(QObject* parent = 0);
     ~Dialer();
     void dial(QString number);
+    void status(QString status);
 
 private:
     Telepathy* ptelepathy;
