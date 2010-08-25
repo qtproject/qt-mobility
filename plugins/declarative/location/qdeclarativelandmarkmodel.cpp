@@ -9,7 +9,7 @@ QTM_BEGIN_NAMESPACE
 
 QDeclarativeLandmarkModel::QDeclarativeLandmarkModel(QObject *parent) :
         QAbstractListModel(parent), m_manager(0), m_filter(0),
-        m_fetchRequest(0), m_sortOrder(AscendingOrder), m_sortKey(DefaultSort),
+        m_fetchRequest(0), m_sortingOrder(0), m_sortOrder(AscendingOrder), m_sortKey(DefaultSort),
         m_componentCompleted(false), m_updatePending(false), m_autoUpdate(false),
         m_limit(-1), m_offset(-1)
 {
@@ -25,14 +25,14 @@ QDeclarativeLandmarkModel::QDeclarativeLandmarkModel(QObject *parent) :
     roleNames.insert(LatitudeRole, "latitude");
     roleNames.insert(LongitudeRole, "longitude");
     setRoleNames(roleNames);
-    // Instantiate default manager
-    m_manager = new QLandmarkManager();
 }
 
 QDeclarativeLandmarkModel::~QDeclarativeLandmarkModel()
 {
-    delete m_manager;
+    // Destruction order is significant, as request dtor uses manager it is associated with
     delete m_fetchRequest;
+    delete m_sortingOrder;
+    delete m_manager;
 }
 
 // When the parent is valid it means that rowCount is returning the number of children of parent.
@@ -71,15 +71,43 @@ QVariant QDeclarativeLandmarkModel::data(const QModelIndex &index, int role) con
 
 void QDeclarativeLandmarkModel::componentComplete()
 {
-    qDebug("QDeclarativeLandmarkModel::componentComplete()");
+#ifdef QDECLARATIVE_LANDMARK_DEBUG
+    qDebug() << "QDeclarativeLandmarkModel::componentComplete() dbName, autoUpdate: "
+    << m_dbFileName << m_autoUpdate;
+#endif
     m_componentCompleted = true;
+    if (!m_manager) {
+        if (m_dbFileName.isEmpty()) {
+            m_manager = new QLandmarkManager();
+        } else {
+            // This is purely for testing purposes
+            QMap<QString, QString> map;
+            map["filename"] = m_dbFileName;
+            m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
+        }
+    }
     if (m_autoUpdate)
         scheduleUpdate();
 }
 
-QString QDeclarativeLandmarkModel::error()
+QString QDeclarativeLandmarkModel::error() const
 {
     return m_error;
+}
+
+// This is purely for testing purposes
+QString QDeclarativeLandmarkModel::dbFileName() const
+{
+    return m_dbFileName;
+}
+
+// This is purely for testing purposes
+void QDeclarativeLandmarkModel::setDbFileName(QString fileName)
+{
+    if (fileName == m_dbFileName)
+        return;
+    m_dbFileName = fileName;
+    emit dbFileNameChanged();
 }
 
 void QDeclarativeLandmarkModel::setAutoUpdate(bool autoUpdate)
@@ -87,6 +115,7 @@ void QDeclarativeLandmarkModel::setAutoUpdate(bool autoUpdate)
     if (autoUpdate == m_autoUpdate)
         return;
     m_autoUpdate = autoUpdate;
+    emit autoUpdateChanged();
 }
 
 bool QDeclarativeLandmarkModel::autoUpdate() const
@@ -122,18 +151,12 @@ void QDeclarativeLandmarkModel::update()
     // Set filters, orders, and limits
     if (m_filter) {
         QLandmarkFilter* filter = m_filter->filter();
-        if (filter) {
-            qDebug("Found a filter");
+        if (filter)
             m_fetchRequest->setFilter(*filter);
-        } else {
-            qDebug("Zero filter");
-        }
     }
     setFetchRange();
     setFetchOrder();
-    qDebug("Calling landmark fetch request start()");
     m_fetchRequest->start();
-    qDebug("Calling after start");
     m_updatePending = false; // Allow requesting updates again
 }
 
@@ -182,7 +205,6 @@ void QDeclarativeLandmarkModel::setOffset(int offset)
 
 void QDeclarativeLandmarkModel::scheduleUpdate()
 {
-    qDebug() << "QDeclarativeLandmarkModel::scheduleUpdate(), componentCompleted, m_updatePending: " << m_componentCompleted << m_updatePending;
     if (!m_componentCompleted || m_updatePending)
         return;
     m_updatePending = true; // Disallow possbile duplicate request triggering
@@ -209,16 +231,15 @@ void QDeclarativeLandmarkModel::setFetchOrder()
         delete m_sortingOrder;
         m_sortingOrder = 0;
     }
-    switch (m_sortKey)
-    {
-    case DefaultSort:
-        m_sortingOrder = new QLandmarkSortOrder();
-        break;
-    case NameSort:
-        m_sortingOrder = new QLandmarkNameSort();
-        break;
-    default:
-        return;
+    switch (m_sortKey) {
+        case DefaultSort:
+            m_sortingOrder = new QLandmarkSortOrder();
+            break;
+        case NameSort:
+            m_sortingOrder = new QLandmarkNameSort();
+            break;
+        default:
+            return;
 
     }
     m_sortingOrder->setDirection((Qt::SortOrder)m_sortOrder);
@@ -269,15 +290,17 @@ void QDeclarativeLandmarkModel::fetchRequestStateChanged(QLandmarkAbstractReques
 {
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
     qDebug() << "QDeclarativeLandmarkModel::Fetch request finished with state: " << state;
-    if (m_fetchRequest)
+    if (m_fetchRequest) {
         qDebug() << "and related request error code is: " << m_fetchRequest->errorString();
+        qDebug() << "and received this many landmarks:" << m_fetchRequest->landmarks().count();
+    }
 #endif
     if (!m_fetchRequest || state != QLandmarkAbstractRequest::FinishedState)
         return;
 
     if (m_fetchRequest->error() == QLandmarkManager::NoError) {
         // Later improvement item is to make udpate incremental by connecting to resultsAvailable() -function.
-        beginInsertRows(QModelIndex(), 0, m_landmarks.count());
+        beginInsertRows(QModelIndex(), 0, m_landmarks.count()); // TODO check if this shuold be amount of received landmarks
         int oldCount = m_landmarks.count();
         m_landmarks = m_fetchRequest->landmarks();
         endInsertRows();

@@ -27,6 +27,8 @@ class QDeclarativeLandmarkModel: public QAbstractListModel, public QDeclarativeP
     Q_PROPERTY(QDeclarativeLandmarkFilterBase* filter READ filter WRITE setFilter NOTIFY filterChanged)
     Q_PROPERTY(SortKey sortBy READ sortBy WRITE setSortBy NOTIFY sortByChanged)
     Q_PROPERTY(SortOrder sortOrder READ sortOrder WRITE setSortOrder NOTIFY sortOrderChanged)
+    // dbFileName is _not_ official public property, but used in testing
+    Q_PROPERTY(QString dbFileName READ dbFileName WRITE setDbFileName NOTIFY dbFileNameChanged)
     Q_INTERFACES(QDeclarativeParserStatus)
 
 public:
@@ -70,7 +72,9 @@ public:
     void setLimit(int limit);
     int offset();
     void setOffset(int offset);
-    QString error();
+    QString error() const;
+    QString dbFileName() const;
+    void setDbFileName(QString fileName);
     void setAutoUpdate(bool autoUpdate);
     bool autoUpdate() const;
     QDeclarativeLandmarkFilterBase* filter();
@@ -78,13 +82,14 @@ public:
 
 signals:
     void errorChanged(QString error);
-    void autoUpdateChanged(bool autoUpdate);
+    void autoUpdateChanged();
     void limitChanged(int limit);
     void offsetChanged(int offset);
     void countChanged(int count);
     void filterChanged();
     void sortByChanged();
     void sortOrderChanged();
+    void dbFileNameChanged();
 
 private slots:
     void update();
@@ -109,9 +114,10 @@ private:
     SortOrder m_sortOrder;
     SortKey m_sortKey;
     QString m_error;
-    bool m_componentCompleted : 1;
-    bool m_updatePending : 1;
-    bool m_autoUpdate : 1;
+    QString m_dbFileName;
+bool m_componentCompleted : 1;
+bool m_updatePending : 1;
+bool m_autoUpdate : 1;
     int m_limit;
     int m_offset;
 };

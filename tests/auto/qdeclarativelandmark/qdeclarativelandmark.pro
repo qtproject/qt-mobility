@@ -8,6 +8,7 @@ QT += testlib declarative
 SOURCES += tst_qdeclarativelandmark.cpp
 
 INCLUDEPATH += ../../../src/location
+INCLUDEPATH += ../../../src/location/landmarks
 INCLUDEPATH += ../../../plugins/declarative/location
 INCLUDEPATH += ../../../src/global
 
