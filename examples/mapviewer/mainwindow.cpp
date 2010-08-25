@@ -51,6 +51,7 @@
 #include <QMenuBar>
 #include <QPainter>
 #include <QDesktopWidget>
+#include <QMessageBox>
 
 #include <QGridLayout>
 #include <QFormLayout>
@@ -71,12 +72,7 @@
 #include <qgeomaprouteobject.h>
 #include <qgeomaptextobject.h>
 #include <qgeorouterequest.h>
-
-#ifdef Q_OS_SYMBIAN
-#include <QMessageBox>
-#include <qnetworksession.h>
 #include <qnetworkconfigmanager.h>
-#endif
 
 #include <cmath>
 
@@ -400,18 +396,75 @@ MainWindow::MainWindow(QWidget *parent) :
         m_serviceProvider(0),
         m_popupMenu(0)
 {
-    QNetworkProxyFactory::setUseSystemConfiguration(true);
-
-    setProvider("nokia");
-
-    setupUi();
-
     setWindowTitle(tr("Map Viewer Demo"));
+
+    // Set Internet Access Point
+    QNetworkConfigurationManager manager;
+    const bool canStartIAP = (manager.capabilities()
+                              & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+    // Is there default access point, use it
+    QNetworkConfiguration cfg = manager.defaultConfiguration();
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+        QMessageBox::information(this, tr("Geo Service Demo"), tr(
+                                     "Available Access Points not found."));
+        return;
+    }
+
+    m_session = new QNetworkSession(cfg, this);
+    connect(m_session, SIGNAL(opened()), this, SLOT(networkSessionOpened()));
+    connect(m_session,
+            SIGNAL(error(QNetworkSession::SessionError)),
+            this,
+            SLOT(error(QNetworkSession::SessionError)));
+
+    m_session->open();
+    m_session->waitForOpened();
+
+    QNetworkProxyFactory::setUseSystemConfiguration(true);
+    setProvider("nokia");
+    setupUi();
 }
 
 MainWindow::~MainWindow()
 {
     delete m_serviceProvider;
+}
+
+void MainWindow::networkSessionOpened()
+{
+}
+
+void MainWindow::error(QNetworkSession::SessionError error)
+{
+    if (error == QNetworkSession::UnknownSessionError) {
+        if (m_session->state() == QNetworkSession::Connecting) {
+            QMessageBox msgBox(qobject_cast<QWidget *>(parent()));
+            msgBox.setText("This application requires network access to function.");
+            msgBox.setInformativeText("Press Cancel to quit the application.");
+            msgBox.setIcon(QMessageBox::Information);
+            msgBox.setStandardButtons(QMessageBox::Retry | QMessageBox::Cancel);
+            msgBox.setDefaultButton(QMessageBox::Retry);
+            int ret = msgBox.exec();
+            if (ret == QMessageBox::Retry) {
+                QTimer::singleShot(0, m_session, SLOT(open()));
+            } else if (ret == QMessageBox::Cancel) {
+                close();
+            }
+        }
+    } else if (error == QNetworkSession::SessionAbortedError) {
+        QMessageBox msgBox(qobject_cast<QWidget *>(parent()));
+        msgBox.setText("Out of range of network.");
+        msgBox.setInformativeText("Move back into range and press Retry, or press Cancel to quit the application.");
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setStandardButtons(QMessageBox::Retry | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Retry);
+        int ret = msgBox.exec();
+        if (ret == QMessageBox::Retry) {
+            QTimer::singleShot(0, m_session, SLOT(open()));
+        } else if (ret == QMessageBox::Cancel) {
+            close();
+        }
+    }
 }
 
 void MainWindow::setupUi()
@@ -426,16 +479,16 @@ void MainWindow::setupUi()
     // setup graphics view containing map widget
 
     QGraphicsScene* scene = new QGraphicsScene(this);
-    qgv = new QGraphicsView(scene, this);
-    qgv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    qgv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    qgv->setVisible(true);
-    qgv->setInteractive(true);
+    m_qgv = new QGraphicsView(scene, this);
+    m_qgv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_qgv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_qgv->setVisible(true);
+    m_qgv->setInteractive(true);
 
     createPixmapIcon();
 
     m_mapWidget = new MapWidget(m_mapManager);
-    qgv->scene()->addItem(m_mapWidget);
+    m_qgv->scene()->addItem(m_mapWidget);
     //m_mapWidget->setCenter(QGeoCoordinate(52.5,13.0));
     //temporary change for dateline testing
     m_mapWidget->setCenter(QGeoCoordinate(-27.0, 152.0));
@@ -443,14 +496,14 @@ void MainWindow::setupUi()
 
     // setup slider control
 
-    slider = new QSlider(Qt::Vertical, this);
-    slider->setTickInterval(1);
-    slider->setTickPosition(QSlider::TicksBothSides);
-    slider->setMaximum(m_mapManager->maximumZoomLevel());
-    slider->setMinimum(m_mapManager->minimumZoomLevel());
-    slider->setSliderPosition(m_mapWidget->zoomLevel());
+    m_slider = new QSlider(Qt::Vertical, this);
+    m_slider->setTickInterval(1);
+    m_slider->setTickPosition(QSlider::TicksBothSides);
+    m_slider->setMaximum(m_mapManager->maximumZoomLevel());
+    m_slider->setMinimum(m_mapManager->minimumZoomLevel());
+    m_slider->setSliderPosition(m_mapWidget->zoomLevel());
 
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged(int)));
+    connect(m_slider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged(int)));
     connect(m_mapWidget, SIGNAL(zoomLevelChanged(qreal)), this, SLOT(mapZoomLevelChanged(qreal)));
 
     // setup map type control
@@ -483,37 +536,37 @@ void MainWindow::setupUi()
 
         connect(radio, SIGNAL(toggled(bool)), this, SLOT(mapTypeToggled(bool)));
 
-        mapControlButtons.append(radio);
-        mapControlTypes.append(types.at(i));
+        m_mapControlButtons.append(radio);
+        m_mapControlTypes.append(types.at(i));
 
         mapControlLayout->addWidget(radio);
     }
 
     // setup lat/lon control
 
-    latitudeEdit = new QLineEdit();
-    longitudeEdit = new QLineEdit();
+    m_latitudeEdit = new QLineEdit();
+    m_longitudeEdit = new QLineEdit();
 
     QFormLayout *formLayout = new QFormLayout();
-    formLayout->addRow("Latitude", latitudeEdit);
-    formLayout->addRow("Longitude", longitudeEdit);
+    formLayout->addRow("Latitude", m_latitudeEdit);
+    formLayout->addRow("Longitude", m_longitudeEdit);
 
-    captureCoordsButton = new QToolButton();
-    captureCoordsButton->setText("Capture coordinates");
-    captureCoordsButton->setCheckable(true);
+    m_captureCoordsButton = new QToolButton();
+    m_captureCoordsButton->setText("Capture coordinates");
+    m_captureCoordsButton->setCheckable(true);
 
-    connect(captureCoordsButton, SIGNAL(toggled(bool)), m_mapWidget, SLOT(setMouseClickCoordQuery(bool)));
+    connect(m_captureCoordsButton, SIGNAL(toggled(bool)), m_mapWidget, SLOT(setMouseClickCoordQuery(bool)));
     connect(m_mapWidget, SIGNAL(coordQueryResult(QGeoCoordinate)), this, SLOT(updateCoords(QGeoCoordinate)));
 
-    setCoordsButton = new QPushButton();
-    setCoordsButton->setText("Set coordinates");
+    m_setCoordsButton = new QPushButton();
+    m_setCoordsButton->setText("Set coordinates");
 
-    connect(setCoordsButton, SIGNAL(clicked()), this, SLOT(setCoordsClicked()));
+    connect(m_setCoordsButton, SIGNAL(clicked()), this, SLOT(setCoordsClicked()));
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
 
-    buttonLayout->addWidget(captureCoordsButton);
-    buttonLayout->addWidget(setCoordsButton);
+    buttonLayout->addWidget(m_captureCoordsButton);
+    buttonLayout->addWidget(m_setCoordsButton);
 
     QVBoxLayout *coordControlLayout = new QVBoxLayout();
     coordControlLayout->addLayout(formLayout);
@@ -528,16 +581,16 @@ void MainWindow::setupUi()
     layout->setColumnStretch(0, 0);
     layout->setColumnStretch(1, 1);
 
-    layout->addWidget(slider, 0, 0);
-    layout->addWidget(qgv, 0, 1);
+    layout->addWidget(m_slider, 0, 0);
+    layout->addWidget(m_qgv, 0, 1);
     layout->addLayout(mapControlLayout, 1, 0);
     layout->addLayout(coordControlLayout, 1, 1);
 
     widget->setLayout(layout);
     setCentralWidget(widget);
 
-    qgv->setContextMenuPolicy(Qt::CustomContextMenu);
-    QObject::connect(qgv, SIGNAL(customContextMenuRequested(const QPoint&)),
+    m_qgv->setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(m_qgv, SIGNAL(customContextMenuRequested(const QPoint&)),
                      this, SLOT(customContextMenuRequest(const QPoint&)));
 
     resize(652, 519);
@@ -550,37 +603,37 @@ void MainWindow::sliderValueChanged(int zoomLevel)
 
 void MainWindow::mapZoomLevelChanged(qreal zoomLevel)
 {
-    slider->setSliderPosition(qRound(zoomLevel));
+    m_slider->setSliderPosition(qRound(zoomLevel));
 }
 
 void MainWindow::mapTypeToggled(bool checked)
 {
     if (checked) {
         QRadioButton *button = qobject_cast<QRadioButton*>(sender());
-        int index = mapControlButtons.indexOf(button);
+        int index = m_mapControlButtons.indexOf(button);
         if (index != -1)
-            m_mapWidget->setMapType(mapControlTypes.at(index));
+            m_mapWidget->setMapType(m_mapControlTypes.at(index));
     }
 
 }
 
 void MainWindow::mapTypeChanged(QGraphicsGeoMap::MapType type)
 {
-    int index = mapControlTypes.indexOf(type);
+    int index = m_mapControlTypes.indexOf(type);
     if (index != -1)
-        mapControlButtons.at(index)->setChecked(true);
+        m_mapControlButtons.at(index)->setChecked(true);
 }
 
 void MainWindow::setCoordsClicked()
 {
     bool ok = false;
 
-    double lat = latitudeEdit->text().toDouble(&ok);
+    double lat = m_latitudeEdit->text().toDouble(&ok);
 
     if (!ok)
         return;
 
-    double lon = longitudeEdit->text().toDouble(&ok);
+    double lon = m_longitudeEdit->text().toDouble(&ok);
 
     if (!ok)
         return;
@@ -593,10 +646,10 @@ void MainWindow::updateCoords(const QGeoCoordinate &coords)
     if (!coords.isValid())
         return;
 
-    latitudeEdit->setText(QString::number(coords.latitude()));
-    longitudeEdit->setText(QString::number(coords.longitude()));
+    m_latitudeEdit->setText(QString::number(coords.latitude()));
+    m_longitudeEdit->setText(QString::number(coords.longitude()));
 
-    captureCoordsButton->setChecked(false);
+    m_captureCoordsButton->setChecked(false);
 }
 
 void MainWindow::setProvider(QString providerId)
@@ -617,14 +670,14 @@ void MainWindow::setProvider(QString providerId)
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
-    qgv->setSceneRect(QRectF(QPointF(0.0, 0.0), qgv->size()));
-    m_mapWidget->resize(qgv->size());
+    m_qgv->setSceneRect(QRectF(QPointF(0.0, 0.0), m_qgv->size()));
+    m_mapWidget->resize(m_qgv->size());
 }
 
 void MainWindow::showEvent(QShowEvent* event)
 {
-    qgv->setSceneRect(QRectF(QPointF(0.0, 0.0), qgv->size()));
-    m_mapWidget->resize(qgv->size());
+    m_qgv->setSceneRect(QRectF(QPointF(0.0, 0.0), m_qgv->size()));
+    m_mapWidget->resize(m_qgv->size());
 }
 
 void MainWindow::createMenus()
@@ -709,7 +762,7 @@ void MainWindow::createMenus()
                      this, SLOT(calcRoute(bool)));
 }
 
-#define MVTEST_MARK(pos) do { QGeoMapPixmapObject *marker = new QGeoMapPixmapObject(pos, QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon); m_mapWidget->addMapObject(marker); markerObjects.append(marker); } while (0)
+#define MVTEST_MARK(pos) do { QGeoMapPixmapObject *marker = new QGeoMapPixmapObject(pos, QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon); m_mapWidget->addMapObject(marker); m_markerObjects.append(marker); } while (0)
 #define MVTEST_MARK2(lat,lng) MVTEST_MARK(QGeoCoordinate(lat,lng))
 #define MVTEST_RECT(topleft,bottomright) removePixmaps(); MVTEST_MARK(topleft); MVTEST_MARK(bottomright); drawRect(false);
 #define MVTEST_RECT2(topleftlat,topleftlng,bottomrightlat,bottomrightlng) MVTEST_RECT(QGeoCoordinate(topleftlat,topleftlng),QGeoCoordinate(bottomrightlat,bottomrightlng))
@@ -764,9 +817,9 @@ void MainWindow::demo3(bool /*checked*/)
 
 void MainWindow::drawRect(bool /*checked*/)
 {
-    if (markerObjects.count() < 2)  return;
-    QGeoMapPixmapObject* p1 = markerObjects.at(0);
-    QGeoMapPixmapObject* p2 = markerObjects.at(1);
+    if (m_markerObjects.count() < 2)  return;
+    QGeoMapPixmapObject* p1 = m_markerObjects.at(0);
+    QGeoMapPixmapObject* p2 = m_markerObjects.at(1);
     QPen pen(Qt::white);
     pen.setWidth(2);
     pen.setCosmetic(true);
@@ -782,8 +835,8 @@ void MainWindow::drawPolyline(bool /*checked*/)
 {
     QList<QGeoCoordinate> path;
 
-    for (int i = 0; i < markerObjects.size(); i++) {
-        QGeoMapPixmapObject* p = markerObjects.at(i);
+    for (int i = 0; i < m_markerObjects.size(); i++) {
+        QGeoMapPixmapObject* p = m_markerObjects.at(i);
         path.append(p->coordinate());
     }
 
@@ -800,8 +853,8 @@ void MainWindow::drawPolygon(bool /*checked*/)
 {
     QList<QGeoCoordinate> path;
 
-    for (int i = 0; i < markerObjects.size(); i++) {
-        QGeoMapPixmapObject* p = markerObjects.at(i);
+    for (int i = 0; i < m_markerObjects.size(); i++) {
+        QGeoMapPixmapObject* p = m_markerObjects.at(i);
         path.append(p->coordinate());
     }
 
@@ -819,9 +872,9 @@ void MainWindow::drawPolygon(bool /*checked*/)
 
 void MainWindow::drawCircle(bool /*checked*/)
 {
-    if (markerObjects.count() < 1) return;
+    if (m_markerObjects.count() < 1) return;
 
-    QGeoMapPixmapObject* p1 = markerObjects.at(0);
+    QGeoMapPixmapObject* p1 = m_markerObjects.at(0);
 
     // center of the circle
     QGeoCoordinate center = p1->coordinate();
@@ -830,8 +883,8 @@ void MainWindow::drawCircle(bool /*checked*/)
     qreal radius = 3000000;
 
     // if a 2nd marker object is given, evaluate its distance to the first one to get the circle's radius.
-    if (markerObjects.count() >= 2) {
-        QGeoMapPixmapObject* p2 = markerObjects.at(1);
+    if (m_markerObjects.count() >= 2) {
+        QGeoMapPixmapObject* p2 = m_markerObjects.at(1);
 
         radius = center.distanceTo(p2->coordinate());
     }
@@ -851,9 +904,9 @@ void MainWindow::drawCircle(bool /*checked*/)
 
 void MainWindow::drawText(bool /*checked*/)
 {
-    if (markerObjects.count() < 1) return;
+    if (m_markerObjects.count() < 1) return;
 
-    QGeoMapPixmapObject* p1 = markerObjects.at(0);
+    QGeoMapPixmapObject* p1 = m_markerObjects.at(0);
 
     // start of the text
     QGeoCoordinate start = p1->coordinate();
@@ -866,16 +919,16 @@ void MainWindow::drawText(bool /*checked*/)
 
 void MainWindow::drawPixmap(bool /*checked*/)
 {
-    QGeoMapPixmapObject *marker = new QGeoMapPixmapObject(m_mapWidget->screenPositionToCoordinate(lastClicked),
+    QGeoMapPixmapObject *marker = new QGeoMapPixmapObject(m_mapWidget->screenPositionToCoordinate(m_lastClicked),
             QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon);
     m_mapWidget->addMapObject(marker);
-    markerObjects.append(marker);
+    m_markerObjects.append(marker);
 }
 
 void MainWindow::removePixmaps()
 {
-    while (markerObjects.size() > 0) {
-        QGeoMapPixmapObject *marker = markerObjects.takeFirst();
+    while (m_markerObjects.size() > 0) {
+        QGeoMapPixmapObject *marker = m_markerObjects.takeFirst();
         m_mapWidget->removeMapObject(marker);
         marker->deleteLater();
     }
@@ -883,19 +936,19 @@ void MainWindow::removePixmaps()
 
 void MainWindow::customContextMenuRequest(const QPoint& point)
 {
-    lastClicked = point;
+    m_lastClicked = point;
 #ifdef Q_OS_SYMBIAN
     // Work around a bug with QGraphicsView's customContextMenuRequeste signal on Symbian
     // TODO: adjust this #ifdef, so it doesn't break with versions that fix the bug
-    lastClicked -= qgv->geometry().topLeft();
+    m_lastClicked -= m_qgv->geometry().topLeft();
 #endif
 
-    if (focusWidget() == qgv) {
+    if (focusWidget() == m_qgv) {
 
         if (!m_popupMenu)
             createMenus();
 
-        m_popupMenu->popup(qgv->mapToGlobal(lastClicked));
+        m_popupMenu->popup(m_qgv->mapToGlobal(m_lastClicked));
     }
 }
 
@@ -924,13 +977,13 @@ void MainWindow::createPixmapIcon()
 
 void MainWindow::calcRoute(bool /*checked*/)
 {
-    if (markerObjects.count() < 2)
+    if (m_markerObjects.count() < 2)
         return;
 
     QList<QGeoCoordinate> waypoints;
 
-    for (int i = 0; i < markerObjects.count(); i++) {
-        QGeoMapPixmapObject* p = markerObjects.at(i);
+    for (int i = 0; i < m_markerObjects.count(); i++) {
+        QGeoMapPixmapObject* p = m_markerObjects.at(i);
         waypoints.append(p->coordinate());
     }
 
@@ -964,11 +1017,11 @@ void MainWindow::routeFinished()
 
 void MainWindow::selectObjects()
 {
-    if (markerObjects.count() < 2)
+    if (m_markerObjects.count() < 2)
         return;
 
-    QGeoMapPixmapObject* bottomRight = markerObjects.takeLast();
-    QGeoMapPixmapObject* topLeft = markerObjects.takeLast();
+    QGeoMapPixmapObject* bottomRight = m_markerObjects.takeLast();
+    QGeoMapPixmapObject* topLeft = m_markerObjects.takeLast();
     m_mapWidget->removeMapObject(topLeft);
     m_mapWidget->removeMapObject(bottomRight);
     QList<QGeoMapObject*> mapObjects = m_mapWidget->mapObjectsInScreenRect(
