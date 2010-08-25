@@ -43,22 +43,99 @@
 
 testcase = {
 
+    initTestCase: function()
+    {
+        prompt(twiki('*Preconditions to the Organizer tests*
+
+   1. Make sure devices system time is correct
+   1. Make sure appropriate backend is listed in the backend list for given device'));
+    },
+
+
+
   add_item: function()
   {
-      prompt(twiki('---++ Add Item
-Allows user to create an organizer item that is stored in a calendar store. The local calendar store for example.'));
+      prompt(twiki('*Add Calendar Event*
+
+    1. Launch calendardemo application
+    1. Verify the layout and UI of the application is apropriate for device
+    1. Verify the correct date and calendar is shown.
+    1. Verify that todays date is higlighted, and that (no entries) is shown
+    1. Select appropriate backend
+    1. Select: Add event
+    1. For Number of entries, select 1
+    1. Enter event detail: Subject, Start time, End time (eg: Event 1, today's date), leve Repeat: None. Click OK
+    1. Verify that you are presented with the day view for today and that Evenet 1 is listed with start time shown
+    1. Click Back
+    1. Verify that you are in the Month View with todays date higlighted, and that Event 1 is listed in the list of today's events.
+    1. As in previous steps, add Event Invalid with todays Start date, but Yesterdays End date
+    1. Verify that you are presented with an error: Failed to save event (error code 9). Click Done
+    1. Verify that Event Invalid is not listed in either Todays, or Yesterdays date.
+    1. As in previous steps, add Event 2 with same date as Event 1, but with different start time
+    1. Verify that Event 1 and Event 2 are listed for todays date in both Day View and Month View
+    1. Create Event 3 by clicking Add Event in Month View with todays date selected, and edit the date for tomorrows date, click OK
+    1. Create Event 4 by clicking a date 2 days in the future, click Add Event, add Subject, Click OK
+    1. Close and reopen Calendardemo, and select the abovementoned backend again.
+    1. Verify that Today has Event 1 and Event 2 listed with correct details
+    1. Verify that Event 3 is listed for tomorrow, and Event 4 for the day after.'));
   },
 
   delete_item: function()
   {
-      prompt(twiki('---++ Delete Item
-Allows user to delete an organizer item from the calendar store.'));
+      prompt(twiki('*Delete Calendar Event*
+
+    1. Re-launch calendardemo application
+    1. Select appropriate backend
+    1. Select todays date
+    1. Verify that Event 1 and Event 2 are listed
+    1. Without selecting any events (no events highlighted), click Remove
+    1. Verify that no event has been removed from list.
+    1. Return back to Month View, and reselect todays date.
+    1. Verify that Event 1 and Event 2 are still listed
+    1. Select Event 1, click Remove
+    1. Verify that Event 1 has been removed from list.'));
   },
 
   edit_item: function()
   {
-      prompt(twiki('---++ Edit Item
-Allows user to edit an existing organizer item that is stored in a calendar store.'));
+      prompt(twiki('*Edit Calendar Event*
+
+    1. Re-launch calendardemo application
+    1. Select appropriate backend
+    1. Select today's date
+    1. Verify that Event 2 is listed
+    1. Highlight Event 2 and click Edit
+    1. Verify that all the listed details are correct
+    1. Edit the Event Subject to Event 2 Edited
+    1. Change date to tomorrows date for Start time and End time
+    1. Verify that Event 2 is now listed under tomorrow's date
+    1. Select Event 2 and click Edit
+    1. Change End time of event to todays date, leaving Start date to point to tomorrow's date
+    1. Verify that you are presented with an error: Failed to save event (error code 9). Click Done
+    1. Verify that Event 2 has not been edited
+    1. Highlight Event 2 and click Edit
+    1. Change both Start time and End time to todays date with a valid range
+    1. Verify that Event 2 is now listed under events for today.'));
+  },
+
+  item_recurrence: function()
+  {
+      prompt(twiki('*Event Recurrence*
+
+    1. Re-launch calendardemo application
+    1. Select appropriate backend
+    1. Select today's date
+    1. Select Add Event
+    1. For Number of entries, accept default of 1
+    1. Enter subject: Recurring Event
+    1. Enter a time for the event (todays date, 30 min in the future, lasting 30 min)
+    1. Select Repeat, and choose Weekly
+    1. Select: Set count, select 5, and click OK
+    1. Verify that created event is listed in event list
+    1. Select date 7 days from today
+    1. Verify that Recurring event is listed on that day
+Work with recurring organizer items. For example use the API to create a fortnightly entry that lasts for 10 recurrences. Another example is working with recurring entries read from an event store. Different stores may handle recurrence differently.
+'));
   },
 
   search_items_by_time: function()
@@ -94,13 +171,6 @@ Access all organizer items corresponding to a particular period. For example, an
       prompt(twiki('---++ Supporting Multiple Stores 	
     * Application may want to choose between the internal calendar store and an online calendar store.
     * It is possible for there to be more than one store on the local device.
-'));
-  },
-
-  item_recurrence: function()
-  {
-      prompt(twiki('---++ Item Recurrence
-Work with recurring organizer items. For example use the API to create a fortnightly entry that lasts for 10 recurrences. Another example is working with recurring entries read from an event store. Different stores may handle recurrence differently. 	
 '));
   },
 

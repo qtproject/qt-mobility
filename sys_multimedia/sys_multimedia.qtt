@@ -125,7 +125,7 @@ testcase = {
     },
 
     seek_controls_for_audio: function()
-    {
+    {sys_multimedia.qtt
         prompt(twiki('*Player Test 3:* Fast forward trough a playing audio file
     1. *Note* This test is not applicable to the Symbian platform
     1. Continuation of previous test ...
@@ -153,7 +153,7 @@ testcase = {
    1. Click on selected file to return to player UI
    1. Verify selected file has populated playlist
    1. Highlight file in playlist by clicking on it
-   1. Click Play [|>]
+   1. Click [Play]
    1. Verify that .MP4 file is playing on device
         '));
     },
