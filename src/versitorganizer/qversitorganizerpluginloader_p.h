@@ -1,3 +1,4 @@
+
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -39,46 +40,39 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITORGANIZERHANDLER_H
-#define QVERSITORGANIZERHANDLER_H
+#ifndef QVERSITORGANIZERPLUGINLOADER_P_H
+#define QVERSITORGANIZERPLUGINLOADER_P_H
 
-#include "qversitorganizerimporter.h"
-#include "qversitorganizerexporter.h"
+#include <QMap>
+#include <QStringList>
+#include <QList>
+
+#include "qmobilityglobal.h"
+#include "qversitorganizerhandler.h"
+#include "qversittimezonehandler.h"
 
 QTM_BEGIN_NAMESPACE
 
-// qdoc seems to not find QVersitOrganizerHandler if it is declared first, hence this forward
-// declaration
-class QVersitOrganizerHandler;
-
-class Q_VERSIT_EXPORT QVersitOrganizerHandlerFactory
+class QVersitOrganizerPluginLoader
 {
-public:
-    virtual ~QVersitOrganizerHandlerFactory() {}
-    virtual QSet<QString> profiles() const { return QSet<QString>(); }
-    virtual QString name() const = 0;
-    virtual int index() const { return 0; }
-    virtual QVersitOrganizerHandler* createHandler() const = 0;
+    private:
+        QVersitOrganizerPluginLoader();
 
-#ifdef Q_QDOC
-    static const QLatin1Constant ProfileSync;
-    static const QLatin1Constant ProfileBackup;
-#else
-    Q_DECLARE_LATIN1_CONSTANT(ProfileSync, "Sync");
-    Q_DECLARE_LATIN1_CONSTANT(ProfileBackup, "Backup");
-#endif
-};
+    public:
+        static QVersitOrganizerPluginLoader* instance();
+        QList<QVersitOrganizerHandler*> createOrganizerHandlers(const QString& profile);
+        QVersitTimeZoneHandler* timeZoneHandler();
 
-class Q_VERSIT_EXPORT QVersitOrganizerHandler : public QVersitOrganizerImporterPropertyHandler,
-                                                public QVersitOrganizerExporterDetailHandler
-{
-public:
-    virtual ~QVersitOrganizerHandler() {}
+    private:
+        void loadPlugins();
+
+        static QVersitOrganizerPluginLoader* mInstance;
+        QSet<QString> mLoadedFactories;
+        QList<QVersitOrganizerHandlerFactory*> mOrganizerHandlerFactories;
+        QVersitTimeZoneHandler* mTimeZoneHandler;
+        QStringList mPluginPaths;
 };
 
 QTM_END_NAMESPACE
-
-#define QT_VERSIT_ORGANIZER_HANDLER_INTERFACE "com.nokia.qt.mobility.versit.organizerhandlerfactory/1.0"
-Q_DECLARE_INTERFACE(QtMobility::QVersitOrganizerHandlerFactory, QT_VERSIT_ORGANIZER_HANDLER_INTERFACE);
 
 #endif

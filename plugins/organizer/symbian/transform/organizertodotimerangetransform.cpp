@@ -82,8 +82,19 @@ void OrganizerTodoTimeRangeTransform::transformToEntryL(const QOrganizerItem& it
     if(item.type() == QOrganizerItemType::TypeTodo || item.type() == QOrganizerItemType::TypeTodoOccurrence)
     {
         QOrganizerTodoTimeRange range = item.detail<QOrganizerTodoTimeRange>();
-        if (!range.isEmpty())
-            entry->SetStartAndEndTimeL(toTCalTimeL(range.startDateTime()), toTCalTimeL(range.dueDateTime()));
+        
+        // Nothing to do?
+        if (range.isEmpty())
+            return;
+        
+        // On some platforms symbian calendar server does not leave
+        // when start date is more than due date. So make the check here.
+        if (range.startDateTime().isValid() && range.dueDateTime().isValid()) {
+            if (range.startDateTime() > range.dueDateTime())
+                User::Leave(KErrArgument);
+        }        
+            
+        entry->SetStartAndEndTimeL(toTCalTimeL(range.startDateTime()), toTCalTimeL(range.dueDateTime()));
     }
 }
 

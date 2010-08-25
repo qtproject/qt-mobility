@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,64 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYTRACKERCOUNTRESPONSE_P_H
-#define QGALLERYTRACKERCOUNTRESPONSE_P_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qgalleryabstractresponse_p.h"
-
-#include "qgallerydbusinterface_p.h"
-
-#include <QtDBus/qdbusinterface.h>
-#include <QtDBus/qdbuspendingcall.h>
+#include "qmobilityglobal.h"
+#include "symbian/qtelephonycallinfo_symbian_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-struct QGalleryTrackerCountResponseArguments
+
+QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate()
+    : remotePartyIdentifier("")
+    , type(QTelephonyEvents::Other)
+    , subType("")
+    , status(QTelephonyEvents::Idle)
+    , m_index(-1)
 {
-    QGalleryTrackerCountResponseArguments() : accumulative(false), updateMask(0) {}
+}
 
-    bool accumulative;
-    int updateMask;
-    QGalleryDBusInterfacePointer queryInterface;
-    QString queryMethod;
-    QVariantList queryArguments;
-};
-
-class QGalleryTrackerCountResponsePrivate;
-
-class QGalleryTrackerCountResponse : public QGalleryAbstractResponse
+QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other)
+    : QSharedData(other)
+      , remotePartyIdentifier(other.remotePartyIdentifier)
+      , type(other.type)
+      , subType(other.subType)
+      , status(other.status)
+      , m_index(other.m_index)
 {
-    Q_OBJECT
-public:
-    QGalleryTrackerCountResponse(
-            const QGalleryTrackerCountResponseArguments &arguments, QObject *parent = 0);
-    ~QGalleryTrackerCountResponse();
 
-    int count() const;
 
-    void cancel();
-
-    bool waitForFinished(int msecs);
-
-public Q_SLOTS:
-    void refresh(int serviceId = -1);
-
-private:
-    Q_DECLARE_PRIVATE(QGalleryTrackerCountResponse)
-    Q_PRIVATE_SLOT(d_func(), void _q_queryFinished(QDBusPendingCallWatcher *))
-};
+}
 
 QTM_END_NAMESPACE
-
-#endif

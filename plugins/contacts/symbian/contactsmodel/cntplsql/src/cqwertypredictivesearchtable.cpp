@@ -184,12 +184,7 @@ void CQwertyPredictiveSearchTable::CreateTableL()
 
 TBool CQwertyPredictiveSearchTable::IsValidChar(const QChar aChar) const
 	{
-#if defined(USE_ORBIT_KEYMAP)
 	return static_cast<CQwertyKeyMap*>(iKeyMap)->IsValidChar(aChar);
-#else
-	const QChar PAD_CHAR = '!'; // This is a hack, must have same value as in cqwertykeymap.cpp
-	return static_cast<CQwertyKeyMap*>(iKeyMap)->UseHardcodedKeyMap(aChar) != PAD_CHAR;
-#endif
 	}
 
 

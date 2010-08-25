@@ -13,9 +13,9 @@ mac: LIBS += -F$${MOBILITY_LIB}
 LIBS+= -L$${MOBILITY_LIB}
 QMAKE_RPATHDIR+=$${MOBILITY_LIB}
 
-# versit depends on contacts and organizer
+# versit depends on contacts
 contains(MOBILITY, versit) {
-    MOBILITY += contacts organizer
+    MOBILITY += contacts
 }
 
 contains(MOBILITY, bearer) {
@@ -73,6 +73,10 @@ contains(MOBILITY, messaging) {
 contains(MOBILITY, versit) {
     INCLUDEPATH += $${MOBILITY_INCLUDE}/QtVersit
     qtAddLibrary(QtVersit)
+    contains(MOBILITY, organizer) : !contains(MOBILITY, vohack) {
+        INCLUDEPATH += $${MOBILITY_INCLUDE}/QtVersitOrganizer
+        qtAddLibrary(QtVersitOrganizer)
+    }
 }
 
 contains(MOBILITY, telephony) {

@@ -76,8 +76,18 @@ QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
 
 QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephonyEvents::CallType& calltype) const 
 { 
-    QList<QTelephonyCallInfo> e; 
-    return e; 
+    QList<QTelephonyCallInfo> ret;
+
+    //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
+    for( int i = 0; i < callInfoList.count(); i++){
+        if(calltype == QTelephonyEvents::Any || callInfoList.at(i).data()->type() == calltype)
+        {
+            QTelephonyCallInfo callinfo;
+            callinfo.d = callInfoList.at(i);
+            ret.push_back(callinfo);
+        }
+    }
+    return ret;
 }
 
 void QTelephonyCallListPrivate::emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call)
@@ -100,16 +110,6 @@ void QTelephonyCallListPrivate::emitActiveCallAdded(QExplicitlySharedDataPointer
     QTelephonyCallInfo callinfo;
     callinfo.d = call;
     emit p->activeCallAdded(callinfo);
-}
-
-QTelephonyEvents::CallType QTelephonyCallListPrivate::convertToCallType(QString channeltelephatytype)
-{
-    if(channeltelephatytype == "StreamedMedia")
-        return QTelephonyEvents::Voice;
-    if(channeltelephatytype == "Text")
-        return QTelephonyEvents::Text;
-
-    return QTelephonyEvents::Other;
 }
 
 void QTelephonyCallListPrivate::newChannels(Tp::ChannelPtr channelptr)
