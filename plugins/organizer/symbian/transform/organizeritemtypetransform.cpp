@@ -118,7 +118,7 @@ QString OrganizerItemTypeTransform::detailDefinitionName()
 CCalEntry::TType OrganizerItemTypeTransform::entryTypeL(const QOrganizerItem &item)
 {
     QString itemType = item.type();
-    CCalEntry::TType entryType;
+    CCalEntry::TType entryType(CCalEntry::EAppt);
 
     if (itemType == QOrganizerItemType::TypeTodo || itemType == QOrganizerItemType::TypeTodoOccurrence)
         entryType = CCalEntry::ETodo;

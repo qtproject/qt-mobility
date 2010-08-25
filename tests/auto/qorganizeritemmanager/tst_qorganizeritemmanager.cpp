@@ -2085,8 +2085,6 @@ void tst_QOrganizerItemManager::errorStayingPut()
 
 void tst_QOrganizerItemManager::detailDefinitions()
 {
-    QSKIP("Test case skipped due to crash in updatedDef initialization.",SkipAll);
-
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
     QMap<QString, QOrganizerItemDetailDefinition> defs = cm->detailDefinitions();
@@ -2168,7 +2166,7 @@ void tst_QOrganizerItemManager::detailDefinitions()
     newDef.setFields(fields);
 
     /* Updated version of an existing definition */
-    QOrganizerItemDetailDefinition updatedDef = defs.begin().value(); // XXX TODO Fixme
+    QOrganizerItemDetailDefinition updatedDef = defs.begin().value();
     fields = updatedDef.fields();
     fields.insert("New Value", field);
     updatedDef.setFields(fields);

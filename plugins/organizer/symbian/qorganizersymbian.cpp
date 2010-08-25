@@ -54,10 +54,6 @@
 #include "organizeritemguidtransform.h"
 #include "qorganizeritemrequestqueue.h"
 
-//QTM_USE_NAMESPACE
-
-// Constants
-const int KSingleCount(1);
 // Special (internal) error code to be used when an item occurrence is not
 // valid. The error code is not expected to clash with any symbian calendar
 // API errors.
@@ -172,7 +168,7 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(const QOrganize
         }
         RPointerArray<CCalInstance> instanceList;
         QDateTime endDateTime(periodEnd);
-        CalCommon::TCalViewFilter filter;
+        CalCommon::TCalViewFilter filter(0);
         //use maximum end date if only count is present.
         if ((!periodEnd.isValid()) && (maxCount > 0)) {
               TCalTime endTime; 
