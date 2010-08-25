@@ -133,8 +133,8 @@ public:
     }
 
 public:
-    int count(char id) const { return m_counts[id - 'a']; }
-    void setCount(char id, int count) { m_counts[id - 'a'] = count; }
+    int count(char id) const { return m_counts[id != '\0' ? (id + 1 - 'a') : 0]; }
+    void setCount(char id, int count) { m_counts[id != '\0' ? (id + 1 - 'a') : 0] = count; }
 
     void clear() { qMemSet(m_counts, 0, sizeof(m_counts)); }
 
@@ -143,8 +143,29 @@ public Q_SLOTS:
     {
         QVector<QStringList> results;
 
-        for (int c = 0; c < 26; ++c) {
-            const QString character = QChar(QLatin1Char('a' + c));
+        for (int i = offset; i < m_counts[0] && limit > 0; ++i, --limit) {
+            QStringList result;
+
+            QString number = QString(QLatin1String("%1")).arg(i, 3, 10, QLatin1Char('0'));
+
+            QString id = QLatin1String("0-") + number;
+            QString url;
+            QString type = QLatin1String("type0");
+
+            result.append(id);
+            result.append(url);
+            result.append(type);
+            result.append(QString());
+            result.append(number);
+            result.append(argument);
+
+            results.append(result);
+        }
+
+        offset = qMax(0, offset - m_counts[0]);
+
+        for (int c = 1; c < 26; ++c) {
+            const QString character = QChar(QLatin1Char('a' + c - 1));
 
             for (int i = offset; i < m_counts[c] && limit > 0; ++i, --limit) {
                 QStringList result;
@@ -176,7 +197,7 @@ public Q_SLOTS:
     }
 
 private:
-    int m_counts[26];
+    int m_counts[27];
 };
 
 class QtTestStringValueColumn : public QGalleryTrackerValueColumn
@@ -283,6 +304,7 @@ void tst_QGalleryTrackerResultSet::populateArguments(
             << 4;
     arguments->sortCriteria = QVector<QGalleryTrackerSortCriteria>();
     arguments->resourceKeys = QVector<int>()
+            << 1
             << 2
             << 3;
 }
@@ -301,12 +323,14 @@ void tst_QGalleryTrackerResultSet::query()
 
     populateArguments(&arguments, QLatin1String("query"));
 
+    m_queryAdaptor->setCount('\0', 1);
     m_queryAdaptor->setCount('a', 16);
 
     QGalleryTrackerResultSet resultSet(arguments, false, 0, 32);
     QCOMPARE(resultSet.propertyNames(), propertyNames);
     QCOMPARE(resultSet.propertyKey(m_itemType), 2);
     QCOMPARE(resultSet.propertyKey(m_alias), 7);
+    QCOMPARE(resultSet.propertyKey(QLatin1String("turtle")), -1);
     QCOMPARE(resultSet.propertyAttributes(2), (QGalleryProperty::CanRead | QGalleryProperty::CanFilter));
     QCOMPARE(resultSet.propertyAttributes(7), (QGalleryProperty::CanRead | QGalleryProperty::CanFilter | QGalleryProperty::CanSort));
     QCOMPARE(resultSet.propertyType(2), QVariant::String);
@@ -322,12 +346,12 @@ void tst_QGalleryTrackerResultSet::query()
     QVERIFY(resultSet.waitForFinished(1000));
 
     QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(resultSet.itemCount(), 16);
+    QCOMPARE(resultSet.itemCount(), 17);
     QCOMPARE(insertSpy.count(), 1);
     QCOMPARE(removeSpy.count(), 0);
     QCOMPARE(changeSpy.count(), 0);
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  0);
-    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 16);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 17);
 
     QCOMPARE(resultSet.currentIndex(), -1);
     QCOMPARE(resultSet.itemId(), QVariant());
@@ -346,26 +370,22 @@ void tst_QGalleryTrackerResultSet::query()
 
     QCOMPARE(resultSet.fetchFirst(), true);
     QCOMPARE(resultSet.currentIndex(), 0);
-    QCOMPARE(resultSet.itemId(), QVariant(QLatin1String("a-000")));
-    QCOMPARE(resultSet.itemUrl(), QUrl(QLatin1String("file:///a/000")));
-    QCOMPARE(resultSet.itemType(), QLatin1String("typea"));
+    QCOMPARE(resultSet.itemId(), QVariant(QLatin1String("0-000")));
+    QCOMPARE(resultSet.itemUrl(), QUrl());
+    QCOMPARE(resultSet.itemType(), QLatin1String("type0"));
     QCOMPARE(resultSet.metaData(0), QVariant());
     QCOMPARE(resultSet.metaData(1), QVariant());
-    QCOMPARE(resultSet.metaData(2), QVariant(QLatin1String("typea")));
-    QCOMPARE(resultSet.metaData(3), QVariant(QLatin1String("a")));
+    QCOMPARE(resultSet.metaData(2), QVariant(QLatin1String("type0")));
+    QCOMPARE(resultSet.metaData(3), QVariant(QVariant::String));
     QCOMPARE(resultSet.metaData(4), QVariant(QLatin1String("000")));
     QCOMPARE(resultSet.metaData(5), QVariant(QLatin1String("query")));
-    QCOMPARE(resultSet.metaData(6), QVariant(QLatin1String("a|000")));
+    QCOMPARE(resultSet.metaData(6), QVariant(QLatin1String("|000")));
     QCOMPARE(resultSet.metaData(7), QVariant(QLatin1String("000")));
     QCOMPARE(resultSet.metaData(8), QVariant());
-    {
-        QMap<int, QVariant> attributes;
-        attributes.insert(2, QLatin1String("typea"));
-        attributes.insert(3, QLatin1String("a"));
+    QCOMPARE(resultSet.resources(), QList<QGalleryResource>());
 
-        QCOMPARE(resultSet.resources(), QList<QGalleryResource>()
-                 << QGalleryResource(QUrl(QLatin1String("file:///a/000")), attributes));
-    }
+    QCOMPARE(resultSet.setMetaData(5, QLatin1String("edit")), false);
+    QCOMPARE(resultSet.metaData(5), QVariant(QLatin1String("query")));
 
     QCOMPARE(resultSet.fetchPrevious(), false);
     QCOMPARE(resultSet.currentIndex(), -1);
@@ -384,6 +404,7 @@ void tst_QGalleryTrackerResultSet::query()
     QCOMPARE(resultSet.resources(), QList<QGalleryResource>());
 
     QCOMPARE(resultSet.fetchLast(), true);
+    QCOMPARE(resultSet.currentIndex(), 16);
     QCOMPARE(resultSet.itemId(), QVariant(QLatin1String("a-015")));
     QCOMPARE(resultSet.itemUrl(), QUrl(QLatin1String("file:///a/015")));
     QCOMPARE(resultSet.itemType(), QLatin1String("typea"));
@@ -405,8 +426,11 @@ void tst_QGalleryTrackerResultSet::query()
                  << QGalleryResource(QUrl(QLatin1String("file:///a/015")), attributes));
     }
 
+    QCOMPARE(resultSet.setMetaData(5, QLatin1String("edit")), false);
+    QCOMPARE(resultSet.metaData(5), QVariant(QLatin1String("query")));
+
     QCOMPARE(resultSet.fetchNext(), false);
-    QCOMPARE(resultSet.currentIndex(), 16);
+    QCOMPARE(resultSet.currentIndex(), 17);
     QCOMPARE(resultSet.itemId(), QVariant());
     QCOMPARE(resultSet.itemUrl(), QUrl());
     QCOMPARE(resultSet.itemType(), QString());

@@ -118,7 +118,6 @@ public:
     virtual QGalleryDBusInterfacePointer metaDataInterface() = 0;
     virtual QGalleryDBusInterfacePointer searchInterface() = 0;
     virtual QGalleryDBusInterfacePointer fileInterface() = 0;
-    virtual QGalleryDBusInterfacePointer thumbnailInterface() = 0;
 };
 
 QTM_END_NAMESPACE
