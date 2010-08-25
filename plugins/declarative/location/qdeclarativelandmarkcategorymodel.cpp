@@ -8,7 +8,8 @@
 QTM_BEGIN_NAMESPACE
 
 QDeclarativeLandmarkCategoryModel::QDeclarativeLandmarkCategoryModel(QObject *parent) :
-        QAbstractListModel(parent), m_manager(0), m_fetchRequest(0), m_autoUpdate(false)
+        QAbstractListModel(parent), m_manager(0), m_fetchRequest(0), m_autoUpdate(false),
+        m_limit(-1), m_offset(-1)
 {
     // Establish role names so that they can be queried from this model
     QHash<int, QByteArray> roleNames;
@@ -53,6 +54,32 @@ int QDeclarativeLandmarkCategoryModel::count()
     return m_categories.count();
 }
 
+int QDeclarativeLandmarkCategoryModel::limit()
+{
+    return m_limit;
+}
+
+void QDeclarativeLandmarkCategoryModel::setLimit(int limit)
+{
+    if (limit == m_limit)
+        return;
+    m_limit = limit;
+    emit limitChanged(limit);
+}
+
+int QDeclarativeLandmarkCategoryModel::offset()
+{
+    return m_offset;
+}
+
+void QDeclarativeLandmarkCategoryModel::setOffset(int offset)
+{
+    if (offset == m_offset)
+        return;
+    m_offset = offset;
+    emit offsetChanged(offset);
+}
+
 QString QDeclarativeLandmarkCategoryModel::error()
 {
     return m_error;
@@ -85,6 +112,16 @@ void QDeclarativeLandmarkCategoryModel::update()
     m_fetchRequest = new QLandmarkCategoryFetchRequest(m_manager, this);
     QObject::connect(m_fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this, SLOT(fetchRequestStateChanged(QLandmarkAbstractRequest::State)));
     m_fetchRequest->start();
+}
+
+void QDeclarativeLandmarkCategoryModel::setFetchHints()
+{
+    if (!m_fetchRequest || ((m_limit <= 0) && (m_offset <= 0)))
+        return;
+    if (m_limit > 0)
+        m_fetchRequest->setLimit(m_limit);
+    if ((m_offset > 0))
+        m_fetchRequest->setOffset(m_offset);
 }
 
 void QDeclarativeLandmarkCategoryModel::cancelUpdate()

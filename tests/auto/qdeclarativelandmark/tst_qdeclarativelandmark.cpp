@@ -43,8 +43,10 @@
 #include <QtTest/QSignalSpy>
 #include <QMetaObject>
 #include <QDateTime>
+#include <QMap>
 #include <QtDeclarative/qdeclarativeengine.h>
 #include <QtDeclarative/qdeclarativecomponent.h>
+#include <qlandmarkmanager.h>
 #include "qdeclarativepositionsource_p.h"
 #include <QString>
 
@@ -113,24 +115,62 @@ public:
 public slots:
     void initTestCase();
     void cleanupTestCase();
+    void init();
 
 private slots:
     void construction();
     void construction_data();
     void defaultProperties();
+    void basicLandmarkFetch();
+    void basicLandmarkFetch_data();
 
 private:
     QObject* createComponent(const QString& componentString);
+    void createDb();
+    void deleteDb();
+    void populateTypicalDb();
 
 private:
     // Engine is needed for instantiating declarative components
-    QDeclarativeEngine engine;
+    QDeclarativeEngine m_engine;
+    QLandmarkManager* m_manager;
 };
 
-tst_QDeclarativeLandmark::tst_QDeclarativeLandmark() {}
+tst_QDeclarativeLandmark::tst_QDeclarativeLandmark() : m_manager(0) {}
 tst_QDeclarativeLandmark::~tst_QDeclarativeLandmark() {}
 void tst_QDeclarativeLandmark::initTestCase() {}
-void tst_QDeclarativeLandmark::cleanupTestCase() {}
+void tst_QDeclarativeLandmark::cleanupTestCase()
+{
+    if (m_manager != 0) {
+        delete m_manager;
+        m_manager = 0;
+    }
+}
+void tst_QDeclarativeLandmark::init()
+{
+    // Delete possible database before each teststep
+    deleteDb();
+    createDb();
+}
+
+void tst_QDeclarativeLandmark::createDb()
+{
+    QMap<QString, QString> map;
+    map["filename"] = "test.db";
+    if (m_manager != 0) {
+        delete m_manager;
+        m_manager = 0;
+    }
+    m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
+}
+
+void tst_QDeclarativeLandmark::deleteDb()
+{
+    delete m_manager;
+    m_manager = 0;
+    QFile file("test.db");
+    file.remove();
+}
 
 /*
   Tests Landmark elements instantiating from plugin.
@@ -142,7 +182,7 @@ void tst_QDeclarativeLandmark::construction()
     QFETCH(QString, expectedClassName);
     QFETCH(bool, shouldSucceed);
     // Component encapsulates one component description
-    QDeclarativeComponent component(&engine);
+    QDeclarativeComponent component(&m_engine);
     component.setData(componentString.toLatin1(), QUrl::fromLocalFile(""));
     QObject* obj = component.create();
 
@@ -183,23 +223,37 @@ void tst_QDeclarativeLandmark::construction_data()
     // LandmarkModel
     QTest::newRow("LandmarkModel: No properties") <<  "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {}" << true;
     QTest::newRow("LandmarkModel: Only id property") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId}" << true;
-    QTest::newRow("LandmarkModel: Valuetype properties") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; autoUpdate:true; landmarksPerUpdate: 5; landmarksOffset: 2}" << true;
-    // TODO create a row with filters here
+    QTest::newRow("LandmarkModel: Valuetype properties") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; autoUpdate:true; limit: 5; offset: 2}" << true;
+    QTest::newRow("LandmarkModel: With filter") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; autoUpdate:true; limit: 5; offset: 2; filter: LandmarkFilter{id: filter} }" << true;
     // Landmark
     QTest::newRow("Landmark: No properties") << "QDeclarativeLandmark" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Landmark {}" << true;
     QTest::newRow("Landmark: Only id property") << "QDeclarativeLandmark" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Landmark {id: landmark}" << true;
     QTest::newRow("Landmark: Valuetype properties") << "QDeclarativeLandmark" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Landmark {id: landmark; name: 'jeesbox'; phoneNumber:'555 999'; description: 'Planet town plaza';radius: 0.3; iconSource: 'www.com'; url: 'urlitus'}" << true;
-    // TODO create a row with filters here
     // LandmarkCategoryModel
     QTest::newRow("LandmarkCategoryModel: No properties") <<  "QDeclarativeLandmarkCategoryModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {}" << true;
     QTest::newRow("LandmarkCategoryModel: Only id property") << "QDeclarativeLandmarkCategoryModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {id: landmarkCategoryModelId}" << true;
     QTest::newRow("LandmarkCategoryModel: Valuetype properties") << "QDeclarativeLandmarkCategoryModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {id: landmarkCategoryModelId; autoUpdate: false; }" << true;
-    // TODO create a row with filters here
     // LandmarkCategory
     QTest::newRow("LandmarkCategory: No properties") <<  "QDeclarativeLandmarkCategory" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategory {}" << true;
     QTest::newRow("LandmarkCategory: Only id property") << "QDeclarativeLandmarkCategory" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategory {id: landmarkCategory}" << true;
     QTest::newRow("LandmarkCategory: Valuetype properties") << "QDeclarativeLandmarkCategory" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategory {id: landmarkCategory; name: 'Franz plaza'; iconSource: 'www.fi' }" << true;
-    // TODO create a row with filters here
+    // LandmarkFilter
+    QTest::newRow("LandmarkFilter: No properties") << "QDeclarativeLandmarkFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkFilter {}" << true;
+    QTest::newRow("LandmarkFilter: Only id property") << "QDeclarativeLandmarkFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkFilter {id: landmarkFilterId}" << true;
+    QTest::newRow("LandmarkFilter: Name filter") << "QDeclarativeLandmarkFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkFilter {id: landmark; type: LandmarkFilter.Name; value: \"landmarkName\" }" << true;
+    QTest::newRow("LandmarkFilter: Proximity filter") << "QDeclarativeLandmarkFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkFilter {id: landmark; type: LandmarkFilter.Proximity; value: Position {id: position} }" << true;
+    // LandmarkUnionFilter
+    QTest::newRow("LandmarkUnionFilter: No properties") << "QDeclarativeLandmarkUnionFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkUnionFilter {}" << true;
+    QTest::newRow("LandmarkUnionFilter: Only id property") << "QDeclarativeLandmarkUnionFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkUnionFilter {id: landmarkUnionFilterId}" << true;
+    QTest::newRow("LandmarkUnionFilter: One plain filter") << "QDeclarativeLandmarkUnionFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkUnionFilter {id: landmarkUnionFilterId; LandmarkFilter {id: filter} }" << true;
+    QTest::newRow("LandmarkUnionFilter: Two plain filters") << "QDeclarativeLandmarkUnionFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkUnionFilter {id: landmarkUnionFilterId; LandmarkFilter {id: filter_1} LandmarkFilter{id: filter_2} }" << true;
+    // LandmarkIntersectionFilter
+    QTest::newRow("LandmarkIntersectionFilter: No properties") << "QDeclarativeLandmarkIntersectionFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkIntersectionFilter {}" << true;
+    QTest::newRow("LandmarkIntersectionFilter: Only id property") << "QDeclarativeLandmarkIntersectionFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkIntersectionFilter {id: landmarkIntersectionFilterId}" << true;
+    QTest::newRow("LandmarkIntersectionFilter: One plain filter") << "QDeclarativeLandmarkIntersectionFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkIntersectionFilter {id: landmarkIntersectionFilterId; LandmarkFilter {id: filter} }" << true;
+    QTest::newRow("LandmarkIntersectionFilter: Two plain filters") << "QDeclarativeLandmarkIntersectionFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkIntersectionFilter {id: landmarkIntersectionFilterId; LandmarkFilter {id: filter_1} LandmarkFilter{id: filter_2} }" << true;
+    // Complex filter
+    QTest::newRow("Intersection (Filter, Union(Filter,Filter) ") << "QDeclarativeLandmarkIntersectionFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkIntersectionFilter{LandmarkFilter{} LandmarkUnionFilter{LandmarkFilter{} LandmarkFilter{}}}" << true;
 }
 
 /*
@@ -217,17 +271,110 @@ void tst_QDeclarativeLandmark::defaultProperties()
     QVERIFY(filter_obj == 0); delete filter_obj;
     filter_obj = source_obj->property("proximityFilter").value<QObject*>();
     QVERIFY(filter_obj == 0); delete filter_obj;
-    QCOMPARE(source_obj->property("landmarksPerUpdate").toInt(), -1);
-    QCOMPARE(source_obj->property("landmarksOffset").toInt(), -1);
+    QCOMPARE(source_obj->property("limit").toInt(), -1);
+    QCOMPARE(source_obj->property("offset").toInt(), -1);
     QCOMPARE(source_obj->property("count").toInt(), 0);
-
-
     delete source_obj;
+    
     source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n Landmark {id: landmark }");
-    // TODO rest of the components
-
-
+    QCOMPARE(source_obj->property("name").toString(), QString());
+    QCOMPARE(source_obj->property("phoneNumber").toString(), QString());
+    QCOMPARE(source_obj->property("description").toString(), QString());
+    QCOMPARE(source_obj->property("radius").toDouble(), -1.0);
+    QCOMPARE(source_obj->property("iconSource").toUrl(), QUrl());
+    QCOMPARE(source_obj->property("url").toUrl(), QUrl());
     delete source_obj;
+    
+    source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategory {id: landmark }");
+    QCOMPARE(source_obj->property("name").toString(), QString());
+    QCOMPARE(source_obj->property("iconSource").toUrl(), QUrl());
+    delete source_obj;
+
+    source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {id: landmark }");
+    QCOMPARE(source_obj->property("error").toString(), QString());
+    QCOMPARE(source_obj->property("count").toInt(), 0);
+    QCOMPARE(source_obj->property("autoUpdate").toBool(), false);
+    QCOMPARE(source_obj->property("limit").toInt(), -1);
+    QCOMPARE(source_obj->property("offset").toInt(), -1);
+    delete source_obj;
+}
+
+void tst_QDeclarativeLandmark::basicLandmarkFetch()
+{
+    QFETCH(QString, componentString);
+    QFETCH(int, expectedMatches);
+    populateTypicalDb();
+
+    QObject* source_obj = createComponent(componentString);
+    QTest::qWait(100);
+    if (expectedMatches == -1) { // All should match
+        QTRY_VERIFY(source_obj->property("count").toInt() == m_manager->landmarks().count());
+    } else {
+        QTRY_VERIFY(source_obj->property("count").toInt() == expectedMatches);
+    }
+    delete source_obj;
+}
+
+void tst_QDeclarativeLandmark::basicLandmarkFetch_data()
+{
+    QTest::addColumn<QString>("componentString");
+    QTest::addColumn<int>("expectedMatches");
+
+    // Simple filters
+    QTest::newRow("No match (non-matching filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; dbFileName: \"test.db\"; autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Name; value: \"Nonexistent landmark\" } }"  << 0;
+    QTest::newRow("All (no filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; dbFileName: \"test.db\"; autoUpdate:true;}" << -1;
+    QTest::newRow("One match (name filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; dbFileName: \"test.db\"; autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Name; value: \"Uniquely named powerhouse\"} }" << 1;
+    QTest::newRow("Two match (name filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; dbFileName: \"test.db\"; autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Name; value: \"Duplicate named bridge\"} }" << 2;
+    QTest::newRow("One match (proximity filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; dbFileName: \"test.db\"; autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Proximity; value: Position {longitude: 70; latitude: 70} } }" << 1;
+    QTest::newRow("Two match (proximity filter, no radius)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; dbFileName: \"test.db\"; autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Proximity; value: Position {longitude: 50; latitude: 50} } }" << 2;
+    QGeoCoordinate from(50,50);
+    QGeoCoordinate to(51,51);
+    QString distance = QString::number(from.distanceTo(to));
+    QTest::newRow("Three match (proximity filter, radius)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; dbFileName: \"test.db\"; autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Proximity; value: Position {longitude: 50; latitude: 50; radius: " + distance + " } } }" << 3;
+
+    // Compound filters
+    QTest::newRow("All (empty intersection filter i.e. no filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; dbFileName: \"test.db\"; autoUpdate:true; filter: LandmarkIntersectionFilter{ id : filter; } }"  << -1;
+    QTest::newRow("All (empty union filter i.e. no filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; dbFileName: \"test.db\"; autoUpdate:true; filter: LandmarkUnionFilter{id: filter; } }"  << -1;
+    QTest::newRow("Two matches (union of two names)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; dbFileName: \"test.db\"; autoUpdate:true; filter: LandmarkUnionFilter{ LandmarkFilter{type: LandmarkFilter.Name; value: \"Uniquely named powerhouse\"} LandmarkFilter{type: LandmarkFilter.Name; value: \"Uniquely named southbank\"} } }"  << 2;
+    QTest::newRow("Two matches (union of name and prox)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; dbFileName: \"test.db\"; autoUpdate:true; filter: LandmarkUnionFilter{ LandmarkFilter{type: LandmarkFilter.Name; value: \"Uniquely named powerhouse\"} LandmarkFilter{type: LandmarkFilter.Proximity; value: Position {longitude:70; latitude:70} } } }"  << 2;
+    QTest::newRow("One match (intersect of name and prox)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; dbFileName: \"test.db\"; autoUpdate:true; filter: LandmarkIntersectionFilter{ LandmarkFilter{type: LandmarkFilter.Name; value: \"Duplicate named bridge\"} LandmarkFilter{type: LandmarkFilter.Proximity; value: Position {longitude:51; latitude:51} } } }"  << 1;
+}
+
+/*
+ Helper function to populate normal valid database
+*/
+
+void tst_QDeclarativeLandmark::populateTypicalDb()
+{
+    Q_ASSERT(m_manager);
+
+    // Clumsy but we don't need that much
+    QLandmark landmark1;
+    landmark1.setName("Uniquely named powerhouse");
+    landmark1.setCoordinate(QGeoCoordinate(50, 50));
+    m_manager->saveLandmark(&landmark1);
+
+    QLandmark landmark2;
+    landmark2.setName("Duplicate named bridge");
+    landmark2.setCoordinate(QGeoCoordinate(50, 50));
+    m_manager->saveLandmark(&landmark2);
+
+    QLandmark landmark3;
+    landmark3.setName("Duplicate named bridge");
+    landmark3.setCoordinate(QGeoCoordinate(51, 51));
+    m_manager->saveLandmark(&landmark3);
+
+    QLandmark landmark4;
+    landmark4.setName("Uniquely located Brisbane");
+    landmark4.setCoordinate(QGeoCoordinate(70, 70));
+    m_manager->saveLandmark(&landmark4);
+
+    QLandmark landmark5;
+    landmark5.setName("Uniquely named southbank");
+    landmark5.setCoordinate(QGeoCoordinate(52, 52));
+    m_manager->saveLandmark(&landmark5);
+
+    QTest::qWait(50);
 }
 
 /*
@@ -235,7 +382,7 @@ void tst_QDeclarativeLandmark::defaultProperties()
 */
 QObject* tst_QDeclarativeLandmark::createComponent(const QString& componentString)
 {
-    QDeclarativeComponent component(&engine);
+    QDeclarativeComponent component(&m_engine);
     component.setData(componentString.toLatin1(), QUrl::fromLocalFile(""));
     QObject* source_obj = component.create();
     Q_ASSERT(source_obj != 0);

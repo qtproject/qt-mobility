@@ -74,7 +74,7 @@ QTM_BEGIN_NAMESPACE
 
 QDeclarativePosition::QDeclarativePosition(QObject* parent)
         : QObject(parent), m_latitude(0), m_latitudeValid(false), m_longitude(0), m_longitudeValid(false),
-        m_altitude(0), m_altitudeValid(false), m_speed(0), m_speedValid(false)
+        m_altitude(0), m_altitudeValid(false), m_speed(0), m_speedValid(false), m_radius(0)
 {
 }
 
@@ -106,7 +106,7 @@ bool QDeclarativePosition::isLatitudeValid() const
 
 */
 
-bool QDeclarativePosition::islongitudeValid() const
+bool QDeclarativePosition::isLongitudeValid() const
 {
     return m_longitudeValid;
 }
@@ -152,6 +152,8 @@ bool QDeclarativePosition::isAltitudeValid() const
 
 void QDeclarativePosition::setSpeed(double speed)
 {
+    if (speed == m_speed)
+        return;
     m_speed = speed;
     if (!m_speedValid) {
         m_speedValid = true;
@@ -177,6 +179,8 @@ double QDeclarativePosition::speed() const
 
 void QDeclarativePosition::setAltitude(double altitude)
 {
+    if (altitude == m_altitude)
+        return;
     m_altitude = altitude;
     if (!m_altitudeValid) {
         m_altitudeValid = true;
@@ -191,6 +195,32 @@ double QDeclarativePosition::altitude() const
 }
 
 /*!
+    \qmlproperty double Position::radius
+
+    This property holds the radius value.
+    If the property has not been set, its default value is zero.
+    Position sources do not update the radius attribute. The radius attribute
+    is provided to serve other use-cases where it is meaningful to express the
+    radius of the position (see e.g. \l Landmark).
+
+    \sa longitude, latitude, speed, altitude
+
+*/
+
+void QDeclarativePosition::setRadius(double radius)
+{
+    if (m_radius == radius)
+        return;
+    m_radius = radius;
+    emit radiusChanged();
+}
+
+double QDeclarativePosition::radius() const
+{
+    return m_radius;
+}
+
+/*!
     \qmlproperty double Position::longitude
 
     This property holds the longitude value of the geographical position
@@ -202,8 +232,10 @@ double QDeclarativePosition::altitude() const
 
 */
 
-void QDeclarativePosition::setlongitude(double longitude)
+void QDeclarativePosition::setLongitude(double longitude)
 {
+    if (longitude == m_longitude)
+        return;
     m_longitude = longitude;
     if (!m_longitudeValid) {
         m_longitudeValid = true;
@@ -254,6 +286,8 @@ double QDeclarativePosition::latitude() const
 
 void QDeclarativePosition::setTimestamp(const QDateTime& timestamp)
 {
+    if (timestamp == m_timestamp)
+        return;
     m_timestamp = timestamp;
     emit timestampChanged(m_timestamp);
 }
