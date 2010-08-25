@@ -880,6 +880,17 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
      idFetchRequest.cancel();
      QVERIFY(waitForAsync(spy2, &idFetchRequest, QLandmarkManager::CancelError));
      QCOMPARE(idFetchRequest.landmarkIds().count(), 0);
+
+     //check that we can delete an request halfway during an operation.
+     QLandmarkFetchRequest *fetchRequestPointer = new QLandmarkFetchRequest(m_manager);
+     QSignalSpy spy3(fetchRequestPointer, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+     fetchRequestPointer->setFilter(unionFilter);
+     fetchRequestPointer->start();
+     QTest::qWait(75);
+     QCOMPARE(spy3.count(),1);
+     QCOMPARE(qvariant_cast<QLandmarkAbstractRequest::State>(spy3.at(0).at(0)), QLandmarkAbstractRequest::ActiveState);
+     delete fetchRequestPointer; //failure to delete usually results in a segfault
+     QTest::qWait(100);
  }
 
  void tst_QLandmarkManagerEngineSqlite::addCategory() {
