@@ -445,14 +445,31 @@ version 1.0 and version 1.1.  In this case the old service implementation
 must be first be removed using QServiceManager::removeService() to make
 way for the new service implementation.
 
-\section1 Out of process Services
+\section1 Out of Process Services
 
 Qt Service Framework provides a mechanism for out of process services
 so that clients can remotely load interfaces.  These inter-process 
 services are deployed similarly to local services, using the IPC address
 tag for the XMl description and calling QRemoteServiceClassRegister::registerType()
-to add the service to the remote services manager.  The \lEcho Client Example}
+to add the service to the remote services manager.  The \l{Echo Client Example}
 demonstrates how remote services can be instantiated and used.
+
+Inter-process services are deployed using a variety of different IPC mechanisms
+available on the current platform and as such may inherit several limitations.  For
+Symbian, IPC is handled by the Symbian Client-Server Framework whereas for other 
+environments services are published using QtDBus if it is available otherwise 
+falls back on QLocalSocket for inter-process communication.
+
+\section2 Local Socket Services
+
+\section2 D-Bus Services
+The QtDBus module is used to provide IPC in correspondance to the Qt Service 
+Framework architecture and provides access to signals, slots, invokable methods
+and properties. A current known limitation for Qt Service Framework using QtDBus
+for IPC is that enumerators cannot be read due to lack of support on D-Bus.
+
+\section2 Symbian Client-Server Framework
+
 
 \section2 Error handling
 
