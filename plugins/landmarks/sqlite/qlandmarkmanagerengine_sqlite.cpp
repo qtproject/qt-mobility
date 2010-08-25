@@ -172,6 +172,19 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
         QStringList queries = s.split("@@@");
 
         bool transacting = db.transaction();
+
+        {//check for database with old schema
+            QSqlQuery query(db);
+            query.exec("SELECT name from sqlite_master WHERE name = 'landmark'");
+            if (query.next()) {
+                query.exec("SELECT name from sqlite_master WHERE name = 'landmark_custom_attribute'");
+                if (!query.next()) {
+                    qWarning() << "Old Database with incompatible schema from Qt Landmarks 1.1 tech preview detected, please delete this file and try again:" << this->m_dbFilename;
+                    db.rollback();
+                    return;
+                }
+            }
+        }
         for (int i = 0; i < queries.size(); ++i) {
             QString q = queries.at(i).trimmed();
             if (q == "")

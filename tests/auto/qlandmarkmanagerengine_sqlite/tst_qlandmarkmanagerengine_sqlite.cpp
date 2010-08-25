@@ -243,7 +243,7 @@ private:
              QSignalSpy spy(&saveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
              saveRequest.setLandmarks(*lms);
              saveRequest.start();
-             result = waitForAsync(spy, &saveRequest,error,100);
+             result = waitForAsync(spy, &saveRequest,error,1000);
              if (errorMap)
                 *errorMap = saveRequest.errorMap();
              *lms = saveRequest.landmarks();

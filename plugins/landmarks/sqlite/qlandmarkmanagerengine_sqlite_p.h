@@ -57,7 +57,7 @@
 #include "databasefilewatcher_p.h"
 
 #include <QSqlDatabase>
-#include <QHash>QLandmarkAbsractRequest
+#include <QHash>
 #include <QSet>
 #include <QMutex>
 #include "databaseoperations_p.h"
