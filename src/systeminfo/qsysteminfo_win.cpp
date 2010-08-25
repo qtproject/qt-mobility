@@ -1312,8 +1312,7 @@ int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
     wHelper->setClassProperty(QStringList() << "CurrentBrightness");
 
     QVariant v = wHelper->getWMIData();
-
-    return v.toUInt();
+    return (quint8)v.toUInt();
 #else
     // This could would detect the state of the backlight, which is as close as we're going to get
     // for WinCE.  Unfortunately, some devices don't honour the Microsoft power management API.
