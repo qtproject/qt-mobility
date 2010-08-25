@@ -63,6 +63,8 @@ protected:
     static const float GRAVITY_EARTH;
     static const float GRAVITY_EARTH_THOUSANDTH;    //for speed
 
+    void setRanges(qreal correctionFactor);
+
     template<typename T>
     void initSensor(QString sensorName, bool &initDone)
     {
@@ -78,8 +80,6 @@ protected:
 
         initDone = true;
 
-        if (sensorName=="alssensor") return; // SensorFW returns lux values, plugin enumerated values
-
 
         //metadata
         int l = m_sensorInterface->getAvailableIntervals().size();
@@ -94,15 +94,14 @@ protected:
             addDataRate(rateMin, rateMax);
         }
 
-        l = m_sensorInterface->getAvailableDataRanges().size();
+        if (sensorName=="alssensor") return;                // SensorFW returns lux values, plugin enumerated values
 
-        for (int i=0; i<l; i++){
-            qreal rangeMin = ((DataRange)(m_sensorInterface->getAvailableDataRanges().at(i))).min;
-            qreal rangeMax =((DataRange)(m_sensorInterface->getAvailableDataRanges().at(i))).max;
-            qreal resolution = ((DataRange)(m_sensorInterface->getAvailableDataRanges().at(i))).min;
-            addOutputRange(rangeMin, rangeMax, resolution);
-        }
         setDescription(m_sensorInterface->property("description").toString());
+
+        if (sensorName=="accelerometersensor") return;      // SensorFW returns milliGs, plugin m/s^2
+        if (sensorName=="magnetometersensor") return;       // SensorFW returns nanoTeslas, plugin Teslas
+
+        setRanges(1);
     };
 
 private:

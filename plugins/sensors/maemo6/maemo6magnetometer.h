@@ -62,6 +62,7 @@ protected:
     virtual void start();
 
 private:
+    static const float NANO;
     QMagnetometerReading m_reading;
     static bool m_initDone;
     bool m_isGeoMagnetometer;
