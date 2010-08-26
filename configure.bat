@@ -64,7 +64,7 @@ set VC_TEMPLATE_OPTION=
 set QT_PATH=
 set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
 
-set ORGANIZER_REQUESTED=
+set ORGANIZER_REQUESTED="no"
 
 if exist "%QMAKE_CACHE%" del /Q %QMAKE_CACHE%
 if exist "%PROJECT_LOG%" del /Q %PROJECT_LOG%
@@ -308,6 +308,7 @@ if %FIRST% == bearer (
     echo     Versit selected ^(implies Contacts^)
 ) else if %FIRST% == organizer (
     echo     Organizer selected
+    set ORGANIZER_REQUESTED="yes"
 ) else if %FIRST% == feedback (
     echo     Feedback selected
 ) else if %FIRST% == sensors (
@@ -604,9 +605,9 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\requests
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\filters
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\details
-    if %ORGANIZER_REQUESTED% == "yes" (
-        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersitOrganizer %SOURCE_PATH%\src\versitorganizer
-    )
+REM    if "%ORGANIZER_REQUESTED%" == "yes" (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersitOrganizer %SOURCE_PATH%\src\versitorganizer
+REM        )
 ) else if %FIRST% == sensors (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSensors %SOURCE_PATH%\src\sensors
 ) else if %FIRST% == gallery (
