@@ -5734,9 +5734,9 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
     QCOMPARE(spyRemove.count(), 0);
     QCOMPARE(spyChange.count(), 0);
     QCOMPARE(spyAdd.count(), 1);
-
     ids = spyAdd.at(0).at(0).value<QList<QLandmarkId> >();
     QCOMPARE(ids.count(), 3);
+    spyAdd.clear();
 
     QList<QLandmark> lms = m_manager->landmarks(ids);
     QCOMPARE(lms.count(), 3);
@@ -5756,6 +5756,27 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
             QCOMPARE(landmark.categoryIds().at(0), cat1.categoryId());
         }
     }
+
+    if (type == "async") {
+        int originalLandmarksCount = m_manager->landmarks().count();
+        spy.clear();
+        importRequest.setFileName(":data/AUS-PublicToilet-NewSouthWales.gpx");
+        importRequest.setFormat(QLandmarkManager::Gpx);
+        importRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
+        importRequest.start();
+        QTest::qWait(75);
+        QCOMPARE(spy.count(),1);
+        QCOMPARE(qvariant_cast<QLandmarkAbstractRequest::State>(spy.at(0).at(0)), QLandmarkAbstractRequest::ActiveState);
+        importRequest.cancel();
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::CancelError,2000));
+        QCOMPARE(originalLandmarksCount, m_manager->landmarkIds().count());
+        QCOMPARE(importRequest.landmarkIds().count(),0);
+
+        QCOMPARE(spyRemove.count(), 0);
+        QCOMPARE(spyChange.count(), 0);
+        QCOMPARE(spyAdd.count(), 0);
+    }
+
 }
 
 void tst_QLandmarkManagerEngineSqlite::importGpx_data()
@@ -5771,7 +5792,9 @@ void tst_QLandmarkManagerEngineSqlite::importGpx_data()
 }
 
 void tst_QLandmarkManagerEngineSqlite::importLmx() {
-    //TODO: Test Signal emission
+    QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+    QSignalSpy spyChange(m_manager,SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+    QSignalSpy spyRemove(m_manager,SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
 
     QFETCH(QString, type);
     QLandmarkImportRequest importRequest(m_manager);
@@ -5874,8 +5897,15 @@ void tst_QLandmarkManagerEngineSqlite::importLmx() {
         qFatal("Unknown row test type");
     }
 
-    QList<QLandmark> landmarks = m_manager->landmarks();
+    QTest::qWait(10);
+    QCOMPARE(spyRemove.count(), 0);
+    QCOMPARE(spyChange.count(), 0);
+    QCOMPARE(spyAdd.count(), 1);
+    QList<QLandmarkId> ids = spyAdd.at(0).at(0).value<QList<QLandmarkId> >();
+    QCOMPARE(ids.count(), 16);
+    spyAdd.clear();
 
+    QList<QLandmark> landmarks = m_manager->landmarks();
     QCOMPARE(landmarks.count(), 16);
 
     QLandmarkNameFilter nameFilter;
@@ -5890,7 +5920,6 @@ void tst_QLandmarkManagerEngineSqlite::importLmx() {
         QCOMPARE(landmarks.count(), 1);
         lm = landmarks.at(0);
         QCOMPARE(lm.categoryIds().count(), 2);
-
 
         QSet<QString> catNames;
         foreach(const QLandmarkCategoryId &categoryId, lm.categoryIds()) {
@@ -5944,6 +5973,26 @@ void tst_QLandmarkManagerEngineSqlite::importLmx() {
         QCOMPARE(m_manager->category(lm.categoryIds().at(0)).name(), QString("catAlpha"));
     } else {
         qFatal("Unknown row test type");
+    }
+
+    if (type == "async") {
+        int originalLandmarkCount = m_manager->landmarkIds().count();
+        spy.clear();
+        importRequest.setFileName(":data/AUS-PublicToilet-NewSouthWales.lmx");
+        importRequest.setFormat(QLandmarkManager::Lmx);
+        importRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
+        importRequest.start();
+        QTest::qWait(75);
+        QCOMPARE(spy.count(),1);
+        QCOMPARE(qvariant_cast<QLandmarkAbstractRequest::State>(spy.at(0).at(0)), QLandmarkAbstractRequest::ActiveState);
+        importRequest.cancel();
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::CancelError,2000));
+        QCOMPARE(originalLandmarkCount, m_manager->landmarkIds().count());
+        QCOMPARE(importRequest.landmarkIds().count(),0);
+
+        QCOMPARE(spyRemove.count(), 0);
+        QCOMPARE(spyChange.count(), 0);
+        QCOMPARE(spyAdd.count(), 0);
     }
 }
 
@@ -6064,6 +6113,7 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx() {
         exportRequest.setFormat(QLandmarkManager::Gpx);
         exportRequest.start();
         QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::NoError));
+        spy.clear();
     } else if (type == "asyncIdList") {
         QList<QLandmarkId> lmIds;
 
@@ -6148,6 +6198,28 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx() {
         nameFilter.setName("lm4");
         QCOMPARE(m_manager->landmarks(nameFilter).count(),1);
     }
+
+    if (type == "async") {
+        QFile::remove(exportFile);
+        QLandmark lm;
+        lms.clear();
+        for (int i=0; i < 600; ++i) {
+            lm.setName(QString("LM%1").arg(0));
+            lms.append(lm);
+        }
+
+        QVERIFY(m_manager->saveLandmarks(&lms));
+        exportRequest.setFormat(QLandmarkManager::Gpx);
+        exportRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
+        exportRequest.setFileName(exportFile);
+        QList<QLandmarkId> idList;
+        exportRequest.setLandmarkIds(idList);
+        exportRequest.start();
+        QTest::qWait(50);
+        exportRequest.cancel();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::CancelError,2000));
+    }
+
 }
 
 void tst_QLandmarkManagerEngineSqlite::exportGpx_data()
@@ -6465,6 +6537,27 @@ void tst_QLandmarkManagerEngineSqlite::exportLmx() {
         QCOMPARE(lm1New, lm1);
         lm3.setLandmarkId(lm2.landmarkId());  //3 will get assigned the same id as 2
         QCOMPARE(lm3New, lm3);
+    }
+
+    if (type == "async") {
+        QFile::remove(exportFile);
+        QLandmark lm;
+        lms.clear();
+        for (int i=0; i < 600; ++i) {
+            lm.setName(QString("LM%1").arg(0));
+            lms.append(lm);
+        }
+
+        QVERIFY(m_manager->saveLandmarks(&lms));
+        exportRequest.setFormat(QLandmarkManager::Lmx);
+        exportRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
+        exportRequest.setFileName(exportFile);
+        QList<QLandmarkId> idList;
+        exportRequest.setLandmarkIds(idList);
+        exportRequest.start();
+        QTest::qWait(50);
+        exportRequest.cancel();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::CancelError,2000));
     }
     QFile::remove(exportFile);
 }
