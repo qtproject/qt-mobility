@@ -3140,12 +3140,6 @@ void QueryRun::run()
                     gpxHandler = 0;
                 }
 
-                if (this->isCanceled) {
-                    error = QLandmarkManager::CancelError;
-                    errorString = "Landmark import request was canceled";
-
-                }
-
                QMutexLocker(&(engine->m_mutex));
                if (engine->m_requestRunHash.contains(request))
                    engine->m_requestRunHash.remove(request);

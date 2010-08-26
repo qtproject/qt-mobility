@@ -5945,6 +5945,21 @@ void tst_QLandmarkManagerEngineSqlite::importLmx() {
     } else {
         qFatal("Unknown row test type");
     }
+
+    if (type == "async") {
+        int originalLandmarkCount = m_manager->landmarkIds().count();
+        spy.clear();
+        importRequest.setFileName(":data/AUS-PublicToilet-NewSouthWales.lmx");
+        importRequest.setFormat(QLandmarkManager::Lmx);
+        importRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
+        importRequest.start();
+        QTest::qWait(75);
+        QCOMPARE(spy.count(),1);
+        QCOMPARE(qvariant_cast<QLandmarkAbstractRequest::State>(spy.at(0).at(0)), QLandmarkAbstractRequest::ActiveState);
+        importRequest.cancel();
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::CancelError,2000));
+        QCOMPARE(originalLandmarkCount, m_manager->landmarkIds().count());
+    }
 }
 
 void tst_QLandmarkManagerEngineSqlite::importLmx_data() {

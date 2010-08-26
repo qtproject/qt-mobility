@@ -105,8 +105,10 @@ bool QLandmarkFileHandlerLmx::importData(QIODevice *device)
     m_reader = new QXmlStreamReader(device);
 
     if (!readLmx()) {
-        m_errorCode = QLandmarkManager::ParsingError;
-        m_error = m_reader->errorString();
+        if (m_errorCode != QLandmarkManager::CancelError) {//if it wasn't canceled
+            m_errorCode = QLandmarkManager::ParsingError;//must've been a parsing error.
+            m_error = m_reader->errorString();
+        }
         return false;
     } else {
         if (m_reader->atEnd()) {
@@ -247,6 +249,12 @@ bool QLandmarkFileHandlerLmx::readLandmark(QLandmark &landmark)
         </xsd:sequence>
     </xsd:complexType>
     */
+
+    if((*m_cancel) == true) {
+        m_errorCode = QLandmarkManager::CancelError;
+        m_error = "Import of lmx file was canceled";
+        return false;
+    }
 
     Q_ASSERT(m_reader->isStartElement() &&
              (m_reader->name() == "landmark"));
