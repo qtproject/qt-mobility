@@ -544,13 +544,6 @@ bool QLandmarkManagerEngineSqlite::cancelRequest(QLandmarkAbstractRequest* reque
 
     m_requestRunHash.value(request)->isCanceled = true;
 
-    if (request->type() == QLandmarkAbstractRequest::ImportRequest) {
-        if (m_requestRunHash.value(request)->gpxHandler) {
-            m_requestRunHash.value(request)->gpxHandler->cancel();
-            QMetaObject::invokeMethod(m_requestRunHash.value(request)->gpxHandler,
-                                "cancel", Qt::QueuedConnection);
-        }
-    }
     return true;
 }
 

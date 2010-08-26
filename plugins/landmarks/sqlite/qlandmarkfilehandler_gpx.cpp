@@ -58,13 +58,12 @@
 
 QTM_USE_NAMESPACE
 
-QLandmarkFileHandlerGpx::QLandmarkFileHandlerGpx()
+QLandmarkFileHandlerGpx::QLandmarkFileHandlerGpx(const volatile bool *cancel)
     : QObject(),
     m_reader(0),
     m_writer(0),
-    m_isAsync(false),
-    m_isCanceled(false),
-    m_behavior(QLandmarkFileHandlerGpx::ExportSubset)
+    m_behavior(QLandmarkFileHandlerGpx::ExportSubset),
+    m_cancel(cancel)
 {
 }
 
@@ -109,7 +108,6 @@ void QLandmarkFileHandlerGpx::setRoutes(const QList<QList<QLandmark> > &routes)
 bool QLandmarkFileHandlerGpx::importData(QIODevice *device)
 {
     // rejects GPX 1.0, need add to docs that 1.1 is the only version supported
-    m_isCanceled = false;
 
     if (m_reader)
         delete m_reader;
@@ -117,15 +115,12 @@ bool QLandmarkFileHandlerGpx::importData(QIODevice *device)
     m_reader = new QXmlStreamReader(device);
 
     if (!readGpx()) {
-        if (!m_isCanceled) {
+        if (m_errorCode != QLandmarkManager::CancelError) {
             m_errorCode = QLandmarkManager::ParsingError;
             m_errorString = m_reader->errorString();
-            return false;
-        } else {
-            m_errorCode = QLandmarkManager::CancelError;
-            m_errorString = "Import operation was canceled";
-            return false;
+
         }
+        return false;
     } else {
         if(m_reader->atEnd()) {
             m_reader->readNextStartElement();
@@ -201,17 +196,15 @@ bool QLandmarkFileHandlerGpx::readGpx()
     }
 
     while (m_reader->name() == "wpt") {
-        QLandmark landmark;
-
-
-        if (!readWaypoint(landmark, "wpt")) {
+        if (m_cancel && (*m_cancel==true)) {
+            m_errorCode = QLandmarkManager::CancelError;
+            m_errorString = "Import of gpx file was canceled";
             return false;
         }
 
-        if (m_isAsync) {
-            QCoreApplication::processEvents();
-        }
-        if (m_isCanceled == true) {
+        QLandmark landmark;
+
+        if (!readWaypoint(landmark, "wpt")) {
             return false;
         }
 
@@ -224,16 +217,15 @@ bool QLandmarkFileHandlerGpx::readGpx()
     }
 
     while (m_reader->name() == "rte") {
-        QList<QLandmark> route;
-
-        if (!readRoute(route))
-            return false;
-
-        if (m_isAsync)
-            QCoreApplication::processEvents();
-        if (m_isCanceled == true) {
+        if (m_cancel && (*m_cancel==true)) {
+            m_errorCode = QLandmarkManager::CancelError;
+            m_errorString = "Import of gpx file was canceled";
             return false;
         }
+
+        QList<QLandmark> route;
+        if (!readRoute(route))
+            return false;
 
         m_routes.append(route);
 
@@ -244,16 +236,15 @@ bool QLandmarkFileHandlerGpx::readGpx()
     }
 
     while (m_reader->name() == "trk") {
-        QList<QLandmark> track;
-
-        if (!readTrack(track))
-            return false;
-
-        if (m_isAsync)
-            QCoreApplication::processEvents();
-        if (m_isCanceled == true) {
+        if (m_cancel && (*m_cancel==true)) {
+            m_errorCode = QLandmarkManager::CancelError;
+            m_errorString = "Import of gpx file was canceled";
             return false;
         }
+
+        QList<QLandmark> track;
+        if (!readTrack(track))
+            return false;
 
         m_tracks.append(track);
 
@@ -815,16 +806,6 @@ bool QLandmarkFileHandlerGpx::writeTrack(const QList<QLandmark> &track)
     m_writer->writeEndElement();
 
     return true;
-}
-
-void QLandmarkFileHandlerGpx::setAsync(bool async)
-{
-    m_isAsync = async;
-}
-
-void QLandmarkFileHandlerGpx::cancel()
-{
-    m_isCanceled = true;
 }
 
 void QLandmarkFileHandlerGpx::setBehavior(Behavior behavior) {

@@ -2644,47 +2644,31 @@ bool DatabaseOperations::importLandmarksGpx(QIODevice *device,
         }
     }
 
-    QLandmarkFileHandlerGpx *gpxHandler = new QLandmarkFileHandlerGpx;
-    if (queryRun) {
-        queryRun->gpxHandler = gpxHandler;
-        queryRun->gpxHandler->setAsync(true);
+    QLandmarkFileHandlerGpx gpxHandler(queryRun?&(queryRun->isCanceled):0);
+    if (!gpxHandler.importData(device)) {
+        *error = gpxHandler.error();
+        *errorString = gpxHandler.errorString();
+        return false;
     }
 
-    bool result = false;
-    if (gpxHandler->importData(device)) {
-            QList<QLandmark> landmarks = gpxHandler->waypoints();
+    QList<QLandmark> landmarks = gpxHandler.waypoints();
+    for(int i =0; i < landmarks.count(); ++i) {
+        if (option == QLandmarkManager::AttachSingleCategory)
+            landmarks[i].addCategoryId(categoryId);
 
-            for(int i =0; i < landmarks.count(); ++i) {
-                if (option == QLandmarkManager::AttachSingleCategory)
-                    landmarks[i].addCategoryId(categoryId);
-
-                saveLandmarkHelper(&(landmarks[i]),error, errorString);
-                if (*error != QLandmarkManager::NoError) {
-                    break;
-                }
-            }
-
+        saveLandmarkHelper(&(landmarks[i]),error, errorString);
         if (*error != QLandmarkManager::NoError) {
-            result = false;
-        } else  {
-            foreach(const QLandmark &landmark, landmarks) {
-                if (landmarkIds && landmark.landmarkId().isValid()) {
-                    landmarkIds->append(landmark.landmarkId());
-                }
-            }
-            result = true;
+            if (landmarkIds)
+                landmarkIds->clear();
+            return false;
         }
-    } else {
-        *error = QLandmarkManager::ParsingError;
-        *errorString = gpxHandler->errorString();
-        result = false;
+        if (landmarkIds)
+            landmarkIds->append(landmarks[i].landmarkId());
     }
 
-    if (!queryRun)
-        delete gpxHandler;
-   //the query run will delete it's own gpx handler
-
-    return result;
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+    return true;
 }
 
 bool DatabaseOperations::exportLandmarksLmx(QIODevice *device,
@@ -2879,16 +2863,12 @@ QueryRun::QueryRun(QLandmarkAbstractRequest *req, const QString &uri, QLandmarkM
       errorMap(QMap<int,QLandmarkManager::Error>()),
       managerUri(uri),
       isCanceled(false),
-      engine(eng),
-      gpxHandler(0)
+      engine(eng)
 {
 };
 
 QueryRun::~QueryRun()
 {
-    if (gpxHandler)
-        delete gpxHandler;
-    gpxHandler = 0;
 }
 
 void QueryRun::run()
@@ -3135,10 +3115,6 @@ void QueryRun::run()
                                                     importRequest->format(), importRequest->transferOption(),
                                                     importRequest->categoryId(),
                                                     &error, &errorString, this, &landmarkIds);
-                if (this->gpxHandler) {
-                    delete gpxHandler;
-                    gpxHandler = 0;
-                }
 
                QMutexLocker(&(engine->m_mutex));
                if (engine->m_requestRunHash.contains(request))
