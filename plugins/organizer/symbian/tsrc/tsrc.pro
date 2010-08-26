@@ -7,4 +7,5 @@ SUBDIRS += tst_symbianom \
 		   tst_detaildef \
 		   tst_itemoccurrence \
 		   tst_itemlocation \
-		   tst_todooccurrence
+		   tst_todooccurrence \
+		   tst_symbianreminder
