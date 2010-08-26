@@ -41,9 +41,11 @@
 
 // Backend
 #include "qmdesession.h"
+#include "qgallerymdsutility.h"
 // API
 #include "qgalleryabstractrequest.h"
 // Symbian
+#include <mdeconstants.h>
 #include <e32base.h>
 
 QTM_BEGIN_NAMESPACE
@@ -85,18 +87,52 @@ CMdEObject* QMdeSession::GetFullObjectL( const unsigned int aId  )
     return ret;
 }
 
-CMdEObjectQuery* QMdeSession::NewObjectQueryL( CMdENamespaceDef &aNamespaceDef,
-        CMdEObjectDef &aObjectDef, MMdEQueryObserver *aResponse )
+CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *aResponse, QGalleryQueryRequest *request)
 {
-    return m_cmdeSession->NewObjectQueryL(aNamespaceDef, aObjectDef, aResponse);
+    CMdENamespaceDef& defaultNamespace = GetDefaultNamespaceDefL();
+
+    CMdEObjectQuery* query = NULL;
+
+    if( request->rootType() == QDocumentGallery::File.name() ){
+        CMdEObjectDef& mediaObjDef = defaultNamespace.GetObjectDefL(
+            MdeConstants::MediaObject::KMediaObject );
+        CMdEObjectDef& imageObjDef = defaultNamespace.GetObjectDefL(
+            MdeConstants::Image::KImageObject );
+        CMdEObjectDef& videoObjDef = defaultNamespace.GetObjectDefL(
+            MdeConstants::Video::KVideoObject );
+        CMdEObjectDef& audioObjDef = defaultNamespace.GetObjectDefL(
+            MdeConstants::Audio::KAudioObject );
+
+        // query media object properties from image and video objects
+        RPointerArray<CMdEObjectDef>* objectDefs = new (ELeave) RPointerArray<CMdEObjectDef>( 3 );
+        objectDefs->Append( &imageObjDef );
+        objectDefs->Append( &videoObjDef );
+        objectDefs->Append( &audioObjDef );
+
+        query = m_cmdeSession->NewObjectQueryL( mediaObjDef, objectDefs, aResponse );
+    }
+    else {
+        CMdEObjectDef& objdef = QDocumentGalleryMDSUtility::ObjDefFromItemTypeL(defaultNamespace, request->rootType() );
+        if( objdef.Name() == MdeConstants::Object::KBaseObject ){
+            // Base object definition is only returned if the root type does not match supported types
+            return NULL;
+            }
+        query = m_cmdeSession->NewObjectQueryL( defaultNamespace, objdef, aResponse );
+    }
+
+    QDocumentGalleryMDSUtility::SetupQueryConditions(query, request);
+
+    return query;
 }
 
 int QMdeSession::RemoveObject( const unsigned int aItemId )
 {
     TItemId result = 0;
     int ret = QGalleryAbstractRequest::NoResult;
-    CMdENamespaceDef& defaultNamespaceDef = GetDefaultNamespaceDefL();
-    TRAPD( err, result = m_cmdeSession->RemoveObjectL( aItemId, &defaultNamespaceDef ) );
+    TRAPD( err,
+           CMdENamespaceDef& defaultNamespaceDef = GetDefaultNamespaceDefL();
+           result = m_cmdeSession->RemoveObjectL( aItemId, &defaultNamespaceDef )
+         );
 
     if (err == KErrNone) {
         if (result != KNoId) {

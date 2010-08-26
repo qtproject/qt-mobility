@@ -60,7 +60,7 @@ QDocumentGalleryMDSUtility::~QDocumentGalleryMDSUtility()
 
 }
 
-CMdEObjectDef& QDocumentGalleryMDSUtility::ObjDefFromItemType( CMdENamespaceDef &nameSpace, QString itemType )
+CMdEObjectDef& QDocumentGalleryMDSUtility::ObjDefFromItemTypeL( CMdENamespaceDef &nameSpace, QString itemType )
 {
     if (itemType == QDocumentGallery::Audio.name())
     {
@@ -235,7 +235,7 @@ void QDocumentGalleryMDSUtility::GetDataFieldsForItemType( QStringList &property
         }
 }
 
-void QDocumentGalleryMDSUtility::GetMetaDataField( CMdEObject *inputItem, QVariant &output, int key )
+void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVariant &output, int key )
 {
     switch( key )
         {
@@ -1227,5 +1227,9 @@ HBufC8* QDocumentGalleryMDSUtility::qByteArrayToS60Desc8(const QByteArray& byteA
     return ptr8.Alloc();
 }
 
+void QDocumentGalleryMDSUtility::SetupQueryConditions(CMdEObjectQuery *query, QGalleryQueryRequest *request)
+{
+
+}
 
 QTM_END_NAMESPACE

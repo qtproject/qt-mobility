@@ -152,7 +152,11 @@ QVariant QMDEGalleryResultSet::metaData(int key) const
 
     CMdEObject *item = m_itemArray[m_cursorPosition];
     if (item) {
-        QDocumentGalleryMDSUtility::GetMetaDataField( item, retval, key );
+        TRAPD( err, QDocumentGalleryMDSUtility::GetMetaDataFieldL( item, retval, key ) );
+        if( err )
+            {
+            retval.clear();
+            }
     }
 
     return retval;
