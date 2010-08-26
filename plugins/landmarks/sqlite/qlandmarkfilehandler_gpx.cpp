@@ -63,7 +63,8 @@ QLandmarkFileHandlerGpx::QLandmarkFileHandlerGpx()
     m_reader(0),
     m_writer(0),
     m_isAsync(false),
-    m_isCanceled(false)
+    m_isCanceled(false),
+    m_behavior(QLandmarkFileHandlerGpx::ExportSubset)
 {
 }
 
@@ -105,7 +106,7 @@ void QLandmarkFileHandlerGpx::setRoutes(const QList<QList<QLandmark> > &routes)
     m_routes = routes;
 }
 
-QLandmarkFileHandlerGpx::State QLandmarkFileHandlerGpx::importData(QIODevice *device)
+bool QLandmarkFileHandlerGpx::importData(QIODevice *device)
 {
     // rejects GPX 1.0, need add to docs that 1.1 is the only version supported
     m_isCanceled = false;
@@ -117,27 +118,28 @@ QLandmarkFileHandlerGpx::State QLandmarkFileHandlerGpx::importData(QIODevice *de
 
     if (!readGpx()) {
         if (!m_isCanceled) {
-            m_error = m_reader->errorString();
-            emit error(m_error);
-            return QLandmarkFileHandlerGpx::ErrorState;
+            m_errorCode = QLandmarkManager::ParsingError;
+            m_errorString = m_reader->errorString();
+            return false;
         } else {
-            emit canceled();
-            return QLandmarkFileHandlerGpx::CanceledState;
+            m_errorCode = QLandmarkManager::CancelError;
+            m_errorString = "Import operation was canceled";
+            return false;
         }
     } else {
         if(m_reader->atEnd()) {
             m_reader->readNextStartElement();
             if (!m_reader->name().isEmpty()) {
-                m_error = QString("A single root element named \"gpx\" was expected (second root element was named \"%1\")").arg(m_reader->name().toString());
-                emit error(m_error);
-                return QLandmarkFileHandlerGpx::ErrorState;
+                m_errorString = QString("A single root element named \"gpx\" was expected (second root element was named \"%1\")").arg(m_reader->name().toString());
+                m_errorCode = QLandmarkManager::ParsingError;
+                return false;
             }
         }
     }
 
-    m_error = "";
-    emit finishedImport();
-    return QLandmarkFileHandlerGpx::DoneState;
+    m_errorCode = QLandmarkManager::NoError;
+    m_errorString = "";
+    return true;
 }
 
 bool QLandmarkFileHandlerGpx::readGpx()
@@ -680,14 +682,13 @@ bool QLandmarkFileHandlerGpx::exportData(QIODevice *device, const QString &nsPre
     bool result = writeGpx();
 
     if (!result) {
-        emit error(m_error);
+        //errors should already have been set
         return false;
     }
 
-    m_error = "";
-    emit finishedExport();
+    m_errorCode = QLandmarkManager::NoError;;
+    m_errorString = "";
     return true;
-
 }
 
 bool QLandmarkFileHandlerGpx::writeGpx()
@@ -717,9 +718,8 @@ bool QLandmarkFileHandlerGpx::writeGpx()
 
 
     for (int i = 0; i < m_waypoints.size(); ++i) {
-        //we don't check the return value of writeWayPoint() because
-        //if a landmark cannot be written we just move onto the next.
-        writeWaypoint(m_waypoints.at(i), "wpt");
+       if (!writeWaypoint(m_waypoints.at(i), "wpt"))
+        return false;
     }
 
     for (int i = 0; i < m_routes.size(); ++i) {
@@ -741,31 +741,36 @@ bool QLandmarkFileHandlerGpx::writeWaypoint(const QLandmark &landmark, const QSt
     double lat = landmark.coordinate().latitude();
     double lon = landmark.coordinate().longitude();
 
+    QString latString;
+    QString lonString;
+    bool isInvalid = false;
+
     if (!qIsNaN(lat)) {
-        if (lat >= 90.0)
-            lat = 90.0;
-        else if (lat <= -90.0)
-            lat = -90;
+        if ((lat > 90.0 )| (lat < -90.0))
+            isInvalid = true;
+        latString = QString::number(lat);
+    } else {
+        latString = "NaN";
+        isInvalid = true;
     }
 
     if (!qIsNaN(lon)) {
-        if (lon == 180.0)
-            lon = -180.0;
-
-        // if we were willing to bet on fmod rounding negative numbers toward zero
-        // during its computatoin on all implementations this would just be a one liner...
-        if (lon >= -180.0)
-            lon = fmod(180.0 + lon, 360.0) - 180.0;
-        else
-            lon = 180.0 - fmod(180.0 - lon, 360.0);
+        if ((lon > 180.0) | (lon < -180.0))
+            isInvalid = true;
+        lonString = QString::number(lon);
+    } else {
+        lonString = "NaN";
+        isInvalid = true;
     }
 
-    QString latString = QString::number(lat);
-    QString lonString = QString::number(lon);
-
-    if (!landmark.coordinate().isValid()) {
-        m_error = QString("Landmarks cannot be exported with invalid coordinates (latitude is %1, longitude is %2)").arg(latString).arg(lonString);
-        return false;
+    if (isInvalid) {
+        if(m_behavior == QLandmarkFileHandlerGpx::ExportAll){
+            m_errorString = QString("Landmarks cannot be exported with invalid coordinates (latitude is %1, longitude is %2)").arg(latString).arg(lonString);
+            m_errorCode = QLandmarkManager::BadArgumentError; //TODO: should be invalid error code?
+            return false;
+        } else { //m_behavior == QLandmarkFileHandlerGpx::ExportSome
+            return true;//ignore landmarks with invalid coordinates.
+        }
     }
 
     m_writer->writeStartElement(m_ns, elementName);
@@ -812,11 +817,6 @@ bool QLandmarkFileHandlerGpx::writeTrack(const QList<QLandmark> &track)
     return true;
 }
 
-QString QLandmarkFileHandlerGpx::errorString() const
-{
-    return m_error;
-}
-
 void QLandmarkFileHandlerGpx::setAsync(bool async)
 {
     m_isAsync = async;
@@ -825,6 +825,20 @@ void QLandmarkFileHandlerGpx::setAsync(bool async)
 void QLandmarkFileHandlerGpx::cancel()
 {
     m_isCanceled = true;
+}
+
+void QLandmarkFileHandlerGpx::setBehavior(Behavior behavior) {
+    m_behavior = behavior;
+}
+
+QLandmarkManager::Error QLandmarkFileHandlerGpx::error()
+{
+    return m_errorCode;
+}
+
+QString QLandmarkFileHandlerGpx::errorString() const
+{
+    return m_errorString;
 }
 
 #include "moc_qlandmarkfilehandler_gpx_p.cpp"

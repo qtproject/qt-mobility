@@ -56,8 +56,7 @@ private: // From CPplPredictiveSearchTableBase
 
 	void FillKeyboardSpecificFieldsL(RSqlStatement& aSqlStatement,
 									 QStringList aTokens);
-	QStringList GetTableSpecificFields(const CContactItem& aItem,
-									   TBool& aMandatoryFieldsPresent) const;
+	QStringList GetTableSpecificFields(const CContactItem& aItem) const;
 
 private:
 	void ConstructL();

@@ -53,22 +53,19 @@ class Q_LOCATION_EXPORT QLandmarkCategoryFetchRequest : public QLandmarkAbstract
 {
     Q_OBJECT
 public:
-    enum MatchingScheme{MatchAll, MatchSubset};
-
     QLandmarkCategoryFetchRequest(QLandmarkManager *manager, QObject *parent=0);
     ~QLandmarkCategoryFetchRequest();
 
-    QList<QLandmarkCategoryId> categoryIds() const;
-    void setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds = QList<QLandmarkCategoryId>());
-    void setCategoryId(const QLandmarkCategoryId &categoryId);
-
     QList<QLandmarkCategory> categories() const;
-
-    MatchingScheme matchingScheme() const;
-    void setMatchingScheme(QLandmarkCategoryFetchRequest::MatchingScheme scheme);
 
     QLandmarkNameSort sorting() const;
     void setSorting(const QLandmarkNameSort &nameSort);
+
+     int limit() const;
+    void setLimit(int limit);
+
+    int offset() const;
+    void setOffset(int offset);
 
 private:
     Q_DISABLE_COPY(QLandmarkCategoryFetchRequest)

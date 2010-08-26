@@ -43,7 +43,9 @@
 
 void OrganizerEventTimeRangeTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
-    if (item->type() == QOrganizerItemType::TypeEvent) // type has already been converted
+    // pre-condition: type has already been converted
+    if (item->type() == QOrganizerItemType::TypeEvent
+        || item->type() == QOrganizerItemType::TypeEventOccurrence)
     {
         TCalTime startTime = entry.StartTimeL();
         TCalTime endTime = entry.EndTimeL();
@@ -59,26 +61,59 @@ void OrganizerEventTimeRangeTransform::transformToDetailL(const CCalEntry& entry
         if (endTime.TimeUtcL() != Time::NullTTime()
             && endTime.TimeUtcL() != startTime.TimeUtcL())
             range.setEndDateTime(toQDateTimeL(endTime));
+        
+        if (!range.isEmpty())
+            item->saveDetail(&range);
+    }
+}
 
-        item->saveDetail(&range);
+void OrganizerEventTimeRangeTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
+{
+    if (itemInstance->type() == QOrganizerItemType::TypeEventOccurrence) // type has already been converted
+    {
+        TCalTime startTime = instance.StartTimeL();
+        TCalTime endTime = instance.EndTimeL();
+
+        QOrganizerEventTimeRange range;
+        if (startTime.TimeUtcL() != Time::NullTTime())
+            range.setStartDateTime(toQDateTimeL(startTime));
+
+        // Check if the end time is defined and if the end time is different to
+        // start time. Effectively this means that if a QtMobility Organizer API
+        // client defines an end time that is exactly the same as start time, the
+        // end time is lost.
+        if (endTime.TimeUtcL() != Time::NullTTime()
+            && endTime.TimeUtcL() != startTime.TimeUtcL())
+            range.setEndDateTime(toQDateTimeL(endTime));
+
+        if (!range.isEmpty())
+            itemInstance->saveDetail(&range);
     }
 }
 
 void OrganizerEventTimeRangeTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
-    if (item.type() == QOrganizerItemType::TypeEvent)
+    if (item.type() == QOrganizerItemType::TypeEvent || item.type() == QOrganizerItemType::TypeEventOccurrence)
     {
         QOrganizerEventTimeRange range = item.detail<QOrganizerEventTimeRange>();
+        
         // Symbian calendar server makes the client process panic in case there
         // is no start time for an event. As a work-around let's check the
         // parameters and leave in that case.
+        if (!range.startDateTime().isValid())
+            User::Leave(KErrArgument);
+
+        // On some platforms symbian calendar server makes the client process panic
+        // when start date is more than end date. We don't want that.
+        if (range.endDateTime().isValid()) {
+            if (range.startDateTime() > range.endDateTime())
+                User::Leave(KErrArgument);
+        }
+        
         // TODO: A VEVENT with empty start time is allowed by the iCalendar
         // specification (RFC2445); file a bug report against symbian calendar
         // server in 10.1 or later platforms.
-        if (!range.isEmpty() && range.startDateTime().isValid())
-            entry->SetStartAndEndTimeL(toTCalTimeL(range.startDateTime()), toTCalTimeL(range.endDateTime()));
-        else
-            User::Leave(KErrArgument);        
+        entry->SetStartAndEndTimeL(toTCalTimeL(range.startDateTime()), toTCalTimeL(range.endDateTime()));
     }
 }
 

@@ -85,6 +85,7 @@ public:
         UnloadedStatus,
         LoadingStatus,
         LoadedStatus,
+        StandbyStatus,
         StartingStatus,
         ActiveStatus
     };
@@ -184,6 +185,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void stateChanged(QCamera::State);
     void captureModeChanged(QCamera::CaptureMode);
+    void statusChanged(QCamera::Status);
 
     void locked();
     void lockFailed();

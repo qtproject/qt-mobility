@@ -42,7 +42,6 @@
 
 #include "qversitcontactexporter.h"
 #include "qversitcontactexporter_p.h"
-#include "qvcardbackuphandlers_p.h"
 #include "qmobilityglobal.h"
 
 #include <qcontact.h>
@@ -133,37 +132,6 @@ QTM_USE_NAMESPACE
   After the handler returns control back to the exporter, the properties in the \a toBeRemoved
   list will be removed and the properties in the \a toBeAdded list will be appended to the document.
  */
-void QVersitContactExporterDetailHandlerV2::detailProcessed(
-        const QContact& contact,
-        const QContactDetail& detail,
-        QSet<QString> processedFields,
-        const QVersitDocument& document,
-        QList<QVersitProperty>* toBeRemoved,
-        QList<QVersitProperty>* toBeAdded)
-{
-    Q_UNUSED(contact)
-    Q_UNUSED(detail)
-    Q_UNUSED(processedFields)
-    Q_UNUSED(document)
-    Q_UNUSED(toBeRemoved)
-    Q_UNUSED(toBeAdded)
-}
-
-void QVersitContactExporterDetailHandlerV2::detailProcessed(
-        const QContact& contact,
-        const QContactDetail& detail,
-        const QVersitDocument& document,
-        QSet<QString>* processedFields,
-        QList<QVersitProperty>* toBeRemoved,
-        QList<QVersitProperty>* toBeAdded)
-{
-    Q_UNUSED(contact)
-    Q_UNUSED(detail)
-    Q_UNUSED(document)
-    Q_UNUSED(processedFields)
-    Q_UNUSED(toBeRemoved)
-    Q_UNUSED(toBeAdded)
-}
 
 /*!
   \fn void QVersitContactExporterDetailHandlerV2::contactProcessed(const QContact& contact, QVersitDocument* document)
@@ -236,61 +204,6 @@ void QVersitContactExporterDetailHandlerV2::detailProcessed(
   \value NoNameError One of the contacts has no QContactName field
   */
 
-
-/*!
-  \internal
-
-  This is deprecated; the preferred way of performing backup is now by constructing an exporter with
-  the "backup" profile.
-  eg. QVersitContactExporter exporter(QVersitContactHandlerFactory::ProfileBackup);
-
-  Constructs and returns a detail handler that encodes all details not handled by the base exporter.
-  The caller is responsible for deleting the object.
-
-  This handler encodes all writable details that the exporter doesn't recognise.  The format it uses
-  to encode the detail is as follows:
-  \list
-  \o All generated properties will have the name X-NOKIA-QCONTACTFIELD
-  \o All generated properties will have a single Versit group, and all properties generated from a
-     single detail will have the same group.
-  \o All generated properties will have at least the parameters DETAIL, which holds the definition
-     name of the QContactDetail from which it was generated, and FIELD, which holds the name of the
-     field within the detail from which it was generated.
-  \o If the field is of type QString or QByteArray, the property's value is set directly to the
-     value of the field.  (For a QByteArray value, the QVersitWriter will base-64 encode it.)
-  \o If the field is of type bool, int, uint, QDate, QTime, QDateTime or QUrl a the property's
-     value is set to a string representation of the field.  A parameter DATATYPE is added to the
-     property with value BOOL, INT, UINT, DATE, TIME or DATETIME depending on the type.
-  \o If the field is of some other type, the field value is encoded to a QByteArray via QDataStream
-     (and the resulting byte array is base-64 encoded by the QVersitWriter).  In this case, the
-     parameter DATATYPE=VARIANT is added to the Versit property.
-  \endlist
-
-  For example, a detail with definition name "Pet" and fields "Name"="Rex" and
-  "Age"=(int)14 will be exported to the vCard properties:
-  \code
-  G0.X-NOKIA-QCONTACTFIELD;DETAIL=Pet;FIELD=Name:Rex
-  G0.X-NOKIA-QCONTACTFIELD;DETAIL=Pet;FIELD=Age;DATATYPE=INT:14
-  \endcode
-
-  And the next detail (say, "Pet" with a field "Name"="Molly" will generate:
-  \code
-  G1.X-NOKIA-QCONTACTFIELD;DETAIL=Pet;FIELD=Name:Molly
-  \endcode
-
-  The properties produced by this class can be imported by the importer "backup" property handler
-  (created by QVersitContactImporterPropertyHandlerV2::createBackupHandler()) to reproduce the
-  original \l{QContactDetail}{QContactDetails}.
-
-  Clients wishing to implement their own detail handler and also benefit from the functionality of
-  the backup handler can use this function to construct one, and wrap a custom
-  QVersitContactExporterDetailHandlerV2 around it.  In the implementation of detailProcessed and
-  contactProcessed, the respective functions in the backup handler should be called as the last
-  step (ensuring the arguments are correctly updated and passed through).
- */
-QVersitContactExporterDetailHandlerV2* QVersitContactExporterDetailHandlerV2::createBackupHandler() {
-    return new QVCardExporterBackupHandler;
-}
 
 /*!
  * Constructs a new contact exporter

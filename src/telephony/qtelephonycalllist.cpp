@@ -38,22 +38,29 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <QtCore/qglobal.h>
 
+#include "qtelephony.h"
 #include "qtelephonycalllist.h"
-#include "qtelephonycallinfo_p.h"
-
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-# include "qtelephonycalllist_unsupported_p.h" // TODO change back to maemo when support is added
+# include "maemo/qtelephonycallinfo_maemo_p.h"
+# include "maemo/qtelephonycalllist_maemo_p.h"
 #elif defined(Q_OS_LINUX)
+# include "qtelephonycallinfo_p.h"
 # include "linux/qtelephonycalllist_linux_p.h"
 #elif defined(Q_OS_WIN)
+# include "qtelephonycallinfo_p.h"
 # include "qtelephonycalllist_win_p.h"
 #elif defined(Q_OS_SYMBIAN)
+# include "qtelephonycallinfo_p.h"
 # include "qtelephonycalllist_symbian_p.h"
 #else
+# include "qtelephonycallinfo_p.h"
 # include "qtelephonycalllist_unsupported_p.h"
 #endif
+
+#include <QtCore/QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -81,7 +88,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QTelephonyCallList
 
-    \ingroup telephony
+    \ingroup telephonyapi
     \inmodule QtTelephony
 
     \brief The QTelephonyCallList class contains a list of active calls. This object can notify other applications about call changes.
@@ -114,12 +121,12 @@ QTelephonyCallList::~QTelephonyCallList()
 }
 
 /*!
-    \fn QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephonyCallInfo::CallType& calltype) const
+    \fn QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephonyEvents::CallType& calltype) const
     \a calltype All calls in the list have this type.
 
     Gives back a list of calls from type of calltype.
 */
-QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephonyCallInfo::CallType& calltype) const
+QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephonyEvents::CallType& calltype) const
 {
     if(d)
         return d->activeCalls(calltype);

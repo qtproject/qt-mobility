@@ -11,25 +11,47 @@ include(../../../common.pri)
 # versions are incompatible
 win32|mac:!wince*:!win32-msvc:!macx-xcode:CONFIG += debug_and_release
 
-# If for some reason the version information is empty, default to 4.7.0
-# which is the earliest version with declarative support
-#isEmpty(QT_MAJOR_VERSION) {
-#   VERSION=4.7.0
-#} else {
-#   VERSION=$${QT_MAJOR_VERSION}.$${QT_MINOR_VERSION}.$${QT_PATCH_VERSION}
-#}
-
 # Where to search for the #include'd files
-INCLUDEPATH += ../../../src/location
 INCLUDEPATH += ../../../src/global
+INCLUDEPATH += ../../../src/location
+INCLUDEPATH += ../../../src/location/landmarks
+INCLUDEPATH += ../../../src/location/maps
+INCLUDEPATH += .
 
 # The header and source files of this project. Note that qmake generates dependency information
 # and automatically adds necessary 'moc' files as it sees Q_OBJECT macros' in header files
 HEADERS += qdeclarativeposition_p.h \
-                     qdeclarativepositionsource_p.h
+           qdeclarativepositionsource_p.h \
+           qdeclarativelandmark_p.h \
+           qdeclarativelandmarkmodel_p.h \
+           qdeclarativelandmarkcategorymodel_p.h \
+           qdeclarativelandmarkcategory_p.h \
+           qdeclarativelandmarkfilters_p.h \
+           qdeclarativecoordinate_p.h \
+           qdeclarativegeomapcircleobject_p.h \
+           qdeclarativegeomappixmapobject_p.h \
+           qdeclarativegeomappolygonobject_p.h \
+           qdeclarativegeomappolylineobject_p.h \
+           qdeclarativegeomaprectangleobject_p.h \
+           qdeclarativegeomaptextobject_p.h \
+           qdeclarativegraphicsgeomap_p.h
+
 SOURCES += qdeclarativeposition.cpp \
-                     location.cpp \
-                     qdeclarativepositionsource.cpp
+           location.cpp \
+           qdeclarativepositionsource.cpp \
+           qdeclarativelandmark.cpp \
+           qdeclarativelandmarkmodel.cpp \
+           qdeclarativelandmarkcategorymodel.cpp \
+           qdeclarativelandmarkcategory.cpp \
+           qdeclarativelandmarkfilters.cpp \
+           qdeclarativecoordinate.cpp \
+           qdeclarativegeomapcircleobject.cpp \
+           qdeclarativegeomappixmapobject.cpp \
+           qdeclarativegeomappolygonobject.cpp \
+           qdeclarativegeomappolylineobject.cpp \
+           qdeclarativegeomaprectangleobject.cpp \
+           qdeclarativegeomaptextobject.cpp \
+           qdeclarativegraphicsgeomap.cpp
 
 # Tell qmake to create such makefile that qmldir and target (i.e. declarative_location)
 # are both copied to qt/imports/QtMobility/location -directory,

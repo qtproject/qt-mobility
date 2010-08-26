@@ -66,14 +66,13 @@ public:
 
     virtual QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request) = 0;
 
-    virtual QGeoMapData* createMapData(QGeoMapWidget *widget);
-    virtual void removeMapData(QGeoMapData* mapData);
+    virtual QGeoMapData* createMapData(QGraphicsGeoMap *geoMap);
 
     QList<QString> supportedImageFormats() const;
     QSize tileSize() const;
 
 protected:
-    QGeoTiledMappingManagerEngine(const QMap<QString, QString> &parameters, QObject *parent = 0);
+    QGeoTiledMappingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent = 0);
 
     void setSupportedImageFormats(const QList<QString> &imageFormats);
     void setTileSize(const QSize &tileSize);

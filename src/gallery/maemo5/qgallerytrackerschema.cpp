@@ -43,7 +43,6 @@
 
 #include "qgalleryabstractrequest.h"
 #include "qgallerydbusinterface_p.h"
-#include "qgallerytrackercountresponse_p.h"
 #include "qgallerytrackerresultset_p.h"
 #include "qgallerytrackerlistcolumn_p.h"
 #include "qgallerytrackertyperesultset_p.h"
@@ -1247,17 +1246,6 @@ QGalleryTrackerSchema QGalleryTrackerSchema::fromItemId(const QString &itemId)
     }
 }
 
-QGalleryTrackerSchema QGalleryTrackerSchema::fromService(const QString &service)
-{
-    const QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
-
-    const int itemIndex = itemTypes.indexOfService(service);
-
-    return itemIndex != -1
-            ? QGalleryTrackerSchema(itemIndex, -1)
-            : QGalleryTrackerSchema(-1, -1);
-}
-
 QString QGalleryTrackerSchema::itemType() const
 {
     if (m_itemIndex >= 0)
@@ -1361,7 +1349,7 @@ QGalleryProperty::Attributes QGalleryTrackerSchema::propertyAttributes(
     return QGalleryProperty::Attributes();
 }
 
-int QGalleryTrackerSchema::prepareIdResponse(
+int QGalleryTrackerSchema::prepareItemResponse(
         QGalleryTrackerResultSetArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
         const QString &itemId,
@@ -1410,7 +1398,7 @@ int QGalleryTrackerSchema::prepareIdResponse(
     }
 }
 
-int QGalleryTrackerSchema::prepareFilterResponse(
+int QGalleryTrackerSchema::prepareQueryResponse(
         QGalleryTrackerResultSetArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
         QGalleryQueryRequest::Scope scope,
@@ -1467,6 +1455,7 @@ int QGalleryTrackerSchema::prepareTypeResponse(
             const QString countField = type.identity[0].field;
 
             arguments->accumulative = false;
+            arguments->updateMask = type.updateMask;
             arguments->queryInterface = dbus->metaDataInterface();
             arguments->queryMethod = QLatin1String("GetCount");
             arguments->queryArguments = QVariantList()
@@ -1625,6 +1614,7 @@ void QGalleryTrackerSchema::populateItemArguments(
     QVector<QGalleryProperty::Attributes> aliasAttributes;
     QVector<QGalleryProperty::Attributes> compositeAttributes;
     QVector<QVariant::Type> valueTypes;
+    QVector<QVariant::Type> extendedValueTypes;
     QVector<QVariant::Type> aliasTypes;
     QVector<QVariant::Type> compositeTypes;
 
@@ -1637,9 +1627,9 @@ void QGalleryTrackerSchema::populateItemArguments(
         if (valueNames.contains(*it) || aliasNames.contains(*it))
             continue;
 
-        int propertyIndex = itemProperties.indexOfProperty(*it);
+        int propertyIndex;
 
-        if (propertyIndex >= 0) {
+        if ((propertyIndex = itemProperties.indexOfProperty(*it)) >= 0) {
             const QString field = itemProperties[propertyIndex].field;
 
             int fieldIndex = arguments->fieldNames.indexOf(field);
@@ -1655,7 +1645,15 @@ void QGalleryTrackerSchema::populateItemArguments(
                 valueAttributes.append(itemProperties[propertyIndex].attributes);
                 valueTypes.append(itemProperties[propertyIndex].type);
             }
-        } else if ((propertyIndex = compositeProperties.indexOfProperty(*it)) >= 0) {
+        }
+    }
+
+    for (QStringList::const_iterator it = propertyNames.begin(); it != propertyNames.end(); ++it) {
+        if (valueNames.contains(*it) || aliasNames.contains(*it) || compositeNames.contains(*it))
+            continue;
+
+        int propertyIndex;
+        if ((propertyIndex = compositeProperties.indexOfProperty(*it)) >= 0) {
             const QGalleryItemPropertyList &dependencies
                     = compositeProperties[propertyIndex].dependencies;
 
@@ -1671,9 +1669,7 @@ void QGalleryTrackerSchema::populateItemArguments(
                     columns.append(arguments->fieldNames.count() + 2);
 
                     arguments->fieldNames.append(field);
-                    valueNames.append(dependencies[i].name);
-                    valueAttributes.append(dependencies[i].attributes);
-                    valueTypes.append(dependencies[i].type);
+                    extendedValueTypes.append(dependencies[i].type);
                 }
             }
 
@@ -1728,9 +1724,7 @@ void QGalleryTrackerSchema::populateItemArguments(
             if (fieldIndex < 0) {
                 fieldIndex = arguments->fieldNames.count();
                 arguments->fieldNames.append(field);
-                valueNames.append(propertyName);
-                valueAttributes.append(itemProperties[propertyIndex].attributes);
-                valueTypes.append(itemProperties[propertyIndex].type);
+                extendedValueTypes.append(itemProperties[propertyIndex].type);
             }
 
             sortFieldNames.append(field);
@@ -1740,7 +1734,9 @@ void QGalleryTrackerSchema::populateItemArguments(
 
     arguments->updateMask = qt_galleryItemTypeList[m_itemIndex].updateMask;
     arguments->identityWidth = 2;
+    arguments->tableWidth = 2 + arguments->fieldNames.count();
     arguments->valueOffset = 2;
+    arguments->compositeOffset = 2 + valueNames.count();
     arguments->queryInterface = dbus->searchInterface();
     arguments->queryMethod = QLatin1String("Query");
     arguments->queryArguments = QVariantList()
@@ -1756,7 +1752,7 @@ void QGalleryTrackerSchema::populateItemArguments(
     arguments->idColumn = new QGalleryTrackerServicePrefixColumn;
     arguments->urlColumn = new QGalleryTrackerFileUrlColumn(0);
     arguments->typeColumn = new QGalleryTrackerServiceTypeColumn;
-    arguments->valueColumns = qt_createValueColumns(valueTypes);
+    arguments->valueColumns = qt_createValueColumns(valueTypes + extendedValueTypes);
     arguments->propertyNames = valueNames + compositeNames + aliasNames;
     arguments->propertyAttributes = valueAttributes + compositeAttributes + aliasAttributes;
     arguments->propertyTypes = valueTypes + compositeTypes + aliasTypes;
@@ -1907,7 +1903,9 @@ void QGalleryTrackerSchema::populateAggregateArguments(
 
     arguments->updateMask = qt_galleryAggregateTypeList[m_aggregateIndex].updateMask;
     arguments->identityWidth = identityColumns.count();
+    arguments->tableWidth = identityColumns.count() + aggregates.count();
     arguments->valueOffset = 0;
+    arguments->compositeOffset = arguments->tableWidth;
     arguments->queryInterface = dbus->metaDataInterface();
     arguments->queryMethod = QLatin1String("GetUniqueValuesWithAggregates");
     arguments->queryArguments = QVariantList()

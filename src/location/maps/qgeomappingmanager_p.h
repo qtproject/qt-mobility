@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qgeomapwidget.h"
+#include "qgraphicsgeomap.h"
 
 #include <QSize>
 #include <QList>
@@ -66,12 +66,12 @@ class QGeoMappingManagerPrivate
 {
 public:
     QGeoMappingManagerPrivate();
-    QGeoMappingManagerPrivate(const QGeoMappingManagerPrivate &other);
     ~QGeoMappingManagerPrivate();
 
-    QGeoMappingManagerPrivate& operator= (const QGeoMappingManagerPrivate &other);
-
     QGeoMappingManagerEngine *engine;
+
+private:
+    Q_DISABLE_COPY(QGeoMappingManagerPrivate)
 };
 
 QTM_END_NAMESPACE

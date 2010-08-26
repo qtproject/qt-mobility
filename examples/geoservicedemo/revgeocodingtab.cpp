@@ -61,10 +61,10 @@ ReverseGeocodingTab::ReverseGeocodingTab(QWidget *parent) :
     m_locLat = new QLineEdit("52.51");
     m_locLat->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    requestBtn = new QPushButton(tr("Reverse Geocoding"));
-    requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
-    requestBtn->setDisabled(true);
-    QObject::connect(requestBtn, SIGNAL(clicked(bool)), this, SLOT(on_btnRequest_clicked()));
+    m_requestBtn = new QPushButton(tr("Reverse Geocoding"));
+    m_requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    m_requestBtn->setDisabled(true);
+    QObject::connect(m_requestBtn, SIGNAL(clicked(bool)), this, SLOT(on_btnRequest_clicked()));
 
     m_resultTree = new QTreeWidget();
     QStringList labels;
@@ -79,7 +79,7 @@ ReverseGeocodingTab::ReverseGeocodingTab(QWidget *parent) :
     firstrow->addWidget(locationlbl);
     firstrow->addWidget(m_locLat);
     firstrow->addWidget(m_locLong);
-    firstrow->addWidget(requestBtn);
+    firstrow->addWidget(m_requestBtn);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSpacing(2);
@@ -103,11 +103,10 @@ void ReverseGeocodingTab::initialize(QGeoSearchManager *searchManager)
         QObject::connect(m_searchManager,
                          SIGNAL(error(QGeoSearchReply*, QGeoSearchReply::Error, QString)), this,
                          SLOT(resultsError(QGeoSearchReply*, QGeoSearchReply::Error, QString)));
-        if(m_searchManager->supportsGeocoding())
-            requestBtn->setDisabled(false);
-    }
-    else
-        requestBtn->setDisabled(true);
+        if (m_searchManager->supportsGeocoding())
+            m_requestBtn->setDisabled(false);
+    } else
+        m_requestBtn->setDisabled(true);
 
 }
 
@@ -138,9 +137,9 @@ void ReverseGeocodingTab::resultsError(QGeoSearchReply* reply, QGeoSearchReply::
     Q_UNUSED(errorCode)
 
     if (!isHidden()) {
-        QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
-        top->setText(0, tr("Error"));
-        top->setText(1, errorString);
+        QTreeWidgetItem* errorResultItem = new QTreeWidgetItem(m_resultTree);
+        errorResultItem->setText(0, tr("Error"));
+        errorResultItem->setText(1, errorString);
         reply->deleteLater();
     }
 }

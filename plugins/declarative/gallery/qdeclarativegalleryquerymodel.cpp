@@ -171,9 +171,9 @@ void QDeclarativeGalleryQueryModel::componentComplete()
     \o NoGallery No gallery was set on the query.
     \o NotSupported Queries are not supported by the \l gallery.
     \o ConnectionError The query failed due to a connection error.
-    \o InvalidItemError The query failed because the value of \l scopeItemId
+    \o InvalidItemError The query failed because the value of \l rootItem
     is not a valid item ID.
-    \o ItemTypeError The query failed because the value of \l itemType is not
+    \o ItemTypeError The query failed because the value of \l rootType is not
     a valid item type.
     \o InvalidPropertyError The query failed because the \l filter refers to an
     invalid property.
@@ -253,7 +253,7 @@ void QDeclarativeGalleryQueryModel::componentComplete()
     \qmlproperty enum GalleryQueryModel::scope
 
     The property contains whether a query should count the direct descendants
-    of the \l scopeItemId or all descendants.
+    of the \l rootItem or all descendants.
 */
 
 /*!

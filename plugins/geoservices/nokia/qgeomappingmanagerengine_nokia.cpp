@@ -54,22 +54,19 @@
 #include <QDebug>
 
 #define LARGE_TILE_DIMENSION 256
-#define PI 3.14159265
-#include <math.h>
 
-QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
-        m_parameters(parameters),
         m_host("loc.desktop.maps.svc.ovi.com")
 {
-    setTileSize(QSize(128,128));
+    setTileSize(QSize(128, 128));
     setMinimumZoomLevel(0.0);
     setMaximumZoomLevel(18.0);
 
-    QList<QGeoMapWidget::MapType> types;
-    types << QGeoMapWidget::StreetMap;
-    types << QGeoMapWidget::SatelliteMapDay;
-    types << QGeoMapWidget::TerrainMap;
+    QList<QGraphicsGeoMap::MapType> types;
+    types << QGraphicsGeoMap::StreetMap;
+    types << QGraphicsGeoMap::SatelliteMapDay;
+    types << QGraphicsGeoMap::TerrainMap;
     setSupportedMapTypes(types);
 
     m_nam = new QNetworkAccessManager(this);
@@ -81,29 +78,29 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
 
     m_cache->setCacheDirectory(dir.path());
 
-    QList<QString> keys = m_parameters.keys();
+    QList<QString> keys = parameters.keys();
 
     if (keys.contains("mapping.proxy")) {
-        QString proxy = m_parameters.value("mapping.proxy");
+        QString proxy = parameters.value("mapping.proxy").toString();
         if (!proxy.isEmpty())
             m_nam->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
     }
 
     if (keys.contains("mapping.host")) {
-        QString host = m_parameters.value("mapping.host");
+        QString host = parameters.value("mapping.host").toString();
         if (!host.isEmpty())
             m_host = host;
     }
 
     if (keys.contains("mapping.cache.directory")) {
-        QString cacheDir = m_parameters.value("mapping.cache.directory");
+        QString cacheDir = parameters.value("mapping.cache.directory").toString();
         if (!cacheDir.isEmpty())
             m_cache->setCacheDirectory(cacheDir);
     }
 
     if (keys.contains("mapping.cache.size")) {
         bool ok = false;
-        qint64 cacheSize = m_parameters.value("mapping.cache.size").toLongLong(&ok);
+        qint64 cacheSize = parameters.value("mapping.cache.size").toString().toLongLong(&ok);
         if (ok)
             m_cache->setMaximumCacheSize(cacheSize);
     }
@@ -117,16 +114,19 @@ QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMa
 {
     QString rawRequest = getRequestString(request);
 
-    QNetworkRequest netRequest = QNetworkRequest(QUrl(rawRequest));
+    QNetworkRequest netRequest((QUrl(rawRequest))); // The extra pair of parens disambiguates this from a function declaration
     netRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
+    netRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
     m_cache->metaData(netRequest.url()).setLastModified(QDateTime::currentDateTime());
 
     QNetworkReply* netReply = m_nam->get(netRequest);
 
-    QGeoTiledMapReply* mapReply = new QGeoMapReplyNokia(netReply, request, this);
+    QGeoTiledMapReply* mapReply = new QGeoMapReplyNokia(netReply, request);
 
-        // TODO goes badly on linux
+    // TODO goes badly on linux
     //qDebug() << "request: " << QString::number(reinterpret_cast<int>(mapReply), 16) << " " << request.row() << "," << request.column();
+    // this one might work better. It follows defined behaviour, unlike reinterpret_cast
+    //qDebug("request: %p %i,%i @ %i", mapReply, request.row(), request.column(), request.zoomLevel());
     return mapReply;
 }
 
@@ -145,7 +145,11 @@ QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapReques
     requestString += '/';
     requestString += sizeToStr(tileSize());
     requestString += '/';
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    requestString += "png8";
+#else
     requestString += "png";
+#endif
 
     if (!m_token.isEmpty()) {
         requestString += "?token=";
@@ -172,14 +176,14 @@ QString QGeoMappingManagerEngineNokia::sizeToStr(const QSize &size)
         return "128";
 }
 
-QString QGeoMappingManagerEngineNokia::mapTypeToStr(QGeoMapWidget::MapType type)
+QString QGeoMappingManagerEngineNokia::mapTypeToStr(QGraphicsGeoMap::MapType type)
 {
-    if (type == QGeoMapWidget::StreetMap)
+    if (type == QGraphicsGeoMap::StreetMap)
         return "normal.day";
-    else if (type == QGeoMapWidget::SatelliteMapDay ||
-             type == QGeoMapWidget::SatelliteMapNight) {
+    else if (type == QGraphicsGeoMap::SatelliteMapDay ||
+             type == QGraphicsGeoMap::SatelliteMapNight) {
         return "satellite.day";
-    } else if (type == QGeoMapWidget::TerrainMap)
+    } else if (type == QGraphicsGeoMap::TerrainMap)
         return "terrain.day";
     else
         return "normal.day";

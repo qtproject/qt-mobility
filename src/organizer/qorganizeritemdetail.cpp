@@ -43,6 +43,7 @@
 #include "qorganizeritemdetail_p.h"
 #include "qorganizeritemmanager.h"
 #include <QDebug>
+#include <QDataStream>
 
 QTM_BEGIN_NAMESPACE
 
@@ -365,6 +366,48 @@ QDebug operator<<(QDebug dbg, const QOrganizerItemDetail& detail)
     }
     dbg.nospace() << ')';
     return dbg.maybeSpace();
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a detail to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QOrganizerItemDetail& detail)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItemDetail
+    return out << formatVersion
+               << detail.definitionName()
+               << static_cast<quint32>(detail.accessConstraints())
+               << detail.variantValues();
+}
+
+/*!
+ * Reads aan organizer item detail from stream \a in into \a detail.
+ */
+QDataStream& operator>>(QDataStream& in, QOrganizerItemDetail& detail)
+{
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QString definitionName;
+        quint32 accessConstraintsInt;
+        QVariantMap values;
+        in >> definitionName >> accessConstraintsInt >> values;
+
+        detail = QOrganizerItemDetail(definitionName);
+        QOrganizerItemDetail::AccessConstraints accessConstraints(accessConstraintsInt);
+        detail.d->m_access = accessConstraints;
+
+        QMapIterator<QString, QVariant> it(values);
+        while (it.hasNext()) {
+            it.next();
+            detail.setValue(it.key(), it.value());
+        }
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
 }
 #endif
 

@@ -40,19 +40,15 @@ NONSHARABLE_CLASS(C12keyKeyMap) : public CPcsKeyMap
 
 	public: // From CPcsKeyMap
 		virtual const QChar ArrayIndexToMappedChar(TInt aArrayIndex) const;
-#if !defined(USE_ORBIT_KEYMAP)
-		virtual const QChar UseHardcodedKeyMap(const QChar input) const;
-#endif
 
 	private: // From CPcsKeyMap
 		virtual TInt ComputeValue(QString aString,
 								  TBool aUpperLimit,
 								  QString& aValue) const;
-#if defined(USE_ORBIT_KEYMAP)
+
 		virtual QList<HbInputLanguage> SelectLanguages();
 
 		virtual void SetHardcodedCharacters();
-#endif
 
 		/**
          * Returns ETrue if characters that are mapped to * and # keys, should

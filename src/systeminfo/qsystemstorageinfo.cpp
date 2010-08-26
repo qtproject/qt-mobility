@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qsystemstorageinfo.h"
-#include "qsysteminfocommon.h"
+#include "qsysteminfocommon_p.h"
 #include <QMetaType>
 
 QTM_BEGIN_NAMESPACE

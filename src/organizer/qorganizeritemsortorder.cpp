@@ -130,6 +130,46 @@ bool QOrganizerItemSortOrder::operator ==(const QOrganizerItemSortOrder& other) 
     return false;
 }
 
+#ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a sortOrder to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QOrganizerItemSortOrder& sortOrder)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItemSortOrder
+    return out << formatVersion
+               << sortOrder.detailDefinitionName()
+               << sortOrder.detailFieldName()
+               << static_cast<quint32>(sortOrder.blankPolicy())
+               << static_cast<quint32>(sortOrder.direction())
+               << static_cast<quint32>(sortOrder.caseSensitivity());
+}
+
+/*!
+ * Reads a sort order from stream \a in into \a sortOrder.
+ */
+QDataStream& operator>>(QDataStream& in, QOrganizerItemSortOrder& sortOrder)
+{
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QString definitionName;
+        QString fieldName;
+        quint32 blankPolicy;
+        quint32 direction;
+        quint32 caseSensitivity;
+        in >> definitionName >> fieldName >> blankPolicy >> direction >> caseSensitivity;
+        sortOrder.setDetailDefinitionName(definitionName, fieldName);
+        sortOrder.setBlankPolicy(static_cast<QOrganizerItemSortOrder::BlankPolicy>(blankPolicy));
+        sortOrder.setDirection(static_cast<Qt::SortOrder>(direction));
+        sortOrder.setCaseSensitivity(static_cast<Qt::CaseSensitivity>(caseSensitivity));
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+#endif
+
 /*!
  * Sets the definition name of the details which will be inspected to perform sorting to \a definitionName,
  * and the name of those details' fields which contains the value which organizer items will be sorted by to \a fieldName

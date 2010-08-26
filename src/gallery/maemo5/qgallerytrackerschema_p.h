@@ -69,14 +69,13 @@ class QGalleryTrackerValueColumn;
 struct QGalleryTrackerResultSetArguments;
 struct QGalleryTrackerTypeResultSetArguments;
 
-class QGalleryTrackerSchema
+class Q_AUTOTEST_EXPORT QGalleryTrackerSchema
 {
 public:
     QGalleryTrackerSchema(const QString &itemType);
     ~QGalleryTrackerSchema();
 
     static QGalleryTrackerSchema fromItemId(const QString &itemId);
-    static QGalleryTrackerSchema fromService(const QString &service);
 
     bool isItemType() const { return m_itemIndex >= 0; }
     bool isAggregateType() const { return m_aggregateIndex >= 0; }
@@ -91,17 +90,17 @@ public:
     QStringList supportedPropertyNames() const;
     QGalleryProperty::Attributes propertyAttributes(const QString &propertyName) const;
 
-    int prepareIdResponse(
+    int prepareItemResponse(
             QGalleryTrackerResultSetArguments *arguments,
             QGalleryDBusInterfaceFactory *dbus,
             const QString &itemId,
             const QStringList &propertyNames) const;
 
-    int prepareFilterResponse(
+    int prepareQueryResponse(
             QGalleryTrackerResultSetArguments *arguments,
             QGalleryDBusInterfaceFactory *dbus,
             QGalleryQueryRequest::Scope scope,
-            const QString &scopeItemId,
+            const QString &rootItem,
             const QGalleryFilter &filter,
             const QStringList &propertyNames,
             const QStringList &sortPropertyNames) const;
