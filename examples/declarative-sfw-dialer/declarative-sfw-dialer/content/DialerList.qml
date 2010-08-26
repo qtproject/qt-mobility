@@ -40,7 +40,7 @@
 
 import Qt 4.7
 // ![4]
-import QtMobility.serviceframework 1.0
+import QtMobility.serviceframework 1.1
 // ![4]
 
 //Layout of the ServiceList control
