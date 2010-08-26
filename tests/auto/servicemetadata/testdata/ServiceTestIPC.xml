@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<SFW version="10.12">
 <service>
     <name>TestIPCService</name>
     <ipcaddress>test_service</ipcaddress>
@@ -21,3 +22,4 @@
         <description>Interface that provides system information support</description> 
     </interface>  
 </service>
+</SFW>

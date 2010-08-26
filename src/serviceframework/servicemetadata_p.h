@@ -128,6 +128,7 @@ public:
         SFW_ERROR_DUPLICATED_CUSTOM_KEY,                    /* The customproperty appears twice*/
         SFW_ERROR_MULTIPLE_SERVICE_TYPES,                   /* Both filepath and ipcaddress found in the XML file */
         SFW_ERROR_INVALID_FILEPATH,                         /* Service path cannot contain IPC prefix */
+        SFW_ERROR_INVALID_XML_VERSION                       /* Error parsing serficefw version node */
     };
 
 public:
@@ -151,6 +152,7 @@ public:
 private:
     QList<QServiceInterfaceDescriptor> latestInterfaces() const;
     QServiceInterfaceDescriptor latestInterfaceVersion(const QString &interfaceName);
+    bool processVersionElement(QXmlStreamReader &aXMLReader);
     bool processServiceElement(QXmlStreamReader &aXMLReader);
     bool processInterfaceElement(QXmlStreamReader &aXMLReader);
     void clearMetadata();
@@ -163,6 +165,7 @@ private:
 
     QIODevice *xmlDevice;
     bool ownsXmlDevice;
+    QString xmlVersion;
     QString serviceName;
     QString serviceLocation;
     QString serviceDescription;

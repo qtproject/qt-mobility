@@ -48,6 +48,8 @@
 //General
 #define NAME_TAG  "name"
 #define DESCRIPTION_TAG "description"
+#define SERVICEFW_TAG "SFW"
+#define XML_MAX "1.1"
 
 //Service related
 #define SERVICE_TAG "service" 
@@ -228,13 +230,21 @@ bool ServiceMetaData::extractMetadata()
         // Read XML doc 
         while (!xmlReader.atEnd() && !parseError) {
             xmlReader.readNext();
+            //Found <SFW> xml versioning tag introduced in 1.1
+            //If this tag is not found the XML parser version will be 1.0
+            if (xmlReader.isStartElement() && xmlReader.name() == SERVICEFW_TAG) {
+                if (!processVersionElement(xmlReader)) {
+                    parseError = true;
+                }
+            }
             //Found a <service> node, read service related metadata
-            if (xmlReader.isStartElement() && xmlReader.name() == SERVICE_TAG) {
+            else if (xmlReader.isStartElement() && xmlReader.name() == SERVICE_TAG) {
                 if (!processServiceElement(xmlReader)) {
                     parseError = true;
                 }
             }
-            else if (xmlReader.isStartElement() && xmlReader.name() != SERVICE_TAG) {
+            else if (xmlReader.isStartElement() && xmlReader.name() != SERVICE_TAG
+                                                && xmlReader.name() != SERVICEFW_TAG) {
                 latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE;
                 parseError = true;
             }
@@ -246,6 +256,7 @@ bool ServiceMetaData::extractMetadata()
         if (ownsXmlDevice)
             xmlDevice->close();
     }
+    
     if (parseError) {
         clearMetadata();
         //provide better error reports
@@ -301,6 +312,9 @@ bool ServiceMetaData::extractMetadata()
             case SFW_ERROR_INVALID_FILEPATH:                         /* Service path cannot contain IPC prefix */
                 qDebug() << "Invalid service location, avoid private prefixes";
                 break;
+            case SFW_ERROR_INVALID_XML_VERSION:                      /* Error parsing servicefw version node */
+                qDebug() << "Invalid or missing version attribute in <SFW> tag";
+                break;
         }
     }
     return !parseError;
@@ -315,6 +329,64 @@ int ServiceMetaData::getLatestError() const
     return latestError;
 }
  
+/*
+    Parses the service framework xml version tag and continues to parse the service
+*/
+bool ServiceMetaData::processVersionElement(QXmlStreamReader &aXMLReader)
+{
+    Q_ASSERT(aXMLReader.isStartElement() && aXMLReader.name() == SERVICEFW_TAG);
+    bool parseError = false;
+    
+    if (aXMLReader.attributes().hasAttribute("version")) {
+        xmlVersion = aXMLReader.attributes().value("version").toString();
+        bool success = checkVersion(xmlVersion);
+
+        if (xmlVersion.isEmpty() || !success) {
+            latestError = ServiceMetaData::SFW_ERROR_INVALID_XML_VERSION;
+            parseError = true;
+        } else {
+            int majorVer = -1;
+            int minorVer = -1;
+            transformVersion(xmlVersion, &majorVer, &minorVer);
+
+            int majorMax = -1;
+            int minorMax = -1;
+            transformVersion(XML_MAX, &majorMax, &minorMax);
+
+            if (majorVer > majorMax 
+                    || (majorVer == majorMax && minorVer > minorMax))
+                xmlVersion = XML_MAX;
+        }
+    } else {
+        latestError = ServiceMetaData::SFW_ERROR_INVALID_XML_VERSION;
+        parseError = true;
+    }
+
+    while(!parseError && !aXMLReader.atEnd()) {
+        aXMLReader.readNext();
+        //Found a <service> node, read service related metadata
+        if (aXMLReader.isStartElement() && aXMLReader.name() == SERVICE_TAG) {
+            if (!processServiceElement(aXMLReader)) {
+                parseError = true;
+            }
+        } 
+        else if (aXMLReader.isEndElement() && aXMLReader.name() == SERVICEFW_TAG) {
+            //Found </SFW>, leave the loop
+            break;
+        } 
+        else if (aXMLReader.isStartElement() && aXMLReader.name() != SERVICE_TAG) {
+            latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE;
+            parseError = true;
+        }
+        else if (aXMLReader.tokenType() == QXmlStreamReader::Invalid) {
+            latestError = ServiceMetaData::SFW_ERROR_INVALID_XML_FILE;
+            parseError = true;
+        }
+    }
+
+    return !parseError;
+}
+
 /*
     Parses and extracts the service metadata from the current xml <service> node \n
  */
@@ -615,6 +687,7 @@ void ServiceMetaData::transformVersion(const QString &version, int *major, int *
  */
 void ServiceMetaData::clearMetadata()
 {
+    xmlVersion = "1.0";
     serviceName.clear();
     serviceLocation.clear();
     serviceDescription.clear();
