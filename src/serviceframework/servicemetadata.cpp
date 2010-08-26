@@ -704,6 +704,11 @@ void ServiceMetaData::transformVersion(const QString &version, int *major, int *
     }
 }
 
+QString ServiceMetaData::serviceXmlVersion()
+{
+    return xmlVersion;
+}
+
  /*
  *  Clears the service metadata
  *

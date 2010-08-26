@@ -149,6 +149,8 @@ public:
 
     int getLatestError() const;
 
+    QString serviceXmlVersion();
+
     ServiceMetaDataResults parseResults() const;
 
 private:
