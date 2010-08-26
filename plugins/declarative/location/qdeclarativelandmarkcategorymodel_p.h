@@ -48,11 +48,11 @@ public:
     bool autoUpdate() const;
 
 signals:
-    void errorChanged(QString error);
-    void autoUpdateChanged(bool autoUpdate);
-    void limitChanged(int limit);
-    void offsetChanged(int offset);
-    void countChanged(int count);
+    void errorChanged();
+    void autoUpdateChanged();
+    void limitChanged();
+    void offsetChanged();
+    void countChanged();
 
 private slots:
     void update();

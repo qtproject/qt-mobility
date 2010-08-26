@@ -47,7 +47,9 @@
 #include <QtDeclarative/qdeclarativeengine.h>
 #include <QtDeclarative/qdeclarativecomponent.h>
 #include <qlandmarkmanager.h>
+#include <qlandmarksortorder.h>
 #include "qdeclarativepositionsource_p.h"
+#include "qdeclarativelandmarkmodel_p.h"
 #include <QString>
 
 // Eventually these will make it into qtestcase.h
@@ -104,6 +106,9 @@
 
 QTM_USE_NAMESPACE
 
+Q_DECLARE_METATYPE(QDeclarativeLandmarkModel::SortOrder)
+Q_DECLARE_METATYPE(QDeclarativeLandmarkModel::SortKey)
+
 class tst_QDeclarativeLandmark : public QObject
 {
     Q_OBJECT
@@ -121,8 +126,10 @@ private slots:
     void construction();
     void construction_data();
     void defaultProperties();
+    void basicSignals();
     void basicLandmarkFetch();
     void basicLandmarkFetch_data();
+    void update();
 
 private:
     QObject* createComponent(const QString& componentString);
@@ -138,7 +145,12 @@ private:
 
 tst_QDeclarativeLandmark::tst_QDeclarativeLandmark() : m_manager(0) {}
 tst_QDeclarativeLandmark::~tst_QDeclarativeLandmark() {}
-void tst_QDeclarativeLandmark::initTestCase() {}
+void tst_QDeclarativeLandmark::initTestCase()
+{
+    qRegisterMetaType<QDeclarativeLandmarkModel::SortOrder>("QDeclarativeLandmarkModel::SortOrder");
+    qRegisterMetaType<QDeclarativeLandmarkModel::SortKey>("QDeclarativeLandmarkModel::SortKey");
+}
+
 void tst_QDeclarativeLandmark::cleanupTestCase()
 {
     if (m_manager != 0) {
@@ -223,7 +235,7 @@ void tst_QDeclarativeLandmark::construction_data()
     // LandmarkModel
     QTest::newRow("LandmarkModel: No properties") <<  "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {}" << true;
     QTest::newRow("LandmarkModel: Only id property") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId}" << true;
-    QTest::newRow("LandmarkModel: Valuetype properties") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; autoUpdate:true; limit: 5; offset: 2}" << true;
+    QTest::newRow("LandmarkModel: Valuetype properties") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; autoUpdate:true; limit: 5; offset: 2; sortBy: LandmarkModel.NameSort; sortOrder: LandmarkModel.DescendingOrder}" << true;
     QTest::newRow("LandmarkModel: With filter") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; autoUpdate:true; limit: 5; offset: 2; filter: LandmarkFilter{id: filter} }" << true;
     // Landmark
     QTest::newRow("Landmark: No properties") << "QDeclarativeLandmark" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Landmark {}" << true;
@@ -299,6 +311,165 @@ void tst_QDeclarativeLandmark::defaultProperties()
     delete source_obj;
 }
 
+/*
+    Tests the basic signals of properties
+*/
+void tst_QDeclarativeLandmark::basicSignals()
+{
+    // LandmarkModel
+    QObject* source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {}");
+    QSignalSpy limitChangedSpy(source_obj, SIGNAL(limitChanged()));
+    QSignalSpy offsetChangedSpy(source_obj, SIGNAL(offsetChanged()));
+    QSignalSpy sortByChangedSpy(source_obj, SIGNAL(sortByChanged()));
+    QSignalSpy sortOrderChangedSpy(source_obj, SIGNAL(sortOrderChanged()));
+    QSignalSpy autoUpdateChangedSpy(source_obj, SIGNAL(autoUpdateChanged()));
+
+    source_obj->setProperty("limit", 2);
+    QTRY_VERIFY(!limitChangedSpy.isEmpty());
+    limitChangedSpy.clear();
+    source_obj->setProperty("limit", 2);
+    QTest::qWait(10); // wait that signals propagate
+    QTRY_VERIFY(limitChangedSpy.isEmpty());
+
+    source_obj->setProperty("offset", 2);
+    QTRY_VERIFY(!offsetChangedSpy.isEmpty());
+    offsetChangedSpy.clear();
+    source_obj->setProperty("offset", 2);
+    QTest::qWait(10);
+    QTRY_VERIFY(offsetChangedSpy.isEmpty());
+
+    source_obj->setProperty("sortOrder", QDeclarativeLandmarkModel::DescendingOrder);
+    QTRY_VERIFY(!sortOrderChangedSpy.isEmpty());
+    sortOrderChangedSpy.clear();
+    source_obj->setProperty("sortOrder", QDeclarativeLandmarkModel::DescendingOrder);
+    QTest::qWait(10);
+    QTRY_VERIFY(sortOrderChangedSpy.isEmpty());
+
+    source_obj->setProperty("sortBy", QLandmarkSortOrder::NameSort);
+    QTRY_VERIFY(!sortByChangedSpy.isEmpty());
+    sortByChangedSpy.clear();
+    source_obj->setProperty("sortBy",  QLandmarkSortOrder::NameSort);
+    QTest::qWait(10);
+    QTRY_VERIFY(sortByChangedSpy.isEmpty());
+
+    source_obj->setProperty("autoUpdate", true);
+    QTRY_VERIFY(!autoUpdateChangedSpy.isEmpty());
+    autoUpdateChangedSpy.clear();
+    source_obj->setProperty("autoUpdate", true);
+    QTest::qWait(10);
+    QTRY_VERIFY(autoUpdateChangedSpy.isEmpty());
+
+    delete source_obj;
+
+    // Landmark
+    source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n Landmark {id: landmark }");
+    QSignalSpy nameChangedSpy(source_obj, SIGNAL(nameChanged()));
+    QSignalSpy phoneNumberChangedSpy(source_obj, SIGNAL(phoneNumberChanged()));
+    QSignalSpy descriptionChangedSpy(source_obj, SIGNAL(descriptionChanged()));
+    QSignalSpy radiusChangedSpy(source_obj, SIGNAL(radiusChanged()));
+    QSignalSpy iconSourceChangedSpy(source_obj, SIGNAL(iconSourceChanged()));
+    QSignalSpy urlChangedSpy(source_obj, SIGNAL(urlChanged()));
+
+    source_obj->setProperty("name", "new value");
+    QTRY_VERIFY(!nameChangedSpy.isEmpty());
+    nameChangedSpy.clear();
+    source_obj->setProperty("name", "new value");
+    QTest::qWait(10); // wait that signals propagate (who should not come)
+    QTRY_VERIFY(nameChangedSpy.isEmpty());
+
+    source_obj->setProperty("phoneNumber", "new value");
+    QTRY_VERIFY(!phoneNumberChangedSpy.isEmpty());
+    phoneNumberChangedSpy.clear();
+    source_obj->setProperty("phoneNumber", "new value");
+    QTest::qWait(10); // wait that signals propagate (who should not come)
+    QTRY_VERIFY(phoneNumberChangedSpy.isEmpty());
+
+    source_obj->setProperty("description", "new value");
+    QTRY_VERIFY(!descriptionChangedSpy.isEmpty());
+    descriptionChangedSpy.clear();
+    source_obj->setProperty("description", "new value");
+    QTest::qWait(10); // wait that signals propagate (who should not come)
+    QTRY_VERIFY(descriptionChangedSpy.isEmpty());
+
+    source_obj->setProperty("radius", 2);
+    QTRY_VERIFY(!radiusChangedSpy.isEmpty());
+    radiusChangedSpy.clear();
+    source_obj->setProperty("radius", 2);
+    QTest::qWait(10); // wait that signals propagate (who should not come)
+    QTRY_VERIFY(radiusChangedSpy.isEmpty());
+
+    source_obj->setProperty("iconSource", "www.yle.fi");
+    QTRY_VERIFY(!iconSourceChangedSpy.isEmpty());
+    iconSourceChangedSpy.clear();
+    source_obj->setProperty("iconSource", "www.yle.fi");
+    QTest::qWait(10); // wait that signals propagate (who should not come)
+    QTRY_VERIFY(iconSourceChangedSpy.isEmpty());
+
+    source_obj->setProperty("url", "www.yle.fi");
+    QTRY_VERIFY(!urlChangedSpy.isEmpty());
+    urlChangedSpy.clear();
+    source_obj->setProperty("url", "www.yle.fi");
+    QTest::qWait(10); // wait that signals propagate (who should not come)
+    QTRY_VERIFY(urlChangedSpy.isEmpty());
+    delete source_obj;
+
+
+    // LandmarkCategory
+
+    source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategory {}");
+    QSignalSpy nameChangedSpy2(source_obj, SIGNAL(nameChanged()));
+    QSignalSpy iconSourceChangedSpy2(source_obj, SIGNAL(iconSourceChanged()));
+
+    source_obj->setProperty("iconSource", "www.yle.fi");
+    QTRY_VERIFY(!iconSourceChangedSpy2.isEmpty());
+    iconSourceChangedSpy2.clear();
+    source_obj->setProperty("iconSource", "www.yle.fi");
+    QTest::qWait(10); // wait that signals propagate (who should not come)
+    QTRY_VERIFY(iconSourceChangedSpy2.isEmpty());
+
+    source_obj->setProperty("name", "new value");
+    QTRY_VERIFY(!nameChangedSpy2.isEmpty());
+    nameChangedSpy2.clear();
+    source_obj->setProperty("name", "new value");
+    QTest::qWait(10); // wait that signals propagate (who should not come)
+    QTRY_VERIFY(nameChangedSpy2.isEmpty());
+    delete source_obj;
+
+    // LandmarkCategoryModel
+    source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {}");
+    QSignalSpy limitChangedSpy3(source_obj, SIGNAL(limitChanged()));
+    QSignalSpy offsetChangedSpy3(source_obj, SIGNAL(offsetChanged()));
+    QSignalSpy autoUpdateChangedSpy3(source_obj, SIGNAL(autoUpdateChanged()));
+
+    source_obj->setProperty("limit", 2);
+    QTRY_VERIFY(!limitChangedSpy3.isEmpty());
+    limitChangedSpy3.clear();
+    source_obj->setProperty("limit", 2);
+    QTest::qWait(10); // wait that signals propagate
+    QTRY_VERIFY(limitChangedSpy3.isEmpty());
+
+    source_obj->setProperty("offset", 2);
+    QTRY_VERIFY(!offsetChangedSpy3.isEmpty());
+    offsetChangedSpy3.clear();
+    source_obj->setProperty("offset", 2);
+    QTest::qWait(10);
+    QTRY_VERIFY(offsetChangedSpy3.isEmpty());
+    delete source_obj;
+
+    // LandmarkFilter
+    source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkFilter {}");
+    QSignalSpy typeChangedSpy(source_obj, SIGNAL(typeChanged()));
+    QSignalSpy valueChangedSpy(source_obj, SIGNAL(valueChanged()));
+
+    source_obj->setProperty("type", QDeclarativeLandmarkFilter::Proximity);
+    QTRY_VERIFY(!typeChangedSpy.isEmpty());
+    typeChangedSpy.clear();
+    source_obj->setProperty("type", QDeclarativeLandmarkFilter::Proximity);
+    QTest::qWait(10); // wait that signals propagate
+    QTRY_VERIFY(typeChangedSpy.isEmpty());
+    delete source_obj;
+}
+
 void tst_QDeclarativeLandmark::basicLandmarkFetch()
 {
     QFETCH(QString, componentString);
@@ -338,6 +509,20 @@ void tst_QDeclarativeLandmark::basicLandmarkFetch_data()
     QTest::newRow("Two matches (union of two names)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; dbFileName: \"test.db\"; autoUpdate:true; filter: LandmarkUnionFilter{ LandmarkFilter{type: LandmarkFilter.Name; value: \"Uniquely named powerhouse\"} LandmarkFilter{type: LandmarkFilter.Name; value: \"Uniquely named southbank\"} } }"  << 2;
     QTest::newRow("Two matches (union of name and prox)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; dbFileName: \"test.db\"; autoUpdate:true; filter: LandmarkUnionFilter{ LandmarkFilter{type: LandmarkFilter.Name; value: \"Uniquely named powerhouse\"} LandmarkFilter{type: LandmarkFilter.Proximity; value: Position {longitude:70; latitude:70} } } }"  << 2;
     QTest::newRow("One match (intersect of name and prox)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; dbFileName: \"test.db\"; autoUpdate:true; filter: LandmarkIntersectionFilter{ LandmarkFilter{type: LandmarkFilter.Name; value: \"Duplicate named bridge\"} LandmarkFilter{type: LandmarkFilter.Proximity; value: Position {longitude:51; latitude:51} } } }"  << 1;
+}
+
+// Update database without autoUpdate with update() and verify signals are received an count updates
+void tst_QDeclarativeLandmark::update()
+{
+    QObject* source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; dbFileName: \"test.db\"; autoUpdate:false;}");
+    QTest::qWait(100);
+    QVERIFY(source_obj->property("count").toInt() == 0);
+    QSignalSpy countChangedSpy(source_obj, SIGNAL(countChanged()));
+    populateTypicalDb();
+    source_obj->metaObject()->invokeMethod(source_obj, "update");
+    QTRY_VERIFY(!countChangedSpy.isEmpty());
+    QTRY_VERIFY(source_obj->property("count").toInt() == m_manager->landmarks().count());
+    delete source_obj;
 }
 
 /*

@@ -64,7 +64,7 @@ void QDeclarativeLandmarkCategoryModel::setLimit(int limit)
     if (limit == m_limit)
         return;
     m_limit = limit;
-    emit limitChanged(limit);
+    emit limitChanged();
 }
 
 int QDeclarativeLandmarkCategoryModel::offset()
@@ -77,7 +77,7 @@ void QDeclarativeLandmarkCategoryModel::setOffset(int offset)
     if (offset == m_offset)
         return;
     m_offset = offset;
-    emit offsetChanged(offset);
+    emit offsetChanged();
 }
 
 QString QDeclarativeLandmarkCategoryModel::error()
@@ -163,10 +163,10 @@ void QDeclarativeLandmarkCategoryModel::fetchRequestStateChanged(QLandmarkAbstra
         m_categories = m_fetchRequest->categories();
         endInsertRows();
         if (oldCount != m_categories.count())
-            emit countChanged(m_categories.count());
+            emit countChanged();
     } else if (m_error != m_fetchRequest->errorString()) {
         m_error = m_fetchRequest->errorString();
-        emit errorChanged(m_error);
+        emit errorChanged();
     }
     // Convert into declarative classes --> possible to return categories in a list in QML
     convertCategoriesToDeclarative();
