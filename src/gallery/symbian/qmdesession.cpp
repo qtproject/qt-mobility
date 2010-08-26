@@ -120,7 +120,7 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *aResponse, QGal
         query = m_cmdeSession->NewObjectQueryL( defaultNamespace, objdef, aResponse );
     }
 
-    QDocumentGalleryMDSUtility::SetupQueryConditions(query, request);
+    QDocumentGalleryMDSUtility::SetupQueryConditions(query, request, defaultNamespace);
 
     return query;
 }
