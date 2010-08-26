@@ -46,6 +46,13 @@
 #include "qcontactchangeset.h"
 #include "qcontactmanagerdataholder.h"
 
+#if defined(USE_VERSIT_PLZ)
+// This makes it easier to create specific QContacts
+#include "qversitcontactimporter.h"
+#include "qversitdocument.h"
+#include "qversitreader.h"
+#endif
+
 QTM_USE_NAMESPACE
 // Eventually these will make it into qtestcase.h
 // but we might need to tweak the timeout values here.
@@ -165,6 +172,11 @@ private slots:
     void detailOrders();
     void relationships();
     void contactType();
+
+#if defined(USE_VERSIT_PLZ)
+    void partialSave();
+    void partialSave_data() {addManagers();}
+#endif
 
     /* Tests that take no data */
     void contactValidation();
@@ -3388,6 +3400,78 @@ void tst_QContactManager::contactType()
     cm->removeContact(g2.localId());
     cm->removeContact(c.localId());
 }
+
+#if defined(USE_VERSIT_PLZ)
+void tst_QContactManager::partialSave()
+{
+    QFETCH(QString, uri);
+    QContactManager* cm = QContactManager::fromUri(uri);
+
+    QVersitContactImporter imp;
+    QVersitReader reader(QByteArray(
+            "BEGIN:VCARD\r\nFN:Alice\r\nN:Alice\r\nTEL:12345\r\nEND:VCARD\r\n"
+            "BEGIN:VCARD\r\nFN:Bob\r\nN:Bob\r\nTEL:5678\r\nEND:VCARD\r\n"
+            "BEGIN:VCARD\r\nFN:Carol\r\nN:Carol\r\nEMAIL:carol@example.com\r\nEND:VCARD\r\n"
+            "BEGIN:VCARD\r\nFN:David\r\nN:David\r\nORG:DavidCorp\r\nEND:VCARD\r\n"));
+    reader.startReading();
+    reader.waitForFinished();
+    qDebug() << reader.error();
+    QCOMPARE(reader.error(), QVersitReader::NoError);
+
+    QCOMPARE(reader.results().count(), 4);
+    QVERIFY(imp.importDocuments(reader.results()));
+    QCOMPARE(imp.contacts().count(), 4);
+    QVERIFY(imp.contacts()[0].displayLabel() == QLatin1String("Alice"));
+    QVERIFY(imp.contacts()[1].displayLabel() == QLatin1String("Bob"));
+    QVERIFY(imp.contacts()[2].displayLabel() == QLatin1String("Carol"));
+    QVERIFY(imp.contacts()[3].displayLabel() == QLatin1String("David"));
+
+    QList<QContact> contacts = imp.contacts();
+
+    // First save these contacts
+    QVERIFY(cm->saveContacts(&contacts, 0));
+    QList<QContact> originalContacts = contacts;
+
+    // Now try some partial save operations
+    // 0) empty mask == full save
+    // 1) Ignore an added phonenumber
+    // 2) Only save a modified phonenumber, not a modified email
+    // 3) Remove an email address
+    // 4) Have a bad manager uri in the middle
+    // 5) Have a non existing contact in the middle
+
+    QContactPhoneNumber pn;
+    pn.setNumber("111111");
+    contacts[0].saveDetail(&pn);
+
+    // 0) empty mask
+    QVERIFY(cm->saveContacts(&contacts, QStringList(), 0));
+
+    // That should have updated everything
+    QContact a = cm->contact(originalContacts[0].localId());
+    QVERIFY(a.details<QContactPhoneNumber>().count() == 2);
+
+    // 1) Add a phone number to b, mask it out
+    contacts[1].saveDetail(&pn);
+    QVERIFY(cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName), 0));
+    //
+
+    QContact b = cm->contact(originalContacts[1].localId());
+    QVERIFY(b.details<QContactPhoneNumber>().count() == 1);
+
+    // 2) save a modified detail in the mask
+    QContactEmailAddress e;
+    e.setEmailAddress("example@example.com");
+    contacts[1].saveDetail(&e);
+
+    QVERIFY(cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName), 0));
+    b = cm->contact(originalContacts[1].localId());
+    QVERIFY(b.details<QContactPhoneNumber>().count() == 1);
+    QVERIFY(b.details<QContactEmailAddress>().count() == 1);
+
+
+}
+#endif
 
 QString tst_QContactManager::generateRandomString(int strlen, bool numeric) const
 {

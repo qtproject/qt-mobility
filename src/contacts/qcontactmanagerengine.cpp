@@ -63,6 +63,8 @@
 #include <QMutexLocker>
 #include <QWeakPointer>
 
+#include <QDebug>
+
 QTM_BEGIN_NAMESPACE
 
 static bool validateActionFilter(const QContactFilter& filter);
@@ -2577,6 +2579,7 @@ QContactManagerEngineV2::~QContactManagerEngineV2()
 bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStringList &definitionMask, QMap<int, QContactManager::Error> *errorMap, QContactManager::Error *error)
 {
     if (definitionMask.isEmpty()) {
+        qDebug() << "Empty list";
         // Non partial, just pass it on
         return saveContacts(contacts, errorMap, error);
     } else {
@@ -2594,9 +2597,6 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
         QList<QContactLocalId> existingContactIds;
         QSet<QString> mask = definitionMask.toSet();
 
-        if (errorMap)
-            errorMap->clear();
-
         // Error conditions:
         // 1) bad id passed in (can't save that at all)
         // 2) bad fetch (can't save partial update at all)
@@ -2605,6 +2605,8 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
 
         QHash<int, int> existingIdMap; // contacts index to existingContacts index
         QSet<int> badArgumentSet; // contacts indices that are bad
+
+        qDebug() << "partial save, list is:" << (contacts ? contacts->count() : 0) << definitionMask << errorMap;
 
         // Try to figure out which of our arguments are new contacts
         for(int i = 0; i < contacts->count(); i++) {
@@ -2680,7 +2682,7 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
 
 
 
-        return false;
+        return true;
     }
 }
 
