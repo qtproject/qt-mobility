@@ -1155,7 +1155,11 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
     QListIterator<QNetworkInterface> i(interfaceList);
     while(i.hasNext()) {
        QNetworkInterface netInterface = i.next();
-        if (!netInterface.isValid() || (netInterface.flags() & QNetworkInterface::IsLoopBack)) {
+        if (!netInterface.isValid()
+            || (netInterface.flags() & QNetworkInterface::IsLoopBack)
+            || !(netInterface.flags() & QNetworkInterface::IsUp)
+            || !(netInterface.flags() & QNetworkInterface::IsRunning)
+            || netInterface.addressEntries().isEmpty()) {
             continue;
         }
 
@@ -1190,7 +1194,6 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
             bytesWritten = 0;
             result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
                                      &physicalMedium, sizeof(physicalMedium), &bytesWritten, 0);
-
 
             if (!result) {
                 CloseHandle(handle);
