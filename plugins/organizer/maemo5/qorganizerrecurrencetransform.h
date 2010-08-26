@@ -131,7 +131,7 @@ private:
     // CRecurrence -> QRecurrence
     QList<QOrganizerItemRecurrenceRule> m_lRecurrenceRules;
     QList<QOrganizerItemRecurrenceRule> m_lExceptionRules;
-    QList<QDate> m_lRecurrenceDates;
+    mutable QList<QDate> m_lRecurrenceDates;
     QList<QDate> m_lExceptionDates;
 };
 
