@@ -46,6 +46,9 @@
 
 QT_BEGIN_NAMESPACE
 
+QTM_USE_NAMESPACE
+
+
 /*!
     \class QTelephonyDeclarativeModule
     \ingroup telephonyapi
@@ -62,8 +65,9 @@ public:
     */
     virtual void registerTypes(const char *uri)
     {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.telephony"));
+        qDebug() << "QTelephonyDeclarativeModule::registerTypes(const char *uri)";
 
+        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.telephony"));
         qmlRegisterType<QTelephonyCallInfoWrapper>(uri, 1, 1, "TelephonyCallInfo");
         qmlRegisterType<QTelephonyCallListWrapper>(uri, 1, 1, "TelephonyCallList");
     }
