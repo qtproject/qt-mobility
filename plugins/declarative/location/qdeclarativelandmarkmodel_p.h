@@ -29,6 +29,8 @@ class QDeclarativeLandmarkModel: public QAbstractListModel, public QDeclarativeP
     Q_PROPERTY(SortOrder sortOrder READ sortOrder WRITE setSortOrder NOTIFY sortOrderChanged)
     // dbFileName is _not_ official public property, but used in testing
     Q_PROPERTY(QString dbFileName READ dbFileName WRITE setDbFileName NOTIFY dbFileNameChanged)
+    Q_ENUMS(SortOrder)
+    Q_ENUMS(SortKey)
     Q_INTERFACES(QDeclarativeParserStatus)
 
 public:
@@ -83,9 +85,9 @@ public:
 signals:
     void errorChanged(QString error);
     void autoUpdateChanged();
-    void limitChanged(int limit);
-    void offsetChanged(int offset);
-    void countChanged(int count);
+    void limitChanged();
+    void offsetChanged();
+    void countChanged();
     void filterChanged();
     void sortByChanged();
     void sortOrderChanged();
@@ -98,6 +100,7 @@ private slots:
     void fetchRequestStateChanged(QLandmarkAbstractRequest::State);
 
 private:
+    Q_INVOKABLE void startUpdate();
     void convertLandmarksToDeclarative();
     void setFetchRange();
     void setFetchOrder();

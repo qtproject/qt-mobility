@@ -26,9 +26,8 @@ public:
     void setIconSource(const QUrl& iconSource);
 
 signals:
-
-    void nameChanged(QString name);
-    void iconSourceChanged(QUrl iconSource);
+    void nameChanged();
+    void iconSourceChanged();
 
 public slots:
 
