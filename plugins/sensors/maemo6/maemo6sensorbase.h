@@ -45,7 +45,6 @@
 #include <qsensorbackend.h>
 #include <sensormanagerinterface.h>
 #include <abstractsensor_i.h>
-#include <iostream>
 
 QTM_USE_NAMESPACE
 
@@ -97,20 +96,14 @@ protected:
                 continue;
             }
 
-            std::cout<<"intervalMax "<<i<<"  "<<intervalMax;
 
 
             qreal rateMin = intervalMax<1 ? 1 : 1/intervalMax * 1000;
             rateMin = rateMin<1 ? 1 : rateMin;
-            std::cout<<"rateMin "<<i<<"  "<<rateMin;
-
-
-            std::cout<<"intervalMin "<<i<<"  "<<intervalMin;
 
             intervalMin = intervalMin<1 ? 10: intervalMin;     // do not divide with 0
             qreal rateMax = 1/intervalMin * 1000;
 
-            std::cout<<"rateMax "<<i<<"  "<<rateMax;
 
 
             //            qreal rateMax = (intervalMin<1) ? rateMin : 1/intervalMin * 1000; // TODO: replace the two lines above with this one once sensord does provide interval>0
