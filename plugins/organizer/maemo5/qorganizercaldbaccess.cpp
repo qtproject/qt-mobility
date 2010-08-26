@@ -150,7 +150,9 @@ std::vector<CEvent *> OrganizerCalendarDatabaseAccess::getEvents(int calId, std:
     QSqlQuery pQuery(queryString);
     bool ok = pQuery.exec();
 
-    // TODO: Map query execution errors to calendar errors
+    sqliteErrorMapper(pQuery.lastError(), pErrorCode);
+    if (!ok)
+        return listEvent;
 
     while (pQuery.next()) {
         event = new CEvent();
@@ -456,7 +458,9 @@ std::vector<CTodo *> OrganizerCalendarDatabaseAccess::getTodos(int calId, std::s
     QSqlQuery pQuery(queryString);
     bool ok = pQuery.exec();
 
-    // TODO: Map query execution errors to calendar errors
+    sqliteErrorMapper(pQuery.lastError(), pErrorCode);
+    if (!ok)
+        return listTodo;
 
     while (pQuery.next()) {
         todo = new CTodo();
@@ -692,7 +696,9 @@ std::vector<CJournal *> OrganizerCalendarDatabaseAccess::getJournals(int calId, 
     QSqlQuery pQuery(queryString);
     bool ok = pQuery.exec();
 
-    // TODO: Map query execution errors to calendar errors
+    sqliteErrorMapper(pQuery.lastError(), pErrorCode);
+    if (!ok)
+        return listJournal;
 
     while (pQuery.next()) {
         journal = new CJournal();
