@@ -76,6 +76,8 @@ public:
     std::vector<CTodo *> getTodos(int calId, std::string guid, int &pErrorCode);
     std::vector<CJournal *> getJournals(int calId, std::string guid, int &pErrorCode);
 
+    static void sqliteErrorMapper(int sqliteError, int& errorCode);
+
 private:
     QSqlDatabase m_db;
 };
