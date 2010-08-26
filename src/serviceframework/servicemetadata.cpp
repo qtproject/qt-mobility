@@ -260,7 +260,6 @@ bool ServiceMetaData::extractMetadata()
     }
     
     if (parseError) {
-        clearMetadata();
         //provide better error reports
         switch (latestError) {
             case SFW_ERROR_NO_SERVICE:                              /* Can not find service root node in XML file*/
@@ -270,7 +269,10 @@ bool ServiceMetaData::extractMetadata()
                 qDebug() << "Missing or empty <name> tag within <service>";
                 break;
             case SFW_ERROR_NO_SERVICE_PATH:                          /* Can not find service filepath or ipcaddress in XML file */
-                qDebug() << "Missing or empty <filepath> or <ipcaddress> tag within <service>";
+                if (greaterThan(xmlVersion, "1.0"))
+                    qDebug() << "Missing or empty <filepath> or <ipcaddress> tag within <service>";
+                else
+                    qDebug() << "Missing or empty <filepath> tag within <service>";
                 break;
             case SFW_ERROR_NO_SERVICE_INTERFACE:                     /* No interface for the service in XML file*/
                 qDebug() << "Missing <interface> tag";
@@ -288,7 +290,8 @@ bool ServiceMetaData::extractMetadata()
                 qDebug() << "Not a valid service xml";
                 break;
             case SFW_ERROR_PARSE_SERVICE:                            /* Error parsing service node */
-                qDebug() << "Invalid tag within <service> tags";
+                qDebug().nospace() << "Invalid tag within <service> with the supplied version(" 
+                                   << xmlVersion << ")";
                 break;
             case SFW_ERROR_PARSE_INTERFACE:                          /* Error parsing interface node */
                 qDebug() << "Invalid tag within <interface> tags";
@@ -318,12 +321,15 @@ bool ServiceMetaData::extractMetadata()
                 qDebug() << "Invalid or missing version attribute in <SFW> tag";
                 break;
             case SFW_ERROR_UNSUPPORTED_IPC:                          /* Servicefw version doesn't support IPC */
-                qDebug() << "Supplied service framework version doesn't support the <ipcaddress> tag";
+                qDebug().nospace() << "Supplied service framework version(" << xmlVersion 
+                                   << ") doesn't support the <ipcaddress> tag";
                 break;
             case SFW_ERROR_UNSUPPORTED_XML_VERSION:                  /* Unsupported servicefw version supplied */
-                qDebug() << "Service framework version is higher than available support";
+                qDebug().nospace() << "Service framework version(" << xmlVersion 
+                                   << ") is higher than available support(" << QString(XML_MAX) << ")";
                 break;
         }
+        clearMetadata();
     }
     return !parseError;
 }
@@ -491,10 +497,6 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
         serviceInterfaces.at(i).d->attributes[QServiceInterfaceDescriptor::Location] = serviceLocation;
         serviceInterfaces.at(i).d->attributes[QServiceInterfaceDescriptor::ServiceDescription] = serviceDescription;
         serviceInterfaces.at(i).d->attributes[QServiceInterfaceDescriptor::ServiceType] = serviceType;
-    }
-
-    if (parseError) {
-        clearMetadata();
     }
 
     return !parseError;
