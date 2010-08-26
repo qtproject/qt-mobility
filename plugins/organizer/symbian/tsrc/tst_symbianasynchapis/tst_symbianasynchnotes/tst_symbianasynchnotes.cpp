@@ -50,7 +50,7 @@ QTM_USE_NAMESPACE
 // Constants
 const QString managerNameSymbian("symbian");
 const int KNumberOfItems = 2;
-const int KTimeToWait = KTimeToWait;
+const int KTimeToWait = 1000;
 
 // We need to be able to pass QOrganizerItem as parameter from
 // test data functions
