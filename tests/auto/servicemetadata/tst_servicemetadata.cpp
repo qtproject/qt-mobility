@@ -264,7 +264,11 @@ void ServiceMetadataTest::parseInvalidServiceXML_data()
     //invalid version in service version tag
     QTest::newRow("Test35.xml") << "Test35.xml" << (int)ServiceMetaData::SFW_ERROR_INVALID_XML_VERSION;
     //invalid missing version attribute in service version tag
-    QTest::newRow("Test35.xml") << "Test35.xml" << (int)ServiceMetaData::SFW_ERROR_INVALID_XML_VERSION;
+    QTest::newRow("Test36.xml") << "Test36.xml" << (int)ServiceMetaData::SFW_ERROR_INVALID_XML_VERSION;
+    //unsupported version attribute in service version tag
+    QTest::newRow("Test37.xml") << "Test37.xml" << (int)ServiceMetaData::SFW_ERROR_UNSUPPORTED_XML_VERSION;
+    //unsupported version attribute in service version tag
+    QTest::newRow("Test38.xml") << "Test38.xml" << (int)ServiceMetaData::SFW_ERROR_UNSUPPORTED_IPC;
 }
 
 void ServiceMetadataTest::parseInvalidServiceXML()

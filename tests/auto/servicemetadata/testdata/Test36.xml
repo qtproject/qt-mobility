@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<SFW something="1.4">
+<SFW something="1.1">
 <service>
     <name>TestService</name>
-    <filepath>_q_ipc_addr:C:/TestData/testservice.dll</filepath>
+    <ipcaddress>test_service</ipcaddress>
     <description>Test service description</description>
     <interface>
         <name>com.nokia.qt.tests.IDownloader</name>

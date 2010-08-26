@@ -128,7 +128,9 @@ public:
         SFW_ERROR_DUPLICATED_CUSTOM_KEY,                    /* The customproperty appears twice*/
         SFW_ERROR_MULTIPLE_SERVICE_TYPES,                   /* Both filepath and ipcaddress found in the XML file */
         SFW_ERROR_INVALID_FILEPATH,                         /* Service path cannot contain IPC prefix */
-        SFW_ERROR_INVALID_XML_VERSION                       /* Error parsing serficefw version node */
+        SFW_ERROR_INVALID_XML_VERSION,                      /* Error parsing serficefw version node */
+        SFW_ERROR_UNSUPPORTED_IPC,                          /* Servicefw version doesn't support IPC */
+        SFW_ERROR_UNSUPPORTED_XML_VERSION                   /* Unsupported servicefw version supplied */
     };
 
 public:
@@ -160,6 +162,7 @@ private:
 private:
     bool lessThan(const QServiceInterfaceDescriptor &d1,
                     const QServiceInterfaceDescriptor &d2) const;
+    bool greaterThan(const QString &v1, const QString &v2) const;
     bool checkVersion(const QString &version) const;
     void transformVersion(const QString &version, int *major, int *minor) const;
 
