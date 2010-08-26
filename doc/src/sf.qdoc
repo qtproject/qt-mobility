@@ -103,7 +103,7 @@ new interface.
 Services can also include remote processes.  By registering with the
 service manager processes can communicate via signals, slots,
 invokable functions and properties as if they were local objects.
-Services can choose to be either be shared between all clients, or
+Services can choose to be either shared between all clients, or
 unique to that client.
 
 
@@ -255,9 +255,10 @@ location of the service. The xml file can be described via the following
 DTD:
 
 \code
-    <!ELEMENT service ( name, filepath, description?, interface+ ) >
+    <!ELEMENT service ( name, filepath | ipcaddress, description?, interface+ ) >
     <!ELEMENT description ( #CDATA ) >
     <!ELEMENT filepath ( #PCDATA ) >
+    <!ELEMENT ipcaddress ( #PCDATA ) >
     <!ELEMENT interface ( name, version, description?, capabilities?, customproperty* ) >
     <!ELEMENT capabilities ( #PCDATA ) >
     <!ELEMENT name ( #PCDATA ) >
@@ -291,6 +292,11 @@ The elements and attributes have the following meanings:
            parts such as the suffix ".dll" and ".so" or plugin prefix "lib"
            should be removed to enable cross platform resolution. QLibrary
            is used to determine the platform specific parts of the plugin.
+    \row 
+        \o "
+        \o ipcaddress
+        \o The socket name or path that the inter-process service will be published
+           on that will provide clients with remote access.
     \row
         \o "
         \o name
@@ -372,8 +378,8 @@ An example for a valid XML service description could be the following \i TestSer
 The framework includes a GUI tool under \tt tools/servicexmlgen for 
 generating and inspecting service XML files. This makes it easy to enter
 service metadata and interface details and generate the appropriate XML to
-describe the service. It can also be used to load and inspect existing
-service XML files.
+describe the plugin or IPC based service. It can also be used to load and 
+inspect existing service XML files.
 
 Here is a screenshot of the application, loaded with the \i TestService XML
 description provided above.
@@ -419,6 +425,7 @@ all services that implement the interface \i com.nokia.qt.ILocation:
 \endcode
 
 \section2 Upgrading Services
+
 There are two ways in which to upgrade a service.  The first is an
 incremental approach whereby QServiceManager::addService() is used to
 register an XML descriptor whose service name already exists but defines
@@ -438,7 +445,33 @@ version 1.0 and version 1.1.  In this case the old service implementation
 must be first be removed using QServiceManager::removeService() to make
 way for the new service implementation.
 
-\section2 Out of process Services
+\section1 Out of Process Services
+
+Qt Service Framework provides a mechanism for out of process services
+so that clients can remotely load interfaces.  These inter-process 
+services are deployed similarly to local services, using the IPC address
+tag for the XMl description and calling QRemoteServiceClassRegister::registerType()
+to add the service to the remote services manager.  The \l{Echo Client Example}
+demonstrates how remote services can be instantiated and used.
+
+Inter-process services are deployed using a variety of different IPC mechanisms
+available on the current platform and as such may inherit several limitations.  For
+Symbian, IPC is handled by the Symbian Client-Server Framework whereas for other 
+environments services are published using QtDBus if it is available otherwise 
+falls back on QLocalSocket for inter-process communication.
+
+\section2 Local Socket Services
+
+\section2 D-Bus Services
+The QtDBus module is used to provide IPC in correspondance to the Qt Service 
+Framework architecture and provides access to signals, slots, invokable methods
+and properties. A current known limitation for Qt Service Framework using QtDBus
+for IPC is that enumerators cannot be read due to lack of support on D-Bus.
+
+\section2 Symbian Client-Server Framework
+
+
+\section2 Error handling
 
 Out of process services behave similarly to local services, with one
 exception.  There can be IPC errors, or the remote service can
@@ -453,10 +486,12 @@ the client application.
 \section1 Examples
 
 \list
+    \o \l{Service Browser Example}
     \o \l{File Manager Plugin Example}
     \o \l{Bluetooth Transfer Plugin Example}
-    \o \l{Service Browser Example}
-    \o \l{Service Framework Echo Example}
+    \o \l{Notes Manager Plugin Example}
+    \o \l{Notes Manager Example}
+    \o \l{Echo Client Example}
 \endlist
 
 

@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 
-import Qt 4.6
+import Qt 4.7
 
 //Implementation of the dialButton control.
 Item {
