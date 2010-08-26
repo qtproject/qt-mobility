@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-SUBDIRS += accel arrowkeys metadata
+SUBDIRS += accel arrowkeys metadata metadata2
 
 contains(QT_CONFIG, declarative) {
     SUBDIRS += orientation
