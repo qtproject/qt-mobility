@@ -109,6 +109,9 @@ void TestNoteItems::cleanupTestCase()
    
 void TestNoteItems::saveItem()
 {
+    if (m_om->detailDefinitions(QOrganizerItemType::TypeNote).count() == 0)
+        QSKIP("Notes are not supported on this backend", SkipSingle);
+        
     // Make sure to delete the old request, if any
     delete m_itemRequest;
     // Create new request
@@ -168,6 +171,9 @@ QList<QOrganizerItem> TestNoteItems::createItems(int noOfItems)
 
 void TestNoteItems::fetchItem()
 {
+    if (m_om->detailDefinitions(QOrganizerItemType::TypeNote).count() == 0)
+        QSKIP("Notes are not supported on this backend", SkipSingle);
+    
     // Make sure to delete the old request, if any
     delete m_itemRequest;
     // Create new request
@@ -220,6 +226,9 @@ void TestNoteItems::fetchItem()
 
 void TestNoteItems::removeItem()
 {
+    if (m_om->detailDefinitions(QOrganizerItemType::TypeNote).count() == 0)
+        QSKIP("Notes are not supported on this backend", SkipSingle);
+    
     // Make sure to delete the old request, if any
     delete m_itemRequest;
     // Create new request
@@ -249,6 +258,9 @@ void TestNoteItems::removeItem()
 
 void TestNoteItems::saveDetails()
 {
+    if (m_om->detailDefinitions(QOrganizerItemType::TypeNote).count() == 0)
+        QSKIP("Notes are not supported on this backend", SkipSingle);
+    
     // Make sure to delete the old request, if any
     delete m_itemRequest;
     // Create new request
@@ -285,6 +297,9 @@ void TestNoteItems::saveDetails()
 
 void TestNoteItems::removeDetails()
 {
+    if (m_om->detailDefinitions(QOrganizerItemType::TypeNote).count() == 0)
+        QSKIP("Notes are not supported on this backend", SkipSingle);
+    
     // Make sure to delete the old request, if any
     delete m_itemRequest;
     // Create new request
@@ -317,6 +332,9 @@ void TestNoteItems::removeDetails()
 
 void TestNoteItems::fetchDetails()
 {
+    if (m_om->detailDefinitions(QOrganizerItemType::TypeNote).count() == 0)
+        QSKIP("Notes are not supported on this backend", SkipSingle);
+    
     // Make sure to delete the old request, if any
     delete m_itemRequest;
     // Create new request
