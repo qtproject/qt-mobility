@@ -92,23 +92,6 @@ Q_SIGNALS:
     void ServiceStatisticsUpdated(const QVector<QStringList> &statistics);
 };
 
-class QGalleryThumbnailerDBusInterface : public QGalleryDBusInterface
-{
-    Q_OBJECT
-public:
-    QGalleryThumbnailerDBusInterface(
-            const QString &service,
-            const QString &path,
-            const char *interface,
-            const QDBusConnection &connection = QDBusConnection::sessionBus(),
-            QObject *parent = 0)
-        : QGalleryDBusInterface(service, path, interface, connection, parent) {}
-
-Q_SIGNALS:
-    void Ready(uint handle, const QStringList &filePaths);
-    void Finished(uint handle);
-};
-
 class QGalleryDBusInterfaceFactory
 {
 public:
