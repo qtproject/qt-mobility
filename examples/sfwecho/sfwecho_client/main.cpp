@@ -121,6 +121,13 @@ public slots:
         echoBox->append(newMsg);
     }
 
+    void errorIPC()
+    {
+      QDateTime ts = QDateTime::currentDateTime();
+      QString newMsg = "[" + ts.toString("hh:mm") + "]" + " " + "IPC Error";
+      echoBox->append(newMsg);
+    }
+
 private:
     QObject *sharedEcho;
     QObject *uniqueEcho;
@@ -176,6 +183,9 @@ private:
         // Connect echo message broadcasts
         QObject::connect(echo, SIGNAL(broadcastMessage(QString,QDateTime)),
                          this, SLOT(receivedMessage(QString,QDateTime)));
+
+        QObject::connect(echo, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)),
+                         this, SLOT(errorIPC()));
 
         return true;
     }

@@ -7,7 +7,7 @@ include(../../examples.pri)
 QT = core
 TEMPLATE=app
 
-CONFIG += mobility
+CONFIG += mobility no_icon
 MOBILITY = serviceframework
 
 HEADERS += 
@@ -20,7 +20,9 @@ symbian {
 wince*|symbian*: {
     addFiles.sources = testdata/*
     addFiles.path = xmldata
-    DEPLOYMENT += addFiles
+    addFiles2.sources = testdata/*
+    addFiles2.path = /private/2002AC7F/import/
+    DEPLOYMENT += addFiles addFiles2
 }
 wince* {
     DEFINES+= TESTDATA_DIR=\\\".\\\"
