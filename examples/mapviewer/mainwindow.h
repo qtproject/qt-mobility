@@ -56,12 +56,8 @@
 #include <QPixmap>
 #include <QList>
 #include <QTime>
+#include <qnetworksession.h>
 
-#ifdef Q_OS_SYMBIAN
-QTM_BEGIN_NAMESPACE
-class QNetworkSession;
-QTM_END_NAMESPACE
-#endif
 
 class QResizeEvent;
 class QShowEvent;
@@ -164,6 +160,9 @@ private slots:
     void setCoordsClicked();
     void updateCoords(const QGeoCoordinate &coords);
 
+    void networkSessionOpened();
+    void error(QNetworkSession::SessionError error);
+
 private:
     QGeoServiceProvider *m_serviceProvider;
     QGeoMappingManager *m_mapManager;
@@ -172,22 +171,19 @@ private:
     MapWidget *m_mapWidget;
     QMenu* m_popupMenu;
     QPixmap m_markerIcon;
-    QPoint lastClicked;
-    QList<QGeoMapPixmapObject*> markerObjects;
+    QPoint m_lastClicked;
+    QList<QGeoMapPixmapObject*> m_markerObjects;
 
-    QGraphicsView* qgv;
-    QSlider *slider;
-    QList<QRadioButton*> mapControlButtons;
-    QList<QGraphicsGeoMap::MapType> mapControlTypes;
-    QLineEdit *latitudeEdit;
-    QLineEdit *longitudeEdit;
-    QToolButton *captureCoordsButton;
-    QPushButton *setCoordsButton;
+    QGraphicsView* m_qgv;
+    QSlider* m_slider;
+    QList<QRadioButton*> m_mapControlButtons;
+    QList<QGraphicsGeoMap::MapType> m_mapControlTypes;
+    QLineEdit *m_latitudeEdit;
+    QLineEdit *m_longitudeEdit;
+    QToolButton *m_captureCoordsButton;
+    QPushButton *m_setCoordsButton;
 
-#ifdef Q_OS_SYMBIAN
-    QNetworkSession *session;
-#endif
-
+    QNetworkSession *m_session;
 };
 
 #endif // MAINWINDOW_H

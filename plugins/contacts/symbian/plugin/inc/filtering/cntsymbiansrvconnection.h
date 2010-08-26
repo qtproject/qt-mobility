@@ -80,11 +80,14 @@ public:
                             QueryType aQueryType,
                             QContactManager::Error* error);
     QList<QContact> searchAllContactNames(QContactManager::Error* error);
+    QList<QPair<QContactLocalId, QString> > searchPhoneNumbers(const QString& searchQuery, 
+                                                  QContactManager::Error* error);
 
 private:
     /* Symbian Leaving functions */
     QList<QContactLocalId> searchContactIdsL(const TDesC& aSqlQuery, QueryType aQueryType);
     QList<QContact> searchContactNamesL(const TDesC& aSqlQuery);
+    QList<QPair<QContactLocalId, QString> > searchPhoneNumbersL(const TDesC& aSqlQuery, QueryType aQueryType);
     void readContactsToBufferL(const TDesC& aSqlQuery, QueryType aQueryType);
     void ConnectSrvL();
     void OpenDatabaseL();

@@ -22,6 +22,8 @@ namespace Tp
         pConnectionInterfaceRequestsInterface = new Tp::Client::ConnectionInterfaceRequestsInterface(busconnection, this->busName(), this->objectPath());
         connect(pConnectionInterfaceRequestsInterface, SIGNAL(NewChannels(Tp::ChannelDetailsList)), SLOT(onNewChannels(Tp::ChannelDetailsList)));
         connect(pConnectionInterfaceRequestsInterface, SIGNAL(ChannelClosed(QDBusObjectPath)), SLOT(onChannelClosed(QDBusObjectPath)));
+
+        readCurrentChannels();
     }
 
     Connection::~Connection()
@@ -38,6 +40,29 @@ namespace Tp
             disconnect(pConnectionInterfaceRequestsInterface, SIGNAL(NewChannels(Tp::ChannelDetailsList)), this, SLOT(onNewChannels(Tp::ChannelDetailsList)));
             disconnect(pConnectionInterfaceRequestsInterface, SIGNAL(ChannelClosed(QDBusObjectPath)), this, SLOT(onChannelClosed(QDBusObjectPath)));
             delete pConnectionInterfaceRequestsInterface;
+        }
+    }
+
+    void Connection::readCurrentChannels()
+    {
+        qDebug() << "Connection::readCurrentChannels()";
+        if(pConnectioninterface){
+            QDBusPendingReply<Tp::ChannelInfoList> dbrlistchannels = pConnectioninterface->ListChannels();
+            dbrlistchannels.waitForFinished();
+            Tp::ChannelInfoList channellist = dbrlistchannels.value();
+            foreach(const Tp::ChannelInfo& chi, channellist){
+                QString connectionbusname = "org.freedesktop.Telepathy.Connection.ring.tel.ring";
+                qDebug() << "- current Channel found";
+                qDebug() << "-- Path " << chi.channel.path();
+                qDebug() << "-- connectionbusname: " << connectionbusname;
+                qDebug() << "-- channelType " << chi.channelType;
+                qDebug() << "";
+                Channel* pchannel = new Channel(QDBusConnection::sessionBus(), connectionbusname,  chi.channel.path(), QVariantMap(), this);
+                if(pchannel->isCall())
+                    ptelephonyCallList->newChannels(ChannelPtr(pchannel));
+                else
+                    delete pchannel;
+            }
         }
     }
 
@@ -71,13 +96,12 @@ namespace Tp
             qDebug() << "- object Path: " << channelDetails.channel.path();
             qDebug() << "- connectionbusname: " << connectionbusname;
             qDebug() << "- check if call";
-            if(QTelephonyCallInfoPrivate::isCall(channelDetails.properties)){
-                qDebug() << " - Creating QTelephonyCallInfoPrivate";
-                Channel* pchannel = new Channel(QDBusConnection::sessionBus(), connectionbusname, channelDetails.channel.path(), channelDetails.properties, this);
+            qDebug() << "- Creating QTelephonyCallInfoPrivate";
+            Channel* pchannel = new Channel(QDBusConnection::sessionBus(), connectionbusname, channelDetails.channel.path(), channelDetails.properties, this);
+            if(pchannel->isCall())
                 ptelephonyCallList->newChannels(ChannelPtr(pchannel));
-            }
             else
-                qDebug() << " - no call";
+                delete pchannel;
         }
     }
 

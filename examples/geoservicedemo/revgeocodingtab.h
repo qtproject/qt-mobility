@@ -73,6 +73,6 @@ private:
     QLineEdit *m_locLong;
     QLineEdit *m_locLat;
     QTreeWidget *m_resultTree;
-    QPushButton *requestBtn;
+    QPushButton *m_requestBtn;
 };
 #endif /* ROUTETAB_H_ */

@@ -43,6 +43,7 @@ contains(mobility_modules,location) {
 
      contains(QT_CONFIG, declarative) {
          SUBDIRS += qdeclarativeposition
+	 SUBDIRS += qdeclarativelandmark
      }
     wince* {
         SUBDIRS += qgeoinfosources_wince
@@ -51,7 +52,7 @@ contains(mobility_modules,location) {
     SUBDIRS +=  qlandmarkfilehandler_gpx
                 #qlandmarkfilehandler_lmx
     
-#disable for now    SUBDIRS += qlandmarkmanagerengine_sqlite
+    SUBDIRS += qlandmarkmanagerengine_sqlite
 }
 
 contains(mobility_modules,publishsubscribe) {
@@ -117,17 +118,21 @@ contains(mobility_modules,organizer) {
 contains(mobility_modules,versit) {
     # Versit module
     SUBDIRS += \
-            qvcard21writer \
-            qvcard30writer \
-            qversit \
-            qversitcontactexporter \
-            qversitcontactimporter \
-            qversitdocument \
+        qvcard21writer \
+        qvcard30writer \
+        qversitcontactexporter \
+        qversitcontactimporter \
+        qversitdocument \
+        qversitproperty \
+        qversitreader \
+        qversitwriter
+
+    contains(mobility_modules,organizer) {
+        SUBDIRS += \
             qversitorganizerexporter \
             qversitorganizerimporter \
-            qversitproperty \
-            qversitreader \
-            qversitwriter
+            qversit
+    }
 }
 
 contains(mobility_modules,telephony) {

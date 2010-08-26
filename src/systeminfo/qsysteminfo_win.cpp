@@ -1155,7 +1155,11 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
     QListIterator<QNetworkInterface> i(interfaceList);
     while(i.hasNext()) {
        QNetworkInterface netInterface = i.next();
-        if (!netInterface.isValid() || (netInterface.flags() & QNetworkInterface::IsLoopBack)) {
+        if (!netInterface.isValid()
+            || (netInterface.flags() & QNetworkInterface::IsLoopBack)
+            || !(netInterface.flags() & QNetworkInterface::IsUp)
+            || !(netInterface.flags() & QNetworkInterface::IsRunning)
+            || netInterface.addressEntries().isEmpty()) {
             continue;
         }
 
@@ -1190,7 +1194,6 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
             bytesWritten = 0;
             result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
                                      &physicalMedium, sizeof(physicalMedium), &bytesWritten, 0);
-
 
             if (!result) {
                 CloseHandle(handle);
@@ -1276,12 +1279,12 @@ bool QSystemNetworkInfoPrivate::isDefaultMode(QSystemNetworkInfo::NetworkMode mo
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
     QList <QSystemNetworkInfo::NetworkMode> modeList;
-    modeList << QSystemNetworkInfo::GsmMode
-            << QSystemNetworkInfo::CdmaMode
-            << QSystemNetworkInfo::WcdmaMode
+    modeList << QSystemNetworkInfo::EthernetMode
             << QSystemNetworkInfo::WlanMode
-            << QSystemNetworkInfo::EthernetMode
             << QSystemNetworkInfo::BluetoothMode
+            << QSystemNetworkInfo::WcdmaMode
+            << QSystemNetworkInfo::CdmaMode
+            << QSystemNetworkInfo::GsmMode
             << QSystemNetworkInfo::WimaxMode;
 
     for (int i = 0; i < modeList.size(); ++i) {
@@ -1312,8 +1315,7 @@ int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
     wHelper->setClassProperty(QStringList() << "CurrentBrightness");
 
     QVariant v = wHelper->getWMIData();
-
-    return v.toUInt();
+    return (quint8)v.toUInt();
 #else
     // This could would detect the state of the backlight, which is as close as we're going to get 
     // for WinCE.  Unfortunately, some devices don't honour the Microsoft power management API.
