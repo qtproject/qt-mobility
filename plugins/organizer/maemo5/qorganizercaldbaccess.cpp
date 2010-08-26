@@ -855,3 +855,19 @@ std::vector<CJournal *> OrganizerCalendarDatabaseAccess::getJournals(int calId, 
 
     return listJournal;
 }
+
+void OrganizerCalendarDatabaseAccess::sqliteErrorMapper(const QSqlError &sqlError, int& errorCode)
+{
+    switch (sqlError.type()) {
+        case QSqlError::NoError:
+            errorCode = CALENDAR_OPERATION_SUCCESSFUL;
+            break;
+        case QSqlError::ConnectionError:
+        case QSqlError::StatementError:
+        case QSqlError::TransactionError:
+        case QSqlError::UnknownError:
+        default :
+            errorCode = CALENDAR_DATABASE_ERROR;
+            break;
+    }
+}
