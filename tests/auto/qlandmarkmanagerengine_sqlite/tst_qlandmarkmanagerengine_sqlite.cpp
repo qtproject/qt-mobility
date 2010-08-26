@@ -5734,9 +5734,9 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
     QCOMPARE(spyRemove.count(), 0);
     QCOMPARE(spyChange.count(), 0);
     QCOMPARE(spyAdd.count(), 1);
-
     ids = spyAdd.at(0).at(0).value<QList<QLandmarkId> >();
     QCOMPARE(ids.count(), 3);
+    spyAdd.clear();
 
     QList<QLandmark> lms = m_manager->landmarks(ids);
     QCOMPARE(lms.count(), 3);
@@ -5771,6 +5771,10 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::CancelError,2000));
         QCOMPARE(originalLandmarksCount, m_manager->landmarkIds().count());
         QCOMPARE(importRequest.landmarkIds().count(),0);
+
+        QCOMPARE(spyRemove.count(), 0);
+        QCOMPARE(spyChange.count(), 0);
+        QCOMPARE(spyAdd.count(), 0);
     }
 
 }
@@ -5788,7 +5792,9 @@ void tst_QLandmarkManagerEngineSqlite::importGpx_data()
 }
 
 void tst_QLandmarkManagerEngineSqlite::importLmx() {
-    //TODO: Test Signal emission
+    QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+    QSignalSpy spyChange(m_manager,SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+    QSignalSpy spyRemove(m_manager,SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
 
     QFETCH(QString, type);
     QLandmarkImportRequest importRequest(m_manager);
@@ -5891,8 +5897,15 @@ void tst_QLandmarkManagerEngineSqlite::importLmx() {
         qFatal("Unknown row test type");
     }
 
-    QList<QLandmark> landmarks = m_manager->landmarks();
+    QTest::qWait(10);
+    QCOMPARE(spyRemove.count(), 0);
+    QCOMPARE(spyChange.count(), 0);
+    QCOMPARE(spyAdd.count(), 1);
+    QList<QLandmarkId> ids = spyAdd.at(0).at(0).value<QList<QLandmarkId> >();
+    QCOMPARE(ids.count(), 16);
+    spyAdd.clear();
 
+    QList<QLandmark> landmarks = m_manager->landmarks();
     QCOMPARE(landmarks.count(), 16);
 
     QLandmarkNameFilter nameFilter;
@@ -5907,7 +5920,6 @@ void tst_QLandmarkManagerEngineSqlite::importLmx() {
         QCOMPARE(landmarks.count(), 1);
         lm = landmarks.at(0);
         QCOMPARE(lm.categoryIds().count(), 2);
-
 
         QSet<QString> catNames;
         foreach(const QLandmarkCategoryId &categoryId, lm.categoryIds()) {
@@ -5977,6 +5989,10 @@ void tst_QLandmarkManagerEngineSqlite::importLmx() {
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::CancelError,2000));
         QCOMPARE(originalLandmarkCount, m_manager->landmarkIds().count());
         QCOMPARE(importRequest.landmarkIds().count(),0);
+
+        QCOMPARE(spyRemove.count(), 0);
+        QCOMPARE(spyChange.count(), 0);
+        QCOMPARE(spyAdd.count(), 0);
     }
 }
 
