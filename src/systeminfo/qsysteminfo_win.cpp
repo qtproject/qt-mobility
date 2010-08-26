@@ -1279,12 +1279,12 @@ bool QSystemNetworkInfoPrivate::isDefaultMode(QSystemNetworkInfo::NetworkMode mo
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
     QList <QSystemNetworkInfo::NetworkMode> modeList;
-    modeList << QSystemNetworkInfo::GsmMode
-            << QSystemNetworkInfo::CdmaMode
-            << QSystemNetworkInfo::WcdmaMode
+    modeList << QSystemNetworkInfo::EthernetMode
             << QSystemNetworkInfo::WlanMode
-            << QSystemNetworkInfo::EthernetMode
             << QSystemNetworkInfo::BluetoothMode
+            << QSystemNetworkInfo::WcdmaMode
+            << QSystemNetworkInfo::CdmaMode
+            << QSystemNetworkInfo::GsmMode
             << QSystemNetworkInfo::WimaxMode;
 
     for (int i = 0; i < modeList.size(); ++i) {
