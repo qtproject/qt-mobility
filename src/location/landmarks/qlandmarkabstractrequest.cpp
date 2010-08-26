@@ -256,8 +256,10 @@ bool QLandmarkAbstractRequest::start()
     }
     QLandmarkManagerEngine *engine = d_ptr->manager->engine();
 
-    if (d_ptr->state != QLandmarkAbstractRequest::ActiveState)
+    if (d_ptr->state != QLandmarkAbstractRequest::ActiveState) {
+        ml.unlock();
         return engine->startRequest(this);
+    }
      else {
         return false;
      }
@@ -280,8 +282,10 @@ bool QLandmarkAbstractRequest::cancel()
     }
     QLandmarkManagerEngine *engine = d_ptr->manager->engine();
 
-    if(d_ptr->state == QLandmarkAbstractRequest::ActiveState)
+    if(d_ptr->state == QLandmarkAbstractRequest::ActiveState) {
+        ml.unlock();
         return engine->cancelRequest(this);
+    }
     else
         return false;
 }
@@ -307,6 +311,7 @@ bool QLandmarkAbstractRequest::waitForFinished(int msecs)
 
     switch(d_ptr->state) {
         case QLandmarkAbstractRequest::ActiveState:
+            ml.unlock();
             return engine->waitForRequestFinished(this, msecs);
         case QLandmarkAbstractRequest::FinishedState:
             return true;

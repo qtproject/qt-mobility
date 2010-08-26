@@ -76,6 +76,8 @@
 
 #include "qgeocoordinate.h"
 
+#include <QWeakPointer>
+
 QTM_BEGIN_NAMESPACE
 
 bool matchString(const QString &sourceString, const QString &matchString, QLandmarkFilter::MatchFlags matchFlags )
@@ -799,13 +801,14 @@ bool QLandmarkManagerEngine::waitForRequestFinished(QLandmarkAbstractRequest* re
 */
 void QLandmarkManagerEngine::updateRequestState(QLandmarkAbstractRequest *req, QLandmarkAbstractRequest::State state)
 {
-    if (!req)
-        return;
-    if (req->d_ptr->state != state) {
+    if (req) {
+        QMutexLocker ml(&req->d_ptr->mutex);
+        if (req->d_ptr->state != state) {
         req->d_ptr->state = state;
+        ml.unlock();
         emit req->stateChanged(state);
+        }
     }
-
 }
 
 /*!
@@ -823,17 +826,20 @@ void QLandmarkManagerEngine::updateLandmarkIdFetchRequest(QLandmarkIdFetchReques
         QLandmarkManager::Error error, const QString &errorString,
         QLandmarkAbstractRequest::State newState)
 {
-    if (!req)
-        return;
-    QLandmarkIdFetchRequestPrivate * rd = static_cast<QLandmarkIdFetchRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->landmarkIds = result;
-    bool emitState = rd->state != newState;
-    rd->state =newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkIdFetchRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkIdFetchRequestPrivate * rd = static_cast<QLandmarkIdFetchRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->landmarkIds = result;
+        bool emitState = rd->state != newState;
+        rd->state =newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit ireq.data()->stateChanged(newState);
+    }
 }
 
 /*!
@@ -851,17 +857,20 @@ void QLandmarkManagerEngine::updateLandmarkFetchRequest(QLandmarkFetchRequest* r
         QLandmarkManager::Error error, const QString &errorString,
         QLandmarkAbstractRequest::State newState)
 {
-    if (!req)
-        return;
-    QLandmarkFetchRequestPrivate * rd = static_cast<QLandmarkFetchRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->landmarks = result;
-    bool emitState = rd->state != newState;
-    rd->state =newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkFetchRequest> ireq(req); //Take this incase the first emit deletes us.
+        QLandmarkFetchRequestPrivate * rd = static_cast<QLandmarkFetchRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->landmarks = result;
+        bool emitState = rd->state != newState;
+        rd->state =newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit req->stateChanged(newState);
+    }
 }
 
 /*!
@@ -879,16 +888,21 @@ void QLandmarkManagerEngine::updateLandmarkFetchRequest(QLandmarkFetchRequest* r
 void QLandmarkManagerEngine::updateLandmarkFetchByIdRequest(QLandmarkFetchByIdRequest* req, const QList<QLandmark>& result, QLandmarkManager::Error error,
         const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkFetchByIdRequestPrivate* rd = static_cast<QLandmarkFetchByIdRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->errorMap = errorMap;
-    rd->landmarks = result;
-    bool emitState = rd->state != newState;
-    rd->state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkFetchByIdRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkFetchByIdRequestPrivate* rd = static_cast<QLandmarkFetchByIdRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->errorMap = errorMap;
+        rd->landmarks = result;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && req)
+            emit req->stateChanged(newState);
+    }
 }
 
 /*!
@@ -905,15 +919,21 @@ void QLandmarkManagerEngine::updateLandmarkFetchByIdRequest(QLandmarkFetchByIdRe
 void QLandmarkManagerEngine::updateLandmarkRemoveRequest(QLandmarkRemoveRequest* req, QLandmarkManager::Error error, const QString &errorString,
         const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkRemoveRequestPrivate* rd = static_cast<QLandmarkRemoveRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->errorMap = errorMap;
-    bool emitState = rd->state != newState;
-    rd->state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkRemoveRequest>ireq(req);//Take this in case the first emit delete us
+        QLandmarkRemoveRequestPrivate* rd = static_cast<QLandmarkRemoveRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->errorMap = errorMap;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit req->stateChanged(newState);
+    }
+
 }
 
 /*!
@@ -930,16 +950,21 @@ void QLandmarkManagerEngine::updateLandmarkRemoveRequest(QLandmarkRemoveRequest*
 void QLandmarkManagerEngine::updateLandmarkSaveRequest(QLandmarkSaveRequest* req, const QList<QLandmark>& result, QLandmarkManager::Error error,
         const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkSaveRequestPrivate* rd = static_cast<QLandmarkSaveRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->errorMap = errorMap;
-    rd->landmarks = result;
-    bool emitState = rd->state != newState;
-    rd->state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkSaveRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkSaveRequestPrivate* rd = static_cast<QLandmarkSaveRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->errorMap = errorMap;
+        rd->landmarks = result;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit req->stateChanged(newState);
+    }
 }
 
 /*!
@@ -958,15 +983,20 @@ void QLandmarkManagerEngine::updateLandmarkCategoryIdFetchRequest(QLandmarkCateg
         QLandmarkAbstractRequest::State newState)
 
 {
-    QLandmarkCategoryIdFetchRequestPrivate* rd = static_cast<QLandmarkCategoryIdFetchRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->categoryIds = result;
-    bool emitState = rd->state != newState;
-    rd->state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkCategoryIdFetchRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkCategoryIdFetchRequestPrivate* rd = static_cast<QLandmarkCategoryIdFetchRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->categoryIds = result;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit req->stateChanged(newState);
+    }
 }
 
 /*!
@@ -985,15 +1015,20 @@ void QLandmarkManagerEngine::updateLandmarkCategoryFetchRequest(QLandmarkCategor
         QLandmarkAbstractRequest::State newState)
 
 {
-    QLandmarkCategoryFetchRequestPrivate* rd = static_cast<QLandmarkCategoryFetchRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->categories = result;
-    bool emitState = rd->state != newState;
-    rd->state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkCategoryFetchRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkCategoryFetchRequestPrivate* rd = static_cast<QLandmarkCategoryFetchRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->categories = result;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit req->stateChanged(newState);
+    }
 }
 
 /*!
@@ -1010,16 +1045,21 @@ void QLandmarkManagerEngine::updateLandmarkCategoryFetchRequest(QLandmarkCategor
 void QLandmarkManagerEngine::updateLandmarkCategoryFetchByIdRequest(QLandmarkCategoryFetchByIdRequest* req, const QList<QLandmarkCategory>& result, QLandmarkManager::Error error,
         const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkCategoryFetchByIdRequestPrivate* rd = static_cast<QLandmarkCategoryFetchByIdRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->errorMap = errorMap;
-    rd->categories = result;
-    bool emitState = rd->state != newState;
-    rd->state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkCategoryFetchByIdRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkCategoryFetchByIdRequestPrivate* rd = static_cast<QLandmarkCategoryFetchByIdRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->errorMap = errorMap;
+        rd->categories = result;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit req->stateChanged(newState);
+    }
 }
 
 /*!
@@ -1036,15 +1076,20 @@ void QLandmarkManagerEngine::updateLandmarkCategoryFetchByIdRequest(QLandmarkCat
 void QLandmarkManagerEngine::updateLandmarkCategoryRemoveRequest(QLandmarkCategoryRemoveRequest* req, QLandmarkManager::Error error, const QString &errorString,
         const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkRemoveRequestPrivate* rd = static_cast<QLandmarkRemoveRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->errorMap = errorMap;
-    bool emitState = rd->state != newState;
-    rd->state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkCategoryRemoveRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkRemoveRequestPrivate* rd = static_cast<QLandmarkRemoveRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->errorMap = errorMap;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit req->stateChanged(newState);
+    }
 }
 
 /*!
@@ -1061,16 +1106,21 @@ void QLandmarkManagerEngine::updateLandmarkCategoryRemoveRequest(QLandmarkCatego
 void QLandmarkManagerEngine::updateLandmarkCategorySaveRequest(QLandmarkCategorySaveRequest* req, const QList<QLandmarkCategory>& result, QLandmarkManager::Error error,
         const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkCategorySaveRequestPrivate* rd = static_cast<QLandmarkCategorySaveRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->errorMap = errorMap;
-    rd->categories = result;
-    bool emitState = rd->state != newState;
-    rd->state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkCategorySaveRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkCategorySaveRequestPrivate* rd = static_cast<QLandmarkCategorySaveRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->errorMap = errorMap;
+        rd->categories = result;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit req->stateChanged(newState);
+    }
 }
 
 /*!
@@ -1087,15 +1137,20 @@ void QLandmarkManagerEngine::updateLandmarkCategorySaveRequest(QLandmarkCategory
 void QLandmarkManagerEngine::updateLandmarkImportRequest(QLandmarkImportRequest *req, const QList<QLandmarkId> &ids, QLandmarkManager::Error error, const QString &errorString,
         QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkImportRequestPrivate* rd = static_cast<QLandmarkImportRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->landmarkIds = ids;
-    bool emitState = rd->state != newState;
-    rd->state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkImportRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkImportRequestPrivate* rd = static_cast<QLandmarkImportRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->landmarkIds = ids;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit req->stateChanged(newState);
+    }
 }
 
 /*!
@@ -1111,14 +1166,19 @@ void QLandmarkManagerEngine::updateLandmarkImportRequest(QLandmarkImportRequest 
 void QLandmarkManagerEngine::updateLandmarkExportRequest(QLandmarkExportRequest *req, QLandmarkManager::Error error, const QString &errorString,
         QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkExportRequestPrivate* rd = static_cast<QLandmarkExportRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    bool emitState = rd->state != newState;
-    rd->state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkExportRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkExportRequestPrivate* rd = static_cast<QLandmarkExportRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState  && req)
+            emit req->stateChanged(newState);
+    }
 }
 
 /*!
