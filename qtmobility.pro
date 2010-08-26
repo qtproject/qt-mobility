@@ -158,9 +158,9 @@ contains(build_demos, yes):SUBDIRS+=demos
         INSTALLS += qtmheadersversit
 
         contains(mobility_modules,organizer) {
-        qtmheadersversitorg.path = $${QT_MOBILITY_INCLUDE}/QtVersitOrganizer
-        qtmheadersversitorg.files = $${QT_MOBILITY_BUILD_TREE}/include/QtVersitOrganizer/*
-        INSTALLS += qtmheadersversitorg
+            qtmheadersversitorg.path = $${QT_MOBILITY_INCLUDE}/QtVersitOrganizer
+            qtmheadersversitorg.files = $${QT_MOBILITY_BUILD_TREE}/include/QtVersitOrganizer/*
+            INSTALLS += qtmheadersversitorg
         }
     }
 
@@ -216,6 +216,7 @@ contains(build_demos, yes):SUBDIRS+=demos
 
     qtmAppHeaders = include/QtContacts/* \
                        include/QtVersit/* \
+                       include/QtVersitOrganizer/* \
                        include/Organizer/*
 
     qtmMwHeaders = include/QtBearer/* \

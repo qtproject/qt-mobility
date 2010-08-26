@@ -76,7 +76,7 @@ contains(MOBILITY, messaging) {
 contains(MOBILITY, versit) {
     INCLUDEPATH += $${MOBILITY_INCLUDE}/QtVersit
     qtAddLibrary(QtVersit)
-    contains(MOBILITY, organizer) : !contains(MOBILITY, vohack) {
+    contains(MOBILITY, organizer) {
         INCLUDEPATH += $${MOBILITY_INCLUDE}/QtVersitOrganizer
         qtAddLibrary(QtVersitOrganizer)
     }
