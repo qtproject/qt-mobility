@@ -51,6 +51,7 @@
 
 QTM_USE_NAMESPACE
 
+Q_DECLARE_METATYPE(QVariant)
 Q_DECLARE_METATYPE(QVector<QVariant>)
 Q_DECLARE_METATYPE(QGalleryDBusInterfacePointer)
 Q_DECLARE_METATYPE(QGalleryQueryRequest::Scope)
@@ -111,6 +112,7 @@ private:
 
 void tst_QGalleryTrackerSchema::initTestCase()
 {
+    qRegisterMetaType<QVariant>();
     qRegisterMetaType<QVector<QVariant> >();
     qRegisterMetaType<QGalleryDBusInterfacePointer>();
     qRegisterMetaType<QGalleryQueryRequest::Scope>();
