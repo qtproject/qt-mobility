@@ -49,9 +49,6 @@
 #elif defined(Q_OS_LINUX)
 # include "qtelephonycallinfo_p.h"
 # include "linux/qtelephonycalllist_linux_p.h"
-#elif defined(Q_OS_WIN)
-# include "qtelephonycallinfo_p.h"
-# include "qtelephonycalllist_win_p.h"
 #elif defined(Q_OS_SYMBIAN)
 # include "qtelephonycallinfo_p.h"
 # include "qtelephonycalllist_symbian_p.h"
