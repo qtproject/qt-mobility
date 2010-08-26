@@ -363,8 +363,7 @@ simulator {
     DEFINES += QTOPIAMAIL_OMIT_QCOP 
 }
 
-
-simulator|contains(qmf_enabled, yes) { 
+simulator|contains(qmf_enabled, yes):!maemo6 { 
     DEFINES += USE_QMF_IMPLEMENTATION
     
     # QMF headers must be located at $QMF_INCLUDEDIR
