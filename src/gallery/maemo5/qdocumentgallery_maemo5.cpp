@@ -148,7 +148,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
 
     QGalleryTrackerResultSetArguments arguments;
 
-    int result = schema.prepareIdResponse(
+    int result = schema.prepareItemResponse(
             &arguments, this, request->itemId().toString(), request->propertyNames());
 
     if (result != QGalleryAbstractRequest::Succeeded) {
@@ -214,7 +214,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
 
     QGalleryTrackerResultSetArguments arguments;
 
-    int result = schema.prepareFilterResponse(
+    int result = schema.prepareQueryResponse(
             &arguments,
             this,
             request->scope(),

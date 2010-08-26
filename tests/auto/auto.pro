@@ -199,6 +199,10 @@ contains(mobility_modules,gallery) {
 
     !unix: SUBDIRS += qgalleryfilter
 
-    unix: contains(QT_CONFIG, dbus): SUBDIRS += qgallerytrackerresultset_maemo5
+    unix: contains(QT_CONFIG, dbus): {
+        SUBDIRS += \
+                qgallerytrackerresultset_maemo5 \
+                qgallerytrackerschema_maemo5
+    }
 }
 

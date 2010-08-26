@@ -1246,17 +1246,6 @@ QGalleryTrackerSchema QGalleryTrackerSchema::fromItemId(const QString &itemId)
     }
 }
 
-QGalleryTrackerSchema QGalleryTrackerSchema::fromService(const QString &service)
-{
-    const QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
-
-    const int itemIndex = itemTypes.indexOfService(service);
-
-    return itemIndex != -1
-            ? QGalleryTrackerSchema(itemIndex, -1)
-            : QGalleryTrackerSchema(-1, -1);
-}
-
 QString QGalleryTrackerSchema::itemType() const
 {
     if (m_itemIndex >= 0)
@@ -1360,7 +1349,7 @@ QGalleryProperty::Attributes QGalleryTrackerSchema::propertyAttributes(
     return QGalleryProperty::Attributes();
 }
 
-int QGalleryTrackerSchema::prepareIdResponse(
+int QGalleryTrackerSchema::prepareItemResponse(
         QGalleryTrackerResultSetArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
         const QString &itemId,
@@ -1409,7 +1398,7 @@ int QGalleryTrackerSchema::prepareIdResponse(
     }
 }
 
-int QGalleryTrackerSchema::prepareFilterResponse(
+int QGalleryTrackerSchema::prepareQueryResponse(
         QGalleryTrackerResultSetArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
         QGalleryQueryRequest::Scope scope,
@@ -1466,6 +1455,7 @@ int QGalleryTrackerSchema::prepareTypeResponse(
             const QString countField = type.identity[0].field;
 
             arguments->accumulative = false;
+            arguments->updateMask = type.updateMask;
             arguments->queryInterface = dbus->metaDataInterface();
             arguments->queryMethod = QLatin1String("GetCount");
             arguments->queryArguments = QVariantList()
