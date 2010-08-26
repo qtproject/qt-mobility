@@ -250,7 +250,7 @@ bool QLandmarkFileHandlerLmx::readLandmark(QLandmark &landmark)
     </xsd:complexType>
     */
 
-    if((*m_cancel) == true) {
+    if(m_cancel && (*m_cancel) == true) {
         m_errorCode = QLandmarkManager::CancelError;
         m_error = "Import of lmx file was canceled";
         return false;
