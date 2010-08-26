@@ -345,7 +345,12 @@ isEmpty(QT_LIBINFIX):symbian {
  
     qtmobilitydeployment.path = /sys/bin
 
-    DEPLOYMENT += qtmobilitydeployment
+    # Support backup and restore for QtMobility libraries and applications
+    mobilitybackup.sources = backup_registration.xml
+    mobilitybackup.path = c:/private/10202D56/import/packages/$$replace(TARGET.UID3, 0x,)
+
+    DEPLOYMENT += qtmobilitydeployment\
+                mobilitybackup
 } else {
     message(Deployment of infixed library names not supported)
 }
