@@ -373,27 +373,49 @@ void TestNoteItems::fetchDetails()
 void TestNoteItems::requestStateChanged(QOrganizerItemAbstractRequest::State currentState)
 {
     switch(currentState) {
-        case QOrganizerItemAbstractRequest::InactiveState: { 
-            // Operation not yet started start the operation
-            break;
-        }
-        case QOrganizerItemAbstractRequest::ActiveState: { 
-            // Operation started, not yet finished operation already started
-        break;
-        }
-        case QOrganizerItemAbstractRequest::CanceledState: { 
-            // Operation is finished due to cancellation test not completed, failed
-        break;
-        }
-        case QOrganizerItemAbstractRequest::FinishedState: { 
-            // Operation either completed successfully or failed.  
-            // No further results will be available.
-            // test completed, compare the results
-            break;
-        }
-        default: {
-            // Not handled
-        }
+    case QOrganizerItemAbstractRequest::InactiveState: {
+        // Verify if the request is in inactive state
+        QVERIFY(m_itemRequest->isInactive());
+        // Compare the request state is set rightly
+        QCOMPARE(m_itemRequest->state(), 
+            QOrganizerItemAbstractRequest::InactiveState);
+        // Operation not yet started start the operation
+        m_itemRequest->start();
+    }
+    break;
+    case QOrganizerItemAbstractRequest::ActiveState: {
+        // Verify if the request is in active state
+        QVERIFY(m_itemRequest->isActive());
+        // Operation started, not yet finished operation already started
+        // Compare the request state is set rightly
+        QCOMPARE(m_itemRequest->state(), 
+            QOrganizerItemAbstractRequest::ActiveState);
+    }
+    break;
+    case QOrganizerItemAbstractRequest::CanceledState: {
+        // Verify if the request is in canceled state
+        QVERIFY(m_itemRequest->isCanceled());
+        // Operation is finished due to cancellation test not completed, 
+        // failed Compare the request state is set rightly
+        QCOMPARE(m_itemRequest->state(), 
+            QOrganizerItemAbstractRequest::CanceledState);
+    }
+    break;
+    case QOrganizerItemAbstractRequest::FinishedState: {
+        // Verify if the request is in finished state
+        QVERIFY(m_itemRequest->isFinished());
+        // Operation either completed successfully or failed.  
+        // No further results will be available.
+        // test completed, compare the results
+        // Compare the request state is set rightly
+        QCOMPARE(m_itemRequest->state(), 
+            QOrganizerItemAbstractRequest::FinishedState);
+    }
+    break;
+    default: {
+        // Not handled
+    }
+    break;
     }
 }
 

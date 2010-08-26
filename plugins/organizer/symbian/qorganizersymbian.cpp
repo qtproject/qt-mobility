@@ -49,7 +49,6 @@
 // user includes
 #include "qorganizersymbian_p.h"
 #include "qtorganizer.h"
-#include "organizeritemdetailtransform.h"
 #include "organizeritemtypetransform.h"
 #include "organizeritemguidtransform.h"
 #include "qorganizeritemrequestqueue.h"
@@ -231,6 +230,7 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(const QOrganize
 }
 QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint,QOrganizerItemManager::Error* error) const
 {
+    Q_UNUSED(fetchHint);
     QList<QOrganizerItem> occurrenceList;
     TCalTime startTime;
     startTime.SetTimeUtcL(TCalTime::MinTime());

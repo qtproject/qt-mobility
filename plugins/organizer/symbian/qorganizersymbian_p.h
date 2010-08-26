@@ -69,8 +69,6 @@
 #include "qorganizeritemmanager.h"
 #include "qorganizeritemmanagerengine.h"
 #include "qorganizeritemmanagerenginefactory.h"
-#include "qorganizeritemdetaildefinition.h"
-#include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
 
 #include "organizeritemtransform.h"
