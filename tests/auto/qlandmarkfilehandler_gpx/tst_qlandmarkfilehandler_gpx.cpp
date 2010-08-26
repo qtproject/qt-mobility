@@ -65,8 +65,8 @@ public:
 
 protected:
     void run() {
-        msleep(100);
-        m_cancel = false;
+        msleep(50);
+        m_cancel = true;
     }
 };
 
@@ -185,7 +185,7 @@ private slots:
         QLandmarkFileHandlerGpx handler(&(cancelThread.m_cancel));
         QLandmark lm;
         QList<QLandmark> lms;
-        for (int i=0; i < 500; ++i) {
+        for (int i=0; i < 50000; ++i) {
             lm.setName(QString("LM%1").arg(0));
             lms.append(lm);
         }

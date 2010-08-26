@@ -717,7 +717,6 @@ bool QLandmarkFileHandlerLmx::exportData(QIODevice *device, const QString &nsPre
     bool result = writeLmx();
 
     if(!result) {
-        emit error(m_error);
         return false;
     }
 
@@ -771,6 +770,12 @@ bool QLandmarkFileHandlerLmx::writeLandmarkCollection(const QList<QLandmark> &la
     m_writer->writeStartElement(m_ns, "landmarkCollection");
 
     for (int i = 0; i < m_landmarks.size(); ++i) {
+        if(m_cancel && (*m_cancel) == true) {
+            m_errorCode = QLandmarkManager::CancelError;
+            m_error = "Export of lmx file was canceled";
+            return false;
+        }
+
         if (!writeLandmark(m_landmarks.at(i)))
             return false;
     }

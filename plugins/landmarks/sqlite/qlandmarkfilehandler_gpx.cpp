@@ -708,7 +708,7 @@ bool QLandmarkFileHandlerGpx::writeGpx()
 
 
     for (int i = 0; i < m_waypoints.size(); ++i) {
-        if (m_cancel && (*m_cancel == false)) {
+        if (m_cancel && (*m_cancel == true)) {
             m_errorCode = QLandmarkManager::CancelError;
             m_errorString = "Export of gpx file was canceled";
             return false;

@@ -6538,6 +6538,27 @@ void tst_QLandmarkManagerEngineSqlite::exportLmx() {
         lm3.setLandmarkId(lm2.landmarkId());  //3 will get assigned the same id as 2
         QCOMPARE(lm3New, lm3);
     }
+
+    if (type == "async") {
+        QFile::remove(exportFile);
+        QLandmark lm;
+        lms.clear();
+        for (int i=0; i < 600; ++i) {
+            lm.setName(QString("LM%1").arg(0));
+            lms.append(lm);
+        }
+
+        QVERIFY(m_manager->saveLandmarks(&lms));
+        exportRequest.setFormat(QLandmarkManager::Lmx);
+        exportRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
+        exportRequest.setFileName(exportFile);
+        QList<QLandmarkId> idList;
+        exportRequest.setLandmarkIds(idList);
+        exportRequest.start();
+        QTest::qWait(50);
+        exportRequest.cancel();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::CancelError,2000));
+    }
     QFile::remove(exportFile);
 }
 

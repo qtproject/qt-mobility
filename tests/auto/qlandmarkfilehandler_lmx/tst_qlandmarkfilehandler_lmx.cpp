@@ -46,11 +46,12 @@
 #include "qlandmarkcategory.h"
 
 #include <qtest.h>
-#include <QMetaType>
-#include <QFile>
-#include <QBuffer>
 
+#include <QBuffer>
 #include <QDebug>
+#include <QFile>
+#include <QMetaType>
+#include <QThread>
 
 #define private public
 #include <qlandmarkmanager.h>
@@ -58,6 +59,21 @@
 #include "qlandmarkfilehandler_lmx_p.h"
 
 QTM_USE_NAMESPACE
+
+class TestThread : public QThread
+{
+public:
+    volatile bool m_cancel;
+    TestThread(): m_cancel(false){}
+
+        protected:
+    void run() {
+
+        msleep(50);
+        m_cancel = true;
+
+    }
+};
 
 Q_DECLARE_METATYPE(QLandmarkCategoryId);
 Q_DECLARE_METATYPE(QList<QLandmark>);
@@ -70,12 +86,14 @@ class tst_QLandmarkLmxHandler : public QObject
 private:
     QLandmarkManager *m_manager;
     QLandmarkFileHandlerLmx *m_handler;
+    QString m_exportFile;
 
 private slots:
 
     void init() {
         QMap<QString, QString> map;
         map["filename"] = "test.db";
+        m_exportFile = "exportfile";
         m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
         m_handler = new QLandmarkFileHandlerLmx();
     }
@@ -86,11 +104,13 @@ private slots:
 
         QFile file("test.db");
         file.remove();
+        QFile::remove(m_exportFile);
     }
 
     void cleanupTestCase() {
         QFile file("test.db");
         file.remove();
+        QFile::remove(m_exportFile);
     }
 
     void fileImport() {
@@ -182,6 +202,29 @@ private slots:
         commonData();
     }
 
+    void cancelExport()
+    {
+        TestThread cancelThread;
+        QLandmarkFileHandlerLmx handler(&(cancelThread.m_cancel));
+        QLandmark lm;
+        QList<QLandmark> lms;
+        for (int i=0; i < 5000; ++i) {
+            lm.setName(QString("LM%1").arg(i));
+            lm.setUrl(QUrl("url"));
+            lm.setCoordinate(QGeoCoordinate(54,23));
+            lm.setAttribute("street", "main street");
+            lms.append(lm);
+        }
+
+        handler.setLandmarks(lms);
+        cancelThread.start();
+        QFile file(m_exportFile);
+
+        QVERIFY(!handler.exportData(&file));
+
+        QCOMPARE(handler.errorCode(), QLandmarkManager::CancelError);
+        cancelThread.wait();
+    }
 
     void fileImportErrors() {
         QFETCH(QString, file);
