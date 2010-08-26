@@ -56,8 +56,31 @@
 
     \section1 Overview
 
+    The Location API gives users of the Qt Mobility Project the capability to write applications that understand a geographical location and movement of the position coordinates. Backend services can be called by the API to detect landmarks and display appropriate information. The QML Location Plugin delivers these capabilities in an easy to use form.
+
     \section1 Elements
 
+    \section2 Coordinate
+
+    The \l Coordinate is a basic unit of geographical information. The \l Coordinate element includes properties to hold the coordinate values for \l {Coordinate::latitude}{latitude}, \l {Coordinate::longitude}{longitude} and \l {Coordinate::altitude}{altitude}.
+
+    \section2 Position
+
+    The three dimensional position of an object such as a mobile device can be specified by giving the latitude, longitude and altitude. That is the values held in the Coordinate element. Additionally for computation of future positions we would like to know if the object is moving, what \l {Position::speed}{speed} it is doing and what is the \l {Position::timestamp}{timestamp} of the last position data. Position therefore includes values for \l {Position::latitude}{latitude}, \l {Position::longitude}{longitude}, \l {Position::altitude}{altitude}, \l {Position::speed}{speed} and a \l {Position::timestamp}{timestamp}. \l Position also takes responsibility for validation of sensible values for these properties: just as there is a \l {Position::latitude}{latitude} there is a property \l {Position::latitudeValid}{latitudeValid}. Similarly for the other properties with the exception of the timestamp.
+
+
+    \section2 PositionSource
+
+    We have a Position element, a Coordinate element but where do we get the data from? It is a good idea to be able to indicate alternative sources. Perhaps instead of directly picking up GPS satellites you want to do some testing using a datafile. We may also need to manage our interaction with the source.
+
+    The \l PositionSource element provides the developer with control, within the limits allowed by the platform, of the source of the geographical data. The positional data can be sourced from a logfile which is in NMEA format.
+
+    \l {http://en.wikipedia.org/wiki/NMEA}{NMEA} is a common text-based protocol for specifying navigational data. For convenience, the \l {PositionSource::nmeaSource}{nmeaSource} property is provided to enable QML applications to read NMEA data from a log file, the source will emit updates according to the time stamp of each NMEA sentence to produce a "replay" of the recorded data.
+
+    
+
+
+    \section1 Elements
     
     \annotatedlist qml-location
 
