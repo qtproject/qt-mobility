@@ -36,25 +36,26 @@ iby.sources = cntmodel.iby cntplsql.iby
 for(iby, iby.sources):BLD_INF_RULES.prj_exports += "groupsql/$$iby $$deploy.path$$iby.path/$$iby"
 
 # Headers
-headers.path = epoc32/include
-headers.sources = inc/cntdef.h\
-                  inc/cntdb.h\
-                  inc/cntdbobs.h\
-                  inc/cntfield.h\
-                  inc/cntfldst.h\
-                  inc/cntfilt.h\ 
-                  inc/cntitem.h\ 
-                  inc/cntview.h\
-                  inc/cntviewbase.h\
-                  inc/cntsync.h\
-                  inc/cntviewfindconfig.h\
-                  inc/cntviewfindconfig.inl\
-                  inc/cntviewsortplugin.h\
-                  inc/cntmodel.rh\
-                  inc/cntdef.hrh\
-                  inc/cntviewstore.h\
-                  cntvcard/cntvcard.h\
-                 
+BLD_INF_RULES.prj_exports = "./inc/cntdef.h APP_LAYER_PUBLIC_EXPORT_PATH(cntdef.h)"\
+                            "./inc/cntdb.h APP_LAYER_PUBLIC_EXPORT_PATH(cntdb.h)"\
+                            "./inc/cntdbobs.h APP_LAYER_PUBLIC_EXPORT_PATH(cntdbobs.h)"\
+                            "./inc/cntfield.h APP_LAYER_PUBLIC_EXPORT_PATH(cntfield.h)"\
+                            "./inc/cntfldst.h APP_LAYER_PUBLIC_EXPORT_PATH(cntfldst.h)"\
+                            "./inc/cntfilt.h APP_LAYER_PUBLIC_EXPORT_PATH(cntfilt.h)"\
+                            "./inc/cntitem.h APP_LAYER_PUBLIC_EXPORT_PATH(cntitem.h)"\
+                            "./inc/cntview.h APP_LAYER_PUBLIC_EXPORT_PATH(cntview.h)"\
+                            "./inc/cntviewbase.h APP_LAYER_PUBLIC_EXPORT_PATH(cntviewbase.h)"\
+                            "./inc/cntsync.h APP_LAYER_PUBLIC_EXPORT_PATH(cntsync.h)"\
+                            "./inc/cntviewfindconfig.h   APP_LAYER_PLATFORM_EXPORT_PATH(cntviewfindconfig.h)"\
+                            "./inc/cntviewfindconfig.inl APP_LAYER_PLATFORM_EXPORT_PATH(cntviewfindconfig.inl)"\
+                            "./inc/cntviewsortplugin.h APP_LAYER_PUBLIC_EXPORT_PATH(cntviewsortplugin.h)"\
+                            "./inc/cntmodel.rh APP_LAYER_PLATFORM_EXPORT_PATH(cntmodel.rh)"\
+                            "./inc/cntdef.hrh APP_LAYER_PUBLIC_EXPORT_PATH(cntdef.hrh)"\
+                            "./cntvcard/cntvcard.h APP_LAYER_PUBLIC_EXPORT_PATH(cntvcard.h)"\
+                            "./inc/cntviewstore.h APP_LAYER_PLATFORM_EXPORT_PATH(cntviewstore.h)"\
+                            "./inc/cntpredictivesearch.h APP_LAYER_PUBLIC_EXPORT_PATH(cntpredictivesearch.h)"
 
-for(header, headers.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$headers.path/$$basename(header)"
-
+BLD_INF_RULES.prj_exports += "./inc/cntphonenumparser.h APP_LAYER_PLATFORM_EXPORT_PATH(cntphonenumparser.h)"\
+                             "./inc/cntviewsortpluginbase.h APP_LAYER_PLATFORM_EXPORT_PATH(cntviewsortpluginbase.h)"\
+                             "./inc/cntsyncecom.h APP_LAYER_PLATFORM_EXPORT_PATH(cntsyncecom.h)"\
+			 

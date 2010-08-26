@@ -5,4 +5,5 @@ SUBDIRS += tst_symbianasynchdetaildefs \
 		   tst_symbianasynchitemids \
 		   tst_symbianasynchremoveitems \
 		   tst_symbianasynchsaveitems \
-		   tst_symbianasynchfetchiteminstance
+		   tst_symbianasynchfetchiteminstance \
+		   tst_symbianasynchnotes
