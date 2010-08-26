@@ -2453,9 +2453,22 @@ bool DatabaseOperations::importLandmarks(QIODevice *device,
         device->close();
         return result;
     } else if (detectedFormat == QLandmarkManager::Gpx) {
-           result = importLandmarksGpx(device, option, categoryId, error, errorString, queryRun, landmarkIds);
-           device->close();
-           return result;
+        QSqlDatabase db = QSqlDatabase::database(connectionName);
+        if (!db.transaction()) {
+            *error = QLandmarkManager::UnknownError;
+            *errorString = QString("Import operation failed, unable to begin transaction, reason: %1")
+                           .arg(db.lastError().text());
+            return false;
+        }
+
+        result = importLandmarksGpx(device, option, categoryId, error, errorString, queryRun, landmarkIds);
+        if (result)
+            db.commit();
+        else
+            db.rollback();
+
+        device->close();
+        return result;
     } else {
         if (error)
             *error = QLandmarkManager::NotSupportedError;
@@ -2640,15 +2653,16 @@ bool DatabaseOperations::importLandmarksGpx(QIODevice *device,
     bool result = false;
     if (gpxHandler->importData(device)) {
             QList<QLandmark> landmarks = gpxHandler->waypoints();
-            if (option == QLandmarkManager::AttachSingleCategory) {
 
-                for (int i =0; i < landmarks.count(); ++i) {
+            for(int i =0; i < landmarks.count(); ++i) {
+                if (option == QLandmarkManager::AttachSingleCategory)
                     landmarks[i].addCategoryId(categoryId);
+
+                saveLandmarkHelper(&(landmarks[i]),error, errorString);
+                if (*error != QLandmarkManager::NoError) {
+                    break;
                 }
             }
-
-        saveLandmarks(&landmarks, 0, error, errorString);
-
 
         if (*error != QLandmarkManager::NoError) {
             result = false;
