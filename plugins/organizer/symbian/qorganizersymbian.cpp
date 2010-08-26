@@ -570,7 +570,7 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemL(QOrganizerItem *item, bool
     if (!entry) {
         HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
 
-        entry = findEntryLC(*globalUid);
+        entry = findEntryL(*globalUid);
         // Not found? Create a new entry instance to be saved to the database
         if (!entry) {
             CCalEntry::TType type = OrganizerItemTypeTransform::entryTypeL(*item);
@@ -579,7 +579,6 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemL(QOrganizerItem *item, bool
             CleanupStack::Pop(globalUid); // Ownership transferred to the new entry
             return entry;
         }
-        CleanupStack::Pop(entry); // Ownership transferred to the caller
         CleanupStack::PopAndDestroy(globalUid);
     }
     return entry;
@@ -606,7 +605,7 @@ CCalEntry * QOrganizerItemSymbianEngine::findEntryL(QOrganizerItemLocalId localI
     return entry;
 }
 
-CCalEntry * QOrganizerItemSymbianEngine::findEntryLC(const TDesC8& globalUid) const
+CCalEntry * QOrganizerItemSymbianEngine::findEntryL(const TDesC8& globalUid) const
 {
     CCalEntry *entry(0);
 
@@ -617,7 +616,6 @@ CCalEntry * QOrganizerItemSymbianEngine::findEntryLC(const TDesC8& globalUid) co
         if (calEntryArray.Count()) {
             // take the first item in the array
             entry = calEntryArray[0];
-            CleanupStack::PushL(entry);
             calEntryArray.Remove(0);
             calEntryArray.ResetAndDestroy();
         }
@@ -641,9 +639,11 @@ CCalEntry* QOrganizerItemSymbianEngine::findParentEntryLC(QOrganizerItem *item, 
         CleanupStack::PushL(parent);
     // Try to find with globalUid
     } else if (globalUid.Length()) {
-        parent = findEntryLC(globalUid);
+        parent = findEntryL(globalUid);
         if (!parent)
             User::Leave(KErrInvalidOccurrence);
+        CleanupStack::PushL(parent);
+
     } else {
         User::Leave(KErrInvalidOccurrence);
     }
