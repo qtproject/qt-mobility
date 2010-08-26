@@ -64,9 +64,15 @@ class TelepathyAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"out\" type=\"a(i)\" name=\"channelsarray\" />\n"
 "      <annotation value=\"ChannelsArray\" name=\"com.trolltech.QtDBus.QtTypeName.In0\" />\n"
 "    </signal>\n"
+"    <signal name=\"StatusChanged\">\n"
+"     <arg name=\"status\" type=\"s\" direction=\"out\"/>\n"
+"    </signal>\n"
 "    <method name=\"createNewChannels\" >\n"
 "      <arg direction=\"in\" type=\"a(i)\" name=\"channelsarray\" />\n"
 "      <annotation value=\"ChannelsArray\" name=\"com.trolltech.QtDBus.QtTypeName.In0\" />\n"
+"    </method>\n"
+"    <method name=\"emitStatusChanged\" >\n"
+"      <arg direction=\"in\" type=\"s\" name=\"status\" />\n"
 "    </method>\n"
 "  </interface>\n"
         "")
@@ -76,9 +82,11 @@ public:
 
 public Q_SLOTS: // METHODS
     void createNewChannels(const ChannelsArray& channelsarray);
+    void emitStatusChanged(const QString& status);
    
 Q_SIGNALS: // SIGNALS
     void NewChannels(const ChannelsArray& channelsarray);
+    void StatusChanged(const QString& status);
 };
 
 #endif //DBUSADAPTOR_H_1275967717

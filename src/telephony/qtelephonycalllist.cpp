@@ -49,9 +49,6 @@
 #elif defined(Q_OS_LINUX)
 # include "qtelephonycallinfo_p.h"
 # include "linux/qtelephonycalllist_linux_p.h"
-#elif defined(Q_OS_WIN)
-# include "qtelephonycallinfo_p.h"
-# include "qtelephonycalllist_win_p.h"
 #elif defined(Q_OS_SYMBIAN)
 # include "qtelephonycallinfo_p.h"
 # include "qtelephonycalllist_symbian_p.h"
@@ -106,6 +103,7 @@ QTM_BEGIN_NAMESPACE
 QTelephonyCallList::QTelephonyCallList(QObject *parent)
     : QObject(parent)
 {
+    qDebug() << "QTelephonyCallList::QTelephonyCallList(QObject *parent)";
     d = new QTelephonyCallListPrivate(this);
 }
 
@@ -116,17 +114,18 @@ QTelephonyCallList::QTelephonyCallList(QObject *parent)
 */
 QTelephonyCallList::~QTelephonyCallList()
 {
+    qDebug() << "QTelephonyCallList::~QTelephonyCallList()";
     if(d)
         delete d;
 }
 
 /*!
-    \fn QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephonyEvents::CallType& calltype) const
+    \fn QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephony::CallType& calltype) const
     \a calltype All calls in the list have this type.
 
     Gives back a list of calls from type of calltype.
 */
-QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephonyEvents::CallType& calltype) const
+QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephony::CallType& calltype) const
 {
     if(d)
         return d->activeCalls(calltype);

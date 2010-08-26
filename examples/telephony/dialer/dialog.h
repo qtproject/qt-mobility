@@ -39,6 +39,7 @@
 ****************************************************************************/
 
 #include "ui_dialog.h"
+#include <QTimer>
 
 #ifndef DIALOG_H_
 #define DIALOG_H_
@@ -52,6 +53,7 @@ public:
 
 protected:
     void changeEvent(QEvent *e);
+    void enableStatusChanges(bool enable);
 
 private slots:
     void dial();
@@ -65,11 +67,15 @@ private slots:
     void button7() { addNumber(7); }
     void button8() { addNumber(8); }
     void button9() { addNumber(9); }
+    void buttonStatus() { changedStatus(); }
 
 private:
     Ui_Dialog ui;
     void addNumber(int val);
+    void changedStatus();
     Dialer* dialer;
+    QTimer timer;
+    QString status;
 };
 
 #endif // DIALOG_H

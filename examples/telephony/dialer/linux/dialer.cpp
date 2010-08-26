@@ -48,10 +48,14 @@
 #define DBUS_PATH "/org/freedesktop/Telepathy/Connection/ring/tel/ring"
 
 
-Dialer::Dialer()
-    : ptelepathy(0),
+Dialer::Dialer(QObject* parent)
+    : QObject(parent),
+    ptelepathy(0),
     ptelepathyAdaptor(0)
 {
+
+    //connect(timer, SIGNAL(timeout()), this, SLOT(timeoutSlot()));
+
     /*
       Register the Channels type first thing, so Qt knows how to handle
       it before an Adaptor/Interface is even constructed.
@@ -104,4 +108,9 @@ void Dialer::dial(QString number)
 {
     ChannelsArray channelsarray(INCOMINGCALL_OBJECT_PATH, number);
     prequestInterface->createNewChannels(channelsarray);
+}
+
+void Dialer::status(QString status)
+{
+    prequestInterface->emitStatusChanged(status);
 }

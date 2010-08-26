@@ -51,7 +51,12 @@ Dialog::Dialog(QWidget *parent) :
     this->setWindowTitle("Monitoring Call Data");
     ui->lstRxMsg->setModel(&m_rxDBusMsg);
     telephonyCallList = new QTelephonyCallList(this);
-    connect(telephonyCallList, SIGNAL(activeCallAdded(QTelephonyCallInfo)), SLOT(activeCallAdded(QTelephonyCallInfo)));
+    connect(telephonyCallList
+            , SIGNAL(activeCallAdded(QTelephonyCallInfo))
+            , SLOT(activeCallAdded(QTelephonyCallInfo)));
+    connect(telephonyCallList
+            , SIGNAL(activeCallStatusChanged(QTelephonyCallInfo))
+            , SLOT(activeCallStatusChanged(QTelephonyCallInfo)));
 
     QString newentry = "waiting for notifications";
     QStringList vl = m_rxDBusMsg.stringList();
@@ -87,3 +92,19 @@ void Dialog::activeCallAdded(const QTelephonyCallInfo& call)
     m_rxDBusMsg.setStringList(vl);
 }
 
+void Dialog::activeCallStatusChanged(const QTelephonyCallInfo& call)
+{
+    QString newentry = "- status ";
+    if(call.status() == QTelephony::Dialing)
+        newentry += "Dialing";
+    else if(call.status() == QTelephony::Alerting)
+        newentry += "Alerting";
+    else if(call.status() == QTelephony::Connected)
+        newentry += "Connected";
+    else if(call.status() == QTelephony::Disconnecting)
+        newentry += "Disconnecting";
+
+    QStringList vl = m_rxDBusMsg.stringList();
+    vl.append(newentry);
+    m_rxDBusMsg.setStringList(vl);
+}

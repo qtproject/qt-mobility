@@ -57,7 +57,8 @@
 
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
-    dialer(0)
+    dialer(0),
+    status("")
 {
     dialer = new Dialer;
 
@@ -75,6 +76,7 @@ Dialog::Dialog(QWidget *parent) :
     connect(ui.pushButton7, SIGNAL(released()), SLOT(button7()));
     connect(ui.pushButton8, SIGNAL(released()), SLOT(button8()));
     connect(ui.pushButton9, SIGNAL(released()), SLOT(button9()));
+    connect(ui.pushButtonStatus, SIGNAL(released()), SLOT(buttonStatus()));
     setTabOrder(ui.lineEditPhoneNumber, ui.pushButton1);
     setTabOrder(ui.pushButton1, ui.pushButton2);
     setTabOrder(ui.pushButton2, ui.pushButton3);
@@ -86,6 +88,8 @@ Dialog::Dialog(QWidget *parent) :
     setTabOrder(ui.pushButton8, ui.pushButton9);
     setTabOrder(ui.pushButton9, ui.pushButton0);
     setTabOrder(ui.pushButton0, ui.pushButtonDial);
+    setTabOrder(ui.pushButtonDial, ui.pushButtonStatus);
+    enableStatusChanges(false);
 }
 
 Dialog::~Dialog()
@@ -105,12 +109,29 @@ void Dialog::changeEvent(QEvent *e)
     }
 }
 
-
+void Dialog::enableStatusChanges(bool enable)
+{
+    ui.pushButtonDial->setDisabled(enable);
+    ui.pushButton0->setDisabled(enable);
+    ui.pushButton1->setDisabled(enable);
+    ui.pushButton2->setDisabled(enable);
+    ui.pushButton3->setDisabled(enable);
+    ui.pushButton4->setDisabled(enable);
+    ui.pushButton5->setDisabled(enable);
+    ui.pushButton6->setDisabled(enable);
+    ui.pushButton7->setDisabled(enable);
+    ui.pushButton8->setDisabled(enable);
+    ui.pushButton9->setDisabled(enable);
+    ui.pushButtonStatus->setDisabled(!enable);
+}
 
 void Dialog::dial()
 {
     dialer->dial(ui.lineEditPhoneNumber->text());
     ui.lineEditPhoneNumber->clear();
+    status = "IDLE";
+    enableStatusChanges(true);
+    changedStatus();
 }
 
 void Dialog::addNumber(int val)
@@ -120,4 +141,24 @@ void Dialog::addNumber(int val)
     ui.lineEditPhoneNumber->setText(txtval);
 }
 
+void Dialog::changedStatus()
+{
+    if(status == "IDLE"){
+        status = "Dialing";
+    }
+    else if(status == "Dialing"){
+        status = "Alerting";
+    }
+    else if(status == "Alerting"){
+        status = "Connected";
+    }
+    else if(status == "Connected"){
+        status = "Disconnecting";
+    }
+    else if(status == "Disconnecting"){
+        status = "IDLE";
+        enableStatusChanges(false);
+    }
+    dialer->status(status);
+}
 

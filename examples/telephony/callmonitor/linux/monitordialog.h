@@ -63,6 +63,7 @@ protected:
 
 private slots:
     void activeCallAdded(const QTelephonyCallInfo& call);
+    void activeCallStatusChanged(const QTelephonyCallInfo& call);
 
 private:
     Ui::Dialog *ui;
