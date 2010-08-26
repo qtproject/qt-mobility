@@ -216,6 +216,8 @@ ServiceMetaDataResults ServiceMetaData::parseResults() const
  */
 bool ServiceMetaData::extractMetadata()
 {
+    Q_ASSERT(checkVersion(XML_MAX));
+
     latestError = 0;
     clearMetadata();                   
     QXmlStreamReader xmlReader;
@@ -315,6 +317,12 @@ bool ServiceMetaData::extractMetadata()
             case SFW_ERROR_INVALID_XML_VERSION:                      /* Error parsing servicefw version node */
                 qDebug() << "Invalid or missing version attribute in <SFW> tag";
                 break;
+            case SFW_ERROR_UNSUPPORTED_IPC:                          /* Servicefw version doesn't support IPC */
+                qDebug() << "Supplied service framework version doesn't support the <ipcaddress> tag";
+                break;
+            case SFW_ERROR_UNSUPPORTED_XML_VERSION:                  /* Unsupported servicefw version supplied */
+                qDebug() << "Service framework version is higher than available support";
+                break;
         }
     }
     return !parseError;
@@ -345,17 +353,10 @@ bool ServiceMetaData::processVersionElement(QXmlStreamReader &aXMLReader)
             latestError = ServiceMetaData::SFW_ERROR_INVALID_XML_VERSION;
             parseError = true;
         } else {
-            int majorVer = -1;
-            int minorVer = -1;
-            transformVersion(xmlVersion, &majorVer, &minorVer);
-
-            int majorMax = -1;
-            int minorMax = -1;
-            transformVersion(XML_MAX, &majorMax, &minorMax);
-
-            if (majorVer > majorMax 
-                    || (majorVer == majorMax && minorVer > minorMax))
-                xmlVersion = XML_MAX;
+            if (greaterThan(xmlVersion, XML_MAX)) {
+                latestError = ServiceMetaData::SFW_ERROR_UNSUPPORTED_XML_VERSION;
+                parseError = true;
+            }
         }
     } else {
         latestError = ServiceMetaData::SFW_ERROR_INVALID_XML_VERSION;
@@ -421,11 +422,17 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
             }
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == SERVICE_IPCADDRESS ) {
             //Found <ipcaddress>> tag for IPC service
-            dupSTags[3]++;
-            serviceLocation = aXMLReader.readElementText();
-            //Check if IPC prefix was used incorrectly here
-            if (serviceLocation.startsWith(SERVICE_IPC_PREFIX)) {
-                latestError = ServiceMetaData::SFW_ERROR_INVALID_FILEPATH;
+            //Check if servicefw XML version supports IPC
+            if (greaterThan(xmlVersion, "1.0")) {
+                dupSTags[3]++;
+                serviceLocation = aXMLReader.readElementText();
+                //Check if IPC prefix was used incorrectly here
+                if (serviceLocation.startsWith(SERVICE_IPC_PREFIX)) {
+                    latestError = ServiceMetaData::SFW_ERROR_INVALID_FILEPATH;
+                    parseError = true;
+                }
+            } else {
+                latestError = ServiceMetaData::SFW_ERROR_UNSUPPORTED_IPC;
                 parseError = true;
             }
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_TAG) {
@@ -644,6 +651,20 @@ bool ServiceMetaData::lessThan(const QServiceInterfaceDescriptor &d1,
             || ( d1.majorVersion() == d2.majorVersion()
                     && d1.minorVersion() < d2.minorVersion());
 
+}
+
+bool ServiceMetaData::greaterThan(const QString &v1, const QString &v2) const
+{
+    int majorV1 = -1;
+    int minorV1 = -1;
+    transformVersion(v1, &majorV1, &minorV1);
+
+    int majorV2 = -1;
+    int minorV2 = -1;
+    transformVersion(v2, &majorV2, &minorV2);
+
+    return  (majorV1 > majorV2 
+             || (majorV1 == majorV2 && minorV1 > minorV2));
 }
 
 bool ServiceMetaData::checkVersion(const QString &version) const
