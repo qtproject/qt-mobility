@@ -43,7 +43,7 @@
 #define QDOCUMENTGALLERYMDSUTILITY_H
 
 #include <QString.h>
-
+#include <QDateTime>
 #include <qobject.h>
 #include <qdocumentgallery.h>
 #include <mdeobject.h>
@@ -111,6 +111,7 @@ public:
     static HBufC8* qStringToS60Desc8(const QString& string);
     static QByteArray s60Desc8ToQByteArray(const TDesC8& desc);
     static HBufC8* qByteArrayToS60Desc8(const QByteArray& string);
+    static QDateTime symbianTTimetoQDateTime(const TTime& time);
 };
 
 QTM_END_NAMESPACE

@@ -268,9 +268,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataField( CMdEObject *inputItem, QVaria
             inputItem->Property( propDef, modProp );
             if ( modProp )
                 {
-                // TODO set TTime value to QVariant DateTime value
-                //TTime value = modProp->TimeValueL();
-                //output.setValue( value );
+                output.setValue(symbianTTimetoQDateTime(modProp->TimeValueL()));
                 }
             else
                 {
@@ -632,9 +630,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataField( CMdEObject *inputItem, QVaria
             inputItem->Property( propDef, dateProp );
             if ( dateProp )
                 {
-                // TODO set TTime value to QVariant DateTime value
-                //TTime value = dateProp->TimeValueL();
-                //output.setValue( value );
+                output.setValue(symbianTTimetoQDateTime(dateProp->TimeValueL()));
                 }
             else
                 {
@@ -1226,6 +1222,14 @@ HBufC8* QDocumentGalleryMDSUtility::qByteArrayToS60Desc8(const QByteArray& byteA
     TPtrC8 ptr8((TUint8*)(byteArray.constData()));
     return ptr8.Alloc();
 }
+QDateTime QDocumentGalleryMDSUtility::symbianTTimetoQDateTime(const TTime& time)
+{
+    TDateTime dateTime = time.DateTime();
+    QDate qdate = QDate(dateTime.Year(), static_cast<int>(dateTime.Month())+1, dateTime.Day()+1);
+    QTime qtime = QTime(dateTime.Hour(), dateTime.Minute(), dateTime.Second(), dateTime.MicroSecond()/1000 );
+    return QDateTime(qdate, qtime, Qt::UTC);
+}
+
 
 
 QTM_END_NAMESPACE
