@@ -7,6 +7,8 @@ TARGET =        $$qtLibraryTarget(qtmultimediakit_ecamengine)
 PLUGIN_TYPE =   mediaservice
 include (../../../../common.pri)
 
+qtAddLibrary(QtMultimediaKit)
+
 CONFIG +=       mobility
 MOBILITY +=     multimedia
 
@@ -29,17 +31,17 @@ contains(S60_VERSION, 3.1) | contains(S60_VERSION, 3.2) {
     DEFINES += PRE_S60_50_PLATFORM
 }
 
-exists($${EPOCROOT}epoc32\include\mmf\common\mmfvideoenums.h) {
+exists($${EPOCROOT}epoc32\\include\\mmf\\common\\mmfvideoenums.h) {
     DEFINES += USE_SYMBIAN_VIDEOENUMS
     message("Using Symbian mmmfvideodeoenums")
 }
 
-exists($${EPOCROOT}epoc32\include\platform\mmf\common\mmfvideoenums.h) {
+exists($${EPOCROOT}epoc32\\include\\platform\\mmf\\common\\mmfvideoenums.h) {
     DEFINES += USE_SYMBIAN_VIDEOENUMS
     message("Using Symbian mmmfvideodeoenums")
 }
 
-exists($${EPOCROOT}epoc32\include\platform\graphics\surface.h) {
+exists($${EPOCROOT}epoc32\\include\\platform\\graphics\\surface.h) {
     DEFINES += SYMBIAN_3_PLATFORM
     MMP_RULES += \
         "MACRO SYMBIAN_3_PLATFORM"

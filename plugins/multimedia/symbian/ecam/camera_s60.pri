@@ -5,18 +5,23 @@ DEFINES += QMEDIA_SYMBIAN_CAMERA
 
 #3.1 Platform uses autofocusing from ForumNokia example
 contains(S60_VERSION, 3.1) {
-    message ("Using s60 3.1 autofocusing")
-    MMP_RULES += \
-        "$${LITERAL_HASH}ifdef WINSCW" \
-        "LIBRARY camautofocus.lib" \
-        "$${LITERAL_HASH}else" \
-        "STATICLIBRARY camautofocus_s.lib" \
-        "$${LITERAL_HASH}endif // WINS" \
-        "MACRO S60_CAM_AUTOFOCUS_SUPPORT"
+    DEFINES += S60_31_PLATFORM
+    MMP_RULES += "MACRO S60_31_PLATFORM"
+
+    exists($${EPOCROOT}epoc32\\include\\CCamAutoFocus.h) {
+        message ("Using S60 3.1 autofocusing")
+        MMP_RULES += \
+            "$${LITERAL_HASH}ifdef WINSCW" \
+            "LIBRARY camautofocus.lib" \
+            "$${LITERAL_HASH}else" \
+            "STATICLIBRARY camautofocus_s.lib" \
+            "$${LITERAL_HASH}endif // WINS" \
+            "MACRO S60_CAM_AUTOFOCUS_SUPPORT"
+    }
 }
 
 # S60 3.2 Platform:
-exists($${EPOCROOT}epoc32\include\ecamadvancedsettings.h) {
+exists($${EPOCROOT}epoc32\\include\\ecamadvancedsettings.h) {
     MMP_RULES += \
         "$${LITERAL_HASH}ifndef WINSCW" \
         "LIBRARY ecamadvsettings.lib" \
@@ -26,14 +31,14 @@ exists($${EPOCROOT}epoc32\include\ecamadvancedsettings.h) {
 }
 
 # S60 5.0 Platform:
-exists($${EPOCROOT}epoc32\include\ecamadvsettings.h) {
+exists($${EPOCROOT}epoc32\\include\\ecamadvsettings.h) {
     symbian:LIBS += -lecamadvsettings
     DEFINES += USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
     message("Using CCameraAdvancedSettings header from S60 5.0")
 }
 
 # DevVideo API Check:
-exists($${EPOCROOT}epoc32\include\mmf\devvideo\devvideoconstants.h) {
+exists($${EPOCROOT}epoc32\\include\\mmf\\devvideo\\devvideoconstants.h) {
     symbian:LIBS += -ldevvideo
     DEFINES += S60_DEVVIDEO_RECORDING_SUPPORTED
     message("Devvideo API supported")

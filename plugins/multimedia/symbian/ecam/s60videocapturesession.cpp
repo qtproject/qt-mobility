@@ -867,23 +867,29 @@ void S60VideoCaptureSession::initializeVideoCaptureSettings()
 
 QSize S60VideoCaptureSession::pixelAspectRatio()
 {
+#ifndef S60_31_PLATFORM
     TVideoAspectRatio par;
     TRAPD(err, m_videoRecorder->GetPixelAspectRatioL(par));
     if (err) {
         setError(err);
     }
     return QSize(par.iNumerator, par.iDenominator);
-
+#else // S60_31_PLATFORM
+    return QSize();
+#endif // !S60_31_PLATFORM
 }
 
 void S60VideoCaptureSession::setPixelAspectRatio(const QSize par)
 {
+#ifndef S60_31_PLATFORM
     const TVideoAspectRatio videoPar(par.width(), par.height());
     TRAPD(err, m_videoRecorder->SetPixelAspectRatioL(videoPar));
     if (err) {
         setError(err);
     }
-
+#else // S60_31_PLATFORM
+    Q_UNUSED(par);
+#endif // !S60_31_PLATFORM
 }
 
 int S60VideoCaptureSession::gain()
