@@ -51,11 +51,26 @@ void OrganizerItemDisplayLabelTransform::transformToDetailL(const CCalEntry& ent
 
 void OrganizerItemDisplayLabelTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
-    if (!item.displayLabel().isEmpty())
-        entry->SetSummaryL(toPtrC16(item.displayLabel()));
+#ifdef AGENDA_EXT_SUPPORT
+    if (QOrganizerItemType::TypeNote !=item.type()) {
+#endif
+        if (!item.displayLabel().isEmpty())
+            entry->SetSummaryL(toPtrC16(item.displayLabel()));  
+#ifdef AGENDA_EXT_SUPPORT
+    }
+#endif
 }
 
 QString OrganizerItemDisplayLabelTransform::detailDefinitionName()
 {
     return QOrganizerItemDisplayLabel::DefinitionName;    
+}
+
+// Modify base schema to remove display label support for notes
+void OrganizerItemDisplayLabelTransform::modifyBaseSchemaDefinitions(
+    QMap<QString, QMap<QString, 
+    QOrganizerItemDetailDefinition> > &schemaDefs) const
+{
+    schemaDefs[QOrganizerItemType::TypeNote].remove(
+        QOrganizerItemDisplayLabel::DefinitionName);
 }
