@@ -52,7 +52,7 @@ QMDEGalleryQueryResultSet::QMDEGalleryQueryResultSet(QMdeSession *session, QObje
 :QMDEGalleryResultSet(parent)
 {
     m_request = static_cast<QGalleryQueryRequest *>(parent);
-
+    m_live = false; // when live queries are supported, read this value from request
     m_session = session;
 
     createQuery();
@@ -60,31 +60,35 @@ QMDEGalleryQueryResultSet::QMDEGalleryQueryResultSet(QMdeSession *session, QObje
 
 QMDEGalleryQueryResultSet::~QMDEGalleryQueryResultSet()
 {
-
+    if( m_query )
+        {
+        m_query->RemoveObserver( *this );
+        m_query->Cancel();
+        }
+    delete m_query;
+    m_query = NULL;
 }
 
 void QMDEGalleryQueryResultSet::HandleQueryNewResults( CMdEQuery &aQuery,
                                                        int firstNewItemIndex,
                                                        int newItemCount )
 {
-    m_eventLoop.quit(); // end eventloop
+    if( aQuery.ResultMode() == EQueryResultModeItem ) {
+        int max = aQuery.Count();
+        for ( TInt i = firstNewItemIndex; i < max; i++ ) {
+            appendItem( static_cast<CMdEObject *>(aQuery.TakeOwnershipOfResult( i )) );
+        }
+    }
+
     //Signals that items have been inserted into a result set at
     emit itemsInserted(firstNewItemIndex, newItemCount);
 
-    emit progressChanged(aQuery.Count(), aQuery.Count());
+    emit progressChanged(aQuery.Count(), KMdEQueryDefaultMaxCount);
 }
 
 void QMDEGalleryQueryResultSet::HandleQueryCompleted( CMdEQuery &aQuery, int aError )
 {
-
-    m_eventLoop.quit(); // end eventloop
-    // All results appended when query is ready
-    if( aQuery.ResultMode() == EQueryResultModeItem ) {
-        int max = aQuery.Count();
-        for ( TInt i = 0; ++i < max; ) {
-            appendItem( static_cast<CMdEObject *>(aQuery.TakeOwnershipOfResult( i )) );
-        }
-    }
+    emit progressChanged(aQuery.Count(), aQuery.Count());
 
     if( aError == KErrNone )
     {
@@ -92,23 +96,33 @@ void QMDEGalleryQueryResultSet::HandleQueryCompleted( CMdEQuery &aQuery, int aEr
     }
     else
     {
-        finish(QGalleryAbstractRequest::RequestError, m_live);
-        emit finished();
+        finish(QGalleryAbstractRequest::RequestError, false);
     }
 
 }
 
 void QMDEGalleryQueryResultSet::createQuery()
 {
-    CMdENamespaceDef& defaultNamespace = m_session->GetDefaultNamespaceDefL();
-    // TODO item type should come from root item type or filters
-	// TODO implement filters, hard coded here only for development
-    QString type( QDocumentGallery::Image.name() );
-    CMdEObjectDef& objdef = QDocumentGalleryMDSUtility::ObjDefFromItemType(defaultNamespace, type );
+    if( !m_session ){
+        finish(QGalleryAbstractRequest::ConnectionError, false);
+    }
 
-    m_query = m_session->NewObjectQueryL( defaultNamespace, objdef, this );
-    m_query->FindL();
-    m_eventLoop.exec(); // start eventloop to wait async callbacks to return
+    TRAPD( err, m_query = m_session->NewObjectQueryL( this, m_request ) );
+    if( err ){
+        m_query = NULL;
+        finish(QGalleryAbstractRequest::RequestError, false);
+    }
+
+    if( m_query ){
+        TRAP( err, m_query->FindL() );
+        if( err ){
+            m_query->RemoveObserver( *this );
+            finish(QGalleryAbstractRequest::RequestError, false);
+        }
+    }
+    else{
+        finish(QGalleryAbstractRequest::NotSupported, false);
+    }
 }
 
 #include "moc_qmdegalleryqueryresultset.cpp"

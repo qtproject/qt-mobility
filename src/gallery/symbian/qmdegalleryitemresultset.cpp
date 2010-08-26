@@ -53,6 +53,7 @@ QMDEGalleryItemResultSet::QMDEGalleryItemResultSet(QMdeSession *session, QObject
 :QMDEGalleryResultSet(parent)
 {
     m_request = static_cast<QGalleryItemRequest *>(parent);
+    m_live = false; // when live queries are supported, read this value from request
     m_session = session;
 
     createQuery();
@@ -64,11 +65,10 @@ QMDEGalleryItemResultSet::~QMDEGalleryItemResultSet()
 }
 void QMDEGalleryItemResultSet::createQuery()
 {
-    m_resultObject = m_session->GetFullObjectL( m_request->itemId().toUInt() );
+    TRAP_IGNORE( m_resultObject = m_session->GetFullObjectL( m_request->itemId().toUInt() ) );
     // After that resultObject contains NULL or the needed item
-    // TODO notify request complete here
     if( m_resultObject ){
-        finish(QGalleryAbstractRequest::Succeeded, false);
+        finish(QGalleryAbstractRequest::Succeeded, m_live);
     }
     else {
         finish(QGalleryAbstractRequest::RequestError, false);

@@ -65,7 +65,6 @@ QMDEGalleryTypeResultSet::~QMDEGalleryTypeResultSet()
 void QMDEGalleryTypeResultSet::createQuery()
 {
     QDocumentGalleryMDSUtility::GetDataFieldsForItemType( m_propertyList, m_request->itemType() );
-    // TODO notify request complete here
     finish(QGalleryAbstractRequest::Succeeded, false);
 }
 

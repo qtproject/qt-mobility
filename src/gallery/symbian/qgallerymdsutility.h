@@ -44,9 +44,13 @@
 
 #include <QString.h>
 #include <QDateTime>
+//API
+#include "qgalleryqueryrequest.h"
+// Symbian
 #include <qobject.h>
 #include <qdocumentgallery.h>
 #include <mdeobject.h>
+#include <mdequery.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -54,7 +58,7 @@ class QDocumentGalleryMDSUtility
 {
 public:
 
-    enum KPropertyKeys
+    enum TPropertyKeys
         {
         EUri = 0,
         EFileSize,
@@ -98,9 +102,9 @@ public:
      * Maps Document Gallery itemtype to MdE object class
      *
      */
-    static CMdEObjectDef& ObjDefFromItemType( CMdENamespaceDef &nameSpace, QString itemType );
+    static CMdEObjectDef& ObjDefFromItemTypeL( CMdENamespaceDef &nameSpace, QString itemType );
     static void GetDataFieldsForItemType( QStringList &propertyList, QString itemType );
-    static void GetMetaDataField( CMdEObject *inputItem, QVariant &output, int key );
+    static void GetMetaDataFieldL( CMdEObject *inputItem, QVariant &output, int key );
     static QString GetItemTypeFromMDEObject( CMdEObject *inputItem );
     static int GetPropertyKey( const QString &property );
     static QVariant::Type GetPropertyType( int key );
@@ -112,6 +116,7 @@ public:
     static QByteArray s60Desc8ToQByteArray(const TDesC8& desc);
     static HBufC8* qByteArrayToS60Desc8(const QByteArray& string);
     static QDateTime symbianTTimetoQDateTime(const TTime& time);
+    static void SetupQueryConditions( CMdEObjectQuery *query, QGalleryQueryRequest *request);
 };
 
 QTM_END_NAMESPACE

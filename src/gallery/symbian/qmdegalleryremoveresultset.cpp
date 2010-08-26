@@ -66,7 +66,6 @@ void QMDEGalleryRemoveResultSet::createQuery()
     // TODO this call only removes the entry from MDS DB. Should the actual binary
     // be deleted from disk?
     // After that m_ret contains error code from request
-    // TODO notify request complete here
     finish(m_result, false);
 }
 

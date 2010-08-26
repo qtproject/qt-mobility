@@ -45,6 +45,8 @@
 
 #include <qmobilityglobal.h>
 
+#include "qgalleryqueryrequest.h"
+
 #include <QObject>
 #include <QEventloop>
 #include <mdesession.h>
@@ -82,8 +84,7 @@ public: // From MMdESessionObserver
 
     CMdEObject* GetFullObjectL( const unsigned int aId );
 
-    CMdEObjectQuery* NewObjectQueryL( CMdENamespaceDef &aNamespaceDef,
-        CMdEObjectDef &aObjectDef, MMdEQueryObserver *aObserver );
+    CMdEObjectQuery* NewObjectQueryL(MMdEQueryObserver *aObserver, QGalleryQueryRequest *request);
 
     int RemoveObject( const unsigned int aItemId );
 
