@@ -2547,7 +2547,7 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
                         QueryRun *queryRun,
                         QList<QLandmarkId>  *landmarkIds)
 {
-    QLandmarkFileHandlerLmx lmxHandler(this, queryRun?&(queryRun->isCanceled):0);
+    QLandmarkFileHandlerLmx lmxHandler(queryRun?&(queryRun->isCanceled):0);
 
     if (option == QLandmarkManager::AttachSingleCategory) {
         QLandmarkCategory singleCategory;
@@ -2678,7 +2678,7 @@ bool DatabaseOperations::exportLandmarksLmx(QIODevice *device,
                         QString *errorString,
                         QueryRun *queryRun) const
 {
-    QLandmarkFileHandlerLmx lmxHandler(this);
+    QLandmarkFileHandlerLmx lmxHandler(queryRun?&(queryRun->isCanceled):0);
 
     QLandmarkFilter filter;
     QList<QLandmark> lms;
@@ -2692,8 +2692,19 @@ bool DatabaseOperations::exportLandmarksLmx(QIODevice *device,
     if (error && *error != QLandmarkManager::NoError)
         return false;
 
+    QList<QLandmarkCategory> categories = this->categories(QList<QLandmarkCategoryId>(),QLandmarkNameSort(),-1,0,error,errorString,true);
+    if (*error != QLandmarkManager::NoError) {
+            return false;
+    }
+
+    QHash<QString,QString> categoryIdNameHash;//local id to name
+    foreach(const QLandmarkCategory &category, categories) {
+            categoryIdNameHash.insert(category.categoryId().localId(),category.name());
+    }
+
     lmxHandler.setTransferOption(option);
     lmxHandler.setLandmarks(lms);
+    lmxHandler.setCategoryIdNameHash(categoryIdNameHash);
 
     bool result = lmxHandler.exportData(device);
 

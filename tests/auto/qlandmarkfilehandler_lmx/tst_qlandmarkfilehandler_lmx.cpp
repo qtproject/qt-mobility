@@ -101,8 +101,13 @@ private slots:
         QFETCH(QList<QLandmarkCategory>, categories);
 
         QLandmarkManager::Error error = QLandmarkManager::NoError;
+        QHash<QString,QString> categoryNameIdHash; //name to local id
         for (int i = 0; i < categories.size(); ++i) {
+            QLandmarkCategoryId catId;
+            categories[i].setCategoryId(catId);
+
             m_manager->saveCategory(&categories[i]);
+            categoryNameIdHash.insert(categories[i].name(),categories[i].categoryId().localId());
             error = m_manager->error();
             QCOMPARE(error, QLandmarkManager::NoError);
         }
@@ -110,18 +115,29 @@ private slots:
         QFile file(fileIn);
         file.open(QIODevice::ReadOnly);
 
+         //set the category ids for the landmarks from the handler
         QVERIFY(m_handler->importData(&file));
+        QList<QLandmark> handlerLandmarks = m_handler->landmarks();
+        QList<QStringList> handlerLandmarkCategoryNames = m_handler->landmarkCategoryNames();
+        for (int i=0; i < handlerLandmarks.count(); ++i) {
+            for(int j=0; j < handlerLandmarkCategoryNames.at(i).count(); ++j) {
+                QLandmarkCategoryId catId;
+                catId.setManagerUri(m_manager->managerUri());
+                catId.setLocalId(categoryNameIdHash.value(handlerLandmarkCategoryNames.at(i).at(j)));
+                handlerLandmarks[i].addCategoryId(catId);
+            }
+
+        }
 
         file.close();
-
-        QCOMPARE(m_handler->landmarks(), landmarks);
+        QCOMPARE(handlerLandmarks, landmarks);
     }
 
     void fileImport_data() {
         commonData();
     }
 
-/* TODO: exports
+
     void dataExport() {
         QFETCH(QString, fileIn);
         QFETCH(QString, fileOut);
@@ -131,16 +147,21 @@ private slots:
 
         QLandmarkManager::Error error;
         for (int i = 0; i < categories.size(); ++i) {
+            QLandmarkCategoryId catId;
+            categories[i].setCategoryId(catId);
             m_manager->saveCategory(&categories[i]);
             error = m_manager->error();
             QCOMPARE(error, QLandmarkManager::NoError);
         }
 
-        //TOOD: handle categories
-        foreach (QLandmark lm, landmarks) {
-            lm.
+        QHash<QString,QString> categoryIdNameHash;//local id to name
+        foreach(const QLandmarkCategory &category, categories) {
+                categoryIdNameHash.insert(category.categoryId().localId(),category.name());
         }
+
+        m_manager->saveLandmarks(&landmarks);
         m_handler->setLandmarks(landmarks);
+        m_handler->setCategoryIdNameHash(categoryIdNameHash);
 
         QBuffer buffer;
         buffer.open(QIODevice::WriteOnly);
@@ -152,7 +173,6 @@ private slots:
         file.open(QIODevice::ReadOnly);
 
         QByteArray testData = file.readAll();
-
         file.close();
 
         QCOMPARE(dataExported, testData);
@@ -161,7 +181,7 @@ private slots:
     void dataExport_data() {
         commonData();
     }
-*/
+
 
     void fileImportErrors() {
         QFETCH(QString, file);
@@ -428,8 +448,8 @@ private:
         QFile file("test.db");
         file.remove();
 
-//        cats << cat0 << cat1 << cat2;
-//        catIds << cat0.categoryId() << cat1.categoryId() << cat2.categoryId();
+        cats << cat0 << cat1 << cat2;
+        catIds << cat0.categoryId() << cat1.categoryId() << cat2.categoryId();
 
         QList<QLandmark> w;
 
@@ -440,14 +460,13 @@ private:
         w0.setCoordinate(QGeoCoordinate(1.0, 2.0, 3.0));
         w0.setRadius(4.0);
         QGeoAddress a0;
-        a0.setStreetNumber("1");
-        a0.setStreet("Main St");
+        a0.setStreet("1 Main St");
         a0.setCity("Brisbane");
         a0.setState("Queensland");
         a0.setCountry("Australia");
         a0.setPostCode("4000");
         w0.setAddress(a0);
-        w0.setPhone("123456789");
+        w0.setPhoneNumber("123456789");
         w0.setUrl(QUrl("http://example.com/testUrl"));
         w0.setCategoryIds(catIds);
         w << w0;
@@ -491,8 +510,7 @@ private:
 
         QLandmark w7;
         QGeoAddress a7;
-        a7.setStreetNumber("1");
-        a7.setStreet("Main St");
+        a7.setStreet("1 Main St");
         w7.setAddress(a7);
         w << w7;
 
@@ -521,19 +539,18 @@ private:
         w << w11;
 
         QLandmark w12;
-        w12.setPhone("123456789");
+        w12.setPhoneNumber("123456789");
         w << w12;
 
         QLandmark w13;
         QGeoAddress a13;
-        a13.setStreetNumber("1");
-        a13.setStreet("Main St");
+        a13.setStreet("1 Main St");
         a13.setCity("Brisbane");
         a13.setState("Queensland");
         a13.setCountry("Australia");
         a13.setPostCode("4000");
         w13.setAddress(a13);
-        w13.setPhone("123456789");
+        w13.setPhoneNumber("123456789");
         w << w13;
 
         QLandmark w14;

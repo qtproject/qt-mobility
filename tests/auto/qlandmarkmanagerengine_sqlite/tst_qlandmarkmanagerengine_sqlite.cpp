@@ -6203,7 +6203,7 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx() {
         QFile::remove(exportFile);
         QLandmark lm;
         lms.clear();
-        for (int i=0; i < 500; ++i) {
+        for (int i=0; i < 600; ++i) {
             lm.setName(QString("LM%1").arg(0));
             lms.append(lm);
         }

@@ -60,13 +60,13 @@
 
 QTM_USE_NAMESPACE
 
-QLandmarkFileHandlerLmx::QLandmarkFileHandlerLmx(const DatabaseOperations *databaseOperations, const volatile bool  * cancel)
+QLandmarkFileHandlerLmx::QLandmarkFileHandlerLmx(const volatile bool  * cancel)
     : QObject(),
     m_writer(0),
     m_reader(0),
     m_option(QLandmarkManager::IncludeCategoryData),
-    m_databaseOperations(const_cast<DatabaseOperations *> (databaseOperations)),
-    m_cancel(cancel)
+    m_cancel(cancel),
+    m_categoryIdNameHash(QHash<QString,QString>())
 {
 }
 
@@ -86,6 +86,11 @@ QList<QLandmark> QLandmarkFileHandlerLmx::landmarks() const
 void QLandmarkFileHandlerLmx::setLandmarks(const QList<QLandmark> &landmarks)
 {
     m_landmarks = landmarks;
+}
+
+void QLandmarkFileHandlerLmx::setCategoryIdNameHash(const QHash<QString,QString> &categoryIdNameHash)
+{
+    m_categoryIdNameHash = categoryIdNameHash;
 }
 
 QList<QStringList> QLandmarkFileHandlerLmx::landmarkCategoryNames()
@@ -903,14 +908,14 @@ bool QLandmarkFileHandlerLmx::writeCategory(const QLandmarkCategoryId &id)
         return false;
     }
 
-    QLandmarkManager::Error error;
-    QLandmarkCategory cat = m_databaseOperations->category(id,&m_errorCode, &m_error);
-    if (m_errorCode != QLandmarkManager::NoError) {
+    if (!m_categoryIdNameHash.contains(id.localId())) {
+        m_errorCode = QLandmarkManager::UnknownError;
+        m_error = "Category for landmark could not be identified";
         return false;
     }
 
     m_writer->writeStartElement(m_ns, "category");
-    m_writer->writeTextElement(m_ns, "name", cat.name());
+    m_writer->writeTextElement(m_ns, "name", m_categoryIdNameHash.value(id.localId()));
     m_writer->writeEndElement();
 
     return true;

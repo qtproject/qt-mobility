@@ -70,11 +70,13 @@ class QLandmarkFileHandlerLmx : public QObject
     Q_OBJECT
 
 public:
-    QLandmarkFileHandlerLmx(const DatabaseOperations *databaseOperations, volatile const bool *cancel=0);
+    QLandmarkFileHandlerLmx(volatile const bool *cancel=0);
     ~QLandmarkFileHandlerLmx();
 
     QList<QLandmark> landmarks() const;
     void setLandmarks(const QList<QLandmark> &landmarks);
+
+    void setCategoryIdNameHash(const QHash<QString,QString> &categoryIdNameHash);
     QList<QStringList> landmarkCategoryNames();
 
     void setTransferOption(QLandmarkManager::TransferOption option);
@@ -119,9 +121,10 @@ private:
     QLandmarkManager::TransferOption m_option;
     QString m_error;
     QLandmarkManager::Error m_errorCode;
-    DatabaseOperations *m_databaseOperations;
     volatile const bool *m_cancel;
-    QList<QStringList> m_landmarkCategoryNames;
+    QList<QStringList> m_landmarkCategoryNames;//list of category names belonging to each landmark
+
+    QHash<QString, QString> m_categoryIdNameHash;//category id to name hash
 };
 
 #endif // #ifndef QLANDMARKFILEHANDLER_LMX_P_H
