@@ -1233,15 +1233,60 @@ void tst_QContactManager::batch()
     QVERIFY(b.details<QContactPhoneNumber>().at(0).number() == "234567");
     QVERIFY(c.details<QContactPhoneNumber>().at(0).number() == "34567");
 
-    /* Retrieve them with the batch API */
+    /* Retrieve them with the batch ID fetch API */
     QList<QContactLocalId> batchIds;
     batchIds << a.localId() << b.localId() << c.localId();
+
+    // Null error map first (doesn't crash)
     QList<QContact> batchFetch = cm->contacts(batchIds, 0, QContactFetchHint());
+    QVERIFY(cm->error() == QContactManager::NoError);
+    QVERIFY(batchFetch.count() == 3);
     QVERIFY(batchFetch.at(0).detail(QContactName::DefinitionName) == na);
     QVERIFY(batchFetch.at(1).detail(QContactName::DefinitionName) == nb);
     QVERIFY(batchFetch.at(2).detail(QContactName::DefinitionName) == nc);
-    // TODO verify more
 
+    // With error map
+    batchFetch = cm->contacts(batchIds, &errorMap, QContactFetchHint());
+    QVERIFY(cm->error() == QContactManager::NoError);
+    QVERIFY(errorMap.count() == 0);
+    QVERIFY(batchFetch.count() == 3);
+    QVERIFY(batchFetch.at(0).detail(QContactName::DefinitionName) == na);
+    QVERIFY(batchFetch.at(1).detail(QContactName::DefinitionName) == nb);
+    QVERIFY(batchFetch.at(2).detail(QContactName::DefinitionName) == nc);
+
+    /* Now an empty id */
+    batchIds.clear();
+    batchIds << QContactLocalId() << a.localId() << b.localId() << c.localId();
+    batchFetch = cm->contacts(batchIds, 0, QContactFetchHint());
+    QVERIFY(cm->error() != QContactManager::NoError);
+    QVERIFY(batchFetch.count() == 4);
+    QVERIFY(batchFetch.at(0).detail(QContactName::DefinitionName) == QContactDetail());
+    QVERIFY(batchFetch.at(1).detail(QContactName::DefinitionName) == na);
+    QVERIFY(batchFetch.at(2).detail(QContactName::DefinitionName) == nb);
+    QVERIFY(batchFetch.at(3).detail(QContactName::DefinitionName) == nc);
+
+    batchFetch = cm->contacts(batchIds, &errorMap, QContactFetchHint());
+    QVERIFY(cm->error() != QContactManager::NoError);
+    QVERIFY(batchFetch.count() == 4);
+    QVERIFY(errorMap.count() == 1);
+    QVERIFY(errorMap[0] == QContactManager::DoesNotExistError);
+    QVERIFY(batchFetch.at(0).detail(QContactName::DefinitionName) == QContactDetail());
+    QVERIFY(batchFetch.at(1).detail(QContactName::DefinitionName) == na);
+    QVERIFY(batchFetch.at(2).detail(QContactName::DefinitionName) == nb);
+    QVERIFY(batchFetch.at(3).detail(QContactName::DefinitionName) == nc);
+
+    /* Now multiple of the same contact */
+    batchIds.clear();
+    batchIds << c.localId() << b.localId() << c.localId() << a.localId() << a.localId();
+    batchFetch = cm->contacts(batchIds, &errorMap, QContactFetchHint());
+    QVERIFY(cm->error() == QContactManager::NoError);
+    QVERIFY(batchFetch.count() == 5);
+    QVERIFY(errorMap.count() == 0);
+    QVERIFY(batchFetch.at(0).detail(QContactName::DefinitionName) == nc);
+    QVERIFY(batchFetch.at(1).detail(QContactName::DefinitionName) == nb);
+    QVERIFY(batchFetch.at(2).detail(QContactName::DefinitionName) == nc);
+    QVERIFY(batchFetch.at(3).detail(QContactName::DefinitionName) == na);
+    QVERIFY(batchFetch.at(4).detail(QContactName::DefinitionName) == na);
 
     /* Now delete them all */
     QList<QContactLocalId> ids;
