@@ -7,5 +7,6 @@
     <file>data/file.omg</file>
     <file>data/garbage.xml</file>
     <file>data/AUS-PublicToilet-NewSouthWales.lmx</file>
+    <file>data/AUS-PublicToilet-NewSouthWales.gpx</file>
     </qresource>
 </RCC>

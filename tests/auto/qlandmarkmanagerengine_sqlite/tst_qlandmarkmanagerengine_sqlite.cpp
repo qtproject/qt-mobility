@@ -5756,6 +5756,23 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
             QCOMPARE(landmark.categoryIds().at(0), cat1.categoryId());
         }
     }
+
+    if (type == "async") {
+        int originalLandmarksCount = m_manager->landmarks().count();
+        spy.clear();
+        importRequest.setFileName(":data/AUS-PublicToilet-NewSouthWales.gpx");
+        importRequest.setFormat(QLandmarkManager::Gpx);
+        importRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
+        importRequest.start();
+        QTest::qWait(75);
+        QCOMPARE(spy.count(),1);
+        QCOMPARE(qvariant_cast<QLandmarkAbstractRequest::State>(spy.at(0).at(0)), QLandmarkAbstractRequest::ActiveState);
+        importRequest.cancel();
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::CancelError,2000));
+        QCOMPARE(originalLandmarksCount, m_manager->landmarkIds().count());
+        QCOMPARE(importRequest.landmarkIds().count(),0);
+    }
+
 }
 
 void tst_QLandmarkManagerEngineSqlite::importGpx_data()
@@ -5959,6 +5976,7 @@ void tst_QLandmarkManagerEngineSqlite::importLmx() {
         importRequest.cancel();
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::CancelError,2000));
         QCOMPARE(originalLandmarkCount, m_manager->landmarkIds().count());
+        QCOMPARE(importRequest.landmarkIds().count(),0);
     }
 }
 

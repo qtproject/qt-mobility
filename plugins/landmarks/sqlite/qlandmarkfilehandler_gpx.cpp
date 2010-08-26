@@ -118,7 +118,6 @@ bool QLandmarkFileHandlerGpx::importData(QIODevice *device)
         if (m_errorCode != QLandmarkManager::CancelError) {
             m_errorCode = QLandmarkManager::ParsingError;
             m_errorString = m_reader->errorString();
-
         }
         return false;
     } else {
