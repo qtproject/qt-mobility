@@ -41,9 +41,6 @@
 
 // User includes
 #include "organizeritemrequestserviceprovider.h"
-#include "organizerItemTransform.h"
-#include "organizerItemGuidTransform.h"
-#include "organizerItemTypeTransform.h"
 #include "qorganizersymbian_p.h"
 
 

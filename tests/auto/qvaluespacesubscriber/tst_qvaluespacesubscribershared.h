@@ -65,6 +65,9 @@ private slots:
 
     void testPathChanges();
 
+    void testInvalidPath_data();
+    void testInvalidPath();
+
     void contentsChanged_data();
     void contentsChanged();
     void dataVersatility_data();
