@@ -97,6 +97,23 @@ QOrganizerItemMaemo5Engine::QOrganizerItemMaemo5Engine()
 
     d->m_itemTransformer.setManagerUri(managerUri());
     d->m_asynchProcess = new OrganizerAsynchProcess(this);
+
+    bool dbOk = d->m_databaseAccess.open(QDir::homePath().append(CALENDAR).append(CALENDARDB));
+    if (!dbOk) {
+        qDebug() << "Database didn't open!";
+        // TODO: Then what???
+    }
+
+    /*
+    bool error;
+    d->m_databaseAccess.typeOf(QOrganizerItemLocalId(6), error);
+    */
+
+    /*
+    int calError;
+    std::string guid = "{cab6a645-0000-4000-80de-ba5b2ea96279}";
+    d->m_databaseAccess.getEvents(2, guid, calError);
+    */
 }
 
 void QOrganizerItemMaemo5Engine::dataChanged()
@@ -114,6 +131,7 @@ void QOrganizerItemMaemo5Engine::dataChanged()
 QOrganizerItemMaemo5Engine::~QOrganizerItemMaemo5Engine()
 {
     delete d->m_asynchProcess;
+    //d->m_databaseAccess.close();
 }
 
 QString QOrganizerItemMaemo5Engine::managerName() const
