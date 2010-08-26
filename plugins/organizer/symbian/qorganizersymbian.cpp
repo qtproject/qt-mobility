@@ -553,9 +553,8 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(QOrganizerItem *
                             parentEntry->SequenceNumberL(),
                             recurrenceId,
                             CalCommon::EThisOnly);
-    CleanupStack::Pop(globalUid); // Ownership transferred
     isNewEntry = true;
-
+    CleanupStack::Pop(globalUid); // Ownership transferred
     CleanupStack::PopAndDestroy(parentEntry);
     CleanupStack::PopAndDestroy(parentGlobalUid);
 
@@ -564,34 +563,29 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(QOrganizerItem *
 
 CCalEntry* QOrganizerItemSymbianEngine::entryForItemL(QOrganizerItem *item, bool &isNewEntry) const
 {
-    HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
-
     // Try to find with local id
-    CCalEntry *entry = findEntryLC(item->localId(), item->id().managerUri());
+    CCalEntry *entry = findEntryL(item->localId(), item->id().managerUri());
 
-    // Not found? Try to find with globalUid
+    // Not found. Try to find with globalUid
     if (!entry) {
+        HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
+
         entry = findEntryLC(*globalUid);
-    }
-
-    // Not found? Create a new entry instance to be saved to the database
-    if (!entry) {
-        CCalEntry::TType type = OrganizerItemTypeTransform::entryTypeL(*item);
-        entry = CCalEntry::NewL(type, globalUid, CCalEntry::EMethodAdd, 0);
-        CleanupStack::PushL(entry);
-        isNewEntry = true;
-    }
-
-    CleanupStack::Pop(entry); // Ownership transferred to the caller
-    if (isNewEntry) {
-        CleanupStack::Pop(globalUid); // Ownership transferred to the new entry
-    } else {
+        // Not found? Create a new entry instance to be saved to the database
+        if (!entry) {
+            CCalEntry::TType type = OrganizerItemTypeTransform::entryTypeL(*item);
+            entry = CCalEntry::NewL(type, globalUid, CCalEntry::EMethodAdd, 0);
+            isNewEntry = true;
+            CleanupStack::Pop(globalUid); // Ownership transferred to the new entry
+            return entry;
+        }
+        CleanupStack::Pop(entry); // Ownership transferred to the caller
         CleanupStack::PopAndDestroy(globalUid);
     }
     return entry;
 }
 
-CCalEntry * QOrganizerItemSymbianEngine::findEntryLC(QOrganizerItemLocalId localId, QString manageruri) const
+CCalEntry * QOrganizerItemSymbianEngine::findEntryL(QOrganizerItemLocalId localId, QString manageruri) const
 {
     CCalEntry *entry(0);
 
@@ -603,7 +597,6 @@ CCalEntry * QOrganizerItemSymbianEngine::findEntryLC(QOrganizerItemLocalId local
             entry = m_entryView->FetchL(localId); // ownership transferred
             if (!entry)
                 User::Leave(KErrNotFound);
-            CleanupStack::PushL(entry);
         } else {
             User::Leave(KErrArgument);
         }

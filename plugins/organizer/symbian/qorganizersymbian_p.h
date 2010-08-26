@@ -180,7 +180,7 @@ public:
 private:
     CCalEntry* entryForItemOccurrenceL(QOrganizerItem *item, bool &isNewEntry) const;
     CCalEntry* entryForItemL(QOrganizerItem *item, bool &isNewEntry) const;
-    CCalEntry* findEntryLC(QOrganizerItemLocalId localId, QString manageruri) const;
+    CCalEntry* findEntryL(QOrganizerItemLocalId localId, QString manageruri) const;
     CCalEntry* findEntryLC(const TDesC8& globalUid) const;
     CCalEntry* findParentEntryLC(QOrganizerItem *item, const TDesC8& globalUid) const;
     void removeItemL(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet *changeSet);
