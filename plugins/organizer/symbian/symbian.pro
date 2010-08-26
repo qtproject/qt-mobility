@@ -44,7 +44,8 @@ symbian: {
         transform/organizeritemtypetransform.h \
         transform/organizerjournaltimerangetransform.h \
         transform/organizertodoprogresstransform.h \
-        transform/organizertodotimerangetransform.h
+        transform/organizertodotimerangetransform.h \
+	transform/organizeritemremindertransform.h
     SOURCES += \
     	qorganizeritemrequestqueue.cpp \
     	organizeritemrequestserviceprovider.cpp \
@@ -63,7 +64,8 @@ symbian: {
         transform/organizeritemtypetransform.cpp \
         transform/organizerjournaltimerangetransform.cpp \
         transform/organizertodoprogresstransform.cpp \
-        transform/organizertodotimerangetransform.cpp
+        transform/organizertodotimerangetransform.cpp \
+	transform/organizeritemremindertransform.cpp
 
     LIBS += -lcalinterimapi
 

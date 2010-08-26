@@ -46,6 +46,7 @@
 #include <calinstance.h>
 
 #include "qorganizeritem.h"
+#include "qorganizereventoccurrence.h"
 #include "organizereventtimerangetransform.h"
 #include "organizeritemdescriptiontransform.h"
 #include "organizeritemdetailtransform.h"
@@ -60,7 +61,7 @@
 #include "organizerjournaltimerangetransform.h"
 #include "organizertodoprogresstransform.h"
 #include "organizertodotimerangetransform.h"
-#include "qorganizereventoccurrence.h"
+#include "organizeritemremindertransform.h"
 
 QTM_USE_NAMESPACE
 
@@ -118,6 +119,7 @@ OrganizerItemTransform::OrganizerItemTransform()
     m_detailTransforms.append(new OrganizerTodoProgressTransform());
     m_detailTransforms.append(new OrganizerTodoTimeRangeTransform());
     m_detailTransforms.append(new OrganizerItemRecurrenceTransform());
+	m_detailTransforms.append(new OrganizerItemReminderTransform());
 }
 
 OrganizerItemTransform::~OrganizerItemTransform()

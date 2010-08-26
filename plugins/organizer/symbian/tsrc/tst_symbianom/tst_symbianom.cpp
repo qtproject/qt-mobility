@@ -482,7 +482,7 @@ void tst_SymbianOm::addItem_data()
     QStringList managerNames = QOrganizerItemManager::availableManagers();
     managerNames.removeAll("invalid"); // the test cases would not pass on invalid backend
     managerNames.removeAll("skeleton"); // the test cases would not pass on skeleton backend
-    //managerNames.removeAll("memory");
+    managerNames.removeAll("memory");
 
     foreach (QString managerName, managerNames) {
         addEvent_data(managerName);
@@ -659,7 +659,7 @@ void tst_SymbianOm::addManagers()
     QStringList managerNames = QOrganizerItemManager::availableManagers();
     managerNames.removeAll("invalid"); // the test cases would not pass on invalid backend
     managerNames.removeAll("skeleton"); // the test cases would not pass on skeleton backend
-    //managerNames.removeAll("memory");
+    managerNames.removeAll("memory");
 
     foreach(QString mgr, managerNames) {
         QTest::newRow(QString("[%1]").arg(mgr).toLatin1().constData()) << mgr;
