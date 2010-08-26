@@ -708,6 +708,12 @@ bool QLandmarkFileHandlerGpx::writeGpx()
 
 
     for (int i = 0; i < m_waypoints.size(); ++i) {
+        if (m_cancel && (*m_cancel == false)) {
+            m_errorCode = QLandmarkManager::CancelError;
+            m_errorString = "Export of gpx file was canceled";
+            return false;
+        }
+
        if (!writeWaypoint(m_waypoints.at(i), "wpt"))
         return false;
     }

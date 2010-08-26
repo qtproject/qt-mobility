@@ -6113,6 +6113,7 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx() {
         exportRequest.setFormat(QLandmarkManager::Gpx);
         exportRequest.start();
         QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::NoError));
+        spy.clear();
     } else if (type == "asyncIdList") {
         QList<QLandmarkId> lmIds;
 
@@ -6197,6 +6198,28 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx() {
         nameFilter.setName("lm4");
         QCOMPARE(m_manager->landmarks(nameFilter).count(),1);
     }
+
+    if (type == "async") {
+        QFile::remove(exportFile);
+        QLandmark lm;
+        lms.clear();
+        for (int i=0; i < 500; ++i) {
+            lm.setName(QString("LM%1").arg(0));
+            lms.append(lm);
+        }
+
+        QVERIFY(m_manager->saveLandmarks(&lms));
+        exportRequest.setFormat(QLandmarkManager::Gpx);
+        exportRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
+        exportRequest.setFileName(exportFile);
+        QList<QLandmarkId> idList;
+        exportRequest.setLandmarkIds(idList);
+        exportRequest.start();
+        QTest::qWait(50);
+        exportRequest.cancel();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::CancelError,2000));
+    }
+
 }
 
 void tst_QLandmarkManagerEngineSqlite::exportGpx_data()

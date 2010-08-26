@@ -48,6 +48,7 @@
 #include <QFile>
 #include <QBuffer>
 #include <QDebug>
+#include <QThread>
 
 #define private public
 #include <qlandmarkmanager.h>
@@ -55,6 +56,19 @@
 
 
 QTM_USE_NAMESPACE
+
+class TestThread : public QThread
+{
+public:
+    volatile bool m_cancel;
+    TestThread(): m_cancel(false){}
+
+protected:
+    void run() {
+        msleep(100);
+        m_cancel = false;
+    }
+};
 
 Q_DECLARE_METATYPE(QList<QLandmark>);
 Q_DECLARE_METATYPE(QList<QList<QLandmark> >);
@@ -66,12 +80,14 @@ class tst_QLandmarkGpxHandler : public QObject
 private:
     QLandmarkManager *m_manager;
     QLandmarkFileHandlerGpx *m_handler;
+    QString m_exportFile;
 
 private slots:
 
     void init() {
         QMap<QString, QString> map;
         map["filename"] = "test.db";
+        m_exportFile = "exportfile";
         m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
 
         m_handler = new QLandmarkFileHandlerGpx;
@@ -83,11 +99,13 @@ private slots:
 
         QFile file("test.db");
         file.remove();
+        QFile::remove(m_exportFile);
     }
 
     void cleanupTestCase() {
         QFile file("test.db");
         file.remove();
+        QFile::remove(m_exportFile);
     }
 
     void fileImport() {
@@ -159,6 +177,25 @@ private slots:
 
         QVERIFY(!result);
         QCOMPARE(m_handler->errorString(), error);
+    }
+
+    void cancelExport()
+    {
+        TestThread cancelThread;
+        QLandmarkFileHandlerGpx handler(&(cancelThread.m_cancel));
+        QLandmark lm;
+        QList<QLandmark> lms;
+        for (int i=0; i < 500; ++i) {
+            lm.setName(QString("LM%1").arg(0));
+            lms.append(lm);
+        }
+
+        handler.setWaypoints(lms);
+        cancelThread.start();
+        QFile file(m_exportFile);
+        QVERIFY(!handler.exportData(&file));
+        QCOMPARE(handler.error(), QLandmarkManager::CancelError);
+        cancelThread.wait();
     }
 
     void fileImportErrors_data() {

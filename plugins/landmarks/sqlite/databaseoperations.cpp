@@ -1143,7 +1143,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                 do {
                     if (queryRun && queryRun->isCanceled) {
                         *error = QLandmarkManager::CancelError;
-                        *errorString = "Fetch operation failed";
+                        *errorString = "Fetch operation was canceled";
                         return QList<QLandmarkId>();
                     }
 
@@ -1167,7 +1167,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                     do {
                         if (queryRun && queryRun->isCanceled) {
                             *error = QLandmarkManager::CancelError;
-                            *errorString = "Fetch operation failed";
+                            *errorString = "Fetch operation canceled";
                             return QList<QLandmarkId>();
                         }
 
@@ -1193,7 +1193,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                         do {
                             if (queryRun && queryRun->isCanceled) {
                                 *error = QLandmarkManager::CancelError;
-                                *errorString = "Fetch operation failed";
+                                *errorString = "Fetch operation canceled";
                                 return QList<QLandmarkId>();
                             }
                             lat = query.value(1).toDouble(&ok);
@@ -1243,7 +1243,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
         for (int i=0; i < result.count(); ++i) {
             if (queryRun && queryRun->isCanceled) {
                 *error = QLandmarkManager::CancelError;
-                *errorString = "Fetch operation failed";
+                *errorString = "Fetch operation canceled";
                 return QList<QLandmarkId>();
             }
             landmark = retrieveLandmark(result.at(i),error,errorString);
@@ -1294,7 +1294,7 @@ QList<QLandmark> DatabaseOperations::landmarks(const QLandmarkFilter& filter,
     foreach(const QLandmarkId &id, ids) {
          if (queryRun && queryRun->isCanceled) {
             *error = QLandmarkManager::CancelError;
-            *errorString  = "Fetch operation failed";
+            *errorString  = "Fetch operation canceled";
             return QList<QLandmark>();
         }
 
@@ -2717,7 +2717,7 @@ bool DatabaseOperations::exportLandmarksGpx(QIODevice *device,
                         QString *errorString,
                         QueryRun *queryRun) const
 {
-    QLandmarkFileHandlerGpx gpxHandler;
+    QLandmarkFileHandlerGpx gpxHandler(queryRun?&(queryRun->isCanceled):0);
 
     QList<QLandmarkSortOrder> sortOrders;
     QLandmarkFilter filter;
@@ -3136,11 +3136,6 @@ void QueryRun::run()
                                                     exportRequest->format(), exportRequest->landmarkIds(),
                                                     exportRequest->transferOption(),
                                                     &error, &errorString);
-
-                if (this->isCanceled) {
-                    error = QLandmarkManager::CancelError;
-                    errorString = "Landmark export request was canceled";
-                }
 
                QMutexLocker(&(engine->m_mutex));
                if (engine->m_requestRunHash.contains(request))
