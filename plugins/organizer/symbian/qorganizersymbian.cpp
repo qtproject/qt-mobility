@@ -1037,8 +1037,3 @@ bool QOrganizerItemSymbianEngine::transformError(TInt symbianError, QOrganizerIt
     }
     return *qtError == QOrganizerItemManager::NoError;
 }
-
-CCalEntryView* QOrganizerItemSymbianEngine::entryView()
-{
-    return m_entryView;
-}
