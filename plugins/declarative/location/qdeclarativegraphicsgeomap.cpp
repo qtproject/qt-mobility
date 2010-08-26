@@ -109,7 +109,7 @@ QPointF QDeclarativeGraphicsGeoMap::toScreenPosition(const QDeclarativeCoordinat
 QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::toCoordinate(QPointF screenPosition) const
 {
     return new QDeclarativeCoordinate(screenPositionToCoordinate(screenPosition),
-                                      const_cast<QDeclarativeGraphicsGeoMap *const>(this));
+                                      const_cast<QDeclarativeGraphicsGeoMap *>(this));
 }
 
 void QDeclarativeGraphicsGeoMap::memberCenterChanged(const QGeoCoordinate &coordinate)

@@ -127,7 +127,7 @@ private:
   QList<QContactPresence*> getPresenceDetail(EContact *eContact) const;
   QContactTimestamp* getTimestampDetail(EContact *eContact) const; 
   QContactThumbnail* getThumbnailDetail(EContact *eContact) const;
-  QContactUrl* getUrlDetail(EContact *eContact) const;
+  QList<QContactUrl*> getUrlDetail(EContact *eContact) const;
   
   /* Saving - QContact to abookContact */
   OssoABookContact* convert(const QContact *contact, QContactManager::Error* error) const;

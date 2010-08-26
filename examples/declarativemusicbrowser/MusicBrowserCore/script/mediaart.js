@@ -48,12 +48,14 @@ function getAlbumArtUrl(artist, title) {
     if (artist == "") artist = " ";
     if (title == "") title = " ";
 
-    return homePath
+    var artPath = homePath
             + "/.cache/media-art/album-"
             + Qt.md5(artist.toLowerCase().replace(illegalCharacters, "").replace(whitespace, " "))
             + "-"
             + Qt.md5(title.toLowerCase().replace(illegalCharacters, "").replace(whitespace, " "))
             + ".jpeg";
+
+    return homePath + "/.thumbnails/cropped/" + Qt.md5(artPath) + ".jpeg";
 }
 
 function formatDuration(duration)

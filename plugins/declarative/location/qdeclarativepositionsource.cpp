@@ -431,7 +431,7 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo& 
     if (update.isValid()) {
         m_position.setTimestamp(update.timestamp());
         m_position.setLatitude(update.coordinate().latitude());
-        m_position.setlongitude(update.coordinate().longitude());
+        m_position.setLongitude(update.coordinate().longitude());
 
         if (update.coordinate().type() == QGeoCoordinate::Coordinate3D) {
             m_position.setAltitude(update.coordinate().altitude());

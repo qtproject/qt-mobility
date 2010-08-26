@@ -294,6 +294,8 @@ TCalRRule OrganizerItemRecurrenceTransform::toCalRRuleL(QList<QOrganizerItemRecu
                 tempDaysOfMonth.append(startDateTime.date().day());
                 rrule.setDaysOfMonth(tempDaysOfMonth);
             }
+            // Convert days-of-month into by-month-day
+            toMonthDaysL(rrule.daysOfMonth(), calRule);
         } else if (calRule.Type() == TCalRRule::EYearly) {
             // Note: this is a special case; days of week can be converted
             // either to TDay array or to TDayOfMonth array, depending on
@@ -301,9 +303,6 @@ TCalRRule OrganizerItemRecurrenceTransform::toCalRRuleL(QList<QOrganizerItemRecu
             // -> Convert days-of-week and positions into TDayOfMonth array
             toDaysOfMonthL(rrule.daysOfWeek(), rrule.positions(), calRule);
         }
-
-        // Convert days-of-month into by-month-day
-        toMonthDaysL(rrule.daysOfMonth(), calRule);
 
         // Convert months into by-month
         toTMonthsL(rrule.months(), calRule);
