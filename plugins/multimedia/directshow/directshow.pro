@@ -18,6 +18,6 @@ DEPENDPATH += .
 HEADERS += dsserviceplugin.h
 SOURCES += dsserviceplugin.cpp
 
-!contains(TMP_REQUIRED_HEADERS, wmsdk.h): DEFINES += QT_NO_WMSDK
+!contains(wmsdk_enabled, yes): DEFINES += QT_NO_WMSDK
 
 include (player/player.pri)

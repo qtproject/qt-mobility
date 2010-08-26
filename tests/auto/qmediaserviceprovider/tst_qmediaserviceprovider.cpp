@@ -311,7 +311,7 @@ void tst_QMediaServiceProvider::initTestCase()
     plugins << new MockServicePlugin3;
     plugins << new MockServicePlugin4;
 
-    QMediaPluginLoader::setStaticPlugins(QLatin1String("/mediaservice"), plugins);
+    QMediaPluginLoader::setStaticPlugins(QLatin1String("mediaservice"), plugins);
 }
 
 void tst_QMediaServiceProvider::testDefaultProviderAvailable()

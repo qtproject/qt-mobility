@@ -101,11 +101,11 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QMediaImageViewer class provides a means of viewing image media.</p>
-<p>QMediaImageViewer is used together with a media display object such as <a href="qvideowidget.html">QVideoWidget</a> to present an image. A display object is attached to the image viewer by passing a pointer to the QMediaImageViewer instance to the setMediaObject() function of the display object.</p>
+<p>QMediaImageViewer is used together with a media display object such as <a href="qvideowidget.html">QVideoWidget</a> to present an image. A display object is attached to the image viewer by means of the bind function.</p>
 <pre>    viewer = new QMediaImageViewer(this);
 
     display = new QVideoWidget;
-    viewer-&gt;setVideoOutput(display);
+    viewer-&gt;bind(display);
     display-&gt;show();</pre>
 <p>QMediaImageViewer can be paired with a <a href="qmediaplaylist.html">QMediaPlaylist</a> to create a slide show of images. Constructing a <a href="qmediaplaylist.html">QMediaPlaylist</a> with a pointer to an instance of QMediaImageViewer will attach it to the image viewer; changing the playlist's selection will then change the media displayed by the image viewer. With a playlist attached QMediaImageViewer's <a href="qmediaimageviewer.html#play">play</a>(), <a href="qmediaimageviewer.html#pause">pause</a>(), and <a href="qmediaimageviewer.html#stop">stop</a>() slots can be control the progression of the playlist. The <a href="qmediaimageviewer.html#timeout-prop">timeout</a> property determines how long an image is displayed for before progressing to the next in the playlist, and the <a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a> property holds how the duration the current image has been displayed for.</p>
 <pre>    playlist = new QMediaPlaylist(this);
@@ -255,6 +255,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.3</div></td>
 </tr></table></div></address></body>
 </html>

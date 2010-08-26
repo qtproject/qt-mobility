@@ -46,15 +46,10 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-#ifdef Q_OS_SYMBIAN
-    QMainWindow window;
-    window.setContentsMargins(10, 10, 10, 10); // workaround for issue where UI is not drawn in older SDKs
-                                               // this line can be removed when bug QTBUG-8697 is fixed
-    Player *player = new Player(&window);
-    window.setCentralWidget(player);
-    window.showMaximized();
-#else
     Player player;
+#ifdef Q_OS_SYMBIAN 
+    player.showMaximized();
+#else    
     player.show();
 #endif
     return app.exec();

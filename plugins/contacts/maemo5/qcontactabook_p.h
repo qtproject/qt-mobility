@@ -118,13 +118,15 @@ private:
   QContactGender* getGenderDetail(EContact *eContact) const;
   QContactGuid* getGuidDetail(EContact *eContact) const;
   QContactNote* getNoteDetail(EContact *eContact) const;
-  QList<QContactOnlineAccount*> getOnlineAccountDetail(EContact *eContact) const;
+  void getOnlineAccountAndPresenceDetails(EContact *eContact, 
+                                         QList<QContactOnlineAccount*>& onlineAccounts,
+                                         QList<QContactPresence*>& presences) const;
   QContactOrganization* getOrganizationDetail(EContact *eContact) const;
   QList<QContactPhoneNumber*> getPhoneDetail(EContact *eContact) const;
   QList<QContactPresence*> getPresenceDetail(EContact *eContact) const;
   QContactTimestamp* getTimestampDetail(EContact *eContact) const; 
   QContactThumbnail* getThumbnailDetail(EContact *eContact) const;
-  QContactUrl* getUrlDetail(EContact *eContact) const;
+  QList<QContactUrl*> getUrlDetail(EContact *eContact) const;
   
   /* Saving - QContact to abookContact */
   OssoABookContact* convert(const QContact *contact, QContactManager::Error* error) const;

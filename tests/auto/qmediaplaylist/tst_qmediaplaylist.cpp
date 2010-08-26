@@ -180,7 +180,7 @@ void tst_QMediaPlaylist::initTestCase()
     content2 = QMediaContent(QUrl(QLatin1String("file:///2")));
     content3 = QMediaContent(QUrl(QLatin1String("file:///3")));
 
-    QMediaPluginLoader::setStaticPlugins(QLatin1String("/playlistformats"), QObjectList() << new QM3uPlaylistPlugin(this));
+    QMediaPluginLoader::setStaticPlugins(QLatin1String("playlistformats"), QObjectList() << new QM3uPlaylistPlugin(this));
 }
 
 void tst_QMediaPlaylist::cleanup()

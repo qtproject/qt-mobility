@@ -71,7 +71,7 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
 #endif
     for (int i=0; i<paths.count(); i++) {
         QString libPath = QDir::toNativeSeparators(paths[i]) + QDir::separator() + libNameOrPath;
-        
+
 #ifdef Q_OS_SYMBIAN
         QFileInfo fi(libPath);
         if (fi.suffix() == QLatin1String("dll"))
