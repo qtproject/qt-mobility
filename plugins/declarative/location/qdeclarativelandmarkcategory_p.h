@@ -14,7 +14,7 @@ class QDeclarativeLandmarkCategory : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(QUrl iconUrl READ iconUrl WRITE setIconUrl NOTIFY iconUrlChanged)
+    Q_PROPERTY(QUrl iconSource READ iconSource WRITE setIconSource NOTIFY iconSourceChanged)
 
 public:
     explicit QDeclarativeLandmarkCategory(QObject* parent = 0);
@@ -22,20 +22,20 @@ public:
     QString name();
     void setName(const QString& name);
 
-    QUrl iconUrl();
-    void setIconUrl(const QUrl& iconUrl);
+    QUrl iconSource();
+    void setIconSource(const QUrl& iconSource);
 
 signals:
 
     void nameChanged(QString name);
-    void iconUrlChanged(QUrl iconUrl);
+    void iconSourceChanged(QUrl iconSource);
 
 public slots:
 
 private:
 
     QLandmarkCategory m_category;
-    friend class QDeclarativeLandmarkCategorySource;
+    friend class QDeclarativeLandmarkCategoryModel;
     void setCategory(const QLandmarkCategory& category);
 
 };

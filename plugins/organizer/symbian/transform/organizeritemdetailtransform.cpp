@@ -50,6 +50,12 @@ OrganizerItemDetailTransform::~OrganizerItemDetailTransform()
 
 }
 
+void OrganizerItemDetailTransform::modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const
+{
+    Q_UNUSED(schemaDefs);
+    // empty default implementation 
+}
+
 void OrganizerItemDetailTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
 {
     // In most cases we can use the other transformToDetailL function without modification

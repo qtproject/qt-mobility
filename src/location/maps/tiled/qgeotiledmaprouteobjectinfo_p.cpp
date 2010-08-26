@@ -110,9 +110,7 @@ void QGeoTiledMapRouteObjectInfo::mapUpdate()
 
         distanceFilteredPoints.append(points.at(points.size() - 1));
 
-        QPen pen = route->pen();
-        pen.setWidthF(pen.widthF() * tiledMapData->zoomFactor());
-        pathItem->setPen(pen);
+        pathItem->setPen(route->pen());
     }
 
     QPainterPath painterPath;

@@ -74,7 +74,6 @@ private:
     QGalleryDBusInterfacePointer metaDataInterface();
     QGalleryDBusInterfacePointer searchInterface();
     QGalleryDBusInterfacePointer fileInterface();
-    QGalleryDBusInterfacePointer thumbnailInterface();
     QGalleryTrackerChangeNotifier *changeNotifier();
 
     QGalleryAbstractResponse *createItemListResponse(
@@ -88,7 +87,6 @@ private:
     QGalleryDBusInterfacePointer metaDataService;
     QGalleryDBusInterfacePointer searchService;
     QGalleryDBusInterfacePointer fileService;
-    QGalleryDBusInterfacePointer thumbnailService;
     QScopedPointer<QGalleryTrackerChangeNotifier> notifier;
 };
 
@@ -135,25 +133,6 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::fileInterface()
     }
     return fileService;
 }
-
-QGalleryDBusInterfacePointer QDocumentGalleryPrivate::thumbnailInterface()
-{
-    if (!thumbnailService) {
-
-        thumbnailService = new QGalleryThumbnailerDBusInterface(
-#ifdef Q_WS_MAEMO_5
-                QLatin1String("org.freedesktop.thumbnailer"),
-                QLatin1String("/org/freedesktop/thumbnailer/Generic"),
-                "org.freedesktop.thumbnailer.Generic");
-#else
-                QLatin1String("org.freedesktop.thumbnails.Thumbnailer1"),
-                QLatin1String("/org/freedesktop/thumbnails/Thumbnailer1"),
-                "org.freedesktop.thumbnails.Thumbnailer1");
-#endif
-    }
-    return thumbnailService;
-}
-
 
 QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::changeNotifier()
 {

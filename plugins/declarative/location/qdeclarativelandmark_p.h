@@ -21,10 +21,10 @@ class QDeclarativeLandmark : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(QString phone READ phone WRITE setPhone NOTIFY phoneChanged)
+    Q_PROPERTY(QString phoneNumber READ phoneNumber WRITE setPhoneNumber NOTIFY phoneNumberChanged)
     Q_PROPERTY(QString description READ description WRITE setDescription NOTIFY descriptionChanged)
     Q_PROPERTY(double radius READ radius WRITE setRadius NOTIFY radiusChanged)
-    Q_PROPERTY(QUrl iconUrl READ iconUrl WRITE setIconUrl NOTIFY iconUrlChanged)
+    Q_PROPERTY(QUrl iconSource READ iconSource WRITE setIconSource NOTIFY iconSourceChanged)
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
 
 public:
@@ -33,8 +33,8 @@ public:
     QString name();
     void setName(const QString& name);
 
-    QString phone();
-    void setPhone(const QString& phone);
+    QString phoneNumber();
+    void setPhoneNumber(const QString& phoneNumber);
 
     QString description();
     void setDescription(const QString& description);
@@ -42,22 +42,22 @@ public:
     double radius();
     void setRadius(const double& radius);
 
-    QUrl iconUrl();
-    void setIconUrl(const QUrl& iconUrl);
+    QUrl iconSource();
+    void setIconSource(const QUrl& iconSource);
 
     QUrl url();
     void setUrl(const QUrl& url);
 
 signals:
     void nameChanged(QString name);
-    void phoneChanged(QString phone);
+    void phoneNumberChanged(QString phoneNumber);
     void descriptionChanged(QString descriptionChanged);
     void radiusChanged(double radius);
-    void iconUrlChanged(QUrl iconUrl);
+    void iconSourceChanged(QUrl iconSource);
     void urlChanged(QUrl url);
 
 private:
-    friend class QDeclarativeLandmarkSource;
+    friend class QDeclarativeLandmarkModel;
     void setLandmark(const QLandmark& landmark);
 
 private:

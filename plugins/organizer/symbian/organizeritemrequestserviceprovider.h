@@ -84,6 +84,8 @@ private:
     void Cleanup();
     
 private: // Worker functions
+    // Fetch itemInstance
+    void FetchInstanceL();
     // Save item/entry in agenda server
     void SaveItemL();
     // Fetch items/entries from agenda server

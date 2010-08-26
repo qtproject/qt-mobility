@@ -140,15 +140,6 @@ QGeoMapData* QGeoMappingManager::createMapData(QGraphicsGeoMap *geoMap)
     return d_ptr->engine->createMapData(geoMap);
 }
 
-/*!
-    Stops this manager from managing \a mapData.
-*/
-void QGeoMappingManager::removeMapData(QGeoMapData *mapData)
-{
-//    if (d_ptr->engine)
-    d_ptr->engine->removeMapData(mapData);
-}
-
 ///*!
 //    Updates the map image stored in \a mapData based on the viewport
 //    data contained within \a mapData.

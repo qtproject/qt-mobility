@@ -84,6 +84,7 @@ QLandmarkCategoryIdFetchRequest::~QLandmarkCategoryIdFetchRequest()
 QList<QLandmarkCategoryId> QLandmarkCategoryIdFetchRequest::categoryIds() const
 {
     Q_D(const QLandmarkCategoryIdFetchRequest);
+    QMutexLocker ml(&d->mutex);
     return d->categoryIds;
 }
 
@@ -95,6 +96,7 @@ QList<QLandmarkCategoryId> QLandmarkCategoryIdFetchRequest::categoryIds() const
 QLandmarkNameSort QLandmarkCategoryIdFetchRequest::sorting() const
 {
     Q_D(const QLandmarkCategoryIdFetchRequest);
+    QMutexLocker ml(&d->mutex);
     return d->sorting;
 }
 
@@ -104,6 +106,7 @@ QLandmarkNameSort QLandmarkCategoryIdFetchRequest::sorting() const
 void QLandmarkCategoryIdFetchRequest::setSorting(const QLandmarkNameSort &nameSort)
 {
     Q_D(QLandmarkCategoryIdFetchRequest);
+    QMutexLocker ml(&d->mutex);
     d->sorting = nameSort;
 }
 
@@ -113,6 +116,7 @@ void QLandmarkCategoryIdFetchRequest::setSorting(const QLandmarkNameSort &nameSo
 int QLandmarkCategoryIdFetchRequest::limit() const
 {
     Q_D(const QLandmarkCategoryIdFetchRequest);
+    QMutexLocker ml(&d->mutex);
     return d->limit;
 }
 
@@ -122,6 +126,7 @@ int QLandmarkCategoryIdFetchRequest::limit() const
 void QLandmarkCategoryIdFetchRequest::setLimit(int limit)
 {
     Q_D(QLandmarkCategoryIdFetchRequest);
+    QMutexLocker ml(&d->mutex);
     d->limit = limit;
 }
 
@@ -131,6 +136,7 @@ void QLandmarkCategoryIdFetchRequest::setLimit(int limit)
 int QLandmarkCategoryIdFetchRequest::offset() const
 {
     Q_D(const QLandmarkCategoryIdFetchRequest);
+    QMutexLocker ml(&d->mutex);
     return d->offset;
 }
 
@@ -139,6 +145,7 @@ int QLandmarkCategoryIdFetchRequest::offset() const
 */
 void QLandmarkCategoryIdFetchRequest::setOffset(int offset) {
     Q_D(QLandmarkCategoryIdFetchRequest);
+    QMutexLocker ml(&d->mutex);
     d->offset = offset;
 }
 

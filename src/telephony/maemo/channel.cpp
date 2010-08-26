@@ -13,27 +13,11 @@ namespace Tp
     Channel::Channel(QDBusConnection busconnection, const QString busname, const QString &objectPath, const QVariantMap &properties, Connection* conn)
         : StatefulDBusProxy(busconnection, busname, objectPath)
         , ReadyObject(this, FeatureCore)
-        , propertylist(properties)
-        , pChannelInterface(0)
-        , pChannelInterfaceChatStateInterface(0)
-        , pChannelInterfaceDTMFInterface(0)
-        , pChannelInterfaceGroupInterface(0)
-        , pChannelInterfaceHoldInterface(0)
-        , pChannelInterfaceMediaSignallingInterface(0)
-        , pChannelInterfaceMessagesInterface(0)
-        , pChannelInterfacePasswordInterface(0)
-        , pChannelInterfaceTubeInterface(0)
-        , pChannelTypeContactListInterface(0)
-        , pChannelTypeFileTransferInterface(0)
-        , pChannelTypeRoomListInterface(0)
-        , pChannelTypeStreamTubeInterface(0)
-        , pChannelTypeStreamedMediaInterface(0)
-        , pChannelTypeTextInterface(0)
-        , pChannelTypeTubesInterface(0)
-        , status(QTelephonyEvents::Idle)
-        , connection(conn)
-        , direction(0)
     {
+        init();
+        propertylist = properties;
+        connection = conn;
+
         qDebug() << " Channel::Channel(";
         qDebug() << "- QDBusConnection base service: " << busconnection.baseService();
         qDebug() << "- QDBusConnection name: " << busconnection.name();
@@ -51,8 +35,77 @@ namespace Tp
                 direction = 2;
         }
 
-        connect((QObject*)this->becomeReady(), SIGNAL(finished(Tp::PendingOperation *)), SLOT(onChannelReady(Tp::PendingOperation*)));
-        qDebug() << "Current hread: " << QThread::currentThreadId();
+        //Create Channel interface
+        pChannelInterface = new Tp::Client::ChannelInterface(this->dbusConnection(),this->busName(), this->objectPath());
+
+        //Set flag to indicate if values must be read
+        if(propertylist.count() <= 0){
+            qDebug() << "read Channel interfaces";
+            //read the channel interfaces
+            QStringList interfaces = pChannelInterface->Interfaces();
+            propertylist.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".Interfaces"), QVariant(interfaces));
+
+            qDebug() << "read Channel type interfaces";
+            //read the channel interfaces
+            QString channeltype = pChannelInterface->ChannelType();
+            qDebug() << "- Add ChannelType " << channeltype;
+            propertylist.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"), QVariant(channeltype));
+            wasExistingChannel = true;
+        }
+
+        //check if is a call
+        if(propertylist.contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"))){
+            QString type = propertylist.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString();
+            qDebug() << "- check mediatype " << type;
+            /**************************
+            check for Mediastream
+            **************************/
+            if(type == TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA){
+                iscall = true;
+            }
+            /************************************************************
+            check for Text Telephony API doesn't care about SMS (no call)
+            *************************************************************/
+            else if(type == TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT){
+                iscall =  false;
+            }
+        }
+
+        //if its not a call we don't need to go further
+        if(iscall){
+            //get the remote id
+            remoteIdentifier = pChannelInterface->TargetID();
+            connect(pChannelInterface, SIGNAL(Closed()), SLOT(onClose()));
+            connectType();
+            connectInterfaces();
+            connect((QObject*)this->becomeReady(), SIGNAL(finished(Tp::PendingOperation *)), SLOT(onChannelReady(Tp::PendingOperation*)));
+        }
+    }
+
+    void Channel::init()
+    {
+        pChannelInterface = 0;
+        pChannelInterfaceChatStateInterface = 0;
+        pChannelInterfaceDTMFInterface = 0;
+        pChannelInterfaceGroupInterface = 0;
+        pChannelInterfaceHoldInterface = 0;
+        pChannelInterfaceMediaSignallingInterface = 0;
+        pChannelInterfaceMessagesInterface = 0;
+        pChannelInterfacePasswordInterface = 0;
+        pChannelInterfaceTubeInterface = 0;
+        pChannelTypeContactListInterface = 0;
+        pChannelTypeFileTransferInterface = 0;
+        pChannelTypeRoomListInterface = 0;
+        pChannelTypeStreamTubeInterface = 0;
+        pChannelTypeStreamedMediaInterface = 0;
+        pChannelTypeTextInterface = 0;
+        pChannelTypeTubesInterface = 0;
+        status = QTelephonyEvents::Idle;
+        direction = 0;
+        wasExistingChannel = false;
+        remoteIdentifier = "";
+        calltype = QTelephonyEvents::Other;
+        iscall = false;
     }
 
     Channel::~Channel()
@@ -100,8 +153,6 @@ namespace Tp
     {
         qDebug() << "Channel::connectInterfaces()";
 
-        pChannelInterface = new Tp::Client::ChannelInterface(this->dbusConnection(),this->busName(), this->objectPath());
-        connect(pChannelInterface, SIGNAL(Closed()), SLOT(onClose()));
 
         if(propertylist.contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".Interfaces"))){
             QStringList varlist = propertylist.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".Interfaces")).toStringList();
@@ -110,11 +161,9 @@ namespace Tp
                 qDebug() << "- supported interface: " << supportedinterface;
                 if(supportedinterface == Tp::Client::ChannelInterfaceCallStateInterface::staticInterfaceName()){
                     pChannelInterfaceCallStateInterface = new Tp::Client::ChannelInterfaceCallStateInterface(this->dbusConnection(), this->busName(), this->objectPath());
-                    connect(pChannelInterfaceCallStateInterface, SIGNAL(CallStateChanged(uint,uint)), SLOT(onCallStateChanged(uint,uint)));
                 }
                 else if(supportedinterface == Tp::Client::ChannelInterfaceChatStateInterface::staticInterfaceName()){
                     pChannelInterfaceChatStateInterface = new Tp::Client::ChannelInterfaceChatStateInterface(this->dbusConnection(), this->busName(), this->objectPath());
-                    connect(pChannelInterfaceChatStateInterface, SIGNAL(ChatStateChanged(uint,uint)), SLOT(onChatStateChanged(uint,uint)));
                 }
                 else if(supportedinterface == Tp::Client::ChannelInterfaceDTMFInterface::staticInterfaceName()){
                     pChannelInterfaceDTMFInterface = new Tp::Client::ChannelInterfaceDTMFInterface(this->dbusConnection(), this->busName(), this->objectPath());
@@ -122,34 +171,57 @@ namespace Tp
                 }
                 else if(supportedinterface == Tp::Client::ChannelInterfaceGroupInterface::staticInterfaceName()){
                     pChannelInterfaceGroupInterface = new Tp::Client::ChannelInterfaceGroupInterface(this->dbusConnection(), this->busName(), this->objectPath());
-                    connect(pChannelInterfaceGroupInterface, SIGNAL(HandleOwnersChanged(Tp::HandleOwnerMap,Tp::UIntList)), SLOT(onHandleOwnersChanged(Tp::HandleOwnerMap,Tp::UIntList)));
-                    connect(pChannelInterfaceGroupInterface, SIGNAL(SelfHandleChanged(uint)), SLOT(onSelfHandleChanged(uint)));
-                    connect(pChannelInterfaceGroupInterface, SIGNAL(GroupFlagsChanged(uint,uint)), SLOT(onGroupFlagsChanged(uint,uint)));
-                    connect(pChannelInterfaceGroupInterface, SIGNAL(MembersChanged(QString,Tp::UIntList,Tp::UIntList,Tp::UIntList,Tp::UIntList,uint,uint)), SLOT(onMembersChanged(QString,Tp::UIntList,Tp::UIntList,Tp::UIntList,Tp::UIntList,uint,uint)));
-                    connect(pChannelInterfaceGroupInterface, SIGNAL(MembersChangedDetailed(Tp::UIntList,Tp::UIntList,Tp::UIntList,Tp::UIntList,QVariantMap)), SLOT(onMembersChangedDetailed(Tp::UIntList,Tp::UIntList,Tp::UIntList,Tp::UIntList,QVariantMap)));
                 }
                 else if(supportedinterface == Tp::Client::ChannelInterfaceHoldInterface::staticInterfaceName()){
                     pChannelInterfaceHoldInterface = new Tp::Client::ChannelInterfaceHoldInterface(this->dbusConnection(), this->busName(), this->objectPath());
-                    connect(pChannelInterfaceHoldInterface, SIGNAL(HoldStateChanged(uint,uint)), SLOT(onHoldStateChanged(uint,uint)));
                 }
                 else if(supportedinterface == Tp::Client::ChannelInterfaceMediaSignallingInterface::staticInterfaceName()){
                     pChannelInterfaceMediaSignallingInterface = new Tp::Client::ChannelInterfaceMediaSignallingInterface(this->dbusConnection(), this->busName(), this->objectPath());
-                    connect(pChannelInterfaceMediaSignallingInterface, SIGNAL(NewSessionHandler(QDBusObjectPath,QString)), SLOT(onNewSessionHandler(QDBusObjectPath,QString)));
                 }
                 else if(supportedinterface == Tp::Client::ChannelInterfaceMessagesInterface::staticInterfaceName()){
                     pChannelInterfaceMessagesInterface = new Tp::Client::ChannelInterfaceMessagesInterface(this->dbusConnection(), this->busName(), this->objectPath());
-                    connect(pChannelInterfaceMessagesInterface, SIGNAL(MessageReceived(Tp::MessagePartList)), SLOT(onMessageReceived(Tp::MessagePartList)));
-                    connect(pChannelInterfaceMessagesInterface, SIGNAL(MessageSent(Tp::MessagePartList,uint,QString)), SLOT(onMessageSent(Tp::MessagePartList,uint,QString)));
-                    connect(pChannelInterfaceMessagesInterface, SIGNAL(PendingMessagesRemoved(Tp::UIntList)), SLOT(onPendingMessagesRemoved(Tp::UIntList)));
                 }
                 else if(supportedinterface == Tp::Client::ChannelInterfacePasswordInterface::staticInterfaceName()){
                     pChannelInterfacePasswordInterface = new Tp::Client::ChannelInterfacePasswordInterface(this->dbusConnection(), this->busName(), this->objectPath());
-                    connect(pChannelInterfacePasswordInterface, SIGNAL(PasswordFlagsChanged(uint,uint)), SLOT(onPasswordFlagsChanged(uint,uint)));
                 }
                 else if(supportedinterface == Tp::Client::ChannelInterfaceTubeInterface::staticInterfaceName()){
                     pChannelInterfaceTubeInterface = new Tp::Client::ChannelInterfaceTubeInterface(this->dbusConnection(), this->busName(), this->objectPath());
-                    connect(pChannelInterfaceTubeInterface, SIGNAL(TubeChannelStateChanged(uint)), SLOT(onTubeChannelStateChanged(uint)));
                 }
+            }
+
+            if(pChannelInterfaceCallStateInterface){
+                connect(pChannelInterfaceCallStateInterface, SIGNAL(CallStateChanged(uint,uint)), SLOT(onCallStateChanged(uint,uint)));
+            }
+            if(pChannelInterfaceChatStateInterface){
+                connect(pChannelInterfaceChatStateInterface, SIGNAL(ChatStateChanged(uint,uint)), SLOT(onChatStateChanged(uint,uint)));
+            }
+            if(pChannelInterfaceDTMFInterface){
+                pChannelInterfaceDTMFInterface = new Tp::Client::ChannelInterfaceDTMFInterface(this->dbusConnection(), this->busName(), this->objectPath());
+                //no signals
+            }
+            if(pChannelInterfaceGroupInterface){
+                connect(pChannelInterfaceGroupInterface, SIGNAL(HandleOwnersChanged(Tp::HandleOwnerMap,Tp::UIntList)), SLOT(onHandleOwnersChanged(Tp::HandleOwnerMap,Tp::UIntList)));
+                connect(pChannelInterfaceGroupInterface, SIGNAL(SelfHandleChanged(uint)), SLOT(onSelfHandleChanged(uint)));
+                connect(pChannelInterfaceGroupInterface, SIGNAL(GroupFlagsChanged(uint,uint)), SLOT(onGroupFlagsChanged(uint,uint)));
+                connect(pChannelInterfaceGroupInterface, SIGNAL(MembersChanged(QString,Tp::UIntList,Tp::UIntList,Tp::UIntList,Tp::UIntList,uint,uint)), SLOT(onMembersChanged(QString,Tp::UIntList,Tp::UIntList,Tp::UIntList,Tp::UIntList,uint,uint)));
+                connect(pChannelInterfaceGroupInterface, SIGNAL(MembersChangedDetailed(Tp::UIntList,Tp::UIntList,Tp::UIntList,Tp::UIntList,QVariantMap)), SLOT(onMembersChangedDetailed(Tp::UIntList,Tp::UIntList,Tp::UIntList,Tp::UIntList,QVariantMap)));
+            }
+            if(pChannelInterfaceHoldInterface){
+                connect(pChannelInterfaceHoldInterface, SIGNAL(HoldStateChanged(uint,uint)), SLOT(onHoldStateChanged(uint,uint)));
+            }
+            if(pChannelInterfaceMediaSignallingInterface){
+                connect(pChannelInterfaceMediaSignallingInterface, SIGNAL(NewSessionHandler(QDBusObjectPath,QString)), SLOT(onNewSessionHandler(QDBusObjectPath,QString)));
+            }
+            if(pChannelInterfaceMessagesInterface){
+                connect(pChannelInterfaceMessagesInterface, SIGNAL(MessageReceived(Tp::MessagePartList)), SLOT(onMessageReceived(Tp::MessagePartList)));
+                connect(pChannelInterfaceMessagesInterface, SIGNAL(MessageSent(Tp::MessagePartList,uint,QString)), SLOT(onMessageSent(Tp::MessagePartList,uint,QString)));
+                connect(pChannelInterfaceMessagesInterface, SIGNAL(PendingMessagesRemoved(Tp::UIntList)), SLOT(onPendingMessagesRemoved(Tp::UIntList)));
+            }
+            if(pChannelInterfacePasswordInterface){
+                connect(pChannelInterfacePasswordInterface, SIGNAL(PasswordFlagsChanged(uint,uint)), SLOT(onPasswordFlagsChanged(uint,uint)));
+            }
+            if(pChannelInterfaceTubeInterface){
+                connect(pChannelInterfaceTubeInterface, SIGNAL(TubeChannelStateChanged(uint)), SLOT(onTubeChannelStateChanged(uint)));
             }
         }
     }
@@ -193,45 +265,74 @@ namespace Tp
     {
         qDebug() << "Channel::connectType()";
         if( propertylist.contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"))){
-            QString type = propertylist.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString();
-            if(type == Tp::Client::ChannelTypeContactListInterface::staticInterfaceName()){
+            subtype = propertylist.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString();
+            qDebug() << "- supported type interface: " << subtype;
+            if(subtype == Tp::Client::ChannelTypeContactListInterface::staticInterfaceName()){
                 pChannelTypeContactListInterface = new Tp::Client::ChannelTypeContactListInterface(this->dbusConnection(), this->busName(), this->objectPath());
                 // no signals
             }
-            else if(type == Tp::Client::ChannelTypeFileTransferInterface::staticInterfaceName()){
+            else if(subtype == Tp::Client::ChannelTypeFileTransferInterface::staticInterfaceName()){
                 pChannelTypeFileTransferInterface = new Tp::Client::ChannelTypeFileTransferInterface(this->dbusConnection(), this->busName(), this->objectPath());
+            }
+            else if(subtype == Tp::Client::ChannelTypeRoomListInterface::staticInterfaceName()){
+                pChannelTypeRoomListInterface = new Tp::Client::ChannelTypeRoomListInterface(this->dbusConnection(), this->busName(), this->objectPath());
+            }
+            else if(subtype == Tp::Client::ChannelTypeStreamTubeInterface::staticInterfaceName()){
+                pChannelTypeStreamTubeInterface = new Tp::Client::ChannelTypeStreamTubeInterface(this->dbusConnection(), this->busName(), this->objectPath());
+            }
+            else if(subtype == Tp::Client::ChannelTypeStreamedMediaInterface::staticInterfaceName()){
+                //read the type of the call before the signals get connected
+                pChannelTypeStreamedMediaInterface = new Tp::Client::ChannelTypeStreamedMediaInterface(this->dbusConnection(), this->busName(), this->objectPath());
+                QString channeltype = pChannelInterface->ChannelType();
+                if(channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA){
+                    bool initialAudio = pChannelTypeStreamedMediaInterface->InitialAudio();
+                    bool initialVideo = pChannelTypeStreamedMediaInterface->InitialVideo();
+                    if(initialVideo) {
+                        calltype = QTelephonyEvents::Video;
+                    }
+                    else if(initialAudio)
+                        calltype = QTelephonyEvents::Voice;
+                }
+            }
+            else if(subtype == Tp::Client::ChannelTypeTextInterface::staticInterfaceName()){
+                pChannelTypeTextInterface = new Tp::Client::ChannelTypeTextInterface(this->dbusConnection(), this->busName(), this->objectPath());
+            }
+            else if(subtype == Tp::Client::ChannelTypeTubesInterface::staticInterfaceName()){
+                pChannelTypeTubesInterface = new Tp::Client::ChannelTypeTubesInterface(this->dbusConnection(), this->busName(), this->objectPath());
+            }
+
+            //Connect signals
+//            if(pChannelTypeContactListInterface){
+                // no signals
+//            }
+            if(pChannelTypeFileTransferInterface){
                 connect(pChannelTypeFileTransferInterface, SIGNAL(FileTransferStateChanged(uint,uint)), SLOT(onFileTransferStateChanged(uint,uint)));
                 connect(pChannelTypeFileTransferInterface, SIGNAL(TransferredBytesChanged(qulonglong)), SLOT(onTransferredBytesChanged(qulonglong)));
                 connect(pChannelTypeFileTransferInterface, SIGNAL(InitialOffsetDefined(qulonglong)), SLOT(onInitialOffsetDefined(qulonglong)));
             }
-            else if(type == Tp::Client::ChannelTypeRoomListInterface::staticInterfaceName()){
-                pChannelTypeRoomListInterface = new Tp::Client::ChannelTypeRoomListInterface(this->dbusConnection(), this->busName(), this->objectPath());
+            if(pChannelTypeRoomListInterface){
                 connect(pChannelTypeRoomListInterface, SIGNAL(GotRooms(Tp::RoomInfoList)), SLOT(onGotRooms(Tp::RoomInfoList)));
                 connect(pChannelTypeRoomListInterface, SIGNAL(ListingRooms(bool)), SLOT(onListingRooms(bool)));
             }
-            else if(type == Tp::Client::ChannelTypeStreamTubeInterface::staticInterfaceName()){
-                pChannelTypeStreamTubeInterface = new Tp::Client::ChannelTypeStreamTubeInterface(this->dbusConnection(), this->busName(), this->objectPath());
+            if(pChannelTypeStreamTubeInterface){
                 connect(pChannelTypeStreamTubeInterface, SIGNAL(NewRemoteConnection(uint,QDBusVariant,uint)), SLOT(onNewRemoteConnection(uint,QDBusVariant,uint)));
                 connect(pChannelTypeStreamTubeInterface, SIGNAL(NewLocalConnection(uint)), SLOT(onNewLocalConnection(uint)));
                 connect(pChannelTypeStreamTubeInterface, SIGNAL(ConnectionClosed(uint,QString,QString)), SLOT(onConnectionClosed(uint,QString,QString)));
             }
-            else if(type == Tp::Client::ChannelTypeStreamedMediaInterface::staticInterfaceName()){
-                pChannelTypeStreamedMediaInterface = new Tp::Client::ChannelTypeStreamedMediaInterface(this->dbusConnection(), this->busName(), this->objectPath());
+            if(pChannelTypeStreamedMediaInterface){
                 connect(pChannelTypeStreamedMediaInterface, SIGNAL(StreamAdded(uint,uint,uint)), SLOT(onStreamAdded(uint,uint,uint)));
                 connect(pChannelTypeStreamedMediaInterface, SIGNAL(StreamDirectionChanged(uint,uint,uint)), SLOT(onStreamDirectionChanged(uint,uint,uint)));
                 connect(pChannelTypeStreamedMediaInterface, SIGNAL(StreamError(uint,uint,QString)), SLOT(onStreamError(uint,uint,QString)));
                 connect(pChannelTypeStreamedMediaInterface, SIGNAL(StreamRemoved(uint)), SLOT(onStreamRemoved(uint)));
                 connect(pChannelTypeStreamedMediaInterface, SIGNAL(StreamStateChanged(uint,uint)), SLOT(onStreamStateChanged(uint,uint)));
             }
-            else if(type == Tp::Client::ChannelTypeTextInterface::staticInterfaceName()){
-                pChannelTypeTextInterface = new Tp::Client::ChannelTypeTextInterface(this->dbusConnection(), this->busName(), this->objectPath());
+            if(pChannelTypeTextInterface){
                 connect(pChannelTypeTextInterface, SIGNAL(LostMessage()), SLOT(onLostMessage()));
                 connect(pChannelTypeTextInterface,SIGNAL(Received(uint,uint,uint,uint,uint,QString)), SLOT(onReceived(uint,uint,uint,uint,uint,QString)));
                 connect(pChannelTypeTextInterface, SIGNAL(SendError(uint,uint,uint,QString)), SLOT(onSendError(uint,uint,uint,QString)));
                 connect(pChannelTypeTextInterface, SIGNAL(Sent(uint,uint,QString)), SLOT(onSent(uint,uint,QString)));
             }
-            else if(type == Tp::Client::ChannelTypeTubesInterface::staticInterfaceName()){
-                pChannelTypeTubesInterface = new Tp::Client::ChannelTypeTubesInterface(this->dbusConnection(), this->busName(), this->objectPath());
+            if(pChannelTypeTubesInterface){
                 connect(pChannelTypeTubesInterface, SIGNAL(DBusNamesChanged(uint,Tp::DBusTubeMemberList,Tp::UIntList)), SLOT(onDBusNamesChanged(uint,Tp::DBusTubeMemberList,Tp::UIntList)));
                 connect(pChannelTypeTubesInterface, SIGNAL(NewTube(uint,uint,uint,QString,QVariantMap,uint)), SLOT(onNewTube(uint,uint,uint,QString,QVariantMap,uint)));
                 connect(pChannelTypeTubesInterface, SIGNAL(StreamTubeNewConnection(uint,uint)), SLOT(onStreamTubeNewConnection(uint,uint)));
@@ -282,32 +383,66 @@ namespace Tp
             disconnect(pChannelTypeTubesInterface, SIGNAL(TubeStateChanged(uint,uint)), this, SLOT(onTubeStateChanged(uint,uint)));
         }
     }
+
     //for ReadyObject
     void Channel::onChannelReady(Tp::PendingOperation* operation)
     {
         qDebug() << "Channel::onChannelReady(...)";
-        qDebug() << "- this: " << this;
         //check if incomming direction
-        if(direction == 1){
-            qDebug() << "Current Thread: " << QThread::currentThreadId();
+        if(direction == 1)
             status = QTelephonyEvents::Incomming;
-            connection->channelStatusChanged(this);
-        }
         //check for outgoing
-        else if(direction == 2){
-            qDebug() << "Current Thread: " << QThread::currentThreadId();
+        else if(direction == 2)
             status = QTelephonyEvents::Dialing;
-            connection->channelStatusChanged(this);
+
+        if(wasExistingChannel){
+            //check for call state if its ringing (call state 0bit = 1)
+            if(direction == 2){
+                if(pChannelInterfaceCallStateInterface){
+                    qDebug() << "- pChannelInterfaceCallStateInterface->GetCallStates()";
+                    QDBusPendingReply<Tp::ChannelCallStateMap> ccsm = pChannelInterfaceCallStateInterface->GetCallStates();
+                    ccsm.waitForFinished();
+                    if(ccsm.isValid()){
+                        Tp::ChannelCallStateMap map = ccsm.value();
+                        QMapIterator<uint, uint> i(map);
+
+                         while (i.hasNext()) {
+                             i.next();
+                             if(i.value() & 0x01){
+                                 status = QTelephonyEvents::Alerting;
+                                 break;
+                             }
+                        }
+                    }
+                }
+            }
+            //Check if status is already connected => call state 0bit = ringing, Stream Directtion = 3 (Bidirectional)
+            //This is valid for both incoming and outgoing calls
+            if(pChannelTypeStreamedMediaInterface){
+                qDebug() << "- pChannelTypeStreamedMediaInterface->ListStreams()";
+                QDBusPendingReply<Tp::MediaStreamInfoList> streams = pChannelTypeStreamedMediaInterface->ListStreams();
+                streams.waitForFinished();
+                if(streams.isValid()){
+                    foreach(const MediaStreamInfo& msi, streams.value())
+                    {
+                        qDebug() << "- msi.direction " << msi.direction;
+                        if(msi.direction == 3){
+                            status = QTelephonyEvents::Connected;
+                            break;
+                        }
+                    }
+                }
+            }
         }
-        connectType();
-        connectInterfaces();
+        qDebug() << "- direction " << direction;
+        qDebug() << "- status " << status;
+        connection->channelStatusChanged(this);
     }
 
     //for ChannelInterface signals
     void Channel::onClose()
     {
         qDebug() << "ChannelInterface - Channel::onClose()";
-        qDebug() << "- this: " << this;
     }
 
     //for ChannelInterfaceCallStateInterface signals
@@ -319,8 +454,7 @@ namespace Tp
         //Check if its ringing
         if(state & 0x01){
             //check for outgoing
-            if(direction == 2){
-                qDebug() << "Current Thread: " << QThread::currentThreadId();
+            if(direction == 2 && status != QTelephonyEvents::Alerting){
                 status = QTelephonyEvents::Alerting;
                 connection->channelStatusChanged(this);
             }
@@ -459,9 +593,10 @@ namespace Tp
         if(streamDirection == 3){
             //check for outgoing
             if(direction == 2 || direction == 1){
-                qDebug() << "Current Thread: " << QThread::currentThreadId();
-                status = QTelephonyEvents::Connected;
-                connection->channelStatusChanged(this);
+                if(status != QTelephonyEvents::Connected){
+                    status = QTelephonyEvents::Connected;
+                    connection->channelStatusChanged(this);
+                }
             }
         }
     }
@@ -474,12 +609,12 @@ namespace Tp
     void Channel::onStreamRemoved(uint streamID)
     {
         qDebug() << "ChannelTypeStreamedMediaInterface - Channel::onStreamRemoved() " << streamID;
-        qDebug() << " - streamID: " << streamID;
         if(direction == 1 || direction == 2)
         {
-            qDebug() << "Current hread: " << QThread::currentThreadId();
-            status = QTelephonyEvents::Disconnecting;
-            connection->channelStatusChanged(this);
+            if(status != QTelephonyEvents::Disconnecting){
+                status = QTelephonyEvents::Disconnecting;
+                connection->channelStatusChanged(this);
+            }
         }
     }
 
@@ -488,7 +623,6 @@ namespace Tp
         qDebug() << "ChannelTypeStreamedMediaInterface - Channel::onStreamStateChanged()";
         qDebug() << " - streamID: " << streamID;
         qDebug() << " - streamState: " << streamState;
-        qDebug() << "- this: " << this;
     }
 
     //for ChannelTypeTextInterface signals
