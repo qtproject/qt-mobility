@@ -227,6 +227,8 @@ QList<QByteArray> QSensor::sensorsForType(const QByteArray &type)
     This is set in a config file and can be overridden if required.
     If no default is available the system will return the first registered
     sensor for \a type.
+
+    \sa {Determining the default sensor for a type}
 */
 QByteArray QSensor::defaultSensorForType(const QByteArray &type)
 {
@@ -238,7 +240,14 @@ QByteArray QSensor::defaultSensorForType(const QByteArray &type)
     if (!d->backendsByType.contains(type))
         return QByteArray();
 
-    QSettings settings(QLatin1String("Nokia"), QLatin1String("Sensors"));
+    QSettings::Scope scope;
+#ifdef QTM_BUILD_UNITTESTS
+    // The unit test needs to modify Sensors.conf but it can't access the system directory
+    scope = QSettings::UserScope;
+#else
+    scope = QSettings::SystemScope;
+#endif
+    QSettings settings(scope, QLatin1String("Nokia"), QLatin1String("Sensors"));
     QVariant value = settings.value(QString(QLatin1String("Default/%1")).arg(QString::fromLatin1(type)));
     if (!value.isNull()) {
         QByteArray defaultIdentifier = value.toByteArray();
