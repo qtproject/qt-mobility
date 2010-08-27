@@ -103,37 +103,6 @@ QOrganizerItemMaemo5Engine::QOrganizerItemMaemo5Engine()
         qDebug() << "Database didn't open!";
         // TODO: Then what???
     }
-
-    // TODO: Several tests here, remove them later: !!!!!!!!!!!!
-
-    /*
-    bool error;
-    d->m_databaseAccess.typeOf(QOrganizerItemLocalId(6), error);
-    */
-
-    int calError;
-    /*
-    std::string guid = "{cab6a645-0000-4000-80de-ba5b2ea96279}";
-    std::vector<CEvent *> res = d->m_databaseAccess.getEvents(2, guid, calError);
-    CEvent* resEvent = res[0];
-    qDebug() << QString::fromStdString(resEvent->getSummary());
-    */
-
-    /*
-    std::string todoguid = "custom todo GUID";
-    std::vector<CTodo *> res2 = d->m_databaseAccess.getTodos(2, todoguid, calError);
-    CTodo* resTodo = res2[0];
-    qDebug() << QString::fromStdString(resTodo->getGUid());
-    */
-
-    /*
-    std::string jourguid = "custom journal GUID";
-    std::vector<CJournal *> res3 = d->m_databaseAccess.getJournals(2, jourguid, calError);
-    CJournal* resJournal = res3[0];
-    qDebug() << QString::fromStdString(resJournal->getSummary());
-    qDebug() << QString::fromStdString(resJournal->getGUid());
-    qDebug() << QString::fromStdString(resJournal->getId());
-    */
 }
 
 void QOrganizerItemMaemo5Engine::dataChanged()

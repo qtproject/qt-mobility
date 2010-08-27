@@ -96,11 +96,17 @@ OrganizerCalendarDatabaseAccess::~OrganizerCalendarDatabaseAccess()
 
 bool OrganizerCalendarDatabaseAccess::open(QString databasePathName)
 {
-    m_db = QSqlDatabase::addDatabase("QSQLITE");
-    m_db.setHostName("localhost");
-    m_db.setDatabaseName(databasePathName);
-    bool ok = m_db.open();
-    return ok;
+    if (!m_db.isOpen()) {
+        m_db = QSqlDatabase::addDatabase("QSQLITE");
+        m_db.setHostName("localhost");
+        m_db.setDatabaseName(databasePathName);
+        bool ok = m_db.open();
+        return ok;
+    }
+    else {
+        // database is already open
+        return true;
+    }
 }
 
 void OrganizerCalendarDatabaseAccess::close()
@@ -140,7 +146,7 @@ std::vector<CEvent *> OrganizerCalendarDatabaseAccess::getEvents(int calId, std:
     std::vector<std::string> vRRule;
 
     QString queryString = selectInnerJoinBatchGuid;
-    queryString.replace("$1", QString::number(calId));
+    queryString.replace("$1", QString::number(calId)); // TODO: binding parameter values do not work for some reason
     queryString.replace("$2", QString::number(E_EVENT));
     queryString.replace("$3", QString::fromStdString(guid));
     QSqlQuery pQuery(queryString);
@@ -447,7 +453,7 @@ std::vector<CTodo *> OrganizerCalendarDatabaseAccess::getTodos(int calId, std::s
     std::vector<long> vCookie;
 
     QString queryString = selectInnerJoinBatchGuid;
-    queryString.replace("$1", QString::number(calId));
+    queryString.replace("$1", QString::number(calId)); // TODO: binding parameter values do not work for some reason
     queryString.replace("$2", QString::number(E_TODO));
     queryString.replace("$3", QString::fromStdString(guid));
 
@@ -685,7 +691,7 @@ std::vector<CJournal *> OrganizerCalendarDatabaseAccess::getJournals(int calId, 
     pErrorCode = CALENDAR_OPERATION_SUCCESSFUL;
 
     QString queryString = selectInnerJoinBatchGuid;
-    queryString.replace("$1", QString::number(calId));
+    queryString.replace("$1", QString::number(calId)); // TODO: binding parameter values do not work for some reason
     queryString.replace("$2", QString::number(E_JOURNAL));
     queryString.replace("$3", QString::fromStdString(guid));
 
