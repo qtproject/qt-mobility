@@ -819,11 +819,14 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                             emit stateChanged(m_state = QMediaPlayer::StoppedState);
                         break;
                     case GST_STATE_PAUSED:
-                        if (m_state != QMediaPlayer::PausedState)
-                            emit stateChanged(m_state = QMediaPlayer::PausedState);
+                    {
+                        QMediaPlayer::State prevState = m_state;
+                        m_state = QMediaPlayer::PausedState;
 
                         //check for seekable
                         if (oldState == GST_STATE_READY) {
+                            getStreamsInfo();
+
                             /*
                                 //gst_element_seek_simple doesn't work reliably here, have to find a better solution
 
@@ -850,12 +853,12 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 
                         }
 
+                        if (m_state != prevState)
+                            emit stateChanged(m_state);
 
                         break;
+                    }
                     case GST_STATE_PLAYING:
-                        if (oldState == GST_STATE_PAUSED)
-                            getStreamsInfo();
-
                         if (m_state != QMediaPlayer::PlayingState)
                             emit stateChanged(m_state = QMediaPlayer::PlayingState);
 
