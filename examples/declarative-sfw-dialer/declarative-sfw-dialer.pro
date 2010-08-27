@@ -1,5 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS += sfwexample \
-           voipdialer \
+SUBDIRS += voipdialer \
            landlinedialer
-#gsmdialer 

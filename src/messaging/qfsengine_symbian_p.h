@@ -102,11 +102,13 @@ struct FSSearchOperation
 };
 
 #ifdef FREESTYLEMAILBOXOBSERVERUSED
-class CFSEngine : public MMailboxContentObserver, public MMailboxSyncObserver, public MEmailFetchObserver
+class CFSEngine : public QObject, public MMailboxContentObserver, public MMailboxSyncObserver, public MEmailFetchObserver
 #else
-class CFSEngine : public MMailboxSyncObserver, public MEmailFetchObserver
+class CFSEngine : public QObject, public MMailboxSyncObserver, public MEmailFetchObserver
 #endif
 {
+    Q_OBJECT
+
 public: 
     
     static CFSEngine* instance();
@@ -164,7 +166,10 @@ public:
     
 public: // From MEmailFetchObserver
     virtual void DataFetchedL(const TInt aResult);
-        
+
+public slots:
+    void cleanupFSBackend();
+
 private:
 
     void queryMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -490,7 +490,16 @@ bool QContactDetail::isEmpty() const
     return true;
 }
 
-/*! Returns the key of this detail. */
+/*!
+ * Returns the key of this detail.
+ *
+ * Be aware that if a contact is retrieved (or reloaded) from the backend, the
+ * keys of any details it contains may have been changed by the backend, or other
+ * threads may have modified the contact details in the backend.  Therefore,
+ * clients should reload the detail that they wish to save in or remove from a contact
+ * after retrieving the contact from the backend, in order to ascertain the keys of
+ * any such details.
+ */
 int QContactDetail::key() const
 {
     return d->m_id;

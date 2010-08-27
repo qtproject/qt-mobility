@@ -56,7 +56,7 @@
         if((methods &amp; QSystemDeviceInfo::Keypad)) {
             inputs &lt;&lt; &quot;Keypad&quot;;
         }</pre>
-<p>Various capabilities of the device can be found by testing for features. In the example a Feature combo box, on the General tab, has a hard coded list of features. When a listed featue is selected the getFeature() function is called with the index which is handled by applying a test to the corresponding feaure.</p>
+<p>Various capabilities of the device can be found by testing for features. In the example a Feature combo box, on the General tab, has a hard coded list of features. When a listed feature is selected the getFeature() function is called with the index which is handled by applying a test to the corresponding feature.</p>
 <pre>        QSystemInfo::Feature feature;
         switch(index) {
         ...
@@ -67,8 +67,8 @@
         featuresLineEdit-&gt;setText((si.hasFeatureSupported(feature) ? &quot;true&quot;:&quot;false&quot; ));</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

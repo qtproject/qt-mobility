@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,6 +49,7 @@
 #include "cnttransformaddress.h"
 #include "cnttransformbirthday.h"
 #include "cnttransformonlineaccount.h"
+#include "cnttransformonlineaccountsimple.h"
 #include "cnttransformorganisation.h"
 #include "cnttransformavatar.h"
 #include "cnttransformringtone.h"
@@ -82,6 +83,8 @@ CntTransformContact::~CntTransformContact()
 {
     delete m_tzConverter;
     m_tzoneServer.Close();
+
+    m_fieldTypeToTransformContact.clear();
 
     QMap<ContactData, CntTransformContactData*>::iterator itr;
 
@@ -132,6 +135,7 @@ void CntTransformContact::initializeCntTransformContactData()
 
     // variated transform classes
     m_transformContactData.insert(Anniversary, new CntTransformAnniversarySimple);
+    m_transformContactData.insert(OnlineAccount, new CntTransformOnlineAccount);
 #endif
 }
 
@@ -143,7 +147,7 @@ void CntTransformContact::initializeCntTransformContactData()
  * \param contact A reference to a symbian contact item to be converted.
  * \return Qt Contact
  */
-QContact CntTransformContact::transformContactL(CContactItem &contact, const QStringList& definitionRestrictions) const
+QContact CntTransformContact::transformContactL(CContactItem &contact)
 {
     // Create a new QContact
     QContact newQtContact;
@@ -170,11 +174,7 @@ QContact CntTransformContact::transformContactL(CContactItem &contact, const QSt
 
         if(detail)
         {
-            // add detail if user requested it.
-            if(definitionRestrictions.isEmpty() || definitionRestrictions.contains(detail->definitionName())) 
-            {
-                newQtContact.saveDetail(detail);
-            }
+            newQtContact.saveDetail(detail);
             delete detail;
             detail = 0;
         }
@@ -288,6 +288,25 @@ QList<TUid> CntTransformContact::supportedSortingFieldTypes( QString detailDefin
     return uids;
 }
 
+QList<TUid> CntTransformContact::itemFieldUidsL(const QString detailDefinitionName) const
+{
+    QList<TUid> fieldUids;
+    QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+
+    while (i != m_transformContactData.constEnd()) {
+        if (i.value()->supportsDetail(detailDefinitionName)) {
+            // The leaf class supports this detail, so check which field type
+            // uids it supports, use empty field name to get all the supported uids
+            fieldUids << i.value()->supportedFields();
+
+            // Assume there are no more leaf classes for this detail
+            break;
+        }
+        i++;
+    }
+    return fieldUids;
+}
+
 TUint32 CntTransformContact::GetIdForDetailL(const QContactDetailFilter& detailFilter, bool& isSubtype) const
     {
     isSubtype = false;
@@ -359,24 +378,34 @@ QList<CContactItemField *> CntTransformContact::transformDetailL(const QContactD
 	return itemFieldList;
 }
 
-QContactDetail *CntTransformContact::transformItemField(const CContactItemField& field, const QContact &contact) const
+QContactDetail *CntTransformContact::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	QContactDetail *detail(0);
 
-	if(field.ContentType().FieldTypeCount()) {
-	    TUint32 fieldType(field.ContentType().FieldType(0).iUid);
+    if(field.ContentType().FieldTypeCount()) {
+        TUint32 fieldType(field.ContentType().FieldType(0).iUid);
 
-	    QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
-	    while (i != m_transformContactData.constEnd()) {
-	        if (i.value()->supportsField(fieldType)) {
-	            detail = i.value()->transformItemField(field, contact);
-	            break;
-	        }
-	        ++i;
-	     }
-	}
+        // Check if the mapping from field type to transform class pointer is available
+        // (this is faster than iterating through all the transform classes)
+        if (m_fieldTypeToTransformContact.contains(fieldType)) {
+            detail = m_fieldTypeToTransformContact[fieldType]->transformItemField(field, contact);
+        } else {
+            // Mapping from field type to transform class pointer not found,
+            // find the correct transform class by iterating through all the
+            // transform classes
+            QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+            while (i != m_transformContactData.constEnd()) {
+                if (i.value()->supportsField(fieldType)) {
+                    detail = i.value()->transformItemField(field, contact);
+                    m_fieldTypeToTransformContact.insert(fieldType, i.value());
+                    break;
+                }
+                i++;
+            }
+        }
+    }
 
-	return detail;
+    return detail;
 }
 
 QContactDetail* CntTransformContact::transformGuidItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const

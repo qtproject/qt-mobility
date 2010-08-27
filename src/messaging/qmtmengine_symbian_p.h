@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,7 +55,9 @@
 #include "qmessagefilter_p.h"
 #include "qmessagefolderfilter.h"
 #include "qmessageservice.h"
-
+#ifdef QTHIGHWAYUSED
+#include <xqappmgr.h>
+#endif
 
 class CRichText;
 class CCharFormatLayer;
@@ -102,8 +104,10 @@ struct MessageQueryInfo
     int count;
 };
 
-class CMTMEngine : public CActive, public MMsvSessionObserver
+class CMTMEngine : public QObject, public CActive, public MMsvSessionObserver
 {
+    Q_OBJECT
+
 public:
     enum MTMType
     {
@@ -164,6 +168,9 @@ public:
 
     inline RFs& FsSession() const { return((RFs&)iFsSession); }
 
+public slots:
+    void cleanupMTMBackend();
+    
 private:
     void updateEmailAccountsL() const;
     bool switchToMTMRootEntry(MTMType aMTMType);
@@ -308,6 +315,10 @@ private:
     mutable QMessageAccountSortOrder iCurrentAccountOrdering;
     mutable QMessageFolderSortOrder iCurrentFolderOrdering;
     mutable QMessageSortOrder iCurrentMessageOrdering;
+    
+#ifdef QTHIGHWAYUSED    
+    XQApplicationManager iAiwMgr;
+#endif
     
     friend class QMessageService;
     friend class CMessagesFindOperation;

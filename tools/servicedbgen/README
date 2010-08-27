@@ -1,0 +1,95 @@
+*) Intended readers:
+
+The servicedbgen tool is intended to be used during Symbian rom
+creation for prepopulating  Qt Serviceframework databases. It is not a
+tool for normal runtime or application usage,  although it may be
+useful also for development or testing purposes.
+
+*) Overview:
+
+The servicedbgen tool is a command line application to populate Qt
+Serviceframework databases.  The tool takes XML files describing the
+service, and produces SQLite databases.  Services can  be added and
+removed.
+
+Servicedbgen runs on the cross-compiling machine (i.e. Windows or
+Linux) and is delivered as a prebuilt  application along with the SDK,
+or must compiled with host tools. It can be invoked  from the command
+line or by directives in your project's .pro-file. Qmake and make can
+then run the tool automatically. The latter approach is used at Symbian
+rom creation time.
+
+*) Design:
+
+The tool uses the same servicedatabase creation components as the Qt 
+Serviceframework. Therefore whenever the tool is rebuilt, it reflects
+the latest changes in database components.
+
+There are two operating modes, individual and batch mode. In individual
+mode, the tool is given individual XML files as input. In batch mode,
+the tool reads XML files from a given directory, or from a default
+directory if none given. The tool uses Nokia Vendor ID as the security
+token when adding the services. If an application needs to change the
+preinstalled services during runtime, it needs to be  equipped with
+Nokia Vendor ID.
+
+Services that require initialization prior to their first usage (e.g.
+to initialize databases etc.)  can set a parameter.  QServiceManager
+will call QServicePluginInterface::installService() when the service is
+loaded first time when QServiceManager::loadInterface() is called.
+
+The tool supports WINSCW emulator and hardware targets. The resulting
+databases are identical, but the locations differ (see Appendix). 
+
+*) Command line use
+
+The usage of the tool is as follows:
+
+servicedbgen [options] <command> [command parameters]
+
+To see the list of all available options,  type 'servicedbgen --help'.
+
+Basic usage examples:
+ - registering service1 and service2 for winscw target:
+        servicedbgen -twinscw add service1.xml service2.xml
+ - registering service1 for all targets, service requesting initialization:
+        servicedbgen -tall -i add service1.xml
+ - unregistering service1 from all targets:
+        servicedbgen -tall remove service1.xml
+ - registering all services for armv5 from default descriptor path:
+        servicedbgen -tall -b -c add
+ - registering services for all targets from specific descriptor path:
+        servicedbgen -tall -b add ./mypath/services
+ - removing services for all targets from default descriptor path:
+        servicedbgen -tall -b remove
+
+The default target, if unspecified, is '-tall'.
+
+*) Project file use
+
+Add following lines to your project's .pro file (inside a
+symbian-block):
+
+CONFIG += qtservice                  # qmake magic, causes processing of qtservice.prf
+QTSERVICE.DESCRIPTOR = <XML files>   # the list of service descriptor XML files
+QTSERVICE.INITIALIZE = yes           # add  this if given descriptors need initialization
+
+----------- Appendix
+
+*) Database locations
+
+Paths to the db. They can not be changed since Qt Serviceframework is
+hardcoded to these paths.
+
+"/epoc32/winscw/c/data/temp/QtServiceFW" // Emulator without WDS
+"/epoc32/winscw/c/private/2002AC7F/Nokia" // Emulator with WDS
+"/epoc32/data/c/private/2002AC7F/Nokia"  // HW
+
+*) Default XML lookup paths
+
+These are the paths where the tool looks for XML files (.xml) if  batch
+option was given and no path was specified.
+
+"/epoc32/winscw/c/private/2002AC7F/Nokia/des" // Emulator
+"/epoc32/data/z/private/2002AC7F/Nokia/des"   // HW
+

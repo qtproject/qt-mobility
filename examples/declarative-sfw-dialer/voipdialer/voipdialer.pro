@@ -1,6 +1,8 @@
 TEMPLATE = lib
 CONFIG += plugin
 INCLUDEPATH += ../../../src/serviceframework
+PLUGIN_TYPE = serviceframework
+
 HEADERS += voipdialer.h \
            voipdialerplugin.h
 SOURCES += voipdialer.cpp \
@@ -17,8 +19,6 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
 
-xml.path = $$DESTDIR/xmldata
+xml.path = $$QT_MOBILITY_PREFIX/bin/xmldata
 xml.files = voipdialerservice.xml
-xml.CONFIG = no_link no_dependencies explicit_dependencies no_build combine ignore_no_exist no_clean
 INSTALLS += xml
-build_pass:ALL_DEPS+=install_xml

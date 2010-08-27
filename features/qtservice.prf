@@ -1,0 +1,43 @@
+###############################################################################
+# Service FW plug-in
+###############################################################################
+
+symbian {
+    isEmpty(QTSERVICE.DESCRIPTOR) {
+       error("Missing service descriptor file")
+    }
+    else {
+       QTSERVICEDBGEN = servicedbgen.exe
+       QTC_COMMAND = add
+       contains(QTSERVICE.INITIALIZE, yes) {
+          QTSERVICE_INITIALIZE = -i
+       }
+
+       #deploy descriptor file to service framework server's private folder
+       #so batch mode tool execution can include the service
+       QtService.sources = $$QTSERVICE.DESCRIPTOR
+       QtService.path = $$EPOCROOT/private/2002AC7F/des
+       DEPLOYMENT += QtService
+
+       symbian-sbsv2{
+           sfwextension = \
+              "START EXTENSION qt/qtservice" \
+              "OPTION QTSERVICE_DESCRIPTOR $$basename(QTSERVICE.DESCRIPTOR)" \
+              "OPTION QTSERVICE_INITIALIZE $$QTSERVICE_INITIALIZE" \
+              "END"
+           BLD_INF_RULES.prj_extensions += sfwextension
+       }
+
+       symbian-abld{
+          DUMMY = qtservice.out
+          qtc.output = $$DUMMY
+          QTC_INPUT = .
+          qtc.input = QTC_INPUT
+          qtc.CONFIG = no_link explicit_dependencies
+          qtc.variable_out = PRE_TARGETDEPS
+          qtc.commands = $$QTSERVICEDBGEN $$QTSERVICE_INITIALIZE $$QTC_COMMAND $$QTSERVICE.DESCRIPTOR
+          QMAKE_EXTRA_COMPILERS += qtc
+       }
+       
+    }
+}

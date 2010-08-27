@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -77,8 +77,6 @@
 #include <smuthdr.h>
 #include <mtuireg.h> // CMtmUiRegistry
 #include <mtmuibas.h> // CBaseMtmUi
-#include <SendUiConsts.h>
-#include <sendui.h>    // SendUi API
 #include <CMessageData.h> //CMessageData
 #include <apgcli.h>
 #include <rsendas.h>
@@ -93,6 +91,17 @@
 #include <QTextCodec>
 #include <messagingutil_p.h>
 
+#ifdef QTHIGHWAYUSED
+#include <xqaiwdecl.h>
+#include <xqaiwdeclplat.h>
+#include <xqaiwrequest.h>
+#include <xqservicerequest.h>
+
+#include <email_services_api.h>
+#else
+#include <SendUiConsts.h>
+#include <sendui.h>    // SendUi API
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -104,6 +113,8 @@ Q_GLOBAL_STATIC(CMTMEngine,mtmEngine);
 CMTMEngine::CMTMEngine()
  : CActive(EPriorityStandard)
 {
+    connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(cleanupMTMBackend()));
+    
     iFsSession.Connect();
     CActiveScheduler::Add(this);
     iTimer.CreateLocal();
@@ -161,6 +172,11 @@ CMTMEngine::CMTMEngine()
 
 CMTMEngine::~CMTMEngine()
 {
+
+}
+
+void CMTMEngine::cleanupMTMBackend()
+{
     iCmsvEntryPoolFree.ResetAndDestroy();
     iCmsvEntryPoolInUse.ResetAndDestroy();
 
@@ -172,7 +188,7 @@ CMTMEngine::~CMTMEngine()
 
     delete ipClientMtmReg;
     delete ipMsvSession;
-    
+
     TRAPD(error,
         TBuf<KMaxPath> privatePath;
         FsSession().CreatePrivatePath(EDriveC);
@@ -191,6 +207,7 @@ CMTMEngine::~CMTMEngine()
     Cancel();
     iTimer.Close();
     iFsSession.Close();
+
 }
 
 CMTMEngine* CMTMEngine::instance()
@@ -773,6 +790,25 @@ bool CMTMEngine::composeMessage(const QMessage &message)
     return retVal;
 }
 
+#ifdef QTHIGHWAYUSED
+bool CMTMEngine::composeSMSL(const QMessage &message)
+{
+    bool embedded = false;
+    XQAiwRequest* request = iAiwMgr.create("com.nokia.symbian.IMessageSend",
+            "send(QVariantMap, QString)",
+            embedded);
+    QMap<QString, QVariant> map;
+    foreach (QMessageAddress recipient,message.to()) {
+        map.insert(recipient.addressee(), QString(""));
+    }
+    QList<QVariant> data;
+    data.append(map);
+    data.append(message.textContent());
+    request->setArguments(data);
+    request->send();
+    return true;
+}
+#else
 bool CMTMEngine::composeSMSL(const QMessage &message)
 {
     CSendUi *sendUi = CSendUi::NewL();
@@ -803,8 +839,38 @@ bool CMTMEngine::composeSMSL(const QMessage &message)
     
     sendUi->CreateAndSendMessageL(KSenduiMtmSmsUid, messageData, KNullUid, ETrue);
     CleanupStack::PopAndDestroy(3); //bd, messageData and sendUi
+    
     return true;
 }
+
+#endif 
+#ifdef QTHIGHWAYUSED
+
+bool CMTMEngine::composeMMSL(const QMessage &message)
+{
+    bool embedded = false;
+    
+    XQAiwRequest* request = iAiwMgr.create("com.nokia.symbian.IMessageSend",
+            "send(QVariantMap, QString)",
+            embedded);
+    
+    QMap<QString, QVariant> map;
+    
+    foreach (QMessageAddress recipient,message.to()) {
+        map.insert(recipient.addressee(), QString(""));
+    }
+    
+    QList<QVariant> data;
+    data.append(map);
+    data.append(message.textContent());
+    request->setArguments(data);
+
+    request->send();
+
+    return true;
+}
+
+#else
 
 bool CMTMEngine::composeMMSL(const QMessage &message)
 {
@@ -875,6 +941,51 @@ bool CMTMEngine::composeMMSL(const QMessage &message)
     CleanupStack::PopAndDestroy(2); //messageData and sendUi
     return true;
 }
+
+#endif 
+#ifdef QTHIGHWAYUSED
+
+bool CMTMEngine::composeEmailL(const QMessage &message)
+{
+    bool embedded = false;
+    
+    XQAiwRequest* request = iAiwMgr.create(XQI_EMAIL_MESSAGE_SEND,
+            "send(QVariant)",//XQOP_EMAIL_MESSAGE_SEND,
+            embedded);
+    
+    QMap<QString,QVariant> map;
+
+    // Add receivers
+    QStringList toRecipients;
+    QStringList ccRecipients;
+    QStringList bccRecipients;
+
+    foreach(QMessageAddress address, message.to())
+        toRecipients.append(address.addressee());
+
+    foreach(QMessageAddress address, message.cc())
+        ccRecipients.append(address.addressee());
+
+    foreach(QMessageAddress address, message.bcc())
+        bccRecipients.append(address.addressee());
+
+    map.insert(emailSendToKey, toRecipients);
+    map.insert(emailSendCcKey, ccRecipients);
+    map.insert(emailSendBccKey, bccRecipients);
+    map.insert(emailSendSubjectKey, message.subject());
+    
+    map.insert(emailSendBodyTextKey, message.textContent());
+    
+    QList<QVariant> data;
+    data.append(map);
+    request->setArguments(data);
+        
+    bool res = request->send();
+   
+    return res;
+}
+
+#else
 
 bool CMTMEngine::composeEmailL(const QMessage &message)
 {
@@ -962,6 +1073,8 @@ bool CMTMEngine::composeEmailL(const QMessage &message)
     CleanupStack::PopAndDestroy(2); //messageData and sendUi
     return true;
 }
+
+#endif
 
 bool CMTMEngine::retrieve(QMessageServicePrivate& privateService, const QMessageId &messageId, const QMessageContentContainerId& id)
 {
@@ -3755,6 +3868,30 @@ QMessage CMTMEngine::mmsMessageL(CMsvEntry& receivedEntry, long int messageId) c
     ipMmsMtm->LoadMessageL();
     message.setFrom(QMessageAddress(QMessageAddress::Phone, QString::fromUtf16(ipMmsMtm->Sender().Ptr(), ipMmsMtm->Sender().Length())));
     QMessagePrivate::setSenderName(message, QString::fromUtf16(ipMmsMtm->Sender().Ptr(), ipMmsMtm->Sender().Length()));
+
+    // Read message recipients
+    const CMsvRecipientList&  recipients = ipMmsMtm->AddresseeList();
+    QMessageAddressList toList;
+    QMessageAddressList ccList;
+    QMessageAddressList bccList;
+    for (int i=0; i < recipients.Count(); i++) {
+        switch (recipients.Type(i)) {
+        case EMsvRecipientCc:
+            ccList.append(QMessageAddress(QMessageAddress::Phone, QString::fromUtf16(recipients[i].Ptr(), recipients[i].Length())));
+            break;
+        case EMsvRecipientBcc:
+            bccList.append(QMessageAddress(QMessageAddress::Phone, QString::fromUtf16(recipients[i].Ptr(), recipients[i].Length())));
+            break;
+        case EMsvRecipientTo:
+        default:
+            toList.append(QMessageAddress(QMessageAddress::Phone, QString::fromUtf16(recipients[i].Ptr(), recipients[i].Length())));
+            break;
+        }
+    }
+    message.setTo(toList);
+    message.setCc(ccList);
+    message.setBcc(bccList);
+
     
     // Read message subject
     if (receivedEntry.Entry().iDescription.Length() > 0)  {
@@ -5790,5 +5927,7 @@ void CAsynchronousMTMOperation::DoCancel()
 {
     ipMsvOperation->Cancel();
 }
+
+#include "..\..\build\Release\QtMessaging\moc\moc_qmtmengine_symbian_p.cpp";
 
 QTM_END_NAMESPACE

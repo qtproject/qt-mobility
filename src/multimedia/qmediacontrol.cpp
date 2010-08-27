@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -51,35 +51,37 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaControl
-    \ingroup multimedia-serv
+    \ingroup multimedia
 
     \preliminary
     \brief The QMediaControl class provides a base interface for media service controls.
 
-    Media controls provide an interface to individual features provided by a media service.  Most
-    services implement a principal control which exposes the core functionality of the service and
-    a number optional controls which expose any additional functionality.
+    Media controls provide an interface to individual features provided by a
+    media service.  Most services implement a principal control which exposes
+    the core functionality of the service and a number optional controls which
+    expose any additional functionality.
 
-    A pointer to a control implemented by a media service can be obtained using the
-    \l {QMediaService::control()}{control()} member of QMediaService.  If the service doesn't
-    implement a control it will instead return a null pointer.
+    A pointer to a control implemented by a media service can be obtained using
+    the \l {QMediaService::requestControl()} member of QMediaService.  If the
+    service doesn't implement a control it will instead return a null pointer.
 
     \code
     QMediaPlayerControl *control = qobject_cast<QMediaPlayerControl *>(
-            service->control("com.nokia.Qt.QMediaPlayerControl/1.0"));
+            service->requestControl("com.nokia.Qt.QMediaPlayerControl/1.0"));
     \endcode
 
-    Alternatively if the IId of the control has been declared using Q_MEDIA_DECLARE_CONTROL
-    the template version of QMediaService::control() can be used to request the service without
+    Alternatively if the IId of the control has been declared using
+    Q_MEDIA_DECLARE_CONTROL the template version of
+    QMediaService::requestControl() can be used to request the service without
     explicitly passing the IId.
 
     \code
-    QMediaPlayerControl *control = service->control<QMediaPlayerControl *>();
+    QMediaPlayerControl *control = service->requestControl<QMediaPlayerControl *>();
     \endcode
 
-    Most application code will not interface directly with a media service's controls, instead the
-    QMediaObject which owns the service acts as an intermeditary between one or more controls and
-    the application.
+    Most application code will not interface directly with a media service's
+    controls, instead the QMediaObject which owns the service acts as an
+    intermediary between one or more controls and the application.
 
     \sa QMediaService, QMediaObject
 */
@@ -88,17 +90,18 @@ QT_BEGIN_NAMESPACE
     \macro Q_MEDIA_DECLARE_CONTROL(Class, IId)
     \relates QMediaControl
 
-    The Q_MEDIA_DECLARE_CONTROL macro declares an \a IId for a \a Class that inherits from
-    QMediaControl.
+    The Q_MEDIA_DECLARE_CONTROL macro declares an \a IId for a \a Class that
+    inherits from QMediaControl.
 
-    Declaring an IId for a QMediaControl allows an instance of that control to be requested from
-    QMediaService::control() without explicitly passing the IId.
+    Declaring an IId for a QMediaControl allows an instance of that control to
+    be requested from QMediaService::requestControl() without explicitly
+    passing the IId.
 
     \code
     QMediaPlayerControl *control = service->control<QMediaPlayerControl *>();
     \endcode
 
-    \sa QMediaService::control()
+    \sa QMediaService::requestControl()
 */
 
 /*!

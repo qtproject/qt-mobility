@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -75,6 +75,8 @@ public:
   bool removeContact(const QContactLocalId& contactId, QContactManager::Error* error);
   bool saveContact(QContact* contact, QContactManager::Error* error);
 
+  const QString getDisplayName(const QContact& contact) const;
+  
   QContactLocalId selfContactId(QContactManager::Error* errors) const;
 
 Q_SIGNALS:

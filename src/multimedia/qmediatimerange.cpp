@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,17 +48,18 @@ QT_BEGIN_NAMESPACE
     \brief The QMediaTimeInterval class represents a time interval with integer precision.
     \ingroup multimedia
 
-    An interval is specified by an inclusive start() and end() time.
-    These must be set in the constructor, as this is an immutable class.
-    The specific units of time represented by the class have not been defined -
-    it is suitable for any times which can be represented by a signed 64 bit integer.
+    An interval is specified by an inclusive start() and end() time.  These
+    must be set in the constructor, as this is an immutable class.  The
+    specific units of time represented by the class have not been defined - it
+    is suitable for any times which can be represented by a signed 64 bit
+    integer.
 
-    The isNormal() method determines if a time interval is normal
-    (a normal time interval has start() <= end()). An abnormal interval can be converted
+    The isNormal() method determines if a time interval is normal (a normal
+    time interval has start() <= end()). An abnormal interval can be converted
     in to a normal interval by calling the normalized() method.
 
-    The contains() method determines if a specified time lies within
-    the time interval.
+    The contains() method determines if a specified time lies within the time
+    interval.
 
     The translated() method returns a time interval which has been translated
     forwards or backwards through time by a specified offset.

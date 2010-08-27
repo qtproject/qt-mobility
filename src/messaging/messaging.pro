@@ -142,16 +142,20 @@ symbian|win32|maemo6|maemo5|mac {
             CONFIG += FREESTYLENMAIL
             DEFINES += FREESTYLENMAILUSED
         }
-    contains(CONFIG, !FREESTYLENMAIL) {
-		contains(messaging_freestyle_enabled, yes) {
-		   		CONFIG += FREESTYLEMAIL
-				DEFINES += FREESTYLEMAILUSED
-				DEFINES += FREESTYLEMAILBOXOBSERVERUSED
-			}
-		}
-	INCLUDEPATH += /sf/mw/qtextensions/qthighway/inc
-	LIBS += -lxqservice 
-	contains(messaging_ncnlist_enabled, no) : DEFINES += NCNLISTREMOVED
+        contains(CONFIG, !FREESTYLENMAIL) {
+	    contains(messaging_freestyle_enabled, yes) {
+                CONFIG += FREESTYLEMAIL
+                DEFINES += FREESTYLEMAILUSED
+                DEFINES += FREESTYLEMAILBOXOBSERVERUSED
+            }
+        }
+        contains(messaging_ncnlist_enabled, no) : DEFINES += NCNLISTREMOVED
+	contains(messaging_qthighway_enabled, yes) {
+            INCLUDEPATH += /sf/mw/qtextensions/qthighway/inc
+            LIBS += -lxqservice 
+            CONFIG += QTHIGHWAY
+            DEFINES += QTHIGHWAYUSED
+        }
         HEADERS -= qmessagestore_p.h \
             qmessagecontentcontainer_p.h \
             qmessage_p.h
@@ -184,6 +188,10 @@ symbian|win32|maemo6|maemo5|mac {
         contains(CONFIG, FREESTYLEMAIL):SOURCES += qfsengine_symbian.cpp
         contains(CONFIG, FREESTYLENMAIL):SOURCES += qfsnmengine_symbian.cpp
         contains(CONFIG, FREESTYLENMAIL):LIBS += -lnmailclientapi \	    
+    contains(CONFIG, QTHIGHWAY) {
+        LIBS += -lxqservice \
+                -lxqserviceutil \
+    }
     LIBS += -lsendas2 \
             -lmsgs \
             -letext \
@@ -200,7 +208,7 @@ symbian|win32|maemo6|maemo5|mac {
             -lcone \
             -lapgrfx \
             -lapmime \
-            -lecom
+            -lecom 
         TARGET.CAPABILITY = ALL \
             -TCB
         TARGET.UID3 = 0x2002AC82

@@ -1,39 +1,50 @@
-TEMPLATE = app
-TARGET = qmlcontacts
+TEMPLATE = lib
+DESTDIR = com/nokia/mobility
+TARGET = qcontactqmlplugin
 
-CONFIG += mobility
-MOBILITY = contacts versit
+CONFIG += qt plugin mobility
+QT += declarative
+
+MOBILITY = contacts \
+    versit
+
 
 DEPENDPATH += .
 INCLUDEPATH += . \
-               ../../include \
-               ../../src/contacts \
-               ../../src/contacts/requests \
-               ../../src/contacts/details \
-               ../../src/contacts/filters \
-               ../../src/versit
-
-QT += declarative
-QT += script
-
+    ../../include \
+    ../../src/contacts \
+    ../../src/contacts/requests \
+    ../../src/contacts/details \
+    ../../src/contacts/filters \
+    ../../src/versit
 
 # Input
-SOURCES += main.cpp \
-    qmlcontacts.cpp \
-    qmlcontact.cpp
-HEADERS += qmlcontactsa.h \
-    qmlcontact.h
-RESOURCES += qmlcontacts.qrc
+HEADERS += qmlcontactmodel.h \
+           imageprovider.h \
+           qmlcontact.h \
+           qmlcontactdetail.h \
+           qmlcontactdetailfield.h
+
+SOURCES += plugin.cpp \
+    qmlcontactmodel.cpp \
+    imageprovider.cpp \
+    qmlcontact.cpp \
+    qmlcontactdetail.cpp \
+    qmlcontactdetailfield.cpp
+
 OTHER_FILES += example.qml \
     contents/example.vcf \
     contents/MediaButton.qml \
-    ScrollBar.qml
+    ScrollBar.qml \
+    com/nokia/mobility/qmldir
 
-symbian: {
+symbian:{
+    TARGET.EPOCALLOWDLLDATA=1
     TARGET.CAPABILITY = ReadUserData \
                         WriteUserData \
                         ReadDeviceData \
                         WriteDeviceData \
                         SwEvent
 }
+
 include(../examples.pri)

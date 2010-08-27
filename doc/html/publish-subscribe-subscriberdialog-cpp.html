@@ -15,7 +15,7 @@
 </h1>
 <pre><span class="comment">    /****************************************************************************
     **
-    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
     ** Contact: Nokia Corporation (qt-info@nokia.com)
     **
@@ -118,6 +118,13 @@
     #endif
         connect(ui-&gt;connectButton, SIGNAL(clicked()), this, SLOT(changeSubscriberPath()));
         changeSubscriberPath();
+
+        <span class="comment">// if the default path does not exist reset it to /</span>
+        QVariant value = subscriber-&gt;value();
+        if (!subscriber-&gt;value().isValid() &amp;&amp; subscriber-&gt;subPaths().isEmpty()) {
+            ui-&gt;basePath-&gt;setText(QLatin1String(&quot;/&quot;));
+            changeSubscriberPath();
+        }
     }
 
     SubscriberDialog::~SubscriberDialog()
@@ -191,8 +198,8 @@
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

@@ -50,6 +50,47 @@
 #define USE_BUFFERS 1
 #endif
 
+class smoothedaccelerometerfilter : public QObject, public QAccelerometerFilter
+{
+    qreal prevX;
+    qreal prevY;
+    qreal prevZ;
+    bool havePrev;
+
+public:
+    smoothedaccelerometerfilter(QObject *parent = 0)
+        : QObject(parent)
+        , QAccelerometerFilter()
+        , prevX(0)
+        , prevY(0)
+        , prevZ(0)
+        , havePrev(false)
+    {
+    }
+
+    bool filter(QAccelerometerReading *reading)
+    {
+        // Smooth out the reported values.  Large changes are applied as-is,
+        // and small jitters smooth to the rest position.
+        if (havePrev) {
+            qreal xdiff = reading->x() - prevX;
+            qreal ydiff = reading->y() - prevY;
+            qreal zdiff = reading->z() - prevZ;
+#define threshold 0.196133f
+            if (qAbs(xdiff) < threshold && qAbs(ydiff) < threshold && qAbs(zdiff) < threshold) {
+                reading->setX(prevX + xdiff * 0.1f);
+                reading->setY(prevY + ydiff * 0.1f);
+                reading->setZ(prevZ + zdiff * 0.1f);
+            }
+        }
+        prevX = reading->x();
+        prevY = reading->y();
+        prevZ = reading->z();
+        havePrev = true;
+        return true;
+    }
+};
+
 View::View(QWidget *parent)
     : QGLWidget(parent),
       sensitivity(0.1f),
@@ -63,6 +104,7 @@ View::View(QWidget *parent)
 
     sensor = new QAccelerometer(this);
     connect(sensor, SIGNAL(readingChanged()), this, SLOT(accelerometerTimeout()));
+    sensor->addFilter(new smoothedaccelerometerfilter(this));
     sensor->start();
 
     time.start();

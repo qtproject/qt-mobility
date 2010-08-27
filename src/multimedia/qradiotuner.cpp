@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -102,7 +102,7 @@ QRadioTuner::QRadioTuner(QObject *parent, QMediaServiceProvider* provider):
     d->provider = provider;
 
     if (d->service != 0) {
-        d->control = qobject_cast<QRadioTunerControl*>(d->service->control(QRadioTunerControl_iid));
+        d->control = qobject_cast<QRadioTunerControl*>(d->service->requestControl(QRadioTunerControl_iid));
         if (d->control != 0) {
             connect(d->control, SIGNAL(stateChanged(QRadioTuner::State)), SIGNAL(stateChanged(QRadioTuner::State)));
             connect(d->control, SIGNAL(bandChanged(QRadioTuner::Band)), SIGNAL(bandChanged(QRadioTuner::Band)));
@@ -124,6 +124,9 @@ QRadioTuner::~QRadioTuner()
 {
     Q_D(QRadioTuner);
 
+    if (d->service && d->control)
+        d->service->releaseControl(d->control);
+
     d->provider->releaseService(d->service);
 }
 
@@ -141,12 +144,12 @@ bool QRadioTuner::isAvailable() const
 /*!
     Returns the availability error state.
 */
-QtMediaServices::AvailabilityError QRadioTuner::availabilityError() const
+QtMultimediaKit::AvailabilityError QRadioTuner::availabilityError() const
 {
     if (d_func()->control != NULL)
         return d_func()->control->availabilityError();
     else
-        return QtMediaServices::ServiceMissingError;
+        return QtMultimediaKit::ServiceMissingError;
 }
 
 /*!

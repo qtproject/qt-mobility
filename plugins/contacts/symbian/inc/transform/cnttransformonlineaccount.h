@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -64,8 +64,8 @@ class CntTransformOnlineAccount : public CntTransformContactData
 protected:
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
 	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
-	bool supportsField(TUint32 fieldType) const;
 	bool supportsDetail(QString detailName) const;
+	QList<TUid> supportedFields() const;
 	QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const;
     bool supportsSubType(const QString& subType) const;
     quint32 getIdForField(const QString& fieldName) const;

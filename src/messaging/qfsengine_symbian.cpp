@@ -78,6 +78,8 @@ Q_GLOBAL_STATIC(CFSEngine,fsEngine);
 
 CFSEngine::CFSEngine()
 {
+    connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(cleanupFSBackend()));
+
     TRAPD(err, {
         m_factory = CEmailInterfaceFactory::NewL(); 
         m_ifPtr = m_factory->InterfaceL(KEmailClientApiInterface);
@@ -92,6 +94,11 @@ CFSEngine::CFSEngine()
 }
 
 CFSEngine::~CFSEngine()
+{
+
+}
+
+void CFSEngine::cleanupFSBackend()
 {
     m_mtmAccountList.clear();
     for (TInt i = 0; i < m_attachments.Count(); i++){
@@ -239,8 +246,12 @@ QMessageAccount CFSEngine::account(const QMessageAccountId &id) const
 
 QMessageAccountId CFSEngine::defaultAccount(QMessage::Type type) const
 {
-    // TODO
-    Q_UNUSED(type);
+    TRAPD(err, updateEmailAccountsL());
+    Q_UNUSED(err); 
+    QMessageAccountIdList accountIds = accountsByType(type);
+    if (accountIds.count() > 0)
+        return accountIds.at(0);
+        
     return QMessageAccountId();
 }
 

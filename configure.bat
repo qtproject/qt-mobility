@@ -1,6 +1,6 @@
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
-:: Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+:: Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 :: All rights reserved.
 :: Contact: Nokia Corporation (qt-info@nokia.com)
 ::
@@ -48,8 +48,8 @@ cd /D %SOURCE_PATH%
 set SOURCE_PATH=%CD%
 cd /D %BUILD_PATH%
 
-set PROJECT_CONFIG= %BUILD_PATH%\config.in
-set PROJECT_LOG= %BUILD_PATH%\config.log
+set PROJECT_CONFIG=%BUILD_PATH%\config.in
+set PROJECT_LOG=%BUILD_PATH%\config.log
 set RELEASEMODE=release
 set WIN32_RELEASEMODE=debug_and_release build_all
 set QT_MOBILITY_LIB=
@@ -63,9 +63,9 @@ set VC_TEMPLATE_OPTION=
 set QT_PATH=
 set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
 
-if exist "%QMAKE_CACHE%" del %QMAKE_CACHE%
-if exist "%PROJECT_LOG%" del %PROJECT_LOG%
-if exist "%PROJECT_CONFIG%" del %PROJECT_CONFIG%
+if exist "%QMAKE_CACHE%" del /Q %QMAKE_CACHE%
+if exist "%PROJECT_LOG%" del /Q %PROJECT_LOG%
+if exist "%PROJECT_CONFIG%" del /Q %PROJECT_CONFIG%
 
 echo QT_MOBILITY_SOURCE_TREE = %SOURCE_PATH% > %QMAKE_CACHE%
 echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH% >> %QMAKE_CACHE%
@@ -80,6 +80,7 @@ if "%1" == "-prefix"            goto prefixTag
 if "%1" == "-libdir"            goto libTag
 if "%1" == "-bindir"            goto binTag
 if "%1" == "-headerdir"         goto headerTag
+if "%1" == "-plugindir"         goto pluginTag
 if "%1" == "-tests"             goto testTag
 if "%1" == "-examples"          goto exampleTag
 if "%1" == "-qt"                goto qtTag
@@ -112,11 +113,13 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     (default PREFIX/lib)
     echo -bindir (dir) ..... Executables will be installed to dir
     echo                     (default PREFIX/bin)
+    echo -plugindir (dir) .. Plug-ins will be installed to dir
+    echo                     (default PREFIX/plugins)
     echo -debug ............ Build with debugging symbols
     echo -release .......... Build without debugging symbols
     echo -silent ........... Reduces build output
     echo -tests ............ Build unit tests (not build by default)
-    echo                     Note, this adds test symbols to all libraries 
+    echo                     Note, this adds test symbols to all libraries
     echo                     and should not be used for release builds.
     echo -examples ......... Build example applications
     echo -no-docs .......... Do not build documentation (build by default)
@@ -181,12 +184,19 @@ echo QT_MOBILITY_INCLUDE = %1 >> %PROJECT_CONFIG%
 shift
 goto cmdline_parsing
 
+:pluginTag
+shift
+echo QT_MOBILITY_PLUGINS = %1 >> %PROJECT_CONFIG%
+shift
+echo
+goto cmdline_parsing
+
 :unfrozenTag
 REM Should never be used in release builds
-REM Some SDK's seem to exclude Q_AUTOTEST_EXPORT symbols if the 
+REM Some SDK's seem to exclude Q_AUTOTEST_EXPORT symbols if the
 REM libraries are frozen. This breaks unit tests relying on the auto test exports
 REM This flag unfreezes the SYMBIAN libraries for the purpose of unit test building.
-REM Ideally this should be connected to '-tests' option but that would prevent 
+REM Ideally this should be connected to '-tests' option but that would prevent
 REM integration testing for frozen symbols as the CI system should test unit tests
 REM and frozen symbol compliance.
 echo symbian_symbols_unfrozen = 1 >> %PROJECT_CONFIG%
@@ -240,8 +250,8 @@ set MOBILITY_MODULES=
 echo Checking selected modules:
 :modulesTag2
 
-for /f "tokens=1,*" %%a in ("%MOBILITY_MODULES_UNPARSED%") do ( 
-    set FIRST=%%a 
+for /f "tokens=1,*" %%a in ("%MOBILITY_MODULES_UNPARSED%") do (
+    set FIRST=%%a
     set REMAINING=%%b
 )
 
@@ -466,6 +476,7 @@ call :compileTest Symbian_Sensor_Framework sensors_symbian
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
 call :compileTest Symbian_Messaging_FreestyleNmail messaging_freestylenm
 call :compileTest Symbian_Messaging_NcnList messaging_ncnlist
+call :compileTest Symbian_Messaging_QtHighway messaging_qthighway
 echo End of compile tests
 echo.
 echo.

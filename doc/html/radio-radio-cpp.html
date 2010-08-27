@@ -15,7 +15,7 @@
 </h1>
 <pre><span class="comment">    /****************************************************************************
     **
-    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
     ** Contact: Nokia Corporation (qt-info@nokia.com)
     **
@@ -86,13 +86,15 @@
         else
             signal-&gt;setText(tr(&quot;No radio found&quot;));
         topBar-&gt;addWidget(signal);
-
+    #if defined Q_WS_MAEMO_5
+        QSpacerItem *spacer = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        topBar-&gt;addItem(spacer);
+        volumeSlider = new QSlider(Qt::Horizontal,this);
+    #else
         volumeSlider = new QSlider(Qt::Vertical,this);
-        volumeSlider-&gt;setRange(0,100);
-    #if defined Q_OS_SYMBIAN
-        volumeSlider-&gt;setRange(0,10);
     #endif
-        volumeSlider-&gt;setValue(radio-&gt;volume());
+        volumeSlider-&gt;setRange(0,100);
+        volumeSlider-&gt;setValue(50);
         connect(volumeSlider,SIGNAL(valueChanged(int)),this,SLOT(updateVolume(int)));
         topBar-&gt;addWidget(volumeSlider);
 
@@ -183,8 +185,8 @@
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

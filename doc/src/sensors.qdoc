@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,9 +45,6 @@
 \brief The Sensors API provides access to sensors.
 \ingroup mobility
 
-\warning This API should be considered in a beta state. It is
-under development and subject to change.
-
 The Sensors API provides access to sensors.
 
 This covers both high-level sensors such as screen orientation (portrait, landscape)
@@ -56,8 +53,8 @@ and low-level, real-time sensors such as accelerometer data.
 \tableofcontents
 
 \section1 Namespace
-The QtMobility API's are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility API's into Qt. See the
+The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -75,12 +72,23 @@ For a list of built-in sensor types, see the \l{Sensor Classes} section below.
 
 Unless otherwise specified, sensors shall use the
 \l{http://en.wikipedia.org/wiki/Cartesian_coordinate_system}{Right Hand Cartesian coordinate system}.
-An example of how the axes are arranged on a phone is included below.
 
-\image axes.png
+\image sensors-coordinates.jpg
 
-In general, sensor data is not reoriented to match the UI. Some specific sensors may reorient
-data to match the UI but most sensors will not do this.
+To allow for measurements in all 6 directions, negative values are used.
+
+\image sensors-coordinates2.jpg
+
+Where rotation around an axis is used, the rotation shall be expressed as a Right Hand rotation.
+
+\image sensors-coordinates3.jpg
+
+In general, sensor data is oriented to the top of the device. If values are to be displayed on
+the screen the values may need to be transformed so that they match the user interface orientation. A sensor
+may define its data as being oriented to the UI. This will be noted in the documentation for the
+sensor.
+
+\image sensors-sides2.jpg
 
 \section1 Using a Sensor
 
@@ -214,7 +222,7 @@ An example follows.
 
 \snippet snippets/sensors/plugin.cpp Plugin
 
-If you woud like to build a backend into a library or application you can use the
+If you would like to build a backend into a library or application you can use the
 REGISTER_STATIC_PLUGIN() macro although it may not work in all situations as it
 uses static initialization.
 

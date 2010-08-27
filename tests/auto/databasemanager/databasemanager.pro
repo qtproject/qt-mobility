@@ -2,12 +2,6 @@ TARGET=tst_databasemanager
 QT = core sql
 INCLUDEPATH += ../../../src/serviceframework
 
-symbian {
-    INCLUDEPATH += ../../../src/serviceframework/symbian
-    DEPENDPATH += ../../../src/serviceframework \
-                  ../../../src/serviceframework/symbian
-}
-
 wince*|symbian*: {
     addFiles.sources = testdata/*
     addFiles.path = testdata
@@ -26,18 +20,9 @@ CONFIG+=testcase
 include(../../../common.pri)
 
 symbian {
-    SOURCES += tst_databasemanager_s60.cpp \
+    SOURCES += tst_databasemanager_symbian.cpp \
                ../qsfwtestutil.cpp
 
-    HEADERS += \
-               ../qsfwtestutil.h
-
-   libBlock = \
-       "$${LITERAL_HASH}ifdef WINSCW" \
-       "LIBRARY qsfwdatabasemanagerserver.lib" \
-       "$${LITERAL_HASH}endif"
-
-    MMP_RULES += libBlock
     TARGET.CAPABILITY = ALL -TCB
     LIBS += -lefsrv
 

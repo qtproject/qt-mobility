@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,76 +54,76 @@ namespace
 {
     struct QWMMetaDataKeyLookup
     {
-        QtMediaServices::MetaData key;
+        QtMultimediaKit::MetaData key;
         const wchar_t *token;
     };
 }
 
 static const QWMMetaDataKeyLookup qt_wmMetaDataKeys[] =
 {
-    { QtMediaServices::Title, L"Title" },
-    { QtMediaServices::SubTitle, L"WM/SubTitle" },
-    { QtMediaServices::Author, L"Author" },
-    { QtMediaServices::Comment, L"Comment" },
-    { QtMediaServices::Description, L"Description" },
-    { QtMediaServices::Category, L"WM/Category" },
-    { QtMediaServices::Genre, L"WM/Genre" },
-    //{ QtMediaServices::Date, 0 },
-    { QtMediaServices::Year, L"WM/Year" },
-    { QtMediaServices::UserRating, L"UserRating" },
-    //{ QtMediaServices::MetaDatawords, 0 },
-    { QtMediaServices::Language, L"Language" },
-    { QtMediaServices::Publisher, L"WM/Publisher" },
-    { QtMediaServices::Copyright, L"Copyright" },
-    { QtMediaServices::ParentalRating, L"ParentalRating" },
-    { QtMediaServices::RatingOrganisation, L"RatingOrganisation" },
+    { QtMultimediaKit::Title, L"Title" },
+    { QtMultimediaKit::SubTitle, L"WM/SubTitle" },
+    { QtMultimediaKit::Author, L"Author" },
+    { QtMultimediaKit::Comment, L"Comment" },
+    { QtMultimediaKit::Description, L"Description" },
+    { QtMultimediaKit::Category, L"WM/Category" },
+    { QtMultimediaKit::Genre, L"WM/Genre" },
+    //{ QtMultimediaKit::Date, 0 },
+    { QtMultimediaKit::Year, L"WM/Year" },
+    { QtMultimediaKit::UserRating, L"UserRating" },
+    //{ QtMultimediaKit::MetaDatawords, 0 },
+    { QtMultimediaKit::Language, L"Language" },
+    { QtMultimediaKit::Publisher, L"WM/Publisher" },
+    { QtMultimediaKit::Copyright, L"Copyright" },
+    { QtMultimediaKit::ParentalRating, L"ParentalRating" },
+    { QtMultimediaKit::RatingOrganisation, L"RatingOrganisation" },
 
     // Media
-    { QtMediaServices::Size, L"FileSize" },
-    { QtMediaServices::MediaType, L"MediaType" },
-    { QtMediaServices::Duration, L"Duration" },
+    { QtMultimediaKit::Size, L"FileSize" },
+    { QtMultimediaKit::MediaType, L"MediaType" },
+    { QtMultimediaKit::Duration, L"Duration" },
 
     // Audio
-    { QtMediaServices::AudioBitRate, L"AudioBitRate" },
-    { QtMediaServices::AudioCodec, L"AudioCodec" },
-    { QtMediaServices::ChannelCount, L"ChannelCount" },
-    { QtMediaServices::SampleRate, L"Frequency" },
+    { QtMultimediaKit::AudioBitRate, L"AudioBitRate" },
+    { QtMultimediaKit::AudioCodec, L"AudioCodec" },
+    { QtMultimediaKit::ChannelCount, L"ChannelCount" },
+    { QtMultimediaKit::SampleRate, L"Frequency" },
 
     // Music
-    { QtMediaServices::AlbumTitle, L"WM/AlbumTitle" },
-    { QtMediaServices::AlbumArtist, L"WM/AlbumArtist" },
-    { QtMediaServices::ContributingArtist, L"Author" },
-    { QtMediaServices::Composer, L"WM/Composer" },
-    { QtMediaServices::Conductor, L"WM/Conductor" },
-    { QtMediaServices::Lyrics, L"WM/Lyrics" },
-    { QtMediaServices::Mood, L"WM/Mood" },
-    { QtMediaServices::TrackNumber, L"WM/TrackNumber" },
-    //{ QtMediaServices::TrackCount, 0 },
-    //{ QtMediaServices::CoverArtUriSmall, 0 },
-    //{ QtMediaServices::CoverArtUriLarge, 0 },
+    { QtMultimediaKit::AlbumTitle, L"WM/AlbumTitle" },
+    { QtMultimediaKit::AlbumArtist, L"WM/AlbumArtist" },
+    { QtMultimediaKit::ContributingArtist, L"Author" },
+    { QtMultimediaKit::Composer, L"WM/Composer" },
+    { QtMultimediaKit::Conductor, L"WM/Conductor" },
+    { QtMultimediaKit::Lyrics, L"WM/Lyrics" },
+    { QtMultimediaKit::Mood, L"WM/Mood" },
+    { QtMultimediaKit::TrackNumber, L"WM/TrackNumber" },
+    //{ QtMultimediaKit::TrackCount, 0 },
+    //{ QtMultimediaKit::CoverArtUriSmall, 0 },
+    //{ QtMultimediaKit::CoverArtUriLarge, 0 },
 
     // Image/Video
-    //{ QtMediaServices::Resolution, 0 },
-    //{ QtMediaServices::PixelAspectRatio, 0 },
+    //{ QtMultimediaKit::Resolution, 0 },
+    //{ QtMultimediaKit::PixelAspectRatio, 0 },
 
     // Video
-    //{ QtMediaServices::FrameRate, 0 },
-    { QtMediaServices::VideoBitRate, L"VideoBitRate" },
-    { QtMediaServices::VideoCodec, L"VideoCodec" },
+    //{ QtMultimediaKit::FrameRate, 0 },
+    { QtMultimediaKit::VideoBitRate, L"VideoBitRate" },
+    { QtMultimediaKit::VideoCodec, L"VideoCodec" },
 
-    //{ QtMediaServices::PosterUri, 0 },
+    //{ QtMultimediaKit::PosterUri, 0 },
 
     // Movie
-    { QtMediaServices::ChapterNumber, L"ChapterNumber" },
-    { QtMediaServices::Director, L"WM/Director" },
-    { QtMediaServices::LeadPerformer, L"LeadPerformer" },
-    { QtMediaServices::Writer, L"WM/Writer" },
+    { QtMultimediaKit::ChapterNumber, L"ChapterNumber" },
+    { QtMultimediaKit::Director, L"WM/Director" },
+    { QtMultimediaKit::LeadPerformer, L"LeadPerformer" },
+    { QtMultimediaKit::Writer, L"WM/Writer" },
 
     // Photos
-    { QtMediaServices::CameraManufacturer, L"CameraManufacturer" },
-    { QtMediaServices::CameraModel, L"CameraModel" },
-    { QtMediaServices::Event, L"Event" },
-    { QtMediaServices::Subject, L"Subject" }
+    { QtMultimediaKit::CameraManufacturer, L"CameraManufacturer" },
+    { QtMultimediaKit::CameraModel, L"CameraModel" },
+    { QtMultimediaKit::Event, L"Event" },
+    { QtMultimediaKit::Subject, L"Subject" }
 };
 
 static QVariant getValue(IWMHeaderInfo *header, const wchar_t *key)
@@ -228,7 +228,7 @@ static QVariant getValue(IWMHeaderInfo *header, const wchar_t *key)
 #endif
 
 DirectShowMetaDataControl::DirectShowMetaDataControl(QObject *parent)
-    : QMetaDataControl(parent)
+    : QMetaDataReaderControl(parent)
     , m_content(0)
 #ifndef QT_NO_WMSDK
     , m_headerInfo(0)
@@ -240,11 +240,6 @@ DirectShowMetaDataControl::~DirectShowMetaDataControl()
 {
 }
 
-bool DirectShowMetaDataControl::isWritable() const
-{
-    return false;
-}
-
 bool DirectShowMetaDataControl::isMetaDataAvailable() const
 {
 #ifndef QT_NO_WMSDK
@@ -254,7 +249,7 @@ bool DirectShowMetaDataControl::isMetaDataAvailable() const
 #endif
 }
 
-QVariant DirectShowMetaDataControl::metaData(QtMediaServices::MetaData key) const
+QVariant DirectShowMetaDataControl::metaData(QtMultimediaKit::MetaData key) const
 {
     QVariant value;
 
@@ -274,19 +269,19 @@ QVariant DirectShowMetaDataControl::metaData(QtMediaServices::MetaData key) cons
         BSTR string = 0;
 
         switch (key) {
-        case QtMediaServices::Author:
+        case QtMultimediaKit::Author:
             m_content->get_AuthorName(&string);
             break;
-        case QtMediaServices::Title:
+        case QtMultimediaKit::Title:
             m_content->get_Title(&string);
             break;
-        case QtMediaServices::ParentalRating:
+        case QtMultimediaKit::ParentalRating:
             m_content->get_Rating(&string);
             break;
-        case QtMediaServices::Description:
+        case QtMultimediaKit::Description:
             m_content->get_Description(&string);
             break;
-        case QtMediaServices::Copyright:
+        case QtMultimediaKit::Copyright:
             m_content->get_Copyright(&string);
             break;
         default:
@@ -302,22 +297,14 @@ QVariant DirectShowMetaDataControl::metaData(QtMediaServices::MetaData key) cons
     return value;
 }
 
-void DirectShowMetaDataControl::setMetaData(QtMediaServices::MetaData, const QVariant &)
+QList<QtMultimediaKit::MetaData> DirectShowMetaDataControl::availableMetaData() const
 {
-}
-
-QList<QtMediaServices::MetaData> DirectShowMetaDataControl::availableMetaData() const
-{
-    return QList<QtMediaServices::MetaData>();
+    return QList<QtMultimediaKit::MetaData>();
 }
 
 QVariant DirectShowMetaDataControl::extendedMetaData(const QString &) const
 {
     return QVariant();
-}
-
-void DirectShowMetaDataControl::setExtendedMetaData(const QString &, const QVariant &)
-{
 }
 
 QStringList DirectShowMetaDataControl::availableExtendedMetaData() const
@@ -360,6 +347,6 @@ void DirectShowMetaDataControl::customEvent(QEvent *event)
         emit metaDataAvailableChanged(m_content);
 #endif
     } else {
-        QMetaDataControl::customEvent(event);
+        QMetaDataReaderControl::customEvent(event);
     }
 }

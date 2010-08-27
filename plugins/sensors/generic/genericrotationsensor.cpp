@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,7 +45,7 @@
 
 #define RADIANS_TO_DEGREES 57.2957795
 
-const char *genericrotationsensor::id("generic.rotation");
+char const * const genericrotationsensor::id("generic.rotation");
 
 genericrotationsensor::genericrotationsensor(QSensor *sensor)
     : QSensorBackend(sensor)
