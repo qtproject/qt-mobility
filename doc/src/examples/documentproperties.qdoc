@@ -44,11 +44,11 @@
 
     \ingroup gallery-examples
 
-    \title Document Sharing
+    \title Document Properties
 
     This example demonstrates using the Document Gallery to access the meta-data
     of a file using it's file name.
 
-    The Document Sharing example uses a QGalleryFilter and QGalleryQueryRequest
+    The Document Properties example uses a QGalleryFilter and QGalleryQueryRequest
     to query the meta-data of a file.
 */

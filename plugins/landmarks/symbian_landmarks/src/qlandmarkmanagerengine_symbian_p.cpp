@@ -2709,7 +2709,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletion(CLandmarkRequestData*
         QLandmarkImportRequest *importRequest = static_cast<QLandmarkImportRequest*> (request);
 
         // for resultsAvailable signal
-        QLandmarkManagerEngineSymbian::updateLandmarkImportRequest(importRequest, error,
+        QList<QLandmarkId> landmarkIds; //TODO: populate landmark ids
+        QLandmarkManagerEngineSymbian::updateLandmarkImportRequest(importRequest, landmarkIds, error,
             errorString, QLandmarkAbstractRequest::FinishedState);
 
         break;

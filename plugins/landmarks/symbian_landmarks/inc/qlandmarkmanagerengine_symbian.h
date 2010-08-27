@@ -229,6 +229,7 @@ public:
         QLandmarkAbstractRequest::State newState);
 
     static void updateLandmarkImportRequest(QLandmarkImportRequest *req,
+        const QList<QLandmarkId> &landmarkIds,
         QLandmarkManager::Error error, const QString &errorString,
         QLandmarkAbstractRequest::State newState);
 

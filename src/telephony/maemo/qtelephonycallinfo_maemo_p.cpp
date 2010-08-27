@@ -49,90 +49,45 @@ using namespace Tp;
 
 QTM_BEGIN_NAMESPACE
 
-bool QTelephonyCallInfoPrivate::isCall( const QVariantMap &properties)
-{
-    if(properties.contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"))){
-        QString type = properties.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString();
-        /**************************
-        check for Mediastream
-        **************************/
-        if(type == TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA){
-            return true;
-        }
-        /************************************************************
-        check for Text Telephony API doesn't care about SMS (no call)
-        *************************************************************/
-        else if(type == TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT){
-            return false;
-        }
-    }
-    return false;
-}
-
 QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate()
-            : _subType("")
-            , telepathychannel(0)
+            : telepathychannel(0)
 {
 }
 
 QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other)
             : QSharedData(other)
-            , _subType(other._subType)
             , telepathychannel(other.telepathychannel)
 {
 }
 
 QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate(Tp::ChannelPtr channel)
-    : _subType("")
-    , telepathychannel(channel)
+    : telepathychannel(channel)
 {
-
 }
 
 QString QTelephonyCallInfoPrivate::remotePartyIdentifier() const
 {
-    QString ret = "";
-    if(telepathychannel){
-        if(telepathychannel->properties().contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".TargetID")))
-            ret = telepathychannel->properties().value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".TargetID")).toString();
-    }
-    return ret;
+    qDebug() << "QTelephonyCallInfoPrivate::remotePartyIdentifier()";
+    if(telepathychannel)
+        return telepathychannel->getRemotePartyIdentifier();
+
+    return QString("");
 }
 
 QTelephonyEvents::CallType QTelephonyCallInfoPrivate::type() const
 {
-    QTelephonyEvents::CallType ret = QTelephonyEvents::Any;
-    if(telepathychannel){
-        if(telepathychannel->properties().contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"))){
-            QString type = telepathychannel->properties().value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString();
-
-            /**************************
-            check for Mediastream
-            **************************/
-            if(type == TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA){
-                //In this case we need to check video or audio
-                bool initialaudio = false;
-                bool initialvideo = false;
-                if(telepathychannel->properties().contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA ".InitialAudio")))
-                    initialaudio = telepathychannel->properties().value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA ".InitialAudio")).toBool();
-                if(telepathychannel->properties().contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA ".InitialVideo")))
-                    initialvideo = telepathychannel->properties().value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA ".InitialVideo")).toBool();
-                if(initialvideo) {
-                    ret = QTelephonyEvents::Video;
-                }
-                else if(initialaudio)
-                    ret = QTelephonyEvents::Voice;
-            }
-        }
-    }
-
-
+    QTelephonyEvents::CallType ret = QTelephonyEvents::Other;
+    if(telepathychannel)
+        ret =   telepathychannel->getCalltype();
     return ret;
 }
 
 QString QTelephonyCallInfoPrivate::subType() const
 {
-    return _subType;
+    QString ret = "";
+    if(telepathychannel)
+        ret = telepathychannel->getSubType();
+    return ret;
 }
 
 QTelephonyEvents::CallStatus QTelephonyCallInfoPrivate::status() const

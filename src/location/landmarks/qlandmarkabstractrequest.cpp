@@ -167,6 +167,7 @@ QLandmarkAbstractRequest::State QLandmarkAbstractRequest::state()
 */
 bool QLandmarkAbstractRequest::isInactive() const
 {
+    QMutexLocker ml(&d_ptr->mutex);
     return d_ptr->state == QLandmarkAbstractRequest::InactiveState;
 }
 
@@ -177,6 +178,7 @@ bool QLandmarkAbstractRequest::isInactive() const
 */
 bool QLandmarkAbstractRequest::isActive() const
 {
+    QMutexLocker ml(&d_ptr->mutex);
     return d_ptr->state == QLandmarkAbstractRequest::ActiveState;
 }
 
@@ -187,6 +189,7 @@ bool QLandmarkAbstractRequest::isActive() const
 */
 bool QLandmarkAbstractRequest::isFinished() const
 {
+    QMutexLocker ml(&d_ptr->mutex);
     return d_ptr->state == QLandmarkAbstractRequest::FinishedState;
 }
 
@@ -196,6 +199,7 @@ bool QLandmarkAbstractRequest::isFinished() const
 */
 QLandmarkManager::Error QLandmarkAbstractRequest::error() const
 {
+    QMutexLocker ml(&d_ptr->mutex);
     return d_ptr->error;
 }
 
@@ -206,6 +210,7 @@ QLandmarkManager::Error QLandmarkAbstractRequest::error() const
 */
 QString QLandmarkAbstractRequest::errorString() const
 {
+    QMutexLocker ml(&d_ptr->mutex);
     return d_ptr->errorString;
 }
 
@@ -215,7 +220,8 @@ QString QLandmarkAbstractRequest::errorString() const
 */
 QLandmarkManager *QLandmarkAbstractRequest::manager() const
 {
-        return d_ptr->manager;
+    QMutexLocker ml(&d_ptr->mutex);
+    return d_ptr->manager;
 }
 
 /*!
@@ -227,6 +233,9 @@ QLandmarkManager *QLandmarkAbstractRequest::manager() const
 */
 void QLandmarkAbstractRequest::setManager(QLandmarkManager *manager)
 {
+    QMutexLocker ml(&d_ptr->mutex);
+    if (d_ptr->state == QLandmarkAbstractRequest::ActiveState && d_ptr->manager)
+        return;
     d_ptr->manager = manager;
 }
 
@@ -238,6 +247,7 @@ void QLandmarkAbstractRequest::setManager(QLandmarkManager *manager)
 */
 bool QLandmarkAbstractRequest::start()
 {
+    QMutexLocker ml(&d_ptr->mutex);
     if (!d_ptr->manager) {
         d_ptr->error = QLandmarkManager::BadArgumentError;
         d_ptr->errorString = "No manager assigned to landmark request object";
@@ -246,8 +256,10 @@ bool QLandmarkAbstractRequest::start()
     }
     QLandmarkManagerEngine *engine = d_ptr->manager->engine();
 
-    if (d_ptr->state != QLandmarkAbstractRequest::ActiveState)
+    if (d_ptr->state != QLandmarkAbstractRequest::ActiveState) {
+        ml.unlock();
         return engine->startRequest(this);
+    }
      else {
         return false;
      }
@@ -261,6 +273,7 @@ bool QLandmarkAbstractRequest::start()
 */
 bool QLandmarkAbstractRequest::cancel()
 {
+    QMutexLocker ml(&d_ptr->mutex);
     if (!d_ptr->manager) {
         d_ptr->error = QLandmarkManager::BadArgumentError;
         d_ptr->errorString = "No manager assigned to landmark request object";
@@ -269,10 +282,12 @@ bool QLandmarkAbstractRequest::cancel()
     }
     QLandmarkManagerEngine *engine = d_ptr->manager->engine();
 
-    if(d_ptr->state == QLandmarkAbstractRequest::ActiveState)
+    if(d_ptr->state == QLandmarkAbstractRequest::ActiveState) {
+        ml.unlock();
         return engine->cancelRequest(this);
+    }
     else
-        return true;
+        return false;
 }
 
 /*!
@@ -285,6 +300,7 @@ bool QLandmarkAbstractRequest::cancel()
 bool QLandmarkAbstractRequest::waitForFinished(int msecs)
 {
 
+    QMutexLocker ml(&d_ptr->mutex);
     if (!d_ptr->manager) {
         d_ptr->error = QLandmarkManager::BadArgumentError;
         d_ptr->errorString = "No manager assigned to landmark request object";
@@ -295,6 +311,7 @@ bool QLandmarkAbstractRequest::waitForFinished(int msecs)
 
     switch(d_ptr->state) {
         case QLandmarkAbstractRequest::ActiveState:
+            ml.unlock();
             return engine->waitForRequestFinished(this, msecs);
         case QLandmarkAbstractRequest::FinishedState:
             return true;

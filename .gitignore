@@ -20,6 +20,7 @@ moc_*.cpp
 build
 include/*
 doc/html/*
+doc/qch/*
 config.pri
 config.in
 config.log

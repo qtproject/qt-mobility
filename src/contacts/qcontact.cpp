@@ -47,7 +47,7 @@
 #include "qcontact_p.h"
 #include "qcontactdetail_p.h"
 #include "qcontactmanager_p.h"
-#include "qcontactactionservicemanager_p.h"
+#include "qcontactactionmanager_p.h"
 #include "qcontactaction.h"
 
 QTM_BEGIN_NAMESPACE
@@ -798,7 +798,7 @@ QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QCo
 QList<QContactActionDescriptor> QContact::availableActions(const QString& serviceName) const
 {
     QList<QContactActionDescriptor> ret;
-    QList<QContactActionDescriptor> allds = QContactActionServiceManager::instance()->availableActions(*this);
+    QList<QContactActionDescriptor> allds = QContactActionManager::instance()->availableActions(*this);
     foreach (const QContactActionDescriptor& d, allds) {
         if (serviceName.isEmpty() || d.serviceName() == serviceName) {
             ret.append(d);

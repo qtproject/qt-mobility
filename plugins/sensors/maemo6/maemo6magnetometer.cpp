@@ -43,6 +43,8 @@
 
 char const * const maemo6magnetometer::id("maemo6.magnetometer");
 bool maemo6magnetometer::m_initDone = false;
+const float maemo6magnetometer::NANO = 0.000000001;
+
 
 maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
     : maemo6sensorbase(sensor)
@@ -50,6 +52,7 @@ maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
     const QString sensorName = "magnetometersensor";
     initSensor<MagnetometerSensorChannelInterface>(sensorName, m_initDone);
 
+    setRanges(NANO);
 
     if (m_sensorInterface){
         if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const MagneticField&)),
@@ -72,17 +75,13 @@ void maemo6magnetometer::start(){
 void maemo6magnetometer::slotDataAvailable(const MagneticField& data)
 {
 
-    if (m_isGeoMagnetometer){
-        m_reading.setX( 0.0000003 * data.x() );
-        m_reading.setY( 0.0000003 * data.y() );
-        m_reading.setZ( 0.0000003 * data.z() );
-        m_reading.setCalibrationLevel( ((float) data.level()) / 3.0 );
-    } else {
-        m_reading.setX( 0.0000003 * data.rx() );
-        m_reading.setY( 0.0000003 * data.ry() );
-        m_reading.setZ( 0.0000003 * data.rz() );
-        m_reading.setCalibrationLevel(1);
-    }
+    //nanoTeslas given, divide with 10^9 to get Teslas
+    m_reading.setX( NANO * m_isGeoMagnetometer?data.x():data.rx());
+    m_reading.setY( NANO * m_isGeoMagnetometer?data.y():data.ry());
+    m_reading.setZ( NANO * m_isGeoMagnetometer?data.z():data.rz());
+    m_reading.setCalibrationLevel( m_isGeoMagnetometer?((float) data.level()) / 3.0 :1);
+
+
     m_reading.setTimestamp(data.timestamp());
     newReadingAvailable();
 }

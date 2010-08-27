@@ -62,10 +62,9 @@ LandmarkBrowser::~LandmarkBrowser()
 
 void LandmarkBrowser::on_importLandmarks_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Import File"),".",tr("Landmark files (*.gpx)"));
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Import File"),".",tr("Landmark files (*.gpx *.lmx)"));
     if (!fileName.isEmpty()) {
         landmarkImport->setFileName(fileName);
-        landmarkImport->setFormat("GpxV1.1");
         landmarkImport->start();
         progress->setWindowTitle(tr("Importing Landmarks"));
         progress->show();

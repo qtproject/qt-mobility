@@ -134,41 +134,6 @@ const QChar CQwertyKeyMap::ArrayIndexToMappedChar(TInt aArrayIndex) const
 	return iKeyNames.value(static_cast<TKeyId>(aArrayIndex), PAD_CHAR);
 	}
 
-#if !defined(USE_ORBIT_KEYMAP)
-// ----------------------------------------------------------------------------
-// CQwertyKeyMap::UseHardcodedKeyMap
-// ----------------------------------------------------------------------------
-const QChar CQwertyKeyMap::UseHardcodedKeyMap(const QChar input) const
-    {
-    if (input >= 'a' && input <= 'z')
-        {
-        return input;
-        }
-    if (input >= 'A' && input <= 'Z')
-        {
-        return input.toLower(); // Return lowercase letter
-        }
-    if (input == KEY_COLON_NAME ||
-        input == KEY_DOT_NAME ||
-        input == KEY_DASH_NAME ||
-        input == KEY_AT_NAME ||
-        input == KEY_QUOTE_NAME ||
-        input == KEY_QUESTION_MARK_NAME)
-        {
-        return input;
-        }
-
-        // TODO: add rest of the keys
-
-#if defined(THAI_KEYMAP)
-    // TODO: add Thai key map
-#endif
-
-    // Other (unknown) chars
-    return PAD_CHAR;
-    }
-#endif // #if !defined(USE_ORBIT_KEYMAP)
-
 // ----------------------------------------------------------------------------
 // CQwertyKeyMap::ComputeValue
 // ----------------------------------------------------------------------------
@@ -215,7 +180,6 @@ TInt CQwertyKeyMap::ComputeValue(QString aString,
 	return KErrNone;
 	}
 
-#if defined(USE_ORBIT_KEYMAP)
 // ----------------------------------------------------------------------------
 // CQwertyKeyMap::MapKeyNameToValue
 // ----------------------------------------------------------------------------
@@ -223,7 +187,6 @@ bool CQwertyKeyMap::IsValidChar(const QChar aChar) const
 	{
 	return iKeyValues.contains(aChar);
 	}
-#endif // #if defined(USE_ORBIT_KEYMAP)
 
 // ----------------------------------------------------------------------------
 // CQwertyKeyMap::MapKeyNameToValue
@@ -256,11 +219,7 @@ void CQwertyKeyMap::ConstructL()
     QT_TRYCATCH_ERROR(err, ConstructKeyNameMap());
     User::LeaveIfError(err);
 
-#if defined(USE_ORBIT_KEYMAP)
 	CPcsKeyMap::ConstructL(HbKeyboardVirtualQwerty);
-#else
-	CPcsKeyMap::ConstructL();
-#endif
 
 	PRINT(_L("End CQwertyKeyMap::ConstructL"));
 	}

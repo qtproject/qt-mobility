@@ -9,6 +9,7 @@
 #include "maemo/ready-object.h"
 #include "maemo/connection.h"
 #include "qtelephonycallinfo.h"
+#include "qtelephony.h"
 
 QTM_BEGIN_NAMESPACE
      class QTelephonyCallListPrivate;
@@ -29,6 +30,11 @@ namespace Tp
         ~Channel();
         QVariantMap properties() const { return propertylist; }
         QTelephonyEvents::CallStatus getStatus() { return status; }
+        int getDirection() { return direction; }
+        QString getRemotePartyIdentifier() { return remoteIdentifier; }
+        QTelephonyEvents::CallType getCalltype() { return calltype; }
+        QString getSubType() { return subtype; }
+        bool isCall() { return iscall; }
 
     Q_SIGNALS:
         void StatusChanged(Tp::Channel* pchannel);
@@ -117,8 +123,11 @@ namespace Tp
         void disconnectInterfaces();
         void connectType();
         void disconnectType();
+        void init();
 
         QVariantMap propertylist;
+
+    public:
         Tp::Client::ChannelInterface* pChannelInterface;
         Tp::Client::ChannelInterfaceCallStateInterface* pChannelInterfaceCallStateInterface;
         Tp::Client::ChannelInterfaceChatStateInterface* pChannelInterfaceChatStateInterface;
@@ -137,6 +146,7 @@ namespace Tp
         Tp::Client::ChannelTypeTextInterface* pChannelTypeTextInterface;
         Tp::Client::ChannelTypeTubesInterface* pChannelTypeTubesInterface;
 
+    private:
         QTelephonyEvents::CallStatus status;
         Connection* connection;
         /*
@@ -145,6 +155,11 @@ namespace Tp
          2 = outgoing
          */
         int direction;
+        bool wasExistingChannel;
+        QString remoteIdentifier;
+        QTelephonyEvents::CallType calltype;
+        QString subtype;
+        bool iscall;
     };
     typedef SharedPtr<Channel> ChannelPtr;
 }

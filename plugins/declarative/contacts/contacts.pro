@@ -17,7 +17,7 @@ PLUGIN_TYPE = declarative
 
 include(../../../common.pri)
 
-QT += declarative
+QT += declarative script network
 
 
 CONFIG += mobility

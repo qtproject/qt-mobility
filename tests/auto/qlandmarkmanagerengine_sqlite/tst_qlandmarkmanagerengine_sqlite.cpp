@@ -153,6 +153,14 @@ private:
                     QLandmarkManager::Error error = QLandmarkManager::NoError,
                     int ms=1500, QLandmarkAbstractRequest::State state = QLandmarkAbstractRequest::FinishedState) {
         bool ret = true;
+        int msWaitedSoFar =0;
+        while(msWaitedSoFar < ms) {
+            QTest::qWait(100);
+            msWaitedSoFar +=100;
+            if (spy.count() ==2)
+                break;
+        }
+
         QTest::qWait(ms);
         if (spy.count() != 2) {
             qWarning() << "Spy count mismatch, expected = " << 2 << ", actual = " << spy.count();
@@ -198,11 +206,85 @@ private:
         return result;
     }
 
+     bool doFetchById(const QString type, const QList<QLandmarkId>lmIds, QList<QLandmark> *lms,
+                        QLandmarkManager::Error error = QLandmarkManager::NoError){
+        bool result =false;
+        if (type== "sync") {
+            *lms = m_manager->landmarks(lmIds);
+            result = (m_manager->error() == error);
+        } else if (type == "async") {
+            QLandmarkFetchByIdRequest fetchRequest(m_manager);
+            QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+            fetchRequest.setLandmarkIds(lmIds);
+            fetchRequest.start();
+            result = waitForAsync(spy, &fetchRequest,error,100);
+            *lms = fetchRequest.landmarks();
+        } else {
+            qFatal("Unknown test row type");
+        }
+        return result;
+    }
+
+     bool doSave(const QString &type, QList<QLandmark> *lms,
+                 QLandmarkManager::Error error = QLandmarkManager::NoError,
+                 QMap<int,QLandmarkManager::Error> *errorMap = 0)
+     {
+         bool result = false;
+         if (type == "sync") {
+             if (error == QLandmarkManager::NoError) {
+                 result = m_manager->saveLandmarks(lms,errorMap)
+                          && (m_manager->error() == QLandmarkManager::NoError);
+             } else {
+                 result = (!m_manager->saveLandmarks(lms,errorMap))
+                          && (m_manager->error() == error);
+             }
+         } else if (type == "async") {
+             QLandmarkSaveRequest saveRequest(m_manager);
+             QSignalSpy spy(&saveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+             saveRequest.setLandmarks(*lms);
+             saveRequest.start();
+             result = waitForAsync(spy, &saveRequest,error,1000);
+             if (errorMap)
+                *errorMap = saveRequest.errorMap();
+             *lms = saveRequest.landmarks();
+         } else {
+             qFatal("Unknown test row type");
+         }
+         return result;
+     }
+
+     bool doRemove(const QString &type, QList<QLandmarkId> lmIds,
+                 QLandmarkManager::Error error = QLandmarkManager::NoError,
+                 QMap<int,QLandmarkManager::Error> *errorMap = 0)
+     {
+         bool result = false;
+         if (type == "sync") {
+             if (error == QLandmarkManager::NoError) {
+                 result = m_manager->removeLandmarks(lmIds,errorMap)
+                          && (m_manager->error() == QLandmarkManager::NoError);
+             } else {
+                 result = (!m_manager->removeLandmarks(lmIds,errorMap))
+                          && (m_manager->error() == error);
+             }
+         } else if (type == "async") {
+             QLandmarkRemoveRequest removeRequest(m_manager);
+             QSignalSpy spy(&removeRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+             removeRequest.setLandmarkIds(lmIds);
+             removeRequest.start();
+             result = waitForAsync(spy, &removeRequest,error,200);
+             if (errorMap)
+                 *errorMap = removeRequest.errorMap();
+         } else {
+             qFatal("Unknown test row type");
+         }
+         return result;
+     }
+
     bool doImport(const QString &type, const QString filename,
                   QLandmarkManager::Error error =QLandmarkManager::NoError){
         bool result =false;
         if (type== "sync") {
-            if (error == QLandmarkManager::NoError)    {
+            if (error == QLandmarkManager::NoError) {
                 result = (m_manager->importLandmarks(filename))
                          && (m_manager->error() == QLandmarkManager::NoError);
             } else {
@@ -214,7 +296,7 @@ private:
             QSignalSpy spy(&importRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
             importRequest.setFileName(filename);
             importRequest.start();
-            result = waitForAsync(spy, &importRequest,error,100);
+            result = waitForAsync(spy, &importRequest,error,150);
         } else {
             qFatal("Unknown test row type");
         }
@@ -387,12 +469,13 @@ private:
         QStringList knownTables;
         knownTables << "category";
         knownTables << "category_attribute";
+        knownTables << "category_custom_attribute";
         knownTables << "category_notification";
         knownTables << "landmark";
         knownTables << "landmark_attribute";
         knownTables << "landmark_category";
+        knownTables << "landmark_custom_attribute";
         knownTables << "landmark_notification";
-
         return (tables == knownTables);
     }
 
@@ -402,6 +485,7 @@ private slots:
 
     void init();
     void cleanup();
+
     void createDbNew();
     void createDbExists();
 
@@ -439,9 +523,10 @@ private slots:
     void retrieveMultipleLandmarksAsync();
 
     void saveMultipleLandmarks();
+    void saveMultipleLandmarks_data();
 
     void removeMultipleLandmarks();
-    void removeMultipleLandmarksAsync();
+    void removeMultipleLandmarks_data();
 
     void listCategoryIds();
 
@@ -482,10 +567,7 @@ private slots:
     void importGpx_data();
 
     void importLmx();
-    void importLmxExcludeCategoryData();
-    void importLmxAttachSingleCategory();
-
-    //TODO: Test async lmx import
+    void importLmx_data();
 
     void exportGpx(); //async testing done too
     void exportGpx_data();
@@ -501,6 +583,12 @@ private slots:
 
     void filterSupportLevel();
     void sortOrderSupportLevel();
+
+    void isFeatureSupported();
+    void extendedAttributes();
+
+    void customAttributes();
+    void customAttributes_data();
 
     void categoryLimitOffset();
     //TODO: void categoryLimitOffsetAsync()
@@ -786,7 +874,9 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
      //test canceling of a landmark fetch
      fetchRequest.setFilter(unionFilter);
      fetchRequest.start();
-     QTest::qWait(50);
+     QTest::qWait(75);
+     QCOMPARE(spy.count(),1);
+     QCOMPARE(qvariant_cast<QLandmarkAbstractRequest::State>(spy.at(0).at(0)), QLandmarkAbstractRequest::ActiveState);
      fetchRequest.cancel();
      QVERIFY(waitForAsync(spy, &fetchRequest, QLandmarkManager::CancelError));
      QCOMPARE(fetchRequest.landmarks().count(), 0);
@@ -800,6 +890,17 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
      idFetchRequest.cancel();
      QVERIFY(waitForAsync(spy2, &idFetchRequest, QLandmarkManager::CancelError));
      QCOMPARE(idFetchRequest.landmarkIds().count(), 0);
+
+     //check that we can delete an request halfway during an operation.
+     QLandmarkFetchRequest *fetchRequestPointer = new QLandmarkFetchRequest(m_manager);
+     QSignalSpy spy3(fetchRequestPointer, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+     fetchRequestPointer->setFilter(unionFilter);
+     fetchRequestPointer->start();
+     QTest::qWait(75);
+     QCOMPARE(spy3.count(),1);
+     QCOMPARE(qvariant_cast<QLandmarkAbstractRequest::State>(spy3.at(0).at(0)), QLandmarkAbstractRequest::ActiveState);
+     delete fetchRequestPointer; //failure to delete usually results in a segfault
+     QTest::qWait(100);
  }
 
  void tst_QLandmarkManagerEngineSqlite::addCategory() {
@@ -811,6 +912,7 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
      // add - no attributes
      QLandmarkCategory cat1;
      cat1.setName("CAT1");
+     cat1.setIconUrl(QUrl("www.cat1.com"));
      QVERIFY(m_manager->saveCategory(&cat1));
      QCOMPARE(cat1, m_manager->category(cat1.categoryId()));
 
@@ -819,6 +921,7 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
      QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.categoryId());
 
      // add - with attributes
+     m_manager->setCustomAttributesEnabled(true);
     QLandmarkCategory cat2;
     cat2.setName("CAT2");
     cat2.setCustomAttribute("one","1");
@@ -864,8 +967,9 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
 }
 
 void tst_QLandmarkManagerEngineSqlite::addCategoryAsync() {
-    QSignalSpy spyAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
 
+    QSignalSpy spyAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+    m_manager->setCustomAttributesEnabled(true);
     QLandmarkCategory emptyCategory;
     int originalKeyCount = emptyCategory.customAttributeKeys().count();
 
@@ -904,7 +1008,8 @@ void tst_QLandmarkManagerEngineSqlite::addCategoryAsync() {
     QCOMPARE(m_manager->category(cat2new.categoryId()).customAttributeKeys().count(), originalKeyCount + 1);
     QCOMPARE(m_manager->category(cat2new.categoryId()).customAttribute("one").toString(), QString("1"));
 
-   //try multiple attributes
+   //try multiple custom attributes
+    m_manager->setCustomAttributesEnabled(true);
     QLandmarkCategory cat3;
     cat3.setName("CAT3");
     cat3.setCustomAttribute("ichi",1);
@@ -988,6 +1093,7 @@ void tst_QLandmarkManagerEngineSqlite::updateCategory() {
     // add - with attributes
     QLandmarkCategory cat1;
     cat1.setName("CAT1");
+    cat1.setIconUrl(QUrl("cat1 icon url"));
     //cat1.setCustomAttribute("Key1", "Value1");
     QVERIFY(m_manager->saveCategory(&cat1));
     QCOMPARE(cat1, m_manager->category(cat1.categoryId()));
@@ -1057,6 +1163,7 @@ void tst_QLandmarkManagerEngineSqlite::updateCategoryAsync() {
     // add - with attributes
     QLandmarkCategory cat1;
     cat1.setName("CAT1");
+    cat1.setIconUrl(QUrl("cat1 icon url"));
     //cat1.setCustomAttribute("Key1", "Value1");
 
     saveCategoryRequest.setCategory(cat1);
@@ -1079,6 +1186,7 @@ void tst_QLandmarkManagerEngineSqlite::updateCategoryAsync() {
     // update core
     cat1.setCategoryId(cat1new.categoryId());
     cat1.setName("CAT1Changed");
+    cat1.setIconUrl(QUrl("CAT1Changed url"));
     saveCategoryRequest.setCategory(cat1);
     saveCategoryRequest.start();
     QVERIFY(waitForAsync(spy, &saveCategoryRequest));
@@ -1172,6 +1280,7 @@ void tst_QLandmarkManagerEngineSqlite::addLandmark() {
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm2.landmarkId());
 
     // add - with attributes
+    m_manager->setCustomAttributesEnabled(true);
     QLandmark lm3;
     lm3.setName("LM3");
     lm3.setCustomAttribute("one","1");
@@ -1328,10 +1437,8 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
     saveRequest.setLandmarks(svLandmarks);
     saveRequest.start();
     QVERIFY(waitForAsync(spy, &saveRequest, QLandmarkManager::DoesNotExistError));
-    QCOMPARE(saveRequest.errorMap().count(), 3);
-    QCOMPARE(saveRequest.errorMap().value(0), QLandmarkManager::NoError);
+    QCOMPARE(saveRequest.errorMap().count(), 1);
     QCOMPARE(saveRequest.errorMap().value(1), QLandmarkManager::DoesNotExistError);
-    QCOMPARE(saveRequest.errorMap().value(2), QLandmarkManager::NoError);
     QCOMPARE(saveRequest.landmarks().count(), 3);
     landmark = m_manager->landmark(saveRequest.landmarks().at(0).landmarkId());
     QCOMPARE(landmark.name(), lm5.name());
@@ -1369,14 +1476,13 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
             for (int j=i; j < saveRequest.landmarks().count(); ++j) {
                 QVERIFY(saveRequest.errorMap().value(j) == QLandmarkManager::CancelError);
             }
-        } else {
-            QVERIFY(saveRequest.errorMap().value(i) == QLandmarkManager::NoError);
         }
-
     }
     QVERIFY(foundCancelError);
 
     // add - with attributes
+    m_manager->setCustomAttributesEnabled(true);
+    QCOMPARE(m_manager->isCustomAttributesEnabled(), true);
     QLandmark lm9;
     lm9.setName("LM7");
     lm9.setCustomAttribute("one","1");
@@ -1457,6 +1563,9 @@ void tst_QLandmarkManagerEngineSqlite::updateLandmark() {
     // add - with attributes
     QLandmark lm1;
     lm1.setName("LM1");
+    lm1.setDescription("LM1 description");
+    lm1.setPhoneNumber("LM1 phone");
+    lm1.setAttribute("street", "LM1 street");
     //lm1.setCustomAttribute("Key1", "Value1");
     QVERIFY(m_manager->saveLandmark(&lm1));
     QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
@@ -1469,6 +1578,7 @@ void tst_QLandmarkManagerEngineSqlite::updateLandmark() {
 
     // update core
     lm1.setName("LM1New");
+    lm1.setAttribute("phoneNumber", "LM1phonenew");
     QVERIFY(m_manager->saveLandmark(&lm1));
     QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
@@ -1647,6 +1757,8 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryId() {
     spyRemove.clear();
 
     //test that category attributes were really removed when a category is removed
+    m_manager->setCustomAttributesEnabled(true);
+    QCOMPARE(m_manager->isCustomAttributesEnabled(), true);
     QLandmarkCategory cat4;
     cat4.setName("CAT4");
     cat4.setCustomAttribute("four", 4);
@@ -1674,6 +1786,13 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryId() {
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
+
+    query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
+    QVERIFY(query.next());
+    query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
+    QVERIFY(query.next());
+    query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
+    QVERIFY(query.next());
     query.finish();
 
     QVERIFY(m_manager->removeCategory(cat5.categoryId()));
@@ -1686,6 +1805,13 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryId() {
     query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
     QVERIFY(!query.next());
     query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
+    QVERIFY(query.next());
+
+    query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
+    QVERIFY(query.next());
+    query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
+    QVERIFY(!query.next());
+    query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
     }
 
@@ -1798,6 +1924,8 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryIdAsync() {
     spyRemove.clear();
 
      //test that category attributes were really removed when a category is removed
+    m_manager->setCustomAttributesEnabled(true);
+    QCOMPARE(m_manager->isCustomAttributesEnabled(), true);
     QLandmarkCategory cat4;
     cat4.setName("CAT4");
     cat4.setCustomAttribute("four", 4);
@@ -1825,6 +1953,13 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryIdAsync() {
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
+
+    query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
+    QVERIFY(query.next());
+    query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
+    QVERIFY(query.next());
+    query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
+    QVERIFY(query.next());
     query.finish();
 
     removeRequest.setCategoryId(cat5.categoryId());
@@ -1840,6 +1975,13 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryIdAsync() {
     query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
     QVERIFY(!query.next());
     query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
+    QVERIFY(query.next());
+
+    query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
+    QVERIFY(query.next());
+    query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
+    QVERIFY(!query.next());
+    query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
     }
 
@@ -1894,6 +2036,8 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmark() {
     spyRemove.clear();
 
     // with attributes
+    m_manager->setCustomAttributesEnabled(true);
+    QVERIFY(m_manager->isCustomAttributesEnabled());
     QLandmark lm4;
     lm4.setName("LM4");
     lm4.setCustomAttribute("four", 4);
@@ -1925,6 +2069,14 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmark() {
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
+
+    query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm4.landmarkId().localId()));
+    QVERIFY(query.next());
+    query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm5.landmarkId().localId()));
+    QVERIFY(query.next());
+    query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
+    QVERIFY(query.next());
+
     query.finish();
 
     m_manager->removeLandmark(lm5.landmarkId());
@@ -1937,6 +2089,13 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmark() {
     query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm5.landmarkId().localId()));
     QVERIFY(!query.next());
     query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
+    QVERIFY(query.next());
+
+    query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm4.landmarkId().localId()));
+    QVERIFY(query.next());
+    query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm5.landmarkId().localId()));
+    QVERIFY(!query.next());
+    query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
     }
 
@@ -1970,15 +2129,13 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmarkAsync() {
     removeRequest.start();
     QVERIFY(waitForAsync(spy, &removeRequest));
 
-    QCOMPARE(removeRequest.errorMap().count(),1);
-    QCOMPARE(removeRequest.errorMap().value(0), QLandmarkManager::NoError);
+    QCOMPARE(removeRequest.errorMap().count(),0);
 
     QCOMPARE(spyRemove.count(), 1);
     QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm2.landmarkId());
     spyRemove.clear();
 
-    // with attributes
-
+    //with categories
     QLandmarkCategory cat3;
     cat3.setName("CAT3");
     QVERIFY(m_manager->saveCategory(&cat3));
@@ -1993,8 +2150,7 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmarkAsync() {
     QVERIFY(waitForAsync(spy, &removeRequest));
 
     QCOMPARE(removeRequest.error(), QLandmarkManager::NoError);
-    QCOMPARE(removeRequest.errorMap().count(),1);
-    QCOMPARE(removeRequest.errorMap().value(0), QLandmarkManager::NoError);
+    QCOMPARE(removeRequest.errorMap().count(),0);
 
     //remove a landmark that's just been removed.
     removeRequest.setLandmarkId(lm3.landmarkId());
@@ -2009,6 +2165,8 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmarkAsync() {
     spyRemove.clear();
 
     // with attributes
+    m_manager->setCustomAttributesEnabled(true);
+    QVERIFY(m_manager->isCustomAttributesEnabled());
     QLandmark lm4;
     lm4.setName("LM4");
     lm4.setCustomAttribute("four", 4);
@@ -2040,6 +2198,13 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmarkAsync() {
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
+
+    query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm4.landmarkId().localId()));
+    QVERIFY(query.next());
+    query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm5.landmarkId().localId()));
+    QVERIFY(query.next());
+    query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
+    QVERIFY(query.next());
     query.finish();
 
     removeRequest.setLandmarkId(lm5.landmarkId());
@@ -2055,6 +2220,13 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmarkAsync() {
     query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm5.landmarkId().localId()));
     QVERIFY(!query.next());
     query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
+    QVERIFY(query.next());
+
+    query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm4.landmarkId().localId()));
+    QVERIFY(query.next());
+    query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm5.landmarkId().localId()));
+    QVERIFY(!query.next());
+    query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
     }
 
@@ -2111,7 +2283,17 @@ void tst_QLandmarkManagerEngineSqlite::retrieveMultipleCategories() {
     //retrieve categories using a set ofids
     QMap<int, QLandmarkManager::Error> errorMap;
     cats = m_manager->categories(catIds,&errorMap);
-    QCOMPARE(cats.count(), 3);
+    QCOMPARE(cats.count(), 6);
+    QCOMPARE(cats.at(0).name(), QString("CAT1"));
+    QCOMPARE(cats.at(0).categoryId().isValid(), true);
+    QCOMPARE(cats.at(1).categoryId().isValid(), false);
+    QCOMPARE(cats.at(2).name(), QString("CAT3")); //(supposed to be 3)
+    QCOMPARE(cats.at(2).categoryId().isValid(), true);
+    QCOMPARE(cats.at(3).categoryId().isValid(), false);
+    QCOMPARE(cats.at(4).name(), QString("CAT2"));
+    QCOMPARE(cats.at(4).categoryId().isValid(), true);
+    QCOMPARE(cats.at(5).categoryId().isValid(), false);
+
     QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
     QCOMPARE(errorMap.keys().count(),3);
     QCOMPARE(errorMap.keys().at(0),1);
@@ -2331,13 +2513,16 @@ void tst_QLandmarkManagerEngineSqlite::retrieveMultipleCategoriesAsync() {
     QVERIFY(waitForAsync(spy2, &fetchByIdRequest, QLandmarkManager::DoesNotExistError));
 
     cats = fetchByIdRequest.categories();
-    QCOMPARE(cats.count(), 3);
+    QCOMPARE(cats.count(), 6);
     QCOMPARE(cats.at(0).name(), QString("CAT1"));
     QCOMPARE(cats.at(0).categoryId().isValid(), true);
-    QCOMPARE(cats.at(1).name(), QString("CAT3")); //(supposed to be 3)
-    QCOMPARE(cats.at(1).categoryId().isValid(), true);
-    QCOMPARE(cats.at(2).name(), QString("CAT2"));
+    QCOMPARE(cats.at(1).categoryId().isValid(), false);
+    QCOMPARE(cats.at(2).name(), QString("CAT3")); //(supposed to be 3)
     QCOMPARE(cats.at(2).categoryId().isValid(), true);
+    QCOMPARE(cats.at(3).categoryId().isValid(), false);
+    QCOMPARE(cats.at(4).name(), QString("CAT2"));
+    QCOMPARE(cats.at(4).categoryId().isValid(), true);
+    QCOMPARE(cats.at(5).categoryId().isValid(), false);
 
     QMap<int, QLandmarkManager::Error> errorMap = fetchByIdRequest.errorMap();
     QCOMPARE(fetchByIdRequest.errorMap().keys().count(),3);
@@ -2397,7 +2582,18 @@ void tst_QLandmarkManagerEngineSqlite::retrieveMultipleLandmarks() {
     lmIds.insert(5, invalidLmIds.at(2));
     QMap<int, QLandmarkManager::Error> errorMap;
     lms = m_manager->landmarks(lmIds, &errorMap);
-    QCOMPARE(lms.count(), 3);
+    QCOMPARE(lms.count(), 6);
+
+    QCOMPARE(lms.at(0).name(), QString("LM1"));
+    QCOMPARE(lms.at(0).landmarkId().isValid(), true);
+    QCOMPARE(lms.at(1).landmarkId().isValid(), false);
+    QCOMPARE(lms.at(2).name(), QString("LM2"));
+    QCOMPARE(lms.at(2).landmarkId().isValid(), true);
+    QCOMPARE(lms.at(3).landmarkId().isValid(), false);
+    QCOMPARE(lms.at(4).name(), QString("LM3"));
+    QCOMPARE(lms.at(4).landmarkId().isValid(), true);
+    QCOMPARE(lms.at(5).landmarkId().isValid(), false);
+
     QVERIFY(m_manager->error() == QLandmarkManager::DoesNotExistError);
     QCOMPARE(errorMap.keys().count(), 3);
     QCOMPARE(errorMap.keys().at(0), 1);
@@ -2501,13 +2697,16 @@ void tst_QLandmarkManagerEngineSqlite::retrieveMultipleLandmarksAsync() {
     QVERIFY(waitForAsync(spy2, &fetchByIdRequest, QLandmarkManager::DoesNotExistError));
 
     lms = fetchByIdRequest.landmarks();
-    QCOMPARE(lms.count(), 3);
+    QCOMPARE(lms.count(), 6);
     QCOMPARE(lms.at(0).name(), QString("LM1"));
     QCOMPARE(lms.at(0).landmarkId().isValid(), true);
-    QCOMPARE(lms.at(1).name(), QString("LM2"));
-    QCOMPARE(lms.at(1).landmarkId().isValid(), true);
-    QCOMPARE(lms.at(2).name(), QString("LM3"));
+    QCOMPARE(lms.at(1).landmarkId().isValid(), false);
+    QCOMPARE(lms.at(2).name(), QString("LM2"));
     QCOMPARE(lms.at(2).landmarkId().isValid(), true);
+    QCOMPARE(lms.at(3).landmarkId().isValid(), false);
+    QCOMPARE(lms.at(4).name(), QString("LM3"));
+    QCOMPARE(lms.at(4).landmarkId().isValid(), true);
+    QCOMPARE(lms.at(5).landmarkId().isValid(), false);
 
     QMap<int, QLandmarkManager::Error> errorMap = fetchByIdRequest.errorMap();
     QCOMPARE(fetchByIdRequest.errorMap().keys().count(),3);
@@ -2534,7 +2733,10 @@ void tst_QLandmarkManagerEngineSqlite::saveMultipleLandmarks() {
     lm3.setName("LM3");
     lms1 << lm3;
 
-    QVERIFY(m_manager->saveLandmarks(&lms1, 0));
+    QMap<int, QLandmarkManager::Error> errorMap;
+    QFETCH(QString, type);
+    doSave(type, &lms1, QLandmarkManager::NoError, &errorMap);
+    QCOMPARE(errorMap.count(), 0);
 
     lm1 = lms1.at(0);
     lm2 = lms1.at(1);
@@ -2544,19 +2746,27 @@ void tst_QLandmarkManagerEngineSqlite::saveMultipleLandmarks() {
     QCOMPARE(lm2, m_manager->landmark(lm2.landmarkId()));
     QCOMPARE(lm3, m_manager->landmark(lm3.landmarkId()));
 
-    //TODO: notifications
-    //QCOMPARE(spyAdd.count(), 1);
-    //QCOMPARE(spyChange.count(), 0);
-    //QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().size(), 3);
-    //QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-    //QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(1), lm2.landmarkId());
-    //QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(2), lm3.landmarkId());
-    //spyAdd.clear();
+    QTest::qWait(10);
+    QCOMPARE(spyAdd.count(), 1);
+    QCOMPARE(spyChange.count(), 0);
+    QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().size(), 3);
+    QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
+    QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(1), lm2.landmarkId());
+    QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(2), lm3.landmarkId());
+    spyAdd.clear();
 
     QList<QLandmark> lms2;
 
     lm1.setName("LM1New");
     lms2 << lm1;
+
+    QLandmark lm4;
+    lm4.setName("LM4");
+    QLandmarkId id;
+    id.setManagerUri(lm1.landmarkId().managerUri());
+    id.setLocalId("500");
+    lm4.setLandmarkId(id);
+    lms2 << lm4;
 
     lm2.setName("LM2New");
     lms2 << lm2;
@@ -2564,24 +2774,52 @@ void tst_QLandmarkManagerEngineSqlite::saveMultipleLandmarks() {
     lm3.setName("LM3New");
     lms2 << lm3;
 
-    QVERIFY(m_manager->saveLandmarks(&lms2, 0));
+    QLandmark lm5;
+    lm5.setName("LM5");
+    id.setLocalId("501");
+    lm5.setLandmarkId(id);
+    lms2 << lm5;
+
+    errorMap.clear();
+    doSave(type, &lms2,QLandmarkManager::DoesNotExistError,  &errorMap);
+    QCOMPARE(errorMap.count(), 2);
+    QVERIFY(errorMap.keys().contains(1));
+    QVERIFY(errorMap.keys().contains(4));
+    QCOMPARE(errorMap.value(1), QLandmarkManager::DoesNotExistError);
+    QCOMPARE(errorMap.value(4), QLandmarkManager::DoesNotExistError);
 
     lm1 = lms2.at(0);
-    lm2 = lms2.at(1);
-    lm3 = lms2.at(2);
+    lm2 = lms2.at(2);
+    lm3 = lms2.at(3);
 
     QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
     QCOMPARE(lm2, m_manager->landmark(lm2.landmarkId()));
     QCOMPARE(lm3, m_manager->landmark(lm3.landmarkId()));
 
-    //TODO: notifications
-    //QCOMPARE(spyAdd.count(), 0);
-    //QCOMPARE(spyChange.count(), 1);
-    //QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().size(), 3);
-    //QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-    //QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(1), lm2.landmarkId());
-    //QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(2), lm3.landmarkId());
-    //spyChange.clear();
+    QTest::qWait(10);
+    QCOMPARE(spyAdd.count(), 0);
+    QCOMPARE(spyChange.count(), 1);
+    QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().size(), 3);
+    QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
+    QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(1), lm2.landmarkId());
+    QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(2), lm3.landmarkId());
+    spyChange.clear();
+
+     //check that we can save without an error map
+    lms2[0].setName("LM1 NEWER");
+    lms2[2].setName("LM2 NEWER");
+    lms2[3].setName("LM3 NEWER");
+    doSave(type, &lms2,QLandmarkManager::DoesNotExistError);
+    QCOMPARE(m_manager->landmark(lm1.landmarkId()).name(), QString("LM1 NEWER"));
+    QCOMPARE(m_manager->landmark(lm2.landmarkId()).name(), QString("LM2 NEWER"));
+    QCOMPARE(m_manager->landmark(lm3.landmarkId()).name(), QString("LM3 NEWER"));
+}
+
+void tst_QLandmarkManagerEngineSqlite::saveMultipleLandmarks_data() {
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
 }
 
 void tst_QLandmarkManagerEngineSqlite::removeMultipleLandmarks() {
@@ -2634,13 +2872,13 @@ void tst_QLandmarkManagerEngineSqlite::removeMultipleLandmarks() {
     QCOMPARE(m_manager->landmark(lmIds2.at(1)).landmarkId().isValid(), true);
     QCOMPARE(m_manager->landmark(lmIds2.at(2)).landmarkId().isValid(), false);
 
-    QMap<int, QLandmarkManager::Error> errors;
-    QVERIFY(!m_manager->removeLandmarks(lmIds1, &errors));
-    QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
-    QCOMPARE(errors.count(), 3);
-    QCOMPARE(errors.value(0), QLandmarkManager::NoError);
-    QCOMPARE(errors.value(1), QLandmarkManager::DoesNotExistError);
-    QCOMPARE(errors.value(2), QLandmarkManager::NoError);
+    QMap<int, QLandmarkManager::Error> errorMap;
+    QFETCH(QString, type);
+
+    QVERIFY(doRemove(type, lmIds1, QLandmarkManager::DoesNotExistError,&errorMap));
+    QCOMPARE(errorMap.count(), 1);
+    QCOMPARE(errorMap.value(1), QLandmarkManager::DoesNotExistError);
+    errorMap.clear();
 
     QTest::qWait(10);
     QCOMPARE(spyAdd.count(), 1);
@@ -2659,12 +2897,12 @@ void tst_QLandmarkManagerEngineSqlite::removeMultipleLandmarks() {
     QCOMPARE(m_manager->landmark(lmIds2.at(1)).landmarkId().isValid(), true);
     QCOMPARE(m_manager->landmark(lmIds2.at(2)).landmarkId().isValid(), false);
 
-    QVERIFY(!m_manager->removeLandmarks(lmIds2, &errors));
+    QVERIFY(doRemove(type, lmIds2, QLandmarkManager::DoesNotExistError,&errorMap));
     QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
-    QCOMPARE(errors.count(), 3);
-    QCOMPARE(errors.value(0), QLandmarkManager::DoesNotExistError);
-    QCOMPARE(errors.value(1), QLandmarkManager::NoError);
-    QCOMPARE(errors.value(2), QLandmarkManager::DoesNotExistError);
+    QCOMPARE(errorMap.count(), 2);
+    QCOMPARE(errorMap.value(0), QLandmarkManager::DoesNotExistError);
+    QCOMPARE(errorMap.value(2), QLandmarkManager::DoesNotExistError);
+    errorMap.clear();
 
     QTest::qWait(10);
     QCOMPARE(spyAdd.count(), 0);
@@ -2695,12 +2933,10 @@ void tst_QLandmarkManagerEngineSqlite::removeMultipleLandmarks() {
     QList<QLandmarkId> lmIds3;
     lmIds3 << lm4.landmarkId() << lm5.landmarkId() << lm6.landmarkId();
 
-    QVERIFY(m_manager->removeLandmarks(lmIds3, &errors));
+    QVERIFY(doRemove(type, lmIds3, QLandmarkManager::NoError,&errorMap));
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
-    QCOMPARE(errors.count(), 3);
-    QCOMPARE(errors.value(0), QLandmarkManager::NoError);
-    QCOMPARE(errors.value(1), QLandmarkManager::NoError);
-    QCOMPARE(errors.value(2), QLandmarkManager::NoError);
+    QCOMPARE(errorMap.count(), 0);
+    errorMap.clear();
 
     for (int i = 0; i < lmIds3.size(); ++i) {
         QCOMPARE(m_manager->landmark(lmIds3.at(i)).landmarkId().isValid(), false);
@@ -2716,162 +2952,35 @@ void tst_QLandmarkManagerEngineSqlite::removeMultipleLandmarks() {
     QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().at(1), lm5.landmarkId());
     QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().at(2), lm6.landmarkId());
     spyRemove.clear();
-}
 
-void tst_QLandmarkManagerEngineSqlite::removeMultipleLandmarksAsync() {
-    QSignalSpy spyRemove(m_manager, SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
-    QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
-    QSignalSpy spyChange(m_manager, SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+    //test removal without an error map
+    QList<QLandmarkId> lmIds = m_manager->landmarkIds();
+    QVERIFY(m_manager->removeLandmarks(lmIds));
+    QCOMPARE(m_manager->landmarks().count(),0);
+    lm4.setLandmarkId(QLandmarkId());
+    m_manager->saveLandmark(&lm4);
+    lm5.setLandmarkId(QLandmarkId());
+    m_manager->saveLandmark(&lm5);
+    lm6.setLandmarkId(QLandmarkId());
+    m_manager->saveLandmark(&lm6);
 
-    QList<QLandmarkId> lmIds1;
-    QList<QLandmarkId> lmIds2;
+    QCOMPARE(m_manager->landmarks().count(), 3);
+    QLandmarkId lmId;
+    lmId.setManagerUri(lm1.landmarkId().managerUri());
+    lmId.setLocalId("500");
 
-    QLandmark lm1;
-    lm1.setName("LM1");
-    QVERIFY(m_manager->saveLandmark(&lm1));
-    lmIds1 << lm1.landmarkId();
+    lmIds << lm4.landmarkId() << lmId << lm6.landmarkId();
 
-    QLandmark lm2;
-    lm2.setName("LM2");
-    QVERIFY(m_manager->saveLandmark(&lm2));
-    lmIds1 << lm2.landmarkId();
+    QVERIFY(doRemove(type, lmIds,QLandmarkManager::DoesNotExistError));
+    QCOMPARE(m_manager->landmarks().count(), 1);
+    QCOMPARE(m_manager->landmarks().at(0), lm5);
 
-    QLandmark lm3;
-    lm3.setName("LM3");
-    QVERIFY(m_manager->saveLandmark(&lm3));
-    lmIds2 << lm3.landmarkId();
+    lmIds = m_manager->landmarkIds();
+    QVERIFY(m_manager->removeLandmarks(lmIds));
+    QCOMPARE(m_manager->landmarks().count(),0);
 
-    QString uri = m_manager->managerUri();
-    int i = 1;
-
-    QList<QLandmarkId> invalidLmIds;
-
-    while (invalidLmIds.size() < 3) {
-        QLandmarkId id;
-        id.setManagerUri(uri);
-        id.setLocalId(QString::number(i));
-        QLandmark lm = m_manager->landmark(id);
-        if (!lm.landmarkId().isValid()) {
-            invalidLmIds << id;
-        }
-        ++i;
-    }
-
-    lmIds1.insert(1, invalidLmIds.at(0));
-    QCOMPARE(m_manager->landmark(lmIds1.at(0)).landmarkId().isValid(), true);
-    QCOMPARE(m_manager->landmark(lmIds1.at(1)).landmarkId().isValid(), false);
-    QCOMPARE(m_manager->landmark(lmIds1.at(2)).landmarkId().isValid(), true);
-
-    lmIds2.insert(0, invalidLmIds.at(1));
-    lmIds2.insert(2, invalidLmIds.at(2));
-    QCOMPARE(m_manager->landmark(lmIds2.at(0)).landmarkId().isValid(), false);
-    QCOMPARE(m_manager->landmark(lmIds2.at(1)).landmarkId().isValid(), true);
-    QCOMPARE(m_manager->landmark(lmIds2.at(2)).landmarkId().isValid(), false);
-
-    QLandmarkRemoveRequest removeRequest(m_manager);
-    QSignalSpy spy(&removeRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
-    removeRequest.setLandmarkIds(lmIds1);
-    removeRequest.start();
-
-    QVERIFY(waitForAsync(spy, &removeRequest, QLandmarkManager::DoesNotExistError));
-    QCOMPARE(removeRequest.errorMap().count(),3);
-    QCOMPARE(removeRequest.errorMap().value(0), QLandmarkManager::NoError);
-    QCOMPARE(removeRequest.errorMap().value(1), QLandmarkManager::DoesNotExistError);
-    QCOMPARE(removeRequest.errorMap().value(2), QLandmarkManager::NoError);
-
-    QCOMPARE(spyAdd.count(), 1);
-    spyAdd.clear();
-    QCOMPARE(spyChange.count(), 0);
-
-    QVERIFY(spyRemove.count() > 0);
-    QList<QLandmarkId> removedIds;
-    for ( int i =0 ;i < spyRemove.count(); ++i) {
-        for (int j = 0; j < spyRemove.at(i).at(0).value<QList<QLandmarkId> >().size(); ++j) {
-            removedIds << spyRemove.at(i).at(0).value<QList<QLandmarkId> >().at(j);
-        }
-    }
-
-    QCOMPARE(removedIds.count(), 2);
-    QCOMPARE(removedIds.at(0), lm1.landmarkId());
-    QCOMPARE(removedIds.at(1), lm2.landmarkId());
-    removedIds.clear();
-    spyRemove.clear();
-
-    for (int i = 0; i < lmIds1.size(); ++i)
-        QCOMPARE(m_manager->landmark(lmIds1.at(i)).landmarkId().isValid(), false);
-
-    QCOMPARE(m_manager->landmark(lmIds2.at(0)).landmarkId().isValid(), false);
-    QCOMPARE(m_manager->landmark(lmIds2.at(1)).landmarkId().isValid(), true);
-    QCOMPARE(m_manager->landmark(lmIds2.at(2)).landmarkId().isValid(), false);
-
-    removeRequest.setLandmarkIds(lmIds2);
-    removeRequest.start();
-
-    QVERIFY(waitForAsync(spy, &removeRequest, QLandmarkManager::DoesNotExistError));
-    QCOMPARE(removeRequest.errorMap().count(),3);
-    QCOMPARE(removeRequest.errorMap().value(0), QLandmarkManager::DoesNotExistError);
-    QCOMPARE(removeRequest.errorMap().value(1), QLandmarkManager::NoError);
-    QCOMPARE(removeRequest.errorMap().value(2), QLandmarkManager::DoesNotExistError);
-
-    QCOMPARE(spyAdd.count(), 0);
-    QCOMPARE(spyChange.count(), 0);
-    QCOMPARE(spyRemove.count(), 1);
-    QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().size(), 1);
-    QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm3.landmarkId());
-    spyRemove.clear();
-
-    for (int i = 0; i < lmIds1.size(); ++i)
-        QCOMPARE(m_manager->landmark(lmIds1.at(i)).landmarkId().isValid(), false);
-    for (int i = 0; i < lmIds2.size(); ++i)
-        QCOMPARE(m_manager->landmark(lmIds2.at(i)).landmarkId().isValid(), false);
-
-    //test all ids to remove were valid existing ids
-    QLandmark lm4;
-    lm4.setName("LM4");
-    QVERIFY(m_manager->saveLandmark(&lm4));
-
-    QLandmark lm5;
-    lm5.setName("LM5");
-    QVERIFY(m_manager->saveLandmark(&lm5));
-
-    QLandmark lm6;
-    lm3.setName("LM6");
-    QVERIFY(m_manager->saveLandmark(&lm6));
-
-    QList<QLandmarkId> lmIds3;
-    lmIds3 << lm4.landmarkId() << lm5.landmarkId() << lm6.landmarkId();
-
-    removeRequest.setLandmarkIds(lmIds3);
-    removeRequest.start();
-
-    QVERIFY(waitForAsync(spy, &removeRequest));
-    QCOMPARE(removeRequest.errorMap().count(),3);
-    QCOMPARE(removeRequest.errorMap().value(0), QLandmarkManager::NoError);
-    QCOMPARE(removeRequest.errorMap().value(1), QLandmarkManager::NoError);
-    QCOMPARE(removeRequest.errorMap().value(2), QLandmarkManager::NoError);
-
-    for (int i = 0; i < lmIds3.size(); ++i) {
-        QCOMPARE(m_manager->landmark(lmIds3.at(i)).landmarkId().isValid(), false);
-    }
-
-    QCOMPARE(spyAdd.count(), 1);
-    spyAdd.clear();
-    QCOMPARE(spyChange.count(), 0);
-
-    QVERIFY(spyRemove.count() > 0);
-    for ( int i =0 ;i < spyRemove.count(); ++i) {
-        for (int j = 0; j < spyRemove.at(i).at(0).value<QList<QLandmarkId> >().size(); ++j) {
-            removedIds << spyRemove.at(i).at(0).value<QList<QLandmarkId> >().at(j);
-        }
-    }
-
-    QCOMPARE(removedIds.count(), 3);
-    QCOMPARE(removedIds.at(0), lm4.landmarkId());
-    QCOMPARE(removedIds.at(1), lm5.landmarkId());
-    QCOMPARE(removedIds.at(2), lm6.landmarkId());
-    spyRemove.clear();
-
-    //test canceling the remove request
+    //test cancelling a remove request
+    if (type == "async") {
     QList<QLandmark> landmarks;
     landmarks.clear();
     QLandmark lm;
@@ -2887,10 +2996,13 @@ void tst_QLandmarkManagerEngineSqlite::removeMultipleLandmarksAsync() {
     for (int i=0; i < landmarks.count(); ++i) {
         lmIds.append(landmarks.at(i).landmarkId());
     }
-
+    QLandmarkRemoveRequest removeRequest(m_manager);
+    QSignalSpy spy(&removeRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
     removeRequest.setLandmarkIds(lmIds);
     removeRequest.start();
-    QTest::qWait(50);
+    QTest::qWait(75);
+    QCOMPARE(spy.count(),1);
+    QCOMPARE(qvariant_cast<QLandmarkAbstractRequest::State>(spy.at(0).at(0)), QLandmarkAbstractRequest::ActiveState);
     removeRequest.cancel();
     QVERIFY(waitForAsync(spy, &removeRequest,QLandmarkManager::CancelError));
     bool foundCancelError = false;
@@ -2900,11 +3012,17 @@ void tst_QLandmarkManagerEngineSqlite::removeMultipleLandmarksAsync() {
             for (int j=i; j < removeRequest.landmarkIds().count(); ++j) {
                 QVERIFY(removeRequest.errorMap().value(j) == QLandmarkManager::CancelError);
             }
-        } else {
-            QVERIFY(removeRequest.errorMap().value(i) == QLandmarkManager::NoError);
         }
     }
     QVERIFY(foundCancelError);
+    }
+}
+
+void tst_QLandmarkManagerEngineSqlite::removeMultipleLandmarks_data() {
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
 }
 
 void tst_QLandmarkManagerEngineSqlite::listCategoryIds() {
@@ -4904,6 +5022,9 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksUnionAsync() {
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterAttribute() {
+    m_manager->setCustomAttributesEnabled(true);
+    QVERIFY(m_manager->isCustomAttributesEnabled());
+
     QLandmark lm1;
     lm1.setName("Adelaide");
     lm1.setDescription("The description of adelaide");
@@ -5024,10 +5145,11 @@ void tst_QLandmarkManagerEngineSqlite::filterAttribute() {
     attributeFilter.setAttribute("description", "the summary", QLandmarkFilter::MatchStartsWith);
     QVERIFY(doFetch(type,attributeFilter,&lms));
     QCOMPARE(lms.count(), 4);
-    QCOMPARE(lms.at(0), lm2);
-    QCOMPARE(lms.at(1), lm4);
-    QCOMPARE(lms.at(2), lm7);
-    QCOMPARE(lms.at(3), lm9);
+
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm4));
+    QVERIFY(lms.contains(lm7));
+    QVERIFY(lms.contains(lm9));
 
     //try an single empty qvariant for and and or
     //should return all landmarks since all landmark will the values
@@ -5511,12 +5633,14 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
         importRequest.setFormat(QLandmarkManager::Gpx);
         importRequest.start();
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError,2000));
+        QCOMPARE(importRequest.landmarkIds().count(),149);
     } else if (type == "asyncExcludeCategoryData") {
         importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
         importRequest.setFormat(QLandmarkManager::Gpx);
         importRequest.setTransferOption(QLandmarkManager::ExcludeCategoryData);
         importRequest.start();
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError,2000));
+        QCOMPARE(importRequest.landmarkIds().count(),149);
     } else if (type == "asyncAttachSingleCategory") {
         importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
         importRequest.setFormat(QLandmarkManager::Gpx);
@@ -5537,9 +5661,9 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
         importRequest.setCategoryId(cat2.categoryId()); //valid id
         importRequest.start();
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError));
+        QCOMPARE(importRequest.landmarkIds().count(),149);
     } else {
         qFatal("Unknown row test type");
-        QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     }
 
     QList<QLandmark> landmarks = m_manager->landmarks(QLandmarkFilter());
@@ -5648,35 +5772,152 @@ void tst_QLandmarkManagerEngineSqlite::importGpx_data()
 
 void tst_QLandmarkManagerEngineSqlite::importLmx() {
     //TODO: Test Signal emission
+
+    QFETCH(QString, type);
+    QLandmarkImportRequest importRequest(m_manager);
+    QSignalSpy spy(&importRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+
     QLandmarkCategory cat0;
     cat0.setName("cat0");
     m_manager->saveCategory(&cat0);
 
-    QVERIFY(m_manager->importLandmarks(":data/convert-collection-in.xml", QLandmarkManager::Lmx));
-    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
-    QList<QLandmarkCategory> categories = m_manager->categories();
+    QLandmarkCategory catAlpha;
+    catAlpha.setName("catAlpha");
 
-    QCOMPARE(categories.count(), 3);
+    if (type == "sync") {
+        QVERIFY(m_manager->importLandmarks(":data/convert-collection-in.xml", QLandmarkManager::Lmx));
+        QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    } else if (type == "async") {
+        importRequest.setFileName(":data/convert-collection-in.xml");
+        importRequest.setFormat(QLandmarkManager::Lmx);
+        importRequest.start();
+        QVERIFY(waitForAsync(spy, &importRequest,QLandmarkManager::NoError));
+        QCOMPARE(importRequest.landmarkIds().count(), 16);
+    } else if (type == "syncExcludeCategoryData") {
+        QVERIFY(m_manager->importLandmarks(":data/convert-collection-in.xml",  QLandmarkManager::Lmx,QLandmarkManager::ExcludeCategoryData));
+        QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    } else if (type == "asyncExcludeCategoryData") {
+        importRequest.setFileName(":data/convert-collection-in.xml");
+        importRequest.setFormat(QLandmarkManager::Lmx);
+        importRequest.setTransferOption(QLandmarkManager::ExcludeCategoryData);
+        importRequest.start();
+        QVERIFY(waitForAsync(spy, &importRequest,QLandmarkManager::NoError));
+        QCOMPARE(importRequest.landmarkIds().count(), 16);
+    } else if (type == "syncAttachSingleCategory") {
+        QVERIFY(m_manager->saveCategory(&catAlpha));
+
+        //try with a null id
+        QLandmarkCategoryId nullId;
+        QVERIFY(!m_manager->importLandmarks(":data/convert-collection-in.xml", QLandmarkManager::Lmx,QLandmarkManager::AttachSingleCategory, nullId));
+        QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
+
+        //try with an id with the wrong manager;
+        QLandmarkCategoryId wrongManagerId;
+        wrongManagerId.setLocalId(cat0.categoryId().localId());
+        wrongManagerId.setManagerUri("wrong.manager");
+        QVERIFY(!m_manager->importLandmarks(":data/convert-collection-in.xml", QLandmarkManager::Lmx,QLandmarkManager::AttachSingleCategory, wrongManagerId));
+        QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
+
+        //try with the correct manager but with a non-existent localid
+        QLandmarkCategoryId wrongLocalId;
+        wrongLocalId.setLocalId("500");
+        wrongLocalId.setManagerUri(cat0.categoryId().managerUri());
+        QVERIFY(!m_manager->importLandmarks(":data/convert-collection-in.xml", QLandmarkManager::Lmx,QLandmarkManager::AttachSingleCategory, wrongLocalId));
+        QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
+
+        //try with a valid category id
+        QVERIFY(m_manager->importLandmarks(":data/convert-collection-in.xml", QLandmarkManager::Lmx, QLandmarkManager::AttachSingleCategory,catAlpha.categoryId()));
+        QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    } else if (type == "asyncAttachSingleCategory") {
+        QVERIFY(m_manager->saveCategory(&catAlpha));
+
+        //try with a null id
+        QLandmarkCategoryId nullId;
+        importRequest.setFileName(":data/convert-collection-in.xml");
+        importRequest.setFormat(QLandmarkManager::Lmx);
+        importRequest.setTransferOption(QLandmarkManager::AttachSingleCategory);
+        importRequest.setCategoryId(nullId);
+        importRequest.start();
+        QVERIFY(waitForAsync(spy,&importRequest,QLandmarkManager::BadArgumentError));
+
+        //try with an id with the wrong manager;
+        QLandmarkCategoryId wrongManagerId;
+        wrongManagerId.setLocalId(cat0.categoryId().localId());
+        wrongManagerId.setManagerUri("wrong.manager");
+        importRequest.setFileName(":data/convert-collection-in.xml");
+        importRequest.setFormat(QLandmarkManager::Lmx);
+        importRequest.setTransferOption(QLandmarkManager::AttachSingleCategory);
+        importRequest.setCategoryId(wrongManagerId);
+        importRequest.start();
+        QVERIFY(waitForAsync(spy,&importRequest,QLandmarkManager::BadArgumentError));
+
+        //try with the correct manager but with a non-existent localid
+        QLandmarkCategoryId wrongLocalId;
+        wrongLocalId.setLocalId("500");
+        wrongLocalId.setManagerUri(cat0.categoryId().managerUri());
+        importRequest.setFileName(":data/convert-collection-in.xml");
+        importRequest.setFormat(QLandmarkManager::Lmx);
+        importRequest.setTransferOption(QLandmarkManager::AttachSingleCategory);
+        importRequest.setCategoryId(wrongLocalId);
+        importRequest.start();
+        QVERIFY(waitForAsync(spy,&importRequest,QLandmarkManager::DoesNotExistError));
+
+        //try with a valid category id
+        importRequest.setFileName(":data/convert-collection-in.xml");
+        importRequest.setFormat(QLandmarkManager::Lmx);
+        importRequest.setTransferOption(QLandmarkManager::AttachSingleCategory);
+        importRequest.setCategoryId(catAlpha.categoryId());
+        importRequest.start();
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError));
+        QCOMPARE(importRequest.landmarkIds().count(), 16);
+    } else {
+        qFatal("Unknown row test type");
+    }
+
     QList<QLandmark> landmarks = m_manager->landmarks();
 
     QCOMPARE(landmarks.count(), 16);
+
     QLandmarkNameFilter nameFilter;
-    nameFilter.setName("w16");
-    landmarks = m_manager->landmarks(nameFilter);
-    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
-    QCOMPARE(landmarks.count(), 1);
-    QLandmark lm = landmarks.at(0);
-    QCOMPARE(lm.categoryIds().count(), 3);
+    QLandmark lm;
+    if ( type == "sync" || type == "async") {
+        QList<QLandmarkCategory> categories = m_manager->categories();
+        QCOMPARE(categories.count(), 3);
 
-    QSet<QString> catNames;
-    foreach(const QLandmarkCategoryId &categoryId, lm.categoryIds()) {
-        catNames.insert(m_manager->category(categoryId).name());
+        nameFilter.setName("w16");
+        landmarks = m_manager->landmarks(nameFilter);
+        QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+        QCOMPARE(landmarks.count(), 1);
+        lm = landmarks.at(0);
+        QCOMPARE(lm.categoryIds().count(), 2);
+
+
+        QSet<QString> catNames;
+        foreach(const QLandmarkCategoryId &categoryId, lm.categoryIds()) {
+            catNames.insert(m_manager->category(categoryId).name());
+        }
+
+        QCOMPARE(catNames.count(), 2);
+        QVERIFY(catNames.contains("cat1"));
+        QVERIFY(catNames.contains("cat2"));
+
+    } else if (type == "syncExcludeCategoryData" || type == "asyncExcludeCategoryData") {
+        foreach(const QLandmark &lm, landmarks) {
+            QCOMPARE(lm.categoryIds().count(),0);
+        }
+
+        QCOMPARE(m_manager->categories().count(),1);
+    } else if (type == "syncAttachSingleCategory" || type == "asyncAttachSingleCategory") {
+        QCOMPARE(m_manager->categories().count(),2);
+
+        foreach(const QLandmark &lm, landmarks) {
+            QCOMPARE(lm.categoryIds().count(),1);
+            QCOMPARE(lm.categoryIds().at(0), catAlpha.categoryId());
+        }
+
+    } else {
+        qFatal("Unknown row test type");
     }
-
-    QCOMPARE(catNames.count(), 3);
-    QVERIFY(catNames.contains("cat0"));
-    QVERIFY(catNames.contains("cat1"));
-    QVERIFY(catNames.contains("cat2"));
 
     nameFilter.setName("w0");
     landmarks = m_manager->landmarks(nameFilter);
@@ -5687,91 +5928,34 @@ void tst_QLandmarkManagerEngineSqlite::importLmx() {
     QCOMPARE(lm.address().street(), QString("1 Main St"));
     QVERIFY(qFuzzyCompare(lm.coordinate().latitude(),1));
     QVERIFY(qFuzzyCompare(lm.coordinate().longitude(),2));
-}
+    if ( type == "sync" || type == "async") {
+        QSet<QString> catNames;
+        foreach(const QLandmarkCategoryId &categoryId, lm.categoryIds()) {
+            catNames.insert(m_manager->category(categoryId).name());
+        }
 
-void tst_QLandmarkManagerEngineSqlite::importLmxExcludeCategoryData() {
-    //TODO: Test Signal emission
-    QLandmarkCategory cat0;
-    cat0.setName("cat0");
-    m_manager->saveCategory(&cat0);
-
-    QVERIFY(m_manager->importLandmarks(":data/convert-collection-in.xml",  QLandmarkManager::Lmx,QLandmarkManager::ExcludeCategoryData));
-    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
-    QList<QLandmarkCategory> categories = m_manager->categories();
-
-    QCOMPARE(categories.count(), 1);
-    QList<QLandmark> landmarks = m_manager->landmarks();
-    QCOMPARE(landmarks.count(), 16);
-
-    foreach(const QLandmark &lm, landmarks) {
+        QCOMPARE(catNames.count(), 2);
+        QVERIFY(catNames.contains("cat0"));
+        QVERIFY(catNames.contains("cat2"));
+    } else if (type == "syncExcludeCategoryData"  || type == "asyncExcludeCategoryData") {
         QCOMPARE(lm.categoryIds().count(),0);
+    } else if (type == "syncAttachSingleCategory" || type == "asyncAttachSingleCategory") {
+        QCOMPARE(lm.categoryIds().count(),1);
+        QCOMPARE(m_manager->category(lm.categoryIds().at(0)).name(), QString("catAlpha"));
+    } else {
+        qFatal("Unknown row test type");
     }
-
-    QLandmarkNameFilter nameFilter;
-    nameFilter.setName("w0");
-    landmarks = m_manager->landmarks(nameFilter);
-    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
-    QCOMPARE(landmarks.count(), 1);
-    QLandmark lm = landmarks.at(0);
-    QCOMPARE(lm.name(), QString("w0"));
-    QCOMPARE(lm.address().street(), QString("1 Main St"));
-    QVERIFY(qFuzzyCompare(lm.coordinate().latitude(),1));
-    QVERIFY(qFuzzyCompare(lm.coordinate().longitude(),2));
 }
 
-void tst_QLandmarkManagerEngineSqlite::importLmxAttachSingleCategory() {
-    //TODO: Test Signal emission
-    QLandmarkCategory cat0;
-    cat0.setName("cat0");
-    m_manager->saveCategory(&cat0);
+void tst_QLandmarkManagerEngineSqlite::importLmx_data() {
+    QTest::addColumn<QString>("type");
 
-    QLandmarkCategory catAlpha;
-    catAlpha.setName("catAlpha");
-    m_manager->saveCategory(&catAlpha);
-
-    //try with a null id
-    QLandmarkCategoryId nullId;
-    QVERIFY(!m_manager->importLandmarks(":data/convert-collection-in.xml", QLandmarkManager::Lmx,QLandmarkManager::AttachSingleCategory, nullId));
-    QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
-
-    //try with an id with the wrong manager;
-    QLandmarkCategoryId wrongManagerId;
-    wrongManagerId.setLocalId(cat0.categoryId().localId());
-    wrongManagerId.setManagerUri("wrong.manager");
-    QVERIFY(!m_manager->importLandmarks(":data/convert-collection-in.xml", QLandmarkManager::Lmx,QLandmarkManager::AttachSingleCategory, wrongManagerId));
-    QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
-
-    //try with the correct manager but with a non-existent localid
-    QLandmarkCategoryId wrongLocalId;
-    wrongLocalId.setLocalId("500");
-    wrongLocalId.setManagerUri(cat0.categoryId().managerUri());
-    QVERIFY(!m_manager->importLandmarks(":data/convert-collection-in.xml", QLandmarkManager::Lmx,QLandmarkManager::AttachSingleCategory, wrongLocalId));
-    QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
-
-    //try with a valid category id
-    QVERIFY(m_manager->importLandmarks(":data/convert-collection-in.xml", QLandmarkManager::Lmx, QLandmarkManager::AttachSingleCategory,catAlpha.categoryId()));
-    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
-    QList<QLandmarkCategory> categories = m_manager->categories();
-    QCOMPARE(categories.count(), 2
-    );
-    QList<QLandmark> landmarks = m_manager->landmarks();
-    QCOMPARE(landmarks.count(), 16);
-
-    foreach(const QLandmark &lm, landmarks) {
-        QCOMPARE(lm.categoryIds().count(),1);
-        QCOMPARE(lm.categoryIds().at(0), catAlpha.categoryId());
-    }
-
-    QLandmarkNameFilter nameFilter;
-    nameFilter.setName("w0");
-    landmarks = m_manager->landmarks(nameFilter);
-    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
-    QCOMPARE(landmarks.count(), 1);
-    QLandmark lm = landmarks.at(0);
-    QCOMPARE(lm.name(), QString("w0"));
-    QCOMPARE(lm.address().street(), QString("1 Main St"));
-    QVERIFY(qFuzzyCompare(lm.coordinate().latitude(),1));
-    QVERIFY(qFuzzyCompare(lm.coordinate().longitude(),2));
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+    QTest::newRow("syncExcludeCategoryData") << "syncExcludeCategoryData";
+    QTest::newRow("asyncExcludeCategoryData") << "asyncExcludeCategoryData";
+    QTest::newRow("syncAttachSingleCategory") << "syncAttachSingleCategory";
+    QTest::newRow("asyncAttachSingleCategory") << "asyncAttachSingleCategory";
 }
 
 void tst_QLandmarkManagerEngineSqlite::exportGpx() {
@@ -6477,6 +6661,124 @@ void tst_QLandmarkManagerEngineSqlite::sortOrderSupportLevel() {
     sortOrders.clear();
     sortOrders << defaultSort << nameSort << defaultSort;
     QCOMPARE(m_manager->sortOrderSupportLevel(sortOrders), QLandmarkManager::Native);
+}
+
+void tst_QLandmarkManagerEngineSqlite::isFeatureSupported()
+{
+    QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::Notifications));
+    QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::ImportExport));
+    QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::CustomAttributes));
+    QVERIFY(!m_manager->isFeatureSupported(QLandmarkManager::ExtendedAttributes));
+}
+
+void tst_QLandmarkManagerEngineSqlite::extendedAttributes()
+{
+    m_manager->setExtendedAttributesEnabled(true);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NotSupportedError);
+    QVERIFY(!m_manager->isExtendedAttributesEnabled());
+    QCOMPARE(m_manager->error(), QLandmarkManager::NotSupportedError);
+}
+
+void tst_QLandmarkManagerEngineSqlite::customAttributes()
+{
+    QFETCH(QString, type);
+
+    QVERIFY(!m_manager->isCustomAttributesEnabled());
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    m_manager->setCustomAttributesEnabled(true);
+    QVERIFY(m_manager->isCustomAttributesEnabled());
+    m_manager->setCustomAttributesEnabled(false);
+
+    //check that we can't save a landmark with custom attributes
+    //when custom attributes are disabled.
+    QLandmark lm1;
+    lm1.setName("LM1");
+    lm1.setCustomAttribute("height", 110);
+    QList<QLandmark> lms;
+    lms << lm1;
+    QVERIFY(doSave(type, &lms, QLandmarkManager::BadArgumentError));
+    lms[0].removeCustomAttribute("height");
+    QVERIFY(doSave(type, &lms));
+
+    //check that we can save a landmark with custom attributes
+    //when custom attributes are enabled
+    QLandmark lm2;
+    lm2.setName("LM2");
+    lm2.setCustomAttribute("height", 50);
+    lm2.setCustomAttribute("weight", 50);
+    m_manager->setCustomAttributesEnabled(true);
+    lms.clear();
+    lms << lm2;
+    QVERIFY(doSave(type, &lms));
+
+    QList<QLandmark> lmsRetrieved;
+    QList<QLandmarkId> lmsIds;
+    lmsIds << lms.at(0).landmarkId();
+
+    //check that we do not receive custom attributes from a landmark
+    //when custom attributes are disabled.
+    m_manager->setCustomAttributesEnabled(false);
+    QVERIFY(doFetchById(type, lmsIds, &lmsRetrieved));
+    QLandmark lmsOriginalCopy = lms.at(0);
+    QVERIFY(lmsRetrieved.at(0) != lmsOriginalCopy);
+    lmsOriginalCopy.removeCustomAttribute("height");
+    lmsOriginalCopy.removeCustomAttribute("weight");
+    QVERIFY(lmsRetrieved.at(0) == lmsOriginalCopy);
+
+    //check that we receive custom attributes from a landmark
+    //when custom attributes are enabled.
+    m_manager->setCustomAttributesEnabled(true);
+    QVERIFY(doFetchById(type,lmsIds,&lmsRetrieved));
+    QCOMPARE(lmsRetrieved.at(0), lms.at(0));
+
+
+    //TODO: async testing for categories
+
+    //checkt that we cannot save a category with custom attributes
+    //when custom attributes are disabled.
+    m_manager->setCustomAttributesEnabled(false);
+    QLandmarkCategory cat1;
+    cat1.setName("cat1");
+    cat1.setCustomAttribute("height",10);
+    QVERIFY(!m_manager->saveCategory(&cat1));
+    QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
+    cat1.removeCustomAttribute("height");
+    QVERIFY(m_manager->saveCategory(&cat1));
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+
+    //check that we can save a category with custom attributes
+    //when custom attributes are enabled.
+    m_manager->setCustomAttributesEnabled(true);
+    QLandmarkCategory cat2;
+    cat2.setName("cat2");
+    cat2.setCustomAttribute("height", 100);
+    cat2.setCustomAttribute("weight", 50);
+    QVERIFY(m_manager->saveCategory(&cat2));
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+
+    //check that we do not receive custom attributes for a category
+    //when custom attributes are disabled.
+    m_manager->setCustomAttributesEnabled(false);
+    QLandmarkCategory cat2Retrieved;
+    cat2Retrieved= m_manager->category(cat2.categoryId());
+    QVERIFY(cat2Retrieved != cat2);
+    QLandmarkCategory cat2Copy = cat2;
+    cat2Copy.removeCustomAttribute("height");
+    cat2Copy.removeCustomAttribute("weight");
+    QVERIFY(cat2Retrieved == cat2Copy);
+
+    //check that we do receive custom attributes for a category
+    //when custom attributes are enabled.
+    m_manager->setCustomAttributesEnabled(true);
+    cat2Retrieved = m_manager->category(cat2.categoryId());
+    QVERIFY(cat2Retrieved == cat2);
+}
+
+void tst_QLandmarkManagerEngineSqlite::customAttributes_data()
+{
+    QTest::addColumn<QString>("type");
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
 }
 
 void tst_QLandmarkManagerEngineSqlite::categoryLimitOffset() {
