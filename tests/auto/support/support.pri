@@ -29,9 +29,9 @@ symbian|wince*|maemo*|win32|mac {
         SOURCES += $$PWD/support_maemo5.cpp
     }
     maemo6 {
-        INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
-        LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
-    	SOURCES += $$PWD/support_maemo6.cpp	
+        CONFIG += link_pkgconfig
+        PKGCONFIG += qtopiamail
+        SOURCES += $$PWD/support_maemo6.cpp
     }	
     mac {
          SOURCES += $$PWD/support_stub.cpp

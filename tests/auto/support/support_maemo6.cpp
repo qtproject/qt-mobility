@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "support.h"
-#include "qmfhelpers_p.h"
+#include "qmfhelpers_maemo6_p.h"
 #include "qmessage_p.h"
 #include <qmailaccount.h>
 #include <qmailaddress.h>
