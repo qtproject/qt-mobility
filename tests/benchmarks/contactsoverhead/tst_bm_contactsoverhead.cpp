@@ -1097,5 +1097,5 @@ int main(int argc, char **argv){
 
 }
 
-#include "tst_bm_contacts.moc"
+#include "tst_bm_contactsoverhead.moc"
 

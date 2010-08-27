@@ -1,8 +1,8 @@
 TEMPLATE = app
-TARGET = tst_bm_contacts
+TARGET = tst_bm_contactsoverhead
 CONFIG += testcase
 
-SOURCES += tst_bm_contacts.cpp
+SOURCES += tst_bm_contactsoverhead.cpp
 
 QT += core \
       network
