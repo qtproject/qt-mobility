@@ -5590,22 +5590,22 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
         QVERIFY(!m_manager->importLandmarks("doesnotexist", QLandmarkManager::Gpx));
         QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError); // file does not exist.
 
-        QVERIFY(m_manager->importLandmarks(":data/McDonalds-AUS-Queensland.gpx", QLandmarkManager::Gpx));
+        QVERIFY(m_manager->importLandmarks(":data/AUS-PublicToilet-AustralianCapitalTerritory.gpx", QLandmarkManager::Gpx));
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     } else if (type == "syncExcludeCategoryData") {
-            QVERIFY(m_manager->importLandmarks(":data/McDonalds-AUS-Queensland.gpx", QLandmarkManager::Gpx,
+            QVERIFY(m_manager->importLandmarks(":data/AUS-PublicToilet-AustralianCapitalTerritory.gpx", QLandmarkManager::Gpx,
                                                 QLandmarkManager::ExcludeCategoryData));
             QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     } else if (type == "syncAttachSingleCategory") {
-        QVERIFY(!m_manager->importLandmarks(":data/McDonalds-AUS-Queensland.gpx", QLandmarkManager::Gpx,
+        QVERIFY(!m_manager->importLandmarks(":data/AUS-PublicToilet-AustralianCapitalTerritory.gpx", QLandmarkManager::Gpx,
                                            QLandmarkManager::AttachSingleCategory));
         QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError); //No category id provided
 
-        QVERIFY(!m_manager->importLandmarks(":data/McDonalds-AUS-Queensland.gpx", QLandmarkManager::Gpx,
+        QVERIFY(!m_manager->importLandmarks(":data/AUS-PublicToilet-AustralianCapitalTerritory.gpx", QLandmarkManager::Gpx,
                                            QLandmarkManager::AttachSingleCategory, cat3.categoryId()));
         QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError); //Category id doesn't exist
 
-        QVERIFY(m_manager->importLandmarks(":data/McDonalds-AUS-Queensland.gpx", QLandmarkManager::Gpx,
+        QVERIFY(m_manager->importLandmarks(":data/AUS-PublicToilet-AustralianCapitalTerritory.gpx", QLandmarkManager::Gpx,
                                            QLandmarkManager::AttachSingleCategory, cat2.categoryId()));
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError); //valid id
     } else if (type == "async") {
@@ -5629,39 +5629,39 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
         importRequest.start();
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::DoesNotExistError)); //does not exist
 
-        importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
+        importRequest.setFileName(":data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
         importRequest.setFormat(QLandmarkManager::Gpx);
         importRequest.start();
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError,2000));
-        QCOMPARE(importRequest.landmarkIds().count(),149);
+        QCOMPARE(importRequest.landmarkIds().count(),187);
     } else if (type == "asyncExcludeCategoryData") {
-        importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
+        importRequest.setFileName(":data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
         importRequest.setFormat(QLandmarkManager::Gpx);
         importRequest.setTransferOption(QLandmarkManager::ExcludeCategoryData);
         importRequest.start();
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError,2000));
-        QCOMPARE(importRequest.landmarkIds().count(),149);
+        QCOMPARE(importRequest.landmarkIds().count(),187);
     } else if (type == "asyncAttachSingleCategory") {
-        importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
+        importRequest.setFileName(":data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
         importRequest.setFormat(QLandmarkManager::Gpx);
         importRequest.setTransferOption(QLandmarkManager::AttachSingleCategory);
         importRequest.start();
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::BadArgumentError)); //no category id provided
 
-        importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
+        importRequest.setFileName(":data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
         importRequest.setFormat(QLandmarkManager::Gpx);
         importRequest.setTransferOption(QLandmarkManager::AttachSingleCategory);
         importRequest.setCategoryId(cat3.categoryId()); //category id doesn't exist
         importRequest.start();
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::DoesNotExistError));
 
-        importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
+        importRequest.setFileName(":data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
         importRequest.setFormat(QLandmarkManager::Gpx);
         importRequest.setTransferOption(QLandmarkManager::AttachSingleCategory);
         importRequest.setCategoryId(cat2.categoryId()); //valid id
         importRequest.start();
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError));
-        QCOMPARE(importRequest.landmarkIds().count(),149);
+        QCOMPARE(importRequest.landmarkIds().count(),187);
     } else {
         qFatal("Unknown row test type");
     }
@@ -5679,14 +5679,14 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
     }
 
     QLandmark lmFirst;
-    lmFirst.setName("McDonald s Airlie Beac... (sample)");
-    lmFirst.setCoordinate(QGeoCoordinate(-20.269213, 148.718128));
+    lmFirst.setName("Public Toilet, AUS-Wetlands Toilets");
+    lmFirst.setCoordinate(QGeoCoordinate(-35.46146, 148.90686));
     lmFirst.setLandmarkId(landmarks.first().landmarkId());
     QCOMPARE(lmFirst, landmarks.first());
 
     QLandmark lmLast;
-    lmLast.setName("McDonald s Yamant... (sample)");
-    lmLast.setCoordinate(QGeoCoordinate(-27.660976,152.738973));
+    lmLast.setName("Public Toilet, AUS-Kowen Forest - Playground Block");
+    lmLast.setCoordinate(QGeoCoordinate(-35.32717,149.24848));
     lmLast.setLandmarkId(landmarks.last().landmarkId());
 
     QCOMPARE(lmLast, landmarks.last());
@@ -5696,7 +5696,7 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
     QCOMPARE(spyChange.count(), 0);
     QCOMPARE(spyAdd.count(), 1);
     QList<QLandmarkId> ids = spyAdd.at(0).at(0).value<QList<QLandmarkId> >();
-    QCOMPARE(ids.count(), 149);
+    QCOMPARE(ids.count(), 187);
     spyAdd.clear();
 
     if (type == "sync") {
@@ -5777,17 +5777,17 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
         QCOMPARE(spyAdd.count(), 0);
 
         //check that we can use canceled request again
-        importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
+        importRequest.setFileName(":data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
         importRequest.setFormat(QLandmarkManager::Gpx);
         importRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
         importRequest.start();
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError,2000));
-        QCOMPARE(originalLandmarksCount + 149, m_manager->landmarks().count());
+        QCOMPARE(originalLandmarksCount + 187, m_manager->landmarks().count());
 
         QCOMPARE(spyRemove.count(), 0);
         QCOMPARE(spyChange.count(), 0);
         QCOMPARE(spyAdd.count(), 1);
-        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().count(), 149);
+        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().count(), 187);
     }
 
 }
