@@ -3436,9 +3436,12 @@ void tst_QContactManager::partialSave()
     // 0) empty mask == full save
     // 1) Ignore an added phonenumber
     // 2) Only save a modified phonenumber, not a modified email
-    // 3) Remove an email address
+    // 3) Remove an email address & phone, mask out phone
     // 4) Have a bad manager uri in the middle
     // 5) Have a non existing contact in the middle
+    // 6) new contact, no details in the mask
+    // 7) new contact, some details in the mask
+    // 8) new contact, all details ok
 
     QContactPhoneNumber pn;
     pn.setNumber("111111");
@@ -3462,12 +3465,46 @@ void tst_QContactManager::partialSave()
     // 2) save a modified detail in the mask
     QContactEmailAddress e;
     e.setEmailAddress("example@example.com");
-    contacts[1].saveDetail(&e);
+    contacts[1].saveDetail(&e); // contacts[1] should have both phone and email
 
     QVERIFY(cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName), 0));
     b = cm->contact(originalContacts[1].localId());
     QVERIFY(b.details<QContactPhoneNumber>().count() == 1);
     QVERIFY(b.details<QContactEmailAddress>().count() == 1);
+
+    // 3) Remove an email address and a phone number
+    QVERIFY(contacts[1].removeDetail(&e));
+    QVERIFY(contacts[1].removeDetail(&pn));
+    QVERIFY(contacts[1].details<QContactEmailAddress>().count() == 0);
+    QVERIFY(contacts[1].details<QContactPhoneNumber>().count() == 1);
+    QVERIFY(cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName), 0));
+    b = cm->contact(originalContacts[1].localId());
+    QVERIFY(b.details<QContactPhoneNumber>().count() == 1);
+    QVERIFY(b.details<QContactEmailAddress>().count() == 0);
+
+    // 4,5  TODO
+
+    // 6 - New contact, no details in the mask
+    QContact newContact = originalContacts[3];
+    newContact.setId(QContactId());
+
+    contacts.append(newContact);
+    QVERIFY(cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName), 0));
+    QVERIFY(contacts[4].localId() != 0); // Saved
+    b = cm->contact(contacts[4].localId());
+    qDebug() << b;
+    QVERIFY(b.details<QContactOrganization>().count() == 0); // not saved
+    QVERIFY(b.details<QContactName>().count() == 0); // not saved
+
+    // 7 - New contact, some details in the mask
+    newContact = originalContacts[2];
+    contacts.append(newContact);
+    QVERIFY(cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName), 0));
+    QVERIFY(contacts[5].localId() != 0); // Saved
+    b = cm->contact(contacts[5].localId());
+    QVERIFY(b.details<QContactEmailAddress>().count() == 1);
+    QVERIFY(b.details<QContactName>().count() == 0); // not saved
+    qDebug() << b;
 
 
 }
