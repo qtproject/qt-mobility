@@ -668,7 +668,7 @@ void tst_QLandmarkManagerEngineSqlite::retrieveCategoryAsync() {
     QLandmarkCategoryFetchRequest catFetchRequest(m_manager);
     QSignalSpy spy(&catFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
     catFetchRequest.start();
-    QVERIFY(waitForAsync(spy, &catFetchRequest));
+    QVERIFY(waitForAsync(spy, &catFetchRequest,QLandmarkManager::NoError, 5000));
     QCOMPARE(catFetchRequest.categories().count(), 3);
     QList<QLandmarkCategory> categories = catFetchRequest.categories();
     QCOMPARE(categories.at(0).name(), QString("CAT1"));
