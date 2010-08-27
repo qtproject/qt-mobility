@@ -47,6 +47,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     TabbedWindow w;
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    a.setNavigationMode(Qt::NavigationModeKeypadTabOrder);
     w.showMaximized();
 #else
     w.show();
