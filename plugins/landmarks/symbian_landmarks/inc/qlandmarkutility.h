@@ -64,13 +64,6 @@
 QTM_USE_NAMESPACE
 
 /*
- * TODO : The naming conventions needed to be change. 
- * all methods should return the bool values, except some methods.
- * all conversion and setting will be done by passing by values and references
- * wherever required.
- */
-
-/*
  *
  * Landmark Utility To convert qt landmark data class to symbian landmark data classes
  * 
@@ -100,7 +93,7 @@ public:
     /*
      * returns new qt landmark object converted from symbian landmark object.
      */
-    static QLandmark* convertToQtLandmark(QString mangerUri, CPosLandmark* symbianLandmark);
+    static QLandmark* convertToQtLandmark(QString managerUri, CPosLandmark* symbianLandmark);
 
     /*
      * returns new symbian landmark converted from qt landmark object. 
@@ -116,13 +109,16 @@ public:
     /*
      * returns new qt landmark id object converted from symbian landmark id object.
      */
-    static QLandmarkId convertToQtLandmarkId(QString mangerUri, TPosLmItemId symbianLandmarkId);
+    static QLandmarkId convertToQtLandmarkId(QString managerUri, TPosLmItemId symbianLandmarkId);
 
     /*
      * returns list of qt landmarks ids converted from symbian landmark id list.
      */
-    static QList<QLandmarkId> convertToQtLandmarkIds(QString mangerUri,
+    static QList<QLandmarkId> convertToQtLandmarkIds(QString managerUri,
         RArray<TPosLmItemId>& symbianLandmarkIds);
+
+    static QList<QLandmarkId> convertToQtLandmarkIds2(QString managerUri,
+        RArray<TUint>& symbianLandmarkIds);
 
     /*
      * returns new object of symbian landmark id converted from qt landmark id. 
@@ -137,7 +133,7 @@ public:
     /*
      * returns new object of qt landmark category converted from symbian landmark category. 
      */
-    static QLandmarkCategory* convertToQtLandmarkCategory(QString mangerUri,
+    static QLandmarkCategory* convertToQtLandmarkCategory(QString managerUri,
         CPosLandmarkCategory* symbianLandmarkCategory);
 
     /*
@@ -156,20 +152,20 @@ public:
     /*
      * returns new object of qt category id coverted from symbian category object.
      */
-    static QLandmarkCategoryId convertToQtLandmarkCategoryId(QString mangerUri,
+    static QLandmarkCategoryId convertToQtLandmarkCategoryId(QString managerUri,
         TPosLmItemId symbianLandmarkCategoryId);
 
     /*
      * returns list of category ids converted from symbian category ids.
      */
-    static QList<QLandmarkCategoryId> convertToQtLandmarkCategoryIds(QString mangerUri, RArray<
+    static QList<QLandmarkCategoryId> convertToQtLandmarkCategoryIds(QString managerUri, RArray<
         TPosLmItemId>& symbianCategoryIds);
 
     /*
      * returns symbian category id converted from qt landmark category id.
      */
     static TPosLmItemId
-        convertToSymbianLandmarkCategoryId(QLandmarkCategoryId qtLandmarkCategoryId);
+    convertToSymbianLandmarkCategoryId(QLandmarkCategoryId qtLandmarkCategoryId);
 
     /*
      * returns symbian coordinate object converted from qt coordinate object.
@@ -189,7 +185,7 @@ public:
     /*
      * returns list of qt category ids associated with landmark from symbian landmark object.
      */
-    static QList<QLandmarkCategoryId> getCategoryIds(QString mangerUri,
+    static QList<QLandmarkCategoryId> getCategoryIds(QString managerUri,
         CPosLandmark* symbianLandmark);
 
     /*
@@ -272,12 +268,21 @@ public:
      * or even be removed.
      */
     static QStringList landmarkPackageFormats();
-    
-    
+
     /**
      * converts the attribute key string to symbian position field value. 
      */
-    static TPositionFieldId LandmarkUtility::positionFieldId(QString keyValue);
+    static TPositionFieldId positionFieldId(QString keyValue);
+
+    /**
+     * converts qt format string to symbian format string
+     */
+    static HBufC8* landmarkPackageFormatsStrLC(const QString& format);
+
+    /**
+     * Prepares the path for the file
+     */
+    static QString preparePath(QString filename);
 
 };
 

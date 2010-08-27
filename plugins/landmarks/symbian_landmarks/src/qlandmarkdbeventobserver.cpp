@@ -47,7 +47,7 @@
  */
 TInt QLandmarkDbEventObserver::AddObsever(MLandmarkDbEventObserver* aObserver)
 {
-    return LandmarkManagerEngineSymbianPrivate::iEventHandler.AddObsever(aObserver);
+    return LandmarkManagerEngineSymbianPrivate::m_DbEventHandler.AddObsever(aObserver);
 }
 
 /*
@@ -55,6 +55,6 @@ TInt QLandmarkDbEventObserver::AddObsever(MLandmarkDbEventObserver* aObserver)
  */
 TInt QLandmarkDbEventObserver::RemoveObsever(MLandmarkDbEventObserver* aObserver)
 {
-    return LandmarkManagerEngineSymbianPrivate::iEventHandler.RemoveObsever(aObserver);
+    return LandmarkManagerEngineSymbianPrivate::m_DbEventHandler.RemoveObsever(aObserver);
 }
 
