@@ -1743,7 +1743,7 @@ QMessage CFSEngine::CreateQMessage(NmApiMessage* aMessage) const
     if (envelope.hasAttachments())
         privateMessage->_status = privateMessage->_status | QMessage::HasAttachments;
     
-    QList<NmApiAttachment> attachments = aMessage->getAttachments();
+    QList<NmApiAttachment> attachments = aMessage->attachments();
     foreach (NmApiAttachment attachment, attachments) {
         QByteArray name = attachment.fileName().toUtf8();
         QString contentType = attachment.contentType(); // ??
