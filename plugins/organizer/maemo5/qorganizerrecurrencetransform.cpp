@@ -469,7 +469,7 @@ QOrganizerItemRecurrenceRule OrganizerRecurrenceTransform::icalRecurrenceRuleToQ
     time_t until = rule->getUntil();
     if (until > 0) {
         QDateTime endDate(QDateTime::fromTime_t(until));
-        m_lRecurrenceDates << endDate.addDays(-1).date();
+        m_lRecurrenceDates << endDate.date();
         retn.setEndDate(endDate.date().addDays(1)); // in Maemo5 the end date is inclusive
     }
 
