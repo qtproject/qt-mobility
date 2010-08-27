@@ -80,6 +80,7 @@ private slots:  // Test cases
 
     void setRecurrenceDates();
 private:
+private: // These test cases are valid only with multicalendar, not run
     void getCollectionIds();
     void getCollections();
     void saveCollection();
@@ -214,8 +215,9 @@ void tst_Maemo5Om::removeSimpleItem()
     QOrganizerItem fetchItem = m_om->item(event.id().localId());
     QVERIFY(fetchItem == QOrganizerItem());
 
-    /* // Temporary commented out
     // Remove list
+    QDateTime todoDueDateTime2(QDate(2010,8,30), QTime(15, 0, 0));
+    QDateTime todoDueDateTime3(QDate(2010,8,31), QTime(13, 0, 0));
     QOrganizerTodo item2;
     item2.setDueDateTime( todoDueDateTime2 );
     QOrganizerTodo item3;
@@ -227,7 +229,7 @@ void tst_Maemo5Om::removeSimpleItem()
     itemIds.append(item3.localId());
     QMap<int, QOrganizerItemManager::Error> errorMap;
     QVERIFY(m_om->removeItems(itemIds, &errorMap));
-    QVERIFY(errorMap.count() == 0);*/
+    QVERIFY(errorMap.count() == 0);
 }
 
 void tst_Maemo5Om::addEvent() {
@@ -426,6 +428,121 @@ void tst_Maemo5Om::addEventExceptions()
 
 void tst_Maemo5Om::addEventExceptionWithGuid()
 {
+    // Set up some recurring items
+    QOrganizerEvent christmas;
+    christmas.setGuid("christmas");
+    christmas.setStartDateTime(QDateTime(QDate(2009, 12, 25), QTime(0, 0, 0)));
+    christmas.setEndDateTime(QDateTime(QDate(2009, 12, 26), QTime(0, 0, 0)));
+    christmas.setDisplayLabel(QLatin1String("Christmas"));
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    christmas.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    QVERIFY(m_om->saveItem(&christmas));
+    QVERIFY(!christmas.id().managerUri().isEmpty());
+    QVERIFY(christmas.id().localId() != 0);
+
+    QOrganizerEvent newYearsDay;
+    newYearsDay.setGuid("newyear");
+    newYearsDay.setStartDateTime(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)));
+    newYearsDay.setEndDateTime(QDateTime(QDate(2010, 1, 2), QTime(0, 0, 0)));
+    newYearsDay.setDisplayLabel(QLatin1String("New Years Day"));
+    newYearsDay.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    QVERIFY(m_om->saveItem(&newYearsDay));
+
+    QOrganizerTodo report;
+    report.setGuid("report");
+    report.setDueDateTime(QDateTime(QDate(2010, 1, 11), QTime(0, 0, 0)));
+    report.setDisplayLabel(QLatin1String("Report"));
+    QVERIFY(m_om->saveItem(&report));
+
+    // The tests:
+    // exception with no guid or parentId fails
+    QOrganizerEventOccurrence exception;
+    exception.setOriginalDate(QDate(2010, 12, 25));
+    exception.setStartDateTime(QDateTime(QDate(2010, 12, 25), QTime(0, 0, 0)));
+    exception.setEndDateTime(QDateTime(QDate(2010, 12, 26), QTime(0, 0, 0)));
+    exception.setDisplayLabel(QLatin1String("Christmas"));
+    exception.addComment(QLatin1String("With the in-laws"));
+    QVERIFY(!m_om->saveItem(&exception));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
+
+    // exception with invalid guid fails
+    exception.setId(QOrganizerItemId());
+    exception.setGuid(QLatin1String("halloween"));
+    QVERIFY(!m_om->saveItem(&exception));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
+
+    // with the guid set, it should work
+    exception.setId(QOrganizerItemId());
+    exception.setGuid(QLatin1String("christmas"));
+    QVERIFY(m_om->saveItem(&exception));
+    QVERIFY(exception.localId() != 0);
+    QOrganizerEventOccurrence savedException = m_om->item(exception.localId());
+    QCOMPARE(savedException.parentLocalId(), christmas.localId()); // parentLocalId should be set by manager
+
+    // with the localId, guid and the parentId all set and consistent, it should work
+    exception = savedException;
+    QVERIFY(m_om->saveItem(&exception));
+    savedException = m_om->item(exception.localId());
+    QCOMPARE(savedException.parentLocalId(), christmas.localId());
+
+    // Make a fresh exception object on a fresh date to avoid clashing with the previously saved one
+    // can't set parentId to a non-event
+    QOrganizerEventOccurrence exception2;
+    exception2.setOriginalDate(QDate(2011, 12, 25));
+    exception2.setStartDateTime(QDateTime(QDate(2011, 12, 25), QTime(0, 0, 0)));
+    exception2.setEndDateTime(QDateTime(QDate(2011, 12, 26), QTime(0, 0, 0)));
+    exception2.setDisplayLabel(QLatin1String("Christmas"));
+    exception2.addComment(QLatin1String("With the in-laws"));
+    exception2.setParentLocalId(report.localId()); // report is not an event
+    QVERIFY(!m_om->saveItem(&exception2));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
+
+    // can't set guid to a non-event
+    exception2.setGuid(QLatin1String("report"));
+    exception2.setParentLocalId(0);
+    QVERIFY(!m_om->saveItem(&exception2));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
+
+    // can't make the guid inconsistent with the parentId
+    exception2.setParentLocalId(christmas.localId());
+    exception2.setGuid(QLatin1String("newyear"));
+    QVERIFY(!m_om->saveItem(&exception2));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
+
+    // with just the parentId set to a valid parent, it should work
+    exception2.setGuid(QLatin1String(""));
+    QVERIFY(m_om->saveItem(&exception2));
+    savedException = m_om->item(exception2.localId());
+    QCOMPARE(savedException.parentLocalId(), christmas.localId());
+    QCOMPARE(savedException.guid(), QLatin1String("christmas")); // guid should be set by manager
+
+    // Make a fresh exception object on a fresh date to avoid clashing with the previously saved one
+    // exception without originalDate fails
+    QOrganizerEventOccurrence exception3;
+    exception3.setStartDateTime(QDateTime(QDate(2012, 12, 25), QTime(0, 0, 0)));
+    exception3.setEndDateTime(QDateTime(QDate(2012, 12, 26), QTime(0, 0, 0)));
+    exception3.setDisplayLabel(QLatin1String("Christmas"));
+    exception3.addComment(QLatin1String("With the in-laws"));
+    exception3.setParentLocalId(christmas.localId());
+    exception3.setGuid(QLatin1String("christmas"));
+    QVERIFY(!m_om->saveItem(&exception3));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
+
+    // with original date, guid and parentId set and consistent, and localId=0, it should work
+    exception3.setOriginalDate(QDate(2012, 12, 25));
+    QVERIFY(m_om->saveItem(&exception3));
+    QVERIFY(exception3.localId() != 0);
+    savedException = m_om->item(exception3.localId());
+    QCOMPARE(savedException.parentLocalId(), christmas.localId());
+
+    /*
+
+
+
+
+
+
     QOrganizerEvent christmas;
     christmas.setGuid("christmas");
     christmas.setStartDateTime(QDateTime(QDate(2009, 12, 25), QTime(0, 0, 0)));
@@ -501,6 +618,7 @@ void tst_Maemo5Om::addEventExceptionWithGuid()
     exception.setParentLocalId(0);
     QVERIFY(!m_om->saveItem(&exception));
     QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
+    */
 }
 
 void tst_Maemo5Om::removeEventWithRecurrence()
@@ -606,12 +724,6 @@ void tst_Maemo5Om::removeEventExceptions()
         // Should still get 10
         QCOMPARE(instances.count(), 10);
 
-        /*
-        foreach(QOrganizerItem i, instances) {
-            qDebug() << i.localId();
-            qDebug() << static_cast<QOrganizerEventOccurrence>(i).startDateTime();
-        }*/
-
         // Create one extra occurrence
         QOrganizerEventOccurrence extraOccurrence;
         extraOccurrence.setGuid(event.guid());
@@ -625,16 +737,8 @@ void tst_Maemo5Om::removeEventExceptions()
         // Save it
         QVERIFY(m_om->saveItem(&extraOccurrence));
 
-        qDebug() << "-- " << extraOccurrence.localId();
-
         // Fetch all event instances
         instances = m_om->itemInstances(event, QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,12,31), QTime(23,59,59)), 0);
-
-        /*
-        foreach(QOrganizerItem i, instances) {
-            qDebug() << i.localId();
-            qDebug() << static_cast<QOrganizerEventOccurrence>(i).startDateTime();
-        }*/
 
         // Should now get 11
         QCOMPARE(instances.count(), 11);
@@ -652,8 +756,6 @@ void tst_Maemo5Om::removeEventExceptions()
 
 void tst_Maemo5Om::addWithIllegalParameters()
 {
-    qDebug() << "Add with illegal params";
-
     // Save with null pointer as item
     QVERIFY(!m_om->saveItem(0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);

@@ -2082,7 +2082,7 @@ void tst_QOrganizerItemManager::errorStayingPut()
 
 void tst_QOrganizerItemManager::detailDefinitions()
 {
-    QSKIP("Test case skipped due to crash in updatedDef initialization.",SkipAll);
+    //QSKIP("Test case skipped due to crash in updatedDef initialization.",SkipAll);
 
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));

@@ -15,10 +15,13 @@ INCLUDEPATH += ../../../src/organizer \
 HEADERS += qorganizermaemo5_p.h \
     qorganizerrecurrencetransform.h \
     qorganizeritemtransform.h \
-    qorganizerasynchprocess.h
+    qorganizerasynchprocess.h \
+    qorganizercaldbaccess.h
 SOURCES += qorganizermaemo5.cpp \
     qorganizerrecurrencetransform.cpp \
     qorganizeritemtransform.cpp \
-    qorganizerasynchprocess.cpp
+    qorganizerasynchprocess.cpp \
+    qorganizercaldbaccess.cpp
 target.path = $${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
 INSTALLS += target
+QT += sql

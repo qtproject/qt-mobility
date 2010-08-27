@@ -375,14 +375,6 @@ void OrganizerRecurrenceTransform::transformToQrecurrence(CRecurrence *crecurren
         }
     }
 
-    // Recurrence dates
-    std::vector< std::string > recurrenceDates = crecurrence->getRDays();
-    std::vector< std::string >::const_iterator recurrenceDate;
-    for (recurrenceDate = recurrenceDates.begin(); recurrenceDate != recurrenceDates.end(); ++recurrenceDate)
-    {
-        m_lRecurrenceDates << convertRDate(QString::fromStdString(*recurrenceDate));
-    }
-
     // Exception dates
     std::vector< std::string > exceptionDates = crecurrence->getEDays();
     std::vector< std::string >::const_iterator exceptionDate;
@@ -477,6 +469,7 @@ QOrganizerItemRecurrenceRule OrganizerRecurrenceTransform::icalRecurrenceRuleToQ
     time_t until = rule->getUntil();
     if (until > 0) {
         QDateTime endDate(QDateTime::fromTime_t(until));
+        m_lRecurrenceDates << endDate.date();
         retn.setEndDate(endDate.date().addDays(1)); // in Maemo5 the end date is inclusive
     }
 

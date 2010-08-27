@@ -75,6 +75,7 @@
 
 #include "qorganizeritemtransform.h"
 #include "qorganizerasynchprocess.h"
+#include "qorganizercaldbaccess.h"
 
 #include "qorganizerjournal.h"
 #include "qorganizertodo.h"
@@ -126,6 +127,9 @@ public:
 
     // asynchronous request handler instance
     OrganizerAsynchProcess *m_asynchProcess;
+
+    // calendar database accessor instance
+    OrganizerCalendarDatabaseAccess m_databaseAccess;
 };
 
 

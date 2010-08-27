@@ -53,7 +53,6 @@ QTM_USE_NAMESPACE
 
 CalendarDemo::CalendarDemo(QWidget *parent)
     :QMainWindow(parent),
-    m_manager(0),
     m_stackedWidget(0),
     m_monthPage(0),
     m_dayPage(0),

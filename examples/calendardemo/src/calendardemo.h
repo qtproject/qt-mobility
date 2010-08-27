@@ -79,7 +79,6 @@ Q_SIGNALS:
 	void multipleEntriesToBeCreated(int);
 
 private:
-    QOrganizerItemManager *m_manager;
     QStackedWidget *m_stackedWidget;
     MonthPage *m_monthPage;
     DayPage *m_dayPage;

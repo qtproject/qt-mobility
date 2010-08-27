@@ -97,6 +97,12 @@ QOrganizerItemMaemo5Engine::QOrganizerItemMaemo5Engine()
 
     d->m_itemTransformer.setManagerUri(managerUri());
     d->m_asynchProcess = new OrganizerAsynchProcess(this);
+
+    bool dbOk = d->m_databaseAccess.open(QDir::homePath().append(CALENDAR).append(CALENDARDB));
+    if (!dbOk) {
+        qDebug() << "Database didn't open!";
+        // TODO: Then what???
+    }
 }
 
 void QOrganizerItemMaemo5Engine::dataChanged()
@@ -232,7 +238,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
             // events (because they have become modified). Those occurrences are saved with GUID set
             // equal to the generator event's GUID.
             QString eventType = QOrganizerItemType::TypeEvent;
-            std::vector<CEvent*> occurrenceCandidates = cal->getEvents(cevent->getGUid(), calError);
+            std::vector<CEvent*> occurrenceCandidates = d->m_databaseAccess.getEvents(cal->getCalendarId(), cevent->getGUid(), calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (*error == QOrganizerItemManager::NoError) {
                 std::vector<CEvent*>::iterator occCand;
@@ -467,7 +473,7 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId> 
                 if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
                     bool parentItem = isParent(cal, cevent, QOrganizerItemType::TypeEvent, error);
                     if (parentItem && *error == QOrganizerItemManager::NoError) {
-                        std::vector<CEvent*> eventsWithGuid = cal->getEvents(cevent->getGUid(), calError);
+                        std::vector<CEvent*> eventsWithGuid = d->m_databaseAccess.getEvents(cal->getCalendarId(), cevent->getGUid(), calError);
                         *error = d->m_itemTransformer.calErrorToManagerError(calError);
                         if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
                             std::vector<CEvent*>::const_iterator childEvent;
@@ -904,7 +910,7 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerI
             // The parent ID was not set, so the GUID is always set here.
             // Must find at least one event with the given GUID.
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
-            std::vector<CEvent*> eventsWithGuid = cal->getEvents(eventOccurrence->guid().toStdString(), calError);
+            std::vector<CEvent*> eventsWithGuid = d->m_databaseAccess.getEvents(cal->getCalendarId(), eventOccurrence->guid().toStdString(), calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             int numberOfEvents = eventsWithGuid.size();
             for (int i = 0; i < numberOfEvents; ++i)
@@ -952,7 +958,7 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerI
         else {
             // Must find at least one todo with the GUID from the DB
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
-            std::vector<CTodo*> todosWithGuid = cal->getTodos(todoOccurrence->guid().toStdString(), calError);
+            std::vector<CTodo*> todosWithGuid = d->m_databaseAccess.getTodos(cal->getCalendarId(), todoOccurrence->guid().toStdString(), calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             int numberOfTodos = todosWithGuid.size();
             for (int i = 0; i < numberOfTodos; ++i)
@@ -1083,7 +1089,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
         // to the GUID.
         if (item->type() == QOrganizerItemType::TypeTodoOccurrence && ctodoId.isEmpty()) {
             calError = CALENDAR_OPERATION_SUCCESSFUL;
-            std::vector<CTodo*> todosWithGuid = cal->getTodos(item->guid().toStdString(), calError);
+            std::vector<CTodo*> todosWithGuid = d->m_databaseAccess.getTodos(cal->getCalendarId(), item->guid().toStdString(), calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
                 delete ctodo;
@@ -1409,7 +1415,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerIt
         else {
             // parent local id was not set, fetch with [GUID,originalDate]
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
-            std::vector<CEvent*> parentCands = cal->getEvents(eventOccurrence->guid().toStdString(), calError);
+            std::vector<CEvent*> parentCands = d->m_databaseAccess.getEvents(cal->getCalendarId(), eventOccurrence->guid().toStdString(), calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             std::vector<CEvent*>::iterator pCand;
 
@@ -1511,15 +1517,20 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(QOrganizerCollectio
     Q_UNUSED(fetchHint);
     // TODO: Make this method to use the fetch hint
 
-    *error = QOrganizerItemManager::NoError;
-    CCalendar *cal = getCalendar(collectionId, error);
-    if (*error != QOrganizerItemManager::NoError)
-        return QOrganizerItem();
+    const int EVENT_TYPE = 1;
+    const int TODO_TYPE = 2;
+    const int JOURNAL_TYPE = 3;
+
 
     std::string nativeId = QString::number(itemId).toStdString();
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
 
-    CEvent *cevent = cal->getEventOrNull(nativeId, calError);
+    CEvent *cevent = 0;
+    if (d->m_databaseAccess.typeOf(itemId) == EVENT_TYPE)
+        cevent = cal->getEvent(nativeId, calError);
+    else
+        calError = CALENDAR_DOESNOT_EXISTS;
+
     *error = d->m_itemTransformer.calErrorToManagerError(calError);
     if (cevent) {
         // first resolve is this event or an event occurrence (exception event)
@@ -1560,7 +1571,12 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(QOrganizerCollectio
         }
     }
 
-    CTodo *todo = cal->getTodoOrNull(nativeId, calError);
+    CTodo *todo = 0;
+    if (d->m_databaseAccess.typeOf(itemId) == TODO_TYPE)
+        todo = cal->getTodo(nativeId, calError);
+    else
+        calError = CALENDAR_DOESNOT_EXISTS;
+
     *error = d->m_itemTransformer.calErrorToManagerError(calError);
     if (todo) {
         QOrganizerTodo retn = d->m_itemTransformer.convertCTodoToQTodo(todo);
@@ -1570,7 +1586,12 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(QOrganizerCollectio
         return retn;
     }
 
-    CJournal *journal = cal->getJournalOrNull(nativeId, calError);
+    CJournal *journal = 0;
+    if (d->m_databaseAccess.typeOf(itemId) == JOURNAL_TYPE)
+        journal = cal->getJournal(nativeId, calError);
+    else
+        calError = CALENDAR_DOESNOT_EXISTS;
+
     *error = d->m_itemTransformer.calErrorToManagerError(calError);
     if (journal) {
         QOrganizerJournal retn = d->m_itemTransformer.convertCJournalToQJournal(journal);
@@ -1602,7 +1623,7 @@ bool QOrganizerItemMaemo5Engine::isOccurrence(CCalendar *cal, CComponent *ccompo
 
         // if no duplicate GUIDs are found, event can't be an occurrence
         int calError = CALENDAR_OPERATION_SUCCESSFUL;
-        std::vector<CEvent*> eventsWithGuid = cal->getEvents(guid.toStdString(), calError);
+        std::vector<CEvent*> eventsWithGuid = d->m_databaseAccess.getEvents(cal->getCalendarId(), guid.toStdString(), calError);
         int eventsWithGuidSize = eventsWithGuid.size();
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
         if (eventsWithGuidSize < 2) {
@@ -1664,7 +1685,7 @@ bool QOrganizerItemMaemo5Engine::isParent(CCalendar *cal, CComponent *ccomponent
     if (typeStr == QOrganizerItemType::TypeEvent) {
         bool retValue = false;
         int calError = CALENDAR_OPERATION_SUCCESSFUL;
-        std::vector<CEvent*> eventsWithGuid = cal->getEvents(guid.toStdString(), calError);
+        std::vector<CEvent*> eventsWithGuid = d->m_databaseAccess.getEvents(cal->getCalendarId(), guid.toStdString(), calError);
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
         int eventsWithGuidSize = eventsWithGuid.size();
         if (eventsWithGuidSize > 1) {
