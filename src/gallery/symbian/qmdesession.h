@@ -86,7 +86,9 @@ public: // From MMdESessionObserver
 
     void CommitObjectL( CMdEObject& object );
 
-    CMdEObjectQuery* NewObjectQueryL(MMdEQueryObserver *observer, QGalleryQueryRequest *request);
+    CMdEObjectQuery* NewObjectQueryL(MMdEQueryObserver *observer,
+                                     QGalleryQueryRequest *request,
+                                     int &error);
 
     int RemoveObject( const unsigned int itemId );
 

@@ -1084,10 +1084,83 @@ CMdEPropertyDef *QDocumentGalleryMDSUtility::GetMDSPropertyDefL( const QString &
     return NULL;
 }
 
-void QDocumentGalleryMDSUtility::SetupQueryConditions(CMdEObjectQuery *query,
+int QDocumentGalleryMDSUtility::SetupQueryConditions(CMdEObjectQuery *query,
                                                       QGalleryQueryRequest *request,
                                                       CMdENamespaceDef& defaultNameSpace)
 {
+    int conditionError;
+    // Add filtering conditions
+    QGalleryFilter filter = request->filter();
+
+    switch (filter.type()) {
+    case QGalleryFilter::Invalid:
+        break;
+    case QGalleryFilter::Intersection:
+        // TODO
+        return QGalleryAbstractRequest::UnsupportedFilterTypeError;
+    case QGalleryFilter::Union:
+        // TODO
+        return QGalleryAbstractRequest::UnsupportedFilterTypeError;
+    case QGalleryFilter::MetaData:
+        {
+        QGalleryMetaDataFilter metaDataFilter = filter.toMetaDataFilter();
+        QString propertyToMatch = metaDataFilter.propertyName();
+
+        CMdEPropertyDef *propDef = NULL;
+        TRAPD( err, propDef = GetMDSPropertyDefL( propertyToMatch, defaultNameSpace ) );
+        if( err || !propDef ){
+            return QGalleryAbstractRequest::PropertyTypeError;
+            break;
+        }
+
+        TPropertyType propertyType = propDef->PropertyType();
+
+        CMdELogicCondition &rootCond = query->Conditions();
+        QVariant valueToMatch = metaDataFilter.value();
+        switch( propertyType ){
+            case EPropertyUint32:
+            case EPropertyInt64:
+                {
+                conditionError = InsertUInt32PropertyCondition( rootCond, propDef, valueToMatch, metaDataFilter );
+                break;
+                }
+            case EPropertyTime:
+                {
+                conditionError = InsertTTImePropertyCondition( rootCond, propDef, valueToMatch, metaDataFilter );
+                break;
+                }
+            case EPropertyText:
+                {
+                conditionError = InsertStringPropertyCondition( rootCond, propDef, valueToMatch, metaDataFilter );
+                break;
+                }
+            case EPropertyBool:
+            case EPropertyUint8:
+            case EPropertyUint16:
+                {
+                conditionError = InsertUIntPropertyCondition( rootCond, propDef, valueToMatch, metaDataFilter );
+                break;
+                }
+            case EPropertyReal32:
+            case EPropertyReal64:
+                {
+                conditionError = InsertReal32PropertyCondition( rootCond, propDef, valueToMatch, metaDataFilter );
+                break;
+                }
+            default:
+                return QGalleryAbstractRequest::PropertyTypeError;
+                break;
+        }
+        if( conditionError != QGalleryAbstractRequest::NoResult ){
+            return conditionError;
+        }
+        break;
+        }
+    default:
+        return QGalleryAbstractRequest::UnsupportedFilterTypeError;
+    }
+
+    // Add sorting conditions
     const QStringList sortPropertyNames = request->sortPropertyNames();
     const bool descending = !sortPropertyNames.isEmpty()
             && sortPropertyNames.first().startsWith(QLatin1Char('-'));
@@ -1104,7 +1177,7 @@ void QDocumentGalleryMDSUtility::SetupQueryConditions(CMdEObjectQuery *query,
             ascending = false;
         }
 
-        CMdEPropertyDef* propDef = NULL;
+        CMdEPropertyDef *propDef = NULL;
         TRAPD( err, propDef = GetMDSPropertyDefL( propertyName, defaultNameSpace ) );
         if( err || !propDef ){
             continue;
@@ -1117,6 +1190,7 @@ void QDocumentGalleryMDSUtility::SetupQueryConditions(CMdEObjectQuery *query,
             TRAP_IGNORE( query->AppendOrderRuleL( TMdEOrderRule( *propDef, ESortDescending ) ) );
         }
     }
+    return QGalleryAbstractRequest::NoResult;
 }
 
 bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVariant &value, int key )
@@ -2031,4 +2105,177 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
         }
 }
 
+int QDocumentGalleryMDSUtility::InsertUInt32PropertyCondition( CMdELogicCondition &rootCond,
+                                                               CMdEPropertyDef *propDef,
+                                                               QVariant &valueToMatch,
+                                                               QGalleryMetaDataFilter &filter )
+{
+    int err;
+    switch( filter.comparator() ){
+        case QGalleryFilter::Equals:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEInt64Equal( valueToMatch.toULongLong() ) ) );
+            break;
+            }
+        case QGalleryFilter::LessThan:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEInt64Less( valueToMatch.toULongLong() ) ) );
+            break;
+            }
+        case QGalleryFilter::GreaterThan:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEInt64Greater( valueToMatch.toULongLong() ) ) );
+            break;
+            }
+        case QGalleryFilter::LessThanEquals:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEInt64LessEqual( valueToMatch.toULongLong() ) ) );
+            break;
+            }
+        case QGalleryFilter::GreaterThanEquals:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEInt64GreaterEqual( valueToMatch.toULongLong() ) ) );
+            break;
+            }
+        default:
+            break;
+    }
+    if( err ){
+        return QGalleryAbstractRequest::PropertyTypeError;
+    }
+    return QGalleryAbstractRequest::NoResult;
+}
+
+int QDocumentGalleryMDSUtility::InsertTTImePropertyCondition( CMdELogicCondition &rootCond,
+                                                              CMdEPropertyDef *propDef,
+                                                              QVariant &valueToMatch,
+                                                              QGalleryMetaDataFilter &filter )
+{
+    int err;
+    TTime time( QDateTimetosymbianTTime( valueToMatch.toDateTime() ) );
+    switch( filter.comparator() ){
+        case QGalleryFilter::Equals:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdETimeEqual( time ) ) );
+            break;
+            }
+        case QGalleryFilter::LessThan:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdETimeLess( time ) ) );
+            break;
+            }
+        case QGalleryFilter::GreaterThan:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdETimeGreater( time ) ) );
+            break;
+            }
+        case QGalleryFilter::LessThanEquals:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdETimeLessEqual( time ) ) );
+            break;
+            }
+        case QGalleryFilter::GreaterThanEquals:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdETimeGreaterEqual( time ) ) );
+            break;
+            }
+        default:
+            break;
+    }
+    if( err ){
+        return QGalleryAbstractRequest::PropertyTypeError;
+    }
+    return QGalleryAbstractRequest::NoResult;
+}
+
+int QDocumentGalleryMDSUtility::InsertStringPropertyCondition( CMdELogicCondition &rootCond,
+                                                               CMdEPropertyDef *propDef,
+                                                               QVariant &valueToMatch,
+                                                               QGalleryMetaDataFilter &filter )
+{
+    // TODO implement string filterin, little more complicates than numeric values
+    return QGalleryAbstractRequest::NoResult;
+}
+
+int QDocumentGalleryMDSUtility::InsertUIntPropertyCondition( CMdELogicCondition &rootCond,
+                                                             CMdEPropertyDef *propDef,
+                                                             QVariant &valueToMatch,
+                                                             QGalleryMetaDataFilter &filter )
+{
+    int err;
+    switch( filter.comparator() ){
+        case QGalleryFilter::Equals:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEUintEqual( valueToMatch.toULongLong() ) ) );
+            break;
+            }
+        case QGalleryFilter::LessThan:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEUintLess( valueToMatch.toULongLong() ) ) );
+            break;
+            }
+        case QGalleryFilter::GreaterThan:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEUintGreater( valueToMatch.toULongLong() ) ) );
+            break;
+            }
+        case QGalleryFilter::LessThanEquals:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEUintLessEqual( valueToMatch.toULongLong() ) ) );
+            break;
+            }
+        case QGalleryFilter::GreaterThanEquals:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEUintGreaterEqual( valueToMatch.toULongLong() ) ) );
+            break;
+            }
+        default:
+            break;
+    }
+    if( err ){
+        return QGalleryAbstractRequest::PropertyTypeError;
+    }
+    return QGalleryAbstractRequest::NoResult;
+}
+
+int QDocumentGalleryMDSUtility::InsertReal32PropertyCondition( CMdELogicCondition &rootCond,
+                                                               CMdEPropertyDef *propDef,
+                                                               QVariant &valueToMatch,
+                                                               QGalleryMetaDataFilter &filter )
+{
+    int err;
+    switch( filter.comparator() ){
+        case QGalleryFilter::Equals:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdERealEqual( valueToMatch.toDouble() ) ) );
+            break;
+            }
+        case QGalleryFilter::LessThan:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdERealLess( valueToMatch.toDouble() ) ) );
+            break;
+            }
+        case QGalleryFilter::GreaterThan:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdERealGreater( valueToMatch.toDouble() ) ) );
+            break;
+            }
+        case QGalleryFilter::LessThanEquals:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdERealLessEqual( valueToMatch.toDouble() ) ) );
+            break;
+            }
+        case QGalleryFilter::GreaterThanEquals:
+            {
+            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdERealGreaterEqual( valueToMatch.toDouble() ) ) );
+            break;
+            }
+        default:
+            break;
+    }
+    if( err ){
+        return QGalleryAbstractRequest::PropertyTypeError;
+    }
+    return QGalleryAbstractRequest::NoResult;
+}
 QTM_END_NAMESPACE

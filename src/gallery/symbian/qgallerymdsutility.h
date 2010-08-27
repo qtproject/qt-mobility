@@ -119,11 +119,32 @@ public:
 
     static CMdEPropertyDef *GetMDSPropertyDefL(const QString &property,
                                                CMdENamespaceDef& defaultNameSpace);
-    static void SetupQueryConditions(CMdEObjectQuery *query,
+    static int SetupQueryConditions(CMdEObjectQuery *query,
                                      QGalleryQueryRequest *request,
                                      CMdENamespaceDef& defaultNameSpace);
 
     static bool SetMetaDataFieldL( CMdEObject *item, const QVariant &value, int key );
+
+    static int InsertUInt32PropertyCondition( CMdELogicCondition &rootCond,
+                                              CMdEPropertyDef *propDef,
+                                              QVariant &valueToMatch,
+                                              QGalleryMetaDataFilter &filter );
+    static int InsertTTImePropertyCondition( CMdELogicCondition &rootCond,
+                                             CMdEPropertyDef *propDef,
+                                             QVariant &valueToMatch,
+                                             QGalleryMetaDataFilter &filter );
+    static int InsertStringPropertyCondition( CMdELogicCondition &rootCond,
+                                              CMdEPropertyDef *propDef,
+                                              QVariant &valueToMatch,
+                                              QGalleryMetaDataFilter &filter );
+    static int InsertUIntPropertyCondition( CMdELogicCondition &rootCond,
+                                            CMdEPropertyDef *propDef,
+                                            QVariant &valueToMatch,
+                                            QGalleryMetaDataFilter &filter );
+    static int InsertReal32PropertyCondition( CMdELogicCondition &rootCond,
+                                              CMdEPropertyDef *propDef,
+                                              QVariant &valueToMatch,
+                                              QGalleryMetaDataFilter &filter );
 };
 
 QTM_END_NAMESPACE

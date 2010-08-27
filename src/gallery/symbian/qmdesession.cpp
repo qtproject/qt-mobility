@@ -92,7 +92,9 @@ void QMdeSession::CommitObjectL( CMdEObject& object )
     m_cmdeSession->CommitObjectL( object );
 }
 
-CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer, QGalleryQueryRequest *request)
+CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer,
+                                              QGalleryQueryRequest *request,
+                                              int &error)
 {
     CMdENamespaceDef& defaultNamespace = GetDefaultNamespaceDefL();
 
@@ -129,7 +131,7 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer, QGall
         query = m_cmdeSession->NewObjectQueryL( defaultNamespace, objdef, observer );
     }
 
-    QDocumentGalleryMDSUtility::SetupQueryConditions(query, request, defaultNamespace);
+    error = QDocumentGalleryMDSUtility::SetupQueryConditions(query, request, defaultNamespace);
 
     return query;
 }

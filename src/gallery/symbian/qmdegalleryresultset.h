@@ -112,7 +112,6 @@ protected:
 protected:
 
     int m_cursorPosition;
-    QGalleryFilter m_filter;
     bool m_live;
     int m_result;
     QString m_itemType;

@@ -105,17 +105,28 @@ void QMDEGalleryQueryResultSet::createQuery()
         return;
     }
 
-    TRAPD( err, m_query = m_session->NewObjectQueryL( this, m_request ) );
+    int error = 0;
+    TRAPD( err, m_query = m_session->NewObjectQueryL( this, m_request, error ) );
     if( err ){
         m_query = NULL;
         finish(QGalleryAbstractRequest::RequestError, false);
         return;
     }
+    else if( error != QGalleryAbstractRequest::NoResult ){
+       m_query->RemoveObserver( *this );
+       delete m_query;
+       m_query = NULL;
+       finish(error, false);
+       return;
+    }
 
+    // NewObjectQuery will return NULL if object type is not supported
     if( m_query ){
         TRAP( err, m_query->FindL() );
         if( err ){
             m_query->RemoveObserver( *this );
+            delete m_query;
+            m_query = NULL;
             finish(QGalleryAbstractRequest::RequestError, false);
         }
     }
