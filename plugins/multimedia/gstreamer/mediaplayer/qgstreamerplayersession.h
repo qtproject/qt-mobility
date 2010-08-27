@@ -136,6 +136,7 @@ private slots:
     void setSeekable(bool);
     void finishVideoOutputChange();
     void updateVideoRenderer();
+    void updateVideoResolutionTag();
 
 private:
     static void playbinNotifySource(GObject *o, GParamSpec *p, gpointer d);

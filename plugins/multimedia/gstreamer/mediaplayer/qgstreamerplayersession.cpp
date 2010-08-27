@@ -48,6 +48,8 @@
 
 #include <QtCore/qdatetime.h>
 #include <QtCore/qdebug.h>
+#include <QtCore/qsize.h>
+#include <QtCore/qdebug.h>
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || (GST_VERSION_MICRO > 20)
 #define USE_PLAYBIN2
@@ -826,6 +828,7 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                         //check for seekable
                         if (oldState == GST_STATE_READY) {
                             getStreamsInfo();
+                            updateVideoResolutionTag();
 
                             /*
                                 //gst_element_seek_simple doesn't work reliably here, have to find a better solution
@@ -1088,6 +1091,51 @@ void QGstreamerPlayerSession::getStreamsInfo()
     emit streamsChanged();
 }
 
+void QGstreamerPlayerSession::updateVideoResolutionTag()
+{
+    QSize size;
+    QSize aspectRatio;
+
+    GstPad *pad = gst_element_get_static_pad(m_videoIdentity, "src");
+    GstCaps *caps = gst_pad_get_negotiated_caps(pad);
+
+    if (caps) {
+        const GstStructure *structure = gst_caps_get_structure(caps, 0);
+        gst_structure_get_int(structure, "width", &size.rwidth());
+        gst_structure_get_int(structure, "height", &size.rheight());
+
+        gint aspectNum = 0;
+        gint aspectDenum = 0;
+        if (!size.isEmpty() && gst_structure_get_fraction(
+                    structure, "pixel-aspect-ratio", &aspectNum, &aspectDenum)) {
+            if (aspectDenum > 0)
+                aspectRatio = QSize(aspectNum, aspectDenum);
+        }
+        gst_caps_unref(caps);
+    }
+
+    gst_object_unref(GST_OBJECT(pad));
+
+    QSize currentSize = m_tags.value("resolution").toSize();
+    QSize currentAspectRatio = m_tags.value("pixel-aspect-ratio").toSize();
+
+    if (currentSize != size || currentAspectRatio != aspectRatio) {
+        if (aspectRatio.isEmpty())
+            m_tags.remove("pixel-aspect-ratio");
+
+        if (size.isEmpty()) {
+            m_tags.remove("resolution");
+        } else {
+            m_tags.insert("resolution", QVariant(size));
+            if (!aspectRatio.isEmpty())
+                m_tags.insert("pixel-aspect-ratio", QVariant(aspectRatio));
+        }
+
+        emit tagsChanged();
+    }
+}
+
+
 void QGstreamerPlayerSession::playbinNotifySource(GObject *o, GParamSpec *p, gpointer d)
 {
     Q_UNUSED(p);
@@ -1147,5 +1195,4 @@ void QGstreamerPlayerSession::playbinNotifySource(GObject *o, GParamSpec *p, gpo
     // NOTE: code assumes souphttpsrc, but written so anything with "extra-headers"
     // should be functional.
 }
-
 
