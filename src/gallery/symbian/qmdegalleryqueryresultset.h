@@ -60,10 +60,10 @@ public:
     ~QMDEGalleryQueryResultSet();
 
     void HandleQueryNewResults( CMdEQuery &aQuery,
-                                int aFirstNewItemIndex,
-                                int aNewItemCount );
+                                TInt aFirstNewItemIndex,
+                                TInt aNewItemCount );
 
-    void HandleQueryCompleted( CMdEQuery& aQuery, int aError );
+    void HandleQueryCompleted( CMdEQuery& aQuery, TInt aError );
 
     void createQuery();
 

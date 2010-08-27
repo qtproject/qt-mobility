@@ -61,7 +61,7 @@ QMDEGalleryItemResultSet::QMDEGalleryItemResultSet(QMdeSession *session, QObject
 
 QMDEGalleryItemResultSet::~QMDEGalleryItemResultSet()
 {
-
+    delete m_resultObject;
 }
 void QMDEGalleryItemResultSet::createQuery()
 {

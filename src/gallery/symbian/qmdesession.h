@@ -71,22 +71,24 @@ public: // From MMdESessionObserver
      * @param aSession  MdE Session which was opened
      * @param aError  Error code from the opening
      */
-    void HandleSessionOpened( CMdESession &aSession, int aError );
+    void HandleSessionOpened( CMdESession &aSession, TInt aError );
 
     /**
      * For checking MdE session errors
      * @param aSession  MdE Session which was opened
      * @param aError  Error which has occurred
      */
-    void HandleSessionError( CMdESession &aSession, int aError );
+    void HandleSessionError( CMdESession &aSession, TInt aError );
 
     CMdENamespaceDef& GetDefaultNamespaceDefL();
 
-    CMdEObject* GetFullObjectL( const unsigned int aId );
+    CMdEObject* GetFullObjectL( const unsigned int id );
 
-    CMdEObjectQuery* NewObjectQueryL(MMdEQueryObserver *aObserver, QGalleryQueryRequest *request);
+    void CommitObjectL( CMdEObject& object );
 
-    int RemoveObject( const unsigned int aItemId );
+    CMdEObjectQuery* NewObjectQueryL(MMdEQueryObserver *observer, QGalleryQueryRequest *request);
+
+    int RemoveObject( const unsigned int itemId );
 
 private:
 

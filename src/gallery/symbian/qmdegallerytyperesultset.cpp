@@ -101,80 +101,70 @@ bool QMDEGalleryTypeResultSet::setMetaData(int key, const QVariant &value)
 
 bool QMDEGalleryTypeResultSet::fetch(int index)
 {
-    if( m_propertyList.count() <= 0 || index < 0 || index > m_propertyList.count() )
-        {
+    if( m_propertyList.count() <= 0 || index < 0 || index > m_propertyList.count() ){
         return false;
-        }
-    else
-        {
+    }
+    else{
         m_cursorPosition = index;
         m_isValid = true;
         return true;
-        }
+    }
     return false;
 }
 
 bool QMDEGalleryTypeResultSet::fetchNext()
 {
     int newIndex = m_cursorPosition + 1;
-    if( m_propertyList.count() <= 0 || newIndex < 0 || newIndex > m_propertyList.count() )
-        {
+    if( m_propertyList.count() <= 0 || newIndex < 0 || newIndex > m_propertyList.count() ){
         return false;
-        }
-    else
-        {
+    }
+    else{
         m_cursorPosition = newIndex;
         m_isValid = true;
         return true;
-        }
+    }
     return false;
 }
 
 bool QMDEGalleryTypeResultSet::fetchPrevious()
 {
     int newIndex = m_cursorPosition - 1;
-    if( m_propertyList.count() <= 0 || newIndex < 0 || newIndex > m_propertyList.count() )
-        {
+    if( m_propertyList.count() <= 0 || newIndex < 0 || newIndex > m_propertyList.count() ){
         return false;
-        }
-    else
-        {
+    }
+    else{
         m_cursorPosition = newIndex;
         m_isValid = true;
         return true;
-        }
+    }
     return false;
 }
 
 bool QMDEGalleryTypeResultSet::fetchFirst()
 {
     int newIndex = 0; // first item
-    if( m_propertyList.count() <= 0 )
-        {
+    if( m_propertyList.count() <= 0 ){
         return false;
-        }
-    else
-        {
+    }
+    else{
         m_cursorPosition = newIndex;
         m_isValid = true;
         return true;
-        }
+    }
     return false;
 }
 
 bool QMDEGalleryTypeResultSet::fetchLast()
 {
     int newIndex = m_itemArray.Count() - 1; // last item
-    if( m_propertyList.count() <= 0 || newIndex < 0 || newIndex > m_propertyList.count() )
-        {
+    if( m_propertyList.count() <= 0 || newIndex < 0 || newIndex > m_propertyList.count() ){
         return false;
-        }
-    else
-        {
+    }
+    else{
         m_cursorPosition = newIndex;
         m_isValid = true;
         return true;
-        }
+    }
     return false;
 }
 

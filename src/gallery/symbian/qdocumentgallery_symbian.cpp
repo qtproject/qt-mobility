@@ -139,14 +139,12 @@ QStringList QDocumentGallery::itemTypePropertyNames(const QString &itemType) con
 QGalleryProperty::Attributes QDocumentGallery::propertyAttributes(
     const QString &propertyName, const QString &/*itemType*/) const
 {
-    if( propertyName == QDocumentGallery::url.name() )
-        {
+    if( propertyName == QDocumentGallery::url.name() ){
         return (QGalleryProperty::CanRead | QGalleryProperty::CanSort | QGalleryProperty::CanFilter );
-        }
-    else
-        {
+    }
+    else{
         return (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanSort | QGalleryProperty::CanFilter );
-        }
+    }
 }
 
 QGalleryAbstractResponse* QDocumentGallery::createResponse(QGalleryAbstractRequest *request)

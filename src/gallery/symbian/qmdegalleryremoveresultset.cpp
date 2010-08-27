@@ -63,8 +63,8 @@ QMDEGalleryRemoveResultSet::~QMDEGalleryRemoveResultSet()
 void QMDEGalleryRemoveResultSet::createQuery()
 {
     m_result = m_session->RemoveObject( m_request->itemId().toUInt() );
-    // TODO this call only removes the entry from MDS DB. Should the actual binary
-    // be deleted from disk?
+    // This call only removes the entry from MDS DB. Should the actual binary
+    // be deleted from disk???
     // After that m_ret contains error code from request
     finish(m_result, false);
 }

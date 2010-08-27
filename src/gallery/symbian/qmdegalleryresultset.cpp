@@ -110,9 +110,9 @@ QVariant QMDEGalleryResultSet::itemId() const
     uint idVar = 0;
 
     if (isValid())
-    idVar = m_itemArray[m_cursorPosition]->Id();
+        idVar = m_itemArray[m_cursorPosition]->Id();
 
-    return QVariant (idVar );
+    return QVariant(idVar);
 }
 
 QUrl QMDEGalleryResultSet::itemUrl() const
@@ -120,23 +120,45 @@ QUrl QMDEGalleryResultSet::itemUrl() const
     if ( isValid()) {
         return QUrl( QDocumentGalleryMDSUtility::s60DescToQString( m_itemArray[m_cursorPosition]->Uri() ));
     }
-    else
-    return NULL;
+    else{
+        QUrl null;
+        return NULL;
+    }
 }
 
 QString QMDEGalleryResultSet::itemType() const
 {
     if ( isValid() )
         return QDocumentGalleryMDSUtility::GetItemTypeFromMDEObject( m_itemArray[m_cursorPosition] );
-    else
-        return NULL;
+    else{
+        QString null;
+        return null;
+    }
 }
 
 QList<QGalleryResource> QMDEGalleryResultSet::resources() const
 {
-    // TODO
-    QList<QGalleryResource> tempNull;
-    return tempNull;
+    QList<QGalleryResource> resources;
+
+    if(m_itemArray[m_cursorPosition]) {
+        const QUrl url =
+            QUrl( QDocumentGalleryMDSUtility::s60DescToQString( m_itemArray[m_cursorPosition]->Uri() ) );
+
+        QStringList propertyList;
+        QDocumentGalleryMDSUtility::GetDataFieldsForItemType( propertyList, itemType() );
+
+        const int count = propertyList.count();
+        QMap<int, QVariant> attributes;
+
+        for( int i = 0; i < count; i++ ){
+            int propertyKey = QDocumentGalleryMDSUtility::GetPropertyKey( propertyList[i] );
+            QVariant value = metaData( propertyKey );
+            if (!value.isNull())
+                attributes.insert(propertyKey, value);
+        }
+        resources.append(QGalleryResource(url, attributes));
+    }
+    return resources;
 }
 
 QVariant QMDEGalleryResultSet::metaData(int key) const
@@ -153,10 +175,9 @@ QVariant QMDEGalleryResultSet::metaData(int key) const
     CMdEObject *item = m_itemArray[m_cursorPosition];
     if (item) {
         TRAPD( err, QDocumentGalleryMDSUtility::GetMetaDataFieldL( item, retval, key ) );
-        if( err )
-            {
+        if( err ){
             retval.clear();
-            }
+        }
     }
 
     return retval;
@@ -164,8 +185,24 @@ QVariant QMDEGalleryResultSet::metaData(int key) const
 
 bool QMDEGalleryResultSet::setMetaData(int key, const QVariant &value)
 {
-    // TODO - should this save data instantly to mds database?
-    // To be implemented after queries are working
+    bool ret = false;
+
+    TRAPD( err, QDocumentGalleryMDSUtility::SetMetaDataFieldL(
+        m_itemArray[m_cursorPosition], value, key) );
+    if( err ){
+        return false;
+    }
+    else{
+        if( ret ){
+            TRAP( err, m_session->CommitObjectL( *m_itemArray[m_cursorPosition] ) );
+            if( err ){
+                return false;
+            }
+            else{
+                return true;
+            }
+        }
+    }
     return false;
 }
 
@@ -176,12 +213,10 @@ int QMDEGalleryResultSet::currentIndex() const
 
 bool QMDEGalleryResultSet::fetch(int index)
 {
-    if( m_itemArray.Count() <= 0 || index < 0 || index > m_itemArray.Count() )
-    {
+    if( m_itemArray.Count() <= 0 || index < 0 || index > m_itemArray.Count() ){
         return false;
     }
-    else
-    {
+    else{
         m_cursorPosition = index;
         m_isValid = true;
         return true;
@@ -192,12 +227,10 @@ bool QMDEGalleryResultSet::fetch(int index)
 bool QMDEGalleryResultSet::fetchNext()
 {
     int newIndex = m_cursorPosition + 1;
-    if( m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count() )
-    {
+    if( m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count() ){
         return false;
     }
-    else
-    {
+    else{
         m_cursorPosition = newIndex;
         m_isValid = true;
         return true;
@@ -208,12 +241,10 @@ bool QMDEGalleryResultSet::fetchNext()
 bool QMDEGalleryResultSet::fetchPrevious()
 {
     int newIndex = m_cursorPosition - 1;
-    if( m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count() )
-    {
+    if( m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count() ){
         return false;
     }
-    else
-    {
+    else{
         m_cursorPosition = newIndex;
         m_isValid = true;
         return true;
@@ -224,12 +255,10 @@ bool QMDEGalleryResultSet::fetchPrevious()
 bool QMDEGalleryResultSet::fetchFirst()
 {
     int newIndex = 0; // first item
-    if( m_itemArray.Count() <= 0 )
-    {
+    if( m_itemArray.Count() <= 0 ){
         return false;
     }
-    else
-    {
+    else{
         m_cursorPosition = newIndex;
         m_isValid = true;
         return true;
@@ -240,12 +269,10 @@ bool QMDEGalleryResultSet::fetchFirst()
 bool QMDEGalleryResultSet::fetchLast()
 {
     int newIndex = m_itemArray.Count() - 1; // last item
-    if( m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count() )
-    {
+    if( m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count() ){
         return false;
     }
-    else
-    {
+    else{
         m_cursorPosition = newIndex;
         m_isValid = true;
         return true;

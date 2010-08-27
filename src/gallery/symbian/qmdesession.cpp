@@ -65,12 +65,12 @@ QMdeSession::~QMdeSession()
     }
 }
 
-void QMdeSession::HandleSessionOpened(CMdESession& /*aSession*/, int /*aError*/)
+void QMdeSession::HandleSessionOpened(CMdESession& /*aSession*/, TInt /*aError*/)
 {
     m_eventLoop.quit();
 }
 
-void QMdeSession::HandleSessionError(CMdESession& /*aSession*/, int /*aError*/)
+void QMdeSession::HandleSessionError(CMdESession& /*aSession*/, TInt /*aError*/)
 {
     m_eventLoop.quit();
 }
@@ -80,14 +80,19 @@ CMdENamespaceDef& QMdeSession::GetDefaultNamespaceDefL()
     return m_cmdeSession->GetDefaultNamespaceDefL();
 }
 
-CMdEObject* QMdeSession::GetFullObjectL( const unsigned int aId  )
+CMdEObject* QMdeSession::GetFullObjectL( const unsigned int id  )
 {
-    CMdEObject* ret = m_cmdeSession->GetFullObjectL( aId );
+    CMdEObject* ret = m_cmdeSession->GetFullObjectL( id );
 
     return ret;
 }
 
-CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *aResponse, QGalleryQueryRequest *request)
+void QMdeSession::CommitObjectL( CMdEObject& object )
+{
+    m_cmdeSession->CommitObjectL( object );
+}
+
+CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer, QGalleryQueryRequest *request)
 {
     CMdENamespaceDef& defaultNamespace = GetDefaultNamespaceDefL();
 
@@ -109,7 +114,11 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *aResponse, QGal
         objectDefs->Append( &videoObjDef );
         objectDefs->Append( &audioObjDef );
 
-        query = m_cmdeSession->NewObjectQueryL( mediaObjDef, objectDefs, aResponse );
+        TRAPD( err, query = m_cmdeSession->NewObjectQueryL( mediaObjDef, objectDefs, observer ) );
+        if( err ){
+            delete objectDefs;
+            return NULL;
+        }
     }
     else {
         CMdEObjectDef& objdef = QDocumentGalleryMDSUtility::ObjDefFromItemTypeL(defaultNamespace, request->rootType() );
@@ -117,7 +126,7 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *aResponse, QGal
             // Base object definition is only returned if the root type does not match supported types
             return NULL;
             }
-        query = m_cmdeSession->NewObjectQueryL( defaultNamespace, objdef, aResponse );
+        query = m_cmdeSession->NewObjectQueryL( defaultNamespace, objdef, observer );
     }
 
     QDocumentGalleryMDSUtility::SetupQueryConditions(query, request, defaultNamespace);
@@ -125,13 +134,13 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *aResponse, QGal
     return query;
 }
 
-int QMdeSession::RemoveObject( const unsigned int aItemId )
+int QMdeSession::RemoveObject( const unsigned int itemId )
 {
     TItemId result = 0;
     int ret = QGalleryAbstractRequest::NoResult;
     TRAPD( err,
            CMdENamespaceDef& defaultNamespaceDef = GetDefaultNamespaceDefL();
-           result = m_cmdeSession->RemoveObjectL( aItemId, &defaultNamespaceDef )
+           result = m_cmdeSession->RemoveObjectL( itemId, &defaultNamespaceDef )
          );
 
     if (err == KErrNone) {

@@ -51,6 +51,7 @@
 #include <qdocumentgallery.h>
 #include <mdeobject.h>
 #include <mdequery.h>
+#include <e32std.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -113,15 +114,16 @@ public:
     static HBufC *qStringToS60Desc(const QString& string);
     static QString s60Desc8ToQString(const TDesC8& desc);
     static HBufC8 *qStringToS60Desc8(const QString& string);
-    static QByteArray s60Desc8ToQByteArray(const TDesC8& desc);
-    static HBufC8 *qByteArrayToS60Desc8(const QByteArray& string);
 	static QDateTime symbianTTimetoQDateTime(const TTime& time);
+	static TTime QDateTimetosymbianTTime(const QDateTime& time);
 
     static CMdEPropertyDef *GetMDSPropertyDefL(const QString &property,
                                                CMdENamespaceDef& defaultNameSpace);
     static void SetupQueryConditions(CMdEObjectQuery *query,
                                      QGalleryQueryRequest *request,
                                      CMdENamespaceDef& defaultNameSpace);
+
+    static bool SetMetaDataFieldL( CMdEObject *item, const QVariant &value, int key );
 };
 
 QTM_END_NAMESPACE

@@ -60,18 +60,17 @@ QMDEGalleryQueryResultSet::QMDEGalleryQueryResultSet(QMdeSession *session, QObje
 
 QMDEGalleryQueryResultSet::~QMDEGalleryQueryResultSet()
 {
-    if( m_query )
-        {
+    if( m_query ){
         m_query->RemoveObserver( *this );
         m_query->Cancel();
-        }
+    }
     delete m_query;
     m_query = NULL;
 }
 
 void QMDEGalleryQueryResultSet::HandleQueryNewResults( CMdEQuery &aQuery,
-                                                       int firstNewItemIndex,
-                                                       int newItemCount )
+                                                       TInt firstNewItemIndex,
+                                                       TInt newItemCount )
 {
     if( aQuery.ResultMode() == EQueryResultModeItem ) {
         int max = aQuery.Count();
@@ -86,16 +85,14 @@ void QMDEGalleryQueryResultSet::HandleQueryNewResults( CMdEQuery &aQuery,
     emit progressChanged(aQuery.Count(), KMdEQueryDefaultMaxCount);
 }
 
-void QMDEGalleryQueryResultSet::HandleQueryCompleted( CMdEQuery &aQuery, int aError )
+void QMDEGalleryQueryResultSet::HandleQueryCompleted( CMdEQuery &aQuery, TInt aError )
 {
     emit progressChanged(aQuery.Count(), aQuery.Count());
 
-    if( aError == KErrNone )
-    {
+    if( aError == KErrNone ){
         finish(QGalleryAbstractRequest::Succeeded, m_live);
     }
-    else
-    {
+    else{
         finish(QGalleryAbstractRequest::RequestError, false);
     }
 
@@ -105,12 +102,14 @@ void QMDEGalleryQueryResultSet::createQuery()
 {
     if( !m_session ){
         finish(QGalleryAbstractRequest::ConnectionError, false);
+        return;
     }
 
     TRAPD( err, m_query = m_session->NewObjectQueryL( this, m_request ) );
     if( err ){
         m_query = NULL;
         finish(QGalleryAbstractRequest::RequestError, false);
+        return;
     }
 
     if( m_query ){
