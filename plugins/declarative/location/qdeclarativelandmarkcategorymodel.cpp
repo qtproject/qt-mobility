@@ -1,4 +1,6 @@
 #include "qdeclarativelandmarkcategorymodel_p.h"
+#include <qlandmarkcategoryfetchrequest.h>
+#include <qlandmarkcategoryfetchbyidrequest.h>
 #include <QTimer>
 
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
@@ -8,8 +10,8 @@
 QTM_BEGIN_NAMESPACE
 
 QDeclarativeLandmarkCategoryModel::QDeclarativeLandmarkCategoryModel(QObject *parent) :
-        QAbstractListModel(parent), m_manager(0), m_fetchRequest(0), m_autoUpdate(false),
-        m_limit(-1), m_offset(-1)
+        QAbstractListModel(parent), m_manager(0), m_fetchRequest(0), m_landmark(0),
+        m_autoUpdate(false), m_limit(-1), m_offset(-1)
 {
     // Establish role names so that they can be queried from this model
     QHash<int, QByteArray> roleNames;
@@ -49,12 +51,25 @@ QVariant QDeclarativeLandmarkCategoryModel::data(const QModelIndex &index, int r
     return QVariant();
 }
 
-int QDeclarativeLandmarkCategoryModel::count()
+QDeclarativeLandmark* QDeclarativeLandmarkCategoryModel::landmark() const
+{
+    return m_landmark;
+}
+
+void QDeclarativeLandmarkCategoryModel::setLandmark(QDeclarativeLandmark *landmark)
+{
+    if (landmark == m_landmark)
+        return;
+    m_landmark = landmark;
+    emit landmarkChanged();
+}
+
+int QDeclarativeLandmarkCategoryModel::count() const
 {
     return m_categories.count();
 }
 
-int QDeclarativeLandmarkCategoryModel::limit()
+int QDeclarativeLandmarkCategoryModel::limit() const
 {
     return m_limit;
 }
@@ -67,7 +82,7 @@ void QDeclarativeLandmarkCategoryModel::setLimit(int limit)
     emit limitChanged();
 }
 
-int QDeclarativeLandmarkCategoryModel::offset()
+int QDeclarativeLandmarkCategoryModel::offset() const
 {
     return m_offset;
 }
@@ -80,7 +95,7 @@ void QDeclarativeLandmarkCategoryModel::setOffset(int offset)
     emit offsetChanged();
 }
 
-QString QDeclarativeLandmarkCategoryModel::error()
+QString QDeclarativeLandmarkCategoryModel::error() const
 {
     return m_error;
 }
@@ -109,19 +124,27 @@ void QDeclarativeLandmarkCategoryModel::update()
         return;
     // Clear any previous updates and request new
     cancelUpdate();
-    m_fetchRequest = new QLandmarkCategoryFetchRequest(m_manager, this);
+    if (m_landmark) {
+        QLandmarkCategoryFetchByIdRequest* req = new QLandmarkCategoryFetchByIdRequest(m_manager, this);
+        req->setCategoryIds(m_landmark->categoryIds());
+        m_fetchRequest = req;
+    } else {
+        m_fetchRequest = new QLandmarkCategoryFetchRequest(m_manager, this);
+        setFetchRange();
+    }
     QObject::connect(m_fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this, SLOT(fetchRequestStateChanged(QLandmarkAbstractRequest::State)));
     m_fetchRequest->start();
 }
 
-void QDeclarativeLandmarkCategoryModel::setFetchHints()
+void QDeclarativeLandmarkCategoryModel::setFetchRange()
 {
     if (!m_fetchRequest || ((m_limit <= 0) && (m_offset <= 0)))
         return;
+    QLandmarkCategoryFetchRequest* req = static_cast<QLandmarkCategoryFetchRequest*>(m_fetchRequest);
     if (m_limit > 0)
-        m_fetchRequest->setLimit(m_limit);
+        req->setLimit(m_limit);
     if ((m_offset > 0))
-        m_fetchRequest->setOffset(m_offset);
+        req->setOffset(m_offset);
 }
 
 void QDeclarativeLandmarkCategoryModel::cancelUpdate()
@@ -157,10 +180,29 @@ void QDeclarativeLandmarkCategoryModel::fetchRequestStateChanged(QLandmarkAbstra
         return;
 
     if (m_fetchRequest->error() == QLandmarkManager::NoError) {
-        // TODO Later improvement item is to make udpate incremental by connecting to resultsAvailable() -function.
-        beginInsertRows(QModelIndex(), 0, m_categories.count());
+        // Later improvement item is to make udpate incremental by
+        // connecting to resultsAvailable() -function.
+        beginInsertRows(QModelIndex(), 0, m_categories.count()); // TODO check if this correct (count)
         int oldCount = m_categories.count();
-        m_categories = m_fetchRequest->categories();
+        switch (m_fetchRequest->type())
+        {
+        case QLandmarkAbstractRequest::CategoryFetchRequest:
+            {
+            QLandmarkCategoryFetchRequest* req = static_cast<QLandmarkCategoryFetchRequest*>(m_fetchRequest);
+            m_categories = req->categories();
+            }
+            break;
+        case QLandmarkAbstractRequest::CategoryFetchByIdRequest:
+            {
+            QLandmarkCategoryFetchByIdRequest* req = static_cast<QLandmarkCategoryFetchByIdRequest*>(m_fetchRequest);
+            m_categories = req->categories();
+            }
+            break;
+
+        default:
+            // No other types supported
+            return;
+        }
         endInsertRows();
         if (oldCount != m_categories.count())
             emit countChanged();
