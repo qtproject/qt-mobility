@@ -87,7 +87,7 @@ QContactAction::~QContactAction()
  */
 
 /*!
-  \fn QContactAction::actionDescriptor() const
+  \fn QContactAction::actionDescriptors(const QString& actionName) const
   Returns the descriptor which uniquely identifies this action implementation.  A descriptor
   consists of an action name, a vendor name and an implementation version.
   The name of the action identifies the action provided; different implementations of an action
