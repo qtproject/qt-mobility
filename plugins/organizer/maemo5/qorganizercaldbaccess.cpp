@@ -108,19 +108,16 @@ void OrganizerCalendarDatabaseAccess::close()
     m_db.close();
 }
 
-int OrganizerCalendarDatabaseAccess::typeOf(QOrganizerItemLocalId id, bool &ok)
+int OrganizerCalendarDatabaseAccess::typeOf(QOrganizerItemLocalId id)
 {
     QString queryString = selectLeftJoin;
     queryString.replace("$1", QString::number(id)); // TODO: binding parameter values do not work for some reason
     QSqlQuery query(queryString);
-    ok = query.exec();
 
     int retn = -1;
-    if (query.next()) {
-        retn = query.value(2).toInt();
-    }
-    else {
-        ok = false;
+    if (query.exec()) {
+        if (query.next())
+            retn = query.value(2).toInt();
     }
 
     return retn;
@@ -146,7 +143,6 @@ std::vector<CEvent *> OrganizerCalendarDatabaseAccess::getEvents(int calId, std:
     queryString.replace("$1", QString::number(calId));
     queryString.replace("$2", QString::number(E_EVENT));
     queryString.replace("$3", QString::fromStdString(guid));
-    qDebug() << queryString;
     QSqlQuery pQuery(queryString);
     bool ok = pQuery.exec();
 
