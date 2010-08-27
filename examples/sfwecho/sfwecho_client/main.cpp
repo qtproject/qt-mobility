@@ -52,16 +52,22 @@
 #include <qservice.h>
 #include <qservicemanager.h>
 
+#if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#include "ui_sfwecho_client_mobile.h"
+#else
 #include "ui_sfwecho_client.h"
+#endif
+
+
 
 QTM_USE_NAMESPACE
 
-class EchoClient : public QWidget, public Ui_EchoClient
+class EchoClient : public QMainWindow, public Ui_EchoClient
 {
     Q_OBJECT
 public:
     EchoClient(QWidget *parent = 0, Qt::WindowFlags flags = 0)
-        : QWidget(parent, flags)
+        : QMainWindow(parent, flags)
     {
         setupUi(this);
 
@@ -89,6 +95,7 @@ public slots:
 
     void on_sharedChat_toggled(bool checked)
     {
+        uniqueChat->setChecked(!checked);
         if (checked) {
             if (!connectToChat())
                 echoBox->append("**Unable to connect to shared Echo Chat server**");
@@ -99,6 +106,7 @@ public slots:
     
     void on_uniqueChat_toggled(bool checked)
     {
+        sharedChat->setChecked(!checked);
         if (checked) {
             if (!connectToChat())
                 echoBox->append("**Unable to connect to unique Echo Chat server**");
@@ -111,6 +119,13 @@ public slots:
     {
         QString newMsg = "[" + ts.toString("hh:mm") + "]" + " " + msg;
         echoBox->append(newMsg);
+    }
+
+    void errorIPC()
+    {
+      QDateTime ts = QDateTime::currentDateTime();
+      QString newMsg = "[" + ts.toString("hh:mm") + "]" + " " + "IPC Error";
+      echoBox->append(newMsg);
     }
 
 private:
@@ -140,6 +155,11 @@ private:
         // No connection established yet
         QServiceManager manager;
         QList<QServiceInterfaceDescriptor> list = manager.findInterfaces("EchoService");
+        if(list.count() < version+1){
+            echoBox->append("Unable to find a registered service");
+            return false;
+        }
+
         QServiceInterfaceDescriptor desc = list[version];
         if (!desc.isValid()) {            
             qWarning() << "EchoService interface not found";
@@ -159,10 +179,13 @@ private:
             sharedEcho = service;
             echo = sharedEcho;
         }
-           
+
         // Connect echo message broadcasts
         QObject::connect(echo, SIGNAL(broadcastMessage(QString,QDateTime)),
                          this, SLOT(receivedMessage(QString,QDateTime)));
+
+        QObject::connect(echo, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)),
+                         this, SLOT(errorIPC()));
 
         return true;
     }

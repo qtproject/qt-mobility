@@ -66,7 +66,7 @@ QTM_BEGIN_NAMESPACE
 struct QTelephonyCallInfoPrivate;
 class QTelephonyCallList;
 
-class Q_AUTOTEST_EXPORT QTelephonyCallListPrivate
+class QM_AUTOTEST_EXPORT QTelephonyCallListPrivate
 {
     friend class QTelephonyCallList;
 

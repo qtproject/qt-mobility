@@ -58,15 +58,15 @@
 #include <QObject>
 
 #ifdef QT_SFW_SERVICEDATABASE_GENERATE
-#undef Q_AUTOTEST_EXPORT
-#define Q_AUTOTEST_EXPORT
+#undef QM_AUTOTEST_EXPORT
+#define QM_AUTOTEST_EXPORT
 #endif
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class DatabaseFileWatcher;
-class Q_AUTOTEST_EXPORT DatabaseManager : public QObject
+class QM_AUTOTEST_EXPORT DatabaseManager : public QObject
 {
     Q_OBJECT
 
@@ -111,7 +111,7 @@ class Q_AUTOTEST_EXPORT DatabaseManager : public QObject
 };
 
 
-class Q_AUTOTEST_EXPORT DatabaseFileWatcher : public QObject
+class QM_AUTOTEST_EXPORT DatabaseFileWatcher : public QObject
 {
     Q_OBJECT
 public:

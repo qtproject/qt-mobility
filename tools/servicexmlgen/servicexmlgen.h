@@ -81,6 +81,7 @@ private:
 
     bool m_firstShow;
     bool m_unsavedData;
+    QString m_version;
     ServiceWidget *m_serviceInfo;
 
     QPushButton *m_buttonPreview;
