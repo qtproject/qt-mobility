@@ -53,12 +53,13 @@ QDateTime TimeZone::convert(const QDateTime& dateTime) const
 {
     Q_ASSERT(isValid());
     QOrganizerItemManager* manager = getManager();
-    int offset;
+    int offset = 100000; // impossible value
     QDateTime latestPhase;
     foreach(const TimeZonePhase& phase, mPhases) {
         QOrganizerEvent event;
         event.setStartDateTime(phase.startDateTime());
         event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << phase.recurrenceRule());
+        event.setRecurrenceDates(phase.recurrenceDates());
         QList<QOrganizerItem> occurrences =
             manager->itemInstances(event, phase.startDateTime(), dateTime, 500);
         if (!occurrences.isEmpty()) {
@@ -71,7 +72,10 @@ QDateTime TimeZone::convert(const QDateTime& dateTime) const
     }
     QDateTime retn(dateTime);
     retn.setTimeSpec(Qt::UTC);
-    return retn.addSecs(-offset);
+    if (offset >= -86400 && offset <= 86400) // offset must be within -24hours to +24hours
+        return retn.addSecs(-offset);
+    else
+        return retn;
 }
 
 QDateTime TimeZones::convert(const QDateTime& dateTime, const QString& tzid) const

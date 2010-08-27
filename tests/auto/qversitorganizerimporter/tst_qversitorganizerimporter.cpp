@@ -920,8 +920,48 @@ void tst_QVersitOrganizerImporter::testTimeZones_data()
 
         QVersitProperty property;
         property.setName(QLatin1String("TZID"));
-        property.setValue(QLatin1String("test"));
+        property.setValue(QLatin1String("US-Eastern"));
         vtimezone.addProperty(property);
+
+        QVersitDocument standard(QVersitDocument::ICalendar20Type);
+        standard.setComponentType(QLatin1String("STANDARD"));
+        property.setName(QLatin1String("DTSTART"));
+        property.setValue(QLatin1String("19961026T020000"));
+        standard.addProperty(property);
+        property.setName(QLatin1String("RDATE"));
+        property.setValue(QLatin1String("19971026T020000"));
+        standard.addProperty(property);
+        property.setName(QLatin1String("TZOFFSETFROM"));
+        property.setValue(QLatin1String("-0400"));
+        standard.addProperty(property);
+        property.setName(QLatin1String("TZOFFSETTO"));
+        property.setValue(QLatin1String("-0500"));
+        standard.addProperty(property);
+        vtimezone.addSubDocument(standard);
+
+        QVersitDocument daylight(QVersitDocument::ICalendar20Type);
+        daylight.setComponentType(QLatin1String("DAYLIGHT"));
+        property.setName(QLatin1String("DTSTART"));
+        property.setValue(QLatin1String("19960406T020000"));
+        daylight.addProperty(property);
+        property.setName(QLatin1String("RDATE"));
+        property.setValue(QLatin1String("19970406T020000"));
+        daylight.addProperty(property);
+        property.setName(QLatin1String("TZOFFSETFROM"));
+        property.setValue(QLatin1String("-0500"));
+        daylight.addProperty(property);
+        property.setName(QLatin1String("TZOFFSETTO"));
+        property.setValue(QLatin1String("-0400"));
+        daylight.addProperty(property);
+        vtimezone.addSubDocument(daylight);
+
+        QTest::newRow("dst specified with rdate - daylight") << QString::fromAscii("US-Eastern")
+            << vtimezone << QString::fromAscii("19970615T100000")
+            << QDateTime(QDate(1997, 6, 15), QTime(14, 0, 0), Qt::UTC);
+
+        QTest::newRow("dst specified with rdate - standard") << QString::fromAscii("US-Eastern")
+            << vtimezone << QString::fromAscii("19971215T100000")
+            << QDateTime(QDate(1997, 12, 15), QTime(15, 0, 0), Qt::UTC);
     }
 }
 

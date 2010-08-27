@@ -187,8 +187,8 @@ private:
             const QVersitProperty& property,
             QOrganizerItem* item,
             QList<QOrganizerItemDetail>* updatedDetails);
-    bool parseDateList(const QString& str, QList<QDate>* dates);
-    QDate parseDate(QString str);
+    bool parseDateList(const QString& str, QList<QDate>* dates) const;
+    QDate parseDate(QString str) const;
 
     bool createStatus(
             const QVersitProperty& property,

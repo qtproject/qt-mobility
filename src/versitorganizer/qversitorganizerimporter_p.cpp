@@ -668,7 +668,7 @@ bool QVersitOrganizerImporterPrivate::createRecurrenceDates(
 /*!
  * Parses a string like "19970304,19970504,19970704" into a list of QDates
  */
-bool QVersitOrganizerImporterPrivate::parseDateList(const QString& str, QList<QDate>* dates)
+bool QVersitOrganizerImporterPrivate::parseDateList(const QString& str, QList<QDate>* dates) const
 {
     QStringList parts = str.split(QLatin1Char(','));
     if (parts.size() == 0)
@@ -688,7 +688,7 @@ bool QVersitOrganizerImporterPrivate::parseDateList(const QString& str, QList<QD
  * Parses a date in either yyyyMMdd or yyyyMMddTHHmmss format (in the latter case, ignoring the
  * time)
  */
-QDate QVersitOrganizerImporterPrivate::parseDate(QString str)
+QDate QVersitOrganizerImporterPrivate::parseDate(QString str) const
 {
     int tIndex = str.indexOf(QLatin1Char('T'));
     if (tIndex >= 0) {
@@ -940,6 +940,11 @@ TimeZonePhase QVersitOrganizerImporterPrivate::importTimeZonePhase(const QVersit
             QOrganizerItemRecurrenceRule rrule;
             if (parseRecurRule(property.value(), &rrule)) {
                 phase.setRecurrenceRule(rrule);
+            }
+        } else if (property.name() == QLatin1String("RDATE")) {
+            QList<QDate> dates;
+            if (parseDateList(property.value(), &dates)) {
+                phase.setRecurrenceDates(dates);
             }
         }
     }

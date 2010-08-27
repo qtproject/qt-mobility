@@ -228,15 +228,13 @@ QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QDateTime& 
                 QDateTime generatedDateTime;
                 generatedDateTime.setDate(match);
                 generatedDateTime.setTime(initialDateTime.time());
-                if (generatedDateTime >= periodStart) {
-                    if (generatedDateTime < realPeriodEnd) {
-                        retn.append(generatedDateTime);
-                    } else {
-                        // We've gone past the end of the period.  Ensure we break both the foreach and
-                        // the while loop
-                        nextDate = match.addDays(1);
-                        break;
-                    }
+                if (generatedDateTime >= periodStart && generatedDateTime < realPeriodEnd) {
+                    retn.append(generatedDateTime);
+                } else {
+                    // We've gone past the end of the period.  Ensure we break both the foreach and
+                    // the while loop
+                    nextDate = match.addDays(1);
+                    break;
                 }
             }
         }
@@ -347,8 +345,8 @@ bool QOrganizerItemMemoryEngine::inIntervaledPeriod(const QDate& date, const QDa
         }
         case QOrganizerItemRecurrenceRule::Invalid:
             Q_ASSERT(false);
-            return true;
     }
+    return true;
 }
 
 /*!
@@ -409,8 +407,8 @@ QDate QOrganizerItemMemoryEngine::firstDateInNextPeriod(const QDate& date, QOrga
             return retn;
         case QOrganizerItemRecurrenceRule::Invalid:
             Q_ASSERT(false);
-            return retn;
     }
+    return retn;
 }
 
 /*!
@@ -566,7 +564,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
 
     // now for each rdate which isn't also an xdate
     foreach (const QDateTime& rdate, rdates) {
-        if (!xdates.contains(rdate.date())) {
+        if (!xdates.contains(rdate.date()) && rdate >= realPeriodStart && rdate < realPeriodEnd) {
             // generate the required instance and add it to the return list.
             retn.append(generateInstance(generator, rdate));
         }
