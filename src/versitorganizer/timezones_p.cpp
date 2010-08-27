@@ -39,34 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef tst_QVERSITORGANIZERIMPORTER_H
-#define tst_QVERSITORGANIZERIMPORTER_H
-
-#include <QObject>
-#include "qversitorganizerimporter.h"
-#include "qversitdocument.h"
-#include "qversitproperty.h"
+#include "timezones_p.h"
 #include "qtorganizer.h"
+#include <QDateTime>
 
-QTM_BEGIN_NAMESPACE
-QTM_END_NAMESPACE
-
-class tst_QVersitOrganizerImporter : public QObject
+QOrganizerItemManager* TimeZone::getManager()
 {
-    Q_OBJECT
+    static QOrganizerItemManager* manager(new QOrganizerItemManager());
+    return manager;
+}
 
-private slots:
-    void testImport();
-    void testImport_data();
+QDateTime TimeZone::convert(const QDateTime& dateTime) const
+{
+    Q_ASSERT(isValid());
+    QOrganizerItemManager* manager = getManager();
+    int offset;
+    QDateTime latestPhase;
+    foreach(const TimeZonePhase& phase, mPhases) {
+        QOrganizerEvent event;
+        event.setStartDateTime(phase.startDateTime());
+        event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << phase.recurrenceRule());
+        QList<QOrganizerItem> occurrences =
+            manager->itemInstances(event, phase.startDateTime(), dateTime, 500);
+        if (!occurrences.isEmpty()) {
+            QDateTime phaseStart(static_cast<QOrganizerEventOccurrence>(occurrences.last()).startDateTime());
+            if (phaseStart > latestPhase) {
+                latestPhase = phaseStart;
+                offset = phase.utcOffset();
+            }
+        }
+    }
+    QDateTime retn(dateTime);
+    retn.setTimeSpec(Qt::UTC);
+    return retn.addSecs(-offset);
+}
 
-    void testImportEventProperties();
-    void testImportEventProperties_data();
-
-    void testImportTodoProperties();
-    void testImportTodoProperties_data();
-
-    void testTimeZones();
-    void testTimeZones_data();
-};
-
-#endif
+QDateTime TimeZones::convert(const QDateTime& dateTime, const QString& tzid) const
+{
+    if (!mTimeZones.contains(tzid))
+        return QDateTime();
+    TimeZone tz = mTimeZones.value(tzid);
+    if (!tz.isValid())
+        return QDateTime();
+    return tz.convert(dateTime);
+}

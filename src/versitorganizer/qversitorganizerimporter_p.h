@@ -57,6 +57,7 @@
 #include "qorganizeritemrecurrence.h"
 #include "qversitorganizerhandler.h"
 #include "qversittimezonehandler.h"
+#include "timezones_p.h"
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItem;
@@ -169,18 +170,18 @@ private:
             const QVersitProperty& property,
             QOrganizerItem* item,
             QList<QOrganizerItemDetail>* updatedDetails);
-    QDateTime parseDateTime(const QVersitProperty& property);
-    QDateTime parseDateTime(QString str);
+    QDateTime parseDateTime(const QVersitProperty& property) const;
+    QDateTime parseDateTime(QString str) const;
 
     bool createRecurrenceRule(
             const QVersitProperty& property,
             QOrganizerItem* item,
             QList<QOrganizerItemDetail>* updatedDetails);
-    bool parseRecurRule(const QString& str, QOrganizerItemRecurrenceRule* rule);
+    bool parseRecurRule(const QString& str, QOrganizerItemRecurrenceRule* rule) const;
     void parseRecurFragment(const QString& key, const QString& value,
-                            QOrganizerItemRecurrenceRule* rule);
-    QList<int> parseIntList(const QString& str, int min, int max);
-    int parseDayOfWeek(const QString& str);
+                            QOrganizerItemRecurrenceRule* rule) const;
+    QList<int> parseIntList(const QString& str, int min, int max) const;
+    int parseDayOfWeek(const QString& str) const;
 
     bool createRecurrenceDates(
             const QVersitProperty& property,
@@ -202,8 +203,12 @@ private:
             QOrganizerItem* item,
             QList<QOrganizerItemDetail>* updatedDetails);
 
+    TimeZone importTimeZone(const QVersitDocument& document) const;
+    TimeZonePhase importTimeZonePhase(const QVersitDocument& document) const;
+
     // versit property name -> <definition name, field name>:
     QMap<QString, QPair<QString, QString> > mPropertyMappings;
+    TimeZones mTimeZones;
 };
 
 QTM_END_NAMESPACE
