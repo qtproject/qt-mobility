@@ -394,7 +394,8 @@ void MapWidget::wheelEvent(QGraphicsSceneWheelEvent* event)
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
         m_serviceProvider(0),
-        m_popupMenu(0)
+        m_popupMenu(0),
+        fullscreen(false)
 {
     setWindowTitle(tr("Map Viewer Demo"));
 
@@ -467,6 +468,66 @@ void MainWindow::error(QNetworkSession::SessionError error)
     }
 }
 
+void MainWindow::sceneSelectionChanged()
+{
+    if (!m_fullScreenButton->isSelected())
+        return;
+
+    m_fullScreenButton->setSelected(false);
+
+    // toggle fullscreen mode
+    fullscreen = !fullscreen;
+
+    // obtain a flat item list, containing every widget
+    QList<QLayoutItem*> items;
+    items << m_layout;
+
+    // Unroll the list until it is flat. start by assuming it isn't
+    bool flat = false;
+    while (!flat) {
+        QList<QLayoutItem*> newItems;
+
+        // Before the actual analysis, assume the list is flat.
+        flat = true;
+
+        foreach(QLayoutItem *item, items) {
+            QLayout * layout = item->layout();
+            if (layout) {
+                // We have a sub-layout => list isn't flat
+                flat = false;
+
+                // loop through all items in that sub-layout
+                for (int i = 0; ; ++i) {
+                    QLayoutItem * subItem = layout->itemAt(i);
+                    if (!subItem) break;
+
+                    // add the sub-layout item to the new flat(ter) list
+                    newItems << subItem;
+                }
+            }
+            else {
+                // not a layout? simply pass it through
+                newItems << item;
+            }
+        }
+
+        //
+        items = newItems;
+    }
+
+    foreach(QLayoutItem *item, items) {
+        QWidget * widget = item->widget();
+
+        if (widget != m_qgv)
+            widget->setHidden(fullscreen);
+    }
+    m_layout->activate();
+
+    // TODO: instead of copypasting from resizeEvent, trigger the resizing on layout changes/qgv size changes.
+    m_qgv->setSceneRect(QRectF(QPointF(0.0, 0.0), m_qgv->size()));
+    m_mapWidget->resize(m_qgv->size());
+}
+
 void MainWindow::setupUi()
 {
     // setup exit menu for devices
@@ -493,6 +554,31 @@ void MainWindow::setupUi()
     //temporary change for dateline testing
     m_mapWidget->setCenter(QGeoCoordinate(-27.0, 152.0));
     m_mapWidget->setZoomLevel(5);
+
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    // make full-screen button
+
+    QPainterPath path;
+    const int gaps = 3;
+    const int innerwidth = 16;
+    const int innerheight = 8;
+    const int smallbox = 5;
+    path.addRect(0, 0, innerwidth+smallbox+3*gaps, innerheight+smallbox+3*gaps);
+    path.addRect(smallbox+2*gaps, gaps, innerwidth, innerheight);
+    path.addRect(gaps, 2*gaps+innerheight, smallbox, smallbox);
+
+    m_fullScreenButton = new QGraphicsPathItem(path); // TODO: make member
+    QPen pen;
+    pen.setWidth(2);
+    pen.setColor(QColor(0,0,0,96));
+    pen.setJoinStyle(Qt::MiterJoin);
+    m_fullScreenButton->setPen(pen);
+    m_fullScreenButton->setFlag(QGraphicsItem::ItemIsSelectable);
+
+    connect(scene, SIGNAL(selectionChanged()), this, SLOT(sceneSelectionChanged()));
+
+    scene->addItem(m_fullScreenButton);
+#endif
 
     // setup slider control
 
@@ -613,6 +699,8 @@ void MainWindow::setupUi()
     layout->addLayout(mapControlLayout, 1, 0);
     layout->addLayout(coordControlLayout, 1, 1);
 #endif
+
+    m_layout = layout;
 
     widget->setLayout(layout);
     setCentralWidget(widget);
