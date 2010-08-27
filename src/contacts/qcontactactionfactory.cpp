@@ -69,7 +69,7 @@ QContactActionFactory::~QContactActionFactory()
  */
 
 /*!
-  \fn QContactActionFactory::supportedTargets(const QContact& contact) const
+  \fn QContactActionFactory::supportedTargets(const QContact& contact, const QContactActionDescriptor& which) const
   Returns the targets which are supported by the action which may be instantiated by this factory
   for the given \a contact.  If there are no supported targets for the \a contact, then that
   contact is not supported by the action.
@@ -77,12 +77,12 @@ QContactActionFactory::~QContactActionFactory()
  */
 
 /*!
-  \fn QContactActionFactory::supportsContact(const QContact& contact) const
+  \fn QContactActionFactory::supportsContact(const QContact& contact, const QContactActionDescriptor& which) const
   Returns true if the list of supported targets for the given \a contact is not empty.
  */
 
 /*!
-  \fn QContactActionFactory::metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const
+  \fn QContactActionFactory::metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap(), const QContactActionDescriptor& which) const
   Returns the meta-data associated with the action which this factory generates, for the given \a key (such as icon, label or sound cues).
   The meta-data may vary depending on the \a targets of the action and any \a parameters to invocation which the client may specify.
  */
