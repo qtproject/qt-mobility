@@ -304,6 +304,23 @@ testcase = {
       prompt(twiki(readLocalFile(baseDataPath() + "testtext/" + currentTestFunction())));
     },
 
+    take_a_photo: function()
+    {
+        prompt(twiki('*Camera Test 1: Take a still photo*
+
+   1.  Launch camera application
+   1.  If device has lens cover, make sure it is open
+   1.  Select Image tab to put camera in still mode
+   1.  Verify the intended scene is reproduced in the preview/viewfinder
+   1.  Click on Capture Photo
+   1.  If applicable, verify that flash has triggered
+   1.  Verify that image is shown on screen for preview 
+   1.  Verify that a new file is in the Images folder and accessabble with the image viewer
+   1.  Select given image and Verify that it is a true representation of the intended sceen
+   1.  Verify the image has no unintended artifacts and noise and is properly formated'));
+    },
+
+
     record_an_audio_file: function()
     {
         prompt(twiki('*Recorder Test 1 :* Record audio on the device
