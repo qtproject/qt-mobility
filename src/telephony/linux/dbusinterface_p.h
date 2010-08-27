@@ -80,6 +80,7 @@ public Q_SLOTS: // METHODS
 
 Q_SIGNALS: // SIGNALS
     void NewChannels(ChannelsArray channelsarray);
+    void StatusChanged(QString status);
 };
 
 namespace org {

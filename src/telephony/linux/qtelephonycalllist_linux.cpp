@@ -58,7 +58,12 @@ QTelephonyCallListPrivate::QTelephonyCallListPrivate(QTelephonyCallList *parent)
 {
     qDebug() << "QTelephonyCallListPrivate::QTelephonyCallListPrivate(...) for linux";
     ptelepathyListener = new TelepathyListener(this);
-    connect(ptelepathyListener, SIGNAL(NewChannels(ChannelsArray)), SLOT(newChannelsSlot(ChannelsArray)));
+    connect(ptelepathyListener
+            , SIGNAL(NewChannels(ChannelsArray))
+            , SLOT(newChannelsSlot(ChannelsArray)));
+    connect(ptelepathyListener
+            , SIGNAL(StatusChangedSlot(QString))
+            , SLOT(statusChangedSlot(QString)));
 }
 
 QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
@@ -91,6 +96,7 @@ void QTelephonyCallListPrivate::emitActiveCallAdded(QTelephonyCallInfoPrivate& c
 
 void QTelephonyCallListPrivate::newChannelsSlot(const ChannelsArray& channelsarray)
 {
+    qDebug() << "TelephonyCallListPrivate::newChannelsSlot";
     //create a QTelephonyCallInfoPrivate
     if(channelsarray.channelslist.count() > 0){
         Channels chs = channelsarray.channelslist.at(0);
@@ -98,22 +104,54 @@ void QTelephonyCallListPrivate::newChannelsSlot(const ChannelsArray& channelsarr
             QVariant var = chs.map.value("org.freedesktop.Telepathy.Channel.InitiatorID");
             QTelephonyCallInfoPrivate* cip = new QTelephonyCallInfoPrivate();
             cip->remotePartyIdentifier = var.toString();
+            cip->type = QTelephony::Voice;
             callInfoList.append(QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(cip));
             emitActiveCallAdded(*cip);
         }
     }
-
-
-    qDebug() << "TelephonyCallListPrivate::newChannelsSlot";
 }
 
-QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephonyEvents::CallType& calltype) const
+void QTelephonyCallListPrivate::statusChangedSlot(const QString& status)
+{
+    qDebug() << "TelephonyCallListPrivate::statusChangedSlot";
+
+    QTelephony::CallStatus newstatus = QTelephony::Idle;
+    if(status == "IDLE")
+        newstatus = QTelephony::Idle;
+    else if(status == "Dialing"){
+        newstatus = QTelephony::Dialing;
+    }
+    else if(status == "Alerting"){
+        newstatus = QTelephony::Alerting;
+    }
+    else if(status == "Connected"){
+        newstatus = QTelephony::Connected;
+    }
+    else if(status == "Disconnecting"){
+        newstatus = QTelephony::Disconnecting;
+    }
+
+    for(int i = 0; i < callInfoList.count(); i++){
+        callInfoList[i]->status = newstatus;
+        emit emitActiveCallStatusChanged(*callInfoList[i].data());
+    }
+
+    // check if we need to remove the calls
+    if(newstatus == QTelephony::Disconnecting){
+        for(int i = 0; i < callInfoList.count(); i++){
+            emit emitActiveCallRemoved(*callInfoList[i].data());
+        }
+        callInfoList.clear();
+    }
+}
+
+QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephony::CallType& calltype) const
 {
     QList<QTelephonyCallInfo> ret;
 
     //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
     for( int i = 0; i < callInfoList.count(); i++){
-        if(callInfoList.at(i).data()->type == QTelephonyEvents::Any
+        if(callInfoList.at(i).data()->type == QTelephony::Any
             || callInfoList.at(i).data()->type == calltype)
         {
             QTelephonyCallInfo callinfo;

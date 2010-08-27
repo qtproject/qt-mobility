@@ -53,3 +53,8 @@ void Telepathy::createNewChannels(const ChannelsArray& channelsarray)
 {
     Q_EMIT NewChannels(channelsarray);
 }
+
+void Telepathy::emitStatusChanged(const QString& status)
+{
+    Q_EMIT StatusChanged(status);
+}

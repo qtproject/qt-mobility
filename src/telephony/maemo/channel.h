@@ -26,15 +26,25 @@ namespace Tp
         Q_DISABLE_COPY(Channel)
     public:
         static const Feature FeatureCore;
+        static bool isCall(QString channeltype);
+
         Channel(QDBusConnection busconnection, const QString busname, const QString &objectPath, const QVariantMap &properties, Connection* connection);
         ~Channel();
         QVariantMap properties() const { return propertylist; }
-        QTelephonyEvents::CallStatus getStatus() { return status; }
+        QTelephony::CallStatus getStatus() { return status; }
         int getDirection() { return direction; }
         QString getRemotePartyIdentifier() { return remoteIdentifier; }
-        QTelephonyEvents::CallType getCalltype() { return calltype; }
+        QTelephony::CallType getCalltype();
         QString getSubType() { return subtype; }
-        bool isCall() { return iscall; }
+
+        bool isCall() {
+            if(pChannelTypeStreamedMediaInterface || pChannelTypeTextInterface)
+                return true;
+            return false;
+        }
+        bool isOutgoing() { return ( direction == 2 ? true : false); }
+        bool isIncomming() { return ( direction == 1 ? true : false); }
+        bool isText() { return (pChannelTypeTextInterface == 0 ? false : true); }
 
     Q_SIGNALS:
         void StatusChanged(Tp::Channel* pchannel);
@@ -124,6 +134,7 @@ namespace Tp
         void connectType();
         void disconnectType();
         void init();
+        void createPropertiyList();
 
         QVariantMap propertylist;
 
@@ -147,7 +158,7 @@ namespace Tp
         Tp::Client::ChannelTypeTubesInterface* pChannelTypeTubesInterface;
 
     private:
-        QTelephonyEvents::CallStatus status;
+        QTelephony::CallStatus status;
         Connection* connection;
         /*
          0 = unknown
@@ -157,9 +168,7 @@ namespace Tp
         int direction;
         bool wasExistingChannel;
         QString remoteIdentifier;
-        QTelephonyEvents::CallType calltype;
         QString subtype;
-        bool iscall;
     };
     typedef SharedPtr<Channel> ChannelPtr;
 }

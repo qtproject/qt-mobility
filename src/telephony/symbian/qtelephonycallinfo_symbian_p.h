@@ -65,7 +65,7 @@
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-using namespace QTelephonyEvents;
+using namespace QTelephony;
 
 NONSHARABLE_CLASS( QTelephonyCallInfoPrivate ): public QSharedData
 {
@@ -74,9 +74,9 @@ public:
     QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other);
 
     QString remotePartyIdentifier;
-    QTelephonyEvents::CallType type;
+    QTelephony::CallType type;
     QString subType;
-    QTelephonyEvents::CallStatus status;
+    QTelephony::CallStatus status;
     QHash<QString, QVariant> values;
     
     int m_index;
