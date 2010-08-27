@@ -43,6 +43,7 @@
 
 #include <maemo5/qgallerytrackerschema_p.h>
 
+#include <qdocumentgallery.h>
 #include <maemo5/qgallerytrackerlistcolumn_p.h>
 #include <maemo5/qgallerytrackerresultset_p.h>
 #include <maemo5/qgallerytrackertyperesultset_p.h>
@@ -93,8 +94,8 @@ private Q_SLOTS:
     void prepareValidItemResponse();
     void prepareInvalidItemResponse_data();
     void prepareInvalidItemResponse();
-    void prepareValidQueryResponse_data();
-    void prepareValidQueryResponse();
+    void prepareValidItemQueryResponse_data();
+    void prepareValidItemQueryResponse();
     void prepareInvalidQueryResponse_data();
     void prepareInvalidQueryResponse();
 
@@ -108,6 +109,10 @@ private:
     QGalleryDBusInterfacePointer m_metaDataInterface;
     QGalleryDBusInterfacePointer m_searchInterface;
     QGalleryDBusInterfacePointer m_fileInterface;
+
+    static QGalleryFilter imagesFilter();
+    static const char *imagesFilterRdfq;
+
 };
 
 void tst_QGalleryTrackerSchema::initTestCase()
@@ -245,6 +250,18 @@ void tst_QGalleryTrackerSchema::serviceUpdateId_data()
 
     QTest::newRow("Files")
             << QString::fromLatin1("Files")
+            << 0x01;
+    QTest::newRow("Other")
+            << QString::fromLatin1("Other")
+            << 0x01;
+    QTest::newRow("Text")
+            << QString::fromLatin1("Text")
+            << 0x80;
+    QTest::newRow("Development")
+            << QString::fromLatin1("Development")
+            << 0x80;
+    QTest::newRow("Turtles")
+            << QString::fromLatin1("Turtles")
             << 0x01;
 }
 
@@ -583,6 +600,11 @@ void tst_QGalleryTrackerSchema::prepareInvalidItemResponse_data()
             << QString::fromLatin1("turtle::its/a/turtle")
             << QStringList()
             << int(QGalleryAbstractRequest::InvalidItemError);
+
+    QTest::newRow("Relative file path")
+            << QString::fromLatin1("file::file.ext")
+            << QStringList()
+            << int(QGalleryAbstractRequest::InvalidItemError);
 }
 
 void tst_QGalleryTrackerSchema::prepareInvalidItemResponse()
@@ -597,7 +619,7 @@ void tst_QGalleryTrackerSchema::prepareInvalidItemResponse()
     QCOMPARE(schema.prepareItemResponse(&arguments, this, itemId, propertyNames), result);
 }
 
-void tst_QGalleryTrackerSchema::prepareValidQueryResponse_data()
+void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse_data()
 {
     QTest::addColumn<QString>("rootItem");
     QTest::addColumn<QGalleryQueryRequest::Scope>("scope");
@@ -614,11 +636,12 @@ void tst_QGalleryTrackerSchema::prepareValidQueryResponse_data()
     QTest::addColumn<int>("tableWidth");
     QTest::addColumn<int>("valueOffset");
     QTest::addColumn<int>("compositeOffset");
-    QTest::addColumn<QGalleryDBusInterfacePointer>("queryInterface");
-    QTest::addColumn<QString>("queryMethod");
-    QTest::addColumn<QVariantList>("queryArguments");
-    QTest::addColumn<QStringList>("queriedPropertyNames");
+    QTest::addColumn<QString>("service");
     QTest::addColumn<QStringList>("fieldNames");
+    QTest::addColumn<QString>("queryString");
+    QTest::addColumn<QStringList>("sortFieldNames");
+    QTest::addColumn<bool>("sortDescending");
+    QTest::addColumn<QStringList>("queriedPropertyNames");
     QTest::addColumn<QVector<QGalleryProperty::Attributes> >("propertyAttributes");
     QTest::addColumn<QVector<QVariant::Type> >("propertyTypes");
     QTest::addColumn<QStringList>("values");
@@ -629,46 +652,105 @@ void tst_QGalleryTrackerSchema::prepareValidQueryResponse_data()
     QTest::addColumn<QVector<int> >("resourceKeys");
 
     QTest::newRow("All Files")
-            << QString()
-            << QGalleryQueryRequest::AllDescendants
-            << QString::fromLatin1("File")
-            << QGalleryFilter()
-            << QStringList()
-            << QStringList()
-            << (QVector<QVariant>() << QLatin1String("/path/to/file.ext") << QLatin1String("Files"))
-            << QVariant(QLatin1String("file::/path/to/file.ext"))
-            << QVariant(QUrl(QLatin1String("file:///path/to/file.ext")))
-            << QVariant(QLatin1String("File"))
-            << 0xFF
-            << 2
-            << 2
-            << 2
-            << 2
-            << m_searchInterface
-            << QString::fromLatin1("Query")
-            << (QVariantList()
-                    << 0
-                    << QLatin1String("Files")
-                    << QStringList()
-                    << QString()
-                    << QStringList()
-                    << QString()
-                    << false
-                    << QStringList()
-                    << false)
-            << QStringList()
-            << QStringList()
-            << QVector<QGalleryProperty::Attributes>()
-            << QVector<QVariant::Type>()
-            << QStringList()
-            << QVector<QVariant>()
-            << QVector<QVariant>()
-            << QVector<int>()
-            << QVector<QGalleryTrackerSortCriteria>()
-            << QVector<int>();
+            << QString() // rootItem
+            << QGalleryQueryRequest::AllDescendants // scope
+            << QString::fromLatin1("File") // rootType
+            << QGalleryFilter() // filter
+            << QStringList() // propertyNames
+            << QStringList() // sortPropertyNames
+            << (QVector<QVariant>()  // row data
+                    << QLatin1String("/path/to/file.ext") // uri
+                    << QLatin1String("Files")) // service
+            << QVariant(QLatin1String("file::/path/to/file.ext")) // itemId
+            << QVariant(QUrl(QLatin1String("file:///path/to/file.ext"))) // itemUrl
+            << QVariant(QLatin1String("File")) // itemType
+            << 0xFF // updateMask
+            << 2 // identityWidth
+            << 2 // tableWidth
+            << 2 // valueOffset
+            << 2 // compositeOffset
+            << QString::fromLatin1("Files") // service
+            << QStringList()    // fieldNames
+            << QString() // rdfq query
+            << QStringList() // sort field names
+            << false // sort descending
+            << QStringList() // queried property names
+            << QVector<QGalleryProperty::Attributes>() // property attributes
+            << QVector<QVariant::Type>() // property types
+            << QStringList() // row values
+            << QVector<QVariant>() // parsed row values
+            << QVector<QVariant>() // composite values
+            << QVector<int>() // alias columns
+            << QVector<QGalleryTrackerSortCriteria>() // sort order
+            << QVector<int>(); // resource keys
+
+    QTest::newRow("Images")
+            << QString() // rootItem
+            << QGalleryQueryRequest::AllDescendants // scope
+            << QString::fromLatin1("Image") // rootType
+            << imagesFilter() // filter
+            << (QStringList() // propertyNames
+                    << QLatin1String("url")
+                    << QLatin1String("title")
+                    << QLatin1String("rating"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("url")
+                    << QLatin1String("-rating")
+                    << QLatin1String("+dateTaken"))
+            << (QVector<QVariant>()  // row data
+                    << QLatin1String("/path/to/image.png") // uri
+                    << QLatin1String("Images") // // service
+                    << QLatin1String("The Beach") // title
+                    << 3 // rating
+                    << QDateTime(QDate(12, 12, 2007), QTime(7, 29))) // dateTaken
+            << QVariant(QLatin1String("image::/path/to/image.png")) // itemId
+            << QVariant(QUrl(QLatin1String("file:///path/to/image.png"))) // itemUrl
+            << QVariant(QLatin1String("Image")) // itemType
+            << 0x10 // updateMask
+            << 2 // identityWidth
+            << 5 // tableWidth
+            << 2 // valueOffset
+            << 4 // compositeOffset
+            << QString::fromLatin1("Images") // service
+            << (QStringList() // field names
+                    << QLatin1String("Image:Title")
+                    << QLatin1String("Image:Rating")
+                    << QLatin1String("Image:Date"))
+            << QString::fromLatin1(imagesFilterRdfq) // rdfq query
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("Image:Rating")
+                    << QLatin1String("Image:Date"))
+            << true // sort descending
+            << (QStringList() // queried property names
+                    << QLatin1String("title")
+                    << QLatin1String("rating")
+                    << QLatin1String("url"))
+            << (QVector<QGalleryProperty::Attributes>() // property attributes
+                    << (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanSort | QGalleryProperty::CanFilter)
+                    << (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanSort | QGalleryProperty::CanFilter)
+                    << (QGalleryProperty::CanRead | QGalleryProperty::CanFilter))
+            << (QVector<QVariant::Type>() // property types
+                    << QVariant::String
+                    << QVariant::Int
+                    << QVariant::Url)
+            << (QStringList() // row values
+                    << QLatin1String("The Beach") // title
+                    << QLatin1String("3") // rating
+                    << QLatin1String("2007-12-12T07:29:00")) // dateTaken
+            << (QVector<QVariant>() // parsed row values
+                    << QLatin1String("The Beach") // title
+                    << 3 // rating
+                    << QDateTime(QDate(2007, 12, 12), QTime(7, 29))) // dateTaken
+            << (QVector<QVariant>() // composite values
+                    << QVariant(QUrl(QLatin1String("file:///path/to/image.png")))) // url
+            << QVector<int>() // alias columns
+            << (QVector<QGalleryTrackerSortCriteria>() // sort order
+                << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted))
+                << (QGalleryTrackerSortCriteria(4, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::ReverseSorted)))
+            << QVector<int>(); // resource keys
 }
 
-void tst_QGalleryTrackerSchema::prepareValidQueryResponse()
+void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse()
 {
     QFETCH(QString, rootItem);
     QFETCH(QGalleryQueryRequest::Scope, scope);
@@ -685,9 +767,10 @@ void tst_QGalleryTrackerSchema::prepareValidQueryResponse()
     QFETCH(int, tableWidth);
     QFETCH(int, valueOffset);
     QFETCH(int, compositeOffset);
-    QFETCH(QGalleryDBusInterfacePointer, queryInterface);
-    QFETCH(QString, queryMethod);
-    QFETCH(QVariantList, queryArguments);
+    QFETCH(QString, service);
+    QFETCH(QString, queryString);
+    QFETCH(QStringList, sortFieldNames);
+    QFETCH(bool, sortDescending);
     QFETCH(QStringList, queriedPropertyNames);
     QFETCH(QStringList, fieldNames);
     QFETCH(QVector<QGalleryProperty::Attributes>, propertyAttributes);
@@ -723,9 +806,18 @@ void tst_QGalleryTrackerSchema::prepareValidQueryResponse()
     QCOMPARE(arguments.valueOffset, valueOffset);
     QCOMPARE(arguments.compositeOffset, compositeOffset);
 
-    QCOMPARE(arguments.queryInterface, queryInterface);
-    QCOMPARE(arguments.queryMethod, queryMethod);
-    QCOMPARE(arguments.queryArguments, queryArguments);
+    QCOMPARE(arguments.queryInterface, m_searchInterface);
+    QCOMPARE(arguments.queryMethod, QLatin1String("Query"));
+    QCOMPARE(arguments.queryArguments.count(), 9);
+    QCOMPARE(arguments.queryArguments.at(0), QVariant(0u));
+    QCOMPARE(arguments.queryArguments.at(1), QVariant(service));
+    QCOMPARE(arguments.queryArguments.at(2), QVariant(fieldNames));
+    QCOMPARE(arguments.queryArguments.at(3), QVariant(QString()));
+    QCOMPARE(arguments.queryArguments.at(4), QVariant(QStringList()));
+    QCOMPARE(arguments.queryArguments.at(5), QVariant(queryString));
+    QCOMPARE(arguments.queryArguments.at(6), QVariant(false));
+    QCOMPARE(arguments.queryArguments.at(7), QVariant(sortFieldNames));
+    QCOMPARE(arguments.queryArguments.at(8), QVariant(sortDescending));
 
     QCOMPARE(arguments.propertyNames, queriedPropertyNames);
     QCOMPARE(arguments.fieldNames, fieldNames);
@@ -740,7 +832,7 @@ void tst_QGalleryTrackerSchema::prepareValidQueryResponse()
 
     QCOMPARE(compositeValues.count(), arguments.compositeColumns.count());
     for (int i = 0; i < arguments.compositeColumns.count(); ++i) {
-        QCOMPARE(arguments.compositeColumns.at(i)->value(row.constBegin()), parsedValues.at(i));
+        QCOMPARE(arguments.compositeColumns.at(i)->value(row.constBegin()), compositeValues.at(i));
     }
 
     QCOMPARE(arguments.aliasColumns, aliasColumns);
@@ -809,6 +901,60 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse()
                     &arguments, this, scope, rootItem, filter, propertyNames, sortPropertyNames),
             result);
 }
+
+QGalleryFilter tst_QGalleryTrackerSchema::imagesFilter()
+{
+    QGalleryIntersectionFilter filter;
+
+    QGalleryUnionFilter unionFilter;
+    unionFilter.append(QGalleryMetaDataFilter(
+            QLatin1String("title"), QLatin1String("watches"), QGalleryFilter::Contains));
+    unionFilter.append(QGalleryMetaDataFilter(
+            QLatin1String("title"), QLatin1String("Bob"), QGalleryFilter::StartsWith));
+    unionFilter.append(QGalleryMetaDataFilter(
+            QLatin1String("title"), QLatin1String("beach"), QGalleryFilter::EndsWith));
+    unionFilter.append(QGalleryMetaDataFilter(
+            QLatin1String("title"), QLatin1String("sun\\w*set"), QGalleryFilter::RegExp));
+    unionFilter.append(QGalleryMetaDataFilter(
+            QLatin1String("title"), QLatin1String("Bob watches * from beach"), QGalleryFilter::Wildcard));
+    filter.append(unionFilter);
+
+    filter.append(QDocumentGallery::width > 1024);
+    filter.append(QDocumentGallery::height >= 768u);
+    filter.append(QDocumentGallery::width < Q_INT64_C(1024000000));
+    filter.append(QDocumentGallery::height <= Q_UINT64_C(76800000));
+
+    filter.append(QDocumentGallery::fNumber > 0.5f);
+    filter.append(!(QDocumentGallery::focalLength < 1.2));
+
+    filter.append(QDocumentGallery::dateTaken < QDateTime(QDate(2008, 4, 12), QTime(4, 30), Qt::UTC));
+    filter.append(QDocumentGallery::lastAccessed < QDate(2010, 1, 2));
+
+    return filter;
+
+}
+
+const char *tst_QGalleryTrackerSchema::imagesFilterRdfq =
+        "<rdfq:Condition>"
+        "<rdfq:and>"
+        "<rdfq:or>"
+        "<rdfq:contains><rdfq:Property name=\"Image:Title\"/><rdf:String>watches</rdf:String></rdfq:contains>"
+        "<rdfq:startsWith><rdfq:Property name=\"Image:Title\"/><rdf:String>Bob</rdf:String></rdfq:startsWith>"
+        "<rdfq:equals><rdfq:Property name=\"Image:Title\"/><rdf:String>*beach</rdf:String></rdfq:equals>"
+        "<rdfq:regex><rdfq:Property name=\"Image:Title\"/><rdf:String>sun\\w*set</rdf:String></rdfq:regex>"
+        "<rdfq:equals><rdfq:Property name=\"Image:Title\"/><rdf:String>Bob watches * from beach</rdf:String></rdfq:equals>"
+        "</rdfq:or>"
+        "<rdfq:greaterThan><rdfq:Property name=\"Image:Width\"/><rdf:Integer>1024</rdf:Integer></rdfq:greaterThan>"
+        "<rdfq:greaterThanEqual><rdfq:Property name=\"Image:Height\"/><rdf:Integer>768</rdf:Integer></rdfq:greaterThanEqual>"
+        "<rdfq:lessThan><rdfq:Property name=\"Image:Width\"/><rdf:Integer>1024000000</rdf:Integer></rdfq:lessThan>"
+        "<rdfq:lessThanEqual><rdfq:Property name=\"Image:Height\"/><rdf:Integer>76800000</rdf:Integer></rdfq:lessThanEqual>"
+        "<rdfq:greaterThan><rdfq:Property name=\"Image:FNumber\"/><rdf:Float>0.5</rdf:Float></rdfq:greaterThan>"
+        "<rdfq:not><rdfq:lessThan><rdfq:Property name=\"Image:FocalLength\"/><rdf:Float>1.2</rdf:Float></rdfq:lessThan></rdfq:not>"
+        "<rdfq:lessThan><rdfq:Property name=\"Image:Date\"/><rdf:Date>2008-04-12T04:30:00</rdf:Date></rdfq:lessThan>"
+        "<rdfq:lessThan><rdfq:Property name=\"File:Accessed\"/><rdf:Date>2010-01-02T00:00:00</rdf:Date></rdfq:lessThan>"
+        "</rdfq:and>"
+        "</rdfq:Condition>";
+
 
 QTEST_MAIN(tst_QGalleryTrackerSchema)
 

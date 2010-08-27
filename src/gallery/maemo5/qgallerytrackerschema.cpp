@@ -411,7 +411,6 @@ template <> bool qt_writeValue<QVariant>(int *error, QXmlStreamWriter *xml, cons
         return qt_writeValue<qreal>(error, xml, value);
     case QVariant::DateTime:
     case QVariant::Date:
-    case QVariant::Time:
         return qt_writeValue<QDateTime>(error, xml, value);
     default:
         if (value.canConvert<QString>()) {
@@ -1006,7 +1005,7 @@ static const QGalleryItemType qt_galleryItemTypeList[] =
     QT_GALLERY_ITEM_TYPE(Video      , Videos       , video   , Video),
     QT_GALLERY_ITEM_TYPE(Playlist   , Playlists    , playlist, Playlist),
     QT_GALLERY_ITEM_TYPE(Text       , Text         , text    , File),
-    QT_GALLERY_ITEM_TYPE(File       , Development  , file    , File),
+    QT_GALLERY_ITEM_TYPE(Text       , Development  , file    , File),
     QT_GALLERY_ITEM_TYPE(File       , Other        , file    , File),
 };
 
@@ -1271,13 +1270,6 @@ QString QGalleryTrackerSchema::uriFromItemId(int *error, const QVariant &itemId)
 
         return QString();
     }
-}
-
-QString QGalleryTrackerSchema::itemIdFromUri(const QString &uri) const
-{
-    return m_itemIndex >= 0
-            ? qt_galleryItemTypeList[m_itemIndex].prefix + uri
-            : QString();
 }
 
 int QGalleryTrackerSchema::serviceUpdateId(const QString &service)
@@ -1687,8 +1679,7 @@ void QGalleryTrackerSchema::populateItemArguments(
         }
     }
 
-    const bool descending = !sortPropertyNames.isEmpty()
-            && sortPropertyNames.first().startsWith(QLatin1Char('-'));
+    bool descending = false;
 
     for (QStringList::const_iterator it = sortPropertyNames.constBegin();
             it != sortPropertyNames.constEnd();
@@ -1701,12 +1692,18 @@ void QGalleryTrackerSchema::populateItemArguments(
             propertyName = propertyName.mid(1);
             sortFlags = QGalleryTrackerSortCriteria::Descending;
 
+            if (arguments->sortCriteria.isEmpty())
+                descending = true;
+
             sortFlags |= descending
                     ? QGalleryTrackerSortCriteria::Sorted
                     : QGalleryTrackerSortCriteria::ReverseSorted;
         } else {
             if (propertyName.startsWith(QLatin1Char('+')))
                 propertyName = propertyName.mid(1);
+
+            if (arguments->sortCriteria.isEmpty())
+                descending = false;
 
             sortFlags |= descending
                     ? QGalleryTrackerSortCriteria::ReverseSorted
@@ -1869,8 +1866,7 @@ void QGalleryTrackerSchema::populateAggregateArguments(
         }
     }
 
-    const bool descending = !sortPropertyNames.isEmpty()
-            && sortPropertyNames.first().startsWith(QLatin1Char('-'));
+    bool descending = false;
 
     for (QStringList::const_iterator it = sortPropertyNames.begin();
             it != sortPropertyNames.end();
@@ -1883,12 +1879,18 @@ void QGalleryTrackerSchema::populateAggregateArguments(
             propertyName = propertyName.mid(1);
             sortFlags = QGalleryTrackerSortCriteria::Descending;
 
+            if (arguments->sortCriteria.isEmpty())
+                descending = true;
+
             sortFlags |= descending
                     ? QGalleryTrackerSortCriteria::Sorted
                     : QGalleryTrackerSortCriteria::ReverseSorted;
         } else {
             if (propertyName.startsWith(QLatin1Char('+')))
                 propertyName = propertyName.mid(1);
+
+            if (arguments->sortCriteria.isEmpty())
+                descending = false;
 
             sortFlags |= descending
                     ? QGalleryTrackerSortCriteria::ReverseSorted

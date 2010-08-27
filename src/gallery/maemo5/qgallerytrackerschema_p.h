@@ -83,7 +83,6 @@ public:
     QString itemType() const;
 
     static QString uriFromItemId(int *error, const QVariant &itemId);
-    QString itemIdFromUri(const QString &uri) const;
 
     static int serviceUpdateId(const QString &service);
 
