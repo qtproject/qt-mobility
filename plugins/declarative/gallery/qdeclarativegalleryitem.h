@@ -65,7 +65,7 @@ class QDeclarativeGalleryItem : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(bool live READ isLive WRITE setLive NOTIFY liveChanged)
     Q_PROPERTY(QVariant item READ itemId WRITE setItemId NOTIFY itemIdChanged)
-    Q_PROPERTY(bool available READ available NOTIFY avaialbleChanged)
+    Q_PROPERTY(bool available READ available NOTIFY availableChanged)
     Q_PROPERTY(QString itemType READ itemType NOTIFY availableChanged)
     Q_PROPERTY(QUrl itemUrl READ itemUrl NOTIFY availableChanged)
     Q_PROPERTY(QObject *metaData READ metaData NOTIFY metaDataChanged)
