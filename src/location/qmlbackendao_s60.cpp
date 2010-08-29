@@ -345,8 +345,6 @@ void CQMLBackendAO::handlePosUpdateNotification(int aError)
             //NotifyPositionUpdate successfully completed
         case KErrNone :
 
-            //Posiiton Module is unable to return any position information
-        case KPositionQualityLoss :
 
             //requested information could not be retrieved within the maximum peroid
         case KErrTimedOut:
@@ -371,8 +369,10 @@ void CQMLBackendAO::handlePosUpdateNotification(int aError)
                 if (mRequester) {
                     initializePosInfo();
                     mPositioner.NotifyPositionUpdate(*mPosInfo, iStatus);
-                } else
+                } else {
+					mPosSatInfo.ClearSatellitesInView();
                     mPositioner.NotifyPositionUpdate(mPosSatInfo, iStatus);
+					}
 
                 SetActive();
             }
@@ -388,11 +388,12 @@ void CQMLBackendAO::handlePosUpdateNotification(int aError)
 
             break;
 
-            //request was successfully cancelled
-        case KErrCancel :
-            break;
-
         default :
+            if (mRequester) {
+                mRequester->updatePosition(positionInfo, aError); // positionInfo will be NULL
+            } else {
+                mRequesterSatellite->updatePosition(satInfo, aError, (mRequestType == RegularUpdate));
+            }
             break;
 
     }
@@ -406,6 +407,7 @@ int CQMLBackendAO::setUpdateInterval(int aMilliSec)
 {
     int minimumUpdateInterval = 0;
     TInt64 mUpdateInterval = 0 ;
+
 
     if (mRequester)
         minimumUpdateInterval = mRequester->minimumUpdateInterval();
@@ -462,9 +464,11 @@ void CQMLBackendAO::startUpdates()
         if (mRequester) {
             initializePosInfo();
             mPositioner.NotifyPositionUpdate(*mPosInfo , iStatus);
-        } else
+        } else {
+			mPosSatInfo.ClearSatellitesInView();
             mPositioner.NotifyPositionUpdate(mPosSatInfo , iStatus);
-
+		}
+		
         SetActive();
 
     }
