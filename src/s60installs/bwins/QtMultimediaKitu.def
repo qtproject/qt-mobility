@@ -1260,3 +1260,331 @@ EXPORTS
 	?removeInterval@QMediaTimeRange@@QAEX_J0@Z @ 1259 NONAME ; void QMediaTimeRange::removeInterval(long long, long long)
 	?qt_metacast@QAbstractAudioOutput@@UAEPAXPBD@Z @ 1260 NONAME ; void * QAbstractAudioOutput::qt_metacast(char const *)
 	??1QVideoSurfaceFormat@@QAE@XZ @ 1261 NONAME ; QVideoSurfaceFormat::~QVideoSurfaceFormat(void)
+	?nativeResolutionChanged@QAbstractVideoSurface@@IAEXABVQSize@@@Z @ 1262 NONAME ; void QAbstractVideoSurface::nativeResolutionChanged(class QSize const &)
+	??1QCameraControl@@UAE@XZ @ 1263 NONAME ; QCameraControl::~QCameraControl(void)
+	?opticalZoomChanged@QCameraFocusControl@@IAEXM@Z @ 1264 NONAME ; void QCameraFocusControl::opticalZoomChanged(float)
+	?trUtf8@QCameraFocusControl@@SA?AVQString@@PBD0@Z @ 1265 NONAME ; class QString QCameraFocusControl::trUtf8(char const *, char const *)
+	?qt_metacast@QCamera@@UAEPAXPBD@Z @ 1266 NONAME ; void * QCamera::qt_metacast(char const *)
+	??4QCameraFocusZone@@QAEAAV0@ABV0@@Z @ 1267 NONAME ; class QCameraFocusZone & QCameraFocusZone::operator=(class QCameraFocusZone const &)
+	?errorString@QCameraImageCapture@@QBE?AVQString@@XZ @ 1268 NONAME ; class QString QCameraImageCapture::errorString(void) const
+	?readyForCaptureChanged@QCameraImageCaptureControl@@IAEX_N@Z @ 1269 NONAME ; void QCameraImageCaptureControl::readyForCaptureChanged(bool)
+	??1QCameraImageCaptureControl@@UAE@XZ @ 1270 NONAME ; QCameraImageCaptureControl::~QCameraImageCaptureControl(void)
+	?metaObject@QCameraViewfinder@@UBEPBUQMetaObject@@XZ @ 1271 NONAME ; struct QMetaObject const * QCameraViewfinder::metaObject(void) const
+	?saturation@QCameraImageProcessing@@QBEHXZ @ 1272 NONAME ; int QCameraImageProcessing::saturation(void) const
+	?trUtf8@QCameraExposure@@SA?AVQString@@PBD0@Z @ 1273 NONAME ; class QString QCameraExposure::trUtf8(char const *, char const *)
+	?availableDevices@QCamera@@SA?AV?$QList@VQByteArray@@@@XZ @ 1274 NONAME ; class QList<class QByteArray> QCamera::availableDevices(void)
+	?tr@QCameraImageCaptureControl@@SA?AVQString@@PBD0H@Z @ 1275 NONAME ; class QString QCameraImageCaptureControl::tr(char const *, char const *, int)
+	?exposure@QCamera@@QBEPAVQCameraExposure@@XZ @ 1276 NONAME ; class QCameraExposure * QCamera::exposure(void) const
+	??_EQCameraViewfinder@@UAE@I@Z @ 1277 NONAME ; QCameraViewfinder::~QCameraViewfinder(unsigned int)
+	?setViewfinder@QCamera@@QAEXPAVQGraphicsVideoItem@@@Z @ 1278 NONAME ; void QCamera::setViewfinder(class QGraphicsVideoItem *)
+	?exposureCompensationChanged@QCameraExposure@@IAEXM@Z @ 1279 NONAME ; void QCameraExposure::exposureCompensationChanged(float)
+	?imageSaved@QCameraImageCaptureControl@@IAEXHABVQString@@@Z @ 1280 NONAME ; void QCameraImageCaptureControl::imageSaved(int, class QString const &)
+	?isFocusPointModeSupported@QCameraFocus@@QBE_NW4FocusPointMode@1@@Z @ 1281 NONAME ; bool QCameraFocus::isFocusPointModeSupported(enum QCameraFocus::FocusPointMode) const
+	?error@QCamera@@QBE?AW4Error@1@XZ @ 1282 NONAME ; enum QCamera::Error QCamera::error(void) const
+	?getStaticMetaObject@QCameraLocksControl@@SAABUQMetaObject@@XZ @ 1283 NONAME ; struct QMetaObject const & QCameraLocksControl::getStaticMetaObject(void)
+	?metaObject@QCameraImageCaptureControl@@UBEPBUQMetaObject@@XZ @ 1284 NONAME ; struct QMetaObject const * QCameraImageCaptureControl::metaObject(void) const
+	?unlock@QCamera@@QAEXV?$QFlags@W4LockType@QCamera@@@@@Z @ 1285 NONAME ; void QCamera::unlock(class QFlags<enum QCamera::LockType>)
+	?qt_metacall@QCameraExposure@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1286 NONAME ; int QCameraExposure::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?staticMetaObject@QCameraLocksControl@@2UQMetaObject@@B @ 1287 NONAME ; struct QMetaObject const QCameraLocksControl::staticMetaObject
+	?focus@QCamera@@QBEPAVQCameraFocus@@XZ @ 1288 NONAME ; class QCameraFocus * QCamera::focus(void) const
+	?staticMetaObject@QCameraFocus@@2UQMetaObject@@B @ 1289 NONAME ; struct QMetaObject const QCameraFocus::staticMetaObject
+	?qt_metacall@QCameraImageProcessing@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1290 NONAME ; int QCameraImageProcessing::qt_metacall(enum QMetaObject::Call, int, void * *)
+	??0QCameraFocus@@AAE@PAVQCamera@@@Z @ 1291 NONAME ; QCameraFocus::QCameraFocus(class QCamera *)
+	?error@QCameraImageCaptureControl@@IAEXHHABVQString@@@Z @ 1292 NONAME ; void QCameraImageCaptureControl::error(int, int, class QString const &)
+	?staticMetaObject@QCameraControl@@2UQMetaObject@@B @ 1293 NONAME ; struct QMetaObject const QCameraControl::staticMetaObject
+	?isReadyForCapture@QCameraImageCapture@@QBE_NXZ @ 1294 NONAME ; bool QCameraImageCapture::isReadyForCapture(void) const
+	?exposureCompensation@QCameraExposure@@QBEMXZ @ 1295 NONAME ; float QCameraExposure::exposureCompensation(void) const
+	?getStaticMetaObject@QCameraImageCapture@@SAABUQMetaObject@@XZ @ 1296 NONAME ; struct QMetaObject const & QCameraImageCapture::getStaticMetaObject(void)
+	?getStaticMetaObject@QCameraImageCaptureControl@@SAABUQMetaObject@@XZ @ 1297 NONAME ; struct QMetaObject const & QCameraImageCaptureControl::getStaticMetaObject(void)
+	?isAvailable@QCameraImageProcessing@@QBE_NXZ @ 1298 NONAME ; bool QCameraImageProcessing::isAvailable(void) const
+	?lockStatusChanged@QCamera@@IAEXW4LockType@1@W4LockStatus@1@W4LockChangeReason@1@@Z @ 1299 NONAME ; void QCamera::lockStatusChanged(enum QCamera::LockType, enum QCamera::LockStatus, enum QCamera::LockChangeReason)
+	?qt_metacall@QCameraControl@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1300 NONAME ; int QCameraControl::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacast@QCameraFlashControl@@UAEPAXPBD@Z @ 1301 NONAME ; void * QCameraFlashControl::qt_metacast(char const *)
+	??1QCamera@@UAE@XZ @ 1302 NONAME ; QCamera::~QCamera(void)
+	??0QCameraViewfinder@@QAE@PAVQWidget@@@Z @ 1303 NONAME ; QCameraViewfinder::QCameraViewfinder(class QWidget *)
+	??1QCameraExposureControl@@UAE@XZ @ 1304 NONAME ; QCameraExposureControl::~QCameraExposureControl(void)
+	?exposureParameterChanged@QCameraExposureControl@@IAEXH@Z @ 1305 NONAME ; void QCameraExposureControl::exposureParameterChanged(int)
+	?tr@QCameraExposureControl@@SA?AVQString@@PBD0@Z @ 1306 NONAME ; class QString QCameraExposureControl::tr(char const *, char const *)
+	?d_func@QCameraImageCapture@@ABEPBVQCameraImageCapturePrivate@@XZ @ 1307 NONAME ; class QCameraImageCapturePrivate const * QCameraImageCapture::d_func(void) const
+	??9QCameraFocusZone@@QBE_NABV0@@Z @ 1308 NONAME ; bool QCameraFocusZone::operator!=(class QCameraFocusZone const &) const
+	??1QCameraFocusControl@@UAE@XZ @ 1309 NONAME ; QCameraFocusControl::~QCameraFocusControl(void)
+	?setContrast@QCameraImageProcessing@@QAEXH@Z @ 1310 NONAME ; void QCameraImageProcessing::setContrast(int)
+	?error@QCameraImageCapture@@IAEXHW4Error@1@ABVQString@@@Z @ 1311 NONAME ; void QCameraImageCapture::error(int, enum QCameraImageCapture::Error, class QString const &)
+	?encodingSettings@QCameraImageCapture@@QBE?AVQImageEncoderSettings@@XZ @ 1312 NONAME ; class QImageEncoderSettings QCameraImageCapture::encodingSettings(void) const
+	?opticalZoom@QCameraFocus@@QBEMXZ @ 1313 NONAME ; float QCameraFocus::opticalZoom(void) const
+	?setCaptureMode@QCamera@@QAEXW4CaptureMode@1@@Z @ 1314 NONAME ; void QCamera::setCaptureMode(enum QCamera::CaptureMode)
+	?d_func@QCameraFocus@@AAEPAVQCameraFocusPrivate@@XZ @ 1315 NONAME ; class QCameraFocusPrivate * QCameraFocus::d_func(void)
+	?metaObject@QCameraExposureControl@@UBEPBUQMetaObject@@XZ @ 1316 NONAME ; struct QMetaObject const * QCameraExposureControl::metaObject(void) const
+	?trUtf8@QCameraFocusControl@@SA?AVQString@@PBD0H@Z @ 1317 NONAME ; class QString QCameraFocusControl::trUtf8(char const *, char const *, int)
+	??_EQCameraLocksControl@@UAE@I@Z @ 1318 NONAME ; QCameraLocksControl::~QCameraLocksControl(unsigned int)
+	?trUtf8@QCameraFlashControl@@SA?AVQString@@PBD0H@Z @ 1319 NONAME ; class QString QCameraFlashControl::trUtf8(char const *, char const *, int)
+	?tr@QCameraImageCapture@@SA?AVQString@@PBD0H@Z @ 1320 NONAME ; class QString QCameraImageCapture::tr(char const *, char const *, int)
+	?tr@QCameraImageProcessing@@SA?AVQString@@PBD0@Z @ 1321 NONAME ; class QString QCameraImageProcessing::tr(char const *, char const *)
+	?trUtf8@QCameraImageProcessingControl@@SA?AVQString@@PBD0H@Z @ 1322 NONAME ; class QString QCameraImageProcessingControl::trUtf8(char const *, char const *, int)
+	?getStaticMetaObject@QCameraFocusControl@@SAABUQMetaObject@@XZ @ 1323 NONAME ; struct QMetaObject const & QCameraFocusControl::getStaticMetaObject(void)
+	?getStaticMetaObject@QCameraImageProcessingControl@@SAABUQMetaObject@@XZ @ 1324 NONAME ; struct QMetaObject const & QCameraImageProcessingControl::getStaticMetaObject(void)
+	?trUtf8@QCameraImageCaptureControl@@SA?AVQString@@PBD0@Z @ 1325 NONAME ; class QString QCameraImageCaptureControl::trUtf8(char const *, char const *)
+	?searchAndLock@QCamera@@QAEXXZ @ 1326 NONAME ; void QCamera::searchAndLock(void)
+	?getStaticMetaObject@QCameraExposureControl@@SAABUQMetaObject@@XZ @ 1327 NONAME ; struct QMetaObject const & QCameraExposureControl::getStaticMetaObject(void)
+	?contrast@QCameraImageProcessing@@QBEHXZ @ 1328 NONAME ; int QCameraImageProcessing::contrast(void) const
+	??_EQCameraImageProcessingControl@@UAE@I@Z @ 1329 NONAME ; QCameraImageProcessingControl::~QCameraImageProcessingControl(unsigned int)
+	??_EQCameraControl@@UAE@I@Z @ 1330 NONAME ; QCameraControl::~QCameraControl(unsigned int)
+	?staticMetaObject@QCameraFocusControl@@2UQMetaObject@@B @ 1331 NONAME ; struct QMetaObject const QCameraFocusControl::staticMetaObject
+	??0QCameraFocusControl@@IAE@PAVQObject@@@Z @ 1332 NONAME ; QCameraFocusControl::QCameraFocusControl(class QObject *)
+	?setAutoIsoSensitivity@QCameraExposure@@QAEXXZ @ 1333 NONAME ; void QCameraExposure::setAutoIsoSensitivity(void)
+	?qt_metacall@QCameraLocksControl@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1334 NONAME ; int QCameraLocksControl::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?trUtf8@QCameraFlashControl@@SA?AVQString@@PBD0@Z @ 1335 NONAME ; class QString QCameraFlashControl::trUtf8(char const *, char const *)
+	?getStaticMetaObject@QCameraImageProcessing@@SAABUQMetaObject@@XZ @ 1336 NONAME ; struct QMetaObject const & QCameraImageProcessing::getStaticMetaObject(void)
+	??0QCameraLocksControl@@IAE@PAVQObject@@@Z @ 1337 NONAME ; QCameraLocksControl::QCameraLocksControl(class QObject *)
+	?stop@QCamera@@QAEXXZ @ 1338 NONAME ; void QCamera::stop(void)
+	?supportedShutterSpeeds@QCameraExposure@@QBE?AV?$QList@M@@PA_N@Z @ 1339 NONAME ; class QList<float> QCameraExposure::supportedShutterSpeeds(bool *) const
+	?flashReady@QCameraExposure@@IAEX_N@Z @ 1340 NONAME ; void QCameraExposure::flashReady(bool)
+	?tr@QCameraViewfinder@@SA?AVQString@@PBD0@Z @ 1341 NONAME ; class QString QCameraViewfinder::tr(char const *, char const *)
+	?whiteBalanceMode@QCameraImageProcessing@@QBE?AW4WhiteBalanceMode@1@XZ @ 1342 NONAME ; enum QCameraImageProcessing::WhiteBalanceMode QCameraImageProcessing::whiteBalanceMode(void) const
+	?qt_metacast@QCameraExposure@@UAEPAXPBD@Z @ 1343 NONAME ; void * QCameraExposure::qt_metacast(char const *)
+	?flashMode@QCameraExposure@@QBE?AV?$QFlags@W4FlashMode@QCameraExposure@@@@XZ @ 1344 NONAME ; class QFlags<enum QCameraExposure::FlashMode> QCameraExposure::flashMode(void) const
+	??1QCameraViewfinder@@UAE@XZ @ 1345 NONAME ; QCameraViewfinder::~QCameraViewfinder(void)
+	?manualWhiteBalance@QCameraImageProcessing@@QBEHXZ @ 1346 NONAME ; int QCameraImageProcessing::manualWhiteBalance(void) const
+	?isAvailable@QCameraFocus@@QBE_NXZ @ 1347 NONAME ; bool QCameraFocus::isAvailable(void) const
+	?readyForCaptureChanged@QCameraImageCapture@@IAEX_N@Z @ 1348 NONAME ; void QCameraImageCapture::readyForCaptureChanged(bool)
+	?metaObject@QCameraExposure@@UBEPBUQMetaObject@@XZ @ 1349 NONAME ; struct QMetaObject const * QCameraExposure::metaObject(void) const
+	?d_func@QCamera@@ABEPBVQCameraPrivate@@XZ @ 1350 NONAME ; class QCameraPrivate const * QCamera::d_func(void) const
+	?opticalZoomChanged@QCameraFocus@@IAEXM@Z @ 1351 NONAME ; void QCameraFocus::opticalZoomChanged(float)
+	?isValid@QCameraFocusZone@@QBE_NXZ @ 1352 NONAME ; bool QCameraFocusZone::isValid(void) const
+	?tr@QCameraFocus@@SA?AVQString@@PBD0@Z @ 1353 NONAME ; class QString QCameraFocus::tr(char const *, char const *)
+	?staticMetaObject@QCameraExposure@@2UQMetaObject@@B @ 1354 NONAME ; struct QMetaObject const QCameraExposure::staticMetaObject
+	?setEncodingSettings@QCameraImageCapture@@QAEXABVQImageEncoderSettings@@@Z @ 1355 NONAME ; void QCameraImageCapture::setEncodingSettings(class QImageEncoderSettings const &)
+	?metaObject@QCameraImageCapture@@UBEPBUQMetaObject@@XZ @ 1356 NONAME ; struct QMetaObject const * QCameraImageCapture::metaObject(void) const
+	?load@QCamera@@QAEXXZ @ 1357 NONAME ; void QCamera::load(void)
+	??0QVideoWidget@@IAE@AAVQVideoWidgetPrivate@@PAVQWidget@@@Z @ 1358 NONAME ; QVideoWidget::QVideoWidget(class QVideoWidgetPrivate &, class QWidget *)
+	?setFocusPointMode@QCameraFocus@@QAEXW4FocusPointMode@1@@Z @ 1359 NONAME ; void QCameraFocus::setFocusPointMode(enum QCameraFocus::FocusPointMode)
+	?tr@QCameraImageProcessing@@SA?AVQString@@PBD0H@Z @ 1360 NONAME ; class QString QCameraImageProcessing::tr(char const *, char const *, int)
+	?staticMetaObject@QCameraFlashControl@@2UQMetaObject@@B @ 1361 NONAME ; struct QMetaObject const QCameraFlashControl::staticMetaObject
+	?setManualShutterSpeed@QCameraExposure@@QAEXM@Z @ 1362 NONAME ; void QCameraExposure::setManualShutterSpeed(float)
+	?mediaObject@QCameraViewfinder@@UBEPAVQMediaObject@@XZ @ 1363 NONAME ; class QMediaObject * QCameraViewfinder::mediaObject(void) const
+	?setAutoAperture@QCameraExposure@@QAEXXZ @ 1364 NONAME ; void QCameraExposure::setAutoAperture(void)
+	?tr@QCameraExposure@@SA?AVQString@@PBD0@Z @ 1365 NONAME ; class QString QCameraExposure::tr(char const *, char const *)
+	?flashReady@QCameraExposureControl@@IAEX_N@Z @ 1366 NONAME ; void QCameraExposureControl::flashReady(bool)
+	??1QCameraImageProcessingControl@@UAE@XZ @ 1367 NONAME ; QCameraImageProcessingControl::~QCameraImageProcessingControl(void)
+	??1QCameraFocus@@EAE@XZ @ 1368 NONAME ; QCameraFocus::~QCameraFocus(void)
+	?statusChanged@QCamera@@IAEXW4Status@1@@Z @ 1369 NONAME ; void QCamera::statusChanged(enum QCamera::Status)
+	?apertureRangeChanged@QCameraExposure@@IAEXXZ @ 1370 NONAME ; void QCameraExposure::apertureRangeChanged(void)
+	?getStaticMetaObject@QCameraFocus@@SAABUQMetaObject@@XZ @ 1371 NONAME ; struct QMetaObject const & QCameraFocus::getStaticMetaObject(void)
+	??0QCameraImageProcessingControl@@IAE@PAVQObject@@@Z @ 1372 NONAME ; QCameraImageProcessingControl::QCameraImageProcessingControl(class QObject *)
+	?setWhiteBalanceMode@QCameraImageProcessing@@QAEXW4WhiteBalanceMode@1@@Z @ 1373 NONAME ; void QCameraImageProcessing::setWhiteBalanceMode(enum QCameraImageProcessing::WhiteBalanceMode)
+	??0QCamera@@QAE@ABVQByteArray@@PAVQObject@@@Z @ 1374 NONAME ; QCamera::QCamera(class QByteArray const &, class QObject *)
+	?focusZonesChanged@QCameraFocusControl@@IAEXXZ @ 1375 NONAME ; void QCameraFocusControl::focusZonesChanged(void)
+	?qt_metacall@QCameraImageCapture@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1376 NONAME ; int QCameraImageCapture::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?setStatus@QCameraFocusZone@@QAEXW4FocusZoneStatus@1@@Z @ 1377 NONAME ; void QCameraFocusZone::setStatus(enum QCameraFocusZone::FocusZoneStatus)
+	?qt_metacall@QCameraFocusControl@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1378 NONAME ; int QCameraFocusControl::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?isFlashModeSupported@QCameraExposure@@QBE_NV?$QFlags@W4FlashMode@QCameraExposure@@@@@Z @ 1379 NONAME ; bool QCameraExposure::isFlashModeSupported(class QFlags<enum QCameraExposure::FlashMode>) const
+	?imageSaved@QCameraImageCapture@@IAEXHABVQString@@@Z @ 1380 NONAME ; void QCameraImageCapture::imageSaved(int, class QString const &)
+	?captureModeChanged@QCamera@@IAEXW4CaptureMode@1@@Z @ 1381 NONAME ; void QCamera::captureModeChanged(enum QCamera::CaptureMode)
+	?getStaticMetaObject@QCameraFlashControl@@SAABUQMetaObject@@XZ @ 1382 NONAME ; struct QMetaObject const & QCameraFlashControl::getStaticMetaObject(void)
+	?focusPointMode@QCameraFocus@@QBE?AW4FocusPointMode@1@XZ @ 1383 NONAME ; enum QCameraFocus::FocusPointMode QCameraFocus::focusPointMode(void) const
+	?digitalZoom@QCameraFocus@@QBEMXZ @ 1384 NONAME ; float QCameraFocus::digitalZoom(void) const
+	??8QCameraFocusZone@@QBE_NABV0@@Z @ 1385 NONAME ; bool QCameraFocusZone::operator==(class QCameraFocusZone const &) const
+	?sharpeningLevel@QCameraImageProcessing@@QBEHXZ @ 1386 NONAME ; int QCameraImageProcessing::sharpeningLevel(void) const
+	?tr@QCamera@@SA?AVQString@@PBD0H@Z @ 1387 NONAME ; class QString QCamera::tr(char const *, char const *, int)
+	?setManualIsoSensitivity@QCameraExposure@@QAEXH@Z @ 1388 NONAME ; void QCameraExposure::setManualIsoSensitivity(int)
+	?setManualWhiteBalance@QCameraImageProcessing@@QAEXH@Z @ 1389 NONAME ; void QCameraImageProcessing::setManualWhiteBalance(int)
+	?isCaptureModeSupported@QCamera@@QBE_NW4CaptureMode@1@@Z @ 1390 NONAME ; bool QCamera::isCaptureModeSupported(enum QCamera::CaptureMode) const
+	??0QCameraFlashControl@@IAE@PAVQObject@@@Z @ 1391 NONAME ; QCameraFlashControl::QCameraFlashControl(class QObject *)
+	?focusZones@QCameraFocus@@QBE?AV?$QList@VQCameraFocusZone@@@@XZ @ 1392 NONAME ; class QList<class QCameraFocusZone> QCameraFocus::focusZones(void) const
+	?shutterSpeed@QCameraExposure@@QBEMXZ @ 1393 NONAME ; float QCameraExposure::shutterSpeed(void) const
+	?setManualAperture@QCameraExposure@@QAEXM@Z @ 1394 NONAME ; void QCameraExposure::setManualAperture(float)
+	?setVideoOutput@QMediaImageViewer@@QAEXPAVQVideoWidget@@@Z @ 1395 NONAME ; void QMediaImageViewer::setVideoOutput(class QVideoWidget *)
+	?trUtf8@QCameraLocksControl@@SA?AVQString@@PBD0H@Z @ 1396 NONAME ; class QString QCameraLocksControl::trUtf8(char const *, char const *, int)
+	??1QCameraImageCapture@@UAE@XZ @ 1397 NONAME ; QCameraImageCapture::~QCameraImageCapture(void)
+	?focusMode@QCameraFocus@@QBE?AW4FocusMode@1@XZ @ 1398 NONAME ; enum QCameraFocus::FocusMode QCameraFocus::focusMode(void) const
+	??1QCameraImageProcessing@@EAE@XZ @ 1399 NONAME ; QCameraImageProcessing::~QCameraImageProcessing(void)
+	?setFlashMode@QCameraExposure@@QAEXV?$QFlags@W4FlashMode@QCameraExposure@@@@@Z @ 1400 NONAME ; void QCameraExposure::setFlashMode(class QFlags<enum QCameraExposure::FlashMode>)
+	?trUtf8@QCameraImageProcessingControl@@SA?AVQString@@PBD0@Z @ 1401 NONAME ; class QString QCameraImageProcessingControl::trUtf8(char const *, char const *)
+	?lockStatusChanged@QCameraLocksControl@@IAEXW4LockType@QCamera@@W4LockStatus@3@W4LockChangeReason@3@@Z @ 1402 NONAME ; void QCameraLocksControl::lockStatusChanged(enum QCamera::LockType, enum QCamera::LockStatus, enum QCamera::LockChangeReason)
+	??_EQCameraFocusControl@@UAE@I@Z @ 1403 NONAME ; QCameraFocusControl::~QCameraFocusControl(unsigned int)
+	?lockStatus@QCamera@@QBE?AW4LockStatus@1@XZ @ 1404 NONAME ; enum QCamera::LockStatus QCamera::lockStatus(void) const
+	?imageCaptured@QCameraImageCaptureControl@@IAEXHABVQImage@@@Z @ 1405 NONAME ; void QCameraImageCaptureControl::imageCaptured(int, class QImage const &)
+	?aperture@QCameraExposure@@QBEMXZ @ 1406 NONAME ; float QCameraExposure::aperture(void) const
+	?staticMetaObject@QCameraImageCaptureControl@@2UQMetaObject@@B @ 1407 NONAME ; struct QMetaObject const QCameraImageCaptureControl::staticMetaObject
+	?isWhiteBalanceModeSupported@QCameraImageProcessing@@QBE_NW4WhiteBalanceMode@1@@Z @ 1408 NONAME ; bool QCameraImageProcessing::isWhiteBalanceModeSupported(enum QCameraImageProcessing::WhiteBalanceMode) const
+	?maximumOpticalZoom@QCameraFocus@@QBEMXZ @ 1409 NONAME ; float QCameraFocus::maximumOpticalZoom(void) const
+	?qt_metacast@QCameraFocus@@UAEPAXPBD@Z @ 1410 NONAME ; void * QCameraFocus::qt_metacast(char const *)
+	?imageProcessing@QCamera@@QBEPAVQCameraImageProcessing@@XZ @ 1411 NONAME ; class QCameraImageProcessing * QCamera::imageProcessing(void) const
+	?digitalZoomChanged@QCameraFocusControl@@IAEXM@Z @ 1412 NONAME ; void QCameraFocusControl::digitalZoomChanged(float)
+	??0QCameraExposureControl@@IAE@PAVQObject@@@Z @ 1413 NONAME ; QCameraExposureControl::QCameraExposureControl(class QObject *)
+	?setMediaObject@QCameraImageCapture@@MAE_NPAVQMediaObject@@@Z @ 1414 NONAME ; bool QCameraImageCapture::setMediaObject(class QMediaObject *)
+	?getStaticMetaObject@QCameraControl@@SAABUQMetaObject@@XZ @ 1415 NONAME ; struct QMetaObject const & QCameraControl::getStaticMetaObject(void)
+	?setFocusMode@QCameraFocus@@QAEXW4FocusMode@1@@Z @ 1416 NONAME ; void QCameraFocus::setFocusMode(enum QCameraFocus::FocusMode)
+	?isoSensitivityChanged@QCameraExposure@@IAEXH@Z @ 1417 NONAME ; void QCameraExposure::isoSensitivityChanged(int)
+	?supportedImageCodecs@QCameraImageCapture@@QBE?AVQStringList@@XZ @ 1418 NONAME ; class QStringList QCameraImageCapture::supportedImageCodecs(void) const
+	?imageCaptured@QCameraImageCapture@@IAEXHABVQImage@@@Z @ 1419 NONAME ; void QCameraImageCapture::imageCaptured(int, class QImage const &)
+	?qt_metacast@QCameraLocksControl@@UAEPAXPBD@Z @ 1420 NONAME ; void * QCameraLocksControl::qt_metacast(char const *)
+	?qt_metacast@QCameraFocusControl@@UAEPAXPBD@Z @ 1421 NONAME ; void * QCameraFocusControl::qt_metacast(char const *)
+	?trUtf8@QCameraImageCaptureControl@@SA?AVQString@@PBD0H@Z @ 1422 NONAME ; class QString QCameraImageCaptureControl::trUtf8(char const *, char const *, int)
+	?trUtf8@QCameraViewfinder@@SA?AVQString@@PBD0@Z @ 1423 NONAME ; class QString QCameraViewfinder::trUtf8(char const *, char const *)
+	?getStaticMetaObject@QCameraExposure@@SAABUQMetaObject@@XZ @ 1424 NONAME ; struct QMetaObject const & QCameraExposure::getStaticMetaObject(void)
+	?trUtf8@QCamera@@SA?AVQString@@PBD0H@Z @ 1425 NONAME ; class QString QCamera::trUtf8(char const *, char const *, int)
+	?tr@QCameraExposureControl@@SA?AVQString@@PBD0H@Z @ 1426 NONAME ; class QString QCameraExposureControl::tr(char const *, char const *, int)
+	?trUtf8@QCameraFocus@@SA?AVQString@@PBD0H@Z @ 1427 NONAME ; class QString QCameraFocus::trUtf8(char const *, char const *, int)
+	?playlist@QMediaImageViewer@@QBEPAVQMediaPlaylist@@XZ @ 1428 NONAME ; class QMediaPlaylist * QMediaImageViewer::playlist(void) const
+	?qt_metacall@QCameraViewfinder@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1429 NONAME ; int QCameraViewfinder::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?unlock@QCamera@@QAEXXZ @ 1430 NONAME ; void QCamera::unlock(void)
+	?supportedIsoSensitivities@QCameraExposure@@QBE?AV?$QList@H@@PA_N@Z @ 1431 NONAME ; class QList<int> QCameraExposure::supportedIsoSensitivities(bool *) const
+	?staticMetaObject@QCameraImageProcessing@@2UQMetaObject@@B @ 1432 NONAME ; struct QMetaObject const QCameraImageProcessing::staticMetaObject
+	?staticMetaObject@QCameraViewfinder@@2UQMetaObject@@B @ 1433 NONAME ; struct QMetaObject const QCameraViewfinder::staticMetaObject
+	?d_func@QCameraImageProcessing@@ABEPBVQCameraImageProcessingPrivate@@XZ @ 1434 NONAME ; class QCameraImageProcessingPrivate const * QCameraImageProcessing::d_func(void) const
+	?isAvailable@QCameraImageCapture@@QBE_NXZ @ 1435 NONAME ; bool QCameraImageCapture::isAvailable(void) const
+	?setExposureCompensation@QCameraExposure@@QAEXM@Z @ 1436 NONAME ; void QCameraExposure::setExposureCompensation(float)
+	??1QCameraExposure@@EAE@XZ @ 1437 NONAME ; QCameraExposure::~QCameraExposure(void)
+	?isAvailable@QCameraExposure@@QBE_NXZ @ 1438 NONAME ; bool QCameraExposure::isAvailable(void) const
+	?qt_metacall@QCameraImageProcessingControl@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1439 NONAME ; int QCameraImageProcessingControl::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?setDenoisingLevel@QCameraImageProcessing@@QAEXH@Z @ 1440 NONAME ; void QCameraImageProcessing::setDenoisingLevel(int)
+	?tr@QCameraFocusControl@@SA?AVQString@@PBD0H@Z @ 1441 NONAME ; class QString QCameraFocusControl::tr(char const *, char const *, int)
+	?tr@QCameraFlashControl@@SA?AVQString@@PBD0H@Z @ 1442 NONAME ; class QString QCameraFlashControl::tr(char const *, char const *, int)
+	?area@QCameraFocusZone@@QBE?AVQRectF@@XZ @ 1443 NONAME ; class QRectF QCameraFocusZone::area(void) const
+	??_EQCameraImageCapture@@UAE@I@Z @ 1444 NONAME ; QCameraImageCapture::~QCameraImageCapture(unsigned int)
+	?status@QCamera@@QBE?AW4Status@1@XZ @ 1445 NONAME ; enum QCamera::Status QCamera::status(void) const
+	?isSharpeningSupported@QCameraImageProcessing@@QBE_NXZ @ 1446 NONAME ; bool QCameraImageProcessing::isSharpeningSupported(void) const
+	?mediaObject@QCameraImageCapture@@UBEPAVQMediaObject@@XZ @ 1447 NONAME ; class QMediaObject * QCameraImageCapture::mediaObject(void) const
+	?trUtf8@QCameraViewfinder@@SA?AVQString@@PBD0H@Z @ 1448 NONAME ; class QString QCameraViewfinder::trUtf8(char const *, char const *, int)
+	?d_func@QCameraImageCapture@@AAEPAVQCameraImageCapturePrivate@@XZ @ 1449 NONAME ; class QCameraImageCapturePrivate * QCameraImageCapture::d_func(void)
+	?status@QCameraFocusZone@@QBE?AW4FocusZoneStatus@1@XZ @ 1450 NONAME ; enum QCameraFocusZone::FocusZoneStatus QCameraFocusZone::status(void) const
+	?error@QCameraControl@@IAEXHABVQString@@@Z @ 1451 NONAME ; void QCameraControl::error(int, class QString const &)
+	?metaObject@QCameraImageProcessingControl@@UBEPBUQMetaObject@@XZ @ 1452 NONAME ; struct QMetaObject const * QCameraImageProcessingControl::metaObject(void) const
+	?qt_metacall@QCameraFocus@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1453 NONAME ; int QCameraFocus::qt_metacall(enum QMetaObject::Call, int, void * *)
+	??0QCameraFocusZone@@QAE@ABV0@@Z @ 1454 NONAME ; QCameraFocusZone::QCameraFocusZone(class QCameraFocusZone const &)
+	?setSharpeningLevel@QCameraImageProcessing@@QAEXH@Z @ 1455 NONAME ; void QCameraImageProcessing::setSharpeningLevel(int)
+	?qt_metacast@QCameraImageCapture@@UAEPAXPBD@Z @ 1456 NONAME ; void * QCameraImageCapture::qt_metacast(char const *)
+	?tr@QCameraImageProcessingControl@@SA?AVQString@@PBD0H@Z @ 1457 NONAME ; class QString QCameraImageProcessingControl::tr(char const *, char const *, int)
+	?captureMode@QCamera@@QBE?AW4CaptureMode@1@XZ @ 1458 NONAME ; enum QCamera::CaptureMode QCamera::captureMode(void) const
+	?isDenoisingSupported@QCameraImageProcessing@@QBE_NXZ @ 1459 NONAME ; bool QCameraImageProcessing::isDenoisingSupported(void) const
+	?shutterSpeedRangeChanged@QCameraExposure@@IAEXXZ @ 1460 NONAME ; void QCameraExposure::shutterSpeedRangeChanged(void)
+	??0QCameraFocusZone@@QAE@ABVQRectF@@W4FocusZoneStatus@0@@Z @ 1461 NONAME ; QCameraFocusZone::QCameraFocusZone(class QRectF const &, enum QCameraFocusZone::FocusZoneStatus)
+	?qt_metacast@QCameraControl@@UAEPAXPBD@Z @ 1462 NONAME ; void * QCameraControl::qt_metacast(char const *)
+	?statusChanged@QCameraControl@@IAEXW4Status@QCamera@@@Z @ 1463 NONAME ; void QCameraControl::statusChanged(enum QCamera::Status)
+	?zoomTo@QCameraFocus@@QAEXMM@Z @ 1464 NONAME ; void QCameraFocus::zoomTo(float, float)
+	??1QCameraFocusZone@@QAE@XZ @ 1465 NONAME ; QCameraFocusZone::~QCameraFocusZone(void)
+	?d_func@QCameraExposure@@ABEPBVQCameraExposurePrivate@@XZ @ 1466 NONAME ; class QCameraExposurePrivate const * QCameraExposure::d_func(void) const
+	?tr@QCameraViewfinder@@SA?AVQString@@PBD0H@Z @ 1467 NONAME ; class QString QCameraViewfinder::tr(char const *, char const *, int)
+	?qt_metacall@QCamera@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1468 NONAME ; int QCamera::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?availabilityError@QCameraImageCapture@@QBE?AW4AvailabilityError@QtMultimediaKit@@XZ @ 1469 NONAME ; enum QtMultimediaKit::AvailabilityError QCameraImageCapture::availabilityError(void) const
+	??_EQCamera@@UAE@I@Z @ 1470 NONAME ; QCamera::~QCamera(unsigned int)
+	?trUtf8@QCameraControl@@SA?AVQString@@PBD0H@Z @ 1471 NONAME ; class QString QCameraControl::trUtf8(char const *, char const *, int)
+	?metaObject@QCameraFocusControl@@UBEPBUQMetaObject@@XZ @ 1472 NONAME ; struct QMetaObject const * QCameraFocusControl::metaObject(void) const
+	?metaObject@QCameraFlashControl@@UBEPBUQMetaObject@@XZ @ 1473 NONAME ; struct QMetaObject const * QCameraFlashControl::metaObject(void) const
+	?maximumDigitalZoom@QCameraFocus@@QBEMXZ @ 1474 NONAME ; float QCameraFocus::maximumDigitalZoom(void) const
+	?error@QCamera@@IAEXW4Error@1@@Z @ 1475 NONAME ; void QCamera::error(enum QCamera::Error)
+	?isFocusModeSupported@QCameraFocus@@QBE_NW4FocusMode@1@@Z @ 1476 NONAME ; bool QCameraFocus::isFocusModeSupported(enum QCameraFocus::FocusMode) const
+	?locked@QCamera@@IAEXXZ @ 1477 NONAME ; void QCamera::locked(void)
+	?supportedResolutions@QCameraImageCapture@@QBE?AV?$QList@VQSize@@@@ABVQImageEncoderSettings@@PA_N@Z @ 1478 NONAME ; class QList<class QSize> QCameraImageCapture::supportedResolutions(class QImageEncoderSettings const &, bool *) const
+	?qt_metacall@QCameraImageCaptureControl@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1479 NONAME ; int QCameraImageCaptureControl::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?tr@QCameraLocksControl@@SA?AVQString@@PBD0@Z @ 1480 NONAME ; class QString QCameraLocksControl::tr(char const *, char const *)
+	?stateChanged@QCamera@@IAEXW4State@1@@Z @ 1481 NONAME ; void QCamera::stateChanged(enum QCamera::State)
+	?lockStatus@QCamera@@QBE?AW4LockStatus@1@W4LockType@1@@Z @ 1482 NONAME ; enum QCamera::LockStatus QCamera::lockStatus(enum QCamera::LockType) const
+	?exposureMode@QCameraExposure@@QBE?AW4ExposureMode@1@XZ @ 1483 NONAME ; enum QCameraExposure::ExposureMode QCameraExposure::exposureMode(void) const
+	??1QCameraLocksControl@@UAE@XZ @ 1484 NONAME ; QCameraLocksControl::~QCameraLocksControl(void)
+	?requestedLocks@QCamera@@QBE?AV?$QFlags@W4LockType@QCamera@@@@XZ @ 1485 NONAME ; class QFlags<enum QCamera::LockType> QCamera::requestedLocks(void) const
+	?trUtf8@QCameraControl@@SA?AVQString@@PBD0@Z @ 1486 NONAME ; class QString QCameraControl::trUtf8(char const *, char const *)
+	?supportedLocks@QCamera@@QBE?AV?$QFlags@W4LockType@QCamera@@@@XZ @ 1487 NONAME ; class QFlags<enum QCamera::LockType> QCamera::supportedLocks(void) const
+	??0QCameraImageCapture@@QAE@PAVQMediaObject@@PAVQObject@@@Z @ 1488 NONAME ; QCameraImageCapture::QCameraImageCapture(class QMediaObject *, class QObject *)
+	?d_func@QCameraImageProcessing@@AAEPAVQCameraImageProcessingPrivate@@XZ @ 1489 NONAME ; class QCameraImageProcessingPrivate * QCameraImageProcessing::d_func(void)
+	?isMeteringModeSupported@QCameraExposure@@QBE_NW4MeteringMode@1@@Z @ 1490 NONAME ; bool QCameraExposure::isMeteringModeSupported(enum QCameraExposure::MeteringMode) const
+	?start@QCamera@@QAEXXZ @ 1491 NONAME ; void QCamera::start(void)
+	?staticMetaObject@QCamera@@2UQMetaObject@@B @ 1492 NONAME ; struct QMetaObject const QCamera::staticMetaObject
+	??0QCamera@@QAE@PAVQObject@@PAVQMediaServiceProvider@@@Z @ 1493 NONAME ; QCamera::QCamera(class QObject *, class QMediaServiceProvider *)
+	?tr@QCameraImageCapture@@SA?AVQString@@PBD0@Z @ 1494 NONAME ; class QString QCameraImageCapture::tr(char const *, char const *)
+	?trUtf8@QCameraExposure@@SA?AVQString@@PBD0H@Z @ 1495 NONAME ; class QString QCameraExposure::trUtf8(char const *, char const *, int)
+	?staticMetaObject@QCameraImageProcessingControl@@2UQMetaObject@@B @ 1496 NONAME ; struct QMetaObject const QCameraImageProcessingControl::staticMetaObject
+	?lockStatusChanged@QCamera@@IAEXW4LockStatus@1@W4LockChangeReason@1@@Z @ 1497 NONAME ; void QCamera::lockStatusChanged(enum QCamera::LockStatus, enum QCamera::LockChangeReason)
+	?setAutoShutterSpeed@QCameraExposure@@QAEXXZ @ 1498 NONAME ; void QCameraExposure::setAutoShutterSpeed(void)
+	?captureModeChanged@QCameraControl@@IAEXW4CaptureMode@QCamera@@@Z @ 1499 NONAME ; void QCameraControl::captureModeChanged(enum QCamera::CaptureMode)
+	?trUtf8@QCameraImageProcessing@@SA?AVQString@@PBD0H@Z @ 1500 NONAME ; class QString QCameraImageProcessing::trUtf8(char const *, char const *, int)
+	??_EQCameraExposure@@UAE@I@Z @ 1501 NONAME ; QCameraExposure::~QCameraExposure(unsigned int)
+	?flashReady@QCameraFlashControl@@IAEX_N@Z @ 1502 NONAME ; void QCameraFlashControl::flashReady(bool)
+	??_EQCameraImageProcessing@@UAE@I@Z @ 1503 NONAME ; QCameraImageProcessing::~QCameraImageProcessing(unsigned int)
+	?imageExposed@QCameraImageCapture@@IAEXH@Z @ 1504 NONAME ; void QCameraImageCapture::imageExposed(int)
+	?deviceDescription@QCamera@@SA?AVQString@@ABVQByteArray@@@Z @ 1505 NONAME ; class QString QCamera::deviceDescription(class QByteArray const &)
+	?staticMetaObject@QCameraImageCapture@@2UQMetaObject@@B @ 1506 NONAME ; struct QMetaObject const QCameraImageCapture::staticMetaObject
+	?qt_metacast@QCameraExposureControl@@UAEPAXPBD@Z @ 1507 NONAME ; void * QCameraExposureControl::qt_metacast(char const *)
+	??0QCameraImageProcessing@@AAE@PAVQCamera@@@Z @ 1508 NONAME ; QCameraImageProcessing::QCameraImageProcessing(class QCamera *)
+	?tr@QCameraLocksControl@@SA?AVQString@@PBD0H@Z @ 1509 NONAME ; class QString QCameraLocksControl::tr(char const *, char const *, int)
+	?unload@QCamera@@QAEXXZ @ 1510 NONAME ; void QCamera::unload(void)
+	?setVideoOutput@QMediaImageViewer@@QAEXPAVQGraphicsVideoItem@@@Z @ 1511 NONAME ; void QMediaImageViewer::setVideoOutput(class QGraphicsVideoItem *)
+	?setCustomFocusPoint@QCameraFocus@@QAEXABVQPointF@@@Z @ 1512 NONAME ; void QCameraFocus::setCustomFocusPoint(class QPointF const &)
+	?trUtf8@QCameraFocus@@SA?AVQString@@PBD0@Z @ 1513 NONAME ; class QString QCameraFocus::trUtf8(char const *, char const *)
+	?qt_metacall@QCameraFlashControl@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1514 NONAME ; int QCameraFlashControl::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?tr@QCameraFocusControl@@SA?AVQString@@PBD0@Z @ 1515 NONAME ; class QString QCameraFocusControl::tr(char const *, char const *)
+	?d_func@QCameraFocus@@ABEPBVQCameraFocusPrivate@@XZ @ 1516 NONAME ; class QCameraFocusPrivate const * QCameraFocus::d_func(void) const
+	?getStaticMetaObject@QCamera@@SAABUQMetaObject@@XZ @ 1517 NONAME ; struct QMetaObject const & QCamera::getStaticMetaObject(void)
+	?qt_metacast@QCameraViewfinder@@UAEPAXPBD@Z @ 1518 NONAME ; void * QCameraViewfinder::qt_metacast(char const *)
+	?trUtf8@QCameraImageCapture@@SA?AVQString@@PBD0H@Z @ 1519 NONAME ; class QString QCameraImageCapture::trUtf8(char const *, char const *, int)
+	?tr@QCameraControl@@SA?AVQString@@PBD0@Z @ 1520 NONAME ; class QString QCameraControl::tr(char const *, char const *)
+	?apertureChanged@QCameraExposure@@IAEXM@Z @ 1521 NONAME ; void QCameraExposure::apertureChanged(float)
+	?d_func@QCamera@@AAEPAVQCameraPrivate@@XZ @ 1522 NONAME ; class QCameraPrivate * QCamera::d_func(void)
+	??_EQCameraFocus@@UAE@I@Z @ 1523 NONAME ; QCameraFocus::~QCameraFocus(unsigned int)
+	??_EQCameraImageCaptureControl@@UAE@I@Z @ 1524 NONAME ; QCameraImageCaptureControl::~QCameraImageCaptureControl(unsigned int)
+	?imageCodecDescription@QCameraImageCapture@@QBE?AVQString@@ABV2@@Z @ 1525 NONAME ; class QString QCameraImageCapture::imageCodecDescription(class QString const &) const
+	??_EQCameraExposureControl@@UAE@I@Z @ 1526 NONAME ; QCameraExposureControl::~QCameraExposureControl(unsigned int)
+	?setSaturation@QCameraImageProcessing@@QAEXH@Z @ 1527 NONAME ; void QCameraImageProcessing::setSaturation(int)
+	?tr@QCameraImageProcessingControl@@SA?AVQString@@PBD0@Z @ 1528 NONAME ; class QString QCameraImageProcessingControl::tr(char const *, char const *)
+	?setMeteringMode@QCameraExposure@@QAEXW4MeteringMode@1@@Z @ 1529 NONAME ; void QCameraExposure::setMeteringMode(enum QCameraExposure::MeteringMode)
+	?isFlashReady@QCameraExposure@@QBE_NXZ @ 1530 NONAME ; bool QCameraExposure::isFlashReady(void) const
+	?denoisingLevel@QCameraImageProcessing@@QBEHXZ @ 1531 NONAME ; int QCameraImageProcessing::denoisingLevel(void) const
+	?qt_metacast@QCameraImageProcessing@@UAEPAXPBD@Z @ 1532 NONAME ; void * QCameraImageProcessing::qt_metacast(char const *)
+	??1QCameraFlashControl@@UAE@XZ @ 1533 NONAME ; QCameraFlashControl::~QCameraFlashControl(void)
+	?tr@QCameraFocus@@SA?AVQString@@PBD0H@Z @ 1534 NONAME ; class QString QCameraFocus::tr(char const *, char const *, int)
+	?metaObject@QCameraControl@@UBEPBUQMetaObject@@XZ @ 1535 NONAME ; struct QMetaObject const * QCameraControl::metaObject(void) const
+	?setNativeResolution@QAbstractVideoSurface@@IAEXABVQSize@@@Z @ 1536 NONAME ; void QAbstractVideoSurface::setNativeResolution(class QSize const &)
+	?searchAndLock@QCamera@@QAEXV?$QFlags@W4LockType@QCamera@@@@@Z @ 1537 NONAME ; void QCamera::searchAndLock(class QFlags<enum QCamera::LockType>)
+	?meteringMode@QCameraExposure@@QBE?AW4MeteringMode@1@XZ @ 1538 NONAME ; enum QCameraExposure::MeteringMode QCameraExposure::meteringMode(void) const
+	??_EQCameraFlashControl@@UAE@I@Z @ 1539 NONAME ; QCameraFlashControl::~QCameraFlashControl(unsigned int)
+	?d_func@QCameraViewfinder@@AAEPAVQCameraViewfinderPrivate@@XZ @ 1540 NONAME ; class QCameraViewfinderPrivate * QCameraViewfinder::d_func(void)
+	?metaObject@QCameraFocus@@UBEPBUQMetaObject@@XZ @ 1541 NONAME ; struct QMetaObject const * QCameraFocus::metaObject(void) const
+	?metaObject@QCameraLocksControl@@UBEPBUQMetaObject@@XZ @ 1542 NONAME ; struct QMetaObject const * QCameraLocksControl::metaObject(void) const
+	?errorString@QCamera@@QBE?AVQString@@XZ @ 1543 NONAME ; class QString QCamera::errorString(void) const
+	?staticMetaObject@QCameraExposureControl@@2UQMetaObject@@B @ 1544 NONAME ; struct QMetaObject const QCameraExposureControl::staticMetaObject
+	?supportedApertures@QCameraExposure@@QBE?AV?$QList@M@@PA_N@Z @ 1545 NONAME ; class QList<float> QCameraExposure::supportedApertures(bool *) const
+	?focusZonesChanged@QCameraFocus@@IAEXXZ @ 1546 NONAME ; void QCameraFocus::focusZonesChanged(void)
+	?qt_metacast@QCameraImageCaptureControl@@UAEPAXPBD@Z @ 1547 NONAME ; void * QCameraImageCaptureControl::qt_metacast(char const *)
+	?tr@QCameraControl@@SA?AVQString@@PBD0H@Z @ 1548 NONAME ; class QString QCameraControl::tr(char const *, char const *, int)
+	?digitalZoomChanged@QCameraFocus@@IAEXM@Z @ 1549 NONAME ; void QCameraFocus::digitalZoomChanged(float)
+	?metaObject@QCamera@@UBEPBUQMetaObject@@XZ @ 1550 NONAME ; struct QMetaObject const * QCamera::metaObject(void) const
+	?trUtf8@QCameraExposureControl@@SA?AVQString@@PBD0@Z @ 1551 NONAME ; class QString QCameraExposureControl::trUtf8(char const *, char const *)
+	?imageExposed@QCameraImageCaptureControl@@IAEXH@Z @ 1552 NONAME ; void QCameraImageCaptureControl::imageExposed(int)
+	?tr@QCameraImageCaptureControl@@SA?AVQString@@PBD0@Z @ 1553 NONAME ; class QString QCameraImageCaptureControl::tr(char const *, char const *)
+	?trUtf8@QCameraLocksControl@@SA?AVQString@@PBD0@Z @ 1554 NONAME ; class QString QCameraLocksControl::trUtf8(char const *, char const *)
+	?isAvailable@QCamera@@UBE_NXZ @ 1555 NONAME ; bool QCamera::isAvailable(void) const
+	?stateChanged@QCameraControl@@IAEXW4State@QCamera@@@Z @ 1556 NONAME ; void QCameraControl::stateChanged(enum QCamera::State)
+	?nativeResolution@QAbstractVideoSurface@@QBE?AVQSize@@XZ @ 1557 NONAME ; class QSize QAbstractVideoSurface::nativeResolution(void) const
+	??0QCameraFocusZone@@QAE@XZ @ 1558 NONAME ; QCameraFocusZone::QCameraFocusZone(void)
+	?trUtf8@QCameraImageProcessing@@SA?AVQString@@PBD0@Z @ 1559 NONAME ; class QString QCameraImageProcessing::trUtf8(char const *, char const *)
+	?exposureParameterRangeChanged@QCameraExposureControl@@IAEXH@Z @ 1560 NONAME ; void QCameraExposureControl::exposureParameterRangeChanged(int)
+	?lockFailed@QCamera@@IAEXXZ @ 1561 NONAME ; void QCamera::lockFailed(void)
+	?d_func@QCameraExposure@@AAEPAVQCameraExposurePrivate@@XZ @ 1562 NONAME ; class QCameraExposurePrivate * QCameraExposure::d_func(void)
+	?isoSensitivity@QCameraExposure@@QBEHXZ @ 1563 NONAME ; int QCameraExposure::isoSensitivity(void) const
+	?qt_metacall@QCameraExposureControl@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1564 NONAME ; int QCameraExposureControl::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?setExposureMode@QCameraExposure@@QAEXW4ExposureMode@1@@Z @ 1565 NONAME ; void QCameraExposure::setExposureMode(enum QCameraExposure::ExposureMode)
+	?d_func@QCameraViewfinder@@ABEPBVQCameraViewfinderPrivate@@XZ @ 1566 NONAME ; class QCameraViewfinderPrivate const * QCameraViewfinder::d_func(void) const
+	?trUtf8@QCameraImageCapture@@SA?AVQString@@PBD0@Z @ 1567 NONAME ; class QString QCameraImageCapture::trUtf8(char const *, char const *)
+	?metaObject@QCameraImageProcessing@@UBEPBUQMetaObject@@XZ @ 1568 NONAME ; struct QMetaObject const * QCameraImageProcessing::metaObject(void) const
+	?setMediaObject@QCameraViewfinder@@MAE_NPAVQMediaObject@@@Z @ 1569 NONAME ; bool QCameraViewfinder::setMediaObject(class QMediaObject *)
+	?capture@QCameraImageCapture@@QAEHABVQString@@@Z @ 1570 NONAME ; int QCameraImageCapture::capture(class QString const &)
+	??0QCameraImageCaptureControl@@IAE@PAVQObject@@@Z @ 1571 NONAME ; QCameraImageCaptureControl::QCameraImageCaptureControl(class QObject *)
+	?trUtf8@QCameraExposureControl@@SA?AVQString@@PBD0H@Z @ 1572 NONAME ; class QString QCameraExposureControl::trUtf8(char const *, char const *, int)
+	?tr@QCamera@@SA?AVQString@@PBD0@Z @ 1573 NONAME ; class QString QCamera::tr(char const *, char const *)
+	?setViewfinder@QCamera@@QAEXPAVQVideoWidget@@@Z @ 1574 NONAME ; void QCamera::setViewfinder(class QVideoWidget *)
+	?tr@QCameraFlashControl@@SA?AVQString@@PBD0@Z @ 1575 NONAME ; class QString QCameraFlashControl::tr(char const *, char const *)
+	?customFocusPoint@QCameraFocus@@QBE?AVQPointF@@XZ @ 1576 NONAME ; class QPointF QCameraFocus::customFocusPoint(void) const
+	??0QCameraExposure@@AAE@PAVQCamera@@@Z @ 1577 NONAME ; QCameraExposure::QCameraExposure(class QCamera *)
+	?shutterSpeedChanged@QCameraExposure@@IAEXM@Z @ 1578 NONAME ; void QCameraExposure::shutterSpeedChanged(float)
+	?qt_metacast@QCameraImageProcessingControl@@UAEPAXPBD@Z @ 1579 NONAME ; void * QCameraImageProcessingControl::qt_metacast(char const *)
+	?error@QCameraImageCapture@@QBE?AW4Error@1@XZ @ 1580 NONAME ; enum QCameraImageCapture::Error QCameraImageCapture::error(void) const
+	?state@QCamera@@QBE?AW4State@1@XZ @ 1581 NONAME ; enum QCamera::State QCamera::state(void) const
+	?availabilityError@QCamera@@UBE?AW4AvailabilityError@QtMultimediaKit@@XZ @ 1582 NONAME ; enum QtMultimediaKit::AvailabilityError QCamera::availabilityError(void) const
+	?cancelCapture@QCameraImageCapture@@QAEXXZ @ 1583 NONAME ; void QCameraImageCapture::cancelCapture(void)
+	?trUtf8@QCamera@@SA?AVQString@@PBD0@Z @ 1584 NONAME ; class QString QCamera::trUtf8(char const *, char const *)
+	?isExposureModeSupported@QCameraExposure@@QBE_NW4ExposureMode@1@@Z @ 1585 NONAME ; bool QCameraExposure::isExposureModeSupported(enum QCameraExposure::ExposureMode) const
+	??0QCameraControl@@IAE@PAVQObject@@@Z @ 1586 NONAME ; QCameraControl::QCameraControl(class QObject *)
+	?tr@QCameraExposure@@SA?AVQString@@PBD0H@Z @ 1587 NONAME ; class QString QCameraExposure::tr(char const *, char const *, int)
+	?getStaticMetaObject@QCameraViewfinder@@SAABUQMetaObject@@XZ @ 1588 NONAME ; struct QMetaObject const & QCameraViewfinder::getStaticMetaObject(void)
+
