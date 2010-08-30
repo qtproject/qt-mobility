@@ -137,6 +137,9 @@ public:
                                               CMdEPropertyDef *propDef,
                                               QVariant &valueToMatch,
                                               QGalleryMetaDataFilter &filter );
+    static int InsertUriPropertyCondition( CMdELogicCondition &rootCond,
+                                           QVariant &valueToMatch,
+                                           QGalleryMetaDataFilter &filter );
     static int InsertUIntPropertyCondition( CMdELogicCondition &rootCond,
                                             CMdEPropertyDef *propDef,
                                             QVariant &valueToMatch,
@@ -145,6 +148,19 @@ public:
                                               CMdEPropertyDef *propDef,
                                               QVariant &valueToMatch,
                                               QGalleryMetaDataFilter &filter );
+
+    static int AddFilter(CMdELogicCondition &rootCond,
+                         QGalleryFilter &filter,
+                         CMdENamespaceDef& defaultNameSpace);
+    static int AddIntersectionFilter(CMdELogicCondition &rootCond,
+                                     QGalleryFilter &filter,
+                                     CMdENamespaceDef& defaultNameSpace);
+    static int AddUnionFilter(CMdELogicCondition &rootCond,
+                              QGalleryFilter &filter,
+                              CMdENamespaceDef& defaultNameSpace);
+    static int AddMetadataFilter(CMdELogicCondition &rootCond,
+                                 QGalleryFilter &filter,
+                                 CMdENamespaceDef& defaultNameSpace);
 };
 
 QTM_END_NAMESPACE
