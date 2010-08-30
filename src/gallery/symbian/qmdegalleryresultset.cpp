@@ -53,13 +53,12 @@ QTM_BEGIN_NAMESPACE
 
 QMDEGalleryResultSet::QMDEGalleryResultSet(QObject *parent)
     : QGalleryResultSet(parent)
-    , m_cursorPosition(0)
+    , m_cursorPosition(-1)
     , m_isValid( false )
     , m_itemType (NULL)
     , m_live(false)
 
 {
-    // TODO: RArray should be map so that key based find is easier?
     m_itemArray.Reset();
 }
 
@@ -163,8 +162,6 @@ QList<QGalleryResource> QMDEGalleryResultSet::resources() const
 
 QVariant QMDEGalleryResultSet::metaData(int key) const
 {
-    //TODO:: remove replace old index based metada function. Use Map?
-
     QVariant retval;
 
     if( !m_isValid ) {
@@ -278,11 +275,6 @@ bool QMDEGalleryResultSet::fetchLast()
         return true;
     }
     return false;
-}
-
-void QMDEGalleryResultSet::appendItem( CMdEObject *item )
-{
-    m_itemArray.Append( item );
 }
 
 #include "moc_qmdegalleryresultset.cpp"

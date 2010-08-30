@@ -44,11 +44,14 @@
 
 #include "qmdegalleryresultset.h"
 
+#include <mdesession.h>
+
 QTM_BEGIN_NAMESPACE
 
 class QGalleryItemRequest;
 
-class QMDEGalleryItemResultSet : public QMDEGalleryResultSet
+class QMDEGalleryItemResultSet : public QMDEGalleryResultSet,
+                                 public MMdEObjectObserver
     {
     Q_OBJECT
 public:
@@ -56,11 +59,17 @@ public:
      QMDEGalleryItemResultSet(QMdeSession *session, QObject *parent = 0);
     ~QMDEGalleryItemResultSet();
 
+    void HandleObjectNotification( CMdESession& aSession,
+                                   TObserverNotificationType aType,
+                                   const RArray<TItemId>& aObjectIdArray );
+
     void createQuery();
 
 private:
     QGalleryItemRequest *m_request;
     CMdEObject *m_resultObject;
+
+    RArray<TItemId> m_currentObjectIDs;
 };
 
 QTM_END_NAMESPACE

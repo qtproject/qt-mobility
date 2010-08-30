@@ -45,13 +45,15 @@
 #include "qmdegalleryresultset.h"
 #include <qeventloop.h>
 #include <mdequery.h>
+#include <mdesession.h>
 
 QTM_BEGIN_NAMESPACE
 
 class QGalleryQueryRequest;
 
 class QMDEGalleryQueryResultSet : public QMDEGalleryResultSet,
-                                  public MMdEQueryObserver
+                                  public MMdEQueryObserver,
+                                  public MMdEObjectObserver
     {
     Q_OBJECT
 public:
@@ -65,12 +67,29 @@ public:
 
     void HandleQueryCompleted( CMdEQuery& aQuery, TInt aError );
 
+    void HandleObjectNotification( CMdESession& aSession,
+                                   TObserverNotificationType aType,
+                                   const RArray<TItemId>& aObjectIdArray );
+
     void createQuery();
+
+private:
+
+    void handleUpdatedResults();
 
 private:
     QGalleryQueryRequest *m_request;
     CMdEObjectQuery *m_query;
     QEventLoop m_eventLoop;
+
+    CMdELogicCondition *m_queryConditions;
+    RArray<TItemId> m_currentObjectIDs;
+
+    bool m_launchUpdateQuery;
+    RPointerArray<CMdEObject> m_updatedItemArray;
+    RArray<TItemId> m_updatedObjectIDs;
+
+    bool m_query_running;
 };
 
 QTM_END_NAMESPACE

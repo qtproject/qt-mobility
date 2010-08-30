@@ -92,6 +92,10 @@ public: // From MMdESessionObserver
 
     int RemoveObject( const unsigned int itemId );
 
+    void AddItemAddedObserverL( MMdEObjectObserver &observer, CMdELogicCondition *condition );
+    void AddItemChangedObserverL( MMdEObjectObserver &observer, RArray<TItemId> &idArray );
+    void RemoveObjectObserver( MMdEObjectObserver &observer );
+
 private:
 
     QEventLoop m_eventLoop;

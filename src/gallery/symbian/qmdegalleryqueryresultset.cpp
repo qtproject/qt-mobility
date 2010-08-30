@@ -52,8 +52,11 @@ QMDEGalleryQueryResultSet::QMDEGalleryQueryResultSet(QMdeSession *session, QObje
 :QMDEGalleryResultSet(parent)
 {
     m_request = static_cast<QGalleryQueryRequest *>(parent);
-    m_live = false; // when live queries are supported, read this value from request
+    m_live = m_request->isLive();
     m_session = session;
+    m_query = NULL;
+    m_launchUpdateQuery = false;
+    m_query_running = false;
 
     createQuery();
 }
@@ -66,42 +69,166 @@ QMDEGalleryQueryResultSet::~QMDEGalleryQueryResultSet()
     }
     delete m_query;
     m_query = NULL;
+
+    m_session->RemoveObjectObserver( *this );
 }
 
 void QMDEGalleryQueryResultSet::HandleQueryNewResults( CMdEQuery &aQuery,
                                                        TInt firstNewItemIndex,
                                                        TInt newItemCount )
 {
-    if( aQuery.ResultMode() == EQueryResultModeItem ) {
-        int max = aQuery.Count();
-        for ( TInt i = firstNewItemIndex; i < max; i++ ) {
-            appendItem( static_cast<CMdEObject *>(aQuery.TakeOwnershipOfResult( i )) );
+    if( m_launchUpdateQuery ){
+        if( aQuery.ResultMode() == EQueryResultModeItem ) {
+            int max = aQuery.Count();
+            for ( TInt i = firstNewItemIndex; i < max; i++ ) {
+                CMdEObject *item = static_cast<CMdEObject *>(aQuery.TakeOwnershipOfResult( i ));
+                m_updatedItemArray.Append( item );
+                m_updatedObjectIDs.Append( item->Id() );
+            }
         }
     }
+    else{
+        if( aQuery.ResultMode() == EQueryResultModeItem ) {
+            int max = aQuery.Count();
+            for ( TInt i = firstNewItemIndex; i < max; i++ ) {
+                CMdEObject *item = static_cast<CMdEObject *>(aQuery.TakeOwnershipOfResult( i ));
+                m_itemArray.Append( item );
+                m_currentObjectIDs.Append( item->Id() );
+            }
+        }
 
-    //Signals that items have been inserted into a result set at
-    emit itemsInserted(firstNewItemIndex, newItemCount);
+        //Signals that items have been inserted into a result set at
+        emit itemsInserted(firstNewItemIndex, newItemCount);
 
-    emit progressChanged(aQuery.Count(), KMdEQueryDefaultMaxCount);
+        emit progressChanged(aQuery.Count(), KMdEQueryDefaultMaxCount);
+    }
 }
 
 void QMDEGalleryQueryResultSet::HandleQueryCompleted( CMdEQuery &aQuery, TInt aError )
 {
-    emit progressChanged(aQuery.Count(), aQuery.Count());
+    m_query_running = false;
 
-    if( aError == KErrNone ){
-        finish(QGalleryAbstractRequest::Succeeded, m_live);
+    if( m_launchUpdateQuery ){
+        handleUpdatedResults();
+        m_launchUpdateQuery = false;
     }
     else{
-        finish(QGalleryAbstractRequest::RequestError, false);
-    }
+        emit progressChanged(aQuery.Count(), aQuery.Count());
 
+        if( aError == KErrNone ){
+            if( m_live ){
+                TRAPD( err,
+                       m_session->AddItemAddedObserverL( *this, m_queryConditions );
+                       m_session->AddItemChangedObserverL( *this, m_currentObjectIDs );
+                     );
+                if( err ){
+                    m_live = false;
+                }
+            }
+            finish(QGalleryAbstractRequest::Succeeded, m_live);
+        }
+        else{
+            finish(QGalleryAbstractRequest::RequestError, false);
+        }
+    }
+}
+
+void QMDEGalleryQueryResultSet::HandleObjectNotification( CMdESession& /*aSession*/,
+                                                          TObserverNotificationType aType,
+                                                          const RArray<TItemId>& aObjectIdArray )
+{
+    if( aType == ENotifyAdd ){
+        m_launchUpdateQuery = true;
+
+        if( m_query_running ){
+            m_query->RemoveObserver( *this );
+            m_query->Cancel();
+        }
+        createQuery();
+    }
+    else if( aType == ENotifyRemove ){
+        const int count = aObjectIdArray.Count();
+        // Linear search as the result set might be sorted by the query
+        for( int i = 0; i < count; i++ ){
+            const int index = m_currentObjectIDs.Find( aObjectIdArray[i]);
+            if( index >= 0 ){
+                CMdEObject *item = m_itemArray[index];
+                m_itemArray.Remove( index );
+                delete item;
+                item = NULL;
+                emit itemsRemoved(index, 1);
+                if( index == m_cursorPosition ){
+                    if ( itemCount() == 0 ) {
+                        m_isValid = false;
+                        emit currentItemChanged();
+                    }
+                    else{
+                        if( fetchFirst() ){
+                            emit currentIndexChanged( m_cursorPosition );
+                        }
+                    }
+                }
+            }
+        }
+    }
+    else if( aType == ENotifyModify ){
+        const int count = aObjectIdArray.Count();
+        // Linear search as the result set might be sorted by the query
+        for( int i = 0; i < count; i++ ){
+            const int index = m_currentObjectIDs.Find( aObjectIdArray[i]);
+            if( index >= 0 ){
+                CMdEObject *oldItem = m_itemArray[index];
+                CMdEObject *newItem = NULL;
+                TRAP_IGNORE( newItem = m_session->GetFullObjectL( aObjectIdArray[i] ) );
+                if( newItem ){
+                    m_itemArray[index] = newItem;
+                    delete oldItem;
+                    oldItem = NULL;
+
+                    QString type = QDocumentGalleryMDSUtility::GetItemTypeFromMDEObject( newItem );
+                    QStringList propertyList;
+                    QDocumentGalleryMDSUtility::GetDataFieldsForItemType( propertyList, type );
+                    QList<int> keys;
+                    const int propertyCount = propertyList.count();
+                    for( int i = 0; i < propertyCount; i++ ){
+                        keys.append( QDocumentGalleryMDSUtility::GetPropertyKey( propertyList[i] ));
+                    }
+                    emit metaDataChanged( index, 1, keys );
+                }
+                else{
+                    m_itemArray.Remove( index );
+                    delete oldItem;
+                    oldItem = NULL;
+                    emit itemsRemoved(index, 1);
+                    if( index == m_cursorPosition ){
+                        if ( itemCount() == 0 ) {
+                            m_isValid = false;
+                            emit currentItemChanged();
+                        }
+                        else{
+                            if( fetchFirst() ){
+                                emit currentIndexChanged( m_cursorPosition );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 void QMDEGalleryQueryResultSet::createQuery()
 {
+    delete m_query;
+    m_query = NULL;
+
     if( !m_session ){
-        finish(QGalleryAbstractRequest::ConnectionError, false);
+        if( !m_launchUpdateQuery ){
+            finish(QGalleryAbstractRequest::ConnectionError, false);
+        }
+        else{
+            m_launchUpdateQuery = false;
+        }
         return;
     }
 
@@ -109,30 +236,76 @@ void QMDEGalleryQueryResultSet::createQuery()
     TRAPD( err, m_query = m_session->NewObjectQueryL( this, m_request, error ) );
     if( err ){
         m_query = NULL;
-        finish(QGalleryAbstractRequest::RequestError, false);
+        if( !m_launchUpdateQuery ){
+            finish(QGalleryAbstractRequest::RequestError, false);
+        }
+        else{
+            m_launchUpdateQuery = false;
+        }
         return;
     }
     else if( error != QGalleryAbstractRequest::NoResult ){
        m_query->RemoveObserver( *this );
        delete m_query;
        m_query = NULL;
-       finish(error, false);
+       if( !m_launchUpdateQuery ){
+           finish(error, false);
+       }
+       else{
+           m_launchUpdateQuery = false;
+       }
        return;
     }
 
     // NewObjectQuery will return NULL if object type is not supported
     if( m_query ){
+        m_queryConditions = &m_query->Conditions();
+        m_query_running = true;
         TRAP( err, m_query->FindL() );
         if( err ){
             m_query->RemoveObserver( *this );
             delete m_query;
             m_query = NULL;
-            finish(QGalleryAbstractRequest::RequestError, false);
+            if( !m_launchUpdateQuery ){
+                finish(QGalleryAbstractRequest::RequestError, false);
+            }
+            else{
+                m_launchUpdateQuery = false;
+            }
         }
     }
     else{
-        finish(QGalleryAbstractRequest::NotSupported, false);
+        if( !m_launchUpdateQuery ){
+            finish(QGalleryAbstractRequest::NotSupported, false);
+        }
+        else{
+            m_launchUpdateQuery = false;
+        }
     }
+}
+
+void QMDEGalleryQueryResultSet::handleUpdatedResults()
+{
+    m_itemArray.ResetAndDestroy();
+    m_itemArray = m_updatedItemArray;
+    const int updatedCount = m_updatedObjectIDs.Count();
+    for( int i = 0; i < updatedCount; i++ ){
+        const int index = m_currentObjectIDs.Find( m_updatedObjectIDs[i]);
+        // If the object ID is not found in current id list, new object
+        // has been added
+        if( index < 0 ){
+            emit itemsInserted( i, 1 );
+            if( i == m_cursorPosition ){
+                emit currentItemChanged();
+            }
+            else if( m_cursorPosition >= m_itemArray.Count() ){
+                if( fetchFirst() ){
+                    currentIndexChanged( m_cursorPosition );
+                }
+            }
+        }
+    }
+    m_currentObjectIDs = m_updatedObjectIDs;
 }
 
 #include "moc_qmdegalleryqueryresultset.cpp"

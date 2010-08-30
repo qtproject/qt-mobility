@@ -160,5 +160,24 @@ int QMdeSession::RemoveObject( const unsigned int itemId )
     return ret;
 }
 
+void QMdeSession::AddItemAddedObserverL( MMdEObjectObserver& observer, CMdELogicCondition *condition )
+{
+    m_cmdeSession->AddObjectObserverL( observer, condition, ENotifyAdd );
+}
+
+void QMdeSession::AddItemChangedObserverL( MMdEObjectObserver& observer, RArray<TItemId> &idArray )
+{
+    CMdELogicCondition* condition = CMdELogicCondition::NewLC( ELogicConditionOperatorOr );
+    condition->AddObjectConditionL( idArray );
+
+    m_cmdeSession->AddObjectObserverL( observer, condition, (ENotifyModify | ENotifyRemove) );
+    CleanupStack::Pop(); // condition
+}
+
+void QMdeSession::RemoveObjectObserver( MMdEObjectObserver& observer )
+{
+    TRAP_IGNORE( m_cmdeSession->RemoveObjectObserverL( observer ) );
+}
+
 #include "moc_qmdesession.cpp"
 QTM_END_NAMESPACE

@@ -95,14 +95,11 @@ public: //MDS spesific
 
     virtual void createQuery() = 0;
 
-    void appendItem( CMdEObject* item );
-
     // Signals to send
-    //        void currentItemChanged();
     //        void currentIndexChanged(int index);
+    //        void currentItemChanged();
     //        void itemsInserted(int index, int count);
     //        void itemsRemoved(int index, int count);
-    //        void itemsMoved(int from, int to, int count);
     //
     //        void metaDataChanged(int index, int count, const QList<int> &keys);
 

@@ -53,8 +53,9 @@ QMDEGalleryItemResultSet::QMDEGalleryItemResultSet(QMdeSession *session, QObject
 :QMDEGalleryResultSet(parent)
 {
     m_request = static_cast<QGalleryItemRequest *>(parent);
-    m_live = false; // when live queries are supported, read this value from request
+    m_live = m_request->isLive();
     m_session = session;
+    m_resultObject = NULL;
 
     createQuery();
 }
@@ -62,12 +63,57 @@ QMDEGalleryItemResultSet::QMDEGalleryItemResultSet(QMdeSession *session, QObject
 QMDEGalleryItemResultSet::~QMDEGalleryItemResultSet()
 {
     delete m_resultObject;
+
+    m_session->RemoveObjectObserver( *this );
 }
+
+void QMDEGalleryItemResultSet::HandleObjectNotification( CMdESession& /*aSession*/,
+                                                          TObserverNotificationType aType,
+                                                          const RArray<TItemId>& aObjectIdArray )
+{
+    if( aType == ENotifyModify ){
+        delete m_resultObject;
+        TRAP_IGNORE( m_resultObject = m_session->GetFullObjectL( aObjectIdArray[0] ) );
+        if( m_resultObject ){
+            QString type = QDocumentGalleryMDSUtility::GetItemTypeFromMDEObject( m_resultObject );
+            QStringList propertyList;
+            QDocumentGalleryMDSUtility::GetDataFieldsForItemType( propertyList, type );
+            QList<int> keys;
+            const int propertyCount = propertyList.count();
+            for( int i = 0; i < propertyCount; i++ ){
+                keys.append( QDocumentGalleryMDSUtility::GetPropertyKey( propertyList[i] ));
+            }
+            if( currentIndex() == 0 ){
+                emit currentItemChanged();
+            }
+            emit metaDataChanged( 0, 1, keys );
+        }
+    }
+    else if( aType == ENotifyRemove ){
+        delete m_resultObject;
+        m_resultObject = NULL;
+        m_isValid = false;
+        emit itemsRemoved(0, 1);
+        if( currentIndex() == 0 ){
+            emit currentItemChanged();
+        }
+    }
+}
+
 void QMDEGalleryItemResultSet::createQuery()
 {
     TRAP_IGNORE( m_resultObject = m_session->GetFullObjectL( m_request->itemId().toUInt() ) );
     // After that resultObject contains NULL or the needed item
     if( m_resultObject ){
+        m_currentObjectIDs.Append( m_resultObject->Id() );
+        if( m_live ){
+            TRAPD( err,
+                   m_session->AddItemChangedObserverL( *this, m_currentObjectIDs );
+                 );
+            if( err ){
+                m_live = false;
+            }
+        }
         finish(QGalleryAbstractRequest::Succeeded, m_live);
     }
     else {
