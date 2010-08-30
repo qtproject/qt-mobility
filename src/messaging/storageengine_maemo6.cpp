@@ -56,8 +56,9 @@ namespace
 
 //! returns text prefix used in SMS storage engine to identify the type of processing message
 /*!
- \param event communication event (message)
- \return QString representing text prefix for the message Id
+    returns text prefix used in SMS storage engine to identify the type of processing message.
+ \a event communication event (message)
+  Returns QString representing text prefix for the message Id.
  */
 QString prefixForEvent(const Event &event)
 {
@@ -170,7 +171,9 @@ struct MessageFilterAndBodySearcher
 }
 
 Q_GLOBAL_STATIC(StorageEngine, storageEngine);
-//! returns pointer to the singleton instance
+/*!
+    returns pointer to the singleton instance
+*/
 StorageEngine* StorageEngine::instance()
 {
     return storageEngine();
@@ -202,8 +205,8 @@ StorageEngine::StorageEngine(QObject *parent)
 
 /*!
  Converts message to event.
- \param message source message
- \return SMS event filled by the corresponding data
+ \a message source message
+  Returns SMS event filled by the corresponding data.
  *
  */
 Event StorageEngine::eventFromMessage(const QMessage &message)
@@ -290,8 +293,8 @@ Event StorageEngine::eventFromMessage(const QMessage &message)
  */
 /*!
  Converts event to message
- \param event source event
- \return SMS message filled by the corresponding data
+ \a event source event
+  Returns SMS message filled by the corresponding data.
  *
  */
 QMessage StorageEngine::messageFromEvent(const Event &ev)
@@ -372,15 +375,18 @@ QMessage StorageEngine::messageFromEvent(const Event &ev)
     return message;
 }
 
-//! returns error value
+/*!
+    returns error value
+*/
 QMessageManager::Error StorageEngine::error() const
 {
     return m_error;
 }
 
-/*! synchronous method to count filtered messages
-  \param filter Filter
-  \return number of messages satisfying to the filter
+/*!
+  Synchronous method to count filtered messages
+  \a filter Filter
+  Returns number of messages satisfying the filter condition.
  */
 int StorageEngine::countMessagesSync(const QMessageFilter &filter)
 {
@@ -402,14 +408,15 @@ int StorageEngine::countMessagesSync(const QMessageFilter &filter)
     return counter._count;
 }
 
-/*! synchronous method that returns list of filtered messages. List will be sorted in QMessageStore::queryMessages().
-  \param filter Filter
-  \param body  specifies the string that message have to contain
-  \param matchFlags specifies the matching method to use
-  \param sortOrder specifies how to sort identifiers
-  \param limit an upper bound on the number of ids in the list returned
-  \param offset specifies how many ids to skip at the beginning of the list returned
-  \return list of messages satisfying to the filter and containing the body
+/*!
+    Synchronous method that returns list of filtered messages. List will be sorted in \l QMessageStore::queryMessages().
+  \a filter Filter
+  \a body  specifies the string that message have to contain
+  \a matchFlags specifies the matching method to use
+  \a sortOrder specifies how to sort identifiers
+  \a limit an upper bound on the number of ids in the list returned
+  \a offset specifies how many ids to skip at the beginning of the list returned
+  Returns list of messages satisfying the filter and containing the body.
  */
 QMessageIdList StorageEngine::queryMessagesSync(const QMessageFilter &filter, const QString &body,
 						QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder,
@@ -437,12 +444,14 @@ QMessageIdList StorageEngine::queryMessagesSync(const QMessageFilter &filter, co
     return searcher._ids;
 }
 
-/*! synchronous method that returns list of filtered messages. List will be sorted in QMessageStore::queryMessages().
-  \param filter Filter
-  \param sortOrder specifies how to sort identifiers
-  \param limit an upper bound on the number of ids in the list returned
-  \param offset specifies how many ids to skip at the beginning of the list returned
-  \return list of messages satisfying to the filter
+/*!
+    Synchronous method that returns list of filtered messages. List will be
+    sorted in \l QMessageStore::queryMessages().
+  \a filter Filter
+  \a sortOrder specifies how to sort identifiers
+  \a limit an upper bound on the number of ids in the list returned
+  \a offset specifies how many ids to skip at the beginning of the list returned
+  Returns list of messages satisfying the filter.
  */
 QMessageIdList StorageEngine::queryMessagesSync(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
@@ -468,9 +477,10 @@ QMessageIdList StorageEngine::queryMessagesSync(const QMessageFilter &filter, co
     return searcher._ids;
 }
 
-/*! Asynchronous method to count filtered messages
-  \param filter Filter
-  \return number of messages satisfying to the filter
+/*!
+    Asynchronous method to count filtered messages
+    \a filter Filter
+    Returns number of messages satisfying the filter.
  */
 bool StorageEngine::countMessages(QMessageService *service, const QMessageFilter &filter)
 {
@@ -876,7 +886,9 @@ ServiceQuery::~ServiceQuery()
     qDebug() << "ServiceQuery::~ServiceQuery()";
 }
 
-//! main processing
+/*!
+    main processing
+*/
 void ServiceQuery::doQuery()
 {
     if (_type == CountQuery) {
@@ -896,7 +908,9 @@ void ServiceQuery::doQuery()
     }
 }
 
-//! sort internal list of messages and apply limit and offset parameters
+/*!
+    Sort internal list of messages and apply limit and offset parameters
+*/
 void ServiceQuery::sortMessages()
 {
     MessagingHelper::orderMessages(_ids, _sortOrder);
@@ -932,7 +946,11 @@ void ServiceQuery::searchBody()
 	QTimer::singleShot(0, this, SLOT(completed()));
     }
 }
-//! slot that inform upper layer (QMessageService) about the operation completion and return results
+
+/*!
+    Slot that inform upper layer (QMessageService) about the operation
+    completion and return results.
+*/
 void ServiceQuery::completed()
 {
     QMessageServicePrivate *p = QMessageServicePrivate::implementation(*_service);
