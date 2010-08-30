@@ -59,12 +59,16 @@ void QTelephonyCallListPrivate::updateCallInformation()
     QList<int> allOngoingCalls; // For checking ended calls
 
     TRAP_IGNORE( IterateCallInformationListL(allOngoingCalls) );
-        
+    
     // Check if calls has been removed
     foreach (QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> existingCall, callInfoList) {
         if (!allOngoingCalls.contains(existingCall->m_index)) {
-            // Make sure that status is changed to idle
-            existingCall->status = QTelephony::Idle;
+            if (existingCall->status != QTelephony::Idle) {
+                // Make sure that status is changed to idle
+                existingCall->status = QTelephony::Idle;
+                emitActiveCallStatusChanged(*existingCall);
+            }
+            
             callInfoList.removeOne(existingCall);
             emitActiveCallRemoved(*existingCall);
             // Call should be deleted after there are no references to it

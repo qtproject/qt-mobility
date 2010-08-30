@@ -82,13 +82,13 @@ public:
     QList<QTelephonyCallInfo> activeCalls(const QTelephony::CallType& calltype) const;
 
     
-private slots:
+public slots:
     void updateCallInformation();
     
-private: // From MCallInformationObserver
+public: // From MCallInformationObserver
     void CallInformationChanged();
 
-private:
+public: // For testing purposes
     void IterateCallInformationListL(QList<int> &existingCalls);
     
     void fillCallInfo(
@@ -98,8 +98,7 @@ private:
     QTelephony::CallStatus mapStatus(CCPCall::TCallState aStatus);
     QTelephony::CallType mapType(CCPCall::TCallType aType);
     QString mapSubType(ulong aServiceId);
-    
-private:
+
     void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);
     void emitActiveCallRemoved(QTelephonyCallInfoPrivate& call);
     void emitActiveCallAdded(QTelephonyCallInfoPrivate& call);
