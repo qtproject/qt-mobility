@@ -187,8 +187,12 @@ void Camera::updateRecordTime()
 
 void Camera::processCapturedImage(int requestId, const QImage& img)
 {
-    Q_UNUSED(requestId);    
-    ui->lastImagePreviewLabel->setPixmap(QPixmap::fromImage(img));
+    Q_UNUSED(requestId);
+    QImage scaledImage = img.scaled(ui->viewfinder->size(),
+                                    Qt::KeepAspectRatio,
+                                    Qt::SmoothTransformation);
+
+    ui->lastImagePreviewLabel->setPixmap(QPixmap::fromImage(scaledImage));
 
     //display captured image for 4 seconds
     displayCapturedImage();
