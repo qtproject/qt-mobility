@@ -54,7 +54,7 @@ EventEditPage::EventEditPage(QWidget *parent)
     m_repeatUntilDate(0)
 {
     //create asynch request to save an item
-	m_saveItemRequest = new QOrganizerItemSaveRequest(this);
+    m_saveItemRequest = new QOrganizerItemSaveRequest(this);
     // Create widgets
     QLabel *subjectLabel = new QLabel("Subject:", this);
     m_subjectEdit = new QLineEdit(this);
@@ -65,14 +65,14 @@ EventEditPage::EventEditPage(QWidget *parent)
     QLabel *repeatLabel = new QLabel("Repeat:", this);
     m_typeComboBox = new QComboBox(this);
     QStringList repeatList;
-    repeatList	<< "None"
-				<< "Daily"
-				<< "Weekly"
-				<< "Monthly"
-				<< "Yearly";
+    repeatList << "None"
+               << "Daily"
+               << "Weekly"
+               << "Monthly"
+               << "Yearly";
     m_typeComboBox->addItems(repeatList);
     connect(m_typeComboBox, SIGNAL(currentIndexChanged(const QString)), this, 
-						SLOT(handleRepeatIndexChanged(const QString)));
+            SLOT(handleRepeatIndexChanged(const QString)));
 
 #ifdef Q_WS_X11
     // Add push buttons for Maemo as it does not support soft keys
@@ -140,19 +140,19 @@ void EventEditPage::eventChanged(QOrganizerItemManager *manager, const QOrganize
     bool isRepeating = false;
     // Check whether existing entry and if it is repeating.
     if(m_organizerEvent.recurrenceRules().count() != 0) {
-    	if (m_organizerEvent.recurrenceRules().at(0).frequency() == QOrganizerItemRecurrenceRule::Daily){
-    		repeatIndex = 1;
-    	} else if (m_organizerEvent.recurrenceRules().at(0).frequency() == QOrganizerItemRecurrenceRule::Weekly) {
-    		repeatIndex = 2;
-    	} else if (m_organizerEvent.recurrenceRules().at(0).frequency() == QOrganizerItemRecurrenceRule::Monthly) {
-    		repeatIndex = 3;
-    	} else if (m_organizerEvent.recurrenceRules().at(0).frequency() == QOrganizerItemRecurrenceRule::Yearly){
-    		repeatIndex = 4;
-    	}
-    	isRepeating = true;
+        if (m_organizerEvent.recurrenceRules().at(0).frequency() == QOrganizerItemRecurrenceRule::Daily){
+            repeatIndex = 1;
+        } else if (m_organizerEvent.recurrenceRules().at(0).frequency() == QOrganizerItemRecurrenceRule::Weekly) {
+            repeatIndex = 2;
+        } else if (m_organizerEvent.recurrenceRules().at(0).frequency() == QOrganizerItemRecurrenceRule::Monthly) {
+            repeatIndex = 3;
+        } else if (m_organizerEvent.recurrenceRules().at(0).frequency() == QOrganizerItemRecurrenceRule::Yearly){
+            repeatIndex = 4;
+        }
+        isRepeating = true;
     }
     if(isRepeating){
-    	m_typeComboBox->setCurrentIndex(repeatIndex);
+        m_typeComboBox->setCurrentIndex(repeatIndex);
     }
 }
 
@@ -169,62 +169,62 @@ void EventEditPage::saveOrNextClicked()
     m_organizerEvent.setEndDateTime(m_endTimeEdit->dateTime());
     m_listOfEvents.append(m_organizerEvent);
     if(m_numOfEntiresToBeCreated > 1){
-    	m_numOfEntiresToBeCreated--;
-    	if(m_numOfEntiresToBeCreated == 1){
-    		// For the last entry change the option to Save.
-    		m_saveOrNextSoftKey->setText("SaveAll");
-    	}
-    	// Clear subject field indicating its a new editor.
-    	m_subjectEdit->clear();
+        m_numOfEntiresToBeCreated--;
+        if(m_numOfEntiresToBeCreated == 1){
+            // For the last entry change the option to Save.
+            m_saveOrNextSoftKey->setText("SaveAll");
+        }
+        // Clear subject field indicating its a new editor.
+        m_subjectEdit->clear();
     } else {
-    	if(!m_multipleEntries){
-    		// If single entry
-    		m_manager->saveItem(&m_organizerEvent);
-    	} else {
-    		// If multiple entries, save asynchronously.
-    		m_saveItemRequest->setItems(m_listOfEvents);
-    		m_saveItemRequest->setManager(m_manager);
-    		m_saveItemRequest->start();
-    	}
-    	
-    	if (m_manager->error())
-    		QMessageBox::information(this, "Failed!", QString("Failed to save event!\n(error code %1)").arg(m_manager->error()));
-    	else
-    		emit showDayPage();
+        if(!m_multipleEntries) {
+            // If single entry
+            m_manager->saveItem(&m_organizerEvent);
+        } else {
+            // If multiple entries, save asynchronously.
+            m_saveItemRequest->setItems(m_listOfEvents);
+            m_saveItemRequest->setManager(m_manager);
+            m_saveItemRequest->start();
+        }
+
+        if (m_manager->error())
+            QMessageBox::information(this, "Failed!", QString("Failed to save event!\n(error code %1)").arg(m_manager->error()));
+        else
+            emit showDayPage();
     }
 }
 
 void EventEditPage::handleRepeatIndexChanged(const QString frequency)
 {
-	QOrganizerItemRecurrenceRule rrule;
-	QList<QOrganizerItemRecurrenceRule> listOfRRules;
-	listOfRRules.clear();
-	if (frequency != "None" && m_countFieldAdded == false) {
-		// Query user if user wants to set count or repeat until date.
-		QPushButton *countButton = new QPushButton(tr("&Set count"));
-		QPushButton *repeatUntilButton = new QPushButton(tr("Set repeat until date"));
-		QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Vertical);
-		buttonBox->addButton(countButton, QDialogButtonBox::AcceptRole);
-		buttonBox->addButton(repeatUntilButton, QDialogButtonBox::AcceptRole);
-		connect(countButton, SIGNAL(pressed()), this, SLOT(setCountField()));
-		connect(repeatUntilButton, SIGNAL(pressed()), this, SLOT(setRepeatUntilField()));
-		connect(countButton, SIGNAL(pressed()), buttonBox, SLOT(close()));
-		connect(repeatUntilButton, SIGNAL(pressed()), buttonBox, SLOT(close()));
-		m_scrollAreaLayout->addWidget(buttonBox);
-		buttonBox->setLayout(m_scrollAreaLayout);
+    QOrganizerItemRecurrenceRule rrule;
+    QList<QOrganizerItemRecurrenceRule> listOfRRules;
+    listOfRRules.clear();
+    if (frequency != "None" && m_countFieldAdded == false) {
+        // Query user if user wants to set count or repeat until date.
+        QPushButton *countButton = new QPushButton(tr("&Set count"));
+        QPushButton *repeatUntilButton = new QPushButton(tr("Set repeat until date"));
+        QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Vertical);
+        buttonBox->addButton(countButton, QDialogButtonBox::AcceptRole);
+        buttonBox->addButton(repeatUntilButton, QDialogButtonBox::AcceptRole);
+        connect(countButton, SIGNAL(pressed()), this, SLOT(setCountField()));
+        connect(repeatUntilButton, SIGNAL(pressed()), this, SLOT(setRepeatUntilField()));
+        connect(countButton, SIGNAL(pressed()), buttonBox, SLOT(close()));
+        connect(repeatUntilButton, SIGNAL(pressed()), buttonBox, SLOT(close()));
+        m_scrollAreaLayout->addWidget(buttonBox);
+        buttonBox->setLayout(m_scrollAreaLayout);
 
-		if (frequency == "Daily") {
-			rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
-		} else if (frequency == "Weekly") {
-			rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
-		} else if (frequency == "Monthly") {
-			rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
-		} else if (frequency == "Yearly") {
-			rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-		}
-		listOfRRules.append(rrule);
-		m_organizerEvent.setRecurrenceRules(listOfRRules);
-	}
+        if (frequency == "Daily") {
+            rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+        } else if (frequency == "Weekly") {
+            rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+        } else if (frequency == "Monthly") {
+            rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+        } else if (frequency == "Yearly") {
+            rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+        }
+        listOfRRules.append(rrule);
+        m_organizerEvent.setRecurrenceRules(listOfRRules);
+    }
 }
 
 void EventEditPage::showEvent(QShowEvent *event)
@@ -235,62 +235,62 @@ void EventEditPage::showEvent(QShowEvent *event)
 
 void EventEditPage::handlemultipleEntriesToBeCreated(int numOfEntries)
 {
-	m_numOfEntiresToBeCreated = numOfEntries;
-	if(m_numOfEntiresToBeCreated > 1) {
-		m_multipleEntries = true; 
-		//The option would be next instead of save inorder to create next entry.
-		m_saveOrNextSoftKey->setText("Next");
-	}
+    m_numOfEntiresToBeCreated = numOfEntries;
+    if(m_numOfEntiresToBeCreated > 1) {
+        m_multipleEntries = true; 
+        //The option would be next instead of save inorder to create next entry.
+        m_saveOrNextSoftKey->setText("Next");
+    }
 }
 void EventEditPage::handleCountChanged(int i)
 {
-	QOrganizerItemRecurrenceRule rrule;
-	QList<QOrganizerItemRecurrenceRule> listOfRRules;
-	listOfRRules.clear();
-	rrule.setFrequency(m_organizerEvent.recurrenceRules().at(0).frequency());
-	rrule.setCount(i);
-	listOfRRules.append(rrule);
-	m_organizerEvent.setRecurrenceRules(listOfRRules);
+    QOrganizerItemRecurrenceRule rrule;
+    QList<QOrganizerItemRecurrenceRule> listOfRRules;
+    listOfRRules.clear();
+    rrule.setFrequency(m_organizerEvent.recurrenceRules().at(0).frequency());
+    rrule.setCount(i);
+    listOfRRules.append(rrule);
+    m_organizerEvent.setRecurrenceRules(listOfRRules);
 }
 
 void EventEditPage::handleRepeatUntilChanged(QDate date)
 {
-	QOrganizerItemRecurrenceRule rrule;
-	QList<QOrganizerItemRecurrenceRule> listOfRRules;
-	listOfRRules.clear();
-	rrule.setFrequency(m_organizerEvent.recurrenceRules().at(0).frequency());
-	rrule.setEndDate(date);
-	listOfRRules.append(rrule);
-	m_organizerEvent.setRecurrenceRules(listOfRRules);
+    QOrganizerItemRecurrenceRule rrule;
+    QList<QOrganizerItemRecurrenceRule> listOfRRules;
+    listOfRRules.clear();
+    rrule.setFrequency(m_organizerEvent.recurrenceRules().at(0).frequency());
+    rrule.setEndDate(date);
+    listOfRRules.append(rrule);
+    m_organizerEvent.setRecurrenceRules(listOfRRules);
 }
 
 void EventEditPage::setCountField()
 {
-	if(!m_countFieldAdded) {
-		m_countFieldAdded = true;
-		QFormLayout *formLayout = new QFormLayout();
-		m_countSpinBox = new QSpinBox(this);
-		m_countSpinBox->setRange(1, 100);
-		m_countSpinBox->setSingleStep(1);
-		m_countSpinBox->setValue(5);
-		formLayout->addRow("Count", m_countSpinBox);
-		formLayout->setFormAlignment(Qt::AlignBottom);
-		m_scrollAreaLayout->addLayout(formLayout);
-		// set the default value.
-		handleCountChanged(5);
-		connect(m_countSpinBox, SIGNAL(valueChanged(int)), this, SLOT(handleCountChanged(int)));
-	}
+    if(!m_countFieldAdded) {
+        m_countFieldAdded = true;
+        QFormLayout *formLayout = new QFormLayout();
+        m_countSpinBox = new QSpinBox(this);
+        m_countSpinBox->setRange(1, 100);
+        m_countSpinBox->setSingleStep(1);
+        m_countSpinBox->setValue(5);
+        formLayout->addRow("Count", m_countSpinBox);
+        formLayout->setFormAlignment(Qt::AlignBottom);
+        m_scrollAreaLayout->addLayout(formLayout);
+        // set the default value.
+        handleCountChanged(5);
+        connect(m_countSpinBox, SIGNAL(valueChanged(int)), this, SLOT(handleCountChanged(int)));
+    }
 }
 
 void EventEditPage::setRepeatUntilField()
 {
-	m_countFieldAdded = false;
-	m_repeatUntilDate = new QDateEdit(this);
-	QLabel *repeatUntilLabel = new QLabel("Repeat until:", this);
-	m_repeatUntilDate->setDate(m_endTimeEdit->date());
-	m_scrollAreaLayout->addWidget(repeatUntilLabel);
-	m_scrollAreaLayout->addWidget(m_repeatUntilDate);
-	// set the default value.
-	handleRepeatUntilChanged(m_endTimeEdit->date());
-	connect(m_repeatUntilDate, SIGNAL(dateChanged(QDate)), this, SLOT(handleRepeatUntilChanged(QDate)));
+    m_countFieldAdded = false;
+    m_repeatUntilDate = new QDateEdit(this);
+    QLabel *repeatUntilLabel = new QLabel("Repeat until:", this);
+    m_repeatUntilDate->setDate(m_endTimeEdit->date());
+    m_scrollAreaLayout->addWidget(repeatUntilLabel);
+    m_scrollAreaLayout->addWidget(m_repeatUntilDate);
+    // set the default value.
+    handleRepeatUntilChanged(m_endTimeEdit->date());
+    connect(m_repeatUntilDate, SIGNAL(dateChanged(QDate)), this, SLOT(handleRepeatUntilChanged(QDate)));
 }

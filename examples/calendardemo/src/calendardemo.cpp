@@ -114,13 +114,13 @@ void CalendarDemo::activateNewDayPage(QOrganizerItemManager *manager, QDate date
 void CalendarDemo::activateEditPage(QOrganizerItemManager *manager, const QOrganizerItem &item)
 {
     if (item.type() == QOrganizerItemType::TypeEvent) {
-		if(item.isEmpty()){
-        	// Query user regarding how many entires to be created.
-        	int numOfEntriesToBeCreated = QInputDialog::getInt(this, "QInputDialog::getInteger()",
-										"Number of entries:", 1, 1, 10, 1);
-        	if(numOfEntriesToBeCreated > 1) {
-        		emit multipleEntriesToBeCreated(numOfEntriesToBeCreated);
-        	}
+        if(item.isEmpty()) {
+            // Query user regarding how many entires to be created.
+            int numOfEntriesToBeCreated = QInputDialog::getInt(
+                    this, "QInputDialog::getInteger()", "Number of entries:", 1, 1, 10, 1);
+            if(numOfEntriesToBeCreated > 1) {
+                emit multipleEntriesToBeCreated(numOfEntriesToBeCreated);
+            }
         }
         QOrganizerEvent event = static_cast<QOrganizerEvent>(item);
         m_dayPage->dayChanged(manager, event.startDateTime().date()); // edit always comes back to day page

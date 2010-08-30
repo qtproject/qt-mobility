@@ -74,7 +74,7 @@ public Q_SLOTS:
     void activateEditPage(QOrganizerItemManager *manager, const QOrganizerItem &item);
     
 Q_SIGNALS:
-	void multipleEntriesToBeCreated(int);
+    void multipleEntriesToBeCreated(int);
 
 private:
     QOrganizerItemManager *m_manager;

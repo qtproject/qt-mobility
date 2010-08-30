@@ -243,19 +243,19 @@ void MonthPage::refresh()
     instanceList.clear();
     foreach (const QOrganizerItem &item, items)
     {   
-    	// Get the instances of the item for that month and collect those dates.
-    	instanceList.append(m_manager->itemInstances(item, startDateTime, endDateTime));
-		for (int count = 0; count < instanceList.count() ; count++) {
-			QOrganizerEventTimeRange eventTimeRange = instanceList.at(count).detail<QOrganizerEventTimeRange>();
-			QDate startDate(eventTimeRange.startDateTime().date());
-			QDate endDate(eventTimeRange.endDateTime().date());
-			while (startDate <= endDate) {
-				dates << (eventTimeRange.startDateTime().date());
-				startDate = startDate.addDays(1);
-			}
-		}
-    	
-		QOrganizerTodoTimeRange todoTimeRange = item.detail<QOrganizerTodoTimeRange>();
+        // Get the instances of the item for that month and collect those dates.
+        instanceList.append(m_manager->itemInstances(item, startDateTime, endDateTime));
+        for (int count = 0; count < instanceList.count() ; count++) {
+            QOrganizerEventTimeRange eventTimeRange = instanceList.at(count).detail<QOrganizerEventTimeRange>();
+            QDate startDate(eventTimeRange.startDateTime().date());
+            QDate endDate(eventTimeRange.endDateTime().date());
+            while (startDate <= endDate) {
+                dates << (eventTimeRange.startDateTime().date());
+                startDate = startDate.addDays(1);
+            }
+        }
+
+        QOrganizerTodoTimeRange todoTimeRange = item.detail<QOrganizerTodoTimeRange>();
         if (!todoTimeRange.isEmpty()) {
             dates << (todoTimeRange.startDateTime().date());
             //dates << (todoTimeRange.dueDateTime().date());
@@ -294,29 +294,29 @@ void MonthPage::refreshDayItems()
     QList<QOrganizerItem> instanceList;
     foreach (const QOrganizerItem &item, items)
     {
-    	instanceList.clear();
-    	instanceList.append(m_manager->itemInstances(item, startOfDay, endOfDay));
-    	if(instanceList.count() > 0) {
-    		QOrganizerEventTimeRange eventTimeRange = item.detail<QOrganizerEventTimeRange>();
-    		QString time = eventTimeRange.startDateTime().time().toString("hh:mm");
-    		QListWidgetItem* listItem = new QListWidgetItem();
-    		listItem->setText(QString("Event:%1-%2").arg(time).arg(item.displayLabel()));
-    		QVariant data = QVariant::fromValue<QOrganizerItem>(item);
-    		listItem->setData(ORGANIZER_ITEM_ROLE, data);
-    		m_itemList->addItem(listItem);
-    	}
+        instanceList.clear();
+        instanceList.append(m_manager->itemInstances(item, startOfDay, endOfDay));
+        if(instanceList.count() > 0) {
+            QOrganizerEventTimeRange eventTimeRange = item.detail<QOrganizerEventTimeRange>();
+            QString time = eventTimeRange.startDateTime().time().toString("hh:mm");
+            QListWidgetItem* listItem = new QListWidgetItem();
+            listItem->setText(QString("Event:%1-%2").arg(time).arg(item.displayLabel()));
+            QVariant data = QVariant::fromValue<QOrganizerItem>(item);
+            listItem->setData(ORGANIZER_ITEM_ROLE, data);
+            m_itemList->addItem(listItem);
+        }
 
-		QOrganizerTodoTimeRange todoTimeRange = item.detail<QOrganizerTodoTimeRange>();
-		if (!todoTimeRange.isEmpty()) {
-			if (todoTimeRange.startDateTime().date() == selectedDate) {
-				QString time = todoTimeRange.startDateTime().time().toString("hh:mm");
-				QListWidgetItem* listItem = new QListWidgetItem();
-				listItem->setText(QString("Todo:%1-%2").arg(time).arg(item.displayLabel()));
-				QVariant data = QVariant::fromValue<QOrganizerItem>(item);
-				listItem->setData(ORGANIZER_ITEM_ROLE, data);
-				m_itemList->addItem(listItem);
-			}
-		}
+        QOrganizerTodoTimeRange todoTimeRange = item.detail<QOrganizerTodoTimeRange>();
+        if (!todoTimeRange.isEmpty()) {
+            if (todoTimeRange.startDateTime().date() == selectedDate) {
+                QString time = todoTimeRange.startDateTime().time().toString("hh:mm");
+                QListWidgetItem* listItem = new QListWidgetItem();
+                listItem->setText(QString("Todo:%1-%2").arg(time).arg(item.displayLabel()));
+                QVariant data = QVariant::fromValue<QOrganizerItem>(item);
+                listItem->setData(ORGANIZER_ITEM_ROLE, data);
+                m_itemList->addItem(listItem);
+            }
+        }
         // TODO: other item types
         // TODO: icons for event/todo/journal would be nice
     }
