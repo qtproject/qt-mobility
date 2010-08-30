@@ -2,7 +2,7 @@
 # Telephony Mobility API
 # #####################################################################
 
-QT       += core gui dbus
+QT       += core gui
 TEMPLATE = app
 TARGET = callmonitor
 
