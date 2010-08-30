@@ -48,4 +48,7 @@
     that allows services to be deployed as remote services. Multiple clients
     can be run to communicate with one another using a shared instance of the
     echo service, or privately with a unique instance.
+
+    The second echo client is for running a second identical instance on Symbian
+    which usually does not allow starting the same program multiple times.
 */
