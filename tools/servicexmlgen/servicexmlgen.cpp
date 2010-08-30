@@ -107,8 +107,7 @@ ServiceXmlGenerator::ServiceXmlGenerator(QWidget *parent)
       m_unsavedData(false),
       m_serviceInfo(new ServiceWidget),
       m_buttonPreview(0),
-      m_previewEdit(new QPlainTextEdit),
-      m_version(QLatin1String("1.1"))
+      m_previewEdit(new QPlainTextEdit)
 {
     connect(m_serviceInfo, SIGNAL(dataChanged()), SLOT(serviceDataChanged()));
 
@@ -223,7 +222,6 @@ void ServiceXmlGenerator::loadFromXml(const QString& f)
         if (data.extractMetadata()) {
             m_serviceInfo->load(data.parseResults());
             m_unsavedData = false;
-            m_version = data.serviceXmlVersion();
             refreshPreview();
             return;
         }
@@ -331,7 +329,7 @@ void ServiceXmlGenerator::getServiceXml(QIODevice *device)
     writer.setAutoFormatting(true);
     writer.writeStartDocument();
     writer.writeStartElement(QLatin1String("SFW"));
-    writer.writeAttribute(QLatin1String("version"), m_version);
+    writer.writeAttribute(QLatin1String("version"), "1.1");
     writer.writeStartElement(QLatin1String("service"));
     m_serviceInfo->writeXml(&writer);
     writer.writeEndElement();
