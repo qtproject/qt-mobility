@@ -139,6 +139,11 @@ void QDeclarativeLandmarkModel::setFilter(QDeclarativeLandmarkFilterBase* filter
 
 void QDeclarativeLandmarkModel::update()
 {
+    scheduleUpdate();
+}
+
+void QDeclarativeLandmarkModel::startUpdate()
+{
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
     qDebug("QDeclarativeLandmarkModel::update()");
 #endif
@@ -187,7 +192,7 @@ void QDeclarativeLandmarkModel::setLimit(int limit)
     if (limit == m_limit)
         return;
     m_limit = limit;
-    emit limitChanged(limit);
+    emit limitChanged();
 }
 
 int QDeclarativeLandmarkModel::offset()
@@ -200,7 +205,7 @@ void QDeclarativeLandmarkModel::setOffset(int offset)
     if (offset == m_offset)
         return;
     m_offset = offset;
-    emit offsetChanged(offset);
+    emit offsetChanged();
 }
 
 void QDeclarativeLandmarkModel::scheduleUpdate()
@@ -208,7 +213,7 @@ void QDeclarativeLandmarkModel::scheduleUpdate()
     if (!m_componentCompleted || m_updatePending)
         return;
     m_updatePending = true; // Disallow possbile duplicate request triggering
-    QMetaObject::invokeMethod(this, "update", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(this, "startUpdate", Qt::QueuedConnection);
 }
 
 void QDeclarativeLandmarkModel::setFetchRange()
@@ -305,7 +310,7 @@ void QDeclarativeLandmarkModel::fetchRequestStateChanged(QLandmarkAbstractReques
         m_landmarks = m_fetchRequest->landmarks();
         endInsertRows();
         if (oldCount != m_landmarks.count())
-            emit countChanged(m_landmarks.count());
+            emit countChanged();
     } else if (m_error != m_fetchRequest->errorString()) {
         m_error = m_fetchRequest->errorString();
         emit errorChanged(m_error);

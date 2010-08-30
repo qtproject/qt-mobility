@@ -49,12 +49,12 @@ public:
     void setUrl(const QUrl& url);
 
 signals:
-    void nameChanged(QString name);
-    void phoneNumberChanged(QString phoneNumber);
-    void descriptionChanged(QString descriptionChanged);
-    void radiusChanged(double radius);
-    void iconSourceChanged(QUrl iconSource);
-    void urlChanged(QUrl url);
+    void nameChanged();
+    void phoneNumberChanged();
+    void descriptionChanged();
+    void radiusChanged();
+    void iconSourceChanged();
+    void urlChanged();
 
 private:
     friend class QDeclarativeLandmarkModel;

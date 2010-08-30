@@ -147,6 +147,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     qDebug() << "customAttributes:" << (customAttributes == other.customAttributes);
     qDebug() << "id" << (id == other.id);
 #endif
+
     return (QGeoPlacePrivate::operator== (other)
             && (name == other.name)
             && (description == other.description)

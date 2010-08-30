@@ -1143,7 +1143,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                 do {
                     if (queryRun && queryRun->isCanceled) {
                         *error = QLandmarkManager::CancelError;
-                        *errorString = "Fetch operation failed";
+                        *errorString = "Fetch operation was canceled";
                         return QList<QLandmarkId>();
                     }
 
@@ -1167,7 +1167,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                     do {
                         if (queryRun && queryRun->isCanceled) {
                             *error = QLandmarkManager::CancelError;
-                            *errorString = "Fetch operation failed";
+                            *errorString = "Fetch operation canceled";
                             return QList<QLandmarkId>();
                         }
 
@@ -1193,7 +1193,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                         do {
                             if (queryRun && queryRun->isCanceled) {
                                 *error = QLandmarkManager::CancelError;
-                                *errorString = "Fetch operation failed";
+                                *errorString = "Fetch operation canceled";
                                 return QList<QLandmarkId>();
                             }
                             lat = query.value(1).toDouble(&ok);
@@ -1243,7 +1243,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
         for (int i=0; i < result.count(); ++i) {
             if (queryRun && queryRun->isCanceled) {
                 *error = QLandmarkManager::CancelError;
-                *errorString = "Fetch operation failed";
+                *errorString = "Fetch operation canceled";
                 return QList<QLandmarkId>();
             }
             landmark = retrieveLandmark(result.at(i),error,errorString);
@@ -1294,7 +1294,7 @@ QList<QLandmark> DatabaseOperations::landmarks(const QLandmarkFilter& filter,
     foreach(const QLandmarkId &id, ids) {
          if (queryRun && queryRun->isCanceled) {
             *error = QLandmarkManager::CancelError;
-            *errorString  = "Fetch operation failed";
+            *errorString  = "Fetch operation canceled";
             return QList<QLandmark>();
         }
 
@@ -2547,7 +2547,7 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
                         QueryRun *queryRun,
                         QList<QLandmarkId>  *landmarkIds)
 {
-    QLandmarkFileHandlerLmx lmxHandler(this, queryRun?&(queryRun->isCanceled):0);
+    QLandmarkFileHandlerLmx lmxHandler(queryRun?&(queryRun->isCanceled):0);
 
     if (option == QLandmarkManager::AttachSingleCategory) {
         QLandmarkCategory singleCategory;
@@ -2644,47 +2644,31 @@ bool DatabaseOperations::importLandmarksGpx(QIODevice *device,
         }
     }
 
-    QLandmarkFileHandlerGpx *gpxHandler = new QLandmarkFileHandlerGpx;
-    if (queryRun) {
-        queryRun->gpxHandler = gpxHandler;
-        queryRun->gpxHandler->setAsync(true);
+    QLandmarkFileHandlerGpx gpxHandler(queryRun?&(queryRun->isCanceled):0);
+    if (!gpxHandler.importData(device)) {
+        *error = gpxHandler.error();
+        *errorString = gpxHandler.errorString();
+        return false;
     }
 
-    bool result = false;
-    if (gpxHandler->importData(device)) {
-            QList<QLandmark> landmarks = gpxHandler->waypoints();
+    QList<QLandmark> landmarks = gpxHandler.waypoints();
+    for(int i =0; i < landmarks.count(); ++i) {
+        if (option == QLandmarkManager::AttachSingleCategory)
+            landmarks[i].addCategoryId(categoryId);
 
-            for(int i =0; i < landmarks.count(); ++i) {
-                if (option == QLandmarkManager::AttachSingleCategory)
-                    landmarks[i].addCategoryId(categoryId);
-
-                saveLandmarkHelper(&(landmarks[i]),error, errorString);
-                if (*error != QLandmarkManager::NoError) {
-                    break;
-                }
-            }
-
+        saveLandmarkHelper(&(landmarks[i]),error, errorString);
         if (*error != QLandmarkManager::NoError) {
-            result = false;
-        } else  {
-            foreach(const QLandmark &landmark, landmarks) {
-                if (landmarkIds && landmark.landmarkId().isValid()) {
-                    landmarkIds->append(landmark.landmarkId());
-                }
-            }
-            result = true;
+            if (landmarkIds)
+                landmarkIds->clear();
+            return false;
         }
-    } else {
-        *error = QLandmarkManager::ParsingError;
-        *errorString = gpxHandler->errorString();
-        result = false;
+        if (landmarkIds)
+            landmarkIds->append(landmarks[i].landmarkId());
     }
 
-    if (!queryRun)
-        delete gpxHandler;
-   //the query run will delete it's own gpx handler
-
-    return result;
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+    return true;
 }
 
 bool DatabaseOperations::exportLandmarksLmx(QIODevice *device,
@@ -2694,7 +2678,7 @@ bool DatabaseOperations::exportLandmarksLmx(QIODevice *device,
                         QString *errorString,
                         QueryRun *queryRun) const
 {
-    QLandmarkFileHandlerLmx lmxHandler(this);
+    QLandmarkFileHandlerLmx lmxHandler(queryRun?&(queryRun->isCanceled):0);
 
     QLandmarkFilter filter;
     QList<QLandmark> lms;
@@ -2708,8 +2692,19 @@ bool DatabaseOperations::exportLandmarksLmx(QIODevice *device,
     if (error && *error != QLandmarkManager::NoError)
         return false;
 
+    QList<QLandmarkCategory> categories = this->categories(QList<QLandmarkCategoryId>(),QLandmarkNameSort(),-1,0,error,errorString,true);
+    if (*error != QLandmarkManager::NoError) {
+            return false;
+    }
+
+    QHash<QString,QString> categoryIdNameHash;//local id to name
+    foreach(const QLandmarkCategory &category, categories) {
+            categoryIdNameHash.insert(category.categoryId().localId(),category.name());
+    }
+
     lmxHandler.setTransferOption(option);
     lmxHandler.setLandmarks(lms);
+    lmxHandler.setCategoryIdNameHash(categoryIdNameHash);
 
     bool result = lmxHandler.exportData(device);
 
@@ -2733,7 +2728,7 @@ bool DatabaseOperations::exportLandmarksGpx(QIODevice *device,
                         QString *errorString,
                         QueryRun *queryRun) const
 {
-    QLandmarkFileHandlerGpx gpxHandler;
+    QLandmarkFileHandlerGpx gpxHandler(queryRun?&(queryRun->isCanceled):0);
 
     QList<QLandmarkSortOrder> sortOrders;
     QLandmarkFilter filter;
@@ -2879,16 +2874,12 @@ QueryRun::QueryRun(QLandmarkAbstractRequest *req, const QString &uri, QLandmarkM
       errorMap(QMap<int,QLandmarkManager::Error>()),
       managerUri(uri),
       isCanceled(false),
-      engine(eng),
-      gpxHandler(0)
+      engine(eng)
 {
 };
 
 QueryRun::~QueryRun()
 {
-    if (gpxHandler)
-        delete gpxHandler;
-    gpxHandler = 0;
 }
 
 void QueryRun::run()
@@ -3135,16 +3126,6 @@ void QueryRun::run()
                                                     importRequest->format(), importRequest->transferOption(),
                                                     importRequest->categoryId(),
                                                     &error, &errorString, this, &landmarkIds);
-                if (this->gpxHandler) {
-                    delete gpxHandler;
-                    gpxHandler = 0;
-                }
-
-                if (this->isCanceled) {
-                    error = QLandmarkManager::CancelError;
-                    errorString = "Landmark import request was canceled";
-
-                }
 
                QMutexLocker(&(engine->m_mutex));
                if (engine->m_requestRunHash.contains(request))
@@ -3166,11 +3147,6 @@ void QueryRun::run()
                                                     exportRequest->format(), exportRequest->landmarkIds(),
                                                     exportRequest->transferOption(),
                                                     &error, &errorString);
-
-                if (this->isCanceled) {
-                    error = QLandmarkManager::CancelError;
-                    errorString = "Landmark export request was canceled";
-                }
 
                QMutexLocker(&(engine->m_mutex));
                if (engine->m_requestRunHash.contains(request))

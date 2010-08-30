@@ -95,11 +95,19 @@ public:
     }
 
     // default meta-data keys
+#ifdef Q_QDOC
+    static const QLatin1Constant MetaDataIcon;
+    static const QLatin1Constant MetaDataLabel;
+    static const QLatin1Constant MetaDataSecondLabel;
+    static const QLatin1Constant MetaDataOptionalParameterKeys;
+    static const QLatin1Constant MetaDataMandatoryParameterKeys;
+#else
     Q_DECLARE_LATIN1_CONSTANT(MetaDataIcon, "Icon");
     Q_DECLARE_LATIN1_CONSTANT(MetaDataLabel, "Label");
     Q_DECLARE_LATIN1_CONSTANT(MetaDataSecondLabel, "SecondLabel");
     Q_DECLARE_LATIN1_CONSTANT(MetaDataOptionalParameterKeys, "OptionalParameterKeys");
     Q_DECLARE_LATIN1_CONSTANT(MetaDataMandatoryParameterKeys, "MandatoryParameterKeys");
+#endif
 
 protected:
     // XXX remove this from here and put it in the private class

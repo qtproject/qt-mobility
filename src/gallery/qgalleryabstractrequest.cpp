@@ -80,17 +80,6 @@ void QGalleryAbstractRequestPrivate::_q_finished()
     }
 }
 
-void QGalleryAbstractRequestPrivate::_q_galleryDestroyed()
-{
-    Q_Q(QGalleryAbstractRequest);
-
-    gallery = 0;
-
-    q->clear();
-
-    emit q->supportedChanged();
-}
-
 void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum)
 {
     currentProgress = current;
@@ -224,21 +213,13 @@ QGalleryAbstractRequest::~QGalleryAbstractRequest()
 
 QAbstractGallery *QGalleryAbstractRequest::gallery() const
 {
-    return d_ptr->gallery;
+    return d_ptr->gallery.data();
 }
 
 void QGalleryAbstractRequest::setGallery(QAbstractGallery *gallery)
 {
-    if (d_ptr->gallery != gallery) {
-        if (d_ptr->gallery)
-            disconnect(d_ptr->gallery, SIGNAL(destroyed()), this, SLOT(_q_galleryDestroyed()));
-
+    if (d_ptr->gallery.data() != gallery) {
         d_ptr->gallery = gallery;
-
-        if (d_ptr->gallery)
-            connect(d_ptr->gallery, SIGNAL(destroyed()), this, SLOT(_q_galleryDestroyed()));
-
-        clear();
 
         emit supportedChanged();
     }
@@ -252,7 +233,7 @@ void QGalleryAbstractRequest::setGallery(QAbstractGallery *gallery)
 
 bool QGalleryAbstractRequest::isSupported() const
 {
-    return d_ptr->gallery && d_ptr->gallery->isRequestSupported(d_ptr->type);
+    return d_ptr->gallery && d_ptr->gallery.data()->isRequestSupported(d_ptr->type);
 }
 
 /*!
@@ -359,15 +340,24 @@ void QGalleryAbstractRequest::execute()
     if (!d_ptr->gallery) {
         d_ptr->result = NoGallery;
 
+        if (d_ptr->response) {
+            QScopedPointer<QGalleryAbstractResponse> oldResponse(d_ptr->response.take());
+
+            //Q_UNUSED(oldResponse);
+
+            setResponse(0);
+        }
+
         emit failed(d_ptr->result);
         emit finished(d_ptr->result);
         emit resultChanged();
     } else {
-        QGalleryAbstractResponse *oldResponse = d_ptr->response;
+        QScopedPointer<QGalleryAbstractResponse> oldResponse(d_ptr->response.take());
+
         int oldResult = d_ptr->result;
         State oldState = d_ptr->state;
 
-        d_ptr->response = d_ptr->gallery->createResponse(this);
+        d_ptr->response.reset(d_ptr->gallery.data()->createResponse(this));
 
         if (d_ptr->response) {
             d_ptr->result = d_ptr->response->result();
@@ -375,12 +365,10 @@ void QGalleryAbstractRequest::execute()
             if (d_ptr->result > Succeeded) {
                 d_ptr->state = Inactive;
 
-                delete d_ptr->response;
-                d_ptr->response = 0;
+                d_ptr->response.reset();
 
                 if (oldResponse)
                     setResponse(0);
-
             } else {
                 if (d_ptr->result == NoResult)
                     d_ptr->state = Active;
@@ -389,11 +377,11 @@ void QGalleryAbstractRequest::execute()
                 else
                     d_ptr->state = Inactive;
 
-                connect(d_ptr->response, SIGNAL(finished()), this, SLOT(_q_finished()));
-                connect(d_ptr->response, SIGNAL(progressChanged(int,int)),
+                connect(d_ptr->response.data(), SIGNAL(finished()), this, SLOT(_q_finished()));
+                connect(d_ptr->response.data(), SIGNAL(progressChanged(int,int)),
                         this, SLOT(_q_progressChanged(int,int)));
 
-                setResponse(d_ptr->response);
+                setResponse(d_ptr->response.data());
             }
         } else {
             d_ptr->result = NotSupported;
@@ -403,7 +391,7 @@ void QGalleryAbstractRequest::execute()
                 setResponse(0);
         }
 
-        delete oldResponse;
+        oldResponse.reset();
 
         if (d_ptr->currentProgress != 0 || d_ptr->maximumProgress != 0) {
             d_ptr->currentProgress = 0;
@@ -470,15 +458,14 @@ void QGalleryAbstractRequest::clear()
         bool wasFinished = d_ptr->result != NoResult;
         bool wasActive = d_ptr->state != Inactive;
 
-        QGalleryAbstractResponse *oldResponse = d_ptr->response;
+        QScopedPointer<QGalleryAbstractResponse> oldResponse(d_ptr->response.take());
 
-        d_ptr->response = 0;
         d_ptr->result = NoResult;
         d_ptr->state = Inactive;
 
         setResponse(0);
 
-        delete oldResponse;
+        oldResponse.reset();
 
         if (d_ptr->currentProgress != 0 || d_ptr->maximumProgress != 0) {
             d_ptr->currentProgress = 0;

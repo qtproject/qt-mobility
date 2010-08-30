@@ -28,7 +28,6 @@ class QDeclarativeLandmarkFilter : public QDeclarativeLandmarkFilterBase
     Q_PROPERTY(FilterType type READ type WRITE setType NOTIFY typeChanged)
     Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
     Q_ENUMS(FilterType)
-    Q_ENUMS(Type)
 
 public:
     explicit QDeclarativeLandmarkFilter(QObject* parent = 0);

@@ -71,7 +71,7 @@ public:
     enum Behavior{ExportAll, ExportSubset};//requirement whether we need to export all landmarks given
                                          //or only those that are capable of being exported ie have valid coords.
 
-    QLandmarkFileHandlerGpx();
+    QLandmarkFileHandlerGpx(const volatile bool *cancel = 0);
     ~QLandmarkFileHandlerGpx();
 
     QList<QLandmark> waypoints() const;
@@ -89,11 +89,7 @@ public:
     QString errorString() const;
     QLandmarkManager::Error error();
 
-    void setAsync(bool async);
     void setBehavior(Behavior behavior);
-
-public slots:
-    void cancel();
 
 private:
     bool readGpx();
@@ -119,10 +115,8 @@ private:
 
     QLandmarkManager::Error m_errorCode;
     QString m_errorString;
-    bool m_isAsync;
     Behavior m_behavior;
-public:
-    volatile bool m_isCanceled;
+    volatile const bool *m_cancel;
 };
 
 #endif // #ifndef QLANDMARKGPXHANDLER_H

@@ -89,7 +89,6 @@ public:
     QString managerUri;
     volatile bool isCanceled;
     QLandmarkManagerEngineSqlite *engine;
-    QLandmarkFileHandlerGpx *gpxHandler;
 };
 
 class DatabaseOperations {
