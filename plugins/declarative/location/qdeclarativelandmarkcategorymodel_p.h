@@ -2,6 +2,7 @@
 #define QDECLARATIVELANDMARKCATEGORYMODEL_P_H
 
 #include <qdeclarativelandmark_p.h>
+#include <qdeclarativelandmarkmodel_p.h>
 #include <qdeclarativelandmarkcategory_p.h>
 #include <qdeclarativelandmarkfilters_p.h>
 
@@ -14,14 +15,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeLandmarkCategoryModel: public QAbstractListModel
+class QDeclarativeLandmarkCategoryModel: public QDeclarativeLandmarkAbstractModel
 {
     Q_OBJECT
-
-    Q_PROPERTY(QString error READ error NOTIFY errorChanged)
-    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
-    Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged)
-    Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(QDeclarativeLandmark* landmark READ landmark WRITE setLandmark NOTIFY landmarkChanged)
 
@@ -42,44 +38,28 @@ public:
     QDeclarativeLandmark* landmark() const;
     void setLandmark(QDeclarativeLandmark* landmark);
     int count() const;
-    int limit() const;
-    void setLimit(int limit);
-    int offset() const;
-    void setOffset(int offset);
-    QString error() const;
-    void setAutoUpdate(bool autoUpdate);
-    bool autoUpdate() const;
 
 signals:
-    void errorChanged();
-    void autoUpdateChanged();
-    void limitChanged();
-    void offsetChanged();
     void countChanged();
     void landmarkChanged();
 
 private slots:
-    void update();
     void cancelUpdate();
     void fetchRequestStateChanged(QLandmarkAbstractRequest::State state);
 
 private:
+    Q_INVOKABLE void startUpdate();
     void convertCategoriesToDeclarative();
     void setFetchRange();
     void setFetchFilters();
 
 private:
-    QLandmarkManager* m_manager;
     QLandmarkAbstractRequest* m_fetchRequest;
     // Landmark list received from platform
     QList<QLandmarkCategory> m_categories;
     // Same category list, but as declarative classes
     QMap<QString, QDeclarativeLandmarkCategory*> m_categoryMap;
     QDeclarativeLandmark* m_landmark;
-    QString m_error;
-    bool m_autoUpdate;
-    int m_limit;
-    int m_offset;
 };
 
 QTM_END_NAMESPACE

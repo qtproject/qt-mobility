@@ -9,7 +9,7 @@
 
 
 // Define this to get qDebug messages
-#define QDECLARATIVE_LANDMARK_DEBUG
+// #define QDECLARATIVE_LANDMARK_DEBUG
 
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
 #include <QDebug>
