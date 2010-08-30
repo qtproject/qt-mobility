@@ -1005,7 +1005,7 @@ static const QGalleryItemType qt_galleryItemTypeList[] =
     QT_GALLERY_ITEM_TYPE(Video      , Videos       , video   , Video),
     QT_GALLERY_ITEM_TYPE(Playlist   , Playlists    , playlist, Playlist),
     QT_GALLERY_ITEM_TYPE(Text       , Text         , text    , File),
-    QT_GALLERY_ITEM_TYPE(Text       , Development  , file    , File),
+    QT_GALLERY_ITEM_TYPE(Text       , Development  , text    , File),
     QT_GALLERY_ITEM_TYPE(File       , Other        , file    , File),
 };
 
@@ -1073,8 +1073,10 @@ static const QGalleryItemProperty qt_galleryAlbumIdentity[] =
 
 static const QGalleryItemProperty qt_galleryAlbumPropertyList[] =
 {
-    QT_GALLERY_ITEM_PROPERTY("title" , "Audio:Album"      , String, CanRead | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("artist", "Audio:AlbumArtist", String, CanRead | CanFilter)
+    QT_GALLERY_ITEM_PROPERTY("title"      , "Audio:Album"      , String, CanRead | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("albumTitle" , "Audio:Album"      , String, CanRead | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("artist"     , "Audio:AlbumArtist", String, CanRead | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("albumArtist", "Audio:AlbumArtist", String, CanRead | CanFilter)
 };
 
 static const QGalleryAggregateProperty qt_galleryAlbumAggregateList[] =
@@ -1199,7 +1201,7 @@ QVariant QGalleryTrackerServicePrefixColumn::value(QVector<QVariant>::const_iter
 
     return index != -1
             ? QVariant(itemTypes[index].prefix + row->toString())
-            : QVariant();
+            : QVariant(QLatin1String("file::") + row->toString());
 }
 
 QVariant QGalleryTrackerServiceTypeColumn::value(QVector<QVariant>::const_iterator row) const
@@ -1210,7 +1212,7 @@ QVariant QGalleryTrackerServiceTypeColumn::value(QVector<QVariant>::const_iterat
 
     return index != -1
             ? QVariant(itemTypes[index].itemType)
-            : QVariant();
+            : QVariant(QLatin1String("File"));
 
 }
 
@@ -1897,10 +1899,15 @@ void QGalleryTrackerSchema::populateAggregateArguments(
                     : QGalleryTrackerSortCriteria::Sorted;
         }
 
-        int fieldIndex = identityNames.indexOf(propertyName);
+        const int propertyIndex = properties.indexOfProperty(propertyName);
+        if (propertyIndex >= 0) {
+            const QString field = properties[propertyIndex].field;
 
-        if (fieldIndex >= 0)
+            const int fieldIndex = identityFields.indexOf(field);
+            Q_ASSERT(fieldIndex != -1);
+
             arguments->sortCriteria.append(QGalleryTrackerSortCriteria(fieldIndex, sortFlags));
+        }
     }
 
     arguments->updateMask = qt_galleryAggregateTypeList[m_aggregateIndex].updateMask;
