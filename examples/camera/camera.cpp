@@ -148,6 +148,7 @@ void Camera::keyPressEvent(QKeyEvent * event)
     switch (event->key()) {
 #if QT_VERSION >= 0x040700
     case Qt::Key_CameraFocus:
+        displayViewfinder();
         camera->searchAndLock();
         break;
     case Qt::Key_Camera:
