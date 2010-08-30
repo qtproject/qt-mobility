@@ -893,16 +893,17 @@ void MainWindow::demo1(bool /*checked*/)
 }
 void MainWindow::demo2(bool /*checked*/)
 {
+    const qreal density = 3; // 1 object each n degrees lat/lng
+
     int i = 0;
-    qreal sz = 3;
-    for (qreal lat = -90 + sz; lat < 90 - sz; lat += sz * 3) {
-        for (qreal lng = -180 + sz; lng < 180 - sz; lng += sz * 3) {
-            MVTEST_RECT2(lat - sz, lng - sz, lat + sz, lng + sz);
+    for (qreal lat = -90 + density; lat < 90 - density; lat += density * 3) {
+        for (qreal lng = -180 + density; lng < 180 - density; lng += density * 3) {
+            MVTEST_RECT2(lat - density, lng - density, lat + density, lng + density);
             i++;
         }
     }
-    qDebug("%i items added, %i items total.", i, m_mapWidget->mapObjects().count());
 
+    qDebug("%i items added, %i items total.", i, m_mapWidget->mapObjects().count());
 
     QMessageBox *mb = new QMessageBox(QMessageBox::NoIcon, "MapViewer", QString::number(i) + " items");
     mb->open();
@@ -910,10 +911,11 @@ void MainWindow::demo2(bool /*checked*/)
 }
 void MainWindow::demo3(bool /*checked*/)
 {
+    const qreal density = 10; // 1 cluster each n degrees lat/lng
+    const qreal clusterSize = 2; // clusters extend for +/- n degrees lat/lng
+    const qreal clusterDensity = 0.1*clusterSize; // 1 object each n degrees lat/lng (as part of a cluster)
+
     int i = 0;
-    qreal density = 10;
-    qreal clusterSize = 2;
-    qreal clusterDensity = 0.1*clusterSize;
     for (qreal latm = -90 + density; latm < 90 - density; latm += density * 3) {
         for (qreal lngm = -180 + density; lngm < 180 - density; lngm += density * 3) {
             for (qreal lat = latm-clusterSize+clusterDensity; lat < latm+clusterSize-clusterDensity; lat += clusterDensity * 3) {
@@ -924,8 +926,8 @@ void MainWindow::demo3(bool /*checked*/)
             }
         }
     }
-    qDebug("%i items added, %i items total.", i, m_mapWidget->mapObjects().count());
 
+    qDebug("%i items added, %i items total.", i, m_mapWidget->mapObjects().count());
 
     QMessageBox *mb = new QMessageBox(QMessageBox::NoIcon, "MapViewer", QString::number(i) + " items");
     mb->open();
