@@ -1676,8 +1676,6 @@ void QGalleryTrackerSchema::populateItemArguments(
             compositeTypes.append(compositeProperties[propertyIndex].type);
             arguments->compositeColumns.append(
                     compositeProperties[propertyIndex].createColumn(columns));
-        } else {
-            qWarning("Unknown column: %s", qPrintable(*it));
         }
     }
 
