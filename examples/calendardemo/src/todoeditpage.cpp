@@ -66,10 +66,10 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     QLabel *statusLabel = new QLabel("Status:", this);
     m_statusEdit = new QComboBox(this);
 
-#ifdef Q_WS_X11
-    // Add push buttons for Maemo as it does not support soft keys
+#ifndef Q_OS_SYMBIAN
+    // Add push buttons for non-Symbian platforms as they do not support soft keys
     QHBoxLayout* hbLayout = new QHBoxLayout();
-    QPushButton *okButton = new QPushButton("Ok", this);
+    QPushButton *okButton = new QPushButton("Save", this);
     connect(okButton,SIGNAL(clicked()),this,SLOT(saveClicked()));
     hbLayout->addWidget(okButton);
     QPushButton *cancelButton = new QPushButton("Cancel", this);
@@ -88,7 +88,9 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(m_priorityEdit);
     scrollAreaLayout->addWidget(statusLabel);
     scrollAreaLayout->addWidget(m_statusEdit);
-#ifdef Q_WS_X11
+    scrollAreaLayout->addStretch();
+
+#ifndef Q_OS_SYMBIAN
     scrollAreaLayout->addLayout(hbLayout);
 #endif
 

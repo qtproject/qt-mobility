@@ -53,6 +53,7 @@ class QOrganizerItem;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
+class QComboBox;
 class QCalendarWidget;
 class QLabel;
 class QListWidget;
@@ -90,6 +91,7 @@ protected: // from QWidget
     void showEvent(QShowEvent *event);
 
 private:
+    QComboBox* m_managerComboBox;
     QOrganizerItemManager *m_manager;
     QCalendarWidget *m_calendarWidget;
     QLabel *m_dateLabel;

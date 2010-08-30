@@ -65,7 +65,7 @@ DayPage::DayPage(QWidget *parent)
     mainlayout->addWidget(m_itemList);
     connect(m_itemList, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(itemDoubleClicked(QListWidgetItem *)));
 
-#ifdef Q_WS_X11
+#ifndef Q_OS_SYMBIAN
     // Add push buttons for Maemo as it does not support soft keys
     QHBoxLayout* hbLayout = new QHBoxLayout();
     QPushButton* editEventButton = new QPushButton("Edit",this);

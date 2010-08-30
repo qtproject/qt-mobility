@@ -59,10 +59,10 @@ MonthPage::MonthPage(QWidget *parent)
     // Create widgets
     QFormLayout *mainlayout = new QFormLayout(this);
 
-    QComboBox *comboBox = new QComboBox(this);
-    comboBox->addItems(QOrganizerItemManager::availableManagers());
-    mainlayout->addRow("Backend:", comboBox);
-    connect(comboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(backendChanged(const QString &)));
+    m_managerComboBox = new QComboBox(this);
+    m_managerComboBox->addItems(QOrganizerItemManager::availableManagers());
+    mainlayout->addRow("Backend:", m_managerComboBox);
+    connect(m_managerComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(backendChanged(const QString &)));
 
     m_dateLabel = new QLabel(this);
     m_dateLabel->setAlignment(Qt::AlignCenter);
@@ -85,8 +85,8 @@ MonthPage::MonthPage(QWidget *parent)
     mainlayout->addRow(m_itemList);
     connect(m_itemList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(itemDoubleClicked(QListWidgetItem*)));
 
-#ifdef Q_WS_X11
-    // Add push buttons for Maemo as it does not support soft keys
+#ifndef Q_OS_SYMBIAN
+    // Add push buttons for non-Symbian platforms as they do not support soft keys
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     QPushButton *addEventButton = new QPushButton("Add Event", this);
     buttonLayout->addWidget(addEventButton);
@@ -94,7 +94,7 @@ MonthPage::MonthPage(QWidget *parent)
     QPushButton *addTodoButton = new QPushButton("Add Todo", this);
     buttonLayout->addWidget(addTodoButton);
     connect(addTodoButton,SIGNAL(clicked()),this,SLOT(addNewTodo()));
-    mainlayout->addRow("Options:", buttonLayout);
+    mainlayout->addRow(buttonLayout);
 #endif
 
     setLayout(mainlayout);
@@ -124,7 +124,7 @@ MonthPage::MonthPage(QWidget *parent)
     connect(&m_remReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
             this, SLOT(removeReqStateChanged(QOrganizerItemAbstractRequest::State)));
     
-    backendChanged(comboBox->currentText());
+    backendChanged(m_managerComboBox->currentText());
     refresh();
 }
 
@@ -139,19 +139,19 @@ void MonthPage::backendChanged(const QString &managerName)
     if (m_manager && m_manager->managerName() == managerName)
         return;
 
-    // Out with the old
-    delete m_manager;
-    m_manager = 0;
-
-    // In with the new
+    // Try creating a new manager
     QMap<QString, QString> parameters;
-    m_manager = new QOrganizerItemManager(managerName, parameters, this);
-    if (m_manager->error()) {
-        QMessageBox::information(this, tr("Failed!"), QString("Failed to create manager!\n(error code %1)").arg(m_manager->error()));
+    QOrganizerItemManager* newManager = new QOrganizerItemManager(managerName, parameters, this);
+    if (!newManager || newManager->error()) {
+        QMessageBox::information(this, tr("Failed!"), QString("Failed to create manager"));
+        delete newManager;
+        m_managerComboBox->setCurrentIndex(m_managerComboBox->findText(m_manager->managerName()));
+    } else {
+        // Success: Replace the old one
         delete m_manager;
+        m_manager = newManager;
+        refresh();
     }
-
-    refresh();
 }
 
 void MonthPage::addNewEvent()
