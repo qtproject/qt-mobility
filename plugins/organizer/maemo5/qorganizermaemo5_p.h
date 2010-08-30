@@ -190,7 +190,7 @@ private:
     QOrganizerItem parentOf(CCalendar *cal, QOrganizerItem *occurence, QOrganizerItemManager::Error *error) const;
 
     // internal fetch item
-    QOrganizerItem internalFetchItem(QOrganizerCollectionLocalId collectionId, const QOrganizerItemLocalId &itemId, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error, bool fetchOccurrences) const;
+    QOrganizerItem internalFetchItem(const QOrganizerItemLocalId &itemId, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error, bool fetchOccurrences) const;
 
     // identifying native item as an occurrence
     bool isOccurrence(CCalendar *cal, CComponent *ccomponent, QString typeStr, QOrganizerItemManager::Error *error) const;
