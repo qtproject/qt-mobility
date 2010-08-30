@@ -83,4 +83,6 @@ LIBRARY     	libc.lib
 LIBRARY     	libm.lib
 LIBRARY         efsrv.lib	 // For copying DB file
 
+OPTION ARMCC --visibility_inlines_hidden
+
 STDCPP
