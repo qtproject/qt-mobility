@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,61 +38,13 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <xqaiwdecl.h>
+#include <xqaiwdeclplat.h>
+#include <xqaiwrequest.h>
+#include <xqservicerequest.h>
+#include <email_services_api.h>
 
-#ifndef GEOCODINGTAB_H_
-#define GEOCODINGTAB_H_
-
-#include <QWidget>
-#include <QDialog>
-
-#include <qgeosearchmanager.h>
-
-class QTreeWidget;
-class QLineEdit;
-class QPushButton;
-
-QTM_USE_NAMESPACE
-
-class GeoCodingInputDialog: public QDialog
+int main(int, char**)
 {
-    Q_OBJECT
-public:
-    GeoCodingInputDialog(QString &obloc, QGeoAddress &address, QWidget *parent=0);
-private slots:
-    void accept();
-private:
-    QString &m_oblocStr;
-    QGeoAddress &m_address;
-    QLineEdit *m_obloc;
-    QLineEdit *m_country;
-    QLineEdit *m_state;
-    QLineEdit *m_city;
-    QLineEdit *m_zip;
-    QLineEdit *m_street;
-    QLineEdit *m_streetNumber;
-};
-
-class GeocodingTab: public QWidget
-{
-    Q_OBJECT
-
-public:
-    GeocodingTab(QWidget *parent = 0);
-    ~GeocodingTab();
-
-public slots:
-    void initialize(QGeoSearchManager *searchManager);
-
-private slots:
-    void on_btnRequest_clicked();
-    void replyFinished(QGeoSearchReply* reply);
-    void resultsError(QGeoSearchReply* reply, QGeoSearchReply::Error errorCode, QString errorString);
-
-private:
-    QGeoSearchManager *m_searchManager;
-    QString m_oblocStr;
-    QGeoAddress m_address;
-    QTreeWidget *m_resultTree;
-    QPushButton *m_requestBtn;
-};
-#endif /* ROUTETAB_H_ */
+    return 0;
+}

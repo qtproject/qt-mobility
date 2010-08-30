@@ -118,9 +118,9 @@ void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
     showBoundingBox(routeItem, route.bounds());
 
     QTreeWidgetItem* wayPointsItem = new QTreeWidgetItem(routeItem);
-    QString overviewLabel = "route overview";
+    QString overviewLabel = "overview";
     if (route.path().count() > 100)
-        overviewLabel += " (First 100)";
+        overviewLabel += "(100)";
     wayPointsItem->setText(0, overviewLabel);
     showPoints(wayPointsItem, route.path());
 
@@ -128,7 +128,7 @@ void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
     QTreeWidgetItem* segmentsItem = new QTreeWidgetItem(routeItem);
     QString segmentsLabel = "segments";
     if (segments.length() > 100)
-        segmentsLabel += " (First 100)";
+        segmentsLabel += "(100)";
 
     segmentsItem->setText(0, segmentsLabel);
 
