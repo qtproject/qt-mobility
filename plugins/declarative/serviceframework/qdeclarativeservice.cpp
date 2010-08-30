@@ -54,6 +54,8 @@ QTM_BEGIN_NAMESPACE
     The Service element is part of the \bold{QtMobility.serviceframework 1.1} module and
     provides a client instance of the service object by specifying the Service::interfaceName, 
     Service::serviceName and Service::versionNumber properties.
+
+    \sa ServiceList
 */
 QDeclarativeService::QDeclarativeService()
 : serviceInstance(0)
@@ -132,11 +134,11 @@ QString QDeclarativeService::serviceName() const
 }
 
 /*!
-    \qmlproperty QString Service::interfaceName
+    \qmlproperty QString Service::versionNumber
 
     This property holds the version number of the service that
-    corresponds to QServiceInterfaceDescriptor::majorVersion() and
-    QServiceInterfaceDescriptor::minorVersion(). 
+    represents \i major.minor corresponding to QServiceInterfaceDescriptor::majorVersion() 
+    and QServiceInterfaceDescriptor::minorVersion(). 
 */
 QString QDeclarativeService::versionNumber() const
 {
@@ -147,10 +149,11 @@ QString QDeclarativeService::versionNumber() const
 }
 
 /*!
-    \qmlproperty QObject* Service::serviceObject
+    \qmlproperty QObject * Service::serviceObject
 
     This property holds an instance of the service object which
-    can be used to make metaobject calls to the service. 
+    can be used to make metaobject calls to the service.  This
+    corresponds to QServiceManager::loadInterface().
 */
 QObject* QDeclarativeService::serviceObject()
 {
@@ -176,9 +179,12 @@ QObject* QDeclarativeService::serviceObject()
 
     \ingroup qml-serviceframework
 
-    The Service element is part of the \bold{QtMobility.serviceframework 1.1} module and
-    provides a client instance of the service object by specifying the Service::interfaceName, 
-    Service::serviceName and Service::versionNumber properties.
+    The ServiceList element is part of the \bold{QtMobility.serviceframework 1.1} module and
+    provides a list of Service elements at the interface ServiceList::interfaceName with
+    minimum version match ServiceList::minVersion properties. This list can be used to 
+    select the desired service and instantiate a service object for access via the QMetaObject.
+
+    \sa Service
 */
 QDeclarativeServiceList::QDeclarativeServiceList()
 {
@@ -190,7 +196,7 @@ QDeclarativeServiceList::~QDeclarativeServiceList()
 }
 
 /*!
-    \qmlproperty QString Service::interfaceName
+    \qmlproperty QString ServiceList::interfaceName
 
     This property holds the interface name of the services that
     corresponds to setting QServiceFilter::setInterface(). 
@@ -233,7 +239,7 @@ QString QDeclarativeServiceList::minVersion() const
 }
 
 /*!
-    \qmlproperty QDeclarativeListProperty Service::services
+    \qmlproperty QDeclarativeListProperty ServiceList::services
 
     This property holds the list of \l Service elements that match
     the Service::interfaceName and minimum Service::versionNumber properties. 
