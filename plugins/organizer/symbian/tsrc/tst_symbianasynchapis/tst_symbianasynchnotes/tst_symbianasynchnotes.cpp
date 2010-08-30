@@ -136,6 +136,8 @@ void TestNoteItems::saveItem()
     itemSaveRequest->start();
     // Wait for KTimeToWait millisecs or until request is finished
     itemSaveRequest->waitForFinished(KTimeToWait);
+    // Verify if the request is finished
+    QVERIFY(itemSaveRequest->isFinished());
 }
 
 QList<QOrganizerItem> TestNoteItems::createItems(int noOfItems)
@@ -222,6 +224,8 @@ void TestNoteItems::fetchItem()
     itemFetchRequest->start();
     // Wait for KTimeToWait millisecs or until request is finished
     itemFetchRequest->waitForFinished(KTimeToWait);
+    // Verify if the request is finished
+    QVERIFY(itemFetchRequest->isFinished());
 }
 
 void TestNoteItems::removeItem()
@@ -254,6 +258,8 @@ void TestNoteItems::removeItem()
     itemRemoveRequest->start();
     // Wait for KTimeToWait millisecs or until request is finished
     itemRemoveRequest->waitForFinished(KTimeToWait);
+    // Verify if the request is finished
+    QVERIFY(itemRemoveRequest->isFinished());
 }
 
 void TestNoteItems::saveDetails()
@@ -293,6 +299,8 @@ void TestNoteItems::saveDetails()
     QVERIFY(itemDetailDefSaveRequest->start());
     // Wait for KTimeToWait millisecs or until request is finished
     itemDetailDefSaveRequest->waitForFinished(KTimeToWait);
+    // Verify if the request is finished
+    QVERIFY(itemDetailDefSaveRequest->isFinished());
 }
 
 void TestNoteItems::removeDetails()
@@ -328,6 +336,8 @@ void TestNoteItems::removeDetails()
     itemDetailDefRemoveRequest->setItemType(QOrganizerItemType::TypeNote);
     itemDetailDefRemoveRequest->start();
     itemDetailDefRemoveRequest->waitForFinished(KTimeToWait);
+    // Verify if the request is finished
+    QVERIFY(itemDetailDefRemoveRequest->isFinished());
 }
 
 void TestNoteItems::fetchDetails()
@@ -386,6 +396,8 @@ void TestNoteItems::fetchDetails()
     itemDetailDefFetchRequest->start();
     // Wait for the request to be completed
     itemDetailDefFetchRequest->waitForFinished(KTimeToWait);
+    // Verify if the request is finished
+    QVERIFY(itemDetailDefFetchRequest->isFinished());
 }
 
 void TestNoteItems::requestStateChanged(QOrganizerItemAbstractRequest::State currentState)
