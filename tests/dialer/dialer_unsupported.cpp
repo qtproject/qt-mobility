@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 
-#include "dialer_win.h"
+#include "dialer_unsupported.h"
 
 Dialer::Dialer()
 {
@@ -49,5 +49,9 @@ Dialer::~Dialer()
 }
 
 void Dialer::dial(QString number)
+{
+}
+
+void Dialer::status(QString status)
 {
 }

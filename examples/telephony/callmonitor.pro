@@ -13,8 +13,8 @@ HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
 
-INCLUDEPATH += ../../../../src/telephony
+INCLUDEPATH += ../../src/telephony
 
-include(../../../examples.pri)
+include(../examples.pri)
 CONFIG += mobility
 MOBILITY = telephony

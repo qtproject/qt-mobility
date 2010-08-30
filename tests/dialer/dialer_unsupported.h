@@ -49,6 +49,7 @@ public:
     Dialer();
     ~Dialer();
     void dial(QString number);
+    void status(QString status);
 };
 #endif // DIALER_H
 

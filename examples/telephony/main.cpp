@@ -38,17 +38,17 @@
 **
 ****************************************************************************/
 
-#ifndef DIALER_H
-#define DIALER_H
+#include <QtGui/QApplication>
+#include "mainwindow.h"
 
-#include <QString>
-
-class Dialer
+int main(int argc, char *argv[])
 {
-public:
-    Dialer();
-    ~Dialer();
-    void dial(QString number);
-};
-#endif // DIALER_H
-
+    QApplication a(argc, argv);
+    MainWindow w;
+#if defined(Q_WS_S60)
+    w.showMaximized();
+#else
+    w.show();
+#endif
+    return a.exec();
+}

@@ -38,20 +38,14 @@
 **
 ****************************************************************************/
 
+#include <QtCore/qglobal.h>
+
 #include "dialog.h"
 
-#if defined(Q_WS_MAEMO_5)
-# include "dialer_maemo.h"
-#else
-# ifdef Q_OS_LINUX
+#ifdef Q_OS_LINUX
 #  include "linux/dialer.h"
-# endif
-# ifdef Q_OS_WIN
-#  include "dialer_win.h"
-# endif
-# ifdef Q_OS_SYMBIAN
-#  include "dialer_symbian.h"
-# endif
+#else
+#  include "dialer_unsupported.h"
 #endif
 
 
