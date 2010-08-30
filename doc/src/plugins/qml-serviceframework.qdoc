@@ -39,43 +39,28 @@
 **
 ****************************************************************************/
 
+/*!
+    \group qml-serviceframework
+    \title QML Service Framework Plugin
+    QML Support for the Mobility Project Service Framework API.
+*/
 
 /*!
-    \page qml-plugins.html
-    \group plugins
+    \page qml-serviceframework.html
 
-    \title Mobility QML Plugins
+    \title Service Framework QML Plugin
 
-    \ingroup mobility
+    \brief A QML plugin for the Mobility Project Service Framework API.
 
-    \brief A set of QML compatible plugins for the Mobility Project.
+    \section1 Overview
 
+    The Service Framework API in the Mobility Project gives developers a mechanism for
+    discovering and instantiating arbitrary services. The QML Service Framework Plugin
+    enables accessing services in a very easy and simple manner by allowing users to
+    declare a service or find a list of services using QML.
 
-
-    \section1 List of QML Plugins for Mobility
-    \table 80%
-    \header
-        \o Plugin
-        \o Description
-    \row
-        \o \l {Gallery QML Plugin}{Gallery}
-        \o A QML plugin for the Document Gallery API.
-    \row
-        \o \l {Location QML Plugin}{Location}
-        \o A QML plugin for the Location API.
-    \row
-        \o \l {Multimedia QML Plugin}{Multimedia}
-        \o A QML plugin for the Multimedia API: includes audio and video.
-    \row
-        \o \l {Service Framework QML Plugin}{Service Framework}
-        \o A QML plugin for the Service Framework API for 
-           discovering and connecting to services.
-    \endtable
-
-
-
-
-
-
+    \section1 Elements 
+    \annotatedlist qml-serviceframework
 */
+
 

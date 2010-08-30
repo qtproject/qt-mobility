@@ -100,7 +100,7 @@ Rectangle {
             Rectangle {
                 id: listItem
                 width: serviceListView.width
-                height: 40
+                height: childrenRect.height
                 border.color: "black"
                 border.width: 1
                 opacity: 0.6

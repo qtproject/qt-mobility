@@ -251,10 +251,12 @@ description.
 \section2 XML Format
 
 Services are installed via an XML file which describes the meta data and
-location of the service. The xml file can be described via the following 
+location of the service. The XML file can be described via the following 
 DTD:
 
 \code
+    <!ELEMENT SFW ( service ) >
+    <!ATTLIST SFW version (1.0|1.1) #REQUIRED >
     <!ELEMENT service ( name, filepath | ipcaddress, description?, interface+ ) >
     <!ELEMENT description ( #CDATA ) >
     <!ELEMENT filepath ( #PCDATA ) >
@@ -273,7 +275,14 @@ The elements and attributes have the following meanings:
 \table
     \header
         \o Element \o SubElement \o Description
-   \row
+    \row
+        \o SFW
+        \o
+        \o The service framework XML version tag that encapsulates the service XML. Must provide the 
+           version attribute that follows the \i major.minor notation and must equate to supported
+           Qt Service Framework versions. This means the minimum version is 1.0 however users are
+           recommended to always specify the highest available version.
+    \row
         \o service
         \o 
         \o The \i service tag can contain an arbitrary number of \i interface tags and one description tag.
@@ -346,6 +355,7 @@ An example for a valid XML service description could be the following \i TestSer
 
 \code
     <?xml version="1.0" encoding="utf-8" ?>
+    <SFW version="1.1">
     <service>
         <name>TestService</name>
         <filepath>testserviceplugin</filepath>
@@ -371,6 +381,7 @@ An example for a valid XML service description could be the following \i TestSer
             <customproperty key="key2">value2</customproperty>
         </interface>  
     </service>
+    </SFW>
 \endcode
 
 \section1 Tools for XML Generation
@@ -380,6 +391,10 @@ generating and inspecting service XML files. This makes it easy to enter
 service metadata and interface details and generate the appropriate XML to
 describe the plugin or IPC based service. It can also be used to load and 
 inspect existing service XML files.
+
+Note that the tool will default to the highest known existing Qt Service Framework
+version as the XML version attribute and subsequent saves on loaded files will
+enforce this default version.
 
 Here is a screenshot of the application, loaded with the \i TestService XML
 description provided above.
@@ -451,7 +466,8 @@ Qt Service Framework provides a mechanism for out of process services
 so that clients can remotely load interfaces.  These inter-process 
 services are deployed similarly to local services, using the IPC address
 tag for the XMl description and calling QRemoteServiceClassRegister::registerType()
-to add the service to the remote services manager.  The \l{Echo Client Example}
+to add the service to the remote services manager.  Clients access services
+via the metaobject similarly to in-process services.  The \l{Echo Client Example}
 demonstrates how remote services can be instantiated and used.
 
 Inter-process services are deployed using a variety of different IPC mechanisms
@@ -460,16 +476,23 @@ Symbian, IPC is handled by the Symbian Client-Server Framework whereas for other
 environments services are published using QtDBus if it is available otherwise 
 falls back on QLocalSocket for inter-process communication.
 
-\section2 Local Socket Services
-
 \section2 D-Bus Services
 The QtDBus module is used to provide IPC in correspondance to the Qt Service 
 Framework architecture and provides access to signals, slots, invokable methods
-and properties. A current known limitation for Qt Service Framework using QtDBus
-for IPC is that enumerators cannot be read due to lack of support on D-Bus.
+and properties.  A current known limitation for Qt Service Framework using QtDBus
+for IPC is that enumerators cannot be read due to lack of support on D-Bus.  This
+will be added in future versions once the QtDBus module enables enumerator support.
 
 \section2 Symbian Client-Server Framework
+Symbian IPC services are automatically instantiated if the service is not already 
+running.  Rendezvous support allows server-side processes to be created upon
+client request and every service has a server of its own.
 
+\section2 Local Socket Services
+On platforms that do not provide D-Bus or the Symbian Client-Server Framework, the
+underlying IPC mechanism utilized is a local socket based protocol.  This mechanism
+doesn't currently support rendezvous and requires service processes to be started
+manually.
 
 \section2 Error handling
 
@@ -481,7 +504,6 @@ errorUnrecoverableIPCFault(QService::UnrecoverableIPCError) which the
 client must connect to.  If an error occurs the object must be
 destroyed; no further calls can be made.  The error recovery is left up to
 the client application.
-
 
 \section1 Examples
 
