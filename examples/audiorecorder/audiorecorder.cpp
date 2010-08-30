@@ -54,7 +54,8 @@
 
 AudioRecorder::AudioRecorder(QWidget *parent)
     :  QMainWindow(parent),
-       ui(new Ui::AudioRecorder)
+       ui(new Ui::AudioRecorder),
+       outputLocationSet(false)
 {
     ui->setupUi(this);
 
@@ -159,6 +160,8 @@ void AudioRecorder::toggleRecord()
     if (capture->state() == QMediaRecorder::StoppedState) {
         audiosource->setAudioInput(boxValue(ui->audioDeviceBox).toString());
 
+        if (!outputLocationSet)
+            capture->setOutputLocation(generateAudioFilePath());
 
         QAudioEncoderSettings settings;
         settings.setCodec(boxValue(ui->audioCodecBox).toString());
@@ -189,11 +192,28 @@ void AudioRecorder::togglePause()
 void AudioRecorder::setOutputLocation()
 {
     QString fileName = QFileDialog::getSaveFileName();
-
     capture->setOutputLocation(QUrl(fileName));
+    outputLocationSet = true;
 }
 
 void AudioRecorder::displayErrorMessage()
 {
     ui->statusbar->showMessage(capture->errorString());
+}
+
+QUrl AudioRecorder::generateAudioFilePath()
+{
+    QDir outputDir(QDir::rootPath());
+
+    int lastImage = 0;
+    int fileCount = 0;
+    foreach(QString fileName, outputDir.entryList(QStringList() << "testclip_*")) {
+        int imgNumber = fileName.mid(5, fileName.size()-9).toInt();
+        lastImage = qMax(lastImage, imgNumber);
+        if (outputDir.exists(fileName))
+            fileCount+=1;
+    }
+    lastImage+=fileCount;
+    QUrl location(QDir::toNativeSeparators(outputDir.canonicalPath()+QString("/testclip_%1").arg(lastImage+1,4,10,QLatin1Char('0'))));
+    return location;
 }
