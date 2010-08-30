@@ -8,7 +8,7 @@ symbian {
     SUBDIRS += symbian
 
     ## build symbian-specific unit tests.
-    contains(build_unit_tests, yes):SUBDIRS += symbian/tsrc
+    contains(build_unit_tests, yes):SUBDIRS += symbian/plugin/tsrc
 
     # SIM backend depends on etel MM APIs
     contains(symbiancntsim_enabled, yes) {
