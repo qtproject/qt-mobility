@@ -63,6 +63,13 @@ Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QGalleryFilter)
 Q_DECLARE_METATYPE(QVector<QGalleryTrackerSortCriteria>)
 
+#define QT_FILE_QUERY_ARGUMENTS_COUNT 9
+#define QT_FILE_QUERY_STRING_POSITION 5
+
+#define QT_AGGREGATE_QUERY_ARGUMENTS_COUNT 6
+#define QT_AGGREGATE_QUERY_STRING_POSITION 2
+
+
 bool operator ==(const QGalleryTrackerSortCriteria &left, const QGalleryTrackerSortCriteria &right)
 {
     return left.column == right.column && left.flags == right.flags;
@@ -94,6 +101,10 @@ private Q_SLOTS:
     void prepareValidItemResponse();
     void prepareInvalidItemResponse_data();
     void prepareInvalidItemResponse();
+    void queryResponseRootItem_data();
+    void queryResponseRootItem();
+    void queryResponseFilter_data();
+    void queryResponseFilter();
     void prepareValidItemQueryResponse_data();
     void prepareValidItemQueryResponse();
     void prepareInvalidQueryResponse_data();
@@ -109,10 +120,6 @@ private:
     QGalleryDBusInterfacePointer m_metaDataInterface;
     QGalleryDBusInterfacePointer m_searchInterface;
     QGalleryDBusInterfacePointer m_fileInterface;
-
-    static QGalleryFilter imagesFilter();
-    static const char *imagesFilterRdfq;
-
 };
 
 void tst_QGalleryTrackerSchema::initTestCase()
@@ -295,6 +302,16 @@ void tst_QGalleryTrackerSchema::supportedPropertyNames_data()
             << QLatin1String("rating")
             << QLatin1String("subject")
             << QLatin1String("title"));
+
+    QTest::newRow("Album") << QString::fromLatin1("Album") << (QStringList()
+            << QLatin1String("artist")
+            << QLatin1String("duration")
+            << QLatin1String("title")
+            << QLatin1String("trackCount"));
+
+    QTest::newRow("Turtle")
+            << QString::fromLatin1("Turtle")
+            << QStringList();
 }
 
 void tst_QGalleryTrackerSchema::supportedPropertyNames()
@@ -348,6 +365,10 @@ void tst_QGalleryTrackerSchema::propertyAttributes_data()
     QTest::newRow("File.filePath")
             << QString::fromLatin1("File")
             << QString::fromLatin1("filePath")
+            << (QGalleryProperty::CanRead | QGalleryProperty::CanFilter);
+    QTest::newRow("File.url")
+            << QString::fromLatin1("File")
+            << QString::fromLatin1("url")
             << (QGalleryProperty::CanRead | QGalleryProperty::CanFilter);
     QTest::newRow("Audio.albumTitle")
             << QString::fromLatin1("Audio")
@@ -619,6 +640,812 @@ void tst_QGalleryTrackerSchema::prepareInvalidItemResponse()
     QCOMPARE(schema.prepareItemResponse(&arguments, this, itemId, propertyNames), result);
 }
 
+void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
+{
+    QTest::addColumn<QString>("rootType");
+    QTest::addColumn<QString>("rootItem");
+    QTest::addColumn<QGalleryQueryRequest::Scope>("scope");
+    QTest::addColumn<int>("argumentCount");
+    QTest::addColumn<int>("queryStringIndex");
+    QTest::addColumn<QString>("queryString");
+
+    QTest::newRow("Folder, All File Descendents")
+            << QString::fromLatin1("File")
+            << QString::fromLatin1("folder::/path/to")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:or>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"File:Path\"/>"
+                                "<rdf:String>/path/to</rdf:String>"
+                            "</rdfq:equals>"
+                            "<rdfq:startsWith>"
+                                "<rdfq:Property name=\"File:Path\"/>"
+                                "<rdf:String>/path/to/</rdf:String>"
+                            "</rdfq:startsWith>"
+                        "</rdfq:or>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Folder, Direct File Descendents")
+            << QString::fromLatin1("File")
+            << QString::fromLatin1("folder::/path/to")
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"File:Path\"/>"
+                            "<rdf:String>/path/to</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Album, All Audio Descendents")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("album::Self Titled/Greatest Hits")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:and>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                                "<rdf:String>Self Titled</rdf:String>"
+                            "</rdfq:equals>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:Album\"/>"
+                                "<rdf:String>Greatest Hits</rdf:String>"
+                            "</rdfq:equals>"
+                        "</rdfq:and>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Album, All Audio Descendents, No Album")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("album::/Greatest Hits")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:and>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                                "<rdf:String></rdf:String>"
+                            "</rdfq:equals>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:Album\"/>"
+                                "<rdf:String>Greatest Hits</rdf:String>"
+                            "</rdfq:equals>"
+                        "</rdfq:and>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Album, All Audio Descendents, Album with slash")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("album::Self//Titled/Greatest Hits")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:and>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                                "<rdf:String>Self/Titled</rdf:String>"
+                            "</rdfq:equals>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:Album\"/>"
+                                "<rdf:String>Greatest Hits</rdf:String>"
+                            "</rdfq:equals>"
+                        "</rdfq:and>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Album, Direct Audio Descendents")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("album::Self Titled/Greatest Hits")
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:and>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                                "<rdf:String>Self Titled</rdf:String>"
+                            "</rdfq:equals>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:Album\"/>"
+                                "<rdf:String>Greatest Hits</rdf:String>"
+                            "</rdfq:equals>"
+                        "</rdfq:and>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Album Artist, All Audio Descendents")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("albumArtist::Self Titled")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                            "<rdf:String>Self Titled</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Album Artist, Direct Audio Descendents")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("albumArtist::Self Titled")
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                            "<rdf:String>Self Titled</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Album Artist, All Album Descendents")
+            << QString::fromLatin1("Album")
+            << QString::fromLatin1("albumArtist::Self Titled")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+            << QT_AGGREGATE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                            "<rdf:String>Self Titled</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Album Artist, Direct Album Descendents")
+            << QString::fromLatin1("Album")
+            << QString::fromLatin1("albumArtist::Self Titled")
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+            << QT_AGGREGATE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                            "<rdf:String>Self Titled</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Artist, All Audio Descendents")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("artist::Self Titled")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:Artist\"/>"
+                            "<rdf:String>Self Titled</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Artist, Direct Audio Descendents")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("artist::Self Titled")
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:Artist\"/>"
+                            "<rdf:String>Self Titled</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Artist, All Album Descendents")
+            << QString::fromLatin1("Album")
+            << QString::fromLatin1("artist::Self Titled")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+            << QT_AGGREGATE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:Artist\"/>"
+                            "<rdf:String>Self Titled</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Artist, Direct Album Descendents")
+            << QString::fromLatin1("Album")
+            << QString::fromLatin1("artist::Self Titled")
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+            << QT_AGGREGATE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:Artist\"/>"
+                            "<rdf:String>Self Titled</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Audio Genre, All Audio Descendents")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("audioGenre::Rock")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:Genre\"/>"
+                            "<rdf:String>Rock</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Audio Genre, Direct Audio Descendents")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("audioGenre::Rock")
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:Genre\"/>"
+                            "<rdf:String>Rock</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Audio Genre, All Album Descendents")
+            << QString::fromLatin1("Album")
+            << QString::fromLatin1("audioGenre::Rock")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+            << QT_AGGREGATE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:Genre\"/>"
+                            "<rdf:String>Rock</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Audio Genre, Direct Album Descendents")
+            << QString::fromLatin1("Album")
+            << QString::fromLatin1("audioGenre::Rock")
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+            << QT_AGGREGATE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:Genre\"/>"
+                            "<rdf:String>Rock</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Photo Album, All Image Descendents")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("photoAlbum::Camping")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Image:Album\"/>"
+                            "<rdf:String>Camping</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Photo Album, Direct Image Descendents")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("photoAlbum::Camping")
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Image:Album\"/>"
+                            "<rdf:String>Camping</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+}
+
+void tst_QGalleryTrackerSchema::queryResponseRootItem()
+{
+    QFETCH(QString, rootType);
+    QFETCH(QString, rootItem);
+    QFETCH(QGalleryQueryRequest::Scope, scope);
+    QFETCH(int, argumentCount);
+    QFETCH(int, queryStringIndex);
+    QFETCH(QString, queryString);
+
+    QGalleryTrackerResultSetArguments arguments;
+
+    QGalleryTrackerSchema schema(rootType);
+
+    QCOMPARE(
+            schema.prepareQueryResponse(
+                    &arguments,
+                    this,
+                    scope,
+                    rootItem,
+                    QGalleryFilter(),
+                    QStringList(),
+                    QStringList()),
+            int(QGalleryAbstractRequest::Succeeded));
+
+    QCOMPARE(arguments.queryArguments.count(), argumentCount);
+    QCOMPARE(arguments.queryArguments.at(queryStringIndex), QVariant(queryString));
+}
+
+void tst_QGalleryTrackerSchema::queryResponseFilter_data()
+{
+    QTest::addColumn<QString>("rootType");
+    QTest::addColumn<QString>("rootItem");
+    QTest::addColumn<QGalleryQueryRequest::Scope>("scope");
+    QTest::addColumn<QGalleryFilter>("filter");
+    QTest::addColumn<int>("argumentCount");
+    QTest::addColumn<int>("queryStringIndex");
+    QTest::addColumn<QString>("queryString");
+
+    {
+        QGalleryFilter filter
+                = QDocumentGallery::url == QUrl::fromLocalFile(QLatin1String("/path/to/file.ext"));
+
+        QTest::newRow("File.url == file:///path/to/file.ext")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:and>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Path\"/>"
+                                    "<rdf:String>/path/to</rdf:String>"
+                                "</rdfq:equals>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Name\"/>"
+                                    "<rdf:String>file.ext</rdf:String>"
+                                "</rdfq:equals>"
+                            "</rdfq:and>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::filePath == QLatin1String("/path/to/file.ext");
+
+        QTest::newRow("File.filePath == /path/to/file.ext")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:and>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Path\"/>"
+                                    "<rdf:String>/path/to</rdf:String>"
+                                "</rdfq:equals>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Name\"/>"
+                                    "<rdf:String>file.ext</rdf:String>"
+                                "</rdfq:equals>"
+                            "</rdfq:and>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::fileName == QLatin1String("file.ext");
+
+        QTest::newRow("File.fileName == file.ext")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"File:Name\"/>"
+                                "<rdf:String>file.ext</rdf:String>"
+                            "</rdfq:equals>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String("file."), QGalleryFilter::StartsWith);
+
+        QTest::newRow("File.fileName.startsWith(file.)")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:startsWith>"
+                                "<rdfq:Property name=\"File:Name\"/>"
+                                "<rdf:String>file.</rdf:String>"
+                            "</rdfq:startsWith>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String(".ext"), QGalleryFilter::EndsWith);
+
+        QTest::newRow("File.fileName.endsWith(.ext)")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"File:Name\"/>"
+                                "<rdf:String>*.ext</rdf:String>"
+                            "</rdfq:equals>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String("ext"), QGalleryFilter::Contains);
+
+        QTest::newRow("File.fileName.contains(ext)")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:contains>"
+                                "<rdfq:Property name=\"File:Name\"/>"
+                                "<rdf:String>ext</rdf:String>"
+                            "</rdfq:contains>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String("file*ext"), QGalleryFilter::Wildcard);
+
+        QTest::newRow("File.fileName.wildcard(file*ext")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"File:Name\"/>"
+                                "<rdf:String>file*ext</rdf:String>"
+                            "</rdfq:equals>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QGalleryMetaDataFilter(
+                QDocumentGallery::fileName,
+                QLatin1String("(file|document).ext"),
+                QGalleryFilter::RegExp);
+
+        QTest::newRow("File.fileName.regExp((file|document).ext")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:regex>"
+                                "<rdfq:Property name=\"File:Name\"/>"
+                                "<rdf:String>(file|document).ext</rdf:String>"
+                            "</rdfq:regex>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::width > 1024;
+
+        QTest::newRow("Image.width > 1024")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:greaterThan>"
+                                "<rdfq:Property name=\"Image:Width\"/>"
+                                "<rdf:Integer>1024</rdf:Integer>"
+                            "</rdfq:greaterThan>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::width >= 1024u;
+
+        QTest::newRow("Video.width >= 1024u")
+                << QString::fromLatin1("Video")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:greaterThanEqual>"
+                                "<rdfq:Property name=\"Video:Width\"/>"
+                                "<rdf:Integer>1024</rdf:Integer>"
+                            "</rdfq:greaterThanEqual>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::height < Q_INT64_C(1024);
+
+        QTest::newRow("Image.height < 1024ll")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:lessThan>"
+                                "<rdfq:Property name=\"Image:Height\"/>"
+                                "<rdf:Integer>1024</rdf:Integer>"
+                            "</rdfq:lessThan>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::height <= Q_UINT64_C(1024);
+
+        QTest::newRow("Video.height <= 1024ull")
+                << QString::fromLatin1("Video")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:lessThanEqual>"
+                                "<rdfq:Property name=\"Video:Height\"/>"
+                                "<rdf:Integer>1024</rdf:Integer>"
+                            "</rdfq:lessThanEqual>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter
+                = QDocumentGallery::dateTaken > QDateTime(QDate(2008, 06, 01), QTime(12, 5, 8));
+
+        QTest::newRow("Image.dateTaken > 2008-06-01T12:05:08")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:greaterThan>"
+                                "<rdfq:Property name=\"Image:Date\"/>"
+                                "<rdf:Date>2008-06-01T12:05:08</rdf:Date>"
+                            "</rdfq:greaterThan>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = !(
+                QDocumentGallery::dateTaken > QDateTime(QDate(2008, 06, 01), QTime(12, 5, 8)));
+
+        QTest::newRow("!(Image.dateTaken > 2008-06-01T12:05:08")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:not>"
+                                "<rdfq:greaterThan>"
+                                    "<rdfq:Property name=\"Image:Date\"/>"
+                                    "<rdf:Date>2008-06-01T12:05:08</rdf:Date>"
+                                "</rdfq:greaterThan>"
+                            "</rdfq:not>"
+                        "</rdfq:Condition>");
+
+    } {
+        QGalleryIntersectionFilter filter;
+        filter.append(QDocumentGallery::width > 1024);
+        filter.append(QDocumentGallery::height > 768);
+
+        QTest::newRow("Image.width > 1024 && Image.height > 768")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:and>"
+                                "<rdfq:greaterThan>"
+                                    "<rdfq:Property name=\"Image:Width\"/>"
+                                    "<rdf:Integer>1024</rdf:Integer>"
+                                "</rdfq:greaterThan>"
+                                "<rdfq:greaterThan>"
+                                    "<rdfq:Property name=\"Image:Height\"/>"
+                                    "<rdf:Integer>768</rdf:Integer>"
+                                "</rdfq:greaterThan>"
+                            "</rdfq:and>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryIntersectionFilter filter;
+        filter.append(QDocumentGallery::width > 1024);
+
+        QTest::newRow("Image.width > 1024 (Single intersection item)")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:and>"
+                                "<rdfq:greaterThan>"
+                                    "<rdfq:Property name=\"Image:Width\"/>"
+                                    "<rdf:Integer>1024</rdf:Integer>"
+                                "</rdfq:greaterThan>"
+                            "</rdfq:and>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryUnionFilter filter;
+        filter.append(QDocumentGallery::width < 1920);
+        filter.append(QDocumentGallery::height < 1024);
+
+        QTest::newRow("Image.width < 1920 || Image.height < 1024")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:or>"
+                                "<rdfq:lessThan>"
+                                    "<rdfq:Property name=\"Image:Width\"/>"
+                                    "<rdf:Integer>1920</rdf:Integer>"
+                                "</rdfq:lessThan>"
+                                "<rdfq:lessThan>"
+                                    "<rdfq:Property name=\"Image:Height\"/>"
+                                    "<rdf:Integer>1024</rdf:Integer>"
+                                "</rdfq:lessThan>"
+                            "</rdfq:or>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryUnionFilter filter;
+        filter.append(QDocumentGallery::width < 1920);
+
+        QTest::newRow("Image.width < 1920 (Single union item")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:or>"
+                                "<rdfq:lessThan>"
+                                    "<rdfq:Property name=\"Image:Width\"/>"
+                                    "<rdf:Integer>1920</rdf:Integer>"
+                                "</rdfq:lessThan>"
+                            "</rdfq:or>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::fileName == QLatin1String("file.ext");
+
+        QTest::newRow("File.fileName == file.ext, In folder")
+                << QString::fromLatin1("File")
+                << QString::fromLatin1("folder::/path/to")
+                << QGalleryQueryRequest::DirectDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:and>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Path\"/>"
+                                    "<rdf:String>/path/to</rdf:String>"
+                                "</rdfq:equals>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Name\"/>"
+                                    "<rdf:String>file.ext</rdf:String>"
+                                "</rdfq:equals>"
+                            "</rdfq:and>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::title == QLatin1String("Greatest Hits");
+
+        QTest::newRow("Album.title == Greatest Hits")
+                << QString::fromLatin1("Album")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+                << QT_AGGREGATE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:Album\"/>"
+                                "<rdf:String>Greatest Hits</rdf:String>"
+                            "</rdfq:equals>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::title == QLatin1String("Greatest Hits");
+
+        QTest::newRow("Album.title == Greatest Hits, Belonging to AlbumArtist")
+                << QString::fromLatin1("Album")
+                << QString::fromLatin1("albumArtist::Self Titled")
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+                << QT_AGGREGATE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:and>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                                    "<rdf:String>Self Titled</rdf:String>"
+                                "</rdfq:equals>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"Audio:Album\"/>"
+                                    "<rdf:String>Greatest Hits</rdf:String>"
+                                "</rdfq:equals>"
+                            "</rdfq:and>"
+                        "</rdfq:Condition>");
+    }
+}
+
+void tst_QGalleryTrackerSchema::queryResponseFilter()
+{
+    QFETCH(QString, rootType);
+    QFETCH(QString, rootItem);
+    QFETCH(QGalleryQueryRequest::Scope, scope);
+    QFETCH(QGalleryFilter, filter);
+    QFETCH(int, argumentCount);
+    QFETCH(int, queryStringIndex);
+    QFETCH(QString, queryString);
+
+    QGalleryTrackerResultSetArguments arguments;
+
+    QGalleryTrackerSchema schema(rootType);
+
+    QCOMPARE(
+            schema.prepareQueryResponse(
+                    &arguments,
+                    this,
+                    scope,
+                    rootItem,
+                    filter,
+                    QStringList(),
+                    QStringList()),
+            int(QGalleryAbstractRequest::Succeeded));
+
+    QCOMPARE(arguments.queryArguments.count(), argumentCount);
+    QCOMPARE(arguments.queryArguments.at(queryStringIndex), QVariant(queryString));
+}
+
 void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse_data()
 {
     QTest::addColumn<QString>("rootItem");
@@ -632,9 +1459,7 @@ void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse_data()
     QTest::addColumn<QVariant>("itemUrl");
     QTest::addColumn<QVariant>("itemType");
     QTest::addColumn<int>("updateMask");
-    QTest::addColumn<int>("identityWidth");
     QTest::addColumn<int>("tableWidth");
-    QTest::addColumn<int>("valueOffset");
     QTest::addColumn<int>("compositeOffset");
     QTest::addColumn<QString>("service");
     QTest::addColumn<QStringList>("fieldNames");
@@ -645,7 +1470,6 @@ void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse_data()
     QTest::addColumn<QVector<QGalleryProperty::Attributes> >("propertyAttributes");
     QTest::addColumn<QVector<QVariant::Type> >("propertyTypes");
     QTest::addColumn<QStringList>("values");
-    QTest::addColumn<QVector<QVariant> >("parsedValues");
     QTest::addColumn<QVector<QVariant> >("compositeValues");
     QTest::addColumn<QVector<int> >("aliasColumns");
     QTest::addColumn<QVector<QGalleryTrackerSortCriteria> >("sortCriteria");
@@ -665,9 +1489,7 @@ void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse_data()
             << QVariant(QUrl(QLatin1String("file:///path/to/file.ext"))) // itemUrl
             << QVariant(QLatin1String("File")) // itemType
             << 0xFF // updateMask
-            << 2 // identityWidth
             << 2 // tableWidth
-            << 2 // valueOffset
             << 2 // compositeOffset
             << QString::fromLatin1("Files") // service
             << QStringList()    // fieldNames
@@ -678,7 +1500,6 @@ void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse_data()
             << QVector<QGalleryProperty::Attributes>() // property attributes
             << QVector<QVariant::Type>() // property types
             << QStringList() // row values
-            << QVector<QVariant>() // parsed row values
             << QVector<QVariant>() // composite values
             << QVector<int>() // alias columns
             << QVector<QGalleryTrackerSortCriteria>() // sort order
@@ -688,7 +1509,7 @@ void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse_data()
             << QString() // rootItem
             << QGalleryQueryRequest::AllDescendants // scope
             << QString::fromLatin1("Image") // rootType
-            << imagesFilter() // filter
+            << QGalleryFilter() // filter
             << (QStringList() // propertyNames
                     << QLatin1String("url")
                     << QLatin1String("title")
@@ -702,21 +1523,19 @@ void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse_data()
                     << QLatin1String("Images") // // service
                     << QLatin1String("The Beach") // title
                     << 3 // rating
-                    << QDateTime(QDate(12, 12, 2007), QTime(7, 29))) // dateTaken
+                    << QDateTime(QDate(2007, 12, 12), QTime(7, 29))) // dateTaken
             << QVariant(QLatin1String("image::/path/to/image.png")) // itemId
             << QVariant(QUrl(QLatin1String("file:///path/to/image.png"))) // itemUrl
             << QVariant(QLatin1String("Image")) // itemType
             << 0x10 // updateMask
-            << 2 // identityWidth
             << 5 // tableWidth
-            << 2 // valueOffset
             << 4 // compositeOffset
             << QString::fromLatin1("Images") // service
             << (QStringList() // field names
                     << QLatin1String("Image:Title")
                     << QLatin1String("Image:Rating")
                     << QLatin1String("Image:Date"))
-            << QString::fromLatin1(imagesFilterRdfq) // rdfq query
+            << QString() // rdfq query
             << (QStringList() // sortFieldNames
                     << QLatin1String("Image:Rating")
                     << QLatin1String("Image:Date"))
@@ -737,10 +1556,6 @@ void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse_data()
                     << QLatin1String("The Beach") // title
                     << QLatin1String("3") // rating
                     << QLatin1String("2007-12-12T07:29:00")) // dateTaken
-            << (QVector<QVariant>() // parsed row values
-                    << QLatin1String("The Beach") // title
-                    << 3 // rating
-                    << QDateTime(QDate(2007, 12, 12), QTime(7, 29))) // dateTaken
             << (QVector<QVariant>() // composite values
                     << QVariant(QUrl(QLatin1String("file:///path/to/image.png")))) // url
             << QVector<int>() // alias columns
@@ -748,6 +1563,81 @@ void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse_data()
                 << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted))
                 << (QGalleryTrackerSortCriteria(4, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::ReverseSorted)))
             << QVector<int>(); // resource keys
+
+    QTest::newRow("Music")
+            << QString::fromLatin1("audio::/path/to/music") // rootItem
+            << QGalleryQueryRequest::AllDescendants // scope
+            << QString::fromLatin1("Audio") // rootType
+            << QGalleryFilter() // filter
+            << (QStringList() // propertyNames
+                    << QLatin1String("trackNumber")
+                    << QLatin1String("title")
+                    << QLatin1String("turtle")
+                    << QLatin1String("trackNumber")
+                    << QLatin1String("duration"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("albumArtist")
+                    << QLatin1String("albumTitle")
+                    << QLatin1String("trackNumber"))
+            << (QVector<QVariant>()  // row data
+                    << QLatin1String("/path/to/music/interlude.mp3") // uri
+                    << QLatin1String("Music") // // service
+                    << 4 // trackNumber
+                    << QLatin1String("Interlude") // title
+                    << 63 // duration
+                    << QLatin1String("Self Titled") // albumArtist
+                    << QLatin1String("Greatest Hits")) // albumTitle
+            << QVariant(QLatin1String("audio::/path/to/music/interlude.mp3")) // itemId
+            << QVariant(QUrl(QLatin1String("file:///path/to/music/interlude.mp3"))) // itemUrl
+            << QVariant(QLatin1String("Audio")) // itemType
+            << 0x08 // updateMask
+            << 7 // tableWidth
+            << 5 // compositeOffset
+            << QString::fromLatin1("Music") // service
+            << (QStringList() // field names
+                    << QLatin1String("Audio:TrackNo")
+                    << QLatin1String("Audio:Title")
+                    << QLatin1String("Audio:Duration")
+                    << QLatin1String("Audio:AlbumArtist")
+                    << QLatin1String("Audio:Album"))
+            << QString::fromLatin1( // rdfq query
+                    "<rdfq:Condition>"
+                    "<rdfq:or>"
+                    "<rdfq:equals><rdfq:Property name=\"File:Path\"/><rdf:String>/path/to/music</rdf:String></rdfq:equals>"
+                    "<rdfq:startsWith><rdfq:Property name=\"File:Path\"/><rdf:String>/path/to/music/</rdf:String></rdfq:startsWith>"
+                    "</rdfq:or>"
+                    "</rdfq:Condition>")
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("Audio:AlbumArtist")
+                    << QLatin1String("Audio:Album")
+                    << QLatin1String("Audio:TrackNo"))
+            << false // sort descending
+            << (QStringList() // queried property names
+                << QLatin1String("trackNumber")
+                << QLatin1String("title")
+                << QLatin1String("duration"))
+            << (QVector<QGalleryProperty::Attributes>() // property attributes
+                    << (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanSort | QGalleryProperty::CanFilter)
+                    << (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanSort | QGalleryProperty::CanFilter)
+                    << (QGalleryProperty::CanRead | QGalleryProperty::CanSort | QGalleryProperty::CanFilter))
+            << (QVector<QVariant::Type>() // property types
+                    << QVariant::Int
+                    << QVariant::String
+                    << QVariant::Int)
+            << (QStringList() // row values
+                    << QLatin1String("4") // trackNumber
+                    << QLatin1String("Interlude") // title
+                    << QLatin1String("63") // duration
+                    << QLatin1String("Self Titled") // albumArtist
+                    << QLatin1String("Greatest Hits")) // albumTitle
+            << (QVector<QVariant>()) // composite values
+            << QVector<int>() // alias columns
+            << (QVector<QGalleryTrackerSortCriteria>() // sort order
+                    << (QGalleryTrackerSortCriteria(5, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted))
+                    << (QGalleryTrackerSortCriteria(6, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted))
+                    << (QGalleryTrackerSortCriteria(2, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted)))
+            << (QVector<int>() // resource keys
+                    << 4); // duration
 }
 
 void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse()
@@ -763,9 +1653,7 @@ void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse()
     QFETCH(QVariant, itemUrl);
     QFETCH(QVariant, itemType);
     QFETCH(int, updateMask);
-    QFETCH(int, identityWidth);
     QFETCH(int, tableWidth);
-    QFETCH(int, valueOffset);
     QFETCH(int, compositeOffset);
     QFETCH(QString, service);
     QFETCH(QString, queryString);
@@ -776,7 +1664,6 @@ void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse()
     QFETCH(QVector<QGalleryProperty::Attributes>, propertyAttributes);
     QFETCH(QVector<QVariant::Type>, propertyTypes);
     QFETCH(QStringList, values);
-    QFETCH(QVector<QVariant>, parsedValues);
     QFETCH(QVector<QVariant>, compositeValues);
     QFETCH(QVector<int>, aliasColumns);
     QFETCH(QVector<QGalleryTrackerSortCriteria>, sortCriteria);
@@ -801,9 +1688,9 @@ void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse()
     QCOMPARE(arguments.typeColumn->value(row.constBegin()), itemType);
 
     QCOMPARE(arguments.updateMask, updateMask);
-    QCOMPARE(arguments.identityWidth, identityWidth);
+    QCOMPARE(arguments.identityWidth, 2);
     QCOMPARE(arguments.tableWidth, tableWidth);
-    QCOMPARE(arguments.valueOffset, valueOffset);
+    QCOMPARE(arguments.valueOffset, 2);
     QCOMPARE(arguments.compositeOffset, compositeOffset);
 
     QCOMPARE(arguments.queryInterface, m_searchInterface);
@@ -824,10 +1711,10 @@ void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse()
     QCOMPARE(arguments.propertyAttributes, propertyAttributes);
     QCOMPARE(arguments.propertyTypes, propertyTypes);
 
-    QCOMPARE(values.count(), parsedValues.count()); // Verify test data.
+    QCOMPARE(values.count(), row.count() - 2); // Verify test data.
     QCOMPARE(values.count(), arguments.valueColumns.count());
     for (int i = 0; i < arguments.valueColumns.count(); ++i) {
-        QCOMPARE(arguments.valueColumns.at(i)->toVariant(values.at(i)), parsedValues.at(i));
+        QCOMPARE(arguments.valueColumns.at(i)->toVariant(values.at(i)), row.at(i + 2));
     }
 
     QCOMPARE(compositeValues.count(), arguments.compositeColumns.count());
@@ -901,60 +1788,6 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse()
                     &arguments, this, scope, rootItem, filter, propertyNames, sortPropertyNames),
             result);
 }
-
-QGalleryFilter tst_QGalleryTrackerSchema::imagesFilter()
-{
-    QGalleryIntersectionFilter filter;
-
-    QGalleryUnionFilter unionFilter;
-    unionFilter.append(QGalleryMetaDataFilter(
-            QLatin1String("title"), QLatin1String("watches"), QGalleryFilter::Contains));
-    unionFilter.append(QGalleryMetaDataFilter(
-            QLatin1String("title"), QLatin1String("Bob"), QGalleryFilter::StartsWith));
-    unionFilter.append(QGalleryMetaDataFilter(
-            QLatin1String("title"), QLatin1String("beach"), QGalleryFilter::EndsWith));
-    unionFilter.append(QGalleryMetaDataFilter(
-            QLatin1String("title"), QLatin1String("sun\\w*set"), QGalleryFilter::RegExp));
-    unionFilter.append(QGalleryMetaDataFilter(
-            QLatin1String("title"), QLatin1String("Bob watches * from beach"), QGalleryFilter::Wildcard));
-    filter.append(unionFilter);
-
-    filter.append(QDocumentGallery::width > 1024);
-    filter.append(QDocumentGallery::height >= 768u);
-    filter.append(QDocumentGallery::width < Q_INT64_C(1024000000));
-    filter.append(QDocumentGallery::height <= Q_UINT64_C(76800000));
-
-    filter.append(QDocumentGallery::fNumber > 0.5f);
-    filter.append(!(QDocumentGallery::focalLength < 1.2));
-
-    filter.append(QDocumentGallery::dateTaken < QDateTime(QDate(2008, 4, 12), QTime(4, 30), Qt::UTC));
-    filter.append(QDocumentGallery::lastAccessed < QDate(2010, 1, 2));
-
-    return filter;
-
-}
-
-const char *tst_QGalleryTrackerSchema::imagesFilterRdfq =
-        "<rdfq:Condition>"
-        "<rdfq:and>"
-        "<rdfq:or>"
-        "<rdfq:contains><rdfq:Property name=\"Image:Title\"/><rdf:String>watches</rdf:String></rdfq:contains>"
-        "<rdfq:startsWith><rdfq:Property name=\"Image:Title\"/><rdf:String>Bob</rdf:String></rdfq:startsWith>"
-        "<rdfq:equals><rdfq:Property name=\"Image:Title\"/><rdf:String>*beach</rdf:String></rdfq:equals>"
-        "<rdfq:regex><rdfq:Property name=\"Image:Title\"/><rdf:String>sun\\w*set</rdf:String></rdfq:regex>"
-        "<rdfq:equals><rdfq:Property name=\"Image:Title\"/><rdf:String>Bob watches * from beach</rdf:String></rdfq:equals>"
-        "</rdfq:or>"
-        "<rdfq:greaterThan><rdfq:Property name=\"Image:Width\"/><rdf:Integer>1024</rdf:Integer></rdfq:greaterThan>"
-        "<rdfq:greaterThanEqual><rdfq:Property name=\"Image:Height\"/><rdf:Integer>768</rdf:Integer></rdfq:greaterThanEqual>"
-        "<rdfq:lessThan><rdfq:Property name=\"Image:Width\"/><rdf:Integer>1024000000</rdf:Integer></rdfq:lessThan>"
-        "<rdfq:lessThanEqual><rdfq:Property name=\"Image:Height\"/><rdf:Integer>76800000</rdf:Integer></rdfq:lessThanEqual>"
-        "<rdfq:greaterThan><rdfq:Property name=\"Image:FNumber\"/><rdf:Float>0.5</rdf:Float></rdfq:greaterThan>"
-        "<rdfq:not><rdfq:lessThan><rdfq:Property name=\"Image:FocalLength\"/><rdf:Float>1.2</rdf:Float></rdfq:lessThan></rdfq:not>"
-        "<rdfq:lessThan><rdfq:Property name=\"Image:Date\"/><rdf:Date>2008-04-12T04:30:00</rdf:Date></rdfq:lessThan>"
-        "<rdfq:lessThan><rdfq:Property name=\"File:Accessed\"/><rdf:Date>2010-01-02T00:00:00</rdf:Date></rdfq:lessThan>"
-        "</rdfq:and>"
-        "</rdfq:Condition>";
-
 
 QTEST_MAIN(tst_QGalleryTrackerSchema)
 

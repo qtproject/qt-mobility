@@ -761,7 +761,7 @@ static void qt_writeFileScopeCondition(int *, QXmlStreamWriter *xml, const QStri
     xml->writeAttribute(QLatin1String("name"), QLatin1String("File:Path"));
 
     xml->writeStartElement(QLatin1String("rdf:String"));
-    xml->writeCharacters(itemId.toString());
+    xml->writeCharacters(itemId.toString()  + QLatin1Char('/'));
     xml->writeEndElement();
 
     xml->writeEndElement();
