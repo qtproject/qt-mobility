@@ -101,7 +101,6 @@ headerdirs = ../../src/global \
              ../../plugins/declarative/gallery \
              ../../src/camera \
              ../../src/organizer \
-             $QTDIR/include \
              .
 
 sourcedirs = ../../src/global \
