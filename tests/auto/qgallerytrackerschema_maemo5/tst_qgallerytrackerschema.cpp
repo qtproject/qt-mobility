@@ -114,6 +114,7 @@ private Q_SLOTS:
     void queryResponseFilter_data();
     void queryResponseFilter();
     void queryResponseRootFileItems();
+    void queryResponseRootFileItemsWithFilter();
     void queryResponseValueColumnToVariant_data();
     void queryResponseValueColumnToVariant();
     void queryResponseValueColumnToString_data();
@@ -401,6 +402,10 @@ void tst_QGalleryTrackerSchema::propertyAttributes_data()
             << QString::fromLatin1("Album")
             << QString::fromLatin1("duration")
             << QGalleryProperty::Attributes(QGalleryProperty::CanRead);
+    QTest::newRow("Album.turtle")
+            << QString::fromLatin1("Album")
+            << QString::fromLatin1("turtle")
+            << QGalleryProperty::Attributes();
 }
 
 void tst_QGalleryTrackerSchema::propertyAttributes()
@@ -1331,6 +1336,107 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                     << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted)))
             << (QVector<int>() // resourceKeys
                     << 3);
+
+    // keywords cannot be sorted on.
+    QTest::newRow("File: [fileName, mimeType], [+keywords, +mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("+keywords")
+                    << QLatin1String("+mimeType"))
+            << 4 // tableWidth
+            << 4 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Mime"))
+            << false // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted)))
+            << (QVector<int>() // resourceKeys
+                    << 3);
+
+    QTest::newRow("File: [fileName, mimeType], [-keywords, +mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("-keywords")
+                    << QLatin1String("+mimeType"))
+            << 4 // tableWidth
+            << 4 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Mime"))
+            << false // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted)))
+            << (QVector<int>() // resourceKeys
+                    << 3);
+
+    QTest::newRow("File: [fileName, mimeType], [+keywords, -mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("+keywords")
+                    << QLatin1String("-mimeType"))
+            << 4 // tableWidth
+            << 4 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Mime"))
+            << true // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted)))
+            << (QVector<int>() // resourceKeys
+                    << 3);
+
+    QTest::newRow("File: [fileName, mimeType], [-keywords, -mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("-keywords")
+                    << QLatin1String("-mimeType"))
+            << 4 // tableWidth
+            << 4 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Mime"))
+            << true // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted)))
+            << (QVector<int>() // resourceKeys
+                    << 3);
 }
 
 void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames()
@@ -1406,6 +1512,33 @@ void tst_QGalleryTrackerSchema::queryResponseAggregatePropertyNames_data()
                     << QLatin1String("title")
                     << QLatin1String("trackCount")
                     << QLatin1String("duration"))
+            << QStringList() // sortPropertyNames
+            << 3 // tableWidth
+            << 0 // valueOffset
+            << 3 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("Audio:Genre"))
+            << (QStringList() // aggregateFieldNames
+                    << QLatin1String("*")
+                    << QLatin1String("Audio:Duration"))
+            << (QStringList() // aggregates
+                    << QLatin1String("COUNT")
+                    << QLatin1String("SUM"))
+            << false // sortDescending
+            << (QStringList() // filteredPropertyName
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>());
+
+    QTest::newRow("AudioGenre: [title, trackCount, duration, turtle], []")
+            << QString::fromLatin1("AudioGenre")
+            << (QStringList() // propertyNames
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration")
+                    << QLatin1String("turtle"))
             << QStringList() // sortPropertyNames
             << 3 // tableWidth
             << 0 // valueOffset
@@ -1889,7 +2022,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
     QTest::addColumn<int>("queryStringIndex");
     QTest::addColumn<QString>("queryString");
 
-    QTest::newRow("Folder, All File Descendents")
+    QTest::newRow("Folder, All File Descendants")
             << QString::fromLatin1("File")
             << QString::fromLatin1("folder::/path/to")
             << QGalleryQueryRequest::AllDescendants
@@ -1909,7 +2042,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:or>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Folder, Direct File Descendents")
+    QTest::newRow("Folder, Direct File Descendants")
             << QString::fromLatin1("File")
             << QString::fromLatin1("folder::/path/to")
             << QGalleryQueryRequest::DirectDescendants
@@ -1923,7 +2056,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:equals>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Album, All Audio Descendents")
+    QTest::newRow("Album, All Audio Descendants")
             << QString::fromLatin1("Audio")
             << QString::fromLatin1("album::Self Titled/Greatest Hits")
             << QGalleryQueryRequest::AllDescendants
@@ -1943,7 +2076,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:and>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Album, All Audio Descendents, No Album")
+    QTest::newRow("Album, All Audio Descendants, No Album")
             << QString::fromLatin1("Audio")
             << QString::fromLatin1("album::/Greatest Hits")
             << QGalleryQueryRequest::AllDescendants
@@ -1963,7 +2096,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:and>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Album, All Audio Descendents, Album with slash")
+    QTest::newRow("Album, All Audio Descendants, Album with slash")
             << QString::fromLatin1("Audio")
             << QString::fromLatin1("album::Self//Titled/Greatest Hits")
             << QGalleryQueryRequest::AllDescendants
@@ -1983,7 +2116,27 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:and>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Album, Direct Audio Descendents")
+    QTest::newRow("Album, All Audio Descendants, No album title")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("album::Self Titled/")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:and>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                                "<rdf:String>Self Titled</rdf:String>"
+                            "</rdfq:equals>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:Album\"/>"
+                                "<rdf:String></rdf:String>"
+                            "</rdfq:equals>"
+                        "</rdfq:and>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Album, Direct Audio Descendants")
             << QString::fromLatin1("Audio")
             << QString::fromLatin1("album::Self Titled/Greatest Hits")
             << QGalleryQueryRequest::DirectDescendants
@@ -2003,7 +2156,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:and>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Album Artist, All Audio Descendents")
+    QTest::newRow("Album Artist, All Audio Descendants")
             << QString::fromLatin1("Audio")
             << QString::fromLatin1("albumArtist::Self Titled")
             << QGalleryQueryRequest::AllDescendants
@@ -2017,7 +2170,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:equals>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Album Artist, Direct Audio Descendents")
+    QTest::newRow("Album Artist, Direct Audio Descendants")
             << QString::fromLatin1("Audio")
             << QString::fromLatin1("albumArtist::Self Titled")
             << QGalleryQueryRequest::DirectDescendants
@@ -2031,7 +2184,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:equals>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Album Artist, All Album Descendents")
+    QTest::newRow("Album Artist, All Album Descendants")
             << QString::fromLatin1("Album")
             << QString::fromLatin1("albumArtist::Self Titled")
             << QGalleryQueryRequest::AllDescendants
@@ -2045,7 +2198,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:equals>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Album Artist, Direct Album Descendents")
+    QTest::newRow("Album Artist, Direct Album Descendants")
             << QString::fromLatin1("Album")
             << QString::fromLatin1("albumArtist::Self Titled")
             << QGalleryQueryRequest::DirectDescendants
@@ -2059,7 +2212,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:equals>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Artist, All Audio Descendents")
+    QTest::newRow("Artist, All Audio Descendants")
             << QString::fromLatin1("Audio")
             << QString::fromLatin1("artist::Self Titled")
             << QGalleryQueryRequest::AllDescendants
@@ -2073,7 +2226,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:equals>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Artist, Direct Audio Descendents")
+    QTest::newRow("Artist, Direct Audio Descendants")
             << QString::fromLatin1("Audio")
             << QString::fromLatin1("artist::Self Titled")
             << QGalleryQueryRequest::DirectDescendants
@@ -2087,7 +2240,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:equals>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Artist, All Album Descendents")
+    QTest::newRow("Artist, All Album Descendants")
             << QString::fromLatin1("Album")
             << QString::fromLatin1("artist::Self Titled")
             << QGalleryQueryRequest::AllDescendants
@@ -2101,7 +2254,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:equals>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Artist, Direct Album Descendents")
+    QTest::newRow("Artist, Direct Album Descendants")
             << QString::fromLatin1("Album")
             << QString::fromLatin1("artist::Self Titled")
             << QGalleryQueryRequest::DirectDescendants
@@ -2115,7 +2268,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:equals>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Audio Genre, All Audio Descendents")
+    QTest::newRow("Audio Genre, All Audio Descendants")
             << QString::fromLatin1("Audio")
             << QString::fromLatin1("audioGenre::Rock")
             << QGalleryQueryRequest::AllDescendants
@@ -2129,7 +2282,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:equals>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Audio Genre, Direct Audio Descendents")
+    QTest::newRow("Audio Genre, Direct Audio Descendants")
             << QString::fromLatin1("Audio")
             << QString::fromLatin1("audioGenre::Rock")
             << QGalleryQueryRequest::DirectDescendants
@@ -2143,7 +2296,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:equals>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Audio Genre, All Album Descendents")
+    QTest::newRow("Audio Genre, All Album Descendants")
             << QString::fromLatin1("Album")
             << QString::fromLatin1("audioGenre::Rock")
             << QGalleryQueryRequest::AllDescendants
@@ -2157,7 +2310,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:equals>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Audio Genre, Direct Album Descendents")
+    QTest::newRow("Audio Genre, Direct Album Descendants")
             << QString::fromLatin1("Album")
             << QString::fromLatin1("audioGenre::Rock")
             << QGalleryQueryRequest::DirectDescendants
@@ -2171,7 +2324,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:equals>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Photo Album, All Image Descendents")
+    QTest::newRow("Photo Album, All Image Descendants")
             << QString::fromLatin1("Image")
             << QString::fromLatin1("photoAlbum::Camping")
             << QGalleryQueryRequest::AllDescendants
@@ -2185,8 +2338,8 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                         "</rdfq:equals>"
                     "</rdfq:Condition>");
 
-    QTest::newRow("Photo Album, Direct Image Descendents")
-            << QString::fromLatin1("Audio")
+    QTest::newRow("Photo Album, Direct Image Descendants")
+            << QString::fromLatin1("Image")
             << QString::fromLatin1("photoAlbum::Camping")
             << QGalleryQueryRequest::DirectDescendants
             << QT_FILE_QUERY_ARGUMENTS_COUNT
@@ -2198,6 +2351,30 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                             "<rdf:String>Camping</rdf:String>"
                         "</rdfq:equals>"
                     "</rdfq:Condition>");
+
+    QTest::newRow("No Root Item, All Image Descendants")
+            << QString::fromLatin1("Image")
+            << QString()
+            << QGalleryQueryRequest::AllDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString();
+
+    QTest::newRow("No Root Item, All Album Descendants")
+            << QString::fromLatin1("Album")
+            << QString()
+            << QGalleryQueryRequest::AllDescendants
+            << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+            << QT_AGGREGATE_QUERY_STRING_POSITION
+            << QString();
+
+    QTest::newRow("No Root Item, Direct Album Descendants")
+            << QString::fromLatin1("Album")
+            << QString()
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+            << QT_AGGREGATE_QUERY_STRING_POSITION
+            << QString();
 }
 
 void tst_QGalleryTrackerSchema::queryResponseRootItem()
@@ -2738,6 +2915,30 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:or>"
                         "</rdfq:Condition>");
     } {
+        QGalleryUnionFilter filter;
+
+        QTest::newRow("Image (Empty union filter)")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition/>");
+    } {
+        QGalleryIntersectionFilter filter;
+
+        QTest::newRow("Image (Empty intersection filter)")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition/>");
+    } {
         QGalleryFilter filter = QDocumentGallery::fileName == QLatin1String("file.ext");
 
         QTest::newRow("File.fileName == file.ext, In folder")
@@ -2763,7 +2964,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
     } {
         QGalleryFilter filter = QDocumentGallery::title == QLatin1String("Greatest Hits");
 
-        QTest::newRow("Album.title == Greatest Hits")
+        QTest::newRow("Album.title == Greatest Hits (All)")
                 << QString::fromLatin1("Album")
                 << QString()
                 << QGalleryQueryRequest::AllDescendants
@@ -2780,10 +2981,50 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
     } {
         QGalleryFilter filter = QDocumentGallery::title == QLatin1String("Greatest Hits");
 
-        QTest::newRow("Album.title == Greatest Hits, Belonging to AlbumArtist")
+        QTest::newRow("Album.title == Greatest Hits (Direct)")
+                << QString::fromLatin1("Album")
+                << QString()
+                << QGalleryQueryRequest::DirectDescendants
+                << QGalleryFilter(filter)
+                << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+                << QT_AGGREGATE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:Album\"/>"
+                                "<rdf:String>Greatest Hits</rdf:String>"
+                            "</rdfq:equals>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::title == QLatin1String("Greatest Hits");
+
+        QTest::newRow("Album.title == Greatest Hits, Belonging to AlbumArtist (All)")
                 << QString::fromLatin1("Album")
                 << QString::fromLatin1("albumArtist::Self Titled")
                 << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+                << QT_AGGREGATE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:and>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                                    "<rdf:String>Self Titled</rdf:String>"
+                                "</rdfq:equals>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"Audio:Album\"/>"
+                                    "<rdf:String>Greatest Hits</rdf:String>"
+                                "</rdfq:equals>"
+                            "</rdfq:and>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::title == QLatin1String("Greatest Hits");
+
+        QTest::newRow("Album.title == Greatest Hits, Belonging to AlbumArtist (Direct)")
+                << QString::fromLatin1("Album")
+                << QString::fromLatin1("albumArtist::Self Titled")
+                << QGalleryQueryRequest::DirectDescendants
                 << QGalleryFilter(filter)
                 << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
                 << QT_AGGREGATE_QUERY_STRING_POSITION
@@ -2854,6 +3095,43 @@ void tst_QGalleryTrackerSchema::queryResponseRootFileItems()
                     QGalleryQueryRequest::DirectDescendants,
                     QString(),
                     QGalleryFilter(),
+                    QStringList(),
+                    QStringList()),
+            int(QGalleryAbstractRequest::Succeeded));
+
+    QCOMPARE(arguments.queryArguments.count(), QT_FILE_QUERY_ARGUMENTS_COUNT);
+    QVERIFY(regExp.exactMatch(
+            arguments.queryArguments.at(QT_FILE_QUERY_STRING_POSITION).toString()));
+}
+
+void tst_QGalleryTrackerSchema::queryResponseRootFileItemsWithFilter()
+{
+    QRegExp regExp(QLatin1String(
+            "<rdfq:Condition>"
+                "<rdfq:and>"
+                    "<rdfq:inSet>"
+                        "<rdfq:Property name=\"File:Path\"/>"
+                        "<rdf:String>.*</rdf:String>"
+                    "</rdfq:inSet>"
+                    "<rdfq:equals>"
+                        "<rdfq:Property name=\"File:Name\"/>"
+                        "<rdf:String>file\\.ext</rdf:String>"
+                    "</rdfq:equals>"
+                "</rdfq:and>"
+            "</rdfq:Condition>"));
+    regExp.setMinimal(true);
+
+    QGalleryTrackerResultSetArguments arguments;
+
+    QGalleryTrackerSchema schema(QLatin1String("File"));
+
+    QCOMPARE(
+            schema.prepareQueryResponse(
+                    &arguments,
+                    this,
+                    QGalleryQueryRequest::DirectDescendants,
+                    QString(),
+                    QDocumentGallery::fileName == QLatin1String("file.ext"),
                     QStringList(),
                     QStringList()),
             int(QGalleryAbstractRequest::Succeeded));
