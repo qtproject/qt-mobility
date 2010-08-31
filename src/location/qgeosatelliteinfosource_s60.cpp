@@ -348,7 +348,7 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TIn
             if ((ret == KErrNone) && (temp != NULL)) {
                 temp->setUpdateInterval(interval);
 
-                if  (mRegUpdateAO)
+                if (mRegUpdateAO)
                     delete mRegUpdateAO;
                 mRegUpdateAO = temp;
 
@@ -533,6 +533,11 @@ void CQGeoSatelliteInfoSourceS60::updatePosition(TPositionSatelliteInfo aSatInfo
 
     else if (aError == KErrTimedOut) {
         //request has timed out
+        emit requestTimeout();
+    }
+
+    else {
+        //request has resulted in an error. could be changed to emit error signal when available.
         emit requestTimeout();
     }
 }

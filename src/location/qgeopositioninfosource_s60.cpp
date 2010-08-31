@@ -665,7 +665,7 @@ void CQGeoPositionInfoSourceS60::updatePosition(HPositionGenericInfo *aPosInfo, 
 {
     QGeoPositionInfo  posInfo;
 
-    if (aError == KErrNone) {
+    if (aError == KErrNone && aPosInfo) {
         //fill posUpdate
         TPositionInfo2QGeoPositionInfo(aPosInfo, posInfo);
 
@@ -685,14 +685,7 @@ void CQGeoPositionInfoSourceS60::updatePosition(HPositionGenericInfo *aPosInfo, 
         }
     } else {
         //posiitoning module is unable to return any position information
-        if (mStartUpdates) {
-            if (!mRegularUpdateTimedOut) {
-                mRegularUpdateTimedOut = true;
-                emit updateTimeout();
-            }
-        } else {
-            emit positionUpdated(posInfo);
-        }
+        emit updateTimeout();
     }
 }
 
@@ -709,7 +702,7 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
     TInt index = -1;
     TUint8 bits;
 
-    CQMLBackendAO *temp= NULL;
+    CQMLBackendAO *temp = NULL;
 
     //return if already a request update is pending
     if (mReqUpdateAO && mReqUpdateAO->isRequestPending())
