@@ -43,6 +43,7 @@
 
 #include <maemo5/qgallerytrackerschema_p.h>
 
+#include <qdocumentgallery.h>
 #include <maemo5/qgallerytrackerlistcolumn_p.h>
 #include <maemo5/qgallerytrackerresultset_p.h>
 #include <maemo5/qgallerytrackertyperesultset_p.h>
@@ -61,6 +62,15 @@ Q_DECLARE_METATYPE(QVector<QGalleryProperty::Attributes>)
 Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QGalleryFilter)
 Q_DECLARE_METATYPE(QVector<QGalleryTrackerSortCriteria>)
+
+#define QT_FILE_QUERY_ARGUMENTS_COUNT 9
+#define QT_FILE_QUERY_SERVICE_POSITION 1
+#define QT_FILE_QUERY_STRING_POSITION 5
+
+#define QT_AGGREGATE_QUERY_ARGUMENTS_COUNT 6
+#define QT_AGGREGATE_QUERY_SERVICE_POSITION 0
+#define QT_AGGREGATE_QUERY_STRING_POSITION 2
+
 
 bool operator ==(const QGalleryTrackerSortCriteria &left, const QGalleryTrackerSortCriteria &right)
 {
@@ -93,8 +103,24 @@ private Q_SLOTS:
     void prepareValidItemResponse();
     void prepareInvalidItemResponse_data();
     void prepareInvalidItemResponse();
-    void prepareValidQueryResponse_data();
-    void prepareValidQueryResponse();
+    void queryResponseRootType_data();
+    void queryResponseRootType();
+    void queryResponseFilePropertyNames_data();
+    void queryResponseFilePropertyNames();
+    void queryResponseAggregatePropertyNames_data();
+    void queryResponseAggregatePropertyNames();
+    void queryResponseRootItem_data();
+    void queryResponseRootItem();
+    void queryResponseFilter_data();
+    void queryResponseFilter();
+    void queryResponseValueColumnToVariant_data();
+    void queryResponseValueColumnToVariant();
+    void queryResponseValueColumnToString_data();
+    void queryResponseValueColumnToString();
+    void queryResponseCompositeColumn_data();
+    void queryResponseCompositeColumn();
+    void prepareValidItemQueryResponse_data();
+    void prepareValidItemQueryResponse();
     void prepareInvalidQueryResponse_data();
     void prepareInvalidQueryResponse();
 
@@ -246,6 +272,18 @@ void tst_QGalleryTrackerSchema::serviceUpdateId_data()
     QTest::newRow("Files")
             << QString::fromLatin1("Files")
             << 0x01;
+    QTest::newRow("Other")
+            << QString::fromLatin1("Other")
+            << 0x01;
+    QTest::newRow("Text")
+            << QString::fromLatin1("Text")
+            << 0x80;
+    QTest::newRow("Development")
+            << QString::fromLatin1("Development")
+            << 0x80;
+    QTest::newRow("Turtles")
+            << QString::fromLatin1("Turtles")
+            << 0x01;
 }
 
 void tst_QGalleryTrackerSchema::serviceUpdateId()
@@ -278,6 +316,18 @@ void tst_QGalleryTrackerSchema::supportedPropertyNames_data()
             << QLatin1String("rating")
             << QLatin1String("subject")
             << QLatin1String("title"));
+
+    QTest::newRow("Album") << QString::fromLatin1("Album") << (QStringList()
+            << QLatin1String("artist")
+            << QLatin1String("albumArtist")
+            << QLatin1String("duration")
+            << QLatin1String("title")
+            << QLatin1String("albumTitle")
+            << QLatin1String("trackCount"));
+
+    QTest::newRow("Turtle")
+            << QString::fromLatin1("Turtle")
+            << QStringList();
 }
 
 void tst_QGalleryTrackerSchema::supportedPropertyNames()
@@ -331,6 +381,10 @@ void tst_QGalleryTrackerSchema::propertyAttributes_data()
     QTest::newRow("File.filePath")
             << QString::fromLatin1("File")
             << QString::fromLatin1("filePath")
+            << (QGalleryProperty::CanRead | QGalleryProperty::CanFilter);
+    QTest::newRow("File.url")
+            << QString::fromLatin1("File")
+            << QString::fromLatin1("url")
             << (QGalleryProperty::CanRead | QGalleryProperty::CanFilter);
     QTest::newRow("Audio.albumTitle")
             << QString::fromLatin1("Audio")
@@ -583,6 +637,11 @@ void tst_QGalleryTrackerSchema::prepareInvalidItemResponse_data()
             << QString::fromLatin1("turtle::its/a/turtle")
             << QStringList()
             << int(QGalleryAbstractRequest::InvalidItemError);
+
+    QTest::newRow("Relative file path")
+            << QString::fromLatin1("file::file.ext")
+            << QStringList()
+            << int(QGalleryAbstractRequest::InvalidItemError);
 }
 
 void tst_QGalleryTrackerSchema::prepareInvalidItemResponse()
@@ -597,7 +656,2330 @@ void tst_QGalleryTrackerSchema::prepareInvalidItemResponse()
     QCOMPARE(schema.prepareItemResponse(&arguments, this, itemId, propertyNames), result);
 }
 
-void tst_QGalleryTrackerSchema::prepareValidQueryResponse_data()
+void tst_QGalleryTrackerSchema::queryResponseRootType_data()
+{
+    QTest::addColumn<QString>("rootType");
+    QTest::addColumn<QGalleryDBusInterfacePointer>("queryInterface");
+    QTest::addColumn<QString>("queryMethod");
+    QTest::addColumn<int>("argumentCount");
+    QTest::addColumn<int>("serviceIndex");
+    QTest::addColumn<QString>("service");
+    QTest::addColumn<int>("updateMask");
+    QTest::addColumn<int>("identityWidth");
+    QTest::addColumn<QVector<QVariant> >("rowData");
+    QTest::addColumn<QString>("itemId");
+    QTest::addColumn<QVariant>("itemUrl");
+    QTest::addColumn<QString>("itemType");
+
+    QTest::newRow("File: Files")
+            << QString::fromLatin1("File")
+            << m_searchInterface
+            << QString::fromLatin1("Query")
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_SERVICE_POSITION
+            << QString::fromLatin1("Files")
+            << 0xFF
+            << 2
+            << (QVector<QVariant>()
+                    << QLatin1String("/path/to/file.ext")
+                    << QLatin1String("Files"))
+            << QString::fromLatin1("file::/path/to/file.ext")
+            << QVariant(QUrl(QLatin1String("file:///path/to/file.ext")))
+            << QString::fromLatin1("File");
+
+    QTest::newRow("File: Images")
+            << QString::fromLatin1("File")
+            << m_searchInterface
+            << QString::fromLatin1("Query")
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_SERVICE_POSITION
+            << QString::fromLatin1("Files")
+            << 0xFF
+            << 2
+            << (QVector<QVariant>()
+                    << QLatin1String("/path/to/image.png")
+                    << QLatin1String("Images"))
+            << QString::fromLatin1("image::/path/to/image.png")
+            << QVariant(QUrl(QLatin1String("file:///path/to/image.png")))
+            << QString::fromLatin1("Image");
+
+    QTest::newRow("File: Turtles")
+            << QString::fromLatin1("File")
+            << m_searchInterface
+            << QString::fromLatin1("Query")
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_SERVICE_POSITION
+            << QString::fromLatin1("Files")
+            << 0xFF
+            << 2
+            << (QVector<QVariant>()
+                    << QLatin1String("/path/to/turtle.ttl")
+                    << QLatin1String("Turtles"))
+            << QString::fromLatin1("file::/path/to/turtle.ttl")
+            << QVariant(QUrl(QLatin1String("file:///path/to/turtle.ttl")))
+            << QString::fromLatin1("File");
+
+    QTest::newRow("Text: Text")
+            << QString::fromLatin1("Text")
+            << m_searchInterface
+            << QString::fromLatin1("Query")
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_SERVICE_POSITION
+            << QString::fromLatin1("Text")
+            << 0x80
+            << 2
+            << (QVector<QVariant>()
+                    << QLatin1String("/path/to/text.txt")
+                    << QLatin1String("Text"))
+            << QString::fromLatin1("text::/path/to/text.txt")
+            << QVariant(QUrl(QLatin1String("file:///path/to/text.txt")))
+            << QString::fromLatin1("Text");
+
+    QTest::newRow("Text: Development")
+            << QString::fromLatin1("Text")
+            << m_searchInterface
+            << QString::fromLatin1("Query")
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_SERVICE_POSITION
+            << QString::fromLatin1("Text")
+            << 0x80
+            << 2
+            << (QVector<QVariant>()
+                    << QLatin1String("/path/to/code.cpp")
+                    << QLatin1String("Development"))
+            << QString::fromLatin1("text::/path/to/code.cpp")
+            << QVariant(QUrl(QLatin1String("file:///path/to/code.cpp")))
+            << QString::fromLatin1("Text");
+
+    QTest::newRow("Artist")
+            << QString::fromLatin1("Artist")
+            << m_metaDataInterface
+            << QString::fromLatin1("GetUniqueValuesWithAggregates")
+            << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+            << QT_AGGREGATE_QUERY_SERVICE_POSITION
+            << QString::fromLatin1("Music")
+            << 0x08
+            << 1
+            << (QVector<QVariant>()
+                    << QLatin1String("Self Titled"))
+            << QString::fromLatin1("artist::Self Titled")
+            << QVariant()
+            << QString::fromLatin1("Artist");
+
+    QTest::newRow("Album")
+            << QString::fromLatin1("Album")
+            << m_metaDataInterface
+            << QString::fromLatin1("GetUniqueValuesWithAggregates")
+            << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+            << QT_AGGREGATE_QUERY_SERVICE_POSITION
+            << QString::fromLatin1("Music")
+            << 0x08
+            << 2
+            << (QVector<QVariant>()
+                << QLatin1String("Self Titled")
+                << QLatin1String("Greatest Hits"))
+            << QString::fromLatin1("album::Self Titled/Greatest Hits")
+            << QVariant()
+            << QString::fromLatin1("Album");
+
+    QTest::newRow("Album: No artist")
+            << QString::fromLatin1("Album")
+            << m_metaDataInterface
+            << QString::fromLatin1("GetUniqueValuesWithAggregates")
+            << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+            << QT_AGGREGATE_QUERY_SERVICE_POSITION
+            << QString::fromLatin1("Music")
+            << 0x08
+            << 2
+            << (QVector<QVariant>()
+                << QVariant()
+                << QLatin1String("Greatest Hits"))
+            << QString::fromLatin1("album::/Greatest Hits")
+            << QVariant()
+            << QString::fromLatin1("Album");
+
+    QTest::newRow("Album: Artist with slash")
+            << QString::fromLatin1("Album")
+            << m_metaDataInterface
+            << QString::fromLatin1("GetUniqueValuesWithAggregates")
+            << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+            << QT_AGGREGATE_QUERY_SERVICE_POSITION
+            << QString::fromLatin1("Music")
+            << 0x08
+            << 2
+            << (QVector<QVariant>()
+                << QLatin1String("Self/Titled")
+                << QLatin1String("Greatest Hits"))
+            << QString::fromLatin1("album::Self//Titled/Greatest Hits")
+            << QVariant()
+            << QString::fromLatin1("Album");
+}
+
+void tst_QGalleryTrackerSchema::queryResponseRootType()
+{
+    QFETCH(QString, rootType);
+    QFETCH(QGalleryDBusInterfacePointer, queryInterface);
+    QFETCH(QString, queryMethod);
+    QFETCH(int, argumentCount);
+    QFETCH(int, serviceIndex);
+    QFETCH(QString, service);
+    QFETCH(int, updateMask);
+    QFETCH(int, identityWidth);
+    QFETCH(QVector<QVariant>, rowData);
+    QFETCH(QString, itemId);
+    QFETCH(QVariant, itemUrl);
+    QFETCH(QString, itemType);
+
+    QGalleryTrackerResultSetArguments arguments;
+
+    QGalleryTrackerSchema schema(rootType);
+
+    QCOMPARE(
+            schema.prepareQueryResponse(
+                    &arguments,
+                    this,
+                    QGalleryQueryRequest::AllDescendants,
+                    QString(),
+                    QGalleryFilter(),
+                    QStringList(),
+                    QStringList()),
+            int(QGalleryAbstractRequest::Succeeded));
+
+    QCOMPARE(arguments.queryInterface, queryInterface);
+    QCOMPARE(arguments.queryMethod, queryMethod);
+
+    QCOMPARE(arguments.queryArguments.count(), argumentCount);
+    QCOMPARE(arguments.queryArguments.at(serviceIndex), QVariant(service));
+
+    QCOMPARE(arguments.updateMask, updateMask);
+    QCOMPARE(arguments.identityWidth, identityWidth);
+
+    QVERIFY(arguments.idColumn != 0);
+    QCOMPARE(arguments.idColumn->value(rowData.constBegin()), QVariant(itemId));
+
+    QVERIFY(arguments.urlColumn != 0);
+    QCOMPARE(arguments.urlColumn->value(rowData.constBegin()), itemUrl);
+
+    QVERIFY(arguments.typeColumn != 0);
+    QCOMPARE(arguments.typeColumn->value(rowData.constBegin()), QVariant(itemType));
+}
+
+void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
+{
+    QTest::addColumn<QString>("rootType");
+    QTest::addColumn<QStringList>("propertyNames");
+    QTest::addColumn<QStringList>("sortPropertyNames");
+    QTest::addColumn<int>("tableWidth");
+    QTest::addColumn<int>("compositeOffset");
+    QTest::addColumn<QStringList>("fieldNames");
+    QTest::addColumn<QStringList>("sortFieldNames");
+    QTest::addColumn<bool>("sortDescending");
+    QTest::addColumn<QStringList>("filteredPropertyNames");
+    QTest::addColumn<QVector<int> >("aliasColumns");
+    QTest::addColumn<QVector<QGalleryTrackerSortCriteria> >("sortCriteria");
+    QTest::addColumn<QVector<int> >("resourceKeys");
+
+    QTest::newRow("File: [fileName, mimeType], []")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << QStringList() // sortPropertyNames
+            << 4 // tableWidth
+            << 4 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << QStringList() // sortFieldNames
+            << false // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << QVector<int>() // aliasColumns
+            << QVector<QGalleryTrackerSortCriteria>() // sortCriteria
+            << (QVector<int>() // resourceKeys
+                    << 3);
+
+    QTest::newRow("File: [turtle, mimeType], []")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("turtle")
+                    << QLatin1String("mimeType"))
+            << QStringList() // sortPropertyNames
+            << 3 // tableWidth
+            << 3 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Mime"))
+            << QStringList() // sortFieldNames
+            << false // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("mimeType"))
+            << QVector<int>() // aliasColumns
+            << QVector<QGalleryTrackerSortCriteria>() // sortCriteria
+            << (QVector<int>() // resourceKeys
+                    << 2);
+
+    QTest::newRow("File: [fileName, mimeType], [fileName, mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << 4 // tableWidth
+            << 4 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << false // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>() // sortCriteria
+                    << (QGalleryTrackerSortCriteria(2, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted))
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted)))
+            << (QVector<int>() // resourceKeys
+                    << 3);
+
+    QTest::newRow("File: [fileName, mimeType], [fileName, -mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("-mimeType"))
+            << 4 // tableWidth
+            << 4 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << false // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>() // sortCriteria
+                    << (QGalleryTrackerSortCriteria(2, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted))
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::ReverseSorted)))
+            << (QVector<int>() // resourceKeys
+                    << 3);
+
+    QTest::newRow("File: [fileName, mimeType], [-fileName, +mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("-fileName")
+                    << QLatin1String("+mimeType"))
+            << 4 // tableWidth
+            << 4 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << true // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(2, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted))
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::ReverseSorted)))
+            << (QVector<int>() // resourceKeys
+                    << 3);
+
+    QTest::newRow("File: [fileName, mimeType], [-fileName, -mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("-fileName")
+                    << QLatin1String("-mimeType"))
+            << 4 // tableWidth
+            << 4 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << true // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(2, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted))
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted)))
+            << (QVector<int>() // resourceKeys
+                    << 3);
+
+    QTest::newRow("File: [fileName], [fileName, mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << 4 // tableWidth
+            << 3 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << false // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>() // sortCriteria
+                    << (QGalleryTrackerSortCriteria(2, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted))
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted)))
+            << QVector<int>(); // resourceKeys
+
+    QTest::newRow("File: [fileName], [fileName, -mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("-mimeType"))
+            << 4 // tableWidth
+            << 3 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << false // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>() // sortCriteria
+                    << (QGalleryTrackerSortCriteria(2, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted))
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::ReverseSorted)))
+            << QVector<int>(); // resourceKeys
+
+    QTest::newRow("File: [fileName], [-fileName, +mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("-fileName")
+                    << QLatin1String("+mimeType"))
+            << 4 // tableWidth
+            << 3 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << true // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(2, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted))
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::ReverseSorted)))
+            << QVector<int>(); // resourceKeys
+
+    QTest::newRow("File: [fileName], [-fileName, -mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("-fileName")
+                    << QLatin1String("-mimeType"))
+            << 4 // tableWidth
+            << 3 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << true // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(2, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted))
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted)))
+            << QVector<int>(); // resourceKeys
+
+    // turtle is an non-existent property.
+    QTest::newRow("File: [fileName, mimeType], [+turtle, +mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("+turtle")
+                    << QLatin1String("+mimeType"))
+            << 4 // tableWidth
+            << 4 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Mime"))
+            << false // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted)))
+            << (QVector<int>() // resourceKeys
+                    << 3);
+
+    QTest::newRow("File: [fileName, mimeType], [-turtle, +mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("-turtle")
+                    << QLatin1String("+mimeType"))
+            << 4 // tableWidth
+            << 4 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Mime"))
+            << false // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted)))
+            << (QVector<int>() // resourceKeys
+                    << 3);
+
+    QTest::newRow("File: [fileName, mimeType], [+turtle, -mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("+turtle")
+                    << QLatin1String("-mimeType"))
+            << 4 // tableWidth
+            << 4 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Mime"))
+            << true // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted)))
+            << (QVector<int>() // resourceKeys
+                    << 3);
+
+    QTest::newRow("File: [fileName, mimeType], [-turtle, -mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("-turtle")
+                    << QLatin1String("-mimeType"))
+            << 4 // tableWidth
+            << 4 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Mime"))
+            << true // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted)))
+            << (QVector<int>() // resourceKeys
+                    << 3);
+
+    // url cannot be sorted on.
+    QTest::newRow("File: [fileName, mimeType], [+url, +mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("+url")
+                    << QLatin1String("+mimeType"))
+            << 4 // tableWidth
+            << 4 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Mime"))
+            << false // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted)))
+            << (QVector<int>() // resourceKeys
+                    << 3);
+
+    QTest::newRow("File: [fileName, mimeType], [-url, +mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("-url")
+                    << QLatin1String("+mimeType"))
+            << 4 // tableWidth
+            << 4 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Mime"))
+            << false // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted)))
+            << (QVector<int>() // resourceKeys
+                    << 3);
+
+    QTest::newRow("File: [fileName, mimeType], [+url, -mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("+url")
+                    << QLatin1String("-mimeType"))
+            << 4 // tableWidth
+            << 4 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Mime"))
+            << true // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted)))
+            << (QVector<int>() // resourceKeys
+                    << 3);
+
+    QTest::newRow("File: [fileName, mimeType], [-url, -mimeType]")
+            << QString::fromLatin1("File") // rootType
+            << (QStringList() // propertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("-url")
+                    << QLatin1String("-mimeType"))
+            << 4 // tableWidth
+            << 4 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("File:Name")
+                    << QLatin1String("File:Mime"))
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("File:Mime"))
+            << true // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("fileName")
+                    << QLatin1String("mimeType"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted)))
+            << (QVector<int>() // resourceKeys
+                    << 3);
+}
+
+void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames()
+{
+    QFETCH(QString, rootType);
+    QFETCH(QStringList, propertyNames);
+    QFETCH(QStringList, sortPropertyNames);
+    QFETCH(int, tableWidth);
+    QFETCH(int, compositeOffset);
+    QFETCH(QStringList, sortFieldNames);
+    QFETCH(bool, sortDescending);
+    QFETCH(QStringList, filteredPropertyNames);
+    QFETCH(QStringList, fieldNames);
+    QFETCH(QVector<int>, aliasColumns);
+    QFETCH(QVector<QGalleryTrackerSortCriteria>, sortCriteria);
+    QFETCH(QVector<int>, resourceKeys);
+
+    QGalleryTrackerResultSetArguments arguments;
+
+    QGalleryTrackerSchema schema(rootType);
+
+    QCOMPARE(
+            schema.prepareQueryResponse(
+                    &arguments,
+                    this,
+                    QGalleryQueryRequest::AllDescendants,
+                    QString(),
+                    QGalleryFilter(),
+                    propertyNames,
+                    sortPropertyNames),
+            int(QGalleryAbstractRequest::Succeeded));
+
+    QCOMPARE(arguments.tableWidth, tableWidth);
+    QCOMPARE(arguments.valueOffset, 2);
+    QCOMPARE(arguments.compositeOffset, compositeOffset);
+
+    QCOMPARE(arguments.queryArguments.count(), 9);
+    QCOMPARE(arguments.queryArguments.at(0), QVariant(0u));
+    QCOMPARE(arguments.queryArguments.at(2), QVariant(fieldNames));
+    QCOMPARE(arguments.queryArguments.at(3), QVariant(QString()));
+    QCOMPARE(arguments.queryArguments.at(4), QVariant(QStringList()));
+    QCOMPARE(arguments.queryArguments.at(6), QVariant(false));
+    QCOMPARE(arguments.queryArguments.at(7), QVariant(sortFieldNames));
+    QCOMPARE(arguments.queryArguments.at(8), QVariant(sortDescending));
+
+    QCOMPARE(arguments.propertyNames, filteredPropertyNames);
+    QCOMPARE(arguments.fieldNames, fieldNames);
+
+    QCOMPARE(arguments.aliasColumns, aliasColumns);
+    QCOMPARE(arguments.sortCriteria, sortCriteria);
+    QCOMPARE(arguments.resourceKeys, resourceKeys);
+}
+
+void tst_QGalleryTrackerSchema::queryResponseAggregatePropertyNames_data()
+{
+    QTest::addColumn<QString>("rootType");
+    QTest::addColumn<QStringList>("propertyNames");
+    QTest::addColumn<QStringList>("sortPropertyNames");
+    QTest::addColumn<int>("tableWidth");
+    QTest::addColumn<int>("valueOffset");
+    QTest::addColumn<int>("compositeOffset");
+    QTest::addColumn<QStringList>("fieldNames");
+    QTest::addColumn<QStringList>("aggregateFieldNames");
+    QTest::addColumn<QStringList>("aggregates");
+    QTest::addColumn<bool>("sortDescending");
+    QTest::addColumn<QStringList>("filteredPropertyNames");
+    QTest::addColumn<QVector<int> >("aliasColumns");
+    QTest::addColumn<QVector<QGalleryTrackerSortCriteria> >("sortCriteria");
+
+    QTest::newRow("AudioGenre: [title, trackCount, duration], []")
+            << QString::fromLatin1("AudioGenre")
+            << (QStringList() // propertyNames
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration"))
+            << QStringList() // sortPropertyNames
+            << 3 // tableWidth
+            << 0 // valueOffset
+            << 3 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("Audio:Genre"))
+            << (QStringList() // aggregateFieldNames
+                    << QLatin1String("*")
+                    << QLatin1String("Audio:Duration"))
+            << (QStringList() // aggregates
+                    << QLatin1String("COUNT")
+                    << QLatin1String("SUM"))
+            << false // sortDescending
+            << (QStringList() // filteredPropertyName
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>());
+
+    QTest::newRow("AudioGenre: [genre, trackCount, duration], []")
+            << QString::fromLatin1("AudioGenre")
+            << (QStringList() // propertyNames
+                    << QLatin1String("genre")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration"))
+            << QStringList() // sortPropertyNames
+            << 3 // tableWidth
+            << 0 // valueOffset
+            << 3 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("Audio:Genre"))
+            << (QStringList() // aggregateFieldNames
+                    << QLatin1String("*")
+                    << QLatin1String("Audio:Duration"))
+            << (QStringList() // aggregates
+                    << QLatin1String("COUNT")
+                    << QLatin1String("SUM"))
+            << false // sortDescending
+            << (QStringList() // filteredPropertyName
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration")
+                    << QLatin1String("genre"))
+            << (QVector<int>() // aliasColumns
+                    << 0)
+            << (QVector<QGalleryTrackerSortCriteria>());
+
+    QTest::newRow("AudioGenre: [trackCount, duration, title], []")
+            << QString::fromLatin1("AudioGenre")
+            << (QStringList() // propertyNames
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration")
+                    << QLatin1String("title"))
+            << QStringList() // sortPropertyNames
+            << 3 // tableWidth
+            << 0 // valueOffset
+            << 3 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("Audio:Genre"))
+            << (QStringList() // aggregateFieldNames
+                    << QLatin1String("*")
+                    << QLatin1String("Audio:Duration"))
+            << (QStringList() // aggregates
+                    << QLatin1String("COUNT")
+                    << QLatin1String("SUM"))
+            << false // sortDescending
+            << (QStringList() // filteredPropertyName
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>());
+
+    QTest::newRow("AudioGenre: [genre, trackCount, duration, title], []")
+            << QString::fromLatin1("AudioGenre")
+            << (QStringList() // propertyNames
+                    << QLatin1String("genre")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration")
+                    << QLatin1String("title"))
+            << QStringList() // sortPropertyNames
+            << 3 // tableWidth
+            << 0 // valueOffset
+            << 3 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("Audio:Genre"))
+            << (QStringList() // aggregateFieldNames
+                    << QLatin1String("*")
+                    << QLatin1String("Audio:Duration"))
+            << (QStringList() // aggregates
+                    << QLatin1String("COUNT")
+                    << QLatin1String("SUM"))
+            << false // sortDescending
+            << (QStringList() // filteredPropertyName
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration")
+                    << QLatin1String("genre"))
+            << (QVector<int>() // aliasColumns
+                    << 0)
+            << (QVector<QGalleryTrackerSortCriteria>());
+
+    QTest::newRow("AudioGenre: [title, trackCount, duration], [title]")
+            << QString::fromLatin1("AudioGenre")
+            << (QStringList() // propertyNames
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("title"))
+            << 3 // tableWidth
+            << 0 // valueOffset
+            << 3 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("Audio:Genre"))
+            << (QStringList() // aggregateFieldNames
+                    << QLatin1String("*")
+                    << QLatin1String("Audio:Duration"))
+            << (QStringList() // aggregates
+                    << QLatin1String("COUNT")
+                    << QLatin1String("SUM"))
+            << false // sortDescending
+            << (QStringList() // filteredPropertyName
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(0, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted)));
+
+    QTest::newRow("AudioGenre: [title, trackCount, duration], [+title]")
+            << QString::fromLatin1("AudioGenre")
+            << (QStringList() // propertyNames
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("+title"))
+            << 3 // tableWidth
+            << 0 // valueOffset
+            << 3 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("Audio:Genre"))
+            << (QStringList() // aggregateFieldNames
+                    << QLatin1String("*")
+                    << QLatin1String("Audio:Duration"))
+            << (QStringList() // aggregates
+                    << QLatin1String("COUNT")
+                    << QLatin1String("SUM"))
+            << false // sortDescending
+            << (QStringList() // filteredPropertyName
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(0, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted)));
+
+    QTest::newRow("AudioGenre: [title, trackCount, duration], [-title]")
+            << QString::fromLatin1("AudioGenre")
+            << (QStringList() // propertyNames
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("-title"))
+            << 3 // tableWidth
+            << 0 // valueOffset
+            << 3 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("Audio:Genre"))
+            << (QStringList() // aggregateFieldNames
+                    << QLatin1String("*")
+                    << QLatin1String("Audio:Duration"))
+            << (QStringList() // aggregates
+                    << QLatin1String("COUNT")
+                    << QLatin1String("SUM"))
+            << true // sortDescending
+            << (QStringList() // filteredPropertyName
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(0, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted)));
+
+
+    QTest::newRow("AudioGenre: [title, trackCount, duration], [+title, trackCount]")
+            << QString::fromLatin1("AudioGenre")
+            << (QStringList() // propertyNames
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("+title")
+                    << QLatin1String("trackCount"))
+            << 3 // tableWidth
+            << 0 // valueOffset
+            << 3 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("Audio:Genre"))
+            << (QStringList() // aggregateFieldNames
+                    << QLatin1String("*")
+                    << QLatin1String("Audio:Duration"))
+            << (QStringList() // aggregates
+                    << QLatin1String("COUNT")
+                    << QLatin1String("SUM"))
+            << false // sortDescending
+            << (QStringList() // filteredPropertyName
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(0, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted)));
+
+    QTest::newRow("AudioGenre: [title, trackCount, duration], [+duration, -title]")
+            << QString::fromLatin1("AudioGenre")
+            << (QStringList() // propertyNames
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("+duration")
+                    << QLatin1String("-title"))
+            << 3 // tableWidth
+            << 0 // valueOffset
+            << 3 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("Audio:Genre"))
+            << (QStringList() // aggregateFieldNames
+                    << QLatin1String("*")
+                    << QLatin1String("Audio:Duration"))
+            << (QStringList() // aggregates
+                    << QLatin1String("COUNT")
+                    << QLatin1String("SUM"))
+            << true // sortDescending
+            << (QStringList() // filteredPropertyName
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(0, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted)));
+
+    QTest::newRow("AudioGenre: [title, trackCount, duration], [-duration, -title]")
+            << QString::fromLatin1("AudioGenre")
+            << (QStringList() // propertyNames
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("-duration")
+                    << QLatin1String("-title"))
+            << 3 // tableWidth
+            << 0 // valueOffset
+            << 3 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("Audio:Genre"))
+            << (QStringList() // aggregateFieldNames
+                    << QLatin1String("*")
+                    << QLatin1String("Audio:Duration"))
+            << (QStringList() // aggregates
+                    << QLatin1String("COUNT")
+                    << QLatin1String("SUM"))
+            << true // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("title")
+                    << QLatin1String("trackCount")
+                    << QLatin1String("duration"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>()
+                    << (QGalleryTrackerSortCriteria(0, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted)));
+
+    QTest::newRow("Album: [], []")
+            << QString::fromLatin1("Album")
+            << QStringList() // propertyNames
+            << QStringList() // sortPropertyNames
+            << 2 // tableWidth
+            << 0 // valueOffset
+            << 2 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("Audio:AlbumArtist")
+                    << QLatin1String("Audio:Album"))
+            << QStringList() // aggregateFieldNames
+            << QStringList() // aggregates
+            << false // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("artist")
+                    << QLatin1String("title"))
+            << QVector<int>() // aliasColumns
+            << QVector<QGalleryTrackerSortCriteria>(); // sortCriteria
+
+    QTest::newRow("Album: [], [artist]")
+            << QString::fromLatin1("Album")
+            << QStringList() // propertyNames
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("artist"))
+            << 2 // tableWidth
+            << 0 // valueOffset
+            << 2 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("Audio:AlbumArtist")
+                    << QLatin1String("Audio:Album"))
+            << QStringList() // aggregateFieldNames
+            << QStringList() // aggregates
+            << false // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("artist")
+                    << QLatin1String("title"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>() // sortCriteria
+                    << (QGalleryTrackerSortCriteria(0, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted)));
+
+    QTest::newRow("Album: [], [-artist]")
+            << QString::fromLatin1("Album")
+            << QStringList() // propertyNames
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("-artist"))
+            << 2 // tableWidth
+            << 0 // valueOffset
+            << 2 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("Audio:AlbumArtist")
+                    << QLatin1String("Audio:Album"))
+            << QStringList() // aggregateFieldNames
+            << QStringList() // aggregates
+            << true // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("artist")
+                    << QLatin1String("title"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>() // sortCriteria
+                    << (QGalleryTrackerSortCriteria(0, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted)));
+
+    QTest::newRow("Album: [], [+title]")
+            << QString::fromLatin1("Album")
+            << QStringList() // propertyNames
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("+title"))
+            << 2 // tableWidth
+            << 0 // valueOffset
+            << 2 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("Audio:Album")
+                    << QLatin1String("Audio:AlbumArtist"))
+            << QStringList() // aggregateFieldNames
+            << QStringList() // aggregates
+            << false // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("title")
+                    << QLatin1String("artist"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>() // sortCriteria
+                    << (QGalleryTrackerSortCriteria(0, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted)));
+
+    QTest::newRow("Album: [], [-title]")
+            << QString::fromLatin1("Album")
+            << QStringList() // propertyNames
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("-title"))
+            << 2 // tableWidth
+            << 0 // valueOffset
+            << 2 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("Audio:Album")
+                    << QLatin1String("Audio:AlbumArtist"))
+            << QStringList() // aggregateFieldNames
+            << QStringList() // aggregates
+            << true // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("title")
+                    << QLatin1String("artist"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>() // sortCriteria
+                    << (QGalleryTrackerSortCriteria(0, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted)));
+
+    QTest::newRow("Album: [], [+title, -albumArtist]")
+            << QString::fromLatin1("Album")
+            << QStringList() // propertyNames
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("+title")
+                    << QLatin1String("-albumArtist"))
+            << 2 // tableWidth
+            << 0 // valueOffset
+            << 2 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("Audio:Album")
+                    << QLatin1String("Audio:AlbumArtist"))
+            << QStringList() // aggregateFieldNames
+            << QStringList() // aggregates
+            << false // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("title")
+                    << QLatin1String("artist"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>() // sortCriteria
+                    << (QGalleryTrackerSortCriteria(0, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted))
+                    << (QGalleryTrackerSortCriteria(1, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::ReverseSorted)));
+
+    QTest::newRow("Album: [], [-title, +albumArtist]")
+            << QString::fromLatin1("Album")
+            << QStringList() // propertyNames
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("-title")
+                    << QLatin1String("+albumArtist"))
+            << 2 // tableWidth
+            << 0 // valueOffset
+            << 2 // compositeOffset
+            << (QStringList() // fieldNames
+                    << QLatin1String("Audio:Album")
+                    << QLatin1String("Audio:AlbumArtist"))
+            << QStringList() // aggregateFieldNames
+            << QStringList() // aggregates
+            << true // sortDescending
+            << (QStringList() // filteredPropertyNames
+                    << QLatin1String("title")
+                    << QLatin1String("artist"))
+            << QVector<int>() // aliasColumns
+            << (QVector<QGalleryTrackerSortCriteria>() // sortCriteria
+                    << (QGalleryTrackerSortCriteria(0, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted))
+                    << (QGalleryTrackerSortCriteria(1, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::ReverseSorted)));
+}
+
+void tst_QGalleryTrackerSchema::queryResponseAggregatePropertyNames()
+{
+    QFETCH(QString, rootType);
+    QFETCH(QStringList, propertyNames);
+    QFETCH(QStringList, sortPropertyNames);
+    QFETCH(int, tableWidth);
+    QFETCH(int, valueOffset);
+    QFETCH(int, compositeOffset);
+    QFETCH(QStringList, aggregateFieldNames);
+    QFETCH(QStringList, aggregates);
+    QFETCH(bool, sortDescending);
+    QFETCH(QStringList, filteredPropertyNames);
+    QFETCH(QStringList, fieldNames);
+    QFETCH(QVector<int>, aliasColumns);
+    QFETCH(QVector<QGalleryTrackerSortCriteria>, sortCriteria);
+
+    QGalleryTrackerResultSetArguments arguments;
+
+    QGalleryTrackerSchema schema(rootType);
+
+    QCOMPARE(
+            schema.prepareQueryResponse(
+                    &arguments,
+                    this,
+                    QGalleryQueryRequest::AllDescendants,
+                    QString(),
+                    QGalleryFilter(),
+                    propertyNames,
+                    sortPropertyNames),
+            int(QGalleryAbstractRequest::Succeeded));
+
+    QCOMPARE(arguments.tableWidth, tableWidth);
+    QCOMPARE(arguments.valueOffset, valueOffset);
+    QCOMPARE(arguments.compositeOffset, compositeOffset);
+
+    QCOMPARE(arguments.queryArguments.count(), 6);
+    QCOMPARE(arguments.queryArguments.at(1), QVariant(fieldNames));
+    QCOMPARE(arguments.queryArguments.at(3), QVariant(aggregates));
+    QCOMPARE(arguments.queryArguments.at(4), QVariant(aggregateFieldNames));
+    QCOMPARE(arguments.queryArguments.at(5), QVariant(sortDescending));
+
+    QCOMPARE(arguments.propertyNames, filteredPropertyNames);
+
+    QCOMPARE(arguments.aliasColumns, aliasColumns);
+    QCOMPARE(arguments.sortCriteria, sortCriteria);
+    QCOMPARE(arguments.resourceKeys, QVector<int>());
+
+}
+
+void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
+{
+    QTest::addColumn<QString>("rootType");
+    QTest::addColumn<QString>("rootItem");
+    QTest::addColumn<QGalleryQueryRequest::Scope>("scope");
+    QTest::addColumn<int>("argumentCount");
+    QTest::addColumn<int>("queryStringIndex");
+    QTest::addColumn<QString>("queryString");
+
+    QTest::newRow("Folder, All File Descendents")
+            << QString::fromLatin1("File")
+            << QString::fromLatin1("folder::/path/to")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:or>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"File:Path\"/>"
+                                "<rdf:String>/path/to</rdf:String>"
+                            "</rdfq:equals>"
+                            "<rdfq:startsWith>"
+                                "<rdfq:Property name=\"File:Path\"/>"
+                                "<rdf:String>/path/to/</rdf:String>"
+                            "</rdfq:startsWith>"
+                        "</rdfq:or>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Folder, Direct File Descendents")
+            << QString::fromLatin1("File")
+            << QString::fromLatin1("folder::/path/to")
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"File:Path\"/>"
+                            "<rdf:String>/path/to</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Album, All Audio Descendents")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("album::Self Titled/Greatest Hits")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:and>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                                "<rdf:String>Self Titled</rdf:String>"
+                            "</rdfq:equals>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:Album\"/>"
+                                "<rdf:String>Greatest Hits</rdf:String>"
+                            "</rdfq:equals>"
+                        "</rdfq:and>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Album, All Audio Descendents, No Album")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("album::/Greatest Hits")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:and>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                                "<rdf:String></rdf:String>"
+                            "</rdfq:equals>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:Album\"/>"
+                                "<rdf:String>Greatest Hits</rdf:String>"
+                            "</rdfq:equals>"
+                        "</rdfq:and>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Album, All Audio Descendents, Album with slash")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("album::Self//Titled/Greatest Hits")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:and>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                                "<rdf:String>Self/Titled</rdf:String>"
+                            "</rdfq:equals>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:Album\"/>"
+                                "<rdf:String>Greatest Hits</rdf:String>"
+                            "</rdfq:equals>"
+                        "</rdfq:and>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Album, Direct Audio Descendents")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("album::Self Titled/Greatest Hits")
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:and>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                                "<rdf:String>Self Titled</rdf:String>"
+                            "</rdfq:equals>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:Album\"/>"
+                                "<rdf:String>Greatest Hits</rdf:String>"
+                            "</rdfq:equals>"
+                        "</rdfq:and>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Album Artist, All Audio Descendents")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("albumArtist::Self Titled")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                            "<rdf:String>Self Titled</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Album Artist, Direct Audio Descendents")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("albumArtist::Self Titled")
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                            "<rdf:String>Self Titled</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Album Artist, All Album Descendents")
+            << QString::fromLatin1("Album")
+            << QString::fromLatin1("albumArtist::Self Titled")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+            << QT_AGGREGATE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                            "<rdf:String>Self Titled</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Album Artist, Direct Album Descendents")
+            << QString::fromLatin1("Album")
+            << QString::fromLatin1("albumArtist::Self Titled")
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+            << QT_AGGREGATE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                            "<rdf:String>Self Titled</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Artist, All Audio Descendents")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("artist::Self Titled")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:Artist\"/>"
+                            "<rdf:String>Self Titled</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Artist, Direct Audio Descendents")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("artist::Self Titled")
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:Artist\"/>"
+                            "<rdf:String>Self Titled</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Artist, All Album Descendents")
+            << QString::fromLatin1("Album")
+            << QString::fromLatin1("artist::Self Titled")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+            << QT_AGGREGATE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:Artist\"/>"
+                            "<rdf:String>Self Titled</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Artist, Direct Album Descendents")
+            << QString::fromLatin1("Album")
+            << QString::fromLatin1("artist::Self Titled")
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+            << QT_AGGREGATE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:Artist\"/>"
+                            "<rdf:String>Self Titled</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Audio Genre, All Audio Descendents")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("audioGenre::Rock")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:Genre\"/>"
+                            "<rdf:String>Rock</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Audio Genre, Direct Audio Descendents")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("audioGenre::Rock")
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:Genre\"/>"
+                            "<rdf:String>Rock</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Audio Genre, All Album Descendents")
+            << QString::fromLatin1("Album")
+            << QString::fromLatin1("audioGenre::Rock")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+            << QT_AGGREGATE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:Genre\"/>"
+                            "<rdf:String>Rock</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Audio Genre, Direct Album Descendents")
+            << QString::fromLatin1("Album")
+            << QString::fromLatin1("audioGenre::Rock")
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+            << QT_AGGREGATE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Audio:Genre\"/>"
+                            "<rdf:String>Rock</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Photo Album, All Image Descendents")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("photoAlbum::Camping")
+            << QGalleryQueryRequest::AllDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Image:Album\"/>"
+                            "<rdf:String>Camping</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+
+    QTest::newRow("Photo Album, Direct Image Descendents")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("photoAlbum::Camping")
+            << QGalleryQueryRequest::DirectDescendants
+            << QT_FILE_QUERY_ARGUMENTS_COUNT
+            << QT_FILE_QUERY_STRING_POSITION
+            << QString::fromLatin1(
+                    "<rdfq:Condition>"
+                        "<rdfq:equals>"
+                            "<rdfq:Property name=\"Image:Album\"/>"
+                            "<rdf:String>Camping</rdf:String>"
+                        "</rdfq:equals>"
+                    "</rdfq:Condition>");
+}
+
+void tst_QGalleryTrackerSchema::queryResponseRootItem()
+{
+    QFETCH(QString, rootType);
+    QFETCH(QString, rootItem);
+    QFETCH(QGalleryQueryRequest::Scope, scope);
+    QFETCH(int, argumentCount);
+    QFETCH(int, queryStringIndex);
+    QFETCH(QString, queryString);
+
+    QGalleryTrackerResultSetArguments arguments;
+
+    QGalleryTrackerSchema schema(rootType);
+
+    QCOMPARE(
+            schema.prepareQueryResponse(
+                    &arguments,
+                    this,
+                    scope,
+                    rootItem,
+                    QGalleryFilter(),
+                    QStringList(),
+                    QStringList()),
+            int(QGalleryAbstractRequest::Succeeded));
+
+    QCOMPARE(arguments.queryArguments.count(), argumentCount);
+    QCOMPARE(arguments.queryArguments.at(queryStringIndex), QVariant(queryString));
+}
+
+void tst_QGalleryTrackerSchema::queryResponseFilter_data()
+{
+    QTest::addColumn<QString>("rootType");
+    QTest::addColumn<QString>("rootItem");
+    QTest::addColumn<QGalleryQueryRequest::Scope>("scope");
+    QTest::addColumn<QGalleryFilter>("filter");
+    QTest::addColumn<int>("argumentCount");
+    QTest::addColumn<int>("queryStringIndex");
+    QTest::addColumn<QString>("queryString");
+
+    {
+        QGalleryFilter filter
+                = QDocumentGallery::url == QUrl::fromLocalFile(QLatin1String("/path/to/file.ext"));
+
+        QTest::newRow("File.url == file:///path/to/file.ext")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:and>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Path\"/>"
+                                    "<rdf:String>/path/to</rdf:String>"
+                                "</rdfq:equals>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Name\"/>"
+                                    "<rdf:String>file.ext</rdf:String>"
+                                "</rdfq:equals>"
+                            "</rdfq:and>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::filePath == QLatin1String("/path/to/file.ext");
+
+        QTest::newRow("File.filePath == /path/to/file.ext")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:and>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Path\"/>"
+                                    "<rdf:String>/path/to</rdf:String>"
+                                "</rdfq:equals>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Name\"/>"
+                                    "<rdf:String>file.ext</rdf:String>"
+                                "</rdfq:equals>"
+                            "</rdfq:and>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::fileName == QLatin1String("file.ext");
+
+        QTest::newRow("File.fileName == file.ext")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"File:Name\"/>"
+                                "<rdf:String>file.ext</rdf:String>"
+                            "</rdfq:equals>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String("file."), QGalleryFilter::StartsWith);
+
+        QTest::newRow("File.fileName.startsWith(file.)")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:startsWith>"
+                                "<rdfq:Property name=\"File:Name\"/>"
+                                "<rdf:String>file.</rdf:String>"
+                            "</rdfq:startsWith>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String(".ext"), QGalleryFilter::EndsWith);
+
+        QTest::newRow("File.fileName.endsWith(.ext)")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"File:Name\"/>"
+                                "<rdf:String>*.ext</rdf:String>"
+                            "</rdfq:equals>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String("ext"), QGalleryFilter::Contains);
+
+        QTest::newRow("File.fileName.contains(ext)")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:contains>"
+                                "<rdfq:Property name=\"File:Name\"/>"
+                                "<rdf:String>ext</rdf:String>"
+                            "</rdfq:contains>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String("file*ext"), QGalleryFilter::Wildcard);
+
+        QTest::newRow("File.fileName.wildcard(file*ext")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"File:Name\"/>"
+                                "<rdf:String>file*ext</rdf:String>"
+                            "</rdfq:equals>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QGalleryMetaDataFilter(
+                QDocumentGallery::fileName,
+                QLatin1String("(file|document).ext"),
+                QGalleryFilter::RegExp);
+
+        QTest::newRow("File.fileName.regExp((file|document).ext")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:regex>"
+                                "<rdfq:Property name=\"File:Name\"/>"
+                                "<rdf:String>(file|document).ext</rdf:String>"
+                            "</rdfq:regex>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::width > 1024;
+
+        QTest::newRow("Image.width > 1024")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:greaterThan>"
+                                "<rdfq:Property name=\"Image:Width\"/>"
+                                "<rdf:Integer>1024</rdf:Integer>"
+                            "</rdfq:greaterThan>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::width >= 1024u;
+
+        QTest::newRow("Video.width >= 1024u")
+                << QString::fromLatin1("Video")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:greaterThanEqual>"
+                                "<rdfq:Property name=\"Video:Width\"/>"
+                                "<rdf:Integer>1024</rdf:Integer>"
+                            "</rdfq:greaterThanEqual>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::height < Q_INT64_C(1024);
+
+        QTest::newRow("Image.height < 1024ll")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:lessThan>"
+                                "<rdfq:Property name=\"Image:Height\"/>"
+                                "<rdf:Integer>1024</rdf:Integer>"
+                            "</rdfq:lessThan>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::height <= Q_UINT64_C(1024);
+
+        QTest::newRow("Video.height <= 1024ull")
+                << QString::fromLatin1("Video")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:lessThanEqual>"
+                                "<rdfq:Property name=\"Video:Height\"/>"
+                                "<rdf:Integer>1024</rdf:Integer>"
+                            "</rdfq:lessThanEqual>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter
+                = QDocumentGallery::dateTaken > QDateTime(QDate(2008, 06, 01), QTime(12, 5, 8));
+
+        QTest::newRow("Image.dateTaken > 2008-06-01T12:05:08")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:greaterThan>"
+                                "<rdfq:Property name=\"Image:Date\"/>"
+                                "<rdf:Date>2008-06-01T12:05:08</rdf:Date>"
+                            "</rdfq:greaterThan>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = !(
+                QDocumentGallery::dateTaken > QDateTime(QDate(2008, 06, 01), QTime(12, 5, 8)));
+
+        QTest::newRow("!(Image.dateTaken > 2008-06-01T12:05:08")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:not>"
+                                "<rdfq:greaterThan>"
+                                    "<rdfq:Property name=\"Image:Date\"/>"
+                                    "<rdf:Date>2008-06-01T12:05:08</rdf:Date>"
+                                "</rdfq:greaterThan>"
+                            "</rdfq:not>"
+                        "</rdfq:Condition>");
+
+    } {
+        QGalleryIntersectionFilter filter;
+        filter.append(QDocumentGallery::width > 1024);
+        filter.append(QDocumentGallery::height > 768);
+
+        QTest::newRow("Image.width > 1024 && Image.height > 768")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:and>"
+                                "<rdfq:greaterThan>"
+                                    "<rdfq:Property name=\"Image:Width\"/>"
+                                    "<rdf:Integer>1024</rdf:Integer>"
+                                "</rdfq:greaterThan>"
+                                "<rdfq:greaterThan>"
+                                    "<rdfq:Property name=\"Image:Height\"/>"
+                                    "<rdf:Integer>768</rdf:Integer>"
+                                "</rdfq:greaterThan>"
+                            "</rdfq:and>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryIntersectionFilter filter;
+        filter.append(QDocumentGallery::width > 1024);
+
+        QTest::newRow("Image.width > 1024 (Single intersection item)")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:and>"
+                                "<rdfq:greaterThan>"
+                                    "<rdfq:Property name=\"Image:Width\"/>"
+                                    "<rdf:Integer>1024</rdf:Integer>"
+                                "</rdfq:greaterThan>"
+                            "</rdfq:and>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryUnionFilter filter;
+        filter.append(QDocumentGallery::width < 1920);
+        filter.append(QDocumentGallery::height < 1024);
+
+        QTest::newRow("Image.width < 1920 || Image.height < 1024")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:or>"
+                                "<rdfq:lessThan>"
+                                    "<rdfq:Property name=\"Image:Width\"/>"
+                                    "<rdf:Integer>1920</rdf:Integer>"
+                                "</rdfq:lessThan>"
+                                "<rdfq:lessThan>"
+                                    "<rdfq:Property name=\"Image:Height\"/>"
+                                    "<rdf:Integer>1024</rdf:Integer>"
+                                "</rdfq:lessThan>"
+                            "</rdfq:or>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryUnionFilter filter;
+        filter.append(QDocumentGallery::width < 1920);
+
+        QTest::newRow("Image.width < 1920 (Single union item")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:or>"
+                                "<rdfq:lessThan>"
+                                    "<rdfq:Property name=\"Image:Width\"/>"
+                                    "<rdf:Integer>1920</rdf:Integer>"
+                                "</rdfq:lessThan>"
+                            "</rdfq:or>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::fileName == QLatin1String("file.ext");
+
+        QTest::newRow("File.fileName == file.ext, In folder")
+                << QString::fromLatin1("File")
+                << QString::fromLatin1("folder::/path/to")
+                << QGalleryQueryRequest::DirectDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:and>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Path\"/>"
+                                    "<rdf:String>/path/to</rdf:String>"
+                                "</rdfq:equals>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Name\"/>"
+                                    "<rdf:String>file.ext</rdf:String>"
+                                "</rdfq:equals>"
+                            "</rdfq:and>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::title == QLatin1String("Greatest Hits");
+
+        QTest::newRow("Album.title == Greatest Hits")
+                << QString::fromLatin1("Album")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+                << QT_AGGREGATE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Audio:Album\"/>"
+                                "<rdf:String>Greatest Hits</rdf:String>"
+                            "</rdfq:equals>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::title == QLatin1String("Greatest Hits");
+
+        QTest::newRow("Album.title == Greatest Hits, Belonging to AlbumArtist")
+                << QString::fromLatin1("Album")
+                << QString::fromLatin1("albumArtist::Self Titled")
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QT_AGGREGATE_QUERY_ARGUMENTS_COUNT
+                << QT_AGGREGATE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:and>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"Audio:AlbumArtist\"/>"
+                                    "<rdf:String>Self Titled</rdf:String>"
+                                "</rdfq:equals>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"Audio:Album\"/>"
+                                    "<rdf:String>Greatest Hits</rdf:String>"
+                                "</rdfq:equals>"
+                            "</rdfq:and>"
+                        "</rdfq:Condition>");
+    }
+}
+
+void tst_QGalleryTrackerSchema::queryResponseFilter()
+{
+    QFETCH(QString, rootType);
+    QFETCH(QString, rootItem);
+    QFETCH(QGalleryQueryRequest::Scope, scope);
+    QFETCH(QGalleryFilter, filter);
+    QFETCH(int, argumentCount);
+    QFETCH(int, queryStringIndex);
+    QFETCH(QString, queryString);
+
+    QGalleryTrackerResultSetArguments arguments;
+
+    QGalleryTrackerSchema schema(rootType);
+
+    QCOMPARE(
+            schema.prepareQueryResponse(
+                    &arguments,
+                    this,
+                    scope,
+                    rootItem,
+                    filter,
+                    QStringList(),
+                    QStringList()),
+            int(QGalleryAbstractRequest::Succeeded));
+
+    QCOMPARE(arguments.queryArguments.count(), argumentCount);
+    QCOMPARE(arguments.queryArguments.at(queryStringIndex), QVariant(queryString));
+}
+
+void tst_QGalleryTrackerSchema::queryResponseValueColumnToVariant_data()
+{
+    QTest::addColumn<QString>("rootType");
+    QTest::addColumn<QString>("propertyName");
+    QTest::addColumn<QString>("string");
+    QTest::addColumn<QVariant>("value");
+
+    QTest::newRow("File.fileName")
+            << QString::fromLatin1("File")
+            << QString::fromLatin1("fileName")
+            << QString::fromLatin1("file.ext")
+            << QVariant(QLatin1String("file.ext"));
+
+    QTest::newRow("File.fileName (Empty)")
+            << QString::fromLatin1("File")
+            << QString::fromLatin1("fileName")
+            << QString()
+            << QVariant(QString());
+
+    QTest::newRow("Image.keywords (1)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("keywords")
+            << QString::fromLatin1("Holiday")
+            << QVariant(QStringList() << QLatin1String("Holiday"));
+
+    QTest::newRow("Image.keywords (2)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("keywords")
+            << QString::fromLatin1("Holiday|Summer")
+            << QVariant(QStringList() << QLatin1String("Holiday") << QLatin1String("Summer"));
+
+    QTest::newRow("Image.keywords (3)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("keywords")
+            << QString::fromLatin1("2009|Holiday|Summer")
+            << QVariant(QStringList()
+                    << QLatin1String("2009")
+                    << QLatin1String("Holiday")
+                    << QLatin1String("Summer"));
+
+    QTest::newRow("Image.keywords (Empty")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("keywords")
+            << QString()
+            << QVariant(QStringList());
+
+    QTest::newRow("Image.dateTaken")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("dateTaken")
+            << QString::fromLatin1("2009-08-23T09:03:32")
+            << QVariant(QDateTime(QDate(2009, 8, 23), QTime(9, 3, 32)));
+
+    QTest::newRow("Image.dateTaken (Invalid)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("dateTaken")
+            << QString::fromLatin1("Yesterday")
+            << QVariant();
+
+    QTest::newRow("Image.dateTaken (Empty)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("dateTaken")
+            << QString()
+            << QVariant();
+
+    QTest::newRow("Image.focalLength (12)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("focalLength")
+            << QString::fromLatin1("12")
+            << QVariant(12.0);
+
+    QTest::newRow("Image.focalLength (12.5)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("focalLength")
+            << QString::fromLatin1("12.5")
+            << QVariant(12.5);
+
+    QTest::newRow("Image.focalLength (Invalid)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("focalLength")
+            << QString::fromLatin1("twelve point 5")
+            << QVariant();
+
+    QTest::newRow("Image.focalLength (Empty")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("focalLength")
+            << QString()
+            << QVariant();
+
+    QTest::newRow("Image.height")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("height")
+            << QString("720")
+            << QVariant(720);
+
+    QTest::newRow("Image.height (Invalid")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("height")
+            << QString::fromLatin1("seven twenty")
+            << QVariant();
+
+    QTest::newRow("Image.height (Empty)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("height")
+            << QString()
+            << QVariant();
+}
+
+void tst_QGalleryTrackerSchema::queryResponseValueColumnToVariant()
+{
+    QFETCH(QString, rootType);
+    QFETCH(QString, propertyName);
+    QFETCH(QString, string);
+    QFETCH(QVariant, value);
+
+    QGalleryTrackerResultSetArguments arguments;
+
+    QGalleryTrackerSchema schema(rootType);
+
+    QCOMPARE(
+            schema.prepareQueryResponse(
+                    &arguments,
+                    this,
+                    QGalleryQueryRequest::AllDescendants,
+                    QString(),
+                    QGalleryFilter(),
+                    QStringList() << propertyName,
+                    QStringList()),
+            int(QGalleryAbstractRequest::Succeeded));
+
+    QCOMPARE(arguments.valueColumns.count(), 1);
+    QCOMPARE(arguments.valueColumns.at(0)->toVariant(string), value);
+}
+
+void tst_QGalleryTrackerSchema::queryResponseValueColumnToString_data()
+{
+    QTest::addColumn<QString>("rootType");
+    QTest::addColumn<QString>("propertyName");
+    QTest::addColumn<QVariant>("value");
+    QTest::addColumn<QString>("string");
+
+    QTest::newRow("File.fileName")
+            << QString::fromLatin1("File")
+            << QString::fromLatin1("fileName")
+            << QVariant(QLatin1String("file.ext"))
+            << QString::fromLatin1("file.ext");
+
+    QTest::newRow("File.fileName (Empty)")
+            << QString::fromLatin1("File")
+            << QString::fromLatin1("fileName")
+            << QVariant(QString())
+            << QString();
+
+    QTest::newRow("Image.keywords (1)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("keywords")
+            << QVariant(QStringList() << QLatin1String("Holiday"))
+            << QString::fromLatin1("Holiday");
+
+    QTest::newRow("Image.keywords (2)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("keywords")
+            << QVariant(QStringList() << QLatin1String("Holiday") << QLatin1String("Summer"))
+            << QString::fromLatin1("Holiday|Summer");
+
+    QTest::newRow("Image.keywords (3)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("keywords")
+            << QVariant(QStringList()
+                    << QLatin1String("2009")
+                    << QLatin1String("Holiday")
+                    << QLatin1String("Summer"))
+            << QString::fromLatin1("2009|Holiday|Summer");
+
+    QTest::newRow("Image.keywords (Empty")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("keywords")
+            << QVariant(QStringList())
+            << QString();
+
+    QTest::newRow("Image.dateTaken")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("dateTaken")
+            << QVariant(QDateTime(QDate(2009, 8, 23), QTime(9, 3, 32)))
+            << QString::fromLatin1("2009-08-23T09:03:32");
+
+    QTest::newRow("Image.dateTaken (Invalid)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("dateTaken")
+            << QVariant(QDateTime(QDate(2009, 8, 56), QTime(95, 3, 32)))
+            << QString();
+
+    QTest::newRow("Image.dateTaken (Empty)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("dateTaken")
+            << QVariant()
+            << QString();
+
+    QTest::newRow("Image.focalLength (12)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("focalLength")
+            << QVariant(12.0)
+            << QString::fromLatin1("12");
+
+    QTest::newRow("Image.focalLength (12.5)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("focalLength")
+            << QVariant(12.5)
+            << QString::fromLatin1("12.5");
+
+    QTest::newRow("Image.focalLength (Empty")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("focalLength")
+            << QVariant()
+            << QString();
+
+    QTest::newRow("Image.height")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("height")
+            << QVariant(720)
+            << QString("720");
+
+    QTest::newRow("Image.height (Empty)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("height")
+            << QVariant()
+            << QString();
+}
+
+void tst_QGalleryTrackerSchema::queryResponseValueColumnToString()
+{
+    QFETCH(QString, rootType);
+    QFETCH(QString, propertyName);
+    QFETCH(QVariant, value);
+    QFETCH(QString, string);
+
+    QGalleryTrackerResultSetArguments arguments;
+
+    QGalleryTrackerSchema schema(rootType);
+
+    QCOMPARE(
+            schema.prepareQueryResponse(
+                    &arguments,
+                    this,
+                    QGalleryQueryRequest::AllDescendants,
+                    QString(),
+                    QGalleryFilter(),
+                    QStringList() << propertyName,
+                    QStringList()),
+            int(QGalleryAbstractRequest::Succeeded));
+
+    QCOMPARE(arguments.valueColumns.count(), 1);
+    QCOMPARE(arguments.valueColumns.at(0)->toString(value), string);
+}
+
+void tst_QGalleryTrackerSchema::queryResponseCompositeColumn_data()
+{
+    QTest::addColumn<QString>("rootType");
+    QTest::addColumn<QString>("propertyName");
+    QTest::addColumn<QVector<QVariant> >("rowData");
+    QTest::addColumn<QVariant>("value");
+
+    QTest::newRow("File.filePath")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("filePath")
+            << (QVector<QVariant>() << QLatin1String("/path/to/file.ext") << QLatin1String("Files"))
+            << QVariant(QLatin1String("/path/to/file.ext"));
+
+    QTest::newRow("File.url")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("url")
+            << (QVector<QVariant>() << QLatin1String("/path/to/file.ext") << QLatin1String("Files"))
+            << QVariant(QUrl::fromLocalFile(QLatin1String("/path/to/file.ext")));
+}
+
+void tst_QGalleryTrackerSchema::queryResponseCompositeColumn()
+{
+    QFETCH(QString, rootType);
+    QFETCH(QString, propertyName);
+    QFETCH(QVector<QVariant>, rowData);
+    QFETCH(QVariant, value);
+
+    QGalleryTrackerResultSetArguments arguments;
+
+    QGalleryTrackerSchema schema(rootType);
+
+    QCOMPARE(
+            schema.prepareQueryResponse(
+                    &arguments,
+                    this,
+                    QGalleryQueryRequest::AllDescendants,
+                    QString(),
+                    QGalleryFilter(),
+                    QStringList() << propertyName,
+                    QStringList()),
+            int(QGalleryAbstractRequest::Succeeded));
+
+    QCOMPARE(arguments.compositeColumns.count(), 1);
+    QCOMPARE(arguments.compositeColumns.at(0)->value(rowData.constBegin()), value);
+}
+
+void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse_data()
 {
     QTest::addColumn<QString>("rootItem");
     QTest::addColumn<QGalleryQueryRequest::Scope>("scope");
@@ -610,65 +2992,188 @@ void tst_QGalleryTrackerSchema::prepareValidQueryResponse_data()
     QTest::addColumn<QVariant>("itemUrl");
     QTest::addColumn<QVariant>("itemType");
     QTest::addColumn<int>("updateMask");
-    QTest::addColumn<int>("identityWidth");
     QTest::addColumn<int>("tableWidth");
-    QTest::addColumn<int>("valueOffset");
     QTest::addColumn<int>("compositeOffset");
-    QTest::addColumn<QGalleryDBusInterfacePointer>("queryInterface");
-    QTest::addColumn<QString>("queryMethod");
-    QTest::addColumn<QVariantList>("queryArguments");
-    QTest::addColumn<QStringList>("queriedPropertyNames");
+    QTest::addColumn<QString>("service");
     QTest::addColumn<QStringList>("fieldNames");
+    QTest::addColumn<QString>("queryString");
+    QTest::addColumn<QStringList>("sortFieldNames");
+    QTest::addColumn<bool>("sortDescending");
+    QTest::addColumn<QStringList>("queriedPropertyNames");
     QTest::addColumn<QVector<QGalleryProperty::Attributes> >("propertyAttributes");
     QTest::addColumn<QVector<QVariant::Type> >("propertyTypes");
     QTest::addColumn<QStringList>("values");
-    QTest::addColumn<QVector<QVariant> >("parsedValues");
     QTest::addColumn<QVector<QVariant> >("compositeValues");
     QTest::addColumn<QVector<int> >("aliasColumns");
     QTest::addColumn<QVector<QGalleryTrackerSortCriteria> >("sortCriteria");
     QTest::addColumn<QVector<int> >("resourceKeys");
 
     QTest::newRow("All Files")
-            << QString()
-            << QGalleryQueryRequest::AllDescendants
-            << QString::fromLatin1("File")
-            << QGalleryFilter()
-            << QStringList()
-            << QStringList()
-            << (QVector<QVariant>() << QLatin1String("/path/to/file.ext") << QLatin1String("Files"))
-            << QVariant(QLatin1String("file::/path/to/file.ext"))
-            << QVariant(QUrl(QLatin1String("file:///path/to/file.ext")))
-            << QVariant(QLatin1String("File"))
-            << 0xFF
-            << 2
-            << 2
-            << 2
-            << 2
-            << m_searchInterface
-            << QString::fromLatin1("Query")
-            << (QVariantList()
-                    << 0
-                    << QLatin1String("Files")
-                    << QStringList()
-                    << QString()
-                    << QStringList()
-                    << QString()
-                    << false
-                    << QStringList()
-                    << false)
-            << QStringList()
-            << QStringList()
-            << QVector<QGalleryProperty::Attributes>()
-            << QVector<QVariant::Type>()
-            << QStringList()
-            << QVector<QVariant>()
-            << QVector<QVariant>()
-            << QVector<int>()
-            << QVector<QGalleryTrackerSortCriteria>()
-            << QVector<int>();
+            << QString() // rootItem
+            << QGalleryQueryRequest::AllDescendants // scope
+            << QString::fromLatin1("File") // rootType
+            << QGalleryFilter() // filter
+            << QStringList() // propertyNames
+            << QStringList() // sortPropertyNames
+            << (QVector<QVariant>()  // row data
+                    << QLatin1String("/path/to/file.ext") // uri
+                    << QLatin1String("Files")) // service
+            << QVariant(QLatin1String("file::/path/to/file.ext")) // itemId
+            << QVariant(QUrl(QLatin1String("file:///path/to/file.ext"))) // itemUrl
+            << QVariant(QLatin1String("File")) // itemType
+            << 0xFF // updateMask
+            << 2 // tableWidth
+            << 2 // compositeOffset
+            << QString::fromLatin1("Files") // service
+            << QStringList()    // fieldNames
+            << QString() // rdfq query
+            << QStringList() // sort field names
+            << false // sort descending
+            << QStringList() // queried property names
+            << QVector<QGalleryProperty::Attributes>() // property attributes
+            << QVector<QVariant::Type>() // property types
+            << QStringList() // row values
+            << QVector<QVariant>() // composite values
+            << QVector<int>() // alias columns
+            << QVector<QGalleryTrackerSortCriteria>() // sort order
+            << QVector<int>(); // resource keys
+
+    QTest::newRow("Images")
+            << QString() // rootItem
+            << QGalleryQueryRequest::AllDescendants // scope
+            << QString::fromLatin1("Image") // rootType
+            << QGalleryFilter() // filter
+            << (QStringList() // propertyNames
+                    << QLatin1String("url")
+                    << QLatin1String("title")
+                    << QLatin1String("rating"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("url")
+                    << QLatin1String("-rating")
+                    << QLatin1String("+dateTaken"))
+            << (QVector<QVariant>()  // row data
+                    << QLatin1String("/path/to/image.png") // uri
+                    << QLatin1String("Images") // // service
+                    << QLatin1String("The Beach") // title
+                    << 3 // rating
+                    << QDateTime(QDate(2007, 12, 12), QTime(7, 29))) // dateTaken
+            << QVariant(QLatin1String("image::/path/to/image.png")) // itemId
+            << QVariant(QUrl(QLatin1String("file:///path/to/image.png"))) // itemUrl
+            << QVariant(QLatin1String("Image")) // itemType
+            << 0x10 // updateMask
+            << 5 // tableWidth
+            << 4 // compositeOffset
+            << QString::fromLatin1("Images") // service
+            << (QStringList() // field names
+                    << QLatin1String("Image:Title")
+                    << QLatin1String("Image:Rating")
+                    << QLatin1String("Image:Date"))
+            << QString() // rdfq query
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("Image:Rating")
+                    << QLatin1String("Image:Date"))
+            << true // sort descending
+            << (QStringList() // queried property names
+                    << QLatin1String("title")
+                    << QLatin1String("rating")
+                    << QLatin1String("url"))
+            << (QVector<QGalleryProperty::Attributes>() // property attributes
+                    << (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanSort | QGalleryProperty::CanFilter)
+                    << (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanSort | QGalleryProperty::CanFilter)
+                    << (QGalleryProperty::CanRead | QGalleryProperty::CanFilter))
+            << (QVector<QVariant::Type>() // property types
+                    << QVariant::String
+                    << QVariant::Int
+                    << QVariant::Url)
+            << (QStringList() // row values
+                    << QLatin1String("The Beach") // title
+                    << QLatin1String("3") // rating
+                    << QLatin1String("2007-12-12T07:29:00")) // dateTaken
+            << (QVector<QVariant>() // composite values
+                    << QVariant(QUrl(QLatin1String("file:///path/to/image.png")))) // url
+            << QVector<int>() // alias columns
+            << (QVector<QGalleryTrackerSortCriteria>() // sort order
+                << (QGalleryTrackerSortCriteria(3, QGalleryTrackerSortCriteria::Descending | QGalleryTrackerSortCriteria::Sorted))
+                << (QGalleryTrackerSortCriteria(4, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::ReverseSorted)))
+            << QVector<int>(); // resource keys
+
+    QTest::newRow("Music")
+            << QString::fromLatin1("audio::/path/to/music") // rootItem
+            << QGalleryQueryRequest::AllDescendants // scope
+            << QString::fromLatin1("Audio") // rootType
+            << QGalleryFilter() // filter
+            << (QStringList() // propertyNames
+                    << QLatin1String("trackNumber")
+                    << QLatin1String("title")
+                    << QLatin1String("turtle")
+                    << QLatin1String("trackNumber")
+                    << QLatin1String("duration"))
+            << (QStringList() // sortPropertyNames
+                    << QLatin1String("albumArtist")
+                    << QLatin1String("albumTitle")
+                    << QLatin1String("trackNumber"))
+            << (QVector<QVariant>()  // row data
+                    << QLatin1String("/path/to/music/interlude.mp3") // uri
+                    << QLatin1String("Music") // // service
+                    << 4 // trackNumber
+                    << QLatin1String("Interlude") // title
+                    << 63 // duration
+                    << QLatin1String("Self Titled") // albumArtist
+                    << QLatin1String("Greatest Hits")) // albumTitle
+            << QVariant(QLatin1String("audio::/path/to/music/interlude.mp3")) // itemId
+            << QVariant(QUrl(QLatin1String("file:///path/to/music/interlude.mp3"))) // itemUrl
+            << QVariant(QLatin1String("Audio")) // itemType
+            << 0x08 // updateMask
+            << 7 // tableWidth
+            << 5 // compositeOffset
+            << QString::fromLatin1("Music") // service
+            << (QStringList() // field names
+                    << QLatin1String("Audio:TrackNo")
+                    << QLatin1String("Audio:Title")
+                    << QLatin1String("Audio:Duration")
+                    << QLatin1String("Audio:AlbumArtist")
+                    << QLatin1String("Audio:Album"))
+            << QString::fromLatin1( // rdfq query
+                    "<rdfq:Condition>"
+                    "<rdfq:or>"
+                    "<rdfq:equals><rdfq:Property name=\"File:Path\"/><rdf:String>/path/to/music</rdf:String></rdfq:equals>"
+                    "<rdfq:startsWith><rdfq:Property name=\"File:Path\"/><rdf:String>/path/to/music/</rdf:String></rdfq:startsWith>"
+                    "</rdfq:or>"
+                    "</rdfq:Condition>")
+            << (QStringList() // sortFieldNames
+                    << QLatin1String("Audio:AlbumArtist")
+                    << QLatin1String("Audio:Album")
+                    << QLatin1String("Audio:TrackNo"))
+            << false // sort descending
+            << (QStringList() // queried property names
+                << QLatin1String("trackNumber")
+                << QLatin1String("title")
+                << QLatin1String("duration"))
+            << (QVector<QGalleryProperty::Attributes>() // property attributes
+                    << (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanSort | QGalleryProperty::CanFilter)
+                    << (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanSort | QGalleryProperty::CanFilter)
+                    << (QGalleryProperty::CanRead | QGalleryProperty::CanSort | QGalleryProperty::CanFilter))
+            << (QVector<QVariant::Type>() // property types
+                    << QVariant::Int
+                    << QVariant::String
+                    << QVariant::Int)
+            << (QStringList() // row values
+                    << QLatin1String("4") // trackNumber
+                    << QLatin1String("Interlude") // title
+                    << QLatin1String("63") // duration
+                    << QLatin1String("Self Titled") // albumArtist
+                    << QLatin1String("Greatest Hits")) // albumTitle
+            << (QVector<QVariant>()) // composite values
+            << QVector<int>() // alias columns
+            << (QVector<QGalleryTrackerSortCriteria>() // sort order
+                    << (QGalleryTrackerSortCriteria(5, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted))
+                    << (QGalleryTrackerSortCriteria(6, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted))
+                    << (QGalleryTrackerSortCriteria(2, QGalleryTrackerSortCriteria::Ascending | QGalleryTrackerSortCriteria::Sorted)))
+            << (QVector<int>() // resource keys
+                    << 4); // duration
 }
 
-void tst_QGalleryTrackerSchema::prepareValidQueryResponse()
+void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse()
 {
     QFETCH(QString, rootItem);
     QFETCH(QGalleryQueryRequest::Scope, scope);
@@ -681,19 +3186,17 @@ void tst_QGalleryTrackerSchema::prepareValidQueryResponse()
     QFETCH(QVariant, itemUrl);
     QFETCH(QVariant, itemType);
     QFETCH(int, updateMask);
-    QFETCH(int, identityWidth);
     QFETCH(int, tableWidth);
-    QFETCH(int, valueOffset);
     QFETCH(int, compositeOffset);
-    QFETCH(QGalleryDBusInterfacePointer, queryInterface);
-    QFETCH(QString, queryMethod);
-    QFETCH(QVariantList, queryArguments);
+    QFETCH(QString, service);
+    QFETCH(QString, queryString);
+    QFETCH(QStringList, sortFieldNames);
+    QFETCH(bool, sortDescending);
     QFETCH(QStringList, queriedPropertyNames);
     QFETCH(QStringList, fieldNames);
     QFETCH(QVector<QGalleryProperty::Attributes>, propertyAttributes);
     QFETCH(QVector<QVariant::Type>, propertyTypes);
     QFETCH(QStringList, values);
-    QFETCH(QVector<QVariant>, parsedValues);
     QFETCH(QVector<QVariant>, compositeValues);
     QFETCH(QVector<int>, aliasColumns);
     QFETCH(QVector<QGalleryTrackerSortCriteria>, sortCriteria);
@@ -718,29 +3221,38 @@ void tst_QGalleryTrackerSchema::prepareValidQueryResponse()
     QCOMPARE(arguments.typeColumn->value(row.constBegin()), itemType);
 
     QCOMPARE(arguments.updateMask, updateMask);
-    QCOMPARE(arguments.identityWidth, identityWidth);
+    QCOMPARE(arguments.identityWidth, 2);
     QCOMPARE(arguments.tableWidth, tableWidth);
-    QCOMPARE(arguments.valueOffset, valueOffset);
+    QCOMPARE(arguments.valueOffset, 2);
     QCOMPARE(arguments.compositeOffset, compositeOffset);
 
-    QCOMPARE(arguments.queryInterface, queryInterface);
-    QCOMPARE(arguments.queryMethod, queryMethod);
-    QCOMPARE(arguments.queryArguments, queryArguments);
+    QCOMPARE(arguments.queryInterface, m_searchInterface);
+    QCOMPARE(arguments.queryMethod, QLatin1String("Query"));
+    QCOMPARE(arguments.queryArguments.count(), 9);
+    QCOMPARE(arguments.queryArguments.at(0), QVariant(0u));
+    QCOMPARE(arguments.queryArguments.at(1), QVariant(service));
+    QCOMPARE(arguments.queryArguments.at(2), QVariant(fieldNames));
+    QCOMPARE(arguments.queryArguments.at(3), QVariant(QString()));
+    QCOMPARE(arguments.queryArguments.at(4), QVariant(QStringList()));
+    QCOMPARE(arguments.queryArguments.at(5), QVariant(queryString));
+    QCOMPARE(arguments.queryArguments.at(6), QVariant(false));
+    QCOMPARE(arguments.queryArguments.at(7), QVariant(sortFieldNames));
+    QCOMPARE(arguments.queryArguments.at(8), QVariant(sortDescending));
 
     QCOMPARE(arguments.propertyNames, queriedPropertyNames);
     QCOMPARE(arguments.fieldNames, fieldNames);
     QCOMPARE(arguments.propertyAttributes, propertyAttributes);
     QCOMPARE(arguments.propertyTypes, propertyTypes);
 
-    QCOMPARE(values.count(), parsedValues.count()); // Verify test data.
+    QCOMPARE(values.count(), row.count() - 2); // Verify test data.
     QCOMPARE(values.count(), arguments.valueColumns.count());
     for (int i = 0; i < arguments.valueColumns.count(); ++i) {
-        QCOMPARE(arguments.valueColumns.at(i)->toVariant(values.at(i)), parsedValues.at(i));
+        QCOMPARE(arguments.valueColumns.at(i)->toVariant(values.at(i)), row.at(i + 2));
     }
 
     QCOMPARE(compositeValues.count(), arguments.compositeColumns.count());
     for (int i = 0; i < arguments.compositeColumns.count(); ++i) {
-        QCOMPARE(arguments.compositeColumns.at(i)->value(row.constBegin()), parsedValues.at(i));
+        QCOMPARE(arguments.compositeColumns.at(i)->value(row.constBegin()), compositeValues.at(i));
     }
 
     QCOMPARE(arguments.aliasColumns, aliasColumns);

@@ -77,7 +77,7 @@ private:
     QGalleryTrackerChangeNotifier *changeNotifier();
 
     QGalleryAbstractResponse *createItemListResponse(
-            const QGalleryTrackerResultSetArguments &arguments,
+            QGalleryTrackerResultSetArguments *arguments,
             int offset,
             int limit,
             bool isItemType,
@@ -154,7 +154,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
     if (result != QGalleryAbstractRequest::Succeeded) {
         return new QGalleryAbstractResponse(result);
     } else {
-        return createItemListResponse(arguments, 0, 1, schema.isItemType(), request->isLive());
+        return createItemListResponse(&arguments, 0, 1, schema.isItemType(), request->isLive());
     }
 }
 
@@ -182,7 +182,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createTypeResponse(QGalleryTy
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
-        const QGalleryTrackerResultSetArguments &arguments,
+        QGalleryTrackerResultSetArguments *arguments,
         int offset,
         int limit,
         bool isItemType,
@@ -227,7 +227,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
         return new QGalleryAbstractResponse(result);
     } else {
         return createItemListResponse(
-                arguments,
+                &arguments,
                 request->offset(),
                 request->limit(),
                 schema.isItemType(),

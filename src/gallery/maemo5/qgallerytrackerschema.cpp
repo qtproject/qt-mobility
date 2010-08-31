@@ -411,7 +411,6 @@ template <> bool qt_writeValue<QVariant>(int *error, QXmlStreamWriter *xml, cons
         return qt_writeValue<qreal>(error, xml, value);
     case QVariant::DateTime:
     case QVariant::Date:
-    case QVariant::Time:
         return qt_writeValue<QDateTime>(error, xml, value);
     default:
         if (value.canConvert<QString>()) {
@@ -762,7 +761,7 @@ static void qt_writeFileScopeCondition(int *, QXmlStreamWriter *xml, const QStri
     xml->writeAttribute(QLatin1String("name"), QLatin1String("File:Path"));
 
     xml->writeStartElement(QLatin1String("rdf:String"));
-    xml->writeCharacters(itemId.toString());
+    xml->writeCharacters(itemId.toString()  + QLatin1Char('/'));
     xml->writeEndElement();
 
     xml->writeEndElement();
@@ -1006,7 +1005,7 @@ static const QGalleryItemType qt_galleryItemTypeList[] =
     QT_GALLERY_ITEM_TYPE(Video      , Videos       , video   , Video),
     QT_GALLERY_ITEM_TYPE(Playlist   , Playlists    , playlist, Playlist),
     QT_GALLERY_ITEM_TYPE(Text       , Text         , text    , File),
-    QT_GALLERY_ITEM_TYPE(File       , Development  , file    , File),
+    QT_GALLERY_ITEM_TYPE(Text       , Development  , text    , File),
     QT_GALLERY_ITEM_TYPE(File       , Other        , file    , File),
 };
 
@@ -1074,8 +1073,10 @@ static const QGalleryItemProperty qt_galleryAlbumIdentity[] =
 
 static const QGalleryItemProperty qt_galleryAlbumPropertyList[] =
 {
-    QT_GALLERY_ITEM_PROPERTY("title" , "Audio:Album"      , String, CanRead | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("artist", "Audio:AlbumArtist", String, CanRead | CanFilter)
+    QT_GALLERY_ITEM_PROPERTY("title"      , "Audio:Album"      , String, CanRead | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("albumTitle" , "Audio:Album"      , String, CanRead | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("artist"     , "Audio:AlbumArtist", String, CanRead | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("albumArtist", "Audio:AlbumArtist", String, CanRead | CanFilter)
 };
 
 static const QGalleryAggregateProperty qt_galleryAlbumAggregateList[] =
@@ -1200,7 +1201,7 @@ QVariant QGalleryTrackerServicePrefixColumn::value(QVector<QVariant>::const_iter
 
     return index != -1
             ? QVariant(itemTypes[index].prefix + row->toString())
-            : QVariant();
+            : QVariant(QLatin1String("file::") + row->toString());
 }
 
 QVariant QGalleryTrackerServiceTypeColumn::value(QVector<QVariant>::const_iterator row) const
@@ -1211,7 +1212,7 @@ QVariant QGalleryTrackerServiceTypeColumn::value(QVector<QVariant>::const_iterat
 
     return index != -1
             ? QVariant(itemTypes[index].itemType)
-            : QVariant();
+            : QVariant(QLatin1String("File"));
 
 }
 
@@ -1271,13 +1272,6 @@ QString QGalleryTrackerSchema::uriFromItemId(int *error, const QVariant &itemId)
 
         return QString();
     }
-}
-
-QString QGalleryTrackerSchema::itemIdFromUri(const QString &uri) const
-{
-    return m_itemIndex >= 0
-            ? qt_galleryItemTypeList[m_itemIndex].prefix + uri
-            : QString();
 }
 
 int QGalleryTrackerSchema::serviceUpdateId(const QString &service)
@@ -1682,13 +1676,10 @@ void QGalleryTrackerSchema::populateItemArguments(
             compositeTypes.append(compositeProperties[propertyIndex].type);
             arguments->compositeColumns.append(
                     compositeProperties[propertyIndex].createColumn(columns));
-        } else {
-            qWarning("Unknown column: %s", qPrintable(*it));
         }
     }
 
-    const bool descending = !sortPropertyNames.isEmpty()
-            && sortPropertyNames.first().startsWith(QLatin1Char('-'));
+    bool descending = false;
 
     for (QStringList::const_iterator it = sortPropertyNames.constBegin();
             it != sortPropertyNames.constEnd();
@@ -1701,12 +1692,18 @@ void QGalleryTrackerSchema::populateItemArguments(
             propertyName = propertyName.mid(1);
             sortFlags = QGalleryTrackerSortCriteria::Descending;
 
+            if (arguments->sortCriteria.isEmpty())
+                descending = true;
+
             sortFlags |= descending
                     ? QGalleryTrackerSortCriteria::Sorted
                     : QGalleryTrackerSortCriteria::ReverseSorted;
         } else {
             if (propertyName.startsWith(QLatin1Char('+')))
                 propertyName = propertyName.mid(1);
+
+            if (arguments->sortCriteria.isEmpty())
+                descending = false;
 
             sortFlags |= descending
                     ? QGalleryTrackerSortCriteria::ReverseSorted
@@ -1749,9 +1746,9 @@ void QGalleryTrackerSchema::populateItemArguments(
             << sortByService
             << sortFieldNames
             << descending;
-    arguments->idColumn = new QGalleryTrackerServicePrefixColumn;
-    arguments->urlColumn = new QGalleryTrackerFileUrlColumn(0);
-    arguments->typeColumn = new QGalleryTrackerServiceTypeColumn;
+    arguments->idColumn.reset(new QGalleryTrackerServicePrefixColumn);
+    arguments->urlColumn.reset(new QGalleryTrackerFileUrlColumn(0));
+    arguments->typeColumn.reset(new QGalleryTrackerServiceTypeColumn);
     arguments->valueColumns = qt_createValueColumns(valueTypes + extendedValueTypes);
     arguments->propertyNames = valueNames + compositeNames + aliasNames;
     arguments->propertyAttributes = valueAttributes + compositeAttributes + aliasAttributes;
@@ -1869,8 +1866,7 @@ void QGalleryTrackerSchema::populateAggregateArguments(
         }
     }
 
-    const bool descending = !sortPropertyNames.isEmpty()
-            && sortPropertyNames.first().startsWith(QLatin1Char('-'));
+    bool descending = false;
 
     for (QStringList::const_iterator it = sortPropertyNames.begin();
             it != sortPropertyNames.end();
@@ -1883,6 +1879,9 @@ void QGalleryTrackerSchema::populateAggregateArguments(
             propertyName = propertyName.mid(1);
             sortFlags = QGalleryTrackerSortCriteria::Descending;
 
+            if (arguments->sortCriteria.isEmpty())
+                descending = true;
+
             sortFlags |= descending
                     ? QGalleryTrackerSortCriteria::Sorted
                     : QGalleryTrackerSortCriteria::ReverseSorted;
@@ -1890,15 +1889,23 @@ void QGalleryTrackerSchema::populateAggregateArguments(
             if (propertyName.startsWith(QLatin1Char('+')))
                 propertyName = propertyName.mid(1);
 
+            if (arguments->sortCriteria.isEmpty())
+                descending = false;
+
             sortFlags |= descending
                     ? QGalleryTrackerSortCriteria::ReverseSorted
                     : QGalleryTrackerSortCriteria::Sorted;
         }
 
-        int fieldIndex = identityNames.indexOf(propertyName);
+        const int propertyIndex = properties.indexOfProperty(propertyName);
+        if (propertyIndex >= 0) {
+            const QString field = properties[propertyIndex].field;
 
-        if (fieldIndex >= 0)
+            const int fieldIndex = identityFields.indexOf(field);
+            Q_ASSERT(fieldIndex != -1);
+
             arguments->sortCriteria.append(QGalleryTrackerSortCriteria(fieldIndex, sortFlags));
+        }
     }
 
     arguments->updateMask = qt_galleryAggregateTypeList[m_aggregateIndex].updateMask;
@@ -1916,11 +1923,11 @@ void QGalleryTrackerSchema::populateAggregateArguments(
             << aggregateFields
             << descending;
     if (type.identity.count == 1)
-        arguments->idColumn = new QGalleryTrackerPrefixColumn(0, type.prefix);
+        arguments->idColumn.reset(new QGalleryTrackerPrefixColumn(0, type.prefix));
     else
-        arguments->idColumn = new QGalleryTrackerCompositeIdColumn(identityColumns, type.prefix);
-    arguments->urlColumn = new QGalleryTrackerStaticColumn(QVariant());
-    arguments->typeColumn = new QGalleryTrackerStaticColumn(type.itemType);
+        arguments->idColumn.reset(new QGalleryTrackerCompositeIdColumn(identityColumns, type.prefix));
+    arguments->urlColumn.reset(new QGalleryTrackerStaticColumn(QVariant()));
+    arguments->typeColumn.reset(new QGalleryTrackerStaticColumn(type.itemType));
     arguments->valueColumns = qt_createValueColumns(identityTypes + aggregateTypes);
     arguments->propertyNames = identityNames + aggregateNames + compositeNames + aliasNames;
     arguments->propertyAttributes
