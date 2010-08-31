@@ -62,10 +62,41 @@ private:
 	void setupBestMatchingContactsDb1();
 	void setupBestMatchingContactsDb2();
 	void setupBestMatchingContactsDb3();
+	void setupBestMatchingContactsDb4();
+	void setupBestMatchingContactsDb5();
+	void setupBestMatchingContactsDb6();
+	void setupBestMatchingContactsDb7();
+	void setupBestMatchingContactsDb8();
+	void setupBestMatchingContactsDb9();
+	void setupBestMatchingContactsDb10();
+	void setupBestMatchingContactsDb11();
+	void setupBestMatchingContactsDb12();
+	void setupBestMatchingContactsDb13();
+	void setupBestMatchingContactsDb14();
+	void setupBestMatchingContactsDb15();
+	void setupBestMatchingContactsDb16();
+	void setupBestMatchingContactsDb17();
+	
     void addContact(QString firstname,QString lastname,QString phonenumber);
-    void testBestMatchingStrategy1();
-    void testBestMatchingStrategy2();
-    void testBestMatchingStrategy3();
+    
+    void testBestMatching1();
+    void testBestMatching2();
+    void testBestMatching3();
+    void testBestMatching4();
+    void testBestMatching5();
+    void testBestMatching6();
+    void testBestMatching7();
+    void testBestMatching8();
+    void testBestMatching9();
+    void testBestMatching10();
+    void testBestMatching11();
+    void testBestMatching12();
+    void testBestMatching13();
+    void testBestMatching14();
+    void testBestMatching15();
+    void testBestMatching16();
+    void testBestMatching17();
+    
     void testBestMatchingWithUnionFilter();
     void testBestMatchingWithIntersectionFilter();
 private slots:  // Test cases
