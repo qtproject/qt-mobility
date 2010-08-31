@@ -79,6 +79,15 @@ UT_CPplPredictiveSearchTable::~UT_CPplPredictiveSearchTable()
     {
     delete iTable;
     iTable = NULL;
+
+	delete iPredictiveSearchSynchronizer;
+    iPredictiveSearchSynchronizer = NULL;
+	
+	delete iPredSearchQwertyTable;
+	iPredSearchQwertyTable = NULL;
+
+	delete iPredSearchSettingsTable;
+	iPredSearchSettingsTable = NULL;
     
     iDB.Close(); // Must close DB before it can be deleted
     RSqlDatabase::Delete(KDBFile);
@@ -868,7 +877,7 @@ void UT_CPplPredictiveSearchTable::CheckItemCountL(
     TInt aCountInTable10,
     TInt aCountInTable11)
     {
-    TPtrC tableNames[KTableCount] =
+    const TDesC tableNames[KTableCount] =
         {
         KSqlContactPredSearchTable0,
         KSqlContactPredSearchTable1,
