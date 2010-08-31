@@ -2255,6 +2255,78 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:and>"
                         "</rdfq:Condition>");
     } {
+        QGalleryFilter filter
+                = QDocumentGallery::url == QUrl::fromLocalFile(QLatin1String("/"));
+
+        QTest::newRow("File.url == file:///")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:and>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Path\"/>"
+                                    "<rdf:String></rdf:String>"
+                                "</rdfq:equals>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Name\"/>"
+                                    "<rdf:String></rdf:String>"
+                                "</rdfq:equals>"
+                            "</rdfq:and>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter
+                = QDocumentGallery::url == QUrl(QLatin1String("http://example.com"));
+
+        QTest::newRow("File.url == http://example.com")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:and>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Path\"/>"
+                                    "<rdf:String></rdf:String>"
+                                "</rdfq:equals>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Name\"/>"
+                                    "<rdf:String></rdf:String>"
+                                "</rdfq:equals>"
+                            "</rdfq:and>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter
+                = QDocumentGallery::url == QUrl(QLatin1String("http://example.com/index.html"));
+
+        QTest::newRow("File.url == http://example.com/index.html")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:and>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Path\"/>"
+                                    "<rdf:String></rdf:String>"
+                                "</rdfq:equals>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Name\"/>"
+                                    "<rdf:String></rdf:String>"
+                                "</rdfq:equals>"
+                            "</rdfq:and>"
+                        "</rdfq:Condition>");
+    } {
         QGalleryFilter filter = QDocumentGallery::filePath == QLatin1String("/path/to/file.ext");
 
         QTest::newRow("File.filePath == /path/to/file.ext")
@@ -2274,6 +2346,29 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                                 "<rdfq:equals>"
                                     "<rdfq:Property name=\"File:Name\"/>"
                                     "<rdf:String>file.ext</rdf:String>"
+                                "</rdfq:equals>"
+                            "</rdfq:and>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::filePath == QLatin1String("file.ext");
+
+        QTest::newRow("File.filePath == file.ext")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:and>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Path\"/>"
+                                    "<rdf:String></rdf:String>"
+                                "</rdfq:equals>"
+                                "<rdfq:equals>"
+                                    "<rdfq:Property name=\"File:Name\"/>"
+                                    "<rdf:String></rdf:String>"
                                 "</rdfq:equals>"
                             "</rdfq:and>"
                         "</rdfq:Condition>");
@@ -2385,6 +2480,23 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                                 "<rdfq:Property name=\"File:Name\"/>"
                                 "<rdf:String>(file|document).ext</rdf:String>"
                             "</rdfq:regex>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::description == QUrl(QLatin1String("http://example.com/index.html"));
+
+        QTest::newRow("Image.description == http://example.com/index.html")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:equals>"
+                                "<rdfq:Property name=\"Image:Description\"/>"
+                                "<rdf:String>http://example.com/index.html</rdf:String>"
+                            "</rdfq:equals>"
                         "</rdfq:Condition>");
     } {
         QGalleryFilter filter = QDocumentGallery::width > 1024;

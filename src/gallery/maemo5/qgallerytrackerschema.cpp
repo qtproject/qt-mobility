@@ -385,9 +385,6 @@ template <> bool qt_writeValue<QDateTime>(int *, QXmlStreamWriter *xml, const QV
 template <> bool qt_writeValue<QVariant>(int *error, QXmlStreamWriter *xml, const QVariant &value)
 {
     switch (value.type()) {
-    case QVariant::String:
-    case QVariant::Url:
-        return qt_writeValue<QString>(error, xml, value);
     case QVariant::Int:
     case QVariant::UInt:
     case QVariant::LongLong:
@@ -401,11 +398,7 @@ template <> bool qt_writeValue<QVariant>(int *error, QXmlStreamWriter *xml, cons
         return qt_writeValue<QDateTime>(error, xml, value);
     default:
         if (value.canConvert<QString>()) {
-            xml->writeStartElement(QLatin1String("rdf:String"));
-            xml->writeCharacters(value.toString());
-            xml->writeEndElement();
-
-            return true;
+            return qt_writeValue<QString>(error, xml, value);
         } else {
             *error = QGalleryAbstractRequest::PropertyTypeError;
 
@@ -638,7 +631,7 @@ static bool qt_writeFileUrlCondition(
 
         const int separatorIndex = filePath.lastIndexOf(QLatin1Char('/'));
 
-        if (separatorIndex > 0 && url.scheme() == QLatin1String("file")) {
+        if (separatorIndex >= 0 && url.scheme() == QLatin1String("file")) {
             const QString path = filePath.mid(0, separatorIndex);
             QString fileName = filePath.mid(separatorIndex + 1);
 
@@ -1498,9 +1491,6 @@ int QGalleryTrackerSchema::buildFilterQuery(
                 qt_writeFileContainerCondition(
                         &result, &xml, itemTypes[index].prefix.strip(rootItemId));
                 break;
-            default:
-                result = QGalleryAbstractRequest::InvalidPropertyError;
-                break;
             }
         } else if ((index = aggregateTypes.indexOfItemId((rootItemId))) != -1) {
             aggregateTypes[index].writeIdCondition(
@@ -1548,7 +1538,6 @@ static QVector<QGalleryTrackerValueColumn *> qt_createValueColumns(
     for (int i = 0, count = types.count(); i < count; ++i) {
         switch (types.at(i)) {
         case QVariant::String:
-        case QVariant::Url:
             columns.append(new QGalleryTrackerStringColumn);
             break;
         case QVariant::StringList:
