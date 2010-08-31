@@ -120,12 +120,14 @@ public:
         control(0),        
         viewfinder(0),
         capture(0),
+        state(QCamera::UnloadedState),
         error(QCamera::NoError),
         supportedLocks(QCamera::NoLock),
         requestedLocks(QCamera::NoLock),
         lockStatus(QCamera::Unlocked),
         lockChangeReason(QCamera::UserRequest),
-        supressLockChangedSignal(false)
+        supressLockChangedSignal(false),
+        restartPending(false)
     {
     }
 
@@ -143,6 +145,8 @@ public:
     QObject *viewfinder;
     QObject *capture;
 
+    QCamera::State state;
+
     QCamera::Error error;
     QString errorString;
 
@@ -153,10 +157,17 @@ public:
     QCamera::LockChangeReason lockChangeReason;
     bool supressLockChangedSignal;
 
+    bool restartPending;
+
     void _q_error(int error, const QString &errorString);
     void unsetError() { error = QCamera::NoError; errorString.clear(); }
 
+    void setState(QCamera::State);
+
     void _q_updateLockStatus(QCamera::LockType, QCamera::LockStatus, QCamera::LockChangeReason);
+    void _q_updateState(QCamera::State newState);
+    void _q_preparePropertyChange(int changeType);
+    void _q_restartCamera();
     void updateLockStatus();
 };
 
@@ -173,6 +184,69 @@ void QCameraPrivate::_q_error(int error, const QString &errorString)
     emit q->error(this->error);
 }
 
+void QCameraPrivate::setState(QCamera::State newState)
+{
+    Q_Q(QCamera);
+
+    unsetError();
+
+    if (!control) {
+        _q_error(QCamera::ServiceMissingError, q_ptr->tr("The camera service is missing"));
+        return;
+    }
+
+    if (state == newState)
+        return;
+
+    restartPending = false;
+    state = newState;
+    control->setState(state);
+    emit q->stateChanged(state);
+}
+
+void QCameraPrivate::_q_updateState(QCamera::State newState)
+{
+    Q_Q(QCamera);
+
+    //omit changins state to Loaded when the camera is temporarily
+    //stopped to apply shanges
+    if (restartPending)
+        return;
+
+    if (newState != state) {
+        qDebug() << "Camera state changed:" << newState;
+        state = newState;
+        emit q->stateChanged(state);
+    }
+}
+
+void QCameraPrivate::_q_preparePropertyChange(int changeType)
+{
+    if (!control)
+        return;
+
+    QCamera::Status status = control->status();
+
+    //all the changes are allowed until the camera is starting
+    if (control->state() != QCamera::ActiveState)
+        return;
+
+    if (control->canChangeProperty(QCameraControl::PropertyChangeType(changeType), status))
+        return;
+
+    restartPending = true;
+    control->setState(QCamera::LoadedState);
+    QMetaObject::invokeMethod(q_ptr, "_q_restartCamera", Qt::QueuedConnection);
+}
+
+void QCameraPrivate::_q_restartCamera()
+{
+    if (restartPending) {
+        restartPending = false;
+        control->setState(QCamera::ActiveState);
+    }
+}
+
 void QCameraPrivate::initControls()
 {
     Q_Q(QCamera);
@@ -184,7 +258,7 @@ void QCameraPrivate::initControls()
         locksControl = qobject_cast<QCameraLocksControl *>(service->requestControl(QCameraLocksControl_iid));
 
         if (control) {
-            q->connect(control, SIGNAL(stateChanged(QCamera::State)), q, SIGNAL(stateChanged(QCamera::State)));
+            q->connect(control, SIGNAL(stateChanged(QCamera::State)), q, SLOT(_q_updateState(QCamera::State)));
             q->connect(control, SIGNAL(statusChanged(QCamera::Status)), q, SIGNAL(statusChanged(QCamera::Status)));
             q->connect(control, SIGNAL(captureModeChanged(QCamera::CaptureMode)),
                        q, SIGNAL(captureModeChanged(QCamera::CaptureMode)));
@@ -402,6 +476,8 @@ QCameraImageProcessing *QCamera::imageProcessing() const
 void QCamera::setViewfinder(QVideoWidget *viewfinder)
 {
     Q_D(QCamera);
+    d->_q_preparePropertyChange(QCameraControl::Viewfinder);
+
     if (d->viewfinder)
         unbind(d->viewfinder);
 
@@ -418,6 +494,8 @@ void QCamera::setViewfinder(QVideoWidget *viewfinder)
 void QCamera::setViewfinder(QGraphicsVideoItem *viewfinder)
 {
     Q_D(QCamera);
+    d->_q_preparePropertyChange(QCameraControl::Viewfinder);
+
     if (d->viewfinder)
         unbind(d->viewfinder);
 
@@ -474,8 +552,13 @@ QCamera::CaptureMode QCamera::captureMode() const
 void QCamera::setCaptureMode(QCamera::CaptureMode mode)
 {
     Q_D(QCamera);
-    if (d->control)
-        d->control->setCaptureMode(mode);
+
+    if (mode != captureMode()) {
+        if (d->control) {
+            d->_q_preparePropertyChange(QCameraControl::CaptureMode);
+            d->control->setCaptureMode(mode);
+        }
+    }
 }
 
 
@@ -492,16 +575,7 @@ void QCamera::setCaptureMode(QCamera::CaptureMode mode)
 void QCamera::start()
 {
     Q_D(QCamera);
-
-    d->unsetError();
-
-    if (d->control)
-        d->control->setState(QCamera::ActiveState);
-    else {
-        d->errorString = tr("The camera service is missing");
-        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
-                                    Q_ARG(QCamera::Error, QCamera::ServiceMissingError));
-    }
+    d->setState(QCamera::ActiveState);
 }
 
 /*!
@@ -511,13 +585,7 @@ void QCamera::start()
 void QCamera::stop()
 {
     Q_D(QCamera);
-
-    d->unsetError();
-
-    if(d->control)
-        d->control->setState(QCamera::LoadedState);
-    else
-        d->_q_error(QCamera::ServiceMissingError, tr("The camera service is missing"));
+    d->setState(QCamera::LoadedState);
 }
 
 /*!
@@ -534,13 +602,7 @@ void QCamera::stop()
 void QCamera::load()
 {
     Q_D(QCamera);
-
-    d->unsetError();
-
-    if(d->control)
-        d->control->setState(QCamera::LoadedState);
-    else
-        d->_q_error(QCamera::ServiceMissingError, tr("The camera service is missing"));
+    d->setState(QCamera::LoadedState);
 }
 
 /*!
@@ -550,11 +612,7 @@ void QCamera::load()
 void QCamera::unload()
 {
     Q_D(QCamera);
-
-    d->unsetError();
-
-    if(d->control)
-        d->control->setState(QCamera::UnloadedState);
+    d->setState(QCamera::UnloadedState);
 }
 
 
@@ -578,10 +636,7 @@ QString QCamera::deviceDescription(const QByteArray &device)
 
 QCamera::State QCamera::state() const
 {
-    if(d_func()->control)
-        return (QCamera::State)d_func()->control->state();
-
-    return QCamera::UnloadedState;
+    return d_func()->state;
 }
 
 QCamera::Status QCamera::status() const

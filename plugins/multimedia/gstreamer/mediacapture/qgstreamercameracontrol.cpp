@@ -142,6 +142,7 @@ void QGstreamerCameraControl::reloadLater()
     //qDebug() << "reload pipeline requested";
     if (!m_reloadPending && m_state == QCamera::ActiveState) {
         m_reloadPending = true;
+        m_session->setState(QGstreamerCaptureSession::StoppedState);
         QMetaObject::invokeMethod(this, "reloadPipeline", Qt::QueuedConnection);
     }
 }
@@ -151,9 +152,23 @@ void QGstreamerCameraControl::reloadPipeline()
     //qDebug() << "reload pipeline";
     if (m_reloadPending) {
         m_reloadPending = false;
-        if (m_state == QCamera::ActiveState) {
-            m_session->setState(QGstreamerCaptureSession::StoppedState);
+        if (m_state == QCamera::ActiveState) {            
             m_session->setState(QGstreamerCaptureSession::PreviewState);
         }
+    }
+}
+
+bool QGstreamerCameraControl::canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const
+{
+    Q_UNUSED(status);
+
+    switch (changeType) {
+    case QCameraControl::CaptureMode:
+    case QCameraControl::ImageEncodingSettings:
+    case QCameraControl::VideoEncodingSettings:
+    case QCameraControl::Viewfinder:
+        return true;
+    default:
+        return false;
     }
 }
