@@ -61,8 +61,6 @@ void QGalleryTrackerChangeNotifier::itemsEdited(const QString &service)
 
 void QGalleryTrackerChangeNotifier::statisticsChanged(const QVector<QStringList> &statistics)
 {
-    qDebug(Q_FUNC_INFO);
-
     int updateId = 0;
 
     typedef QVector<QStringList>::const_iterator iterator;
