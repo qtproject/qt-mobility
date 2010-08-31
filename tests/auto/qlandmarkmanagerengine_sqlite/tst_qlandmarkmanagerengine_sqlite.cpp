@@ -4677,6 +4677,78 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksIntersection() {
             QCOMPARE(idSet.contains(lm.landmarkId().localId()), false);
         }
     }
+
+    m_manager->removeLandmarks(m_manager->landmarkIds());
+
+    QCOMPARE(m_manager->landmarkIds().count(), 0);
+
+    QLandmark lm1;
+    lm1.setName("LM1");
+    lm1.setCoordinate(QGeoCoordinate(10,0));
+    lm1.addCategoryId(cat1.categoryId());
+    m_manager->saveLandmark(&lm1);
+
+    QLandmark lm2;
+    lm2.setName("LM2");
+    lm2.setCoordinate(QGeoCoordinate(10,20));
+    lm2.addCategoryId(cat1.categoryId());
+    m_manager->saveLandmark(&lm2);
+
+    QLandmark lm3;
+    lm3.setName("LM3");
+    lm3.setCoordinate(QGeoCoordinate(10,21));
+    lm3.addCategoryId(cat2.categoryId());
+    m_manager->saveLandmark(&lm3);
+
+    QLandmark lm4;
+    lm4.setName("LM4");
+    lm4.setCoordinate(QGeoCoordinate(10,22));
+    lm4.addCategoryId(cat3.categoryId());
+    m_manager->saveLandmark(&lm4);
+
+    QLandmark lm5;
+    lm5.setName("LM5");
+    lm5.setCoordinate(QGeoCoordinate(10,22));
+    lm5.addCategoryId(cat1.categoryId());
+    lm5.addCategoryId(cat2.categoryId());
+    m_manager->saveLandmark(&lm5);
+
+    QLandmark lm6;
+    lm6.setName("LM6");
+    lm6.setCoordinate(QGeoCoordinate(10,50));
+    m_manager->saveLandmark(&lm6);
+
+    filter.clear();
+    QLandmarkProximityFilter proximityFilter(QGeoCoordinate(10,21),120000);
+    filter.append(proximityFilter);
+    QCOMPARE(m_manager->landmarks(filter).count(), 4);
+
+    QLandmarkCategoryFilter cat1Filter;
+    cat1Filter.setCategoryId(cat1.categoryId());
+    filter.append(cat1Filter);
+    QCOMPARE(m_manager->landmarks(filter).count(), 2);
+    lms =m_manager->landmarks(filter);
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm5));
+
+    QLandmarkCategoryFilter cat2Filter;
+    cat2Filter.setCategoryId(cat2.categoryId());
+    filter.append(cat2Filter);
+    QCOMPARE(m_manager->landmarks(filter).count(), 1);
+    lms =m_manager->landmarks(filter);
+    QVERIFY(lms.contains(lm5));
+
+    QLandmarkUnionFilter unionFilter;
+    unionFilter.append(cat1Filter);
+    unionFilter.append(cat2Filter);
+    filter.clear();
+    filter.append(proximityFilter);
+    filter.append(unionFilter);
+    QCOMPARE(m_manager->landmarks(filter).count(), 3);
+    lms = m_manager->landmarks(filter);
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm3));
+    QVERIFY(lms.contains(lm5));
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksIntersectionAsync() {
