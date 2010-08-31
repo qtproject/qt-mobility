@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,28 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef QXARECORDMEDIASERVICEPROVIDERPLUGIN_H
-#define QXARECORDMEDIASERVICEPROVIDERPLUGIN_H
+#ifndef S60VIDEORENDERERCONTROL_H
+#define S60VIDEORENDERERCONTROL_H
 
-#include <qmediaservice.h>
-#include <qmediaserviceproviderplugin.h>
+#include <qvideorenderercontrol.h>
 
-QT_USE_NAMESPACE
-
-/*
- * This class implements QMediaServiceProviderPlugin interface.
- * This plug-in is a factory interface where individual services are created and
- * deleted.
- */
-
-class QXARecordMediaServiceProviderPlugin : public QMediaServiceProviderPlugin
+class S60VideoRendererControl : public QVideoRendererControl
 {
     Q_OBJECT
 
-public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+public: // Constructor & Destructor
+
+    S60VideoRendererControl(QObject *parent = 0);
+    virtual ~S60VideoRendererControl();
+
+public: // S60VideoRendererControl
+
+    QAbstractVideoSurface *surface() const;
+    void setSurface(QAbstractVideoSurface *surface);
+
+Q_SIGNALS: // Internal Signals
+
+    void viewFinderSurfaceSet();
+
+private: // Data
+
+    QAbstractVideoSurface   *m_surface;
+
 };
 
-#endif /* QXARECORDMEDIASERVICEPROVIDERPLUGIN_H */
+#endif // S60VIDEORENDERERCONTROL_H

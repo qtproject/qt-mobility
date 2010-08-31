@@ -97,8 +97,8 @@ static const QGstreamerMetaDataKeyLookup qt_gstreamerMetaDataKeys[] =
     //{ QtMultimediaKit::CoverArtUrlLarge, 0 },
 
     // Image/Video
-    //{ QtMultimediaKit::Resolution, 0 },
-    //{ QtMultimediaKit::PixelAspectRatio, 0 },
+    { QtMultimediaKit::Resolution, "resolution" },
+    { QtMultimediaKit::PixelAspectRatio, "pixel-aspect-ratio" },
 
     // Video
     //{ QtMultimediaKit::VideoFrameRate, 0 },

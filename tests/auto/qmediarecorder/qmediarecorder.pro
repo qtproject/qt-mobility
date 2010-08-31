@@ -6,14 +6,14 @@ symbian {
     include(../../../config.pri)
     HEADERS += s60common.h
     contains(openmaxal_symbian_enabled, yes) {
-    	DEFINES += HAS_OPENMAXAL_MEDIARECORD_BACKEND
+        DEFINES += HAS_OPENMAXAL_MEDIARECORD_BACKEND
         HEADERS += tst_qmediarecorder_xa.h
-	SOURCES += tst_qmediarecorder_xa.cpp
+        SOURCES += tst_qmediarecorder_xa.cpp
+        TARGET.CAPABILITY = ALL -TCB
     } else {
         HEADERS += tst_qmediarecorder_mmf.h
         SOURCES += tst_qmediarecorder_mmf.cpp
     }
-	    
 }
 HEADERS += tst_qmediarecorder.h
 SOURCES += main.cpp tst_qmediarecorder.cpp
