@@ -993,13 +993,13 @@ static const QGalleryItemType qt_galleryItemTypeList[] =
 
 static const QGalleryItemProperty qt_galleryArtistIdentity[] =
 {
-    QT_GALLERY_ITEM_PROPERTY("title", "Audio:Artist", String, CanRead | CanFilter)
+    QT_GALLERY_ITEM_PROPERTY("title", "Audio:Artist", String, CanRead | CanFilter | CanSort)
 };
 
 static const QGalleryItemProperty qt_galleryArtistPropertyList[] =
 {
-    QT_GALLERY_ITEM_PROPERTY("artist", "Audio:Artist", String, CanRead | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("title" , "Audio:Artist", String, CanRead | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("artist", "Audio:Artist", String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("title" , "Audio:Artist", String, CanRead | CanFilter | CanSort),
 };
 
 static const QGalleryAggregateProperty qt_galleryArtistAggregateList[] =
@@ -1045,16 +1045,16 @@ static void qt_writeAlbumArtistIdCondition(int *, QXmlStreamWriter *xml, const Q
 
 static const QGalleryItemProperty qt_galleryAlbumIdentity[] =
 {
-    QT_GALLERY_ITEM_PROPERTY("artist", "Audio:AlbumArtist", String, CanRead | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("title" , "Audio:Album"      , String, CanRead | CanFilter)
+    QT_GALLERY_ITEM_PROPERTY("artist", "Audio:AlbumArtist", String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("title" , "Audio:Album"      , String, CanRead | CanFilter | CanSort)
 };
 
 static const QGalleryItemProperty qt_galleryAlbumPropertyList[] =
 {
-    QT_GALLERY_ITEM_PROPERTY("title"      , "Audio:Album"      , String, CanRead | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("albumTitle" , "Audio:Album"      , String, CanRead | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("artist"     , "Audio:AlbumArtist", String, CanRead | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("albumArtist", "Audio:AlbumArtist", String, CanRead | CanFilter)
+    QT_GALLERY_ITEM_PROPERTY("title"      , "Audio:Album"      , String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("albumTitle" , "Audio:Album"      , String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("artist"     , "Audio:AlbumArtist", String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("albumArtist", "Audio:AlbumArtist", String, CanRead | CanFilter | CanSort)
 };
 
 static const QGalleryAggregateProperty qt_galleryAlbumAggregateList[] =

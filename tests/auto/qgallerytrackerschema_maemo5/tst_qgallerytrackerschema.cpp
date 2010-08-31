@@ -389,6 +389,14 @@ void tst_QGalleryTrackerSchema::propertyAttributes_data()
             << QString::fromLatin1("Audio")
             << QString::fromLatin1("albumTitle")
             << (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanFilter | QGalleryProperty::CanSort);
+    QTest::newRow("Album.title")
+            << QString::fromLatin1("Album")
+            << QString::fromLatin1("albumTitle")
+            << (QGalleryProperty::CanRead | QGalleryProperty::CanFilter | QGalleryProperty::CanSort);
+    QTest::newRow("Album.albumTitle")
+            << QString::fromLatin1("Album")
+            << QString::fromLatin1("albumTitle")
+            << (QGalleryProperty::CanRead | QGalleryProperty::CanFilter | QGalleryProperty::CanSort);
     QTest::newRow("Album.duration")
             << QString::fromLatin1("Album")
             << QString::fromLatin1("duration")
