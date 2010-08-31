@@ -44,6 +44,9 @@
 #include <QtGui/QMainWindow>
 #include <QDate>
 #include <qmobilityglobal.h>
+#include <qorganizeritemsaverequest.h>
+#include <qorganizeritemremoverequest.h>
+class QProgressDialog;
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItemManager;
@@ -79,6 +82,15 @@ public Q_SLOTS:
     void changeManager(QOrganizerItemManager *manager);
     void updateSelectedDay(const QDate& date);
 
+private Q_SLOTS:
+    void switchView();
+    void editItem();
+    void removeItem();
+    void addEvents();
+    void deleteAllEntries();
+    void saveReqStateChanged(QOrganizerItemAbstractRequest::State);
+    void removeReqStateChanged(QOrganizerItemAbstractRequest::State);
+
 private:
     void buildMenu();
 
@@ -91,6 +103,12 @@ private:
     TodoEditPage *m_todoEditPage;
     JournalEditPage *m_journalEditPage;
     EventOccurrenceEditPage *m_eventOccurrenceEditPage;
+
+    QAction *m_switchViewAction;
+
+    QOrganizerItemSaveRequest m_saveReq;
+    QOrganizerItemRemoveRequest m_remReq;
+    QProgressDialog *m_progressDlg;
 };
 
 #endif // CALENDARDEMO_H

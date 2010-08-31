@@ -62,7 +62,7 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     m_stackedWidget = new QStackedWidget(this);
 
     m_monthPage = new MonthPage(m_stackedWidget);
-    m_dayPage = new DayPage(this, m_stackedWidget);
+    m_dayPage = new DayPage(m_stackedWidget);
     m_eventEditPage = new EventEditPage(m_stackedWidget);
     m_todoEditPage = new TodoEditPage(m_stackedWidget);
     m_journalEditPage = new JournalEditPage(m_stackedWidget);
@@ -86,6 +86,12 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     connect(m_todoEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_journalEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_eventOccurrenceEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
+    
+    // Connect to the save and remove request status change signals
+    connect(&m_saveReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
+            this, SLOT(saveReqStateChanged(QOrganizerItemAbstractRequest::State)));
+    connect(&m_remReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
+            this, SLOT(removeReqStateChanged(QOrganizerItemAbstractRequest::State)));
 
     m_monthPage->init();
     
@@ -120,37 +126,37 @@ void CalendarDemo::buildMenu()
     // These platforms need their menu items added directly to the menu bar.
     QMenuBar *optionsMenu = menuBar();
 #else
-    QMenu *optionsMenu = new QMenu("Options", this);
+    QMenu *optionsMenu = new QMenu("&Options", this);
     #ifndef Q_OS_SYMBIAN
     // We add the options menu to the softkey manually later
     menuBar()->addMenu(optionsMenu);
     #endif
 #endif
-#ifdef Q_OS_SYMBIAN
     // Add editing options in the menu for Symbian (other platforms get buttons)
-    QAction* editAction = optionsMenu->addAction("Edit");
-    connect(editAction, SIGNAL(triggered(bool)), this, SLOT(editItem()));
-    QAction* removeAction = optionsMenu->addAction("Remove");
-    connect(removeAction, SIGNAL(triggered(bool)), this, SLOT(removeItem()));
-#endif
-    QAction* addEventAction = optionsMenu->addAction("Add Event");
+    QAction* addEventAction = optionsMenu->addAction("Add E&vent");
     connect(addEventAction, SIGNAL(triggered(bool)), this, SLOT(addNewEvent()));
-    QAction* addTodoAction = optionsMenu->addAction("Add Todo");
+    QAction* addTodoAction = optionsMenu->addAction("Add &Todo");
     connect(addTodoAction, SIGNAL(triggered(bool)), this, SLOT(addNewTodo()));
-    QAction* addJournalAction = optionsMenu->addAction("Add Journal");
+    QAction* addJournalAction = optionsMenu->addAction("Add &Journal");
     connect(addJournalAction, SIGNAL(triggered(bool)), this, SLOT(addNewJournal()));
+    optionsMenu->addSeparator();
+    QAction* editAction = optionsMenu->addAction("&Edit");
+    connect(editAction, SIGNAL(triggered(bool)), this, SLOT(editItem()));
+    QAction* removeAction = optionsMenu->addAction("&Remove");
+    connect(removeAction, SIGNAL(triggered(bool)), this, SLOT(removeItem()));
+    optionsMenu->addSeparator();
+    m_switchViewAction = optionsMenu->addAction("&Open Day");
+    connect(m_switchViewAction, SIGNAL(triggered(bool)), this, SLOT(switchView()));
+    optionsMenu->addSeparator();
+    QAction* addHugeEntires = optionsMenu->addAction("Add many events");
+    connect(addHugeEntires, SIGNAL(triggered(bool)), this, SLOT(addEvents()));
+    QAction* deleteAllEntires = optionsMenu->addAction("Delete all entries");
+    connect(deleteAllEntires, SIGNAL(triggered(bool)), this, SLOT(deleteAllEntries()));
 
 #ifdef Q_OS_SYMBIAN
-    // Add softkeys for symbian
-    QAction* backSoftKey = new QAction("View Month", this);
-    backSoftKey->setSoftKeyRole(QAction::NegativeSoftKey);
-    addAction(backSoftKey);
-    connect(backSoftKey, SIGNAL(triggered(bool)), this, SLOT(viewMonthClicked()));
-
-    QAction* optionsSoftKey = new QAction("Options", this);
-    optionsSoftKey->setSoftKeyRole(QAction::PositiveSoftKey);
-    optionsSoftKey->setMenu(optionsMenu);
-    addAction(optionsSoftKey);
+    // add the menu to the softkey for these pages
+    m_monthPage->setMenu(optionsMenu);
+    m_dayPage->setMenu(optionsMenu);
 #endif
 }
 
@@ -161,6 +167,7 @@ void CalendarDemo::activateMonthPage()
 #endif
     m_monthPage->refresh();
     m_stackedWidget->setCurrentWidget(m_monthPage);
+    m_switchViewAction->setText("&Open Day");
 }
 
 void CalendarDemo::activateDayPage()
@@ -170,6 +177,7 @@ void CalendarDemo::activateDayPage()
 #endif
     m_dayPage->refresh();
     m_stackedWidget->setCurrentWidget(m_dayPage);
+    m_switchViewAction->setText("View &Month");
 }
 
 void CalendarDemo::activateEditPage(const QOrganizerItem &item)
@@ -231,6 +239,102 @@ void CalendarDemo::addNewJournal()
     QDateTime time(m_currentDate);
     newJournal.setDateTime(time);
     activateEditPage(newJournal);
+}
+
+void CalendarDemo::switchView()
+{
+    if (m_stackedWidget->currentWidget() == m_dayPage) {
+        activateMonthPage();
+    } else if (m_stackedWidget->currentWidget() == m_monthPage) {
+        activateDayPage();
+    }
+}
+
+void CalendarDemo::editItem()
+{
+    if (m_stackedWidget->currentWidget() == m_dayPage) {
+        m_dayPage->editItem();
+    } else if (m_stackedWidget->currentWidget() == m_monthPage) {
+        m_monthPage->editItem();
+    }
+}
+
+void CalendarDemo::removeItem()
+{
+    if (m_stackedWidget->currentWidget() == m_dayPage) {
+        m_dayPage->removeItem();
+    } else if (m_stackedWidget->currentWidget() == m_monthPage) {
+        m_monthPage->removeItem();
+    }
+}
+
+void CalendarDemo::addEvents()
+{
+    QList<QOrganizerItem> items;
+    
+    // Create a large number of events asynchronously
+    for(int index=0 ; index <  100 ; index++) {
+        QOrganizerItem item;
+        item.setType(QOrganizerItemType::TypeEvent);
+        item.setDescription(QString("Event %1").arg(index));
+        item.setDisplayLabel(QString("Subject for event %1").arg(index + 1));
+        
+        // Set the start date to index to add events to next 5000 days
+        QOrganizerEventTimeRange timeRange;
+        timeRange.setStartDateTime(QDateTime::currentDateTime().addDays(index));
+        item.saveDetail(&timeRange);
+        
+        items.append(item);
+    }
+    
+    // Now create a save request and execute it
+    m_saveReq.setItems(items);
+    m_saveReq.setManager(m_manager);
+    m_saveReq.start();
+}
+
+void CalendarDemo::deleteAllEntries()
+{
+    // Fetch all the entries
+    QList<QOrganizerItemLocalId> ids = m_manager->itemIds();
+    
+    if(ids.count()) {
+        m_remReq.setItemIds(ids);
+        m_remReq.setManager(m_manager);
+        m_remReq.start();
+    }
+}
+
+void CalendarDemo::saveReqStateChanged(QOrganizerItemAbstractRequest::State reqState)
+{
+    if(QOrganizerItemAbstractRequest::ActiveState == reqState) {
+        // Request started. Show a progress or wait dialog
+        m_progressDlg = new QProgressDialog("Saving events..", "Cancel", 100, 100, this);
+        connect(m_progressDlg, SIGNAL(canceled()), &m_saveReq, SLOT(cancel()));
+        m_progressDlg->show();
+    } else if (QOrganizerItemAbstractRequest::FinishedState == reqState ||
+               QOrganizerItemAbstractRequest::CanceledState == reqState) {
+        // Request finished or cancelled. Stop showing the progress dialog and refresh
+        m_progressDlg->hide();
+        m_monthPage->refresh();
+        m_dayPage->refresh();
+    }
+}
+
+void CalendarDemo::removeReqStateChanged(QOrganizerItemAbstractRequest::State reqState)
+{
+    if(QOrganizerItemAbstractRequest::ActiveState == reqState) {
+        // Request started. Show a progress or wait dialog
+        m_progressDlg = new QProgressDialog("Removing events..", "Cancel", 100, 100, this);
+        connect(m_progressDlg, SIGNAL(canceled()), &m_remReq, SLOT(cancel()));
+        m_progressDlg->show();
+    } else if (QOrganizerItemAbstractRequest::FinishedState == reqState ||
+               QOrganizerItemAbstractRequest::CanceledState == reqState) {
+        // Request finished or cancelled. Stop showing the progress dialog and refresh
+        m_progressDlg->hide();
+        m_monthPage->refresh();
+        m_dayPage->refresh();
+    }
 }
 
 void CalendarDemo::changeManager(QOrganizerItemManager *manager)

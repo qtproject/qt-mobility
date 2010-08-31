@@ -47,7 +47,7 @@ QTM_USE_NAMESPACE
 EventOccurrenceEditPage::EventOccurrenceEditPage(QWidget *parent)
     :QWidget(parent),
     m_manager(0),
-    m_scrollAreaLayout(0),
+    scrollAreaLayout(0),
     m_typeComboBox(0),
     m_subjectEdit(0),
     m_countSpinBox(0),
@@ -63,7 +63,7 @@ EventOccurrenceEditPage::EventOccurrenceEditPage(QWidget *parent)
     QLabel *endTimeLabel = new QLabel("End time:", this);
     m_endTimeEdit = new QDateTimeEdit(this);
 
-#ifdef Q_WS_X11
+#ifndef Q_OS_SYMBIAN
     // Add push buttons for Maemo as it does not support soft keys
     QHBoxLayout* hbLayout = new QHBoxLayout();
     QPushButton *okButton = new QPushButton("Ok", this);
@@ -74,22 +74,23 @@ EventOccurrenceEditPage::EventOccurrenceEditPage(QWidget *parent)
     hbLayout->addWidget(cancelButton);
 #endif
 
-    m_scrollAreaLayout = new QVBoxLayout();
-    m_scrollAreaLayout->addWidget(subjectLabel);
-    m_scrollAreaLayout->addWidget(m_subjectEdit);
-    m_scrollAreaLayout->addWidget(startTimeLabel);
-    m_scrollAreaLayout->addWidget(m_startTimeEdit);
-    m_scrollAreaLayout->addWidget(endTimeLabel);
-    m_scrollAreaLayout->addWidget(m_endTimeEdit);
+    scrollAreaLayout = new QVBoxLayout();
+    scrollAreaLayout->addWidget(subjectLabel);
+    scrollAreaLayout->addWidget(m_subjectEdit);
+    scrollAreaLayout->addWidget(startTimeLabel);
+    scrollAreaLayout->addWidget(m_startTimeEdit);
+    scrollAreaLayout->addWidget(endTimeLabel);
+    scrollAreaLayout->addWidget(m_endTimeEdit);
+    scrollAreaLayout->addStretch();
 
-#ifdef Q_WS_X11
-    m_scrollAreaLayout->addLayout(hbLayout);
+#ifndef Q_OS_SYMBIAN
+    scrollAreaLayout->addLayout(hbLayout);
 #endif
 
     QScrollArea *scrollArea = new QScrollArea(this);
     scrollArea->setWidgetResizable(true);
     QWidget *formContainer = new QWidget(scrollArea);
-    formContainer->setLayout(m_scrollAreaLayout);
+    formContainer->setLayout(scrollAreaLayout);
     scrollArea->setWidget(formContainer);
 
     QVBoxLayout *mainLayout = new QVBoxLayout();

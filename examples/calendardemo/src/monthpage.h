@@ -44,8 +44,6 @@
 #include <QWidget>
 #include <QDate>
 #include <qmobilityglobal.h>
-#include <qorganizeritemsaverequest.h>
-#include <qorganizeritemremoverequest.h>
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItemManager;
@@ -58,7 +56,6 @@ class QCalendarWidget;
 class QLabel;
 class QListWidget;
 class QListWidgetItem;
-class QProgressDialog;
 
 class MonthPage : public QWidget
 {
@@ -66,22 +63,24 @@ class MonthPage : public QWidget
 
 public:
     MonthPage(QWidget *parent = 0);
-    void init();
     ~MonthPage();
+    void init();
+
+#ifdef Q_OS_SYMBIAN
+    void setMenu(QMenu *menu);
+#endif
 
 private Q_SLOTS:
     void backendChanged(const QString &managerName);
-    void addEvents();
-    void deleteAllEntries();
     void refreshDayItems();
     void currentMonthChanged();
     void dayDoubleClicked(QDate date);
     void openDay();
     void itemDoubleClicked(QListWidgetItem *listItem);
-    void saveReqStateChanged(QOrganizerItemAbstractRequest::State);
-    void removeReqStateChanged(QOrganizerItemAbstractRequest::State);
 
 public Q_SLOTS:
+    void editItem();
+    void removeItem();
     void refresh();
 
 Q_SIGNALS:
@@ -101,9 +100,6 @@ private:
     QCalendarWidget *m_calendarWidget;
     QLabel *m_dateLabel;
     QListWidget *m_itemList;
-    QOrganizerItemSaveRequest m_saveReq;
-    QOrganizerItemRemoveRequest m_remReq;
-    QProgressDialog *m_progressDlg;
 };
 
 #endif // MONTHPAGE_H_

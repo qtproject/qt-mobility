@@ -105,7 +105,7 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(alarmLabel);
     scrollAreaLayout->addWidget(m_alarmComboBox);
     scrollAreaLayout->addStretch();
-#ifdef Q_WS_X11
+#ifndef Q_OS_SYMBIAN
     scrollAreaLayout->addLayout(hbLayout);
 #endif
 

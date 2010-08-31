@@ -93,7 +93,6 @@ private:
     QOrganizerEvent m_organizerEvent;
     QList<QOrganizerItem> m_listOfEvents;
     QOrganizerItemSaveRequest *m_saveItemRequest;
-    QVBoxLayout *m_scrollAreaLayout;
     QVBoxLayout *m_repeatControls;
     QAction *m_saveOrNextSoftKey;
     QComboBox *m_alarmComboBox;

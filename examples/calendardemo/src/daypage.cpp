@@ -48,25 +48,31 @@ QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QOrganizerItem)
 
-DayPage::DayPage(QMainWindow *mainWindow, QWidget *parent)
+DayPage::DayPage(QWidget *parent)
     :QWidget(parent),
     m_manager(0),
     m_dateLabel(0),
     m_itemList(0),
     m_menuBar(0)
 {
-    QVBoxLayout *mainlayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
+    QHBoxLayout *dateLayout = new QHBoxLayout(this);
     m_dateLabel = new QLabel(this);
     m_dateLabel->setAlignment(Qt::AlignCenter);
-    mainlayout->addWidget(m_dateLabel);
+    dateLayout->addWidget(m_dateLabel);
+    dateLayout->addStretch();
+#ifndef Q_OS_SYMBIAN
+    QPushButton* backButton = new QPushButton("View Month",this);
+    connect(backButton,SIGNAL(clicked()),this,SLOT(viewMonthClicked()));
+    dateLayout->addWidget(backButton);
+#endif
+    mainLayout->addLayout(dateLayout);
 
     m_itemList = new QListWidget(this);
-    mainlayout->addWidget(m_itemList);
+    mainLayout->addWidget(m_itemList);
     connect(m_itemList, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(itemDoubleClicked(QListWidgetItem *)));
 
-#ifndef Q_OS_SYMBIAN
-    // Add push buttons for non-Symbian platforms
     QHBoxLayout* hbLayout = new QHBoxLayout();
     QPushButton* editEventButton = new QPushButton("Edit",this);
     connect(editEventButton,SIGNAL(clicked()),this,SLOT(editItem()));
@@ -74,20 +80,34 @@ DayPage::DayPage(QMainWindow *mainWindow, QWidget *parent)
     QPushButton* removeEventButton = new QPushButton("Remove",this);
     connect(removeEventButton,SIGNAL(clicked()),this,SLOT(removeItem()));
     hbLayout->addWidget(removeEventButton);
-    QPushButton* backButton = new QPushButton("View Month",this);
-    connect(backButton,SIGNAL(clicked()),this,SLOT(viewMonthClicked()));
-    hbLayout->addWidget(backButton);
-    mainlayout->addLayout(hbLayout);
+    mainLayout->addLayout(hbLayout);
+
+#ifdef Q_OS_SYMBIAN
+    // Add softkey for symbian
+    QAction* backSoftKey = new QAction("View Month", this);
+    backSoftKey->setSoftKeyRole(QAction::NegativeSoftKey);
+    addAction(backSoftKey);
+    connect(backSoftKey, SIGNAL(triggered(bool)), this, SLOT(viewMonthClicked()));
 #endif
 
-    setLayout(mainlayout);
-
+    setLayout(mainLayout);
 }
 
 DayPage::~DayPage()
 {
 
 }
+
+#ifdef Q_OS_SYMBIAN
+void DayPage::setMenu(QMenu *menu)
+{
+    // Add softkey for symbian
+    QAction* optionsSoftKey = new QAction("Options", this);
+    optionsSoftKey->setSoftKeyRole(QAction::PositiveSoftKey);
+    optionsSoftKey->setMenu(menu);
+    addAction(optionsSoftKey);
+}
+#endif
 
 void DayPage::refresh()
 {

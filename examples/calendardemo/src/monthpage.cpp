@@ -89,44 +89,30 @@ MonthPage::MonthPage(QWidget *parent)
     connect(m_itemList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(itemDoubleClicked(QListWidgetItem*)));
 
     setLayout(mainlayout);
-
-    // Add options softkey
-    QAction* optionsSoftKey = new QAction("Options", this);
-    optionsSoftKey->setSoftKeyRole(QAction::PositiveSoftKey);
-    optionsSoftKey->setMenu(new QMenu(this));
-    addAction(optionsSoftKey);
-
-    // Add actions to options menu
-    QMenu *optionsMenu = optionsSoftKey->menu();
-    QAction* openAction = optionsMenu->addAction("Open");
-    connect(openAction, SIGNAL(triggered(bool)), this, SLOT(openDay()));
-    QAction* addEventAction = optionsMenu->addAction("Add Event");
-    connect(addEventAction, SIGNAL(triggered(bool)), this, SIGNAL(addNewEvent()));
-    QAction* addTodoAction = optionsMenu->addAction("Add Todo");
-    connect(addTodoAction, SIGNAL(triggered(bool)), this, SIGNAL(addNewTodo()));
-    QAction* addHugeEntires = optionsMenu->addAction("Add large no. of events");
-    connect(addHugeEntires, SIGNAL(triggered(bool)), this, SLOT(addEvents()));
-    QAction* deleteAllEntires = optionsMenu->addAction("Delete all entries");
-    connect(deleteAllEntires, SIGNAL(triggered(bool)), this, SLOT(deleteAllEntries()));
-    
-    // Connect to the save and remove request status change signals
-    connect(&m_saveReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
-            this, SLOT(saveReqStateChanged(QOrganizerItemAbstractRequest::State)));
-    connect(&m_remReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
-            this, SLOT(removeReqStateChanged(QOrganizerItemAbstractRequest::State)));
 }
 
 // This is separate from the constructor so we can do it after connecting the signals
 void MonthPage::init()
 {
     backendChanged(m_managerComboBox->currentText());
-    refresh();
+    currentMonthChanged();
 }
 
 MonthPage::~MonthPage()
 {
 
 }
+
+#ifdef Q_OS_SYMBIAN
+void MonthPage::setMenu(QMenu *menu)
+{
+    // Add softkey for symbian
+    QAction* optionsSoftKey = new QAction("Options", this);
+    optionsSoftKey->setSoftKeyRole(QAction::PositiveSoftKey);
+    optionsSoftKey->setMenu(menu);
+    addAction(optionsSoftKey);
+}
+#endif
 
 void MonthPage::backendChanged(const QString &managerName)
 {
@@ -150,41 +136,29 @@ void MonthPage::backendChanged(const QString &managerName)
     }
 }
 
-void MonthPage::addEvents()
+void MonthPage::editItem()
 {
-    QList<QOrganizerItem> items;
-    
-    // Create a large number of events asynchronously
-    for(int index=0 ; index <  100 ; index++) {
-        QOrganizerItem item;
-        item.setType(QOrganizerItemType::TypeEvent);
-        item.setDescription(QString("Event %1").arg(index));
-        item.setDisplayLabel(QString("Subject for event %1").arg(index + 1));
-        
-        // Set the start date to index to add events to next 5000 days
-        QOrganizerEventTimeRange timeRange;
-        timeRange.setStartDateTime(QDateTime::currentDateTime().addDays(index));
-        item.saveDetail(&timeRange);
-        
-        items.append(item);
-    }
-    
-    // Now create a save request and execute it
-    m_saveReq.setItems(items);
-    m_saveReq.setManager(m_manager);
-    m_saveReq.start();
+    QListWidgetItem *listItem = m_itemList->currentItem();
+    if (!listItem)
+        return;
+
+    QOrganizerItem organizerItem = listItem->data(ORGANIZER_ITEM_ROLE).value<QOrganizerItem>();
+    if (!organizerItem.isEmpty())
+        emit showEditPage(organizerItem);
 }
 
-void MonthPage::deleteAllEntries()
+void MonthPage::removeItem()
 {
-    // Fetch all the entries
-    QList<QOrganizerItemLocalId> ids = m_manager->itemIds();
-    
-    if(ids.count()) {
-        m_remReq.setItemIds(ids);
-        m_remReq.setManager(m_manager);
-        m_remReq.start();
-    }
+    QListWidgetItem *listItem = m_itemList->currentItem();
+    if (!listItem)
+        return;
+
+    QOrganizerItem organizerItem = listItem->data(ORGANIZER_ITEM_ROLE).value<QOrganizerItem>();
+    if (organizerItem.isEmpty())
+        return;
+
+    m_manager->removeItem(organizerItem.localId());
+    refresh();
 }
 
 void MonthPage::refresh()
@@ -261,8 +235,6 @@ void MonthPage::refreshDayItems()
     QDate selectedDate = m_calendarWidget->selectedDate();
     emit currentDayChanged(selectedDate);
 
-    // Update date
-    m_dateLabel->setText(selectedDate.toString());
     QDateTime startOfDay(selectedDate, QTime(0, 0, 0));
     QDateTime endOfDay(selectedDate, QTime(23, 59, 59));
     // Clear items shown
@@ -320,6 +292,9 @@ void MonthPage::refreshDayItems()
 
 void MonthPage::currentMonthChanged()
 {
+    int month = m_calendarWidget->monthShown();
+    int year = m_calendarWidget->yearShown();
+    m_dateLabel->setText(QString("%1 %2").arg(QDate::longMonthName(month)).arg(year));
     refresh();
 }
 
@@ -341,36 +316,6 @@ void MonthPage::itemDoubleClicked(QListWidgetItem *listItem)
     QOrganizerItem organizerItem = listItem->data(ORGANIZER_ITEM_ROLE).value<QOrganizerItem>();
     if (!organizerItem.isEmpty())
         emit showEditPage(organizerItem);
-}
-
-void MonthPage::saveReqStateChanged(QOrganizerItemAbstractRequest::State reqState)
-{
-    if(QOrganizerItemAbstractRequest::ActiveState == reqState) {
-        // Request started. Show a progress or wait dialog
-        m_progressDlg = new QProgressDialog("Saving events..", "Cancel", 100, 100, this);
-        connect(m_progressDlg, SIGNAL(canceled()), &m_saveReq, SLOT(cancel()));
-        m_progressDlg->show();
-    } else if (QOrganizerItemAbstractRequest::FinishedState == reqState ||
-               QOrganizerItemAbstractRequest::CanceledState == reqState) {
-        // Request finished or cancelled. Stop showing the progress dialog and refresh
-        m_progressDlg->hide();
-        refresh();
-    }
-}
-
-void MonthPage::removeReqStateChanged(QOrganizerItemAbstractRequest::State reqState)
-{
-    if(QOrganizerItemAbstractRequest::ActiveState == reqState) {
-        // Request started. Show a progress or wait dialog
-        m_progressDlg = new QProgressDialog("Removing events..", "Cancel", 100, 100, this);
-        connect(m_progressDlg, SIGNAL(canceled()), &m_remReq, SLOT(cancel()));
-        m_progressDlg->show();
-    } else if (QOrganizerItemAbstractRequest::FinishedState == reqState ||
-               QOrganizerItemAbstractRequest::CanceledState == reqState) {
-        // Request finished or cancelled. Stop showing the progress dialog and refresh
-        m_progressDlg->hide();
-        refresh();
-    }
 }
 
 void MonthPage::showEvent(QShowEvent *event)
