@@ -134,6 +134,7 @@ public:
 
     // enums
     enum Frequency {
+        Invalid,
         Daily,
         Weekly,
         Monthly,

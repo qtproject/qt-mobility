@@ -161,8 +161,11 @@ bool QVersitOrganizerImporter::importDocument(const QVersitDocument& document)
         if (d->importDocument(subDocument, &item, &error)) {
             d->mItems.append(item);
         } else {
-            d->mErrors.insert(documentIndex, error);
-            ok = false;
+            // importDocument can return false with no error if it's a non-document component
+            if (error != QVersitOrganizerImporter::NoError) {
+                d->mErrors.insert(documentIndex, error);
+                ok = false;
+            }
         }
         documentIndex++;
     }

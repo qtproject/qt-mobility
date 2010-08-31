@@ -30,7 +30,8 @@ PRIVATE_HEADERS += \
     qversitorganizerexporter_p.h \
     qversitorganizerimporter_p.h \
     qversitorganizerdefs_p.h \
-    qversitorganizerpluginloader_p.h
+    qversitorganizerpluginloader_p.h \
+    timezones_p.h
 
 # Implementation
 SOURCES += \
@@ -39,7 +40,8 @@ SOURCES += \
     qversitorganizerimporter.cpp \
     qversitorganizerimporter_p.cpp \
     qversitorganizerhandler.cpp \
-    qversitorganizerpluginloader_p.cpp
+    qversitorganizerpluginloader_p.cpp \
+    timezones_p.cpp
 
 HEADERS += \
     $$PUBLIC_HEADERS \
