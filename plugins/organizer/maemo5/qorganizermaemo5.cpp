@@ -141,16 +141,28 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
 {
     QList<QOrganizerItem> retn;
 
+    // Create a filter that reads all the items from all the calendars that are
+    // specified in filter, but does not set any other restrictions to the fetch.
+    // The other restrictions must not be set on this stage, because otherwise
+    // we can lose some instances (if their generator events are for example out of period)
+    QOrganizerItemCollectionFilter targetCalendarsFilter;
+    targetCalendarsFilter.setCollectionIds(extractCollectionLocalIds(filter));
+
     QList<QOrganizerItemSortOrder> noSorting;
-    QList<QOrganizerItem> itemList = items(QOrganizerItemFilter(), noSorting, fetchMinimalData(), error);
+    QList<QOrganizerItem> itemList;
+    if (!targetCalendarsFilter.collectionIds().empty()) {
+        itemList = items(targetCalendarsFilter, noSorting, fetchMinimalData(), error);
+    }
+    else {
+        // no target calendar(s) specified, let the items() implementation select the target calendars
+        itemList = items(QOrganizerItemFilter(), noSorting, fetchMinimalData(), error);
+    }
 
     if (*error != QOrganizerItemManager::NoError)
         return QList<QOrganizerItem>();
 
     if (itemList.isEmpty())
         return retn;
-
-    // TODO: Filter here to rule out wrong calendars
 
     QDateTime periodStart;
     QDateTime periodEnd;
@@ -162,9 +174,9 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
     }
     else {
         // otherwise just set a large enough period
-        // TODO: If absolutely needed for performace reasons the union and intersection filters could be iterated
-        // TODO: too to resolve the needed period. However it is quite a laborous task and not done for now.
-        periodStart = QDateTime(QDate(1970, 1, 1), QTime(0, 0, 0));
+        // TODO: If needed for performace reasons the union and intersection filters maybe
+        // TODO: could be iterated too to resolve the asked period?
+        periodStart = QDateTime(QDate(1970, 1, 1), QTime(0, 0, 0)); // the min year or maemo5 calendar is 1970
         periodEnd = QDateTime(QDate(2037, 12, 31), QTime(23, 59, 59)); // the max year for maemo5 calendar is 2037
     }
 
@@ -172,6 +184,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
         if (generatorItem.type() == QOrganizerItemType::TypeEvent || generatorItem.type() == QOrganizerItemType::TypeTodo)
         {
             QList<QOrganizerItem> generatorInstances = itemInstances(generatorItem, periodStart, periodEnd, 0, error);
+
             if (*error != QOrganizerItemManager::NoError)
                 break;
 
@@ -196,6 +209,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
         return retn;
     }
 
+    // no matter which calendar is used here, all the items are available in all the calendars
     CCalendar *cal = d->m_mcInstance->getDefaultCalendar();
 
     std::string nativeId = QString::number(generator.localId()).toStdString();
@@ -231,6 +245,10 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
                     QOrganizerEventOccurrence eventOcc =
                             d->m_itemTransformer.convertCEventToQEventOccurrence(cevent, instanceStartDate, instanceEndDate);
                     d->m_itemTransformer.fillInCommonCComponentDetails(&eventOcc, cevent, false); // false = do not set local ids
+
+                    // Set the collection id
+                    QOrganizerItemManagerEngine::setItemCollectionId(&eventOcc, generator.collectionId());
+
                     retn << eventOcc;
                 }
             }
@@ -265,6 +283,9 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
                                             d->m_itemTransformer.convertCEventToQEventOccurrence(coccurrenceCandidate, instanceStartDate, instanceEndDate, parentLocalId);
                                     d->m_itemTransformer.fillInCommonCComponentDetails(&eventOcc, coccurrenceCandidate);
 
+                                    // Set the collection id
+                                    QOrganizerItemManagerEngine::setItemCollectionId(&eventOcc, generator.collectionId());
+
                                     // insert occurrence to the result list in right position
                                     insertOccurenceSortedByStartDate(&eventOcc, retn);
                                 }
@@ -296,6 +317,10 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
                 // Instance start time or instance due time is in period
                 QOrganizerTodoOccurrence todoOcc = d->m_itemTransformer.convertCTodoToQTodoOccurrence(ctodo);
                 d->m_itemTransformer.fillInCommonCComponentDetails(&todoOcc, ctodo);
+
+                // Set the collection id
+                QOrganizerItemManagerEngine::setItemCollectionId(&todoOcc, generator.collectionId());
+
                 retn << todoOcc;
             }
         }
@@ -309,7 +334,6 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
 
     cleanupCal( cal );
 
-
     return retn;
 }
 
@@ -318,35 +342,53 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganize
     *error = QOrganizerItemManager::NoError;
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     QList<QOrganizerItemLocalId> retn;
-    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
 
-    std::vector<std::string>::const_iterator id;
+    // Resolve from which collections (calendars) the items must be fetch (pre-filtering)
+    QSet<QOrganizerCollectionLocalId> collectionLocalIds = extractCollectionLocalIds(filter);
 
-    // Append event ids
-    std::vector<std::string> eventIds = cal->getIdList(E_EVENT, calError);
-    *error = d->m_itemTransformer.calErrorToManagerError(calError);
-    if (*error != QOrganizerItemManager::NoError)
-        return retn;
-    for (id = eventIds.begin(); id != eventIds.end(); ++id)
-        retn << QString::fromStdString(*id).toUInt();
+    // TODO: What if collectionLocalIds is empty? Now this uses the default calendar, is it ok?
+    if (collectionLocalIds.empty()) {
+        CCalendar *defaultCal = d->m_mcInstance->getDefaultCalendar();
+        collectionLocalIds.insert(static_cast<QOrganizerCollectionLocalId>(defaultCal->getCalendarId()));
+    }
 
-    // Append todo ids
-    std::vector<std::string> todoIds = cal->getIdList(E_TODO, calError);
-    *error = d->m_itemTransformer.calErrorToManagerError(calError);
-    if (*error != QOrganizerItemManager::NoError)
-        return retn;
-    for (id = todoIds.begin(); id != todoIds.end(); ++id)
-        retn << QString::fromStdString(*id).toUInt();
+    foreach (QOrganizerCollectionLocalId collectionLocalId, collectionLocalIds) {
+        CCalendar *cal = d->m_mcInstance->getCalendarById(static_cast<int>(collectionLocalId), calError);
+        *error = d->m_itemTransformer.calErrorToManagerError(calError);
+        if (*error != QOrganizerItemManager::NoError)
+            return retn;
 
-    // Append journal ids
-    std::vector<std::string> journalIds = cal->getIdList(E_JOURNAL, calError);
-    *error = d->m_itemTransformer.calErrorToManagerError(calError);
-    if (*error != QOrganizerItemManager::NoError)
-        return retn;
-    for (id = journalIds.begin(); id != journalIds.end(); ++id)
-        retn << QString::fromStdString(*id).toUInt();
+        std::vector<std::string>::const_iterator id;
 
-    // If no filtering and sorting needed, return the result (this a fast case)
+        // Append event ids
+        std::vector<std::string> eventIds = cal->getIdList(E_EVENT, calError);
+        *error = d->m_itemTransformer.calErrorToManagerError(calError);
+        if (*error != QOrganizerItemManager::NoError)
+            return retn;
+        for (id = eventIds.begin(); id != eventIds.end(); ++id)
+            retn << QString::fromStdString(*id).toUInt();
+
+        // Append todo ids
+        std::vector<std::string> todoIds = cal->getIdList(E_TODO, calError);
+        *error = d->m_itemTransformer.calErrorToManagerError(calError);
+        if (*error != QOrganizerItemManager::NoError)
+            return retn;
+        for (id = todoIds.begin(); id != todoIds.end(); ++id)
+            retn << QString::fromStdString(*id).toUInt();
+
+        // Append journal ids
+        std::vector<std::string> journalIds = cal->getIdList(E_JOURNAL, calError);
+        *error = d->m_itemTransformer.calErrorToManagerError(calError);
+        if (*error != QOrganizerItemManager::NoError)
+            return retn;
+        for (id = journalIds.begin(); id != journalIds.end(); ++id)
+            retn << QString::fromStdString(*id).toUInt();
+
+        // Cleanup calendar
+        cleanupCal(cal);
+    }
+
+    // If no filtering and sorting needed, return the result (the fast case)
     if (filter == QOrganizerItemInvalidFilter() && sortOrders.count() == 0)
         return retn;
 
@@ -769,7 +811,7 @@ bool QOrganizerItemMaemo5Engine::startRequest(QOrganizerItemAbstractRequest* req
 {
     d->m_asynchProcess->addRequest(req);
     QMetaObject::invokeMethod(d->m_asynchProcess, "processRequest", Qt::QueuedConnection);
-    return true; // TODO: Is this ok?
+    return true;
 }
 
 bool QOrganizerItemMaemo5Engine::cancelRequest(QOrganizerItemAbstractRequest* req)
@@ -859,7 +901,8 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerI
     if (checkItem->type() == QOrganizerItemType::TypeTodoOccurrence)
         todoOccurrence = static_cast<QOrganizerTodoOccurrence *>(checkItem);
 
-    // TODO: Maybe here should be added a GUID check: if item is NOT an occurrence, setting duplicate GUIDs should be disallowed
+    // TODO: Maybe here should be added a GUID check?:
+    // if item is not an occurrence, setting duplicate GUIDs should be disallowed
 
     // If the item is not an occurrence, no more checks are needed
     if (!eventOccurrence && !todoOccurrence)
@@ -981,9 +1024,6 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
 
     // Read the given GUID
     item->setGuid(QString::fromStdString(component->getGUid()));
-
-    // TODO: The custom detail fields should be iterated and the corresponding
-    // fields should be set to CComponent for saving.
 
     if (item->type() == QOrganizerItemType::TypeEvent) {
         CEvent* cevent = static_cast<CEvent *>(component);
@@ -1285,9 +1325,6 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
         return calError;
     }
 
-    // TODO: The custom detail fields should be iterated and the corresponding
-    // fields should be set to CComponent for saving.
-
     // save the parent back to the DB (if needed)
     if (parentModified) {
         calError = doSaveItem(cal, parent, cs, error);
@@ -1499,8 +1536,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerIt
 
 QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerItemLocalId &itemId, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error, bool fetchOccurrences) const
 {
-    Q_UNUSED(fetchHint);
-    // TODO: Make this method to use the fetch hint
+    Q_UNUSED(fetchHint); // there are never large binary blobs etc. attached to maemo5 calendar items
 
     // no matter which calendar is used, all the items are available in all the calendars
     CCalendar *cal = d->m_mcInstance->getDefaultCalendar();
@@ -1764,32 +1800,43 @@ CCalendar* QOrganizerItemMaemo5Engine::getCalendar(QOrganizerCollectionLocalId c
     return cal;
 }
 
-bool QOrganizerItemMaemo5Engine::itemExists(CCalendar *cal, const QOrganizerItemLocalId &itemId) const
+QSet<QOrganizerCollectionLocalId> QOrganizerItemMaemo5Engine::extractCollectionLocalIds(const QOrganizerItemFilter& filter) const
 {
-    if (!cal)
-        return false;
+    QSet<QOrganizerCollectionLocalId> retn;
 
-    int calError = CALENDAR_OPERATION_SUCCESSFUL;
-
-    // Events
-    std::vector<std::string>::iterator id;
-    std::vector<std::string> ids = cal->getIdList(E_EVENT, calError);
-
-    for (id = ids.begin(); id != ids.end(); ++id)
-        if (QString::fromStdString(*id).toUInt() == itemId)
-            return true;
-
-    // Todos
-    ids = cal->getIdList(E_TODO, calError);
-    for (id = ids.begin(); id != ids.end(); ++id)
-        if (QString::fromStdString(*id).toUInt() == itemId)
-            return true;
-
-    // Journals
-    ids = cal->getIdList(E_JOURNAL, calError);
-    for (id = ids.begin(); id != ids.end(); ++id)
-        if (QString::fromStdString(*id).toUInt() == itemId)
-            return true;
-
-    return false;
+    QOrganizerItemFilter::FilterType type = filter.type();
+    switch(type) {
+    case QOrganizerItemFilter::CollectionFilter: {
+        QOrganizerItemCollectionFilter collectionFilter = static_cast<QOrganizerItemCollectionFilter>(filter);
+        retn = collectionFilter.collectionIds();
+        break;
+    }
+    case QOrganizerItemFilter::IntersectionFilter: {
+        QOrganizerItemIntersectionFilter intersectionFilter = static_cast<QOrganizerItemIntersectionFilter>(filter);
+        QList<QOrganizerItemFilter> filters = intersectionFilter.filters();
+        if (!filters.isEmpty()) {
+            retn = extractCollectionLocalIds(filters.at(0));
+            for (int i = 1; i < filters.count(); ++i) {
+                QSet<QOrganizerCollectionLocalId> subset = extractCollectionLocalIds(filters.at(i));
+                // do not intersect empty subsets, because there can be other than collection filters that produce them
+                if (!subset.empty())
+                    retn.intersect(subset);
+            }
+        }
+        break;
+    }
+    case QOrganizerItemFilter::UnionFilter: {
+        QOrganizerItemUnionFilter unionFilter = static_cast<QOrganizerItemUnionFilter>(filter);
+        QList<QOrganizerItemFilter> filters = unionFilter.filters();
+        if (!filters.isEmpty()) {
+            retn = extractCollectionLocalIds(filters.at(0));
+            for (int i = 1; i < filters.count(); ++i)
+                retn.unite(extractCollectionLocalIds(filters.at(i)));
+        }
+        break;
+    }
+    default:
+        break;
+    }
+    return retn;
 }

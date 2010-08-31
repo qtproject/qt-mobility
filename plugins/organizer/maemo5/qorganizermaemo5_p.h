@@ -206,8 +206,8 @@ private:
     // get calendar
     CCalendar* getCalendar(QOrganizerCollectionLocalId collectionId, QOrganizerItemManager::Error *error) const;
 
-    // check item existence in a calendar
-    bool itemExists(CCalendar *cal, const QOrganizerItemLocalId &itemId) const;
+    // extract possible collection ids from the filters
+    QSet<QOrganizerCollectionLocalId> extractCollectionLocalIds(const QOrganizerItemFilter& filter) const;
 
     // ctor
     QOrganizerItemMaemo5Engine();
