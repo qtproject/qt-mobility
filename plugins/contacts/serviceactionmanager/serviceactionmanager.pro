@@ -19,4 +19,11 @@ MOBILITY = contacts serviceframework
 symbian: {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.EPOCALLOWDLLDATA = 1
+
+    target.path = /sys/bin
+    INSTALLS += target
+
+    symbianplugin.sources = $${TARGET}.dll
+    symbianplugin.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
+    DEPLOYMENT += symbianplugin
 }
