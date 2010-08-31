@@ -78,6 +78,7 @@ public Q_SLOTS:
     void countChanged(int);
     void untilChanged(QDate);
     void endConditionChanged(const QString&);
+    void alarmIndexChanged(const QString);
     void setCountField();
     void setRepeatUntilField();
 
@@ -94,6 +95,8 @@ private:
     QOrganizerItemSaveRequest *m_saveItemRequest;
     QVBoxLayout *m_scrollAreaLayout;
     QVBoxLayout *m_repeatControls;
+    QAction *m_saveOrNextSoftKey;
+    QComboBox *m_alarmComboBox;
     QComboBox *m_typeComboBox;
     QLineEdit *m_subjectEdit;
     QDateTimeEdit *m_startTimeEdit;

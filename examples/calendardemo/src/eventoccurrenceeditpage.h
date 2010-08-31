@@ -37,70 +37,66 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef MONTHPAGE_H_
-#define MONTHPAGE_H_
+#ifndef EVENTOCCURRENCEEDITPAGE_H_
+#define EVENTOCCURRENCEEDITPAGE_H_
 
 #include <QWidget>
 #include <QDate>
 #include <qmobilityglobal.h>
-#include <qorganizeritemsaverequest.h>
-#include <qorganizeritemremoverequest.h>
+#include <qorganizeritemid.h>
+#include <qorganizerevent.h>
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItemManager;
+class QOrganizerItemSaveRequest;
+class QOrganizerEvent;
 class QOrganizerItem;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
 class QComboBox;
-class QCalendarWidget;
-class QLabel;
-class QListWidget;
-class QListWidgetItem;
-class QProgressDialog;
+class QLineEdit;
+class QDateTimeEdit;
+class QVBoxLayout;
+class QString;
+class QSpinBox;
+class QDateEdit;
 
-class MonthPage : public QWidget
+class EventOccurrenceEditPage : public QWidget
 {
     Q_OBJECT
 
 public:
-    MonthPage(QWidget *parent = 0);
-    ~MonthPage();
+    EventOccurrenceEditPage(QWidget *parent = 0);
+    ~EventOccurrenceEditPage();
 
 public Q_SLOTS:
-    void backendChanged(const QString &managerName);
-    void addNewEvent();
-    void addNewTodo();
-    void addNewJournal();
-    void addEvents();
-    void deleteAllEntries();
-    void refresh();
-    void refreshDayItems();
-    void currentMonthChanged();
-    void dayDoubleClicked(QDate date);
-    void openDay();
-    void itemDoubleClicked(QListWidgetItem *listItem);
-    void saveReqStateChanged(QOrganizerItemAbstractRequest::State);
-    void removeReqStateChanged(QOrganizerItemAbstractRequest::State);
+    void cancelClicked();
+    void saveOrNextClicked();
+    void eventOccurrenceChanged(QOrganizerItemManager *manager, const QOrganizerEventOccurrence &eventOccurrence);
 
 Q_SIGNALS:
-    void showDayPage(QOrganizerItemManager *manager, QDate date);
-    void showEditPage(QOrganizerItemManager *manager, const QOrganizerItem &item);
-    
+    void showDayPage();
+
 protected: // from QWidget
     void showEvent(QShowEvent *event);
 
 private:
-    QComboBox* m_managerComboBox;
     QOrganizerItemManager *m_manager;
-    QCalendarWidget *m_calendarWidget;
-    QLabel *m_dateLabel;
-    QListWidget *m_itemList;
-    QList<QOrganizerItem> m_itemsList;
-    QOrganizerItemSaveRequest m_saveReq;
-    QOrganizerItemRemoveRequest m_remReq;
-    QProgressDialog *m_progressDlg;
+    QOrganizerEventOccurrence m_organizerEventOccurrence;
+    QList<QOrganizerItem> m_listOfEvents;
+    QOrganizerItemSaveRequest *m_saveItemRequest;
+    QVBoxLayout *m_scrollAreaLayout;
+    QAction *m_saveOrNextSoftKey;
+    QComboBox *m_typeComboBox;
+    QLineEdit *m_subjectEdit;
+    QDateTimeEdit *m_startTimeEdit;
+    QDateTimeEdit *m_endTimeEdit;
+    QSpinBox *m_countSpinBox;
+    QDateEdit *m_repeatUntilDate;
+    int m_numOfEntiresToBeCreated;
+    bool m_countFieldAdded;
+    bool m_multipleEntries;
 };
 
-#endif // MONTHPAGE_H_
+#endif // EVENTOCCURRENCEEDITPAGE_H_

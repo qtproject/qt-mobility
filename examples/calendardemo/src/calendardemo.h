@@ -58,6 +58,8 @@ class MonthPage;
 class DayPage;
 class EventEditPage;
 class TodoEditPage;
+class JournalEditPage;
+class EventOccurrenceEditPage;
 
 class CalendarDemo : public QMainWindow
 {
@@ -77,12 +79,17 @@ Q_SIGNALS:
     void multipleEntriesToBeCreated(int);
 
 private:
-    QOrganizerItemManager *m_manager;
     QStackedWidget *m_stackedWidget;
     MonthPage *m_monthPage;
     DayPage *m_dayPage;
     EventEditPage *m_eventEditPage;
     TodoEditPage *m_todoEditPage;
+    JournalEditPage *m_journalEditPage;
+    EventOccurrenceEditPage *m_eventOccurrenceEditPage;
+
+#ifdef Q_WS_X11
+    QMenu *m_appMenu;
+#endif // Q_WS_X11
 };
 
 #endif // CALENDARDEMO_H

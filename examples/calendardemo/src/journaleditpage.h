@@ -38,69 +38,53 @@
 **
 ****************************************************************************/
 
-#ifndef MONTHPAGE_H_
-#define MONTHPAGE_H_
+#ifndef JOURNALEDITPAGE_H_
+#define JOURNALEDITPAGE_H_
 
 #include <QWidget>
 #include <QDate>
 #include <qmobilityglobal.h>
-#include <qorganizeritemsaverequest.h>
-#include <qorganizeritemremoverequest.h>
+#include <qorganizeritemid.h>
+#include <qorganizerjournal.h>
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItemManager;
+class QOrganizerEvent;
 class QOrganizerItem;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
 class QComboBox;
-class QCalendarWidget;
-class QLabel;
-class QListWidget;
-class QListWidgetItem;
-class QProgressDialog;
+class QLineEdit;
+class QDateTimeEdit;
 
-class MonthPage : public QWidget
+class JournalEditPage : public QWidget
 {
     Q_OBJECT
 
 public:
-    MonthPage(QWidget *parent = 0);
-    ~MonthPage();
+    JournalEditPage(QWidget *parent = 0);
+    ~JournalEditPage();
 
 public Q_SLOTS:
-    void backendChanged(const QString &managerName);
-    void addNewEvent();
-    void addNewTodo();
-    void addNewJournal();
-    void addEvents();
-    void deleteAllEntries();
-    void refresh();
-    void refreshDayItems();
-    void currentMonthChanged();
-    void dayDoubleClicked(QDate date);
-    void openDay();
-    void itemDoubleClicked(QListWidgetItem *listItem);
-    void saveReqStateChanged(QOrganizerItemAbstractRequest::State);
-    void removeReqStateChanged(QOrganizerItemAbstractRequest::State);
+    void cancelClicked();
+    void saveClicked();
+    void journalChanged(QOrganizerItemManager *manager, const QOrganizerJournal &journal);
+    void handleAlarmIndexChanged(const QString);
 
 Q_SIGNALS:
-    void showDayPage(QOrganizerItemManager *manager, QDate date);
-    void showEditPage(QOrganizerItemManager *manager, const QOrganizerItem &item);
-    
+    void showDayPage();
+
 protected: // from QWidget
     void showEvent(QShowEvent *event);
 
 private:
-    QComboBox* m_managerComboBox;
     QOrganizerItemManager *m_manager;
-    QCalendarWidget *m_calendarWidget;
-    QLabel *m_dateLabel;
-    QListWidget *m_itemList;
-    QList<QOrganizerItem> m_itemsList;
-    QOrganizerItemSaveRequest m_saveReq;
-    QOrganizerItemRemoveRequest m_remReq;
-    QProgressDialog *m_progressDlg;
+    QOrganizerJournal m_organizerJournal;
+    QLineEdit *m_subjectEdit;
+    QDateTimeEdit *m_timeEdit;
+    QComboBox *m_alarmComboBox;
+
 };
 
-#endif // MONTHPAGE_H_
+#endif // JOURNALEDITPAGE_H_

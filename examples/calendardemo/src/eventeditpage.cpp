@@ -48,6 +48,7 @@ EventEditPage::EventEditPage(QWidget *parent)
     :QWidget(parent),
     m_manager(0),
     m_scrollAreaLayout(0),
+    m_alarmComboBox(0),
     m_typeComboBox(0),
     m_subjectEdit(0),
     m_countSpinBox(0),
@@ -63,6 +64,8 @@ EventEditPage::EventEditPage(QWidget *parent)
     QLabel *endTimeLabel = new QLabel("End time:", this);
     m_endTimeEdit = new QDateTimeEdit(this);
     QLabel *repeatLabel = new QLabel("Repeat:", this);
+    QLabel *alarmLabel = new QLabel("Alarm:", this);
+    m_alarmComboBox = new QComboBox(this);
     m_typeComboBox = new QComboBox(this);
     m_typeComboBox->addItem("None");
     m_typeComboBox->addItem("Daily");
@@ -71,6 +74,16 @@ EventEditPage::EventEditPage(QWidget *parent)
     m_typeComboBox->addItem("Yearly");
     connect(m_typeComboBox, SIGNAL(currentIndexChanged(const QString&)), this, 
             SLOT(frequencyChanged(const QString&)));
+    QStringList alarmList;
+    alarmList	<< "None"
+                << "0 minutes before"
+                << "5 minutes before"
+                << "15 minutes before"
+                << "30 minutes before"
+                << "1 hour before";
+    m_alarmComboBox->addItems(alarmList);
+    connect(m_alarmComboBox, SIGNAL(currentIndexChanged(const QString)), this,
+                        SLOT(alarmIndexChanged(const QString)));
 
     m_endConditionComboBox = new QComboBox(this);
     m_endConditionComboBox->addItem("Forever");
@@ -108,6 +121,8 @@ EventEditPage::EventEditPage(QWidget *parent)
     m_scrollAreaLayout->addWidget(m_startTimeEdit);
     m_scrollAreaLayout->addWidget(endTimeLabel);
     m_scrollAreaLayout->addWidget(m_endTimeEdit);
+    m_scrollAreaLayout->addWidget(alarmLabel);
+    m_scrollAreaLayout->addWidget(m_alarmComboBox);
     m_scrollAreaLayout->addWidget(repeatLabel);
     m_scrollAreaLayout->addWidget(m_typeComboBox);
     m_scrollAreaLayout->addWidget(m_endConditionComboBox);
@@ -201,7 +216,6 @@ void EventEditPage::saveClicked()
     m_organizerEvent.setEndDateTime(m_endTimeEdit->dateTime());
     m_listOfEvents.append(m_organizerEvent);
     m_manager->saveItem(&m_organizerEvent);
-
     if (m_manager->error())
         QMessageBox::information(this, "Failed!", QString("Failed to save event!\n(error code %1)").arg(m_manager->error()));
     else
@@ -231,6 +245,34 @@ void EventEditPage::frequencyChanged(const QString& frequency)
         m_endConditionComboBox->setCurrentIndex(0);
         m_endConditionComboBox->setVisible(false);
     }
+}
+
+void EventEditPage::alarmIndexChanged(const QString time)
+{
+    QOrganizerItemVisualReminder reminder;
+    reminder.setMessage(m_subjectEdit->text());
+
+    if (time == "None") {
+         QOrganizerItemVisualReminder fetchedReminder = m_organizerEvent.detail(QOrganizerItemVisualReminder::DefinitionName);
+         m_organizerEvent.removeDetail(&fetchedReminder);
+        return;
+    } else if (time == "0 minutes before") {
+        reminder.setDateTime(m_startTimeEdit->dateTime());
+    } else if (time == "5 minutes before") {
+        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(5*60));
+        reminder.setDateTime(reminderTime);
+    } else if (time == "15 minutes before") {
+        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(15*60));
+        reminder.setDateTime(reminderTime);
+    } else if (time == "30 minutes before") {
+        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(30*60));
+        reminder.setDateTime(reminderTime);
+    } else if (time == "1 hour before") {
+        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(60*60));
+        reminder.setDateTime(reminderTime);
+    }
+
+    m_organizerEvent.saveDetail(&reminder);
 }
 
 void EventEditPage::showEvent(QShowEvent *event)

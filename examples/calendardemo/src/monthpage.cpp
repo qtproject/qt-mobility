@@ -176,6 +176,15 @@ void MonthPage::addNewTodo()
     emit showEditPage(m_manager, newTodo);
 }
 
+void MonthPage::addNewJournal()
+{
+    // TODO: move this to CalendarDemo::addNewJournal() slot
+    QOrganizerJournal newJournal;
+    QDateTime time(m_calendarWidget->selectedDate());
+    newJournal.setDateTime(time);
+    emit showEditPage(m_manager, newJournal);
+}
+
 void MonthPage::addEvents()
 {
     m_itemsList.clear();
@@ -240,12 +249,12 @@ void MonthPage::refresh()
     // Get dates for all items
     QList<QDate> dates;
     QList<QOrganizerItem> instanceList;
-    instanceList.clear();
     foreach (const QOrganizerItem &item, items)
-    {   
-        // Get the instances of the item for that month and collect those dates.
+    {
+    	// Get the instances of the item for that month and collect those dates.
+        instanceList.clear();
         instanceList.append(m_manager->itemInstances(item, startDateTime, endDateTime));
-        for (int count = 0; count < instanceList.count() ; count++) {
+        for (int count = 0; count < instanceList.count(); count++) {
             QOrganizerEventTimeRange eventTimeRange = instanceList.at(count).detail<QOrganizerEventTimeRange>();
             QDate startDate(eventTimeRange.startDateTime().date());
             QDate endDate(eventTimeRange.endDateTime().date());
@@ -256,12 +265,14 @@ void MonthPage::refresh()
         }
 
         QOrganizerTodoTimeRange todoTimeRange = item.detail<QOrganizerTodoTimeRange>();
-        if (!todoTimeRange.isEmpty()) {
-            dates << (todoTimeRange.startDateTime().date());
-            //dates << (todoTimeRange.dueDateTime().date());
-        }
+        if (!todoTimeRange.isEmpty())
+            dates << todoTimeRange.startDateTime().date();
+
+        QOrganizerJournalTimeRange journalTimeRange = item.detail<QOrganizerJournalTimeRange>();
+        if (!journalTimeRange.isEmpty())
+            dates << journalTimeRange.entryDateTime().date();
+
         instanceList.clear();
-        
         // TODO: other item types
     }
 
@@ -269,6 +280,8 @@ void MonthPage::refresh()
     QBrush brush;
     brush.setColor(Qt::green);
     foreach (QDate date, dates) {
+        if (date == QDate())
+            continue;
         QTextCharFormat cf = m_calendarWidget->dateTextFormat(date);
         cf.setFontItalic(true); // TODO: find a better way to mark dates
         cf.setBackground(brush);
@@ -317,6 +330,19 @@ void MonthPage::refreshDayItems()
                 m_itemList->addItem(listItem);
             }
         }
+
+        QOrganizerJournalTimeRange journalTimeRange = item.detail<QOrganizerJournalTimeRange>();
+        if (!journalTimeRange.isEmpty()) {
+            if (journalTimeRange.entryDateTime().date() == selectedDate) {
+                QString time = journalTimeRange.entryDateTime().time().toString("hh:mm");
+                QListWidgetItem* listItem = new QListWidgetItem();
+                listItem->setText(QString("Journal:%1-%2").arg(time).arg(item.displayLabel()));
+                QVariant data = QVariant::fromValue<QOrganizerItem>(item);
+                listItem->setData(ORGANIZER_ITEM_ROLE, data);
+                m_itemList->addItem(listItem);
+            }
+        }
+
         // TODO: other item types
         // TODO: icons for event/todo/journal would be nice
     }
