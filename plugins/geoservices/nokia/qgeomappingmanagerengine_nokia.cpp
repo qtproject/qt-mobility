@@ -57,7 +57,7 @@
 
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
-        m_host("loc.desktop.maps.svc.ovi.com")
+        m_host("maptile.maps.svc.ovi.com")
 {
     setTileSize(QSize(256, 256));
     setMinimumZoomLevel(0.0);
@@ -132,24 +132,33 @@ QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMa
 
 QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapRequest &request) const
 {
-    QString requestString = "http://";
+    const int maxDomains = 11; // TODO: hmmm....
+    const char subdomain = 'a' + (request.row()+request.column()) % maxDomains; // a...k
+    static const QString http("http://");
+    static const QString path("/maptiler/maptile/newest/");
+    static const QChar dot('.');
+    static const QChar slash('/');
+
+    QString requestString = http;
+    requestString += subdomain;
+    requestString += dot;
     requestString += m_host;
-    requestString += "/maptiler/maptile/newest/";
+    requestString += path;
     requestString += mapTypeToStr(request.mapType());
-    requestString += '/';
+    requestString += slash;
     requestString += QString::number(request.zoomLevel());
-    requestString += '/';
+    requestString += slash;
     requestString += QString::number(request.column());
-    requestString += '/';
+    requestString += slash;
     requestString += QString::number(request.row());
-    requestString += '/';
+    requestString += slash;
     requestString += sizeToStr(tileSize());
-    requestString += '/';
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    requestString += "png8";
+    static const QString slashpng("/png8");
 #else
-    requestString += "png";
+    static const QString slashpng("/png");
 #endif
+    requestString += slashpng;
 
     if (!m_token.isEmpty()) {
         requestString += "?token=";
@@ -169,11 +178,13 @@ QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapReques
 
 QString QGeoMappingManagerEngineNokia::sizeToStr(const QSize &size)
 {
+    static const QString s256("256");
+    static const QString s128("128");
     if (size.height() >= LARGE_TILE_DIMENSION ||
             size.width() >= LARGE_TILE_DIMENSION)
-        return "256";
+        return s256;
     else
-        return "128";
+        return s128;
 }
 
 QString QGeoMappingManagerEngineNokia::mapTypeToStr(QGraphicsGeoMap::MapType type)
