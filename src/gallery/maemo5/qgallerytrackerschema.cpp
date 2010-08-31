@@ -1746,9 +1746,9 @@ void QGalleryTrackerSchema::populateItemArguments(
             << sortByService
             << sortFieldNames
             << descending;
-    arguments->idColumn = new QGalleryTrackerServicePrefixColumn;
-    arguments->urlColumn = new QGalleryTrackerFileUrlColumn(0);
-    arguments->typeColumn = new QGalleryTrackerServiceTypeColumn;
+    arguments->idColumn.reset(new QGalleryTrackerServicePrefixColumn);
+    arguments->urlColumn.reset(new QGalleryTrackerFileUrlColumn(0));
+    arguments->typeColumn.reset(new QGalleryTrackerServiceTypeColumn);
     arguments->valueColumns = qt_createValueColumns(valueTypes + extendedValueTypes);
     arguments->propertyNames = valueNames + compositeNames + aliasNames;
     arguments->propertyAttributes = valueAttributes + compositeAttributes + aliasAttributes;
@@ -1923,11 +1923,11 @@ void QGalleryTrackerSchema::populateAggregateArguments(
             << aggregateFields
             << descending;
     if (type.identity.count == 1)
-        arguments->idColumn = new QGalleryTrackerPrefixColumn(0, type.prefix);
+        arguments->idColumn.reset(new QGalleryTrackerPrefixColumn(0, type.prefix));
     else
-        arguments->idColumn = new QGalleryTrackerCompositeIdColumn(identityColumns, type.prefix);
-    arguments->urlColumn = new QGalleryTrackerStaticColumn(QVariant());
-    arguments->typeColumn = new QGalleryTrackerStaticColumn(type.itemType);
+        arguments->idColumn.reset(new QGalleryTrackerCompositeIdColumn(identityColumns, type.prefix));
+    arguments->urlColumn.reset(new QGalleryTrackerStaticColumn(QVariant()));
+    arguments->typeColumn.reset(new QGalleryTrackerStaticColumn(type.itemType));
     arguments->valueColumns = qt_createValueColumns(identityTypes + aggregateTypes);
     arguments->propertyNames = identityNames + aggregateNames + compositeNames + aliasNames;
     arguments->propertyAttributes
