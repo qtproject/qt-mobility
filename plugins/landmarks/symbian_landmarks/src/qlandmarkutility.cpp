@@ -38,9 +38,12 @@
  ** $QT_END_LICENSE$
  **
  ****************************************************************************/
-
 #include "qlandmarkutility.h"
 #include <QDebug>
+_LIT8(Klmx,"application/vnd.nokia.landmarkcollection+xml");
+_LIT8(Kgpx,"application/gps+xml");
+_LIT8(Kkml,"application/vnd.google-earth.kml+xml");
+_LIT8(Kkmz,"application/vnd.google-earth.kmz");
 
 /*
  * Landmark Utility To convert qt landmark data class to symbian landmark data classes
@@ -50,11 +53,11 @@
  * convert symbian landmar to qt landmark
  * 
  */
-QLandmark* LandmarkUtility::convertToQtLandmark(QString mangerUri, CPosLandmark* symbianLandmark)
+QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark* symbianLandmark)
 {
     QLandmark* qtLandmark = new QLandmark();
 
-    if (!symbianLandmark || mangerUri.size() <= 0)
+    if (!symbianLandmark || managerUri.size() <= 0)
         return qtLandmark;
 
     TBuf<KPosLmMaxTextFieldLength> lmBuf;
@@ -72,15 +75,11 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString mangerUri, CPosLandmark*
     // set QLandmarkId
     TPosLmItemId lmId = symbianLandmark->LandmarkId();
     if (lmId > 0) {
-        QString localId;
-        localId.setNum(lmId);
-        QLandmarkId landmarkId;
-        landmarkId.setManagerUri(mangerUri);
-        landmarkId.setLocalId(localId);
+        qtLandmark->setLandmarkId(convertToQtLandmarkId(managerUri, lmId));
     }
 
     // set category ids
-    QList<QLandmarkCategoryId> catIdList = getCategoryIds(mangerUri, symbianLandmark);
+    QList<QLandmarkCategoryId> catIdList = getCategoryIds(managerUri, symbianLandmark);
     if (catIdList.size() > 0) {
         qtLandmark->setCategoryIds(catIdList);
     }
@@ -119,7 +118,7 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString mangerUri, CPosLandmark*
     // set radius
     TReal32 covRadius;
     symbianLandmark->GetCoverageRadius(covRadius);
-    if (!Math::IsNaN(covRadius)) {
+    if (covRadius > 0) {
         qtLandmark->setRadius(covRadius);
     }
 
@@ -257,7 +256,7 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
 
     // set landmark name
     QString lmName = qtLandmark->name();
-    if (lmName.size() > 0) {
+    if (lmName.length() > 0) {
         TPtrC symbianLmName(reinterpret_cast<const TText*> (lmName.constData()), lmName.length());
         symbianLandmark.SetLandmarkNameL(symbianLmName);
     }
@@ -278,14 +277,14 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
 
     // set landmark description
     QString lmDesc = qtLandmark->description();
-    if (lmName.length() > 0) {
+    if (lmDesc.length() > 0) {
         TPtrC symbianLmDesc(reinterpret_cast<const TText*> (lmDesc.constData()), lmDesc.length());
         symbianLandmark.SetLandmarkDescriptionL(symbianLmDesc);
     }
 
     // set icon info
     QString lmIconInfo = qtLandmark->iconUrl().toString();
-    if (lmName.size() > 0) {
+    if (lmIconInfo.length() > 0) {
         TPtrC symbianLmIcon(reinterpret_cast<const TText*> (lmIconInfo.constData()),
             lmIconInfo.length());
         if (symbianLmIcon.Length() > 0) {
@@ -396,7 +395,7 @@ CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
 
     // set landmark name
     QString lmName = qtLandmark->name();
-    if (lmName.size() > 0) {
+    if (lmName.length() > 0) {
         TPtrC symbianLmName(reinterpret_cast<const TText*> (lmName.constData()), lmName.length());
         symbianLandmark->SetLandmarkNameL(symbianLmName);
     }
@@ -417,14 +416,14 @@ CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
 
     // set landmark description
     QString lmDesc = qtLandmark->description();
-    if (lmName.length() > 0) {
+    if (lmDesc.length() > 0) {
         TPtrC symbianLmDesc(reinterpret_cast<const TText*> (lmDesc.constData()), lmDesc.length());
         symbianLandmark->SetLandmarkDescriptionL(symbianLmDesc);
     }
 
     // set icon info
     QString lmIconInfo = qtLandmark->iconUrl().toString();
-    if (lmName.size() > 0) {
+    if (lmIconInfo.length() > 0) {
         TPtrC symbianLmIcon(reinterpret_cast<const TText*> (lmIconInfo.constData()),
             lmIconInfo.length());
         if (symbianLmIcon.Length() > 0) {
@@ -531,7 +530,7 @@ CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
  * convert symbian landmark id to qt landmark id
  * 
  */
-QLandmarkId LandmarkUtility::convertToQtLandmarkId(QString mangerUri,
+QLandmarkId LandmarkUtility::convertToQtLandmarkId(QString managerUri,
     TPosLmItemId symbianLandmarkId)
 {
     QLandmarkId qtLandmarkId;
@@ -539,7 +538,7 @@ QLandmarkId LandmarkUtility::convertToQtLandmarkId(QString mangerUri,
     id.setNum(symbianLandmarkId);
 
     qtLandmarkId.setLocalId(id);
-    qtLandmarkId.setManagerUri(mangerUri);
+    qtLandmarkId.setManagerUri(managerUri);
     return qtLandmarkId;
 }
 
@@ -547,12 +546,27 @@ QLandmarkId LandmarkUtility::convertToQtLandmarkId(QString mangerUri,
  * convert symbian landmark ids to qt landmark ids
  * 
  */
-QList<QLandmarkId> LandmarkUtility::convertToQtLandmarkIds(QString mangerUri,
+QList<QLandmarkId> LandmarkUtility::convertToQtLandmarkIds(QString managerUri,
     RArray<TPosLmItemId>& symbianLandmarkIds)
 {
     QList<QLandmarkId> qtLandmarkIds;
     for (int i = 0; i < symbianLandmarkIds.Count(); ++i) {
-        QLandmarkId qtLmId = convertToQtLandmarkId(mangerUri, symbianLandmarkIds[i]);
+        QLandmarkId qtLmId = convertToQtLandmarkId(managerUri, symbianLandmarkIds[i]);
+        qtLandmarkIds.append(qtLmId);
+    }
+    return qtLandmarkIds;
+}
+
+/*
+ * convert symbian landmark ids to qt landmark ids
+ * 
+ */
+QList<QLandmarkId> LandmarkUtility::convertToQtLandmarkIds2(QString managerUri,
+    RArray<TUint>& symbianLandmarkIds)
+{
+    QList<QLandmarkId> qtLandmarkIds;
+    for (int i = 0; i < symbianLandmarkIds.Count(); ++i) {
+        QLandmarkId qtLmId = convertToQtLandmarkId(managerUri, symbianLandmarkIds[i]);
         qtLandmarkIds.append(qtLmId);
     }
     return qtLandmarkIds;
@@ -594,12 +608,12 @@ RArray<TPosLmItemId> LandmarkUtility::getSymbianLandmarkIds(QList<QLandmarkId>& 
  * convert symbian category to qt category
  * 
  */
-QLandmarkCategory* LandmarkUtility::convertToQtLandmarkCategory(QString mangerUri,
+QLandmarkCategory* LandmarkUtility::convertToQtLandmarkCategory(QString managerUri,
     CPosLandmarkCategory* symbianLandmarkCategory)
 {
     QLandmarkCategory* qtLmCategory = new QLandmarkCategory();
 
-    if (!symbianLandmarkCategory || mangerUri.size() <= 0)
+    if (!symbianLandmarkCategory || managerUri.size() <= 0)
         return qtLmCategory;
 
     TBuf<KPosLmMaxCategoryNameLength> lmBuf;
@@ -615,8 +629,8 @@ QLandmarkCategory* LandmarkUtility::convertToQtLandmarkCategory(QString mangerUr
 
     // set category id    
     TPosLmItemId catId = symbianLandmarkCategory->CategoryId();
-    if (catId > 0) {
-        qtLmCategory->setCategoryId(convertToQtLandmarkCategoryId(mangerUri, catId));
+    if (catId != KPosLmNullItemId) {
+        qtLmCategory->setCategoryId(convertToQtLandmarkCategoryId(managerUri, catId));
     }
 
     // set icon info
@@ -655,7 +669,7 @@ CPosLandmarkCategory* LandmarkUtility::convertToSymbianLandmarkCategoryL(
 
     // set icon info
     QString catIconInfo = qtLandmarkCategory->iconUrl().toString();
-    if (catIconInfo.size() > 0) {
+    if (catIconInfo.length() > 0) {
         TPtrC symbianLmIcon(reinterpret_cast<const TText*> (catIconInfo.constData()),
             catIconInfo.length());
         if (symbianLmIcon.Length() > 0) {
@@ -689,7 +703,7 @@ void LandmarkUtility::setSymbianLandmarkCategoryL(CPosLandmarkCategory& symbianL
 
     // set icon info
     QString catIconInfo = qtLandmarkCategory->iconUrl().toString();
-    if (catIconInfo.size() > 0) {
+    if (catIconInfo.length() > 0) {
         TPtrC symbianLmIcon(reinterpret_cast<const TText*> (catIconInfo.constData()),
             catIconInfo.length());
         if (symbianLmIcon.Length() > 0) {
@@ -719,18 +733,13 @@ QLandmarkCategoryId LandmarkUtility::convertToQtLandmarkCategoryId(QString manag
  * convert symbian landmark category ids to qt landmark category ids
  * 
  */
-QList<QLandmarkCategoryId> LandmarkUtility::convertToQtLandmarkCategoryIds(QString mangerUri,
+QList<QLandmarkCategoryId> LandmarkUtility::convertToQtLandmarkCategoryIds(QString managerUri,
     RArray<TPosLmItemId>& symbianCategoryIds)
 {
     QList<QLandmarkCategoryId> qtCategoryIds;
     for (int i = 0; i < symbianCategoryIds.Count(); ++i) {
-        qDebug() << "symbian cat id = " << symbianCategoryIds[i];
-
-        QLandmarkCategoryId qtLmId =
-            convertToQtLandmarkCategoryId(mangerUri, symbianCategoryIds[i]);
-
-        qDebug() << "qt cat id = " << qtLmId.localId();
-
+        QLandmarkCategoryId qtLmId = convertToQtLandmarkCategoryId(managerUri,
+            symbianCategoryIds[i]);
         qtCategoryIds.append(qtLmId);
     }
     return qtCategoryIds;
@@ -795,7 +804,7 @@ TPosLmItemId LandmarkUtility::getSymbianLandmarkId(QLandmark* qtLandmark)
  * get category info from symbian landmark
  * 
  */
-QList<QLandmarkCategoryId> LandmarkUtility::getCategoryIds(QString mangerUri,
+QList<QLandmarkCategoryId> LandmarkUtility::getCategoryIds(QString managerUri,
     CPosLandmark* symbianLandmark)
 {
     QList<QLandmarkCategoryId> qtCategoryIds;
@@ -808,7 +817,7 @@ QList<QLandmarkCategoryId> LandmarkUtility::getCategoryIds(QString mangerUri,
             QString localId;
             localId.setNum(categoryIdArray[i]);
             qtCat.setLocalId(localId);
-            qtCat.setManagerUri(mangerUri);
+            qtCat.setManagerUri(managerUri);
             qtCategoryIds.append(qtCat);
         }
     }
@@ -825,7 +834,8 @@ bool LandmarkUtility::validCategoriesExist(CPosLmCategoryManager* catMgr, QLandm
     bool result = false;
 
     QList<QLandmarkCategoryId> catList = qtLandmark->categoryIds();
-    if (catList.size() != 0) {
+    if (catList.size() > 0) {
+        qDebug() << "category list size = " << catList.size();
         for (int i = 0; i < catList.size(); ++i) {
             TPosLmItemId symbianCatId = convertToSymbianLandmarkCategoryId(catList.at(i));
             CPosLandmarkCategory* symbiancat = NULL;
@@ -839,7 +849,7 @@ bool LandmarkUtility::validCategoriesExist(CPosLmCategoryManager* catMgr, QLandm
             result = true;
         }
     }
-    else if (catList.size() == 0) {
+    else {
         result = true;
     }
     return result;
@@ -854,9 +864,11 @@ bool LandmarkUtility::validLocalId(QString localId)
     bool result = false;
 
     if (!localId.isEmpty()) {
+        //qDebug() << "local id = " << localId;
         for (int i = 0; i < localId.size(); ++i) {
             QChar ch = localId.operator [](i);
             if (!ch.isNumber()) {
+                result = false;
                 break;
             }
             result = true;
@@ -963,7 +975,7 @@ QStringList LandmarkUtility::landmarkAttributeKeys()
     return landmarkAttributeKeys;
 }
 
-/*
+/**
  * list of landmark package formats
  * 
  */
@@ -973,13 +985,13 @@ QStringList LandmarkUtility::landmarkPackageFormats()
 
     // LMX (Nokia's Landmark Format Standard)
     landmarkPkgFormats << "application/vnd.nokia.landmarkcollection+xml";
-    
+
     // GPX (Global Landmark Format Standard)
-    landmarkPkgFormats << "application/gps+xml";                            
-    
+    landmarkPkgFormats << "application/gps+xml";
+
     // KML (Google's Landmark Format  Standard)
     landmarkPkgFormats << "application/vnd.google-earth.kml+xml";
-    
+
     // KMZ (Google's Landmark Format  Standard)
     landmarkPkgFormats << "application/vnd.google-earth.kmz";
 
@@ -1015,6 +1027,57 @@ TPositionFieldId LandmarkUtility::positionFieldId(QString keyValue)
         fieldId = EPositionFieldPostalCode;
 
     return fieldId;
+}
+
+/**
+ * Converts to symbian format string
+ */
+HBufC8* LandmarkUtility::landmarkPackageFormatsStrLC(const QString& format)
+{
+    HBufC8* buffer = NULL;
+    if (format == "lmx")
+        buffer = Klmx().AllocLC();
+    else if (format == "gpx")
+        buffer = Kgpx().AllocLC();
+    else if (format == "kml")
+        buffer = Kkml().AllocLC();
+    else if (format == "kmz")
+        buffer = Kkmz().AllocLC();
+    else
+        User::Leave(KErrNotSupported);
+
+    return buffer;
+}
+
+/**
+ * Prepares the file path
+ */
+QString LandmarkUtility::preparePath(QString filename)
+{
+    int j = 0;
+
+    // Change from / to // (Just to make path symbian compatible)
+    while ((j = filename.indexOf("\\", j)) != -1) {
+        qDebug() << "Found \\ tag at index position" << j;
+
+        //Check if its already "\\"
+        if ((filename.indexOf("\\\\", j) == -1) && (filename.indexOf("\\\\", j) > j)) {
+            filename.remove(j, 1);
+            filename.insert(j, "\\");
+            ++j;
+        }
+    }
+    j = 0;
+
+    //Change from \ to // (Just to make path symbian compatible)    
+    while ((j = filename.indexOf("/", j)) != -1) {
+        qDebug() << "Found /  at index position" << j;
+        filename.remove(j, 1);
+        filename.insert(j, "\\");
+        ++j;
+    }
+
+    return filename;
 }
 
 // end of file
