@@ -66,15 +66,13 @@ class MonthPage : public QWidget
 
 public:
     MonthPage(QWidget *parent = 0);
+    void init();
     ~MonthPage();
 
-public Q_SLOTS:
+private Q_SLOTS:
     void backendChanged(const QString &managerName);
-    void addNewEvent();
-    void addNewTodo();
     void addEvents();
     void deleteAllEntries();
-    void refresh();
     void refreshDayItems();
     void currentMonthChanged();
     void dayDoubleClicked(QDate date);
@@ -83,9 +81,16 @@ public Q_SLOTS:
     void saveReqStateChanged(QOrganizerItemAbstractRequest::State);
     void removeReqStateChanged(QOrganizerItemAbstractRequest::State);
 
+public Q_SLOTS:
+    void refresh();
+
 Q_SIGNALS:
-    void showDayPage(QOrganizerItemManager *manager, QDate date);
-    void showEditPage(QOrganizerItemManager *manager, const QOrganizerItem &item);
+    void managerChanged(QOrganizerItemManager *manager);
+    void currentDayChanged(QDate date);
+    void showDayPage(QDate date);
+    void showEditPage(const QOrganizerItem &item);
+    void addNewEvent();
+    void addNewTodo();
     
 protected: // from QWidget
     void showEvent(QShowEvent *event);

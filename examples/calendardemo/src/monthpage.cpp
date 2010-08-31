@@ -90,10 +90,10 @@ MonthPage::MonthPage(QWidget *parent)
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     QPushButton *addEventButton = new QPushButton("Add Event", this);
     buttonLayout->addWidget(addEventButton);
-    connect(addEventButton,SIGNAL(clicked()),this,SLOT(addNewEvent()));
+    connect(addEventButton,SIGNAL(clicked()),this, SIGNAL(addNewEvent()));
     QPushButton *addTodoButton = new QPushButton("Add Todo", this);
     buttonLayout->addWidget(addTodoButton);
-    connect(addTodoButton,SIGNAL(clicked()),this,SLOT(addNewTodo()));
+    connect(addTodoButton,SIGNAL(clicked()),this, SIGNAL(addNewTodo()));
     mainlayout->addRow(buttonLayout);
 #endif
 
@@ -110,9 +110,9 @@ MonthPage::MonthPage(QWidget *parent)
     QAction* openAction = optionsMenu->addAction("Open");
     connect(openAction, SIGNAL(triggered(bool)), this, SLOT(openDay()));
     QAction* addEventAction = optionsMenu->addAction("Add Event");
-    connect(addEventAction, SIGNAL(triggered(bool)), this, SLOT(addNewEvent()));
+    connect(addEventAction, SIGNAL(triggered(bool)), this, SIGNAL(addNewEvent()));
     QAction* addTodoAction = optionsMenu->addAction("Add Todo");
-    connect(addTodoAction, SIGNAL(triggered(bool)), this, SLOT(addNewTodo()));
+    connect(addTodoAction, SIGNAL(triggered(bool)), this, SIGNAL(addNewTodo()));
     QAction* addHugeEntires = optionsMenu->addAction("Add large no. of events");
     connect(addHugeEntires, SIGNAL(triggered(bool)), this, SLOT(addEvents()));
     QAction* deleteAllEntires = optionsMenu->addAction("Delete all entries");
@@ -123,7 +123,11 @@ MonthPage::MonthPage(QWidget *parent)
             this, SLOT(saveReqStateChanged(QOrganizerItemAbstractRequest::State)));
     connect(&m_remReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
             this, SLOT(removeReqStateChanged(QOrganizerItemAbstractRequest::State)));
-    
+}
+
+// This is separate from the constructor so we can do it after connecting the signals
+void MonthPage::init()
+{
     backendChanged(m_managerComboBox->currentText());
     refresh();
 }
@@ -150,30 +154,9 @@ void MonthPage::backendChanged(const QString &managerName)
         // Success: Replace the old one
         delete m_manager;
         m_manager = newManager;
+        emit managerChanged(m_manager);
         refresh();
     }
-}
-
-void MonthPage::addNewEvent()
-{
-    // TODO: move this to CalendarDemo::addNewEvent() slot
-    QOrganizerEvent newEvent;
-    QDateTime time(m_calendarWidget->selectedDate());
-    newEvent.setStartDateTime(time);
-    time = time.addSecs(60*30); // add 30 minutes to end time
-    newEvent.setEndDateTime(time);
-    emit showEditPage(m_manager, newEvent);
-}
-
-void MonthPage::addNewTodo()
-{
-    // TODO: move this to CalendarDemo::addNewTodo() slot
-    QOrganizerTodo newTodo;
-    QDateTime time(m_calendarWidget->selectedDate());
-    newTodo.setStartDateTime(time);
-    time = time.addSecs(60*30); // add 30 minutes to due time
-    newTodo.setDueDateTime(time);
-    emit showEditPage(m_manager, newTodo);
 }
 
 void MonthPage::addEvents()
@@ -280,8 +263,10 @@ void MonthPage::refresh()
 
 void MonthPage::refreshDayItems()
 {
-    // Update date
     QDate selectedDate = m_calendarWidget->selectedDate();
+    emit currentDayChanged(selectedDate);
+
+    // Update date
     m_dateLabel->setText(selectedDate.toString());
     QDateTime startOfDay(selectedDate, QTime(0, 0, 0));
     QDateTime endOfDay(selectedDate, QTime(23, 59, 59));
@@ -332,12 +317,12 @@ void MonthPage::currentMonthChanged()
 
 void MonthPage::dayDoubleClicked(QDate date)
 {
-    emit showDayPage(m_manager, date);
+    emit showDayPage(date);
 }
 
 void MonthPage::openDay()
 {
-    emit showDayPage(m_manager, m_calendarWidget->selectedDate());
+    emit showDayPage(m_calendarWidget->selectedDate());
 }
 
 void MonthPage::itemDoubleClicked(QListWidgetItem *listItem)
@@ -347,7 +332,7 @@ void MonthPage::itemDoubleClicked(QListWidgetItem *listItem)
 
     QOrganizerItem organizerItem = listItem->data(ORGANIZER_ITEM_ROLE).value<QOrganizerItem>();
     if (!organizerItem.isEmpty())
-        emit showEditPage(m_manager, organizerItem);
+        emit showEditPage(organizerItem);
 }
 
 void MonthPage::saveReqStateChanged(QOrganizerItemAbstractRequest::State reqState)

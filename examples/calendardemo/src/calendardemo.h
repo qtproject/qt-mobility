@@ -70,13 +70,15 @@ public:
 public Q_SLOTS:
     void activateMonthPage();
     void activateDayPage();
-    void activateNewDayPage(QOrganizerItemManager *manager, QDate date);
-    void activateEditPage(QOrganizerItemManager *manager, const QOrganizerItem &item);
-    
-Q_SIGNALS:
-    void multipleEntriesToBeCreated(int);
+    void activateNewDayPage(QDate date);
+    void activateEditPage(const QOrganizerItem &item);
+    void addNewEvent();
+    void addNewTodo();
+    void changeManager(QOrganizerItemManager *manager);
+    void updateSelectedDay(const QDate& date);
 
 private:
+    QDate m_currentDate;
     QOrganizerItemManager *m_manager;
     QStackedWidget *m_stackedWidget;
     MonthPage *m_monthPage;

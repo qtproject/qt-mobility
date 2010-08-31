@@ -63,22 +63,24 @@ class DayPage : public QWidget
     Q_OBJECT
 
 public:
-    DayPage(QWidget *parent = 0);
+    DayPage(QMainWindow *mainWindow, QWidget *parent = 0);
     ~DayPage();
 
 public Q_SLOTS:
     void refresh();
     void dayChanged(QOrganizerItemManager *manager, QDate date);
+
+private Q_SLOTS:
     void itemDoubleClicked(QListWidgetItem *listItem);
-    void backClicked();
+    void viewMonthClicked();
     void editItem();
     void removeItem();
-    void addNewEvent();
-    void addNewTodo();
 
 Q_SIGNALS:
     void showMonthPage();
-    void showEditPage(QOrganizerItemManager *manager, const QOrganizerItem &item);
+    void showEditPage(const QOrganizerItem &item);
+    void addNewEvent();
+    void addNewTodo();
 
 protected: // from QWidget
     void showEvent(QShowEvent *event);

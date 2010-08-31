@@ -48,7 +48,7 @@ QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QOrganizerItem)
 
-DayPage::DayPage(QWidget *parent)
+DayPage::DayPage(QMainWindow *mainWindow, QWidget *parent)
     :QWidget(parent),
     m_manager(0),
     m_dateLabel(0),
@@ -66,7 +66,7 @@ DayPage::DayPage(QWidget *parent)
     connect(m_itemList, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(itemDoubleClicked(QListWidgetItem *)));
 
 #ifndef Q_OS_SYMBIAN
-    // Add push buttons for Maemo as it does not support soft keys
+    // Add push buttons for non-Symbian platforms
     QHBoxLayout* hbLayout = new QHBoxLayout();
     QPushButton* editEventButton = new QPushButton("Edit",this);
     connect(editEventButton,SIGNAL(clicked()),this,SLOT(editItem()));
@@ -74,41 +74,50 @@ DayPage::DayPage(QWidget *parent)
     QPushButton* removeEventButton = new QPushButton("Remove",this);
     connect(removeEventButton,SIGNAL(clicked()),this,SLOT(removeItem()));
     hbLayout->addWidget(removeEventButton);
-    QPushButton* addEventButton = new QPushButton("Add Event",this);
-    connect(addEventButton,SIGNAL(clicked()),this,SLOT(addNewEvent()));
-    hbLayout->addWidget(addEventButton);
-    QPushButton* addTodoButton = new QPushButton("Add Todo",this);
-    connect(addTodoButton,SIGNAL(clicked()),this,SLOT(addNewTodo()));
-    hbLayout->addWidget(addTodoButton);
-    QPushButton* backButton = new QPushButton("Back",this);
-    connect(backButton,SIGNAL(clicked()),this,SLOT(backClicked()));
+    QPushButton* backButton = new QPushButton("View Month",this);
+    connect(backButton,SIGNAL(clicked()),this,SLOT(viewMonthClicked()));
     hbLayout->addWidget(backButton);
     mainlayout->addLayout(hbLayout);
 #endif
 
     setLayout(mainlayout);
 
-    // Add softkeys
-    QAction* backSoftKey = new QAction("Back", this);
-    backSoftKey->setSoftKeyRole(QAction::NegativeSoftKey);
-    addAction(backSoftKey);
-    connect(backSoftKey, SIGNAL(triggered(bool)), this, SLOT(backClicked()));
-
-    QAction* optionsSoftKey = new QAction("Options", this);
-    optionsSoftKey->setSoftKeyRole(QAction::PositiveSoftKey);
-    optionsSoftKey->setMenu(new QMenu(this));
-    addAction(optionsSoftKey);
-
-    // Add actions to options menu
-    QMenu *optionsMenu = optionsSoftKey->menu();
+    // Build Options menu
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_WINCE)
+    // These platforms need their menu items added directly to the menu bar.
+    QMenuBar *optionsMenu = mainWindow->menuBar();
+#else
+    QMenu *optionsMenu = new QMenu("Options", this);
+    #ifndef Q_OS_SYMBIAN
+    // We add the options menu to the softkey manually later
+    mainWindow->menuBar()->addMenu(optionsMenu);
+    #endif
+#endif
+#ifdef Q_OS_SYMBIAN
+    // Add editing options in the menu for Symbian (other platforms get buttons)
     QAction* editAction = optionsMenu->addAction("Edit");
     connect(editAction, SIGNAL(triggered(bool)), this, SLOT(editItem()));
     QAction* removeAction = optionsMenu->addAction("Remove");
     connect(removeAction, SIGNAL(triggered(bool)), this, SLOT(removeItem()));
+#endif
     QAction* addEventAction = optionsMenu->addAction("Add Event");
-    connect(addEventAction, SIGNAL(triggered(bool)), this, SLOT(addNewEvent()));
+    connect(addEventAction, SIGNAL(triggered(bool)), this, SIGNAL(addNewEvent()));
     QAction* addTodoAction = optionsMenu->addAction("Add Todo");
-    connect(addTodoAction, SIGNAL(triggered(bool)), this, SLOT(addNewTodo()));
+    connect(addTodoAction, SIGNAL(triggered(bool)), this, SIGNAL(addNewTodo()));
+
+#ifdef Q_OS_SYMBIAN
+    // Add softkeys for symbian
+    QAction* backSoftKey = new QAction("View Month", this);
+    backSoftKey->setSoftKeyRole(QAction::NegativeSoftKey);
+    addAction(backSoftKey);
+    connect(backSoftKey, SIGNAL(triggered(bool)), this, SLOT(viewMonthClicked()));
+
+    QAction* optionsSoftKey = new QAction("Options", this);
+    optionsSoftKey->setSoftKeyRole(QAction::PositiveSoftKey);
+    optionsSoftKey->setMenu(optionsMenu);
+    addAction(optionsSoftKey);
+#endif
+
 }
 
 DayPage::~DayPage()
@@ -170,10 +179,10 @@ void DayPage::itemDoubleClicked(QListWidgetItem *listItem)
 
     QOrganizerItem organizerItem = listItem->data(ORGANIZER_ITEM_ROLE).value<QOrganizerItem>();
     if (!organizerItem.isEmpty())
-        emit showEditPage(m_manager, organizerItem);
+        emit showEditPage(organizerItem);
 }
 
-void DayPage::backClicked()
+void DayPage::viewMonthClicked()
 {
     emit showMonthPage();
 }
@@ -186,7 +195,7 @@ void DayPage::editItem()
 
     QOrganizerItem organizerItem = listItem->data(ORGANIZER_ITEM_ROLE).value<QOrganizerItem>();
     if (!organizerItem.isEmpty())
-        emit showEditPage(m_manager, organizerItem);
+        emit showEditPage(organizerItem);
 }
 
 void DayPage::removeItem()
@@ -207,28 +216,6 @@ void DayPage::removeItem()
 
     if (m_itemList->count() == 0)
         m_itemList->addItem("(no entries)");
-}
-
-void DayPage::addNewEvent()
-{
-    // TODO: move this to CalendarDemo::addNewEvent() slot
-    QOrganizerEvent newEvent;
-    QDateTime time(m_day);
-    newEvent.setStartDateTime(time);
-    time = time.addSecs(60*30); // add 30 minutes to end time
-    newEvent.setEndDateTime(time);
-    emit showEditPage(m_manager, newEvent);
-}
-
-void DayPage::addNewTodo()
-{
-    // TODO: move this to CalendarDemo::addNewTodo() slot
-    QOrganizerTodo newTodo;
-    QDateTime time(m_day);
-    newTodo.setStartDateTime(time);
-    time = time.addSecs(60*30); // add 30 minutes to due time
-    newTodo.setDueDateTime(time);
-    emit showEditPage(m_manager, newTodo);
 }
 
 void DayPage::showEvent(QShowEvent *event)
