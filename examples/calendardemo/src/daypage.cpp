@@ -95,13 +95,31 @@ void DayPage::refresh()
     m_dateLabel->setText(m_day.toString());
     m_itemList->clear();
 
-    // TODO: refactor this when we have itemInstances() working properly
+    // Items
     QList<QOrganizerItem> items = m_manager->items();
+
+    // Today's item instances
+    QOrganizerItemDateTimePeriodFilter filter;
+    filter.setStartPeriod(QDateTime(m_day, QTime(0, 0, 0)));
+    filter.setEndPeriod(QDateTime(m_day, QTime(23, 59, 59)));
+    QList<QOrganizerItem> instances = m_manager->itemInstances(filter);
+
     foreach (const QOrganizerItem &item, items)
     {
         QOrganizerEventTimeRange eventTimeRange = item.detail<QOrganizerEventTimeRange>();
         if (!eventTimeRange.isEmpty()) {
-            if (eventTimeRange.startDateTime().date() == m_day) {
+            QOrganizerItemGuid itemGuid = item.detail<QOrganizerItemGuid>();
+            QOrganizerEventTimeRange itemTimeRange = item.detail<QOrganizerEventTimeRange>();
+            bool instancesContainGuid = false;
+            foreach (QOrganizerItem instance, instances) {
+                if (instance.detail<QOrganizerItemGuid>() == itemGuid
+                    && instance.detail<QOrganizerEventTimeRange>().startDateTime() != itemTimeRange.startDateTime()) {
+                    instancesContainGuid = true;
+                    break;
+                }
+            }
+
+            if (eventTimeRange.startDateTime().date() == m_day && !instancesContainGuid) {
                 QString time = eventTimeRange.startDateTime().time().toString("hh:mm");
                 QListWidgetItem* listItem = new QListWidgetItem();
                 listItem->setText(QString("Event:%1-%2").arg(time).arg(item.displayLabel()));
@@ -121,9 +139,35 @@ void DayPage::refresh()
                 listItem->setData(ORGANIZER_ITEM_ROLE, data);
                 m_itemList->addItem(listItem);
             }
-        }        
+        }
+
+        QOrganizerJournalTimeRange journalTimeRange = item.detail<QOrganizerJournalTimeRange>();
+        if (!journalTimeRange.isEmpty()) {
+            if (journalTimeRange.entryDateTime().date() == m_day) {
+                QString time = journalTimeRange.entryDateTime().time().toString("hh:mm");
+                QListWidgetItem* listItem = new QListWidgetItem();
+                listItem->setText(QString("Journal:%1-%2").arg(time).arg(item.displayLabel()));
+                QVariant data = QVariant::fromValue<QOrganizerItem>(item);
+                listItem->setData(ORGANIZER_ITEM_ROLE, data);
+                m_itemList->addItem(listItem);
+            }
+        }
         
         // TODO: other item types
+    }
+
+    foreach (const QOrganizerItem &instance, instances)
+    {
+        QString type = instance.type();
+        if (type == QOrganizerItemType::TypeEventOccurrence) {
+            QOrganizerEventOccurrence occurrence = static_cast<QOrganizerEventOccurrence>(instance);
+            QString time = occurrence.startDateTime().time().toString("hh:mm");
+            QListWidgetItem* listItem = new QListWidgetItem();
+            listItem->setText(QString("Event occurrence:%1-%2").arg(time).arg(occurrence.displayLabel()));
+            QVariant data = QVariant::fromValue<QOrganizerItem>(instance);
+            listItem->setData(ORGANIZER_ITEM_ROLE, data);
+            m_itemList->addItem(listItem);
+        }
     }
 
     if (m_itemList->count() == 0)

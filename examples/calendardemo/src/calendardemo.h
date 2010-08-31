@@ -58,6 +58,8 @@ class MonthPage;
 class DayPage;
 class EventEditPage;
 class TodoEditPage;
+class JournalEditPage;
+class EventOccurrenceEditPage;
 
 class CalendarDemo : public QMainWindow
 {
@@ -73,6 +75,7 @@ public Q_SLOTS:
     void activateEditPage(const QOrganizerItem &item);
     void addNewEvent();
     void addNewTodo();
+    void addNewJournal();
     void changeManager(QOrganizerItemManager *manager);
     void updateSelectedDay(const QDate& date);
 
@@ -86,6 +89,8 @@ private:
     DayPage *m_dayPage;
     EventEditPage *m_eventEditPage;
     TodoEditPage *m_todoEditPage;
+    JournalEditPage *m_journalEditPage;
+    EventOccurrenceEditPage *m_eventOccurrenceEditPage;
 };
 
 #endif // CALENDARDEMO_H

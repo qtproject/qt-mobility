@@ -71,13 +71,13 @@ public:
 
 private Q_SLOTS:
     void backendChanged(const QString &managerName);
+    void addEvents();
+    void deleteAllEntries();
     void refreshDayItems();
     void currentMonthChanged();
     void dayDoubleClicked(QDate date);
     void openDay();
     void itemDoubleClicked(QListWidgetItem *listItem);
-    void addEvents();
-    void deleteAllEntries();
     void saveReqStateChanged(QOrganizerItemAbstractRequest::State);
     void removeReqStateChanged(QOrganizerItemAbstractRequest::State);
 

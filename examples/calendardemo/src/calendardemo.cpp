@@ -44,6 +44,8 @@
 #include "daypage.h"
 #include "eventeditpage.h"
 #include "todoeditpage.h"
+#include "journaleditpage.h"
+#include "eventoccurrenceeditpage.h"
 #include <QtGui>
 #include <qtorganizer.h>
 
@@ -51,11 +53,11 @@ QTM_USE_NAMESPACE
 
 CalendarDemo::CalendarDemo(QWidget *parent)
     :QMainWindow(parent),
-    m_manager(0),
     m_stackedWidget(0),
     m_monthPage(0),
     m_dayPage(0),
-    m_eventEditPage(0)
+    m_eventEditPage(0),
+    m_eventOccurrenceEditPage(0)
 {
     m_stackedWidget = new QStackedWidget(this);
 
@@ -63,6 +65,8 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     m_dayPage = new DayPage(this, m_stackedWidget);
     m_eventEditPage = new EventEditPage(m_stackedWidget);
     m_todoEditPage = new TodoEditPage(m_stackedWidget);
+    m_journalEditPage = new JournalEditPage(m_stackedWidget);
+    m_eventOccurrenceEditPage = new EventOccurrenceEditPage(m_stackedWidget);
 
     //qRegisterMetaType<QOrganizerItemManager>("QOrganizerItemManager");
     qRegisterMetaType<QOrganizerItem>("QOrganizerItem");
@@ -80,6 +84,8 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     connect(m_dayPage, SIGNAL(addNewTodo()), this, SLOT(addNewTodo()), Qt::QueuedConnection);
     connect(m_eventEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_todoEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
+    connect(m_journalEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
+    connect(m_eventOccurrenceEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
 
     m_monthPage->init();
     
@@ -87,6 +93,8 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     m_stackedWidget->addWidget(m_dayPage);
     m_stackedWidget->addWidget(m_eventEditPage);
     m_stackedWidget->addWidget(m_todoEditPage);
+    m_stackedWidget->addWidget(m_journalEditPage);
+    m_stackedWidget->addWidget(m_eventOccurrenceEditPage);
     m_stackedWidget->setCurrentIndex(0);
 
     setCentralWidget(m_stackedWidget);
@@ -94,6 +102,8 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
 #endif
     buildMenu();
+
+    activateMonthPage();
 }
 
 
@@ -127,6 +137,8 @@ void CalendarDemo::buildMenu()
     connect(addEventAction, SIGNAL(triggered(bool)), this, SLOT(addNewEvent()));
     QAction* addTodoAction = optionsMenu->addAction("Add Todo");
     connect(addTodoAction, SIGNAL(triggered(bool)), this, SLOT(addNewTodo()));
+    QAction* addJournalAction = optionsMenu->addAction("Add Journal");
+    connect(addJournalAction, SIGNAL(triggered(bool)), this, SLOT(addNewJournal()));
 
 #ifdef Q_OS_SYMBIAN
     // Add softkeys for symbian
@@ -177,8 +189,19 @@ void CalendarDemo::activateEditPage(const QOrganizerItem &item)
         m_todoEditPage->todoChanged(m_manager, todo);
         m_stackedWidget->setCurrentWidget(m_todoEditPage);
     }
+    else if (item.type() == QOrganizerItemType::TypeJournal) {
+        QOrganizerJournal journal = static_cast<QOrganizerJournal>(item);
+        m_dayPage->dayChanged(journal.dateTime().date()); // edit always comes back to day page
+        m_journalEditPage->journalChanged(m_manager, journal);
+        m_stackedWidget->setCurrentWidget(m_journalEditPage);
+    }
+    else if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
+        QOrganizerEventOccurrence eventOccurrence = static_cast<QOrganizerEventOccurrence>(item);
+        m_dayPage->dayChanged(eventOccurrence.startDateTime().date()); // edit always comes back to day page
+        m_eventOccurrenceEditPage->eventOccurrenceChanged(m_manager, eventOccurrence);
+        m_stackedWidget->setCurrentWidget(m_eventOccurrenceEditPage);
+    }
     // TODO:
-    //else if (item.type() == QOrganizerItemType::TypeJournal)
     //else if (item.type() == QOrganizerItemType::TypeNote)
 }
 
@@ -200,6 +223,14 @@ void CalendarDemo::addNewTodo()
     time = time.addSecs(60*30); // add 30 minutes to due time
     newTodo.setDueDateTime(time);
     activateEditPage(newTodo);
+}
+
+void CalendarDemo::addNewJournal()
+{
+    QOrganizerJournal newJournal;
+    QDateTime time(m_currentDate);
+    newJournal.setDateTime(time);
+    activateEditPage(newJournal);
 }
 
 void CalendarDemo::changeManager(QOrganizerItemManager *manager)
