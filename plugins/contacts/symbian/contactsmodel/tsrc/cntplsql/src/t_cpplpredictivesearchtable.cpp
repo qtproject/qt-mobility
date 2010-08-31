@@ -203,6 +203,7 @@ void UT_CPplPredictiveSearchTable::UseSpecificDbL(const TDesC& aDbFile)
                                             *iTable,
                                             *iPredSearchQwertyTable,
                                             *iPredSearchSettingsTable);
+    HbKeymapFactory::instance();
     }
 
 // -----------------------------------------------------------------------------
@@ -877,7 +878,9 @@ void UT_CPplPredictiveSearchTable::CheckItemCountL(
     TInt aCountInTable10,
     TInt aCountInTable11)
     {
-    const TDesC tableNames[KTableCount] =
+#if defined(__WINSCW__)
+    TPtrC tableNames[KTableCount] = // Does not compile in armv5
+    //const TDesC tableNames[KTableCount] = // Compiles in armv5, but crashes in winscw
         {
         KSqlContactPredSearchTable0,
         KSqlContactPredSearchTable1,
@@ -892,6 +895,24 @@ void UT_CPplPredictiveSearchTable::CheckItemCountL(
         KSqlContactPredSearchTable10,
         KSqlContactPredSearchTable11
         };
+#else
+    // armv5
+    TPtrC tableNames[KTableCount] =
+        {
+        static_cast<TPtrC>(KSqlContactPredSearchTable0),
+        static_cast<TPtrC>(KSqlContactPredSearchTable1),
+        static_cast<TPtrC>(KSqlContactPredSearchTable2),
+        static_cast<TPtrC>(KSqlContactPredSearchTable3),
+        static_cast<TPtrC>(KSqlContactPredSearchTable4),
+        static_cast<TPtrC>(KSqlContactPredSearchTable5),
+        static_cast<TPtrC>(KSqlContactPredSearchTable6),
+        static_cast<TPtrC>(KSqlContactPredSearchTable7),
+        static_cast<TPtrC>(KSqlContactPredSearchTable8),
+        static_cast<TPtrC>(KSqlContactPredSearchTable9),
+        static_cast<TPtrC>(KSqlContactPredSearchTable10),
+        static_cast<TPtrC>(KSqlContactPredSearchTable11)
+        };
+#endif
     TInt rowCounts[KTableCount] = {0};
     
     for (TInt i = 0; i < KTableCount; ++i)
