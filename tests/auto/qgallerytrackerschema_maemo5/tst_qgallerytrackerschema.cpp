@@ -2850,6 +2850,12 @@ void tst_QGalleryTrackerSchema::queryResponseValueColumnToString_data()
                     << QLatin1String("Summer"))
             << QString::fromLatin1("2009|Holiday|Summer");
 
+    QTest::newRow("Image.keywords (QString)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("keywords")
+            << QVariant(QLatin1String("Holiday"))
+            << QString::fromLatin1("Holiday");
+
     QTest::newRow("Image.keywords (Empty")
             << QString::fromLatin1("Image")
             << QString::fromLatin1("keywords")
