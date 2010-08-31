@@ -18,7 +18,8 @@ exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
 }
 
 contains(IS_SYMBIAN_4, yes) {
-    message(Temporarily disabled; building Symbian CNTMODEL and contacts plugin DISABLED!)
+    message(Building Symbian^4 CNTMODEL library and plugin)
+    SUBDIRS += contactsmodel plugin
 } else {
     SUBDIRS += plugin
 }
