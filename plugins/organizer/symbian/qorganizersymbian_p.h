@@ -109,7 +109,6 @@ class CCalSession;
 class CCalEntryView;
 class CCalInstanceView;
 class CActiveSchedulerWait;
-class TCalTime;
 class QOrganizerItemRequestQueue;
 
 class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine, 
