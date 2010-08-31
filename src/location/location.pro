@@ -68,10 +68,13 @@ maemo6 {
                 qgeosatelliteinfosource_maemo.cpp \
                 dbuscomm_maemo.cpp \
                 dbusserver_maemo.cpp
-    HEADERS += qgeopositioninfosource_maemo_p.h \
+    PRIVATE_HEADERS += qgeopositioninfosource_maemo_p.h \
                 qgeosatelliteinfosource_maemo_p.h \
                 dbuscomm_maemo_p.h \
                 dbusserver_maemo_p.h
+    CONFIG += create_pc create_prl
+    pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+    pkgconfig.files = QtLocation.pc
 }
 
 maemo5 {

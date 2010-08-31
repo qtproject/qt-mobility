@@ -9,7 +9,7 @@ isEmpty(QT_LIBINFIX):symbian {
     TARGET = "QtMobility"
     TARGET.UID3 = 0x2002AC89
 
-    VERSION = 1.0.2
+    VERSION = 1.0.3
 
     vendorinfo = \
         "; Localised Vendor name" \
@@ -41,12 +41,30 @@ isEmpty(QT_LIBINFIX):symbian {
         EPOCROOT50 = $$(EPOCROOT50)
     }
 
+    #Symbian^3 and beyond requires special package flags
+    #we cannot use S60_VERSION == 5.2 as Qt 4.6.x does not define it yet
+    #see $QTDIR/mkspecs/common/symbian/symbian.conf for details
+    exists($${EPOCROOT}epoc32/release/winscw/udeb/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/data/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/release/armv5/lib/libstdcppv5.dso) {
+        pkg_version = $$replace(VERSION,"\.",",")
+        qtmobilitydeployment.pkg_prerules += "$${LITERAL_HASH}{\"QtMobility\"},(0x2002AC89),$${pkg_version},TYPE=SA,RU,NR"
+    }
+
     contains(mobility_modules, messaging): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtMessaging.dll
-
-    contains(mobility_modules, serviceframework): qtmobilitydeployment.sources += \
+	
+    contains(mobility_modules, serviceframework) { 
+        qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtServiceFramework.dll \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qsfwdatabasemanagerserver.exe
+        contains(QT_CONFIG, declarative): {
+            qtmobilitydeployment.sources += \
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_serviceframework.dll
+            pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\serviceframework\\qmakepluginstubs\\declarative_serviceframework.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\serviceframework\\declarative_serviceframework.qtplugin\""
+            qmldirs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\serviceframework\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\serviceframework\\qmldir\""
+        }
+    }
 
     contains(mobility_modules, location): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtLocation.dll
@@ -54,9 +72,19 @@ isEmpty(QT_LIBINFIX):symbian {
     contains(mobility_modules, systeminfo): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtSystemInfo.dll
 
-    contains(mobility_modules, publishsubscribe): qtmobilitydeployment.sources += \
+    contains(mobility_modules, publishsubscribe) {
+        qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtPublishSubscribe.dll \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qpspathmapperserver.exe
+        contains(QT_CONFIG, declarative) {
+            qtmobilitydeployment.sources += \
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_publishsubscribe.dll
+            pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\publishsubscribe\\qmakepluginstubs\\declarative_publishsubscribe.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\publishsubscribe\\declarative_publishsubscribe.qtplugin\""
+            qmldirs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\publishsubscribe\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\publishsubscribe\\qmldir\""
+        }
+    }
 
     contains(mobility_modules, versit): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtVersit.dll
@@ -115,7 +143,14 @@ isEmpty(QT_LIBINFIX):symbian {
 
             qtmobilitydeployment.pkg_postrules += symbiancntsim
         }
-
+	 contains(QT_CONFIG, declarative): {
+            qtmobilitydeployment.sources += \
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_contacts.dll
+            pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\contacts\\qmakepluginstubs\\declarative_contacts.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\contacts\\declarative_contacts.qtplugin\""
+            qmldirs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\contacts\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\contacts\\qmldir\""
+        }
     }
 
     contains(mobility_modules, multimedia) {
@@ -155,6 +190,15 @@ isEmpty(QT_LIBINFIX):symbian {
         pluginstubs += \
             "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
             "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/qtmultimediakit_m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\qtmultimediakit_m3u.qtplugin\"" \
+	    
+	contains(QT_CONFIG, declarative): {
+            qtmobilitydeployment.sources += \
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_multimedia.dll
+            pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\multimedia\\qmakepluginstubs\\declarative_multimedia.qtplugin\"  - \"!:\\resource\\qt\\imports\\Qt\\multimedia\\declarative_multimedia.qtplugin\""
+            qmldirs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\multimedia\\qmldir\"  - \"!:\\resource\\qt\\imports\\Qt\\multimedia\\qmldir\""
+        }
     }
 
     contains(mobility_modules, sensors) {
@@ -190,13 +234,27 @@ isEmpty(QT_LIBINFIX):symbian {
             "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/generic/qmakepluginstubs/qtsensors_generic.qtplugin\"  - \"!:\\resource\\qt\\plugins\\sensors\\qtsensors_generic.qtplugin\""
 
         !isEmpty(sensors):qtmobilitydeployment.pkg_postrules += sensors
+        contains(QT_CONFIG, declarative): {
+            qtmobilitydeployment.sources += \
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_sensors.dll
+            pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\sensors\\qmakepluginstubs\\declarative_sensors.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\sensors\\declarative_sensors.qtplugin\""
+            qmldirs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\sensors\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\sensors\\qmldir\""
+        }
     }
 
     !isEmpty(pluginstubs):qtmobilitydeployment.pkg_postrules += pluginstubs
+    !isEmpty(qmldirs):qtmobilitydeployment.pkg_postrules += qmldirs
 
     qtmobilitydeployment.path = /sys/bin
 
-    DEPLOYMENT += qtmobilitydeployment
+    # Support backup and restore for QtMobility libraries and applications
+    mobilitybackup.sources = backup_registration.xml
+    mobilitybackup.path = c:/private/10202D56/import/packages/$$replace(TARGET.UID3, 0x,)
+
+    DEPLOYMENT += qtmobilitydeployment\
+                mobilitybackup
 } else {
     message(Deployment of infixed library names not supported)
 }

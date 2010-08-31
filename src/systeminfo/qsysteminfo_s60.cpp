@@ -1025,6 +1025,10 @@ QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
+#ifdef SYMBIAN_3_1
+    if (!DeviceInfo::instance()->subscriberInfo()->imsi().isEmpty())
+        return QSystemDeviceInfo::SingleSimAvailable;
+#else //SYMBIAN_3_1
     TInt lockStatus = 0;
     TInt err = RProperty::Get(KPSUidStartup, KStartupSimLockStatus, lockStatus);
     if (err == KErrNone && (TPSSimLockStatus)lockStatus != ESimLockOk) {
@@ -1036,7 +1040,7 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
     if (err == KErrNone && TPSSimStatus(simStatus) == ESimUsable) {
         return QSystemDeviceInfo::SingleSimAvailable;
     }
-
+#endif //SYMBIAN_3_1
     return QSystemDeviceInfo::SimNotAvailable;
 }
 

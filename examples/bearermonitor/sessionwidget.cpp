@@ -89,13 +89,26 @@ void SessionWidget::updateSession()
 {
     updateSessionState(session->state());
 
-    if (session->configuration().type() == QNetworkConfiguration::InternetAccessPoint)
-        bearer->setText(session->configuration().bearerName());
-    else {
-        QNetworkConfigurationManager mgr;
-        QNetworkConfiguration c = mgr.configurationFromIdentifier(session->sessionProperty("ActiveConfiguration").toString());
-        bearer->setText(c.bearerName());
+    QNetworkConfigurationManager manager;
+    QNetworkConfiguration config;
+    switch (session->configuration().type()) {
+    case QNetworkConfiguration::InternetAccessPoint:
+        config = session->configuration();
+        break;
+    case QNetworkConfiguration::ServiceNetwork:
+        config = manager.configurationFromIdentifier(
+                    session->sessionProperty("ActiveConfiguration").toString());
+        break;
+    case QNetworkConfiguration::UserChoice:
+        config = manager.configurationFromIdentifier(
+                    session->sessionProperty("UserChoiceConfiguration").toString());
+        break;
+    default:
+        ;
     }
+
+    bearer->setText(config.bearerName());
+    configuration->setText(config.name());
 
     interfaceName->setText(session->interface().humanReadableName());
     interfaceGuid->setText(session->interface().name());
