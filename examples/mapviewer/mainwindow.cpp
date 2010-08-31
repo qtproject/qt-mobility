@@ -101,14 +101,6 @@ static const int kineticPanningResolution = 30; // temporal resolution. Smaller 
 static const int holdTimeThreshold = 100; // maximum time between last mouse move and mouse release for kinetic panning to kick in
 #endif
 
-static inline qreal qPointLength(const QPointF &p)
-{
-    qreal x = p.x();
-    qreal y = p.y();
-
-    return std::sqrt(x * x + y * y);
-}
-
 MapWidget::MapWidget(QGeoMappingManager *manager) :
         QGraphicsGeoMap(manager),
         coordQueryState(false),
