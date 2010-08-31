@@ -51,11 +51,9 @@ enum TKeyId
 	EKeyHash
     };
 
-#if defined(USE_ORBIT_KEYMAP)
 const QChar KStar = '*';
 const QChar KPlus = '+';
 const QChar KHash = '#';
-#endif // #if defined(USE_ORBIT_KEYMAP)
 
 
 // * key is mapped to this
@@ -122,222 +120,6 @@ const QChar C12keyKeyMap::ArrayIndexToMappedChar(TInt aArrayIndex) const
         }
     }
 
-#if !defined(USE_ORBIT_KEYMAP)
-// ----------------------------------------------------------------------------
-// C12keyKeyMap::UseHardcodedKeyMap
-// ----------------------------------------------------------------------------
-QChar C12keyKeyMap::UseHardcodedKeyMap(QChar input) const
-    {
-	QChar ret = '0';
-    switch (input.unicode())
-        {
-#if defined(THAI_KEYMAP)
-		case 0x21B2:
-			ret = '0';
-			break;
-
-		case 0x0E01:
-		case 0x0E02:
-		case 0x0E03:
-		case 0x0E04:
-		case 0x0E05:	
-#endif
-		case '-':
-		case '?':
-		    ret = '1';
-		    break;
-
-        case 'a':
-        case 'A':
-        case 'b':
-        case 'B':
-        case 'c':
-        case 'C':
-#if defined(THAI_KEYMAP)
-		case 0x0E06:
-		case 0x0E07:
-		case 0x0E08:
-		case 0x0E09:
-#endif
-            ret = '2';
-            break;
-
-		case 'd':
-        case 'D':
-        case 'e':
-        case 'E':
-        case 'f':
-        case 'F':
-#if defined(THAI_KEYMAP)
-		case 0x0E0A:
-		case 0x0E0B:
-		case 0x0E0C:
-		case 0x0E0D:
-#endif
-            ret = '3';
-            break;
-            
-		case 'g':
-        case 'G':
-        case 'h':
-        case 'H':
-        case 'i':
-        case 'I':
-#if defined(THAI_KEYMAP)
-		case 0x0E0E:
-		case 0x0E0F:
-		case 0x0E10:
-		case 0x0E11:
-		case 0x0E12:
-		case 0x0E13:
-#endif
-            ret = '4';
-            break;
-
-		case 'j':
-        case 'J':
-        case 'k':
-        case 'K':
-        case 'l':
-        case 'L':
-#if defined(THAI_KEYMAP)
-		case 0x0E14:
-		case 0x0E15:
-		case 0x0E16:
-		case 0x0E17:
-		case 0x0E18:
-#endif
-            ret = '5';
-            break;
-
-		case 'm':
-        case 'M':
-        case 'n':
-        case 'N':
-        case 'o':
-        case 'O':
-#if defined(THAI_KEYMAP)
-		case 0x0E19:
-		case 0x0E1A:
-		case 0x0E1B:
-		case 0x0E1C:
-		case 0x0E1D:
-#endif
-            ret = '6';
-            break;
-      
-		case 'p':
-        case 'P':
-        case 'q':
-        case 'Q':
-        case 'r':
-        case 'R':
-        case 's':
-        case 'S':
-#if defined(THAI_KEYMAP)
-		case 0x0E1E:
-		case 0x0E1F:
-		case 0x0E20:
-		case 0x0E21:
-		case 0x0E22:
-#endif
-            ret = '7';
-            break;
-
-		case 't':
-        case 'T':
-        case 'u':
-        case 'U':
-        case 'v':
-        case 'V':
-#if defined(THAI_KEYMAP)
-		case 0x0E23:
-		case 0x0E24:
-		case 0x0E25:
-		case 0x0E26:
-		case 0x0E27:
-		case 0x0E28:
-		case 0x0E29:
-#endif
-            ret = '8';
-            break;
-
-        case 'w':
-        case 'W':
-        case 'X':
-        case 'x':
-        case 'Y':
-        case 'y':
-        case 'z':
-        case 'Z':
-#if defined(THAI_KEYMAP)
-		case 0x0E2A:
-		case 0x0E2B:
-		case 0x0E2C:
-		case 0x0E2D:
-		case 0x0E2E:
-#endif
-            ret = '9';
-            break;
-
-		case '*':
-		case '+':
-#if defined(THAI_KEYMAP)
-		case 0x0E2F:
-		case 0x0E3F:
-		case 0x0E31:
-		case 0x0E34:
-		case 0x0E35:
-		case 0x0E36:
-		case 0x0E37:
-		case 0x0E38:
-		case 0x0E39:
-		case 0x0E46:
-		case 0x0E47:
-		case 0x0E48:
-		case 0x0E49:
-		case 0x0E4A:
-		case 0x0E4B:
-		case 0x0E4C:
-#endif
-		    ret = KMappedCharForStar;
-		    break;
-		    
-		case '#':
-#if defined(THAI_KEYMAP)
-		case 0x0E30:
-		case 0x0E32:
-		case 0x0E33:
-		case 0x0E40:
-		case 0x0E41:
-		case 0x0E42:
-		case 0x0E43:
-		case 0x0E44:
-#endif
-		    ret = KMappedCharForHash;
-		    break;
-
-		case '0':
-		case '1':
-		case '2':
-		case '3':
-		case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-        case ' ':
-            ret = input; // Numbers and space
-            break;
-
-		default: // Other (unknown) chars
-		    ret = KPadChar;
-        }
-    return ret;
-    }
-#endif // #if !defined(USE_ORBIT_KEYMAP)
-
 // ----------------------------------------------------------------------------
 // C12keyKeyMap::ComputeValue
 // ----------------------------------------------------------------------------
@@ -385,8 +167,6 @@ TInt C12keyKeyMap::ComputeValue(QString aString,
 	return KErrNone;
 	}
 
-#if defined(USE_ORBIT_KEYMAP)
-
 // ----------------------------------------------------------------------------
 // C12keyKeyMap::SetHardcodedCharacters
 // In emulator (except in unit tests), select just the default language, as new
@@ -418,7 +198,6 @@ void C12keyKeyMap::SetHardcodedCharacters()
 	iHardcodedChars.append(KPlus);
 	iHardcodedChars.append(KHash);
 	}
-#endif // #if defined(USE_ORBIT_KEYMAP)
 
 // ----------------------------------------------------------------------------
 // C12keyKeyMap::DetermineSpecialCharBehaviour
@@ -463,11 +242,7 @@ void C12keyKeyMap::ConstructL()
 	{
 	PRINT(_L("Enter C12keyKeyMap::ConstructL"));
 
-#if defined(USE_ORBIT_KEYMAP)
 	CPcsKeyMap::ConstructL(HbKeyboardVirtual12Key);
-#else
-	CPcsKeyMap::ConstructL();
-#endif
 
 	TInt err(KErrNone);
 	QT_TRYCATCH_ERROR(err, GetTextCodecs());

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,8 +48,12 @@
 #include <QString>
 #include <QVariant>
 
+#include "qtelephony.h"
+
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
+
+using namespace QTelephony;
 
 struct QTelephonyCallInfoPrivate;
 class Q_TELEPHONY_EXPORT QTelephonyCallInfo
@@ -59,32 +63,13 @@ public:
     QTelephonyCallInfo(const QTelephonyCallInfo& other);
     ~QTelephonyCallInfo();
 
-    enum CallType {
-        Any = 0,
-        Text,
-        Data,
-        Video,
-        Voice,
-        Other
-    };
-
-    enum CallStatus {
-        Idle = 0,
-        Dialing,
-        Alerting,
-        Connected,
-        Disconnecting,
-        Incomming,
-        OnHold
-    };
-
     QString remotePartyIdentifier() const;
     CallType type() const;
     QString subType() const;
     CallStatus status() const;
     QVariant value(const QString& key) const;
 private:
-    QSharedDataPointer<QTelephonyCallInfoPrivate> d;
+    QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> d;
     friend class QTelephonyCallListPrivate;
 };
 

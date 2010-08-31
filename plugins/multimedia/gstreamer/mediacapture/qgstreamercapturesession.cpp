@@ -468,7 +468,7 @@ static gboolean saveImageFilter(GstElement *element,
             f.write((const char *)buffer->data, buffer->size);
             f.close();
 
-            static int signalIndex = session->metaObject()->indexOfSignal("imageSaved(int, QString)");
+            static int signalIndex = session->metaObject()->indexOfSignal("imageSaved(int,QString)");
             session->metaObject()->method(signalIndex).invoke(session,
                                                               Qt::QueuedConnection,
                                                               Q_ARG(int,session->m_imageRequestId),

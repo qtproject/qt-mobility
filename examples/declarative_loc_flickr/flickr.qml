@@ -56,7 +56,7 @@ Item {
         Common.RestModel {
             id: restModel;
             latitude: geoTab.latitude
-            longtitude: geoTab.longtitude}
+            longitude: geoTab.longitude}
 
         Item {
             id: views

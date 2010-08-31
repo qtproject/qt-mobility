@@ -224,8 +224,8 @@ void ServiceDatabaseUnitTest::getInterfaces()
 
     QHash<QString,QString> customs;
     QStringList capabilities;
-    compareDescriptor(interfaces[0], "com.acme.service.downloader", "acme", 1, 0, capabilities, customs, "C:/TestData/testservice.dll",
-            "Acme services", "Interface that provides download support");
+    QVERIFY(compareDescriptor(interfaces[0], "com.acme.service.downloader", "acme", 1, 0, capabilities, customs, "C:/TestData/testservice.dll",
+            "Acme services", "Interface that provides download support"));
 
     QServiceInterfaceDescriptor interface;
     customs["coordinate"] = QString("global");

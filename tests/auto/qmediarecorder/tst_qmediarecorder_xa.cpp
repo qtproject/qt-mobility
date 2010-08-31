@@ -72,7 +72,7 @@ void tst_QMediaRecorder_xa::testMediaRecorderObject()
     QCOMPARE(audiocapture->supportedAudioCodecs().count(), 3); // "pcm", "amr", "aac"
     QAudioEncoderSettings settings;
     settings.setCodec("pcm");
-    QCOMPARE(audiocapture->supportedAudioSampleRates(settings).count(), 12);
+    QCOMPARE(audiocapture->supportedAudioSampleRates(settings).count(), 5);
     bool isContinuous;
     audiocapture->supportedAudioSampleRates(settings, &isContinuous);
     QCOMPARE(isContinuous, false);
@@ -134,10 +134,8 @@ void tst_QMediaRecorder_xa::testAudioRecording_data()
     QTest::newRow("wav 16kHz Stereo") << "audio/wav" << "pcm" << "Sr16kHzStereo" << "wav" << "user" << 0 << 16000 << 2;
     QTest::newRow("wav 32kHz Mono") << "audio/wav" << "pcm" << "Sr32kHzMono" << "wav" << "user" << 0 << 32000 << 1;
     QTest::newRow("wav 32kHz Stereo") << "audio/wav" << "pcm" << "Sr32kHzStereo" << "wav" << "user" << 0<< 32000 << 2;
-#ifndef __WINSCW__
-    QTest::newRow("wav 96kHz Mono") << "audio/wav" << "pcm" << "Sr96kHzMono" << "wav" << "user" << 0 << 96000 << 1;
-    QTest::newRow("wav 96kHz Stereo") << "audio/wav" << "pcm" << "Sr96kHzStereo" << "wav" << "user" << 0 << 96000 << 2;
-#endif // __WINSCW__
+    QTest::newRow("wav 48kHz Mono") << "audio/wav" << "pcm" << "Sr48kHzMono" << "wav" << "user" << 0 << 48000 << 1;
+    QTest::newRow("wav 48kHz Stereo") << "audio/wav" << "pcm" << "Sr48kHzStereo" << "wav" << "user" << 0 << 48000 << 2;
     QTest::newRow("amr Br04750bps") << "audio/amr" << "amr" << "Br04750bps" << "amr" << "user" << 4750 << 8000 << 1;
     QTest::newRow("amr Br05150bps") << "audio/amr" << "amr" << "Br05150bps" << "amr" << "user" << 5150 << 8000 << 1;
     QTest::newRow("amr Br05900bps") << "audio/amr" << "amr" << "Br05900bps" << "amr" << "user" << 5900 << 8000 << 1;

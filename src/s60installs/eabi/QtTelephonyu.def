@@ -23,7 +23,7 @@ EXPORTS
 	_ZNK10QtMobility18QTelephonyCallInfo6statusEv @ 22 NONAME
 	_ZNK10QtMobility18QTelephonyCallInfo7subTypeEv @ 23 NONAME
 	_ZNK10QtMobility18QTelephonyCallList10metaObjectEv @ 24 NONAME
-	_ZNK10QtMobility18QTelephonyCallList11activeCallsERKNS_18QTelephonyCallInfo8CallTypeE @ 25 NONAME
+	_ZNK10QtMobility18QTelephonyCallList11activeCallsERKNS_10QTelephony8CallTypeE @ 25 NONAME
 	_ZTIN10QtMobility18QTelephonyCallListE @ 26 NONAME
 	_ZTVN10QtMobility18QTelephonyCallListE @ 27 NONAME
 

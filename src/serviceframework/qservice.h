@@ -44,8 +44,11 @@
 
 #include "qmobilityglobal.h"
 
+QT_BEGIN_HEADER
+
 QTM_BEGIN_NAMESPACE
 
+//QTM_SYNC_HEADER_EXPORT QService
 namespace QService 
 {
     enum Scope {
@@ -59,9 +62,15 @@ namespace QService
         ErrorOutofMemory,
         ErrorPermissionDenied,
         ErrorInvalidArguments
-    };    
+    };   
+
+    enum Type {
+        Plugin = 0,
+        InterProcess
+    };
 }
 
 QTM_END_NAMESPACE
 
+QT_END_HEADER
 #endif //Q_SERVICE_H

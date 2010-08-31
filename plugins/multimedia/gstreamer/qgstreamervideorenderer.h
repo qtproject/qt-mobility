@@ -66,8 +66,11 @@ public:
 signals:
     void sinkChanged();
 
+private slots:
+    void handleFormatChange();
+
 private:    
-    GstElement *m_videoSink;
+    QVideoSurfaceGstSink *m_videoSink;
     QAbstractVideoSurface *m_surface;
 };
 

@@ -171,9 +171,9 @@ void QDeclarativeGalleryQueryModel::componentComplete()
     \o NoGallery No gallery was set on the query.
     \o NotSupported Queries are not supported by the \l gallery.
     \o ConnectionError The query failed due to a connection error.
-    \o InvalidItemError The query failed because the value of \l scopeItemId
+    \o InvalidItemError The query failed because the value of \l rootItem
     is not a valid item ID.
-    \o ItemTypeError The query failed because the value of \l itemType is not
+    \o ItemTypeError The query failed because the value of \l rootType is not
     a valid item type.
     \o InvalidPropertyError The query failed because the \l filter refers to an
     invalid property.
@@ -253,7 +253,7 @@ void QDeclarativeGalleryQueryModel::componentComplete()
     \qmlproperty enum GalleryQueryModel::scope
 
     The property contains whether a query should count the direct descendants
-    of the \l scopeItemId or all descendants.
+    of the \l rootItem or all descendants.
 */
 
 /*!
@@ -357,7 +357,14 @@ QModelIndex QDeclarativeGalleryQueryModel::index(int row, int column, const QMod
 
 void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet)
 {
-    m_resultSet = resultSet;
+    if (m_rowCount > 0) {
+        beginRemoveRows(QModelIndex(), 0, m_rowCount);
+        m_rowCount = 0;
+        m_resultSet = resultSet;
+        endRemoveRows();
+    } else {
+        m_resultSet = resultSet;
+    }
 
     if (m_resultSet) {
         QHash<int, QByteArray> roleNames;
@@ -384,12 +391,13 @@ void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet
         connect(m_resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)),
                 this, SLOT(_q_itemsChanged(int,int)));
 
-        m_rowCount = m_resultSet->itemCount();
-    } else {
-        m_rowCount = 0;
+        const int rowCount = m_resultSet->itemCount();
+        if (rowCount > 0) {
+            beginInsertRows(QModelIndex(), 0, rowCount - 1);
+            m_rowCount = rowCount;
+            endInsertRows();
+        }
     }
-
-    reset();
 }
 
 void QDeclarativeGalleryQueryModel::_q_itemsInserted(int index, int count)

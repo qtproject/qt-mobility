@@ -207,7 +207,12 @@ public:
 
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
-
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    float contrast(int screen);
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);
     int displayBrightness(int screen);
 };
 
@@ -275,6 +280,7 @@ public:
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
+    bool isInhibited;
 
 private Q_SLOTS:
     void wakeUpDisplay();

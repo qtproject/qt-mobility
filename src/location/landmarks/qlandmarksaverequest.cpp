@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
     request that certain landmarks be saved by a landmark manager.
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-request
 
     For a QLandmarkSaveRequest, the resultsAvailable() signal will be emitted
@@ -85,6 +85,7 @@ QLandmarkSaveRequest::~QLandmarkSaveRequest()
 QList<QLandmark> QLandmarkSaveRequest::landmarks() const
 {
     Q_D(const QLandmarkSaveRequest);
+    QMutexLocker ml(&d->mutex);
     return d->landmarks;
 }
 
@@ -96,6 +97,7 @@ QList<QLandmark> QLandmarkSaveRequest::landmarks() const
 void QLandmarkSaveRequest::setLandmarks(const QList<QLandmark> &landmarks)
 {
     Q_D(QLandmarkSaveRequest);
+    QMutexLocker ml(&d->mutex);
     d->landmarks = landmarks;
 }
 
@@ -107,6 +109,7 @@ void QLandmarkSaveRequest::setLandmarks(const QList<QLandmark> &landmarks)
 void QLandmarkSaveRequest::setLandmark(const QLandmark &landmark)
 {
     Q_D(QLandmarkSaveRequest);
+    QMutexLocker ml(&d->mutex);
     d->landmarks.clear();
     d->landmarks.append(landmark);
 }
@@ -117,6 +120,7 @@ void QLandmarkSaveRequest::setLandmark(const QLandmark &landmark)
 QMap<int, QLandmarkManager::Error> QLandmarkSaveRequest::errorMap() const
 {
     Q_D(const QLandmarkSaveRequest);
+    QMutexLocker ml(&d->mutex);
     return d->errorMap;
 }
 

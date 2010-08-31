@@ -100,18 +100,18 @@ class Q_ORGANIZER_EXPORT QOrganizerItemRecurrenceRule
 {
 public:
 #ifdef Q_QDOC
-    const char* FieldFrequency;
-    const char* FieldCount;
-    const char* FieldStartDate;
-    const char* FieldEndDate;
-    const char* FieldInterval;
-    const char* FieldDaysOfWeek;
-    const char* FieldDaysOfMonth;
-    const char* FieldDaysOfYear;
-    const char* FieldMonths;
-    const char* FieldWeeksOfYear;
-    const char* FieldPositions;
-    const char* FieldWeekStart;
+    static const QLatin1Constant FieldFrequency;
+    static const QLatin1Constant FieldCount;
+    static const QLatin1Constant FieldStartDate;
+    static const QLatin1Constant FieldEndDate;
+    static const QLatin1Constant FieldInterval;
+    static const QLatin1Constant FieldDaysOfWeek;
+    static const QLatin1Constant FieldDaysOfMonth;
+    static const QLatin1Constant FieldDaysOfYear;
+    static const QLatin1Constant FieldMonths;
+    static const QLatin1Constant FieldWeeksOfYear;
+    static const QLatin1Constant FieldPositions;
+    static const QLatin1Constant FieldWeekStart;
 #else
     Q_DECLARE_LATIN1_CONSTANT(FieldFrequency, "Frequency");
     Q_DECLARE_LATIN1_CONSTANT(FieldCount, "Count");
@@ -134,6 +134,7 @@ public:
 
     // enums
     enum Frequency {
+        Invalid,
         Daily,
         Weekly,
         Monthly,

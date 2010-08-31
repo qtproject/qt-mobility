@@ -12,8 +12,7 @@ PUBLIC_HEADERS +=   qsysteminfo.h \
     qsystemdisplayinfo.h \
     qsystemnetworkinfo.h \
     qsystemscreensaver.h \
-    qsystemstorageinfo.h \
-    qsysteminfocommon.h
+    qsystemstorageinfo.h 
 
 SOURCES += qsystemgeneralinfo.cpp \
     qsystemdeviceinfo.cpp \
@@ -21,6 +20,8 @@ SOURCES += qsystemgeneralinfo.cpp \
     qsystemnetworkinfo.cpp \
     qsystemscreensaver.cpp \
     qsystemstorageinfo.cpp
+
+PRIVATE_HEADERS += qsysteminfocommon_p.h
 
 DEFINES += QT_BUILD_SYSINFO_LIB QT_MAKEDLL
 
@@ -71,17 +72,18 @@ unix: {
                 SOURCES += qhalservice_linux.cpp
                 HEADERS += qhalservice_linux_p.h
 
-                SOURCES += qdevicekitservice_linux.cpp
-                HEADERS += qdevicekitservice_linux_p.h
-                
                 contains(networkmanager_enabled, yes): {
                     SOURCES += qnetworkmanagerservice_linux.cpp qnmdbushelper.cpp
                     HEADERS += qnetworkmanagerservice_linux_p.h qnmdbushelper_p.h
                 } else {
                     DEFINES += QT_NO_NETWORKMANAGER
                 }
-                
+                contains(CONFIG,meego): { #for now... udisks
+                    SOURCES += qdevicekitservice_linux.cpp
+                    HEADERS += qdevicekitservice_linux_p.h
+                }
                 contains(connman_enabled, yes): {
+
                     SOURCES+= qconnmanservice_linux.cpp qofonoservice_linux.cpp
                     HEADERS+= qconnmanservice_linux_p.h qofonoservice_linux_p.h
                 } else {
@@ -98,6 +100,7 @@ unix: {
           #  LIBS += -lXrandr
             SOURCES += qsysteminfo_maemo.cpp gconfitem.cpp
             HEADERS += qsysteminfo_maemo_p.h gconfitem_p.h
+                    DEFINES += QT_NO_CONNMAN
         contains(QT_CONFIG,dbus): {
                 QT += dbus
                 SOURCES += qhalservice_linux.cpp
@@ -142,18 +145,30 @@ unix: {
         contains(S60_VERSION, 3.1){
             DEFINES += SYMBIAN_3_1
         }        
+
+        contains(hb_symbian_enabled,yes) {
+            CONFIG += qt hb
+            DEFINES += HB_SUPPORTED
+            message("s60_HbKeymap enabled")
+            LIBS += -lhbcore \
+        } else {
+            LIBS += -lptiengine \
+        }
+
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE        
         DEPENDPATH += symbian
         
         SOURCES += qsysteminfo_s60.cpp \
             telephonyinfo_s60.cpp \
             chargingstatus_s60.cpp \
-            wlaninfo_s60.cpp
+            wlaninfo_s60.cpp \
+            storagestatus_s60.cpp
 
         HEADERS += qsysteminfo_s60_p.h \
             telephonyinfo_s60.h \
             chargingstatus_s60.h \
-            wlaninfo_s60.h
+            wlaninfo_s60.h \
+            storagestatus_s60.h
 
         LIBS += -lprofileengine \
             -letel3rdparty \
@@ -171,6 +186,7 @@ unix: {
             -lbluetooth \
             -lgdi \
             -lecom \
+            -lplatformenv
 
         contains(hb_symbian_enabled,yes) {
                 CONFIG += qt hb

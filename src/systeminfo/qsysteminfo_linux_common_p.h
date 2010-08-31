@@ -137,7 +137,7 @@ public:
 
     virtual QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
-    virtual int cellId();
+    virtual qint32 cellId();
     virtual int locationAreaCode();
 
     virtual QString currentMobileCountryCode();
@@ -154,7 +154,7 @@ public:
 
 
 #if !defined(QT_NO_CONNMAN)
-    QSystemNetworkInfo::NetworkStatus getOfonoStatus();
+    QSystemNetworkInfo::NetworkStatus getOfonoStatus(QSystemNetworkInfo::NetworkMode mode);
 #endif
 //public Q_SLOTS:
 //    void getPrimaryMode();
@@ -221,12 +221,12 @@ public:
     int colorDepth(int screen);
 
 
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-    float contrast(int screen);
-    int getDPIWidth(int screen);
-    int getDPIHeight(int screen);
-    int physicalHeight(int screen);
-    int physicalWidth(int screen);
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int /*screen*/) {return QSystemDisplayInfo::Unknown;};
+    float contrast(int /*screen*/) {return 0.0;};
+    int getDPIWidth(int /*screen*/){return 0;};
+    int getDPIHeight(int /*screen*/){return 0;};
+    int physicalHeight(int /*screen*/){return 0;};
+    int physicalWidth(int /*screen*/){return 0;};
 };
 
 class QSystemStorageInfoLinuxCommonPrivate : public QObject
@@ -280,8 +280,8 @@ public:
     QString imei() {return QString();}
     QString imsi() {return QString();}
     QString manufacturer();
-    QString model();
-    QString productName();
+    QString model()  {return QString();}
+    QString productName()  {return QString();}
 
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
 

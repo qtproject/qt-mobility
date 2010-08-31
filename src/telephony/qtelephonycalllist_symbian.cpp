@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,31 +57,31 @@ QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
 void QTelephonyCallListPrivate::emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call)
 {
     QTelephonyCallInfo callinfo;
-    callinfo.d = QSharedDataPointer<QTelephonyCallInfoPrivate>(&call);
+    callinfo.d = QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(&call);
     emit p->activeCallStatusChanged(callinfo);
 }
 
 void QTelephonyCallListPrivate::emitActiveCallRemoved(QTelephonyCallInfoPrivate& call)
 {
     QTelephonyCallInfo callinfo;
-    callinfo.d = QSharedDataPointer<QTelephonyCallInfoPrivate>(&call);
+    callinfo.d = QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(&call);
     emit p->activeCallRemoved(callinfo);
 }
 
 void QTelephonyCallListPrivate::emitActiveCallAdded(QTelephonyCallInfoPrivate& call)
 {
     QTelephonyCallInfo callinfo;
-    callinfo.d = QSharedDataPointer<QTelephonyCallInfoPrivate>(&call);
+    callinfo.d = QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(&call);
     emit p->activeCallAdded(callinfo);
 }
 
-QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephonyCallInfo::CallType& calltype) const
+QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephony::CallType& calltype) const
 {
     QList<QTelephonyCallInfo> ret;
 
     //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
     for( int i = 0; i < callInfoList.count(); i++){
-        if(callInfoList.at(i).data()->type == QTelephonyCallInfo::Any
+        if(callInfoList.at(i).data()->type == QTelephony::Any
             || callInfoList.at(i).data()->type == calltype)
         {
             QTelephonyCallInfo callinfo;

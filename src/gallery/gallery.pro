@@ -59,7 +59,6 @@ symbian {
     QtGalleryDeployment.path = /sys/bin
     DEPLOYMENT += QtGalleryDeployment
     TARGET.UID3=0x2002BFCB
-    MMP_RULES += EXPORTUNFROZEN
     TARGET.CAPABILITY = ALL -TCB
 }
 

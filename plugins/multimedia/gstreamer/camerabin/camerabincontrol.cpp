@@ -60,6 +60,8 @@
 #include <sys/mman.h>
 #include <linux/videodev2.h>
 
+#define CAMEABIN_DEBUG
+
 CameraBinControl::CameraBinControl(CameraBinSession *session)
     :QCameraControl(session),
     m_session(session),
@@ -76,6 +78,8 @@ CameraBinControl::CameraBinControl(CameraBinSession *session)
     connect(m_session->mediaContainerControl(), SIGNAL(settingsChanged()),
             SLOT(reloadLater()));
     connect(m_session->imageEncodeControl(), SIGNAL(settingsChanged()),
+            SLOT(reloadLater()));
+    connect(m_session, SIGNAL(viewfinderChanged()),
             SLOT(reloadLater()));
 }
 
@@ -146,30 +150,44 @@ void CameraBinControl::updateStatus()
 #endif
         emit statusChanged(m_status);
     }
-
 }
 
 void CameraBinControl::reloadLater()
 {
 #ifdef CAMEABIN_DEBUG
-    qDebug() << "reload pipeline requested";
+    qDebug() << "reload pipeline requested" << m_state;
 #endif
     if (!m_reloadPending && m_state == QCamera::ActiveState) {
         m_reloadPending = true;
-        QMetaObject::invokeMethod(this, "reloadPipeline", Qt::QueuedConnection);
+        m_session->setState(QCamera::LoadedState);
+        QMetaObject::invokeMethod(this, "delayedReload", Qt::QueuedConnection);
     }
 }
 
-void CameraBinControl::reloadPipeline()
+void CameraBinControl::delayedReload()
 {
 #ifdef CAMEABIN_DEBUG
     qDebug() << "reload pipeline";
 #endif
     if (m_reloadPending) {
         m_reloadPending = false;
-        if (m_state == QCamera::ActiveState) {
-            m_session->setState(QCamera::LoadedState);
+        if (m_state == QCamera::ActiveState) {            
             m_session->setState(QCamera::ActiveState);
         }
+    }
+}
+
+bool CameraBinControl::canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const
+{
+    Q_UNUSED(status);
+
+    switch (changeType) {
+    case QCameraControl::CaptureMode:
+    case QCameraControl::ImageEncodingSettings:
+    case QCameraControl::VideoEncodingSettings:
+    case QCameraControl::Viewfinder:
+        return true;
+    default:
+        return false;
     }
 }

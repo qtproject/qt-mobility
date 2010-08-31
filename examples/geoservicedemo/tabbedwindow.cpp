@@ -44,22 +44,44 @@
 
 #include <QApplication>
 #include <QTabWidget>
+#include <QAction>
+#include <QMenuBar>
 #include <QVBoxLayout>
 #include <QTimer>
 #include <QMessageBox>
 #include <QNetworkProxyFactory>
-
-#ifdef Q_OS_SYMBIAN
 #include <QNetworkConfigurationManager>
-#endif
 
 TabbedWindow::TabbedWindow(QWidget *parent)
         : QMainWindow(parent), m_serviceProvider(NULL)
 {
-
     setWindowTitle(tr("Geo Service Demo"));
 
-#ifdef Q_OS_SYMBIAN
+    m_servicesTab = new ServicesTab();
+
+    QObject::connect(m_servicesTab, SIGNAL(serviceProviderChanged(QString)), this,
+                     SLOT(setProvider(QString)), Qt::QueuedConnection);
+
+    m_geocodingTab = new GeocodingTab();
+    m_reverseTab = new ReverseGeocodingTab();
+    m_routingTab = new RouteTab();
+
+    m_tabWidget = new QTabWidget(this);
+    m_tabWidget->addTab(m_servicesTab, tr("Service Providers"));
+    m_tabWidget->addTab(m_routingTab, tr("Route"));
+    m_tabWidget->addTab(m_geocodingTab, tr("Geocoding"));
+    m_tabWidget->addTab(m_reverseTab, tr("Reverse Geocoding"));
+
+    setCentralWidget(m_tabWidget);
+
+    // setup exit menu for devices
+
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    QAction* exitAction = new QAction(tr("Exit"), this);
+    menuBar()->addAction(exitAction);
+    connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
+#endif
+
     // Set Internet Access Point
     QNetworkConfigurationManager manager;
     const bool canStartIAP = (manager.capabilities()
@@ -73,34 +95,58 @@ TabbedWindow::TabbedWindow(QWidget *parent)
     }
 
     m_session = new QNetworkSession(cfg, this);
+    connect(m_session, SIGNAL(opened()), this, SLOT(networkSessionOpened()));
+    connect(m_session,
+            SIGNAL(error(QNetworkSession::SessionError)),
+            this,
+            SLOT(error(QNetworkSession::SessionError)));
+
     m_session->open();
-    m_session->waitForOpened(-1);
-#endif
-
-    QNetworkProxyFactory::setUseSystemConfiguration(true);
-
-    ServicesTab* servicesTab = new ServicesTab();
-
-    QObject::connect(servicesTab, SIGNAL(serviceProviderChanged(QString)), this,
-                     SLOT(setProvider(QString)), Qt::QueuedConnection);
-
-    m_geocodingTab = new GeocodingTab();
-    m_reverseTab = new ReverseGeocodingTab();
-    m_routingTab = new RouteTab();
-
-    m_tabWidget = new QTabWidget;
-    m_tabWidget->addTab(servicesTab, tr("Service Providers"));
-    m_tabWidget->addTab(m_routingTab, tr("Route"));
-    m_tabWidget->addTab(m_geocodingTab, tr("Geocoding"));
-    m_tabWidget->addTab(m_reverseTab, tr("Reverse Geocoding"));
-
-    setCentralWidget(m_tabWidget);
-    QTimer::singleShot(0, servicesTab, SLOT(initialize()));
+    resize(640, 480);
 }
 
 TabbedWindow::~TabbedWindow()
 {
     delete m_serviceProvider;
+}
+
+void TabbedWindow::networkSessionOpened()
+{
+    QNetworkProxyFactory::setUseSystemConfiguration(true);
+    QTimer::singleShot(0, m_servicesTab, SLOT(initialize()));
+}
+
+void TabbedWindow::error(QNetworkSession::SessionError error)
+{
+    if (error == QNetworkSession::UnknownSessionError) {
+        if (m_session->state() == QNetworkSession::Connecting) {
+            QMessageBox msgBox(qobject_cast<QWidget *>(parent()));
+            msgBox.setText("This application requires network access to function.");
+            msgBox.setInformativeText("Press Cancel to quit the application.");
+            msgBox.setIcon(QMessageBox::Information);
+            msgBox.setStandardButtons(QMessageBox::Retry | QMessageBox::Cancel);
+            msgBox.setDefaultButton(QMessageBox::Retry);
+            int ret = msgBox.exec();
+            if (ret == QMessageBox::Retry) {
+                QTimer::singleShot(0, m_session, SLOT(open()));
+            } else if (ret == QMessageBox::Cancel) {
+                close();
+            }
+        }
+    } else if (error == QNetworkSession::SessionAbortedError) {
+        QMessageBox msgBox(qobject_cast<QWidget *>(parent()));
+        msgBox.setText("Out of range of network.");
+        msgBox.setInformativeText("Move back into range and press Retry, or press Cancel to quit the application.");
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setStandardButtons(QMessageBox::Retry | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Retry);
+        int ret = msgBox.exec();
+        if (ret == QMessageBox::Retry) {
+            QTimer::singleShot(0, m_session, SLOT(open()));
+        } else if (ret == QMessageBox::Cancel) {
+            close();
+        }
+    }
 }
 
 void TabbedWindow::setProvider(QString providerId)

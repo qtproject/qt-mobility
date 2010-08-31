@@ -120,7 +120,7 @@ public:
     NotificationFilterId registerNotificationFilter(const QMessageFilter &filter);
     void unregisterNotificationFilter(NotificationFilterId filterId);
 
-signals:
+Q_SIGNALS:
     void messageAdded(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
     void messageRemoved(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
     void messageUpdated(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);

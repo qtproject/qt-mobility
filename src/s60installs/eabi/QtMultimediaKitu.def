@@ -1586,4 +1586,22 @@ EXPORTS
 	_ZN21QAbstractVideoSurface19setNativeResolutionERK5QSize @ 1585 NONAME
 	_ZN21QAbstractVideoSurface23nativeResolutionChangedERK5QSize @ 1586 NONAME
 	_ZNK21QAbstractVideoSurface16nativeResolutionEv @ 1587 NONAME
+	_ZN14QCameraControl13statusChangedEN7QCamera6StatusE @ 1588 NONAME
+	_ZN15QCameraExposure27exposureCompensationChangedEf @ 1589 NONAME
+	_ZN19QCameraFlashControl10flashReadyEb @ 1590 NONAME
+	_ZN19QCameraFlashControl11qt_metacallEN11QMetaObject4CallEiPPv @ 1591 NONAME
+	_ZN19QCameraFlashControl11qt_metacastEPKc @ 1592 NONAME
+	_ZN19QCameraFlashControl16staticMetaObjectE @ 1593 NONAME DATA 16
+	_ZN19QCameraFlashControl19getStaticMetaObjectEv @ 1594 NONAME
+	_ZN19QCameraFlashControlC2EP7QObject @ 1595 NONAME
+	_ZN19QCameraFlashControlD0Ev @ 1596 NONAME
+	_ZN19QCameraFlashControlD1Ev @ 1597 NONAME
+	_ZN19QCameraFlashControlD2Ev @ 1598 NONAME
+	_ZN7QCamera13statusChangedENS_6StatusE @ 1599 NONAME
+	_ZN7QCamera4loadEv @ 1600 NONAME
+	_ZN7QCamera6unloadEv @ 1601 NONAME
+	_ZNK19QCameraFlashControl10metaObjectEv @ 1602 NONAME
+	_ZNK7QCamera6statusEv @ 1603 NONAME
+	_ZTI19QCameraFlashControl @ 1604 NONAME
+	_ZTV19QCameraFlashControl @ 1605 NONAME
 

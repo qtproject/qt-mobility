@@ -504,7 +504,24 @@ void tst_QVersitOrganizerImporter::testImportEventProperties_data()
                 << Qt::Monday << Qt::Tuesday << Qt::Wednesday << Qt::Thursday << Qt::Friday);
         recurrenceRule.setPositions(QList<int>() << -1);
         recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
-        QTest::newRow("rrule setbypos")
+        QTest::newRow("rrule bysetpos")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+    }
+
+    {
+        QVersitProperty rrule;
+        rrule.setName(QLatin1String("RRULE"));
+        rrule.setValue(QLatin1String("FREQ=YEARLY;BYMONTH=4;BYDAY=1SU"));
+        QOrganizerItemRecurrence recurrence;
+        QOrganizerItemRecurrenceRule recurrenceRule;
+        recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+        recurrenceRule.setMonths(QList<QOrganizerItemRecurrenceRule::Month>()
+                << QOrganizerItemRecurrenceRule::April);
+        recurrenceRule.setDaysOfWeek(QList<Qt::DayOfWeek>() << Qt::Sunday);
+        recurrenceRule.setPositions(QList<int>() << 1);
+        recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+        QTest::newRow("rrule byday with position")
             << (QList<QVersitProperty>() << rrule)
             << (QList<QOrganizerItemDetail>() << recurrence);
     }
@@ -749,6 +766,202 @@ void tst_QVersitOrganizerImporter::testImportTodoProperties_data()
         QTest::newRow("completed")
             << (QList<QVersitProperty>() << property)
             << (QList<QOrganizerItemDetail>() << progress);
+    }
+}
+
+void tst_QVersitOrganizerImporter::testTimeZones()
+{
+    QFETCH(QString, tzid);
+    QFETCH(QVersitDocument, timezoneSpec);
+    QFETCH(QString, datetimeString);
+    QFETCH(QDateTime, expected);
+
+    QVersitDocument document(QVersitDocument::ICalendar20Type);
+    document.setComponentType(QLatin1String("VCALENDAR"));
+    if (!tzid.isEmpty()) {
+        document.addSubDocument(timezoneSpec);
+    }
+    QVersitDocument vevent(QVersitDocument::ICalendar20Type);
+    vevent.setComponentType(QLatin1String("VEVENT"));
+    QVersitProperty property;
+    property.setName(QLatin1String("DTSTART"));
+    property.setValue(datetimeString);
+    if (!tzid.isEmpty()) {
+        property.insertParameter(QLatin1String("TZID"), tzid);
+    }
+    vevent.addProperty(property);
+    document.addSubDocument(vevent);
+
+    QVersitOrganizerImporter importer;
+    QVERIFY(importer.importDocument(document));
+    QVERIFY(importer.errors().isEmpty());
+    QList<QOrganizerItem> items = importer.items();
+    QCOMPARE(items.size(), 1);
+
+    QOrganizerEvent event = static_cast<QOrganizerEvent>(items.first());
+    QCOMPARE(event.type(), QString(QLatin1String(QOrganizerItemType::TypeEvent)));
+    QDateTime actualDatetime = event.startDateTime();
+    QCOMPARE(actualDatetime, expected);
+    QCOMPARE(actualDatetime.timeSpec(), expected.timeSpec());
+}
+
+void tst_QVersitOrganizerImporter::testTimeZones_data()
+{
+    QTest::addColumn<QString>("tzid"); // set this to empty if you don't want to associate a tzid
+    QTest::addColumn<QVersitDocument>("timezoneSpec");
+    QTest::addColumn<QString>("datetimeString");
+    QTest::addColumn<QDateTime>("expected");
+
+    QVersitDocument vtimezone(QVersitDocument::ICalendar20Type);
+    vtimezone.setComponentType(QLatin1String("VTIMEZONE"));
+    QTest::newRow("utc") << QString() << QVersitDocument(QVersitDocument::ICalendar20Type)
+        << QString::fromAscii("20100102T030405Z")
+        << QDateTime(QDate(2010, 1, 2), QTime(3, 4, 5), Qt::UTC);
+
+    QTest::newRow("floating") << QString() << QVersitDocument(QVersitDocument::ICalendar20Type)
+        << QString::fromAscii("20100102T030405")
+        << QDateTime(QDate(2010, 1, 2), QTime(3, 4, 5), Qt::LocalTime);
+
+    {
+        QVersitDocument vtimezone(QVersitDocument::ICalendar20Type);
+        vtimezone.setComponentType(QLatin1String("VTIMEZONE"));
+
+        QVersitProperty property;
+        property.setName(QLatin1String("TZID"));
+        property.setValue(QLatin1String("Asia/Singapore"));
+        vtimezone.addProperty(property);
+        property.setName(QLatin1String("X-LIC-LOCATION"));
+        property.setValue(QLatin1String("Asia/Singapore"));
+        vtimezone.addProperty(property);
+
+        QVersitDocument standard(QVersitDocument::ICalendar20Type);
+        standard.setComponentType(QLatin1String("STANDARD"));
+        property.setName(QLatin1String("TZOFFSETFROM"));
+        property.setValue(QLatin1String("+0800"));
+        standard.addProperty(property);
+        property.setName(QLatin1String("TZOFFSETTO"));
+        property.setValue(QLatin1String("+0800"));
+        standard.addProperty(property);
+        property.setName(QLatin1String("TZNAME"));
+        property.setValue(QLatin1String("EST"));
+        standard.addProperty(property);
+        property.setName(QLatin1String("DTSTART"));
+        property.setValue(QLatin1String("19700101T000000"));
+        standard.addProperty(property);
+        vtimezone.addSubDocument(standard);
+
+        QTest::newRow("no dst") << QString::fromAscii("Asia/Singapore")
+            << vtimezone << QString::fromAscii("20100102T100405")
+            << QDateTime(QDate(2010, 1, 2), QTime(2, 4, 5), Qt::UTC);
+    }
+
+    {
+        QVersitDocument vtimezone(QVersitDocument::ICalendar20Type);
+        vtimezone.setComponentType(QLatin1String("VTIMEZONE"));
+
+        QVersitProperty property;
+        property.setName(QLatin1String("TZID"));
+        property.setValue(QLatin1String("Australia/Sydney"));
+        vtimezone.addProperty(property);
+        property.setName(QLatin1String("X-LIC-LOCATION"));
+        property.setValue(QLatin1String("Australia/Sydney"));
+        vtimezone.addProperty(property);
+
+        QVersitDocument standard(QVersitDocument::ICalendar20Type);
+        standard.setComponentType(QLatin1String("STANDARD"));
+        property.setName(QLatin1String("TZOFFSETFROM"));
+        property.setValue(QLatin1String("+1100"));
+        standard.addProperty(property);
+        property.setName(QLatin1String("TZOFFSETTO"));
+        property.setValue(QLatin1String("+1000"));
+        standard.addProperty(property);
+        property.setName(QLatin1String("TZNAME"));
+        property.setValue(QLatin1String("EST"));
+        standard.addProperty(property);
+        property.setName(QLatin1String("DTSTART"));
+        property.setValue(QLatin1String("19700405T030000"));
+        standard.addProperty(property);
+        property.setName(QLatin1String("RRULE"));
+        property.setValue(QLatin1String("FREQ=YEARLY;BYMONTH=4;BYDAY=1SU"));
+        standard.addProperty(property);
+        vtimezone.addSubDocument(standard);
+
+        QVersitDocument daylight(QVersitDocument::ICalendar20Type);
+        daylight.setComponentType(QLatin1String("DAYLIGHT"));
+        property.setName(QLatin1String("TZOFFSETFROM"));
+        property.setValue(QLatin1String("+1000"));
+        daylight.addProperty(property);
+        property.setName(QLatin1String("TZOFFSETTO"));
+        property.setValue(QLatin1String("+1100"));
+        daylight.addProperty(property);
+        property.setName(QLatin1String("TZNAME"));
+        property.setValue(QLatin1String("EST"));
+        daylight.addProperty(property);
+        property.setName(QLatin1String("DTSTART"));
+        property.setValue(QLatin1String("19701004T020000"));
+        daylight.addProperty(property);
+        property.setName(QLatin1String("RRULE"));
+        property.setValue(QLatin1String("FREQ=YEARLY;BYMONTH=10;BYDAY=1SU"));
+        daylight.addProperty(property);
+        vtimezone.addSubDocument(daylight);
+
+        QTest::newRow("dst area in standard time") << QString::fromAscii("Australia/Sydney")
+            << vtimezone << QString::fromAscii("20100502T100405")
+            << QDateTime(QDate(2010, 5, 2), QTime(0, 4, 5), Qt::UTC);
+
+        QTest::newRow("dst") << QString::fromAscii("Australia/Sydney")
+            << vtimezone << QString::fromAscii("20100102T100405")
+            << QDateTime(QDate(2010, 1, 1), QTime(23, 4, 5), Qt::UTC);
+    }
+    
+    {
+        QVersitDocument vtimezone(QVersitDocument::ICalendar20Type);
+        vtimezone.setComponentType(QLatin1String("VTIMEZONE"));
+
+        QVersitProperty property;
+        property.setName(QLatin1String("TZID"));
+        property.setValue(QLatin1String("US-Eastern"));
+        vtimezone.addProperty(property);
+
+        QVersitDocument standard(QVersitDocument::ICalendar20Type);
+        standard.setComponentType(QLatin1String("STANDARD"));
+        property.setName(QLatin1String("DTSTART"));
+        property.setValue(QLatin1String("19961026T020000"));
+        standard.addProperty(property);
+        property.setName(QLatin1String("RDATE"));
+        property.setValue(QLatin1String("19971026T020000"));
+        standard.addProperty(property);
+        property.setName(QLatin1String("TZOFFSETFROM"));
+        property.setValue(QLatin1String("-0400"));
+        standard.addProperty(property);
+        property.setName(QLatin1String("TZOFFSETTO"));
+        property.setValue(QLatin1String("-0500"));
+        standard.addProperty(property);
+        vtimezone.addSubDocument(standard);
+
+        QVersitDocument daylight(QVersitDocument::ICalendar20Type);
+        daylight.setComponentType(QLatin1String("DAYLIGHT"));
+        property.setName(QLatin1String("DTSTART"));
+        property.setValue(QLatin1String("19960406T020000"));
+        daylight.addProperty(property);
+        property.setName(QLatin1String("RDATE"));
+        property.setValue(QLatin1String("19970406T020000"));
+        daylight.addProperty(property);
+        property.setName(QLatin1String("TZOFFSETFROM"));
+        property.setValue(QLatin1String("-0500"));
+        daylight.addProperty(property);
+        property.setName(QLatin1String("TZOFFSETTO"));
+        property.setValue(QLatin1String("-0400"));
+        daylight.addProperty(property);
+        vtimezone.addSubDocument(daylight);
+
+        QTest::newRow("dst specified with rdate - daylight") << QString::fromAscii("US-Eastern")
+            << vtimezone << QString::fromAscii("19970615T100000")
+            << QDateTime(QDate(1997, 6, 15), QTime(14, 0, 0), Qt::UTC);
+
+        QTest::newRow("dst specified with rdate - standard") << QString::fromAscii("US-Eastern")
+            << vtimezone << QString::fromAscii("19971215T100000")
+            << QDateTime(QDate(1997, 12, 15), QTime(15, 0, 0), Qt::UTC);
     }
 }
 

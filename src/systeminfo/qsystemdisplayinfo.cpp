@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qsystemdisplayinfo.h"
-#include "qsysteminfocommon.h"
+#include "qsysteminfocommon_p.h"
 
 QTM_BEGIN_NAMESPACE
         Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)

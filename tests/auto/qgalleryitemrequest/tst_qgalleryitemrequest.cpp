@@ -41,8 +41,6 @@
 
 //TESTED_COMPONENT=src/documentgallery
 
-#include <QtTest/QtTest>
-
 #include <qgalleryitemrequest.h>
 
 #include <qabstractgallery.h>
@@ -50,6 +48,8 @@
 #include <qgalleryresultset.h>
 #include <qgalleryresource.h>
 #include <qgallerytype.h>
+
+#include <QtTest/QtTest>
 
 QTM_USE_NAMESPACE
 
@@ -79,6 +79,8 @@ public:
         , m_currentIndex(-1)
         , m_propertyNames(propertyNames)
     {
+        m_propertyNames.removeAll(QLatin1String("turtle"));
+
         if (result != QGalleryAbstractRequest::NoResult)
             finish(result, idle);
     }
@@ -214,7 +216,8 @@ void tst_QGalleryItemRequest::executeSynchronous()
 
     request.setPropertyNames(QStringList()
             << QLatin1String("album")
-            << QLatin1String("trackNumber"));
+            << QLatin1String("trackNumber")
+            << QLatin1String("turtle"));
 
     QSignalSpy resultSetSpy(&request, SIGNAL(resultSetChanged(QGalleryResultSet*)));
     QSignalSpy itemChangedSpy(&request, SIGNAL(itemChanged()));
@@ -236,6 +239,7 @@ void tst_QGalleryItemRequest::executeSynchronous()
     QCOMPARE(request.propertyKey(QLatin1String("title")), -1);
     QCOMPARE(request.propertyKey(QLatin1String("album")), 0);
     QCOMPARE(request.propertyKey(QLatin1String("trackNumber")), 1);
+    QCOMPARE(request.propertyKey(QLatin1String("turtle")), -1);
 
     QCOMPARE(request.propertyAttributes(0), QGalleryProperty::CanRead | QGalleryProperty::CanWrite);
     QCOMPARE(request.propertyType(0), QVariant::String);
@@ -281,7 +285,8 @@ void tst_QGalleryItemRequest::executeAsynchronous()
 
     request.setPropertyNames(QStringList()
             << QLatin1String("album")
-            << QLatin1String("trackNumber"));
+            << QLatin1String("trackNumber")
+            << QLatin1String("turtle"));
 
     QSignalSpy resultSetSpy(&request, SIGNAL(resultSetChanged(QGalleryResultSet*)));
     QSignalSpy itemChangedSpy(&request, SIGNAL(itemChanged()));
@@ -296,6 +301,7 @@ void tst_QGalleryItemRequest::executeAsynchronous()
     QCOMPARE(request.propertyKey(QLatin1String("title")), -1);
     QCOMPARE(request.propertyKey(QLatin1String("album")), 0);
     QCOMPARE(request.propertyKey(QLatin1String("trackNumber")), 1);
+    QCOMPARE(request.propertyKey(QLatin1String("turtle")), -1);
 
     QCOMPARE(request.propertyAttributes(0), QGalleryProperty::CanRead | QGalleryProperty::CanWrite);
     QCOMPARE(request.propertyType(0), QVariant::String);
@@ -450,6 +456,9 @@ void tst_QGalleryItemRequest::multipleResults()
     resultSet->metaDataChanged(0, 1, propertyKeys);
     QCOMPARE(metaDataSpy.count(), 2);
     QCOMPARE(metaDataSpy.last().value(0).value<QList<int> >(), propertyKeys);
+
+    resultSet->metaDataChanged(1, 1, propertyKeys);
+    QCOMPARE(metaDataSpy.count(), 2);
 
     resultSet->itemsMoved(0, 1, 1);
     QCOMPARE(request.isValid(), true);

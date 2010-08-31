@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,12 +39,13 @@
 **
 ****************************************************************************/
 
-#include "telepathylistener.h"
-#include "telepathy.h"
-#include "dbusadaptor.h"
-#include "dbusinterface.h"
-#include "message.h"
 #include <QDebug>
+
+#include "telepathylistener_p.h"
+#include "telepathy_p.h"
+#include "dbusadaptor_p.h"
+#include "dbusinterface_p.h"
+#include "message_p.h"
 
 #define DBUS_SERVICE "org.freedesktop.Telepathy.Connection.Interface.Requests"
 #define DBUS_PATH "/org/freedesktop/Telepathy/Connection/ring/tel/ring"
@@ -71,7 +72,12 @@ TelepathyListener::TelepathyListener(QObject* parent) :
     ptelepathy = new Telepathy();
     ptelepathyAdaptor = new TelepathyAdaptor(ptelepathy);
     prequestInterface = new org::freedesktop::Telepathy::Connection::Interface::Requests(DBUS_SERVICE, DBUS_PATH, connection);
-    connect(prequestInterface, SIGNAL(NewChannels(ChannelsArray)), SLOT(newChannelsSlot(ChannelsArray)));
+    connect(prequestInterface
+            , SIGNAL(NewChannels(ChannelsArray))
+            , SLOT(newChannelsSlot(ChannelsArray)));
+    connect(prequestInterface
+            , SIGNAL(StatusChanged(QString))
+            , SLOT(statusChangedSlot(QString)));
 }
  
 TelepathyListener::~TelepathyListener()
@@ -91,6 +97,12 @@ void TelepathyListener::newChannelsSlot(const ChannelsArray& channelsarray)
     emit NewChannels(channelsarray);
 }
 
-#include "moc_telepathylistener.cpp"
+void TelepathyListener::statusChangedSlot(const QString& status)
+{
+    qDebug() << "TelepathyListener::statusChangedSlot";
+    emit StatusChangedSlot(status);
+}
+
+#include "moc_telepathylistener_p.cpp"
 
 QTM_END_NAMESPACE

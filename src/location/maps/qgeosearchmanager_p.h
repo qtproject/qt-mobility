@@ -55,6 +55,9 @@
 
 #include "qgeosearchmanager.h"
 
+#include "qgeosearchreply.h"
+#include "qlandmarkfetchrequest.h"
+
 #include <QList>
 
 QTM_BEGIN_NAMESPACE
@@ -66,14 +69,33 @@ class QGeoSearchManagerPrivate
 {
 public:
     QGeoSearchManagerPrivate();
-    QGeoSearchManagerPrivate(const QGeoSearchManagerPrivate &other);
     ~QGeoSearchManagerPrivate();
 
-    QGeoSearchManagerPrivate& operator= (const QGeoSearchManagerPrivate &other);
-
     QGeoSearchManagerEngine *engine;
+
+private:
+    Q_DISABLE_COPY(QGeoSearchManagerPrivate)
+};
+
+class QGeoCombiningSearchReply : public QGeoSearchReply
+{
+    Q_OBJECT
+public:
+    QGeoCombiningSearchReply(QGeoSearchReply* searchReply,
+                             QList<QLandmarkFetchRequest*> fetchRequests,
+                             QObject *parent = 0);
+    ~QGeoCombiningSearchReply();
+
+private slots:
+    void searchReplyFinished();
+    void landmarkFetchStateChanged(QLandmarkAbstractRequest::State newState);
+
+private:
+    QGeoSearchReply* searchReply;
+    QList<QLandmarkFetchRequest*> fetchRequests;
 };
 
 QTM_END_NAMESPACE
 
 #endif
+

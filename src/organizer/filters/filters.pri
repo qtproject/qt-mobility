@@ -8,6 +8,7 @@ PUBLIC_HEADERS += filters/qorganizeritemfilters.h \
     filters/qorganizeritemintersectionfilter.h \
     filters/qorganizeriteminvalidfilter.h \
     filters/qorganizeritemlocalidfilter.h \
+    filters/qorganizeritemcollectionfilter.h \
     filters/qorganizeritemunionfilter.h \
     filters/qorganizeritemdatetimeperiodfilter.h
 PRIVATE_HEADERS += \
@@ -16,6 +17,7 @@ PRIVATE_HEADERS += \
     filters/qorganizeritemdetailrangefilter_p.h \
     filters/qorganizeritemintersectionfilter_p.h \
     filters/qorganizeritemlocalidfilter_p.h \
+    filters/qorganizeritemcollectionfilter_p.h \
     filters/qorganizeritemunionfilter_p.h \
     filters/qorganizeritemdatetimeperiodfilter_p.h
 SOURCES += \
@@ -25,5 +27,6 @@ SOURCES += \
     filters/qorganizeritemintersectionfilter.cpp \
     filters/qorganizeriteminvalidfilter.cpp \
     filters/qorganizeritemlocalidfilter.cpp \
+    filters/qorganizeritemcollectionfilter.cpp \
     filters/qorganizeritemunionfilter.cpp \
     filters/qorganizeritemdatetimeperiodfilter.cpp

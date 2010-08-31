@@ -462,7 +462,7 @@ void TestSymbianEngine::retrieveContacts()
 
     // Retrieve contacts with invalid filter
     cnt_ids = m_engine->contactIds(invalidFilter, s, &err);
-    QVERIFY(err == QContactManager::NotSupportedError);
+    QVERIFY(cnt_ids.count() == 0);
 
     // Retrieve sorted contacts
     QContactSortOrder sortOrder;
@@ -724,16 +724,8 @@ void TestSymbianEngine::removeContacts()
     contacts.insert(3, 0);
 
     QVERIFY(!m_engine->removeContacts(contacts, &errorMap, &err));
-    QVERIFY(err == QContactManager::DoesNotExistError);
-    foreach(QContactManager::Error e, errorMap) {
-        QVERIFY(e == QContactManager::DoesNotExistError);
-    }
-
-    for(int i=0; i<contacts.count(); i++) {
-        QContact f = m_engine->contact(contacts[i], hint, &err);
-        QVERIFY(f.localId() == 0);
-        QVERIFY(err == QContactManager::DoesNotExistError);
-    }
+    QVERIFY(err == QContactManager::BadArgumentError); //not allowed to delete
+                                                    //a contact with id = 0
 }
 
 void TestSymbianEngine::addOwnCard()
@@ -1040,7 +1032,7 @@ void TestSymbianEngine::synthesizeDisplaylable()
     orgContact.saveDetail(&org);
     label = m_engine->synthesizedDisplayLabel(orgContact, &err);
     QVERIFY(err == QContactManager::NoError);
-    QVERIFY(label == QString("Nokia"));
+    QVERIFY(label.isEmpty());
 
     QContact jargon;
     jargon.setType("jargon");

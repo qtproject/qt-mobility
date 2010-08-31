@@ -45,7 +45,7 @@
 CameraBinImageCapture::CameraBinImageCapture(CameraBinSession *session)
     :QCameraImageCaptureControl(session), m_session(session), m_ready(false), requestId(0)
 {
-    connect(m_session, SIGNAL(stateChanged(CameraBinSession::State)), SLOT(updateState()));
+    connect(m_session, SIGNAL(stateChanged(QCamera::State)), SLOT(updateState()));
     connect(m_session, SIGNAL(imageExposed(int)), this, SIGNAL(imageExposed(int)));
     connect(m_session, SIGNAL(imageCaptured(int,QImage)), this, SIGNAL(imageCaptured(int,QImage)));
     connect(m_session, SIGNAL(imageSaved(int,QString)), this, SIGNAL(imageSaved(int,QString)));

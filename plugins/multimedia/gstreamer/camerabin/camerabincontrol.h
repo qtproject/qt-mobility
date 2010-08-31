@@ -72,12 +72,14 @@ public:
         return mode == QCamera::CaptureStillImage || mode == QCamera::CaptureVideo;
     }
 
+    bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
+
 public slots:
     void reloadLater();
 
 private slots:
     void updateStatus();
-    void reloadPipeline();
+    void delayedReload();
 
 private:
     void updateSupportedResolutions(const QString &device);

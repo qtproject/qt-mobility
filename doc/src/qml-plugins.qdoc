@@ -61,8 +61,11 @@
         \o \l {Gallery QML Plugin}{Gallery}
         \o A QML plugin for the Document Gallery API.
     \row
-        \o \l {Location QML Plugin}{Gallery}
+        \o \l {Location QML Plugin}{Location}
         \o A QML plugin for the Location API.
+    \row
+        \o \l {Multimedia QML Plugin}{Multimedia}
+        \o A QML plugin for the Multimedia API: includes audio and video.
     \endtable
 
 

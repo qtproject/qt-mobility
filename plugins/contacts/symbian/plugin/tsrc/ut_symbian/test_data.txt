@@ -28,7 +28,7 @@
 [ContactDetailFilter2: Name, LastName, Daniel,MatchExactly, 1, 0]
          //Name - MatchContains
 [ContactDetailFilter3: Name, FirstName, nn,MatchContains, 3, 0]
-[ContactDetailFilter4: Name, LastName, n,MatchContains, 4, 0]
+[ContactDetailFilter4: Name, LastName, n,MatchContains, 5, 0]
          //Name - MatchStartsWith
 [ContactDetailFilter5: Name, FirstName, Jo,MatchStartsWith, 2, 0]
 [ContactDetailFilter6: Name, LastName, Len,MatchStartsWith, 1, 0]
@@ -46,7 +46,7 @@
 //Email - MatchStartsWith
 [ContactDetailFilter13: EmailAddress, EmailAddress, Joronn,MatchStartsWith, 1, 0]
 //Email - MatchEndsWith
-[ContactDetailFilter14: EmailAddress, EmailAddress, com,MatchEndsWith, 5, 0]
+[ContactDetailFilter14: EmailAddress, EmailAddress, com,MatchEndsWith, 8, 0]
 //Email - No results search
 [ContactDetailFilter15: EmailAddress, EmailAddress, andrewf,MatchEndsWith, 0, 0]
 //-----------------------------------------------------------------------

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,9 +42,12 @@
 #ifndef QTELEPHONYCALLLIST_H
 #define QTELEPHONYCALLLIST_H
 
+#include <qmobilityglobal.h>
 #include <QObject>
 #include <QList>
+
 #include "qtelephonycallinfo.h"
+#include "qtelephony.h"
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
@@ -65,7 +68,7 @@ Q_SIGNALS:
     void activeCallAdded(const QTelephonyCallInfo& call);
 
 public:
-    QList<QTelephonyCallInfo > activeCalls(const QTelephonyCallInfo::CallType& calltype = QTelephonyCallInfo::Any) const;
+    QList<QTelephonyCallInfo > activeCalls(const QTelephony::CallType& calltype = QTelephony::Any) const;
 
 protected:
     QTelephonyCallListPrivate* d;

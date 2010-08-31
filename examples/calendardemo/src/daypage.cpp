@@ -77,6 +77,9 @@ DayPage::DayPage(QWidget *parent)
     QPushButton* addEventButton = new QPushButton("Add Event",this);
     connect(addEventButton,SIGNAL(clicked()),this,SLOT(addNewEvent()));
     hbLayout->addWidget(addEventButton);
+    QPushButton* addTodoButton = new QPushButton("Add Todo",this);
+    connect(addTodoButton,SIGNAL(clicked()),this,SLOT(addNewTodo()));
+    hbLayout->addWidget(addTodoButton);
     QPushButton* backButton = new QPushButton("Back",this);
     connect(backButton,SIGNAL(clicked()),this,SLOT(backClicked()));
     hbLayout->addWidget(backButton);
@@ -162,6 +165,9 @@ void DayPage::dayChanged(QOrganizerItemManager *manager, QDate date)
 
 void DayPage::itemDoubleClicked(QListWidgetItem *listItem)
 {
+    if (!listItem)
+        return;
+
     QOrganizerItem organizerItem = listItem->data(ORGANIZER_ITEM_ROLE).value<QOrganizerItem>();
     if (!organizerItem.isEmpty())
         emit showEditPage(m_manager, organizerItem);
@@ -175,6 +181,9 @@ void DayPage::backClicked()
 void DayPage::editItem()
 {
     QListWidgetItem *listItem = m_itemList->currentItem();
+    if (!listItem)
+        return;
+
     QOrganizerItem organizerItem = listItem->data(ORGANIZER_ITEM_ROLE).value<QOrganizerItem>();
     if (!organizerItem.isEmpty())
         emit showEditPage(m_manager, organizerItem);

@@ -44,10 +44,11 @@
 
 #include <qgeomappingmanager.h>
 #include <qgeoroutingmanager.h>
-#include <qgeomapwidget.h>
+#include <qgraphicsgeomap.h>
 #include <qgeoserviceprovider.h>
-#include <qgeomapmarkerobject.h>
+#include <qgeomappixmapobject.h>
 #include <qgeomapcircleobject.h>
+
 #include <QMainWindow>
 #include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
@@ -55,12 +56,8 @@
 #include <QPixmap>
 #include <QList>
 #include <QTime>
+#include <qnetworksession.h>
 
-#ifdef Q_OS_SYMBIAN
-QTM_BEGIN_NAMESPACE
-class QNetworkSession;
-QTM_END_NAMESPACE
-#endif
 
 class QResizeEvent;
 class QShowEvent;
@@ -73,7 +70,7 @@ class QToolButton;
 
 QTM_USE_NAMESPACE
 
-class MapWidget : public QGeoMapWidget
+class MapWidget : public QGraphicsGeoMap
 {
     Q_OBJECT
 public:
@@ -111,9 +108,9 @@ private:
     QPoint panDir;
     QTimer *kineticTimer;
     QTime lastMoveTime;
-    
+
     // An entry in the mouse history. first=speed, second=time
-    typedef QPair<QPointF,QTime> MouseHistoryEntry;
+    typedef QPair<QPointF, QTime> MouseHistoryEntry;
     // A history of the last (currently 5) mouse move events is stored in order to smooth out movement detection for kinetic panning
     QList<MouseHistoryEntry> mouseHistory;
 
@@ -138,26 +135,34 @@ private:
     void setupUi();
     void setProvider(QString providerId);
     void createMenus();
-    void createMarkerIcon();
+    void createPixmapIcon();
 
 private slots:
+    void demo1(bool checked);
+    void demo2(bool checked);
+    void demo3(bool checked);
     void drawRect(bool checked);
-    void drawMarker(bool checked);
+    void drawPixmap(bool checked);
     void drawPolyline(bool checked);
     void drawPolygon(bool checked);
     void drawCircle(bool checked);
+    void drawText(bool checked);
     void calcRoute(bool checked);
     void customContextMenuRequest(const QPoint&);
     void routeFinished();
-    void removeMarkers();
+    void removePixmaps();
     void selectObjects();
 
     void sliderValueChanged(int zoomLevel);
     void mapZoomLevelChanged(qreal zoomLevel);
     void mapTypeToggled(bool checked);
-    void mapTypeChanged(QGeoMapWidget::MapType type);
+    void mapTypeChanged(QGraphicsGeoMap::MapType type);
     void setCoordsClicked();
     void updateCoords(const QGeoCoordinate &coords);
+    void sceneSelectionChanged();
+
+    void networkSessionOpened();
+    void error(QNetworkSession::SessionError error);
 
 private:
     QGeoServiceProvider *m_serviceProvider;
@@ -165,24 +170,25 @@ private:
     QGeoRoutingManager *m_routingManager;
 
     MapWidget *m_mapWidget;
+    QGraphicsPathItem* m_fullScreenButton;
     QMenu* m_popupMenu;
     QPixmap m_markerIcon;
-    QPoint lastClicked;
-    QList<QGeoMapMarkerObject*> markerObjects;
+    QPoint m_lastClicked;
+    QList<QGeoMapPixmapObject*> m_markerObjects;
 
-    QGraphicsView* qgv;
-    QSlider *slider;
-    QList<QRadioButton*> mapControlButtons;
-    QList<QGeoMapWidget::MapType> mapControlTypes;
-    QLineEdit *latitudeEdit;
-    QLineEdit *longitudeEdit;
-    QToolButton *captureCoordsButton;
-    QPushButton *setCoordsButton;
+    QGraphicsView* m_qgv;
+    QSlider* m_slider;
+    QList<QRadioButton*> m_mapControlButtons;
+    QList<QGraphicsGeoMap::MapType> m_mapControlTypes;
+    QLineEdit *m_latitudeEdit;
+    QLineEdit *m_longitudeEdit;
+    QToolButton *m_captureCoordsButton;
+    QPushButton *m_setCoordsButton;
 
-#ifdef Q_OS_SYMBIAN
-    QNetworkSession *session;
-#endif
+    QLayout *m_layout;
+    bool fullscreen;
 
+    QNetworkSession *m_session;
 };
 
 #endif // MAINWINDOW_H

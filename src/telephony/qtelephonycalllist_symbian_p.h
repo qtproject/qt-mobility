@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,10 +53,12 @@
 // We mean it.
 //
 
-#include "qmobilityglobal.h"
-#include "qtelephonycalllist.h"
+#include <qmobilityglobal.h>
 #include <QList>
 #include <QtCore/qshareddata.h>
+
+#include "qtelephonycalllist.h"
+#include "qtelephony.h"
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
@@ -71,14 +73,14 @@ class QTelephonyCallListPrivate
 public:
     QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
     virtual ~QTelephonyCallListPrivate();
-    QList<QTelephonyCallInfo> activeCalls(const QTelephonyCallInfo::CallType& calltype) const;
+    QList<QTelephonyCallInfo> activeCalls(const QTelephony::CallType& calltype) const;
 
 private:
     void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);
     void emitActiveCallRemoved(QTelephonyCallInfoPrivate& call);
     void emitActiveCallAdded(QTelephonyCallInfoPrivate& call);
 
-    QList<QSharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
+    QList<QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
     QTelephonyCallList* p;
 };
 

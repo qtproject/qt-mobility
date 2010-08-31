@@ -64,6 +64,7 @@
 #include "telephonyinfo_s60.h"
 #include "chargingstatus_s60.h"
 #include "wlaninfo_s60.h"
+#include "storagestatus_s60.h"
 
 QT_BEGIN_HEADER
 
@@ -169,7 +170,8 @@ public:
 
 
 //////// QSystemStorageInfo
-class QSystemStorageInfoPrivate : public QObject
+class QSystemStorageInfoPrivate : public QObject,
+    public MStorageStatusObserver
 {
     Q_OBJECT
 
@@ -180,6 +182,9 @@ public:
     qlonglong availableDiskSpace(const QString &driveVolume);
     static QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
+
+protected: // from MStorageStatusObserver
+    void storageStatusChanged(bool, const QString &);
 
 private:
     RFs iFs;
@@ -372,10 +377,18 @@ public:
         return m_wlanInfo;
     }
 
+    CMMCStorageStatus *mmcStorageStatus()
+    {
+        if (!m_mmcStorageStatus) {
+            m_mmcStorageStatus = new CMMCStorageStatus;
+        }
+        return m_mmcStorageStatus;
+    }
+
 private:
     DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_chargingStatus(NULL),
         m_batteryInfo(NULL), m_cellNetworkInfo(NULL), m_cellNetworkRegistrationInfo(NULL),
-        m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL)
+        m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL), m_mmcStorageStatus(NULL)
     {
         m_telephony = CTelephony::NewL();
     };
@@ -391,6 +404,7 @@ private:
         delete m_phoneInfo;
         delete m_telephony;
         delete m_wlanInfo;
+        delete m_mmcStorageStatus;
     }
 
     static DeviceInfo *m_instance;
@@ -404,6 +418,7 @@ private:
     CCellNetworkRegistrationInfo *m_cellNetworkRegistrationInfo;
     CCellSignalStrengthInfo *m_cellSignalStrengthInfo;
     CWlanInfo* m_wlanInfo;
+    CMMCStorageStatus* m_mmcStorageStatus;
 };
 
 QTM_END_NAMESPACE

@@ -65,6 +65,7 @@
 
 #include <winsock2.h>
 #include <mswsock.h>
+#include <qt_windows.h>
 
 #include <QBasicTimer>
 
@@ -160,6 +161,7 @@ private:
    void startWifiCallback();
    bool wlanCallbackInitialized;
 
+
 };
 
 class QSystemDisplayInfoPrivate : public QObject
@@ -181,6 +183,11 @@ public:
     int getDPIHeight(int screen);
     int physicalHeight(int screen);
     int physicalWidth(int screen);
+
+private:
+    HDC deviceContextHandle;
+    int getMonitorCaps(int caps, int screen);
+
 };
 
 class QSystemStorageInfoPrivate : public QObject

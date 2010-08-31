@@ -125,20 +125,22 @@ void QOfonoManagerInterface::disconnectNotify(const char *signal)
 
 QVariant QOfonoManagerInterface::getProperty(const QString &property)
 {
-    QVariant var;
     QVariantMap map = getProperties();
     if (map.contains(property)) {
-        var = map.value(property);
+        return map.value(property);
     } else {
         qDebug() << Q_FUNC_INFO << "does not contain" << property;
     }
-    return var;
+    return QVariant();
 }
 
 QVariantMap QOfonoManagerInterface::getProperties()
 {
     QDBusReply<QVariantMap > reply = this->call(QLatin1String("GetProperties"));
-    return reply.value();
+    if(reply.isValid())
+        return reply.value();
+    else
+        return QVariantMap();
 }
 
 QOfonoDBusHelper::QOfonoDBusHelper(QObject * parent)
@@ -185,6 +187,33 @@ QString QOfonoModemInterface::getName()
 {
     QVariant var = getProperty("Name");
     return qdbus_cast<QString>(var);
+}
+
+QString QOfonoModemInterface::getManufacturer()
+{
+    QVariant var = getProperty("Manufacturer");
+    return qdbus_cast<QString>(var);
+
+}
+
+QString QOfonoModemInterface::getModel()
+{
+
+    QVariant var = getProperty("Model");
+    return qdbus_cast<QString>(var);
+}
+
+QString QOfonoModemInterface::getRevision()
+{
+    QVariant var = getProperty("Revision");
+    return qdbus_cast<QString>(var);
+
+}
+QString QOfonoModemInterface::getSerial()
+{
+    QVariant var = getProperty("Serial");
+    return qdbus_cast<QString>(var);
+
 }
 
 QStringList QOfonoModemInterface::getFeatures()
@@ -262,7 +291,7 @@ QVariant QOfonoModemInterface::getProperty(const QString &property)
 }
 
 
-QOfonoNetworkInterface::QOfonoNetworkInterface(const QString &dbusPathName, QObject *parent)
+QOfonoNetworkRegistrationInterface::QOfonoNetworkRegistrationInterface(const QString &dbusPathName, QObject *parent)
     : QDBusAbstractInterface(QLatin1String(OFONO_SERVICE),
                              dbusPathName,
                              OFONO_NETWORK_REGISTRATION_INTERFACE,
@@ -270,11 +299,11 @@ QOfonoNetworkInterface::QOfonoNetworkInterface(const QString &dbusPathName, QObj
 {
 }
 
-QOfonoNetworkInterface::~QOfonoNetworkInterface()
+QOfonoNetworkRegistrationInterface::~QOfonoNetworkRegistrationInterface()
 {
 }
 
-QString QOfonoNetworkInterface::getStatus()
+QString QOfonoNetworkRegistrationInterface::getStatus()
 {
     /*
                 "unregistered"  Not registered to any network
@@ -287,52 +316,52 @@ QString QOfonoNetworkInterface::getStatus()
     return qdbus_cast<QString>(var);
 }
 
-quint16 QOfonoNetworkInterface::getLac()
+quint16 QOfonoNetworkRegistrationInterface::getLac()
 {
     QVariant var = getProperty("LocationAreaCode");
-    return qdbus_cast<quint16>(var);
+    return var.value<quint16>();
 }
 
 
-quint16 QOfonoNetworkInterface::getCellId()
+quint32 QOfonoNetworkRegistrationInterface::getCellId()
 {
     QVariant var = getProperty("CellId");
-    return qdbus_cast<quint16>(var);
+    return var.value<quint32>();
 }
 
-QString QOfonoNetworkInterface::getTechnology()
+QString QOfonoNetworkRegistrationInterface::getTechnology()
 {
     // "gsm", "edge", "umts", "hspa","lte"
     QVariant var = getProperty("Technology");
     return qdbus_cast<QString>(var);
 }
 
-QString QOfonoNetworkInterface::getOperatorName()
+QString QOfonoNetworkRegistrationInterface::getOperatorName()
 {
     QVariant var = getProperty("Name");
     return qdbus_cast<QString>(var);
 }
 
-int QOfonoNetworkInterface::getSignalStrength()
+int QOfonoNetworkRegistrationInterface::getSignalStrength()
 {
     QVariant var = getProperty("Strength");
     return qdbus_cast<int>(var);
 
 }
 
-QString QOfonoNetworkInterface::getBaseStation()
+QString QOfonoNetworkRegistrationInterface::getBaseStation()
 {
     QVariant var = getProperty("BaseStation");
     return qdbus_cast<QString>(var);
 }
 
-QList <QDBusObjectPath> QOfonoNetworkInterface::getOperators()
+QList <QDBusObjectPath> QOfonoNetworkRegistrationInterface::getOperators()
 {
     QVariant var = getProperty("Operators");
     return qdbus_cast<QList <QDBusObjectPath> >(var);
 }
 
-void QOfonoNetworkInterface::connectNotify(const char *signal)
+void QOfonoNetworkRegistrationInterface::connectNotify(const char *signal)
 {
 if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QDBusVariant))) {
         if(!connection().connect(QLatin1String(OFONO_SERVICE),
@@ -360,14 +389,14 @@ if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QDBusVariant))) {
     }
 }
 
-void QOfonoNetworkInterface::disconnectNotify(const char *signal)
+void QOfonoNetworkRegistrationInterface::disconnectNotify(const char *signal)
 {
     if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QVariant))) {
 
     }
 }
 
-QVariant QOfonoNetworkInterface::getProperty(const QString &property)
+QVariant QOfonoNetworkRegistrationInterface::getProperty(const QString &property)
 {
     QVariant var;
     QVariantMap map = getProperties();
@@ -379,7 +408,7 @@ QVariant QOfonoNetworkInterface::getProperty(const QString &property)
     return var;
 }
 
-QVariantMap QOfonoNetworkInterface::getProperties()
+QVariantMap QOfonoNetworkRegistrationInterface::getProperties()
 {
     QDBusReply<QVariantMap > reply =  this->call(QLatin1String("GetProperties"));
     return reply.value();
@@ -586,7 +615,7 @@ QVariantMap QOfonoSimInterface::getProperties()
     return reply.value();
 }
 
-QOfonoDataConnectionInterface::QOfonoDataConnectionInterface(const QString &dbusPathName, QObject *parent)
+QOfonoDataConnectionManagerInterface::QOfonoDataConnectionManagerInterface(const QString &dbusPathName, QObject *parent)
     : QDBusAbstractInterface(QLatin1String(OFONO_SERVICE),
                              dbusPathName,
                              OFONO_DATA_CONNECTION_MANAGER_INTERFACE,
@@ -594,35 +623,35 @@ QOfonoDataConnectionInterface::QOfonoDataConnectionInterface(const QString &dbus
 {
 }
 
-QOfonoDataConnectionInterface::~QOfonoDataConnectionInterface()
+QOfonoDataConnectionManagerInterface::~QOfonoDataConnectionManagerInterface()
 {
 }
 
-QList<QDBusObjectPath> QOfonoDataConnectionInterface::getPrimaryContexts()
+QList<QDBusObjectPath> QOfonoDataConnectionManagerInterface::getPrimaryContexts()
 {
     QVariant var = getProperty("PrimaryContexts");
     return qdbus_cast<QList<QDBusObjectPath> >(var);
 }
 
-bool QOfonoDataConnectionInterface::isAttached()
+bool QOfonoDataConnectionManagerInterface::isAttached()
 {
     QVariant var = getProperty("Attached");
     return qdbus_cast<bool>(var);
 }
 
-bool QOfonoDataConnectionInterface::roamingAttached()
+bool QOfonoDataConnectionManagerInterface::isRoamingAllowed()
 {
-    QVariant var = getProperty("Roaming");
+    QVariant var = getProperty("RoamingAllowed");
     return qdbus_cast<bool>(var);
 }
 
-bool QOfonoDataConnectionInterface::isPowered()
+bool QOfonoDataConnectionManagerInterface::isPowered()
 {
     QVariant var = getProperty("Powered");
     return qdbus_cast<bool>(var);
 }
 
-void QOfonoDataConnectionInterface::connectNotify(const char *signal)
+void QOfonoDataConnectionManagerInterface::connectNotify(const char *signal)
 {
 if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QDBusVariant))) {
         if(!connection().connect(QLatin1String(OFONO_SERVICE),
@@ -650,14 +679,14 @@ if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QDBusVariant))) {
     }
 }
 
-void QOfonoDataConnectionInterface::disconnectNotify(const char *signal)
+void QOfonoDataConnectionManagerInterface::disconnectNotify(const char *signal)
 {
     if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QVariant))) {
 
     }
 }
 
-QVariant QOfonoDataConnectionInterface::getProperty(const QString &property)
+QVariant QOfonoDataConnectionManagerInterface::getProperty(const QString &property)
 {
     QVariant var;
     QVariantMap map = getProperties();
@@ -669,7 +698,7 @@ QVariant QOfonoDataConnectionInterface::getProperty(const QString &property)
     return var;
 }
 
-QVariantMap QOfonoDataConnectionInterface::getProperties()
+QVariantMap QOfonoDataConnectionManagerInterface::getProperties()
 {
     QDBusReply<QVariantMap > reply =  this->call(QLatin1String("GetProperties"));
     return reply.value();
@@ -719,8 +748,26 @@ QVariantMap QOfonoPrimaryDataContextInterface::getSettings()
 
 QString QOfonoPrimaryDataContextInterface::getInterface()
 {
-    QVariant var = getProperty("Interace");
+    QVariant var = getProperty("Interface");
     return qdbus_cast<QString>(var);
+}
+
+QString QOfonoPrimaryDataContextInterface::getAddress()
+{
+    QVariant var = getProperty("Address");
+    return qdbus_cast<QString>(var);
+}
+
+bool QOfonoPrimaryDataContextInterface::setActive(bool on)
+{
+//    this->setProperty("Active", QVariant(on));
+
+    return setProp("Active", qVariantFromValue(on));
+}
+
+bool QOfonoPrimaryDataContextInterface::setApn(const QString &name)
+{
+    return setProp("AccessPointName", QVariant::fromValue(name));
 }
 
 void QOfonoPrimaryDataContextInterface::connectNotify(const char *signal)
@@ -776,5 +823,118 @@ QVariantMap QOfonoPrimaryDataContextInterface::getProperties()
     return reply.value();
 }
 
+bool QOfonoPrimaryDataContextInterface::setProp(const QString &property, const QVariant &var)
+{
+    QList<QVariant> args;
+    args << qVariantFromValue(property) << qVariantFromValue(QDBusVariant(var));
+
+    QDBusMessage reply = this->callWithArgumentList(QDBus::AutoDetect,
+                                                    QLatin1String("SetProperty"),
+                                                    args);
+    bool ok = true;
+    if(reply.type() != QDBusMessage::ReplyMessage) {
+        qWarning() << reply.errorMessage();
+        ok = false;
+    }
+    qWarning() << reply.errorMessage();
+    return ok;
+}
+
+QOfonoSmsInterface::QOfonoSmsInterface(const QString &dbusPathName, QObject *parent)
+    : QDBusAbstractInterface(QLatin1String(OFONO_SERVICE),
+                             dbusPathName,
+                             OFONO_SMS_MANAGER_INTERFACE,
+                             QDBusConnection::systemBus(), parent)
+{
+}
+
+QOfonoSmsInterface::~QOfonoSmsInterface()
+{
+}
+
+void QOfonoSmsInterface::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QDBusVariant))) {
+        if(!connection().connect(QLatin1String(OFONO_SERVICE),
+                                 this->path(),
+                                 QLatin1String(OFONO_SMS_MANAGER_INTERFACE),
+                                 QLatin1String("PropertyChanged"),
+                                 this,SIGNAL(propertyChanged(const QString &, const QDBusVariant & )))) {
+            qWarning() << "PropertyCHanged not connected";
+        }
+    }
+
+    if (QLatin1String(signal) == SIGNAL(propertyChangedContext(QString,QString,QDBusVariant))) {
+        QOfonoDBusHelper *helper;
+        helper = new QOfonoDBusHelper(this);
+
+        dbusConnection.connect(QLatin1String(OFONO_SERVICE),
+                               this->path(),
+                               QLatin1String(OFONO_SMS_MANAGER_INTERFACE),
+                               QLatin1String("PropertyChanged"),
+                               helper,SLOT(propertyChanged(QString,QDBusVariant)));
+
+
+        QObject::connect(helper,SIGNAL(propertyChangedContext(const QString &,const QString &,const QDBusVariant &)),
+                         this,SIGNAL(propertyChangedContext(const QString &,const QString &,const QDBusVariant &)));
+    }
+
+    if (QLatin1String(signal) == SIGNAL(immediateMessage(QString,QVariantMap))) {
+        if(!connection().connect(QLatin1String(OFONO_SERVICE),
+                                 this->path(),
+                                 QLatin1String(OFONO_SMS_MANAGER_INTERFACE),
+                                 QLatin1String("ImmediateMessage"),
+                                 this,SIGNAL(immediateMessage(QString,QVariantMap )))) {
+            qWarning() << "PropertyCHanged not connected";
+        }
+    }
+
+    if (QLatin1String(signal) == SIGNAL(incomingMessage(QString,QVariantMap))) {
+        if(!connection().connect(QLatin1String(OFONO_SERVICE),
+                                 this->path(),
+                                 QLatin1String(OFONO_SMS_MANAGER_INTERFACE),
+                                 QLatin1String("IncomingMessage"),
+                                 this,SIGNAL(incomingMessage(QString,QVariantMap)))) {
+            qWarning() << "PropertyCHanged not connected";
+        }
+    }
+}
+
+void QOfonoSmsInterface::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QVariant))) {
+
+    }
+}
+
+QVariant QOfonoSmsInterface::getProperty(const QString &property)
+{
+    QVariant var;
+    QVariantMap map = getProperties();
+    if (map.contains(property)) {
+        var = map.value(property);
+    } else {
+        qDebug() << Q_FUNC_INFO << "does not contain" << property;
+    }
+    return var;
+}
+
+QVariantMap QOfonoSmsInterface::getProperties()
+{
+    QDBusReply<QVariantMap > reply = this->call(QLatin1String("GetProperties"));
+    return reply.value();
+}
+
+void QOfonoSmsInterface::sendMessage(const QString &to, const QString &message)
+{
+    QDBusReply<QString> reply =  this->call(QLatin1String("SendMessage"),
+                                            QVariant::fromValue(to),
+                                            QVariant::fromValue(message));
+    bool ok = true;
+    if(reply.error().type() == QDBusError::InvalidArgs) {
+        qWarning() << reply.error().message();
+        ok = false;
+    }
+}
 
 QT_END_NAMESPACE

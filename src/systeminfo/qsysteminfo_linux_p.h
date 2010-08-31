@@ -150,6 +150,12 @@ class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
     Q_OBJECT
 
 public:
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    float contrast(int screen);
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);
 
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
@@ -216,7 +222,10 @@ private:
     bool kdeIsRunning;
     bool gnomeIsRunning;
     void whichWMRunning();
-
+    bool screenSaverIsInhibited;
+#ifdef Q_WS_X11
+     int changeTimeout(int timeout);
+#endif
 };
 
 QTM_END_NAMESPACE

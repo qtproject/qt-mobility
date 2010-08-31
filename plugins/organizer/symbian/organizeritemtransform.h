@@ -44,6 +44,7 @@
 
 #include <QList>
 #include <qmobilityglobal.h>
+#include "qorganizeritemdetaildefinition.h"
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItem;
@@ -59,15 +60,14 @@ class OrganizerItemTransform
 public:
     OrganizerItemTransform();
     ~OrganizerItemTransform();
+    
+    void modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const;
 
     void toEntryL(const QOrganizerItem &item, CCalEntry *entry);
     void toItemL(const CCalEntry &entry, QOrganizerItem *item) const;
-    void toItemPostSaveL(const CCalEntry &entry, QOrganizerItem *item) const;
-    void toItemL(const CCalInstance &instance, QOrganizerItem *item) const;
-
-private:
-    void debugEntryL(const CCalEntry &entry) const;
-    
+    void toItemPostSaveL(const CCalEntry &entry, QOrganizerItem *item, QString managerUri) const;
+    void toItemInstanceL(const CCalInstance &instance, QOrganizerItem *itemInstance) const;
+   
 private:
     QList<OrganizerItemDetailTransform *> m_detailTransforms;
 };

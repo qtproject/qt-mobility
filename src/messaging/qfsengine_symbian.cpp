@@ -246,8 +246,12 @@ QMessageAccount CFSEngine::account(const QMessageAccountId &id) const
 
 QMessageAccountId CFSEngine::defaultAccount(QMessage::Type type) const
 {
-    // TODO
-    Q_UNUSED(type);
+    TRAPD(err, updateEmailAccountsL());
+    Q_UNUSED(err); 
+    QMessageAccountIdList accountIds = accountsByType(type);
+    if (accountIds.count() > 0)
+        return accountIds.at(0);
+        
     return QMessageAccountId();
 }
 
