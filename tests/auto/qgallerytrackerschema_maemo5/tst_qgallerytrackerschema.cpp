@@ -518,18 +518,8 @@ void tst_QGalleryTrackerSchema::prepareValidItemResponse_data()
     QTest::addColumn<QGalleryDBusInterfacePointer>("queryInterface");
     QTest::addColumn<QString>("queryMethod");
     QTest::addColumn<QVariantList>("queryArguments");
-    QTest::addColumn<QStringList>("queriedPropertyNames");
-    QTest::addColumn<QStringList>("fieldNames");
-    QTest::addColumn<QVector<QGalleryProperty::Attributes> >("propertyAttributes");
-    QTest::addColumn<QVector<QVariant::Type> >("propertyTypes");
-    QTest::addColumn<QStringList>("values");
-    QTest::addColumn<QVector<QVariant> >("parsedValues");
-    QTest::addColumn<QVector<QVariant> >("compositeValues");
-    QTest::addColumn<QVector<int> >("aliasColumns");
-    QTest::addColumn<QVector<int> >("resourceKeys");
 
-
-    QTest::newRow("All Files")
+    QTest::newRow("file:://path/to/file.ext")
             << QVariant(QLatin1String("file::/path/to/file.ext"))
             << QStringList()
             << (QVector<QVariant>() << QLatin1String("/path/to/file.ext") << QLatin1String("Files"))
@@ -555,16 +545,32 @@ void tst_QGalleryTrackerSchema::prepareValidItemResponse_data()
                             "</rdfq:and></rdfq:Condition>")
                     << false
                     << QStringList()
-                    << false)
+                    << false);
+
+    QTest::newRow("album::Self Titled/Greatest Hits")
+            << QVariant(QLatin1String("album::Self Titled/Greatest Hits"))
             << QStringList()
-            << QStringList()
-            << QVector<QGalleryProperty::Attributes>()
-            << QVector<QVariant::Type>()
-            << QStringList()
-            << QVector<QVariant>()
-            << QVector<QVariant>()
-            << QVector<int>()
-            << QVector<int>();
+            << (QVector<QVariant>() << QLatin1String("Self Titled") << QLatin1String("Greatest Hits"))
+            << QVariant()
+            << QVariant(QLatin1String("Album"))
+            << 0x08
+            << 2
+            << 2
+            << 0
+            << 2
+            << m_metaDataInterface
+            << QString::fromLatin1("GetUniqueValuesWithAggregates")
+            << (QVariantList()
+                    << QLatin1String("Music")
+                    << (QStringList() << QLatin1String("Audio:AlbumArtist") << QLatin1String("Audio:Album"))
+                    << QLatin1String(
+                            "<rdfq:Condition><rdfq:and>"
+                                "<rdfq:equals><rdfq:Property name=\"Audio:AlbumArtist\"/><rdf:String>Self Titled</rdf:String></rdfq:equals>"
+                                "<rdfq:equals><rdfq:Property name=\"Audio:Album\"/><rdf:String>Greatest Hits</rdf:String></rdfq:equals>"
+                            "</rdfq:and></rdfq:Condition>")
+                    << QStringList()
+                    << QStringList()
+                    << false);
 }
 
 void tst_QGalleryTrackerSchema::prepareValidItemResponse()
@@ -582,15 +588,6 @@ void tst_QGalleryTrackerSchema::prepareValidItemResponse()
     QFETCH(QGalleryDBusInterfacePointer, queryInterface);
     QFETCH(QString, queryMethod);
     QFETCH(QVariantList, queryArguments);
-    QFETCH(QStringList, queriedPropertyNames);
-    QFETCH(QStringList, fieldNames);
-    QFETCH(QVector<QGalleryProperty::Attributes>, propertyAttributes);
-    QFETCH(QVector<QVariant::Type>, propertyTypes);
-    QFETCH(QStringList, values);
-    QFETCH(QVector<QVariant>, parsedValues);
-    QFETCH(QVector<QVariant>, compositeValues);
-    QFETCH(QVector<int>, aliasColumns);
-    QFETCH(QVector<int>, resourceKeys);
 
     QGalleryTrackerResultSetArguments arguments;
 
@@ -617,26 +614,6 @@ void tst_QGalleryTrackerSchema::prepareValidItemResponse()
     QCOMPARE(arguments.queryInterface, queryInterface);
     QCOMPARE(arguments.queryMethod, queryMethod);
     QCOMPARE(arguments.queryArguments, queryArguments);
-
-    QCOMPARE(arguments.propertyNames, queriedPropertyNames);
-    QCOMPARE(arguments.fieldNames, fieldNames);
-    QCOMPARE(arguments.propertyAttributes, propertyAttributes);
-    QCOMPARE(arguments.propertyTypes, propertyTypes);
-
-    QCOMPARE(values.count(), parsedValues.count()); // Verify test data.
-    QCOMPARE(values.count(), arguments.valueColumns.count());
-    for (int i = 0; i < arguments.valueColumns.count(); ++i) {
-        QCOMPARE(arguments.valueColumns.at(i)->toVariant(values.at(i)), parsedValues.at(i));
-    }
-
-    QCOMPARE(compositeValues.count(), arguments.compositeColumns.count());
-    for (int i = 0; i < arguments.compositeColumns.count(); ++i) {
-        QCOMPARE(arguments.compositeColumns.at(i)->value(row.constBegin()), parsedValues.at(i));
-    }
-
-    QCOMPARE(arguments.aliasColumns, aliasColumns);
-    QCOMPARE(arguments.sortCriteria, QVector<QGalleryTrackerSortCriteria>());
-    QCOMPARE(arguments.resourceKeys, resourceKeys);
 }
 
 void tst_QGalleryTrackerSchema::prepareInvalidItemResponse_data()
@@ -652,6 +629,11 @@ void tst_QGalleryTrackerSchema::prepareInvalidItemResponse_data()
 
     QTest::newRow("Relative file path")
             << QString::fromLatin1("file::file.ext")
+            << QStringList()
+            << int(QGalleryAbstractRequest::InvalidItemError);
+
+    QTest::newRow("Relative file path")
+            << QString::fromLatin1("album::Greatest Hits")
             << QStringList()
             << int(QGalleryAbstractRequest::InvalidItemError);
 }
@@ -3119,7 +3101,6 @@ void tst_QGalleryTrackerSchema::queryResponseRootFileItemsWithFilter()
                     "</rdfq:equals>"
                 "</rdfq:and>"
             "</rdfq:Condition>"));
-    regExp.setMinimal(true);
 
     QGalleryTrackerResultSetArguments arguments;
 
@@ -3461,11 +3442,20 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse_data()
     QTest::addColumn<QStringList>("propertyNames");
     QTest::addColumn<int>("result");
 
-    QTest::newRow("Invalid Type")
+    QTest::newRow("Invalid Type, No Filter")
             << QString()
             << QGalleryQueryRequest::AllDescendants
             << QString::fromLatin1("Turtle")
             << QGalleryFilter()
+            << QStringList()
+            << QStringList()
+            << int(QGalleryAbstractRequest::ItemTypeError);
+
+    QTest::newRow("Invalid Type, With Filter")
+            << QString()
+            << QGalleryQueryRequest::AllDescendants
+            << QString::fromLatin1("Turtle")
+            << QGalleryFilter(QDocumentGallery::fileName == QLatin1String("file.ext"))
             << QStringList()
             << QStringList()
             << int(QGalleryAbstractRequest::ItemTypeError);
@@ -3487,6 +3477,84 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse_data()
             << QStringList()
             << QStringList()
             << int(QGalleryAbstractRequest::InvalidItemError);
+
+    QTest::newRow("Invalid Album ID")
+            << QString::fromLatin1("album::Greatest Hits")
+            << QGalleryQueryRequest::AllDescendants
+            << QString::fromLatin1("Audio")
+            << QGalleryFilter()
+            << QStringList()
+            << QStringList()
+            << int(QGalleryAbstractRequest::InvalidItemError);
+
+    QTest::newRow("File.filePath > /path")
+            << QString()
+            << QGalleryQueryRequest::AllDescendants
+            << QString::fromLatin1("File")
+            << QGalleryFilter(QDocumentGallery::filePath > QLatin1String("/path"))
+            << QStringList()
+            << QStringList()
+            << int(QGalleryAbstractRequest::UnsupportedFilterOptionError);
+
+    QTest::newRow("File.url > file:///path")
+            << QString()
+            << QGalleryQueryRequest::AllDescendants
+            << QString::fromLatin1("File")
+            << QGalleryFilter(QDocumentGallery::url > QUrl::fromLocalFile(QLatin1String("/path")))
+            << QStringList()
+            << QStringList()
+            << int(QGalleryAbstractRequest::UnsupportedFilterOptionError);
+
+    QTest::newRow("File.filePath > /path (within union)")
+            << QString()
+            << QGalleryQueryRequest::AllDescendants
+            << QString::fromLatin1("File")
+            << QGalleryFilter(QGalleryUnionFilter(
+                    QDocumentGallery::filePath > QLatin1String("/path")))
+            << QStringList()
+            << QStringList()
+            << int(QGalleryAbstractRequest::UnsupportedFilterOptionError);
+
+    QTest::newRow("File.filePath > /path (within intersection)")
+            << QString()
+            << QGalleryQueryRequest::AllDescendants
+            << QString::fromLatin1("File")
+            << QGalleryFilter(QGalleryIntersectionFilter(
+                    QDocumentGallery::filePath > QLatin1String("/path")))
+            << QStringList()
+            << QStringList()
+            << int(QGalleryAbstractRequest::UnsupportedFilterOptionError);
+
+    QTest::newRow("File.fileName ? /path")
+            << QString()
+            << QGalleryQueryRequest::AllDescendants
+            << QString::fromLatin1("File")
+            << QGalleryFilter(QGalleryMetaDataFilter(
+                    QLatin1String("fileName"),
+                    QLatin1String("file.ext"),
+                    QGalleryFilter::Comparator(1200)))
+            << QStringList()
+            << QStringList()
+            << int(QGalleryAbstractRequest::UnsupportedFilterOptionError);
+
+    QTest::newRow("File.fileName == QPoint(12, 44)")
+            << QString()
+            << QGalleryQueryRequest::AllDescendants
+            << QString::fromLatin1("File")
+            << QGalleryFilter(QDocumentGallery::fileName == QPoint(12, 44))
+            << QStringList()
+            << QStringList()
+            << int(QGalleryAbstractRequest::PropertyTypeError);
+
+
+    QTest::newRow("File.url == 125")
+            << QString()
+            << QGalleryQueryRequest::AllDescendants
+            << QString::fromLatin1("File")
+            << QGalleryFilter(QDocumentGallery::url == 125)
+            << QStringList()
+            << QStringList()
+            << int(QGalleryAbstractRequest::PropertyTypeError);
 }
 
 void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse()
