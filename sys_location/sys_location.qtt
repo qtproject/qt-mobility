@@ -1,8 +1,16 @@
 //TESTED_COMPONENT=src/location
 
 testcase = {
+
+    // Under construction
+
     initTestCase: function()
     {
+    },
+
+    init: {
+        // If qtmobility.version < 1.1 && currentTest() != [ current_position | location_is_updated ]
+            // skip("Test only for QtMobility 1.1 and greater");
     },
 
     current_position: function()
@@ -22,8 +30,36 @@ testcase = {
     1. Note the updated position displayed in the example.
     1. Verify that the new position in step 4 corresponds to the move in step 3 (i.e. if the device moved north, the new position should clearly indicate this).
        '));
-    }
-    // *** Start of Test Functions ***
+    },
 
+    // Landmarks
+/*
+    store_and_load_a_landmark: function
+    Get land marks within range of a position: function
+    Create, Edit, Delete landmark (and its details): function
+    Add, Edit, Delete a category: function
+    Enumerate categories: function
+    Sort, Search based on category for a landmark: function
+    Sort landmarks(alphabetical, nearest): function
+    Notification on landmark changes: function
+    Notification on category changes: function
+*/
+
+    // Maps and Navigation
+/*
+    Request route from one GPS location to another: function
+    List of way points: function
+    Distinguish pedestrian and car navigation: function
+    Request Landmarks for given coordinate - Reverse geocoding (overlap with Landmarks API needs to be resolved): function
+    Find matching landmarks for given search criteria - Geocoding (overlap with Landmarks API needs to be resolved): function
+    Displaying a map: function
+    Provide map for given coordinate: function
+    Zooming support: function
+    QML support: function
+    Standard widget: function
+    Online vs offline support: function
+    Should navigation work while the device is offline?: function
+    Available platform/REST API??: function
+*/
 }  // end of testcase
 

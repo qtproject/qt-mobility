@@ -42,12 +42,30 @@
 //TESTED_COMPONENT=src/telephony
 
 testcase = {
-    telephony_events: function() {
-        // Under construction
+    // Under construction
+    initTestCase: {
+        // if qtmobility.version < 1.1
+            // skip("Telephony exists only for Qt Mobility 1.1 and greater"
+    },
+
+    current_state: function() {
         prompt("queries the current telephony state. e.g. no call, ringing, call in-progress and call on-hold.");
+    },
+
+    notified_of_status_change: function() {
         prompt("gets a notification on a change of a call status. e.g. ringing, on-hold, terminating.");
+    },
+
+    current_call_information: function() {
         prompt("queries call information. e.g. call type, phone number, SIP id.");
+    },
+
+    notified_of_list_change: function() {
         prompt("gets a notification on a change of list of calls.");
+    },
+
+    query_the_open_calls: function() {
         prompt("queries open calls at a given time.");
     }
+
 }
