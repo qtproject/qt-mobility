@@ -295,6 +295,9 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
     QPixmap newImage(oldImage.size());
     newImage.fill(Qt::lightGray);
     QPainter painter2(&newImage);
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+    painter2.setRenderHint(QPainter::SmoothPixmapTransform, true);
+#endif
     if (zoomDiff < 0) {
         painter2.drawPixmap(source, oldImage, target);
     } else {
