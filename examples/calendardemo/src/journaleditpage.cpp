@@ -89,6 +89,7 @@ JournalEditPage::JournalEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(m_timeEdit);
     scrollAreaLayout->addWidget(alarmLabel);
     scrollAreaLayout->addWidget(m_alarmComboBox);
+    scrollAreaLayout->addStretch();
 
 #ifdef Q_WS_X11
     scrollAreaLayout->addLayout(hbLayout);

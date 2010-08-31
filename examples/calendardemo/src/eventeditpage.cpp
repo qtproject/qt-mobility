@@ -47,7 +47,6 @@ QTM_USE_NAMESPACE
 EventEditPage::EventEditPage(QWidget *parent)
     :QWidget(parent),
     m_manager(0),
-    m_scrollAreaLayout(0),
     m_alarmComboBox(0),
     m_typeComboBox(0),
     m_subjectEdit(0),
@@ -114,30 +113,30 @@ EventEditPage::EventEditPage(QWidget *parent)
     hbLayout->addWidget(cancelButton);
 #endif
 
-    m_scrollAreaLayout = new QVBoxLayout();
-    m_scrollAreaLayout->addWidget(subjectLabel);
-    m_scrollAreaLayout->addWidget(m_subjectEdit);
-    m_scrollAreaLayout->addWidget(startTimeLabel);
-    m_scrollAreaLayout->addWidget(m_startTimeEdit);
-    m_scrollAreaLayout->addWidget(endTimeLabel);
-    m_scrollAreaLayout->addWidget(m_endTimeEdit);
-    m_scrollAreaLayout->addWidget(alarmLabel);
-    m_scrollAreaLayout->addWidget(m_alarmComboBox);
-    m_scrollAreaLayout->addWidget(repeatLabel);
-    m_scrollAreaLayout->addWidget(m_typeComboBox);
-    m_scrollAreaLayout->addWidget(m_endConditionComboBox);
-    m_scrollAreaLayout->addWidget(m_countSpinBox);
-    m_scrollAreaLayout->addWidget(m_repeatUntilDate);
-    m_scrollAreaLayout->addStretch();
+    QVBoxLayout *scrollAreaLayout = new QVBoxLayout();
+    scrollAreaLayout->addWidget(subjectLabel);
+    scrollAreaLayout->addWidget(m_subjectEdit);
+    scrollAreaLayout->addWidget(startTimeLabel);
+    scrollAreaLayout->addWidget(m_startTimeEdit);
+    scrollAreaLayout->addWidget(endTimeLabel);
+    scrollAreaLayout->addWidget(m_endTimeEdit);
+    scrollAreaLayout->addWidget(alarmLabel);
+    scrollAreaLayout->addWidget(m_alarmComboBox);
+    scrollAreaLayout->addWidget(repeatLabel);
+    scrollAreaLayout->addWidget(m_typeComboBox);
+    scrollAreaLayout->addWidget(m_endConditionComboBox);
+    scrollAreaLayout->addWidget(m_countSpinBox);
+    scrollAreaLayout->addWidget(m_repeatUntilDate);
+    scrollAreaLayout->addStretch();
 
 #ifndef Q_OS_SYMBIAN
-    m_scrollAreaLayout->addLayout(hbLayout);
+    scrollAreaLayout->addLayout(hbLayout);
 #endif
 
     QScrollArea *scrollArea = new QScrollArea(this);
     scrollArea->setWidgetResizable(true);
     QWidget *formContainer = new QWidget(scrollArea);
-    formContainer->setLayout(m_scrollAreaLayout);
+    formContainer->setLayout(scrollAreaLayout);
     scrollArea->setWidget(formContainer);
 
     QVBoxLayout *mainLayout = new QVBoxLayout();

@@ -102,9 +102,9 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(m_priorityEdit);
     scrollAreaLayout->addWidget(statusLabel);
     scrollAreaLayout->addWidget(m_statusEdit);
-    scrollAreaLayout->addStretch();
     scrollAreaLayout->addWidget(alarmLabel);
     scrollAreaLayout->addWidget(m_alarmComboBox);
+    scrollAreaLayout->addStretch();
 #ifdef Q_WS_X11
     scrollAreaLayout->addLayout(hbLayout);
 #endif
