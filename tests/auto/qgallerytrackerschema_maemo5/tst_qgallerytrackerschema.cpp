@@ -113,6 +113,12 @@ private Q_SLOTS:
     void queryResponseRootItem();
     void queryResponseFilter_data();
     void queryResponseFilter();
+    void queryResponseValueColumnToVariant_data();
+    void queryResponseValueColumnToVariant();
+    void queryResponseValueColumnToString_data();
+    void queryResponseValueColumnToString();
+    void queryResponseCompositeColumn_data();
+    void queryResponseCompositeColumn();
     void prepareValidItemQueryResponse_data();
     void prepareValidItemQueryResponse();
     void prepareInvalidQueryResponse_data();
@@ -2671,6 +2677,306 @@ void tst_QGalleryTrackerSchema::queryResponseFilter()
 
     QCOMPARE(arguments.queryArguments.count(), argumentCount);
     QCOMPARE(arguments.queryArguments.at(queryStringIndex), QVariant(queryString));
+}
+
+void tst_QGalleryTrackerSchema::queryResponseValueColumnToVariant_data()
+{
+    QTest::addColumn<QString>("rootType");
+    QTest::addColumn<QString>("propertyName");
+    QTest::addColumn<QString>("string");
+    QTest::addColumn<QVariant>("value");
+
+    QTest::newRow("File.fileName")
+            << QString::fromLatin1("File")
+            << QString::fromLatin1("fileName")
+            << QString::fromLatin1("file.ext")
+            << QVariant(QLatin1String("file.ext"));
+
+    QTest::newRow("File.fileName (Empty)")
+            << QString::fromLatin1("File")
+            << QString::fromLatin1("fileName")
+            << QString()
+            << QVariant(QString());
+
+    QTest::newRow("Image.keywords (1)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("keywords")
+            << QString::fromLatin1("Holiday")
+            << QVariant(QStringList() << QLatin1String("Holiday"));
+
+    QTest::newRow("Image.keywords (2)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("keywords")
+            << QString::fromLatin1("Holiday|Summer")
+            << QVariant(QStringList() << QLatin1String("Holiday") << QLatin1String("Summer"));
+
+    QTest::newRow("Image.keywords (3)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("keywords")
+            << QString::fromLatin1("2009|Holiday|Summer")
+            << QVariant(QStringList()
+                    << QLatin1String("2009")
+                    << QLatin1String("Holiday")
+                    << QLatin1String("Summer"));
+
+    QTest::newRow("Image.keywords (Empty")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("keywords")
+            << QString()
+            << QVariant(QStringList());
+
+    QTest::newRow("Image.dateTaken")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("dateTaken")
+            << QString::fromLatin1("2009-08-23T09:03:32")
+            << QVariant(QDateTime(QDate(2009, 8, 23), QTime(9, 3, 32)));
+
+    QTest::newRow("Image.dateTaken (Invalid)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("dateTaken")
+            << QString::fromLatin1("Yesterday")
+            << QVariant();
+
+    QTest::newRow("Image.dateTaken (Empty)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("dateTaken")
+            << QString()
+            << QVariant();
+
+    QTest::newRow("Image.focalLength (12)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("focalLength")
+            << QString::fromLatin1("12")
+            << QVariant(12.0);
+
+    QTest::newRow("Image.focalLength (12.5)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("focalLength")
+            << QString::fromLatin1("12.5")
+            << QVariant(12.5);
+
+    QTest::newRow("Image.focalLength (Invalid)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("focalLength")
+            << QString::fromLatin1("twelve point 5")
+            << QVariant();
+
+    QTest::newRow("Image.focalLength (Empty")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("focalLength")
+            << QString()
+            << QVariant();
+
+    QTest::newRow("Image.height")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("height")
+            << QString("720")
+            << QVariant(720);
+
+    QTest::newRow("Image.height (Invalid")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("height")
+            << QString::fromLatin1("seven twenty")
+            << QVariant();
+
+    QTest::newRow("Image.height (Empty)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("height")
+            << QString()
+            << QVariant();
+}
+
+void tst_QGalleryTrackerSchema::queryResponseValueColumnToVariant()
+{
+    QFETCH(QString, rootType);
+    QFETCH(QString, propertyName);
+    QFETCH(QString, string);
+    QFETCH(QVariant, value);
+
+    QGalleryTrackerResultSetArguments arguments;
+
+    QGalleryTrackerSchema schema(rootType);
+
+    QCOMPARE(
+            schema.prepareQueryResponse(
+                    &arguments,
+                    this,
+                    QGalleryQueryRequest::AllDescendants,
+                    QString(),
+                    QGalleryFilter(),
+                    QStringList() << propertyName,
+                    QStringList()),
+            int(QGalleryAbstractRequest::Succeeded));
+
+    QCOMPARE(arguments.valueColumns.count(), 1);
+    QCOMPARE(arguments.valueColumns.at(0)->toVariant(string), value);
+}
+
+void tst_QGalleryTrackerSchema::queryResponseValueColumnToString_data()
+{
+    QTest::addColumn<QString>("rootType");
+    QTest::addColumn<QString>("propertyName");
+    QTest::addColumn<QVariant>("value");
+    QTest::addColumn<QString>("string");
+
+    QTest::newRow("File.fileName")
+            << QString::fromLatin1("File")
+            << QString::fromLatin1("fileName")
+            << QVariant(QLatin1String("file.ext"))
+            << QString::fromLatin1("file.ext");
+
+    QTest::newRow("File.fileName (Empty)")
+            << QString::fromLatin1("File")
+            << QString::fromLatin1("fileName")
+            << QVariant(QString())
+            << QString();
+
+    QTest::newRow("Image.keywords (1)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("keywords")
+            << QVariant(QStringList() << QLatin1String("Holiday"))
+            << QString::fromLatin1("Holiday");
+
+    QTest::newRow("Image.keywords (2)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("keywords")
+            << QVariant(QStringList() << QLatin1String("Holiday") << QLatin1String("Summer"))
+            << QString::fromLatin1("Holiday|Summer");
+
+    QTest::newRow("Image.keywords (3)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("keywords")
+            << QVariant(QStringList()
+                    << QLatin1String("2009")
+                    << QLatin1String("Holiday")
+                    << QLatin1String("Summer"))
+            << QString::fromLatin1("2009|Holiday|Summer");
+
+    QTest::newRow("Image.keywords (Empty")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("keywords")
+            << QVariant(QStringList())
+            << QString();
+
+    QTest::newRow("Image.dateTaken")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("dateTaken")
+            << QVariant(QDateTime(QDate(2009, 8, 23), QTime(9, 3, 32)))
+            << QString::fromLatin1("2009-08-23T09:03:32");
+
+    QTest::newRow("Image.dateTaken (Invalid)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("dateTaken")
+            << QVariant(QDateTime(QDate(2009, 8, 56), QTime(95, 3, 32)))
+            << QString();
+
+    QTest::newRow("Image.dateTaken (Empty)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("dateTaken")
+            << QVariant()
+            << QString();
+
+    QTest::newRow("Image.focalLength (12)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("focalLength")
+            << QVariant(12.0)
+            << QString::fromLatin1("12");
+
+    QTest::newRow("Image.focalLength (12.5)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("focalLength")
+            << QVariant(12.5)
+            << QString::fromLatin1("12.5");
+
+    QTest::newRow("Image.focalLength (Empty")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("focalLength")
+            << QVariant()
+            << QString();
+
+    QTest::newRow("Image.height")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("height")
+            << QVariant(720)
+            << QString("720");
+
+    QTest::newRow("Image.height (Empty)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("height")
+            << QVariant()
+            << QString();
+}
+
+void tst_QGalleryTrackerSchema::queryResponseValueColumnToString()
+{
+    QFETCH(QString, rootType);
+    QFETCH(QString, propertyName);
+    QFETCH(QVariant, value);
+    QFETCH(QString, string);
+
+    QGalleryTrackerResultSetArguments arguments;
+
+    QGalleryTrackerSchema schema(rootType);
+
+    QCOMPARE(
+            schema.prepareQueryResponse(
+                    &arguments,
+                    this,
+                    QGalleryQueryRequest::AllDescendants,
+                    QString(),
+                    QGalleryFilter(),
+                    QStringList() << propertyName,
+                    QStringList()),
+            int(QGalleryAbstractRequest::Succeeded));
+
+    QCOMPARE(arguments.valueColumns.count(), 1);
+    QCOMPARE(arguments.valueColumns.at(0)->toString(value), string);
+}
+
+void tst_QGalleryTrackerSchema::queryResponseCompositeColumn_data()
+{
+    QTest::addColumn<QString>("rootType");
+    QTest::addColumn<QString>("propertyName");
+    QTest::addColumn<QVector<QVariant> >("rowData");
+    QTest::addColumn<QVariant>("value");
+
+    QTest::newRow("File.filePath")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("filePath")
+            << (QVector<QVariant>() << QLatin1String("/path/to/file.ext") << QLatin1String("Files"))
+            << QVariant(QLatin1String("/path/to/file.ext"));
+
+    QTest::newRow("File.url")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("url")
+            << (QVector<QVariant>() << QLatin1String("/path/to/file.ext") << QLatin1String("Files"))
+            << QVariant(QUrl::fromLocalFile(QLatin1String("/path/to/file.ext")));
+}
+
+void tst_QGalleryTrackerSchema::queryResponseCompositeColumn()
+{
+    QFETCH(QString, rootType);
+    QFETCH(QString, propertyName);
+    QFETCH(QVector<QVariant>, rowData);
+    QFETCH(QVariant, value);
+
+    QGalleryTrackerResultSetArguments arguments;
+
+    QGalleryTrackerSchema schema(rootType);
+
+    QCOMPARE(
+            schema.prepareQueryResponse(
+                    &arguments,
+                    this,
+                    QGalleryQueryRequest::AllDescendants,
+                    QString(),
+                    QGalleryFilter(),
+                    QStringList() << propertyName,
+                    QStringList()),
+            int(QGalleryAbstractRequest::Succeeded));
+
+    QCOMPARE(arguments.compositeColumns.count(), 1);
+    QCOMPARE(arguments.compositeColumns.at(0)->value(rowData.constBegin()), value);
 }
 
 void tst_QGalleryTrackerSchema::prepareValidItemQueryResponse_data()
