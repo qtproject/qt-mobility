@@ -68,7 +68,8 @@ public:
 
 public Q_SLOTS:
     void refresh();
-    void dayChanged(QOrganizerItemManager *manager, QDate date);
+    void changeManager(QOrganizerItemManager *manager);
+    void dayChanged(QDate date);
 
 private Q_SLOTS:
     void itemDoubleClicked(QListWidgetItem *listItem);

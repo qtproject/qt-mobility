@@ -67,11 +67,12 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     //qRegisterMetaType<QOrganizerItemManager>("QOrganizerItemManager");
     qRegisterMetaType<QOrganizerItem>("QOrganizerItem");
 
-    connect(m_monthPage, SIGNAL(showDayPage(QDate)), this, SLOT(activateNewDayPage(QDate)), Qt::QueuedConnection);
+    connect(m_monthPage, SIGNAL(showDayPage(QDate)), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_monthPage, SIGNAL(showEditPage(const QOrganizerItem &)), this, SLOT(activateEditPage(const QOrganizerItem &)), Qt::QueuedConnection);
     connect(m_monthPage, SIGNAL(addNewEvent()), this, SLOT(addNewEvent()), Qt::QueuedConnection);
     connect(m_monthPage, SIGNAL(addNewTodo()), this, SLOT(addNewTodo()), Qt::QueuedConnection);
     connect(m_monthPage, SIGNAL(managerChanged(QOrganizerItemManager*)), this, SLOT(changeManager(QOrganizerItemManager*)), Qt::QueuedConnection);
+    connect(m_monthPage, SIGNAL(managerChanged(QOrganizerItemManager*)), m_dayPage, SLOT(changeManager(QOrganizerItemManager*)), Qt::QueuedConnection);
     connect(m_monthPage, SIGNAL(currentDayChanged(QDate)), this, SLOT(updateSelectedDay(QDate)));
     connect(m_dayPage, SIGNAL(showMonthPage()), this, SLOT(activateMonthPage()), Qt::QueuedConnection);
     connect(m_dayPage, SIGNAL(showEditPage(const QOrganizerItem &)), this, SLOT(activateEditPage(const QOrganizerItem &)), Qt::QueuedConnection);
@@ -92,18 +93,59 @@ CalendarDemo::CalendarDemo(QWidget *parent)
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
 #endif
-    menuBar()->setVisible(false);
+    buildMenu();
 }
+
+
 
 CalendarDemo::~CalendarDemo()
 {
 
 }
 
+void CalendarDemo::buildMenu()
+{
+    // Build Options menu
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_WINCE)
+    // These platforms need their menu items added directly to the menu bar.
+    QMenuBar *optionsMenu = menuBar();
+#else
+    QMenu *optionsMenu = new QMenu("Options", this);
+    #ifndef Q_OS_SYMBIAN
+    // We add the options menu to the softkey manually later
+    menuBar()->addMenu(optionsMenu);
+    #endif
+#endif
+#ifdef Q_OS_SYMBIAN
+    // Add editing options in the menu for Symbian (other platforms get buttons)
+    QAction* editAction = optionsMenu->addAction("Edit");
+    connect(editAction, SIGNAL(triggered(bool)), this, SLOT(editItem()));
+    QAction* removeAction = optionsMenu->addAction("Remove");
+    connect(removeAction, SIGNAL(triggered(bool)), this, SLOT(removeItem()));
+#endif
+    QAction* addEventAction = optionsMenu->addAction("Add Event");
+    connect(addEventAction, SIGNAL(triggered(bool)), this, SLOT(addNewEvent()));
+    QAction* addTodoAction = optionsMenu->addAction("Add Todo");
+    connect(addTodoAction, SIGNAL(triggered(bool)), this, SLOT(addNewTodo()));
+
+#ifdef Q_OS_SYMBIAN
+    // Add softkeys for symbian
+    QAction* backSoftKey = new QAction("View Month", this);
+    backSoftKey->setSoftKeyRole(QAction::NegativeSoftKey);
+    addAction(backSoftKey);
+    connect(backSoftKey, SIGNAL(triggered(bool)), this, SLOT(viewMonthClicked()));
+
+    QAction* optionsSoftKey = new QAction("Options", this);
+    optionsSoftKey->setSoftKeyRole(QAction::PositiveSoftKey);
+    optionsSoftKey->setMenu(optionsMenu);
+    addAction(optionsSoftKey);
+#endif
+}
+
 void CalendarDemo::activateMonthPage()
 {
 #if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5))
-    menuBar()->setVisible(false);
+    menuBar()->setVisible(true);
 #endif
     m_monthPage->refresh();
     m_stackedWidget->setCurrentWidget(m_monthPage);
@@ -118,16 +160,6 @@ void CalendarDemo::activateDayPage()
     m_stackedWidget->setCurrentWidget(m_dayPage);
 }
 
-void CalendarDemo::activateNewDayPage(QDate date)
-{
-#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5))
-    menuBar()->setVisible(true);
-#endif
-    m_dayPage->dayChanged(m_manager, date);
-    m_dayPage->refresh();
-    m_stackedWidget->setCurrentWidget(m_dayPage);
-}
-
 void CalendarDemo::activateEditPage(const QOrganizerItem &item)
 {
 #if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5))
@@ -135,13 +167,13 @@ void CalendarDemo::activateEditPage(const QOrganizerItem &item)
 #endif
     if (item.type() == QOrganizerItemType::TypeEvent) {
         QOrganizerEvent event = static_cast<QOrganizerEvent>(item);
-        m_dayPage->dayChanged(m_manager, event.startDateTime().date()); // edit always comes back to day page
+        m_dayPage->dayChanged(event.startDateTime().date()); // edit always comes back to day page
         m_eventEditPage->eventChanged(m_manager, event);
         m_stackedWidget->setCurrentWidget(m_eventEditPage);
     }
     else if (item.type() == QOrganizerItemType::TypeTodo) {
         QOrganizerTodo todo = static_cast<QOrganizerTodo>(item);
-        m_dayPage->dayChanged(m_manager, todo.startDateTime().date()); // edit always comes back to day page
+        m_dayPage->dayChanged(todo.startDateTime().date()); // edit always comes back to day page
         m_todoEditPage->todoChanged(m_manager, todo);
         m_stackedWidget->setCurrentWidget(m_todoEditPage);
     }
@@ -177,5 +209,6 @@ void CalendarDemo::changeManager(QOrganizerItemManager *manager)
 
 void CalendarDemo::updateSelectedDay(const QDate& date)
 {
+    m_dayPage->dayChanged(date);
     m_currentDate = date;
 }

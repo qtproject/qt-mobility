@@ -82,42 +82,6 @@ DayPage::DayPage(QMainWindow *mainWindow, QWidget *parent)
 
     setLayout(mainlayout);
 
-    // Build Options menu
-#if defined(Q_WS_MAEMO_5) || defined(Q_OS_WINCE)
-    // These platforms need their menu items added directly to the menu bar.
-    QMenuBar *optionsMenu = mainWindow->menuBar();
-#else
-    QMenu *optionsMenu = new QMenu("Options", this);
-    #ifndef Q_OS_SYMBIAN
-    // We add the options menu to the softkey manually later
-    mainWindow->menuBar()->addMenu(optionsMenu);
-    #endif
-#endif
-#ifdef Q_OS_SYMBIAN
-    // Add editing options in the menu for Symbian (other platforms get buttons)
-    QAction* editAction = optionsMenu->addAction("Edit");
-    connect(editAction, SIGNAL(triggered(bool)), this, SLOT(editItem()));
-    QAction* removeAction = optionsMenu->addAction("Remove");
-    connect(removeAction, SIGNAL(triggered(bool)), this, SLOT(removeItem()));
-#endif
-    QAction* addEventAction = optionsMenu->addAction("Add Event");
-    connect(addEventAction, SIGNAL(triggered(bool)), this, SIGNAL(addNewEvent()));
-    QAction* addTodoAction = optionsMenu->addAction("Add Todo");
-    connect(addTodoAction, SIGNAL(triggered(bool)), this, SIGNAL(addNewTodo()));
-
-#ifdef Q_OS_SYMBIAN
-    // Add softkeys for symbian
-    QAction* backSoftKey = new QAction("View Month", this);
-    backSoftKey->setSoftKeyRole(QAction::NegativeSoftKey);
-    addAction(backSoftKey);
-    connect(backSoftKey, SIGNAL(triggered(bool)), this, SLOT(viewMonthClicked()));
-
-    QAction* optionsSoftKey = new QAction("Options", this);
-    optionsSoftKey->setSoftKeyRole(QAction::PositiveSoftKey);
-    optionsSoftKey->setMenu(optionsMenu);
-    addAction(optionsSoftKey);
-#endif
-
 }
 
 DayPage::~DayPage()
@@ -166,9 +130,13 @@ void DayPage::refresh()
         m_itemList->addItem("(no entries)");
 }
 
-void DayPage::dayChanged(QOrganizerItemManager *manager, QDate date)
+void DayPage::changeManager(QOrganizerItemManager *manager)
 {
     m_manager = manager;
+}
+
+void DayPage::dayChanged(QDate date)
+{
     m_day = date;
 }
 

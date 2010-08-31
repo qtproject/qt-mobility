@@ -60,7 +60,10 @@ MonthPage::MonthPage(QWidget *parent)
     QFormLayout *mainlayout = new QFormLayout(this);
 
     m_managerComboBox = new QComboBox(this);
-    m_managerComboBox->addItems(QOrganizerItemManager::availableManagers());
+    foreach (const QString& manager, QOrganizerItemManager::availableManagers()) {
+        if (manager != "invalid" && manager != "skeleton")
+            m_managerComboBox->addItem(manager);
+    }
     mainlayout->addRow("Backend:", m_managerComboBox);
     connect(m_managerComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(backendChanged(const QString &)));
 
@@ -84,18 +87,6 @@ MonthPage::MonthPage(QWidget *parent)
     m_itemList->setFocusPolicy(Qt::NoFocus);
     mainlayout->addRow(m_itemList);
     connect(m_itemList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(itemDoubleClicked(QListWidgetItem*)));
-
-#ifndef Q_OS_SYMBIAN
-    // Add push buttons for non-Symbian platforms as they do not support soft keys
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-    QPushButton *addEventButton = new QPushButton("Add Event", this);
-    buttonLayout->addWidget(addEventButton);
-    connect(addEventButton,SIGNAL(clicked()),this, SIGNAL(addNewEvent()));
-    QPushButton *addTodoButton = new QPushButton("Add Todo", this);
-    buttonLayout->addWidget(addTodoButton);
-    connect(addTodoButton,SIGNAL(clicked()),this, SIGNAL(addNewTodo()));
-    mainlayout->addRow(buttonLayout);
-#endif
 
     setLayout(mainlayout);
 
@@ -161,7 +152,7 @@ void MonthPage::backendChanged(const QString &managerName)
 
 void MonthPage::addEvents()
 {
-    m_itemsList.clear();
+    QList<QOrganizerItem> items;
     
     // Create a large number of events asynchronously
     for(int index=0 ; index <  100 ; index++) {
@@ -175,11 +166,11 @@ void MonthPage::addEvents()
         timeRange.setStartDateTime(QDateTime::currentDateTime().addDays(index));
         item.saveDetail(&timeRange);
         
-        m_itemsList.append(item);
+        items.append(item);
     }
     
     // Now create a save request and execute it
-    m_saveReq.setItems(m_itemsList);
+    m_saveReq.setItems(items);
     m_saveReq.setManager(m_manager);
     m_saveReq.start();
 }

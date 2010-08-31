@@ -70,7 +70,6 @@ public:
 public Q_SLOTS:
     void activateMonthPage();
     void activateDayPage();
-    void activateNewDayPage(QDate date);
     void activateEditPage(const QOrganizerItem &item);
     void addNewEvent();
     void addNewTodo();
@@ -78,6 +77,8 @@ public Q_SLOTS:
     void updateSelectedDay(const QDate& date);
 
 private:
+    void buildMenu();
+
     QDate m_currentDate;
     QOrganizerItemManager *m_manager;
     QStackedWidget *m_stackedWidget;
