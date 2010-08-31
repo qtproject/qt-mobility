@@ -13,7 +13,7 @@
 # Nokia Corporation - initial contribution.
 #
 # Contributors:
-# 
+#
 # Description:
 #
 #
@@ -36,7 +36,7 @@ iby.sources = cntmodel.iby cntplsql.iby
 for(iby, iby.sources):BLD_INF_RULES.prj_exports += "groupsql/$$iby $$deploy.path$$iby.path/$$iby"
 
 # Headers
-BLD_INF_RULES.prj_exports = "./inc/cntdef.h APP_LAYER_PUBLIC_EXPORT_PATH(cntdef.h)"\
+BLD_INF_RULES.prj_exports += "./inc/cntdef.h APP_LAYER_PUBLIC_EXPORT_PATH(cntdef.h)"\
                             "./inc/cntdb.h APP_LAYER_PUBLIC_EXPORT_PATH(cntdb.h)"\
                             "./inc/cntdbobs.h APP_LAYER_PUBLIC_EXPORT_PATH(cntdbobs.h)"\
                             "./inc/cntfield.h APP_LAYER_PUBLIC_EXPORT_PATH(cntfield.h)"\
@@ -52,10 +52,9 @@ BLD_INF_RULES.prj_exports = "./inc/cntdef.h APP_LAYER_PUBLIC_EXPORT_PATH(cntdef.
                             "./inc/cntmodel.rh APP_LAYER_PLATFORM_EXPORT_PATH(cntmodel.rh)"\
                             "./inc/cntdef.hrh APP_LAYER_PUBLIC_EXPORT_PATH(cntdef.hrh)"\
                             "./cntvcard/cntvcard.h APP_LAYER_PUBLIC_EXPORT_PATH(cntvcard.h)"\
-                            "./inc/cntviewstore.h APP_LAYER_PLATFORM_EXPORT_PATH(cntviewstore.h)"\
-                            "./inc/cntpredictivesearch.h APP_LAYER_PUBLIC_EXPORT_PATH(cntpredictivesearch.h)"
+                            "./inc/cntviewstore.h APP_LAYER_PLATFORM_EXPORT_PATH(cntviewstore.h)"
 
 BLD_INF_RULES.prj_exports += "./inc/cntphonenumparser.h APP_LAYER_PLATFORM_EXPORT_PATH(cntphonenumparser.h)"\
                              "./inc/cntviewsortpluginbase.h APP_LAYER_PLATFORM_EXPORT_PATH(cntviewsortpluginbase.h)"\
                              "./inc/cntsyncecom.h APP_LAYER_PLATFORM_EXPORT_PATH(cntsyncecom.h)"\
-			 
+
