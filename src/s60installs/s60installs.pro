@@ -41,6 +41,14 @@ isEmpty(QT_LIBINFIX):symbian {
         EPOCROOT50 = $$(EPOCROOT50)
     }
 
+    #Symbian^3 and beyond requires special package flags
+    #we cannot use S60_VERSION == 5.2 as Qt 4.6.x does not define it yet
+    #see $QTDIR/mkspecs/common/symbian/symbian.conf for details
+    exists($${EPOCROOT}epoc32/release/winscw/udeb/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/data/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/release/armv5/lib/libstdcppv5.dso) {
+        pkg_version = $$replace(VERSION,"\.",",")
+        qtmobilitydeployment.pkg_prerules += "$${LITERAL_HASH}{\"QtMobility\"},(0x2002AC89),$${pkg_version},TYPE=SA,RU,NR"
+    }
+
     contains(mobility_modules, messaging): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtMessaging.dll
     
@@ -219,7 +227,7 @@ isEmpty(QT_LIBINFIX):symbian {
         qtmobilitydeployment.pkg_postrules += contacts
 
         pluginstubs += \
-            "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbian/qmakepluginstubs/qtcontacts_symbian.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\qtcontacts_symbian.qtplugin\"" \\
+            "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbian/qmakepluginstubs/qtcontacts_symbian.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\qtcontacts_symbian.qtplugin\"" \
             "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbian/qmakepluginstubs/qtcontacts_serviceactionmanager.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\qtcontacts_serviceactionmanager.qtplugin\""
 
         contains(symbiancntsim_enabled, yes) {

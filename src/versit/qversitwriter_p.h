@@ -72,7 +72,7 @@ QTM_BEGIN_NAMESPACE
 
 class QVersitDocumentWriter;
 
-class Q_AUTOTEST_EXPORT QVersitWriterPrivate : public QThread
+class QM_AUTOTEST_EXPORT QVersitWriterPrivate : public QThread
 {
     Q_OBJECT
 

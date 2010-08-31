@@ -1,16 +1,17 @@
 INCLUDEPATH += ../../../src/serviceframework
 INCLUDEPATH += ../../../src/global
+INCLUDEPATH += .
 
 TARGET  = $$qtLibraryTarget(declarative_serviceframework)
 TEMPLATE = lib
-CONFIG += plugin
+CONFIG += qt plugin
 TARGETPATH = QtMobility/serviceframework
 PLUGIN_TYPE = declarative
 include(../../../common.pri)
 
 QT += declarative
 
-HEADERS += qdeclarativeservice.h
+HEADERS += qdeclarativeservice_p.h
 
 SOURCES += qdeclarativeservice.cpp \
            serviceframework.cpp 
