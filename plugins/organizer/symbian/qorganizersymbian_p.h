@@ -69,8 +69,6 @@
 #include "qorganizeritemmanager.h"
 #include "qorganizeritemmanagerengine.h"
 #include "qorganizeritemmanagerenginefactory.h"
-#include "qorganizeritemdetaildefinition.h"
-#include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
 
 #include "organizeritemtransform.h"
@@ -132,6 +130,8 @@ public:
     int managerVersion() const;
 
     QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerItem> itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint,QOrganizerItemManager::Error* error) const;
+
     QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const;
     QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
@@ -144,9 +144,6 @@ public:
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const;
-    QOrganizerItemDetailDefinition detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const;
-    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerItemManager::Error* error);
-    bool removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error);
 
     /* Capabilities reporting */
     bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const;
@@ -171,9 +168,7 @@ public: // MCalChangeCallBack2
 public: 
     /* Util functions */
     static bool transformError(TInt symbianError, QOrganizerItemManager::Error* qtError);
-    CCalEntryView* entryView();
-    void deleteItemL(const QOrganizerItemLocalId& organizeritemId,
-            int& sucessCount);
+    void deleteItemL(const QOrganizerItemLocalId& organizeritemId);
     void saveItemL(QOrganizerItem *item, QOrganizerItemChangeSet *changeSet = 0);
     void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, 
             const QOrganizerItemFetchHint& fetchHint) const;
@@ -182,15 +177,12 @@ public:
         const QList<QOrganizerItemSortOrder>& sortOrders) const;
     
 private:
+    CCalEntry* entryForItemOccurrenceL(QOrganizerItem *item, bool &isNewEntry) const;
+    CCalEntry* entryForItemL(QOrganizerItem *item, bool &isNewEntry) const;
+    CCalEntry* findEntryL(QOrganizerItemLocalId localId, QString manageruri) const;
+    CCalEntry* findEntryL(const TDesC8& globalUid) const;
+    CCalEntry* findParentEntryLC(QOrganizerItem *item, const TDesC8& globalUid) const;
     void removeItemL(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet *changeSet);
-    void modifyDetailDefinitionsForEvent() const;
-    void modifyDetailDefinitionsForEventOccurrence() const;
-    void modifyDetailDefinitionsForTodo() const;
-    void modifyDetailDefinitionsForTodoOccurrence() const;
-    void modifyDetailDefinitionsForNote() const;
-    void modifyDetailDefinitionsForJournal() const;
-    CCalEntry* createEntryToSaveItemInstanceL(QOrganizerItem *item);
-    bool checkForValidParentEntryL(QOrganizerItem *item , CCalEntry *parentEntry);
 	
 private:
     QOrganizerItemSymbianEngineData *d;

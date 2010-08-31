@@ -41,6 +41,30 @@
 #include "organizeritemlocationtransform.h"
 #include "qorganizeritemlocation.h"
 
+void OrganizerItemLocationTransform::modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const
+{
+    // Create a detail definition
+    QOrganizerItemDetailDefinition d;
+    d.setName(QOrganizerItemLocation::DefinitionName);
+    QOrganizerItemDetailFieldDefinition f;
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    QMap<QString, QOrganizerItemDetailFieldDefinition> fields;
+#ifdef SYMBIAN_CALENDAR_V2
+    fields.insert(QOrganizerItemLocation::FieldGeoLocation, f);
+#endif
+    fields.insert(QOrganizerItemLocation::FieldLocationName, f);
+    d.setFields(fields);
+    d.setUnique(true);
+
+    // Replace default detail definition with our own
+    foreach (QString itemTypeName, schemaDefs.keys()) {
+        QMap<QString, QOrganizerItemDetailDefinition> details = schemaDefs.value(itemTypeName);
+        if (details.contains(d.name()))
+            schemaDefs[itemTypeName].insert(d.name(), d);
+    }    
+}
+
 void OrganizerItemLocationTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
 	QString locationName = toQString(entry.LocationL());

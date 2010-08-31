@@ -212,7 +212,13 @@ class QLandmarkImportRequestPrivate : public QLandmarkAbstractRequestPrivate
 {
 public:
     QLandmarkImportRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr)
+        : QLandmarkAbstractRequestPrivate(mgr),
+        device(0),
+        fileName(QString()),
+        format(QString()),
+        option(QLandmarkManager::IncludeCategoryData),
+        categoryId(QLandmarkCategoryId()),
+        landmarkIds(QList<QLandmarkId>())
     {
         type = QLandmarkAbstractRequest::ImportRequest;
     }
@@ -229,7 +235,12 @@ class QLandmarkExportRequestPrivate : public QLandmarkAbstractRequestPrivate
 {
 public:
     QLandmarkExportRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr)
+        : QLandmarkAbstractRequestPrivate(mgr),
+          device(0),
+          fileName(QString()),
+          format(QString()),
+          option(QLandmarkManager::IncludeCategoryData),
+          landmarkIds(QList<QLandmarkId>())
     {
         type = QLandmarkAbstractRequest::ExportRequest;
     }

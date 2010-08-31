@@ -77,14 +77,12 @@ void QGeoSearchReplyNokia::networkFinished()
     }
 
     QGeoCodeXmlParser parser;
-
     if (parser.parse(m_reply)) {
         // TODO trim results based on bounds
         setPlaces(parser.results());
         setFinished(true);
     } else {
-        // add a qWarning with the actual parser.errorString()
-        setError(QGeoSearchReply::ParseError, "The response from the service was not in a recognisable format.");
+        setError(QGeoSearchReply::ParseError,parser.errorString());
     }
 
     m_reply->deleteLater();

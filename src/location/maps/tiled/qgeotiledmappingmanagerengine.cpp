@@ -79,8 +79,6 @@ QGeoMapData* QGeoTiledMappingManagerEngine::createMapData(QGraphicsGeoMap *geoMa
     return new QGeoTiledMapData(this, geoMap);
 }
 
-void QGeoTiledMappingManagerEngine::removeMapData(QGeoMapData* mapData) {}
-
 /*!
     Returns a list of the image formats supported by this QGeoTiledMappingManagerEngine
     instance.

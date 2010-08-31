@@ -54,8 +54,6 @@
 #include <QDebug>
 
 #define LARGE_TILE_DIMENSION 256
-#define PI 3.14159265
-#include <math.h>
 
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
@@ -118,11 +116,12 @@ QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMa
 
     QNetworkRequest netRequest((QUrl(rawRequest))); // The extra pair of parens disambiguates this from a function declaration
     netRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
+    netRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
     m_cache->metaData(netRequest.url()).setLastModified(QDateTime::currentDateTime());
 
     QNetworkReply* netReply = m_nam->get(netRequest);
 
-    QGeoTiledMapReply* mapReply = new QGeoMapReplyNokia(netReply, request, this);
+    QGeoTiledMapReply* mapReply = new QGeoMapReplyNokia(netReply, request);
 
     // TODO goes badly on linux
     //qDebug() << "request: " << QString::number(reinterpret_cast<int>(mapReply), 16) << " " << request.row() << "," << request.column();
@@ -146,7 +145,11 @@ QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapReques
     requestString += '/';
     requestString += sizeToStr(tileSize());
     requestString += '/';
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    requestString += "png8";
+#else
     requestString += "png";
+#endif
 
     if (!m_token.isEmpty()) {
         requestString += "?token=";

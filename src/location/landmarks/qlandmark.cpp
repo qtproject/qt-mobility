@@ -56,6 +56,10 @@
 #include <QVariant>
 #include <QStringList>
 
+#ifdef LANDMARKPRIVATE_DEBUG
+#include <QDebug>
+#endif
+
 QTM_USE_NAMESPACE
 
 // ----- QLandmarkPrivate -----
@@ -129,6 +133,21 @@ QLandmarkPrivate& QLandmarkPrivate::operator= (const QLandmarkPrivate & other)
 
 bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
 {
+
+#ifdef LANDMARKPRIVATE_DEBUG
+    qDebug() << "==" << (QGeoPlacePrivate::operator== (other));
+    qDebug() << "name:" << (name == other.name);
+    qDebug() << "description:" <<  (description == other.description);
+    qDebug() << "iconUrl:" << (iconUrl == other.iconUrl);
+    qDebug() << "radius:" <<  (radius == other.radius);
+    qDebug() << "phoneNumber:" << (phoneNumber == other.phoneNumber);
+    qDebug() << "url:" << (url == other.url);
+    qDebug() << "categoryIds:" << (categoryIds == other.categoryIds);
+    qDebug() << "managerAttributes:" << (managerAttributes == other.managerAttributes);
+    qDebug() << "customAttributes:" << (customAttributes == other.customAttributes);
+    qDebug() << "id" << (id == other.id);
+#endif
+
     return (QGeoPlacePrivate::operator== (other)
             && (name == other.name)
             && (description == other.description)
@@ -153,10 +172,10 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
            of some significance.
 
 
-    Each landmark consists of a number of properties such as name,
-    coordinates, description etc.  Landmarks may also be assigned a set of
-    generic attributes which may be accessed and modified by using the attribute()
-    and setAttribute() functions.
+    Each landmark consists of a number of core properties such as name, coordinates,
+    description etc accessible through standard member functions.  For
+    information on accessing landmark properties through the attributes function
+    see \l {Landmark Attributes}.
 
     Each QLandmark may be associated with zero or more categories.
     A category  defines a type of landmark such as restaurant or

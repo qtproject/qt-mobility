@@ -19,31 +19,17 @@
 #ifndef __CPCSKEYMAP_H__
 #define __CPCSKEYMAP_H__
 
-
-// If this macro is defined, Orbit code is used to build the keymap.
-//
-// If macro is not defined, a hardcoded keymap is used. That code does not
-// crash, but it supports just a limited range of characters.
-#define USE_ORBIT_KEYMAP
-
-// If this macro is defined, the hardcoded keymap contains also Thai characters
-#define THAI_KEYMAP
-
 // INCLUDES
 #include <QLocale>
-#if defined(USE_ORBIT_KEYMAP)
 #include <QList>
 #include <hbinputdef.h>	// HbKeyboardType
 #include <hbinputlanguage.h>
-#endif
 #include <e32base.h>
 
 // FORWARD DECLARATIONS
 class QString;
 class QChar;
-#if defined(USE_ORBIT_KEYMAP)
 class HbKeymap;
-#endif
 
 
 // CLASS DECLARATION
@@ -86,31 +72,24 @@ NONSHARABLE_CLASS(CPcsKeyMap) : public CBase
 							  QString& aLowerLimit,
 							  QString& aUpperLimit) const;
 
-#if defined(USE_ORBIT_KEYMAP)
 		/*
 		 * Return the separator character.
 		 */
 		QChar Separator() const;
-#endif
 
 	public: // Pure virtual functions
 		virtual const QChar ArrayIndexToMappedChar(TInt aArrayIndex) const = 0;
-#if !defined(USE_ORBIT_KEYMAP)
-		virtual const QChar UseHardcodedKeyMap(const QChar input) const = 0;
-#endif
 
 	private: // Pure virtual functions
 		virtual TInt ComputeValue(QString aString,
 								  TBool aUpperLimit,
 								  QString& aValue) const = 0;
 
-#if defined(USE_ORBIT_KEYMAP)
 	protected: // Virtual functions
 		virtual QList<HbInputLanguage> SelectLanguages();
 
 	private: // Virtual functions
 		virtual void SetHardcodedCharacters();
-#endif
 
 	private: // Virtual functions
 		/**
@@ -130,14 +109,9 @@ NONSHARABLE_CLASS(CPcsKeyMap) : public CBase
 		/**
 		 * Second phase constructor
 		 */
-#if defined(USE_ORBIT_KEYMAP)
 		void ConstructL(HbKeyboardType aKeyboardType);
-#else
-		void ConstructL();
-#endif
 
 	private: // New functions
-#if defined(USE_ORBIT_KEYMAP)
 		void InitKeyMappings();
 
 		/**
@@ -162,9 +136,7 @@ NONSHARABLE_CLASS(CPcsKeyMap) : public CBase
          */
 		TInt ReadKeymapCharacters(HbKeyboardType aKeyboardType,
                                   const HbKeymap& aKeymap);
-#endif // #if defined(USE_ORBIT_KEYMAP)
 
-#if defined(USE_ORBIT_KEYMAP)
 	protected:
 		// One QString for each key of the keyboard.
 		// Each contains all the characters that can originate from that key,
@@ -189,7 +161,6 @@ NONSHARABLE_CLASS(CPcsKeyMap) : public CBase
 
 		// Unmapped (unknown) characters are mapped to this
 		const QChar iPadChar;
-#endif // #if defined(USE_ORBIT_KEYMAP)
 
 		// Largest amount of keypresses that can be stored in predictive search
 		// table, using this keyboard.

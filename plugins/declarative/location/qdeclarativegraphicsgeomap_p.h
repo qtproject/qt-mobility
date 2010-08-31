@@ -85,7 +85,7 @@ private:
     static void object_clear(QDeclarativeListProperty<QGeoMapObject> *prop);
 
     QDeclarativeCoordinate* m_center;
-    Q_DISABLE_COPY(QDeclarativeGraphicsGeoMap);
+    Q_DISABLE_COPY(QDeclarativeGraphicsGeoMap)
 };
 
 QTM_END_NAMESPACE

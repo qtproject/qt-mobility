@@ -239,6 +239,15 @@ void BearerMonitor::updateConfigurations()
         }
     }
 
+    QNetworkConfiguration defaultConfiguration = manager.defaultConfiguration();
+    if (defaultConfiguration.type() == QNetworkConfiguration::UserChoice) {
+        QTreeWidgetItem *item = itemMap.take(defaultConfiguration.identifier());
+        if (item)
+            updateItem(item, defaultConfiguration);
+        else
+            configurationAdded(defaultConfiguration);
+    }
+
     foreach (const QString &id, itemMap.keys())
         delete itemMap.value(id);
 }

@@ -161,21 +161,19 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& ident)
 QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier& typeIdent, const QString& location)
 {
     QLocalSocket* socket = new QLocalSocket();
-    //location format:  protocol:address    
-    QString address = location.section(':', 1, 1);
-    socket->connectToServer(address);
+    socket->connectToServer(location);
     if (!socket->isValid()) {
         qWarning() << "Cannot connect to remote service, trying to start service " << location;
         // try starting the service by hand
         QProcess *service = new QProcess();
-        service->start(address);
+        service->start(location);
         service->waitForStarted();
         if(service->error() != QProcess::UnknownError || service->state() != QProcess::Running) {
-            qWarning() << "Unable to start service " << address << service->error() << service->errorString() << service->state();
+            qWarning() << "Unable to start service " << location << service->error() << service->errorString() << service->state();
             return false;
         }
         int i;
-        socket->connectToServer(address);
+        socket->connectToServer(location);
         for(i = 0; !socket->isValid() && i < 100; i++){
             if(service->state() != QProcess::Running){
                 qWarning() << "Service died on startup" << service->errorString();
@@ -190,7 +188,7 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
             tm.tv_nsec = 1000000;
             nanosleep(&tm, 0x0);
 #endif
-            socket->connectToServer(address);
+            socket->connectToServer(location);
             // keep trying for a while
         }
         qDebug() << "Number of loops: "  << i;

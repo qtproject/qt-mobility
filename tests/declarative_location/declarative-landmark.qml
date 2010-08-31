@@ -42,8 +42,6 @@ import "content" as Content
 import Qt 4.7
 import QtMobility.location 1.1
 
-
-
 Rectangle {
     id: page
     width: 350
@@ -68,45 +66,112 @@ Rectangle {
         id: lmcat
         name: "just to see if this categoary element instantiates"
     }
-    LandmarkNameFilter {
-	id: townFilter
-	name: "Orgrimmar" // needs to be exact match
+    LandmarkIntersectionFilter {
+        id : landmarkIntersectionFilterInstantiation
     }
-    LandmarkProximityFilter {
-	id: myPositionFilter
-	longitude: positionSource.position.longitude
-	latitude: positionSource.position.latitude
-	radius: 100
+    LandmarkUnionFilter {
+        id : landmarUnionFilterInstantiation
     }
-    LandmarkProximityFilter {
-	id: existingCityPositionFilter
-	longitude: 12
-	latitude: 85
-	radius: 100 // metres
-    }
-    // The model where data stems
-    LandmarkSource {
-        id: lmsource
-        active: true
-	nameFilter: townFilter
-	//proximityFilter: myPositionFilter
-	//proximityFilter: existingCityPositionFilter
-        maxItems: 15
+    LandmarkFilter {
+        id : landmarkFilterName
+	type: LandmarkFilter.Name
+	//value: "Perth"
+	value: "Landmark 1"
     }
     
-    LandmarkCategorySource {
-         id: lmcatsource
-         active: true
+    LandmarkFilter {
+        id: landmarkFilterProximity
+	type: LandmarkFilter.Proximity
+	value: Position {
+            id: position
+	    longitude:  10
+	    latitude: 20
+	    radius: 500
+	}
     }
+    
+    LandmarkUnionFilter {
+        id : landmarkUnionFilterNameAndProxy
+	LandmarkFilter {
+	    type: LandmarkFilter.Name
+	    value: "Landmark 1"
+        }
+	LandmarkFilter {
+	    type: LandmarkFilter.Proximity
+	    value: Position {
+	        longitude:  10
+	        latitude: 20
+	        radius: 50000
+	    }
+        }
+    }
+    
+    LandmarkIntersectionFilter {
+        id : landmarkIntersectionFilterNameAndProxy
+	LandmarkFilter {
+	    type: LandmarkFilter.Name
+	    value: "Landmark 1"
+        }
+	LandmarkFilter {
+	    type: LandmarkFilter.Proximity
+	    value: Position {
+	        longitude:  10
+	        latitude: 20
+	        radius: 500
+	    }
+        }
+    }
+    
+    
+    // The model where data stems
+    LandmarkModel {
+        id: lmmodel
+        autoUpdate: true
+	
+	//filter: landmarkFilterName
+	//filter: landmarkFilterProximity
+	filter: landmarkUnionFilterNameAndProxy
+	
+	/*
+	filter: LandmarkIntersectionFilter {
+	    LandmarkFilter {
+	        type: LandmarkFilter.Proximity
+		value: 1500
+	    }
+	    LandmarkUnionFilter {
+	        LandmarkIntersectionFilter {
+		    LandmarkFilter {
+		        type: LandmarkFilter.Name
+			value: "Brisbane"
+		    }
+		    LandmarkFilter {
+	                type: LandmarkFilter.Name
+			value: "Gold Coast"
+		    }
+		    
+		    
+		}
+	    }
+	} // LandmarkIntersectionFilter
+	*/
+	
+        limit: 15
+	offset: 0
+    }
+    
+    //LandmarkCategoryModel {
+    //    id: lmcatmodel
+    //     autoUpdate: true
+    //	}
     
     // The view which lays the overall view
     ListView {
         id: mainList
         
-        model: lmsource
+        model: lmmodel
         delegate: landmarklistdelegate
         
-        //model: lmcatsource
+        //model: lmcatmodel
         //delegate: categorylistdelegate
         
         anchors {top: title.bottom; left: title.left}
@@ -123,8 +188,8 @@ Rectangle {
 	Item {
 	    width: 200; height: 50
 	    Text { id: nameField; text: name }
-	    //Text { id: nameFiedld; text: lmsource.nameFilter.name }
-	    Text { id: phoneField; text: "  tel:"  + phone; anchors.left: nameField.right }
+	    //Text { id: nameFiedld; text: lmmodel.nameFilter.name }
+	    Text { id: phoneField; text: "  tel:"  + phoneNumber; anchors.left: nameField.right }
 	    Text { id: latitudeField; text: "  lat:"  + latitude;  anchors.left: phoneField.right }
 	    Text { id: longitudeField; text: "  lon:"  + longitude;  anchors.left: latitudeField.right }
 	}
@@ -137,8 +202,6 @@ Rectangle {
 	}
     }
 
-
-
     /*
     Column {
         id: data
@@ -147,9 +210,8 @@ Rectangle {
         Text {text: "name: " + lm.name}
         Text {text: "<==== Landmark category ====>"}
         Text {text: "name: " + lmcat.name}
-        Text {text: "<==== LandmarkSource ====>"}
-        Text {text: "name: " + lmsource.name}
-        Text {text: "active: " + lmsource.active}
+        Text {text: "<==== LandmarkModel ====>"}
+        Text {text: "autoUpdate: " + lmmodel.autoUpdate}
         
     }
     
