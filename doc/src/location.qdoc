@@ -289,6 +289,164 @@ a datastore contains a significantly large number of landmarks or if the datasto
 
 For more details see the \l {Landmark Examples} {Landmark Examples} page.
 
+\section2 Landmark Attributes
+
+    The attribute system for landmarks is intended to be expose advanced
+    functionality provided a particular manager supports them.
+    Each landmark consists of a number of attributes such as name, coordinates,
+    description etc. These attributes can be divided into 3 distinct types.
+
+    \list
+    \o Core attributes:  These are core properties common to all managers.
+    These are accessible through standard member functions.  They are also available through
+    the generic attributes() function via a key name.  e.g. A landmark name is retrievable
+    through landmark.name() or landmark.attribute("name").  The return type of the attributes() function
+    is a QVariant.
+    The following tables provides the member functions and their equivalent attribute keys.
+
+    \endlist
+
+    Landmark Attributes
+    \table
+    \header
+        \o Member function
+        \o Attribute key
+        \o Member function
+        \o Attribute key
+    \row
+        \o address().country()
+        \o "country"
+        \o address().countryCode()
+        \o "countryCode"
+    \row
+        \o address().county()
+        \o "county"
+        \o address().district()
+        \o "district"
+    \row
+        \o address().postCode()
+        \o "postCode"
+        \o address().state()
+        \o "state"
+    \row
+        \o address().street()
+        \o "street"
+        \o address().streetNumber()
+        \o "streetNumber"
+    \row
+        \o coordinate().latitude()
+        \o "latitude"
+        \o coordinate().longitude()
+        \o "longitude"
+    \row
+        \o description()
+        \o "description"
+        \o iconUrl()
+        \o "iconUrl"
+    \row
+        \o name()
+        \o "name"
+        \o phoneNumber()
+        \o "phoneNumber"
+    \row
+        \o radius()
+        \o "radius"
+        \o url()
+        \o "url"
+    \endtable
+
+    Category Attributes
+    \table
+    \header
+        \o Member function
+        \o AttributeKey
+        \o Member function
+        \o AttributeKey
+    \row
+        \o iconUrl()
+        \o "iconUrl"
+        \o name()
+        \o "name"
+    \endtable
+
+    \list
+    \o Extended attributes:  These are attributes that a particular manager provides
+    above those of the core attributes.  The keys to be used are dependent upon the manager.
+    The extended attributes may be accessed using the attribute() and setAttribute() functions,
+    just as the core attributes are.
+    \o Custom attributes:  These are attributes that a client application can use to associate
+    its own domain specific data with a landmark.  These are accessible through the customAttribute() and
+    setCustomAttribute() functions.
+\endlist
+
+    The combination of core and extended attributes are regarded as \c manager
+    attributes. These are accessible through the attribute() and setAttribute()
+    functions. Custom attributes are conceptually separate from the manager
+    attributes since they are not predefined and thus are accessed using the
+    customAttribute() and setCustomAttribute() functions instead. There is an
+    important semantic difference between manager and custom attributes in that
+    setting an invalid QVariant to a manager attribute will set the attribute
+    value to a default value, e.g setAttribute("name", QVariant()) will assign
+    an empty string to name. Setting an invalid QVariant on a custom attribute
+    will remove that attribute from the landmark, eg
+    setCustomAttribute("price", QVariant()) will remove the price attribute
+    from the landmark. The concept of attributes also applies to categories.
+
+    A QLandmarkManager can be queried as to whether it supports extended or
+    custom attributes by using the QLandmarkManager::isFeatureSupported()
+    function. Extended and custom attributes may also be enabled and disabled
+    by using the QLandmarkManager::setExtendedAttributesEnabled() and
+    QLandmarkManager::setCustomAttributesEnabled() function.  When fetching
+    a set of landmarks, the landmark object will contain extended or custom attributes
+    attributes depending upon whether these are enabled in the manager.
+
+    The manager attribute keys that are available for use can be retrieved by using
+    the QLandmarkManager::landmarkAttributeKeys() function.  Only the core attribute keys
+    are returned if extended attributes are disabled.  In similar fashion, attribute keys
+    for categories can be retrieved by using QLandmarkManager::categoryAttributeKeys().
+    Custom attributes are added on landmark by landmark basis so the manager
+    cannot provide a set of custom attribute keys.
+
+    Filtering on various attributes is facilitated by the QLandmarkAttributeFilter.
+    The attribute filter be used to search for a set of attributes by ANDing them all together
+    or by ORing them.  The attribute filter may only be used to search one type of attributes,
+    i.e. either manager attributes or custom attributes.  Not all attributes are searchable,
+    and the ones that can be searched are backend specific.  The following set of attributes
+    are currently searchable for the following managers
+    \table
+    \header
+        \o Manager Name
+        \o Platform
+    \row
+        \o  com.nokia.qt.landmarks.engines.symbian
+        \o  Symbian
+    \row
+        \o com.nokia.qt.landmarks.engines.sqlite
+        \o Maemo 5, windows, linux
+    \endtable
+
+    \table
+    \header
+        \o {3,1} Searchable attributes
+    \row
+        \o "city"
+        \o "country"
+        \o "county"
+    \row
+        \o "countryCode"
+        \o "description"
+        \o "district"
+    \row
+        \o "name"
+        \o "state"
+        \o "street"
+    \row
+        \o "phoneNumber"
+        \o "postCode"
+        \o
+    \endtable
+
+
 \section2 Landmark classes
 
 \section3 \bold{Main Landmark Classes}

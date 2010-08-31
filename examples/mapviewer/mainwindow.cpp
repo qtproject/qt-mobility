@@ -394,7 +394,8 @@ void MapWidget::wheelEvent(QGraphicsSceneWheelEvent* event)
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
         m_serviceProvider(0),
-        m_popupMenu(0)
+        m_popupMenu(0),
+        fullscreen(false)
 {
     setWindowTitle(tr("Map Viewer Demo"));
 
@@ -467,6 +468,66 @@ void MainWindow::error(QNetworkSession::SessionError error)
     }
 }
 
+void MainWindow::sceneSelectionChanged()
+{
+    if (!m_fullScreenButton->isSelected())
+        return;
+
+    m_fullScreenButton->setSelected(false);
+
+    // toggle fullscreen mode
+    fullscreen = !fullscreen;
+
+    // obtain a flat item list, containing every widget
+    QList<QLayoutItem*> items;
+    items << m_layout;
+
+    // Unroll the list until it is flat. start by assuming it isn't
+    bool flat = false;
+    while (!flat) {
+        QList<QLayoutItem*> newItems;
+
+        // Before the actual analysis, assume the list is flat.
+        flat = true;
+
+        foreach(QLayoutItem *item, items) {
+            QLayout * layout = item->layout();
+            if (layout) {
+                // We have a sub-layout => list isn't flat
+                flat = false;
+
+                // loop through all items in that sub-layout
+                for (int i = 0; ; ++i) {
+                    QLayoutItem * subItem = layout->itemAt(i);
+                    if (!subItem) break;
+
+                    // add the sub-layout item to the new flat(ter) list
+                    newItems << subItem;
+                }
+            }
+            else {
+                // not a layout? simply pass it through
+                newItems << item;
+            }
+        }
+
+        //
+        items = newItems;
+    }
+
+    foreach(QLayoutItem *item, items) {
+        QWidget * widget = item->widget();
+
+        if (widget != m_qgv)
+            widget->setHidden(fullscreen);
+    }
+    m_layout->activate();
+
+    // TODO: instead of copypasting from resizeEvent, trigger the resizing on layout changes/qgv size changes.
+    m_qgv->setSceneRect(QRectF(QPointF(0.0, 0.0), m_qgv->size()));
+    m_mapWidget->resize(m_qgv->size());
+}
+
 void MainWindow::setupUi()
 {
     // setup exit menu for devices
@@ -488,11 +549,36 @@ void MainWindow::setupUi()
     createPixmapIcon();
 
     m_mapWidget = new MapWidget(m_mapManager);
-    m_qgv->scene()->addItem(m_mapWidget);
+    scene->addItem(m_mapWidget);
     //m_mapWidget->setCenter(QGeoCoordinate(52.5,13.0));
     //temporary change for dateline testing
     m_mapWidget->setCenter(QGeoCoordinate(-27.0, 152.0));
     m_mapWidget->setZoomLevel(5);
+
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    // make full-screen button
+
+    QPainterPath path;
+    const int gaps = 3;
+    const int innerwidth = 16;
+    const int innerheight = 8;
+    const int smallbox = 5;
+    path.addRect(0, 0, innerwidth+smallbox+3*gaps, innerheight+smallbox+3*gaps);
+    path.addRect(smallbox+2*gaps, gaps, innerwidth, innerheight);
+    path.addRect(gaps, 2*gaps+innerheight, smallbox, smallbox);
+
+    m_fullScreenButton = new QGraphicsPathItem(path); // TODO: make member
+    QPen pen;
+    pen.setWidth(2);
+    pen.setColor(QColor(0,0,0,96));
+    pen.setJoinStyle(Qt::MiterJoin);
+    m_fullScreenButton->setPen(pen);
+    m_fullScreenButton->setFlag(QGraphicsItem::ItemIsSelectable);
+
+    connect(scene, SIGNAL(selectionChanged()), this, SLOT(sceneSelectionChanged()));
+
+    scene->addItem(m_fullScreenButton);
+#endif
 
     // setup slider control
 
@@ -552,14 +638,22 @@ void MainWindow::setupUi()
     formLayout->addRow("Longitude", m_longitudeEdit);
 
     m_captureCoordsButton = new QToolButton();
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    m_captureCoordsButton->setText("Get coords");
+#else
     m_captureCoordsButton->setText("Capture coordinates");
+#endif
     m_captureCoordsButton->setCheckable(true);
 
     connect(m_captureCoordsButton, SIGNAL(toggled(bool)), m_mapWidget, SLOT(setMouseClickCoordQuery(bool)));
     connect(m_mapWidget, SIGNAL(coordQueryResult(QGeoCoordinate)), this, SLOT(updateCoords(QGeoCoordinate)));
 
     m_setCoordsButton = new QPushButton();
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    m_captureCoordsButton->setText("Set coords");
+#else
     m_setCoordsButton->setText("Set coordinates");
+#endif
 
     connect(m_setCoordsButton, SIGNAL(clicked()), this, SLOT(setCoordsClicked()));
 
@@ -578,6 +672,25 @@ void MainWindow::setupUi()
 
     layout->setRowStretch(0, 1);
     layout->setRowStretch(1, 0);
+#if 1
+    QGridLayout *topLayout = new QGridLayout();
+    QGridLayout *bottomLayout = new QGridLayout();
+
+    topLayout->setColumnStretch(0, 0);
+    topLayout->setColumnStretch(1, 1);
+
+    bottomLayout->setColumnStretch(0, 0);
+    bottomLayout->setColumnStretch(1, 1);
+
+    topLayout->addWidget(m_slider, 0, 0);
+    topLayout->addWidget(m_qgv, 0, 1);
+
+    bottomLayout->addLayout(mapControlLayout, 0, 0);
+    bottomLayout->addLayout(coordControlLayout, 0, 1);
+
+    layout->addLayout(topLayout,0,0);
+    layout->addLayout(bottomLayout,1,0);
+#else
     layout->setColumnStretch(0, 0);
     layout->setColumnStretch(1, 1);
 
@@ -585,6 +698,9 @@ void MainWindow::setupUi()
     layout->addWidget(m_qgv, 0, 1);
     layout->addLayout(mapControlLayout, 1, 0);
     layout->addLayout(coordControlLayout, 1, 1);
+#endif
+
+    m_layout = layout;
 
     widget->setLayout(layout);
     setCentralWidget(widget);
