@@ -123,6 +123,8 @@ private:
     
     bool isQwerty(const QString &pattern);
     
+    QString remZerosEndOfString(const QString &pattern) const;
+    
     QStringList qwertyTokens(const QString &pattern) const;
     
 private:
