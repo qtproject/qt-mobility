@@ -113,6 +113,7 @@ private Q_SLOTS:
     void queryResponseRootItem();
     void queryResponseFilter_data();
     void queryResponseFilter();
+    void queryResponseRootFileItems();
     void queryResponseValueColumnToVariant_data();
     void queryResponseValueColumnToVariant();
     void queryResponseValueColumnToString_data();
@@ -2454,6 +2455,40 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:lessThanEqual>"
                         "</rdfq:Condition>");
     } {
+        QGalleryFilter filter = QDocumentGallery::focalLength <= 1.9;
+
+        QTest::newRow("Image.focalLength <= 1.9")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:lessThanEqual>"
+                                "<rdfq:Property name=\"Image:FocalLength\"/>"
+                                "<rdf:Float>1.9</rdf:Float>"
+                            "</rdfq:lessThanEqual>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter = QDocumentGallery::focalLength > 0.25f;
+
+        QTest::newRow("Image.focalLength <= 0.25f")
+                << QString::fromLatin1("Image")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:greaterThan>"
+                                "<rdfq:Property name=\"Image:FocalLength\"/>"
+                                "<rdf:Float>0.25</rdf:Float>"
+                            "</rdfq:greaterThan>"
+                        "</rdfq:Condition>");
+    } {
         QGalleryFilter filter
                 = QDocumentGallery::dateTaken > QDateTime(QDate(2008, 06, 01), QTime(12, 5, 8));
 
@@ -2675,6 +2710,37 @@ void tst_QGalleryTrackerSchema::queryResponseFilter()
 
     QCOMPARE(arguments.queryArguments.count(), argumentCount);
     QCOMPARE(arguments.queryArguments.at(queryStringIndex), QVariant(queryString));
+}
+
+void tst_QGalleryTrackerSchema::queryResponseRootFileItems()
+{
+    QRegExp regExp(QLatin1String(
+            "<rdfq:Condition>"
+                "<rdfq:inSet>"
+                    "<rdfq:Property name=\"File:Path\"/>"
+                    "<rdf:String>.*</rdf:String>"
+                "</rdfq:inSet>"
+            "</rdfq:Condition>"));
+    regExp.setMinimal(true);
+
+    QGalleryTrackerResultSetArguments arguments;
+
+    QGalleryTrackerSchema schema(QLatin1String("File"));
+
+    QCOMPARE(
+            schema.prepareQueryResponse(
+                    &arguments,
+                    this,
+                    QGalleryQueryRequest::DirectDescendants,
+                    QString(),
+                    QGalleryFilter(),
+                    QStringList(),
+                    QStringList()),
+            int(QGalleryAbstractRequest::Succeeded));
+
+    QCOMPARE(arguments.queryArguments.count(), QT_FILE_QUERY_ARGUMENTS_COUNT);
+    QVERIFY(regExp.exactMatch(
+            arguments.queryArguments.at(QT_FILE_QUERY_STRING_POSITION).toString()));
 }
 
 void tst_QGalleryTrackerSchema::queryResponseValueColumnToVariant_data()

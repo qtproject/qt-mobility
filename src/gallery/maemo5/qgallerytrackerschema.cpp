@@ -344,20 +344,7 @@ namespace
     UpdateMask \
 }
 
-template <typename T> bool qt_writeValue(int *error, QXmlStreamWriter *xml, const QVariant &value)
-{
-    if (value.canConvert<QString>()) {
-        xml->writeStartElement(QLatin1String("rdf:String"));
-        xml->writeCharacters(value.toString());
-        xml->writeEndElement();
-
-        return true;
-    } else {
-        *error = QGalleryAbstractRequest::PropertyTypeError;
-
-        return false;
-    }
-}
+template <typename T> bool qt_writeValue(int *error, QXmlStreamWriter *xml, const QVariant &value);
 
 template <> bool qt_writeValue<QString>(int *, QXmlStreamWriter *xml, const QVariant &value)
 {
@@ -815,9 +802,7 @@ static QStringList qt_trackerRootPaths()
                         .split(QLatin1Char(';'), QString::SkipEmptyParts));
             }
         }
-   }
-
-    qDebug("Paths %s", qPrintable(paths.join(QLatin1String(";"))));
+    }
 
     return paths;
 }
