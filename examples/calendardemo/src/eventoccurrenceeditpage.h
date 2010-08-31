@@ -37,8 +37,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef EVENTEDITPAGE_H_
-#define EVENTEDITPAGE_H_
+#ifndef EVENTOCCURRENCEEDITPAGE_H_
+#define EVENTOCCURRENCEEDITPAGE_H_
 
 #include <QWidget>
 #include <QDate>
@@ -62,25 +62,18 @@ class QString;
 class QSpinBox;
 class QDateEdit;
 
-class EventEditPage : public QWidget
+class EventOccurrenceEditPage : public QWidget
 {
     Q_OBJECT
 
 public:
-    EventEditPage(QWidget *parent = 0);
-    ~EventEditPage();
+    EventOccurrenceEditPage(QWidget *parent = 0);
+    ~EventOccurrenceEditPage();
 
 public Q_SLOTS:
     void cancelClicked();
-    void saveClicked();
-    void eventChanged(QOrganizerItemManager *manager, const QOrganizerEvent &event);
-    void frequencyChanged(const QString&);
-    void countChanged(int);
-    void untilChanged(QDate);
-    void endConditionChanged(const QString&);
-    void alarmIndexChanged(const QString);
-    void setCountField();
-    void setRepeatUntilField();
+    void saveOrNextClicked();
+    void eventOccurrenceChanged(QOrganizerItemManager *manager, const QOrganizerEventOccurrence &eventOccurrence);
 
 Q_SIGNALS:
     void showDayPage();
@@ -90,19 +83,20 @@ protected: // from QWidget
 
 private:
     QOrganizerItemManager *m_manager;
-    QOrganizerEvent m_organizerEvent;
+    QOrganizerEventOccurrence m_organizerEventOccurrence;
     QList<QOrganizerItem> m_listOfEvents;
     QOrganizerItemSaveRequest *m_saveItemRequest;
-    QVBoxLayout *m_repeatControls;
+    QVBoxLayout *scrollAreaLayout;
     QAction *m_saveOrNextSoftKey;
-    QComboBox *m_alarmComboBox;
     QComboBox *m_typeComboBox;
     QLineEdit *m_subjectEdit;
     QDateTimeEdit *m_startTimeEdit;
     QDateTimeEdit *m_endTimeEdit;
-    QComboBox *m_endConditionComboBox;
     QSpinBox *m_countSpinBox;
     QDateEdit *m_repeatUntilDate;
+    int m_numOfEntiresToBeCreated;
+    bool m_countFieldAdded;
+    bool m_multipleEntries;
 };
 
-#endif // EVENTEDITPAGE_H_
+#endif // EVENTOCCURRENCEEDITPAGE_H_

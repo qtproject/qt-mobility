@@ -37,18 +37,18 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef EVENTEDITPAGE_H_
-#define EVENTEDITPAGE_H_
+
+#ifndef JOURNALEDITPAGE_H_
+#define JOURNALEDITPAGE_H_
 
 #include <QWidget>
 #include <QDate>
 #include <qmobilityglobal.h>
 #include <qorganizeritemid.h>
-#include <qorganizerevent.h>
+#include <qorganizerjournal.h>
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItemManager;
-class QOrganizerItemSaveRequest;
 class QOrganizerEvent;
 class QOrganizerItem;
 QTM_END_NAMESPACE
@@ -57,30 +57,20 @@ QTM_USE_NAMESPACE
 class QComboBox;
 class QLineEdit;
 class QDateTimeEdit;
-class QVBoxLayout;
-class QString;
-class QSpinBox;
-class QDateEdit;
 
-class EventEditPage : public QWidget
+class JournalEditPage : public QWidget
 {
     Q_OBJECT
 
 public:
-    EventEditPage(QWidget *parent = 0);
-    ~EventEditPage();
+    JournalEditPage(QWidget *parent = 0);
+    ~JournalEditPage();
 
 public Q_SLOTS:
     void cancelClicked();
     void saveClicked();
-    void eventChanged(QOrganizerItemManager *manager, const QOrganizerEvent &event);
-    void frequencyChanged(const QString&);
-    void countChanged(int);
-    void untilChanged(QDate);
-    void endConditionChanged(const QString&);
-    void alarmIndexChanged(const QString);
-    void setCountField();
-    void setRepeatUntilField();
+    void journalChanged(QOrganizerItemManager *manager, const QOrganizerJournal &journal);
+    void handleAlarmIndexChanged(const QString);
 
 Q_SIGNALS:
     void showDayPage();
@@ -90,19 +80,11 @@ protected: // from QWidget
 
 private:
     QOrganizerItemManager *m_manager;
-    QOrganizerEvent m_organizerEvent;
-    QList<QOrganizerItem> m_listOfEvents;
-    QOrganizerItemSaveRequest *m_saveItemRequest;
-    QVBoxLayout *m_repeatControls;
-    QAction *m_saveOrNextSoftKey;
-    QComboBox *m_alarmComboBox;
-    QComboBox *m_typeComboBox;
+    QOrganizerJournal m_organizerJournal;
     QLineEdit *m_subjectEdit;
-    QDateTimeEdit *m_startTimeEdit;
-    QDateTimeEdit *m_endTimeEdit;
-    QComboBox *m_endConditionComboBox;
-    QSpinBox *m_countSpinBox;
-    QDateEdit *m_repeatUntilDate;
+    QDateTimeEdit *m_timeEdit;
+    QComboBox *m_alarmComboBox;
+
 };
 
-#endif // EVENTEDITPAGE_H_
+#endif // JOURNALEDITPAGE_H_

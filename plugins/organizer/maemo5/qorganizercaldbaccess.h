@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,34 +39,47 @@
 **
 ****************************************************************************/
 
-#include "organizeritemdisplaylabeltransform.h"
-#include "qorganizeritemdisplaylabel.h"
+#ifndef QORGANIZERCALDBACCESS_H
+#define QORGANIZERCALDBACCESS_H
 
-void OrganizerItemDisplayLabelTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
-{
-    QString summary = toQString(entry.SummaryL());
-    if (!summary.isEmpty())
-        item->setDisplayLabel(summary);
-}
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-void OrganizerItemDisplayLabelTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
-{
-    if (QOrganizerItemType::TypeNote !=item.type()) {
-        if (!item.displayLabel().isEmpty())
-            entry->SetSummaryL(toPtrC16(item.displayLabel()));  
-    }
-}
+#include "qtorganizer.h"
+#include <QtSql>
 
-QString OrganizerItemDisplayLabelTransform::detailDefinitionName()
-{
-    return QOrganizerItemDisplayLabel::DefinitionName;    
-}
+QTM_USE_NAMESPACE
 
-// Modify base schema to remove display label support for notes
-void OrganizerItemDisplayLabelTransform::modifyBaseSchemaDefinitions(
-    QMap<QString, QMap<QString, 
-    QOrganizerItemDetailDefinition> > &schemaDefs) const
+class CEvent;
+class CTodo;
+class CJournal;
+
+class OrganizerCalendarDatabaseAccess
 {
-    schemaDefs[QOrganizerItemType::TypeNote].remove(
-        QOrganizerItemDisplayLabel::DefinitionName);
-}
+public:
+    OrganizerCalendarDatabaseAccess();
+    ~OrganizerCalendarDatabaseAccess();
+
+    bool open(QString databasePathName);
+    void close();
+
+    int typeOf(QOrganizerItemLocalId id);
+    std::vector<CEvent *> getEvents(int calId, std::string guid, int &pErrorCode);
+    std::vector<CTodo *> getTodos(int calId, std::string guid, int &pErrorCode);
+    std::vector<CJournal *> getJournals(int calId, std::string guid, int &pErrorCode);
+
+    static void sqliteErrorMapper(const QSqlError &sqlError, int& errorCode);
+
+private:
+    QSqlDatabase m_db;
+};
+
+#endif // QORGANIZERCALDBACCESS_H

@@ -44,6 +44,9 @@
 #include <QtGui/QMainWindow>
 #include <QDate>
 #include <qmobilityglobal.h>
+#include <qorganizeritemsaverequest.h>
+#include <qorganizeritemremoverequest.h>
+class QProgressDialog;
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItemManager;
@@ -58,6 +61,8 @@ class MonthPage;
 class DayPage;
 class EventEditPage;
 class TodoEditPage;
+class JournalEditPage;
+class EventOccurrenceEditPage;
 
 class CalendarDemo : public QMainWindow
 {
@@ -70,19 +75,40 @@ public:
 public Q_SLOTS:
     void activateMonthPage();
     void activateDayPage();
-    void activateNewDayPage(QOrganizerItemManager *manager, QDate date);
-    void activateEditPage(QOrganizerItemManager *manager, const QOrganizerItem &item);
-    
-Q_SIGNALS:
-	void multipleEntriesToBeCreated(int);
+    void activateEditPage(const QOrganizerItem &item);
+    void addNewEvent();
+    void addNewTodo();
+    void addNewJournal();
+    void changeManager(QOrganizerItemManager *manager);
+    void updateSelectedDay(const QDate& date);
+
+private Q_SLOTS:
+    void switchView();
+    void editItem();
+    void removeItem();
+    void addEvents();
+    void deleteAllEntries();
+    void saveReqStateChanged(QOrganizerItemAbstractRequest::State);
+    void removeReqStateChanged(QOrganizerItemAbstractRequest::State);
 
 private:
+    void buildMenu();
+
+    QDate m_currentDate;
     QOrganizerItemManager *m_manager;
     QStackedWidget *m_stackedWidget;
     MonthPage *m_monthPage;
     DayPage *m_dayPage;
     EventEditPage *m_eventEditPage;
     TodoEditPage *m_todoEditPage;
+    JournalEditPage *m_journalEditPage;
+    EventOccurrenceEditPage *m_eventOccurrenceEditPage;
+
+    QAction *m_switchViewAction;
+
+    QOrganizerItemSaveRequest m_saveReq;
+    QOrganizerItemRemoveRequest m_remReq;
+    QProgressDialog *m_progressDlg;
 };
 
 #endif // CALENDARDEMO_H
