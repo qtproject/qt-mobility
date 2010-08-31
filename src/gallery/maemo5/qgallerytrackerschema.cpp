@@ -344,20 +344,7 @@ namespace
     UpdateMask \
 }
 
-template <typename T> bool qt_writeValue(int *error, QXmlStreamWriter *xml, const QVariant &value)
-{
-    if (value.canConvert<QString>()) {
-        xml->writeStartElement(QLatin1String("rdf:String"));
-        xml->writeCharacters(value.toString());
-        xml->writeEndElement();
-
-        return true;
-    } else {
-        *error = QGalleryAbstractRequest::PropertyTypeError;
-
-        return false;
-    }
-}
+template <typename T> bool qt_writeValue(int *error, QXmlStreamWriter *xml, const QVariant &value);
 
 template <> bool qt_writeValue<QString>(int *, QXmlStreamWriter *xml, const QVariant &value)
 {
@@ -398,9 +385,6 @@ template <> bool qt_writeValue<QDateTime>(int *, QXmlStreamWriter *xml, const QV
 template <> bool qt_writeValue<QVariant>(int *error, QXmlStreamWriter *xml, const QVariant &value)
 {
     switch (value.type()) {
-    case QVariant::String:
-    case QVariant::Url:
-        return qt_writeValue<QString>(error, xml, value);
     case QVariant::Int:
     case QVariant::UInt:
     case QVariant::LongLong:
@@ -414,11 +398,7 @@ template <> bool qt_writeValue<QVariant>(int *error, QXmlStreamWriter *xml, cons
         return qt_writeValue<QDateTime>(error, xml, value);
     default:
         if (value.canConvert<QString>()) {
-            xml->writeStartElement(QLatin1String("rdf:String"));
-            xml->writeCharacters(value.toString());
-            xml->writeEndElement();
-
-            return true;
+            return qt_writeValue<QString>(error, xml, value);
         } else {
             *error = QGalleryAbstractRequest::PropertyTypeError;
 
@@ -581,8 +561,6 @@ static bool qt_writeCondition(
         const QGalleryCompositePropertyList &composites)
 {
     switch (filter.type()) {
-    case QGalleryFilter::Invalid:
-        return true;
     case QGalleryFilter::Intersection:
         return qt_writeCondition(
                 error, xml, filter.toIntersectionFilter(), properties, composites);
@@ -591,6 +569,8 @@ static bool qt_writeCondition(
     case QGalleryFilter::MetaData:
         return qt_writeCondition(error, xml, filter.toMetaDataFilter(), properties, composites);
     default:
+        Q_ASSERT(filter.type() != QGalleryFilter::Invalid);
+
         *error = QGalleryAbstractRequest::UnsupportedFilterTypeError;
 
         return false;
@@ -651,7 +631,7 @@ static bool qt_writeFileUrlCondition(
 
         const int separatorIndex = filePath.lastIndexOf(QLatin1Char('/'));
 
-        if (separatorIndex > 0 && url.scheme() == QLatin1String("file")) {
+        if (separatorIndex >= 0 && url.scheme() == QLatin1String("file")) {
             const QString path = filePath.mid(0, separatorIndex);
             QString fileName = filePath.mid(separatorIndex + 1);
 
@@ -698,9 +678,9 @@ static const QGalleryItemProperty qt_galleryFilePropertyList[] =
     QT_GALLERY_FILE_PROPERTIES,
 //    QT_GALLERY_ITEM_PROPERTY(""         , "DC:Contributor", String    , QGalleryProperty::Attributes()),
 //    QT_GALLERY_ITEM_PROPERTY(""         , "DC:Coverage"   , String    , QGalleryProperty::Attributes()),
-    QT_GALLERY_ITEM_PROPERTY("author"     , "DC:Creator"    , String    , CanRead | CanSort | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("author"     , "DC:Creator"    , String    , CanRead | CanWrite | CanSort | CanFilter),
 //    QT_GALLERY_ITEM_PROPERTY(""         , "DC:Date"       , DateTime  , QGalleryProperty::Attributes()),
-    QT_GALLERY_ITEM_PROPERTY("description", "DC:Description", String    , CanRead | CanSort | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("description", "DC:Description", String    , CanRead | CanWrite | CanSort | CanFilter),
 //    QT_GALLERY_ITEM_PROPERTY(""         , "DC:Format"     , String    , QGalleryProperty::Attributes()),
 //    QT_GALLERY_ITEM_PROPERTY(""         , "DC:Identifier" , String    , QGalleryProperty::Attributes()),
 //    QT_GALLERY_ITEM_PROPERTY(""         , "DC:Language"   , String    , QGalleryProperty::Attributes()),
@@ -708,12 +688,12 @@ static const QGalleryItemProperty qt_galleryFilePropertyList[] =
 //    QT_GALLERY_ITEM_PROPERTY(""         , "DC:Relation"   , String    , QGalleryProperty::Attributes()),
 //    QT_GALLERY_ITEM_PROPERTY(""         , "DC:Rights"     , String    , QGalleryProperty::Attributes()),
 //    QT_GALLERY_ITEM_PROPERTY(""         , "DC:Source"     , String    , QGalleryProperty::Attributes()),
-    QT_GALLERY_ITEM_PROPERTY("subject"    , "DC:Subject"    , String    , CanRead | CanSort | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("subject"    , "DC:Subject"    , String    , CanRead | CanWrite | CanSort | CanFilter),
 //    QT_GALLERY_ITEM_PROPERTY(""         , "DC:Keywords"   , String    , QGalleryProperty::Attributes()),
-    QT_GALLERY_ITEM_PROPERTY("title"      , "DC:Title"      , String    , CanRead | CanSort | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("title"      , "DC:Title"      , String    , CanRead | CanWrite | CanSort | CanFilter),
 //    QT_GALLERY_ITEM_PROPERTY(""         , "DC:Type"       , String    , QGalleryProperty::Attributes()),
-    QT_GALLERY_ITEM_PROPERTY("rating"     , "User:Rank"     , String    , CanRead | CanSort | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("keywords"   , "User:Keywords" , StringList, CanRead | CanSort | CanFilter)
+    QT_GALLERY_ITEM_PROPERTY("rating"     , "User:Rank"     , String    , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("keywords"   , "User:Keywords" , StringList, CanRead | CanWrite | CanFilter)
 };
 
 #define QT_GALLERY_FILE_COMPOSITE_PROPERTIES \
@@ -815,9 +795,7 @@ static QStringList qt_trackerRootPaths()
                         .split(QLatin1Char(';'), QString::SkipEmptyParts));
             }
         }
-   }
-
-    qDebug("Paths %s", qPrintable(paths.join(QLatin1String(";"))));
+    }
 
     return paths;
 }
@@ -908,7 +886,7 @@ static const QGalleryItemProperty qt_galleryImagePropertyList[] =
 {
     QT_GALLERY_FILE_PROPERTIES,
     QT_GALLERY_ITEM_PROPERTY("title"             , "Image:Title"          , String    , CanRead | CanWrite | CanSort | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("keywords"          , "Image:Keywords"       , StringList, CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("keywords"          , "Image:Keywords"       , StringList, CanRead | CanWrite | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("height"            , "Image:Height"         , Int       , CanRead | CanSort | CanFilter | IsResource),
     QT_GALLERY_ITEM_PROPERTY("width"             , "Image:Width"          , Int       , CanRead | CanSort | CanFilter | IsResource),
     //QT_GALLERY_ITEM_PROPERTY(""                , "Image:Album"          , String    , CanRead | CanWrite | CanSort | CanFilter),
@@ -1015,13 +993,13 @@ static const QGalleryItemType qt_galleryItemTypeList[] =
 
 static const QGalleryItemProperty qt_galleryArtistIdentity[] =
 {
-    QT_GALLERY_ITEM_PROPERTY("title", "Audio:Artist", String, CanRead | CanFilter)
+    QT_GALLERY_ITEM_PROPERTY("title", "Audio:Artist", String, CanRead | CanFilter | CanSort)
 };
 
 static const QGalleryItemProperty qt_galleryArtistPropertyList[] =
 {
-    QT_GALLERY_ITEM_PROPERTY("artist", "Audio:Artist", String, CanRead | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("title" , "Audio:Artist", String, CanRead | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("artist", "Audio:Artist", String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("title" , "Audio:Artist", String, CanRead | CanFilter | CanSort),
 };
 
 static const QGalleryAggregateProperty qt_galleryArtistAggregateList[] =
@@ -1067,16 +1045,16 @@ static void qt_writeAlbumArtistIdCondition(int *, QXmlStreamWriter *xml, const Q
 
 static const QGalleryItemProperty qt_galleryAlbumIdentity[] =
 {
-    QT_GALLERY_ITEM_PROPERTY("artist", "Audio:AlbumArtist", String, CanRead | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("title" , "Audio:Album"      , String, CanRead | CanFilter)
+    QT_GALLERY_ITEM_PROPERTY("artist", "Audio:AlbumArtist", String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("title" , "Audio:Album"      , String, CanRead | CanFilter | CanSort)
 };
 
 static const QGalleryItemProperty qt_galleryAlbumPropertyList[] =
 {
-    QT_GALLERY_ITEM_PROPERTY("title"      , "Audio:Album"      , String, CanRead | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("albumTitle" , "Audio:Album"      , String, CanRead | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("artist"     , "Audio:AlbumArtist", String, CanRead | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("albumArtist", "Audio:AlbumArtist", String, CanRead | CanFilter)
+    QT_GALLERY_ITEM_PROPERTY("title"      , "Audio:Album"      , String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("albumTitle" , "Audio:Album"      , String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("artist"     , "Audio:AlbumArtist", String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("albumArtist", "Audio:AlbumArtist", String, CanRead | CanFilter | CanSort)
 };
 
 static const QGalleryAggregateProperty qt_galleryAlbumAggregateList[] =
@@ -1504,18 +1482,12 @@ int QGalleryTrackerSchema::buildFilterQuery(
         int index;
 
         if ((index = itemTypes.indexOfItemId(rootItemId)) != -1) {
-            switch (scope) {
-            case QGalleryQueryRequest::AllDescendants:
+            if (scope ==  QGalleryQueryRequest::AllDescendants) {
                 qt_writeFileScopeCondition(
                         &result, &xml, itemTypes[index].prefix.strip(rootItemId));
-                break;
-            case QGalleryQueryRequest::DirectDescendants:
+            } else {
                 qt_writeFileContainerCondition(
                         &result, &xml, itemTypes[index].prefix.strip(rootItemId));
-                break;
-            default:
-                result = QGalleryAbstractRequest::InvalidPropertyError;
-                break;
             }
         } else if ((index = aggregateTypes.indexOfItemId((rootItemId))) != -1) {
             aggregateTypes[index].writeIdCondition(
@@ -1563,7 +1535,6 @@ static QVector<QGalleryTrackerValueColumn *> qt_createValueColumns(
     for (int i = 0, count = types.count(); i < count; ++i) {
         switch (types.at(i)) {
         case QVariant::String:
-        case QVariant::Url:
             columns.append(new QGalleryTrackerStringColumn);
             break;
         case QVariant::StringList:

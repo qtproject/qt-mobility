@@ -46,49 +46,203 @@
 #include <QtCore>
 #include <QDebug>
 
-#define private public
+#include <tst_telephony_moc.h>
+
 #include "../qsfwtestutil.h"
+#include "qtelephonycalllist.h"
+#include "qtelephonycalllist_symbian_p.h"
+#include "qtelephonycallinfo_symbian_p.h"
+
+
 
 #if defined(Q_OS_SYMBIAN)
 # define TESTDATA_DIR "."
 #endif
 
-//QTM_USE_NAMESPACE Will be needed as soon you use QtMobility objects
+
+QTM_BEGIN_NAMESPACE
+
+class tst_TelefonyCallList : public QTelephonyCallList
+{
+    Q_OBJECT
+public:
+    tst_TelefonyCallList() : QTelephonyCallList(), pcallInfoPrivate(0)
+    {
+        this->connect(this, SIGNAL(activeCallStatusChanged(const QTelephonyCallInfo&)), this, SLOT(activeCallStatusChangedSlot(const QTelephonyCallInfo&)));
+        this->connect(this, SIGNAL(activeCallRemoved(const QTelephonyCallInfo&)), this, SLOT(activeCallRemovedSlot(const QTelephonyCallInfo&)));
+        this->connect(this, SIGNAL(activeCallAdded(const QTelephonyCallInfo&)), this, SLOT(activeCallAddedSlot(const QTelephonyCallInfo&)));
+    }
+    QTelephonyCallListPrivate* getPrivateTelefonyList() { return d; }
+private slots:
+    void activeCallStatusChangedSlot(const QTelephonyCallInfo& call)
+    {
+        Q_UNUSED(call);
+        if(values.contains("activeCallStatusChangedSlot_RefCount"))
+            values.remove("activeCallStatusChangedSlot_RefCount");
+        if(pcallInfoPrivate)
+            values.insert("activeCallStatusChangedSlot_RefCount", QVariant(pcallInfoPrivate->ref));
+    }
+    void activeCallRemovedSlot(const QTelephonyCallInfo& call)
+    {
+        Q_UNUSED(call);
+        if(values.contains("activeCallRemovedSlot_RefCount"))
+            values.remove("activeCallRemovedSlot_RefCount");
+        if(pcallInfoPrivate)
+            values.insert("activeCallRemovedSlot_RefCount", QVariant(pcallInfoPrivate->ref));
+    }
+    void activeCallAddedSlot(const QTelephonyCallInfo& call)
+    {
+        Q_UNUSED(call);
+        if(values.contains("activeCallAddedSlot_RefCount"))
+            values.remove("activeCallAddedSlot_RefCount");
+        if(pcallInfoPrivate)
+            values.insert("activeCallAddedSlot_RefCount", QVariant(pcallInfoPrivate->ref));
+    }
+public:
+    QHash<QString, QVariant> values;
+    QTelephonyCallInfoPrivate* pcallInfoPrivate;
+};
 
 class tst_Telephony: public QObject
 {
     Q_OBJECT
 private slots:
-        void initTestCase();
+    void init();
+    void cleanup();
 
-        //Test cases
-        void myFirstTest();
-        void mySecondTest();
+    //Test cases
+    void test_sharedPointer();
 
-        void cleanupTestCase();
+    void test_activeCalls();
+    
+    void test_statusChanges();
+        
+private:
+    void waitForSignal(const char *aSignal)
+    {
+        qRegisterMetaType<QTelephonyCallInfo> ("QTelephonyCallInfo");
+        QSignalSpy spy(pCallList, aSignal);
+        while (spy.count() == 0)
+            QTest::qWait(200);
+    }
+        
+private:
+    tst_TelefonyCallList* pCallList;
 };
 
-void tst_Telephony::initTestCase()
+void tst_Telephony::init()
 {
     qDebug("called before everything else");
+    pCallList = new tst_TelefonyCallList();
 }
 
 //Test cases
-void tst_Telephony::myFirstTest()
+void tst_Telephony::test_sharedPointer()
 {
-    QVERIFY(1 == 1);
+    QTelephonyCallListPrivate* p = pCallList->getPrivateTelefonyList();
+    QVERIFY(p != 0);
+    pCallList->pcallInfoPrivate = new QTelephonyCallInfoPrivate();
+
+    //Adding to list should increment the ref counter to 1
+    p->callInfoList.append(QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(pCallList->pcallInfoPrivate));
+    QVERIFY(pCallList->pcallInfoPrivate->ref == 1);
+
+    int refcount = -1;
+
+    //Now emit the activeCallAdded signal this should increment the ref counter to 2
+    qDebug("emit ActiveCallAdded");
+    p->emitActiveCallAdded(*pCallList->pcallInfoPrivate);
+    if(pCallList->values.contains("activeCallAddedSlot_RefCount")){
+        QVariant var = pCallList->values.value("activeCallAddedSlot_RefCount");
+        refcount = var.toInt();
+    }
+    QVERIFY(refcount == 2);
+    qDebug("- ref counting OK");
+
+    //Now emit the activeCallStatusChanged signal this should increment the ref counter to 2
+    qDebug("emit ActiveCallStatusChanged");
+    p->emitActiveCallStatusChanged(*pCallList->pcallInfoPrivate);
+    refcount = -1;
+    if(pCallList->values.contains("activeCallStatusChangedSlot_RefCount")){
+        QVariant var = pCallList->values.value("activeCallStatusChangedSlot_RefCount");
+        refcount = var.toInt();
+    }
+    QVERIFY(refcount == 2);
+    qDebug("- ref counting OK");
+
+    //Now emit the activeCallRemoved signal this should increment the ref counter to 2
+    qDebug("emit ActiveCallRemoved");
+    p->emitActiveCallRemoved(*pCallList->pcallInfoPrivate);
+    refcount = -1;
+    if(pCallList->values.contains("activeCallRemovedSlot_RefCount")){
+        QVariant var = pCallList->values.value("activeCallRemovedSlot_RefCount");
+        refcount = var.toInt();
+    }
+    QVERIFY(refcount == 2);
+    qDebug("- ref counting OK");
+
+    //After emitint we should have ref counter == 1
+    QVERIFY(pCallList->pcallInfoPrivate->ref == 1);
 }
 
-void tst_Telephony::mySecondTest()
+void tst_Telephony::test_activeCalls()
 {
-    QVERIFY(1 == 1);
+    QCOMPARE(pCallList->activeCalls().count(), 0);
+    int addedcall1 = addCall("12351");
+    waitForSignal(SIGNAL(activeCallAdded(QTelephonyCallInfo)));
+    
+    QCOMPARE(pCallList->activeCalls().count(), 1);
+    int addedcall2 = addCall("");
+    waitForSignal(SIGNAL(activeCallAdded(QTelephonyCallInfo)));
+    
+    QCOMPARE(pCallList->activeCalls().count(), 2);
+    removeCall(addedcall1);
+    waitForSignal(SIGNAL(activeCallRemoved(QTelephonyCallInfo)));
+    
+    QCOMPARE(pCallList->activeCalls().count(), 1);
+    int addedcall3 = addCall("12351", QTelephony::Video);
+    waitForSignal(SIGNAL(activeCallAdded(QTelephonyCallInfo)));
+    
+    QCOMPARE(pCallList->activeCalls(QTelephony::Video).count(), 1);
+    QCOMPARE(pCallList->activeCalls(QTelephony::Any).count(), 2);
+    
+    removeCall(addedcall2);
+    removeCall(addedcall3);
+    waitForSignal(SIGNAL(activeCallRemoved(QTelephonyCallInfo)));
+    QCOMPARE(pCallList->activeCalls().count(), 0);
 }
 
-void tst_Telephony::cleanupTestCase()
+void tst_Telephony::test_statusChanges()
 {
-    qDebug("called after myFirstTest and mySecondTest");
+    QCOMPARE(pCallList->activeCalls().count(), 0);
+    int addedCall = addCall("12351");
+    waitForSignal(SIGNAL(activeCallAdded(QTelephonyCallInfo)));
+    
+    changeCall(addedCall, QTelephony::Dialing);
+    waitForSignal(SIGNAL(activeCallStatusChanged(QTelephonyCallInfo)));
+    changeCall(addedCall, QTelephony::Alerting);
+    waitForSignal(SIGNAL(activeCallStatusChanged(QTelephonyCallInfo)));
+    changeCall(addedCall, QTelephony::Connected);
+    waitForSignal(SIGNAL(activeCallStatusChanged(QTelephonyCallInfo)));
+    changeCall(addedCall, QTelephony::Disconnecting);
+    waitForSignal(SIGNAL(activeCallStatusChanged(QTelephonyCallInfo)));
+    removeCall(addedCall);
+    waitForSignal(SIGNAL(activeCallRemoved(QTelephonyCallInfo)));
+    QCOMPARE(pCallList->activeCalls().count(), 0);
+    
 }
 
-QTEST_MAIN(tst_Telephony)
+void tst_Telephony::cleanup()
+{
+    delete pCallList;
+}
+
+
 
 #include "tst_telephony_s60.moc"
+
+QTM_END_NAMESPACE
+
+
+QTM_USE_NAMESPACE
+QTEST_MAIN(tst_Telephony)
