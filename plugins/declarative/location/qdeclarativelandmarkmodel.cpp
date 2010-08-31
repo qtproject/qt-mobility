@@ -9,7 +9,7 @@ QTM_BEGIN_NAMESPACE
 
 QDeclarativeLandmarkAbstractModel::QDeclarativeLandmarkAbstractModel(QObject *parent) :
         QAbstractListModel(parent), m_manager(0),
-        m_componentCompleted(false), m_updatePending(false), m_autoUpdate(false),
+        m_componentCompleted(false), m_updatePending(false), m_autoUpdate(true),
         m_limit(-1), m_offset(-1)
 {
 }
@@ -22,10 +22,53 @@ QDeclarativeLandmarkAbstractModel::~QDeclarativeLandmarkAbstractModel()
 void QDeclarativeLandmarkAbstractModel::componentComplete()
 {
     m_componentCompleted = true;
-    if (!m_manager)
+    if (!m_manager) {
         m_manager = new QLandmarkManager();
+        connectManager();
+    }
     if (m_autoUpdate)
         scheduleUpdate();
+}
+
+void QDeclarativeLandmarkAbstractModel::connectManager()
+{
+    if (!m_manager)
+        return;
+    connect(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)),
+            this, SLOT(categoriesChanged(QList<QLandmarkCategoryId>)));
+    connect(m_manager, SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)),
+            this, SLOT(categoriesChanged(QList<QLandmarkCategoryId>)));
+    connect(m_manager, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
+            this, SLOT(categoriesChanged(QList<QLandmarkCategoryId>)));
+    connect(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)),
+            this, SLOT(landmarksChanged(QList<QLandmarkId>)));
+    connect(m_manager, SIGNAL(landmarksChanged(QList<QLandmarkId>)),
+            this, SLOT(landmarksChanged(QList<QLandmarkId>)));
+    connect(m_manager, SIGNAL(landmarksRemoved(QList<QLandmarkId>)),
+            this, SLOT(landmarksChanged(QList<QLandmarkId>)));
+    connect(m_manager, SIGNAL(dataChanged()),
+            this, SLOT(dataChanged()));
+}
+
+void QDeclarativeLandmarkAbstractModel::categoriesChanged(const QList<QLandmarkCategoryId>& ids)
+{
+    if (m_autoUpdate)
+        update();
+    emit modelChanged();
+}
+
+void QDeclarativeLandmarkAbstractModel::landmarksChanged(const QList<QLandmarkId>& ids)
+{
+    if (m_autoUpdate)
+        update();
+    emit modelChanged();
+}
+
+void QDeclarativeLandmarkAbstractModel::dataChanged()
+{
+    if (m_autoUpdate)
+        update();
+    emit modelChanged();
 }
 
 void QDeclarativeLandmarkAbstractModel::setAutoUpdate(bool autoUpdate)
@@ -60,12 +103,15 @@ void QDeclarativeLandmarkAbstractModel::setDbFileName(QString fileName)
     if (fileName == m_dbFileName)
         return;
     m_dbFileName = fileName;
-    if (m_manager)
+    if (m_manager) {
+        cancelUpdate();
         delete m_manager;
+    }
 
     QMap<QString, QString> map;
     map["filename"] = m_dbFileName;
     m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
+    connectManager();
 }
 
 void QDeclarativeLandmarkAbstractModel::update()
@@ -119,7 +165,6 @@ QDeclarativeLandmarkModel::QDeclarativeLandmarkModel(QObject *parent) :
 
 QDeclarativeLandmarkModel::~QDeclarativeLandmarkModel()
 {
-    // Destruction order is significant, as request dtor uses manager it is associated with
     delete m_fetchRequest;
     delete m_sortingOrder;
 }
@@ -175,7 +220,7 @@ void QDeclarativeLandmarkModel::setFilter(QDeclarativeLandmarkFilterBase* filter
 void QDeclarativeLandmarkModel::startUpdate()
 {
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
-    qDebug("QDeclarativeLandmarkModel::update()");
+    qDebug("QDeclarativeLandmarkModel::startUpdate()");
 #endif
     if (!m_manager)
         return;
@@ -197,6 +242,9 @@ void QDeclarativeLandmarkModel::startUpdate()
 
 void QDeclarativeLandmarkModel::cancelUpdate()
 {
+#ifdef QDECLARATIVE_LANDMARK_DEBUG
+    qDebug("QDeclarativeLandmarkModel::cancelUpdate()");
+#endif
     if (m_fetchRequest) {
         delete m_fetchRequest;
         m_fetchRequest = 0;

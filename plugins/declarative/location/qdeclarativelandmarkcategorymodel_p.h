@@ -23,7 +23,7 @@ class QDeclarativeLandmarkCategoryModel: public QDeclarativeLandmarkAbstractMode
 
 public:
     explicit QDeclarativeLandmarkCategoryModel(QObject* parent = 0);
-    ~QDeclarativeLandmarkCategoryModel();
+    virtual ~QDeclarativeLandmarkCategoryModel();
 
     // From QAbstractListModel
     int rowCount(const QModelIndex &parent) const;
