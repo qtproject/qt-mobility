@@ -327,6 +327,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
 
         QList<QPair<QRect, QRect> > overlaps = d->intersectedScreen(tileRect);
         for (int i = 0; i < overlaps.size(); ++i) {
+            QRect s = overlaps.at(i).first;
             QRect t = overlaps.at(i).second;
 
             QRectF source = QRectF(offsetX + int(t.left()) / d->zoomFactor,
@@ -335,9 +336,12 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
                                    int(t.height()) / d->zoomFactor);
 
             QPixmap *tile = new QPixmap(tileSize);
-            tile->fill(Qt::lightGray);
+            tile->fill(Qt::lightGray); // TODO: this looks useless
 
-            QRectF target = QRectF(QPointF(0.0, 0.0), tileEngine->tileSize());
+            QRectF target = QRectF(int(s.left()) / d->zoomFactor,
+                                   int(s.top()) / d->zoomFactor,
+                                   int(s.width()) / d->zoomFactor,
+                                   int(s.height()) / d->zoomFactor);
 
             QPainter painter3(tile);
             painter3.drawPixmap(target, newImage, source);
