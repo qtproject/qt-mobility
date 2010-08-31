@@ -466,7 +466,7 @@ void importExportLandmark() {
     //! [ImportExport landmark simple]
     landmarkManager->importLandmarks("places.gpx");
 
-    landmarkManager->exportLandmarks("myplaces.gpx","GpxV1.1");
+    landmarkManager->exportLandmarks("myplaces.gpx",QLandmarkManager::Gpx);
     //! [ImportExport landmark simple]
 }
 

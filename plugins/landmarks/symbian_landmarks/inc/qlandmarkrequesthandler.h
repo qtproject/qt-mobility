@@ -46,8 +46,9 @@
 // system includes
 #include <EPos_CPosLandmarkSearch.h>
 #include <Epos_Landmarks.h>
-#include <qdebug.h>
 #include <qmobilityglobal.h>
+#include <qstring.h>
+#include <qset.h>
 #include <qlandmarkrequesthandler.h>
 #include <qlandmarkmanagerengine.h>
 
@@ -81,28 +82,39 @@ class CLandmarkRequestData: public CBase
 {
 public:
     static CLandmarkRequestData
-    * NewL(QLandmarkAbstractRequest*, CLandmarkRequestAO*);
+    * NewL(QLandmarkAbstractRequest *, CLandmarkRequestAO *);
     virtual ~CLandmarkRequestData();
     void Reset();
 private:
-    CLandmarkRequestData(QLandmarkAbstractRequest*, CLandmarkRequestAO*);
+    CLandmarkRequestData(QLandmarkAbstractRequest *, CLandmarkRequestAO *);
     void ConstructL();
 
 private:
     // for AO
-    CLandmarkRequestAO* iOwnerAO;
+    CLandmarkRequestAO *iOwnerAO;
     TInt iOwnerThrd;
     TSglQue<TWaitThrdData> iWaitThrds;
     RFastLock iLock;
+
     // for engine
-    QLandmarkAbstractRequest* iQtRequest;
-    CPosLandmarkSearch* iLandmarkSearch;
+    // not owned
+    QLandmarkAbstractRequest *iQtRequest;
+    QLandmarkIdFetchRequest *iLmIdFetchRequest;
+
+    // owned
+    CPosLandmarkSearch *iLandmarkSearch;
+    CPosLandmarkEncoder *iLandmarkEncoder;
+    CBufBase *iExportBuffer;
     QList<QLandmarkCategoryId> iCategoryIds;
     QList<QLandmarkId> iLandmarkIds;
     QList<QLandmark> iLandmarks;
     QList<QLandmarkCategory> iCategories;
+    QSet<QString> iLocalIds;
+
     ERROR_MAP iErrorMap;
     TInt iErrorId;
+    QLandmarkManager::Error error;
+    QString errorString;
     int iOpCount;
     int iFilterIndex;
 
@@ -118,8 +130,8 @@ private:
 class MLandmarkRequestObserver
 {
 public:
-    virtual void HandleExecution(CLandmarkRequestData*, TRequestStatus&) = 0;
-    virtual void HandleCompletion(CLandmarkRequestData*) = 0;
+    virtual void HandleExecutionL(CLandmarkRequestData *, TRequestStatus &) = 0;
+    virtual void HandleCompletionL(CLandmarkRequestData *) = 0;
 };
 
 /***
@@ -131,24 +143,30 @@ public:
     TBool StartRequest(CPosLandmarkSearch *aLandmarkSearch);
     TBool CancelRequest();
     TBool WaitForFinished(TInt);
-    static CLandmarkRequestAO* NewL(MLandmarkRequestObserver*, CPosLmOperation* aOp = NULL);
-    inline void SetParent(CLandmarkRequestData* aData)
+    void SetOperation(CPosLmOperation *aOp = NULL);
+    void SetExportData(CPosLandmarkEncoder *aEncoder = NULL, CBufBase *aExportBuffer = NULL, QList<
+        QLandmarkId> lmIds = QList<QLandmarkId> ());
+    void SetImportData(QList<QLandmarkId>& aParsedLmIds);
+    CPosLmOperation * GetOperation();
+    static CLandmarkRequestAO* NewL(MLandmarkRequestObserver *, CPosLmOperation *aOp = NULL);
+    inline void SetParent(CLandmarkRequestData *aData)
     {
         iParent = aData;
     }
     virtual ~CLandmarkRequestAO();
 
 private:
-    CLandmarkRequestAO(CPosLmOperation*, MLandmarkRequestObserver*);
+    CLandmarkRequestAO(CPosLmOperation *, MLandmarkRequestObserver *);
     void RunL();
+    TInt RunError(TInt aError);
     void DoCancel();
     void WakeupThreads(TInt);
-    TBool WaitForRequest(TInt, TRequestStatus&);
-
+    TBool WaitForRequestL(TInt, TRequestStatus &);
+    TBool IsMultiOperationRequest();
 private:
-    MLandmarkRequestObserver* iObserver;
-    CPosLmOperation* iOperation;
-    CLandmarkRequestData* iParent;
+    MLandmarkRequestObserver *iObserver;
+    CPosLmOperation *iOperation;
+    CLandmarkRequestData *iParent;
     TBool iCancelRequest;
     TReal32 iProgress;
     TBool iIsComplete;
@@ -162,9 +180,9 @@ class LandmarkRequestHandler
 public:
     LandmarkRequestHandler();
     ~LandmarkRequestHandler();
-    TInt AddAsyncRequest(QLandmarkAbstractRequest*, CLandmarkRequestAO* aAO);
-    TBool RemoveAsyncRequest(QLandmarkAbstractRequest*);
-    CLandmarkRequestData* FetchAsyncRequest(QLandmarkAbstractRequest*);
+    TInt AddAsyncRequest(QLandmarkAbstractRequest *, CLandmarkRequestAO *aAO);
+    TBool RemoveAsyncRequest(QLandmarkAbstractRequest *);
+    CLandmarkRequestData* FetchAsyncRequest(QLandmarkAbstractRequest *);
 
 private:
     RArray<CLandmarkRequestData> iRequestList;

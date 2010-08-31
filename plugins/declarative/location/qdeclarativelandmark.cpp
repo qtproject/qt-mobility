@@ -92,6 +92,11 @@ void QDeclarativeLandmark::setLandmark(const QLandmark& landmark)
     // TODO update notifications when the whole scenario is more clear
 }
 
+QList<QLandmarkCategoryId> QDeclarativeLandmark::categoryIds () const
+{
+    return m_landmark.categoryIds();
+}
+
 #include "moc_qdeclarativelandmark_p.cpp"
 
 QTM_END_NAMESPACE

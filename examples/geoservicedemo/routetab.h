@@ -43,6 +43,7 @@
 #define ROUTETAB_H_
 
 #include <QWidget>
+#include <QDialog>
 
 #include <qgeoroutingmanager.h>
 
@@ -51,6 +52,23 @@ class QLineEdit;
 class QPushButton;
 
 QTM_USE_NAMESPACE
+
+
+class RouteCoordinateInputDialog: public QDialog
+{
+    Q_OBJECT
+public:
+    RouteCoordinateInputDialog(QGeoCoordinate& src,QGeoCoordinate& dst, QWidget *parent=0);
+private slots:
+    void accept();
+private:
+    QGeoCoordinate& m_src;
+    QGeoCoordinate& m_dst;
+    QLineEdit* m_srcLong;
+    QLineEdit* m_srcLat;
+    QLineEdit* m_destLong;
+    QLineEdit* m_destLat;
+};
 
 class RouteTab: public QWidget
 {
@@ -71,10 +89,8 @@ private slots:
 
 private:
     QGeoRoutingManager *m_routingManager;
-    QLineEdit *m_srcLong;
-    QLineEdit *m_srcLat;
-    QLineEdit *m_destLong;
-    QLineEdit *m_destLat;
+    QGeoCoordinate m_src;
+    QGeoCoordinate m_dst;
     QTreeWidget *m_resultTree;
     QPushButton *m_requestBtn;
     QPushButton *m_updateBtn;
