@@ -34,6 +34,7 @@
 // Used to create HbKeymapFactory singleton to get rid of resource leak
 #include <QLocale>
 #include <hbinputkeymapfactory.h>
+#include <hbinputkeymap.h>
 
 
 // Must have same value as KMaxTokenLength in c12keypredictivesearchtable.cpp
@@ -827,6 +828,25 @@ void UT_CPplPredictiveSearchTable::UT_ConvertToHexL()
 	EUNIT_ASSERT_EQUALS(KConversionError, iTable->ConvertToHex("12345678901234567890"));
 	}
 
+void UT_CPplPredictiveSearchTable::UT_HbKeymapFactoryApiL()
+    {
+    // Get 1..N keymaps and their ownership, see if there are memory leaks
+    
+//this does not leak
+    // Gets ownership of keymap
+    const HbKeymap* keymap =
+        HbKeymapFactory::instance()->keymap(QLocale::English,  
+                                            HbKeymapFactory::NoCaching);
+    // ReadKeymapCharacters(aKeyboardType, *keymap);
+    delete keymap;
+    
+
+    keymap = NULL;
+    keymap = HbKeymapFactory::instance()->keymap(QLocale::Swedish,  
+                                                HbKeymapFactory::NoCaching);
+    delete keymap;
+    }
+
 void UT_CPplPredictiveSearchTable::AddContactL(const TDesC& aFirstName,
                                                const TDesC& aLastName,
                                                TContactItemId aContactId)
@@ -1223,6 +1243,13 @@ EUNIT_TEST(
     "FUNCTIONALITY",
     SetupL, UT_ConvertToHexL, Teardown )
 
+EUNIT_TEST(
+    "Test HbKeymapFactory API",
+    "UT_CPplPredictiveSearchTable",
+    "test API",
+    "FUNCTIONALITY",
+    SetupL, UT_HbKeymapFactoryApiL, Teardown )
+    
 EUNIT_END_TEST_TABLE
 
 //  END OF FILE
