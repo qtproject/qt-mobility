@@ -133,3 +133,32 @@ QDateTime OrganizerItemDetailTransform::toQDateTimeL(TCalTime calTime)
     dateTime.setTime(dateTime.time().addMSecs(msecondscomponent));
     return dateTime;
 }
+
+TTime OrganizerItemDetailTransform::toTTimeL(QDateTime dateTime)
+{
+    TTime time = Time::NullTTime();
+
+    if (dateTime.isValid()) {
+        uint secondsFrom1970 = dateTime.toTime_t();
+        quint64 usecondsFrom1970 = ((quint64) secondsFrom1970) * ((quint64) 1000000) + ((quint64) dateTime.time().msec() * (quint64)1000);
+        TTime time1970(_L("19700000:000000.000000"));
+        quint64 usecondsBCto1970 = time1970.MicroSecondsFrom(TTime(0)).Int64();
+        quint64 useconds = usecondsBCto1970 + usecondsFrom1970;
+        time = useconds;
+    }
+
+    return time;
+}
+
+QDateTime OrganizerItemDetailTransform::toQDateTimeL(TTime time)
+{
+    const TTime time1970(_L("19700000:000000.000000"));
+    quint64 usecondsBCto1970 = time1970.MicroSecondsFrom(TTime(0)).Int64();
+    quint64 useconds = time.Int64() - usecondsBCto1970;
+    quint64 seconds = useconds / (quint64)1000000;
+    quint64 msecondscomponent = (useconds - seconds * (quint64)1000000) / (quint64)1000;
+    QDateTime dateTime;
+    dateTime.setTime_t(seconds);
+    dateTime.setTime(dateTime.time().addMSecs(msecondscomponent));
+    return dateTime;
+}

@@ -70,6 +70,8 @@ public:
     static TCalTime toTCalTimeL(QDateTime dateTime);
     static TCalTime toTCalTimeL(QDate date);
     static QDateTime toQDateTimeL(TCalTime calTime);
+    static TTime toTTimeL(QDateTime dateTime);
+    static QDateTime toQDateTimeL(TTime time);
 };
 
 #endif /* ORGANIZERITEMDETAILTRANSFORM_H_ */

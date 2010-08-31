@@ -137,7 +137,15 @@ private slots:  // Test cases
     void saveCollection();
     
     void removeCollection_data(){ addManagers(); };
-    void removeCollection();     
+    void removeCollection();
+    
+    // TODO: test signal emission
+    //void collectionSignalEmission_data();
+    //void collectionSignalEmission();
+    
+    // TODO: test all known properties
+    //void collectionProperties_data();
+    //void collectionProperties();
 
 private: // util functions
     void addManagers();

@@ -50,6 +50,7 @@
 #include <calinstanceiterator.h>
 #include <calcalendariterator.h>
 #include <calcalendarinfo.h>
+#include <calenmulticaluids.hrh>
 #endif
 
 // user includes
@@ -63,6 +64,8 @@
 // valid. The error code is not expected to clash with any symbian calendar
 // API errors.
 const TInt KErrInvalidOccurrence(-32768);
+
+const TInt KBuffLength = 24;
 
 QOrganizerItemManagerEngine* QOrganizerItemSymbianFactory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
 {
@@ -868,27 +871,7 @@ QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collectionsL(const QLis
         // Read calendar info from session
         CCalCalendarInfo* calInfo = session->CalendarInfoL();
         CleanupStack::PushL(calInfo);
-        
-        // TODO: we should define the keys somewhere
-        collection.setMetaData("IsValid", (bool) calInfo->IsValid());
-        collection.setMetaData("Name", OrganizerItemDetailTransform::toQString(calInfo->NameL()));
-        collection.setMetaData("FileName", OrganizerItemDetailTransform::toQString(calInfo->FileNameL()));
-        collection.setMetaData("Description", OrganizerItemDetailTransform::toQString(calInfo->DescriptionL()));
-        TRgb color = calInfo->Color();
-        QColor qcolor(color.Red(), color.Green(), color.Blue(), color.Alpha());
-        collection.setMetaData("Color", qcolor);
-        collection.setMetaData("Enabled", (bool) calInfo->Enabled());
-        
-        CDesC8Array* keys = calInfo->PropertyKeysL();
-        CleanupStack::PushL(keys);
-        for (int i=0; i<keys->Count(); i++) {
-            QString key = OrganizerItemDetailTransform::toQString(keys->MdcaPoint(i));
-            const TDesC8& propValue = calInfo->PropertyValueL(keys->MdcaPoint(i)); 
-            QByteArray value((const char*) propValue.Ptr(), propValue.Size()); // TODO: is the byte array the correct type?
-            collection.setMetaData(key, value);
-        }
-        
-        CleanupStack::PopAndDestroy(keys);        
+        collection.setMetaData(toMetaDataL(*calInfo));       
         CleanupStack::PopAndDestroy(calInfo);
         
         collections.append(collection);
@@ -916,61 +899,12 @@ void QOrganizerItemSymbianEngine::saveCollectionL(QOrganizerCollection* collecti
             User::Leave(KErrArgument); // uri does not match this manager
     }
     
-    // Read metadata
-    QVariantMap metaData = collection->metaData();
+    // Convert metadata to cal info
+    CCalCalendarInfo *calInfo = toCalInfoLC(collection->metaData());
     
-    // TODO: we should define the keys somewhere
-    QString key = QString("Name");
-    if (!metaData.keys().contains(key))
-        User::Leave(KErrArgument); // mandatory parameter
-    QString name = metaData.value(key).toString();
-    metaData.remove(key);
-    
-    key = QString("FileName");
-    if (!metaData.keys().contains(key))
-        User::Leave(KErrArgument); // mandatory parameter
-    QString fileName = metaData.value(key).toString();
-    metaData.remove(key);
-
-    key = QString("Description");
-    if (!metaData.keys().contains(key))
-        User::Leave(KErrArgument); // TODO: is this really mandatory?
-    QString description = metaData.value(key).toString(); 
-    metaData.remove(key);
-    
-    key = QString("Color");
-    if (!metaData.keys().contains(key))
-        User::Leave(KErrArgument); // mandatory parameter  
-    QColor qcolor = metaData.value(key).value<QColor>();
-    TRgb color(qcolor.red(), qcolor.green(), qcolor.blue(), qcolor.alpha());
-    metaData.remove(key);
-    
-    key = QString("Enabled");
-    if (!metaData.keys().contains(key))
-        User::Leave(KErrArgument); // mandatory parameter  
-    bool enabled = metaData.value(key).toBool();
-    metaData.remove(key);
-    
-    // Create a new calendar info
-    CCalCalendarInfo* calInfo = CCalCalendarInfo::NewL();
-    CleanupStack::PushL(calInfo);
-    calInfo->SetNameL(OrganizerItemDetailTransform::toPtrC16(name));
-    calInfo->SetDescriptionL(OrganizerItemDetailTransform::toPtrC16(description));
-    calInfo->SetColor(color);
-    calInfo->SetEnabled(enabled);
-    
-    // Set remaining meta data as custom properties
-    foreach (QString key, metaData.keys()) {
-        
-        QByteArray keyBytes = key.toUtf8();
-        TPtrC8 propName = OrganizerItemDetailTransform::toPtrC8(keyBytes);
-        
-        QByteArray valueBytes = metaData.value(key).toByteArray();
-        TPtrC8 propValue = OrganizerItemDetailTransform::toPtrC8(valueBytes);
-        
-        calInfo->SetPropertyL(propName, propValue);
-    }
-        
+    // Get filename
+    TPtrC16 fileName = OrganizerItemDetailTransform::toPtrC16(collection->metaData("FileName").toString());
+            
     // Find existing collection/session
     CCalSession *session = 0;
     int count = m_calSessions.Count();
@@ -983,23 +917,21 @@ void QOrganizerItemSymbianEngine::saveCollectionL(QOrganizerCollection* collecti
     
     // Did we find any?
     if (!session) {
-        // Collection id is defined but we did not find a match
+        
         if (collection->id().localId())
-            User::Leave(KErrArgument);
+            User::Leave(KErrArgument); // collection id is defined but no matching collection found
         
         // Create a new session to a new calendar file
         session = CCalSession::NewL();
-        session->CreateCalFileL(OrganizerItemDetailTransform::toPtrC16(fileName), *calInfo);
-        session->OpenL(OrganizerItemDetailTransform::toPtrC16(fileName));
+        session->CreateCalFileL(fileName, *calInfo);
+        session->OpenL(fileName);
         m_calSessions.Append(session);
     }
     else {
-        // Don't allow changing the filename.
-        // Symbian calendar seems allow saving with a new filename but still
-        // it does not actually change it. So make it leave. 
+        // Don't allow changing the filename for an existing session
         CCalCalendarInfo* info = session->CalendarInfoL();
         CleanupStack::PushL(info);
-        if (info->FileNameL() != OrganizerItemDetailTransform::toPtrC16(fileName))
+        if (info->FileNameL() != fileName)
             User::Leave(KErrArgument);
         CleanupStack::PopAndDestroy(info);
 
@@ -1053,6 +985,184 @@ void QOrganizerItemSymbianEngine::removeCollectionL(const QOrganizerCollectionLo
         }
     }
     User::Leave(KErrNotFound);
+}
+
+QVariantMap QOrganizerItemSymbianEngine::toMetaDataL(const CCalCalendarInfo &calInfo) const
+{
+    QVariantMap metaData;
+    
+    // TODO: we should define the keys somewher
+    metaData.insert("IsValid", (bool) calInfo.IsValid());
+    metaData.insert("Name", OrganizerItemDetailTransform::toQString(calInfo.NameL()));
+    metaData.insert("FileName", OrganizerItemDetailTransform::toQString(calInfo.FileNameL()));
+    metaData.insert("Description", OrganizerItemDetailTransform::toQString(calInfo.DescriptionL()));
+    TRgb color = calInfo.Color();
+    QColor qcolor(color.Red(), color.Green(), color.Blue(), color.Alpha());
+    metaData.insert("Color", qcolor);
+    metaData.insert("Enabled", (bool) calInfo.Enabled());
+    
+    CDesC8Array* keys = calInfo.PropertyKeysL();
+    CleanupStack::PushL(keys);
+    for (int i=0; i<keys->Count(); i++) {
+        
+        // Get key and value 
+        QString propKey = OrganizerItemDetailTransform::toQString(keys->MdcaPoint(i));
+        TPtrC8 propValue = calInfo.PropertyValueL(keys->MdcaPoint(i));
+           
+        // Try converting the key to int
+        bool ok = false;
+        int calenPropertyUid = propKey.toInt(&ok);
+        if (!ok) {
+            // Default conversion to byte array
+            QByteArray value((const char*) propValue.Ptr(), propValue.Size());
+            metaData.insert(propKey, value);
+            continue;
+        }
+
+        // Convert the predefined properties
+        if (calenPropertyUid == EFolderLUID) {
+            TPckgBuf<TUint> value;
+            value.Copy(propValue);
+            metaData.insert("FolderLUID", (uint) value());
+        } else if (calenPropertyUid == ECreationTime) {
+            TPckgBuf<TTime> value;
+            value.Copy(propValue);
+            metaData.insert("CreationTime", OrganizerItemDetailTransform::toQDateTimeL(value()));
+        } else if (calenPropertyUid == EModificationTime) {
+            TPckgBuf<TTime> value;
+            value.Copy(propValue);
+            metaData.insert("ModificationTime", OrganizerItemDetailTransform::toQDateTimeL(value()));
+        } else if (calenPropertyUid == ESyncStatus) {
+            TPckgBuf<TBool> value;
+            value.Copy(propValue);
+            metaData.insert("SyncStatus", (bool) value());
+        } else if (calenPropertyUid == EIsSharedFolder) {
+            TPckgBuf<TBool> value;
+            value.Copy(propValue);
+            metaData.insert("IsSharedFolder", (bool) value());
+        } else if (calenPropertyUid == EGlobalUUID) {
+            metaData.insert("GlobalUUID", OrganizerItemDetailTransform::toQString(propValue));
+        } else if (calenPropertyUid == EDeviceSyncServiceOwner) {
+            TPckgBuf<TUint> value;
+            value.Copy(propValue);
+            metaData.insert("DeviceSyncServiceOwner", (uint) value());
+        } else if (calenPropertyUid == EOwnerName) {
+            metaData.insert("OwnerName", OrganizerItemDetailTransform::toQString(propValue));
+        } else if (calenPropertyUid == EMarkAsDelete) {
+            TPckgBuf<TBool> value;
+            value.Copy(propValue);            
+            metaData.insert("MarkAsDelete", (bool) value());
+        } else {
+            // Default conversion for unknown property
+            QByteArray value((const char*) propValue.Ptr(), propValue.Size());
+            metaData.insert(propKey, value);
+        }
+        // TODO: EDeviceSyncProfileID can't find any reference of the type.. uint?
+        // TODO: ESyncConfigEnabled can't find any reference of the type.. bool?
+    }
+    
+    CleanupStack::PopAndDestroy(keys);     
+    
+    return metaData;
+}
+
+CCalCalendarInfo* QOrganizerItemSymbianEngine::toCalInfoLC(QVariantMap metaData) const
+{
+    // Create a new calendar info
+    CCalCalendarInfo* calInfo = CCalCalendarInfo::NewL();
+    CleanupStack::PushL(calInfo);
+    
+    // TODO: we should define the keys somewhere
+    
+    // Filename
+    QString fileName = metaData.value("FileName").toString();
+    metaData.remove("FileName");
+    if (fileName.isEmpty())
+        User::Leave(KErrArgument); // mandatory parameter
+    // NOTE: filename is set only when creating a new calendar...
+
+    // Name
+    QString name = metaData.value("Name").toString();
+    metaData.remove("Name");
+    if (!name.isEmpty())
+        calInfo->SetNameL(OrganizerItemDetailTransform::toPtrC16(name));
+    
+    // Description
+    QString description = metaData.value("Description").toString();
+    metaData.remove("Description");
+    if (!description.isEmpty())
+        calInfo->SetDescriptionL(OrganizerItemDetailTransform::toPtrC16(description));
+    
+    // Color
+    if (metaData.keys().contains("Color")) {
+        QColor qcolor = metaData.value("Color").value<QColor>();
+        TRgb color(qcolor.red(), qcolor.green(), qcolor.blue(), qcolor.alpha());
+        calInfo->SetColor(color);
+        metaData.remove("Color");
+    }
+    
+    // Enabled
+    if (metaData.keys().contains("Enabled")) {
+        calInfo->SetEnabled(metaData.value("Enabled").toBool());
+        metaData.remove("Enabled");
+    }
+        
+    // Set remaining metadata as properties
+    foreach (QString key, metaData.keys()) {
+        
+        QVariant value = metaData.value(key);
+        
+        TBuf8<KBuffLength> propKey;
+        
+        // Set known properties by converting to correct type
+        if (key == "FolderLUID") {
+            propKey.AppendNum(EFolderLUID);
+            TPckgC<TUint> propValue((TUint)value.toUInt());
+            calInfo->SetPropertyL(propKey, propValue);
+        } else if (key == "CreationTime") {
+            propKey.AppendNum(ECreationTime);
+            TPckgC<TTime> propValue(OrganizerItemDetailTransform::toTTimeL(value.toDateTime()));
+            calInfo->SetPropertyL(propKey, propValue);            
+        } else if (key == "ModificationTime") {
+            propKey.AppendNum(EModificationTime);
+            TPckgC<TTime> propValue(OrganizerItemDetailTransform::toTTimeL(value.toDateTime()));
+            calInfo->SetPropertyL(propKey, propValue);
+        } else if (key == "SyncStatus") {
+            propKey.AppendNum(ESyncStatus);
+            TPckgC<TBool> propValue(value.toBool());
+            calInfo->SetPropertyL(propKey, propValue);            
+        } else if (key == "IsSharedFolder") {
+            propKey.AppendNum(EIsSharedFolder);
+            TPckgC<TBool> propValue(value.toBool());
+            calInfo->SetPropertyL(propKey, propValue);  
+        } else if (key == "GlobalUUID") {
+            propKey.AppendNum(EGlobalUUID);
+            QByteArray bytes = value.toString().toUtf8();
+            calInfo->SetPropertyL(propKey,  OrganizerItemDetailTransform::toPtrC8(bytes));
+        } else if (key == "DeviceSyncServiceOwner") {
+            propKey.AppendNum(EDeviceSyncServiceOwner);
+            TPckgC<TUint> propValue((TUint)value.toUInt());
+            calInfo->SetPropertyL(propKey, propValue);
+        } else if (key == "OwnerName") {
+            propKey.AppendNum(EOwnerName);
+            QByteArray bytes = value.toString().toUtf8();
+            calInfo->SetPropertyL(propKey,  OrganizerItemDetailTransform::toPtrC8(bytes));
+        } else if (key == "MarkAsDelete") {
+            propKey.AppendNum(EMarkAsDelete);
+            TPckgC<TBool> propValue(value.toBool());
+            calInfo->SetPropertyL(propKey, propValue);
+        } else {
+            // Default conversion for unknown property
+            QByteArray keyBytes = key.toUtf8();
+            TPtrC8 propName = OrganizerItemDetailTransform::toPtrC8(keyBytes);
+            QByteArray valueBytes = metaData.value(key).toByteArray();
+            TPtrC8 propValue = OrganizerItemDetailTransform::toPtrC8(valueBytes);
+            calInfo->SetPropertyL(propName, propValue);
+        }
+        // TODO: EDeviceSyncProfileID can't find any reference of the type.. uint?
+        // TODO: ESyncConfigEnabled can't find any reference of the type.. bool?
+    }    
+    return calInfo;
 }
 #endif // SYMBIAN_CALENDAR_V2
 
