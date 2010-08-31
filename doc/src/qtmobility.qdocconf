@@ -8,7 +8,7 @@ include(qtmobility-cpp-ignore.qdocconf)
 project                 = QtMobility
 description             = Qt Mobility Project Library Reference Documentation
 versionsym              =
-version                 = 1.1
+version                 = Mobility 1.1
 url                     = http://qt.nokia.com/doc/qtmobility-1.1
 online			        = true
 
@@ -101,6 +101,7 @@ headerdirs = ../../src/global \
              ../../plugins/declarative/gallery \
              ../../src/camera \
              ../../src/organizer \
+             $QTDIR/include \
              .
 
 sourcedirs = ../../src/global \

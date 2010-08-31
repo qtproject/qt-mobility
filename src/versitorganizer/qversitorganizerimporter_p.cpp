@@ -88,7 +88,9 @@ bool QVersitOrganizerImporterPrivate::importDocument(
     } else if (document.componentType() == QLatin1String("VJOURNAL")) {
         item->setType(QOrganizerItemType::TypeJournal);
     } else if (document.componentType() == QLatin1String("VTIMEZONE")) {
-        // TODO
+        mTimeZones.addTimeZone(importTimeZone(document));
+        *error = QVersitOrganizerImporter::NoError;
+        return false;
     } else {
         *error = QVersitOrganizerImporter::InvalidDocumentError;
         return false;
@@ -411,14 +413,17 @@ bool QVersitOrganizerImporterPrivate::createJournalEntryDateTime(
  * time zone (returned as a UTC datetime).  Returns an invalid QDateTime if the string cannot be
  * parsed.
  */
-QDateTime QVersitOrganizerImporterPrivate::parseDateTime(const QVersitProperty& property)
+QDateTime QVersitOrganizerImporterPrivate::parseDateTime(const QVersitProperty& property) const
 {
-    QDateTime datetime = parseDateTime(property.value());
-    if (datetime.isValid() && datetime.timeSpec() == Qt::LocalTime && mTimeZoneHandler) {
+    QDateTime datetime(parseDateTime(property.value()));
+    if (datetime.isValid() && datetime.timeSpec() == Qt::LocalTime) {
         QMultiHash<QString, QString> params = property.parameters();
         QString tzid = params.value(QLatin1String("TZID"));
         if (!tzid.isEmpty()) {
-            datetime = mTimeZoneHandler->convertTimeZoneToUtc(datetime, tzid);
+            if (tzid.at(0) == QLatin1Char('/') && mTimeZoneHandler)
+                datetime = mTimeZoneHandler->convertTimeZoneToUtc(datetime, tzid);
+            else
+                datetime = mTimeZones.convert(datetime, tzid);
         }
     }
     return datetime;
@@ -427,7 +432,7 @@ QDateTime QVersitOrganizerImporterPrivate::parseDateTime(const QVersitProperty& 
 /*! Parses \a str as an ISO 8601 datetime in basic format, either in UTC timezone or floating
  * timezone.  Returns an invalid QDateTime if the string cannot be parsed.
  */
-QDateTime QVersitOrganizerImporterPrivate::parseDateTime(QString str)
+QDateTime QVersitOrganizerImporterPrivate::parseDateTime(QString str) const
 {
     bool utc = str.endsWith(QLatin1Char('Z'), Qt::CaseInsensitive);
     if (utc)
@@ -464,7 +469,7 @@ bool QVersitOrganizerImporterPrivate::createRecurrenceRule(
  * Parses an iCalendar recurrence rule string \a str and puts the result in \a rule.
  * Return true on success, false on failure.
  */
-bool QVersitOrganizerImporterPrivate::parseRecurRule(const QString& str, QOrganizerItemRecurrenceRule* rule)
+bool QVersitOrganizerImporterPrivate::parseRecurRule(const QString& str, QOrganizerItemRecurrenceRule* rule) const
 {
     QStringList parts = str.split(QLatin1Char(';'));
     if (parts.size() == 0)
@@ -503,7 +508,7 @@ bool QVersitOrganizerImporterPrivate::parseRecurRule(const QString& str, QOrgani
  * \a key is the part of the fragment before the equals sign and \a value is the part after.
  */
 void QVersitOrganizerImporterPrivate::parseRecurFragment(const QString& key, const QString& value,
-                                                         QOrganizerItemRecurrenceRule* rule)
+                                                         QOrganizerItemRecurrenceRule* rule) const
 {
     if (key == QLatin1String("INTERVAL")) {
         bool ok;
@@ -597,7 +602,7 @@ void QVersitOrganizerImporterPrivate::parseRecurFragment(const QString& key, con
  * Parses and returns a comma-separated list of integers.  Only non-zero values between \a min and
  * \a max (inclusive) are added
  */
-QList<int> QVersitOrganizerImporterPrivate::parseIntList(const QString& str, int min, int max)
+QList<int> QVersitOrganizerImporterPrivate::parseIntList(const QString& str, int min, int max) const
 {
     QList<int> values;
     QStringList parts = str.split(QLatin1Char(','));
@@ -615,7 +620,7 @@ QList<int> QVersitOrganizerImporterPrivate::parseIntList(const QString& str, int
  * Parses an iCalendar two-character string representing a day of week and returns an int
  * corresponding to Qt::DayOfWeek.  Returns -1 on parse failure.
  */
-int QVersitOrganizerImporterPrivate::parseDayOfWeek(const QString& str)
+int QVersitOrganizerImporterPrivate::parseDayOfWeek(const QString& str) const
 {
     if (str == QLatin1String("MO")) {
         return Qt::Monday;
@@ -663,7 +668,7 @@ bool QVersitOrganizerImporterPrivate::createRecurrenceDates(
 /*!
  * Parses a string like "19970304,19970504,19970704" into a list of QDates
  */
-bool QVersitOrganizerImporterPrivate::parseDateList(const QString& str, QList<QDate>* dates)
+bool QVersitOrganizerImporterPrivate::parseDateList(const QString& str, QList<QDate>* dates) const
 {
     QStringList parts = str.split(QLatin1Char(','));
     if (parts.size() == 0)
@@ -683,7 +688,7 @@ bool QVersitOrganizerImporterPrivate::parseDateList(const QString& str, QList<QD
  * Parses a date in either yyyyMMdd or yyyyMMddTHHmmss format (in the latter case, ignoring the
  * time)
  */
-QDate QVersitOrganizerImporterPrivate::parseDate(QString str)
+QDate QVersitOrganizerImporterPrivate::parseDate(QString str) const
 {
     int tIndex = str.indexOf(QLatin1Char('T'));
     if (tIndex >= 0) {
@@ -891,4 +896,57 @@ QString Duration::nextToken(QString* str)
     } else {
         return QString(); // null QString
     }
+}
+
+TimeZone QVersitOrganizerImporterPrivate::importTimeZone(const QVersitDocument& document) const
+{
+    TimeZone timeZone;
+    foreach (const QVersitProperty& property, document.properties()) {
+        if (property.name() == QLatin1String("TZID") && !property.value().isEmpty()) {
+            timeZone.setTzid(property.value());
+        }
+    }
+    foreach (const QVersitDocument& subDocument, document.subDocuments()) {
+        timeZone.addPhase(importTimeZonePhase(subDocument));
+    }
+    return timeZone;
+}
+
+TimeZonePhase QVersitOrganizerImporterPrivate::importTimeZonePhase(const QVersitDocument& document) const
+{
+    TimeZonePhase phase;
+    phase.setStandard(document.componentType() == QLatin1String("STANDARD"));
+
+    foreach (const QVersitProperty& property, document.properties()) {
+        if (property.name() == QLatin1String("TZOFFSETTO")) {
+            QString value(property.value());
+            if (value.size() == 5
+                    && (value.at(0) == QLatin1Char('+') || value.at(0) == QLatin1Char('-'))
+                    && value.at(1).isDigit()
+                    && value.at(2).isDigit()
+                    && value.at(3).isDigit()
+                    && value.at(4).isDigit()) {
+                phase.setUtcOffset((value.at(0) == QLatin1Char('+') ? 1 : -1) * ( // deal with sign
+                        value.mid(1, 2).toInt() * 3600 // hours part
+                        + value.mid(3, 2).toInt() * 60 // minutes part
+                        ));
+            }
+        } else if (property.name() == QLatin1String("DTSTART")) {
+            QDateTime dt(parseDateTime(property.value()));
+            if (dt.isValid() && dt.timeSpec() == Qt::LocalTime) {
+                phase.setStartDateTime(dt);
+            }
+        } else if (property.name() == QLatin1String("RRULE")) {
+            QOrganizerItemRecurrenceRule rrule;
+            if (parseRecurRule(property.value(), &rrule)) {
+                phase.setRecurrenceRule(rrule);
+            }
+        } else if (property.name() == QLatin1String("RDATE")) {
+            QList<QDate> dates;
+            if (parseDateList(property.value(), &dates)) {
+                phase.setRecurrenceDates(dates);
+            }
+        }
+    }
+    return phase;
 }

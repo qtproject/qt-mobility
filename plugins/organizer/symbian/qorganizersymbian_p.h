@@ -69,8 +69,6 @@
 #include "qorganizeritemmanager.h"
 #include "qorganizeritemmanagerengine.h"
 #include "qorganizeritemmanagerenginefactory.h"
-#include "qorganizeritemdetaildefinition.h"
-#include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
 
 #include "organizeritemtransform.h"
@@ -111,7 +109,6 @@ class CCalSession;
 class CCalEntryView;
 class CCalInstanceView;
 class CActiveSchedulerWait;
-class TCalTime;
 class QOrganizerItemRequestQueue;
 
 class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine, 
@@ -170,7 +167,6 @@ public: // MCalChangeCallBack2
 public: 
     /* Util functions */
     static bool transformError(TInt symbianError, QOrganizerItemManager::Error* qtError);
-    CCalEntryView* entryView();
     void deleteItemL(const QOrganizerItemLocalId& organizeritemId);
     void saveItemL(QOrganizerItem *item, QOrganizerItemChangeSet *changeSet = 0);
     void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, 
@@ -182,8 +178,8 @@ public:
 private:
     CCalEntry* entryForItemOccurrenceL(QOrganizerItem *item, bool &isNewEntry) const;
     CCalEntry* entryForItemL(QOrganizerItem *item, bool &isNewEntry) const;
-    CCalEntry* findEntryLC(QOrganizerItemLocalId localId, QString manageruri) const;
-    CCalEntry* findEntryLC(const TDesC8& globalUid) const;
+    CCalEntry* findEntryL(QOrganizerItemLocalId localId, QString manageruri) const;
+    CCalEntry* findEntryL(const TDesC8& globalUid) const;
     CCalEntry* findParentEntryLC(QOrganizerItem *item, const TDesC8& globalUid) const;
     void removeItemL(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet *changeSet);
 	

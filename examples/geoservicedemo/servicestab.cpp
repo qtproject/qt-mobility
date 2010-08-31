@@ -57,7 +57,7 @@ ServicesTab::ServicesTab(QWidget *parent) :
         QWidget(parent)
 {
     m_requestBtn = new QPushButton(tr("Set Service Provider"));
-    m_requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    m_requestBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     QObject::connect(m_requestBtn, SIGNAL(clicked(bool)), this, SLOT(on_btnRequest_clicked()));
 
     m_resultTree = new QTreeWidget();
@@ -68,8 +68,8 @@ ServicesTab::ServicesTab(QWidget *parent) :
     m_resultTree->setColumnWidth(0, 275);
 
     QHBoxLayout *firstrow = new QHBoxLayout;
-    firstrow->setSpacing(0);
-    firstrow->setContentsMargins(0, 0, 0, 0);
+    firstrow->setSpacing(2);
+    firstrow->setContentsMargins(2, 1, 2, 1);
     firstrow->addWidget(m_requestBtn);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;

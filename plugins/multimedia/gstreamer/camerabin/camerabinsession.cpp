@@ -987,7 +987,12 @@ QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate, bool *c
                                << QSize(2560, 1600)
                                << QSize(2580, 1936);
         const QSize minSize = res.first();
+
+#ifdef Q_WS_MAEMO_5
+        const QSize maxSize = QSize(848, 480);
+#else
         const QSize maxSize = res.last();
+#endif
 
         res.clear();
 

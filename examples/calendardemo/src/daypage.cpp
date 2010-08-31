@@ -77,6 +77,9 @@ DayPage::DayPage(QWidget *parent)
     QPushButton* addEventButton = new QPushButton("Add Event",this);
     connect(addEventButton,SIGNAL(clicked()),this,SLOT(addNewEvent()));
     hbLayout->addWidget(addEventButton);
+    QPushButton* addTodoButton = new QPushButton("Add Todo",this);
+    connect(addTodoButton,SIGNAL(clicked()),this,SLOT(addNewTodo()));
+    hbLayout->addWidget(addTodoButton);
     QPushButton* backButton = new QPushButton("Back",this);
     connect(backButton,SIGNAL(clicked()),this,SLOT(backClicked()));
     hbLayout->addWidget(backButton);

@@ -60,13 +60,13 @@
 
 QTM_USE_NAMESPACE
 
-QLandmarkFileHandlerLmx::QLandmarkFileHandlerLmx(const DatabaseOperations *databaseOperations, const volatile bool  * cancel)
+QLandmarkFileHandlerLmx::QLandmarkFileHandlerLmx(const volatile bool  * cancel)
     : QObject(),
     m_writer(0),
     m_reader(0),
     m_option(QLandmarkManager::IncludeCategoryData),
-    m_databaseOperations(const_cast<DatabaseOperations *> (databaseOperations)),
-    m_cancel(cancel)
+    m_cancel(cancel),
+    m_categoryIdNameHash(QHash<QString,QString>())
 {
 }
 
@@ -88,6 +88,11 @@ void QLandmarkFileHandlerLmx::setLandmarks(const QList<QLandmark> &landmarks)
     m_landmarks = landmarks;
 }
 
+void QLandmarkFileHandlerLmx::setCategoryIdNameHash(const QHash<QString,QString> &categoryIdNameHash)
+{
+    m_categoryIdNameHash = categoryIdNameHash;
+}
+
 QList<QStringList> QLandmarkFileHandlerLmx::landmarkCategoryNames()
 {
     return m_landmarkCategoryNames;
@@ -105,8 +110,10 @@ bool QLandmarkFileHandlerLmx::importData(QIODevice *device)
     m_reader = new QXmlStreamReader(device);
 
     if (!readLmx()) {
-        m_errorCode = QLandmarkManager::ParsingError;
-        m_error = m_reader->errorString();
+        if (m_errorCode != QLandmarkManager::CancelError) {//if it wasn't canceled
+            m_errorCode = QLandmarkManager::ParsingError;//must've been a parsing error.
+            m_error = m_reader->errorString();
+        }
         return false;
     } else {
         if (m_reader->atEnd()) {
@@ -247,6 +254,12 @@ bool QLandmarkFileHandlerLmx::readLandmark(QLandmark &landmark)
         </xsd:sequence>
     </xsd:complexType>
     */
+
+    if(m_cancel && (*m_cancel) == true) {
+        m_errorCode = QLandmarkManager::CancelError;
+        m_error = "Import of lmx file was canceled";
+        return false;
+    }
 
     Q_ASSERT(m_reader->isStartElement() &&
              (m_reader->name() == "landmark"));
@@ -704,7 +717,6 @@ bool QLandmarkFileHandlerLmx::exportData(QIODevice *device, const QString &nsPre
     bool result = writeLmx();
 
     if(!result) {
-        emit error(m_error);
         return false;
     }
 
@@ -758,6 +770,12 @@ bool QLandmarkFileHandlerLmx::writeLandmarkCollection(const QList<QLandmark> &la
     m_writer->writeStartElement(m_ns, "landmarkCollection");
 
     for (int i = 0; i < m_landmarks.size(); ++i) {
+        if(m_cancel && (*m_cancel) == true) {
+            m_errorCode = QLandmarkManager::CancelError;
+            m_error = "Export of lmx file was canceled";
+            return false;
+        }
+
         if (!writeLandmark(m_landmarks.at(i)))
             return false;
     }
@@ -895,14 +913,14 @@ bool QLandmarkFileHandlerLmx::writeCategory(const QLandmarkCategoryId &id)
         return false;
     }
 
-    QLandmarkManager::Error error;
-    QLandmarkCategory cat = m_databaseOperations->category(id,&m_errorCode, &m_error);
-    if (m_errorCode != QLandmarkManager::NoError) {
+    if (!m_categoryIdNameHash.contains(id.localId())) {
+        m_errorCode = QLandmarkManager::UnknownError;
+        m_error = "Category for landmark could not be identified";
         return false;
     }
 
     m_writer->writeStartElement(m_ns, "category");
-    m_writer->writeTextElement(m_ns, "name", cat.name());
+    m_writer->writeTextElement(m_ns, "name", m_categoryIdNameHash.value(id.localId()));
     m_writer->writeEndElement();
 
     return true;

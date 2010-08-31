@@ -41,6 +41,14 @@ isEmpty(QT_LIBINFIX):symbian {
         EPOCROOT50 = $$(EPOCROOT50)
     }
 
+    #Symbian^3 and beyond requires special package flags
+    #we cannot use S60_VERSION == 5.2 as Qt 4.6.x does not define it yet
+    #see $QTDIR/mkspecs/common/symbian/symbian.conf for details
+    exists($${EPOCROOT}epoc32/release/winscw/udeb/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/data/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/release/armv5/lib/libstdcppv5.dso) {
+        pkg_version = $$replace(VERSION,"\.",",")
+        qtmobilitydeployment.pkg_prerules += "$${LITERAL_HASH}{\"QtMobility\"},(0x2002AC89),$${pkg_version},TYPE=SA,RU,NR"
+    }
+
     contains(mobility_modules, messaging): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtMessaging.dll
     
@@ -262,17 +270,32 @@ isEmpty(QT_LIBINFIX):symbian {
             "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_mmfengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_mmfengine.dll\"" \
             "ELSEIF package(0x102032BE)" \
             "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_mmfengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_mmfengine.dll\"" \
-            "ELSE" \
+            "ELSEIF package(0x20022E6D)" \
             "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_mmfengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_mmfengine.dll\"" \
             "ENDIF"
 
 
         qtmobilitydeployment.pkg_postrules += multimedia
 
+        camera = \
+            "IF package(0x1028315F)" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_ecamengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_ecamengine.dll\"" \
+            "ELSEIF package(0x102752AE)" \
+            "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_ecamengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_ecamengine.dll\"" \
+            "ELSEIF package(0x102032BE)" \
+            "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_ecamengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_ecamengine.dll\"" \
+            "ELSEIF package(0x20022E6D)" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_ecamengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_ecamengine.dll\"" \
+            "ENDIF"
+
+        qtmobilitydeployment.pkg_postrules += camera
+
         contains(openmaxal_symbian_enabled, yes) {
             openmax = \
                 "IF package(0x20022E6D)" \
                 "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_xarecordservice.dll\" - \"!:\\sys\\bin\\qtmultimediakit_xarecordservice.dll\"" \
+                "ELSEIF package(0x20032DE7)" \
+                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_openmaxalengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_openmaxalengine.dll\"" \
                 "ENDIF"
 
             qtmobilitydeployment.pkg_postrules += openmax
@@ -280,14 +303,25 @@ isEmpty(QT_LIBINFIX):symbian {
             pluginstubs += \
                 "IF package(0x20022E6D)" \
                     "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/openmaxal/mediarecorder/qmakepluginstubs/qtmultimediakit_xarecordservice.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_xarecordservice.qtplugin\"" \
+                "ELSEIF package(0x20032DE7)" \
+                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/openmaxal/qmakepluginstubs/qtmultimediakit_openmaxalengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_xarecordservice.qtplugin\"" \
                 "ENDIF"
         }
 
         pluginstubs += \
-            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
-            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/qtmultimediakit_m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\qtmultimediakit_m3u.qtplugin\"" \
-        
-    contains(QT_CONFIG, declarative): {
+            "IF package(0x1028315F)" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
+            "ELSEIF package(0x102752AE)" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
+            "ELSEIF package(0x102032BE)" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
+            "ELSEIF package(0x20022E6D)" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
+            "ENDIF" \
+            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/ecam/qmakepluginstubs/qtmultimediakit_ecamengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_ecamengine.qtplugin\"" \
+            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/qtmultimediakit_m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\qtmultimediakit_m3u.qtplugin\"" 
+	    
+	contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_multimedia.dll
             pluginstubs += \
@@ -345,7 +379,12 @@ isEmpty(QT_LIBINFIX):symbian {
  
     qtmobilitydeployment.path = /sys/bin
 
-    DEPLOYMENT += qtmobilitydeployment
+    # Support backup and restore for QtMobility libraries and applications
+    mobilitybackup.sources = backup_registration.xml
+    mobilitybackup.path = c:/private/10202D56/import/packages/$$replace(TARGET.UID3, 0x,)
+
+    DEPLOYMENT += qtmobilitydeployment\
+                mobilitybackup
 } else {
     message(Deployment of infixed library names not supported)
 }

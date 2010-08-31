@@ -99,8 +99,8 @@ class Q_MULTIMEDIA_EXPORT QCameraFocus : public QObject
     Q_PROPERTY(FocusPointMode focusPointMode READ focusPointMode WRITE setFocusPointMode)
     Q_PROPERTY(QPointF customFocusPoint READ customFocusPoint WRITE setCustomFocusPoint)
     Q_PROPERTY(QCameraFocusZoneList focusZones READ focusZones NOTIFY focusZonesChanged)
-    Q_PROPERTY(qreal opticalZoom READ opticalZoom NOTIFY opticalZonesChanged)
-    Q_PROPERTY(qreal digitalZoom READ digitalZoom NOTIFY digitalZonesChanged)
+    Q_PROPERTY(qreal opticalZoom READ opticalZoom NOTIFY opticalZoomChanged)
+    Q_PROPERTY(qreal digitalZoom READ digitalZoom NOTIFY digitalZoomChanged)
 
     Q_ENUMS(FocusMode)
     Q_ENUMS(FocusPointMode)

@@ -87,9 +87,14 @@ MonthPage::MonthPage(QWidget *parent)
 
 #ifdef Q_WS_X11
     // Add push buttons for Maemo as it does not support soft keys
-    QPushButton *addButton = new QPushButton("Add event", this);
-    connect(addButton,SIGNAL(clicked()),this,SLOT(addNewEvent()));
-    mainlayout->addRow("Options:", addButton);
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
+    QPushButton *addEventButton = new QPushButton("Add Event", this);
+    buttonLayout->addWidget(addEventButton);
+    connect(addEventButton,SIGNAL(clicked()),this,SLOT(addNewEvent()));
+    QPushButton *addTodoButton = new QPushButton("Add Todo", this);
+    buttonLayout->addWidget(addTodoButton);
+    connect(addTodoButton,SIGNAL(clicked()),this,SLOT(addNewTodo()));
+    mainlayout->addRow("Options:", buttonLayout);
 #endif
 
     setLayout(mainlayout);

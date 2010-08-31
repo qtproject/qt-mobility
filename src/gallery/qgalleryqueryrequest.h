@@ -66,7 +66,7 @@ class Q_GALLERY_EXPORT QGalleryQueryRequest : public QGalleryAbstractRequest
     Q_PROPERTY(QString rootType READ rootType WRITE setRootType)
     Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem)
     Q_PROPERTY(QGalleryQueryRequest::Scope scope READ scope WRITE setScope)
-    Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
+    Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter)
     Q_PROPERTY(bool valid READ isValid NOTIFY currentItemChanged)
     Q_PROPERTY(QVariant itemId READ itemId NOTIFY currentItemChanged)
     Q_PROPERTY(QString itemType READ itemType NOTIFY currentItemChanged)

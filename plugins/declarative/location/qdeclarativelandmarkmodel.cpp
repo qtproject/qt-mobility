@@ -7,11 +7,101 @@
 
 QTM_BEGIN_NAMESPACE
 
-QDeclarativeLandmarkModel::QDeclarativeLandmarkModel(QObject *parent) :
-        QAbstractListModel(parent), m_manager(0), m_filter(0),
-        m_fetchRequest(0), m_sortingOrder(0), m_sortOrder(AscendingOrder), m_sortKey(DefaultSort),
+QDeclarativeLandmarkAbstractModel::QDeclarativeLandmarkAbstractModel(QObject *parent) :
+        QAbstractListModel(parent), m_manager(0),
         m_componentCompleted(false), m_updatePending(false), m_autoUpdate(false),
         m_limit(-1), m_offset(-1)
+{
+}
+
+QDeclarativeLandmarkAbstractModel::~QDeclarativeLandmarkAbstractModel()
+{
+    delete m_manager;
+}
+
+void QDeclarativeLandmarkAbstractModel::componentComplete()
+{
+    m_componentCompleted = true;
+    if (!m_manager)
+        m_manager = new QLandmarkManager();
+    if (m_autoUpdate)
+        scheduleUpdate();
+}
+
+void QDeclarativeLandmarkAbstractModel::setAutoUpdate(bool autoUpdate)
+{
+    if (autoUpdate == m_autoUpdate)
+        return;
+    m_autoUpdate = autoUpdate;
+    emit autoUpdateChanged();
+}
+
+bool QDeclarativeLandmarkAbstractModel::autoUpdate() const
+{
+    return m_autoUpdate;
+}
+
+void QDeclarativeLandmarkAbstractModel::scheduleUpdate()
+{
+    if (!m_componentCompleted || m_updatePending)
+        return;
+    m_updatePending = true; // Disallow possible duplicate request triggering
+    QMetaObject::invokeMethod(this, "startUpdate", Qt::QueuedConnection);
+}
+
+QString QDeclarativeLandmarkAbstractModel::error() const
+{
+    return m_error;
+}
+
+// This is purely for testing purposes
+void QDeclarativeLandmarkAbstractModel::setDbFileName(QString fileName)
+{
+    if (fileName == m_dbFileName)
+        return;
+    m_dbFileName = fileName;
+    if (m_manager)
+        delete m_manager;
+
+    QMap<QString, QString> map;
+    map["filename"] = m_dbFileName;
+    m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
+}
+
+void QDeclarativeLandmarkAbstractModel::update()
+{
+    scheduleUpdate();
+}
+
+int QDeclarativeLandmarkAbstractModel::limit()
+{
+    return m_limit;
+}
+
+void QDeclarativeLandmarkAbstractModel::setLimit(int limit)
+{
+    if (limit == m_limit)
+        return;
+    m_limit = limit;
+    emit limitChanged();
+}
+
+int QDeclarativeLandmarkAbstractModel::offset()
+{
+    return m_offset;
+}
+
+void QDeclarativeLandmarkAbstractModel::setOffset(int offset)
+{
+    if (offset == m_offset)
+        return;
+    m_offset = offset;
+    emit offsetChanged();
+}
+
+QDeclarativeLandmarkModel::QDeclarativeLandmarkModel(QObject *parent) :
+        QDeclarativeLandmarkAbstractModel(parent),
+        m_filter(0), m_fetchRequest(0), m_sortingOrder(0), m_sortOrder(AscendingOrder), m_sortKey(DefaultSort)
 {
     // Establish role names so that they can be queried from this model
     QHash<int, QByteArray> roleNames;
@@ -32,7 +122,6 @@ QDeclarativeLandmarkModel::~QDeclarativeLandmarkModel()
     // Destruction order is significant, as request dtor uses manager it is associated with
     delete m_fetchRequest;
     delete m_sortingOrder;
-    delete m_manager;
 }
 
 // When the parent is valid it means that rowCount is returning the number of children of parent.
@@ -69,60 +158,6 @@ QVariant QDeclarativeLandmarkModel::data(const QModelIndex &index, int role) con
     return QVariant();
 }
 
-void QDeclarativeLandmarkModel::componentComplete()
-{
-#ifdef QDECLARATIVE_LANDMARK_DEBUG
-    qDebug() << "QDeclarativeLandmarkModel::componentComplete() dbName, autoUpdate: "
-    << m_dbFileName << m_autoUpdate;
-#endif
-    m_componentCompleted = true;
-    if (!m_manager) {
-        if (m_dbFileName.isEmpty()) {
-            m_manager = new QLandmarkManager();
-        } else {
-            // This is purely for testing purposes
-            QMap<QString, QString> map;
-            map["filename"] = m_dbFileName;
-            m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
-        }
-    }
-    if (m_autoUpdate)
-        scheduleUpdate();
-}
-
-QString QDeclarativeLandmarkModel::error() const
-{
-    return m_error;
-}
-
-// This is purely for testing purposes
-QString QDeclarativeLandmarkModel::dbFileName() const
-{
-    return m_dbFileName;
-}
-
-// This is purely for testing purposes
-void QDeclarativeLandmarkModel::setDbFileName(QString fileName)
-{
-    if (fileName == m_dbFileName)
-        return;
-    m_dbFileName = fileName;
-    emit dbFileNameChanged();
-}
-
-void QDeclarativeLandmarkModel::setAutoUpdate(bool autoUpdate)
-{
-    if (autoUpdate == m_autoUpdate)
-        return;
-    m_autoUpdate = autoUpdate;
-    emit autoUpdateChanged();
-}
-
-bool QDeclarativeLandmarkModel::autoUpdate() const
-{
-    return m_autoUpdate;
-}
-
 QDeclarativeLandmarkFilterBase* QDeclarativeLandmarkModel::filter()
 {
     return m_filter;
@@ -137,7 +172,7 @@ void QDeclarativeLandmarkModel::setFilter(QDeclarativeLandmarkFilterBase* filter
     emit filterChanged();
 }
 
-void QDeclarativeLandmarkModel::update()
+void QDeclarativeLandmarkModel::startUpdate()
 {
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
     qDebug("QDeclarativeLandmarkModel::update()");
@@ -175,40 +210,6 @@ void QDeclarativeLandmarkModel::cancelUpdate()
 int QDeclarativeLandmarkModel::count()
 {
     return m_landmarks.count();
-}
-
-int QDeclarativeLandmarkModel::limit()
-{
-    return m_limit;
-}
-
-void QDeclarativeLandmarkModel::setLimit(int limit)
-{
-    if (limit == m_limit)
-        return;
-    m_limit = limit;
-    emit limitChanged(limit);
-}
-
-int QDeclarativeLandmarkModel::offset()
-{
-    return m_offset;
-}
-
-void QDeclarativeLandmarkModel::setOffset(int offset)
-{
-    if (offset == m_offset)
-        return;
-    m_offset = offset;
-    emit offsetChanged(offset);
-}
-
-void QDeclarativeLandmarkModel::scheduleUpdate()
-{
-    if (!m_componentCompleted || m_updatePending)
-        return;
-    m_updatePending = true; // Disallow possbile duplicate request triggering
-    QMetaObject::invokeMethod(this, "update", Qt::QueuedConnection);
 }
 
 void QDeclarativeLandmarkModel::setFetchRange()
@@ -286,6 +287,11 @@ void QDeclarativeLandmarkModel::setSortOrder(QDeclarativeLandmarkModel::SortOrde
     emit sortOrderChanged();
 }
 
+Q_INVOKABLE QList<QDeclarativeLandmark*> QDeclarativeLandmarkModel::landmarks() const
+{
+    return m_landmarkMap.values();
+}
+
 void QDeclarativeLandmarkModel::fetchRequestStateChanged(QLandmarkAbstractRequest::State state)
 {
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
@@ -305,10 +311,10 @@ void QDeclarativeLandmarkModel::fetchRequestStateChanged(QLandmarkAbstractReques
         m_landmarks = m_fetchRequest->landmarks();
         endInsertRows();
         if (oldCount != m_landmarks.count())
-            emit countChanged(m_landmarks.count());
+            emit countChanged();
     } else if (m_error != m_fetchRequest->errorString()) {
         m_error = m_fetchRequest->errorString();
-        emit errorChanged(m_error);
+        emit errorChanged();
     }
     // Convert into declarative classes --> possible to return landmarks in a list in QML
     convertLandmarksToDeclarative();

@@ -77,7 +77,7 @@ private:
     QGalleryTrackerChangeNotifier *changeNotifier();
 
     QGalleryAbstractResponse *createItemListResponse(
-            const QGalleryTrackerResultSetArguments &arguments,
+            QGalleryTrackerResultSetArguments *arguments,
             int offset,
             int limit,
             bool isItemType,
@@ -148,13 +148,13 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
 
     QGalleryTrackerResultSetArguments arguments;
 
-    int result = schema.prepareIdResponse(
+    int result = schema.prepareItemResponse(
             &arguments, this, request->itemId().toString(), request->propertyNames());
 
     if (result != QGalleryAbstractRequest::Succeeded) {
         return new QGalleryAbstractResponse(result);
     } else {
-        return createItemListResponse(arguments, 0, 1, schema.isItemType(), request->isLive());
+        return createItemListResponse(&arguments, 0, 1, schema.isItemType(), request->isLive());
     }
 }
 
@@ -182,7 +182,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createTypeResponse(QGalleryTy
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
-        const QGalleryTrackerResultSetArguments &arguments,
+        QGalleryTrackerResultSetArguments *arguments,
         int offset,
         int limit,
         bool isItemType,
@@ -214,7 +214,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
 
     QGalleryTrackerResultSetArguments arguments;
 
-    int result = schema.prepareFilterResponse(
+    int result = schema.prepareQueryResponse(
             &arguments,
             this,
             request->scope(),
@@ -227,7 +227,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
         return new QGalleryAbstractResponse(result);
     } else {
         return createItemListResponse(
-                arguments,
+                &arguments,
                 request->offset(),
                 request->limit(),
                 schema.isItemType(),

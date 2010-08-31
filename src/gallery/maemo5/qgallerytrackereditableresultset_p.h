@@ -66,7 +66,7 @@ class QGalleryTrackerEditableResultSet : public QGalleryTrackerResultSet
     Q_OBJECT
 public:
     QGalleryTrackerEditableResultSet(
-            const QGalleryTrackerResultSetArguments &arguments,
+            QGalleryTrackerResultSetArguments *arguments,
             const QGalleryDBusInterfacePointer &metaDataInterface,
             bool live,
             int cursorPosition,
