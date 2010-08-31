@@ -95,12 +95,10 @@ void OrganizerItemRecurrenceTransform::transformToDetailL(const CCalInstance& in
 
 void OrganizerItemRecurrenceTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
-#ifdef AGENDA_EXT_SUPPORT
     if (QOrganizerItemType::TypeNote == item.type()) {
         // Notes do not support the reccurrence rules
         return;
     }
-#endif
     // Clear all repeating properties from this entry.
     // This is needed for removing recurrence rules from an existing entry.
     entry->ClearRepeatingPropertiesL();
