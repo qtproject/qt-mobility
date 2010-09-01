@@ -10,7 +10,7 @@ DEPENDPATH += .
 INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
 
 # QMF libraries must be located at $QMF_LIBDIR
-LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
+LIBS += -L $$(QMF_LIBDIR) -lqmfclient
 QMAKE_RPATHDIR+= $$(QMF_LIBDIR)
 
 # Input
