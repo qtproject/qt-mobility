@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,33 +38,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "organizeritemdetailtransform.h"
 
-OrganizerItemDetailTransform::OrganizerItemDetailTransform()
+#include <calentry.h>
+
+int main(int, char**)
 {
-
-}
-
-OrganizerItemDetailTransform::~OrganizerItemDetailTransform()
-{
-
-}
-
-void OrganizerItemDetailTransform::modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const
-{
-    Q_UNUSED(schemaDefs);
-    // empty default implementation 
-}
-
-void OrganizerItemDetailTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
-{
-    // In most cases we can use the other transformToDetailL function without modification
-    transformToDetailL(instance.Entry(), itemInstance);
-}
-
-void OrganizerItemDetailTransform::transformToDetailPostSaveL(const CCalEntry& entry, QOrganizerItem *item)
-{
-    Q_UNUSED(entry);
-    Q_UNUSED(item);
-    // empty default implementation
+    CCalEntry::TType entryType = CCalEntry::ENote;
+    return 0;
 }

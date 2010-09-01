@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,33 +38,48 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "organizeritemdetailtransform.h"
 
-OrganizerItemDetailTransform::OrganizerItemDetailTransform()
+#ifndef QORGANIZERCALDBACCESS_H
+#define QORGANIZERCALDBACCESS_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qtorganizer.h"
+#include <QtSql>
+
+QTM_USE_NAMESPACE
+
+class CEvent;
+class CTodo;
+class CJournal;
+
+class OrganizerCalendarDatabaseAccess
 {
+public:
+    OrganizerCalendarDatabaseAccess();
+    ~OrganizerCalendarDatabaseAccess();
 
-}
+    bool open(QString databasePathName);
+    void close();
 
-OrganizerItemDetailTransform::~OrganizerItemDetailTransform()
-{
+    int typeOf(QOrganizerItemLocalId id);
+    std::vector<CEvent *> getEvents(int calId, std::string guid, int &pErrorCode);
+    std::vector<CTodo *> getTodos(int calId, std::string guid, int &pErrorCode);
+    std::vector<CJournal *> getJournals(int calId, std::string guid, int &pErrorCode);
 
-}
+    static void sqliteErrorMapper(const QSqlError &sqlError, int& errorCode);
 
-void OrganizerItemDetailTransform::modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const
-{
-    Q_UNUSED(schemaDefs);
-    // empty default implementation 
-}
+private:
+    QSqlDatabase m_db;
+};
 
-void OrganizerItemDetailTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
-{
-    // In most cases we can use the other transformToDetailL function without modification
-    transformToDetailL(instance.Entry(), itemInstance);
-}
-
-void OrganizerItemDetailTransform::transformToDetailPostSaveL(const CCalEntry& entry, QOrganizerItem *item)
-{
-    Q_UNUSED(entry);
-    Q_UNUSED(item);
-    // empty default implementation
-}
+#endif // QORGANIZERCALDBACCESS_H
