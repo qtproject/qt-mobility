@@ -242,29 +242,31 @@ void QConnmanManagerInterface::releaseSession()
 
 QDBusObjectPath QConnmanManagerInterface::lookupService(const QString &service)
 {
-
-    QDBusReply<QDBusObjectPath > reply = this->call(QLatin1String("LookupService"), QVariant::fromValue(service));
-
+    QDBusReply<QDBusObjectPath > reply = this->call(QLatin1String("LookupService"),
+                                                    QVariant::fromValue(service));
     if(!reply.isValid() || reply.error().message().contains("Not found")) {
-        foreach(const QString servicepath,getServices()) {            
-            QConnmanServiceInterface serv(servicepath,this);
+        foreach(const QString servicepath,getServices()) {
+            if(!servicepath.isEmpty()) {
+                QConnmanServiceInterface serv(servicepath,this);
 
-            if(serv.getName() == service) {
-                return QDBusObjectPath(servicepath);
-            }
-            else if(serv.getType() == service) {
-                return QDBusObjectPath(servicepath);
-            }
-            QConnmanTechnologyInterface tech(getPathForTechnology(serv.getType()));
-
-            foreach(const QString dev,tech.getDevices()) {
-                QConnmanDeviceInterface devIface(dev);
-                if(devIface.getInterface() == service ||
-                   devIface.getName() == service)
+                if(serv.getName() == service) {
                     return QDBusObjectPath(servicepath);
+                }
+                else if(serv.getType() == service) {
+                    return QDBusObjectPath(servicepath);
+                }
+                QConnmanTechnologyInterface tech(getPathForTechnology(serv.getType()));
+
+                if(tech.isValid())  {
+                    foreach(const QString dev,tech.getDevices()) {
+                        QConnmanDeviceInterface devIface(dev);
+                        if(devIface.getInterface() == service ||
+                           devIface.getName() == service)
+                            return QDBusObjectPath(servicepath);
+                    }
+                }
             }
         }
-
     }
     return reply.value();
 }

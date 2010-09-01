@@ -351,7 +351,6 @@ void Dialog::setupNetwork()
     networkModeChanged(ni->currentMode());
     netStatusComboBox->setCurrentIndex((int)ni->currentMode());
     netStatusComboActivated((int)ni->currentMode());
-
 }
 void Dialog::netStatusComboActivated(int index)
 {

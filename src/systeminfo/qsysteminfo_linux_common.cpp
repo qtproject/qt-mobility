@@ -489,7 +489,6 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
     if(connmanIsAvailable) {
 
         QDBusObjectPath path = connmanManager->lookupService(modeToTechnology(mode));
-
         if(!path.path().isEmpty()) {
             QConnmanServiceInterface serviceIface(path.path(),this);
 
@@ -576,13 +575,15 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getOfono
 
             QOfonoNetworkRegistrationInterface ofonoNetwork(modempath,this);
             if(ofonoNetwork.isValid()) {
-                foreach(const QDBusObjectPath op,ofonoNetwork.getOperators() ) {
-                    QOfonoNetworkOperatorInterface opIface(op.path(),this);
+                foreach(const QDBusObjectPath op,ofonoNetwork.getOperators()) {
+                    if(!op.path().isEmpty()) {
+                        QOfonoNetworkOperatorInterface opIface(op.path(),this);
 
-                    foreach(const QString opTech, opIface.getTechnologies()) {
-                        if(mode == ofonoTechToMode(opTech)) {
-                              networkStatus = ofonoStatusToStatus(ofonoNetwork.getStatus());
-                              break;
+                        foreach(const QString opTech, opIface.getTechnologies()) {
+                            if(mode == ofonoTechToMode(opTech)) {
+                                networkStatus = ofonoStatusToStatus(ofonoNetwork.getStatus());
+                                break;
+                            }
                         }
                     }
                 }
@@ -1429,8 +1430,7 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoLinuxCommonPrivate::currentMod
         } else if(curMode == "ethernet") {
             return QSystemNetworkInfo::EthernetMode;
         } else if(curMode == "cellular") {
-#warning FIXME
-            return QSystemNetworkInfo::WlanMode;
+            return typeToMode(curMode);
         } else if(curMode == "bluetooth") {
             return QSystemNetworkInfo::BluetoothMode;
         } else if(curMode == "wimax") {
