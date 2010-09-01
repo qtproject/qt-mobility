@@ -73,7 +73,8 @@ public:
     QTelephonyCallInfoPrivate()
         : type(QTelephony::Other)
         , subType("")
-        , status(QTelephony::Idle) { }
+        , status(QTelephony::Idle)
+        , direction(QTelephony::Received){ }
     QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other)
         : QSharedData(other) { }
 
@@ -82,6 +83,7 @@ public:
     QString subType;
     QTelephony::CallStatus status;
     QHash<QString, QVariant> values;
+    QTelephony::Direction direction;
 };
 
 QTM_END_NAMESPACE

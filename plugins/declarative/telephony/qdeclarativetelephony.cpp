@@ -77,6 +77,16 @@
 */
 
 /*!
+    \enum QTelephonyCallInfoWrapper::Direction
+
+    This enum decribes the direction of the call.
+    A QTelephonyCallInfo object can have a direction of:
+
+    \value Received    The call is received.
+    \value Dialed      The call is dialed.
+*/
+
+/*!
     \fn  QTelephonyCallInfoWrapper::QTelephonyCallInfoWrapper()
 
     Constructor of a QTelephonyCallInfoWrapper object.
@@ -193,6 +203,18 @@ QVariant QTelephonyCallInfoWrapper::value(const QString& param) const
 }
 
 /*!
+    \fn  QVariant QTelephonyCallInfoWrapper::direction() const
+
+    Gives back the direction of a call.
+    This function is for reading the direction of a call (received or dialed).
+*/
+QTelephonyCallInfoWrapper::Direction QTelephonyCallInfoWrapper::direction() const
+{
+    return (QTelephonyCallInfoWrapper::Direction)d->direction();
+}
+
+
+/*!
     \class QTelephonyCallListWrapper
     \ingroup telephonyapi
     \brief The QTelephonyCallListWrapper class for a QTelephonyCallList object. This wrapper class can be used in QML to work with telephony.
@@ -281,8 +303,6 @@ void QTelephonyCallListWrapper::onCallRemoved(const QTelephonyCallInfo& call)
 
     This Slot is called whenever a call was added to the active call list of QTelephonyCallList.
 */
-
-
 void QTelephonyCallListWrapper::onCallAdded(const QTelephonyCallInfo& call)
 {
     qDebug() << "QTelephonyCallListWrapper::onCallAdded(...)";
