@@ -69,9 +69,12 @@ void OrganizerItemTypeTransform::transformToDetailL(const CCalEntry& entry, QOrg
     }
     else if (entryType == CCalEntry::EAnniv)
         itemType = QLatin1String(QOrganizerItemType::TypeEvent);
+#ifdef AGENDA_EXT_SUPPORT
     else if (CCalEntry::ENote == entryType) {
         itemType = QLatin1String(QOrganizerItemType::TypeNote);
-    } else
+    }
+#endif
+    else
         User::Leave(KErrUnknown); // unknown type
 
     // TODO: CCalEntry::EReminder
@@ -121,11 +124,13 @@ CCalEntry::TType OrganizerItemTypeTransform::entryTypeL(const QOrganizerItem &it
         entryType = CCalEntry::ETodo;
     else if (itemType == QOrganizerItemType::TypeEvent || itemType == QOrganizerItemType::TypeEventOccurrence)
         entryType = CCalEntry::EAppt;
+#ifdef AGENDA_EXT_SUPPORT
     else if (QOrganizerItemType::TypeNote == itemType) {
         entryType = CCalEntry::ENote;
-    } else {
-        User::Leave(KErrUnknown); // unknown type
     }
+#endif
+    else
+        User::Leave(KErrUnknown); // unknown type
         
         
 
