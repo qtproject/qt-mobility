@@ -85,7 +85,7 @@ Q_GLOBAL_STATIC(CFSEngine,fsEngine);
 void createFSMessage(QMessage &message, NmApiMessage &fsMessage)
 {      
     NmApiMessageEnvelope fsMessageEnvelope = fsMessage.envelope();
-    
+
     switch (message.priority()) {
         case QMessage::HighPriority:
             fsMessageEnvelope.setPriority(EmailClientApi::NmApiMessagePriorityHigh);
@@ -168,7 +168,6 @@ void createFSMessage(QMessage &message, NmApiMessage &fsMessage)
             QMessageContentContainerIdList contentIds = message.contentIds();
             foreach (QMessageContentContainerId id, contentIds){
                 QMessageContentContainer container = message.find(id);
-               // MEmailMessageContent* content = fsMessage->ContentL(); 
                 QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
                 if (pPrivateContainer->_id == message.bodyId()) {
                     // ContentContainer is body
@@ -187,8 +186,6 @@ void createFSMessage(QMessage &message, NmApiMessage &fsMessage)
                 } else {
                     // ContentContainer is attachment
                     QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
-                    // Replace Qt style path separator "/" with Symbian path separator "\"
-                    //filePath.replace(QByteArray("/"), QByteArray("\\"));
                     NmApiAttachment attachment;
                     QString temp_path = QString(filePath);
                     attachment.setFileName(temp_path);
@@ -205,6 +202,7 @@ void createFSMessage(QMessage &message, NmApiMessage &fsMessage)
 
 CFSEngine::CFSEngine()
 {
+    startEventObserver();
 }
 
 CFSEngine::~CFSEngine()
@@ -214,11 +212,142 @@ CFSEngine::~CFSEngine()
     
     while (!m_addList.isEmpty())
         delete m_addList.takeFirst();
+    
+    cancelEventObserver();
 }
 
 CFSEngine* CFSEngine::instance()
 {   
     return fsEngine();
+}
+
+void CFSEngine::startEventObserver()
+{
+    m_eventNotifier = new NmApiEventNotifier(this);
+    m_eventNotifier->start();
+    connect(m_eventNotifier,SIGNAL(messageEvent(MessageEvent,quint64,quint64,QList<quint64>)),this,
+                     SLOT(messageEvent(MessageEvent,quint64,quint64,QList<quint64>)),Qt::QueuedConnection);
+}
+
+void CFSEngine::messageEvent(EmailClientApi::NmApiMessageEvent event, quint64 mailboxId, quint64 folderId, QList<quint64> envelopeIdList)
+{
+    switch(event) {
+        case EmailClientApi::MessageCreated:
+            newMessageEvent(mailboxId, envelopeIdList, folderId);
+            break;
+        case EmailClientApi::MessageChanged:
+            messageChangedEvent(mailboxId, envelopeIdList, folderId);
+            break;
+        case EmailClientApi::MessageDeleted:
+            messageDeletedEvent(mailboxId, envelopeIdList, folderId);
+            break;
+    }
+}
+
+void CFSEngine::newMessageEvent(quint64 mailboxId, QList<quint64> envelopeIdList, quint64 folderId)
+{
+    QMessageManager::NotificationFilterIdSet matchingFilters;
+    QMessageStorePrivate::NotificationType notificationType = QMessageStorePrivate::Added;
+  
+    for (TInt i = 0; i < envelopeIdList.count(); i++) {
+        quint64 messageId(envelopeIdList[i]);
+        notification(mailboxId, messageId, folderId, notificationType);
+    }
+}
+
+void CFSEngine::messageChangedEvent(quint64 mailboxId, QList<quint64> envelopeIdList, quint64 folderId)
+{
+    QMessageManager::NotificationFilterIdSet matchingFilters;
+    QMessageStorePrivate::NotificationType notificationType = QMessageStorePrivate::Updated;
+  
+    for (TInt i = 0; i < envelopeIdList.count(); i++) {
+        quint64 messageId(envelopeIdList[i]);
+        notification(mailboxId, messageId, folderId, notificationType);
+    }
+}
+
+void CFSEngine::messageDeletedEvent(quint64 mailboxId, QList<quint64> envelopeIdList, quint64 folderId)
+{
+    QMessageManager::NotificationFilterIdSet matchingFilters;
+    QMap<int, QMessageFilter> filters(m_filters);
+    QMap<int, QMessageFilter>::const_iterator it = filters.begin(), end = filters.end();  
+    QMessageStorePrivate::NotificationType notificationType = QMessageStorePrivate::Removed;
+    // TODO: convert mailboxId
+    QString idAsString = QString::number(mailboxId);
+    for (TInt j = 0; j < m_mtmAccountList.count(); j++) {
+        if (idAsString == m_mtmAccountList[j].toString())
+            return;
+    } 
+    for (TInt i = 0; i < envelopeIdList.count(); i++) {
+        for ( ; it != end; ++it) {
+            // Empty filter matches to all messages
+            matchingFilters.insert(it.key());
+        }
+        quint64 messageId(envelopeIdList[i]);
+        ipMessageStorePrivate->messageNotification(notificationType, 
+                            QMessageId(addIdPrefix(QString::number(messageId), SymbianHelpers::EngineTypeFreestyle)), 
+                            matchingFilters);
+    }
+}
+
+void CFSEngine::notification(quint64 mailboxId, quint64 envelopeId, quint64 folderId, 
+                                    QMessageStorePrivate::NotificationType aNotificationType)
+{
+    Q_UNUSED(folderId);
+    QMessageManager::NotificationFilterIdSet matchingFilters;
+    // Copy the filter map to protect against modification during traversal
+    QMap<int, QMessageFilter> filters(m_filters);
+    QMap<int, QMessageFilter>::const_iterator it = filters.begin(), end = filters.end();
+    QMessage message;
+    QMessageId realMessageId = QMessageId(addIdPrefix(QString::number(mailboxId), SymbianHelpers::EngineTypeFreestyle));
+    bool messageRetrieved = false;    
+    // TODO: convert mailboxId
+    QString idAsString = QString::number(mailboxId);
+    for (TInt j = 0; j < m_mtmAccountList.count(); j++) {
+        if (idAsString == m_mtmAccountList[j].toString()) {
+            return;
+        }
+    }   
+    for ( ; it != end; ++it) {
+        const QMessageFilter &filter(it.value());
+        if (!messageRetrieved) {
+            NmApiMessage* fsMessage = NULL;
+            //TODO: Use NmApiEmailService::getMessage() to find NmApiMessage by messageId.            
+            if (!fsMessage) {
+                return;
+            }
+            message = CreateQMessage(fsMessage);
+            messageRetrieved = true;
+        }
+
+        if (filter.isEmpty()) {
+            // Empty filter matches to all messages
+            matchingFilters.insert(it.key());
+        } else {
+            if (message.type() == QMessage::NoType) {
+                matchingFilters.clear();
+                continue;
+            }
+        }
+        QMessageFilterPrivate* privateMessageFilter = QMessageFilterPrivate::implementation(filter);
+        if (privateMessageFilter->filter(message)) {
+            matchingFilters.insert(it.key());
+        }
+        
+    }
+    int c = matchingFilters.count();
+    QString id = realMessageId.toString();
+    if (matchingFilters.count() > 0)
+        ipMessageStorePrivate->messageNotification(aNotificationType, realMessageId, matchingFilters);
+}
+
+
+void CFSEngine::cancelEventObserver()
+{
+    if (m_eventNotifier) {
+        m_eventNotifier->cancel();
+        delete m_eventNotifier;
+    }
 }
 
 bool CFSEngine::accountLessThan(const QMessageAccountId accountId1, const QMessageAccountId accountId2)
@@ -449,13 +578,14 @@ bool CFSEngine::addMessage(QMessage *message)
         return false;
     }
 
-    connect(addOperation, SIGNAL(messageSend(int, CFSAsynchronousAddOperation*)), this, 
+    connect(addOperation, SIGNAL(messageAdded(int, CFSAsynchronousAddOperation*)), this, 
                 SLOT(addMessageCompleted(int, CFSAsynchronousAddOperation*)));
     m_addList.append(addOperation);    
     QEventLoop* eventloop = new QEventLoop();
     connect(addOperation, SIGNAL(operationComplete(QVariant, int)), eventloop, SLOT(quit()));
-    eventloop->exec();
     addOperation->addMessage(*message);
+    
+    eventloop->exec();  
     delete eventloop;
     if (!m_addMessageError)
         return true;
@@ -481,8 +611,8 @@ bool CFSEngine::updateMessage(QMessage *message)
     QPointer<NmApiOperation> saveOperation = manager->saveMessage(fsMessage);
     QEventLoop* eventloop = new QEventLoop();
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(saveOperation, SIGNAL(operationComplete(QVariant, int)), this, SLOT(saveCompleted(QVariant, int)));
-    connect(saveOperation, SIGNAL(operationComplete(QVariant, int)), eventloop, SLOT(quit()));
+    connect(saveOperation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(saveCompleted(QVariant, int)));
+    connect(saveOperation, SIGNAL(operationComplete(int, QVariant)), eventloop, SLOT(quit()));
     eventloop->exec();
     
     delete manager;
@@ -654,8 +784,8 @@ bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOpti
     QPointer<NmApiOperation> deleteOperation = manager->deleteMessages(messageIds);
     QEventLoop* eventloop = new QEventLoop();
 
-    connect(deleteOperation, SIGNAL(operationComplete(QVariant, int)), this, SLOT(deleteCompleted(QVariant, int)));
-    connect(deleteOperation, SIGNAL(operationComplete(QVariant, int)), eventloop, SLOT(quit()));
+    connect(deleteOperation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(deleteCompleted(QVariant, int)));
+    connect(deleteOperation, SIGNAL(operationComplete(int, QVariant)), eventloop, SLOT(quit()));
     eventloop->exec();
     
     delete manager;
@@ -2547,7 +2677,7 @@ void CFSAsynchronousSendOperation::saveMessage()
     NmApiMessageManager* manager = new NmApiMessageManager(this, mailboxId);
     QPointer<NmApiOperation> operation = manager->saveMessage(m_fsMessage);
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(operation, SIGNAL(operationComplete(QVariant, int)), this, SLOT(saveCompleted(QVariant, int)));
+    connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(saveCompleted(QVariant, int)));
     delete manager;
 }
     
@@ -2557,7 +2687,7 @@ void CFSAsynchronousSendOperation::createDraftMessage()
     NmApiMessageManager* manager = new NmApiMessageManager(this, mailboxId);
     QPointer<NmApiOperation> operation = manager->createDraftMessage(NULL);
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(operation, SIGNAL(operationComplete(QVariant, int)), this, SLOT(createDraftMessageCompleted(QVariant, int)));
+    connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(createDraftMessageCompleted(QVariant, int)));
     delete manager;
 }
     
@@ -2567,7 +2697,7 @@ void CFSAsynchronousSendOperation::sendMessage()
     NmApiMessageManager* manager = new NmApiMessageManager(this, mailboxId);
     QPointer<NmApiOperation> operation = manager->sendMessage(m_fsMessage);
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(operation, SIGNAL(operationComplete(QVariant, int)), this, SLOT(sendCompleted(QVariant, int)));
+    connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(sendCompleted(QVariant, int)));
     delete manager;
 }
 
@@ -2587,7 +2717,7 @@ void CFSAsynchronousAddOperation::addMessage(QMessage &message)
     createDraftMessage();
 }
     
-void CFSAsynchronousAddOperation::createDraftMessageCompleted(QVariant message, int success)
+void CFSAsynchronousAddOperation::createDraftMessageCompleted(int success, QVariant message)
 {
     if (success == 0) {
         if (message.canConvert<NmApiMessage>()) {
@@ -2600,7 +2730,7 @@ void CFSAsynchronousAddOperation::createDraftMessageCompleted(QVariant message, 
 
 void CFSAsynchronousAddOperation::saveCompleted(QVariant message, int success)
 {
-    emit messageAdded(success);
+    emit messageAdded(success, this);
 }
     
 void CFSAsynchronousAddOperation::saveMessage()
@@ -2609,17 +2739,17 @@ void CFSAsynchronousAddOperation::saveMessage()
     NmApiMessageManager* manager = new NmApiMessageManager(this, mailboxId);
     QPointer<NmApiOperation> operation = manager->saveMessage(m_fsMessage);
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(operation, SIGNAL(operationComplete(QVariant, int)), this, SLOT(saveCompleted(QVariant, int)));
+    connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(saveCompleted(QVariant, int)));
     delete manager;
 }
     
 void CFSAsynchronousAddOperation::createDraftMessage()
 {
     quint64 mailboxId = stripIdPrefix(m_qMessage.parentAccountId().toString()).toULongLong();
-    NmApiMessageManager* manager = new NmApiMessageManager(this, mailboxId);
+    NmApiMessageManager* manager = new NmApiMessageManager(0, mailboxId);
     QPointer<NmApiOperation> operation = manager->createDraftMessage(NULL);
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(operation, SIGNAL(operationComplete(QVariant, int)), this, SLOT(createDraftMessageCompleted(QVariant, int)));
+    connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(createDraftMessageCompleted(int, QVariant)));
     delete manager;
 }
 

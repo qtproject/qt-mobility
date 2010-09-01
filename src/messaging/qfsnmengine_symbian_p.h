@@ -58,6 +58,7 @@
 #include <nmapienvelopelisting.h>
 #include <nmapimessagesearch.h>
 #include <nmapicommon.h>
+#include <nmapieventnotifier.h>
 #include <xqappmgr.h>
 
 #include "qmessagemanager.h"
@@ -159,6 +160,7 @@ public:
     void createFSMessage(QMessage &message, NmApiMessage &fsMessage);
     
 public slots:
+    void messageEvent(EmailClientApi::NmApiMessageEvent event, quint64 mailboxId, quint64 folderId, QList<quint64> envelopeIdList);
     void sendCompleted(int success, CFSAsynchronousSendOperation *operation);
     void addMessageCompleted(int success, CFSAsynchronousAddOperation *operation);
     void saveCompleted(QVariant variant, int success);
@@ -166,6 +168,14 @@ public slots:
       
 private:
 
+    void startEventObserver();
+    void cancelEventObserver();
+    void newMessageEvent(quint64 mailboxId, QList<quint64> envelopeIdList, quint64 folderId);
+    void messageChangedEvent(quint64 mailboxId, QList<quint64> envelopeIdList, quint64 folderId);
+    void messageDeletedEvent(quint64 mailboxId, QList<quint64> envelopeIdList, quint64 folderId);
+    void notification(quint64 mailboxId, quint64 envelopeId, quint64 folderId, 
+                                        QMessageStorePrivate::NotificationType aNotificationType);
+    
     void queryMessagesL(QMessageServicePrivate &privateService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     void queryMessagesL(QMessageServicePrivate &privateService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     void countMessagesL(QMessageServicePrivate &privateService, const QMessageFilter &filter);
@@ -208,7 +218,8 @@ private:
     friend class CMessagesFindOperation;
     
 private:
-
+    NmApiEventNotifier* m_eventNotifier;
+    
     mutable QHash<QString, QMessageAccount> m_accounts;
     mutable int m_operationIds;
     mutable QList<FSMessageQueryInfo> m_messageQueries;
@@ -330,11 +341,11 @@ public:
     void addMessage(QMessage &message);
     
 public slots:
-    void createDraftMessageCompleted(QVariant message, int success);
+    void createDraftMessageCompleted(int success, QVariant message);
     void saveCompleted(QVariant variant, int success);
     
 signals:    
-    void messageAdded(int success);
+    void messageAdded(int success, CFSAsynchronousAddOperation *operation);
     
 private:
     void saveMessage();

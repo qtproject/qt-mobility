@@ -44,7 +44,9 @@ PRIVATE_HEADERS += addresshelper_p.h \
     qmessagestore.h \
     qmessagestore_p.h \
     messagingutil_p.h
-SOURCES += qmessageid.cpp \
+SOURCES += qfsnmengine_symbian.cpp \
+    qfsnmengine_symbian.cpp \
+    qmessageid.cpp \
     qmessagecontentcontainerid.cpp \
     qmessagefolderid.cpp \
     qmessageaccountid.cpp \
@@ -65,7 +67,7 @@ SOURCES += qmessageid.cpp \
     qmessageservice.cpp \
     messagingutil.cpp
 symbian|win32|maemo6|maemo5|mac { 
-    mac|maemo6: SOURCES += qmessageid_stub.cpp \
+    mac|maemo6:SOURCES += qmessageid_stub.cpp \
         qmessagecontentcontainerid_stub.cpp \
         qmessagefolderid_stub.cpp \
         qmessageaccountid_stub.cpp \
@@ -81,16 +83,18 @@ symbian|win32|maemo6|maemo5|mac {
         qmessagesortorder_stub.cpp \
         qmessagestore_stub.cpp \
         qmessageservice_stub.cpp
-    maemo5 {
+    maemo5 { 
         QT += dbus
         CONFIG += link_pkgconfig
         PUBLIC_HEADERS -= qmessagecontentcontainer_p.h
         PRIVATE_HEADERS -= qmessagecontentcontainer_p.h
-        HEADERS += qmessagecontentcontainer_maemo_p.h \
+        HEADERS += qfsnmengine_symbian_p.h \
+            qfsnmengine_symbian_p.h \
+            qmessagecontentcontainer_maemo_p.h \
             qmessageservice_maemo_p.h \
             modestengine_maemo_p.h \
             telepathyengine_maemo_p.h \
-            maemohelpers_p.h\
+            maemohelpers_p.h \
             eventloggerengine_maemo_p.h
         SOURCES += qmessageid_maemo.cpp \
             qmessagecontentcontainerid_maemo.cpp \
@@ -110,7 +114,7 @@ symbian|win32|maemo6|maemo5|mac {
             qmessageservice_maemo.cpp \
             modestengine_maemo.cpp \
             telepathyengine_maemo.cpp \
-            maemohelpers.cpp\
+            maemohelpers.cpp \
             eventloggerengine_maemo.cpp
         documentation.path = $$QT_MOBILITY_PREFIX/doc
         documentation.files = doc/html
@@ -134,23 +138,31 @@ symbian|win32|maemo6|maemo5|mac {
         pkgconfig.files = QtMessaging.pc
         INSTALLS += pkgconfig \
             documentation
-        LIBS += -lgconf-2 -lrtcom-eventlogger -lmodest-dbus-client-1.0 -losso -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0 -ltpsession -ltelepathy-qt4 -lhildonmime
+        LIBS += -lgconf-2 \
+            -lrtcom-eventlogger \
+            -lmodest-dbus-client-1.0 \
+            -losso \
+            -ldbus-glib-1 \
+            -ldbus-1 \
+            -lgobject-2.0 \
+            -lglib-2.0 \
+            -ltpsession \
+            -ltelepathy-qt4 \
+            -lhildonmime
     }
     symbian { 
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
-		contains(messaging_freestylenm_enabled, yes) {
+        contains(messaging_freestylenm_enabled, yes) { 
             CONFIG += FREESTYLENMAIL
             DEFINES += FREESTYLENMAILUSED
         }
-        contains(CONFIG, !FREESTYLENMAIL) {
-	    contains(messaging_freestyle_enabled, yes) {
-                CONFIG += FREESTYLEMAIL
-                DEFINES += FREESTYLEMAILUSED
-                DEFINES += FREESTYLEMAILBOXOBSERVERUSED
-            }
+        contains(CONFIG, !FREESTYLENMAIL):contains(messaging_freestyle_enabled, yes) { 
+            CONFIG += FREESTYLEMAIL
+            DEFINES += FREESTYLEMAILUSED
+            DEFINES += FREESTYLEMAILBOXOBSERVERUSED
         }
-        contains(messaging_ncnlist_enabled, no) : DEFINES += NCNLISTREMOVED
-		contains(messaging_qthighway_enabled, yes) {
+        contains(messaging_ncnlist_enabled, no):DEFINES += NCNLISTREMOVED
+        contains(messaging_qthighway_enabled, yes) { 
             INCLUDEPATH += /sf/mw/qtextensions/qthighway/inc
             CONFIG += QTHIGHWAY
             DEFINES += QTHIGHWAYUSED
@@ -165,8 +177,8 @@ symbian|win32|maemo6|maemo5|mac {
             qmessage_symbian_p.h \
             maemohelpers_p.h
         contains(CONFIG, FREESTYLEMAIL):HEADERS += qfsengine_symbian_p.h
-		contains(CONFIG, FREESTYLENMAIL):HEADERS += qfsnmengine_symbian_p.h
-		SOURCES += qmtmengine_symbian.cpp \
+        contains(CONFIG, FREESTYLENMAIL):HEADERS += 
+        SOURCES += qmtmengine_symbian.cpp \
             qmessageid_symbian.cpp \
             qmessagecontentcontainerid_symbian.cpp \
             qmessagefolderid_symbian.cpp \
@@ -185,13 +197,11 @@ symbian|win32|maemo6|maemo5|mac {
             qmessageservice_symbian.cpp \
             maemohelpers.cpp
         contains(CONFIG, FREESTYLEMAIL):SOURCES += qfsengine_symbian.cpp
-        contains(CONFIG, FREESTYLENMAIL):SOURCES += qfsnmengine_symbian.cpp
-        contains(CONFIG, FREESTYLENMAIL):LIBS += -lnmailclientapi	    
-		contains(CONFIG, QTHIGHWAY) {
-        LIBS += -lxqservice \
-                -lxqserviceutil
-		}
-		LIBS += -lsendas2 \
+        contains(CONFIG, FREESTYLENMAIL):SOURCES += 
+        contains(CONFIG, FREESTYLENMAIL):LIBS += -lnmailclientapi
+        contains(CONFIG, QTHIGHWAY):LIBS += -lxqservice \
+            -lxqserviceutil
+        LIBS += -lsendas2 \
             -lmsgs \
             -letext \
             -lefsrv \
@@ -207,7 +217,7 @@ symbian|win32|maemo6|maemo5|mac {
             -lcone \
             -lapgrfx \
             -lapmime \
-            -lecom 
+            -lecom
         TARGET.CAPABILITY = ALL \
             -TCB
         TARGET.UID3 = 0x2002AC82
