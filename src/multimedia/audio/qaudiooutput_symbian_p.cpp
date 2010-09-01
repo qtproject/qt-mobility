@@ -380,6 +380,9 @@ void QAudioOutputPrivate::devsoundPlayError(int err)
         else
             setState(SymbianAudio::IdleState);
         break;
+    case KErrOverflow:
+        // Silently consume this error when in playback mode
+        break;
     default:
         setError(QAudio::IOError);
         break;
