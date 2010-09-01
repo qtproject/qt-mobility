@@ -57,7 +57,7 @@ QT_END_NAMESPACE
 QTM_BEGIN_NAMESPACE
 
 class QServicePackagePrivate;
-class Q_AUTOTEST_EXPORT QServicePackage
+class QM_AUTOTEST_EXPORT QServicePackage
 {
 public:
     QServicePackage();
