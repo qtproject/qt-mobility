@@ -630,12 +630,16 @@ QList<QOrganizerItem> TestNoteItems::createItems_Negative(int noOfItems)
         // Set display label
         organizerItem.setDisplayLabel(desplaylabel);
 
-/*
         //Set GUID
         QString guId("1234567890");
         organizerItem.setGuid(guId);
-*/
         
+        //Set Luid
+        QOrganizerItemId id;
+        QOrganizerItemLocalId localId(1234);
+        id.setLocalId(localId);
+        organizerItem.setId(id);
+
         // Set current time
         QOrganizerEventTimeRange timeRange;
         QDateTime startTime;
@@ -723,8 +727,21 @@ void TestNoteItems::requestResultsAvailable_Negative()
         QList<QOrganizerItem> items = ((QOrganizerItemSaveRequest*)
             m_itemRequest)->items();
         int count(items.count());
-        QCOMPARE(KNumberOfItems, count);
+        QCOMPARE(0, count);
 
+        // Get the error map
+        QMap<int, QOrganizerItemManager::Error> errorMap(
+            ((QOrganizerItemSaveRequest*)
+                (m_itemRequest))->errorMap());
+        // Get the iterator to the error map
+        QMapIterator<int, QOrganizerItemManager::Error> iter(errorMap);
+        // Compare the errors returned
+        while (iter.hasNext()){
+            // Advance the iterator to point to next item in the error map
+            iter.next();
+            qWarning() << iter.value() << "trown while saving item";
+        }
+        
         // Clear m_itemIds to fetch all the item Ids
         m_itemIds.clear();
         for (int index(0); index < count; index++) {
