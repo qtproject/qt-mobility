@@ -3,8 +3,11 @@ CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtorganizer_symbian)
 PLUGIN_TYPE=organizer
 
-#uncomment the below line when compiling for 10.1 and later versions.
-#DEFINES += AGENDA_EXT_SUPPORT
+# support for S^4-specific types
+contains(symbianenote_enabled,yes) {
+    DEFINES += AGENDA_EXT_SUPPORT
+}
+
 CONFIG += mobility
 MOBILITY = organizer
 
