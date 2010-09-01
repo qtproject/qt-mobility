@@ -538,7 +538,6 @@ QString CntSqlSearch::CompareTwoColumnsWithModifiedPattern(const QString& patter
     QString lower2_without_zero;
     QString upper2_without_zero;
     int err;
-    int i(0);
     
     QString firstTokenWithoutZeros = tokens.at(0);
     firstTokenWithoutZeros.remove(QChar('0'), Qt::CaseInsensitive);
