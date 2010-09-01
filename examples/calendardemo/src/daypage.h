@@ -57,6 +57,7 @@ class QLabel;
 class QListWidget;
 class QListWidgetItem;
 class QMenuBar;
+class QMenu;
 
 class DayPage : public QWidget
 {
