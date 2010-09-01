@@ -145,7 +145,7 @@ void JournalEditPage::saveClicked()
     // Save
     m_manager->saveItem(&m_organizerJournal);
     if (m_manager->error())
-        QMessageBox::information(this, "Failed!", QString("Failed to save journal!\n(error code %1)").arg(m_manager->error()));
+        QMessageBox::warning(this, "Failed!", QString("Failed to save journal!\n(error code %1)").arg(m_manager->error()));
     else
         emit showDayPage();
 }

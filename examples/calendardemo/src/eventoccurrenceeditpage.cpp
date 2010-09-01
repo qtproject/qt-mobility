@@ -133,9 +133,16 @@ void EventOccurrenceEditPage::cancelClicked()
 
 void EventOccurrenceEditPage::saveOrNextClicked()
 {
+    QDateTime start(m_startTimeEdit->dateTime());
+    QDateTime end(m_endTimeEdit->dateTime());
+    if (start > end) {
+        QMessageBox::warning(this, "Failed!", "Start date is not before end date");
+        return;
+    }
+
     m_organizerEventOccurrence.setDisplayLabel(m_subjectEdit->text());
-    m_organizerEventOccurrence.setStartDateTime(m_startTimeEdit->dateTime());
-    m_organizerEventOccurrence.setEndDateTime(m_endTimeEdit->dateTime());
+    m_organizerEventOccurrence.setStartDateTime(start);
+    m_organizerEventOccurrence.setEndDateTime(end);
     m_listOfEvents.append(m_organizerEventOccurrence);
     if(m_numOfEntiresToBeCreated > 1){
         m_numOfEntiresToBeCreated--;
@@ -157,7 +164,7 @@ void EventOccurrenceEditPage::saveOrNextClicked()
         }
 
         if (m_manager->error())
-                QMessageBox::information(this, "Failed!", QString("Failed to save event occurrence!\n(error code %1)").arg(m_manager->error()));
+                QMessageBox::warning(this, "Failed!", QString("Failed to save event occurrence!\n(error code %1)").arg(m_manager->error()));
         else
                 emit showDayPage();
     }
