@@ -127,9 +127,10 @@ QDeclarativeGalleryType::~QDeclarativeGalleryType()
 */
 
 /*!
-    \qmlproperty int GalleryType::currentProgress
+    \qmlproperty real GalleryType::progress
 
-    This property holds the current progress value.
+    This property holds the current progress of the request, from 0.0 (started)
+    to 1.0 (finished).
 */
 
 /*!
