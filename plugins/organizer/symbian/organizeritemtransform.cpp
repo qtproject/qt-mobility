@@ -160,12 +160,7 @@ void OrganizerItemTransform::toEntryL(const QOrganizerItem &item, CCalEntry *ent
 {
     // Loop through transform objects
     foreach (OrganizerItemDetailTransform *i, m_detailTransforms) {
-        // TODO: This is just for debugging. Remove before release.
-        TRAPD(err, i->transformToEntryL(item, entry));
-        if (err) {
-            qDebug() << "transformToEntryL failed! detail:" << i->detailDefinitionName() << "err:" << err;
-            User::Leave(err);
-        }
+        i->transformToEntryL(item, entry);
     }
 
     entry->SetLastModifiedDateL();
@@ -177,12 +172,7 @@ void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *ite
     
     // Loop through transform objects
     foreach (OrganizerItemDetailTransform *i, m_detailTransforms) {
-        // TODO: This is just for debugging. Remove before release.
-        TRAPD(err, i->transformToDetailL(entry, item));
-        if (err) {
-            qDebug() << "transformToDetailL failed! detail:" << i->detailDefinitionName() << "err:" << err;
-            User::Leave(err);
-        }
+        i->transformToDetailL(entry, item);
     }
 }
 
@@ -191,12 +181,7 @@ void OrganizerItemTransform::toItemPostSaveL(const CCalEntry &entry, QOrganizerI
     //debugEntryL(entry);
     // Loop through transform objects
     foreach (OrganizerItemDetailTransform *i, m_detailTransforms) {
-        // TODO: This is just for debugging. Remove before release.
-        TRAPD(err, i->transformToDetailPostSaveL(entry, item));
-        if (err) {
-            qDebug() << "transformToDetailPostSaveL failed! detail:" << i->detailDefinitionName() << "err:" << err;
-            User::Leave(err);
-        }
+        i->transformToDetailPostSaveL(entry, item);
     }
 
     // Update local id
@@ -212,13 +197,7 @@ void OrganizerItemTransform::toItemInstanceL(const CCalInstance &instance, QOrga
     //debugInstanceL(instance);
 
     // Loop through transform objects
-    foreach (OrganizerItemDetailTransform *i, m_detailTransforms) 
-    {
-        TRAPD(err, i->transformToDetailL(instance, itemInstance));
-        if (err) {
-            // TODO: This is just for debugging. Remove before release.
-            qDebug() << "toItemInstanceL failed! detail:" << i->detailDefinitionName() << "err:" << err;
-            User::Leave(err);
-        }
+    foreach (OrganizerItemDetailTransform *i, m_detailTransforms) {
+        i->transformToDetailL(instance, itemInstance);
     }
 }
