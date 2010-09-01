@@ -44,6 +44,8 @@
 #include "qgeoareamonitor_s60_p.h"
 #elif defined(Q_WS_MAEMO_5)
 #include "qgeoareamonitor_maemo_p.h"
+#elif defined(QT_SIMULATOR)
+#include "qgeoareamonitor_simulator_p.h"
 #endif
 
 /*!
@@ -179,6 +181,8 @@ QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)
 #elif defined(Q_WS_MAEMO_5)
     QGeoAreaMonitorMaemo *ret = new QGeoAreaMonitorMaemo(parent);
     return ret;
+#elif defined(QT_SIMULATOR)
+    return new QGeoAreaMonitorSimulator(parent);
 #else
     Q_UNUSED(parent);
 #endif
