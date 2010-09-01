@@ -56,6 +56,7 @@ class QCalendarWidget;
 class QLabel;
 class QListWidget;
 class QListWidgetItem;
+class QMenu;
 
 class MonthPage : public QWidget
 {
