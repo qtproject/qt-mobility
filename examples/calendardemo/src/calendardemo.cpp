@@ -46,10 +46,12 @@
 #include "todoeditpage.h"
 #include "journaleditpage.h"
 #include "eventoccurrenceeditpage.h"
+#ifdef BUILD_VERSIT
 #include "qversitreader.h"
 #include "qversitwriter.h"
 #include "qversitorganizerimporter.h"
 #include "qversitorganizerexporter.h"
+#endif
 #include <QtGui>
 #include <qtorganizer.h>
 
