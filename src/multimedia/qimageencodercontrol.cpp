@@ -119,6 +119,10 @@ QImageEncoderControl::~QImageEncoderControl()
     \fn QImageEncoderControl::imageSettings() const
 
     Returns the currently used image encoder settings.
+
+    The returned value may be different tha passed to QImageEncoderControl::setImageSettings()
+    if the settings contains the default or undefined parameters.
+    In this case if the undefined parameters are already resolved, they should be returned.
 */
 
 /*!

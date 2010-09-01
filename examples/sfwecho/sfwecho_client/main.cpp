@@ -180,6 +180,8 @@ private:
             echo = sharedEcho;
         }
 
+        echo->setParent(this);
+
         // Connect echo message broadcasts
         QObject::connect(echo, SIGNAL(broadcastMessage(QString,QDateTime)),
                          this, SLOT(receivedMessage(QString,QDateTime)));

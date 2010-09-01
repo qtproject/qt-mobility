@@ -90,7 +90,8 @@ public:
                           RArray<TInt32> &aSampleRates,
                           TBool &aIsContinuous);
     TInt32 getBitrates(const TDesC &aEncoder,
-                          RArray<TUint32> &aBitrates);
+                          RArray<TUint32> &aBitrates,
+                          TBool& aContinuous);
     /* For QAudioEncoderControl end */
 
     /* For QMediaContainerControl begin */
@@ -123,7 +124,8 @@ private:
     TInt32 initAudioInputDevicesList();
     TInt32 setEncoderSettingsToMediaRecorder();
     TInt32 getBitratesByAudioCodecID(XAuint32 encoderId,
-                          RArray<TUint32> &aBitrates);
+                          RArray<TUint32> &aBitrates,
+                          XAboolean& aContinuous);
     TInt32 getSampleRatesByAudioCodecID(XAuint32 encoderId,
                           RArray<TInt32> &aSampleRates);
 

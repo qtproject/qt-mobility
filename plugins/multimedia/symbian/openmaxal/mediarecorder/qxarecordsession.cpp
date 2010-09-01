@@ -48,7 +48,7 @@
 /* The following declaration is required to allow QList<int> to be added to
  * QVariant
  */
-Q_DECLARE_METATYPE(QList<int>)
+Q_DECLARE_METATYPE(QList<uint>)
 
 /* This macro checks for m_impl null pointer. If it is, emits an error signal
  * error(QMediaRecorder::ResourceError, tr("Service has not been started"));
@@ -472,12 +472,9 @@ QStringList QXARecordSession::supportedEncodingOptions(const QString &codec)
     if ((codec.compare("aac") == 0) ||
             (codec.compare("amr") == 0))
         {
-        options << "bitrate";
+        options << "bitrate" << "quality";
         }
-    else
-        {
-        options << "quality";
-        }
+
 
     QT_TRACE_FUNCTION_EXIT;
     return options;
@@ -488,23 +485,26 @@ QVariant QXARecordSession::encodingOption(const QString &codec, const QString &n
     QT_TRACE_FUNCTION_ENTRY;
 
     QVariant encodingOption;
-
+    QMap<QString, QVariant> map;
     RETURN_s_IF_m_impl_IS_NULL(encodingOption);
 
     if (name.toLower().compare("bitrate") == 0) {
         TPtrC16 tempPtr(reinterpret_cast<const TUint16*>(codec.toLower().utf16()));
-        QList<int> bitrateList;
+        QList<uint> bitrateList;
         RArray<TUint32> bitrates;
-        if (m_impl->getBitrates(tempPtr, bitrates) == KErrNone) {
+        TBool continuous;
+        if (m_impl->getBitrates(tempPtr, bitrates, continuous) == KErrNone) {
             for (TInt index = 0; index < bitrates.Count(); index++)
                 bitrateList.append(bitrates[index]);
             bitrates.Close();
         }
         encodingOption.setValue(bitrateList);
+        map.insert("continuous", QVariant(continuous));
+        map.insert("bitrates", encodingOption);
     }
 
     QT_TRACE_FUNCTION_EXIT;
-    return encodingOption;
+    return map;
 }
 
 void QXARecordSession::setEncodingOption(
