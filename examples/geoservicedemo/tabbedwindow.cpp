@@ -55,7 +55,6 @@
 TabbedWindow::TabbedWindow(QWidget *parent)
         : QMainWindow(parent), m_serviceProvider(NULL)
 {
-
     setWindowTitle(tr("Geo Service Demo"));
 
     m_servicesTab = new ServicesTab();
@@ -67,7 +66,7 @@ TabbedWindow::TabbedWindow(QWidget *parent)
     m_reverseTab = new ReverseGeocodingTab();
     m_routingTab = new RouteTab();
 
-    m_tabWidget = new QTabWidget;
+    m_tabWidget = new QTabWidget(this);
     m_tabWidget->addTab(m_servicesTab, tr("Service Providers"));
     m_tabWidget->addTab(m_routingTab, tr("Route"));
     m_tabWidget->addTab(m_geocodingTab, tr("Geocoding"));
@@ -76,6 +75,7 @@ TabbedWindow::TabbedWindow(QWidget *parent)
     setCentralWidget(m_tabWidget);
 
     // setup exit menu for devices
+
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     QAction* exitAction = new QAction(tr("Exit"), this);
     menuBar()->addAction(exitAction);
@@ -102,6 +102,7 @@ TabbedWindow::TabbedWindow(QWidget *parent)
             SLOT(error(QNetworkSession::SessionError)));
 
     m_session->open();
+    resize(640, 480);
 }
 
 TabbedWindow::~TabbedWindow()

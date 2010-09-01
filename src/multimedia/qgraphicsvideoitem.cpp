@@ -112,7 +112,9 @@ void QGraphicsVideoItemPrivate::updateRects()
     q_ptr->prepareGeometryChange();
 
     if (nativeSize.isEmpty()) {
-        boundingRect = QRectF();
+        //this is necessary for item to receive the
+        //first paint event and configure video surface.
+        boundingRect = rect;
     } else if (aspectRatioMode == Qt::IgnoreAspectRatio) {
         boundingRect = rect;
         sourceRect = QRectF(0, 0, 1, 1);
@@ -260,7 +262,12 @@ bool QGraphicsVideoItem::setMediaObject(QMediaObject *object)
                 d->rendererControl = qobject_cast<QVideoRendererControl *>(control);
 
                 if (d->rendererControl) {
-                    d->rendererControl->setSurface(d->surface);
+                    //don't set the surface untill the item is painted
+                    //at least once and the surface is configured
+                    if (!d->updatePaintDevice)
+                        d->rendererControl->setSurface(d->surface);
+                    else
+                        update(boundingRect());
 
                     connect(d->service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
 
@@ -371,14 +378,9 @@ void QGraphicsVideoItem::paint(
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    if (d->surface && d->surface->isActive()) {
-        d->surface->paint(painter, d->boundingRect, d->sourceRect);
-        d->surface->setReady(true);
-#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
-    } else if (d->updatePaintDevice && (painter->paintEngine()->type() == QPaintEngine::OpenGL
-            || painter->paintEngine()->type() == QPaintEngine::OpenGL2)) {
+    if (d->surface && d->updatePaintDevice) {
         d->updatePaintDevice = false;
-
+#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
         if (widget)
             connect(widget, SIGNAL(destroyed()), d->surface, SLOT(viewportDestroyed()));
 
@@ -389,6 +391,13 @@ void QGraphicsVideoItem::paint(
             d->surface->setShaderType(QPainterVideoSurface::FragmentProgramShader);
         }
 #endif
+        if (d->rendererControl && d->rendererControl->surface() != d->surface)
+            d->rendererControl->setSurface(d->surface);
+    }
+
+    if (d->surface && d->surface->isActive()) {
+        d->surface->paint(painter, d->boundingRect, d->sourceRect);
+        d->surface->setReady(true);
     }
 }
 

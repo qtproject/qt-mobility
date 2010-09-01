@@ -43,6 +43,8 @@
 #define GEOCODINGTAB_H_
 
 #include <QWidget>
+#include <QDialog>
+
 #include <qgeosearchmanager.h>
 
 class QTreeWidget;
@@ -50,6 +52,25 @@ class QLineEdit;
 class QPushButton;
 
 QTM_USE_NAMESPACE
+
+class GeoCodingInputDialog: public QDialog
+{
+    Q_OBJECT
+public:
+    GeoCodingInputDialog(QString &obloc, QGeoAddress &address, QWidget *parent=0);
+private slots:
+    void accept();
+private:
+    QString &m_oblocStr;
+    QGeoAddress &m_address;
+    QLineEdit *m_obloc;
+    QLineEdit *m_country;
+    QLineEdit *m_state;
+    QLineEdit *m_city;
+    QLineEdit *m_zip;
+    QLineEdit *m_street;
+    QLineEdit *m_streetNumber;
+};
 
 class GeocodingTab: public QWidget
 {
@@ -69,13 +90,8 @@ private slots:
 
 private:
     QGeoSearchManager *m_searchManager;
-    QLineEdit *m_obloc;
-    QLineEdit *m_country;
-    QLineEdit *m_state;
-    QLineEdit *m_city;
-    QLineEdit *m_zip;
-    QLineEdit *m_street;
-    QLineEdit *m_streetNumber;
+    QString m_oblocStr;
+    QGeoAddress m_address;
     QTreeWidget *m_resultTree;
     QPushButton *m_requestBtn;
 };

@@ -1,6 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-    <file>data/McDonalds-AUS-Queensland.gpx</file>
     <file>data/long.gpx</file>
     <file>data/test.gpx</file>
     <file>data/convert-collection-in.xml</file>
@@ -8,5 +7,6 @@
     <file>data/garbage.xml</file>
     <file>data/AUS-PublicToilet-NewSouthWales.lmx</file>
     <file>data/AUS-PublicToilet-NewSouthWales.gpx</file>
+    <file>data/AUS-PublicToilet-AustralianCapitalTerritory.gpx</file>
     </qresource>
 </RCC>
