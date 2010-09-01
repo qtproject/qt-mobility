@@ -88,9 +88,7 @@ void QGeoTiledMapPolylineObjectInfo::objectUpdate()
 void QGeoTiledMapPolylineObjectInfo::mapUpdate()
 {
     if (pathItem) {
-        QPen pen = polyline->pen();
-        pen.setWidthF(pen.widthF() * tiledMapData->zoomFactor());
-        pathItem->setPen(pen);
+        pathItem->setPen(polyline->pen());
     }
 }
 

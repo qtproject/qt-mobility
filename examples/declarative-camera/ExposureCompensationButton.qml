@@ -43,7 +43,7 @@ import Qt 4.7
 
 Item {
     id: exposureCompensation
-    property real value
+    property real value : flickableList.items[flickableList.index]
     signal clicked
 
     width : 144
@@ -63,9 +63,6 @@ Item {
         color: "white"
     }
 
-    onValueChanged: {
-    }
-
     FlickableList {
         anchors.fill: buttonImage
         id: flickableList        
@@ -73,10 +70,6 @@ Item {
         index: 4
 
         onClicked: exposureCompensation.clicked()
-
-        onIndexChanged: {
-            exposureCompensation.value = flickableList.items[flickableList.index]
-        }
 
         delegate: Text {
             font.pixelSize: 22

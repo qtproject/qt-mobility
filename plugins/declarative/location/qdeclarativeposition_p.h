@@ -64,12 +64,13 @@ class QDeclarativePosition : public QObject
     Q_PROPERTY(QDateTime timestamp READ timestamp WRITE setTimestamp NOTIFY timestampChanged)
     Q_PROPERTY(double latitude READ latitude WRITE setLatitude NOTIFY latitudeChanged)
     Q_PROPERTY(bool latitudeValid READ isLatitudeValid NOTIFY latitudeValidChanged)
-    Q_PROPERTY(double longitude READ longitude WRITE setlongitude NOTIFY longitudeChanged)
-    Q_PROPERTY(bool longitudeValid READ islongitudeValid NOTIFY longitudeValidChanged)
+    Q_PROPERTY(double longitude READ longitude WRITE setLongitude NOTIFY longitudeChanged)
+    Q_PROPERTY(bool longitudeValid READ isLongitudeValid NOTIFY longitudeValidChanged)
     Q_PROPERTY(double altitude READ altitude WRITE setAltitude NOTIFY altitudeChanged)
     Q_PROPERTY(bool altitudeValid READ isAltitudeValid NOTIFY altitudeValidChanged)
     Q_PROPERTY(double speed READ speed WRITE setSpeed NOTIFY speedChanged)
     Q_PROPERTY(bool speedValid READ isSpeedValid NOTIFY speedValidChanged)
+    Q_PROPERTY(double radius READ radius WRITE setRadius NOTIFY radiusChanged)
 
 public:
 
@@ -84,8 +85,8 @@ public:
     bool isLatitudeValid() const;
 
     double longitude() const;
-    void setlongitude(double longitude);
-    bool islongitudeValid() const;
+    void setLongitude(double longitude);
+    bool isLongitudeValid() const;
 
     double speed() const;
     void setSpeed(double speed);
@@ -94,6 +95,9 @@ public:
     double altitude() const;
     void setAltitude(double altitude);
     bool isAltitudeValid() const;
+
+    double radius() const;
+    void setRadius(double altitude);
 
 Q_SIGNALS:
     void timestampChanged(QDateTime timestamp);
@@ -105,9 +109,9 @@ Q_SIGNALS:
     void altitudeValidChanged(bool isValid);
     void speedChanged(double speed);
     void speedValidChanged(bool isValid);
+    void radiusChanged();
 
 private:
-    QGeoPositionInfo m_positionInfo;
     QDateTime m_timestamp;
     double m_latitude;
     bool m_latitudeValid;
@@ -117,6 +121,7 @@ private:
     bool m_altitudeValid;
     double m_speed;
     bool m_speedValid;
+    double m_radius;
 };
 
 QTM_END_NAMESPACE

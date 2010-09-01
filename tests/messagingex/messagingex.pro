@@ -28,12 +28,6 @@ FORMS += mmsreceiveddialog.ui \
     smsreceiveddialog.ui \
     accountdialog.ui
 
-symbian:TARGET.CAPABILITY = NetworkServices \
-    LocalServices \
-    ReadUserData \
-    WriteUserData \
-    UserEnvironment \
-    ReadDeviceData \
-    WriteDeviceData \
-    SwEvent
+symbian:TARGET.CAPABILITY = ALL  \
+	-TCB
     

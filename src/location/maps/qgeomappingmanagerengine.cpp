@@ -162,14 +162,6 @@ int QGeoMappingManagerEngine::managerVersion() const
 */
 
 /*!
-  Stops this manager from managing \a mapData.
-*/
-void QGeoMappingManagerEngine::removeMapData(QGeoMapData *mapData)
-{
-    Q_UNUSED(mapData)
-}
-
-/*!
 \fn void QGeoMappingManagerEngine::updateMapImage(QGeoMapData *mapData)
 
     Updates the map image stored in \a mapData based on the viewport

@@ -143,12 +143,9 @@ unix: {
 
     symbian:{
         contains(S60_VERSION, 3.1){
-            DEFINES += SYMBIAN_3
+            DEFINES += SYMBIAN_3_1
         }        
 
-        contains(S60_VERSION, 3.2){
-            DEFINES += SYMBIAN_3
-        }
         contains(hb_symbian_enabled,yes) {
             CONFIG += qt hb
             DEFINES += HB_SUPPORTED

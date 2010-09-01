@@ -74,11 +74,11 @@ QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::declarativeCenter() const
 QDeclarativeListProperty<QGeoMapObject> QDeclarativeGraphicsGeoMap::objects()
 {
     return QDeclarativeListProperty<QGeoMapObject>(this,
-                                                   0,
-                                                   object_append,
-                                                   object_count,
-                                                   object_at,
-                                                   object_clear);
+            0,
+            object_append,
+            object_count,
+            object_at,
+            object_clear);
 }
 
 void QDeclarativeGraphicsGeoMap::object_append(QDeclarativeListProperty<QGeoMapObject> *prop, QGeoMapObject *mapObject)
@@ -109,7 +109,7 @@ QPointF QDeclarativeGraphicsGeoMap::toScreenPosition(const QDeclarativeCoordinat
 QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::toCoordinate(QPointF screenPosition) const
 {
     return new QDeclarativeCoordinate(screenPositionToCoordinate(screenPosition),
-                                      const_cast<QDeclarativeGraphicsGeoMap *const>(this));
+                                      const_cast<QDeclarativeGraphicsGeoMap *>(this));
 }
 
 void QDeclarativeGraphicsGeoMap::memberCenterChanged(const QGeoCoordinate &coordinate)

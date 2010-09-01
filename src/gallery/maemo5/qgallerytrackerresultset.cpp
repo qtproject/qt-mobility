@@ -571,7 +571,7 @@ void QGalleryTrackerResultSetPrivate::_q_editFinished(QGalleryTrackerMetaDataEdi
 }
 
 QGalleryTrackerResultSet::QGalleryTrackerResultSet(
-        const QGalleryTrackerResultSetArguments &arguments,
+        QGalleryTrackerResultSetArguments *arguments,
         bool live,
         int cursorPosition,
         int minimumPagedItems,

@@ -6,4 +6,6 @@ SUBDIRS += tst_symbianom \
 		   tst_symbianasynchapis \
 		   tst_detaildef \
 		   tst_itemoccurrence \
-		   tst_itemlocation
+		   tst_itemlocation \
+		   tst_todooccurrence \
+		   tst_symbianreminder

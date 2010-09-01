@@ -57,9 +57,22 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QDateTime>
+#include <QMutexLocker>
 #include "databaseoperations_p.h"
 
-using namespace DatabaseOperations;
+#include <qlandmarkabstractrequest.h>
+#include <qlandmarkidfetchrequest.h>
+#include <qlandmarkfetchrequest.h>
+#include <qlandmarkfetchbyidrequest.h>
+#include <qlandmarksaverequest.h>
+#include <qlandmarkremoverequest.h>
+#include <qlandmarkcategoryidfetchrequest.h>
+#include <qlandmarkcategoryfetchrequest.h>
+#include <qlandmarkcategoryfetchbyidrequest.h>
+#include <qlandmarkcategorysaverequest.h>
+#include <qlandmarkcategoryremoverequest.h>
+#include <qlandmarkimportrequest.h>
+#include <qlandmarkexportrequest.h>
 
 QTM_USE_NAMESPACE
 
@@ -71,6 +84,7 @@ Q_DECLARE_METATYPE(QLandmarkAbstractRequest::State)
 Q_DECLARE_METATYPE(QLandmarkAbstractRequest *)
 Q_DECLARE_METATYPE(QLandmarkIdFetchRequest *)
 Q_DECLARE_METATYPE(QLandmarkFetchRequest *)
+Q_DECLARE_METATYPE(QLandmarkFetchByIdRequest *)
 Q_DECLARE_METATYPE(QLandmarkManager::Error)
 Q_DECLARE_METATYPE(QLandmarkSaveRequest *)
 Q_DECLARE_METATYPE(QLandmarkRemoveRequest *)
@@ -78,6 +92,7 @@ Q_DECLARE_METATYPE(QLandmarkCategorySaveRequest *)
 Q_DECLARE_METATYPE(QLandmarkCategoryRemoveRequest *)
 Q_DECLARE_METATYPE(QLandmarkCategoryIdFetchRequest *)
 Q_DECLARE_METATYPE(QLandmarkCategoryFetchRequest *)
+Q_DECLARE_METATYPE(QLandmarkCategoryFetchByIdRequest *)
 Q_DECLARE_METATYPE(QLandmarkImportRequest *)
 Q_DECLARE_METATYPE(QLandmarkExportRequest *)
 Q_DECLARE_METATYPE(ERROR_MAP)
@@ -86,7 +101,10 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
         : m_dbFilename(filename),
         m_dbConnectionName(QUuid::createUuid().toString()),
         m_dbWatcher(NULL),
-        m_latestTimestamp(0.0)
+        m_latestTimestamp(0.0),
+        m_isExtendedAttributesEnabled(false),
+        m_isCustomAttributesEnabled(false),
+        m_databaseOperations(m_isExtendedAttributesEnabled, m_isCustomAttributesEnabled)
 {
     qRegisterMetaType<ERROR_MAP >();
     qRegisterMetaType<QList<QLandmarkCategoryId> >();
@@ -97,10 +115,12 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
     qRegisterMetaType<QLandmarkAbstractRequest *>();
     qRegisterMetaType<QLandmarkIdFetchRequest *>();
     qRegisterMetaType<QLandmarkFetchRequest *>();
+    qRegisterMetaType<QLandmarkFetchByIdRequest *>();
     qRegisterMetaType<QLandmarkSaveRequest *>();
     qRegisterMetaType<QLandmarkRemoveRequest *>();
     qRegisterMetaType<QLandmarkCategoryIdFetchRequest *>();
     qRegisterMetaType<QLandmarkCategoryFetchRequest *>();
+    qRegisterMetaType<QLandmarkCategoryFetchByIdRequest *>();
     qRegisterMetaType<QLandmarkCategorySaveRequest *>();
     qRegisterMetaType<QLandmarkCategoryRemoveRequest *>();
     qRegisterMetaType<QLandmarkImportRequest *>();
@@ -108,6 +128,8 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
     qRegisterMetaType<QLandmarkManager::Error>();
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", m_dbConnectionName);
+    m_databaseOperations.connectionName = m_dbConnectionName;
+    m_databaseOperations.managerUri = managerUri();
 
     if (m_dbFilename.isEmpty()) {
         QSettings settings(QSettings::IniFormat, QSettings::UserScope,
@@ -150,6 +172,19 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
         QStringList queries = s.split("@@@");
 
         bool transacting = db.transaction();
+
+        {//check for database with old schema
+            QSqlQuery query(db);
+            query.exec("SELECT name from sqlite_master WHERE name = 'landmark'");
+            if (query.next()) {
+                query.exec("SELECT name from sqlite_master WHERE name = 'landmark_custom_attribute'");
+                if (!query.next()) {
+                    qWarning() << "Old Database with incompatible schema from Qt Landmarks 1.1 tech preview detected, please delete this file and try again:" << this->m_dbFilename;
+                    db.rollback();
+                    return;
+                }
+            }
+        }
         for (int i = 0; i < queries.size(); ++i) {
             QString q = queries.at(i).trimmed();
             if (q == "")
@@ -205,13 +240,13 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIds(const QLandmarkFilt
         QLandmarkManager::Error *error,
         QString *errorString) const
 {
-    return DatabaseOperations::landmarkIds(m_dbConnectionName,filter,sortOrders,limit,offset, error,errorString, managerUri() );
+    return m_databaseOperations.landmarkIds(filter,sortOrders,limit,offset, error,errorString);
 }
 
 QList<QLandmarkCategoryId> QLandmarkManagerEngineSqlite::categoryIds(int limit, int offset, const QLandmarkNameSort &nameSort,
                                                             QLandmarkManager::Error *error, QString *errorString) const
 {
-    return DatabaseOperations::categoryIds(m_dbConnectionName, nameSort, limit, offset, error, errorString, managerUri());
+    return m_databaseOperations.categoryIds(nameSort, limit, offset, error, errorString);
 }
 
 /* Retrieval */
@@ -219,7 +254,7 @@ QLandmark QLandmarkManagerEngineSqlite::landmark(const QLandmarkId &landmarkId,
         QLandmarkManager::Error *error,
         QString *errorString) const
 {
-    return DatabaseOperations::retrieveLandmark(m_dbConnectionName, landmarkId, error, errorString, managerUri());
+    return m_databaseOperations.retrieveLandmark(landmarkId, error, errorString);
 }
 
 QList<QLandmark> QLandmarkManagerEngineSqlite::landmarks(const QLandmarkFilter &filter,
@@ -229,7 +264,7 @@ QList<QLandmark> QLandmarkManagerEngineSqlite::landmarks(const QLandmarkFilter &
                                                          QString *errorString) const
 {
 
-    return DatabaseOperations::landmarks(m_dbConnectionName, filter, sortOrders, limit, offset, error, errorString, managerUri());
+    return m_databaseOperations.landmarks(filter, sortOrders, limit, offset, error, errorString);
 }
 
 QList<QLandmark> QLandmarkManagerEngineSqlite::landmarks(const QList<QLandmarkId> &landmarkIds,
@@ -238,14 +273,14 @@ QList<QLandmark> QLandmarkManagerEngineSqlite::landmarks(const QList<QLandmarkId
                                                          QString *errorString) const
 {
 
-    return DatabaseOperations::landmarks(m_dbConnectionName, landmarkIds, errorMap, error, errorString, managerUri());
+    return m_databaseOperations.landmarks(landmarkIds, errorMap, error, errorString);
 }
 
 QLandmarkCategory QLandmarkManagerEngineSqlite::category(const QLandmarkCategoryId &landmarkCategoryId,
                                                          QLandmarkManager::Error *error,
                                                          QString *errorString) const
 {
-    return DatabaseOperations::category(m_dbConnectionName, landmarkCategoryId, error, errorString, managerUri());
+    return m_databaseOperations.category(landmarkCategoryId, error, errorString);
 }
 
 QList<QLandmarkCategory> QLandmarkManagerEngineSqlite::categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds,
@@ -253,8 +288,7 @@ QList<QLandmarkCategory> QLandmarkManagerEngineSqlite::categories(const QList<QL
                                                                   QLandmarkManager::Error *error,
                                                                   QString *errorString) const
 {
-    QLandmarkNameSort nameSort;// this should be ignored in the following call
-    return DatabaseOperations::categories(m_dbConnectionName, landmarkCategoryIds, errorMap, error, errorString, managerUri());
+    return m_databaseOperations.categories(landmarkCategoryIds, errorMap, error, errorString);
 }
 
 QList<QLandmarkCategory> QLandmarkManagerEngineSqlite::categories(int limit, int offset,
@@ -263,7 +297,7 @@ QList<QLandmarkCategory> QLandmarkManagerEngineSqlite::categories(int limit, int
                                                                   QString *errorString) const
 {
     QList<QLandmarkCategoryId> catIds;
-    return DatabaseOperations::categories(m_dbConnectionName, catIds, nameSort, limit, offset, error, errorString, managerUri(), false);
+    return m_databaseOperations.categories(catIds, nameSort, limit, offset, error, errorString, false);
 }
 
 
@@ -272,7 +306,7 @@ bool QLandmarkManagerEngineSqlite::saveLandmark(QLandmark* landmark,
         QString *errorString)
 {
 
-    return DatabaseOperations::saveLandmark(m_dbConnectionName, landmark, error, errorString, managerUri());
+    return m_databaseOperations.saveLandmark(landmark, error, errorString);
 
 }
 
@@ -281,14 +315,14 @@ bool QLandmarkManagerEngineSqlite::saveLandmarks(QList<QLandmark> * landmarks,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    return DatabaseOperations::saveLandmarks(m_dbConnectionName, landmarks, errorMap, error, errorString, managerUri());
+    return m_databaseOperations.saveLandmarks(landmarks, errorMap, error, errorString);
 }
 
 bool QLandmarkManagerEngineSqlite::removeLandmark(const QLandmarkId &landmarkId,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    return  DatabaseOperations::removeLandmark(m_dbConnectionName, landmarkId , error, errorString, managerUri());
+    return  m_databaseOperations.removeLandmark(landmarkId , error, errorString);
 }
 
 bool QLandmarkManagerEngineSqlite::removeLandmarks(const QList<QLandmarkId> &landmarkIds,
@@ -296,21 +330,21 @@ bool QLandmarkManagerEngineSqlite::removeLandmarks(const QList<QLandmarkId> &lan
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    return  DatabaseOperations::removeLandmarks(m_dbConnectionName, landmarkIds , errorMap, error, errorString, managerUri());
+    return  m_databaseOperations.removeLandmarks(landmarkIds , errorMap, error, errorString);
 }
 
 bool QLandmarkManagerEngineSqlite::saveCategory(QLandmarkCategory* category,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    return DatabaseOperations::saveCategory(m_dbConnectionName, category, error, errorString, managerUri());
+    return m_databaseOperations.saveCategory(category, error, errorString);
 }
 
 bool QLandmarkManagerEngineSqlite::removeCategory(const QLandmarkCategoryId &categoryId,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    return DatabaseOperations::removeCategory(m_dbConnectionName, categoryId, error, errorString, managerUri());
+    return m_databaseOperations.removeCategory(categoryId, error, errorString);
 }
 
 bool QLandmarkManagerEngineSqlite::importLandmarks(QIODevice *device,
@@ -320,17 +354,17 @@ bool QLandmarkManagerEngineSqlite::importLandmarks(QIODevice *device,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString)
 {
-    return DatabaseOperations::importLandmarks(m_dbConnectionName, device, format, option, categoryId, error, errorString, managerUri());
+    return m_databaseOperations.importLandmarks(device, format, option, categoryId, error, errorString);
 }
 
 bool QLandmarkManagerEngineSqlite::exportLandmarks(QIODevice *device,
                                                    const QString &format,
                                                    QList<QLandmarkId> landmarkIds,
-                                                   QLandmarkManager::TransferOption,
+                                                   QLandmarkManager::TransferOption option,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString) const
 {
-    return DatabaseOperations::exportLandmarks(m_dbConnectionName, device, format, landmarkIds, error, errorString, managerUri());
+    return m_databaseOperations.exportLandmarks(device, format, landmarkIds, option, error, errorString);
 }
 
 QStringList QLandmarkManagerEngineSqlite::supportedFormats(QLandmarkManager::TransferOperation operation, QLandmarkManager::Error *error, QString *errorString) const
@@ -353,17 +387,18 @@ QLandmarkManager::SupportLevel QLandmarkManagerEngineSqlite::filterSupportLevel(
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    return QLandmarkManager::Native;
+    return m_databaseOperations.filterSupportLevel(filter);
 }
 
-QLandmarkManager::SupportLevel QLandmarkManagerEngineSqlite::sortOrderSupportLevel(const QList<QLandmarkSortOrder>&, QLandmarkManager::Error *error, QString *errorString) const
+QLandmarkManager::SupportLevel QLandmarkManagerEngineSqlite::sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders,
+                                                            QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    return QLandmarkManager::Native;
+    return m_databaseOperations.sortOrderSupportLevel(sortOrders);
 }
 
 bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const
@@ -374,10 +409,12 @@ bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::Landmark
     *errorString = "";
 
     switch(feature) {
-        case (QLandmarkManager::ExtendedAttributes):
         case (QLandmarkManager::CustomAttributes):
+        case (QLandmarkManager::Notifications):
+        case (QLandmarkManager::ImportExport):
             return true;
-            break;
+        case (QLandmarkManager::ExtendedAttributes):
+            return false;
         default:
             return false;
     }
@@ -436,8 +473,8 @@ bool QLandmarkManagerEngineSqlite::isExtendedAttributesEnabled(QLandmarkManager:
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
-    *error = QLandmarkManager::NoError;
-    *errorString = "";
+    *error = QLandmarkManager::NotSupportedError;
+    *errorString = "Extended attributes are not supported";
 
     return m_isExtendedAttributesEnabled;
 }
@@ -446,10 +483,9 @@ void QLandmarkManagerEngineSqlite::setExtendedAttributesEnabled(bool enabled, QL
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
-    *error = QLandmarkManager::NoError;
-    *errorString = "";
-
-    m_isExtendedAttributesEnabled = enabled;
+    *error = QLandmarkManager::NotSupportedError;
+    *errorString = "Extended attributes are not supported";
+    return;
 }
 
 bool QLandmarkManagerEngineSqlite::isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const
@@ -475,22 +511,28 @@ void QLandmarkManagerEngineSqlite::setCustomAttributesEnabled(bool enabled, QLan
 /* Asynchronous Request Support */
 void QLandmarkManagerEngineSqlite::requestDestroyed(QLandmarkAbstractRequest* request)
 {
-    QueryRun *queryRun;
-    queryRun = m_requestRunHash.value(request);
-    m_requestRunHash.remove(request);
-    delete queryRun;
-    queryRun = 0;
+    QMutexLocker ml(&m_mutex);
+    if (m_requestRunHash.contains(request))
+        m_requestRunHash.remove(request);
+    if (m_activeRequests.contains(request))
+        m_activeRequests.remove(request);
 }
 
 bool QLandmarkManagerEngineSqlite::startRequest(QLandmarkAbstractRequest* request)
 {
+    QMutexLocker ml(&m_mutex);
+
     QueryRun *queryRun;
+    m_activeRequests.insert(request);
     if (!m_requestRunHash.contains(request)) {
         queryRun= new QueryRun(request, managerUri(), this);
-        queryRun->setAutoDelete(false);
         m_requestRunHash.insert(request, queryRun);
+        ml.unlock();
     } else {
-        queryRun = m_requestRunHash.value(request);
+         ml.unlock();
+        //this shouldn't be possible
+        qWarning() << "Landmark Request trying to be started twice within engine.";
+        return false;
     }
 
     QThreadPool::globalInstance()->start(queryRun);
@@ -499,15 +541,12 @@ bool QLandmarkManagerEngineSqlite::startRequest(QLandmarkAbstractRequest* reques
 
 bool QLandmarkManagerEngineSqlite::cancelRequest(QLandmarkAbstractRequest* request)
 {
+    QMutexLocker ml(&m_mutex);
+    if (!m_requestRunHash.contains(request))
+        return false;
+
     m_requestRunHash.value(request)->isCanceled = true;
 
-    if (request->type() == QLandmarkAbstractRequest::ImportRequest) {
-        if (m_requestRunHash.value(request)->gpxHandler) {
-            m_requestRunHash.value(request)->gpxHandler->cancel();
-            QMetaObject::invokeMethod(m_requestRunHash.value(request)->gpxHandler,
-                                "cancel", Qt::QueuedConnection);
-        }
-    }
     return true;
 }
 
@@ -523,7 +562,7 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
 
     qreal latestLandmarkTimestamp = m_latestTimestamp;
     QSqlQuery query(db);
-    if (!query.prepare("SELECT landmark_id,action, timestamp FROM landmark_notification WHERE timestamp > ?")) {
+    if (!query.prepare("SELECT landmarkId,action, timestamp FROM landmark_notification WHERE timestamp > ?")) {
 #ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
         qWarning() << "Could not prepare statement: " << query.lastQuery() << " \nReason:" << query.lastError().text();
 #endif
@@ -578,7 +617,7 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
 
     //now check for added/modified/removed categories
     qreal latestCategoryTimestamp = m_latestTimestamp;
-    if (!query.prepare("SELECT category_id,action, timestamp FROM category_notification WHERE timestamp > ?")) {
+    if (!query.prepare("SELECT categoryId,action, timestamp FROM category_notification WHERE timestamp > ?")) {
 #ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
         qWarning() << "Could not prepare statement: " << query.lastQuery() << " \nReason:" << query.lastError().text();
 #endif
@@ -679,64 +718,155 @@ void QLandmarkManagerEngineSqlite::disconnectNotify(const char *signal)
 void QLandmarkManagerEngineSqlite::updateLandmarkIdFetchRequest(QLandmarkIdFetchRequest* req, const QList<QLandmarkId>& result,
                                   QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkManagerEngine::updateLandmarkIdFetchRequest(req, result, error, errorString, newState);
+    QMutexLocker ml(&m_mutex);
+    if (m_activeRequests.contains(req)) {
+        QLandmarkManagerEngine::updateLandmarkIdFetchRequest(req, result, error, errorString, newState);
+
+        if (newState == QLandmarkAbstractRequest::FinishedState)
+            m_activeRequests.remove(req);
+    }
+
 }
 
 void QLandmarkManagerEngineSqlite::updateLandmarkFetchRequest(QLandmarkFetchRequest* req, const QList<QLandmark>& result,
                             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkManagerEngine::updateLandmarkFetchRequest(req, result, error, errorString,newState);
+    QMutexLocker ml(&m_mutex);
+    if (m_activeRequests.contains(req)) {
+        QLandmarkManagerEngine::updateLandmarkFetchRequest(req, result, error, errorString,newState);
+
+        if (newState == QLandmarkAbstractRequest::FinishedState)
+            m_activeRequests.remove(req);
+    }
+}
+
+void QLandmarkManagerEngineSqlite::updateLandmarkFetchByIdRequest(QLandmarkFetchByIdRequest* req, const QList<QLandmark>& result,
+                            QLandmarkManager::Error error, const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState)
+{
+    QMutexLocker ml(&m_mutex);
+    if (m_activeRequests.contains(req)) {
+        QLandmarkManagerEngine::updateLandmarkFetchByIdRequest(req, result, error, errorString, errorMap, newState);
+
+        if (newState == QLandmarkAbstractRequest::FinishedState)
+            m_activeRequests.remove(req);
+    }
 }
 
 void QLandmarkManagerEngineSqlite::updateLandmarkSaveRequest(QLandmarkSaveRequest* req, const QList<QLandmark>& result,
                             QLandmarkManager::Error error, const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkManagerEngine::updateLandmarkSaveRequest(req, result, error, errorString, errorMap, newState);
+    QMutexLocker ml(&m_mutex);
+    if (m_activeRequests.contains(req)) {
+        QLandmarkManagerEngine::updateLandmarkSaveRequest(req, result, error, errorString, errorMap, newState);
+
+        if (newState == QLandmarkAbstractRequest::FinishedState)
+            m_activeRequests.remove(req);
+    }
 }
 
 void QLandmarkManagerEngineSqlite::updateLandmarkRemoveRequest(QLandmarkRemoveRequest* req, QLandmarkManager::Error error,
                              const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkManagerEngine::updateLandmarkRemoveRequest(req, error, errorString, errorMap, newState);
+    QMutexLocker ml(&m_mutex);
+    if (m_activeRequests.contains(req)) {
+        QLandmarkManagerEngine::updateLandmarkRemoveRequest(req, error, errorString, errorMap, newState);
+
+        if (newState == QLandmarkAbstractRequest::FinishedState)
+            m_activeRequests.remove(req);
+    }
 }
 
 void QLandmarkManagerEngineSqlite::updateRequestState(QLandmarkAbstractRequest *req, QLandmarkAbstractRequest::State state)
 {
-    QLandmarkManagerEngine::updateRequestState(req,state);
+    QMutexLocker ml(&m_mutex);
+    if (m_activeRequests.contains(req)) {
+        QLandmarkManagerEngine::updateRequestState(req,state);
+
+        if (state == QLandmarkAbstractRequest::FinishedState)
+            m_activeRequests.remove(req);
+    }
 }
 
 void QLandmarkManagerEngineSqlite::updateLandmarkCategoryIdFetchRequest(QLandmarkCategoryIdFetchRequest* req, const QList<QLandmarkCategoryId>& result,
         QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkManagerEngine::updateLandmarkCategoryIdFetchRequest(req, result, error, errorString, newState);
+    QMutexLocker ml(&m_mutex);
+    if (m_activeRequests.contains(req)) {
+        QLandmarkManagerEngine::updateLandmarkCategoryIdFetchRequest(req, result, error, errorString, newState);
+
+        if (newState == QLandmarkAbstractRequest::FinishedState)
+            m_activeRequests.remove(req);
+    }
 }
 
 void QLandmarkManagerEngineSqlite::updateLandmarkCategoryFetchRequest(QLandmarkCategoryFetchRequest* req, const QList<QLandmarkCategory>& result,
         QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkManagerEngine::updateLandmarkCategoryFetchRequest(req, result, error, errorString, newState);
+    QMutexLocker ml(&m_mutex);
+    if (m_activeRequests.contains(req)) {
+        QLandmarkManagerEngine::updateLandmarkCategoryFetchRequest(req, result, error, errorString, newState);
+
+        if (newState == QLandmarkAbstractRequest::FinishedState)
+            m_activeRequests.remove(req);
+    }
+}
+
+void QLandmarkManagerEngineSqlite::updateLandmarkCategoryFetchByIdRequest(QLandmarkCategoryFetchByIdRequest* req, const QList<QLandmarkCategory>& result,
+                            QLandmarkManager::Error error, const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState)
+{
+    QMutexLocker ml(&m_mutex);
+    if (m_activeRequests.contains(req)) {
+        QLandmarkManagerEngine::updateLandmarkCategoryFetchByIdRequest(req, result, error, errorString, errorMap, newState);
+
+        if (newState == QLandmarkAbstractRequest::FinishedState)
+            m_activeRequests.remove(req);
+    }
 }
 
 void QLandmarkManagerEngineSqlite::updateLandmarkCategorySaveRequest(QLandmarkCategorySaveRequest* req, const QList<QLandmarkCategory>& result,
                             QLandmarkManager::Error error, const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkManagerEngine::updateLandmarkCategorySaveRequest(req, result, error, errorString, errorMap, newState);
+    QMutexLocker ml(&m_mutex);
+    if (m_activeRequests.contains(req)) {
+        QLandmarkManagerEngine::updateLandmarkCategorySaveRequest(req, result, error, errorString, errorMap, newState);
+
+        if (newState == QLandmarkAbstractRequest::FinishedState)
+            m_activeRequests.remove(req);
+    }
 }
 
 void QLandmarkManagerEngineSqlite::updateLandmarkCategoryRemoveRequest(QLandmarkCategoryRemoveRequest* req,
                             QLandmarkManager::Error error, const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkManagerEngine::updateLandmarkCategoryRemoveRequest(req, error, errorString, errorMap, newState);
+    QMutexLocker ml(&m_mutex);
+    if (m_activeRequests.contains(req)) {
+        QLandmarkManagerEngine::updateLandmarkCategoryRemoveRequest(req, error, errorString, errorMap, newState);
+
+        if (newState == QLandmarkAbstractRequest::FinishedState)
+            m_activeRequests.remove(req);
+    }
 }
 
-void QLandmarkManagerEngineSqlite::updateLandmarkImportRequest(QLandmarkImportRequest *req, QLandmarkManager::Error error, const QString &errorString,
+void QLandmarkManagerEngineSqlite::updateLandmarkImportRequest(QLandmarkImportRequest *req, const QList<QLandmarkId> &ids, QLandmarkManager::Error error, const QString &errorString,
                                  QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkManagerEngine::updateLandmarkImportRequest(req, error, errorString, newState);
+    QMutexLocker ml(&m_mutex);
+    if (m_activeRequests.contains(req)) {
+        QLandmarkManagerEngine::updateLandmarkImportRequest(req, ids, error, errorString, newState);
+
+        if (newState == QLandmarkAbstractRequest::FinishedState)
+            m_activeRequests.remove(req);
+    }
 }
 
 void QLandmarkManagerEngineSqlite::updateLandmarkExportRequest(QLandmarkExportRequest *req, QLandmarkManager::Error error, const QString &errorString,
                                  QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkManagerEngine::updateLandmarkExportRequest(req, error, errorString, newState);
+    QMutexLocker ml(&m_mutex);
+    if (m_activeRequests.contains(req)) {
+        QLandmarkManagerEngine::updateLandmarkExportRequest(req, error, errorString, newState);
+
+        if (newState == QLandmarkAbstractRequest::FinishedState)
+            m_activeRequests.remove(req);
+    }
 }

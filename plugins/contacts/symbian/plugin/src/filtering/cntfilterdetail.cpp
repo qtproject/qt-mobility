@@ -122,6 +122,11 @@ bool CntFilterDetail::filterSupported(const QContactFilter& filter)
                 detailFilter.detailFieldName())) {
             result = true;
         }
+        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName &&
+            detailFilter.detailFieldName() == QContactPhoneNumber::FieldNumber) {
+            //cpecial case - phone number matching 
+            result = true;
+        }
     }
     return result;
 }
@@ -342,11 +347,55 @@ void CntFilterDetail::createMatchPhoneNumberQuery(
         }
         else {
             // Checking the upper digits...
-            TMatch phoneNumber = createPhoneMatchNumber(
-                                  numberPtr, numLowerDigits, numUpperDigits, error);
-            QString fieldToMatch = QString(" LIKE '%1").arg(phoneNumber.iUpperDigits) + "%'"  ;
-            whereClause += " AND extra_value" + fieldToMatch;
-            sqlQuery = "SELECT contact_id FROM comm_addr" + whereClause;
+        
+            // select fields for contacts that match phone lookup
+            //  SELECT contact_id, extra_value FROM comm_addr
+            //      WHERE value = [value string] AND type = [type value];
+            //
+            QString type =  QString(" type = %1").arg(CntDbInfo::EPhoneNumber);
+            QString value =  QString(" value = %1").arg(phoneDigits.iLowerSevenDigits);
+            QString whereClause = " WHERE" + value + " AND" + type;
+            sqlQuery = "SELECT contact_id, extra_value FROM comm_addr" + whereClause;
+            
+            QList<QPair<QContactLocalId, QString> > contactMatches =  m_srvConnection.searchPhoneNumbers(sqlQuery, error);
+            
+            // Check if search query was successful
+            if (*error != QContactManager::NoError) {
+                  return;
+                }
+            
+            QStringList list;
+            for (int i=0; i<contactMatches.count(); ++i) {
+                // Check the upper digits...
+                TInt32 storedUpperDigits(0);
+                QString extraValue = contactMatches.at(i).second;
+                TPtrC extValString(reinterpret_cast<const TUint16*>(extraValue.utf16()));
+                if (TLex(extValString).Val(storedUpperDigits) == KErrNone) {
+                
+                    const TInt KDigitsToRemove = KMaxPhoneMatchLength - KLowerSevenDigits - phoneDigits.iNumUpperDigits;
+                    for (TInt j = 0; j < KDigitsToRemove; ++j) {
+                        // repeatedly divide by 10 to lop off the appropriate number of digits from the right
+                        storedUpperDigits /= 10;
+                    }
+                
+                    storedUpperDigits = TMatch::padOutPhoneMatchNumber(storedUpperDigits, KDigitsToRemove);
+                
+                    if (phoneDigits.iUpperDigits == storedUpperDigits) {
+                        list.append(QString("%1").arg(contactMatches.at(i).first));
+                    }
+                }
+                else {
+                    *error = QContactManager::UnspecifiedError;
+                }
+            }
+            // Recreate query to fetch all match ids
+            // SELECT DISTINCT contact_id FROM contact WHERE contact_id in (
+            //      ..
+            // )  
+            QString ids = list.join(" ,");
+            sqlQuery = "SELECT DISTINCT contact_id FROM contact WHERE contact_id in (";
+            sqlQuery += ids;
+            sqlQuery += ')';
         }
       
         // refine search
@@ -442,7 +491,7 @@ CntFilterDetail::TMatch CntFilterDetail::createPaddedPhoneDigits(
     TMatch phoneNumber = createPhoneMatchNumber(
                                             number, numLowerDigits, numUpperDigits, error);
     if (*error == QContactManager::NoError) {
-        if (phoneNumber.iNumLowerDigits + phoneNumber.iUpperDigits == 0) {
+        if (phoneNumber.iNumLowerDigits + phoneNumber.iNumUpperDigits == 0) {
             // No digits, do nothing
         }
         else if (phoneNumber.iNumLowerDigits < KLowerSevenDigits) {

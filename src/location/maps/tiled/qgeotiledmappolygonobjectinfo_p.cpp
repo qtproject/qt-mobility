@@ -81,9 +81,7 @@ void QGeoTiledMapPolygonObjectInfo::objectUpdate()
 void QGeoTiledMapPolygonObjectInfo::mapUpdate()
 {
     if (polygonItem) {
-        QPen pen = polygon->pen();
-        pen.setWidthF(pen.widthF() * tiledMapData->zoomFactor());
-        polygonItem->setPen(pen);
+        polygonItem->setPen(polygon->pen());
     }
 }
 

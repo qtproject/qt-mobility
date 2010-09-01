@@ -50,7 +50,10 @@
 #include <QVBoxLayout>
 #include <QGroupBox>
 #include <QPushButton>
+#include <QComboBox>
 #include <QDebug>
+
+#define SERVICE_IPC_PREFIX "_q_ipc_addr:"
 
 //QTM_USE_NAMESPACE
 
@@ -60,7 +63,9 @@ ServiceWidget::ServiceWidget(QWidget *parent)
       m_title(new QLabel),
       m_name(new MandatoryLineEdit(tr("(Name required)"))),
       m_path(new MandatoryLineEdit(tr("(Path required)"))),
-      m_desc(new QLineEdit)
+      m_desc(new QLineEdit),
+      m_type(new QComboBox),
+      m_text(QLatin1String("filepath"))
 {
     connect(m_name, SIGNAL(textChanged(QString)), SLOT(setTitle(QString)));
 
@@ -68,6 +73,7 @@ ServiceWidget::ServiceWidget(QWidget *parent)
     connect(m_path, SIGNAL(textEdited(QString)), SIGNAL(dataChanged()));
     connect(m_desc, SIGNAL(textEdited(QString)), SIGNAL(dataChanged()));
     connect(m_ifacesTabs, SIGNAL(dataChanged()), SIGNAL(dataChanged()));
+    connect(m_type, SIGNAL(currentIndexChanged(int)), SLOT(serviceTypeChanged(int)));
 
     QFont f = m_title->font();
     f.setBold(true);
@@ -78,10 +84,14 @@ ServiceWidget::ServiceWidget(QWidget *parent)
     buttonAdd->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
     connect(buttonAdd, SIGNAL(clicked()), m_ifacesTabs, SLOT(addInterface()));
 
+    QStringList serviceTypes;
+    serviceTypes << tr("* Plugin path") << tr("* IPC address");
+    m_type->addItems(serviceTypes);
+
     QGroupBox *serviceAttrsGroup = new QGroupBox(tr("Main attributes"));
     QFormLayout *form = new QFormLayout;
     form->addRow(tr("* Name"), m_name);
-    form->addRow(tr("* Resource path"), m_path);
+    form->addRow(m_type, m_path);
     form->addRow(tr("Description"), m_desc);
     serviceAttrsGroup->setLayout(form);
 
@@ -114,12 +124,15 @@ void ServiceWidget::validate(ErrorCollector *errors)
     m_name->validate(errors);
     m_path->validate(errors);
     m_ifacesTabs->validate(errors);
+
+    if (m_path->text().startsWith(SERVICE_IPC_PREFIX))
+        errors->addError("Invalid service plugin path, avoid private prefixes.");
 }
 
 void ServiceWidget::writeXml(QXmlStreamWriter *writer) const
 {
     writer->writeTextElement(QLatin1String("name"), !m_name->hasText() ? QString() : m_name->text());
-    writer->writeTextElement(QLatin1String("filepath"), !m_path->hasText() ? QString() : m_path->text());
+    writer->writeTextElement(m_text, !m_path->hasText() ? QString() : m_path->text());
     writer->writeTextElement(QLatin1String("description"), m_desc->text());
     m_ifacesTabs->writeXml(writer);
 }
@@ -130,4 +143,14 @@ void ServiceWidget::setTitle(const QString &text)
         m_title->setText(tr("[New Service]"));
     else
         m_title->setText(text);
+}
+
+void ServiceWidget::serviceTypeChanged(int type)
+{
+    if (type == 0)
+        m_text = QLatin1String("filepath");
+    else
+        m_text = QLatin1String("ipcaddress");
+
+    emit dataChanged();
 }

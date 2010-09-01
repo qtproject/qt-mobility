@@ -72,6 +72,8 @@ void tst_QDocumentGallery::isRequestSupported()
 #endif
 
     QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::QueryRequest), platformSupported);
+    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::ItemRequest), platformSupported);
+    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::TypeRequest), platformSupported);
     QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::RemoveRequest), platformSupported);
     QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::RequestType(1000)), false);
 }
@@ -133,6 +135,8 @@ void tst_QDocumentGallery::itemTypeProperties_data()
 
     QTest::newRow("Album") << QString(QDocumentGallery::Album) << (QStringList()
 #if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
+            << QDocumentGallery::albumArtist
+            << QDocumentGallery::albumTitle
             << QDocumentGallery::artist
             << QDocumentGallery::duration
             << QDocumentGallery::title

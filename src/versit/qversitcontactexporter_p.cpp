@@ -41,7 +41,7 @@
 
 #include "qversitcontactexporter.h"
 #include "qversitcontactexporter_p.h"
-#include "qversitorganizerdefs_p.h"
+#include "qversitcontactsdefs_p.h"
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
 
@@ -67,7 +67,7 @@
 #include <qcontactdisplaylabel.h>
 #include <qcontactthumbnail.h>
 #include "qversitcontacthandler.h"
-#include "qversitpluginloader_p.h"
+#include "qversitcontactpluginloader_p.h"
 
 #include <QUrl>
 #include <QBuffer>
@@ -109,7 +109,7 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QString& prof
                 QLatin1String(versitSubTypeMappings[i].versitString));
     }
 
-    mPluginDetailHandlers = QVersitPluginLoader::instance()->createContactHandlers(profile);
+    mPluginDetailHandlers = QVersitContactPluginLoader::instance()->createContactHandlers(profile);
 }
 
 /*!

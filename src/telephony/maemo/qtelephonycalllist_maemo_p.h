@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLLIST_UNSUPPORTED_P_H
-#define QTELEPHONYCALLLIST_UNSUPPORTED_P_H
+#ifndef QTELEPHONYCALLLIST_MAEMO_P_H
+#define QTELEPHONYCALLLIST_MAEMO_P_H
 
 //
 //  W A R N I N G
@@ -60,11 +60,11 @@
 #include "qtelephony.h"
 #include "qtelephonycallinfo.h"
 #include "qtelephonycalllist.h"
-#include "maemo/clientregistrar.h"
+#include "maemo/accountmanager.h"
 #include "maemo/connection.h"
 #include "maemo/channel.h"
 
-using namespace Tp;
+using namespace DBus;
 
 QT_BEGIN_HEADER
 
@@ -79,24 +79,24 @@ class QTelephonyCallListPrivate : public QObject
 public:
     QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
     virtual ~QTelephonyCallListPrivate();
-    QList<QTelephonyCallInfo> activeCalls(const QTelephonyEvents::CallType& calltype) const;
+    QList<QTelephonyCallInfo> activeCalls(const QTelephony::CallType& calltype) const;
 
     //for tp
-    void newChannels(Tp::ChannelPtr channelptr);
-    void channelStatusChanged(Tp::ChannelPtr channel);
+    void newChannels(DBus::ChannelPtr channelptr);
+    void channelStatusChanged(DBus::ChannelPtr channel);
 
 private:
     void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);
     void emitActiveCallRemoved(QTelephonyCallInfoPrivate& call);
     void emitActiveCallAdded(QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>& call);
-    QTelephonyEvents::CallType convertToCallType(QString channeltelephatytype);
 private:
     QList<QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
     QTelephonyCallList* p;
-    ConnectionPtr connection;
+    QList<ConnectionPtr> connections;
+    AccountManager* accountManager;
 };
 
 QTM_END_NAMESPACE
 QT_END_HEADER
 
-#endif // QTELEPHONYCALLLIST_UNSUPPORTED_P_H
+#endif // QTELEPHONYCALLLIST_MAEMO_P_H

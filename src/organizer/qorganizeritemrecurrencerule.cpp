@@ -80,6 +80,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldWeekStart, "WeekStar
 
 /*!
  * \enum QOrganizerItemRecurrenceRule::Frequency
+ * \value Invalid Signifies that the entire rrule is invalid.
  * \value Daily
  * \value Weekly
  * \value Monthly
@@ -145,14 +146,14 @@ void QOrganizerItemRecurrenceRule::setFrequency(Frequency freq)
 }
 
 /*!
- * Returns the frequency with which the item recurs.  The default frequency is 1.
+ * Returns the frequency with which the item recurs.  The default frequency is Invalid.
  */
 QOrganizerItemRecurrenceRule::Frequency QOrganizerItemRecurrenceRule::frequency() const
 {
     if (d->m_variantValues.contains(FieldFrequency))
         return static_cast<Frequency>(d->m_variantValues.value(FieldFrequency).toInt());
     else
-        return Weekly;
+        return Invalid;
 }
 
 /*! Sets the "count" condition of the recurrence rule to \a count.  If an end-date was previously

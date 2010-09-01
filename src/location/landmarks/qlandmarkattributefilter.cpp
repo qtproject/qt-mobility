@@ -58,7 +58,7 @@ public:
         return (attributes == od->attributes)
             && (flags == od->flags)
             && (attributeType == od->attributeType)
-            && (operationType == od->attributeType);
+            && (operationType == od->operationType);
     }
 
     Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(QLandmarkAttributeFilter, QLandmarkFilter::AttributeFilter)

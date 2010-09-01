@@ -12,9 +12,12 @@ include(../examples.pri)
 
 CONFIG += mobility
 MOBILITY = location
+contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7){
+    MOBILITY += bearer
+    INCLUDEPATH += ../../src/bearer
+}
 
 symbian: { 
-    MOBILITY += bearer
     TARGET.CAPABILITY = Location \
                         NetworkServices \
                         ReadUserData \

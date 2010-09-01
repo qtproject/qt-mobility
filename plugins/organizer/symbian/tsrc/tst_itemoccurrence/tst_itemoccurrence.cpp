@@ -53,7 +53,7 @@ Q_DECLARE_METATYPE(QOrganizerItemRecurrenceRule)
 Q_DECLARE_METATYPE(QOrganizerItemPriority)
 Q_DECLARE_METATYPE(QOrganizerItemLocation)
 
-class TestItemOccurrence : public QObject
+class tst_ItemOccurrence : public QObject
 {
     Q_OBJECT
     
@@ -64,16 +64,21 @@ private slots:
 private slots:
     void addOccurrenceDetail_data();
     void addOccurrenceDetail();
+    void fetchOccurrenceByFilterSort_data();
+    void fetchOccurrenceByFilterSort();
     void addOccurrenceWithException_data();
     void addOccurrenceWithException();
     void editOccurrence_data();
     void editOccurrence();
     void editOccurrenceNegative_data();
     void editOccurrenceNegative();
+    void updateOccurrenceLocalId_data(){addManagers();};
+    void updateOccurrenceLocalId();
     void fetchNegative_data();
     void fetchNegative();
 
 private:
+    void addManagers();
     QStringList getAvailableManagers();
     void addOccurrenceData(QString managerName, QString itemType);
     
@@ -82,7 +87,7 @@ private:
     
 };
 
-void TestItemOccurrence::init()
+void tst_ItemOccurrence::init()
 {
     QFETCH(QString, managerName);
     
@@ -93,15 +98,18 @@ void TestItemOccurrence::init()
     m_om->removeItems(m_om->itemIds(), 0);
 }
 
-void TestItemOccurrence::cleanup()
+void tst_ItemOccurrence::cleanup()
 {
+    // Cleanup by deleting all items
+    m_om->removeItems(m_om->itemIds(), 0);
+
     if (m_om) {
         delete m_om;
         m_om = 0;
     }
 }
 
-QStringList TestItemOccurrence::getAvailableManagers()
+QStringList tst_ItemOccurrence::getAvailableManagers()
 {
     // Get the list of all available item managers
     QStringList availableManagers = QOrganizerItemManager::availableManagers();
@@ -114,7 +122,7 @@ QStringList TestItemOccurrence::getAvailableManagers()
     return availableManagers;
 }
 
-void TestItemOccurrence::addOccurrenceDetail_data()
+void tst_ItemOccurrence::addOccurrenceDetail_data()
 {
     QStringList availableManagers = getAvailableManagers();    
     QTest::addColumn<QString>("managerName");
@@ -127,7 +135,7 @@ void TestItemOccurrence::addOccurrenceDetail_data()
     }
 }
 
-void TestItemOccurrence::addOccurrenceData(QString managerName, QString itemType)
+void tst_ItemOccurrence::addOccurrenceData(QString managerName, QString itemType)
 {
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
@@ -142,7 +150,7 @@ void TestItemOccurrence::addOccurrenceData(QString managerName, QString itemType
         << rrule;
 }
 
-void TestItemOccurrence::addOccurrenceDetail()
+void tst_ItemOccurrence::addOccurrenceDetail()
 {
     QFETCH(QString, managerName);
     QFETCH(QString, itemType);
@@ -193,7 +201,132 @@ void TestItemOccurrence::addOccurrenceDetail()
     QCOMPARE(secondEvent.parentLocalId(), item.localId());    
 }
 
-void TestItemOccurrence::addOccurrenceWithException_data()
+void tst_ItemOccurrence::fetchOccurrenceByFilterSort_data() 
+{
+    QStringList availableManagers = getAvailableManagers();    
+    QTest::addColumn<QString>("managerName");
+    QTest::addColumn<QString>("itemType");
+    QTest::addColumn<QDateTime>("startTime");
+    QTest::addColumn<QOrganizerItemRecurrenceRule>("rrule");
+    QTest::addColumn<QString>("label");
+    QTest::addColumn<QString>("modifiedLabel");
+    
+    QString label("label");
+    QString modifiedLabel("newLabel");
+    QString itemType = QOrganizerItemType::TypeEvent;
+    
+    foreach(QString manager, availableManagers) {
+        QOrganizerItemRecurrenceRule rrule;
+        rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+        rrule.setCount(3);
+        QList<Qt::DayOfWeek> daysOfWeek;
+        daysOfWeek.append(Qt::Wednesday);
+        rrule.setDaysOfWeek(daysOfWeek);
+        QTest::newRow(QString("[%1] weekly on Wednesday for 3 weeks").arg(manager).toLatin1().constData())
+            << manager
+            << itemType
+            << QDateTime(QDate(QDate::currentDate().year() , 9, 1))
+            << rrule
+            << label
+            << modifiedLabel;
+    }    
+}
+
+void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
+{
+    QFETCH(QString, managerName);
+    QFETCH(QString, itemType);
+    QFETCH(QDateTime, startTime);
+    QFETCH(QOrganizerItemRecurrenceRule, rrule);
+    QFETCH(QString, label);
+    QFETCH(QString, modifiedLabel);
+    
+    // Set the item type
+    QOrganizerItem item;
+    item.setType(itemType);
+    QDateTime endTime(QDate(QDate::currentDate().year() , 9, 30));
+    QOrganizerEventTimeRange timeRange;
+    timeRange.setStartDateTime(startTime);
+    QVERIFY(item.saveDetail(&timeRange));
+    item.setDisplayLabel(label); 
+    // Add recurrence rules to the item
+    QList<QOrganizerItemRecurrenceRule> rrules;
+    rrules.append(rrule);
+    QOrganizerItemRecurrence recurrence;
+    recurrence.setRecurrenceRules(rrules);
+    QVERIFY(item.saveDetail(&recurrence));
+    
+    // Save item with recurrence rule.
+    QVERIFY(m_om->saveItem(&item));
+    
+    //fetch instances and modify displaylabel for second and third instance
+    QList<QOrganizerItem> instanceList;
+    instanceList = m_om->itemInstances(item,startTime,QDateTime(),10);
+    instanceList[1].setDisplayLabel(modifiedLabel);
+    instanceList[2].setDisplayLabel(modifiedLabel);
+    QVERIFY(m_om->saveItem(&instanceList[1]));
+    QVERIFY(m_om->saveItem(&instanceList[2]));
+    
+    // Fetch iteminstance using sort and filter.
+    /* filters */
+    QOrganizerItemFilter f; // matches everything
+    QOrganizerItemDetailFilter df;
+    df.setDetailDefinitionName(QOrganizerItemDisplayLabel::DefinitionName,
+                               QOrganizerItemDisplayLabel::FieldLabel);
+
+    df.setMatchFlags(QOrganizerItemFilter::MatchExactly);     
+    df.setValue(instanceList[1].detail(            
+                QOrganizerItemDisplayLabel::DefinitionName).value(
+                QOrganizerItemDisplayLabel::FieldLabel));
+    
+    QOrganizerItemSortOrder sortOrder;
+    sortOrder.setDirection(Qt::DescendingOrder);
+    sortOrder.setDetailDefinitionName(QOrganizerEventTimeRange::DefinitionName,
+                                     QOrganizerEventTimeRange::FieldStartDateTime);
+    QList<QOrganizerItemSortOrder> sortList;
+    sortList.append(sortOrder);
+    instanceList.clear();
+    QOrganizerItemFetchHint fetchHint;
+    instanceList = m_om->itemInstances(df,sortList,fetchHint);
+    QCOMPARE(instanceList.size(), 2);
+    
+    QOrganizerItem firstItem = instanceList.at(0);
+    QCOMPARE(firstItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QOrganizerEventOccurrence firstEvent = static_cast<QOrganizerEventOccurrence>(firstItem);
+    QCOMPARE(firstEvent.startDateTime(), QDateTime(QDate(QDate::currentDate().year() , 9, 15)));
+    QCOMPARE(firstEvent.displayLabel(), instanceList[1].displayLabel());
+    
+    //Search without filtering and sorting.Full instanceList is returned
+    instanceList.clear();
+    sortList.clear();    
+    QOrganizerItemInvalidFilter invalidFilter;
+    instanceList = m_om->itemInstances(invalidFilter,sortList,fetchHint);
+    QCOMPARE(instanceList.size(), 3);
+    
+    //Search full instance list in descending order without filtering
+    instanceList.clear();
+    sortList.append(sortOrder);
+    instanceList = m_om->itemInstances(invalidFilter,sortList,fetchHint);
+    QCOMPARE(instanceList.size(), 3);
+    QOrganizerItem thirdItem = instanceList.at(2);
+    QCOMPARE(thirdItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QOrganizerEventOccurrence thirdEvent = static_cast<QOrganizerEventOccurrence>(thirdItem);
+    QCOMPARE(thirdEvent.startDateTime(), startTime);
+    
+    // Save another item with same attributes as first item
+    QOrganizerItem secondItem;    
+    secondItem.setType(itemType);
+    QVERIFY(secondItem.saveDetail(&timeRange));
+    secondItem.setDisplayLabel(modifiedLabel); 
+    QVERIFY(secondItem.saveDetail(&recurrence));
+    QVERIFY(m_om->saveItem(&secondItem));
+    
+    instanceList.clear();
+    instanceList = m_om->itemInstances(df,sortList,fetchHint);
+    QCOMPARE(instanceList.size(), 5);    
+}
+
+void tst_ItemOccurrence::addOccurrenceWithException_data()
 {
     // Get the list of all available item managers
     QStringList availableManagers = getAvailableManagers();
@@ -279,7 +412,7 @@ void TestItemOccurrence::addOccurrenceWithException_data()
     }
 }
 
-void TestItemOccurrence::addOccurrenceWithException()
+void tst_ItemOccurrence::addOccurrenceWithException()
 {
     QFETCH(QString, managerName);
     QFETCH(QString, itemType);
@@ -356,12 +489,12 @@ void TestItemOccurrence::addOccurrenceWithException()
     QCOMPARE(instanceList.size(),0);
 }
 
-void TestItemOccurrence::editOccurrence_data() 
+void tst_ItemOccurrence::editOccurrence_data() 
 {
     addOccurrenceWithException_data();    
 }
 
-void TestItemOccurrence::editOccurrence() 
+void tst_ItemOccurrence::editOccurrence() 
 {
     QFETCH(QString, managerName);
     QFETCH(QString, itemType);
@@ -450,7 +583,7 @@ void TestItemOccurrence::editOccurrence()
     QCOMPARE(newInstance.startDateTime(),firstInstance.startDateTime());
 }
 
-void TestItemOccurrence::editOccurrenceNegative_data() 
+void tst_ItemOccurrence::editOccurrenceNegative_data() 
 {
     // Get the list of all available item managers
     QStringList availableManagers = getAvailableManagers();
@@ -473,7 +606,7 @@ void TestItemOccurrence::editOccurrenceNegative_data()
     }    
 }
 
-void TestItemOccurrence::editOccurrenceNegative() 
+void tst_ItemOccurrence::editOccurrenceNegative() 
 {
     QFETCH(QString, managerName);
     QFETCH(QString, itemType);
@@ -530,7 +663,36 @@ void TestItemOccurrence::editOccurrenceNegative()
     QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
 }
 
-void TestItemOccurrence::fetchNegative_data()
+void tst_ItemOccurrence::updateOccurrenceLocalId()
+{
+    // Create recurring event
+    QOrganizerEvent christmas;
+    christmas.setGuid("christmas");
+    christmas.setStartDateTime(QDateTime(QDate(2010, 12, 25), QTime(0, 0, 0)));
+    christmas.setEndDateTime(QDateTime(QDate(2010, 12, 26), QTime(0, 0, 0)));
+    christmas.setDisplayLabel(QLatin1String("Christmas"));
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    christmas.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    QVERIFY(m_om->saveItem(&christmas));
+
+    // Save an exception
+    QOrganizerEventOccurrence exception;
+    exception.setOriginalDate(QDate(2010, 12, 25));
+    exception.setStartDateTime(QDateTime(QDate(2010, 12, 25), QTime(0, 0, 0)));
+    exception.setEndDateTime(QDateTime(QDate(2010, 12, 26), QTime(0, 0, 0)));
+    exception.setDisplayLabel(QLatin1String("Xmass"));
+    exception.setParentLocalId(christmas.localId());
+    QVERIFY(m_om->saveItem(&exception));
+    QVERIFY(exception.localId() != QOrganizerItemLocalId(0));
+
+    // Modify the exception
+    exception.setDisplayLabel(QLatin1String("Christmas"));
+    exception.setParentLocalId(QOrganizerItemLocalId(0));
+    QVERIFY(m_om->saveItem(&exception));
+}
+
+void tst_ItemOccurrence::fetchNegative_data()
 {
     // Get the list of all available item managers
     QStringList availableManagers = getAvailableManagers();
@@ -547,7 +709,8 @@ void TestItemOccurrence::fetchNegative_data()
             << QDateTime::currentDateTime().addSecs(3600);
     }    
 }
-void TestItemOccurrence::fetchNegative()
+
+void tst_ItemOccurrence::fetchNegative()
 {
     //Fetch instances for a non recurring entry
     QFETCH(QString, managerName);
@@ -598,6 +761,21 @@ void TestItemOccurrence::fetchNegative()
    instanceList = m_om->itemInstances(item,startTime,QDateTime());
    QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);   
 }
-QTEST_MAIN(TestItemOccurrence);
+
+/*!
+ * Helper function for adding available manager as test case data
+ */
+void tst_ItemOccurrence::addManagers()
+{
+    QTest::addColumn<QString>("managerName");
+
+    QStringList availableManagers = getAvailableManagers();
+    foreach(QString manager, availableManagers) {
+        QTest::newRow(QString("[%1]").arg(manager).toLatin1().constData())
+            << manager;
+    }    
+}
+
+QTEST_MAIN(tst_ItemOccurrence);
 
 #include "tst_itemoccurrence.moc"

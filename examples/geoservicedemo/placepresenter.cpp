@@ -43,142 +43,117 @@
 #include <qgeoaddress.h>
 
 PlacePresenter::PlacePresenter(QTreeWidget *treeWidget, const QGeoSearchReply* codingReply)
-        : GeoPresenter(treeWidget), codingReply(codingReply)
+        : GeoPresenter(treeWidget), m_codingReply(codingReply)
 {
 }
 
 void PlacePresenter::show()
 {
-    treeWidget->clear();
-    QTreeWidgetItem* top = showPlaces();
-    QList<QGeoPlace> places = codingReply->places();
+    m_treeWidget->clear();
+    QTreeWidgetItem* placesItem = new QTreeWidgetItem(m_treeWidget);
+    placesItem->setText(0, "places");
 
+    QTreeWidgetItem* countItem = new QTreeWidgetItem(placesItem);
+    countItem->setText(0, "count");
+    countItem->setText(1, QString().setNum(m_codingReply->places().size()));
+
+    QList<QGeoPlace> places = m_codingReply->places();
     for (int i = 0; i < places.length(); i++) {
-        showPlace(top, places[i]);
+        showPlace(placesItem, places[i]);
     }
-}
-
-QTreeWidgetItem* PlacePresenter::showPlaces()
-{
-    QTreeWidgetItem* top = new QTreeWidgetItem(treeWidget);
-    top->setText(0, "places");
-
-    /*
-    QTreeWidgetItem* prop = new QTreeWidgetItem(top);
-    prop->setText(0, "result");
-    prop->setText(1, QString().setNum((quint16) codingReply->resultCode()));
-    */
-
-    QTreeWidgetItem* prop = new QTreeWidgetItem(top);
-    prop->setText(0, "count");
-    prop->setText(1, QString().setNum(codingReply->places().size()));
-
-    return top;
 }
 
 void PlacePresenter::showPlace(QTreeWidgetItem* top, const QGeoPlace& place)
 {
-    QTreeWidgetItem* prop;
     QTreeWidgetItem* placeItem = new QTreeWidgetItem(top);
     placeItem->setText(0, "place");
 
     if (place.viewport().isValid())
         showBoundingBox(placeItem, place.viewport());
 
-    prop = new QTreeWidgetItem(placeItem);
-    prop->setText(0, "position");
-    prop->setText(1, formatGeoCoordinate(place.coordinate()));
+    QTreeWidgetItem* positionItem = new QTreeWidgetItem(placeItem);
+    positionItem->setText(0, "position");
+    positionItem->setText(1, formatGeoCoordinate(place.coordinate()));
 
     if (!place.address().isEmpty()) {
-        prop = new QTreeWidgetItem(placeItem);
-        prop->setText(0, "address");
+        QTreeWidgetItem* addressItem = new QTreeWidgetItem(placeItem);
+        addressItem->setText(0, "address");
 
-        showAddress(prop, place.address());
+        showAddress(addressItem, place.address());
     }
-
-    /*
-    if ( !place->alternatives().isEmpty() )
-    {
-        prop = new QTreeWidgetItem(placeItem);
-        prop->setText( 0, "alternatives" );
-
-        showAddress(prop, place->alternatives());
-    }
-    */
 }
 
 void PlacePresenter::showAddress(QTreeWidgetItem* addrItem, const QGeoAddress& address)
 {
-    QTreeWidgetItem* prop;
     QString s = address.country();
 
     if (!s.isEmpty()) {
-        prop = new QTreeWidgetItem(addrItem);
-        prop->setText(0, "country");
-        prop->setText(1, s);
+        QTreeWidgetItem* countryItem = new QTreeWidgetItem(addrItem);
+        countryItem->setText(0, "country");
+        countryItem->setText(1, s);
     }
 
     s = address.countryCode();
 
     if (!s.isEmpty()) {
-        prop = new QTreeWidgetItem(addrItem);
-        prop->setText(0, "country code");
-        prop->setText(1, s);
+        QTreeWidgetItem* coutryCodeItem = new QTreeWidgetItem(addrItem);
+        coutryCodeItem->setText(0, "country code");
+        coutryCodeItem->setText(1, s);
     }
 
     s = address.state();
 
     if (!s.isEmpty()) {
-        prop = new QTreeWidgetItem(addrItem);
-        prop->setText(0, "state");
-        prop->setText(1, s);
+        QTreeWidgetItem* stateItem = new QTreeWidgetItem(addrItem);
+        stateItem->setText(0, "state");
+        stateItem->setText(1, s);
     }
 
     s = address.county();
 
     if (!s.isEmpty()) {
-        prop = new QTreeWidgetItem(addrItem);
-        prop->setText(0, "county");
-        prop->setText(1, s);
+        QTreeWidgetItem* countyItem = new QTreeWidgetItem(addrItem);
+        countyItem->setText(0, "county");
+        countyItem->setText(1, s);
     }
 
     s = address.city();
 
     if (!s.isEmpty()) {
-        prop = new QTreeWidgetItem(addrItem);
-        prop->setText(0, "city");
-        prop->setText(1, s);
+        QTreeWidgetItem* cityItem = new QTreeWidgetItem(addrItem);
+        cityItem->setText(0, "city");
+        cityItem->setText(1, s);
     }
 
     s = address.district();
 
     if (!s.isEmpty()) {
-        prop = new QTreeWidgetItem(addrItem);
-        prop->setText(0, "district");
-        prop->setText(1, s);
+        QTreeWidgetItem* districtItem = new QTreeWidgetItem(addrItem);
+        districtItem->setText(0, "district");
+        districtItem->setText(1, s);
     }
 
     s = address.street();
 
     if (!s.isEmpty()) {
-        prop = new QTreeWidgetItem(addrItem);
-        prop->setText(0, "thoroughfare name");
-        prop->setText(1, s);
+        QTreeWidgetItem* streetNameItem = new QTreeWidgetItem(addrItem);
+        streetNameItem->setText(0, "street name");
+        streetNameItem->setText(1, s);
     }
 
     s = address.streetNumber();
 
     if (!s.isEmpty()) {
-        prop = new QTreeWidgetItem(addrItem);
-        prop->setText(0, "thoroughfare number");
-        prop->setText(1, s);
+        QTreeWidgetItem* streetNumberItem = new QTreeWidgetItem(addrItem);
+        streetNumberItem->setText(0, "street number");
+        streetNumberItem->setText(1, s);
     }
 
     s = address.postCode();
 
     if (!s.isEmpty()) {
-        prop = new QTreeWidgetItem(addrItem);
-        prop->setText(0, "post code");
-        prop->setText(1, s);
+        QTreeWidgetItem* postCodeItem = new QTreeWidgetItem(addrItem);
+        postCodeItem->setText(0, "post code");
+        postCodeItem->setText(1, s);
     }
 }

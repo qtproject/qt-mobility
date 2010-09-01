@@ -48,11 +48,8 @@
 
 QTM_USE_NAMESPACE
 
-const QString m_managerNameSymbian("symbian");
-
 Q_DECLARE_METATYPE(QOrganizerItemLocation)
 Q_DECLARE_METATYPE(QOrganizerItemManager::Error)
-
 
 class TestItemLocation : public QObject
 {
@@ -116,158 +113,140 @@ void TestItemLocation::addLocationDetail_data()
 
 void TestItemLocation::addLocationData(QString managerName, QString itemType)
 {
-    QOrganizerItemLocation location;
-    location.setLocationName("TestLocationName");
+    QOrganizerItemLocation loc;
+    loc.setLocationName("TestLocationName");
     
-    QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
+    QTest::newRow(QString("[%1] LocationName=%2").arg(managerName).arg(loc.locationName()).toLatin1().constData())
         << managerName
         << itemType
         << QDateTime::currentDateTime().addDays(1)
-        << location
+        << loc
         << QOrganizerItemManager::NoError;
 
-    location.setLocationName("");
-    QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
+    loc.setLocationName("");
+    QTest::newRow(QString("[%1] LocationName=%2").arg(managerName).arg(loc.locationName()).toLatin1().constData())
         << managerName
         << itemType
         << QDateTime::currentDateTime().addDays(1)
-        << location
+        << loc
         << QOrganizerItemManager::NoError;
 
-    location.setLocationName("#$%^");
-    QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
+    loc.setLocationName("#$%^");
+    QTest::newRow(QString("[%1] LocationName=%2").arg(managerName).arg(loc.locationName()).toLatin1().constData())
         << managerName
         << itemType
         << QDateTime::currentDateTime().addDays(1)
-        << location
+        << loc
         << QOrganizerItemManager::NoError;
 
 #ifdef SYMBIAN_CALENDAR_V2
-    location.setLocationName("TestLocationName");
-    location.setGeoLocation("20.356784;76.276748");
-    QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
+    loc.setLocationName("TestLocationName");
+    loc.setGeoLocation("20.356784;76.276748");
+    QTest::newRow(QString("[%1] LocationName=%2 GeoLocation=%3").arg(managerName).arg(loc.locationName()).arg(loc.geoLocation()).toLatin1().constData())
 		<< managerName
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
-		<< location
+		<< loc
 		<< QOrganizerItemManager::NoError;
     
-    location.setLocationName("TestLocationName");
-	location.setGeoLocation("+20.356784;76.276748");
-	QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
+    loc.setLocationName("TestLocationName");
+	loc.setGeoLocation("+20.356784;76.276748");
+	QTest::newRow(QString("[%1] LocationName=%2 GeoLocation=%3").arg(managerName).arg(loc.locationName()).arg(loc.geoLocation()).toLatin1().constData())
 		<< managerName
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
-		<< location
+		<< loc
 		<< QOrganizerItemManager::NoError;
 	
-	location.setLocationName("TestLocationName");
-	location.setGeoLocation("+20.356784;76.276748");
-	QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
-			<< managerName
-			<< itemType
-			<< QDateTime::currentDateTime().addDays(1)
-			<< location
-			<< QOrganizerItemManager::NoError;
-	
-	location.setLocationName("TestLocationName");
-	location.setGeoLocation("+20.356784;-76.276748");
-	QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
-			<< managerName
-			<< itemType
-			<< QDateTime::currentDateTime().addDays(1)
-			<< location
-			<< QOrganizerItemManager::NoError;
-		
-	location.setLocationName("TestLocationName");
-	location.setGeoLocation("20.356784;-76.276748");
-	QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
+	loc.setLocationName("TestLocationName");
+	loc.setGeoLocation("+20.356784;-76.276748");
+	QTest::newRow(QString("[%1] LocationName=%2 GeoLocation=%3").arg(managerName).arg(loc.locationName()).arg(loc.geoLocation()).toLatin1().constData())
+        << managerName
+        << itemType
+        << QDateTime::currentDateTime().addDays(1)
+        << loc
+        << QOrganizerItemManager::NoError;
+
+	loc.setLocationName("TestLocationName");
+	loc.setGeoLocation("20.356784;-76.276748");
+	QTest::newRow(QString("[%1] LocationName=%2 GeoLocation=%3").arg(managerName).arg(loc.locationName()).arg(loc.geoLocation()).toLatin1().constData())
 		<< managerName
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
-		<< location
+		<< loc
 		<< QOrganizerItemManager::NoError;
 	
-	location.setLocationName("TestLocationName");
-	location.setGeoLocation("200.356784;-716.276748");
-	QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
+	loc.setLocationName("TestLocationName");
+	loc.setGeoLocation("200.356784;-716.276748");
+	QTest::newRow(QString("[%1] LocationName=%2 GeoLocation=%3").arg(managerName).arg(loc.locationName()).arg(loc.geoLocation()).toLatin1().constData())
 		<< managerName
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
-		<< location
+		<< loc
 		<< QOrganizerItemManager::BadArgumentError;
 	
-	location.setLocationName("TestLocationName");
-	location.setGeoLocation("20;-716.276748");
-	QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
+	loc.setLocationName("TestLocationName");
+	loc.setGeoLocation("20;-716.276748");
+	QTest::newRow(QString("[%1] LocationName=%2 GeoLocation=%3").arg(managerName).arg(loc.locationName()).arg(loc.geoLocation()).toLatin1().constData())
 		<< managerName
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
-		<< location
+		<< loc
 		<< QOrganizerItemManager::BadArgumentError;
 	
-	location.setLocationName("TestLocationName");
-	location.setGeoLocation("20;-71");
-	QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
+	loc.setLocationName("TestLocationName");
+	loc.setGeoLocation("20;-71");
+	QTest::newRow(QString("[%1] LocationName=%2 GeoLocation=%3").arg(managerName).arg(loc.locationName()).arg(loc.geoLocation()).toLatin1().constData())
 		<< managerName
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
-		<< location
+		<< loc
 		<< QOrganizerItemManager::NoError;
 	
-	location.setLocationName("TestLocationName");
-	location.setGeoLocation("20;-71");
-	QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
+	loc.setLocationName("TestLocationName");
+	loc.setGeoLocation("0;0");
+	QTest::newRow(QString("[%1] LocationName=%2 GeoLocation=%3").arg(managerName).arg(loc.locationName()).arg(loc.geoLocation()).toLatin1().constData())
 		<< managerName
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
-		<< location
+		<< loc
 		<< QOrganizerItemManager::NoError;
 	
-	location.setLocationName("TestLocationName");
-	location.setGeoLocation("0;0");
-	QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
+	loc.setLocationName("TestLocationName");
+	loc.setGeoLocation("0;76");
+	QTest::newRow(QString("[%1] LocationName=%2 GeoLocation=%3").arg(managerName).arg(loc.locationName()).arg(loc.geoLocation()).toLatin1().constData())
 		<< managerName
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
-		<< location
+		<< loc
 		<< QOrganizerItemManager::NoError;
 	
-	location.setLocationName("TestLocationName");
-	location.setGeoLocation("0;76");
-	QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
+	loc.setLocationName("TestLocationName");
+	loc.setGeoLocation("20;0");
+	QTest::newRow(QString("[%1] LocationName=%2 GeoLocation=%3").arg(managerName).arg(loc.locationName()).arg(loc.geoLocation()).toLatin1().constData())
 		<< managerName
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
-		<< location
+		<< loc
 		<< QOrganizerItemManager::NoError;
 	
-	location.setLocationName("TestLocationName");
-	location.setGeoLocation("20;0");
-	QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
+	loc.setLocationName("TestLocationName");
+	loc.setGeoLocation("0.128675;0.709");
+	QTest::newRow(QString("[%1] LocationName=%2 GeoLocation=%3").arg(managerName).arg(loc.locationName()).arg(loc.geoLocation()).toLatin1().constData())
 		<< managerName
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
-		<< location
-		<< QOrganizerItemManager::NoError;
-	
-	location.setLocationName("TestLocationName");
-	location.setGeoLocation("0.128675;0.709");
-	QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
-		<< managerName
-		<< itemType
-		<< QDateTime::currentDateTime().addDays(1)
-		<< location
+		<< loc
 		<< QOrganizerItemManager::NoError;
 #else
-	location.setLocationName("TestLocationName");
-	location.setGeoLocation("0.128675;0.709");
-	QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
+	loc.setLocationName("TestLocationName");
+	loc.setGeoLocation("0.128675;0.709");
+	QTest::newRow(QString("[%1] LocationName=%2 GeoLocation=%3").arg(managerName).arg(loc.locationName()).arg(loc.geoLocation()).toLatin1().constData())
 		<< managerName
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
-		<< location
-		<< QOrganizerItemManager::NotSupportedError;
+		<< loc
+		<< QOrganizerItemManager::InvalidDetailError; // GeoLocation is not supported so QOrganizerItemManagerEngine::validateItem will return this error.
 #endif
 }
 

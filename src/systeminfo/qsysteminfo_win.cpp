@@ -1155,7 +1155,11 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
     QListIterator<QNetworkInterface> i(interfaceList);
     while(i.hasNext()) {
        QNetworkInterface netInterface = i.next();
-        if (!netInterface.isValid() || (netInterface.flags() & QNetworkInterface::IsLoopBack)) {
+        if (!netInterface.isValid()
+            || (netInterface.flags() & QNetworkInterface::IsLoopBack)
+            || !(netInterface.flags() & QNetworkInterface::IsUp)
+            || !(netInterface.flags() & QNetworkInterface::IsRunning)
+            || netInterface.addressEntries().isEmpty()) {
             continue;
         }
 
@@ -1190,7 +1194,6 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
             bytesWritten = 0;
             result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
                                      &physicalMedium, sizeof(physicalMedium), &bytesWritten, 0);
-
 
             if (!result) {
                 CloseHandle(handle);
@@ -1276,12 +1279,12 @@ bool QSystemNetworkInfoPrivate::isDefaultMode(QSystemNetworkInfo::NetworkMode mo
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
     QList <QSystemNetworkInfo::NetworkMode> modeList;
-    modeList << QSystemNetworkInfo::GsmMode
-            << QSystemNetworkInfo::CdmaMode
-            << QSystemNetworkInfo::WcdmaMode
+    modeList << QSystemNetworkInfo::EthernetMode
             << QSystemNetworkInfo::WlanMode
-            << QSystemNetworkInfo::EthernetMode
             << QSystemNetworkInfo::BluetoothMode
+            << QSystemNetworkInfo::WcdmaMode
+            << QSystemNetworkInfo::CdmaMode
+            << QSystemNetworkInfo::GsmMode
             << QSystemNetworkInfo::WimaxMode;
 
     for (int i = 0; i < modeList.size(); ++i) {
@@ -1293,12 +1296,13 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 }
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
-        : QObject(parent)
+        : QObject(parent),deviceContextHandle(0)
 {
 }
 
 QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 {
+    ReleaseDC(NULL, deviceContextHandle);
 }
 
 int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
@@ -1312,8 +1316,7 @@ int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
     wHelper->setClassProperty(QStringList() << "CurrentBrightness");
 
     QVariant v = wHelper->getWMIData();
-
-    return v.toUInt();
+    return (quint8)v.toUInt();
 #else
     // This could would detect the state of the backlight, which is as close as we're going to get 
     // for WinCE.  Unfortunately, some devices don't honour the Microsoft power management API.
@@ -1341,18 +1344,24 @@ int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
     return -1;
 }
 
+int QSystemDisplayInfoPrivate::getMonitorCaps(int caps, int screen)
+{
+    if(deviceContextHandle == 0) {
+        QDesktopWidget wid;
+        HWND hWnd = wid.screen(screen)->winId();
+        deviceContextHandle = GetDC(hWnd);
+    }
+    int out = GetDeviceCaps(deviceContextHandle ,caps);
+    return out;
+}
+
 int QSystemDisplayInfoPrivate::colorDepth(int screen)
 {
-    QDesktopWidget wid;
-    HWND hWnd = wid.screen(screen)->winId();
-    HDC deviceContextHandle = GetDC(hWnd);
-    int bpp = GetDeviceCaps(deviceContextHandle ,BITSPIXEL);
-    int planes = GetDeviceCaps(deviceContextHandle, PLANES);
+    int bpp = getMonitorCaps(BITSPIXEL, screen);
+    int planes = getMonitorCaps(PLANES, screen);
     if(planes > 1) {
         bpp = 1 << planes;
     }
-    ReleaseDC(NULL, deviceContextHandle);
-
     return bpp;
 }
 
@@ -1361,22 +1370,25 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation
     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
 
     if(screen < 16 && screen > -1) {
-        int rotation = 0;
-        switch(rotation) {
-        case 0:
-        case 360:
+        if(physicalWidth(screen) > physicalHeight(screen)) {
             orientation = QSystemDisplayInfo::Landscape;
-            break;
-        case 90:
+        } else {
             orientation = QSystemDisplayInfo::Portrait;
-            break;
-        case 180:
-            orientation = QSystemDisplayInfo::InvertedLandscape;
-            break;
-        case 270:
-            orientation = QSystemDisplayInfo::InvertedPortrait;
-            break;
-        };
+        }
+//        int rotation = 0;
+//        switch(rotation) {
+//        case 0:
+//        case 360:
+//            break;
+//        case 90:
+//            break;
+//        case 180:
+//            orientation = QSystemDisplayInfo::InvertedLandscape;
+//            break;
+//        case 270:
+//            orientation = QSystemDisplayInfo::InvertedPortrait;
+//            break;
+//        };
     }
     return orientation;
 }
@@ -1391,18 +1403,18 @@ float QSystemDisplayInfoPrivate::contrast(int screen)
 
 int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
 {
-    int dpi=0;
+    int dpi = getMonitorCaps(LOGPIXELSX,screen);
     if(screen < 16 && screen > -1) {
-
+//
         }
     return dpi;
 }
 
 int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
 {
-    int dpi=0;
+    int dpi = getMonitorCaps(LOGPIXELSY,screen);
     if(screen < 16 && screen > -1) {
-
+//Win32_VideoController
     }
     return dpi;
 }
@@ -1410,18 +1422,17 @@ int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
 
 int QSystemDisplayInfoPrivate::physicalHeight(int screen)
 {
-    int height=0;
-
+    int height = getMonitorCaps(VERTSIZE,screen);
+    // root/wmi
+// WmiMonitorBasicDisplayParams MaxHorizontalImageSize MaxVerticalImageSize
     return height;
 }
 
 int QSystemDisplayInfoPrivate::physicalWidth(int screen)
 {
-    int width=0;
-
+    int width = getMonitorCaps(HORZSIZE,screen);
     return width;
 }
-
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     : QObject(parent)
