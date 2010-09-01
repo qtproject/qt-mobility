@@ -220,6 +220,29 @@ QVariant QContactActionDescriptor::metaData(const QString& key, const QList<QCon
     return QVariant();
 }
 
+
+/*!
+  Returns the meta data for the given meta data key \a key with the given invocation parameters \a parameters.
+ */
+QVariant QContactActionDescriptor::metaData(const QString& key, const QVariantMap& parameters) const
+{
+    if (d->m_factory) {
+        return d->m_factory->metaData(key, QList<QContactActionTarget>(), parameters, *this);
+    }
+
+    return QVariant();
+}
+
+QVariant QContactActionDescriptor::metaData(const QString& key, const QContactActionTarget& target, const QVariantMap& parameters) const
+{
+    return metaData(key, QList<QContactActionTarget>() << target, parameters);
+}
+
+QVariant QContactActionDescriptor::metaData(const QString& key, const QContact& contact, const QContactDetail& detail, const QVariantMap& parameters) const
+{
+    return metaData(key, QList<QContactActionTarget>() << QContactActionTarget(contact, detail), parameters);
+}
+
 /*!
   Returns true if the action which this descriptor describes supports at least one action target for the given \a contact
  */

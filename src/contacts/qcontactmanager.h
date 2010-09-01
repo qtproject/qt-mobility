@@ -57,6 +57,7 @@
 #include "qcontactrelationship.h"
 #include "qcontactsortorder.h"
 #include "qcontactfetchhint.h"
+#include "qcontacttype.h"
 
 QTM_BEGIN_NAMESPACE
 
