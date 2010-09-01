@@ -208,7 +208,7 @@ void QNetworkSessionPrivate::updateIdentifier(const QString &newId)
 }
 
 
-quint64 QNetworkSessionPrivate::getStatistics(bool sent) const
+QNetworkSessionPrivate::Statistics QNetworkSessionPrivate::getStatistics() const
 {
     /* This could be also implemented by using the Maemo::Icd::statistics()
      * that gets the statistics data for a specific IAP. Change if
@@ -216,52 +216,47 @@ quint64 QNetworkSessionPrivate::getStatistics(bool sent) const
      */
     Maemo::Icd icd;
     QList<Maemo::IcdStatisticsResult> stats_results;
-    quint64 counter_rx = 0, counter_tx = 0;
+    Statistics stats = { 0, 0, 0};
 
-    if (!icd.statistics(stats_results)) {
-	return 0;
-    }
+    if (!icd.statistics(stats_results))
+        return stats;
 
     foreach (const Maemo::IcdStatisticsResult &res, stats_results) {
-	if (res.params.network_attrs & ICD_NW_ATTR_IAPNAME) {
-	    /* network_id is the IAP UUID */
-	    if (QString(res.params.network_id.data()) == activeConfig.identifier()) {
-		counter_tx = res.bytes_sent;
-		counter_rx = res.bytes_received;
-	    }
-	} else {
-	    /* We probably will never get to this branch */
-	    QNetworkConfigurationPrivate *d = activeConfig.d.data();
-	    if (res.params.network_id == d->network_id) {
-		counter_tx = res.bytes_sent;
-		counter_rx = res.bytes_received;
-	    }
-	}
+        if (res.params.network_attrs & ICD_NW_ATTR_IAPNAME) {
+            /* network_id is the IAP UUID */
+            if (QString(res.params.network_id.data()) == activeConfig.identifier()) {
+                stats.txData = res.bytes_sent;
+                stats.rxData = res.bytes_received;
+                stats.activeTime = res.time_active;
+            }
+        } else {
+            /* We probably will never get to this branch */
+            QNetworkConfigurationPrivate *d = activeConfig.d.data();
+            if (res.params.network_id == d->network_id) {
+                stats.txData = res.bytes_sent;
+                stats.rxData = res.bytes_received;
+                stats.activeTime = res.time_active;
+            }
+        }
     }
 
-    if (sent)
-	return counter_tx;
-    else
-	return counter_rx;
+    return stats;
 }
 
 
 quint64 QNetworkSessionPrivate::bytesWritten() const
 {
-    return getStatistics(true);
+    return getStatistics().txData;
 }
 
 quint64 QNetworkSessionPrivate::bytesReceived() const
 {
-    return getStatistics(false);
+    return getStatistics().rxData;
 }
 
 quint64 QNetworkSessionPrivate::activeTime() const
 {
-    if (startTime.isNull()) {
-        return 0;
-    }
-    return startTime.secsTo(QDateTime::currentDateTime());
+    return getStatistics().activeTime;
 }
 
 

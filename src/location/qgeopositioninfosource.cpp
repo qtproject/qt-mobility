@@ -42,6 +42,8 @@
 
 #if defined(Q_OS_SYMBIAN)
 #   include "qgeopositioninfosource_s60_p.h"
+#elif defined(QT_SIMULATOR)
+#   include "qgeopositioninfosource_simulator_p.h"
 #elif defined(Q_OS_WINCE)
 #   include "qgeopositioninfosource_wince_p.h"
 #elif defined(Q_WS_MAEMO_6)
@@ -204,6 +206,8 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
     if (error != KErrNone)
         return 0;
     return ret;
+#elif defined(QT_SIMULATOR)
+    return new QGeoPositionInfoSourceSimulator(parent);
 #elif defined(Q_OS_WINCE)
     return new QGeoPositionInfoSourceWinCE(parent);
 #elif (defined(Q_WS_MAEMO_6)) || (defined(Q_WS_MAEMO_5))

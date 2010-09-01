@@ -862,8 +862,13 @@ QSystemDisplayInfoLinuxCommonPrivate::~QSystemDisplayInfoLinuxCommonPrivate()
 
 int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 {
-#ifdef Q_WS_X11
     QDesktopWidget wid;
+
+    if(wid.screenCount() - 1 < screen) {
+        return -1;
+    }
+
+#ifdef Q_WS_X11
     return wid.screen(screen)->x11Info().depth();
 #else
         return QPixmap::defaultDepth();
@@ -873,7 +878,10 @@ int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 
 int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
 {
-    Q_UNUSED(screen);
+    QDesktopWidget wid;
+    if(wid.screenCount() - 1 < screen) {
+        return -1;
+    }
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface;
@@ -1255,102 +1263,6 @@ QString QSystemDeviceInfoLinuxCommonPrivate::manufacturer()
     return QString();
 }
 
-QString QSystemDeviceInfoLinuxCommonPrivate::model()
-{
-    if(halIsAvailable) {
-#if !defined(QT_NO_DBUS)
-        QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
-        QString model;
-        if (iface.isValid()) {
-            model = iface.getPropertyString("system.kernel.machine");
-            if(!model.isEmpty())
-                model += " ";
-            model += iface.getPropertyString("system.chassis.type");
-            if(!model.isEmpty())
-                return model;
-        }
-#endif
-    }
-    QFile file("/proc/cpuinfo");
-    if (!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "Could not open /proc/cpuinfo";
-    } else {
-        QTextStream cpuinfo(&file);
-        QString line = cpuinfo.readLine();
-        while (!line.isNull()) {
-            line = cpuinfo.readLine();
-            if(line.contains("model name")) {
-                return line.split(": ").at(1).trimmed();
-            }
-        }
-    }
-    return QString();
-}
-
-QString QSystemDeviceInfoLinuxCommonPrivate::productName()
-{
-    if(halIsAvailable) {
-#if !defined(QT_NO_DBUS)
-        QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
-        QString productName;
-        if (iface.isValid()) {
-            productName = iface.getPropertyString("info.product");
-            if(productName.isEmpty()) {
-                productName = iface.getPropertyString("system.product");
-                if(!productName.isEmpty())
-                    return productName;
-            } else {
-                return productName;
-            }
-        }
-#endif
-    }
-    const QDir dir("/etc");
-    if(dir.exists()) {
-        QStringList langList;
-        QFileInfoList localeList = dir.entryInfoList(QStringList() << "*release",
-                                                     QDir::Files | QDir::NoDotAndDotDot,
-                                                     QDir::Name);
-        foreach(const QFileInfo fileInfo, localeList) {
-            const QString filepath = fileInfo.filePath();
-            QFile file(filepath);
-            if (file.open(QIODevice::ReadOnly)) {
-                QTextStream prodinfo(&file);
-                QString line = prodinfo.readLine();
-                while (!line.isNull()) {
-                    if(filepath.contains("lsb.release")) {
-                        if(line.contains("DISTRIB_DESCRIPTION")) {
-                            return line.split("=").at(1).trimmed();
-                        }
-                    } else {
-                        return line;
-                    }
-                    line = prodinfo.readLine();
-                }
-            }
-        } //end foreach
-    }
-
-    QFile file("/etc/issue");
-    if (!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "Could not open /proc/cpuinfo";
-    } else {
-        QTextStream prodinfo(&file);
-        QString line = prodinfo.readLine();
-        while (!line.isNull()) {
-            line = prodinfo.readLine();
-            if(!line.isEmpty()) {
-                QStringList lineList = line.split(" ");
-                for(int i = 0; i < lineList.count(); i++) {
-                    if(lineList.at(i).toFloat()) {
-                        return lineList.at(i-1) + " "+ lineList.at(i);
-                    }
-                }
-            }
-        }
-    }
-    return QString();
-}
 
 QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMethodType()
 {

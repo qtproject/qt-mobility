@@ -187,7 +187,8 @@ QGeoPositionInfo CQGeoPositionInfoSourceS60::lastKnownPosition(bool aFromSatelli
                 TDateTime datetime = pos.Time().DateTime();
                 QDateTime dt(QDate(datetime.Year(), datetime.Month() + 1, datetime.Day() + 1),
                              QTime(datetime.Hour(), datetime.Minute(), datetime.Second(),
-                                   datetime.MicroSecond() / 1000));
+                                   datetime.MicroSecond() / 1000),
+                            Qt::UTC);
 
                 //store the time stamp
                 posUpdate.setTimestamp(dt);
@@ -623,7 +624,8 @@ void CQGeoPositionInfoSourceS60::TPositionInfo2QGeoPositionInfo(
     TDateTime datetime = pos.Time().DateTime();
     QDateTime dt(QDate(datetime.Year() , datetime.Month() + 1, datetime.Day() + 1),
                  QTime(datetime.Hour() , datetime.Minute(), datetime.Second(),
-                       datetime.MicroSecond() / 1000));
+                       datetime.MicroSecond() / 1000),
+                Qt::UTC);
 
     //store the time stamp
     aPosInfo2.setTimestamp(dt);
@@ -663,7 +665,7 @@ void CQGeoPositionInfoSourceS60::updatePosition(HPositionGenericInfo *aPosInfo, 
 {
     QGeoPositionInfo  posInfo;
 
-    if (aError == KErrNone) {
+    if (aError == KErrNone && aPosInfo) {
         //fill posUpdate
         TPositionInfo2QGeoPositionInfo(aPosInfo, posInfo);
 
@@ -683,14 +685,7 @@ void CQGeoPositionInfoSourceS60::updatePosition(HPositionGenericInfo *aPosInfo, 
         }
     } else {
         //posiitoning module is unable to return any position information
-        if (mStartUpdates) {
-            if (!mRegularUpdateTimedOut) {
-                mRegularUpdateTimedOut = true;
-                emit updateTimeout();
-            }
-        } else {
-            emit positionUpdated(posInfo);
-        }
+        emit updateTimeout();
     }
 }
 
@@ -707,7 +702,7 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
     TInt index = -1;
     TUint8 bits;
 
-    CQMLBackendAO *temp= NULL;
+    CQMLBackendAO *temp = NULL;
 
     //return if already a request update is pending
     if (mReqUpdateAO && mReqUpdateAO->isRequestPending())

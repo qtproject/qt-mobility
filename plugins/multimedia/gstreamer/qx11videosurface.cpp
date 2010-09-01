@@ -50,8 +50,6 @@
 
 Q_DECLARE_METATYPE(XvImage*);
 
-static QAbstractVideoBuffer::HandleType XvHandleType = QAbstractVideoBuffer::HandleType(4);
-
 struct XvFormatRgb
 {
     QVideoFrame::PixelFormat pixelFormat;
@@ -310,7 +308,7 @@ int QX11VideoSurface::redistribute(
 QList<QVideoFrame::PixelFormat> QX11VideoSurface::supportedPixelFormats(
         QAbstractVideoBuffer::HandleType handleType) const
 {
-    return handleType == QAbstractVideoBuffer::NoHandle || handleType ==  XvHandleType
+    return handleType == QAbstractVideoBuffer::NoHandle || handleType ==  QAbstractVideoBuffer::XvShmImageHandle
             ? m_supportedPixelFormats
             : QList<QVideoFrame::PixelFormat>();
 }
@@ -390,17 +388,17 @@ bool QX11VideoSurface::present(const QVideoFrame &frame)
         } else {
             bool presented = false;
 
-            if (frame.handleType() != XvHandleType &&
+            if (frame.handleType() != QAbstractVideoBuffer::XvShmImageHandle &&
                 m_image->data_size > frame.mappedBytes()) {
                 qWarning("Insufficient frame buffer size");
                 setError(IncorrectFormatError);
-            } else if (frame.handleType() != XvHandleType &&
+            } else if (frame.handleType() != QAbstractVideoBuffer::XvShmImageHandle &&
                        m_image->num_planes > 0 &&
                        m_image->pitches[0] != frame.bytesPerLine()) {
                 qWarning("Incompatible frame pitches");
                 setError(IncorrectFormatError);
             } else {
-                if (frame.handleType() != XvHandleType) {
+                if (frame.handleType() != QAbstractVideoBuffer::XvShmImageHandle) {
                     m_image->data = reinterpret_cast<char *>(frameCopy.bits());
 
                     //qDebug() << "copy frame";
@@ -462,7 +460,7 @@ bool QX11VideoSurface::findPort()
 #ifdef Q_WS_MAEMO_5
             //the overlay xvideo adapter fails to switch winId,
             //prefer the "SGX Textured Video" adapter instead
-        for (unsigned int i = count-1; i >=0 && !portFound; --i) {
+        for (int i = count-1; i >= 0 && !portFound; --i) {
 #else
         for (unsigned int i = 0; i < count && !portFound; ++i) {
 #endif

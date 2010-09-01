@@ -21,9 +21,5 @@ SOURCES = main.cpp \
     videowidget.cpp
 
 symbian {
-    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData NetworkServices SwEvent
-    HEADERS += mediakeysobserver.h
-    SOURCES += mediakeysobserver.cpp
-    LIBS += -lremconinterfacebase \
-            -lremconcoreapi
+    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData
  }

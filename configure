@@ -243,8 +243,8 @@ done
 
 checkostype()
 {
-    match="darwin" 
-    if [ "$OSTYPE" = "${match}"* ]; then
+    match="Darwin"
+    if [ `uname -s` = "${match}" ]; then
         OS="darwin"
         QMKSPEC="-spec macx-g++"
         echo "QMAKESPEC = "$QMKSPEC >> "$CONFIG_IN"

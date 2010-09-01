@@ -135,8 +135,8 @@ QMessage::TypeFlags QMessageAccount::messageTypes() const
 
 QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 {
-    if (QMailStore *store = QMailStore::instance()) {
-        QMailAccountKey typeKey(QMailAccountKey::messageType(convert(type)));
+    if (QMailStore *store = mailStoreInstance()) {
+        QMailAccountKey typeKey(QMailAccountKey::messageType(convert(type), QMailDataComparator::Includes));
         QMailAccountKey enabledKey(QMailAccountKey::status(QMailAccount::Enabled));
 
         // See if there is a preferred sender

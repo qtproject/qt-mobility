@@ -226,6 +226,7 @@
 <h3 class="fn"><a name="outputLocation-prop"></a>outputLocation : <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a></h3>
 <p>This property holds the destination location of media content.</p>
 <p>Setting the location can fail, for example when the service supports only local file system locations but a network URL was passed. If the service does not support media recording this setting the output location will always fail.</p>
+<p>The <i>location</i> can be relative or empty; in this case the recorder uses the system specific place and file naming scheme. After recording has stated, QMediaRecorder::outputLocation() returns the actual output location.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b>outputLocation</b> () const</td></tr>
@@ -374,6 +375,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.3</div></td>
 </tr></table></div></address></body>
 </html>

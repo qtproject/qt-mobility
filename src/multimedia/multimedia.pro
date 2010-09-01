@@ -112,14 +112,15 @@ include(video/video.pri)
 include(effects/effects.pri)
 
 mac {
+!simulator {
    HEADERS += qpaintervideosurface_mac_p.h
    OBJECTIVE_SOURCES += qpaintervideosurface_mac.mm
-
+}
    LIBS += -framework AppKit -framework QuartzCore -framework QTKit
 }
 
 maemo5 {
-    QMAKE_CXXFLAGS += -march=armv7a -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon
+    isEqual(QT_ARCH,armv6):QMAKE_CXXFLAGS += -march=armv7a -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon
     HEADERS += qxvideosurface_maemo5_p.h
     SOURCES += qxvideosurface_maemo5.cpp
     SOURCES += qgraphicsvideoitem_maemo5.cpp

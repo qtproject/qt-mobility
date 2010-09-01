@@ -57,7 +57,7 @@ set BUILD_UNITTESTS=no
 set BUILD_EXAMPLES=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
-set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors
+set MOBILITY_MODULES=bearer location contacts systeminfo publishsubscribe versit messaging sensors serviceframework multimedia
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
@@ -512,7 +512,7 @@ if "%MULTIMEDIA_SELECTED%" == "yes" (
     call :compileTest Audiorouting_s60 audiorouting_s60
     call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
     call :compileTest RadioUtility_for_post_3.1 radioutility_s60
-    REM call :compileTest OpenMaxAl_support openmaxal_symbian
+    call :compileTest OpenMaxAl_support openmaxal_symbian
     call :compileTest Surfaces_s60 surfaces_s60
 )
 if "%CONTACTS_SELECTED%" == "yes" (
