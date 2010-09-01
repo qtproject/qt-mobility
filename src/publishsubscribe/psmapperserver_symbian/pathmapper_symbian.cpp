@@ -144,8 +144,6 @@ QStringList PathMapper::childPaths(const QString &path) const
 {
     QString basePath = path;
     QStringList children;
-    if (basePath.right(1) == QString(QLatin1Char('/')))
-        basePath.chop(1);
     QHashIterator<QString, PathData> i(m_paths);
     XQSettingsManager settingsManager;
     while (i.hasNext()) {

@@ -55,6 +55,7 @@ public:
     QOrganizerItemUnionFilter(const QOrganizerItemFilter& other);
 
     void setFilters(const QList<QOrganizerItemFilter>& filters);
+    void clear();
 
     void prepend(const QOrganizerItemFilter& filter);
     void append(const QOrganizerItemFilter& filter);

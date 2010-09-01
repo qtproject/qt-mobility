@@ -55,17 +55,39 @@
 
 #include <QSharedData>
 #include <QString>
+#include <QVariantMap>
 
 QTM_BEGIN_NAMESPACE
 
+class QContactActionFactory;
 class QContactActionDescriptorPrivate : public QSharedData
 {
 public:
-    QContactActionDescriptorPrivate(const QString& action, const QString& vendor, int version)
+
+    QContactActionDescriptorPrivate()
+        : QSharedData(),
+        m_implementationVersion(-1),
+        m_factory(0)
+    {
+    }
+
+    QContactActionDescriptorPrivate(const QString& action, const QString& service, const QString& identifier, int version, const QContactActionFactory* factory)
             : QSharedData(),
             m_actionName(action),
-            m_vendorName(vendor),
-            m_implementationVersion(version)
+            m_serviceName(service),
+            m_identifier(identifier),
+            m_implementationVersion(version),
+            m_factory(factory)
+    {
+    }
+
+    QContactActionDescriptorPrivate(const QContactActionDescriptorPrivate& other)
+            : QSharedData(),
+            m_actionName(other.m_actionName),
+            m_serviceName(other.m_serviceName),
+            m_identifier(other.m_identifier),
+            m_implementationVersion(other.m_implementationVersion),
+            m_factory(other.m_factory)
     {
     }
 
@@ -73,28 +95,11 @@ public:
     {
     }
 
-    /*
-    bool operator <(const QContactActionDescriptorPrivate& other) const
-    {
-        if (m_actionName < other.m_actionName)
-            return true;
-        if (m_actionName == other.m_actionName) {
-            if (m_vendorName < other.m_vendorName)
-                return true;
-            else if (m_vendorName == other.m_vendorName) {
-                if (m_implementationVersion < other.m_implementationVersion)
-                    return true;
-                else if (m_implementationVersion == other.m_implementationVersion)
-                    return this < &other; // equality, try to be stable
-            }
-        }
-        return false;
-    }
-    */
-
     QString m_actionName;
-    QString m_vendorName;
+    QString m_serviceName;
+    QString m_identifier;
     int m_implementationVersion;
+    const QContactActionFactory* m_factory;
 };
 
 QTM_END_NAMESPACE

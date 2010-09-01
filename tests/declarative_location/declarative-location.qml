@@ -40,7 +40,7 @@
 
 import "content" as Content
 import Qt 4.7
-import QtMobility.location 1.0
+import QtMobility.location 1.1
 
 Rectangle {
     id: page
@@ -68,12 +68,12 @@ Rectangle {
         Text {text: "active: "     + positionSource.active}
         Text {text: "<==== Position ====>"}
         Text {text: "latitude: "   + positionSource.position.latitude}
-        Text {text: "longtitude: "   + positionSource.position.longtitude}
+        Text {text: "longitude: "   + positionSource.position.longitude}
         Text {text: "altitude: "   + positionSource.position.altitude}
         Text {text: "speed: " + positionSource.position.speed}
         Text {text: "timestamp: "  + positionSource.position.timestamp}
         Text {text: "altitudeValid: "  + positionSource.position.altitudeValid}
-        Text {text: "longtitudeValid: "  + positionSource.position.longtitudeValid}
+        Text {text: "longitudeValid: "  + positionSource.position.longitudeValid}
         Text {text: "latitudeValid: "  + positionSource.position.latitudeValid}
         Text {text: "speedValid: "     + positionSource.position.speedValid}
     }

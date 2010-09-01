@@ -76,7 +76,6 @@ public:
     QString sStreet; //!< street name field
     QString sStreetNumber; //!< street number field
     QString sPostCode; //!< post code field
-    QString sPostOfficeBox; //!< post office box field
 };
 
 QTM_END_NAMESPACE

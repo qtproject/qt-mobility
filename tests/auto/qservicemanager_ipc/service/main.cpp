@@ -48,14 +48,12 @@
 #include "qservicefilter.h" //only used to test custom metatype
 
 QTM_USE_NAMESPACE
-
 Q_DECLARE_METATYPE(QServiceFilter);
-
-Q_DECLARE_METATYPE(QVariant)
+Q_DECLARE_METATYPE(QVariant);
+Q_DECLARE_METATYPE(QList<QString>);
 
 class SharedTestService : public QObject 
 {
-    
     Q_OBJECT
     Q_SERVICE(SharedTestService, "IPCExampleService", "com.nokia.qt.ipcunittest", "3.4")
     Q_PROPERTY(QString value READ value WRITE setValue RESET resetValue NOTIFY valueChanged SCRIPTABLE true DESIGNABLE true STORED true); 
@@ -272,7 +270,15 @@ public:
         f.setServiceName("MyUniqueService");
         return f;
     }
-
+    
+    Q_INVOKABLE QList<QString> testFunctionWithListReturn()
+    {
+        qDebug() << "UniqueTestService::testFunctionWithListReturn()";
+        QList<QString> list;
+        list << "1" << "2" << "3";
+        return list;
+    }
+    
     Q_INVOKABLE uint slotConfirmation() const
     {
         return m_hash;
@@ -311,7 +317,7 @@ public slots:
         QServiceFilter f("com.nokia.qt.ipcunittest", "6.7");
         f.setServiceName("MyService");
         qDebug() << "Emitting UniqueTestService::signalWithVariousParam()";
-        emit signalWithVariousParam( QVariant(), QString("string-value"), f, QVariant(5) );
+        emit signalWithVariousParam( QVariant("CAN'T BE NULL"), QString("string-value"), f, QVariant(5) );
     }
 
     void testSlot() {
@@ -342,6 +348,18 @@ public slots:
         m_hash = 1;
     }
     
+    void testSlotWithListArg(QList<QString> list)
+    {
+        QString output;
+        for (int i=0; i<list.size(); i++) {
+            output += list[i];
+            if (i<list.size()-1)
+                output += ", ";
+        }
+        m_hash = qHash(output);
+        qDebug() << "UniqueTestService::testSlotWithListArg( QList(" << output << " ) ) called" << m_hash;
+    }
+
     void testIpcFailure() {
       qApp->exit(0); // exit to show failure
     }
@@ -369,8 +387,6 @@ void registerExampleService()
         qWarning() << "Cannot register IPCExampleService" << path;
 }
 
-//Q_DECLARE_SERVICE_METATYPE(QServiceFilter);
-
 Q_DECLARE_METATYPE(QMetaType::Type);
 
 int main(int argc, char** argv)
@@ -382,6 +398,9 @@ int main(int argc, char** argv)
     
     qRegisterMetaType<QVariant>();    
     qRegisterMetaTypeStreamOperators<QVariant>("QVariant");
+  
+    qRegisterMetaType<QList<QString> >();    
+    qRegisterMetaTypeStreamOperators<QList<QString> >("QList<QString>");
    
     registerExampleService();
 

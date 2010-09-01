@@ -42,7 +42,8 @@
 #include "qgeomapobject.h"
 #include "qgeomapobject_p.h"
 
-#include "qgeomapdata_p.h"
+#include "qgeomapdata.h"
+
 #include <QtAlgorithms>
 
 QTM_BEGIN_NAMESPACE
@@ -54,7 +55,7 @@ QTM_BEGIN_NAMESPACE
     distances.
 
     \inmodule QtLocation
-    
+
     \ingroup maps-mapping-objects
 
     QGeoMapObject instances can also be grouped into heirarchies in order to
@@ -85,19 +86,19 @@ QTM_BEGIN_NAMESPACE
     Constructs a new map object with the specified \a parent.
 */
 QGeoMapObject::QGeoMapObject(QGeoMapObject *parent)
-    : d_ptr(new QGeoMapObjectPrivate(this, parent)) {}
+        : d_ptr(new QGeoMapObjectPrivate(this, parent)) {}
 
 /*!
     Constructs a new root map object associated with \a mapData.
 */
-QGeoMapObject::QGeoMapObject(QGeoMapDataPrivate *mapData)
-    : d_ptr(new QGeoMapObjectPrivate(this, mapData)) {}
+QGeoMapObject::QGeoMapObject(QGeoMapData *mapData)
+        : d_ptr(new QGeoMapObjectPrivate(this, mapData)) {}
 
 /*!
   \internal
 */
 QGeoMapObject::QGeoMapObject(QGeoMapObjectPrivate *dd)
-    : d_ptr(dd) {}
+        : d_ptr(dd) {}
 
 /*!
     Destroys this map object.
@@ -129,12 +130,13 @@ QGeoMapObject::Type QGeoMapObject::type() const
 void QGeoMapObject::setZValue(int zValue)
 {
     Q_D(QGeoMapObject);
-    bool reinsert = (d->zValue != zValue);
-    d->zValue = zValue;
-
-    if (reinsert && d->parent) {
-        d->parent->removeChildObject(this);
-        d->parent->addChildObject(this);
+    if (d->zValue != zValue) {
+        d->zValue = zValue;
+        if (d->parent) {
+            d->parent->removeChildObject(this);
+            d->parent->addChildObject(this);
+        }
+        emit zValueChanged(d->zValue);
     }
 }
 
@@ -162,7 +164,10 @@ int QGeoMapObject::zValue() const
 void QGeoMapObject::setVisible(bool visible)
 {
     Q_D(QGeoMapObject);
-    d->isVisible = visible;
+    if (d->isVisible != visible) {
+        d->isVisible = visible;
+        emit visibleChanged(d->isVisible);
+    }
 }
 
 /*!
@@ -175,6 +180,21 @@ bool QGeoMapObject::isVisible() const
 {
     Q_D(const QGeoMapObject);
     return d->isVisible;
+}
+
+void QGeoMapObject::setSelected(bool selected)
+{
+    Q_D(QGeoMapObject);
+    if (d->isSelected != selected) {
+        d->isSelected = selected;
+        emit selectedChanged(d->isSelected);
+    }
+}
+
+bool QGeoMapObject::isSelected() const
+{
+    Q_D(const QGeoMapObject);
+    return d->isSelected;
 }
 
 /*!
@@ -270,14 +290,16 @@ void QGeoMapObject::removeChildObject(QGeoMapObject *childObject)
     }
 }
 
-/*!
-    Returns the children of this map object.
-    The children are ordered ascendingly on their zValues.
-*/
 QList<QGeoMapObject*> QGeoMapObject::childObjects() const
 {
     Q_D(const QGeoMapObject);
     return d->children;
+}
+
+void QGeoMapObject::clearChildObjects()
+{
+    Q_D(QGeoMapObject);
+    d->children.clear();
 }
 
 void QGeoMapObject::objectUpdate()
@@ -308,26 +330,33 @@ bool QGeoMapObject::operator>(const QGeoMapObject &other) const
 *******************************************************************************/
 
 QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent, QGeoMapObject::Type type)
-    : type(type),
-    parent(parent),
-    info(0),
-    q_ptr(impl),
-    mapData(0)
+        : type(type),
+        parent(parent),
+        zValue(0),
+        isVisible(false),
+        isSelected(false),
+        mapData(0),
+        info(0),
+        q_ptr(impl)
 {
     if (parent) {
         mapData = parent->d_ptr->mapData;
-        info = mapData->createObjectInfo(this);
+        mapData->setupMapObject(q_ptr);
     }
 }
 
-QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapDataPrivate *mapData, QGeoMapObject::Type type)
-    : type(type),
-    parent(0),
-    info(0),
-    q_ptr(impl),
-    mapData(mapData) {}
+QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapData *mapData, QGeoMapObject::Type type)
+        : type(type),
+        parent(0),
+        zValue(0),
+        isVisible(false),
+        isSelected(false),
+        mapData(mapData),
+        info(0),
+        q_ptr(impl) {}
 
-QGeoMapObjectPrivate::~QGeoMapObjectPrivate() {
+QGeoMapObjectPrivate::~QGeoMapObjectPrivate()
+{
     if (parent) {
         Q_Q(QGeoMapObject);
         parent->removeChildObject(q);
@@ -344,11 +373,10 @@ QGeoMapObjectPrivate::~QGeoMapObjectPrivate() {
         delete info;
 }
 
-void QGeoMapObjectPrivate::setMapData(QGeoMapDataPrivate *mapData)
+void QGeoMapObjectPrivate::setMapData(QGeoMapData *mapData)
 {
     this->mapData = mapData;
-    if (!info)
-        info = mapData->createObjectInfo(this);
+    mapData->setupMapObject(q_ptr);
     int size = children.size();
     for (int i = 0; i < size; ++i)
         children[i]->d_ptr->setMapData(mapData);
@@ -375,23 +403,13 @@ void QGeoMapObjectPrivate::removeFromParent()
 
 void QGeoMapObjectPrivate::objectUpdate()
 {
-    if (!mapData)
-        return;
-
-    if (!info)
-        info = mapData->createObjectInfo(this);
-    else
+    if (info)
         info->objectUpdate();
 }
 
 void QGeoMapObjectPrivate::mapUpdate()
 {
-    if (!mapData)
-        return;
-
-    if (!info)
-        info = mapData->createObjectInfo(this);
-    else
+    if (info)
         info->mapUpdate();
 
     for (int i = 0; i < children.size(); ++i)
@@ -400,37 +418,19 @@ void QGeoMapObjectPrivate::mapUpdate()
 
 QGeoBoundingBox QGeoMapObjectPrivate::boundingBox() const
 {
-    if (!mapData)
-        return QGeoBoundingBox();
-
     if (!info)
-        info = mapData->createObjectInfo(this);
+        return QGeoBoundingBox();
 
     return info->boundingBox();
 }
 
 bool QGeoMapObjectPrivate::contains(const QGeoCoordinate &coord) const
 {
-    if (!mapData)
-        return false;
-
     if (!info)
-        info = mapData->createObjectInfo(this);
+        return false;
 
     return info->contains(coord);
 }
-
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoMapObjectInfo::QGeoMapObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) :
-        mapObjectPrivate(mapObjectPrivate) {}
-
-QGeoMapObjectInfo::~QGeoMapObjectInfo() {}
-
-void QGeoMapObjectInfo::objectUpdate() {}
-
-void QGeoMapObjectInfo::mapUpdate() {}
 
 /*******************************************************************************
 *******************************************************************************/

@@ -56,11 +56,11 @@ class Q_ORGANIZER_EXPORT QOrganizerItemRecurrence : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldRecurrenceRules;
-    const char* FieldExceptionRules;
-    const char* FieldRecurrenceDates;
-    const char* FieldExceptionDates;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldRecurrenceRules;
+    static const QLatin1Constant FieldExceptionRules;
+    static const QLatin1Constant FieldRecurrenceDates;
+    static const QLatin1Constant FieldExceptionDates;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemRecurrence, "Recurrence")
     Q_DECLARE_LATIN1_CONSTANT(FieldRecurrenceRules, "RecurrenceRules");
@@ -73,8 +73,8 @@ public:
     void setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule>& rrules)
     {
         QVariantList saveList;
-        foreach (const QOrganizerItemRecurrenceRule& rule, rrules) {
-            saveList << rule.variantValues();
+        for (int i = 0; i < rrules.count(); i++) {
+            saveList << rrules.at(i).variantValues();
         }
         setValue(FieldRecurrenceRules, saveList);
     }
@@ -83,8 +83,8 @@ public:
     {
         QList<QOrganizerItemRecurrenceRule> retn;
         QVariantList loadList = variantValue(FieldRecurrenceRules).toList();
-        foreach (const QVariant& currRule, loadList) {
-            QVariantMap ruleMap = currRule.toMap();
+        for (int i = 0; i < loadList.count(); i++) {
+            QVariantMap ruleMap = loadList.at(i).toMap();
             retn << QOrganizerItemRecurrenceRule::fromVariantValues(ruleMap);
         }
         return retn;
@@ -93,8 +93,8 @@ public:
     void setRecurrenceDates(const QList<QDate>& rdates)
     {
         QVariantList saveList;
-        foreach (const QDate& currDate, rdates) {
-            saveList << currDate;
+        for (int i = 0; i < rdates.count(); i++) {
+            saveList << rdates.at(i);
         }
         setValue(FieldRecurrenceDates, saveList);
     }
@@ -103,8 +103,8 @@ public:
     {
         QList<QDate> retn;
         QVariantList loadList = variantValue(FieldRecurrenceDates).toList();
-        foreach (const QVariant& currDate, loadList) {
-            retn << currDate.toDate();
+        for (int i = 0; i < loadList.count(); i++) {
+            retn << loadList.at(i).toDate();
         }
         return retn;
     }
@@ -112,8 +112,8 @@ public:
     void setExceptionRules(const QList<QOrganizerItemRecurrenceRule>& xrules)
     {
         QVariantList saveList;
-        foreach (const QOrganizerItemRecurrenceRule& rule, xrules) {
-            saveList << rule.variantValues();
+        for (int i=0; i < xrules.count(); i++) {
+            saveList << xrules.at(i).variantValues();
         }
         setValue(FieldExceptionRules, saveList);
     }
@@ -122,8 +122,8 @@ public:
     {
         QList<QOrganizerItemRecurrenceRule> retn;
         QVariantList loadList = variantValue(FieldExceptionRules).toList();
-        foreach (const QVariant& currRule, loadList) {
-            QVariantMap ruleMap = currRule.toMap();
+        for(int i = 0; i < loadList.count(); i++) {
+            QVariantMap ruleMap = loadList.at(i).toMap();
             retn << QOrganizerItemRecurrenceRule::fromVariantValues(ruleMap);
         }
         return retn;
@@ -132,8 +132,8 @@ public:
     void setExceptionDates(const QList<QDate>& xdates)
     {
         QVariantList saveList;
-        foreach (const QDate& currDate, xdates) {
-            saveList << currDate;
+        for(int i = 0; i < xdates.count(); i++) {
+            saveList << xdates.at(i);
         }
         setValue(FieldExceptionDates, saveList);
     }
@@ -142,8 +142,8 @@ public:
     {
         QList<QDate> retn;
         QVariantList loadList = variantValue(FieldExceptionDates).toList();
-        foreach (const QVariant& currDate, loadList) {
-            retn << currDate.toDate();
+        for( int i = 0; i < loadList.count(); i++) {
+            retn << loadList.at(i).toDate();
         }
         return retn;
     }

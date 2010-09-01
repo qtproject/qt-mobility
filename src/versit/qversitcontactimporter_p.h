@@ -55,7 +55,6 @@
 
 #include "qmobilityglobal.h"
 #include "qversitcontactimporter.h"
-#include "qvcardbackuphandlers_p.h"
 
 #include <QList>
 #include <QDateTime>

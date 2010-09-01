@@ -149,6 +149,9 @@ Q_SIGNALS:
 
     void focusZonesChanged();
 
+    void maximumOpticalZoomChanged(qreal);
+    void maximumDigitalZoomChanged(qreal);
+
 private:
     friend class QCamera;
     QCameraFocus(QCamera *camera);

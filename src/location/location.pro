@@ -16,7 +16,9 @@ include(maps/maps.pri)
 PUBLIC_HEADERS += \
                     qgeoaddress.h \
                     qgeoareamonitor.h \
+                    qgeoboundingarea.h \
                     qgeoboundingbox.h \
+                    qgeoboundingcircle.h \
                     qgeocoordinate.h \
                     qgeoplace.h \
                     qgeopositioninfo.h \
@@ -28,6 +30,7 @@ PUBLIC_HEADERS += \
 PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
                     qgeoboundingbox_p.h \
+                    qgeoboundingcircle_p.h \
                     qgeoplace_p.h \
                     qlocationutils_p.h \
                     qnmeapositioninfosource_p.h
@@ -83,6 +86,9 @@ maemo6 {
                 qgeosatelliteinfosource_maemo_p.h \
                 dbuscomm_maemo_p.h \
                 dbusserver_maemo_p.h
+    CONFIG += create_pc create_prl
+    pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+    pkgconfig.files = QtLocation.pc
 }
 
 maemo5 {
@@ -109,7 +115,9 @@ HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 SOURCES += \
             qgeoaddress.cpp \
             qgeoareamonitor.cpp \
+            qgeoboundingarea.cpp \
             qgeoboundingbox.cpp \
+            qgeoboundingcircle.cpp \
             qgeocoordinate.cpp \
             qgeoplace.cpp \
             qgeopositioninfo.cpp \

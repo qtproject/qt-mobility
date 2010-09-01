@@ -144,4 +144,15 @@ Item {
             }
         }
     }
+
+    ZoomControl {
+        x : 0
+        y : 0
+        width : parent.width/4
+        height: parent.height
+
+        currentZoom: camera.digitalZoom
+        maximumZoom: Math.min(3.0, camera.maximumDigitalZoom)
+        onZoomTo: camera.setDigitalZoom(value)
+    }
 }

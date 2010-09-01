@@ -53,6 +53,7 @@
 // We mean it.
 //
 
+#include "qorganizercollectionid.h"
 #include "qorganizeritemabstractrequest_p.h"
 #include "qorganizeritemfilter.h"
 #include "qorganizeritemsortorder.h"
@@ -82,6 +83,7 @@ public:
     }
 
     QList<QOrganizerItem> m_organizeritems;
+    QOrganizerCollectionLocalId m_collectionId;
     QMap<int, QOrganizerItemManager::Error> m_errors;
 };
 
@@ -198,6 +200,7 @@ public:
     QString m_organizeritemType;
     QStringList m_names;
     QMap<QString, QOrganizerItemDetailDefinition> m_definitions;
+    QOrganizerCollectionLocalId m_collectionId;
     QMap<int, QOrganizerItemManager::Error> m_errors;
 };
 
@@ -221,6 +224,7 @@ public:
 
     QString m_organizeritemType;
     QList<QOrganizerItemDetailDefinition> m_definitions;
+    QOrganizerCollectionLocalId m_collectionId;
     QMap<int, QOrganizerItemManager::Error> m_errors;
 };
 
@@ -244,6 +248,91 @@ public:
 
     QString m_organizeritemType;
     QStringList m_names;
+    QOrganizerCollectionLocalId m_collectionId;
+    QMap<int, QOrganizerItemManager::Error> m_errors;
+};
+
+class QOrganizerCollectionFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+{
+public:
+    QOrganizerCollectionFetchRequestPrivate()
+        : QOrganizerItemAbstractRequestPrivate()
+    {
+    }
+
+    ~QOrganizerCollectionFetchRequestPrivate()
+    {
+    }
+
+    QOrganizerItemAbstractRequest::RequestType type() const
+    {
+        return QOrganizerItemAbstractRequest::CollectionFetchRequest;
+    }
+
+    QList<QOrganizerCollectionId> m_collectionIds;
+
+    QList<QOrganizerCollection> m_collections;
+};
+
+class QOrganizerCollectionLocalIdFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+{
+public:
+    QOrganizerCollectionLocalIdFetchRequestPrivate()
+        : QOrganizerItemAbstractRequestPrivate()
+    {
+    }
+
+    ~QOrganizerCollectionLocalIdFetchRequestPrivate()
+    {
+    }
+
+    QOrganizerItemAbstractRequest::RequestType type() const
+    {
+        return QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest;
+    }
+
+    QList<QOrganizerCollectionLocalId> m_collectionIds;
+};
+
+class QOrganizerCollectionRemoveRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+{
+public:
+    QOrganizerCollectionRemoveRequestPrivate()
+        : QOrganizerItemAbstractRequestPrivate()
+    {
+    }
+
+    ~QOrganizerCollectionRemoveRequestPrivate()
+    {
+    }
+
+    QOrganizerItemAbstractRequest::RequestType type() const
+    {
+        return QOrganizerItemAbstractRequest::CollectionRemoveRequest;
+    }
+
+    QList<QOrganizerCollectionId> m_collectionIds;
+    QMap<int, QOrganizerItemManager::Error> m_errors;
+};
+
+class QOrganizerCollectionSaveRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+{
+public:
+    QOrganizerCollectionSaveRequestPrivate()
+        : QOrganizerItemAbstractRequestPrivate()
+    {
+    }
+
+    ~QOrganizerCollectionSaveRequestPrivate()
+    {
+    }
+
+    QOrganizerItemAbstractRequest::RequestType type() const
+    {
+        return QOrganizerItemAbstractRequest::CollectionSaveRequest;
+    }
+
+    QList<QOrganizerCollection> m_collections;
     QMap<int, QOrganizerItemManager::Error> m_errors;
 };
 

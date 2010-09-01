@@ -42,9 +42,12 @@
 #ifndef QTELEPHONYCALLLIST_H
 #define QTELEPHONYCALLLIST_H
 
+#include <qmobilityglobal.h>
 #include <QObject>
 #include <QList>
+
 #include "qtelephonycallinfo.h"
+#include "qtelephony.h"
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
@@ -65,7 +68,7 @@ Q_SIGNALS:
     void activeCallAdded(const QTelephonyCallInfo& call);
 
 public:
-    QList<QTelephonyCallInfo > activeCalls(const QTelephonyCallInfo::CallType& calltype = QTelephonyCallInfo::Any) const;
+    QList<QTelephonyCallInfo > activeCalls(const QTelephonyEvents::CallType& calltype = QTelephonyEvents::Any) const;
 
 protected:
     QTelephonyCallListPrivate* d;

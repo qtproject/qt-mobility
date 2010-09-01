@@ -44,6 +44,7 @@
 #include "qgeomappingmanagerengine.h"
 
 #include <QNetworkProxy>
+#include <QLocale>
 
 QTM_BEGIN_NAMESPACE
 
@@ -53,7 +54,7 @@ QTM_BEGIN_NAMESPACE
     and interacting with maps.
 
     \inmodule QtLocation
-    
+
     \ingroup maps-mapping
 
     A QGeoMappingManager instance can create QGeoMapData instances with
@@ -114,17 +115,6 @@ QString QGeoMappingManager::managerName() const
 }
 
 /*!
-    Returns the parameters used in the creation of this mapping manager.
-*/
-QMap<QString, QString> QGeoMappingManager::managerParameters() const
-{
-//    if (!d_ptr->engine)
-//        return QMap<QString, QString>();
-
-    return d_ptr->engine->managerParameters();
-}
-
-/*!
     Returns the version of the engine which implements the behaviour of this
     mapping manager.
 
@@ -140,23 +130,14 @@ int QGeoMappingManager::managerVersion() const
 }
 
 /*!
-    Returns a new QGeoMapData instance for \a widget which will be managed by this manager.
+    Returns a new QGeoMapData instance for \a graphicsItem which will be managed by this manager.
 */
-QGeoMapData* QGeoMappingManager::createMapData(QGeoMapWidget *widget)
+QGeoMapData* QGeoMappingManager::createMapData(QGraphicsGeoMap *geoMap)
 {
 //    if (!d_ptr->engine)
 //        return 0;
 
-    return d_ptr->engine->createMapData(widget);
-}
-
-/*!
-    Stops this manager from managing \a mapData.
-*/
-void QGeoMappingManager::removeMapData(QGeoMapData *mapData)
-{
-//    if (d_ptr->engine)
-        d_ptr->engine->removeMapData(mapData);
+    return d_ptr->engine->createMapData(geoMap);
 }
 
 ///*!
@@ -175,7 +156,7 @@ void QGeoMappingManager::removeMapData(QGeoMapData *mapData)
 /*!
     Returns a list of the map types supported by this manager.
 */
-QList<QGeoMapWidget::MapType> QGeoMappingManager::supportedMapTypes() const
+QList<QGraphicsGeoMap::MapType> QGeoMappingManager::supportedMapTypes() const
 {
 //    if (!d_ptr->engine)
 //        return QList<QGeoMapWidget::MapType>();
@@ -243,25 +224,30 @@ QSize QGeoMappingManager::maximumImageSize() const
     return d_ptr->engine->maximumImageSize();
 }
 
+/*!
+*/
+void QGeoMappingManager::setLocale(const QLocale &locale)
+{
+    d_ptr->engine->setLocale(locale);
+}
+
+/*!
+*/
+QLocale QGeoMappingManager::locale() const
+{
+    return d_ptr->engine->locale();
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoMappingManagerPrivate::QGeoMappingManagerPrivate()
         : engine(0) {}
 
-QGeoMappingManagerPrivate::QGeoMappingManagerPrivate(const QGeoMappingManagerPrivate &other)
-        : engine(other.engine) {}
-
 QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate()
 {
-    delete engine;
-}
-
-QGeoMappingManagerPrivate& QGeoMappingManagerPrivate::operator= (const QGeoMappingManagerPrivate & other)
-{
-    engine = other.engine;
-
-    return *this;
+    if (engine)
+        delete engine;
 }
 
 #include "moc_qgeomappingmanager.cpp"

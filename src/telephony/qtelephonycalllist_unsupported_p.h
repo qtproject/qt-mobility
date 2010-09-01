@@ -53,12 +53,15 @@
 // We mean it.
 //
 
-#include "qmobilityglobal.h"
+#include <qmobilityglobal.h>
+
+#include "qtelephony.h"
+#include "qtelephonycallinfo.h"
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-class QTelephonyCallInfoPrivate;
+struct QTelephonyCallInfoPrivate;
 class QTelephonyCallList;
 
 class QTelephonyCallListPrivate
@@ -66,16 +69,10 @@ class QTelephonyCallListPrivate
     friend class QTelephonyCallList;
 
 public:
-    QTelephonyCallListPrivate(QTelephonyCallList *parent = 0) { 
-		qWarning("Telephone is not supported on this platform");
-	};
-    virtual ~QTelephonyCallListPrivate() { 
-	};
-    QList<QTelephonyCallInfo> activeCalls(const QTelephonyCallInfo::CallType& calltype) const 
-	{ 
-	QList<QTelephonyCallInfo> e; 
-	return e; 
-	};
+    QTelephonyCallListPrivate(QTelephonyCallList *parent = 0) { qWarning("Telephone is not supported on this platform"); }
+
+    virtual ~QTelephonyCallListPrivate() { }
+    QList<QTelephonyCallInfo> activeCalls(const QTelephonyEvents::CallType& calltype) const { return QList<QTelephonyCallInfo>(); }
 
 private:
 };

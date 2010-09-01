@@ -41,7 +41,9 @@
 #include "qlandmarkabstractrequest.h"
 #include "qlandmarkabstractrequest_p.h"
 #include "qlandmarkmanagerengine.h"
+#include "qlandmarkmanager_p.h"
 #include <QDebug>
+#include <QMutexLocker>
 
 QTM_USE_NAMESPACE
 
@@ -64,9 +66,78 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
 
     \ingroup landmarks-request
 
-    It allows a client to asynchronously request some functionality
-    from a QLandmarkManager.
+    It allows a client to asynchronously request some functionality of a
+    particular QContactManager. Instances of the class will emit signals when
+    the state of the request changes, or when more results become available.
+
+    Clients should not attempt to create instances of this class directly, but
+    should instead use the use-case-specific classes derived from this class.
+
+    All such request classes have a similar interface: clients set the
+    parameters of the asynchronous call, including which manager the request
+    will be made of, and then call the start() slot of the request. The manager
+    will then enqueue or begin to process the request, at which point the
+    request's state will transition from \c InactiveState to \c ActiveState.
+    After any state transition, the request will emit the stateChanged()
+    signal. The manager may periodically update the request with results, at
+    which point the request will emit the resultsAvailable() signal. These
+    results are not guaranteed to have a stable ordering. Error information is
+    considered a result, so some requests will emit the resultsAvailable()
+    signal even if no results are possible from the request (for example, a
+    landmark remove request) when the manager updates the request with
+    information about any errors which may have occurred.
+
+    Clients can choose which signals they wish to handle from a request. If the
+    client is not interested in interim results, they can choose to handle only
+    the stateChanged() signal, and in the slot to which that signal is
+    connected, check whether the state has changed to the \c FinishedState
+    (which signifies that the manager has finished handling the request, and
+    that the request will not be updated with any more results). If the client
+    is not interested in any results (including error information), they may
+    choose to delete the request after calling \l start(), or simply not
+    connect the request's signals to any slots.
+
+    If the request is allocated via operator new, the client must delete the
+    request when they are no longer using it in order to avoid leaking memory.
+    That is, the client retains ownership of the request.
+
+    The client may delete a heap-allocated request in various ways: by deleting
+    it directly (but not within a slot connected to a signal emitted by the
+    request), or by using the deleteLater() slot to schedule the request for
+    deletion when control returns to the event loop (from within a slot
+    connected to a signal emitted by the request, for example \l
+    stateChanged()).
+
+    An active request may be deleted by the client, but the client will not
+    receive any notifications about whether the request succeeded or not,
+    nor any results of the request.
+
+    Because clients retain ownership of any request object, and may delete a
+    request object at any time, manager engine implementors must be careful to
+    ensure that they do not assume that a request has not been deleted at some
+    point during processing of a request, particularly if the engine has a
+    multithreaded implementation.
 */
+
+
+QLandmarkAbstractRequestPrivate::~QLandmarkAbstractRequestPrivate()
+{
+}
+
+void QLandmarkAbstractRequestPrivate::notifyEngine(QLandmarkAbstractRequest* request)
+{
+        Q_ASSERT(request);
+        QLandmarkAbstractRequestPrivate* d = request->d_ptr;
+        if (d) {
+            QMutexLocker ml(&d->mutex);
+            QLandmarkManagerEngine *engine = QLandmarkManagerPrivate::getEngine(d->manager);
+            ml.unlock();
+            if (engine) {
+                engine->requestDestroyed(request);
+            }
+        }
+}
+
 
 /*!
     \enum QLandmarkAbstractRequest::RequestType
@@ -76,8 +147,11 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
             identifiers.
     \value  CategoryIdFetchRequest A request to fetch a list of catgory
             identifiers.
+
     \value  LandmarkFetchRequest A request to fetch a list of landmarks
+    \value  LandmarkFetchByIdRequest A request to fetch a list of landmarks by id.
     \value  CategoryFetchRequest A request to fetch a list of categories
+    \value  CategoryFetchByIdRequest A request to fetch a list of categories by id
     \value  LandmarkSaveRequest A request to save a list of landmarks.
     \value  LandmarkRemoveRequest A request to remove a list of landmarks.
     \value  CategorySaveRequest A request to save a list of categories.
@@ -114,10 +188,13 @@ QLandmarkAbstractRequest::QLandmarkAbstractRequest(QLandmarkAbstractRequestPriva
 }
 
 /*!
-    Destroys the asynchronous request
+    Destroys the asynchronous request.  Because the request object is effectively a handle to
+    a request operation, the operation may continue or it may be canceled, depending upon
+    the engine implementation, even though the request object itself has been destroyed.
 */
 QLandmarkAbstractRequest::~QLandmarkAbstractRequest()
 {
+    QLandmarkAbstractRequestPrivate::notifyEngine(this);
     delete d_ptr;
 }
 
@@ -144,6 +221,7 @@ QLandmarkAbstractRequest::State QLandmarkAbstractRequest::state()
 */
 bool QLandmarkAbstractRequest::isInactive() const
 {
+    QMutexLocker ml(&d_ptr->mutex);
     return d_ptr->state == QLandmarkAbstractRequest::InactiveState;
 }
 
@@ -154,6 +232,7 @@ bool QLandmarkAbstractRequest::isInactive() const
 */
 bool QLandmarkAbstractRequest::isActive() const
 {
+    QMutexLocker ml(&d_ptr->mutex);
     return d_ptr->state == QLandmarkAbstractRequest::ActiveState;
 }
 
@@ -164,25 +243,29 @@ bool QLandmarkAbstractRequest::isActive() const
 */
 bool QLandmarkAbstractRequest::isFinished() const
 {
+    QMutexLocker ml(&d_ptr->mutex);
     return d_ptr->state == QLandmarkAbstractRequest::FinishedState;
 }
 
 /*!
-    Returns the error of the most recent asynchronous operation.
+    Returns the overall error of the most recent asynchronous operation.
     \sa errorString()
 */
 QLandmarkManager::Error QLandmarkAbstractRequest::error() const
 {
+    QMutexLocker ml(&d_ptr->mutex);
     return d_ptr->error;
 }
 
 /*!
     Returns a human readable string of the last error
-    that occurred.
+    that occurred.  This error string is intended to be used
+    by developers only and should not be seen by end users.
     \sa error()
 */
 QString QLandmarkAbstractRequest::errorString() const
 {
+    QMutexLocker ml(&d_ptr->mutex);
     return d_ptr->errorString;
 }
 
@@ -192,7 +275,8 @@ QString QLandmarkAbstractRequest::errorString() const
 */
 QLandmarkManager *QLandmarkAbstractRequest::manager() const
 {
-        return d_ptr->manager;
+    QMutexLocker ml(&d_ptr->mutex);
+    return d_ptr->manager;
 }
 
 /*!
@@ -201,20 +285,28 @@ QLandmarkManager *QLandmarkAbstractRequest::manager() const
     Note that if a NULL manager is set, the functions
     start(), cancel() and waitForFinished() will return false and
     error will be set to QLandmarkManager::InvalidManagerError.
+
+    A manager cannot be assigned while the request is in the
+    QLandmarkAbstractRequest::ActiveState.
 */
 void QLandmarkAbstractRequest::setManager(QLandmarkManager *manager)
 {
+    QMutexLocker ml(&d_ptr->mutex);
+    if (d_ptr->state == QLandmarkAbstractRequest::ActiveState && d_ptr->manager)
+        return;
     d_ptr->manager = manager;
 }
 
 /*!
     Attempts to start the request.
 
-    Returns true if the request was started, otherwise false.
-    \sa cancel()
+    Returns true if the request was started, otherwise false. Trying to start a
+    request that is already active returns false.
+    \sa cancel().
 */
 bool QLandmarkAbstractRequest::start()
 {
+    QMutexLocker ml(&d_ptr->mutex);
     if (!d_ptr->manager) {
         d_ptr->error = QLandmarkManager::BadArgumentError;
         d_ptr->errorString = "No manager assigned to landmark request object";
@@ -223,21 +315,29 @@ bool QLandmarkAbstractRequest::start()
     }
     QLandmarkManagerEngine *engine = d_ptr->manager->engine();
 
-    if (d_ptr->state != QLandmarkAbstractRequest::ActiveState)
+    if (d_ptr->state != QLandmarkAbstractRequest::ActiveState) {
+        ml.unlock();
         return engine->startRequest(this);
+    }
      else {
         return false;
      }
 }
 
 /*!
-    Attempts to cancel the request.
+    Notifies the request that it should be canceled.
 
-    Returns true if the request was canceled, otherwise false.
-    \sa start()
+    Returns true if the request was successfully notified
+    that it should be canceled.  The request may or may not honor
+    the cancel notification.  Returns false if the notification
+    could not be made or the request is not in the
+    QLandmarkManager::Active state.
+
+    \sa start().
 */
 bool QLandmarkAbstractRequest::cancel()
 {
+    QMutexLocker ml(&d_ptr->mutex);
     if (!d_ptr->manager) {
         d_ptr->error = QLandmarkManager::BadArgumentError;
         d_ptr->errorString = "No manager assigned to landmark request object";
@@ -246,22 +346,32 @@ bool QLandmarkAbstractRequest::cancel()
     }
     QLandmarkManagerEngine *engine = d_ptr->manager->engine();
 
-    if(d_ptr->state == QLandmarkAbstractRequest::ActiveState)
+    if(d_ptr->state == QLandmarkAbstractRequest::ActiveState) {
+        ml.unlock();
         return engine->cancelRequest(this);
+    }
     else
-        return true;
+        return false;
 }
 
 /*!
     Blocks until the request has been completed or until \a msecs milliseconds
-    has elapsed.  If \a msecs is zero, this function will block indefinitely.
+    has elapsed.  If \a msecs is zero or negative, this function will block indefinitely.
 
     Returns true if the request was canceled or completed
-    within the given period, otherwise returns false.
+    within the given period, otherwise returns false.  Some backends may be unable
+    to support this  operation saafely and will return false immediately.
+
+    Note that any signals generated while waiting for the request to be complete
+    may be queued and delivered sometime after this function has returned, when
+    the calling thread's event loop is dispatched.  If your code depends on
+    your slots being invoked, you may need to process events after calling
+    this function.
 */
 bool QLandmarkAbstractRequest::waitForFinished(int msecs)
 {
 
+    QMutexLocker ml(&d_ptr->mutex);
     if (!d_ptr->manager) {
         d_ptr->error = QLandmarkManager::BadArgumentError;
         d_ptr->errorString = "No manager assigned to landmark request object";
@@ -272,6 +382,7 @@ bool QLandmarkAbstractRequest::waitForFinished(int msecs)
 
     switch(d_ptr->state) {
         case QLandmarkAbstractRequest::ActiveState:
+            ml.unlock();
             return engine->waitForRequestFinished(this, msecs);
         case QLandmarkAbstractRequest::FinishedState:
             return true;
