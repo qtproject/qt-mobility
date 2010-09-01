@@ -65,7 +65,7 @@ QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QVersitDocumentWriter
+class QM_AUTOTEST_EXPORT QVersitDocumentWriter
 {
 public:
     QVersitDocumentWriter();

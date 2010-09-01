@@ -101,7 +101,7 @@ headerdirs = ../../src/global \
              ../../plugins/declarative/gallery \
              ../../src/camera \
              ../../src/organizer \
-             $QTDIR/include \
+             ../../plugins/declarative/serviceframework \
              .
 
 sourcedirs = ../../src/global \
@@ -117,6 +117,7 @@ sourcedirs = ../../src/global \
              ../../plugins/declarative/multimedia \
 	     ../../plugins/declarative/location \
 	     ../../plugins/declarative/messaging \
+             ../../plugins/declarative/serviceframework \
              ../../src/messaging \
              ../../src/versit \
              ../../src/telephony \

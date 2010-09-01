@@ -66,7 +66,7 @@ QTM_BEGIN_NAMESPACE
 
 class QServiceInterfaceDescriptor;
 
-class Q_AUTOTEST_EXPORT ServiceDatabase : public QObject
+class QM_AUTOTEST_EXPORT ServiceDatabase : public QObject
 {
     Q_OBJECT
 
@@ -104,7 +104,7 @@ Q_SIGNALS:
         void serviceAdded(const QString& serviceName);
         void serviceRemoved(const QString& serviceName);
 
-#ifdef QT_BUILD_INTERNAL
+#ifdef QTM_BUILD_UNITTESTS
     public:
 #else
     private:
