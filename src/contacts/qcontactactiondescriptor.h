@@ -44,7 +44,8 @@
 #define QCONTACTACTIONDESCRIPTOR_H
 
 #include "qtcontactsglobal.h"
-#include "qcontactactiontarget.h"
+#include "qcontactfilter.h"
+#include "qcontactdetail.h"
 
 #include <QSet>
 #include <QVariant>
@@ -56,6 +57,7 @@ QTM_BEGIN_NAMESPACE
 
 class QContact;
 class QContactActionFactory;
+class QContactActionTarget;
 class QContactActionDescriptorPrivate;
 
 // MSVC needs the declaration before the friend statement
@@ -82,17 +84,13 @@ public:
     /* The descriptor provides the client with all information required in UI. */
     QSet<QContactActionTarget> supportedTargets(const QContact& contact) const;
     QContactFilter contactFilter() const;
-    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets = QList<QContactActionTarget>(), const QVariantMap& parameters = QVariantMap()) const;
-
     bool supportsContact(const QContact& contact) const;
-    QVariant metaData(const QString& key, const QContactActionTarget& target, const QVariantMap& parameters = QVariantMap()) const
-    {
-        return metaData(key, QList<QContactActionTarget>() << target, parameters);
-    }
-    QVariant metaData(const QString& key, const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap()) const
-    {
-        return metaData(key, QList<QContactActionTarget>() << QContactActionTarget(contact, detail), parameters);
-    }
+    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const;
+
+    /* Convenience meta data accessors */
+    QVariant metaData(const QString& key, const QVariantMap& parameters = QVariantMap()) const;
+    QVariant metaData(const QString& key, const QContactActionTarget& target, const QVariantMap& parameters = QVariantMap()) const;
+    QVariant metaData(const QString& key, const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap()) const;
 
     // default meta-data keys
 #ifdef Q_QDOC
