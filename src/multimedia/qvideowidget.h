@@ -58,7 +58,7 @@ class Q_MULTIMEDIA_EXPORT QVideoWidget : public QWidget, public QMediaBindableIn
     Q_INTERFACES(QMediaBindableInterface)
     Q_PROPERTY(QMediaObject* mediaObject READ mediaObject WRITE setMediaObject)
     Q_PROPERTY(bool fullScreen READ isFullScreen WRITE setFullScreen NOTIFY fullScreenChanged)
-    Q_PROPERTY(Qt::AspectRatioMode aspectRatioMode READ aspectRatioMode WRITE setAspectRatioMode NOTIFY aspectRatioModeChanged)
+    Q_PROPERTY(Qt::AspectRatioMode aspectRatioMode READ aspectRatioMode WRITE setAspectRatioMode)
     Q_PROPERTY(int brightness READ brightness WRITE setBrightness NOTIFY brightnessChanged)
     Q_PROPERTY(int contrast READ contrast WRITE setContrast NOTIFY contrastChanged)
     Q_PROPERTY(int hue READ hue WRITE setHue NOTIFY hueChanged)

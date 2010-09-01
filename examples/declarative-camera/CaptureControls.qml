@@ -45,6 +45,11 @@ import Qt.multimedia 4.7
 Item {
     property Camera camera
     property bool previewAvailable : false
+
+    property alias whiteBalance : wbModesButton.value
+    property alias flashMode : flashModesButton.value
+    property alias exposureCompensation : exposureCompensationButton.value
+
     signal previewSelected
     id : captureControls
 
@@ -66,20 +71,15 @@ Item {
         }
 
         FlashModesButton {
-            id : flashModes
-            onValueChanged: captureControls.camera.setFlashMode(flashModes.value)
+            id : flashModesButton
         }
 
         WBModesButton {
-            id : wbModes
-            onValueChanged: captureControls.camera.setWhiteBalanceMode(wbModes.value)
+            id : wbModesButton
         }
 
         ExposureCompensationButton {
-            id : exposureCompensation
-            onClicked: {
-                console.log("Ev clicked")
-            }
+            id : exposureCompensationButton
         }
 
         CameraButton {
@@ -88,8 +88,6 @@ Item {
             visible: captureControls.previewAvailable
         }
     }
-
-    Binding { target: camera; property: "exposureCompensation"; value: exposureCompensation.value }
 
     Item {
         id: exposureDetails
@@ -145,5 +143,16 @@ Item {
                 visible: camera.iso > 0
             }
         }
+    }
+
+    ZoomControl {
+        x : 0
+        y : 0
+        width : parent.width/4
+        height: parent.height
+
+        currentZoom: camera.digitalZoom
+        maximumZoom: Math.min(3.0, camera.maximumDigitalZoom)
+        onZoomTo: camera.setDigitalZoom(value)
     }
 }
