@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum ErrorCode
+    \enum QGeoTiledMapReply::ErrorCode
 
     \value NoError
         No error has occurred.
