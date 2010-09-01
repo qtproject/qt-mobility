@@ -55,7 +55,9 @@
 #include "qmessagefilter_p.h"
 #include "qmessagefolderfilter.h"
 #include "qmessageservice.h"
-
+#ifdef QTHIGHWAYUSED
+#include <xqappmgr.h>
+#endif
 
 class CRichText;
 class CCharFormatLayer;
@@ -313,6 +315,10 @@ private:
     mutable QMessageAccountSortOrder iCurrentAccountOrdering;
     mutable QMessageFolderSortOrder iCurrentFolderOrdering;
     mutable QMessageSortOrder iCurrentMessageOrdering;
+    
+#ifdef QTHIGHWAYUSED    
+    XQApplicationManager iAiwMgr;
+#endif
     
     friend class QMessageService;
     friend class CMessagesFindOperation;
