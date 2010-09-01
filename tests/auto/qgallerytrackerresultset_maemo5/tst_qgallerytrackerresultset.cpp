@@ -259,9 +259,9 @@ void tst_QGalleryTrackerResultSet::cleanup()
 void tst_QGalleryTrackerResultSet::populateArguments(
         QGalleryTrackerResultSetArguments *arguments, const QString &argument)
 {
-    arguments->idColumn = new QtTestIdentityColumn(0);
-    arguments->urlColumn = new QtTestIdentityColumn(1);
-    arguments->typeColumn = new QtTestIdentityColumn(2);
+    arguments->idColumn.reset(new QtTestIdentityColumn(0));
+    arguments->urlColumn.reset(new QtTestIdentityColumn(1));
+    arguments->typeColumn.reset(new QtTestIdentityColumn(2));
     arguments->updateMask = 0x01;
     arguments->identityWidth = 1;
     arguments->tableWidth = 6;
@@ -326,7 +326,7 @@ void tst_QGalleryTrackerResultSet::query()
     m_queryAdaptor->setCount('\0', 1);
     m_queryAdaptor->setCount('a', 16);
 
-    QGalleryTrackerResultSet resultSet(arguments, false, 0, 32);
+    QGalleryTrackerResultSet resultSet(&arguments, false, 0, 32);
     QCOMPARE(resultSet.propertyNames(), propertyNames);
     QCOMPARE(resultSet.propertyKey(m_itemType), 2);
     QCOMPARE(resultSet.propertyKey(m_alias), 7);
@@ -455,7 +455,7 @@ void tst_QGalleryTrackerResultSet::refresh()
 
     m_queryAdaptor->setCount('a', 16);
 
-    QGalleryTrackerResultSet resultSet(arguments, true, 0, 32);
+    QGalleryTrackerResultSet resultSet(&arguments, true, 0, 32);
 
     QSignalSpy insertSpy(&resultSet, SIGNAL(itemsInserted(int,int)));
     QSignalSpy removeSpy(&resultSet, SIGNAL(itemsRemoved(int,int)));
@@ -504,7 +504,7 @@ void tst_QGalleryTrackerResultSet::reset()
 
     m_queryAdaptor->setCount('a', 16);
 
-    QGalleryTrackerResultSet resultSet(arguments, true, 0, 32);
+    QGalleryTrackerResultSet resultSet(&arguments, true, 0, 32);
 
     QSignalSpy insertSpy(&resultSet, SIGNAL(itemsInserted(int,int)));
     QSignalSpy removeSpy(&resultSet, SIGNAL(itemsRemoved(int,int)));
@@ -563,7 +563,7 @@ void tst_QGalleryTrackerResultSet::removeItem()
     m_queryAdaptor->setCount('b', 2);
     m_queryAdaptor->setCount('c', 8);
 
-    QGalleryTrackerResultSet resultSet(arguments, true, 0, 32);
+    QGalleryTrackerResultSet resultSet(&arguments, true, 0, 32);
 
     QSignalSpy insertSpy(&resultSet, SIGNAL(itemsInserted(int,int)));
     QSignalSpy removeSpy(&resultSet, SIGNAL(itemsRemoved(int,int)));
@@ -620,7 +620,7 @@ void tst_QGalleryTrackerResultSet::insertItem()
     m_queryAdaptor->setCount('a', 8);
     m_queryAdaptor->setCount('c', 8);
 
-    QGalleryTrackerResultSet resultSet(arguments, true, 0, 32);
+    QGalleryTrackerResultSet resultSet(&arguments, true, 0, 32);
 
     QSignalSpy insertSpy(&resultSet, SIGNAL(itemsInserted(int,int)));
     QSignalSpy removeSpy(&resultSet, SIGNAL(itemsRemoved(int,int)));
@@ -677,7 +677,7 @@ void tst_QGalleryTrackerResultSet::replaceFirstItem()
     m_queryAdaptor->setCount('a', 1);
     m_queryAdaptor->setCount('c', 15);
 
-    QGalleryTrackerResultSet resultSet(arguments, true, 0, 32);
+    QGalleryTrackerResultSet resultSet(&arguments, true, 0, 32);
 
     QSignalSpy insertSpy(&resultSet, SIGNAL(itemsInserted(int,int)));
     QSignalSpy removeSpy(&resultSet, SIGNAL(itemsRemoved(int,int)));
@@ -736,7 +736,7 @@ void tst_QGalleryTrackerResultSet::replaceLastItem()
     m_queryAdaptor->setCount('a', 15);
     m_queryAdaptor->setCount('b', 1);
 
-    QGalleryTrackerResultSet resultSet(arguments, true, 0, 32);
+    QGalleryTrackerResultSet resultSet(&arguments, true, 0, 32);
 
     QSignalSpy insertSpy(&resultSet, SIGNAL(itemsInserted(int,int)));
     QSignalSpy removeSpy(&resultSet, SIGNAL(itemsRemoved(int,int)));
@@ -795,7 +795,7 @@ void tst_QGalleryTrackerResultSet::replaceMiddleItem()
     m_queryAdaptor->setCount('b', 2);
     m_queryAdaptor->setCount('d', 6);
 
-    QGalleryTrackerResultSet resultSet(arguments, true, 0, 32);
+    QGalleryTrackerResultSet resultSet(&arguments, true, 0, 32);
 
     QSignalSpy insertSpy(&resultSet, SIGNAL(itemsInserted(int,int)));
     QSignalSpy removeSpy(&resultSet, SIGNAL(itemsRemoved(int,int)));

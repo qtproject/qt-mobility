@@ -20,11 +20,6 @@ SOURCES +=        qtelephonycalllist.cpp \
                   qtelephony.cpp
 
 # Private Headers and sources
-win32 {
-    HEADERS += qtelephonycalllist_win_p.h \
-               qtelephonycallinfo_p
-    SOURCES += qtelephonycalllist_win.cpp
-}
 
 symbian {
     contains(callinformation_symbian_enabled, yes) {
@@ -73,7 +68,7 @@ maemo* {
     QT += dbus
     include(maemo.pri)
 }
-mac {
+mac|win32 {
     HEADERS += qtelephonycalllist_unsupported_p.h \
                qtelephonycallinfo_p.h
 }

@@ -67,7 +67,7 @@ class QDeclarativeGalleryType : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(bool live READ isLive WRITE setLive NOTIFY liveChanged)
     Q_PROPERTY(QString itemType READ itemType WRITE setItemType NOTIFY itemTypeChanged)
-    Q_PROPERTY(bool available READ available NOTIFY avaialbleChanged)
+    Q_PROPERTY(bool available READ available NOTIFY availableChanged)
     Q_PROPERTY(QObject *metaData READ metaData NOTIFY metaDataChanged)
 public:
     enum State
