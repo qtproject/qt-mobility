@@ -210,13 +210,20 @@ void EventEditPage::cancelClicked()
 
 void EventEditPage::saveClicked()
 {
+    QDateTime start(m_startTimeEdit->dateTime());
+    QDateTime end(m_endTimeEdit->dateTime());
+    if (start > end) {
+        QMessageBox::warning(this, "Failed!", "Start date is not before end date");
+        return;
+    }
+
     m_organizerEvent.setDisplayLabel(m_subjectEdit->text());
-    m_organizerEvent.setStartDateTime(m_startTimeEdit->dateTime());
-    m_organizerEvent.setEndDateTime(m_endTimeEdit->dateTime());
+    m_organizerEvent.setStartDateTime(start);
+    m_organizerEvent.setEndDateTime(end);
     m_listOfEvents.append(m_organizerEvent);
     m_manager->saveItem(&m_organizerEvent);
     if (m_manager->error())
-        QMessageBox::information(this, "Failed!", QString("Failed to save event!\n(error code %1)").arg(m_manager->error()));
+        QMessageBox::warning(this, "Failed!", QString("Failed to save event!\n(error code %1)").arg(m_manager->error()));
     else
         emit showDayPage();
 }

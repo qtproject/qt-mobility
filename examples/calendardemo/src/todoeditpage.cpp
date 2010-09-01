@@ -175,9 +175,16 @@ void TodoEditPage::cancelClicked()
 void TodoEditPage::saveClicked()
 {
     // Read data from page
+    QDateTime start(m_startTimeEdit->dateTime());
+    QDateTime due(m_dueTimeEdit->dateTime());
+    if (start > due) {
+        QMessageBox::warning(this, "Failed!", "Start date is not before due date");
+        return;
+    }
+
     m_organizerTodo.setDisplayLabel(m_subjectEdit->text());
-    m_organizerTodo.setStartDateTime(m_startTimeEdit->dateTime());
-    m_organizerTodo.setDueDateTime(m_dueTimeEdit->dateTime());
+    m_organizerTodo.setStartDateTime(start);
+    m_organizerTodo.setDueDateTime(due);
     int index = m_priorityEdit->currentIndex();
     m_organizerTodo.setPriority((QOrganizerItemPriority::Priority) m_priorityEdit->itemData(index).toInt());
     
@@ -192,7 +199,7 @@ void TodoEditPage::saveClicked()
     // Save
     m_manager->saveItem(&m_organizerTodo);
     if (m_manager->error())
-        QMessageBox::information(this, "Failed!", QString("Failed to save todo!\n(error code %1)").arg(m_manager->error()));
+        QMessageBox::warning(this, "Failed!", QString("Failed to save todo!\n(error code %1)").arg(m_manager->error()));
     else
         emit showDayPage();
 }
