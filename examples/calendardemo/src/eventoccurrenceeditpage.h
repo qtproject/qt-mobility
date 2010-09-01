@@ -37,67 +37,66 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef DAYPAGE_H_
-#define DAYPAGE_H_
+#ifndef EVENTOCCURRENCEEDITPAGE_H_
+#define EVENTOCCURRENCEEDITPAGE_H_
 
 #include <QWidget>
 #include <QDate>
 #include <qmobilityglobal.h>
 #include <qorganizeritemid.h>
+#include <qorganizerevent.h>
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItemManager;
+class QOrganizerItemSaveRequest;
+class QOrganizerEvent;
 class QOrganizerItem;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-class QMainWindow;
-class QLabel;
-class QListWidget;
-class QListWidgetItem;
-class QMenuBar;
-class QMenu;
+class QComboBox;
+class QLineEdit;
+class QDateTimeEdit;
+class QVBoxLayout;
+class QString;
+class QSpinBox;
+class QDateEdit;
 
-class DayPage : public QWidget
+class EventOccurrenceEditPage : public QWidget
 {
     Q_OBJECT
 
 public:
-    DayPage(QWidget *parent = 0);
-    ~DayPage();
-
-#ifdef Q_OS_SYMBIAN
-    void setMenu(QMenu *menu);
-#endif
+    EventOccurrenceEditPage(QWidget *parent = 0);
+    ~EventOccurrenceEditPage();
 
 public Q_SLOTS:
-    void refresh();
-    void changeManager(QOrganizerItemManager *manager);
-    void dayChanged(QDate date);
-    void editItem();
-    void removeItem();
-
-private Q_SLOTS:
-    void itemDoubleClicked(QListWidgetItem *listItem);
-    void viewMonthClicked();
+    void cancelClicked();
+    void saveOrNextClicked();
+    void eventOccurrenceChanged(QOrganizerItemManager *manager, const QOrganizerEventOccurrence &eventOccurrence);
 
 Q_SIGNALS:
-    void showMonthPage();
-    void showEditPage(const QOrganizerItem &item);
-    void addNewEvent();
-    void addNewTodo();
-    void addNewJournal();
+    void showDayPage();
 
 protected: // from QWidget
     void showEvent(QShowEvent *event);
 
 private:
     QOrganizerItemManager *m_manager;
-    QDate m_day;
-    QLabel *m_dateLabel;
-    QListWidget *m_itemList;
-    QMenuBar *m_menuBar;
+    QOrganizerEventOccurrence m_organizerEventOccurrence;
+    QList<QOrganizerItem> m_listOfEvents;
+    QOrganizerItemSaveRequest *m_saveItemRequest;
+    QVBoxLayout *scrollAreaLayout;
+    QAction *m_saveOrNextSoftKey;
+    QComboBox *m_typeComboBox;
+    QLineEdit *m_subjectEdit;
+    QDateTimeEdit *m_startTimeEdit;
+    QDateTimeEdit *m_endTimeEdit;
+    QSpinBox *m_countSpinBox;
+    QDateEdit *m_repeatUntilDate;
+    int m_numOfEntiresToBeCreated;
+    bool m_countFieldAdded;
+    bool m_multipleEntries;
 };
 
-#endif // DAYPAGE_H_
+#endif // EVENTOCCURRENCEEDITPAGE_H_
