@@ -58,7 +58,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT DBError
+class QM_AUTOTEST_EXPORT DBError
 {
     public:
         enum ErrorCode {

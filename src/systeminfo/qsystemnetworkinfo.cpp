@@ -46,6 +46,10 @@
 QTM_BEGIN_NAMESPACE
         Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
 
+#ifdef QT_SIMULATOR
+QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate(); }
+#endif
+
 /*!
   \fn QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
   Constructs a QSystemNetworkInfo object with the given \a parent.
