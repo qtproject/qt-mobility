@@ -44,8 +44,8 @@ LandmarkBrowser::LandmarkBrowser(QWidget *parent, Qt::WindowFlags flags)
     table->setHorizontalHeaderItem(2, new QTableWidgetItem("Name"));
 
     progress = new QProgressDialog (tr("Please wait..."),tr("Cancel"),0,0, this);
-    progress->setCancelButton(0);
     progress->setWindowTitle(tr("Loading Landmarks"));
+    QObject::connect(progress,SIGNAL(canceled()), this, SLOT(cancel()));
     landmarkFetch->start();
     progress->show();
 }
@@ -123,6 +123,8 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
             case QLandmarkAbstractRequest::ImportRequest : {
                     if (request->error() == QLandmarkManager::NoError) {
                         landmarkFetch->start();
+                    } else if (request->error() == QLandmarkManager::CancelError) {
+                            // do nothing
                     } else {
                         QMessageBox::warning(this,"Warning", "Import Failed", QMessageBox::Ok, QMessageBox::NoButton);
                         progress->hide();
@@ -165,4 +167,9 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
             }
         }
     }
+}
+
+void LandmarkBrowser::cancel()
+{
+    landmarkImport->cancel();
 }
