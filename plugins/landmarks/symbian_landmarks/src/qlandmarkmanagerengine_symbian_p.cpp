@@ -478,13 +478,16 @@ QList<QLandmark> LandmarkManagerEngineSymbianPrivate::landmarks(
     QLandmarkManager::Error lastError = QLandmarkManager::NoError;
     QString lastErrorString = "";
     for (int i = 0; i < landmarkIds.count(); ++i) {
-        lm = landmark(landmarkIds.at(i), &lastError, &lastErrorString);
-        if (lastError == QLandmarkManager::NoError) {
+        lm = landmark(landmarkIds.at(i), error, errorString);
+        if (*error == QLandmarkManager::NoError) {
             result << lm;
         }
         else {
+            lastError = *error;
+            lastErrorString = *errorString;
             if (errorMap)
                 errorMap->insert(i, lastError);
+            result << QLandmark();
         }
     }
 
@@ -569,15 +572,19 @@ QList<QLandmarkCategory> LandmarkManagerEngineSymbianPrivate::categories(const Q
     QLandmarkManager::Error lastError = QLandmarkManager::NoError;
     QString lastErrorString = "";
     for (int i = 0; i < landmarkCategoryIds.size(); ++i) {
-        QLandmarkCategory cat = category(landmarkCategoryIds.operator[](i), &lastError,
-            &lastErrorString);
+        QLandmarkCategory cat = category(landmarkCategoryIds.operator[](i), error,
+            errorString);
 
-        if (lastError == QLandmarkManager::NoError) {
+        if (*error == QLandmarkManager::NoError) {
             result << cat;
         }
         else {
+            lastError = *error;
+            lastErrorString = *errorString;
             if (errorMap)
                 errorMap->insert(i, lastError);
+
+            result << QLandmarkCategory();
         }
 
     }
@@ -585,12 +592,7 @@ QList<QLandmarkCategory> LandmarkManagerEngineSymbianPrivate::categories(const Q
     *error = lastError;
     *errorString = lastErrorString;
 
-    if (landmarkCategoryIds.size() != result.size()) {
-        return QList<QLandmarkCategory> ();
-    }
-    else {
-        return result;
-    }
+    return result;
 }
 
 /*!
@@ -3637,8 +3639,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
                 aData->error = error;
                 aData->errorString = errorString;
             }
-            else
-                aData->iLandmarks.append(qtLm);
+
+            aData->iLandmarks.append(qtLm);
 
             aData->iOpCount++;
         }
@@ -3661,8 +3663,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
                 aData->error = error;
                 aData->errorString = errorString;
             }
-            else
-                aData->iLandmarkIds.append(qtLmId);
+
+            aData->iLandmarkIds.append(qtLmId);
 
             aData->iOpCount++;
         }
@@ -3685,8 +3687,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
                 aData->error = error;
                 aData->errorString = errorString;
             }
-            else
-                aData->iCategories.append(qtCat);
+
+            aData->iCategories.append(qtCat);
 
             aData->iOpCount++;
         }
@@ -3709,8 +3711,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
                 aData->error = error;
                 aData->errorString = errorString;
             }
-            else
-                aData->iCategoryIds.append(qtCatId);
+
+            aData->iCategoryIds.append(qtCatId);
 
             aData->iOpCount++;
         }
@@ -3735,8 +3737,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
                 aData->error = error;
                 aData->errorString = errorString;
             }
-            else
-                aData->iLandmarks.append(fetchedLandmark);
+
+            aData->iLandmarks.append(fetchedLandmark);
 
             aData->iOpCount++;
         }
@@ -3762,8 +3764,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
                 aData->error = error;
                 aData->errorString = errorString;
             }
-            else
-                aData->iCategories.append(fetchedQtCategory);
+
+            aData->iCategories.append(fetchedQtCategory);
 
             aData->iOpCount++;
         }

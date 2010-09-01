@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,10 +42,10 @@
 #include <qmobilityglobal.h>
 
 #include "qtelephony.h"
-#include "maemo/cli-constants.h"
+#include "maemo/constants.h"
 #include "maemo/qtelephonycallinfo_maemo_p.h"
 
-using namespace Tp;
+using namespace DBus;
 
 QTM_BEGIN_NAMESPACE
 
@@ -60,7 +60,7 @@ QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate(const QTelephonyCallInfoPri
 {
 }
 
-QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate(Tp::ChannelPtr channel)
+QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate(DBus::ChannelPtr channel)
     : telepathychannel(channel)
 {
 }
@@ -74,9 +74,9 @@ QString QTelephonyCallInfoPrivate::remotePartyIdentifier() const
     return QString("");
 }
 
-QTelephonyEvents::CallType QTelephonyCallInfoPrivate::type() const
+QTelephony::CallType QTelephonyCallInfoPrivate::type() const
 {
-    QTelephonyEvents::CallType ret = QTelephonyEvents::Other;
+    QTelephony::CallType ret = QTelephony::Other;
     if(telepathychannel)
         ret =   telepathychannel->getCalltype();
     return ret;
@@ -90,9 +90,9 @@ QString QTelephonyCallInfoPrivate::subType() const
     return ret;
 }
 
-QTelephonyEvents::CallStatus QTelephonyCallInfoPrivate::status() const
+QTelephony::CallStatus QTelephonyCallInfoPrivate::status() const
 {
-    QTelephonyEvents::CallStatus ret = QTelephonyEvents::Idle;
+    QTelephony::CallStatus ret = QTelephony::Idle;
     if(telepathychannel)
         ret = telepathychannel->getStatus();
     return ret;

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,10 +49,11 @@
 #include "qtelephony.h"
 #include "maemo/qtelephonycalllist_maemo_p.h"
 #include "maemo/qtelephonycallinfo_maemo_p.h"
-#include "maemo/cli-constants.h"
+#include "maemo/constants.h"
 #include "maemo/types.h"
 #include "maemo/connection.h"
 #include "maemo/channel.h"
+#include "maemo/accountmanager.h"
 
 QT_USE_NAMESPACE
 
@@ -60,27 +61,30 @@ QTM_BEGIN_NAMESPACE
 
 QTelephonyCallListPrivate::QTelephonyCallListPrivate(QTelephonyCallList *parent)
     : p(parent)
+    , accountManager(0)
 {
-    Tp::registerTypes();
+    DBus::registerTypes();
     qDebug() << "QTelephonyCallListPrivate::QTelephonyCallListPrivate(QTelephonyCallList *parent)";
-    //now Create Connection Request interface
-    QString path = "/org/freedesktop/Telepathy/Connection/ring/tel/ring";
-    connection = ConnectionPtr(new Connection(QDBusConnection::sessionBus(), path.mid(1).replace(QLatin1String("/"), QLatin1String(".")), path, this));
+
+    qDebug() << "create Account Manager";
+    accountManager = new AccountManager(QDBusConnection::sessionBus(), TELEPATHY_ACCOUNT_MANAGER_BUS_NAME, TELEPATHY_ACCOUNT_MANAGER_OBJECT_PATH, this);
 }
 
 QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
 {
     qDebug() << "QTelephonyCallListPrivate::~QTelephonyCallListPrivate() for maemo";
     callInfoList.clear();
+    if(accountManager)
+        delete accountManager;
 }
 
-QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephonyEvents::CallType& calltype) const 
+QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephony::CallType& calltype) const 
 { 
     QList<QTelephonyCallInfo> ret;
 
     //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
     for( int i = 0; i < callInfoList.count(); i++){
-        if(calltype == QTelephonyEvents::Any || callInfoList.at(i).data()->type() == calltype)
+        if(calltype == QTelephony::Any || callInfoList.at(i).data()->type() == calltype)
         {
             QTelephonyCallInfo callinfo;
             callinfo.d = callInfoList.at(i);
@@ -112,14 +116,14 @@ void QTelephonyCallListPrivate::emitActiveCallAdded(QExplicitlySharedDataPointer
     emit p->activeCallAdded(callinfo);
 }
 
-void QTelephonyCallListPrivate::newChannels(Tp::ChannelPtr channelptr)
+void QTelephonyCallListPrivate::newChannels(DBus::ChannelPtr channelptr)
 {
     QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> callinfo = QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(new QTelephonyCallInfoPrivate(channelptr));
     callInfoList.append(callinfo);
     emitActiveCallAdded(callinfo);
 }
 
-void QTelephonyCallListPrivate::channelStatusChanged(Tp::ChannelPtr channel)
+void QTelephonyCallListPrivate::channelStatusChanged(DBus::ChannelPtr channel)
 {
     int index = 0;
     for(index = 0; index < callInfoList.count(); index++)
@@ -133,7 +137,7 @@ void QTelephonyCallListPrivate::channelStatusChanged(Tp::ChannelPtr channel)
         emit p->activeCallStatusChanged(callinfo);
 
         //check if channel must be removed from callist
-        if(callInfoList[index]->status() == QTelephonyEvents::Disconnecting)
+        if(callInfoList[index]->status() == QTelephony::Disconnecting)
             callInfoList.removeAt(index);
     }
 }
