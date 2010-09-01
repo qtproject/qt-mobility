@@ -41,6 +41,7 @@
 
 #include "eventloggerengine_maemo_p.h"
 #include "telepathyengine_maemo_p.h"
+#include "maemohelpers_p.h"
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
@@ -249,6 +250,8 @@ additional_text=%s icon_name=%s pango_markup=%s\n",
     if(iter) g_object_unref(iter);
     //    debugMessage(message);
 
+    MessageCache::instance()->insert(message);
+
     return message;
 
 }
@@ -434,6 +437,7 @@ QMessageIdList EventLoggerEngine::filterAndOrderMessages(const QMessageFilter &f
 	     if (pf->filter(message)) {
 	       //   qDebug() <<"Filter :filtering match" << message.id().toString();
 	       //matchingFilters.insert(it.key());
+               MessageCache::instance()->insert(message);
 	       idList.append(message.id());
 	     };
 	   };

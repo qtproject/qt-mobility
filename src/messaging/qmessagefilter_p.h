@@ -114,6 +114,10 @@ public:
     
     bool filter(const QMessage &message) const;
     static bool filter(const QMessage &message, const QMessageFilterPrivate &filter);
+
+    static bool preFilter(QMessage::Type type, const QString &idPrefix, const QMessageFilterPrivate &privateFilter);
+    static bool preFilterRow(QMessage::Type type, const QString &idPrefix, const SortedMessageFilterList &filterRow);
+    bool preFilter(QMessage::Type type, const QString idPrefix = QString()) const;
     
     static void changeComparatorValuesToOpposite(QMessageFilter& filter);
     static void changeANDsAndORsToOpposite(QMessageFilter& filter);
