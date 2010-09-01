@@ -39,7 +39,9 @@ INCLUDEPATH += . \
     ../../src/organizer/items \
     ../../src/organizer/details \
     ../../src/organizer/filters \
-    ../../src/organizer/requests
+    ../../src/organizer/requests \
+    ../../src/versit \
+    ../../src/versitorganizer
 
 
 symbian: {
