@@ -46,7 +46,6 @@ private slots:
 
 private slots: //test methods
 
-    void testCompareTwoColumnsWithModifiedPattern();
     void testPredictiveSearch();
     void testSelectQweryTable();
     void testSelectTableView();
