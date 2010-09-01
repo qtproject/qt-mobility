@@ -206,3 +206,8 @@ contains(mobility_modules,gallery) {
     }
 }
 
+# Feedback
+contains(mobility_modules,feedback) {
+    SUBDIRS += qsensor
+}
+
