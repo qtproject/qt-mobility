@@ -60,7 +60,7 @@
 
 #include <nmapifolderlisting.h>
 #include <nmapiemailaddress.h>
-#include <nmapimessagemanager.h>
+
 #include <nmapimessage.h>
 
 #include <xqaiwdecl.h>
@@ -582,7 +582,7 @@ bool CFSEngine::addMessage(QMessage *message)
                 SLOT(addMessageCompleted(int, CFSAsynchronousAddOperation*)));
     m_addList.append(addOperation);    
     QEventLoop* eventloop = new QEventLoop();
-    connect(addOperation, SIGNAL(operationComplete(QVariant, int)), eventloop, SLOT(quit()));
+    connect(addOperation, SIGNAL(messageAdded(int, CFSAsynchronousAddOperation*)), eventloop, SLOT(quit()));
     addOperation->addMessage(*message);
     
     eventloop->exec();  
@@ -808,22 +808,21 @@ void CFSEngine::deleteCompleted(QVariant variant, int success)
 bool CFSEngine::showMessage(const QMessageId &id)
 {
     bool syncronous;
-
-    XQServiceRequest request(
-       emailInterfaceNameMessage,
-       emailOperationViewMessage,
-       syncronous );
-    
+        
+    XQAiwRequest* request = m_applicationManager.create(emailInterfaceNameMessage,
+            emailOperationViewMessage,
+            syncronous);
+  
     QMessage qmessage = message(id);
    
     QList<QVariant> list;
     list.append(stripIdPrefix(qmessage.parentAccountId().toString()).toLongLong());
     list.append(stripIdPrefix(qmessage.parentFolderId().toString()).toLongLong());
     list.append(stripIdPrefix(qmessage.id().toString()).toLongLong());
-    request.setArguments(list);
+    request->setArguments(list);
 
     QVariant returnValue;
-    bool rval = request.send(returnValue);
+    bool rval = request->send(returnValue);
     return rval;
 }
 
@@ -2645,6 +2644,8 @@ void CFSAsynchronousSendOperation::sendMessage(QMessageServicePrivate& privateSe
 {
     m_privateService = &privateService;
     m_qMessage = message;
+    quint64 mailboxId = stripIdPrefix(m_qMessage.parentAccountId().toString()).toULongLong();
+    m_manager = new NmApiMessageManager(this, mailboxId);
     createDraftMessage();
 }
     
@@ -2657,12 +2658,16 @@ void CFSAsynchronousSendOperation::createDraftMessageCompleted(QVariant message,
         createFSMessage(m_qMessage, m_fsMessage);
         saveMessage();
     }
+    else
+        emit messageSend(success, this);
 }
 
 void CFSAsynchronousSendOperation::saveCompleted(QVariant message, int success)
 {
     if (success == 0)
         sendMessage();
+    else
+        emit messageSend(success, this);
 }
     
 void CFSAsynchronousSendOperation::sendCompleted(QVariant message, int success)
@@ -2673,32 +2678,23 @@ void CFSAsynchronousSendOperation::sendCompleted(QVariant message, int success)
     
 void CFSAsynchronousSendOperation::saveMessage()
 {
-    quint64 mailboxId = stripIdPrefix(m_qMessage.parentAccountId().toString()).toULongLong();
-    NmApiMessageManager* manager = new NmApiMessageManager(this, mailboxId);
-    QPointer<NmApiOperation> operation = manager->saveMessage(m_fsMessage);
+    QPointer<NmApiOperation> operation = m_manager->saveMessage(m_fsMessage);
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
     connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(saveCompleted(QVariant, int)));
-    delete manager;
 }
     
 void CFSAsynchronousSendOperation::createDraftMessage()
 {
-    quint64 mailboxId = stripIdPrefix(m_qMessage.parentAccountId().toString()).toULongLong();
-    NmApiMessageManager* manager = new NmApiMessageManager(this, mailboxId);
-    QPointer<NmApiOperation> operation = manager->createDraftMessage(NULL);
+    QPointer<NmApiOperation> operation = m_manager->createDraftMessage(NULL);
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
     connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(createDraftMessageCompleted(QVariant, int)));
-    delete manager;
 }
     
 void CFSAsynchronousSendOperation::sendMessage()
 {
-    quint64 mailboxId = stripIdPrefix(m_qMessage.parentAccountId().toString()).toULongLong();
-    NmApiMessageManager* manager = new NmApiMessageManager(this, mailboxId);
-    QPointer<NmApiOperation> operation = manager->sendMessage(m_fsMessage);
+    QPointer<NmApiOperation> operation = m_manager->sendMessage(m_fsMessage);
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
     connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(sendCompleted(QVariant, int)));
-    delete manager;
 }
 
 CFSAsynchronousAddOperation::CFSAsynchronousAddOperation()
@@ -2708,12 +2704,14 @@ CFSAsynchronousAddOperation::CFSAsynchronousAddOperation()
 
 CFSAsynchronousAddOperation::~CFSAsynchronousAddOperation()
 {
-    
+
 }
 
 void CFSAsynchronousAddOperation::addMessage(QMessage &message)
 {
     m_qMessage = message;
+    quint64 mailboxId = stripIdPrefix(m_qMessage.parentAccountId().toString()).toULongLong();
+    m_manager = new NmApiMessageManager(this, mailboxId);
     createDraftMessage();
 }
     
@@ -2726,6 +2724,8 @@ void CFSAsynchronousAddOperation::createDraftMessageCompleted(int success, QVari
         createFSMessage(m_qMessage, m_fsMessage);
         saveMessage();
     }
+    else
+        emit messageAdded(success, this);
 }
 
 void CFSAsynchronousAddOperation::saveCompleted(QVariant message, int success)
@@ -2735,22 +2735,16 @@ void CFSAsynchronousAddOperation::saveCompleted(QVariant message, int success)
     
 void CFSAsynchronousAddOperation::saveMessage()
 {
-    quint64 mailboxId = stripIdPrefix(m_qMessage.parentAccountId().toString()).toULongLong();
-    NmApiMessageManager* manager = new NmApiMessageManager(this, mailboxId);
-    QPointer<NmApiOperation> operation = manager->saveMessage(m_fsMessage);
+    QPointer<NmApiOperation> operation = m_manager->saveMessage(m_fsMessage);
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
     connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(saveCompleted(QVariant, int)));
-    delete manager;
 }
     
 void CFSAsynchronousAddOperation::createDraftMessage()
 {
-    quint64 mailboxId = stripIdPrefix(m_qMessage.parentAccountId().toString()).toULongLong();
-    NmApiMessageManager* manager = new NmApiMessageManager(0, mailboxId);
-    QPointer<NmApiOperation> operation = manager->createDraftMessage(NULL);
+    QPointer<NmApiOperation> operation = m_manager->createDraftMessage(NULL);
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
     connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(createDraftMessageCompleted(int, QVariant)));
-    delete manager;
 }
 
 

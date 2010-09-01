@@ -58,6 +58,7 @@
 #include <nmapienvelopelisting.h>
 #include <nmapimessagesearch.h>
 #include <nmapicommon.h>
+#include <nmapimessagemanager.h>
 #include <nmapieventnotifier.h>
 #include <xqappmgr.h>
 
@@ -327,6 +328,7 @@ private:
     NmApiMessage m_fsMessage;
     QMessageServicePrivate *m_privateService;
     QMessage m_qMessage;
+    NmApiMessageManager* m_manager;
 
 };
 
@@ -354,6 +356,7 @@ private:
 private:
     NmApiMessage m_fsMessage;
     QMessage m_qMessage;
+    NmApiMessageManager* m_manager;
 
 };
 
