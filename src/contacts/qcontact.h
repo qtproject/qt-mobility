@@ -54,11 +54,15 @@
 #include "qcontactdetail.h"
 #include "qcontactrelationship.h"
 
+#include "qcontactdetaildefinition.h"
+#include "qcontactdisplaylabel.h"
+#include "qcontactrelationshipfilter.h"
+#include "qcontacttype.h"
+
 class QDataStream;
 
 QTM_BEGIN_NAMESPACE
 
-class QContactType;
 class QContactManager;
 class QContactData;
 class QContactName;
