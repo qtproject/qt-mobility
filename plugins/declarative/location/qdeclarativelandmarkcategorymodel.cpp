@@ -10,8 +10,7 @@
 QTM_BEGIN_NAMESPACE
 
 QDeclarativeLandmarkCategoryModel::QDeclarativeLandmarkCategoryModel(QObject *parent) :
-        QAbstractListModel(parent), m_manager(0), m_fetchRequest(0), m_landmark(0),
-        m_autoUpdate(false), m_limit(-1), m_offset(-1)
+        QDeclarativeLandmarkAbstractModel(parent), m_fetchRequest(0), m_landmark(0)
 {
     // Establish role names so that they can be queried from this model
     QHash<int, QByteArray> roleNames;
@@ -20,13 +19,10 @@ QDeclarativeLandmarkCategoryModel::QDeclarativeLandmarkCategoryModel(QObject *pa
     roleNames.insert(DescriptionRole, "description");
     roleNames.insert(IconSourceRole, "iconSource");
     setRoleNames(roleNames);
-    // Instantiate default manager
-    m_manager = new QLandmarkManager();
 }
 
 QDeclarativeLandmarkCategoryModel::~QDeclarativeLandmarkCategoryModel()
 {
-    delete m_manager;
     delete m_fetchRequest;
 }
 
@@ -69,56 +65,10 @@ int QDeclarativeLandmarkCategoryModel::count() const
     return m_categories.count();
 }
 
-int QDeclarativeLandmarkCategoryModel::limit() const
-{
-    return m_limit;
-}
-
-void QDeclarativeLandmarkCategoryModel::setLimit(int limit)
-{
-    if (limit == m_limit)
-        return;
-    m_limit = limit;
-    emit limitChanged();
-}
-
-int QDeclarativeLandmarkCategoryModel::offset() const
-{
-    return m_offset;
-}
-
-void QDeclarativeLandmarkCategoryModel::setOffset(int offset)
-{
-    if (offset == m_offset)
-        return;
-    m_offset = offset;
-    emit offsetChanged();
-}
-
-QString QDeclarativeLandmarkCategoryModel::error() const
-{
-    return m_error;
-}
-
-void QDeclarativeLandmarkCategoryModel::setAutoUpdate(bool autoUpdate)
-{
-    if (autoUpdate == m_autoUpdate)
-        return;
-    if (m_autoUpdate)
-        QTimer::singleShot(0, this, SLOT(update())); // delay ensures all properties have been set
-    else
-        cancelUpdate();
-}
-
-bool QDeclarativeLandmarkCategoryModel::autoUpdate() const
-{
-    return m_autoUpdate;
-}
-
-void QDeclarativeLandmarkCategoryModel::update()
+void QDeclarativeLandmarkCategoryModel::startUpdate()
 {
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
-    qDebug("QDeclarativeLandmarkCategoryModel::update()");
+    qDebug("QDeclarativeLandmarkCategoryModel::startUpdate()");
 #endif
     if (!m_manager)
         return;
@@ -134,6 +84,7 @@ void QDeclarativeLandmarkCategoryModel::update()
     }
     QObject::connect(m_fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this, SLOT(fetchRequestStateChanged(QLandmarkAbstractRequest::State)));
     m_fetchRequest->start();
+    m_updatePending = false; // Allow requesting updates again
 }
 
 void QDeclarativeLandmarkCategoryModel::setFetchRange()
@@ -149,6 +100,9 @@ void QDeclarativeLandmarkCategoryModel::setFetchRange()
 
 void QDeclarativeLandmarkCategoryModel::cancelUpdate()
 {
+#ifdef QDECLARATIVE_LANDMARK_DEBUG
+    qDebug("QDeclarativeLandmarkCategoryModel::cancelUpdate()");
+#endif
     if (m_fetchRequest) {
         delete m_fetchRequest;
         m_fetchRequest = 0;

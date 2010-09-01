@@ -161,7 +161,7 @@ int QGeoMappingManagerEngine::managerVersion() const
     with the created instance..
 */
 
-/*!
+/*
 \fn void QGeoMappingManagerEngine::updateMapImage(QGeoMapData *mapData)
 
     Updates the map image stored in \a mapData based on the viewport

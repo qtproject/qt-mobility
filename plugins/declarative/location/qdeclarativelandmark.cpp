@@ -94,7 +94,6 @@ void QDeclarativeLandmark::setLandmark(const QLandmark& landmark)
 
 QList<QLandmarkCategoryId> QDeclarativeLandmark::categoryIds () const
 {
-    qDebug() << "QDeclarativeLandmark category IDs requested, returning this many: " << m_landmark.categoryIds().count();
     return m_landmark.categoryIds();
 }
 

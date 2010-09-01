@@ -45,6 +45,9 @@
 #include <calchangecallback.h>
 #include <calentryview.h>
 #include <calinstanceview.h>
+#ifdef SYMBIAN_CALENDAR_V2
+#include <calinstanceiterator.h>
+#endif
 
 // user includes
 #include "qorganizersymbian_p.h"
@@ -181,21 +184,43 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(const QOrganize
         	filter = (CalCommon::EIncludeCompletedTodos |
         	CalCommon::EIncludeIncompletedTodos);
         }
+		#ifdef SYMBIAN_CALENDAR_V2
+            CCalInstanceIterator *iterator(NULL);
+            CCalFindInstanceSettings *findIntanceSettings = CCalFindInstanceSettings::NewL(filter,
+                CalCommon::TCalTimeRange(OrganizerItemDetailTransform::toTCalTimeL(periodStart),
+                                         OrganizerItemDetailTransform::toTCalTimeL(endDateTime)));
+            CleanupStack::PushL(findIntanceSettings);
         
-        TRAPD(err, m_instanceView->FindInstanceL(instanceList,filter,
-                                   CalCommon::TCalTimeRange(OrganizerItemDetailTransform::toTCalTimeL(periodStart),
-                                   OrganizerItemDetailTransform::toTCalTimeL(endDateTime))
-                                   ));
-            
+            TRAPD(err,iterator = m_instanceView->FindInstanceL(*findIntanceSettings));
+            CleanupStack::PopAndDestroy(findIntanceSettings);
+            CleanupStack::PushL(iterator);
+        #else        
+        
+            TRAPD(err, m_instanceView->FindInstanceL(instanceList,filter,
+                                                     CalCommon::TCalTimeRange(
+                                       OrganizerItemDetailTransform::toTCalTimeL(periodStart),
+                                       OrganizerItemDetailTransform::toTCalTimeL(endDateTime))
+                                       ));
+        #endif    
         transformError(err, error);
    
-        if (*error == QOrganizerItemManager::NoError) {  
-            int count(instanceList.Count()); 
+        if (*error == QOrganizerItemManager::NoError) {
+            #ifdef SYMBIAN_CALENDAR_V2
+                int count(iterator->Count()); 
+            #else
+                int count(instanceList.Count()); 
+            #endif
             // Convert calninstance list to  QOrganizerEventOccurrence and add to QOrganizerItem list                 
             for( int index=0; index < count;index++ ) {
                  QOrganizerItem itemInstance;
-                 CCalInstance* calInstance = (instanceList)[index];
-                 
+                 CCalInstance* calInstance(NULL);
+                 #ifdef SYMBIAN_CALENDAR_V2
+                     calInstance = iterator->NextL(); 
+                 #else
+                     calInstance = (instanceList)[index];
+                 #endif     
+                     CleanupStack::PushL(calInstance);
+                     
                  if (QOrganizerItemType::TypeEvent == generator.type())
                      itemInstance.setType(QOrganizerItemType::TypeEventOccurrence);
                  else if (QOrganizerItemType::TypeTodo == generator.type())
@@ -218,9 +243,14 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(const QOrganize
                          occurrenceList.append(itemInstance);
                      }
                  }    
+                 CleanupStack::PopAndDestroy(calInstance);                  
             }           
         }
-        instanceList.ResetAndDestroy();
+        #ifdef SYMBIAN_CALENDAR_V2
+            CleanupStack::PopAndDestroy(iterator);
+        #else
+            instanceList.Close();
+        #endif
         
     } else {
         *error = QOrganizerItemManager::BadArgumentError;
