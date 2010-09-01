@@ -535,6 +535,11 @@ void CQGeoSatelliteInfoSourceS60::updatePosition(TPositionSatelliteInfo aSatInfo
         //request has timed out
         emit requestTimeout();
     }
+
+    else {
+        //request has resulted in an error. could be changed to emit error signal when available.
+        emit requestTimeout();
+    }
 }
 
 // for request update

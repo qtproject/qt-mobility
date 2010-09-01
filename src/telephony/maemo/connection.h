@@ -1,3 +1,44 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
@@ -5,9 +46,10 @@
 #include <QtDBus/QDBusMessage>
 #include <qmobilityglobal.h>
 #include "maemo/types.h"
-#include "maemo/dbus-proxy.h"
-#include "maemo/interfaces/cli-connection.h"
-#include "maemo/ready-object.h"
+#include "maemo/statefulldbusproxy.h"
+#include "maemo/interfaces/iconnection.h"
+#include "maemo/interfaces/iconnectionrequests.h"
+#include "maemo/readyobject.h"
 #include "qtelephonycallinfo.h"
 
 QTM_BEGIN_NAMESPACE
@@ -16,11 +58,11 @@ QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-namespace Tp
+namespace DBus
 {
-    class Connection : public StatefulDBusProxy
+    class Connection : public StatefullDBusProxy
                         , public ReadyObject
-                        , public RefCounted
+                        , public ReferenceCounter
     {
         Q_OBJECT
         Q_DISABLE_COPY(Connection)
@@ -29,7 +71,7 @@ namespace Tp
 
         Connection(const QDBusConnection busconnection, const QString &busName, const QString &objectPath, QTelephonyCallListPrivate* callList);
         ~Connection();
-        void channelStatusChanged(Tp::Channel* channel);
+        void channelStatusChanged(DBus::Channel* channel);
 
     private Q_SLOTS:
         void onSelfHandleChanged(uint selfHandle);
@@ -37,17 +79,17 @@ namespace Tp
         void onConnectionError(const QString& error, const QVariantMap& details);
         void onStatusChanged(uint status, uint reason);
 
-        // for ConnectionInterfaceRequestsInterface signals
-        void onNewChannels(const Tp::ChannelDetailsList& channels);
+        // for IConnectionRequests signals
+        void onNewChannels(const DBus::Interfaces::ChannelDetailsList& channels);
         void onChannelClosed(const QDBusObjectPath& removed);
 
     private: 
         void readCurrentChannels();
 
-        Tp::Client::ConnectionInterface* pConnectioninterface;
-        Tp::Client::ConnectionInterfaceRequestsInterface* pConnectionInterfaceRequestsInterface;
+        DBus::Interfaces::IConnection* pIConnection;
+        DBus::Interfaces::IConnectionRequests* pIConnectionRequests;
         QTelephonyCallListPrivate* ptelephonyCallList;
     };
-    typedef SharedPtr<Connection> ConnectionPtr;
+    typedef SharedPointer<Connection> ConnectionPtr;
 }
 #endif // CONNECTION_H

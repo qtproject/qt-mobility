@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -71,16 +71,16 @@ class QM_AUTOTEST_EXPORT QTelephonyCallInfoPrivate : public QSharedData
 public:
     QTelephonyCallInfoPrivate();
     QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other);
-    QTelephonyCallInfoPrivate(Tp::ChannelPtr channel);
+    QTelephonyCallInfoPrivate(DBus::ChannelPtr channel);
 
     QString remotePartyIdentifier() const;
-    QTelephonyEvents::CallType type() const;
+    QTelephony::CallType type() const;
     QString subType() const;
-    QTelephonyEvents::CallStatus status() const;
+    QTelephony::CallStatus status() const;
     QHash<QString, QVariant> values;
 
 public:
-    Tp::ChannelPtr telepathychannel;
+    DBus::ChannelPtr telepathychannel;
 };
 
 QTM_END_NAMESPACE

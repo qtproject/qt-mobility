@@ -44,7 +44,7 @@ import Qt.multimedia 4.7
 
 Item {
     id: wbMode
-    property int value
+    property int value : values[flickableList.index]
     property variant values : [ Camera.WhiteBalanceAuto,
                                 Camera.WhiteBalanceSunlight,
                                 Camera.WhiteBalanceCloudy,
@@ -75,10 +75,6 @@ Item {
         ]
 
         onClicked: wbMode.clicked()
-
-        onIndexChanged: {
-            wbMode.value = wbMode.values[flickableList.index]
-        }
 
         delegate: Item {
             width: flickableList.width

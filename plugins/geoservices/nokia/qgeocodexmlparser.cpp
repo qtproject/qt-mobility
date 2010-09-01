@@ -108,7 +108,12 @@ bool QGeoCodeXmlParser::parseRootElement()
             if (m_reader->attributes().hasAttribute("resultCode")) {
                 QStringRef result = m_reader->attributes().value("resultCode");
                 if (result == "FAILED") {
-                    m_reader->raiseError("The attribute \"resultCode\" of the element \"places\" indicates that the request failed.");
+                    QString resultDesc = m_reader->attributes().value("resultDescription").toString();
+                    if(resultDesc.isEmpty())
+                        resultDesc = "The attribute \"resultCode\" of the element \"places\" indicates that the request failed.";
+
+                    m_reader->raiseError(resultDesc);
+
                     return false;
                 } else if (result != "OK") {
                     m_reader->raiseError(QString("The attribute \"resultCode\" of the element \"places\" has an unknown value (value was %1).").arg(result.toString()));

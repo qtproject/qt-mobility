@@ -69,10 +69,8 @@ QTM_BEGIN_NAMESPACE
 /*!
     \enum QLandmarkSortOrder::SortType
     Defines the type of sort order.
-    \value DefaultSort The default sort order that does nothing
+    \value DefaultSort The default sort order that does no sorting.
     \value NameSort   Sorts landmarks by name.
-    \value DistanceSort   Sorts landmarks by distance from a particular
-           coordinate.
 */
 
 /*!
