@@ -85,7 +85,11 @@ MonthPage::MonthPage(QWidget *parent)
     m_itemList->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_itemList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_itemList->setFocusPolicy(Qt::NoFocus);
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    m_itemList->setVisible(false);
+#else
     mainlayout->addRow(m_itemList);
+#endif
     connect(m_itemList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(itemDoubleClicked(QListWidgetItem*)));
 
     setLayout(mainlayout);

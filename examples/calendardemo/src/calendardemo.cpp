@@ -104,9 +104,6 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     m_stackedWidget->setCurrentIndex(0);
 
     setCentralWidget(m_stackedWidget);
-#ifdef Q_WS_MAEMO_5
-    setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
-#endif
     buildMenu();
 
     activateMonthPage();
@@ -122,7 +119,7 @@ CalendarDemo::~CalendarDemo()
 void CalendarDemo::buildMenu()
 {
     // Build Options menu
-#if defined(Q_WS_MAEMO_5) || defined(Q_OS_WINCE)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || defined(Q_OS_WINCE)
     // These platforms need their menu items added directly to the menu bar.
     QMenuBar *optionsMenu = menuBar();
 #else
@@ -162,7 +159,7 @@ void CalendarDemo::buildMenu()
 
 void CalendarDemo::activateMonthPage()
 {
-#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5))
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
     menuBar()->setVisible(true);
 #endif
     m_monthPage->refresh();
@@ -172,7 +169,7 @@ void CalendarDemo::activateMonthPage()
 
 void CalendarDemo::activateDayPage()
 {
-#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5))
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
     menuBar()->setVisible(true);
 #endif
     m_dayPage->refresh();
@@ -182,7 +179,7 @@ void CalendarDemo::activateDayPage()
 
 void CalendarDemo::activateEditPage(const QOrganizerItem &item)
 {
-#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5))
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
     menuBar()->setVisible(false);
 #endif
     if (item.type() == QOrganizerItemType::TypeEvent) {
