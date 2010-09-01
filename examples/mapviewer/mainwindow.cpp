@@ -398,7 +398,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Is there default access point, use it
     QNetworkConfiguration cfg = manager.defaultConfiguration();
     if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
-        QMessageBox::information(this, tr("Geo Service Demo"), tr(
+        QMessageBox::information(this, tr("Map Viewer Demo"), tr(
                                      "Available Access Points not found."));
         return;
     }
