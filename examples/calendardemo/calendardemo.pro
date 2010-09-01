@@ -10,6 +10,10 @@ include(../examples.pri)
 DEPENDPATH += .
 CONFIG += mobility
 MOBILITY = organizer
+contains(mobility_modules,versit) {
+    MOBILITY += versit
+    DEFINES += BUILD_VERSIT
+}
 
 # Input
 SOURCES += src/main.cpp \

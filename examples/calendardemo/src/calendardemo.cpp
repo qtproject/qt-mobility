@@ -46,6 +46,10 @@
 #include "todoeditpage.h"
 #include "journaleditpage.h"
 #include "eventoccurrenceeditpage.h"
+#include "qversitreader.h"
+#include "qversitwriter.h"
+#include "qversitorganizerimporter.h"
+#include "qversitorganizerexporter.h"
 #include <QtGui>
 #include <qtorganizer.h>
 
@@ -145,10 +149,14 @@ void CalendarDemo::buildMenu()
     m_switchViewAction = optionsMenu->addAction("&Open Day");
     connect(m_switchViewAction, SIGNAL(triggered(bool)), this, SLOT(switchView()));
     optionsMenu->addSeparator();
-    QAction* addHugeEntires = optionsMenu->addAction("Add many events");
-    connect(addHugeEntires, SIGNAL(triggered(bool)), this, SLOT(addEvents()));
-    QAction* deleteAllEntires = optionsMenu->addAction("Delete all entries");
-    connect(deleteAllEntires, SIGNAL(triggered(bool)), this, SLOT(deleteAllEntries()));
+    QAction* addHugeEntries = optionsMenu->addAction("Add Test Events");
+    connect(addHugeEntries, SIGNAL(triggered(bool)), this, SLOT(addEvents()));
+    QAction* importItems = optionsMenu->addAction("&Import Items...");
+    connect(importItems, SIGNAL(triggered(bool)), this, SLOT(importItems()));
+    QAction* exportItems = optionsMenu->addAction("Ex&port Items...");
+    connect(exportItems, SIGNAL(triggered(bool)), this, SLOT(exportItems()));
+    QAction* deleteAllEntries = optionsMenu->addAction("Delete All Items");
+    connect(deleteAllEntries, SIGNAL(triggered(bool)), this, SLOT(deleteAllEntries()));
 
 #ifdef Q_OS_SYMBIAN
     // add the menu to the softkey for these pages
@@ -288,6 +296,67 @@ void CalendarDemo::addEvents()
     m_saveReq.setItems(items);
     m_saveReq.setManager(m_manager);
     m_saveReq.start();
+}
+
+void CalendarDemo::importItems()
+{
+#ifdef BUILD_VERSIT
+    if (!m_manager) {
+        qWarning() << "No manager selected; cannot import";
+        return;
+    }
+    QString fileName = QFileDialog::getOpenFileName(this,
+       tr("Select iCalendar file"), ".", tr("iCalendar files (*.ics)"));
+    QFile file(fileName);
+    file.open(QIODevice::ReadOnly);
+    if (file.isReadable()) {
+        QVersitReader reader;
+        reader.setDevice(&file);
+        if (reader.startReading() && reader.waitForFinished()) {
+            QVersitOrganizerImporter importer;
+            foreach (const QVersitDocument& document, reader.results()) {
+                if (importer.importDocument(document)) {
+                    QList<QOrganizerItem> items = importer.items();
+                    QMap<int, QOrganizerItemManager::Error> errorMap;
+                    QList<QOrganizerItem>::iterator it = items.begin();
+                    while (it != items.end()) {
+                        *it = m_manager->compatibleItem(*it);
+                        it++;
+                    }
+                    m_manager->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap);
+                }
+            }
+            m_monthPage->refresh();
+            m_dayPage->refresh();
+        }
+    }
+#endif
+}
+
+void CalendarDemo::exportItems()
+{
+#ifdef BUILD_VERSIT
+    if (!m_manager) {
+        qWarning() << "No manager selected; cannot export";
+        return;
+    }
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save iCalendar"),
+                                                    "./calendar.ics",
+                                                    tr("iCalendar files (*.ics)"));
+    QFile file(fileName);
+    file.open(QIODevice::WriteOnly);
+    if (file.isWritable()) {
+        QList<QOrganizerItem> items(m_manager->items());
+        QVersitOrganizerExporter exporter;
+        if(exporter.exportItems(items, QVersitDocument::ICalendar20Type)) {
+            QVersitDocument document = exporter.document();
+            QVersitWriter writer;
+            writer.setDevice(&file);
+            writer.startWriting(QList<QVersitDocument>() << document);
+            writer.waitForFinished();
+        }
+    }
+#endif
 }
 
 void CalendarDemo::deleteAllEntries()

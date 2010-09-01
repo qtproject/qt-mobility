@@ -87,6 +87,8 @@ private Q_SLOTS:
     void editItem();
     void removeItem();
     void addEvents();
+    void importItems();
+    void exportItems();
     void deleteAllEntries();
     void saveReqStateChanged(QOrganizerItemAbstractRequest::State);
     void removeReqStateChanged(QOrganizerItemAbstractRequest::State);
