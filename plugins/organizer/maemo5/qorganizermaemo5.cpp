@@ -209,8 +209,28 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
         return retn;
     }
 
+    /*
     // no matter which calendar is used here, all the items are available in all the calendars
     CCalendar *cal = d->m_mcInstance->getDefaultCalendar();
+    */
+
+    // get the generator's calendar (or the default calendar, if the generator collection id is not set)
+    QOrganizerCollectionLocalId collectionLocalId = generator.collectionId().localId();
+    CCalendar *cal = 0;
+    if (collectionLocalId != QOrganizerCollectionLocalId(0)) {
+        cal = d->m_mcInstance->getCalendarById(static_cast<int>(collectionLocalId), calError);
+        if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
+            *error = d->m_itemTransformer.calErrorToManagerError(calError);
+            return retn;
+        }
+        if (!cal) {
+            *error = QOrganizerItemManager::UnspecifiedError;
+            return retn;
+        }
+    }
+    else {
+        cal = d->m_mcInstance->getDefaultCalendar();
+    }
 
     std::string nativeId = QString::number(generator.localId()).toStdString();
 
@@ -332,7 +352,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
         *error = QOrganizerItemManager::BadArgumentError;
     }
 
-    cleanupCal( cal );
+    cleanupCal(cal);
 
     return retn;
 }
