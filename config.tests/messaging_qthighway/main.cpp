@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,38 +38,13 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <xqaiwdecl.h>
+#include <xqaiwdeclplat.h>
+#include <xqaiwrequest.h>
+#include <xqservicerequest.h>
+#include <email_services_api.h>
 
-#include "qgeoboundingarea.h"
-
-QTM_BEGIN_NAMESPACE
-
-/*!
-    \class QGeoBoundingArea
-    \brief The QGeoBoundingArea class defines a rectangular geographic area.
-
-    \inmodule QtLocation
-
-    \ingroup maps
-*/
-
-/*!
-*/
-QGeoBoundingArea::~QGeoBoundingArea() {}
-
-/*!
-\fn AreaType type() const
-*/
-
-/*!
-\fn bool QGeoBoundingArea::isValid() const
-*/
-
-/*!
-\fn bool QGeoBoundingArea::isEmpty() const
-*/
-
-/*!
-\fn bool QGeoBoundingArea::contains(const QGeoCoordinate &coordinate) const
-*/
-
-QTM_END_NAMESPACE
+int main(int, char**)
+{
+    return 0;
+}

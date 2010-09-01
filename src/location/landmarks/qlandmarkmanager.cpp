@@ -148,12 +148,6 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
     operations is to specify a filename:
 
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp ImportExport landmark simple
-
-    \i {At the time of the QtMobility 1.1 tech preview, only importing of landmarks by supplying a
-       file format is functional.  For the supported platforms, the file format that may be supplied
-       is "GpxV1.1" which means only Gpx version 1.1 files are known to work.  Exporting is still
-       under development and so are notifications.}
-
 */
 
 /*!
