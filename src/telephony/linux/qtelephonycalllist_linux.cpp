@@ -96,7 +96,6 @@ void QTelephonyCallListPrivate::emitActiveCallAdded(QTelephonyCallInfoPrivate& c
 
 void QTelephonyCallListPrivate::newChannelsSlot(const ChannelsArray& channelsarray)
 {
-    qDebug() << "TelephonyCallListPrivate::newChannelsSlot";
     //create a QTelephonyCallInfoPrivate
     if(channelsarray.channelslist.count() > 0){
         Channels chs = channelsarray.channelslist.at(0);
