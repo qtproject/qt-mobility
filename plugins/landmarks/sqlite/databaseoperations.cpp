@@ -2609,7 +2609,13 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
         }
         landmark.setCategoryIds(categoryIds);
 
-        saveLandmarkHelper(&landmark,error,errorString);
+        if (queryRun && queryRun->isCanceled) {
+            *error = QLandmarkManager::CancelError;
+            *errorString = "Import of lmx file canceled";
+        } else {
+            saveLandmarkHelper(&(landmarks[i]),error, errorString);
+        }
+
         if (*error != QLandmarkManager::NoError) {
             if(landmarkIds)
                 landmarkIds->clear();
@@ -2656,7 +2662,13 @@ bool DatabaseOperations::importLandmarksGpx(QIODevice *device,
         if (option == QLandmarkManager::AttachSingleCategory)
             landmarks[i].addCategoryId(categoryId);
 
-        saveLandmarkHelper(&(landmarks[i]),error, errorString);
+        if (queryRun && queryRun->isCanceled) {
+            *error = QLandmarkManager::CancelError;
+            *errorString = "Import of gpx file canceled";
+        } else {
+            saveLandmarkHelper(&(landmarks[i]),error, errorString);
+        }
+
         if (*error != QLandmarkManager::NoError) {
             if (landmarkIds)
                 landmarkIds->clear();
