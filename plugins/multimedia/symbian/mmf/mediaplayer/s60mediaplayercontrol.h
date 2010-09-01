@@ -65,7 +65,7 @@ class S60MediaSettings
 
 public:
     S60MediaSettings() 
-        : m_volume(0)
+        : m_volume(50)
         , m_muted(false)
         , m_playbackRate(0)
         , m_mediaStatus(QMediaPlayer::UnknownMediaStatus)
