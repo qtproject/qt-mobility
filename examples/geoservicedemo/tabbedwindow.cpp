@@ -50,7 +50,7 @@
 #include <QTimer>
 #include <QMessageBox>
 #include <QNetworkProxyFactory>
-#include <QNetworkConfigurationManager>
+#include <qnetworkconfigmanager.h>
 
 TabbedWindow::TabbedWindow(QWidget *parent)
         : QMainWindow(parent), m_serviceProvider(NULL)
