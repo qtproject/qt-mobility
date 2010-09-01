@@ -191,8 +191,6 @@ public:
     QList<QOrganizerCollection> collectionsL(const QList<QOrganizerCollectionLocalId>& collectionIds) const;
     void saveCollectionL(QOrganizerCollection* collection);
     void removeCollectionL(const QOrganizerCollectionLocalId& collectionId);
-    QVariantMap toMetaDataL(const CCalCalendarInfo &calInfo) const;
-    CCalCalendarInfo* toCalInfoLC(QVariantMap metaData) const;
 #endif
     
 private:

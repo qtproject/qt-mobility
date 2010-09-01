@@ -74,7 +74,7 @@ void OrganizerItemReminderTransform::transformToDetailL(const CCalEntry& entry, 
         int offsetSeconds = alarm->TimeOffset().Int() * 60;
         // Set both the offset and dateTime values for the reminder detail
         reminder.setTimeDelta(offsetSeconds);
-        QDateTime startTime = OrganizerItemDetailTransform::toQDateTimeL(entry.StartTimeL());
+        QDateTime startTime = toQDateTimeL(entry.StartTimeL());
         QDateTime reminderTime = startTime.addSecs(-offsetSeconds);
         reminder.setDateTime(reminderTime);
         item->saveDetail(&reminder);
