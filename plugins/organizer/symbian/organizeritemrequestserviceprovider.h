@@ -111,6 +111,7 @@ private:
     QOrganizerItemSymbianEngine&            iOrganizerItemManagerEngine;
     QOrganizerItemAbstractRequest*          iReq; // Request to be processed
     QList<QOrganizerItem>                   iItemList;
+    QList<QOrganizerItem>                   iSuccessfullItems;
     QList<QOrganizerItemLocalId>            iItemIds;
     QMap<int, QOrganizerItemManager::Error> iErrorMap; // Error map
     QOrganizerItemManager::Error            iError; // Error

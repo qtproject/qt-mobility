@@ -25,7 +25,9 @@ symbian {
 
     TARGET.EPOCALLOWDLLDATA=1
     TARGET.CAPABILITY = All -Tcb
+    TARGET.UID3=0x200315FE
     TARGET = $${TARGET}$${QT_LIBINFIX}
+
     load(armcc_warnings)
 
     target.path = /sys/bin

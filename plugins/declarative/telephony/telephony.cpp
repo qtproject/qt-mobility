@@ -48,6 +48,7 @@ QT_BEGIN_NAMESPACE
 
 QTM_USE_NAMESPACE
 
+using namespace QTelephony;
 
 /*!
     \class QTelephonyDeclarativeModule

@@ -55,18 +55,24 @@ DayPage::DayPage(QWidget *parent)
     m_itemList(0),
     m_menuBar(0)
 {
-    QVBoxLayout *mainlayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
+    QHBoxLayout *dateLayout = new QHBoxLayout(this);
     m_dateLabel = new QLabel(this);
     m_dateLabel->setAlignment(Qt::AlignCenter);
-    mainlayout->addWidget(m_dateLabel);
+    dateLayout->addWidget(m_dateLabel);
+    dateLayout->addStretch();
+#ifndef Q_OS_SYMBIAN
+    QPushButton* backButton = new QPushButton("View Month",this);
+    connect(backButton,SIGNAL(clicked()),this,SLOT(viewMonthClicked()));
+    dateLayout->addWidget(backButton);
+#endif
+    mainLayout->addLayout(dateLayout);
 
     m_itemList = new QListWidget(this);
-    mainlayout->addWidget(m_itemList);
+    mainLayout->addWidget(m_itemList);
     connect(m_itemList, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(itemDoubleClicked(QListWidgetItem *)));
 
-#ifdef Q_WS_X11
-    // Add push buttons for Maemo as it does not support soft keys
     QHBoxLayout* hbLayout = new QHBoxLayout();
     QPushButton* editEventButton = new QPushButton("Edit",this);
     connect(editEventButton,SIGNAL(clicked()),this,SLOT(editItem()));
@@ -74,41 +80,17 @@ DayPage::DayPage(QWidget *parent)
     QPushButton* removeEventButton = new QPushButton("Remove",this);
     connect(removeEventButton,SIGNAL(clicked()),this,SLOT(removeItem()));
     hbLayout->addWidget(removeEventButton);
-    QPushButton* addEventButton = new QPushButton("Add Event",this);
-    connect(addEventButton,SIGNAL(clicked()),this,SLOT(addNewEvent()));
-    hbLayout->addWidget(addEventButton);
-    QPushButton* addTodoButton = new QPushButton("Add Todo",this);
-    connect(addTodoButton,SIGNAL(clicked()),this,SLOT(addNewTodo()));
-    hbLayout->addWidget(addTodoButton);
-    QPushButton* backButton = new QPushButton("Back",this);
-    connect(backButton,SIGNAL(clicked()),this,SLOT(backClicked()));
-    hbLayout->addWidget(backButton);
-    mainlayout->addLayout(hbLayout);
-#endif
+    mainLayout->addLayout(hbLayout);
 
-    setLayout(mainlayout);
-
-    // Add softkeys
-    QAction* backSoftKey = new QAction("Back", this);
+#ifdef Q_OS_SYMBIAN
+    // Add softkey for symbian
+    QAction* backSoftKey = new QAction("View Month", this);
     backSoftKey->setSoftKeyRole(QAction::NegativeSoftKey);
     addAction(backSoftKey);
-    connect(backSoftKey, SIGNAL(triggered(bool)), this, SLOT(backClicked()));
+    connect(backSoftKey, SIGNAL(triggered(bool)), this, SLOT(viewMonthClicked()));
+#endif
 
-    QAction* optionsSoftKey = new QAction("Options", this);
-    optionsSoftKey->setSoftKeyRole(QAction::PositiveSoftKey);
-    optionsSoftKey->setMenu(new QMenu(this));
-    addAction(optionsSoftKey);
-
-    // Add actions to options menu
-    QMenu *optionsMenu = optionsSoftKey->menu();
-    QAction* editAction = optionsMenu->addAction("Edit");
-    connect(editAction, SIGNAL(triggered(bool)), this, SLOT(editItem()));
-    QAction* removeAction = optionsMenu->addAction("Remove");
-    connect(removeAction, SIGNAL(triggered(bool)), this, SLOT(removeItem()));
-    QAction* addEventAction = optionsMenu->addAction("Add Event");
-    connect(addEventAction, SIGNAL(triggered(bool)), this, SLOT(addNewEvent()));
-    QAction* addTodoAction = optionsMenu->addAction("Add Todo");
-    connect(addTodoAction, SIGNAL(triggered(bool)), this, SLOT(addNewTodo()));
+    setLayout(mainLayout);
 }
 
 DayPage::~DayPage()
@@ -116,19 +98,48 @@ DayPage::~DayPage()
 
 }
 
+#ifdef Q_OS_SYMBIAN
+void DayPage::setMenu(QMenu *menu)
+{
+    // Add softkey for symbian
+    QAction* optionsSoftKey = new QAction("Options", this);
+    optionsSoftKey->setSoftKeyRole(QAction::PositiveSoftKey);
+    optionsSoftKey->setMenu(menu);
+    addAction(optionsSoftKey);
+}
+#endif
+
 void DayPage::refresh()
 {
 
     m_dateLabel->setText(m_day.toString());
     m_itemList->clear();
 
-    // TODO: refactor this when we have itemInstances() working properly
+    // Items
     QList<QOrganizerItem> items = m_manager->items();
+
+    // Today's item instances
+    QOrganizerItemDateTimePeriodFilter filter;
+    filter.setStartPeriod(QDateTime(m_day, QTime(0, 0, 0)));
+    filter.setEndPeriod(QDateTime(m_day, QTime(23, 59, 59)));
+    QList<QOrganizerItem> instances = m_manager->itemInstances(filter);
+
     foreach (const QOrganizerItem &item, items)
     {
         QOrganizerEventTimeRange eventTimeRange = item.detail<QOrganizerEventTimeRange>();
         if (!eventTimeRange.isEmpty()) {
-            if (eventTimeRange.startDateTime().date() == m_day) {
+            QOrganizerItemGuid itemGuid = item.detail<QOrganizerItemGuid>();
+            QOrganizerEventTimeRange itemTimeRange = item.detail<QOrganizerEventTimeRange>();
+            bool instancesContainGuid = false;
+            foreach (QOrganizerItem instance, instances) {
+                if (instance.detail<QOrganizerItemGuid>() == itemGuid
+                    && instance.detail<QOrganizerEventTimeRange>().startDateTime() != itemTimeRange.startDateTime()) {
+                    instancesContainGuid = true;
+                    break;
+                }
+            }
+
+            if (eventTimeRange.startDateTime().date() == m_day && !instancesContainGuid) {
                 QString time = eventTimeRange.startDateTime().time().toString("hh:mm");
                 QListWidgetItem* listItem = new QListWidgetItem();
                 listItem->setText(QString("Event:%1-%2").arg(time).arg(item.displayLabel()));
@@ -148,18 +159,48 @@ void DayPage::refresh()
                 listItem->setData(ORGANIZER_ITEM_ROLE, data);
                 m_itemList->addItem(listItem);
             }
-        }        
+        }
+
+        QOrganizerJournalTimeRange journalTimeRange = item.detail<QOrganizerJournalTimeRange>();
+        if (!journalTimeRange.isEmpty()) {
+            if (journalTimeRange.entryDateTime().date() == m_day) {
+                QString time = journalTimeRange.entryDateTime().time().toString("hh:mm");
+                QListWidgetItem* listItem = new QListWidgetItem();
+                listItem->setText(QString("Journal:%1-%2").arg(time).arg(item.displayLabel()));
+                QVariant data = QVariant::fromValue<QOrganizerItem>(item);
+                listItem->setData(ORGANIZER_ITEM_ROLE, data);
+                m_itemList->addItem(listItem);
+            }
+        }
         
         // TODO: other item types
+    }
+
+    foreach (const QOrganizerItem &instance, instances)
+    {
+        QString type = instance.type();
+        if (type == QOrganizerItemType::TypeEventOccurrence) {
+            QOrganizerEventOccurrence occurrence = static_cast<QOrganizerEventOccurrence>(instance);
+            QString time = occurrence.startDateTime().time().toString("hh:mm");
+            QListWidgetItem* listItem = new QListWidgetItem();
+            listItem->setText(QString("Event occurrence:%1-%2").arg(time).arg(occurrence.displayLabel()));
+            QVariant data = QVariant::fromValue<QOrganizerItem>(instance);
+            listItem->setData(ORGANIZER_ITEM_ROLE, data);
+            m_itemList->addItem(listItem);
+        }
     }
 
     if (m_itemList->count() == 0)
         m_itemList->addItem("(no entries)");
 }
 
-void DayPage::dayChanged(QOrganizerItemManager *manager, QDate date)
+void DayPage::changeManager(QOrganizerItemManager *manager)
 {
     m_manager = manager;
+}
+
+void DayPage::dayChanged(QDate date)
+{
     m_day = date;
 }
 
@@ -170,10 +211,10 @@ void DayPage::itemDoubleClicked(QListWidgetItem *listItem)
 
     QOrganizerItem organizerItem = listItem->data(ORGANIZER_ITEM_ROLE).value<QOrganizerItem>();
     if (!organizerItem.isEmpty())
-        emit showEditPage(m_manager, organizerItem);
+        emit showEditPage(organizerItem);
 }
 
-void DayPage::backClicked()
+void DayPage::viewMonthClicked()
 {
     emit showMonthPage();
 }
@@ -186,7 +227,7 @@ void DayPage::editItem()
 
     QOrganizerItem organizerItem = listItem->data(ORGANIZER_ITEM_ROLE).value<QOrganizerItem>();
     if (!organizerItem.isEmpty())
-        emit showEditPage(m_manager, organizerItem);
+        emit showEditPage(organizerItem);
 }
 
 void DayPage::removeItem()
@@ -207,28 +248,6 @@ void DayPage::removeItem()
 
     if (m_itemList->count() == 0)
         m_itemList->addItem("(no entries)");
-}
-
-void DayPage::addNewEvent()
-{
-    // TODO: move this to CalendarDemo::addNewEvent() slot
-    QOrganizerEvent newEvent;
-    QDateTime time(m_day);
-    newEvent.setStartDateTime(time);
-    time = time.addSecs(60*30); // add 30 minutes to end time
-    newEvent.setEndDateTime(time);
-    emit showEditPage(m_manager, newEvent);
-}
-
-void DayPage::addNewTodo()
-{
-    // TODO: move this to CalendarDemo::addNewTodo() slot
-    QOrganizerTodo newTodo;
-    QDateTime time(m_day);
-    newTodo.setStartDateTime(time);
-    time = time.addSecs(60*30); // add 30 minutes to due time
-    newTodo.setDueDateTime(time);
-    emit showEditPage(m_manager, newTodo);
 }
 
 void DayPage::showEvent(QShowEvent *event)

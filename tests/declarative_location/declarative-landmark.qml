@@ -130,7 +130,15 @@ Rectangle {
 	// Value is true by default
         autoUpdate: true
 	// filter determines what data is requested
-	filter: landmarkFilterUndercity
+	//filter: landmarkFilterUndercity
+	
+	onLandmarksChanged: {
+	    console.log("Landmark count is: "+ count);
+	    for (var index = 0; index < landmarks.length; index++)  {
+	        console.log("Index, name:" + index + " , " + landmarks[index].name);
+            }
+	}
+	
 	/* 
 	// Alternatively filter could be declared directly
 	filter: LandmarkIntersectionFilter {
