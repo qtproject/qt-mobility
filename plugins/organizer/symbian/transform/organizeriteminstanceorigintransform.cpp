@@ -57,7 +57,7 @@ void OrganizerItemInstanceOriginTransform::transformToDetailL(const CCalInstance
 {
     QOrganizerItemInstanceOrigin origin;
     origin.setParentLocalId(instance.Entry().LocalUidL());
-    origin.setOriginalDate(OrganizerItemDetailTransform::toQDateTimeL(instance.StartTimeL()).date());
+    origin.setOriginalDate(toQDateTimeL(instance.StartTimeL()).date());
     itemInstance->saveDetail(&origin);
 }
 

@@ -38,66 +38,53 @@
 **
 ****************************************************************************/
 
-#ifndef DAYPAGE_H_
-#define DAYPAGE_H_
+#ifndef JOURNALEDITPAGE_H_
+#define JOURNALEDITPAGE_H_
 
 #include <QWidget>
 #include <QDate>
 #include <qmobilityglobal.h>
 #include <qorganizeritemid.h>
+#include <qorganizerjournal.h>
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItemManager;
+class QOrganizerEvent;
 class QOrganizerItem;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-class QMainWindow;
-class QLabel;
-class QListWidget;
-class QListWidgetItem;
-class QMenuBar;
-class QMenu;
+class QComboBox;
+class QLineEdit;
+class QDateTimeEdit;
 
-class DayPage : public QWidget
+class JournalEditPage : public QWidget
 {
     Q_OBJECT
 
 public:
-    DayPage(QWidget *parent = 0);
-    ~DayPage();
-
-#ifdef Q_OS_SYMBIAN
-    void setMenu(QMenu *menu);
-#endif
+    JournalEditPage(QWidget *parent = 0);
+    ~JournalEditPage();
 
 public Q_SLOTS:
-    void refresh();
-    void changeManager(QOrganizerItemManager *manager);
-    void dayChanged(QDate date);
-    void editItem();
-    void removeItem();
-
-private Q_SLOTS:
-    void itemDoubleClicked(QListWidgetItem *listItem);
-    void viewMonthClicked();
+    void cancelClicked();
+    void saveClicked();
+    void journalChanged(QOrganizerItemManager *manager, const QOrganizerJournal &journal);
+    void handleAlarmIndexChanged(const QString);
 
 Q_SIGNALS:
-    void showMonthPage();
-    void showEditPage(const QOrganizerItem &item);
-    void addNewEvent();
-    void addNewTodo();
-    void addNewJournal();
+    void showDayPage();
 
 protected: // from QWidget
     void showEvent(QShowEvent *event);
 
 private:
     QOrganizerItemManager *m_manager;
-    QDate m_day;
-    QLabel *m_dateLabel;
-    QListWidget *m_itemList;
-    QMenuBar *m_menuBar;
+    QOrganizerJournal m_organizerJournal;
+    QLineEdit *m_subjectEdit;
+    QDateTimeEdit *m_timeEdit;
+    QComboBox *m_alarmComboBox;
+
 };
 
-#endif // DAYPAGE_H_
+#endif // JOURNALEDITPAGE_H_

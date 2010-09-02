@@ -37,7 +37,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "todoeditpage.h"
+#include "journaleditpage.h"
 
 #include <QtGui>
 #include <QComboBox>
@@ -45,27 +45,18 @@
 
 QTM_USE_NAMESPACE
 
-TodoEditPage::TodoEditPage(QWidget *parent)
+JournalEditPage::JournalEditPage(QWidget *parent)
     :QWidget(parent),
     m_manager(0),
     m_subjectEdit(0),
-    m_startTimeEdit(0),
-    m_dueTimeEdit(0),
-    m_priorityEdit(0),
-    m_statusEdit(0),
+    m_timeEdit(0),
     m_alarmComboBox(0)
 {
     // Create widgets
     QLabel *subjectLabel = new QLabel("Subject:", this);
     m_subjectEdit = new QLineEdit(this);
-    QLabel *startTimeLabel = new QLabel("Start time:", this);
-    m_startTimeEdit = new QDateTimeEdit(this);
-    QLabel *dueTimeLabel = new QLabel("Due time:", this);
-    m_dueTimeEdit = new QDateTimeEdit(this);    
-    QLabel *priorityLabel = new QLabel("Priority:", this);
-    m_priorityEdit = new QComboBox(this);
-    QLabel *statusLabel = new QLabel("Status:", this);
-    m_statusEdit = new QComboBox(this);
+    QLabel *startTimeLabel = new QLabel("Time:", this);
+    m_timeEdit = new QDateTimeEdit(this);
     QLabel *alarmLabel = new QLabel("Alarm:", this);
     m_alarmComboBox = new QComboBox(this);
 
@@ -81,9 +72,9 @@ TodoEditPage::TodoEditPage(QWidget *parent)
                         SLOT(handleAlarmIndexChanged(const QString)));
 
 #ifndef Q_OS_SYMBIAN
-    // Add push buttons for non-Symbian platforms as they do not support soft keys
+    // Add push buttons for Maemo as it does not support soft keys
     QHBoxLayout* hbLayout = new QHBoxLayout();
-    QPushButton *okButton = new QPushButton("Save", this);
+    QPushButton *okButton = new QPushButton("Ok", this);
     connect(okButton,SIGNAL(clicked()),this,SLOT(saveClicked()));
     hbLayout->addWidget(okButton);
     QPushButton *cancelButton = new QPushButton("Cancel", this);
@@ -95,16 +86,11 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(subjectLabel);
     scrollAreaLayout->addWidget(m_subjectEdit);
     scrollAreaLayout->addWidget(startTimeLabel);
-    scrollAreaLayout->addWidget(m_startTimeEdit);
-    scrollAreaLayout->addWidget(dueTimeLabel);
-    scrollAreaLayout->addWidget(m_dueTimeEdit);
-    scrollAreaLayout->addWidget(priorityLabel);
-    scrollAreaLayout->addWidget(m_priorityEdit);
-    scrollAreaLayout->addWidget(statusLabel);
-    scrollAreaLayout->addWidget(m_statusEdit);
+    scrollAreaLayout->addWidget(m_timeEdit);
     scrollAreaLayout->addWidget(alarmLabel);
     scrollAreaLayout->addWidget(m_alarmComboBox);
     scrollAreaLayout->addStretch();
+
 #ifndef Q_OS_SYMBIAN
     scrollAreaLayout->addLayout(hbLayout);
 #endif
@@ -124,117 +110,77 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     cancelSoftKey->setSoftKeyRole(QAction::NegativeSoftKey);
     addAction(cancelSoftKey);
     connect(cancelSoftKey, SIGNAL(triggered(bool)), this, SLOT(cancelClicked()));
-    
+
     QAction* saveSoftKey = new QAction("Save", this);
     saveSoftKey->setSoftKeyRole(QAction::PositiveSoftKey);
     addAction(saveSoftKey);
     connect(saveSoftKey, SIGNAL(triggered(bool)), this, SLOT(saveClicked()));
-    
-    // Fill priority combo
-    m_priorityEdit->addItem("Unknown", QVariant(QOrganizerItemPriority::UnknownPriority));
-    m_priorityEdit->addItem("Highest", QVariant(QOrganizerItemPriority::HighestPriority));
-    m_priorityEdit->addItem("Extremely high", QVariant(QOrganizerItemPriority::ExtremelyHighPriority));
-    m_priorityEdit->addItem("Very high", QVariant(QOrganizerItemPriority::VeryHighPriority));
-    m_priorityEdit->addItem("High", QVariant(QOrganizerItemPriority::HighPriority));
-    m_priorityEdit->addItem("Medium", QVariant(QOrganizerItemPriority::MediumPriority));
-    m_priorityEdit->addItem("Low", QVariant(QOrganizerItemPriority::LowPriority));
-    m_priorityEdit->addItem("Very low", QVariant(QOrganizerItemPriority::VeryLowPriority));
-    m_priorityEdit->addItem("Extremely low", QVariant(QOrganizerItemPriority::ExtremelyLowPriority));
-    m_priorityEdit->addItem("Lowest", QVariant(QOrganizerItemPriority::LowestPriority));
-
-    // Fill status combo
-    m_statusEdit->addItem("Not started", QVariant(QOrganizerTodoProgress::StatusNotStarted));
-    m_statusEdit->addItem("In progress", QVariant(QOrganizerTodoProgress::StatusInProgress));
-    m_statusEdit->addItem("Complete", QVariant(QOrganizerTodoProgress::StatusComplete));
 }
 
-TodoEditPage::~TodoEditPage()
+JournalEditPage::~JournalEditPage()
 {
 
 }
 
-void TodoEditPage::todoChanged(QOrganizerItemManager *manager, const QOrganizerTodo &todo)
+void JournalEditPage::journalChanged(QOrganizerItemManager *manager, const QOrganizerJournal &journal)
 {
     m_manager = manager;
-    m_organizerTodo = todo;
-    m_subjectEdit->setText(todo.displayLabel());
-    m_startTimeEdit->setDateTime(todo.startDateTime());
-    m_dueTimeEdit->setDateTime(todo.dueDateTime());
-    int index = m_priorityEdit->findData(QVariant(todo.priority()));
-    m_priorityEdit->setCurrentIndex(index);
-    index = m_priorityEdit->findData(QVariant(todo.status()));
-    m_statusEdit->setCurrentIndex(index);
+    m_organizerJournal = journal;
+    m_subjectEdit->setText(journal.displayLabel());
+    m_timeEdit->setDateTime(journal.dateTime());
 }
 
 
-void TodoEditPage::cancelClicked()
+void JournalEditPage::cancelClicked()
 {
     emit showDayPage();
 }
 
-void TodoEditPage::saveClicked()
+void JournalEditPage::saveClicked()
 {
     // Read data from page
-    QDateTime start(m_startTimeEdit->dateTime());
-    QDateTime due(m_dueTimeEdit->dateTime());
-    if (start > due) {
-        QMessageBox::warning(this, "Failed!", "Start date is not before due date");
-        return;
-    }
+    m_organizerJournal.setDisplayLabel(m_subjectEdit->text());
+    m_organizerJournal.setDateTime(m_timeEdit->dateTime());
 
-    m_organizerTodo.setDisplayLabel(m_subjectEdit->text());
-    m_organizerTodo.setStartDateTime(start);
-    m_organizerTodo.setDueDateTime(due);
-    int index = m_priorityEdit->currentIndex();
-    m_organizerTodo.setPriority((QOrganizerItemPriority::Priority) m_priorityEdit->itemData(index).toInt());
-    
-    index = m_statusEdit->currentIndex();
-    QOrganizerTodoProgress::Status currentStatus = (QOrganizerTodoProgress::Status) m_statusEdit->itemData(index).toInt();
-    QOrganizerTodoProgress oldStatus = m_organizerTodo.detail<QOrganizerTodoProgress>();
-    m_organizerTodo.removeDetail(&oldStatus);
-    if (currentStatus == QOrganizerTodoProgress::StatusComplete && oldStatus.status() != QOrganizerTodoProgress::StatusComplete)
-        m_organizerTodo.setFinishedDateTime(QDateTime::currentDateTime());
-    m_organizerTodo.setStatus(currentStatus);
-    
     // Save
-    m_manager->saveItem(&m_organizerTodo);
+    m_manager->saveItem(&m_organizerJournal);
     if (m_manager->error())
-        QMessageBox::warning(this, "Failed!", QString("Failed to save todo!\n(error code %1)").arg(m_manager->error()));
+        QMessageBox::warning(this, "Failed!", QString("Failed to save journal!\n(error code %1)").arg(m_manager->error()));
     else
         emit showDayPage();
 }
 
-void TodoEditPage::showEvent(QShowEvent *event)
+void JournalEditPage::showEvent(QShowEvent *event)
 {
-    window()->setWindowTitle("Edit todo");
+    window()->setWindowTitle("Edit journal");
     QWidget::showEvent(event);
 }
 
-void TodoEditPage::handleAlarmIndexChanged(const QString time)
+void JournalEditPage::handleAlarmIndexChanged(const QString time)
 {
     QOrganizerItemVisualReminder reminder;
     reminder.setMessage(m_subjectEdit->text());
 
     if (time == "None") {
-         QOrganizerItemVisualReminder fetchedReminder = m_organizerTodo.detail(QOrganizerItemVisualReminder::DefinitionName);
-         m_organizerTodo.removeDetail(&fetchedReminder);
+         QOrganizerItemVisualReminder fetchedReminder = m_organizerJournal.detail(QOrganizerItemVisualReminder::DefinitionName);
+         m_organizerJournal.removeDetail(&fetchedReminder);
         return;
     } else if (time == "0 minutes before") {
-        reminder.setDateTime(m_startTimeEdit->dateTime());
+        reminder.setDateTime(m_timeEdit->dateTime());
     } else if (time == "5 minutes before") {
-        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(5*60));
+        QDateTime reminderTime = m_timeEdit->dateTime().addSecs(-(5*60));
         reminder.setDateTime(reminderTime);
     } else if (time == "15 minutes before") {
-        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(15*60));
+        QDateTime reminderTime = m_timeEdit->dateTime().addSecs(-(15*60));
         reminder.setDateTime(reminderTime);
     } else if (time == "30 minutes before") {
-        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(30*60));
+        QDateTime reminderTime = m_timeEdit->dateTime().addSecs(-(30*60));
         reminder.setDateTime(reminderTime);
     } else if (time == "1 hour before") {
-        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(60*60));
+        QDateTime reminderTime = m_timeEdit->dateTime().addSecs(-(60*60));
         reminder.setDateTime(reminderTime);
     }
 
-    m_organizerTodo.saveDetail(&reminder);
+    m_organizerJournal.saveDetail(&reminder);
 }
 
