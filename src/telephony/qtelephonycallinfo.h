@@ -68,6 +68,7 @@ public:
     QString subType() const;
     CallStatus status() const;
     QVariant value(const QString& key) const;
+    Direction direction() const;
 private:
     QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> d;
     friend class QTelephonyCallListPrivate;

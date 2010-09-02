@@ -77,3 +77,13 @@
     \value Voice       The call is a voice based call.
     \value Other       The call is a an unknown base call.
 */
+
+/*!
+    \enum QTelephony::Direction
+
+    This enum decribes the direction of the call.
+    A QTelephonyCallInfo object can have a direction of:
+
+    \value Received    The call is received.
+    \value Dialed      The call is dialed.
+*/

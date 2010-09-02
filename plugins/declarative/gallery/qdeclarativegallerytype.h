@@ -62,8 +62,7 @@ class QDeclarativeGalleryType : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery NOTIFY galleryChanged)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(Result result READ result NOTIFY resultChanged)
-    Q_PROPERTY(int currentProgress READ currentProgress NOTIFY progressChanged)
-    Q_PROPERTY(int maximumProgress READ maximumProgress NOTIFY progressChanged)
+    Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(bool live READ isLive WRITE setLive NOTIFY liveChanged)
     Q_PROPERTY(QString itemType READ itemType WRITE setItemType NOTIFY itemTypeChanged)
@@ -99,8 +98,11 @@ public:
     State state() const { return State(m_request.state()); }
     Result result() const { return Result(m_request.result()); }
 
-    int currentProgress() const { return m_request.currentProgress(); }
-    int maximumProgress() const { return m_request.maximumProgress(); }
+    qreal progress() const
+    {
+        const int max = m_request.maximumProgress();
+        return max > 0 ? qreal(m_request.currentProgress()) / max : qreal(0.0);
+    }
 
     QStringList propertyNames() { return m_request.propertyNames(); }
     void setPropertyNames(const QStringList &names) {
