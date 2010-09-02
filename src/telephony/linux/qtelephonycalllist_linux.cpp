@@ -105,6 +105,7 @@ void QTelephonyCallListPrivate::newChannelsSlot(const ChannelsArray& channelsarr
             QTelephonyCallInfoPrivate* cip = new QTelephonyCallInfoPrivate();
             cip->remotePartyIdentifier = var.toString();
             cip->type = QTelephony::Voice;
+            cip->direction = QTelephony::Received;
             callInfoList.append(QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(cip));
             emitActiveCallAdded(*cip);
         }

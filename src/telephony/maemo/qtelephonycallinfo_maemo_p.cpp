@@ -98,4 +98,17 @@ QTelephony::CallStatus QTelephonyCallInfoPrivate::status() const
     return ret;
 }
 
+QTelephony::Direction QTelephonyCallInfoPrivate::direction() const
+{
+    QTelephony::Direction ret = QTelephony::Received;
+    if(telepathychannel){
+        /*
+        1 = incomming
+        2 = outgoing*/
+        if(telepathychannel->getDirection() == 2)
+            ret = QTelephony::Dialed;
+    }
+    return ret;
+}
+
 QTM_END_NAMESPACE

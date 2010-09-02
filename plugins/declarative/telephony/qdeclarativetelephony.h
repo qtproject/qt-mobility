@@ -43,8 +43,8 @@
 #define QDECLARATIVETELEPHONY_H
 
 #include <QtCore>
-#include <qdeclarative.h>
-#include <qdeclarativelist.h>
+#include <QtDeclarative/qdeclarative.h>
+#include <QtDeclarative/qdeclarativelist.h>
 #include <qtelephony.h>
 #include <qtelephonycalllist.h>
 
@@ -53,7 +53,7 @@ QTM_USE_NAMESPACE
 
 class QTelephonyCallInfoWrapper : public QObject {
     Q_OBJECT
-    Q_ENUMS(CallType CallStatus)
+    Q_ENUMS(CallType CallStatus Direction)
     Q_PROPERTY(QString remotePartyIdentifier READ remotePartyIdentifier)
     Q_PROPERTY(CallType type READ type)
     Q_PROPERTY(CallStatus status READ status)
@@ -79,6 +79,11 @@ public:
         OnHold = QTelephony::OnHold
     };
 
+    enum Direction {
+        Received = QTelephony::Received,
+        Dialed = QTelephony::Dialed
+    };
+
     QTelephonyCallInfoWrapper();
     QTelephonyCallInfoWrapper(const QTelephonyCallInfo& other);
     QTelephonyCallInfoWrapper(const QTelephonyCallInfoWrapper& other);
@@ -91,6 +96,7 @@ public:
     CallStatus status() const;
     QString subType() const;
     QVariant value(const QString& param) const;
+    Direction direction() const;
 
 private:
     QTelephonyCallInfo* d;

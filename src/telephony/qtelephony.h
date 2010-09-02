@@ -67,6 +67,11 @@ namespace QTelephony
         Incomming,
         OnHold
     };
+
+    enum Direction {
+        Received = 0,
+        Dialed
+    };
 }
 
 QTM_END_NAMESPACE

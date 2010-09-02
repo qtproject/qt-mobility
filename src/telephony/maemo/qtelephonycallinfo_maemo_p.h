@@ -78,6 +78,7 @@ public:
     QString subType() const;
     QTelephony::CallStatus status() const;
     QHash<QString, QVariant> values;
+    QTelephony::Direction direction() const;
 
 public:
     DBus::ChannelPtr telepathychannel;

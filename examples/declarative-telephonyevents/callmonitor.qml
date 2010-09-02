@@ -83,52 +83,52 @@ Rectangle {
         //Convert status value to a string
         switch(call.status){
           case 0:
-                statusstr = "Idle";      
+                statusstr = "Idle";
                 break;
           case 1:
-                statusstr = "Dialing";      
+                statusstr = "Dialing";
                 break;
           case 2:
-                statusstr = "Alerting";      
+                statusstr = "Alerting";
                 break;
           case 3:
-                statusstr = "Connected";      
+                statusstr = "Connected";
                 break;
           case 4:
-                statusstr = "Disconnecting";      
+                statusstr = "Disconnecting";
                 break;
           case 5:
-                statusstr = "Incomming";      
+                statusstr = "Incomming";
                 break;
           case 6:
-                statusstr = "OnHold";      
+                statusstr = "OnHold";
                 break;
           default:
-                statusstr = "Unknown";      
+                statusstr = "Unknown";
         }
         
         //Convert type value to a string
         switch(call.type){
           case 0:
-                statusstr = "Any";      
+                typestr = "Any";
                 break;
           case 1:
-                statusstr = "Text";      
+                typestr = "Text";
                 break;
           case 2:
-                statusstr = "Data";      
+                typestr = "Data";
                 break;
           case 3:
-                statusstr = "Video";      
+                typestr = "Video";
                 break;
           case 4:
-                statusstr = "Voice";      
+                typestr = "Other";
                 break;
           case 5:
-                statusstr = "Other";      
+                typestr = "Other";
                 break;
           default:
-                statusstr = "Unknown";      
+                typestr = "Unknown";
         }
         
         //Add new call into the list model
@@ -136,7 +136,7 @@ Rectangle {
                     "name": call.remotePartyIdentifier,
                     "status": statusstr,
                     "event": eventstr,
-                    "type": statusstr
+                    "type": typestr
                 })
     }
     

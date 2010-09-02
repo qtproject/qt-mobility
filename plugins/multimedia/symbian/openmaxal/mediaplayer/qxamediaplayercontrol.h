@@ -39,31 +39,62 @@
 **
 ****************************************************************************/
 
-#include <QString>
-#include "qxarecordmediaserviceproviderplugin.h"
-#include "qxarecordmediaservice.h"
-#include "qxacommon.h"
+#ifndef QXAMEDIAPLAYERCONTROL_H
+#define QXAMEDIAPLAYERCONTROL_H
 
-QStringList QXARecordMediaServiceProviderPlugin::keys() const
+#include "qmediaplayercontrol.h"
+#include "qmediaplayer.h"
+
+QT_USE_NAMESPACE
+
+class QXAPlaySession;
+
+class QXAMediaPlayerControl : public QMediaPlayerControl
 {
-    return QStringList()
-            << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE);
-}
+    Q_OBJECT
+    Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
+public:
+    QXAMediaPlayerControl(QXAPlaySession *session, QObject *parent = 0);
+    ~QXAMediaPlayerControl();
 
-QMediaService* QXARecordMediaServiceProviderPlugin::create(QString const& key)
-{
-    if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
-        return new QXARecodMediaService;
-    else
-        QT_TRACE2("unsupported key:", key);
-    return 0;
-}
+    QMediaPlayer::State state() const;
+    QMediaPlayer::MediaStatus mediaStatus() const;
 
-void QXARecordMediaServiceProviderPlugin::release(QMediaService *service)
-{
-    QT_TRACE_FUNCTION_ENTRY;
-    delete service;
-    QT_TRACE_FUNCTION_EXIT;
-}
+    qint64 duration() const;
 
-Q_EXPORT_PLUGIN2(qtmultimediakit_xarecordservice, QXARecordMediaServiceProviderPlugin);
+    qint64 position() const;
+    void setPosition(qint64 position);
+
+    int volume() const;
+    void setVolume(int volume);
+
+    bool isMuted() const;
+    void setMuted(bool muted);
+
+    int bufferStatus() const;
+
+    bool isAudioAvailable() const;
+    bool isVideoAvailable() const;
+
+    bool isSeekable() const;
+
+    QMediaTimeRange availablePlaybackRanges() const;
+
+    float playbackRate() const;
+    void setPlaybackRate(float rate);
+
+    QMediaContent media() const;
+    const QIODevice *mediaStream() const;
+    void setMedia(const QMediaContent&, QIODevice *);
+
+    void play();
+    void pause();
+    void stop();
+
+
+private:
+    QXAPlaySession *mSession;
+    QIODevice *mStream;
+};
+
+#endif /* QXAMEDIAPLAYERCONTROL_H */
