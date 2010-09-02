@@ -95,7 +95,7 @@ void tst_recurringItems::initTestCase()
     QStringList managerNames = QOrganizerItemManager::availableManagers();
     managerNames.removeAll("invalid");
     managerNames.removeAll("skeleton");
-    //managerNames.removeAll("memory");
+    managerNames.removeAll("memory");
     foreach (QString managerName, managerNames) {
         m_om = new QOrganizerItemManager(managerName);
         m_om->removeItems(m_om->itemIds(), 0);
@@ -130,7 +130,7 @@ void tst_recurringItems::addRecurrenceRule_data()
     QStringList managerNames = QOrganizerItemManager::availableManagers();
     managerNames.removeAll("invalid"); // the test cases would not pass on invalid backend
     managerNames.removeAll("skeleton"); // the test cases would not pass on skeleton backend
-    //managerNames.removeAll("memory");
+    managerNames.removeAll("memory");
 
     foreach (QString managerName, managerNames) {
         addItemsWeeklyRecurrence(managerName, QOrganizerItemType::TypeEvent);
@@ -405,7 +405,7 @@ void tst_recurringItems::addManagers()
     QStringList managerNames = QOrganizerItemManager::availableManagers();
     managerNames.removeAll("invalid"); // the test cases would not pass on invalid backend
     managerNames.removeAll("skeleton"); // the test cases would not pass on skeleton backend
-    //managerNames.removeAll("memory");
+    managerNames.removeAll("memory");
 
     foreach(QString mgr, managerNames) {
         QTest::newRow(QString("[%1]").arg(mgr).toLatin1().constData()) << mgr;
@@ -721,11 +721,21 @@ void tst_recurringItems::addItemsDailyRecurrence(QString managerName, QString it
 
 void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString itemType)
 {
-    // Every year for 3 occurances
+    // Every year
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-    rrule.setCount(3);
     QTest::newRow(QString("[%1] yearly").arg(managerName).toLatin1().constData())
+        << managerName
+        << QString("yearly 0")
+        << itemType
+        << QDateTime::currentDateTime().addSecs(3600)
+        << rrule;
+
+    // Every year for 3 occurances
+    rrule = QOrganizerItemRecurrenceRule();
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    rrule.setCount(3);
+    QTest::newRow(QString("[%1] yearly for three years").arg(managerName).toLatin1().constData())
         << managerName
         << QString("yearly 1")
         << itemType

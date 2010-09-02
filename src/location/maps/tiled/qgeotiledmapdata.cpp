@@ -96,12 +96,11 @@ QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGe
     d->maxZoomSize = (1 << qRound(tileEngine->maximumZoomLevel())) * tileEngine->tileSize();
 
     d->scene = new QGraphicsScene(QRectF(QPointF(0.0, 0.0), d->maxZoomSize));
+    d->scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
     // TODO get this from the engine, which should give different values depending on if this is running on a device or not
     d->cache.setMaxCost(10 * 1024 * 1024);
     d->zoomCache.setMaxCost(10 * 1024 * 1024);
-    d->emptyTile = QPixmap(tileEngine->tileSize());
-    d->emptyTile.fill(Qt::lightGray);
 }
 
 QGeoTiledMapData::~QGeoTiledMapData()
@@ -236,6 +235,9 @@ void QGeoTiledMapData::setMapType(QGraphicsGeoMap::MapType mapType)
     QGeoMapData::setMapType(mapType);
 
     d->clearRequests();
+    d->cache.clear();
+    d->zoomCache.clear();
+    geoMap()->update();
     d->updateMapImage();
 }
 
@@ -293,6 +295,9 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
     QPixmap newImage(oldImage.size());
     newImage.fill(Qt::lightGray);
     QPainter painter2(&newImage);
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+    painter2.setRenderHint(QPainter::SmoothPixmapTransform, true);
+#endif
     if (zoomDiff < 0) {
         painter2.drawPixmap(source, oldImage, target);
     } else {
@@ -325,6 +330,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
 
         QList<QPair<QRect, QRect> > overlaps = d->intersectedScreen(tileRect);
         for (int i = 0; i < overlaps.size(); ++i) {
+            QRect s = overlaps.at(i).first;
             QRect t = overlaps.at(i).second;
 
             QRectF source = QRectF(offsetX + int(t.left()) / d->zoomFactor,
@@ -333,9 +339,12 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
                                    int(t.height()) / d->zoomFactor);
 
             QPixmap *tile = new QPixmap(tileSize);
-            tile->fill(Qt::lightGray);
+            tile->fill(Qt::lightGray); // TODO: this looks useless
 
-            QRectF target = QRectF(QPointF(0.0, 0.0), tileEngine->tileSize());
+            QRectF target = QRectF(int(s.left()) / d->zoomFactor,
+                                   int(s.top()) / d->zoomFactor,
+                                   int(s.width()) / d->zoomFactor,
+                                   int(s.height()) / d->zoomFactor);
 
             QPainter painter3(tile);
             painter3.drawPixmap(target, newImage, source);
@@ -378,7 +387,6 @@ void QGeoTiledMapData::pan(int dx, int dy)
     if (y > d->maxZoomSize.height() - height)
         y = d->maxZoomSize.height() - height;
 
-
     d->maxZoomCenter.setX(x);
     d->maxZoomCenter.setY(y);
 
@@ -403,7 +411,7 @@ void QGeoTiledMapData::processRequests()
     Q_D(QGeoTiledMapData);
 
     QMutableSetIterator<QGeoTiledMapReply*> replyIter(d->replies);
-    //Kill off screen replies
+    // Abort off-screen replies
     while (replyIter.hasNext()) {
         QGeoTiledMapReply *reply = replyIter.next();
         if (!d->intersectsScreen(reply->request().tileRect())
@@ -417,7 +425,7 @@ void QGeoTiledMapData::processRequests()
     }
 
     QGeoTiledMappingManagerEngine *tiledEngine
-    = static_cast<QGeoTiledMappingManagerEngine*>(engine());
+        = static_cast<QGeoTiledMappingManagerEngine*>(engine());
 
     QMutableListIterator<QGeoTiledMapRequest> requestIter(d->requests);
     while (requestIter.hasNext()) {
@@ -672,10 +680,9 @@ QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoM
 
 QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
 {
-    QList<QGeoTiledMapReply*> replyList = replies.toList();
-    for (int i = 0; i < replyList.size(); ++i) {
-        replyList.at(i)->abort();
-        replyList.at(i)->deleteLater();
+    foreach(QGeoTiledMapReply *reply, replies) {
+        reply->abort();
+        reply->deleteLater();
     }
 }
 
@@ -766,7 +773,7 @@ void QGeoTiledMapDataPrivate::paintMap(QPainter *painter, const QStyleOptionGrap
                 if (zoomCache.contains(req)) {
                     painter->drawPixmap(target, *zoomCache.object(req), source);
                 } else {
-                    painter->drawPixmap(target, emptyTile, source);
+                    painter->fillRect(target, Qt::lightGray);
                 }
             }
         }
@@ -778,43 +785,52 @@ void QGeoTiledMapDataPrivate::paintMapObjects(QPainter *painter, const QStyleOpt
     updateScreenRect();
 
     qreal targetX = ((viewportSize.width() * zoomFactor) - maxZoomScreenRect.width()) / 2.0;
-    if (targetX < 0.0)
-        targetX = 0.0;
+    Q_ASSERT(targetX >= 0.0); // This should not be possible
     targetX /= zoomFactor;
+
     qreal targetY = ((viewportSize.height() * zoomFactor) - maxZoomScreenRect.height()) / 2.0;
-    if (targetY < 0.0)
-        targetY = 0.0;
+    Q_ASSERT(targetY >= 0.0); // This should not be possible
     targetY /= zoomFactor;
-    qreal targetW = viewportSize.width() - 2 * targetX;
-    qreal targetH = viewportSize.height() - 2 * targetY;
+
+    qreal targetW = qreal(maxZoomScreenRect.width())/zoomFactor;
+    qreal targetH = qreal(maxZoomScreenRect.height())/zoomFactor;
 
     QRect worldRect = QRect(QPoint(0.0, 0.0), maxZoomSize);
 
     if (worldRect.contains(maxZoomScreenRect)) {
+        // the screen is completely contained inside the map, which means we can just draw once and be done.
         scene->render(painter,
                       QRectF(targetX, targetY, targetW, targetH),
-                      maxZoomScreenRect);
+                      maxZoomScreenRect,
+                      Qt::IgnoreAspectRatio);
         return;
     }
 
-    QRect inside = maxZoomScreenRect.intersected(worldRect);
+    // cut off the part east of the dateline
+    QRect westside = maxZoomScreenRect.intersected(worldRect);
 
-    qreal insideWidth = targetW * inside.width() / maxZoomScreenRect.width();
+    qreal westsideWidth = floor(qreal(westside.width()) / zoomFactor);
+
+    westside.setWidth(westsideWidth*zoomFactor);
+    westside.setHeight(maxZoomScreenRect.height());
 
     scene->render(painter,
-                  QRectF(targetX, targetY, insideWidth, targetH),
-                  inside);
+                  QRectF(targetX, targetY, westsideWidth, targetH),
+                  westside,
+                  Qt::IgnoreAspectRatio);
 
-    QRect outside = QRect(0,
+    qreal eastsideWidth = targetW-westsideWidth;
+
+    QRect eastside = QRect(0,
                           maxZoomScreenRect.y(),
-                          maxZoomScreenRect.width() - inside.width(),
+                          eastsideWidth*zoomFactor,
                           maxZoomScreenRect.height());
 
-    qreal outsideWidth = targetW * outside.width() / maxZoomScreenRect.width();
-
     scene->render(painter,
-                  QRectF(targetX + targetW - outsideWidth, targetY, outsideWidth, targetH),
-                  outside);
+                  QRectF(targetX + targetW - eastsideWidth, targetY, eastsideWidth, targetH),
+                  eastside,
+                  Qt::IgnoreAspectRatio);
+    // TODO: call this recursively to draw more than 2 sets of objects
 }
 
 
@@ -878,6 +894,9 @@ void QGeoTiledMapDataPrivate::updateScreenRect()
         x += maxZoomSize.width();
 
     int y = maxZoomCenter.y() - (height / 2);
+
+    if (height == maxZoomSize.height())
+        y = 0;
 
     maxZoomScreenRect = QRect(x, y, width, height);
 

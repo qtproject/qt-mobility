@@ -210,8 +210,8 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& /*ident*
         QString serviceName = "com.nokia.qtmobility.sfw." + list[0].name;
         connection->unregisterService(serviceName);
 
-        connection->registerService(serviceName);
-        if (!connection->registerService(serviceName)) {
+        bool service = connection->registerService(serviceName);
+        if (!service) {
             qWarning() << "Cannot register service to DBus";
             return 0;
         }
@@ -235,6 +235,7 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& /*ident*
         Q_UNUSED(endpoint);
         return true;
     }
+
     return false;
 }
 

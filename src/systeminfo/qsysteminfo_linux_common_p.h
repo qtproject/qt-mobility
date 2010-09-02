@@ -234,8 +234,8 @@ public:
     QString imei() {return QString();}
     QString imsi() {return QString();}
     QString manufacturer();
-    QString model();
-    QString productName();
+    QString model()  {return QString();}
+    QString productName()  {return QString();}
 
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
 

@@ -74,7 +74,17 @@ SOURCES += \
 HEADERS += $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS
 
-symbian { 
+maemo5 {
+    isEmpty(ORGANIZER_DEFAULT_ENGINE): ORGANIZER_DEFAULT_ENGINE=maemo5
+}
+
+maemo6 {
+    isEmpty(ORGANIZER_DEFAULT_ENGINE): ORGANIZER_DEFAULT_ENGINE=maemo6
+}
+
+symbian {
+    isEmpty(ORGANIZER_DEFAULT_ENGINE): ORGANIZER_DEFAULT_ENGINE=symbian
+
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
 
@@ -95,6 +105,7 @@ symbian {
     for(header, exportheaders.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
 }
 
+CONFIG += app
 maemo5 {
     isEmpty(ORGANIZER_DEFAULT_ENGINE): ORGANIZER_DEFAULT_ENGINE=maemo5
 }

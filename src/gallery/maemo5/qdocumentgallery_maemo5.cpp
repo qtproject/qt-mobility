@@ -74,11 +74,10 @@ private:
     QGalleryDBusInterfacePointer metaDataInterface();
     QGalleryDBusInterfacePointer searchInterface();
     QGalleryDBusInterfacePointer fileInterface();
-    QGalleryDBusInterfacePointer thumbnailInterface();
     QGalleryTrackerChangeNotifier *changeNotifier();
 
     QGalleryAbstractResponse *createItemListResponse(
-            const QGalleryTrackerResultSetArguments &arguments,
+            QGalleryTrackerResultSetArguments *arguments,
             int offset,
             int limit,
             bool isItemType,
@@ -88,7 +87,6 @@ private:
     QGalleryDBusInterfacePointer metaDataService;
     QGalleryDBusInterfacePointer searchService;
     QGalleryDBusInterfacePointer fileService;
-    QGalleryDBusInterfacePointer thumbnailService;
     QScopedPointer<QGalleryTrackerChangeNotifier> notifier;
 };
 
@@ -136,25 +134,6 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::fileInterface()
     return fileService;
 }
 
-QGalleryDBusInterfacePointer QDocumentGalleryPrivate::thumbnailInterface()
-{
-    if (!thumbnailService) {
-
-        thumbnailService = new QGalleryThumbnailerDBusInterface(
-#ifdef Q_WS_MAEMO_5
-                QLatin1String("org.freedesktop.thumbnailer"),
-                QLatin1String("/org/freedesktop/thumbnailer/Generic"),
-                "org.freedesktop.thumbnailer.Generic");
-#else
-                QLatin1String("org.freedesktop.thumbnails.Thumbnailer1"),
-                QLatin1String("/org/freedesktop/thumbnails/Thumbnailer1"),
-                "org.freedesktop.thumbnails.Thumbnailer1");
-#endif
-    }
-    return thumbnailService;
-}
-
-
 QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::changeNotifier()
 {
     if (!notifier)
@@ -169,13 +148,13 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
 
     QGalleryTrackerResultSetArguments arguments;
 
-    int result = schema.prepareIdResponse(
+    int result = schema.prepareItemResponse(
             &arguments, this, request->itemId().toString(), request->propertyNames());
 
     if (result != QGalleryAbstractRequest::Succeeded) {
         return new QGalleryAbstractResponse(result);
     } else {
-        return createItemListResponse(arguments, 0, 1, schema.isItemType(), request->isLive());
+        return createItemListResponse(&arguments, 0, 1, schema.isItemType(), request->isLive());
     }
 }
 
@@ -203,7 +182,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createTypeResponse(QGalleryTy
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
-        const QGalleryTrackerResultSetArguments &arguments,
+        QGalleryTrackerResultSetArguments *arguments,
         int offset,
         int limit,
         bool isItemType,
@@ -235,7 +214,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
 
     QGalleryTrackerResultSetArguments arguments;
 
-    int result = schema.prepareFilterResponse(
+    int result = schema.prepareQueryResponse(
             &arguments,
             this,
             request->scope(),
@@ -248,7 +227,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
         return new QGalleryAbstractResponse(result);
     } else {
         return createItemListResponse(
-                arguments,
+                &arguments,
                 request->offset(),
                 request->limit(),
                 schema.isItemType(),

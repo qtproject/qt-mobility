@@ -102,20 +102,9 @@ void UT_CPplPredictiveSearchTable::ConstructL()
     // It generates the test case table.
     CEUnitTestSuiteClass::ConstructL();
     
-#if defined(USE_ORBIT_KEYMAP)
     // Create singleton outside actual test cases so that it is not treated as
     // resource leak, since it can't be deleted.
     HbKeymapFactory::instance();
-#else
-    // If Orbit keymap is not used, EUnit shows there is a resource leak in the
-    // first test case of UT_CPplPredictiveSearchTable that writes something to
-    // the database.
-    // To get rid of the resource leak, the following code is here to create DB,
-    // and one contact, delete it, delete DB. 
-    SetupL();
-    UT_DeleteLL(); // Adds and deletes 1 contact
-    Teardown();
-#endif
     }
     
 // -----------------------------------------------------------------------------
@@ -143,9 +132,7 @@ void UT_CPplPredictiveSearchTable::SetupL()
                                             *iTable,
                                             *iPredSearchQwertyTable,
                                             *iPredSearchSettingsTable);  
-#if defined(USE_ORBIT_KEYMAP)
     HbKeymapFactory::instance();
-#endif
 	}
     
 // -----------------------------------------------------------------------------

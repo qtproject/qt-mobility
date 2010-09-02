@@ -10,6 +10,10 @@ include(../examples.pri)
 DEPENDPATH += .
 CONFIG += mobility
 MOBILITY = organizer
+contains(mobility_modules,versit) {
+    MOBILITY += versit
+    DEFINES += BUILD_VERSIT
+}
 
 # Input
 SOURCES += src/main.cpp \
@@ -35,7 +39,9 @@ INCLUDEPATH += . \
     ../../src/organizer/items \
     ../../src/organizer/details \
     ../../src/organizer/filters \
-    ../../src/organizer/requests
+    ../../src/organizer/requests \
+    ../../src/versit \
+    ../../src/versitorganizer
 
 
 symbian: {

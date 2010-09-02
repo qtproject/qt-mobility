@@ -18,8 +18,32 @@ win32 {
 }
 
 symbian {
-    SOURCES += tst_telephony_s60.cpp
-    MOBILITY = telephony
+    DEFINES+=QT_MAKEDLL QT_BUILD_TELEPHONY_LIB
+
+    contains(callinformation_symbian_enabled, yes) {
+        INCLUDEPATH -= ../../../src/telephony
+        INCLUDEPATH += ../../../src/telephony/symbian
+
+        SOURCES += tst_telephony_moc_s3.cpp \
+            ../../../src/telephony/symbian/qtelephonycallinfo_symbian_p.cpp \
+            ../../../src/telephony/symbian/qtelephonycalllist_symbian_p.cpp
+
+        HEADERS += \
+            ../../../src/telephony/symbian/qtelephonycallinfo_symbian_p.h \
+            ../../../src/telephony/symbian/qtelephonycalllist_symbian_p.h
+
+    }    
+        
+    SOURCES += tst_telephony_s60.cpp \
+        ../../../src/telephony/qtelephonycalllist.cpp \
+        ../../../src/telephony/qtelephonycallinfo.cpp
+            
+    HEADERS += \
+        ../../../src/telephony/qtelephonycalllist.h \
+        ../../../src/telephony/qtelephonycallinfo.h
+
+
+
 } 
 
 linux-*:!maemo* {

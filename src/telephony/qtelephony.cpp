@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,17 +40,17 @@
 ****************************************************************************/
 
 /*!
-    \namespace QTelephonyEvents
+    \namespace QTelephony
 
     \inmodule QtTelephony
 
     \ingroup telephonyapienum
 
-    \brief The QTelephonyEvents namespace contains all enumerators for the Telephony Events API.
+    \brief The QTelephony namespace contains all enumerators for the Telephony Events API.
 */
 
 /*!
-    \enum  QTelephonyEvents::CallStatus
+    \enum  QTelephony::CallStatus
 
     This enum type is used to describe the status of a call.
     A QTelephonyCallInfo object can have a status of:
@@ -65,7 +65,7 @@
 */
 
 /*!
-    \enum QTelephonyEvents::CallType
+    \enum QTelephony::CallType
 
     This enum decribes the type of the call.
     A QTelephonyCallInfo object can be a type of:
@@ -76,4 +76,14 @@
     \value Video       The call is a video based call.
     \value Voice       The call is a voice based call.
     \value Other       The call is a an unknown base call.
+*/
+
+/*!
+    \enum QTelephony::Direction
+
+    This enum decribes the direction of the call.
+    A QTelephonyCallInfo object can have a direction of:
+
+    \value Received    The call is received.
+    \value Dialed      The call is dialed.
 */

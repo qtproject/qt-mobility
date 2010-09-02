@@ -368,11 +368,7 @@ CPplPredictiveSearchTableBase::AddTokens(HBufC* aString, QStringList& aTokens) c
 	if (aString)
 		{
 		QString s((QChar*)aString->Ptr(), aString->Length());
-#if defined(USE_ORBIT_KEYMAP)
 		QStringList tokens = s.split(iKeyMap->Separator(), QString::SkipEmptyParts);
-#else
-		QStringList tokens = s.split(' ', QString::SkipEmptyParts);
-#endif
 
 		// Select tokens in the same order they are in original aString
 		for (TInt i = 0; i < tokens.count(); ++i)

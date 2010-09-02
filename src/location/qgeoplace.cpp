@@ -43,6 +43,10 @@
 #include "qgeoplace_p.h"
 #include "qlandmark.h"
 
+#ifdef QGEOPLACE_DEBUG
+#include <QDebug>
+#endif
+
 #if !defined(Q_CC_MWERKS)
 template<> QTM_PREPEND_NAMESPACE(QGeoPlacePrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QGeoPlacePrivate)>::clone()
 {
@@ -77,7 +81,6 @@ QTM_BEGIN_NAMESPACE
     if (p.isLandmark())
         l = QLandmark(p)
     \endcode
-
     \sa type()
 */
 
@@ -245,6 +248,14 @@ QGeoPlacePrivate& QGeoPlacePrivate::operator= (const QGeoPlacePrivate & other)
 
 bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
 {
+
+#ifdef QGEOPLACE_DEBUG
+    qDebug() << "typoe" << (type == other.type);
+    qDebug() << "viewport" << (viewport == other.viewport);
+    qDebug() << "coordinate:" <<  (coordinate == other.coordinate);
+    qDebug() << "address:" << (address == other.address);
+#endif
+
     return ((type == other.type)
             && (viewport == other.viewport)
             && (coordinate == other.coordinate)

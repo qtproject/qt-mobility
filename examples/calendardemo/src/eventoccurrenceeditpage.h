@@ -74,7 +74,6 @@ public Q_SLOTS:
     void cancelClicked();
     void saveOrNextClicked();
     void eventOccurrenceChanged(QOrganizerItemManager *manager, const QOrganizerEventOccurrence &eventOccurrence);
-    void handlemultipleEntriesToBeCreated(int);
 
 Q_SIGNALS:
     void showDayPage();
@@ -87,7 +86,7 @@ private:
     QOrganizerEventOccurrence m_organizerEventOccurrence;
     QList<QOrganizerItem> m_listOfEvents;
     QOrganizerItemSaveRequest *m_saveItemRequest;
-    QVBoxLayout *m_scrollAreaLayout;
+    QVBoxLayout *scrollAreaLayout;
     QAction *m_saveOrNextSoftKey;
     QComboBox *m_typeComboBox;
     QLineEdit *m_subjectEdit;

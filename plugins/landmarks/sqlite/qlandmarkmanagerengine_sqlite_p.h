@@ -58,10 +58,11 @@
 
 #include <QSqlDatabase>
 #include <QHash>
+#include <QSet>
+#include <QMutex>
 #include "databaseoperations_p.h"
 
 QTM_USE_NAMESPACE
-using namespace DatabaseOperations;
 
 class QLandmarkManagerEngineSqlite : public QLandmarkManagerEngine
 {
@@ -176,6 +177,8 @@ public slots:
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
     void updateLandmarkFetchRequest(QLandmarkFetchRequest* req, const QList<QLandmark>& result,
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
+    void updateLandmarkFetchByIdRequest(QLandmarkFetchByIdRequest* req, const QList<QLandmark>& result,
+                                   QLandmarkManager::Error error, const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState);
     void updateLandmarkSaveRequest(QLandmarkSaveRequest* req, const QList<QLandmark>& result,
                                     QLandmarkManager::Error error, const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState);
     void updateLandmarkRemoveRequest(QLandmarkRemoveRequest* req, QLandmarkManager::Error error,
@@ -184,11 +187,13 @@ public slots:
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
     void updateLandmarkCategoryFetchRequest(QLandmarkCategoryFetchRequest *req, const QList<QLandmarkCategory>& result,
                                                    QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
+    void updateLandmarkCategoryFetchByIdRequest(QLandmarkCategoryFetchByIdRequest* req, const QList<QLandmarkCategory> &categories, QLandmarkManager::Error error,
+                                     const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState);
     void updateLandmarkCategorySaveRequest(QLandmarkCategorySaveRequest* req, const QList<QLandmarkCategory> &categories, QLandmarkManager::Error error,
                                      const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState);
     void updateLandmarkCategoryRemoveRequest(QLandmarkCategoryRemoveRequest* req, QLandmarkManager::Error error,
                                            const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState);
-    void updateLandmarkImportRequest(QLandmarkImportRequest *req, QLandmarkManager::Error error, const QString &errorString,
+    void updateLandmarkImportRequest(QLandmarkImportRequest *req, const QList<QLandmarkId> &ids, QLandmarkManager::Error error, const QString &errorString,
                                             QLandmarkAbstractRequest::State newState);
     void updateLandmarkExportRequest(QLandmarkExportRequest *req, QLandmarkManager::Error error, const QString &errorString,
                                      QLandmarkAbstractRequest::State newState);
@@ -213,11 +218,14 @@ private:
     QString m_dbFilename;
     QString m_dbConnectionName;
     QHash<QLandmarkAbstractRequest *, QueryRun *> m_requestRunHash;
+    QSet<QLandmarkAbstractRequest *> m_activeRequests;
     DatabaseFileWatcher *m_dbWatcher;
     qreal m_latestTimestamp;
-    friend class DatabaseOperations::QueryRun;
-    bool m_isExtendedAttributesEnabled;
-    bool m_isCustomAttributesEnabled;
+    volatile bool m_isExtendedAttributesEnabled;
+    volatile bool m_isCustomAttributesEnabled;
+    DatabaseOperations m_databaseOperations;
+    friend class QueryRun;
+    QMutex m_mutex;//protects m_requestRunHash and m_activeRequests
 };
 
 #endif // QLANDMARKMANAGERENGINE_SQLITE_P_H

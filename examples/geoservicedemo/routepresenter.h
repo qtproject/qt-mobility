@@ -59,7 +59,7 @@ public:
     virtual void show();
 
 private:
-    QTreeWidgetItem* showRoutes();
+    void showRoutes();
     void showRoute(QTreeWidgetItem* top, const QGeoRoute& route);
     void showRouteSegment(QTreeWidgetItem* routeItem, const QGeoRouteSegment &segment);
     void showPoints(QTreeWidgetItem* pointsItem, const QList<QGeoCoordinate>& points);
@@ -68,7 +68,7 @@ private:
                    QGeoRouteRequest::AvoidFeatureTypes avoid);
 
 private:
-    const QGeoRouteReply* routeReply;
+    const QGeoRouteReply* m_routeReply;
 };
 
 #endif

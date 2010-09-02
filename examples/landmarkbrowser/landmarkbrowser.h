@@ -25,6 +25,7 @@ private slots:
    void on_deleteLandmarks_clicked();
    void on_addLandmark_clicked();
    void fetchHandler(QLandmarkAbstractRequest::State state);
+   void cancel();
 
 private:
     QLandmarkFetchRequest *landmarkFetch;

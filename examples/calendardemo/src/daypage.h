@@ -57,6 +57,7 @@ class QLabel;
 class QListWidget;
 class QListWidgetItem;
 class QMenuBar;
+class QMenu;
 
 class DayPage : public QWidget
 {
@@ -66,20 +67,27 @@ public:
     DayPage(QWidget *parent = 0);
     ~DayPage();
 
+#ifdef Q_OS_SYMBIAN
+    void setMenu(QMenu *menu);
+#endif
+
 public Q_SLOTS:
     void refresh();
-    void dayChanged(QOrganizerItemManager *manager, QDate date);
-    void itemDoubleClicked(QListWidgetItem *listItem);
-    void backClicked();
+    void changeManager(QOrganizerItemManager *manager);
+    void dayChanged(QDate date);
     void editItem();
     void removeItem();
-    void addNewEvent();
-    void addNewTodo();
-    void addNewJournal();
+
+private Q_SLOTS:
+    void itemDoubleClicked(QListWidgetItem *listItem);
+    void viewMonthClicked();
 
 Q_SIGNALS:
     void showMonthPage();
-    void showEditPage(QOrganizerItemManager *manager, const QOrganizerItem &item);
+    void showEditPage(const QOrganizerItem &item);
+    void addNewEvent();
+    void addNewTodo();
+    void addNewJournal();
 
 protected: // from QWidget
     void showEvent(QShowEvent *event);

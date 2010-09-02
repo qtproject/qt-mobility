@@ -77,6 +77,16 @@
 */
 
 /*!
+    \enum QTelephonyCallInfoWrapper::Direction
+
+    This enum decribes the direction of the call.
+    A QTelephonyCallInfo object can have a direction of:
+
+    \value Received    The call is received.
+    \value Dialed      The call is dialed.
+*/
+
+/*!
     \fn  QTelephonyCallInfoWrapper::QTelephonyCallInfoWrapper()
 
     Constructor of a QTelephonyCallInfoWrapper object.
@@ -96,7 +106,7 @@ QTelephonyCallInfoWrapper::QTelephonyCallInfoWrapper()
 QTelephonyCallInfoWrapper::QTelephonyCallInfoWrapper(const QTelephonyCallInfo& other)
     : QObject(0)
 {
-   // d = new QTelephonyCallInfo(other);
+    d = new QTelephonyCallInfo(other);
 }
 
 /*!
@@ -193,6 +203,18 @@ QVariant QTelephonyCallInfoWrapper::value(const QString& param) const
 }
 
 /*!
+    \fn  QVariant QTelephonyCallInfoWrapper::direction() const
+
+    Gives back the direction of a call.
+    This function is for reading the direction of a call (received or dialed).
+*/
+QTelephonyCallInfoWrapper::Direction QTelephonyCallInfoWrapper::direction() const
+{
+    return (QTelephonyCallInfoWrapper::Direction)d->direction();
+}
+
+
+/*!
     \class QTelephonyCallListWrapper
     \ingroup telephonyapi
     \brief The QTelephonyCallListWrapper class for a QTelephonyCallList object. This wrapper class can be used in QML to work with telephony.
@@ -207,13 +229,15 @@ QVariant QTelephonyCallInfoWrapper::value(const QString& param) const
 QTelephonyCallListWrapper::QTelephonyCallListWrapper()
     : QObject(0)
 {
+    qDebug() << "QTelephonyCallListWrapper::QTelephonyCallListWrapper()";
     d = new QTelephonyCallList(this);
-    connect(d, SIGNAL(activeCallStatusChanged(const QTelephonyCallInfo))
-        , this , SIGNAL(activeCallStatusChanged(const QTelephonyCallInfo)));
-    connect(d, SIGNAL(activeCallRemoved(const QTelephonyCallInfo))
-        , this, SIGNAL(activeCallRemoved(const QTelephonyCallInfo)));
-    connect(d, SIGNAL(activeCallAdded(const QTelephonyCallInfo))
-        , this, SIGNAL(activeCallAdded(const QTelephonyCallInfo)));
+
+    connect(d, SIGNAL(activeCallStatusChanged(const QTelephonyCallInfo&))
+        , this , SLOT(onCallStatusChanged(const QTelephonyCallInfo&)));
+    connect(d, SIGNAL(activeCallRemoved(const QTelephonyCallInfo&))
+        , this, SLOT(onCallRemoved(const QTelephonyCallInfo&)));
+    connect(d, SIGNAL(activeCallAdded(const QTelephonyCallInfo&))
+        , this, SLOT(onCallAdded(const QTelephonyCallInfo&)));
 }
 
 /*!
@@ -238,7 +262,7 @@ QList<QTelephonyCallInfoWrapper> QTelephonyCallListWrapper::activeCalls(const QT
     QList<QtMobility::QTelephonyCallInfo> calllist;
     QList<QTelephonyCallInfoWrapper> ret;
     if(d)
-        calllist = d->activeCalls((QTelephonyEvents::CallType)calltype);
+        calllist = d->activeCalls((QTelephony::CallType)calltype);
 
     //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
     for( int i = 0; i < calllist.count(); i++){
@@ -253,9 +277,11 @@ QList<QTelephonyCallInfoWrapper> QTelephonyCallListWrapper::activeCalls(const QT
 
     This Slot is called whenever a call changed its status.
 */
-void QTelephonyCallListWrapper::activeCallStatusChanged(const QTelephonyCallInfo& call)
+void QTelephonyCallListWrapper::onCallStatusChanged(const QTelephonyCallInfo& call)
 {
-    emit activeCallStatusChanged(QTelephonyCallInfoWrapper(call));
+    qDebug() << "QTelephonyCallListWrapper::onActiveCallStatusChanged(...)";
+    QTelephonyCallInfoWrapper tciw(call);
+    emit evActiveCallStatusChanged(&tciw);
 }
 
 /*! 
@@ -264,9 +290,11 @@ void QTelephonyCallListWrapper::activeCallStatusChanged(const QTelephonyCallInfo
 
     This Slot is called whenever a call was removed from the active call list of QTelephonyCallList.
 */
-void QTelephonyCallListWrapper::activeCallRemoved(const QTelephonyCallInfo& call)
+void QTelephonyCallListWrapper::onCallRemoved(const QTelephonyCallInfo& call)
 {
-    emit activeCallRemoved(QTelephonyCallInfoWrapper(call));
+    qDebug() << "QTelephonyCallListWrapper::onActiveCallRemoved(...)";
+    QTelephonyCallInfoWrapper tciw(call);
+    emit evActiveCallRemoved(&tciw);
 }
 
 /*! 
@@ -275,8 +303,10 @@ void QTelephonyCallListWrapper::activeCallRemoved(const QTelephonyCallInfo& call
 
     This Slot is called whenever a call was added to the active call list of QTelephonyCallList.
 */
-void QTelephonyCallListWrapper::activeCallAdded(const QTelephonyCallInfo& call)
+void QTelephonyCallListWrapper::onCallAdded(const QTelephonyCallInfo& call)
 {
-    emit activeCallAdded(QTelephonyCallInfoWrapper(call));
+    qDebug() << "QTelephonyCallListWrapper::onCallAdded(...)";
+    QTelephonyCallInfoWrapper tciw(call);
+    emit evActiveCallAdded(&tciw);
 }
 

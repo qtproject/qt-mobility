@@ -95,6 +95,10 @@ void OrganizerItemRecurrenceTransform::transformToDetailL(const CCalInstance& in
 
 void OrganizerItemRecurrenceTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
+    if (QOrganizerItemType::TypeNote == item.type()) {
+        // Notes do not support the reccurrence rules
+        return;
+    }
     // Clear all repeating properties from this entry.
     // This is needed for removing recurrence rules from an existing entry.
     entry->ClearRepeatingPropertiesL();
@@ -294,6 +298,8 @@ TCalRRule OrganizerItemRecurrenceTransform::toCalRRuleL(QList<QOrganizerItemRecu
                 tempDaysOfMonth.append(startDateTime.date().day());
                 rrule.setDaysOfMonth(tempDaysOfMonth);
             }
+            // Convert days-of-month into by-month-day
+            toMonthDaysL(rrule.daysOfMonth(), calRule);
         } else if (calRule.Type() == TCalRRule::EYearly) {
             // Note: this is a special case; days of week can be converted
             // either to TDay array or to TDayOfMonth array, depending on
@@ -301,9 +307,6 @@ TCalRRule OrganizerItemRecurrenceTransform::toCalRRuleL(QList<QOrganizerItemRecu
             // -> Convert days-of-week and positions into TDayOfMonth array
             toDaysOfMonthL(rrule.daysOfWeek(), rrule.positions(), calRule);
         }
-
-        // Convert days-of-month into by-month-day
-        toMonthDaysL(rrule.daysOfMonth(), calRule);
 
         // Convert months into by-month
         toTMonthsL(rrule.months(), calRule);

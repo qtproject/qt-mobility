@@ -17,19 +17,34 @@ PUBLIC_HEADERS += qtelephonycalllist.h \
 
 SOURCES +=        qtelephonycalllist.cpp \
                   qtelephonycallinfo.cpp \
-				  qtelephony.cpp
+                  qtelephony.cpp
 
 # Private Headers and sources
-win32: {
-    HEADERS += qtelephonycalllist_win_p.h \
-               qtelephonycallinfo_p
-    SOURCES += qtelephonycalllist_win.cpp
-}
 
-symbian: {
-    HEADERS += qtelephonycalllist_symbian_p.h \
-               qtelephonycallinfo_p.h
-    SOURCES += qtelephonycalllist_symbian.cpp
+symbian {
+    contains(callinformation_symbian_enabled, yes) {
+        # Implementation which is used with Symbian^3 and Symbian^4
+        HEADERS += symbian/qtelephonycalllist_symbian_p.h \
+                   symbian/qtelephonycallinfo_symbian_p.h
+        SOURCES += symbian/qtelephonycalllist_symbian_p.cpp \
+                   symbian/qtelephonycallinfo_symbian_p.cpp
+               
+        LIBS += -ltelephonyservice -lserviceprovidersettings
+    } else {
+        HEADERS += qtelephonycalllist_symbian_p.h \
+                   qtelephonycallinfo_p.h
+        SOURCES += qtelephonycalllist_symbian.cpp
+    }
+    
+    # Export headers to middleware
+    CONFIG += middleware
+
+    TARGET.CAPABILITY = ALL -TCB
+    TARGET.UID3 = 0x2002BFCF
+
+    QtTelephony.sources = QtTelephony.dll
+    QtTelephony.path = /sys/bin
+    DEPLOYMENT += QtTelephony
 }
  
 linux-*:!maemo* {
@@ -53,7 +68,7 @@ maemo* {
     QT += dbus
     include(maemo.pri)
 }
-mac {
+mac|win32 {
     HEADERS += qtelephonycalllist_unsupported_p.h \
                qtelephonycallinfo_p.h
 }

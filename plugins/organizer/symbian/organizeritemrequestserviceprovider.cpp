@@ -41,9 +41,6 @@
 
 // User includes
 #include "organizeritemrequestserviceprovider.h"
-#include "organizerItemTransform.h"
-#include "organizerItemGuidTransform.h"
-#include "organizerItemTypeTransform.h"
 #include "qorganizersymbian_p.h"
 
 
@@ -257,6 +254,7 @@ void COrganizerItemRequestsServiceProvider::SaveItemL()
         iIndex++;
         // Save item
         iOrganizerItemManagerEngine.saveItemL(&iItemList[iIndex-1]);
+        iSuccessfullItems.append(iItemList[iIndex-1]);
         // Calls itself recursively until all the items are deleted
         SelfComplete();
         }
@@ -265,7 +263,7 @@ void COrganizerItemRequestsServiceProvider::SaveItemL()
         // Notify results
         QOrganizerItemManagerEngine::updateItemSaveRequest(
                 (QOrganizerItemSaveRequest*)(iReq), 
-                iItemList, iError, iErrorMap, 
+                iSuccessfullItems, iError, iErrorMap, 
                 QOrganizerItemAbstractRequest::FinishedState);
         }    
     }
@@ -521,4 +519,5 @@ void COrganizerItemRequestsServiceProvider::Cleanup()
     iItemIds.clear();
     iItemList.clear();
     iError = QOrganizerItemManager::NoError;
+    iSuccessfullItems.clear();
     }

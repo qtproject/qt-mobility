@@ -52,8 +52,11 @@ QTM_BEGIN_NAMESPACE
 /*!
     \qmlclass PositionSource
 
-    \brief The PositionSource element allows you to get information about your current position.
+    \brief The PositionSource element allows you to get information about your
+    current position.
     \inherits QObject
+
+    \ingroup qml-location
 
     The PositionSource element allows you to get information about your current position.
     You can receive information about things such as \l Position::latitude,
@@ -62,7 +65,7 @@ QTM_BEGIN_NAMESPACE
 
     Support for location sources are platform dependant. When declaring a PositionSource element, a
     default PositionSource source shall be created. Supported positioning methods are held in
-    \l PositioningMethods. As a development convinience, one may also set data file as a source (NMEA format).
+    \l PositioningMethods. As a development convenience, one may also set data file as a source (NMEA format).
     Location updates are not necessarily started automatically upon element declaration, see \l start \l stop \l active
     and \l update.
 
@@ -223,7 +226,7 @@ void QDeclarativePositionSource::setUpdateInterval(int updateInterval)
     \qmlproperty url PositionSource::nmeaSource
 
     This property holds the source for NMEA data (file). One purpose of this
-    property is to be of development convinience.
+    property is to be of development convenience.
 
     Setting this property will override any other position source. Currently only
     files local to the .qml -file are supported. Nmea source is created in simulation mode,
@@ -322,7 +325,7 @@ void QDeclarativePositionSource::start()
 /*!
     \qmlmethod PositionSource::update()
 
-    A convinience method to request single update from the location source.
+    A convenience method to request single update from the location source.
     If there is no source available, this method has no effect.
 
     \sa start, stop, active
@@ -428,7 +431,7 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo& 
     if (update.isValid()) {
         m_position.setTimestamp(update.timestamp());
         m_position.setLatitude(update.coordinate().latitude());
-        m_position.setlongitude(update.coordinate().longitude());
+        m_position.setLongitude(update.coordinate().longitude());
 
         if (update.coordinate().type() == QGeoCoordinate::Coordinate3D) {
             m_position.setAltitude(update.coordinate().altitude());
