@@ -60,6 +60,16 @@ QGeoTiledMapPixmapObjectInfo::~QGeoTiledMapPixmapObjectInfo() {}
 
 void QGeoTiledMapPixmapObjectInfo::objectUpdate()
 {
+    if (!pixmap->coordinate().isValid()
+            || pixmap->pixmap().isNull()) {
+        if (pixmapItem) {
+            delete pixmapItem;
+            pixmapItem = 0;
+            graphicsItem = 0;
+        }
+        return;
+    }
+
     if (!pixmapItem)
         pixmapItem = new QGraphicsPixmapItem();
 

@@ -100,7 +100,8 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
         : m_dbFilename(filename),
         m_dbConnectionName(QUuid::createUuid().toString()),
         m_dbWatcher(NULL),
-        m_latestTimestamp(0.0),
+        m_latestLandmarkTimestamp(0),
+        m_latestCategoryTimestamp(0),
         m_isExtendedAttributesEnabled(false),
         m_isCustomAttributesEnabled(false),
         m_databaseOperations(m_isExtendedAttributesEnabled, m_isCustomAttributesEnabled)
@@ -573,7 +574,6 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
 {
     QSqlDatabase db = QSqlDatabase::database(m_dbConnectionName);
 
-    qreal latestLandmarkTimestamp = m_latestTimestamp;
     QSqlQuery query(db);
     if (!query.prepare("SELECT landmarkId,action, timestamp FROM landmark_notification WHERE timestamp > ?")) {
 #ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
@@ -581,7 +581,7 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
 #endif
         return;
     }
-    query.addBindValue(latestLandmarkTimestamp);
+    query.addBindValue(m_latestLandmarkTimestamp);
     if (!query.exec()) {
 #ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
         qWarning() << "Could not execute statement:" << query.lastQuery() << " \nReason:" << query.lastError().text();
@@ -597,15 +597,15 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
     QLandmarkId landmarkId;
     landmarkId.setManagerUri(managerUri());
     bool ok;
-    qreal timestamp;
+    qint64 timestamp;
 
     while(query.next()) {
-        timestamp = query.value(2).toDouble(&ok);
+        timestamp = query.value(2).toLongLong(&ok);
         if (!ok) //this should never happen
             continue;
 
-        if (timestamp > latestLandmarkTimestamp)
-            latestLandmarkTimestamp = timestamp;
+        if (timestamp > m_latestLandmarkTimestamp)
+            m_latestLandmarkTimestamp = timestamp;
 
         action = query.value(1).toString();
         landmarkId.setLocalId((query.value(0).toString()));
@@ -629,14 +629,13 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
         emit landmarksRemoved(removedLandmarkIds);
 
     //now check for added/modified/removed categories
-    qreal latestCategoryTimestamp = m_latestTimestamp;
     if (!query.prepare("SELECT categoryId,action, timestamp FROM category_notification WHERE timestamp > ?")) {
 #ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
         qWarning() << "Could not prepare statement: " << query.lastQuery() << " \nReason:" << query.lastError().text();
 #endif
         return;
     }
-    query.addBindValue(latestCategoryTimestamp);
+    query.addBindValue(m_latestCategoryTimestamp);
     if (!query.exec()) {
 #ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
         qWarning() << "Could not execute statement:" << query.lastQuery() << " \nReason:" << query.lastError().text();
@@ -651,12 +650,12 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
     categoryId.setManagerUri(managerUri());
 
     while(query.next()) {
-        timestamp = query.value(2).toDouble(&ok);
+        timestamp = query.value(2).toLongLong(&ok);
         if (!ok) //this should never happen
             continue;
 
-        if (timestamp > latestCategoryTimestamp)
-            latestCategoryTimestamp = timestamp;
+        if (timestamp > m_latestCategoryTimestamp)
+            m_latestCategoryTimestamp = timestamp;
 
         action = query.value(1).toString();
         categoryId.setLocalId(query.value(0).toString());
@@ -669,21 +668,14 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
         }
     }
 
-    if (addedCategoryIds.count() > 0) {
+    if (addedCategoryIds.count() > 0)
         emit categoriesAdded(addedCategoryIds);
-     }
 
     if (changedCategoryIds.count() > 0)
         emit categoriesChanged(changedCategoryIds);
 
-    if (removedCategoryIds.count() > 0) {
+    if (removedCategoryIds.count() > 0)
         emit categoriesRemoved(removedCategoryIds);
-       }
-
-    if (latestLandmarkTimestamp > m_latestTimestamp)
-        m_latestTimestamp = latestLandmarkTimestamp;
-    if (latestCategoryTimestamp > m_latestTimestamp)
-        m_latestTimestamp = latestCategoryTimestamp;
 }
 
 void QLandmarkManagerEngineSqlite::setChangeNotificationsEnabled(bool enabled)
@@ -693,8 +685,11 @@ void QLandmarkManagerEngineSqlite::setChangeNotificationsEnabled(bool enabled)
         connect(m_dbWatcher, SIGNAL(notifyChange()),this,SLOT(databaseChanged()));
     }
     m_dbWatcher->setEnabled(enabled);
-    if (enabled)
-        m_latestTimestamp = QDateTime::currentDateTime().toTime_t();
+    if (enabled) {
+        QDateTime dateTime= QDateTime::currentDateTime();
+        m_latestLandmarkTimestamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
+        m_latestCategoryTimestamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
+    }
 }
 
 void QLandmarkManagerEngineSqlite::connectNotify(const char *signal)

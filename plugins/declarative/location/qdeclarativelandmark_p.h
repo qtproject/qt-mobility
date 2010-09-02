@@ -9,7 +9,7 @@
 
 
 // Define this to get qDebug messages
-#define QDECLARATIVE_LANDMARK_DEBUG
+// #define QDECLARATIVE_LANDMARK_DEBUG
 
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
 #include <QDebug>
@@ -26,7 +26,6 @@ class QDeclarativeLandmark : public QObject
     Q_PROPERTY(double radius READ radius WRITE setRadius NOTIFY radiusChanged)
     Q_PROPERTY(QUrl iconSource READ iconSource WRITE setIconSource NOTIFY iconSourceChanged)
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
-    //Q_PROPERTY(QDeclarativeListProperty<QDeclarativeLandmarkCategoryId> categoryId READ categoryId NOTIFY categoryIdChanged)
 
 public:
     explicit QDeclarativeLandmark(QObject* parent = 0);
@@ -43,7 +42,6 @@ public:
     void setIconSource(const QUrl& iconSource);
     QUrl url();
     void setUrl(const QUrl& url);
-    //QDeclarativeListProperty<QDeclarativeLandmarkCategory> categoryId();
 
 signals:
     void nameChanged();
@@ -62,8 +60,6 @@ private:
 
 private:
     QLandmark m_landmark;
-    //QList<QDeclarativeLandmarkCategoryId*> m_categoryIds;
-
 };
 
 QTM_END_NAMESPACE
