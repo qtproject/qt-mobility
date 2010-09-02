@@ -88,7 +88,6 @@ public: // Conversion from CRecurrence to QRecurrence
     QList<QDate> recurrenceDates() const;
     QList<QDate> exceptionDates() const;
 
-
 private:
     // qrule -> crule conversions
     QString qrecurrenceRuleToIcalRecurrenceRule(const QOrganizerItemRecurrenceRule &rule) const;

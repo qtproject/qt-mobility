@@ -101,7 +101,7 @@ QOrganizerItemMaemo5Engine::QOrganizerItemMaemo5Engine()
     bool dbOk = d->m_databaseAccess.open(QDir::homePath().append(CALENDAR).append(CALENDARDB));
     if (!dbOk) {
         qDebug() << "Database didn't open!";
-        // TODO: Then what???
+        // TODO: Then what? Constructor has no error status. Throw an exception?
     }
 }
 
@@ -208,11 +208,6 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
         *error = QOrganizerItemManager::BadArgumentError;
         return retn;
     }
-
-    /*
-    // no matter which calendar is used here, all the items are available in all the calendars
-    CCalendar *cal = d->m_mcInstance->getDefaultCalendar();
-    */
 
     // get the generator's calendar (or the default calendar, if the generator collection id is not set)
     QOrganizerCollectionLocalId collectionLocalId = generator.collectionId().localId();
@@ -851,19 +846,13 @@ void QOrganizerItemMaemo5Engine::requestDestroyed(QOrganizerItemAbstractRequest*
 
 bool QOrganizerItemMaemo5Engine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString &itemType) const
 {
-    // TODO - the answer to the question may depend on the type
     Q_UNUSED(itemType);
     switch(feature) {
         case QOrganizerItemManager::MutableDefinitions:
-            // TODO If you support save/remove detail definition, return true
             return false;
-
         case QOrganizerItemManager::Anonymous:
-            // TODO if this engine is anonymous (e.g. no other engine can share the data) return true
-            // (mostly for an in memory engine)
             return false;
         case QOrganizerItemManager::ChangeLogs:
-            // TODO if this engine supports filtering by last modified/created/removed timestamps, return true
             return false;
     }
     return false;
@@ -871,7 +860,6 @@ bool QOrganizerItemMaemo5Engine::hasFeature(QOrganizerItemManager::ManagerFeatur
 
 bool QOrganizerItemMaemo5Engine::isFilterSupported(const QOrganizerItemFilter &filter) const
 {
-    // TODO if you engine can natively support the filter, return true.  Otherwise you should emulate support in the item{Ids} functions.
     Q_UNUSED(filter);
     return false;
 }
@@ -879,25 +867,21 @@ bool QOrganizerItemMaemo5Engine::isFilterSupported(const QOrganizerItemFilter &f
 QList<QVariant::Type> QOrganizerItemMaemo5Engine::supportedDataTypes() const
 {
     QList<QVariant::Type> retn;
-    // TODO - tweak which data types this engine understands
     retn << QVariant::String;
     retn << QVariant::Date;
     retn << QVariant::DateTime;
     retn << QVariant::Time;
-
     return retn;
 }
 
 QStringList QOrganizerItemMaemo5Engine::supportedItemTypes() const
 {
     QStringList retn;
-
     retn << QOrganizerItemType::TypeEvent;
     retn << QOrganizerItemType::TypeEventOccurrence;
     retn << QOrganizerItemType::TypeJournal;
     retn << QOrganizerItemType::TypeTodo;
     retn << QOrganizerItemType::TypeTodoOccurrence;
-
     return retn;
 }
 
