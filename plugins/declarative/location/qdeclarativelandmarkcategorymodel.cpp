@@ -68,7 +68,7 @@ int QDeclarativeLandmarkCategoryModel::count() const
 void QDeclarativeLandmarkCategoryModel::startUpdate()
 {
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
-    qDebug("QDeclarativeLandmarkCategoryModel::update()");
+    qDebug("QDeclarativeLandmarkCategoryModel::startUpdate()");
 #endif
     if (!m_manager)
         return;
@@ -84,6 +84,7 @@ void QDeclarativeLandmarkCategoryModel::startUpdate()
     }
     QObject::connect(m_fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this, SLOT(fetchRequestStateChanged(QLandmarkAbstractRequest::State)));
     m_fetchRequest->start();
+    m_updatePending = false; // Allow requesting updates again
 }
 
 void QDeclarativeLandmarkCategoryModel::setFetchRange()
@@ -99,6 +100,9 @@ void QDeclarativeLandmarkCategoryModel::setFetchRange()
 
 void QDeclarativeLandmarkCategoryModel::cancelUpdate()
 {
+#ifdef QDECLARATIVE_LANDMARK_DEBUG
+    qDebug("QDeclarativeLandmarkCategoryModel::cancelUpdate()");
+#endif
     if (m_fetchRequest) {
         delete m_fetchRequest;
         m_fetchRequest = 0;

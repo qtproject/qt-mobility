@@ -192,7 +192,7 @@ QList<QGalleryResource> QGalleryResultSet::resources() const
 
     Returns the index of the item a result set currently positioned on.
 
-    \sa seek()
+    \sa fetch()
 */
 
 /*!
