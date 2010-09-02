@@ -38,33 +38,30 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "organizeritemdetailtransform.h"
+#ifndef ORGANIZERSYMBIANUTILS_H_
+#define ORGANIZERSYMBIANUTILS_H_
 
-OrganizerItemDetailTransform::OrganizerItemDetailTransform()
+#include <e32base.h>
+#include <caltime.h>
+#include <QString>
+#include <QDateTime>
+#include <QVariantMap>
+
+class CCalCalendarInfo;
+
+namespace OrganizerSymbianUtils
 {
-
+    QString toQString(const TDesC8 &des);
+    QString toQString(const TDesC16 &des);
+    TPtrC8 toPtrC8(const QByteArray &bytes);
+    TPtrC16 toPtrC16(const QString &string);
+    TCalTime toTCalTimeL(QDateTime dateTime);
+    TCalTime toTCalTimeL(QDate date);
+    QDateTime toQDateTimeL(TCalTime calTime);
+    TTime toTTimeL(QDateTime dateTime);
+    QDateTime toQDateTimeL(TTime time);
+    QVariantMap toMetaDataL(const CCalCalendarInfo &calInfo);
+    CCalCalendarInfo* toCalInfoLC(QVariantMap metaData);
 }
 
-OrganizerItemDetailTransform::~OrganizerItemDetailTransform()
-{
-
-}
-
-void OrganizerItemDetailTransform::modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const
-{
-    Q_UNUSED(schemaDefs);
-    // empty default implementation 
-}
-
-void OrganizerItemDetailTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
-{
-    // In most cases we can use the other transformToDetailL function without modification
-    transformToDetailL(instance.Entry(), itemInstance);
-}
-
-void OrganizerItemDetailTransform::transformToDetailPostSaveL(const CCalEntry& entry, QOrganizerItem *item)
-{
-    Q_UNUSED(entry);
-    Q_UNUSED(item);
-    // empty default implementation
-}
+#endif // ORGANIZERSYMBIANUTILS_H_

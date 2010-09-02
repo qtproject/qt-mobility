@@ -3,8 +3,11 @@ CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtorganizer_symbian)
 PLUGIN_TYPE=organizer
 
-#uncomment the below line when compiling for 10.1 and later versions.
-#DEFINES += AGENDA_EXT_SUPPORT
+# support for S^4-specific types
+contains(symbianenote_enabled,yes) {
+    DEFINES += AGENDA_EXT_SUPPORT
+}
+
 CONFIG += mobility
 MOBILITY = organizer
 
@@ -30,6 +33,7 @@ symbian: {
     	qorganizeritemrequestqueue.h \
     	organizeritemrequestserviceprovider.h \
         qorganizersymbian_p.h \
+        organizersymbianutils.h \
         organizeritemtransform.h \
         transform/organizeritemdetailtransform.h \
         transform/organizereventtimerangetransform.h \
@@ -50,6 +54,7 @@ symbian: {
     	qorganizeritemrequestqueue.cpp \
     	organizeritemrequestserviceprovider.cpp \
         qorganizersymbian.cpp \
+        organizersymbianutils.cpp \
         organizeritemtransform.cpp \
         transform/organizeritemdetailtransform.cpp \
         transform/organizereventtimerangetransform.cpp \

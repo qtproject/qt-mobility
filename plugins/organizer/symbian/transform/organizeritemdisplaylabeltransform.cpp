@@ -51,14 +51,10 @@ void OrganizerItemDisplayLabelTransform::transformToDetailL(const CCalEntry& ent
 
 void OrganizerItemDisplayLabelTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
-#ifdef AGENDA_EXT_SUPPORT
     if (QOrganizerItemType::TypeNote !=item.type()) {
-#endif
         if (!item.displayLabel().isEmpty())
             entry->SetSummaryL(toPtrC16(item.displayLabel()));  
-#ifdef AGENDA_EXT_SUPPORT
     }
-#endif
 }
 
 QString OrganizerItemDisplayLabelTransform::detailDefinitionName()
