@@ -2244,14 +2244,25 @@ bool CMTMEngine::storeMMS(QMessage &message)
     return true;
 }
 
-bool CMTMEngine::sendMMS(QMessage &message)
+bool CMTMEngine::sendMMS(QMessageServicePrivate& privateService, QMessage &message)
 {
     if (!iSessionReady) {
         return false;
     }
 
-    TRAPD(err, sendMMSL(message));
+    TRAPD(err, sendMMSL(privateService, message));
     if (err != KErrNone) {
+        // sendMMSL() function adds messageId to iPendingSends array
+        // just before message is tried to send. 
+        // => Make sure that messageId will be removed if sending fails
+        TMsvId messageId = SymbianHelpers::stripIdPrefix(message.id().toString()).toLong();
+        for (int index=0; index < iPendingSends.count(); index++) {
+            if (iPendingSends[index].messageId == messageId) {
+                iPendingSends.removeAt(index);
+                break;
+            }
+        }
+        
         return false;
     }
     
@@ -2272,14 +2283,25 @@ bool CMTMEngine::storeEmail(QMessage &message)
     return true;
 }
 
-bool CMTMEngine::sendEmail(QMessage &message)
+bool CMTMEngine::sendEmail(QMessageServicePrivate& privateService, QMessage &message)
 {
     if (!iSessionReady) {
         return false;
     }
 
-    TRAPD(err, sendEmailL(message));
+    TRAPD(err, sendEmailL(privateService, message));
     if (err != KErrNone) {
+        // sendEmailL() function adds messageId to iPendingSends array
+        // just before message is tried to send. 
+        // => Make sure that messageId will be removed if sending fails
+        TMsvId messageId = SymbianHelpers::stripIdPrefix(message.id().toString()).toLong();
+        for (int index=0; index < iPendingSends.count(); index++) {
+            if (iPendingSends[index].messageId == messageId) {
+                iPendingSends.removeAt(index);
+                break;
+            }
+        }
+
         return false;
     }
     
@@ -2420,14 +2442,25 @@ void CMTMEngine::storeSMSL(QMessage &message)
     privateMessage->_id = QMessageId(SymbianHelpers::addIdPrefix(QString::number(entry.Id()), SymbianHelpers::EngineTypeMTM));
 }
 
-bool CMTMEngine::sendSMS(QMessage &message)
+bool CMTMEngine::sendSMS(QMessageServicePrivate& privateService, QMessage &message)
 {
     if (!iSessionReady) {
         return false;
     }
     
-    TRAPD(err, sendSMSL(message));
+    TRAPD(err, sendSMSL(privateService, message));
     if (err != KErrNone) {
+        // sendSMSL() function adds messageId to iPendingSends array
+        // just before message is tried to send. 
+        // => Make sure that messageId will be removed if sending fails
+        TMsvId messageId = SymbianHelpers::stripIdPrefix(message.id().toString()).toLong();
+        for (int index=0; index < iPendingSends.count(); index++) {
+            if (iPendingSends[index].messageId == messageId) {
+                iPendingSends.removeAt(index);
+                break;
+            }
+        }
+        
         return false;
     }
     
@@ -2453,7 +2486,7 @@ bool CMTMEngine::validateSMS()
     return true;
 }
 
-void CMTMEngine::sendSMSL(QMessage &message)
+void CMTMEngine::sendSMSL(QMessageServicePrivate& privateService, QMessage &message)
 {
     if (!iSessionReady) {
         User::Leave(KErrNotReady);
@@ -2520,6 +2553,11 @@ void CMTMEngine::sendSMSL(QMessage &message)
     ipSmsMtm->SaveMessageL();
     
     if (validateSMS()) {
+        PendingSend pendingSend;
+        pendingSend.privateService = &privateService;
+        pendingSend.messageId = messageId;
+        iPendingSends.append(pendingSend);
+        
         // Switch current SMS MTM context to SMS message parent folder entry
         ipSmsMtm->SwitchCurrentEntryL(ipSmsMtm->Entry().Entry().Parent());
         
@@ -3299,7 +3337,7 @@ void CMTMEngine::updateEmailL(QMessage &message)
     }
 }
 
-void CMTMEngine::sendMMSL(QMessage &message)
+void CMTMEngine::sendMMSL(QMessageServicePrivate& privateService, QMessage &message)
 {
     if (!iSessionReady) {
         User::Leave(KErrNotReady);
@@ -3317,6 +3355,11 @@ void CMTMEngine::sendMMSL(QMessage &message)
         User::Leave(KErrNotReady);
     }
 
+    PendingSend pendingSend;
+    pendingSend.privateService = &privateService;
+    pendingSend.messageId = messageId;
+    iPendingSends.append(pendingSend);
+    
     CMsvEntry* pMsvEntry = retrieveCMsvEntryAndPushToCleanupStack(messageId);
 
     QMTMWait mtmWait;
@@ -3650,7 +3693,7 @@ void CMTMEngine::storeEmailL(QMessage &message)
     privateMessage->_id = QMessageId(SymbianHelpers::addIdPrefix(QString::number(newMessageId),SymbianHelpers::EngineTypeMTM));
 }
 
-void CMTMEngine::sendEmailL(QMessage &message)
+void CMTMEngine::sendEmailL(QMessageServicePrivate& privateService, QMessage &message)
 {
     if (!iSessionReady) {
         User::Leave(KErrNotReady);
@@ -3681,6 +3724,11 @@ void CMTMEngine::sendEmailL(QMessage &message)
         User::Leave(KErrNotReady);
     }    
 
+    PendingSend pendingSend;
+    pendingSend.privateService = &privateService;
+    pendingSend.messageId = messageId;
+    iPendingSends.append(pendingSend);
+    
     CMsvEntry* pMsvEntry = retrieveCMsvEntryAndPushToCleanupStack(messageId);
     
     QMTMWait mtmWait;
@@ -4693,7 +4741,7 @@ void CMTMEngine::HandleSessionEventL(TMsvSessionEvent aEvent, TAny* aArg1,
     case EMsvEntriesChanged:
     case EMsvEntriesDeleted:
     case EMsvEntriesMoved:
-        if (aArg2 && iListenForNotifications) {
+        if (aArg2) {
             CMsvEntrySelection* entries = static_cast<CMsvEntrySelection*>(aArg1);
             
             if (entries != NULL) {
@@ -4701,14 +4749,59 @@ void CMTMEngine::HandleSessionEventL(TMsvSessionEvent aEvent, TAny* aArg1,
                while (count--) {
                    const TMsvId id = (*entries)[count];
                    if (aEvent == EMsvEntriesDeleted) {
-                       notification(aEvent, TUid(), *(static_cast<TMsvId*>(aArg2)), id);
+                       // Handle message status change
+                       QMessageServicePrivate* pPrivateService = NULL;
+                       for (int index=0; index < iPendingSends.count(); index++) {
+                           if (iPendingSends[index].messageId == id) {
+                               pPrivateService = iPendingSends[index].privateService;
+                               iPendingSends.removeAt(index);
+                               break;
+                           }
+                       }
+                       if (pPrivateService) {
+                           pPrivateService->setFinished(false);
+                       }
+                   
+                       // Handle message event
+                       if (iListenForNotifications) {
+                           notification(aEvent, TUid(), *(static_cast<TMsvId*>(aArg2)), id);
+                       }
                    } else {
                        CMsvEntry* pReceivedEntry = NULL;
                        TRAPD(err, pReceivedEntry = ipMsvSession->GetEntryL(id));
                        if (err == KErrNone) {
                            const TMsvEntry& entry = pReceivedEntry->Entry();
                            if (entry.iType == KUidMsvMessageEntry) {
-                               notification(aEvent, entry.iMtm, *(static_cast<TMsvId*>(aArg2)), id);
+                               // Handle message status change
+                               if (entry.SendingState() == KMsvSendStateFailed) {
+                                   QMessageServicePrivate* pPrivateService = NULL; 
+                                   for (int index=0; index < iPendingSends.count(); index++) {
+                                       if (iPendingSends[index].messageId == id) {
+                                           pPrivateService = iPendingSends[index].privateService;
+                                           iPendingSends.removeAt(index);
+                                           break;
+                                       }
+                                   }
+                                   if (pPrivateService) {
+                                       pPrivateService->setFinished(false);
+                                   }
+                               } else if (entry.SendingState() == KMsvSendStateSent) {
+                                   QMessageServicePrivate* pPrivateService = NULL; 
+                                   for (int index=0; index < iPendingSends.count(); index++) {
+                                       if (iPendingSends[index].messageId == id) {
+                                           pPrivateService = iPendingSends[index].privateService;
+                                           iPendingSends.removeAt(index);
+                                           break;
+                                       }
+                                   }
+                                   if (pPrivateService) {
+                                       pPrivateService->setFinished(true);
+                                   }
+                               }
+                               // Handle message event
+                               if (iListenForNotifications) {
+                                   notification(aEvent, entry.iMtm, *(static_cast<TMsvId*>(aArg2)), id);
+                               }
                            }
                            delete pReceivedEntry;
                        }
