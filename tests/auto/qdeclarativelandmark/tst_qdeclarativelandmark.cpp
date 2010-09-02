@@ -51,6 +51,8 @@
 #include "qdeclarativepositionsource_p.h"
 #include "qdeclarativelandmarkmodel_p.h"
 #include "qdeclarativelandmarkcategorymodel_p.h"
+#include "qdeclarativelist.h"
+#include <QDeclarativeListProperty>
 #include <QString>
 #include <QUuid>
 
@@ -133,8 +135,8 @@ public slots:
 
 private slots:
 
-
     void updateCancel();
+    void declarativeLandmarkList();
     void databaseChanges();
 
     void robustness();
@@ -565,9 +567,9 @@ void tst_QDeclarativeLandmark::categoriesOfLandmarkFetch()
     // Upon such, set the item as the 'landmark' in the category model, and verify that
     // model gives the categories the landmark belongs to.
     QDeclarativeLandmark* landmark(0);
-    for (int i = 0; i < landmarkModel->landmarks().count(); i++) {
-        if (landmarkModel->landmarks().at(i)->name() == landmarkName) {
-            landmark = landmarkModel->landmarks().at(i);
+    for (int i = 0; i < landmarkModel->landmarkList().count(); i++) {
+        if (landmarkModel->landmarkList().at(i)->name() == landmarkName) {
+            landmark = landmarkModel->landmarkList().at(i);
             break;
         }
     }
@@ -626,7 +628,7 @@ void tst_QDeclarativeLandmark::update_data()
 
 void tst_QDeclarativeLandmark::databaseChanges()
 {
-    QSKIP("Temporary skip while QLandmarkManager crashes", SkipAll);
+    //QSKIP("Temporary skip while QLandmarkManager crashes", SkipAll);
     QDeclarativeLandmarkModel* landmarkModel = static_cast<QDeclarativeLandmarkModel*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:true;}"));
     landmarkModel->setDbFileName(DB_FILENAME);
 
@@ -637,20 +639,21 @@ void tst_QDeclarativeLandmark::databaseChanges()
     QTRY_COMPARE(modelChangedSpy.count(), 1);
     QTRY_COMPARE(countChangedSpy.count(), 1);
     QTRY_COMPARE(landmarkModel->property("count").toInt(), 1);
-    QTRY_COMPARE(landmarkModel->landmarks().at(0)->name(), landmarkName);
-    delete landmarkModel;
+    QTRY_COMPARE(landmarkModel->landmarkList().at(0)->name(), landmarkName);
+    //delete landmarkModel; TODO workaround only, enable this
 
-    //QDeclarativeLandmarkCategoryModel* categoryModel = static_cast<QDeclarativeLandmarkCategoryModel*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:true;}"));
-    //categoryModel->setDbFileName(DB_FILENAME);
-    //QSignalSpy modelChangedSpy2(categoryModel, SIGNAL(modelChanged()));
-    //QSignalSpy countChangedSpy2(categoryModel, SIGNAL(countChanged()));
+    QDeclarativeLandmarkCategoryModel* categoryModel = static_cast<QDeclarativeLandmarkCategoryModel*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:true;}"));
+    categoryModel->setDbFileName(DB_FILENAME);
+    QSignalSpy modelChangedSpy2(categoryModel, SIGNAL(modelChanged()));
+    QSignalSpy countChangedSpy2(categoryModel, SIGNAL(countChanged()));
 
-    //QString categoryName = addCategoryToDb();
-    //QTRY_COMPARE(modelChangedSpy2.count(), 1);
-    //QTRY_COMPARE(countChangedSpy2.count(), 1);
-    //QTRY_COMPARE(categoryModel->property("count").toInt(), 1);
-    //QTRY_COMPARE(categoryModel->categories().at(0)->name(), categoryName); TODO!
-    //delete categoryModel;
+    QString categoryName = addCategoryToDb();
+    QTRY_COMPARE(modelChangedSpy2.count(), 1);
+    QTRY_COMPARE(countChangedSpy2.count(), 1);
+    QTRY_COMPARE(categoryModel->property("count").toInt(), 1);
+    // QTRY_COMPARE(categoryModel->categories().at(0)->name(), categoryName); // TODO!
+
+    //delete categoryModel; TODO workaround only, enable this
 }
 
 /*
@@ -703,6 +706,29 @@ void tst_QDeclarativeLandmark::updateCancel()
     landmarkModel->startUpdate();
     QTest::qWait(10);
     delete landmarkModel;
+}
+
+// Verify declarative list -property of landmarks works
+void tst_QDeclarativeLandmark::declarativeLandmarkList()
+{
+    populateTypicalDb();
+    QObject* source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true;}");
+    QDeclarativeLandmarkModel* model = static_cast<QDeclarativeLandmarkModel*>(source_obj);
+    model->setDbFileName(DB_FILENAME);
+    QTRY_VERIFY(model->count() > 0);
+    QDeclarativeListProperty<QDeclarativeLandmark> declarativeList = model->landmarks();
+
+    // Count
+    QTRY_COMPARE(QDeclarativeLandmarkModel::landmarks_count(&declarativeList), model->count());
+    // At
+    for (int i = 0; i < model->count(); i++) {
+        qDebug() << "Looping through i" << i;
+        QCOMPARE(QDeclarativeLandmarkModel::landmarks_at(&declarativeList, i)->name(), model->landmarkList().at(i)->name());
+    }
+    // Append (not supported but should not crash)
+    QDeclarativeLandmarkModel::landmarks_append(&declarativeList, 0);
+    // Clear
+    QDeclarativeLandmarkModel::landmarks_clear(&declarativeList);
 }
 
 /*

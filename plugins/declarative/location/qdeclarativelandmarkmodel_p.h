@@ -83,6 +83,7 @@ class QDeclarativeLandmarkModel: public QDeclarativeLandmarkAbstractModel
     Q_OBJECT
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(QDeclarativeLandmarkFilterBase* filter READ filter WRITE setFilter NOTIFY filterChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeLandmark> landmarks READ landmarks NOTIFY landmarksChanged)
     Q_PROPERTY(SortKey sortBy READ sortBy WRITE setSortBy NOTIFY sortByChanged)
     Q_PROPERTY(SortOrder sortOrder READ sortOrder WRITE setSortOrder NOTIFY sortOrderChanged)
     Q_ENUMS(SortOrder)
@@ -123,14 +124,23 @@ public:
     int count();
     QDeclarativeLandmarkFilterBase* filter();
     void setFilter(QDeclarativeLandmarkFilterBase* filter);
-    Q_INVOKABLE QList<QDeclarativeLandmark*> landmarks() const;
+
+    QDeclarativeListProperty<QDeclarativeLandmark> landmarks();
+
+    Q_INVOKABLE QList<QDeclarativeLandmark*> landmarkList() const; // Testing purposes
     Q_INVOKABLE void startUpdate();
+
+    static void landmarks_append(QDeclarativeListProperty<QDeclarativeLandmark>* prop, QDeclarativeLandmark* landmark);
+    static int landmarks_count(QDeclarativeListProperty<QDeclarativeLandmark>* prop);
+    static QDeclarativeLandmark* landmarks_at(QDeclarativeListProperty<QDeclarativeLandmark>* prop, int index);
+    static void landmarks_clear(QDeclarativeListProperty<QDeclarativeLandmark>* prop);
 
 signals:
     void countChanged();
     void filterChanged();
     void sortByChanged();
     void sortOrderChanged();
+    void landmarksChanged();
 
 private slots:
     void cancelUpdate();
