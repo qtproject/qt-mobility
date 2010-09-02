@@ -465,7 +465,8 @@ void QGeoTiledMapData::processRequests()
         d->replies.insert(reply);
         d->replyRects.insert(reply->request().tileRect());
 
-        break;
+        if (reply->isCached())
+            break;
     }
 }
 
