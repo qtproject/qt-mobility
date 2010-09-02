@@ -82,6 +82,8 @@ public:
 
     static QList<QFeedbackActuator> actuators();
 
+    bool operator==(const QFeedbackActuator&) const;
+
 private:
     QFeedbackActuator(int id);
     friend class QFeedbackHapticsInterface;

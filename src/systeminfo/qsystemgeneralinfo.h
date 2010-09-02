@@ -75,7 +75,8 @@ public:
     enum Version {
         Os = 1,
         QtCore,
-        Firmware
+        Firmware,
+        QtMobility
     };
 
     QString version(QSystemInfo::Version type, const QString &parameter = QString());

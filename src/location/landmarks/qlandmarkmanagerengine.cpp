@@ -860,6 +860,7 @@ void QLandmarkManagerEngine::updateLandmarkFetchRequest(QLandmarkFetchRequest* r
     if (req) {
         QWeakPointer<QLandmarkFetchRequest> ireq(req); //Take this incase the first emit deletes us.
         QLandmarkFetchRequestPrivate * rd = static_cast<QLandmarkFetchRequestPrivate*>(ireq.data()->d_ptr);
+
         QMutexLocker ml(&rd->mutex);
         rd->error = error;
         rd->errorString = errorString;

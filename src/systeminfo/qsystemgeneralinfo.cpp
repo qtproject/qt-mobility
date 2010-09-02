@@ -98,8 +98,9 @@ is a reliable way to gather such information.
     This enum describes the version component.
 
     \value Os                    Operating system version / platform ID.
-    \value QtCore                Qt libs version.
+    \value QtCore                Qt library version.
     \value Firmware              Version of (flashable) system as a whole.
+    \value QtMobility            QtMobility library version.
 
   */
 /*!
@@ -215,12 +216,17 @@ QStringList QSystemInfo::availableLanguages()
   Version will be returned in "major.minor.build" form.
 
   In case a particular version does not use the "build" part, it is set to 0.
-If a particular element is not available at all, an error "Not Installed" will be returned by
-the API.
+  If a particular element is not available at all, an error "Not Installed" will be returned by
+  the API.
 */
 QString QSystemInfo::version(QSystemInfo::Version type, const QString &parameter)
 {
-    return sysinfoPrivate()->version(type, parameter);
+    switch(type) {
+        case QSystemInfo::QtMobility:
+            return QLatin1String(QTM_VERSION_STR);
+        default:
+            return sysinfoPrivate()->version(type, parameter);
+    }
 }
 
 /*!

@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
 QGeoBoundingArea::~QGeoBoundingArea() {}
 
 /*!
-\fn virtual AreaType type() const
+\fn AreaType type() const
 */
 
 /*!

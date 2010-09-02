@@ -27,7 +27,7 @@ class QDeclarativeLandmarkAbstractModel : public QAbstractListModel, public QDec
 
 public:
     explicit QDeclarativeLandmarkAbstractModel(QObject* parent = 0);
-    ~QDeclarativeLandmarkAbstractModel();
+    virtual ~QDeclarativeLandmarkAbstractModel();
 
     // From QDeclarativeParserStatus
     void classBegin() {}
@@ -53,9 +53,19 @@ signals:
     void autoUpdateChanged();
     void limitChanged();
     void offsetChanged();
+    void modelChanged();
 
 public slots:
     void update();
+
+private slots:
+    void categoriesChanged(const QList<QLandmarkCategoryId> &);
+    void landmarksChanged(const QList<QLandmarkId> &);
+    void dataChanged();
+    virtual void cancelUpdate() = 0;
+
+private:
+    void connectManager();
 
 protected:
     QLandmarkManager* m_manager;
@@ -66,7 +76,6 @@ protected:
     QString m_dbFileName;
     int m_limit;
     int m_offset;
-
 };
 
 class QDeclarativeLandmarkModel: public QDeclarativeLandmarkAbstractModel
@@ -81,7 +90,7 @@ class QDeclarativeLandmarkModel: public QDeclarativeLandmarkAbstractModel
 
 public:
     explicit QDeclarativeLandmarkModel(QObject* parent = 0);
-    ~QDeclarativeLandmarkModel();
+    virtual ~QDeclarativeLandmarkModel();
 
     // From QAbstractListModel
     int rowCount(const QModelIndex &parent) const;
@@ -115,6 +124,7 @@ public:
     QDeclarativeLandmarkFilterBase* filter();
     void setFilter(QDeclarativeLandmarkFilterBase* filter);
     Q_INVOKABLE QList<QDeclarativeLandmark*> landmarks() const;
+    Q_INVOKABLE void startUpdate();
 
 signals:
     void countChanged();
@@ -127,7 +137,6 @@ private slots:
     void fetchRequestStateChanged(QLandmarkAbstractRequest::State);
 
 private:
-    Q_INVOKABLE void startUpdate();
     void convertLandmarksToDeclarative();
     void setFetchRange();
     void setFetchOrder();

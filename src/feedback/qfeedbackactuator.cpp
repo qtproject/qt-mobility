@@ -182,6 +182,15 @@ QList<QFeedbackActuator> QFeedbackActuator::actuators()
     return QFeedbackHapticsInterface::instance()->actuators();
 }
 
+/*!
+    \fn QFeedbackActuator::operator==(const QFeedbackActuator &other) const
+
+    returns true if the actuators are the same
+*/
+bool QFeedbackActuator::operator==(const QFeedbackActuator &other) const
+{
+    return m_id == other.m_id;
+}
 
 #include "moc_qfeedbackactuator.cpp"
 
