@@ -76,6 +76,7 @@ QTM_BEGIN_NAMESPACE
 
 class QContactAbstractRequest;
 class QContactManagerEngine;
+class QContactMemoryEngine;
 class QContactMemoryEngineData : public QSharedData
 {
 public:
@@ -100,6 +101,8 @@ public:
     ~QContactMemoryEngineData()
     {
     }
+
+    static QContactMemoryEngineData *data(QContactMemoryEngine *engine);
 
     QAtomicInt m_refCount;
     QString m_id;                                  // the id parameter value
@@ -207,19 +210,22 @@ public:
 protected:
     QContactMemoryEngine(QContactMemoryEngineData* data);
 
-private:
+protected:
     /* Implement "signal coalescing" for batch functions via change set */
-    bool saveContact(QContact* theContact, QContactChangeSet& changeSet, QContactManager::Error* error);
-    bool removeContact(const QContactLocalId& contactId, QContactChangeSet& changeSet, QContactManager::Error* error);
-    bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactChangeSet& changeSet, QContactManager::Error* error);
-    bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactChangeSet& changeSet, QContactManager::Error* error);
-    bool saveRelationship(QContactRelationship* relationship, QContactChangeSet& changeSet, QContactManager::Error* error);
-    bool removeRelationship(const QContactRelationship& relationship, QContactChangeSet& changeSet, QContactManager::Error* error);
+    virtual bool saveContact(QContact* theContact, QContactChangeSet& changeSet, QContactManager::Error* error);
+    virtual bool removeContact(const QContactLocalId& contactId, QContactChangeSet& changeSet, QContactManager::Error* error);
+    virtual bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactChangeSet& changeSet, QContactManager::Error* error);
+    virtual bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactChangeSet& changeSet, QContactManager::Error* error);
+    virtual bool saveRelationship(QContactRelationship* relationship, QContactChangeSet& changeSet, QContactManager::Error* error);
+    virtual bool removeRelationship(const QContactRelationship& relationship, QContactChangeSet& changeSet, QContactManager::Error* error);
 
+private:
     void performAsynchronousOperation(QContactAbstractRequest* request);
 
     QContactMemoryEngineData* d;
     static QMap<QString, QContactMemoryEngineData*> engineDatas;
+
+    friend class QContactMemoryEngineData;
 };
 
 QTM_END_NAMESPACE
