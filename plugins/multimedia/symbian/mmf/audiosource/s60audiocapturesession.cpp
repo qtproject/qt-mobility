@@ -533,16 +533,19 @@ void S60AudioCaptureSession::applyAudioSettingsL()
     }
     CleanupStack::PopAndDestroy(&supportedSampleRates);
 
-    RArray<TUint> supportedChannels;
-    CleanupClosePushL(supportedChannels);
-    m_recorderUtility->GetSupportedNumberOfChannelsL(supportedChannels);
-    for (TInt l = 0; l < supportedChannels.Count(); l++ ) {
-        if (supportedChannels[l] == m_format.channels()) {
-            m_recorderUtility->SetDestinationNumberOfChannelsL(m_format.channels());
-            break;
+    /* If requested channel setting is different than current one */
+    if (m_recorderUtility->DestinationNumberOfChannelsL() != m_format.channels()) {
+        RArray<TUint> supportedChannels;
+        CleanupClosePushL(supportedChannels);
+        m_recorderUtility->GetSupportedNumberOfChannelsL(supportedChannels);
+        for (TInt l = 0; l < supportedChannels.Count(); l++ ) {
+            if (supportedChannels[l] == m_format.channels()) {
+                m_recorderUtility->SetDestinationNumberOfChannelsL(m_format.channels());
+                break;
+            }
         }
+        CleanupStack::PopAndDestroy(&supportedChannels);
     }
-    CleanupStack::PopAndDestroy(&supportedChannels);
 }
 
 TFourCC S60AudioCaptureSession::determinePCMFormat()
