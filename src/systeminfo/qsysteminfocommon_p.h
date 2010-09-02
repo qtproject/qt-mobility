@@ -44,6 +44,11 @@
 
 #include "qmobilityglobal.h"
 
+#if defined(QT_SIMULATOR) || defined(SIMULATOR_APPLICATION)
+#define SIMULATOR
+#include "qsysteminfo_simulator_p.h"
+#else
+
 #ifdef Q_OS_LINUX
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
 #include "qsysteminfo_maemo_p.h"
@@ -61,5 +66,7 @@
 #ifdef Q_OS_SYMBIAN
 #include "qsysteminfo_s60_p.h"
 #endif
+
+#endif // QT_SIMULATOR
 
 #endif // QSYSTEMINFOCOMMON_H

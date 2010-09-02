@@ -209,7 +209,7 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
     // provide. If service provider is not up, it will be started.
     // Connecting is tried few times in a loop, because if service starting is
     // done at device startup, everything may not be ready yet.
-    RServiceSession *session = new RServiceSession(location.section(':', 1, 1));
+    RServiceSession *session = new RServiceSession(location);
     int err = session->Connect();
     int i = 0;
     while (err != KErrNone) {
@@ -228,24 +228,37 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
     // Create IPC endpoint. In practice binds the communication session and abstracting
     // class presenting the IPC endoint.
     SymbianClientEndPoint* ipcEndPoint = new SymbianClientEndPoint(session);
+    ipcEndPoint->setParent(session);
     // Create an active message solicitor, which listens messages from server
-    ServiceMessageListener* messageListener = new ServiceMessageListener(session, ipcEndPoint);
+    ServiceMessageListener* messageListener = new ServiceMessageListener(session, ipcEndPoint);    
     // Create object endpoint, which handles the metaobject protocol.
     ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
+    endPoint->setParent(session);
     QObject *proxy = endPoint->constructProxy(typeId);
-    QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
+    session->setParent(proxy);
     QObject::connect(session, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)),
         proxy, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)));
     return proxy;
 }
 
 RServiceSession::RServiceSession(QString address) 
-: iSize(0)
+: iSize(0), iListener(0)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "RServiceSession() for address: " << address;
 #endif
     iServerAddress = address;
+}
+
+RServiceSession::~RServiceSession()
+{
+    delete iListener;
+    Close();
+}
+
+void RServiceSession::setListener(ServiceMessageListener *listener)
+{
+  iListener = listener;
 }
 
 void RServiceSession::Close()
@@ -393,7 +406,7 @@ void RServiceSession::ListenForPackages(TRequestStatus& aStatus)
 void RServiceSession::CancelListenForPackages()
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG  
-    qDebug("RServiceSession::CancelListenForPackages");
+    qDebug("RServiceSession::CancelListenForPackages -- 2");
 #endif
     TInt err = SendReceive(EPackageRequestCancel, TIpcArgs(NULL));
     if(err != KErrNone){
@@ -407,7 +420,6 @@ void RServiceSession::CancelListenForPackages()
         e = QService::ErrorOutofMemory;
         break;
       }
-      qDebug() << "RServiceSession::CancelListenForPackages failed with error: " << e;
       emit errorUnrecoverableIPCFault(e);
     }
 }
@@ -448,7 +460,7 @@ void CServiceProviderServer::IncreaseSessions()
 {
     iSessionCount++;
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-    qDebug() << "CServiceProviderServer incremented session count to: " << iSessionCount;
+    qDebug() << ">>>> CServiceProviderServer incremented session count to: " << iSessionCount;
 #endif
 }
 
@@ -456,7 +468,7 @@ void CServiceProviderServer::DecreaseSessions()
 {
     iSessionCount--;
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-    qDebug() << "CServiceProviderServer decremented session count to: " << iSessionCount;
+    qDebug() << "<<<< CServiceProviderServer decremented session count to: " << iSessionCount;
 #endif
 }
 
@@ -580,7 +592,7 @@ void CServiceProviderServerSession::HandlePackageRequestL(const RMessage2& aMess
       SendServicePackageL(iPendingPackageQueue.dequeue());
 }
 
-void CServiceProviderServerSession::HandlePackageRequestCancelL(const RMessage2& /*aMessage*/)
+void CServiceProviderServerSession::HandlePackageRequestCancelL(const RMessage2& aMessage)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug("HandlePackageRequestCancelL");
@@ -589,6 +601,7 @@ void CServiceProviderServerSession::HandlePackageRequestCancelL(const RMessage2&
         iMsg.Complete(KErrCancel);
         iPendingPackageRequest = EFalse;
     }
+    aMessage.Complete(EPackageRequestComplete);
 }
 
 void CServiceProviderServerSession::SendServicePackageL(const QServicePackage& aPackage)
@@ -650,6 +663,7 @@ ServiceMessageListener::ServiceMessageListener(RServiceSession* aSession, Symbia
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG    
     qDebug("ServiceMessageListener constructor");
 #endif
+    aSession->setListener(this);
     CActiveScheduler::Add(this);
     StartListening();
 }
