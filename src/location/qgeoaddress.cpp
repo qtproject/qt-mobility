@@ -101,7 +101,7 @@ QGeoAddress::QGeoAddress(const QGeoAddress &other)
 }
 
 /*!
-    Destroys the address
+    Destroys this address.
 */
 QGeoAddress::~QGeoAddress()
 {

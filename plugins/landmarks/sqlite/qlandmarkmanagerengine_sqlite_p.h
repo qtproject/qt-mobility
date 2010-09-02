@@ -220,7 +220,8 @@ private:
     QHash<QLandmarkAbstractRequest *, QueryRun *> m_requestRunHash;
     QHash<QLandmarkAbstractRequest *, unsigned int> m_activeRequestsRunIdHash;
     DatabaseFileWatcher *m_dbWatcher;
-    qreal m_latestTimestamp;
+    qint64 m_latestLandmarkTimestamp;
+    qint64 m_latestCategoryTimestamp;
     volatile bool m_isExtendedAttributesEnabled;
     volatile bool m_isCustomAttributesEnabled;
     DatabaseOperations m_databaseOperations;

@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QGeoMapObject
     \brief The QGeoMapObject class is graphical item for display in
-    QGeoMapWidget instancse, that is specified in terms of coordinates and
+    QGraphicsGeoMap instancse, that is specified in terms of coordinates and
     distances.
 
     \inmodule QtLocation
@@ -78,8 +78,12 @@ QTM_BEGIN_NAMESPACE
         A QGeoMapObject used to display a multi-segment line.
     \value PolygonType
         A QGeoMapObject used to display a polygonal region.
-    \value MarkerType
-        A QGeoMapObject used to display a map marker.
+    \value PixmapType
+        A QGeoMapObject used to display a pixmap on a map.
+    \value TextType
+        A QGeoMapObject used to display text on a map
+    \value RouteType
+        A QGeoMapObject used to display a route.
 */
 
 /*!
@@ -119,7 +123,8 @@ QGeoMapObject::Type QGeoMapObject::type() const
 }
 
 /*!
-    Sets the z-value of this map object to \a zValue.
+    \property QGeoMapObject::zValue
+    \brief This property holds the z-value of the map object.
 
     The z-value determines the order in which the objects are drawn on the
     screen.  Objects with the same value will be drawn in the order that
@@ -140,15 +145,6 @@ void QGeoMapObject::setZValue(int zValue)
     }
 }
 
-/*!
-    Returns the z-value of this map object.
-
-    The z-value determines the order in which the objects are drawn on the
-    screen.  Objects with the same value will be drawn in the order that
-    they were added to the map or map object.
-
-    This is the same behaviour as QGraphicsItem.
-*/
 int QGeoMapObject::zValue() const
 {
     Q_D(const QGeoMapObject);
@@ -156,7 +152,8 @@ int QGeoMapObject::zValue() const
 }
 
 /*!
-    Sets whether this map object is \a visible.
+    \property QGeoMapObject::visible
+    \brief This property holds whether the map object is visible.
 
     If this map object is not visible then none of the childObjects() will
     be displayed either.
@@ -170,18 +167,16 @@ void QGeoMapObject::setVisible(bool visible)
     }
 }
 
-/*!
-    Returns whether this map object is visible.
-
-    If this map object is not visible then none of the childObjects() will
-    be displayed either.
-*/
 bool QGeoMapObject::isVisible() const
 {
     Q_D(const QGeoMapObject);
     return d->isVisible;
 }
 
+/*!
+    \property QGeoMapObject::selected
+    \brief This property holds whether the map object is selected.
+*/
 void QGeoMapObject::setSelected(bool selected)
 {
     Q_D(QGeoMapObject);
@@ -254,7 +249,9 @@ QGeoMapObject* QGeoMapObject::parentObject() const
 /*!
     Adds \a childObject to the list of children of this map object.
 
-    If \a childObject is 0 it will not be added.
+    The children objects are drawn in order of the QGeoMapObject::zValue()
+    value.  Children objects having the same z value will be drawn
+    in the order they were added.
 
     The map object will take ownership of \a childObject.
 */
@@ -275,9 +272,6 @@ void QGeoMapObject::addChildObject(QGeoMapObject *childObject)
 /*!
     Removes \a childObject from the list of children of this map object.
 
-    This method does nothing if \a childObject is not contained in this
-    map objects list of children.
-
     The map object will release ownership of \a childObject.
 */
 void QGeoMapObject::removeChildObject(QGeoMapObject *childObject)
@@ -290,36 +284,56 @@ void QGeoMapObject::removeChildObject(QGeoMapObject *childObject)
     }
 }
 
+/*!
+    Returns the children of this object.
+*/
 QList<QGeoMapObject*> QGeoMapObject::childObjects() const
 {
     Q_D(const QGeoMapObject);
     return d->children;
 }
 
+/*!
+    Clears the children of this object.
+
+    The child objects will be deleted.
+*/
 void QGeoMapObject::clearChildObjects()
 {
     Q_D(QGeoMapObject);
     d->children.clear();
 }
 
+/*!
+    \internal
+*/
 void QGeoMapObject::objectUpdate()
 {
     Q_D(QGeoMapObject);
     d->objectUpdate();
 }
 
+/*!
+   \internal
+*/
 void QGeoMapObject::mapUpdate()
 {
     Q_D(QGeoMapObject);
     d->mapUpdate();
 }
 
+/*!
+    \internal
+*/
 bool QGeoMapObject::operator<(const QGeoMapObject &other) const
 {
     Q_D(const QGeoMapObject);
     return d->zValue < other.d_func()->zValue;
 }
 
+/*!
+    \internal
+*/
 bool QGeoMapObject::operator>(const QGeoMapObject &other) const
 {
     Q_D(const QGeoMapObject);

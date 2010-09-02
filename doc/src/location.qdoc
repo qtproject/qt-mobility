@@ -515,16 +515,16 @@ is part of Qt Mobility.
 
 \section2 Mapping
 
-The QGeoMapWidget class is the main class used for displaying and interacting
+The QGraphicsGeoMap class is the main class used for displaying and interacting
 with maps. It is designed for use within the Graphics View Framework, and is
 a subclass of QGraphicsWidget.
 
 The QGeoMappingManager provides most of the functionality required by
-QGeoMapWidget.  The details of QGeoMappingManager are mostly only important
+QGraphicsGeoMap.  The details of QGeoMappingManager are mostly only important
 to plugin implementers, as regular users should not need to make use of
-QGeoMappingManager outside of the QGeoMapWidget constructor:
+QGeoMappingManager outside of the QGraphicsGeoMap constructor:
 \code
-    QGeoMapWidget *widget = new QGeoMapWidget(mappingManager);
+    QGraphicsGeoMap *map = new QGraphicsGeoMap(mappingManager);
 \endcode
 
 \annotatedlist maps-mapping
@@ -598,6 +598,16 @@ QGeoServiceProviderFactory::createMappingManagerEngine() and
 QGeoServiceProviderFactory::createRoutingManagerEngine() as appropriate.
 
 \annotatedlist maps-impl
+
+\section3 Tile-based map convenience classes
+
+Most of the current tile based mapping APIs are very similar, and so we 
+provide a number of classes intended to make writing tile based mapping 
+plugins much simpler.  
+
+If the Mercator projection and the most common tile addressing scheme is used this will mainly involve subclassing QGeoTiledMappingManagerEngine and providing an implementation of QGeoTiledMappingManagerEngine::getTileImage().
+
+\annotatedlist maps-impl-tiled
 
 */
 
