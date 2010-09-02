@@ -26,8 +26,9 @@ void QDeclarativeLandmarkAbstractModel::componentComplete()
         m_manager = new QLandmarkManager();
         connectManager();
     }
-    if (m_autoUpdate)
+    if (m_autoUpdate) {
         scheduleUpdate();
+    }
 }
 
 void QDeclarativeLandmarkAbstractModel::connectManager()
@@ -106,6 +107,7 @@ void QDeclarativeLandmarkAbstractModel::setDbFileName(QString fileName)
     if (m_manager) {
         cancelUpdate();
         delete m_manager;
+        m_manager = 0;
     }
 
     QMap<QString, QString> map;
@@ -167,6 +169,8 @@ QDeclarativeLandmarkModel::~QDeclarativeLandmarkModel()
 {
     delete m_fetchRequest;
     delete m_sortingOrder;
+    qDeleteAll(m_landmarkMap.values());
+    m_landmarkMap.clear();
 }
 
 // When the parent is valid it means that rowCount is returning the number of children of parent.
@@ -203,6 +207,16 @@ QVariant QDeclarativeLandmarkModel::data(const QModelIndex &index, int role) con
     return QVariant();
 }
 
+QDeclarativeListProperty<QDeclarativeLandmark> QDeclarativeLandmarkModel::landmarks()
+{
+    return QDeclarativeListProperty<QDeclarativeLandmark>(this,
+                                                          0, // opaque data parameter
+                                                          landmarks_append,
+                                                          landmarks_count,
+                                                          landmarks_at,
+                                                          landmarks_clear);
+}
+
 QDeclarativeLandmarkFilterBase* QDeclarativeLandmarkModel::filter()
 {
     return m_filter;
@@ -236,6 +250,9 @@ void QDeclarativeLandmarkModel::startUpdate()
     }
     setFetchRange();
     setFetchOrder();
+#ifdef QDECLARATIVE_LANDMARK_DEBUG
+    qDebug() << "============ Calling start for the request: " << m_fetchRequest << " whose manager is: " << m_manager;
+#endif
     m_fetchRequest->start();
     m_updatePending = false; // Allow requesting updates again
 }
@@ -243,7 +260,7 @@ void QDeclarativeLandmarkModel::startUpdate()
 void QDeclarativeLandmarkModel::cancelUpdate()
 {
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
-    qDebug("QDeclarativeLandmarkModel::cancelUpdate()");
+    qDebug() << "QDeclarativeLandmarkModel::cancelUpdate() m_fetchRequest:" << m_fetchRequest;
 #endif
     if (m_fetchRequest) {
         delete m_fetchRequest;
@@ -295,6 +312,32 @@ void QDeclarativeLandmarkModel::setFetchOrder()
     m_fetchRequest->setSorting(*m_sortingOrder);
 }
 
+void QDeclarativeLandmarkModel::landmarks_append(QDeclarativeListProperty<QDeclarativeLandmark>* prop, QDeclarativeLandmark* landmark)
+{
+    Q_UNUSED(prop);
+    Q_UNUSED(landmark);
+    qWarning() << "LandmarkModel: appending landmarks is not currently supported";
+}
+
+int QDeclarativeLandmarkModel::landmarks_count(QDeclarativeListProperty<QDeclarativeLandmark>* prop)
+{
+    // The 'prop' is in a sense 'this' for this static function (as given in landmarks() function)
+    return static_cast<QDeclarativeLandmarkModel*>(prop->object)->m_landmarkMap.values().count();
+}
+
+QDeclarativeLandmark* QDeclarativeLandmarkModel::landmarks_at(QDeclarativeListProperty<QDeclarativeLandmark>* prop, int index)
+{
+    return static_cast<QDeclarativeLandmarkModel*>(prop->object)->m_landmarkMap.values().at(index);
+}
+
+void QDeclarativeLandmarkModel::landmarks_clear(QDeclarativeListProperty<QDeclarativeLandmark>* prop)
+{
+    QDeclarativeLandmarkModel* model = static_cast<QDeclarativeLandmarkModel*>(prop->object);
+    QMap<QString, QDeclarativeLandmark*>* landmarkMap = &model->m_landmarkMap;
+    qDeleteAll(landmarkMap->values());
+    landmarkMap->clear();
+}
+
 void QDeclarativeLandmarkModel::convertLandmarksToDeclarative()
 {
     foreach(const QLandmark& landmark, m_landmarks) {
@@ -307,6 +350,7 @@ void QDeclarativeLandmarkModel::convertLandmarksToDeclarative()
             m_landmarkMap.value(landmark.landmarkId().localId())->setLandmark(landmark);
         }
     }
+    emit landmarksChanged();
 }
 
 QDeclarativeLandmarkModel::SortKey QDeclarativeLandmarkModel::sortBy() const
@@ -335,7 +379,7 @@ void QDeclarativeLandmarkModel::setSortOrder(QDeclarativeLandmarkModel::SortOrde
     emit sortOrderChanged();
 }
 
-Q_INVOKABLE QList<QDeclarativeLandmark*> QDeclarativeLandmarkModel::landmarks() const
+Q_INVOKABLE QList<QDeclarativeLandmark*> QDeclarativeLandmarkModel::landmarkList() const
 {
     return m_landmarkMap.values();
 }

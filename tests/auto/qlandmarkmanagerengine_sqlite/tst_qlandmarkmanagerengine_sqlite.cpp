@@ -616,6 +616,8 @@ private slots:
 
     void categoryLimitOffset();
     //TODO: void categoryLimitOffsetAsync()
+
+    void notificationCheck();
 };
 
 
@@ -6895,7 +6897,7 @@ void tst_QLandmarkManagerEngineSqlite::exportLmx() {
         exportRequest.start();
         QTest::qWait(50);
         exportRequest.cancel();
-        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::CancelError,2000));
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::CancelError,2500));
     }
     QFile::remove(exportFile);
 }
@@ -7267,6 +7269,37 @@ void tst_QLandmarkManagerEngineSqlite::categoryLimitOffset() {
     //try with an offset which greater than the number of items
     cats = m_manager->categories( 100, 500, QLandmarkNameSort(Qt::AscendingOrder));
     QCOMPARE(cats.count(), 0);
+}
+
+void tst_QLandmarkManagerEngineSqlite::notificationCheck()
+{
+    QSignalSpy spyCatAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+    QSignalSpy spyLmAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+
+    QMap<QString,QString> parameters;
+    parameters.insert("filename", "test.db");
+
+    QLandmark lm1;
+    lm1.setName("LM1");
+    m_manager->saveLandmark(&lm1);
+
+    QTest::qWait(10);
+    QCOMPARE(spyCatAdd.count(),0);
+    QCOMPARE(spyLmAdd.count(),1);
+    delete m_manager;
+    m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", parameters);
+    connectNotifications();
+
+    QSignalSpy spyCatAdd2(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+    QSignalSpy spyLmAdd2(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+
+     QLandmarkCategory cat1;
+     cat1.setName("CAT1");
+     m_manager->saveCategory(&cat1);
+
+    QTest::qWait(10);
+    QCOMPARE(spyCatAdd2.count(),1);
+    QCOMPARE(spyLmAdd2.count(),0);
 }
 
 QTEST_MAIN(tst_QLandmarkManagerEngineSqlite)
