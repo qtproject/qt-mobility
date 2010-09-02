@@ -95,6 +95,7 @@ QSystemDeviceInfo::~QSystemDeviceInfo()
 
 void QSystemDeviceInfo::connectNotify(const char *signal)
 {
+    Q_UNUSED(signal);
 }
 
 /*!

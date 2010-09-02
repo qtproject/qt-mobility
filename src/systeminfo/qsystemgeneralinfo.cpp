@@ -447,8 +447,8 @@ QStringList QSystemInfo::availableLanguages()
   Version will be returned in "major.minor.build" form.
 
   In case a particular version does not use the "build" part, it is set to 0.
-If a particular element is not available at all, an error "Not Installed" will be returned by
-the API.
+  If a particular element is not available at all, an error "Not Installed" will be returned by
+  the API.
 */
 QString QSystemInfo::version(QSystemInfo::Version type, const QString &parameter)
 {
