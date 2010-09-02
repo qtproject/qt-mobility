@@ -50,7 +50,8 @@
 #include <calinstanceiterator.h>
 #include <calcalendariterator.h>
 #include <calcalendarinfo.h>
-#include <calenmulticaluids.hrh>
+// This file (calenmulticaluids.hrh) no longer exists in S^4, so use a local copy for now
+#include "local_calenmulticaluids.hrh"
 #endif
 
 // user includes
