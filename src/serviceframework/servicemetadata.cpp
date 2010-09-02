@@ -427,7 +427,7 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
                 parseError = true;
             }
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == SERVICE_IPCADDRESS ) {
-            //Found <ipcaddress>> tag for IPC service
+            //Found <ipcaddress> tag for IPC service
             //Check if servicefw XML version supports IPC
             if (greaterThan(xmlVersion, "1.0")) {
                 dupSTags[3]++;

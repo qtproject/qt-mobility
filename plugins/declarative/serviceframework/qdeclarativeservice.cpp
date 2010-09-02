@@ -149,7 +149,7 @@ QString QDeclarativeService::versionNumber() const
 }
 
 /*!
-    \qmlproperty QObject * Service::serviceObject
+    \qmlproperty QObject* Service::serviceObject
 
     This property holds an instance of the service object which
     can be used to make metaobject calls to the service.  This
