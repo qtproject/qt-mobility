@@ -6895,7 +6895,7 @@ void tst_QLandmarkManagerEngineSqlite::exportLmx() {
         exportRequest.start();
         QTest::qWait(50);
         exportRequest.cancel();
-        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::CancelError,2000));
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::CancelError,2500));
     }
     QFile::remove(exportFile);
 }

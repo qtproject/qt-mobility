@@ -2584,9 +2584,7 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
 
     QStringList categoryNames;
     QList<QLandmarkCategoryId> categoryIds;
-    QLandmark landmark;
     for (int i=0; i < landmarks.count(); ++i) {
-        landmark = landmarks.at(i);
         categoryIds.clear();
         if (option == QLandmarkManager::IncludeCategoryData) {
             categoryNames = landmarkCategoryNames.at(i);
@@ -2607,7 +2605,8 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
         } else if (option == QLandmarkManager::AttachSingleCategory) {
             categoryIds.append(categoryId);
         }
-        landmark.setCategoryIds(categoryIds);
+
+        landmarks[i].setCategoryIds(categoryIds);
 
         if (queryRun && queryRun->isCanceled) {
             *error = QLandmarkManager::CancelError;
@@ -2622,12 +2621,11 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
             return false;
         }
         if (landmarkIds)
-            landmarkIds->append(landmark.landmarkId());
+            landmarkIds->append(landmarks[i].landmarkId());
     }
 
     *error = QLandmarkManager::NoError;
     *errorString = "";
-
     return true;
 }
 
@@ -3301,7 +3299,7 @@ void QueryRun::run()
                if (!isDeleted) {
                    ml.relock();
                    if (engine->m_requestRunHash.contains(request)) {
-                       QLandmarkImportRequest *importRequest = static_cast<QLandmarkImportRequest *> (request);
+                       importRequest = static_cast<QLandmarkImportRequest *> (request);
                        QIODevice *device = importRequest->device();
                        QString format = importRequest->format();
                        QLandmarkManager::TransferOption transferOption = importRequest->transferOption();
