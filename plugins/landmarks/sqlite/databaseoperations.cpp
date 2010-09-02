@@ -2879,7 +2879,7 @@ QLandmarkManager::SupportLevel DatabaseOperations::sortOrderSupportLevel(const Q
     return currentLevel;
 }
 
-QueryRun::QueryRun(QLandmarkAbstractRequest *req, const QString &uri, QLandmarkManagerEngineSqlite *eng)
+QueryRun::QueryRun(QLandmarkAbstractRequest *req, const QString &uri, QLandmarkManagerEngineSqlite *eng, unsigned int runId)
     : request(req),
       error(QLandmarkManager::NoError),
       errorString(QString()),
@@ -2887,7 +2887,8 @@ QueryRun::QueryRun(QLandmarkAbstractRequest *req, const QString &uri, QLandmarkM
       managerUri(uri),
       isCanceled(false),
       isDeleted(false),
-      engine(eng)
+      engine(eng),
+      runId(runId)
 {
 };
 
@@ -2919,7 +2920,8 @@ void QueryRun::run()
             QMetaObject::invokeMethod(engine, "updateRequestState",
                                       Qt::QueuedConnection,
                                       Q_ARG(QLandmarkAbstractRequest *, request),
-                                      Q_ARG(QLandmarkAbstractRequest::State, QLandmarkAbstractRequest::ActiveState));
+                                      Q_ARG(QLandmarkAbstractRequest::State, QLandmarkAbstractRequest::ActiveState),
+                                      Q_ARG(unsigned int, runId));
         }
 
         switch(request->type()){
@@ -2937,7 +2939,8 @@ void QueryRun::run()
                                               Q_ARG(QList<QLandmarkId>,lmIds),
                                               Q_ARG(QLandmarkManager::Error, error),
                                               Q_ARG(QString, errorString),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState),
+                                              Q_ARG(unsigned int, runId));
                 }
 
                 break;
@@ -2957,7 +2960,8 @@ void QueryRun::run()
                                               Q_ARG(QList<QLandmark>,lms),
                                               Q_ARG(QLandmarkManager::Error, error),
                                               Q_ARG(QString, errorString),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState),
+                                              Q_ARG(unsigned int, runId));
                 }
                 break;
             }
@@ -2978,7 +2982,8 @@ void QueryRun::run()
                                               Q_ARG(QLandmarkManager::Error, error),
                                               Q_ARG(QString, errorString),
                                               Q_ARG(ERROR_MAP, errorMap),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState),
+                                              Q_ARG(unsigned int, runId));
                 }
 
                 break;
@@ -2999,7 +3004,8 @@ void QueryRun::run()
                                           Q_ARG(QLandmarkManager::Error, error),
                                           Q_ARG(QString, errorString),
                                           Q_ARG(ERROR_MAP, errorMap),
-                                          Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                                          Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState),
+                                          Q_ARG(unsigned int, runId));
             }
 
                 break;
@@ -3020,7 +3026,8 @@ void QueryRun::run()
                                           Q_ARG(QLandmarkManager::Error, error),
                                           Q_ARG(QString, errorString),
                                           Q_ARG(ERROR_MAP, errorMap),
-                                          Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                                          Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState),
+                                          Q_ARG(unsigned int, runId));
             }
             break;
         }
@@ -3041,7 +3048,8 @@ void QueryRun::run()
                                               Q_ARG(QList<QLandmarkCategoryId>,catIds),
                                               Q_ARG(QLandmarkManager::Error, error),
                                               Q_ARG(QString, errorString),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState),
+                                              Q_ARG(unsigned int, runId));
                 }
                 break;
             }
@@ -3064,7 +3072,8 @@ void QueryRun::run()
                                               Q_ARG(QList<QLandmarkCategory>,cats),
                                               Q_ARG(QLandmarkManager::Error, error),
                                               Q_ARG(QString, errorString),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState),
+                                              Q_ARG(unsigned int, runId));
                 }
                 break;
             }
@@ -3091,7 +3100,8 @@ void QueryRun::run()
                                               Q_ARG(QLandmarkManager::Error, error),
                                               Q_ARG(QString, errorString),
                                               Q_ARG(ERROR_MAP, errorMap),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState),
+                                              Q_ARG(unsigned int, runId));
                 }
 
                 break;
@@ -3118,7 +3128,8 @@ void QueryRun::run()
                                           Q_ARG(QLandmarkManager::Error, error),
                                           Q_ARG(QString, errorString),
                                           Q_ARG(ERROR_MAP, errorMap),
-                                          Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                                          Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState),
+                                          Q_ARG(unsigned int, runId));
             }
 
             break;
@@ -3146,7 +3157,8 @@ void QueryRun::run()
                                              Q_ARG(QLandmarkManager::Error, error),
                                              Q_ARG(QString, errorString),
                                              Q_ARG(ERROR_MAP, errorMap),
-                                             Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                                             Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState),
+                                             Q_ARG(unsigned int, runId));
                }
                break;
             }
@@ -3168,7 +3180,8 @@ void QueryRun::run()
                                               Q_ARG(QList<QLandmarkId>, landmarkIds),
                                               Q_ARG(QLandmarkManager::Error, error),
                                               Q_ARG(QString, errorString),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState),
+                                              Q_ARG(unsigned int, runId));
                 }
 
                 break;
@@ -3189,7 +3202,8 @@ void QueryRun::run()
                                               Q_ARG(QLandmarkExportRequest *, exportRequest),
                                               Q_ARG(QLandmarkManager::Error, error),
                                               Q_ARG(QString, errorString),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState),
+                                              Q_ARG(unsigned int, runId));
                 }
                 break;
             }

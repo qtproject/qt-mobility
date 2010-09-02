@@ -209,12 +209,22 @@ QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate & other)
 /*!
     Returns true if the latitude, longitude and altitude of this
     coordinate are the same as those of \a other.
+
+    The longitude will be ignored if the latitude is +/- 90 degrees.
 */
 bool QGeoCoordinate::operator==(const QGeoCoordinate &other) const
 {
-    return ((qIsNaN(d->lat) && qIsNaN(other.d->lat)) || qFuzzyCompare(d->lat, other.d->lat))
-           && ((qIsNaN(d->lng) && qIsNaN(other.d->lng)) || qFuzzyCompare(d->lng, other.d->lng))
-           && ((qIsNaN(d->alt) && qIsNaN(other.d->alt)) || qFuzzyCompare(d->alt, other.d->alt));
+    bool latEqual = (qIsNaN(d->lat) && qIsNaN(other.d->lat))
+                        || qFuzzyCompare(d->lat, other.d->lat);
+    bool lngEqual = (qIsNaN(d->lng) && qIsNaN(other.d->lng))
+                        || qFuzzyCompare(d->lng, other.d->lng);
+    bool altEqual = (qIsNaN(d->alt) && qIsNaN(other.d->alt))
+                        || qFuzzyCompare(d->alt, other.d->alt);
+
+    if (!qIsNaN(d->lat) && ((d->lat == 90.0) || (d->lat == -90.0)))
+        lngEqual = true;
+
+    return (latEqual && lngEqual && altEqual);
 }
 
 /*!
@@ -349,7 +359,7 @@ qreal QGeoCoordinate::distanceTo(const QGeoCoordinate &other) const
                + cos(qgeocoordinate_degToRad(d->lat))
                * cos(qgeocoordinate_degToRad(other.d->lat))
                * sin(dlon / 2.0) * sin(dlon / 2.0);
-    double x = 2 * atan2(sqrt(y), sqrt(1 - y));
+    double x = 2 * asin(sqrt(y));
     return qreal(x * qgeocoordinate_EARTH_MEAN_RADIUS * 1000);
 }
 
@@ -357,8 +367,9 @@ qreal QGeoCoordinate::distanceTo(const QGeoCoordinate &other) const
     Returns the azimuth (or bearing) in degrees from this coordinate to the
     coordinate specified by \a other. Altitude is not used in the calculation.
 
-    There is an assumption that the Earth is spherical for the purpose of
-    this calculation.
+    The bearing returned is the bearing from the origin to \a other along the
+    great-circle between the two coordinates. There is an assumption that the
+    Earth is spherical for the purpose of this calculation.
 
     Returns 0 if the type of this coordinate or the type of \a other is
     QGeoCoordinate::InvalidCoordinate.
