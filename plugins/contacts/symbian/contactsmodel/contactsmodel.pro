@@ -23,15 +23,25 @@ TEMPLATE = subdirs
 BLD_INF_RULES.prj_mmpfiles = "./groupsql/cntmodel.mmp"\
                              "./group/cntview.mmp"\
                              "./group/template.mmp"\
-                             "./groupsql/cntsrv.mmp"\
-                             "./groupsql/cntplsql.mmp"
+                             "./groupsql/cntsrv.mmp"
 
 # Exports
 deploy.path = /
 
 # IBY files
 iby.path = epoc32/rom/include
-iby.sources = cntmodel.iby cntplsql.iby
+iby.sources = cntmodel.iby
+
+#
+# The CI system currently builds against latest stable Qt,
+# which doesn't get installed to epoc32/include
+# Try to handle both cases here. (cntplsql needs Qt)
+#
+exists($${EPOCROOT}epoc32/include/mw/QtCore) {
+message(Adding cntplsql)
+BLD_INF_RULES.prj_mmpfiles += "./groupsql/cntplsql.mmp"
+iby.sources += cntplsql.iby
+}
 
 for(iby, iby.sources):BLD_INF_RULES.prj_exports += "groupsql/$$iby $$deploy.path$$iby.path/$$iby"
 
@@ -57,4 +67,3 @@ BLD_INF_RULES.prj_exports += "./inc/cntdef.h APP_LAYER_PUBLIC_EXPORT_PATH(cntdef
 BLD_INF_RULES.prj_exports += "./inc/cntphonenumparser.h APP_LAYER_PLATFORM_EXPORT_PATH(cntphonenumparser.h)"\
                              "./inc/cntviewsortpluginbase.h APP_LAYER_PLATFORM_EXPORT_PATH(cntviewsortpluginbase.h)"\
                              "./inc/cntsyncecom.h APP_LAYER_PLATFORM_EXPORT_PATH(cntsyncecom.h)"\
-
