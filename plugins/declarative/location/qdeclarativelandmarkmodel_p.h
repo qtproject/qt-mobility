@@ -47,6 +47,7 @@ public:
 
     void scheduleUpdate();
     void setDbFileName(QString fileName); //  testing purposes only
+    virtual void startUpdate() = 0;
 
 signals:
     void errorChanged();
