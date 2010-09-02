@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 SUBDIRS += tst_symbianom \
+           tst_symbianomasync \
            tst_recurringItems \
            tst_itempriority \
            tst_symbianasynchapis \
