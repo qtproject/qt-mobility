@@ -43,26 +43,109 @@
 #define QREMOTESERVICECONTROL_H
 
 #include "qmobilityglobal.h"
+#include "qremoteserviceclassregister.h"
 #include <QObject>
 #include <QQueue>
 
 
 QTM_BEGIN_NAMESPACE
 
-
 class QRemoteServiceControlPrivate;
 class Q_SERVICEFW_EXPORT QRemoteServiceControl : public QObject
 {
     Q_OBJECT
 public:
+
+    enum InstanceType {
+        SharedInstanceT = 0,  //every new request for service gets same service instance
+        UniqueInstanceT       //every new request for service gets new service instance
+    };
+
+    class Q_SERVICEFW_EXPORT Entry {
+    public:
+        Entry();
+        Entry(const Entry &);
+        Entry &operator=(const Entry &);
+
+        bool operator==(const Entry &) const;
+        bool operator!=(const Entry &) const;
+
+        bool isValid() const;
+
+        QString interfaceName() const;
+        QString serviceName() const;
+        QString version() const;
+
+        QMetaObject* metaObject() const;
+        void setInstanciationType(QRemoteServiceClassRegister::InstanceType t);
+        QRemoteServiceClassRegister::InstanceType instaciationType() const;
+
+
+    private:
+        //TODO do we need a private d-pointer?
+        QString iface;
+        QString service;
+        QString ifaceVersion;
+        QMetaObject* meta;
+        QRemoteServiceClassRegister::CreateServiceFunc cptr;
+        QRemoteServiceClassRegister::InstanceType instanceType;
+
+
+        friend class QRemoteServiceControl;
+    };
+
+
     QRemoteServiceControl(QObject* parent = 0);
     ~QRemoteServiceControl();
 
-    void publishServices(const QString& ident );
+    template <typename T>
+        Entry createServiceEntry(const QString& serviceName, const QString& interfaceName, const QString& version);
+    void registerService(const Entry& entry);
+
+
+    void publishServices(const QString& ident ); //TODO To be removed
+    void publishServices();
 
 private:
+    void registerServiceHelper(const QMetaObject* meta,
+                QRemoteServiceClassRegister::CreateServiceFunc func,
+                const QRemoteServiceIdentifier& identifier,
+                QRemoteServiceClassRegister::InstanceType type);
+
+
+
     QRemoteServiceControlPrivate* d;
 };
+
+template <typename T>
+QObject* qServiceTypeConstructHelper()
+{
+    return new T;
+}
+
+
+template <typename T>
+QRemoteServiceControl::Entry QRemoteServiceControl::createServiceEntry(const QString& serviceName, const QString& interfaceName, const QString& version)
+{
+    if (serviceName.isEmpty()
+            || interfaceName.isEmpty()
+            || version.isEmpty() ) {
+        qWarning() << "QRemoteServiceControl::registerService: service name, interface name and version must be specified";
+        return Entry();
+    }
+
+    QRemoteServiceClassRegister::CreateServiceFunc cptr = qServiceTypeConstructHelper<T>();
+
+    Entry e;
+    e.service = serviceName;
+    e.iface = interfaceName;
+    e.ifaceVersion = version;
+    e.cptr = cptr;
+    e.metaObject = &T::staticMetaObject;
+
+    return e;
+}
+
 
 QTM_END_NAMESPACE
 #endif //QREMOTESERVICECONTROL_H

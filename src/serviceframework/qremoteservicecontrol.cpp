@@ -51,6 +51,77 @@
 
 QTM_BEGIN_NAMESPACE
 
+QRemoteServiceControl::Entry::Entry()
+    : meta(0), cptr(0), instanceType(QRemoteServiceClassRegister::UniqueInstance)
+{
+}
+
+QRemoteServiceControl::Entry::Entry(const Entry& other)
+    : iface(other.iface), service(other.service), ifaceVersion(other.ifaceVersion),
+      meta(other.meta), cptr(other.cptr), instanceType(other.instanceType)
+{
+}
+
+bool QRemoteServiceControl::Entry::isValid() const
+{
+    if (!iface.isEmpty() && !service.isEmpty() 
+            && !ifaceVersion.isEmpty() && cptr!=0 && meta!=0)
+        return true;
+    return false;
+}
+
+bool QRemoteServiceControl::Entry::operator==(const Entry& other) const
+{
+    return service == other.service &&
+           iface == other.iface &&
+           ifaceVersion == other.ifaceVersion;
+}
+
+bool QRemoteServiceControl::Entry::operator!=(const Entry& other) const
+{
+    return !(other == *this);
+}
+
+QRemoteServiceControl::Entry &QRemoteServiceControl::Entry::operator=(const Entry& other)
+{
+    service = other.service;
+    iface = other.iface;
+    ifaceVersion = other.ifaceVersion;
+    meta = other.meta;
+    cptr = other.cptr;
+    instanceType = other.instanceType;
+    return *this;
+}
+
+QString QRemoteServiceControl::Entry::interfaceName() const
+{
+    return iface;
+}
+
+QString QRemoteServiceControl::Entry::serviceName() const
+{
+    return service;
+}
+
+QString QRemoteServiceControl::Entry::version() const
+{
+    return ifaceVersion;
+}
+
+QMetaObject* QRemoteServiceControl::Entry::metaObject() const
+{
+    return meta;
+}
+
+void QRemoteServiceControl::Entry::setInstanciationType(QRemoteServiceClassRegister::InstanceType t)
+{
+    instanceType = t;
+}
+
+QRemoteServiceClassRegister::InstanceType QRemoteServiceControl::Entry::instaciationType() const
+{
+    return instanceType;
+}
 
 /*!
     \class QRemoteServiceControl
@@ -92,6 +163,22 @@ void QRemoteServiceControl::publishServices( const QString& ident)
 {
     d->publishServices(ident);
 }
+
+void QRemoteServiceControl::registerService(const Entry& e)
+{
+    QRemoteServiceIdentifier ident(e.service.toLatin1(), e.iface.toLatin1(), e.ifaceVersion.toLatin1());
+    registerServiceHelper(e.meta, e.cptr, ident, e.instanceType);
+}
+
+void QRemoteServiceControl::registerServiceHelper(const QMetaObject* meta,
+                QRemoteServiceClassRegister::CreateServiceFunc func,
+                const QRemoteServiceIdentifier& identifier,
+                QRemoteServiceClassRegister::InstanceType type)
+{
+    Q_ASSERT(InstanceManager::instance());
+    InstanceManager::instance()->addType(meta, func, identifier, type);
+}
+
 
 #include "moc_qremoteservicecontrol.cpp"
 

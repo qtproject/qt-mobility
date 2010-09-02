@@ -78,6 +78,12 @@ public:
             QRemoteServiceClassRegister::CreateServiceFunc func,
             QRemoteServiceClassRegister::TypeIdentFunc typeFunc,
             QRemoteServiceClassRegister::InstanceType type);
+
+    bool addType(const QMetaObject* meta,
+            QRemoteServiceClassRegister::CreateServiceFunc func,
+            QRemoteServiceIdentifier ident,
+            QRemoteServiceClassRegister::InstanceType type);
+
     const QMetaObject* metaObject(const QRemoteServiceIdentifier& ident) const;
     QList<QRemoteServiceIdentifier> allIdents() const;
 

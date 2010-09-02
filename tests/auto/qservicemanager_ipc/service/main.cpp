@@ -407,8 +407,15 @@ int main(int argc, char** argv)
     QRemoteServiceClassRegister::registerType<SharedTestService>(QRemoteServiceClassRegister::SharedInstance);
     QRemoteServiceClassRegister::registerType<UniqueTestService>(QRemoteServiceClassRegister::UniqueInstance);
 
-    //this only works
     QRemoteServiceControl* control = new QRemoteServiceControl();
+    //QRemoteServiceControl::Entry e = control->createServiceEntry<UniqueTestService>("IPCExampleService",
+    //        "com.nokia.qt.ipcunittest", "3.5");
+    //e.set
+
+    //QRemoteServiceControl* controlnew = new QRemoteServiceControl();
+    //QRemoteServiceControl::Entry e = controlnew->registerService<UniqueTestService>("IPCExampleService", "com.nokia.qt.ipcunittest", "3.5");
+
+    //this only works
     control->publishServices("qt_sfw_example_ipc_unittest");
     int res =  app.exec();
     delete control;

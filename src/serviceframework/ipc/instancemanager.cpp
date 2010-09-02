@@ -75,12 +75,10 @@ InstanceManager::~InstanceManager()
 }
 
 bool InstanceManager::addType(const QMetaObject* meta,
-        QRemoteServiceClassRegister::CreateServiceFunc func, 
-        QRemoteServiceClassRegister::TypeIdentFunc typeFunc,
-        QRemoteServiceClassRegister::InstanceType type)
+            QRemoteServiceClassRegister::CreateServiceFunc func,
+            QRemoteServiceIdentifier ident,
+            QRemoteServiceClassRegister::InstanceType type)
 {
-    QRemoteServiceIdentifier ident = (*typeFunc)();
-
     QMutexLocker ml(&lock);
 
     if (metaMap.contains(ident)) {
@@ -96,6 +94,17 @@ bool InstanceManager::addType(const QMetaObject* meta,
     }
     return false;
 }
+
+bool InstanceManager::addType(const QMetaObject* meta,
+        QRemoteServiceClassRegister::CreateServiceFunc func,
+        QRemoteServiceClassRegister::TypeIdentFunc typeFunc,
+        QRemoteServiceClassRegister::InstanceType type)
+{
+    QRemoteServiceIdentifier ident = (*typeFunc)();
+    return addType(meta, func, ident, type);
+}
+
+
 
 const QMetaObject* InstanceManager::metaObject(const QRemoteServiceIdentifier& ident) const
 {
