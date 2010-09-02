@@ -263,6 +263,8 @@ private:
                                                               TMsvId serviceId);
     void deleteAsynchronousMTMOperation(CAsynchronousMTMOperation *apOperation);
     bool checkIfWaitingDiscardClearMessage(TMsvId aMessageId);
+    
+    bool isGsm0338CompatibleUnicodeCharacter(TUint16 aValue);
 
 private: // from CActive
     void RunL();
