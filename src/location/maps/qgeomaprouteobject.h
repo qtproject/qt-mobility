@@ -61,6 +61,7 @@ class Q_LOCATION_EXPORT QGeoMapRouteObject : public QGeoMapObject
     Q_PROPERTY(quint32 detailLevel READ detailLevel WRITE setDetailLevel NOTIFY detailLevelChanged)
 
 public:
+    QGeoMapRouteObject(QGeoMapObject *parent = 0);
     QGeoMapRouteObject(const QGeoRoute &route, QGeoMapObject *parent = 0);
     ~QGeoMapRouteObject();
 
