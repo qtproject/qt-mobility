@@ -216,6 +216,7 @@ void tst_symbianomcollections::saveCollection()
     c1.setMetaData("Name", "testname");
     c1.setMetaData("FileName", "c:testcalendar");
     c1.setMetaData("Description", "this is a test collection");
+    c1.setMetaData("OwnerName", "test");
     c1.setMetaData("Color", QColor(Qt::red));
     c1.setMetaData("Enabled", true);
     QVERIFY(m_om->saveCollection(&c1));
@@ -276,12 +277,46 @@ void tst_symbianomcollections::saveCollection()
 
 void tst_symbianomcollections::removeCollection()
 {
-    // Get collections
-    QList<QOrganizerCollectionLocalId> ids = m_om->collectionIds();
-    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
-    QVERIFY(ids.count() >= 2); // default collection + collection saved at saveCollection
+    // Save a collection
+    QOrganizerCollection c;
+    c.setMetaData("Name", "testremove");
+    c.setMetaData("FileName", "c:testremovecalendar");
+    QVERIFY(m_om->saveCollection(&c));
+    
+    // Remove it
+    // Backend should be able to remove the calendar file itself
+    QVERIFY(m_om->removeCollection(c.id().localId()));
+    
+    // Save again
+    c.setId(QOrganizerCollectionId());
+    QVERIFY(m_om->saveCollection(&c));
+    
+    // Create a second manager which will open the same collection
+    QScopedPointer<QOrganizerItemManager> om2(new QOrganizerItemManager(m_om->managerName()));
+    QList<QOrganizerCollectionLocalId> ids = om2->collectionIds();
+    QVERIFY(ids.contains(c.id().localId())); // we assume that collections local id is global between managers
+    
+    // Remove the collection again
+    // Now the backend cannot remove the file. It must set the MarkAsDelete flag instead. 
+    QVERIFY(m_om->removeCollection(c.id().localId()));
+    
+    // Create a third manager it should not contain the removed calendar
+    QScopedPointer<QOrganizerItemManager> om3(new QOrganizerItemManager(m_om->managerName()));
+    ids = om3->collectionIds();
+    QVERIFY(!ids.contains(c.id().localId()));
         
-    // Remove all
+    // Save yet again. Backend should remove the MarkAsDelete flag from the calendar.
+    c.setId(QOrganizerCollectionId());
+    QVERIFY(m_om->saveCollection(&c));
+    
+    // Free collections for removing
+    delete om2.take();
+    delete om3.take();
+    
+    // Remove all collections
+    ids = m_om->collectionIds();
+    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    QVERIFY(ids.count() >= 2); // default collection + collection saved
     foreach (QOrganizerCollectionLocalId id, ids) {
         if (id == m_om->defaultCollectionId())
             QVERIFY(!m_om->removeCollection(id)); // removing default collection not allowed
