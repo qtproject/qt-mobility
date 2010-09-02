@@ -56,7 +56,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QGeoMapData
 
-    \brief The QGeoMapData class are used as a bridge between QGeoMapWidget and
+    \brief The QGeoMapData class are used as a bridge between QGraphicsGeoMap and
     QGeoMappingManager.
 
 
@@ -66,7 +66,7 @@ QTM_BEGIN_NAMESPACE
 
     Instances of QGeoMapData are created with
     QGeoMappingManager::createMapData(), and are used internally by
-    QGeoMappingWidget to manage the state of the map and the associated
+    QGraphicsGeoMap to manage the state of the map and the associated
     QGeoMapObject instances.
 
     Plugin implementers will need to provide implementations of
@@ -80,7 +80,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     Constructs a new map data object, which stores the map data required by
-    \a widget and makes use of the functionality provided by \a engine.
+    \a geoMap and makes use of the functionality provided by \a engine.
 */
 QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
         : d_ptr(new QGeoMapDataPrivate(this, engine, geoMap)) {}
@@ -127,7 +127,7 @@ QGeoMapObject* QGeoMapData::containerObject()
 /*!
     Sets the size of the map viewport to \a size.
 
-    The size will be adjusted by the associated QGeoMapWidget as it resizes.
+    The size will be adjusted by the associated QGraphicsGeoMap as it resizes.
 */
 void QGeoMapData::setViewportSize(const QSizeF &size)
 {
@@ -137,7 +137,7 @@ void QGeoMapData::setViewportSize(const QSizeF &size)
 /*!
     Returns the size of the map viewport.
 
-    The size will be adjusted by the associated QGeoMapWidget as it resizes.
+    The size will be adjusted by the associated QGraphicsGeoMap as it resizes.
 */
 QSizeF QGeoMapData::viewportSize() const
 {
@@ -220,6 +220,7 @@ QGraphicsGeoMap::MapType QGeoMapData::mapType() const
 }
 
 /*!
+    Returns the map objects associated with this map.
 */
 QList<QGeoMapObject*> QGeoMapData::mapObjects() const
 {
@@ -228,6 +229,11 @@ QList<QGeoMapObject*> QGeoMapData::mapObjects() const
 
 /*!
     Adds \a mapObject to the list of map objects managed by this map.
+
+    The children objects are drawn in order of the QGeoMapObject::zValue()
+    value.  Children objects having the same z value will be drawn
+    in the order they were added.
+
     The map will take ownership of the \a mapObject.
 */
 void QGeoMapData::addMapObject(QGeoMapObject *mapObject)
@@ -245,6 +251,9 @@ void QGeoMapData::removeMapObject(QGeoMapObject *mapObject)
 }
 
 /*!
+    Clears the map objects associated with this map.
+
+    The map objects will be deleted.
 */
 void QGeoMapData::clearMapObjects()
 {
@@ -314,6 +323,12 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
 */
 
 /*!
+    Paints the map on \a painter, using the options \a option.
+
+    This should handle the painting of the map overlays and the map objects as
+    well.
+
+    The default implementation just draws the overlays.
 */
 void QGeoMapData::paint(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
@@ -322,6 +337,7 @@ void QGeoMapData::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 }
 
 /*!
+    Returns the map overlays associated with this map.
 */
 QList<QGeoMapOverlay*> QGeoMapData::mapOverlays() const
 {
@@ -329,6 +345,11 @@ QList<QGeoMapOverlay*> QGeoMapData::mapOverlays() const
 }
 
 /*!
+    Adds \a overlay to the list of map overlays associated with this map.
+
+    The overlays will be drawn in the order in which they were added.
+
+    The map will take ownership of \a overlay.
 */
 void QGeoMapData::addMapOverlay(QGeoMapOverlay *overlay)
 {
@@ -339,6 +360,9 @@ void QGeoMapData::addMapOverlay(QGeoMapOverlay *overlay)
 }
 
 /*!
+    Removes \a overlay from the list of map overlays associated with this map.
+
+    The map will release ownership of \a overlay.
 */
 void QGeoMapData::removeMapOverlay(QGeoMapOverlay *overlay)
 {
@@ -349,6 +373,9 @@ void QGeoMapData::removeMapOverlay(QGeoMapOverlay *overlay)
 }
 
 /*!
+    Clears the map overlays associated with this map.
+
+    The map overlays will be deleted.
 */
 void QGeoMapData::clearMapOverlays()
 {
@@ -357,6 +384,11 @@ void QGeoMapData::clearMapOverlays()
 }
 
 /*!
+    Sets up the associated between the map object \a mapObject and this map.
+
+    This will setup an instance of a QGeoMapObjectInfo subclass for \a
+    mapObject which will handle any of the map object behaviour which is
+    specifical to this QGeoMapData subclass.
 */
 void QGeoMapData::setupMapObject(QGeoMapObject *mapObject) {}
 

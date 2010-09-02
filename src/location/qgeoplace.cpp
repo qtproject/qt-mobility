@@ -81,7 +81,6 @@ QTM_BEGIN_NAMESPACE
     if (p.isLandmark())
         l = QLandmark(p)
     \endcode
-    \sa type()
 */
 
 /*!

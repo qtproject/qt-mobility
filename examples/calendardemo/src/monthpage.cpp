@@ -59,10 +59,13 @@ MonthPage::MonthPage(QWidget *parent)
     // Create widgets
     QFormLayout *mainlayout = new QFormLayout(this);
 
-    QComboBox *comboBox = new QComboBox(this);
-    comboBox->addItems(QOrganizerItemManager::availableManagers());
-    mainlayout->addRow("Backend:", comboBox);
-    connect(comboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(backendChanged(const QString &)));
+    m_managerComboBox = new QComboBox(this);
+    foreach (const QString& manager, QOrganizerItemManager::availableManagers()) {
+        if (manager != "invalid" && manager != "skeleton")
+            m_managerComboBox->addItem(manager);
+    }
+    mainlayout->addRow("Backend:", m_managerComboBox);
+    connect(m_managerComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(backendChanged(const QString &)));
 
     m_dateLabel = new QLabel(this);
     m_dateLabel->setAlignment(Qt::AlignCenter);
@@ -82,50 +85,21 @@ MonthPage::MonthPage(QWidget *parent)
     m_itemList->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_itemList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_itemList->setFocusPolicy(Qt::NoFocus);
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    m_itemList->setVisible(false);
+#else
     mainlayout->addRow(m_itemList);
+#endif
     connect(m_itemList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(itemDoubleClicked(QListWidgetItem*)));
 
-#ifdef Q_WS_X11
-    // Add push buttons for Maemo as it does not support soft keys
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-    QPushButton *addEventButton = new QPushButton("Add Event", this);
-    buttonLayout->addWidget(addEventButton);
-    connect(addEventButton,SIGNAL(clicked()),this,SLOT(addNewEvent()));
-    QPushButton *addTodoButton = new QPushButton("Add Todo", this);
-    buttonLayout->addWidget(addTodoButton);
-    connect(addTodoButton,SIGNAL(clicked()),this,SLOT(addNewTodo()));
-    mainlayout->addRow("Options:", buttonLayout);
-#endif
-
     setLayout(mainlayout);
+}
 
-    // Add options softkey
-    QAction* optionsSoftKey = new QAction("Options", this);
-    optionsSoftKey->setSoftKeyRole(QAction::PositiveSoftKey);
-    optionsSoftKey->setMenu(new QMenu(this));
-    addAction(optionsSoftKey);
-
-    // Add actions to options menu
-    QMenu *optionsMenu = optionsSoftKey->menu();
-    QAction* openAction = optionsMenu->addAction("Open");
-    connect(openAction, SIGNAL(triggered(bool)), this, SLOT(openDay()));
-    QAction* addEventAction = optionsMenu->addAction("Add Event");
-    connect(addEventAction, SIGNAL(triggered(bool)), this, SLOT(addNewEvent()));
-    QAction* addTodoAction = optionsMenu->addAction("Add Todo");
-    connect(addTodoAction, SIGNAL(triggered(bool)), this, SLOT(addNewTodo()));
-    QAction* addHugeEntires = optionsMenu->addAction("Add large no. of events");
-    connect(addHugeEntires, SIGNAL(triggered(bool)), this, SLOT(addEvents()));
-    QAction* deleteAllEntires = optionsMenu->addAction("Delete all entries");
-    connect(deleteAllEntires, SIGNAL(triggered(bool)), this, SLOT(deleteAllEntries()));
-    
-    // Connect to the save and remove request status change signals
-    connect(&m_saveReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
-            this, SLOT(saveReqStateChanged(QOrganizerItemAbstractRequest::State)));
-    connect(&m_remReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
-            this, SLOT(removeReqStateChanged(QOrganizerItemAbstractRequest::State)));
-    
-    backendChanged(comboBox->currentText());
-    refresh();
+// This is separate from the constructor so we can do it after connecting the signals
+void MonthPage::init()
+{
+    backendChanged(m_managerComboBox->currentText());
+    currentMonthChanged();
 }
 
 MonthPage::~MonthPage()
@@ -133,84 +107,62 @@ MonthPage::~MonthPage()
 
 }
 
+#ifdef Q_OS_SYMBIAN
+void MonthPage::setMenu(QMenu *menu)
+{
+    // Add softkey for symbian
+    QAction* optionsSoftKey = new QAction("Options", this);
+    optionsSoftKey->setSoftKeyRole(QAction::PositiveSoftKey);
+    optionsSoftKey->setMenu(menu);
+    addAction(optionsSoftKey);
+}
+#endif
+
 void MonthPage::backendChanged(const QString &managerName)
 {
     // Nothing to change
     if (m_manager && m_manager->managerName() == managerName)
         return;
 
-    // Out with the old
-    delete m_manager;
-    m_manager = 0;
-
-    // In with the new
+    // Try creating a new manager
     QMap<QString, QString> parameters;
-    m_manager = new QOrganizerItemManager(managerName, parameters, this);
-    if (m_manager->error()) {
-        QMessageBox::information(this, tr("Failed!"), QString("Failed to create manager!\n(error code %1)").arg(m_manager->error()));
+    QOrganizerItemManager* newManager = new QOrganizerItemManager(managerName, parameters, this);
+    if (!newManager || newManager->error()) {
+        QMessageBox::information(this, tr("Failed!"), QString("Failed to create manager"));
+        delete newManager;
+        m_managerComboBox->setCurrentIndex(m_managerComboBox->findText(m_manager->managerName()));
+    } else {
+        // Success: Replace the old one
         delete m_manager;
+        m_manager = newManager;
+        emit managerChanged(m_manager);
+        refresh();
     }
+}
 
+void MonthPage::editItem()
+{
+    QListWidgetItem *listItem = m_itemList->currentItem();
+    if (!listItem)
+        return;
+
+    QOrganizerItem organizerItem = listItem->data(ORGANIZER_ITEM_ROLE).value<QOrganizerItem>();
+    if (!organizerItem.isEmpty())
+        emit showEditPage(organizerItem);
+}
+
+void MonthPage::removeItem()
+{
+    QListWidgetItem *listItem = m_itemList->currentItem();
+    if (!listItem)
+        return;
+
+    QOrganizerItem organizerItem = listItem->data(ORGANIZER_ITEM_ROLE).value<QOrganizerItem>();
+    if (organizerItem.isEmpty())
+        return;
+
+    m_manager->removeItem(organizerItem.localId());
     refresh();
-}
-
-void MonthPage::addNewEvent()
-{
-    // TODO: move this to CalendarDemo::addNewEvent() slot
-    QOrganizerEvent newEvent;
-    QDateTime time(m_calendarWidget->selectedDate());
-    newEvent.setStartDateTime(time);
-    time = time.addSecs(60*30); // add 30 minutes to end time
-    newEvent.setEndDateTime(time);
-    emit showEditPage(m_manager, newEvent);
-}
-
-void MonthPage::addNewTodo()
-{
-    // TODO: move this to CalendarDemo::addNewTodo() slot
-    QOrganizerTodo newTodo;
-    QDateTime time(m_calendarWidget->selectedDate());
-    newTodo.setStartDateTime(time);
-    time = time.addSecs(60*30); // add 30 minutes to due time
-    newTodo.setDueDateTime(time);
-    emit showEditPage(m_manager, newTodo);
-}
-
-void MonthPage::addEvents()
-{
-    m_itemsList.clear();
-    
-    // Create a large number of events asynchronously
-    for(int index=0 ; index <  100 ; index++) {
-        QOrganizerItem item;
-        item.setType(QOrganizerItemType::TypeEvent);
-        item.setDescription(QString("Event %1").arg(index));
-        item.setDisplayLabel(QString("Subject for event %1").arg(index + 1));
-        
-        // Set the start date to index to add events to next 5000 days
-        QOrganizerEventTimeRange timeRange;
-        timeRange.setStartDateTime(QDateTime::currentDateTime().addDays(index));
-        item.saveDetail(&timeRange);
-        
-        m_itemsList.append(item);
-    }
-    
-    // Now create a save request and execute it
-    m_saveReq.setItems(m_itemsList);
-    m_saveReq.setManager(m_manager);
-    m_saveReq.start();
-}
-
-void MonthPage::deleteAllEntries()
-{
-    // Fetch all the entries
-    QList<QOrganizerItemLocalId> ids = m_manager->itemIds();
-    
-    if(ids.count()) {
-        m_remReq.setItemIds(ids);
-        m_remReq.setManager(m_manager);
-        m_remReq.start();
-    }
 }
 
 void MonthPage::refresh()
@@ -240,28 +192,30 @@ void MonthPage::refresh()
     // Get dates for all items
     QList<QDate> dates;
     QList<QOrganizerItem> instanceList;
-    instanceList.clear();
     foreach (const QOrganizerItem &item, items)
-    {   
+    {
     	// Get the instances of the item for that month and collect those dates.
-    	instanceList.append(m_manager->itemInstances(item, startDateTime, endDateTime));
-		for (int count = 0; count < instanceList.count() ; count++) {
-			QOrganizerEventTimeRange eventTimeRange = instanceList.at(count).detail<QOrganizerEventTimeRange>();
-			QDate startDate(eventTimeRange.startDateTime().date());
-			QDate endDate(eventTimeRange.endDateTime().date());
-			while (startDate <= endDate) {
-				dates << (eventTimeRange.startDateTime().date());
-				startDate = startDate.addDays(1);
-			}
-		}
-    	
-		QOrganizerTodoTimeRange todoTimeRange = item.detail<QOrganizerTodoTimeRange>();
-        if (!todoTimeRange.isEmpty()) {
-            dates << (todoTimeRange.startDateTime().date());
-            //dates << (todoTimeRange.dueDateTime().date());
-        }
         instanceList.clear();
-        
+        instanceList.append(m_manager->itemInstances(item, startDateTime, endDateTime));
+        for (int count = 0; count < instanceList.count(); count++) {
+            QOrganizerEventTimeRange eventTimeRange = instanceList.at(count).detail<QOrganizerEventTimeRange>();
+            QDate startDate(eventTimeRange.startDateTime().date());
+            QDate endDate(eventTimeRange.endDateTime().date());
+            while (startDate <= endDate) {
+                dates << (eventTimeRange.startDateTime().date());
+                startDate = startDate.addDays(1);
+            }
+        }
+
+        QOrganizerTodoTimeRange todoTimeRange = item.detail<QOrganizerTodoTimeRange>();
+        if (!todoTimeRange.isEmpty())
+            dates << todoTimeRange.startDateTime().date();
+
+        QOrganizerJournalTimeRange journalTimeRange = item.detail<QOrganizerJournalTimeRange>();
+        if (!journalTimeRange.isEmpty())
+            dates << journalTimeRange.entryDateTime().date();
+
+        instanceList.clear();
         // TODO: other item types
     }
 
@@ -269,6 +223,8 @@ void MonthPage::refresh()
     QBrush brush;
     brush.setColor(Qt::green);
     foreach (QDate date, dates) {
+        if (date == QDate())
+            continue;
         QTextCharFormat cf = m_calendarWidget->dateTextFormat(date);
         cf.setFontItalic(true); // TODO: find a better way to mark dates
         cf.setBackground(brush);
@@ -280,9 +236,9 @@ void MonthPage::refresh()
 
 void MonthPage::refreshDayItems()
 {
-    // Update date
     QDate selectedDate = m_calendarWidget->selectedDate();
-    m_dateLabel->setText(selectedDate.toString());
+    emit currentDayChanged(selectedDate);
+
     QDateTime startOfDay(selectedDate, QTime(0, 0, 0));
     QDateTime endOfDay(selectedDate, QTime(23, 59, 59));
     // Clear items shown
@@ -294,29 +250,42 @@ void MonthPage::refreshDayItems()
     QList<QOrganizerItem> instanceList;
     foreach (const QOrganizerItem &item, items)
     {
-    	instanceList.clear();
-    	instanceList.append(m_manager->itemInstances(item, startOfDay, endOfDay));
-    	if(instanceList.count() > 0) {
-    		QOrganizerEventTimeRange eventTimeRange = item.detail<QOrganizerEventTimeRange>();
-    		QString time = eventTimeRange.startDateTime().time().toString("hh:mm");
-    		QListWidgetItem* listItem = new QListWidgetItem();
-    		listItem->setText(QString("Event:%1-%2").arg(time).arg(item.displayLabel()));
-    		QVariant data = QVariant::fromValue<QOrganizerItem>(item);
-    		listItem->setData(ORGANIZER_ITEM_ROLE, data);
-    		m_itemList->addItem(listItem);
-    	}
+        instanceList.clear();
+        instanceList.append(m_manager->itemInstances(item, startOfDay, endOfDay));
+        if(instanceList.count() > 0) {
+            QOrganizerEventTimeRange eventTimeRange = item.detail<QOrganizerEventTimeRange>();
+            QString time = eventTimeRange.startDateTime().time().toString("hh:mm");
+            QListWidgetItem* listItem = new QListWidgetItem();
+            listItem->setText(QString("Event:%1-%2").arg(time).arg(item.displayLabel()));
+            QVariant data = QVariant::fromValue<QOrganizerItem>(item);
+            listItem->setData(ORGANIZER_ITEM_ROLE, data);
+            m_itemList->addItem(listItem);
+        }
 
-		QOrganizerTodoTimeRange todoTimeRange = item.detail<QOrganizerTodoTimeRange>();
-		if (!todoTimeRange.isEmpty()) {
-			if (todoTimeRange.startDateTime().date() == selectedDate) {
-				QString time = todoTimeRange.startDateTime().time().toString("hh:mm");
-				QListWidgetItem* listItem = new QListWidgetItem();
-				listItem->setText(QString("Todo:%1-%2").arg(time).arg(item.displayLabel()));
-				QVariant data = QVariant::fromValue<QOrganizerItem>(item);
-				listItem->setData(ORGANIZER_ITEM_ROLE, data);
-				m_itemList->addItem(listItem);
-			}
-		}
+        QOrganizerTodoTimeRange todoTimeRange = item.detail<QOrganizerTodoTimeRange>();
+        if (!todoTimeRange.isEmpty()) {
+            if (todoTimeRange.startDateTime().date() == selectedDate) {
+                QString time = todoTimeRange.startDateTime().time().toString("hh:mm");
+                QListWidgetItem* listItem = new QListWidgetItem();
+                listItem->setText(QString("Todo:%1-%2").arg(time).arg(item.displayLabel()));
+                QVariant data = QVariant::fromValue<QOrganizerItem>(item);
+                listItem->setData(ORGANIZER_ITEM_ROLE, data);
+                m_itemList->addItem(listItem);
+            }
+        }
+
+        QOrganizerJournalTimeRange journalTimeRange = item.detail<QOrganizerJournalTimeRange>();
+        if (!journalTimeRange.isEmpty()) {
+            if (journalTimeRange.entryDateTime().date() == selectedDate) {
+                QString time = journalTimeRange.entryDateTime().time().toString("hh:mm");
+                QListWidgetItem* listItem = new QListWidgetItem();
+                listItem->setText(QString("Journal:%1-%2").arg(time).arg(item.displayLabel()));
+                QVariant data = QVariant::fromValue<QOrganizerItem>(item);
+                listItem->setData(ORGANIZER_ITEM_ROLE, data);
+                m_itemList->addItem(listItem);
+            }
+        }
+
         // TODO: other item types
         // TODO: icons for event/todo/journal would be nice
     }
@@ -327,17 +296,20 @@ void MonthPage::refreshDayItems()
 
 void MonthPage::currentMonthChanged()
 {
+    int month = m_calendarWidget->monthShown();
+    int year = m_calendarWidget->yearShown();
+    m_dateLabel->setText(QString("%1 %2").arg(QDate::longMonthName(month)).arg(year));
     refresh();
 }
 
 void MonthPage::dayDoubleClicked(QDate date)
 {
-    emit showDayPage(m_manager, date);
+    emit showDayPage(date);
 }
 
 void MonthPage::openDay()
 {
-    emit showDayPage(m_manager, m_calendarWidget->selectedDate());
+    emit showDayPage(m_calendarWidget->selectedDate());
 }
 
 void MonthPage::itemDoubleClicked(QListWidgetItem *listItem)
@@ -347,37 +319,7 @@ void MonthPage::itemDoubleClicked(QListWidgetItem *listItem)
 
     QOrganizerItem organizerItem = listItem->data(ORGANIZER_ITEM_ROLE).value<QOrganizerItem>();
     if (!organizerItem.isEmpty())
-        emit showEditPage(m_manager, organizerItem);
-}
-
-void MonthPage::saveReqStateChanged(QOrganizerItemAbstractRequest::State reqState)
-{
-    if(QOrganizerItemAbstractRequest::ActiveState == reqState) {
-        // Request started. Show a progress or wait dialog
-        m_progressDlg = new QProgressDialog("Saving events..", "Cancel", 100, 100, this);
-        connect(m_progressDlg, SIGNAL(canceled()), &m_saveReq, SLOT(cancel()));
-        m_progressDlg->show();
-    } else if (QOrganizerItemAbstractRequest::FinishedState == reqState ||
-               QOrganizerItemAbstractRequest::CanceledState == reqState) {
-        // Request finished or cancelled. Stop showing the progress dialog and refresh
-        m_progressDlg->hide();
-        refresh();
-    }
-}
-
-void MonthPage::removeReqStateChanged(QOrganizerItemAbstractRequest::State reqState)
-{
-    if(QOrganizerItemAbstractRequest::ActiveState == reqState) {
-        // Request started. Show a progress or wait dialog
-        m_progressDlg = new QProgressDialog("Removing events..", "Cancel", 100, 100, this);
-        connect(m_progressDlg, SIGNAL(canceled()), &m_remReq, SLOT(cancel()));
-        m_progressDlg->show();
-    } else if (QOrganizerItemAbstractRequest::FinishedState == reqState ||
-               QOrganizerItemAbstractRequest::CanceledState == reqState) {
-        // Request finished or cancelled. Stop showing the progress dialog and refresh
-        m_progressDlg->hide();
-        refresh();
-    }
+        emit showEditPage(organizerItem);
 }
 
 void MonthPage::showEvent(QShowEvent *event)
