@@ -47,6 +47,12 @@ QTM_BEGIN_NAMESPACE
 
 // display
  /*!
+   \class QSystemDisplayInfo
+   \ingroup systeminfo
+   \inmodule QtSystemInfo
+
+        \brief The QSystemDisplayInfo class provides access to display information from the system.
+
    \fn QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
    Constructs a QSystemDisplayInfo object with the given \a parent.
  */

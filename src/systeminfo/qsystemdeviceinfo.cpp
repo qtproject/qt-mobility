@@ -48,9 +48,116 @@ QTM_BEGIN_NAMESPACE
 
 // device
  /*!
-   \fn QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
+        \class QSystemDeviceInfo
+        \ingroup systeminfo
+        \inmodule QtSystemInfo
+        \brief The QSystemDeviceInfo class provides access to device information from the system.
+
+        \fn QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
+
    Constructs a QSystemDeviceInfo with the given \a parent.
  */
+        /*!
+           \enum QSystemDisplayInfo::DisplayOrientation
+          This enum describes the current orientation of the display.
+
+             \value Unknown              Orientation could not be determined.
+             \value Landscape            Orientation is in landscape.
+             \value Portrait             Orientation is in portrait.
+             \value InvertedLandscape    Orientation is landscape inverted.
+             \value InvertedPortrait     Orientation is portrait inverted.
+        */
+
+        /*!
+          \fn void QSystemDeviceInfo::batteryLevelChanged(int level)
+
+          This signal is emitted when battery level has changed.
+          \a level is the new level.
+         */
+
+        /*!
+          \fn void QSystemDeviceInfo::batteryStatusChanged(QSystemDeviceInfo::BatteryStatus status)
+
+          This signal is emitted when battery status has changed.
+          \a status is the new status.
+         */
+
+           /*!
+          \fn void QSystemDeviceInfo::powerStateChanged(QSystemDeviceInfo::PowerState state)
+
+          This signal is emitted when the power state has changed, such as when a phone gets plugged in to the wall.
+          \a state is the new power state.
+         */
+
+        /*!
+          \fn  void QSystemDeviceInfo::currentProfileChanged(QSystemDeviceInfo::Profile profile)
+
+          This signal is emitted whenever the users active profile changes, specified by \a profile.
+        */
+
+
+        /*!
+            \enum QSystemDeviceInfo::BatteryStatus
+            This enum describes the status of the main battery.
+
+            \value NoBatteryLevel          Battery level undetermined.
+            \value BatteryCritical         Battery level is critical 3% or less.
+            \value BatteryVeryLow          Battery level is very low, 10% or less.
+            \value BatteryLow              Battery level is low 40% or less.
+            \value BatteryNormal           Battery level is above 40%.
+
+          */
+        /*!
+            \enum QSystemDeviceInfo::PowerState
+            This enum describes the power state:
+
+            \value UnknownPower                   Power error.
+            \value BatteryPower                   On battery power.
+            \value WallPower                      On wall power.
+            \value WallPowerChargingBattery       On wall power and charging main battery.
+
+          */
+        /*!
+            \enum QSystemDeviceInfo::Profile
+            This enum describes the current operating profile of the device or computer.
+
+            \value UnknownProfile          Profile unknown or error.
+            \value SilentProfile           Silent profile.
+            \value NormalProfile           Normal profile.
+            \value LoudProfile             Loud profile.
+            \value VibProfile              Vibrate profile.
+            \value OfflineProfile          Offline profile.
+            \value PowersaveProfile        Powersave profile.
+            \value CustomProfile           Custom profile.
+
+          */
+
+        /*!
+            \enum QSystemDeviceInfo::SimStatus
+            This enum describes the status is the sim card or cards.
+
+            \value SimNotAvailable         SIM is not available on this device.
+            \value SingleSimAvailable         One SIM card is available on this.
+            \value DualSimAvailable           Two SIM cards are available on this device.
+            \value SimLocked                  Device has SIM lock enabled.
+        */
+
+        /*!
+            \enum QSystemDeviceInfo::InputMethod
+            This enum describes the device method of user input.
+
+            \value Keys               Device has key/buttons.
+            \value Keypad             Device has keypad (1,2,3, etc).
+            \value Keyboard           Device has qwerty keyboard.
+            \value SingleTouch        Device has single touch screen.
+            \value MultiTouch         Device has muti touch screen.
+            \value Mouse              Device has a mouse.
+        */
+        /*!
+          \fn void QSystemDeviceInfo::bluetoothStateChanged(bool on)
+
+          This signal is emitted whenever bluetooth state changes, specified by \a on.
+        */
 
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     : QObject(parent), d(deviceInfoPrivate())
