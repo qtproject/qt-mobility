@@ -64,7 +64,7 @@ QTelephonyCallListPrivate::QTelephonyCallListPrivate(QTelephonyCallList *parent)
     , accountManager(0)
 {
     DBus::registerTypes();
-    qDebug() << "QTelephonyCallListPrivate::QTelephonyCallListPrivate(QTelephonyCallList *parent)";
+    qDebug() << "QTelephonyCallListPrivate::QTelephonyCallListPrivate(QTelephonyCallList *parent) for maemo";
 
     qDebug() << "create Account Manager";
     accountManager = new AccountManager(QDBusConnection::sessionBus(), TELEPATHY_ACCOUNT_MANAGER_BUS_NAME, TELEPATHY_ACCOUNT_MANAGER_OBJECT_PATH, this);
@@ -137,8 +137,10 @@ void QTelephonyCallListPrivate::channelStatusChanged(DBus::ChannelPtr channel)
         emit p->activeCallStatusChanged(callinfo);
 
         //check if channel must be removed from callist
-        if(callInfoList[index]->status() == QTelephony::Disconnecting)
+        if(callInfoList[index]->status() == QTelephony::Disconnecting){
             callInfoList.removeAt(index);
+            emit p->activeCallRemoved(callinfo);
+        }
     }
 }
 
