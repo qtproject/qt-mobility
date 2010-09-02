@@ -206,6 +206,22 @@ QCameraFocusControl::~QCameraFocusControl()
 */
 
 /*!
+    \fn void QCameraFocusControl::maximumOpticalZoomChanged(qreal zoom)
+
+    Signal emitted when the maximum supported optical \a zoom value changed.
+*/
+
+/*!
+    \fn void QCameraFocusControl::maximumDigitalZoomChanged(qreal zoom)
+
+    Signal emitted when the maximum supported digital \a zoom value changed.
+
+    The maximum supported zoom value can depend on other camera settings,
+    like capture mode or resolution.
+*/
+
+
+/*!
   \fn QCameraFocusControl::focusZonesChanged()
 
   Signal is emited when the set of zones, camera focused on is changed.

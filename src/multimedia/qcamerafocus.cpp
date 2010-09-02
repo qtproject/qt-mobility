@@ -207,6 +207,10 @@ void QCameraFocusPrivate::initControls()
     if (focusControl) {
         q->connect(focusControl, SIGNAL(opticalZoomChanged(qreal)), q, SIGNAL(opticalZoomChanged(qreal)));
         q->connect(focusControl, SIGNAL(digitalZoomChanged(qreal)), q, SIGNAL(digitalZoomChanged(qreal)));
+        q->connect(focusControl, SIGNAL(maximumOpticalZoomChanged(qreal)),
+                   q, SIGNAL(maximumOpticalZoomChanged(qreal)));
+        q->connect(focusControl, SIGNAL(maximumDigitalZoomChanged(qreal)),
+                   q, SIGNAL(maximumDigitalZoomChanged(qreal)));
     }
 }
 
@@ -429,6 +433,22 @@ void QCameraFocus::zoomTo(qreal optical, qreal digital)
 
     Signal emitted when digital zoom value changes to new \a value.
 */
+
+/*!
+    \fn void QCameraFocus::maximumOpticalZoomChanged(qreal zoom)
+
+    Signal emitted when the maximum supported optical \a zoom value changed.
+*/
+
+/*!
+    \fn void QCameraFocus::maximumDigitalZoomChanged(qreal zoom)
+
+    Signal emitted when the maximum supported digital \a zoom value changed.
+
+    The maximum supported zoom value can depend on other camera settings,
+    like capture mode or resolution.
+*/
+
 
 
 /*!

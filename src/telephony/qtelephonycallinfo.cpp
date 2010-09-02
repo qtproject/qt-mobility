@@ -176,4 +176,22 @@ QVariant QTelephonyCallInfo::value(const QString& key) const
     return QVariant();
 }
 
+/*!
+    \fn  QTelephony::Direction QTelephonyCallInfo::direction() const
+
+    Gives back the direction of a call.
+    This function is for reading the direction of a call (received or dialed).
+*/
+QTelephony::Direction QTelephonyCallInfo::direction() const
+{
+    if(d){
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        return d->direction();
+#else
+        return d->direction;
+#endif
+    }
+    return QTelephony::Received;
+}
+
 QTM_END_NAMESPACE

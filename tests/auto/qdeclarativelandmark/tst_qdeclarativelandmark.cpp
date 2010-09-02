@@ -52,6 +52,7 @@
 #include "qdeclarativelandmarkmodel_p.h"
 #include "qdeclarativelandmarkcategorymodel_p.h"
 #include <QString>
+#include <QUuid>
 
 // Eventually these will make it into qtestcase.h
 // but we might need to tweak the timeout values here.
@@ -132,6 +133,13 @@ public slots:
 
 private slots:
 
+
+    void updateCancel();
+    void databaseChanges();
+
+    void robustness();
+    void robustness_data();
+
     void construction();
     void construction_data();
     void defaultProperties();
@@ -148,6 +156,8 @@ private:
     void createDb();
     void deleteDb();
     void populateTypicalDb();
+    QString addLandmarkToDb();
+    QString addCategoryToDb();
 
 private:
     // Engine is needed for instantiating declarative components
@@ -293,7 +303,7 @@ void tst_QDeclarativeLandmark::defaultProperties()
 
     source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModel }");
     QCOMPARE(source_obj->property("error").toString(), QString());
-    QCOMPARE(source_obj->property("autoUpdate").toBool(), false);
+    QCOMPARE(source_obj->property("autoUpdate").toBool(), true);
     filter_obj = source_obj->property("nameFilter").value<QObject*>();
     QVERIFY(filter_obj == 0); delete filter_obj;
     filter_obj = source_obj->property("proximityFilter").value<QObject*>();
@@ -320,7 +330,7 @@ void tst_QDeclarativeLandmark::defaultProperties()
     source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {id: landmark }");
     QCOMPARE(source_obj->property("error").toString(), QString());
     QCOMPARE(source_obj->property("count").toInt(), 0);
-    QCOMPARE(source_obj->property("autoUpdate").toBool(), false);
+    QCOMPARE(source_obj->property("autoUpdate").toBool(), true);
     QCOMPARE(source_obj->property("limit").toInt(), -1);
     QCOMPARE(source_obj->property("offset").toInt(), -1);
     delete source_obj;
@@ -367,10 +377,10 @@ void tst_QDeclarativeLandmark::basicSignals()
     QTest::qWait(10);
     QTRY_VERIFY(sortByChangedSpy.isEmpty());
 
-    source_obj->setProperty("autoUpdate", true);
+    source_obj->setProperty("autoUpdate", false);
     QTRY_VERIFY(!autoUpdateChangedSpy.isEmpty());
     autoUpdateChangedSpy.clear();
-    source_obj->setProperty("autoUpdate", true);
+    source_obj->setProperty("autoUpdate", false);
     QTest::qWait(10);
     QTRY_VERIFY(autoUpdateChangedSpy.isEmpty());
 
@@ -612,6 +622,110 @@ void tst_QDeclarativeLandmark::update_data()
     QTest::addColumn<ObjectType>("objectType");
     QTest::newRow("LandmarkModel") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:false;}" << ObjectTypeLandmark;
     QTest::newRow("LandmarkCategoryModel") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:false;}"<< ObjectTypeCategory;
+}
+
+void tst_QDeclarativeLandmark::databaseChanges()
+{
+    QSKIP("Temporary skip while QLandmarkManager crashes", SkipAll);
+    QDeclarativeLandmarkModel* landmarkModel = static_cast<QDeclarativeLandmarkModel*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:true;}"));
+    landmarkModel->setDbFileName(DB_FILENAME);
+
+    QSignalSpy modelChangedSpy(landmarkModel, SIGNAL(modelChanged()));
+    QSignalSpy countChangedSpy(landmarkModel, SIGNAL(countChanged()));
+    QString landmarkName = addLandmarkToDb();
+
+    QTRY_COMPARE(modelChangedSpy.count(), 1);
+    QTRY_COMPARE(countChangedSpy.count(), 1);
+    QTRY_COMPARE(landmarkModel->property("count").toInt(), 1);
+    QTRY_COMPARE(landmarkModel->landmarks().at(0)->name(), landmarkName);
+    delete landmarkModel;
+
+    //QDeclarativeLandmarkCategoryModel* categoryModel = static_cast<QDeclarativeLandmarkCategoryModel*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:true;}"));
+    //categoryModel->setDbFileName(DB_FILENAME);
+    //QSignalSpy modelChangedSpy2(categoryModel, SIGNAL(modelChanged()));
+    //QSignalSpy countChangedSpy2(categoryModel, SIGNAL(countChanged()));
+
+    //QString categoryName = addCategoryToDb();
+    //QTRY_COMPARE(modelChangedSpy2.count(), 1);
+    //QTRY_COMPARE(countChangedSpy2.count(), 1);
+    //QTRY_COMPARE(categoryModel->property("count").toInt(), 1);
+    //QTRY_COMPARE(categoryModel->categories().at(0)->name(), categoryName); TODO!
+    //delete categoryModel;
+}
+
+/*
+Sanitytest interface robustness
+*/
+void tst_QDeclarativeLandmark::robustness()
+{
+    QSKIP("Temporary skip while QLandmarkManager crashes", SkipAll);
+    QFETCH(QString, componentString);
+    QObject* source_obj = createComponent(componentString);
+
+    // Bomb update() calls with empty database, should not crash
+    for (int interval = 0; interval < 30; interval += 5) {
+        source_obj->metaObject()->invokeMethod(source_obj, "update");
+        QTest::qWait(interval);
+    }
+    // Bomb update() calls with prepopulated database, should not crash
+    populateTypicalDb();
+    QDeclarativeLandmarkAbstractModel* model = static_cast<QDeclarativeLandmarkAbstractModel*>(source_obj);
+    model->setDbFileName(DB_FILENAME);
+    QTest::qWait(100);
+
+    for (int interval = 0; interval < 30; interval += 5) {
+        source_obj->metaObject()->invokeMethod(source_obj, "update");
+        QTest::qWait(interval);
+    }
+    delete source_obj;
+}
+
+void tst_QDeclarativeLandmark::robustness_data()
+{
+    QTest::addColumn<QString>("componentString");
+    QTest::newRow("LandmarkModel without autoUpdate") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:false;}";
+    QTest::newRow("LandmarkModel with autoUpdate") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:false;}";
+    QTest::newRow("LandmarkCategoryModel without autoUpdate") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:false;}";
+    QTest::newRow("LandmarkCategoryModel with autoUpdate") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:true;}";
+}
+
+// Very simple case to check that deletion of classes does not crash during an update
+void tst_QDeclarativeLandmark::updateCancel()
+{
+    QSKIP("Temporary skip while QLandmarkManager crashes", SkipAll);
+    QObject* source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:true;}");
+    QDeclarativeLandmarkModel* landmarkModel = static_cast<QDeclarativeLandmarkModel*>(source_obj);
+
+    landmarkModel->setDbFileName(DB_FILENAME);
+    addLandmarkToDb();
+    landmarkModel->startUpdate();
+    QTest::qWait(10);
+    landmarkModel->startUpdate();
+    QTest::qWait(10);
+    delete landmarkModel;
+}
+
+/*
+ Adds randomly named landmark/category to database and returns the name
+ (for comparison purposes)
+ */
+
+QString tst_QDeclarativeLandmark::addLandmarkToDb()
+{
+    Q_ASSERT(m_manager);
+    QLandmark landmark;
+    landmark.setName(QUuid::createUuid().toString());
+    m_manager->saveLandmark(&landmark);
+    return landmark.name();
+}
+
+QString tst_QDeclarativeLandmark::addCategoryToDb()
+{
+    Q_ASSERT(m_manager);
+    QLandmarkCategory category;
+    category.setName(QUuid::createUuid().toString());
+    m_manager->saveCategory(&category);
+    return category.name();
 }
 
 /*

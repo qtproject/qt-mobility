@@ -131,15 +131,10 @@ QDeclarativeGalleryItem::~QDeclarativeGalleryItem()
 */
 
 /*!
-    \qmlproperty int GalleryItem::currentProgress
+    \qmlproperty real GalleryItem::progress
 
-    This property holds the current progress value.
-*/
-
-/*!
-    \qmlproperty int GalleryItem::maximumProgress
-
-    This property holds the maximum progress value.
+    This property holds the current progress of the request, from 0.0 (started)
+    to 1.0 (finished).
 */
 
 /*!

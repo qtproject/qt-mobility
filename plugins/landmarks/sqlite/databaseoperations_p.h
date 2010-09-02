@@ -88,6 +88,7 @@ public:
     QMap<int, QLandmarkManager::Error> errorMap;
     QString managerUri;
     volatile bool isCanceled;
+    volatile bool isDeleted;
     QLandmarkManagerEngineSqlite *engine;
 };
 
