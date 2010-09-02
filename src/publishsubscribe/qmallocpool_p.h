@@ -50,7 +50,7 @@ QTM_BEGIN_NAMESPACE
 
 class QMallocPoolPrivate;
 
-class Q_AUTOTEST_EXPORT QMallocPool
+class QM_AUTOTEST_EXPORT QMallocPool
 {
 public:
     enum PoolType { Owned, NewShared, Shared };

@@ -222,6 +222,7 @@ void ServiceXmlGenerator::loadFromXml(const QString& f)
         if (data.extractMetadata()) {
             m_serviceInfo->load(data.parseResults());
             m_unsavedData = false;
+            refreshPreview();
             return;
         }
     }
@@ -327,8 +328,11 @@ void ServiceXmlGenerator::getServiceXml(QIODevice *device)
     QXmlStreamWriter writer(device);
     writer.setAutoFormatting(true);
     writer.writeStartDocument();
+    writer.writeStartElement(QLatin1String("SFW"));
+    writer.writeAttribute(QLatin1String("version"), "1.1");
     writer.writeStartElement(QLatin1String("service"));
     m_serviceInfo->writeXml(&writer);
+    writer.writeEndElement();
     writer.writeEndElement();
     writer.writeEndDocument();
 }

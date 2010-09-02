@@ -43,11 +43,18 @@
 
 #include <qmobilityglobal.h>
 #include <e32base.h>
+#include <QObject>
 #include "databasemanagerserver.pan"
+
+class QFileSystemWatcher;
 
 //QTM_BEGIN_NAMESPACE
 namespace QtMobility {
 
+class DatabaseManagerServerSignalHandler;
+class ServiceDatabase;
+
+  
 // needed for creating server thread.
 const TUint KDefaultHeapSize = 0x10000;
 
@@ -62,13 +69,38 @@ class CDatabaseManagerServer : public CServer2
         
         void IncreaseSessions();
         void DecreaseSessions();
-          
         
         void Shutdown();
+        
+        void DiscoverServices();
+        
     private:
+        void initDbPath();        
+        
         static const TInt timeoutInterval;
         int iSessionCount;        
         CPeriodic *iPeriodic;
+        ServiceDatabase *iDb;
+        QFileSystemWatcher *iWatcher;
+        DatabaseManagerServerSignalHandler *iDatabaseManagerServerSignalHandler;
+    };
+
+
+class DatabaseManagerServerSignalHandler : public QObject
+    {
+    Q_OBJECT
+    
+    public:
+        DatabaseManagerServerSignalHandler(CDatabaseManagerServer *databaseManagerServerSession) 
+        {
+          iDatabaseManagerServerSession = databaseManagerServerSession;
+        }
+
+    public Q_SLOTS:
+        void importChanged(const QString &path);
+        
+    public:
+        CDatabaseManagerServer *iDatabaseManagerServerSession;
     };
 
 //QTM_END_NAMESPACE

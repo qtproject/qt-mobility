@@ -68,7 +68,7 @@ struct ServiceIdentDescriptor
     int sharedRefCount;
 };
 
-class Q_AUTOTEST_EXPORT InstanceManager 
+class QM_AUTOTEST_EXPORT InstanceManager
 {
 public:
     InstanceManager();
