@@ -60,7 +60,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QGalleryDBusInterface : public QDBusAbstractInterface, public QSharedData
+class QM_AUTOTEST_EXPORT QGalleryDBusInterface : public QDBusAbstractInterface, public QSharedData
 {
     Q_OBJECT
 public:
