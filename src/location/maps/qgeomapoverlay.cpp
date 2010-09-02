@@ -45,11 +45,27 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
+    \class QGeoMapOverlay
+    \brief The QGeoMapOverlay class is used to draw overlays on the map.
+
+    \inmodule QtLocation
+
+    \ingroup maps-mapping
+
+    This allows for general drawing to occur in overlays above the map.
+
+    \note This class will be improved between the beta and final releases.
+*/
+
+/*!
+    Destroys this map overlay object.
 */
 QGeoMapOverlay::~QGeoMapOverlay() {}
 
 /*!
 \fn void QGeoMapOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *option)
+
+Paints the overlay on \a painter, using the options \a option.
 */
 
 QTM_END_NAMESPACE

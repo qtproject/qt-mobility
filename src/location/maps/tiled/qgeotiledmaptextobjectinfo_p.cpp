@@ -60,6 +60,15 @@ QGeoTiledMapTextObjectInfo::~QGeoTiledMapTextObjectInfo() {}
 
 void QGeoTiledMapTextObjectInfo::objectUpdate()
 {
+    if (!text->coordinate().isValid()) {
+        if (textItem) {
+            delete textItem;
+            textItem = 0;
+            graphicsItem = 0;
+        }
+        return;
+    }
+
     QPointF position = tiledMapData->coordinateToWorldPixel(text->coordinate());
 
     if (!textItem)

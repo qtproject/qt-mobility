@@ -71,7 +71,6 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*
-
     DESIGN NOTE
 
     There are plans to make this extensible by allowing the user to set a
@@ -92,6 +91,10 @@ QTM_BEGIN_NAMESPACE
     options subclass (and the fact that user auth said that the user had
     support) would mean we could provide better values for the estimated
     travel times etc...
+
+    This all relies on at least one service making this data available to us,
+    which would probably be tied to token based authorization.  It could be
+    some time before this becomes available.
 */
 
 /*!
@@ -168,7 +171,7 @@ enum SegmentDetail {
         No segment data should be included with the route.  A route requested
         with this level of segment detail will initialise
         QGeoRouteSegment::path() as a straight line between the positions of
-        the previous and next QGeoInstructions.
+        the previous and next QGeoInstruction instances.
 
     \value BasicSegmentData
         Basic segment data will be included with the route.  This will include

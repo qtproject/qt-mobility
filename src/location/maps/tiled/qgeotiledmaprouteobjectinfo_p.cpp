@@ -79,6 +79,8 @@ void QGeoTiledMapRouteObjectInfo::objectUpdate()
         }
     }
 
+    // TODO cleanup object if less than 2 valid points
+
     if (!pathItem)
         pathItem = new QGraphicsPathItem();
 

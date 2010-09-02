@@ -45,9 +45,32 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QGeoMapPixmapObject
+    \brief The QGeoMapPixmapObject class is a QGeoMapObject used to draw
+    a pixmap on a map.
+
+    \inmodule QtLocation
+
+    \ingroup maps-mapping-objects
+
+    The pixmap object is rendered such that the upper left corner of
+    QGeoMapPixmapObject::pixmap will be drawn QGeoMapPixmapObject::offset
+    pixels away from the position of QGeoMapPixmapObject::coordinate on the
+    map.
+*/
+
+/*!
+    Constructs a new pixmap object with the parent \a parent.
+*/
 QGeoMapPixmapObject::QGeoMapPixmapObject(QGeoMapObject *parent)
         : QGeoMapObject(new QGeoMapPixmapObjectPrivate(this, parent)) {}
 
+/*!
+    Constructs a new pixmap object which will draw the pixmap \a pixmap at an
+    offset of \a offset pixels from the coordinate \a coordinate, with the
+    parent \a parent.
+*/
 QGeoMapPixmapObject::QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset, const QPixmap &pixmap, QGeoMapObject *parent)
         : QGeoMapObject(new QGeoMapPixmapObjectPrivate(this, parent))
 {
@@ -58,10 +81,21 @@ QGeoMapPixmapObject::QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const
     d->offset = offset;
 }
 
+/*!
+    Destroys this pixmap object.
+*/
 QGeoMapPixmapObject::~QGeoMapPixmapObject()
 {
 }
 
+/*!
+    \property QGeoMapPixmapObject::coordinate
+    \brief This property holds the coordinate that specifies where the pixmap
+    will be drawn by this pixmap object.
+
+    The default value of this property is an invalid coordinate. While the
+    value of this property is invalid the pixmap object will not be displayed.
+*/
 QGeoCoordinate QGeoMapPixmapObject::coordinate() const
 {
     Q_D(const QGeoMapPixmapObject);
@@ -78,6 +112,18 @@ void QGeoMapPixmapObject::setCoordinate(const QGeoCoordinate &coordinate)
     }
 }
 
+/*!
+    \property QGeoMapPixmapObject::pixmap
+    \brief This property holds the pixmap that will be drawn by this pixmap
+    object.
+
+    The default value of this property is a null pixmap. While the value of
+    this property is the null pixmap the pixmap object will not be displayed.
+
+    The pixmap will be drawn such that the upper left corner of the pixmap
+    will be drawn QGeoMapPixmapObject::offset pixels away from the position of
+    QGeoMapPixmapObject::coordinate on the map.
+*/
 QPixmap QGeoMapPixmapObject::pixmap() const
 {
     Q_D(const QGeoMapPixmapObject);
@@ -100,6 +146,19 @@ void QGeoMapPixmapObject::setPixmap(const QPixmap &pixmap)
     }
 }
 
+/*!
+    \property QGeoMapPixmapObject::offset
+    \brief This property holds the offset in pixels at which the pixmap will be
+    drawn by this pixmap object.
+
+    The default value of this property is QPoint(0, 0). If this value is not
+    changed the upper left coordinate of the pixmap will be drawn at the
+    coordinate specified by QGeoMapPixmapObject::coordinate.
+
+    The offset is in pixels and is independent of the zoom level of the map.
+    The offset property is provided so that pixmaps such as arrows can be drawn
+    with the point of the arrow placed exactly on the associated coordinate.
+*/
 QPoint QGeoMapPixmapObject::offset() const
 {
     Q_D(const QGeoMapPixmapObject);
