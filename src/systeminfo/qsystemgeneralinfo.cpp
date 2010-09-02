@@ -97,8 +97,9 @@ is a reliable way to gather such information.
     This enum describes the version component.
 
     \value Os                    Operating system version / platform ID.
-    \value QtCore                Qt libs version.
+    \value QtCore                Qt library version.
     \value Firmware              Version of (flashable) system as a whole.
+    \value QtMobility            QtMobility library version.
 
   */
 /*!
@@ -452,7 +453,12 @@ QStringList QSystemInfo::availableLanguages()
 */
 QString QSystemInfo::version(QSystemInfo::Version type, const QString &parameter)
 {
-    return sysinfoPrivate()->version(type, parameter);
+    switch(type) {
+        case QSystemInfo::QtMobility:
+            return QLatin1String(QTM_VERSION_STR);
+        default:
+            return sysinfoPrivate()->version(type, parameter);
+    }
 }
 
 /*!
