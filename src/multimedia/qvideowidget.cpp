@@ -322,7 +322,7 @@ QWindowVideoWidgetBackend::QWindowVideoWidgetBackend(
     connect(control, SIGNAL(fullScreenChanged(bool)), m_widget, SLOT(_q_fullScreenChanged(bool)));
     connect(control, SIGNAL(nativeSizeChanged()), m_widget, SLOT(_q_dimensionsChanged()));
 
-
+    control->setWinId(widget->winId());
 }
 
 QWindowVideoWidgetBackend::~QWindowVideoWidgetBackend()
