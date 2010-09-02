@@ -48,9 +48,32 @@ QTM_BEGIN_NAMESPACE
         Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
 
 /*!
-  \fn QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
+   \class QSystemStorageInfo
+   \ingroup systeminfo
+   \inmodule QtSystemInfo
+        \brief The QSystemStorageInfo class provides access to memory and disk information from the system.
+
+   \fn QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
   Constructs a QSystemStorageInfo object with the given \a parent.
 */
+
+        /*!
+            \enum QSystemStorageInfo::DriveType
+            This enum describes the type of drive or volume
+
+            \value NoDrive               Drive type undetermined.
+            \value InternalDrive         Is internal drive.
+            \value RemovableDrive        Is removable.
+            \value RemoteDrive           Is a network drive.
+            \value CdromDrive            Is a cd rom drive.
+        */
+
+        /*!
+           \fn void QSystemStorageInfo::logicalDriveChanged(bool,const QString &))
+
+           This signal gets emitted when new storage has been added or removed from the system.
+        */
+
 
 QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
    : QObject(parent), d(storageInfoPrivate())
