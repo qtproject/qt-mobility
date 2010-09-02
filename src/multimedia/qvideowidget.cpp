@@ -416,7 +416,7 @@ void QWindowVideoWidgetBackend::paintEvent(QPaintEvent *event)
 }
 
 #if defined(Q_WS_WIN)
-bool QWindowVideoWidgetBackend::winEvent(MSG *message, long *result)
+bool QWindowVideoWidgetBackend::winEvent(MSG *message, long *)
 {
     if (message->message == WM_PAINT)
         m_windowControl->repaint();
