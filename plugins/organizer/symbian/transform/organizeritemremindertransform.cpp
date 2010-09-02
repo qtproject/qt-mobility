@@ -120,10 +120,6 @@ void OrganizerItemReminderTransform::transformToEntryL(const QOrganizerItem& ite
             if (timeOffset != reminder.timeDelta() / 60)
                 User::Leave(KErrArgument);
         } else {
-            // The delta must be non-negative
-            if (reminder.timeDelta() < 0)
-                User::Leave(KErrArgument);
-
             // Convert delta to minutes
             timeOffset = reminder.timeDelta() / 60;
         }

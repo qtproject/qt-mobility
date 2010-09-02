@@ -168,7 +168,6 @@ private: // util functions
     void addItem_dataEventTimeRange(QString managerName, QString itemType);
     void addItem_dataTodoTimeRange(QString managerName, QString itemType);
     void addItem_dataReminders(QString managerName, QString itemType);
-    void addItem_todo(QString managerName);
     QString testCaseName(QString testCase, QString managerName, QString itemType);
     bool parseDetails(QTstDetailFieldList detailsString, QList<QOrganizerItemDetail> &details);
     bool verifyDetails(QList<QOrganizerItemDetail> actual, QList<QOrganizerItemDetail> expected);
@@ -489,23 +488,23 @@ void tst_SymbianOm::addItem_data()
     managerNames.removeAll("memory");
 
     foreach (QString managerName, managerNames) {
-        // Item type event
+        // TypeEvent
         addItem_dataBasic(managerName, QOrganizerItemType::TypeEvent);
         addItem_dataEventTimeRange(managerName, QOrganizerItemType::TypeEvent);
         addItem_dataReminders(managerName, QOrganizerItemType::TypeEvent);
 
+        // TypeTodo
         addItem_dataBasic(managerName, QOrganizerItemType::TypeTodo);
         addItem_dataTodoTimeRange(managerName, QOrganizerItemType::TypeTodo);
         addItem_dataReminders(managerName, QOrganizerItemType::TypeTodo);
 
-        // Journal not implementable on symbian backend
+        // TypeJournal not implementable on symbian backend
         //addItem_dataBasic(managerName, QOrganizerItemType::TypeJournal);
 
-        // Note not supported in all platforms
+        // TypeNote not supported in all platforms
 #ifdef AGENDA_EXT_SUPPORT
         addItem_dataBasic(managerName, QOrganizerItemType::TypeNote);
 #endif
-        //addItem_todo(managerName);
     }
 }
 

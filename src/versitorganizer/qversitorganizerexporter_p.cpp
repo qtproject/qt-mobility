@@ -362,6 +362,7 @@ void QVersitOrganizerExporterPrivate::encodeRecurRule(
         value.append(weekString(rule.weekStart()));
     }
     property.setValue(value);
+    property.setValueType(QVersitProperty::PreformattedType);
     *generatedProperties << property;
 }
 
