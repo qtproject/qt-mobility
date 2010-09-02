@@ -103,7 +103,7 @@ void tst_QFeedbackActuator::enumeration()
 {
     QList<QFeedbackActuator> actuators = QFeedbackActuator::actuators();
 #ifdef HAVE_ACTUATORS
-    QVERIFY(!act.isEmpty());
+    QVERIFY(!actuators.isEmpty());
 #endif
     foreach(QFeedbackActuator actuator, actuators) {
         QVERIFY(actuator.isValid());

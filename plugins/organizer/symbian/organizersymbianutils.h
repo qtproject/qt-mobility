@@ -38,44 +38,30 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef ORGANIZERSYMBIANUTILS_H_
+#define ORGANIZERSYMBIANUTILS_H_
 
-#ifndef QGEOSEARCHMANAGERENGINE_NOKIA_H
-#define QGEOSEARCHMANAGERENGINE_NOKIA_H
+#include <e32base.h>
+#include <caltime.h>
+#include <QString>
+#include <QDateTime>
+#include <QVariantMap>
 
-#include <qgeoserviceprovider.h>
-#include <qgeosearchmanagerengine.h>
+class CCalCalendarInfo;
 
-#include <QNetworkAccessManager>
-
-QTM_USE_NAMESPACE
-
-class QGeoSearchManagerEngineNokia : public QGeoSearchManagerEngine
+namespace OrganizerSymbianUtils
 {
-    Q_OBJECT
-public:
-    QGeoSearchManagerEngineNokia(const QMap<QString, QVariant> &parameters,
-                                 QGeoServiceProvider::Error *error,
-                                 QString *errorString);
-    ~QGeoSearchManagerEngineNokia();
+    QString toQString(const TDesC8 &des);
+    QString toQString(const TDesC16 &des);
+    TPtrC8 toPtrC8(const QByteArray &bytes);
+    TPtrC16 toPtrC16(const QString &string);
+    TCalTime toTCalTimeL(QDateTime dateTime);
+    TCalTime toTCalTimeL(QDate date);
+    QDateTime toQDateTimeL(TCalTime calTime);
+    TTime toTTimeL(QDateTime dateTime);
+    QDateTime toQDateTimeL(TTime time);
+    QVariantMap toMetaDataL(const CCalCalendarInfo &calInfo);
+    CCalCalendarInfo* toCalInfoLC(QVariantMap metaData);
+}
 
-    QGeoSearchReply* geocode(const QGeoAddress &address,
-                             QGeoBoundingArea *bounds);
-
-    QGeoSearchReply* search(const QString &searchString,
-                            QGeoSearchManager::SearchTypes searchTypes,
-                            int limit,
-                            int offset,
-                            QGeoBoundingArea *bounds);
-
-private slots:
-    void placesFinished();
-    void placesError(QGeoSearchReply::Error error, const QString &errorString);
-
-private:
-    QGeoSearchReply* search(QString requestString);
-
-    QNetworkAccessManager *m_networkManager;
-    QString m_host;
-};
-
-#endif
+#endif // ORGANIZERSYMBIANUTILS_H_

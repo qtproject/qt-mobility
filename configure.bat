@@ -526,6 +526,7 @@ goto windowsTests
 call :compileTest LBT lbt
 call :compileTest SNAP snap
 call :compileTest OCC occ
+call :compileTest SymbianENote symbianenote
 call :compileTest SymbianContactSIM symbiancntsim
 call :compileTest SymbianContactModel symbiancntmodel
 call :compileTest SymbianContactModelv2 symbiancntmodelv2

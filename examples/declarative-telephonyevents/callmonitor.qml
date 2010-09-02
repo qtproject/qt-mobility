@@ -122,7 +122,7 @@ Rectangle {
                 typestr = "Video";
                 break;
           case 4:
-                typestr = "Other";
+                typestr = "Voice";
                 break;
           case 5:
                 typestr = "Other";
