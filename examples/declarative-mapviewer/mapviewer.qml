@@ -48,8 +48,6 @@ Item {
 
     focus: true
 
-
-
     Map {
         id: map
         size.width: parent.width
@@ -59,79 +57,6 @@ Item {
                     latitude: -27
                     longitude: 153
                 }
-
-        MapCircleObject {
-            center: Coordinate {
-                        latitude: -27.1
-                        longitude: 153
-                    }
-            radius: 10000.0
-            color: "#808080FF"
-        }
-
-        MapCircleObject {
-            center: Coordinate {
-                        latitude: -27.1
-                        longitude: 153
-                    }
-            radius: 8000.0
-        }
-
-        MapCircleObject {
-            center: Coordinate {
-                        latitude: -27.1
-                        longitude: 153
-                    }
-            radius: 6000.0
-            color: "#80FF8080"
-        }
-
-        MapRectangleObject {
-            topLeft:        map.toCoordinate(Qt.point(map.size.width / 3.0, map.size.height * 2.0 / 3.0))        
-            bottomRight:    map.toCoordinate(Qt.point(map.size.width * 2.0 / 3.0, map.size.height / 3.0))   
-            color: "#8080FF80"
-        }
-
-        MapPolygonObject {
-            color: "#80808080"
-            Coordinate {
-                latitude: -27.1
-                longitude: 153.1
-            }
-            Coordinate {
-                latitude: -27.0
-                longitude: 153.0
-            }
-            Coordinate {
-                latitude: -27.0
-                longitude: 153.2
-            }
-        }
-
-        MapPolylineObject {
-            Coordinate {
-                latitude: -27.2
-                longitude: 153.1
-            }
-            Coordinate {
-                latitude: -27.1
-                longitude: 153.0
-            }
-            Coordinate {
-                latitude: -27.1
-                longitude: 153.2
-            }
-        }
-
-        MapTextObject {
-            coordinate:     Coordinate {
-                                latitude: -27.1
-                                longitude: 153.1
-                            }
-            text: "Testing text"
-            font.underline: true
-            color: "#800000"
-        }
     }
 
     MouseArea {

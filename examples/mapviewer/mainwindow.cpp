@@ -794,6 +794,14 @@ void MainWindow::createMenus()
     QMenu* subMenuItem;
     m_popupMenu = new QMenu(this);
 
+    /*
+
+    // These are gread for testing, but not really what we want in
+    // an example application.
+    // We should probably creating a testing branch which tracks
+    // the master branch and has various "test enabled" versions
+    // of the examples at some point anyhow.
+
     subMenuItem = new QMenu(tr("Spawn stuff"), this);
     m_popupMenu->addMenu(subMenuItem);
 
@@ -811,6 +819,8 @@ void MainWindow::createMenus()
     subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(demo3(bool)));
+
+    */
 
     //**************************************************************
     subMenuItem = new QMenu(tr("Marker"), this);
@@ -1022,9 +1032,13 @@ void MainWindow::drawText(bool /*checked*/)
     QGeoCoordinate start = p1->coordinate();
 
     QGeoMapTextObject *text = new QGeoMapTextObject(start, QString("text"));
+
+    QGeoMapObject *object = new QGeoMapObject();
+    object->addChildObject(text);
+
     QColor fill(Qt::black);
     text->setBrush(QBrush(fill));
-    m_mapWidget->addMapObject(text);
+    m_mapWidget->addMapObject(object);
 }
 
 void MainWindow::drawPixmap(bool /*checked*/)
@@ -1127,6 +1141,10 @@ void MainWindow::routeFinished()
 
 void MainWindow::selectObjects()
 {
+    QList<QGeoMapObject*> allObjects = m_mapWidget->mapObjects();
+    for (int i = 0; i < allObjects.size(); ++i)
+        allObjects[i]->setSelected(false);
+
     if (m_markerObjects.count() < 2)
         return;
 
@@ -1134,8 +1152,11 @@ void MainWindow::selectObjects()
     QGeoMapPixmapObject* topLeft = m_markerObjects.takeLast();
     m_mapWidget->removeMapObject(topLeft);
     m_mapWidget->removeMapObject(bottomRight);
-    QList<QGeoMapObject*> mapObjects = m_mapWidget->mapObjectsInScreenRect(
+
+    QList<QGeoMapObject*> selectedObjects = m_mapWidget->mapObjectsInScreenRect(
                                            QRectF(m_mapWidget->coordinateToScreenPosition(topLeft->coordinate()),
                                                   m_mapWidget->coordinateToScreenPosition(bottomRight->coordinate()))
                                        );
+    for (int i = 0; i < selectedObjects.size(); ++i)
+        selectedObjects[i]->setSelected(true);
 }
