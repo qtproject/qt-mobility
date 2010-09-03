@@ -201,6 +201,7 @@ Rectangle {
 	    Text { id: phoneField; text: "  tel:"  + phoneNumber; anchors.left: nameField.right }
 	    Text { id: latitudeField; text: "  lat:"  + latitude;  anchors.left: phoneField.right }
 	    Text { id: longitudeField; text: "  lon:"  + longitude;  anchors.left: latitudeField.right }
+	    Text { id: altitudeeField; text: "  alt:"  + altitude;  anchors.left: longitudeField.right }
 	    // Set landmark to the model, few lines of code missing still
 	    // categoriesOfGivenLandmark.landmark = landmark
         }
@@ -213,30 +214,25 @@ Rectangle {
 	}
     }
 
-
-
-
-    /*
     Grid {
         id: actionRectangles
         x: 4;
         width: 150
         anchors { topMargin: 5; top: data.bottom}
         rows: 3; columns: 1; spacing: anchors.bottomMargin;
-        Content.Cell {action: "unassigned 1"; onClicked: doAction(action)}
+        Content.Cell {action: "Change DB"; onClicked: doAction(action)}
         Content.Cell {action: "unassigned 2"; onClicked: doAction(action)}
         Content.Cell {action: "unassigned 3";  onClicked: doAction(action)}
     }
     function doAction(action) {
-        if (action == "unassigned 1") {
-            positionSource.update()
+        if (action == "Change DB") {
+            landmarkModel.setDbFileName("generatedExampleLandmarkDb.db");
         }
         else if (action == "unassigned 2" ) {
-            positionSource.start();
+            
         }
         else if (action == "unassigned 3" ) {
-            positionSource.stop();
+            
         }
     }
-    */
 }

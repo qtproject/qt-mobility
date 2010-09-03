@@ -8,6 +8,7 @@ QT += testlib declarative
 INCLUDEPATH += ../../../src/location
 INCLUDEPATH += ../../../plugins/declarative/location
 INCLUDEPATH += ../../../src/location/landmarks
+INCLUDEPATH += ../../../src/location/maps
 INCLUDEPATH += ../../../src/global
 
 HEADERS += ../../../plugins/declarative/location/qdeclarativeposition_p.h
@@ -17,6 +18,7 @@ HEADERS += ../../../plugins/declarative/location/qdeclarativelandmarkcategory_p.
 HEADERS += ../../../plugins/declarative/location/qdeclarativelandmarkfilters_p.h
 HEADERS += ../../../plugins/declarative/location/qdeclarativelandmarkmodel_p.h
 HEADERS += ../../../plugins/declarative/location/qdeclarativelandmark_p.h
+HEADERS += ../../../plugins/declarative/location/qdeclarativecoordinate_p.h
 
 SOURCES += tst_qdeclarativelandmark.cpp
 SOURCES += ../../../plugins/declarative/location/qdeclarativeposition.cpp
@@ -26,6 +28,7 @@ SOURCES += ../../../plugins/declarative/location/qdeclarativelandmark.cpp
 SOURCES += ../../../plugins/declarative/location/qdeclarativelandmarkcategorymodel.cpp
 SOURCES += ../../../plugins/declarative/location/qdeclarativelandmarkfilters.cpp
 SOURCES += ../../../plugins/declarative/location/qdeclarativelandmarkmodel.cpp
+SOURCES += ../../../plugins/declarative/location/qdeclarativecoordinate.cpp
 
 CONFIG += mobility
 MOBILITY += location
