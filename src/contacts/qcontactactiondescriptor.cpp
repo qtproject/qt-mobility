@@ -66,15 +66,6 @@ QContactActionDescriptor::QContactActionDescriptor()
 }
 
 /*!
- * Constructs a new action descriptor for the implementation of the action identified by the given \a actionName
- * of the given implementation \a implementationVersion, as implemented by the service identified by the given \a serviceName
- */
-QContactActionDescriptor::QContactActionDescriptor(const QString& actionName, const QString& serviceName, const QString& serviceIdentifier, int implementationVersion, const QContactActionFactory* factory)
-        : d(new QContactActionDescriptorPrivate(actionName, serviceName, serviceIdentifier, implementationVersion, factory))
-{
-}
-
-/*!
  * Constructs a copy of the \a other action descriptor
  */
 QContactActionDescriptor::QContactActionDescriptor(const QContactActionDescriptor& other)

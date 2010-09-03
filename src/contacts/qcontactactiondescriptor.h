@@ -107,10 +107,6 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(MetaDataMandatoryParameterKeys, "MandatoryParameterKeys");
 #endif
 
-protected:
-    // XXX remove this from here and put it in the private class
-    QContactActionDescriptor(const QString& actionName, const QString& serviceName, const QString& serviceIdentifier, int implementationVersion, const QContactActionFactory* factory);
-
 private:
     QSharedDataPointer<QContactActionDescriptorPrivate> d;
     friend class QContactActionFactory;

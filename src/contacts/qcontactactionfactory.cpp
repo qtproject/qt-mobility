@@ -101,7 +101,13 @@ bool QContactActionFactory::supportsContact(const QContact& contact, const QCont
 
 QContactActionDescriptor QContactActionFactory::createDescriptor(const QString& actionName, const QString& serviceName, const QString& actionIdentifier, int implementationVersion) const
 {
-    return QContactActionDescriptor(actionName, serviceName, actionIdentifier, implementationVersion, this);
+    QContactActionDescriptor retn;
+    retn.d->m_actionName = actionName;
+    retn.d->m_serviceName = serviceName;
+    retn.d->m_identifier = actionIdentifier;
+    retn.d->m_implementationVersion = implementationVersion;
+    retn.d->m_factory = this;
+    return retn;
 }
 
 #include "moc_qcontactactionfactory.cpp"
