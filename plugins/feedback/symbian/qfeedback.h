@@ -105,7 +105,10 @@ private:
     class PausableElapsedTimer
     {
     public:
-        PausableElapsedTimer() : pausedTime(0) { }
+        PausableElapsedTimer() : pausedTime(0)
+        {
+           m_elapsedTimer.invalidate();
+        }
 
         void start()
         {

@@ -41,6 +41,10 @@
 #ifndef QMOBILITYGLOBAL_H
 #define QMOBILITYGLOBAL_H
 
+#if defined(Q_OS_SYMBIAN)
+# include <f32file.h>
+#endif
+
 
 #define QTM_VERSION_STR   "1.1.0"
 /*
