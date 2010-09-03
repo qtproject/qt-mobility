@@ -44,9 +44,7 @@ PRIVATE_HEADERS += addresshelper_p.h \
     qmessagestore.h \
     qmessagestore_p.h \
     messagingutil_p.h
-SOURCES += qfsnmengine_symbian.cpp \
-    qfsnmengine_symbian.cpp \
-    qmessageid.cpp \
+SOURCES += qmessageid.cpp \
     qmessagecontentcontainerid.cpp \
     qmessagefolderid.cpp \
     qmessageaccountid.cpp \
@@ -67,7 +65,7 @@ SOURCES += qfsnmengine_symbian.cpp \
     qmessageservice.cpp \
     messagingutil.cpp
 symbian|win32|maemo6|maemo5|mac { 
-    mac|maemo6:SOURCES += qmessageid_stub.cpp \
+    mac|maemo6: SOURCES += qmessageid_stub.cpp \
         qmessagecontentcontainerid_stub.cpp \
         qmessagefolderid_stub.cpp \
         qmessageaccountid_stub.cpp \
@@ -88,9 +86,7 @@ symbian|win32|maemo6|maemo5|mac {
         CONFIG += link_pkgconfig
         PUBLIC_HEADERS -= qmessagecontentcontainer_p.h
         PRIVATE_HEADERS -= qmessagecontentcontainer_p.h
-        HEADERS += qfsnmengine_symbian_p.h \
-            qfsnmengine_symbian_p.h \
-            qmessagecontentcontainer_maemo_p.h \
+        HEADERS += qmessagecontentcontainer_maemo_p.h \
             qmessageservice_maemo_p.h \
             modestengine_maemo_p.h \
             telepathyengine_maemo_p.h \
@@ -177,7 +173,7 @@ symbian|win32|maemo6|maemo5|mac {
             qmessage_symbian_p.h \
             maemohelpers_p.h
         contains(CONFIG, FREESTYLEMAIL):HEADERS += qfsengine_symbian_p.h
-        contains(CONFIG, FREESTYLENMAIL):HEADERS += 
+        contains(CONFIG, FREESTYLENMAIL):HEADERS += qfsnmengine_symbian_p.h
         SOURCES += qmtmengine_symbian.cpp \
             qmessageid_symbian.cpp \
             qmessagecontentcontainerid_symbian.cpp \
@@ -197,7 +193,7 @@ symbian|win32|maemo6|maemo5|mac {
             qmessageservice_symbian.cpp \
             maemohelpers.cpp
         contains(CONFIG, FREESTYLEMAIL):SOURCES += qfsengine_symbian.cpp
-        contains(CONFIG, FREESTYLENMAIL):SOURCES += 
+        contains(CONFIG, FREESTYLENMAIL):SOURCES += qfsnmengine_symbian.cpp
         contains(CONFIG, FREESTYLENMAIL):LIBS += -lnmailclientapi
         contains(CONFIG, QTHIGHWAY):LIBS += -lxqservice \
             -lxqserviceutil
