@@ -45,25 +45,28 @@ iby.sources += cntplsql.iby
 
 for(iby, iby.sources):BLD_INF_RULES.prj_exports += "groupsql/$$iby $$deploy.path$$iby.path/$$iby"
 
-# Headers
-BLD_INF_RULES.prj_exports += "./inc/cntdef.h APP_LAYER_PUBLIC_EXPORT_PATH(cntdef.h)"\
-                            "./inc/cntdb.h APP_LAYER_PUBLIC_EXPORT_PATH(cntdb.h)"\
-                            "./inc/cntdbobs.h APP_LAYER_PUBLIC_EXPORT_PATH(cntdbobs.h)"\
-                            "./inc/cntfield.h APP_LAYER_PUBLIC_EXPORT_PATH(cntfield.h)"\
-                            "./inc/cntfldst.h APP_LAYER_PUBLIC_EXPORT_PATH(cntfldst.h)"\
-                            "./inc/cntfilt.h APP_LAYER_PUBLIC_EXPORT_PATH(cntfilt.h)"\
-                            "./inc/cntitem.h APP_LAYER_PUBLIC_EXPORT_PATH(cntitem.h)"\
-                            "./inc/cntview.h APP_LAYER_PUBLIC_EXPORT_PATH(cntview.h)"\
-                            "./inc/cntviewbase.h APP_LAYER_PUBLIC_EXPORT_PATH(cntviewbase.h)"\
-                            "./inc/cntsync.h APP_LAYER_PUBLIC_EXPORT_PATH(cntsync.h)"\
-                            "./inc/cntviewfindconfig.h   APP_LAYER_PLATFORM_EXPORT_PATH(cntviewfindconfig.h)"\
-                            "./inc/cntviewfindconfig.inl APP_LAYER_PLATFORM_EXPORT_PATH(cntviewfindconfig.inl)"\
-                            "./inc/cntviewsortplugin.h APP_LAYER_PUBLIC_EXPORT_PATH(cntviewsortplugin.h)"\
-                            "./inc/cntmodel.rh APP_LAYER_PLATFORM_EXPORT_PATH(cntmodel.rh)"\
-                            "./inc/cntdef.hrh APP_LAYER_PUBLIC_EXPORT_PATH(cntdef.hrh)"\
-                            "./cntvcard/cntvcard.h APP_LAYER_PUBLIC_EXPORT_PATH(cntvcard.h)"\
-                            "./inc/cntviewstore.h APP_LAYER_PLATFORM_EXPORT_PATH(cntviewstore.h)"
+# Seems we currently need to export headers to both epoc32\include and the proper app directory
+# (until the build environment gets cleaned up to not have any contactsmodel headers by default)
+# otherwise we have problems with stale headers
 
-BLD_INF_RULES.prj_exports += "./inc/cntphonenumparser.h APP_LAYER_PLATFORM_EXPORT_PATH(cntphonenumparser.h)"\
-                             "./inc/cntviewsortpluginbase.h APP_LAYER_PLATFORM_EXPORT_PATH(cntviewsortpluginbase.h)"\
-                             "./inc/cntsyncecom.h APP_LAYER_PLATFORM_EXPORT_PATH(cntsyncecom.h)"\
+# these headers come from ./inc and go to APP_LAYER_PUBLIC_EXPORT_PATH
+publicincheaders = cntdef.h cntdb.h cntdbobs.h cntfield.h cntfldst.h cntfilt.h cntitem.h cntview.h \
+    cntviewbase.h cntsync.h cntviewsortplugin.h cntdef.hrh
+
+# these headers come from ./inc and go to APP_LAYER_PLATFORM_EXPORT_PATH
+platformincheaders = cntmodel.rh cntviewfindconfig.h cntviewfindconfig.inl cntviewstore.h \
+    cntphonenumparser.h cntviewsortpluginbase.h cntsyncecom.h
+
+# these headers come from ./vcard and go to APP_LAYER_PUBLIC_EXPORT_PATH
+publicvcardheaders = cntvcard.h
+
+for(header, publicincheaders):BLD_INF_RULES.prj_exports += "./inc/$$header APP_LAYER_PUBLIC_EXPORT_PATH($$header)"
+for(header, platformincheaders):BLD_INF_RULES.prj_exports += "./inc/$$header APP_LAYER_PLATFORM_EXPORT_PATH($$header)"
+for(header, publicvcardheaders):BLD_INF_RULES.prj_exports += "./vcard/$$header APP_LAYER_PUBLIC_EXPORT_PATH($$header)"
+
+# Now the duplicate to \epoc32\include. .. . 
+for(header, publicincheaders):BLD_INF_RULES.prj_exports += "./inc/$$header /epoc32/include/$$header"
+for(header, platformincheaders):BLD_INF_RULES.prj_exports += "./inc/$$header /epoc32/include/$$header"
+for(header, publicvcardheaders):BLD_INF_RULES.prj_exports += "./vcard/$$header /epoc32/include/$$header"
+
+
