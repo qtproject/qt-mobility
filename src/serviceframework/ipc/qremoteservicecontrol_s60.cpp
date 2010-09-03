@@ -200,7 +200,7 @@ void QRemoteServiceControlPrivate::processIncoming(CServiceProviderServerSession
     ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
 }
 
-QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier &typeId, const QString &location)
+QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceControl::Entry &entry, const QString &location)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "QRemoteServiceControlPrivate::proxyForService for location: " << location;
@@ -234,7 +234,7 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
     // Create object endpoint, which handles the metaobject protocol.
     ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
     endPoint->setParent(session);
-    QObject *proxy = endPoint->constructProxy(typeId);
+    QObject *proxy = endPoint->constructProxy(entry);
     session->setParent(proxy);
     QObject::connect(session, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)),
         proxy, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)));

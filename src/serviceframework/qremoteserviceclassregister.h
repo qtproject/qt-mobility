@@ -55,74 +55,25 @@ QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
-struct QRemoteServiceIdentifier
-{
-    QByteArray name;
-    QByteArray iface;
-    QByteArray version;
-
-    QRemoteServiceIdentifier() : name(QByteArray()), iface(QByteArray()), version(QByteArray()) {}
-
-    QRemoteServiceIdentifier(const QByteArray &n, const QByteArray &i, const QByteArray &v) :
-        name(n), iface(i), version(v) {}
-
-    QRemoteServiceIdentifier& operator=(const QRemoteServiceIdentifier& other)
-    { name = other.name; iface = other.iface; version = other.version; return *this; }
-
-    bool operator==(const QRemoteServiceIdentifier& other) const {
-        if ( name == other.name && iface == other.iface && version == other.version ) return true;
-        return false;
-    }
-
-    inline bool operator!=(const QRemoteServiceIdentifier& other ) { return !operator==(other); }
-};
-
-inline uint qHash(const QRemoteServiceIdentifier& key) { 
-    return ( qHash(key.name) + qHash(key.iface) + qHash(key.version) );
-}
-
-#ifndef QT_NO_DATASTREAM
-inline QDataStream& operator>>(QDataStream& s, QRemoteServiceIdentifier& ident) {
-    s >> ident.name >> ident.iface >> ident.version;
-    return s;
-}
-
-inline QDataStream& operator<<(QDataStream& s, const QRemoteServiceIdentifier& ident) {
-    s << ident.name << ident.iface << ident.version;
-    return s;
-}
-#endif
-
-#ifndef QT_NO_DEBUG_STREAM
-inline QDebug operator<<(QDebug dbg, const QRemoteServiceIdentifier& ident) {
-    dbg.nospace() << "QRemoteServiceIdentifier(" 
-                  << ident.name << ", "
-                  << ident.iface << ", "
-                  << ident.version << ")";
-    return dbg.space();
-}
-#endif
-
 class Q_SERVICEFW_EXPORT QRemoteServiceClassRegister 
 {
 public:
     typedef QObject *(*CreateServiceFunc)();
-    typedef QRemoteServiceIdentifier (*TypeIdentFunc)();
 
     enum InstanceType {
         SharedInstance = 0,  //every new request for service gets same service instance
         UniqueInstance       //every new request for service gets new service instance
     };
 
-    QList<QRemoteServiceIdentifier> types() const;
-    const QMetaObject* metaObject(const QRemoteServiceIdentifier& ident) const;
+    //QList<QRemoteServiceIdentifier> types() const;
+    //const QMetaObject* metaObject(const QRemoteServiceIdentifier& ident) const;
 
-    static bool registerType(const QMetaObject* meta, CreateServiceFunc, TypeIdentFunc, InstanceType instance = UniqueInstance);
-    template <class T> static bool registerType( QRemoteServiceClassRegister::InstanceType instanceType = UniqueInstance) 
+    //static bool registerType(const QMetaObject* meta, CreateServiceFunc, TypeIdentFunc, InstanceType instance = UniqueInstance);
+    /*template <class T> static bool registerType( QRemoteServiceClassRegister::InstanceType instanceType = UniqueInstance) 
     {
         return QRemoteServiceClassRegister::registerType(
                 &T::staticMetaObject, &T::qt_sfw_create_instance, &T::qt_sfw_type_ident, instanceType);
-    }
+    }*/
 };
 
 #define Q_SERVICE(T, service, interface, version) \

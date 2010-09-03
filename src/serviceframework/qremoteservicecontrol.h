@@ -106,7 +106,8 @@ public:
     ~QRemoteServiceControl();
 
     template <typename T>
-        Entry createServiceEntry(const QString& serviceName, const QString& interfaceName, const QString& version);
+    Entry createServiceEntry(const QString& serviceName,
+                    const QString& interfaceName, const QString& version);
     void registerService(const Entry& entry);
 
 

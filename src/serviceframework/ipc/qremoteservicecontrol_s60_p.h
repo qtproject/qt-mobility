@@ -45,7 +45,6 @@
 #define QT_SFW_SYMBIAN_IPC_DEBUG
 
 #include "qremoteservicecontrol.h"
-#include "qremoteserviceclassregister.h"
 #include "qservicepackage_p.h"
 #include "qservice.h"
 #include <e32base.h>
@@ -191,7 +190,7 @@ class QRemoteServiceControlPrivate: public QObject
 public:
     QRemoteServiceControlPrivate(QObject* parent);
     void publishServices(const QString& ident );
-    static QObject* proxyForService(const QRemoteServiceIdentifier& typeId, const QString& location);
+    static QObject* proxyForService(const QRemoteServiceControl::Entry& entry, const QString& location);
     void processIncoming(CServiceProviderServerSession* session);
 };
 

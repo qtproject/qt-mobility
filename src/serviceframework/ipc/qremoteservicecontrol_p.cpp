@@ -158,7 +158,7 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& ident)
 /*
     Creates endpoint on client side.
 */
-QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier& typeIdent, const QString& location)
+QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceControl::Entry& entry, const QString& location)
 {
     QLocalSocket* socket = new QLocalSocket();
     socket->connectToServer(location);
@@ -200,7 +200,7 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
     LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(socket);
     ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
 
-    QObject *proxy = endPoint->constructProxy(typeIdent);
+    QObject *proxy = endPoint->constructProxy(entry);
     QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
     return proxy;
 }

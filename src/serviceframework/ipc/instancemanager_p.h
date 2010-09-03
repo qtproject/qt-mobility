@@ -87,7 +87,7 @@ public:
 
 private:
     mutable QMutex lock;
-    QHash<QRemoteServiceControl::Entry, ServiceIdentDescriptor> metaMap2;
+    QHash<QRemoteServiceControl::Entry, ServiceIdentDescriptor> metaMap;
 };
 
 
