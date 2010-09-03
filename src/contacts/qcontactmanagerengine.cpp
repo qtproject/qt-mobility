@@ -2752,57 +2752,6 @@ QList<QContact> QContactManagerEngineV2::contacts(const QList<QContactLocalId> &
     return ret;
 }
 
-/* These convenience functions are mostly so you don't need the boilerplate in the old startRequest */
-bool QContactManagerEngineV2::startContactIdFetchRequest(QContactLocalIdFetchRequest* request)
-{
-    return startRequest(request);
-}
-
-bool QContactManagerEngineV2::startContactFetchRequest(QContactFetchRequest* request)
-{
-    return startRequest(request);
-}
-
-bool QContactManagerEngineV2::startContactSaveRequest(QContactSaveRequest* request)
-{
-    return startRequest(request);
-}
-
-bool QContactManagerEngineV2::startContactRemoveRequest(QContactRemoveRequest* request)
-{
-    return startRequest(request);
-}
-
-bool QContactManagerEngineV2::startRelationshipFetchRequest(QContactRelationshipFetchRequest* request)
-{
-    return startRequest(request);
-}
-
-bool QContactManagerEngineV2::startRelationshipSaveRequest(QContactRelationshipSaveRequest* request)
-{
-    return startRequest(request);
-}
-
-bool QContactManagerEngineV2::startRelationshipRemoveRequest(QContactRelationshipRemoveRequest* request)
-{
-    return startRequest(request);
-}
-
-bool QContactManagerEngineV2::startDetailDefinitionFetchRequest(QContactDetailDefinitionFetchRequest* request)
-{
-    return startRequest(request);
-}
-
-bool QContactManagerEngineV2::startDetailDefinitionSaveRequest(QContactDetailDefinitionSaveRequest* request)
-{
-    return startRequest(request);
-}
-
-bool QContactManagerEngineV2::startDetailDefinitionRemoveRequest(QContactDetailDefinitionRemoveRequest* request)
-{
-    return startRequest(request);
-}
-
 /* Wrapper class */
 QContactManagerEngineV2Wrapper::QContactManagerEngineV2Wrapper(QContactManagerEngine *wrappee)
     : m_engine(wrappee)
@@ -2822,13 +2771,12 @@ void QContactManagerEngineV2Wrapper::requestDestroyed(QContactAbstractRequest* r
     return m_engine->requestDestroyed(req);
 }
 
-bool QContactManagerEngineV2Wrapper::startContactSaveRequest(QContactSaveRequest* req)
+bool QContactManagerEngineV2Wrapper::startRequest(QContactAbstractRequest* req)
 {
-    if (req) {
-        if (!req->definitionMask().isEmpty()) {
-            // This is a partial save
-            // TODO do something
-        }
+    if (req && req->type() == QContactAbstractRequest::ContactSaveRequest
+        && !static_cast<QContactSaveRequest*>(req)->definitionMask().isEmpty()) {
+        // This is a partial save
+        // TODO do something
     }
 
     // Otherwise, pass it on
