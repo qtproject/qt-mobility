@@ -43,6 +43,7 @@
 #include "qserviceplugininterface.h"
 #include "qabstractsecuritysession.h"
 #include "qserviceinterfacedescriptor_p.h"
+#include "qremoteservicecontrol.h"
 
 #if defined(Q_OS_SYMBIAN)
     #include "qremoteservicecontrol_s60_p.h"
@@ -410,8 +411,12 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
         //ipc service
         const QByteArray version = QString("%1.%2").arg(descriptor.majorVersion())
                                                    .arg(descriptor.minorVersion()).toLatin1();
-        const QRemoteServiceIdentifier ident(descriptor.serviceName().toLatin1(), descriptor.interfaceName().toLatin1(), version);
-        QObject* service = QRemoteServiceControlPrivate::proxyForService(ident, location);
+
+        QRemoteServiceControl::Entry serviceEntry;
+        serviceEntry.iface = descriptor.interfaceName();
+        serviceEntry.service = descriptor.serviceName();
+        serviceEntry.ifaceVersion = version;
+        QObject* service = QRemoteServiceControlPrivate::proxyForService(serviceEntry, location);
         if (!service)
             d->setError(InvalidServiceLocation);
 

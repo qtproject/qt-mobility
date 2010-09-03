@@ -127,8 +127,8 @@ QTM_BEGIN_NAMESPACE
 bool QRemoteServiceClassRegister::registerType( const QMetaObject* meta,
         CreateServiceFunc func, TypeIdentFunc tfunc,  QRemoteServiceClassRegister::InstanceType t)
 {
-    Q_ASSERT(InstanceManager::instance());
-    return InstanceManager::instance()->addType(meta, func, tfunc, t);
+    //Q_ASSERT(InstanceManager::instance());
+    //return InstanceManager::instance()->addType(meta, func, tfunc, t);
 }
 
 /*!
@@ -136,8 +136,8 @@ bool QRemoteServiceClassRegister::registerType( const QMetaObject* meta,
 */
 const QMetaObject* QRemoteServiceClassRegister::metaObject(const QRemoteServiceIdentifier& ident) const
 {
-    Q_ASSERT(InstanceManager::instance());
-    return InstanceManager::instance()->metaObject(ident);
+    //Q_ASSERT(InstanceManager::instance());
+    //return InstanceManager::instance()->metaObject(ident);
 }
 
 /*!
@@ -145,8 +145,8 @@ const QMetaObject* QRemoteServiceClassRegister::metaObject(const QRemoteServiceI
 */
 QList<QRemoteServiceIdentifier> QRemoteServiceClassRegister::types() const
 {
-    Q_ASSERT(InstanceManager::instance());
-    return InstanceManager::instance()->allIdents();
+    //Q_ASSERT(InstanceManager::instance());
+    //return InstanceManager::instance()->allIdents();
 }
 
 QTM_END_NAMESPACE

@@ -44,6 +44,7 @@
 
 #include <qmobilityglobal.h>
 #include "qremoteserviceclassregister.h"
+#include "qremoteservicecontrol.h"
 #include <QHash>
 #include <QMutexLocker>
 #include <QMetaObject>
@@ -74,27 +75,19 @@ public:
     InstanceManager();
     ~InstanceManager();
 
-    bool addType(const QMetaObject* meta,
-            QRemoteServiceClassRegister::CreateServiceFunc func,
-            QRemoteServiceClassRegister::TypeIdentFunc typeFunc,
-            QRemoteServiceClassRegister::InstanceType type);
+    bool addType(const QRemoteServiceControl::Entry& entry);
 
-    bool addType(const QMetaObject* meta,
-            QRemoteServiceClassRegister::CreateServiceFunc func,
-            QRemoteServiceIdentifier ident,
-            QRemoteServiceClassRegister::InstanceType type);
+    const QMetaObject* metaObject(const QRemoteServiceControl::Entry& ident) const;
+    QList<QRemoteServiceControl::Entry> allEntries() const;
 
-    const QMetaObject* metaObject(const QRemoteServiceIdentifier& ident) const;
-    QList<QRemoteServiceIdentifier> allIdents() const;
-
-    QObject* createObjectInstance(const QRemoteServiceIdentifier& ident, QUuid& instanceId);
-    void removeObjectInstance(const QRemoteServiceIdentifier& ident, const QUuid& instanceId);
+    QObject* createObjectInstance(const QRemoteServiceControl::Entry& entry, QUuid& instanceId);
+    void removeObjectInstance(const QRemoteServiceControl::Entry& entry, const QUuid& instanceId);
 
     static InstanceManager* instance();
 
 private:
     mutable QMutex lock;
-    QHash<QRemoteServiceIdentifier, ServiceIdentDescriptor> metaMap;
+    QHash<QRemoteServiceControl::Entry, ServiceIdentDescriptor> metaMap2;
 };
 
 

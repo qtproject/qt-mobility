@@ -46,6 +46,7 @@
 #include "qremoteserviceclassregister.h"
 #include <QObject>
 #include <QQueue>
+#include <QHash>
 
 
 QTM_BEGIN_NAMESPACE
@@ -78,7 +79,7 @@ public:
 
         const QMetaObject* metaObject() const;
         void setInstanciationType(QRemoteServiceClassRegister::InstanceType t);
-        QRemoteServiceClassRegister::InstanceType instaciationType() const;
+        QRemoteServiceClassRegister::InstanceType instanciationType() const;
 
 
     private:
@@ -92,6 +93,12 @@ public:
 
 
         friend class QRemoteServiceControl;
+        friend class InstanceManager;
+        friend class QServiceManager;
+#ifndef QT_NO_DATASTREAM
+        friend Q_SERVICEFW_EXPORT QDataStream &operator<<(QDataStream &, const QRemoteServiceControl::Entry &);
+        friend Q_SERVICEFW_EXPORT QDataStream &operator>>(QDataStream &, QRemoteServiceControl::Entry &);
+#endif
     };
 
 
@@ -103,19 +110,42 @@ public:
     void registerService(const Entry& entry);
 
 
-    void publishServices(const QString& ident ); //TODO To be removed
-    void publishServices();
+    void publishServices(const QString& ident );
 
 private:
-    void registerServiceHelper(const QMetaObject* meta,
-                QRemoteServiceClassRegister::CreateServiceFunc func,
-                const QRemoteServiceIdentifier& identifier,
-                QRemoteServiceClassRegister::InstanceType type);
-
-
-
     QRemoteServiceControlPrivate* d;
 };
+
+inline uint qHash(const QRemoteServiceControl::Entry& e) {
+    //Only consider version, iface and service name -> needs to sync with operator==
+    return ( qHash(e.serviceName()) + qHash(e.interfaceName()) + qHash(e.version()) );
+}
+
+#ifndef QT_NO_DATASTREAM
+inline QDataStream& operator>>(QDataStream& s, QRemoteServiceControl::Entry& entry) {
+    //for now we only serialize version, iface and service name
+    //neds to sync with qHash and operator==
+    s >> entry.service >> entry.iface >> entry.ifaceVersion;
+    return s;
+}
+
+inline QDataStream& operator<<(QDataStream& s, const QRemoteServiceControl::Entry& entry) {
+    //for now we only serialize version, iface and service name
+    //neds to sync with qHash and operator==
+    s << entry.service << entry.iface << entry.ifaceVersion;
+    return s;
+}
+#endif
+
+#ifndef QT_NO_DEBUG_STREAM
+inline QDebug operator<<(QDebug dbg, const QRemoteServiceControl::Entry& entry) {
+    dbg.nospace() << "QRemoteServiceControl::Entry("
+                  << entry.serviceName() << ", "
+                  << entry.interfaceName() << ", "
+                  << entry.version() << ")";
+    return dbg.space();
+}
+#endif
 
 template <typename T>
 QObject* qServiceTypeConstructHelper()

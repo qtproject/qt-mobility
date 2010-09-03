@@ -105,7 +105,7 @@ public:
     ObjectEndPoint* parent;
 
     // Used for calculate the registered paths on DBus
-    QRemoteServiceIdentifier typeIdent;
+    QRemoteServiceControl::Entry entry;
     QUuid serviceInstanceId;
 };
 
@@ -143,7 +143,7 @@ ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* pa
 ObjectEndPoint::~ObjectEndPoint()
 {
     if (d->endPointType == Service) {
-        InstanceManager::instance()->removeObjectInstance(d->typeIdent, d->serviceInstanceId);
+        InstanceManager::instance()->removeObjectInstance(d->entry, d->serviceInstanceId);
     }
 
     delete d;
@@ -159,7 +159,7 @@ void ObjectEndPoint::disconnected()
     code and this object must clean itself up upon destruction of
     proxy.
 */
-QObject* ObjectEndPoint::constructProxy(const QRemoteServiceIdentifier& ident)
+QObject* ObjectEndPoint::constructProxy(const QRemoteServiceControl::Entry& entry)
 {
     // Client side 
     Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
@@ -168,7 +168,7 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceIdentifier& ident)
     QServicePackage p;
     p.d = new QServicePackagePrivate();
     p.d->messageId = QUuid::createUuid();
-    p.d->typeId = ident;
+    p.d->entry = entry;
 
     Response* response = new Response();
     openRequests()->insert(p.d->messageId, response);
@@ -267,7 +267,7 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
 
         d->serviceInstanceId = p.d->instanceId;
-        d->typeIdent = p.d->typeId;
+        d->entry = p.d->entry;
 
         Response* response = openRequests()->value(p.d->messageId);
         if (p.d->responseType == QServicePackage::Failed) {
@@ -284,9 +284,9 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         response->isFinished = true;
 
         // Create DBUS interface by using a hash of the service instance ID
-        QString serviceName = "com.nokia.qtmobility.sfw." + p.d->typeId.name; 
+        QString serviceName = "com.nokia.qtmobility.sfw." + p.d->entry.serviceName();
         uint hash = qHash(d->serviceInstanceId.toString());
-        QString objPath = "/" + p.d->typeId.iface + "/" + p.d->typeId.version + "/" + QString::number(hash);
+        QString objPath = "/" + p.d->entry.interfaceName() + "/" + p.d->entry.version() + "/" + QString::number(hash);
         objPath.replace(QString("."), QString("/"));
      
 #ifdef DEBUG
@@ -307,7 +307,7 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         InstanceManager* iManager = InstanceManager::instance();
 
         // Instantiate service object from type register
-        service = iManager->createObjectInstance(p.d->typeId, d->serviceInstanceId);
+        service = iManager->createObjectInstance(p.d->entry, d->serviceInstanceId);
         if (!service) {
             qWarning() << "Cannot instanciate service object";
             dispatch->writePackage(response);
@@ -321,9 +321,9 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         }
 
         // DBus registration path uses a hash of the service instance ID
-        QString serviceName = "com.nokia.qtmobility.sfw." + p.d->typeId.name; 
+        QString serviceName = "com.nokia.qtmobility.sfw." + p.d->entry.serviceName();
         uint hash = qHash(d->serviceInstanceId.toString());
-        QString objPath = "/" + p.d->typeId.iface + "/" + p.d->typeId.version + "/" + QString::number(hash);
+        QString objPath = "/" + p.d->entry.interfaceName() + "/" + p.d->entry.version() + "/" + QString::number(hash);
         objPath.replace(QString("."), QString("/"));
 
         QServiceMetaObjectDBus *serviceDBus = new QServiceMetaObjectDBus(service);
@@ -393,9 +393,9 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
 #endif
         
         // Get meta object from type register
-        const QMetaObject* meta = iManager->metaObject(p.d->typeId);
+        const QMetaObject* meta = iManager->metaObject(p.d->entry);
         if (!meta) {
-            qDebug() << "Unknown type" << p.d->typeId;
+            qDebug() << "Unknown type" << p.d->entry;
             dispatch->writePackage(response);
             return;
         }
@@ -407,9 +407,9 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         builder.serialize(stream);
         
         // Send meta object and instance ID to the client for processing 
-        d->typeIdent = p.d->typeId;
+        d->entry = p.d->entry;
         response.d->instanceId = d->serviceInstanceId;
-        response.d->typeId = p.d->typeId;
+        response.d->entry = p.d->entry;
         response.d->responseType = QServicePackage::Success;
         response.d->payload = QVariant(data);
         dispatch->writePackage(response);

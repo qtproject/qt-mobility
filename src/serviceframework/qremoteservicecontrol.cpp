@@ -118,7 +118,7 @@ void QRemoteServiceControl::Entry::setInstanciationType(QRemoteServiceClassRegis
     instanceType = t;
 }
 
-QRemoteServiceClassRegister::InstanceType QRemoteServiceControl::Entry::instaciationType() const
+QRemoteServiceClassRegister::InstanceType QRemoteServiceControl::Entry::instanciationType() const
 {
     return instanceType;
 }
@@ -166,19 +166,9 @@ void QRemoteServiceControl::publishServices( const QString& ident)
 
 void QRemoteServiceControl::registerService(const Entry& e)
 {
-    QRemoteServiceIdentifier ident(e.service.toLatin1(), e.iface.toLatin1(), e.ifaceVersion.toLatin1());
-    registerServiceHelper(e.meta, e.cptr, ident, e.instanceType);
-}
-
-void QRemoteServiceControl::registerServiceHelper(const QMetaObject* meta,
-                QRemoteServiceClassRegister::CreateServiceFunc func,
-                const QRemoteServiceIdentifier& identifier,
-                QRemoteServiceClassRegister::InstanceType type)
-{
     Q_ASSERT(InstanceManager::instance());
-    InstanceManager::instance()->addType(meta, func, identifier, type);
+    InstanceManager::instance()->addType(e);
 }
-
 
 #include "moc_qremoteservicecontrol.cpp"
 
