@@ -23,15 +23,22 @@ public:
 private slots:
    void on_importLandmarks_clicked();
    void on_deleteLandmarks_clicked();
+   void on_nextButton_clicked();
+   void on_prevButton_clicked();
    void on_addLandmark_clicked();
    void fetchHandler(QLandmarkAbstractRequest::State state);
    void cancel();
 
 private:
+    void updateRowLabels();
+    void updateTable(const QList<QLandmark> &lms);
+
     QLandmarkFetchRequest *landmarkFetch;
     QLandmarkImportRequest *landmarkImport;
     QLandmarkRemoveRequest *landmarkRemove;
     QLandmarkSaveRequest *landmarkSave;
     QProgressDialog *progress;
     QLandmarkManager *manager;
+    int currentOffset;
+    const int limit;
 };
