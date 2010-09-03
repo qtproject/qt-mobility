@@ -408,23 +408,23 @@ namespace DBus
         }
     }
 
-    QTelephony::CallType Channel::getCalltype()
+    unsigned int Channel::getCallType()
     {
-        QTelephony::CallType ret = QTelephony::Other;
+        unsigned int ret = 0;
         if(pIChannelTypeStreamedMedia){
             QDBusPendingReply<DBus::Interfaces::MediaStreamInfoList> lst = pIChannelTypeStreamedMedia->ListStreams();
             lst.waitForFinished();
             //Type 0=Audio, 1=Video
             foreach(const DBus::Interfaces::MediaStreamInfo& info, lst.value()){
                 if(info.type == 0 && ret == QTelephony::Other)
-                    ret = QTelephony::Voice;
+                    ret |= QTelephony::Voice;
                 if(info.type == 1)
-                    ret = QTelephony::Video;
+                    ret |= QTelephony::Video;
 
             }
         }
         else if(pIChannelTypeText)
-            ret = QTelephony::Text;
+            ret |= QTelephony::Text;
 
         return ret;
     }

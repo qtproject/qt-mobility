@@ -66,9 +66,9 @@ Rectangle {
     //Assign Telephony Events signals to slots
     TelephonyCallList {
         id: telephonycallist
-        onEvActiveCallAdded: screen.evAddItem(call, "call added")
-        onEvActiveCallStatusChanged: screen.evAddItem(call, "status changed")
-        onEvActiveCallRemoved: screen.evAddItem(call, "call removed")
+        onActiveCallAdded: screen.evAddItem(call, "call added")
+        onActiveCallStatusChanged: screen.evAddItem(call, "status changed")
+        onActiveCallRemoved: screen.evAddItem(call, "call removed")
     }
 
     //Adds a new call item into the list
