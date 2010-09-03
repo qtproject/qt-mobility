@@ -101,7 +101,7 @@ namespace DBus
             return false;
         }
         bool isOutgoing() { return ( direction == 2 ? true : false); }
-        bool isIncomming() { return ( direction == 1 ? true : false); }
+        bool isIncoming() { return ( direction == 1 ? true : false); }
         bool isText() { return (pIChannelTypeText == 0 ? false : true); }
 
     Q_SIGNALS:
@@ -220,7 +220,7 @@ namespace DBus
         Connection* connection;
         /*
          0 = unknown
-         1 = incomming
+         1 = incoming
          2 = outgoing
          */
         int direction;

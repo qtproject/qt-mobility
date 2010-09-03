@@ -32,10 +32,11 @@ private slots:
     void onActiveCallAdded(const QTelephonyCallInfo& call);
     void onActiveCallRemoved(const QTelephonyCallInfo& call);
     void onActiveCallStatusChanged(const QTelephonyCallInfo& call);
+    void onClearList();
 private:
     Ui::MainWindow *ui;
     QStringListModel m_rxDBusMsg;
-    QTelephonyCallList *telephoycalllist;
+    QTelephonyCallList *telephonycalllist;
 };
 
 #endif // MAINWINDOW_H

@@ -60,7 +60,7 @@
     \value Alerting      The status of the call is alerting.
     \value Connected     The status of the call is connected.
     \value Disconnecting The status of the call is disconnecting.
-    \value Incomming     The status of the call is incomming.
+    \value Incoming      The status of the call is incoming.
     \value OnHold        The status of the call is on hold.
 */
 

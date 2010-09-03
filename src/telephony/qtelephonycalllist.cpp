@@ -123,7 +123,7 @@ QTelephonyCallList::~QTelephonyCallList()
     \fn QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephony::CallType& calltype) const
     \a calltype All calls in the list have this type.
 
-    Gives back a list of calls from type of calltype.
+    Returns a list of calls from type of calltype.
 */
 QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephony::CallType& calltype) const
 {

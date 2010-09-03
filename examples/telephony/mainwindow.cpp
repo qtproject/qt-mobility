@@ -15,23 +15,24 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle("Call Monitor");
     ui->lstRxMsg->setModel(&m_rxDBusMsg);
-    telephoycalllist = new QtMobility::QTelephonyCallList(this);
-    connect(telephoycalllist
-            , SIGNAL(activeCallAdded(QTelephonyCallInfo))
-            , SLOT(onActiveCallAdded(QTelephonyCallInfo)));
-    connect(telephoycalllist
-            , SIGNAL(activeCallRemoved(QTelephonyCallInfo))
-            , SLOT(onActiveCallRemoved(QTelephonyCallInfo)));
-    connect(telephoycalllist
-            , SIGNAL(activeCallStatusChanged(QTelephonyCallInfo))
-            , SLOT(onActiveCallStatusChanged(QTelephonyCallInfo)));
+    telephonycalllist = new QtMobility::QTelephonyCallList(this);
+    connect(telephonycalllist
+        , SIGNAL(activeCallAdded(QTelephonyCallInfo))
+        , SLOT(onActiveCallAdded(QTelephonyCallInfo)));
+    connect(telephonycalllist
+        , SIGNAL(activeCallStatusChanged(QTelephonyCallInfo))
+        , SLOT(onActiveCallStatusChanged(QTelephonyCallInfo)));
+    connect(telephonycalllist
+        , SIGNAL(activeCallRemoved(QTelephonyCallInfo))
+        , SLOT(onActiveCallRemoved(QTelephonyCallInfo)));
+    connect(ui->pushButtonClearList, SIGNAL(released()), SLOT(onClearList()));
 }
 
 MainWindow::~MainWindow()
 {
     qDebug() << "MainWindow::~MainWindow()";
-    if(telephoycalllist != 0){
-        delete telephoycalllist;
+    if(telephonycalllist != 0){
+        delete telephonycalllist;
     }
     delete ui;
 }
@@ -64,8 +65,8 @@ void MainWindow::addListEntry(const QString& event, const QTelephonyCallInfo& ca
         val += "-Connected";
     else if(call.status() == QTelephony::Disconnecting)
         val += "-Disconnecting";
-    else if(call.status() == QTelephony::Incomming)
-        val += "-Incomming";
+    else if(call.status() == QTelephony::Incoming)
+        val += "-Incoming";
     else if(call.status() == QTelephony::OnHold)
         val += "-OnHold";
 
@@ -102,4 +103,11 @@ void MainWindow::onActiveCallRemoved(const QTelephonyCallInfo& call)
 void MainWindow::onActiveCallStatusChanged(const QTelephonyCallInfo& call)
 {
     addListEntry("status changed: ", call);
+}
+
+void MainWindow::onClearList()
+{
+    QStringList vl = m_rxDBusMsg.stringList();
+    vl.clear();
+    m_rxDBusMsg.setStringList(vl);
 }
