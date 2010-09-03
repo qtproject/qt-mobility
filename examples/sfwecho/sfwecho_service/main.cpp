@@ -46,12 +46,12 @@
 
 QTM_USE_NAMESPACE
 
-class EchoSharedService : public QObject
+class EchoService : public QObject
 {
     Q_OBJECT
 
 public:
-    EchoSharedService(QObject* parent = 0)
+    EchoService(QObject* parent = 0)
         : QObject(parent)
     {
     }
@@ -69,28 +69,6 @@ private:
 
 };
 
-class EchoUniqueService : public QObject
-{
-    Q_OBJECT
-
-public:
-    EchoUniqueService(QObject* parent = 0)
-        : QObject(parent)
-    {
-    }
-
-Q_SIGNALS:
-    void broadcastMessage(const QString &msg, const QDateTime &timestamp);
-
-public slots:
-    void sendMessage(const QString &msg)
-    {
-        emit broadcastMessage(msg, QDateTime::currentDateTime());
-    }
-
-private:
-
-};
 
 void unregisterExampleService()
 {
@@ -120,12 +98,12 @@ int main(int argc, char** argv)
 
     QRemoteServiceControl* control = new QRemoteServiceControl();
 
-    QRemoteServiceControl::Entry shared = control->createServiceEntry<EchoSharedService>(
+    QRemoteServiceControl::Entry shared = control->createServiceEntry<EchoService>(
         "EchoService", "com.nokia.qt.example.sfwecho", "1.1");
     shared.setInstanciationType(QRemoteServiceControl::SharedInstance);
     control->registerService(shared);
 
-    QRemoteServiceControl::Entry unique = control->createServiceEntry<EchoUniqueService>(
+    QRemoteServiceControl::Entry unique = control->createServiceEntry<EchoService>(
         "EchoService", "com.nokia.qt.example.sfwecho", "1.0");
     unique.setInstanciationType(QRemoteServiceControl::UniqueInstance);
     control->registerService(unique);
