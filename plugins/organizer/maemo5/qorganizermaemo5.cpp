@@ -211,20 +211,12 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
 
     // get the generator's calendar (or the default calendar, if the generator collection id is not set)
     QOrganizerCollectionLocalId collectionLocalId = generator.collectionId().localId();
-    CCalendar *cal = 0;
-    if (collectionLocalId != QOrganizerCollectionLocalId(0)) {
-        cal = d->m_mcInstance->getCalendarById(static_cast<int>(collectionLocalId), calError);
-        if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
-            *error = d->m_itemTransformer.calErrorToManagerError(calError);
-            return retn;
-        }
-        if (!cal) {
-            *error = QOrganizerItemManager::UnspecifiedError;
-            return retn;
-        }
-    }
-    else {
-        cal = d->m_mcInstance->getDefaultCalendar();
+    CCalendar *cal = getCalendar(collectionLocalId, error);
+    if (*error != QOrganizerItemManager::NoError)
+        return retn;
+    if (!cal) {
+        *error = QOrganizerItemManager::UnspecifiedError;
+        return retn;
     }
 
     std::string nativeId = QString::number(generator.localId()).toStdString();
