@@ -39,63 +39,39 @@
 **
 ****************************************************************************/
 
-#include "qgeotiledmaptextobjectinfo_p.h"
+#ifndef QGEOTILEDMAPCONTAINEROBJECT_INFO_P_H
+#define QGEOTILEDMAPCONTAINEROBJECT_INFO_P_H
 
-#include "qgeotiledmapdata.h"
-#include "qgeotiledmapdata_p.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include "qgeomaptextobject.h"
+#include "qgeotiledmapobjectinfo_p.h"
+
+class QGraphicsPathItem;
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapTextObjectInfo::QGeoTiledMapTextObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject),
-        textItem(0)
+class QGeoMapContainerObject;
 
+class QGeoTiledMapContainerObjectInfo : public QGeoTiledMapObjectInfo
 {
-    text = static_cast<QGeoMapTextObject*>(mapObject);
-}
+public:
+    QGeoTiledMapContainerObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    ~QGeoTiledMapContainerObjectInfo();
 
-QGeoTiledMapTextObjectInfo::~QGeoTiledMapTextObjectInfo() {}
+    void objectUpdated();
 
-void QGeoTiledMapTextObjectInfo::objectUpdated()
-{
-    if (!text->coordinate().isValid()) {
-        if (textItem) {
-            delete textItem;
-            textItem = 0;
-            graphicsItem = 0;
-        }
-        return;
-    }
-
-    QPointF position = tiledMapData->coordinateToWorldPixel(text->coordinate());
-
-    if (!textItem)
-        textItem = new QGraphicsSimpleTextItem();
-
-    textItem->setText(text->text());
-    textItem->setFont(text->font());
-    textItem->setBrush(text->brush());
-    textItem->setPos(position);
-    //textItem->setTransformOriginPoint(position);
-
-    mapUpdated();
-
-    graphicsItem = textItem;
-
-    updateItem();
-}
-
-void QGeoTiledMapTextObjectInfo::mapUpdated()
-{
-    if (textItem) {
-        int zoomFactor = tiledMapData->zoomFactor();
-
-        textItem->resetTransform();
-        textItem->setScale(zoomFactor);
-    }
-}
+    QGraphicsPathItem *pathItem;
+};
 
 QTM_END_NAMESPACE
 
+#endif //QGEOTILEDMAPCONTAINEROBJECT_INFO_P_H

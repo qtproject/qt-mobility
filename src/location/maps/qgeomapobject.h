@@ -102,11 +102,10 @@ public:
     void removeChildObject(QGeoMapObject *childObject);
     void clearChildObjects();
 
-    void objectUpdate();
-    void mapUpdate();
-
     bool operator<(const QGeoMapObject &other) const;
     bool operator>(const QGeoMapObject &other) const;
+
+    void mapUpdated();
 
 signals:
     void zValueChanged(int zValue);
@@ -115,6 +114,8 @@ signals:
 
 protected:
     QGeoMapObject(QGeoMapObjectPrivate *dd);
+
+    void objectUpdated();
 
     QGeoMapObjectPrivate *d_ptr;
 

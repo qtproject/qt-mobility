@@ -58,7 +58,7 @@ QGeoTiledMapPolygonObjectInfo::QGeoTiledMapPolygonObjectInfo(QGeoMapData *mapDat
 
 QGeoTiledMapPolygonObjectInfo::~QGeoTiledMapPolygonObjectInfo() {}
 
-void QGeoTiledMapPolygonObjectInfo::objectUpdate()
+void QGeoTiledMapPolygonObjectInfo::objectUpdated()
 {
     QList<QGeoCoordinate> path = polygon->path();
 
@@ -80,14 +80,14 @@ void QGeoTiledMapPolygonObjectInfo::objectUpdate()
     polygonItem->setPolygon(points);
     polygonItem->setBrush(polygon->brush());
 
-    mapUpdate();
+    mapUpdated();
 
     graphicsItem = polygonItem;
 
     updateItem();
 }
 
-void QGeoTiledMapPolygonObjectInfo::mapUpdate()
+void QGeoTiledMapPolygonObjectInfo::mapUpdated()
 {
     if (polygonItem) {
         polygonItem->setPen(polygon->pen());

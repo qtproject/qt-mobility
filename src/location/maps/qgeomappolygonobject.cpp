@@ -93,7 +93,7 @@ void QGeoMapPolygonObject::setPath(const QList<QGeoCoordinate> &path)
     Q_D(QGeoMapPolygonObject);
     if (d->path != path) {
         d->path = path;
-        objectUpdate();
+        objectUpdated();
         emit pathChanged(emit d->path);
     }
 }
@@ -117,11 +117,16 @@ QList<QGeoCoordinate> QGeoMapPolygonObject::path() const
 void QGeoMapPolygonObject::setPen(const QPen &pen)
 {
     Q_D(QGeoMapPolygonObject);
-    if (d->pen != pen) {
-        d->pen = pen;
-        objectUpdate();
-        emit penChanged(emit d->pen);
-    }
+
+    QPen newPen = pen;
+    newPen.setCosmetic(true);
+
+    if (d->pen == newPen)
+        return;
+
+    d->pen = newPen;
+    objectUpdated();
+    emit penChanged(d->pen);
 }
 
 QPen QGeoMapPolygonObject::pen() const
@@ -144,7 +149,7 @@ void QGeoMapPolygonObject::setBrush(const QBrush &brush)
     Q_D(QGeoMapPolygonObject);
     if (d->brush != brush) {
         d->brush = brush;
-        objectUpdate();
+        objectUpdated();
         emit brushChanged(d->brush);
     }
 }
@@ -159,7 +164,10 @@ QBrush QGeoMapPolygonObject::brush() const
 *******************************************************************************/
 
 QGeoMapPolygonObjectPrivate::QGeoMapPolygonObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::PolygonType) {}
+        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::PolygonType)
+{
+    pen.setCosmetic(true);
+}
 
 QGeoMapPolygonObjectPrivate::~QGeoMapPolygonObjectPrivate() {}
 

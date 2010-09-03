@@ -107,7 +107,7 @@ void QGeoMapPixmapObject::setCoordinate(const QGeoCoordinate &coordinate)
     Q_D(QGeoMapPixmapObject);
     if (d->coordinate != coordinate) {
         d->coordinate = coordinate;
-        objectUpdate();
+        objectUpdated();
         emit coordinateChanged(d->coordinate);
     }
 }
@@ -141,7 +141,7 @@ void QGeoMapPixmapObject::setPixmap(const QPixmap &pixmap)
             || (!d->pixmap.isNull() && pixmap.isNull())
             || (d->pixmap.toImage() != pixmap.toImage())) {
         d->pixmap = pixmap;
-        objectUpdate();
+        objectUpdated();
         emit pixmapChanged(d->pixmap);
     }
 }
@@ -170,7 +170,7 @@ void QGeoMapPixmapObject::setOffset(const QPoint &offset)
     Q_D(QGeoMapPixmapObject);
     if (d->offset != offset) {
         d->offset = offset;
-        objectUpdate();
+        objectUpdated();
         emit offsetChanged(d->offset);
     }
 }

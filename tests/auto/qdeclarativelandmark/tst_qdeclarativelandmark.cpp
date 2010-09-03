@@ -58,6 +58,7 @@
 #include <QString>
 #include <QUuid>
 
+
 // Eventually these will make it into qtestcase.h
 // but we might need to tweak the timeout values here.
 #ifndef QTRY_COMPARE
@@ -111,6 +112,7 @@
 #endif
 
 #define DB_FILENAME "test.db"
+#define LEAVE_DB_AFTER_TESTRUN true
 
 QTM_USE_NAMESPACE
 
@@ -156,8 +158,8 @@ private slots:
 
 private:
     QObject* createComponent(const QString& componentString);
-    void createDb();
-    void deleteDb();
+    void createDb(QString fileName = DB_FILENAME);
+    void deleteDb(QString fileName = DB_FILENAME);
     void populateTypicalDb();
     QLandmarkId addLandmarkToDb();
     void removeLandmarkFromDb(QLandmarkId);
@@ -174,13 +176,23 @@ private:
 
 Q_DECLARE_METATYPE(tst_QDeclarativeLandmark::ObjectType)
 
-tst_QDeclarativeLandmark::tst_QDeclarativeLandmark() : m_manager(0) {}
+tst_QDeclarativeLandmark::tst_QDeclarativeLandmark() : m_engine(0), m_manager(0) {}
 tst_QDeclarativeLandmark::~tst_QDeclarativeLandmark() {}
+
 void tst_QDeclarativeLandmark::initTestCase()
 {
     qRegisterMetaType<QDeclarativeLandmarkModel::SortOrder>("QDeclarativeLandmarkModel::SortOrder");
     qRegisterMetaType<QDeclarativeLandmarkModel::SortKey>("QDeclarativeLandmarkModel::SortKey");
     qRegisterMetaType<QDeclarativeLandmark*>("QDeclarativeLandmark*");
+
+    // If true, leave a database behind from this testcase.
+    // The db is located in /tests/auto/qdeclarativelandmark/
+    if (LEAVE_DB_AFTER_TESTRUN) {
+        deleteDb("generatedExampleLandmarkDb.db"); // Clear previous
+        createDb("generatedExampleLandmarkDb.db");
+        populateTypicalDb();
+
+    }
 }
 
 void tst_QDeclarativeLandmark::cleanupTestCase()
@@ -189,7 +201,9 @@ void tst_QDeclarativeLandmark::cleanupTestCase()
         delete m_manager;
         m_manager = 0;
     }
+    deleteDb();
 }
+
 void tst_QDeclarativeLandmark::init()
 {
     // Delete possible database before each teststep
@@ -197,10 +211,10 @@ void tst_QDeclarativeLandmark::init()
     createDb();
 }
 
-void tst_QDeclarativeLandmark::createDb()
+void tst_QDeclarativeLandmark::createDb(QString fileName)
 {
     QMap<QString, QString> map;
-    map["filename"] = "test.db";
+    map["filename"] = fileName;
     if (m_manager != 0) {
         delete m_manager;
         m_manager = 0;
@@ -208,11 +222,11 @@ void tst_QDeclarativeLandmark::createDb()
     m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
 }
 
-void tst_QDeclarativeLandmark::deleteDb()
+void tst_QDeclarativeLandmark::deleteDb(QString fileName)
 {
     delete m_manager;
     m_manager = 0;
-    QFile file("test.db");
+    QFile file(fileName);
     file.remove();
 }
 
@@ -531,22 +545,23 @@ void tst_QDeclarativeLandmark::basicFetch_data()
     // Simple filters
     QTest::newRow("No match (non-matching filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Name; value: \"Nonexistent landmark\" } }"  << 0;
     QTest::newRow("All (no filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true;}" << -1;
-    QTest::newRow("One match (name filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Name; value: \"Uniquely named powerhouse\"} }" << 1;
-    QTest::newRow("Two match (name filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Name; value: \"Duplicate named bridge\"} }" << 2;
-    QTest::newRow("One match (proximity filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Proximity; value: Position {longitude: 70; latitude: 70} } }" << 1;
-    QTest::newRow("Two match (proximity filter, no radius)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Proximity; value: Position {longitude: 50; latitude: 50} } }" << 2;
-    QGeoCoordinate from(50,50);
-    QGeoCoordinate to(51,51);
+    QTest::newRow("One match (name filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Name; value: \"Brisbane\"} }" << 1;
+    QTest::newRow("Two match (name filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Name; value: \"Tower\"} }" << 2;
+    QTest::newRow("One match (proximity filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Proximity; value: Position {longitude: 20; latitude: 20} } }" << 1;
+    QTest::newRow("Two match (proximity filter, no radius)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Proximity; value: Position {longitude: 60; latitude: 60} } }" << 2;
+    QGeoCoordinate from(70,70);
+    QGeoCoordinate to(71,71);
     QString distance = QString::number(from.distanceTo(to));
-    QTest::newRow("Three match (proximity filter, radius)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Proximity; value: Position {longitude: 50; latitude: 50; radius: " + distance + " } } }" << 3;
-    QTest::newRow("Two match (three, but offset'd)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {offset: 1; autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Proximity; value: Position {longitude: 50; latitude: 50; radius: " + distance + " } } }" << 2;
+
+    QTest::newRow("Two match (proximity filter, radius)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Proximity; value: Position {longitude: 70; latitude: 70; radius: " + distance + " } } }" << 2;
+    QTest::newRow("One match (two, but offset'd)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {offset: 1; autoUpdate:true; filter: LandmarkFilter{id: filter; type: LandmarkFilter.Proximity; value: Position {longitude: 70; latitude: 70; radius: " + distance + " } } }" << 1;
     QTest::newRow("Four match (all, but limit'd)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {limit: 4; autoUpdate:true;}" << 4;
     // Compound filters
     QTest::newRow("All (empty intersection filter i.e. no filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkIntersectionFilter{ id : filter; } }"  << -1;
     QTest::newRow("All (empty union filter i.e. no filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkUnionFilter{id: filter; } }"  << -1;
-    QTest::newRow("Two matches (union of two names)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkUnionFilter{ LandmarkFilter{type: LandmarkFilter.Name; value: \"Uniquely named powerhouse\"} LandmarkFilter{type: LandmarkFilter.Name; value: \"Uniquely named southbank\"} } }"  << 2;
-    QTest::newRow("Two matches (union of name and prox)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkUnionFilter{ LandmarkFilter{type: LandmarkFilter.Name; value: \"Uniquely named powerhouse\"} LandmarkFilter{type: LandmarkFilter.Proximity; value: Position {longitude:70; latitude:70} } } }"  << 2;
-    QTest::newRow("One match (intersect of name and prox)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkIntersectionFilter{ LandmarkFilter{type: LandmarkFilter.Name; value: \"Duplicate named bridge\"} LandmarkFilter{type: LandmarkFilter.Proximity; value: Position {longitude:51; latitude:51} } } }"  << 1;
+    QTest::newRow("Two matches (union of two names)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkUnionFilter{ LandmarkFilter{type: LandmarkFilter.Name; value: \"London\"} LandmarkFilter{type: LandmarkFilter.Name; value: \"Sydney\"} } }"  << 2;
+    QTest::newRow("Two matches (union of name and prox)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkUnionFilter{ LandmarkFilter{type: LandmarkFilter.Name; value: \"Brisbane\"} LandmarkFilter{type: LandmarkFilter.Proximity; value: Position {longitude:20; latitude:20} } } }"  << 2;
+    QTest::newRow("One match (intersect of name and prox)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkIntersectionFilter{ LandmarkFilter{type: LandmarkFilter.Name; value: \"Tower\"} LandmarkFilter{type: LandmarkFilter.Proximity; value: Position {longitude:71; latitude:71} } } }"  << 1;
     // Categories
     QTest::newRow("All categories") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:true;}" << -1;
     QTest::newRow("One match (all, but limit'd") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:true; limit: 1}" << 1;
@@ -597,9 +612,9 @@ void tst_QDeclarativeLandmark::categoriesOfLandmarkFetch_data()
     QTest::addColumn<QString>("landmarkName");
     QTest::addColumn<int>("expectedMatches");
 
-    QTest::newRow("no category") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:false;}" << "nocategory" << 0;
-    QTest::newRow("one category") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:false;}" << "Uniquely named powerhouse" << 1;
-    QTest::newRow("two categories") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:false;}" << "Sydney" << 2;
+    QTest::newRow("no category") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:false;}" << "Alpha centauri" << 0;
+    QTest::newRow("one category") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:false;}" << "London" << 1;
+    QTest::newRow("two categories") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:false;}" << "Brisbane" << 2;
 }
 
 // Update database without autoUpdate with update() and verify signals are received an count updates
@@ -867,79 +882,61 @@ bool tst_QDeclarativeLandmark::modelContainsItem(QDeclarativeLandmarkModel* mode
 void tst_QDeclarativeLandmark::populateTypicalDb()
 {
     Q_ASSERT(m_manager);
-    QList<QLandmarkCategoryId> categoryIdAll;
+
+    QLandmarkCategory categorySunshineCities;
+    categorySunshineCities.setName("Sunshine cities");
+    m_manager->saveCategory(&categorySunshineCities);
+    QLandmarkCategoryId categoryIdSunshineCities = categorySunshineCities.categoryId();
 
     QLandmarkCategory categoryEmpty;
-    categoryEmpty.setName("Empty category");
+    categoryEmpty.setName("Empty");
     m_manager->saveCategory(&categoryEmpty);
 
-    QLandmarkCategory categoryAll;
-    categoryAll.setName("All landmarks category");
-    m_manager->saveCategory(&categoryAll);
-    categoryIdAll.append(categoryAll.categoryId());
+    QLandmark uncategorized;
+    uncategorized.setName("Alpha centauri");
+    m_manager->saveLandmark(&uncategorized);
 
     QLandmarkCategory categoryCities;
-    categoryCities.setName("Cities category");
+    categoryCities.setName("Cities");
     m_manager->saveCategory(&categoryCities);
+    QLandmarkCategoryId categoryIdCities = categoryCities.categoryId();
+    QLandmark brisbane;
+    brisbane.setName("Brisbane");
+    brisbane.setCoordinate(QGeoCoordinate(50, 50));
+    brisbane.addCategoryId(categoryIdCities);
+    brisbane.addCategoryId(categoryIdSunshineCities);
+    m_manager->saveLandmark(&brisbane);
+    QLandmark sydney;
+    sydney.setName("Sydney");
+    sydney.setCoordinate(QGeoCoordinate(60, 60));
+    sydney.addCategoryId(categoryIdCities);
+    sydney.addCategoryId(categoryIdSunshineCities);
+    m_manager->saveLandmark(&sydney);
+    QLandmark london;
+    london.setName("London");
+    london.setCoordinate(QGeoCoordinate(70, 70));
+    london.addCategoryId(categoryIdCities);
+    m_manager->saveLandmark(&london);
 
-    // Clumsy but we don't need that much
-    QLandmark landmark1;
-    landmark1.setName("Uniquely named powerhouse");
-    landmark1.setCoordinate(QGeoCoordinate(50, 50));
-    landmark1.setCategoryIds(categoryIdAll);
-    m_manager->saveLandmark(&landmark1);
-
-    QLandmark landmark2;
-    landmark2.setName("Duplicate named bridge");
-    landmark2.setCoordinate(QGeoCoordinate(50, 50));
-    landmark2.setCategoryIds(categoryIdAll);
-    m_manager->saveLandmark(&landmark2);
-
-    QLandmark landmark3;
-    landmark3.setName("Duplicate named bridge");
-    landmark3.setCoordinate(QGeoCoordinate(51, 51));
-    landmark3.setCategoryIds(categoryIdAll);
-    m_manager->saveLandmark(&landmark3);
-
-    QLandmark landmark4;
-    landmark4.setName("Uniquely located Brisbane");
-    landmark4.setCoordinate(QGeoCoordinate(70, 70));
-    landmark4.setCategoryIds(categoryIdAll);
-    m_manager->saveLandmark(&landmark4);
-
-    QLandmark landmark5;
-    landmark5.setName("Uniquely named southbank");
-    landmark5.setCoordinate(QGeoCoordinate(52, 52));
-    landmark5.setCategoryIds(categoryIdAll);
-    m_manager->saveLandmark(&landmark5);
-
-    //qDebug() << "categoryAll" << categoryAll.categoryId().managerUri() << categoryAll.categoryId().localId();
-    //qDebug() << "categoryCities" << categoryCities.categoryId().managerUri() <<  categoryCities.categoryId().localId();
-    //for (int i = 0; i < categoryIdAll.count(); i++) {
-    //     qDebug() << "category ID s in list" << categoryIdAll.at(i).managerUri() <<  categoryIdAll.at(i).localId();
-    //}
-
-    // In cities -category
-    categoryIdAll.append(categoryCities.categoryId());
-
-    QLandmark landmark6;
-    landmark6.setName("Sydney");
-    landmark6.setCoordinate(QGeoCoordinate(152, 152));
-    landmark6.setCategoryIds(categoryIdAll);
-    m_manager->saveLandmark(&landmark6);
-
-    QLandmark landmark7;
-    landmark7.setName("Perth");
-    landmark7.setCoordinate(QGeoCoordinate(153, 153));
-    landmark7.setCategoryIds(categoryIdAll);
-    m_manager->saveLandmark(&landmark7);
-
-    QLandmark landmark8;
-    landmark8.setName("nocategory");
-    landmark8.setCoordinate(QGeoCoordinate(153, 153));
-    m_manager->saveLandmark(&landmark8);
-
-    QTest::qWait(50);
+    QLandmarkCategory categorySights;
+    categorySights.setName("Sights");
+    m_manager->saveCategory(&categorySights);
+    QLandmarkCategoryId categoryIdSights = categorySights.categoryId();
+    QLandmark tower1;
+    tower1.setName("Tower");
+    tower1.setCoordinate(QGeoCoordinate(20, 20));
+    tower1.addCategoryId(categoryIdSights);
+    m_manager->saveLandmark(&tower1);
+    QLandmark tower2;
+    tower2.setName("Tower");
+    tower2.setCoordinate(QGeoCoordinate(71, 71));
+    tower2.addCategoryId(categoryIdSights);
+    m_manager->saveLandmark(&tower2);
+    QLandmark museum;
+    museum.setName("Opera House");
+    museum.setCoordinate(QGeoCoordinate(60, 60));
+    museum.addCategoryId(categoryIdSights);
+    m_manager->saveLandmark(&museum);
 }
 
 /*

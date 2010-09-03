@@ -53,6 +53,7 @@ void QDeclarativeLandmarkAbstractModel::connectManager()
 
 void QDeclarativeLandmarkAbstractModel::categoriesChanged(const QList<QLandmarkCategoryId>& ids)
 {
+    Q_UNUSED(ids)
     if (m_autoUpdate)
         update();
     emit modelChanged();
@@ -60,6 +61,7 @@ void QDeclarativeLandmarkAbstractModel::categoriesChanged(const QList<QLandmarkC
 
 void QDeclarativeLandmarkAbstractModel::landmarksChanged(const QList<QLandmarkId>& ids)
 {
+    Q_UNUSED(ids)
     if (m_autoUpdate)
         update();
     emit modelChanged();
@@ -106,6 +108,7 @@ void QDeclarativeLandmarkAbstractModel::setDbFileName(QString fileName)
     m_dbFileName = fileName;
     if (m_manager) {
         cancelUpdate();
+        cancelImport();
         delete m_manager;
         m_manager = 0;
     }
@@ -149,7 +152,10 @@ void QDeclarativeLandmarkAbstractModel::setOffset(int offset)
 
 QDeclarativeLandmarkModel::QDeclarativeLandmarkModel(QObject *parent) :
         QDeclarativeLandmarkAbstractModel(parent),
-        m_filter(0), m_fetchRequest(0), m_sortingOrder(0), m_sortOrder(AscendingOrder), m_sortKey(DefaultSort)
+        m_filter(0), m_fetchRequest(0), m_sortingOrder(0),
+        m_importRequest(0), m_importPending(false),
+        m_sortOrder(AscendingOrder), m_sortKey(DefaultSort)
+
 {
     // Establish role names so that they can be queried from this model
     QHash<int, QByteArray> roleNames;
@@ -162,6 +168,8 @@ QDeclarativeLandmarkModel::QDeclarativeLandmarkModel(QObject *parent) :
     roleNames.insert(UrlRole, "url");
     roleNames.insert(LatitudeRole, "latitude");
     roleNames.insert(LongitudeRole, "longitude");
+    roleNames.insert(AltitudeRole, "altitude");
+    roleNames.insert(LandmarkRole, "landmark");
     setRoleNames(roleNames);
 }
 
@@ -169,6 +177,7 @@ QDeclarativeLandmarkModel::~QDeclarativeLandmarkModel()
 {
     delete m_fetchRequest;
     delete m_sortingOrder;
+    delete m_importRequest;
     qDeleteAll(m_landmarkMap.values());
     m_landmarkMap.clear();
 }
@@ -203,6 +212,8 @@ QVariant QDeclarativeLandmarkModel::data(const QModelIndex &index, int role) con
             return landmark.coordinate().latitude();
         case LongitudeRole:
             return landmark.coordinate().longitude();
+        case AltitudeRole:
+            return landmark.coordinate().altitude();
     }
     return QVariant();
 }
@@ -269,6 +280,16 @@ void QDeclarativeLandmarkModel::cancelUpdate()
     if (m_sortingOrder) {
         delete m_sortingOrder;
         m_sortingOrder = 0;
+    }
+}
+void QDeclarativeLandmarkModel::cancelImport()
+{
+#ifdef QDECLARATIVE_LANDMARK_DEBUG
+    qDebug() << "QDeclarativeLandmarkModel::cancelImport() m_importRequest:" << m_importRequest;
+#endif
+    if (m_importRequest) {
+        delete m_importRequest;
+        m_importRequest = 0;
     }
 }
 
@@ -361,6 +382,61 @@ void QDeclarativeLandmarkModel::convertLandmarksToDeclarative()
         m_landmarkMap.remove(removable);
     }
     emit landmarksChanged();
+}
+
+QString QDeclarativeLandmarkModel::importFile() const
+{
+    return m_importFile;
+}
+
+void QDeclarativeLandmarkModel::setImportFile(QString importFile)
+{
+    if (importFile == m_importFile)
+        return;
+    m_importFile = importFile;
+    if (m_importRequest) {
+        delete m_importRequest;
+        m_importRequest = 0;
+    }
+    scheduleImport();
+    emit importFileChanged();
+}
+
+void QDeclarativeLandmarkModel::scheduleImport()
+{
+    if (!m_componentCompleted || m_importPending)
+        return;
+    m_importPending = true; // Disallow possible duplicate request triggering
+    QMetaObject::invokeMethod(this, "startImport", Qt::QueuedConnection);
+}
+
+void QDeclarativeLandmarkModel::componentComplete()
+{
+    m_componentCompleted = true;
+    if (!m_manager) {
+        m_manager = new QLandmarkManager();
+        connectManager();
+    }
+    if (m_autoUpdate) {
+        if (!m_importFile.isEmpty())
+            scheduleImport();
+        scheduleUpdate();
+    }
+}
+
+void QDeclarativeLandmarkModel::startImport()
+{
+#ifdef QDECLARATIVE_LANDMARK_DEBUG
+    qDebug("QDeclarativeLandmarkModel::startImport()");
+#endif
+    if (!m_manager || m_importFile.isEmpty())
+        return;
+    if (m_importRequest)
+        delete m_importRequest;
+    m_importRequest = new QLandmarkImportRequest(m_manager);
+    m_importRequest->setFileName("m_importRequest");
+    m_importRequest->start(); // If successful, will result in landmark/category added signals
+    m_importPending = false;
 }
 
 QDeclarativeLandmarkModel::SortKey QDeclarativeLandmarkModel::sortBy() const
