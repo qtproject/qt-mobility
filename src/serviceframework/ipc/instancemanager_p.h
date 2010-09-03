@@ -43,7 +43,7 @@
 #define QSERVICE_INSTANCE_MANAGER
 
 #include <qmobilityglobal.h>
-#include "qremoteservicecontrol.h"
+#include "qremoteserviceregister.h"
 #include <QHash>
 #include <QMutexLocker>
 #include <QMetaObject>
@@ -60,8 +60,8 @@ struct ServiceIdentDescriptor
     }
 
     const QMetaObject* meta;
-    QRemoteServiceControl::CreateServiceFunc create;
-    QRemoteServiceControl::InstanceType instanceType;
+    QRemoteServiceRegister::CreateServiceFunc create;
+    QRemoteServiceRegister::InstanceType instanceType;
     QHash<QUuid, QObject*> individualInstances;
     QObject* sharedInstance;
     QUuid sharedId;
@@ -74,19 +74,19 @@ public:
     InstanceManager();
     ~InstanceManager();
 
-    bool addType(const QRemoteServiceControl::Entry& entry);
+    bool addType(const QRemoteServiceRegister::Entry& entry);
 
-    const QMetaObject* metaObject(const QRemoteServiceControl::Entry& ident) const;
-    QList<QRemoteServiceControl::Entry> allEntries() const;
+    const QMetaObject* metaObject(const QRemoteServiceRegister::Entry& ident) const;
+    QList<QRemoteServiceRegister::Entry> allEntries() const;
 
-    QObject* createObjectInstance(const QRemoteServiceControl::Entry& entry, QUuid& instanceId);
-    void removeObjectInstance(const QRemoteServiceControl::Entry& entry, const QUuid& instanceId);
+    QObject* createObjectInstance(const QRemoteServiceRegister::Entry& entry, QUuid& instanceId);
+    void removeObjectInstance(const QRemoteServiceRegister::Entry& entry, const QUuid& instanceId);
 
     static InstanceManager* instance();
 
 private:
     mutable QMutex lock;
-    QHash<QRemoteServiceControl::Entry, ServiceIdentDescriptor> metaMap;
+    QHash<QRemoteServiceRegister::Entry, ServiceIdentDescriptor> metaMap;
 };
 
 

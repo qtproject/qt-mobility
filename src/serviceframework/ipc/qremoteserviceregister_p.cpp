@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qremoteservicecontrol_p.h"
+#include "qremoteserviceregister_p.h"
 #include "ipcendpoint_p.h"
 #include "objectendpoint_p.h"
 
@@ -112,17 +112,17 @@ private:
     QLocalSocket* socket;
 };
 
-QRemoteServiceControlPrivate::QRemoteServiceControlPrivate(QObject* parent)
+QRemoteServiceRegisterPrivate::QRemoteServiceRegisterPrivate(QObject* parent)
     : QObject(parent)
 {
 }
 
-void QRemoteServiceControlPrivate::publishServices( const QString& ident)
+void QRemoteServiceRegisterPrivate::publishServices( const QString& ident)
 {
     createServiceEndPoint(ident) ;
 }
 
-void QRemoteServiceControlPrivate::processIncoming()
+void QRemoteServiceRegisterPrivate::processIncoming()
 {
     qDebug() << "Processing incoming connect";
     if (localServer->hasPendingConnections()) {
@@ -137,7 +137,7 @@ void QRemoteServiceControlPrivate::processIncoming()
 /*
     Creates endpoint on service side.
 */
-bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& ident)
+bool QRemoteServiceRegisterPrivate::createServiceEndPoint(const QString& ident)
 {
     //other IPC mechanisms such as dbus may have to publish the
     //meta object definition for all registered service types        
@@ -158,7 +158,7 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& ident)
 /*
     Creates endpoint on client side.
 */
-QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceControl::Entry& entry, const QString& location)
+QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& location)
 {
     QLocalSocket* socket = new QLocalSocket();
     socket->connectToServer(location);
@@ -205,6 +205,6 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceContr
     return proxy;
 }
 
-#include "moc_qremoteservicecontrol_p.cpp"
-#include "qremoteservicecontrol_p.moc"
+#include "moc_qremoteserviceregister_p.cpp"
+#include "qremoteserviceregister_p.moc"
 QTM_END_NAMESPACE

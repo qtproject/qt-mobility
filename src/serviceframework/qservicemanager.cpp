@@ -43,14 +43,14 @@
 #include "qserviceplugininterface.h"
 #include "qabstractsecuritysession.h"
 #include "qserviceinterfacedescriptor_p.h"
-#include "qremoteservicecontrol.h"
+#include "qremoteserviceregister.h"
 
 #if defined(Q_OS_SYMBIAN)
-    #include "qremoteservicecontrol_s60_p.h"
+    #include "qremoteserviceregister_s60_p.h"
 #elif defined(QT_NO_DBUS)
-    #include "qremoteservicecontrol_p.h"
+    #include "qremoteserviceregister_p.h"
 #else
-    #include "qremoteservicecontrol_dbus_p.h"
+    #include "qremoteserviceregister_dbus_p.h"
 #endif
 
 #ifdef Q_OS_SYMBIAN
@@ -412,11 +412,11 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
         const QByteArray version = QString("%1.%2").arg(descriptor.majorVersion())
                                                    .arg(descriptor.minorVersion()).toLatin1();
 
-        QRemoteServiceControl::Entry serviceEntry;
+        QRemoteServiceRegister::Entry serviceEntry;
         serviceEntry.iface = descriptor.interfaceName();
         serviceEntry.service = descriptor.serviceName();
         serviceEntry.ifaceVersion = version;
-        QObject* service = QRemoteServiceControlPrivate::proxyForService(serviceEntry, location);
+        QObject* service = QRemoteServiceRegisterPrivate::proxyForService(serviceEntry, location);
         if (!service)
             d->setError(InvalidServiceLocation);
 

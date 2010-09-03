@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QREMOTESERVICECONTROL_H
-#define QREMOTESERVICECONTROL_H
+#ifndef QREMOTESERVICEREGISTER_H
+#define QREMOTESERVICEREGISTER_H
 
 #include "qmobilityglobal.h"
 #include <QObject>
@@ -51,8 +51,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QRemoteServiceControlPrivate;
-class Q_SERVICEFW_EXPORT QRemoteServiceControl : public QObject
+class QRemoteServiceRegisterPrivate;
+class Q_SERVICEFW_EXPORT QRemoteServiceRegister : public QObject
 {
     Q_OBJECT
 public:
@@ -80,8 +80,8 @@ public:
         QString version() const;
 
         const QMetaObject* metaObject() const;
-        void setInstanciationType(QRemoteServiceControl::InstanceType t);
-        QRemoteServiceControl::InstanceType instanciationType() const;
+        void setInstanciationType(QRemoteServiceRegister::InstanceType t);
+        QRemoteServiceRegister::InstanceType instanciationType() const;
 
 
     private:
@@ -90,49 +90,49 @@ public:
         QString service;
         QString ifaceVersion;
         const QMetaObject* meta;
-        QRemoteServiceControl::CreateServiceFunc cptr;
-        QRemoteServiceControl::InstanceType instanceType;
+        QRemoteServiceRegister::CreateServiceFunc cptr;
+        QRemoteServiceRegister::InstanceType instanceType;
 
 
-        friend class QRemoteServiceControl;
+        friend class QRemoteServiceRegister;
         friend class InstanceManager;
         friend class QServiceManager;
 #ifndef QT_NO_DATASTREAM
-        friend Q_SERVICEFW_EXPORT QDataStream &operator<<(QDataStream &, const QRemoteServiceControl::Entry &);
-        friend Q_SERVICEFW_EXPORT QDataStream &operator>>(QDataStream &, QRemoteServiceControl::Entry &);
+        friend Q_SERVICEFW_EXPORT QDataStream &operator<<(QDataStream &, const QRemoteServiceRegister::Entry &);
+        friend Q_SERVICEFW_EXPORT QDataStream &operator>>(QDataStream &, QRemoteServiceRegister::Entry &);
 #endif
     };
 
 
-    QRemoteServiceControl(QObject* parent = 0);
-    ~QRemoteServiceControl();
+    QRemoteServiceRegister(QObject* parent = 0);
+    ~QRemoteServiceRegister();
 
     template <typename T>
-    Entry createServiceEntry(const QString& serviceName,
+    Entry createEntry(const QString& serviceName,
                     const QString& interfaceName, const QString& version);
-    void registerService(const Entry& entry);
+    void registerEntry(const Entry& entry);
 
 
-    void publishServices(const QString& ident );
+    void publishEntries(const QString& ident );
 
 private:
-    QRemoteServiceControlPrivate* d;
+    QRemoteServiceRegisterPrivate* d;
 };
 
-inline uint qHash(const QRemoteServiceControl::Entry& e) {
+inline uint qHash(const QRemoteServiceRegister::Entry& e) {
     //Only consider version, iface and service name -> needs to sync with operator==
     return ( qHash(e.serviceName()) + qHash(e.interfaceName()) + qHash(e.version()) );
 }
 
 #ifndef QT_NO_DATASTREAM
-inline QDataStream& operator>>(QDataStream& s, QRemoteServiceControl::Entry& entry) {
+inline QDataStream& operator>>(QDataStream& s, QRemoteServiceRegister::Entry& entry) {
     //for now we only serialize version, iface and service name
     //neds to sync with qHash and operator==
     s >> entry.service >> entry.iface >> entry.ifaceVersion;
     return s;
 }
 
-inline QDataStream& operator<<(QDataStream& s, const QRemoteServiceControl::Entry& entry) {
+inline QDataStream& operator<<(QDataStream& s, const QRemoteServiceRegister::Entry& entry) {
     //for now we only serialize version, iface and service name
     //neds to sync with qHash and operator==
     s << entry.service << entry.iface << entry.ifaceVersion;
@@ -141,8 +141,8 @@ inline QDataStream& operator<<(QDataStream& s, const QRemoteServiceControl::Entr
 #endif
 
 #ifndef QT_NO_DEBUG_STREAM
-inline QDebug operator<<(QDebug dbg, const QRemoteServiceControl::Entry& entry) {
-    dbg.nospace() << "QRemoteServiceControl::Entry("
+inline QDebug operator<<(QDebug dbg, const QRemoteServiceRegister::Entry& entry) {
+    dbg.nospace() << "QRemoteServiceRegister::Entry("
                   << entry.serviceName() << ", "
                   << entry.interfaceName() << ", "
                   << entry.version() << ")";
@@ -158,16 +158,16 @@ QObject* qServiceTypeConstructHelper()
 
 
 template <typename T>
-QRemoteServiceControl::Entry QRemoteServiceControl::createServiceEntry(const QString& serviceName, const QString& interfaceName, const QString& version)
+QRemoteServiceRegister::Entry QRemoteServiceRegister::createEntry(const QString& serviceName, const QString& interfaceName, const QString& version)
 {
     if (serviceName.isEmpty()
             || interfaceName.isEmpty()
             || version.isEmpty() ) {
-        qWarning() << "QRemoteServiceControl::registerService: service name, interface name and version must be specified";
+        qWarning() << "QRemoteServiceRegister::registerService: service name, interface name and version must be specified";
         return Entry();
     }
 
-    QRemoteServiceControl::CreateServiceFunc cptr = qServiceTypeConstructHelper<T>;
+    QRemoteServiceRegister::CreateServiceFunc cptr = qServiceTypeConstructHelper<T>;
 
     Entry e;
     e.service = serviceName;
@@ -181,4 +181,4 @@ QRemoteServiceControl::Entry QRemoteServiceControl::createServiceEntry(const QSt
 
 
 QTM_END_NAMESPACE
-#endif //QREMOTESERVICECONTROL_H
+#endif //QREMOTESERVICEREGISTER_H

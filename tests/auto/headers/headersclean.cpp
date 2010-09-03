@@ -388,7 +388,7 @@
 #include <qservicefilter.h>
 #include <qservice.h>
 #include <qserviceinterfacedescriptor.h>
-#include <qremoteservicecontrol.h>
+#include <qremoteserviceregister.h>
 #include <qservicemanager.h>
 
 //QtSystemInfo

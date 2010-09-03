@@ -1,29 +1,29 @@
 INCLUDEPATH += ipc
 
 symbian {
-    PRIVATE_HEADERS += ipc/qremoteservicecontrol_s60_p.h \
+    PRIVATE_HEADERS += ipc/qremoteserviceregister_s60_p.h \
                        ipc/objectendpoint_p.h
     
-    SOURCES += ipc/qremoteservicecontrol_s60.cpp \    
+    SOURCES += ipc/qremoteserviceregister_s60.cpp \
                ipc/objectendpoint.cpp
 
 } else {
     contains(QT_CONFIG,dbus) {
         QT += dbus network
         
-        PRIVATE_HEADERS += ipc/qremoteservicecontrol_dbus_p.h \
+        PRIVATE_HEADERS += ipc/qremoteserviceregister_dbus_p.h \
                            ipc/objectendpoint_dbus_p.h \
                            ipc/qservicemetaobject_dbus_p.h
-        SOURCES += ipc/qremoteservicecontrol_dbus_p.cpp \
+        SOURCES += ipc/qremoteserviceregister_dbus_p.cpp \
                    ipc/objectendpoint_dbus.cpp \
                    ipc/qservicemetaobject_dbus.cpp
 
     } else {
         QT += network
 
-        PRIVATE_HEADERS += ipc/qremoteservicecontrol_p.h \
+        PRIVATE_HEADERS += ipc/qremoteserviceregister_p.h \
                            ipc/objectendpoint_p.h
-        SOURCES += ipc/qremoteservicecontrol_p.cpp \
+        SOURCES += ipc/qremoteserviceregister_p.cpp \
                    ipc/objectendpoint.cpp
     }
 }

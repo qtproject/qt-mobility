@@ -105,7 +105,7 @@ public:
     ObjectEndPoint* parent;
 
     // Used for calculate the registered paths on DBus
-    QRemoteServiceControl::Entry entry;
+    QRemoteServiceRegister::Entry entry;
     QUuid serviceInstanceId;
 };
 
@@ -159,7 +159,7 @@ void ObjectEndPoint::disconnected()
     code and this object must clean itself up upon destruction of
     proxy.
 */
-QObject* ObjectEndPoint::constructProxy(const QRemoteServiceControl::Entry& entry)
+QObject* ObjectEndPoint::constructProxy(const QRemoteServiceRegister::Entry& entry)
 {
     // Client side 
     Q_ASSERT(d->endPointType == ObjectEndPoint::Client);

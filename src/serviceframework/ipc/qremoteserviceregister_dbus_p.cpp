@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qremoteservicecontrol_dbus_p.h"
+#include "qremoteserviceregister_dbus_p.h"
 #include "ipcendpoint_p.h"
 #include "objectendpoint_dbus_p.h"
 
@@ -179,12 +179,12 @@ DBusSessionAdaptor::~DBusSessionAdaptor()
 {
 }
 
-QRemoteServiceControlPrivate::QRemoteServiceControlPrivate(QObject* parent)
+QRemoteServiceRegisterPrivate::QRemoteServiceRegisterPrivate(QObject* parent)
     : QObject(parent)
 {
 }
 
-void QRemoteServiceControlPrivate::publishServices(const QString& ident)
+void QRemoteServiceRegisterPrivate::publishServices(const QString& ident)
 {
     createServiceEndPoint(ident);
 }
@@ -192,10 +192,10 @@ void QRemoteServiceControlPrivate::publishServices(const QString& ident)
 /*!
     Creates endpoint on service side.
 */
-bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& /*ident*/)
+bool QRemoteServiceRegisterPrivate::createServiceEndPoint(const QString& /*ident*/)
 {
     InstanceManager *iManager = InstanceManager::instance();
-    QList<QRemoteServiceControl::Entry> list = iManager->allEntries();
+    QList<QRemoteServiceRegister::Entry> list = iManager->allEntries();
    
     if (list.size() > 0) {
         QDBusConnection *connection = new QDBusConnection(QDBusConnection::sessionBus());
@@ -242,7 +242,7 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& /*ident*
 /*!
     Creates endpoint on client side.
 */
-QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceControl::Entry& entry, const QString& /*location*/)
+QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& /*location*/)
 {
     QString serviceName = "com.nokia.qtmobility.sfw." + entry.serviceName();
     QString path = "/" + entry.interfaceName() + "/DBusSession";
@@ -269,6 +269,6 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceContr
     return proxy;
 }
 
-#include "moc_qremoteservicecontrol_dbus_p.cpp"
-#include "qremoteservicecontrol_dbus_p.moc"
+#include "moc_qremoteserviceregister_dbus_p.cpp"
+#include "qremoteserviceregister_dbus_p.moc"
 QTM_END_NAMESPACE

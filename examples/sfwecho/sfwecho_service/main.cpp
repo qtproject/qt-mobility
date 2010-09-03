@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qremoteservicecontrol.h>
+#include <qremoteserviceregister.h>
 #include "qservicemanager.h"
 #include <QCoreApplication>
 #include <QDateTime>
@@ -96,23 +96,23 @@ int main(int argc, char** argv)
 
     registerExampleService();
 
-    QRemoteServiceControl* control = new QRemoteServiceControl();
+    QRemoteServiceRegister* serviceRegister = new QRemoteServiceRegister();
 
-    QRemoteServiceControl::Entry shared = control->createServiceEntry<EchoService>(
+    QRemoteServiceRegister::Entry shared = serviceRegister->createEntry<EchoService>(
         "EchoService", "com.nokia.qt.example.sfwecho", "1.1");
-    shared.setInstanciationType(QRemoteServiceControl::SharedInstance);
-    control->registerService(shared);
+    shared.setInstanciationType(QRemoteServiceRegister::SharedInstance);
+    serviceRegister->registerEntry(shared);
 
-    QRemoteServiceControl::Entry unique = control->createServiceEntry<EchoService>(
+    QRemoteServiceRegister::Entry unique = serviceRegister->createEntry<EchoService>(
         "EchoService", "com.nokia.qt.example.sfwecho", "1.0");
-    unique.setInstanciationType(QRemoteServiceControl::UniqueInstance);
-    control->registerService(unique);
+    unique.setInstanciationType(QRemoteServiceRegister::UniqueInstance);
+    serviceRegister->registerEntry(unique);
 
-    control->publishServices("sfwecho_service");
+    serviceRegister->publishEntries("sfwecho_service");
 
     int res =  app.exec();
 
-    delete control;    
+    delete serviceRegister;
     return res;
 }
 

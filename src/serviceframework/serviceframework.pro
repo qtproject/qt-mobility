@@ -19,7 +19,7 @@ PUBLIC_HEADERS += \
             qabstractsecuritysession.h \
             qserviceinterfacedescriptor.h \
             qservicefilter.h \
-            qremoteservicecontrol.h
+            qremoteserviceregister.h
 
 PRIVATE_HEADERS += servicedatabase_p.h \
             databasemanager_p.h \
@@ -35,7 +35,7 @@ SOURCES +=  servicemetadata.cpp \
             qserviceinterfacedescriptor.cpp \
             qservicefilter.cpp \
             dberror.cpp \
-            qremoteservicecontrol.cpp
+            qremoteserviceregister.cpp
 
 symbian {
     INCLUDEPATH +=  ./databasemanagerserver_symbian

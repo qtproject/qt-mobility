@@ -47,7 +47,7 @@
 #include <QSharedData>
 #include <QUuid>
 #include <QVariant>
-#include "qremoteservicecontrol.h"
+#include "qremoteserviceregister.h"
 
 QT_BEGIN_NAMESPACE
 class QDataStream;
@@ -103,13 +103,13 @@ class QServicePackagePrivate : public QSharedData
 public:
     QServicePackagePrivate() 
         :   packageType(QServicePackage::ObjectCreation),
-            entry(QRemoteServiceControl::Entry()), payload(QVariant()),
+            entry(QRemoteServiceRegister::Entry()), payload(QVariant()),
             messageId(QUuid()), instanceId(QUuid()), responseType(QServicePackage::NotAResponse)
     {
     }
 
     QServicePackage::Type packageType;
-    QRemoteServiceControl::Entry entry;
+    QRemoteServiceRegister::Entry entry;
     QVariant payload;
     QUuid messageId;
     QUuid instanceId;
@@ -121,7 +121,7 @@ public:
         messageId = QUuid();
         instanceId = QUuid();
         payload = QVariant();
-        entry = QRemoteServiceControl::Entry();
+        entry = QRemoteServiceRegister::Entry();
         responseType = QServicePackage::NotAResponse;
     }
 };

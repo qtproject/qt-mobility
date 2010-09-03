@@ -40,7 +40,7 @@
 ****************************************************************************/
 #include <QCoreApplication>
 #include <QTimer>
-#include <qremoteservicecontrol.h>
+#include <qremoteserviceregister.h>
 #include "qservicemanager.h"
 #include <QDebug>
 
@@ -401,26 +401,26 @@ int main(int argc, char** argv)
    
     registerExampleService();
 
-    QRemoteServiceControl* control = new QRemoteServiceControl();
+    QRemoteServiceRegister* serviceRegister = new QRemoteServiceRegister();
 
     //register the unique service
-    QRemoteServiceControl::Entry uniqueEntry =
-        control->createServiceEntry<UniqueTestService>(
+    QRemoteServiceRegister::Entry uniqueEntry =
+        serviceRegister->createEntry<UniqueTestService>(
                 "IPCExampleService", "com.nokia.qt.ipcunittest", "3.5");
-    uniqueEntry.setInstanciationType(QRemoteServiceControl::UniqueInstance);
-    control->registerService(uniqueEntry);
+    uniqueEntry.setInstanciationType(QRemoteServiceRegister::UniqueInstance);
+    serviceRegister->registerEntry(uniqueEntry);
 
     //register the shared srevice
-    QRemoteServiceControl::Entry sharedEntry =
-        control->createServiceEntry<SharedTestService>(
+    QRemoteServiceRegister::Entry sharedEntry =
+        serviceRegister->createEntry<SharedTestService>(
                 "IPCExampleService", "com.nokia.qt.ipcunittest", "3.4");
-    sharedEntry.setInstanciationType(QRemoteServiceControl::SharedInstance);
-    control->registerService(sharedEntry);
+    sharedEntry.setInstanciationType(QRemoteServiceRegister::SharedInstance);
+    serviceRegister->registerEntry(sharedEntry);
 
     //publish the registered services
-    control->publishServices("qt_sfw_example_ipc_unittest");
+    serviceRegister->publishEntries("qt_sfw_example_ipc_unittest");
     int res =  app.exec();
-    delete control;
+    delete serviceRegister;
     unregisterExampleService();
     return res;
 }

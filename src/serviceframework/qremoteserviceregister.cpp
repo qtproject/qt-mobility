@@ -39,30 +39,30 @@
 **
 ****************************************************************************/
 
-#include "qremoteservicecontrol.h"
+#include "qremoteserviceregister.h"
 
 #if defined(Q_OS_SYMBIAN)
-    #include "qremoteservicecontrol_s60_p.h"
+    #include "qremoteserviceregister_s60_p.h"
 #elif defined(QT_NO_DBUS)
-    #include "qremoteservicecontrol_p.h"
+    #include "qremoteserviceregister_p.h"
 #else
-    #include "qremoteservicecontrol_dbus_p.h"
+    #include "qremoteserviceregister_dbus_p.h"
 #endif
 
 QTM_BEGIN_NAMESPACE
 
-QRemoteServiceControl::Entry::Entry()
-    : meta(0), cptr(0), instanceType(QRemoteServiceControl::UniqueInstance)
+QRemoteServiceRegister::Entry::Entry()
+    : meta(0), cptr(0), instanceType(QRemoteServiceRegister::UniqueInstance)
 {
 }
 
-QRemoteServiceControl::Entry::Entry(const Entry& other)
+QRemoteServiceRegister::Entry::Entry(const Entry& other)
     : iface(other.iface), service(other.service), ifaceVersion(other.ifaceVersion),
       meta(other.meta), cptr(other.cptr), instanceType(other.instanceType)
 {
 }
 
-bool QRemoteServiceControl::Entry::isValid() const
+bool QRemoteServiceRegister::Entry::isValid() const
 {
     if (!iface.isEmpty() && !service.isEmpty() 
             && !ifaceVersion.isEmpty() && cptr!=0 && meta!=0)
@@ -70,19 +70,19 @@ bool QRemoteServiceControl::Entry::isValid() const
     return false;
 }
 
-bool QRemoteServiceControl::Entry::operator==(const Entry& other) const
+bool QRemoteServiceRegister::Entry::operator==(const Entry& other) const
 {
     return service == other.service &&
            iface == other.iface &&
            ifaceVersion == other.ifaceVersion;
 }
 
-bool QRemoteServiceControl::Entry::operator!=(const Entry& other) const
+bool QRemoteServiceRegister::Entry::operator!=(const Entry& other) const
 {
     return !(other == *this);
 }
 
-QRemoteServiceControl::Entry &QRemoteServiceControl::Entry::operator=(const Entry& other)
+QRemoteServiceRegister::Entry &QRemoteServiceRegister::Entry::operator=(const Entry& other)
 {
     service = other.service;
     iface = other.iface;
@@ -93,41 +93,41 @@ QRemoteServiceControl::Entry &QRemoteServiceControl::Entry::operator=(const Entr
     return *this;
 }
 
-QString QRemoteServiceControl::Entry::interfaceName() const
+QString QRemoteServiceRegister::Entry::interfaceName() const
 {
     return iface;
 }
 
-QString QRemoteServiceControl::Entry::serviceName() const
+QString QRemoteServiceRegister::Entry::serviceName() const
 {
     return service;
 }
 
-QString QRemoteServiceControl::Entry::version() const
+QString QRemoteServiceRegister::Entry::version() const
 {
     return ifaceVersion;
 }
 
-const QMetaObject * QRemoteServiceControl::Entry::metaObject() const
+const QMetaObject * QRemoteServiceRegister::Entry::metaObject() const
 {
     return meta;
 }
 
-void QRemoteServiceControl::Entry::setInstanciationType(QRemoteServiceControl::InstanceType t)
+void QRemoteServiceRegister::Entry::setInstanciationType(QRemoteServiceRegister::InstanceType t)
 {
     instanceType = t;
 }
 
-QRemoteServiceControl::InstanceType QRemoteServiceControl::Entry::instanciationType() const
+QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instanciationType() const
 {
     return instanceType;
 }
 
 /*!
-    \class QRemoteServiceControl
+    \class QRemoteServiceRegister
     \inmodule QtServiceFramework
     \ingroup servicefw
-    \brief The QRemoteServiceControl class manages instances of remote service objects.
+    \brief The QRemoteServiceRegister class manages instances of remote service objects.
 
     This class registers and publishes IPC based service objects. It owns each created service object instance and
     ensures that the platform specific IPC mechanism publishes the required service
@@ -135,18 +135,18 @@ QRemoteServiceControl::InstanceType QRemoteServiceControl::Entry::instanciationT
 */
 
 /*!
-    Creates a service control instance with the given \a parent.
+    Creates a service register instance with the given \a parent.
 */
-QRemoteServiceControl::QRemoteServiceControl(QObject* parent)
+QRemoteServiceRegister::QRemoteServiceRegister(QObject* parent)
     : QObject(parent)
 {
-    d = new QRemoteServiceControlPrivate(this);
+    d = new QRemoteServiceRegisterPrivate(this);
 }
 
 /*!
-    Destroys the service control instance
+    Destroys the service register instance
 */
-QRemoteServiceControl::~QRemoteServiceControl()
+QRemoteServiceRegister::~QRemoteServiceRegister()
 {
 }
 
@@ -156,17 +156,17 @@ QRemoteServiceControl::~QRemoteServiceControl()
     IPC address under which the service can be reached. This address must match
     the address provided in the services xml descriptor (see <filepath> tag).
 */
-void QRemoteServiceControl::publishServices( const QString& ident)
+void QRemoteServiceRegister::publishEntries( const QString& ident)
 {
     d->publishServices(ident);
 }
 
-void QRemoteServiceControl::registerService(const Entry& e)
+void QRemoteServiceRegister::registerEntry(const Entry& e)
 {
     Q_ASSERT(InstanceManager::instance());
     InstanceManager::instance()->addType(e);
 }
 
-#include "moc_qremoteservicecontrol.cpp"
+#include "moc_qremoteserviceregister.cpp"
 
 QTM_END_NAMESPACE

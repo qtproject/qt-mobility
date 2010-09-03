@@ -39,27 +39,26 @@
 **
 ****************************************************************************/
 
-#ifndef QREMOTESERVICECONTROL_DBUS_P_H
-#define QREMOTESERVICECONTROL_DBUS_P_H
+#ifndef QREMOTESERVICEREGISTER_P_H
+#define QREMOTESERVICEREGISTER_P_H
 
-#include "qremoteservicecontrol.h"
+#include "qremoteserviceregister.h"
 #include "instancemanager_p.h"
 #include "qserviceinterfacedescriptor.h"
 #include <QLocalServer>
-#include <QUuid>
-#include <QtDBus/QtDBus>
 
 QTM_BEGIN_NAMESPACE
 
 class ObjectEndPoint;
-
-class QRemoteServiceControlPrivate: public QObject
+class QRemoteServiceRegisterPrivate: public QObject
 {
     Q_OBJECT
 public:
-    QRemoteServiceControlPrivate(QObject* parent);
+    QRemoteServiceRegisterPrivate(QObject* parent);
     void publishServices(const QString& ident );
 
+public slots:
+    void processIncoming(); 
 private:
     bool createServiceEndPoint(const QString& ident);
 
@@ -67,7 +66,7 @@ private:
     QList<ObjectEndPoint*> pendingConnections;
 
 public:
-    static QObject* proxyForService(const QRemoteServiceControl::Entry& entry, const QString& location);
+    static QObject* proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& location);
 };
 
 QTM_END_NAMESPACE
