@@ -50,7 +50,8 @@ Q_EXPORT_PLUGIN2(feedback_symbian, QFeedbackSymbian)
 
 
 #define VIBRA_DEVICE 0
-#define TOUCH_DEVICE 1
+#define TOUCH_DEVICE 1 //this one is only available if ADVANCED_TACTILE_SUPPORT is defined
+
 
 //TODO: is activeWindow good enough
 //or should we create a widget for that?
@@ -62,6 +63,17 @@ CCoeControl *QFeedbackSymbian::defaultWidget()
 
 #ifndef NO_TACTILE_SUPPORT
 #include <touchfeedback.h>
+
+static MTouchFeedback *touchInstance()
+{
+    static MTouchFeedback *ret = 0;
+    if (!ret) {
+        ret = MTouchFeedback::Instance();
+        if (!ret)
+            ret = MTouchFeedback::CreateInstanceL();
+    }
+    return ret;
+}
 
 static TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::ThemeEffect effect)
 {
@@ -167,50 +179,13 @@ static TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::ThemeEffect effec
     return themeFeedbackSymbian;
 }
 
-#ifdef ADVANCED_TACTILE_SUPPORT
-typedef MTouchFeedback QTouchFeedback;
 // This define is for the second parameter of StartFeedback, which needs to be of type
 // TTouchContinuousFeedback in platforms with ADVANCED_TACTILE_SUPPORT
 #define DEFAULT_CONTINUOUS_EFFECT ETouchContinuousSmooth
-#else
-class QTouchFeedback : public MTouchFeedback
-{
-public:
-
-    static QTouchFeedback *Instance()
-    {
-        return static_cast<QTouchFeedback*>(MTouchFeedback::Instance());
-    }
-
-    void StopFeedback(const CCoeControl* dummy)
-    {
-        Q_UNUSED(dummy);
-    }
-
-    void ModifyFeedback(const CCoeControl* dummy, int intensity)
-    {
-        Q_UNUSED(dummy);
-        Q_UNUSED(intensity);
-    }
-
-    void StartFeedback(const CCoeControl* dummy, int effect, void *event, int intensity, int duration)
-    {
-        Q_UNUSED(dummy);
-        Q_UNUSED(effect);
-        Q_UNUSED(event);
-        Q_UNUSED(intensity);
-        Q_UNUSED(duration);
-        //if there is no advanced feedback, we just do the normal one and return -1
-        MTouchFeedback::Instance()->InstantFeedback(ETouchFeedbackSensitive);
-    }
-};
-// The second parameter of StartFeedback: an int
-#define DEFAULT_CONTINUOUS_EFFECT 0
-#endif //ADVANCED_TACTILE_SUPPORT
 
 bool QFeedbackSymbian::play(QFeedbackEffect::ThemeEffect effect)
 {
-    QTouchFeedback::Instance()->InstantFeedback(convertToSymbian(effect));
+    touchInstance()->InstantFeedback(convertToSymbian(effect));
     return true; //there is no way to know if there was a failure
 }
 
@@ -241,12 +216,12 @@ CHWRMVibra *QFeedbackSymbian::vibra()
 QList<QFeedbackActuator> QFeedbackSymbian::actuators()
 {
     QList<QFeedbackActuator> ret;
-#ifndef NO_TACTILE_SUPPORT
+#ifdef ADVANCED_TACTILE_SUPPORT
     //if we don't have advanced tactile support then the MTouchFeedback doesn't really support custom effects
-    if (QTouchFeedback::Instance()->TouchFeedbackSupported()) {
+    if (touchInstance()->TouchFeedbackSupported()) {
         ret << createFeedbackActuator(TOUCH_DEVICE);
     }
-#endif //NO_TACTILE_SUPPORT
+#endif //ADVANCED_TACTILE_SUPPORT
     ret << createFeedbackActuator(VIBRA_DEVICE);
     return ret;
 }
@@ -261,11 +236,11 @@ void QFeedbackSymbian::setActuatorProperty(const QFeedbackActuator &actuator, Ac
         case VIBRA_DEVICE:
             m_vibraActive = value.toBool();
             break;
-    #ifndef NO_TACTILE_SUPPORT
+#ifdef ADVANCED_TACTILE_SUPPORT
         case TOUCH_DEVICE:
-            QTouchFeedback::Instance()->SetFeedbackEnabledForThisApp(value.toBool());
+            touchInstance()->SetFeedbackEnabledForThisApp(value.toBool());
             break;
-    #endif //NO_TACTILE_SUPPORT
+#endif
         default:
             break;
         }
@@ -313,10 +288,10 @@ QVariant QFeedbackSymbian::actuatorProperty(const QFeedbackActuator &actuator, A
         {
         case VIBRA_DEVICE:
             return m_vibraActive;
-    #ifndef NO_TACTILE_SUPPORT
+#ifdef ADVANCED_TACTILE_SUPPORT
         case TOUCH_DEVICE:
-            return QTouchFeedback::Instance()->FeedbackEnabledForThisApp();
-    #endif //NO_TACTILE_SUPPORT
+            return touchInstance()->FeedbackEnabledForThisApp();
+#endif
         default:
             return false;
         }
@@ -346,11 +321,11 @@ void QFeedbackSymbian::updateEffectProperty(const QFeedbackHapticsEffect *effect
         case VIBRA_DEVICE:
             vibra()->StartVibraL(effect->duration() - m_elapsed[effect].elapsed(), qRound(100 * effect->intensity()));
             break;
-#ifndef NO_TACTILE_SUPPORT
+#ifdef ADVANCED_TACTILE_SUPPORT
         case TOUCH_DEVICE:
-            QTouchFeedback::Instance()->ModifyFeedback(defaultWidget(), qRound(100 * effect->intensity()));
+            touchInstance()->ModifyFeedback(defaultWidget(), qRound(100 * effect->intensity()));
             break;
-#endif //NO_TACTILE_SUPPORT
+#endif //ADVANCED_TACTILE_SUPPORT
         default:
             break;
         }
@@ -386,33 +361,33 @@ void QFeedbackSymbian::setEffectState(const QFeedbackHapticsEffect *effect, QFee
             break;
         }
         break;
-#ifndef NO_TACTILE_SUPPORT
+#ifdef ADVANCED_TACTILE_SUPPORT
     case TOUCH_DEVICE:
         switch(newState)
         {
         case QFeedbackEffect::Stopped:
             if (m_elapsed.contains(effect)) {
-                QTouchFeedback::Instance()->StopFeedback(defaultWidget());
+                touchInstance()->StopFeedback(defaultWidget());
                 m_elapsed.remove(effect);
             }
             break;
         case QFeedbackEffect::Paused:
             if (m_elapsed.contains(effect)) {
-                QTouchFeedback::Instance()->StopFeedback(defaultWidget());
+                touchInstance()->StopFeedback(defaultWidget());
                 m_elapsed[effect].pause();
             }
             break;
         case QFeedbackEffect::Running:
             if (m_elapsed[effect].elapsed() >= effect->duration())
                 m_elapsed.remove(effect); //we reached the end. it's time to restart
-            QTouchFeedback::Instance()->StartFeedback(defaultWidget(),
+            touchInstance()->StartFeedback(defaultWidget(),
                                          DEFAULT_CONTINUOUS_EFFECT,
                                          0, qRound(effect->intensity() * 100), qMax(0, (effect->duration() - m_elapsed[effect].elapsed()) * 1000));
             m_elapsed[effect].start();
             break;
         }
         break;
-#endif //NO_TACTILE_SUPPORT
+#endif //ADVANCED_TACTILE_SUPPORT
     default:
         break;
     }
