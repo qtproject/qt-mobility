@@ -224,6 +224,7 @@ QLandmarkManager::QLandmarkManager(QObject *parent)
     QString managerName;
 
 #ifdef Q_OS_SYMBIAN
+    managerName = "com.nokia.qt.landmarks.engines.symbian";
 #else
     managerName = "com.nokia.qt.landmarks.engines.sqlite";
 #endif
