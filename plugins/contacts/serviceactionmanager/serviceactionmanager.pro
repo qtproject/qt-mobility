@@ -19,6 +19,7 @@ MOBILITY = contacts serviceframework
 symbian: {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.EPOCALLOWDLLDATA = 1
+    TARGET.UID3=0x200315FD
 
     target.path = /sys/bin
     INSTALLS += target

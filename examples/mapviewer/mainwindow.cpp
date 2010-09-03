@@ -642,7 +642,7 @@ void MainWindow::setupUi()
 
     m_setCoordsButton = new QPushButton();
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    m_captureCoordsButton->setText("Set coords");
+    m_setCoordsButton->setText("Set coords");
 #else
     m_setCoordsButton->setText("Set coordinates");
 #endif

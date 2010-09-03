@@ -84,6 +84,35 @@ uint qHash(const QRectF& key)
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QGeoTiledMapData
+    \brief The QGeoTiledMapData class is a subclass of QGeoMapData provided
+    to make working with tile based mapping services more convenient.
+
+    \inmodule QtLocation
+
+    \ingroup maps-impl-tiled
+
+    This class assumes that at a zoom level of z the world is represented as a
+    2^z by 2^z grid of tiles, and that the Mercator projection is used to map
+    back and forth between coordinate and positions on the map.
+
+    Different projections can be provided by reimplementing
+    coordinateToWorldPixel() and worldPixelToCoordinate().
+
+    Many of the internal calculations deal with positions as though they are
+    pixel positions on the map at the maximum zoom level. Several functions are
+    provided which expose information about the map and the viewport onto the
+    map in these terms for use with custom QGeoMapObjectInfo subclasses.
+
+    These functions include maxZoomCenter(), maxZoomSize() and
+    maxZoomScreenRect().
+*/
+
+/*!
+    Constructs a new tiled map data object, which stores the map data required by
+    \a geoMap and makes use of the functionality provided by \a engine.
+*/
 QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
         : QGeoMapData(new QGeoTiledMapDataPrivate(this, engine, geoMap))
 {
@@ -103,10 +132,16 @@ QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGe
     d->zoomCache.setMaxCost(10 * 1024 * 1024);
 }
 
+/*!
+    Destroys this tiled map data object.
+*/
 QGeoTiledMapData::~QGeoTiledMapData()
 {
 }
 
+/*!
+    \reimp
+*/
 QPointF QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
 {
     Q_D(const QGeoTiledMapData);
@@ -138,6 +173,9 @@ QPointF QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coord
     return posF;
 }
 
+/*!
+    \reimp
+*/
 QGeoCoordinate QGeoTiledMapData::screenPositionToCoordinate(const QPointF &screenPosition) const
 {
     Q_D(const QGeoTiledMapData);
@@ -163,6 +201,12 @@ QGeoCoordinate QGeoTiledMapData::screenPositionToCoordinate(const QPointF &scree
     return worldPixelToCoordinate(QPoint(worldX, worldY));
 }
 
+/*!
+    Converts the coordinate \a coordinate to a pixel position on the entire
+    map at the maximum zoom level.
+
+    The default implementation is based on the Mercator projection.
+*/
 QPoint QGeoTiledMapData::coordinateToWorldPixel(const QGeoCoordinate &coordinate) const
 {
     Q_D(const QGeoTiledMapData);
@@ -186,6 +230,13 @@ qreal rmod(const qreal a, const qreal b)
     return a - static_cast<qreal>(div) * b;
 }
 
+/*!
+    Converts the pixel position \a pixel on the map to a coordinate.
+
+    The pixel position is relative the entire map at the maximum zoom level.
+
+    The default implementation is based on the Mercator projection.
+*/
 QGeoCoordinate QGeoTiledMapData::worldPixelToCoordinate(const QPoint &pixel) const
 {
     Q_D(const QGeoTiledMapData);
@@ -219,6 +270,9 @@ QGeoCoordinate QGeoTiledMapData::worldPixelToCoordinate(const QPoint &pixel) con
     return QGeoCoordinate(lat, lng);
 }
 
+/*!
+    \reimp
+*/
 void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
 {
     Q_D(QGeoTiledMapData);
@@ -228,6 +282,9 @@ void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
     d->updateMapImage();
 }
 
+/*!
+    \reimp
+*/
 void QGeoTiledMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 {
     Q_D(QGeoTiledMapData);
@@ -241,12 +298,18 @@ void QGeoTiledMapData::setMapType(QGraphicsGeoMap::MapType mapType)
     d->updateMapImage();
 }
 
+/*!
+    \reimp
+*/
 QGeoCoordinate QGeoTiledMapData::center() const
 {
     Q_D(const QGeoTiledMapData);
     return worldPixelToCoordinate(d->maxZoomCenter);
 }
 
+/*!
+    \reimp
+*/
 void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
 {
     Q_D(QGeoTiledMapData);
@@ -360,6 +423,9 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
     d->updateMapImage();
 }
 
+/*!
+    \reimp
+*/
 void QGeoTiledMapData::setViewportSize(const QSizeF &size)
 {
     Q_D(QGeoTiledMapData);
@@ -369,6 +435,9 @@ void QGeoTiledMapData::setViewportSize(const QSizeF &size)
     d->updateMapImage();
 }
 
+/*!
+    \reimp
+*/
 void QGeoTiledMapData::pan(int dx, int dy)
 {
     Q_D(QGeoTiledMapData);
@@ -394,6 +463,9 @@ void QGeoTiledMapData::pan(int dx, int dy)
     d->updateMapImage();
 }
 
+/*!
+    \reimp
+*/
 void QGeoTiledMapData::paint(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
     Q_D(QGeoTiledMapData);
@@ -465,7 +537,8 @@ void QGeoTiledMapData::processRequests()
         d->replies.insert(reply);
         d->replyRects.insert(reply->request().tileRect());
 
-        break;
+        if (reply->isCached())
+            break;
     }
 }
 
@@ -558,9 +631,7 @@ void QGeoTiledMapData::tileError(QGeoTiledMapReply::Error error, QString errorSt
 }
 
 /*!
-    Returns the list of map objects managed by this map which are at \a
-    screenPosition. The returned map objects are ordered ascendingly on their
-    zIndices.
+    \reimp
 */
 QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition)
 {
@@ -589,9 +660,7 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF
 }
 
 /*!
-    Returns the list of map objects managed by this map which
-    which are displayed at least partially within the on screen rectangle
-    \a screenRect. The returned map objects are ordered ascendingly on their zIndices.
+    \reimp
 */
 QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &screenRect)
 {
@@ -610,6 +679,9 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &scr
     return results;
 }
 
+/*!
+    \reimp
+*/
 void QGeoTiledMapData::setupMapObject(QGeoMapObject *mapObject)
 {
     Q_D(QGeoTiledMapData);
@@ -648,24 +720,40 @@ void QGeoTiledMapData::setupMapObject(QGeoMapObject *mapObject)
         info->objectUpdate();
 }
 
+/*!
+    Returns the center of the viewport, in pixels on the entire
+    map as a pixmap at the maximum zoom level.
+*/
 QPoint QGeoTiledMapData::maxZoomCenter() const
 {
     Q_D(const QGeoTiledMapData);
     return d->maxZoomCenter;
 }
 
+/*!
+    Returns the size, in pixels, of the entire map as a pixmap at the maximum
+    zoom level.
+*/
 QSize QGeoTiledMapData::maxZoomSize() const
 {
     Q_D(const QGeoTiledMapData);
     return d->maxZoomSize;
 }
 
+/*!
+    Returns the visible screen rectangle, in pixels on the entire map
+    as a pixmap at the maximum zoom level.
+*/
 QRect QGeoTiledMapData::maxZoomScreenRect() const
 {
     Q_D(const QGeoTiledMapData);
     return d->maxZoomScreenRect;
 }
 
+/*!
+    Returns the ratio between a single pixel on the screen and a pixel on
+    the entire map as a pixmap at the maximum zoom level.
+*/
 int QGeoTiledMapData::zoomFactor() const
 {
     Q_D(const QGeoTiledMapData);

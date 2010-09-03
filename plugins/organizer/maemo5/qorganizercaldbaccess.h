@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,50 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOROUTEPARSER_H
-#define QGEOROUTEPARSER_H
+#ifndef QORGANIZERCALDBACCESS_H
+#define QORGANIZERCALDBACCESS_H
 
-#include <QList>
-#include <QMap>
-#include <QString>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-class QIODevice;
-
-#include <qgeoroute.h>
-#include <qgeoroutesegment.h>
-#include <qgeocoordinate.h>
-#include <qgeoboundingbox.h>
-#include <qgeorouterequest.h>
-#include <qgeoinstruction.h>
+#include "qtorganizer.h"
+#include <QtSql>
 
 QTM_USE_NAMESPACE
 
-class QGeoRouteDataContainer
+class CEvent;
+class CTodo;
+class CJournal;
+
+class OrganizerCalendarDatabaseAccess
 {
 public:
-    quint8 id;
-    QByteArray data;
-};
+    OrganizerCalendarDatabaseAccess();
+    ~OrganizerCalendarDatabaseAccess();
 
-class QGeoRouteParser
-{
-public:
-    QGeoRouteParser(const QGeoRouteRequest &request);
-    ~QGeoRouteParser();
+    bool open(QString databasePathName);
+    void close();
 
-    bool parse(QIODevice* source);
-    QList<QGeoRoute> results() const;
-    QString errorString() const;
+    int typeOf(QOrganizerItemLocalId id);
+    std::vector<CEvent *> getEvents(int calId, std::string guid, int &pErrorCode);
+    std::vector<CTodo *> getTodos(int calId, std::string guid, int &pErrorCode);
+    std::vector<CJournal *> getJournals(int calId, std::string guid, int &pErrorCode);
+
+    static void sqliteErrorMapper(const QSqlError &sqlError, int& errorCode);
 
 private:
-    QList<QGeoRouteDataContainer> decodeTLV(QByteArray data);
-    QGeoCoordinate coordinateFromByteArray(QByteArray array);
-    quint32 int32FromByteArray(QByteArray array);
-    double fromInt32(quint32 value);
-
-    QGeoRouteRequest m_request;
-    QList<QGeoRoute> m_results;
-    QString m_errorString;
+    QSqlDatabase m_db;
 };
 
-#endif
+#endif // QORGANIZERCALDBACCESS_H

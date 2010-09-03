@@ -75,9 +75,10 @@ class QLandmarkFileHandlerGpx;
 class QueryRun : public QRunnable
 {
 public:
-    QueryRun(QLandmarkAbstractRequest *req =0,
-             const QString &uri=QString(),
-             QLandmarkManagerEngineSqlite *eng =0);
+    QueryRun(QLandmarkAbstractRequest *req,
+             const QString &uri,
+             QLandmarkManagerEngineSqlite *eng,
+             unsigned int runId);
     ~QueryRun();
     void run();
 
@@ -90,6 +91,7 @@ public:
     volatile bool isCanceled;
     volatile bool isDeleted;
     QLandmarkManagerEngineSqlite *engine;
+    unsigned int runId;
 };
 
 class DatabaseOperations {

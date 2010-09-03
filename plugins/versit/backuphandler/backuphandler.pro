@@ -19,6 +19,8 @@ MOBILITY = versit contacts
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
+    TARGET.CAPABILITY = ALL -Tcb
+    TARGET.UID3 = 0x20031600
 
     target.path = /sys/bin
     INSTALLS += target
