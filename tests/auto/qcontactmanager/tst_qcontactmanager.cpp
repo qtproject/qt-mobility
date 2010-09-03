@@ -46,6 +46,16 @@
 #include "qcontactchangeset.h"
 #include "qcontactmanagerdataholder.h"
 
+#if defined(SYMBIAN_BACKEND_S60_VERSION_31) || defined(SYMBIAN_BACKEND_S60_VERSION_32) || defined(SYMBIAN_BACKEND_S60_VERSION_50)
+  // for the symbianManager() test.
+  #include <e32std.h>
+  #include <cntdb.h>
+  #include <cntdbobs.h>
+  #include <e32base.h>
+  #include <s32mem.h>
+  #include <cntitem.h>
+#endif
+
 QTM_USE_NAMESPACE
 // Eventually these will make it into qtestcase.h
 // but we might need to tweak the timeout values here.
@@ -149,6 +159,12 @@ private slots:
     void nameSynthesis();
     void compatibleContact();
 
+    /* Backend-specific tests */
+#if defined(SYMBIAN_BACKEND_S60_VERSION_31) || defined(SYMBIAN_BACKEND_S60_VERSION_32) || defined(SYMBIAN_BACKEND_S60_VERSION_50)
+    void symbianManager();
+    void symbianManager_data() {addManagers();}
+#endif
+
     /* Tests that are run on all managers */
     void metadata();
     void nullIdOperations();
@@ -178,6 +194,7 @@ private slots:
     void uriParsing_data();
     void nameSynthesis_data();
     void compatibleContact_data();
+
     /* Tests that are run on all managers */
     void metadata_data() {addManagers();}
     void nullIdOperations_data() {addManagers();}
@@ -1550,6 +1567,47 @@ void tst_QContactManager::memoryManager()
     QCOMPARE(m4.contactIds().count(), 0);
     QCOMPARE(m5.contactIds().count(), 0);
 }
+
+#if defined(SYMBIAN_BACKEND_S60_VERSION_31) || defined(SYMBIAN_BACKEND_S60_VERSION_32) || defined(SYMBIAN_BACKEND_S60_VERSION_50)
+/* Some symbian-specific unit tests. */
+void tst_QContactManager::symbianManager()
+{
+    QFETCH(QString, uri);
+    QString managerName;
+    QMap<QString, QString> managerParameters;
+    QContactManager::parseUri(uri, &managerName, &managerParameters);
+    if (managerName != QString("symbian"))
+        return;
+
+    /* Firstly, a test for invalid storage type crash - QTMOBILITY-470 */
+    // open the contact database, and create a new contact
+    CContactDatabase* cntdb = CContactDatabase::OpenL();
+    CleanupStack::PushL(cntdb);
+    CContactItem* testItem = CContactCard::NewLC();
+
+    // create a new thumbnail field with (invalid) storage type KStorageTypeText instead of KStorageTypeStore
+    CContactItemField* thumbnailField;
+    thumbnailField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPicture);
+    field->SetMapping(KUidContactFieldVCardMapPHOTO);
+    field->AddFieldTypeL(KUidContactFieldVCardMapBMP);
+    field->ResetStore();
+
+    // set the thumbnail data in the thumbnail field, and add it to the contact
+    _LIT8(KThumbnailDataString, "Dummy Thumbnail Data String");
+    field->StoreStorage()->SetThingL(KThumbnailDataString);
+    contactItem->AddFieldL(*thumbnailField);
+    CleanupStack::Pop(thumbnailField);
+
+    // save the updated contact.
+    cntdb->CommitContactL(*testItem);
+    cntdb->CloseContactL(testItem->Id());
+    CleanupStack::PopAndDestroy(2); // testItem, cntdb
+
+    // force database to read thumbnail with invalid storage type.  crash if not handled properly.
+    QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
+    QList<QContact> allContacts = cm.contacts();
+}
+#endif
 
 void tst_QContactManager::nameSynthesis_data()
 {
