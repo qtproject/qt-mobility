@@ -98,7 +98,7 @@ QString QDeclarativeLandmarkAbstractModel::error() const
     return m_error;
 }
 
-// This is purely for testing purposes
+// This is purely for testing purposes, not part of public interface
 void QDeclarativeLandmarkAbstractModel::setDbFileName(QString fileName)
 {
     if (fileName == m_dbFileName)
@@ -336,10 +336,14 @@ void QDeclarativeLandmarkModel::landmarks_clear(QDeclarativeListProperty<QDeclar
     QMap<QString, QDeclarativeLandmark*>* landmarkMap = &model->m_landmarkMap;
     qDeleteAll(landmarkMap->values());
     landmarkMap->clear();
+    model->m_landmarks.clear();
+    emit model->landmarksChanged();
 }
 
 void QDeclarativeLandmarkModel::convertLandmarksToDeclarative()
 {
+    QList<QString> landmarksToRemove = m_landmarkMap.keys();
+
     foreach(const QLandmark& landmark, m_landmarks) {
         if (!m_landmarkMap.contains(landmark.landmarkId().localId())) {
             QDeclarativeLandmark* declarativeLandmark = new QDeclarativeLandmark(this);
@@ -348,7 +352,13 @@ void QDeclarativeLandmarkModel::convertLandmarksToDeclarative()
         } else {
             // The landmark exists already, update it
             m_landmarkMap.value(landmark.landmarkId().localId())->setLandmark(landmark);
+            // Item is still valid, remove it from the list of removables
+            landmarksToRemove.removeOne(landmark.landmarkId().localId());
         }
+    }
+    foreach (const QString removable, landmarksToRemove) {
+        delete m_landmarkMap.value(removable);
+        m_landmarkMap.remove(removable);
     }
     emit landmarksChanged();
 }
@@ -379,9 +389,9 @@ void QDeclarativeLandmarkModel::setSortOrder(QDeclarativeLandmarkModel::SortOrde
     emit sortOrderChanged();
 }
 
-Q_INVOKABLE QList<QDeclarativeLandmark*> QDeclarativeLandmarkModel::landmarkList() const
+QList<QLandmark> QDeclarativeLandmarkModel::landmarkList()
 {
-    return m_landmarkMap.values();
+    return m_landmarks;
 }
 
 void QDeclarativeLandmarkModel::fetchRequestStateChanged(QLandmarkAbstractRequest::State state)
@@ -398,7 +408,7 @@ void QDeclarativeLandmarkModel::fetchRequestStateChanged(QLandmarkAbstractReques
 
     if (m_fetchRequest->error() == QLandmarkManager::NoError) {
         // Later improvement item is to make udpate incremental by connecting to resultsAvailable() -function.
-        beginInsertRows(QModelIndex(), 0, m_landmarks.count()); // TODO check if this shuold be amount of received landmarks
+        beginInsertRows(QModelIndex(), 0, m_landmarks.count()); // TODO check if this should be amount of received landmarks
         int oldCount = m_landmarks.count();
         m_landmarks = m_fetchRequest->landmarks();
         endInsertRows();

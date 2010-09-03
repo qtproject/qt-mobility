@@ -126,15 +126,16 @@ public:
     QDeclarativeLandmarkFilterBase* filter();
     void setFilter(QDeclarativeLandmarkFilterBase* filter);
 
+    // For testing purpose to access ordered data
+    QList<QLandmark> landmarkList();
     QDeclarativeListProperty<QDeclarativeLandmark> landmarks();
-
-    Q_INVOKABLE QList<QDeclarativeLandmark*> landmarkList() const; // Testing purposes
-    Q_INVOKABLE void startUpdate();
-
     static void landmarks_append(QDeclarativeListProperty<QDeclarativeLandmark>* prop, QDeclarativeLandmark* landmark);
     static int landmarks_count(QDeclarativeListProperty<QDeclarativeLandmark>* prop);
     static QDeclarativeLandmark* landmarks_at(QDeclarativeListProperty<QDeclarativeLandmark>* prop, int index);
     static void landmarks_clear(QDeclarativeListProperty<QDeclarativeLandmark>* prop);
+
+protected:
+    Q_INVOKABLE void startUpdate();
 
 signals:
     void countChanged();
