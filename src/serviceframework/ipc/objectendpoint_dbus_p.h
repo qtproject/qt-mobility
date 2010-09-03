@@ -44,7 +44,6 @@
 
 #include "qmobilityglobal.h"
 #include "ipcendpoint_p.h"
-//#include "qremoteserviceclassregister.h"
 #include "qremoteservicecontrol.h"
 #include "qservice.h"
 #include <QPointer>

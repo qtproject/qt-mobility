@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qremoteserviceclassregister.h>
 #include <qremoteservicecontrol.h>
 #include "qservicemanager.h"
 #include <QCoreApplication>
@@ -50,7 +49,6 @@ QTM_USE_NAMESPACE
 class EchoSharedService : public QObject
 {
     Q_OBJECT
-    //Q_SERVICE(EchoSharedService, "EchoService", "com.nokia.qt.example.sfwecho", "1.1")
 
 public:
     EchoSharedService(QObject* parent = 0)
@@ -74,7 +72,6 @@ private:
 class EchoUniqueService : public QObject
 {
     Q_OBJECT
-    //Q_SERVICE(EchoUniqueService, "EchoService", "com.nokia.qt.example.sfwecho", "1.0")
 
 public:
     EchoUniqueService(QObject* parent = 0)
@@ -121,18 +118,16 @@ int main(int argc, char** argv)
 
     registerExampleService();
 
-    //QRemoteServiceClassRegister::registerType<EchoSharedService>(QRemoteServiceClassRegister::SharedInstance);
-    //QRemoteServiceClassRegister::registerType<EchoUniqueService>(QRemoteServiceClassRegister::UniqueInstance);
     QRemoteServiceControl* control = new QRemoteServiceControl();
 
     QRemoteServiceControl::Entry shared = control->createServiceEntry<EchoSharedService>(
         "EchoService", "com.nokia.qt.example.sfwecho", "1.1");
-    shared.setInstanciationType(QRemoteServiceClassRegister::SharedInstance);
+    shared.setInstanciationType(QRemoteServiceControl::SharedInstance);
     control->registerService(shared);
 
     QRemoteServiceControl::Entry unique = control->createServiceEntry<EchoUniqueService>(
         "EchoService", "com.nokia.qt.example.sfwecho", "1.0");
-    unique.setInstanciationType(QRemoteServiceClassRegister::UniqueInstance);
+    unique.setInstanciationType(QRemoteServiceControl::UniqueInstance);
     control->registerService(unique);
 
     control->publishServices("sfwecho_service");

@@ -60,7 +60,7 @@ InstanceManager::~InstanceManager()
     QList<QRemoteServiceControl::Entry> allEntries = metaMap.keys();
     while (!allEntries.isEmpty()) {
         ServiceIdentDescriptor descr = metaMap.take(allEntries.takeFirst());
-        if (descr.instanceType == QRemoteServiceClassRegister::SharedInstance) {
+        if (descr.instanceType == QRemoteServiceControl::SharedInstance) {
             if (descr.sharedInstance)
                descr.sharedInstance->deleteLater();
             descr.sharedInstance = 0;
@@ -124,7 +124,7 @@ QObject* InstanceManager::createObjectInstance(const QRemoteServiceControl::Entr
     QObject* service = 0;
     ServiceIdentDescriptor& descr = metaMap[entry];
 
-    if (descr.instanceType == QRemoteServiceClassRegister::SharedInstance) {
+    if (descr.instanceType == QRemoteServiceControl::SharedInstance) {
         if (descr.sharedInstance) {
             service = descr.sharedInstance;
             instanceId = descr.sharedId;
@@ -159,7 +159,7 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceControl::Entry& e
         return;
     
     ServiceIdentDescriptor& descr = metaMap[entry];
-    if (descr.instanceType == QRemoteServiceClassRegister::SharedInstance) {
+    if (descr.instanceType == QRemoteServiceControl::SharedInstance) {
         if (descr.sharedRefCount < 1)
             return;
 

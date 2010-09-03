@@ -43,7 +43,6 @@
 #define QSERVICE_INSTANCE_MANAGER
 
 #include <qmobilityglobal.h>
-#include "qremoteserviceclassregister.h"
 #include "qremoteservicecontrol.h"
 #include <QHash>
 #include <QMutexLocker>
@@ -61,8 +60,8 @@ struct ServiceIdentDescriptor
     }
 
     const QMetaObject* meta;
-    QRemoteServiceClassRegister::CreateServiceFunc create;
-    QRemoteServiceClassRegister::InstanceType instanceType;
+    QRemoteServiceControl::CreateServiceFunc create;
+    QRemoteServiceControl::InstanceType instanceType;
     QHash<QUuid, QObject*> individualInstances;
     QObject* sharedInstance;
     QUuid sharedId;

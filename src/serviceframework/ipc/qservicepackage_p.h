@@ -47,7 +47,6 @@
 #include <QSharedData>
 #include <QUuid>
 #include <QVariant>
-//#include "qremoteserviceclassregister.h"
 #include "qremoteservicecontrol.h"
 
 QT_BEGIN_NAMESPACE

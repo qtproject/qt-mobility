@@ -43,10 +43,10 @@
 #define QREMOTESERVICECONTROL_H
 
 #include "qmobilityglobal.h"
-#include "qremoteserviceclassregister.h"
 #include <QObject>
 #include <QQueue>
 #include <QHash>
+#include <QDebug>
 
 
 QTM_BEGIN_NAMESPACE
@@ -58,9 +58,11 @@ class Q_SERVICEFW_EXPORT QRemoteServiceControl : public QObject
 public:
 
     enum InstanceType {
-        SharedInstanceT = 0,  //every new request for service gets same service instance
-        UniqueInstanceT       //every new request for service gets new service instance
+        SharedInstance = 0,  //every new request for service gets same service instance
+        UniqueInstance       //every new request for service gets new service instance
     };
+
+    typedef QObject *(*CreateServiceFunc)();
 
     class Q_SERVICEFW_EXPORT Entry {
     public:
@@ -78,8 +80,8 @@ public:
         QString version() const;
 
         const QMetaObject* metaObject() const;
-        void setInstanciationType(QRemoteServiceClassRegister::InstanceType t);
-        QRemoteServiceClassRegister::InstanceType instanciationType() const;
+        void setInstanciationType(QRemoteServiceControl::InstanceType t);
+        QRemoteServiceControl::InstanceType instanciationType() const;
 
 
     private:
@@ -88,8 +90,8 @@ public:
         QString service;
         QString ifaceVersion;
         const QMetaObject* meta;
-        QRemoteServiceClassRegister::CreateServiceFunc cptr;
-        QRemoteServiceClassRegister::InstanceType instanceType;
+        QRemoteServiceControl::CreateServiceFunc cptr;
+        QRemoteServiceControl::InstanceType instanceType;
 
 
         friend class QRemoteServiceControl;
@@ -165,7 +167,7 @@ QRemoteServiceControl::Entry QRemoteServiceControl::createServiceEntry(const QSt
         return Entry();
     }
 
-    QRemoteServiceClassRegister::CreateServiceFunc cptr = qServiceTypeConstructHelper<T>;
+    QRemoteServiceControl::CreateServiceFunc cptr = qServiceTypeConstructHelper<T>;
 
     Entry e;
     e.service = serviceName;

@@ -52,7 +52,7 @@
 QTM_BEGIN_NAMESPACE
 
 QRemoteServiceControl::Entry::Entry()
-    : meta(0), cptr(0), instanceType(QRemoteServiceClassRegister::UniqueInstance)
+    : meta(0), cptr(0), instanceType(QRemoteServiceControl::UniqueInstance)
 {
 }
 
@@ -113,12 +113,12 @@ const QMetaObject * QRemoteServiceControl::Entry::metaObject() const
     return meta;
 }
 
-void QRemoteServiceControl::Entry::setInstanciationType(QRemoteServiceClassRegister::InstanceType t)
+void QRemoteServiceControl::Entry::setInstanciationType(QRemoteServiceControl::InstanceType t)
 {
     instanceType = t;
 }
 
-QRemoteServiceClassRegister::InstanceType QRemoteServiceControl::Entry::instanciationType() const
+QRemoteServiceControl::InstanceType QRemoteServiceControl::Entry::instanciationType() const
 {
     return instanceType;
 }
@@ -129,12 +129,9 @@ QRemoteServiceClassRegister::InstanceType QRemoteServiceControl::Entry::instanci
     \ingroup servicefw
     \brief The QRemoteServiceControl class manages instances of remote service objects.
 
-    This class instanciates IPC based service objects which have been registered
-    via QRemoteServiceClassRegister. It owns each created service object instance and
+    This class registers and publishes IPC based service objects. It owns each created service object instance and
     ensures that the platform specific IPC mechanism publishes the required service
     object to other processes in the system.
- 
-    \sa QRemoteServiceClassRegister   
 */
 
 /*!
@@ -155,7 +152,7 @@ QRemoteServiceControl::~QRemoteServiceControl()
 
 /*!
     Publishes every service that has been registered using
-    \l QRemoteServiceClassRegister::registerType(). \a ident is the service specific
+    \l registerService(). \a ident is the service specific
     IPC address under which the service can be reached. This address must match
     the address provided in the services xml descriptor (see <filepath> tag).
 */

@@ -40,7 +40,6 @@
 ****************************************************************************/
 #include <QCoreApplication>
 #include <QTimer>
-#include <qremoteserviceclassregister.h>
 #include <qremoteservicecontrol.h>
 #include "qservicemanager.h"
 #include <QDebug>
@@ -55,7 +54,6 @@ Q_DECLARE_METATYPE(QList<QString>);
 class SharedTestService : public QObject 
 {
     Q_OBJECT
-    //Q_SERVICE(SharedTestService, "IPCExampleService", "com.nokia.qt.ipcunittest", "3.4")
     Q_PROPERTY(QString value READ value WRITE setValue RESET resetValue NOTIFY valueChanged SCRIPTABLE true DESIGNABLE true STORED true); 
 
 public:
@@ -188,7 +186,6 @@ private:
 class UniqueTestService : public QObject 
 {
     Q_OBJECT
-    //Q_SERVICE(UniqueTestService, "IPCExampleService", "com.nokia.qt.ipcunittest", "3.5")
     Q_CLASSINFO("UniqueTestService", "First test");
     Q_CLASSINFO("Key", "Value");
 
@@ -410,14 +407,14 @@ int main(int argc, char** argv)
     QRemoteServiceControl::Entry uniqueEntry =
         control->createServiceEntry<UniqueTestService>(
                 "IPCExampleService", "com.nokia.qt.ipcunittest", "3.5");
-    uniqueEntry.setInstanciationType(QRemoteServiceClassRegister::UniqueInstance);
+    uniqueEntry.setInstanciationType(QRemoteServiceControl::UniqueInstance);
     control->registerService(uniqueEntry);
 
     //register the shared srevice
     QRemoteServiceControl::Entry sharedEntry =
         control->createServiceEntry<SharedTestService>(
                 "IPCExampleService", "com.nokia.qt.ipcunittest", "3.4");
-    sharedEntry.setInstanciationType(QRemoteServiceClassRegister::SharedInstance);
+    sharedEntry.setInstanciationType(QRemoteServiceControl::SharedInstance);
     control->registerService(sharedEntry);
 
     //publish the registered services
