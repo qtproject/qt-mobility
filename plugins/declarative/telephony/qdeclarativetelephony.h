@@ -75,7 +75,7 @@ public:
         Alerting = QTelephony::Alerting,
         Connected = QTelephony::Connected,
         Disconnecting = QTelephony::Disconnecting,
-        Incomming = QTelephony::Incomming,
+        Incoming = QTelephony::Incoming,
         OnHold = QTelephony::OnHold
     };
 
