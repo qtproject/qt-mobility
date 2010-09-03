@@ -103,24 +103,6 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
     return QString();
 }
 
-/*!
-    For now we assume that localsocket means IPC via QLocalSocket and
-    dbus means IPC via QDBusConnection on the system bus.
-    This needs to be extended as new IPC mechanisms are incorporated.
-*/
-static bool qservicemanager_isIpcBasedService(const QString& location)
-{
-    // Shall be generalized later on
-    // TODO: we don't actually have to specify the specific ipc mechanism
-    // a simple flag would do.
-    if (location.startsWith("localsocket:") ||
-        location.startsWith("symbianclientserver:") ||
-        location.startsWith("dbus:"))
-        return true;
-    return false;
-}
-
-
 class QServicePluginCleanup : public QObject
 {
     Q_OBJECT
@@ -422,7 +404,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     }
 
     const QString location = descriptor.attribute(QServiceInterfaceDescriptor::Location).toString();
-    bool isInterProcess = (descriptor.attribute(QServiceInterfaceDescriptor::ServiceType).toInt() 
+    const bool isInterProcess = (descriptor.attribute(QServiceInterfaceDescriptor::ServiceType).toInt() 
                                 == QService::InterProcess);
     if (isInterProcess) {
         //ipc service
