@@ -57,17 +57,10 @@ namespace DBus
         , ptelephonyCallList(callList)
     {
         qDebug() << " Account::Account(";
-        qDebug() << "- QDBusConnection base service: " << busconnection.baseService();
-        qDebug() << "- QDBusConnection name: " << busconnection.name();
-        qDebug() << "- objectPath: " << objectPath;
-        qDebug() << "- DBusProxy.busName: " << this->busName();
-        qDebug() << "- DBusProxy.objectPath: " << this->objectPath();
 
         //Create Account Manager interface
         pIAccount = new DBus::Interfaces::IAccount(this->dbusConnection(),this->busName(), this->objectPath());
         QString connectionpath = pIAccount->Connection().path();
-        qDebug() << "- connection bus " << connectionpath;
-        qDebug() << "- connection path " << connectionpath;
         connection = ConnectionPtr(new Connection(QDBusConnection::sessionBus(), PATH2BUS(connectionpath), connectionpath, ptelephonyCallList));
     }
 

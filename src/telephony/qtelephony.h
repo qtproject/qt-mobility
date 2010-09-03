@@ -64,7 +64,7 @@ namespace QTelephony
         Alerting,
         Connected,
         Disconnecting,
-        Incomming,
+        Incoming,
         OnHold
     };
 

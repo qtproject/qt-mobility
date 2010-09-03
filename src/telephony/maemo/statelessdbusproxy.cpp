@@ -54,8 +54,7 @@ namespace DBus
           mPriv(0)
     {
         if (busName.startsWith(QLatin1String(":"))) {
-            qDebug() <<
-                "warning- Using StatelessDBusProxy for a unique name does not make sense";
+            qDebug() << "warning - StatelessDBusProxy use a unique name?";
         }
     }
 

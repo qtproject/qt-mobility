@@ -76,15 +76,6 @@ namespace DBus
             invalidate(QLatin1String(TELEPATHY_ERROR_DISCONNECTED),
                     QLatin1String("DBus connection disconnected"));
         }
-        else{
-            qDebug() << "DBusProxy:DBusProxy(...)";
-            qDebug() << "- busName: " << busName;
-            qDebug() << "- path: " << path;
-
-            qDebug() << "- DBusConnection name: " << dbusConnection.name();
-            qDebug() << "- DBusConnection baseService: " << dbusConnection.baseService();
-            qDebug() << "- DBusConnection sender().name(): " << dbusConnection.sender().name();
-        }
     }
 
     DBusProxy::~DBusProxy()

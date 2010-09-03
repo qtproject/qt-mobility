@@ -156,11 +156,11 @@ QTelephony::CallStatus QTelephonyCallListPrivate::mapStatus(
         case CCPCall::EStateDialling: 
             return QTelephony::Dialing;
         case CCPCall::EStateRinging: 
-            return QTelephony::Incomming;
+            return QTelephony::Incoming;
         case CCPCall::EStateQueued:
-            return QTelephony::Incomming;
+            return QTelephony::Incoming;
         case CCPCall::EStateAnswering: 
-            return QTelephony::Incomming;
+            return QTelephony::Incoming;
         case CCPCall::EStateConnecting: 
             return QTelephony::Alerting;
         case CCPCall::EStateConnected: 
