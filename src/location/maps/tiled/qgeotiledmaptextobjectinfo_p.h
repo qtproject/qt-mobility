@@ -67,8 +67,8 @@ public:
     QGeoTiledMapTextObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapTextObjectInfo();
 
-    void objectUpdate();
-    void mapUpdate();
+    void objectUpdated();
+    void mapUpdated();
 
     QGeoMapTextObject* text;
     QGraphicsSimpleTextItem *textItem;

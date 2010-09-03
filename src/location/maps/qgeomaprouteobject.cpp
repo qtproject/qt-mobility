@@ -110,7 +110,7 @@ void QGeoMapRouteObject::setRoute(const QGeoRoute &route)
     Q_D(QGeoMapRouteObject);
     //if (d->route != route) {
     d->route = route;
-    objectUpdate();
+    objectUpdated();
     emit routeChanged(d->route);
     //}
 }
@@ -133,11 +133,16 @@ QPen QGeoMapRouteObject::pen() const
 void QGeoMapRouteObject::setPen(const QPen &pen)
 {
     Q_D(QGeoMapRouteObject);
-    if (d->pen != pen) {
-        d->pen = pen;
-        objectUpdate();
-        emit penChanged(d->pen);
-    }
+
+    QPen newPen = pen;
+    newPen.setCosmetic(true);
+
+    if (d->pen == newPen)
+        return;
+
+    d->pen = newPen;
+    objectUpdated();
+    emit penChanged(d->pen);
 }
 
 /*!
@@ -166,7 +171,7 @@ void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
     Q_D(QGeoMapRouteObject);
     if (d->detailLevel != detailLevel) {
         d->detailLevel = detailLevel;
-        objectUpdate();
+        objectUpdated();
         emit detailLevelChanged(d->detailLevel);
     }
 }
@@ -178,6 +183,7 @@ QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate(QGeoMapObject *impl, QGeoMa
         : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::RouteType)
 {
     detailLevel = DEFAULT_ROUTE_DETAIL_LEVEL;
+    pen.setCosmetic(true);
 }
 
 QGeoMapRouteObjectPrivate::~QGeoMapRouteObjectPrivate() {}

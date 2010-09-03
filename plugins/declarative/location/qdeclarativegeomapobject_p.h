@@ -39,63 +39,43 @@
 **
 ****************************************************************************/
 
-#include "qgeotiledmaptextobjectinfo_p.h"
+#ifndef QDECLARATIVEGEOMAPOBJECT_H
+#define QDECLARATIVEGEOMAPOBJECT_H
 
-#include "qgeotiledmapdata.h"
-#include "qgeotiledmapdata_p.h"
+#include "qgeomapobject.h"
 
-#include "qgeomaptextobject.h"
+#include <QtDeclarative/qdeclarative.h>
+#include <QDeclarativeListProperty>
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapTextObjectInfo::QGeoTiledMapTextObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject),
-        textItem(0)
+class QGeoCoordinate;
 
+class QDeclarativeGeoMapObject : public QGeoMapObject
 {
-    text = static_cast<QGeoMapTextObject*>(mapObject);
-}
+    Q_OBJECT
 
-QGeoTiledMapTextObjectInfo::~QGeoTiledMapTextObjectInfo() {}
+    Q_PROPERTY(QDeclarativeListProperty<QGeoMapObject> objects READ objects)
 
-void QGeoTiledMapTextObjectInfo::objectUpdated()
-{
-    if (!text->coordinate().isValid()) {
-        if (textItem) {
-            delete textItem;
-            textItem = 0;
-            graphicsItem = 0;
-        }
-        return;
-    }
+    Q_CLASSINFO("DefaultProperty", "objects")
 
-    QPointF position = tiledMapData->coordinateToWorldPixel(text->coordinate());
+public:
+    QDeclarativeGeoMapObject();
+    ~QDeclarativeGeoMapObject();
 
-    if (!textItem)
-        textItem = new QGraphicsSimpleTextItem();
+    QDeclarativeListProperty<QGeoMapObject> objects();
 
-    textItem->setText(text->text());
-    textItem->setFont(text->font());
-    textItem->setBrush(text->brush());
-    textItem->setPos(position);
-    //textItem->setTransformOriginPoint(position);
+private:
+    static void child_append(QDeclarativeListProperty<QGeoMapObject> *prop, QGeoMapObject *mapObject);
+    static int child_count(QDeclarativeListProperty<QGeoMapObject> *prop);
+    static QGeoMapObject* child_at(QDeclarativeListProperty<QGeoMapObject> *prop, int index);
+    static void child_clear(QDeclarativeListProperty<QGeoMapObject> *prop);
 
-    mapUpdated();
-
-    graphicsItem = textItem;
-
-    updateItem();
-}
-
-void QGeoTiledMapTextObjectInfo::mapUpdated()
-{
-    if (textItem) {
-        int zoomFactor = tiledMapData->zoomFactor();
-
-        textItem->resetTransform();
-        textItem->setScale(zoomFactor);
-    }
-}
+    Q_DISABLE_COPY(QDeclarativeGeoMapObject)
+};
 
 QTM_END_NAMESPACE
 
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapObject));
+
+#endif

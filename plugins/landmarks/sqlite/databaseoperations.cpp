@@ -2484,8 +2484,7 @@ bool DatabaseOperations::exportLandmarks( QIODevice *device,
                      QList<QLandmarkId> landmarkIds,
                      QLandmarkManager::TransferOption option,
                      QLandmarkManager::Error *error,
-                     QString *errorString,
-                     QueryRun *queryRun) const
+                     QString *errorString) const
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
@@ -2517,11 +2516,11 @@ bool DatabaseOperations::exportLandmarks( QIODevice *device,
 
     bool result = false;
     if (format ==  QLandmarkManager::Lmx) {
-        result = exportLandmarksLmx(device, landmarkIds, option, error, errorString, queryRun);
+        result = exportLandmarksLmx(device, landmarkIds, option, error, errorString);
         device->close();
         return result;
     } else if (format == QLandmarkManager::Gpx) {
-        result = exportLandmarksGpx(device, landmarkIds, error, errorString, queryRun);
+        result = exportLandmarksGpx(device, landmarkIds, error, errorString);
         device->close();
         return result;
     }  else if (format =="") {
@@ -2685,8 +2684,7 @@ bool DatabaseOperations::exportLandmarksLmx(QIODevice *device,
                         QList<QLandmarkId> landmarkIds,
                         QLandmarkManager::TransferOption option,
                         QLandmarkManager::Error *error,
-                        QString *errorString,
-                        QueryRun *queryRun) const
+                        QString *errorString) const
 {
     QLandmarkFileHandlerLmx lmxHandler(queryRun?&(queryRun->isCanceled):0);
 
@@ -2700,7 +2698,11 @@ bool DatabaseOperations::exportLandmarksLmx(QIODevice *device,
     }
 
     if (error && *error != QLandmarkManager::NoError)
-        return false;
+    {
+        if (*error == QLandmarkManager::CancelError)
+            *errorString = "Export of lmx file was canceled";
+            return false;
+    }
 
     QList<QLandmarkCategory> categories = this->categories(QList<QLandmarkCategoryId>(),QLandmarkNameSort(),-1,0,error,errorString,true);
     if (*error != QLandmarkManager::NoError) {
@@ -2735,8 +2737,7 @@ bool DatabaseOperations::exportLandmarksLmx(QIODevice *device,
 bool DatabaseOperations::exportLandmarksGpx(QIODevice *device,
                         QList<QLandmarkId> landmarkIds,
                         QLandmarkManager::Error *error,
-                        QString *errorString,
-                        QueryRun *queryRun) const
+                        QString *errorString) const
 {
     QLandmarkFileHandlerGpx gpxHandler(queryRun?&(queryRun->isCanceled):0);
 

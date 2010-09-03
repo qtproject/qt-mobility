@@ -20,6 +20,7 @@ class QDeclarativeLandmarkCategoryModel: public QDeclarativeLandmarkAbstractMode
     Q_OBJECT
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(QDeclarativeLandmark* landmark READ landmark WRITE setLandmark NOTIFY landmarkChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeLandmarkCategory> categories READ categories NOTIFY categoriesChanged)
 
 public:
     explicit QDeclarativeLandmarkCategoryModel(QObject* parent = 0);
@@ -39,9 +40,18 @@ public:
     void setLandmark(QDeclarativeLandmark* landmark);
     int count() const;
 
+    // For testing purpose to access ordered data
+    QList<QLandmarkCategory> categoryList();
+    QDeclarativeListProperty<QDeclarativeLandmarkCategory> categories();
+    static void categories_append(QDeclarativeListProperty<QDeclarativeLandmarkCategory>* prop, QDeclarativeLandmarkCategory* category);
+    static int categories_count(QDeclarativeListProperty<QDeclarativeLandmarkCategory>* prop);
+    static QDeclarativeLandmarkCategory* categories_at(QDeclarativeListProperty<QDeclarativeLandmarkCategory>* prop, int index);
+    static void categories_clear(QDeclarativeListProperty<QDeclarativeLandmarkCategory>* prop);
+
 signals:
     void countChanged();
     void landmarkChanged();
+    void categoriesChanged();
 
 private slots:
     void cancelUpdate();

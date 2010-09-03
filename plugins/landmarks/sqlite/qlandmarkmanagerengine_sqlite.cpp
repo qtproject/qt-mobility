@@ -129,7 +129,6 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", m_dbConnectionName);
     m_databaseOperations.connectionName = m_dbConnectionName;
-    m_databaseOperations.managerUri = managerUri();
 
     if (m_dbFilename.isEmpty()) {
         QSettings settings(QSettings::IniFormat, QSettings::UserScope,
@@ -200,6 +199,7 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
             db.commit();
     }
     file.close();
+    m_databaseOperations.managerUri = managerUri();
 }
 
 QLandmarkManagerEngineSqlite::~QLandmarkManagerEngineSqlite()

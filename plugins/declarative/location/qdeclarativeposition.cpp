@@ -74,7 +74,7 @@ QTM_BEGIN_NAMESPACE
 
 QDeclarativePosition::QDeclarativePosition(QObject* parent)
         : QObject(parent), m_latitude(0), m_latitudeValid(false), m_longitude(0), m_longitudeValid(false),
-        m_altitude(0), m_altitudeValid(false), m_speed(0), m_speedValid(false), m_radius(0)
+        m_altitude(0), m_altitudeValid(false), m_speed(0), m_speedValid(false), m_radius(1000)
 {
 }
 

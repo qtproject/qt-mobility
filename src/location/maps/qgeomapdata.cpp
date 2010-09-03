@@ -76,6 +76,10 @@ QTM_BEGIN_NAMESPACE
      The other virtual functions can be overriden.  If the screen position to
      coordinate tranformations are expensive then overriding these functions
      may allow optimizations based on caching parts of the geometry information.
+
+     Subclasses should override createMapObjecInfo() so that QGeoMapObjectInfo
+     instances will be created for each QGeoMapObject type in order to
+     provide the QGeoMapData subclass specific behaviours for the map objects.
  */
 
 /*!
@@ -389,8 +393,27 @@ void QGeoMapData::clearMapOverlays()
     This will setup an instance of a QGeoMapObjectInfo subclass for \a
     mapObject which will handle any of the map object behaviour which is
     specifical to this QGeoMapData subclass.
+
+    This function uses createMapObjectInfo as a factory for the
+    QGeoMapObjectInfo instance, and so subclasses should reimplement
+    createMapObjectInfo to create the appropriate QGeoMapObjectInfo objects.
 */
-void QGeoMapData::setupMapObject(QGeoMapObject *mapObject) {}
+void QGeoMapData::associateMapObject(QGeoMapObject *mapObject)
+{
+    QGeoMapObjectInfo* info = createMapObjectInfo(mapObject);
+    d_ptr->setObjectInfo(mapObject, info);
+}
+
+/*!
+    Creates a QGeoMapObjectInfo instance which implements the behaviours of
+    the map object \a object which are specific to this QGeoMapData.
+
+    The default implementation returns 0.
+*/
+QGeoMapObjectInfo* QGeoMapData::createMapObjectInfo(QGeoMapObject *object)
+{
+    return 0;
+}
 
 /*******************************************************************************
 *******************************************************************************/
@@ -414,6 +437,16 @@ QGeoMapDataPrivate::~QGeoMapDataPrivate()
 void QGeoMapDataPrivate::setObjectInfo(QGeoMapObject *object, QGeoMapObjectInfo *info)
 {
     object->d_ptr->info = info;
+    if (info)
+        info->objectUpdated();
+}
+
+QGeoMapObjectInfo* QGeoMapDataPrivate::parentObjectInfo(QGeoMapObject *object) const
+{
+    QGeoMapObject *parent = object->d_ptr->parent;
+    if (!parent)
+        return 0;
+    return parent->d_ptr->info;
 }
 
 #include "moc_qgeomapdata.cpp"
