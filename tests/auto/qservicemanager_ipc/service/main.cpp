@@ -55,7 +55,7 @@ Q_DECLARE_METATYPE(QList<QString>);
 class SharedTestService : public QObject 
 {
     Q_OBJECT
-    Q_SERVICE(SharedTestService, "IPCExampleService", "com.nokia.qt.ipcunittest", "3.4")
+    //Q_SERVICE(SharedTestService, "IPCExampleService", "com.nokia.qt.ipcunittest", "3.4")
     Q_PROPERTY(QString value READ value WRITE setValue RESET resetValue NOTIFY valueChanged SCRIPTABLE true DESIGNABLE true STORED true); 
 
 public:
@@ -188,7 +188,7 @@ private:
 class UniqueTestService : public QObject 
 {
     Q_OBJECT
-    Q_SERVICE(UniqueTestService, "IPCExampleService", "com.nokia.qt.ipcunittest", "3.5")
+    //Q_SERVICE(UniqueTestService, "IPCExampleService", "com.nokia.qt.ipcunittest", "3.5")
     Q_CLASSINFO("UniqueTestService", "First test");
     Q_CLASSINFO("Key", "Value");
 
@@ -404,18 +404,23 @@ int main(int argc, char** argv)
    
     registerExampleService();
 
-    QRemoteServiceClassRegister::registerType<SharedTestService>(QRemoteServiceClassRegister::SharedInstance);
-    QRemoteServiceClassRegister::registerType<UniqueTestService>(QRemoteServiceClassRegister::UniqueInstance);
-
     QRemoteServiceControl* control = new QRemoteServiceControl();
-    //QRemoteServiceControl::Entry e = control->createServiceEntry<UniqueTestService>("IPCExampleService",
-    //        "com.nokia.qt.ipcunittest", "3.5");
-    //e.set
 
-    //QRemoteServiceControl* controlnew = new QRemoteServiceControl();
-    //QRemoteServiceControl::Entry e = controlnew->registerService<UniqueTestService>("IPCExampleService", "com.nokia.qt.ipcunittest", "3.5");
+    //register the unique service
+    QRemoteServiceControl::Entry uniqueEntry =
+        control->createServiceEntry<UniqueTestService>(
+                "IPCExampleService", "com.nokia.qt.ipcunittest", "3.5");
+    uniqueEntry.setInstanciationType(QRemoteServiceClassRegister::UniqueInstance);
+    control->registerService(uniqueEntry);
 
-    //this only works
+    //register the shared srevice
+    QRemoteServiceControl::Entry sharedEntry =
+        control->createServiceEntry<SharedTestService>(
+                "IPCExampleService", "com.nokia.qt.ipcunittest", "3.4");
+    sharedEntry.setInstanciationType(QRemoteServiceClassRegister::SharedInstance);
+    control->registerService(sharedEntry);
+
+    //publish the registered services
     control->publishServices("qt_sfw_example_ipc_unittest");
     int res =  app.exec();
     delete control;

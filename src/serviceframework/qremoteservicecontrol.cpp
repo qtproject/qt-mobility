@@ -108,7 +108,7 @@ QString QRemoteServiceControl::Entry::version() const
     return ifaceVersion;
 }
 
-QMetaObject* QRemoteServiceControl::Entry::metaObject() const
+const QMetaObject * QRemoteServiceControl::Entry::metaObject() const
 {
     return meta;
 }

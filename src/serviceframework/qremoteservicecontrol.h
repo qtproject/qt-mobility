@@ -76,7 +76,7 @@ public:
         QString serviceName() const;
         QString version() const;
 
-        QMetaObject* metaObject() const;
+        const QMetaObject* metaObject() const;
         void setInstanciationType(QRemoteServiceClassRegister::InstanceType t);
         QRemoteServiceClassRegister::InstanceType instaciationType() const;
 
@@ -86,7 +86,7 @@ public:
         QString iface;
         QString service;
         QString ifaceVersion;
-        QMetaObject* meta;
+        const QMetaObject* meta;
         QRemoteServiceClassRegister::CreateServiceFunc cptr;
         QRemoteServiceClassRegister::InstanceType instanceType;
 
@@ -134,14 +134,14 @@ QRemoteServiceControl::Entry QRemoteServiceControl::createServiceEntry(const QSt
         return Entry();
     }
 
-    QRemoteServiceClassRegister::CreateServiceFunc cptr = qServiceTypeConstructHelper<T>();
+    QRemoteServiceClassRegister::CreateServiceFunc cptr = qServiceTypeConstructHelper<T>;
 
     Entry e;
     e.service = serviceName;
     e.iface = interfaceName;
     e.ifaceVersion = version;
     e.cptr = cptr;
-    e.metaObject = &T::staticMetaObject;
+    e.meta = &T::staticMetaObject;
 
     return e;
 }
