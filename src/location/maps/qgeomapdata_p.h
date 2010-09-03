@@ -73,6 +73,7 @@ public:
     virtual ~QGeoMapDataPrivate();
 
     void setObjectInfo(QGeoMapObject *object, QGeoMapObjectInfo *info);
+    QGeoMapObjectInfo* parentObjectInfo(QGeoMapObject *object) const;
 
     QGeoMapData *q_ptr;
 

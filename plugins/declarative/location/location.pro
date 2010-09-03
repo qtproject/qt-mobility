@@ -28,6 +28,7 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativelandmarkcategory_p.h \
            qdeclarativelandmarkfilters_p.h \
            qdeclarativecoordinate_p.h \
+           qdeclarativegeomapobject_p.h \
            qdeclarativegeomapcircleobject_p.h \
            qdeclarativegeomappixmapobject_p.h \
            qdeclarativegeomappolygonobject_p.h \
@@ -45,6 +46,7 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativelandmarkcategory.cpp \
            qdeclarativelandmarkfilters.cpp \
            qdeclarativecoordinate.cpp \
+           qdeclarativegeomapobject.cpp \
            qdeclarativegeomapcircleobject.cpp \
            qdeclarativegeomappixmapobject.cpp \
            qdeclarativegeomappolygonobject.cpp \

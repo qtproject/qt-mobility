@@ -63,7 +63,7 @@ QGeoTiledMapRouteObjectInfo::QGeoTiledMapRouteObjectInfo(QGeoMapData *mapData, Q
 
 QGeoTiledMapRouteObjectInfo::~QGeoTiledMapRouteObjectInfo() {}
 
-void QGeoTiledMapRouteObjectInfo::objectUpdate()
+void QGeoTiledMapRouteObjectInfo::objectUpdated()
 {
     QListIterator<QGeoRouteSegment> segIt(route->route().routeSegments());
 
@@ -84,14 +84,14 @@ void QGeoTiledMapRouteObjectInfo::objectUpdate()
     if (!pathItem)
         pathItem = new QGraphicsPathItem();
 
-    mapUpdate();
+    mapUpdated();
 
     graphicsItem = pathItem;
 
     updateItem();
 }
 
-void QGeoTiledMapRouteObjectInfo::mapUpdate()
+void QGeoTiledMapRouteObjectInfo::mapUpdated()
 {
     if (!pathItem)
         return;

@@ -70,8 +70,8 @@ public:
     QGeoTiledMapPolylineObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapPolylineObjectInfo();
 
-    void objectUpdate();
-    void mapUpdate();
+    void objectUpdated();
+    void mapUpdated();
 
     QGeoMapPolylineObject *polyline;
     QGraphicsPathItem *pathItem;

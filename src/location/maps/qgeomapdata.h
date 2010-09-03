@@ -55,6 +55,7 @@ class QGeoCoordinate;
 class QGeoBoundingBox;
 class QGeoMappingManagerEngine;
 class QGeoMapObject;
+class QGeoMapObjectInfo;
 class QGeoMapDataPrivate;
 class QGeoMapOverlay;
 
@@ -98,7 +99,7 @@ public:
 
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
-    virtual void setupMapObject(QGeoMapObject *mapObject);
+    void associateMapObject(QGeoMapObject *mapObject);
 
 protected:
     QGeoMapData(QGeoMapDataPrivate *dd);
@@ -107,11 +108,15 @@ protected:
     QGeoMappingManagerEngine* engine() const;
     QGeoMapObject* containerObject();
 
+    virtual QGeoMapObjectInfo* createMapObjectInfo(QGeoMapObject *object);
+
     QGeoMapDataPrivate* d_ptr;
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapData)
     Q_DISABLE_COPY(QGeoMapData)
+
+    friend class QGeoMapObjectInfo;
 };
 
 QTM_END_NAMESPACE
