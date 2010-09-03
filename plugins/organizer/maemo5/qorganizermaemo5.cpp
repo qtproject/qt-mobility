@@ -361,10 +361,11 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganize
     // Resolve from which collections (calendars) the items must be fetch (pre-filtering)
     QSet<QOrganizerCollectionLocalId> collectionLocalIds = extractCollectionLocalIds(filter);
 
-    // TODO: What if collectionLocalIds is empty? Now this uses the default calendar, is it ok?
     if (collectionLocalIds.empty()) {
-        CCalendar *defaultCal = d->m_mcInstance->getDefaultCalendar();
-        collectionLocalIds.insert(static_cast<QOrganizerCollectionLocalId>(defaultCal->getCalendarId()));
+        // use all calendars if no collection filter is specified
+        collectionLocalIds = collectionIds(error).toSet();
+        if (*error != QOrganizerItemManager::NoError)
+            return retn;
     }
 
     foreach (QOrganizerCollectionLocalId collectionLocalId, collectionLocalIds) {

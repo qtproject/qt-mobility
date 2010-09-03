@@ -1059,11 +1059,8 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     QCOMPARE(f3.id(), items2.at(0).id());
     QCOMPARE(f3.guid(), items2.at(0).guid());
 
-    // TODO: Implement this case when clear how it should work with an empty filter.
-    /*
     // Get items with no filtering
     QOrganizerItemFilter noFilter;
-    */
 
     // Define a collection filter for the next collection
     QOrganizerItemCollectionFilter newCollectionFilter;
@@ -1108,6 +1105,10 @@ void tst_Maemo5Om::saveItemsToNewCollection()
 
     // There should be items that exist in both collections
     QCOMPARE(intersectionItemIds.count(), 0);
+
+    // When no filtering is set, all the item ids should be returned ( = equal to number of ids with union filtering)
+    QList<QOrganizerItemLocalId> noFilteringItemIds = m_om->itemIds(noFilter, noSort);
+    QCOMPARE(noFilteringItemIds.count(), unionItemIds.count());
 
     // Get all items of the new collection
     QList<QOrganizerItem> newCollectionItems = m_om->items(newCollectionFilter, noSort);
