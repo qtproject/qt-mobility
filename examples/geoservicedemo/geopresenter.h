@@ -54,7 +54,7 @@ QTM_USE_NAMESPACE
 class GeoPresenter
 {
 protected:
-    GeoPresenter(QTreeWidget* treeWidget) : treeWidget(treeWidget) {}
+    GeoPresenter(QTreeWidget* treeWidget) : m_treeWidget(treeWidget) {}
 
     QString formatGeoCoordinate(const QGeoCoordinate& coord);
     void showBoundingBox(QTreeWidgetItem* routeItem, const QGeoBoundingBox& box);
@@ -66,7 +66,7 @@ private:
     Q_DISABLE_COPY(GeoPresenter)
 
 protected:
-    QTreeWidget* treeWidget;
+    QTreeWidget* m_treeWidget;
 };
 
 #endif

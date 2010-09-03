@@ -72,7 +72,8 @@ public:
         Capabilities = 0,
         Location, 
         ServiceDescription,
-        InterfaceDescription
+        InterfaceDescription,
+        ServiceType
     };
 
     QServiceInterfaceDescriptor();

@@ -498,10 +498,6 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
 
         retn = cjournal;
     }
-    else if (item->type() == QOrganizerItemType::TypeNote) {
-        *error = QOrganizerItemManager::NotSupportedError;
-        // TODO
-    }
 
     if (retn) {
         // Set the details common for all the CComponents:
@@ -644,7 +640,7 @@ QOrganizerItemManager::Error OrganizerItemTransform::calErrorToManagerError(int 
 
         case CALENDAR_SYSTEM_ERROR:
         case CALENDAR_DATABASE_ERROR:
-        // case CALENDAR_DBUS_ERROR: // CALENDAR_DBUS_ERROR and CALENDAR_FILE_ERROR has the same value 3
+        // case CALENDAR_DBUS_ERROR: // CALENDAR_DBUS_ERROR and CALENDAR_FILE_ERROR have the same value 3
         case CALENDAR_LTIME_ERROR:
         case CALENDAR_LIBALARM_ERROR:
         case CALENDAR_ALARM_ERROR:

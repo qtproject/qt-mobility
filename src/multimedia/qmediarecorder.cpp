@@ -49,6 +49,8 @@
 #include <qaudioencodercontrol.h>
 #include <qvideoencodercontrol.h>
 #include <qmediacontainercontrol.h>
+#include <qcamera.h>
+#include <qcameracontrol.h>
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>
@@ -629,6 +631,14 @@ void QMediaRecorder::setEncodingSettings(const QAudioEncoderSettings &audio,
                                          const QString &container)
 {
     Q_D(QMediaRecorder);
+
+    QCamera *camera = qobject_cast<QCamera*>(d->mediaObject);
+    if (camera && camera->captureMode() == QCamera::CaptureVideo) {
+        QMetaObject::invokeMethod(camera,
+                                  "_q_preparePropertyChange",
+                                  Qt::DirectConnection,
+                                  Q_ARG(int, QCameraControl::VideoEncodingSettings));
+    }
 
     if (d->audioControl)
         d->audioControl->setAudioSettings(audio);

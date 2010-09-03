@@ -85,6 +85,7 @@ private:
     QOrganizerItemAbstractRequest *m_req;
 };
 
+
 class OrganizerAsynchProcess : public QThread
 {
     Q_OBJECT

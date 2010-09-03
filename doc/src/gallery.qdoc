@@ -107,23 +107,24 @@
     (MDS) on Symbian and potentially Windows Search, or Spotlight on macs.
     There are four requests; \l QGalleryQueryRequest takes a type, a parent
     item, and some filtering criteria (\l QGalleryFilter) and returns
-    meta-data for all matching items in a \l QGalleryItemList.
+    meta-data for all matching items.
     \l QGalleryItemRequest takes an item ID and returns meta-data for just that
-    item. \l QGalleryUrlRequest takes the URL of an item and resolves the ID
-    and type of that item. And \l QGalleryRemoveRequest takes an item ID and
-    removes that item from the gallery.
+    item.  And \l QGalleryRemoveRequest takes an item ID and removes that item
+    from the gallery.
 
     The requests operate on implementations of the \l QAbstractGallery.
     The default implementation is \l QDocumentGallery, but it's possible to
     create alternative implementations which talk to a media server or web
     services.
 
-    The primary interface to items in a gallery is the \l QGalleryItemList
-    class which provides accessors for reading and writing the meta-data of a
-    set of items.
+    The primary interface to the results of a request is the
+    \l QGalleryResultSet class which provides accessors for reading and writing
+     the meta-data of a set of items.
 
-    A \l QGalleryItemList cannot be created directly, instead an instance
-    must be requested from a gallery using one of the gallery request classes.
+    A \l QGalleryResultSet cannot be created directly and may not need to be
+    accessed directly, instead an instance must be requested from a gallery
+    using one of the gallery request classes which typically also provide
+    convenience functions for accessing the items in a result set.
 
 
     \section2 Requests
@@ -148,10 +149,21 @@
 
     \annotatedlist gallery-galleries
 
+    \section2 QGalleryQueryModel
+
+    The \l QGalleryQueryModel class implements a QAbstractItemModel using
+    QGalleryQueryRequest.  This is a convenience class which simplifies the
+    process of presenting gallery items in a list view.
+
+    \section2 \l QML Elements
+
+    QML elements providing access to the document gallery are implemented in
+    the \l {Gallery QML Plugin}.
+
+    \annotatedlist qml-gallery
+
     \section1 Examples
 
     \annotatedlist gallery-examples
-
-
 */
 

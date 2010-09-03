@@ -10,17 +10,13 @@ DEPENDPATH += .
 INCLUDEPATH += \
     . \
     ../../ \
-    ../../../src/versit \
-    ../../../src/contacts \
-    ../../../src/contacts/details \
-    ../../../src/contacts/requests \
-    ../../../src/contacts/filters
+    ../../../src/versit
 
 HEADERS += tst_qversitwriter.h
 SOURCES += tst_qversitwriter.cpp
 
 CONFIG += mobility
-MOBILITY += contacts versit organizer
+MOBILITY += versit
 
 symbian: { 
     TARGET.CAPABILITY = ALL \

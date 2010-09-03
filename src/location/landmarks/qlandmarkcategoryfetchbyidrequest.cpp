@@ -83,6 +83,7 @@ QLandmarkCategoryFetchByIdRequest::~QLandmarkCategoryFetchByIdRequest()
 QList<QLandmarkCategoryId> QLandmarkCategoryFetchByIdRequest::categoryIds() const
 {
     Q_D(const QLandmarkCategoryFetchByIdRequest);
+    QMutexLocker ml(&d->mutex);
     return d->categoryIds;
 }
 
@@ -92,6 +93,7 @@ QList<QLandmarkCategoryId> QLandmarkCategoryFetchByIdRequest::categoryIds() cons
 void QLandmarkCategoryFetchByIdRequest::setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds)
 {
     Q_D(QLandmarkCategoryFetchByIdRequest);
+    QMutexLocker ml(&d->mutex);
     d->categoryIds = categoryIds;
 }
 
@@ -101,6 +103,7 @@ void QLandmarkCategoryFetchByIdRequest::setCategoryIds(const QList<QLandmarkCate
 void QLandmarkCategoryFetchByIdRequest::setCategoryId(const QLandmarkCategoryId &categoryId)
 {
     Q_D(QLandmarkCategoryFetchByIdRequest);
+    QMutexLocker ml(&d->mutex);
     d->categoryIds.clear();
     d->categoryIds.append(categoryId);
 }
@@ -111,6 +114,7 @@ void QLandmarkCategoryFetchByIdRequest::setCategoryId(const QLandmarkCategoryId 
 QList<QLandmarkCategory> QLandmarkCategoryFetchByIdRequest::categories() const
 {
     Q_D(const QLandmarkCategoryFetchByIdRequest);
+    QMutexLocker ml(&d->mutex);
     return d->categories;
 }
 
@@ -121,6 +125,7 @@ QList<QLandmarkCategory> QLandmarkCategoryFetchByIdRequest::categories() const
 QMap<int, QLandmarkManager::Error> QLandmarkCategoryFetchByIdRequest::errorMap() const
 {
     Q_D(const QLandmarkCategoryFetchByIdRequest);
+    QMutexLocker ml(&d->mutex);
     return d->errorMap;
 }
 

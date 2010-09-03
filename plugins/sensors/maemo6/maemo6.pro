@@ -16,3 +16,6 @@ MOBILITY += sensors
 CONFIG += link_pkgconfig
 PKGCONFIG += sensord
 
+CONFIGFILES.files = Sensors.conf
+CONFIGFILES.path = /etc/xdg/Nokia/
+INSTALLS += CONFIGFILES

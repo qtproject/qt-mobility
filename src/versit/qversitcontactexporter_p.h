@@ -56,7 +56,6 @@
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
-#include "qvcardbackuphandlers_p.h"
 
 #include <QHash>
 #include <QObject>

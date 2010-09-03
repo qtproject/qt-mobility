@@ -203,6 +203,12 @@ private:
     // calendar instance deletion helper
     void cleanupCal(CCalendar *cal) const;
 
+    // get calendar
+    CCalendar* getCalendar(QOrganizerCollectionLocalId collectionId, QOrganizerItemManager::Error *error) const;
+
+    // extract possible collection ids from the filters
+    QSet<QOrganizerCollectionLocalId> extractCollectionLocalIds(const QOrganizerItemFilter& filter) const;
+
     // ctor
     QOrganizerItemMaemo5Engine();
 

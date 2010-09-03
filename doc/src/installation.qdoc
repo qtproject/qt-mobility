@@ -113,7 +113,10 @@ these domains have dependencies and these are outlined below:
 
        To enable all mediaservices on Symbian one must download sdk plugins. Sdk plugins are available at \l http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in
        For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a zip is provided. You will need following plugins to compile all features:
-       AudioRoutingAPI, Tuner Utility (only for 3rd FP1), Radio Utility API (for 3rd FP2 and 5th ed).
+       AudioRoutingAPI, Tuner Utility,  (only for 3rd FP1), Radio Utility API (for 3rd FP2 and 5th ed).
+       For camera autofocus support in 3rd edition FP1 one must download the following camera example app at 
+       \l http://www.forum.nokia.com/info/sw.nokia.com/id/2f492479-ac8c-4c3e-aa90-cc883e190d83/S60_Platform_Camera_Example_with_AutoFocus_Support_v2_2_en.zip.html
+       and extract the autofocus extension plugin that is contained within it, namely  autofocus_extension_library_s60_3rd_ed.zip.
 
        Multimedia also includes audio and video (from 1.0.1 onwards) and in Symbian we need MMFDevSound API-SDK plugin to compile/link API. This is also available in Forum Nokia as a supplementary pack.
 
@@ -134,19 +137,21 @@ these domains have dependencies and these are outlined below:
     \o System Information
     \o On all platforms, QtSystemInfo depends on QtNetwork.
 
-       On Linux, it depends on QtDBus (auto-detected), HAL and \l {http://projects.gnome.org/NetworkManager/} {NetworkManager},
+       Linux backend depends on QtDBus (auto-detected), HAL and \l {http://projects.gnome.org/NetworkManager/} {NetworkManager},
        although System Information will compile without them, there will be reduced functionality. It also depends on QtGui, and 
        on libbluetooth development headers.
        
-       On Mac, it depends on CoreWLAN (auto-detected) if the Mac OS X 10.6 SDK is available. It will compile
+       The Mac backend depends on CoreWLAN (auto-detected) if the Mac OS X 10.6 SDK is available. It will compile
        with older SSDKsbut there will be reduced functionality.
 
-       On Maemo, it depends on QtDBus (auto-detected). QtDBus is used to communicate with HAL, and functionality will be reduced if either is unavailable.
+       For Maemo depends on QtDBus (auto-detected). QtDBus is used to communicate with HAL, and functionality will be reduced if either is unavailable.
        
-       On Symbian, it depends on WLANManagementAPI. WLANManagementAPI plugin is available at \l http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in
+       The Symbian backend depends on WLANManagementAPI. WLANManagementAPI plugin is available at \l http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in
        For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a WLANManagementAPI.zip is provided.
 
-       On Symbian, it depends on SIM Utils API SDK plugin available from Forum Nokia \l http://wiki.forum.nokia.com/index.php/File:SIMUtilsAPI_3x_50.zip
+       Also for Symbian, it depends on SIM Utils API SDK plugin available from Forum Nokia \l http://wiki.forum.nokia.com/index.php/File:SIMUtilsAPI_3x_50.zip
+
+       On Symbian 3 FP2, it depends on the Multiple Drive Support available from Forum Nokia http://www.forum.nokia.com/Library/Tools_and_downloads/Other/Multiple_Drive_Support_plug-in.xhtml
 \row
     \o QtVersit
     \o On all platforms, QtVersit depends on QtContacts and QtOrganizer.

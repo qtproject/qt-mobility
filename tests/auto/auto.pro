@@ -43,15 +43,16 @@ contains(mobility_modules,location) {
 
      contains(QT_CONFIG, declarative) {
          SUBDIRS += qdeclarativeposition
+	 SUBDIRS += qdeclarativelandmark
      }
     wince* {
         SUBDIRS += qgeoinfosources_wince
     }
 
-    SUBDIRS +=  qlandmarkfilehandler_gpx
-                #qlandmarkfilehandler_lmx
+    SUBDIRS +=  qlandmarkfilehandler_gpx \
+                qlandmarkfilehandler_lmx
     
-#disable for now    SUBDIRS += qlandmarkmanagerengine_sqlite
+    SUBDIRS += qlandmarkmanagerengine_sqlite
 }
 
 contains(mobility_modules,publishsubscribe) {
@@ -90,7 +91,6 @@ contains(mobility_modules,systeminfo) {
 contains(mobility_modules,contacts) {
     #Contacts
     SUBDIRS +=  qcontact \
-            qcontactactions \
             qcontactasync \
             qcontactdetail \
             qcontactdetaildefinition \
@@ -98,11 +98,16 @@ contains(mobility_modules,contacts) {
             qcontactfilter \
             qcontactmanager \
             qcontactmanagerplugins \
-            qcontactmanagerfiltering \
             qcontactrelationship \
             qlatin1constant
     # This needs glibc:
     linux*: SUBDIRS += qcontactmemusage
+
+    contains(mobility_modules,serviceframework){
+            SUBDIRS += qcontactmanagerfiltering \
+            qcontactactions
+    } else: warning(Some contacts unit tests depend on service framework too)
+
 }
 
 contains(mobility_modules,organizer) {
@@ -113,17 +118,21 @@ contains(mobility_modules,organizer) {
 contains(mobility_modules,versit) {
     # Versit module
     SUBDIRS += \
-            qvcard21writer \
-            qvcard30writer \
-            qversit \
-            qversitcontactexporter \
-            qversitcontactimporter \
-            qversitdocument \
+        qvcard21writer \
+        qvcard30writer \
+        qversitcontactexporter \
+        qversitcontactimporter \
+        qversitdocument \
+        qversitproperty \
+        qversitreader \
+        qversitwriter
+
+    contains(mobility_modules,organizer) {
+        SUBDIRS += \
             qversitorganizerexporter \
             qversitorganizerimporter \
-            qversitproperty \
-            qversitreader \
-            qversitwriter
+            qversit
+    }
 }
 
 contains(mobility_modules,telephony) {
@@ -161,7 +170,7 @@ contains(mobility_modules,multimedia) {
 }
 #Messaging
 contains(mobility_modules,messaging) {
-    contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
+    contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5|maemo6 {
     !win32-g++:SUBDIRS += \
         qmessagestore \
         qmessagestorekeys \
@@ -190,6 +199,17 @@ contains(mobility_modules,gallery) {
 
     !unix: SUBDIRS += qgalleryfilter
 
-    unix: contains(QT_CONFIG, dbus): SUBDIRS += qgallerytrackerresultset_maemo5
+    unix: contains(QT_CONFIG, dbus): {
+        SUBDIRS += \
+                qgallerytrackerresultset_maemo5 \
+                qgallerytrackerschema_maemo5
+    }
+}
+
+# Feedback
+contains(mobility_modules,feedback) {
+    SUBDIRS += \
+        qfeedbackactuator \
+        qfeedbackhapticseffect
 }
 

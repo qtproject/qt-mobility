@@ -49,12 +49,10 @@
 #include "qversitcontactexporter.h"
 #include "qversitcontactimporter.h"
 #include "qversitcontacthandler.h"
-#include "qcontact.h"
-#include "qcontactmanager.h"
-#include "qcontactmanagerengine.h"
-#include "qorganizeritem.h"
 #include "qversitorganizerexporter.h"
 #include "qversitorganizerimporter.h"
+#include "qtorganizer.h"
+#include "qtcontacts.h"
 
 #include <QtTest/QtTest>
 #include <QDebug>

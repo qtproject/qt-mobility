@@ -71,7 +71,7 @@ JournalEditPage::JournalEditPage(QWidget *parent)
     connect(m_alarmComboBox, SIGNAL(currentIndexChanged(const QString)), this,
                         SLOT(handleAlarmIndexChanged(const QString)));
 
-#ifdef Q_WS_X11
+#ifndef Q_OS_SYMBIAN
     // Add push buttons for Maemo as it does not support soft keys
     QHBoxLayout* hbLayout = new QHBoxLayout();
     QPushButton *okButton = new QPushButton("Ok", this);
@@ -89,8 +89,9 @@ JournalEditPage::JournalEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(m_timeEdit);
     scrollAreaLayout->addWidget(alarmLabel);
     scrollAreaLayout->addWidget(m_alarmComboBox);
+    scrollAreaLayout->addStretch();
 
-#ifdef Q_WS_X11
+#ifndef Q_OS_SYMBIAN
     scrollAreaLayout->addLayout(hbLayout);
 #endif
 
@@ -144,7 +145,7 @@ void JournalEditPage::saveClicked()
     // Save
     m_manager->saveItem(&m_organizerJournal);
     if (m_manager->error())
-        QMessageBox::information(this, "Failed!", QString("Failed to save journal!\n(error code %1)").arg(m_manager->error()));
+        QMessageBox::warning(this, "Failed!", QString("Failed to save journal!\n(error code %1)").arg(m_manager->error()));
     else
         emit showDayPage();
 }

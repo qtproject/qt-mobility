@@ -111,7 +111,6 @@ public:
 
     QCache<QGeoTiledMapRequest, QPixmap> cache;
     QCache<QGeoTiledMapRequest, QPixmap> zoomCache;
-    QPixmap emptyTile;
 
     QGraphicsScene *scene;
 

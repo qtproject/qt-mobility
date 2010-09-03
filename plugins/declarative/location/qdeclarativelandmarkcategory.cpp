@@ -17,20 +17,20 @@ void QDeclarativeLandmarkCategory::setName(const QString& name)
     if (name == m_category.name())
         return;
     m_category.setName(name);
-    emit nameChanged(name);
+    emit nameChanged();
 }
 
-QUrl QDeclarativeLandmarkCategory::iconUrl()
+QUrl QDeclarativeLandmarkCategory::iconSource()
 {
     return m_category.iconUrl();
 }
 
-void QDeclarativeLandmarkCategory::setIconUrl(const QUrl& iconUrl)
+void QDeclarativeLandmarkCategory::setIconSource(const QUrl& iconSource)
 {
-    if (iconUrl == m_category.iconUrl())
+    if (iconSource == m_category.iconUrl())
         return;
-    m_category.setIconUrl(iconUrl);
-    emit iconUrlChanged(iconUrl);
+    m_category.setIconUrl(iconSource);
+    emit iconSourceChanged();
 }
 
 // Initializes this category from the given category

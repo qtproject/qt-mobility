@@ -108,7 +108,7 @@ bool OrganizerAsynchProcess::addRequest(QOrganizerItemAbstractRequest *req)
 {
     QOrganizerItemManagerEngine::updateRequestState(req, QOrganizerItemAbstractRequest::InactiveState);
     m_requestQueue.enqueue(req);
-    return true; // TODO: Is this ok?
+    return true;
 }
 
 bool OrganizerAsynchProcess::cancelRequest(QOrganizerItemAbstractRequest *req)
@@ -272,25 +272,24 @@ void OrganizerAsynchProcess::handleSaveRequest(QOrganizerItemSaveRequest *req)
     QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
     QMap<int, QOrganizerItemManager::Error> errorMap;
     QList<QOrganizerItem> items = req->items();
-    QOrganizerCollectionLocalId collectionLocalId; // TODO: Make support for this
-    m_engine->saveItems(&items, collectionLocalId, &errorMap, &err);
+    m_engine->saveItems(&items, req->collectionId(), &errorMap, &err);
     QOrganizerItemManagerEngine::updateItemSaveRequest(req, items, err, errorMap, QOrganizerItemAbstractRequest::FinishedState);
 }
 
 void OrganizerAsynchProcess::handleDefinitionFetchRequest(QOrganizerItemDetailDefinitionFetchRequest *req)
 {
     Q_UNUSED(req);
-    // TODO
+    // TODO: Probably this is not needed as detail definitions are handled in API
 }
 
 void OrganizerAsynchProcess::handleDefinitionRemoveRequest(QOrganizerItemDetailDefinitionRemoveRequest *req)
 {
     Q_UNUSED(req);
-    // TODO
+    // TODO: Probably this is not needed as detail definitions are handled in API
 }
 
 void OrganizerAsynchProcess::handleDefinitionSaveRequest(QOrganizerItemDetailDefinitionSaveRequest *req)
 {
     Q_UNUSED(req);
-    // TODO
+    // TODO: Probably this is not needed as detail definitions are handled in API
 }

@@ -81,9 +81,9 @@ const int HAS_RECURRENCE_ALARM = 5;
 
 QTM_USE_NAMESPACE
 
-const QString selectLeftJoin = QString("select * from components left join componentdetails on components.Id = componentdetails.Id Left Join alarm on components.Id = alarm.Id Left Join Recursive on components.Id = Recursive.Id where components.Id = \"$1\" ");
+const QString selectComponentCalIdType = QString("select CalendarId, ComponentType from Components where Id = :compId");
 
-const QString selectInnerJoinBatchGuid = QString("select * from components left join componentdetails on components.Id = componentdetails.Id Left Join alarm on components.Id = alarm.Id Left Join Recursive on components.Id = Recursive.Id where Calendarid = $1 AND Components.ComponentType = $2 AND Components.Uid = \"$3\"");
+const QString selectInnerJoinBatchGuid = QString("select * from components left join componentdetails on components.Id = componentdetails.Id Left Join alarm on components.Id = alarm.Id Left Join Recursive on components.Id = Recursive.Id where Calendarid = :calId AND Components.ComponentType = :compType AND Components.Uid = :compUid");
 
 OrganizerCalendarDatabaseAccess::OrganizerCalendarDatabaseAccess()
 {
@@ -114,18 +114,34 @@ void OrganizerCalendarDatabaseAccess::close()
     m_db.close();
 }
 
-int OrganizerCalendarDatabaseAccess::typeOf(QOrganizerItemLocalId id)
+int OrganizerCalendarDatabaseAccess::calIdOf(QOrganizerItemLocalId id)
 {
-    QString queryString = selectLeftJoin;
-    queryString.replace("$1", QString::number(id)); // TODO: binding parameter values do not work for some reason
-    QSqlQuery query(queryString);
+    QSqlQuery query;
+    if (!query.prepare(selectComponentCalIdType))
+        return -1;
+    query.bindValue(":compId", QString::number(id));
 
     int retn = -1;
     if (query.exec()) {
         if (query.next())
-            retn = query.value(2).toInt();
+            retn = query.value(0).toInt();
     }
 
+    return retn;
+}
+
+int OrganizerCalendarDatabaseAccess::typeOf(QOrganizerItemLocalId id)
+{
+    QSqlQuery query;
+    if (!query.prepare(selectComponentCalIdType))
+        return -1;
+    query.bindValue(":compId", QString::number(id));
+
+    int retn = -1;
+    if (query.exec()) {
+        if (query.next())
+            retn = query.value(1).toInt();
+    }
     return retn;
 }
 
@@ -145,11 +161,15 @@ std::vector<CEvent *> OrganizerCalendarDatabaseAccess::getEvents(int calId, std:
     std::vector<std::string> vRdate;
     std::vector<std::string> vRRule;
 
-    QString queryString = selectInnerJoinBatchGuid;
-    queryString.replace("$1", QString::number(calId)); // TODO: binding parameter values do not work for some reason
-    queryString.replace("$2", QString::number(E_EVENT));
-    queryString.replace("$3", QString::fromStdString(guid));
-    QSqlQuery pQuery(queryString);
+    QSqlQuery pQuery;
+    if (!pQuery.prepare(selectInnerJoinBatchGuid)) {
+        pErrorCode = CALENDAR_DATABASE_ERROR;
+        return listEvent;
+    }
+    pQuery.bindValue(":calId", QString::number(calId));
+    pQuery.bindValue(":compType", QString::number(E_EVENT));
+    pQuery.bindValue(":compUid", QString::fromStdString(guid));
+
     bool ok = pQuery.exec();
 
     sqliteErrorMapper(pQuery.lastError(), pErrorCode);
@@ -452,12 +472,14 @@ std::vector<CTodo *> OrganizerCalendarDatabaseAccess::getTodos(int calId, std::s
     pErrorCode = CALENDAR_OPERATION_SUCCESSFUL;
     std::vector<long> vCookie;
 
-    QString queryString = selectInnerJoinBatchGuid;
-    queryString.replace("$1", QString::number(calId)); // TODO: binding parameter values do not work for some reason
-    queryString.replace("$2", QString::number(E_TODO));
-    queryString.replace("$3", QString::fromStdString(guid));
-
-    QSqlQuery pQuery(queryString);
+    QSqlQuery pQuery;
+    if (!pQuery.prepare(selectInnerJoinBatchGuid)) {
+        pErrorCode = CALENDAR_DATABASE_ERROR;
+        return listTodo;
+    }
+    pQuery.bindValue(":calId", QString::number(calId));
+    pQuery.bindValue(":compType", QString::number(E_TODO));
+    pQuery.bindValue(":compUid", QString::fromStdString(guid));
     bool ok = pQuery.exec();
 
     sqliteErrorMapper(pQuery.lastError(), pErrorCode);
@@ -690,12 +712,14 @@ std::vector<CJournal *> OrganizerCalendarDatabaseAccess::getJournals(int calId, 
     int iJ_JourCount = 0;
     pErrorCode = CALENDAR_OPERATION_SUCCESSFUL;
 
-    QString queryString = selectInnerJoinBatchGuid;
-    queryString.replace("$1", QString::number(calId)); // TODO: binding parameter values do not work for some reason
-    queryString.replace("$2", QString::number(E_JOURNAL));
-    queryString.replace("$3", QString::fromStdString(guid));
-
-    QSqlQuery pQuery(queryString);
+    QSqlQuery pQuery;
+    if (!pQuery.prepare(selectInnerJoinBatchGuid)) {
+        pErrorCode = CALENDAR_DATABASE_ERROR;
+        return listJournal;
+    }
+    pQuery.bindValue(":calId", QString::number(calId));
+    pQuery.bindValue(":compType", QString::number(E_JOURNAL));
+    pQuery.bindValue(":compUid", QString::fromStdString(guid));
     bool ok = pQuery.exec();
 
     sqliteErrorMapper(pQuery.lastError(), pErrorCode);

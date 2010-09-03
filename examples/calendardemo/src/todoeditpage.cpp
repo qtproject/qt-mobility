@@ -80,10 +80,10 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     connect(m_alarmComboBox, SIGNAL(currentIndexChanged(const QString)), this,
                         SLOT(handleAlarmIndexChanged(const QString)));
 
-#ifdef Q_WS_X11
-    // Add push buttons for Maemo as it does not support soft keys
+#ifndef Q_OS_SYMBIAN
+    // Add push buttons for non-Symbian platforms as they do not support soft keys
     QHBoxLayout* hbLayout = new QHBoxLayout();
-    QPushButton *okButton = new QPushButton("Ok", this);
+    QPushButton *okButton = new QPushButton("Save", this);
     connect(okButton,SIGNAL(clicked()),this,SLOT(saveClicked()));
     hbLayout->addWidget(okButton);
     QPushButton *cancelButton = new QPushButton("Cancel", this);
@@ -104,7 +104,8 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(m_statusEdit);
     scrollAreaLayout->addWidget(alarmLabel);
     scrollAreaLayout->addWidget(m_alarmComboBox);
-#ifdef Q_WS_X11
+    scrollAreaLayout->addStretch();
+#ifndef Q_OS_SYMBIAN
     scrollAreaLayout->addLayout(hbLayout);
 #endif
 
@@ -174,9 +175,16 @@ void TodoEditPage::cancelClicked()
 void TodoEditPage::saveClicked()
 {
     // Read data from page
+    QDateTime start(m_startTimeEdit->dateTime());
+    QDateTime due(m_dueTimeEdit->dateTime());
+    if (start > due) {
+        QMessageBox::warning(this, "Failed!", "Start date is not before due date");
+        return;
+    }
+
     m_organizerTodo.setDisplayLabel(m_subjectEdit->text());
-    m_organizerTodo.setStartDateTime(m_startTimeEdit->dateTime());
-    m_organizerTodo.setDueDateTime(m_dueTimeEdit->dateTime());
+    m_organizerTodo.setStartDateTime(start);
+    m_organizerTodo.setDueDateTime(due);
     int index = m_priorityEdit->currentIndex();
     m_organizerTodo.setPriority((QOrganizerItemPriority::Priority) m_priorityEdit->itemData(index).toInt());
     
@@ -191,7 +199,7 @@ void TodoEditPage::saveClicked()
     // Save
     m_manager->saveItem(&m_organizerTodo);
     if (m_manager->error())
-        QMessageBox::information(this, "Failed!", QString("Failed to save todo!\n(error code %1)").arg(m_manager->error()));
+        QMessageBox::warning(this, "Failed!", QString("Failed to save todo!\n(error code %1)").arg(m_manager->error()));
     else
         emit showDayPage();
 }

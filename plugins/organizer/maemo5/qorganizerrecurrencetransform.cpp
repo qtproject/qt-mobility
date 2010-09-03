@@ -226,6 +226,7 @@ QString OrganizerRecurrenceTransform::qfrequencyToIcalFrequency(QOrganizerItemRe
     case QOrganizerItemRecurrenceRule::Weekly: return QString("FREQ=WEEKLY");
     case QOrganizerItemRecurrenceRule::Monthly: return QString("FREQ=MONTHLY");
     case QOrganizerItemRecurrenceRule::Yearly: return QString("FREQ=YEARLY");
+    default: return QString("FREQ=WEEKLY"); // invalid frequency, assume weekly
     }
 }
 

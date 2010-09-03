@@ -59,7 +59,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-\enum InstructionDirection
+\enum QGeoInstruction::InstructionDirection
 
 Describes the change in direction associated with an instruction.
 

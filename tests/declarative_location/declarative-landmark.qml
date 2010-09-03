@@ -42,93 +42,161 @@ import "content" as Content
 import Qt 4.7
 import QtMobility.location 1.1
 
-
-
 Rectangle {
     id: page
     width: 350
     height: 350
     color: "olive"
     
-    Text {
-        id: title
-        text: "Simple landmark test app"
-        font {pointSize: 12; bold: true}
-    }
+    Text { id: title;  text: "Simple landmark test app"; font {pointSize: 12; bold: true}}
     
+    // Just to see everything instantiates
+    Landmark { }
+    LandmarkModel { }
+    LandmarkCategory { }
+    LandmarkCategoryModel { }
+    LandmarkFilter { }
+    LandmarkIntersectionFilter { }
+    LandmarkUnionFilter { }
+
+    // Example: landmark name filter
+    LandmarkFilter {
+	id: landmarkFilterUndercity
+	type: LandmarkFilter.Name
+	value: "Undercity"
+    }    
+    // Example: landmark proximity filters
+    LandmarkFilter {
+        id: landmarkFilterSpecificLocation
+	type: LandmarkFilter.Proximity
+	value: Position {
+            id: position
+	    longitude:  10
+	    latitude: 20
+	    radius: 500
+	}
+    }
     PositionSource {
-        id: positionSource
+        id: myPosition
         updateInterval: 1000
     }
-    Landmark {
-        id: lm
-        name: "just to see if this landmark element instantiates"
-    }
-    LandmarkCategory {
-        id: lmcat
-        name: "just to see if this categoary element instantiates"
-    }
-    LandmarkNameFilter {
-	id: townFilter
-	name: "Orgrimmar" // needs to be exact match
-    }
-    LandmarkProximityFilter {
-	id: myPositionFilter
-	longitude: positionSource.position.longitude
-	latitude: positionSource.position.latitude
-	radius: 100
-    }
-    LandmarkProximityFilter {
-	id: existingCityPositionFilter
-	longitude: 12
-	latitude: 85
-	radius: 100 // metres
-    }
-    // The model where data stems
-    LandmarkSource {
-        id: lmsource
-        active: true
-	nameFilter: townFilter
-	//proximityFilter: myPositionFilter
-	//proximityFilter: existingCityPositionFilter
-        maxItems: 15
+    LandmarkFilter {
+        id: landmarkFilterMyCurrentLocation
+	type: LandmarkFilter.Proximity
+	value: myPosition.position
     }
     
-    LandmarkCategorySource {
-         id: lmcatsource
-         active: true
+    // Example: landmark intersection filter
+    LandmarkIntersectionFilter {
+        id: landmarkIntersectionFilterNameAndProximity
+	LandmarkFilter {
+	    type: LandmarkFilter.Name
+	    value: "Darwin"
+        }
+	LandmarkFilter {
+	    type: LandmarkFilter.Proximity
+	    value: Position {
+	        longitude:  10
+	        latitude: 20
+	        radius: 500
+	    }
+        }
     }
     
-    // The view which lays the overall view
+    // Example: landmark union filter
+    LandmarkUnionFilter {
+        id: landmarkUnionFilterNameAndProximity
+	LandmarkFilter {
+	    type: LandmarkFilter.Name
+	    value: "Nimbin"
+        }
+	LandmarkFilter {
+	    type: LandmarkFilter.Proximity
+	    value: Position {
+	        longitude:  myPosition.position.longitude
+	        latitude: myPosition.position.latitude
+	        radius: 50
+	    }
+        }
+    }
+    
+    // Example: landmark model
+    LandmarkModel {
+        id: landmarkModel
+	//  autoUpdate determines if model is automatically updated:
+	//  1) after instantiated  (no need to call update())
+	//  2) whenever database data changes (QLandmarkManager reports changes)
+	//  3) filters are changed (TBD if data change within a filter should trigger update too)
+	// Value is true by default
+        autoUpdate: true
+	// filter determines what data is requested
+	filter: landmarkFilterUndercity
+	/* 
+	// Alternatively filter could be declared directly
+	filter: LandmarkIntersectionFilter {
+	    LandmarkFilter {
+	        ...
+	    }
+	    LandmarkUnionFilter {
+	        LandmarkIntersectionFilter {
+		    LandmarkFilter {
+		        ...
+		    }
+		    LandmarkFilter {
+		        ...
+		    }
+		}
+	    }
+	}
+	*/
+	// Limit determines the maximum number of items this model holds
+        limit: 15
+	// Offset determines the index where to start elements (e.g. in tabbed/paged browsing)
+	offset: 0
+    }
+
+    // Example: landmark category model
+    LandmarkCategoryModel {
+        id: categoriesOfGivenLandmark
+	autoUpdate: false
+	
+	// You can assign a Landmark here. That causes the LandmarkCategoryModel to 
+	// provide the categories the landmark belongs to. However, the Landmark needs to come from
+	// LandmarkModel because it needs to have internal IDs set correctly. Preferably it should be assigned
+	// either by iterating list of landmarks from model, or by setting it in the landmark model's delegate.
+        // (although the 'role' for providing the landmark instance is currently not implemented)
+	// landmark: 
+	
+	limit: 5
+	offset:0
+    }
+    
+    // The view
     ListView {
         id: mainList
-        
-        model: lmsource
+        model: landmarkModel
         delegate: landmarklistdelegate
-        
-        //model: lmcatsource
-        //delegate: categorylistdelegate
-        
         anchors {top: title.bottom; left: title.left}
         width: parent.width; height: parent.height
-        
         highlightFollowsCurrentItem: false
         focus: true
         anchors.fill: parent
         keyNavigationWraps: true
     }
+    
      // The delegate which determines how individual element is shown
     Component {
 	id: landmarklistdelegate
 	Item {
 	    width: 200; height: 50
 	    Text { id: nameField; text: name }
-	    //Text { id: nameFiedld; text: lmsource.nameFilter.name }
-	    Text { id: phoneField; text: "  tel:"  + phone; anchors.left: nameField.right }
+	    Text { id: phoneField; text: "  tel:"  + phoneNumber; anchors.left: nameField.right }
 	    Text { id: latitudeField; text: "  lat:"  + latitude;  anchors.left: phoneField.right }
 	    Text { id: longitudeField; text: "  lon:"  + longitude;  anchors.left: latitudeField.right }
-	}
-    }
+	    // Set landmark to the model, few lines of code missing still
+	    // categoriesOfGivenLandmark.landmark = landmark
+        }
+    }    
     Component {
 	id: categorylistdelegate
 	Item {
@@ -139,20 +207,8 @@ Rectangle {
 
 
 
+
     /*
-    Column {
-        id: data
-        anchors {top: title.bottom; left: title.left}
-        Text {text: "<==== Landmark ====>"}
-        Text {text: "name: " + lm.name}
-        Text {text: "<==== Landmark category ====>"}
-        Text {text: "name: " + lmcat.name}
-        Text {text: "<==== LandmarkSource ====>"}
-        Text {text: "name: " + lmsource.name}
-        Text {text: "active: " + lmsource.active}
-        
-    }
-    
     Grid {
         id: actionRectangles
         x: 4;

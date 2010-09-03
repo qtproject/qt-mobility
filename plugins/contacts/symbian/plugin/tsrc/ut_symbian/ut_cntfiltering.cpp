@@ -243,16 +243,11 @@ void TestFiltering::createContacts()
     createContact_7();
     createContact_8();
     createContact_9();
-    // Empty contact
-    //QContact empty;
-    //mCntMng->saveContact(&empty);
     
     QContactManager::Error err;
     QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
     int j = cnt_ids.count();
-    // 7contacts created in code, so check if all 5 were created
     QVERIFY(9 == j);
-    
 }
 
 

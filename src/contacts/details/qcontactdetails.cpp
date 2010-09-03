@@ -211,7 +211,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactFamily::FieldChildren, "Children");
 Q_DEFINE_LATIN1_CONSTANT(QContactFavorite::DefinitionName, "Favorite");
 
 /*!
-   \variable QContactFavorite::FieldIndex
+   \variable QContactFavorite::FieldFavorite
 
    The field key constant for the value that indicates whether a contact is a favorite.
    \sa index(), setIndex()
@@ -232,7 +232,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactFavorite::FieldIndex, "Index");
  */
 
 /*!
-   \fn QContactFavorite::setFavorite(bool isFavorite) const
+   \fn QContactFavorite::setFavorite(bool isFavorite) 
    If \a isFavorite is true, marks the contact as a favorite.  Otherwise, marks the contact as not a favorite.
  */
 
@@ -242,7 +242,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactFavorite::FieldIndex, "Index");
  */
 
 /*!
-   \fn QContactFavorite::setIndex(int index) const
+   \fn QContactFavorite::setIndex(int index) 
    Sets the index of the favorite contact to \a index.
  */
 
@@ -364,7 +364,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
-   \fn QContactAnniversary::setOriginalDateTime(const QDate& dateTime)
+   \fn QContactAnniversary::setOriginalDateTime(const QDateTime& dateTime)
    Sets the original date and time of the event stored in this detail to \a dateTime.
  */
 

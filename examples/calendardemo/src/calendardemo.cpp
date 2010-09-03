@@ -46,6 +46,12 @@
 #include "todoeditpage.h"
 #include "journaleditpage.h"
 #include "eventoccurrenceeditpage.h"
+#ifdef BUILD_VERSIT
+#include "qversitreader.h"
+#include "qversitwriter.h"
+#include "qversitorganizerimporter.h"
+#include "qversitorganizerexporter.h"
+#endif
 #include <QtGui>
 #include <qtorganizer.h>
 
@@ -71,15 +77,29 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     //qRegisterMetaType<QOrganizerItemManager>("QOrganizerItemManager");
     qRegisterMetaType<QOrganizerItem>("QOrganizerItem");
 
-    connect(m_monthPage, SIGNAL(showDayPage(QOrganizerItemManager *, QDate)), this, SLOT(activateNewDayPage(QOrganizerItemManager *, QDate)), Qt::QueuedConnection);
-    connect(m_monthPage, SIGNAL(showEditPage(QOrganizerItemManager *, const QOrganizerItem &)), this, SLOT(activateEditPage(QOrganizerItemManager *, const QOrganizerItem &)), Qt::QueuedConnection);
+    connect(m_monthPage, SIGNAL(showDayPage(QDate)), this, SLOT(activateDayPage()), Qt::QueuedConnection);
+    connect(m_monthPage, SIGNAL(showEditPage(const QOrganizerItem &)), this, SLOT(activateEditPage(const QOrganizerItem &)), Qt::QueuedConnection);
+    connect(m_monthPage, SIGNAL(addNewEvent()), this, SLOT(addNewEvent()), Qt::QueuedConnection);
+    connect(m_monthPage, SIGNAL(addNewTodo()), this, SLOT(addNewTodo()), Qt::QueuedConnection);
+    connect(m_monthPage, SIGNAL(managerChanged(QOrganizerItemManager*)), this, SLOT(changeManager(QOrganizerItemManager*)), Qt::QueuedConnection);
+    connect(m_monthPage, SIGNAL(managerChanged(QOrganizerItemManager*)), m_dayPage, SLOT(changeManager(QOrganizerItemManager*)), Qt::QueuedConnection);
+    connect(m_monthPage, SIGNAL(currentDayChanged(QDate)), this, SLOT(updateSelectedDay(QDate)));
     connect(m_dayPage, SIGNAL(showMonthPage()), this, SLOT(activateMonthPage()), Qt::QueuedConnection);
-    connect(m_dayPage, SIGNAL(showEditPage(QOrganizerItemManager *, const QOrganizerItem &)), this, SLOT(activateEditPage(QOrganizerItemManager *, const QOrganizerItem &)), Qt::QueuedConnection);
+    connect(m_dayPage, SIGNAL(showEditPage(const QOrganizerItem &)), this, SLOT(activateEditPage(const QOrganizerItem &)), Qt::QueuedConnection);
+    connect(m_dayPage, SIGNAL(addNewEvent()), this, SLOT(addNewEvent()), Qt::QueuedConnection);
+    connect(m_dayPage, SIGNAL(addNewTodo()), this, SLOT(addNewTodo()), Qt::QueuedConnection);
     connect(m_eventEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_todoEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_journalEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_eventOccurrenceEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
-    connect(this, SIGNAL(multipleEntriesToBeCreated(int)), m_eventEditPage, SLOT(handlemultipleEntriesToBeCreated(int)));
+    
+    // Connect to the save and remove request status change signals
+    connect(&m_saveReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
+            this, SLOT(saveReqStateChanged(QOrganizerItemAbstractRequest::State)));
+    connect(&m_remReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
+            this, SLOT(removeReqStateChanged(QOrganizerItemAbstractRequest::State)));
+
+    m_monthPage->init();
     
     m_stackedWidget->addWidget(m_monthPage);
     m_stackedWidget->addWidget(m_dayPage);
@@ -90,114 +110,308 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     m_stackedWidget->setCurrentIndex(0);
 
     setCentralWidget(m_stackedWidget);
+    buildMenu();
 
-#ifdef Q_WS_X11
-    m_appMenu = menuBar()->addMenu(QString());
-    activateMonthPage(); // set the menu
-#endif // Q_WS_X11
+    activateMonthPage();
 }
+
+
 
 CalendarDemo::~CalendarDemo()
 {
 
 }
 
+void CalendarDemo::buildMenu()
+{
+    // Build Options menu
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || defined(Q_OS_WINCE)
+    // These platforms need their menu items added directly to the menu bar.
+    QMenuBar *optionsMenu = menuBar();
+#else
+    QMenu *optionsMenu = new QMenu("&Options", this);
+    #ifndef Q_OS_SYMBIAN
+    // We add the options menu to the softkey manually later
+    menuBar()->addMenu(optionsMenu);
+    #endif
+#endif
+    // Add editing options in the menu for Symbian (other platforms get buttons)
+    QAction* addEventAction = optionsMenu->addAction("Add E&vent");
+    connect(addEventAction, SIGNAL(triggered(bool)), this, SLOT(addNewEvent()));
+    QAction* addTodoAction = optionsMenu->addAction("Add &Todo");
+    connect(addTodoAction, SIGNAL(triggered(bool)), this, SLOT(addNewTodo()));
+    QAction* addJournalAction = optionsMenu->addAction("Add &Journal");
+    connect(addJournalAction, SIGNAL(triggered(bool)), this, SLOT(addNewJournal()));
+    optionsMenu->addSeparator();
+    QAction* editAction = optionsMenu->addAction("&Edit");
+    connect(editAction, SIGNAL(triggered(bool)), this, SLOT(editItem()));
+    QAction* removeAction = optionsMenu->addAction("&Remove");
+    connect(removeAction, SIGNAL(triggered(bool)), this, SLOT(removeItem()));
+    optionsMenu->addSeparator();
+    m_switchViewAction = optionsMenu->addAction("&Open Day");
+    connect(m_switchViewAction, SIGNAL(triggered(bool)), this, SLOT(switchView()));
+    optionsMenu->addSeparator();
+    QAction* addHugeEntries = optionsMenu->addAction("Add Test Events");
+    connect(addHugeEntries, SIGNAL(triggered(bool)), this, SLOT(addEvents()));
+    QAction* importItems = optionsMenu->addAction("&Import Items...");
+    connect(importItems, SIGNAL(triggered(bool)), this, SLOT(importItems()));
+    QAction* exportItems = optionsMenu->addAction("Ex&port Items...");
+    connect(exportItems, SIGNAL(triggered(bool)), this, SLOT(exportItems()));
+    QAction* deleteAllEntries = optionsMenu->addAction("Delete All Items");
+    connect(deleteAllEntries, SIGNAL(triggered(bool)), this, SLOT(deleteAllEntries()));
+
+#ifdef Q_OS_SYMBIAN
+    // add the menu to the softkey for these pages
+    m_monthPage->setMenu(optionsMenu);
+    m_dayPage->setMenu(optionsMenu);
+#endif
+}
+
 void CalendarDemo::activateMonthPage()
 {
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+    menuBar()->setVisible(true);
+#endif
     m_monthPage->refresh();
     m_stackedWidget->setCurrentWidget(m_monthPage);
-
-#ifdef Q_WS_X11
-    QAction *addEvent = new QAction(tr("Add event"), this);
-    QAction *addTodo = new QAction(tr("Add todo"), this);
-    QAction *addJournal = new QAction(tr("Add journal"), this);
-    m_appMenu->clear();
-    m_appMenu->addAction(addEvent);
-    m_appMenu->addAction(addTodo);
-    m_appMenu->addAction(addJournal);
-    connect(addEvent, SIGNAL(triggered()), m_monthPage, SLOT(addNewEvent()));
-    connect(addTodo, SIGNAL(triggered()), m_monthPage, SLOT(addNewTodo()));
-    connect(addJournal, SIGNAL(triggered()), m_monthPage, SLOT(addNewJournal()));
-#endif // Q_WS_X11
+    m_switchViewAction->setText("&Open Day");
 }
 
 void CalendarDemo::activateDayPage()
 {
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+    menuBar()->setVisible(true);
+#endif
     m_dayPage->refresh();
     m_stackedWidget->setCurrentWidget(m_dayPage);
-
-#ifdef Q_WS_X11
-    QAction *addEvent = new QAction(tr("Add event"), this);
-    QAction *addTodo = new QAction(tr("Add todo"), this);
-    QAction *addJournal = new QAction(tr("Add journal"), this);
-    m_appMenu->clear();
-    m_appMenu->addAction(addEvent);
-    m_appMenu->addAction(addTodo);
-    m_appMenu->addAction(addJournal);
-    connect(addEvent, SIGNAL(triggered()), m_dayPage, SLOT(addNewEvent()));
-    connect(addTodo, SIGNAL(triggered()), m_dayPage, SLOT(addNewTodo()));
-    connect(addJournal, SIGNAL(triggered()), m_dayPage, SLOT(addNewJournal()));
-#endif // Q_WS_X11
+    m_switchViewAction->setText("View &Month");
 }
 
-void CalendarDemo::activateNewDayPage(QOrganizerItemManager *manager, QDate date)
+void CalendarDemo::activateEditPage(const QOrganizerItem &item)
 {
-    m_dayPage->dayChanged(manager, date);
-    m_dayPage->refresh();
-    m_stackedWidget->setCurrentWidget(m_dayPage);
-
-#ifdef Q_WS_X11
-    QAction *addEvent = new QAction(tr("Add event"), this);
-    QAction *addTodo = new QAction(tr("Add todo"), this);
-    QAction *addJournal = new QAction(tr("Add journal"), this);
-    m_appMenu->clear();
-    m_appMenu->addAction(addEvent);
-    m_appMenu->addAction(addTodo);
-    m_appMenu->addAction(addJournal);
-    connect(addEvent, SIGNAL(triggered()), m_dayPage, SLOT(addNewEvent()));
-    connect(addTodo, SIGNAL(triggered()), m_dayPage, SLOT(addNewTodo()));
-    connect(addJournal, SIGNAL(triggered()), m_dayPage, SLOT(addNewJournal()));
-#endif // Q_WS_X11
-}
-
-void CalendarDemo::activateEditPage(QOrganizerItemManager *manager, const QOrganizerItem &item)
-{
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+    menuBar()->setVisible(false);
+#endif
     if (item.type() == QOrganizerItemType::TypeEvent) {
-        if(item.isEmpty()) {
-            // Query user regarding how many entires to be created.
-            int numOfEntriesToBeCreated = QInputDialog::getInt(this, "QInputDialog::getInteger()",
-                                                               "Number of entries:", 1, 1, 10, 1);
-            if(numOfEntriesToBeCreated > 1) {
-                emit multipleEntriesToBeCreated(numOfEntriesToBeCreated);
-            }
-        }
         QOrganizerEvent event = static_cast<QOrganizerEvent>(item);
-        m_dayPage->dayChanged(manager, event.startDateTime().date()); // edit always comes back to day page
-        m_eventEditPage->eventChanged(manager, event);
+        m_dayPage->dayChanged(event.startDateTime().date()); // edit always comes back to day page
+        m_eventEditPage->eventChanged(m_manager, event);
         m_stackedWidget->setCurrentWidget(m_eventEditPage);
     }
     else if (item.type() == QOrganizerItemType::TypeTodo) {
         QOrganizerTodo todo = static_cast<QOrganizerTodo>(item);
-        m_dayPage->dayChanged(manager, todo.startDateTime().date()); // edit always comes back to day page
-        m_todoEditPage->todoChanged(manager, todo);
+        m_dayPage->dayChanged(todo.startDateTime().date()); // edit always comes back to day page
+        m_todoEditPage->todoChanged(m_manager, todo);
         m_stackedWidget->setCurrentWidget(m_todoEditPage);
     }
     else if (item.type() == QOrganizerItemType::TypeJournal) {
         QOrganizerJournal journal = static_cast<QOrganizerJournal>(item);
-        m_dayPage->dayChanged(manager, journal.dateTime().date()); // edit always comes back to day page
-        m_journalEditPage->journalChanged(manager, journal);
+        m_dayPage->dayChanged(journal.dateTime().date()); // edit always comes back to day page
+        m_journalEditPage->journalChanged(m_manager, journal);
         m_stackedWidget->setCurrentWidget(m_journalEditPage);
     }
     else if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
         QOrganizerEventOccurrence eventOccurrence = static_cast<QOrganizerEventOccurrence>(item);
-        m_dayPage->dayChanged(manager, eventOccurrence.startDateTime().date()); // edit always comes back to day page
-        m_eventOccurrenceEditPage->eventOccurrenceChanged(manager, eventOccurrence);
+        m_dayPage->dayChanged(eventOccurrence.startDateTime().date()); // edit always comes back to day page
+        m_eventOccurrenceEditPage->eventOccurrenceChanged(m_manager, eventOccurrence);
         m_stackedWidget->setCurrentWidget(m_eventOccurrenceEditPage);
     }
     // TODO:
     //else if (item.type() == QOrganizerItemType::TypeNote)
+}
 
-#ifdef Q_WS_X11
-    m_appMenu->clear();
-#endif // Q_WS_X11
+void CalendarDemo::addNewEvent()
+{
+    QOrganizerEvent newEvent;
+    QDateTime time(m_currentDate);
+    newEvent.setStartDateTime(time);
+    time = time.addSecs(60*30); // add 30 minutes to end time
+    newEvent.setEndDateTime(time);
+    activateEditPage(newEvent);
+}
+
+void CalendarDemo::addNewTodo()
+{
+    QOrganizerTodo newTodo;
+    QDateTime time(m_currentDate);
+    newTodo.setStartDateTime(time);
+    time = time.addSecs(60*30); // add 30 minutes to due time
+    newTodo.setDueDateTime(time);
+    activateEditPage(newTodo);
+}
+
+void CalendarDemo::addNewJournal()
+{
+    QOrganizerJournal newJournal;
+    QDateTime time(m_currentDate);
+    newJournal.setDateTime(time);
+    activateEditPage(newJournal);
+}
+
+void CalendarDemo::switchView()
+{
+    if (m_stackedWidget->currentWidget() == m_dayPage) {
+        activateMonthPage();
+    } else if (m_stackedWidget->currentWidget() == m_monthPage) {
+        activateDayPage();
+    }
+}
+
+void CalendarDemo::editItem()
+{
+    if (m_stackedWidget->currentWidget() == m_dayPage) {
+        m_dayPage->editItem();
+    } else if (m_stackedWidget->currentWidget() == m_monthPage) {
+        m_monthPage->editItem();
+    }
+}
+
+void CalendarDemo::removeItem()
+{
+    if (m_stackedWidget->currentWidget() == m_dayPage) {
+        m_dayPage->removeItem();
+    } else if (m_stackedWidget->currentWidget() == m_monthPage) {
+        m_monthPage->removeItem();
+    }
+}
+
+void CalendarDemo::addEvents()
+{
+    QList<QOrganizerItem> items;
+    
+    // Create a large number of events asynchronously
+    for(int index=0 ; index <  100 ; index++) {
+        QOrganizerItem item;
+        item.setType(QOrganizerItemType::TypeEvent);
+        item.setDescription(QString("Event %1").arg(index));
+        item.setDisplayLabel(QString("Subject for event %1").arg(index + 1));
+        
+        // Set the start date to index to add events to next 5000 days
+        QOrganizerEventTimeRange timeRange;
+        timeRange.setStartDateTime(QDateTime::currentDateTime().addDays(index));
+        item.saveDetail(&timeRange);
+        
+        items.append(item);
+    }
+    
+    // Now create a save request and execute it
+    m_saveReq.setItems(items);
+    m_saveReq.setManager(m_manager);
+    m_saveReq.start();
+}
+
+void CalendarDemo::importItems()
+{
+#ifdef BUILD_VERSIT
+    if (!m_manager) {
+        qWarning() << "No manager selected; cannot import";
+        return;
+    }
+    QString fileName = QFileDialog::getOpenFileName(this,
+       tr("Select iCalendar file"), ".", tr("iCalendar files (*.ics)"));
+    QFile file(fileName);
+    file.open(QIODevice::ReadOnly);
+    if (file.isReadable()) {
+        QVersitReader reader;
+        reader.setDevice(&file);
+        if (reader.startReading() && reader.waitForFinished()) {
+            QVersitOrganizerImporter importer;
+            foreach (const QVersitDocument& document, reader.results()) {
+                if (importer.importDocument(document)) {
+                    QList<QOrganizerItem> items = importer.items();
+                    QMap<int, QOrganizerItemManager::Error> errorMap;
+                    QList<QOrganizerItem>::iterator it = items.begin();
+                    while (it != items.end()) {
+                        *it = m_manager->compatibleItem(*it);
+                        it++;
+                    }
+                    m_manager->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap);
+                }
+            }
+            m_monthPage->refresh();
+            m_dayPage->refresh();
+        }
+    }
+#endif
+}
+
+void CalendarDemo::exportItems()
+{
+#ifdef BUILD_VERSIT
+    if (!m_manager) {
+        qWarning() << "No manager selected; cannot export";
+        return;
+    }
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save iCalendar"),
+                                                    "./calendar.ics",
+                                                    tr("iCalendar files (*.ics)"));
+    QFile file(fileName);
+    file.open(QIODevice::WriteOnly);
+    if (file.isWritable()) {
+        QList<QOrganizerItem> items(m_manager->items());
+        QVersitOrganizerExporter exporter;
+        if(exporter.exportItems(items, QVersitDocument::ICalendar20Type)) {
+            QVersitDocument document = exporter.document();
+            QVersitWriter writer;
+            writer.setDevice(&file);
+            writer.startWriting(QList<QVersitDocument>() << document);
+            writer.waitForFinished();
+        }
+    }
+#endif
+}
+
+void CalendarDemo::deleteAllEntries()
+{
+    // Fetch all the entries
+    QList<QOrganizerItemLocalId> ids = m_manager->itemIds();
+    
+    if(ids.count()) {
+        m_remReq.setItemIds(ids);
+        m_remReq.setManager(m_manager);
+        m_remReq.start();
+    }
+}
+
+void CalendarDemo::saveReqStateChanged(QOrganizerItemAbstractRequest::State reqState)
+{
+    if(QOrganizerItemAbstractRequest::ActiveState == reqState) {
+        // Request started. Show a progress or wait dialog
+        m_progressDlg = new QProgressDialog("Saving events..", "Cancel", 100, 100, this);
+        connect(m_progressDlg, SIGNAL(canceled()), &m_saveReq, SLOT(cancel()));
+        m_progressDlg->show();
+    } else if (QOrganizerItemAbstractRequest::FinishedState == reqState ||
+               QOrganizerItemAbstractRequest::CanceledState == reqState) {
+        // Request finished or cancelled. Stop showing the progress dialog and refresh
+        m_progressDlg->hide();
+        m_monthPage->refresh();
+        m_dayPage->refresh();
+    }
+}
+
+void CalendarDemo::removeReqStateChanged(QOrganizerItemAbstractRequest::State reqState)
+{
+    if(QOrganizerItemAbstractRequest::ActiveState == reqState) {
+        // Request started. Show a progress or wait dialog
+        m_progressDlg = new QProgressDialog("Removing events..", "Cancel", 100, 100, this);
+        connect(m_progressDlg, SIGNAL(canceled()), &m_remReq, SLOT(cancel()));
+        m_progressDlg->show();
+    } else if (QOrganizerItemAbstractRequest::FinishedState == reqState ||
+               QOrganizerItemAbstractRequest::CanceledState == reqState) {
+        // Request finished or cancelled. Stop showing the progress dialog and refresh
+        m_progressDlg->hide();
+        m_monthPage->refresh();
+        m_dayPage->refresh();
+    }
+}
+
+void CalendarDemo::changeManager(QOrganizerItemManager *manager)
+{
+    m_manager = manager;
+}
+
+void CalendarDemo::updateSelectedDay(const QDate& date)
+{
+    m_dayPage->dayChanged(date);
+    m_currentDate = date;
 }
