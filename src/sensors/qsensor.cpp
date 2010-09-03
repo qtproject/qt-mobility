@@ -71,6 +71,61 @@ static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>
 // =====================================================================
 
 /*!
+    \class qoutputrange
+    \brief The qoutputrange class holds the specifics of an output range.
+
+    The class is defined as a simple struct.
+
+    \code
+    struct qoutputrange
+    {
+        qreal maximum;
+        qreal minimum;
+        qreal accuracy;
+    };
+    \endcode
+
+    Each output range specifies a minimum and maximum value as well as an accuracy value.
+    The accuracy value represents the resolution of the sensor. It is the smallest change
+    the sensor can detect and is expressed using the same units as the minimum and maximum.
+
+    Sensors must often trade off range for accuracy. To allow the user to determine which of
+    these are more important the sensor may offer several output ranges. One output
+    range may have reduced minimum and maximum values and increased sensitivity. Another output
+    range may have higher minimum and maximum values with reduced sensitivity. Note that higher
+    sensitivities will be represented by smaller accuracy values.
+
+    An example of this tradeoff can be seen by examining the LIS302DL accelerometer. It has only
+    256 possible values to report with. These values are scaled so that they can represent either
+    -2G to +2G (with an accuracy value of 0.015G) or -8G to +8G (with an accuracy value of 0.06G).
+
+    \sa QSensor::outputRanges
+*/
+
+/*!
+    \variable qoutputrange::maximum
+
+    This is the maximum value for this output range.
+    The units are defined by the sensor.
+*/
+
+/*!
+    \variable qoutputrange::minimum
+
+    This is the minimum value for this output range.
+    The units are defined by the sensor.
+*/
+
+/*!
+    \variable qoutputrange::accuracy
+
+    The accuracy value represents the resolution of the sensor. It is the smallest change
+    the sensor can detect and is expressed using the same units as the minimum and maximum.
+*/
+
+// =====================================================================
+
+/*!
     \class QSensor
     \ingroup sensors_main
     \inmodule QtSensors
@@ -442,7 +497,13 @@ void QSensor::removeFilter(QSensorFilter *filter)
     A sensor may have more than one output range. Typically this is done
     to give a greater measurement range at the cost of lowering accuracy.
 
-    \sa QSensor::outputRange
+    The qoutputrangelist type exists for the benefit of the meta-type system.
+    It is just a typedef.
+    \code
+    typedef qoutputrangelist QList<qoutputrange>;
+    \endcode
+
+    \sa QSensor::outputRange, qoutputrange
 */
 
 qoutputrangelist QSensor::outputRanges() const

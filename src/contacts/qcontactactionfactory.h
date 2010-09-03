@@ -75,7 +75,11 @@ public:
 
     virtual bool supportsContact(const QContact& contact, const QContactActionDescriptor& which) const; // virtual but not pure virtual; default impl. calls supportedTargets.isEmpty().
 
+#ifdef Q_QDOC
+    static const QLatin1Constant InterfaceName;
+#else
     Q_DECLARE_LATIN1_CONSTANT(InterfaceName, "com.nokia.qt.mobility.contacts.action");
+#endif
 
 protected:
     QContactActionDescriptor createDescriptor(const QString& actionName, const QString& serviceName, const QString& actionIdentifier, int implementationVersion) const;

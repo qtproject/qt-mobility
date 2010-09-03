@@ -87,6 +87,10 @@ QContactActionFactory::~QContactActionFactory()
   The meta-data may vary depending on the \a targets of the action and any \a parameters to invocation which the client may specify.
  */
 
+/*!
+  \variable QContactActionFactory::InterfaceName
+  The name of the interface that action plugins should implement.
+ */
 Q_DEFINE_LATIN1_CONSTANT(QContactActionFactory::InterfaceName, "com.nokia.qt.mobility.contacts.action");
 
 bool QContactActionFactory::supportsContact(const QContact& contact, const QContactActionDescriptor& which) const
@@ -97,7 +101,13 @@ bool QContactActionFactory::supportsContact(const QContact& contact, const QCont
 
 QContactActionDescriptor QContactActionFactory::createDescriptor(const QString& actionName, const QString& serviceName, const QString& actionIdentifier, int implementationVersion) const
 {
-    return QContactActionDescriptor(actionName, serviceName, actionIdentifier, implementationVersion, this);
+    QContactActionDescriptor retn;
+    retn.d->m_actionName = actionName;
+    retn.d->m_serviceName = serviceName;
+    retn.d->m_identifier = actionIdentifier;
+    retn.d->m_implementationVersion = implementationVersion;
+    retn.d->m_factory = this;
+    return retn;
 }
 
 #include "moc_qcontactactionfactory.cpp"
