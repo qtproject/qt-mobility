@@ -31,6 +31,10 @@ LandmarkBrowser::LandmarkBrowser(QWidget *parent, Qt::WindowFlags flags)
     QObject::connect(landmarkImport, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
                 this,SLOT(fetchHandler(QLandmarkAbstractRequest::State)));
 
+    landmarkExport = new QLandmarkExportRequest(manager, this);
+    QObject::connect(landmarkExport, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
+                this,SLOT(fetchHandler(QLandmarkAbstractRequest::State)));
+
     landmarkRemove = new QLandmarkRemoveRequest(manager, this);
     QObject::connect(landmarkRemove, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
                 this,SLOT(fetchHandler(QLandmarkAbstractRequest::State)));
@@ -53,25 +57,67 @@ LandmarkBrowser::LandmarkBrowser(QWidget *parent, Qt::WindowFlags flags)
     landmarkFetch->setOffset(currentOffset);
     landmarkFetch->start();
     progress->show();
+
+    #ifdef Q_OS_SYMBIAN
+        gpxRadioButton->setEnabled(false);
+        gpxRadioButton->setVisible(false);
+    #endif
 }
 
 LandmarkBrowser::~LandmarkBrowser()
 {
     delete landmarkFetch;
+    landmarkFetch =0;
     delete landmarkImport;
+    landmarkImport =0;
+    delete landmarkExport;
+    landmarkExport =0;
     delete landmarkRemove;
+    landmarkRemove =0;
     delete landmarkSave;
+    landmarkSave =0;
     delete progress;
+    progress =0;
     delete manager;
+    manager=0;
 }
 
 void LandmarkBrowser::on_importLandmarks_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Import File"),".",tr("Landmark files (*.gpx *.lmx)"));
+    QString fileFilterString;
+    #ifdef Q_OS_SYMBIAN
+        fileFilterString = tr("Landmark files (*.lmx *)");
+    #else
+        fileFilterString = tr("Landmark files (*.gpx *.lmx *)");
+    #endif
+
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Import File"),".",fileFilterString);
     if (!fileName.isEmpty()) {
         landmarkImport->setFileName(fileName);
         landmarkImport->start();
         progress->setWindowTitle(tr("Importing Landmarks"));
+        progress->show();
+    }
+}
+
+void LandmarkBrowser::on_exportLandmarks_clicked()
+{
+    QString fileFilterString;
+    #ifdef Q_OS_SYMBIAN
+        fileFilterString = tr("Landmark files (*.lmx *)");
+    #else
+        fileFilterString = tr("Landmark files (*.gpx *.lmx *)");
+    #endif
+
+    QString fileName = QFileDialog::getSaveFileName(this,tr("Export File"),".",fileFilterString);
+    if (!fileName.isEmpty()) {
+        landmarkExport->setFileName(fileName);
+        if (lmxRadioButton->isChecked())
+            landmarkExport->setFormat(QLandmarkManager::Lmx);
+        else
+            landmarkExport->setFormat(QLandmarkManager::Gpx);
+        landmarkExport->start();
+        progress->setWindowTitle(tr("Exporting Landmarks"));
         progress->show();
     }
 }
@@ -148,6 +194,19 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
                     }
                 break;
             }
+            case QLandmarkAbstractRequest::ExportRequest : {
+                if (request->error() == QLandmarkManager::NoError) {
+                    progress->hide();                   
+                    QMessageBox::information(this,"Finished", "Export Successful", QMessageBox::Ok, QMessageBox::NoButton);
+
+                } else if (request->error() == QLandmarkManager::CancelError) {
+                    // do nothing
+                } else {
+                    QMessageBox::warning(this,"Warning", "Export Failed", QMessageBox::Ok, QMessageBox::NoButton);
+                    progress->hide();
+                }
+                break;
+            }
             case QLandmarkAbstractRequest::LandmarkFetchRequest: {
                     if (landmarkFetch->error() == QLandmarkManager::NoError) {
                         if (currentOffset < limit)
@@ -185,7 +244,10 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
 
 void LandmarkBrowser::cancel()
 {
-    landmarkImport->cancel();
+    if (landmarkImport->isActive())
+        landmarkImport->cancel();
+    else if (landmarkExport->isActive())
+        landmarkExport->cancel();
 }
 
 void LandmarkBrowser::updateRowLabels()
