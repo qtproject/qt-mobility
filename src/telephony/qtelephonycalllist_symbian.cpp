@@ -342,5 +342,10 @@ TInt QTelephonyCallListPrivate::findCallInfo(QString aCallName)
     }
     return -1 ; // not found
 }
-    
+
+int QTelephonyCallListPrivate::activeCallCount() const
+{
+    return callInfoList.count();
+}
+
 QTM_END_NAMESPACE
