@@ -76,8 +76,8 @@ public:
     QGeoBoundingArea* viewport() const;
     QList<QGeoPlace> places() const;
 
-    int resultsCount() const;
-    int resultsOffset() const;
+    int limit() const;
+    int offset() const;
 
     virtual void abort();
 
@@ -95,8 +95,8 @@ protected:
     void addPlace(const QGeoPlace &place);
     void setPlaces(const QList<QGeoPlace> &places);
 
-    void setResultsCount(int resultsCount);
-    void setResultsOffset(int resultsOffset);
+    void setLimit(int limit);
+    void setOffset(int offset);
 
 private:
     QGeoSearchReplyPrivate *d_ptr;

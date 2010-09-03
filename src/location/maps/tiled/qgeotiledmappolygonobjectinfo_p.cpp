@@ -65,6 +65,15 @@ void QGeoTiledMapPolygonObjectInfo::objectUpdate()
     points = createPolygon(path, tiledMapData, true);
     //makepoly(points, path, mapData, true);
 
+    if (points.size() < 3) {
+        if (polygonItem) {
+            delete polygonItem;
+            polygonItem = 0;
+            graphicsItem = 0;
+        }
+        return;
+    }
+
     if (!polygonItem)
         polygonItem = new QGraphicsPolygonItem();
 

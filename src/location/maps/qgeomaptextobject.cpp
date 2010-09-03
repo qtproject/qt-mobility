@@ -44,9 +44,35 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QGeoMapTextObject
+    \brief The QGeoMapTextObject class is a QGeoMapObject used to draw
+    text on a map.
+
+    \inmodule QtLocation
+
+    \ingroup maps-mapping-objects
+
+    The text is drawn at a given coordinate on the map.
+
+    The text object is drawn such that the rendered size of the text object is
+    independent of the zoom level of the map.
+
+    \note Anchor and/or alignment options didn't make it into the beta release
+    but will be present in the final 1.1 release.
+*/
+
+/*!
+    Constructs a new text object with the parent \a parent.
+*/
 QGeoMapTextObject::QGeoMapTextObject(QGeoMapObject *parent)
         : QGeoMapObject(new QGeoMapTextObjectPrivate(this, parent)) {}
 
+/*!
+    Constructs a new text object which will display the text \a text with font
+    \a font at the coordinate \a coordinate on the map, with the parent \a
+    parent.
+*/
 QGeoMapTextObject::QGeoMapTextObject(const QGeoCoordinate &coordinate,
                                      const QString &text,
                                      const QFont &font,
@@ -60,10 +86,27 @@ QGeoMapTextObject::QGeoMapTextObject(const QGeoCoordinate &coordinate,
     d->font = font;
 }
 
+/*!
+    Destroys this text object.
+*/
 QGeoMapTextObject::~QGeoMapTextObject()
 {
 }
 
+/*!
+    \property QGeoMapTextObject::coordinate
+    \brief This property holds the coordinate at which this text object
+    will be rendered.
+
+    The default value of this property is an invalid coordinate. While the
+    value of this property is invalid the text object will not be displayed.
+
+    The text will be drawn such that the upper left corner of the bounding box
+    of the text will appear at the position of the coordinate property.
+
+    \note Anchor and/or alignment options didn't make it into the beta release
+    but will be present in the final 1.1 release.
+*/
 QGeoCoordinate QGeoMapTextObject::coordinate() const
 {
     Q_D(const QGeoMapTextObject);
@@ -80,6 +123,13 @@ void QGeoMapTextObject::setCoordinate(const QGeoCoordinate &coordinate)
     }
 }
 
+/*!
+    \property QGeoMapTextObject::text
+    \brief This property holds the text that will be displayed by this text
+    object.
+
+    The default value of this property is an empty string.
+*/
 QString QGeoMapTextObject::text() const
 {
     Q_D(const QGeoMapTextObject);
@@ -96,6 +146,17 @@ void QGeoMapTextObject::setText(const QString &text)
     }
 }
 
+/*!
+    \property QGeoMapTextObject::font
+    \brief This property holds the font that will be used to render the text
+    for this text object.
+
+    The default value of this property is the application's default font.
+
+    It is not necessary to account for the zoom level of the map, since text
+    objects are scaled such that they appear to be independent of the zoom
+    level.
+*/
 QFont QGeoMapTextObject::font() const
 {
     Q_D(const QGeoMapTextObject);
@@ -112,6 +173,16 @@ void QGeoMapTextObject::setFont(const QFont &font)
     }
 }
 
+/*!
+    \property QGeoMapTextObject::pen
+    \brief This property holds the pen that will be used to draw this object.
+
+    The pen is used to draw an outline around the text. The text itself is
+    filled using the QGeoMapTextObject::brush property.
+
+    The pen will be treated as a cosmetic pen, which means that the width
+    of the pen will be independent of the zoom level of the map.
+*/
 QPen QGeoMapTextObject::pen() const
 {
     Q_D(const QGeoMapTextObject);
@@ -128,6 +199,15 @@ void QGeoMapTextObject::setPen(const QPen &pen)
     }
 }
 
+/*!
+    \property QGeoMapTextObject::brush
+    \brief This property holds the brush that will be used to draw this object.
+
+    The brush is used to fill in the glyphs of the text.
+
+    The outline around the perimeter of the glyphs is drawn using the
+    QGeoMapTextObject::pen property.
+*/
 QBrush QGeoMapTextObject::brush() const
 {
     Q_D(const QGeoMapTextObject);

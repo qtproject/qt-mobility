@@ -93,13 +93,11 @@ TelepathyListener::~TelepathyListener()
 
 void TelepathyListener::newChannelsSlot(const ChannelsArray& channelsarray)
 {
-    qDebug() << "TelepathyListener::newChannelsSlot";
     emit NewChannels(channelsarray);
 }
 
 void TelepathyListener::statusChangedSlot(const QString& status)
 {
-    qDebug() << "TelepathyListener::statusChangedSlot";
     emit StatusChangedSlot(status);
 }
 

@@ -203,6 +203,7 @@ QLandmarkAbstractRequest::~QLandmarkAbstractRequest()
 */
 QLandmarkAbstractRequest::RequestType QLandmarkAbstractRequest::type() const
 {
+    QMutexLocker ml(&d_ptr->mutex);
     return d_ptr->type;
 }
 
@@ -211,6 +212,7 @@ QLandmarkAbstractRequest::RequestType QLandmarkAbstractRequest::type() const
 */
 QLandmarkAbstractRequest::State QLandmarkAbstractRequest::state()
 {
+    QMutexLocker ml(&d_ptr->mutex);
     return d_ptr->state;
 }
 
