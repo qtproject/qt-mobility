@@ -416,7 +416,7 @@ namespace DBus
             lst.waitForFinished();
             //Type 0=Audio, 1=Video
             foreach(const DBus::Interfaces::MediaStreamInfo& info, lst.value()){
-                if(info.type == 0 && ret == QTelephony::Other)
+                if(info.type == 0)
                     ret |= QTelephony::Voice;
                 if(info.type == 1)
                     ret |= QTelephony::Video;

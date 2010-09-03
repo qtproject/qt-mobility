@@ -118,13 +118,13 @@ Rectangle {
           case 2:
                 typestr = "Data";
                 break;
-          case 3:
+          case 4:
                 typestr = "Video";
                 break;
-          case 4:
+          case 8:
                 typestr = "Voice";
                 break;
-          case 5:
+          case 16:
                 typestr = "Other";
                 break;
           default:
