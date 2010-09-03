@@ -51,6 +51,8 @@
 #include "qdeclarativepositionsource_p.h"
 #include "qdeclarativelandmarkmodel_p.h"
 #include "qdeclarativelandmarkcategorymodel_p.h"
+#include "qlandmarkid.h"
+#include "qlandmarkcategoryid.h"
 #include "qdeclarativelist.h"
 #include <QDeclarativeListProperty>
 #include <QString>
@@ -135,19 +137,20 @@ public slots:
 
 private slots:
 
-    void declarativeLandmarkList();
-    void databaseChanges();
-    void basicFetch();
-    void basicFetch_data();
-    void updateCancel();
-    void robustness();
-    void robustness_data();
     void construction();
     void construction_data();
     void defaultProperties();
     void basicSignals();
     void update();
     void update_data();
+    void basicFetch();
+    void basicFetch_data();
+    void databaseChanges();
+    void declarativeLandmarkList();
+    void declarativeCategoryList();
+    void updateCancel();
+    void robustness();
+    void robustness_data();
     void categoriesOfLandmarkFetch();
     void categoriesOfLandmarkFetch_data();
 
@@ -156,8 +159,12 @@ private:
     void createDb();
     void deleteDb();
     void populateTypicalDb();
-    QString addLandmarkToDb();
-    QString addCategoryToDb();
+    QLandmarkId addLandmarkToDb();
+    void removeLandmarkFromDb(QLandmarkId);
+    QLandmarkCategoryId addCategoryToDb();
+    void removeCategoryFromDb(QLandmarkCategoryId categoryId);
+    bool modelContainsItem(QDeclarativeLandmarkCategoryModel* model, QLandmarkCategoryId categoryId);
+    bool modelContainsItem(QDeclarativeLandmarkModel* model, QLandmarkId landmarkId);
 
 private:
     // Engine is needed for instantiating declarative components
@@ -565,9 +572,10 @@ void tst_QDeclarativeLandmark::categoriesOfLandmarkFetch()
     // Upon such, set the item as the 'landmark' in the category model, and verify that
     // model gives the categories the landmark belongs to.
     QDeclarativeLandmark* landmark(0);
-    for (int i = 0; i < landmarkModel->landmarkList().count(); i++) {
-        if (landmarkModel->landmarkList().at(i)->name() == landmarkName) {
-            landmark = landmarkModel->landmarkList().at(i);
+    QDeclarativeListProperty<QDeclarativeLandmark> declarativeList = landmarkModel->landmarks();
+    for (int i = 0; i < landmarkModel->count(); i++) {
+        if (QDeclarativeLandmarkModel::landmarks_at(&declarativeList, i)->name() == landmarkName) {
+            landmark = QDeclarativeLandmarkModel::landmarks_at(&declarativeList, i);
             break;
         }
     }
@@ -626,30 +634,77 @@ void tst_QDeclarativeLandmark::update_data()
 
 void tst_QDeclarativeLandmark::databaseChanges()
 {
+    // Test adding and removing of categories
     QDeclarativeLandmarkCategoryModel* categoryModel = static_cast<QDeclarativeLandmarkCategoryModel*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:true;}"));
     categoryModel->setDbFileName(DB_FILENAME);
-    QSignalSpy modelChangedSpy2(categoryModel, SIGNAL(modelChanged()));
-    QSignalSpy countChangedSpy2(categoryModel, SIGNAL(countChanged()));
-
-    QString categoryName = addCategoryToDb();
-    QTRY_COMPARE(modelChangedSpy2.count(), 1);
-    QTRY_COMPARE(countChangedSpy2.count(), 1);
+    QSignalSpy categoryModelChangedSpy(categoryModel, SIGNAL(modelChanged()));
+    QSignalSpy categoryCountChangedSpy(categoryModel, SIGNAL(countChanged()));
+    // Add first category
+    QLandmarkCategoryId categoryId1 = addCategoryToDb();
+    QTRY_COMPARE(categoryModelChangedSpy.count(), 1);
+    QTRY_COMPARE(categoryCountChangedSpy.count(), 1);
     QTRY_COMPARE(categoryModel->property("count").toInt(), 1);
-    // QTRY_COMPARE(categoryModel->categories().at(0)->name(), categoryName); // TODO!
+    QVERIFY(modelContainsItem(categoryModel, categoryId1));
 
+    // Add second category
+    categoryModelChangedSpy.clear();
+    categoryCountChangedSpy.clear();
+    QLandmarkCategoryId categoryId2 = addCategoryToDb();
+    QTRY_COMPARE(categoryModelChangedSpy.count(), 1);
+    QTRY_COMPARE(categoryCountChangedSpy.count(), 1);
+    QTRY_COMPARE(categoryModel->property("count").toInt(), 2);
+    QVERIFY(modelContainsItem(categoryModel, categoryId1));
+    QVERIFY(modelContainsItem(categoryModel, categoryId2));
+    // Remove first category
+    categoryModelChangedSpy.clear();
+    categoryCountChangedSpy.clear();
+    removeCategoryFromDb(categoryId1);
+    QTRY_COMPARE(categoryModelChangedSpy.count(), 1);
+    QTRY_COMPARE(categoryCountChangedSpy.count(), 1);
+    QTRY_COMPARE(categoryModel->property("count").toInt(), 1);
+    QVERIFY(!modelContainsItem(categoryModel, categoryId1));
+    QVERIFY(modelContainsItem(categoryModel, categoryId2));
+    // Clear the remaining category
+    QDeclarativeListProperty<QDeclarativeLandmarkCategory> declarativeCategoryList = categoryModel->categories();
+    QDeclarativeLandmarkCategoryModel::categories_clear(&declarativeCategoryList);
+    QVERIFY(!modelContainsItem(categoryModel, categoryId2));
     delete categoryModel;
 
+    // Test adding and removing of landmarks
     QDeclarativeLandmarkModel* landmarkModel = static_cast<QDeclarativeLandmarkModel*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:true;}"));
     landmarkModel->setDbFileName(DB_FILENAME);
 
-    QSignalSpy modelChangedSpy(landmarkModel, SIGNAL(modelChanged()));
-    QSignalSpy countChangedSpy(landmarkModel, SIGNAL(countChanged()));
-    QString landmarkName = addLandmarkToDb();
-    // QTRY_COMPARE(modelChangedSpy.count(), 1); TODO enable when landmark is corrected, for some reason 2 signals are received
-    QTRY_VERIFY(!modelChangedSpy.empty());
-    QTRY_COMPARE(countChangedSpy.count(), 1);
+    // Add first landmark to database
+    QSignalSpy landmarkModelChangedSpy(landmarkModel, SIGNAL(modelChanged()));
+    QSignalSpy landmarkCountChangedSpy(landmarkModel, SIGNAL(countChanged()));
+    QLandmarkId landmarkId1 = addLandmarkToDb();
+    QTRY_COMPARE(landmarkModelChangedSpy.count(), 1);
+    QTRY_COMPARE(landmarkCountChangedSpy.count(), 1);
     QTRY_COMPARE(landmarkModel->property("count").toInt(), 1);
-    QTRY_COMPARE(landmarkModel->landmarkList().at(0)->name(), landmarkName);
+    QVERIFY(modelContainsItem(landmarkModel, landmarkId1));
+    // Add second landmark to database
+    landmarkModelChangedSpy.clear();
+    landmarkCountChangedSpy.clear();
+    QLandmarkId landmarkId2 = addLandmarkToDb();
+    QTRY_COMPARE(landmarkModelChangedSpy.count(), 1);
+    QTRY_COMPARE(landmarkCountChangedSpy.count(), 1);
+    QTRY_COMPARE(landmarkModel->property("count").toInt(), 2);
+    QVERIFY(modelContainsItem(landmarkModel, landmarkId1));
+    QVERIFY(modelContainsItem(landmarkModel, landmarkId2));
+    // Remove first landmark from the database
+    landmarkModelChangedSpy.clear();
+    landmarkCountChangedSpy.clear();
+    removeLandmarkFromDb(landmarkId1);
+    QTRY_COMPARE(landmarkModelChangedSpy.count(), 1);
+    QTRY_COMPARE(landmarkCountChangedSpy.count(), 1);
+    QTRY_COMPARE(landmarkModel->property("count").toInt(), 1);
+    QTRY_COMPARE(landmarkModel->landmarkList().at(0).name(), m_manager->landmark(landmarkId2).name());
+    QVERIFY(!modelContainsItem(landmarkModel, landmarkId1));
+    QVERIFY(modelContainsItem(landmarkModel, landmarkId2));
+    // Clear the remaining landmark
+    QDeclarativeListProperty<QDeclarativeLandmark> declarativeLandmarkList = landmarkModel->landmarks();
+    QDeclarativeLandmarkModel::landmarks_clear(&declarativeLandmarkList);
+    QVERIFY(!modelContainsItem(landmarkModel, landmarkId2));
     delete landmarkModel;
 }
 
@@ -661,6 +716,9 @@ void tst_QDeclarativeLandmark::robustness()
     QFETCH(QString, componentString);
     QObject* source_obj = createComponent(componentString);
 
+    QDeclarativeLandmarkAbstractModel* model = static_cast<QDeclarativeLandmarkAbstractModel*>(source_obj);
+    model->setDbFileName(DB_FILENAME);
+
     // Bomb update() calls with empty database, should not crash
     for (int interval = 0; interval < 30; interval += 5) {
         source_obj->metaObject()->invokeMethod(source_obj, "update");
@@ -668,8 +726,6 @@ void tst_QDeclarativeLandmark::robustness()
     }
     // Bomb update() calls with prepopulated database, should not crash
     populateTypicalDb();
-    QDeclarativeLandmarkAbstractModel* model = static_cast<QDeclarativeLandmarkAbstractModel*>(source_obj);
-    model->setDbFileName(DB_FILENAME);
     QTest::qWait(100);
 
     for (int interval = 0; interval < 30; interval += 5) {
@@ -714,37 +770,94 @@ void tst_QDeclarativeLandmark::declarativeLandmarkList()
     QTRY_COMPARE(QDeclarativeLandmarkModel::landmarks_count(&declarativeList), model->count());
     // At()
     for (int i = 0; i < model->count(); i++) {
-        QCOMPARE(QDeclarativeLandmarkModel::landmarks_at(&declarativeList, i)->name(), model->landmarkList().at(i)->name());
+        QCOMPARE(QDeclarativeLandmarkModel::landmarks_at(&declarativeList, i)->name(), model->landmarkList().at(i).name());
     }
     // Append() (not supported but should not crash)
-    qDebug("Following warning is OK (testing that unsupported feature does not crash.");
+    qDebug("Following warning is OK (testing that unsupported feature does not crash).");
     QDeclarativeLandmarkModel::landmarks_append(&declarativeList, 0);
     // Clear()
     QDeclarativeLandmarkModel::landmarks_clear(&declarativeList);
     delete model;
 }
 
+// Verify declarative list -property of landmarks works
+void tst_QDeclarativeLandmark::declarativeCategoryList()
+{
+    populateTypicalDb();
+    QObject* source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel { autoUpdate:true;}");
+    QDeclarativeLandmarkCategoryModel* model = static_cast<QDeclarativeLandmarkCategoryModel*>(source_obj);
+    model->setDbFileName(DB_FILENAME);
+    QTRY_VERIFY(model->count() > 0);
+    QDeclarativeListProperty<QDeclarativeLandmarkCategory> declarativeList = model->categories();
+
+    // Count()
+    QTRY_COMPARE(QDeclarativeLandmarkCategoryModel::categories_count(&declarativeList), model->count());
+    // At()
+    for (int i = 0; i < model->count(); i++) {
+        // TODO QCOMPARE(QDeclarativeLandmarkCategoryModel::categories_at(&declarativeList, i)->name(), model->categories().at(i)->name());
+    }
+    // Append() (not supported but should not crash)
+    qDebug("Following warning is OK (testing that unsupported feature does not crash).");
+    QDeclarativeLandmarkCategoryModel::categories_append(&declarativeList, 0);
+    // Clear()
+    QDeclarativeLandmarkCategoryModel::categories_clear(&declarativeList);
+    delete model;
+}
+
 /*
- Adds randomly named landmark/category to database and returns the name
- (for comparison purposes)
+ Adds randomly named landmark/category to database and returns the id.
  */
 
-QString tst_QDeclarativeLandmark::addLandmarkToDb()
+QLandmarkId tst_QDeclarativeLandmark::addLandmarkToDb()
 {
     Q_ASSERT(m_manager);
     QLandmark landmark;
     landmark.setName(QUuid::createUuid().toString());
     m_manager->saveLandmark(&landmark);
-    return landmark.name();
+    return landmark.landmarkId();
 }
 
-QString tst_QDeclarativeLandmark::addCategoryToDb()
+void tst_QDeclarativeLandmark::removeLandmarkFromDb(QLandmarkId landmarkId)
+{
+    Q_ASSERT(m_manager);
+    m_manager->removeLandmark(landmarkId);
+    QTest::qWait(10);
+}
+
+void tst_QDeclarativeLandmark::removeCategoryFromDb(QLandmarkCategoryId categoryId)
+{
+    Q_ASSERT(m_manager);
+    m_manager->removeCategory(categoryId);
+    QTest::qWait(10);
+}
+
+QLandmarkCategoryId tst_QDeclarativeLandmark::addCategoryToDb()
 {
     Q_ASSERT(m_manager);
     QLandmarkCategory category;
     category.setName(QUuid::createUuid().toString());
     m_manager->saveCategory(&category);
-    return category.name();
+    return category.categoryId();
+}
+
+bool tst_QDeclarativeLandmark::modelContainsItem(QDeclarativeLandmarkCategoryModel* model, QLandmarkCategoryId categoryId)
+{
+    QList<QLandmarkCategory> categories = model->categoryList();
+    foreach(const QLandmarkCategory category, categories) {
+        if (category.categoryId() == categoryId)
+            return true;
+    }
+    return false;
+}
+
+bool tst_QDeclarativeLandmark::modelContainsItem(QDeclarativeLandmarkModel* model, QLandmarkId landmarkId)
+{
+    QList<QLandmark> landmarks = model->landmarkList();
+    foreach (const QLandmark landmark, landmarks) {
+        if (landmark.landmarkId() == landmarkId)
+            return true;
+    }
+    return false;
 }
 
 /*
