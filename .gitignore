@@ -85,7 +85,7 @@ examples/sensors/show_rotation/show_rotation
 examples/sensors/show_tap/show_tap
 examples/servicebrowser/servicebrowser
 examples/sfwecho/sfwecho_service/sfwecho_service
-examples/sfwecho/sfwecho_ui/sfwecho_ui
+examples/sfwecho/sfwecho_client/sfwecho_client
 examples/sfw-notes/sfw-notes
 examples/slideshow/slideshow
 examples/sysinfo/qsysinfo
