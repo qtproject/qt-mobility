@@ -111,6 +111,16 @@ private:
     QList<QLandmarkCategory> iCategories;
     QSet<QString> iLocalIds;
 
+    QList<QLandmarkId> iAddedLandmarkIds;
+    QList<QLandmarkId> iChangedLandmarkIds;
+    QList<QLandmarkId> iRemovedLandmarkIds;
+    QList<QLandmarkId> iFetchedLandmarkIds;
+
+    QList<QLandmarkCategoryId> iAddedCategoryIds;
+    QList<QLandmarkCategoryId> iChangedCategoryIds;
+    QList<QLandmarkCategoryId> iRemovedCategoryIds;
+    QList<QLandmarkCategoryId> iFetchedCategoryIds;
+    
     ERROR_MAP iErrorMap;
     TInt iErrorId;
     QLandmarkManager::Error error;
