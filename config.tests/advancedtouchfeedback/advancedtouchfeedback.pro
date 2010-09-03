@@ -1,0 +1,11 @@
+CONFIG -= qt
+TEMPLATE = app
+TARGET =
+DEPENDPATH += .
+INCLUDEPATH += .
+
+# Input
+SOURCES += main.cpp
+
+INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
+LIBS += -ltouchfeedback

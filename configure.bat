@@ -538,6 +538,7 @@ call :compileTest Surfaces_s60 surfaces_s60
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
 call :compileTest callinformation_symbian callinformation_symbian
 call :compileTest IMMERSION immersion
+call :compileTest AdvancedTouchFeedback advancedtouchfeedback 
 goto noTests
 
 :windowsTests
