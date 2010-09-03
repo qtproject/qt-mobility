@@ -729,12 +729,41 @@ QStringList QContactManagerEngine::supportedContactTypes() const
   Returns the engine backend implementation version number
  */
 
-/*! Returns the base schema definitions */
+/*!
+  Returns the schema definitions for version 1 of the API.
+  This function is provided for engine implementors and should not be called by clients.
+  Engine implementors using version 1.1 or later of the Qt Mobility project should use the related
+  function which takes a schema version as a parameter instead.
+ */
 QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::schemaDefinitions()
 {
-    // This implementation provides the base schema.
+    return schemaDefinitions(1); // returns version 1 of the schema.
+}
+
+/*!
+  Returns the schema definitions for the given \a schemaVersion version of the API.
+  Note that as of QtMobility 1.1 the current schema version is 2.
+
+  This function is provided for engine implementors and should not be called by clients.
+
+  Engine implementations using this function to build their supported detail definitions
+  should call this function with the \a schemaVersion number which corresponds to the
+  version of the Qt Mobility project which was used to develop the engine plugin.
+
+  The following schema versions are as follows:
+  \list
+    \o 1 Corresponds to version 1.0 of the Qt Mobility project
+    \o 2 Corresponds to version 1.1 of the Qt Mobility project
+  \endlist
+ */
+QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::schemaDefinitions(int schemaVersion)
+{
+    // This implementation provides the schema.
     // The schema documentation (contactsschema.qdoc)
     // MUST BE KEPT UP TO DATE as definitions are added here.
+
+    if (schemaVersion != 1 && schemaVersion != 2)
+        return QMap<QString, QMap<QString, QContactDetailDefinition> >();
 
     // the map we will eventually return
     QMap<QString, QContactDetailDefinition> retn;
@@ -955,21 +984,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     d.setUnique(false);
     retn.insert(d.name(), d);
 
-    // favorite
-    d.setName(QContactFavorite::DefinitionName);
-    fields.clear();
-    f.setAllowableValues(QVariantList());
-    f.setDataType(QVariant::Bool);
-    fields.insert(QContactFavorite::FieldFavorite, f);
-    f.setDataType(QVariant::Int);
-    fields.insert(QContactFavorite::FieldIndex, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QContactDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    retn.insert(d.name(), d);
-
     // gender
     d.setName(QContactGender::DefinitionName);
     fields.clear();
@@ -1175,6 +1189,39 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     d.setFields(fields);
     d.setUnique(false);
     retn.insert(d.name(), d);
+
+    // Over time, the schema will be updated.
+    // This will correspond to different releases of QtMobility.
+    // The default schema for each release will be documented in contactsschema.qdoc.
+    if (schemaVersion == 2) {
+        // family
+        d.setName(QContactFamily::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QContactFamily::FieldSpouse, f);
+        f.setDataType(QVariant::StringList);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QContactFamily::FieldChildren, f);
+        d.setFields(fields);
+        d.setUnique(false);
+        retn.insert(d.name(), d);
+
+        // favorite
+        d.setName(QContactFavorite::DefinitionName);
+        fields.clear();
+        f.setAllowableValues(QVariantList());
+        f.setDataType(QVariant::Bool);
+        fields.insert(QContactFavorite::FieldFavorite, f);
+        f.setDataType(QVariant::Int);
+        fields.insert(QContactFavorite::FieldIndex, f);
+        f.setDataType(QVariant::StringList);
+        f.setAllowableValues(contexts);
+        fields.insert(QContactDetail::FieldContext, f);
+        d.setFields(fields);
+        d.setUnique(false);
+        retn.insert(d.name(), d);
+    }
 
     // in the default schema, we have two contact types: TypeContact, TypeGroup.
     // the entire default schema is valid for both types.

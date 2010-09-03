@@ -130,7 +130,8 @@ public:
     virtual QStringList supportedContactTypes() const;
 
     /* Reports the built-in definitions from the schema */
-    static QMap<QString, QMap<QString, QContactDetailDefinition> > schemaDefinitions();
+    static QMap<QString, QMap<QString, QContactDetailDefinition> > schemaDefinitions(); // returns version 1 of the schema
+    static QMap<QString, QMap<QString, QContactDetailDefinition> > schemaDefinitions(int schemaVersion); // returns schema of the specified version
 
 Q_SIGNALS:
     void dataChanged();
