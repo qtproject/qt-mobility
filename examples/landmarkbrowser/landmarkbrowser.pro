@@ -24,7 +24,7 @@ symbian|wince* {
         addFiles.sources = places.gpx
         DEPLOYMENT += addFiles
 
-        TARGET.CAPABILITY = Location
+        TARGET.CAPABILITY = LocalServices ReadUserData WriteUserData ReadDeviceData WriteDeviceData NetworkServices
     }
     wince* {
         addFiles.sources = ./places.gpx
