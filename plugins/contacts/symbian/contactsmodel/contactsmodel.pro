@@ -57,16 +57,16 @@ publicincheaders = cntdef.h cntdb.h cntdbobs.h cntfield.h cntfldst.h cntfilt.h c
 platformincheaders = cntmodel.rh cntviewfindconfig.h cntviewfindconfig.inl cntviewstore.h \
     cntphonenumparser.h cntviewsortpluginbase.h cntsyncecom.h
 
-# these headers come from ./vcard and go to APP_LAYER_PUBLIC_EXPORT_PATH
-publicvcardheaders = cntvcard.h
+# these headers come from ./cntvcard and go to APP_LAYER_PUBLIC_EXPORT_PATH
+publiccntvcardheaders = cntvcard.h
 
 for(header, publicincheaders):BLD_INF_RULES.prj_exports += "./inc/$$header APP_LAYER_PUBLIC_EXPORT_PATH($$header)"
 for(header, platformincheaders):BLD_INF_RULES.prj_exports += "./inc/$$header APP_LAYER_PLATFORM_EXPORT_PATH($$header)"
-for(header, publicvcardheaders):BLD_INF_RULES.prj_exports += "./vcard/$$header APP_LAYER_PUBLIC_EXPORT_PATH($$header)"
+for(header, publiccntvcardheaders):BLD_INF_RULES.prj_exports += "./cntvcard/$$header APP_LAYER_PUBLIC_EXPORT_PATH($$header)"
 
 # Now the duplicate to \epoc32\include. .. . 
 for(header, publicincheaders):BLD_INF_RULES.prj_exports += "./inc/$$header /epoc32/include/$$header"
 for(header, platformincheaders):BLD_INF_RULES.prj_exports += "./inc/$$header /epoc32/include/$$header"
-for(header, publicvcardheaders):BLD_INF_RULES.prj_exports += "./vcard/$$header /epoc32/include/$$header"
+for(header, publiccntvcardheaders):BLD_INF_RULES.prj_exports += "./cntvcard/$$header /epoc32/include/$$header"
 
 
