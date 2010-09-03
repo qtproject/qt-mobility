@@ -235,14 +235,10 @@ void tst_QFeedbackHapticsEffect::startStop()
 
 void tst_QFeedbackHapticsEffect::themeSupport()
 {
-    const bool supportsTheme = 
-#ifdef SUPPORTS_THEME
-        true;
-#else
-        false;
-#endif
+    const bool supportsTheme = QFeedbackEffect::supportsThemeEffect();
 
-    QCOMPARE(QFeedbackEffect::supportsThemeEffect(), supportsTheme);
+    if (!supportsTheme)
+        QSKIP("No theme support", SkipAll);
     for (int i = 0; i < QFeedbackEffect::NumberOfThemeEffects; ++i) {
         QCOMPARE(QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeEffect(i)), true);
         QTest::qWait(250); //let's make sure the device is ready again
