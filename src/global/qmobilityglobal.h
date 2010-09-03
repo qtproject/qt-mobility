@@ -56,13 +56,17 @@
 
 #define QTM_PACKAGE_TAG ""
 
-#if defined(QTM_BUILD_UNITTESTS)
-# include <qconfig.h>
-# if !defined(QT_BUILD_INTERNAL)
-#   define QT_BUILD_INTERNAL
-# endif
-#endif
 #include <QtCore/qglobal.h>
+#if defined(QTM_BUILD_UNITTESTS) && (defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)) && defined(QT_MAKEDLL)
+#    define QM_AUTOTEST_EXPORT Q_DECL_EXPORT
+#elif defined(QTM_BUILD_UNITTESTS) && (defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)) && defined(QT_DLL)
+#    define QM_AUTOTEST_EXPORT Q_DECL_IMPORT
+#elif defined(QTM_BUILD_UNITTESTS) && !(defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)) && defined(QT_SHARED)
+#    define QM_AUTOTEST_EXPORT Q_DECL_EXPORT
+#else
+#    define QM_AUTOTEST_EXPORT
+#endif
+
 
 #if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
 #  if defined(QT_NODLL)
@@ -212,10 +216,10 @@
 #    undef Q_SERVICEFW_EXPORT
 #  endif
 #  define Q_SERVICEFW_EXPORT
-#  ifdef Q_AUTOTEST_EXPORT
-#    undef Q_AUTOTEST_EXPORT
+#  ifdef QM_AUTOTEST_EXPORT
+#    undef QM_AUTOTEST_EXPORT
 #  endif
-#  define Q_AUTOTEST_EXPORT
+#  define QM_AUTOTEST_EXPORT
 #endif
 
 // The namespace is hardcoded as moc has issues resolving

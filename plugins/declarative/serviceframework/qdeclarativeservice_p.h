@@ -48,9 +48,9 @@
 #include <qdeclarative.h>
 #include <qdeclarativelist.h>
 
-QTM_USE_NAMESPACE
+//Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
 
-Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
+QTM_BEGIN_NAMESPACE
 
 class QDeclarativeService : public QObject {
     Q_OBJECT
@@ -86,7 +86,6 @@ private:
     QObject* serviceInstance;
 };
 
-QML_DECLARE_TYPE(QDeclarativeService)
 
 class QDeclarativeServiceList : public QObject {
     Q_OBJECT
@@ -116,7 +115,9 @@ Q_SIGNALS:
     void servicesChanged(const QDeclarativeListProperty<QDeclarativeService>&);
 };
 
-QML_DECLARE_TYPE(QDeclarativeServiceList)
+QTM_END_NAMESPACE
+
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeService));
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeServiceList));
 
 #endif
-

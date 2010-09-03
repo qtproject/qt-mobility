@@ -59,7 +59,7 @@ QT_USE_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QValueSpaceManager
+class QM_AUTOTEST_EXPORT QValueSpaceManager
 {
 public:
     QValueSpaceManager();

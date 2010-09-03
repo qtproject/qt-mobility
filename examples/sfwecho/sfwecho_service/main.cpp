@@ -127,6 +127,7 @@ int main(int argc, char** argv)
     control->publishServices("sfwecho_service");
 
     int res =  app.exec();
+
     delete control;    
     return res;
 }
