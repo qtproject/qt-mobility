@@ -18,6 +18,11 @@
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <widget class="QPushButton" name="addLandmark">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>Add Landmark</string>
        </property>
@@ -25,6 +30,11 @@
      </item>
      <item>
       <widget class="QPushButton" name="deleteLandmarks">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>Delete Landmarks</string>
        </property>
@@ -32,6 +42,11 @@
      </item>
      <item>
       <widget class="QPushButton" name="importLandmarks">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>Import Landmarks</string>
        </property>
@@ -39,6 +54,11 @@
      </item>
      <item>
       <widget class="QPushButton" name="exportLandmarks">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>Export Landmarks</string>
        </property>
@@ -46,6 +66,11 @@
      </item>
      <item>
       <widget class="QGroupBox" name="exportOptions">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+        </font>
+       </property>
        <property name="title">
         <string>Export options</string>
        </property>
