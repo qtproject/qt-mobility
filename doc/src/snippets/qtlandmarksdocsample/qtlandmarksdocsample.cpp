@@ -268,7 +268,7 @@ void RequestExample::landmarkRemoveRequest()
     connect(lmRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,
             SLOT(landmarkRemoveRequestHandler(QLandmarkAbstractRequest::State)));
     if (!lmRemoveRequest->start())
-        qDebug() << "Unable to remove landmark, error code: " << lmSaveRequest->error();
+        qDebug() << "Unable to remove landmark, error code: " << lmRemoveRequest->error();
     else
         qDebug() << "Removing landmark; awaiting results...";
 }
@@ -468,7 +468,108 @@ void importExportLandmark() {
 
     landmarkManager->exportLandmarks("myplaces.gpx",QLandmarkManager::Gpx);
     //! [ImportExport landmark simple]
+
+    QLandmarkCategoryId categoryId;
+    QList<QLandmarkId> landmarkIds;
+
+    //! [Import landmarks sync complex]
+    //Import landmarks by providing just a file name.
+    landmarkManager->importLandmarks("places.lmx");
+
+    //Import landmarks by providing a given format.
+    landmarkManager->importLandmarks("places.xml", QLandmarkManager::Lmx);
+
+    //Import landmarks but ignore all categories
+    landmarkManager->importLandmarks("places.lmx",QLandmarkManager::Lmx,QLandmarkManager::ExcludeCategoryData);
+
+    //Import landmarks and assign them all to a single category.
+    landmarkManager->importLandmarks("places.lmx", QLandmarkManager::Lmx, QLandmarkManager::AttachSingleCategory,categoryId);
+    //! [Import landmarks sync complex]
+
+    //! [Export landmarks sync complex]
+    //export to a given file with a specified format
+    landmarkManager->exportLandmarks("places.lmx", QLandmarkManager::Lmx);
+
+    //export a subset of landmarks defined by a set of landmark ids
+    landmarkManager->exportLandmarks("places.lmx", QLandmarkManager::Lmx,landmarkIds);
+
+    //Export landmarks but do not include any category data.
+    //(If we provide an empty list of landmark ids, then all landmarks are exported)
+    landmarkManager->exportLandmarks("places.lmx", QLandmarkManager::Lmx,landmarkIds, QLandmarkManager::ExcludeCategoryData);
+    //! [Export landmarks sync complex]
 }
+
+//! [Import landmarks asynchronously]
+void RequestExample::landmarkImportRequest()
+{
+    //lmImportRequest was created with lmImportRequest = new QLandmarkImportRequest(lmManager)
+    //in the ctor, where lmManager is a QLandmarkManager*
+    lmImportRequest->setFileName("places.lmx");
+
+    //if we wanted to we could specify various import parameters
+    // lmImportRequest->setFormat(...);
+    // lmImportRequest->setTransferOptions(...);
+
+
+    connect(lmImportRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,
+            SLOT(landmarkImportRequestHandler(QLandmarkAbstractRequest::State)));
+    if (!lmImportRequest->start())
+        qDebug() << "Unable to import landmarks, error code: " << lmImportRequest->error();
+    else
+        qDebug() << "Import landmarks; awaiting results...";
+}
+//! [Import landmarks asynchronously]
+
+//! [Import landmarks asynchronously handler]
+void RequestExample::landmarkImportRequestHandler(QLandmarkAbstractRequest::State state)
+{
+    if (state == QLandmarkAbstractRequest::FinishedState) {
+        if (lmImportRequest->error() == QLandmarkManager::NoError) {
+            qDebug() << "Landmark import succesfully completed";
+        }
+        else {
+            qDebug() << "Landmark import was unsuccessful";
+        }
+    }
+}
+//! [Import landmarks asynchronously handler]
+
+//! [Export landmarks asynchronously]
+void RequestExample::landmarkExportRequest()
+{
+    //lmExportRequest was created with lmExportRequest = new QLandmarkExportRequest(lmManager)
+    //in the ctor, where lmManager is a QLandmarkManager*
+    lmExportRequest->setFileName("places.lmx");
+    lmExportRequest->setFormat(QLandmarkManager::Lmx);
+
+    //if we wanted to we could specify various export parameters
+    // lmExportRequest->setLandmarkIds(...);
+    // lmExportRequest->setTransferOptions(...);
+
+
+    connect(lmExportRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,
+            SLOT(landmarkExportRequestHandler(QLandmarkAbstractRequest::State)));
+    if (!lmExportRequest->start())
+        qDebug() << "Unable to export landmarks, error code: " << lmExportRequest->error();
+    else
+        qDebug() << "Export landmarks; awaiting results...";
+}
+//! [Export landmarks asynchronously]
+
+
+//! [Export landmarks asynchronously handler]
+void RequestExample::landmarkExportRequestHandler(QLandmarkAbstractRequest::State state)
+{
+    if (state == QLandmarkAbstractRequest::FinishedState) {
+        if (lmExportRequest->error() == QLandmarkManager::NoError) {
+            qDebug() << "Landmark export succesfully completed";
+        }
+        else {
+            qDebug() << "Landmark export was unsuccessful";
+        }
+    }
+}
+//! [Export landmarks asynchronously handler]
 
 int main(int argc, char *argv[])
 {

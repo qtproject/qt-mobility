@@ -64,9 +64,9 @@ to facilitate the future migration of Mobility APIs into Qt. See the
 namespace impacts on application development.
 
 
-\section1 Creating categories and landmarks
+\section1 Creating/saving categories and landmarks
 \section2 Synchronous
-\section3 \bold{Creating a category}
+\section3 \bold{Creating/saving a category}
 The following example demonstrates how to synchronously add a category.
 We create a QLandmarkCategory instance, set the desired properties and then use a
 QLandmarkManager instance to save it.  When the category is saved, it is assigned
@@ -74,15 +74,15 @@ a QLandmarkCategoryId which is why it passed as a pointer.
 
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Add category synchronously
 
-\section3 \bold{Creating landmark}
-The following example demonstrate synchronously adding a landmark.  We create
+\section3 \bold{Creating/saving a landmark}
+The following example demonstrates synchronously adding a landmark.  We create
 a QLandmark instance, set the desired properties and then use a QLandmarkMangerInstance
 to save it.  When the landmark is saved, it is assigned a QLandmarkId, which is why it is
 passed as a pointer.
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Add landmark synchronously
 
 \section2 Asynchronous
-\section3 \bold{Creating a category}
+\section3 \bold{Creating/saving a category}
 We create a QLandmarkCategory instance and set the desired properties.  Next we
 have an instance of a QLandmarkCategorySaveRequest and set its QLandmarkManager and
 the append the category we want to save.  We then connect the \l {QLandmarkAbstractRequest::stateChanged()}
@@ -92,13 +92,13 @@ we invoke \l {QLandmarkAbstractRequest::start()} {start()}.
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Add category asynchronously req
 
 For brevity, the slot does not process all the different request states.  In our example
-we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not.
+we watch for the QLandmarkAbstractRequest::FinishedState and see if there are any errors or not.
 We may reuse the QLandmarkCategorySaveRequest by setting another category and running \l {QLandmarkAbstractRequest::start()}
 {start()} again.
 
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Add category asynchronously handler
 
-\section3 \bold{Creating a landmark}
+\section3 \bold{Creating/saving a landmark}
 We create a QLandmark instance and set the desired properties.  Next we
 have an instance of a QLandmarkSaveRequest and set its QLandmarkManager and
 the append the category we want to save.  We then connect the \l {QLandmarkAbstractRequest::stateChanged()}
@@ -108,7 +108,7 @@ we invoke \l {QLandmarkAbstractRequest::start()} {start()}.
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Add landmark asynchronously
 
 For brevity, the slot does not process all the different request states.  In our example
-we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not.
+we watch for the QLandmarkAbstractRequest::FinishedState and see if there are any errors or not.
 We may reuse the QLandmarkSaveRequest by setting another landmark and running \l {QLandmarkAbstractRequest::start()}
 {start()} again.
 
@@ -144,7 +144,7 @@ we invoke \l {QLandmarkAbstractRequest::start()} {start()}.
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve categories asynchronously
 
 For brevity, the slot does not process all the different request states.  In our example, we watch for
-the QLandmarkAbstractRequest::Finished state and if there are no errors, print out the categories.
+the QLandmarkAbstractRequest::FinishedState and if there are no errors, print out the categories.
 
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve categories asynchronously handler
 
@@ -158,7 +158,7 @@ we invoke \l {QLandmarkAbstractRequest::start()} {start()}.
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve landmarks asynchronously
 
 For brevity, the slot does not process all the different request states.  In our example, we watch for
-the QLandmarkAbstractRequest::Finished state and if there are no errors, print out the landmarks.
+the QLandmarkAbstractRequest::FinishedState and if there are no errors, print out the landmarks.
 
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve landmarks asynchronously handler
 
@@ -189,7 +189,7 @@ we invoke \l {QLandmarkAbstractRequest::start()} {start()}
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Remove category asynchronously
 
 For brevity, the slot does not process all the different request states.  In our example
-we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not.
+we watch for the QLandmarkAbstractRequest::FinishedState and see if there are any errors or not.
 We may reuse the QLandmarkCategoryRemoveRequest by setting another category id and running \l {QLandmarkAbstractRequest::start()}
 {start()} again.
 
@@ -204,9 +204,70 @@ we invoke \l {QLandmarkAbstractRequest::start()} {start()}
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Remove landmark asynchronously
 
 For brevity, the slot does not process all the different request states.  In our example
-we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not.
+we watch for the QLandmarkAbstractRequest::FinishedState and see if there are any errors or not.
 We may reuse the QLandmarkRemoveRequest by setting another category id and running \l {QLandmarkAbstractRequest::start()}
 {start()} again.
 
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Remove landmark asynchronously handler
+
+\section1 Importing Landmarks
+
+\section2 Synchronous
+
+To import landmarks from a file we can simply provide the filename to the manager (the manager will try to automatically
+detect the file format).  If we know the format we can provide one of the \l {QLandmarkManager::Gpx} {format strings}
+as a parameter.  Using the QLandmarkManager::TransferOptions we  can choose to include category data that comes with the landmarks(default),
+exclude category data meaning that the landmarks will not be associated with any categories or we can attach the landmarks to a single
+category meaning all the imported landmarks will be assigned to the given category. Typically an import operation
+will take a long time to execute, it is therefore recommended that landmarks be imported asynchronously rather than synchronously.
+\snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Import landmarks sync complex
+
+\section2 Asynchronous
+
+To import landmarks we use a QLandmarkImportRequest and set its manager and the
+filename of the file we want to import. We can set other import parameters as necessary
+such as the file format or the transfer options.  We then connect the \l
+{QLandmarkAbstractRequest::stateChanged()} {stateChanged()} signal up to a slot
+which watches the state of the request. To begin the request we invoke \l
+{QLandmarkAbstractRequest::start()} {start()}
+
+\snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Import landmarks asynchronously
+
+For brevity, the slot does not process all the different request states.  In our example
+we watch for the QLandmarkAbstractRequest::FinishedState and see if there are any errors or not.
+We may reuse the QLandmarkImportRequest by setting filename and running \l {QLandmarkAbstractRequest::start()}
+{start()} again.
+
+\snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Import landmarks asynchronously handler
+
+\section1 Exporting Landmarks
+
+\section2 Synchronous
+
+To export landmarks we can pass a filename and \l {QLandmarkManager::Gpx} {format} to the manager.
+If we only want to export a subset of landmarks we can provide a list of landmark ids to export.
+We may also use the QLandmarkManager::TransferOptions to decide whether we want to include(default) or exclude
+category data for the export (This will only have an affect if the supplied format supports categories.)
+Typically an export operation will take a long time to execute, it is therefore recommended that landmarks
+be exported asynchronously rather than synchronously.
+
+\snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Export landmarks sync complex
+
+\section2 Asynchronous
+To export landmarks we use a QLandmarkExportRequest and set the filename of the file we want to export
+to, as well as the format we wish to use.  We can set other export parameters as necessary,
+such as a list of ids of landmarks we want to export or the transfer options.  We then connect the \l
+{QLandmarkAbstractRequest::stateChanged()} {stateChanged()} signal up to a slot
+which watches the state of the request. To begin the request we invoke \l
+{QLandmarkAbstractRequest::start()} {start()}
+
+\snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Export landmarks asynchronously
+
+For brevity, the slot does not process all the different request states.  In our example
+we watch for the QLandmarkAbstractRequest::FinishedState and see if there are any errors or not.
+We may reuse the QLandmarkExportRequest by setting another filename and/or format and running \l {QLandmarkAbstractRequest::start()}
+{start()} again.
+
+\snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Export landmarks asynchronously handler
+
 */

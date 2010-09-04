@@ -263,6 +263,7 @@ the current location.
 
 \annotatedlist location
 
+\target Landmarks
 \section1 Landmarks
 The Landmarks portion of the Location API facilitates the creation,
 retrieval, updating and deletion of landmarks from arbitrary data stores.
@@ -287,7 +288,14 @@ a datastore contains a significantly large number of landmarks or if the datasto
 
 \section2 Landmark Examples
 
-For more details see the \l {Landmark Examples} {Landmark Examples} page.
+For more details see the \l {Landmark Examples} {Landmark Examples} page for:
+\list
+    \o \l {Creating/Saving categories and landmarks}
+    \o \l {Retrieving categories and landmarks}
+    \o \l {Deleting categories and landmarks}
+    \o Importing categories and landmarks
+    \o Exporting categories and landmarks
+\endlist
 
 \section2 Landmark Attributes
 
@@ -445,6 +453,28 @@ For more details see the \l {Landmark Examples} {Landmark Examples} page.
         \o "postCode"
         \o
     \endtable
+
+\section3 Importing and Exporting Landmarks
+The landmarks API supports import and exporting of landmarks.  The file formats that are supported depends on the particular manager.
+The following table outline the formats that may be used for each manager.  You may also query the supported formats through the
+QLandmarkManager::supportedFormats() function.
+
+\table
+\header
+    \o Manager
+    \o Import formats
+    \o Export formats
+\row
+    \o  com.nokia.qt.landmarks.engines.symbian
+    \o  Gpx, Lmx, Kml, Kmz
+    \o  Lmx
+
+\row
+    \o com.nokia.qt.landmarks.engines.sqlite
+    \o Lmx, Gpx(version 1.1 only)
+    \o Lmx, Gpx(vesion 1.1)
+\endtable
+
 
 
 \section2 Landmark classes
