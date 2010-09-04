@@ -15,7 +15,7 @@ QTM_USE_NAMESPACE
 
 LandmarkBrowser::LandmarkBrowser(QWidget *parent, Qt::WindowFlags flags)
     :currentOffset(0),
-     limit(5)
+     limit(20)
 {
     setupUi(this);
     table->insertColumn(3);
