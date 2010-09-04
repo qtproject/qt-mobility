@@ -263,6 +263,7 @@ void LandmarkBrowser::on_nextButton_clicked()
     currentOffset = currentOffset + limit;
     landmarkFetch->setOffset(currentOffset);
     landmarkFetch->start();
+    progress->setWindowTitle(tr("Loading Landmarks"));
     progress->show();
 }
 
@@ -273,6 +274,7 @@ void LandmarkBrowser::on_prevButton_clicked()
         currentOffset = 0;
     landmarkFetch->setOffset(currentOffset);
     landmarkFetch->start();
+    progress->setWindowTitle(tr("Loading Landmarks"));
     progress->show();
 }
 
