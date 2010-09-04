@@ -92,7 +92,7 @@ void QGeoMapPolylineObject::setPath(const QList<QGeoCoordinate> &path)
     Q_D(QGeoMapPolylineObject);
     if (d->path != path) {
         d->path = path;
-        objectUpdate();
+        objectUpdated();
         emit pathChanged(d->path);
     }
 }
@@ -115,11 +115,16 @@ QList<QGeoCoordinate> QGeoMapPolylineObject::path() const
 void QGeoMapPolylineObject::setPen(const QPen &pen)
 {
     Q_D(QGeoMapPolylineObject);
-    if (d->pen != pen) {
-        d->pen = pen;
-        objectUpdate();
-        emit penChanged(d->pen);
-    }
+
+    QPen newPen = pen;
+    newPen.setCosmetic(true);
+
+    if (d->pen == newPen)
+        return;
+
+    d->pen = newPen;
+    objectUpdated();
+    emit penChanged(d->pen);
 }
 
 QPen QGeoMapPolylineObject::pen() const
@@ -132,7 +137,10 @@ QPen QGeoMapPolylineObject::pen() const
 *******************************************************************************/
 
 QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::PolylineType) {}
+        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::PolylineType)
+{
+    pen.setCosmetic(true);
+}
 
 QGeoMapPolylineObjectPrivate::~QGeoMapPolylineObjectPrivate() {}
 

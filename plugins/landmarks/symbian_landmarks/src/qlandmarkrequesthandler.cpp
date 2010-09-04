@@ -297,7 +297,7 @@ TBool CLandmarkRequestAO::WaitForFinished(TInt aTime)
     }
 
     RTimer timer;
-    TRequestStatus timestatus;
+    TRequestStatus timestatus = KRequestPending;
     if (aTime > 0) {
         if (timer.CreateLocal() != KErrNone) {
             return EFalse; // ???
@@ -498,6 +498,16 @@ void CLandmarkRequestData::Reset()
     iOpCount = 0;
     error = QLandmarkManager::NoError;
     errorString.clear();
+    
+    iAddedLandmarkIds.clear();
+    iChangedLandmarkIds.clear();
+    iRemovedLandmarkIds.clear();
+    iFetchedLandmarkIds.clear();
+
+    iAddedCategoryIds.clear();
+    iChangedCategoryIds.clear();
+    iRemovedCategoryIds.clear();
+    iFetchedCategoryIds.clear();
 }
 
 // Asynchronous Framework

@@ -49,6 +49,7 @@
 #include "qgeoboundingbox.h"
 #include "qgeomapoverlay.h"
 
+#include "qgeotiledmapcontainerobjectinfo_p.h"
 #include "qgeotiledmapcircleobjectinfo_p.h"
 #include "qgeotiledmaprectangleobjectinfo_p.h"
 #include "qgeotiledmappolylineobjectinfo_p.h"
@@ -682,42 +683,28 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &scr
 /*!
     \reimp
 */
-void QGeoTiledMapData::setupMapObject(QGeoMapObject *mapObject)
+QGeoMapObjectInfo* QGeoTiledMapData::createMapObjectInfo(QGeoMapObject *mapObject)
 {
-    Q_D(QGeoTiledMapData);
-
-    QGeoMapObjectInfo* info = 0;
-
     switch (mapObject->type()) {
+        case QGeoMapObject::ContainerType:
+            return new QGeoTiledMapContainerObjectInfo(this, mapObject);
         case QGeoMapObject::RectangleType:
-            info = new QGeoTiledMapRectangleObjectInfo(this, mapObject);
-            break;
+            return new QGeoTiledMapRectangleObjectInfo(this, mapObject);
         case QGeoMapObject::CircleType:
-            info = new QGeoTiledMapCircleObjectInfo(this, mapObject);
-            break;
+            return  new QGeoTiledMapCircleObjectInfo(this, mapObject);
         case QGeoMapObject::PolylineType:
-            info = new QGeoTiledMapPolylineObjectInfo(this, mapObject);
-            break;
+            return  new QGeoTiledMapPolylineObjectInfo(this, mapObject);
         case QGeoMapObject::PolygonType:
-            info = new QGeoTiledMapPolygonObjectInfo(this, mapObject);
-            break;
+            return  new QGeoTiledMapPolygonObjectInfo(this, mapObject);
         case QGeoMapObject::PixmapType:
-            info = new QGeoTiledMapPixmapObjectInfo(this, mapObject);
-            break;
+            return  new QGeoTiledMapPixmapObjectInfo(this, mapObject);
         case QGeoMapObject::TextType:
-            info = new QGeoTiledMapTextObjectInfo(this, mapObject);
-            break;
+            return  new QGeoTiledMapTextObjectInfo(this, mapObject);
         case QGeoMapObject::RouteType:
-            info = new QGeoTiledMapRouteObjectInfo(this, mapObject);
-            break;
+            return  new QGeoTiledMapRouteObjectInfo(this, mapObject);
         default:
-            info = 0;
+            return 0;
     }
-
-    d->setObjectInfo(mapObject, info);
-
-    if (info)
-        info->objectUpdate();
 }
 
 /*!
@@ -998,7 +985,7 @@ void QGeoTiledMapDataPrivate::updateScreenRect()
         maxZoomScreenRectClippedRight = QRect(0, y, widthRight, height);
     }
 
-    containerObject->mapUpdate();
+    containerObject->mapUpdated();
 }
 
 bool QGeoTiledMapDataPrivate::containedInScreen(const QPoint &point) const

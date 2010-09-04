@@ -1,3 +1,4 @@
+
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -39,63 +40,47 @@
 **
 ****************************************************************************/
 
-#include "qgeotiledmaptextobjectinfo_p.h"
-
-#include "qgeotiledmapdata.h"
-#include "qgeotiledmapdata_p.h"
-
-#include "qgeomaptextobject.h"
+#include "qdeclarativegeomapobject_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapTextObjectInfo::QGeoTiledMapTextObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject),
-        textItem(0)
 
+QDeclarativeGeoMapObject::QDeclarativeGeoMapObject()
+        : QGeoMapObject() {}
+
+QDeclarativeGeoMapObject::~QDeclarativeGeoMapObject() {}
+
+QDeclarativeListProperty<QGeoMapObject> QDeclarativeGeoMapObject::objects()
 {
-    text = static_cast<QGeoMapTextObject*>(mapObject);
+    return QDeclarativeListProperty<QGeoMapObject>(this,
+            0,
+            child_append,
+            child_count,
+            child_at,
+            child_clear);
 }
 
-QGeoTiledMapTextObjectInfo::~QGeoTiledMapTextObjectInfo() {}
-
-void QGeoTiledMapTextObjectInfo::objectUpdated()
+void QDeclarativeGeoMapObject::child_append(QDeclarativeListProperty<QGeoMapObject> *prop, QGeoMapObject *mapObject)
 {
-    if (!text->coordinate().isValid()) {
-        if (textItem) {
-            delete textItem;
-            textItem = 0;
-            graphicsItem = 0;
-        }
-        return;
-    }
-
-    QPointF position = tiledMapData->coordinateToWorldPixel(text->coordinate());
-
-    if (!textItem)
-        textItem = new QGraphicsSimpleTextItem();
-
-    textItem->setText(text->text());
-    textItem->setFont(text->font());
-    textItem->setBrush(text->brush());
-    textItem->setPos(position);
-    //textItem->setTransformOriginPoint(position);
-
-    mapUpdated();
-
-    graphicsItem = textItem;
-
-    updateItem();
+    static_cast<QDeclarativeGeoMapObject*>(prop->object)->addChildObject(mapObject);
 }
 
-void QGeoTiledMapTextObjectInfo::mapUpdated()
+int QDeclarativeGeoMapObject::child_count(QDeclarativeListProperty<QGeoMapObject> *prop)
 {
-    if (textItem) {
-        int zoomFactor = tiledMapData->zoomFactor();
-
-        textItem->resetTransform();
-        textItem->setScale(zoomFactor);
-    }
+    return static_cast<QDeclarativeGeoMapObject*>(prop->object)->childObjects().size();
 }
+
+QGeoMapObject *QDeclarativeGeoMapObject::child_at(QDeclarativeListProperty<QGeoMapObject> *prop, int index)
+{
+    return static_cast<QDeclarativeGeoMapObject*>(prop->object)->childObjects().at(index);
+}
+
+void QDeclarativeGeoMapObject::child_clear(QDeclarativeListProperty<QGeoMapObject> *prop)
+{
+    static_cast<QDeclarativeGeoMapObject*>(prop->object)->clearChildObjects();
+}
+
+#include "moc_qdeclarativegeomapobject_p.cpp"
 
 QTM_END_NAMESPACE
 

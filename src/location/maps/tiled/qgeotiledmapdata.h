@@ -76,8 +76,6 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
-    void setupMapObject(QGeoMapObject *mapObject);
-
     virtual QPoint coordinateToWorldPixel(const QGeoCoordinate &coordinate) const;
     virtual QGeoCoordinate worldPixelToCoordinate(const QPoint &pixel) const;
 
@@ -85,6 +83,9 @@ public:
     QSize maxZoomSize() const;
     QRect maxZoomScreenRect() const;
     int zoomFactor() const;
+
+protected:
+    QGeoMapObjectInfo* createMapObjectInfo(QGeoMapObject *mapObject);
 
 private Q_SLOTS:
     void processRequests();

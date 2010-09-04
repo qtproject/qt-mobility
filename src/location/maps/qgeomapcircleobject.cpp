@@ -115,11 +115,16 @@ QGeoMapCircleObject::~QGeoMapCircleObject()
 void QGeoMapCircleObject::setPen(const QPen &pen)
 {
     Q_D(QGeoMapCircleObject);
-    if (d->pen != pen) {
-        d->pen = pen;
-        objectUpdate();
-        emit penChanged(d->pen);
-    }
+
+    QPen newPen = pen;
+    newPen.setCosmetic(true);
+
+    if (d->pen == newPen)
+        return;
+
+    d->pen = newPen;
+    objectUpdated();
+    emit penChanged(d->pen);
 }
 
 QPen QGeoMapCircleObject::pen() const
@@ -142,7 +147,7 @@ void QGeoMapCircleObject::setBrush(const QBrush &brush)
     Q_D(QGeoMapCircleObject);
     if (d->brush != brush) {
         d->brush = brush;
-        objectUpdate();
+        objectUpdated();
         emit brushChanged(d->brush);
     }
 }
@@ -192,7 +197,7 @@ void QGeoMapCircleObject::setCircle(const QGeoBoundingCircle &circle)
 
     d->circle = circle;
 
-    objectUpdate();
+    objectUpdated();
 
     if (oldCircle.center() != d->circle.center())
         emit centerChanged(d->circle.center());
@@ -215,7 +220,7 @@ void QGeoMapCircleObject::setCenter(const QGeoCoordinate &center)
     Q_D(QGeoMapCircleObject);
     if (d->circle.center() != center) {
         d->circle.setCenter(center);
-        objectUpdate();
+        objectUpdated();
         emit centerChanged(center);
     }
 }
@@ -239,7 +244,7 @@ void QGeoMapCircleObject::setRadius(qreal radius)
     Q_D(QGeoMapCircleObject);
     if (d->circle.radius() != radius) {
         d->circle.setRadius(radius);
-        objectUpdate();
+        objectUpdated();
         emit radiusChanged(radius);
     }
 }
@@ -254,7 +259,10 @@ qreal QGeoMapCircleObject::radius() const
 *******************************************************************************/
 
 QGeoMapCircleObjectPrivate::QGeoMapCircleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::CircleType) {}
+        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::CircleType)
+{
+    pen.setCosmetic(true);
+}
 
 QGeoMapCircleObjectPrivate::~QGeoMapCircleObjectPrivate() {}
 

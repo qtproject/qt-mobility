@@ -39,63 +39,36 @@
 **
 ****************************************************************************/
 
-#include "qgeotiledmaptextobjectinfo_p.h"
+#include "qgeotiledmapcontainerobjectinfo_p.h"
 
+#include "qgeotiledmapobjectinfo_p.h"
 #include "qgeotiledmapdata.h"
 #include "qgeotiledmapdata_p.h"
 
-#include "qgeomaptextobject.h"
+#include <QGraphicsItem>
+#include <QGraphicsPathItem>
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapTextObjectInfo::QGeoTiledMapTextObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
+QGeoTiledMapContainerObjectInfo::QGeoTiledMapContainerObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
         : QGeoTiledMapObjectInfo(mapData, mapObject),
-        textItem(0)
-
+        pathItem(0)
 {
-    text = static_cast<QGeoMapTextObject*>(mapObject);
 }
 
-QGeoTiledMapTextObjectInfo::~QGeoTiledMapTextObjectInfo() {}
+QGeoTiledMapContainerObjectInfo::~QGeoTiledMapContainerObjectInfo() {}
 
-void QGeoTiledMapTextObjectInfo::objectUpdated()
+void QGeoTiledMapContainerObjectInfo::objectUpdated()
 {
-    if (!text->coordinate().isValid()) {
-        if (textItem) {
-            delete textItem;
-            textItem = 0;
-            graphicsItem = 0;
-        }
-        return;
+    if (!pathItem) {
+        pathItem = new QGraphicsPathItem();
+        pathItem->setPos(0.0, 0.0);
     }
 
-    QPointF position = tiledMapData->coordinateToWorldPixel(text->coordinate());
-
-    if (!textItem)
-        textItem = new QGraphicsSimpleTextItem();
-
-    textItem->setText(text->text());
-    textItem->setFont(text->font());
-    textItem->setBrush(text->brush());
-    textItem->setPos(position);
-    //textItem->setTransformOriginPoint(position);
-
-    mapUpdated();
-
-    graphicsItem = textItem;
+    graphicsItem = pathItem;
 
     updateItem();
 }
 
-void QGeoTiledMapTextObjectInfo::mapUpdated()
-{
-    if (textItem) {
-        int zoomFactor = tiledMapData->zoomFactor();
-
-        textItem->resetTransform();
-        textItem->setScale(zoomFactor);
-    }
-}
 
 QTM_END_NAMESPACE
-

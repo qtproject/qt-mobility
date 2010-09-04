@@ -32,7 +32,7 @@ contains(mobility_modules,location) {
     SUBDIRS += logfilepositionsource \
                satellitedialog 
 
-    !symbian:!wince* {
+    !wince* {
         SUBDIRS += landmarkbrowser
     }
 

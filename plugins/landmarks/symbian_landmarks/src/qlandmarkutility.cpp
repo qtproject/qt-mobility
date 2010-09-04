@@ -174,6 +174,17 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark
             }
         }
 
+        // set county
+        if (symbianLandmark->IsPositionFieldAvailable(EPositionFieldCounty)) {
+            TPtrC posField;
+            symbianLandmark->GetPositionField(EPositionFieldCounty, posField);
+            if (posField.Length() > 0) {
+                lmBuf.Copy(posField);
+                QString lmPosField((QChar*) (lmBuf.Ptr()), lmBuf.Length());
+                address.setCounty(lmPosField);
+            }
+        }
+        
         // set state / province
         if (symbianLandmark->IsPositionFieldAvailable(EPositionFieldState)) {
             TPtrC posField;
@@ -228,16 +239,18 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark
                 address.setStreet(lmPosField);
             }
         }
-        // set street no 
-        if (symbianLandmark->IsPositionFieldAvailable(EPositionFieldStreetExtension)) {
+
+        // set street no
+        if (symbianLandmark->IsPositionFieldAvailable(EPositionFieldCrossing1)) {
             TPtrC posField;
-            symbianLandmark->GetPositionField(EPositionFieldStreetExtension, posField);
+            symbianLandmark->GetPositionField(EPositionFieldCrossing1, posField);
             if (posField.Length() > 0) {
                 lmBuf.Copy(posField);
                 QString lmPosField((QChar*) (lmBuf.Ptr()), lmBuf.Length());
                 address.setStreetNumber(lmPosField);
             }
         }
+
         // set QGeoAddress with above info
         qtLandmark->setAddress(address);
 
@@ -335,7 +348,15 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
             lmDistrict.length());
         symbianLandmark.SetPositionFieldL(EPositionFieldDistrict, symbianLmPosField);
     }
-
+    
+    // set county
+    QString lmCounty = qtLandmark->address().county();
+    if (lmCounty.length() > 0) {
+        TPtrC symbianLmPosField(reinterpret_cast<const TText*> (lmCounty.constData()),
+            lmCounty.length());
+        symbianLandmark.SetPositionFieldL(EPositionFieldCounty, symbianLmPosField);
+    }
+    
     // set state
     QString lmState = qtLandmark->address().state();
     if (lmState.length() > 0) {
@@ -381,8 +402,9 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
     if (lmStreetNumber.length() > 0) {
         TPtrC symbianLmPosField(reinterpret_cast<const TText*> (lmStreetNumber.constData()),
             lmStreetNumber.length());
-        symbianLandmark.SetPositionFieldL(EPositionFieldStreetExtension, symbianLmPosField);
+        symbianLandmark.SetPositionFieldL(EPositionFieldCrossing1, symbianLmPosField);
     }
+
 }
 
 CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
@@ -475,6 +497,14 @@ CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
         symbianLandmark->SetPositionFieldL(EPositionFieldDistrict, symbianLmPosField);
     }
 
+    // set county
+    QString lmCounty = qtLandmark->address().county();
+    if (lmCounty.length() > 0) {
+        TPtrC symbianLmPosField(reinterpret_cast<const TText*> (lmCounty.constData()),
+            lmCounty.length());
+        symbianLandmark->SetPositionFieldL(EPositionFieldCounty, symbianLmPosField);
+    }
+    
     // set state
     QString lmState = qtLandmark->address().state();
     if (lmState.length() > 0) {
@@ -516,12 +546,15 @@ CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
     }
 
     // set street number
+    // this is just a assignment of extra field of landmark
+    // as there is no such field avaiable in positioning fields
     QString lmStreetNumber = qtLandmark->address().streetNumber();
     if (lmStreetNumber.length() > 0) {
         TPtrC symbianLmPosField(reinterpret_cast<const TText*> (lmStreetNumber.constData()),
             lmStreetNumber.length());
-        symbianLandmark->SetPositionFieldL(EPositionFieldStreetExtension, symbianLmPosField);
+        symbianLandmark->SetPositionFieldL(EPositionFieldCrossing1, symbianLmPosField);
     }
+
     CleanupStack::Pop(symbianLandmark);
     return symbianLandmark;
 }
@@ -558,21 +591,6 @@ QList<QLandmarkId> LandmarkUtility::convertToQtLandmarkIds(QString managerUri,
 }
 
 /*
- * convert symbian landmark ids to qt landmark ids
- * 
- */
-QList<QLandmarkId> LandmarkUtility::convertToQtLandmarkIds2(QString managerUri,
-    RArray<TUint>& symbianLandmarkIds)
-{
-    QList<QLandmarkId> qtLandmarkIds;
-    for (int i = 0; i < symbianLandmarkIds.Count(); ++i) {
-        QLandmarkId qtLmId = convertToQtLandmarkId(managerUri, symbianLandmarkIds[i]);
-        qtLandmarkIds.append(qtLmId);
-    }
-    return qtLandmarkIds;
-}
-
-/*
  * convert qt landmark id to symbian landmark id
  * 
  */
@@ -594,7 +612,7 @@ RArray<TPosLmItemId> LandmarkUtility::getSymbianLandmarkIds(QList<QLandmarkId>& 
     RArray<TPosLmItemId> symbianLandmarkIds;
     for (int i = 0; i < qtLandmarkIds.size(); ++i) {
         TPosLmItemId lmId = convertToSymbianLandmarkId(qtLandmarkIds.at(i));
-        if (lmId != KPosLmNullItemId) {
+        if (lmId == KPosLmNullItemId) {
             symbianLandmarkIds.Reset();
             return symbianLandmarkIds;
         }
@@ -761,33 +779,6 @@ TPosLmItemId LandmarkUtility::convertToSymbianLandmarkCategoryId(
 }
 
 /*
- * convert qt coordinate to symbian coordinate
- * 
- */
-TCoordinate LandmarkUtility::getCoordinate(QGeoCoordinate qtCoordinate)
-{
-    TCoordinate symbianCoord;
-    symbianCoord.SetCoordinate(qtCoordinate.latitude(), qtCoordinate.longitude(),
-        qtCoordinate.altitude());
-    return symbianCoord;
-}
-
-/*
- * get symbian landmark name from qt landmark
- * 
- */
-TDesC LandmarkUtility::getSymbianLandmarkName(QLandmark* qtLandmark)
-{
-    if (qtLandmark && qtLandmark->name().length() > 0) {
-        TPtrC symbianLmName(reinterpret_cast<const TText*> (qtLandmark->name().constData()),
-            qtLandmark->name().length());
-        return symbianLmName;
-    }
-    else
-        return KNullDesC;
-}
-
-/*
  * get symbian landmark id from qt landmark
  * 
  */
@@ -906,33 +897,6 @@ QList<QLandmarkCategory> LandmarkUtility::getCategoriesL(CPosLmCategoryManager* 
 }
 
 /*
- * get symbian landmark from qt landmark ids
- * Note: Assumption is that all are valid landmark ids and exist in landmarks database
- * 
- */
-QList<QLandmark> LandmarkUtility::getLandmarksL(CPosLandmarkDatabase* landmarkDb,
-    QList<QLandmarkId> qtLandmarkIds)
-{
-    QList<QLandmark> qtLandmarkList;
-    QString managerUri = qtLandmarkIds.operator [](0).managerUri();
-
-    for (int i = 0; i < qtLandmarkIds.size(); ++i) {
-        CPosLandmark* symbianLandmark = NULL;
-        TPosLmItemId symbianLmId = convertToSymbianLandmarkId(qtLandmarkIds.operator [](i));
-        TRAPD(err, symbianLandmark = landmarkDb->ReadLandmarkLC(symbianLmId);
-            if (symbianLandmark!=NULL) CleanupStack::Pop( symbianLandmark );)
-        if (err == KErrNone) {
-            QLandmark* qtLandmark = convertToQtLandmark(managerUri, symbianLandmark);
-            qtLandmarkList.append(*qtLandmark);
-            delete symbianLandmark;
-            symbianLandmark = NULL;
-        }
-    }
-
-    return qtLandmarkList;
-}
-
-/*
  * verify global category id
  * 
  */
@@ -967,36 +931,28 @@ bool LandmarkUtility::isGlobalCategoryId(CPosLmCategoryManager* catMgr,
  */
 QStringList LandmarkUtility::landmarkAttributeKeys()
 {
-    QStringList landmarkAttributeKeys;
-
-    landmarkAttributeKeys << "Name" << "Description" << "Phone" << "Street" << "City" << "District"
-        << "State" << "Country" << "CountryCode" << "PostCode";
-
-    return landmarkAttributeKeys;
+    QStringList commonKeys = QStringList()
+                             << "name"
+                             << "description"
+                             << "iconUrl"
+                             << "radius"
+                             << "phoneNumber"
+                             << "url"
+                             << "latitude"
+                             << "longitude"
+                             << "altitude"
+                             << "country"
+                             << "countryCode"
+                             << "state"
+                             << "county"
+                             << "city"
+                             << "district"
+                             << "street"
+                             << "streetNumber"
+                             << "postCode";
+    return commonKeys;
 }
 
-/**
- * list of landmark package formats
- * 
- */
-QStringList LandmarkUtility::landmarkPackageFormats()
-{
-    QStringList landmarkPkgFormats;
-
-    // LMX (Nokia's Landmark Format Standard)
-    landmarkPkgFormats << "application/vnd.nokia.landmarkcollection+xml";
-
-    // GPX (Global Landmark Format Standard)
-    landmarkPkgFormats << "application/gps+xml";
-
-    // KML (Google's Landmark Format  Standard)
-    landmarkPkgFormats << "application/vnd.google-earth.kml+xml";
-
-    // KMZ (Google's Landmark Format  Standard)
-    landmarkPkgFormats << "application/vnd.google-earth.kmz";
-
-    return landmarkPkgFormats;
-}
 
 /**
  * converts attribute key string to symbian position field id value

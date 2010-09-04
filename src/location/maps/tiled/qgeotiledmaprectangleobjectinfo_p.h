@@ -67,8 +67,8 @@ public:
     QGeoTiledMapRectangleObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapRectangleObjectInfo();
 
-    void objectUpdate();
-    void mapUpdate();
+    void objectUpdated();
+    void mapUpdated();
 
     QGeoMapRectangleObject* rectangle;
     QGraphicsRectItem *rectangleItem1;

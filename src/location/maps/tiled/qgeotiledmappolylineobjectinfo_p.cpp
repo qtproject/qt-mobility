@@ -60,7 +60,7 @@ QGeoTiledMapPolylineObjectInfo::QGeoTiledMapPolylineObjectInfo(QGeoMapData *mapD
 
 QGeoTiledMapPolylineObjectInfo::~QGeoTiledMapPolylineObjectInfo() {}
 
-void QGeoTiledMapPolylineObjectInfo::objectUpdate()
+void QGeoTiledMapPolylineObjectInfo::objectUpdated()
 {
     QList<QGeoCoordinate> path = polyline->path();
 
@@ -84,14 +84,14 @@ void QGeoTiledMapPolylineObjectInfo::objectUpdate()
 
     pathItem->setPath(painterPath);
 
-    mapUpdate();
+    mapUpdated();
 
     graphicsItem = pathItem;
 
     updateItem();
 }
 
-void QGeoTiledMapPolylineObjectInfo::mapUpdate()
+void QGeoTiledMapPolylineObjectInfo::mapUpdated()
 {
     if (pathItem) {
         pathItem->setPen(polyline->pen());

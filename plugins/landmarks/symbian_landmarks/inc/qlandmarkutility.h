@@ -117,9 +117,6 @@ public:
     static QList<QLandmarkId> convertToQtLandmarkIds(QString managerUri,
         RArray<TPosLmItemId>& symbianLandmarkIds);
 
-    static QList<QLandmarkId> convertToQtLandmarkIds2(QString managerUri,
-        RArray<TUint>& symbianLandmarkIds);
-
     /*
      * returns new object of symbian landmark id converted from qt landmark id. 
      */
@@ -168,16 +165,6 @@ public:
     convertToSymbianLandmarkCategoryId(QLandmarkCategoryId qtLandmarkCategoryId);
 
     /*
-     * returns symbian coordinate object converted from qt coordinate object.
-     */
-    static TCoordinate getCoordinate(QGeoCoordinate qtCoordinate);
-
-    /*
-     * returns landmarks name in symbian desciptor format from qt landmark object.
-     */
-    static TDesC getSymbianLandmarkName(QLandmark* qtLandmark);
-
-    /*
      * returns symbian landmark id from qt landmark object.
      */
     static TPosLmItemId getSymbianLandmarkId(QLandmark* qtLandmark);
@@ -209,12 +196,6 @@ public:
      */
     static QList<QLandmarkCategory> getCategoriesL(CPosLmCategoryManager* catMgr, QList<
         QLandmarkCategoryId> qtCategoryIds);
-
-    /*
-     * returns the list of qt landmarks from the list of qt landmark ids.
-     */
-    static QList<QLandmark> getLandmarksL(CPosLandmarkDatabase* landmarkDb,
-        QList<QLandmarkId> qtLandmarkIds);
 
     /* 
      * This method checks the provided category id is global category or not
@@ -255,19 +236,6 @@ public:
      *
      */
     static QStringList landmarkAttributeKeys();
-
-    /*
-     * Returns Landmark package formats
-     *  
-     * Thease formats are the symbian platform specific landmark package formats,
-     * where landmarks can be packaged in different xml formats as defined in 
-     * landmarks exchange format specification.
-     * Thease formats are used to import and export of landmarks 
-     * 
-     * This list may change from version to version without notice, 
-     * or even be removed.
-     */
-    static QStringList landmarkPackageFormats();
 
     /**
      * converts the attribute key string to symbian position field value. 
