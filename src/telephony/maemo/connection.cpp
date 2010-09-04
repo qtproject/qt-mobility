@@ -58,11 +58,6 @@ namespace DBus
         , ptelephonyCallList(callList)
     {
         qDebug() << "Connection::Connection(...)";
-        qDebug() << "- QDBusConnection base service: " << busconnection.baseService();
-        qDebug() << "- QDBusConnection name: " << busconnection.name();
-        qDebug() << "- objectPath: " << objectPath;
-        qDebug() << "- DBusProxy.busName: " << this->busName();
-        qDebug() << "- DBusProxy.objectPath: " << this->objectPath();
 
         pIConnection = new DBus::Interfaces::IConnection(busconnection, busName, objectPath);
         connect(pIConnection, SIGNAL(SelfHandleChanged(uint)), SLOT(onSelfHandleChanged(uint)));
@@ -96,8 +91,6 @@ namespace DBus
 
     void Connection::readCurrentChannels()
     {
-        qDebug() << "Connection::readCurrentChannels()";
-
         if(pIConnection){
             QDBusPendingReply<DBus::Interfaces::ChannelInfoList> dbrlistchannels = pIConnection->ListChannels();
             dbrlistchannels.waitForFinished();
@@ -166,9 +159,9 @@ namespace DBus
         qDebug() << "Connection::IConnectionRequests::onChannelClosed(...)";
     }
 
+    //own slots
     void Connection::channelStatusChanged(DBus::Channel *channel)
     {
-        qDebug() << "Connection::channelStatusChanged(...)";
         ptelephonyCallList->channelStatusChanged(ChannelPtr(channel));
     }
 }

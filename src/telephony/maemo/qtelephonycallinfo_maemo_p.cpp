@@ -67,7 +67,6 @@ QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate(DBus::ChannelPtr channel)
 
 QString QTelephonyCallInfoPrivate::remotePartyIdentifier() const
 {
-    qDebug() << "QTelephonyCallInfoPrivate::remotePartyIdentifier()";
     if(telepathychannel)
         return telepathychannel->getRemotePartyIdentifier();
 
@@ -103,7 +102,7 @@ QTelephony::Direction QTelephonyCallInfoPrivate::direction() const
     QTelephony::Direction ret = QTelephony::Received;
     if(telepathychannel){
         /*
-        1 = incomming
+        1 = incoming
         2 = outgoing*/
         if(telepathychannel->getDirection() == 2)
             ret = QTelephony::Dialed;

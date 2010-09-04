@@ -66,6 +66,13 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonClearList">
+       <property name="text">
+        <string>clear list</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
