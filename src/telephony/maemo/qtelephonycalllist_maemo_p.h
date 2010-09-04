@@ -80,14 +80,15 @@ public:
     QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
     virtual ~QTelephonyCallListPrivate();
     QList<QTelephonyCallInfo> activeCalls(const QTelephony::CallType& calltype) const;
+    int activeCallCount() const;
 
     //for tp
     void newChannels(DBus::ChannelPtr channelptr);
     void channelStatusChanged(DBus::ChannelPtr channel);
 
 private:
-    void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);
-    void emitActiveCallRemoved(QTelephonyCallInfoPrivate& call);
+    void emitActiveCallStatusChanged(QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>& call);
+    void emitActiveCallRemoved(QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>& call);
     void emitActiveCallAdded(QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>& call);
 private:
     QList<QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;

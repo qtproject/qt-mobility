@@ -102,6 +102,10 @@ QTM_BEGIN_NAMESPACE
 */
 QTelephonyCallList::QTelephonyCallList(QObject *parent)
     : QObject(parent)
+    , enableCallStatusChangeNotify(false)
+    , enableCallRemovedNotify(false)
+    , enableCallAddedNotify(false)
+    , enableCallCountChangedNotify(false)
 {
     qDebug() << "QTelephonyCallList::QTelephonyCallList(QObject *parent)";
     d = new QTelephonyCallListPrivate(this);
@@ -131,6 +135,35 @@ QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephony::Call
         return d->activeCalls(calltype);
     return QList<QTelephonyCallInfo>();
 }
+
+/*!
+    \fn int QTelephonyCallList::activeCallCount() const
+
+    Returns the number of current active calls.
+*/
+int QTelephonyCallList::activeCallCount() const
+{
+    if(d)
+        return d->activeCallCount();
+    return 0;
+}
+
+void QTelephonyCallList::connectNotify ( const char * signal )
+{
+    qDebug() << "connectNotify";
+    if (QLatin1String(signal) == SIGNAL(activeCallStatusChanged(QTelephonyCallInfo)))
+        enableCallStatusChangeNotify = true;
+    else if (QLatin1String(signal) == SIGNAL(activeCallRemoved(QTelephonyCallInfo)))
+        enableCallRemovedNotify = true;
+    else if (QLatin1String(signal) == SIGNAL(activeCallAdded(QTelephonyCallInfo)))
+        enableCallAddedNotify = true;
+    else if (QLatin1String(signal) == SIGNAL(activeCallCountChanged())){
+        enableCallCountChangedNotify = true;
+        if(activeCallCount() > 0)
+            emit activeCallCountChanged();
+    }
+}
+
 
 #include "moc_qtelephonycalllist.cpp"
 

@@ -108,13 +108,13 @@ QString QTelephonyCallInfo::remotePartyIdentifier() const
 }
 
 /*!
-    \fn  QTelephony::CallType QTelephonyCallInfo::type() const
+    \fn  unsigned int QTelephonyCallInfo::type() const
 
-    Returns the type of the call.
-    A call can be a VOIP, Video Voice and so on.
-    You can use this property to get the type of the call.
+    Returns the types of the call.
+    A call can be a VOIP, Video Voice and so on or a combination of different types.
+    You can use this property to get the types of the call by masking with QTelephony::CallType.
 */
-QTelephony::CallType QTelephonyCallInfo::type() const
+unsigned int  QTelephonyCallInfo::type() const
 {
     if(d)
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)

@@ -92,7 +92,7 @@ namespace DBus
         QTelephony::CallStatus getStatus() { return status; }
         int getDirection() { return direction; }
         QString getRemotePartyIdentifier() { return remoteIdentifier; }
-        QTelephony::CallType getCalltype();
+        unsigned int getCallType();
         QString getSubType() { return subtype; }
 
         bool isCall() {
