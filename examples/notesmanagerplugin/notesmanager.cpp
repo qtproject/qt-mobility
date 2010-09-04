@@ -44,22 +44,31 @@
 #include "notesmanager.h"
 
 NotesManager::NotesManager(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), m_search(QString())
 {
-    m_search = "";
+}
 
+bool NotesManager::init()
+{
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("todoDB");
-    db.open();
+    db.setDatabaseName("notesmanager.db");
+    if (!db.open())
+        db.setDatabaseName(QDir::homePath() + "/notesmanager.db");
 
-    QSqlQuery create;
-    create.exec("CREATE TABLE todolist(id INTEGER PRIMARY KEY, notes VARCHAR(255), date VARCHAR(255))");
+    if (db.open()) {
+        QSqlQuery create;
+        create.exec("CREATE TABLE todolist(id INTEGER PRIMARY KEY, notes VARCHAR(255), date VARCHAR(255))");
 
-    nextAlarm();
+        nextAlarm();
 
-    QTimer *timer = new QTimer(this);
-    QObject::connect(timer, SIGNAL(timeout()), this, SLOT(checkAlarm()));
-    timer->start(1000);
+        QTimer *timer = new QTimer(this);
+        QObject::connect(timer, SIGNAL(timeout()), this, SLOT(checkAlarm()));
+        timer->start(1000);
+    } else {
+        return false;
+    }
+
+    return true;
 }
 
 void NotesManager::nextAlarm()

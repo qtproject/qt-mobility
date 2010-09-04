@@ -50,7 +50,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QServiceIpcEndPoint : public QObject
+class QM_AUTOTEST_EXPORT QServiceIpcEndPoint : public QObject
 {
     Q_OBJECT
 public:
