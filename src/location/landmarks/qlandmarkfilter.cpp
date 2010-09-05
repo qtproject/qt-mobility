@@ -97,7 +97,7 @@ QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
 /*!
     \enum QLandmarkFilter::FilterType
     Describes the type of the filter
-    \value InvalidFilter, An invalid filter which matches nothing
+    \value InvalidFilter An invalid filter which matches nothing
     \value NameFilter A filter which matches landmarks based on name
     \value ProximityFilter A filter which matches landmarks within a certain range of a given
            coordinate.
