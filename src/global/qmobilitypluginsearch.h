@@ -41,9 +41,10 @@
 #ifndef QMOBILITYPLUGINSEARCH_H
 #define QMOBILITYPLUGINSEARCH_H
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QStringList>
 #include <QDir>
+#include <QDebug>
 
 #if defined(Q_OS_SYMBIAN)
 # include <f32file.h>
@@ -145,7 +146,7 @@ inline QStringList mobilityPlugins(const QString plugintype)
     const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
 #endif
 
-    QStringList paths = QApplication::libraryPaths();
+    QStringList paths = QCoreApplication::libraryPaths();
 #ifdef QTM_PLUGIN_PATH
     paths << QLatin1String(QTM_PLUGIN_PATH);
 #endif
