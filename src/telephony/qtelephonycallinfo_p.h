@@ -79,7 +79,7 @@ public:
         : QSharedData(other) { }
 
     QString remotePartyIdentifier;
-    QTelephony::CallType type;
+    unsigned int type;
     QString subType;
     QTelephony::CallStatus status;
     QHash<QString, QVariant> values;

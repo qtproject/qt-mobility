@@ -79,6 +79,7 @@ public:
     QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
     virtual ~QTelephonyCallListPrivate();
     QList<QTelephonyCallInfo> activeCalls(const QTelephony::CallType& calltype) const;
+    int activeCallCount() const;
 
 private:
     void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);
