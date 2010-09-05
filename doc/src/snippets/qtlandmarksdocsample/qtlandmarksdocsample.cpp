@@ -386,19 +386,18 @@ void landmarkFetch(QLandmarkManager *lm)
     }
 
     {
-        QLandmarkManager *landmarkManager;
-        //! [Retrieve landmarks by proximity synchronously]
-        QGeoCoordinate coordinate(54.0, 23.1);
 
-        QLandmarkProximityFilter filter;
-        filter.setCoordinate(coordinate);
-        filter.setRadius(5000);
+        QLandmarkManager *landmarkManager;
+        QLandmarkCategory category;
+        //! [Retrieve landmarks by category synchronously]
+        QLandmarkCategoryFilter filter;
+        filter.setCategoryId(category.categoryId());
 
         QLandmarkNameSort nameSort;
         nameSort.setDirection(Qt::AscendingOrder);
 
-        landmarkManager->landmarks(filter, 5, 0, nameSort);
-        //! [Retrieve landmarks by proximity synchronously]
+        landmarkManager->landmarks(filter, 100, 0, nameSort);
+        //! [Retrieve landmarks by category synchronously]
 
         //! [Retrieve all landmarks synchronously]
         landmarkManager->landmarks();
@@ -554,7 +553,6 @@ void RequestExample::landmarkExportRequest()
     //if we wanted to we could specify various export parameters
     // lmExportRequest->setLandmarkIds(...);
     // lmExportRequest->setTransferOption(...);
-
 
     connect(lmExportRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,
             SLOT(landmarkExportRequestHandler(QLandmarkAbstractRequest::State)));
