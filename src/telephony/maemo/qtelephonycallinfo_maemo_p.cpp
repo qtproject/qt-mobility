@@ -73,11 +73,11 @@ QString QTelephonyCallInfoPrivate::remotePartyIdentifier() const
     return QString("");
 }
 
-QTelephony::CallType QTelephonyCallInfoPrivate::type() const
+unsigned int QTelephonyCallInfoPrivate::type() const
 {
-    QTelephony::CallType ret = QTelephony::Other;
+    unsigned int ret = 0;
     if(telepathychannel)
-        ret =   telepathychannel->getCalltype();
+        ret = telepathychannel->getCallType();
     return ret;
 }
 

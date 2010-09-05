@@ -31,6 +31,8 @@ symbian {
                
         LIBS += -ltelephonyservice -lserviceprovidersettings
     } else {
+        LIBS += -letel \
+                -letelmm 
         HEADERS += qtelephonycalllist_symbian_p.h \
                    qtelephonycallinfo_p.h
         SOURCES += qtelephonycalllist_symbian.cpp
