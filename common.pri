@@ -97,9 +97,12 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
             DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE 
         } else {
             #check that plugin_type is set or warn otherwise
-            isEmpty(PLUGIN_TYPE):message(PLUGIN_TYPE not specified - install rule may not work)
-            target.path=$${QT_MOBILITY_PLUGINS}/$${PLUGIN_TYPE}
-            INSTALLS += target
+            isEmpty(PLUGIN_TYPE) {
+                message(PLUGIN_TYPE not specified - install rule may not work)
+            } else {
+                target.path=$${QT_MOBILITY_PLUGINS}/$${PLUGIN_TYPE}
+                INSTALLS += target
+            }
         }
     }
 

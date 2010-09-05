@@ -2,7 +2,9 @@ TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qqt7engine)
 
+!simulator {
 QT += opengl
+}
 
 PLUGIN_TYPE = mediaservice
 
@@ -34,24 +36,29 @@ DEPENDPATH += .
 HEADERS += \
     qt7backend.h \
     qt7videooutput.h \
-    qt7movieviewoutput.h \
-    qt7movievideowidget.h \
-    qt7movieviewrenderer.h \
-    qt7serviceplugin.h \
-    qt7movierenderer.h \
-    qt7ciimagevideobuffer.h \
-    qcvdisplaylink.h
-
+    qt7serviceplugin.h
 
 OBJECTIVE_SOURCES += \
     qt7backend.mm \
-    qt7serviceplugin.mm \
-    qt7movieviewoutput.mm \
-    qt7movievideowidget.mm \
-    qt7movieviewrenderer.mm \
-    qt7movierenderer.mm \
-    qt7videooutput.mm \
-    qt7ciimagevideobuffer.mm \
-    qcvdisplaylink.mm
+    qt7serviceplugin.mm
+
+!simulator {
+    HEADERS += \
+        qt7movieviewoutput.h \
+        qt7movievideowidget.h \
+        qt7movieviewrenderer.h \
+        qt7movierenderer.h \
+        qt7ciimagevideobuffer.h \
+        qcvdisplaylink.h
+
+    OBJECTIVE_SOURCES += \
+        qt7movieviewoutput.mm \
+        qt7movievideowidget.mm \
+        qt7movieviewrenderer.mm \
+        qt7movierenderer.mm \
+        qt7videooutput.mm \
+        qt7ciimagevideobuffer.mm \
+        qcvdisplaylink.mm
+}
 
 include(mediaplayer/mediaplayer.pri)
