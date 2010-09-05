@@ -29,6 +29,8 @@ symbian {
     # UID
     TARGET.UID3 = 0x2002BFCE
 
+    LIBS += -lefsrv
+
     # Main library
     FEEDBACK_DEPLOYMENT.sources = QtFeedback.dll
     FEEDBACK_DEPLOYMENT.path = /sys/bin
