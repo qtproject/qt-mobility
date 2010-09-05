@@ -31,10 +31,16 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
-        <widget class="QLabel" name="currentLanguageLabel">
-         <property name="text">
-          <string>.</string>
+       <item row="0" column="2" colspan="2">
+        <widget class="QLineEdit" name="curLanguageLineEdit">
+         <property name="mouseTracking">
+          <bool>false</bool>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="acceptDrops">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -48,7 +54,7 @@
        <item row="1" column="2">
         <widget class="QLabel" name="countryCodeLabel">
          <property name="text">
-          <string>.</string>
+          <string>TextLabel</string>
          </property>
         </widget>
        </item>
@@ -62,19 +68,6 @@
        <item row="2" column="2" colspan="2">
         <widget class="QComboBox" name="languagesComboBox"/>
        </item>
-       <item row="2" column="4">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>329</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="3" column="0">
         <widget class="QLabel" name="label_30">
          <property name="text">
@@ -82,7 +75,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="2">
+       <item row="3" column="1" colspan="2">
         <widget class="QComboBox" name="versionComboBox">
          <item>
           <property name="text">
@@ -106,10 +99,16 @@
          </item>
         </widget>
        </item>
-       <item row="3" column="3">
-        <widget class="QLabel" name="versionLabel">
-         <property name="text">
-          <string>.</string>
+       <item row="3" column="3" colspan="2">
+        <widget class="QLineEdit" name="versionLineEdit">
+         <property name="mouseTracking">
+          <bool>false</bool>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="acceptDrops">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -120,7 +119,7 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="2">
+       <item row="4" column="2" colspan="2">
         <widget class="QComboBox" name="featureComboBox">
          <item>
           <property name="text">
@@ -194,10 +193,16 @@
          </item>
         </widget>
        </item>
-       <item row="4" column="3">
-        <widget class="QLabel" name="featuresLabel">
-         <property name="text">
-          <string>.</string>
+       <item row="4" column="4">
+        <widget class="QLineEdit" name="featuresLineEdit">
+         <property name="mouseTracking">
+          <bool>false</bool>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="acceptDrops">
+          <bool>false</bool>
          </property>
         </widget>
        </item>

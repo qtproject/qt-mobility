@@ -146,7 +146,7 @@ void Dialog::setupGeneral()
     delete systemInfo;
 //! [lang]
     systemInfo = new QSystemInfo(this);
-    currentLanguageLabel->setText( systemInfo->currentLanguage());
+    curLanguageLineEdit->setText( systemInfo->currentLanguage());
 //! [lang]
     languagesComboBox->clear();
     languagesComboBox->insertItems(0,systemInfo->availableLanguages());
@@ -398,7 +398,7 @@ void Dialog::getVersion(int index)
     QSystemInfo::Version version;
     switch(index) {
     case 0:
-        versionLabel->setText("");
+        versionLineEdit->setText("");
         break;
     case 1:
 //! [OS ver]
@@ -418,7 +418,7 @@ void Dialog::getVersion(int index)
     };
 
     QSystemInfo si;
-    versionLabel->setText(si.version(version));
+    versionLineEdit->setText(si.version(version));
 }
 
 void Dialog::getFeature(int index)
@@ -474,7 +474,7 @@ void Dialog::getFeature(int index)
     };
 //! [feature test]
     QSystemInfo si;
-    featuresLabel->setText((si.hasFeatureSupported(feature) ? "true":"false" ));
+    featuresLineEdit->setText((si.hasFeatureSupported(feature) ? "true":"false" ));
 //! [feature test]
 }
 
