@@ -1240,7 +1240,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                     point.coordinate = coordinate;
                     point.landmarkId = id;
 
-                    if (radius == -1 || (coordinate.distanceTo(center) < radius) || qFuzzyCompare(coordinate.distanceTo(center), radius))
+                    if (radius == -1 || (coordinate.distanceTo(center) < radius) || qFuzzyCompare((double)coordinate.distanceTo(center), radius))
                         addSortedPoint(&sortedPoints,point,center);
 
                 } while (query.next());
