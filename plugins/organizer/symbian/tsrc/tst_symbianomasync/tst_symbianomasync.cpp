@@ -82,6 +82,8 @@ private slots:  // Test cases
     void addSimpleItem();
     void fetchSimpleItem_data(){ addManagers(); };
     void fetchSimpleItem();
+    void fetchWaitForFinished_data(){ addManagers(); };
+    void fetchWaitForFinished();
 
 private: // util functions
     void addManagers();
@@ -172,6 +174,40 @@ void tst_SymbianOmAsync::fetchSimpleItem()
     QCOMPARE(fetchItemRequest.error(), QOrganizerItemManager::NoError);
     QCOMPARE(fetchItemRequest.items().count(), 1);
     QVERIFY(fetchItemRequest.items().at(0).localId() != 0);
+}
+
+void tst_SymbianOmAsync::fetchWaitForFinished()
+{
+     // Create item
+     QOrganizerItem item;
+     item.setType(QOrganizerItemType::TypeTodo);
+
+     // Save (synchronously)
+     QVERIFY(m_om->saveItem(&item));
+     QVERIFY(item.id().localId() != 0);
+     QVERIFY(item.id().managerUri().contains(m_om->managerName()));
+
+     // Create fetch request
+     QOrganizerItemFetchRequest fetchItemRequest;
+     fetchItemRequest.setManager(m_om);
+
+     // Create signal spys for verification purposes
+     QSignalSpy stateSpy(&fetchItemRequest,
+         SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+     QSignalSpy resultSpy(&fetchItemRequest, SIGNAL(resultsAvailable()));
+
+     // Fetch
+     QVERIFY(fetchItemRequest.start());
+     QCOMPARE(fetchItemRequest.state(), QOrganizerItemAbstractRequest::ActiveState);
+     QCOMPARE(stateSpy.count(), 1);
+     QTime startTime = QTime::currentTime();
+     QVERIFY(fetchItemRequest.waitForFinished(5000)); // 5 seconds time-out
+
+     // Verify that the fetch did not take over 2 secons
+     // Note: at the moment we don't have any performance requirements defined,
+     // but a single fetch request taking more than 2 seconds would be clearly
+     // too slow
+     QVERIFY(startTime.secsTo(QTime::currentTime()) < 2);
 }
 
 /*!
