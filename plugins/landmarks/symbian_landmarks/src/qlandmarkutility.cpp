@@ -988,7 +988,7 @@ TPositionFieldId LandmarkUtility::positionFieldId(QString keyValue)
 /**
  * Converts to symbian format string
  */
-HBufC8* LandmarkUtility::landmarkPackageFormatsStrLC(const QString& format)
+HBufC8* LandmarkUtility::landmarkPackageFormatsStrL(const QString& format)
 {
     HBufC8* buffer = NULL;
     if (format == "lmx")

@@ -350,8 +350,8 @@ void CLandmarkRequestAO::SetOperation(CPosLmOperation *aOp)
     iOperation = aOp;
 }
 
-void CLandmarkRequestAO::SetExportData(CPosLandmarkEncoder *aEncoder, CBufBase *aExportBuffer,
-    QList<QLandmarkId> lmIds)
+void CLandmarkRequestAO::SetExportData(CPosLandmarkEncoder *aEncoder, RFs &aFs,
+    CBufBase *aExportBuffer, QList<QLandmarkId> lmIds)
 {
     if (iParent) {
         if (aEncoder)
@@ -361,6 +361,7 @@ void CLandmarkRequestAO::SetExportData(CPosLandmarkEncoder *aEncoder, CBufBase *
         if (&lmIds != 0 && lmIds.size() > 0) {
             iParent->iLandmarkIds = lmIds;
         }
+        iParent->iFileSystem = aFs;
     }
 }
 
@@ -498,7 +499,7 @@ void CLandmarkRequestData::Reset()
     iOpCount = 0;
     error = QLandmarkManager::NoError;
     errorString.clear();
-    
+
     iAddedLandmarkIds.clear();
     iChangedLandmarkIds.clear();
     iRemovedLandmarkIds.clear();
