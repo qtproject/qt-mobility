@@ -73,8 +73,8 @@ void RequestExample::categorySaveRequest()
     cafes.setName("Cafes");
     cafes.setIconUrl(QUrl("cafe.png"));
 
-    //catSaveRequest was created with catSaveRequest = new QLandmarkCategorySaveRequest(lmManager)
-    //in the ctor, where lmManager is a QLandmarkManager *
+    //catSaveRequest was previously created with catSaveRequest = new QLandmarkCategorySaveRequest(lmManager)
+    //where lmManager is a QLandmarkManager *
     catSaveRequest->setCategory(cafes);
 
     connect(catSaveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,
@@ -113,12 +113,12 @@ void RequestExample::landmarkSaveRequest()
     // ...
     address.setCountryCode("US");
     monks.setAddress(address);
+    monks.setDescription("Jerry's favourite diner");
 
-    //lmSaveRequest was created with lmSaveRequest = new QLandmarkSaveRequest(lmManager)
-    //in the ctor, where lmManager is a QLandamrkManager constructor
+    //lmSaveRequest was previously created with lmSaveRequest = new QLandmarkSaveRequest(lmManager);
+    //where lmManager is a QLandamrkManager *
     lmSaveRequest->setLandmark(monks);
 
-    monks.setDescription("Jerry's favourite diner");
 
     connect(lmSaveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,
             SLOT(landmarkSaveRequestHandler(QLandmarkAbstractRequest::State)));
@@ -147,8 +147,8 @@ void RequestExample::landmarkSaveRequestHandler(QLandmarkAbstractRequest::State 
 void RequestExample::categoryFetchRequest()
 {
     //! [Retrieve categories asynchronously]
-    //catFetchRequest was created with catFetchRequest = new QLandmarkCategoryFetchRequest(lmManager)
-    //in the ctor, where lmManager is a QLandmarkManager*
+    //catFetchRequest was previously created with catFetchRequest = new QLandmarkCategoryFetchRequest(lmManager);
+    //where lmManager is a QLandmarkManager*
 
     connect(catFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
             this, SLOT(categoryFetchRequestHandler(QLandmarkAbstractRequest::State)));
@@ -166,7 +166,6 @@ void RequestExample::categoryFetchRequest()
 void RequestExample::categoryFetchRequestHandler(QLandmarkAbstractRequest::State state)
 {
     if (state == QLandmarkAbstractRequest::FinishedState) {
-        previousLastIndex = 0;
         if (catFetchRequest->error() == QLandmarkManager::NoError) {
             QList<QLandmarkCategory> categories = catFetchRequest->categories();
             qDebug() << "Category fetch succesfully completed";
@@ -185,14 +184,16 @@ void RequestExample::landmarkFetchRequest()
 {
     //! [Retrieve landmarks asynchronously]
     QLandmarkCategoryFilter filter;
-    QLandmarkNameSort sort(Qt::AscendingOrder);
     //categoryId is a previously retrieved QLandmarkCategoryId
     filter.setCategoryId(categoryId);
+    QLandmarkNameSort sortOrder(Qt::AscendingOrder);
 
-    //lmFetchRequest was created with lmFetchRequest = new QLandmarkFetchRequest(lmManager)
-    //in the ctor, where lmManager is a QLandmarkManger *
+    //lmFetchRequest was previously created with lmFetchRequest = new QLandmarkFetchRequest(lmManager);
+    //where lmManager is a QLandmarkManger *
     lmFetchRequest->setFilter(filter);
-    lmFetchRequest->setSorting(sort);
+    lmFetchRequest->setLimit(5);
+    lmFetchRequest->setOffset(0);
+    lmFetchRequest->setSorting(sortOrder);
 
     connect(lmFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
             this, SLOT(landmarkFetchRequestHandler(QLandmarkAbstractRequest::State)));
@@ -228,8 +229,8 @@ void RequestExample::landmarkFetchRequestHandler(QLandmarkAbstractRequest::State
 //! [Remove category asynchronously]
 void RequestExample::categoryRemoveRequest()
 {
-    //catRemoveRequest was created with catRemoveRequest = new QLandmarkCategoryRemoveRequest(lmManager)
-    //in the ctor, where lmManager is a QLandmarkManager*
+    //catRemoveRequest was created previously with catRemoveRequest = new QLandmarkCategoryRemoveRequest(lmManager);
+    //where lmManager is a QLandmarkManager*
     catRemoveRequest->setCategoryId(category.categoryId()); //category is a previously retrieved QLandmarkCategory
 
     connect(catRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
@@ -261,8 +262,8 @@ void RequestExample::categoryRemoveRequestHandler(QLandmarkAbstractRequest::Stat
 //! [Remove landmark asynchronously]
 void RequestExample::landmarkRemoveRequest()
 {
-    //lmRemoveRequest was created with lmRemoveRequest = new QLandmarkSaveRequest(lmManager)
-    //in the ctor, where lmManager is a QLandmarkManager*
+    //lmRemoveRequest was created previously with lmRemoveRequest = new QLandmarkRemoveRequest(lmManager);
+    //where lmManager is a QLandmarkManager*
     lmRemoveRequest->setLandmarkId(landmark.landmarkId());  //landmark is a previously retrieved QLandmark
 
     connect(lmRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,
@@ -354,27 +355,35 @@ void categoryFetch(QLandmarkManager *lm)
 
 void landmarkFetch(QLandmarkManager *lm)
 {
-    //! [Retrieve landmarks synchronously by id]
-    QLandmarkCategoryFilter filter;
-    //categoryId is a previously retrieved QLandmarkCategoryId
-    filter.setCategoryId(categoryId);
 
-    //retrieval via ids
-    QList<QLandmarkId> landmarkIds;
-    QLandmarkNameSort sortOrder(Qt::AscendingOrder);
-    landmarkIds = lm->landmarkIds(filter, -1, 0, sortOrder);
-    foreach(QLandmarkId id, landmarkIds) {
-        qDebug() << "Found landmark:" << lm->landmark(id).name();
+    {
+        //! [Retrieve landmarks synchronously]
+        QList<QLandmark> landmarks;
+        QLandmarkCategoryFilter filter;
+        //categoryId is a previously retrieved QLandmarkCategoryId
+        filter.setCategoryId(categoryId);
+        QLandmarkNameSort sortOrder(Qt::AscendingOrder);
+        landmarks = lm->landmarks(filter, 5, 0, sortOrder);
+        foreach(const QLandmark &landmark, landmarks) {
+            qDebug() << "Found landmark:" << landmark.name();
+        }
+        //! [Retrieve landmarks synchronously]
     }
-    //! [Retrieve landmarks synchronously by id]
 
-    //! [Retrieve landmarks synchronously]
-    QList<QLandmark> landmarks;
-    landmarks = lm->landmarks(filter, -1, 0, sortOrder);
-    foreach(QLandmark landmark, landmarks) {
-        qDebug() << "Found landmark:" << landmark.name();
+    {
+        //! [Retrieve landmarks synchronously by id]
+        //retrieval via ids
+        QList<QLandmarkId> landmarkIds;
+        QLandmarkCategoryFilter filter;
+        //categoryId is a previously retrieved QLandmarkCategoryId
+        filter.setCategoryId(categoryId);
+        QLandmarkNameSort sortOrder(Qt::AscendingOrder);
+        landmarkIds = lm->landmarkIds(filter, 5, 0, sortOrder);
+        foreach(const QLandmarkId &id, landmarkIds) {
+            qDebug() << "Found landmark:" << lm->landmark(id).name();
+        }
+        //! [Retrieve landmarks synchronously by id]
     }
-    //! [Retrieve landmarks synchronously]
 
     {
         QLandmarkManager *landmarkManager;
@@ -388,7 +397,7 @@ void landmarkFetch(QLandmarkManager *lm)
         QLandmarkNameSort nameSort;
         nameSort.setDirection(Qt::AscendingOrder);
 
-        landmarkManager->landmarks(filter, 5, 0, sortOrder);
+        landmarkManager->landmarks(filter, 5, 0, nameSort);
         //! [Retrieve landmarks by proximity synchronously]
 
         //! [Retrieve all landmarks synchronously]
@@ -508,7 +517,7 @@ void RequestExample::landmarkImportRequest()
 
     //if we wanted to we could specify various import parameters
     // lmImportRequest->setFormat(...);
-    // lmImportRequest->setTransferOptions(...);
+    // lmImportRequest->setTransferOption(...);
 
 
     connect(lmImportRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,
@@ -516,7 +525,7 @@ void RequestExample::landmarkImportRequest()
     if (!lmImportRequest->start())
         qDebug() << "Unable to import landmarks, error code: " << lmImportRequest->error();
     else
-        qDebug() << "Import landmarks; awaiting results...";
+        qDebug() << "Importing landmarks; awaiting results...";
 }
 //! [Import landmarks asynchronously]
 
@@ -544,7 +553,7 @@ void RequestExample::landmarkExportRequest()
 
     //if we wanted to we could specify various export parameters
     // lmExportRequest->setLandmarkIds(...);
-    // lmExportRequest->setTransferOptions(...);
+    // lmExportRequest->setTransferOption(...);
 
 
     connect(lmExportRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,
@@ -552,7 +561,7 @@ void RequestExample::landmarkExportRequest()
     if (!lmExportRequest->start())
         qDebug() << "Unable to export landmarks, error code: " << lmExportRequest->error();
     else
-        qDebug() << "Export landmarks; awaiting results...";
+        qDebug() << "Exporting landmarks; awaiting results...";
 }
 //! [Export landmarks asynchronously]
 
