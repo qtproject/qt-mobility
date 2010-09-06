@@ -107,7 +107,11 @@ private:
     public:
         PausableElapsedTimer() : pausedTime(0)
         {
+#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
            m_elapsedTimer.invalidate();
+#else
+            m_elapsedTimer = QTime();
+#endif
         }
 
         void start()
