@@ -439,12 +439,70 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_armv5()
 
 void tst_QMediaPlayer_s60::initTestCase_data_32_winscw()
 {
-    //TODO: add data
+    QTest::addColumn<bool>("valid");
+    QTest::addColumn<QMediaPlayer::State>("state");
+    QTest::addColumn<QMediaPlayer::MediaStatus>("status");
+    QTest::addColumn<QMediaContent>("mediaContent");
+    QTest::addColumn<qint64>("duration");
+    QTest::addColumn<qint64>("position");
+    QTest::addColumn<bool>("seekable");
+    QTest::addColumn<bool>("seekableWhilePlaying");
+    QTest::addColumn<int>("volume");
+    QTest::addColumn<bool>("videoAvailable");
+    QTest::addColumn<bool>("audioAvailable");
+    QTest::addColumn<qreal>("playbackRate");
+    QTest::addColumn<QMediaPlayer::Error>("error");
+    QTest::addColumn<QString>("errorString");
+
+    QTest::newRow("TestDataNull")
+    << false //valid
+    << QMediaPlayer::StoppedState // state
+    << QMediaPlayer::NoMedia // status
+    << QMediaContent() // mediaContent
+    << qint64(-1) // duration
+    << qint64(0) // position
+    << false // seekable
+    << false // seekableWhilePlaying
+    << 50 // volume
+    << false // videoAvailable
+    << false //audioAvailable
+    << qreal(0) // playbackRate
+    << QMediaPlayer::NoError // error
+    << QString(); // errorString
 }
 
 void tst_QMediaPlayer_s60::initTestCase_data_32_armv5()
 {
-    //TODO: add data
+    QTest::addColumn<bool>("valid");
+    QTest::addColumn<QMediaPlayer::State>("state");
+    QTest::addColumn<QMediaPlayer::MediaStatus>("status");
+    QTest::addColumn<QMediaContent>("mediaContent");
+    QTest::addColumn<qint64>("duration");
+    QTest::addColumn<qint64>("position");
+    QTest::addColumn<bool>("seekable");
+    QTest::addColumn<bool>("seekableWhilePlaying");
+    QTest::addColumn<int>("volume");
+    QTest::addColumn<bool>("videoAvailable");
+    QTest::addColumn<bool>("audioAvailable");
+    QTest::addColumn<qreal>("playbackRate");
+    QTest::addColumn<QMediaPlayer::Error>("error");
+    QTest::addColumn<QString>("errorString");
+
+    QTest::newRow("TestDataNull")
+    << false //valid
+    << QMediaPlayer::StoppedState // state
+    << QMediaPlayer::NoMedia // status
+    << QMediaContent() // mediaContent
+    << qint64(-1) // duration
+    << qint64(0) // position
+    << false // seekable
+    << false // seekableWhilePlaying
+    << 50 // volume
+    << false // videoAvailable
+    << false //audioAvailable
+    << qreal(0) // playbackRate
+    << QMediaPlayer::NoError // error
+    << QString(); // errorString
 }
 
 void tst_QMediaPlayer_s60::initTestCase_data_31_winscw()
