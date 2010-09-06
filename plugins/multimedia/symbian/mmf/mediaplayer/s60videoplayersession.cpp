@@ -280,7 +280,7 @@ void S60VideoPlayerSession::doSetPositionL(qint64 microSeconds)
 
 void S60VideoPlayerSession::doSetVolumeL(int volume)
 {
-    m_player->SetVolumeL((volume / 100.0)* m_player->MaxVolume());
+    m_player->SetVolumeL(volume * m_player->MaxVolume() / 100);
 }
 
 QPair<qreal, qreal> S60VideoPlayerSession::scaleFactor()
