@@ -114,9 +114,22 @@ public:
     static void new_event_cb(RTComEl *el,int event_id,
                              const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
                              const char *group_uid,const char *service,EventLoggerEngine *p);
+    static void event_updated_cb(RTComEl *el,int event_id,
+                          const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                             const char *group_uid,const char *service,EventLoggerEngine *p);
+    static void event_deleted_cb(RTComEl *el,int event_id,
+                             const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                             const char *group_uid,const char *service,EventLoggerEngine *p);
     void newEvent(int event_id,
                   const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
                   const char *group_uid,const char *service);
+    void deletedEvent(int event_id,
+                  const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                  const char *group_uid,const char *service);
+    void updatedEvent(int event_id,
+                  const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                  const char *group_uid,const char *service);
+
     QMessageIdList filterAndOrderMessages(const QMessageFilter &filter, const QMessageSortOrder& sortOrder,
 				      QString body, QMessageDataComparator::MatchFlags matchFlags);
 

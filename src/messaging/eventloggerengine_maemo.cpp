@@ -73,7 +73,10 @@ EventLoggerEngine::EventLoggerEngine(QObject *parent):QObject(parent)
 
 
     g_signal_connect(G_OBJECT(el), "new-event", G_CALLBACK(new_event_cb),(void*)this);
+    g_signal_connect(G_OBJECT(el), "event-deleted", G_CALLBACK(event_deleted_cb),(void*)this);
+    g_signal_connect(G_OBJECT(el), "event-updated", G_CALLBACK(event_updated_cb),(void*)this);
 }
+
 
 void EventLoggerEngine::new_event_cb(RTComEl *el,int event_id,
                                     const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
@@ -82,6 +85,23 @@ void EventLoggerEngine::new_event_cb(RTComEl *el,int event_id,
   Q_UNUSED(el);
   p->newEvent(event_id, local_uid,remote_uid ,remote_ebook_uid,group_uid,service);
 };
+
+void EventLoggerEngine::event_deleted_cb(RTComEl *el,int event_id,
+                                    const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                                    const char *group_uid,const char *service,EventLoggerEngine *p)
+{
+  Q_UNUSED(el);
+  p->deletedEvent(event_id, local_uid,remote_uid ,remote_ebook_uid,group_uid,service);
+};
+
+void EventLoggerEngine::event_updated_cb(RTComEl *el,int event_id,
+                                    const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                                    const char *group_uid,const char *service,EventLoggerEngine *p)
+{
+  Q_UNUSED(el);
+  p->updatedEvent(event_id, local_uid,remote_uid ,remote_ebook_uid,group_uid,service);
+};
+
 
 void EventLoggerEngine::newEvent(int event_id,
                                 const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
@@ -92,8 +112,34 @@ void EventLoggerEngine::newEvent(int event_id,
    QString eventIds=QString("el")+QString::number(event_id);
     QMessageId id(eventIds);
 
-
+ qDebug()  << "newEvent id=" << eventIds;
     notification(event_id,service,QMessageStorePrivate::Added);
+}
+
+void EventLoggerEngine::updatedEvent(int event_id,
+                                const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                                const char *group_uid,const char *service)
+{
+  Q_UNUSED(local_uid); Q_UNUSED(remote_uid);Q_UNUSED(remote_ebook_uid);
+  Q_UNUSED(group_uid);Q_UNUSED(service);
+   QString eventIds=QString("el")+QString::number(event_id);
+    QMessageId id(eventIds);
+
+ qDebug()  << "updatedEvent id=" << eventIds;
+    notification(event_id,service,QMessageStorePrivate::Updated);
+}
+
+void EventLoggerEngine::deletedEvent(int event_id,
+                                const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                                const char *group_uid,const char *service)
+{
+  Q_UNUSED(local_uid); Q_UNUSED(remote_uid);Q_UNUSED(remote_ebook_uid);
+  Q_UNUSED(group_uid);Q_UNUSED(service);
+   QString eventIds=QString("el")+QString::number(event_id);
+    QMessageId id(eventIds);
+
+    qDebug()  << "deletedEvent id=" << eventIds;
+    notification(event_id,service,QMessageStorePrivate::Removed);
 }
 
 QMessageManager::NotificationFilterId EventLoggerEngine::registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
