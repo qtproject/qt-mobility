@@ -4,7 +4,8 @@ INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 # Input
 LIBS +=     -lmdeclient.dll \
-            -leuser.dll
+            -leuser.dll \
+            -lcharconv
 
 SOURCES += $$PWD/qmdegalleryresultset.cpp \
            $$PWD/qgallerymdsutility.cpp \

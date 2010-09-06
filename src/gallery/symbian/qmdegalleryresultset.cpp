@@ -94,14 +94,10 @@ int QMDEGalleryResultSet::itemCount() const
 bool QMDEGalleryResultSet::isValid() const
 {
     // Index based check
-    if ( itemCount() != 0 && itemCount() >= currentIndex() ) {
+    if ( itemCount() != 0 && itemCount() >= currentIndex() )
         return true;
-    }
-    else {
+    else
         return false;
-    }
-
-    return m_isValid;
 }
 
 QVariant QMDEGalleryResultSet::itemId() const
@@ -117,12 +113,14 @@ QVariant QMDEGalleryResultSet::itemId() const
 QUrl QMDEGalleryResultSet::itemUrl() const
 {
     if ( isValid()) {
-        return QUrl( QDocumentGalleryMDSUtility::s60DescToQString( m_itemArray[m_cursorPosition]->Uri() ));
+        const QUrl url =
+            QUrl(QDocumentGalleryMDSUtility::s60DescToQString( m_itemArray[m_cursorPosition]->Uri()));
+        return url;
     }
-    else{
-        QUrl null;
-        return NULL;
+    else {
+        return QUrl();
     }
+
 }
 
 QString QMDEGalleryResultSet::itemType() const
