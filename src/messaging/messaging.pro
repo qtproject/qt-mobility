@@ -64,7 +64,7 @@ SOURCES += qmessageid.cpp \
     qmessagestore.cpp \
     qmessageservice.cpp \
     messagingutil.cpp
-symbian|win32|maemo6|maemo5|mac:!simulator { 
+symbian|win32|maemo6|maemo5|mac:!simulator {
     mac: SOURCES += qmessageid_stub.cpp \
         qmessagecontentcontainerid_stub.cpp \
         qmessagefolderid_stub.cpp \

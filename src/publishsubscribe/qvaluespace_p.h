@@ -57,7 +57,7 @@ QString qCanonicalPath(const QString &path);
 QString qAddSimulatorPrefix(const QString &path);
 #endif
 
-class Q_AUTOTEST_EXPORT QAbstractValueSpaceLayer : public QObject
+class QM_AUTOTEST_EXPORT QAbstractValueSpaceLayer : public QObject
 {
     Q_OBJECT
 
@@ -111,8 +111,8 @@ signals:
 
 namespace QValueSpace {
     typedef QAbstractValueSpaceLayer *(*LayerCreateFunc)();
-    Q_AUTOTEST_EXPORT void installLayer(LayerCreateFunc func);
-    Q_AUTOTEST_EXPORT void installLayer(QAbstractValueSpaceLayer *layer);
+    QM_AUTOTEST_EXPORT void installLayer(LayerCreateFunc func);
+    QM_AUTOTEST_EXPORT void installLayer(QAbstractValueSpaceLayer *layer);
 
     struct AutoInstall {
         AutoInstall(LayerCreateFunc func) { installLayer(func); }

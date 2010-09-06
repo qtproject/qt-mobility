@@ -64,7 +64,7 @@ QT_BEGIN_NAMESPACE
 
 class QMediaServiceProviderPlugin;
 
-class Q_AUTOTEST_EXPORT QMediaPluginLoader
+class QM_AUTOTEST_EXPORT QMediaPluginLoader
 {
 public:
     QMediaPluginLoader(const char *iid,
