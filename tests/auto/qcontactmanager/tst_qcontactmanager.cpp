@@ -54,6 +54,7 @@
   #include <e32base.h>
   #include <s32mem.h>
   #include <cntitem.h>
+  #include <cntfldst.h>
 #endif
 
 QTM_USE_NAMESPACE
@@ -1595,7 +1596,7 @@ void tst_QContactManager::symbianManager()
     // set the thumbnail data in the thumbnail field, and add it to the contact
     _LIT8(KThumbnailDataString, "Dummy Thumbnail Data String");
     thumbnailField->StoreStorage()->SetThingL(KThumbnailDataString);
-    contactItem->AddFieldL(*thumbnailField);
+    testItem->AddFieldL(*thumbnailField);
     CleanupStack::Pop(thumbnailField);
 
     // save the updated contact.
