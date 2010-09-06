@@ -113,10 +113,10 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
     to choose landmarks that belong to a certain category or a QLandmarkProximityFilter to choose landmarks
     within a certain range from a given location.  A QLandmarkSortOrder order defines how the results should
     be sorted.  The limit allows specification of the maximum number of items to
-    return and the offset defines the index of the first item.  The following demonstrates how to search for the 5 nearest
-    landmarks to a given coordinate.
+    return and the offset defines the index of the first item.  The following demonstrates how to search for the first 100
+    landmarks belonging to a given category, sorted by name.
 
-    \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve landmarks by proximity synchronously
+    \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve landmarks by category synchronously
 
     The set of parameters described above are not always necessary as defaults are provided, if we wanted to retrieve
     all landmarks, then the appropriate call is:
@@ -144,8 +144,8 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
 
     \section1 Importing and exporting
     Import and exporting are potentially long operations, to perform these operations asynchronously
-    see QLandmarkImportRequest and QLandmarkExportRequest.  The simplest way to perform import and export
-    operations is to specify a filename:
+    see QLandmarkImportRequest and QLandmarkExportRequest.  The simplest way to perform an import
+    is to supply a filename while an export will need both a filename and format.
 
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp ImportExport landmark simple
 */
@@ -430,8 +430,6 @@ bool QLandmarkManager::saveCategory(QLandmarkCategory *category)
 
 /*!
     Remove the category identified by \a categoryId from the database.
-    The categoryId is cleared(and becomes invalid) on successful
-    removal.  An unsuccessful removal will leave the identifer alone.
 
     Returns true if the category was removed successfully, otherwise
     returnse false.

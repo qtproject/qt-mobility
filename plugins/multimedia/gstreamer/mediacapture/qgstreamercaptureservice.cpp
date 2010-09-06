@@ -163,7 +163,7 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
         m_videoRenderer = new QGstreamerVideoRenderer(this);
         m_videoRendererFactory = new QGstreamerVideoRendererWrapper(m_videoRenderer);
 
-#ifndef QT_NO_XVIDEO
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
         QGstreamerVideoOverlay *videoWindow = new QGstreamerVideoOverlay(this);
         m_videoWindow = videoWindow;
         m_videoWindowFactory = new QGstreamerVideoRendererWrapper(videoWindow);

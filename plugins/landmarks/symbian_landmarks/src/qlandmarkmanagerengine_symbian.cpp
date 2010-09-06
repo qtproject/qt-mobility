@@ -668,6 +668,11 @@ void QLandmarkManagerEngineSymbian::handleLandmarkEvent(LandmarkEventObserver::l
         emit categoriesRemoved(categoryIds);
         break;
     }
+    case LandmarkEventObserver::unknownChanges:
+    {
+        emit dataChanged();
+        break;
+    }
     default:
     {
         break;
