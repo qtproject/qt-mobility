@@ -4775,4 +4775,57 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::importLandmarksL(QIODevi
     return importedLmIds;
 }
 
+/**
+ * 
+ */
+void LandmarkManagerEngineSymbianPrivate::handleDatabaseEvent(const TPosLmEvent& aEvent)
+{
+    qDebug() << "aEvent.iLandmarkItemId = " << aEvent.iLandmarkItemId;
+    qDebug() << "aEvent.iEventType = " << aEvent.iEventType;
+
+    switch (aEvent.iEventType) {
+    case EPosLmEventLandmarkCreated:
+    {
+        qDebug() << "landmark created";
+        break;
+    }
+    case EPosLmEventLandmarkDeleted:
+    {
+        qDebug() << "landmark deleted";
+        break;
+    }
+    case EPosLmEventLandmarkUpdated:
+    {
+        qDebug() << "landmark updated";
+        break;
+    }
+    case EPosLmEventCategoryCreated:
+    {
+        qDebug() << "landmark category created";
+        break;
+    }
+    case EPosLmEventCategoryDeleted:
+    {
+        qDebug() << "landmark category deleted";
+        break;
+    }
+    case EPosLmEventCategoryUpdated:
+    {
+        qDebug() << "landmark category updated";
+        break;
+    }
+        //    case EPosLmEventLandmarkUnknownChanges:
+        //    case EPosLmEventCategoryUnknownChanges:
+        //    case EPosLmEventUnknownChanges: 
+        //    case EPosLmEventNewDefaultDatabaseLocation:
+        //    case EPosLmEventMediaRemoved:
+    default:
+    {
+        m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::unknownChanges);
+    }
+
+    } // switch closure    
+
+}
+
 // end of file
