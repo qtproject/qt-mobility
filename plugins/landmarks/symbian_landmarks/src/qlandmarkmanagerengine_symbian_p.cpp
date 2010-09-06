@@ -147,6 +147,7 @@ LandmarkManagerEngineSymbianPrivate::LandmarkManagerEngineSymbianPrivate(
         m_LandmarkCatMgr = CPosLmCategoryManager::NewL(*m_LandmarkDb);
     );
 
+    m_DbEventHandler.AddObsever(this);
 }
 
 /*!
@@ -154,6 +155,7 @@ LandmarkManagerEngineSymbianPrivate::LandmarkManagerEngineSymbianPrivate(
  */
 LandmarkManagerEngineSymbianPrivate::~LandmarkManagerEngineSymbianPrivate()
 {
+    m_DbEventHandler.RemoveObsever(this);
     delete m_LandmarkCatMgr;
     delete m_LandmarkDb;
     ReleaseLandmarkResources();
