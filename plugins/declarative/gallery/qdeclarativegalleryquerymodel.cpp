@@ -85,15 +85,16 @@ QTM_BEGIN_NAMESPACE
 
                 rootType: "Image"
                 properties: [ "url" ]
-                filter: GalleryFilter {
+                filter: GalleryWildcardFilter {
                     property: "fileName";
                     value: "*.jpg";
-                    comparator: GalleryFilter.Wildcard
                 }
             }
 
             delegate: Image {
                 source: url
+                width: 128
+                height: 128
             }
         }
     }

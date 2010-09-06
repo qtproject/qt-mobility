@@ -63,7 +63,15 @@ public:
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.gallery"));
 
         qmlRegisterType<QDeclarativeGalleryFilterBase>();
-        qmlRegisterType<QDeclarativeGalleryFilter>(uri, 1, 1, "GalleryFilter");
+        qmlRegisterType<QDeclarativeGalleryEqualsFilter>(uri, 1, 1, "GalleryEqualsFilter");
+        qmlRegisterType<QDeclarativeGalleryLessThanFilter>(uri, 1, 1, "GalleryLessThanFilter");
+        qmlRegisterType<QDeclarativeGalleryLessThanEqualsFilter>(uri, 1, 1, "GalleryLessThanEqualsFilter");
+        qmlRegisterType<QDeclarativeGalleryGreaterThanFilter>(uri, 1, 1, "GalleryGreaterThanFilter");
+        qmlRegisterType<QDeclarativeGalleryGreaterThanEqualsFilter>(uri, 1, 1, "GalleryGreaterThanEqualsFilter");
+        qmlRegisterType<QDeclarativeGalleryContainsFilter>(uri, 1, 1, "GalleryContainsFilter");
+        qmlRegisterType<QDeclarativeGalleryStartsWithFilter>(uri, 1, 1, "GalleryStartsWithFilter");
+        qmlRegisterType<QDeclarativeGalleryEndsWithFilter>(uri, 1, 1, "GalleryEndsWithFilter");
+        qmlRegisterType<QDeclarativeGalleryWildcardFilter>(uri, 1, 1, "GalleryWildcardFilter");
         qmlRegisterType<QDeclarativeGalleryFilterUnion>(uri, 1, 1, "GalleryFilterUnion");
         qmlRegisterType<QDeclarativeGalleryFilterIntersection>(uri, 1, 1, "GalleryFilterIntersection");
         qmlRegisterType<QDeclarativeGalleryItem>(uri, 1, 1, "GalleryItem");
