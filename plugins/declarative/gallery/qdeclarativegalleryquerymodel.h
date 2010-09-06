@@ -59,11 +59,9 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
     Q_OBJECT
     Q_INTERFACES(QDeclarativeParserStatus)
     Q_ENUMS(Status)
-    Q_ENUMS(Result)
     Q_ENUMS(Scope)
     Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery NOTIFY galleryChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
-    Q_PROPERTY(Result result READ result NOTIFY resultChanged)
     Q_PROPERTY(int progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(QStringList sortProperties READ sortPropertyNames WRITE setSortPropertyNames NOTIFY sortPropertyNamesChanged)
@@ -78,26 +76,13 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
 public:
     enum Status
     {
-        Inactive    = QGalleryAbstractRequest::Inactive,
-        Active      = QGalleryAbstractRequest::Active,
-        Cancelling  = QGalleryAbstractRequest::Cancelling,
-        Idle        = QGalleryAbstractRequest::Idle
-    };
-
-    enum Result
-    {
-        NoResult                        = QGalleryAbstractRequest::NoResult,
-        Succeeded                       = QGalleryAbstractRequest::NoResult,
-        Cancelled                       = QGalleryAbstractRequest::NoResult,
-        NoGallery                       = QGalleryAbstractRequest::NoResult,
-        NotSupported                    = QGalleryAbstractRequest::NoResult,
-        ConnectionError                 = QGalleryAbstractRequest::NoResult,
-        InvalidItemError                = QGalleryAbstractRequest::NoResult,
-        ItemTypeError                   = QGalleryAbstractRequest::NoResult,
-        InvalidPropertyError            = QGalleryAbstractRequest::NoResult,
-        PropertyTypeError               = QGalleryAbstractRequest::NoResult,
-        UnsupportedFilterTypeError      = QGalleryAbstractRequest::NoResult,
-        UnsupportedFilterOptionError    = QGalleryAbstractRequest::NoResult
+        Null,
+        Active,
+        Finished,
+        Idle,
+        Cancelling,
+        Cancelled,
+        Error
     };
 
     enum Scope
@@ -120,8 +105,7 @@ public:
     void setGallery(QAbstractGallery *gallery) {
         if (!m_complete || !gallery) { m_request.setGallery(gallery); emit galleryChanged(); } }
 
-    Status status() const { return Status(m_request.state()); }
-    Result result() const { return Result(m_request.result()); }
+    Status status() const { return m_status; }
 
     qreal progress() const
     {
@@ -185,12 +169,7 @@ public Q_SLOTS:
     void clear() { m_request.clear(); }
 
 Q_SIGNALS:
-    void succeeded();
-    void cancelled();
-    void failed(int result);
-    void finished(int result);
     void statusChanged();
-    void resultChanged();
     void progressChanged();
     void galleryChanged();
     void propertyNamesChanged();
@@ -205,6 +184,7 @@ Q_SIGNALS:
     void countChanged();
 
 private Q_SLOTS:
+    void _q_stateChanged();
     void _q_setResultSet(QGalleryResultSet *resultSet);
     void _q_itemsInserted(int index, int count);
     void _q_itemsRemoved(int index, int count);
@@ -216,6 +196,7 @@ private:
     QPointer<QDeclarativeGalleryFilterBase> m_filter;
     QGalleryResultSet *m_resultSet;
     QVector<QPair<int, QString> > m_propertyNames;
+    Status m_status;
     int m_rowCount;
     bool m_complete;
 };

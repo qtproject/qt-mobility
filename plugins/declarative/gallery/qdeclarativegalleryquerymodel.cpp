@@ -105,17 +105,13 @@ QTM_BEGIN_NAMESPACE
 QDeclarativeGalleryQueryModel::QDeclarativeGalleryQueryModel(QObject *parent)
     : QAbstractListModel(parent)
     , m_resultSet(0)
+    , m_status(Null)
     , m_complete(false)
 {
-    connect(&m_request, SIGNAL(succeeded()), this, SIGNAL(succeeded()));
-    connect(&m_request, SIGNAL(cancelled()), this, SIGNAL(cancelled()));
     connect(&m_request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)),
-            this, SIGNAL(statusChanged()));
-    connect(&m_request, SIGNAL(resultChanged()), this, SIGNAL(resultChanged()));
+            this, SLOT(_q_stateChanged()));
+    connect(&m_request, SIGNAL(resultChanged()), this, SLOT(_q_stateChanged()));
     connect(&m_request, SIGNAL(progressChanged(int,int)), this, SIGNAL(progressChanged()));
-    connect(&m_request, SIGNAL(resultChanged()), this, SIGNAL(resultChanged()));
-    connect(&m_request, SIGNAL(failed(int)), this, SIGNAL(failed(int)));
-    connect(&m_request, SIGNAL(finished(int)), this, SIGNAL(finished(int)));
 
     connect(&m_request, SIGNAL(resultSetChanged(QGalleryResultSet*)),
             this, SLOT(_q_setResultSet(QGalleryResultSet*)));
@@ -150,39 +146,16 @@ void QDeclarativeGalleryQueryModel::componentComplete()
     This property holds the status of a query.  It can be one of:
 
     \list
-    \o Inactive The query has finished.
-    \o Active The query is currently executing.
-    \o Cancelling The query has been cancelled, but has yet reached the
-    Inactive status.
-    \o Idle The query has finished and is monitoring its result set for
-    changes.
-    \endlist
-*/
-
-/*!
-    \qmlproperty enum GalleryQueryModel::result
-
-    The property holds the result of a query. It can be one of:
-
-    \list
-    \o NoResult The query is still executing.
-    \o Succeeded The query finished successfully.
+    \o Null No query parameters have been specified.
+    \o Active Items matching the query parameters are being fetched from the
+    gallery.
+    \o Finished The query has finished
+    \o Idle The query is finished and will be automatically updated as new
+    items become available.
+    \o Cancelling The query was cancelled but hasn't yet reached the
+    cancelled status.
     \o Cancelled The query was cancelled.
-    \o NoGallery No gallery was set on the query.
-    \o NotSupported Queries are not supported by the \l gallery.
-    \o ConnectionError The query failed due to a connection error.
-    \o InvalidItemError The query failed because the value of \l rootItem
-    is not a valid item ID.
-    \o ItemTypeError The query failed because the value of \l rootType is not
-    a valid item type.
-    \o InvalidPropertyError The query failed because the \l filter refers to an
-    invalid property.
-    \o PropertyTypeError The query failed because the type of a value in the
-    \l filter is incompatible with the property.
-    \o UnsupportedFilterTypeError The query failed because the set \l filter
-    is not supported by the \l gallery.
-    \o UnsupportedFilterOptionError The query failed because an option of a
-    \l filter is not supported by the \l gallery.
+    \o Error Information about a type could not be retrieved due to an error.
     \endlist
 */
 
@@ -479,6 +452,45 @@ void QDeclarativeGalleryQueryModel::setProperty(
     }
 
     m_resultSet->setMetaData(m_resultSet->propertyKey(property), value);
+}
+
+void QDeclarativeGalleryQueryModel::_q_stateChanged()
+{
+    Status status = m_status;
+
+    switch (m_request.state()) {
+    case QGalleryAbstractRequest::Inactive: {
+            switch (m_request.result()) {
+            case QGalleryAbstractRequest::NoResult:
+                status = Null;
+                break;
+            case QGalleryAbstractRequest::Cancelled:
+                status = Cancelled;
+                break;
+            case QGalleryAbstractRequest::Succeeded:
+                status = Finished;
+                break;
+            default:
+                status = Error;
+                break;
+            }
+        }
+    case QGalleryAbstractRequest::Active:
+        status = Active;
+        break;
+    case QGalleryAbstractRequest::Cancelling:
+        status = Cancelling;
+        break;
+    case QGalleryAbstractRequest::Idle:
+        status = Idle;
+        break;
+    }
+
+    if (m_status != status) {
+        m_status = status;
+
+        emit statusChanged();
+    }
 }
 
 void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet)

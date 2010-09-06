@@ -65,17 +65,13 @@ QTM_BEGIN_NAMESPACE
 QDeclarativeGalleryItem::QDeclarativeGalleryItem(QObject *parent)
     : QObject(parent)
     , m_metaData(0)
+    , m_status(Null)
     , m_complete(false)
 {
-    connect(&m_request, SIGNAL(succeeded()), this, SIGNAL(succeeded()));
-    connect(&m_request, SIGNAL(cancelled()), this, SIGNAL(cancelled()));
     connect(&m_request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)),
-            this, SIGNAL(statusChanged()));
-    connect(&m_request, SIGNAL(resultChanged()), this, SIGNAL(resultChanged()));
+            this, SLOT(_q_stateChanged()));
+    connect(&m_request, SIGNAL(resultChanged()), this, SLOT(_q_stateChanged()));
     connect(&m_request, SIGNAL(progressChanged(int,int)), this, SIGNAL(progressChanged()));
-    connect(&m_request, SIGNAL(resultChanged()), this, SIGNAL(resultChanged()));
-    connect(&m_request, SIGNAL(failed(int)), this, SIGNAL(failed(int)));
-    connect(&m_request, SIGNAL(finished(int)), this, SIGNAL(finished(int)));
 
     connect(&m_request, SIGNAL(itemChanged()),
             this, SLOT(_q_itemChanged()));
@@ -104,29 +100,15 @@ QDeclarativeGalleryItem::~QDeclarativeGalleryItem()
     This property holds the status of an item request.  It can be one of:
 
     \list
-    \o Inactive The request has finished.
-    \o Active The request is currently executing.
-    \o Cancelling The request has been cancelled, but has yet reached the
-    Inactive status.
-    \o Idle The request has finished and is monitoring its result set for
-    changes.
-    \endlist
-*/
-
-/*!
-    \qmlproperty enum GalleryItem::result
-
-    The property holds the result of an item request. It can be one of:
-
-    \list
-    \o NoResult The request is still executing.
-    \o Succeeded The request finished successfully.
-    \o Cancelled The request was cancelled.
-    \o NoGallery No \l gallery was specified.
-    \o NotSupported Item requests are not supported by the \l gallery.
-    \o ConnectionError The request failed due to a connection error.
-    \o InvalidItemError The request failed because the value of \l item
-    is not a valid item ID.
+    \o Null No \l item has been specified.
+    \o Active Information about an \l item is being fetched from the gallery.
+    \o Finished Information about an \l item is available.
+    \o Idle Information about an \l item which will be automatically
+    updated is available.
+    \o Cancelling The query was cancelled but hasn't yet reached the
+    cancelled status.
+    \o Cancelled The query was cancelled.
+    \o Error Information about a type could not be retrieved due to an error.
     \endlist
 */
 
@@ -252,6 +234,45 @@ void QDeclarativeGalleryItem::componentComplete()
 
     if (m_request.itemId().isValid())
         m_request.execute();
+}
+
+void QDeclarativeGalleryItem::_q_stateChanged()
+{
+    Status status = m_status;
+
+    switch (m_request.state()) {
+    case QGalleryAbstractRequest::Inactive: {
+            switch (m_request.result()) {
+            case QGalleryAbstractRequest::NoResult:
+                status = Null;
+                break;
+            case QGalleryAbstractRequest::Cancelled:
+                status = Cancelled;
+                break;
+            case QGalleryAbstractRequest::Succeeded:
+                status = Finished;
+                break;
+            default:
+                status = Error;
+                break;
+            }
+        }
+    case QGalleryAbstractRequest::Active:
+        status = Active;
+        break;
+    case QGalleryAbstractRequest::Cancelling:
+        status = Cancelling;
+        break;
+    case QGalleryAbstractRequest::Idle:
+        status = Idle;
+        break;
+    }
+
+    if (m_status != status) {
+        m_status = status;
+
+        emit statusChanged();
+    }
 }
 
 void QDeclarativeGalleryItem::_q_itemChanged()

@@ -58,10 +58,8 @@ class QDeclarativeGalleryType : public QObject, public QDeclarativeParserStatus
     Q_OBJECT
     Q_INTERFACES(QDeclarativeParserStatus)
     Q_ENUMS(Status)
-    Q_ENUMS(Result)
     Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery NOTIFY galleryChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
-    Q_PROPERTY(Result result READ result NOTIFY resultChanged)
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(bool autoUpdate READ isAutoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
@@ -71,21 +69,13 @@ class QDeclarativeGalleryType : public QObject, public QDeclarativeParserStatus
 public:
     enum Status
     {
-        Inactive    = QGalleryAbstractRequest::Inactive,
-        Active      = QGalleryAbstractRequest::Active,
-        Cancelling  = QGalleryAbstractRequest::Cancelling,
-        Idle        = QGalleryAbstractRequest::Idle
-    };
-
-    enum Result
-    {
-        NoResult                        = QGalleryAbstractRequest::NoResult,
-        Succeeded                       = QGalleryAbstractRequest::NoResult,
-        Cancelled                       = QGalleryAbstractRequest::NoResult,
-        NoGallery                       = QGalleryAbstractRequest::NoResult,
-        NotSupported                    = QGalleryAbstractRequest::NoResult,
-        ConnectionError                 = QGalleryAbstractRequest::NoResult,
-        InvalidItemError                = QGalleryAbstractRequest::NoResult
+        Null,
+        Active,
+        Finished,
+        Idle,
+        Cancelling,
+        Cancelled,
+        Error
     };
 
     QDeclarativeGalleryType(QObject *parent = 0);
@@ -95,8 +85,7 @@ public:
     void setGallery(QAbstractGallery *gallery) {
         if (!m_complete || !gallery) { m_request.setGallery(gallery); emit galleryChanged(); } }
 
-    Status status() const { return Status(m_request.state()); }
-    Result result() const { return Result(m_request.result()); }
+    Status status() const { return m_status; }
 
     qreal progress() const
     {
@@ -133,12 +122,7 @@ public Q_SLOTS:
     void clear() { m_request.clear(); }
 
 Q_SIGNALS:
-    void succeeded();
-    void cancelled();
-    void failed(int result);
-    void finished(int result);
     void statusChanged();
-    void resultChanged();
     void progressChanged();
     void availableChanged();
     void metaDataChanged();
@@ -149,6 +133,7 @@ Q_SIGNALS:
     void itemTypeChanged();
 
 private Q_SLOTS:
+    void _q_stateChanged();
     void _q_typeChanged();
     void _q_metaDataChanged(const QList<int> &keys);
 
@@ -156,6 +141,7 @@ private:
     QGalleryTypeRequest m_request;
     QDeclarativePropertyMap *m_metaData;
     QHash<int, QString> m_propertyKeys;
+    Status m_status;
     bool m_complete;
 };
 
