@@ -45,7 +45,7 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QOrganizerEventOccurrence
-  \brief The QOrganizerEvenOccurrence class provides an occurrence of an event
+  \brief The QOrganizerEventOccurrence class provides an occurrence of an event.
   \inmodule QtOrganizer
   \ingroup organizer-items
 

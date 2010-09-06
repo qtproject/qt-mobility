@@ -51,11 +51,11 @@
 #include <QSharedDataPointer>
 
 #include "qtcontactsglobal.h"
-
 #include "qcontactdetail.h"
+#include "qcontactrelationship.h"
+
 #include "qcontactdetaildefinition.h"
 #include "qcontactdisplaylabel.h"
-#include "qcontactrelationship.h"
 #include "qcontactrelationshipfilter.h"
 #include "qcontacttype.h"
 
@@ -67,6 +67,7 @@ class QContactManager;
 class QContactData;
 class QContactName;
 class QContactAction;
+class QContactActionDescriptor;
 
 // MSVC needs the function declared before the friend declaration
 class QContact;

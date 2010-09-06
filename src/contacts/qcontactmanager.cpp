@@ -369,7 +369,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactManager::ParameterSignalDefinitions, "SignalDef
    the data as it is stored in the backend, but does not wish to be
    notified of changes (or side effects) which it has caused itself.
  */
-Q_DEFINE_LATIN1_CONSTANT(ParameterValueOnlyOtherManagers, "OnlyOtherManagers");
+Q_DEFINE_LATIN1_CONSTANT(QContactManager::ParameterValueOnlyOtherManagers, "OnlyOtherManagers");
 
 /*!
    \variable QContactManager::ParameterValueOnlyOtherProcesses
@@ -381,7 +381,7 @@ Q_DEFINE_LATIN1_CONSTANT(ParameterValueOnlyOtherManagers, "OnlyOtherManagers");
    process, even if those changes were made in a different manager instance to this
    one.
  */
-Q_DEFINE_LATIN1_CONSTANT(ParameterValueOnlyOtherProcesses, "OnlyOtherProcesses");
+Q_DEFINE_LATIN1_CONSTANT(QContactManager::ParameterValueOnlyOtherProcesses, "OnlyOtherProcesses");
 
 /*!
   \enum QContactManager::Error

@@ -48,7 +48,6 @@
 
 #include "qcontactaction.h"
 #include "qcontactactiondescriptor.h"
-
 #ifdef QT_SIMULATOR
 #include "qcontactsimulatorbackend_p.h"
 #endif
