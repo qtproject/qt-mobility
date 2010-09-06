@@ -50,7 +50,8 @@ Q_EXPORT_PLUGIN2(feedback_symbian, QFeedbackSymbian)
 
 
 #define VIBRA_DEVICE 0
-#define TOUCH_DEVICE 1
+#define TOUCH_DEVICE 1 //this one is only available if ADVANCED_TACTILE_SUPPORT is defined
+
 
 //TODO: is activeWindow good enough
 //or should we create a widget for that?
@@ -62,6 +63,19 @@ CCoeControl *QFeedbackSymbian::defaultWidget()
 
 #ifndef NO_TACTILE_SUPPORT
 #include <touchfeedback.h>
+
+static MTouchFeedback *touchInstance()
+{
+    static MTouchFeedback *ret = 0;
+    if (!ret) {
+        QT_TRAP_THROWING(
+            ret = MTouchFeedback::Instance();
+            if (!ret)
+                ret = MTouchFeedback::CreateInstanceL();
+        )
+    }
+    return ret;
+}
 
 static TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::ThemeEffect effect)
 {
@@ -167,51 +181,15 @@ static TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::ThemeEffect effec
     return themeFeedbackSymbian;
 }
 
-#ifdef ADVANCED_TACTILE_SUPPORT
-typedef MTouchFeedback QTouchFeedback;
 // This define is for the second parameter of StartFeedback, which needs to be of type
 // TTouchContinuousFeedback in platforms with ADVANCED_TACTILE_SUPPORT
 #define DEFAULT_CONTINUOUS_EFFECT ETouchContinuousSmooth
-#else
-class QTouchFeedback : public MTouchFeedback
-{
-public:
-
-    static QTouchFeedback *Instance()
-    {
-        return static_cast<QTouchFeedback*>(MTouchFeedback::Instance());
-    }
-
-    void StopFeedback(const CCoeControl* dummy)
-    {
-        Q_UNUSED(dummy);
-    }
-
-    void ModifyFeedback(const CCoeControl* dummy, int intensity)
-    {
-        Q_UNUSED(dummy);
-        Q_UNUSED(intensity);
-    }
-
-    void StartFeedback(const CCoeControl* dummy, int effect, void *event, int intensity, int duration)
-    {
-        Q_UNUSED(dummy);
-        Q_UNUSED(effect);
-        Q_UNUSED(event);
-        Q_UNUSED(intensity);
-        Q_UNUSED(duration);
-        //if there is no advanced feedback, we just do the normal one and return -1
-        MTouchFeedback::Instance()->InstantFeedback(ETouchFeedbackSensitive);
-    }
-};
-// The second parameter of StartFeedback: an int
-#define DEFAULT_CONTINUOUS_EFFECT 0
-#endif //ADVANCED_TACTILE_SUPPORT
 
 bool QFeedbackSymbian::play(QFeedbackEffect::ThemeEffect effect)
 {
-    QTouchFeedback::Instance()->InstantFeedback(convertToSymbian(effect));
-    return true; //there is no way to know if there was a failure
+    TInt err = KErrNone;
+    TRAP(err, touchInstance()->InstantFeedback(convertToSymbian(effect)));
+    return err == KErrNone;
 }
 
 #endif //NO_TACTILE_SUPPORT
@@ -233,7 +211,7 @@ QFeedbackSymbian::~QFeedbackSymbian()
 CHWRMVibra *QFeedbackSymbian::vibra()
 {
     if (!m_vibra)
-        m_vibra = CHWRMVibra::NewL();
+        QT_TRAP_THROWING(m_vibra = CHWRMVibra::NewL());
 
     return m_vibra;
 }
@@ -241,12 +219,14 @@ CHWRMVibra *QFeedbackSymbian::vibra()
 QList<QFeedbackActuator> QFeedbackSymbian::actuators()
 {
     QList<QFeedbackActuator> ret;
-#ifndef NO_TACTILE_SUPPORT
+#ifdef ADVANCED_TACTILE_SUPPORT
     //if we don't have advanced tactile support then the MTouchFeedback doesn't really support custom effects
-    if (QTouchFeedback::Instance()->TouchFeedbackSupported()) {
+    bool touch = false;
+    TRAP_IGNORE(touch = touchInstance()->TouchFeedbackSupported());
+    if (touch) {
         ret << createFeedbackActuator(TOUCH_DEVICE);
     }
-#endif //NO_TACTILE_SUPPORT
+#endif //ADVANCED_TACTILE_SUPPORT
     ret << createFeedbackActuator(VIBRA_DEVICE);
     return ret;
 }
@@ -261,11 +241,11 @@ void QFeedbackSymbian::setActuatorProperty(const QFeedbackActuator &actuator, Ac
         case VIBRA_DEVICE:
             m_vibraActive = value.toBool();
             break;
-    #ifndef NO_TACTILE_SUPPORT
+#ifdef ADVANCED_TACTILE_SUPPORT
         case TOUCH_DEVICE:
-            QTouchFeedback::Instance()->SetFeedbackEnabledForThisApp(value.toBool());
+            TRAP_IGNORE(touchInstance()->SetFeedbackEnabledForThisApp(value.toBool()));
             break;
-    #endif //NO_TACTILE_SUPPORT
+#endif
         default:
             break;
         }
@@ -292,14 +272,18 @@ QVariant QFeedbackSymbian::actuatorProperty(const QFeedbackActuator &actuator, A
             switch(actuator.id())
             {
             case VIBRA_DEVICE:
-                switch (vibra()->VibraStatus())
                 {
-                case CHWRMVibra::EVibraStatusStopped:
-                    return QFeedbackActuator::Ready;
-                case CHWRMVibra::EVibraStatusOn:
-                    return QFeedbackActuator::Busy;
-                default:
-                    return QFeedbackActuator::Unknown;
+                    TInt status = 0;
+                    TRAP_IGNORE(status = vibra()->VibraStatus());
+                    switch (status)
+                    {
+                    case CHWRMVibra::EVibraStatusStopped:
+                        return QFeedbackActuator::Ready;
+                    case CHWRMVibra::EVibraStatusOn:
+                        return QFeedbackActuator::Busy;
+                    default:
+                        return QFeedbackActuator::Unknown;
+                    }
                 }
             case TOUCH_DEVICE:
                 //there is no way of getting the state of the device!
@@ -313,10 +297,14 @@ QVariant QFeedbackSymbian::actuatorProperty(const QFeedbackActuator &actuator, A
         {
         case VIBRA_DEVICE:
             return m_vibraActive;
-    #ifndef NO_TACTILE_SUPPORT
+#ifdef ADVANCED_TACTILE_SUPPORT
         case TOUCH_DEVICE:
-            return QTouchFeedback::Instance()->FeedbackEnabledForThisApp();
-    #endif //NO_TACTILE_SUPPORT
+            {
+                bool ret = false;
+                TRAP_IGNORE(ret = touchInstance()->FeedbackEnabledForThisApp());
+                return ret;
+            }
+#endif
         default:
             return false;
         }
@@ -334,7 +322,7 @@ bool QFeedbackSymbian::isActuatorCapabilitySupported(const QFeedbackActuator &, 
 
 void QFeedbackSymbian::updateEffectProperty(const QFeedbackHapticsEffect *effect, EffectProperty prop)
 {
-
+    TInt err = KErrNone;
     switch(prop)
     {
     case Intensity:
@@ -344,23 +332,26 @@ void QFeedbackSymbian::updateEffectProperty(const QFeedbackHapticsEffect *effect
         switch(effect->actuator().id())
         {
         case VIBRA_DEVICE:
-            vibra()->StartVibraL(effect->duration() - m_elapsed[effect].elapsed(), qRound(100 * effect->intensity()));
+            TRAP(err, vibra()->StartVibraL(effect->duration() - m_elapsed[effect].elapsed(), qRound(100 * effect->intensity())));
             break;
-#ifndef NO_TACTILE_SUPPORT
+#ifdef ADVANCED_TACTILE_SUPPORT
         case TOUCH_DEVICE:
-            QTouchFeedback::Instance()->ModifyFeedback(defaultWidget(), qRound(100 * effect->intensity()));
+            TRAP(err, touchInstance()->ModifyFeedback(defaultWidget(), qRound(100 * effect->intensity())));
             break;
-#endif //NO_TACTILE_SUPPORT
+#endif //ADVANCED_TACTILE_SUPPORT
         default:
             break;
         }
         break;
 
     }
+    if (err != KErrNone)
+        reportError(effect, QFeedbackEffect::UnknownError);
 }
 
 void QFeedbackSymbian::setEffectState(const QFeedbackHapticsEffect *effect, QFeedbackEffect::State newState)
 {
+    TInt err = KErrNone;
     switch(effect->actuator().id())
     {
     case VIBRA_DEVICE:
@@ -368,54 +359,56 @@ void QFeedbackSymbian::setEffectState(const QFeedbackHapticsEffect *effect, QFee
         {
         case QFeedbackEffect::Stopped:
             if (m_elapsed.contains(effect)) {
-                vibra()->StopVibraL();
+                TRAP(err, vibra()->StopVibraL());
                 m_elapsed.remove(effect);
             }
             break;
         case QFeedbackEffect::Paused:
             if (m_elapsed.contains(effect)) {
-                vibra()->StopVibraL();
+                TRAP(err, vibra()->StopVibraL());
                 m_elapsed[effect].pause();
             }
             break;
         case QFeedbackEffect::Running:
             if (m_elapsed[effect].elapsed() >= effect->duration())
                 m_elapsed.remove(effect); //we reached the end. it's time to restart
-            vibra()->StartVibraL(effect->duration() - m_elapsed[effect].elapsed(), qRound(100 * effect->intensity()));
+            TRAP(err, vibra()->StartVibraL(effect->duration() - m_elapsed[effect].elapsed(), qRound(100 * effect->intensity())));
             m_elapsed[effect].start();
             break;
         }
         break;
-#ifndef NO_TACTILE_SUPPORT
+#ifdef ADVANCED_TACTILE_SUPPORT
     case TOUCH_DEVICE:
         switch(newState)
         {
         case QFeedbackEffect::Stopped:
             if (m_elapsed.contains(effect)) {
-                QTouchFeedback::Instance()->StopFeedback(defaultWidget());
+                TRAP(err, touchInstance()->StopFeedback(defaultWidget()));
                 m_elapsed.remove(effect);
             }
             break;
         case QFeedbackEffect::Paused:
             if (m_elapsed.contains(effect)) {
-                QTouchFeedback::Instance()->StopFeedback(defaultWidget());
+                TRAP(err, touchInstance()->StopFeedback(defaultWidget()));
                 m_elapsed[effect].pause();
             }
             break;
         case QFeedbackEffect::Running:
             if (m_elapsed[effect].elapsed() >= effect->duration())
                 m_elapsed.remove(effect); //we reached the end. it's time to restart
-            QTouchFeedback::Instance()->StartFeedback(defaultWidget(),
+            TRAP(err, touchInstance()->StartFeedback(defaultWidget(),
                                          DEFAULT_CONTINUOUS_EFFECT,
-                                         0, qRound(effect->intensity() * 100), qMax(0, (effect->duration() - m_elapsed[effect].elapsed()) * 1000));
+                                         0, qRound(effect->intensity() * 100), qMax(0, (effect->duration() - m_elapsed[effect].elapsed()) * 1000)));
             m_elapsed[effect].start();
             break;
         }
         break;
-#endif //NO_TACTILE_SUPPORT
+#endif //ADVANCED_TACTILE_SUPPORT
     default:
         break;
     }
+    if (err != KErrNone)
+        reportError(effect, QFeedbackEffect::UnknownError);
 }
 
 QFeedbackEffect::State QFeedbackSymbian::effectState(const QFeedbackHapticsEffect *effect)

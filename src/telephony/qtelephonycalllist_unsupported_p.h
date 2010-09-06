@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,12 +53,15 @@
 // We mean it.
 //
 
-#include "qmobilityglobal.h"
+#include <qmobilityglobal.h>
+
+#include "qtelephony.h"
+#include "qtelephonycallinfo.h"
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-class QTelephonyCallInfoPrivate;
+struct QTelephonyCallInfoPrivate;
 class QTelephonyCallList;
 
 class QTelephonyCallListPrivate
@@ -66,16 +69,18 @@ class QTelephonyCallListPrivate
     friend class QTelephonyCallList;
 
 public:
-    QTelephonyCallListPrivate(QTelephonyCallList *parent = 0) { 
-		qWarning("Telephone is not supported on this platform");
-	};
-    virtual ~QTelephonyCallListPrivate() { 
-	};
-    QList<QTelephonyCallInfo> activeCalls(const QTelephonyCallInfo::CallType& calltype) const 
-	{ 
-	QList<QTelephonyCallInfo> e; 
-	return e; 
-	};
+    QTelephonyCallListPrivate(QTelephonyCallList *parent = 0) {
+        Q_UNUSED(parent);
+        qWarning("Telephone is not supported on this platform"); 
+    }
+
+    virtual ~QTelephonyCallListPrivate() { }
+
+    QList<QTelephonyCallInfo> activeCalls(const QTelephony::CallType& calltype) const {
+        Q_UNUSED(calltype);
+        return QList<QTelephonyCallInfo>(); 
+    }
+    int activeCallCount() const { return 0; }
 
 private:
 };

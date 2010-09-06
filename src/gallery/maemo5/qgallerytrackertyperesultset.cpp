@@ -156,7 +156,7 @@ void QGalleryTrackerTypeResultSetPrivate::queryFinished(const QDBusPendingCall &
     }
 
     if (count != oldCount)
-        emit q_func()->metaDataChanged(0, 0, QList<int>() << 0);
+        emit q_func()->metaDataChanged(0, 1, QList<int>() << 0);
 
     if (!queryWatcher)
         q_func()->finish(QGalleryAbstractRequest::Succeeded);
@@ -250,8 +250,16 @@ int QGalleryTrackerTypeResultSet::currentIndex() const
 
 bool QGalleryTrackerTypeResultSet::fetch(int index)
 {
-    d_func()->currentIndex = index;
+    if (index != d_func()->currentIndex) {
+        bool itemChanged = index == 0 || d_func()->currentIndex == 0;
 
+        d_func()->currentIndex = index;
+
+        emit currentIndexChanged(index);
+
+        if (itemChanged)
+            emit currentItemChanged();
+    }
     return d_func()->currentIndex == 0;
 }
 

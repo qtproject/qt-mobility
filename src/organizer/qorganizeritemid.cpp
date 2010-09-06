@@ -43,6 +43,7 @@
 #include "qorganizeritemid_p.h"
 #include <QHash>
 #include <QDebug>
+#include <QDataStream>
 
 QTM_BEGIN_NAMESPACE
 
@@ -156,6 +157,30 @@ QDebug operator<<(QDebug dbg, const QOrganizerItemId& id)
 {
     dbg.nospace() << "QOrganizerItemId(" << id.managerUri() << ", " << id.localId() << ")";
     return dbg.maybeSpace();
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+QDataStream& operator<<(QDataStream& out, const QOrganizerItemId& id)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItemId
+    return out << formatVersion << id.managerUri() << id.localId();
+}
+
+QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id)
+{
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QString managerUri;
+        QOrganizerItemLocalId localId;
+        in >> managerUri >> localId;
+        id.setManagerUri(managerUri);
+        id.setLocalId(localId);
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
 }
 #endif
 

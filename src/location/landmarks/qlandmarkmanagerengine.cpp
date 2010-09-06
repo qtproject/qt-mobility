@@ -46,21 +46,24 @@
 #include "qlandmarkcategoryid.h"
 
 #include "qlandmarkrequests_p.h"
+#include "qlandmark_p.h"
+#include "qlandmarkcategory_p.h"
 
 #include "qlandmarkabstractrequest.h"
 #include "qlandmarkidfetchrequest.h"
 #include "qlandmarkfetchrequest.h"
+#include "qlandmarkfetchbyidrequest.h"
 #include "qlandmarkremoverequest.h"
 #include "qlandmarksaverequest.h"
 #include "qlandmarkcategoryidfetchrequest.h"
 #include "qlandmarkcategoryfetchrequest.h"
+#include "qlandmarkcategoryfetchbyidrequest.h"
 #include "qlandmarkcategoryremoverequest.h"
 #include "qlandmarkcategorysaverequest.h"
 #include "qlandmarkimportrequest.h"
 #include "qlandmarkexportrequest.h"
 
 #include "qlandmarknamesort.h"
-#include "qlandmarkdistancesort.h"
 
 #include "qlandmarkattributefilter.h"
 #include "qlandmarkboxfilter.h"
@@ -73,8 +76,29 @@
 
 #include "qgeocoordinate.h"
 
+#include <QWeakPointer>
+
 QTM_BEGIN_NAMESPACE
 
+bool matchString(const QString &sourceString, const QString &matchString, QLandmarkFilter::MatchFlags matchFlags )
+{
+    Qt::CaseSensitivity cs;
+    if (matchFlags & QLandmarkFilter::MatchCaseSensitive)
+        cs = Qt::CaseSensitive;
+    else
+        cs = Qt::CaseInsensitive;
+    if ((matchFlags & 3) == QLandmarkFilter::MatchEndsWith) {
+        return sourceString.endsWith(matchString, cs);
+    } else if ((matchFlags & 3) == QLandmarkFilter::MatchStartsWith) {
+        return sourceString.startsWith(matchString, cs);
+    } else if ((matchFlags & 3) == QLandmarkFilter::MatchContains) {
+        return sourceString.contains(matchString,cs);
+    } else if (matchFlags & QLandmarkFilter::MatchFixedString) {
+        return sourceString.compare(matchString,cs) == 0;
+    } else {
+        return QVariant(sourceString) == QVariant(matchString);
+    }
+}
 /*!
     \class QLandmarkManagerEngine
     \brief The QLandmarkManagerEngine class provides the interface for all implementations
@@ -136,24 +160,28 @@ int QLandmarkManagerEngine::managerVersion() const
 }
 
 /*!
-    Returns a list of landmark ids of landmarks that match the given \a filter, sorted
-    according to the given \a sortOrders.  Depending on the backend, this filtering operation
-    may involve retrieving all the landmarks.  Various fetch operation parameters may be specified by \a fetchHint.
+    Returns a list of landmark identifiers which match the given \a filter and are sorted according to
+    the given \a sortOrders. The \a limit defines the maximum number of landmark ids to return and the
+    \a offset defines the index offset of the first landmark id.
+    A \a limit of -1 means that ids of all matching landmarks should be returned.
 
     Any error which occurs will be saved in \a error and \a errorString.
  */
 QList<QLandmarkId> QLandmarkManagerEngine::landmarkIds(const QLandmarkFilter& filter,
-        const QList<QLandmarkSortOrder>& sortOrders, const QLandmarkFetchHint& fetchHint, QLandmarkManager::Error* error,
+        int limit, int offset, const QList<QLandmarkSortOrder>& sortOrders, QLandmarkManager::Error* error,
         QString *errorString) const
 {
     return QList<QLandmarkId>();
 }
 
 /*!
-    Returns a list of all category identifiers which are sorted according to \a nameSort.  Any error which occurs will be saved in \a
-    error and \a errorString.
+    Returns a list of category identifiers
+    The \a limit defines the maximum number of ids to return and the \a offset defines the index offset
+    of the first id.  A \a limit of -1 means ids for all categories should be returned.
+    Any error which occurs will be saved in \a error and \a errorString.
+    The identifiers are returned in order according to the given \a nameSort.
 */
-QList<QLandmarkCategoryId> QLandmarkManagerEngine::categoryIds(const QLandmarkNameSort &nameSort, QLandmarkManager::Error *error,
+QList<QLandmarkCategoryId> QLandmarkManagerEngine::categoryIds(int limit, int offset, const QLandmarkNameSort &nameSort, QLandmarkManager::Error *error,
         QString *errorString) const
 {
     return QList<QLandmarkCategoryId>();
@@ -171,13 +199,29 @@ QLandmark QLandmarkManagerEngine::landmark(const QLandmarkId &landmarkId, QLandm
 }
 
 /*!
+    Returns a list of landmarks which match the given \a landmarkIds.  The engine will populate \a errorMap
+    (the map of indices of the \a landmarkIds list an error) for the indexes where the landmark could not
+    be retrieved.
+
+    Overall operation errors are stored in \a error and
+    \a errorString.  \a error is set to QLandmarkManager::NoError, if
+    all landmarks were successfully retrieved.
+*/
+QList<QLandmark> QLandmarkManagerEngine::landmarks(const QList<QLandmarkId> &landmarkIds, QMap<int, QLandmarkManager::Error> *errorMap,
+                                        QLandmarkManager::Error *error, QString *errorString) const
+{
+    return QList<QLandmark>();
+}
+
+/*!
     Returns a list of landmarks which match the given \a filter and are sorted according to the \a sortOrders.
-    Various fetch operation parameters are specified by \a fetchHint.
+    The \a limit defines the maximum number of landmarks to return and the \a offset defines the index offset
+    of the first landmark.  A \a limit of -1 means all matching landmarks should be returned.
 
     Overall operation errors are stored in \a error and \a errorString.
 */
-QList<QLandmark> QLandmarkManagerEngine::landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder> &sortOrders,
-                                                   const QLandmarkFetchHint &fetchHint, QLandmarkManager::Error *error, QString *errorString) const
+QList<QLandmark> QLandmarkManagerEngine::landmarks(const QLandmarkFilter &filter, int limit, int offset,
+                    const QList<QLandmarkSortOrder> &sortOrders, QLandmarkManager::Error *error, QString *errorString) const
 {
     return QList<QLandmark>();
 }
@@ -194,20 +238,28 @@ QLandmarkCategory QLandmarkManagerEngine::category(const QLandmarkCategoryId &ca
 }
 
 /*!
-    Returns a list of categories identified by \a landmarkCategoryIds.
+    Returns a list of categories which match the given \a categoryIds.  The engine will populate \a errorMap
+    (the map of indices of the \a categoryIds list an error) for the indexes where the category could not
+    be retrieved.
 
-    Overall operation errors are stored in \a error and \a errorString.
+    Overall operation errors are stored in \a error and
+    \a errorString.  \a error is set to QLandmarkManager::NoError, if
+    all categories were successfully retrieved.
 */
-QList<QLandmarkCategory> QLandmarkManagerEngine::categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds,
+QList<QLandmarkCategory> QLandmarkManagerEngine::categories(const QList<QLandmarkCategoryId> &categoryIds,
+                                                            QMap<int, QLandmarkManager::Error> *errorMap,
                                                             QLandmarkManager::Error *error, QString *errorString) const
 {
     return QList<QLandmarkCategory>();
 }
 
 /*!
-    Returns a list of all categories sorted according to the gien \a nameSort.
+    Returns a list of categories.
+    The \a limit defines the maximum number of categories to return and the \a offset defines the index offset
+    of the first category.  A \a limit of -1 means all categories should be returned.
+    The returned categories ordered according to the gien \a nameSort.
 */
-QList<QLandmarkCategory> QLandmarkManagerEngine::categories(const QLandmarkNameSort &nameSort,
+QList<QLandmarkCategory> QLandmarkManagerEngine::categories(int limit, int offset, const QLandmarkNameSort &nameSort,
                                                             QLandmarkManager::Error *error, QString *errorString) const
 {
     return QList<QLandmarkCategory>();
@@ -379,13 +431,20 @@ bool QLandmarkManagerEngine::removeCategory(const QLandmarkCategoryId &categoryI
     is expected to adhere to the provided \a format.  If no \a format is provided,
     the manager engine tries to autodetect the \a format.
 
+    The \a option can be used to control whether categories in the imported
+    file will be added during the import.  If the \c AttachSingleCategory option is used, then
+    all the landmarks in the import file are assigned to the category identified by
+    \a categoryId, in all other cirumstances \a categoryId is ignored.  If \a categoryId
+    doesn't exist when using \c AttachSingleCategory, QLandmarkManager::DoesNotExist error is returned.  Note that
+    some file formats may not support categories at all.
+
     Returns true if all landmarks could be imported, otherwise returns false.
     It may be possible that only a subset of landmarks are imported.
 
     Overall operational errors are stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, const QString &format,
+bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, const QString &format, QLandmarkManager::TransferOption option, const QLandmarkCategoryId& categoryId,
         QLandmarkManager::Error *error, QString *errorString)
 {
     Q_ASSERT(error);
@@ -401,6 +460,12 @@ bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, const QString &f
     all landmarks will be exported, otherwise only those landmarks that
     match \a landmarkIds will be exported.
 
+    The \a option can be used to control whether categories will be exported or not.
+    Note that the \c AttachSingleCategory option has no meaning during
+    export and the manager will export as if \a option was \c IncludeCategoryData.
+    Also, be aware that some file formats may not support categories at all and for
+    these formats, the \a option is always treated as if it was \c ExcludeCategoryData.
+
     Returns true if all specified landmarks were successfully exported,
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
@@ -408,7 +473,7 @@ bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, const QString &f
     Overall operation errors are stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds,
+bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::TransferOption option,
         QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
@@ -418,7 +483,11 @@ bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, const QString &f
     return false;
 }
 
-QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::Error *error, QString *errorString) const
+/*!
+    Returns the supported file formats for the given exchange \a operation, i.e. import or export.
+    Errors are stored in \a error and \a errorString.
+*/
+QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::TransferOperation operation , QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
@@ -428,10 +497,18 @@ QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::Error *er
 }
 
 /*!
-    \fn QLandmarkManager::FilterSupportLevel QLandmarkManagerEngine::filterSupportLevel(const QLandmarkFilter &filter,
+    \fn QLandmarkManager::SupportLevel QLandmarkManagerEngine::filterSupportLevel(const QLandmarkFilter &filter,
                                                             QLandmarkManager::Error *error, QString *errorString) const
 
     Returns the support level the manager engine provides for the given \a filter.  Errors are stored in \a error
+    and \a errorString.
+*/
+
+/*!
+    \fn QLandmarkManager::SupportLevel QLandmarkManagerEngine::sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders,
+                                                            QLandmarkManager::Error *error, QString *errorString) const
+
+    Returns the support level the manager engine provides for the given \a sortOrders.  Errors are stored in \a error
     and \a errorString.
 */
 
@@ -472,6 +549,103 @@ QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::Error *er
     If \a categoryId does not refer to an existing category,
     it is considered writable unless the manager engine is exclusively read-only.
     Errors are stored in \a error and \a errorString.
+*/
+
+/*!
+    Returns the list of attribute keys the landmarks will have.
+    If extended attributes are enabled (provided manager supported them),
+    landmarks will possess  extra keys in addition to the standard cross platform keys.
+    Errors are stored in \a error and \a errorString.
+*/
+QStringList QLandmarkManagerEngine::landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+
+    *error = QLandmarkManager::NoError;
+    *errorString  = "";
+
+    //TODO: optimize
+    QStringList commonKeys = QStringList()
+                             << "name"
+                             << "description"
+                             << "iconUrl"
+                             << "radius"
+                             << "phoneNumber"
+                             << "url"
+                             << "latitude"
+                             << "longitude"
+                             << "altitude"
+                             << "country"
+                             << "countryCode"
+                             << "state"
+                             << "county"
+                             << "city"
+                             << "district"
+                             << "street"
+                             << "streetNumber"
+                             << "postCode";
+    return commonKeys;
+}
+
+/*!
+    Returns the list of attribute keys the categories will have.
+    If extended attributes are enabled (provided manager supported them),
+    categories will possess  extra keys in addition to the standard cross platform keys.
+    Errors are stored in \a error and \a errorString.
+*/
+QStringList QLandmarkManagerEngine::categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+
+    *error = QLandmarkManager::NoError;
+    *errorString  = "";
+
+
+    //TODO: Optimize
+    QStringList commonKeys = QStringList() << "name"
+                             << "iconUrl";
+    return commonKeys;
+}
+
+/*!
+    \fn bool QLandmarkManagerEngine::isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const
+
+    Returns whether extended attributes specific to this manager are enabled or not.
+    If extended attributes are enabled, retrieved landmarks will have
+    extra attribute keys accessible through the QLandmark::attribute() function.
+    Extended attributes must be enabled to save any landmarks which possess
+    extended attributes.  This same behaviour will also apply to categories
+    if extended category attributes are supported.
+    Errors are stored in \a error and \a errorString.
+*/
+
+/*!
+    \fn void QLandmarkManagerEngine::setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString)
+
+    Sets whether extended attributes are \a enabled or not.
+    Errors are stored in \a error and \a errorString.
+*/
+
+/*!
+    \fn bool QLandmarkManagerEngine::isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
+
+    Returns whether custom attributes are enabled or not. Custom attributes
+    are arbitrary attributes created by the application for a landmark.
+    If custom attributes are enabled (and the manager supports them),
+    retrieved landmarks will have extra attributes accessible
+    using QLandmark::customAttributes().  Custom attributes must be enabled
+    to save any landmarks with possess custom attributes.  This same behaviour
+    applies to categories if custom category attributes are supported.
+    Errors are stored in \a error and \a errorString.
+*/
+
+/*!
+    \fn void QLandmarkManagerEngine::setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString)
+
+     Sets whether custom attributes are \a enabled or not.
+     Errors are stored in \a error and \a errorString.
 */
 
 /*!
@@ -627,13 +801,14 @@ bool QLandmarkManagerEngine::waitForRequestFinished(QLandmarkAbstractRequest* re
 */
 void QLandmarkManagerEngine::updateRequestState(QLandmarkAbstractRequest *req, QLandmarkAbstractRequest::State state)
 {
-    if (!req)
-        return;
-    if (req->d_ptr->state != state) {
+    if (req) {
+        QMutexLocker ml(&req->d_ptr->mutex);
+        if (req->d_ptr->state != state) {
         req->d_ptr->state = state;
+        ml.unlock();
         emit req->stateChanged(state);
+        }
     }
-
 }
 
 /*!
@@ -651,17 +826,20 @@ void QLandmarkManagerEngine::updateLandmarkIdFetchRequest(QLandmarkIdFetchReques
         QLandmarkManager::Error error, const QString &errorString,
         QLandmarkAbstractRequest::State newState)
 {
-    if (!req)
-        return;
-    QLandmarkIdFetchRequestPrivate * rd = static_cast<QLandmarkIdFetchRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->landmarkIds = result;
-    bool emitState = rd->state != newState;
-    rd->state =newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkIdFetchRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkIdFetchRequestPrivate * rd = static_cast<QLandmarkIdFetchRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->landmarkIds = result;
+        bool emitState = rd->state != newState;
+        rd->state =newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit ireq.data()->stateChanged(newState);
+    }
 }
 
 /*!
@@ -679,17 +857,53 @@ void QLandmarkManagerEngine::updateLandmarkFetchRequest(QLandmarkFetchRequest* r
         QLandmarkManager::Error error, const QString &errorString,
         QLandmarkAbstractRequest::State newState)
 {
-    if (!req)
-        return;
-    QLandmarkFetchRequestPrivate * rd = static_cast<QLandmarkFetchRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->landmarks = result;
-    bool emitState = rd->state != newState;
-    rd->state =newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkFetchRequest> ireq(req); //Take this incase the first emit deletes us.
+        QLandmarkFetchRequestPrivate * rd = static_cast<QLandmarkFetchRequestPrivate*>(ireq.data()->d_ptr);
+
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->landmarks = result;
+        bool emitState = rd->state != newState;
+        rd->state =newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit req->stateChanged(newState);
+    }
+}
+
+/*!
+    Updates the given QLandmarkFetchByIdRequest \a req with the latest \a result,
+    operation \a error and \a errorString and map of input index to individual errors, \a errorMap.
+     In addition, the state of the request
+    will be changed to \a newState.
+
+    It then causes the request to emit its resultsAvailable() signal to notify clients of the
+    request progress.
+
+    If the new request state is different from the previous state, the stateChanged() signal will
+    also be emitted from the request.
+ */
+void QLandmarkManagerEngine::updateLandmarkFetchByIdRequest(QLandmarkFetchByIdRequest* req, const QList<QLandmark>& result, QLandmarkManager::Error error,
+        const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState)
+{
+    if (req) {
+        QWeakPointer<QLandmarkFetchByIdRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkFetchByIdRequestPrivate* rd = static_cast<QLandmarkFetchByIdRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->errorMap = errorMap;
+        rd->landmarks = result;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && req)
+            emit req->stateChanged(newState);
+    }
 }
 
 /*!
@@ -706,15 +920,21 @@ void QLandmarkManagerEngine::updateLandmarkFetchRequest(QLandmarkFetchRequest* r
 void QLandmarkManagerEngine::updateLandmarkRemoveRequest(QLandmarkRemoveRequest* req, QLandmarkManager::Error error, const QString &errorString,
         const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkRemoveRequestPrivate* rd = static_cast<QLandmarkRemoveRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->errorMap = errorMap;
-    bool emitState = rd->state != newState;
-    rd->state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkRemoveRequest>ireq(req);//Take this in case the first emit delete us
+        QLandmarkRemoveRequestPrivate* rd = static_cast<QLandmarkRemoveRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->errorMap = errorMap;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit req->stateChanged(newState);
+    }
+
 }
 
 /*!
@@ -731,16 +951,21 @@ void QLandmarkManagerEngine::updateLandmarkRemoveRequest(QLandmarkRemoveRequest*
 void QLandmarkManagerEngine::updateLandmarkSaveRequest(QLandmarkSaveRequest* req, const QList<QLandmark>& result, QLandmarkManager::Error error,
         const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkSaveRequestPrivate* rd = static_cast<QLandmarkSaveRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->errorMap = errorMap;
-    rd->landmarks = result;
-    bool emitState = rd->state != newState;
-    rd->state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkSaveRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkSaveRequestPrivate* rd = static_cast<QLandmarkSaveRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->errorMap = errorMap;
+        rd->landmarks = result;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit req->stateChanged(newState);
+    }
 }
 
 /*!
@@ -759,15 +984,20 @@ void QLandmarkManagerEngine::updateLandmarkCategoryIdFetchRequest(QLandmarkCateg
         QLandmarkAbstractRequest::State newState)
 
 {
-    QLandmarkCategoryIdFetchRequestPrivate* rd = static_cast<QLandmarkCategoryIdFetchRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->categoryIds = result;
-    bool emitState = rd->state != newState;
-    rd->state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkCategoryIdFetchRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkCategoryIdFetchRequestPrivate* rd = static_cast<QLandmarkCategoryIdFetchRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->categoryIds = result;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit req->stateChanged(newState);
+    }
 }
 
 /*!
@@ -786,15 +1016,51 @@ void QLandmarkManagerEngine::updateLandmarkCategoryFetchRequest(QLandmarkCategor
         QLandmarkAbstractRequest::State newState)
 
 {
-    QLandmarkCategoryFetchRequestPrivate* rd = static_cast<QLandmarkCategoryFetchRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->categories = result;
-    bool emitState = rd->state != newState;
-    rd->state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkCategoryFetchRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkCategoryFetchRequestPrivate* rd = static_cast<QLandmarkCategoryFetchRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->categories = result;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit req->stateChanged(newState);
+    }
+}
+
+/*!
+    Updates the given QLandmarkCategoryFetchByIdRequest \a req with the latest \a result,
+    and operation \a error and \a errorString, and map of input index to individual errors, \a errorMap.
+   In addition, the state of the request will be changed to \a newState.
+
+    It then causes the request to emit its resultsAvailable() signal to notify clients of the
+    request progress.
+
+    If the new request state is different from the previous state, the stateChanged() signal will
+    also be emitted from the request.
+ */
+void QLandmarkManagerEngine::updateLandmarkCategoryFetchByIdRequest(QLandmarkCategoryFetchByIdRequest* req, const QList<QLandmarkCategory>& result, QLandmarkManager::Error error,
+        const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState)
+{
+    if (req) {
+        QWeakPointer<QLandmarkCategoryFetchByIdRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkCategoryFetchByIdRequestPrivate* rd = static_cast<QLandmarkCategoryFetchByIdRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->errorMap = errorMap;
+        rd->categories = result;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit req->stateChanged(newState);
+    }
 }
 
 /*!
@@ -811,15 +1077,20 @@ void QLandmarkManagerEngine::updateLandmarkCategoryFetchRequest(QLandmarkCategor
 void QLandmarkManagerEngine::updateLandmarkCategoryRemoveRequest(QLandmarkCategoryRemoveRequest* req, QLandmarkManager::Error error, const QString &errorString,
         const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkRemoveRequestPrivate* rd = static_cast<QLandmarkRemoveRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->errorMap = errorMap;
-    bool emitState = rd->state != newState;
-    rd->state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkCategoryRemoveRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkRemoveRequestPrivate* rd = static_cast<QLandmarkRemoveRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->errorMap = errorMap;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit req->stateChanged(newState);
+    }
 }
 
 /*!
@@ -836,21 +1107,27 @@ void QLandmarkManagerEngine::updateLandmarkCategoryRemoveRequest(QLandmarkCatego
 void QLandmarkManagerEngine::updateLandmarkCategorySaveRequest(QLandmarkCategorySaveRequest* req, const QList<QLandmarkCategory>& result, QLandmarkManager::Error error,
         const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkCategorySaveRequestPrivate* rd = static_cast<QLandmarkCategorySaveRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    rd->errorMap = errorMap;
-    rd->categories = result;
-    bool emitState = rd->state != newState;
-    rd->state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkCategorySaveRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkCategorySaveRequestPrivate* rd = static_cast<QLandmarkCategorySaveRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->errorMap = errorMap;
+        rd->categories = result;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit req->stateChanged(newState);
+    }
 }
 
 /*!
     Updates the given QLandmarkImportRequest \a req with the operation \a error and \a errorString.
-    In addition the state of the request is changed to \a newState.
+    In addition the state of the request is changed to \a newState.  This function may also be used
+    to update the \a ids of the landmarks which have been imported.
 
     It then causes the request to emit its resultsAvailable() signal to notify the clients of the request
     progress.
@@ -858,17 +1135,23 @@ void QLandmarkManagerEngine::updateLandmarkCategorySaveRequest(QLandmarkCategory
     If the new request state is different from the previous state, the stateChanged() signal will
     also be emitted from the request.
 */
-void QLandmarkManagerEngine::updateLandmarkImportRequest(QLandmarkImportRequest *req, QLandmarkManager::Error error, const QString &errorString,
+void QLandmarkManagerEngine::updateLandmarkImportRequest(QLandmarkImportRequest *req, const QList<QLandmarkId> &ids, QLandmarkManager::Error error, const QString &errorString,
         QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkImportRequestPrivate* rd = static_cast<QLandmarkImportRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    bool emitState = rd->state != newState;
-    rd->state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkImportRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkImportRequestPrivate* rd = static_cast<QLandmarkImportRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        rd->landmarkIds = ids;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState && ireq)
+            emit req->stateChanged(newState);
+    }
 }
 
 /*!
@@ -884,14 +1167,19 @@ void QLandmarkManagerEngine::updateLandmarkImportRequest(QLandmarkImportRequest 
 void QLandmarkManagerEngine::updateLandmarkExportRequest(QLandmarkExportRequest *req, QLandmarkManager::Error error, const QString &errorString,
         QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkExportRequestPrivate* rd = static_cast<QLandmarkExportRequestPrivate*>(req->d_ptr);
-    rd->error = error;
-    rd->errorString = errorString;
-    bool emitState = rd->state != newState;
-    rd->state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QLandmarkExportRequest> ireq(req); //Take this in case the first emit delete us
+        QLandmarkExportRequestPrivate* rd = static_cast<QLandmarkExportRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->mutex);
+        rd->error = error;
+        rd->errorString = errorString;
+        bool emitState = rd->state != newState;
+        rd->state = newState;
+        ml.unlock();
+        emit req->resultsAvailable();
+        if (emitState  && req)
+            emit req->stateChanged(newState);
+    }
 }
 
 /*!
@@ -910,12 +1198,6 @@ int QLandmarkManagerEngine::compareLandmark(const QLandmark& a, const QLandmark&
             {
                 const QLandmarkNameSort nameSort = sortOrders.at(i);
                 comparison = compareName(a, b, nameSort);
-                break;
-            }
-            case (QLandmarkSortOrder::DistanceSort):
-            {
-                const QLandmarkDistanceSort distanceSort = sortOrders.at(i);
-                comparison = compareDistance(a, b, distanceSort);
                 break;
             }
             default:
@@ -947,54 +1229,6 @@ int QLandmarkManagerEngine::compareName(const QLandmark &a, const QLandmark &b, 
     int result = QString::compare(a.name(), b.name(), nameSort.caseSensitivity());
 
     if (nameSort.direction() == Qt::DescendingOrder)
-        result *= -1;
-
-    return result;
-}
-
-/*!
-  Compares two landmarks (\a a and \a b) by distance from a point given by \a distanceSort.
-  Returns a negative number if \a a should appear before \a b according to the sort order,
-  a positive number if \a a should appear after \a b according to the sort order,
-  and zero if the two are unable to be sorted.
-
-  Assuming an ascending order sort, a negative number is returned if \a a is closer
-  and a positive number if \a b is considered closer.  0 is returned if both are the same
-  distance away.
-
-  A invalid coordinate is considered to be an infinite distance away.
- */
-int QLandmarkManagerEngine::compareDistance(const QLandmark &a, const QLandmark &b, const QLandmarkDistanceSort &distanceSort)
-{
-    int result = 0;
-
-    if (!distanceSort.coordinate().isValid())
-        return result;
-
-    if (a.coordinate().isValid()) {
-        if (b.coordinate().isValid()) {
-            double da = distanceSort.coordinate().distanceTo(a.coordinate());
-            double db = distanceSort.coordinate().distanceTo(b.coordinate());
-
-            if (qFuzzyCompare(da,db)) {
-                result = 0;
-            } else if (da < db) {
-                result = -1;
-            } else if (da > db) {
-                result = 1;
-            }
-        } else {
-            result = -1;
-        }
-    } else {
-        if (b.coordinate().isValid()) {
-            result = 1;
-        } else {
-            result = 0;
-        }
-    }
-
-    if (distanceSort.direction() == Qt::DescendingOrder)
         result *= -1;
 
     return result;
@@ -1036,23 +1270,67 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
         {
             const QLandmarkAttributeFilter attribFilter(filter);
             QStringList filterKeys = attribFilter.attributeKeys();
-            QStringList landmarkKeys = attribFilter.attributeKeys();
 
-            foreach(const QString filterKey, filterKeys)
-            {
-                if (landmarkKeys.contains(filterKey)) {
-                    if (!attribFilter.attribute(filterKey).isValid())
-                        continue;
+            QStringList landmarkKeys;
+            if (attribFilter.attributeType() == QLandmarkAttributeFilter::ManagerAttributes)
+                landmarkKeys = landmark.attributeKeys();
+            else
+                landmarkKeys = landmark.customAttributeKeys();
 
-                    if (attribFilter.attribute(filterKey) == landmark.attribute(filterKey))
-                        continue;
-                    else
+            if (attribFilter.operationType() ==  QLandmarkAttributeFilter::AndOperation) {
+                QVariant lmAttributeValue;
+                foreach(const QString filterKey, filterKeys)
+                {
+                    if (landmarkKeys.contains(filterKey)) {
+                        if (!attribFilter.attribute(filterKey).isValid())
+                            continue;
+
+                        if (attribFilter.attributeType() == QLandmarkAttributeFilter::ManagerAttributes)
+                            lmAttributeValue = landmark.attribute(filterKey);
+                        else
+                            lmAttributeValue = landmark.customAttribute(filterKey);
+
+                        if (lmAttributeValue.type() == QVariant::String) {
+                            QString lmString = lmAttributeValue.toString();
+                            QString attribString = attribFilter.attribute(filterKey).toString();
+                            if (matchString(lmString, attribString, attribFilter.matchFlags(filterKey)))
+                                continue;
+                        } else if (attribFilter.attribute(filterKey) == lmAttributeValue) {
+                            continue;
+                        }
+
                         return false;
-                } else {
-                    return false;
+                    } else {
+                        return false;
+                    }
                 }
+                return true;
+            } else {//must be OR operation
+                QVariant lmAttributeValue;
+                foreach(const QString filterKey, filterKeys) {
+                    if (landmarkKeys.contains(filterKey)) {
+                        if (!(attribFilter.attribute(filterKey).isValid()))
+                            return true;
+
+                        if (attribFilter.attributeType() == QLandmarkAttributeFilter::ManagerAttributes)
+                            lmAttributeValue = landmark.attribute(filterKey);
+                        else
+                            lmAttributeValue = landmark.customAttribute(filterKey);
+
+                        if (lmAttributeValue.type() == QVariant::String) {
+                            QString lmString = lmAttributeValue.toString();
+                            QString attribString = attribFilter.attribute(filterKey).toString();
+                            if (matchString(lmString, attribString, attribFilter.matchFlags(filterKey)))
+                                return true;
+                        }
+
+                        if (attribFilter.attribute(filterKey) == lmAttributeValue) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
             }
-            return true;
         }
         case QLandmarkFilter::BoxFilter:
         {
@@ -1130,7 +1408,7 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
         case QLandmarkFilter::NameFilter:
         {
             QLandmarkNameFilter nameFilter(filter);
-            return QString::compare(nameFilter.name(), landmark.name(), nameFilter.caseSensitivity()) == 0;
+            return matchString(landmark.name(), nameFilter.name(), nameFilter.matchFlags());
         }
         case QLandmarkFilter::ProximityFilter:
         {

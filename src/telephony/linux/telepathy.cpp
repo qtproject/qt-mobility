@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "telepathy.h"
+#include "telepathy_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -57,6 +57,6 @@ void Telepathy::createNewChannels(const ChannelsArray& channelsarray)
     Q_EMIT NewChannels(channelsarray);
 }
 
-#include "moc_telepathy.cpp"
+#include "moc_telepathy_p.cpp"
 
 QTM_END_NAMESPACE

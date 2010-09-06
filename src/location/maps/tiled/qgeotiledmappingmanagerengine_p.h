@@ -57,9 +57,6 @@
 #include "qgeotiledmapreply.h"
 
 #include <QSize>
-#include <QRectF>
-#include <QList>
-#include <QSet>
 
 QTM_BEGIN_NAMESPACE
 
@@ -71,14 +68,13 @@ class QGeoTiledMapRequest;
 class QGeoTiledMappingManagerEnginePrivate : public QGeoMappingManagerEnginePrivate
 {
 public:
-    QGeoTiledMappingManagerEnginePrivate(const QMap<QString, QString> &parameters);
-    QGeoTiledMappingManagerEnginePrivate(const QGeoTiledMappingManagerEnginePrivate &other);
+    QGeoTiledMappingManagerEnginePrivate();
     ~QGeoTiledMappingManagerEnginePrivate();
 
-    QGeoTiledMappingManagerEnginePrivate& operator= (const QGeoTiledMappingManagerEnginePrivate &other);
-
-    QList<QString> supportedImageFormats;
     QSize tileSize;
+
+private:
+    Q_DISABLE_COPY(QGeoTiledMappingManagerEnginePrivate)
 };
 
 QTM_END_NAMESPACE

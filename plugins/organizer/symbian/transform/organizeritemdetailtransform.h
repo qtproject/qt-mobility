@@ -43,28 +43,27 @@
 
 #include <caltime.h>
 #include <calentry.h>
+#include <calinstance.h>
 #include "qorganizeritem.h"
+#include "qorganizeritemdetaildefinition.h"
+#include "organizersymbianutils.h"
 
 QTM_USE_NAMESPACE
+using namespace OrganizerSymbianUtils;
 
 class OrganizerItemDetailTransform
 {
 public:
     OrganizerItemDetailTransform();
     virtual ~OrganizerItemDetailTransform();
+    
+    virtual void modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const;
 
     virtual void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item) = 0;
+    virtual void transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance);
     virtual void transformToDetailPostSaveL(const CCalEntry& entry, QOrganizerItem *item);
     virtual void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry) = 0;
     virtual QString detailDefinitionName() = 0;
-
-    static QString toQString(const TDesC8 &des);
-    static QString toQString(const TDesC16 &des);
-    static TPtrC8 toPtrC8(const QByteArray &bytes);
-    static TPtrC16 toPtrC16(const QString &string);
-    static TCalTime toTCalTimeL(QDateTime dateTime);
-    static TCalTime toTCalTimeL(QDate date);
-    static QDateTime toQDateTimeL(TCalTime calTime);
 };
 
 #endif /* ORGANIZERITEMDETAILTRANSFORM_H_ */

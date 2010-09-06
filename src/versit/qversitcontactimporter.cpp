@@ -42,7 +42,6 @@
 #include "qcontactmanagerengine.h"
 #include "qversitcontactimporter.h"
 #include "qversitcontactimporter_p.h"
-#include "qvcardbackuphandlers_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
@@ -127,33 +126,6 @@ QTM_USE_NAMESPACE
   list of details that the importer will update, and can be modified (by removing, modifying or
   adding details to the list)
  */
-void QVersitContactImporterPropertyHandlerV2::propertyProcessed(
-        const QVersitDocument& document,
-        const QVersitProperty& property,
-        bool alreadyProcessed,
-        const QContact& contact,
-        QList<QContactDetail>* updatedDetails)
-{
-    Q_UNUSED(document)
-    Q_UNUSED(property)
-    Q_UNUSED(alreadyProcessed)
-    Q_UNUSED(contact)
-    Q_UNUSED(updatedDetails)
-}
-
-void QVersitContactImporterPropertyHandlerV2::propertyProcessed(
-        const QVersitDocument& document,
-        const QVersitProperty& property,
-        const QContact& contact,
-        bool *alreadyProcessed,
-        QList<QContactDetail>* updatedDetails)
-{
-    Q_UNUSED(document)
-    Q_UNUSED(property)
-    Q_UNUSED(contact)
-    Q_UNUSED(alreadyProcessed)
-    Q_UNUSED(updatedDetails)
-}
 
 /*!
   \fn void QVersitContactImporterPropertyHandlerV2::documentProcessed(const QVersitDocument& document, QContact* contact)
@@ -224,27 +196,6 @@ void QVersitContactImporterPropertyHandlerV2::propertyProcessed(
   \value EmptyDocumentError One of the documents is empty
   */
 
-
-/*!
-  \internal
-
-  This is deprecated; the preferred way of restoring from backup is now by constructing an importer with
-  the "backup" profile.
-  eg. QVersitContactImporter importer(QVersitContactHandlerFactory::ProfileBackup);
-
-  Constructs and returns a property handler that restores data from a vCard generated using the
-  exporter backup detail handler (see QVersitContactExporterDetailHandlerV2::createBackupHandler()).
-  The caller is responsible for deleting the object.
-
-  Clients wishing to implement their own property handler and also benefit from the functionality of
-  the default handler can use this function to construct one, and wrap a custom
-  QVersitContactImporterPropertyHandlerV2 around it.  In the implementation of propertyProcessed and
-  documentProcessed, the respective functions in the backup handler should be called as the last
-  step (ensuring the arguments are correctly updated and passed through).
- */
-QVersitContactImporterPropertyHandlerV2* QVersitContactImporterPropertyHandlerV2::createBackupHandler() {
-    return new QVCardImporterBackupHandler;
-}
 
 /*! Constructs a new importer */
 QVersitContactImporter::QVersitContactImporter()

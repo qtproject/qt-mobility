@@ -64,6 +64,9 @@ private slots:
 
     void testImportTodoProperties();
     void testImportTodoProperties_data();
+
+    void testTimeZones();
+    void testTimeZones_data();
 };
 
 #endif

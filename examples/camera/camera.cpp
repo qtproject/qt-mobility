@@ -148,13 +148,18 @@ void Camera::keyPressEvent(QKeyEvent * event)
     switch (event->key()) {
 #if QT_VERSION >= 0x040700
     case Qt::Key_CameraFocus:
+        displayViewfinder();
         camera->searchAndLock();
         break;
     case Qt::Key_Camera:
-        if (camera->captureMode() == QCamera::CaptureStillImage)
+        if (camera->captureMode() == QCamera::CaptureStillImage) {
             takeImage();
-        else
-            record();
+        } else {
+            if (mediaRecorder->state() == QMediaRecorder::RecordingState)
+                stop();
+            else
+                record();
+        }
         break;
 #endif
     default:
@@ -168,10 +173,6 @@ void Camera::keyReleaseEvent(QKeyEvent * event)
 #if QT_VERSION >= 0x040700
     case Qt::Key_CameraFocus:
         camera->unlock();
-        break;
-    case Qt::Key_Camera:
-        if (camera->captureMode() == QCamera::CaptureVideo)
-            stop();
         break;
 #endif
     default:
@@ -187,8 +188,12 @@ void Camera::updateRecordTime()
 
 void Camera::processCapturedImage(int requestId, const QImage& img)
 {
-    Q_UNUSED(requestId);    
-    ui->lastImagePreviewLabel->setPixmap(QPixmap::fromImage(img));
+    Q_UNUSED(requestId);
+    QImage scaledImage = img.scaled(ui->viewfinder->size(),
+                                    Qt::KeepAspectRatio,
+                                    Qt::SmoothTransformation);
+
+    ui->lastImagePreviewLabel->setPixmap(QPixmap::fromImage(scaledImage));
 
     //display captured image for 4 seconds
     displayCapturedImage();

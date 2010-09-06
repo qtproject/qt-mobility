@@ -8,7 +8,7 @@ include(qtmobility-cpp-ignore.qdocconf)
 project                 = QtMobility
 description             = Qt Mobility Project Library Reference Documentation
 versionsym              =
-version                 = 1.1
+version                 = Mobility 1.1
 url                     = http://qt.nokia.com/doc/qtmobility-1.1
 online			        = true
 
@@ -18,51 +18,48 @@ naturallanguage         = en_US
 
 qhp.projects            = QtMobility
 
-#qhp.Qt.file                = qt.qhp
-#qhp.Qt.namespace           = com.trolltech.qt.470
-#qhp.Qt.virtualFolder       = qdoc
-#qhp.Qt.indexTitle          = Qt Reference Documentation
-#qhp.Qt.indexRoot           =
-
-# Files not referenced in any qdoc file (last four are needed by qtdemo)
-# See also extraimages.HTML
-qhp.Qt.extraFiles          = index.html \
-			     images/bg_l.png \
-			     images/bg_l_blank.png \
-                 images/bg_r.png \
-			     images/box_bg.png \
-			     images/breadcrumb.png \
-			     images/bullet_gt.png \
-			     images/bullet_dn.png \
-			     images/bullet_sq.png \
-			     images/bullet_up.png \
-			     images/feedbackground.png \
-			     images/horBar.png \
-			     images/page.png \
-			     images/page_bg.png \
-			     images/sprites-combined.png \
-			     images/spinner.gif \
-			     images/stylesheet-coffee-plastique.png \
-			     images/taskmenuextension-example.png \
-			     images/coloreditorfactoryimage.png \
-			     images/dynamiclayouts-example.png \
-			     scripts/functions.js \
-			     scripts/jquery.js \
-			     style/style_ie6.css \
-			     style/style_ie7.css \
-			     style/style_ie8.css \
-			     style/style.css
-
-qhp.QtMobility.filterAttributes   = qtmobility
 qhp.QtMobility.file               = qtmobility.qhp
-qhp.QtMobility.namespace          = com.nokia.qtmobility
+qhp.QtMobility.namespace          = com.nokia.qtmobility.110
 qhp.QtMobility.virtualFolder      = mobility
 qhp.QtMobility.indexTitle         = Qt Mobility Project Reference Documentation
 qhp.QtMobility.indexRoot          =
 
-qhp.QtMobility.customFilters.QtMobility.name = Qt Mobility
-qhp.QtMobility.customFilters.QtMobility.filterAttributes = qtmobility
+# Files not referenced in any qdoc file
+# See also extraimages.HTML
+qhp.QtMobility.extraFiles = index.html \
+                 images/bg_l.png \
+                 images/bg_l_blank.png \
+                 images/bg_ll_blank.png \
+                 images/bg_ul_blank.png \
+                 images/header_bg.png \
+                 images/bg_r.png \
+                 images/box_bg.png \
+                 images/breadcrumb.png \
+                 images/bullet_gt.png \
+                 images/bullet_dn.png \
+                 images/bullet_sq.png \
+                 images/bullet_up.png \
+                 images/arrow_down.png \
+                 images/feedbackground.png \
+                 images/horBar.png \
+                 images/page.png \
+                 images/page_bg.png \
+                 images/sprites-combined.png \
+                 images/spinner.gif \
+                 scripts/functions.js \
+                 scripts/jquery.js \
+                 scripts/narrow.js \
+                 scripts/superfish.js \
+                 style/narrow.css \
+                 style/superfish.css \
+                 style/style_ie6.css \
+                 style/style_ie7.css \
+                 style/style_ie8.css \
+                 style/style.css
 
+qhp.QtMobility.filterAttributes   = qtmobility 1.1.0
+qhp.QtMobility.customFilters.QtMobility.name = Qt Mobility 1.1.0
+qhp.QtMobility.customFilters.QtMobility.filterAttributes = qtmobility 1.1.0
 qhp.QtMobility.subprojects = classes overviews examples
 qhp.QtMobility.subprojects.classes.title = Classes
 qhp.QtMobility.subprojects.classes.indexTitle = All Qt Mobility Project Classes
@@ -104,6 +101,7 @@ headerdirs = ../../src/global \
              ../../plugins/declarative/gallery \
              ../../src/camera \
              ../../src/organizer \
+             ../../plugins/declarative/serviceframework \
              .
 
 sourcedirs = ../../src/global \
@@ -118,6 +116,8 @@ sourcedirs = ../../src/global \
              ../../src/multimedia \
              ../../plugins/declarative/multimedia \
 	     ../../plugins/declarative/location \
+	     ../../plugins/declarative/messaging \
+             ../../plugins/declarative/serviceframework \
              ../../src/messaging \
              ../../src/versit \
              ../../src/telephony \
@@ -151,14 +151,6 @@ outputdir               = ../html
 tagfile                 = ../html/qt.tags
 base                    = file:../html
 
-
-
-HTML.footer             = "<p /><address><hr /><div align=\"center\">\n" \
-                          "<table width=\"100%\" cellspacing=\"0\" border=\"0\"><tr class=\"address\">\n" \
-                          "<td align=\"left\">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>\n" \
-                          "<td width=\"20%\" align=\"center\"><a href=\"trademarks.html\">Trademarks</a></td>\n" \
-                          "<td align=\"right\"><div align=\"right\">Qt Mobility Project 1.1.0</div></td>\n" \
-                          "</tr></table></div></address>"
 
 macro.raisedaster.HTML  = "<sup>*</sup>"
 macro.br.HTML = "<br/>"

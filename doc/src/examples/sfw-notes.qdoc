@@ -42,11 +42,11 @@
 /*!
     \example sfw-notes
 
-    \title Service Framework Notes Manager
+    \title Notes Manager Example
 
     This example demonstrates how to use the Service Framework to obtain a single
-    default service at a specified interface address provided by the Notes
-    Manager service \l{notesmanagerplugin}{plugin}, which can be used to implement 
+    default service at a specified interface address provided by the 
+    \l{notesmanagerplugin}{Notes Manager service plugin}, which can be used to implement 
     a notes managing application.
 
     There is also a declarative example which implements identical functionality

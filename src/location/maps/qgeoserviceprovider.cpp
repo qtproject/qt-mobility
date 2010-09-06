@@ -52,6 +52,7 @@
 
 #include <QList>
 #include <QString>
+#include <QVariant>
 
 #include <QPluginLoader>
 #include <QDebug>
@@ -71,7 +72,7 @@ QTM_BEGIN_NAMESPACE
     geographical information.
 
     \inmodule QtLocation
-    
+
     \ingroup maps
 
     The Maps and Navigation API allows people to access various kinds of
@@ -96,7 +97,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-\enum QGeoServiceProvider::Error 
+\enum QGeoServiceProvider::Error
 
 Describes an error related to the loading and setup of a service provider
 plugin.
@@ -133,28 +134,11 @@ QStringList QGeoServiceProvider::availableServiceProviders()
     If no plugin matching \a providerName was able to be loaded then error()
     and errorString() will provide details about why this is the case.
 */
-QGeoServiceProvider::QGeoServiceProvider(const QString &providerName, const QMap<QString, QString> &parameters)
+QGeoServiceProvider::QGeoServiceProvider(const QString &providerName, const QMap<QString, QVariant> &parameters)
         : d_ptr(new QGeoServiceProviderPrivate())
 {
     d_ptr->loadPlugin(providerName, parameters);
     d_ptr->parameterMap = parameters;
-}
-
-/*!
-    Constructs a QGeoServiceProvider whose backend has the name \a providerName
-    and version \a providerVersion, using the provided \a parameters.
-
-    If no plugin matching \a providerName and \a providerVersion was able to be
-    loaded then error() and errorString() will provide details about why this
-    is the case.
-*/
-QGeoServiceProvider::QGeoServiceProvider(const QString &providerName, int providerVersion, const QMap<QString, QString> &parameters)
-        : d_ptr(new QGeoServiceProviderPrivate())
-{
-
-    d_ptr->parameterMap = parameters;
-    d_ptr->parameterMap["version"] = QString::number(providerVersion);
-    d_ptr->loadPlugin(providerName, d_ptr->parameterMap);
 }
 
 /*!
@@ -189,8 +173,8 @@ QGeoSearchManager* QGeoServiceProvider::searchManager() const
 
     if (!d_ptr->searchManager) {
         QGeoSearchManagerEngine *engine = d_ptr->factory->createSearchManagerEngine(d_ptr->parameterMap,
-                                                                                    &(d_ptr->searchError),
-                                                                                    &(d_ptr->searchErrorString));
+                                          &(d_ptr->searchError),
+                                          &(d_ptr->searchErrorString));
         if (engine) {
             engine->setManagerName(d_ptr->factory->providerName());
             engine->setManagerVersion(d_ptr->factory->providerVersion());
@@ -235,8 +219,8 @@ QGeoMappingManager* QGeoServiceProvider::mappingManager() const
 
     if (!d_ptr->mappingManager) {
         QGeoMappingManagerEngine *engine = d_ptr->factory->createMappingManagerEngine(d_ptr->parameterMap,
-                                                                                      &(d_ptr->mappingError),
-                                                                                      &(d_ptr->mappingErrorString));
+                                           &(d_ptr->mappingError),
+                                           &(d_ptr->mappingErrorString));
 
         if (engine) {
             engine->setManagerName(d_ptr->factory->providerName());
@@ -282,8 +266,8 @@ QGeoRoutingManager* QGeoServiceProvider::routingManager() const
 
     if (!d_ptr->routingManager) {
         QGeoRoutingManagerEngine *engine = d_ptr->factory->createRoutingManagerEngine(d_ptr->parameterMap,
-                                                                                      &(d_ptr->routingError),
-                                                                                      &(d_ptr->routingErrorString));
+                                           &(d_ptr->routingError),
+                                           &(d_ptr->routingErrorString));
 
         if (engine) {
             engine->setManagerName(d_ptr->factory->providerName());
@@ -349,7 +333,7 @@ QGeoServiceProviderPrivate::~QGeoServiceProviderPrivate()
         delete mappingManager;
 }
 
-void QGeoServiceProviderPrivate::loadPlugin(const QString &providerName, const QMap<QString, QString> &parameters)
+void QGeoServiceProviderPrivate::loadPlugin(const QString &providerName, const QMap<QString, QVariant> &parameters)
 {
     if (!QGeoServiceProviderPrivate::plugins().keys().contains(providerName)) {
         error = QGeoServiceProvider::NotSupportedError;
@@ -365,26 +349,13 @@ void QGeoServiceProviderPrivate::loadPlugin(const QString &providerName, const Q
 
     QList<QGeoServiceProviderFactory*> candidates = QGeoServiceProviderPrivate::plugins().values(providerName);
 
-    bool ok = false;
-    int versionTarget  = parameters.value("version", "-1").toInt(&ok);
-    if (!ok)
-        versionTarget = -1;
     int versionFound = -1;
 
     for (int i = 0; i < candidates.size(); ++i) {
         QGeoServiceProviderFactory* f = candidates[i];
-        if (f) {
-            if (versionTarget == -1) {
-                if (f->providerVersion() > versionFound) {
-                    versionFound = f->providerVersion();
-                    factory = f;
-                }
-            } else {
-                if (f->providerVersion() == versionTarget) {
-                    factory = f;
-                    break;
-                }
-            }
+        if (f && (f->providerVersion() > versionFound)) {
+            versionFound = f->providerVersion();
+            factory = f;
         }
     }
 }

@@ -61,6 +61,7 @@ QTM_BEGIN_NAMESPACE
     \class QAbstractValueSpaceLayer
     \brief The QAbstractValueSpaceLayer class provides support for adding new logical data layers
            to the Qt Value Space.
+    \inmodule QtPublishSubscribe
     \ingroup publishsubscribe
 
     To create a new layer in the Value Space subclass this class and reimplement all of the virtual

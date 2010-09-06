@@ -58,7 +58,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-request
 */
 
@@ -87,6 +87,7 @@ QLandmarkIdFetchRequest::~QLandmarkIdFetchRequest()
 QLandmarkFilter QLandmarkIdFetchRequest::filter() const
 {
     Q_D(const QLandmarkIdFetchRequest);
+    QMutexLocker ml(&d->mutex);
     return d->filter;
 }
 
@@ -97,6 +98,7 @@ QLandmarkFilter QLandmarkIdFetchRequest::filter() const
 void QLandmarkIdFetchRequest::setFilter(const QLandmarkFilter &filter)
 {
     Q_D(QLandmarkIdFetchRequest);
+    QMutexLocker ml(&d->mutex);
     d->filter = filter;
 }
 
@@ -106,6 +108,7 @@ void QLandmarkIdFetchRequest::setFilter(const QLandmarkFilter &filter)
 QList<QLandmarkSortOrder> QLandmarkIdFetchRequest::sorting() const
 {
     Q_D(const QLandmarkIdFetchRequest);
+    QMutexLocker ml(&d->mutex);
     return d->sorting;
 }
 
@@ -117,6 +120,7 @@ QList<QLandmarkSortOrder> QLandmarkIdFetchRequest::sorting() const
 void QLandmarkIdFetchRequest::setSorting(const QList<QLandmarkSortOrder> &sorting)
 {
     Q_D(QLandmarkIdFetchRequest);
+    QMutexLocker ml(&d->mutex);
     d->sorting = sorting;
 }
 
@@ -128,26 +132,48 @@ void QLandmarkIdFetchRequest::setSorting(const QList<QLandmarkSortOrder> &sortin
 void QLandmarkIdFetchRequest::setSorting(const QLandmarkSortOrder &sorting)
 {
     Q_D(QLandmarkIdFetchRequest);
+    QMutexLocker ml(&d->mutex);
     d->sorting.clear();
     d->sorting.append(sorting);
 }
 
 /*!
-    Returns the request's fetch hint.
+    Returns the maximum number of landmark ids to be returned.
 */
-QLandmarkFetchHint QLandmarkIdFetchRequest::fetchHint() const
+int QLandmarkIdFetchRequest::limit() const
 {
     Q_D(const QLandmarkIdFetchRequest);
-    return d->fetchHint;
+    QMutexLocker ml(&d->mutex);
+    return d->limit;
 }
 
 /*!
-    Sets the request's \a fetchHint.
-*/
-void QLandmarkIdFetchRequest::setFetchHint(const QLandmarkFetchHint &fetchHint)
+    Sets the maximum number of landmarks to be returned to \a limit.
+ */
+void QLandmarkIdFetchRequest::setLimit(int limit)
 {
     Q_D(QLandmarkIdFetchRequest);
-    d->fetchHint = fetchHint;
+    QMutexLocker ml(&d->mutex);
+    d->limit = limit;
+}
+
+/*!
+    Returns the index offset for the request.
+*/
+int QLandmarkIdFetchRequest::offset() const
+{
+    Q_D(const QLandmarkIdFetchRequest);
+    QMutexLocker ml(&d->mutex);
+    return d->offset;
+}
+
+/*!
+    Sets the index \a offset for the request.
+*/
+void QLandmarkIdFetchRequest::setOffset(int offset) {
+    Q_D(QLandmarkIdFetchRequest);
+    QMutexLocker ml(&d->mutex);
+    d->offset = offset;
 }
 
 /*!
@@ -157,6 +183,7 @@ void QLandmarkIdFetchRequest::setFetchHint(const QLandmarkFetchHint &fetchHint)
 QList<QLandmarkId> QLandmarkIdFetchRequest::landmarkIds() const
 {
     Q_D(const QLandmarkIdFetchRequest);
+    QMutexLocker ml(&d->mutex);
     return d->landmarkIds;
 }
 

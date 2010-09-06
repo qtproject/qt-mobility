@@ -59,13 +59,13 @@ public:
     virtual QString providerName() const = 0;
     virtual int providerVersion() const = 0;
 
-    virtual QGeoSearchManagerEngine* createSearchManagerEngine(const QMap<QString, QString> &parameters,
+    virtual QGeoSearchManagerEngine* createSearchManagerEngine(const QMap<QString, QVariant> &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
-    virtual QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QString> &parameters,
+    virtual QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
-    virtual QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QString> &parameters,
+    virtual QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
 };

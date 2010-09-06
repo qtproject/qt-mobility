@@ -63,12 +63,12 @@ class QGeoRoutingManagerPrivate
 {
 public:
     QGeoRoutingManagerPrivate();
-    QGeoRoutingManagerPrivate(const QGeoRoutingManagerPrivate &other);
     ~QGeoRoutingManagerPrivate();
 
-    QGeoRoutingManagerPrivate& operator= (const QGeoRoutingManagerPrivate &other);
-
     QGeoRoutingManagerEngine *engine;
+
+private:
+    Q_DISABLE_COPY(QGeoRoutingManagerPrivate)
 };
 
 QTM_END_NAMESPACE

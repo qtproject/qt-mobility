@@ -51,6 +51,8 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+//QTM_SYNC_HEADER_EXPORT QValueSpace
+
 namespace QValueSpace {
     enum LayerOption {
         UnspecifiedLayer = 0x0000,

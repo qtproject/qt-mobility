@@ -43,6 +43,8 @@
 #include "qgeoroutingmanager_p.h"
 #include "qgeoroutingmanagerengine.h"
 
+#include <QLocale>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -53,7 +55,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup maps-routing
 
     The calculateRoute() and updateRoute() methods function QGeoRouteReply
@@ -109,27 +111,33 @@ public:
         QGeoRouteReply *reply = routingManager->calculateRoute(request);
 
         if (reply->isFinished()) {
-            if (reply->error() != QGeoRouteReply::NoError) {
+            if (reply->error() == QGeoRouteReply::NoError) {
                 routeCalculated(reply);
             } else {
                 routeError(reply, reply->error(), reply->errorString());
             }
-        } else {
-            connect(routingManager,
-                    SIGNAL(finished(QGeoRouteReply*)),
-                    this,
-                    SLOT(routeCalculated(QGeoRouteReply*)));
-
-            connect(routingManager,
-                    SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
-                    this,
-                    SLOT(routeError(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
+            return;
         }
+
+        connect(routingManager,
+                SIGNAL(finished(QGeoRouteReply*)),
+                this,
+                SLOT(routeCalculated(QGeoRouteReply*)));
+
+        connect(routingManager,
+                SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
+                this,
+                SLOT(routeError(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
     }
 
 private slots:
     void routeCalculated(QGeoRouteReply *reply)
     {
+        if (reply->error() != QGeoRouteReply::NoError) {
+            reply->deleteLater();
+            return;
+        }
+
         // A route request can ask for several alternative routes ...
         if (reply->routes().size() != 0) {
 
@@ -201,17 +209,6 @@ QString QGeoRoutingManager::managerName() const
 //        return QString();
 
     return d_ptr->engine->managerName();
-}
-
-/*!
-    Returns the parameters used in the creation of this routing manager.
-*/
-QMap<QString, QString> QGeoRoutingManager::managerParameters() const
-{
-//    if (!d_ptr->engine)
-//        return QMap<QString, QString>();
-
-    return d_ptr->engine->managerParameters();
 }
 
 /*!
@@ -384,6 +381,28 @@ QGeoRouteRequest::InstructionDetails QGeoRoutingManager::supportedInstructionDet
 }
 
 /*!
+    Sets the locale to be used by the this manager to \a locale.
+
+    If this routing manager supports returning addresses and instructions
+    in different languages, they will be returned in the language of \a locale.
+
+    The locale used defaults to the system locale if this is not set.
+*/
+void QGeoRoutingManager::setLocale(const QLocale &locale)
+{
+    d_ptr->engine->setLocale(locale);
+}
+
+/*!
+    Returns the locale used to hint to this routing manager about what
+    language to use for addresses and instructions.
+*/
+QLocale QGeoRoutingManager::locale() const
+{
+    return d_ptr->engine->locale();
+}
+
+/*!
 \fn void QGeoRoutingManager::finished(QGeoRouteReply* reply)
 
 This signal is emitted when \a reply has finished processing.
@@ -418,19 +437,10 @@ Use deleteLater() instead.
 QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate()
         : engine(0) {}
 
-QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate(const QGeoRoutingManagerPrivate &other)
-        : engine(other.engine) {}
-
 QGeoRoutingManagerPrivate::~QGeoRoutingManagerPrivate()
 {
-    delete engine;
-}
-
-QGeoRoutingManagerPrivate& QGeoRoutingManagerPrivate::operator= (const QGeoRoutingManagerPrivate & other)
-{
-    engine = other.engine;
-
-    return *this;
+    if (engine)
+        delete engine;
 }
 
 #include "moc_qgeoroutingmanager.cpp"

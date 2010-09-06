@@ -43,7 +43,6 @@
 #define QGEOMAPREPLY_NOKIA_H
 
 #include <qgeotiledmapreply.h>
-#include <qgeomapwidget.h>
 #include <QNetworkReply>
 
 QTM_USE_NAMESPACE
@@ -61,11 +60,11 @@ public:
     QNetworkReply* networkReply() const;
 
 private slots:
+    void replyDestroyed();
     void networkFinished();
     void networkError(QNetworkReply::NetworkError error);
 
 private:
-    bool cleanedUp;
     QNetworkReply *m_reply;
 };
 

@@ -60,17 +60,16 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
     Q_ENUMS(State)
     Q_ENUMS(Result)
     Q_ENUMS(Scope)
-    Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery)
+    Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery NOTIFY galleryChanged)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(Result result READ result NOTIFY resultChanged)
-    Q_PROPERTY(int currentProgress READ currentProgress NOTIFY progressChanged)
-    Q_PROPERTY(int maximumProgress READ maximumProgress NOTIFY progressChanged)
-    Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames)
+    Q_PROPERTY(int progress READ progress NOTIFY progressChanged)
+    Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(QStringList sortProperties READ sortPropertyNames WRITE setSortPropertyNames NOTIFY sortPropertyNamesChanged)
     Q_PROPERTY(bool live READ isLive WRITE setLive NOTIFY liveChanged)
-    Q_PROPERTY(QString rootType READ rootType WRITE setRootType)
+    Q_PROPERTY(QString rootType READ rootType WRITE setRootType NOTIFY rootTypeChanged)
     Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem NOTIFY rootItemChanged)
-    Q_PROPERTY(Scope scope READ scope WRITE setScope)
+    Q_PROPERTY(Scope scope READ scope WRITE setScope NOTIFY scopeChanged)
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged)
     Q_PROPERTY(QDeclarativeGalleryFilterBase* filter READ filter WRITE setFilter NOTIFY filterChanged)
@@ -116,17 +115,21 @@ public:
     ~QDeclarativeGalleryQueryModel();
 
     QAbstractGallery *gallery() const { return m_request.gallery(); }
-    void setGallery(QAbstractGallery *gallery) { m_request.setGallery(gallery); }
+    void setGallery(QAbstractGallery *gallery) {
+        if (!m_complete || !gallery) { m_request.setGallery(gallery); emit galleryChanged(); } }
 
     State state() const { return State(m_request.state()); }
     Result result() const { return Result(m_request.result()); }
 
-    int currentProgress() const { return m_request.currentProgress(); }
-    int maximumProgress() const { return m_request.maximumProgress(); }
+    qreal progress() const
+    {
+        const int max = m_request.maximumProgress();
+        return max > 0 ? qreal(m_request.currentProgress()) / max : qreal(0.0);
+    }
 
     QStringList propertyNames() { return m_request.propertyNames(); }
     void setPropertyNames(const QStringList &names) {
-        if (!m_complete) m_request.setPropertyNames(names); }
+        if (!m_complete) { m_request.setPropertyNames(names); emit propertyNamesChanged(); } }
 
     QStringList sortPropertyNames() const { return m_request.sortPropertyNames(); }
     void setSortPropertyNames(const QStringList &names) {
@@ -137,10 +140,11 @@ public:
 
     QString rootType() const { return m_request.rootType(); }
     void setRootType(const QString &itemType) {
-        if (!m_complete) m_request.setRootType(itemType); emit rootTypeChanged(); }
+        if (!m_complete) { m_request.setRootType(itemType); emit rootTypeChanged(); } }
 
     Scope scope() const { return Scope(m_request.scope()); }
-    void setScope(Scope scope) { m_request.setScope(QGalleryQueryRequest::Scope(scope)); }
+    void setScope(Scope scope) {
+        m_request.setScope(QGalleryQueryRequest::Scope(scope)); emit scopeChanged(); }
 
     QVariant rootItem() const { return m_request.rootItem(); }
     void setRootItem(const QVariant &itemId) {
@@ -178,10 +182,13 @@ Q_SIGNALS:
     void stateChanged();
     void resultChanged();
     void progressChanged();
+    void galleryChanged();
+    void propertyNamesChanged();
     void sortPropertyNamesChanged();
     void liveChanged();
     void rootTypeChanged();
     void rootItemChanged();
+    void scopeChanged();
     void filterChanged();
     void offsetChanged();
     void limitChanged();

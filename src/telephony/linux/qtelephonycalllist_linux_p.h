@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,12 +53,14 @@
 // We mean it.
 //
 
-#include "qmobilityglobal.h"
-#include "qtelephonycalllist.h"
+#include <qmobilityglobal.h>
 #include <QObject>
 #include <QList>
 #include <QtCore/qshareddata.h>
-#include "dbusinterface.h"
+#include "dbusinterface_p.h"
+
+#include "qtelephony.h"
+#include "qtelephonycalllist.h"
 
 QT_BEGIN_HEADER
 
@@ -76,7 +78,8 @@ class QTelephonyCallListPrivate : public QObject
 public:
     QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
     virtual ~QTelephonyCallListPrivate();
-    QList<QTelephonyCallInfo> activeCalls(const QTelephonyCallInfo::CallType& calltype) const;
+    QList<QTelephonyCallInfo> activeCalls(const QTelephony::CallType& calltype) const;
+    int activeCallCount() const;
 
 private:
     void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);
@@ -85,9 +88,10 @@ private:
 
 private slots:
     void newChannelsSlot(const ChannelsArray& channelsarray);
+    void statusChangedSlot(const QString& status);
 
 private:
-    QList<QSharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
+    QList<QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
     QTelephonyCallList* p;
     TelepathyListener* ptelepathyListener;
 };

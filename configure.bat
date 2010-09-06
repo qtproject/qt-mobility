@@ -58,11 +58,13 @@ set BUILD_EXAMPLES=no
 set BUILD_DEMOS=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
-set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery telephony organizer feedback
+set MOBILITY_MODULES=bearer location contacts systeminfo publishsubscribe versit messaging sensors serviceframework multimedia gallery telephony organizer feedback
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
 set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
+
+set ORGANIZER_REQUESTED="no"
 
 if exist "%QMAKE_CACHE%" del /Q %QMAKE_CACHE%
 if exist "%PROJECT_LOG%" del /Q %PROJECT_LOG%
@@ -303,9 +305,10 @@ if %FIRST% == bearer (
 ) else if %FIRST% == telephony (
     echo     Telephony selected
 ) else if %FIRST% == versit (
-    echo     Versit selected ^(implies Contacts and Organizer^)
+    echo     Versit selected ^(implies Contacts^)
 ) else if %FIRST% == organizer (
     echo     Organizer selected
+    set ORGANIZER_REQUESTED="yes"
 ) else if %FIRST% == feedback (
     echo     Feedback selected
 ) else if %FIRST% == sensors (
@@ -385,7 +388,7 @@ echo isEmpty($$QT_MOBILITY_EXAMPLES):QT_MOBILITY_EXAMPLES=$$QT_MOBILITY_PREFIX/b
 echo isEmpty($$QT_MOBILITY_DEMOS):QT_MOBILITY_DEMOS=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
-echo contains(mobility_modules,versit): mobility_modules *= contacts organizer  >> %PROJECT_CONFIG%
+echo contains(mobility_modules,versit): mobility_modules *= contacts >> %PROJECT_CONFIG%
 
 echo Checking available Qt
 call %QT_PATH%qmake -v >> %PROJECT_LOG% 2>&1
@@ -523,6 +526,7 @@ goto windowsTests
 call :compileTest LBT lbt
 call :compileTest SNAP snap
 call :compileTest OCC occ
+call :compileTest SymbianENote symbianenote
 call :compileTest SymbianContactSIM symbiancntsim
 call :compileTest SymbianContactModel symbiancntmodel
 call :compileTest SymbianContactModelv2 symbiancntmodelv2
@@ -535,8 +539,9 @@ call :compileTest RadioUtility_for_post_3.1 radioutility_s60
 call :compileTest OpenMaxAl_support openmaxal_symbian
 call :compileTest Surfaces_s60 surfaces_s60
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
+call :compileTest callinformation_symbian callinformation_symbian
 call :compileTest IMMERSION immersion
-
+call :compileTest AdvancedTouchFeedback advancedtouchfeedback 
 goto noTests
 
 :windowsTests
@@ -596,17 +601,15 @@ if %FIRST% == bearer (
 ) else if %FIRST% == telephony (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtTelephony %SOURCE_PATH%\src\telephony
 ) else if %FIRST% == versit (
-    REM versit implies contacts and organizer
+    REM versit implies contacts.  organizer includes might also be necessary
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersit %SOURCE_PATH%\src\versit
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\requests
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\filters
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\details
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\items
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\requests
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\filters
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\details
+REM    if "%ORGANIZER_REQUESTED%" == "yes" (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersitOrganizer %SOURCE_PATH%\src\versitorganizer
+REM        )
 ) else if %FIRST% == sensors (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSensors %SOURCE_PATH%\src\sensors
 ) else if %FIRST% == gallery (
@@ -665,6 +668,7 @@ set FIRST=
 set MODULES_TEMP=
 set QT_MOBILITY_EXAMPLES=
 set QT_MOBILITY_DEMOS=
+set ORGANIZER_REQUESTED=
 exit /b 1
 
 :exitTag
@@ -684,4 +688,5 @@ set FIRST=
 set MODULES_TEMP=
 set QT_MOBILITY_EXAMPLES=
 set QT_MOBILITY_DEMOS=
+set ORGANIZER_REQUESTED=
 exit /b 0

@@ -44,7 +44,6 @@
 #define QCONTACTDETAIL_H
 
 #include "qtcontactsglobal.h"
-#include "qcontactactiondescriptor.h"
 
 #include <QSharedDataPointer>
 #include <QStringList>
@@ -54,6 +53,7 @@ class QDataStream;
 
 QTM_BEGIN_NAMESPACE
 
+class QContactActionDescriptor;
 class QContactDetailPrivate;
 
 // MSVC needs the function declared before the friend declaration

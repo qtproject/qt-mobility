@@ -59,7 +59,7 @@
 #include <QString>
 #include <QMap>
 
-#define QTLANDMARKS_IMPLEMENTATION_VERSION_NAME "com.nokia.qtmobility.landmarks.implentation.version"
+#define QTLANDMARKS_IMPLEMENTATION_VERSION_NAME "com.nokia.qtmobility.landmarks.implementation.version"
 
 QTM_BEGIN_NAMESPACE
 
@@ -75,6 +75,7 @@ public:
     QLandmarkManagerEngine *engine;
     mutable QLandmarkManager::Error errorCode;
     mutable QString errorString;
+    static QLandmarkManagerEngine *getEngine(const QLandmarkManager* manager);
     static void loadFactories();
     static QHash<QString, QLandmarkManagerEngineFactory*> factories(bool reload = false);
     static  void loadDynamicFactories (QHash<QString, QLandmarkManagerEngineFactory*> *factories);

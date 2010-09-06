@@ -72,6 +72,7 @@ private:
     bool setOptions(const QStringList &options);
     void showAllEntries();
     void showInterfaceInfo(const QServiceFilter &filter);
+    void showInterfaceInfo(QList<QServiceInterfaceDescriptor> descriptors);
     void showServiceInfo(const QString &service);
 
     QServiceManager *serviceManager;
@@ -129,6 +130,8 @@ void CommandProcessor::showUsage(QTextStream *stream)
             "Options:\n"
             "\t--system   Use the system-wide services database instead of the\n"
             "\t           user-specific database\n"
+            "\t--user     Use the user-specific services database for add/remove.\n"
+            "\t           This is the default\n"
             "\n";
 }
 
@@ -229,15 +232,25 @@ bool CommandProcessor::setOptions(const QStringList &options)
     if (serviceManager)
         delete serviceManager;
 
+    bool systemScope = false;
+    bool userScope = false;
+
     QStringList opts = options;
     QMutableListIterator<QString> i(opts);
     while (i.hasNext()) {
-        if (i.next() == "--system") {
-            serviceManager = new QServiceManager(QService::SystemScope, this);
+        QString option = i.next();
+        if (option == "--system") {
+            systemScope = true;
+            i.remove();
+        } else if (option == "--user") {
+            userScope = true;
             i.remove();
         }
     }
 
+    if (!userScope && systemScope)
+        serviceManager = new QServiceManager(QService::SystemScope, this);
+    
     if (!opts.isEmpty()) {
         *stdoutStream << "Bad options: " << opts.join(" ") << "\n\n";
         showUsage();
@@ -260,6 +273,7 @@ void CommandProcessor::showAllEntries()
         *stdoutStream << "Found 1 service.\n\n";
     else
         *stdoutStream << "Found " << services.count() << " services.\n\n";
+    
     foreach (const QString &service, services)
         showServiceInfo(service);
 }
@@ -291,23 +305,65 @@ void CommandProcessor::showServiceInfo(const QString &service)
         *stdoutStream << "Service " << service << " not found.\n";
         return;
     }
-
-    QString description = descriptors[0].attribute(
-            QServiceInterfaceDescriptor::ServiceDescription).toString();
-    QStringList capabilities = descriptors[0].attribute(
-            QServiceInterfaceDescriptor::Capabilities).toStringList();
-
-    *stdoutStream << service << ":\n";
-    if (!description.isEmpty())
-        *stdoutStream << '\t' << description << '\n';
-    *stdoutStream << "\tLibrary: " << descriptors[0].attribute(
-                    QServiceInterfaceDescriptor::Location).toString() << '\n'
-            << "\tCapabilities: " << (capabilities.isEmpty() ? "" : capabilities.join(", ")) << '\n'
-            << "\tImplements:\n";
-
+   
+    QList<QServiceInterfaceDescriptor> pluginDesc;
+    QList<QServiceInterfaceDescriptor> ipcDesc;
     foreach (const QServiceInterfaceDescriptor &desc, descriptors) {
-        *stdoutStream << "\t\t" << desc.interfaceName() << ' '
-                << desc.majorVersion() << '.' << desc.minorVersion() << '\n';
+        int serviceType = desc.attribute(QServiceInterfaceDescriptor::ServiceType).toInt();
+        if (serviceType == QService::Plugin)
+            pluginDesc.append(desc);
+        else
+            ipcDesc.append(desc);
+    }
+
+    if (pluginDesc.size() > 0) {
+        *stdoutStream << service;
+        if (ipcDesc.size() > 0)
+            *stdoutStream << " (Plugin):\n";
+        else 
+            *stdoutStream << ":\n";
+
+        QString description = pluginDesc[0].attribute(
+                QServiceInterfaceDescriptor::ServiceDescription).toString();
+        if (!description.isEmpty())
+            *stdoutStream << '\t' << description << '\n';
+        
+        *stdoutStream << "\tPlugin Library: ";
+        showInterfaceInfo(pluginDesc);
+    }
+   
+    if (ipcDesc.size() > 0) {
+        *stdoutStream << service;
+        if (pluginDesc.size() > 0)
+            *stdoutStream << " (IPC):\n";
+        else 
+            *stdoutStream << ":\n";
+        
+        QString description = ipcDesc[0].attribute(
+                QServiceInterfaceDescriptor::ServiceDescription).toString();
+        if (!description.isEmpty())
+            *stdoutStream << '\t' << description << '\n';
+    
+        *stdoutStream << "\tIPC Address: ";
+        showInterfaceInfo(ipcDesc);
+    }
+}
+
+void CommandProcessor::showInterfaceInfo(QList<QServiceInterfaceDescriptor> descriptors)
+{
+    QService::Scope scope = descriptors[0].scope();
+
+    *stdoutStream << descriptors[0].attribute(QServiceInterfaceDescriptor::Location).toString() << '\n'
+                  << "\tScope: " << (scope == QService::SystemScope ? "All users" : "Current User") << '\n'
+                  << "\tImplements:\n";
+    
+    foreach (const QServiceInterfaceDescriptor &desc, descriptors) {
+        QStringList capabilities = desc.attribute(
+            QServiceInterfaceDescriptor::Capabilities).toStringList();
+        
+        *stdoutStream << "\t    " << desc.interfaceName() << ' '
+                      << desc.majorVersion() << '.' << desc.minorVersion()
+                      << (capabilities.isEmpty() ? "" : "\t{" + capabilities.join(", ") + "}") << "\n";
     }
 }
 
@@ -316,16 +372,21 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
     QStringList args = QCoreApplication::arguments();
 
-    if (args.count() == 1 || args.value(1) == "--help" || args.value(1) == "-h") {
-        QTextStream stream(stdout);
-        CommandProcessor::showUsage(&stream);
-        return 0;
-    }
-
+    // check for at least one non-option argument
+    bool exec = false;
+    
     QStringList options;
     for (int i=1; i<args.count(); i++) {
         if (args[i].startsWith("--"))
             options += args[i];
+        else
+            exec = true;
+    }
+
+    if (!exec || args.count() == 1 || args.value(1) == "--help" || args.value(1) == "-h") {
+        QTextStream stream(stdout);
+        CommandProcessor::showUsage(&stream);
+        return 0;
     }
 
     CommandProcessor processor;

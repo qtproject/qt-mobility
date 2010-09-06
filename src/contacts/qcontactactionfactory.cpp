@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qcontactactionfactory.h"
+#include "qcontactactiondescriptor_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -56,33 +57,58 @@ QContactActionFactory::~QContactActionFactory()
 }
 
 /*!
- * \fn QContactActionFactory::~QContactActionFactory()
- * Clears any memory in use by this factory
+  \fn QContactActionFactory::~QContactActionFactory()
+  Clears any memory in use by this factory
  */
 
 /*!
- * \fn QContactActionFactory::name() const
- * Returns the name of this factory.  The name is used to identify the factory
- * when it is retrieved using the Qt Plugin framework.
+  \fn QContactActionFactory::instance() const
+  Returns a pointer to an instance of the implementation of the action.
+  The caller takes ownership of the action instance returned from this function, and must delete it when
+  they are finished using it in order to avoid a memory leak.
  */
 
 /*!
- * \fn QContactActionFactory::actionDescriptors() const
- * Returns a list of descriptors of the actions of which instances of their implementations are able to be retrieved
- * from this factory.
+  \fn QContactActionFactory::supportedTargets(const QContact& contact, const QContactActionDescriptor& which) const
+  Returns the targets which are supported by the action which may be instantiated by this factory
+  for the given \a contact.  If there are no supported targets for the \a contact, then that
+  contact is not supported by the action.
+  \sa supportsContact()
  */
 
 /*!
- * \fn QContactActionFactory::instance(const QContactActionDescriptor& descriptor) const
- * Returns a pointer to an instance of the implementation of the action described by the given \a descriptor.
- * The caller takes ownership of the action instance returned from this function, and must delete it when
- * they are finished using it in order to avoid a memory leak.
+  \fn QContactActionFactory::supportsContact(const QContact& contact, const QContactActionDescriptor& which) const
+  Returns true if the list of supported targets for the given \a contact is not empty.
  */
 
 /*!
- * \fn QContactActionFactory::actionMetadata(const QContactActionDescriptor& descriptor) const
- * Returns the metadata associated with the action identified by the given \a descriptor
+  \fn QContactActionFactory::metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap(), const QContactActionDescriptor& which) const
+  Returns the meta-data associated with the action which this factory generates, for the given \a key (such as icon, label or sound cues).
+  The meta-data may vary depending on the \a targets of the action and any \a parameters to invocation which the client may specify.
  */
+
+/*!
+  \variable QContactActionFactory::InterfaceName
+  The name of the interface that action plugins should implement.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactActionFactory::InterfaceName, "com.nokia.qt.mobility.contacts.action");
+
+bool QContactActionFactory::supportsContact(const QContact& contact, const QContactActionDescriptor& which) const
+{
+    // default implementation is naive.
+    return !supportedTargets(contact, which).isEmpty();
+}
+
+QContactActionDescriptor QContactActionFactory::createDescriptor(const QString& actionName, const QString& serviceName, const QString& actionIdentifier, int implementationVersion) const
+{
+    QContactActionDescriptor retn;
+    retn.d->m_actionName = actionName;
+    retn.d->m_serviceName = serviceName;
+    retn.d->m_identifier = actionIdentifier;
+    retn.d->m_implementationVersion = implementationVersion;
+    retn.d->m_factory = this;
+    return retn;
+}
 
 #include "moc_qcontactactionfactory.cpp"
 

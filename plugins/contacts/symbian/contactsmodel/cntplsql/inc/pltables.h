@@ -333,9 +333,7 @@ private: // New pure virtual functions
 											 QStringList aTokens) = 0;
 
 private: // New virtual functions
-	virtual QStringList
-		GetTableSpecificFields(const CContactItem& aItem,
-							   TBool& aMandatoryFieldsPresent) const;
+	virtual QStringList GetTableSpecificFields(const CContactItem& aItem) const;
 
 public:
 	const CPcsKeyMap* KeyMap() const;

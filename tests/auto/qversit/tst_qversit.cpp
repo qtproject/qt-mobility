@@ -49,9 +49,10 @@
 #include "qversitcontactexporter.h"
 #include "qversitcontactimporter.h"
 #include "qversitcontacthandler.h"
-#include "qcontact.h"
-#include "qcontactmanager.h"
-#include "qcontactmanagerengine.h"
+#include "qversitorganizerexporter.h"
+#include "qversitorganizerimporter.h"
+#include "qtorganizer.h"
+#include "qtcontacts.h"
 
 #include <QtTest/QtTest>
 #include <QDebug>
@@ -97,26 +98,31 @@ QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QList<QContact>)
 Q_DECLARE_METATYPE(QContact)
+Q_DECLARE_METATYPE(QList<QOrganizerItem>)
+Q_DECLARE_METATYPE(QOrganizerItem)
 
 class tst_QVersit : public QObject
 {
     Q_OBJECT
 
 private slots: // Tests
-    void testImportFiles();
-    void testImportFiles_data();
-    void testExportImport();
-    void testExportImport_data();
+    void testImportVCardFiles();
+    void testImportVCardFiles_data();
+    void testExportImportVCard();
+    void testExportImportVCard_data();
+    void testImportICalFiles();
+    void testImportICalFiles_data();
 
 private:
 };
 
-void tst_QVersit::testImportFiles()
+void tst_QVersit::testImportVCardFiles()
 {
     QFETCH(QString, filename);
     QFETCH(QByteArray, charset);
     QFETCH(QList<QContact>, expectedContacts);
 
+    filename = QString::fromAscii(TESTDATA_DIR "testdata_vcf/") + filename;
     QVersitReader reader;
     QFile file(filename);
     QVERIFY2(file.open(QIODevice::ReadOnly), filename.toAscii());
@@ -154,25 +160,26 @@ void tst_QVersit::testImportFiles()
     }
 }
 
-#define QTEST_NEW_ROW(filename,charset,contact) \
-        QTest::newRow(filename) \
-        << QString::fromAscii(TESTDATA_DIR "testdata/") + QString::fromAscii(filename) \
-        << QByteArray(charset) \
-        << (contact)
-
-void tst_QVersit::testImportFiles_data()
+void tst_QVersit::testImportVCardFiles_data()
 {
     QTest::addColumn<QString>("filename");
     QTest::addColumn<QByteArray>("charset");
     QTest::addColumn<QList<QContact> >("expectedContacts");
 
-    QTEST_NEW_ROW("AAB4-MultipleAll.vcf", "UTF-16BE", QList<QContact>());
-    QTEST_NEW_ROW("AAB4-MultipleAscii.vcf", "", QList<QContact>());
-    QTEST_NEW_ROW("AAB4-SingleCompany.vcf", "", QList<QContact>());
-    QTEST_NEW_ROW("AAB4-SingleExtensive.vcf", "", QList<QContact>());
-    QTEST_NEW_ROW("AAB4-SingleNonAscii.vcf", "UTF-16BE", QList<QContact>());
-    QTEST_NEW_ROW("AAB4-SingleNonAsciiWithPhoto.vcf", "UTF-16BE", QList<QContact>());
-    QTEST_NEW_ROW("AAB5-SingleNonAscii.vcf", "UTF-8", QList<QContact>());
+    QTest::newRow("AAB4-MultipleAll.vcf") << QString::fromAscii("AAB4-MultipleAll.vcf")
+        << QByteArray("UTF-16BE") << QList<QContact>();
+    QTest::newRow("AAB4-MultipleAscii.vcf") << QString::fromAscii("AAB4-MultipleAscii.vcf")
+        << QByteArray("") << QList<QContact>();
+    QTest::newRow("AAB4-SingleCompany.vcf") << QString::fromAscii("AAB4-SingleCompany.vcf")
+        << QByteArray("") << QList<QContact>();
+    QTest::newRow("AAB4-SingleExtensive.vcf") << QString::fromAscii("AAB4-SingleExtensive.vcf")
+        << QByteArray("") << QList<QContact>();
+    QTest::newRow("AAB4-SingleNonAscii.vcf") << QString::fromAscii("AAB4-SingleNonAscii.vcf")
+        << QByteArray("UTF-16BE") << QList<QContact>();
+    QTest::newRow("AAB4-SingleNonAsciiWithPhoto.vcf") << QString::fromAscii("AAB4-SingleNonAsciiWithPhoto.vcf")
+        << QByteArray("UTF-16BE") << QList<QContact>();
+    QTest::newRow("AAB5-SingleNonAscii.vcf") << QString::fromAscii("AAB5-SingleNonAscii.vcf")
+        << QByteArray("UTF-8") << QList<QContact>();
 
     {
         QList<QContact> list;
@@ -202,12 +209,15 @@ void tst_QVersit::testImportFiles_data()
         workUrl.setUrl(QLatin1String("http://workwebpage"));
         workUrl.setContexts(QContactDetail::ContextWork);
         contact.saveDetail(&workUrl);
-        QTEST_NEW_ROW("Entourage11-basic.vcf", "UTF-16BE", list);
+        QTest::newRow("Entourage11-basic.vcf") << QString::fromAscii("Entourage11-basic.vcf")
+            << QByteArray("UTF-16BE") << list;
     }
 
-    QTEST_NEW_ROW("Entourage11-image.vcf", "UTF-16BE", QList<QContact>());
+    QTest::newRow("Entourage11-image.vcf") << QString::fromAscii("Entourage11-image.vcf")
+        << QByteArray("UTF-16BE") << QList<QContact>();
 
-    QTEST_NEW_ROW("Entourage11-nonascii.vcf", "UTF-16BE", QList<QContact>());
+    QTest::newRow("Entourage11-nonascii.vcf") << QString::fromAscii("Entourage11-nonascii.vcf")
+        << QByteArray("UTF-16BE") << QList<QContact>();
 
     {
         QList<QContact> list;
@@ -223,12 +233,16 @@ void tst_QVersit::testImportFiles_data()
         contact.saveDetail(&org);
         QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("first last"));
         list.append(contact);
-        QTEST_NEW_ROW("Entourage12-basic.vcf", "", list);
+        QTest::newRow("Entourage12-basic.vcf") << QString::fromAscii("Entourage12-basic.vcf")
+            << QByteArray("") << list;
     }
 
-    QTEST_NEW_ROW("Entourage12-kevin.vcf", "UTF-8", QList<QContact>());
-    QTEST_NEW_ROW("Entourage12-nonascii.vcf", "UTF-8", QList<QContact>());
-    QTEST_NEW_ROW("gmail.vcf", "UTF-8", QList<QContact>());
+    QTest::newRow("Entourage12-kevin.vcf") << QString::fromAscii("Entourage12-kevin.vcf")
+        << QByteArray("UTF-8") << QList<QContact>();
+    QTest::newRow("Entourage12-nonascii.vcf") << QString::fromAscii("Entourage12-nonascii.vcf")
+        << QByteArray("UTF-8") << QList<QContact>();
+    QTest::newRow("gmail.vcf") << QString::fromAscii("gmail.vcf")
+        << QByteArray("UTF-8") << QList<QContact>();
 
     {
         QContact contact;
@@ -258,11 +272,12 @@ void tst_QVersit::testImportFiles_data()
         assistantphone.setSubTypes(QContactPhoneNumber::SubTypeAssistant);
         contact.saveDetail(&assistantphone);
         QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
-        QTEST_NEW_ROW("test1.vcf", "UTF-8", QList<QContact>() << contact);
+        QTest::newRow("test1.vcf") << QString::fromAscii("test1.vcf")
+            << QByteArray("UTF-8") << (QList<QContact>() << contact);
     }
 }
 
-void tst_QVersit::testExportImport()
+void tst_QVersit::testExportImportVCard()
 {
     // Test that using the backup profile, a contact, when exported and imported again, is unaltered.
     QFETCH(QContact, contact);
@@ -297,7 +312,7 @@ void tst_QVersit::testExportImport()
 
 enum Color { RED, GREEN, BLUE };
 
-void tst_QVersit::testExportImport_data()
+void tst_QVersit::testExportImportVCard_data()
 {
     QTest::addColumn<QContact>("contact");
 
@@ -387,6 +402,73 @@ void tst_QVersit::testExportImport_data()
     customDetail.setValue(QLatin1String("CustomField"), RED);
     contact.saveDetail(&customDetail);
     QTest::newRow("enum field") << contact;
+}
+
+void tst_QVersit::testImportICalFiles()
+{
+    QFETCH(QString, filename);
+    QFETCH(QByteArray, charset);
+    QFETCH(QList<QOrganizerItem>, expectedItems);
+
+    filename = QString::fromAscii(TESTDATA_DIR "testdata_ics/") + filename;
+    QVersitReader reader;
+    QFile file(filename);
+    QVERIFY2(file.open(QIODevice::ReadOnly), filename.toAscii());
+    reader.setDevice(&file);
+    if (charset != "") {
+        reader.setDefaultCodec(QTextCodec::codecForName(charset));
+    }
+    QVERIFY(reader.startReading());
+    QVERIFY(reader.waitForFinished());
+    QList<QVersitDocument> documents = reader.results();
+    QCOMPARE(reader.error(), QVersitReader::NoError);
+    QCOMPARE(documents.size(), 1);
+    QVersitOrganizerImporter importer;
+    QVERIFY(importer.importDocument(documents.first()));
+    QList<QOrganizerItem> items = importer.items();
+
+    if (expectedItems.size() > 0) {
+        QCOMPARE(items.size(), expectedItems.size());
+        QListIterator<QOrganizerItem> i(expectedItems);
+        foreach (QOrganizerItem parsed, items) {
+            QOrganizerItem expected = i.next();
+            QList<QOrganizerItemDetail> expectedDetails = expected.details();
+            foreach(QOrganizerItemDetail expectedDetail, expectedDetails) {
+                QString name = expectedDetail.definitionName();
+                QOrganizerItemDetail parsedDetail = parsed.detail(name);
+                if (parsedDetail != expectedDetail) {
+                    qDebug() << "Detail: " << name.toAscii();
+                    qDebug() << "Actual:" << parsedDetail.variantValues();
+                    qDebug() << "Expected:" << expectedDetail.variantValues();
+                    QCOMPARE(parsedDetail, expectedDetail);
+                }
+            }
+        }
+    }
+}
+
+void tst_QVersit::testImportICalFiles_data()
+{
+    QTest::addColumn<QString>("filename");
+    QTest::addColumn<QByteArray>("charset");
+    QTest::addColumn<QList<QOrganizerItem> >("expectedItems");
+
+    QTest::newRow("2010-FIFA-WorldCup.ics") << QString::fromAscii("2010-FIFA-WorldCup.ics")
+        << QByteArray("") << QList<QOrganizerItem>();
+    QTest::newRow("2010-India-Holidays.ics") << QString::fromAscii("2010-India-Holidays.ics")
+        << QByteArray("") << QList<QOrganizerItem>();
+    QTest::newRow("2010-US-Holidays.ics") << QString::fromAscii("2010-US-Holidays.ics")
+        << QByteArray("") << QList<QOrganizerItem>();
+    QTest::newRow("Asiacup2010.ics") << QString::fromAscii("Asiacup2010.ics")
+        << QByteArray("") << QList<QOrganizerItem>();
+    QTest::newRow("FinlandHolidays.ics") << QString::fromAscii("FinlandHolidays.ics")
+        << QByteArray("") << QList<QOrganizerItem>();
+    QTest::newRow("india2010.ics") << QString::fromAscii("india2010.ics")
+        << QByteArray("") << QList<QOrganizerItem>();
+    QTest::newRow("IndiaHolidays.ics") << QString::fromAscii("IndiaHolidays.ics")
+        << QByteArray("") << QList<QOrganizerItem>();
+    QTest::newRow("worldt2009.ics") << QString::fromAscii("worldt2009.ics")
+        << QByteArray("") << QList<QOrganizerItem>();
 }
 
 QTEST_MAIN(tst_QVersit)

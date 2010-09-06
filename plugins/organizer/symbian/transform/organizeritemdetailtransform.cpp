@@ -50,74 +50,21 @@ OrganizerItemDetailTransform::~OrganizerItemDetailTransform()
 
 }
 
+void OrganizerItemDetailTransform::modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const
+{
+    Q_UNUSED(schemaDefs);
+    // empty default implementation 
+}
+
+void OrganizerItemDetailTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
+{
+    // In most cases we can use the other transformToDetailL function without modification
+    transformToDetailL(instance.Entry(), itemInstance);
+}
+
 void OrganizerItemDetailTransform::transformToDetailPostSaveL(const CCalEntry& entry, QOrganizerItem *item)
 {
     Q_UNUSED(entry);
     Q_UNUSED(item);
     // empty default implementation
-}
-
-QString OrganizerItemDetailTransform::toQString(const TDesC8 &des)
-{
-    return QString::fromUtf8((const char *)des.Ptr(), des.Length());
-}
-
-QString OrganizerItemDetailTransform::toQString(const TDesC16 &des)
-{
-    return QString::fromUtf16(des.Ptr(), des.Length());
-}
-
-TPtrC8 OrganizerItemDetailTransform::toPtrC8(const QByteArray &bytes)
-{
-    return TPtrC8(reinterpret_cast<const TUint8*>(bytes.constData()), bytes.size());
-}
-
-TPtrC16 OrganizerItemDetailTransform::toPtrC16(const QString &string)
-{
-    return TPtrC16(reinterpret_cast<const TUint16*>(string.utf16()), string.size());
-}
-
-TCalTime OrganizerItemDetailTransform::toTCalTimeL(QDateTime dateTime)
-{
-    TCalTime calTime;
-    calTime.SetTimeUtcL(Time::NullTTime());
-
-    if (dateTime.isValid()) {
-        uint secondsFrom1970 = dateTime.toTime_t();
-        quint64 usecondsFrom1970 = ((quint64) secondsFrom1970) * ((quint64) 1000000) + ((quint64) dateTime.time().msec() * (quint64)1000);
-        TTime time1970(_L("19700000:000000.000000"));
-        quint64 usecondsBCto1970 = time1970.MicroSecondsFrom(TTime(0)).Int64();
-        quint64 useconds = usecondsBCto1970 + usecondsFrom1970;
-
-        TTime time(useconds);
-        calTime.SetTimeUtcL(time);
-    }
-
-    return calTime;
-}
-
-TCalTime OrganizerItemDetailTransform::toTCalTimeL(QDate date)
-{
-    TCalTime calTime;
-    calTime.SetTimeUtcL(Time::NullTTime());
-
-    if (date.isValid()) {
-        QDateTime dateTime(date);
-        calTime = toTCalTimeL(dateTime);
-    }
-
-    return calTime;
-}
-
-QDateTime OrganizerItemDetailTransform::toQDateTimeL(TCalTime calTime)
-{
-    const TTime time1970(_L("19700000:000000.000000"));
-    quint64 usecondsBCto1970 = time1970.MicroSecondsFrom(TTime(0)).Int64();
-    quint64 useconds = calTime.TimeUtcL().Int64() - usecondsBCto1970;
-    quint64 seconds = useconds / (quint64)1000000;
-    quint64 msecondscomponent = (useconds - seconds * (quint64)1000000) / (quint64)1000;
-    QDateTime dateTime;
-    dateTime.setTime_t(seconds);
-    dateTime.setTime(dateTime.time().addMSecs(msecondscomponent));
-    return dateTime;
 }

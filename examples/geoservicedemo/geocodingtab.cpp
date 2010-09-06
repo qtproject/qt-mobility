@@ -50,78 +50,123 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QDialogButtonBox>
+
 #include <qgeoaddress.h>
+
+GeoCodingInputDialog::GeoCodingInputDialog(QString &obloc, QGeoAddress &address, QWidget *parent)
+    : QDialog(parent), m_oblocStr(obloc), m_address(address)
+{
+    setWindowTitle(tr("Geocoding Parameters"));
+    QLabel *obloclbl = new QLabel(tr("OneBox-Search:"));
+    m_obloc = new QLineEdit(m_oblocStr);
+    m_obloc->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+
+    QLabel *addressSearchlbl = new QLabel(tr("Search by address (Leave OneBox empty):"));
+    QLabel *countrylbl = new QLabel(tr("Country:"));
+    m_country = new QLineEdit(address.country());
+    m_country->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    QLabel *statelbl = new QLabel(tr("State:"));
+    m_state = new QLineEdit(address.state());
+    m_state->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    QLabel *citylbl = new QLabel(tr("City:"));
+    m_city = new QLineEdit(address.city());
+    m_city->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    QLabel *ziplbl = new QLabel(tr("Zip:"));
+    m_zip = new QLineEdit(address.postCode());
+    m_zip->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    QLabel *streetlbl = new QLabel(tr("Street:"));
+    m_street = new QLineEdit(address.street());
+    m_street->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    QLabel *streetnumlbl = new QLabel(tr("Street number:"));
+    m_streetNumber = new QLineEdit(address.streetNumber());
+    m_streetNumber->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    QHBoxLayout *firstrow = new QHBoxLayout;
+    firstrow->setSpacing(2);
+    firstrow->setContentsMargins(2, 1, 2, 1);
+    firstrow->addWidget(m_obloc);
+
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel,Qt::Horizontal);
+    connect(buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
+    connect(buttonBox,SIGNAL(rejected()),this,SLOT(reject()));
+
+    QGridLayout *gridLayout = new QGridLayout ;
+    gridLayout->setSizeConstraint(QLayout::SetMinimumSize);
+    gridLayout->setSpacing(2);
+    gridLayout->setContentsMargins(2, 1, 2, 1);
+
+    gridLayout->addWidget(streetlbl, 1, 0);
+    gridLayout->addWidget(streetnumlbl, 1, 1);
+    gridLayout->addWidget(m_street, 2, 0);
+    gridLayout->addWidget(m_streetNumber, 2, 1);
+
+    gridLayout->addWidget(ziplbl, 3, 0);
+    gridLayout->addWidget(citylbl, 3, 1);
+    gridLayout->addWidget(m_zip, 4, 0);
+    gridLayout->addWidget(m_city, 4, 1);
+
+    gridLayout->addWidget(statelbl, 5, 0);
+    gridLayout->addWidget(countrylbl, 5, 1);
+    gridLayout->addWidget(m_state, 6, 0);
+    gridLayout->addWidget(m_country, 6, 1);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->setSizeConstraint(QLayout::SetFixedSize);
+    mainLayout->setSpacing(2);
+    mainLayout->setContentsMargins(2, 1, 2, 1);
+    mainLayout->addWidget(obloclbl);
+    mainLayout->addLayout(firstrow);
+    mainLayout->addWidget(addressSearchlbl);
+    mainLayout->addLayout(gridLayout);
+    mainLayout->addWidget(buttonBox);
+    setLayout(mainLayout);
+
+}
+
+void GeoCodingInputDialog::accept()
+{
+    m_oblocStr = m_obloc->text();
+
+    m_address.setCountry(m_country->text());
+    m_address.setState(m_state->text());
+    m_address.setCity(m_city->text());
+    m_address.setPostCode(m_zip->text());
+    m_address.setStreet(m_street->text());
+    m_address.setStreetNumber(m_streetNumber->text());
+
+    QDialog::accept();
+}
+
 
 GeocodingTab::GeocodingTab(QWidget *parent) :
         QWidget(parent),
         m_searchManager(NULL)
 {
-    m_obloc = new QLineEdit("Deutschland, München");
-    m_obloc->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
-    QLabel *countrylbl = new QLabel(tr("Country:"));
-    m_country = new QLineEdit("");
-    m_country->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    QLabel *statelbl = new QLabel(tr("State:"));
-    m_state = new QLineEdit("");
-    m_state->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    QLabel *citylbl = new QLabel(tr("City:"));
-    m_city = new QLineEdit("");
-    m_city->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    QLabel *ziplbl = new QLabel(tr("Zip:"));
-    m_zip = new QLineEdit("");
-    m_zip->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    QLabel *streetlbl = new QLabel(tr("Street:"));
-    m_street = new QLineEdit("");
-    m_street->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    QLabel *streetnumlbl = new QLabel(tr("#:"));
-    m_streetNumber = new QLineEdit("");
-    m_streetNumber->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_oblocStr="Deutschland, München";
 
-    requestBtn = new QPushButton(tr("Geocoding"));
-    requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
-    requestBtn->setDisabled(true);
-    QObject::connect(requestBtn, SIGNAL(clicked(bool)), this, SLOT(on_btnRequest_clicked()));
+    m_requestBtn = new QPushButton(tr("Search By Address"));
+    m_requestBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_requestBtn->setDisabled(true);
+    QObject::connect(m_requestBtn, SIGNAL(clicked(bool)), this, SLOT(on_btnRequest_clicked()));
 
     m_resultTree = new QTreeWidget();
     QStringList labels;
     labels << tr("Elements") << tr("Value");
     m_resultTree->setHeaderLabels(labels);
     m_resultTree->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    m_resultTree->setColumnWidth(0, 150);
+    m_resultTree->setColumnWidth(0, 240);
 
     QHBoxLayout *firstrow = new QHBoxLayout;
-    firstrow->setSpacing(0);
-    firstrow->setContentsMargins(0, 0, 0, 0);
-    firstrow->addWidget(m_obloc);
-    firstrow->addWidget(requestBtn);
-
-    QHBoxLayout *secondrow = new QHBoxLayout;
-    secondrow->setSpacing(0);
-    secondrow->setContentsMargins(0, 0, 0, 0);
-    secondrow->addWidget(streetlbl);
-    secondrow->addWidget(m_street);
-    secondrow->addWidget(streetnumlbl);
-    secondrow->addWidget(m_streetNumber);
-    secondrow->addWidget(ziplbl);
-    secondrow->addWidget(m_zip);
-
-    QHBoxLayout *thirdrow = new QHBoxLayout;
-    thirdrow->setSpacing(0);
-    thirdrow->setContentsMargins(0, 0, 0, 0);
-    thirdrow->addWidget(citylbl);
-    thirdrow->addWidget(m_city);
-    thirdrow->addWidget(statelbl);
-    thirdrow->addWidget(m_state);
-    thirdrow->addWidget(countrylbl);
-    thirdrow->addWidget(m_country);
+    firstrow->setSpacing(2);
+    firstrow->setContentsMargins(2, 1, 2, 1);
+    firstrow->addWidget(m_requestBtn);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSpacing(2);
     mainLayout->setContentsMargins(2, 1, 2, 1);
     mainLayout->addLayout(firstrow);
-    mainLayout->addLayout(secondrow);
-    mainLayout->addLayout(thirdrow);
     mainLayout->addWidget(m_resultTree);
     setLayout(mainLayout);
 }
@@ -140,32 +185,28 @@ void GeocodingTab::initialize(QGeoSearchManager *searchManager)
         QObject::connect(m_searchManager,
                          SIGNAL(error(QGeoSearchReply*, QGeoSearchReply::Error, QString)), this,
                          SLOT(resultsError(QGeoSearchReply*, QGeoSearchReply::Error, QString)));
-        if(m_searchManager->supportsGeocoding())
-            requestBtn->setDisabled(false);
-    }
-    else
-        requestBtn->setDisabled(true);
+        if (m_searchManager->supportsGeocoding())
+            m_requestBtn->setDisabled(false);
+    } else
+        m_requestBtn->setDisabled(true);
 
 }
 
 void GeocodingTab::on_btnRequest_clicked()
 {
     if (m_searchManager) {
-        QString s = m_obloc->text();
+        GeoCodingInputDialog dlg(m_oblocStr,m_address,this);
+        if(dlg.exec()==QDialog::Accepted) {
+            m_resultTree->clear();
+            QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
+            top->setText(0, tr("Geocode"));
+            top->setText(1, tr("Requesting data"));
 
-        m_resultTree->clear();
-
-        if (!s.isEmpty()) {
-            m_searchManager->search(s, QGeoSearchManager::SearchGeocode);
-        } else {
-            QGeoAddress address;
-            address.setCountry(m_country->text());
-            address.setState(m_state->text());
-            address.setCity(m_city->text());
-            address.setPostCode(m_zip->text());
-            address.setStreet(m_street->text());
-            address.setStreetNumber(m_streetNumber->text());
-            m_searchManager->geocode(address);
+            if (!m_oblocStr.isEmpty()) {
+                m_searchManager->search(m_oblocStr, QGeoSearchManager::SearchGeocode);
+            } else {
+                m_searchManager->geocode(m_address);
+            }
         }
     } else {
         QMessageBox::warning(this, tr("Geocoding"), tr("No search manager available."));
@@ -185,8 +226,10 @@ void GeocodingTab::resultsError(QGeoSearchReply* reply, QGeoSearchReply::Error e
 {
     Q_UNUSED(errorCode)
 
-    QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
-    top->setText(0, tr("Error"));
-    top->setText(1, errorString);
-    reply->deleteLater();
+    if (!isHidden()) {
+        QTreeWidgetItem* errorResultItem = new QTreeWidgetItem(m_resultTree);
+        errorResultItem->setText(0, tr("Error"));
+        errorResultItem->setText(1, errorString);
+        reply->deleteLater();
+    }
 }

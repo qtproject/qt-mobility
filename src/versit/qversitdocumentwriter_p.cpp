@@ -61,7 +61,8 @@ QTM_USE_NAMESPACE
  * eg. "2.1"
  */
 QVersitDocumentWriter::QVersitDocumentWriter()
-    : mCodec(0),
+    : mDevice(0),
+    mCodec(0),
     mEncoder(0),
     mUtf8Encoder(QTextCodec::codecForName("UTF-8")->makeEncoder()),
     mSuccessful(true),

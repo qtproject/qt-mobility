@@ -42,25 +42,58 @@
 #include "qgeomapcircleobject.h"
 #include "qgeomapcircleobject_p.h"
 
+#include "qgeocoordinate.h"
+
+#include <QDebug>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMapCircleObject
     \brief The QGeoMapCircleObject class is a QGeoMapObject used to draw the region
-    within a certain distance of a coordinate.
+    within a given distance of a coordinate.
 
     \inmodule QtLocation
-    
+
     \ingroup maps-mapping-objects
 
-    TODO add pen and brush attributes as per alignment doc
+    The circle is specified by either a valid QGeoBoundingCircle instance or a
+    valid QGeoCoordinate instance and a qreal with value greater than 0.0,
+    which represent the center of the circle and the radius of the circle in
+    metres respectively.
+
+    The circle may appear as an ellipse on maps which use the Mercator
+    projection. This is done so that the circle accurately covers all points at
+    a distance of the radius or less from the center.
 */
 
 /*!
-    Constructs a new circle object with the specified \a parent.
+    Constructs a new circle object with the parent \a parent.
 */
 QGeoMapCircleObject::QGeoMapCircleObject(QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent)) {}
+        : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent)) {}
+
+/*!
+    Constructs a new circle object based on the circle \a circle, with
+    the parent \a parent.
+*/
+QGeoMapCircleObject::QGeoMapCircleObject(const QGeoBoundingCircle &circle, QGeoMapObject *parent)
+        : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent))
+{
+    Q_D(QGeoMapCircleObject);
+    d->circle = circle;
+}
+
+/*!
+    Constructs a new circle object with a center at coordinate \a center
+    and a radius in meters of \a radius, with the parent \a parent.
+*/
+QGeoMapCircleObject::QGeoMapCircleObject(const QGeoCoordinate &center, qreal radius, QGeoMapObject *parent)
+        : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent))
+{
+    Q_D(QGeoMapCircleObject);
+    d->circle = QGeoBoundingCircle(center, radius);
+}
 
 /*!
     Destroys this circle object.
@@ -69,13 +102,29 @@ QGeoMapCircleObject::~QGeoMapCircleObject()
 {
 }
 
+/*!
+    \property QGeoMapCircleObject::pen
+    \brief This property holds the pen that will be used to draw this object.
+
+    The pen is used to draw an outline around the circle. The circle is
+    filled using the QGeoMapCircleObject::brush property.
+
+    The pen will be treated as a cosmetic pen, which means that the width
+    of the pen will be independent of the zoom level of the map.
+*/
 void QGeoMapCircleObject::setPen(const QPen &pen)
 {
     Q_D(QGeoMapCircleObject);
-    bool update = (pen != d->pen);
-    d->pen = pen;
-    if (update)
-        objectUpdate();
+
+    QPen newPen = pen;
+    newPen.setCosmetic(true);
+
+    if (d->pen == newPen)
+        return;
+
+    d->pen = newPen;
+    objectUpdated();
+    emit penChanged(d->pen);
 }
 
 QPen QGeoMapCircleObject::pen() const
@@ -84,13 +133,23 @@ QPen QGeoMapCircleObject::pen() const
     return d->pen;
 }
 
+/*!
+    \property QGeoMapCircleObject::brush
+    \brief This property holds the brush that will be used to draw this object.
+
+    The brush is used to fill in circle.
+
+    The outline around the perimeter of the circle is drawn using the
+    QGeoMapCircleObject::pen property.
+*/
 void QGeoMapCircleObject::setBrush(const QBrush &brush)
 {
     Q_D(QGeoMapCircleObject);
-    bool update = (brush != d->brush);
-    d->brush = brush;
-    if (update)
-        objectUpdate();
+    if (d->brush != brush) {
+        d->brush = brush;
+        objectUpdated();
+        emit brushChanged(d->brush);
+    }
 }
 
 QBrush QGeoMapCircleObject::brush() const
@@ -100,54 +159,114 @@ QBrush QGeoMapCircleObject::brush() const
 }
 
 /*!
-    Sets the center of the circle object to \a center.
+    Returns a QGeoBoundingCircle instance which corresponds to the circle that
+    will be drawn by this object.
+
+    This is equivalent to
+    \code
+        QGeoMapCircleObject *object;
+        // setup object
+        QGeoBoundingCircle(object->center(), object->radius());
+    \endcode
+*/
+QGeoBoundingCircle QGeoMapCircleObject::circle() const
+{
+    Q_D(const QGeoMapCircleObject);
+    return d->circle;
+}
+
+/*!
+    Sets the circle that will be drawn by this object to \a circle.
+
+    This is equivalent to
+    \code
+        QGeoMapCircleObject *object;
+        // setup object
+        object->setCenter(circle.center());
+        object->setRadius(circle.radius());
+    \endcode
+*/
+void QGeoMapCircleObject::setCircle(const QGeoBoundingCircle &circle)
+{
+    Q_D(QGeoMapCircleObject);
+
+    QGeoBoundingCircle oldCircle = d->circle;
+
+    if (oldCircle == circle)
+        return;
+
+    d->circle = circle;
+
+    objectUpdated();
+
+    if (oldCircle.center() != d->circle.center())
+        emit centerChanged(d->circle.center());
+
+    if (oldCircle.radius() != d->circle.radius())
+        emit radiusChanged(d->circle.radius());
+}
+
+/*!
+    \property QGeoMapCircleObject::center
+
+    \brief This property holds the coordinate of the center of the circle to be
+    drawn by this circle object.
+
+    The default value of this property is an invalid coordinate.  While the
+    value of this property is invalid the circle object will not be displayed.
 */
 void QGeoMapCircleObject::setCenter(const QGeoCoordinate &center)
 {
     Q_D(QGeoMapCircleObject);
-    bool update = (center != d->center);
-    d->center = center;
-    if (update)
-        objectUpdate();
+    if (d->circle.center() != center) {
+        d->circle.setCenter(center);
+        objectUpdated();
+        emit centerChanged(center);
+    }
 }
 
-/*!
-    Returns the center of the circle object.
-*/
 QGeoCoordinate QGeoMapCircleObject::center() const
 {
     Q_D(const QGeoMapCircleObject);
-    return d->center;
+    return d->circle.center();
 }
 
 /*!
-    Sets the radius of the circle object to \a radius metres.
+    \property QGeoMapCircleObject::radius
+    \brief This property holds the radius in metres of the circle that will be
+    drawn by this circle object.
+
+    The default value of this property is -1.0. While the value of this
+    property is not greater than 0 the circle object will not be displayed.
 */
 void QGeoMapCircleObject::setRadius(qreal radius)
 {
     Q_D(QGeoMapCircleObject);
-    bool update = (radius != d->radius);
-    d->radius = radius;
-    if (update)
-        objectUpdate();
+    if (d->circle.radius() != radius) {
+        d->circle.setRadius(radius);
+        objectUpdated();
+        emit radiusChanged(radius);
+    }
 }
 
-/*!
-    Returns the radius of the circle object in metres.
-*/
 qreal QGeoMapCircleObject::radius() const
 {
     Q_D(const QGeoMapCircleObject);
-    return d->radius;
+    return d->circle.radius();
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoMapCircleObjectPrivate::QGeoMapCircleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::CircleType) {}
+        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::CircleType)
+{
+    pen.setCosmetic(true);
+}
 
 QGeoMapCircleObjectPrivate::~QGeoMapCircleObjectPrivate() {}
+
+#include "moc_qgeomapcircleobject.cpp"
 
 QTM_END_NAMESPACE
 

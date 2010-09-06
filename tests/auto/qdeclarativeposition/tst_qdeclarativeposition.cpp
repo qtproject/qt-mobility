@@ -214,14 +214,14 @@ void tst_QDeclarativePosition::construction_data()
     QTest::addColumn<QString>("componentString");
     QTest::addColumn<bool>("shouldSucceed");
     // PositionSource
-    QTest::newRow("Source: No properties") <<  "QDeclarativePositionSource" << "import Qt 4.7 \n import QtMobility.location 1.0 \n PositionSource {}" << true;
-    QTest::newRow("Source: Only id property") << "QDeclarativePositionSource" << "import Qt 4.7 \n import QtMobility.location 1.0 \n PositionSource {id: positionId}" << true;
-    QTest::newRow("Source: All write properties") << "QDeclarativePositionSource" << "import Qt 4.7 \n import QtMobility.location 1.0 \n PositionSource {id: positionId; updateInterval: 1000; nmeaSource: \"nonexistentfile.txt\"}" << true;
-    QTest::newRow("Source: Nonexistent property") << "QDeclarativePositionSource" << "import Qt 4.7 \n import QtMobility.location 1.0 \n PositionSource {id: positionId; nonExistentProperty: 1980}" << false;
+    QTest::newRow("Source: No properties") <<  "QDeclarativePositionSource" << "import Qt 4.7 \n import QtMobility.location 1.1 \n PositionSource {}" << true;
+    QTest::newRow("Source: Only id property") << "QDeclarativePositionSource" << "import Qt 4.7 \n import QtMobility.location 1.1 \n PositionSource {id: positionId}" << true;
+    QTest::newRow("Source: All write properties") << "QDeclarativePositionSource" << "import Qt 4.7 \n import QtMobility.location 1.1 \n PositionSource {id: positionId; updateInterval: 1000; nmeaSource: \"nonexistentfile.txt\"}" << true;
+    QTest::newRow("Source: Nonexistent property") << "QDeclarativePositionSource" << "import Qt 4.7 \n import QtMobility.location 1.1 \n PositionSource {id: positionId; nonExistentProperty: 1980}" << false;
     // Position
-    QTest::newRow("Position: No properties") << "QDeclarativePosition" << "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {}" << true;
-    QTest::newRow("Position: Only id property") << "QDeclarativePosition" << "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: position}" << true;
-    QTest::newRow("Position: All write properties") << "QDeclarativePosition" << "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: position; timestamp: \"2010-07-09\"; longtitude: 61.373459; latitude: 21.611216; altitude: 325; speed: 15}" << true;
+    QTest::newRow("Position: No properties") << "QDeclarativePosition" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Position {}" << true;
+    QTest::newRow("Position: Only id property") << "QDeclarativePosition" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Position {id: position}" << true;
+    QTest::newRow("Position: All write properties") << "QDeclarativePosition" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Position {id: position; timestamp: \"2010-07-09\"; longitude: 61.373459; latitude: 21.611216; altitude: 325; speed: 15}" << true;
 }
 
 /*
@@ -229,7 +229,7 @@ void tst_QDeclarativePosition::construction_data()
 */
 void tst_QDeclarativePosition::defaultProperties()
 {
-    QString componentString("import Qt 4.7 \n import QtMobility.location 1.0 \n PositionSource {id: positionId}");
+    QString componentString("import Qt 4.7 \n import QtMobility.location 1.1 \n PositionSource {id: positionId}");
     QDeclarativeComponent component(&engine);
     component.setData(componentString.toLatin1(), QUrl::fromLocalFile(""));
     QObject* source_obj = component.create();
@@ -243,11 +243,11 @@ void tst_QDeclarativePosition::defaultProperties()
     // Verify position default data
     QCOMPARE(position_obj->property("timestamp").toDateTime(), QDateTime());
     QCOMPARE(position_obj->property("latitude").toDouble(), static_cast<double>(0));
-    QCOMPARE(position_obj->property("longtitude").toDouble(), static_cast<double>(0));
+    QCOMPARE(position_obj->property("longitude").toDouble(), static_cast<double>(0));
     QCOMPARE(position_obj->property("altitude").toDouble(), static_cast<double>(0));
     QCOMPARE(position_obj->property("speed").toDouble(), static_cast<double>(0));
     QCOMPARE(position_obj->property("latitudeValid").toBool(), false);
-    QCOMPARE(position_obj->property("longtitudeValid").toBool(), false);
+    QCOMPARE(position_obj->property("longitudeValid").toBool(), false);
     QCOMPARE(position_obj->property("altitudeValid").toBool(), false);
     QCOMPARE(position_obj->property("speedValid").toBool(), false);
 
@@ -264,7 +264,7 @@ void tst_QDeclarativePosition::basicNmeaSource()
     QFETCH(int, repeats);
 
     qDebug() << "1. ----- Create PositionSource";
-    QString componentString("import Qt 4.7 \n import QtMobility.location 1.0 \n PositionSource {id: positionId;}");
+    QString componentString("import Qt 4.7 \n import QtMobility.location 1.1 \n PositionSource {id: positionId;}");
     QDeclarativeComponent component(&engine);
     component.setData(componentString.toLatin1(), QUrl::fromLocalFile(""));
     QObject* source_obj = component.create();
@@ -322,7 +322,7 @@ void tst_QDeclarativePosition::basicNmeaSource_data()
 void tst_QDeclarativePosition::changeNmeaSource()
 {
     // Create position source with nmea source
-    QObject* source_obj = createPositionSource("import Qt 4.7 \n import QtMobility.location 1.0 \n PositionSource {id: positionSource; nmeaSource: \"/data/nmealog.txt\"}");
+    QObject* source_obj = createPositionSource("import Qt 4.7 \n import QtMobility.location 1.1 \n PositionSource {id: positionSource; nmeaSource: \"/data/nmealog.txt\"}");
     QSignalSpy positionChangedSpy(source_obj, SIGNAL(positionChanged()));
     QSignalSpy nmeaSourceChangedSpy(source_obj, SIGNAL(nmeaSourceChanged(QUrl)));
     QSignalSpy positioningMethodChangedSpy(source_obj, SIGNAL(positioningMethodChanged(QDeclarativePositionSource::PositioningMethod)));
@@ -394,7 +394,7 @@ void tst_QDeclarativePosition::changeNmeaSource()
 
 void tst_QDeclarativePosition::activism()
 {
-    QObject* source_obj = createPositionSource("import Qt 4.7 \n import QtMobility.location 1.0 \n PositionSource {id: positionSource; nmeaSource: \"/data/nmealog.txt\"}");
+    QObject* source_obj = createPositionSource("import Qt 4.7 \n import QtMobility.location 1.1 \n PositionSource {id: positionSource; nmeaSource: \"/data/nmealog.txt\"}");
     QSignalSpy positionChangedSpy(source_obj, SIGNAL(positionChanged()));
     QSignalSpy positioningMethodChangedSpy(source_obj, SIGNAL(positioningMethodChanged(QDeclarativePositionSource::PositioningMethod)));
     QSignalSpy activeChangedSpy(source_obj, SIGNAL(activeChanged(bool)));
@@ -458,8 +458,8 @@ QList<QSignalSpy*> createPositionSpies(QObject* position_obj)
     QList<QSignalSpy*> spies;
     spies.append(new QSignalSpy(position_obj, SIGNAL(latitudeChanged(double)))); //4
     spies.append(new QSignalSpy(position_obj, SIGNAL(latitudeValidChanged(bool))));
-    spies.append(new QSignalSpy(position_obj, SIGNAL(longtitudeChanged(double))));
-    spies.append(new QSignalSpy(position_obj, SIGNAL(longtitudeValidChanged(bool))));
+    spies.append(new QSignalSpy(position_obj, SIGNAL(longitudeChanged(double))));
+    spies.append(new QSignalSpy(position_obj, SIGNAL(longitudeValidChanged(bool))));
     spies.append(new QSignalSpy(position_obj, SIGNAL(altitudeChanged(double))));
     spies.append(new QSignalSpy(position_obj, SIGNAL(altitudeValidChanged(bool))));
     spies.append(new QSignalSpy(position_obj, SIGNAL(speedChanged(double)))); // 10

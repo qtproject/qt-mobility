@@ -79,6 +79,8 @@ Q_SIGNALS:
     void opticalZoomChanged(qreal opticalZoom);
     void digitalZoomChanged(qreal digitalZoom);
     void focusZonesChanged();
+    void maximumOpticalZoomChanged(qreal);
+    void maximumDigitalZoomChanged(qreal);
 
 protected:
     QCameraFocusControl(QObject* parent = 0);

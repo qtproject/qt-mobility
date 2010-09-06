@@ -65,6 +65,9 @@ Dialog::Dialog()
     ui.verticalSpacer_7->changeSize(20, 30, QSizePolicy::Expanding, QSizePolicy::Fixed);
 #endif
 
+    //exit button
+    connect(ui.exitButton, SIGNAL(clicked()), qApp, SLOT(quit()));
+    
     connect(ui.actuators, SIGNAL(currentIndexChanged(int)), SLOT(actuatorChanged()));
     connect(ui.enabled, SIGNAL(toggled(bool)), SLOT(enabledChanged(bool)));
     connect(ui.playPause, SIGNAL(pressed()), SLOT(playPauseClicked()));
@@ -139,8 +142,21 @@ void Dialog::enabledChanged(bool on)
     QFeedbackActuator dev = currentActuator();
     dev.setEnabled(on);
     ui.enabled->setChecked(dev.isEnabled());
-    ui.envelope->setEnabled(dev.isEnabled() && (dev.isCapabilitySupported(QFeedbackActuator::Envelope)));
-    ui.grpPeriod->setEnabled(dev.isEnabled() && (dev.isCapabilitySupported(QFeedbackActuator::Period)));
+
+    if (dev.isEnabled() && (dev.isCapabilitySupported(QFeedbackActuator::Envelope))) {
+        ui.envelope->setEnabled(true);
+        ui.envelope->show();
+    } else {
+        ui.envelope->setEnabled(true);
+        ui.envelope->hide();
+    }
+    if (dev.isEnabled() && (dev.isCapabilitySupported(QFeedbackActuator::Period))) {
+        ui.grpPeriod->setEnabled(true);
+        ui.grpPeriod->show();
+    } else {
+        ui.grpPeriod->setEnabled(false);
+        ui.grpPeriod->hide();
+    }
 }
 
 void Dialog::playPauseClicked()

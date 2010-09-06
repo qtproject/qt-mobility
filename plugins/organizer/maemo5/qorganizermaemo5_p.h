@@ -63,6 +63,7 @@
 #include <QDateTime>
 #include <QString>
 #include <QObject>
+#include <QTimer>
 
 #include "qorganizeritem.h"
 #include "qorganizeritemmanager.h"
@@ -72,7 +73,9 @@
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
 
-#include "qorganizerrecurrencetransform.h"
+#include "qorganizeritemtransform.h"
+#include "qorganizerasynchprocess.h"
+#include "qorganizercaldbaccess.h"
 
 #include "qorganizerjournal.h"
 #include "qorganizertodo.h"
@@ -116,19 +119,17 @@ public:
             delete m_mcInstance;
     }
 
-    // key = QString(QLatin1String(CEvent.id().data()));
-    // value = QOrganizerItemLocalId(qHash(key));
-    QMap<QString, QOrganizerItemLocalId> m_cIdToQId; // TODO: This is not used anymore, remove
-
-    // the cId consists of a calendar name and an item id
-    // we need to be able to separate both of these parts.
-    QMap<QString, QString> m_cIdToCName; // TODO: This is not used anymore, remove
-
     // the multicalendar instance
     CMulticalendar *m_mcInstance;
 
-    // recurrence rule converter instance
-    OrganizerRecurrenceTransform m_recTransformer;
+    // item converter instance
+    OrganizerItemTransform m_itemTransformer;
+
+    // asynchronous request handler instance
+    OrganizerAsynchProcess *m_asynchProcess;
+
+    // calendar database accessor instance
+    OrganizerCalendarDatabaseAccess m_databaseAccess;
 };
 
 
@@ -144,61 +145,70 @@ public:
     QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
-    QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const;
-    QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerItem> itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerItem> itemInstances(const QOrganizerItem &generator, const QDateTime &periodStart, const QDateTime &periodEnd, int maxCount, QOrganizerItemManager::Error *error) const;
+    QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, QOrganizerItemManager::Error *error) const;
 
-    // TODO: This is temporary just to reset the calendar in error situations,
-    // use only for debugging & remove this finally!
-    void removeAllForDebug() const;
+    QList<QOrganizerItem> items(const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error) const;
+    QOrganizerItem item(const QOrganizerItemLocalId &itemId, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error) const;
 
-    QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
-    QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
+    bool saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+    bool removeItems(const QList<QOrganizerItemLocalId> &itemIds, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error);
 
-    bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
-    bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+    /* Collections - every item belongs to exactly one collection */
+    QOrganizerCollectionLocalId defaultCollectionId(QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerCollectionLocalId> collectionIds(QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const;
+    bool saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error);
+    bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
 
     /* Capabilities reporting */
-    bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const;
-    bool isFilterSupported(const QOrganizerItemFilter& filter) const;
+    bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString &itemType) const;
+    bool isFilterSupported(const QOrganizerItemFilter &filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
     QStringList supportedItemTypes() const;
 
     /* Asynchronous Request Support */
-    void requestDestroyed(QOrganizerItemAbstractRequest* req);
-    bool startRequest(QOrganizerItemAbstractRequest* req);
-    bool cancelRequest(QOrganizerItemAbstractRequest* req);
-    bool waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs);
+    void requestDestroyed(QOrganizerItemAbstractRequest *req);
+    bool startRequest(QOrganizerItemAbstractRequest *req);
+    bool cancelRequest(QOrganizerItemAbstractRequest *req);
+    bool waitForRequestFinished(QOrganizerItemAbstractRequest *req, int msecs);
+
+public Q_SLOTS:
+    void dataChanged();
 
 private:
     // single item saving implementation
-    int doSaveItem(CCalendar* cal, QOrganizerItem* item, QOrganizerItemManager::Error* error);
+    void checkItemIdValidity(CCalendar *cal, QOrganizerItem *checkItem, QOrganizerItemManager::Error *error);
+    int doSaveItem(CCalendar *cal, QOrganizerItem *item, QOrganizerItemChangeSet &cs, QOrganizerItemManager::Error *error);
 
-    // conversion functions
-    QOrganizerEvent convertCEventToQEvent(CEvent* cevent) const;
-    QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent* cevent, const QDateTime& instanceDate) const;
-    QOrganizerTodo convertCTodoToQTodo(CTodo* ctodo) const;
-    QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo* ctodo, const QString& calendarName) const;
-    QOrganizerJournal convertCJournalToQJournal(CJournal* cjournal ) const;
+    // saving the occurrences
+    int saveEventOccurrence(CCalendar *cal, QOrganizerEventOccurrence *occurrence, QOrganizerEvent *parent, QOrganizerItemChangeSet &cs, QOrganizerItemManager::Error *error);
+    void insertOccurenceSortedByStartDate(QOrganizerItem *occurrence, QList<QOrganizerItem> &target) const;
 
-    // conversions between CComponent and QOrganizerItem
-    void fillInCommonCComponentDetails( QOrganizerItem* item, CComponent* component, bool setId = true ) const;
-    CComponent* createCComponent( CCalendar* cal, const QOrganizerItem* item ) const;
+    // getting the parent (base) item of an exception item (event occurrence or todo occurrence)
+    QOrganizerItem parentOf(CCalendar *cal, QOrganizerItem *occurence, QOrganizerItemManager::Error *error) const;
 
-    // recurrence information conversions
-    CRecurrence* createCRecurrence( const QOrganizerItem* item ) const;
+    // internal fetch item
+    QOrganizerItem internalFetchItem(const QOrganizerItemLocalId &itemId, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error, bool fetchOccurrences) const;
 
-    // error code conversion
-    QOrganizerItemManager::Error calErrorToManagerError( int calError ) const;
+    // identifying native item as an occurrence
+    bool isOccurrence(CCalendar *cal, CComponent *ccomponent, QString typeStr, QOrganizerItemManager::Error *error) const;
+    bool isParent(CCalendar *cal, CComponent *ccomponent, QString typeStr, QOrganizerItemManager::Error *error) const;
+    bool containsRecurrenceInformation(CComponent *ccomponent) const;
+
+    // returns a fetch hint for fetching minimal amount of information
+    QOrganizerItemFetchHint fetchMinimalData() const;
 
     // calendar instance deletion helper
-    void cleanupCal( CCalendar* cal ) const;
+    void cleanupCal(CCalendar *cal) const;
 
     // ctor
     QOrganizerItemMaemo5Engine();
 
 private:
-    QOrganizerItemMaemo5EngineData* d;
-
+    QOrganizerItemMaemo5EngineData *d;
+    QTimer m_waitTimer;
     friend class QOrganizerItemMaemo5Factory;
 };
 

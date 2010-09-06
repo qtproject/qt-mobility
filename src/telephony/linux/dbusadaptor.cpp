@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "dbusadaptor.h"
+#include "dbusadaptor_p.h"
 #include <QtCore/QMetaObject>
 #include <QtCore/QByteArray>
 #include <QtCore/QList>
@@ -72,6 +72,6 @@ void TelepathyAdaptor::createNewChannels(const ChannelsArray& channelsarray)
     QMetaObject::invokeMethod(parent(), "createNewChannels", Q_ARG(ChannelsArray, channelsarray));
 }
 
-#include "moc_dbusadaptor.cpp"
+#include "moc_dbusadaptor_p.cpp"
 
 QTM_END_NAMESPACE

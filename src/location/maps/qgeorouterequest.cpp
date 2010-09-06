@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
     which define a request for routing information.
 
     \inmodule QtLocation
-    
+
     \ingroup maps-routing
 
     The default state of a QGeoRouteRequest instance will result in a request
@@ -71,7 +71,6 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*
-
     DESIGN NOTE
 
     There are plans to make this extensible by allowing the user to set a
@@ -92,6 +91,10 @@ QTM_BEGIN_NAMESPACE
     options subclass (and the fact that user auth said that the user had
     support) would mean we could provide better values for the estimated
     travel times etc...
+
+    This all relies on at least one service making this data available to us,
+    which would probably be tied to token based authorization.  It could be
+    some time before this becomes available.
 */
 
 /*!
@@ -152,11 +155,11 @@ QTM_BEGIN_NAMESPACE
         Maximize the scenic potential of the journey.
 */
 
-        enum SegmentDetail {
-            NoSegmentData = 0x0000,
-            BasicSegmentData = 0x0001,
-            DetailedSegmentData = 0x0002
-        };
+enum SegmentDetail {
+    NoSegmentData = 0x0000,
+    BasicSegmentData = 0x0001,
+    DetailedSegmentData = 0x0002
+};
 
 /*!
     \enum QGeoRouteRequest::SegmentDetail
@@ -168,7 +171,7 @@ QTM_BEGIN_NAMESPACE
         No segment data should be included with the route.  A route requested
         with this level of segment detail will initialise
         QGeoRouteSegment::path() as a straight line between the positions of
-        the previous and next QGeoNavigationInstructions.
+        the previous and next QGeoInstruction instances.
 
     \value BasicSegmentData
         Basic segment data will be included with the route.  This will include
@@ -186,7 +189,7 @@ QTM_BEGIN_NAMESPACE
 
     \value BasicInstructions
         Basic instructions will be included with the route. This will
-        include QGeoNavigationInstruction::instructionText().
+        include QGeoInstruction::instructionText().
 */
 
 /*!
@@ -230,6 +233,22 @@ QGeoRouteRequest& QGeoRouteRequest::operator= (const QGeoRouteRequest & other)
 {
     d_ptr = other.d_ptr;
     return *this;
+}
+
+/*!
+    Returns whether this route request and \a other are equal.
+*/
+bool QGeoRouteRequest::operator ==(const QGeoRouteRequest &other) const
+{
+    return (d_ptr.constData() == other.d_ptr.constData());
+}
+
+/*!
+    Returns whether this route request and \a other are equal.
+*/
+bool QGeoRouteRequest::operator !=(const QGeoRouteRequest &other) const
+{
+    return (d_ptr.constData() != other.d_ptr.constData());
 }
 
 /*!
@@ -411,5 +430,16 @@ QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &
 
 QGeoRouteRequestPrivate::~QGeoRouteRequestPrivate() {}
 
+bool QGeoRouteRequestPrivate::operator ==(const QGeoRouteRequestPrivate &other) const
+{
+    return ((waypoints == other.waypoints)
+            && (excludeAreas == other.excludeAreas)
+            && (numberAlternativeRoutes == other.numberAlternativeRoutes)
+            && (travelModes == other.travelModes)
+            && (avoidFeatureTypes == other.avoidFeatureTypes)
+            && (routeOptimization == other.routeOptimization)
+            && (segmentDetail == other.segmentDetail)
+            && (instructionDetail == other.instructionDetail));
+}
 
 QTM_END_NAMESPACE

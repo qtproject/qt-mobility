@@ -47,6 +47,7 @@
 #include "qcontact_p.h"
 #include "qcontactdetail_p.h"
 #include "qcontactmanager_p.h"
+#include "qcontactactionmanager_p.h"
 #include "qcontactaction.h"
 
 QTM_BEGIN_NAMESPACE
@@ -703,63 +704,6 @@ QDataStream& operator>>(QDataStream& in, QContact& contact)
 #endif
 
 /*!
-    Retrieve the first detail in this contact supported by the given \a action.
-
-    If there is a preferred detail set for this action name, and that detail is
-    supported by the given \a action, that preferred detail will be returned.
-
-    Otherwise, the first detail in the list returned by detailsWithAction() will
-    be returned.
-
-    \sa detailsWithAction()
-*/
-QContactDetail QContact::detailWithAction(QContactAction* action) const
-{
-    if (action) {
-        QContactDetail pref = preferredDetail(action->actionDescriptor().actionName());
-        if (!pref.isEmpty() && action->isDetailSupported(pref, *this))
-            return pref;
-        foreach (const QContactDetail& detail, d->m_details) {
-            if (action->isDetailSupported(detail, *this)) {
-                return detail;
-            }
-        }
-    }
-    return QContactDetail();
-}
-
-/*!
-    Retrieve any details supported by the given \a action.
-
-    If the action does not exist, an empty list will be returned.  Otherwise,
-    the details in this contact will be tested by the action and a list of the
-    details supported will be returned.
-
-    If a preferred detail for this action name has been set, and it is supported
-    by the given \a action, that detail will be the first detail returned in the list.
-
-    See this example for usage:
-    \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Details with action
-*/
-QList<QContactDetail> QContact::detailsWithAction(QContactAction* action) const
-{
-    QList<QContactDetail> retn;
-
-    if (action) {
-        QContactDetail preferred = preferredDetail(action->actionDescriptor().actionName());
-        foreach (const QContactDetail& detail, d->m_details) {
-            if (action->isDetailSupported(detail, *this)) {
-                if (detail == preferred)
-                    retn.prepend(detail);
-                else
-                    retn.append(detail);
-            }
-        }
-    }
-    return retn;
-}
-
-/*!
     Returns a list of relationships of the given \a relationshipType in which this contact is a participant.
 
     If \a relationshipType is empty, all relationships will be returned.
@@ -844,33 +788,24 @@ QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QCo
  * Return a list of descriptors for the actions available to be performed on this contact.
  *
  * The actions considered can be restricted by the optional parameters
- * \list
- *  \o The actions can be restricted to those provided by a specific vendor with the \a vendorName parameter.
- * If \a vendorName is empty, actions from all vendors will be considered.
- *  \o A specific version of an action can also be requested with \a implementationVersion.  If \c -1 is
- * passed (the default), all versions will be considered.  This is usually useful in conjunction with a specific vendor.
- * \endlist
+ * The actions can be restricted to those provided by a specific service with the \a serviceName parameter.
+ * If \a serviceName is empty, actions provided by any service will be returned if the
+ * contact meets the required criteria (contains details of the correct type, etc).
  *
  * Each action that matches the above criteria will be tested to see if this contact is supported
  * by the action, and a list of the action descriptors that are supported will be returned.
  */
-QList<QContactActionDescriptor> QContact::availableActions(const QString& vendorName, int implementationVersion) const
+QList<QContactActionDescriptor> QContact::availableActions(const QString& serviceName) const
 {
-    // check every action implementation to see if it supports me.
-    QSet<QContactActionDescriptor> retn;
-    QList<QContactActionDescriptor> descriptors = QContactManagerData::actionDescriptors();
-    for (int i = 0; i < descriptors.size(); i++) {
-        QContactActionDescriptor currDescriptor = descriptors.at(i);
-        if ((vendorName.isEmpty() || currDescriptor.vendorName() == vendorName) &&
-            (implementationVersion == -1 || currDescriptor.implementationVersion() == implementationVersion)) {
-            QScopedPointer<QContactAction> currImpl(QContactManagerData::action(currDescriptor));
-            if (QContactManagerEngine::testFilter(currImpl->contactFilter(), *this)) {
-                retn.insert(currDescriptor);
-            }
+    QList<QContactActionDescriptor> ret;
+    QList<QContactActionDescriptor> allds = QContactActionManager::instance()->availableActions(*this);
+    foreach (const QContactActionDescriptor& d, allds) {
+        if (serviceName.isEmpty() || d.serviceName() == serviceName) {
+            ret.append(d);
         }
     }
 
-    return retn.toList();
+    return ret;
 }
 
 /*!

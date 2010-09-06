@@ -57,11 +57,14 @@ class QGeoBoundingBox;
 class QGeoMapObjectPrivate;
 class QGeoMapContainer;
 
-class QGeoMapDataPrivate;
+class QGeoMapData;
 
 class Q_LOCATION_EXPORT QGeoMapObject : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(int zValue READ zValue WRITE setZValue NOTIFY zValueChanged)
+    Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
+    Q_PROPERTY(bool selected READ isSelected WRITE setSelected NOTIFY selectedChanged)
 
 public:
     enum Type {
@@ -70,8 +73,9 @@ public:
         CircleType,
         PolylineType,
         PolygonType,
-        MarkerType,
-        GeoRouteType
+        PixmapType,
+        TextType,
+        RouteType
     };
 
     QGeoMapObject(QGeoMapObject *parent = 0);
@@ -85,29 +89,38 @@ public:
     void setVisible(bool visible);
     bool isVisible() const;
 
-    // TODO selection and selectability?
+    void setSelected(bool selected);
+    bool isSelected() const;
 
-    virtual QGeoBoundingBox boundingBox() const;
-    virtual bool contains(const QGeoCoordinate &coordinate) const;
+    QGeoBoundingBox boundingBox() const;
+    bool contains(const QGeoCoordinate &coordinate) const;
 
     QGeoMapObject* parentObject() const;
+
+    QList<QGeoMapObject*> childObjects() const;
     void addChildObject(QGeoMapObject *childObject);
     void removeChildObject(QGeoMapObject *childObject);
-    QList<QGeoMapObject*> childObjects() const;
-
-    void objectUpdate();
-    void mapUpdate();
+    void clearChildObjects();
 
     bool operator<(const QGeoMapObject &other) const;
     bool operator>(const QGeoMapObject &other) const;
 
+    void mapUpdated();
+
+signals:
+    void zValueChanged(int zValue);
+    void visibleChanged(bool visible);
+    void selectedChanged(bool selected);
+
 protected:
     QGeoMapObject(QGeoMapObjectPrivate *dd);
+
+    void objectUpdated();
 
     QGeoMapObjectPrivate *d_ptr;
 
 private:
-    QGeoMapObject(QGeoMapDataPrivate *mapData);
+    QGeoMapObject(QGeoMapData *mapData);
 
     Q_DECLARE_PRIVATE(QGeoMapObject)
     Q_DISABLE_COPY(QGeoMapObject)

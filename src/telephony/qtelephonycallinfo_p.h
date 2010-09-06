@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,31 +53,41 @@
 //
 // We mean it.
 //
-
-#include "qtelephonycallinfo.h"
+#include <QtCore/qglobal.h>
 #include <QtCore/qshareddata.h>
 #include <QList>
 #include <QString>
 #include <QVariant>
 
+#include "qtelephonycallinfo.h"
+#include "qtelephony.h"
+
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-struct Q_AUTOTEST_EXPORT QTelephonyCallInfoPrivate : public QSharedData
+using namespace QTelephony;
+
+struct
+#if defined(Q_OS_LINUX)
+        QM_AUTOTEST_EXPORT
+#endif
+        QTelephonyCallInfoPrivate : public QSharedData
 {
 public:
     QTelephonyCallInfoPrivate()
-        : type(QTelephonyCallInfo::Other)
+        : type(QTelephony::Other)
         , subType("")
-        , status(QTelephonyCallInfo::Idle) { }
+        , status(QTelephony::Idle)
+        , direction(QTelephony::Received){ }
     QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other)
         : QSharedData(other) { }
 
     QString remotePartyIdentifier;
-    QTelephonyCallInfo::CallType type;
+    unsigned int type;
     QString subType;
-    QTelephonyCallInfo::CallStatus status;
+    QTelephony::CallStatus status;
     QHash<QString, QVariant> values;
+    QTelephony::Direction direction;
 };
 
 QTM_END_NAMESPACE

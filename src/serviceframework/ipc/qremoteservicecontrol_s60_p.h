@@ -58,6 +58,8 @@
 
 QTM_BEGIN_NAMESPACE
 
+class ServiceMessageListener;
+
 const TUint KServerMajorVersionNumber = 1;
 const TUint KServerMinorVersionNumber = 0;
 const TUint KServerBuildVersionNumber = 0;
@@ -93,6 +95,7 @@ class RServiceSession : public QObject, public RSessionBase
     Q_OBJECT
 public: 
     RServiceSession(QString address);
+    virtual ~RServiceSession();
     TInt Connect(); 
     void Close();
     TVersion Version() const;
@@ -103,7 +106,9 @@ public:
     // this size might need to be increased to avoid a lot
     // of context switches
     TBuf8<255> iMessageFromServer; 
-    TPckgBuf<TInt> iSize; // TPckgBuf type can be used directly as IPC parameter   
+    TPckgBuf<TInt> iSize; // TPckgBuf type can be used directly as IPC parameter
+
+    void setListener(ServiceMessageListener* listener);
 
 public slots:
      void ipcFailure(QService::UnrecoverableIPCError);
@@ -123,7 +128,8 @@ private:
 private: 
     TIpcArgs iArgs; // These two are used in actively listening to server
     TError iError;
-    QString iServerAddress;     
+    QString iServerAddress;
+    ServiceMessageListener* iListener;
     
     friend class ServiceMessageListener;
 };

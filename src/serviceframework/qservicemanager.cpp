@@ -103,24 +103,6 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
     return QString();
 }
 
-/*!
-    For now we assume that localsocket means IPC via QLocalSocket and
-    dbus means IPC via QDBusConnection on the system bus.
-    This needs to be extended as new IPC mechanisms are incorporated.
-*/
-static bool qservicemanager_isIpcBasedService(const QString& location)
-{
-    // Shall be generalized later on
-    // TODO: we don't actually have to specify the specific ipc mechanism
-    // a simple flag would do.
-    if (location.startsWith("localsocket:") ||
-        location.startsWith("symbianclientserver:") ||
-        location.startsWith("dbus:"))
-        return true;
-    return false;
-}
-
-
 class QServicePluginCleanup : public QObject
 {
     Q_OBJECT
@@ -422,9 +404,12 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     }
 
     const QString location = descriptor.attribute(QServiceInterfaceDescriptor::Location).toString();
-    if (qservicemanager_isIpcBasedService(location)) {
+    const bool isInterProcess = (descriptor.attribute(QServiceInterfaceDescriptor::ServiceType).toInt() 
+                                == QService::InterProcess);
+    if (isInterProcess) {
+        //ipc service
         const QByteArray version = QString("%1.%2").arg(descriptor.majorVersion())
-                .arg(descriptor.minorVersion()).toLatin1();
+                                                   .arg(descriptor.minorVersion()).toLatin1();
         const QRemoteServiceIdentifier ident(descriptor.serviceName().toLatin1(), descriptor.interfaceName().toLatin1(), version);
         QObject* service = QRemoteServiceControlPrivate::proxyForService(ident, location);
         if (!service)
@@ -594,9 +579,8 @@ bool QServiceManager::addService(QIODevice *device)
     ServiceMetaDataResults results = parser.parseResults();
 
     bool result = d->dbManager->registerService(results, scope);
-
-    //ipc services cannot be test loaded
-    if (qservicemanager_isIpcBasedService(results.location))
+    
+    if (results.type == QService::InterProcess)
         return result;
 
     //test the new plug-in
@@ -652,8 +636,9 @@ bool QServiceManager::removeService(const QString& serviceName)
     QList<QServiceInterfaceDescriptor> descriptors = findInterfaces(serviceName);
     for (int i=0; i<descriptors.count(); i++) {
         const QString loc = descriptors[i].attribute(QServiceInterfaceDescriptor::Location).toString();
+        const int type = descriptors[i].attribute(QServiceInterfaceDescriptor::ServiceType).toInt();
         //exclude ipc services
-        if (!qservicemanager_isIpcBasedService(loc))
+        if (type <= QService::Plugin)
             pluginPathsSet << loc;
     }
 

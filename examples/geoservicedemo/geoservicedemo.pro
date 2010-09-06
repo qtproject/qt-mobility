@@ -13,7 +13,7 @@ SOURCES += main.cpp\
         routetab.cpp \
         geocodingtab.cpp \
         revgeocodingtab.cpp \
-        servicestab.cpp
+        servicestab.cpp 
 
 HEADERS  += routepresenter.h \
         placepresenter.h \
@@ -21,15 +21,17 @@ HEADERS  += routepresenter.h \
         routetab.h \
         geocodingtab.h \
         revgeocodingtab.h \
-        servicestab.h
+        servicestab.h 
 
 include(../examples.pri)
 
 CONFIG += mobility
 MOBILITY = location
-
-symbian: {
+contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7){
     MOBILITY += bearer
-    INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/src/bearer
-    TARGET.CAPABILITY = Location NetworkServices ReadUserData WriteUserData
+    INCLUDEPATH += ../../src/bearer
+}
+    
+symbian: {
+     TARGET.CAPABILITY = Location NetworkServices ReadUserData WriteUserData
 }

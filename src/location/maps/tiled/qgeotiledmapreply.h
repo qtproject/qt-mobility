@@ -56,7 +56,6 @@ class Q_LOCATION_EXPORT QGeoTiledMapReply : public QObject
     Q_OBJECT
 
 public:
-    // TODO populate this some more...
     enum Error {
         NoError,
         CommunicationError,
@@ -79,10 +78,9 @@ public:
     QByteArray mapImageData() const;
     QString mapImageFormat() const;
 
-public slots:
     virtual void abort();
 
-signals:
+Q_SIGNALS:
     void finished();
     void error(QGeoTiledMapReply::Error error, const QString &errorString = QString());
 

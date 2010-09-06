@@ -49,12 +49,15 @@ void OrganizerItemPriorityTransform::transformToDetailL(const CCalEntry& entry, 
 {
     QOrganizerItemPriority priority;
     // Item has range from 0-9 and entry has range from 0 - 255.
+    // NOTE: Zero means unknown priority. So just leave the detail out.
 	int entryPriority = entry.PriorityL();
-	entryPriority = entryPriority / PRIORITY_RESOLUTION;
-	entryPriority = (entryPriority > QOrganizerItemPriority::LowestPriority) ?
-										QOrganizerItemPriority::LowestPriority : entryPriority;
-    priority.setPriority((QOrganizerItemPriority::Priority) entryPriority);
-    item->saveDetail(&priority);
+	if (entryPriority > 0) { 
+	    entryPriority = entryPriority / PRIORITY_RESOLUTION;
+	    entryPriority = (entryPriority > QOrganizerItemPriority::LowestPriority) ?
+	        QOrganizerItemPriority::LowestPriority : entryPriority;
+	    priority.setPriority((QOrganizerItemPriority::Priority) entryPriority);
+	    item->saveDetail(&priority);
+	}
 }
 
 void OrganizerItemPriorityTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
