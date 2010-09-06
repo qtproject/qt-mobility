@@ -1588,13 +1588,13 @@ void tst_QContactManager::symbianManager()
     // create a new thumbnail field with (invalid) storage type KStorageTypeText instead of KStorageTypeStore
     CContactItemField* thumbnailField;
     thumbnailField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPicture);
-    field->SetMapping(KUidContactFieldVCardMapPHOTO);
-    field->AddFieldTypeL(KUidContactFieldVCardMapBMP);
-    field->ResetStore();
+    thumbnailField->SetMapping(KUidContactFieldVCardMapPHOTO);
+    thumbnailField->AddFieldTypeL(KUidContactFieldVCardMapBMP);
+    thumbnailField->ResetStore();
 
     // set the thumbnail data in the thumbnail field, and add it to the contact
     _LIT8(KThumbnailDataString, "Dummy Thumbnail Data String");
-    field->StoreStorage()->SetThingL(KThumbnailDataString);
+    thumbnailField->StoreStorage()->SetThingL(KThumbnailDataString);
     contactItem->AddFieldL(*thumbnailField);
     CleanupStack::Pop(thumbnailField);
 
@@ -1605,7 +1605,7 @@ void tst_QContactManager::symbianManager()
 
     // force database to read thumbnail with invalid storage type.  crash if not handled properly.
     QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
-    QList<QContact> allContacts = cm.contacts();
+    QList<QContact> allContacts = cm->contacts();
 }
 #endif
 
