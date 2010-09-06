@@ -56,7 +56,7 @@ ListView {
 
         model: DocumentGalleryModel {
             id: galleryModel
-            rootType: "Album"
+            rootType: DocumentGallery.Album
             properties: [ "artist", "title" ]
             sortProperties: [ "artist", "title" ]
         }

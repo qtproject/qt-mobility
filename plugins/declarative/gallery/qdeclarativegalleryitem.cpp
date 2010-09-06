@@ -41,8 +41,6 @@
 
 #include "qdeclarativegalleryitem.h"
 
-#include "qdeclarativedocumentgallery.h"
-
 #include <qgalleryresultset.h>
 
 #include <QtDeclarative/qdeclarativepropertymap.h>
@@ -186,13 +184,15 @@ void QDeclarativeGalleryItem::_q_metaDataChanged(const QList<int> &keys)
     This element is part of the \bold {QtMobility.gallery 1.1} module.
 
 
-    \sa GalleryQueryModel, GalleryType
+    \sa DocumentGalleryModel, DocumentGalleryType
 */
 
 QDeclarativeDocumentGalleryItem::QDeclarativeDocumentGalleryItem(QObject *parent)
     : QDeclarativeGalleryItem(parent)
 {
-    setGallery(QDeclarativeDocumentGallery::gallery());
+    m_request.setGallery(QDeclarativeDocumentGallery::gallery());
+
+    connect(this, SIGNAL(availableChanged()), this, SIGNAL(itemTypeChanged()));
 }
 
 QDeclarativeDocumentGalleryItem::~QDeclarativeDocumentGalleryItem()
@@ -250,10 +250,32 @@ QDeclarativeDocumentGalleryItem::~QDeclarativeDocumentGalleryItem()
 */
 
 /*!
-    \qmlproperty string DocumentGalleryItem::itemType
+    \qmlproperty enum DocumentGalleryItem::itemType
 
-    This property holds the type of a gallery item.
+    This property holds the type of a gallery item. It can be one of:
+
+    \list
+    \o DocumentGallery.InvalidType
+    \o DocumentGallery.File
+    \o DocumentGallery.Folder
+    \o DocumentGallery.Document
+    \o DocumentGallery.Text
+    \o DocumentGallery.Audio
+    \o DocumentGallery.Image
+    \o DocumentGallery.Video
+    \o DocumentGallery.Playlist
+    \o DocumentGallery.Artist
+    \o DocumentGallery.AlbumArtist
+    \o DocumentGallery.Album
+    \o DocumentGallery.AudioGenre
+    \o DocumentGallery.PhotoAlbum
+    \endlist
 */
+
+QDeclarativeDocumentGallery::ItemType QDeclarativeDocumentGalleryItem::itemType() const
+{
+    return QDeclarativeDocumentGallery::itemTypeFromString(m_request.itemType());
+}
 
 /*!
     \qmlproperty url DocumentGalleryItem::itemUrl

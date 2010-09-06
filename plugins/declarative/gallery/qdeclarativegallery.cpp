@@ -44,6 +44,7 @@
 
 #include <qdocumentgallery.h>
 
+#include "qdeclarativedocumentgallery.h"
 #include "qdeclarativegalleryfilter.h"
 #include "qdeclarativegalleryitem.h"
 #include "qdeclarativegalleryquerymodel.h"
@@ -59,6 +60,9 @@ public:
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.gallery"));
 
+        qRegisterMetaType<QDeclarativeDocumentGallery::ItemType>();
+
+        qmlRegisterUncreatableType<QDeclarativeDocumentGallery>(uri, 1, 1, "DocumentGallery", QDeclarativeDocumentGallery::tr("DocumentGallery is a namespace class"));
         qmlRegisterType<QDeclarativeGalleryFilterBase>();
         qmlRegisterType<QDeclarativeGalleryEqualsFilter>(uri, 1, 1, "GalleryEqualsFilter");
         qmlRegisterType<QDeclarativeGalleryLessThanFilter>(uri, 1, 1, "GalleryLessThanFilter");

@@ -55,7 +55,7 @@ Package {
 
         model: DocumentGalleryModel {
             id: galleryModel
-            rootType: "Album"
+            rootType: DocumentGallery.Album
             rootItem: itemId
             properties: [ "artist", "title" ]
             sortProperties: [ "artist", "title" ]

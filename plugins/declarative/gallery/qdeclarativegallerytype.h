@@ -49,6 +49,7 @@
 #include <QtDeclarative/qdeclarative.h>
 #include <QtDeclarative/qdeclarativepropertymap.h>
 
+#include "qdeclarativedocumentgallery.h"
 #include "qdeclarativegalleryfilter.h"
 
 QTM_BEGIN_NAMESPACE
@@ -62,7 +63,6 @@ class QDeclarativeGalleryType : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(bool autoUpdate READ isAutoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
-    Q_PROPERTY(QString itemType READ itemType WRITE setItemType NOTIFY itemTypeChanged)
     Q_PROPERTY(bool available READ available NOTIFY availableChanged)
     Q_PROPERTY(QObject *metaData READ metaData NOTIFY metaDataChanged)
 public:
@@ -94,15 +94,6 @@ public:
     bool isAutoUpdate() const { return m_request.isLive(); }
     void setAutoUpdate(bool autoUpdate) { m_request.setLive(autoUpdate); emit autoUpdateChanged(); }
 
-    QString itemType() const { return m_request.itemType(); }
-    void setItemType(const QString itemType)
-    {
-        m_request.setItemType(itemType);
-        if (m_complete)
-            m_request.execute();
-        emit itemTypeChanged();
-    }
-
     bool available() const { return m_request.isValid(); }
 
     QObject *metaData() const { return m_metaData; }
@@ -124,33 +115,36 @@ Q_SIGNALS:
     void galleryChanged();
     void propertyNamesChanged();
     void autoUpdateChanged();
-    void itemTypeChanged();
 
 protected:
-
     explicit QDeclarativeGalleryType(QObject *parent = 0);
 
-    void setGallery(QAbstractGallery *gallery) { m_request.setGallery(gallery); }
-
-private Q_SLOTS:
-    void _q_stateChanged();
-    void _q_typeChanged();
-    void _q_metaDataChanged(const QList<int> &keys);
-
-private:
     QGalleryTypeRequest m_request;
     QDeclarativePropertyMap *m_metaData;
     QHash<int, QString> m_propertyKeys;
     Status m_status;
     bool m_complete;
+
+private Q_SLOTS:
+    void _q_stateChanged();
+    void _q_typeChanged();
+    void _q_metaDataChanged(const QList<int> &keys);
 };
 
 class QDeclarativeDocumentGalleryType : public QDeclarativeGalleryType
 {
     Q_OBJECT
+    Q_PROPERTY(QDeclarativeDocumentGallery::ItemType itemType READ itemType WRITE setItemType NOTIFY itemTypeChanged)
 public:
-    QDeclarativeDocumentGalleryType(QObject *parent = 0);
+    explicit QDeclarativeDocumentGalleryType(QObject *parent = 0);
     ~QDeclarativeDocumentGalleryType();
+
+    QDeclarativeDocumentGallery::ItemType itemType() const;
+    void setItemType(QDeclarativeDocumentGallery::ItemType itemType);
+
+Q_SIGNALS:
+    void itemTypeChanged();
+
 };
 
 QTM_END_NAMESPACE

@@ -193,7 +193,7 @@ Package {
 
             Repeater {
                 model: DocumentGalleryModel {
-                    rootType: "Audio"
+                    rootType: DocumentGallery.Audio
                     rootItem: itemId
                     properties: [ "trackNumber", "title", "duration" ]
                     sortProperties: [ "trackNumber" ]
@@ -208,7 +208,7 @@ Package {
 
         ListView {
             model: DocumentGalleryModel {
-                rootType: "Audio"
+                rootType: DocumentGallery.Audio
                 rootItem: itemId
                 properties: [ "trackNumber", "title", "duration" ]
                 sortProperties: [ "trackNumber" ]

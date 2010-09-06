@@ -43,6 +43,8 @@
 #define GALLERYQUERYREQUEST_H
 
 #include <qgalleryqueryrequest.h>
+
+#include "qdeclarativedocumentgallery.h"
 #include "qdeclarativegalleryfilter.h"
 
 #include <QtCore/qabstractitemmodel.h>
@@ -65,7 +67,6 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(QStringList sortProperties READ sortPropertyNames WRITE setSortPropertyNames NOTIFY sortPropertyNamesChanged)
     Q_PROPERTY(bool autoUpdate READ isAutoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
-    Q_PROPERTY(QString rootType READ rootType WRITE setRootType NOTIFY rootTypeChanged)
     Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem NOTIFY rootItemChanged)
     Q_PROPERTY(Scope scope READ scope WRITE setScope NOTIFY scopeChanged)
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
@@ -118,10 +119,6 @@ public:
     bool isAutoUpdate() const { return m_request.isLive(); }
     void setAutoUpdate(bool autoUpdate) { m_request.setLive(autoUpdate); emit autoUpdateChanged(); }
 
-    QString rootType() const { return m_request.rootType(); }
-    void setRootType(const QString &itemType) {
-        if (!m_complete) { m_request.setRootType(itemType); emit rootTypeChanged(); } }
-
     Scope scope() const { return Scope(m_request.scope()); }
     void setScope(Scope scope) {
         m_request.setScope(QGalleryQueryRequest::Scope(scope)); emit scopeChanged(); }
@@ -168,7 +165,6 @@ Q_SIGNALS:
     void propertyNamesChanged();
     void sortPropertyNamesChanged();
     void autoUpdateChanged();
-    void rootTypeChanged();
     void rootItemChanged();
     void scopeChanged();
     void filterChanged();
@@ -179,7 +175,15 @@ Q_SIGNALS:
 protected:
     explicit QDeclarativeGalleryQueryModel(QObject *parent = 0);
 
-    void setGallery(QAbstractGallery *gallery) { m_request.setGallery(gallery); }
+    virtual QVariant itemType(const QString &type) const = 0;
+
+    QGalleryQueryRequest m_request;
+    QPointer<QDeclarativeGalleryFilterBase> m_filter;
+    QGalleryResultSet *m_resultSet;
+    QVector<QPair<int, QString> > m_propertyNames;
+    Status m_status;
+    int m_rowCount;
+    bool m_complete;
 
 private Q_SLOTS:
     void _q_stateChanged();
@@ -188,23 +192,24 @@ private Q_SLOTS:
     void _q_itemsRemoved(int index, int count);
     void _q_itemsMoved(int from, int to, int count);
     void _q_itemsChanged(int index, int count);
-
-private:
-    QGalleryQueryRequest m_request;
-    QPointer<QDeclarativeGalleryFilterBase> m_filter;
-    QGalleryResultSet *m_resultSet;
-    QVector<QPair<int, QString> > m_propertyNames;
-    Status m_status;
-    int m_rowCount;
-    bool m_complete;
 };
 
 class QDeclarativeDocumentGalleryModel : public QDeclarativeGalleryQueryModel
 {
     Q_OBJECT
+    Q_PROPERTY(QDeclarativeDocumentGallery::ItemType rootType READ rootType WRITE setRootType NOTIFY rootTypeChanged)
 public:
     explicit QDeclarativeDocumentGalleryModel(QObject *parent = 0);
     ~QDeclarativeDocumentGalleryModel();
+
+    QDeclarativeDocumentGallery::ItemType rootType() const;
+    void setRootType(QDeclarativeDocumentGallery::ItemType itemType);
+
+Q_SIGNALS:
+    void rootTypeChanged();
+
+protected:
+    QVariant itemType(const QString &type) const;
 };
 
 QTM_END_NAMESPACE

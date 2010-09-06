@@ -41,7 +41,6 @@
 
 #include "qdeclarativegalleryquerymodel.h"
 
-#include "qdeclarativedocumentgallery.h"
 #include "qdeclarativegalleryfilter.h"
 
 #include <qgalleryresultset.h>
@@ -102,7 +101,7 @@ QVariant QDeclarativeGalleryQueryModel::data(const QModelIndex &index, int role)
         case ItemId:
             return m_resultSet->itemId();
         case ItemType:
-            return m_resultSet->itemType();
+            return itemType(m_resultSet->itemType());
         default:
             {
                 QVariant value = m_resultSet->metaData(role - MetaDataOffset);
@@ -379,7 +378,7 @@ void QDeclarativeGalleryQueryModel::_q_itemsChanged(int index, int count)
             cellHeight: 128
 
             model: DocumentGalleryModel {
-                rootType: "Image"
+                rootType: DocumentGallery.Image
                 properties: [ "url" ]
                 filter: GalleryWildcardFilter {
                     property: "fileName";
@@ -396,13 +395,14 @@ void QDeclarativeGalleryQueryModel::_q_itemsChanged(int index, int count)
     }
     \endqml
 
-    \sa GalleryItem, GalleryType
+    \sa DocumentGalleryItem, DocumentGalleryType
 */
 
 QDeclarativeDocumentGalleryModel::QDeclarativeDocumentGalleryModel(QObject *parent)
     : QDeclarativeGalleryQueryModel(parent)
 {
-    setGallery(QDeclarativeDocumentGallery::gallery());
+    m_request.setGallery(QDeclarativeDocumentGallery::gallery());
+    m_request.setRootType(QDocumentGallery::File);
 }
 
 QDeclarativeDocumentGalleryModel::~QDeclarativeDocumentGalleryModel()
@@ -468,10 +468,44 @@ QDeclarativeDocumentGalleryModel::~QDeclarativeDocumentGalleryModel()
 */
 
 /*!
-    \qmlproperty string DocumentGalleryModel::rootType
+    \qmlproperty enum DocumentGalleryModel::rootType
 
     This property contains the type of item a query should return.
+    It can be one of:
+
+    \list
+    \o DocumentGallery.InvalidType
+    \o DocumentGallery.File
+    \o DocumentGallery.Folder
+    \o DocumentGallery.Document
+    \o DocumentGallery.Text
+    \o DocumentGallery.Audio
+    \o DocumentGallery.Image
+    \o DocumentGallery.Video
+    \o DocumentGallery.Playlist
+    \o DocumentGallery.Artist
+    \o DocumentGallery.AlbumArtist
+    \o DocumentGallery.Album
+    \o DocumentGallery.AudioGenre
+    \o DocumentGallery.PhotoAlbum
+    \endlist
+
+    The default value is DocumentGallery.File
 */
+
+QDeclarativeDocumentGallery::ItemType QDeclarativeDocumentGalleryModel::rootType() const
+{
+    return QDeclarativeDocumentGallery::itemTypeFromString(m_request.rootType());
+}
+
+void QDeclarativeDocumentGalleryModel::setRootType(QDeclarativeDocumentGallery::ItemType itemType)
+{
+    if (!m_complete) {
+        m_request.setRootType(QDeclarativeDocumentGallery::toString(itemType));
+
+        emit rootTypeChanged();
+    }
+}
 
 /*!
     \qmlproperty GalleryFilter DocumentGalleryModel::filter
@@ -578,6 +612,10 @@ QDeclarativeDocumentGalleryModel::~QDeclarativeDocumentGalleryModel()
     \endcode
 */
 
+QVariant QDeclarativeDocumentGalleryModel::itemType(const QString &type) const
+{
+    return QVariant::fromValue(QDeclarativeDocumentGallery::itemTypeFromString(type));
+}
 
 #include "moc_qdeclarativegalleryquerymodel.cpp"
 
