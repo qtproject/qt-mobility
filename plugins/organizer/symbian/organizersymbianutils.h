@@ -48,7 +48,8 @@
 #include <QVariantMap>
 #include <calcommon.h>
 #ifdef SYMBIAN_CALENDAR_V2
-#include <calenmulticaluids.hrh>
+// This file (calenmulticaluids.hrh) no longer exists in S^4, so use a local copy for now
+#include "local_calenmulticaluids.hrh"
 #include <calcalendarinfo.h>
 #endif
 
