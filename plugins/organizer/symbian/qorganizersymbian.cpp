@@ -101,9 +101,13 @@ QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
     m_defaultCalSession->OpenL(KNullDesC);
 
 #ifdef SYMBIAN_CALENDAR_V2
+    // Start listening to calendar file changes
+    m_defaultCalSession->StartFileChangeNotificationL(*this);
+    
     // Add default session to array
     m_calSessions.Append(m_defaultCalSession);
     
+    // Get default calendar filename
     QString defaultFileName = toQString(m_defaultCalSession->DefaultFileNameL());
     
     // Load available calendars
@@ -902,8 +906,19 @@ QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collectionsL(const QLis
 
 bool QOrganizerItemSymbianEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
 {
+    bool isNewCollection = true;
+    if (collection->id().localId())
+        isNewCollection = false;
+    
     TRAPD(err, saveCollectionL(collection));
     transformError(err, error);
+    
+    if (*error == QOrganizerItemManager::NoError) {
+        if (isNewCollection)
+            emit collectionsAdded(QList<QOrganizerCollectionLocalId>() << collection->id().localId());
+        // NOTE: collectionsChanged signal will be emitted from CalendarInfoChangeNotificationL
+    }
+    
     return (*error == QOrganizerItemManager::NoError);   
 }
 
@@ -986,6 +1001,8 @@ bool QOrganizerItemSymbianEngine::removeCollection(const QOrganizerCollectionLoc
 {
     TRAPD(err, removeCollectionL(collectionId));
     transformError(err, error);
+    if (*error == QOrganizerItemManager::NoError)
+        emit collectionsRemoved(QList<QOrganizerCollectionLocalId>() << collectionId);
     return (*error == QOrganizerItemManager::NoError);
 }
 
@@ -1270,6 +1287,119 @@ void QOrganizerItemSymbianEngine::CalChangeNotification(RArray<TCalChangeEntry>&
     
     changeSet.emitSignals(this);
 }
+
+#ifdef SYMBIAN_CALENDAR_V2
+void QOrganizerItemSymbianEngine::CalendarInfoChangeNotificationL(RPointerArray<CCalFileChangeInfo>& aCalendarInfoChangeEntries)
+{
+    // Loop through changes
+    int changeCount = aCalendarInfoChangeEntries.Count();
+    for (int i=0; i<changeCount; i++) {
+
+        // Get changed calendar file name
+        const TDesC& fileName = aCalendarInfoChangeEntries[i]->FileNameL();
+        
+        // Try to find matching session
+        CCalSession *session = 0;
+        int sessionCount = m_calSessions.Count();
+        for (int j=0; j<sessionCount; j++){
+            CCalCalendarInfo *calInfo = m_calSessions[j]->CalendarInfoL();
+            CleanupStack::PushL(calInfo);
+            if (calInfo->FileNameL() == fileName) {
+                session = m_calSessions[j];
+                CleanupStack::PopAndDestroy(calInfo);
+                break;
+            }
+            CleanupStack::PopAndDestroy(calInfo);
+        }
+        
+        // Set collection id for signal emission
+        QList<QOrganizerCollectionLocalId> ids;
+        if (session)
+            ids << session->CollectionIdL();
+        
+        // Check change type
+        switch (aCalendarInfoChangeEntries[i]->ChangeType())
+        {
+        case ECalendarFileCreated:
+            //qDebug() << this << session << toQString(fileName) << "created";
+            if (!session) {
+                // A calendar file has been created but not by this manager instance.
+                // Create a new session to the file
+                session = CCalSession::NewL();
+                session->OpenL(fileName);
+                m_calSessions.Append(session);
+                emit collectionsAdded(ids << session->CollectionIdL());
+            }
+            break;
+            
+        case ECalendarFileDeleted:
+            //qDebug() << this << session << toQString(fileName) << "deleted";
+            if (session) {
+                // A calendar file has been removed but not by this manager instance.
+                m_calSessions.Remove(m_calSessions.Find(session));
+                delete session;
+                emit collectionsRemoved(ids);
+            }
+            break;
+            
+        case ECalendarInfoCreated:
+            //qDebug() << this << session << toQString(fileName) << "info created";
+            break;
+            
+        case ECalendarInfoUpdated: // fallthrough
+            //qDebug() << this << session << toQString(fileName) << "info updated";
+            if (session) {
+                // Get EMarkAsDelete property
+                CCalCalendarInfo *calInfo = session->CalendarInfoL();
+                TBool markAsDelete = EFalse;
+                TRAP_IGNORE(markAsDelete = getCalInfoPropertyL<TBool>(*calInfo, EMarkAsDelete));
+                delete calInfo;
+                
+                if (markAsDelete) {
+                    // A calendar file has been marked for deletion but not by this manager instance.
+                    m_calSessions.Remove(m_calSessions.Find(session));
+                    delete session;
+                    emit collectionsRemoved(ids);
+                    
+                    // TODO: Try removing the calendar file?                    
+                } else {
+                    emit collectionsChanged(ids);
+                }
+            } else {
+                // Calendar file has been modified but we do not have a session to it.
+                // Create a new session to the file
+                session = CCalSession::NewL();
+                session->OpenL(fileName);
+                CleanupStack::PushL(session);
+                
+                // Get EMarkAsDelete property
+                CCalCalendarInfo *calInfo = session->CalendarInfoL();
+                TBool markAsDelete = EFalse;
+                TRAP_IGNORE(markAsDelete = getCalInfoPropertyL<TBool>(*calInfo, EMarkAsDelete));
+                delete calInfo;
+                
+                if (markAsDelete) {
+                    // Something has modified a calendar which is marked for deletion.
+                    CleanupStack::PopAndDestroy(session);
+                } else {
+                    // A calendar file which was marked for deletion has been taken into use again.
+                    m_calSessions.Append(session);
+                    CleanupStack::Pop(session);
+                    emit collectionsAdded(ids << session->CollectionIdL());
+                }
+            }
+            break;
+            
+        case ECalendarInfoDeleted:
+            //qDebug() << this << session << toQString(fileName) << "info deleted";
+            break;
+            
+        default:
+            break;
+        }
+    }
+}
+#endif
 
 /*! Transform a Symbian error id to QOrganizerItemManager::Error.
  *
