@@ -48,6 +48,7 @@
 #include <QtCore/qabstractitemmodel.h>
 #include <QtCore/qpointer.h>
 #include <QtDeclarative/qdeclarative.h>
+#include <QtScript/QtScript>
 
 QTM_BEGIN_NAMESPACE
 
@@ -72,6 +73,7 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
     Q_PROPERTY(Scope scope READ scope WRITE setScope NOTIFY scopeChanged)
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged)
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(QDeclarativeGalleryFilterBase* filter READ filter WRITE setFilter NOTIFY filterChanged)
 public:
     enum State
@@ -166,6 +168,14 @@ public:
 
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
 
+    int count() const { return m_rowCount; }
+
+    Q_INVOKABLE QScriptValue get(const QScriptValue &index) const;
+    Q_INVOKABLE QVariant property(int index, const QString &property) const;
+
+    Q_INVOKABLE void set(int index, const QScriptValue &value);
+    Q_INVOKABLE void setProperty(int index, const QString &property, const QVariant &value);
+
     void classBegin();
     void componentComplete();
 
@@ -192,6 +202,7 @@ Q_SIGNALS:
     void filterChanged();
     void offsetChanged();
     void limitChanged();
+    void countChanged();
 
 private Q_SLOTS:
     void _q_setResultSet(QGalleryResultSet *resultSet);
@@ -204,6 +215,7 @@ private:
     QGalleryQueryRequest m_request;
     QPointer<QDeclarativeGalleryFilterBase> m_filter;
     QGalleryResultSet *m_resultSet;
+    QVector<QPair<int, QString> > m_propertyNames;
     int m_rowCount;
     bool m_complete;
 };
