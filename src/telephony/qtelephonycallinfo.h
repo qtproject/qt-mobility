@@ -64,7 +64,7 @@ public:
     ~QTelephonyCallInfo();
 
     QString remotePartyIdentifier() const;
-    CallType type() const;
+    unsigned int type() const;
     QString subType() const;
     CallStatus status() const;
     QVariant value(const QString& key) const;

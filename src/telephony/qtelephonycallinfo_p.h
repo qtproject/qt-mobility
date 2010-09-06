@@ -53,7 +53,7 @@
 //
 // We mean it.
 //
-
+#include <QtCore/qglobal.h>
 #include <QtCore/qshareddata.h>
 #include <QList>
 #include <QString>
@@ -67,7 +67,11 @@ QTM_BEGIN_NAMESPACE
 
 using namespace QTelephony;
 
-struct QM_AUTOTEST_EXPORT QTelephonyCallInfoPrivate : public QSharedData
+struct
+#if defined(Q_OS_LINUX)
+        QM_AUTOTEST_EXPORT
+#endif
+        QTelephonyCallInfoPrivate : public QSharedData
 {
 public:
     QTelephonyCallInfoPrivate()
@@ -79,7 +83,7 @@ public:
         : QSharedData(other) { }
 
     QString remotePartyIdentifier;
-    QTelephony::CallType type;
+    unsigned int type;
     QString subType;
     QTelephony::CallStatus status;
     QHash<QString, QVariant> values;
