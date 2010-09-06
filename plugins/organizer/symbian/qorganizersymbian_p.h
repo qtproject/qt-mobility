@@ -75,6 +75,9 @@
 
 #include <calprogresscallback.h> // MCalProgressCallBack
 #include <calchangecallback.h>
+#ifdef SYMBIAN_CALENDAR_V2
+#include <calfilechangenotification.h>
+#endif
 
 QTM_USE_NAMESPACE
 
@@ -117,6 +120,9 @@ class CCalCalendarInfo;
 class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine, 
                                     public MCalProgressCallBack,
                                     public MCalChangeCallBack2
+#ifdef SYMBIAN_CALENDAR_V2
+                                    ,public MCalFileChangeObserver
+#endif
 {
     Q_OBJECT
 
@@ -172,9 +178,14 @@ public: // MCalProgressCallBack
     void Progress(TInt aPercentageCompleted);
     void Completed(TInt aError);
     TBool NotifyProgress();
-    
+
 public: // MCalChangeCallBack2
     void CalChangeNotification(RArray<TCalChangeEntry>& aChangeItems);
+
+#ifdef SYMBIAN_CALENDAR_V2
+public: // MCalFileChangeObserver
+    void CalendarInfoChangeNotificationL(RPointerArray<CCalFileChangeInfo>& aCalendarInfoChangeEntries);
+#endif
     
 public: 
     /* Util functions */
