@@ -69,7 +69,7 @@ QDeclarativeGalleryType::QDeclarativeGalleryType(QObject *parent)
     connect(&m_request, SIGNAL(succeeded()), this, SIGNAL(succeeded()));
     connect(&m_request, SIGNAL(cancelled()), this, SIGNAL(cancelled()));
     connect(&m_request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)),
-            this, SIGNAL(stateChanged()));
+            this, SIGNAL(statusChanged()));
     connect(&m_request, SIGNAL(resultChanged()), this, SIGNAL(resultChanged()));
     connect(&m_request, SIGNAL(progressChanged(int,int)), this, SIGNAL(progressChanged()));
     connect(&m_request, SIGNAL(resultChanged()), this, SIGNAL(resultChanged()));
@@ -95,15 +95,15 @@ QDeclarativeGalleryType::~QDeclarativeGalleryType()
 */
 
 /*!
-    \qmlproperty enum GalleryType::state
+    \qmlproperty enum GalleryType::status
 
-    This property holds the state of a type request.  It can be one of:
+    This property holds the status of a type request.  It can be one of:
 
     \list
     \o Inactive The request has finished.
     \o Active The request is currently executing.
     \o Cancelling The request has been cancelled, but has yet reached the
-    Inactive state.
+    Inactive status.
     \o Idle The request has finished and is monitoring its result set for
     changes.
     \endlist

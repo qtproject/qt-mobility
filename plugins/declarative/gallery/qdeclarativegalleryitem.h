@@ -55,10 +55,10 @@ class QDeclarativeGalleryItem : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
     Q_INTERFACES(QDeclarativeParserStatus)
-    Q_ENUMS(State)
+    Q_ENUMS(Status)
     Q_ENUMS(Result)
     Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery NOTIFY galleryChanged)
-    Q_PROPERTY(State state READ state NOTIFY stateChanged)
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(Result result READ result NOTIFY resultChanged)
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
@@ -69,7 +69,7 @@ class QDeclarativeGalleryItem : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QUrl itemUrl READ itemUrl NOTIFY availableChanged)
     Q_PROPERTY(QObject *metaData READ metaData NOTIFY metaDataChanged)
 public:
-    enum State
+    enum Status
     {
         Inactive    = QGalleryAbstractRequest::Inactive,
         Active      = QGalleryAbstractRequest::Active,
@@ -95,7 +95,7 @@ public:
     void setGallery(QAbstractGallery *gallery) {
         if (!m_complete || !gallery) { m_request.setGallery(gallery); emit galleryChanged(); } }
 
-    State state() const { return State(m_request.state()); }
+    Status status() const { return Status(m_request.state()); }
     Result result() const { return Result(m_request.result()); }
 
     qreal progress() const
@@ -135,7 +135,7 @@ Q_SIGNALS:
     void cancelled();
     void failed(int result);
     void finished(int result);
-    void stateChanged();
+    void statusChanged();
     void resultChanged();
     void progressChanged();
     void availableChanged();
