@@ -46,7 +46,6 @@ QTM_USE_NAMESPACE
 class TapSensorFilter : public QTapFilter
 {
 public:
-    qtimestamp stamp;
     bool filter(QTapReading *reading)
     {
         int diff = ( reading->timestamp() - stamp );
@@ -74,6 +73,8 @@ public:
         out << QString(" (%1 ms since last, %2 Hz)").arg(diff / 1000, 5).arg( 1000000.0 / diff, 3, 'f', 1) << endl;
         return false; // don't store the reading in the sensor
     }
+private:
+    qtimestamp stamp;
 };
 
 int main(int argc, char **argv)
@@ -86,6 +87,7 @@ int main(int argc, char **argv)
         rate_val = args.at(rate_place + 1).toInt();
 
     QTapSensor doublesensor;
+    doublesensor.setProperty("returnDoubleTapEvents", true);
     if (rate_val > 0) {
         doublesensor.setDataRate(rate_val);
     }

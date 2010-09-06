@@ -51,7 +51,7 @@ maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
 {
     const QString sensorName = "magnetometersensor";
     initSensor<MagnetometerSensorChannelInterface>(sensorName, m_initDone);
-
+    setDescription(QLatin1String("magnetic flux density in teslas (T)"));
     setRanges(NANO);
 
     if (m_sensorInterface){
@@ -61,6 +61,7 @@ maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
     }
     else
         qWarning() << "Unable to initialize "<< sensorName;
+
 
     setReading<QMagnetometerReading>(&m_reading);
 
