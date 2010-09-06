@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<SFW version="1.0">
 <service>
     <name>TestService</name>
     <filepath>C:/TestData/testservice.dll</filepath>
@@ -36,3 +37,4 @@
         <customproperty key="key3"></customproperty>
     </interface>
 </service>
+</SFW>

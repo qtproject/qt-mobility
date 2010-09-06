@@ -512,6 +512,16 @@ QString qCanonicalPath(const QString &path)
     return result;
 }
 
+#ifdef QT_SIMULATOR
+QString qAddSimulatorPrefix(const QString &path)
+{
+    QString result("/SimulatorPrivate");
+    result.append(path);
+    return result;
+}
+
+#endif
+
 #include "moc_qvaluespace_p.cpp"
 
 QTM_END_NAMESPACE

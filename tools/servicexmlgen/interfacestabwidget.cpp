@@ -66,9 +66,8 @@ void InterfacesTabWidget::load(const QList<QTM_PREPEND_NAMESPACE(QServiceInterfa
         }
     }
 
-    InterfaceWidget *iface;
     for (int i=0; i<descriptors.count(); i++)
-        iface = addInterface(descriptors[i]);
+        addInterface(descriptors[i]);
 
     if (count() == 0)
         addInterface(); // blank placeholder interface
