@@ -751,56 +751,56 @@ EXPORTS
 	_ZN10QtMobility14QContactActionD2Ev @ 750 NONAME
 	_ZN10QtMobility15QContactManager22ParameterSignalSourcesE @ 751 NONAME DATA 14
 	_ZN10QtMobility15QContactManager26ParameterSignalDefinitionsE @ 752 NONAME DATA 18
-	_ZN10QtMobility16QContactFavorite10FieldIndexE @ 753 NONAME DATA 6
-	_ZN10QtMobility16QContactFavorite13FieldFavoriteE @ 754 NONAME DATA 9
-	_ZN10QtMobility16QContactFavorite14DefinitionNameE @ 755 NONAME DATA 9
-	_ZN10QtMobility17QContactFetchHint21setPreferredImageSizeERK5QSize @ 756 NONAME
-	_ZN10QtMobility19QContactSaveRequestD0Ev @ 757 NONAME
-	_ZN10QtMobility19QContactSaveRequestD1Ev @ 758 NONAME
-	_ZN10QtMobility19QContactSaveRequestD2Ev @ 759 NONAME
-	_ZN10QtMobility19QContactUnionFilter5clearEv @ 760 NONAME
-	_ZN10QtMobility20QContactActionFilter13setActionNameERK7QString @ 761 NONAME
-	_ZN10QtMobility20QContactActionFilterC1ERKNS_14QContactFilterE @ 762 NONAME
-	_ZN10QtMobility20QContactActionFilterC1Ev @ 763 NONAME
-	_ZN10QtMobility20QContactActionFilterC2ERKNS_14QContactFilterE @ 764 NONAME
-	_ZN10QtMobility20QContactActionFilterC2Ev @ 765 NONAME
-	_ZN10QtMobility20QContactActionTarget10setContactERKNS_8QContactE @ 766 NONAME
-	_ZN10QtMobility20QContactActionTarget10setDetailsERK5QListINS_14QContactDetailEE @ 767 NONAME
-	_ZN10QtMobility20QContactActionTargetC1ERKNS_8QContactERK5QListINS_14QContactDetailEE @ 768 NONAME
-	_ZN10QtMobility20QContactActionTargetC1ERKNS_8QContactERKNS_14QContactDetailE @ 769 NONAME
-	_ZN10QtMobility20QContactActionTargetC1ERKS0_ @ 770 NONAME
-	_ZN10QtMobility20QContactActionTargetC2ERKNS_8QContactERK5QListINS_14QContactDetailEE @ 771 NONAME
-	_ZN10QtMobility20QContactActionTargetC2ERKNS_8QContactERKNS_14QContactDetailE @ 772 NONAME
-	_ZN10QtMobility20QContactActionTargetC2ERKS0_ @ 773 NONAME
-	_ZN10QtMobility20QContactActionTargetD1Ev @ 774 NONAME
-	_ZN10QtMobility20QContactActionTargetD2Ev @ 775 NONAME
-	_ZN10QtMobility20QContactActionTargetaSERKS0_ @ 776 NONAME
-	_ZN10QtMobility20QContactFetchRequestD0Ev @ 777 NONAME
-	_ZN10QtMobility20QContactFetchRequestD1Ev @ 778 NONAME
-	_ZN10QtMobility20QContactFetchRequestD2Ev @ 779 NONAME
-	_ZN10QtMobility21QContactActionFactory11qt_metacallEN11QMetaObject4CallEiPPv @ 780 NONAME
-	_ZN10QtMobility21QContactActionFactory11qt_metacastEPKc @ 781 NONAME
-	_ZN10QtMobility21QContactActionFactory13InterfaceNameE @ 782 NONAME DATA 38
-	_ZN10QtMobility21QContactActionFactory16staticMetaObjectE @ 783 NONAME DATA 16
-	_ZN10QtMobility21QContactActionFactory19getStaticMetaObjectEv @ 784 NONAME
-	_ZN10QtMobility21QContactActionFactoryD0Ev @ 785 NONAME
-	_ZN10QtMobility21QContactActionFactoryD1Ev @ 786 NONAME
-	_ZN10QtMobility21QContactActionFactoryD2Ev @ 787 NONAME
-	_ZN10QtMobility21QContactLocalIdFilter3addERKj @ 788 NONAME
-	_ZN10QtMobility21QContactLocalIdFilter5clearEv @ 789 NONAME
-	_ZN10QtMobility21QContactLocalIdFilter6removeERKj @ 790 NONAME
-	_ZN10QtMobility21QContactRemoveRequestD0Ev @ 791 NONAME
-	_ZN10QtMobility21QContactRemoveRequestD1Ev @ 792 NONAME
-	_ZN10QtMobility21QContactRemoveRequestD2Ev @ 793 NONAME
-	_ZN10QtMobility24QContactActionDescriptor12MetaDataIconE @ 794 NONAME DATA 5
-	_ZN10QtMobility24QContactActionDescriptor13MetaDataLabelE @ 795 NONAME DATA 6
-	_ZN10QtMobility24QContactActionDescriptor19MetaDataSecondLabelE @ 796 NONAME DATA 12
-	_ZN10QtMobility24QContactActionDescriptor29MetaDataOptionalParameterKeysE @ 797 NONAME DATA 22
-	_ZN10QtMobility24QContactActionDescriptor30MetaDataMandatoryParameterKeysE @ 798 NONAME DATA 23
-	_ZN10QtMobility24QContactActionDescriptorC1ERK7QStringS3_S3_iPKNS_21QContactActionFactoryE @ 799 NONAME
-	_ZN10QtMobility24QContactActionDescriptorC1ERKS0_ @ 800 NONAME
-	_ZN10QtMobility24QContactActionDescriptorC1Ev @ 801 NONAME
-	_ZN10QtMobility24QContactActionDescriptorC2ERK7QStringS3_S3_iPKNS_21QContactActionFactoryE @ 802 NONAME
+	_ZN10QtMobility15QContactManager31ParameterValueOnlyOtherManagersE @ 753 NONAME DATA 18
+	_ZN10QtMobility15QContactManager32ParameterValueOnlyOtherProcessesE @ 754 NONAME DATA 19
+	_ZN10QtMobility16QContactFavorite10FieldIndexE @ 755 NONAME DATA 6
+	_ZN10QtMobility16QContactFavorite13FieldFavoriteE @ 756 NONAME DATA 9
+	_ZN10QtMobility16QContactFavorite14DefinitionNameE @ 757 NONAME DATA 9
+	_ZN10QtMobility17QContactFetchHint21setPreferredImageSizeERK5QSize @ 758 NONAME
+	_ZN10QtMobility19QContactSaveRequestD0Ev @ 759 NONAME
+	_ZN10QtMobility19QContactSaveRequestD1Ev @ 760 NONAME
+	_ZN10QtMobility19QContactSaveRequestD2Ev @ 761 NONAME
+	_ZN10QtMobility19QContactUnionFilter5clearEv @ 762 NONAME
+	_ZN10QtMobility20QContactActionFilter13setActionNameERK7QString @ 763 NONAME
+	_ZN10QtMobility20QContactActionFilterC1ERKNS_14QContactFilterE @ 764 NONAME
+	_ZN10QtMobility20QContactActionFilterC1Ev @ 765 NONAME
+	_ZN10QtMobility20QContactActionFilterC2ERKNS_14QContactFilterE @ 766 NONAME
+	_ZN10QtMobility20QContactActionFilterC2Ev @ 767 NONAME
+	_ZN10QtMobility20QContactActionTarget10setContactERKNS_8QContactE @ 768 NONAME
+	_ZN10QtMobility20QContactActionTarget10setDetailsERK5QListINS_14QContactDetailEE @ 769 NONAME
+	_ZN10QtMobility20QContactActionTargetC1ERKNS_8QContactERK5QListINS_14QContactDetailEE @ 770 NONAME
+	_ZN10QtMobility20QContactActionTargetC1ERKNS_8QContactERKNS_14QContactDetailE @ 771 NONAME
+	_ZN10QtMobility20QContactActionTargetC1ERKS0_ @ 772 NONAME
+	_ZN10QtMobility20QContactActionTargetC2ERKNS_8QContactERK5QListINS_14QContactDetailEE @ 773 NONAME
+	_ZN10QtMobility20QContactActionTargetC2ERKNS_8QContactERKNS_14QContactDetailE @ 774 NONAME
+	_ZN10QtMobility20QContactActionTargetC2ERKS0_ @ 775 NONAME
+	_ZN10QtMobility20QContactActionTargetD1Ev @ 776 NONAME
+	_ZN10QtMobility20QContactActionTargetD2Ev @ 777 NONAME
+	_ZN10QtMobility20QContactActionTargetaSERKS0_ @ 778 NONAME
+	_ZN10QtMobility20QContactFetchRequestD0Ev @ 779 NONAME
+	_ZN10QtMobility20QContactFetchRequestD1Ev @ 780 NONAME
+	_ZN10QtMobility20QContactFetchRequestD2Ev @ 781 NONAME
+	_ZN10QtMobility21QContactActionFactory11qt_metacallEN11QMetaObject4CallEiPPv @ 782 NONAME
+	_ZN10QtMobility21QContactActionFactory11qt_metacastEPKc @ 783 NONAME
+	_ZN10QtMobility21QContactActionFactory13InterfaceNameE @ 784 NONAME DATA 38
+	_ZN10QtMobility21QContactActionFactory16staticMetaObjectE @ 785 NONAME DATA 16
+	_ZN10QtMobility21QContactActionFactory19getStaticMetaObjectEv @ 786 NONAME
+	_ZN10QtMobility21QContactActionFactoryD0Ev @ 787 NONAME
+	_ZN10QtMobility21QContactActionFactoryD1Ev @ 788 NONAME
+	_ZN10QtMobility21QContactActionFactoryD2Ev @ 789 NONAME
+	_ZN10QtMobility21QContactLocalIdFilter3addERKj @ 790 NONAME
+	_ZN10QtMobility21QContactLocalIdFilter5clearEv @ 791 NONAME
+	_ZN10QtMobility21QContactLocalIdFilter6removeERKj @ 792 NONAME
+	_ZN10QtMobility21QContactRemoveRequestD0Ev @ 793 NONAME
+	_ZN10QtMobility21QContactRemoveRequestD1Ev @ 794 NONAME
+	_ZN10QtMobility21QContactRemoveRequestD2Ev @ 795 NONAME
+	_ZN10QtMobility24QContactActionDescriptor12MetaDataIconE @ 796 NONAME DATA 5
+	_ZN10QtMobility24QContactActionDescriptor13MetaDataLabelE @ 797 NONAME DATA 6
+	_ZN10QtMobility24QContactActionDescriptor19MetaDataSecondLabelE @ 798 NONAME DATA 12
+	_ZN10QtMobility24QContactActionDescriptor29MetaDataOptionalParameterKeysE @ 799 NONAME DATA 22
+	_ZN10QtMobility24QContactActionDescriptor30MetaDataMandatoryParameterKeysE @ 800 NONAME DATA 23
+	_ZN10QtMobility24QContactActionDescriptorC1ERKS0_ @ 801 NONAME
+	_ZN10QtMobility24QContactActionDescriptorC1Ev @ 802 NONAME
 	_ZN10QtMobility24QContactActionDescriptorC2ERKS0_ @ 803 NONAME
 	_ZN10QtMobility24QContactActionDescriptorC2Ev @ 804 NONAME
 	_ZN10QtMobility24QContactActionDescriptorD1Ev @ 805 NONAME
@@ -868,15 +868,18 @@ EXPORTS
 	_ZNK10QtMobility24QContactActionDescriptor16supportedTargetsERKNS_8QContactE @ 867 NONAME
 	_ZNK10QtMobility24QContactActionDescriptor21implementationVersionEv @ 868 NONAME
 	_ZNK10QtMobility24QContactActionDescriptor7isValidEv @ 869 NONAME
-	_ZNK10QtMobility24QContactActionDescriptor8metaDataERK7QStringRK5QListINS_20QContactActionTargetEERK4QMapIS1_8QVariantE @ 870 NONAME
-	_ZNK10QtMobility24QContactActionDescriptoreqERKS0_ @ 871 NONAME
-	_ZNK10QtMobility24QContactActionDescriptorneERKS0_ @ 872 NONAME
-	_ZNK10QtMobility8QContact15preferredDetailERK7QString @ 873 NONAME
-	_ZNK10QtMobility8QContact16availableActionsERK7QString @ 874 NONAME
-	_ZNK10QtMobility8QContact16preferredDetailsEv @ 875 NONAME
-	_ZNK10QtMobility8QContact17isPreferredDetailERK7QStringRKNS_14QContactDetailE @ 876 NONAME
-	_ZTIN10QtMobility14QContactActionE @ 877 NONAME
-	_ZTIN10QtMobility21QContactActionFactoryE @ 878 NONAME
-	_ZTVN10QtMobility14QContactActionE @ 879 NONAME
-	_ZTVN10QtMobility21QContactActionFactoryE @ 880 NONAME
+	_ZNK10QtMobility24QContactActionDescriptor8metaDataERK7QStringRK4QMapIS1_8QVariantE @ 870 NONAME
+	_ZNK10QtMobility24QContactActionDescriptor8metaDataERK7QStringRK5QListINS_20QContactActionTargetEERK4QMapIS1_8QVariantE @ 871 NONAME
+	_ZNK10QtMobility24QContactActionDescriptor8metaDataERK7QStringRKNS_20QContactActionTargetERK4QMapIS1_8QVariantE @ 872 NONAME
+	_ZNK10QtMobility24QContactActionDescriptor8metaDataERK7QStringRKNS_8QContactERKNS_14QContactDetailERK4QMapIS1_8QVariantE @ 873 NONAME
+	_ZNK10QtMobility24QContactActionDescriptoreqERKS0_ @ 874 NONAME
+	_ZNK10QtMobility24QContactActionDescriptorneERKS0_ @ 875 NONAME
+	_ZNK10QtMobility8QContact15preferredDetailERK7QString @ 876 NONAME
+	_ZNK10QtMobility8QContact16availableActionsERK7QString @ 877 NONAME
+	_ZNK10QtMobility8QContact16preferredDetailsEv @ 878 NONAME
+	_ZNK10QtMobility8QContact17isPreferredDetailERK7QStringRKNS_14QContactDetailE @ 879 NONAME
+	_ZTIN10QtMobility14QContactActionE @ 880 NONAME
+	_ZTIN10QtMobility21QContactActionFactoryE @ 881 NONAME
+	_ZTVN10QtMobility14QContactActionE @ 882 NONAME
+	_ZTVN10QtMobility21QContactActionFactoryE @ 883 NONAME
 
