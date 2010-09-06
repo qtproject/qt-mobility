@@ -75,9 +75,10 @@ class QLandmarkFileHandlerGpx;
 class QueryRun : public QRunnable
 {
 public:
-    QueryRun(QLandmarkAbstractRequest *req =0,
-             const QString &uri=QString(),
-             QLandmarkManagerEngineSqlite *eng =0);
+    QueryRun(QLandmarkAbstractRequest *req,
+             const QString &uri,
+             QLandmarkManagerEngineSqlite *eng,
+             unsigned int runId);
     ~QueryRun();
     void run();
 
@@ -88,7 +89,9 @@ public:
     QMap<int, QLandmarkManager::Error> errorMap;
     QString managerUri;
     volatile bool isCanceled;
+    volatile bool isDeleted;
     QLandmarkManagerEngineSqlite *engine;
+    unsigned int runId;
 };
 
 class DatabaseOperations {
@@ -184,8 +187,7 @@ class DatabaseOperations {
                          QList<QLandmarkId> landmarkIds,
                          QLandmarkManager::TransferOption,
                          QLandmarkManager::Error *error,
-                         QString *errorString,
-                         QueryRun *queryRun =0) const;
+                         QString *errorString) const;
 
     bool importLandmarksLmx(QIODevice *device,
                             QLandmarkManager::TransferOption option,
@@ -207,14 +209,12 @@ class DatabaseOperations {
                             QList<QLandmarkId> landmarkIds,
                             QLandmarkManager::TransferOption option,
                             QLandmarkManager::Error *error,
-                            QString *errorString,
-                            QueryRun *queryRun =0) const ;
+                            QString *errorString) const ;
 
     bool exportLandmarksGpx(QIODevice *device,
                             QList<QLandmarkId> landmarkIds,
                             QLandmarkManager::Error *error,
-                            QString *errorString,
-                            QueryRun *queryRun =0) const;
+                            QString *errorString) const;
 
     QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
     QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders) const;

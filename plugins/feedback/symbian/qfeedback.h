@@ -131,7 +131,7 @@ private:
 
         int elapsed() const
         {
-            return pausedTime + m_elapsedTimer.isValid() ? m_elapsedTimer.elapsed() : 0;
+            return pausedTime + (m_elapsedTimer.isValid() ? m_elapsedTimer.elapsed() : 0);
         }
 
 

@@ -187,15 +187,10 @@ void QDeclarativeGalleryQueryModel::componentComplete()
 */
 
 /*!
-    \qmlproperty int GalleryQueryModel::currentProgress
+    \qmlproperty real GalleryQueryModel::progress
 
-    This property holds the current progress value.
-*/
-
-/*!
-    \qmlproperty int GalleryQueryModel::maximumProgress
-
-    This property holds the maximum progress value.
+    This property holds the current progress of the request, from 0.0 (started)
+    to 1.0 (finished).
 */
 
 /*!

@@ -140,7 +140,7 @@ QChar CPcsKeyMap::Separator() const
     }
 
 // ----------------------------------------------------------------------------
-// CPcsKeyMap::SetHardcodedCharacters
+// CPcsKeyMap::SelectLanguages
 // Default implementation selects only the current default language.
 // ----------------------------------------------------------------------------
 QList<HbInputLanguage> CPcsKeyMap::SelectLanguages()
@@ -282,7 +282,7 @@ void CPcsKeyMap::ConstructLanguageMappings(HbKeyboardType aKeyboardType)
                 ReadKeymapCharacters(aKeyboardType, *keymap);
 				
 #if defined(NEW_KEYMAP_FACTORY_API)
-				delete keymap;
+                delete keymap;
 #endif
 			    }
 			else

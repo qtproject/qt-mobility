@@ -10,6 +10,7 @@
     INCLUDEPATH+=$$MW_LAYER_SYSTEMINCLUDE
 }
 mac: LIBS += -F$${MOBILITY_LIB}
+
 LIBS+= -L$${MOBILITY_LIB}
 QMAKE_RPATHDIR+=$${MOBILITY_LIB}
 
@@ -17,6 +18,8 @@ QMAKE_RPATHDIR+=$${MOBILITY_LIB}
 contains(MOBILITY, versit) {
     MOBILITY += contacts
 }
+
+simulator: qtAddLibrary(QtMobilitySimulator)
 
 contains(MOBILITY, bearer) {
     DEFINES += QT_MOBILITY_BEARER

@@ -224,8 +224,12 @@ private:
     // import export internal impl
     void exportLandmarksL(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds,
         QLandmarkManager::TransferOption option) const;
-    void importLandmarksL(QIODevice *device, const QString &format,
+    QList<QLandmarkId> importLandmarksL(QIODevice *device, const QString &format,
         QLandmarkManager::TransferOption option, const QLandmarkCategoryId& categoryId) const;
+
+public:
+    static CLandmarkDbEventHandler m_DbEventHandler;
+    static LandmarkRequestHandler m_RequestHandler;
 
 private:
     QString m_dbFilename;
@@ -237,11 +241,6 @@ private:
 
     bool m_isExtendedAttributesEnabled;
     bool m_isCustomAttributesEnabled;
-
-public:
-    static CLandmarkDbEventHandler m_DbEventHandler;
-    static LandmarkRequestHandler m_RequestHandler;
-    
 
 private:
     friend class QLandmarkDbEventObserver;

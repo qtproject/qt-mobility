@@ -58,7 +58,7 @@ set BUILD_EXAMPLES=no
 set BUILD_DEMOS=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
-set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery telephony organizer feedback
+set MOBILITY_MODULES=bearer location contacts systeminfo publishsubscribe versit messaging sensors serviceframework multimedia gallery telephony organizer feedback
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
@@ -523,6 +523,7 @@ goto windowsTests
 call :compileTest LBT lbt
 call :compileTest SNAP snap
 call :compileTest OCC occ
+call :compileTest SymbianENote symbianenote
 call :compileTest SymbianContactSIM symbiancntsim
 call :compileTest SymbianContactModel symbiancntmodel
 call :compileTest SymbianContactModelv2 symbiancntmodelv2
