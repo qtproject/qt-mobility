@@ -245,7 +245,7 @@ public:
     /**
      * converts qt format string to symbian format string
      */
-    static HBufC8* landmarkPackageFormatsStrLC(const QString& format);
+    static HBufC8* landmarkPackageFormatsStrL(const QString& format);
 
     /**
      * Prepares the path for the file
