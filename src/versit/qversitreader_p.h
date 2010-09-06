@@ -88,7 +88,7 @@ static const int MAX_OLD_BYTES_TO_KEEP = 8192;
  * 
  * It stores a QByteArray internally, plus a marker of where it starts and where it ends.
  */
-class Q_AUTOTEST_EXPORT LByteArray
+class QM_AUTOTEST_EXPORT LByteArray
 {
 public:
     LByteArray() : mStart(0), mEnd(0) {}
@@ -151,7 +151,7 @@ private:
     friend class LineReader;
 };
 
-class Q_AUTOTEST_EXPORT LineReader
+class QM_AUTOTEST_EXPORT LineReader
 {
 public:
     LineReader(QIODevice* device, QTextCodec* codec, int chunkSize = 1000);
@@ -174,7 +174,7 @@ private:
     int mSearchFrom;
 };
 
-class Q_AUTOTEST_EXPORT QVersitReaderPrivate : public QThread
+class QM_AUTOTEST_EXPORT QVersitReaderPrivate : public QThread
 {
     Q_OBJECT
 

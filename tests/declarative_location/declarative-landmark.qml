@@ -48,39 +48,26 @@ Rectangle {
     height: 350
     color: "olive"
     
-    Text {
-        id: title
-        text: "Simple landmark test app"
-        font {pointSize: 12; bold: true}
-    }
+    Text { id: title;  text: "Simple landmark test app"; font {pointSize: 12; bold: true}}
     
-    PositionSource {
-        id: positionSource
-        updateInterval: 1000
-    }
-    Landmark {
-        id: lm
-        name: "just to see if this landmark element instantiates"
-    }
-    LandmarkCategory {
-        id: lmcat
-        name: "just to see if this categoary element instantiates"
-    }
-    LandmarkIntersectionFilter {
-        id : landmarkIntersectionFilterInstantiation
-    }
-    LandmarkUnionFilter {
-        id : landmarUnionFilterInstantiation
-    }
+    // Just to see everything instantiates
+    Landmark { }
+    LandmarkModel { }
+    LandmarkCategory { }
+    LandmarkCategoryModel { }
+    LandmarkFilter { }
+    LandmarkIntersectionFilter { }
+    LandmarkUnionFilter { }
+
+    // Example: landmark name filter
     LandmarkFilter {
-        id : landmarkFilterName
+	id: landmarkFilterUndercity
 	type: LandmarkFilter.Name
-	//value: "Perth"
-	value: "Landmark 1"
-    }
-    
+	value: "Undercity"
+    }    
+    // Example: landmark proximity filters
     LandmarkFilter {
-        id: landmarkFilterProximity
+        id: landmarkFilterSpecificLocation
 	type: LandmarkFilter.Proximity
 	value: Position {
             id: position
@@ -89,28 +76,22 @@ Rectangle {
 	    radius: 500
 	}
     }
-    
-    LandmarkUnionFilter {
-        id : landmarkUnionFilterNameAndProxy
-	LandmarkFilter {
-	    type: LandmarkFilter.Name
-	    value: "Landmark 1"
-        }
-	LandmarkFilter {
-	    type: LandmarkFilter.Proximity
-	    value: Position {
-	        longitude:  10
-	        latitude: 20
-	        radius: 50000
-	    }
-        }
+    PositionSource {
+        id: myPosition
+        updateInterval: 1000
+    }
+    LandmarkFilter {
+        id: landmarkFilterMyCurrentLocation
+	type: LandmarkFilter.Proximity
+	value: myPosition.position
     }
     
+    // Example: landmark intersection filter
     LandmarkIntersectionFilter {
-        id : landmarkIntersectionFilterNameAndProxy
+        id: landmarkIntersectionFilterNameAndProximity
 	LandmarkFilter {
 	    type: LandmarkFilter.Name
-	    value: "Landmark 1"
+	    value: "Darwin"
         }
 	LandmarkFilter {
 	    type: LandmarkFilter.Proximity
@@ -122,78 +103,109 @@ Rectangle {
         }
     }
     
+    // Example: landmark union filter
+    LandmarkUnionFilter {
+        id: landmarkUnionFilterNameAndProximity
+	LandmarkFilter {
+	    type: LandmarkFilter.Name
+	    value: "Nimbin"
+        }
+	LandmarkFilter {
+	    type: LandmarkFilter.Proximity
+	    value: Position {
+	        longitude:  myPosition.position.longitude
+	        latitude: myPosition.position.latitude
+	        radius: 50
+	    }
+        }
+    }
     
-    // The model where data stems
+    // Example: landmark model
     LandmarkModel {
-        id: lmmodel
+        id: landmarkModel
+	//  autoUpdate determines if model is automatically updated:
+	//  1) after instantiated  (no need to call update())
+	//  2) whenever database data changes (QLandmarkManager reports changes)
+	//  3) filters are changed (TBD if data change within a filter should trigger update too)
+	// Value is true by default
         autoUpdate: true
+	// filter determines what data is requested
+	//filter: landmarkFilterUndercity
 	
-	//filter: landmarkFilterName
-	//filter: landmarkFilterProximity
-	filter: landmarkUnionFilterNameAndProxy
+	onLandmarksChanged: {
+	    console.log("Landmark count is: "+ count);
+	    for (var index = 0; index < landmarks.length; index++)  {
+	        console.log("Index, name:" + index + " , " + landmarks[index].name);
+            }
+	}
 	
-	/*
+	/* 
+	// Alternatively filter could be declared directly
 	filter: LandmarkIntersectionFilter {
 	    LandmarkFilter {
-	        type: LandmarkFilter.Proximity
-		value: 1500
+	        ...
 	    }
 	    LandmarkUnionFilter {
 	        LandmarkIntersectionFilter {
 		    LandmarkFilter {
-		        type: LandmarkFilter.Name
-			value: "Brisbane"
+		        ...
 		    }
 		    LandmarkFilter {
-	                type: LandmarkFilter.Name
-			value: "Gold Coast"
+		        ...
 		    }
-		    
-		    
 		}
 	    }
-	} // LandmarkIntersectionFilter
+	}
 	*/
-	
+	// Limit determines the maximum number of items this model holds
         limit: 15
+	// Offset determines the index where to start elements (e.g. in tabbed/paged browsing)
 	offset: 0
     }
+
+    // Example: landmark category model
+    LandmarkCategoryModel {
+        id: categoriesOfGivenLandmark
+	autoUpdate: false
+	
+	// You can assign a Landmark here. That causes the LandmarkCategoryModel to 
+	// provide the categories the landmark belongs to. However, the Landmark needs to come from
+	// LandmarkModel because it needs to have internal IDs set correctly. Preferably it should be assigned
+	// either by iterating list of landmarks from model, or by setting it in the landmark model's delegate.
+        // (although the 'role' for providing the landmark instance is currently not implemented)
+	// landmark: 
+	
+	limit: 5
+	offset:0
+    }
     
-    //LandmarkCategoryModel {
-    //    id: lmcatmodel
-    //     autoUpdate: true
-    //	}
-    
-    // The view which lays the overall view
+    // The view
     ListView {
         id: mainList
-        
-        model: lmmodel
+        model: landmarkModel
         delegate: landmarklistdelegate
-        
-        //model: lmcatmodel
-        //delegate: categorylistdelegate
-        
         anchors {top: title.bottom; left: title.left}
         width: parent.width; height: parent.height
-        
         highlightFollowsCurrentItem: false
         focus: true
         anchors.fill: parent
         keyNavigationWraps: true
     }
+    
      // The delegate which determines how individual element is shown
     Component {
 	id: landmarklistdelegate
 	Item {
 	    width: 200; height: 50
 	    Text { id: nameField; text: name }
-	    //Text { id: nameFiedld; text: lmmodel.nameFilter.name }
 	    Text { id: phoneField; text: "  tel:"  + phoneNumber; anchors.left: nameField.right }
 	    Text { id: latitudeField; text: "  lat:"  + latitude;  anchors.left: phoneField.right }
 	    Text { id: longitudeField; text: "  lon:"  + longitude;  anchors.left: latitudeField.right }
-	}
-    }
+	    Text { id: altitudeeField; text: "  alt:"  + altitude;  anchors.left: longitudeField.right }
+	    // Set landmark to the model, few lines of code missing still
+	    // categoriesOfGivenLandmark.landmark = landmark
+        }
+    }    
     Component {
 	id: categorylistdelegate
 	Item {
@@ -202,39 +214,25 @@ Rectangle {
 	}
     }
 
-    /*
-    Column {
-        id: data
-        anchors {top: title.bottom; left: title.left}
-        Text {text: "<==== Landmark ====>"}
-        Text {text: "name: " + lm.name}
-        Text {text: "<==== Landmark category ====>"}
-        Text {text: "name: " + lmcat.name}
-        Text {text: "<==== LandmarkModel ====>"}
-        Text {text: "autoUpdate: " + lmmodel.autoUpdate}
-        
-    }
-    
     Grid {
         id: actionRectangles
         x: 4;
         width: 150
         anchors { topMargin: 5; top: data.bottom}
         rows: 3; columns: 1; spacing: anchors.bottomMargin;
-        Content.Cell {action: "unassigned 1"; onClicked: doAction(action)}
+        Content.Cell {action: "Change DB"; onClicked: doAction(action)}
         Content.Cell {action: "unassigned 2"; onClicked: doAction(action)}
         Content.Cell {action: "unassigned 3";  onClicked: doAction(action)}
     }
     function doAction(action) {
-        if (action == "unassigned 1") {
-            positionSource.update()
+        if (action == "Change DB") {
+            landmarkModel.setDbFileName("generatedExampleLandmarkDb.db");
         }
         else if (action == "unassigned 2" ) {
-            positionSource.start();
+            
         }
         else if (action == "unassigned 3" ) {
-            positionSource.stop();
+            
         }
     }
-    */
 }

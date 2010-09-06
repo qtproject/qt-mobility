@@ -243,31 +243,45 @@ void QGeoSearchReply::abort()
 }
 
 /*!
+    Returns the limit on the number of responses from each data source.
+
+    If no limit was set this function will return -1.
+
+    This may be more than places().length() if the number of responses
+    was less than the number requested.
+
+    If QGeoSearchManager::search() is used along with
+    QGeoSearchManager::setAdditionalLandmarkManagers the number of results can
+    be as high as limit * (1 + number of additional landmark managers).
 */
-int QGeoSearchReply::resultsCount() const
+int QGeoSearchReply::limit() const
 {
-    return d_ptr->resultsCount;
+    return d_ptr->limit;
+}
+
+/*!
+    Returns the offset
+*/
+int QGeoSearchReply::offset() const
+{
+    return d_ptr->offset;
+}
+
+/*!
+    Sets the limit on the number of responses from each data source to \a limit.
+
+    If \a limit is -1 then all available responses will be returned.
+*/
+void QGeoSearchReply::setLimit(int limit)
+{
+    d_ptr->limit = limit;
 }
 
 /*!
 */
-int QGeoSearchReply::resultsOffset() const
+void QGeoSearchReply::setOffset(int offset)
 {
-    return d_ptr->resultsOffset;
-}
-
-/*!
-*/
-void QGeoSearchReply::setResultsCount(int resultsCount)
-{
-    d_ptr->resultsCount = resultsCount;
-}
-
-/*!
-*/
-void QGeoSearchReply::setResultsOffset(int resultsOffset)
-{
-    d_ptr->resultsOffset = resultsOffset;
+    d_ptr->offset = offset;
 }
 
 /*!
@@ -306,15 +320,15 @@ QGeoSearchReplyPrivate::QGeoSearchReplyPrivate()
         : error(QGeoSearchReply::NoError),
         errorString(""),
         isFinished(false),
-        resultsCount(-1),
-        resultsOffset(0) {}
+        limit(-1),
+        offset(0) {}
 
 QGeoSearchReplyPrivate::QGeoSearchReplyPrivate(QGeoSearchReply::Error error, const QString &errorString)
         : error(error),
         errorString(errorString),
         isFinished(true),
-        resultsCount(-1),
-        resultsOffset(0) {}
+        limit(-1),
+        offset(0) {}
 
 QGeoSearchReplyPrivate::~QGeoSearchReplyPrivate() {}
 

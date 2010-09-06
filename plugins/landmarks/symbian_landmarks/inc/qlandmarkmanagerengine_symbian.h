@@ -75,7 +75,8 @@ public:
         landmarkRemoved,
         categoryAdded,
         categoryUpdated,
-        categoryRemoved
+        categoryRemoved,
+        unknownChanges
     };
 
 public:
@@ -91,7 +92,7 @@ class QLandmarkManagerEngineSymbian: public QLandmarkManagerEngine, public Landm
 {
 Q_OBJECT
 public:
-    QLandmarkManagerEngineSymbian(const QString &filename = QString("file://C:eposlm.ldb"));
+    QLandmarkManagerEngineSymbian(const QString &filename = QString("file://c:eposlm.ldb"));
     ~QLandmarkManagerEngineSymbian();
 
     /* URI reporting */
@@ -229,8 +230,7 @@ public:
         QLandmarkAbstractRequest::State newState);
 
     static void updateLandmarkImportRequest(QLandmarkImportRequest *req,
-        const QList<QLandmarkId> &landmarkIds,
-        QLandmarkManager::Error error, const QString &errorString,
+        const QList<QLandmarkId> &ids, QLandmarkManager::Error error, const QString &errorString,
         QLandmarkAbstractRequest::State newState);
 
     static void updateLandmarkExportRequest(QLandmarkExportRequest *req,

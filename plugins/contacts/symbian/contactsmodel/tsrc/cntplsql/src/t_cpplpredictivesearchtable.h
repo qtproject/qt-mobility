@@ -90,6 +90,7 @@ NONSHARABLE_CLASS( UT_CPplPredictiveSearchTable ): public CEUnitTestSuiteClass
         void UT_TokenizeNamesL();
 		void UT_WriteToDbL();
 		void UT_ConvertToHexL();
+		void UT_HbKeymapFactoryApiL();
         
     private: // New functions
 

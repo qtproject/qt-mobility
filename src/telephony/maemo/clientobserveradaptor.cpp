@@ -68,9 +68,6 @@ namespace DBus
             const QVariantMap &observerInfo,
             const QDBusMessage &message)
     {
-        qDebug() << "ObserveChannels: account:" << accountPath.path() <<
-            ", connection:" << connectionPath.path();
-
         mClient->observeChannels(accountPath, connectionPath, channelDetailsList
                                  ,dispatchOperationPath, requestsSatisfied, observerInfo, message);
     }

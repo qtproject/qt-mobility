@@ -92,7 +92,7 @@ QTelephonyCallInfo::~QTelephonyCallInfo()
 /*!
     \fn  QString QTelephonyCallInfo::remotePartyIdentifier() const
 
-    Gives back the id of a call.
+    Returns the id of a call.
     The remotePartyIdentifier contains the value dependend on the call CallType.
     It can be the phone number, IP address or something else.
 */
@@ -108,13 +108,13 @@ QString QTelephonyCallInfo::remotePartyIdentifier() const
 }
 
 /*!
-    \fn  QTelephony::CallType QTelephonyCallInfo::type() const
+    \fn  unsigned int QTelephonyCallInfo::type() const
 
-    Gives back the type of the call.
-    A call can be a VOIP, Video Voice and so on.
-    You can use this property to get the type of the call.
+    Returns the types of the call.
+    A call can be a VOIP, Video Voice and so on or a combination of different types.
+    You can use this property to get the types of the call by masking with QTelephony::CallType.
 */
-QTelephony::CallType QTelephonyCallInfo::type() const
+unsigned int  QTelephonyCallInfo::type() const
 {
     if(d)
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
@@ -128,7 +128,7 @@ QTelephony::CallType QTelephonyCallInfo::type() const
 /*!
     \fn  QString QTelephonyCallInfo::subType() const
 
-    Gives back the sub type of the call type (see \l QTelephonyCallInfo::type()).
+    Returns the sub type of the call type (see \l QTelephonyCallInfo::type()).
     A subtype of a Voip call can be Skype.
     You can use this property to get the sub type of the call .
 */
@@ -146,7 +146,7 @@ QString QTelephonyCallInfo::subType() const
 /*!
     \fn  QTelephony::CallStatus QTelephonyCallInfo::status() const
 
-    Gives back the status of the call.
+    Returns the status of the call.
     A call can be in different conditions like ringing, dropped and so on.
     You can use this property if you want to know about the current condition of the call.
 */
@@ -165,7 +165,7 @@ QTelephony::CallStatus QTelephonyCallInfo::status() const
     \fn  QVariant QTelephonyCallInfo::value(const QString& key) const
     The \a key select the value in which the user is interrested to read.
 
-    Gives back a variant value.
+    Returns a variant value.
     This function is for reading additional values dependent on the key parameter.
 */
 QVariant QTelephonyCallInfo::value(const QString& key) const
@@ -174,6 +174,24 @@ QVariant QTelephonyCallInfo::value(const QString& key) const
         return d->values.value(key);
     }
     return QVariant();
+}
+
+/*!
+    \fn  QTelephony::Direction QTelephonyCallInfo::direction() const
+
+    Returns the direction of a call.
+    This function is for reading the direction of a call (received or dialed).
+*/
+QTelephony::Direction QTelephonyCallInfo::direction() const
+{
+    if(d){
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        return d->direction();
+#else
+        return d->direction;
+#endif
+    }
+    return QTelephony::Received;
 }
 
 QTM_END_NAMESPACE

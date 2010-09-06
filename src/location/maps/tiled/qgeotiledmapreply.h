@@ -56,7 +56,6 @@ class Q_LOCATION_EXPORT QGeoTiledMapReply : public QObject
     Q_OBJECT
 
 public:
-    // TODO populate this some more...
     enum Error {
         NoError,
         CommunicationError,

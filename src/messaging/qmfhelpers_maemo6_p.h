@@ -67,95 +67,95 @@ class QMessageFilter;
 
 namespace QmfHelpers {
 
-    Q_AUTOTEST_EXPORT QMessageId convert(const QMailMessageId &id);
-    Q_AUTOTEST_EXPORT QMailMessageId convert(const QMessageId &id);
+    QM_AUTOTEST_EXPORT QMessageId convert(const QMailMessageId &id);
+    QM_AUTOTEST_EXPORT QMailMessageId convert(const QMessageId &id);
 
-    Q_AUTOTEST_EXPORT QMessageAccountId convert(const QMailAccountId &id);
-    Q_AUTOTEST_EXPORT QMailAccountId convert(const QMessageAccountId &id);
+    QM_AUTOTEST_EXPORT QMessageAccountId convert(const QMailAccountId &id);
+    QM_AUTOTEST_EXPORT QMailAccountId convert(const QMessageAccountId &id);
 
-    Q_AUTOTEST_EXPORT QMessageFolderId convert(const QMailFolderId &id);
-    Q_AUTOTEST_EXPORT QMailFolderId convert(const QMessageFolderId &id);
+    QM_AUTOTEST_EXPORT QMessageFolderId convert(const QMailFolderId &id);
+    QM_AUTOTEST_EXPORT QMailFolderId convert(const QMessageFolderId &id);
 
-    Q_AUTOTEST_EXPORT QMessageContentContainerId convert(const QMailMessagePart::Location &location);
-    Q_AUTOTEST_EXPORT QMailMessagePart::Location convert(const QMessageContentContainerId &id);
+    QM_AUTOTEST_EXPORT QMessageContentContainerId convert(const QMailMessagePart::Location &location);
+    QM_AUTOTEST_EXPORT QMailMessagePart::Location convert(const QMessageContentContainerId &id);
 
-    Q_AUTOTEST_EXPORT QMessageContentContainerId bodyId(const QMailMessageId &id);
+    QM_AUTOTEST_EXPORT QMessageContentContainerId bodyId(const QMailMessageId &id);
 
-    Q_AUTOTEST_EXPORT QMessageIdList convert(const QList<QMailMessageId> &ids);
-    Q_AUTOTEST_EXPORT QList<QMailMessageId> convert(const QMessageIdList &ids);
+    QM_AUTOTEST_EXPORT QMessageIdList convert(const QList<QMailMessageId> &ids);
+    QM_AUTOTEST_EXPORT QList<QMailMessageId> convert(const QMessageIdList &ids);
 
-    Q_AUTOTEST_EXPORT QMessageAccountIdList convert(const QList<QMailAccountId> &ids);
-    Q_AUTOTEST_EXPORT QList<QMailAccountId> convert(const QMessageAccountIdList &ids);
+    QM_AUTOTEST_EXPORT QMessageAccountIdList convert(const QList<QMailAccountId> &ids);
+    QM_AUTOTEST_EXPORT QList<QMailAccountId> convert(const QMessageAccountIdList &ids);
 
-    Q_AUTOTEST_EXPORT QMessageFolderIdList convert(const QList<QMailFolderId> &ids);
-    Q_AUTOTEST_EXPORT QList<QMailFolderId> convert(const QMessageFolderIdList &ids);
+    QM_AUTOTEST_EXPORT QMessageFolderIdList convert(const QList<QMailFolderId> &ids);
+    QM_AUTOTEST_EXPORT QList<QMailFolderId> convert(const QMessageFolderIdList &ids);
 
-    Q_AUTOTEST_EXPORT QMessageContentContainerIdList convert(const QList<QMailMessagePart::Location> &locations);
+    QM_AUTOTEST_EXPORT QMessageContentContainerIdList convert(const QList<QMailMessagePart::Location> &locations);
     //QList<QMailMessagePart::Location> convert(const QMessageContentContainerIdList &ids);
 
-    Q_AUTOTEST_EXPORT QMailMessage::MessageType convert(QMessage::Type t);
-    Q_AUTOTEST_EXPORT QMessage::Type convert(QMailMessage::MessageType t);
+    QM_AUTOTEST_EXPORT QMailMessage::MessageType convert(QMessage::Type t);
+    QM_AUTOTEST_EXPORT QMessage::Type convert(QMailMessage::MessageType t);
 
-    Q_AUTOTEST_EXPORT QMailMessage::MessageType convert(QMessage::TypeFlags v);
+    QM_AUTOTEST_EXPORT QMailMessage::MessageType convert(QMessage::TypeFlags v);
 
-    Q_AUTOTEST_EXPORT QMessage::StatusFlags convert(quint64 v);
-    Q_AUTOTEST_EXPORT quint64 convert(QMessage::Status v);
+    QM_AUTOTEST_EXPORT QMessage::StatusFlags convert(quint64 v);
+    QM_AUTOTEST_EXPORT quint64 convert(QMessage::Status v);
 
-    Q_AUTOTEST_EXPORT quint64 convert(QMessage::StatusFlags v);
+    QM_AUTOTEST_EXPORT quint64 convert(QMessage::StatusFlags v);
 
-    Q_AUTOTEST_EXPORT QMessageManager::Error convert(QMailStore::ErrorCode v);
+    QM_AUTOTEST_EXPORT QMessageManager::Error convert(QMailStore::ErrorCode v);
     //QMailStore::ErrorCode convert(QMessageManager::Error v);
 
     //QMessageManager::RemovalOption convert(QMailStore::MessageRemovalOption v);
-    Q_AUTOTEST_EXPORT QMailStore::MessageRemovalOption convert(QMessageManager::RemovalOption v);
+    QM_AUTOTEST_EXPORT QMailStore::MessageRemovalOption convert(QMessageManager::RemovalOption v);
 
-    Q_AUTOTEST_EXPORT QMessageService::State convert(QMailServiceAction::Activity v);
-    Q_AUTOTEST_EXPORT QMailServiceAction::Activity convert(QMessageService::State v);
+    QM_AUTOTEST_EXPORT QMessageService::State convert(QMailServiceAction::Activity v);
+    QM_AUTOTEST_EXPORT QMailServiceAction::Activity convert(QMessageService::State v);
 
-    Q_AUTOTEST_EXPORT QMessageAddress convert(const QMailAddress &address);
-    Q_AUTOTEST_EXPORT QMailAddress convert(const QMessageAddress &address);
+    QM_AUTOTEST_EXPORT QMessageAddress convert(const QMailAddress &address);
+    QM_AUTOTEST_EXPORT QMailAddress convert(const QMessageAddress &address);
 
-    Q_AUTOTEST_EXPORT QMessageAddressList convert(const QList<QMailAddress> &list);
-    Q_AUTOTEST_EXPORT QList<QMailAddress> convert(const QMessageAddressList& list);
+    QM_AUTOTEST_EXPORT QMessageAddressList convert(const QList<QMailAddress> &list);
+    QM_AUTOTEST_EXPORT QList<QMailAddress> convert(const QMessageAddressList& list);
 
     //QMessageDataComparator::EqualityComparator convert(QMailDataComparator::EqualityComparator cmp);
-    Q_AUTOTEST_EXPORT QMailDataComparator::EqualityComparator convert(QMessageDataComparator::EqualityComparator cmp);
+    QM_AUTOTEST_EXPORT QMailDataComparator::EqualityComparator convert(QMessageDataComparator::EqualityComparator cmp);
 
     //QMessageDataComparator::InclusionComparator convert(QMailDataComparator::InclusionComparator cmp);
-    Q_AUTOTEST_EXPORT QMailDataComparator::InclusionComparator convert(QMessageDataComparator::InclusionComparator cmp);
+    QM_AUTOTEST_EXPORT QMailDataComparator::InclusionComparator convert(QMessageDataComparator::InclusionComparator cmp);
 
     //QMessageDataComparator::RelationComparator convert(QMailDataComparator::RelationComparator cmp);
-    Q_AUTOTEST_EXPORT QMailDataComparator::RelationComparator convert(QMessageDataComparator::RelationComparator cmp);
+    QM_AUTOTEST_EXPORT QMailDataComparator::RelationComparator convert(QMessageDataComparator::RelationComparator cmp);
 
     //QMessageAccountFilter convert(const QMailAccountKey &key);
-    Q_AUTOTEST_EXPORT QMailAccountKey convert(const QMessageAccountFilter &filter);
+    QM_AUTOTEST_EXPORT QMailAccountKey convert(const QMessageAccountFilter &filter);
 
     //QMessageFolderFilter convert(const QMailFolderKey &key);
-    Q_AUTOTEST_EXPORT QMailFolderKey convert(const QMessageFolderFilter &filter);
+    QM_AUTOTEST_EXPORT QMailFolderKey convert(const QMessageFolderFilter &filter);
 
     //QMessageFilter convert(const QMailMessageKey &key);
-    Q_AUTOTEST_EXPORT QMailMessageKey convert(const QMessageFilter &filter);
+    QM_AUTOTEST_EXPORT QMailMessageKey convert(const QMessageFilter &filter);
 
     //QMessageAccountSortOrder convert(const QMailAccountSortKey &key);
-    Q_AUTOTEST_EXPORT QMailAccountSortKey convert(const QMessageAccountSortOrder &sortOrder);
+    QM_AUTOTEST_EXPORT QMailAccountSortKey convert(const QMessageAccountSortOrder &sortOrder);
 
     //QMessageFolderSortOrder convert(const QMailFolderSortKey &key);
-    Q_AUTOTEST_EXPORT QMailFolderSortKey convert(const QMessageFolderSortOrder &sortOrder);
+    QM_AUTOTEST_EXPORT QMailFolderSortKey convert(const QMessageFolderSortOrder &sortOrder);
 
     //QMessageSortOrder convert(const QMailMessageSortKey &key);
-    Q_AUTOTEST_EXPORT QMailMessageSortKey convert(const QMessageSortOrder &sortOrder);
+    QM_AUTOTEST_EXPORT QMailMessageSortKey convert(const QMessageSortOrder &sortOrder);
 
-    Q_AUTOTEST_EXPORT QMessageAccount convert(const QMailAccount &account);
+    QM_AUTOTEST_EXPORT QMessageAccount convert(const QMailAccount &account);
     //QMailAccount convert(const QMessageAccount &account);
 
-    Q_AUTOTEST_EXPORT QMessageFolder convert(const QMailFolder &folder);
+    QM_AUTOTEST_EXPORT QMessageFolder convert(const QMailFolder &folder);
     //QMailFolder convert(const QMessageFolder &folder);
 
-    Q_AUTOTEST_EXPORT QMessage convert(const QMailMessage &message);
-    Q_AUTOTEST_EXPORT QMailMessage convert(const QMessage &message);
+    QM_AUTOTEST_EXPORT QMessage convert(const QMailMessage &message);
+    QM_AUTOTEST_EXPORT QMailMessage convert(const QMessage &message);
 
-    Q_AUTOTEST_EXPORT quint64 highPriorityMask();
-    Q_AUTOTEST_EXPORT quint64 lowPriorityMask();
+    QM_AUTOTEST_EXPORT quint64 highPriorityMask();
+    QM_AUTOTEST_EXPORT quint64 lowPriorityMask();
 
 };
 

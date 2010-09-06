@@ -272,6 +272,8 @@ QDeclarativeCamera::QDeclarativeCamera(QDeclarativeItem *parent) :
 
     connect(m_focus, SIGNAL(opticalZoomChanged(qreal)), this, SIGNAL(opticalZoomChanged(qreal)));
     connect(m_focus, SIGNAL(digitalZoomChanged(qreal)), this, SIGNAL(digitalZoomChanged(qreal)));
+    connect(m_focus, SIGNAL(maximumOpticalZoomChanged(qreal)), this, SIGNAL(maximumOpticalZoomChanged(qreal)));
+    connect(m_focus, SIGNAL(maximumDigitalZoomChanged(qreal)), this, SIGNAL(maximumDigitalZoomChanged(qreal)));
 
     //delayed start to evoid stopping the cammera immediately if
     //stop() is called after constructor,
@@ -411,7 +413,6 @@ void QDeclarativeCamera::geometryChanged(const QRectF &newGeometry, const QRectF
 
 void QDeclarativeCamera::keyPressEvent(QKeyEvent * event)
 {
-    qDebug() << Q_FUNC_INFO << event->key();
     switch (event->key()) {
     case Qt::Key_CameraFocus:
         m_camera->searchAndLock();
@@ -429,7 +430,6 @@ void QDeclarativeCamera::keyPressEvent(QKeyEvent * event)
 
 void QDeclarativeCamera::keyReleaseEvent(QKeyEvent * event)
 {
-    qDebug() << Q_FUNC_INFO << event->key();
     switch (event->key()) {
     case Qt::Key_CameraFocus:
         m_camera->unlock();

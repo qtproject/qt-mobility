@@ -66,7 +66,8 @@ public:
         CompoundType,
         ListType,
         BinaryType,
-        VersitDocumentType
+        VersitDocumentType,
+        PreformattedType
     };
 
     QVersitProperty();

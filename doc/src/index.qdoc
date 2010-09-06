@@ -279,7 +279,7 @@
     The Landmarks portion of the Location API facilitates the creation,
     retrieval, updating and deletion of landmarks from arbitrary data stores.
 
-    For more details, see the \l {Landmark Examples}{Landmark examples}.
+    For more details, see the \l {Landmarks} {Landmarks API overview}.
 
     \section2 Document Gallery
 

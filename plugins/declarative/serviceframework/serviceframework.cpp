@@ -42,13 +42,15 @@
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include <QtDeclarative/qdeclarative.h>
 
-#include "qdeclarativeservice.h"
+#include "qdeclarativeservice_p.h"
 
 QT_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 class QServiceDeclarativeModule : public QDeclarativeExtensionPlugin
 {
     Q_OBJECT
+
 public:
     virtual void registerTypes(const char *uri)
     {
@@ -60,7 +62,6 @@ public:
 };
 
 QT_END_NAMESPACE
-
 #include "serviceframework.moc"
 
 Q_EXPORT_PLUGIN2(qservicedeclarativemodule, QT_PREPEND_NAMESPACE(QServiceDeclarativeModule));

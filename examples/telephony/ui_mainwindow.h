@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Wed 11. Aug 12:13:31 2010
+** Created: Fri 3. Sep 10:03:01 2010
 **      by: Qt User Interface Compiler version 4.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -19,6 +19,7 @@
 #include <QtGui/QLabel>
 #include <QtGui/QListView>
 #include <QtGui/QMainWindow>
+#include <QtGui/QPushButton>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QWidget>
 
@@ -33,6 +34,7 @@ public:
     QLabel *label;
     QFrame *line;
     QListView *lstRxMsg;
+    QPushButton *pushButtonClearList;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -79,6 +81,11 @@ public:
 
         verticalLayout->addWidget(lstRxMsg);
 
+        pushButtonClearList = new QPushButton(verticalLayoutWidget);
+        pushButtonClearList->setObjectName(QString::fromUtf8("pushButtonClearList"));
+
+        verticalLayout->addWidget(pushButtonClearList);
+
         MainWindow->setCentralWidget(centralWidget);
 
         retranslateUi(MainWindow);
@@ -90,6 +97,7 @@ public:
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0, QApplication::UnicodeUTF8));
         label->setText(QApplication::translate("MainWindow", "Call Events:", 0, QApplication::UnicodeUTF8));
+        pushButtonClearList->setText(QApplication::translate("MainWindow", "clear list", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

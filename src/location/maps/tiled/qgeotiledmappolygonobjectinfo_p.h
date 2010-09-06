@@ -69,8 +69,8 @@ public:
     QGeoTiledMapPolygonObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapPolygonObjectInfo();
 
-    void objectUpdate();
-    void mapUpdate();
+    void objectUpdated();
+    void mapUpdated();
 
     QGeoMapPolygonObject *polygon;
     QGraphicsPolygonItem *polygonItem;

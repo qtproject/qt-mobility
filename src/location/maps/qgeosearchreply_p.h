@@ -77,8 +77,8 @@ public:
     QGeoBoundingArea* viewport;
     QList<QGeoPlace> places;
 
-    int resultsCount;
-    int resultsOffset;
+    int limit;
+    int offset;
 private:
     Q_DISABLE_COPY(QGeoSearchReplyPrivate)
 };

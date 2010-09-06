@@ -162,7 +162,11 @@ QVideoEncoderControl::~QVideoEncoderControl()
 /*!
     \fn QVideoEncoderControl::videoSettings() const
 
-    Returns the selected video encoder settings.
+    Returns the video encoder settings.
+
+    The returned value may be different tha passed to QVideoEncoderControl::setVideoSettings()
+    if the settings contains the default or undefined parameters.
+    In this case if the undefined parameters are already resolved, they should be returned.
 */
 
 /*!
