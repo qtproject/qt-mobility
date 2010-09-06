@@ -65,7 +65,7 @@ SOURCES += qmessageid.cpp \
     qmessageservice.cpp \
     messagingutil.cpp
 symbian|win32|maemo6|maemo5|mac:!simulator { 
-    mac|maemo6: SOURCES += qmessageid_stub.cpp \
+    mac: SOURCES += qmessageid_stub.cpp \
         qmessagecontentcontainerid_stub.cpp \
         qmessagefolderid_stub.cpp \
         qmessageaccountid_stub.cpp \
