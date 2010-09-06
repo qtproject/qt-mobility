@@ -147,6 +147,7 @@ LandmarkManagerEngineSymbianPrivate::LandmarkManagerEngineSymbianPrivate(
         m_LandmarkCatMgr = CPosLmCategoryManager::NewL(*m_LandmarkDb);
     );
 
+    m_DbEventHandler.AddObsever(this);
 }
 
 /*!
@@ -154,6 +155,7 @@ LandmarkManagerEngineSymbianPrivate::LandmarkManagerEngineSymbianPrivate(
  */
 LandmarkManagerEngineSymbianPrivate::~LandmarkManagerEngineSymbianPrivate()
 {
+    m_DbEventHandler.RemoveObsever(this);
     delete m_LandmarkCatMgr;
     delete m_LandmarkDb;
     ReleaseLandmarkResources();
@@ -2061,6 +2063,8 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
         QList<QLandmarkId> exportedLandmarkIds;
         // Buffer to hold the Exported content temporarily
         CBufBase *bufferPath = NULL;
+        HBufC *exportPath = NULL;
+
         // File system        
         RFs fs;
 
@@ -2100,7 +2104,6 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
 
         // Encoder initialized with the supported landmark package format
         CPosLandmarkEncoder* encoder = CPosLandmarkEncoder::NewL(KPosMimeTypeLandmarkCollectionXml);
-        CleanupStack::PushL(encoder);
 
         // Check if the expected export is to a file
         if (outputdevice = dynamic_cast<QFile *> (exportRequest->device())) {
@@ -2111,13 +2114,11 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
             QString filePathName = LandmarkUtility::preparePath(filePath->fileName());
 
             // Export path which will be used to prepare full path
-            HBufC *exportPath = HBufC::NewL(KMaxFileName);
-            CleanupStack::PushL(exportPath);
+            exportPath = HBufC::NewL(KMaxFileName);
 
             // RFs session to perform file save related operations
             RFs fs;
             User::LeaveIfError(fs.Connect());
-            CleanupClosePushL(fs);
             fs.ShareAuto();
 
             TPtr pathPtr = exportPath->Des();
@@ -2151,11 +2152,6 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
 
             encoder->SetOutputFileL(pathPtr);
 
-            CleanupStack::PopAndDestroy(exportPath);
-
-            // transfer the ownership
-            CleanupStack::Pop(encoder);
-
             // Performs export of landmarks  and cleanup of CPosLmOperation
             exportOperation = m_LandmarkDb->ExportLandmarksL(*encoder, selectedLandmarks,
                 transferOption);
@@ -2168,9 +2164,6 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
 
             // Set the encoder to write to a buffer
             bufferPath = encoder->SetUseOutputBufferL();
-
-            // transfer the ownership
-            CleanupStack::Pop(encoder);
 
             // Performs export of landmarks  and cleanup of CPosLmOperation
             exportOperation = m_LandmarkDb->ExportLandmarksL(*encoder, selectedLandmarks,
@@ -2194,7 +2187,7 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
 
         // start the request & transfer landmarkSearch object ownership
         requestAO->StartRequest(NULL);
-        requestAO->SetExportData(encoder, fs, bufferPath, exportedLandmarkIds);
+        requestAO->SetExportData(encoder, fs, exportPath, bufferPath, exportedLandmarkIds);
         CleanupStack::Pop(requestAO);
 
         result = true;
@@ -2817,8 +2810,8 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
         QLandmarkBoxFilter boxFilter = filter;
 
         const TReal64& eastlong = boxFilter.boundingBox().bottomRight().longitude();
-        const TReal64& southlat = boxFilter.boundingBox().bottomLeft().latitude();
-        const TReal64& northlat = boxFilter.boundingBox().topRight().latitude();
+        const TReal64& southlat = boxFilter.boundingBox().bottomRight().latitude();
+        const TReal64& northlat = boxFilter.boundingBox().topLeft().latitude();
         const TReal64& westlong = boxFilter.boundingBox().topLeft().longitude();
 
         if (southlat > northlat)
@@ -3820,7 +3813,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
     {
         QLandmarkExportRequest *exportRequest = static_cast<QLandmarkExportRequest*> (request);
 
-        if (aData->iErrorId == KErrNone) {
+        if (aData->iErrorId == KErrNone && aData->iLandmarkEncoder) {
+
             // finalize the encoder to save the data into the file
             ExecuteAndDeleteLD(aData->iLandmarkEncoder->FinalizeEncodingL());
 
@@ -3840,8 +3834,15 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
                 aData->iExportBuffer = NULL;
             }
             else {
+                if (aData->iExportPath) {
+                    delete aData->iExportPath;
+                    aData->iExportPath = NULL;
+                }
                 aData->iFileSystem.Close();
             }
+
+            delete aData->iLandmarkEncoder;
+            aData->iLandmarkEncoder = NULL;
 
             exportRequest->setLandmarkIds(aData->iLandmarkIds);
 
@@ -4771,6 +4772,59 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::importLandmarksL(QIODevi
         CleanupStack::PopAndDestroy(packageFormat);
     }
     return importedLmIds;
+}
+
+/**
+ * 
+ */
+void LandmarkManagerEngineSymbianPrivate::handleDatabaseEvent(const TPosLmEvent& aEvent)
+{
+    qDebug() << "aEvent.iLandmarkItemId = " << aEvent.iLandmarkItemId;
+    qDebug() << "aEvent.iEventType = " << aEvent.iEventType;
+
+    switch (aEvent.iEventType) {
+    case EPosLmEventLandmarkCreated:
+    {
+        qDebug() << "landmark created";
+        break;
+    }
+    case EPosLmEventLandmarkDeleted:
+    {
+        qDebug() << "landmark deleted";
+        break;
+    }
+    case EPosLmEventLandmarkUpdated:
+    {
+        qDebug() << "landmark updated";
+        break;
+    }
+    case EPosLmEventCategoryCreated:
+    {
+        qDebug() << "landmark category created";
+        break;
+    }
+    case EPosLmEventCategoryDeleted:
+    {
+        qDebug() << "landmark category deleted";
+        break;
+    }
+    case EPosLmEventCategoryUpdated:
+    {
+        qDebug() << "landmark category updated";
+        break;
+    }
+        //    case EPosLmEventLandmarkUnknownChanges:
+        //    case EPosLmEventCategoryUnknownChanges:
+        //    case EPosLmEventUnknownChanges: 
+        //    case EPosLmEventNewDefaultDatabaseLocation:
+        //    case EPosLmEventMediaRemoved:
+    default:
+    {
+        m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::unknownChanges);
+    }
+
+    } // switch closure    
+
 }
 
 // end of file
