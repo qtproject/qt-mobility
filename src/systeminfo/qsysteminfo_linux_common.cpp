@@ -1676,7 +1676,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
                  QString property="Powered";
                  QVariantMap map = reply.value();
                  if (map.contains(property)) {
-                     btPowered = map.value(property.toBool());
+                     btPowered = map.value(property ).toBool();
                  }
              }
          }
