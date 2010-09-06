@@ -2817,8 +2817,8 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
         QLandmarkBoxFilter boxFilter = filter;
 
         const TReal64& eastlong = boxFilter.boundingBox().bottomRight().longitude();
-        const TReal64& southlat = boxFilter.boundingBox().bottomLeft().latitude();
-        const TReal64& northlat = boxFilter.boundingBox().topRight().latitude();
+        const TReal64& southlat = boxFilter.boundingBox().bottomRight().latitude();
+        const TReal64& northlat = boxFilter.boundingBox().topLeft().latitude();
         const TReal64& westlong = boxFilter.boundingBox().topLeft().longitude();
 
         if (southlat > northlat)
