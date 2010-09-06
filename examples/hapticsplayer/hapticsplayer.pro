@@ -21,4 +21,6 @@ MOBILITY = feedback
 
 include(../examples.pri)
 
-
+symbian: {
+    TARGET.CAPABILITY = WriteDeviceData ReadDeviceData
+}
