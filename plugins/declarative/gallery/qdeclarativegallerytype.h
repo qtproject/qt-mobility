@@ -64,7 +64,7 @@ class QDeclarativeGalleryType : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(Result result READ result NOTIFY resultChanged)
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
-    Q_PROPERTY(bool live READ isLive WRITE setLive NOTIFY liveChanged)
+    Q_PROPERTY(bool autoUpdate READ isAutoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QString itemType READ itemType WRITE setItemType NOTIFY itemTypeChanged)
     Q_PROPERTY(bool available READ available NOTIFY availableChanged)
     Q_PROPERTY(QObject *metaData READ metaData NOTIFY metaDataChanged)
@@ -108,8 +108,8 @@ public:
     void setPropertyNames(const QStringList &names) {
         if (!m_complete) m_request.setPropertyNames(names); emit propertyNamesChanged(); }
 
-    bool isLive() const { return m_request.isLive(); }
-    void setLive(bool live) { m_request.setLive(live); emit liveChanged(); }
+    bool isAutoUpdate() const { return m_request.isLive(); }
+    void setAutoUpdate(bool autoUpdate) { m_request.setLive(autoUpdate); emit autoUpdateChanged(); }
 
     QString itemType() const { return m_request.itemType(); }
     void setItemType(const QString itemType)
@@ -145,7 +145,7 @@ Q_SIGNALS:
 
     void galleryChanged();
     void propertyNamesChanged();
-    void liveChanged();
+    void autoUpdateChanged();
     void itemTypeChanged();
 
 private Q_SLOTS:

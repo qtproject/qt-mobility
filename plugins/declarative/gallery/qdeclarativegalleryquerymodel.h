@@ -67,7 +67,7 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
     Q_PROPERTY(int progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(QStringList sortProperties READ sortPropertyNames WRITE setSortPropertyNames NOTIFY sortPropertyNamesChanged)
-    Q_PROPERTY(bool live READ isLive WRITE setLive NOTIFY liveChanged)
+    Q_PROPERTY(bool autoUpdate READ isAutoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QString rootType READ rootType WRITE setRootType NOTIFY rootTypeChanged)
     Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem NOTIFY rootItemChanged)
     Q_PROPERTY(Scope scope READ scope WRITE setScope NOTIFY scopeChanged)
@@ -137,8 +137,8 @@ public:
     void setSortPropertyNames(const QStringList &names) {
         if (!m_complete) m_request.setSortPropertyNames(names); emit sortPropertyNamesChanged(); }
 
-    bool isLive() const { return m_request.isLive(); }
-    void setLive(bool live) { m_request.setLive(live); emit liveChanged(); }
+    bool isAutoUpdate() const { return m_request.isLive(); }
+    void setAutoUpdate(bool autoUpdate) { m_request.setLive(autoUpdate); emit autoUpdateChanged(); }
 
     QString rootType() const { return m_request.rootType(); }
     void setRootType(const QString &itemType) {
@@ -195,7 +195,7 @@ Q_SIGNALS:
     void galleryChanged();
     void propertyNamesChanged();
     void sortPropertyNamesChanged();
-    void liveChanged();
+    void autoUpdateChanged();
     void rootTypeChanged();
     void rootItemChanged();
     void scopeChanged();

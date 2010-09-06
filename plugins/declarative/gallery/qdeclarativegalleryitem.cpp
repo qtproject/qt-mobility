@@ -144,7 +144,7 @@ QDeclarativeGalleryItem::~QDeclarativeGalleryItem()
 */
 
 /*!
-    \qmlproperty bool GalleryItem::live
+    \qmlproperty bool GalleryItem::autoUpdate
 
     This property holds whether a request should refresh its results
     automatically.

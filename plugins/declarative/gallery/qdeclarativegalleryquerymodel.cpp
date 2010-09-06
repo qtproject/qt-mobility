@@ -207,7 +207,7 @@ void QDeclarativeGalleryQueryModel::componentComplete()
 */
 
 /*!
-    \qmlproperty bool GalleryQueryModel::live
+    \qmlproperty bool GalleryQueryModel::autoUpdate
 
     This property holds whether a query should refresh its results
     automatically.

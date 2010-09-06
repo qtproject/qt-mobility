@@ -54,7 +54,7 @@ Item {
         id: typeInfo
         gallery: documentGallery
         properties: [ "count" ]
-        live: true
+        autoUpdate: true
     }
 
     Image {
