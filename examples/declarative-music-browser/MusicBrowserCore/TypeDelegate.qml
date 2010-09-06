@@ -50,9 +50,8 @@ Item {
     width: 192
     height: 192
 
-    GalleryType {
+    DocumentGalleryType {
         id: typeInfo
-        gallery: documentGallery
         properties: [ "count" ]
         autoUpdate: true
     }

@@ -41,25 +41,13 @@
 
 #include "qdeclarativegallerytype.h"
 
+#include "qdeclarativedocumentgallery.h"
+
 #include <qgalleryresultset.h>
 
 #include <QtDeclarative/qdeclarativepropertymap.h>
 
 QTM_BEGIN_NAMESPACE
-
-/*!
-    \qmlclass GalleryType QDeclarativeGalleryType
-
-    \inmodule QtGallery
-    \ingroup qml-gallery
-
-    \brief The GalleryType element allows you to request information about an
-    item type from a gallery
-
-    This element is part of the \bold {QtMobility.gallery 1.1} module.
-
-    \sa GalleryQueryModel, GalleryItem
-*/
 
 QDeclarativeGalleryType::QDeclarativeGalleryType(QObject *parent)
     : QObject(parent)
@@ -84,115 +72,6 @@ QDeclarativeGalleryType::~QDeclarativeGalleryType()
 {
 }
 
-/*!
-    \qmlproperty QAbstractGallery GalleryType::gallery
-
-    This property holds the gallery type information should be requested from.
-*/
-
-/*!
-    \qmlproperty enum GalleryType::status
-
-    This property holds the status of a type request.  It can be one of:
-
-    \list
-    \o Null No \l itemType has been specified.
-    \o Active Information about an \l itemType is being fetched from the gallery.
-    \o Finished Information about an \l itemType is available.
-    \o Idle Information about an \l itemType which will be automatically
-    updated is available.
-    \o Cancelling The query was cancelled but hasn't yet reached the
-    cancelled status.
-    \o Cancelled The query was cancelled.
-    \o Error Information about a type could not be retrieved due to an error.
-    \endlist
-*/
-
-/*!
-    \qmlproperty real GalleryType::progress
-
-    This property holds the current progress of the request, from 0.0 (started)
-    to 1.0 (finished).
-*/
-
-/*!
-    \qmlproperty int GalleryType::maximumProgress
-
-    This property holds the maximum progress value.
-*/
-
-/*!
-    \qmlproperty QStringList GalleryType::properties
-
-    This property holds the type properties a request should return values for.
-*/
-
-/*!
-    \qmlproperty bool GalleryType::autoUpdate
-
-    This property holds whether a request should refresh its results
-    automatically.
-*/
-
-/*!
-    \qmlproperty string GalleryType::itemType
-
-    This property holds the item type that a request fetches information about.
-*/
-
-/*!
-    \qmlproperty bool GalleryType::available
-
-    This property holds whether the meta-data of a type is available.
-*/
-
-/*!
-    \qmlproperty object GalleryType::metaData
-
-    This property holds the meta-data of an item type/
-*/
-
-/*!
-    \qmlmethod GalleryType::reload()
-
-    Re-queries the gallery.
-*/
-
-/*!
-    \qmlmethod GalleryType::cancel()
-
-    Cancels an executing request.
-*/
-
-/*!
-    \qmlmethod GalleryType::clear()
-
-    Clears the results of a request.
-*/
-
-/*!
-    \qmlsignal GalleryType::onSucceeded()
-
-    Signals that a request has finished successfully.
-*/
-
-/*!
-    \qmlsignal GalleryType::onCancelled()
-
-    Signals that a request was cancelled.
-*/
-
-/*!
-    \qmlsignal GalleryType::onFailed(error)
-
-    Signals that a request failed with the given \a error.
-*/
-
-/*!
-    \qmlsignal GalleryType::onFinished(result)
-
-    Signals that a request finished with the given \a result.
-*/
 
 void QDeclarativeGalleryType::classBegin()
 {
@@ -293,6 +172,109 @@ void QDeclarativeGalleryType::_q_metaDataChanged(const QList<int> &keys)
     }
 }
 
+/*!
+    \qmlclass DocumentGalleryType QDeclarativeDocumentGalleryType
+
+    \inmodule QtGallery
+    \ingroup qml-gallery
+
+    \brief The DocumentGalleryType element allows you to request information
+    about an item type from the document gallery.
+
+    This element is part of the \bold {QtMobility.gallery 1.1} module.
+
+    \sa GalleryQueryModel, GalleryItem
+*/
+
+QDeclarativeDocumentGalleryType::QDeclarativeDocumentGalleryType(QObject *parent)
+    : QDeclarativeGalleryType(parent)
+{
+    setGallery(QDeclarativeDocumentGallery::gallery());
+}
+
+QDeclarativeDocumentGalleryType::~QDeclarativeDocumentGalleryType()
+{
+}
+
+/*!
+    \qmlproperty enum DocumentGalleryType::status
+
+    This property holds the status of a type request.  It can be one of:
+
+    \list
+    \o Null No \l itemType has been specified.
+    \o Active Information about an \l itemType is being fetched from the gallery.
+    \o Finished Information about an \l itemType is available.
+    \o Idle Information about an \l itemType which will be automatically
+    updated is available.
+    \o Cancelling The query was cancelled but hasn't yet reached the
+    cancelled status.
+    \o Cancelled The query was cancelled.
+    \o Error Information about a type could not be retrieved due to an error.
+    \endlist
+*/
+
+/*!
+    \qmlproperty real DocumentGalleryType::progress
+
+    This property holds the current progress of the request, from 0.0 (started)
+    to 1.0 (finished).
+*/
+
+/*!
+    \qmlproperty int DocumentGalleryType::maximumProgress
+
+    This property holds the maximum progress value.
+*/
+
+/*!
+    \qmlproperty QStringList DocumentGalleryType::properties
+
+    This property holds the type properties a request should return values for.
+*/
+
+/*!
+    \qmlproperty bool DocumentGalleryType::autoUpdate
+
+    This property holds whether a request should refresh its results
+    automatically.
+*/
+
+/*!
+    \qmlproperty string DocumentGalleryType::itemType
+
+    This property holds the item type that a request fetches information about.
+*/
+
+/*!
+    \qmlproperty bool DocumentGalleryType::available
+
+    This property holds whether the meta-data of a type is available.
+*/
+
+/*!
+    \qmlproperty object DocumentGalleryType::metaData
+
+    This property holds the meta-data of an item type/
+*/
+
+/*!
+    \qmlmethod DocumentGalleryType::reload()
+
+    Re-queries the gallery.
+*/
+
+/*!
+    \qmlmethod DocumentGalleryType::cancel()
+
+    Cancels an executing request.
+*/
+
+/*!
+    \qmlmethod DocumentGalleryType::clear()
+
+    Clears the results of a request.
+*/
 
 #include "moc_qdeclarativegallerytype.cpp"
 

@@ -54,9 +54,8 @@ ListView {
     VisualDataModel {
         id: visualModel
 
-        model: GalleryQueryModel {
+        model: DocumentGalleryModel {
             id: galleryModel
-            gallery: documentGallery
             rootType: "Album"
             properties: [ "artist", "title" ]
             sortProperties: [ "artist", "title" ]

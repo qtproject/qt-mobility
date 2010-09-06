@@ -56,7 +56,6 @@ class QDeclarativeGalleryItem : public QObject, public QDeclarativeParserStatus
     Q_OBJECT
     Q_INTERFACES(QDeclarativeParserStatus)
     Q_ENUMS(Status)
-    Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery NOTIFY galleryChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
@@ -78,12 +77,7 @@ public:
         Error
     };
 
-    QDeclarativeGalleryItem(QObject *parent = 0);
     ~QDeclarativeGalleryItem();
-
-    QAbstractGallery *gallery() const { return m_request.gallery(); }
-    void setGallery(QAbstractGallery *gallery) {
-        if (!m_complete || !gallery) { m_request.setGallery(gallery); emit galleryChanged(); } }
 
     Status status() const { return m_status; }
 
@@ -130,6 +124,11 @@ Q_SIGNALS:
     void autoUpdateChanged();
     void itemIdChanged();
 
+protected:
+    explicit QDeclarativeGalleryItem(QObject *parent = 0);
+
+    void setGallery(QAbstractGallery *gallery) { m_request.setGallery(gallery); }
+
 private Q_SLOTS:
     void _q_stateChanged();
     void _q_itemChanged();
@@ -145,8 +144,16 @@ private:
     bool m_complete;
 };
 
+class QDeclarativeDocumentGalleryItem : public QDeclarativeGalleryItem
+{
+    Q_OBJECT
+public:
+    explicit QDeclarativeDocumentGalleryItem(QObject *parent = 0);
+    ~QDeclarativeDocumentGalleryItem();
+};
+
 QTM_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryItem))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeDocumentGalleryItem))
 
 #endif

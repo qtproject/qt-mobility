@@ -48,8 +48,6 @@ Rectangle {
     height: 480
     color: "black"
 
-    DocumentGallery { id: documentGallery }
-
     Flipable {
         property real angle: 0
 

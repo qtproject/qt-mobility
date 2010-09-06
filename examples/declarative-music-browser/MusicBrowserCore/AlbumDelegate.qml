@@ -192,8 +192,7 @@ Package {
             id: songColumn
 
             Repeater {
-                model: GalleryQueryModel {
-                    gallery: documentGallery
+                model: DocumentGalleryModel {
                     rootType: "Audio"
                     rootItem: itemId
                     properties: [ "trackNumber", "title", "duration" ]
@@ -208,8 +207,7 @@ Package {
         id: fullScreenView
 
         ListView {
-            model: GalleryQueryModel {
-                gallery: documentGallery
+            model: DocumentGalleryModel {
                 rootType: "Audio"
                 rootItem: itemId
                 properties: [ "trackNumber", "title", "duration" ]

@@ -60,7 +60,6 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
     Q_INTERFACES(QDeclarativeParserStatus)
     Q_ENUMS(Status)
     Q_ENUMS(Scope)
-    Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery NOTIFY galleryChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(int progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
@@ -98,12 +97,7 @@ public:
         MetaDataOffset
     };
 
-    QDeclarativeGalleryQueryModel(QObject *parent = 0);
     ~QDeclarativeGalleryQueryModel();
-
-    QAbstractGallery *gallery() const { return m_request.gallery(); }
-    void setGallery(QAbstractGallery *gallery) {
-        if (!m_complete || !gallery) { m_request.setGallery(gallery); emit galleryChanged(); } }
 
     Status status() const { return m_status; }
 
@@ -171,7 +165,6 @@ public Q_SLOTS:
 Q_SIGNALS:
     void statusChanged();
     void progressChanged();
-    void galleryChanged();
     void propertyNamesChanged();
     void sortPropertyNamesChanged();
     void autoUpdateChanged();
@@ -182,6 +175,11 @@ Q_SIGNALS:
     void offsetChanged();
     void limitChanged();
     void countChanged();
+
+protected:
+    explicit QDeclarativeGalleryQueryModel(QObject *parent = 0);
+
+    void setGallery(QAbstractGallery *gallery) { m_request.setGallery(gallery); }
 
 private Q_SLOTS:
     void _q_stateChanged();
@@ -201,9 +199,17 @@ private:
     bool m_complete;
 };
 
+class QDeclarativeDocumentGalleryModel : public QDeclarativeGalleryQueryModel
+{
+    Q_OBJECT
+public:
+    explicit QDeclarativeDocumentGalleryModel(QObject *parent = 0);
+    ~QDeclarativeDocumentGalleryModel();
+};
+
 QTM_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryQueryModel))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeDocumentGalleryModel))
 
 #endif
 

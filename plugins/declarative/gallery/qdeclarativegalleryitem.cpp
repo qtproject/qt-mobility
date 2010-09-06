@@ -41,26 +41,13 @@
 
 #include "qdeclarativegalleryitem.h"
 
+#include "qdeclarativedocumentgallery.h"
+
 #include <qgalleryresultset.h>
 
 #include <QtDeclarative/qdeclarativepropertymap.h>
 
 QTM_BEGIN_NAMESPACE
-
-/*!
-    \qmlclass GalleryItem QDeclarativeGalleryItem
-
-    \inmodule QtGallery
-    \ingroup qml-gallery
-
-    \brief The GalleryItem element allows you to request information about a
-    single item from a gallery
-
-    This element is part of the \bold {QtMobility.gallery 1.1} module.
-    
-
-    \sa GalleryQueryModel, GalleryType
-*/
 
 QDeclarativeGalleryItem::QDeclarativeGalleryItem(QObject *parent)
     : QObject(parent)
@@ -87,142 +74,6 @@ QDeclarativeGalleryItem::QDeclarativeGalleryItem(QObject *parent)
 QDeclarativeGalleryItem::~QDeclarativeGalleryItem()
 {
 }
-
-/*!
-    \qmlproperty QAbstractGallery GalleryItem::gallery
-
-    This property holds the gallery that an item should be requested from.
-*/
-
-/*!
-    \qmlproperty enum GalleryItem::status
-
-    This property holds the status of an item request.  It can be one of:
-
-    \list
-    \o Null No \l item has been specified.
-    \o Active Information about an \l item is being fetched from the gallery.
-    \o Finished Information about an \l item is available.
-    \o Idle Information about an \l item which will be automatically
-    updated is available.
-    \o Cancelling The query was cancelled but hasn't yet reached the
-    cancelled status.
-    \o Cancelled The query was cancelled.
-    \o Error Information about a type could not be retrieved due to an error.
-    \endlist
-*/
-
-/*!
-    \qmlproperty real GalleryItem::progress
-
-    This property holds the current progress of the request, from 0.0 (started)
-    to 1.0 (finished).
-*/
-
-/*!
-    \qmlproperty QStringList GalleryItem::properties
-
-    This property holds the item properties a request should return values for.
-*/
-
-/*!
-    \qmlproperty bool GalleryItem::autoUpdate
-
-    This property holds whether a request should refresh its results
-    automatically.
-*/
-
-/*!
-    \qmlproperty variant GalleryItem::item
-
-    This property holds the id of the item to return information about.
-*/
-
-/*!
-    \qmlproperty bool GalleryItem::available
-
-    This property holds whether the meta-data of an item is available.
-*/
-
-/*!
-    \qmlproperty bool GalleryItem::reading
-
-    This property holds whether the meta-data of an item is currently being
-    read.
-*/
-
-/*!
-    \qmlproperty bool GalleryItem::writing
-
-    This property holds whether the meta-data of an item is currently being
-    written.
-*/
-
-/*!
-    \qmlproperty bool GalleryType::available
-
-    This property holds whether the meta-data of an item is available.
-*/
-
-/*!
-    \qmlproperty string GalleryItem::itemType
-
-    This property holds the type of a gallery item.
-*/
-
-/*!
-    \qmlproperty url GalleryItem::itemUrl
-
-    This property holds the URL of a gallery item.
-*/
-
-/*!
-    \qmlproperty object GalleryItem::metaData
-
-    This property holds the meta-data of a gallery item.
-*/
-
-/*!
-    \qmlmethod GalleryItem::reload()
-
-    Re-queries the gallery.
-*/
-
-/*!
-    \qmlmethod GalleryItem::cancel()
-
-    Cancels an executing request.
-*/
-
-/*!
-    \qmlmethod GalleryItem::clear()
-
-    Clears the results of a request.
-*/
-
-/*!
-    \qmlsignal GalleryItem::onSucceeded()
-
-    Signals that a request has finished successfully.
-*/
-
-/*!
-    \qmlsignal GalleryItem::onCancelled()
-
-    Signals that a request was cancelled.
-*/
-
-/*!
-    \qmlsignal GalleryItem::onFailed(error)
-
-    Signals that a request failed with the given \a error.
-*/
-
-/*!
-    \qmlsignal GalleryItem::onFinished(result)
-
-    Signals that a request finished with the given \a result.
-*/
 
 void QDeclarativeGalleryItem::classBegin()
 {
@@ -322,6 +173,117 @@ void QDeclarativeGalleryItem::_q_metaDataChanged(const QList<int> &keys)
                 : value);
     }
 }
+
+/*!
+    \qmlclass DocumentGalleryItem QDeclarativeDocumentGalleryItem
+
+    \inmodule QtGallery
+    \ingroup qml-gallery
+
+    \brief The DocumentGalleryItem element allows you to request information
+    about a single item from the document gallery
+
+    This element is part of the \bold {QtMobility.gallery 1.1} module.
+
+
+    \sa GalleryQueryModel, GalleryType
+*/
+
+QDeclarativeDocumentGalleryItem::QDeclarativeDocumentGalleryItem(QObject *parent)
+    : QDeclarativeGalleryItem(parent)
+{
+    setGallery(QDeclarativeDocumentGallery::gallery());
+}
+
+QDeclarativeDocumentGalleryItem::~QDeclarativeDocumentGalleryItem()
+{
+}
+
+/*!
+    \qmlproperty enum DocumentGalleryItem::status
+
+    This property holds the status of an item request.  It can be one of:
+
+    \list
+    \o Null No \l item has been specified.
+    \o Active Information about an \l item is being fetched from the gallery.
+    \o Finished Information about an \l item is available.
+    \o Idle Information about an \l item which will be automatically
+    updated is available.
+    \o Cancelling The query was cancelled but hasn't yet reached the
+    cancelled status.
+    \o Cancelled The query was cancelled.
+    \o Error Information about a type could not be retrieved due to an error.
+    \endlist
+*/
+
+/*!
+    \qmlproperty real DocumentGalleryItem::progress
+
+    This property holds the current progress of the request, from 0.0 (started)
+    to 1.0 (finished).
+*/
+
+/*!
+    \qmlproperty QStringList DocumentGalleryItem::properties
+
+    This property holds the item properties a request should return values for.
+*/
+
+/*!
+    \qmlproperty bool DocumentGalleryItem::autoUpdate
+
+    This property holds whether a request should refresh its results
+    automatically.
+*/
+
+/*!
+    \qmlproperty variant DocumentGalleryItem::item
+
+    This property holds the id of the item to return information about.
+*/
+
+/*!
+    \qmlproperty bool DocumentGalleryItem::available
+
+    This property holds whether the meta-data of an item is available.
+*/
+
+/*!
+    \qmlproperty string DocumentGalleryItem::itemType
+
+    This property holds the type of a gallery item.
+*/
+
+/*!
+    \qmlproperty url DocumentGalleryItem::itemUrl
+
+    This property holds the URL of a gallery item.
+*/
+
+/*!
+    \qmlproperty object DocumentGalleryItem::metaData
+
+    This property holds the meta-data of a gallery item.
+*/
+
+/*!
+    \qmlmethod DocumentGalleryItem::reload()
+
+    Re-queries the gallery.
+*/
+
+/*!
+    \qmlmethod DocumentGalleryItem::cancel()
+
+    Cancels an executing request.
+*/
+
+/*!
+    \qmlmethod DocumentGalleryItem::clear()
+
+    Clears the results of a request.
+*/
 
 #include "moc_qdeclarativegalleryitem.cpp"
 
