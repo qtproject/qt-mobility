@@ -131,7 +131,7 @@ protected:
     bool m_complete;
 
 private Q_SLOTS:
-    void _q_stateChanged();
+    void _q_statusChanged();
     void _q_typeChanged();
     void _q_metaDataChanged(const QList<int> &keys);
 };

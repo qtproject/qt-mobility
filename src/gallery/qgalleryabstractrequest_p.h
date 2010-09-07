@@ -70,7 +70,7 @@ public:
             QAbstractGallery *gallery, QGalleryAbstractRequest::RequestType type)
         : gallery(gallery)
         , type(type)
-        , state(QGalleryAbstractRequest::Inactive)
+        , status(QGalleryAbstractRequest::Inactive)
         , result(QGalleryAbstractRequest::NoResult)
         , currentProgress(0)
         , maximumProgress(0)
@@ -88,7 +88,7 @@ public:
     QWeakPointer<QAbstractGallery> gallery;
     QScopedPointer<QGalleryAbstractResponse> response;
     QGalleryAbstractRequest::RequestType type;
-    QGalleryAbstractRequest::State state;
+    QGalleryAbstractRequest::Status status;
     int result;
     int currentProgress;
     int maximumProgress;

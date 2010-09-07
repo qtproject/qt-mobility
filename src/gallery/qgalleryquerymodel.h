@@ -66,7 +66,7 @@ class Q_GALLERY_EXPORT QGalleryQueryModel : public QAbstractItemModel
     Q_PROPERTY(QGalleryQueryRequest::Scope scope READ scope WRITE setScope)
     Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter)
     Q_PROPERTY(int result READ result NOTIFY resultChanged)
-    Q_PROPERTY(QGalleryAbstractRequest::State state READ state NOTIFY stateChanged)
+    Q_PROPERTY(QGalleryAbstractRequest::Status status READ status NOTIFY statusChanged)
 public:
     QGalleryQueryModel(QObject *parent = 0);
     QGalleryQueryModel(QAbstractGallery *gallery, QObject *parent = 0);
@@ -113,7 +113,7 @@ public:
     void clear();
 
     int result() const;
-    QGalleryAbstractRequest::State state() const;
+    QGalleryAbstractRequest::Status status() const;
 
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     QModelIndex parent(const QModelIndex &index) const;
@@ -142,7 +142,7 @@ Q_SIGNALS:
     void cancelled();
     void failed(int result);
     void finished(int result);
-    void stateChanged(QGalleryAbstractRequest::State state);
+    void statusChanged(QGalleryAbstractRequest::Status status);
     void resultChanged();
 
 private:

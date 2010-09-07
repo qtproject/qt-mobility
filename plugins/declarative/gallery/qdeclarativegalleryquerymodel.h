@@ -191,7 +191,7 @@ protected:
     bool m_complete;
 
 private Q_SLOTS:
-    void _q_stateChanged();
+    void _q_statusChanged();
     void _q_setResultSet(QGalleryResultSet *resultSet);
     void _q_itemsInserted(int index, int count);
     void _q_itemsRemoved(int index, int count);

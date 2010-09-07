@@ -60,15 +60,15 @@ class Q_GALLERY_EXPORT QGalleryAbstractRequest : public QObject
     Q_DECLARE_PRIVATE(QGalleryAbstractRequest)
     Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery)
     Q_PROPERTY(bool supported READ isSupported NOTIFY supportedChanged)
-    Q_PROPERTY(State state READ state NOTIFY stateChanged)
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(int result READ result NOTIFY resultChanged)
     Q_PROPERTY(int currentProgress READ currentProgress NOTIFY progressChanged)
     Q_PROPERTY(int maximumProgress READ maximumProgress NOTIFY progressChanged)
-    Q_ENUMS(State)
+    Q_ENUMS(Status)
     Q_ENUMS(Result)
     Q_ENUMS(RequestType)
 public:
-    enum State
+    enum Status
     {
         Inactive,
         Active,
@@ -115,7 +115,7 @@ public:
     bool isSupported() const;
 
     RequestType type() const;
-    State state() const;
+    Status status() const;
     int result() const;
 
     int currentProgress() const;
@@ -134,7 +134,7 @@ Q_SIGNALS:
     void cancelled();
     void failed(int result);
     void finished(int result);
-    void stateChanged(QGalleryAbstractRequest::State state);
+    void statusChanged(QGalleryAbstractRequest::Status status);
     void resultChanged();
     void progressChanged(int current, int maximum);
 

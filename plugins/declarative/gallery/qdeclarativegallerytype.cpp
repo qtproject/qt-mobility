@@ -54,9 +54,9 @@ QDeclarativeGalleryType::QDeclarativeGalleryType(QObject *parent)
     , m_status(Null)
     , m_complete(false)
 {
-    connect(&m_request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)),
-            this, SLOT(_q_stateChanged()));
-    connect(&m_request, SIGNAL(resultChanged()), this, SLOT(_q_stateChanged()));
+    connect(&m_request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)),
+            this, SLOT(_q_statusChanged()));
+    connect(&m_request, SIGNAL(resultChanged()), this, SLOT(_q_statusChanged()));
     connect(&m_request, SIGNAL(progressChanged(int,int)), this, SIGNAL(progressChanged()));
 
     connect(&m_request, SIGNAL(typeChanged()),
@@ -84,12 +84,12 @@ void QDeclarativeGalleryType::componentComplete()
         m_request.execute();
 }
 
-void QDeclarativeGalleryType::_q_stateChanged()
+void QDeclarativeGalleryType::_q_statusChanged()
 {
     Status status = m_status;
     QString message;
 
-    switch (m_request.state()) {
+    switch (m_request.status()) {
     case QGalleryAbstractRequest::Inactive: {
             switch (m_request.result()) {
             case QGalleryAbstractRequest::NoResult:

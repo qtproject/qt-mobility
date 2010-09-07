@@ -69,8 +69,8 @@ public:
 
         QObject::connect(&query, SIGNAL(resultSetChanged(QGalleryResultSet*)),
                 q_ptr, SLOT(_q_resultSetChanged(QGalleryResultSet*)));
-        QObject::connect(&query, SIGNAL(stateChanged(QGalleryAbstractRequest::State)),
-                q_ptr, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
+        QObject::connect(&query, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)),
+                q_ptr, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)));
         QObject::connect(&query, SIGNAL(resultChanged()), q_ptr, SIGNAL(resultChanged()));
         QObject::connect(&query, SIGNAL(finished(int)), q_ptr, SIGNAL(finished(int)));
         QObject::connect(&query, SIGNAL(succeeded()), q_ptr, SIGNAL(succeeded()));
@@ -694,13 +694,13 @@ int QGalleryQueryModel::result() const
     \brief The state of a query.
 */
 
-QGalleryAbstractRequest::State QGalleryQueryModel::state() const
+QGalleryAbstractRequest::Status QGalleryQueryModel::status() const
 {
-    return d_ptr->query.state();
+    return d_ptr->query.status();
 }
 
 /*!
-    \fn QGalleryQueryModel::stateChanged(QGalleryAbstractRequest::State state)
+    \fn QGalleryQueryModel::statusChanged(QGalleryAbstractRequest::Status state)
 
     Signals that the \a state of the query has changed.
 */

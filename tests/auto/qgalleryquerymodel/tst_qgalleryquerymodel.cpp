@@ -54,7 +54,7 @@
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QModelIndex)
-Q_DECLARE_METATYPE(QGalleryAbstractRequest::State)
+Q_DECLARE_METATYPE(QGalleryAbstractRequest::Status)
 
 class QtTestGallery;
 
@@ -254,7 +254,7 @@ private:
 void tst_QGalleryItemListModel::initTestCase()
 {
     qRegisterMetaType<QModelIndex>();
-    qRegisterMetaType<QGalleryAbstractRequest::State>();
+    qRegisterMetaType<QGalleryAbstractRequest::Status>();
 
     albumProperties.insert(Qt::DisplayRole, QLatin1String("albumTitle"));
     albumProperties.insert(Qt::UserRole, QLatin1String("albumArtist"));
@@ -320,59 +320,59 @@ void tst_QGalleryItemListModel::execute()
     QSignalSpy cancelledSpy(&model, SIGNAL(cancelled()));
     QSignalSpy failedSpy(&model, SIGNAL(failed(int)));
     QSignalSpy finishedSpy(&model, SIGNAL(finished(int)));
-    QSignalSpy stateSpy(&model, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
+    QSignalSpy statusSpy(&model, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)));
     QSignalSpy resultSpy(&model, SIGNAL(resultChanged()));
 
     model.execute();
     QCOMPARE(model.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(model.state(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(model.status(), QGalleryAbstractRequest::Inactive);
     QCOMPARE(succeededSpy.count(), 1);
     QCOMPARE(cancelledSpy.count(), 0);
     QCOMPARE(failedSpy.count(), 0);
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
     QCOMPARE(resultSpy.count(), 1);
 
     gallery.setResult(QGalleryAbstractRequest::NoResult);
     model.execute();
     QCOMPARE(model.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(model.state(), QGalleryAbstractRequest::Active);
+    QCOMPARE(model.status(), QGalleryAbstractRequest::Active);
     QCOMPARE(succeededSpy.count(), 1);
     QCOMPARE(cancelledSpy.count(), 0);
     QCOMPARE(failedSpy.count(), 0);
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(statusSpy.count(), 1);
     QCOMPARE(resultSpy.count(), 2);
 
     model.cancel();
     QCOMPARE(model.result(), int(QGalleryAbstractRequest::Cancelled));
-    QCOMPARE(model.state(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(model.status(), QGalleryAbstractRequest::Inactive);
     QCOMPARE(succeededSpy.count(), 1);
     QCOMPARE(cancelledSpy.count(), 1);
     QCOMPARE(failedSpy.count(), 0);
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(stateSpy.count(), 2);
+    QCOMPARE(statusSpy.count(), 2);
     QCOMPARE(resultSpy.count(), 3);
 
     gallery.setResult(QGalleryAbstractRequest::ConnectionError);
     model.execute();
     QCOMPARE(model.result(), int(QGalleryAbstractRequest::ConnectionError));
-    QCOMPARE(model.state(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(model.status(), QGalleryAbstractRequest::Inactive);
     QCOMPARE(succeededSpy.count(), 1);
     QCOMPARE(cancelledSpy.count(), 1);
     QCOMPARE(failedSpy.count(), 1);
     QCOMPARE(finishedSpy.count(), 3);
-    QCOMPARE(stateSpy.count(), 2);
+    QCOMPARE(statusSpy.count(), 2);
     QCOMPARE(resultSpy.count(), 4);
 
     model.clear();
     QCOMPARE(model.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(model.state(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(model.status(), QGalleryAbstractRequest::Inactive);
     QCOMPARE(succeededSpy.count(), 1);
     QCOMPARE(cancelledSpy.count(), 1);
     QCOMPARE(failedSpy.count(), 1);
     QCOMPARE(finishedSpy.count(), 3);
-    QCOMPARE(stateSpy.count(), 2);
+    QCOMPARE(statusSpy.count(), 2);
     QCOMPARE(resultSpy.count(), 5);
 }
 
