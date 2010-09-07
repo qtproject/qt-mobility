@@ -239,7 +239,7 @@ QDeclarativeTelephonyCallList::QDeclarativeTelephonyCallList()
     connect(d, SIGNAL(activeCallAdded(const QTelephonyCallInfo&))
         , this, SLOT(onCallAdded(const QTelephonyCallInfo&)));
     connect(d, SIGNAL(hasActiveCalls(bool))
-        , this, SLOT(onHasActiveCalls(bool)));
+        , this, SLOT(onActiveCalls(bool)));
 }
 
 /*!
@@ -335,7 +335,7 @@ void QDeclarativeTelephonyCallList::onCallAdded(const QTelephonyCallInfo& call)
 
     Value true indicates if active calls are available or not.
 */
-void QDeclarativeTelephonyCallList::onHasActiveCalls(bool value)
+void QDeclarativeTelephonyCallList::onActiveCalls(bool value)
 {
     emit hasActiveCalls(value);
 }

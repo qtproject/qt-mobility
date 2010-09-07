@@ -105,7 +105,7 @@ private slots:
     void onCallStatusChanged(const QTelephonyCallInfo& call);
     void onCallRemoved(const QTelephonyCallInfo& call);
     void onCallAdded(const QTelephonyCallInfo& call);
-    void onCallCountChanged(const int& value);
+    void onActiveCalls(bool value);
 
 private:
     QTelephonyCallList* d;
