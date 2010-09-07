@@ -48,24 +48,45 @@ testcase = {
             // skip("Telephony exists only for Qt Mobility 1.1 and greater"
     },
 
-    current_state: function() {
-        prompt("queries the current telephony state. e.g. no call, ringing, call in-progress and call on-hold.");
+    current_state_data: {
+        nocall:["Do nothing", "there is no call shown"],
+        ringing:["Call another device but do not answer", "callmonitor displays 'ringing'"],
+        inprogress:["Call another device and answer", "callmonitor displays 'call in progress'"],
+        inprogress:["Call another device, answer and place on hold", "callmonitor displays 'call on hold'"]
+    },
+
+    current_state: function(action, result) {
+        var prompttext = "Start callmonitor\n" + action + "\n" + "Verify that " +result;
+        prompt(twiki(prompttext));
     },
 
     notified_of_status_change: function() {
-        prompt("gets a notification on a change of a call status. e.g. ringing, on-hold, terminating.");
+        prompt("Start callmonitor
+Call the device from a secondary device
+Verify that the callmonitor shows incoming call
+Answer the call
+Verify that the callmonitor changes the status to connected
+Set the call to held
+Verify that the callmonitor changes the status to on hold
+Terminate the call on the secondary device
+Verify that the callmonitor changes the status to terminated");
     },
 
     current_call_information: function() {
-        prompt("queries call information. e.g. call type, phone number, SIP id.");
+        prompt("Start callmonitor
+Call the device from a secondary device
+Verify that the callmonitor shows incoming call
+Answer the call
+Verify that the callmonitor changes the status to connected
+Verify that the call type shows as 'Voice' and the source phone number matches that of the calling device");
     },
 
     notified_of_list_change: function() {
-        prompt("gets a notification on a change of list of calls.");
+        prompt("Verify the callmonitor gets a notification on a change of list of calls.");
     },
 
     query_the_open_calls: function() {
-        prompt("queries open calls at a given time.");
+        prompt("Verify the callmonitor can query open calls at any given time.");
     }
 
 }

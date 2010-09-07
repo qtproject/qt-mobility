@@ -55,11 +55,15 @@ testcase = {
     },
 
     user_interface_response: function() {
-        prompt("Only clicking the buttons should vibrate, indicating a correct action on the users part");
+        startApplication("hapticsquare");
+        select("Click");
+        prompt("Verify the device emits a short, light vibe");
+        select("Rumble");
+        prompt("Verify the device emits a long vibe that increases in intensity");
     },
 
     gameplay_feedback: function() {
-        prompt("The QML snake game vibrates the device slightly when consuming yellow points.");
+        prompt("Verify the QML snake game vibrates the device slightly when consuming yellow points.");
     }
 }
 

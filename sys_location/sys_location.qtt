@@ -32,34 +32,81 @@ testcase = {
        '));
     },
 
+
     // Landmarks
+
+    store_and_load_a_landmark_data: {
+        // Valid landmarks are -90~90 latitude, and -180~180 longitude
+        landmark : ["landmark", "20", "120"]
+    },
+
+    store_and_load_a_landmark: function(name, latitude, longitude) {
+        startApplication("landmarkbrowser");
+        click("Add Landmark");
+        enter("Latitude", latitude);
+        enter("Longitude", longitude);
+        enter("Name", name);
+        click("Ok");
+        prompt("Verify that the landmark record is created");
+    },
+
+    negative_store_and_load_a_landmark_data: {
+        // Landmarks outside the ranges -90~90 latitude, and -180~180 longitude
+        bad_landmark_lat : ["bad_landmark", "100", "120"],
+        bad_landmark_long : ["bad_landmark", "80", "300"]
+    },
+
+    negative_store_and_load_a_landmark: function(name, latitude, longitude) {
+        startApplication("landmarkbrowser");
+        click("Add Landmark");
+        enter("Latitude", latitude);
+        enter("Longitude", longitude);
+        enter("Name", name);
+        expectMessageBox("Invalid"){
+            click("Ok");
+        }
+        click("Ok");
+        click("Cancel");
+    },
 /*
-    store_and_load_a_landmark: function
-    Get land marks within range of a position: function
-    Create, Edit, Delete landmark (and its details): function
-    Add, Edit, Delete a category: function
-    Enumerate categories: function
-    Sort, Search based on category for a landmark: function
-    Sort landmarks(alphabetical, nearest): function
-    Notification on landmark changes: function
-    Notification on category changes: function
+    landmarks_within_range_of_a_position: function() {    },
+
+    create_edit_and_delete_a_landmark: function() {    },
+
+    sorted_search_based_on_category: function() {    },
+
+    sort_landmarks_in_alphabetical_and_nearest: function() {    },
+
+    notification_on_landmark_changes: function() {    },
+
+    enumerate_categories: function() {    },
+
+    add_edit_and_delete_a_category: function() {    },
+
+    notification_on_category_changes: function() {    },
+
 */
 
     // Maps and Navigation
 /*
-    Request route from one GPS location to another: function
-    List of way points: function
-    Distinguish pedestrian and car navigation: function
-    Request Landmarks for given coordinate - Reverse geocoding (overlap with Landmarks API needs to be resolved): function
-    Find matching landmarks for given search criteria - Geocoding (overlap with Landmarks API needs to be resolved): function
-    Displaying a map: function
-    Provide map for given coordinate: function
-    Zooming support: function
-    QML support: function
-    Standard widget: function
-    Online vs offline support: function
-    Should navigation work while the device is offline?: function
-    Available platform/REST API??: function
+    request_route_from_one_GPS_location_to_another: function() {    },
+
+    list_of_way_points: function() {    },
+
+    distinguish_pedestrian_and_car_navigation: function() {    },
+
+    request_landmarks_for_given_coordinate_with_reverse_geocoding: function() {    },
+
+    find_matching_landmarks_for_given_search_criteria_with_geocoding: function() {    },
+
+    displaying_a_map: function() {    },
+
+    provide_map_for_given_coordinate: function() {    },
+
+    zooming_support: function() {    },
+
+    online_and_offline: function() {    }
+
 */
 }  // end of testcase
 
