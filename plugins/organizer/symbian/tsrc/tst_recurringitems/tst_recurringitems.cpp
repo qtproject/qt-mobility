@@ -476,6 +476,7 @@ void tst_recurringItems::addItemsWeeklyRecurrence(QString managerName, QString i
         << rrule;
 
     rrule = QOrganizerItemRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
     rrule.setInterval(2);
     daysOfWeek.clear(); // reset
     daysOfWeek.append(Qt::Monday);
