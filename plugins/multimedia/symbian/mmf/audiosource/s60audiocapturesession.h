@@ -85,7 +85,6 @@ public:
     enum TAudioCaptureState
     {
         ENotInitialized = 0,
-        EInitializing,
         EInitialized,
         EOpenCompelete,
         ERecording,
@@ -120,20 +119,18 @@ private:
     void initializeSessionL();
     void setError(TInt aError);
     QMediaRecorder::Error fromSymbianErrorToMultimediaError(int error);
-    QString initializeSinkL();
+    void prepareSinkL();
     void updateAudioContainersL();
     void populateAudioCodecsDataL();
     void retrieveSupportedAudioSampleRatesL();
     void applyAudioSettingsL();
     TFourCC determinePCMFormat();
     void setDefaultSettings();
-    void createFileWithHeader(const TPtrC &path);
     // MMdaObjectStateChangeObserver
     void MoscoStateChangeEvent(CBase* aObject, TInt aPreviousState,
             TInt aCurrentState, TInt aErrorCode);
     void MoscoStateChangeEventL(CBase* aObject, TInt aPreviousState,
             TInt aCurrentState, TInt aErrorCode);
-    QUrl generateAudioFilePath();
 
 public slots:
     void setCaptureDevice(const QString &deviceName);
@@ -155,7 +152,8 @@ private:
     QHash<QString, CodecData>  m_audioCodeclist;
     QList<int> m_supportedSampleRates;
     int m_error;
-    bool isMuted;
+    bool m_isMuted;
+    RFs m_fsSession;
 };
 
 #endif // S60AUDIOCAPTURESESSION_H
