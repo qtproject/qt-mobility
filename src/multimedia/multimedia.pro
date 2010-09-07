@@ -155,7 +155,13 @@ maemo5 {
     SOURCES += qxvideosurface_maemo5.cpp
     SOURCES += qgraphicsvideoitem_maemo5.cpp
     LIBS += -lXv  -lX11 -lXext
-} else {
+}
+
+maemo6 {
+    SOURCES += qgraphicsvideoitem_overlay.cpp
+}
+
+!maemo* {
     SOURCES += qgraphicsvideoitem.cpp
 }
 
