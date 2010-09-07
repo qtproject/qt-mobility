@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,24 +39,41 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QMainWindow>
-#include <QDeclarativeView>
-#include <QDeclarativeContext>
-#include "buzzer.h"
+import Qt 4.7
 
-int main(int argc, char *argv[])
-{
-    QApplication app(argc, argv);
+Item {
+    id: container
 
-    QMainWindow mw;
-    QDeclarativeView *view = new QDeclarativeView(&mw);
-    view->setResizeMode(QDeclarativeView::SizeRootObjectToView);
-    view->rootContext()->setContextProperty("hapticplayer", new Buzzer);
+    signal clicked
 
-    view->setSource(QUrl::fromLocalFile(":/hapticsquare.qml"));
-    mw.setCentralWidget(view);
-    mw.showMaximized();
+    property string text
 
-    return app.exec();
+    BorderImage {
+        id: buttonImage
+        source: "images/toolbutton.sci"
+        width: container.width; height: container.height
+    }
+    BorderImage {
+        id: pressed
+        opacity: 0
+        source: "images/toolbutton.sci"
+        width: container.width; height: container.height
+    }
+    MouseArea {
+        id: mouseRegion
+        anchors.fill: buttonImage
+        onClicked: { container.clicked(); }
+    }
+    Text {
+        color: "white"
+        anchors.centerIn: buttonImage; font.bold: true
+        text: container.text; style: Text.Raised; styleColor: "black"
+    }
+    states: [
+        State {
+            name: "Pressed"
+            when: mouseRegion.pressed == true
+            PropertyChanges { target: pressed; opacity: 1 }
+        }
+    ]
 }
