@@ -1679,8 +1679,10 @@ QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObje
     if(halIsAvailable)
         halIface = new QHalInterface(this);
 #else
+#if !defined(QT_NO_UDISKS)
     if(udisksIsAvailable)
         udisksIface = new QUDisksInterface(this);
+#endif
 #endif
 #endif
     logicalDrives();
@@ -1767,7 +1769,7 @@ void QSystemStorageInfoLinuxCommonPrivate::udisksDeviceChanged(const QDBusObject
 {
     if(udisksIsAvailable) {
 #if !defined(QT_NO_DBUS)
-#if !defined(QT_NO_CONNMAN)
+#if !defined(QT_NO_UDISKS)
         QUDisksDeviceInterface devIface(path.path());
         QString mountp;
         if(devIface.deviceMountPaths().count() > 0)
@@ -1818,7 +1820,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive
 
     if(udisksIsAvailable) {
 #if !defined(QT_NO_DBUS)
-#if !defined(QT_NO_CONNMAN)
+#if !defined(QT_NO_UDISKS)
         QUDisksDeviceInterface devIface("/org/freedesktop/UDisks/devices/"+mountEntriesMap.value(driveVolume));
         if(devIface.deviceIsMounted()) {
             QString chopper = devIface.deviceFile();
@@ -1904,7 +1906,7 @@ QStringList QSystemStorageInfoLinuxCommonPrivate::logicalDrives()
 #if !defined(QT_NO_DBUS)
 
     if(udisksAvailable()) {
-#if !defined(QT_NO_CONNMAN)
+#if !defined(QT_NO_UDISKS)
         mountEntriesMap.clear();
         foreach(const QDBusObjectPath device,udisksIface->enumerateDevices() ) {
             QUDisksDeviceInterface devIface(device.path());
@@ -1984,8 +1986,8 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
-qDebug() << Q_FUNC_INFO;
-QHalInterface iface;
+//        qDebug() << Q_FUNC_INFO;
+        QHalInterface iface;
 
         QStringList list = iface.findDeviceByCapability("battery");
         if(!list.isEmpty()) {

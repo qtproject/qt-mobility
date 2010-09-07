@@ -81,7 +81,9 @@ unix:!simulator {
                 contains(CONFIG,meego): { #for now... udisks
                     SOURCES += qdevicekitservice_linux.cpp
                     HEADERS += qdevicekitservice_linux_p.h
-                }
+                } else {
+                    DEFINES += QT_NO_UDISKS
+                   }
                 contains(connman_enabled, yes): {
 
                     SOURCES+= qconnmanservice_linux.cpp qofonoservice_linux.cpp

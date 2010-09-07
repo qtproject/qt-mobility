@@ -316,12 +316,12 @@ protected:
 #if !defined(QT_NO_DBUS)
     void setupBluetooth();
 
-#if defined(QT_NO_CONNMAN)
+//#if defined(QT_NO_CONNMAN)
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
-#else
+//#else
     QUDisksInterface *udisksIface;
-#endif
+//#endif
     bool hasWirelessKeyboardConnected;
 private Q_SLOTS:
     virtual void halChanged(int,QVariantList);
