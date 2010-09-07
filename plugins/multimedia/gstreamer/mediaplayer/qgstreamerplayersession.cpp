@@ -343,12 +343,19 @@ void QGstreamerPlayerSession::updateVideoRenderer()
 void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
 {
     if (m_videoOutput != videoOutput) {
-        if (m_videoOutput)
+        if (m_videoOutput) {
             disconnect(m_videoOutput, SIGNAL(sinkChanged()),
                        this, SLOT(updateVideoRenderer()));
-        if (videoOutput)
+            disconnect(m_videoOutput, SIGNAL(readyChanged(bool)),
+                   this, SLOT(updateVideoRenderer()));
+        }
+
+        if (videoOutput) {
             connect(videoOutput, SIGNAL(sinkChanged()),
                     this, SLOT(updateVideoRenderer()));
+            connect(m_videoOutput, SIGNAL(readyChanged(bool)),
+                   this, SLOT(updateVideoRenderer()));
+        }
 
         m_videoOutput = videoOutput;
     }
