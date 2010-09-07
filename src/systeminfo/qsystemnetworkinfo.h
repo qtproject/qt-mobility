@@ -90,7 +90,11 @@ public:
         WlanMode,
         EthernetMode,
         BluetoothMode,
-        WimaxMode
+        WimaxMode,
+        GprsMode, //1.2
+        EdgeMode, //1.2
+        HspaMode, //1.2
+        LteMode //1.2
     };
 
     Q_INVOKABLE QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
