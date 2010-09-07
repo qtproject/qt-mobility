@@ -1277,6 +1277,43 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGuid::FieldGuid, "Guid");
    Sets the globally unique identifier which is stored in this detail to \a guid.
  */
 
+/* ==================== QContactHobby ======================= */
+
+/*!
+   \class QContactHobby
+   \brief The QContactHobby class contains a hobby of the contact.
+   \ingroup contacts-details
+
+   A contact may have one or more hobbies.  Each QContactHobby
+   detail contains information about a single hobby of the contact.
+ */
+
+/*!
+   \variable QContactHobby::DefinitionName
+   The string constant for the definition name of QContactHobby details.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactHobby::DefinitionName, "Hobby");
+
+/*!
+   \variable QContactHobby::FieldHobby
+
+    The field key constant for the value containing the name
+    of the hobby.
+   \sa hobby(), setHobby()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactHobby::FieldHobby, "Hobby");
+
+/*!
+   \fn QContactHobby::setHobby(const QString& hobby)
+   Sets the hobby associated with a contact which is stored in this detail to \a hobby.
+ */
+
+/*!
+   \fn QContactHobby::hobby() const
+   Returns the hobby associated with a contact which is stored in this detail.
+ */
+
+
 /* ==================== QContactName ======================= */
 
 /*!

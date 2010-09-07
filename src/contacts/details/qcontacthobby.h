@@ -39,31 +39,30 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTTAG_H
-#define QCONTACTTAG_H
+#ifndef QCONTACTHOBBY_H
+#define QCONTACTHOBBY_H
 
 #include <QString>
 
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
-#include "qcontact.h"
 
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_CONTACTS_EXPORT QContactTag : public QContactDetail
+class Q_CONTACTS_EXPORT QContactHobby : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
     static const QLatin1Constant DefinitionName;
-    static const QLatin1Constant FieldTag;
+    static const QLatin1Constant FieldHobby;
 #else
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactTag, "Tag")
-    Q_DECLARE_LATIN1_CONSTANT(FieldTag, "Tag");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactHobby, "Hobby")
+    Q_DECLARE_LATIN1_CONSTANT(FieldHobby, "Hobby");
 #endif
 
-    void setTag(const QString& tag) {setValue(FieldTag, tag);}
-    QString tag() const {return value(FieldTag);}
+    void setHobby(const QString& hobby) {setValue(FieldHobby, hobby);}
+    QString hobby() const {return value(FieldHobby);}
 };
 
 QTM_END_NAMESPACE

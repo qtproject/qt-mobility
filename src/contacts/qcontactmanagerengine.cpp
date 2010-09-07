@@ -1221,6 +1221,19 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
         d.setFields(fields);
         d.setUnique(false);
         retn.insert(d.name(), d);
+
+        // hobby
+        d.setName(QContactHobby::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QContactHobby::FieldHobby, f);
+        f.setDataType(QVariant::StringList);
+        f.setAllowableValues(contexts);
+        fields.insert(QContactDetail::FieldContext, f);
+        d.setFields(fields);
+        d.setUnique(false);
+        retn.insert(d.name(), d);
     }
 
     // in the default schema, we have two contact types: TypeContact, TypeGroup.
