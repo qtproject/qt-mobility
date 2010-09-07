@@ -45,28 +45,35 @@
 #include "qremoteservicecontrol.h"
 #include "instancemanager_p.h"
 #include "qserviceinterfacedescriptor.h"
-#include <QLocalServer>
 
 QTM_BEGIN_NAMESPACE
 
 class ObjectEndPoint;
+
 class QRemoteServiceControlPrivate: public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(bool quitOnLastInstanceClosed READ quitOnLastInstanceClosed WRITE setQuitOnLastInstanceClosed)
 public:
     QRemoteServiceControlPrivate(QObject* parent);
-    void publishServices(const QString& ident );
+    virtual ~QRemoteServiceControlPrivate();
+
+    virtual void publishServices(const QString& ident );
+
+    virtual bool quitOnLastInstanceClosed() const;
+    virtual void setQuitOnLastInstanceClosed(const bool quit);
+
+Q_SIGNALS:
+    void lastInstanceClosed();
 
 public slots:
     void processIncoming(); 
 private:
-    bool createServiceEndPoint(const QString& ident);
-
-    QLocalServer* localServer;
-    QList<ObjectEndPoint*> pendingConnections;
+    bool m_quit;
 
 public:
     static QObject* proxyForService(const QRemoteServiceIdentifier& typeId, const QString& location);
+    static QRemoteServiceControlPrivate* constructPrivateObject(QObject *parent);
 };
 
 QTM_END_NAMESPACE

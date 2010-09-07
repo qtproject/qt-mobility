@@ -45,6 +45,7 @@
 #define QT_SFW_SYMBIAN_IPC_DEBUG
 
 #include "qremoteservicecontrol.h"
+#include "qremoteservicecontrol_p.h"
 #include "qremoteserviceclassregister.h"
 #include "qservicepackage_p.h"
 #include "qservice.h"
@@ -79,6 +80,7 @@ class CServiceProviderServerSession;
 class CServiceProviderServer;
 class SymbianServerEndPoint;
 class SymbianClientEndPoint;
+class QRemoteServiceControlSymbianPrivate;
 
 // Type definitions
 typedef TPckgBuf<TInt> TError; 
@@ -140,7 +142,7 @@ const TUint KDefaultHeapSize = 0x10000;
 class CServiceProviderServer : public CServer2
     {
     public:
-        CServiceProviderServer(QRemoteServiceControlPrivate* aOwner);
+        CServiceProviderServer(QRemoteServiceControlSymbianPrivate* aOwner);
         CSession2* NewSessionL(const TVersion& aVersion, const RMessage2& aMessage) const;
 
     public:
@@ -151,7 +153,7 @@ class CServiceProviderServer : public CServer2
     private:
 
         int iSessionCount;
-        QRemoteServiceControlPrivate* iOwner;
+        QRemoteServiceControlSymbianPrivate* iOwner;
     };
 
 class CServiceProviderServerSession : public CSession2
@@ -184,15 +186,17 @@ class CServiceProviderServerSession : public CSession2
     };
 
 
-class QRemoteServiceControlPrivate: public QObject
+class QRemoteServiceControlSymbianPrivate: public QRemoteServiceControlPrivate
 {
     Q_OBJECT
 
 public:
-    QRemoteServiceControlPrivate(QObject* parent);
+    QRemoteServiceControlSymbianPrivate(QObject* parent);
     void publishServices(const QString& ident );
     static QObject* proxyForService(const QRemoteServiceIdentifier& typeId, const QString& location);
     void processIncoming(CServiceProviderServerSession* session);
+
+    void closingLastInstance();
 };
 
 // A helper class that actively listens for serviceprovider messages.

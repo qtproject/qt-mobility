@@ -43,11 +43,12 @@
 #include "qserviceplugininterface.h"
 #include "qabstractsecuritysession.h"
 #include "qserviceinterfacedescriptor_p.h"
+#include "qremoteservicecontrol_p.h"
 
 #if defined(Q_OS_SYMBIAN)
     #include "qremoteservicecontrol_s60_p.h"
 #elif defined(QT_NO_DBUS)
-    #include "qremoteservicecontrol_p.h"
+    #include "qremoteservicecontrol_ls_p.h"
 #else
     #include "qremoteservicecontrol_dbus_p.h"
 #endif

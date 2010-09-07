@@ -21,9 +21,9 @@ symbian {
     } else {
         QT += network
 
-        PRIVATE_HEADERS += ipc/qremoteservicecontrol_p.h \
+        PRIVATE_HEADERS += ipc/qremoteservicecontrol_ls_p.h \
                            ipc/objectendpoint_p.h
-        SOURCES += ipc/qremoteservicecontrol_p.cpp \
+        SOURCES += ipc/qremoteservicecontrol_ls_p.cpp \
                    ipc/objectendpoint.cpp
     }
 }
@@ -35,7 +35,8 @@ PRIVATE_HEADERS += \
         ipc/instancemanager_p.h \
         ipc/qservicepackage_p.h \
         ipc/proxyobject_p.h \
-        ipc/ipcendpoint_p.h
+        ipc/ipcendpoint_p.h \
+        ipc/qremoteservicecontrol_p.h
 
 SOURCES += \
         ipc/qslotinvoker.cpp \
@@ -44,4 +45,5 @@ SOURCES += \
         ipc/instancemanager.cpp \
         ipc/qservicepackage.cpp \
         ipc/proxyobject.cpp \
-        ipc/ipcendpoint.cpp
+        ipc/ipcendpoint.cpp \
+        ipc/qremoteservicecontrol_p.cpp
