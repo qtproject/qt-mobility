@@ -305,6 +305,9 @@ void QVersitOrganizerExporterPrivate::encodeRecurRule(
         case QOrganizerItemRecurrenceRule::Yearly:
             value.append(QLatin1String("YEARLY"));
             break;
+        case QOrganizerItemRecurrenceRule::Invalid:
+        default:
+            return;
     }
     if (rule.count() > 0) {
         value.append(QLatin1String(";COUNT="));
@@ -359,6 +362,7 @@ void QVersitOrganizerExporterPrivate::encodeRecurRule(
         value.append(weekString(rule.weekStart()));
     }
     property.setValue(value);
+    property.setValueType(QVersitProperty::PreformattedType);
     *generatedProperties << property;
 }
 

@@ -91,6 +91,16 @@ public:
     }
 
     // common actions
+#ifdef Q_QDOC
+    static const QLatin1Constant ActionCall;
+    static const QLatin1Constant ActionEmail;
+    static const QLatin1Constant ActionSms;
+    static const QLatin1Constant ActionMms;
+    static const QLatin1Constant ActionChat;
+    static const QLatin1Constant ActionVideoCall;
+    static const QLatin1Constant ActionOpenInEditor;
+    static const QLatin1Constant ActionOpenInViewer;
+#else
     Q_DECLARE_LATIN1_CONSTANT(ActionCall, "call");
     Q_DECLARE_LATIN1_CONSTANT(ActionEmail, "email");
     Q_DECLARE_LATIN1_CONSTANT(ActionSms, "sms");
@@ -99,6 +109,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(ActionVideoCall, "videocall");
     Q_DECLARE_LATIN1_CONSTANT(ActionOpenInEditor, "edit");
     Q_DECLARE_LATIN1_CONSTANT(ActionOpenInViewer, "view");
+#endif
 
 Q_SIGNALS:
     void stateChanged(QContactAction::State);

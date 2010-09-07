@@ -67,8 +67,8 @@ public:
     QGeoTiledMapPixmapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapPixmapObjectInfo();
 
-    void objectUpdate();
-    void mapUpdate();
+    void objectUpdated();
+    void mapUpdated();
 
     QGeoMapPixmapObject* pixmap;
     QGraphicsPixmapItem *pixmapItem;

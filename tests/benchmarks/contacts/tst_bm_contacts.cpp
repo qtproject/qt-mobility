@@ -43,1058 +43,776 @@
 
 #include <QApplication>
 #include <QtTest/QtTest>
-//#include "contact.h"
-//#include <QContactManager>
-#include <QDebug>
-#include <QEventLoop>
-#include <QTimer>
-
-#include <qcontactabstractrequest.h>
-#include <requests/qcontactfetchrequest.h>
-#include <filters/qcontactlocalidfilter.h>
-#include <details/qcontactdetails.h>
-
-#ifdef Q_OS_SYMBIAN
-#include <cntfilt.h>
-#include <cntitem.h>
-#include <cntdb.h>
-#include <cntitem.h>
-#include <cntfield.h>
-#include <cntfldst.h>
-#include <cntdef.h>
-#include <cntdef.hrh> 
-#endif
+#include "qtcontacts.h"
 
 QTM_USE_NAMESPACE
 
-class tst_Contact : public QObject
+class tst_QContactBenchmark : public QObject
 {
     Q_OBJECT
 
 public:
-    enum platform {
-        QContacts,
-        Native
-    };
+    tst_QContactBenchmark();
+    virtual ~tst_QContactBenchmark();
 
-    
 private slots:
     void initTestCase();
     void cleanupTestCase();
-
-    void tst_createTime_data();
-    void tst_createTime();
-
-    void tst_fetchAllContactIds_data();
-    void tst_fetchAllContactIds();
-    void tst_fetchOneContact_data();
-    void tst_fetchOneContact();
-    void tst_fetchTenContact_data();
-    void tst_fetchTenContact();
-    //void tst_fetchAllContact();
-
-    void tst_createContact_data();  
-    void tst_createContact();
-    
-    void tst_saveContact_data();
-    void tst_saveContact();    
-
-    void tst_nameFilter_data();
-    void tst_nameFilter();
-
-    void tst_removeOneContact_data();
-    void tst_removeOneContact();
-    
-    void tst_removeAllContacts_data();
-    void tst_removeAllContacts();
-
-
-//    void tst_currentLanguage();
-//    void tst_availableLanguages();
-//
-//    void tst_versions_data();
-//    void tst_versions();
-//
-//    void tst_hasFeatures_data();
-//    void tst_hasFeatures();
-
-public slots:
-
-    void gotContact(QContactFetchRequest*,bool);
-    void stateChanged(QContactAbstractRequest::State newState);
-    void timeout();
-    void resultsAvailable();
-    void resultsAvailableFilter();
-    //void setManager(QContactManager *mgr);
+    void benchmarking();
+    void benchmarking_data() {addManagers();}
 
 private:
-    void createContact(QContactManager *mgr, enum platform p = QContacts);
-    void clearContacts(QContactManager *mgr, enum platform p = QContacts);
-    int countContacts(QContactManager *mgr, enum platform p = QContacts);
-    
-    QString manager;
-    QEventLoop *loop;
-//    QContactManager *m_qm;
-    QContactManager *m_systemManager;
-    QList<QContactManager *> m_managers;
-//    enum platform m_platform;
-    int m_num_contacts;
-    QList<QContactLocalId> id_list;
-
-    int m_run;
-    
-    int m_num_start;
-
-    QTimer *m_timer;
-    QStringList firstNames;
-    QStringList lastNames;    
+    void addManagers();
+    QString generateRandomString(int strlen, bool numeric = false) const;
 
 };
 
-Q_DECLARE_METATYPE(QContactManager *);
-Q_DECLARE_METATYPE(tst_Contact::platform);
-
-void tst_Contact::initTestCase()
-{    
-    qDebug() << "Managers: " << QContactManager::availableManagers();    
-    m_run = 0;
-    m_systemManager = 0x0;
-
-    QStringList list = QContactManager::availableManagers();       
-    while(!list.empty()){
-      QString mgr = list.takeFirst();
-      if((mgr != "invalid") && (mgr != "testdummy") && (mgr != "maliciousplugin")){
-        m_managers.append(new QContactManager(mgr));
-        if((mgr == "symbian") || (mgr == "tracker") || (mgr == "maemo5")) {
-          qDebug() << "Found system manager: " << mgr;
-          m_systemManager = m_managers.last();
-        }
-        if(!m_systemManager && mgr == "memory"){
-            qDebug() << "Found system manager of last resort: " << mgr;
-            m_systemManager = m_managers.last();
-        }
-      }      
-    }
-    if(m_managers.isEmpty()) {
-      QFAIL("Unable to find valid managers. Please check install");
-    }
-    if(!m_systemManager){
-      QFAIL("Unable to find a default plugin to use, please install plugins or fix test");
-    }
-
-    // setup an event loop for waiting
-    loop = new QEventLoop;
-
-    firstNames << "Anahera" << "Anaru" << "Hemi" << "Hine" << "Kiri" << "Maata" << "Mere" << "Moana" << "Paora" << "Petera" << "Piripi" << "Ruiha" << "Tane" << "Whetu";
-    lastNames << "Ati Awa" << "Kai Taho" << "Moriori" << "Muaupoko" << "Nga Rauru" << "Taranaki" << "Opotoki" << "Aotea" << "Taninui" << "Tuhourangi" << "Tainui" << "Waitaha";
-    
-    m_num_start = countContacts(m_systemManager);
-    qDebug() << "Number of Contact: " << m_num_start;
-
-
-    for(int i = 0; i < 20; i++){
-      foreach(QContactManager *mgr, m_managers){
-        createContact(mgr);
-      }
-    }
-    
-    int after = countContacts(m_systemManager);
-    if(after - m_num_start != 20){
-        qWarning() << "Failed to create 20 contacts";
-    }
-
-    m_timer = new QTimer(this);
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(timeout()));
-
-}
-
-int tst_Contact::countContacts(QContactManager *manager, enum platform platform)
-{  
-  if(platform == tst_Contact::QContacts) {
-        QList<QContactLocalId> qcl = manager->contactIds();
-        return qcl.count();
-  } 
-  else if(platform == tst_Contact::Native){ 
-#ifdef Q_OS_SYMBIAN
-    CContactDatabase* contactsDb = CContactDatabase::OpenL();
-    CleanupStack::PushL(contactsDb);
-    
-    int num = contactsDb->CountL();
-    
-    CleanupStack::PopAndDestroy(contactsDb);
-    
-    return num;    
-#endif
-    }
-
-    qWarning("No backend support in countContacts()");
-    return 0;
-
-}
-
-void tst_Contact::cleanupTestCase()
+tst_QContactBenchmark::tst_QContactBenchmark()
 {
-  foreach(QContactManager *manager, m_managers) {
-    clearContacts(manager);          
-  }
-  if(countContacts(0x0, Native))
-    clearContacts(0x0, tst_Contact::Native);
-  int num_end = countContacts(0x0, tst_Contact::Native);  
-  if(num_end){
-    qWarning() << "Ended with: " << num_end << " contacts, should be 0";
-  }
 }
 
-void tst_Contact::createContact(QContactManager *manager, enum platform platform)
+tst_QContactBenchmark::~tst_QContactBenchmark()
 {
-  if(platform == tst_Contact::QContacts) {    
-    QContact *c = new QContact;
-    c->setType(QContactType::TypeContact);
-    QContactName cname;
-    QString name;
-    name = firstNames.takeFirst();
-    firstNames.push_back(name);
-    cname.setFirstName(name);
-    name = lastNames.takeFirst();
-    lastNames.push_back(name);
-    cname.setLastName(name);
-#ifndef Q_WS_MAEMO_5
-    cname.setPrefix("Mr");
-#endif
-    c->saveDetail(&cname);
-
-    if(!manager->saveContact(c)){
-      qDebug() << "Failed to create contact during setup";
-      return;
-    }
-    id_list.append(c->localId());
-    delete c;
-  }
-  else if(platform == tst_Contact::Native){
-#ifdef Q_OS_SYMBIAN
-    // Create a contact card and add a work phone number. Numeric values are 
-    // stored in a text field (storage type = KStorageTypeText).
-    
-    CContactDatabase* db = CContactDatabase::OpenL();
-    CleanupStack::PushL(db);
-
-    CContactCard* newCard = CContactCard::NewLC();    
-    
-    QString name;
-    
-    // Create the firstName field and add the data to it
-    name = firstNames.takeFirst();
-    firstNames.push_back(name);        
-    CContactItemField* firstName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldGivenName);
-    TPtrC Firstname(reinterpret_cast<const TUint16*>(name.utf16()));
-    firstName->TextStorage()->SetTextL(Firstname);      
-    newCard->AddFieldL(*firstName);
-    CleanupStack::Pop(firstName);
-
-    // Create the lastName field and add the data to it
-    name = lastNames.takeFirst();
-    lastNames.push_back(name);        
-    CContactItemField* lastName= CContactItemField::NewLC(KStorageTypeText, KUidContactFieldFamilyName);
-    TPtrC Lastname(reinterpret_cast<const TUint16*>(name.utf16()));
-    lastName->TextStorage()->SetTextL(Lastname);
-    newCard->AddFieldL(*lastName);
-    CleanupStack::Pop(lastName);
-
-    CContactItemField* prefix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPrefixName);
-    _LIT(KPrefix, "Mr");
-    prefix->TextStorage()->SetTextL(KPrefix);
-    newCard->AddFieldL(*prefix);
-    CleanupStack::Pop(prefix);
-
-    // Add newCard to the database
-    const TContactItemId contactId = db->AddNewContactL(*newCard);
-    db->CloseContactL(contactId);    
-    
-    id_list.append(contactId);
-    CleanupStack::PopAndDestroy(2, db); //newCard, contactsDb
-#else
-    qWarning("No native test for createContact");
-#endif 
-  }
 }
 
-void tst_Contact::clearContacts(QContactManager *manager, enum platform platform)
+void tst_QContactBenchmark::initTestCase()
 {
-  if(platform == tst_Contact::QContacts) {
-    QMap<int, QContactManager::Error> errorMap;
-    manager->removeContacts(id_list, &errorMap);
-    id_list.clear();
-  }
-  else if(platform == tst_Contact::Native){
-#ifdef Q_OS_SYMBIAN
-    CContactDatabase* contactDb = CContactDatabase::OpenL();
-    CleanupStack::PushL(contactDb);
-    
-    CCntFilter *filter = CCntFilter::NewL();
-    CleanupStack::PushL(filter);
-    //get all contact items (no groups, templates...)
-    filter->SetContactFilterTypeALL(EFalse);
-    filter->SetContactFilterTypeCard(ETrue);
-    TRAPD(err, contactDb->FilterDatabaseL(*filter));
-    if(err != KErrNone){
-      qWarning() << "clearContacts failed to get any contacts error: " << err;
-      CleanupStack::PopAndDestroy(2, contactDb);
-      return;
-    }
-    
-    CContactIdArray *iContacts = 0;
-    TRAP(err, iContacts = CContactIdArray::NewL(filter->iIds));
-    if(err != KErrNone){      
-      CleanupStack::PopAndDestroy(2, contactDb); //idArray, contactsDb
-      return;
-    }
-    CleanupStack::PushL(iContacts);
-    
-    TRAP(err, contactDb->DeleteContactsL(*iContacts));
-    if(err != KErrNone)
-      qWarning() << "DeleteContacts failed with: " << err;
-    
-    CleanupStack::PopAndDestroy(3, contactDb); //idArray, contactsDb
-#endif
-  }
-
 }
 
-void tst_Contact::tst_createTime_data()
+void tst_QContactBenchmark::cleanupTestCase()
 {
-  QTest::addColumn<tst_Contact::platform>("platform");
-  QTest::addColumn<QContactManager *>("manager");
-  
-  QTest::newRow("Native") << tst_Contact::Native << (QContactManager *)0x0;
-  foreach(QContactManager *mgr, m_managers){
-    QTest::newRow(QString("QContact-" + mgr->managerName()).toAscii()) << tst_Contact::QContacts << mgr; 
-  }  
 }
 
-void tst_Contact::tst_createTime()
+void tst_QContactBenchmark::addManagers()
 {
-  QFETCH(tst_Contact::platform, platform);
-  QFETCH(QContactManager *, manager);
-  
-  if(platform == tst_Contact::QContacts){
-    
-    QContactManager *qm = 0x0;
+    QTest::addColumn<QString>("uri");
 
-    QBENCHMARK {
-        qm = new QContactManager(manager->managerName());
-    }
-    delete qm;
-  }
-  else if(platform == tst_Contact::Native){
-#ifdef Q_OS_SYMBIAN
-    CContactDatabase* db = 0x0;
-    QBENCHMARK {
-      db = CContactDatabase::OpenL();     
-    }
-    CleanupStack::PushL(db);
-    CleanupStack::PopAndDestroy(db); //db
-#endif
-  }
-}
+    QStringList managers = QContactManager::availableManagers();
 
-void tst_Contact::tst_fetchAllContactIds_data()
-{
-  QTest::addColumn<tst_Contact::platform>("platform");
-  QTest::addColumn<QContactManager *>("manager");
-  
-  QTest::newRow("Native") << tst_Contact::Native << (QContactManager *)0x0;
-  foreach(QContactManager *mgr, m_managers){
-    QTest::newRow(QString("QContact-" + mgr->managerName()).toAscii()) << tst_Contact::QContacts << mgr; 
-  }  
-}
+    /* Known one that will not pass */
+    managers.removeAll("invalid");
+    managers.removeAll("testdummy");
+    managers.removeAll("teststaticdummy");
+    managers.removeAll("maliciousplugin");
 
-
-void tst_Contact::tst_fetchAllContactIds()
-{   
-  QFETCH(tst_Contact::platform, platform);
-  QFETCH(QContactManager *, manager);
-
-  if(platform == tst_Contact::QContacts) {
-    QList<QContactLocalId> ql;    
-    
-    QBENCHMARK {
-        ql = manager->contactIds();
-    }        
-  }
-  else if(platform == tst_Contact::Native){
-#ifdef Q_OS_SYMBIAN
-    //open database
-    // Open the default contact database
-    CContactDatabase* contactsDb = CContactDatabase::OpenL();
-    CleanupStack::PushL(contactsDb);    
-
-    CCntFilter *filter = CCntFilter::NewLC();
-    
-    //get all contact items (no groups, templates...)
-    filter->SetContactFilterTypeALL(EFalse);
-    filter->SetContactFilterTypeCard(ETrue);
-    QBENCHMARK {
-      contactsDb->FilterDatabaseL(*filter);
-      CContactIdArray *iContacts = CContactIdArray::NewLC(filter->iIds);
-      CleanupStack::PopAndDestroy(iContacts);
-    }
-    CleanupStack::PopAndDestroy(2, contactsDb); //iContacts, filter, contactsDb    
-#endif 
-  }
-}
-
-void tst_Contact::tst_fetchOneContact_data()
-{
-  QTest::addColumn<tst_Contact::platform>("platform");
-  QTest::addColumn<QContactManager *>("manager");
-  
-  QTest::newRow("Native") << tst_Contact::Native << (QContactManager *)0x0;
-  foreach(QContactManager *mgr, m_managers){
-    QTest::newRow(QString("QContact-" + mgr->managerName()).toAscii()) << tst_Contact::QContacts << mgr; 
-  }  
-}
-
-void tst_Contact::tst_fetchOneContact()
-{
-  QFETCH(tst_Contact::platform, platform);
-  QFETCH(QContactManager *, manager);
-
-  if (manager == 0)
-    return;
-
-  if(platform == tst_Contact::QContacts){
-    QContact c;
-
-    m_run++;
-
-#if defined(Q_WS_MAEMO_6)
-    int ret;   
-    QContactFetchRequest* req = new QContactFetchRequest;
-
-    QList<QContactLocalId> qcl = manager->contactIds();
-    if(qcl.count() < 1)
-        QFAIL("No contacts to pull from tracker");
-    QList<QContactLocalId> one;
-    one += qcl.takeFirst();
-    QContactLocalIdFilter idFil;
-    idFil.setIds(one);
-    req->setFilter(idFil);
-
-    req->setManager(manager);    
-    //connect(req, SIGNAL(progress(QContactFetchRequest*, bool)), this, SLOT(gotContact(QContactFetchRequest*,bool)));
-    //connect(req, SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(stateChanged(QContactAbstractRequest::State)));
-    connect(req, SIGNAL(resultsAvailable()), this, SLOT(resultsAvailable()));
-
-    m_num_contacts = 1;
-    m_timer->start(1000);
-
-    QBENCHMARK {
-        req->start();
-        ret = loop->exec();
-    }
-    m_timer->stop();
-
-    //qDebug() << "Got Contact: " << qm->synthesizeDisplayLabel(c);
-    if(ret){
-        QFAIL("Failed to load one contact");
-    }
-    delete req;
-
-#elif defined(Q_OS_SYMBIAN)    
-    QList<QContactLocalId> qcl = manager->contactIds();    
-    if(qcl.count() < 1)
-        QFAIL("No contacts to pull from tracker");
-    
-    QBENCHMARK {
-       c = manager->contact(qcl.first());
-    }
-#endif
-  }
-  else if(platform == tst_Contact::Native){
-#ifdef Q_OS_SYMBIAN
-    //open database
-    // Open the default contact database
-    CContactDatabase* contactDb = CContactDatabase::OpenL();
-    CleanupStack::PushL(contactDb);       
-    CContactItem *item = 0;
-    TInt r;
-    
-    CCntFilter *filter = CCntFilter::NewL();
-    CleanupStack::PushL(filter);
-
-    //get all contact items (no groups, templates...)
-    filter->SetContactFilterTypeALL(EFalse);
-    filter->SetContactFilterTypeCard(ETrue);
-    contactDb->FilterDatabaseL(*filter);
-    CContactIdArray *iContacts = CContactIdArray::NewL(filter->iIds);
-    CleanupStack::PushL(iContacts);
-    int cnt = iContacts->Count();
-    int i = 0;
-               
-    QBENCHMARK {      
-      TRAP(r, item = contactDb->ReadContactL((*iContacts)[i++]));
-      if(r == KErrNone)
-        delete item;
-      if(i >= cnt)
-        i = 0;
-    }      
-    
-    if(r != KErrNone){ qWarning() << "Error by OpenContactL: " << r; }
-            
-    CleanupStack::PopAndDestroy(3, contactDb); //contact, filter, IdArray    
-
-#endif
-  }                
-}
-
-
-void tst_Contact::tst_fetchTenContact_data()
-{
-  QTest::addColumn<tst_Contact::platform>("platform");
-  QTest::addColumn<QContactManager *>("manager");
-  
-  QTest::newRow("Native") << tst_Contact::Native << (QContactManager *)0x0;
-  foreach(QContactManager *mgr, m_managers){
-    QTest::newRow(QString("QContact-" + mgr->managerName()).toAscii()) << tst_Contact::QContacts << mgr; 
-  }  
-}
-
-void tst_Contact::tst_fetchTenContact()
-{
-  QFETCH(tst_Contact::platform, platform);
-  QFETCH(QContactManager *, manager);
-
-  if (manager == 0)
-    return;
-
-  if(platform == tst_Contact::QContacts){
-    QContact c;
-    m_run++;
-
-#if defined(Q_WS_MAEMO_6)
-    int ret;
-
-    QContactFetchRequest* req = new QContactFetchRequest;
-
-    QList<QContactLocalId> qcl = manager->contactIds();
-    if(qcl.count() < 10){
-        QFAIL("No enough contacts to get 10");
-    }
-    QList<QContactLocalId> one;
-    for(int i = 0; i<10; i++)
-        one += qcl.takeFirst();
-    m_num_contacts = 10;
-
-    QContactLocalIdFilter idFil;
-    idFil.setIds(one);
-    req->setFilter(idFil);
-
-    req->setManager(manager);
-
-    //    connect(req, SIGNAL(progress(QContactFetchRequest*, bool)), this, SLOT(gotContact(QContactFetchRequest*,bool)));
-    connect(req, SIGNAL(resultsAvailable()), this, SLOT(resultsAvailable()));
-
-    m_timer->start(1000);
-
-    QBENCHMARK {
-        req->start();
-        ret = loop->exec();
-    }
-    m_timer->stop();
-
-    //qDebug() << "Got Contact: " << qm->synthesizeDisplayLabel(c);
-    if(ret){
-        QFAIL("Failed to load one contact");
-    }
-
-    delete req;
-
-#elif defined(Q_OS_SYMBIAN)
-    QList<QContactLocalId> qcl = manager->contactIds();
-    if(qcl.count() < 10){
-        QFAIL("No enough contacts to get 10");
-    }
-    QList<QContactLocalId> one;
-    for(int i = 0; i<10; i++)
-        one += qcl.takeFirst();
-
-    QContactLocalIdFilter idFil;
-    idFil.setIds(one);
-    
-    QList<QContact> qlc;
-    
-    QBENCHMARK {
-      qlc = manager->contacts(idFil, QList<QContactSortOrder>(), QContactFetchHint());
-    }
-    
-    if(qlc.count() != 10){
-      QFAIL("Did not get 10 contacts back");    
-    }
-    
-#endif    
-  }
-  else if(platform == tst_Contact::Native){
-#ifdef Q_OS_SYMBIAN
-    //open database
-    // Open the default contact database
-    CContactDatabase* contactDb = CContactDatabase::OpenL();
-    CleanupStack::PushL(contactDb);
-
-    CCntFilter *filter = CCntFilter::NewL();
-    CleanupStack::PushL(filter);
-
-    //get all contact items (no groups, templates...)
-    filter->SetContactFilterTypeALL(EFalse);
-    filter->SetContactFilterTypeCard(ETrue);
-    contactDb->FilterDatabaseL(*filter);
-    CContactIdArray *iContacts = CContactIdArray::NewL(filter->iIds);
-    CleanupStack::PushL(iContacts);
-    if(iContacts->Count() <= 10){
-      QFAIL("There are less than 10 contacts to fetch");
-    }
-    
-    TInt r;
-    int i = 0;
-    
-    CContactItem *item = 0;
-
-    // there is no multiple fetch in symbian
-    
-    
-    QBENCHMARK {
-      for(i = 0; i < 10; i++){
-        TRAP(r, item = contactDb->ReadContactL((*iContacts)[i]));
-        if(r == KErrNone)
-          delete item;
-      }
-    }
-    
-    CleanupStack::PopAndDestroy(3, contactDb); //iContacts, filer, contactsDb    
-#endif
-  }
-}
-
-void tst_Contact::timeout()
-{    
-    qDebug() << "***** Timeout, haven't received the signal/contact within 1sec";
-    loop->exit(1); // timeout, fail test
-
-}
-
-void tst_Contact::gotContact(QContactFetchRequest *request, bool appendOnly)
-{
-    Q_UNUSED(appendOnly);
-
-    // first, check to make sure that the request is still valid.
-    if (request->state() == QContactAbstractRequest::CanceledState) {
-        delete request;
-        QWARN("Contact request canceled");
-        loop->exit(1);
-        return; // ignore these results.
-    }
-
-    if(request->contacts().count() > 0) {        
-        m_num_contacts -= request->contacts().count();
-        if(m_num_contacts <= 0)
-            loop->exit(0);
-        return; // got one or more
-    }
-
-    // check to see if the request status is "finished" - clean up.
-    if (request->state() == QContactAbstractRequest::FinishedState) {
-        delete request;        
-    }
-
-}
-
-void tst_Contact::resultsAvailable()
-{
-
-    QContactFetchRequest *req = qobject_cast<QContactFetchRequest *>(sender());
-    if(req){
-        //qDebug() << m_run << " Got resultsAvailable: " << req->contacts().count() << " need: " << m_num_contacts;
-        if(!req->contacts().empty()) {
-            m_num_contacts -= req->contacts().count();
-            if(m_num_contacts <= 0)
-                loop->exit(0);
-            return; // got one or more
-        }
-    }
-
-}
-
-void tst_Contact::resultsAvailableFilter()
-{
-
-    QContactFetchRequest *req = qobject_cast<QContactFetchRequest *>(sender());
-    if(req){
-        if(!req->contacts().empty()) { // we got enough certainly...don't know how many are coming back with the filter
-            loop->exit(0);
-            return; // got one or more
+    foreach(QString mgr, managers) {
+        QMap<QString, QString> params;
+        if (mgr == "memory") {
+            // parameters specific to the memory engine
+            params.insert("id", "tst_QContactManager");
+            QTest::newRow(QString("mgr='%1', params").arg(mgr).toLatin1().constData()) << QContactManager::buildUri(mgr, params);
+        } else if (mgr == "symbian") {
+            // parameters specific to the symbian engine
+            QTest::newRow(QString("mgr='%1'").arg(mgr).toLatin1().constData()) << QContactManager::buildUri(mgr, params);
+        } else {
+            // all other engines, just generate the default manager.
+            QTest::newRow(QString("mgr='%1'").arg(mgr).toLatin1().constData()) << QContactManager::buildUri(mgr, params);
         }
     }
 }
 
-void tst_Contact::stateChanged(QContactAbstractRequest::State /*newState*/)
+QString tst_QContactBenchmark::generateRandomString(int strlen, bool numeric) const
 {
-    qDebug() << "Got state change";
+    QString retn;
+
+    for (int i = 0; i < strlen; ++i) {
+        int random = qrand();
+        if (numeric) {
+            random = random % 10;
+            retn += QString::number(random);
+        } else {
+            random = random % 26;
+            unsigned char letter = ('a' + static_cast<unsigned char>(random));
+            retn += QChar(letter);
+        }
+    }
+
+    return retn;
 }
 
-void tst_Contact::tst_createContact_data()
+void tst_QContactBenchmark::benchmarking()
 {
-  QTest::addColumn<tst_Contact::platform>("platform");
-  QTest::addColumn<QContactManager *>("manager");
-  
-  QTest::newRow("Native") << tst_Contact::Native << (QContactManager *)0x0;
-  foreach(QContactManager *mgr, m_managers){
-    QTest::newRow(QString("QContact-" + mgr->managerName()).toAscii()) << tst_Contact::QContacts << mgr; 
-  }  
+    QFETCH(QString, uri);
+    QContactManager* cm = QContactManager::fromUri(uri);
+
+    qDebug() << "Performing Benchmark Test: this may take some time, please be patient...";
+
+    // we aggregate results from multiple runs of each benchmark
+    int AGGREGATION_LIMIT = 3;
+
+    // we perform each benchmark synchronously, and asynchronously.
+    // the average time for each benchmark is reported, however
+    // this time does not include the time taken for erroneous operations,
+    // as this is reported separately.
+
+    // successful synchronous benchmarks
+    quint64 ssb[10] = {
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0)
+    };
+
+    // erroneous synchronous benchmarks
+    quint64 esb[10] = {
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0)
+    };
+
+    // successful asynchronous benchmarks
+    quint64 sab[10] = {
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0)
+    };
+
+    // erroneous asynchronous benchmarks
+    quint64 eab[10] = {
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0)
+    };
+
+    // count of erroneous synchronous benchmark operations
+    quint64 esbc[10] = {
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0)
+    };
+
+    // count of erroneous asynchronous benchmark operations
+    quint64 eabc[10] = {
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0),
+        Q_UINT64_C(0)
+    };
+
+    // define some details which we'll use.
+    QContactName name;
+    QContactPhoneNumber phoneNumberOne;
+    QContactPhoneNumber phoneNumberTwo;
+    QContactPhoneNumber phoneNumberThree;
+    QContactEmailAddress emailAddressOne;
+    QContactEmailAddress emailAddressTwo;
+    QContactEmailAddress emailAddressThree;
+    QContactAddress streetAddress;
+    QContactThumbnail thumbnail;
+    QByteArray thumbnailArray =
+        "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"\
+        "ngAAAABJRU5ErkJggg==";
+    QImage thumbnailImage = QImage::fromData(QByteArray::fromBase64(thumbnailArray));
+    thumbnail.setThumbnail(thumbnailImage);
+
+    // the filter and sort order which we'll use.
+    QContactDetailFilter df;
+    df.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldPrefix);
+    df.setValue("Dr.");
+    df.setMatchFlags(QContactFilter::MatchExactly);
+    QContactSortOrder singleSort;
+    singleSort.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldLastName);
+    QList<QContactSortOrder> sorting;
+    sorting.append(singleSort);
+
+    // intialise the random number generator
+    qsrand(QDateTime::currentDateTime().toTime_t());
+
+    // We run the benchmarks with different numbers of contacts each time.
+    QString outputMessage = QString("\nBenchmark results for manager: %1\n========================================").arg(cm->managerUri());
+    QList<int> testSetSizes;
+    testSetSizes << 10 << 100 << 1000 << 10000;
+    for (int n = 0; n < testSetSizes.size(); ++n) {
+        int numberOfContacts = testSetSizes.at(n);
+        int prefixCutoff = numberOfContacts / 5; // the first 20 % of contacts get a prefix we can filter on.
+
+        // benchmark 1: save numberOfContacts new contacts.
+        // benchmark 2: update numberOfContacts existing contacts.
+        // benchmark 3: retrieve all contact ids.
+        // benchmark 4: retrieve contact ids matching filter.
+        // benchmark 5: retrieve contact ids matching filter, sorted.
+        // benchmark 6: retrieve all contacts.
+        // benchmark 7: retrieve contacts matching filter.
+        // benchmark 8: retrieve contacts matching filter, sorted.
+        // benchmark 9: remove some selected contacts.
+        // benchmark 10: remove all contacts.
+        QStringList benchmarkDescriptions;
+        benchmarkDescriptions << QString("Save %1 contacts").arg(QString::number(numberOfContacts))
+                              << QString("Update %1 contacts").arg(QString::number(numberOfContacts))
+                              << QString("Retrieve %1 ids (all)").arg(QString::number(numberOfContacts))
+                              << QString("Retrieve %1 ids (filter)").arg(QString::number(prefixCutoff))
+                              << QString("Retrieve %1 ids (filter, sorted)").arg(QString::number(prefixCutoff))
+                              << QString("Retrieve %1 contacts (all)").arg(QString::number(numberOfContacts))
+                              << QString("Retrieve %1 contacts (filter)").arg(QString::number(prefixCutoff))
+                              << QString("Retrieve %1 contacts (filter, sorted)").arg(QString::number(prefixCutoff))
+                              << QString("Remove %1 contacts (filter)").arg(QString::number(prefixCutoff))
+                              << QString("Remove %1 contacts (all)").arg(QString::number((numberOfContacts - prefixCutoff)));
+        int largestDescriptionLength = 0;
+        for (int i = 0; i < benchmarkDescriptions.size(); ++i) {
+            if (benchmarkDescriptions.at(i).length() > largestDescriptionLength) {
+                largestDescriptionLength = benchmarkDescriptions.at(i).length();
+            }
+        }
+
+        // now generate the contacts.
+        QList<QContact> contacts;
+        for (int i = 0; i < numberOfContacts; ++i) {
+            // generated contact.
+            QContact temp;
+            if (i % 4 == 0) {
+                temp.saveDetail(&thumbnail);
+            }
+
+            // all contacts have just one name detail, the first 20% have a filterable prefix.
+            if (i < prefixCutoff) {
+                name.setPrefix("Dr.");
+            } else {
+                name.setPrefix("");
+            }
+            name.setFirstName(generateRandomString(((qrand()%8) + 1)));
+            name.setLastName(generateRandomString(((qrand()%10) + 1)));
+            temp.saveDetail(&name);
+
+            // contacts have different amounts of phone numbers.
+            phoneNumberOne.setNumber(generateRandomString(((qrand()%10) + 1), true));
+            temp.saveDetail(&phoneNumberOne);
+            if (i % 2 == 0) {
+                phoneNumberTwo.setNumber(generateRandomString(((qrand()%10) + 1), true));
+                phoneNumberTwo.setContexts(QContactPhoneNumber::ContextHome);
+                phoneNumberTwo.setSubTypes(QContactPhoneNumber::SubTypeMobile);
+                temp.saveDetail(&phoneNumberTwo);
+            }
+            if (i % 3 == 0) {
+                phoneNumberThree.setNumber(generateRandomString(((qrand()%10) + 1), true));
+                phoneNumberThree.setContexts(QStringList() << QContactPhoneNumber::ContextHome << QContactPhoneNumber::ContextWork);
+                phoneNumberThree.setSubTypes(QContactPhoneNumber::SubTypeVoice);
+                temp.saveDetail(&phoneNumberThree);
+            }
+
+            QString email = generateRandomString(((qrand()%7) + 1));
+            email += "@test.com";
+            emailAddressOne.setEmailAddress(email);
+            temp.saveDetail(&emailAddressOne);
+            if (i % 5 == 0) {
+                email = generateRandomString(((qrand()%7) + 1));
+                email += "@test.com";
+                emailAddressTwo.setEmailAddress(email);
+                temp.saveDetail(&emailAddressTwo);
+            }
+            if (i % 7 == 0) {
+                email = generateRandomString(((qrand()%7) + 1));
+                email += "@test.com";
+                emailAddressThree.setEmailAddress(email);
+                temp.saveDetail(&emailAddressThree);
+            }
+
+            if (i % 9 == 0) {
+                streetAddress.setStreet(generateRandomString(((qrand()%7) + 5)));
+                streetAddress.setLocality(generateRandomString(((qrand()%7) + 5)));
+                streetAddress.setRegion(generateRandomString(((qrand()%7) + 5)));
+                streetAddress.setPostcode(generateRandomString(5, true));
+                streetAddress.setCountry(generateRandomString(((qrand()%7) + 5)));
+                temp.saveDetail(&streetAddress);
+            }
+
+            contacts.append(temp);
+        }
+
+        // now we can perform the benchmarks.
+        QTime timer;
+        bool success = false;
+        QMap<int, QContactManager::Error> errorMap;
+        for (int i = 0; i < AGGREGATION_LIMIT; ++i) {
+            // synchronous benchmark 1 - saving new contacts.
+            QList<QContact> tempList = contacts;
+            tempList.swap(0,1); // force detach, we don't want that to contaminate benchmark.
+            timer.start();
+            success = cm->saveContacts(&tempList, &errorMap);
+            int tempElapsed = timer.elapsed();
+            if (!success) {
+                esb[0] += tempElapsed;
+                esbc[0] += 1;
+            } else {
+                ssb[0] += tempElapsed;
+            }
+
+            // synchronous benchmark 2 - update all existing contacts.
+            for (int j = 0; j < tempList.size(); ++j) {
+                QContact tempContact = tempList.at(j);
+                QContactName tempName = tempContact.detail<QContactName>();
+                tempName.setMiddleName("updated");
+                tempContact.saveDetail(&tempName);
+                tempList.replace(j, tempContact);
+            }
+            timer.start();
+            success = cm->saveContacts(&tempList, &errorMap);
+            tempElapsed = timer.elapsed();
+            if (!success) {
+                esb[1] += tempElapsed;
+                esbc[1] += 1;
+            } else {
+                ssb[1] += tempElapsed;
+            }
+
+            // synchronous benchmark 3 - retrieve all contact ids.
+            timer.start();
+            QList<QContactLocalId> allIds = cm->contactIds();
+            tempElapsed = timer.elapsed();
+            if (cm->error() != QContactManager::NoError) {
+                esb[2] += tempElapsed;
+                esbc[2] += 1;
+            } else {
+                ssb[2] += tempElapsed;
+            }
+
+            // synchronous benchmark 4 - fetching contactids with filter.
+            timer.start();
+            QList<QContactLocalId> ids = cm->contactIds(df);
+            tempElapsed = timer.elapsed();
+            if (cm->error() != QContactManager::NoError) {
+                esb[3] += tempElapsed;
+                esbc[3] += 1;
+            } else {
+                ssb[3] += tempElapsed;
+            }
+
+            // synchronous benchmark 5 - fetching contactids with filter, sorted.
+            timer.start();
+            ids = cm->contactIds(df, sorting);
+            tempElapsed = timer.elapsed();
+            if (cm->error() != QContactManager::NoError) {
+                esb[4] += tempElapsed;
+                esbc[4] += 1;
+            } else {
+                ssb[4] += tempElapsed;
+            }
+
+            // synchronous benchmark 6 - fetching all contacts.
+            tempList.clear();
+            timer.start();
+            tempList = cm->contacts();
+            tempElapsed = timer.elapsed();
+            if (cm->error() != QContactManager::NoError) {
+                esb[5] += tempElapsed;
+                esbc[5] += 1;
+            } else {
+                ssb[5] += tempElapsed;
+            }
+
+            // synchronous benchmark 7 - fetching contacts with filter
+            tempList.clear();
+            timer.start();
+            tempList = cm->contacts(df);
+            tempElapsed = timer.elapsed();
+            if (cm->error() != QContactManager::NoError) {
+                esb[6] += tempElapsed;
+                esbc[6] += 1;
+            } else {
+                ssb[6] += tempElapsed;
+            }
+
+            // synchronous benchmark 8 - fetching contacts with filter, sorted
+            tempList.clear();
+            timer.start();
+            tempList = cm->contacts(df, sorting);
+            tempElapsed = timer.elapsed();
+            if (cm->error() != QContactManager::NoError) {
+                esb[7] += tempElapsed;
+                esbc[7] += 1;
+            } else {
+                ssb[7] += tempElapsed;
+            }
+
+            // synchronous benchmark 9 - removing some contacts
+            ids.clear();
+            ids = cm->contactIds(df);
+            timer.start();
+            success = cm->removeContacts(ids, &errorMap);
+            tempElapsed = timer.elapsed();
+            if (cm->error() != QContactManager::NoError) {
+                esb[8] += tempElapsed;
+                esbc[8] += 1;
+            } else {
+                ssb[8] += tempElapsed;
+            }
+
+            // synchronous benchmark 10 - removing all contacts
+            ids.clear();
+            ids = cm->contactIds();
+            timer.start();
+            success = cm->removeContacts(ids, &errorMap);
+            tempElapsed = timer.elapsed();
+            if (cm->error() != QContactManager::NoError) {
+                esb[9] += tempElapsed;
+                esbc[9] += 1;
+            } else {
+                ssb[9] += tempElapsed;
+            }
+
+            // asynchronous benchmark 1 - save new contacts.
+            QContactSaveRequest csr;
+            csr.setManager(cm);
+            tempList = contacts;
+            tempList.swap(0,1); // force detach, we don't want that to contaminate benchmark.
+            csr.setContacts(tempList);
+            timer.start();
+            csr.start();
+            success = csr.waitForFinished();
+            tempElapsed = timer.elapsed();
+            if (csr.error() != QContactManager::NoError || !success) {
+                eab[0] += tempElapsed;
+                eabc[0] += 1;
+            } else {
+                sab[0] += tempElapsed;
+            }
+
+            // asynchronous benchmark 2 - update existing contacts.
+            for (int j = 0; j < tempList.size(); ++j) {
+                QContact tempContact = tempList.at(j);
+                QContactName tempName = tempContact.detail<QContactName>();
+                tempName.setMiddleName("updated");
+                tempContact.saveDetail(&tempName);
+                tempList.replace(j, tempContact);
+            }
+            csr.setContacts(tempList);
+            timer.start();
+            csr.start();
+            success = csr.waitForFinished();
+            tempElapsed = timer.elapsed();
+            if (csr.error() != QContactManager::NoError || !success) {
+                eab[1] += tempElapsed;
+                eabc[1] += 1;
+            } else {
+                sab[1] += tempElapsed;
+            }
+
+            // asynchronous benchmark 3 - retrieve all contact ids.
+            QContactLocalIdFetchRequest cifr;
+            cifr.setManager(cm);
+            timer.start();
+            cifr.start();
+            success = cifr.waitForFinished();
+            tempElapsed = timer.elapsed();
+            if (cifr.error() != QContactManager::NoError || !success) {
+                eab[2] += tempElapsed;
+                eabc[2] += 1;
+            } else {
+                sab[2] += tempElapsed;
+            }
+
+            // asynchronous benchmark 4 - retrieve contact ids matching filter.
+            cifr.setFilter(df);
+            timer.start();
+            cifr.start();
+            success = cifr.waitForFinished();
+            tempElapsed = timer.elapsed();
+            if (cifr.error() != QContactManager::NoError || !success) {
+                eab[3] += tempElapsed;
+                eabc[3] += 1;
+            } else {
+                sab[3] += tempElapsed;
+            }
+
+            // asynchronous benchmark 5 - retrieve contact ids matching filter, sorted.
+            cifr.setFilter(df);
+            cifr.setSorting(sorting);
+            timer.start();
+            cifr.start();
+            success = cifr.waitForFinished();
+            tempElapsed = timer.elapsed();
+            if (cifr.error() != QContactManager::NoError || !success) {
+                eab[4] += tempElapsed;
+                eabc[4] += 1;
+            } else {
+                sab[4] += tempElapsed;
+            }
+
+            // asynchronous benchmark 6 - retrieve all contacts.
+            QContactFetchRequest cfr;
+            cfr.setManager(cm);
+            cfr.setFilter(QContactFilter()); // matches all.
+            timer.start();
+            cfr.start();
+            success = cfr.waitForFinished();
+            tempElapsed = timer.elapsed();
+            if (cfr.error() != QContactManager::NoError || !success) {
+                eab[5] += tempElapsed;
+                eabc[5] += 1;
+            } else {
+                sab[5] += tempElapsed;
+            }
+
+            // asynchronous benchmark 7 - retrieve contacts matching filter.
+            cfr.setFilter(df);
+            timer.start();
+            cfr.start();
+            success = cfr.waitForFinished();
+            tempElapsed = timer.elapsed();
+            if (cfr.error() != QContactManager::NoError || !success) {
+                eab[6] += tempElapsed;
+                eabc[6] += 1;
+            } else {
+                sab[6] += tempElapsed;
+            }
+
+            // asynchronous benchmark 8 - retrieve contacts matching filter, sorted.
+            cfr.setFilter(df);
+            cfr.setSorting(sorting);
+            timer.start();
+            cfr.start();
+            success = cfr.waitForFinished();
+            tempElapsed = timer.elapsed();
+            if (cfr.error() != QContactManager::NoError || !success) {
+                eab[7] += tempElapsed;
+                eabc[7] += 1;
+            } else {
+                sab[7] += tempElapsed;
+            }
+
+            // asynchronous benchmark 9 - remove selected contacts.
+            ids = cm->contactIds(df);
+            QContactRemoveRequest crr;
+            crr.setManager(cm);
+            crr.setContactIds(ids);
+            timer.start();
+            crr.start();
+            success = crr.waitForFinished();
+            tempElapsed = timer.elapsed();
+            if (crr.error() != QContactManager::NoError || !success) {
+                eab[8] += tempElapsed;
+                eabc[8] += 1;
+            } else {
+                sab[8] += tempElapsed;
+            }
+
+            // asynchronous benchmark 10 - remove all contacts.
+            ids = cm->contactIds();
+            crr.setContactIds(ids);
+            timer.start();
+            crr.start();
+            success = crr.waitForFinished();
+            tempElapsed = timer.elapsed();
+            if (crr.error() != QContactManager::NoError || !success) {
+                eab[9] += tempElapsed;
+                eabc[9] += 1;
+            } else {
+                sab[9] += tempElapsed;
+            }
+        }
+
+        quint64 succeededCount, failedCount, averageSuccessTime, averageFailTime;
+        outputMessage += QString("\nwith numberOfContacts = %1").arg(numberOfContacts);
+        outputMessage += QLatin1String("\n  Synchronous:");
+
+        for (int i = 0; i < 10; ++i) {
+            succeededCount = AGGREGATION_LIMIT - esbc[i];
+            failedCount = esbc[i];
+            if (succeededCount)
+                averageSuccessTime = (ssb[i] / succeededCount);
+            else
+                averageSuccessTime = -1;
+            if (failedCount)
+                averageFailTime = (esb[i] / failedCount);
+            else
+                averageFailTime = -1;
+            QString tempStr = QString("%1:").arg(benchmarkDescriptions.at(i));
+            int whitespaceAdjust = largestDescriptionLength - benchmarkDescriptions.at(i).length();
+            for (int j = 0; j < whitespaceAdjust; ++j) {
+                tempStr += " ";
+            }
+            tempStr += QString("  succeeded: %1  average_time(success): %2  failed: %3  average_time(failed): %4").arg(succeededCount).arg(averageSuccessTime).arg(failedCount).arg(averageFailTime);
+            if (i == 9) {
+                outputMessage += QString(QLatin1String("\n    (")) + QString::number(i+1) + QString(QLatin1String(") "));
+            } else {
+                outputMessage += QString(QLatin1String("\n     (")) + QString::number(i+1) + QString(QLatin1String(") "));
+            }
+            outputMessage += tempStr;
+        }
+
+        outputMessage += QLatin1String("\n  Asynchronous:");
+        for (int i = 0; i < 10; ++i) {
+            succeededCount = AGGREGATION_LIMIT - eabc[i];
+            failedCount = eabc[i];
+            if (succeededCount)
+                averageSuccessTime = (sab[i] / succeededCount);
+            else
+                averageSuccessTime = -1;
+            if (failedCount)
+                averageFailTime = (sab[i] / failedCount);
+            else
+                averageFailTime = -1;
+            QString tempStr = QString("%1:").arg(benchmarkDescriptions.at(i));
+            int whitespaceAdjust = largestDescriptionLength - benchmarkDescriptions.at(i).length();
+            for (int j = 0; j < whitespaceAdjust; ++j) {
+                tempStr += " ";
+            }
+            tempStr += QString("  succeeded: %1  average_time(success): %2  failed: %3 average_time(failed): %4").arg(succeededCount).arg(averageSuccessTime).arg(failedCount).arg(averageFailTime);
+            if (i == 9) {
+                outputMessage += QString(QLatin1String("\n    (")) + QString::number(i+1) + QString(QLatin1String(") "));
+            } else {
+                outputMessage += QString(QLatin1String("\n     (")) + QString::number(i+1) + QString(QLatin1String(") "));
+            }
+            outputMessage += tempStr;
+        }
+        outputMessage += QLatin1String("\n----------------------------------------");
+    }
+
+    outputMessage += QLatin1String("\n(All times measured in milliseconds).");
+    qDebug() << outputMessage;
+    delete cm;
 }
 
-void tst_Contact::tst_createContact()
+int main(int argc, char **argv)
 {
-  QFETCH(tst_Contact::platform, platform);
-  QFETCH(QContactManager *, manager);
-
-  QBENCHMARK {
-        createContact(manager, platform);
-  }
-}
-
-void tst_Contact::tst_saveContact_data()
-{
-  QTest::addColumn<tst_Contact::platform>("platform");
-  QTest::addColumn<QContactManager *>("manager");
-  
-  QTest::newRow("Native") << tst_Contact::Native << (QContactManager *)0x0;
-  foreach(QContactManager *mgr, m_managers){
-    QTest::newRow(QString("QContact-" + mgr->managerName()).toAscii()) << tst_Contact::QContacts << mgr; 
-  }  
-}
-
-void tst_Contact::tst_saveContact()
-{
-  QFETCH(tst_Contact::platform, platform);
-  QFETCH(QContactManager *, manager);
-
-  if(platform == tst_Contact::QContacts) {    
-    QContact *c = new QContact;
-    c->setType("Contact");
-    QContactName cname;
-    QString name;
-    name = firstNames.takeFirst();
-    firstNames.push_back(name);
-    cname.setFirstName(name);
-    name = lastNames.takeFirst();
-    lastNames.push_back(name);
-    cname.setLastName(name);
-#ifndef Q_WS_MAEMO_5
-    cname.setPrefix("Mr");
-#endif
-    c->saveDetail(&cname);
-
-    int ret = 0; 
-    
-    QBENCHMARK {
-      ret = manager->saveContact(c);
-    }
-    if(!ret){
-      qDebug() << "Failed to create contact durring setup";
-      return;
-    }
-    id_list.append(c->localId());
-    delete c;
-  }
-  else if(platform == tst_Contact::Native){
-#ifdef Q_OS_SYMBIAN
-    // Create a contact card and add a work phone number. Numeric values are 
-    // stored in a text field (storage type = KStorageTypeText).
-    
-    CContactDatabase* db = CContactDatabase::OpenL();
-    CleanupStack::PushL(db);
-
-    CContactCard* newCard = CContactCard::NewLC();    
-    
-    QString name;
-    
-    // Create the firstName field and add the data to it
-    name = firstNames.takeFirst();
-    firstNames.push_back(name);        
-    CContactItemField* firstName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldGivenName);
-    TPtrC Firstname(reinterpret_cast<const TUint16*>(name.utf16()));
-    firstName->TextStorage()->SetTextL(Firstname);      
-    newCard->AddFieldL(*firstName);
-    CleanupStack::Pop(firstName);
-
-    // Create the lastName field and add the data to it
-    name = lastNames.takeFirst();
-    lastNames.push_back(name);        
-    CContactItemField* lastName= CContactItemField::NewLC(KStorageTypeText, KUidContactFieldFamilyName);
-    TPtrC Lastname(reinterpret_cast<const TUint16*>(name.utf16()));
-    lastName->TextStorage()->SetTextL(Lastname);
-    newCard->AddFieldL(*lastName);
-    CleanupStack::Pop(lastName);
-
-    CContactItemField* prefix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPrefixName);
-    _LIT(KPrefix, "Mr");
-    prefix->TextStorage()->SetTextL(KPrefix);
-    newCard->AddFieldL(*prefix);
-    CleanupStack::Pop(prefix);
-
-    QBENCHMARK {
-      // Add newCard to the database
-      const TContactItemId contactId = db->AddNewContactL(*newCard);
-      db->CloseContactL(contactId);
-      id_list.append(contactId);      
-    }
-        
-    CleanupStack::PopAndDestroy(2, db); //newCard, contactsDb
-#else
-    qWarning("No native test defined for this platform and tst_saveContact()");
-#endif 
-  }
-}
-
-void tst_Contact::tst_nameFilter_data()
-{
-  QTest::addColumn<tst_Contact::platform>("platform");
-  QTest::addColumn<QContactManager *>("manager");
-  
-  QTest::newRow("Native") << tst_Contact::Native << (QContactManager *)0x0;
-  foreach(QContactManager *mgr, m_managers){
-    QTest::newRow(QString("QContact-" + mgr->managerName()).toAscii()) << tst_Contact::QContacts << mgr; 
-  }  
-}
-
-
-void tst_Contact::tst_nameFilter()
-{ 
-  QFETCH(tst_Contact::platform, platform);
-  QFETCH(QContactManager *, manager);
-
-  if (manager == 0)
-    return;
- 
-  if(platform == tst_Contact::QContacts){
-    QContactFilter fil = QContactName::match(firstNames.first(),""); // pick one first name to find
-    //QContactFilter fil = QContactName::match("sdfsdfsdfjhsjkdfshdkf", ""); // pick one first name to find
-    QContact c;    
-
-    m_run++;
-
-
-
-#if defined(Q_WS_MAEMO_6)
-    int ret;
-    QContactFetchRequest* req = new QContactFetchRequest;
-    req->setFilter(fil);
-    req->setManager(manager);
-
-    connect(req, SIGNAL(resultsAvailable()), this, SLOT(resultsAvailableFilter()));
-
-    m_timer->start(1000);
-
-    QBENCHMARK {
-        req->start();
-        ret = loop->exec();
-    }
-    m_timer->stop();
-
-    //qDebug() << "Got Contact: " << qm->synthesizeDisplayLabel(c);
-    if(ret){
-        QFAIL("Failed to load one contact");
-    }
-
-//    QList<QContact> qcl = req->contacts();
-//    while(!qcl.isEmpty()){
-//        QContact c = qcl.takeFirst();
-//        qDebug() << "Contact: " << c.displayLabel();
-//    }
-    delete req;
-    
-#elif defined(Q_OS_SYMBIAN)
-    QList<QContact> qlc;
-    
-    QBENCHMARK {
-      qlc = manager->contacts(fil, QList<QContactSortOrder>(), QContactFetchHint());
-    }
-    
-//    while(!qlc.isEmpty()){
-//        QContact c = qlc.takeFirst();
-//        qDebug() << "Contact: " << c.displayLabel();
-//    }
-#endif
-  }
-  else if(platform == tst_Contact::Native){
-#ifdef Q_OS_SYMBIAN
-    //open database
-    // Open the default contact database
-    CContactDatabase* contactDb = CContactDatabase::OpenL();
-    CleanupStack::PushL(contactDb);
-       
-    CContactItem *item = 0x0;
-
-    CCntFilter *filter = CCntFilter::NewL();
-    CleanupStack::PushL(filter);
-
-    //get all contact items (no groups, templates...)
-    filter->SetContactFilterTypeALL(EFalse);
-    filter->SetContactFilterTypeCard(ETrue);
-    contactDb->FilterDatabaseL(*filter);
-    CContactIdArray *iContacts;
-    TRAPD(filter_err, iContacts = CContactIdArray::NewL(filter->iIds));
-    if(filter_err != KErrNone){
-      CleanupStack::PopAndDestroy(2, contactDb); // filter, contactDB
-      QFAIL("Failed to fetch a list of contacts");
-    }
-    CleanupStack::PushL(iContacts);
-    
-    TBuf<100> Firstname(0);
-    
-    for(int i = 0; i< iContacts->Count(); i++){
-      TRAPD(err, item = contactDb->ReadContactL((*iContacts)[0]));
-      if(err != KErrNone) {
-        CleanupStack::PopAndDestroy(3, contactDb); // iContacts, filers, db
-        QFAIL("Unable to fetch a sample item from the contacts file");
-      }
-      CleanupStack::PushL(item);
-      
-      int fieldNum = item->CardFields().Find(KUidContactFieldGivenName);
-      if(fieldNum != KErrNotFound){
-        Firstname.Copy((item->CardFields())[fieldNum].TextStorage()->Text());
-        CleanupStack::PopAndDestroy(item); // item
-        break;
-      }
-      CleanupStack::PopAndDestroy(item); // item
-    }
-    if(Firstname.Length() == 0){
-      QFAIL("Unable to find a contact to search for");
-    }
-      
-
-    //const TPtrC Firstname(reinterpret_cast<const TUint16*>(firstNames.first().utf16()));
-    CContactIdArray* idArray;
-    
-    CContactItemFieldDef* fieldDef = new (ELeave) CContactItemFieldDef();
-    CleanupStack::PushL(fieldDef);
-    
-    fieldDef->AppendL( KUidContactFieldGivenName);
-       
-    QBENCHMARK {      
-      idArray = contactDb->FindLC(Firstname, fieldDef);      
-      if(idArray->Count() > 0) {
-          item = contactDb->ReadContactL((*idArray)[0]);
-          delete item;
-          CleanupStack::PopAndDestroy(idArray);
-      }
-      else {
-          qDebug() << "Number of contacts native: " << countContacts(0x0, Native);
-          qDebug() << "Number of contacts qt/system: " << countContacts(m_systemManager);
-          QFAIL("No contacts returned from CContactDatabase::FindLC");
-      }
-    }   
-    
-    CleanupStack::PopAndDestroy(4, contactDb); //item, idArray, fielddef, lock, contactsDb
-#endif
-  }
-}
-
-void tst_Contact::tst_removeOneContact_data()
-{
-  QTest::addColumn<tst_Contact::platform>("platform");
-  QTest::addColumn<QContactManager *>("manager");
-  
-  QTest::newRow("Native") << tst_Contact::Native << (QContactManager *)0x0;
-  foreach(QContactManager *mgr, m_managers){
-    QTest::newRow(QString("QContact-" + mgr->managerName()).toAscii()) << tst_Contact::QContacts << mgr; 
-  }  
-}
-
-void tst_Contact::tst_removeOneContact()
-{
-  QFETCH(tst_Contact::platform, platform);
-  QFETCH(QContactManager *, manager);
-  
-  if(platform == tst_Contact::QContacts){
-    QList<QContactLocalId> one;
-    QMap<int, QContactManager::Error> errorMap;
-
-    if(id_list.count() < 1){ // incase we run out of contacts
-      createContact(manager, platform);
-    }
-        
-    one += id_list.takeFirst();
-    
-    QBENCHMARK_ONCE {
-        manager->removeContacts(one, &errorMap);
-    }    
-
-  }
-  else if(platform == tst_Contact::Native){    
-#ifdef Q_OS_SYMBIAN
-    CContactDatabase* contactDb = CContactDatabase::OpenL();
-    CleanupStack::PushL(contactDb);
-
-    CCntFilter *filter = CCntFilter::NewL();
-    CleanupStack::PushL(filter);
-
-    //get all contact items (no groups, templates...)
-    filter->SetContactFilterTypeALL(EFalse);
-    filter->SetContactFilterTypeCard(ETrue);
-    contactDb->FilterDatabaseL(*filter);
-    CContactIdArray *iContacts = CContactIdArray::NewL(filter->iIds);
-    CleanupStack::PushL(iContacts);
-    int i = 0;
-     
-    QBENCHMARK_ONCE { // Do it once only, to many removals becomes a problem
-      contactDb->DeleteContactL((*iContacts)[i++]);
-      if(i >= iContacts->Count()){
-        break;
-      }
-    }
-    
-    CleanupStack::PopAndDestroy(3, contactDb); //idArray, contactsDb
-#endif
-  }
-}
-
-void tst_Contact::tst_removeAllContacts_data()
-{
-  QTest::addColumn<tst_Contact::platform>("platform");
-  QTest::addColumn<QContactManager *>("manager");
-  
-  QTest::newRow("Native") << tst_Contact::Native << (QContactManager *)0x0;
-  foreach(QContactManager *mgr, m_managers){
-    QTest::newRow(QString("QContact-" + mgr->managerName()).toAscii()) << tst_Contact::QContacts << mgr; 
-  }  
-}
-
-
-void tst_Contact::tst_removeAllContacts()
-{
-  QFETCH(tst_Contact::platform, platform);
-  QFETCH(QContactManager *, manager);
-
-  int before = countContacts(manager, platform);
-
-  if(before < 20) {
-    for(int i = before; i < 20; i++){
-      createContact(manager, platform);
-    }
-  }  
-
-  QBENCHMARK {
-    clearContacts(manager, platform);
-  }
-}
-
-int main(int argc, char **argv){
-
     QApplication app(argc, argv);
-
-    tst_Contact test1;
+    tst_QContactBenchmark test1;
     QTest::qExec(&test1, argc, argv);
-
 }
 
 #include "tst_bm_contacts.moc"

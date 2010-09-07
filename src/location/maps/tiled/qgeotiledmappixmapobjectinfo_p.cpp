@@ -58,18 +58,28 @@ QGeoTiledMapPixmapObjectInfo::QGeoTiledMapPixmapObjectInfo(QGeoMapData *mapData,
 
 QGeoTiledMapPixmapObjectInfo::~QGeoTiledMapPixmapObjectInfo() {}
 
-void QGeoTiledMapPixmapObjectInfo::objectUpdate()
+void QGeoTiledMapPixmapObjectInfo::objectUpdated()
 {
+    if (!pixmap->coordinate().isValid()
+            || pixmap->pixmap().isNull()) {
+        if (pixmapItem) {
+            delete pixmapItem;
+            pixmapItem = 0;
+            graphicsItem = 0;
+        }
+        return;
+    }
+
     if (!pixmapItem)
         pixmapItem = new QGraphicsPixmapItem();
 
     pixmapItem->setPixmap(pixmap->pixmap());
-    mapUpdate();
+    mapUpdated();
     graphicsItem = pixmapItem;
     updateItem();
 }
 
-void QGeoTiledMapPixmapObjectInfo::mapUpdate()
+void QGeoTiledMapPixmapObjectInfo::mapUpdated()
 {
     if (pixmapItem) {
         qreal zoomFactor = tiledMapData->zoomFactor();

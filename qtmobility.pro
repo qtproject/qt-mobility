@@ -51,10 +51,10 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
 
     PRF_CONFIG=$${QT_MOBILITY_BUILD_TREE}/features/mobilityconfig.prf
     system(echo MOBILITY_CONFIG=$${mobility_modules} > $$PRF_CONFIG)
-    system(echo MOBILITY_VERSION = 1.0.3 >> $$PRF_CONFIG)
+    system(echo MOBILITY_VERSION = 1.1.0 >> $$PRF_CONFIG)
     system(echo MOBILITY_MAJOR_VERSION = 1 >> $$PRF_CONFIG)
-    system(echo MOBILITY_MINOR_VERSION = 0 >> $$PRF_CONFIG)
-    system(echo MOBILITY_PATCH_VERSION = 3 >> $$PRF_CONFIG)
+    system(echo MOBILITY_MINOR_VERSION = 1 >> $$PRF_CONFIG)
+    system(echo MOBILITY_PATCH_VERSION = 0 >> $$PRF_CONFIG)
 
     #symbian does not generate make install rule. we have to copy prf manually 
     symbian {
@@ -158,9 +158,9 @@ contains(build_demos, yes):SUBDIRS+=demos
         INSTALLS += qtmheadersversit
 
         contains(mobility_modules,organizer) {
-        qtmheadersversitorg.path = $${QT_MOBILITY_INCLUDE}/QtVersitOrganizer
-        qtmheadersversitorg.files = $${QT_MOBILITY_BUILD_TREE}/include/QtVersitOrganizer/*
-        INSTALLS += qtmheadersversitorg
+            qtmheadersversitorg.path = $${QT_MOBILITY_INCLUDE}/QtVersitOrganizer
+            qtmheadersversitorg.files = $${QT_MOBILITY_BUILD_TREE}/include/QtVersitOrganizer/*
+            INSTALLS += qtmheadersversitorg
         }
     }
 
@@ -216,6 +216,7 @@ contains(build_demos, yes):SUBDIRS+=demos
 
     qtmAppHeaders = include/QtContacts/* \
                        include/QtVersit/* \
+                       include/QtVersitOrganizer/* \
                        include/Organizer/*
 
     qtmMwHeaders = include/QtBearer/* \

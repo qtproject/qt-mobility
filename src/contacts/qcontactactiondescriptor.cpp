@@ -66,15 +66,6 @@ QContactActionDescriptor::QContactActionDescriptor()
 }
 
 /*!
- * Constructs a new action descriptor for the implementation of the action identified by the given \a actionName
- * of the given implementation \a implementationVersion, as implemented by the service identified by the given \a serviceName
- */
-QContactActionDescriptor::QContactActionDescriptor(const QString& actionName, const QString& serviceName, const QString& serviceIdentifier, int implementationVersion, const QContactActionFactory* factory)
-        : d(new QContactActionDescriptorPrivate(actionName, serviceName, serviceIdentifier, implementationVersion, factory))
-{
-}
-
-/*!
  * Constructs a copy of the \a other action descriptor
  */
 QContactActionDescriptor::QContactActionDescriptor(const QContactActionDescriptor& other)
@@ -218,6 +209,29 @@ QVariant QContactActionDescriptor::metaData(const QString& key, const QList<QCon
     }
 
     return QVariant();
+}
+
+
+/*!
+  Returns the meta data for the given meta data key \a key with the given invocation parameters \a parameters.
+ */
+QVariant QContactActionDescriptor::metaData(const QString& key, const QVariantMap& parameters) const
+{
+    if (d->m_factory) {
+        return d->m_factory->metaData(key, QList<QContactActionTarget>(), parameters, *this);
+    }
+
+    return QVariant();
+}
+
+QVariant QContactActionDescriptor::metaData(const QString& key, const QContactActionTarget& target, const QVariantMap& parameters) const
+{
+    return metaData(key, QList<QContactActionTarget>() << target, parameters);
+}
+
+QVariant QContactActionDescriptor::metaData(const QString& key, const QContact& contact, const QContactDetail& detail, const QVariantMap& parameters) const
+{
+    return metaData(key, QList<QContactActionTarget>() << QContactActionTarget(contact, detail), parameters);
 }
 
 /*!

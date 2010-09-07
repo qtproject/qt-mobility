@@ -615,11 +615,10 @@ void QLandmarkManagerEngineSymbian::updateLandmarkCategoryFetchByIdRequest(
 }
 
 void QLandmarkManagerEngineSymbian::updateLandmarkImportRequest(QLandmarkImportRequest *req,
-    const QList<QLandmarkId> &landmarkIds,
-    QLandmarkManager::Error error, const QString &errorString,
+    const QList<QLandmarkId> &ids, QLandmarkManager::Error error, const QString &errorString,
     QLandmarkAbstractRequest::State newState)
 {
-    QLandmarkManagerEngine::updateLandmarkImportRequest(req, landmarkIds, error, errorString, newState);
+    QLandmarkManagerEngine::updateLandmarkImportRequest(req, ids, error, errorString, newState);
 }
 
 void QLandmarkManagerEngineSymbian::updateLandmarkExportRequest(QLandmarkExportRequest *req,
@@ -667,6 +666,11 @@ void QLandmarkManagerEngineSymbian::handleLandmarkEvent(LandmarkEventObserver::l
     case LandmarkEventObserver::categoryRemoved:
     {
         emit categoriesRemoved(categoryIds);
+        break;
+    }
+    case LandmarkEventObserver::unknownChanges:
+    {
+        emit dataChanged();
         break;
     }
     default:

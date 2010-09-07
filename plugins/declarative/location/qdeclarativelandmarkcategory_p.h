@@ -29,14 +29,11 @@ signals:
     void nameChanged();
     void iconSourceChanged();
 
-public slots:
-
 private:
 
     QLandmarkCategory m_category;
     friend class QDeclarativeLandmarkCategoryModel;
     void setCategory(const QLandmarkCategory& category);
-
 };
 
 QTM_END_NAMESPACE

@@ -57,19 +57,21 @@ QTM_BEGIN_NAMESPACE
     \ingroup maps-impl
 
     Subclasses of QGeoMappingManagerEngine need to provide an implementations
-    of createMapData() and updateMapImage().
+    of createMapData(). The QGeoMapData instances returned by createMapData()
+    can be used to contain and manage information concerning what a particular
+    QGraphicsGeoMap is viewing.
 
     The functions
-    setSupportedMapTypes(const QList<QGeoMapWidget::MapType> &mapTypes),
+    setSupportedMapTypes(const QList<QGraphicsGeoMap::MapType> &mapTypes),
     setMinimumZoomLevel(qreal minimumZoom),
     setMaximumZoomLevel(qreal maximumZoom),
     setMinimumImageSize(const QSize &minimumSize) and
     setMaximumImageSize(const QSize &maximumSize) should be used to
     configure the reported capabilities of the engine.
 
-    It is important that this is done before createMapData(),
-    updateMapImage() or any of the capability reporting functions are used to
-    prevent incorrect or inconsistent behaviour.
+    It is important that this is done before createMapData() or any of the
+    capability reporting functions are used to prevent incorrect or
+    inconsistent behaviour.
 */
 
 /*!
@@ -149,28 +151,16 @@ int QGeoMappingManagerEngine::managerVersion() const
     this manager.
 
     A QGeoMapData instance contains and manages the information about
-    what a map widget is looking at.  A  single manager can be used by several
-    widgets since each widget has an associated QGeoMapData instance.
+    what a QGraphicsGeoMap is looking at.  A  single manager can be used by several
+    QGraphicsGeoMap instances since each instance has an associated QGeoMapData instance.
 
     The QGeoMapData instance can be treated as a kind of session object, or
-    as a model in a model-view-controller architecture, with QGeoMapWidget
+    as a model in a model-view-controller architecture, with QGraphicsGeoMap
     as the view and QGeoMappingManagerEngine as the controller.
 
-    Subclasses of QGeoMappingManagerEngine are free to create subclasses of
-    QGeoMapData in order to associate implementation specific data
-    with the created instance..
-*/
-
-/*!
-\fn void QGeoMappingManagerEngine::updateMapImage(QGeoMapData *mapData)
-
-    Updates the map image stored in \a mapData based on the viewport
-    data contained within \a mapData.
-
-    The image may be updated incrementally, as will happen with
-    tile based mapping managers.
-
-    Subclasses can use QGeoMapData::setMapImage() to update the map image.
+    Subclasses of QGeoMappingManagerEngine are free to override this function
+    to return subclasses of QGeoMapData in order to customize the
+    map.
 */
 
 /*!
@@ -306,6 +296,12 @@ void QGeoMappingManagerEngine::setMaximumImageSize(const QSize &maximumImageSize
 }
 
 /*!
+    Sets the locale to be used by the this manager to \a locale.
+
+    If this mapping manager supports returning map labels
+    in different languages, they will be returned in the language of \a locale.
+
+    The locale used defaults to the system locale if this is not set.
 */
 void QGeoMappingManagerEngine::setLocale(const QLocale &locale)
 {
@@ -313,6 +309,8 @@ void QGeoMappingManagerEngine::setLocale(const QLocale &locale)
 }
 
 /*!
+    Returns the locale used to hint to this mapping manager about what
+    language to use for map labels.
 */
 QLocale QGeoMappingManagerEngine::locale() const
 {

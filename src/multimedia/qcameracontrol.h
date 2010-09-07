@@ -54,6 +54,13 @@ class Q_MULTIMEDIA_EXPORT QCameraControl : public QMediaControl
     Q_OBJECT
 
 public:
+    enum PropertyChangeType {
+        CaptureMode = 1,
+        ImageEncodingSettings = 2,
+        VideoEncodingSettings = 3,
+        Viewfinder = 4
+    };
+
     ~QCameraControl();
 
     virtual QCamera::State state() const = 0;
@@ -64,6 +71,8 @@ public:
     virtual QCamera::CaptureMode captureMode() const = 0;
     virtual void setCaptureMode(QCamera::CaptureMode) = 0;
     virtual bool isCaptureModeSupported(QCamera::CaptureMode mode) const = 0;
+
+    virtual bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const = 0;
 
 Q_SIGNALS:
     void stateChanged(QCamera::State);

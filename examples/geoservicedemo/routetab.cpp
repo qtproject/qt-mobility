@@ -52,28 +52,78 @@
 #include <QMessageBox>
 #include <qgeorouterequest.h>
 
+#include <QDialogButtonBox>
+
+RouteCoordinateInputDialog::RouteCoordinateInputDialog(QGeoCoordinate& src, QGeoCoordinate& dst, QWidget *parent)
+    : QDialog(parent), m_src(src), m_dst(dst)
+{
+    setWindowTitle(tr("Route End Points"));
+
+    QLabel *source = new QLabel(tr("Source (lat,long):"));
+    m_srcLong = new QLineEdit(QString::number(src.longitude()));
+    m_srcLong->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_srcLat = new QLineEdit(QString::number(src.latitude()));
+    m_srcLat->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    QLabel *destination = new QLabel(tr("Destination (lat,long):"));
+    m_destLong = new QLineEdit(QString::number(dst.longitude()));
+    m_destLong->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_destLat = new QLineEdit(QString::number(dst.latitude()));
+    m_destLat->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    QHBoxLayout *firstrow = new QHBoxLayout;
+    firstrow->setSpacing(2);
+    firstrow->setContentsMargins(2, 1, 2, 1);
+    firstrow->addWidget(m_srcLat);
+    firstrow->addWidget(m_srcLong);
+
+    QHBoxLayout *secondrow = new QHBoxLayout;
+    secondrow->setSpacing(2);
+    secondrow->setContentsMargins(2, 1, 2, 1);
+    secondrow->addWidget(m_destLat);
+    secondrow->addWidget(m_destLong);
+
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel,Qt::Horizontal);
+    connect(buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
+    connect(buttonBox,SIGNAL(rejected()),this,SLOT(reject()));
+
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->setSizeConstraint(QLayout::SetFixedSize);
+    mainLayout->setSpacing(2);
+    mainLayout->setContentsMargins(2, 1, 2, 1);
+    mainLayout->addWidget(source);
+    mainLayout->addLayout(firstrow);
+    mainLayout->addWidget(destination);
+    mainLayout->addLayout(secondrow);
+    mainLayout->addWidget(buttonBox);
+    setLayout(mainLayout);
+}
+
+void RouteCoordinateInputDialog::accept()
+{
+    m_src.setLatitude(m_srcLat->text().toDouble());
+    m_src.setLongitude(m_srcLong->text().toDouble());
+    m_dst.setLatitude(m_destLat->text().toDouble());
+    m_dst.setLongitude(m_destLong->text().toDouble());
+    QDialog::accept();
+}
+
 RouteTab::RouteTab(QWidget *parent) :
         QWidget(parent),
         m_routingManager(0)
 {
-    QLabel *source = new QLabel(tr("Source (lat,long):"));
-    m_srcLong = new QLineEdit("9.986572");
-    m_srcLong->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    m_srcLat = new QLineEdit("53.546836");
-    m_srcLat->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_src.setLatitude(53.546836);
+    m_src.setLongitude(9.986572);
+    m_dst.setLatitude(52.382306);
+    m_dst.setLongitude(9.733887);
 
-    QLabel *destination = new QLabel(tr("Destination (lat,long):"));
-    m_destLong = new QLineEdit("9.733887");
-    m_destLong->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    m_destLat = new QLineEdit("52.382306");
-    m_destLat->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_requestBtn = new QPushButton(tr("Request Route"));
-    m_requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    m_requestBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_requestBtn->setDisabled(true);
     QObject::connect(m_requestBtn, SIGNAL(clicked(bool)),
                      this, SLOT(on_btnRequest_clicked()));
     m_updateBtn = new QPushButton(tr("Update Route"));
-    m_updateBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    m_updateBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_updateBtn->setDisabled(true);
     QObject::connect(m_updateBtn, SIGNAL(clicked(bool)),
                      this, SLOT(on_btnUpdate_clicked()));
@@ -81,28 +131,18 @@ RouteTab::RouteTab(QWidget *parent) :
     QStringList labels;
     labels << tr("Elements") << tr("Value");
     m_resultTree->setHeaderLabels(labels);
+    m_resultTree->setColumnWidth(0, 240);
 
     QHBoxLayout *firstrow = new QHBoxLayout;
-    firstrow->setSpacing(0);
-    firstrow->setContentsMargins(0, 0, 0, 0);
-    firstrow->addWidget(source);
-    firstrow->addWidget(m_srcLat);
-    firstrow->addWidget(m_srcLong);
+    firstrow->setSpacing(2);
+    firstrow->setContentsMargins(2, 1, 2, 1);
     firstrow->addWidget(m_requestBtn);
-
-    QHBoxLayout *secondrow = new QHBoxLayout;
-    secondrow->setSpacing(0);
-    secondrow->setContentsMargins(0, 0, 0, 0);
-    secondrow->addWidget(destination);
-    secondrow->addWidget(m_destLat);
-    secondrow->addWidget(m_destLong);
-    secondrow->addWidget(m_updateBtn);
+    firstrow->addWidget(m_updateBtn);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSpacing(2);
     mainLayout->setContentsMargins(2, 1, 2, 1);
     mainLayout->addLayout(firstrow);
-    mainLayout->addLayout(secondrow);
     mainLayout->addWidget(m_resultTree);
     setLayout(mainLayout);
 }
@@ -129,22 +169,22 @@ void RouteTab::initialize(QGeoRoutingManager *routingManager)
 void RouteTab::on_btnRequest_clicked()
 {
     if (m_routingManager) {
-        m_resultTree->clear();
-        QTreeWidgetItem* waitInfoItem = new QTreeWidgetItem(m_resultTree);
-        waitInfoItem->setText(0, tr("Route"));
-        waitInfoItem->setText(1, tr("Calculating"));
-        m_updateBtn->setDisabled(true);
+        RouteCoordinateInputDialog dlg(m_src,m_dst,this);
+        if(dlg.exec()==QDialog::Accepted) {
+            m_resultTree->clear();
+            QTreeWidgetItem* waitInfoItem = new QTreeWidgetItem(m_resultTree);
+            waitInfoItem->setText(0, tr("Route"));
+            waitInfoItem->setText(1, tr("Calculating"));
+            m_updateBtn->setDisabled(true);
 
-        QGeoCoordinate src(m_srcLat->text().toDouble(), m_srcLong->text().toDouble());
-        QGeoCoordinate dst(m_destLat->text().toDouble(), m_destLong->text().toDouble());
+            QGeoRouteRequest request(m_src, m_dst);
+            if ((m_routingManager->supportedSegmentDetails() & QGeoRouteRequest::BasicSegmentData) != 0)
+                request.setSegmentDetail(QGeoRouteRequest::BasicSegmentData);
+            if ((m_routingManager->supportedInstructionDetails() & QGeoRouteRequest::BasicInstructions) != 0)
+                request.setInstructionDetail(QGeoRouteRequest::BasicInstructions);
 
-        QGeoRouteRequest request(src, dst);
-        if ((m_routingManager->supportedSegmentDetails() & QGeoRouteRequest::BasicSegmentData) != 0)
-            request.setSegmentDetail(QGeoRouteRequest::BasicSegmentData);
-        if ((m_routingManager->supportedInstructionDetails() & QGeoRouteRequest::BasicInstructions) != 0)
-            request.setInstructionDetail(QGeoRouteRequest::BasicInstructions);
-
-        m_routingManager->calculateRoute(request);
+            m_routingManager->calculateRoute(request);
+        }
     } else {
         QMessageBox::warning(this, tr("Routing"), tr("No routing manager available."));
     }
@@ -158,8 +198,7 @@ void RouteTab::on_btnUpdate_clicked()
         top->setText(0, tr("Route"));
         top->setText(1, tr("Updating"));
         m_updateBtn->setDisabled(true);
-        QGeoCoordinate src(m_srcLat->text().toDouble(), m_srcLong->text().toDouble());
-        m_routingManager->updateRoute(m_routes[0], src);
+        m_routingManager->updateRoute(m_routes[0], m_src);
     } else {
         QMessageBox::warning(this, tr("Routing"), tr("Route update not available."));
     }

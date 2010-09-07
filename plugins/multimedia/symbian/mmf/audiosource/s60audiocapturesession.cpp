@@ -56,6 +56,12 @@
 
 _LIT(KAudioDummyFile, "c:\\data\\temp\\temp.wav");
 
+const QString S60AudioCaptureSession::defaultMic("Default Mic");
+const QString S60AudioCaptureSession::voiceCall("Voice Call");
+const QString S60AudioCaptureSession::fmRadio("FM Radio");
+const QString S60AudioCaptureSession::speaker("Speaker");
+const QString S60AudioCaptureSession::lineIn("Line In");
+
 S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
     QObject(parent)
     , m_recorderUtility(NULL)
@@ -63,8 +69,12 @@ S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
     , m_controllerIdMap(QHash<QString, ControllerData>())
     , m_audioCodeclist(QHash<QString, CodecData>())
     , m_error(QMediaRecorder::NoError)
-    , isMuted(false)
+    , m_isMuted(false)
+    , m_audioEndpoint(S60AudioCaptureSession::defaultMic)
 {
+#ifdef AUDIOINPUT_ROUTING
+    m_audioInput = NULL;
+#endif //AUDIOINPUT_ROUTING
     TRAPD(err, initializeSessionL());
     setError(err);
 }
@@ -75,6 +85,7 @@ void S60AudioCaptureSession::initializeSessionL()
     updateAudioContainersL();
     populateAudioCodecsDataL();
     setDefaultSettings();
+    initAudioInputs();
 }
 
 void S60AudioCaptureSession::setError(TInt aError)
@@ -82,6 +93,7 @@ void S60AudioCaptureSession::setError(TInt aError)
     if (aError == KErrNone)
         return;
 
+    stop();
     m_error = aError;
     QMediaRecorder::Error recorderError = fromSymbianErrorToMultimediaError(m_error);
 
@@ -122,6 +134,9 @@ QMediaRecorder::Error S60AudioCaptureSession::fromSymbianErrorToMultimediaError(
 
 S60AudioCaptureSession::~S60AudioCaptureSession()
 {
+#ifdef AUDIOINPUT_ROUTING
+    delete m_audioInput;
+#endif //AUDIOINPUT_ROUTING
     delete m_recorderUtility;
 }
 
@@ -269,12 +284,12 @@ void S60AudioCaptureSession::mute(bool muted)
     else
         m_recorderUtility->SetGain(m_recorderUtility->MaxGain());
 
-    isMuted = muted;
+    m_isMuted = muted;
 }
 
 bool S60AudioCaptureSession::muted()
 {
-    return isMuted;
+    return m_isMuted;
 }
 
 void S60AudioCaptureSession::setDefaultSettings()
@@ -320,10 +335,100 @@ void S60AudioCaptureSession::stop()
     emit stateChanged(m_captureState);
 }
 
-void S60AudioCaptureSession::setCaptureDevice(const QString &deviceName)
+void S60AudioCaptureSession::initAudioInputs()
 {
-    m_captureDevice = deviceName;
+    m_audioInputs[S60AudioCaptureSession::defaultMic] = QString("Microphone associated with the currently active speaker.");
+#ifdef AUDIOINPUT_ROUTING
+    m_audioInputs[S60AudioCaptureSession::voiceCall] = QString("Audio stream associated with the current phone call.");
+    m_audioInputs[S60AudioCaptureSession::fmRadio] = QString("Audio of the currently tuned FM radio station.");
+    m_audioInputs[S60AudioCaptureSession::lineIn] = QString("Audio being received from the line-in (if available).");
+    m_audioInputs[S60AudioCaptureSession::speaker] = QString("Audio currently being sent to the currently active speaker.");
+#endif //AUDIOINPUT_ROUTING
 }
+
+void S60AudioCaptureSession::setActiveEndpoint(const QString& audioEndpoint)
+{
+    if (!m_audioInputs.keys().contains(audioEndpoint))
+        return;
+
+    if (activeEndpoint().compare(audioEndpoint) != 0) {
+        m_audioEndpoint = audioEndpoint;
+        emit activeEndpointChanged(audioEndpoint);
+    }
+}
+
+QList<QString> S60AudioCaptureSession::availableEndpoints() const
+{
+    return m_audioInputs.keys();
+}
+
+QString S60AudioCaptureSession::endpointDescription(const QString& name) const
+{
+    if (m_audioInputs.keys().contains(name))
+        return m_audioInputs.value(name);
+    return QString();
+}
+
+QString S60AudioCaptureSession::activeEndpoint() const
+{
+    QString inputName = QString(S60AudioCaptureSession::defaultMic);
+#ifdef AUDIOINPUT_ROUTING
+    if (m_audioInput) {
+        CAudioInput::TAudioInputArray input = m_audioInput->AudioInput();
+        inputName = qStringFromTAudioInputPreference(input[0]);
+    }
+#endif //AUDIOINPUT_ROUTING
+    return inputName;
+}
+
+QString S60AudioCaptureSession::defaultEndpoint() const
+{
+    return QString(S60AudioCaptureSession::defaultMic);
+}
+
+void S60AudioCaptureSession::doSetActiveEndpointL(const QString& name)
+{
+#ifdef AUDIOINPUT_ROUTING
+    if (!m_recorderUtility)
+        return;
+
+    CAudioInput::TAudioInputPreference input = CAudioInput::EDefaultMic;
+
+    if (name.compare(S60AudioCaptureSession::voiceCall) == 0)
+        input = CAudioInput::EVoiceCall;
+    else if (name.compare(S60AudioCaptureSession::fmRadio) == 0)
+        input = CAudioInput::EFMRadio;
+    else if (name.compare(S60AudioCaptureSession::lineIn)== 0)
+        input = CAudioInput::ELineIn;
+    else if (name.compare(S60AudioCaptureSession::speaker) == 0)
+        input = CAudioInput::EOutputToSpeaker;
+    else // S60AudioCaptureSession::defaultMic
+        input = CAudioInput::EDefaultMic;
+
+    RArray<CAudioInput::TAudioInputPreference> inputArray;
+    inputArray.Append(input);
+
+    if (m_audioInput)
+        m_audioInput->SetAudioInputL(inputArray.Array());
+
+#endif //AUDIOINPUT_ROUTING
+}
+
+#ifdef AUDIOINPUT_ROUTING
+QString S60AudioCaptureSession::qStringFromTAudioInputPreference(CAudioInput::TAudioInputPreference input) const
+{
+    if (input == CAudioInput::EVoiceCall)
+        return S60AudioCaptureSession::voiceCall;
+    else if (input == CAudioInput::EFMRadio)
+        return S60AudioCaptureSession::fmRadio;
+    else if (input == CAudioInput::ELineIn)
+        return S60AudioCaptureSession::lineIn;
+    else if (input == CAudioInput::EOutputToSpeaker)
+        return S60AudioCaptureSession::speaker;
+    return S60AudioCaptureSession::defaultMic; // CAudioInput::EDefaultMic
+}
+#endif //AUDIOINPUT_ROUTING
+
 
 void S60AudioCaptureSession::MoscoStateChangeEvent(CBase* aObject,
         TInt aPreviousState, TInt aCurrentState, TInt aErrorCode)
@@ -501,7 +606,18 @@ void S60AudioCaptureSession::populateAudioCodecsDataL()
 
 void S60AudioCaptureSession::applyAudioSettingsL()
 {
-    if (!m_recorderUtility || m_format.codec() == "AMR")
+    if (!m_recorderUtility)
+        return;
+#ifdef AUDIOINPUT_ROUTING
+    //CAudioInput needs to be re-initialized everytime recording starts
+    if (m_audioInput) {
+        delete m_audioInput;
+        m_audioInput = NULL;
+    }
+    m_audioInput = CAudioInput::NewL(*m_recorderUtility);
+    doSetActiveEndpointL(m_audioEndpoint);
+#endif //AUDIOINPUT_ROUTING
+    if (m_format.codec() == "AMR")
         return;
 
     TFourCC fourCC = m_audioCodeclist.value(m_format.codec()).fourCC;
@@ -533,16 +649,19 @@ void S60AudioCaptureSession::applyAudioSettingsL()
     }
     CleanupStack::PopAndDestroy(&supportedSampleRates);
 
-    RArray<TUint> supportedChannels;
-    CleanupClosePushL(supportedChannels);
-    m_recorderUtility->GetSupportedNumberOfChannelsL(supportedChannels);
-    for (TInt l = 0; l < supportedChannels.Count(); l++ ) {
-        if (supportedChannels[l] == m_format.channels()) {
-            m_recorderUtility->SetDestinationNumberOfChannelsL(m_format.channels());
-            break;
+    /* If requested channel setting is different than current one */
+    if (m_recorderUtility->DestinationNumberOfChannelsL() != m_format.channels()) {
+        RArray<TUint> supportedChannels;
+        CleanupClosePushL(supportedChannels);
+        m_recorderUtility->GetSupportedNumberOfChannelsL(supportedChannels);
+        for (TInt l = 0; l < supportedChannels.Count(); l++ ) {
+            if (supportedChannels[l] == m_format.channels()) {
+                m_recorderUtility->SetDestinationNumberOfChannelsL(m_format.channels());
+                break;
+            }
         }
+        CleanupStack::PopAndDestroy(&supportedChannels);
     }
-    CleanupStack::PopAndDestroy(&supportedChannels);
 }
 
 TFourCC S60AudioCaptureSession::determinePCMFormat()
@@ -605,4 +724,3 @@ QUrl S60AudioCaptureSession::generateAudioFilePath()
     QUrl location(QDir::toNativeSeparators(outputDir.canonicalPath()+QString("/testclip_%1").arg(lastImage+1,4,10,QLatin1Char('0'))));
     return location;
 }
-

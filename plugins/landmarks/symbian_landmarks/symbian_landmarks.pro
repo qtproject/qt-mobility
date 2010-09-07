@@ -48,6 +48,7 @@ CONFIG += mobility
 MOBILITY = location
 
 include(../../../common.pri)
+include(symbian_landmarks_defines.pri)
 
 symbian {
 
@@ -63,11 +64,14 @@ symbian {
         -leposlmsearchlib \
         -leposlmdbmanlib \
         -llbs \
-        -euser \
+        -leuser \
         -lefsrv \
         -lcone \
-        -lbafl
-
+        -lbafl \
+		-lapgrfx \
+		-lefsrv \
+		-lapmime
+		
     pluginDep.sources = $${TARGET}.dll
     pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += pluginDep

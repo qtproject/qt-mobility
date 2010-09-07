@@ -56,6 +56,7 @@
 #include <qgalleryresultset.h>
 
 #include "qgallerydbusinterface_p.h"
+#include "qgallerytrackerlistcolumn_p.h"
 
 QT_BEGIN_NAMESPACE
 class QDBusPendingCallWatcher;
@@ -64,10 +65,8 @@ QT_END_NAMESPACE
 QTM_BEGIN_NAMESPACE
 
 class QGalleryDBusInterfaceFactory;
-class QGalleryTrackerCompositeColumn;
 class QGalleryTrackerImageColumn;
 class QGalleryTrackerSchema;
-class QGalleryTrackerValueColumn;
 
 struct QGalleryTrackerSortCriteria
 {
@@ -102,9 +101,21 @@ struct QGalleryTrackerResultSetArguments
     {
     }
 
-    QGalleryTrackerCompositeColumn *idColumn;
-    QGalleryTrackerCompositeColumn *urlColumn;
-    QGalleryTrackerCompositeColumn *typeColumn;
+    ~QGalleryTrackerResultSetArguments()
+    {
+        qDeleteAll(valueColumns);
+        qDeleteAll(compositeColumns);
+    }
+
+    void clear()
+    {
+        valueColumns.clear();
+        compositeColumns.clear();
+    }
+
+    QScopedPointer<QGalleryTrackerCompositeColumn> idColumn;
+    QScopedPointer<QGalleryTrackerCompositeColumn> urlColumn;
+    QScopedPointer<QGalleryTrackerCompositeColumn> typeColumn;
     int updateMask;
     int identityWidth;
     int tableWidth;
@@ -124,12 +135,12 @@ struct QGalleryTrackerResultSetArguments
     QVector<int> resourceKeys;
 };
 
-class Q_AUTOTEST_EXPORT QGalleryTrackerResultSet : public QGalleryResultSet
+class QM_AUTOTEST_EXPORT QGalleryTrackerResultSet : public QGalleryResultSet
 {
     Q_OBJECT
 public:
     QGalleryTrackerResultSet(
-            const QGalleryTrackerResultSetArguments &arguments,
+            QGalleryTrackerResultSetArguments *arguments,
             bool live,
             int cursorPosition,
             int minimumPagedItems,

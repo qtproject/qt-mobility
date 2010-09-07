@@ -166,6 +166,9 @@ QGraphicsGeoMap::~QGraphicsGeoMap()
     delete d_ptr;
 }
 
+/*!
+    \internal
+*/
 void QGraphicsGeoMap::setMappingManager(QGeoMappingManager *manager)
 {
     MapType type = QGraphicsGeoMap::StreetMap;
@@ -212,8 +215,9 @@ void QGraphicsGeoMap::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 }
 
 /*!
-    Returns the minimum zoom level supported by the QGeoMappingManager
-    associated with this widget.
+    \property QGraphicsGeoMap::minimumZoomLevel
+    \brief This property holds the minimum zoom level supported by the
+    QGeoMappingManager associated with this widget.
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
@@ -227,8 +231,9 @@ qreal QGraphicsGeoMap::minimumZoomLevel() const
 }
 
 /*!
-    Returns the maximum zoom level supported by the QGeoMappingManager
-    associated with this widget.
+    \property QGraphicsGeoMap::maximumZoomLevel
+    \brief This property holds the maximum zoom level supported by the
+    QGeoMappingManager associated with this widget.
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
@@ -242,14 +247,15 @@ qreal QGraphicsGeoMap::maximumZoomLevel() const
 }
 
 /*!
-    Sets the zoom level of the map to \a zoomLevel.
+    \property QGraphicsGeoMap::zoomLevel
+    \brief This property holds the zoom level of the map.
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
 
-    If \a zoomLevel is less than minimumZoomLevel() then minimumZoomLevel()
-    will be used, and if \a zoomLevel is  larger than
-    maximumZoomLevel() then maximumZoomLevel() will be used.
+    If zoomLevel is less than minimumZoomLevel then minimumZoomLevel
+    will be used, and if zoomLevel is  larger than
+    maximumZoomLevel then maximumZoomLevel will be used.
 */
 void QGraphicsGeoMap::setZoomLevel(qreal zoomLevel)
 {
@@ -262,12 +268,6 @@ void QGraphicsGeoMap::setZoomLevel(qreal zoomLevel)
     }
 }
 
-/*!
-    Returns the zoom level of the map.
-
-    Larger values of the zoom level correspond to more detailed views of the
-    map.
-*/
 qreal QGraphicsGeoMap::zoomLevel() const
 {
     if (d_ptr->mapData)
@@ -295,7 +295,11 @@ void QGraphicsGeoMap::pan(int dx, int dy)
 }
 
 /*!
-    Centers the map viewport on the coordinate \a center.
+    \property QGraphicsGeoMap::center
+    \brief This property holds the coordinate at the center of the map viewport.
+
+    Panning the map can be more efficient than changing the center by small
+    increments.
 */
 void QGraphicsGeoMap::setCenter(const QGeoCoordinate &center)
 {
@@ -307,9 +311,6 @@ void QGraphicsGeoMap::setCenter(const QGeoCoordinate &center)
     }
 }
 
-/*!
-    Returns the coordinate of the point in the center of the map viewport.
-*/
 QGeoCoordinate QGraphicsGeoMap::center() const
 {
     if (d_ptr->mapData)
@@ -331,9 +332,11 @@ QList<QGraphicsGeoMap::MapType> QGraphicsGeoMap::supportedMapTypes() const
 }
 
 /*!
-    Changes the type of map data to display to \a mapType.
+  \property QGraphicsGeoMap::mapType
+  \brief This property holds the type of map data displayed by the map.
 
-    This will do nothing if \a mapType is not present in supportedMapTypes().
+  Setting mapType to a type not present in supportedMapTypes() will do
+  nothing.
 */
 void QGraphicsGeoMap::setMapType(QGraphicsGeoMap::MapType mapType)
 {
@@ -349,9 +352,6 @@ void QGraphicsGeoMap::setMapType(QGraphicsGeoMap::MapType mapType)
     }
 }
 
-/*!
-    Returns the type of map data which is being displayed.
-*/
 QGraphicsGeoMap::MapType QGraphicsGeoMap::mapType() const
 {
     if (d_ptr->mapData)
@@ -361,6 +361,7 @@ QGraphicsGeoMap::MapType QGraphicsGeoMap::mapType() const
 }
 
 /*!
+    Returns the map objects associated with this map.
 */
 QList<QGeoMapObject*> QGraphicsGeoMap::mapObjects() const
 {
@@ -377,7 +378,7 @@ QList<QGeoMapObject*> QGraphicsGeoMap::mapObjects() const
     QGeoMapObject::isVisible() returns true then the map will display the map
     object immediately.
 
-    The widget will take ownership of the \a mapObject.
+    The map will take ownership of the \a mapObject.
 */
 void QGraphicsGeoMap::addMapObject(QGeoMapObject *mapObject)
 {
@@ -396,7 +397,7 @@ void QGraphicsGeoMap::addMapObject(QGeoMapObject *mapObject)
     QGeoMapObject::isVisible() returns true then the map will stop displaying
     the map object immediately.
 
-    The widget will release ownership of the \a mapObject.
+    The map will release ownership of the \a mapObject.
 */
 void QGraphicsGeoMap::removeMapObject(QGeoMapObject *mapObject)
 {
@@ -409,6 +410,9 @@ void QGraphicsGeoMap::removeMapObject(QGeoMapObject *mapObject)
 }
 
 /*!
+    Clears the map objects associated with this map.
+
+    The map objects will be deleted.
 */
 void QGraphicsGeoMap::clearMapObjects()
 {
@@ -479,7 +483,7 @@ Indicates that the zoom level has changed to \a zoomLevel.
 */
 
 /*!
-\fn void QGraphicsGeoMap::centered(const QGeoCoordinate &coordinate)
+\fn void QGraphicsGeoMap::centerChanged(const QGeoCoordinate &coordinate)
 
 Indicates that the map has been centered on \a coordinate.
 

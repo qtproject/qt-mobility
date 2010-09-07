@@ -20,6 +20,11 @@ void QDeclarativeLandmark::setName(const QString& name)
     emit nameChanged();
 }
 
+QDeclarativeCoordinate* QDeclarativeLandmark::coordinate()
+{
+    return &m_coordinate;
+}
+
 QString QDeclarativeLandmark::phoneNumber()
 {
     return m_landmark.phoneNumber();
@@ -89,7 +94,14 @@ void QDeclarativeLandmark::setUrl(const QUrl& url)
 void QDeclarativeLandmark::setLandmark(const QLandmark& landmark)
 {
     m_landmark = landmark;
+    m_coordinate.setCoordinate(m_landmark.coordinate());
+    emit coordinateChanged();
     // TODO update notifications when the whole scenario is more clear
+}
+
+QList<QLandmarkCategoryId> QDeclarativeLandmark::categoryIds () const
+{
+    return m_landmark.categoryIds();
 }
 
 #include "moc_qdeclarativelandmark_p.cpp"

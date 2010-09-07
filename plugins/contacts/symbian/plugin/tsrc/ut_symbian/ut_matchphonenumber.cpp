@@ -59,9 +59,9 @@ const TUid KCRUidTelConfiguration = {0x102828B8};
 const TUint32 KTelMatchDigits                               = 0x00000001;
 
 const QString DB1_FIRSTNAME1 = "A";
-const QString DB1_LASTNAME1 = "9";
-const QString DB1_FIRSTNAME2 = "D";
-const QString DB1_LASTNAME2 = "6";
+const QString DB1_LASTNAME1 = "Jo";
+const QString DB1_FIRSTNAME2 = "Di";
+const QString DB1_LASTNAME2 = "Jo";
 
 
 void TestMatchPhoneNumber::initTestCase()
@@ -106,65 +106,197 @@ void TestMatchPhoneNumber::cleanupContactsDb()
 void TestMatchPhoneNumber::setupBestMatchingContactsDb1()
 {
     cleanupContactsDb();
-    
-    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "00358401234561" ) );
-    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "99533358401234562" ) );
-    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "99533358401234563" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "+358401234564" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "00358401234565" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "99533358401234566" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "0561234567" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "0561234568" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "061234569" ) );
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "34567" ) );
     
     QContactManager::Error err;
     QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
     int j = cnt_ids.count();
-    QVERIFY(9 == j);
+    QVERIFY(1 == j);
 }
 
 void TestMatchPhoneNumber::setupBestMatchingContactsDb2()
 {
     cleanupContactsDb();
-    
-    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "+358401234561" ) );
-    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "+358401234562" ) );
-    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "00358401234563" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "0401234564" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "0401234565" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "0401234566" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "061234567" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "+8261234568" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "+82561234569" ) );
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "358401234567" ) );
     
     QContactManager::Error err;
     QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
     int j = cnt_ids.count();
-    QVERIFY(9 == j);
+    QVERIFY(1 == j);
 }
 
 void TestMatchPhoneNumber::setupBestMatchingContactsDb3()
 {
     cleanupContactsDb();
-    
-    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "1234561" ) );
-    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "401234561" ) );
-    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "00358401234563" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "0401234564" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "+358401234565" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "16101234566" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "4567" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "1234567" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "221234567" ) );
-    
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "4566" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "*4566" ) );
-    addContact( DB1_FIRSTNAME2, DB1_LASTNAME2, QString( "*55*0705#" ) );
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "3560 0123456" ) );
     
     QContactManager::Error err;
     QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
     int j = cnt_ids.count();
-    QVERIFY(12 == j);
+    QVERIFY(1 == j);
+}
+
+void TestMatchPhoneNumber::setupBestMatchingContactsDb4()
+{
+    cleanupContactsDb();
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "1234567" ) );
+    
+    QContactManager::Error err;
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
+    int j = cnt_ids.count();
+    QVERIFY(1 == j);
+}
+
+void TestMatchPhoneNumber::setupBestMatchingContactsDb5()
+{
+    cleanupContactsDb();
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "0000 0123456" ) );
+    
+    QContactManager::Error err;
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
+    int j = cnt_ids.count();
+    QVERIFY(1 == j);
+}
+
+void TestMatchPhoneNumber::setupBestMatchingContactsDb6()
+{
+    cleanupContactsDb();
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "020 7700 9001" ) );
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "20 7700 90012" ) );
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "020 7700 9081" ) );
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "120 7700 9081" ) );
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "9120 7700 9081" ) );
+    
+    QContactManager::Error err;
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
+    int j = cnt_ids.count();
+    QVERIFY(5 == j);
+}
+
+void TestMatchPhoneNumber::setupBestMatchingContactsDb7()
+{
+    cleanupContactsDb();
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "9999 9990 0999 999" ) );
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "9000 0000 0000 000" ) );
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "0000 0000 0000 000" ) );
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "0000 0000 0000 009" ) );
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "9 9000 000" ) );
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "9000 000" ) );
+    
+    QContactManager::Error err;
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
+    int j = cnt_ids.count();
+    QVERIFY(6 == j);
+}
+
+void TestMatchPhoneNumber::setupBestMatchingContactsDb8()
+{
+    cleanupContactsDb();
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "443049607" ) );
+    
+    QContactManager::Error err;
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
+    int j = cnt_ids.count();
+    QVERIFY(1 == j);
+}
+
+void TestMatchPhoneNumber::setupBestMatchingContactsDb9()
+{
+    cleanupContactsDb();
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "0443049607" ) );
+    
+    QContactManager::Error err;
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
+    int j = cnt_ids.count();
+    QVERIFY(1 == j);
+}
+
+void TestMatchPhoneNumber::setupBestMatchingContactsDb10()
+{
+    cleanupContactsDb();
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "358443049607" ) );
+    
+    QContactManager::Error err;
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
+    int j = cnt_ids.count();
+    QVERIFY(1 == j);
+}
+
+void TestMatchPhoneNumber::setupBestMatchingContactsDb11()
+{
+    cleanupContactsDb();
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "443049607" ) );
+    
+    QContactManager::Error err;
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
+    int j = cnt_ids.count();
+    QVERIFY(1 == j);
+}
+
+void TestMatchPhoneNumber::setupBestMatchingContactsDb12()
+{
+    cleanupContactsDb();
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "0443049607" ) );
+    
+    QContactManager::Error err;
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
+    int j = cnt_ids.count();
+    QVERIFY(1 == j);
+}
+
+void TestMatchPhoneNumber::setupBestMatchingContactsDb13()
+{
+    cleanupContactsDb();
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "3049607" ) );
+    
+    QContactManager::Error err;
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
+    int j = cnt_ids.count();
+    QVERIFY(1 == j);
+}
+
+void TestMatchPhoneNumber::setupBestMatchingContactsDb14()
+{
+    cleanupContactsDb();
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "03049607" ) );
+    
+    QContactManager::Error err;
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
+    int j = cnt_ids.count();
+    QVERIFY(1 == j);
+}
+
+void TestMatchPhoneNumber::setupBestMatchingContactsDb15()
+{
+    cleanupContactsDb();
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "4443049607" ) );
+    
+    QContactManager::Error err;
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
+    int j = cnt_ids.count();
+    QVERIFY(1 == j);
+}
+
+void TestMatchPhoneNumber::setupBestMatchingContactsDb16()
+{
+    cleanupContactsDb();
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "584443049607" ) );
+    
+    QContactManager::Error err;
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
+    int j = cnt_ids.count();
+    QVERIFY(1 == j);
+}
+
+void TestMatchPhoneNumber::setupBestMatchingContactsDb17()
+{
+    cleanupContactsDb();
+    addContact( DB1_FIRSTNAME1, DB1_LASTNAME1, QString( "401234567" ) );
+    
+    QContactManager::Error err;
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
+    int j = cnt_ids.count();
+    QVERIFY(1 == j);
 }
 
 void TestMatchPhoneNumber::addContact(QString firstname,QString lastname,QString phonenumber)
@@ -191,14 +323,29 @@ void TestMatchPhoneNumber::addContact(QString firstname,QString lastname,QString
 
 void TestMatchPhoneNumber::testMatchPhoneNumber()
 {
-    testBestMatchingStrategy1();
-    testBestMatchingStrategy2();
-    testBestMatchingStrategy3();
+    testBestMatching1();
+    testBestMatching2();
+    testBestMatching3();
+    testBestMatching4();
+    testBestMatching5();
+    testBestMatching6();
+    testBestMatching7();
+    testBestMatching8();
+    testBestMatching9();
+    testBestMatching10();
+    testBestMatching11();
+    testBestMatching12();
+    testBestMatching13();
+    testBestMatching14();
+    testBestMatching15();
+    testBestMatching16();
+    testBestMatching17();
+    
     testBestMatchingWithUnionFilter();
     testBestMatchingWithIntersectionFilter();
 }
 
-void TestMatchPhoneNumber::testBestMatchingStrategy1()
+void TestMatchPhoneNumber::testBestMatching1()
 {
     setupBestMatchingContactsDb1();
     
@@ -221,66 +368,10 @@ void TestMatchPhoneNumber::testBestMatchingStrategy1()
     cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
     // check counts 
     seachedcontactcount = cnt_ids.count();
-    expectedCount =1;  
-    QVERIFY(expectedCount == seachedcontactcount);
-    
-    detailFilter.setValue("+358401234562");
-    error = QContactManager::NoError;
-    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
-    // check counts 
-    seachedcontactcount = cnt_ids.count();
-    expectedCount =1;  
-    QVERIFY(expectedCount == seachedcontactcount);
-    
-    detailFilter.setValue("00358401234563");
-    error = QContactManager::NoError;
-    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
-    // check counts 
-    seachedcontactcount = cnt_ids.count();
-    expectedCount =1;  
-    QVERIFY(expectedCount == seachedcontactcount);
-    
-    detailFilter.setValue("0401234564");
-    error = QContactManager::NoError;
-    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
-    // check counts 
-    seachedcontactcount = cnt_ids.count();
-    expectedCount =1;  
-    QVERIFY(expectedCount == seachedcontactcount);
-    
-    detailFilter.setValue("0401234565");
-    error = QContactManager::NoError;
-    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
-    // check counts 
-    seachedcontactcount = cnt_ids.count();
-    expectedCount =1;  
-    QVERIFY(expectedCount == seachedcontactcount);
-    
-    detailFilter.setValue("0401234566");
-    error = QContactManager::NoError;
-    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
-    // check counts 
-    seachedcontactcount = cnt_ids.count();
-    expectedCount =1;  
-    QVERIFY(expectedCount == seachedcontactcount);
-    
-    detailFilter.setValue("061234567");
-    error = QContactManager::NoError;
-    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
-    // check counts 
-    seachedcontactcount = cnt_ids.count();
     expectedCount =0;  
     QVERIFY(expectedCount == seachedcontactcount);
     
-    detailFilter.setValue("+8261234568");
-    error = QContactManager::NoError;
-    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
-    // check counts 
-    seachedcontactcount = cnt_ids.count();
-    expectedCount =0;  
-    QVERIFY(expectedCount == seachedcontactcount);
-    
-    detailFilter.setValue("+82561234569");
+    detailFilter.setValue("34567");
     error = QContactManager::NoError;
     cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
     // check counts 
@@ -288,7 +379,8 @@ void TestMatchPhoneNumber::testBestMatchingStrategy1()
     expectedCount =1;  
     QVERIFY(expectedCount == seachedcontactcount);
 }
-void TestMatchPhoneNumber::testBestMatchingStrategy2()
+
+void TestMatchPhoneNumber::testBestMatching2()
 {
     setupBestMatchingContactsDb2();
     
@@ -306,7 +398,7 @@ void TestMatchPhoneNumber::testBestMatchingStrategy2()
     CntFilterDetail filter(*m_database,srvConnection,dbInfo);
     filter.emulateBestMatching();
     
-    detailFilter.setValue("00358401234561");
+    detailFilter.setValue("358401234567");
     error = QContactManager::NoError;
     cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
     // check counts 
@@ -314,72 +406,16 @@ void TestMatchPhoneNumber::testBestMatchingStrategy2()
     expectedCount =1;  
     QVERIFY(expectedCount == seachedcontactcount);
     
-    detailFilter.setValue("99533358401234562");
-    error = QContactManager::NoError;
-    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
-    // check counts 
-    seachedcontactcount = cnt_ids.count();
-    expectedCount =1;  
-    QVERIFY(expectedCount == seachedcontactcount);
-    
-    detailFilter.setValue("99533358401234563");
-    error = QContactManager::NoError;
-    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
-    // check counts 
-    seachedcontactcount = cnt_ids.count();
-    expectedCount =1;  
-    QVERIFY(expectedCount == seachedcontactcount);
-    
-    detailFilter.setValue("+358401234564");
-    error = QContactManager::NoError;
-    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
-    // check counts 
-    seachedcontactcount = cnt_ids.count();
-    expectedCount =1;  
-    QVERIFY(expectedCount == seachedcontactcount);
-    
-    detailFilter.setValue("00358401234565");
-    error = QContactManager::NoError;
-    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
-    // check counts 
-    seachedcontactcount = cnt_ids.count();
-    expectedCount =1;  
-    QVERIFY(expectedCount == seachedcontactcount);
-    
-    detailFilter.setValue("99533358401234566");
-    error = QContactManager::NoError;
-    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
-    // check counts 
-    seachedcontactcount = cnt_ids.count();
-    expectedCount =1;  
-    QVERIFY(expectedCount == seachedcontactcount);
-    
-    detailFilter.setValue("0561234567");
+    detailFilter.setValue("34567");
     error = QContactManager::NoError;
     cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
     // check counts 
     seachedcontactcount = cnt_ids.count();
     expectedCount =0;  
-    QVERIFY(expectedCount == seachedcontactcount);
-    
-    detailFilter.setValue("0561234568");
-    error = QContactManager::NoError;
-    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
-    // check counts 
-    seachedcontactcount = cnt_ids.count();
-    expectedCount =0;  
-    QVERIFY(expectedCount == seachedcontactcount);
-    
-    detailFilter.setValue("061234569");
-    error = QContactManager::NoError;
-    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
-    // check counts 
-    seachedcontactcount = cnt_ids.count();
-    expectedCount =1;  
     QVERIFY(expectedCount == seachedcontactcount);
 }
 
-void TestMatchPhoneNumber::testBestMatchingStrategy3()
+void TestMatchPhoneNumber::testBestMatching3()
 {
     setupBestMatchingContactsDb3();
     
@@ -397,31 +433,76 @@ void TestMatchPhoneNumber::testBestMatchingStrategy3()
     CntFilterDetail filter(*m_database,srvConnection,dbInfo);
     filter.emulateBestMatching();
     
-    detailFilter.setValue("1234561");
+    detailFilter.setValue("0000 0123456");
     error = QContactManager::NoError;
     cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
     // check counts 
     seachedcontactcount = cnt_ids.count();
-    expectedCount =2;  
+    expectedCount =1;  
     QVERIFY(expectedCount == seachedcontactcount);
     
-    detailFilter.setValue("401234561");
+    detailFilter.setValue("123456");
     error = QContactManager::NoError;
     cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
     // check counts 
     seachedcontactcount = cnt_ids.count();
-    expectedCount =2;  
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestMatchPhoneNumber::testBestMatching4()
+{
+    setupBestMatchingContactsDb4();
+    
+    CntSymbianSrvConnection srvConnection(m_engine);
+    CntDbInfo dbInfo(m_engine);
+    bool filterSupported(true);
+    
+    QContactDetailFilter detailFilter;
+    detailFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    int seachedcontactcount;
+    int expectedCount;
+    
+    CntFilterDetail filter(*m_database,srvConnection,dbInfo);
+    filter.emulateBestMatching();
+    
+    detailFilter.setValue("358401234567");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
     QVERIFY(expectedCount == seachedcontactcount);
     
-    detailFilter.setValue("358401234563");
+    detailFilter.setValue("34567");
     error = QContactManager::NoError;
     cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
     // check counts 
     seachedcontactcount = cnt_ids.count();
     expectedCount =0;  
     QVERIFY(expectedCount == seachedcontactcount);
+}
+void TestMatchPhoneNumber::testBestMatching5()
+{
+    setupBestMatchingContactsDb5();
     
-    detailFilter.setValue("401234564");
+    CntSymbianSrvConnection srvConnection(m_engine);
+    CntDbInfo dbInfo(m_engine);
+    bool filterSupported(true);
+    
+    QContactDetailFilter detailFilter;
+    detailFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    int seachedcontactcount;
+    int expectedCount;
+    
+    CntFilterDetail filter(*m_database,srvConnection,dbInfo);
+    filter.emulateBestMatching();
+    
+    detailFilter.setValue("0123456");
     error = QContactManager::NoError;
     cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
     // check counts 
@@ -429,7 +510,7 @@ void TestMatchPhoneNumber::testBestMatchingStrategy3()
     expectedCount =1;  
     QVERIFY(expectedCount == seachedcontactcount);
     
-    detailFilter.setValue("+358401234565");
+    detailFilter.setValue("123456");
     error = QContactManager::NoError;
     cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
     // check counts 
@@ -437,31 +518,7 @@ void TestMatchPhoneNumber::testBestMatchingStrategy3()
     expectedCount =1;  
     QVERIFY(expectedCount == seachedcontactcount);
     
-    detailFilter.setValue("+16101234566");
-    error = QContactManager::NoError;
-    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
-    // check counts 
-    seachedcontactcount = cnt_ids.count();
-    expectedCount =1;  
-    QVERIFY(expectedCount == seachedcontactcount);
-    
-    detailFilter.setValue("4567");
-    error = QContactManager::NoError;
-    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
-    // check counts 
-    seachedcontactcount = cnt_ids.count();
-    expectedCount =1;  
-    QVERIFY(expectedCount == seachedcontactcount);
-    
-    detailFilter.setValue("*4566");
-    error = QContactManager::NoError;
-    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
-    // check counts 
-    seachedcontactcount = cnt_ids.count();
-    expectedCount =1;  
-    QVERIFY(expectedCount == seachedcontactcount);
-    
-    detailFilter.setValue("*55*0705#");
+    detailFilter.setValue("3456");
     error = QContactManager::NoError;
     cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
     // check counts 
@@ -470,9 +527,460 @@ void TestMatchPhoneNumber::testBestMatchingStrategy3()
     QVERIFY(expectedCount == seachedcontactcount);
 }
 
+void TestMatchPhoneNumber::testBestMatching6()
+{
+    setupBestMatchingContactsDb6();
+    
+    CntSymbianSrvConnection srvConnection(m_engine);
+    CntDbInfo dbInfo(m_engine);
+    bool filterSupported(true);
+    
+    QContactDetailFilter detailFilter;
+    detailFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    int seachedcontactcount;
+    int expectedCount;
+    
+    CntFilterDetail filter(*m_database,srvConnection,dbInfo);
+    filter.emulateBestMatching();
+    
+    detailFilter.setValue("020 7700 9001");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    
+    detailFilter.setValue("20 7700 90012");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    
+    detailFilter.setValue("020 7700 9081");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =3;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    
+    detailFilter.setValue("120 7700 9081");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =3;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    
+    detailFilter.setValue("9120 7700 9081");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =3;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    
+    detailFilter.setValue("20 7700 9081");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =3;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestMatchPhoneNumber::testBestMatching7()
+{
+    setupBestMatchingContactsDb7();
+    
+    CntSymbianSrvConnection srvConnection(m_engine);
+    CntDbInfo dbInfo(m_engine);
+    bool filterSupported(true);
+    
+    QContactDetailFilter detailFilter;
+    detailFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    int seachedcontactcount;
+    int expectedCount;
+    
+    CntFilterDetail filter(*m_database,srvConnection,dbInfo);
+    filter.emulateBestMatching();
+    
+    detailFilter.setValue("9999 9990 0999 999");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    detailFilter.setValue("9999 9990 0999 999");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    
+    detailFilter.setValue("9000 0000 0000 000");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =2;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    
+    detailFilter.setValue("0000 0000 0000 000");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =2;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    
+    detailFilter.setValue("0000 0000 0000 009");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    
+    detailFilter.setValue("9 9000 000");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =2;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    
+    detailFilter.setValue("9000 000");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =2;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    
+    detailFilter.setValue("0000 000");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =2;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestMatchPhoneNumber::testBestMatching8()
+{
+    setupBestMatchingContactsDb8();
+    
+    CntSymbianSrvConnection srvConnection(m_engine);
+    CntDbInfo dbInfo(m_engine);
+    bool filterSupported(true);
+    
+    QContactDetailFilter detailFilter;
+    detailFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    int seachedcontactcount;
+    int expectedCount;
+    
+    CntFilterDetail filter(*m_database,srvConnection,dbInfo);
+    filter.emulateBestMatching();
+    
+    detailFilter.setValue("358443049607");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestMatchPhoneNumber::testBestMatching9()
+{
+    setupBestMatchingContactsDb9();
+    
+    CntSymbianSrvConnection srvConnection(m_engine);
+    CntDbInfo dbInfo(m_engine);
+    bool filterSupported(true);
+    
+    QContactDetailFilter detailFilter;
+    detailFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    int seachedcontactcount;
+    int expectedCount;
+    
+    CntFilterDetail filter(*m_database,srvConnection,dbInfo);
+    filter.emulateBestMatching();
+    
+    detailFilter.setValue("358443049607");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestMatchPhoneNumber::testBestMatching10()
+{
+    setupBestMatchingContactsDb10();
+    
+    CntSymbianSrvConnection srvConnection(m_engine);
+    CntDbInfo dbInfo(m_engine);
+    bool filterSupported(true);
+    
+    QContactDetailFilter detailFilter;
+    detailFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    int seachedcontactcount;
+    int expectedCount;
+    
+    CntFilterDetail filter(*m_database,srvConnection,dbInfo);
+    filter.emulateBestMatching();
+    
+    detailFilter.setValue("443049607");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    
+    detailFilter.setValue("0443049607");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    
+    detailFilter.setValue("3049607");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    
+    detailFilter.setValue("03049607");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestMatchPhoneNumber::testBestMatching11()
+{
+    setupBestMatchingContactsDb11();
+    
+    CntSymbianSrvConnection srvConnection(m_engine);
+    CntDbInfo dbInfo(m_engine);
+    bool filterSupported(true);
+    
+    QContactDetailFilter detailFilter;
+    detailFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    int seachedcontactcount;
+    int expectedCount;
+    
+    CntFilterDetail filter(*m_database,srvConnection,dbInfo);
+    filter.emulateBestMatching();
+    
+    detailFilter.setValue("0443049607");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestMatchPhoneNumber::testBestMatching12()
+{
+    setupBestMatchingContactsDb12();
+    
+    CntSymbianSrvConnection srvConnection(m_engine);
+    CntDbInfo dbInfo(m_engine);
+    bool filterSupported(true);
+    
+    QContactDetailFilter detailFilter;
+    detailFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    int seachedcontactcount;
+    int expectedCount;
+    
+    CntFilterDetail filter(*m_database,srvConnection,dbInfo);
+    filter.emulateBestMatching();
+    
+    detailFilter.setValue("443049607");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestMatchPhoneNumber::testBestMatching13()
+{
+    setupBestMatchingContactsDb13();
+    
+    CntSymbianSrvConnection srvConnection(m_engine);
+    CntDbInfo dbInfo(m_engine);
+    bool filterSupported(true);
+    
+    QContactDetailFilter detailFilter;
+    detailFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    int seachedcontactcount;
+    int expectedCount;
+    
+    CntFilterDetail filter(*m_database,srvConnection,dbInfo);
+    filter.emulateBestMatching();
+    
+    detailFilter.setValue("358443049607");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestMatchPhoneNumber::testBestMatching14()
+{
+    setupBestMatchingContactsDb14();
+    
+    CntSymbianSrvConnection srvConnection(m_engine);
+    CntDbInfo dbInfo(m_engine);
+    bool filterSupported(true);
+    
+    QContactDetailFilter detailFilter;
+    detailFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    int seachedcontactcount;
+    int expectedCount;
+    
+    CntFilterDetail filter(*m_database,srvConnection,dbInfo);
+    filter.emulateBestMatching();
+    
+    detailFilter.setValue("358443049607");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    
+    detailFilter.setValue("0358443049607");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestMatchPhoneNumber::testBestMatching15()
+{
+    setupBestMatchingContactsDb15();
+    
+    CntSymbianSrvConnection srvConnection(m_engine);
+    CntDbInfo dbInfo(m_engine);
+    bool filterSupported(true);
+    
+    QContactDetailFilter detailFilter;
+    detailFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    int seachedcontactcount;
+    int expectedCount;
+    
+    CntFilterDetail filter(*m_database,srvConnection,dbInfo);
+    filter.emulateBestMatching();
+    
+    detailFilter.setValue("3584443049607");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestMatchPhoneNumber::testBestMatching16()
+{
+    setupBestMatchingContactsDb16();
+    
+    CntSymbianSrvConnection srvConnection(m_engine);
+    CntDbInfo dbInfo(m_engine);
+    bool filterSupported(true);
+    
+    QContactDetailFilter detailFilter;
+    detailFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    int seachedcontactcount;
+    int expectedCount;
+    
+    CntFilterDetail filter(*m_database,srvConnection,dbInfo);
+    filter.emulateBestMatching();
+    
+    detailFilter.setValue("4443049607");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+void TestMatchPhoneNumber::testBestMatching17()
+{
+    setupBestMatchingContactsDb17();
+    
+    CntSymbianSrvConnection srvConnection(m_engine);
+    CntDbInfo dbInfo(m_engine);
+    bool filterSupported(true);
+    
+    QContactDetailFilter detailFilter;
+    detailFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    int seachedcontactcount;
+    int expectedCount;
+    
+    CntFilterDetail filter(*m_database,srvConnection,dbInfo);
+    filter.emulateBestMatching();
+    
+    detailFilter.setValue("2041234567");
+    error = QContactManager::NoError;
+    cnt_ids = filter.contacts(detailFilter, QContactSortOrder(), filterSupported, &error);
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =0;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+
 void TestMatchPhoneNumber::testBestMatchingWithUnionFilter()
 {
-    setupBestMatchingContactsDb2();
+    setupBestMatchingContactsDb6();
     
     CntSymbianSrvConnection srvConnection(m_engine);
     CntDbInfo dbInfo(m_engine);
@@ -482,11 +990,11 @@ void TestMatchPhoneNumber::testBestMatchingWithUnionFilter()
     //Create first filter
     QContactDetailFilter f1;
     f1.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
-    f1.setValue("1234561");
+    f1.setValue("02077009001");
     //Create second filter
     QContactDetailFilter f2;
     f2.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
-    f2.setValue("1234562");
+    f2.setValue("02077009081");
     
     //Create an union filter with the above created filters 
     QList<QContactLocalId> cnt_ids;
@@ -501,7 +1009,7 @@ void TestMatchPhoneNumber::testBestMatchingWithUnionFilter()
     cnt_ids = unionFilter.contacts(qfilter, QContactSortOrder(), filterSupported, &error);
     // check counts 
     int seachedcontactcount = cnt_ids.count();
-    int expectedCount =2;
+    int expectedCount =4;
     QVERIFY(expectedCount == seachedcontactcount);
 }
 
@@ -517,11 +1025,11 @@ void TestMatchPhoneNumber::testBestMatchingWithIntersectionFilter()
     //Create first filter
     QContactDetailFilter f1;
     f1.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
-    f1.setValue("00358401234561");
+    f1.setValue("358401234567");
     //Create second filter
     QContactDetailFilter f2;
     f2.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
-    f2.setValue("99533358401234561");
+    f2.setValue("1234567");
     
     //Create an intersection filter with the above created filters 
     QList<QContactLocalId> cnt_ids;

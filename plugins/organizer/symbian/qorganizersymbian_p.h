@@ -75,6 +75,9 @@
 
 #include <calprogresscallback.h> // MCalProgressCallBack
 #include <calchangecallback.h>
+#ifdef SYMBIAN_CALENDAR_V2
+#include <calfilechangenotification.h>
+#endif
 
 QTM_USE_NAMESPACE
 
@@ -109,12 +112,17 @@ class CCalSession;
 class CCalEntryView;
 class CCalInstanceView;
 class CActiveSchedulerWait;
-class TCalTime;
 class QOrganizerItemRequestQueue;
+#ifdef SYMBIAN_CALENDAR_V2
+class CCalCalendarInfo;
+#endif
 
 class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine, 
                                     public MCalProgressCallBack,
                                     public MCalChangeCallBack2
+#ifdef SYMBIAN_CALENDAR_V2
+                                    ,public MCalFileChangeObserver
+#endif
 {
     Q_OBJECT
 
@@ -141,6 +149,15 @@ public:
 
     bool removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemManager::Error* error);
     bool removeItems(const QList<QOrganizerItemLocalId> &itemIds, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error);
+    
+    /* Collections - every item belongs to exactly one collection */
+#ifdef SYMBIAN_CALENDAR_V2
+    QOrganizerCollectionLocalId defaultCollectionId(QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerCollectionLocalId> collectionIds(QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const;
+    bool saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error);
+    bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
+#endif
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const;
@@ -161,9 +178,14 @@ public: // MCalProgressCallBack
     void Progress(TInt aPercentageCompleted);
     void Completed(TInt aError);
     TBool NotifyProgress();
-    
+
 public: // MCalChangeCallBack2
     void CalChangeNotification(RArray<TCalChangeEntry>& aChangeItems);
+
+#ifdef SYMBIAN_CALENDAR_V2
+public: // MCalFileChangeObserver
+    void CalendarInfoChangeNotificationL(RPointerArray<CCalFileChangeInfo>& aCalendarInfoChangeEntries);
+#endif
     
 public: 
     /* Util functions */
@@ -175,6 +197,12 @@ public:
     QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, 
         const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders) const;
+#ifdef SYMBIAN_CALENDAR_V2
+    QList<QOrganizerCollectionLocalId> collectionIdsL() const;
+    QList<QOrganizerCollection> collectionsL(const QList<QOrganizerCollectionLocalId>& collectionIds) const;
+    void saveCollectionL(QOrganizerCollection* collection);
+    void removeCollectionL(const QOrganizerCollectionLocalId& collectionId);
+#endif
     
 private:
     CCalEntry* entryForItemOccurrenceL(QOrganizerItem *item, bool &isNewEntry) const;
@@ -186,7 +214,10 @@ private:
 	
 private:
     QOrganizerItemSymbianEngineData *d;
-    CCalSession *m_calSession;
+    CCalSession *m_defaultCalSession;
+#ifdef SYMBIAN_CALENDAR_V2    
+    RPointerArray<CCalSession> m_calSessions;
+#endif
     CCalEntryView *m_entryView;
     CCalInstanceView *m_instanceView;
     CActiveSchedulerWait *m_activeSchedulerWait;

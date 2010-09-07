@@ -45,6 +45,8 @@
 #include <qimageencodercontrol.h>
 #include <qmediaobject_p.h>
 #include <qmediaservice.h>
+#include <qcamera.h>
+#include <qcameracontrol.h>
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qstringlist.h>
@@ -353,8 +355,17 @@ void QCameraImageCapture::setEncodingSettings(const QImageEncoderSettings &setti
 {
     Q_D(QCameraImageCapture);
 
-    if (d->encoderControl)
+    if (d->encoderControl) {
+        QCamera *camera = qobject_cast<QCamera*>(d->mediaObject);
+        if (camera && camera->captureMode() == QCamera::CaptureStillImage) {
+            QMetaObject::invokeMethod(camera,
+                                      "_q_preparePropertyChange",
+                                      Qt::DirectConnection,
+                                      Q_ARG(int, QCameraControl::ImageEncodingSettings));
+        }
+
         d->encoderControl->setImageSettings(settings);
+    }
 }
 
 /*!
