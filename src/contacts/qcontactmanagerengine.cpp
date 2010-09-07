@@ -2639,7 +2639,6 @@ QContactManagerEngineV2::~QContactManagerEngineV2()
 bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStringList &definitionMask, QMap<int, QContactManager::Error> *errorMap, QContactManager::Error *error)
 {
     if (definitionMask.isEmpty()) {
-        qDebug() << "Empty list";
         // Non partial, just pass it on
         return saveContacts(contacts, errorMap, error);
     } else {
@@ -2665,8 +2664,6 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
 
         QHash<int, int> existingIdMap; // contacts index to existingContacts index
         QSet<int> badArgumentSet; // contacts indices that are bad
-
-        qDebug() << "partial save, list is:" << (contacts ? contacts->count() : 0) << definitionMask << errorMap;
 
         // Try to figure out which of our arguments are new contacts
         for(int i = 0; i < contacts->count(); i++) {
@@ -2697,38 +2694,35 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
         for (int i = 0; i < contacts->count(); i++) {
             // See if this is an existing contact or a new one
             const int fetchedIdx = existingIdMap.value(i, -1);
-            const int saveIdx = contactsToSave.count(); // The index into contactsToSave for this contact
+            QContact contactToSave;
             if (fetchedIdx >= 0) {
                 // See if we had an error
                 // Existing contact we should have fetched
-                QContact victim = existingContacts.at(fetchedIdx);
+                contactToSave = existingContacts.at(fetchedIdx);
 
-                QSharedDataPointer<QContactData>& cd = QContactData::contactData(victim);
+                QSharedDataPointer<QContactData>& cd = QContactData::contactData(contactToSave);
                 cd->removeOnly(mask);
-
-                // make sure we can get from this index to the original
-                contactsToSave.append(victim);
             } else if (!badArgumentSet.contains(i)) {
                 // New contact
-                contactsToSave.append(QContact());
+            } else {
+                // A bad argument.  Leave it out of the contactsToSave list
+                continue;
             }
 
-            // If we decided to save something..
-            if (contactsToSave.count() != saveIdx) {
-                savedToOriginalMap.insert(saveIdx, i);
+            // Now copy in the details from the arguments
+            const QContact& c = contacts->at(i);
 
-                // Now copy in the details from the arguments
-                const QContact& c = contacts->at(i);
-
-                // Perhaps this could do this directly rather than through saveDetail
-                // but that would duplicate the checks for display label etc
-                foreach (const QString& name, mask) {
-                    QList<QContactDetail> details = c.details(name);
-                    foreach(QContactDetail detail, details) {
-                        contactsToSave[saveIdx].saveDetail(&detail);
-                    }
+            // Perhaps this could do this directly rather than through saveDetail
+            // but that would duplicate the checks for display label etc
+            foreach (const QString& name, mask) {
+                QList<QContactDetail> details = c.details(name);
+                foreach(QContactDetail detail, details) {
+                    contactToSave.saveDetail(&detail);
                 }
             }
+
+            savedToOriginalMap.insert(contactsToSave.count(), i);
+            contactsToSave.append(contactToSave);
         }
 
         // Now save them
@@ -2738,8 +2732,12 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
 
         // Now update the passed in arguments, where necessary
 
-        // TODO First, any successful contacts
-
+        // Update IDs of the contacts list
+        for (int i = 0; i < contactsToSave.count(); i++) {
+            (*contacts)[savedToOriginalMap[i]].setId(contactsToSave[i].id());
+        }
+        // Populate the errorMap with the errorMap of the attempted save
+        // Add to errorMap contacts we didn't try to save
 
 
         return true;
