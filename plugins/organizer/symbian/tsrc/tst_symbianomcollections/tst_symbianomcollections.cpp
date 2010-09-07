@@ -105,12 +105,16 @@ private slots:  // Test cases
     
     void collectionSignalEmission_data(){ addManagers(); };
     void collectionSignalEmission();
-        
+
+    void addItem_data(){ addManagers(); };
+    void addItem();
+
     // TODO: test all known properties
     //void collectionProperties_data();
     //void collectionProperties();
 
 private: // util functions
+    QOrganizerItem createItem(QString itemType, QString label, QDateTime startTime, QDateTime endTime = QDateTime());
     void addManagers();
 
 private:
@@ -122,10 +126,12 @@ void tst_symbianomcollections::init()
 {
     QFETCH(QString, managerName);
     m_om = new QOrganizerItemManager(managerName);
+    m_om->removeItems(m_om->itemIds(), 0);
 }
 
 void tst_symbianomcollections::cleanup()
 {
+    m_om->removeItems(m_om->itemIds(), 0);
     delete m_om;
     m_om = 0;
 }
@@ -359,6 +365,63 @@ void tst_symbianomcollections::collectionSignalEmission()
     QVERIFY(m_om->removeCollection(c.id().localId()));
     removedCount++;
     QTRY_COMPARE(removedSpy1.count(), removedCount);
+}
+
+void tst_symbianomcollections::addItem()
+{
+    // Save a collection
+    QOrganizerCollection c;
+    c.setMetaData("Name", "addItem");
+    c.setMetaData("FileName", "c:additem");
+    QVERIFY(m_om->saveCollection(&c));
+
+    // Check that we now have the default collection and the new one
+    QCOMPARE(m_om->collectionIds().count(), 2);
+
+    // Save similar item to both of the collections
+    QOrganizerItem item1 = createItem(QOrganizerItemType::TypeEvent,
+                                      QString("additem"),
+                                      QDateTime::currentDateTime().addMSecs(3600));
+    QOrganizerItem item2 = item1;
+    QVERIFY(m_om->saveItem(&item1));
+    QVERIFY(m_om->saveItem(&item2, c.id().localId()));
+
+    // Verify (note: collections need to be empty before executing the test case)
+    QCOMPARE(m_om->itemIds().count(), 2);
+    QVERIFY(item1.localId() != item2.localId());
+    QCOMPARE(m_om->item(item1.localId()).collectionId().localId(), m_om->defaultCollectionId());
+    QCOMPARE(m_om->item(item2.localId()).collectionId().localId(), c.id().localId());
+
+    // Remove the newly created collection
+    QVERIFY(m_om->removeCollection(c.id().localId()));
+}
+
+/*!
+ * A helper method for creating a QOrganizerItem instance.
+ */
+QOrganizerItem tst_symbianomcollections::createItem(QString itemType, QString label, QDateTime startTime, QDateTime endTime)
+{
+    QOrganizerItem item;
+    item.setType(itemType);
+    item.setDisplayLabel(label);
+    if (itemType == QOrganizerItemType::TypeTodo) {
+        QOrganizerTodoTimeRange timeRange;
+        if (startTime.isValid())
+            timeRange.setStartDateTime(startTime);
+        if (endTime.isValid())
+            timeRange.setDueDateTime(endTime);
+        if (!timeRange.isEmpty())
+            item.saveDetail(&timeRange);
+    } else {
+        QOrganizerEventTimeRange timeRange;
+        if (startTime.isValid())
+            timeRange.setStartDateTime(startTime);
+        if (endTime.isValid())
+            timeRange.setEndDateTime(endTime);
+        if (!timeRange.isEmpty())
+            item.saveDetail(&timeRange);
+    }
+    return item;
 }
 
 /*!
