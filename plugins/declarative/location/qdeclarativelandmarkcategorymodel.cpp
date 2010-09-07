@@ -170,15 +170,17 @@ void QDeclarativeLandmarkCategoryModel::fetchRequestStateChanged(QLandmarkAbstra
             // No other types supported
             return;
         }
+        // Convert into declarative classes
+        convertCategoriesToDeclarative();
         endInsertRows();
         if (oldCount != m_categories.count())
             emit countChanged();
     } else if (m_error != m_fetchRequest->errorString()) {
         m_error = m_fetchRequest->errorString();
+        // Convert into declarative classes
+        convertCategoriesToDeclarative();
         emit errorChanged();
     }
-    // Convert into declarative classes --> possible to return categories in a list in QML
-    convertCategoriesToDeclarative();
 }
 
 // For testing purposes in order to access ordered data (i.e. as filters dictate)

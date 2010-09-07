@@ -100,18 +100,10 @@ public:
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
 
-    // Roles for exposing data via model
+    // Roles for exposing data via model. Only one role because
+    // everything can be accessed via QDeclarativeLandmark
     enum Roles {
-        NameRole = Qt::UserRole + 500, // Check
-        PhoneNumberRole,
-        DescriptionRole,
-        RadiusRole,
-        IconSourceRole,
-        UrlRole,
-        LatitudeRole,
-        LongitudeRole,
-        AltitudeRole,
-        LandmarkRole
+        LandmarkRole = Qt::UserRole + 500,
     };
     enum SortOrder {
         AscendingOrder = Qt::AscendingOrder,
