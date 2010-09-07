@@ -86,7 +86,7 @@ public:
         UnknownMode=0,
         GsmMode,
         CdmaMode,
-        WcdmaMode,
+        WcdmaMode, //umts
         WlanMode,
         EthernetMode,
         BluetoothMode,
