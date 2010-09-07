@@ -228,6 +228,10 @@ bool CameraBinSession::setupCameraBin()
 
     if (m_viewfinderInterface) {
         GstElement *preview = m_viewfinderInterface->videoSink();
+        if (!preview) {
+            qWarning() << "Staring camera without viewfinder available";
+            preview = gst_element_factory_make("fakesink", NULL);
+        }
         g_object_set(G_OBJECT(m_pipeline), VIEWFINDER_SINK_PROPERTY, preview, NULL);
     }
 
@@ -421,6 +425,11 @@ void CameraBinSession::setVideoInput(QGstreamerElementFactory *videoInput)
     m_videoInputHasChanged = true;
 }
 
+bool CameraBinSession::isReady() const
+{
+    return m_viewfinderInterface && m_viewfinderInterface->isReady();
+}
+
 void CameraBinSession::setViewfinder(QObject *viewfinder)
 {
     m_viewfinderInterface = qobject_cast<QGstreamerVideoRendererInterface*>(viewfinder);
@@ -428,9 +437,13 @@ void CameraBinSession::setViewfinder(QObject *viewfinder)
         viewfinder = 0;
 
     if (m_viewfinder != viewfinder) {
+        bool oldReady = isReady();
+
         if (m_viewfinder) {
             disconnect(m_viewfinder, SIGNAL(sinkChanged()),
                        this, SIGNAL(viewfinderChanged()));
+            disconnect(m_viewfinder, SIGNAL(readyChanged(bool)),
+                       this, SIGNAL(readyChanged(bool)));
         }
 
         m_viewfinder = viewfinder;
@@ -439,9 +452,13 @@ void CameraBinSession::setViewfinder(QObject *viewfinder)
         if (m_viewfinder) {
             connect(m_viewfinder, SIGNAL(sinkChanged()),
                        this, SIGNAL(viewfinderChanged()));
+            connect(m_viewfinder, SIGNAL(readyChanged(bool)),
+                    this, SIGNAL(readyChanged(bool)));
         }
 
         emit viewfinderChanged();
+        if (oldReady != isReady())
+            emit readyChanged(isReady());
     }
 }
 

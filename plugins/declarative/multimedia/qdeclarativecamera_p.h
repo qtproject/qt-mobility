@@ -80,7 +80,6 @@ class QDeclarativeCamera : public QDeclarativeItem
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
 
     Q_PROPERTY(QString capturedImagePath READ capturedImagePath NOTIFY imageSaved)
-    //Q_PROPERTY(QImage capturedImagePreview READ capturedImagePreview NOTIFY imageCaptured)
 
     Q_PROPERTY(int iso READ isoSensitivity WRITE setManualIsoSensitivity NOTIFY isoSensitivityChanged)
     Q_PROPERTY(qreal shutterSpeed READ shutterSpeed NOTIFY shutterSpeedChanged)
@@ -238,7 +237,7 @@ Q_SIGNALS:
 
     void lockStatusChanged();
 
-    void imageCaptured();
+    void imageCaptured(const QString &preview);
     void imageSaved(const QString &path);
     void captureFailed(const QString &message);
 

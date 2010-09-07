@@ -95,9 +95,9 @@ void CPplCommAddrTable::ConstructL()
 
 	// insert new comm addr record
 	// 	INSERT INTO comm_addr
-	//		(comm_addr_id, contact_id, type, value, extra_value)
+	//		(comm_addr_id, contact_id, type, value, extra_value, extra_type_info)
 	//		VALUES (NULL, [contact id value], [type value],
-	//			[value string], [extra value string]);
+	//			[value string], [extra value string], [extra type info]);
 	//
 	iInsertStmnt = TSqlProvider::GetSqlStatementL(insertType);
 	iInsertStmnt->SetParamL(KCommAddrId(), KCommAddrIdParam() );
@@ -105,12 +105,13 @@ void CPplCommAddrTable::ConstructL()
 	iInsertStmnt->SetParamL(KCommAddrValue(), KCommAddrValueParam() );
 	iInsertStmnt->SetParamL(KCommAddrExtraValue(), KCommAddrExtraValueParam() );
 	iInsertStmnt->SetParamL(KCommAddrType(), KCommAddrTypeParam() );
+	iInsertStmnt->SetParamL(KCommAddrExtraTypeInfo(), KCommAddrExtraTypeInfoParam() );
 
 	// SELECT
 
 	// select all fields for all comm addrs for a particular item id
 	// For a statement in the following format:
-	// 	SELECT comm_addr_id, type, value, extra_value FROM comm_addr
+	// 	SELECT comm_addr_id, type, value, extra_value,extra_type_info FROM comm_addr
 	//		WHERE contact_id = [contact id value];
 	//
 	iWholeSelectStmnt = TSqlProvider::GetSqlStatementL(selectType);
@@ -118,6 +119,7 @@ void CPplCommAddrTable::ConstructL()
 	iWholeSelectStmnt->SetParamL(KCommAddrType(), KNullDesC() );
 	iWholeSelectStmnt->SetParamL(KCommAddrValue(), KNullDesC() );
 	iWholeSelectStmnt->SetParamL(KCommAddrExtraValue(), KNullDesC() );
+	iWholeSelectStmnt->SetParamL(KCommAddrExtraTypeInfo(), KNullDesC() );
 	iWholeSelectStmnt->SetConditionL(*whereContactIdClause);
 
 	// select fields for contacts that match phone, email or SIP lookup
@@ -139,6 +141,7 @@ void CPplCommAddrTable::ConstructL()
 	//		type = [type value],
 	//		value = [value string],
 	//		extra_value = [extra value string]
+	//      extra_type_info = [ extra type info ] 
 	//		WHERE comm_addr_id = [comm addr id value];
 	//
 	iUpdateStmnt = TSqlProvider::GetSqlStatementL(updateType);
@@ -146,6 +149,7 @@ void CPplCommAddrTable::ConstructL()
 	iUpdateStmnt->SetParamL(KCommAddrValue(), KCommAddrValueParam() );
 	iUpdateStmnt->SetParamL(KCommAddrExtraValue(), KCommAddrExtraValueParam() );
 	iUpdateStmnt->SetParamL(KCommAddrType(), KCommAddrTypeParam() );
+	iUpdateStmnt->SetParamL(KCommAddrExtraTypeInfo(), KCommAddrExtraTypeInfoParam() );
 	iUpdateStmnt->SetConditionL(*whereCommAddrIdClause);
 
 	// DELETE
@@ -176,7 +180,7 @@ void CPplCommAddrTable::CreateInDbL(CContactItem& aItem)
 	{
 	// Check that the contact item is a card, own card or ICC entry.
 	const TUid KType = aItem.Type();
-	if (KType != KUidContactCard && KType != KUidContactOwnCard && KType != KUidContactICCEntry)
+	if (KType != KUidContactCard && KType != KUidContactOwnCard && KType != KUidContactICCEntry && KType != KUidContactGroup)
 		{
 		return;
 		}
@@ -214,7 +218,15 @@ void CPplCommAddrTable::CreateInDbL(CContactItem& aItem)
 													   KMaxPhoneMatchLength - KLowerSevenDigits);
 				if (newPhones.Find(phoneNumber, TIdentityRelation<TMatch>(&TMatch::Equals) ) == KErrNotFound)
 					{
-					DoPhoneNumWriteOpL(phoneNumber, EInsert, KItemId);
+					if(contType.ContainsFieldType(KUidContactFieldVCardMapCELL))
+                        {
+                        DoPhoneNumWriteOpL(phoneNumber, EInsert, KItemId,EPhoneNumber,EMobileNumber);
+                        }
+					else
+					    {
+					    DoPhoneNumWriteOpL(phoneNumber, EInsert, KItemId);
+					    }
+					
 					newPhones.AppendL(phoneNumber);
 					}
 				}
@@ -251,7 +263,7 @@ void CPplCommAddrTable::UpdateL(const CContactItem& aItem)
 	{
 	// Check that the contact item is a card, own card or ICC entry.
 	const TUid type(aItem.Type() );
-	if (type != KUidContactCard && type != KUidContactOwnCard && type != KUidContactICCEntry)
+	if (type != KUidContactCard && type != KUidContactOwnCard && type != KUidContactICCEntry && type != KUidContactGroup)
 		{
 		return;
 		}
@@ -265,6 +277,8 @@ void CPplCommAddrTable::UpdateL(const CContactItem& aItem)
 	CleanupClosePushL(newPhones);
 	CleanupClosePushL(newEmails);
 	CleanupClosePushL(newSips);
+	
+	CPplCommAddrTable::TCommAddrExtraInfoType extraInfoType = ENonMobileNumber;
 
 	for (TInt fieldNum = aItem.CardFields().Count() - 1; fieldNum >= 0; --fieldNum)
 		{
@@ -291,6 +305,10 @@ void CPplCommAddrTable::UpdateL(const CContactItem& aItem)
 					{
 					newPhones.AppendL(phoneNumber);
 					}
+				if(contType.ContainsFieldType(KUidContactFieldVCardMapCELL))
+                    {
+                    extraInfoType = EMobileNumber;
+                    }
 				}
 			// get email addresses
 			else if (isEmail && newEmails.Find(currField.TextStorage()->Text() ) == KErrNotFound)
@@ -325,10 +343,11 @@ void CPplCommAddrTable::UpdateL(const CContactItem& aItem)
 
 	// weed out addresses from the list that are already in the db but haven't changed
 	// and populate the freeCommAddrIds list
-	RemoveNonUpdatedAddrsL(newPhones, newEmails, newSips, freeCommAddrIds, KItemId);
+	RemoveNonUpdatedAddrsL(newPhones, newEmails, newSips, freeCommAddrIds, KItemId, extraInfoType);
 
 	// do the actual updating on an address-by-address basis
-	DoUpdateCommAddrsL(newPhones, newEmails, newSips, freeCommAddrIds, KItemId);
+
+	DoUpdateCommAddrsL(newPhones, newEmails, newSips, freeCommAddrIds, KItemId,extraInfoType);
 
 	CleanupStack::PopAndDestroy(4, &newPhones); // and freeCommAddrIds, newSips, newEmails
 	}
@@ -340,7 +359,8 @@ It takes the 3 lists in as parameters and modifies them accordingly. It also pop
 of comm address ids that are free to be recycled during updating.
 */
 void CPplCommAddrTable::RemoveNonUpdatedAddrsL(RArray<TMatch>& aNewPhones, RArray<TPtrC>& aNewEmails, RArray<TPtrC>& aNewSips,
-					  RArray<TInt>& aFreeCommAddrIds, const TInt aItemId)
+					  RArray<TInt>& aFreeCommAddrIds, const TInt aItemId,CPplCommAddrTable::TCommAddrExtraInfoType 
+                      aExtraInfoType )
 	{
 	// build the RSqlStatement
 	RSqlStatement stmnt;
@@ -359,13 +379,14 @@ void CPplCommAddrTable::RemoveNonUpdatedAddrsL(RArray<TMatch>& aNewPhones, RArra
 			TMatch phoneNumber;
 			TPtrC valString    = stmnt.ColumnTextL(iWholeSelectStmnt->ParameterIndex(KCommAddrValue() ) );
 			TPtrC extValString = stmnt.ColumnTextL(iWholeSelectStmnt->ParameterIndex(KCommAddrExtraValue() ) );
+			TInt extTypeInfoString = stmnt.ColumnInt(iWholeSelectStmnt->ParameterIndex(KCommAddrExtraTypeInfo() ) );
 			User::LeaveIfError(TLex(valString).Val(phoneNumber.iLowerSevenDigits) );
 			User::LeaveIfError(TLex(extValString).Val(phoneNumber.iUpperDigits) );
 
 			TInt matchIndex(aNewPhones.Find(phoneNumber, TIdentityRelation<TMatch>(&TMatch::Equals) ) );
 			// remove any phone numbers from the new list if we already
 			// have them in the db and they haven't changed...
-			if (matchIndex != KErrNotFound)
+			if (matchIndex != KErrNotFound  && (extTypeInfoString == aExtraInfoType))
 				{
 				aNewPhones.Remove(matchIndex);
 				}
@@ -422,7 +443,8 @@ Does comm_addr updating on an address-by-address basis.
 Takes 3 lists of new addresses and a list of free comm_addr_ids.
 */
 void CPplCommAddrTable::DoUpdateCommAddrsL(RArray<TMatch>& aNewPhones, RArray<TPtrC>& aNewEmails, RArray<TPtrC>& aNewSips,
-					  RArray<TInt>& aFreeCommAddrIds, const TInt aItemId)
+					  RArray<TInt>& aFreeCommAddrIds, const TInt aItemId, CPplCommAddrTable::TCommAddrExtraInfoType 
+                      aExtraInfoType)
 	{
 	// if we have free ids to recycle and new comm_addrs, insert them by UPDATE
 	const TInt KFirstElementId(0);
@@ -430,7 +452,7 @@ void CPplCommAddrTable::DoUpdateCommAddrsL(RArray<TMatch>& aNewPhones, RArray<TP
 		{
 		if(aNewPhones.Count() )
 			{
-			DoPhoneNumWriteOpL(aNewPhones[KFirstElementId], EUpdate, aItemId, aFreeCommAddrIds[KFirstElementId]);
+			DoPhoneNumWriteOpL(aNewPhones[KFirstElementId], EUpdate, aItemId, aFreeCommAddrIds[KFirstElementId],aExtraInfoType);
 			aNewPhones.Remove(KFirstElementId);
 			aFreeCommAddrIds.Remove(KFirstElementId);
 			}
@@ -470,7 +492,7 @@ void CPplCommAddrTable::DoUpdateCommAddrsL(RArray<TMatch>& aNewPhones, RArray<TP
 	const TInt KNumNewSips(aNewSips.Count() );
 	for (TInt i = 0; i < KNumNewPhones; ++i)
 		{
-		DoPhoneNumWriteOpL(aNewPhones[i], EInsert, aItemId);
+	    DoPhoneNumWriteOpL(aNewPhones[i], EInsert, aItemId, EPhoneNumber, aExtraInfoType);
 		}
 	for (TInt i = 0; i < KNumNewEmails; ++i)
 		{
@@ -524,48 +546,48 @@ void CPplCommAddrTable::DoPhoneNumWriteOpL(const CPplCommAddrTable::TMatch& aPho
 Performs write (Insert/Update) operations for indiviual communication addresses of type "phone number".
 */
 void CPplCommAddrTable::DoPhoneNumWriteOpL(const CPplCommAddrTable::TMatch& aPhoneNum, TCntSqlStatement aType,
-											TInt aCntId, TInt aCommAddrId)
-	{
-	// leave if the statement type is not insert or update.
-	// also, we can't update if aCommAddrId is 0 as we don't know the record's id
-	if ((aType != EUpdate && aType != EInsert) || (aType == EUpdate && aCommAddrId == 0) )
-		{
-		User::Leave(KErrArgument);
-		}
+                                            TInt aCntId, TInt aCommAddrId,CPplCommAddrTable::TCommAddrExtraInfoType aExtraInfoType)
+    {
+    // leave if the statement type is not insert or update.
+    // also, we can't update if aCommAddrId is 0 as we don't know the record's id
+    if ((aType != EUpdate && aType != EInsert) || (aType == EUpdate && aCommAddrId == 0) )
+        {
+        User::Leave(KErrArgument);
+        }
 
-	RSqlStatement stmnt;
-	CleanupClosePushL(stmnt);
+    RSqlStatement stmnt;
+    CleanupClosePushL(stmnt);
 
-	// temporary reference to the CCntSqlStatements member variables to take advantage
-	// of the commonality between update and insert operations.
-	CCntSqlStatement* tempCntStmnt = iUpdateStmnt;
-	if (aType == EInsert)
-		{
-		tempCntStmnt = iInsertStmnt;
-		}
+    // temporary reference to the CCntSqlStatements member variables to take advantage
+    // of the commonality between update and insert operations.
+    CCntSqlStatement* tempCntStmnt = iUpdateStmnt;
+    if (aType == EInsert)
+        {
+        tempCntStmnt = iInsertStmnt;
+        }
+    
+    User::LeaveIfError(stmnt.Prepare(iDatabase, tempCntStmnt->SqlStringL() ) );
+    User::LeaveIfError(stmnt.BindInt(tempCntStmnt->ParameterIndex(KCommAddrContactId() ), aCntId) );
+    User::LeaveIfError(stmnt.BindInt(tempCntStmnt->ParameterIndex(KCommAddrExtraValue() ), aPhoneNum.iUpperDigits) );
+    User::LeaveIfError(stmnt.BindInt(tempCntStmnt->ParameterIndex(KCommAddrValue() ), aPhoneNum.iLowerSevenDigits) );
+    User::LeaveIfError(stmnt.BindInt(tempCntStmnt->ParameterIndex(KCommAddrType() ), EPhoneNumber) );
+    User::LeaveIfError(stmnt.BindInt(tempCntStmnt->ParameterIndex(KCommAddrExtraTypeInfo() ), aExtraInfoType) );
+  
+    if (aType == EInsert)
+        {
+        User::LeaveIfError(stmnt.BindNull(tempCntStmnt->ParameterIndex(KCommAddrId() ) ) );
+        }
+    else
+        {
+        // it's the sixth parameter in the query and is in the WHERE
+        // clause so we can't get its index from the CCntSqlStatement
+        const TInt KCommAddrIdParamIndex(KFirstIndex  + 5);
+        User::LeaveIfError(stmnt.BindInt(KCommAddrIdParamIndex, aCommAddrId) );
+        }
 
-	User::LeaveIfError(stmnt.Prepare(iDatabase, tempCntStmnt->SqlStringL() ) );
-	User::LeaveIfError(stmnt.BindInt(tempCntStmnt->ParameterIndex(KCommAddrContactId() ), aCntId) );
-	User::LeaveIfError(stmnt.BindInt(tempCntStmnt->ParameterIndex(KCommAddrExtraValue() ), aPhoneNum.iUpperDigits) );
-	User::LeaveIfError(stmnt.BindInt(tempCntStmnt->ParameterIndex(KCommAddrValue() ), aPhoneNum.iLowerSevenDigits) );
-	User::LeaveIfError(stmnt.BindInt(tempCntStmnt->ParameterIndex(KCommAddrType() ), EPhoneNumber) );
-
-	if (aType == EInsert)
-		{
-		User::LeaveIfError(stmnt.BindNull(tempCntStmnt->ParameterIndex(KCommAddrId() ) ) );
-		}
-	else
-		{
-		// it's the fifth parameter in the query and is in the WHERE
-		// clause so we can't get its index from the CCntSqlStatement
-		const TInt KCommAddrIdParamIndex(KFirstIndex + 4);
-		User::LeaveIfError(stmnt.BindInt(KCommAddrIdParamIndex, aCommAddrId) );
-		}
-
-	User::LeaveIfError(stmnt.Exec() );
-	CleanupStack::PopAndDestroy(&stmnt);
-	}
-
+    User::LeaveIfError(stmnt.Exec() );
+    CleanupStack::PopAndDestroy(&stmnt);
+    }
 
 /**
 Performs write operations for individual communication addresses of type "email" or "SIP" address.
@@ -617,9 +639,9 @@ void CPplCommAddrTable::DoNonPhoneWriteOpL(const TDesC& aAddress, const TCntSqlS
 		}
 	else
 		{
-		// it's the fifth parameter in the query and is in the WHERE
+		// it's the sixth parameter in the query and is in the WHERE
 		// clause so we can't get its index from the CCntSqlStatement
-		const TInt KCommAddrIdParamIndex(KFirstIndex + 4);
+		const TInt KCommAddrIdParamIndex(KFirstIndex + 5);
 		User::LeaveIfError(stmnt.BindInt(KCommAddrIdParamIndex, aCommAddrId) );
 		}
 
@@ -637,7 +659,7 @@ deleting a contact item from the database altogether.
 void CPplCommAddrTable::DeleteL(const CContactItem& aItem, TBool& aLowDiskErrorOccurred)
 	{
 	const TUid KType = aItem.Type();
-	if (KType != KUidContactCard && KType != KUidContactOwnCard && KType != KUidContactICCEntry)
+    if (KType != KUidContactCard && KType != KUidContactOwnCard && KType != KUidContactICCEntry && KType != KUidContactGroup)
 		{
 		return;
 		}

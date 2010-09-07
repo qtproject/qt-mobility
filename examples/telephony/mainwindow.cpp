@@ -26,8 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
         , SIGNAL(activeCallRemoved(QTelephonyCallInfo))
         , SLOT(onActiveCallRemoved(QTelephonyCallInfo)));
     connect(telephonycalllist
-        , SIGNAL(activeCallCountChanged())
-        , SLOT(onActiveCallCountChanged()));
+        , SIGNAL(hasActiveCalls(bool))
+        , SLOT(onHasActiveCalls(bool)));
     connect(ui->pushButtonClearList
         , SIGNAL(released())
         , SLOT(onClearList()));
@@ -112,7 +112,7 @@ void MainWindow::onActiveCallStatusChanged(const QTelephonyCallInfo& call)
     addListEntry("status changed: ", call);
 }
 
-void MainWindow::onActiveCallCountChanged()
+void MainWindow::onHasActiveCalls(bool value)
 {
     qDebug() << "active Call count changed";
 }

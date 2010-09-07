@@ -78,6 +78,11 @@ QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
         delete accountManager;
 }
 
+int QTelephonyCallListPrivate::activeCallCount() const
+{
+    return callInfoList.count();
+}
+
 QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephony::CallType& calltype) const 
 { 
     QList<QTelephonyCallInfo> ret;
@@ -92,11 +97,6 @@ QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephon
         }
     }
     return ret;
-}
-
-int QTelephonyCallListPrivate::activeCallCount() const
-{
-    return callInfoList.count();
 }
 
 void QTelephonyCallListPrivate::emitActiveCallStatusChanged(QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>& call)
@@ -115,8 +115,9 @@ void QTelephonyCallListPrivate::emitActiveCallRemoved(QExplicitlySharedDataPoint
         callinfo.d = call;
         emit p->activeCallRemoved(callinfo);
     }
-    if(p->enableCallCountChangedNotify){
-        emit p->activeCallCountChanged();
+    if(p->enableHasActiveCallsNotify){
+        if(callInfoList.count() == 0 && p->enableHasActiveCallsNotify)
+            emit p->hasActiveCalls(false);
     }
 }
 
@@ -127,9 +128,8 @@ void QTelephonyCallListPrivate::emitActiveCallAdded(QExplicitlySharedDataPointer
         callinfo.d = call;
         emit p->activeCallAdded(callinfo);
     }
-    if(p->enableCallCountChangedNotify){
-        emit p->activeCallCountChanged();
-    }
+    if(callInfoList.count() == 1 && p->enableHasActiveCallsNotify)
+        emit p->hasActiveCalls(true);
 }
 
 void QTelephonyCallListPrivate::newChannels(DBus::ChannelPtr channelptr)
@@ -156,8 +156,6 @@ void QTelephonyCallListPrivate::channelStatusChanged(DBus::ChannelPtr channel)
             QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> callinfo = callInfoList[found];
             callInfoList.removeAt(found);
             emitActiveCallRemoved(callinfo);
-            if(p->enableCallCountChangedNotify)
-                emit p->activeCallCountChanged();
         }
     }
 }

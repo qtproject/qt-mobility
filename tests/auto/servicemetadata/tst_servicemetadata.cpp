@@ -261,6 +261,14 @@ void ServiceMetadataTest::parseInvalidServiceXML_data()
     QTest::newRow("Test33.xml") << "Test33.xml" << (int)ServiceMetaData::SFW_ERROR_MULTIPLE_SERVICE_TYPES;
     //invalid filepath from ipc service type prefix
     QTest::newRow("Test34.xml") << "Test34.xml" << (int)ServiceMetaData::SFW_ERROR_INVALID_FILEPATH;
+    //invalid version in service version tag
+    QTest::newRow("Test35.xml") << "Test35.xml" << (int)ServiceMetaData::SFW_ERROR_INVALID_XML_VERSION;
+    //invalid missing version attribute in service version tag
+    QTest::newRow("Test36.xml") << "Test36.xml" << (int)ServiceMetaData::SFW_ERROR_INVALID_XML_VERSION;
+    //unsupported version attribute in service version tag
+    QTest::newRow("Test37.xml") << "Test37.xml" << (int)ServiceMetaData::SFW_ERROR_UNSUPPORTED_XML_VERSION;
+    //unsupported version attribute in service version tag
+    QTest::newRow("Test38.xml") << "Test38.xml" << (int)ServiceMetaData::SFW_ERROR_UNSUPPORTED_IPC;
 }
 
 void ServiceMetadataTest::parseInvalidServiceXML()

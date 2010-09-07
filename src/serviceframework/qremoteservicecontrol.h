@@ -54,11 +54,20 @@ class QRemoteServiceControlPrivate;
 class Q_SERVICEFW_EXPORT QRemoteServiceControl : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(bool quitOnLastInstanceClosed READ quitOnLastInstanceClosed WRITE setQuitOnLastInstanceClosed)
+
 public:
     QRemoteServiceControl(QObject* parent = 0);
     ~QRemoteServiceControl();
 
     void publishServices(const QString& ident );
+    
+    bool quitOnLastInstanceClosed() const;
+    void setQuitOnLastInstanceClosed(const bool quit);
+
+Q_SIGNALS:
+    void lastInstanceClosed();
+
 
 private:
     QRemoteServiceControlPrivate* d;
