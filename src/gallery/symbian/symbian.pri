@@ -2,6 +2,10 @@ iNCLUDEPATH += $$PWD
 INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
+contains(mds_25_enabled, yes) {
+    DEFINES += MDS_25_COMPILATION_ENABLED
+}
+
 # Input
 LIBS +=     -lmdeclient.dll \
             -leuser.dll \
