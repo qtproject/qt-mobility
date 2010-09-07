@@ -140,6 +140,11 @@ TBool COrganizerItemRequestsServiceProvider::StartRequest(
                     iNoOfItems = iCollectionIds.count();
                 }
                 break;
+            case QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest :
+                {
+                iNoOfItems = iOrganizerItemManagerEngine.sessionCount();
+                }
+                break;
 #endif
            }
 
@@ -523,7 +528,7 @@ void COrganizerItemRequestsServiceProvider::SaveDetailDefinitionL()
 
 #ifdef SYMBIAN_CALENDAR_V2
 void COrganizerItemRequestsServiceProvider::CollectionIdL()
-    {/*
+    {
     if (iIndex < iNoOfItems)
             {
             // update index beforehand in case collectionIdL leaves, if so
@@ -542,7 +547,7 @@ void COrganizerItemRequestsServiceProvider::CollectionIdL()
                 iCollectionLocalIds, iError, 
                 QOrganizerItemAbstractRequest::FinishedState);
             }    
-    */}
+    }
 
 void COrganizerItemRequestsServiceProvider::CollectionL()
     {/*

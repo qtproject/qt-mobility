@@ -847,10 +847,20 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemSymbianEngine::collectionIds(QO
 QList<QOrganizerCollectionLocalId> QOrganizerItemSymbianEngine::collectionIdsL() const
 {
     QList<QOrganizerCollectionLocalId> ids;
-    int count = m_calSessions.Count();
+    int count = sessionCount();
     for (int i=0; i<count; i++)
-        ids.append(m_calSessions[i]->CollectionIdL());
+        ids.append(collectionIdL(i));
     return ids;
+}
+
+QOrganizerCollectionLocalId QOrganizerItemSymbianEngine::collectionIdL(int index) const
+{
+    return m_calSessions[index]->CollectionIdL();
+}
+
+int QOrganizerItemSymbianEngine::sessionCount() const
+{
+    return m_calSessions.Count();
 }
 
 QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
