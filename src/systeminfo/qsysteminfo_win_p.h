@@ -270,6 +270,10 @@ public:
 
     bool currentBluetoothPowerState();
 
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
+    bool isWirelessKeyboardConnected(); //1.2
+    bool isKeyboardFlipOpen();//1.2
+
 Q_SIGNALS:
     void batteryLevelChanged(int);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
@@ -278,7 +282,13 @@ Q_SIGNALS:
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
 
+    void wirelessKeyboardConnected(bool connected);//1.2
+    void keyboardFlip(bool open);//1.2
+
 private:
+    bool btPowered;
+    bool hasWirelessKeyboardConnected;
+
     int batteryLevelCache;
     QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::PowerState) currentPowerStateCache;
     QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::BatteryStatus) batteryStatusCache;

@@ -2027,6 +2027,31 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
     return false;
 }
 
+QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardType()
+{
+    QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags = QSystemDeviceInfo::UnknownKeyboard;
+
+    if((methods & QSystemDeviceInfo::Keyboard)) {
+        keyboardFlags = (keyboardFlags | QSystemDeviceInfo::FullQwertyKeyboard);
+  }
+    if(isWirelessKeyboardConnected()) {
+        keyboardFlags = (keyboardFlags | QSystemDeviceInfo::WirelessKeyboard);
+    }
+// how to check softkeys on desktop?
+    return keyboardFlags;
+}
+
+bool QSystemDeviceInfoPrivate::isWirelessKeyboardConnected()
+{
+    return hasWirelessKeyboardConnected;
+}
+
+bool QSystemDeviceInfoPrivate::isKeyboardFlipOpen()
+{
+    return false;
+}
+
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
         : QObject(parent)
 {
