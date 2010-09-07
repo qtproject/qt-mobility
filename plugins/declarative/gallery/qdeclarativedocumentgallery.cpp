@@ -41,6 +41,8 @@
 
 #include "qdeclarativedocumentgallery.h"
 
+#include <qgalleryabstractrequest.h>
+
 QTM_BEGIN_NAMESPACE
 
 static const char *qt_documentGalleryTypes[] =
@@ -78,6 +80,29 @@ QDeclarativeDocumentGallery::ItemType QDeclarativeDocumentGallery::itemTypeFromS
     }
 
     return QDeclarativeDocumentGallery::InvalidType;
+}
+
+static const char *qt_declarativeDocumentGalleryErrorStrings[] =
+{
+    QT_TRANSLATE_NOOP("QDeclarativeDocumentGallery", "The document gallery doesn't support this request."),
+    QT_TRANSLATE_NOOP("QDeclarativeDocumentGallery", "There was an error connecting to the document gallery"),
+    QT_TRANSLATE_NOOP("QDeclarativeDocumentGallery", "The value of an item ID property is invalid."),
+    QT_TRANSLATE_NOOP("QDeclarativeDocumentGallery", "The value of an item type property is invalid."),
+    QT_TRANSLATE_NOOP("QDeclarativeDocumentGallery", "A filter references a property that doesn't exist."),
+    QT_TRANSLATE_NOOP("QDeclarativeDocumentGallery", "A filter includes an incompatible property value."),
+    QT_TRANSLATE_NOOP("QDeclarativeDocumentGallery", "A filter type is not supported by the document gallery."),
+    QT_TRANSLATE_NOOP("QDeclarativeDocumentGallery", "A filter option is not supported by the document gallery.")
+};
+
+QString QDeclarativeDocumentGallery::toErrorString(int result)
+{
+    if (result >= QGalleryAbstractRequest::NotSupported
+            && result <= QGalleryAbstractRequest::UnsupportedFilterOptionError) {
+        return tr(qt_declarativeDocumentGalleryErrorStrings[
+                result - QGalleryAbstractRequest::NotSupported]);
+    } else {
+        return QString();
+    }
 }
 
 QAbstractGallery *QDeclarativeDocumentGallery::gallery()

@@ -88,6 +88,7 @@ void QDeclarativeGalleryItem::componentComplete()
 void QDeclarativeGalleryItem::_q_stateChanged()
 {
     Status status = m_status;
+    QString message;
 
     switch (m_request.state()) {
     case QGalleryAbstractRequest::Inactive: {
@@ -103,6 +104,7 @@ void QDeclarativeGalleryItem::_q_stateChanged()
                 break;
             default:
                 status = Error;
+                message = QDeclarativeDocumentGallery::toErrorString(m_request.result());
                 break;
             }
         }
@@ -117,11 +119,16 @@ void QDeclarativeGalleryItem::_q_stateChanged()
         break;
     }
 
+    qSwap(message, m_errorMessage);
+
     if (m_status != status) {
         m_status = status;
 
         emit statusChanged();
     }
+
+    if (message != m_errorMessage)
+        emit errorMessageChanged();
 }
 
 void QDeclarativeGalleryItem::_q_itemChanged()
