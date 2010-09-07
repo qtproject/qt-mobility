@@ -289,6 +289,7 @@ void CalendarDemo::addEvents()
         // Set the start date to index to add events to next 5000 days
         QOrganizerEventTimeRange timeRange;
         timeRange.setStartDateTime(QDateTime::currentDateTime().addDays(index));
+        timeRange.setEndDateTime(QDateTime::currentDateTime().addDays(index).addSecs(60 * 60));
         item.saveDetail(&timeRange);
         
         items.append(item);
@@ -297,6 +298,7 @@ void CalendarDemo::addEvents()
     // Now create a save request and execute it
     m_saveReq.setItems(items);
     m_saveReq.setManager(m_manager);
+    m_saveReq.setCollectionId(m_manager->defaultCollectionId());
     m_saveReq.start();
 }
 
