@@ -68,7 +68,17 @@ QDeclarativeCoordinate::~QDeclarativeCoordinate() {}
 
 void QDeclarativeCoordinate::setCoordinate(const QGeoCoordinate &coordinate)
 {
+    QGeoCoordinate previousCoordinate = m_coordinate;
     m_coordinate = coordinate;
+    if (coordinate.altitude() != previousCoordinate.altitude()) {
+        emit altitudeChanged(m_coordinate.altitude());
+    }
+    if (coordinate.latitude() != previousCoordinate.latitude()) {
+        emit latitudeChanged(m_coordinate.latitude());
+    }
+    if (coordinate.longitude() != previousCoordinate.longitude()) {
+        emit longitudeChanged(m_coordinate.longitude());
+    }
 }
 
 QGeoCoordinate QDeclarativeCoordinate::coordinate() const

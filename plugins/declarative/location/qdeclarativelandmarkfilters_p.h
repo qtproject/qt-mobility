@@ -3,6 +3,7 @@
 
 #include <qlandmarkintersectionfilter.h>
 #include <qlandmarkproximityfilter.h>
+#include <qdeclarativecoordinate_p.h>
 #include <qlandmarkunionfilter.h>
 #include <qlandmarknamefilter.h>
 #include <qlandmarkfilter.h>
@@ -22,36 +23,55 @@ public:
     virtual QLandmarkFilter* filter() = 0;
 };
 
-class QDeclarativeLandmarkFilter : public QDeclarativeLandmarkFilterBase
+class QDeclarativeLandmarkNameFilter : public QDeclarativeLandmarkFilterBase
 {
     Q_OBJECT
-    Q_PROPERTY(FilterType type READ type WRITE setType NOTIFY typeChanged)
-    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
-    Q_ENUMS(FilterType)
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 
 public:
-    explicit QDeclarativeLandmarkFilter(QObject* parent = 0);
-    ~QDeclarativeLandmarkFilter();
-    enum FilterType {
-        Name,
-        Proximity
-    };
+    explicit QDeclarativeLandmarkNameFilter(QObject* parent = 0);
+    ~QDeclarativeLandmarkNameFilter();
 
-    FilterType type() const;
-    void setType(FilterType type);
-    QVariant value() const;
-    void setValue(const QVariant &value);
+    QString name() const;
+    void setName(const QString& name);
+    // From QDeclarativeLandmarkFilterBase
     virtual QLandmarkFilter* filter();
 
 signals:
-    void typeChanged();
-    void valueChanged();
+    void nameChanged();
 
 private:
-    FilterType m_type;
-    QVariant m_value;
-    QLandmarkFilter* m_filter;
+    QString m_name;
+    QLandmarkNameFilter m_filter;
 };
+
+class QDeclarativeLandmarkProximityFilter : public QDeclarativeLandmarkFilterBase
+{
+    Q_OBJECT
+    Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
+    Q_PROPERTY(double radius READ radius WRITE setRadius NOTIFY radiusChanged)
+
+public:
+    explicit QDeclarativeLandmarkProximityFilter(QObject* parent = 0);
+    ~QDeclarativeLandmarkProximityFilter();
+
+    double radius() const;
+    void setRadius(const double radius);
+    QDeclarativeCoordinate* coordinate() const;
+    void setCoordinate(QDeclarativeCoordinate* coordinate);
+    // From QDeclarativeLandmarkFilterBase
+    virtual QLandmarkFilter* filter();
+
+signals:
+    void radiusChanged();
+    void coordinateChanged();
+
+private:
+    double m_radius;
+    QDeclarativeCoordinate* m_coordinate;
+    QLandmarkProximityFilter m_filter;
+};
+
 
 class QDeclarativeLandmarkUnionFilter : public QDeclarativeLandmarkFilterBase
 {
@@ -93,7 +113,8 @@ private:
 };
 
 QTM_END_NAMESPACE
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkFilter));
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkNameFilter));
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkProximityFilter));
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkUnionFilter));
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkIntersectionFilter));
 

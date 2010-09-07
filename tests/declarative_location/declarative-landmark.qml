@@ -196,16 +196,22 @@ Rectangle {
     Component {
 	id: landmarklistdelegate
 	Item {
-	    width: 200; height: 50
-	    Text { id: nameField; text: name }
-	    Text { id: phoneField; text: "  tel:"  + phoneNumber; anchors.left: nameField.right }
-	    Text { id: latitudeField; text: "  lat:"  + latitude;  anchors.left: phoneField.right }
-	    Text { id: longitudeField; text: "  lon:"  + longitude;  anchors.left: latitudeField.right }
-	    Text { id: altitudeeField; text: "  alt:"  + altitude;  anchors.left: longitudeField.right }
-	    // Set landmark to the model, few lines of code missing still
+	        width: 200; height: 50
+                Text {
+                    id: nameField; text: name
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked: categoriesOfGivenLandmark.landmark = landmark
+                    }
+                }
+                Text { id: phoneField; text: "  tel:"  + phoneNumber; anchors.left: nameField.right;} //anchors.top: nameField.bottom}
+	        Text { id: latitudeField; text: "  lat:"  + latitude;  anchors.left: phoneField.right }
+	        Text { id: longitudeField; text: "  lon:"  + longitude;  anchors.left: latitudeField.right }
+	        Text { id: landmarkField; text: " landmark.name test: " + landmark.name; anchors.left: longitudeField.right }
+		}
 	    // categoriesOfGivenLandmark.landmark = landmark
         }
-    }    
+
     Component {
 	id: categorylistdelegate
 	Item {

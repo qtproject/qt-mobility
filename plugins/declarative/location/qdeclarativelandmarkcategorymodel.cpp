@@ -59,6 +59,8 @@ void QDeclarativeLandmarkCategoryModel::setLandmark(QDeclarativeLandmark *landma
     if (landmark == m_landmark)
         return;
     m_landmark = landmark;
+    if (m_autoUpdate)
+        scheduleUpdate();
     emit landmarkChanged();
 }
 

@@ -134,6 +134,8 @@ void QDeclarativeLandmarkAbstractModel::setLimit(int limit)
     if (limit == m_limit)
         return;
     m_limit = limit;
+    if (m_autoUpdate)
+        scheduleUpdate();
     emit limitChanged();
 }
 
@@ -147,6 +149,8 @@ void QDeclarativeLandmarkAbstractModel::setOffset(int offset)
     if (offset == m_offset)
         return;
     m_offset = offset;
+    if (m_autoUpdate)
+        scheduleUpdate();
     emit offsetChanged();
 }
 
@@ -214,6 +218,20 @@ QVariant QDeclarativeLandmarkModel::data(const QModelIndex &index, int role) con
             return landmark.coordinate().longitude();
         case AltitudeRole:
             return landmark.coordinate().altitude();
+    case LandmarkRole:
+             {
+                 qDebug() << "Landmark role requested.";
+                 qDebug() << "Currently the pointer is:" << m_landmarkMap.value(landmark.landmarkId().localId());
+                 if (!m_landmarkMap.value(landmark.landmarkId().localId())) {
+                     qDebug() << "since zero, returning invalid QVariant";
+                     return QVariant();
+                 }
+                 else {
+                     qDebug() << "since non-zero, returning object whose name";
+                     qDebug() << "is" << m_landmarkMap.value(landmark.landmarkId().localId())->name();
+                     return QVariant::fromValue(m_landmarkMap.value(landmark.landmarkId().localId()));
+                 }
+             }
     }
     return QVariant();
 }
@@ -238,7 +256,8 @@ void QDeclarativeLandmarkModel::setFilter(QDeclarativeLandmarkFilterBase* filter
     if (filter == m_filter)
         return;
     m_filter = filter;
-    scheduleUpdate();
+    if (m_autoUpdate)
+        scheduleUpdate();
     emit filterChanged();
 }
 
@@ -449,6 +468,8 @@ void QDeclarativeLandmarkModel::setSortBy(QDeclarativeLandmarkModel::SortKey key
     if (key == m_sortKey)
         return;
     m_sortKey = key;
+    if (m_autoUpdate)
+        scheduleUpdate();
     emit sortByChanged();
 }
 
@@ -462,6 +483,8 @@ void QDeclarativeLandmarkModel::setSortOrder(QDeclarativeLandmarkModel::SortOrde
     if (order == m_sortOrder)
         return;
     m_sortOrder = order;
+    if (m_autoUpdate)
+        scheduleUpdate();
     emit sortOrderChanged();
 }
 

@@ -3,81 +3,76 @@
 
 QTM_BEGIN_NAMESPACE
 
-QDeclarativeLandmarkFilter::QDeclarativeLandmarkFilter(QObject *parent) :
-        QDeclarativeLandmarkFilterBase(parent), m_type(Name), m_filter(new QLandmarkNameFilter())
+QDeclarativeLandmarkNameFilter::QDeclarativeLandmarkNameFilter(QObject *parent) :
+        QDeclarativeLandmarkFilterBase(parent)
 {
 }
 
-QDeclarativeLandmarkFilter::~QDeclarativeLandmarkFilter()
+QDeclarativeLandmarkNameFilter::~QDeclarativeLandmarkNameFilter()
 {
-    delete m_filter;
 }
 
-QDeclarativeLandmarkFilter::FilterType QDeclarativeLandmarkFilter::type() const
+QString QDeclarativeLandmarkNameFilter::name() const
 {
-    return m_type;
+    return m_name;
 }
 
-void QDeclarativeLandmarkFilter::setType(QDeclarativeLandmarkFilter::FilterType type)
+void QDeclarativeLandmarkNameFilter::setName(const QString& name)
 {
-    if (type == m_type)
+    if (name == m_name)
         return;
-    m_type = type;
-    if (m_filter) {
-        delete m_filter;
-        m_filter = 0;
-    }
-    switch (m_type) {
-        case Name:
-            m_filter = new QLandmarkNameFilter();
-            break;
-        case Proximity:
-            m_filter = new QLandmarkProximityFilter();
-            break;
-        default:
-            return;
-    }
-    emit typeChanged();
+    m_name = name;
+    m_filter.setName(m_name);
+    emit nameChanged();
 }
 
-QVariant QDeclarativeLandmarkFilter::value() const
+QLandmarkFilter* QDeclarativeLandmarkNameFilter::filter()
 {
-    return m_value;
-}
-
-void QDeclarativeLandmarkFilter::setValue(const QVariant& value)
-{
-    if (value == m_value)
-        return;
-    m_value = value;
-    emit valueChanged();
-}
-
-QLandmarkFilter* QDeclarativeLandmarkFilter::filter()
-{
-    if (!m_filter || !m_value.isValid())
+    if (m_name.isEmpty())
         return 0;
+    return &m_filter;
+}
 
-    // Set value for filter here so we are not dependant of in
-    // which order the 'type' and 'value' were set.
-    switch (m_filter->type()) {
-        case QLandmarkFilter::NameFilter: {
-            QLandmarkNameFilter* filter = static_cast<QLandmarkNameFilter*>(m_filter);
-            filter->setName(m_value.toString());
-        }
-        break;
-        case QLandmarkFilter::ProximityFilter: {
-            QLandmarkProximityFilter* filter = static_cast<QLandmarkProximityFilter*>(m_filter);
-            QDeclarativePosition* position = qobject_cast<QDeclarativePosition*>(m_value.value<QObject*>());
-            filter->setCoordinate(QGeoCoordinate(position->latitude(), position->longitude()));
-            filter->setRadius(position->radius());
-        }
-        break;
-        default:
-            // Other filters are not currently supported
-            return 0;
-    }
-    return m_filter;
+QDeclarativeLandmarkProximityFilter::QDeclarativeLandmarkProximityFilter(QObject *parent) :
+        QDeclarativeLandmarkFilterBase(parent), m_radius(50), m_coordinate(0)
+{
+}
+
+QDeclarativeLandmarkProximityFilter::~QDeclarativeLandmarkProximityFilter()
+{
+}
+
+double QDeclarativeLandmarkProximityFilter::radius() const
+{
+    return m_radius;
+}
+
+void QDeclarativeLandmarkProximityFilter::setRadius(const double radius)
+{
+    if (radius == m_radius)
+        return;
+    m_radius = radius;
+    emit radiusChanged();
+}
+
+QDeclarativeCoordinate* QDeclarativeLandmarkProximityFilter::coordinate() const
+{
+    return m_coordinate;
+}
+
+void QDeclarativeLandmarkProximityFilter::setCoordinate(QDeclarativeCoordinate* coordinate)
+{
+    m_coordinate = coordinate;
+    m_filter.setCoordinate(m_coordinate->coordinate());
+    emit coordinateChanged();
+}
+
+QLandmarkFilter* QDeclarativeLandmarkProximityFilter::filter()
+{
+    if (!m_coordinate)
+        return 0;
+    m_filter.setRadius(m_radius);
+    return &m_filter;
 }
 
 QDeclarativeLandmarkUnionFilter::QDeclarativeLandmarkUnionFilter(QObject* parent)
