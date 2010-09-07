@@ -43,6 +43,7 @@
 #include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
+#include "qcontactmanagerenginev2wrapper_p.h"
 
 #include "qcontact_p.h"
 
@@ -109,7 +110,7 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
 
     QString builtManagerName = managerName.isEmpty() ? QContactManager::availableManagers().value(0) : managerName;
     if (builtManagerName == QLatin1String("memory")) {
-        m_engine = QContactMemoryEngine::createMemoryEngine(parameters);
+        m_engine = new QContactManagerEngineV2Wrapper(QContactMemoryEngine::createMemoryEngine(parameters));
     } else {
         int implementationVersion = parameterValue(parameters, QTCONTACTS_IMPLEMENTATION_VERSION_NAME, -1);
 

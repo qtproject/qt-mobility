@@ -123,7 +123,7 @@ public:
     QList<QContactManagerEngine*> m_sharedEngines;   // The list of engines that share this data
 };
 
-class QContactMemoryEngine : public QContactManagerEngineV2
+class QContactMemoryEngine : public QContactManagerEngine
 {
     Q_OBJECT
 
@@ -144,7 +144,6 @@ public:
 
     virtual bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
     virtual bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
-    virtual QList<QContact> contacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error) const;
 
     /*! \reimp */
     virtual QContact compatibleContact(const QContact& original, QContactManager::Error* error) const

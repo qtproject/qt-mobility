@@ -2751,64 +2751,20 @@ QList<QContact> QContactManagerEngineV2::contacts(const QList<QContactLocalId> &
     // Default implementation is to fetch one by one
     QList<QContact> ret;
 
-    for(int idx=0; idx < localIds.count(); idx++) {
+    for (int i = 0; i < localIds.count(); i++) {
         QContactManager::Error localError = QContactManager::NoError;
-        ret.append(contact(localIds.at(idx), fetchHint, &localError));
+        ret.append(contact(localIds.at(i), fetchHint, &localError));
 
         if (localError != QContactManager::NoError) {
             *error = localError;
             if (errorMap)
-                errorMap->insert(idx, localError);
+                errorMap->insert(i, localError);
         }
     }
 
     return ret;
 }
 
-/* Wrapper class */
-QContactManagerEngineV2Wrapper::QContactManagerEngineV2Wrapper(QContactManagerEngine *wrappee)
-    : m_engine(wrappee)
-{
-    Q_ASSERT(wrappee);
-    // Connect all the signals
-}
-
-QContactManagerEngineV2Wrapper::~QContactManagerEngineV2Wrapper()
-{
-    delete m_engine;
-}
-
-void QContactManagerEngineV2Wrapper::requestDestroyed(QContactAbstractRequest* req)
-{
-    // TODO - if it's a partial save request, handle it, otherwise pass it on
-    return m_engine->requestDestroyed(req);
-}
-
-bool QContactManagerEngineV2Wrapper::startRequest(QContactAbstractRequest* req)
-{
-    if (req && req->type() == QContactAbstractRequest::ContactSaveRequest
-        && !static_cast<QContactSaveRequest*>(req)->definitionMask().isEmpty()) {
-        // This is a partial save
-        // TODO do something
-    }
-
-    // Otherwise, pass it on
-    return m_engine->startRequest(req);
-}
-
-bool QContactManagerEngineV2Wrapper::cancelRequest(QContactAbstractRequest* req)
-{
-    // TODO - see if we know about this request
-    return m_engine->cancelRequest(req);
-}
-
-bool QContactManagerEngineV2Wrapper::waitForRequestFinished(QContactAbstractRequest* req, int msecs)
-{
-    // TODO - see if we know about this request
-    return m_engine->waitForRequestFinished(req, msecs);
-}
-
 #include "moc_qcontactmanagerengine.cpp"
-#include "moc_qcontactmanager_p.cpp"
 
 QTM_END_NAMESPACE

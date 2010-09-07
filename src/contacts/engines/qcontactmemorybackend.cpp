@@ -387,32 +387,6 @@ bool QContactMemoryEngine::removeContacts(const QList<QContactLocalId>& contactI
     return (*error == QContactManager::NoError);
 }
 
-QList<QContact> QContactMemoryEngine::contacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error) const
-{
-    QList<QContact> ret;
-    if (contactIds.count() == 0) {
-        *error = QContactManager::BadArgumentError;
-        return ret;
-    }
-
-    // Default error
-    *error = QContactManager::NoError;
-    for (int i = 0; i < contactIds.count(); i++) {
-        QContactManager::Error operationError = QContactManager::NoError;
-        QContact current = contact(contactIds.at(i), QContactFetchHint(), &operationError);
-        if (operationError != QContactManager::NoError) {
-            *error = operationError;
-            ret.append(QContact()); // make sure there's an invalid contact so sizeof(input)==sizeof(output)
-            if (errorMap)
-                errorMap->insert(i, operationError);
-        } else {
-            ret.append(current);
-        }
-    }
-
-    return ret;
-}
-
 /*! \reimp */
 QList<QContactRelationship> QContactMemoryEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error* error) const
 {
