@@ -64,6 +64,7 @@ private slots:  // Test cases
     void addEvent();
     void addTodo();
     void addJournal();
+
     void addEventWithRecurrence();
     void addEventExceptions();
     void addEventExceptionWithGuid();
@@ -83,7 +84,9 @@ private slots:  // Test cases
     void removeCollection();
     void saveItemsToNewCollection();
 
-    // TODO: Asynchronous requests testing
+    void asynchronousSaveAndFetch();
+    void consecutiveAsynchronousRequests();
+    void deleteRequest();
 
 private:
     QOrganizerItemManager *m_om;
@@ -1134,6 +1137,168 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     // Get all the instances with the intersection filter
     QList<QOrganizerItem> intersectionInstances = m_om->itemInstances(intersectionFilter, noSort);
     QCOMPARE(intersectionInstances.count(), 0);
+}
+
+void tst_Maemo5Om::asynchronousSaveAndFetch()
+{
+    // Create event and set details
+    QOrganizerEvent event;
+
+    event.setStartDateTime(QDateTime(QDate(2010,12,15), QTime(11, 13, 2)));
+    event.setEndDateTime(QDateTime(QDate(2010,12,17),QTime(2,0,0)));
+    event.setDisplayLabel("asynchronousSaveAndFetch");
+    event.setDescription("Asynchronous save test");
+    event.setGuid("asynchronous event guid");
+
+    // Create a save request
+    QOrganizerItemSaveRequest saveRequest;
+    saveRequest.setCollectionId(m_om->defaultCollectionId());
+    saveRequest.setItem(event);
+    saveRequest.setManager(m_om);
+
+    // Start the request
+    saveRequest.start();
+
+    // Wait until the request processing begins (otherwise waitForFinished returns immediately)
+    while (saveRequest.state() == QOrganizerItemAbstractRequest::InactiveState)
+        QThread::yieldCurrentThread();
+
+    // Wait for request finished (should return true as there's no timeout)
+    QVERIFY(saveRequest.waitForFinished());
+
+    // Try to fetch the saved item with an asynchronous request
+    QOrganizerItemCollectionFilter collectionFilter;
+    collectionFilter.setCollectionIds(m_om->collectionIds().toSet());
+    QList<QOrganizerItemSortOrder> noSorting;
+
+    QOrganizerItemFetchRequest fetchRequest;
+    fetchRequest.setFilter(collectionFilter);
+    fetchRequest.setSorting(noSorting);
+    fetchRequest.setManager(m_om);
+
+    // Start the request
+    fetchRequest.start();
+
+    // Wait until the request processing begins (otherwise waitForFinished returns immediately)
+    while (fetchRequest.state() == QOrganizerItemAbstractRequest::InactiveState)
+        QThread::yieldCurrentThread();
+
+    // Wait for request finished (should return true as there's no timeout)
+    QVERIFY(fetchRequest.waitForFinished());
+
+    QList<QOrganizerItem> resultItems = fetchRequest.items();
+    QOrganizerItem resultItem;
+    foreach(QOrganizerItem itm, resultItems) {
+        if (itm.guid() == event.guid()) {
+            resultItem = itm;
+            break;
+        }
+    }
+    QVERIFY(resultItem.type() == QOrganizerItemType::TypeEvent);
+    QOrganizerEvent resultEvent = static_cast<QOrganizerEvent>(resultItem);
+    QCOMPARE(resultEvent.startDateTime(), event.startDateTime());
+    QCOMPARE(resultEvent.endDateTime(), event.endDateTime());
+    QCOMPARE(resultEvent.displayLabel(), event.displayLabel());
+    QCOMPARE(resultEvent.description(), event.description());
+}
+
+void tst_Maemo5Om::consecutiveAsynchronousRequests()
+{
+    // Create three events
+    QOrganizerEvent event1;
+    event1.setStartDateTime(QDateTime(QDate(2010,11,1), QTime(11, 0, 0)));
+    event1.setEndDateTime(QDateTime(QDate(2010,11,1),QTime(12, 0, 0)));
+    event1.setDisplayLabel("consecutiveAsynchronousRequests");
+    event1.setGuid("consecutiveAsynchronousRequests1");
+
+    QOrganizerEvent event2;
+    event2.setStartDateTime(QDateTime(QDate(2010,11,2), QTime(11, 0, 0)));
+    event2.setEndDateTime(QDateTime(QDate(2010,11,2),QTime(12, 0, 0)));
+    event2.setDisplayLabel("consecutiveAsynchronousRequests");
+    event2.setGuid("consecutiveAsynchronousRequests2");
+
+    QOrganizerEvent event3;
+    event3.setStartDateTime(QDateTime(QDate(2010,11,3), QTime(11, 0, 0)));
+    event3.setEndDateTime(QDateTime(QDate(2010,11,3),QTime(12, 0, 0)));
+    event3.setDisplayLabel("consecutiveAsynchronousRequests");
+    event3.setGuid("consecutiveAsynchronousRequests3");
+
+    // Create three save requests
+    QOrganizerItemSaveRequest saveRequest1;
+    saveRequest1.setCollectionId(m_om->defaultCollectionId());
+    saveRequest1.setItem(event1);
+    saveRequest1.setManager(m_om);
+
+    QOrganizerItemSaveRequest saveRequest2;
+    saveRequest2.setCollectionId(m_om->defaultCollectionId());
+    saveRequest2.setItem(event2);
+    saveRequest2.setManager(m_om);
+
+    QOrganizerItemSaveRequest saveRequest3;
+    saveRequest3.setCollectionId(m_om->defaultCollectionId());
+    saveRequest3.setItem(event3);
+    saveRequest3.setManager(m_om);
+
+    // Start all the requests
+    saveRequest1.start();
+    saveRequest2.start();
+    saveRequest3.start();
+
+    // Wait until the request processing begins (otherwise waitForFinished returns immediately)
+    while (saveRequest1.state() == QOrganizerItemAbstractRequest::InactiveState ||
+           saveRequest2.state() == QOrganizerItemAbstractRequest::InactiveState ||
+           saveRequest3.state() == QOrganizerItemAbstractRequest::InactiveState) {
+        QThread::yieldCurrentThread();
+    }
+
+    // Wait for all requests to finish
+    QVERIFY(saveRequest1.waitForFinished());
+    QVERIFY(saveRequest2.waitForFinished());
+    QVERIFY(saveRequest3.waitForFinished());
+
+    QList<QOrganizerItem> resultItems = m_om->items();
+    int foundCount = 0;
+    foreach(QOrganizerItem itm, resultItems) {
+        if (itm.guid() == event1.guid() || itm.guid() == event2.guid() || itm.guid() == event3.guid())
+            ++foundCount;
+    }
+
+    // All three events should exist in db
+    QCOMPARE(foundCount, 3);
+}
+
+void tst_Maemo5Om::deleteRequest()
+{
+    // Create two fetch requests
+    QOrganizerItemCollectionFilter collectionFilter;
+    collectionFilter.setCollectionIds(m_om->collectionIds().toSet());
+    QList<QOrganizerItemSortOrder> noSorting;
+
+    QOrganizerItemFetchRequest *fetchRequest1 = new QOrganizerItemFetchRequest();
+    fetchRequest1->setFilter(collectionFilter);
+    fetchRequest1->setSorting(noSorting);
+    fetchRequest1->setManager(m_om);
+
+    QOrganizerItemFetchRequest *fetchRequest2 = new QOrganizerItemFetchRequest();
+    fetchRequest2->setFilter(collectionFilter);
+    fetchRequest2->setSorting(noSorting);
+    fetchRequest2->setManager(m_om);
+
+    // Start both requests
+    fetchRequest1->start();
+    fetchRequest2->start();
+
+    // Wait until the first request processing begins
+    while (fetchRequest1->state() == QOrganizerItemAbstractRequest::InactiveState)
+        QThread::yieldCurrentThread();
+
+    // Delete both requests
+    delete fetchRequest1;
+    fetchRequest1 = 0;
+    delete fetchRequest2;
+    fetchRequest2 = 0;
+
+    // (There are no explicit checks, the test just should not crash.)
 }
 
 QTEST_MAIN(tst_Maemo5Om);
