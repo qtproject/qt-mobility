@@ -199,6 +199,8 @@ public:
         const QList<QOrganizerItemSortOrder>& sortOrders) const;
 #ifdef SYMBIAN_CALENDAR_V2
     QList<QOrganizerCollectionLocalId> collectionIdsL() const;
+    QOrganizerCollectionLocalId collectionIdL(int index) const;
+    int sessionCount() const;
     QList<QOrganizerCollection> collectionsL(const QList<QOrganizerCollectionLocalId>& collectionIds) const;
     void saveCollectionL(QOrganizerCollection* collection);
     void removeCollectionL(const QOrganizerCollectionLocalId& collectionId);
