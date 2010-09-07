@@ -218,12 +218,22 @@ QDeclarativeLandmarkFilterBase* QDeclarativeLandmarkModel::filter()
 
 void QDeclarativeLandmarkModel::setFilter(QDeclarativeLandmarkFilterBase* filter)
 {
-    if (filter == m_filter)
-        return;
     m_filter = filter;
+    // Connect to listen for filters' content changes
+    if (filter)
+        QObject::connect(filter, SIGNAL(filterContentChanged()), this, SLOT(filterContentChanged()));
     if (m_autoUpdate)
         scheduleUpdate();
     emit filterChanged();
+}
+
+void QDeclarativeLandmarkModel::filterContentChanged()
+{
+#ifdef QDECLARATIVE_LANDMARK_DEBUG
+    qDebug() << "QDeclarativeLandmarkModel::filterContentChanged(), scheduling update.";
+#endif
+    if (m_autoUpdate)
+        scheduleUpdate();
 }
 
 void QDeclarativeLandmarkModel::startUpdate()

@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qdeclarativecoordinate_p.h"
+#include <qnumeric.h>
 #include "qdeclarative.h"
 
 QTM_BEGIN_NAMESPACE
@@ -70,7 +71,10 @@ void QDeclarativeCoordinate::setCoordinate(const QGeoCoordinate &coordinate)
 {
     QGeoCoordinate previousCoordinate = m_coordinate;
     m_coordinate = coordinate;
-    if (coordinate.altitude() != previousCoordinate.altitude()) {
+
+    // Comparing two NotANumbers is false which is not wanted here
+    if (coordinate.altitude() != previousCoordinate.altitude() &&
+        !(qIsNaN(coordinate.altitude()) && qIsNaN(previousCoordinate.altitude()))) {
         emit altitudeChanged(m_coordinate.altitude());
     }
     if (coordinate.latitude() != previousCoordinate.latitude()) {

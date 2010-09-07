@@ -149,6 +149,7 @@ signals:
     void importFileChanged();
 
 private slots:
+    void filterContentChanged();
     void cancelUpdate();
     void cancelImport();
     void fetchRequestStateChanged(QLandmarkAbstractRequest::State);

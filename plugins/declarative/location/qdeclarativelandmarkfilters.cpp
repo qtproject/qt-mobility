@@ -24,6 +24,7 @@ void QDeclarativeLandmarkNameFilter::setName(const QString& name)
     m_name = name;
     m_filter.setName(m_name);
     emit nameChanged();
+    emit filterContentChanged();
 }
 
 QLandmarkFilter* QDeclarativeLandmarkNameFilter::filter()
@@ -53,6 +54,7 @@ void QDeclarativeLandmarkProximityFilter::setRadius(const double radius)
         return;
     m_radius = radius;
     emit radiusChanged();
+    emit filterContentChanged();
 }
 
 QDeclarativeCoordinate* QDeclarativeLandmarkProximityFilter::coordinate() const
@@ -63,66 +65,95 @@ QDeclarativeCoordinate* QDeclarativeLandmarkProximityFilter::coordinate() const
 void QDeclarativeLandmarkProximityFilter::setCoordinate(QDeclarativeCoordinate* coordinate)
 {
     m_coordinate = coordinate;
-    m_filter.setCoordinate(m_coordinate->coordinate());
+    QObject::connect(m_coordinate, SIGNAL(latitudeChanged(double)), this, SIGNAL(filterContentChanged()));
+    QObject::connect(m_coordinate, SIGNAL(longitudeChanged(double)), this, SIGNAL(filterContentChanged()));
     emit coordinateChanged();
+    emit filterContentChanged();
 }
 
 QLandmarkFilter* QDeclarativeLandmarkProximityFilter::filter()
 {
     if (!m_coordinate)
         return 0;
+    // Populate filter only now in case their contents have changed.
     m_filter.setRadius(m_radius);
+    m_filter.setCoordinate(m_coordinate->coordinate());
     return &m_filter;
 }
 
-QDeclarativeLandmarkUnionFilter::QDeclarativeLandmarkUnionFilter(QObject* parent)
+
+QDeclarativeLandmarkCompoundFilter::QDeclarativeLandmarkCompoundFilter(QObject* parent)
         : QDeclarativeLandmarkFilterBase(parent)
 {
 }
 
-QDeclarativeListProperty<QDeclarativeLandmarkFilterBase> QDeclarativeLandmarkUnionFilter::filters()
+QDeclarativeListProperty<QDeclarativeLandmarkFilterBase> QDeclarativeLandmarkCompoundFilter::filters()
 {
-    return QDeclarativeListProperty<QDeclarativeLandmarkFilterBase>(this, m_filters);
+    return QDeclarativeListProperty<QDeclarativeLandmarkFilterBase>(this,
+                                                          0, // opaque data parameter
+                                                          filters_append,
+                                                          filters_count,
+                                                          filters_at,
+                                                          filters_clear);
+}
+
+void QDeclarativeLandmarkCompoundFilter::filters_append(QDeclarativeListProperty<QDeclarativeLandmarkFilterBase>* prop, QDeclarativeLandmarkFilterBase* filter)
+{
+    QDeclarativeLandmarkCompoundFilter* compoundFilter = static_cast<QDeclarativeLandmarkCompoundFilter*>(prop->object);
+    compoundFilter->m_filters.append(filter);
+    QObject::connect(filter, SIGNAL(filterContentChanged()), compoundFilter, SIGNAL(filterContentChanged()));
+    emit compoundFilter->filterContentChanged();
+}
+
+int QDeclarativeLandmarkCompoundFilter::filters_count(QDeclarativeListProperty<QDeclarativeLandmarkFilterBase>* prop)
+{
+    // The 'prop' is in a sense 'this' for this static function (as given in filters() function)
+    return static_cast<QDeclarativeLandmarkCompoundFilter*>(prop->object)->m_filters.count();
+}
+
+QDeclarativeLandmarkFilterBase* QDeclarativeLandmarkCompoundFilter::filters_at(QDeclarativeListProperty<QDeclarativeLandmarkFilterBase>* prop, int index)
+{
+    return static_cast<QDeclarativeLandmarkCompoundFilter*>(prop->object)->m_filters.at(index);
+}
+
+void QDeclarativeLandmarkCompoundFilter::filters_clear(QDeclarativeListProperty<QDeclarativeLandmarkFilterBase>* prop)
+{
+    QDeclarativeLandmarkCompoundFilter* filter = static_cast<QDeclarativeLandmarkCompoundFilter*>(prop->object);
+    qDeleteAll(filter->m_filters);
+    filter->m_filters.clear();
+}
+
+template <class T>
+        bool QDeclarativeLandmarkCompoundFilter::appendFilters(T* compoundFilter)
+{
+    // Creates a T type compound filter of all filters.
+    if (m_filters.isEmpty())
+        return false;
+    compoundFilter->clear();
+    for (int i = 0; i < m_filters.count(); i++) {
+        compoundFilter->append(*m_filters.at(i)->filter());
+    }
+    return true;
 }
 
 QLandmarkFilter* QDeclarativeLandmarkUnionFilter::filter()
 {
-    if (m_filters.isEmpty())
-        return 0;
+    return appendFilters<QLandmarkUnionFilter>(&m_filter) ? &m_filter : 0;
+}
 
-    // Creates a Union filter of all filters.
-    // This could be optimized such that the filters will be rebuilt when something
-    // in filters really change, as opposed to rebuilding each time retrieved
-    m_filter.clear();
-    for (int i = 0; i < m_filters.count(); i++) {
-        m_filter.append(*m_filters.at(i)->filter());
-    }
-    return &m_filter;
+QDeclarativeLandmarkUnionFilter::QDeclarativeLandmarkUnionFilter(QObject* parent)
+        : QDeclarativeLandmarkCompoundFilter(parent)
+{
 }
 
 QDeclarativeLandmarkIntersectionFilter::QDeclarativeLandmarkIntersectionFilter(QObject* parent)
-        : QDeclarativeLandmarkFilterBase(parent)
+        : QDeclarativeLandmarkCompoundFilter(parent)
 {
-}
-
-QDeclarativeListProperty<QDeclarativeLandmarkFilterBase> QDeclarativeLandmarkIntersectionFilter::filters()
-{
-    return QDeclarativeListProperty<QDeclarativeLandmarkFilterBase>(this, m_filters);
 }
 
 QLandmarkFilter* QDeclarativeLandmarkIntersectionFilter::filter()
 {
-    if (m_filters.isEmpty())
-        return 0;
-
-    // Creates a Intersection filter of all filters.
-    // This could be optimized such that the filters will be rebuilt when something
-    // in filters really change, as opposed to rebuilding each time retrieved
-    m_filter.clear();
-    for (int i = 0; i < m_filters.count(); i++) {
-        m_filter.append(*m_filters.at(i)->filter());
-    }
-    return &m_filter;
+    return appendFilters<QLandmarkIntersectionFilter>(&m_filter) ? &m_filter : 0;
 }
 
 #include "moc_qdeclarativelandmarkfilters_p.cpp"

@@ -20,8 +20,42 @@ class QDeclarativeLandmarkFilterBase : public QObject
 
 public:
     explicit QDeclarativeLandmarkFilterBase(QObject* parent = 0)  : QObject(parent) {}
+    virtual ~QDeclarativeLandmarkFilterBase() {}
+
+    // Returns a C++ intersection filter of all set filters
     virtual QLandmarkFilter* filter() = 0;
+
+signals:
+    // This signal is more of internal importance, not part of public interface
+    void filterContentChanged();
+
 };
+
+class QDeclarativeLandmarkCompoundFilter: public QDeclarativeLandmarkFilterBase
+{
+    Q_OBJECT
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeLandmarkFilterBase> filters READ filters)
+    Q_CLASSINFO("DefaultProperty", "filters")
+
+public:
+    explicit QDeclarativeLandmarkCompoundFilter(QObject* parent = 0);
+    virtual ~QDeclarativeLandmarkCompoundFilter() {}
+    // 'READ' accessor for the filters, basically this is also a 'WRITE' accessor
+    // as per QDeclarativeListProperty's design.
+    QDeclarativeListProperty<QDeclarativeLandmarkFilterBase> filters();
+
+    static void filters_append(QDeclarativeListProperty<QDeclarativeLandmarkFilterBase>* prop, QDeclarativeLandmarkFilterBase* landmark);
+    static int filters_count(QDeclarativeListProperty<QDeclarativeLandmarkFilterBase>* prop);
+    static QDeclarativeLandmarkFilterBase* filters_at(QDeclarativeListProperty<QDeclarativeLandmarkFilterBase>* prop, int index);
+    static void filters_clear(QDeclarativeListProperty<QDeclarativeLandmarkFilterBase>* prop);
+
+protected:
+    template <class T> bool appendFilters(T* compoundFilter);
+
+private:
+    QList<QDeclarativeLandmarkFilterBase*> m_filters;
+};
+
 
 class QDeclarativeLandmarkNameFilter : public QDeclarativeLandmarkFilterBase
 {
@@ -73,42 +107,27 @@ private:
 };
 
 
-class QDeclarativeLandmarkUnionFilter : public QDeclarativeLandmarkFilterBase
+class QDeclarativeLandmarkUnionFilter : public QDeclarativeLandmarkCompoundFilter
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeLandmarkFilterBase> filters READ filters)
-    Q_CLASSINFO("DefaultProperty", "filters")
 
 public:
     explicit QDeclarativeLandmarkUnionFilter(QObject* parent = 0);
-
-    // 'READ' accessor for the filters, basically this is also a 'WRITE' accessor
-    // as per QDeclarativeListProperty's design.
-    QDeclarativeListProperty<QDeclarativeLandmarkFilterBase> filters();
-    // Returns a C++ union filter of all set filters
-    virtual QLandmarkFilter* filter();
+    QLandmarkFilter* filter();
 
 private:
-    QList<QDeclarativeLandmarkFilterBase*> m_filters;
     QLandmarkUnionFilter m_filter;
 };
 
-class QDeclarativeLandmarkIntersectionFilter : public QDeclarativeLandmarkFilterBase
+class QDeclarativeLandmarkIntersectionFilter : public QDeclarativeLandmarkCompoundFilter
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeLandmarkFilterBase> filters READ filters)
-    Q_CLASSINFO("DefaultProperty", "filters")
 
 public:
     explicit QDeclarativeLandmarkIntersectionFilter(QObject* parent = 0);
-    // READ for the filters, basically this is also a WRITE accessor
-    // as per QDeclarativeListProperty's design.
-    QDeclarativeListProperty<QDeclarativeLandmarkFilterBase> filters();
-    // Returns a C++ intersection filter of all set filters
     virtual QLandmarkFilter* filter();
 
 private:
-    QList<QDeclarativeLandmarkFilterBase*> m_filters;
     QLandmarkIntersectionFilter m_filter;
 };
 

@@ -51,6 +51,7 @@
 #include "qdeclarativepositionsource_p.h"
 #include "qdeclarativelandmarkmodel_p.h"
 #include "qdeclarativelandmarkcategorymodel_p.h"
+#include "qdeclarativelandmarkfilters_p.h"
 #include "qlandmarkid.h"
 #include "qlandmarkcategoryid.h"
 #include "qdeclarativelist.h"
@@ -138,6 +139,8 @@ public slots:
     void init();
 
 private slots:
+
+    void filterContentChange();
 
     void construction();
     void construction_data();
@@ -873,6 +876,58 @@ bool tst_QDeclarativeLandmark::modelContainsItem(QDeclarativeLandmarkModel* mode
     }
     return false;
 }
+
+void tst_QDeclarativeLandmark::filterContentChange()
+{
+    populateTypicalDb();
+    QObject* source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkNameFilter {name: \"Brisbane\"} }");
+    QDeclarativeLandmarkModel* model = static_cast<QDeclarativeLandmarkModel*>(source_obj);
+    model->setDbFileName(DB_FILENAME);
+    // First only one landmark found
+    QTRY_COMPARE(source_obj->property("count").toInt(), 1);
+    QObject* filter = model->filter();
+    QVERIFY(filter != 0);
+    // More generic name, two landmarks should be found
+    filter->setProperty("name", "Tower");
+    QTRY_COMPARE(source_obj->property("count").toInt(), 2);
+
+    // Change filter to proximity filter which matches one landmark
+    QDeclarativeLandmarkProximityFilter* proximity_filter_obj = static_cast<QDeclarativeLandmarkProximityFilter*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkProximityFilter{coordinate: Coordinate {longitude: 70; latitude: 70} }"));
+    model->setFilter(proximity_filter_obj);
+    QTRY_COMPARE(source_obj->property("count").toInt(), 1);
+    // Change filter so that it matches more than one landmark
+    proximity_filter_obj->setRadius(QGeoCoordinate(70,70).distanceTo(QGeoCoordinate(71,71)));
+    QTRY_COMPARE(source_obj->property("count").toInt(), 2);
+
+    // Change filter to a compound filter that matches only one filter
+    QDeclarativeLandmarkUnionFilter* union_filter_obj = static_cast<QDeclarativeLandmarkUnionFilter*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkUnionFilter{ LandmarkNameFilter{name: \"Im nothing im nobody i dont exist\"} LandmarkProximityFilter{coordinate: Coordinate {longitude:20; latitude:20} } }"));
+    model->setFilter(union_filter_obj);
+    QTRY_COMPARE(source_obj->property("count").toInt(), 1);
+    // Append compound filter with one more filter (this filter matches)
+    QDeclarativeListProperty<QDeclarativeLandmarkFilterBase> declarativeList = union_filter_obj->filters();
+    QDeclarativeLandmarkNameFilter* extra_name_filter_obj = new QDeclarativeLandmarkNameFilter();
+    extra_name_filter_obj->setName("Brisbane");
+    QDeclarativeLandmarkCompoundFilter::filters_append(&declarativeList, extra_name_filter_obj);
+    QTRY_COMPARE(source_obj->property("count").toInt(), 2);
+    // Change the name of the filter so that it no longer matches
+    extra_name_filter_obj->setName("im a useless name doh");
+    QTRY_COMPARE(source_obj->property("count").toInt(), 1);
+
+    // Set additional proximity filter so that there is extra match again
+    QDeclarativeLandmarkProximityFilter* extra_proximity_filter_obj = new QDeclarativeLandmarkProximityFilter();
+    QGeoCoordinate extra_coordinate(50,50);
+    QDeclarativeCoordinate extra_declarative_coordinate;
+    extra_declarative_coordinate.setCoordinate(extra_coordinate);
+    extra_proximity_filter_obj->setCoordinate(&extra_declarative_coordinate);
+    QDeclarativeLandmarkCompoundFilter::filters_append(&declarativeList, extra_proximity_filter_obj);
+    QTRY_COMPARE(source_obj->property("count").toInt(), 2);
+    // Modify the coordinates of the last filter so that it no more matches
+    extra_declarative_coordinate.setLongitude(1);
+    extra_declarative_coordinate.setLatitude(1);
+    QTRY_COMPARE(source_obj->property("count").toInt(), 1);
+    delete source_obj;
+}
+
 
 /*
  Helper function to populate normal valid database
