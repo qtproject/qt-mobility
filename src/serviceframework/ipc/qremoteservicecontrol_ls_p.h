@@ -39,54 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef OBJECT_ENDPOINT_H
-#define OBJECT_ENDPOINT_H
+#ifndef QREMOTESERVICECONTROL_LS_P_H
+#define QREMOTESERVICECONTROL_LS_P_H
 
-#include "qmobilityglobal.h"
-#include "ipcendpoint_p.h"
-#include "qremoteserviceclassregister.h"
-#include "qservice.h"
-#include <QPointer>
-#include <QHash>
+#include "qremoteservicecontrol.h"
+#include "instancemanager_p.h"
+#include "qserviceinterfacedescriptor.h"
+#include "qremoteservicecontrol_p.h"
+#include <QLocalServer>
 
 QTM_BEGIN_NAMESPACE
 
-class ObjectEndPointPrivate;
-class ObjectEndPoint : public QObject
+class ObjectEndPoint;
+
+class QRemoteServiceControlLocalSocketPrivate: public QRemoteServiceControlPrivate
 {
     Q_OBJECT
 public:
-    enum Type {
-        Service = 0,
-        Client
-    };
+    QRemoteServiceControlLocalSocketPrivate(QObject* parent);
+    void publishServices(const QString& ident );
 
-    ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent = 0);
-    ~ObjectEndPoint();
-    QObject* constructProxy(const QRemoteServiceIdentifier& ident);
-
-    void objectRequest(const QServicePackage& p);
-    void methodCall(const QServicePackage& p);
-    void propertyCall(const QServicePackage& p);
-
-    QVariant invokeRemote(int metaIndex, const QVariantList& args, int returnType);
-    QVariant invokeRemoteProperty(int metaIndex, const QVariant& arg, int returnType, QMetaObject::Call c);
+public slots:
+    void processIncoming();
     
-Q_SIGNALS:
-    void pendingRequestFinished();
-
-public Q_SLOTS:
-    void newPackageReady();
-    void disconnected();
-
 private:
-    void waitForResponse(const QUuid& requestId);
+    bool createServiceEndPoint(const QString& ident);
 
-    QServiceIpcEndPoint* dispatch;
-    QPointer<QObject> service;
-    ObjectEndPointPrivate* d;
+    QLocalServer* localServer;
+    QList<ObjectEndPoint*> pendingConnections;
 };
 
 QTM_END_NAMESPACE
 
-#endif //OBJECT_ENDPOINT_H
+#endif
