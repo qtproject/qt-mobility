@@ -56,6 +56,7 @@ Rectangle {
     PositionSource {
         id: positionSource
         updateInterval: 1000
+	nmeaSource: "nmealog.txt"
     }
     Column {
         id: data
@@ -67,9 +68,9 @@ Rectangle {
         Text {text: "updateInterval: "     + positionSource.updateInterval}
         Text {text: "active: "     + positionSource.active}
         Text {text: "<==== Position ====>"}
-        Text {text: "latitude: "   + positionSource.position.latitude}
-        Text {text: "longitude: "   + positionSource.position.longitude}
-        Text {text: "altitude: "   + positionSource.position.altitude}
+        Text {text: "latitude: "   + positionSource.position.coordinate.latitude}
+        Text {text: "longitude: "   + positionSource.position.coordinate.longitude}
+        Text {text: "altitude: "   + positionSource.position.coordinate.altitude}
         Text {text: "speed: " + positionSource.position.speed}
         Text {text: "timestamp: "  + positionSource.position.timestamp}
         Text {text: "altitudeValid: "  + positionSource.position.altitudeValid}

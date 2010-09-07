@@ -55,69 +55,62 @@ Rectangle {
     LandmarkModel { }
     LandmarkCategory { }
     LandmarkCategoryModel { }
-    LandmarkFilter { }
+    LandmarkNameFilter { }
+    LandmarkProximityFilter { }
     LandmarkIntersectionFilter { }
     LandmarkUnionFilter { }
 
     // Example: landmark name filter
-    LandmarkFilter {
+    LandmarkNameFilter {
 	id: landmarkFilterUndercity
-	type: LandmarkFilter.Name
-	value: "Undercity"
+	name: "Undercity"
     }    
-    // Example: landmark proximity filters
-    LandmarkFilter {
+    // Example: landmark proximity filter
+    LandmarkProximityFilter {
         id: landmarkFilterSpecificLocation
-	type: LandmarkFilter.Proximity
-	value: Position {
-            id: position
-	    longitude:  10
-	    latitude: 20
-	    radius: 500
-	}
+	coordinate: Coordinate {
+	        longitude: 10
+		latitude: 20
+        }
+	radius: 500
     }
+
     PositionSource {
         id: myPosition
         updateInterval: 1000
     }
-    LandmarkFilter {
+    LandmarkProximityFilter {
         id: landmarkFilterMyCurrentLocation
-	type: LandmarkFilter.Proximity
-	value: myPosition.position
+	coordinate: myPosition.position.coordinate
+	radius: 500
     }
     
     // Example: landmark intersection filter
     LandmarkIntersectionFilter {
         id: landmarkIntersectionFilterNameAndProximity
-	LandmarkFilter {
-	    type: LandmarkFilter.Name
-	    value: "Darwin"
+	LandmarkNameFilter {
+	    name: "Darwin"
         }
-	LandmarkFilter {
-	    type: LandmarkFilter.Proximity
-	    value: Position {
+	LandmarkProximityFilter {
+	    coordinate: Coordinate {
 	        longitude:  10
 	        latitude: 20
+		}
 	        radius: 500
-	    }
         }
     }
+
     
     // Example: landmark union filter
     LandmarkUnionFilter {
         id: landmarkUnionFilterNameAndProximity
-	LandmarkFilter {
-	    type: LandmarkFilter.Name
-	    value: "Nimbin"
+	LandmarkNameFilter {
+	    name: "Nimbin"
         }
-	LandmarkFilter {
-	    type: LandmarkFilter.Proximity
-	    value: Position {
-	        longitude:  myPosition.position.longitude
-	        latitude: myPosition.position.latitude
-	        radius: 50
-	    }
-        }
+	LandmarkProximityFilter {
+            coordinate: myPosition.position.coordinate
+	    radius: 50
+	}
     }
     
     // Example: landmark model
@@ -132,6 +125,8 @@ Rectangle {
 	// filter determines what data is requested
 	//filter: landmarkFilterUndercity
 	
+	// If seen convinient, the landmarks can be enumerated like this as well, instead of 
+	// accessing them via model
 	onLandmarksChanged: {
 	    console.log("Landmark count is: "+ count);
 	    for (var index = 0; index < landmarks.length; index++)  {
@@ -142,15 +137,15 @@ Rectangle {
 	/* 
 	// Alternatively filter could be declared directly
 	filter: LandmarkIntersectionFilter {
-	    LandmarkFilter {
+	    LandmarkNameFilter {
 	        ...
 	    }
 	    LandmarkUnionFilter {
 	        LandmarkIntersectionFilter {
-		    LandmarkFilter {
+		    LandmarkNameFilter {
 		        ...
 		    }
-		    LandmarkFilter {
+		    LandmarkProximityFilter {
 		        ...
 		    }
 		}
@@ -167,14 +162,11 @@ Rectangle {
     LandmarkCategoryModel {
         id: categoriesOfGivenLandmark
 	autoUpdate: false
-	
 	// You can assign a Landmark here. That causes the LandmarkCategoryModel to 
 	// provide the categories the landmark belongs to. However, the Landmark needs to come from
 	// LandmarkModel because it needs to have internal IDs set correctly. Preferably it should be assigned
 	// either by iterating list of landmarks from model, or by setting it in the landmark model's delegate.
-        // (although the 'role' for providing the landmark instance is currently not implemented)
 	// landmark: 
-	
 	limit: 5
 	offset:0
     }
@@ -196,16 +188,20 @@ Rectangle {
     Component {
 	id: landmarklistdelegate
 	Item {
-	    width: 200; height: 50
-	    Text { id: nameField; text: name }
-	    Text { id: phoneField; text: "  tel:"  + phoneNumber; anchors.left: nameField.right }
-	    Text { id: latitudeField; text: "  lat:"  + latitude;  anchors.left: phoneField.right }
-	    Text { id: longitudeField; text: "  lon:"  + longitude;  anchors.left: latitudeField.right }
-	    Text { id: altitudeeField; text: "  alt:"  + altitude;  anchors.left: longitudeField.right }
-	    // Set landmark to the model, few lines of code missing still
-	    // categoriesOfGivenLandmark.landmark = landmark
+	        width: 200; height: 50
+                Text {
+                    id: nameField; text: landmark.name
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked: categoriesOfGivenLandmark.landmark = landmark
+                    }
+                }
+                Text { id: phoneField; text: "  tel:"  + landmark.phoneNumber; anchors.left: nameField.right;}
+	        Text { id: latitudeField; text: "  lat:"  + landmark.coordinate.latitude;  anchors.left: phoneField.right }
+	        Text { id: longitudeField; text: "  lon:"  + landmark.coordinate.longitude;  anchors.left: latitudeField.right }
+		}
         }
-    }    
+
     Component {
 	id: categorylistdelegate
 	Item {
