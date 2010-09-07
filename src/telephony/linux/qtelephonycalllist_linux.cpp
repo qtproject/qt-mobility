@@ -92,6 +92,8 @@ void QTelephonyCallListPrivate::emitActiveCallAdded(QTelephonyCallInfoPrivate& c
     QTelephonyCallInfo callinfo;
     callinfo.d = QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(&call);
     emit p->activeCallAdded(callinfo);
+    if(callInfoList.count() == 1 && p->enableHasActiveCallsNotify)
+        emit p->hasActiveCalls(true);
 }
 
 void QTelephonyCallListPrivate::newChannelsSlot(const ChannelsArray& channelsarray)
@@ -142,6 +144,8 @@ void QTelephonyCallListPrivate::statusChangedSlot(const QString& status)
             emit emitActiveCallRemoved(*callInfoList[i].data());
         }
         callInfoList.clear();
+        if(p->enableHasActiveCallsNotify)
+            emit p->hasActiveCalls(false);
     }
 }
 

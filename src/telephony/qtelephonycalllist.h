@@ -62,19 +62,19 @@ public:
     explicit QTelephonyCallList(QObject *parent = 0);
     virtual ~QTelephonyCallList();
 
-    Q_PROPERTY(int activeCallCount READ activeCallCount NOTIFY activeCallCountChanged)
+    Q_PROPERTY(int activeCallCount READ activeCallCount)
 
 Q_SIGNALS:
     void activeCallStatusChanged(const QTelephonyCallInfo& call);
     void activeCallRemoved(const QTelephonyCallInfo& call);
     void activeCallAdded(const QTelephonyCallInfo& call);
-    void activeCallCountChanged();
+    void hasActiveCalls(bool value);
 
 public:
     QList<QTelephonyCallInfo > activeCalls(const QTelephony::CallType& calltype = QTelephony::Any) const;
     int activeCallCount() const;
 
-protected:
+private:
     QTelephonyCallListPrivate* d;
     friend class QTelephonyCallListPrivate;
 
@@ -83,7 +83,7 @@ private:
     bool enableCallStatusChangeNotify;
     bool enableCallRemovedNotify;
     bool enableCallAddedNotify;
-    bool enableCallCountChangedNotify;
+    bool enableHasActiveCallsNotify;
 };
 
 QTM_END_NAMESPACE

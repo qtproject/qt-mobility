@@ -62,7 +62,9 @@ public:
     QTelephonyCallInfo();
     QTelephonyCallInfo(const QTelephonyCallInfo& other);
     ~QTelephonyCallInfo();
-
+    bool operator ==(const QTelephonyCallInfo& other) const;
+    bool operator !=(const QTelephonyCallInfo& other) const;
+    QTelephonyCallInfo& operator=(const QTelephonyCallInfo& other);
     QString remotePartyIdentifier() const;
     unsigned int type() const;
     QString subType() const;
