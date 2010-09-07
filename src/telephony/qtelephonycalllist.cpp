@@ -102,10 +102,6 @@ QTM_BEGIN_NAMESPACE
 */
 QTelephonyCallList::QTelephonyCallList(QObject *parent)
     : QObject(parent)
-    , enableCallStatusChangeNotify(false)
-    , enableCallRemovedNotify(false)
-    , enableCallAddedNotify(false)
-    , enableHasActiveCallsNotify(false)
 {
     qDebug() << "QTelephonyCallList::QTelephonyCallList(QObject *parent)";
     d = new QTelephonyCallListPrivate(this);
@@ -147,22 +143,6 @@ int QTelephonyCallList::activeCallCount() const
         return d->activeCallCount();
     return 0;
 }
-
-void QTelephonyCallList::connectNotify ( const char * signal )
-{
-    qDebug() << "connectNotify";
-    if (QLatin1String(signal) == SIGNAL(activeCallStatusChanged(QTelephonyCallInfo)))
-        enableCallStatusChangeNotify = true;
-    else if (QLatin1String(signal) == SIGNAL(activeCallRemoved(QTelephonyCallInfo)))
-        enableCallRemovedNotify = true;
-    else if (QLatin1String(signal) == SIGNAL(activeCallAdded(QTelephonyCallInfo)))
-        enableCallAddedNotify = true;
-    else if (QLatin1String(signal) == SIGNAL(hasActiveCalls(bool))){
-        enableHasActiveCallsNotify = true;
-        emit hasActiveCalls((activeCallCount() > 0));
-    }
-}
-
 
 #include "moc_qtelephonycalllist.cpp"
 
