@@ -198,7 +198,7 @@ void QSystemInfoLinuxCommonPrivate::startLanguagePolling()
         langCached = checkLang;
     }
     langTimer = new QTimer(this);
-    QTimer::singleShot(1000, this, SLOT(startLanguagePolling()));
+    QTimer::singleShot(5000, this, SLOT(startLanguagePolling()));
 }
 
 QString QSystemInfoLinuxCommonPrivate::currentLanguage() const
@@ -1984,7 +1984,8 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
-        QHalInterface iface;
+qDebug() << Q_FUNC_INFO;
+QHalInterface iface;
 
         QStringList list = iface.findDeviceByCapability("battery");
         if(!list.isEmpty()) {
@@ -2037,6 +2038,27 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
             }
         }
 
+        list = iface.findDeviceByCapability("input.keyboard");
+        if(!list.isEmpty()) {
+            QStringList btList = iface.findDeviceByCapability("bluetooth_acl");
+            foreach(const QString btdev, btList) {
+                foreach(const QString dev, list) {
+                    if(dev.contains(btdev.section("/",-1))) { //ugly, I know.
+                        qDebug() <<"Found wireless keyboard:"<< dev << btList;
+                     //   hasWirelessKeyboard = true;
+                        halIfaceDevice = new QHalDeviceInterface(dev);
+                        if (halIfaceDevice->isValid() && halIfaceDevice->setConnections()) {
+                            if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
+                                        this,SLOT(halChanged(int,QVariantList)))) {
+                                qDebug() << "connection malfunction";
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
 #endif
     }
 }
@@ -2066,7 +2088,28 @@ void QSystemDeviceInfoLinuxCommonPrivate::halChanged(int,QVariantList map)
         || (map.at(i).toString() == "battery.rechargeable.is_charging")) {
             QSystemDeviceInfo::PowerState state = currentPowerState();
             emit powerStateChanged(state);
-       }} //end map
+       }
+
+        if((map.at(i).toString() == "input.keyboard")) {
+            qDebug()<<"keyboard changed";
+
+        }
+/*
+
+        list = iface.findDeviceByCapability("input.keyboard");
+        if(!list.isEmpty()) {
+            QStringList btList = iface.findDeviceByCapability("bluetooth_acl");
+            foreach(const QString btdev, btList) {
+                foreach(const QString dev, list) {
+                    if(dev.contains(btdev.section("/",-1))) { //ugly, I know.
+                        qDebug() <<"Found wireless keyboard:"<< dev << btList;
+                        hasWirelessKeyboard = true;
+                    }
+
+                }
+            }
+        } */
+    } //end map
 }
 #endif
 
@@ -2335,6 +2378,60 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
                                             this,SLOT(bluezPropertyChanged(QString, QDBusVariant)))) {
                      qDebug() << "bluez could not connect signal";
                  }
+                 QDBusReply<QVariantMap > reply =  adapterInterface->call(QLatin1String("GetProperties"));
+                 QVariant var;
+                 QVariantMap map = reply.value();
+                 QString property="Powered";
+                 if (map.contains(property)) {
+                     btPowered = map.value(property).toBool();
+                 }
+
+                 property="Devices";
+                 if (map.contains(property)) {
+                     QList<QDBusObjectPath> devicesList = qdbus_cast<QList<QDBusObjectPath> >(map.value(property));
+                     foreach(const QDBusObjectPath device, devicesList) {
+                         qDebug() << device.path();
+                         QDBusInterface *devadapterInterface = new QDBusInterface("org.bluez",
+                                                                                  device.path(),
+                                                                                  "org.bluez.Device",
+                                                                                  dbusConnection);
+                         if (!dbusConnection.connect("org.bluez",
+                                                   device.path(),
+                                                    "org.bluez.Device",
+                                                    "PropertyChanged",
+                                                    this,SLOT(bluezPropertyChanged(QString, QDBusVariant)))) {
+                             qDebug() << "bluez could not connect signal";
+                         }
+                         QDBusReply<QVariantMap > reply =  devadapterInterface->call(QLatin1String("GetProperties"));
+                         QVariant var;
+                         QVariantMap map = reply.value();
+                         QString property="Class";
+                         //0x002540  9536
+                         if (map.contains(property)) {
+                             uint classId = map.value(property).toUInt();
+                             if(classId = 9536 &&  map.value("Connected").toBool()) {
+                                 // keyboard"
+                                 hasWirelessKeyboardConnected = true;
+                                 qDebug() <<map.value("Name").toString() << map.value(property);
+                             }
+                         }
+                     }
+                 }
+             }
+
+             adapterInterface = new QDBusInterface("org.bluez",
+                                                   reply.value().path(),
+                                                   "org.bluez.Input",
+                                                   dbusConnection);
+
+             if (adapterInterface->isValid()) {
+                 if (!dbusConnection.connect("org.bluez",
+                                           reply.value().path(),
+                                            "org.bluez.Input",
+                                            "PropertyChanged",
+                                            this,SLOT(bluezPropertyChanged(QString, QDBusVariant)))) {
+                     qDebug() << "bluez could not connect Input signal";
+                 }
              }
          }
      }
@@ -2343,13 +2440,63 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
  void QSystemDeviceInfoLinuxCommonPrivate::bluezPropertyChanged(const QString &str, QDBusVariant v)
   {
      if(str == "Powered") {
-          emit bluetoothStateChanged(v.variant().toBool());
+             if(btPowered != v.variant().toBool()) {
+             btPowered = !btPowered;
+             emit bluetoothStateChanged(btPowered);
+         }
       }
+     if(str == "Connected") {
+         bool conn =  v.variant().toBool();
+
+         QDBusInterface *devadapterInterface = new QDBusInterface("org.bluez",
+                                                                  str,
+                                                                  "org.bluez.Device",
+                                                                   QDBusConnection::systemBus());
+         QDBusReply<QVariantMap > reply =  devadapterInterface->call(QLatin1String("GetProperties"));
+         QVariant var;
+         QVariantMap map = reply.value();
+         QString property="Class";
+         //0x002540  9536
+         if (map.contains(property)) {
+             uint classId = map.value(property).toUInt();
+             if(classId = 9536 &&  conn) {
+                 // keyboard"
+                     hasWirelessKeyboardConnected = conn;
+                     emit wirelessKeyboardConnected(conn);
+                 qDebug() <<map.value("Name").toString() << map.value(property);
+             }
+         }
+     }
       // Pairable Name Class Discoverable
   }
  #endif
 
  bool QSystemDeviceInfoLinuxCommonPrivate::currentBluetoothPowerState()
+ {
+     return btPowered;
+ }
+
+ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoLinuxCommonPrivate::keyboardType()
+ {
+     QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
+     QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags = QSystemDeviceInfo::UnknownKeyboard;
+
+     if((methods & QSystemDeviceInfo::Keyboard)) {
+         keyboardFlags = (keyboardFlags | QSystemDeviceInfo::FullQwertyKeyboard);
+   }
+     if(isWirelessKeyboardConnected()) {
+         keyboardFlags = (keyboardFlags | QSystemDeviceInfo::WirelessKeyboard);
+     }
+// how to check softkeys on desktop?
+     return keyboardFlags;
+ }
+
+ bool QSystemDeviceInfoLinuxCommonPrivate::isWirelessKeyboardConnected()
+ {
+     return hasWirelessKeyboardConnected;
+ }
+
+ bool QSystemDeviceInfoLinuxCommonPrivate::isKeyboardFlipOpen()
  {
      return false;
  }

@@ -6,7 +6,7 @@
 #include <qlandmark.h>
 #include <QtDeclarative/qdeclarative.h>
 #include <qdeclarativelandmarkcategory_p.h>
-
+#include <qdeclarativecoordinate_p.h>
 
 // Define this to get qDebug messages
 // #define QDECLARATIVE_LANDMARK_DEBUG
@@ -25,8 +25,8 @@ class QDeclarativeLandmark : public QObject
     Q_PROPERTY(QString description READ description WRITE setDescription NOTIFY descriptionChanged)
     Q_PROPERTY(double radius READ radius WRITE setRadius NOTIFY radiusChanged)
     Q_PROPERTY(QUrl iconSource READ iconSource WRITE setIconSource NOTIFY iconSourceChanged)
+    Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate NOTIFY coordinateChanged())
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
-    //Q_PROPERTY(QDeclarativeListProperty<QDeclarativeLandmarkCategoryId> categoryId READ categoryId NOTIFY categoryIdChanged)
 
 public:
     explicit QDeclarativeLandmark(QObject* parent = 0);
@@ -43,7 +43,7 @@ public:
     void setIconSource(const QUrl& iconSource);
     QUrl url();
     void setUrl(const QUrl& url);
-    //QDeclarativeListProperty<QDeclarativeLandmarkCategory> categoryId();
+    QDeclarativeCoordinate* coordinate();
 
 signals:
     void nameChanged();
@@ -53,17 +53,17 @@ signals:
     void iconSourceChanged();
     void urlChanged();
     void categoryIdChanged();
+    void coordinateChanged();
 
 private:
     friend class QDeclarativeLandmarkModel;
     void setLandmark(const QLandmark& landmark);
     friend class QDeclarativeLandmarkCategoryModel;
     QList<QLandmarkCategoryId> categoryIds () const;
+    QDeclarativeCoordinate m_coordinate;
 
 private:
     QLandmark m_landmark;
-    //QList<QDeclarativeLandmarkCategoryId*> m_categoryIds;
-
 };
 
 QTM_END_NAMESPACE

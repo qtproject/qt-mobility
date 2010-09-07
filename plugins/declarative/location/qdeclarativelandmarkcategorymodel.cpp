@@ -24,6 +24,8 @@ QDeclarativeLandmarkCategoryModel::QDeclarativeLandmarkCategoryModel(QObject *pa
 QDeclarativeLandmarkCategoryModel::~QDeclarativeLandmarkCategoryModel()
 {
     delete m_fetchRequest;
+    qDeleteAll(m_categoryMap.values());
+    m_categoryMap.clear();
 }
 
 // When the parent is valid it means that rowCount is returning the number of children of parent.
@@ -68,7 +70,7 @@ int QDeclarativeLandmarkCategoryModel::count() const
 void QDeclarativeLandmarkCategoryModel::startUpdate()
 {
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
-    qDebug("QDeclarativeLandmarkCategoryModel::update()");
+    qDebug("QDeclarativeLandmarkCategoryModel::startUpdate()");
 #endif
     if (!m_manager)
         return;
@@ -84,6 +86,7 @@ void QDeclarativeLandmarkCategoryModel::startUpdate()
     }
     QObject::connect(m_fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this, SLOT(fetchRequestStateChanged(QLandmarkAbstractRequest::State)));
     m_fetchRequest->start();
+    m_updatePending = false; // Allow requesting updates again
 }
 
 void QDeclarativeLandmarkCategoryModel::setFetchRange()
@@ -99,6 +102,9 @@ void QDeclarativeLandmarkCategoryModel::setFetchRange()
 
 void QDeclarativeLandmarkCategoryModel::cancelUpdate()
 {
+#ifdef QDECLARATIVE_LANDMARK_DEBUG
+    qDebug("QDeclarativeLandmarkCategoryModel::cancelUpdate()");
+#endif
     if (m_fetchRequest) {
         delete m_fetchRequest;
         m_fetchRequest = 0;
@@ -107,6 +113,8 @@ void QDeclarativeLandmarkCategoryModel::cancelUpdate()
 
 void QDeclarativeLandmarkCategoryModel::convertCategoriesToDeclarative()
 {
+    QList<QString> categoriesToRemove = m_categoryMap.keys();
+
     foreach(const QLandmarkCategory& category, m_categories) {
         if (!m_categoryMap.contains(category.categoryId().localId())) {
             QDeclarativeLandmarkCategory* declarativeLandmarkCategory = new QDeclarativeLandmarkCategory(this);
@@ -115,8 +123,15 @@ void QDeclarativeLandmarkCategoryModel::convertCategoriesToDeclarative()
         } else {
             // The landmark exists already, update it
             m_categoryMap.value(category.categoryId().localId())->setCategory(category);
+            // Item is still valid, remove it from the list of removables
+            categoriesToRemove.removeOne(category.categoryId().localId());
         }
     }
+    foreach (const QString removable, categoriesToRemove) {
+        delete m_categoryMap.value(removable);
+        m_categoryMap.remove(removable);
+    }
+    emit categoriesChanged();
 }
 
 void QDeclarativeLandmarkCategoryModel::fetchRequestStateChanged(QLandmarkAbstractRequest::State state)
@@ -162,6 +177,50 @@ void QDeclarativeLandmarkCategoryModel::fetchRequestStateChanged(QLandmarkAbstra
     }
     // Convert into declarative classes --> possible to return categories in a list in QML
     convertCategoriesToDeclarative();
+}
+
+// For testing purposes in order to access ordered data (i.e. as filters dictate)
+QList<QLandmarkCategory> QDeclarativeLandmarkCategoryModel::categoryList()
+{
+    return m_categories;
+}
+
+QDeclarativeListProperty<QDeclarativeLandmarkCategory> QDeclarativeLandmarkCategoryModel::categories()
+{
+    return QDeclarativeListProperty<QDeclarativeLandmarkCategory>(this,
+                                                          0, // opaque data parameter
+                                                          categories_append,
+                                                          categories_count,
+                                                          categories_at,
+                                                          categories_clear);
+}
+
+void QDeclarativeLandmarkCategoryModel::categories_append(QDeclarativeListProperty<QDeclarativeLandmarkCategory>* prop, QDeclarativeLandmarkCategory* category)
+{
+    Q_UNUSED(prop);
+    Q_UNUSED(category);
+    qWarning() << "LandmarkModel: appending categories is not currently supported";
+}
+
+int QDeclarativeLandmarkCategoryModel::categories_count(QDeclarativeListProperty<QDeclarativeLandmarkCategory>* prop)
+{
+    // The 'prop' is in a sense 'this' for this static function (as given in categories() function)
+    return static_cast<QDeclarativeLandmarkCategoryModel*>(prop->object)->m_categoryMap.values().count();
+}
+
+QDeclarativeLandmarkCategory* QDeclarativeLandmarkCategoryModel::categories_at(QDeclarativeListProperty<QDeclarativeLandmarkCategory>* prop, int index)
+{
+    return static_cast<QDeclarativeLandmarkCategoryModel*>(prop->object)->m_categoryMap.values().at(index);
+}
+
+void QDeclarativeLandmarkCategoryModel::categories_clear(QDeclarativeListProperty<QDeclarativeLandmarkCategory>* prop)
+{
+    QDeclarativeLandmarkCategoryModel* model = static_cast<QDeclarativeLandmarkCategoryModel*>(prop->object);
+    QMap<QString, QDeclarativeLandmarkCategory*>* categoryMap = &model->m_categoryMap;
+    qDeleteAll(categoryMap->values());
+    categoryMap->clear();
+    model->m_categories.clear();
+    emit model->categoriesChanged();
 }
 
 #include "moc_qdeclarativelandmarkcategorymodel_p.cpp"

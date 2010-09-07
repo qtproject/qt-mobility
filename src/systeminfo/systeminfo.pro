@@ -26,7 +26,7 @@ PRIVATE_HEADERS += qsysteminfocommon_p.h
 DEFINES += QT_BUILD_SYSINFO_LIB QT_MAKEDLL
 
 
-win32 {
+win32:!simulator {
     contains(CONFIG,release) {
        CONFIG-=console
     }
@@ -55,7 +55,7 @@ win32 {
         -lCoredll
 }
 
-unix: {
+unix:!simulator {
     QT += gui
     maemo5|maemo6|linux-*: {
         contains(bluez_enabled, yes):DEFINES += BLUEZ_SUPPORTED
@@ -207,6 +207,12 @@ unix: {
         QtSystemInfoDeployment.path = /sys/bin
         DEPLOYMENT += QtSystemInfoDeployment
     }
+}
+simulator {
+    SOURCES += qsysteminfo_simulator.cpp qsysteminfodata_simulator.cpp
+    HEADERS += qsysteminfo_simulator_p.h qsysteminfodata_simulator_p.h
+    INCLUDEPATH += ../mobilitysimulator
+    qtAddLibrary(QtMobilitySimulator)
 }
 
 HEADERS += $$PUBLIC_HEADERS

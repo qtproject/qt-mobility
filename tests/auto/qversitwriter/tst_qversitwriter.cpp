@@ -288,6 +288,7 @@ void tst_QVersitWriter::testWritingDocument()
     mOutputDevice->seek(0);
     QByteArray result(mOutputDevice->readAll());
 
+    if (result!=expected) qDebug() << result << expected;
     QCOMPARE(result, expected);
 }
 
@@ -326,36 +327,49 @@ void tst_QVersitWriter::testWritingDocument_data()
             "FN:Bob\r\n"
             "END:VCARD\r\n"
             );
+    
+    {
+        QVersitDocument document(QVersitDocument::ICalendar20Type);
+        document.setComponentType(QLatin1String("VEVENT"));
+        property.setValueType(QVersitProperty::PreformattedType);
+        property.setName(QLatin1String("RRULE"));
+        property.setValue(QLatin1String("FREQ=MONTHLY;BYMONTHDAY=1,3"));
+        document.addProperty(property);
+        QTest::newRow("basic iCalendar 2.0") << document << QByteArray(
+                "BEGIN:VEVENT\r\n"
+                "RRULE:FREQ=MONTHLY;BYMONTHDAY=1,3\r\n"
+                "END:VEVENT\r\n");
+    }
 
     {
-    QVersitDocument document(QVersitDocument::ICalendar20Type);
-    document.setComponentType(QLatin1String("VCALENDAR"));
-    QVersitProperty property;
-    property.setName(QLatin1String("PRODID"));
-    property.setValue(QLatin1String("-//hacksw/handcal//NONSGML v1.0//EN"));
-    document.addProperty(property);
-    QVersitDocument nested(QVersitDocument::ICalendar20Type);
-    nested.setComponentType(QLatin1String("VEVENT"));
-    property.setName(QLatin1String("DTSTART"));
-    property.setValue(QLatin1String("19970714T170000Z"));
-    nested.addProperty(property);
-    property.setName(QLatin1String("DTEND"));
-    property.setValue(QLatin1String("19970715T035959Z"));
-    nested.addProperty(property);
-    property.setName(QLatin1String("SUMMARY"));
-    property.setValue(QLatin1String("Bastille Day Party"));
-    nested.addProperty(property);
-    document.addSubDocument(nested);
-    QTest::newRow("iCalendar 2.0 from spec") << document << QByteArray(
-                    "BEGIN:VCALENDAR\r\n"
-                    "VERSION:2.0\r\n"
-                    "PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n"
-                    "BEGIN:VEVENT\r\n"
-                    "DTSTART:19970714T170000Z\r\n"
-                    "DTEND:19970715T035959Z\r\n"
-                    "SUMMARY:Bastille Day Party\r\n"
-                    "END:VEVENT\r\n"
-                    "END:VCALENDAR\r\n");
+        QVersitDocument document(QVersitDocument::ICalendar20Type);
+        document.setComponentType(QLatin1String("VCALENDAR"));
+        QVersitProperty property;
+        property.setName(QLatin1String("PRODID"));
+        property.setValue(QLatin1String("-//hacksw/handcal//NONSGML v1.0//EN"));
+        document.addProperty(property);
+        QVersitDocument nested(QVersitDocument::ICalendar20Type);
+        nested.setComponentType(QLatin1String("VEVENT"));
+        property.setName(QLatin1String("DTSTART"));
+        property.setValue(QLatin1String("19970714T170000Z"));
+        nested.addProperty(property);
+        property.setName(QLatin1String("DTEND"));
+        property.setValue(QLatin1String("19970715T035959Z"));
+        nested.addProperty(property);
+        property.setName(QLatin1String("SUMMARY"));
+        property.setValue(QLatin1String("Bastille Day Party"));
+        nested.addProperty(property);
+        document.addSubDocument(nested);
+        QTest::newRow("iCalendar 2.0 from spec") << document << QByteArray(
+                        "BEGIN:VCALENDAR\r\n"
+                        "VERSION:2.0\r\n"
+                        "PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n"
+                        "BEGIN:VEVENT\r\n"
+                        "DTSTART:19970714T170000Z\r\n"
+                        "DTEND:19970715T035959Z\r\n"
+                        "SUMMARY:Bastille Day Party\r\n"
+                        "END:VEVENT\r\n"
+                        "END:VCALENDAR\r\n");
     }
 }
 

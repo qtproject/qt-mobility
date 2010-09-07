@@ -561,6 +561,9 @@ private slots:
     void filterLandmarksProximity();
     void filterLandmarksProximityAsync();
 
+    void filterLandmarksProximityOrder();
+    void filterLandmarksProximityOrder_data();
+
     void filterLandmarksNearest();
     void filterLandmarksNearestAsync();
 
@@ -616,6 +619,8 @@ private slots:
 
     void categoryLimitOffset();
     //TODO: void categoryLimitOffsetAsync()
+
+    void notificationCheck();
 };
 
 
@@ -3548,6 +3553,71 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
     }
 }
 
+void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximityOrder()
+{
+    QFETCH(QString, type);
+    QLandmark lm1;
+    lm1.setName("LM1");
+    lm1.setCoordinate(QGeoCoordinate(20,19));
+    m_manager->saveLandmark(&lm1);
+
+    QLandmark lm2;
+    lm2.setName("LM2");
+    lm2.setCoordinate(QGeoCoordinate(20,50));
+    m_manager->saveLandmark(&lm2);
+
+    QLandmark lm3;
+    lm3.setName("LM3");
+    lm3.setCoordinate(QGeoCoordinate(20, 30));
+    m_manager->saveLandmark(&lm3);
+
+    QLandmark lm4;
+    lm4.setName("LM4");
+    lm4.setCoordinate(QGeoCoordinate(5,20));
+    m_manager->saveLandmark(&lm4);
+
+    QLandmark lm5;
+    lm5.setName("LM5");
+    lm5.setCoordinate(QGeoCoordinate(80,20));
+    m_manager->saveLandmark(&lm5);
+
+    QLandmark lm6;
+    lm6.setName("LM6");
+    lm6.setCoordinate(QGeoCoordinate(60,20));
+    m_manager->saveLandmark(&lm6);
+
+    QLandmarkProximityFilter proximityFilter;
+    proximityFilter.setCoordinate(QGeoCoordinate(20,20));
+    QList<QLandmark> lms;
+    QVERIFY(doFetch(type,proximityFilter, &lms));
+    QCOMPARE(lms.count(), 6);
+    QCOMPARE(lms.at(0), lm1);
+    QCOMPARE(lms.at(1), lm3);
+    QCOMPARE(lms.at(2), lm4);
+    QCOMPARE(lms.at(3), lm2);
+    QCOMPARE(lms.at(4), lm6);
+    QCOMPARE(lms.at(5), lm5);
+
+    double radius = QGeoCoordinate(20,20).distanceTo(QGeoCoordinate(20,50));
+    proximityFilter.setRadius(radius);
+    QVERIFY(doFetch(type, proximityFilter,&lms));
+
+    QCOMPARE(lms.count(),4);
+
+    QCOMPARE(lms.at(0), lm1);
+    QCOMPARE(lms.at(1), lm3);
+    QCOMPARE(lms.at(2), lm4);
+    QCOMPARE(lms.at(3), lm2);
+}
+
+void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximityOrder_data()
+{
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+}
+
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximityAsync() {
     QList<QGeoCoordinate> greenwhichFilterCoords;
     QList<QGeoCoordinate> datelineFilterCoords;
@@ -4677,6 +4747,78 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksIntersection() {
             QCOMPARE(idSet.contains(lm.landmarkId().localId()), false);
         }
     }
+
+    m_manager->removeLandmarks(m_manager->landmarkIds());
+
+    QCOMPARE(m_manager->landmarkIds().count(), 0);
+
+    QLandmark lm1;
+    lm1.setName("LM1");
+    lm1.setCoordinate(QGeoCoordinate(10,0));
+    lm1.addCategoryId(cat1.categoryId());
+    m_manager->saveLandmark(&lm1);
+
+    QLandmark lm2;
+    lm2.setName("LM2");
+    lm2.setCoordinate(QGeoCoordinate(10,20));
+    lm2.addCategoryId(cat1.categoryId());
+    m_manager->saveLandmark(&lm2);
+
+    QLandmark lm3;
+    lm3.setName("LM3");
+    lm3.setCoordinate(QGeoCoordinate(10,21));
+    lm3.addCategoryId(cat2.categoryId());
+    m_manager->saveLandmark(&lm3);
+
+    QLandmark lm4;
+    lm4.setName("LM4");
+    lm4.setCoordinate(QGeoCoordinate(10,22));
+    lm4.addCategoryId(cat3.categoryId());
+    m_manager->saveLandmark(&lm4);
+
+    QLandmark lm5;
+    lm5.setName("LM5");
+    lm5.setCoordinate(QGeoCoordinate(10,22));
+    lm5.addCategoryId(cat1.categoryId());
+    lm5.addCategoryId(cat2.categoryId());
+    m_manager->saveLandmark(&lm5);
+
+    QLandmark lm6;
+    lm6.setName("LM6");
+    lm6.setCoordinate(QGeoCoordinate(10,50));
+    m_manager->saveLandmark(&lm6);
+
+    filter.clear();
+    QLandmarkProximityFilter proximityFilter(QGeoCoordinate(10,21),120000);
+    filter.append(proximityFilter);
+    QCOMPARE(m_manager->landmarks(filter).count(), 4);
+
+    QLandmarkCategoryFilter cat1Filter;
+    cat1Filter.setCategoryId(cat1.categoryId());
+    filter.append(cat1Filter);
+    QCOMPARE(m_manager->landmarks(filter).count(), 2);
+    lms =m_manager->landmarks(filter);
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm5));
+
+    QLandmarkCategoryFilter cat2Filter;
+    cat2Filter.setCategoryId(cat2.categoryId());
+    filter.append(cat2Filter);
+    QCOMPARE(m_manager->landmarks(filter).count(), 1);
+    lms =m_manager->landmarks(filter);
+    QVERIFY(lms.contains(lm5));
+
+    QLandmarkUnionFilter unionFilter;
+    unionFilter.append(cat1Filter);
+    unionFilter.append(cat2Filter);
+    filter.clear();
+    filter.append(proximityFilter);
+    filter.append(unionFilter);
+    QCOMPARE(m_manager->landmarks(filter).count(), 3);
+    lms = m_manager->landmarks(filter);
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm3));
+    QVERIFY(lms.contains(lm5));
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksIntersectionAsync() {
@@ -6823,7 +6965,7 @@ void tst_QLandmarkManagerEngineSqlite::exportLmx() {
         exportRequest.start();
         QTest::qWait(50);
         exportRequest.cancel();
-        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::CancelError,2000));
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::CancelError,2500));
     }
     QFile::remove(exportFile);
 }
@@ -7195,6 +7337,37 @@ void tst_QLandmarkManagerEngineSqlite::categoryLimitOffset() {
     //try with an offset which greater than the number of items
     cats = m_manager->categories( 100, 500, QLandmarkNameSort(Qt::AscendingOrder));
     QCOMPARE(cats.count(), 0);
+}
+
+void tst_QLandmarkManagerEngineSqlite::notificationCheck()
+{
+    QSignalSpy spyCatAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+    QSignalSpy spyLmAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+
+    QMap<QString,QString> parameters;
+    parameters.insert("filename", "test.db");
+
+    QLandmark lm1;
+    lm1.setName("LM1");
+    m_manager->saveLandmark(&lm1);
+
+    QTest::qWait(10);
+    QCOMPARE(spyCatAdd.count(),0);
+    QCOMPARE(spyLmAdd.count(),1);
+    delete m_manager;
+    m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", parameters);
+    connectNotifications();
+
+    QSignalSpy spyCatAdd2(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+    QSignalSpy spyLmAdd2(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+
+     QLandmarkCategory cat1;
+     cat1.setName("CAT1");
+     m_manager->saveCategory(&cat1);
+
+    QTest::qWait(10);
+    QCOMPARE(spyCatAdd2.count(),1);
+    QCOMPARE(spyLmAdd2.count(),0);
 }
 
 QTEST_MAIN(tst_QLandmarkManagerEngineSqlite)

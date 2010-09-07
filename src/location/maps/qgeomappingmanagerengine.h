@@ -73,8 +73,6 @@ public:
 
     virtual QGeoMapData* createMapData(QGraphicsGeoMap *geoMap) = 0;
 
-    //virtual void updateMapImage(QGeoMapData *mapData) = 0;
-
     QList<QGraphicsGeoMap::MapType> supportedMapTypes() const;
 
     QSize minimumImageSize() const;

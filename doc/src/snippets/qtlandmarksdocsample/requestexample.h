@@ -49,7 +49,10 @@
 #include "qlandmarkcategoryfetchrequest.h"
 #include "qlandmarkcategoryremoverequest.h"
 #include "qlandmarkremoverequest.h"
+#include "qlandmarkimportrequest.h"
+#include "qlandmarkexportrequest.h"
 #include "qlandmarkmanager.h"
+
 
 QTM_USE_NAMESPACE
 
@@ -81,6 +84,10 @@ private slots:
     void categoryRemoveRequestHandler(QLandmarkAbstractRequest::State);
     void landmarkRemoveRequest();
     void landmarkRemoveRequestHandler(QLandmarkAbstractRequest::State);
+    void landmarkImportRequest();
+    void landmarkImportRequestHandler(QLandmarkAbstractRequest::State);
+    void landmarkExportRequest();
+    void landmarkExportRequestHandler(QLandmarkAbstractRequest::State);
 
 private:
     QLandmarkManager *lmManager;
@@ -91,6 +98,8 @@ private:
     QLandmarkFetchRequest *lmFetchRequest;
     QLandmarkCategoryRemoveRequest *catRemoveRequest;
     QLandmarkRemoveRequest *lmRemoveRequest;
+    QLandmarkImportRequest *lmImportRequest;
+    QLandmarkExportRequest *lmExportRequest;
 
     QLandmarkManager *landmarkManager;
     QLandmarkCategoryId categoryId;

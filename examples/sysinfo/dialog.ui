@@ -97,6 +97,11 @@
            <string>Firmware</string>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>QtMobility</string>
+          </property>
+         </item>
         </widget>
        </item>
        <item row="3" column="3" colspan="2">

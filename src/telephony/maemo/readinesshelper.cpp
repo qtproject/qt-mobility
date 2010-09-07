@@ -109,9 +109,6 @@ namespace DBus
                     SIGNAL(invalidated(DBus::DBusProxy *, const QString &, const QString &)),
                     SLOT(onProxyInvalidated(DBus::DBusProxy *, const QString &, const QString &)));
         }
-
-        qDebug() << "ReadinessHelper: supportedStatuses =" << supportedStatuses;
-        qDebug() << "ReadinessHelper: supportedFeatures =" << supportedFeatures;
     }
 
     ReadinessHelper::Private::~Private()
@@ -125,8 +122,6 @@ namespace DBus
             currentStatus = newStatus;
             satisfiedFeatures.clear();
             missingFeatures.clear();
-
-            // retrieve all features that were requested for the new status
             pendingFeatures = requestedFeatures;
 
             if (supportedStatuses.contains(currentStatus)) {
@@ -135,7 +130,6 @@ namespace DBus
                 emit parent->statusReady(currentStatus);
             }
         } else {
-            qDebug() << "status changed while introspection process was running";
             pendingStatusChange = true;
             pendingStatus = newStatus;
         }
@@ -144,15 +138,8 @@ namespace DBus
     void ReadinessHelper::Private::setIntrospectCompleted(const Feature &feature,
             bool success, const QString &errorName, const QString &errorMessage)
     {
-        qDebug() << "ReadinessHelper::setIntrospectCompleted: feature:" << feature <<
-            "- success:" << success;
         if (pendingStatusChange) {
-            qDebug() << "ReadinessHelper::setIntrospectCompleted called while there is "
-                "a pending status change - ignoring";
-
             inFlightFeatures.remove(feature);
-
-            // ignore all introspection completed as the state changed
             if (!inFlightFeatures.isEmpty()) {
                 return;
             }
@@ -172,8 +159,6 @@ namespace DBus
             missingFeaturesErrors.insert(feature,
                     QPair<QString, QString>(errorName, errorMessage));
             if (errorName.isEmpty()) {
-                qDebug() << "warning: ReadinessHelper::setIntrospectCompleted: Feature" <<
-                    feature << "introspection failed but no error message was given";
             }
         }
 
@@ -190,13 +175,9 @@ namespace DBus
         }
 
         if (!supportedStatuses.contains(currentStatus)) {
-            qDebug() << "ignoring iterate introspection for status" << currentStatus;
-            // don't do anything just now to avoid spurious becomeReady finishes
             return;
         }
 
-        // take care to flag anything with dependencies in missing, and the
-        // stuff depending on them, as missing
         Introspectables::const_iterator i = introspectables.constBegin();
         Introspectables::const_iterator end = introspectables.constEnd();
         while (i != end) {
@@ -212,9 +193,6 @@ namespace DBus
             ++i;
         }
 
-        // check if any pending operations for becomeReady should finish now
-        // based on their requested features having nothing more than what
-        // satisfiedFeatures + missingFeatures has
         QString errorName;
         QString errorMessage;
         foreach (PendingReady *operation, pendingOperations) {
@@ -228,26 +206,19 @@ namespace DBus
         }
 
         if ((requestedFeatures - (satisfiedFeatures + missingFeatures)).isEmpty()) {
-            // all requested features satisfied or missing
             emit parent->statusReady(currentStatus);
             return;
         }
 
-        // update pendingFeatures with the difference of requested and
-        // satisfied + missing
         pendingFeatures -= (satisfiedFeatures + missingFeatures);
 
-        // find out which features don't have dependencies that are still pending
         Features readyToIntrospect;
         foreach (const Feature &feature, pendingFeatures) {
-            // missing doesn't have to be considered here anymore
             if ((introspectables[feature].mPriv->dependsOnFeatures - satisfiedFeatures).isEmpty()) {
                 readyToIntrospect.insert(feature);
             }
         }
 
-        // now readyToIntrospect should contain all the features which have
-        // all their feature dependencies satisfied
         foreach (const Feature &feature, readyToIntrospect) {
             if (inFlightFeatures.contains(feature)) {
                 continue;
@@ -258,29 +229,18 @@ namespace DBus
             Introspectable introspectable = introspectables[feature];
 
             if (!introspectable.mPriv->makesSenseForStatuses.contains(currentStatus)) {
-                // No-op satisfy features for which nothing has to be done in
-                // the current state
                 setIntrospectCompleted(feature, true);
-                return; // will be called with a single-shot soon again
+                return;
             }
 
             foreach (const QString &interface, introspectable.mPriv->dependsOnInterfaces) {
                 if (!interfaces.contains(interface)) {
-                    // If a feature is ready to introspect and depends on a interface
-                    // that is not present the feature can't possibly be satisfied
-                    qDebug() << "feature" << feature << "depends on interfaces" <<
-                        introspectable.mPriv->dependsOnInterfaces << ", but interface" << interface <<
-                        "is not present";
                     setIntrospectCompleted(feature, false,
                             QLatin1String(TELEPATHY_ERROR_NOT_AVAILABLE),
                             QLatin1String("Feature depend on interfaces that are not available"));
-                    return; // will be called with a single-shot soon again
+                    return;
                 }
             }
-
-            // yes, with the dependency info, we can even parallelize
-            // introspection of several features at once, reducing total round trip
-            // time considerably with many independent features!
             (*(introspectable.mPriv->introspectFunc))(introspectable.mPriv->introspectFuncData);
         }
     }
@@ -318,16 +278,11 @@ namespace DBus
 
     void ReadinessHelper::addIntrospectables(const Introspectables &introspectables)
     {
-        // QMap::unite will create multiple items if the key is already in the map
-        // so let's make sure we don't duplicate keys
         Introspectables::const_iterator i = introspectables.constBegin();
         Introspectables::const_iterator end = introspectables.constEnd();
         while (i != end) {
             Feature feature = i.key();
             if (mPriv->introspectables.contains(feature)) {
-                qDebug() << "warning: ReadinessHelper::addIntrospectables: trying to add an "
-                    "introspectable for feature" << feature << "but introspectable "
-                    "for this feature already exists";
             } else {
                 Introspectable introspectable = i.value();
                 mPriv->introspectables.insert(feature, introspectable);
@@ -337,9 +292,6 @@ namespace DBus
 
             ++i;
         }
-
-        qDebug() << "ReadinessHelper: new supportedStatuses =" << mPriv->supportedStatuses;
-        qDebug() << "ReadinessHelper: new supportedFeatures =" << mPriv->supportedFeatures;
     }
 
     uint ReadinessHelper::currentStatus() const
@@ -404,13 +356,11 @@ namespace DBus
 
         if (feature.isCritical()) {
             if (!mPriv->satisfiedFeatures.contains(feature)) {
-                qDebug() << "ReadinessHelper::isReady: critical feature" << feature << "not ready";
                 ret = false;
             }
         } else {
             if (!mPriv->satisfiedFeatures.contains(feature) &&
                 !mPriv->missingFeatures.contains(feature)) {
-                qDebug() << "ReadinessHelper::isReady: feature" << feature << "not ready";
                 ret = false;
             }
         }
@@ -456,8 +406,6 @@ namespace DBus
 
         Features supportedFeatures = mPriv->supportedFeatures;
         if (supportedFeatures.intersect(requestedFeatures) != requestedFeatures) {
-            qDebug() << "ReadinessHelper::becomeReady called with invalid features: requestedFeatures =" <<
-                requestedFeatures << "- supportedFeatures =" << mPriv->supportedFeatures;
             PendingReady *operation =
                 new PendingReady(requestedFeatures, mPriv->object, this);
             operation->setFinishedWithError(

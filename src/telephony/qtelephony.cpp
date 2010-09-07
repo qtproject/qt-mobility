@@ -60,7 +60,7 @@
     \value Alerting      The status of the call is alerting.
     \value Connected     The status of the call is connected.
     \value Disconnecting The status of the call is disconnecting.
-    \value Incomming     The status of the call is incomming.
+    \value Incoming      The status of the call is incoming.
     \value OnHold        The status of the call is on hold.
 */
 
@@ -76,4 +76,14 @@
     \value Video       The call is a video based call.
     \value Voice       The call is a voice based call.
     \value Other       The call is a an unknown base call.
+*/
+
+/*!
+    \enum QTelephony::Direction
+
+    This enum decribes the direction of the call.
+    A QTelephonyCallInfo object can have a direction of:
+
+    \value Received    The call is received.
+    \value Dialed      The call is dialed.
 */

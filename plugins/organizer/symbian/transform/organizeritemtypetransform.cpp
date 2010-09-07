@@ -129,9 +129,8 @@ CCalEntry::TType OrganizerItemTypeTransform::entryTypeL(const QOrganizerItem &it
         entryType = CCalEntry::ENote;
     }
 #endif
-    else {
+    else
         User::Leave(KErrUnknown); // unknown type
-    }
         
         
 

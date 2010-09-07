@@ -101,14 +101,6 @@ static const int kineticPanningResolution = 30; // temporal resolution. Smaller 
 static const int holdTimeThreshold = 100; // maximum time between last mouse move and mouse release for kinetic panning to kick in
 #endif
 
-static inline qreal qPointLength(const QPointF &p)
-{
-    qreal x = p.x();
-    qreal y = p.y();
-
-    return std::sqrt(x * x + y * y);
-}
-
 MapWidget::MapWidget(QGeoMappingManager *manager) :
         QGraphicsGeoMap(manager),
         coordQueryState(false),
@@ -406,7 +398,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Is there default access point, use it
     QNetworkConfiguration cfg = manager.defaultConfiguration();
     if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
-        QMessageBox::information(this, tr("Geo Service Demo"), tr(
+        QMessageBox::information(this, tr("Map Viewer Demo"), tr(
                                      "Available Access Points not found."));
         return;
     }
@@ -650,7 +642,7 @@ void MainWindow::setupUi()
 
     m_setCoordsButton = new QPushButton();
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    m_captureCoordsButton->setText("Set coords");
+    m_setCoordsButton->setText("Set coords");
 #else
     m_setCoordsButton->setText("Set coordinates");
 #endif
@@ -802,6 +794,14 @@ void MainWindow::createMenus()
     QMenu* subMenuItem;
     m_popupMenu = new QMenu(this);
 
+    /*
+
+    // These are gread for testing, but not really what we want in
+    // an example application.
+    // We should probably creating a testing branch which tracks
+    // the master branch and has various "test enabled" versions
+    // of the examples at some point anyhow.
+
     subMenuItem = new QMenu(tr("Spawn stuff"), this);
     m_popupMenu->addMenu(subMenuItem);
 
@@ -819,6 +819,8 @@ void MainWindow::createMenus()
     subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(demo3(bool)));
+
+    */
 
     //**************************************************************
     subMenuItem = new QMenu(tr("Marker"), this);
@@ -893,16 +895,17 @@ void MainWindow::demo1(bool /*checked*/)
 }
 void MainWindow::demo2(bool /*checked*/)
 {
+    const qreal density = 3; // 1 object each n degrees lat/lng
+
     int i = 0;
-    qreal sz = 3;
-    for (qreal lat = -90 + sz; lat < 90 - sz; lat += sz * 3) {
-        for (qreal lng = -180 + sz; lng < 180 - sz; lng += sz * 3) {
-            MVTEST_RECT2(lat - sz, lng - sz, lat + sz, lng + sz);
+    for (qreal lat = -90 + density; lat < 90 - density; lat += density * 3) {
+        for (qreal lng = -180 + density; lng < 180 - density; lng += density * 3) {
+            MVTEST_RECT2(lat - density, lng - density, lat + density, lng + density);
             i++;
         }
     }
-    qDebug("%i items added, %i items total.", i, m_mapWidget->mapObjects().count());
 
+    qDebug("%i items added, %i items total.", i, m_mapWidget->mapObjects().count());
 
     QMessageBox *mb = new QMessageBox(QMessageBox::NoIcon, "MapViewer", QString::number(i) + " items");
     mb->open();
@@ -910,10 +913,11 @@ void MainWindow::demo2(bool /*checked*/)
 }
 void MainWindow::demo3(bool /*checked*/)
 {
+    const qreal density = 10; // 1 cluster each n degrees lat/lng
+    const qreal clusterSize = 2; // clusters extend for +/- n degrees lat/lng
+    const qreal clusterDensity = 0.1*clusterSize; // 1 object each n degrees lat/lng (as part of a cluster)
+
     int i = 0;
-    qreal density = 10;
-    qreal clusterSize = 2;
-    qreal clusterDensity = 0.1*clusterSize;
     for (qreal latm = -90 + density; latm < 90 - density; latm += density * 3) {
         for (qreal lngm = -180 + density; lngm < 180 - density; lngm += density * 3) {
             for (qreal lat = latm-clusterSize+clusterDensity; lat < latm+clusterSize-clusterDensity; lat += clusterDensity * 3) {
@@ -924,8 +928,8 @@ void MainWindow::demo3(bool /*checked*/)
             }
         }
     }
-    qDebug("%i items added, %i items total.", i, m_mapWidget->mapObjects().count());
 
+    qDebug("%i items added, %i items total.", i, m_mapWidget->mapObjects().count());
 
     QMessageBox *mb = new QMessageBox(QMessageBox::NoIcon, "MapViewer", QString::number(i) + " items");
     mb->open();
@@ -1028,9 +1032,13 @@ void MainWindow::drawText(bool /*checked*/)
     QGeoCoordinate start = p1->coordinate();
 
     QGeoMapTextObject *text = new QGeoMapTextObject(start, QString("text"));
+
+    QGeoMapObject *object = new QGeoMapObject();
+    object->addChildObject(text);
+
     QColor fill(Qt::black);
     text->setBrush(QBrush(fill));
-    m_mapWidget->addMapObject(text);
+    m_mapWidget->addMapObject(object);
 }
 
 void MainWindow::drawPixmap(bool /*checked*/)
@@ -1133,6 +1141,10 @@ void MainWindow::routeFinished()
 
 void MainWindow::selectObjects()
 {
+    QList<QGeoMapObject*> allObjects = m_mapWidget->mapObjects();
+    for (int i = 0; i < allObjects.size(); ++i)
+        allObjects[i]->setSelected(false);
+
     if (m_markerObjects.count() < 2)
         return;
 
@@ -1140,8 +1152,11 @@ void MainWindow::selectObjects()
     QGeoMapPixmapObject* topLeft = m_markerObjects.takeLast();
     m_mapWidget->removeMapObject(topLeft);
     m_mapWidget->removeMapObject(bottomRight);
-    QList<QGeoMapObject*> mapObjects = m_mapWidget->mapObjectsInScreenRect(
+
+    QList<QGeoMapObject*> selectedObjects = m_mapWidget->mapObjectsInScreenRect(
                                            QRectF(m_mapWidget->coordinateToScreenPosition(topLeft->coordinate()),
                                                   m_mapWidget->coordinateToScreenPosition(bottomRight->coordinate()))
                                        );
+    for (int i = 0; i < selectedObjects.size(); ++i)
+        selectedObjects[i]->setSelected(true);
 }

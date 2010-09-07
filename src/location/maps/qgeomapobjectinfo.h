@@ -59,14 +59,19 @@ public:
     QGeoMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     virtual ~QGeoMapObjectInfo();
 
-    virtual void addToParent() = 0;
-    virtual void removeFromParent() = 0;
+    QGeoMapObjectInfo* parentObjectInfo();
 
-    virtual void objectUpdate() = 0;
-    virtual void mapUpdate() = 0;
+    virtual void addToParent();
+    virtual void removeFromParent();
 
-    virtual QGeoBoundingBox boundingBox() const = 0;
-    virtual bool contains(const QGeoCoordinate &coord) const = 0;
+    virtual void objectUpdated();
+    virtual void mapUpdated();
+
+    virtual void visibleChanged(bool visible);
+    virtual void selectedChanged(bool selected);
+
+    virtual QGeoBoundingBox boundingBox() const;
+    virtual bool contains(const QGeoCoordinate &coordinate) const;
 
 protected:
     QGeoMapData* mapData();

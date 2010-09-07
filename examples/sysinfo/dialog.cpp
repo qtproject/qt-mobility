@@ -415,6 +415,9 @@ void Dialog::getVersion(int index)
         version = QSystemInfo::Firmware;
 //! [Firm ver]
         break;
+    case 4:
+        version = QSystemInfo::QtMobility;
+        break;
     };
 
     QSystemInfo si;
