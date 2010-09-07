@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the plugins of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,45 +39,38 @@
 **
 ****************************************************************************/
 
-#include <QtDeclarative/qdeclarativeextensionplugin.h>
-#include <QtDeclarative/qdeclarative.h>
-#include <QtDeclarative/qdeclarativeengine.h>
-#include <QtDeclarative/qdeclarativecomponent.h>
-#include "qsoundeffect.h"
+#ifndef QDECLARATIVECAMERAPREVIEWPROVIDER_H
+#define QDECLARATIVECAMERAPREVIEWPROVIDER_H
 
-#include "qdeclarativevideo_p.h"
-#include "qdeclarativeaudio_p.h"
-#include "qdeclarativecamera_p.h"
-#include "qdeclarativecamerapreviewprovider_p.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists for the convenience
+// of other Qt classes.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-QML_DECLARE_TYPE(QSoundEffect)
+#include <QtDeclarative/qdeclarativeimageprovider.h>
+
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QMultimediaDeclarativeModule : public QDeclarativeExtensionPlugin
+class QDeclarativeCameraPreviewProvider : public QDeclarativeImageProvider
 {
-    Q_OBJECT
 public:
-    virtual void registerTypes(const char *uri)
-    {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("Qt.multimedia"));
+    QDeclarativeCameraPreviewProvider();
+    ~QDeclarativeCameraPreviewProvider();
 
-        qmlRegisterType<QSoundEffect>(uri, 1, 1, "SoundEffect");
-        qmlRegisterType<QDeclarativeAudio>(uri, 1, 1, "Audio");
-        qmlRegisterType<QDeclarativeVideo>(uri, 1, 1, "Video");
-        qmlRegisterType<QDeclarativeCamera>(uri, 1, 1, "Camera");
-    }
-
-    void initializeEngine(QDeclarativeEngine *engine, const char *uri)
-    {
-        Q_UNUSED(uri);
-        engine->addImageProvider("camera", new QDeclarativeCameraPreviewProvider);
-    }
+    virtual QImage requestImage(const QString &id, QSize *size, const QSize& requestedSize);
+    static void registerPreview(const QString &id, const QImage &preview);
 };
 
 QT_END_NAMESPACE
 
-#include "multimedia.moc"
+QT_END_HEADER
 
-Q_EXPORT_PLUGIN2(qmultimediadeclarativemodule, QT_PREPEND_NAMESPACE(QMultimediaDeclarativeModule));
-
+#endif

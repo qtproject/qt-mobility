@@ -100,8 +100,8 @@ Rectangle {
         whiteBalanceMode: stillControls.whiteBalance
         exposureCompensation: stillControls.exposureCompensation
 
-        onImageSaved : {
-            photoPreview.source = capturedImagePath
+        onImageCaptured : {
+            photoPreview.source = preview
             stillControls.previewAvailable = true
             cameraUI.state = "PhotoPreview"
         }
