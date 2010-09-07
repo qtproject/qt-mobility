@@ -61,8 +61,8 @@ private slots:
 
 private slots:
     void saveCollection();
-    void removeCollection();
     void collectionIds();
+    void removeCollection();
     void fetchCollection();
     
 public slots:
@@ -91,7 +91,7 @@ void tst_symbianasynchcollections::cleanupTestCase()
 }
 
 void tst_symbianasynchcollections::collectionIds()
-{/*
+{
     // Make sure to delete the old request, if any
     delete m_itemRequest;
     // Create new request
@@ -117,12 +117,7 @@ void tst_symbianasynchcollections::collectionIds()
     collectionLocalIdFetchRequest->waitForFinished(KTimeToWait);
     // Verify if the request is finished
     QVERIFY(collectionLocalIdFetchRequest->isFinished());
-
-    // Get all collection ids
-    QList<QOrganizerCollectionLocalId> ids = 
-        collectionLocalIdFetchRequest->collectionIds();
-    QVERIFY(collectionLocalIdFetchRequest->error() == QOrganizerItemManager::NoError);
-*/}
+}
 
 void tst_symbianasynchcollections::fetchCollection()
 {/*
@@ -283,13 +278,23 @@ void tst_symbianasynchcollections::requestResultsAvailable()
 {
     QOrganizerItemAbstractRequest::RequestType reqType(m_itemRequest->type());
     switch (reqType) {
+    case QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest : {
+        // Get all collection ids
+        QList<QOrganizerCollectionLocalId> collectionIds(
+        ((QOrganizerCollectionLocalIdFetchRequest*)(m_itemRequest))
+        ->collectionIds());
+        
+        QVERIFY(m_itemRequest->error() == QOrganizerItemManager::NoError);
+
+        qWarning() << collectionIds.count() << "calendar/s are present currently";
+    }
+    break;
     case QOrganizerItemAbstractRequest::CollectionSaveRequest : {
         QList<QOrganizerCollection> savedCollections(
             ((QOrganizerCollectionSaveRequest*)(m_itemRequest))->collections());
         int count(savedCollections.count());
         for (int index(0); index < count; index++) {
             m_collectionIds.append(savedCollections.at(index).id());
-            QOrganizerCollectionLocalId id(m_collectionIds[index]);
         }
         // Check the number of requests saved. magic number to be changed to a
         // constant
