@@ -47,6 +47,7 @@
 #include "qcontact.h"
 #include "qcontactdetail.h"
 
+#include <QList>
 #include <QString>
 #include <QSharedDataPointer>
 
