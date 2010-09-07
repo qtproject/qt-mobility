@@ -134,7 +134,6 @@ testcase = {
     1. Verify that created event is listed in event list
     1. Select date 7 days from today
     1. Verify that Recurring event is listed on that day
-Work with recurring organizer items. For example use the API to create a fortnightly entry that lasts for 10 recurrences. Another example is working with recurring entries read from an event store. Different stores may handle recurrence differently.
 '));
   },
 
