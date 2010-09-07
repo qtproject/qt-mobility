@@ -121,6 +121,8 @@ Q_SIGNALS:
    void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
+   void cellIdChanged(int); //1.2
+
 protected:
     virtual void connectNotify(const char *signal);
     virtual void disconnectNotify(const char *signal);
