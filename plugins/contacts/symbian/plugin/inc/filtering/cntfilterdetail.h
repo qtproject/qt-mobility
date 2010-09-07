@@ -89,6 +89,7 @@ public:
     void createMatchPhoneNumberQuery(const QContactFilter& filter,
                                      QString& sqlQuery,
                                      QContactManager::Error* error);
+	void fetchAllPhoneNumbers(QString& sqlQuery);
     void bestMatchPhoneNumberQuery(const QContactFilter& filter,
                                    QString& sqlQuery,
                                    QContactManager::Error* error);
