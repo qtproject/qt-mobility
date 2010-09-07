@@ -79,7 +79,7 @@ QTM_USE_NAMESPACE
  * technology change should inherit from this class.
  */
 
-class LandmarkManagerEngineSymbianPrivate: public MLandmarkRequestObserver
+class LandmarkManagerEngineSymbianPrivate: public MLandmarkRequestObserver, public MLandmarkDbEventObserver
 {
 public:
     LandmarkManagerEngineSymbianPrivate(LandmarkEventObserver& lmOpObserver,
@@ -226,6 +226,9 @@ private:
         QLandmarkManager::TransferOption option) const;
     QList<QLandmarkId> importLandmarksL(QIODevice *device, const QString &format,
         QLandmarkManager::TransferOption option, const QLandmarkCategoryId& categoryId) const;
+
+private:
+    void handleDatabaseEvent(const TPosLmEvent& aEvent);
 
 public:
     static CLandmarkDbEventHandler m_DbEventHandler;

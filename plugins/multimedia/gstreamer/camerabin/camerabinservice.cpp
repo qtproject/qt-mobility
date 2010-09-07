@@ -60,6 +60,7 @@
 #include "qgstreamervideoinputdevicecontrol.h"
 
 #include "qgstreamervideooverlay.h"
+#include "qgstreamervideowindow.h"
 #include "qgstreamervideorenderer.h"
 
 #include "qgstreamervideowidget.h"
@@ -69,7 +70,7 @@
 #include <QtCore/qdebug.h>
 #include <QtCore/qprocess.h>
 
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_5)
 #include "camerabuttonlistener_maemo.h"
 #endif
 
@@ -103,7 +104,13 @@ CameraBinService::CameraBinService(const QString &service, QObject *parent):
             m_captureSession->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));        
 
         m_videoRenderer = new QGstreamerVideoRenderer(this);
+
+#ifdef Q_WS_MAEMO_6
+        //m_videoWindow = new QGstreamerVideoWindow(this, "omapxvsink");
+        m_videoWindow = new QGstreamerVideoWindow(this);
+#else
         m_videoWindow = new QGstreamerVideoOverlay(this);
+#endif
 
         m_videoWidgetControl = new QGstreamerVideoWidgetControl(this);
 
@@ -230,4 +237,3 @@ bool CameraBinService::isCameraBinAvailable()
 
     return false;
 }
-

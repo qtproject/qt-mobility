@@ -146,8 +146,8 @@ class supports constructing, managing and playing playlists.
     player = new QMediaPlayer;
 
     playlist = new QMediaPlaylist(player);
-    playlist->append(QUrl("http://example.com/myfile1.mp3"));
-    playlist->append(QUrl("http://example.com/myfile2.mp3"));
+    playlist->addMedia(QUrl("http://example.com/myfile1.mp3"));
+    playlist->addMedia(QUrl("http://example.com/myfile2.mp3"));
     ...
     playlist->setCurrentPosition(1);
     player->play();
@@ -171,8 +171,8 @@ hue, saturation and full screen mode.
     player = new QMediaPlayer;
 
     playlist = new QMediaPlaylist(player);
-    playlist->append(QUrl("http://example.com/myclip1.mp4"));
-    playlist->append(QUrl("http://example.com/myclip2.mp4"));
+    playlist->addMedia(QUrl("http://example.com/myclip1.mp4"));
+    playlist->addMedia(QUrl("http://example.com/myclip2.mp4"));
     ...
     widget = new QVideoWidget(player);
     widget->show();

@@ -97,6 +97,7 @@ public:
 
 signals:
     void sinkChanged();
+    void readyChanged(bool);
 
 private slots:
     void surfaceFormatChanged();

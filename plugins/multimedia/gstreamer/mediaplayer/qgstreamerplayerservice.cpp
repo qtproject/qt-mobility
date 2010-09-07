@@ -49,6 +49,7 @@
 #include "qgstreamermetadataprovider.h"
 
 #include "qgstreamervideooverlay.h"
+#include "qgstreamervideowindow.h"
 #include "qgstreamervideorenderer.h"
 
 #include "qgstreamervideowidget.h"
@@ -71,7 +72,13 @@ QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent):
 
     m_videoRenderer = new QGstreamerVideoRenderer(this);
 #if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
+
+#ifdef Q_WS_MAEMO_6
+    m_videoWindow = new QGstreamerVideoWindow(this);
+#else
     m_videoWindow = new QGstreamerVideoOverlay(this);
+#endif
+
     m_videoWidget = new QGstreamerVideoWidgetControl(this);
 #endif
 }

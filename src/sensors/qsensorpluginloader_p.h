@@ -63,7 +63,7 @@ QTM_BEGIN_NAMESPACE
 
 class QSensorPluginInterface;
 
-class Q_AUTOTEST_EXPORT QSensorPluginLoader
+class QM_AUTOTEST_EXPORT QSensorPluginLoader
 {
 public:
     QSensorPluginLoader(const char *iid, const QString &suffix = QString());
