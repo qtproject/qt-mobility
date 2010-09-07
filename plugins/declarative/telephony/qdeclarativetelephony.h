@@ -85,7 +85,7 @@ QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeTelephonyCallInfo))
 
 class QDeclarativeTelephonyCallList : public QObject {
     Q_OBJECT
-    Q_PROPERTY(int activeCallCount READ activeCallCount NOTIFY activeCallCountChanged)
+    Q_PROPERTY(int activeCallCount READ activeCallCount)
 
 public:
     QDeclarativeTelephonyCallList();
@@ -95,7 +95,7 @@ Q_SIGNALS:
     void activeCallStatusChanged(QDeclarativeTelephonyCallInfo* call);
     void activeCallRemoved(QDeclarativeTelephonyCallInfo* call);
     void activeCallAdded(QDeclarativeTelephonyCallInfo* call);
-    void activeCallCountChanged(int count);
+    void hasActiveCalls(bool value);
 
 protected:
     int activeCallCount() const;

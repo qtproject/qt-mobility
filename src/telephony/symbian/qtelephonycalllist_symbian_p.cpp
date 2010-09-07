@@ -268,11 +268,6 @@ QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephon
     return ret;
 }
 
-int QTelephonyCallListPrivate::activeCallCount() const
-{
-    return callInfoList.count();
-}
-
 #include "moc_qtelephonycalllist_symbian_p.cpp"
 
 QTM_END_NAMESPACE

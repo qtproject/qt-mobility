@@ -238,8 +238,8 @@ QDeclarativeTelephonyCallList::QDeclarativeTelephonyCallList()
         , this, SLOT(onCallRemoved(const QTelephonyCallInfo&)));
     connect(d, SIGNAL(activeCallAdded(const QTelephonyCallInfo&))
         , this, SLOT(onCallAdded(const QTelephonyCallInfo&)));
-    connect(d, SIGNAL(activeCallCountChanged(const int&))
-        , this, SLOT(onCallStatusChanged(QTelephonyCallInfo)));
+    connect(d, SIGNAL(hasActiveCalls(bool))
+        , this, SLOT(onHasActiveCalls(bool)));
 }
 
 /*!
@@ -330,13 +330,13 @@ void QDeclarativeTelephonyCallList::onCallAdded(const QTelephonyCallInfo& call)
 }
 
 /*!
-    \fn void QDeclarativeTelephonyCallList::onCallCountChanged(const int& value);
-    \a count The current count of active calls.
+    \fn void QDeclarativeTelephonyCallList::onHasActiveCalls(bool value);
+    \a value A flag if active call(s) are available.
 
-    This Slot is called whenever the count of active calls was changed.
+    Value true indicates if active calls are available or not.
 */
-void QDeclarativeTelephonyCallList::onCallCountChanged(const int& value)
+void QDeclarativeTelephonyCallList::onHasActiveCalls(bool value)
 {
-    emit activeCallCountChanged(value);
+    emit hasActiveCalls(value);
 }
 
