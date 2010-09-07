@@ -72,21 +72,31 @@ void OrganizerRequestTimeoutTimer::internalTimeout()
 }
 
 OrganizerAsynchProcess::OrganizerAsynchProcess(QOrganizerItemMaemo5Engine* engine)
-    : m_engine(engine)
-{
-    QTimer::singleShot(0, this, SLOT(doStart()));
-}
-
-void OrganizerAsynchProcess::doStart()
+    : m_engine(engine), m_quitNow(false)
 {
     start();
     QObject::moveToThread(this);
 }
 
+void OrganizerAsynchProcess::run()
+{
+    while(!m_quitNow) {
+        yieldCurrentThread();
+        processRequest();
+    }
+
+    // Inform that the thread quits now
+    m_quitNow = false;
+}
+
 OrganizerAsynchProcess::~OrganizerAsynchProcess()
 {
-    quit();
-    wait();
+    // Tell thread to quit
+    m_quitNow = true;
+
+    // Wait for run() to exit
+    while(m_quitNow)
+        yieldCurrentThread();
 }
 
 void OrganizerAsynchProcess::requestDestroyed(QOrganizerItemAbstractRequest *req)
@@ -148,6 +158,7 @@ bool OrganizerAsynchProcess::waitForRequestFinished(QOrganizerItemAbstractReques
 
     do {
         yieldCurrentThread();
+        // Process events to allow the timeout timers to work
         QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
     } while(m_activeRequests.contains(req)
             && (req->state() == QOrganizerItemAbstractRequest::InactiveState

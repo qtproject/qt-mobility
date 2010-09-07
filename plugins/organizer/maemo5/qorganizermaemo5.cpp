@@ -818,7 +818,6 @@ bool QOrganizerItemMaemo5Engine::removeCollection(const QOrganizerCollectionLoca
 bool QOrganizerItemMaemo5Engine::startRequest(QOrganizerItemAbstractRequest* req)
 {
     d->m_asynchProcess->addRequest(req);
-    QMetaObject::invokeMethod(d->m_asynchProcess, "processRequest", Qt::QueuedConnection);
     return true;
 }
 
@@ -1791,9 +1790,9 @@ CCalendar* QOrganizerItemMaemo5Engine::getCalendar(QOrganizerCollectionLocalId c
     else
         cal = d->m_mcInstance->getCalendarById(static_cast<int>(collectionId), calError);
 
-    if (!cal || calError != CALENDAR_OPERATION_SUCCESSFUL) {
+    if (!cal || calError != CALENDAR_OPERATION_SUCCESSFUL)
         *error = QOrganizerItemManager::InvalidCollectionError;
-    }
+
     return cal;
 }
 

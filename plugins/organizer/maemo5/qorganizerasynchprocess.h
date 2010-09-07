@@ -99,9 +99,9 @@ public:
     bool cancelRequest(QOrganizerItemAbstractRequest *req);
     bool waitForRequestFinished(QOrganizerItemAbstractRequest *req, int msecs);
 
-public Q_SLOTS:
+protected:
     void processRequest();
-    void doStart();
+    void run();
 
 private:
     bool waitForRequestFinished(QOrganizerItemAbstractRequest *req);
@@ -129,6 +129,7 @@ private:
     QSet<QOrganizerItemAbstractRequest *> m_activeRequests;
     QMutex m_mainMutex;
     QMutex m_timeoutMutex;
+    bool m_quitNow;
 };
 
 #endif // QORGANIZERASYNCHPROCESS_H
