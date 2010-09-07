@@ -39,50 +39,25 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLLIST_MAEMO_P_H
-#define QTELEPHONYCALLLIST_MAEMO_P_H
+#ifndef SIMULATORLIGHTSENSOR_H
+#define SIMULATORLIGHTSENSOR_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "simulatorcommon.h"
+#include <qambientlightsensor.h>
 
-#include "qmobilityglobal.h"
-#include "qtelephonycalllist.h"
-#include <QList>
-#include <QtCore/qshareddata.h>
+QTM_USE_NAMESPACE
 
-QT_BEGIN_HEADER
-QTM_BEGIN_NAMESPACE
-
-class QTelephonyCallInfoPrivate;
-class QTelephonyCallList;
-
-class QTelephonyCallListPrivate
+class SimulatorLightSensor : public SimulatorCommon
 {
-    friend class QTelephonyCallList;
-
 public:
-    QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
-    virtual ~QTelephonyCallListPrivate();
-    QList<QTelephonyCallInfo> activeCalls(const QTelephony::CallType& calltype) const;
+    static const char *id;
 
+    SimulatorLightSensor(QSensor *sensor);
+
+    void poll();
 private:
-    void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);
-    void emitActiveCallRemoved(QTelephonyCallInfoPrivate& call);
-    void emitActiveCallAdded(QTelephonyCallInfoPrivate& call);
-
-    QList<QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
-    QTelephonyCallList* p;
+    QAmbientLightReading m_reading;
 };
 
-QTM_END_NAMESPACE
-QT_END_HEADER
+#endif
 
-#endif // QTELEPHONYCALLLIST_MAEMO_P_H

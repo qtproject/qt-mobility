@@ -39,57 +39,49 @@
 **
 ****************************************************************************/
 
-#include "qtelephonycalllist_maemo_p.h"
-#include "qtelephonycallinfo_p.h"
+#include "qgeoareamonitor_simulator_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-////////
-QTelephonyCallListPrivate::QTelephonyCallListPrivate(QTelephonyCallList *parent)
-    : p(parent)
-{
-}
+#define UPDATE_INTERVAL_5S  5000
 
-QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
+QGeoAreaMonitorSimulator::QGeoAreaMonitorSimulator(QObject *parent) : QGeoAreaMonitor(parent)
 {
-}
-
-void QTelephonyCallListPrivate::emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call)
-{
-    QTelephonyCallInfo callinfo;
-    callinfo.d = QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(&call);
-    emit p->activeCallStatusChanged(callinfo);
-}
-
-void QTelephonyCallListPrivate::emitActiveCallRemoved(QTelephonyCallInfoPrivate& call)
-{
-    QTelephonyCallInfo callinfo;
-    callinfo.d = QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(&call);
-    emit p->activeCallRemoved(callinfo);
-}
-
-void QTelephonyCallListPrivate::emitActiveCallAdded(QTelephonyCallInfoPrivate& call)
-{
-    QTelephonyCallInfo callinfo;
-    callinfo.d = QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(&call);
-    emit p->activeCallAdded(callinfo);
-}
-
-QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephony::CallType& calltype) const
-{
-    QList<QTelephonyCallInfo> ret;
-
-    //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
-    for( int i = 0; i < callInfoList.count(); i++){
-        if(callInfoList.at(i).data()->type == QTelephony::Any
-            || callInfoList.at(i).data()->type == calltype)
-        {
-            QTelephonyCallInfo callinfo;
-            callinfo.d = callInfoList.at(i);
-            ret.push_back(callinfo);
-        }
+    insideArea = false;
+    location = QGeoPositionInfoSource::createDefaultSource(this);
+    if(location) {
+        location->setUpdateInterval(UPDATE_INTERVAL_5S);
+        connect(location, SIGNAL(positionUpdated(QGeoPositionInfo)),
+                this, SLOT(positionUpdated(QGeoPositionInfo)));
+        location->startUpdates();
     }
-    return ret;
 }
 
+QGeoAreaMonitorSimulator::~QGeoAreaMonitorSimulator()
+{
+    if(location)
+        location->stopUpdates();
+}
+
+void QGeoAreaMonitorSimulator::setCenter(const QGeoCoordinate& coordinate)
+{
+    if (coordinate.isValid())
+        QGeoAreaMonitor::setCenter(coordinate);
+}
+
+void QGeoAreaMonitorSimulator::positionUpdated(const QGeoPositionInfo &info)
+{
+    qreal distance = info.coordinate().distanceTo(center());
+
+    if (distance <= QGeoAreaMonitor::radius()) {
+        if(!insideArea)
+            emit areaEntered(info);
+        insideArea = true;
+    } else if (insideArea) {
+        emit areaExited(info);
+        insideArea = false;
+    }
+}
+
+#include "moc_qgeoareamonitor_simulator_p.cpp"
 QTM_END_NAMESPACE

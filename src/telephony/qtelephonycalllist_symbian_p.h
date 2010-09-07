@@ -59,6 +59,8 @@
 
 #include "qtelephonycalllist.h"
 #include "qtelephony.h"
+#include <e32base.h>
+#include <etelmm.h>
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
@@ -66,22 +68,58 @@ QTM_BEGIN_NAMESPACE
 class QTelephonyCallInfoPrivate;
 class QTelephonyCallList;
 
+class CLineStatusObserver : public CActive
+    {
+public:
+    CLineStatusObserver(QTelephonyCallListPrivate *aList, TInt aLineIndex);
+    virtual ~CLineStatusObserver();
+
+public:
+    void startMonitoring();
+    RMobileCall::TMobileCallStatus m_callStatus;
+
+private:
+    void issueNotifyStatusChange();
+    QTelephony::CallStatus mapStatus(TInt aStatus); 
+    QTelephony::CallType mapType(TInt aType);
+    QString toQString(const TDesC& aText);
+    void updateCallList();
+
+    // from CActive
+    void RunL();
+    void DoCancel();
+    
+    QTelephonyCallListPrivate* m_list;
+    RTelServer m_etel;
+    RPhone m_phone;
+    RMobileLine m_line;
+    TInt m_lineIndex;
+    bool m_setupPhase;
+};
+
 class QTelephonyCallListPrivate
 {
     friend class QTelephonyCallList;
+    friend class CLineStatusObserver;
 
 public:
     QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
     virtual ~QTelephonyCallListPrivate();
     QList<QTelephonyCallInfo> activeCalls(const QTelephony::CallType& calltype) const;
-
-private:
+    int activeCallCount() const;
+    // Public for testing purposes
+    QList<QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
+    QTelephonyCallList* p;
     void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);
     void emitActiveCallRemoved(QTelephonyCallInfoPrivate& call);
     void emitActiveCallAdded(QTelephonyCallInfoPrivate& call);
-
-    QList<QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
-    QTelephonyCallList* p;
+    
+private:
+    void checkMobileLines();
+    TInt findCallInfo(QString aCallName);
+    RTelServer m_etel;
+    RPhone m_phone;
+    QList<CLineStatusObserver *> m_observers;
 };
 
 QTM_END_NAMESPACE
