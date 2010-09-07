@@ -140,11 +140,6 @@ TBool COrganizerItemRequestsServiceProvider::StartRequest(
                     iNoOfItems = iCollectionIds.count();
                 }
                 break;
-            case QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest :
-                {
-                iNoOfItems = iOrganizerItemManagerEngine.sessionCount();
-                }
-                break;
 #endif
            }
 
@@ -529,24 +524,20 @@ void COrganizerItemRequestsServiceProvider::SaveDetailDefinitionL()
 #ifdef SYMBIAN_CALENDAR_V2
 void COrganizerItemRequestsServiceProvider::CollectionIdL()
     {
-    if (iIndex < iNoOfItems)
-            {
-            // update index beforehand in case collectionIdL leaves, if so
-            // RunError would call SelfComplete() for recursive operation
-            iIndex++;
-            iCollectionLocalIds.append(
-                iOrganizerItemManagerEngine.collectionIdL(iIndex-1));
-            // Calls itself recursively until all the items are deleted
-            SelfComplete();
-            }
-        else
-            {
-            // Notify results
-            QOrganizerItemManagerEngine::updateCollectionLocalIdFetchRequest( 
-                (QOrganizerCollectionLocalIdFetchRequest*)(iReq), 
-                iCollectionLocalIds, iError, 
-                QOrganizerItemAbstractRequest::FinishedState);
-            }    
+    TInt count(iOrganizerItemManagerEngine.sessionCount());
+    QList<QOrganizerCollectionLocalId> collectionLocalIds;
+    // As there are no costly IPC is involved in this operation so
+    // execute a loop to perform the operation as it's done in a short
+    // time span
+    for (TInt index(0); index < count; index++)
+        {
+        collectionLocalIds.append(
+            iOrganizerItemManagerEngine.collectionIdL(index));
+        }
+    // Notify results
+    QOrganizerItemManagerEngine::updateCollectionLocalIdFetchRequest( 
+        (QOrganizerCollectionLocalIdFetchRequest*)(iReq), collectionLocalIds, 
+        iError, QOrganizerItemAbstractRequest::FinishedState);
     }
 
 void COrganizerItemRequestsServiceProvider::CollectionL()
@@ -647,6 +638,5 @@ void COrganizerItemRequestsServiceProvider::Cleanup()
     iCollections.clear();
     iSuccessfullCollections.clear();
     iCollectionIds.clear();
-    iCollectionLocalIds.clear();
 #endif
     }

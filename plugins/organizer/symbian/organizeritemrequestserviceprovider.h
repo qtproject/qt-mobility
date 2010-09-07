@@ -132,7 +132,6 @@ private:
     QList<QOrganizerCollection>             iCollections;
     QList<QOrganizerCollection>             iSuccessfullCollections;
     QList<QOrganizerCollectionId>           iCollectionIds;
-    QList<QOrganizerCollectionLocalId>      iCollectionLocalIds;
 #endif
     };
 
