@@ -124,6 +124,7 @@ TBool COrganizerItemRequestsServiceProvider::StartRequest(
                 
                 }
                 break;
+#ifdef SYMBIAN_CALENDAR_V2
             case QOrganizerItemAbstractRequest::CollectionSaveRequest :
                 {
                 iCollections.append(
@@ -139,6 +140,7 @@ TBool COrganizerItemRequestsServiceProvider::StartRequest(
                     iNoOfItems = iCollectionIds.count();
                 }
                 break;
+#endif
            }
 
         SelfComplete();
@@ -214,6 +216,7 @@ void COrganizerItemRequestsServiceProvider::RunL()
             SaveDetailDefinitionL();
             }
             break;
+#ifdef SYMBIAN_CALENDAR_V2
         case QOrganizerItemAbstractRequest::CollectionFetchRequest : 
             {
             CollectionL();
@@ -234,6 +237,7 @@ void COrganizerItemRequestsServiceProvider::RunL()
             SaveCollectionL();
             }
             break;
+#endif
         default:
             {
             // Not implemented yet
@@ -517,6 +521,7 @@ void COrganizerItemRequestsServiceProvider::SaveDetailDefinitionL()
             QOrganizerItemAbstractRequest::FinishedState);
     }
 
+#ifdef SYMBIAN_CALENDAR_V2
 void COrganizerItemRequestsServiceProvider::CollectionIdL()
     {/*
     if (iIndex < iNoOfItems)
@@ -594,7 +599,7 @@ void COrganizerItemRequestsServiceProvider::RemoveCollectionL()
                     iErrorMap, QOrganizerItemAbstractRequest::FinishedState);
             }    
     }
-
+#endif
 // Called by Cancel()
 void COrganizerItemRequestsServiceProvider::DoCancel()
     {
@@ -633,8 +638,10 @@ void COrganizerItemRequestsServiceProvider::Cleanup()
     iItemList.clear();
     iError = QOrganizerItemManager::NoError;
     iSuccessfullItems.clear();
+#ifdef SYMBIAN_CALENDAR_V2
     iCollections.clear();
     iSuccessfullCollections.clear();
     iCollectionIds.clear();
     iCollectionLocalIds.clear();
+#endif
     }
