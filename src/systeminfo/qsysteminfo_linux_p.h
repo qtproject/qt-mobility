@@ -189,6 +189,11 @@ public:
     QString model();
     QString productName();
 
+//    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
+//    bool isWirelessKeyboardConnected(); //1.2
+//    bool isKeyboardFlipOpen();//1.2
+
+
 private:
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;

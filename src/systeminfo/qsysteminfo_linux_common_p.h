@@ -152,7 +152,6 @@ public:
     virtual QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
     virtual QSystemNetworkInfo::NetworkMode currentMode();
 
-
 #if !defined(QT_NO_CONNMAN)
     QSystemNetworkInfo::NetworkStatus getOfonoStatus(QSystemNetworkInfo::NetworkMode mode);
 #endif
@@ -295,6 +294,11 @@ public:
     void setConnection();
     bool currentBluetoothPowerState();
 
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
+    bool isWirelessKeyboardConnected(); //1.2
+    bool isKeyboardFlipOpen();//1.2
+
+
 Q_SIGNALS:
     void batteryLevelChanged(int);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
@@ -302,14 +306,23 @@ Q_SIGNALS:
     void powerStateChanged(QSystemDeviceInfo::PowerState);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
+
+    void wirelessKeyboardConnected(bool connected);//1.2
+    void keyboardFlip(bool open);//1.2
+
 protected:
     bool btPowered;
 
 #if !defined(QT_NO_DBUS)
-    QHalInterface *halIface;
-    QHalDeviceInterface *halIfaceDevice;
     void setupBluetooth();
 
+#if defined(QT_NO_CONNMAN)
+    QHalInterface *halIface;
+    QHalDeviceInterface *halIfaceDevice;
+#else
+    QUDisksInterface *udisksIface;
+#endif
+    bool hasWirelessKeyboardConnected;
 private Q_SLOTS:
     virtual void halChanged(int,QVariantList);
     void bluezPropertyChanged(const QString&, QDBusVariant);

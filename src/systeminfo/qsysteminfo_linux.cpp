@@ -794,8 +794,10 @@ QString QSystemDeviceInfoPrivate::productName()
          }
 #endif
      }
+#if defined(QT_NO_DBUS)
 #ifdef Q_WS_X11
      changeTimeout(-1);
+#endif
 #endif
  }
 
