@@ -78,6 +78,11 @@ QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
         delete accountManager;
 }
 
+int QTelephonyCallListPrivate::activeCallCount() const
+{
+    return callInfoList.count();
+}
+
 QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephony::CallType& calltype) const 
 { 
     QList<QTelephonyCallInfo> ret;
