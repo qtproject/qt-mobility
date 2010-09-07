@@ -297,7 +297,7 @@ TBool CLandmarkRequestAO::WaitForFinished(TInt aTime)
     }
 
     RTimer timer;
-    TRequestStatus timestatus;
+    TRequestStatus timestatus;// = KRequestPending;
     if (aTime > 0) {
         if (timer.CreateLocal() != KErrNone) {
             return EFalse; // ???
@@ -350,8 +350,8 @@ void CLandmarkRequestAO::SetOperation(CPosLmOperation *aOp)
     iOperation = aOp;
 }
 
-void CLandmarkRequestAO::SetExportData(CPosLandmarkEncoder *aEncoder, CBufBase *aExportBuffer,
-    QList<QLandmarkId> lmIds)
+void CLandmarkRequestAO::SetExportData(CPosLandmarkEncoder *aEncoder, RFs &aFs,
+    HBufC *aExportPath, CBufBase *aExportBuffer, QList<QLandmarkId> lmIds)
 {
     if (iParent) {
         if (aEncoder)
@@ -361,6 +361,10 @@ void CLandmarkRequestAO::SetExportData(CPosLandmarkEncoder *aEncoder, CBufBase *
         if (&lmIds != 0 && lmIds.size() > 0) {
             iParent->iLandmarkIds = lmIds;
         }
+        if( aExportPath ) {
+            iParent->iExportPath = aExportPath;
+        }
+        iParent->iFileSystem = aFs;
     }
 }
 
@@ -498,6 +502,16 @@ void CLandmarkRequestData::Reset()
     iOpCount = 0;
     error = QLandmarkManager::NoError;
     errorString.clear();
+
+    iAddedLandmarkIds.clear();
+    iChangedLandmarkIds.clear();
+    iRemovedLandmarkIds.clear();
+    iFetchedLandmarkIds.clear();
+
+    iAddedCategoryIds.clear();
+    iChangedCategoryIds.clear();
+    iRemovedCategoryIds.clear();
+    iFetchedCategoryIds.clear();
 }
 
 // Asynchronous Framework

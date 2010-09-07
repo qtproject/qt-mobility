@@ -26,15 +26,18 @@ public:
 
 protected:
     void changeEvent(QEvent *e);
-    void addListEntry(QString value);
+    void addListEntry(const QString& event, const QTelephonyCallInfo& call);
 
 private slots:
     void onActiveCallAdded(const QTelephonyCallInfo& call);
+    void onActiveCallRemoved(const QTelephonyCallInfo& call);
     void onActiveCallStatusChanged(const QTelephonyCallInfo& call);
+    void onActiveCallCountChanged();
+    void onClearList();
 private:
     Ui::MainWindow *ui;
     QStringListModel m_rxDBusMsg;
-    QTelephonyCallList *telephoycalllist;
+    QTelephonyCallList *telephonycalllist;
 };
 
 #endif // MAINWINDOW_H

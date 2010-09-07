@@ -187,8 +187,7 @@ class DatabaseOperations {
                          QList<QLandmarkId> landmarkIds,
                          QLandmarkManager::TransferOption,
                          QLandmarkManager::Error *error,
-                         QString *errorString,
-                         QueryRun *queryRun =0) const;
+                         QString *errorString) const;
 
     bool importLandmarksLmx(QIODevice *device,
                             QLandmarkManager::TransferOption option,
@@ -210,14 +209,12 @@ class DatabaseOperations {
                             QList<QLandmarkId> landmarkIds,
                             QLandmarkManager::TransferOption option,
                             QLandmarkManager::Error *error,
-                            QString *errorString,
-                            QueryRun *queryRun =0) const ;
+                            QString *errorString) const ;
 
     bool exportLandmarksGpx(QIODevice *device,
                             QList<QLandmarkId> landmarkIds,
                             QLandmarkManager::Error *error,
-                            QString *errorString,
-                            QueryRun *queryRun =0) const;
+                            QString *errorString) const;
 
     QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
     QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders) const;

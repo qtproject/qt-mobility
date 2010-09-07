@@ -38,7 +38,6 @@ namespace DBus
                 const QString &error, const QString &message)
         {
             qDebug() << "IClientHandler::invalidate";
-
             DBus::IAbstract::invalidate(proxy, error, message);
         }
 

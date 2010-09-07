@@ -42,31 +42,31 @@
 #include "qdeclarativetelephony.h"
 
 /*!
-    \class QTelephonyCallInfoWrapper
+    \class QDeclarativeTelephonyCallInfo
     \ingroup telephonyapi
-    \brief The QTelephonyCallInfoWrapper class for a QTelephonyCallInfo object. This wrapper class can be used in QML to work with telephony.
+    \brief The QDeclarativeTelephonyCallInfo class for a QTelephonyCallInfo object. This wrapper class can be used in QML to work with telephony.
 */
 
 /*!
-    \enum QTelephonyCallInfoWrapper::CallStatus
+    \enum QDeclarativeTelephonyCallInfo::CallStatus
 
     This enum type is used to describe the status of a call.
-    A QTelephonyCallInfoWrapper object can have a status of:
+    A QDeclarativeTelephonyCallInfo object can have a status of:
 
     \value Idle          The call status is not defined.
     \value Dialing       The status of the call is dialing.
     \value Alerting      The status of the call is alerting.
     \value Connected     The status of the call is connected.
     \value Disconnecting The status of the call is disconnected.
-    \value Incomming     The status of the call is incomming.
+    \value Incoming     The status of the call is incoming.
     \value OnHold        The status of the call is on hold.
 */
 
 /*!
-    \enum QTelephonyCallInfoWrapper::CallType
+    \enum QDeclarativeTelephonyCallInfo::CallType
 
     This enum decribes the type of the call.
-    A QTelephonyCallInfoWrapper object can be a type of:
+    A QDeclarativeTelephonyCallInfo object can be a type of:
 
     \value Any         The call type can be any type.
     \value Text        The call is a text base call.
@@ -77,7 +77,7 @@
 */
 
 /*!
-    \enum QTelephonyCallInfoWrapper::Direction
+    \enum QDeclarativeTelephonyCallInfo::Direction
 
     This enum decribes the direction of the call.
     A QTelephonyCallInfo object can have a direction of:
@@ -87,149 +87,149 @@
 */
 
 /*!
-    \fn  QTelephonyCallInfoWrapper::QTelephonyCallInfoWrapper()
+    \fn  QDeclarativeTelephonyCallInfo::QDeclarativeTelephonyCallInfo()
 
-    Constructor of a QTelephonyCallInfoWrapper object.
+    Constructor of a QDeclarativeTelephonyCallInfo object.
 */
-QTelephonyCallInfoWrapper::QTelephonyCallInfoWrapper()
+QDeclarativeTelephonyCallInfo::QDeclarativeTelephonyCallInfo()
     : QObject(0)
 {
     d = new QTelephonyCallInfo();
 }
 
 /*!
-    \fn  QTelephonyCallInfoWrapper::QTelephonyCallInfoWrapper(const QTelephonyCallInfo& other)
+    \fn  QDeclarativeTelephonyCallInfo::QDeclarativeTelephonyCallInfo(const QTelephonyCallInfo& other)
     \a QTelephonyCallInfo Object which needs to be copied from.
 
-    Constructor of a QTelephonyCallInfoWrapper object.
+    Constructor of a QDeclarativeTelephonyCallInfo object.
 */
-QTelephonyCallInfoWrapper::QTelephonyCallInfoWrapper(const QTelephonyCallInfo& other)
+QDeclarativeTelephonyCallInfo::QDeclarativeTelephonyCallInfo(const QTelephonyCallInfo& other)
     : QObject(0)
 {
     d = new QTelephonyCallInfo(other);
 }
 
 /*!
-    \fn  QTelephonyCallInfoWrapper::QTelephonyCallInfoWrapper(const QTelephonyCallInfoWrapper& other)
+    \fn  QDeclarativeTelephonyCallInfo::QDeclarativeTelephonyCallInfo(const QDeclarativeTelephonyCallInfo& other)
     \a other Object which needs to be copied from.
 
-    Copy constructor of a QTelephonyCallInfoWrapper object.
+    Copy constructor of a QDeclarativeTelephonyCallInfo object.
 */
-QTelephonyCallInfoWrapper::QTelephonyCallInfoWrapper(const QTelephonyCallInfoWrapper& other)
+QDeclarativeTelephonyCallInfo::QDeclarativeTelephonyCallInfo(const QDeclarativeTelephonyCallInfo& other)
     : QObject(0)
 {
     d = new QTelephonyCallInfo(*other.d);
 }
 
 /*!
-    \fn  QTelephonyCallInfoWrapper::~QTelephonyCallInfoWrapper()
+    \fn  QDeclarativeTelephonyCallInfo::~QDeclarativeTelephonyCallInfo()
     
     Destructor of a call info object.
 */
-QTelephonyCallInfoWrapper::~QTelephonyCallInfoWrapper()
+QDeclarativeTelephonyCallInfo::~QDeclarativeTelephonyCallInfo()
 {
     delete d;
 }
 
 /*!
-    \fn  QTelephonyCallInfoWrapper& QTelephonyCallInfoWrapper::operator=(const QTelephonyCallInfoWrapper& other)
+    \fn  QDeclarativeTelephonyCallInfo& QDeclarativeTelephonyCallInfo::operator=(const QDeclarativeTelephonyCallInfo& other)
 
     Assigns this relationship to be equal to \a other.
 */
-QTelephonyCallInfoWrapper& QTelephonyCallInfoWrapper::operator=(const QTelephonyCallInfoWrapper& other)
+QDeclarativeTelephonyCallInfo& QDeclarativeTelephonyCallInfo::operator=(const QDeclarativeTelephonyCallInfo& other)
 {
     d = other.d;
     return *this;
 }
 
 /*!
-    \property QTelephonyCallInfoWrapper::remotePartyIdentifier
+    \property QDeclarativeTelephonyCallInfo::remotePartyIdentifier
     \brief the id of a call.
 
     The remotePartyIdentifier contains the value dependend on the call CallType.
     It can be the phone number, IP address or something else.
 */
-QString QTelephonyCallInfoWrapper::remotePartyIdentifier() const
+QString QDeclarativeTelephonyCallInfo::remotePartyIdentifier() const
 {
     return d->remotePartyIdentifier();
 }
 
 /*!
-    \property QTelephonyCallInfoWrapper::type
-    \brief  the type of the call.
+    \fn  unsigned int QDeclarativeTelephonyCallInfo::type() const
 
-    A call can be a VOIP, Video Voice and so on.
-    You can use this property to get the type of the call.
+    Returns the types of the call.
+    A call can be a VOIP, Video Voice and so on or a combination of different types.
+    You can use this property to get the types of the call by masking with QTelephony::CallType.
 */
-QTelephonyCallInfoWrapper::CallType QTelephonyCallInfoWrapper::type() const
+unsigned int QDeclarativeTelephonyCallInfo::type() const
 {
-    return (QTelephonyCallInfoWrapper::CallType)d->type();
+    return d->type();
 }
 
 /*!
-    \property QTelephonyCallInfoWrapper::status
+    \property QDeclarativeTelephonyCallInfo::status
     \brief the status of the call.
 
     A call can be in different conditions like ringing, dropped and so on.
     You can use this property if you want to know about the current condition of the call.
 */
-QTelephonyCallInfoWrapper::CallStatus QTelephonyCallInfoWrapper::status() const
+QDeclarativeTelephonyCallInfo::CallStatus QDeclarativeTelephonyCallInfo::status() const
 {
-    return (QTelephonyCallInfoWrapper::CallStatus)d->status();
+    return (QDeclarativeTelephonyCallInfo::CallStatus)d->status();
 }
 
 /*!
-    \fn  QString QTelephonyCallInfoWrapper::subType() const
+    \fn  QString QDeclarativeTelephonyCallInfo::subType() const
 
     Gives back the sub type of the call type.
     A subtype of a Voip call can be Skype.
     You can use this property to get the sub type of the call.
 */
-QString QTelephonyCallInfoWrapper::subType() const
+QString QDeclarativeTelephonyCallInfo::subType() const
 {
     return d->subType();
 }
 
 /*!
-    \fn  QVariant QTelephonyCallInfoWrapper::value(const QString& param) const
+    \fn  QVariant QDeclarativeTelephonyCallInfo::value(const QString& param) const
     \a param Parameter for reading additional values.
 
     Gives back a variant value.
     This function is for reading special values dependce on the param parameter.
 */
-QVariant QTelephonyCallInfoWrapper::value(const QString& param) const
+QVariant QDeclarativeTelephonyCallInfo::value(const QString& param) const
 {
     return d->value(param);
 }
 
 /*!
-    \fn  QVariant QTelephonyCallInfoWrapper::direction() const
+    \fn  QVariant QDeclarativeTelephonyCallInfo::direction() const
 
     Gives back the direction of a call.
     This function is for reading the direction of a call (received or dialed).
 */
-QTelephonyCallInfoWrapper::Direction QTelephonyCallInfoWrapper::direction() const
+QDeclarativeTelephonyCallInfo::Direction QDeclarativeTelephonyCallInfo::direction() const
 {
-    return (QTelephonyCallInfoWrapper::Direction)d->direction();
+    return (QDeclarativeTelephonyCallInfo::Direction)d->direction();
 }
 
 
 /*!
-    \class QTelephonyCallListWrapper
+    \class QDeclarativeTelephonyCallList
     \ingroup telephonyapi
-    \brief The QTelephonyCallListWrapper class for a QTelephonyCallList object. This wrapper class can be used in QML to work with telephony.
+    \brief The QDeclarativeTelephonyCallList class for a QTelephonyCallList object. This wrapper class can be used in QML to work with telephony.
 */
 
 /*!
-    \fn QTelephonyCallListWrapper::QTelephonyCallListWrapper(QObject *parent)
+    \fn QDeclarativeTelephonyCallList::QDeclarativeTelephonyCallList(QObject *parent)
     \a parent The parent of this object. Default is 0.
 
-    Constructor for the QTelephonyCallListWrapper object 
+    Constructor for the QDeclarativeTelephonyCallList object 
 */
-QTelephonyCallListWrapper::QTelephonyCallListWrapper()
+QDeclarativeTelephonyCallList::QDeclarativeTelephonyCallList()
     : QObject(0)
 {
-    qDebug() << "QTelephonyCallListWrapper::QTelephonyCallListWrapper()";
+    qDebug() << "QDeclarativeTelephonyCallList::QDeclarativeTelephonyCallList()";
     d = new QTelephonyCallList(this);
 
     connect(d, SIGNAL(activeCallStatusChanged(const QTelephonyCallInfo&))
@@ -238,75 +238,105 @@ QTelephonyCallListWrapper::QTelephonyCallListWrapper()
         , this, SLOT(onCallRemoved(const QTelephonyCallInfo&)));
     connect(d, SIGNAL(activeCallAdded(const QTelephonyCallInfo&))
         , this, SLOT(onCallAdded(const QTelephonyCallInfo&)));
+    connect(d, SIGNAL(activeCallCountChanged(const int&))
+        , this, SLOT(onCallStatusChanged(QTelephonyCallInfo)));
 }
 
 /*!
-    \fn QTelephonyCallListWrapper::~QTelephonyCallListWrapper()
+    \fn QDeclarativeTelephonyCallList::~QDeclarativeTelephonyCallList()
 
-    Destructor of QTelephonyCallListWrapper.
+    Destructor of QDeclarativeTelephonyCallList.
 */
-QTelephonyCallListWrapper::~QTelephonyCallListWrapper()
+QDeclarativeTelephonyCallList::~QDeclarativeTelephonyCallList()
 {
+    tmpcallinfolist.clear();
     delete d;
 }
 
 /*!
-    \fn QList<QTelephonyCallListWrapper> QTelephonyCallListWrapper::activeCalls(const CallType& calltype) const
+    \fn QList<QDeclarativeTelephonyCallList> QDeclarativeTelephonyCallList::activeCalls(const CallType& calltype) const
     \a calltype All calls in the list have this type.
 
     Gives back a list of calls from type of calltype.
 */
-QList<QTelephonyCallInfoWrapper> QTelephonyCallListWrapper::activeCalls(const QTelephonyCallInfoWrapper::CallType& calltype) const
+QList<QDeclarativeTelephonyCallInfo*> QDeclarativeTelephonyCallList::activeCalls(const QDeclarativeTelephonyCallInfo::CallType& calltype)
 {
-    
+    tmpcallinfolist.clear();
     QList<QtMobility::QTelephonyCallInfo> calllist;
-    QList<QTelephonyCallInfoWrapper> ret;
     if(d)
         calllist = d->activeCalls((QTelephony::CallType)calltype);
 
     //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
     for( int i = 0; i < calllist.count(); i++){
-        ret.push_back(QTelephonyCallInfoWrapper(calllist.at(i)));
+        tmpcallinfolist.push_back(QDeclarativeTelephonyCallInfo(calllist.at(i)));
+    }
+    //create list of pointer
+    QList< QDeclarativeTelephonyCallInfo* > ret;
+    for( int i = 0; i < tmpcallinfolist.count(); i++){
+        ret.push_back(&tmpcallinfolist[i]);
     }
     return ret;
 }
 
+/*!
+    \fn int QDeclarativeTelephonyCallList::activeCallCount() const
+
+    Returns the number of current active calls.
+*/
+int QDeclarativeTelephonyCallList::activeCallCount() const
+{
+    if(d)
+        return d->activeCallCount();
+    return 0;
+}
+
 /*! 
-    \fn void QTelephonyCallListWrapper::activeCallStatusChanged(const QTelephonyCallInfo& call);
+    \fn void QDeclarativeTelephonyCallList::activeCallStatusChanged(const QTelephonyCallInfo& call);
     \a call The QTelephonyCallInfo object that changed its status.
 
     This Slot is called whenever a call changed its status.
 */
-void QTelephonyCallListWrapper::onCallStatusChanged(const QTelephonyCallInfo& call)
+void QDeclarativeTelephonyCallList::onCallStatusChanged(const QTelephonyCallInfo& call)
 {
-    qDebug() << "QTelephonyCallListWrapper::onActiveCallStatusChanged(...)";
-    QTelephonyCallInfoWrapper tciw(call);
-    emit evActiveCallStatusChanged(&tciw);
+    qDebug() << "QDeclarativeTelephonyCallList::onActiveCallStatusChanged(...)";
+    QDeclarativeTelephonyCallInfo tciw(call);
+    emit activeCallStatusChanged(&tciw);
 }
 
 /*! 
-    \fn void QTelephonyCallListWrapper::activeCallRemoved(const QTelephonyCallInfo& call);
+    \fn void QDeclarativeTelephonyCallList::activeCallRemoved(const QTelephonyCallInfo& call);
     \a call The QTelephonyCallInfo object that was removed from the active call list.
 
     This Slot is called whenever a call was removed from the active call list of QTelephonyCallList.
 */
-void QTelephonyCallListWrapper::onCallRemoved(const QTelephonyCallInfo& call)
+void QDeclarativeTelephonyCallList::onCallRemoved(const QTelephonyCallInfo& call)
 {
-    qDebug() << "QTelephonyCallListWrapper::onActiveCallRemoved(...)";
-    QTelephonyCallInfoWrapper tciw(call);
-    emit evActiveCallRemoved(&tciw);
+    qDebug() << "QDeclarativeTelephonyCallList::onActiveCallRemoved(...)";
+    QDeclarativeTelephonyCallInfo tciw(call);
+    emit activeCallRemoved(&tciw);
 }
 
 /*! 
-    \fn void QTelephonyCallListWrapper::activeCallAdded(const QTelephonyCallInfo& call);
+    \fn void QDeclarativeTelephonyCallList::activeCallAdded(const QTelephonyCallInfo& call);
     \a call The QTelephonyCallInfo object that was added to the active call list.
 
     This Slot is called whenever a call was added to the active call list of QTelephonyCallList.
 */
-void QTelephonyCallListWrapper::onCallAdded(const QTelephonyCallInfo& call)
+void QDeclarativeTelephonyCallList::onCallAdded(const QTelephonyCallInfo& call)
 {
-    qDebug() << "QTelephonyCallListWrapper::onCallAdded(...)";
-    QTelephonyCallInfoWrapper tciw(call);
-    emit evActiveCallAdded(&tciw);
+    qDebug() << "QDeclarativeTelephonyCallList::onCallAdded(...)";
+    QDeclarativeTelephonyCallInfo tciw(call);
+    emit activeCallAdded(&tciw);
+}
+
+/*!
+    \fn void QDeclarativeTelephonyCallList::onCallCountChanged(const int& value);
+    \a count The current count of active calls.
+
+    This Slot is called whenever the count of active calls was changed.
+*/
+void QDeclarativeTelephonyCallList::onCallCountChanged(const int& value)
+{
+    emit activeCallCountChanged(value);
 }
 

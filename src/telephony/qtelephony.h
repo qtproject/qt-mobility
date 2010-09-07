@@ -47,31 +47,37 @@
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
+//use this define to avaoi multiple enum declaration between
+//Telephony Lib and Declarative Lib.
+#define CALLTYPEENUM enum CallType{ \
+    Any = 0x00, \
+    Text = 0x01, \
+    Data = 0x02, \
+    Video = 0x04, \
+    Voice = 0x08, \
+    Other = 0x16 \
+};
+
+#define CALLSTATUSENUM enum CallStatus { \
+    Idle = 0, \
+    Dialing, \
+    Alerting, \
+    Connected, \
+    Disconnecting, \
+    Incoming, \
+    OnHold \
+};
+
+#define CALLDIRECTIONENUM enum Direction { \
+    Received = 0, \
+    Dialed \
+};
+
 namespace QTelephony
 {
-    enum CallType {
-        Any = 0,
-        Text,
-        Data,
-        Video,
-        Voice,
-        Other
-    };
-
-    enum CallStatus {
-        Idle = 0,
-        Dialing,
-        Alerting,
-        Connected,
-        Disconnecting,
-        Incomming,
-        OnHold
-    };
-
-    enum Direction {
-        Received = 0,
-        Dialed
-    };
+    CALLTYPEENUM
+    CALLSTATUSENUM
+    CALLDIRECTIONENUM
 }
 
 QTM_END_NAMESPACE

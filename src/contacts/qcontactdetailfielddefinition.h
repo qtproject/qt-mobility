@@ -71,6 +71,11 @@ public:
 
 private:
     QSharedDataPointer<QContactDetailFieldDefinitionPrivate> d;
+
+#if defined(SIMULATOR_APPLICATION) || defined(QT_SIMULATOR)
+     friend QDataStream &operator<<(QDataStream &, const QContactDetailFieldDefinition &);
+     friend QDataStream &operator>>(QDataStream &, QContactDetailFieldDefinition &);
+#endif
 };
 
 #ifndef QT_NO_DATASTREAM
