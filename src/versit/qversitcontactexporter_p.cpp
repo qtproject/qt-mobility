@@ -213,8 +213,10 @@ bool QVersitContactExporterPrivate::exportContact(
     // Search through the document for FN or N properties.  This will find it even if it was added
     // by a detail handler.
     if (!documentContainsName(document)) {
-        *error = QVersitContactExporter::NoNameError;
-        return false;
+        QVersitProperty nameProperty;
+        nameProperty.setName(QLatin1String("FN"));
+        nameProperty.setValue(QString());
+        document.addProperty(nameProperty);
     }
     return true;
 }

@@ -1744,8 +1744,10 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                     QString preprocessedInput;
                     for (int i = 0; i < input.size(); i++) {
                         QChar current = input.at(i).toLower();
-                        if (current.isDigit()) preprocessedInput.append(current);
-                        // note: we ignore characters like '+', 'p', 'w', '*' and '#' which may be important.
+                        // XXX NOTE: we ignore characters like '+', 'p', 'w', '*' and '#' which may be important.
+                        if (current.isDigit()) {
+                            preprocessedInput.append(current);
+                        }
                     }
 
                     /* Look at every detail in the set of details and compare */
@@ -1755,8 +1757,10 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                         QString preprocessedValueString;
                         for (int i = 0; i < valueString.size(); i++) {
                             QChar current = valueString.at(i).toLower();
-                            if (current.isDigit()) preprocessedValueString.append(current);
                             // note: we ignore characters like '+', 'p', 'w', '*' and '#' which may be important.
+                            if (current.isDigit()) {
+                                preprocessedValueString.append(current);
+                            }
                         }
 
                         // if the matchflags input don't require a particular criteria to pass, we assume that it has passed.
@@ -1772,6 +1776,11 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                         bool mewr = (mew ? preprocessedValueString.endsWith(preprocessedInput) : true);
                         if (mewr && mswr && mcr && mer) {
                             return true; // this detail meets all of the criteria which were required, and hence must match.
+                        }
+
+                        // fallback case: default MatchPhoneNumber compares the rightmost 7 digits, ignoring other matchflags.
+                        if (preprocessedValueString.right(7) == preprocessedInput.right(7)) {
+                            return true;
                         }
                     }
                 } else if (cdf.matchFlags() & QContactFilter::MatchKeypadCollation) {

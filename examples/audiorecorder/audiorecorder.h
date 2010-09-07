@@ -73,14 +73,15 @@ private slots:
     void updateState(QMediaRecorder::State);
     void updateProgress(qint64 pos);
     void displayErrorMessage();
+    QUrl generateAudioFilePath();
 
 private:
     Ui::AudioRecorder *ui;
 
     QAudioCaptureSource* audiosource;
     QMediaRecorder* capture;
-
     QAudioEncoderSettings  audioSettings;
+    bool outputLocationSet;
 
 };
 

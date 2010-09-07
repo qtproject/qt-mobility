@@ -44,17 +44,13 @@
 #include <QtCore/qurl.h>
 #include <QDir>
 
-#include <Mda\Common\Audio.h>
-#include <Mda\Common\Resource.h>
 #include <Mda\Client\Utility.h>
 #include <MdaAudioSampleEditor.h>
 #include <mmf\common\mmfcontrollerpluginresolver.h>
 #include <mmf\common\mmfcontroller.h>
 #include <BADESCA.H>
 #include <BAUTILS.H>
-#include <coemain.h>
-
-_LIT(KAudioDummyFile, "c:\\data\\temp\\temp.wav");
+#include <f32file.h>
 
 S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
     QObject(parent)
@@ -63,7 +59,7 @@ S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
     , m_controllerIdMap(QHash<QString, ControllerData>())
     , m_audioCodeclist(QHash<QString, CodecData>())
     , m_error(QMediaRecorder::NoError)
-    , isMuted(false)
+    , m_isMuted(false)
 {
     TRAPD(err, initializeSessionL());
     setError(err);
@@ -71,10 +67,13 @@ S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
 
 void S60AudioCaptureSession::initializeSessionL()
 {
-    m_recorderUtility = CMdaAudioRecorderUtility::NewL(*this, 0, 80,(TMdaPriorityPreference) 0x5210001);
+    m_recorderUtility = CMdaAudioRecorderUtility::NewL(*this, 0, EMdaPriorityNormal, EMdaPriorityPreferenceTimeAndQuality);
     updateAudioContainersL();
     populateAudioCodecsDataL();
     setDefaultSettings();
+    User::LeaveIfError(m_fsSession.Connect());
+    m_captureState = EInitialized;
+    emit stateChanged(m_captureState);
 }
 
 void S60AudioCaptureSession::setError(TInt aError)
@@ -123,6 +122,7 @@ QMediaRecorder::Error S60AudioCaptureSession::fromSymbianErrorToMultimediaError(
 S60AudioCaptureSession::~S60AudioCaptureSession()
 {
     delete m_recorderUtility;
+    m_fsSession.Close();
 }
 
 QAudioFormat S60AudioCaptureSession::format() const
@@ -199,10 +199,10 @@ QUrl S60AudioCaptureSession::outputLocation() const
 
 bool S60AudioCaptureSession::setOutputLocation(const QUrl& sink)
 {
-    QString filename = QDir::toNativeSeparators(m_sink.toString());
+    QString filename = QDir::toNativeSeparators(sink.toString());
     TPtrC16 path(reinterpret_cast<const TUint16*>(filename.utf16()));
-    TRAPD(err, BaflUtils::EnsurePathExistsL(CCoeEnv::Static()->FsSession(),path));
-    if (err==KErrNone) {
+    TRAPD(err, BaflUtils::EnsurePathExistsL(m_fsSession,path));
+    if (err == KErrNone) {
         m_sink = sink;
         setError(err);
         return true;
@@ -220,17 +220,19 @@ qint64 S60AudioCaptureSession::position() const
     return m_recorderUtility->Duration().Int64() / 1000;
 }
 
-QString S60AudioCaptureSession::initializeSinkL()
+void S60AudioCaptureSession::prepareSinkL()
 {
-    if (m_sink.isEmpty())
-        m_sink = generateAudioFilePath();
     QString sink = QDir::toNativeSeparators(m_sink.toString());
+    TPtrC16 path(reinterpret_cast<const TUint16*>(sink.utf16()));
+    if (BaflUtils::FileExists(m_fsSession, path))
+            BaflUtils::DeleteFile(m_fsSession, path);
+
     int index = sink.lastIndexOf('.');
     if (index != -1)
         sink.chop(sink.length()-index);
 
     sink.append(m_controllerIdMap.value(m_container).fileExtension);
-    return sink;
+    m_sink.setUrl(sink);
 }
 
 void S60AudioCaptureSession::record()
@@ -239,7 +241,8 @@ void S60AudioCaptureSession::record()
         return;
 
     if (m_captureState == EInitialized || m_captureState == ERecordComplete) {
-        QString filename = initializeSinkL();
+        prepareSinkL();
+        QString filename = m_sink.toString();
         TPtrC16 sink(reinterpret_cast<const TUint16*>(filename.utf16()));
         TUid controllerUid(TUid::Uid(m_controllerIdMap.value(m_container).controllerUid));
         TUid formatUid(TUid::Uid(m_controllerIdMap.value(m_container).destinationFormatUid));
@@ -269,12 +272,12 @@ void S60AudioCaptureSession::mute(bool muted)
     else
         m_recorderUtility->SetGain(m_recorderUtility->MaxGain());
 
-    isMuted = muted;
+    m_isMuted = muted;
 }
 
 bool S60AudioCaptureSession::muted()
 {
-    return isMuted;
+    return m_isMuted;
 }
 
 void S60AudioCaptureSession::setDefaultSettings()
@@ -344,20 +347,13 @@ void S60AudioCaptureSession::MoscoStateChangeEventL(CBase* aObject,
 		switch(aCurrentState) {
         case CMdaAudioClipUtility::EOpen: {
             if(aPreviousState == CMdaAudioClipUtility::ENotReady) {
-                if (m_captureState == EInitializing) {
-                    retrieveSupportedAudioSampleRatesL();
-                    m_recorderUtility->Close();
-                    m_captureState = EInitialized;
-                    emit stateChanged(m_captureState);
-                }else {
-                    applyAudioSettingsL();
-                    m_recorderUtility->SetGain(m_recorderUtility->MaxGain());
-                    m_recorderUtility->RecordL();
-                    m_captureState = EOpenCompelete;
-                    emit stateChanged(m_captureState);
-                    }
-                break;
+                applyAudioSettingsL();
+                m_recorderUtility->SetGain(m_recorderUtility->MaxGain());
+                m_recorderUtility->RecordL();
+                m_captureState = EOpenCompelete;
+                emit stateChanged(m_captureState);
             }
+            break;
         }
         case CMdaAudioClipUtility::ENotReady: {
             m_captureState = EInitialized;
@@ -429,7 +425,7 @@ void S60AudioCaptureSession::updateAudioContainersL()
 
 void S60AudioCaptureSession::retrieveSupportedAudioSampleRatesL()
 {
-    if (!m_recorderUtility || m_captureState != EInitializing)
+    if (!m_recorderUtility)
         return;
 
     m_supportedSampleRates.clear();
@@ -489,14 +485,6 @@ void S60AudioCaptureSession::populateAudioCodecsDataL()
 
     // default samplerates
     m_supportedSampleRates << 96000 << 88200 << 64000 << 48000 << 44100 << 32000 << 24000 << 22050 << 16000 << 12000 << 11025 << 8000;
-    m_captureState = EInitialized;
-    if (m_controllerIdMap.contains("audio/wav") && m_captureState != EInitialized) {
-        TMdaFileClipLocation location;
-        location.iName = KAudioDummyFile();
-        TMdaWavClipFormat format;
-        m_captureState = EInitializing;
-        m_recorderUtility->OpenL(&location, &format);
-    }
 }
 
 void S60AudioCaptureSession::applyAudioSettingsL()
@@ -533,16 +521,19 @@ void S60AudioCaptureSession::applyAudioSettingsL()
     }
     CleanupStack::PopAndDestroy(&supportedSampleRates);
 
-    RArray<TUint> supportedChannels;
-    CleanupClosePushL(supportedChannels);
-    m_recorderUtility->GetSupportedNumberOfChannelsL(supportedChannels);
-    for (TInt l = 0; l < supportedChannels.Count(); l++ ) {
-        if (supportedChannels[l] == m_format.channels()) {
-            m_recorderUtility->SetDestinationNumberOfChannelsL(m_format.channels());
-            break;
+    /* If requested channel setting is different than current one */
+    if (m_recorderUtility->DestinationNumberOfChannelsL() != m_format.channels()) {
+        RArray<TUint> supportedChannels;
+        CleanupClosePushL(supportedChannels);
+        m_recorderUtility->GetSupportedNumberOfChannelsL(supportedChannels);
+        for (TInt l = 0; l < supportedChannels.Count(); l++ ) {
+            if (supportedChannels[l] == m_format.channels()) {
+                m_recorderUtility->SetDestinationNumberOfChannelsL(m_format.channels());
+                break;
+            }
         }
+        CleanupStack::PopAndDestroy(&supportedChannels);
     }
-    CleanupStack::PopAndDestroy(&supportedChannels);
 }
 
 TFourCC S60AudioCaptureSession::determinePCMFormat()
@@ -588,21 +579,3 @@ TFourCC S60AudioCaptureSession::determinePCMFormat()
     }
     return fourCC;
 }
-
-QUrl S60AudioCaptureSession::generateAudioFilePath()
-{
-    QDir outputDir(QDir::rootPath());
-
-    int lastImage = 0;
-    int fileCount = 0;
-    foreach(QString fileName, outputDir.entryList(QStringList() << "testclip_*")) {
-        int imgNumber = fileName.mid(5, fileName.size()-9).toInt();
-        lastImage = qMax(lastImage, imgNumber);
-        if (outputDir.exists(fileName))
-            fileCount+=1;
-    }
-    lastImage+=fileCount;
-    QUrl location(QDir::toNativeSeparators(outputDir.canonicalPath()+QString("/testclip_%1").arg(lastImage+1,4,10,QLatin1Char('0'))));
-    return location;
-}
-

@@ -124,5 +124,21 @@ symbian {
     DEPLOYMENT += QtLocationDeployment
 }
 
+simulator {
+    QT += gui
+    SOURCES += qgeopositioninfosource_simulator.cpp \
+                qlocationdata_simulator.cpp \
+                qgeosatelliteinfosource_simulator.cpp \
+                qgeoareamonitor_simulator.cpp \
+                qlocationconnection_simulator.cpp
+    HEADERS += qgeopositioninfosource_simulator_p.h \
+                qlocationdata_simulator_p.h \
+                qgeosatelliteinfosource_simulator_p.h \
+                qgeoareamonitor_simulator_p.h \
+                qlocationconnection_simulator_p.h
+    INCLUDEPATH += ../mobilitysimulator
+    qtAddLibrary(QtMobilitySimulator)
+}
+
 CONFIG += middleware
 include(../../features/deploy.pri)

@@ -112,9 +112,10 @@ include(video/video.pri)
 include(effects/effects.pri)
 
 mac {
+!simulator {
    HEADERS += qpaintervideosurface_mac_p.h
    OBJECTIVE_SOURCES += qpaintervideosurface_mac.mm
-
+}
    LIBS += -framework AppKit -framework QuartzCore -framework QTKit
 }
 

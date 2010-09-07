@@ -134,7 +134,7 @@ void S60AudioPlayerSession::doStop()
 
 void S60AudioPlayerSession::doSetVolumeL(int volume)
 {
-    m_player->SetVolume((volume / 100.0) * m_player->MaxVolume());
+    m_player->SetVolume(volume * m_player->MaxVolume() / 100);
 }
 
 void S60AudioPlayerSession::doSetPositionL(qint64 microSeconds)
@@ -242,11 +242,6 @@ void S60AudioPlayerSession::setActiveEndpoint(const QString& name)
     if (m_audioOutput) {
         TRAPD(err, m_audioOutput->SetAudioOutputL(output));
         setError(err);
-
-        if (m_audioEndpoint != name) {
-            m_audioEndpoint = name;
-            emit activeEndpointChanged(name);
-        }
     }
 #endif
 }

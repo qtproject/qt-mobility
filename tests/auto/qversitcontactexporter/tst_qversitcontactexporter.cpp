@@ -262,22 +262,6 @@ void tst_QVersitContactExporter::testContactDetailHandler()
     detail = searchDetail(unknownDetails, definitionName);
     QCOMPARE(definitionName, detail.definitionName());
 
-    // Test that preProcessDetail returns true stops the exporter from doing anything.
-    contact.clearDetails();
-    QContactName contactName;
-    contactName.setFirstName(QLatin1String("John"));
-    contact.saveDetail(&contactName);
-    mDetailHandler->clear();
-    mDetailHandler->mPreProcess = true;
-    // Fails, with NoNameError
-    QVERIFY(!mExporter->exportContacts(QList<QContact>() << contact,
-            QVersitDocument::VCard30Type));
-    QList<QVersitDocument> documents = mExporter->documents();
-    QCOMPARE(documents.size(), 0);
-    QVERIFY(mDetailHandler->mPreProcessedDetails.count() > BASE_PROPERTY_COUNT);
-    QCOMPARE(mDetailHandler->mPostProcessedDetails.count(), 0);
-    QCOMPARE(mDetailHandler->mUnknownDetails.count(), 0);
-
     QVERIFY(mExporter->detailHandler() == mDetailHandler);
 }
 
@@ -285,6 +269,15 @@ void tst_QVersitContactExporter::testEncodeName()
 {
     QContact contact;
     QContactName name;
+
+    // An empty contact - a blank FN should be generated
+    QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard21Type));
+    QCOMPARE(mExporter->documents().size(), 1);
+    QVersitDocument document = mExporter->documents().first();
+    QCOMPARE(document.properties().size(), 1);
+    QVersitProperty property = document.properties().first();
+    QCOMPARE(property.name(), QString::fromAscii("FN"));
+    QCOMPARE(property.value(), QString());
 
     // Special characters are NOT backslash escaped by the exporter, only by the writer.
     name.setFirstName(QString::fromAscii("He;ido"));
@@ -294,7 +287,7 @@ void tst_QVersitContactExporter::testEncodeName()
     name.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&name);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard21Type));
-    QVersitDocument document = mExporter->documents().first();
+    document = mExporter->documents().first();
 
     // Each Contact has display label detail by default. Display label is enocded
     // if some value exists for the Label or if value for Name exists.

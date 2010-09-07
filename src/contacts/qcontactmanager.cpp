@@ -127,6 +127,9 @@ QStringList QContactManager::availableManagers()
 {
     QStringList ret;
     ret << QLatin1String("memory") << QLatin1String("invalid");
+#ifdef QT_SIMULATOR
+    ret << QLatin1String("simulator");
+#endif
     QContactManagerData::loadFactories();
     ret.append(QContactManagerData::m_engines.keys());
 

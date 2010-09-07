@@ -280,7 +280,7 @@ void S60VideoPlayerSession::doSetPositionL(qint64 microSeconds)
 
 void S60VideoPlayerSession::doSetVolumeL(int volume)
 {
-    m_player->SetVolumeL((volume / 100.0)* m_player->MaxVolume());
+    m_player->SetVolumeL(volume * m_player->MaxVolume() / 100);
 }
 
 QPair<qreal, qreal> S60VideoPlayerSession::scaleFactor()
@@ -593,11 +593,6 @@ void S60VideoPlayerSession::setActiveEndpoint(const QString& name)
     if (m_audioOutput) {
         TRAPD(err, m_audioOutput->SetAudioOutputL(output));
         setError(err);
-
-        if (m_audioEndpoint != name) {
-            m_audioEndpoint = name;
-            emit activeEndpointChanged(name);
-        }
     }
 #endif
 }

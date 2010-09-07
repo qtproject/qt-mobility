@@ -39,7 +39,7 @@ mac {
 #one version but not the other we silently disable the impossible combination
 win32:contains(CONFIG_WIN32,build_all) {
     contains(QT_CONFIG,debug):contains(QT_CONFIG,release) {
-        contains(TEMPLATE,.*lib):!plugin {
+        contains(TEMPLATE,.*lib) {
             CONFIG += $$WAS_IN_DEBUG
             CONFIG += debug_and_release build_all
         }
@@ -97,9 +97,12 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
             DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE 
         } else {
             #check that plugin_type is set or warn otherwise
-            isEmpty(PLUGIN_TYPE):message(PLUGIN_TYPE not specified - install rule may not work)
-            target.path=$${QT_MOBILITY_PLUGINS}/$${PLUGIN_TYPE}
-            INSTALLS += target
+            isEmpty(PLUGIN_TYPE) {
+                message(PLUGIN_TYPE not specified - install rule may not work)
+            } else {
+                target.path=$${QT_MOBILITY_PLUGINS}/$${PLUGIN_TYPE}
+                INSTALLS += target
+            }
         }
     }
 
