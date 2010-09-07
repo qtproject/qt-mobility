@@ -212,5 +212,5 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
 }
 
 #include "moc_qremoteservicecontrol_ls_p.cpp"
-#include "qremoteservicecontrol_p.moc"
+#include "qremoteservicecontrol_ls_p.moc"
 QTM_END_NAMESPACE
