@@ -124,6 +124,21 @@ TBool COrganizerItemRequestsServiceProvider::StartRequest(
                 
                 }
                 break;
+            case QOrganizerItemAbstractRequest::CollectionSaveRequest :
+                {
+                iCollections.append(
+                    ((QOrganizerCollectionSaveRequest*)(iReq))->collections());
+                iNoOfItems = iCollections.count();
+                }
+                break;
+            case QOrganizerItemAbstractRequest::CollectionRemoveRequest :
+                {
+                iCollectionIds.append(
+                    ((QOrganizerCollectionRemoveRequest*)(iReq))
+                    ->collectionIds());
+                    iNoOfItems = iCollectionIds.count();
+                }
+                break;
            }
 
         SelfComplete();
@@ -197,6 +212,26 @@ void COrganizerItemRequestsServiceProvider::RunL()
         case QOrganizerItemAbstractRequest::DetailDefinitionSaveRequest: 
             {
             SaveDetailDefinitionL();
+            }
+            break;
+        case QOrganizerItemAbstractRequest::CollectionFetchRequest : 
+            {
+            CollectionL();
+            }
+            break;
+        case QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest:
+            {
+            CollectionIdL();
+            }
+            break;
+        case QOrganizerItemAbstractRequest::CollectionRemoveRequest :
+            {
+            RemoveCollectionL();    
+            }
+            break;
+        case QOrganizerItemAbstractRequest::CollectionSaveRequest :
+            {
+            SaveCollectionL();
             }
             break;
         default:
@@ -482,6 +517,84 @@ void COrganizerItemRequestsServiceProvider::SaveDetailDefinitionL()
             QOrganizerItemAbstractRequest::FinishedState);
     }
 
+void COrganizerItemRequestsServiceProvider::CollectionIdL()
+    {/*
+    if (iIndex < iNoOfItems)
+            {
+            // update index beforehand in case collectionIdL leaves, if so
+            // RunError would call SelfComplete() for recursive operation
+            iIndex++;
+            iCollectionLocalIds.append(
+                iOrganizerItemManagerEngine.collectionIdL(iIndex-1));
+            // Calls itself recursively until all the items are deleted
+            SelfComplete();
+            }
+        else
+            {
+            // Notify results
+            QOrganizerItemManagerEngine::updateCollectionLocalIdFetchRequest( 
+                (QOrganizerCollectionLocalIdFetchRequest*)(iReq), 
+                iCollectionLocalIds, iError, 
+                QOrganizerItemAbstractRequest::FinishedState);
+            }    
+    */}
+
+void COrganizerItemRequestsServiceProvider::CollectionL()
+    {/*
+    // Get the collection ids
+    QList<QOrganizerCollection> collections(
+        iOrganizerItemManagerEngine.collectionsL(QOrganizerCollectionLocalId));
+    // Notify results
+    QOrganizerItemManagerEngine::updateCollectionFetchRequest(
+        (QOrganizerCollectionFetchRequest*)(iReq), collections, iError, 
+        QOrganizerItemAbstractRequest::FinishedState);
+    */}
+
+void COrganizerItemRequestsServiceProvider::SaveCollectionL()
+    {
+    if (iIndex < iNoOfItems)
+            {
+            // update index beforehand in case saveCollectionL leaves, if so
+            // RunError would call SelfComplete() for recursive operation
+            iIndex++;
+            QOrganizerCollection collection(iCollections.at(iIndex-1));
+            iOrganizerItemManagerEngine.saveCollectionL(&collection);
+            // Append the fetched item to iItemList
+            iSuccessfullCollections.append(collection);
+            // Calls itself recursively until all the items are deleted
+            SelfComplete();
+            }
+        else
+            {
+            // Notify results
+            QOrganizerItemManagerEngine::updateCollectionSaveRequest(
+                    (QOrganizerCollectionSaveRequest*)(iReq), 
+                    iSuccessfullCollections, iError, iErrorMap, 
+                    QOrganizerItemAbstractRequest::FinishedState);
+            }    
+    }
+
+void COrganizerItemRequestsServiceProvider::RemoveCollectionL()
+    {
+    if (iIndex < iNoOfItems)
+            {
+            // update index beforehand in case removeCollectionL leaves, if so
+            // RunError would call SelfComplete() for recursive operation
+            iIndex++;
+            QOrganizerCollectionId collectionId(iCollectionIds.at(iIndex-1));
+            iOrganizerItemManagerEngine.removeCollectionL(collectionId.localId());
+            // Calls itself recursively until all the items are deleted
+            SelfComplete();
+            }
+        else
+            {
+            // Notify results
+            QOrganizerItemManagerEngine::updateCollectionRemoveRequest(
+                    (QOrganizerCollectionRemoveRequest*)(iReq), iError, 
+                    iErrorMap, QOrganizerItemAbstractRequest::FinishedState);
+            }    
+    }
+
 // Called by Cancel()
 void COrganizerItemRequestsServiceProvider::DoCancel()
     {
@@ -520,4 +633,8 @@ void COrganizerItemRequestsServiceProvider::Cleanup()
     iItemList.clear();
     iError = QOrganizerItemManager::NoError;
     iSuccessfullItems.clear();
+    iCollections.clear();
+    iSuccessfullCollections.clear();
+    iCollectionIds.clear();
+    iCollectionLocalIds.clear();
     }

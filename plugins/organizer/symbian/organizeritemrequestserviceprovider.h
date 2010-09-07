@@ -106,6 +106,14 @@ private: // Worker functions
     void RemoveDetailDefinitionL();
     // Save detail definition
     void SaveDetailDefinitionL();
+    // Fetch collection Id
+    void CollectionIdL();
+    // Fetch collection
+    void CollectionL();
+    // Save collection
+    void SaveCollectionL();
+    // Remove collection
+    void RemoveCollectionL();
     
 private:
     QOrganizerItemSymbianEngine&            iOrganizerItemManagerEngine;
@@ -117,6 +125,10 @@ private:
     QOrganizerItemManager::Error            iError; // Error
     TInt                                    iNoOfItems;
     TInt                                    iIndex;
+    QList<QOrganizerCollection>             iCollections;
+    QList<QOrganizerCollection>             iSuccessfullCollections;
+    QList<QOrganizerCollectionId>           iCollectionIds;
+    QList<QOrganizerCollectionLocalId>      iCollectionLocalIds;
     };
 
 #endif /* CORGANIZERITEMREQUESTSSERVICEPROVIDER_H_ */
