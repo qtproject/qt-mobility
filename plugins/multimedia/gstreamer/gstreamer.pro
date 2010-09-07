@@ -67,12 +67,14 @@ SOURCES += \
 
     HEADERS += \
         qgstreamervideooverlay.h \
+        qgstreamervideowindow.h \
         qgstreamervideowidget.h \
         qx11videosurface.h \
         qgstxvimagebuffer.h
 
     SOURCES += \
         qgstreamervideooverlay.cpp \
+        qgstreamervideowindow.cpp \
         qgstreamervideowidget.cpp \
         qx11videosurface.cpp \
         qgstxvimagebuffer.cpp
