@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,24 +39,51 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QMainWindow>
-#include <QDeclarativeView>
-#include <QDeclarativeContext>
-#include "buzzer.h"
+import Qt 4.7
+import "components"
 
-int main(int argc, char *argv[])
-{
-    QApplication app(argc, argv);
-
-    QMainWindow mw;
-    QDeclarativeView *view = new QDeclarativeView(&mw);
-    view->setResizeMode(QDeclarativeView::SizeRootObjectToView);
-    view->rootContext()->setContextProperty("hapticplayer", new Buzzer);
-
-    view->setSource(QUrl::fromLocalFile(":/hapticsquare.qml"));
-    mw.setCentralWidget(view);
-    mw.showMaximized();
-
-    return app.exec();
+Item {
+    Button {
+        id: rumbleButton
+        text: "Rumble"
+        anchors.top: parent.top
+        anchors.left: parent.left
+        width : parent.width/2
+        height : parent.height/2
+        onClicked: {
+            hapticplayer.rumble();
+        }
+    }
+    Button {
+        id: oceanButton
+        text: { if (!hapticplayer.oceaning) "Start Ocean"; else "Stop Ocean" }
+        anchors.top: parent.top
+        anchors.left: rumbleButton.right
+        width : parent.width/2
+        height : parent.height/2
+        onClicked: {
+            hapticplayer.oceaning = !hapticplayer.oceaning
+        }
+    }
+    Button {
+        id: clickButton
+        text: "Click"
+        anchors.top: rumbleButton.bottom
+        anchors.left: parent.left
+        width : parent.width/2
+        height : parent.height/2
+        onClicked: {
+            hapticplayer.click();
+        }
+    }
+    Button {
+        text: "Oops!"
+        anchors.top: oceanButton.bottom
+        anchors.left: clickButton.right
+        width : parent.width/2
+        height : parent.height/2
+        onClicked: {
+            hapticplayer.oops();
+        }
+    }
 }

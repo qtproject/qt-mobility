@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,40 +39,36 @@
 **
 ****************************************************************************/
 
+#ifndef BUZZER_H
+#define BUZZER_H
+
 #include <qmobilityglobal.h>
 #include <qfeedbackeffect.h>
 
-#include <QDialog>
-class QPushButton;
-
 QTM_USE_NAMESPACE
 
-#ifndef DIALOG_H_
-#define DIALOG_H_
-
-class Dialog : public QDialog
+class Buzzer : public QObject
 {
     Q_OBJECT
-
+    Q_PROPERTY(bool oceaning READ oceaning WRITE setOceaning NOTIFY oceaningChanged)
 public:
-    Dialog();
-    ~Dialog();
+    Buzzer();
+    void setOceaning(bool on);
+    bool oceaning() const;
 
-private Q_SLOTS:
-    void playRumble();
-    void playOcean(bool toggleState);
-    void playButtonClick();
-    void playNegativeEffect();
+public Q_SLOTS:
+    void rumble();
+    void click();
+    void oops();
+    void quit();
+
+Q_SIGNALS:
+    void oceaningChanged();
 
 private:
-    QPushButton *m_btnRumble;
-    QPushButton *m_btnOcean;
-    QPushButton *m_btnButtonClick;
-    QPushButton *m_btnNegativeEffect;
-
     QFeedbackHapticsEffect m_rumble;
     QFeedbackHapticsEffect m_ocean;
+    bool m_oceaning;
 };
 
 #endif
-
