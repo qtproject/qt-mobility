@@ -119,8 +119,8 @@ public:
     void setSortPropertyNames(const QStringList &names) {
         if (!m_complete) m_request.setSortPropertyNames(names); emit sortPropertyNamesChanged(); }
 
-    bool isAutoUpdate() const { return m_request.isLive(); }
-    void setAutoUpdate(bool autoUpdate) { m_request.setLive(autoUpdate); emit autoUpdateChanged(); }
+    bool isAutoUpdate() const { return m_request.isAutoUpdate(); }
+    void setAutoUpdate(bool enabled) { m_request.setAutoUpdate(enabled); emit autoUpdateChanged(); }
 
     Scope scope() const { return Scope(m_request.scope()); }
     void setScope(Scope scope) {

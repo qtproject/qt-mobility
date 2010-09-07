@@ -186,7 +186,7 @@ void tst_QGalleryTypeRequest::properties()
     QGalleryTypeRequest request;
 
     QCOMPARE(request.propertyNames(), QStringList());
-    QCOMPARE(request.isLive(), false);
+    QCOMPARE(request.isAutoUpdate(), false);
     QCOMPARE(request.itemType(), QString());
 
     request.setPropertyNames(QStringList()
@@ -200,8 +200,8 @@ void tst_QGalleryTypeRequest::properties()
             << QLatin1String("album")
             << QLatin1String("trackNumber"));
 
-    request.setLive(true);
-    QCOMPARE(request.isLive(), true);
+    request.setAutoUpdate(true);
+    QCOMPARE(request.isAutoUpdate(), true);
 
     request.setItemType(audioType);
     QCOMPARE(request.itemType(), QString::fromLatin1("Audio"));

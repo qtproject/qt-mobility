@@ -487,20 +487,20 @@ void QGalleryQueryModel::setSortPropertyNames(const QStringList &names)
 }
 
 /*!
-    \property QGalleryQueryModel::live
+    \property QGalleryQueryModel::autoUpdate
 
     \brief Whether a query should continue to update its result set after the
     initial query succeeded.
 */
 
-bool QGalleryQueryModel::isLive() const
+bool QGalleryQueryModel::isAutoUpdate() const
 {
-    return d_ptr->query.isLive();
+    return d_ptr->query.isAutoUpdate();
 }
 
-void QGalleryQueryModel::setLive(bool live)
+void QGalleryQueryModel::setAutoUpdate(bool enabled)
 {
-    d_ptr->query.setLive(live);
+    d_ptr->query.setAutoUpdate(enabled);
 }
 
 /*!

@@ -181,7 +181,7 @@ void tst_QGalleryItemRequest::properties()
     QGalleryItemRequest request;
 
     QCOMPARE(request.propertyNames(), QStringList());
-    QCOMPARE(request.isLive(), false);
+    QCOMPARE(request.isAutoUpdate(), false);
     QCOMPARE(request.itemId(), QVariant());
 
     request.setPropertyNames(QStringList()
@@ -195,8 +195,8 @@ void tst_QGalleryItemRequest::properties()
             << QLatin1String("album")
             << QLatin1String("trackNumber"));
 
-    request.setLive(true);
-    QCOMPARE(request.isLive(), true);
+    request.setAutoUpdate(true);
+    QCOMPARE(request.isAutoUpdate(), true);
 
     request.setItemId(QVariant(76));
     QCOMPARE(request.itemId(), QVariant(76));

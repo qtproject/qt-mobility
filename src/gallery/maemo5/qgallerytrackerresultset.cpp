@@ -572,12 +572,13 @@ void QGalleryTrackerResultSetPrivate::_q_editFinished(QGalleryTrackerMetaDataEdi
 
 QGalleryTrackerResultSet::QGalleryTrackerResultSet(
         QGalleryTrackerResultSetArguments *arguments,
-        bool live,
+        bool autoUpdate,
         int cursorPosition,
         int minimumPagedItems,
         QObject *parent)
     : QGalleryResultSet(
-            *new QGalleryTrackerResultSetPrivate(arguments, live, cursorPosition, minimumPagedItems),
+            *new QGalleryTrackerResultSetPrivate(
+                    arguments, autoUpdate, cursorPosition, minimumPagedItems),
             parent)
 {
     Q_D(QGalleryTrackerResultSet);

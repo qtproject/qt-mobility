@@ -81,7 +81,7 @@ private:
             int offset,
             int limit,
             bool isItemType,
-            bool isLive);
+            bool isAutoUpdate);
 
     QGalleryDBusInterfacePointer daemonService;
     QGalleryDBusInterfacePointer metaDataService;
@@ -154,7 +154,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
     if (result != QGalleryAbstractRequest::Succeeded) {
         return new QGalleryAbstractResponse(result);
     } else {
-        return createItemListResponse(&arguments, 0, 1, schema.isItemType(), request->isLive());
+        return createItemListResponse(&arguments, 0, 1, schema.isItemType(), request->isAutoUpdate());
     }
 }
 
@@ -171,7 +171,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createTypeResponse(QGalleryTy
     } else {
         QGalleryTrackerTypeResultSet *response = new QGalleryTrackerTypeResultSet(arguments);
 
-        if (request->isLive()) {
+        if (request->isAutoUpdate()) {
             QObject::connect(
                     changeNotifier(), SIGNAL(itemsChanged(int)),
                     response, SLOT(refresh(int)));
@@ -186,18 +186,18 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
         int offset,
         int limit,
         bool isItemType,
-        bool isLive)
+        bool isAutoUpdate)
 {
     QGalleryTrackerResultSet *response = 0;
 
     if (isItemType) {
         response = new QGalleryTrackerEditableResultSet(
-                arguments, metaDataInterface(), isLive, offset, limit);
+                arguments, metaDataInterface(), isAutoUpdate, offset, limit);
     } else {
-        response = new QGalleryTrackerResultSet(arguments, isLive, offset, limit);
+        response = new QGalleryTrackerResultSet(arguments, isAutoUpdate, offset, limit);
     }
 
-    if (isLive) {
+    if (isAutoUpdate) {
         QObject::connect(
                 changeNotifier(), SIGNAL(itemsChanged(int)), response, SLOT(refresh(int)));
     }
@@ -231,7 +231,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
                 request->offset(),
                 request->limit(),
                 schema.isItemType(),
-                request->isLive());
+                request->isAutoUpdate());
     }
 }
 

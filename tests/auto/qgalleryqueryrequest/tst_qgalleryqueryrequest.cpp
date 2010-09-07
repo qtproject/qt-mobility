@@ -184,7 +184,7 @@ void tst_QGalleryQueryRequest::properties()
 
     QCOMPARE(request.propertyNames(), QStringList());
     QCOMPARE(request.sortPropertyNames(), QStringList());
-    QCOMPARE(request.isLive(), false);
+    QCOMPARE(request.isAutoUpdate(), false);
     QCOMPARE(request.offset(), 0);
     QCOMPARE(request.limit(), 0);
     QCOMPARE(request.rootType(), QString());
@@ -214,8 +214,8 @@ void tst_QGalleryQueryRequest::properties()
              << QLatin1String("-trackNumber")
              << QLatin1String("title"));
 
-    request.setLive(true);
-    QCOMPARE(request.isLive(), true);
+    request.setAutoUpdate(true);
+    QCOMPARE(request.isAutoUpdate(), true);
 
     request.setOffset(140);
     QCOMPARE(request.offset(), 140);

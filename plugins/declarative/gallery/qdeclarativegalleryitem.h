@@ -95,8 +95,8 @@ public:
     void setPropertyNames(const QStringList &names) {
         if (!m_complete) m_request.setPropertyNames(names); emit propertyNamesChanged(); }
 
-    bool isAutoUpdate() const { return m_request.isLive(); }
-    void setAutoUpdate(bool autoUpdate) { m_request.setLive(autoUpdate); emit autoUpdateChanged(); }
+    bool isAutoUpdate() const { return m_request.isAutoUpdate(); }
+    void setAutoUpdate(bool enabled) { m_request.setAutoUpdate(enabled); emit autoUpdateChanged(); }
 
     QVariant itemId() const { return m_request.itemId(); }
     void setItemId(const QVariant &itemId) {
