@@ -241,12 +241,19 @@ public:
 
     bool currentBluetoothPowerState();
 
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
+    bool isWirelessKeyboardConnected(); //1.2
+    bool isKeyboardFlipOpen();//1.2
+
 Q_SIGNALS:
     void batteryLevelChanged(int);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus);
     void bluetoothStateChanged(bool);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void powerStateChanged(QSystemDeviceInfo::PowerState);
+
+    void wirelessKeyboardConnected(bool connected);//1.2
+    void keyboardFlip(bool open);//1.2
 
 protected:  //From QObject
     void connectNotify(const char *signal);

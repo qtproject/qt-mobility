@@ -134,4 +134,9 @@ EXPORTS
 	_ZN10QtMobility18QSystemDisplayInfo14physicalHeightEi @ 133 NONAME
 	_ZN10QtMobility18QSystemDisplayInfo8contrastEi @ 134 NONAME
 	_ZN10QtMobility18QSystemStorageInfo19logicalDriveChangedEbRK7QString @ 135 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo12keyboardFlipEb @ 136 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo12keyboardTypeEv @ 137 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo18isKeyboardFlipOpenEv @ 138 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo25wirelessKeyboardConnectedEb @ 139 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo27isWirelessKeyboardConnectedEv @ 140 NONAME
 
