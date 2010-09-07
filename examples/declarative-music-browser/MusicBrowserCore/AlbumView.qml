@@ -93,7 +93,7 @@ Item {
 
         onCurrentIndexChanged: {
             gridView.positionViewAtIndex(currentIndex, GridView.Contain)
-            subTitle = currentItem.albumTitle
+            subTitle = galleryModel.get(currentIndex).title
         }
 
     }

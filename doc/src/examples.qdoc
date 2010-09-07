@@ -50,7 +50,7 @@
     \list
     \o \l{mediabrowser}{Media Browser}
     \o \l{documentproperties}{Document Properties}
-    \o \l{declarativemusicbrowser}{QML Music Browser}
+    \o \l{declarative-music-browser}{QML Music Browser}
     \endlist
 
     \section2 Feedback

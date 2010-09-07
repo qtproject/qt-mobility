@@ -86,8 +86,6 @@ Package {
     }
 
     Item {
-        property string albumTitle: title
-
         Package.name: 'fullScreen'
         width: viewWidth
         height: viewHeight
