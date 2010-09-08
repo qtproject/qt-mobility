@@ -412,7 +412,6 @@ void QGeoServiceProviderPrivate::loadStaticPlugins(QHash<QString, QGeoServicePro
             QString name = f->providerName();
 
 #if !defined QT_NO_DEBUG
-            const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
             if (showDebug)
                 qDebug() << "Static: found a service provider plugin with name" << name;
 #endif
