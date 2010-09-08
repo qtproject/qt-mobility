@@ -236,8 +236,15 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         return false;
     }
 
+    QContactId id(theContact->id());
+    if (!id.managerUri().isEmpty() && id.managerUri() != managerUri()) {
+        // the contact doesn't belong to this manager
+        *error = QContactManager::DoesNotExistError;
+        return false;
+    }
+
     // check to see if this contact already exists
-    int index = d->m_contactIds.indexOf(theContact->id().localId());
+    int index = d->m_contactIds.indexOf(id.localId());
     if (index != -1) {
         /* We also need to check that there are no modified create only details */
         QContact oldContact = d->m_contacts.at(index);

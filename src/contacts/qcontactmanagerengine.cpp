@@ -2652,18 +2652,20 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
         // 4) for any new contacts, copy the masked details to a blank contact
         // 5) save the modified ones
         // 6) update the id of any new contacts
+        // 7) transfer any errors from saving to errorMap
 
         QList<QContactLocalId> existingContactIds;
         QSet<QString> mask = definitionMask.toSet();
 
         // Error conditions:
-        // 1) bad id passed in (can't save that at all)
-        // 2) bad fetch (can't save partial update at all)
+        // 1) bad id passed in (can't fetch)
+        // 2) bad fetch (can't save partial update)
         // 3) bad save error
         // all of which needs to be returned in the error map
 
         QHash<int, int> existingIdMap; // contacts index to existingContacts index
         QSet<int> badArgumentSet; // contacts indices that are bad
+        bool ok = true;
 
         // Try to figure out which of our arguments are new contacts
         for(int i = 0; i < contacts->count(); i++) {
@@ -2676,20 +2678,23 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
                 } else {
                     // Strange. it's just a new contact
                 }
-            } else if (!c.id().managerUri().isEmpty()){
+            } else if (!c.id().managerUri().isEmpty() || c.localId() != 0) {
                 // Hmm, error (wrong manager)
                 badArgumentSet.insert(i);
-            } // else {new contact}
+                ok = false;
+                errorMap->insert(i, QContactManager::DoesNotExistError);
+            } // else new contact
         }
 
         // Now fetch those contacts
         QMap<int, QContactManager::Error> fetchErrors;
         QContactManager::Error fetchError = QContactManager::NoError;
         QList<QContact> existingContacts = this->contacts(existingContactIds, &fetchErrors, QContactFetchHint() , &fetchError);
+        ok &= (fetchError == QContactManager::NoError);
 
         // Prepare the list to save
         QList<QContact> contactsToSave;
-        QHash<int, int> savedToOriginalMap; // contactsToSave index to contacts index
+        QList<int> savedToOriginalMap; // contactsToSave index to contacts index
 
         for (int i = 0; i < contacts->count(); i++) {
             // See if this is an existing contact or a new one
@@ -2697,17 +2702,20 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
             QContact contactToSave;
             if (fetchedIdx >= 0) {
                 // See if we had an error
+                if (fetchErrors[fetchedIdx] != QContactManager::NoError) {
+                    errorMap->insert(i, fetchErrors[fetchedIdx]);
+                    continue;
+                }
+
                 // Existing contact we should have fetched
                 contactToSave = existingContacts.at(fetchedIdx);
 
                 QSharedDataPointer<QContactData>& cd = QContactData::contactData(contactToSave);
                 cd->removeOnly(mask);
-            } else if (!badArgumentSet.contains(i)) {
-                // New contact
-            } else {
+            } else if (badArgumentSet.contains(i)) {
                 // A bad argument.  Leave it out of the contactsToSave list
                 continue;
-            }
+            } // else new contact
 
             // Now copy in the details from the arguments
             const QContact& c = contacts->at(i);
@@ -2721,14 +2729,14 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
                 }
             }
 
-            savedToOriginalMap.insert(contactsToSave.count(), i);
+            savedToOriginalMap.append(i);
             contactsToSave.append(contactToSave);
         }
 
         // Now save them
         QMap<int, QContactManager::Error> saveErrors;
         QContactManager::Error saveError = QContactManager::NoError;
-        saveContacts(&contactsToSave, &saveErrors, &saveError);
+        ok &= saveContacts(&contactsToSave, &saveErrors, &saveError);
 
         // Now update the passed in arguments, where necessary
 
@@ -2737,10 +2745,13 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
             (*contacts)[savedToOriginalMap[i]].setId(contactsToSave[i].id());
         }
         // Populate the errorMap with the errorMap of the attempted save
-        // Add to errorMap contacts we didn't try to save
+        QMap<int, QContactManager::Error>::iterator it(saveErrors.begin());
+        while (it != saveErrors.end()) {
+            errorMap->insert(savedToOriginalMap[it.key()], it.value());
+            it++;
+        }
 
-
-        return true;
+        return ok;
     }
 }
 

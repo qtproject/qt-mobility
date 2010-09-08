@@ -3426,9 +3426,10 @@ void tst_QContactManager::partialSave()
     QVERIFY(imp.contacts()[3].displayLabel() == QLatin1String("David"));
 
     QList<QContact> contacts = imp.contacts();
+    QMap<int, QContactManager::Error> errorMap;
 
     // First save these contacts
-    QVERIFY(cm->saveContacts(&contacts, 0));
+    QVERIFY(cm->saveContacts(&contacts, &errorMap));
     QList<QContact> originalContacts = contacts;
 
     // Now try some partial save operations
@@ -3438,16 +3439,15 @@ void tst_QContactManager::partialSave()
     // 3) Remove an email address & phone, mask out phone
     // 4) new contact, no details in the mask
     // 5) new contact, some details in the mask
-    // 6) new contact, all details ok
-    // 7) Have a bad manager uri in the middle
-    // 8) Have a non existing contact in the middle
+    // 6) Have a bad manager uri in the middle
+    // 7) Have a non existing contact in the middle
 
     QContactPhoneNumber pn;
     pn.setNumber("111111");
     contacts[0].saveDetail(&pn);
 
     // 0) empty mask
-    QVERIFY(cm->saveContacts(&contacts, QStringList(), 0));
+    QVERIFY(cm->saveContacts(&contacts, QStringList(), &errorMap));
 
     // That should have updated everything
     QContact a = cm->contact(originalContacts[0].localId());
@@ -3455,8 +3455,8 @@ void tst_QContactManager::partialSave()
 
     // 1) Add a phone number to b, mask it out
     contacts[1].saveDetail(&pn);
-    QVERIFY(cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName), 0));
-    //
+    QVERIFY(cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName), &errorMap));
+    QVERIFY(errorMap.isEmpty());
 
     QContact b = cm->contact(originalContacts[1].localId());
     QVERIFY(b.details<QContactPhoneNumber>().count() == 1);
@@ -3466,7 +3466,8 @@ void tst_QContactManager::partialSave()
     e.setEmailAddress("example@example.com");
     contacts[1].saveDetail(&e); // contacts[1] should have both phone and email
 
-    QVERIFY(cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName), 0));
+    QVERIFY(cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName), &errorMap));
+    QVERIFY(errorMap.isEmpty());
     b = cm->contact(originalContacts[1].localId());
     QVERIFY(b.details<QContactPhoneNumber>().count() == 1);
     QVERIFY(b.details<QContactEmailAddress>().count() == 1);
@@ -3476,7 +3477,8 @@ void tst_QContactManager::partialSave()
     QVERIFY(contacts[1].removeDetail(&pn));
     QVERIFY(contacts[1].details<QContactEmailAddress>().count() == 0);
     QVERIFY(contacts[1].details<QContactPhoneNumber>().count() == 1);
-    QVERIFY(cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName), 0));
+    QVERIFY(cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName), &errorMap));
+    QVERIFY(errorMap.isEmpty());
     b = cm->contact(originalContacts[1].localId());
     QVERIFY(b.details<QContactPhoneNumber>().count() == 1);
     QVERIFY(b.details<QContactEmailAddress>().count() == 0);
@@ -3486,7 +3488,8 @@ void tst_QContactManager::partialSave()
     newContact.setId(QContactId());
 
     contacts.append(newContact);
-    QVERIFY(cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName), 0));
+    QVERIFY(cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName), &errorMap));
+    QVERIFY(errorMap.isEmpty());
     QVERIFY(contacts[4].localId() != 0); // Saved
     b = cm->contact(contacts[4].localId());
     QVERIFY(b.details<QContactOrganization>().count() == 0); // not saved
@@ -3496,15 +3499,34 @@ void tst_QContactManager::partialSave()
     newContact = originalContacts[2];
     newContact.setId(QContactId());
     contacts.append(newContact);
-    QVERIFY(cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName), 0));
+    QVERIFY(cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName), &errorMap));
+    QVERIFY(errorMap.isEmpty());
     QVERIFY(contacts[5].localId() != 0); // Saved
     b = cm->contact(contacts[5].localId());
     QVERIFY(b.details<QContactEmailAddress>().count() == 1);
     QVERIFY(b.details<QContactName>().count() == 0); // not saved
 
-    // 6,7,8  TODO
+    // 6) Have a bad manager uri in the middle followed by a save error
+    QContactId id4(contacts[4].id());
+    QContactId badId(id4);
+    badId.setManagerUri(QString());
+    contacts[4].setId(badId);
+    QContactDetail badDetail("BadDetail");
+    badDetail.setValue("BadField", "BadValue");
+    contacts[5].saveDetail(&badDetail);
+    QVERIFY(!cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName) << "BadDetail", &errorMap));
+    QCOMPARE(errorMap.count(), 2);
+    QCOMPARE(errorMap[4], QContactManager::DoesNotExistError);
+    QCOMPARE(errorMap[5], QContactManager::InvalidDetailError);
 
-
+    // 7) Have a non existing contact in the middle followed by a save error
+    badId = id4;
+    badId.setLocalId(987234); // something nonexistent
+    contacts[4].setId(badId);
+    QVERIFY(!cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName) << "BadDetail", &errorMap));
+    QCOMPARE(errorMap.count(), 2);
+    QCOMPARE(errorMap[4], QContactManager::DoesNotExistError);
+    QCOMPARE(errorMap[5], QContactManager::InvalidDetailError);
 }
 #endif
 
