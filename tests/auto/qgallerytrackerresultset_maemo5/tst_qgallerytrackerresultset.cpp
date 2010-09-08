@@ -340,12 +340,12 @@ void tst_QGalleryTrackerResultSet::query()
     QSignalSpy removeSpy(&resultSet, SIGNAL(itemsRemoved(int,int)));
     QSignalSpy changeSpy(&resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(resultSet.isActive(), true);
     QCOMPARE(resultSet.itemCount(), 0);
 
     QVERIFY(resultSet.waitForFinished(1000));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(resultSet.isActive(), false);
     QCOMPARE(resultSet.itemCount(), 17);
     QCOMPARE(insertSpy.count(), 1);
     QCOMPARE(removeSpy.count(), 0);
@@ -461,12 +461,12 @@ void tst_QGalleryTrackerResultSet::refresh()
     QSignalSpy removeSpy(&resultSet, SIGNAL(itemsRemoved(int,int)));
     QSignalSpy changeSpy(&resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(resultSet.isActive(), true);
     QCOMPARE(resultSet.itemCount(), 0);
 
     QVERIFY(resultSet.waitForFinished(1000));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(resultSet.isActive(), false);
     QCOMPARE(resultSet.itemCount(), 16);
     QCOMPARE(insertSpy.count(), 1);
     QCOMPARE(removeSpy.count(), 0);
@@ -483,7 +483,7 @@ void tst_QGalleryTrackerResultSet::refresh()
     resultSet.refresh();
     QVERIFY(resultSet.waitForFinished(1000));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(resultSet.isActive(), false);
     QCOMPARE(resultSet.itemCount(), 16);
     QCOMPARE(insertSpy.count(), 1);
     QCOMPARE(removeSpy.count(), 0);
@@ -510,12 +510,12 @@ void tst_QGalleryTrackerResultSet::reset()
     QSignalSpy removeSpy(&resultSet, SIGNAL(itemsRemoved(int,int)));
     QSignalSpy changeSpy(&resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(resultSet.isActive(), true);
     QCOMPARE(resultSet.itemCount(), 0);
 
     QVERIFY(resultSet.waitForFinished(1000));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(resultSet.isActive(), false);
     QCOMPARE(resultSet.itemCount(), 16);
     QCOMPARE(insertSpy.count(), 1);
     QCOMPARE(removeSpy.count(), 0);
@@ -535,7 +535,7 @@ void tst_QGalleryTrackerResultSet::reset()
     resultSet.refresh();
     QVERIFY(resultSet.waitForFinished(1000));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(resultSet.isActive(), false);
     QCOMPARE(resultSet.itemCount(), 16);
     QCOMPARE(insertSpy.count(), 2);
     QCOMPARE(removeSpy.count(), 1);
@@ -569,12 +569,12 @@ void tst_QGalleryTrackerResultSet::removeItem()
     QSignalSpy removeSpy(&resultSet, SIGNAL(itemsRemoved(int,int)));
     QSignalSpy changeSpy(&resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(resultSet.isActive(), true);
     QCOMPARE(resultSet.itemCount(), 0);
 
     QVERIFY(resultSet.waitForFinished(1000));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(resultSet.isActive(), false);
     QCOMPARE(resultSet.itemCount(), 18);
     QCOMPARE(insertSpy.count(), 1);
     QCOMPARE(removeSpy.count(), 0);
@@ -596,7 +596,7 @@ void tst_QGalleryTrackerResultSet::removeItem()
     resultSet.refresh();
     QVERIFY(resultSet.waitForFinished(1000));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(resultSet.isActive(), false);
     QCOMPARE(resultSet.itemCount(), 16);
     QCOMPARE(insertSpy.count(), 1);
     QCOMPARE(removeSpy.count(), 1);
@@ -626,12 +626,12 @@ void tst_QGalleryTrackerResultSet::insertItem()
     QSignalSpy removeSpy(&resultSet, SIGNAL(itemsRemoved(int,int)));
     QSignalSpy changeSpy(&resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(resultSet.isActive(), true);
     QCOMPARE(resultSet.itemCount(), 0);
 
     QVERIFY(resultSet.waitForFinished(1000));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(resultSet.isActive(), false);
     QCOMPARE(resultSet.itemCount(), 16);
     QCOMPARE(insertSpy.count(), 1);
     QCOMPARE(removeSpy.count(), 0);
@@ -650,7 +650,7 @@ void tst_QGalleryTrackerResultSet::insertItem()
     resultSet.refresh();
     QVERIFY(resultSet.waitForFinished(1000));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(resultSet.isActive(), false);
     QCOMPARE(resultSet.itemCount(), 18);
     QCOMPARE(insertSpy.count(), 2);
     QCOMPARE(removeSpy.count(), 0);
@@ -683,12 +683,12 @@ void tst_QGalleryTrackerResultSet::replaceFirstItem()
     QSignalSpy removeSpy(&resultSet, SIGNAL(itemsRemoved(int,int)));
     QSignalSpy changeSpy(&resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(resultSet.isActive(), true);
     QCOMPARE(resultSet.itemCount(), 0);
 
     QVERIFY(resultSet.waitForFinished(1000));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(resultSet.isActive(), false);
     QCOMPARE(resultSet.itemCount(), 16);
     QCOMPARE(insertSpy.count(), 1);
     QCOMPARE(removeSpy.count(), 0);
@@ -709,7 +709,7 @@ void tst_QGalleryTrackerResultSet::replaceFirstItem()
     resultSet.refresh();
     QVERIFY(resultSet.waitForFinished(1000));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(resultSet.isActive(), false);
     QCOMPARE(resultSet.itemCount(), 16);
     QCOMPARE(insertSpy.count(), 2);
     QCOMPARE(removeSpy.count(), 1);
@@ -742,12 +742,12 @@ void tst_QGalleryTrackerResultSet::replaceLastItem()
     QSignalSpy removeSpy(&resultSet, SIGNAL(itemsRemoved(int,int)));
     QSignalSpy changeSpy(&resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(resultSet.isActive(), true);
     QCOMPARE(resultSet.itemCount(), 0);
 
     QVERIFY(resultSet.waitForFinished(1000));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(resultSet.isActive(), false);
     QCOMPARE(resultSet.itemCount(), 16);
     QCOMPARE(insertSpy.count(), 1);
     QCOMPARE(removeSpy.count(), 0);
@@ -767,7 +767,7 @@ void tst_QGalleryTrackerResultSet::replaceLastItem()
     resultSet.refresh();
     QVERIFY(resultSet.waitForFinished(1000));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(resultSet.isActive(), false);
     QCOMPARE(resultSet.itemCount(), 16);
     QCOMPARE(insertSpy.count(), 2);
     QCOMPARE(removeSpy.count(), 1);
@@ -801,12 +801,12 @@ void tst_QGalleryTrackerResultSet::replaceMiddleItem()
     QSignalSpy removeSpy(&resultSet, SIGNAL(itemsRemoved(int,int)));
     QSignalSpy changeSpy(&resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(resultSet.isActive(), true);
     QCOMPARE(resultSet.itemCount(), 0);
 
     QVERIFY(resultSet.waitForFinished(1000));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(resultSet.isActive(), false);
     QCOMPARE(resultSet.itemCount(), 16);
     QCOMPARE(insertSpy.count(), 1);
     QCOMPARE(removeSpy.count(), 0);
@@ -832,7 +832,7 @@ void tst_QGalleryTrackerResultSet::replaceMiddleItem()
     resultSet.refresh();
     QVERIFY(resultSet.waitForFinished(1000));
 
-    QCOMPARE(resultSet.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(resultSet.isActive(), false);
     QCOMPARE(resultSet.itemCount(), 16);
     QCOMPARE(insertSpy.count(), 2);
     QCOMPARE(removeSpy.count(), 1);

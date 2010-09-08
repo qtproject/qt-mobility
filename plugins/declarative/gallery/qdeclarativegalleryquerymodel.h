@@ -77,13 +77,13 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
 public:
     enum Status
     {
-        Null,
-        Active,
-        Finished,
-        Idle,
-        Cancelling,
-        Cancelled,
-        Error
+        Null        = QGalleryAbstractRequest::Inactive,
+        Active      = QGalleryAbstractRequest::Active,
+        Finished    = QGalleryAbstractRequest::Finished,
+        Idle        = QGalleryAbstractRequest::Idle,
+        Cancelling  = QGalleryAbstractRequest::Cancelling,
+        Cancelled   = QGalleryAbstractRequest::Cancelled,
+        Error       = QGalleryAbstractRequest::Error
     };
 
     enum Scope

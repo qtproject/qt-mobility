@@ -61,11 +61,11 @@ class Q_GALLERY_EXPORT QGalleryAbstractRequest : public QObject
     Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery)
     Q_PROPERTY(bool supported READ isSupported NOTIFY supportedChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
-    Q_PROPERTY(int result READ result NOTIFY resultChanged)
+    Q_PROPERTY(int error READ error NOTIFY errorChanged)
+    Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged);
     Q_PROPERTY(int currentProgress READ currentProgress NOTIFY progressChanged)
     Q_PROPERTY(int maximumProgress READ maximumProgress NOTIFY progressChanged)
     Q_ENUMS(Status)
-    Q_ENUMS(Result)
     Q_ENUMS(RequestType)
 public:
     enum Status
@@ -73,27 +73,18 @@ public:
         Inactive,
         Active,
         Cancelling,
-        Idle
+        Cancelled,
+        Idle,
+        Finished,
+        Error
     };
 
-    enum Result
+    enum RequestError
     {
-        NoResult,
-        Succeeded,
-        Cancelled,
+        NoError,
         NoGallery,
         NotSupported,
-        ConnectionError,
-        InvalidItemError,
-        ItemTypeError,
-        InvalidPropertyError,
-        PropertyTypeError,
-        UnsupportedFilterTypeError,
-        UnsupportedFilterOptionError,
-        PermissionsError,
-        InvalidDestinationError,
-        InvalidUrlError,
-        RequestError = 100
+        GalleryError = 100
     };
 
     enum RequestType
@@ -116,7 +107,9 @@ public:
 
     RequestType type() const;
     Status status() const;
-    int result() const;
+
+    int error() const;
+    QString errorString() const;
 
     int currentProgress() const;
     int maximumProgress() const;
@@ -130,12 +123,11 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void supportedChanged();
-    void succeeded();
+    void finished();
     void cancelled();
-    void failed(int result);
-    void finished(int result);
+    void error(int error, const QString &errorString);
     void statusChanged(QGalleryAbstractRequest::Status status);
-    void resultChanged();
+    void errorChanged();
     void progressChanged(int current, int maximum);
 
 protected:
@@ -147,6 +139,8 @@ protected:
 
 private:
     Q_PRIVATE_SLOT(d_ptr, void _q_finished())
+    Q_PRIVATE_SLOT(d_ptr, void _q_cancelled())
+    Q_PRIVATE_SLOT(d_ptr, void _q_resumed())
     Q_PRIVATE_SLOT(d_ptr, void _q_progressChanged(int, int))
 };
 

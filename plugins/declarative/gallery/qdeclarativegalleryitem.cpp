@@ -55,7 +55,6 @@ QDeclarativeGalleryItem::QDeclarativeGalleryItem(QObject *parent)
 {
     connect(&m_request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)),
             this, SLOT(_q_statusChanged()));
-    connect(&m_request, SIGNAL(resultChanged()), this, SLOT(_q_statusChanged()));
     connect(&m_request, SIGNAL(progressChanged(int,int)), this, SIGNAL(progressChanged()));
 
     connect(&m_request, SIGNAL(itemChanged()),
@@ -88,36 +87,9 @@ void QDeclarativeGalleryItem::componentComplete()
 void QDeclarativeGalleryItem::_q_statusChanged()
 {
     Status status = m_status;
-    QString message;
+    QString message = m_request.errorString();
 
-    switch (m_request.status()) {
-    case QGalleryAbstractRequest::Inactive: {
-            switch (m_request.result()) {
-            case QGalleryAbstractRequest::NoResult:
-                status = Null;
-                break;
-            case QGalleryAbstractRequest::Cancelled:
-                status = Cancelled;
-                break;
-            case QGalleryAbstractRequest::Succeeded:
-                status = Finished;
-                break;
-            default:
-                status = Error;
-                message = QDeclarativeDocumentGallery::toErrorString(m_request.result());
-                break;
-            }
-        }
-    case QGalleryAbstractRequest::Active:
-        status = Active;
-        break;
-    case QGalleryAbstractRequest::Cancelling:
-        status = Cancelling;
-        break;
-    case QGalleryAbstractRequest::Idle:
-        status = Idle;
-        break;
-    }
+    m_status = Status(m_request.status());
 
     qSwap(message, m_errorMessage);
 

@@ -148,11 +148,11 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
 
     QGalleryTrackerResultSetArguments arguments;
 
-    int result = schema.prepareItemResponse(
+    int error = schema.prepareItemResponse(
             &arguments, this, request->itemId().toString(), request->propertyNames());
 
-    if (result != QGalleryAbstractRequest::Succeeded) {
-        return new QGalleryAbstractResponse(result);
+    if (error != QDocumentGallery::NoError) {
+        return new QGalleryAbstractResponse(error);
     } else {
         return createItemListResponse(&arguments, 0, 1, schema.isItemType(), request->isAutoUpdate());
     }
@@ -164,10 +164,10 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createTypeResponse(QGalleryTy
 
     QGalleryTrackerTypeResultSetArguments arguments;
 
-    int result = schema.prepareTypeResponse(&arguments, this);
+    int error = schema.prepareTypeResponse(&arguments, this);
 
-    if (result != QGalleryAbstractRequest::Succeeded) {
-        return new QGalleryAbstractResponse(result);
+    if (error != QDocumentGallery::NoError) {
+        return new QGalleryAbstractResponse(error);
     } else {
         QGalleryTrackerTypeResultSet *response = new QGalleryTrackerTypeResultSet(arguments);
 
@@ -214,7 +214,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
 
     QGalleryTrackerResultSetArguments arguments;
 
-    int result = schema.prepareQueryResponse(
+    int error = schema.prepareQueryResponse(
             &arguments,
             this,
             request->scope(),
@@ -223,8 +223,8 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
             request->propertyNames(),
             request->sortPropertyNames());
 
-    if (result != QGalleryAbstractRequest::Succeeded) {
-        return new QGalleryAbstractResponse(result);
+    if (error != QDocumentGallery::NoError) {
+        return new QGalleryAbstractResponse(error);
     } else {
         return createItemListResponse(
                 &arguments,
@@ -238,15 +238,15 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createRemoveResponse(
         QGalleryRemoveRequest *request)
 {
-    int result = QGalleryAbstractRequest::Succeeded;
+    QDocumentGallery::Error error = QDocumentGallery::NoError;
 
-    QString fileName = QGalleryTrackerSchema::uriFromItemId(&result, request->itemId());
+    QString fileName = QGalleryTrackerSchema::uriFromItemId(&error, request->itemId());
 
     if (fileName.isNull()) {
-        if (result == QGalleryAbstractRequest::Succeeded)
-            result = QGalleryAbstractRequest::InvalidItemError;
+        if (error == QDocumentGallery::NoError)
+            error = QDocumentGallery::ItemIdError;
 
-        return new QGalleryAbstractResponse(result);
+        return new QGalleryAbstractResponse(error);
     } else {
         return new QGalleryTrackerRemoveResponse(fileInterface(), fileName);
     }

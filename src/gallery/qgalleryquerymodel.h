@@ -65,7 +65,8 @@ class Q_GALLERY_EXPORT QGalleryQueryModel : public QAbstractItemModel
     Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem)
     Q_PROPERTY(QGalleryQueryRequest::Scope scope READ scope WRITE setScope)
     Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter)
-    Q_PROPERTY(int result READ result NOTIFY resultChanged)
+    Q_PROPERTY(int error READ error NOTIFY errorChanged)
+    Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
     Q_PROPERTY(QGalleryAbstractRequest::Status status READ status NOTIFY statusChanged)
 public:
     QGalleryQueryModel(QObject *parent = 0);
@@ -112,7 +113,9 @@ public:
     void cancel();
     void clear();
 
-    int result() const;
+    int error() const;
+    QString errorString() const;
+
     QGalleryAbstractRequest::Status status() const;
 
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
@@ -138,12 +141,11 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
 Q_SIGNALS:
-    void succeeded();
+    void finished();
     void cancelled();
-    void failed(int result);
-    void finished(int result);
+    void error(int error, const QString &errorString);
+    void errorChanged();
     void statusChanged(QGalleryAbstractRequest::Status status);
-    void resultChanged();
 
 private:
     QScopedPointer<QGalleryQueryModelPrivate> d_ptr;

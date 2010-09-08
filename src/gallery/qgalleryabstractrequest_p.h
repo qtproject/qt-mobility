@@ -71,9 +71,10 @@ public:
         : gallery(gallery)
         , type(type)
         , status(QGalleryAbstractRequest::Inactive)
-        , result(QGalleryAbstractRequest::NoResult)
+        , error(QGalleryAbstractRequest::NoError)
         , currentProgress(0)
         , maximumProgress(0)
+        , wasIdle(false)
     {
     }
 
@@ -82,6 +83,8 @@ public:
     }
 
     void _q_finished();
+    void _q_cancelled();
+    void _q_resumed();
     void _q_progressChanged(int current, int maximum);
 
     QGalleryAbstractRequest *q_ptr;
@@ -89,9 +92,11 @@ public:
     QScopedPointer<QGalleryAbstractResponse> response;
     QGalleryAbstractRequest::RequestType type;
     QGalleryAbstractRequest::Status status;
-    int result;
+    int error;
     int currentProgress;
     int maximumProgress;
+    bool wasIdle;
+    QString errorString;
 };
 
 QTM_END_NAMESPACE

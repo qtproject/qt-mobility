@@ -76,8 +76,6 @@ public:
     static QString toString(ItemType type);
     static ItemType itemTypeFromString(const QString &string);
 
-    static QString toErrorString(int result);
-
     static QAbstractGallery *gallery();
 };
 
