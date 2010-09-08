@@ -41,15 +41,7 @@
 
 #include "organizersymbianutils.h"
 #include <badesca.h>
-#include <calcommon.h>
-#ifdef SYMBIAN_CALENDAR_V2
-#include <calcalendarinfo.h>
-// This file (calenmulticaluids.hrh) no longer exists in S^4, so use a local copy for now
-#include "local_calenmulticaluids.hrh"
 #include <QColor>
-#endif
-
-const TInt KBuffLength = 24;
 
 namespace OrganizerSymbianUtils
 {
@@ -149,6 +141,16 @@ QDateTime toQDateTimeL(TTime time)
 }
 
 #ifdef SYMBIAN_CALENDAR_V2
+
+void setCalInfoPropertyL(CCalCalendarInfo *calInfo, TCalenPropertyUid propertyUid, const QString &value)
+{    
+    TBuf8<KPropertyKeyLen> keyBuff;
+    keyBuff.AppendNum(propertyUid);
+    QByteArray bytes = value.toUtf8();
+    TPtrC8 des = toPtrC8(bytes);
+    calInfo->SetPropertyL(keyBuff, des);
+}
+
 QVariantMap toMetaDataL(const CCalCalendarInfo &calInfo)
 {
     QVariantMap metaData;
@@ -274,45 +276,25 @@ CCalCalendarInfo* toCalInfoLC(QVariantMap metaData)
         
         QVariant value = metaData.value(key);
         
-        TBuf8<KBuffLength> propKey;
-        
         // Set known properties by converting to correct type
         if (key == "FolderLUID") {
-            propKey.AppendNum(EFolderLUID);
-            TPckgC<TUint> propValue((TUint)value.toUInt());
-            calInfo->SetPropertyL(propKey, propValue);
+            setCalInfoPropertyL(calInfo, EFolderLUID, (TUint) value.toUInt());
         } else if (key == "CreationTime") {
-            propKey.AppendNum(ECreationTime);
-            TPckgC<TTime> propValue(toTTimeL(value.toDateTime()));
-            calInfo->SetPropertyL(propKey, propValue);            
+            setCalInfoPropertyL(calInfo, ECreationTime, toTTimeL(value.toDateTime()));
         } else if (key == "ModificationTime") {
-            propKey.AppendNum(EModificationTime);
-            TPckgC<TTime> propValue(toTTimeL(value.toDateTime()));
-            calInfo->SetPropertyL(propKey, propValue);
+            setCalInfoPropertyL(calInfo, EModificationTime, toTTimeL(value.toDateTime()));
         } else if (key == "SyncStatus") {
-            propKey.AppendNum(ESyncStatus);
-            TPckgC<TBool> propValue(value.toBool());
-            calInfo->SetPropertyL(propKey, propValue);            
+            setCalInfoPropertyL(calInfo, ESyncStatus, (TBool) value.toBool());
         } else if (key == "IsSharedFolder") {
-            propKey.AppendNum(EIsSharedFolder);
-            TPckgC<TBool> propValue(value.toBool());
-            calInfo->SetPropertyL(propKey, propValue);  
+            setCalInfoPropertyL(calInfo, EIsSharedFolder, (TBool) value.toBool());
         } else if (key == "GlobalUUID") {
-            propKey.AppendNum(EGlobalUUID);
-            QByteArray bytes = value.toString().toUtf8();
-            calInfo->SetPropertyL(propKey,  toPtrC8(bytes));
+            setCalInfoPropertyL(calInfo, EGlobalUUID, value.toString());
         } else if (key == "DeviceSyncServiceOwner") {
-            propKey.AppendNum(EDeviceSyncServiceOwner);
-            TPckgC<TUint> propValue((TUint)value.toUInt());
-            calInfo->SetPropertyL(propKey, propValue);
+            setCalInfoPropertyL(calInfo, EDeviceSyncServiceOwner, (TUint) value.toUInt());
         } else if (key == "OwnerName") {
-            propKey.AppendNum(EOwnerName);
-            QByteArray bytes = value.toString().toUtf8();
-            calInfo->SetPropertyL(propKey,  toPtrC8(bytes));
+            setCalInfoPropertyL(calInfo, EOwnerName, value.toString());
         } else if (key == "MarkAsDelete") {
-            propKey.AppendNum(EMarkAsDelete);
-            TPckgC<TBool> propValue(value.toBool());
-            calInfo->SetPropertyL(propKey, propValue);
+            setCalInfoPropertyL(calInfo, EMarkAsDelete, (TBool) value.toBool());
         } else {
             // Default conversion for unknown property
             QByteArray keyBytes = key.toUtf8();

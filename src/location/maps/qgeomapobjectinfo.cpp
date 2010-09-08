@@ -43,6 +43,7 @@
 #include "qgeomapobjectinfo_p.h"
 
 #include "qgeomapdata.h"
+#include "qgeomapdata_p.h"
 #include "qgeomapobject.h"
 #include "qgeoboundingbox.h"
 
@@ -90,6 +91,19 @@ QGeoMapObjectInfo::~QGeoMapObjectInfo()
 }
 
 /*!
+    Returns the QGeoMapObjectInfo instance associated with the parent of
+    this object, or 0 if it has no parent or if there is no QGeoMapObjectInfo
+    instance asssoicated with the parent object.
+*/
+QGeoMapObjectInfo* QGeoMapObjectInfo::parentObjectInfo()
+{
+    if (!d_ptr->mapData)
+        return 0;
+
+    return d_ptr->mapData->d_ptr->parentObjectInfo(d_ptr->mapObject);
+}
+
+/*!
     This function is run when a map object is made a child of another object.
 
     The default implementation does nothing.
@@ -112,7 +126,7 @@ void QGeoMapObjectInfo::removeFromParent() {}
 
     The default implementation does nothing.
 */
-void QGeoMapObjectInfo::objectUpdate() {}
+void QGeoMapObjectInfo::objectUpdated() {}
 
 /*!
     This function is run when the map is updated in a way that might effect the
@@ -123,7 +137,21 @@ void QGeoMapObjectInfo::objectUpdate() {}
 
   The default implementation does nothing.
 */
-void QGeoMapObjectInfo::mapUpdate() {}
+void QGeoMapObjectInfo::mapUpdated() {}
+
+/*!
+    This function is run when the visible state of the object changes.
+
+    The default implementation does nothing.
+*/
+void QGeoMapObjectInfo::visibleChanged(bool visible) {}
+
+/*!
+    This function is run when the selected state of the object changes.
+
+    The default implementation does nothing.
+*/
+void QGeoMapObjectInfo::selectedChanged(bool selected) {}
 
 /*!
     Returns a bounding box which contains this map object.

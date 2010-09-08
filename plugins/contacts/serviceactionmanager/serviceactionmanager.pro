@@ -20,4 +20,11 @@ symbian: {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.UID3=0x200315FD
+
+    target.path = /sys/bin
+    INSTALLS += target
+
+    symbianplugin.sources = $${TARGET}.dll
+    symbianplugin.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
+    DEPLOYMENT += symbianplugin
 }

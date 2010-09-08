@@ -57,7 +57,7 @@ class QPacket;
 class QPacketAutoSend;
 class QPacketProtocolPrivate;
 
-class Q_AUTOTEST_EXPORT QPacketProtocol : public QObject
+class QM_AUTOTEST_EXPORT QPacketProtocol : public QObject
 {
 Q_OBJECT
 public:
@@ -87,7 +87,7 @@ private:
 };
 
 
-class Q_AUTOTEST_EXPORT QPacket : public QDataStream
+class QM_AUTOTEST_EXPORT QPacket : public QDataStream
 {
 public:
     QPacket();
@@ -104,7 +104,7 @@ protected:
     QBuffer * buf;
 };
 
-class Q_AUTOTEST_EXPORT QPacketAutoSend : public QPacket
+class QM_AUTOTEST_EXPORT QPacketAutoSend : public QPacket
 {
 public:
     virtual ~QPacketAutoSend();

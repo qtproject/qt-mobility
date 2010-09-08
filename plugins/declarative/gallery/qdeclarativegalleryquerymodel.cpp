@@ -343,11 +343,142 @@ bool QDeclarativeGalleryQueryModel::setData(const QModelIndex &index, const QVar
 
 }
 
+/*!
+    \qmlproperty GalleryQueryModel::count
+
+    This property holds the number of results returned by a query.
+*/
+
 QModelIndex QDeclarativeGalleryQueryModel::index(int row, int column, const QModelIndex &parent) const
 {
     return !parent.isValid() && row >= 0 && row < m_rowCount && column == 0
             ? createIndex(row, column)
             : QModelIndex();
+}
+
+/*!
+    \qmlmethod GalleryQueryModel::get(int index)
+
+    Returns the result at \a index in a query model.
+
+    \code
+    query.get(0).title
+    \endcode
+*/
+
+QScriptValue QDeclarativeGalleryQueryModel::get(const QScriptValue &index) const
+{
+    QScriptEngine *scriptEngine = index.engine();
+
+    if (!scriptEngine)
+       return QScriptValue();
+
+    const int i = index.toInt32();
+
+    if (i < 0 || i >= m_rowCount || (i != m_resultSet->currentIndex() && !m_resultSet->fetch(i)))
+       return scriptEngine->undefinedValue();
+
+    QScriptValue object = scriptEngine->newObject();
+
+    object.setProperty(
+            QLatin1String("itemId"), qScriptValueFromValue(scriptEngine, m_resultSet->itemId()));
+    object.setProperty(
+            QLatin1String("itemUrl"), qScriptValueFromValue(scriptEngine, m_resultSet->itemUrl()));
+
+    typedef QVector<QPair<int, QString> >::const_iterator iterator;
+    for (iterator it = m_propertyNames.constBegin(), end = m_propertyNames.constEnd();
+            it != end;
+            ++it) {
+        QVariant value = m_resultSet->metaData(it->first);
+
+        if (value.isNull())
+            value = QVariant(m_resultSet->propertyType(it->first));
+
+        object.setProperty(it->second, qScriptValueFromValue(scriptEngine, value));
+    }
+
+    return object;
+}
+
+/*!
+    \qmlmethod GalleryQueryModel::property(int index, string property)
+
+    Returns the value of \a property from the result at \a index.
+
+    \code
+    query.getProperty(0, "title")
+    \endcode
+*/
+
+QVariant QDeclarativeGalleryQueryModel::property(int index, const QString &property) const
+{
+    if (index < 0
+            || index >= m_rowCount
+            || (m_resultSet->currentIndex() != index && !m_resultSet->fetch(index))) {
+        return QVariant();
+    }
+
+    if (property == QLatin1String("itemId")) {
+        return m_resultSet->itemId();
+    } else if (property == QLatin1String("itemType")) {
+        return m_resultSet->itemType();
+    } else {
+        const int propertyKey = m_resultSet->propertyKey(property);
+
+        const QVariant value = m_resultSet->metaData(propertyKey);
+
+        return value.isNull()
+                ? QVariant(m_resultSet->propertyType(propertyKey))
+                : value;
+    }
+}
+
+/*!
+    \qmlmethod GalleryQueryModel::set(int index, jsobject dict)
+
+    Changes the item at \a index in the list model with the values in \a dict.
+    Properties not appearing in \a dict are left unchanged.
+*/
+
+void QDeclarativeGalleryQueryModel::set(int index, const QScriptValue &values)
+{
+    if (index < 0
+            || index >= m_rowCount
+            || (m_resultSet->currentIndex() != index && !m_resultSet->fetch(index))) {
+        return;
+    }
+
+    QScriptValueIterator it(values);
+    while (it.hasNext()) {
+        it.next();
+        QScriptValue value = it.value();
+
+        if (value.isVariant())
+            m_resultSet->setMetaData(m_resultSet->propertyKey(it.name()), value.toVariant());
+    }
+}
+
+/*!
+    \qmlmethod GalleryQueryModel::setProperty(int index, string property, variant value)
+
+    Changes the \a property of the result at \a index in a model to \a value.
+
+    \code
+        model.setProperty(0, "rating", 4)
+    \endcode
+*/
+
+void QDeclarativeGalleryQueryModel::setProperty(
+        int index, const QString &property, const QVariant &value)
+{
+
+    if (index < 0
+            || index >= m_rowCount
+            || (m_resultSet->currentIndex() != index && !m_resultSet->fetch(index))) {
+        return;
+    }
+
+    m_resultSet->setMetaData(m_resultSet->propertyKey(property), value);
 }
 
 void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet)
@@ -363,15 +494,19 @@ void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet
 
     if (m_resultSet) {
         QHash<int, QByteArray> roleNames;
+        m_propertyNames.clear();
 
         QStringList propertyNames = m_request.propertyNames();
 
         typedef QStringList::const_iterator iterator;
         for (iterator it = propertyNames.constBegin(), end = propertyNames.constEnd();
                 it != end;
-                ++it)
-            roleNames.insert(m_resultSet->propertyKey(*it) + MetaDataOffset, it->toLatin1());
+                ++it) {
+            const int key = m_resultSet->propertyKey(*it);
 
+            roleNames.insert(key + MetaDataOffset, it->toLatin1());
+            m_propertyNames.append(qMakePair(key, *it));
+        }
         roleNames.insert(ItemId, QByteArray("itemId"));
         roleNames.insert(ItemType, QByteArray("itemType"));
 
@@ -393,6 +528,8 @@ void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet
             endInsertRows();
         }
     }
+
+    emit countChanged();
 }
 
 void QDeclarativeGalleryQueryModel::_q_itemsInserted(int index, int count)
@@ -400,6 +537,8 @@ void QDeclarativeGalleryQueryModel::_q_itemsInserted(int index, int count)
     beginInsertRows(QModelIndex(), index, index + count - 1);
     m_rowCount += count;
     endInsertRows();
+
+    emit countChanged();
 }
 
 void QDeclarativeGalleryQueryModel::_q_itemsRemoved(int index, int count)
@@ -407,6 +546,8 @@ void QDeclarativeGalleryQueryModel::_q_itemsRemoved(int index, int count)
     beginRemoveRows(QModelIndex(), index, index + count - 1);
     m_rowCount -= count;
     endRemoveRows();
+
+    emit countChanged();
 }
 
 void QDeclarativeGalleryQueryModel::_q_itemsMoved(int from, int to, int count)

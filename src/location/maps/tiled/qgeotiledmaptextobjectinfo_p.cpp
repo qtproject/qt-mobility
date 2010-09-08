@@ -58,7 +58,7 @@ QGeoTiledMapTextObjectInfo::QGeoTiledMapTextObjectInfo(QGeoMapData *mapData, QGe
 
 QGeoTiledMapTextObjectInfo::~QGeoTiledMapTextObjectInfo() {}
 
-void QGeoTiledMapTextObjectInfo::objectUpdate()
+void QGeoTiledMapTextObjectInfo::objectUpdated()
 {
     if (!text->coordinate().isValid()) {
         if (textItem) {
@@ -80,14 +80,14 @@ void QGeoTiledMapTextObjectInfo::objectUpdate()
     textItem->setPos(position);
     //textItem->setTransformOriginPoint(position);
 
-    mapUpdate();
+    mapUpdated();
 
     graphicsItem = textItem;
 
     updateItem();
 }
 
-void QGeoTiledMapTextObjectInfo::mapUpdate()
+void QGeoTiledMapTextObjectInfo::mapUpdated()
 {
     if (textItem) {
         int zoomFactor = tiledMapData->zoomFactor();

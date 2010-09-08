@@ -300,6 +300,10 @@ void DatabaseManager::initDbPath(DbScope scope)
         db = m_userDb;
     }
 
+#ifdef QT_SIMULATOR
+    dbIdentifier.append("_simulator");
+#endif
+
     #ifdef Q_OS_SYMBIAN
         QDir dir(QDir::toNativeSeparators("C:\\Data\\temp\\QtServiceFW"));
     #else

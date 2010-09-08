@@ -63,7 +63,7 @@ protected:
     static const float GRAVITY_EARTH;
     static const float GRAVITY_EARTH_THOUSANDTH;    //for speed
 
-    void setRanges(qreal correctionFactor);
+    void setRanges(qreal correctionFactor=1);
 
     template<typename T>
     void initSensor(QString sensorName, bool &initDone)
@@ -85,23 +85,37 @@ protected:
         int l = m_sensorInterface->getAvailableIntervals().size();
         for (int i=0; i<l; i++){
             qreal intervalMax = ((DataRange)(m_sensorInterface->getAvailableIntervals().at(i))).max;
+            qreal intervalMin =((DataRange)(m_sensorInterface->getAvailableIntervals().at(i))).min;
+
+
+            if (intervalMin==0 && intervalMax==0){
+                // 0 interval has different meanings in e.g. magge/acce
+                // magge -> best-effort
+                // acce -> lowest possible
+                // in Qt API setting 0 means default
+                continue;
+            }
+
+
+
             qreal rateMin = intervalMax<1 ? 1 : 1/intervalMax * 1000;
             rateMin = rateMin<1 ? 1 : rateMin;
-            qreal intervalMin =((DataRange)(m_sensorInterface->getAvailableIntervals().at(i))).min;
+
             intervalMin = intervalMin<1 ? 10: intervalMin;     // do not divide with 0
             qreal rateMax = 1/intervalMin * 1000;
+
+
+
             //            qreal rateMax = (intervalMin<1) ? rateMin : 1/intervalMin * 1000; // TODO: replace the two lines above with this one once sensord does provide interval>0
             addDataRate(rateMin, rateMax);
         }
 
         if (sensorName=="alssensor") return;                // SensorFW returns lux values, plugin enumerated values
-
-        setDescription(m_sensorInterface->property("description").toString());
-
         if (sensorName=="accelerometersensor") return;      // SensorFW returns milliGs, plugin m/s^2
         if (sensorName=="magnetometersensor") return;       // SensorFW returns nanoTeslas, plugin Teslas
 
-        setRanges(1);
+        setDescription(m_sensorInterface->property("description").toString());
+        setRanges();
     };
 
 private:

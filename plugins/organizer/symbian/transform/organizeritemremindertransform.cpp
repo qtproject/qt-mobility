@@ -86,8 +86,11 @@ void OrganizerItemReminderTransform::transformToEntryL(const QOrganizerItem& ite
 {
     QOrganizerItemReminder reminder = item.detail<QOrganizerItemReminder>();
 
-    if (reminder.isEmpty())
+    if (reminder.isEmpty()) {
+		// Remove the alarm from the entry
+		entry->SetAlarmL(0);
         return;
+	}
 
     QDateTime reminderDateTime = reminder.dateTime();
     int timeOffset(0);

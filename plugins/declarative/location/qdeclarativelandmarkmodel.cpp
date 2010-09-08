@@ -53,6 +53,7 @@ void QDeclarativeLandmarkAbstractModel::connectManager()
 
 void QDeclarativeLandmarkAbstractModel::categoriesChanged(const QList<QLandmarkCategoryId>& ids)
 {
+    Q_UNUSED(ids)
     if (m_autoUpdate)
         update();
     emit modelChanged();
@@ -60,6 +61,7 @@ void QDeclarativeLandmarkAbstractModel::categoriesChanged(const QList<QLandmarkC
 
 void QDeclarativeLandmarkAbstractModel::landmarksChanged(const QList<QLandmarkId>& ids)
 {
+    Q_UNUSED(ids)
     if (m_autoUpdate)
         update();
     emit modelChanged();
@@ -98,7 +100,7 @@ QString QDeclarativeLandmarkAbstractModel::error() const
     return m_error;
 }
 
-// This is purely for testing purposes
+// This is purely for testing purposes, not part of public interface
 void QDeclarativeLandmarkAbstractModel::setDbFileName(QString fileName)
 {
     if (fileName == m_dbFileName)
@@ -106,6 +108,7 @@ void QDeclarativeLandmarkAbstractModel::setDbFileName(QString fileName)
     m_dbFileName = fileName;
     if (m_manager) {
         cancelUpdate();
+        cancelImport();
         delete m_manager;
         m_manager = 0;
     }
@@ -131,6 +134,8 @@ void QDeclarativeLandmarkAbstractModel::setLimit(int limit)
     if (limit == m_limit)
         return;
     m_limit = limit;
+    if (m_autoUpdate)
+        scheduleUpdate();
     emit limitChanged();
 }
 
@@ -144,24 +149,22 @@ void QDeclarativeLandmarkAbstractModel::setOffset(int offset)
     if (offset == m_offset)
         return;
     m_offset = offset;
+    if (m_autoUpdate)
+        scheduleUpdate();
     emit offsetChanged();
 }
 
 QDeclarativeLandmarkModel::QDeclarativeLandmarkModel(QObject *parent) :
         QDeclarativeLandmarkAbstractModel(parent),
-        m_filter(0), m_fetchRequest(0), m_sortingOrder(0), m_sortOrder(AscendingOrder), m_sortKey(DefaultSort)
+        m_filter(0), m_fetchRequest(0), m_sortingOrder(0),
+        m_importRequest(0), m_importPending(false),
+        m_sortOrder(AscendingOrder), m_sortKey(DefaultSort)
+
 {
     // Establish role names so that they can be queried from this model
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
-    roleNames.insert(NameRole, "name");
-    roleNames.insert(PhoneNumberRole, "phoneNumber");
-    roleNames.insert(DescriptionRole, "description");
-    roleNames.insert(RadiusRole, "radius");
-    roleNames.insert(IconSourceRole, "iconSource");
-    roleNames.insert(UrlRole, "url");
-    roleNames.insert(LatitudeRole, "latitude");
-    roleNames.insert(LongitudeRole, "longitude");
+    roleNames.insert(LandmarkRole, "landmark");
     setRoleNames(roleNames);
 }
 
@@ -169,6 +172,7 @@ QDeclarativeLandmarkModel::~QDeclarativeLandmarkModel()
 {
     delete m_fetchRequest;
     delete m_sortingOrder;
+    delete m_importRequest;
     qDeleteAll(m_landmarkMap.values());
     m_landmarkMap.clear();
 }
@@ -184,26 +188,16 @@ int QDeclarativeLandmarkModel::rowCount(const QModelIndex &parent) const
 QVariant QDeclarativeLandmarkModel::data(const QModelIndex &index, int role) const
 {
     QLandmark landmark = m_landmarks.value(index.row());
+
     switch (role) {
         case Qt::DisplayRole:
             return landmark.name();
-        case NameRole:
-            return landmark.name();
-        case PhoneNumberRole:
-            return landmark.phoneNumber();
-        case DescriptionRole:
-            return landmark.description();
-        case RadiusRole:
-            return landmark.radius();
-        case IconSourceRole:
-            return landmark.iconUrl();
-        case UrlRole:
-            return landmark.url();
-        case LatitudeRole:
-            return landmark.coordinate().latitude();
-        case LongitudeRole:
-            return landmark.coordinate().longitude();
-    }
+        case LandmarkRole:
+            if (m_landmarkMap.value(landmark.landmarkId().localId()))
+                return QVariant::fromValue(m_landmarkMap.value(landmark.landmarkId().localId()));
+            else
+                return QVariant();
+        }
     return QVariant();
 }
 
@@ -224,11 +218,22 @@ QDeclarativeLandmarkFilterBase* QDeclarativeLandmarkModel::filter()
 
 void QDeclarativeLandmarkModel::setFilter(QDeclarativeLandmarkFilterBase* filter)
 {
-    if (filter == m_filter)
-        return;
     m_filter = filter;
-    scheduleUpdate();
+    // Connect to listen for filters' content changes
+    if (filter)
+        QObject::connect(filter, SIGNAL(filterContentChanged()), this, SLOT(filterContentChanged()));
+    if (m_autoUpdate)
+        scheduleUpdate();
     emit filterChanged();
+}
+
+void QDeclarativeLandmarkModel::filterContentChanged()
+{
+#ifdef QDECLARATIVE_LANDMARK_DEBUG
+    qDebug() << "QDeclarativeLandmarkModel::filterContentChanged(), scheduling update.";
+#endif
+    if (m_autoUpdate)
+        scheduleUpdate();
 }
 
 void QDeclarativeLandmarkModel::startUpdate()
@@ -269,6 +274,16 @@ void QDeclarativeLandmarkModel::cancelUpdate()
     if (m_sortingOrder) {
         delete m_sortingOrder;
         m_sortingOrder = 0;
+    }
+}
+void QDeclarativeLandmarkModel::cancelImport()
+{
+#ifdef QDECLARATIVE_LANDMARK_DEBUG
+    qDebug() << "QDeclarativeLandmarkModel::cancelImport() m_importRequest:" << m_importRequest;
+#endif
+    if (m_importRequest) {
+        delete m_importRequest;
+        m_importRequest = 0;
     }
 }
 
@@ -336,10 +351,14 @@ void QDeclarativeLandmarkModel::landmarks_clear(QDeclarativeListProperty<QDeclar
     QMap<QString, QDeclarativeLandmark*>* landmarkMap = &model->m_landmarkMap;
     qDeleteAll(landmarkMap->values());
     landmarkMap->clear();
+    model->m_landmarks.clear();
+    emit model->landmarksChanged();
 }
 
 void QDeclarativeLandmarkModel::convertLandmarksToDeclarative()
 {
+    QList<QString> landmarksToRemove = m_landmarkMap.keys();
+
     foreach(const QLandmark& landmark, m_landmarks) {
         if (!m_landmarkMap.contains(landmark.landmarkId().localId())) {
             QDeclarativeLandmark* declarativeLandmark = new QDeclarativeLandmark(this);
@@ -348,9 +367,70 @@ void QDeclarativeLandmarkModel::convertLandmarksToDeclarative()
         } else {
             // The landmark exists already, update it
             m_landmarkMap.value(landmark.landmarkId().localId())->setLandmark(landmark);
+            // Item is still valid, remove it from the list of removables
+            landmarksToRemove.removeOne(landmark.landmarkId().localId());
         }
     }
+    foreach (const QString removable, landmarksToRemove) {
+        delete m_landmarkMap.value(removable);
+        m_landmarkMap.remove(removable);
+    }
     emit landmarksChanged();
+}
+
+QString QDeclarativeLandmarkModel::importFile() const
+{
+    return m_importFile;
+}
+
+void QDeclarativeLandmarkModel::setImportFile(QString importFile)
+{
+    if (importFile == m_importFile)
+        return;
+    m_importFile = importFile;
+    if (m_importRequest) {
+        delete m_importRequest;
+        m_importRequest = 0;
+    }
+    scheduleImport();
+    emit importFileChanged();
+}
+
+void QDeclarativeLandmarkModel::scheduleImport()
+{
+    if (!m_componentCompleted || m_importPending)
+        return;
+    m_importPending = true; // Disallow possible duplicate request triggering
+    QMetaObject::invokeMethod(this, "startImport", Qt::QueuedConnection);
+}
+
+void QDeclarativeLandmarkModel::componentComplete()
+{
+    m_componentCompleted = true;
+    if (!m_manager) {
+        m_manager = new QLandmarkManager();
+        connectManager();
+    }
+    if (m_autoUpdate) {
+        if (!m_importFile.isEmpty())
+            scheduleImport();
+        scheduleUpdate();
+    }
+}
+
+void QDeclarativeLandmarkModel::startImport()
+{
+#ifdef QDECLARATIVE_LANDMARK_DEBUG
+    qDebug("QDeclarativeLandmarkModel::startImport()");
+#endif
+    if (!m_manager || m_importFile.isEmpty())
+        return;
+    if (m_importRequest)
+        delete m_importRequest;
+    m_importRequest = new QLandmarkImportRequest(m_manager);
+    m_importRequest->setFileName("m_importRequest");
+    m_importRequest->start(); // If successful, will result in landmark/category added signals
+    m_importPending = false;
 }
 
 QDeclarativeLandmarkModel::SortKey QDeclarativeLandmarkModel::sortBy() const
@@ -363,6 +443,8 @@ void QDeclarativeLandmarkModel::setSortBy(QDeclarativeLandmarkModel::SortKey key
     if (key == m_sortKey)
         return;
     m_sortKey = key;
+    if (m_autoUpdate)
+        scheduleUpdate();
     emit sortByChanged();
 }
 
@@ -376,12 +458,14 @@ void QDeclarativeLandmarkModel::setSortOrder(QDeclarativeLandmarkModel::SortOrde
     if (order == m_sortOrder)
         return;
     m_sortOrder = order;
+    if (m_autoUpdate)
+        scheduleUpdate();
     emit sortOrderChanged();
 }
 
-Q_INVOKABLE QList<QDeclarativeLandmark*> QDeclarativeLandmarkModel::landmarkList() const
+QList<QLandmark> QDeclarativeLandmarkModel::landmarkList()
 {
-    return m_landmarkMap.values();
+    return m_landmarks;
 }
 
 void QDeclarativeLandmarkModel::fetchRequestStateChanged(QLandmarkAbstractRequest::State state)
@@ -398,18 +482,20 @@ void QDeclarativeLandmarkModel::fetchRequestStateChanged(QLandmarkAbstractReques
 
     if (m_fetchRequest->error() == QLandmarkManager::NoError) {
         // Later improvement item is to make udpate incremental by connecting to resultsAvailable() -function.
-        beginInsertRows(QModelIndex(), 0, m_landmarks.count()); // TODO check if this shuold be amount of received landmarks
+        beginInsertRows(QModelIndex(), 0, m_landmarks.count()); // TODO check if this should be amount of received landmarks
         int oldCount = m_landmarks.count();
         m_landmarks = m_fetchRequest->landmarks();
+        // Convert into declarative classes
+        convertLandmarksToDeclarative();
         endInsertRows();
         if (oldCount != m_landmarks.count())
             emit countChanged();
     } else if (m_error != m_fetchRequest->errorString()) {
         m_error = m_fetchRequest->errorString();
+        // Convert into declarative classes
+        convertLandmarksToDeclarative();
         emit errorChanged();
     }
-    // Convert into declarative classes --> possible to return landmarks in a list in QML
-    convertLandmarksToDeclarative();
 }
 
 #include "moc_qdeclarativelandmarkmodel_p.cpp"

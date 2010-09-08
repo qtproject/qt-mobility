@@ -561,6 +561,9 @@ private slots:
     void filterLandmarksProximity();
     void filterLandmarksProximityAsync();
 
+    void filterLandmarksProximityOrder();
+    void filterLandmarksProximityOrder_data();
+
     void filterLandmarksNearest();
     void filterLandmarksNearestAsync();
 
@@ -3548,6 +3551,71 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
             }
         }
     }
+}
+
+void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximityOrder()
+{
+    QFETCH(QString, type);
+    QLandmark lm1;
+    lm1.setName("LM1");
+    lm1.setCoordinate(QGeoCoordinate(20,19));
+    m_manager->saveLandmark(&lm1);
+
+    QLandmark lm2;
+    lm2.setName("LM2");
+    lm2.setCoordinate(QGeoCoordinate(20,50));
+    m_manager->saveLandmark(&lm2);
+
+    QLandmark lm3;
+    lm3.setName("LM3");
+    lm3.setCoordinate(QGeoCoordinate(20, 30));
+    m_manager->saveLandmark(&lm3);
+
+    QLandmark lm4;
+    lm4.setName("LM4");
+    lm4.setCoordinate(QGeoCoordinate(5,20));
+    m_manager->saveLandmark(&lm4);
+
+    QLandmark lm5;
+    lm5.setName("LM5");
+    lm5.setCoordinate(QGeoCoordinate(80,20));
+    m_manager->saveLandmark(&lm5);
+
+    QLandmark lm6;
+    lm6.setName("LM6");
+    lm6.setCoordinate(QGeoCoordinate(60,20));
+    m_manager->saveLandmark(&lm6);
+
+    QLandmarkProximityFilter proximityFilter;
+    proximityFilter.setCoordinate(QGeoCoordinate(20,20));
+    QList<QLandmark> lms;
+    QVERIFY(doFetch(type,proximityFilter, &lms));
+    QCOMPARE(lms.count(), 6);
+    QCOMPARE(lms.at(0), lm1);
+    QCOMPARE(lms.at(1), lm3);
+    QCOMPARE(lms.at(2), lm4);
+    QCOMPARE(lms.at(3), lm2);
+    QCOMPARE(lms.at(4), lm6);
+    QCOMPARE(lms.at(5), lm5);
+
+    double radius = QGeoCoordinate(20,20).distanceTo(QGeoCoordinate(20,50));
+    proximityFilter.setRadius(radius);
+    QVERIFY(doFetch(type, proximityFilter,&lms));
+
+    QCOMPARE(lms.count(),4);
+
+    QCOMPARE(lms.at(0), lm1);
+    QCOMPARE(lms.at(1), lm3);
+    QCOMPARE(lms.at(2), lm4);
+    QCOMPARE(lms.at(3), lm2);
+}
+
+void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximityOrder_data()
+{
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximityAsync() {

@@ -90,6 +90,39 @@ QTelephonyCallInfo::~QTelephonyCallInfo()
 }
 
 /*!
+    Returns true, if this QTelephonyCallInfo is the same as the \a other
+    QTelephonyCallInfo given; otherwise returns false.
+*/
+bool QTelephonyCallInfo::operator ==(const QTelephonyCallInfo& other) const
+{
+    if (!d)
+        return !other.d;
+
+    if (!other.d)
+        return false;
+
+    return (d == other.d);
+}
+
+/*!
+    Returns true, if this QTelephonyCallInfo is not the same as the \a other
+    QTelephonyCallInfo given; otherwise returns false.
+*/
+bool QTelephonyCallInfo::operator !=(const QTelephonyCallInfo& other) const
+{
+    return !((*this) == other);
+}
+
+/*!
+    Copies the content of the QTelephonyCallInfo object contained in \a other into this one.
+*/
+QTelephonyCallInfo& QTelephonyCallInfo::operator =(const QTelephonyCallInfo& other)
+{
+    d = other.d;
+    return *this;
+}
+
+/*!
     \fn  QString QTelephonyCallInfo::remotePartyIdentifier() const
 
     Returns the id of a call.
@@ -108,13 +141,13 @@ QString QTelephonyCallInfo::remotePartyIdentifier() const
 }
 
 /*!
-    \fn  QTelephony::CallType QTelephonyCallInfo::type() const
+    \fn  unsigned int QTelephonyCallInfo::type() const
 
-    Returns the type of the call.
-    A call can be a VOIP, Video Voice and so on.
-    You can use this property to get the type of the call.
+    Returns the types of the call.
+    A call can be a VOIP, Video Voice and so on or a combination of different types.
+    You can use this property to get the types of the call by masking with QTelephony::CallType.
 */
-QTelephony::CallType QTelephonyCallInfo::type() const
+unsigned int  QTelephonyCallInfo::type() const
 {
     if(d)
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)

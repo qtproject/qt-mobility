@@ -118,7 +118,7 @@ void QGeoMapTextObject::setCoordinate(const QGeoCoordinate &coordinate)
     Q_D(QGeoMapTextObject);
     if (d->coordinate != coordinate) {
         d->coordinate = coordinate;
-        objectUpdate();
+        objectUpdated();
         emit coordinateChanged(d->coordinate);
     }
 }
@@ -141,7 +141,7 @@ void QGeoMapTextObject::setText(const QString &text)
     Q_D(QGeoMapTextObject);
     if (d->text != text) {
         d->text = text;
-        objectUpdate();
+        objectUpdated();
         emit textChanged(d->text);
     }
 }
@@ -168,7 +168,7 @@ void QGeoMapTextObject::setFont(const QFont &font)
     Q_D(QGeoMapTextObject);
     if (d->font != font) {
         d->font = font;
-        objectUpdate();
+        objectUpdated();
         emit fontChanged(d->font);
     }
 }
@@ -192,11 +192,16 @@ QPen QGeoMapTextObject::pen() const
 void QGeoMapTextObject::setPen(const QPen &pen)
 {
     Q_D(QGeoMapTextObject);
-    if (d->pen != pen) {
-        d->pen = pen;
-        objectUpdate();
-        emit penChanged(d->pen);
-    }
+
+    QPen newPen = pen;
+    newPen.setCosmetic(true);
+
+    if (d->pen == newPen)
+        return;
+
+    d->pen = newPen;
+    objectUpdated();
+    emit penChanged(d->pen);
 }
 
 /*!
@@ -219,7 +224,7 @@ void QGeoMapTextObject::setBrush(const QBrush &brush)
     Q_D(QGeoMapTextObject);
     if (d->brush != brush) {
         d->brush = brush;
-        objectUpdate();
+        objectUpdated();
         emit brushChanged(d->brush);
     }
 }
@@ -228,7 +233,10 @@ void QGeoMapTextObject::setBrush(const QBrush &brush)
 *******************************************************************************/
 
 QGeoMapTextObjectPrivate::QGeoMapTextObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::TextType) {}
+        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::TextType)
+{
+    pen.setCosmetic(true);
+}
 
 QGeoMapTextObjectPrivate::~QGeoMapTextObjectPrivate() {}
 
