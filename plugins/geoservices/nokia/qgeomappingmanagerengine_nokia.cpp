@@ -156,11 +156,11 @@ QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapReques
     requestString += QString::number(request.row());
     requestString += slash;
     requestString += sizeToStr(tileSize());
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+//#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     static const QString slashpng("/png8");
-#else
-    static const QString slashpng("/png");
-#endif
+//#else
+//    static const QString slashpng("/png");
+//#endif
     requestString += slashpng;
 
     if (!m_token.isEmpty()) {
