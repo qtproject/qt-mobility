@@ -15,9 +15,7 @@ QDeclarativeLandmarkCategoryModel::QDeclarativeLandmarkCategoryModel(QObject *pa
     // Establish role names so that they can be queried from this model
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
-    roleNames.insert(NameRole, "name");
-    roleNames.insert(DescriptionRole, "description");
-    roleNames.insert(IconSourceRole, "iconSource");
+    roleNames.insert(CategoryRole, "category");
     setRoleNames(roleNames);
 }
 
@@ -41,10 +39,10 @@ QVariant QDeclarativeLandmarkCategoryModel::data(const QModelIndex &index, int r
     QLandmarkCategory category = m_categories.value(index.row());
 
     switch (role) {
-        case NameRole:
+        case Qt::DisplayRole:
             return category.name();
-        case IconSourceRole:
-            return category.iconUrl();
+        case CategoryRole:
+            return QVariant::fromValue(m_categoryMap.value(category.categoryId().localId()));
     }
     return QVariant();
 }
@@ -85,6 +83,7 @@ void QDeclarativeLandmarkCategoryModel::startUpdate()
     } else {
         m_fetchRequest = new QLandmarkCategoryFetchRequest(m_manager, this);
         setFetchRange();
+        setFetchOrder();
     }
     QObject::connect(m_fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this, SLOT(fetchRequestStateChanged(QLandmarkAbstractRequest::State)));
     m_fetchRequest->start();
@@ -100,6 +99,24 @@ void QDeclarativeLandmarkCategoryModel::setFetchRange()
         req->setLimit(m_limit);
     if ((m_offset > 0))
         req->setOffset(m_offset);
+}
+
+void QDeclarativeLandmarkCategoryModel::setFetchOrder()
+{
+    if (!m_fetchRequest ||
+        ((m_sortKey == NoSort) && (m_sortOrder = NoOrder)) ||
+        m_fetchRequest->type() != QLandmarkAbstractRequest::CategoryFetchRequest)
+        return;
+    if (m_sortingOrder)
+        delete m_sortingOrder;
+    if (m_sortKey == NameSort) {
+        m_sortingOrder = new QLandmarkNameSort(); // Only supported sort type
+    } else {
+        m_sortingOrder = new QLandmarkSortOrder();
+    }
+    if (m_sortOrder != NoOrder)
+        m_sortingOrder->setDirection((Qt::SortOrder)m_sortOrder);
+    static_cast<QLandmarkCategoryFetchRequest*>(m_fetchRequest)->setSorting(*m_sortingOrder);
 }
 
 void QDeclarativeLandmarkCategoryModel::cancelUpdate()

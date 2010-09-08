@@ -10,7 +10,7 @@ QTM_BEGIN_NAMESPACE
 QDeclarativeLandmarkAbstractModel::QDeclarativeLandmarkAbstractModel(QObject *parent) :
         QAbstractListModel(parent), m_manager(0),
         m_componentCompleted(false), m_updatePending(false), m_autoUpdate(true),
-        m_limit(-1), m_offset(-1)
+        m_limit(-1), m_offset(-1), m_sortingOrder(0), m_sortOrder(NoOrder), m_sortKey(NoSort)
 {
 }
 
@@ -154,12 +154,40 @@ void QDeclarativeLandmarkAbstractModel::setOffset(int offset)
     emit offsetChanged();
 }
 
+QDeclarativeLandmarkAbstractModel::SortKey QDeclarativeLandmarkAbstractModel::sortBy() const
+{
+    return m_sortKey;
+}
+
+void QDeclarativeLandmarkAbstractModel::setSortBy(QDeclarativeLandmarkAbstractModel::SortKey key)
+{
+    if (key == m_sortKey)
+        return;
+    m_sortKey = key;
+    if (m_autoUpdate)
+        scheduleUpdate();
+    emit sortByChanged();
+}
+
+QDeclarativeLandmarkAbstractModel::SortOrder QDeclarativeLandmarkAbstractModel::sortOrder() const
+{
+    return m_sortOrder;
+}
+
+void QDeclarativeLandmarkAbstractModel::setSortOrder(QDeclarativeLandmarkAbstractModel::SortOrder order)
+{
+    if (order == m_sortOrder)
+        return;
+    m_sortOrder = order;
+    if (m_autoUpdate)
+        scheduleUpdate();
+    emit sortOrderChanged();
+}
+
+
 QDeclarativeLandmarkModel::QDeclarativeLandmarkModel(QObject *parent) :
         QDeclarativeLandmarkAbstractModel(parent),
-        m_filter(0), m_fetchRequest(0), m_sortingOrder(0),
-        m_importRequest(0), m_importPending(false),
-        m_sortOrder(AscendingOrder), m_sortKey(DefaultSort)
-
+        m_filter(0), m_fetchRequest(0), m_importRequest(0), m_importPending(false)
 {
     // Establish role names so that they can be queried from this model
     QHash<int, QByteArray> roleNames;
@@ -304,26 +332,17 @@ void QDeclarativeLandmarkModel::setFetchRange()
 
 void QDeclarativeLandmarkModel::setFetchOrder()
 {
-    if (!m_fetchRequest)
+    if (!m_fetchRequest || ((m_sortKey == NoSort) && (m_sortOrder = NoOrder)))
         return;
-    if (m_sortingOrder) {
-        // Arguably existing could be recycled but would introduce
-        // just complex logic. Perhaps a later optimization.
+    if (m_sortingOrder)
         delete m_sortingOrder;
-        m_sortingOrder = 0;
+    if (m_sortKey == NameSort) {
+        m_sortingOrder = new QLandmarkNameSort(); // Only supported sort type
+    } else {
+        m_sortingOrder = new QLandmarkSortOrder();
     }
-    switch (m_sortKey) {
-        case DefaultSort:
-            m_sortingOrder = new QLandmarkSortOrder();
-            break;
-        case NameSort:
-            m_sortingOrder = new QLandmarkNameSort();
-            break;
-        default:
-            return;
-
-    }
-    m_sortingOrder->setDirection((Qt::SortOrder)m_sortOrder);
+    if (m_sortOrder != NoOrder)
+        m_sortingOrder->setDirection((Qt::SortOrder)m_sortOrder);
     m_fetchRequest->setSorting(*m_sortingOrder);
 }
 
@@ -428,40 +447,11 @@ void QDeclarativeLandmarkModel::startImport()
     if (m_importRequest)
         delete m_importRequest;
     m_importRequest = new QLandmarkImportRequest(m_manager);
-    m_importRequest->setFileName("m_importRequest");
+    m_importRequest->setFileName("m_importRequest"); // TODO WTF
     m_importRequest->start(); // If successful, will result in landmark/category added signals
     m_importPending = false;
 }
 
-QDeclarativeLandmarkModel::SortKey QDeclarativeLandmarkModel::sortBy() const
-{
-    return m_sortKey;
-}
-
-void QDeclarativeLandmarkModel::setSortBy(QDeclarativeLandmarkModel::SortKey key)
-{
-    if (key == m_sortKey)
-        return;
-    m_sortKey = key;
-    if (m_autoUpdate)
-        scheduleUpdate();
-    emit sortByChanged();
-}
-
-QDeclarativeLandmarkModel::SortOrder QDeclarativeLandmarkModel::sortOrder() const
-{
-    return m_sortOrder;
-}
-
-void QDeclarativeLandmarkModel::setSortOrder(QDeclarativeLandmarkModel::SortOrder order)
-{
-    if (order == m_sortOrder)
-        return;
-    m_sortOrder = order;
-    if (m_autoUpdate)
-        scheduleUpdate();
-    emit sortOrderChanged();
-}
 
 QList<QLandmark> QDeclarativeLandmarkModel::landmarkList()
 {
