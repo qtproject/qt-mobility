@@ -106,7 +106,8 @@ namespace DBus
         check for Mediastream
         **************************/
         if(channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA
-           || channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT){
+           //|| channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT
+           ){
             return true;
         }
         return false;
@@ -423,8 +424,6 @@ namespace DBus
 
             }
         }
-        else if(pIChannelTypeText)
-            ret |= QTelephony::Text;
 
         return ret;
     }

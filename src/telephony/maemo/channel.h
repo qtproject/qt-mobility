@@ -96,7 +96,7 @@ namespace DBus
         QString getSubType() { return subtype; }
 
         bool isCall() {
-            if(pIChannelTypeStreamedMedia || pIChannelTypeText)
+            if(pIChannelTypeStreamedMedia)
                 return true;
             return false;
         }
