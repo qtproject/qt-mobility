@@ -443,11 +443,18 @@ bool QVersitContactImporterPrivate::createNicknames(
         return false;
     QStringList values = variant.toStringList();
     QStringList contexts = extractContexts(property);
+
+    // We don't want to make duplicates of existing nicknames
+    QSet<QString> existingNicknames;
+    foreach (const QContactNickname& nickname, contact->details<QContactNickname>()) {
+        existingNicknames.insert(nickname.nickname());
+    }
     foreach(const QString& value, values) {
-        if (!value.isEmpty()) {
-            QContactNickname nickName;
-            nickName.setNickname(value);
-            saveDetailWithContext(contact, &nickName, contexts);
+        if (!value.isEmpty() && !existingNicknames.contains(value)) {
+            QContactNickname nickname;
+            nickname.setNickname(value);
+            saveDetailWithContext(contact, &nickname, contexts);
+            existingNicknames.insert(value);
         }
     }
     return true;
@@ -465,11 +472,18 @@ bool QVersitContactImporterPrivate::createTags(
         return false;
     QStringList values = variant.toStringList();
     QStringList contexts = extractContexts(property);
+
+    // We don't want to make duplicates of existing tags
+    QSet<QString> existingTags;
+    foreach (const QContactTag& tag, contact->details<QContactTag>()) {
+        existingTags.insert(tag.tag());
+    }
     foreach(const QString& value, values) {
-        if (!value.isEmpty()) {
+        if (!value.isEmpty() && !existingTags.contains(value)) {
             QContactTag tag;
             tag.setTag(value);
             saveDetailWithContext(contact, &tag, contexts);
+            existingTags.insert(value);
         }
     }
     return true;
