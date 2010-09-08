@@ -272,11 +272,12 @@ public:
     bool currentBluetoothPowerState();
     bool btThreadOk;
 
+    void keyboardConnected(bool connect);
     QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
     bool isWirelessKeyboardConnected(); //1.2
     bool isKeyboardFlipOpen();//1.2
+    QString productType();//1.2
 
-    void keyboardConnected(bool connect);
 
 Q_SIGNALS:
     void batteryLevelChanged(int);

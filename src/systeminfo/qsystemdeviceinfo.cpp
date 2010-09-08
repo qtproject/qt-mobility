@@ -461,6 +461,17 @@ bool QSystemDeviceInfo::isKeyboardFlipOpen()
     return deviceInfoPrivate()->isKeyboardFlipOpen();
 }
 
+/*!
+  \brief Product type.
+
+  Returns the product type of the device.
+
+  */
+QString QSystemDeviceInfo::productType()
+{
+    return deviceInfoPrivate()->productType();
+}
+
 
 #include "moc_qsystemdeviceinfo.cpp"
 

@@ -124,10 +124,6 @@ public:
 
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
-    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
-    bool isWirelessKeyboardConnected(); //1.2
-    bool isKeyboardFlipOpen();//1.2
-
     QString imei();
     QString imsi();
     QString manufacturer();
@@ -160,6 +156,12 @@ public:
     QSystemDeviceInfo::PowerState currentPowerState();
 
     bool currentBluetoothPowerState();
+
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
+    bool isWirelessKeyboardConnected(); //1.2
+    bool isKeyboardFlipOpen();//1.2
+    QString productType(); //1.2
+
 Q_SIGNALS:
     void batteryLevelChanged(int level);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus batteryStatus);

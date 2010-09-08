@@ -1195,6 +1195,10 @@ bool QSystemDeviceInfoPrivate::isKeyboardFlipOpen()
     return false;
 }
 
+QString QSystemDeviceInfoPrivate::productType()
+{
+    return QString();
+}
 
 DeviceInfo *DeviceInfo::m_instance = NULL;
 
