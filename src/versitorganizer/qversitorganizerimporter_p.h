@@ -102,7 +102,7 @@ class Duration
         bool mValid;
 };
 
-class Q_AUTOTEST_EXPORT QVersitOrganizerImporterPrivate
+class QM_AUTOTEST_EXPORT QVersitOrganizerImporterPrivate
 {
 public:
     QVersitOrganizerImporterPrivate(const QString& profile = QString());

@@ -105,7 +105,7 @@ QTelephonyCallList::QTelephonyCallList(QObject *parent)
     , enableCallStatusChangeNotify(false)
     , enableCallRemovedNotify(false)
     , enableCallAddedNotify(false)
-    , enableCallCountChangedNotify(false)
+    , enableHasActiveCallsNotify(false)
 {
     qDebug() << "QTelephonyCallList::QTelephonyCallList(QObject *parent)";
     d = new QTelephonyCallListPrivate(this);
@@ -157,10 +157,9 @@ void QTelephonyCallList::connectNotify ( const char * signal )
         enableCallRemovedNotify = true;
     else if (QLatin1String(signal) == SIGNAL(activeCallAdded(QTelephonyCallInfo)))
         enableCallAddedNotify = true;
-    else if (QLatin1String(signal) == SIGNAL(activeCallCountChanged())){
-        enableCallCountChangedNotify = true;
-        if(activeCallCount() > 0)
-            emit activeCallCountChanged();
+    else if (QLatin1String(signal) == SIGNAL(hasActiveCalls(bool))){
+        enableHasActiveCallsNotify = true;
+        emit hasActiveCalls((activeCallCount() > 0));
     }
 }
 

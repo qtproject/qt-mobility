@@ -64,6 +64,8 @@ public:
     QFont font;
     QPen pen;
     QBrush brush;
+    QPoint offset;
+    Qt::Alignment alignment;
 };
 
 QTM_END_NAMESPACE

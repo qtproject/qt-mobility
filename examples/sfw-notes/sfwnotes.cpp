@@ -89,19 +89,28 @@ void ToDoTool::init()
 
             if (notesManager)
                 notesManager->setParent(this);
+            
+            bool connect;
+            QMetaObject::invokeMethod(notesManager, "init", Q_RETURN_ARG(bool, connect));
+            if (connect) {
+                currentNote = 1;
+                searchWord = "";    
+                refreshList();
 
-            currentNote = 1;
-            searchWord = "";    
-            refreshList();
+                addButton->setEnabled(true);
+                deleteButton->setEnabled(true);
+                searchButton->setEnabled(true);
+                nextButton->setEnabled(true);
+                prevButton->setEnabled(true);
 
-            addButton->setEnabled(true);
-            deleteButton->setEnabled(true);
-            searchButton->setEnabled(true);
-            nextButton->setEnabled(true);
-            prevButton->setEnabled(true);
-
-            QObject::connect(notesManager, SIGNAL(soundAlarm(QDateTime)), 
-                            this, SLOT(soundAlarm(QDateTime)));
+                QObject::connect(notesManager, SIGNAL(soundAlarm(QDateTime)), 
+                        this, SLOT(soundAlarm(QDateTime))); 
+            } else {
+                QMessageBox msgBox;
+                msgBox.setWindowTitle(tr("ToDoTool"));
+                msgBox.setText("Unable to access notes manager database\n in current or home directory");
+                msgBox.exec();
+            }
         } else {
             QMessageBox msgBox;
             msgBox.setWindowTitle(tr("ToDoTool"));
@@ -113,6 +122,8 @@ void ToDoTool::init()
 
 void ToDoTool::registerExampleServices()
 {
+    unregisterExampleServices();
+    
     QStringList exampleXmlFiles;
     exampleXmlFiles << "notesmanagerservice.xml";
     foreach (const QString &fileName, exampleXmlFiles) {

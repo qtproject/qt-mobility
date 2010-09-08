@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qdeclarativecamera_p.h"
+#include "qdeclarativecamerapreviewprovider_p.h"
 
 #include <qmediaplayercontrol.h>
 #include <qmediaservice.h>
@@ -117,9 +118,11 @@ void QDeclarativeCamera::_q_error(int errorCode, const QString &errorString)
 
 void QDeclarativeCamera::_q_imageCaptured(int id, const QImage &preview)
 {
-    Q_UNUSED(id);
     m_capturedImagePreview = preview;
-    emit imageCaptured();
+    QString previewId = QString("preview_%1").arg(id);
+    QDeclarativeCameraPreviewProvider::registerPreview(previewId, preview);
+
+    emit imageCaptured(QLatin1String("image://camera/")+previewId);
 }
 
 void QDeclarativeCamera::_q_imageSaved(int id, const QString &fileName)

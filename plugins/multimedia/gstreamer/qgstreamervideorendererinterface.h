@@ -53,8 +53,13 @@ public:
     virtual GstElement *videoSink() = 0;
     virtual void precessNewStream() {}
 
+    //the video output is configured, usually after the first paint event
+    //(winId is known,
+    virtual bool isReady() const { return true; }
+
     //signals:
     //void sinkChanged();
+    //void readyChanged(bool);
 };
 
 #define QGstreamerVideoRendererInterface_iid "com.nokia.Qt.QGstreamerVideoRendererInterface/1.0"

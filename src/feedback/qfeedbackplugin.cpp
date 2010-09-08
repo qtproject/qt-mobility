@@ -42,6 +42,7 @@
 #include "qfeedbackplugininterfaces.h"
 #include "qfeedbackplugin_p.h"
 #include "qfeedbackeffect_p.h"
+#include "qmobilitypluginsearch.h"
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QStringList>
@@ -227,25 +228,17 @@ class BackendManager
 public:
     BackendManager()
     {
-        const QStringList paths = QCoreApplication::libraryPaths();
-        for (int i = 0; i < paths.size(); ++i) {
+        const QStringList pluginPaths = mobilityPlugins(QLatin1String("feedback"));
+        foreach (const QString& pluginPath, pluginPaths) {
+            QPluginLoader loader(pluginPath);
 
-            QDir pluginDir(paths.at(i));
-            if (!pluginDir.cd(QLatin1String("feedback")))
-                continue;
+            hapticsBackend.tryLoad(loader);
+            themeBackend.tryLoad(loader);
 
-
-            foreach (const QFileInfo &pluginLib, pluginDir.entryInfoList(QDir::Files)) {
-                QPluginLoader loader(pluginLib.absoluteFilePath());
-
-                hapticsBackend.tryLoad(loader);
-                themeBackend.tryLoad(loader);
-
-                if (QFeedbackFileInterface *newFile = qobject_cast<QFeedbackFileInterface*>(loader.instance())) {
-                    fileBackend.addFileBackend(newFile);
-                } else {
-                    loader.unload();
-                }
+            if (QFeedbackFileInterface *newFile = qobject_cast<QFeedbackFileInterface*>(loader.instance())) {
+                fileBackend.addFileBackend(newFile);
+            } else {
+                loader.unload();
             }
         }
 
@@ -253,6 +246,22 @@ public:
             hapticsBackend.setInstance(new QDummyBackend);
     }
 
+    QFeedbackHapticsInterface* hapticsBackendInstance()
+    {
+        return hapticsBackend.instance();
+    }
+
+    QFeedbackThemeInterface* themeBackendInstance()
+    {
+        return themeBackend.instance();
+    }
+
+    FileBackend *fileBackendInstance()
+    {
+        return &fileBackend;
+    }
+
+private:
     BackendLoader<QFeedbackHapticsInterface> hapticsBackend;
     BackendLoader<QFeedbackThemeInterface> themeBackend;
     FileBackend fileBackend;
@@ -357,7 +366,7 @@ Q_GLOBAL_STATIC(BackendManager, backendManager);
 
 QFeedbackHapticsInterface *QFeedbackHapticsInterface::instance()
 {
-    return backendManager()->hapticsBackend.instance();
+    return backendManager()->hapticsBackendInstance();
 }
 
 /*!
@@ -405,7 +414,7 @@ QFeedbackActuator QFeedbackHapticsInterface::createFeedbackActuator(int id)
 
 QFeedbackThemeInterface *QFeedbackThemeInterface::instance()
 {
-    return backendManager()->themeBackend.instance();
+    return backendManager()->themeBackendInstance();
 }
 
 /*!
@@ -468,7 +477,7 @@ QFeedbackThemeInterface *QFeedbackThemeInterface::instance()
 
 QFeedbackFileInterface *QFeedbackFileInterface::instance()
 {
-    return &backendManager()->fileBackend;
+    return backendManager()->fileBackendInstance();
 }
 
 /*!
@@ -483,7 +492,7 @@ QFeedbackFileInterface *QFeedbackFileInterface::instance()
 
 void QFeedbackFileInterface::reportLoadFinished(QFeedbackFileEffect *effect, bool success)
 {
-    backendManager()->fileBackend.reportLoadFinished(effect, success);
+    backendManager()->fileBackendInstance()->reportLoadFinished(effect, success);
 }
 
 

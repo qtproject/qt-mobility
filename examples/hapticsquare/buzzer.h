@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,27 +39,36 @@
 **
 ****************************************************************************/
 
-/*!
-    \example declarativemusicbrowser
+#ifndef BUZZER_H
+#define BUZZER_H
 
-    \ingroup gallery-examples
+#include <qmobilityglobal.h>
+#include <qfeedbackeffect.h>
 
-    \title Music Browser
+QTM_USE_NAMESPACE
 
-    This example demonstrates using the Document Gallery QML elements to
-    navigate a music collection.
+class Buzzer : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(bool oceaning READ oceaning WRITE setOceaning NOTIFY oceaningChanged)
+public:
+    Buzzer();
+    void setOceaning(bool on);
+    bool oceaning() const;
 
-    The main menu of the music browser contains links to the four sub-menus
-    each of which displays a different type of gallery item. The \l GalleryType
-    element provides the number of items in each sub-menu.
+public Q_SLOTS:
+    void rumble();
+    void click();
+    void oops();
+    void quit();
 
-    Each sub-menu contains a list of items populated using the
-    \l GalleryQueryModel element.  Selecting an item from one of the the Albums,
-    Artists, or Genres menus will display a list of songs which belong to the
-    selected item.
+Q_SIGNALS:
+    void oceaningChanged();
 
-    Selecting a song from the music browser will display a dialog with
-    information about a song provided by the \l GalleryItem element. Property
-    values changed in this dialog are written back to the \l GalleryItem
-    element and saved to the gallery.
-*/
+private:
+    QFeedbackHapticsEffect m_rumble;
+    QFeedbackHapticsEffect m_ocean;
+    bool m_oceaning;
+};
+
+#endif

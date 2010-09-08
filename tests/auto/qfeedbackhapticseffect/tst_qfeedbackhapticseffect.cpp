@@ -132,10 +132,10 @@ void tst_QFeedbackHapticsEffect::envelope_data()
     QTest::addColumn<qreal>("fadeIntensity");
     QTest::addColumn<int>("period");
 
-    QTest::newRow("TEST1")        <<  300 << qreal(0) <<   1 << qreal(2) <<   2 << qreal(1) <<  -1;
-    QTest::newRow("TEST2")        <<  500 << qreal(1) << 100 << qreal(5) <<   0 << qreal(0) <<  -1;
-    QTest::newRow("TEST3")        <<  250 << qreal(8) << 150 << qreal(1) << 150 << qreal(1) <<  -1;
-    QTest::newRow("TEST period")  << 1000 << qreal(1) << 150 << qreal(1) << 150 << qreal(1) << 150;
+    QTest::newRow("TEST1")        <<  300 << qreal(.2) <<   1 << qreal(.2) <<   2 << qreal(1) <<  -1;
+    QTest::newRow("TEST2")        <<  500 <<  qreal(1) << 100 << qreal(.5) <<   0 << qreal(0) <<  -1;
+    QTest::newRow("TEST3")        <<  250 << qreal(.8) << 150 <<  qreal(1) << 150 << qreal(1) <<  -1;
+    QTest::newRow("TEST period")  << 1000 <<  qreal(1) << 150 <<  qreal(1) << 150 << qreal(1) << 150;
 }
 
 void tst_QFeedbackHapticsEffect::envelope()
@@ -235,14 +235,10 @@ void tst_QFeedbackHapticsEffect::startStop()
 
 void tst_QFeedbackHapticsEffect::themeSupport()
 {
-    const bool supportsTheme = 
-#ifdef SUPPORTS_THEME
-        true;
-#else
-        false;
-#endif
+    const bool supportsTheme = QFeedbackEffect::supportsThemeEffect();
 
-    QCOMPARE(QFeedbackEffect::supportsThemeEffect(), supportsTheme);
+    if (!supportsTheme)
+        QSKIP("No theme support", SkipAll);
     for (int i = 0; i < QFeedbackEffect::NumberOfThemeEffects; ++i) {
         QCOMPARE(QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeEffect(i)), true);
         QTest::qWait(250); //let's make sure the device is ready again

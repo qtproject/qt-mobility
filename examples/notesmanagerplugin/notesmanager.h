@@ -67,6 +67,7 @@ class NotesManager : public QObject
 
 public:
     NotesManager(QObject *parent = 0);
+    Q_INVOKABLE bool init();
     Q_INVOKABLE QList<QObject*> getNotes(const QString& search=QString());
 #ifdef DECLARATIVE     
     QDeclarativeListProperty<QObject> noteSet();

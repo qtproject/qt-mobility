@@ -76,6 +76,8 @@ QGeoMapTextObject::QGeoMapTextObject(QGeoMapObject *parent)
 QGeoMapTextObject::QGeoMapTextObject(const QGeoCoordinate &coordinate,
                                      const QString &text,
                                      const QFont &font,
+                                     const QPoint &offset,
+                                     Qt::Alignment alignment,
                                      QGeoMapObject *parent)
         : QGeoMapObject(new QGeoMapTextObjectPrivate(this, parent))
 {
@@ -84,6 +86,8 @@ QGeoMapTextObject::QGeoMapTextObject(const QGeoCoordinate &coordinate,
     d->coordinate = coordinate;
     d->text = text;
     d->font = font;
+    d->offset = offset;
+    d->alignment = alignment;
 }
 
 /*!
@@ -101,11 +105,10 @@ QGeoMapTextObject::~QGeoMapTextObject()
     The default value of this property is an invalid coordinate. While the
     value of this property is invalid the text object will not be displayed.
 
-    The text will be drawn such that the upper left corner of the bounding box
-    of the text will appear at the position of the coordinate property.
-
-    \note Anchor and/or alignment options didn't make it into the beta release
-    but will be present in the final 1.1 release.
+    If QGeoMapTextObject::offset and QGeoMapTextObject::alignment are not set
+    the text will be drawn so that it is centered both horizontally and
+    vertically around the position of QGeoMapTextObject::coordinate on the
+    screen.
 */
 QGeoCoordinate QGeoMapTextObject::coordinate() const
 {
@@ -229,6 +232,60 @@ void QGeoMapTextObject::setBrush(const QBrush &brush)
     }
 }
 
+/*!
+    \property QGeoMapTextObject::offset
+    \brief This property holds the offset in pixels from the screen position of
+    QGeoMapTextObject::coordinate at which the text will be rendered when
+    drawing this text object.
+
+    The default value of this property is QPoint(0,0).
+*/
+QPoint QGeoMapTextObject::offset() const
+{
+    Q_D(const QGeoMapTextObject);
+    return d->offset;
+}
+
+void QGeoMapTextObject::setOffset(const QPoint &offset)
+{
+    Q_D(QGeoMapTextObject);
+    if (d->offset != offset) {
+        d->offset = offset;
+        objectUpdated();
+        emit offsetChanged(d->offset);
+    }
+}
+
+/*!
+    \property QGeoMapTextObject::alignment
+    \brief This property holds the alignment options used to align the
+    text when drawing this text object.
+
+    The default value of this property will align the text so that it is
+    centered both horizontally and vertically around the point that is
+    QGeoMapTextObject::offset pixels away from the position of
+    QGeoMapTextObject::coordinate on the screen.
+
+    The alignment does not take the width of QGeoMapTextObject::pen into
+    consideration.
+*/
+Qt::Alignment QGeoMapTextObject::alignment() const
+{
+    Q_D(const QGeoMapTextObject);
+    return d->alignment;
+}
+
+void QGeoMapTextObject::setAlignment(Qt::Alignment alignment)
+{
+    Q_D(QGeoMapTextObject);
+    if (d->alignment != alignment) {
+        d->alignment = alignment;
+        objectUpdated();
+        emit alignmentChanged(d->alignment);
+    }
+}
+
+
 /*******************************************************************************
 *******************************************************************************/
 
@@ -236,6 +293,7 @@ QGeoMapTextObjectPrivate::QGeoMapTextObjectPrivate(QGeoMapObject *impl, QGeoMapO
         : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::TextType)
 {
     pen.setCosmetic(true);
+    alignment = Qt::AlignCenter;
 }
 
 QGeoMapTextObjectPrivate::~QGeoMapTextObjectPrivate() {}

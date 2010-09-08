@@ -39,40 +39,27 @@
 **
 ****************************************************************************/
 
-#include <qmobilityglobal.h>
-#include <qfeedbackeffect.h>
+/*!
+    \example declarative-music-browser
 
-#include <QDialog>
-class QPushButton;
+    \ingroup gallery-examples
 
-QTM_USE_NAMESPACE
+    \title Music Browser
 
-#ifndef DIALOG_H_
-#define DIALOG_H_
+    This example demonstrates using the Document Gallery QML elements to
+    navigate a music collection.
 
-class Dialog : public QDialog
-{
-    Q_OBJECT
+    The main menu of the music browser contains links to the four sub-menus
+    each of which displays a different type of gallery item. The \l GalleryType
+    element provides the number of items in each sub-menu.
 
-public:
-    Dialog();
-    ~Dialog();
+    Each sub-menu contains a list of items populated using the
+    \l GalleryQueryModel element.  Selecting an item from one of the the Albums,
+    Artists, or Genres menus will display a list of songs which belong to the
+    selected item.
 
-private Q_SLOTS:
-    void playRumble();
-    void playOcean(bool toggleState);
-    void playButtonClick();
-    void playNegativeEffect();
-
-private:
-    QPushButton *m_btnRumble;
-    QPushButton *m_btnOcean;
-    QPushButton *m_btnButtonClick;
-    QPushButton *m_btnNegativeEffect;
-
-    QFeedbackHapticsEffect m_rumble;
-    QFeedbackHapticsEffect m_ocean;
-};
-
-#endif
-
+    Selecting a song from the music browser will display a dialog with
+    information about a song provided by the \l GalleryItem element. Property
+    values changed in this dialog are written back to the \l GalleryItem
+    element and saved to the gallery.
+*/

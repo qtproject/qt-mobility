@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,44 +39,12 @@
 **
 ****************************************************************************/
 
-#ifndef CONTACTBACKENDSDEFS_H
-#define CONTACTBACKENDSDEFS_H
+#include <touchfeedback.h>
 
-/*!
- * The definitions below are to be used as argument when constructiong a QContactManager.
- */
+int main(int argc, char** argv)
+{
+    TTouchLogicalFeedback themeFeedbackSymbian = ETouchFeedbackBasicButton;
 
-/*!
- * Default backend in Symbian devices.
- */
-const QString SYMBIAN_BACKEND     = "qtcontacts:symbian:";
+    return 0;
+}
 
-/*!
- * SIM backend. (ADN contacts)
- */
-const QString SIM_BACKEND         = "qtcontacts:symbiansim:";
-
-/*!
- * SIM backend for ADN contacts.
- */
-const QString SIM_BACKEND_ADN     = "qtcontacts:symbiansim:store=ADN";
-
-/*!
- * SIM backend for SDN contacts.
- */
-const QString SIM_BACKEND_SDN     = "qtcontacts:symbiansim:store=SDN";
-
-/*!
- * SIM backend for FDN contacts.
- */
-const QString SIM_BACKEND_FDN     = "qtcontacts:symbiansim:store=FDN";
-
-/*!
- * SIM backend for Own Number contacts.
- *
- */
-const QString SIM_BACKEND_ON     = "qtcontacts:symbiansim:store=ON";
-
-
-
-#endif

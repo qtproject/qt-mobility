@@ -1,14 +1,18 @@
+
+
+
+
 TEMPLATE = app
-TARGET = tst_symbianreminder
+TARGET = tst_symbianasynchcollections
 QT += testlib
 CONFIG += qtestlib
 
 symbian:
 {
-    INCLUDEPATH += ./inc
+	INCLUDEPATH += .\inc
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
-    SOURCES += tst_symbianreminder.cpp
+    SOURCES += tst_symbianasynchcollections.cpp
 
     CONFIG += mobility
     MOBILITY = organizer
