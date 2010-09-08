@@ -74,6 +74,7 @@ void QGeoTiledMapPixmapObjectInfo::objectUpdated()
         pixmapItem = new QGraphicsPixmapItem();
 
     pixmapItem->setPixmap(pixmap->pixmap());
+    pixmapItem->setPos(tiledMapData->coordinateToWorldPixel(pixmap->coordinate()));
     mapUpdated();
     graphicsItem = pixmapItem;
     updateItem();
@@ -84,7 +85,6 @@ void QGeoTiledMapPixmapObjectInfo::mapUpdated()
     if (pixmapItem) {
         qreal zoomFactor = tiledMapData->zoomFactor();
         pixmapItem->setScale(zoomFactor);
-        pixmapItem->setPos(tiledMapData->coordinateToWorldPixel(pixmap->coordinate()));
         pixmapItem->setTransform(QTransform::fromTranslate(pixmap->offset().x() * zoomFactor, pixmap->offset().y() * zoomFactor));
     }
 }

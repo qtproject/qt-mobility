@@ -92,7 +92,7 @@ class QLandmarkManagerEngineSymbian: public QLandmarkManagerEngine, public Landm
 {
 Q_OBJECT
 public:
-    QLandmarkManagerEngineSymbian(const QString &filename = QString("file://c:eposlm.ldb"));
+    QLandmarkManagerEngineSymbian(const QString &filename = QString());
     ~QLandmarkManagerEngineSymbian();
 
     /* URI reporting */

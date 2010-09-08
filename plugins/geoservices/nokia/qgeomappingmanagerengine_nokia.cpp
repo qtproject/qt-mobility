@@ -59,6 +59,9 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
         : QGeoTiledMappingManagerEngine(parameters),
         m_host("maptile.maps.svc.ovi.com")
 {
+    Q_UNUSED(error)
+    Q_UNUSED(errorString)
+
     setTileSize(QSize(256, 256));
     setMinimumZoomLevel(0.0);
     setMaximumZoomLevel(18.0);
