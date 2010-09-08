@@ -848,6 +848,7 @@ void tst_QDeclarativeLandmark::sort()
             QCOMPARE(landmarks.at(i).name(), names.at(i));
         }
     }
+    delete source_obj;
 }
 
 void tst_QDeclarativeLandmark::sort_data()
@@ -857,7 +858,7 @@ void tst_QDeclarativeLandmark::sort_data()
     QTest::newRow("LandmarkModel ascending name") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:true; sortBy: LandmarkModel.NameSort; sortOrder: LandmarkModel.AscendingOrder}" << (QStringList() << "Alpha centauri" << "Brisbane" << "London");
     QTest::newRow("LandmarkModel descending name") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:true; sortBy: LandmarkModel.NameSort; sortOrder: LandmarkModel.DescendingOrder}" << (QStringList() << "Tower" << "Tower" << "Sydney");
     QTest::newRow("LandmarkCategoryModel ascending name") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:true;sortBy: LandmarkCategoryModel.NameSort; sortOrder: LandmarkCategoryModel.AscendingOrder}" << (QStringList() << "Cities" << "Empty");
-    QTest::newRow("LandmarkCategoryModel descending name") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:true;sortBy: LandmarkCategoryModel.NameSort; sortOrder: LandmarkModel.DescendingOrder}" << (QStringList() << "Sunshine cities" << "Sights");
+    QTest::newRow("LandmarkCategoryModel descending name") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:true;sortBy: LandmarkModel.NameSort; sortOrder: LandmarkModel.DescendingOrder}" << (QStringList() << "Sunshine cities" << "Sights");
 }
 
 /*

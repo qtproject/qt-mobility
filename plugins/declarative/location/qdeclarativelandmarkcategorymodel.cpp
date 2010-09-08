@@ -72,8 +72,10 @@ void QDeclarativeLandmarkCategoryModel::startUpdate()
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
     qDebug("QDeclarativeLandmarkCategoryModel::startUpdate()");
 #endif
-    if (!m_manager)
+    if (!m_manager) {
+        m_updatePending = false;
         return;
+    }
     // Clear any previous updates and request new
     cancelUpdate();
     if (m_landmark) {
@@ -92,7 +94,8 @@ void QDeclarativeLandmarkCategoryModel::startUpdate()
 
 void QDeclarativeLandmarkCategoryModel::setFetchRange()
 {
-    if (!m_fetchRequest || ((m_limit <= 0) && (m_offset <= 0)))
+    if (!m_fetchRequest || ((m_limit <= 0) && (m_offset <= 0)) ||
+        (m_fetchRequest->type() != QLandmarkAbstractRequest::CategoryFetchRequest))
         return;
     QLandmarkCategoryFetchRequest* req = static_cast<QLandmarkCategoryFetchRequest*>(m_fetchRequest);
     if (m_limit > 0)

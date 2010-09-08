@@ -44,7 +44,7 @@ import QtMobility.location 1.1
 
 Rectangle {
     id: page
-    width: 350
+    width: 800
     height: 350
     color: "olive"
     
@@ -52,9 +52,9 @@ Rectangle {
     
     // Just to see everything instantiates
     Landmark { }
-    LandmarkModel { }
+    //LandmarkModel { }
     LandmarkCategory { }
-    LandmarkCategoryModel { }
+    //LandmarkCategoryModel { }
     LandmarkNameFilter { }
     LandmarkProximityFilter { }
     LandmarkIntersectionFilter { }
@@ -119,16 +119,20 @@ Rectangle {
 	//  autoUpdate determines if model is automatically updated:
 	//  1) after instantiated  (no need to call update())
 	//  2) whenever database data changes (QLandmarkManager reports changes)
-	//  3) filters are changed (TBD if data change within a filter should trigger update too)
+	//  3) filters are changed
 	// Value is true by default
-        autoUpdate: true
+        autoUpdate: false
 	// filter determines what data is requested
 	//filter: landmarkFilterUndercity
 	
+	// Imports landmarks and categories from files.
+	// Setting this variable automatically triggers the import operation,
+	// irrespective of ongoing updates (or autoUpdate) setting.
+	// importFile: "AUS-PublicToilet-Queensland.gpx"
 	// If seen convinient, the landmarks can be enumerated like this as well, instead of 
 	// accessing them via model
 	onLandmarksChanged: {
-	    console.log("Landmark count is: "+ count);
+	    console.log("log: Landmark count is: "+ count);
 	    for (var index = 0; index < landmarks.length; index++)  {
 	        console.log("Index, name:" + index + " , " + landmarks[index].name);
             }
@@ -153,7 +157,7 @@ Rectangle {
 	}
 	*/
 	// Limit determines the maximum number of items this model holds
-        limit: 15
+        limit: 100
 	// Offset determines the index where to start elements (e.g. in tabbed/paged browsing)
 	offset: 0
     }
@@ -176,7 +180,7 @@ Rectangle {
         id: mainList
         model: landmarkModel
         delegate: landmarklistdelegate
-        anchors {top: title.bottom; left: title.left}
+        anchors {top:title.bottom;}
         width: parent.width; height: parent.height
         highlightFollowsCurrentItem: false
         focus: true
@@ -188,7 +192,7 @@ Rectangle {
     Component {
 	id: landmarklistdelegate
 	Item {
-	        width: 200; height: 50
+	        width: 200; height: 20
                 Text {
                     id: nameField; text: landmark.name
                     MouseArea{
@@ -214,23 +218,42 @@ Rectangle {
         id: actionRectangles
         x: 4;
         width: 150
-        anchors { topMargin: 5; top: data.bottom}
-        rows: 3; columns: 1; spacing: anchors.bottomMargin;
+        anchors { topMargin: 5; top: title.bottom; right: page.right}
+        //rows: 3; 
+	columns: 1; spacing: anchors.bottomMargin;
         Content.Cell {action: "Change DB"; onClicked: doAction(action)}
         Content.Cell {action: "Import"; onClicked: doAction(action)}
-        Content.Cell {action: "unassigned 3";  onClicked: doAction(action)}
+        Content.Cell {action: "Update"; onClicked: doAction(action)}
+        Content.Cell {action: "Set import file"; onClicked: doAction(action)}
+        Content.Cell {action: "Autoupdate";  onClicked: doAction(action)}
     }
     function doAction(action) {
         if (action == "Change DB") {
-	    console.log("Changing DB to generatedExampleLandmarkDb.db");
+	    console.log("log: Changing DB to generatedExampleLandmarkDb.db");
             landmarkModel.setDbFileName("generatedExampleLandmarkDb.db");
         }
-        else if (action == "Import" ) {
-	    console.log("Setting import file to AUS-PublicToilet-Queensland.gpx")
+        else if (action == "Set import file" ) {
+	    console.log("log: Setting import file to AUS-PublicToilet-Queensland.gpx")
 	    landmarkModel.importFile = "AUS-PublicToilet-Queensland.gpx"
         }
-        else if (action == "unassigned 3" ) {
-            
+        else if (action == "Import" ) {
+	    console.log("log:Calling importLandmarks()")
+	    landmarkModel.importLandmarks()
+        }
+        else if (action == "Update" ) {
+	    console.log("log: Calling update()")
+	    landmarkModel.update()
+	}
+	else if (action == "Autoupdate" ) {
+	    if (landmarkModel.autoUpdate == true) {
+		console.log("log: setting autoUpdate false")
+		landmarkModel.autoUpdate = false;
+	    } else {
+		console.log("log: setting autoUpdate true")
+		landmarkModel.autoUpdate = true;
+	    }
+	} else {
+            console.log("log: Unassigned clicked")
         }
     }
 }

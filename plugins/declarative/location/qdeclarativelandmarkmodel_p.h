@@ -130,6 +130,8 @@ public:
     QString importFile() const;
     void setImportFile(QString importFile);
     void scheduleImport();
+    Q_INVOKABLE void importLandmarks();
+
     virtual void componentComplete();
 
     int count();
