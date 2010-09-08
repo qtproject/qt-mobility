@@ -327,6 +327,7 @@ QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephon
     //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
     for( int i = 0; i < callInfoList.count(); i++){
         if(callInfoList.at(i).data()->type == QTelephony::Any
+            || QTelephony::Any == calltype
             || callInfoList.at(i).data()->type == calltype)
         {
             QTelephonyCallInfo callinfo;

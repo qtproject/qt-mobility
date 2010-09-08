@@ -54,6 +54,7 @@
 // We mean it.
 //
 
+#include <qmobilityglobal.h>
 #include <QtCore/qshareddata.h>
 #include <QList>
 #include <QString>

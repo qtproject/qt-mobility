@@ -84,7 +84,7 @@ namespace DBus
         Q_DISABLE_COPY(Channel)
     public:
         static const Feature FeatureCore;
-        static bool isCall(QString channeltype);
+        static bool isCall(QString channeltype, QString channelpath);
 
         Channel(QDBusConnection busconnection, const QString busname, const QString &objectPath, const QVariantMap &properties, Connection* connection);
         ~Channel();
