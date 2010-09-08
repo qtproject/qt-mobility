@@ -1404,7 +1404,7 @@ void QSystemNetworkInfoLinuxCommonPrivate::ofonoNetworkPropertyChangedContext(co
 
     }
     if(item == "CellId") {
-
+        Q_EMIT cellIdChanged(value.variant().toString());
     }
     if(item == "Technology") {
 
