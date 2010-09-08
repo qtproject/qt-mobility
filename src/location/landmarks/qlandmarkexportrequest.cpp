@@ -190,7 +190,7 @@ QList<QLandmarkId> QLandmarkExportRequest::landmarkIds() const
     Sets the landmarks to be exported by specifying a list of
     \a landmarkIds.
 */
-void QLandmarkExportRequest::setLandmarkIds(QList<QLandmarkId> &landmarkIds)
+void QLandmarkExportRequest::setLandmarkIds(const QList<QLandmarkId> &landmarkIds)
 {
     Q_D(QLandmarkExportRequest);
     QMutexLocker ml(&d->mutex);
