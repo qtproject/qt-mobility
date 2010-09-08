@@ -565,9 +565,9 @@ void MainWindow::setupUi()
 
     QPainterPath path;
     const int gaps = 3;
-    const int innerwidth = 16;
-    const int innerheight = 8;
-    const int smallbox = 5;
+    const int innerwidth = 20;
+    const int innerheight = 10;
+    const int smallbox = 6;
     path.addRect(0, 0, innerwidth+smallbox+3*gaps, innerheight+smallbox+3*gaps);
     path.addRect(smallbox+2*gaps, gaps, innerwidth, innerheight);
     path.addRect(gaps, 2*gaps+innerheight, smallbox, smallbox);
@@ -575,7 +575,7 @@ void MainWindow::setupUi()
     m_fullScreenButton = new QGraphicsPathItem(path); // TODO: make member
     QPen pen;
     pen.setWidth(2);
-    pen.setColor(QColor(0,0,0,96));
+    pen.setColor(QColor(0,0,0,128));
     pen.setJoinStyle(Qt::MiterJoin);
     m_fullScreenButton->setPen(pen);
     m_fullScreenButton->setFlag(QGraphicsItem::ItemIsSelectable);
