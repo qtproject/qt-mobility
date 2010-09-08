@@ -75,6 +75,8 @@ public:
 
     Q_INVOKABLE QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
+    QString uriForDrive(const QString &driveVolume);//1.2
+
 Q_SIGNALS:
     void logicalDriveChanged(bool added,const QString &vol);
 

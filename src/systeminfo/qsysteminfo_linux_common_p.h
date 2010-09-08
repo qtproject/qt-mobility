@@ -241,6 +241,9 @@ public:
     qint64 totalDiskSpace(const QString &driveVolume);
     QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
+
+    QString uriForDrive(const QString &driveVolume);//1.2
+
 Q_SIGNALS:
     void logicalDriveChanged(bool, const QString &);
 

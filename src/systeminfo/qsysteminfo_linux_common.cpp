@@ -1966,6 +1966,10 @@ void QSystemStorageInfoLinuxCommonPrivate::mountEntries()
     endmntent(mntfp);
 }
 
+QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVolume)
+{
+    return QString();
+}
 
 
 QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)

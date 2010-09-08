@@ -887,6 +887,11 @@ void QSystemStorageInfoPrivate::storageStatusChanged(bool added, const QString &
     emit logicalDriveChanged(added, aDriveVolume);
 };
 
+QString QSystemStorageInfoPrivate::uriForDrive(const QString &driveVolume)
+{
+    return QString();
+}
+
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     : QObject(parent), m_profileEngine(NULL), m_proEngNotifyHandler(NULL),
     m_bluetoothRepository(NULL), m_bluetoothNotifyHandler(NULL)

@@ -204,6 +204,8 @@ public:
     QStringList logicalDrives();
     QTM_PREPEND_NAMESPACE(QSystemStorageInfo::DriveType) typeForDrive(const QString &driveVolume);
 
+    QString uriForDrive(const QString &driveVolume);//1.2
+
 public Q_SLOTS:
     void notificationArrived();
 

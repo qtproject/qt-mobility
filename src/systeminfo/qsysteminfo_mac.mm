@@ -1891,6 +1891,10 @@ void QSystemStorageInfoPrivate::disconnectNotify(const char *signal)
     }
 }
 
+QString QSystemStorageInfoPrivate::uriForDrive(const QString &driveVolume)
+{
+    return QString();
+}
 
 void powerInfoChanged(void* context)
 {

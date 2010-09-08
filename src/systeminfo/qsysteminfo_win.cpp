@@ -1569,6 +1569,11 @@ void QSystemStorageInfoPrivate::mountEntries()
     logicalDrives();
 }
 
+QString QSystemStorageInfoPrivate::uriForDrive(const QString &driveVolume)
+{
+    return QString();
+}
+
 #if defined(Q_OS_WINCE)
 QPowerNotificationThread::QPowerNotificationThread(QSystemDeviceInfoPrivate *parent)
     : parent(parent),

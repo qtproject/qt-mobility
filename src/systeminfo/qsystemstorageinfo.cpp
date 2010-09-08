@@ -127,6 +127,13 @@ QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &dr
    return storageInfoPrivate()->typeForDrive(driveVolume);
 }
 
+/*!
+  Returns the uri, or unique identifier fir \a driveVolume.
+  */
+QSystemStorageInfo::uriForDrive(const QString &driveVolume)
+{
+    return storageInfoPrivate()->uriForDrive(const QString &driveVolume);
+}
 
 #include "moc_qsystemstorageinfo.cpp"
 

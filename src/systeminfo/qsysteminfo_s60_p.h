@@ -183,6 +183,8 @@ public:
     static QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
+    QString uriForDrive(const QString &driveVolume);//1.2
+
 protected: // from MStorageStatusObserver
     void storageStatusChanged(bool, const QString &);
 
