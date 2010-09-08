@@ -123,9 +123,14 @@ public:
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+    Q_PROPERTY(bool controlsVisible READ controlsVisible WRITE setControlsVisible)
+
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+    void setControlsVisible(bool visible);
+    bool controlsVisible();
 
 protected:
     void resizeEvent(QResizeEvent* event);
@@ -186,7 +191,7 @@ private:
     QPushButton *m_setCoordsButton;
 
     QLayout *m_layout;
-    bool fullscreen;
+    bool m_controlsVisible;
 
     QNetworkSession *m_session;
 };

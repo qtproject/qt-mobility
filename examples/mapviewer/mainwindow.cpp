@@ -387,7 +387,7 @@ MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
         m_serviceProvider(0),
         m_popupMenu(0),
-        fullscreen(false)
+        m_controlsVisible(true)
 {
     setWindowTitle(tr("Map Viewer Demo"));
 
@@ -467,8 +467,21 @@ void MainWindow::sceneSelectionChanged()
 
     m_fullScreenButton->setSelected(false);
 
-    // toggle fullscreen mode
-    fullscreen = !fullscreen;
+    // toggle hide control mode
+    setControlsVisible(!controlsVisible());
+}
+
+bool MainWindow::controlsVisible()
+{
+    return m_controlsVisible;
+}
+
+void MainWindow::setControlsVisible(bool controlsVisible)
+{
+    if (m_controlsVisible == controlsVisible)
+        return;
+
+    m_controlsVisible = controlsVisible;
 
     // obtain a flat item list, containing every widget
     QList<QLayoutItem*> items;
@@ -511,7 +524,7 @@ void MainWindow::sceneSelectionChanged()
         QWidget * widget = item->widget();
 
         if (widget != m_qgv)
-            widget->setHidden(fullscreen);
+            widget->setVisible(controlsVisible);
     }
     m_layout->activate();
 
@@ -552,9 +565,9 @@ void MainWindow::setupUi()
 
     QPainterPath path;
     const int gaps = 3;
-    const int innerwidth = 16;
-    const int innerheight = 8;
-    const int smallbox = 5;
+    const int innerwidth = 20;
+    const int innerheight = 10;
+    const int smallbox = 6;
     path.addRect(0, 0, innerwidth+smallbox+3*gaps, innerheight+smallbox+3*gaps);
     path.addRect(smallbox+2*gaps, gaps, innerwidth, innerheight);
     path.addRect(gaps, 2*gaps+innerheight, smallbox, smallbox);
@@ -562,7 +575,7 @@ void MainWindow::setupUi()
     m_fullScreenButton = new QGraphicsPathItem(path); // TODO: make member
     QPen pen;
     pen.setWidth(2);
-    pen.setColor(QColor(0,0,0,96));
+    pen.setColor(QColor(0,0,0,128));
     pen.setJoinStyle(Qt::MiterJoin);
     m_fullScreenButton->setPen(pen);
     m_fullScreenButton->setFlag(QGraphicsItem::ItemIsSelectable);
@@ -606,6 +619,8 @@ void MainWindow::setupUi()
                 break;
             case QGraphicsGeoMap::TerrainMap:
                 radio->setText("Terrain");
+                break;
+            case QGraphicsGeoMap::NoMap:
                 break;
         }
 
