@@ -3453,17 +3453,15 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
     datelineFilterCoords << QGeoCoordinate(-0.1, 179.9);
     datelineFilterCoords << QGeoCoordinate(0.1, 179.9);
 
-    /*TODO: test poles
-        northPoleFilterCoords << QGeoCoordinate(89.9, -179.9);
-        northPoleFilterCoords << QGeoCoordinate(89.9, -0.1);
-        northPoleFilterCoords << QGeoCoordinate(89.9, 0.1);
-        northPoleFilterCoords << QGeoCoordinate(89.9, 179.9);
+    northPoleFilterCoords << QGeoCoordinate(89.9, -179.9);
+    northPoleFilterCoords << QGeoCoordinate(89.9, -0.1);
+    northPoleFilterCoords << QGeoCoordinate(89.9, 0.1);
+    northPoleFilterCoords << QGeoCoordinate(89.9, 179.9);
 
-        southPoleFilterCoords << QGeoCoordinate(-89.9, -179.9);
-        southPoleFilterCoords << QGeoCoordinate(-89.9, -0.1);
-        southPoleFilterCoords << QGeoCoordinate(-89.9, 0.1);
-        southPoleFilterCoords << QGeoCoordinate(-89.9, 179.9);
-*/
+    southPoleFilterCoords << QGeoCoordinate(-89.9, -179.9);
+    southPoleFilterCoords << QGeoCoordinate(-89.9, -0.1);
+    southPoleFilterCoords << QGeoCoordinate(-89.9, 0.1);
+    southPoleFilterCoords << QGeoCoordinate(-89.9, 179.9);
 
     eastFilterCoords << QGeoCoordinate(-0.1, 10.0);
     eastFilterCoords << QGeoCoordinate(0.1, 10.0);
@@ -3500,9 +3498,9 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
     QList<QList<QGeoCoordinate> > coords;
     coords << greenwhichLmCoords;
     coords << datelineLmCoords;
-    //TODO: test poles
-    //        coords << northPoleLmCoords;
-    //        coords << southPoleLmCoords;
+
+    coords << northPoleLmCoords;
+    coords << southPoleLmCoords;
     coords << eastLmCoords;
     coords << northLmCoords;
     coords << northeastLmCoords;
@@ -3519,9 +3517,10 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
     QList<QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> > > testSets;
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(greenwhichFilterCoords, greenwhichLmCoords);
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(datelineFilterCoords, datelineLmCoords);
-    //TODO: test poles
-    //        testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(northPoleFilterCoords, northPoleLmCoords);
-    //        testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(southPoleFilterCoords, southPoleLmCoords);
+
+    testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(northPoleFilterCoords, northPoleLmCoords);
+    testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(southPoleFilterCoords, southPoleLmCoords);
+
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(northFilterCoords, northLmCoords);
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(eastFilterCoords, eastLmCoords);
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(northeastFilterCoords, northeastLmCoords);
@@ -3534,8 +3533,12 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
 
         for (int j = 0; j < filterCoords.size(); ++j) {
             QLandmarkProximityFilter filter(filterCoords.at(j), dist);
-
             QList<QLandmark> lms = m_manager->landmarks(filter);
+
+            if (i ==2 || i ==3) { //we're in the testing the north and south poles which is invalid
+                QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
+                continue;
+            }
 
             if (lms.size() != lmCoords.size()) {
                 for (int k = 0; k < lms.size(); ++k)
@@ -3551,6 +3554,21 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
             }
         }
     }
+
+    m_manager->removeLandmarks(m_manager->landmarkIds());
+
+    //TODO: more edge cases, async version of these tests
+    QGeoCoordinate nearNorthPole(89.91,0);
+    QLandmarkProximityFilter proximityFilter;
+    proximityFilter.setCoordinate(nearNorthPole);
+    proximityFilter.setRadius(11000);
+    m_manager->landmarks(proximityFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
+
+    proximityFilter.setCoordinate(nearNorthPole);
+    proximityFilter.setRadius(9000);
+    m_manager->landmarks(proximityFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximityOrder()
