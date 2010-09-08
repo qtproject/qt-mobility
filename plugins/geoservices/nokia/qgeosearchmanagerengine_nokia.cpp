@@ -110,7 +110,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
     QString requestString = "http://";
     requestString += m_host;
     requestString += "/geocoder/gc/1.0?referer=" + m_referer;
-    
+
     if (!m_token.isNull())
         requestString += "&token=" + m_token;
 
@@ -183,6 +183,8 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchStrin
         int offset,
         QGeoBoundingArea *bounds)
 {
+    Q_UNUSED(bounds)
+
     // NOTE this will eventually replaced by a much improved implementation
     // which will make use of the additionLandmarkManagers()
     if ((searchTypes != QGeoSearchManager::SearchTypes(QGeoSearchManager::SearchAll))
@@ -192,8 +194,6 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchStrin
         emit error(reply, reply->error(), reply->errorString());
         return reply;
     }
-
-    Q_UNUSED(bounds)
 
     QString requestString = "http://";
     requestString += m_host;
@@ -208,6 +208,16 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchStrin
 
     requestString += "&obloc=";
     requestString += searchString;
+
+    if(limit>0) {
+        requestString += "&total=";
+        requestString += QString::number(limit);
+    }
+
+    if(offset>0) {
+        requestString += "&offset=";
+        requestString += QString::number(offset);
+    }
 
     return search(requestString);
 }
