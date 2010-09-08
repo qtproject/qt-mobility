@@ -166,7 +166,7 @@ void QDeclarativeLandmarkCategoryModel::fetchRequestStateChanged(QLandmarkAbstra
     if (m_fetchRequest->error() == QLandmarkManager::NoError) {
         // Later improvement item is to make udpate incremental by
         // connecting to resultsAvailable() -function.
-        beginInsertRows(QModelIndex(), 0, m_categories.count()); // TODO check if this correct (count)
+        beginResetModel();
         int oldCount = m_categories.count();
         switch (m_fetchRequest->type())
         {
@@ -189,7 +189,7 @@ void QDeclarativeLandmarkCategoryModel::fetchRequestStateChanged(QLandmarkAbstra
         }
         // Convert into declarative classes
         convertCategoriesToDeclarative();
-        endInsertRows();
+        endResetModel();
         if (oldCount != m_categories.count())
             emit countChanged();
     } else if (m_error != m_fetchRequest->errorString()) {

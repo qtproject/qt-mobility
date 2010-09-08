@@ -217,15 +217,17 @@ Rectangle {
         anchors { topMargin: 5; top: data.bottom}
         rows: 3; columns: 1; spacing: anchors.bottomMargin;
         Content.Cell {action: "Change DB"; onClicked: doAction(action)}
-        Content.Cell {action: "unassigned 2"; onClicked: doAction(action)}
+        Content.Cell {action: "Import"; onClicked: doAction(action)}
         Content.Cell {action: "unassigned 3";  onClicked: doAction(action)}
     }
     function doAction(action) {
         if (action == "Change DB") {
+	    console.log("Changing DB to generatedExampleLandmarkDb.db");
             landmarkModel.setDbFileName("generatedExampleLandmarkDb.db");
         }
-        else if (action == "unassigned 2" ) {
-            
+        else if (action == "Import" ) {
+	    console.log("Setting import file to AUS-PublicToilet-Queensland.gpx")
+	    landmarkModel.importFile = "AUS-PublicToilet-Queensland.gpx"
         }
         else if (action == "unassigned 3" ) {
             

@@ -206,14 +206,14 @@ QDeclarativeLandmarkModel::~QDeclarativeLandmarkModel()
 }
 
 // When the parent is valid it means that rowCount is returning the number of children of parent.
-int QDeclarativeLandmarkModel::rowCount(const QModelIndex &parent) const
+int QDeclarativeLandmarkModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
     return m_landmarks.count();
 }
 
 // Returns the stored under the given role for the item referred to by the index.
-QVariant QDeclarativeLandmarkModel::data(const QModelIndex &index, int role) const
+QVariant QDeclarativeLandmarkModel::data(const QModelIndex& index, int role) const
 {
     QLandmark landmark = m_landmarks.value(index.row());
 
@@ -447,7 +447,7 @@ void QDeclarativeLandmarkModel::startImport()
     if (m_importRequest)
         delete m_importRequest;
     m_importRequest = new QLandmarkImportRequest(m_manager);
-    m_importRequest->setFileName("m_importRequest"); // TODO WTF
+    m_importRequest->setFileName(m_importFile);
     m_importRequest->start(); // If successful, will result in landmark/category added signals
     m_importPending = false;
 }
@@ -472,12 +472,12 @@ void QDeclarativeLandmarkModel::fetchRequestStateChanged(QLandmarkAbstractReques
 
     if (m_fetchRequest->error() == QLandmarkManager::NoError) {
         // Later improvement item is to make udpate incremental by connecting to resultsAvailable() -function.
-        beginInsertRows(QModelIndex(), 0, m_landmarks.count()); // TODO check if this should be amount of received landmarks
+        beginResetModel();
         int oldCount = m_landmarks.count();
         m_landmarks = m_fetchRequest->landmarks();
         // Convert into declarative classes
         convertLandmarksToDeclarative();
-        endInsertRows();
+        endResetModel();
         if (oldCount != m_landmarks.count())
             emit countChanged();
     } else if (m_error != m_fetchRequest->errorString()) {
