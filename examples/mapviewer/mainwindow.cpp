@@ -387,7 +387,7 @@ MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
         m_serviceProvider(0),
         m_popupMenu(0),
-        fullscreen(false)
+        m_controlsVisible(true)
 {
     setWindowTitle(tr("Map Viewer Demo"));
 
@@ -467,8 +467,21 @@ void MainWindow::sceneSelectionChanged()
 
     m_fullScreenButton->setSelected(false);
 
-    // toggle fullscreen mode
-    fullscreen = !fullscreen;
+    // toggle hide control mode
+    setControlsVisible(!controlsVisible());
+}
+
+bool MainWindow::controlsVisible()
+{
+    return m_controlsVisible;
+}
+
+void MainWindow::setControlsVisible(bool controlsVisible)
+{
+    if (m_controlsVisible == controlsVisible)
+        return;
+
+    m_controlsVisible = controlsVisible;
 
     // obtain a flat item list, containing every widget
     QList<QLayoutItem*> items;
@@ -511,7 +524,7 @@ void MainWindow::sceneSelectionChanged()
         QWidget * widget = item->widget();
 
         if (widget != m_qgv)
-            widget->setHidden(fullscreen);
+            widget->setVisible(controlsVisible);
     }
     m_layout->activate();
 
