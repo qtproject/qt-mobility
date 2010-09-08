@@ -280,6 +280,7 @@ void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
 
     d->maxZoomCenter = coordinateToWorldPixel(center);
     d->updateScreenRect();
+    geoMap()->update();
     d->updateMapImage();
 }
 
