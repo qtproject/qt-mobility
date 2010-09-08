@@ -1173,7 +1173,7 @@ EXPORTS
 	?setLandmarkId@QLandmark@QtMobility@@QAEXABVQLandmarkId@2@@Z @ 1172 NONAME ; void QtMobility::QLandmark::setLandmarkId(class QtMobility::QLandmarkId const &)
 	?setLandmarkId@QLandmarkFetchByIdRequest@QtMobility@@QAEXABVQLandmarkId@2@@Z @ 1173 NONAME ; void QtMobility::QLandmarkFetchByIdRequest::setLandmarkId(class QtMobility::QLandmarkId const &)
 	?setLandmarkId@QLandmarkRemoveRequest@QtMobility@@QAEXABVQLandmarkId@2@@Z @ 1174 NONAME ; void QtMobility::QLandmarkRemoveRequest::setLandmarkId(class QtMobility::QLandmarkId const &)
-	?setLandmarkIds@QLandmarkExportRequest@QtMobility@@QAEXAAV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 1175 NONAME ; void QtMobility::QLandmarkExportRequest::setLandmarkIds(class QList<class QtMobility::QLandmarkId> &)
+	?setLandmarkIds@QLandmarkExportRequest@QtMobility@@QAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 1175 NONAME ; void QtMobility::QLandmarkExportRequest::setLandmarkIds(class QList<class QtMobility::QLandmarkId> const &)
 	?setLandmarkIds@QLandmarkFetchByIdRequest@QtMobility@@QAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 1176 NONAME ; void QtMobility::QLandmarkFetchByIdRequest::setLandmarkIds(class QList<class QtMobility::QLandmarkId> const &)
 	?setLandmarkIds@QLandmarkIdFilter@QtMobility@@QAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 1177 NONAME ; void QtMobility::QLandmarkIdFilter::setLandmarkIds(class QList<class QtMobility::QLandmarkId> const &)
 	?setLandmarkIds@QLandmarkRemoveRequest@QtMobility@@QAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 1178 NONAME ; void QtMobility::QLandmarkRemoveRequest::setLandmarkIds(class QList<class QtMobility::QLandmarkId> const &)
