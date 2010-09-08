@@ -91,8 +91,7 @@ class QDeclarativeCamera : public QDeclarativeItem
     Q_PROPERTY(WhiteBalanceMode whiteBalanceMode READ whiteBalanceMode WRITE setWhiteBalanceMode NOTIFY whiteBalanceModeChanged)
     Q_PROPERTY(int manualWhiteBalance READ manualWhiteBalance WRITE setManualWhiteBalance NOTIFY manualWhiteBalanceChanged)
 
-    Q_PROPERTY(int captureWidth READ captureWidth WRITE setCaptureWidth NOTIFY captureWidthChanged)
-    Q_PROPERTY(int captureHeight READ captureHeight WRITE setCaptureHeight NOTIFY captureHeightChanged)
+    Q_PROPERTY(QSize captureResolution READ captureResolution WRITE setCaptureResolution NOTIFY captureResolutionChanged)
 
     Q_PROPERTY(qreal opticalZoom READ opticalZoom WRITE setOpticalZoom NOTIFY opticalZoomChanged)
     Q_PROPERTY(qreal maximumOpticalZoom READ maximumOpticalZoom NOTIFY maximumOpticalZoomChanged)
@@ -195,8 +194,7 @@ public:
     WhiteBalanceMode whiteBalanceMode() const;
     int manualWhiteBalance() const;
 
-    int captureWidth() const;
-    int captureHeight() const;
+    QSize captureResolution() const;
 
     qreal maximumOpticalZoom() const;
     qreal maximumDigitalZoom() const;
@@ -223,8 +221,7 @@ public Q_SLOTS:
     void setWhiteBalanceMode(QDeclarativeCamera::WhiteBalanceMode mode) const;
     void setManualWhiteBalance(int colorTemp) const;
 
-    void setCaptureWidth(int);
-    void setCaptureHeight(int);
+    void setCaptureResolution(const QSize &size);
 
     void setOpticalZoom(qreal);
     void setDigitalZoom(qreal);
@@ -251,8 +248,7 @@ Q_SIGNALS:
     void whiteBalanceModeChanged(QDeclarativeCamera::WhiteBalanceMode) const;
     void manualWhiteBalanceChanged(int) const;
 
-    void captureWidthChanged(int);
-    void captureHeightChanged(int);
+    void captureResolutionChanged(const QSize&);
 
     void opticalZoomChanged(qreal);
     void digitalZoomChanged(qreal);
