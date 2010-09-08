@@ -311,7 +311,37 @@ bool hasIOServiceMatching(const QString &classstr)
 #endif
 NSObject* delegate;
 
+@interface QtBtConnectListener : NSObject
+{
+}
+@end
+
+@implementation QtBtConnectListener
+- (id) init
+{
+    [super init];
+    [IOBluetoothDevice registerForConnectNotifications:self selector:@selector(bluetoothDeviceConnected:device:)];
+    return self;
+}
+
+- (void)bluetoothDeviceConnected:(IOBluetoothUserNotification *)notification device:(IOBluetoothDevice *)device
+{
+    if([ device getClassOfDevice ] == 9536) {
+        QTM_NAMESPACE::QSystemDeviceInfoPrivate::instance()->keyboardConnected(true);
+        [device registerForDisconnectNotification:self selector:@selector(bluetoothDeviceDisconnected:device:)];
+    }
+}
+
+- (void)bluetoothDeviceDisconnected:(IOBluetoothUserNotification *)notification device:(IOBluetoothDevice *)device
+{
+    if([ device getClassOfDevice ] == 9536) {
+        QTM_NAMESPACE::QSystemDeviceInfoPrivate::instance()->keyboardConnected(false);
+    }
+}
+@end
+
 QTM_BEGIN_NAMESPACE
+QtBtConnectListener *btConnListener;
 
 Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, qsystemDeviceInfoPrivate)
 
@@ -796,6 +826,7 @@ void btPowerStateChange(void *ref, io_service_t /*service*/, natural_t messageTy
 }
 
 
+
 QBluetoothListenerThread::QBluetoothListenerThread(QObject *parent)
     :QObject(parent)
 {
@@ -812,6 +843,7 @@ void QBluetoothListenerThread::stop()
     mutex.lock();
     keepRunning = false;
     mutex.unlock();
+    [btConnListener release];
     t.quit();
     t.wait();
 }
@@ -826,7 +858,9 @@ void QBluetoothListenerThread::doWork()
         mutex.lock();
         keepRunning = true;
         mutex.unlock();
+
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
         io_object_t notifyObject;
         io_service_t bluetoothservice;
 
@@ -890,6 +924,12 @@ void QBluetoothListenerThread::doWork()
         [pool release];
     }
 #endif
+}
+
+void QBluetoothListenerThread::setupConnectNotify()
+{
+    qDebug() << Q_FUNC_INFO;
+    btConnListener = [[QtBtConnectListener alloc] init];
 }
 
 void QBluetoothListenerThread::emitBtPower(bool b)
@@ -1860,11 +1900,12 @@ void powerInfoChanged(void* context)
 }
 
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
-        : QObject(parent), btThreadOk(0) ,btThread(0)
+        : QObject(parent), btThreadOk(0) ,btThread(0),hasWirelessKeyboardConnected(0)
 {
     batteryLevelCache = 0;
     currentPowerStateCache = QSystemDeviceInfo::UnknownPower;
     batteryStatusCache = QSystemDeviceInfo::NoBatteryLevel;
+    hasWirelessKeyboardConnected = isWirelessKeyboardConnected();
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
@@ -1881,12 +1922,18 @@ QSystemDeviceInfoPrivate *QSystemDeviceInfoPrivate::instance()
 
 void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
 {
-    if (QLatin1String(signal) == SIGNAL(bluetoothStateChanged(bool))) {
+    if (QLatin1String(signal) == SIGNAL(bluetoothStateChanged(bool))
+        || QLatin1String(signal) == SIGNAL(wirelessKeyboardConnected(bool))) {
         if(!btThread) {
             btThread = new QBluetoothListenerThread();
+            btThreadOk = true;
+        }
+        if (QLatin1String(signal) == SIGNAL(bluetoothStateChanged(bool))) {
             connect(btThread,SIGNAL(bluetoothPower(bool)), this, SIGNAL(bluetoothStateChanged(bool)));
             btThread->doWork();
-             btThreadOk = true;
+        }
+        if( QLatin1String(signal) == SIGNAL(wirelessKeyboardConnected(bool))) {
+            btThread->setupConnectNotify();
         }
     }
 
@@ -1911,12 +1958,10 @@ void QSystemDeviceInfoPrivate::disconnectNotify(const char *signal)
     }
 }
 
-
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 {
     return QSystemDeviceInfo::UnknownProfile;
 }
-
 
 QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 {
@@ -1936,7 +1981,6 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
     }
     return methods;
 }
-
 
 QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 {
@@ -2102,6 +2146,45 @@ bool QSystemDeviceInfoPrivate::currentBluetoothPowerState()
     if(isBtPowerOn())
         return true;
     return false;
+}
+QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardType()
+{
+    QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags = QSystemDeviceInfo::UnknownKeyboard;
+
+    if((methods & QSystemDeviceInfo::Keyboard)) {
+        keyboardFlags = (keyboardFlags | QSystemDeviceInfo::FullQwertyKeyboard);
+  }
+    if(isWirelessKeyboardConnected()) {
+        keyboardFlags = (keyboardFlags | QSystemDeviceInfo::WirelessKeyboard);
+    }
+// how to check softkeys on desktop?
+    return keyboardFlags;
+}
+
+bool QSystemDeviceInfoPrivate::isWirelessKeyboardConnected()
+{
+    NSArray *pairedDevices = [ IOBluetoothDevice pairedDevices];
+
+    for (IOBluetoothDevice *currentBtDevice in pairedDevices) {
+        if([ currentBtDevice getClassOfDevice ] == 9536
+           && [currentBtDevice isConnected]) {
+            hasWirelessKeyboardConnected = true;
+        }
+    }
+    return hasWirelessKeyboardConnected;
+}
+
+bool QSystemDeviceInfoPrivate::isKeyboardFlipOpen()
+{
+    return false;
+}
+
+void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
+{
+    if(connect != hasWirelessKeyboardConnected)
+        hasWirelessKeyboardConnected = connect;
+    Q_EMIT wirelessKeyboardConnected(connect);
 }
 
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)

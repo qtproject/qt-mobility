@@ -272,6 +272,12 @@ public:
     bool currentBluetoothPowerState();
     bool btThreadOk;
 
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
+    bool isWirelessKeyboardConnected(); //1.2
+    bool isKeyboardFlipOpen();//1.2
+
+    void keyboardConnected(bool connect);
+
 Q_SIGNALS:
     void batteryLevelChanged(int);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
@@ -280,6 +286,9 @@ Q_SIGNALS:
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
 
+    void wirelessKeyboardConnected(bool connected);//1.2
+    void keyboardFlip(bool open);//1.2
+
 private:
     int batteryLevelCache;
     QSystemDeviceInfo::PowerState currentPowerStateCache;
@@ -287,6 +296,7 @@ private:
     static QSystemDeviceInfoPrivate *self;
     QBluetoothListenerThread *btThread;
 
+    bool hasWirelessKeyboardConnected;
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
@@ -391,6 +401,7 @@ public:
     ~QBluetoothListenerThread();
     bool keepRunning;
     QThread t;
+    void setupConnectNotify();
 
 public Q_SLOTS:
     void emitBtPower(bool);
