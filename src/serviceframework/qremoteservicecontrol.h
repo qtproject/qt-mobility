@@ -65,6 +65,9 @@ public:
     bool quitOnLastInstanceClosed() const;
     void setQuitOnLastInstanceClosed(const bool quit);
 
+    typedef bool (*securityFilter)(const void *message);
+    securityFilter setSecurityFilter(securityFilter filter);
+
 Q_SIGNALS:
     void lastInstanceClosed();
 

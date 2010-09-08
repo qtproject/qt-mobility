@@ -63,6 +63,8 @@ public:
     virtual bool quitOnLastInstanceClosed() const;
     virtual void setQuitOnLastInstanceClosed(const bool quit);
 
+    virtual QRemoteServiceControl::securityFilter setSecurityFilter(QRemoteServiceControl::securityFilter filter);
+
 Q_SIGNALS:
     void lastInstanceClosed();
 
