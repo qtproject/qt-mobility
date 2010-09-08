@@ -2052,11 +2052,6 @@ bool QSystemDeviceInfoPrivate::isKeyboardFlipOpen()
     return false;
 }
 
-QString QSystemDeviceInfoPrivate::productType()
-{
-    return QString();
-}
-
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
         : QObject(parent)
 {

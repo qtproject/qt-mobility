@@ -2503,11 +2503,6 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
      return false;
  }
 
- QString QSystemDeviceInfoLinuxCommonPrivate::productType()
- {
-     return QString();
- }
-
 QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
 }

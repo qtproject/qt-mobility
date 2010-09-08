@@ -244,7 +244,6 @@ public:
     QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
     bool isWirelessKeyboardConnected(); //1.2
     bool isKeyboardFlipOpen();//1.2
-    QString productType(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
