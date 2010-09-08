@@ -39,25 +39,44 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTREQUESTS_H
-#define QCONTACTREQUESTS_H
+#ifndef QCONTACTFETCHBYIDREQUEST_H
+#define QCONTACTFETCHBYIDREQUEST_H
 
-// this file includes all of the asynchronous request
-// leaf classes that are included in the public API
+#include "qtcontactsglobal.h"
+#include "qcontactabstractrequest.h"
+#include "qcontact.h"
+#include "qcontactfetchhint.h"
 
-#include "qcontactdetaildefinitionfetchrequest.h"
-#include "qcontactdetaildefinitionremoverequest.h"
-#include "qcontactdetaildefinitionsaverequest.h"
+#include <QList>
+#include <QStringList>
 
-#include "qcontactrelationshipfetchrequest.h"
-#include "qcontactrelationshipremoverequest.h"
-#include "qcontactrelationshipsaverequest.h"
+QTM_BEGIN_NAMESPACE
 
-#include "qcontactfetchrequest.h"
-#include "qcontactfetchbyidrequest.h"
-#include "qcontactlocalidfetchrequest.h"
-#include "qcontactremoverequest.h"
-#include "qcontactsaverequest.h"
+class QContactFetchByIdRequestPrivate;
+class Q_CONTACTS_EXPORT QContactFetchByIdRequest : public QContactAbstractRequest
+{
+    Q_OBJECT
+
+public:
+    QContactFetchByIdRequest(QObject* parent = 0);
+    ~QContactFetchByIdRequest();
+
+    /* Selection, restriction and sorting */
+    void setLocalIds(const QList<QContactLocalId>& localIds);
+    void setFetchHint(const QContactFetchHint& fetchHint);
+    QList<QContactLocalId> localIds() const;
+    QContactFetchHint fetchHint() const;
+
+    /* Results */
+    QList<QContact> contacts() const;
+    QMap<int, QContactManager::Error> errorMap() const;
+
+private:
+    Q_DISABLE_COPY(QContactFetchByIdRequest)
+    friend class QContactManagerEngine;
+    Q_DECLARE_PRIVATE_D(d_ptr, QContactFetchByIdRequest)
+};
+
+QTM_END_NAMESPACE
 
 #endif
-

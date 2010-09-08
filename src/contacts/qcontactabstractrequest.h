@@ -81,7 +81,8 @@ public:
         DetailDefinitionSaveRequest,
         RelationshipFetchRequest,
         RelationshipRemoveRequest,
-        RelationshipSaveRequest
+        RelationshipSaveRequest,
+        ContactFetchByIdRequest
     };
 
     RequestType type() const;

@@ -154,6 +154,7 @@ QTM_BEGIN_NAMESPACE
   \value RelationshipFetchRequest A request to fetch relationships between contacts
   \value RelationshipRemoveRequest A request to remove any relationships which match the request criteria
   \value RelationshipSaveRequest A request to save a list of relationships
+  \value ContactFetchByIdRequest A request to fetch a list of contacts given a list of ids
  */
 
 /*!

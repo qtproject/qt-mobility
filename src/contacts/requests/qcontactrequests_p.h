@@ -111,6 +111,30 @@ public:
     QList<QContact> m_contacts;
 };
 
+class QContactFetchByIdRequestPrivate : public QContactAbstractRequestPrivate
+{
+public:
+    QContactFetchByIdRequestPrivate()
+        : QContactAbstractRequestPrivate()
+    {
+    }
+
+    ~QContactFetchByIdRequestPrivate()
+    {
+    }
+
+    QContactAbstractRequest::RequestType type() const
+    {
+        return QContactAbstractRequest::ContactFetchByIdRequest;
+    }
+
+    QList<QContactLocalId> m_localIds;
+    QContactFetchHint m_fetchHint;
+
+    QList<QContact> m_contacts;
+    QMap<int, QContactManager::Error> m_errors;
+};
+
 class QContactRemoveRequestPrivate : public QContactAbstractRequestPrivate
 {
 public:
