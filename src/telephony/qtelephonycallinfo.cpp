@@ -163,7 +163,11 @@ unsigned int  QTelephonyCallInfo::type() const
 
     Returns the sub type of the call type (see \l QTelephonyCallInfo::type()).
     A subtype of a Voip call can be Skype.
-    You can use this property to get the sub type of the call .
+    You can use this property to get the sub type of the call.
+    For CallType Text subtype Voip is possible.
+    For CallType Data subtype GSM is possible.
+    For CallType Video subtype GSM & Voip is possible.
+    For CallType Audio subtype GSM & Voip is possible.
 */
 QString QTelephonyCallInfo::subType() const
 {
