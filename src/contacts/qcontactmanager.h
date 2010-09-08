@@ -175,8 +175,7 @@ public:
         DetailOrdering,
         SelfContact,
         Anonymous,
-        ChangeLogs,
-        PartialSaves
+        ChangeLogs
     };
     bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType = QContactType::TypeContact) const;
     bool isRelationshipTypeSupported(const QString& relationshipType, const QString& contactType = QContactType::TypeContact) const;
