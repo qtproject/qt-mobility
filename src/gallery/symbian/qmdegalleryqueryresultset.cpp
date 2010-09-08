@@ -1,43 +1,43 @@
 /****************************************************************************
-**
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
-** All rights reserved.
-** Contact: Nokia Corporation (qt-info@nokia.com)
-**
-** This file is part of the Qt Mobility Components.
-**
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
+ **
+ ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ ** All rights reserved.
+ ** Contact: Nokia Corporation (qt-info@nokia.com)
+ **
+ ** This file is part of the Qt Mobility Components.
+ **
+ ** $QT_BEGIN_LICENSE:LGPL$
+ ** No Commercial Usage
+ ** This file contains pre-release code and may not be distributed.
+ ** You may use this file in accordance with the terms and conditions
+ ** contained in the Technology Preview License Agreement accompanying
+ ** this package.
+ **
+ ** GNU Lesser General Public License Usage
+ ** Alternatively, this file may be used under the terms of the GNU Lesser
+ ** General Public License version 2.1 as published by the Free Software
+ ** Foundation and appearing in the file LICENSE.LGPL included in the
+ ** packaging of this file.  Please review the following information to
+ ** ensure the GNU Lesser General Public License version 2.1 requirements
+ ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+ **
+ ** In addition, as a special exception, Nokia gives you certain additional
+ ** rights.  These rights are described in the Nokia Qt LGPL Exception
+ ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+ **
+ ** If you have questions regarding the use of this file, please contact
+ ** Nokia at qt-info@nokia.com.
+ **
+ **
+ **
+ **
+ **
+ **
+ **
+ **
+ ** $QT_END_LICENSE$
+ **
+ ****************************************************************************/
 
 //Backend
 #include "qmdegalleryqueryresultset.h"
@@ -63,7 +63,7 @@ QMDEGalleryQueryResultSet::QMDEGalleryQueryResultSet(QMdeSession *session, QObje
 
 QMDEGalleryQueryResultSet::~QMDEGalleryQueryResultSet()
 {
-    if( m_query ){
+    if( m_query ) {
         m_query->RemoveObserver( *this );
         m_query->Cancel();
     }
@@ -74,10 +74,10 @@ QMDEGalleryQueryResultSet::~QMDEGalleryQueryResultSet()
 }
 
 void QMDEGalleryQueryResultSet::HandleQueryNewResults( CMdEQuery &aQuery,
-                                                       TInt firstNewItemIndex,
-                                                       TInt newItemCount )
+    TInt firstNewItemIndex,
+    TInt newItemCount )
 {
-    if( m_launchUpdateQuery ){
+    if( m_launchUpdateQuery ) {
         if( aQuery.ResultMode() == EQueryResultModeItem ) {
             int max = aQuery.Count();
             for ( TInt i = firstNewItemIndex; i < max; i++ ) {
@@ -87,7 +87,7 @@ void QMDEGalleryQueryResultSet::HandleQueryNewResults( CMdEQuery &aQuery,
             }
         }
     }
-    else{
+    else {
         if( aQuery.ResultMode() == EQueryResultModeItem ) {
             int max = aQuery.Count();
             for ( TInt i = firstNewItemIndex; i < max; i++ ) {
@@ -108,62 +108,62 @@ void QMDEGalleryQueryResultSet::HandleQueryCompleted( CMdEQuery &aQuery, TInt aE
 {
     m_query_running = false;
 
-    if( m_launchUpdateQuery ){
+    if( m_launchUpdateQuery ) {
         handleUpdatedResults();
         m_launchUpdateQuery = false;
     }
-    else{
+    else {
         emit progressChanged(aQuery.Count(), aQuery.Count());
 
-        if( aError == KErrNone ){
-            if( m_live ){
+        if( aError == KErrNone ) {
+            if( m_live ) {
                 TRAPD( err,
-                       m_session->AddItemAddedObserverL( *this, m_queryConditions );
-                       m_session->AddItemChangedObserverL( *this, m_currentObjectIDs );
-                     );
-                if( err ){
+                    m_session->AddItemAddedObserverL( *this, m_queryConditions );
+                    m_session->AddItemChangedObserverL( *this, m_currentObjectIDs );
+                );
+                if( err ) {
                     m_live = false;
                 }
             }
             finish(QGalleryAbstractRequest::Succeeded, m_live);
         }
-        else{
+        else {
             finish(QGalleryAbstractRequest::RequestError, false);
         }
     }
 }
 
 void QMDEGalleryQueryResultSet::HandleObjectNotification( CMdESession& /*aSession*/,
-                                                          TObserverNotificationType aType,
-                                                          const RArray<TItemId>& aObjectIdArray )
+    TObserverNotificationType aType,
+    const RArray<TItemId>& aObjectIdArray )
 {
-    if( aType == ENotifyAdd ){
+    if( aType == ENotifyAdd ) {
         m_launchUpdateQuery = true;
 
-        if( m_query_running ){
+        if( m_query_running ) {
             m_query->RemoveObserver( *this );
             m_query->Cancel();
         }
         createQuery();
     }
-    else if( aType == ENotifyRemove ){
+    else if( aType == ENotifyRemove ) {
         const int count = aObjectIdArray.Count();
         // Linear search as the result set might be sorted by the query
-        for( int i = 0; i < count; i++ ){
+        for( int i = 0; i < count; i++ ) {
             const int index = m_currentObjectIDs.Find( aObjectIdArray[i]);
-            if( index >= 0 ){
+            if( index >= 0 ) {
                 CMdEObject *item = m_itemArray[index];
                 m_itemArray.Remove( index );
                 delete item;
                 item = NULL;
                 emit itemsRemoved(index, 1);
-                if( index == m_cursorPosition ){
+                if( index == m_cursorPosition ) {
                     if ( itemCount() == 0 ) {
                         m_isValid = false;
                         emit currentItemChanged();
                     }
-                    else{
-                        if( fetchFirst() ){
+                    else {
+                        if( fetchFirst() ) {
                             emit currentIndexChanged( m_cursorPosition );
                         }
                     }
@@ -171,16 +171,16 @@ void QMDEGalleryQueryResultSet::HandleObjectNotification( CMdESession& /*aSessio
             }
         }
     }
-    else if( aType == ENotifyModify ){
+    else if( aType == ENotifyModify ) {
         const int count = aObjectIdArray.Count();
         // Linear search as the result set might be sorted by the query
-        for( int i = 0; i < count; i++ ){
+        for( int i = 0; i < count; i++ ) {
             const int index = m_currentObjectIDs.Find( aObjectIdArray[i]);
-            if( index >= 0 ){
+            if( index >= 0 ) {
                 CMdEObject *oldItem = m_itemArray[index];
                 CMdEObject *newItem = NULL;
                 TRAP_IGNORE( newItem = m_session->GetFullObjectL( aObjectIdArray[i] ) );
-                if( newItem ){
+                if( newItem ) {
                     m_itemArray[index] = newItem;
                     delete oldItem;
                     oldItem = NULL;
@@ -190,23 +190,23 @@ void QMDEGalleryQueryResultSet::HandleObjectNotification( CMdESession& /*aSessio
                     QDocumentGalleryMDSUtility::GetDataFieldsForItemType( propertyList, type );
                     QList<int> keys;
                     const int propertyCount = propertyList.count();
-                    for( int i = 0; i < propertyCount; i++ ){
+                    for( int i = 0; i < propertyCount; i++ ) {
                         keys.append( QDocumentGalleryMDSUtility::GetPropertyKey( propertyList[i] ));
                     }
                     emit metaDataChanged( index, 1, keys );
                 }
-                else{
+                else {
                     m_itemArray.Remove( index );
                     delete oldItem;
                     oldItem = NULL;
                     emit itemsRemoved(index, 1);
-                    if( index == m_cursorPosition ){
+                    if( index == m_cursorPosition ) {
                         if ( itemCount() == 0 ) {
                             m_isValid = false;
                             emit currentItemChanged();
                         }
-                        else{
-                            if( fetchFirst() ){
+                        else {
+                            if( fetchFirst() ) {
                                 emit currentIndexChanged( m_cursorPosition );
                             }
                         }
@@ -222,11 +222,11 @@ void QMDEGalleryQueryResultSet::createQuery()
     delete m_query;
     m_query = NULL;
 
-    if( !m_session ){
-        if( !m_launchUpdateQuery ){
+    if( !m_session ) {
+        if( !m_launchUpdateQuery ) {
             finish(QGalleryAbstractRequest::ConnectionError, false);
         }
-        else{
+        else {
             m_launchUpdateQuery = false;
         }
         return;
@@ -234,51 +234,51 @@ void QMDEGalleryQueryResultSet::createQuery()
 
     int error = 0;
     TRAPD( err, m_query = m_session->NewObjectQueryL( this, m_request, error ) );
-    if( err ){
+    if( err ) {
         m_query = NULL;
-        if( !m_launchUpdateQuery ){
+        if( !m_launchUpdateQuery ) {
             finish(QGalleryAbstractRequest::RequestError, false);
         }
-        else{
+        else {
             m_launchUpdateQuery = false;
         }
         return;
     }
-    else if( error != QGalleryAbstractRequest::NoResult ){
-       m_query->RemoveObserver( *this );
-       delete m_query;
-       m_query = NULL;
-       if( !m_launchUpdateQuery ){
-           finish(error, false);
-       }
-       else{
-           m_launchUpdateQuery = false;
-       }
-       return;
+    else if( error != QGalleryAbstractRequest::NoResult ) {
+        m_query->RemoveObserver( *this );
+        delete m_query;
+        m_query = NULL;
+        if( !m_launchUpdateQuery ) {
+            finish(error, false);
+        }
+        else {
+            m_launchUpdateQuery = false;
+        }
+        return;
     }
 
     // NewObjectQuery will return NULL if object type is not supported
-    if( m_query ){
+    if( m_query ) {
         m_queryConditions = &m_query->Conditions();
         m_query_running = true;
         TRAP( err, m_query->FindL() );
-        if( err ){
+        if( err ) {
             m_query->RemoveObserver( *this );
             delete m_query;
             m_query = NULL;
-            if( !m_launchUpdateQuery ){
+            if( !m_launchUpdateQuery ) {
                 finish(QGalleryAbstractRequest::RequestError, false);
             }
-            else{
+            else {
                 m_launchUpdateQuery = false;
             }
         }
     }
-    else{
-        if( !m_launchUpdateQuery ){
+    else {
+        if( !m_launchUpdateQuery ) {
             finish(QGalleryAbstractRequest::NotSupported, false);
         }
-        else{
+        else {
             m_launchUpdateQuery = false;
         }
     }
@@ -289,17 +289,17 @@ void QMDEGalleryQueryResultSet::handleUpdatedResults()
     m_itemArray.ResetAndDestroy();
     m_itemArray = m_updatedItemArray;
     const int updatedCount = m_updatedObjectIDs.Count();
-    for( int i = 0; i < updatedCount; i++ ){
+    for( int i = 0; i < updatedCount; i++ ) {
         const int index = m_currentObjectIDs.Find( m_updatedObjectIDs[i]);
         // If the object ID is not found in current id list, new object
         // has been added
-        if( index < 0 ){
+        if( index < 0 ) {
             emit itemsInserted( i, 1 );
-            if( i == m_cursorPosition ){
+            if( i == m_cursorPosition ) {
                 emit currentItemChanged();
             }
-            else if( m_cursorPosition >= m_itemArray.Count() ){
-                if( fetchFirst() ){
+            else if( m_cursorPosition >= m_itemArray.Count() ) {
+                if( fetchFirst() ) {
                     currentIndexChanged( m_cursorPosition );
                 }
             }
