@@ -53,6 +53,37 @@ QtContacts
  - foo
     * bar
 
+QtLandmarks
+------
+ - Import and export landmarks atomically for sqlite backend
+ - Add format constants for importing and exporting
+ - Add options to control how categories are treated
+   for importing and exporting operations
+ - Change QGeoAddress::thoroughfareName to street
+ - Add ability to report support levels for sort orders
+ - Landmark name filter now uses match flags
+ - Expand the API to now include the concept
+   of extended and custom attributes.  Modify
+   the QLandmarkAttributeFilter accordingly,
+   and also use match flags in the attribute filter.
+ - Common core filed such as name, street etc
+   are now available through the QLandmark::attributes() 
+   function
+ - Replace the QLandmarkFetchHint with limit and offset
+ - Remove QLandmarkDistanceSort
+ - QLandmark::phone renamed to QLandmark::phoneNumber
+ - QGeoAddress::postOfficeBox removed
+ - Add QLandmarkFetchById and QLandmarkCategoryFetchById
+   classes
+ - Refactoring of sqlite backend, in particular the
+   database schema to be more extensible
+ - Add symbian backend plugin
+ - Add in mutexes to improve thread safety
+   for the asynchronous request classes
+ - Implement signal notificiations in sqlite backend
+ - Implement auto detection of file formats in sqlite backend.
+ - Started adding in basic QML support for landmarks
+
 QtLocation
 ------
 

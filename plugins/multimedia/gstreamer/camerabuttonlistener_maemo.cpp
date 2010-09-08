@@ -54,7 +54,6 @@ CameraButtonListener::CameraButtonListener(QObject *parent) :
     m_focusPressed(false),
     m_shutterPressed(false)
 {
-#if QT_VERSION >= 0x040700
     QDBusConnection::systemBus().connect(
                 QString(),
                 "/org/freedesktop/Hal/devices/platform_cam_launch",
@@ -70,7 +69,6 @@ CameraButtonListener::CameraButtonListener(QObject *parent) :
                 "PropertyModified",
                 this,
                 SLOT(updateFocusButtonState()));
-#endif
 }
 
 
@@ -80,7 +78,6 @@ CameraButtonListener::~CameraButtonListener()
 
 void CameraButtonListener::updateFocusButtonState()
 {
-#if QT_VERSION >= 0x040700
     QDBusInterface propertyInterface("org.freedesktop.Hal",
                                      "/org/freedesktop/Hal/devices/platform_cam_focus",
                                      "org.freedesktop.Hal.Device",
@@ -95,16 +92,14 @@ void CameraButtonListener::updateFocusButtonState()
         if (window) {
             QApplication::postEvent(window,
                                     new QKeyEvent(pressed ? QEvent::KeyPress : QEvent::KeyRelease,
-                                                  Qt::Key_CameraFocus,
+                                                  0x01100021, //Qt::Key_CameraFocus since Qt 4.7.0
                                                   Qt::NoModifier));
         }
     }
-#endif
 }
 
 void CameraButtonListener::updateShuterButtonState()
 {
-#if QT_VERSION >= 0x040700
     QDBusInterface propertyInterface("org.freedesktop.Hal",
                                      "/org/freedesktop/Hal/devices/platform_cam_launch",
                                      "org.freedesktop.Hal.Device",
@@ -119,9 +114,8 @@ void CameraButtonListener::updateShuterButtonState()
         if (window) {
             QApplication::postEvent(window,
                                     new QKeyEvent(pressed ? QEvent::KeyPress : QEvent::KeyRelease,
-                                                  Qt::Key_Camera,
+                                                  0x01100020, //Qt::Key_Camera since Qt 4.7.0
                                                   Qt::NoModifier));
         }
     }
-#endif
 }

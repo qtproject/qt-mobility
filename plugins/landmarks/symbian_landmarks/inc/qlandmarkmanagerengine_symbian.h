@@ -75,7 +75,8 @@ public:
         landmarkRemoved,
         categoryAdded,
         categoryUpdated,
-        categoryRemoved
+        categoryRemoved,
+        unknownChanges
     };
 
 public:

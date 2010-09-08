@@ -46,6 +46,7 @@
 // system includes
 #include <EPos_CPosLandmarkSearch.h>
 #include <Epos_Landmarks.h>
+#include <f32file.h>  
 #include <qmobilityglobal.h>
 #include <qstring.h>
 #include <qset.h>
@@ -104,7 +105,9 @@ private:
     // owned
     CPosLandmarkSearch *iLandmarkSearch;
     CPosLandmarkEncoder *iLandmarkEncoder;
+    RFs iFileSystem;
     CBufBase *iExportBuffer;
+    HBufC *iExportPath;
     QList<QLandmarkCategoryId> iCategoryIds;
     QList<QLandmarkId> iLandmarkIds;
     QList<QLandmark> iLandmarks;
@@ -120,7 +123,7 @@ private:
     QList<QLandmarkCategoryId> iChangedCategoryIds;
     QList<QLandmarkCategoryId> iRemovedCategoryIds;
     QList<QLandmarkCategoryId> iFetchedCategoryIds;
-    
+
     ERROR_MAP iErrorMap;
     TInt iErrorId;
     QLandmarkManager::Error error;
@@ -154,8 +157,8 @@ public:
     TBool CancelRequest();
     TBool WaitForFinished(TInt);
     void SetOperation(CPosLmOperation *aOp = NULL);
-    void SetExportData(CPosLandmarkEncoder *aEncoder = NULL, CBufBase *aExportBuffer = NULL, QList<
-        QLandmarkId> lmIds = QList<QLandmarkId> ());
+    void SetExportData(CPosLandmarkEncoder *aEncoder, RFs &aFileSystem, HBufC *aExportPath, CBufBase *aExportBuffer,
+        QList<QLandmarkId> lmIds = QList<QLandmarkId> ());
     void SetImportData(QList<QLandmarkId>& aParsedLmIds);
     CPosLmOperation * GetOperation();
     static CLandmarkRequestAO* NewL(MLandmarkRequestObserver *, CPosLmOperation *aOp = NULL);

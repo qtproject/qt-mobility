@@ -32,6 +32,7 @@ private slots:
     void onActiveCallAdded(const QTelephonyCallInfo& call);
     void onActiveCallRemoved(const QTelephonyCallInfo& call);
     void onActiveCallStatusChanged(const QTelephonyCallInfo& call);
+    void onHasActiveCalls(bool);
     void onClearList();
 private:
     Ui::MainWindow *ui;

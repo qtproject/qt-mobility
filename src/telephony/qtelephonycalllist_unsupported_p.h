@@ -75,10 +75,12 @@ public:
     }
 
     virtual ~QTelephonyCallListPrivate() { }
+
     QList<QTelephonyCallInfo> activeCalls(const QTelephony::CallType& calltype) const {
         Q_UNUSED(calltype);
         return QList<QTelephonyCallInfo>(); 
     }
+    int activeCallCount() const { return 0; }
 
 private:
 };

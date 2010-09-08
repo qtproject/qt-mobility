@@ -71,7 +71,7 @@ class QGalleryTrackerValueColumn;
 struct QGalleryTrackerResultSetArguments;
 struct QGalleryTrackerTypeResultSetArguments;
 
-class Q_AUTOTEST_EXPORT QGalleryTrackerSchema
+class QM_AUTOTEST_EXPORT QGalleryTrackerSchema
 {
 public:
     QGalleryTrackerSchema(const QString &itemType);

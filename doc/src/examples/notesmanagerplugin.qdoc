@@ -47,5 +47,8 @@
     database to add, delete and store note objects. This plugin is QML compatible and is 
     therefore used in the example \l{declarative-sfw-notes}{Declarative Notes Manager} as 
     well as its non-QML counterpart \l{sfw-notes}{Notes Manager} which uses standard 
-    user-interface files (*.ui). 
+    user-interface files (*.ui).
+
+    The data associated with this service is stored in \bold notesmanager.db in either the 
+    default, current or home directory depending on user writing permissions.
 */

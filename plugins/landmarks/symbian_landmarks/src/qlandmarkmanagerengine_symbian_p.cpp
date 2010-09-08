@@ -147,6 +147,7 @@ LandmarkManagerEngineSymbianPrivate::LandmarkManagerEngineSymbianPrivate(
         m_LandmarkCatMgr = CPosLmCategoryManager::NewL(*m_LandmarkDb);
     );
 
+    m_DbEventHandler.AddObsever(this);
 }
 
 /*!
@@ -154,6 +155,7 @@ LandmarkManagerEngineSymbianPrivate::LandmarkManagerEngineSymbianPrivate(
  */
 LandmarkManagerEngineSymbianPrivate::~LandmarkManagerEngineSymbianPrivate()
 {
+    m_DbEventHandler.RemoveObsever(this);
     delete m_LandmarkCatMgr;
     delete m_LandmarkDb;
     ReleaseLandmarkResources();
@@ -383,8 +385,8 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
         return result;
 
     if (offset > resultcount) {
-        *error = QLandmarkManager::BadArgumentError;
-        *errorString = QString("Invalid fetchHint data, Invalid offset value.");
+        *error = QLandmarkManager::DoesNotExistError;
+        *errorString = QString("No Landmark data found.");
 
         return QList<QLandmarkId> ();
     }
@@ -1061,9 +1063,12 @@ bool LandmarkManagerEngineSymbianPrivate::importLandmarks(QIODevice *device, con
     *errorString = "";
 
     bool status = false;
-    TRAPD(err,importLandmarksL(device,format,option,categoryId));
-    if (err == KErrNone)
+    QList<QLandmarkId> importedIds;
+    TRAPD(err,importedIds = importLandmarksL(device,format,option,categoryId));
+    if (err == KErrNone) {
         status = true;
+        m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::landmarkAdded, importedIds);
+    }
     else
         handleSymbianError(err, error, errorString);
 
@@ -1104,8 +1109,15 @@ bool LandmarkManagerEngineSymbianPrivate::exportLandmarks(QIODevice *device, con
     filter.setLandmarkIds(landmarkIds);
 
     // Using QLandmarkIdFilter to determine wether all the told landmarks exists
-    QList<QLandmarkId> fetchedLandmarkId = this->landmarkIds(filter, KAllLandmarks, KDefaultIndex,
-        order, error, errorString);
+    QList<QLandmarkId> fetchedLandmarkId;
+
+    if (landmarkIds.isEmpty())
+        fetchedLandmarkId = this->landmarkIds(QLandmarkFilter(), KAllLandmarks, KDefaultIndex,
+            order, error, errorString);
+    else
+        fetchedLandmarkId = this->landmarkIds(filter, KAllLandmarks, KDefaultIndex, order, error,
+            errorString);
+
     if (fetchedLandmarkId.isEmpty())
         return status;
     TRAPD(err,exportLandmarksL(device,format,landmarkIds,option));
@@ -1191,7 +1203,12 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
                 break;
             }
             TInt found = 0;
-            QStringList lmkat = m_LandmarkAttributeKeys;
+
+            // default landmark attributes
+            //QStringList lmkat = m_LandmarkAttributeKeys;
+
+            // symbian platform supported attributes
+            QStringList lmkat = LandmarkUtility::landmarkAttributeKeys();
 
             // if any of the attribute matchflag is set to MatchContains & operation type is AndOperation, 
             // then return KErrNotSupported 
@@ -1347,13 +1364,26 @@ QStringList LandmarkManagerEngineSymbianPrivate::supportedFormats(
     QStringList formats;
 
     if (operation == QLandmarkManager::ImportOperation) {
-        formats << QLandmarkManager::Gpx;
-        formats << QLandmarkManager::Lmx;
-        formats << QLandmarkManager::Kml;
-        formats << QLandmarkManager::Kmz;
-    }
 
-    if (operation == QLandmarkManager::ExportOperation) {
+        if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1 || QSysInfo::s60Version()
+            == QSysInfo::SV_S60_3_2) {
+            // for 3.1 & 3.2 platform only Lmx format supported.
+            formats << QLandmarkManager::Lmx;
+        }
+        else if (QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+            // for 5.0 only Lmx & Gpx format supported.
+            formats << QLandmarkManager::Lmx;
+            formats << QLandmarkManager::Gpx;
+        }
+        else {
+            // from 9.2 onwards
+            formats << QLandmarkManager::Lmx;
+            formats << QLandmarkManager::Gpx;
+            formats << QLandmarkManager::Kml;
+            formats << QLandmarkManager::Kmz;
+        }
+    }
+    else if (operation == QLandmarkManager::ExportOperation) {
         //TODO: Sqlite Plugin's GPX encoder can be used to support GPX export
         //formats << QLandmarkManager::Gpx;
         formats << QLandmarkManager::Lmx;
@@ -1809,17 +1839,41 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
     {
         QLandmarkImportRequest * importRequest = static_cast<QLandmarkImportRequest*> (request);
 
-        QIODevice *outputdevice = 0;
-        CPosLandmarkParser* parser = NULL;
-        CPosLmOperation* importOperation = NULL;
-
         TPosLmItemId catId = LandmarkUtility::convertToSymbianLandmarkCategoryId(
             importRequest->categoryId());
 
+        // check for AttachSingleCategory transfer option & association of provided category id.
         if ((catId == KPosLmNullItemId
             || (managerUri() != importRequest->categoryId().managerUri()))
             && (importRequest->transferOption() == QLandmarkManager::AttachSingleCategory))
             User::Leave(KErrArgument);
+
+        // check availability of category from provided category id.
+        if (importRequest->transferOption() == QLandmarkManager::AttachSingleCategory) {
+            CPosLandmarkCategory *tempCategory = m_LandmarkCatMgr->ReadCategoryLC(catId);
+            CleanupStack::PopAndDestroy(tempCategory);
+        }
+
+        QIODevice *outputdevice = 0;
+        CPosLandmarkParser* parser = NULL;
+        CPosLmOperation* importOperation = NULL;
+
+        TInt transferOption = CPosLandmarkDatabase::EDefaultOptions;
+
+        switch (importRequest->transferOption()) {
+        case QLandmarkManager::IncludeCategoryData:
+            transferOption = CPosLandmarkDatabase::EIncludeCategories;
+            break;
+        case QLandmarkManager::AttachSingleCategory:
+            transferOption = CPosLandmarkDatabase::EDefaultOptions;
+            break;
+        case QLandmarkManager::ExcludeCategoryData:
+            transferOption = CPosLandmarkDatabase::EIncludeCategories
+                | CPosLandmarkDatabase::ESupressCategoryCreation;
+            break;
+        default:
+            break;
+        }
 
         //Check if the import is from a file
         if (outputdevice = dynamic_cast<QFile *> (importRequest->device())) {
@@ -1857,6 +1911,9 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
             else if (colonpos == 0) {
                 fs.SessionPath(pathPtr);
                 filename.remove(":");
+                if (filename.indexOf("\\", 0) == 0) {
+                    filename.remove(0, 1);
+                }
                 pathPtr.Append(filename.utf16(), filename.size());
             }
 
@@ -1914,7 +1971,7 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
                 == CApaDataRecognizerType::EPossible)) {
 
                 parser = CPosLandmarkParser::NewL(dataType.iDataType.Des8());
-                //CleanupStack::PushL(parser);
+                CleanupStack::PushL(parser);
                 parser->SetInputFileL(pathPtr);
 
             }
@@ -1929,29 +1986,16 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
                 User::Leave(KErrArgument);
             }
 
-            TInt transferOption = CPosLandmarkDatabase::EDefaultOptions;
-
-            switch (importRequest->transferOption()) {
-            case QLandmarkManager::IncludeCategoryData:
-                transferOption = CPosLandmarkDatabase::EIncludeCategories;
-                break;
-            case QLandmarkManager::AttachSingleCategory:
-                transferOption = CPosLandmarkDatabase::EDefaultOptions;
-                break;
-            case QLandmarkManager::ExcludeCategoryData:
-                transferOption = CPosLandmarkDatabase::EDefaultOptions;
-                break;
-            }
-
-            fs.Close();
-            ls.Close();
-            //CleanupStack::Pop(parser);
-
+            CleanupStack::Pop(parser);
             importOperation = m_LandmarkDb->ImportLandmarksL(*parser, transferOption);
 
+            fileName.Close();
+            fs.Close();
+            ls.Close();
             CleanupStack::PopAndDestroy(&ls);
             CleanupStack::PopAndDestroy(&fs);
             CleanupStack::PopAndDestroy(importPath);
+
         }
 
         // Check if the input as to be taken from a QBuffer
@@ -1963,12 +2007,13 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
             }
 
             //
-            HBufC8* packageFormat = LandmarkUtility::landmarkPackageFormatsStrLC(
+            HBufC8* packageFormat = LandmarkUtility::landmarkPackageFormatsStrL(
                 importRequest->format());
+            CleanupStack::PushL(packageFormat);
 
             TPtr8 ptrPath = packageFormat->Des();
             parser = CPosLandmarkParser::NewL(ptrPath);
-            //CleanupStack::PushL(parser);
+            CleanupStack::PushL(parser);
 
             QBuffer* buffer = (QBuffer*) importRequest->device();
 
@@ -1979,30 +2024,12 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
 
             parser->SetInputBuffer(lmDataPath);
 
-            TInt transferOption;
-            bool addSinglecategoryrequired = false;
-
-            switch (importRequest->transferOption()) {
-            case QLandmarkManager::IncludeCategoryData:
-                transferOption = CPosLandmarkDatabase::EIncludeCategories;
-                break;
-            case QLandmarkManager::AttachSingleCategory:
-                transferOption = CPosLandmarkDatabase::EDefaultOptions;
-                addSinglecategoryrequired = true;
-                break;
-            case QLandmarkManager::ExcludeCategoryData:
-                transferOption = CPosLandmarkDatabase::EIncludeCategories
-                    || CPosLandmarkDatabase::ESupressCategoryCreation;
-                break;
-            default:
-                transferOption = CPosLandmarkDatabase::EDefaultOptions;
-            }
-
-            importOperation = m_LandmarkDb->ImportLandmarksL(*parser, transferOption);
-
             CleanupStack::Pop(lmxData);
             CleanupStack::Pop(parser);
             CleanupStack::PopAndDestroy(packageFormat);
+
+            importOperation = m_LandmarkDb->ImportLandmarksL(*parser, transferOption);
+
         }
 
         else {
@@ -2030,19 +2057,53 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
     case QLandmarkAbstractRequest::ExportRequest:
     {
         QLandmarkExportRequest * exportRequest = static_cast<QLandmarkExportRequest*> (request);
+
         CPosLmOperation* exportOperation = NULL;
         QIODevice *outputdevice = 0;
+        QList<QLandmarkId> exportedLandmarkIds;
+        // Buffer to hold the Exported content temporarily
+        CBufBase *bufferPath = NULL;
+        HBufC *exportPath = NULL;
+
+        // File system        
+        RFs fs;
+
         RArray<TPosLmItemId> selectedLandmarks;
+
+        // Convert the provided Qt landmark Ids to Symbian Ids
+        if (!exportRequest->landmarkIds().size()) {
+            CPosLmItemIterator* iter = m_LandmarkDb->LandmarkIteratorL();
+            CleanupStack::PushL(iter);
+
+            TPosLmItemId lmID = KPosLmNullItemId;
+            while ((lmID = iter->NextL()) != KPosLmNullItemId)
+                selectedLandmarks.AppendL(lmID);
+            CleanupStack::PopAndDestroy(iter);
+
+        }
+        else {
+            foreach(const QLandmarkId& id,exportRequest->landmarkIds())
+                    selectedLandmarks.AppendL(LandmarkUtility::convertToSymbianLandmarkId(id));
+        }
+
+        exportedLandmarkIds = LandmarkUtility::convertToQtLandmarkIds(managerUri(),
+            selectedLandmarks);
+
+        TInt transferOption = CPosLandmarkDatabase::EDefaultOptions;
+        switch (exportRequest->transferOption()) {
+        case QLandmarkManager::IncludeCategoryData:
+            transferOption = CPosLandmarkDatabase::EIncludeCategories;
+            break;
+        case QLandmarkManager::ExcludeCategoryData:
+            transferOption = CPosLandmarkDatabase::EDefaultOptions;
+            break;
+        case QLandmarkManager::AttachSingleCategory:
+            transferOption = CPosLandmarkDatabase::EIncludeCategories;
+            break;
+        }
 
         // Encoder initialized with the supported landmark package format
         CPosLandmarkEncoder* encoder = CPosLandmarkEncoder::NewL(KPosMimeTypeLandmarkCollectionXml);
-        CleanupStack::PushL(encoder);
-
-        // Used to determine write is for file or a buffer
-        bool writeToBufferRequired = false;
-
-        // Buffer to hold the Exported content temporarily
-        CBufBase *bufferPath = NULL;
 
         // Check if the expected export is to a file
         if (outputdevice = dynamic_cast<QFile *> (exportRequest->device())) {
@@ -2053,13 +2114,11 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
             QString filePathName = LandmarkUtility::preparePath(filePath->fileName());
 
             // Export path which will be used to prepare full path
-            HBufC *exportPath = HBufC::NewL(KMaxFileName);
-            CleanupStack::PushL(exportPath);
+            exportPath = HBufC::NewL(KMaxFileName);
 
             // RFs session to perform file save related operations
             RFs fs;
             User::LeaveIfError(fs.Connect());
-            CleanupClosePushL(fs);
             fs.ShareAuto();
 
             TPtr pathPtr = exportPath->Des();
@@ -2092,43 +2151,6 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
             }
 
             encoder->SetOutputFileL(pathPtr);
-            //delete filePath;
-            //CleanupStack::PopAndDestroy(exportPath);
-
-            // Convert the provided Qt landmark Ids to Symbian Ids
-            if (!exportRequest->landmarkIds().size()) {
-                CPosLmItemIterator* iter = m_LandmarkDb->LandmarkIteratorL();
-
-                CleanupStack::PushL(iter);
-
-                TPosLmItemId lmID = KPosLmNullItemId;
-
-                while ((lmID = iter->NextL()) != KPosLmNullItemId)
-                    selectedLandmarks.AppendL(lmID);
-                CleanupStack::PopAndDestroy(iter);
-            }
-            else {
-                foreach(const QLandmarkId& id,exportRequest->landmarkIds())
-                        selectedLandmarks.AppendL(LandmarkUtility::convertToSymbianLandmarkId(id));
-            }
-
-            TInt transferOption = CPosLandmarkDatabase::EDefaultOptions;
-            switch (exportRequest->transferOption()) {
-            case QLandmarkManager::IncludeCategoryData:
-                transferOption = CPosLandmarkDatabase::EIncludeCategories;
-                break;
-            case QLandmarkManager::ExcludeCategoryData:
-                transferOption = CPosLandmarkDatabase::EDefaultOptions;
-                break;
-            case QLandmarkManager::AttachSingleCategory:
-                transferOption = CPosLandmarkDatabase::EIncludeCategories;
-                break;
-            }
-
-            fs.Close();
-            CleanupStack::PopAndDestroy(&fs);
-            CleanupStack::PopAndDestroy(exportPath);
-            CleanupStack::Pop(encoder);
 
             // Performs export of landmarks  and cleanup of CPosLmOperation
             exportOperation = m_LandmarkDb->ExportLandmarksL(*encoder, selectedLandmarks,
@@ -2140,13 +2162,12 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
 
         else if (outputdevice = dynamic_cast<QBuffer *> (exportRequest->device())) {
 
-            // Set true to indicate write to Qbuffer is required
-            writeToBufferRequired = true;
-
             // Set the encoder to write to a buffer
             bufferPath = encoder->SetUseOutputBufferL();
 
-            CleanupStack::PushL(bufferPath);
+            // Performs export of landmarks  and cleanup of CPosLmOperation
+            exportOperation = m_LandmarkDb->ExportLandmarksL(*encoder, selectedLandmarks,
+                transferOption);
 
         }
 
@@ -2155,61 +2176,6 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
             // Invalid device has been provided.
             User::Leave(KErrArgument);
         }
-
-        // Write to the QBuffer
-        if (writeToBufferRequired) {
-
-            bufferPath = encoder->SetUseOutputBufferL();
-            //delete filePath;
-            //CleanupStack::PopAndDestroy(exportPath);
-
-
-            // Convert the provided Qt landmark Ids to Symbian Ids
-            if (!exportRequest->landmarkIds().size()) {
-                CPosLmItemIterator* iter = m_LandmarkDb->LandmarkIteratorL();
-
-                CleanupStack::PushL(iter);
-
-                TPosLmItemId lmID = KPosLmNullItemId;
-
-                while ((lmID = iter->NextL()) != KPosLmNullItemId)
-                    selectedLandmarks.AppendL(lmID);
-                CleanupStack::PopAndDestroy(iter);
-
-            }
-            else {
-                foreach(const QLandmarkId& id,exportRequest->landmarkIds())
-                        selectedLandmarks.AppendL(LandmarkUtility::convertToSymbianLandmarkId(id));
-            }
-
-            TInt transferOption;
-            switch (exportRequest->transferOption()) {
-            case QLandmarkManager::IncludeCategoryData:
-                transferOption = CPosLandmarkDatabase::EIncludeCategories;
-                break;
-            case QLandmarkManager::ExcludeCategoryData:
-                transferOption = CPosLandmarkDatabase::EDefaultOptions;
-                break;
-            case QLandmarkManager::AttachSingleCategory:
-                transferOption = CPosLandmarkDatabase::EIncludeCategories;
-                break;
-            default:
-                transferOption = CPosLandmarkDatabase::EDefaultOptions;
-
-            }
-
-            //CleanupStack::Pop(encoder);
-
-            // Performs export of landmarks  and cleanup of CPosLmOperation
-            exportOperation = m_LandmarkDb->ExportLandmarksL(*encoder, selectedLandmarks,
-                transferOption);
-            if (writeToBufferRequired)
-                CleanupStack::Pop(bufferPath);
-            CleanupStack::Pop(encoder);
-        }
-
-        QList<QLandmarkId> exportedLandmarkIds = LandmarkUtility::convertToQtLandmarkIds(
-            managerUri(), selectedLandmarks);
 
         // create request AO and start async request
         CLandmarkRequestAO* requestAO = CLandmarkRequestAO::NewL(this, exportOperation);
@@ -2221,7 +2187,7 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
 
         // start the request & transfer landmarkSearch object ownership
         requestAO->StartRequest(NULL);
-        requestAO->SetExportData(encoder, bufferPath, exportedLandmarkIds);
+        requestAO->SetExportData(encoder, fs, exportPath, bufferPath, exportedLandmarkIds);
         CleanupStack::Pop(requestAO);
 
         result = true;
@@ -2844,20 +2810,23 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
         QLandmarkBoxFilter boxFilter = filter;
 
         const TReal64& eastlong = boxFilter.boundingBox().bottomRight().longitude();
-        const TReal64& southlat = boxFilter.boundingBox().bottomLeft().latitude();
-        const TReal64& northlat = boxFilter.boundingBox().topRight().latitude();
+        const TReal64& southlat = boxFilter.boundingBox().bottomRight().latitude();
+        const TReal64& northlat = boxFilter.boundingBox().topLeft().latitude();
         const TReal64& westlong = boxFilter.boundingBox().topLeft().longitude();
 
-        if (!LandmarkUtility::isValidLong(eastlong) && !LandmarkUtility::isValidLat(southlat)
-            && !LandmarkUtility::isValidLat(northlat) && !LandmarkUtility::isValidLong(westlong)) {
+        if (southlat > northlat)
             User::Leave(KErrArgument);
+        if (LandmarkUtility::isValidLong(eastlong) && LandmarkUtility::isValidLat(southlat)
+            && LandmarkUtility::isValidLat(northlat) && LandmarkUtility::isValidLong(westlong)) {
+            CPosLmAreaCriteria* areaCriteria = CPosLmAreaCriteria::NewLC(southlat, northlat,
+                westlong, eastlong);
+            CleanupStack::Pop(areaCriteria);
+
+            return areaCriteria;
         }
+        else
+            User::Leave(KErrArgument);
 
-        CPosLmAreaCriteria* areaCriteria = CPosLmAreaCriteria::NewLC(southlat, northlat, westlong,
-            eastlong);
-        CleanupStack::Pop(areaCriteria);
-
-        return areaCriteria;
     }
     case QLandmarkFilter::AttributeFilter:
     {
@@ -3803,35 +3772,36 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
     case QLandmarkAbstractRequest::ImportRequest:
     {
         QLandmarkImportRequest *importRequest = static_cast<QLandmarkImportRequest*> (request);
-        RArray<TPosLmItemId> landmarkIds;
+
+        QList<QLandmarkId> importedLandmarkIds;
 
         if (aData->iOwnerAO->GetOperation()) {
 
             CPosLmItemIterator* iter = m_LandmarkDb->ImportedLandmarksIteratorL(
                 aData->iOwnerAO->GetOperation());
-
             CleanupStack::PushL(iter);
 
-            TPosLmItemId lmID = KPosLmNullItemId;
+            RArray<TPosLmItemId> landmarkIds;
 
+            TPosLmItemId lmID = KPosLmNullItemId;
             while ((lmID = iter->NextL()) != KPosLmNullItemId)
                 landmarkIds.Append(lmID);
 
             CleanupStack::PopAndDestroy(iter);
+
+            importedLandmarkIds
+                = LandmarkUtility::convertToQtLandmarkIds(managerUri(), landmarkIds);
+
+            //If add to single category is required  do that
+            if (importRequest->transferOption() == QLandmarkManager::AttachSingleCategory) {
+
+                TPosLmItemId catId = LandmarkUtility::convertToSymbianLandmarkCategoryId(
+                    importRequest->categoryId());
+
+                ExecuteAndDeleteLD(m_LandmarkCatMgr->AddCategoryToLandmarksL(catId, landmarkIds));
+
+            }
         }
-
-        TPosLmItemId catId = LandmarkUtility::convertToSymbianLandmarkCategoryId(
-            importRequest->categoryId());
-
-        //If add to single category is required  do that
-        if (importRequest->transferOption() == QLandmarkManager::AttachSingleCategory) {
-
-            ExecuteAndDeleteLD(m_LandmarkCatMgr->AddCategoryToLandmarksL(catId, landmarkIds));
-
-        }
-
-        QList<QLandmarkId> importedLandmarkIds = LandmarkUtility::convertToQtLandmarkIds(
-            managerUri(), landmarkIds);
 
         // for resultsAvailable signal
         QLandmarkManagerEngineSymbian::updateLandmarkImportRequest(importRequest,
@@ -3843,7 +3813,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
     {
         QLandmarkExportRequest *exportRequest = static_cast<QLandmarkExportRequest*> (request);
 
-        if (aData->iErrorId == KErrNone) {
+        if (aData->iErrorId == KErrNone && aData->iLandmarkEncoder) {
+
             // finalize the encoder to save the data into the file
             ExecuteAndDeleteLD(aData->iLandmarkEncoder->FinalizeEncodingL());
 
@@ -3862,6 +3833,16 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
                 delete aData->iExportBuffer;
                 aData->iExportBuffer = NULL;
             }
+            else {
+                if (aData->iExportPath) {
+                    delete aData->iExportPath;
+                    aData->iExportPath = NULL;
+                }
+                aData->iFileSystem.Close();
+            }
+
+            delete aData->iLandmarkEncoder;
+            aData->iLandmarkEncoder = NULL;
 
             exportRequest->setLandmarkIds(aData->iLandmarkIds);
 
@@ -4318,13 +4299,13 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
 {
     // if no search data found return empty list
     if (&landmarkIds == 0 || landmarkIds.isEmpty()) {
-        *error = QLandmarkManager::BadArgumentError;
+        *error = QLandmarkManager::DoesNotExistError;
         *errorString = QString("No landmarks found.");
         return false;
     }
     if (offset >= landmarkIds.size()) {
-        *error = QLandmarkManager::BadArgumentError;
-        *errorString = QString("Invalid fetchHint data, Invalid offset value.");
+        *error = QLandmarkManager::DoesNotExistError;
+        *errorString = QString("No landmarks found, from provided offset value.");
     }
 
     //fetchRequired will prevent multiple fetches from database
@@ -4397,11 +4378,42 @@ void LandmarkManagerEngineSymbianPrivate::exportLandmarksL(QIODevice *device,
     CPosLandmarkEncoder* encoder = CPosLandmarkEncoder::NewL(KPosMimeTypeLandmarkCollectionXml);
     CleanupStack::PushL(encoder);
 
-    // Used to determine write is for file or a buffer
-    bool writeToBufferRequired = false;
+    RArray<TPosLmItemId> selectedLandmarks;
 
-    // Buffer to hold the Exported content temporarily
-    CBufBase *bufferPath;
+    // Convert the provided Qt landmark Ids to Symbian Ids
+    if (!landmarkIds.size()) {
+        CPosLmItemIterator* iter = m_LandmarkDb->LandmarkIteratorL();
+
+        CleanupStack::PushL(iter);
+
+        TPosLmItemId lmID = KPosLmNullItemId;
+
+        while ((lmID = iter->NextL()) != KPosLmNullItemId)
+            selectedLandmarks.AppendL(lmID);
+        CleanupStack::PopAndDestroy(iter);
+
+    }
+    else {
+        foreach(const QLandmarkId& id,landmarkIds)
+                selectedLandmarks.AppendL(LandmarkUtility::convertToSymbianLandmarkId(id));
+    }
+
+    TInt transferOption;
+    switch (option) {
+    case QLandmarkManager::IncludeCategoryData:
+        transferOption = CPosLandmarkDatabase::EIncludeCategories;
+        break;
+    case QLandmarkManager::ExcludeCategoryData:
+        transferOption = CPosLandmarkDatabase::EIncludeCategories
+            | CPosLandmarkDatabase::ESupressCategoryCreation;
+        break;
+    case QLandmarkManager::AttachSingleCategory:
+        transferOption = CPosLandmarkDatabase::EIncludeCategories;
+        break;
+    default:
+        transferOption = CPosLandmarkDatabase::EDefaultOptions;
+
+    }
 
     // Check if the expected export is to a file
     if (outputdevice = dynamic_cast<QFile *> (device)) {
@@ -4456,44 +4468,7 @@ void LandmarkManagerEngineSymbianPrivate::exportLandmarksL(QIODevice *device,
         }
 
         encoder->SetOutputFileL(pathPtr);
-        //delete filePath;
-        //CleanupStack::PopAndDestroy(exportPath);
 
-        RArray<TPosLmItemId> selectedLandmarks;
-
-        // Convert the provided Qt landmark Ids to Symbian Ids
-        if (!landmarkIds.size()) {
-            CPosLmItemIterator* iter = m_LandmarkDb->LandmarkIteratorL();
-
-            CleanupStack::PushL(iter);
-
-            TPosLmItemId lmID = KPosLmNullItemId;
-
-            while ((lmID = iter->NextL()) != KPosLmNullItemId)
-                selectedLandmarks.AppendL(lmID);
-            CleanupStack::PopAndDestroy(iter);
-
-        }
-        else {
-            foreach(const QLandmarkId& id,landmarkIds)
-                    selectedLandmarks.AppendL(LandmarkUtility::convertToSymbianLandmarkId(id));
-        }
-
-        TInt transferOption;
-        switch (option) {
-        case QLandmarkManager::IncludeCategoryData:
-            transferOption = CPosLandmarkDatabase::EIncludeCategories;
-            break;
-        case QLandmarkManager::ExcludeCategoryData:
-            transferOption = CPosLandmarkDatabase::EDefaultOptions;
-            break;
-        case QLandmarkManager::AttachSingleCategory:
-            transferOption = CPosLandmarkDatabase::EIncludeCategories;
-            break;
-        default:
-            transferOption = CPosLandmarkDatabase::EDefaultOptions;
-
-        }
         // Performs export of landmarks  and cleanup of CPosLmOperation
         ExecuteAndDeleteLD(m_LandmarkDb->ExportLandmarksL(*encoder, selectedLandmarks,
             transferOption));
@@ -4506,68 +4481,16 @@ void LandmarkManagerEngineSymbianPrivate::exportLandmarksL(QIODevice *device,
     }
 
     // Determine if the export path is a buffer
-    else if (outputdevice = dynamic_cast<QBuffer *> (device))
-
-    {
+    else if (outputdevice = dynamic_cast<QBuffer *> (device)) {
 
         if (!device->isWritable())
             User::Leave(KErrArgument);
-        // Set true to indicate write to Qbuffer is required
-        writeToBufferRequired = true;
+
+        // Buffer to hold the Exported content temporarily
+        CBufBase *bufferPath;
 
         // Set the encoder to write to a buffer
         bufferPath = encoder->SetUseOutputBufferL();
-
-    }
-
-    else
-
-        // The provided destination not supported
-        User::Leave(KErrNotSupported);
-
-    // Write to the QBuffer
-    if (writeToBufferRequired) {
-
-        bufferPath = encoder->SetUseOutputBufferL();
-        //delete filePath;
-        //CleanupStack::PopAndDestroy(exportPath);
-
-        RArray<TPosLmItemId> selectedLandmarks;
-
-        // Convert the provided Qt landmark Ids to Symbian Ids
-        if (!landmarkIds.size()) {
-            CPosLmItemIterator* iter = m_LandmarkDb->LandmarkIteratorL();
-
-            CleanupStack::PushL(iter);
-
-            TPosLmItemId lmID = KPosLmNullItemId;
-
-            while ((lmID = iter->NextL()) != KPosLmNullItemId)
-                selectedLandmarks.AppendL(lmID);
-            CleanupStack::PopAndDestroy(iter);
-
-        }
-        else {
-            foreach(const QLandmarkId& id,landmarkIds)
-                    selectedLandmarks.AppendL(LandmarkUtility::convertToSymbianLandmarkId(id));
-        }
-
-        TInt transferOption;
-        switch (option) {
-        case QLandmarkManager::IncludeCategoryData:
-            transferOption = CPosLandmarkDatabase::EIncludeCategories;
-            break;
-        case QLandmarkManager::ExcludeCategoryData:
-            transferOption = CPosLandmarkDatabase::EIncludeCategories
-                || CPosLandmarkDatabase::ESupressCategoryCreation;
-            break;
-        case QLandmarkManager::AttachSingleCategory:
-            transferOption = CPosLandmarkDatabase::EIncludeCategories;
-            break;
-        default:
-            transferOption = CPosLandmarkDatabase::EDefaultOptions;
-
-        }
 
         // Performs export of landmarks  and cleanup of CPosLmOperation
         ExecuteAndDeleteLD(m_LandmarkDb->ExportLandmarksL(*encoder, selectedLandmarks,
@@ -4596,23 +4519,56 @@ void LandmarkManagerEngineSymbianPrivate::exportLandmarksL(QIODevice *device,
 
         CleanupStack::PopAndDestroy(buffer);
         CleanupStack::PopAndDestroy(encoder);
+
     }
+
+    else {
+
+        // The provided destination not supported
+        User::Leave(KErrNotSupported);
+    }
+
 }
 
 /**
  * 
  */
-void LandmarkManagerEngineSymbianPrivate::importLandmarksL(QIODevice *device,
+QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::importLandmarksL(QIODevice *device,
     const QString &format, QLandmarkManager::TransferOption option,
     const QLandmarkCategoryId& categoryId) const
 {
     QIODevice *outputdevice = 0;
     CPosLandmarkParser* parser = NULL;
+    QList<QLandmarkId> importedLmIds;
 
     TPosLmItemId catId = LandmarkUtility::convertToSymbianLandmarkCategoryId(categoryId);
     if ((catId == KPosLmNullItemId || (managerUri() != categoryId.managerUri())) && (option
-        == QLandmarkManager::AttachSingleCategory))
+        == QLandmarkManager::AttachSingleCategory)) {
         User::Leave(KErrArgument);
+    }
+
+    if (option == QLandmarkManager::AttachSingleCategory) {
+        CPosLandmarkCategory *tempCategory = m_LandmarkCatMgr->ReadCategoryLC(catId);
+        CleanupStack::PopAndDestroy(tempCategory);
+    }
+
+    bool addSinglecategoryrequired = false;
+
+    TInt transferOption = CPosLandmarkDatabase::EDefaultOptions;
+
+    switch (option) {
+    case QLandmarkManager::IncludeCategoryData:
+        transferOption = CPosLandmarkDatabase::EIncludeCategories;
+        break;
+    case QLandmarkManager::AttachSingleCategory:
+        transferOption = CPosLandmarkDatabase::EDefaultOptions;
+        addSinglecategoryrequired = true;
+        break;
+    case QLandmarkManager::ExcludeCategoryData:
+        transferOption = CPosLandmarkDatabase::EIncludeCategories
+            | CPosLandmarkDatabase::ESupressCategoryCreation;
+        break;
+    }
 
     //Check if the import is from a file
     if (outputdevice = dynamic_cast<QFile *> (device)) {
@@ -4650,6 +4606,9 @@ void LandmarkManagerEngineSymbianPrivate::importLandmarksL(QIODevice *device,
         else if (colonpos == 0) {
             fs.SessionPath(pathPtr);
             filename.remove(":");
+            if (filename.indexOf("\\", 0) == 0) {
+                filename.remove(0, 1);
+            }
             pathPtr.Append(filename.utf16(), filename.size());
         }
 
@@ -4722,55 +4681,35 @@ void LandmarkManagerEngineSymbianPrivate::importLandmarksL(QIODevice *device,
             User::Leave(KErrArgument);
         }
 
-        bool addSinglecategoryrequired = false;
-
-        TInt transferOption = CPosLandmarkDatabase::EDefaultOptions;
-
-        switch (option) {
-        case QLandmarkManager::IncludeCategoryData:
-            transferOption = CPosLandmarkDatabase::EIncludeCategories;
-            break;
-        case QLandmarkManager::AttachSingleCategory:
-            transferOption = CPosLandmarkDatabase::EDefaultOptions;
-            addSinglecategoryrequired = true;
-            break;
-        case QLandmarkManager::ExcludeCategoryData:
-            transferOption = CPosLandmarkDatabase::EDefaultOptions;
-            break;
-        }
-
-        CPosLmOperation* op = m_LandmarkDb->ImportLandmarksL(*parser,
-            CPosLandmarkDatabase::EDefaultOptions);
+        CPosLmOperation* op = m_LandmarkDb->ImportLandmarksL(*parser, transferOption);
 
         CleanupStack::PushL(op);
 
         // Execute the operation in one batch
         op->ExecuteL();
 
+        CPosLmItemIterator* iter = m_LandmarkDb->ImportedLandmarksIteratorL(op);
+
+        CleanupStack::PushL(iter);
+
+        RArray<TPosLmItemId> landmarkIds;
+
+        TPosLmItemId lmID = KPosLmNullItemId;
+
+        while ((lmID = iter->NextL()) != KPosLmNullItemId)
+            landmarkIds.Append(lmID);
+
+        importedLmIds = LandmarkUtility::convertToQtLandmarkIds(managerUri(), landmarkIds);
+
         //If add to single category is required  do that
         if (addSinglecategoryrequired) {
-            CPosLmItemIterator* iter = m_LandmarkDb->ImportedLandmarksIteratorL(op);
 
-            CleanupStack::PushL(iter);
-
-            RArray<TPosLmItemId> landmarkIds;
-
-            TPosLmItemId lmID = KPosLmNullItemId;
-
-            while ((lmID = iter->NextL()) != KPosLmNullItemId)
-                landmarkIds.Append(lmID);
-
-            CPosLmCategoryManager* categoryManager = CPosLmCategoryManager::NewL(*m_LandmarkDb);
-
-            CleanupStack::PushL(categoryManager);
-
-            ExecuteAndDeleteLD(categoryManager->AddCategoryToLandmarksL(catId, landmarkIds));
-
-            CleanupStack::PopAndDestroy(categoryManager);
-            CleanupStack::PopAndDestroy(iter);
+            ExecuteAndDeleteLD(m_LandmarkCatMgr->AddCategoryToLandmarksL(catId, landmarkIds));
 
         }
 
+        CleanupStack::PopAndDestroy(iter);
+        fileName.Close();
         fs.Close();
         ls.Close();
         CleanupStack::PopAndDestroy(op);
@@ -4790,7 +4729,8 @@ void LandmarkManagerEngineSymbianPrivate::importLandmarksL(QIODevice *device,
         }
 
         //
-        HBufC8* packageFormat = LandmarkUtility::landmarkPackageFormatsStrLC(format);
+        HBufC8* packageFormat = LandmarkUtility::landmarkPackageFormatsStrL(format);
+        CleanupStack::PushL(packageFormat);
 
         TPtr8 ptrPath = packageFormat->Des();
         parser = CPosLandmarkParser::NewL(ptrPath);
@@ -4805,60 +4745,86 @@ void LandmarkManagerEngineSymbianPrivate::importLandmarksL(QIODevice *device,
 
         parser->SetInputBuffer(lmDataPath);
 
-        TInt transferOption;
-        bool addSinglecategoryrequired = false;
-        switch (option) {
-        case QLandmarkManager::IncludeCategoryData:
-            transferOption = CPosLandmarkDatabase::EIncludeCategories;
-            break;
-        case QLandmarkManager::AttachSingleCategory:
-            transferOption = CPosLandmarkDatabase::EDefaultOptions;
-            addSinglecategoryrequired = true;
-            break;
-        case QLandmarkManager::ExcludeCategoryData:
-            transferOption = CPosLandmarkDatabase::EIncludeCategories
-                || CPosLandmarkDatabase::ESupressCategoryCreation;
-            break;
-        default:
-            transferOption = CPosLandmarkDatabase::EDefaultOptions;
-        }
-
         CPosLmOperation* op = m_LandmarkDb->ImportLandmarksL(*parser, transferOption);
-
         CleanupStack::PushL(op);
 
         // Execute the operation in one batch
-
         op->ExecuteL();
+
+        CPosLmItemIterator* iter = m_LandmarkDb->ImportedLandmarksIteratorL(op);
+        CleanupStack::PushL(iter);
+
+        RArray<TPosLmItemId> landmarkIds;
+
+        TPosLmItemId lmID = KPosLmNullItemId;
+        while ((lmID = iter->NextL()) != KPosLmNullItemId)
+            landmarkIds.Append(lmID);
+        CleanupStack::PopAndDestroy(iter);
 
         //If add to single category is required  do that
         if (addSinglecategoryrequired) {
-            CPosLmItemIterator* iter = m_LandmarkDb->ImportedLandmarksIteratorL(op);
-
-            CleanupStack::PushL(iter);
-
-            RArray<TPosLmItemId> landmarkIds;
-
-            TPosLmItemId lmID = KPosLmNullItemId;
-
-            while ((lmID = iter->NextL()) != KPosLmNullItemId)
-                landmarkIds.Append(lmID);
-
-            CPosLmCategoryManager* categoryManager = CPosLmCategoryManager::NewL(*m_LandmarkDb);
-
-            CleanupStack::PushL(categoryManager);
-
-            ExecuteAndDeleteLD(categoryManager->AddCategoryToLandmarksL(catId, landmarkIds));
-
-            CleanupStack::PopAndDestroy(categoryManager);
-            CleanupStack::PopAndDestroy(iter);
-
+            ExecuteAndDeleteLD(m_LandmarkCatMgr->AddCategoryToLandmarksL(catId, landmarkIds));
         }
+
         CleanupStack::PopAndDestroy(op);
         CleanupStack::PopAndDestroy(lmxData);
         CleanupStack::PopAndDestroy(parser);
         CleanupStack::PopAndDestroy(packageFormat);
     }
+    return importedLmIds;
+}
+
+/**
+ * 
+ */
+void LandmarkManagerEngineSymbianPrivate::handleDatabaseEvent(const TPosLmEvent& aEvent)
+{
+    qDebug() << "aEvent.iLandmarkItemId = " << aEvent.iLandmarkItemId;
+    qDebug() << "aEvent.iEventType = " << aEvent.iEventType;
+
+    switch (aEvent.iEventType) {
+    case EPosLmEventLandmarkCreated:
+    {
+        qDebug() << "landmark created";
+        break;
+    }
+    case EPosLmEventLandmarkDeleted:
+    {
+        qDebug() << "landmark deleted";
+        break;
+    }
+    case EPosLmEventLandmarkUpdated:
+    {
+        qDebug() << "landmark updated";
+        break;
+    }
+    case EPosLmEventCategoryCreated:
+    {
+        qDebug() << "landmark category created";
+        break;
+    }
+    case EPosLmEventCategoryDeleted:
+    {
+        qDebug() << "landmark category deleted";
+        break;
+    }
+    case EPosLmEventCategoryUpdated:
+    {
+        qDebug() << "landmark category updated";
+        break;
+    }
+        //    case EPosLmEventLandmarkUnknownChanges:
+        //    case EPosLmEventCategoryUnknownChanges:
+        //    case EPosLmEventUnknownChanges: 
+        //    case EPosLmEventNewDefaultDatabaseLocation:
+        //    case EPosLmEventMediaRemoved:
+    default:
+    {
+        m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::unknownChanges);
+    }
+
+    } // switch closure    
+
 }
 
 // end of file

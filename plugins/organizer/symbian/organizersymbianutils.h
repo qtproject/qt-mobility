@@ -46,8 +46,14 @@
 #include <QString>
 #include <QDateTime>
 #include <QVariantMap>
+#include <calcommon.h>
+#ifdef SYMBIAN_CALENDAR_V2
+// This file (calenmulticaluids.hrh) no longer exists in S^4, so use a local copy for now
+#include "local_calenmulticaluids.hrh"
+#include <calcalendarinfo.h>
+#endif
 
-class CCalCalendarInfo;
+const int KPropertyKeyLen = 32;
 
 namespace OrganizerSymbianUtils
 {
@@ -60,8 +66,32 @@ namespace OrganizerSymbianUtils
     QDateTime toQDateTimeL(TCalTime calTime);
     TTime toTTimeL(QDateTime dateTime);
     QDateTime toQDateTimeL(TTime time);
+#ifdef SYMBIAN_CALENDAR_V2
+    
+    template<typename T>
+    T getCalInfoPropertyL(const CCalCalendarInfo &calInfo, TCalenPropertyUid propertyUid)
+    {    
+        TBuf8<KPropertyKeyLen> keyBuff;
+        keyBuff.AppendNum(propertyUid);
+        TPckgBuf<T> valuePckgBuf;
+        valuePckgBuf.Copy(calInfo.PropertyValueL(keyBuff));
+        return valuePckgBuf();
+    }
+    
+    template<typename T> 
+    void setCalInfoPropertyL(CCalCalendarInfo *calInfo, TCalenPropertyUid propertyUid, const T &value)
+    {    
+        TBuf8<KPropertyKeyLen> keyBuff;
+        keyBuff.AppendNum(propertyUid);
+        TPckgC<T> valuePckg(value);
+        calInfo->SetPropertyL(keyBuff, valuePckg);
+    }
+    
+    void setCalInfoPropertyL(CCalCalendarInfo *calInfo, TCalenPropertyUid propertyUid, const QString &value);
+    
     QVariantMap toMetaDataL(const CCalCalendarInfo &calInfo);
     CCalCalendarInfo* toCalInfoLC(QVariantMap metaData);
+#endif
 }
 
 #endif // ORGANIZERSYMBIANUTILS_H_

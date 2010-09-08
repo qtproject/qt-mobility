@@ -187,6 +187,60 @@ void shiftCoordinate(QGeoCoordinate *coord,double bearing, double distance)
     coord->setLongitude(normalizeLongitude(long2));
 }
 
+class LandmarkPoint
+{
+    public:
+        QGeoCoordinate coordinate;
+        QLandmarkId landmarkId;
+};
+
+int compareDistance(const QGeoCoordinate &a, const QGeoCoordinate &b, const QGeoCoordinate &c)
+{
+    int result = 0;
+
+
+    if (a.isValid()) {
+        if (b.isValid()) {
+            double da = c.distanceTo(a);
+            double db = c.distanceTo(b);
+
+            if (qFuzzyCompare(da,db)) {
+                result = 0;
+            } else if (da < db) {
+                result = -1;
+            } else if (da > db) {
+                result = 1;
+            }
+        } else {
+            result = -1;
+        }
+    } else {
+        if (b.isValid()) {
+            result = 1;
+        } else {
+            result = 0;
+        }
+    }
+
+    return result;
+}
+
+void addSortedPoint(QList<LandmarkPoint>* sorted, const LandmarkPoint& point, const QGeoCoordinate &center)
+{
+
+        for (int i = 0; i < sorted->size(); i++) {
+            // check to see if the new landmark should be inserted here
+            int comparison = compareDistance(sorted->at(i).coordinate, point.coordinate,center);
+            if (comparison > 0) {
+                sorted->insert(i, point);
+                return;
+            }
+        }
+
+    // hasn't been inserted yet?  append to the list.
+    sorted->append(point);
+}
+
 bool executeQuery(QSqlQuery *query, const QString &statement, const QMap<QString,QVariant> &bindValues,
                 QLandmarkManager::Error *error, QString *errorString)
 {
@@ -258,7 +312,7 @@ QString queryStringForRadius(const QGeoCoordinate &coord, double radius)
 
 QString landmarkIdsDefaultQueryString()
 {
-    return QString("SELECT id FROM landmark ");
+    return QString("SELECT id, latitude, longitude FROM landmark ");
 }
 
 QString landmarkIdsQueryString(const QLandmarkIdFilter &filter)
@@ -913,15 +967,18 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
         break;
         }
     case QLandmarkFilter::ProximityFilter: {
-            QLandmarkProximityFilter proximityFilter = filter;
-            if (proximityFilter.radius() < 0) {
-                if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-                    queryString = ::landmarkIdsNearestQueryString(proximityFilter);
-                } else {
-                    queryString =  ::landmarkIdsDefaultQueryString();
-                }
-                break;
-            }
+            //QLandmarkProximityFilter proximityFilter = filter;
+            //if (proximityFilter.radius() < 0) {
+            //    if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
+            //        queryString = ::landmarkIdsNearestQueryString(proximityFilter);
+            //    } else {
+            //        queryString =  ::landmarkIdsDefaultQueryString();
+            //    }
+            //    break;
+            //}
+            //TODO: optimize this
+            queryString = landmarkIdsDefaultQueryString();
+            break;
         }//fall through if we have a radius
     case QLandmarkFilter::BoxFilter: {
             QLandmarkBoxFilter boxFilter;
@@ -1159,68 +1216,39 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                 QLandmarkProximityFilter proximityFilter;
                 proximityFilter = filter;
 
-                qreal radius = proximityFilter.radius();
+                double radius = proximityFilter.radius();
                 QGeoCoordinate center = proximityFilter.coordinate();
-                if (radius > -1) {
-                    QGeoCoordinate coordinate;
 
-                    do {
-                        if (queryRun && queryRun->isCanceled) {
-                            *error = QLandmarkManager::CancelError;
-                            *errorString = "Fetch operation canceled";
-                            return QList<QLandmarkId>();
-                        }
+                QGeoCoordinate coordinate;
+                
+                //TODO: optimize
+                QList<LandmarkPoint>  sortedPoints;
+                LandmarkPoint point;
 
-                        coordinate.setLatitude(query.value(1).toDouble());
-                        coordinate.setLongitude(query.value(2).toDouble());
-
-                        if (coordinate.distanceTo(center) < radius || qFuzzyCompare(coordinate.distanceTo(center), radius))
-                        {
-                            id.setManagerUri(managerUri);
-                            id.setLocalId(QString::number(query.value(0).toInt()));
-                            result << id;
-                        }
-                    } while (query.next());
-                } else { //no radius
-                    if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-                        bool ok = false;
-                        double lat;
-                        double lon;
-                        int minId = -1;
-                        double minDist = 0.0;
-                        double dist;
-
-                        do {
-                            if (queryRun && queryRun->isCanceled) {
-                                *error = QLandmarkManager::CancelError;
-                                *errorString = "Fetch operation canceled";
-                                return QList<QLandmarkId>();
-                            }
-                            lat = query.value(1).toDouble(&ok);
-                            Q_ASSERT(ok);
-                            lon = query.value(2).toDouble(&ok);
-                            Q_ASSERT(ok);
-
-                            dist = QGeoCoordinate(lat, lon).distanceTo(proximityFilter.coordinate());
-                            if (radius == -1 || dist < radius) {
-                                if (minId == -1 || dist < minDist) {
-                                    minId = query.value(0).toInt();
-                                    minDist = dist;
-                                }
-                            }
-                        } while (query.next());
-
-                        if (minId != -1) {
-                            QLandmarkId id;
-                            id.setManagerUri(managerUri);
-                            id.setLocalId(QString::number(minId));
-                            result << id;
-                        }
-                    } else { //accept all results since we are proximity filter with no radius
-                        id.setManagerUri(managerUri);
-                        id.setLocalId(QString::number(query.value(0).toInt()));
-                        result << id;
+                do {
+                    if (queryRun && queryRun->isCanceled) {
+                        *error = QLandmarkManager::CancelError;
+                        *errorString = "Fetch operation canceled";
+                        return QList<QLandmarkId>();
                     }
+
+                    coordinate.setLatitude(query.value(1).toDouble());
+                    coordinate.setLongitude(query.value(2).toDouble());
+
+                    id.setManagerUri(managerUri);
+                    id.setLocalId(QString::number(query.value(0).toInt()));
+                    point.coordinate = coordinate;
+                    point.landmarkId = id;
+
+                    if (radius == -1 || (coordinate.distanceTo(center) < radius) || qFuzzyCompare((double)coordinate.distanceTo(center), radius))
+                        addSortedPoint(&sortedPoints,point,center);
+
+                } while (query.next());
+
+                for (int i=0;i < sortedPoints.count(); ++i) {
+                    result << sortedPoints.at(i).landmarkId;
+                    if (i==0 && proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly)
+                        break;
                 }
             } else {
                 id.setManagerUri(managerUri);

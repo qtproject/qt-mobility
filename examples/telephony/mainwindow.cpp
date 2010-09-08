@@ -25,7 +25,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(telephonycalllist
         , SIGNAL(activeCallRemoved(QTelephonyCallInfo))
         , SLOT(onActiveCallRemoved(QTelephonyCallInfo)));
-    connect(ui->pushButtonClearList, SIGNAL(released()), SLOT(onClearList()));
+    connect(telephonycalllist
+        , SIGNAL(hasActiveCalls(bool))
+        , SLOT(onHasActiveCalls(bool)));
+    connect(ui->pushButtonClearList
+        , SIGNAL(released())
+        , SLOT(onClearList()));
 }
 
 MainWindow::~MainWindow()
@@ -72,15 +77,17 @@ void MainWindow::addListEntry(const QString& event, const QTelephonyCallInfo& ca
 
     val += " ";
 
-    if(call.type() == QTelephony::Text)
+    unsigned int type = call.type();
+    qDebug() << "type : "  << type;
+    if(type & QTelephony::Text)
         val += "Text";
-    else if(call.type() == QTelephony::Data)
+    if(type & QTelephony::Data)
         val += "Data";
-    else if(call.type() == QTelephony::Video)
+    if(type & QTelephony::Video)
         val += "Video";
-    else if(call.type() == QTelephony::Voice)
+    if(type & QTelephony::Voice)
         val += "Voice";
-    else if(call.type() == QTelephony::Other)
+    if(type & QTelephony::Other)
         val += "Other";
 
     QStringList vl = m_rxDBusMsg.stringList();
@@ -103,6 +110,11 @@ void MainWindow::onActiveCallRemoved(const QTelephonyCallInfo& call)
 void MainWindow::onActiveCallStatusChanged(const QTelephonyCallInfo& call)
 {
     addListEntry("status changed: ", call);
+}
+
+void MainWindow::onHasActiveCalls(bool value)
+{
+    qDebug() << "active Call count changed";
 }
 
 void MainWindow::onClearList()

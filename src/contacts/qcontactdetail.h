@@ -218,6 +218,11 @@ private:
     friend QDataStream& operator>>(QDataStream& in, QContactDetail& detail);
 #endif
     QSharedDataPointer<QContactDetailPrivate> d;
+
+#if defined(SIMULATOR_APPLICATION) || defined(QT_SIMULATOR)
+    friend QDataStream &operator<<(QDataStream &, const QContactDetail &);
+    friend QDataStream &operator>>(QDataStream &, QContactDetail &);
+#endif
 };
 
 Q_CONTACTS_EXPORT uint qHash(const QContactDetail& key);
