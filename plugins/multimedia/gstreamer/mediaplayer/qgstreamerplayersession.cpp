@@ -353,7 +353,7 @@ void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
         if (videoOutput) {
             connect(videoOutput, SIGNAL(sinkChanged()),
                     this, SLOT(updateVideoRenderer()));
-            connect(m_videoOutput, SIGNAL(readyChanged(bool)),
+            connect(videoOutput, SIGNAL(readyChanged(bool)),
                    this, SLOT(updateVideoRenderer()));
         }
 
