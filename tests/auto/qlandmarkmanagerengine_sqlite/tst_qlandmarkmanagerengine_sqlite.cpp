@@ -6638,8 +6638,7 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx() {
         exportRequest.setFormat(QLandmarkManager::Gpx);
         exportRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
         exportRequest.setFileName(exportFile);
-        QList<QLandmarkId> idList;
-        exportRequest.setLandmarkIds(idList);
+        exportRequest.setLandmarkIds(QList<QLandmarkId>());
         exportRequest.start();
         QTest::qWait(50);
         exportRequest.cancel();
@@ -6978,8 +6977,7 @@ void tst_QLandmarkManagerEngineSqlite::exportLmx() {
         exportRequest.setFormat(QLandmarkManager::Lmx);
         exportRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
         exportRequest.setFileName(exportFile);
-        QList<QLandmarkId> idList;
-        exportRequest.setLandmarkIds(idList);
+        exportRequest.setLandmarkIds(QList<QLandmarkId>());
         exportRequest.start();
         QTest::qWait(50);
         exportRequest.cancel();
