@@ -620,6 +620,8 @@ void MainWindow::setupUi()
             case QGraphicsGeoMap::TerrainMap:
                 radio->setText("Terrain");
                 break;
+            case QGraphicsGeoMap::NoMap:
+                break;
         }
 
         if (types.at(i) == m_mapWidget->mapType())
