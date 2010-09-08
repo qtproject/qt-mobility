@@ -20,6 +20,5 @@ CONFIG += mobility
 MOBILITY = telephony
 
 symbian {
-    TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location ReadDeviceData
-    TARGET.UID3 = 0x2002BFD0
+    TARGET.CAPABILITY = UserEnvironment ReadUserData ReadDeviceData
 }
