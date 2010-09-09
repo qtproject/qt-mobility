@@ -44,8 +44,10 @@
 #include <QDebug>
 
 #include <qndefrecord.h>
-#include <qndefnfctextrecord.h>
 #include <qndefmessage.h>
+#include <qndefnfctextrecord.h>
+#include <qndefnfcurirecord.h>
+
 
 QTM_USE_NAMESPACE
 
@@ -74,6 +76,7 @@ void tst_QNdefMessage::tst_parse_data()
 {
     QTest::addColumn<QByteArray>("data");
     QTest::addColumn<QNdefMessage>("message");
+    QTest::addColumn<QVariantList>("expectedData");
 
     // empty message
     {
@@ -84,11 +87,13 @@ void tst_QNdefMessage::tst_parse_data()
         data.append(char(0));      // PAYLOAD LENGTH 2
         data.append(char(0));      // PAYLOAD LENGTH 1
         data.append(char(0));      // PAYLOAD LENGTH 0
-        QTest::newRow("empty") << data << QNdefMessage();
+        QTest::newRow("empty") << data << QNdefMessage() << QVariantList();
 
         QNdefRecord record;
         record.setTypeNameFormat(QNdefRecord::Empty);
-        QTest::newRow("empty record") << data << QNdefMessage(QList<QNdefRecord>() << record);
+        QTest::newRow("empty record") << data
+                                      << QNdefMessage(QList<QNdefRecord>() << record)
+                                      << QVariantList();
     }
 
     // empty short message
@@ -97,11 +102,13 @@ void tst_QNdefMessage::tst_parse_data()
         data.append(char(0xd0));   // MB=1, ME=1, SR=1
         data.append(char(0));      // TYPE LENGTH
         data.append(char(0));      // PAYLOAD LENGTH
-        QTest::newRow("empty") << data << QNdefMessage();
+        QTest::newRow("empty") << data << QNdefMessage() << QVariantList();
 
         QNdefRecord record;
         record.setTypeNameFormat(QNdefRecord::Empty);
-        QTest::newRow("empty record") << data << QNdefMessage(QList<QNdefRecord>() << record);
+        QTest::newRow("empty record") << data
+                                      << QNdefMessage(QList<QNdefRecord>() << record)
+                                      << QVariantList();
     }
 
     // unknown message
@@ -129,7 +136,7 @@ void tst_QNdefMessage::tst_parse_data()
         record.setPayload(payload);
         QList<QNdefRecord> recordList;
         recordList.append(record);
-        QTest::newRow("unknown") << data << QNdefMessage(recordList);
+        QTest::newRow("unknown") << data << QNdefMessage(recordList) << QVariantList();
     }
 
     // NFC-RTD Text
@@ -156,7 +163,9 @@ void tst_QNdefMessage::tst_parse_data()
         record.setPayload("\002enTest String");
         QList<QNdefRecord> recordList;
         recordList.append(record);
-        QTest::newRow("nfc-rtd text") << data << QNdefMessage(recordList);
+        QTest::newRow("nfc-rtd text") << data << QNdefMessage(recordList)
+                                      << (QVariantList() << QLatin1String("Test String")
+                                                         << QLocale(QLatin1String("en")));
     }
 
     // NFC-RTD Text
@@ -183,7 +192,95 @@ void tst_QNdefMessage::tst_parse_data()
         record.setPayload("\002ja" + QByteArray::fromHex("e38386e382b9e38388e69687e5ad97e58897"));
         QList<QNdefRecord> recordList;
         recordList.append(record);
-        QTest::newRow("nfc-rtd text ja") << data << QNdefMessage(recordList);
+        QTest::newRow("nfc-rtd text ja")
+            << data << QNdefMessage(recordList)
+            << (QVariantList() << QString::fromUtf8("\343\203\206\343\202\271\343\203\210\346\226"
+                                                    "\207\345\255\227\345\210\227")
+                               << QLocale(QLatin1String("ja")));
+    }
+
+    // NFC-RTD URI
+    {
+        QByteArray type("U");
+        QByteArray payload;
+        payload.append(char(0x00));
+        payload.append("http://qt.nokia.com/");
+
+        QByteArray data;
+        data.append(char(0xc1));
+        data.append(char(type.length()));
+        data.append(char((payload.length() >> 24) & 0xff)); // PAYLOAD LENGTH 3
+        data.append(char((payload.length() >> 16) & 0xff)); // PAYLOAD LENGTH 2
+        data.append(char((payload.length() >> 8) & 0xff));  // PAYLOAD LENGTH 1
+        data.append(char((payload.length() >> 0) & 0xff));  // PAYLOAD LENGTH 0
+        data.append(type);
+        data.append(payload);
+
+        QNdefRecord record;
+        record.setTypeNameFormat(QNdefRecord::NfcRtd);
+        record.setType("U");
+        record.setPayload(QByteArray("\000http://qt.nokia.com/", 21));
+        QList<QNdefRecord> recordList;
+        recordList.append(record);
+        QTest::newRow("nfc-rtd uri http://qt.nokia.com/")
+            << data << QNdefMessage(recordList)
+            << (QVariantList() << QUrl(QLatin1String("http://qt.nokia.com/")));
+    }
+
+    // NFC-RTD URI
+    {
+        QByteArray type("U");
+        QByteArray payload;
+        payload.append(char(0x03));
+        payload.append("qt.nokia.com/");
+
+        QByteArray data;
+        data.append(char(0xc1));
+        data.append(char(type.length()));
+        data.append(char((payload.length() >> 24) & 0xff)); // PAYLOAD LENGTH 3
+        data.append(char((payload.length() >> 16) & 0xff)); // PAYLOAD LENGTH 2
+        data.append(char((payload.length() >> 8) & 0xff));  // PAYLOAD LENGTH 1
+        data.append(char((payload.length() >> 0) & 0xff));  // PAYLOAD LENGTH 0
+        data.append(type);
+        data.append(payload);
+
+        QNdefRecord record;
+        record.setTypeNameFormat(QNdefRecord::NfcRtd);
+        record.setType("U");
+        record.setPayload(QByteArray("\003qt.nokia.com/", 14));
+        QList<QNdefRecord> recordList;
+        recordList.append(record);
+        QTest::newRow("nfc-rtd uri abbrev http://qt.nokia.com/")
+            << data << QNdefMessage(recordList)
+            << (QVariantList() << QUrl(QLatin1String("http://qt.nokia.com/")));
+    }
+
+    // NFC-RTD URI
+    {
+        QByteArray type("U");
+        QByteArray payload;
+        payload.append(char(0x05));
+        payload.append("+1234567890");
+
+        QByteArray data;
+        data.append(char(0xc1));
+        data.append(char(type.length()));
+        data.append(char((payload.length() >> 24) & 0xff)); // PAYLOAD LENGTH 3
+        data.append(char((payload.length() >> 16) & 0xff)); // PAYLOAD LENGTH 2
+        data.append(char((payload.length() >> 8) & 0xff));  // PAYLOAD LENGTH 1
+        data.append(char((payload.length() >> 0) & 0xff));  // PAYLOAD LENGTH 0
+        data.append(type);
+        data.append(payload);
+
+        QNdefRecord record;
+        record.setTypeNameFormat(QNdefRecord::NfcRtd);
+        record.setType("U");
+        record.setPayload(QByteArray("\005+1234567890", 12));
+        QList<QNdefRecord> recordList;
+        recordList.append(record);
+        QTest::newRow("nfc-rtd uri tel:+1234567890")
+            << data << QNdefMessage(recordList)
+            << (QVariantList() << QUrl(QLatin1String("tel:+1234567890")));
     }
 }
 
@@ -191,6 +288,7 @@ void tst_QNdefMessage::tst_parse()
 {
     QFETCH(QByteArray, data);
     QFETCH(QNdefMessage, message);
+    QFETCH(QVariantList, expectedData);
 
     QNdefMessage parsedMessage(data);
 
@@ -211,6 +309,22 @@ void tst_QNdefMessage::tst_parse()
 
             QCOMPARE(textRecord.text(), parsedTextRecord.text());
             QCOMPARE(textRecord.locale(), parsedTextRecord.locale());
+
+            if (expectedData.count() == 2) {
+                QCOMPARE(parsedTextRecord.text(), expectedData.at(0).toString());
+                QCOMPARE(parsedTextRecord.locale(), expectedData.at(1).toLocale());
+            }
+        }
+
+        // Test NDEF NFC URI
+        {
+            QNdefNfcUriRecord uriRecord(record);
+            QNdefNfcUriRecord parsedUriRecord(parsedRecord);
+
+            QCOMPARE(uriRecord.uri(), parsedUriRecord.uri());
+
+            if (expectedData.count() == 1)
+                QCOMPARE(parsedUriRecord.uri(), expectedData.at(0).toUrl());
         }
     }
 }

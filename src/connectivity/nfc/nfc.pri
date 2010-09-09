@@ -7,7 +7,8 @@ HEADERS += \
     nfc/qndefnfctextrecord.h \
     nfc/qndefmessage.h \
     nfc/qcontactlesssocket.h \
-    nfc/qndeffilter.h
+    nfc/qndeffilter.h \
+    nfc/qndefnfcurirecord.h
 
 PRIVATE_HEADERS +=
 
@@ -18,6 +19,7 @@ SOURCES += \
     nfc/qndefnfctextrecord.cpp \
     nfc/qndefmessage.cpp \
     nfc/qcontactlesssocket.cpp \
-    nfc/qndeffilter.cpp
+    nfc/qndeffilter.cpp \
+    nfc/qndefnfcurirecord.cpp
 
 INCLUDEPATH += $$PWD

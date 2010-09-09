@@ -39,71 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QNDEFRECORD_H
-#define QNDEFRECORD_H
+#ifndef QNDEFNFCURIRECORD_H
+#define QNDEFNFCURIRECORD_H
 
 #include <qmobilityglobal.h>
 
-#include <QtCore/QSharedDataPointer>
-#include <QtCore/QByteArray>
+#include <qndefrecord.h>
+
+QT_FORWARD_DECLARE_CLASS(QUrl)
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QNdefRecordPrivate;
-
-class Q_CONNECTIVITY_EXPORT QNdefRecord
+class Q_CONNECTIVITY_EXPORT QNdefNfcUriRecord : public QNdefRecord
 {
 public:
-    enum TypeNameFormat {
-        Empty,
-        NfcRtd,
-        Mime,
-        Uri,
-        ExternalRtd,
-        Unknown,
-    };
+    Q_DECLARE_NDEF_RECORD(QNdefNfcUriRecord, QNdefRecord::NfcRtd, "U")
 
-    QNdefRecord();
-    ~QNdefRecord();
-
-    QNdefRecord(const QNdefRecord &other);
-    QNdefRecord &operator=(const QNdefRecord &other);
-
-    void setTypeNameFormat(TypeNameFormat typeNameFormat);
-    TypeNameFormat typeNameFormat() const;
-    void setUserTypeNameFormat(quint8 typeNameFormat);
-    quint8 userTypeNameFormat() const;
-
-    void setType(const QByteArray &type);
-    QByteArray type() const;
-
-    void setId(const QByteArray &id);
-    QByteArray id() const;
-
-    void setPayload(const QByteArray &payload);
-    QByteArray payload() const;
-
-    bool operator==(const QNdefRecord &other) const;
-    inline bool operator!=(const QNdefRecord &other) const { return !operator==(other); }
-
-protected:
-    QNdefRecord(const QNdefRecord &other, quint8 typeNameFormat, const QByteArray &type);
-    QNdefRecord(quint8 typeNameFormat, const QByteArray &type);
-
-private:
-    friend class QNdefMessage;
-
-    QSharedDataPointer<QNdefRecordPrivate> d;
+    QUrl uri() const;
 };
-
-#define Q_DECLARE_NDEF_RECORD(className, typeNameFormat, type) \
-    className() : QNdefRecord(quint8(typeNameFormat), type) { } \
-    className(const QNdefRecord &other) : QNdefRecord(other, quint8(typeNameFormat), type) { }
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QNDEFRECORD_H
+#endif // QNDEFNFCURIRECORD_H

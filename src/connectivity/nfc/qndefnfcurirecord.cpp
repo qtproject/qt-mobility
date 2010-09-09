@@ -39,30 +39,80 @@
 **
 ****************************************************************************/
 
-#ifndef QNDEFNFCTEXTRECORD_H
-#define QNDEFNFCTEXTRECORD_H
+#include "qndefnfcurirecord.h"
 
-#include <qmobilityglobal.h>
+#include <QtCore/QString>
+#include <QtCore/QUrl>
 
-#include <qndefrecord.h>
-
-#include <QtCore/QLocale>
-
-QT_BEGIN_HEADER
+#include <QtCore/QDebug>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_CONNECTIVITY_EXPORT QNdefNfcTextRecord : public QNdefRecord
-{
-public:
-    Q_DECLARE_NDEF_RECORD(QNdefNfcTextRecord, QNdefRecord::NfcRtd, "T")
+/*!
+    \class QNdefNfcUriRecord
+    \brief The QNdefNfcUriRecord class provides an NFC RTD-URI
 
-    QLocale locale() const;
-    QString text() const;
+    \ingroup connectivity-nfc
+    \inmodule QtConnectivity
+
+    RTD-URI encapsulates a URI.
+*/
+
+static const char * const abbreviations[] = {
+    0,
+    "http://www.",
+    "https://www.",
+    "http://",
+    "https://",
+    "tel:",
+    "mailto:",
+    "ftp://anonymous:anonymous@",
+    "ftp://ftp.",
+    "ftps://",
+    "sftp://",
+    "smb://",
+    "nfs://",
+    "ftp://",
+    "dav://",
+    "news:",
+    "telnet://",
+    "imap:",
+    "rtsp://",
+    "urn:",
+    "pop:",
+    "sip:",
+    "sips:",
+    "tftp:",
+    "btspp://",
+    "btl2cap://",
+    "btgoep://",
+    "tcpobex://",
+    "irdaobex://",
+    "file://",
+    "urn:epc:id:",
+    "urn:epc:tag:",
+    "urn:epc:pat:",
+    "urn:epc:raw:",
+    "urn:epc:",
+    "urn:nfc:",
 };
 
+/*!
+    Returns the URI of this URI record.
+*/
+QUrl QNdefNfcUriRecord::uri() const
+{
+    const QByteArray p = payload();
+
+    if (p.isEmpty())
+        return QUrl();
+
+    quint8 code = p.at(0);
+    if (code >= sizeof(abbreviations) / sizeof(*abbreviations))
+        code = 0;
+
+    return QUrl(QLatin1String(abbreviations[code]) + QString::fromUtf8(p.mid(1), p.length() - 1));
+}
+
+
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QNDEFNFCTEXTRECORD_H
