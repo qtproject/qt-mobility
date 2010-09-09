@@ -43,385 +43,390 @@
 
 testcase = {
 
+/* Notes
+Ensure 2 test .mp4 files are available on device
+Ensure 2 test .mp3 file available on device
+Ensure 2 test .wav file available on device
+Ensure a number of .jpg, .gif and .png files are available on device
+Ensure a valid m3u file referring to locations of indicated media is available on the device
+Ensure the device can ping destinations on the network (if applicable)
+Have an audio stream url available (e.g. http://202.6.74.107:8060/triplej.mp3 for example)
+Have a video stream url available (e.g. http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4)
+Ensure access to Internet available to device
+Ensure radio reception is available in testing area
+*/
     initTestCase: function()
     {
-        prompt(twiki('*Preconditions to the Multimedia Player tests*
-   1. Have 2 test .mp4 file available on device (Such as the file available from here: http://camendesign.com/code/video_for_everybody/test.html) 
-   1. Have 2 test .mp3 and .vaw file available on device 
-   1. Have a number of .jpg, .gif and .png files available on device 
-   1. Have a valid m3u file for testing sideshow functionality (a test file is available on crud: crud-playlist.m3u at http://crud-nokia.trolltech.com.au/crud-playlist.m3u). A test collection of images and a link to an image on the net is linked here: playlist.tar (Please note, the paths in the .m3u file are to images in the /opt/media/pix/ , if your test environment differs, please edit accordingly) 
-   1. Make sure device can ping destinations on the network (if applicable) 
-   1. Have an audio stream url available (http://202.6.74.107:8060/triplej.mp3 for example) 
-   1. Have a video stream available(Such as: http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4) 
-   1. Access to Internet available to device 
-   1. Have radio reception available in testing area (required for testing of radio) 
-   1. "Click" means using devices keypad for selection and navigation 
-   1. "Tap" means using devices touchscreen for selection and navigation
-        '));
     },
 
-    play_an_audio_file: function()
+    play_an_audio_file_data: {
+        mp3:[".mp3", "filename", "mpeg audio layer 3"],
+        wav:[".wav", "filename", "waveform audio"]
+    },
+
+    play_an_audio_file: function(extension, filename, format)
     {
-        prompt(twiki('*Play an audio file on device*
-
-   1. Launch player application
-   1.  Click [Open]
-   1.  In "Open File" window navigate and highlight test .mp3 file
-   1.  Click on selected file to return to player UI
-   1.  Verify selected file has populated playlist window
-   1.  Highlight file in playlist window by clicking on it
-   1.  Click [Play]
-   1.  Verify that .mp3 file is audible on device'));
+        prompt(twiki("Ensure a test "+extension+" file is available on device"));
+        prompt(twiki("Launch player application
+Select [Open]
+In [Open File] select the "+filename+extension+" file to return to player UI
+Verify selected file has populated playlist window
+Highlight file in playlist window by clicking on it
+Select [Play]
+Verify that the "+format+" file is audible on device"));
     },
 
-    basic_player_controls_for_audio: function()
+    basic_player_controls_for_audio_data: {
+        mp3:[".mp3", "filename", "mpeg audio layer 3"],
+    },
+
+    basic_player_controls_for_audio: function(extension, filename, format)
     {
-        prompt(twiki('*All player control features of player application function properly with audio file*
-    1. Assumed: An audio file plays on the device
+        prompt(twiki("Ensure a test "+extension+" file is available on device"));
+prompt(twiki("Launch player application
+Select [Open]
+In [Open File] select the "+filename+extension+" file to return to player UI
+Select [Play] to play the file
+Select [Pause]
+Verify that file has paused
+Verify that [Pause] control has now changed to [Play] control
+Select [Play]
+Verify that file continues to play from where previously paused.
+Verify that [Play] icon is now a [Pause] icon
+Select [Next File] control
+Verify that next file in playlist is playing from start
+After some time (10-20 sec) Select [Beginning of File] control
+Verify that current file is being played from start
+Let some arbitrary time pass, then Select [Beginning of File] control twice in quick succession.
+Verify that previous file in playlist is playing from start
+Select [Stop] control
+Verify that file has stopped playing
+Select [Play]
+Verify that file continues to play from start of file.
+Let file play till end
+Verify player continues playing the next file in the playlist window
+After some arbitrary time, Select [Stop]
+Select [Next File] control
+Verify that next file in playlist is highlighted
+Verify that file is not automatically playing
+Select [Beginning of File] control
+Verify that previous file in playlist is highlighted
+Select file in playlist
+Verify that file plays in player.
+Select number of files greater than can be displayed without scrolling in to playlist
+Verify that list can be scrolled through
+With file playing, verify that hardware keys can change volume up and down
+With file playing, verify that UI volume control slider can change volume up and down
+Select volume at 50% (or thereabout)
+Select [Mute]
+Verify that sound is muted while file is playing
+Verify that [Mute] control is displaying the Muted icon
+Select [Mute] control again
+Verify that sound has reverted back to level selected prior to muting
+Drag positional slider to right, then release
+Verify that player continues to play file at later part of file
+Drag positional slider to left, then release
+Verify that player continues to play file at earlier part of file"));
 
-    1. Click on [Pause]
-    1. Verify that file has paused
-    1. Verify that [Pause] control has now changed to [Play] control
-    1. Click on [Play]
-    1. Verify that file continues to play from where previously paused.
-    1. Verify that [Play] icon is now a [Pause] icon
-    1. Click on [Next File] control
-    1. Verify that next file in playlist is playing from start
-    1. After some time (10-20 sec) click on [Beginning of File] control
-    1. Verify that current file is being played from start
-    1. Let some arbitrary time pass, then click on [Beginning of File] control twice in quick succession.
-    1. Verify that previous file in playlist is playing from start
-    1. Click on [Stop] control
-    1. Verify that file has stopped playing
-    1. Click on [Play]
-    1. Verify that file continues to play from start of file.
-    1. Let file play till end
-    1. Verify player continues playing the next file in the playlist window
-    1. After some arbitrary time, click on [Stop]
-    1. Click on [Next File] control
-    1. Verify that next file in playlist is highlighted
-    1. Verify that file is not automatically playing
-    1. Click on [Beginning of File] control
-    1. Verify that previous file in playlist is highlighted
-    1. Tap on file in playlist
-    1. Verify that file plays in player.
-    1. Select number of files greater than can be displayed without scrolling in to playlist
-    1. Verify that list can be scrolled through
-    1. With file playing, verify that hardware keys can change volume up and down
-    1. With file playing, verify that UI volume control slider can change volume up and down
-    1. Select volume at 50% (or thereabout)
-    1. Click or Tap on [Mute] control
-    1. Verify that sound is muted while file is playing
-    1. Verify that [Mute] control is displaying the Muted icon
-    1. Click or Tap on [Mute] control again
-    1. Verify that sound has reverted back to level selected prior to muting
-    1. Tap and drag positional slider to right, then release
-    1. Verify that player continues to play file at later part of file
-    1. Tap and drag positional slider to left, then release
-    1. Verify that player continues to play file at earlier part of file
-    1. *Note* [Color Option] is not implemented so far in player
-    1. *Note* [Full Screen] opens a blank screen with no content
-        '));
+// Note: [Color Option] is not implemented so far in player
+// Note: [Full Screen] opens a blank screen with no content
+
     },
 
-    seek_controls_for_audio: function()
-    {sys_multimedia.qtt
-        prompt(twiki('*Player Test 3:* Fast forward trough a playing audio file
-    1. *Note* This test is not applicable to the Symbian platform
-    1. Continuation of previous test ...
-    1. Click or Tap on [1.0] (Multiplier) control.
-    1. Select [2.0]
-    1. Verify that file is playing at double speed
-    1. With multiplier control set on [2.0], select a new file from the pla list window
-    1. Verify that the Multiplier control has reverted back to [1.0]
-    1. Verify that the audio is playing at normal speed
-    1. Click or Tap on [Multiplier] control.
-    1. Select [0.5]
-    1. Verify that file is playing at half speed
-    1. With multiplier control set on [0.5], select a new file from the playlist window
-    1. Verify that the Multiplier control has reverted back to [1.0]
-    1. Verify that the audio is playing at normal speed
-        '));
+    seek_controls_for_audio_data: {
+        mp3:[".mp3", "filename", "mpeg audio layer 3"],
     },
 
-    play_a_video_file: function()
+    seek_controls_for_audio: function(extension, filename, format)
     {
-        prompt(twiki('*Player Test 4 :* Watch a video file on device
-   1. Launch player application
-   1. Click [Open]
-   1. In "Open File" navigate and highlight test .MP4 file
-   1. Click on selected file to return to player UI
-   1. Verify selected file has populated playlist
-   1. Highlight file in playlist by clicking on it
-   1. Click [Play]
-   1. Verify that .MP4 file is playing on device
-        '));
+        prompt(twiki("Ensure a test "+extension+" file is available on device"));
+prompt(twiki("Launch player application
+Select [Open]
+In [Open File] select the "+filename+extension+" file to return to player UI
+Select [Play] to play the file
+Select the [1.0] (Multiplier) control.
+Select [2.0]
+Verify that file is playing at double speed
+With multiplier control set on [2.0], select a new file from the playlist window
+Verify that the Multiplier control has reverted back to [1.0]
+Verify that the audio is playing at normal speed
+Select [Multiplier] control.
+Select [0.5]
+Verify that file is playing at half speed
+With multiplier control set on [0.5], select a new file from the playlist window
+Verify that the Multiplier control has reverted back to [1.0]
+Verify that the audio is playing at normal speed"));
     },
 
-    basic_controls_for_video: function()
+    play_a_video_file_data: {
+        mp4:[".mp4", "filename", "mpeg video layer 4"]
+    },
+
+    play_a_video_file: function(extension, filename, format)
     {
-        prompt(twiki('*Player Test 5:* All features of player application function properly with video file
-   1. Click on [Pause]
-   1. Verify that file has paused
-   1. Verify that the [Pause] icon has changed to a [Play] icon
-   1. Click on [Play]
-   1. Verify that the [Play] icon has changed to a [Pause] icon
-   1. Verify that file continues to play from where previously paused.
-   1. Click on [Next File]
-   1. Verify that next file in playlist is playing from start
-   1. After some time (10-20 sec) click on [Beginning of File] control
-   1. Verify that current file is being played from start
-   1. Let arbitrary time pass, then click on [Beginning of File] control twice in quick succession.
-   1. Verify that previous file in playlist is playing from start
-   1. Click on [Stop]
-   1. Verify that file has stopped playing
-   1. Click on [Play]
-   1. Verify that file continues to play from start of file.
-   1. Let file play till end
-   1. Verify player stops at end of file.
-   1. Start playing file.
-   1. After arbitrary time, click on [Stop]
-   1. Click on [Next File]
-   1. Verify that next file in playlist is highlighted
-   1. Verify that file is not automatically playing
-   1. Click on [Beginning of File]
-   1. Verify that previous file in playlist is highlighted
-   1. Tap on file in playlist
-   1. Verify that file plays in player.
-   1. Select number of files greater than can be displayed without scrolling in to playlist
-   1. Verify that list can be scrolled through
-   1. With file playing, verify that hardware keys can change volume up and down
-   1. With file playing, verify that UI volume control slider can change volume up and down
-   1. Select volume at 50% (or thereabout)
-   1. Click or Tap on [Mute] control 
-   1. Verify that sound is muted while file is playing
-   1. Verify that [Mute] control is displaying the Muted icon
-   1. Click or Tap on [Mute] control again
-   1. Verify that sound has reverted back to level selected prior to muting
-   1. Tap and drag positional slider to right, then release
-   1. Verify that player continues to play file at later part of file
-   1. Tap and drag positional slider to left, then release
-   1. Verify that player continues to play file at earlier part of file
-   1. *Note* [Color Option] is not implemented so far in player
-   1. Start playing file
-   1. Click or Tap on [FullScreen] controll
-   1. Verify that video is now playing in Fullscreen mode
-   1. When at end of current file, verify that next file in playlist is being played
-   1. When at last file in playlist and at end of file, verify that fullscreen mode is exited and user returned to player interface and that [FullScreen] is no longer selected.
-        '));
+        prompt(twiki("Ensure a test "+extension+" file is available on device"));
+prompt(twiki("Launch player application
+Select [Open]
+In [Open File] select the "+filename+extension+" file to return to player UI
+Select [Play] to play the file
+Verify selected file has populated playlist
+Highlight file in playlist by clicking on it
+Select [Play]
+Verify that .MP4 file is playing on device"));
+    },
+
+    basic_controls_for_video_data: {
+        mp4:[".mp4", "filename", "mpeg video layer 4"]
+    },
+
+    basic_controls_for_video: function(extension, filename, format)
+    {
+        prompt(twiki("Launch player application
+Select [Open]
+In [Open File] select the "+filename+extension+" file to return to player UI
+Select [Play] to play the file
+Select [Pause]
+Verify that file has paused
+Verify that the [Pause] icon has changed to a [Play] icon
+Select [Play]
+Verify that the [Play] icon has changed to a [Pause] icon
+Verify that file continues to play from where previously paused.
+Select [Next File]
+Verify that next file in playlist is playing from start
+After some time (10-20 sec) Select [Beginning of File] control
+Verify that current file is being played from start
+Let arbitrary time pass, then Select [Beginning of File] control twice in quick succession.
+Verify that previous file in playlist is playing from start
+Select [Stop]
+Verify that file has stopped playing
+Select [Play]
+Verify that file continues to play from start of file.
+Let file play till end
+Verify player stops at end of file.
+Start playing file.
+After arbitrary time, Select [Stop]
+Select [Next File]
+Verify that next file in playlist is highlighted
+Verify that file is not automatically playing
+Select [Beginning of File]
+Verify that previous file in playlist is highlighted
+Select file in playlist
+Verify that file plays in player.
+Select number of files greater than can be displayed without scrolling in to playlist
+Verify that list can be scrolled through
+With file playing, verify that hardware keys can change volume up and down
+With file playing, verify that UI volume control slider can change volume up and down
+Select volume at 50% (or thereabout)
+Select [Mute] control
+Verify that sound is muted while file is playing
+Verify that [Mute] control is displaying the Muted icon
+Select [Mute] control again
+Verify that sound has reverted back to level selected prior to muting
+Drag positional slider to right, then release
+Verify that player continues to play file at later part of file
+Drag positional slider to left, then release
+Verify that player continues to play file at earlier part of file
+Start playing file
+Select [FullScreen] control
+Verify that video is now playing in Fullscreen mode
+When at end of current file, verify that next file in playlist is being played
+When at last file in playlist and at end of file, verify that fullscreen mode is exited and user returned to player interface and that [FullScreen] is no longer selected."));
     },
 
     seek_controls_for_video: function()
     {
-        prompt(twiki('*Player Test 6 :* Fast Forward through a playing video file
-    1. *Note* This test is not applicable to the Symbian platform
-    1. While playing a video file, Click or Tap on [1.0] (Multiplier) control
-    1. Select [2.0]
-    1. Verify that file is playing at double speed
-    1. Click or Tap on [Multiplier] control
-    1. Select [0.5]
-    1. Verify that file is playing at half speed
-        '));
+        prompt(twiki("This test is not applicable to the Symbian platform
+While playing a video file, Select or Tap on [1.0] (Multiplier) control
+Select [2.0]
+Verify that file is playing at double speed
+Select [Multiplier] control
+Select [0.5]
+Verify that file is playing at half speed"));
     },
 
     basic_controls_for_streamed_content: function()
     {
-        prompt(twiki('*Player Test 7:* All features of player application function properly with streaming
 
-   1. *Note* Functionality for this feature is being implemented due to bugs in .m3u playback on Maemo. Once resolved, this test will revert back to its original form
-   1. *Note* In order to play stream on Maemo, invoke player with following command from console:
-            run-standalone.sh ./player http://202.6.74.107:8060/triplej.mp3
-   1. *Note* For this test you need a playlist of streaming media urls. Suggest: http://202.6.74.107:8060/triplej.mp3 ; http://www.abc.net.au/streaming/triplej.asx ; rtsp://media1.abc.net.au/broadcast/triplej.rm ; mms://media3.abc.net.au/triplej ; depending on your platform and backend support.
+//*Note* Functionality for this feature is being implemented due to bugs in .m3u playback on Maemo. Once resolved, this test will revert back to its original form
+//*Note* In order to play stream on Maemo, invoke player with following command from console:
+//            run-standalone.sh ./player http://202.6.74.107:8060/triplej.mp3
+//*Note* For this test you need a playlist of streaming media urls. Suggest: http://202.6.74.107:8060/triplej.mp3 ; http://www.abc.net.au/streaming/triplej.asx ; rtsp://media1.abc.net.au/broadcast/triplej.rm ; mms://media3.abc.net.au/triplej ; depending on your platform and backend support.
 
-   1. In player application, Click or Tap [Open]
-   1. In "Open File" navigate and highlight test playlist file
-   1. Click or Tap on selected file to return to player UI
-   1. Verify selected file has populated playlist
-   1. Highlight file in playlist by selecting or clicking it
-   1. Click [Play]
-   1. Verify that stream is playing on device
-   1. Click [Pause] 	
-   1. Verify that stream is paused on device
-   1. Verify that the [Pause] button has changed to a [Play] button
-   1. Click [Play] again
-   1. Verify that stream is playing on device
-   1. Click [Stop]
-   1. Open local mp3 file in to play list and select it to play 	
-   1. Verify that the mp3 plays while the stream name is still present in the playlist 
-   1. Re-select the stream in the playlist 	
-   1. Verify that the stream starts playing again 
-   1. Click [Next File] 	
-   1. Verify that the player started playing the next file in the playlist 
-   1. Click [Previous File] 	
-   1. Verify that the original stream is playing again 
-   1. During stream playback, have headphones connected to device 	
-   1. Verify that the sound is now playing through the headphones 
-   1. Invoke a system notification on the device (such as an incoming SMS) 	
-   1. Verify that the device correctly transmits the audible system notification through the devices speakers and then returns to playing the stream through the headphones
-        '));
+        prompt(twiki("Launch player application
+In player application, Select or Tap [Open]
+In [Open File] navigate and highlight test playlist file
+Select or Tap on selected file to return to player UI
+Verify selected file has populated playlist
+Highlight file in playlist by selecting or clicking it
+Select [Play]
+Verify that stream is playing on device
+Select [Pause]
+Verify that stream is paused on device
+Verify that the [Pause] button has changed to a [Play] button
+Select [Play] again
+Verify that stream is playing on device
+Select [Stop]
+Open local mp3 file in to play list and select it to play
+Verify that the mp3 plays while the stream name is still present in the playlist
+Re-select the stream in the playlist
+Verify that the stream starts playing again
+Select [Next File]
+Verify that the player started playing the next file in the playlist
+Select [Previous File]
+Verify that the original stream is playing again
+During stream playback, have headphones connected to device
+Verify that the sound is now playing through the headphones
+Invoke a system notification on the device (such as an incoming SMS)
+Verify that the device correctly transmits the audible system notification through the devices speakers and then returns to playing the stream through the headphones"));
     },
     
     play_a_radio_transmission: function()
     {
-        prompt(twiki('*Radio Test 1 :* Listen to a radio transmission on the device
+//    *Note* This test requires radio reception and headphones to be connected to device
+//    *Note* Audible system notifications should be enabled for this test
 
-   1. *Note* This test requires radio reception and headphones to be connected to device 
-   1. *Note* Audible system notifications should be enabled for this test
-
-   1. Start Radio application 	
-   1. Verify that 0 KHz and No Signal is displayed 
-   1. Click on [Scan Up] 	
-   1. Audible "white noise" should be heard as the radio searches for a frequency lock 
-   1. Frequency should be increasing in 100 KHz steps until a strong signal is found 	
-   1. Verify that a radio signal can be heard. It is possible for the radio to lock on a silent station signal, in that case progress further up the frequencies 
-   1. Once a strong audible signal is found 	
-   1. Verify that the stations frequency and Got Signal message is displayed 
-   1. Click on [Scan Up] 	
-   1. Verify that the radio has moved off the previous station and in progressing through the frequencies 
-   1. Once on a radio station, Click on [Freq Up] 	
-   1. Verify that the radio frequency has moved off the station by 100KHz and is stationary 
-   1. Click on [Freq Up] again 	
-   1. Verify that the radio frequency has moved up another 100KHz and is stationary 
-   1. Click on [Freq Down] twice
-   1. Verify that you are now at the frequency of the previous radio station and that the signal is audible 
-   1. Click on [Scan Down]
-   1. Verify that the radio has moved off the previous station, progressing through the frequencies, and finds the original station from this test
-   1. Exit the radio application
-   1. Verify that the radio station is no longer heard
-        '));
+        prompt(twiki("Start Radio application
+Verify that 0 KHz and No Signal is displayed
+Select [Scan Up]
+Audible white noise should be heard as the radio searches for a frequency lock
+Frequency should be increasing in 100 KHz steps until a strong signal is found
+Verify that a radio signal can be heard. It is possible for the radio to lock on a silent station signal, in that case progress further up the frequencies
+Once a strong audible signal is found
+Verify that the stations frequency and Got Signal message is displayed
+Select [Scan Up]
+Verify that the radio has moved off the previous station and in progressing through the frequencies
+Once on a radio station, Select [Freq Up]
+Verify that the radio frequency has moved off the station by 100KHz and is stationary
+Select [Freq Up] again
+Verify that the radio frequency has moved up another 100KHz and is stationary
+Select [Freq Down] twice
+Verify that you are now at the frequency of the previous radio station and that the signal is audible
+Select [Scan Down]
+Verify that the radio has moved off the previous station, progressing through the frequencies, and finds the original station from this test
+Exit the radio application
+Verify that the radio station is no longer heard"));
     },
 
     radio_interrupted_by_system_notification: function()
     {
-        prompt(twiki('*Radio Test 2 :* System notifications don't interfere with Radio playback
-   1. While on a strong and audible radio signal, evoke a system notification on device (eg: incoming SMS, alarm notification)
-   1. Verify that after the system notification has been delivered, the radio reverts to outputting the audio signal back through the headphones 
-        '));
+        prompt(twiki("Launch the radio application
+Locate a strong radio station signal by scanning upwards
+While on a strong and audible radio signal, evoke a system notification on device (eg: incoming SMS, alarm notification)
+Verify that after the system notification has been delivered, the radio reverts to outputting the audio signal back through the headphones"));
     },
 
-    basic_radio_controlls: function()
+    basic_radio_controls: function()
     {
-        prompt(twiki('*Radio Test 3 :* Basic Radio controlls test
-   1. While on a strong and audible radio signal, move volume slider to the right
-   1. Verify that the audio volume of the radio station is amplified
-   1. Move volume slider to the left
-   1. Verify that the audio volume is lowered
-   1. Move the volume slider all the way to the left
-   1. Verify that the sound is now completly muted
-        '));
+        prompt(twiki("Launch the radio application
+Locate a strong radio station signal by scanning upwards
+While on a strong and audible radio signal, move volume slider to the right
+Verify that the audio volume of the radio station is amplified
+Move volume slider to the left
+Verify that the audio volume is lowered
+Move the volume slider all the way to the left
+Verify that the sound is now completely muted"));
+    },
 
     take_a_photo: function()
     {
-        prompt(twiki('*Camera Test 1: Take a still photo*
-
-   1.  Launch camera application
-   1.  If device has lens cover, make sure it is open
-   1.  Select Image tab to put camera in still mode
-   1.  Verify the intended scene is reproduced in the preview/viewfinder
-   1.  Click on Capture Photo
-   1.  If applicable, verify that flash has triggered
-   1.  Verify that image is shown on screen for preview 
-   1.  Verify that a new file is in the Images folder and accessabble with the image viewer
-   1.  Select given image and Verify that it is a true representation of the intended sceen
-   1.  Verify the image has no unintended artifacts and noise and is properly formated
-         '));
+        prompt(twiki("Launch camera application
+ If device has lens cover, make sure it is open
+ Select Image tab to put camera in still mode
+ Verify the intended scene is reproduced in the preview/viewfinder
+ Select Capture Photo
+ If applicable, verify that flash has triggered
+ Verify that image is shown on screen for preview
+ Verify that a new file is in the Images folder and accessabble with the image viewer
+ Select given image and Verify that it is a true representation of the intended sceen
+ Verify the image has no unintended artifacts and noise and is properly formatted"));
     },
-
 
     record_an_audio_file: function()
     {
-        prompt(twiki('*Recorder Test 1 :* Record audio on the device
 
-    On Maemo5, accepting the default for Input Device, Audio Codec, File Container and Sample Rate will produce a valid audio file.
-    Selecting the alternative selection, if available, works as well.
+// Note: On Maemo5, accepting the default for Input Device, Audio Codec, File Container and Sample Rate will produce a valid audio file.
+// Note: Selecting the alternative selection, if available, works as well.
 
-    1. Open audiorecorder application 
-    1. Select Input Device 	    
-    1. Select Audio Codec 	     
-    1. Select File Container 	     
-    1. Select Sample Rate 	     
-    1. Select Quality and Bitrate
-    1. Select Output... and select location and name of output file 	     
-    1. Click Record
-    1. Verify that [Record] button has changed in to [Stop]
-    1. Verify that Duration is counting seconds
-    1. Verify that Recording is displayed
-    1. Click Stop
-    1. Verify that Duration is now 0
-    1. Select Output File in file browser
-    1. Verify that an audio file has been generated
-    1. Play output file in media player
-    1. Verify that audible audio is recorded in file
-        '));
+        prompt(twiki("Open audiorecorder application
+ Select Input Device
+ Select Audio Codec
+ Select File Container
+ Select Sample Rate
+ Select Quality and Bitrate
+ Select Output... and select location and name of output file
+ Select Record
+ Verify that [Record] button has changed in to [Stop]
+ Verify that Duration is counting seconds
+ Verify that Recording is displayed
+ Select Stop
+ Verify that Duration is now 0
+ Select Output File in file browser
+ Verify that an audio file has been generated
+ Play output file in media player
+ Verify that audible audio is recorded in file"));
     },
 
 pause_recording_an_audio_file: function()
     {
-        prompt(twiki('*Recorder Test 2 :* Pause audio recording on the device
+// Note: On Maemo5, accepting the default for Input Device, Audio Codec, File Container and Sample Rate will produce a valid audio file.
+// Note: Selecting the alternative selection, if available, works as well.
 
- On Maemo5, accepting the default for Input Device, Audio Codec, File Container and Sample Rate will produce a valid audio file.
-    Selecting the alternative selection, if available, works as well.
-
-    1. Open audiorecorder application
-    1. Select Input Device
-    1. Select Audio Codec
-    1. Select File Container
-    1. Select Sample Rate
-    1. Select Quality and Bitrate
-    1. Select Output... and select location and name of output file
-    1. Click Record
-    1. Verify that [Record] button has changed in to [Stop]
-    1. Verify that Duration is counting seconds
-    1. Verify that Recording is displayed
-    1. Click Pause
-    1. Verify that instead of Duration, Paused is displayed
-    1. Click Resume
-    1. Verify that the counter has resumed the seconds count from where it was previously paused.
-    1. After a arbitrary time, Stop the recording.
-    1. Select Output File in file browser
-    1. Verify that an audio file has been generated
-    1. Play output file in media player
-    1. Verify that audible audio is recorded in file and that audio is only recorded for period that Pause was not selected
-    1. Verify there is no audible artifact that separates the two (or more) recording periods, that is that the joint is seemless
-        '));
+        prompt(twiki("Open audiorecorder application
+ Select Input Device
+ Select Audio Codec
+ Select File Container
+ Select Sample Rate
+ Select Quality and Bitrate
+ Select Output... and select location and name of output file
+ Select Record
+ Verify that [Record] button has changed in to [Stop]
+ Verify that Duration is counting seconds
+ Verify that Recording is displayed
+ Select Pause
+ Verify that instead of Duration, Paused is displayed
+ Select Resume
+ Verify that the counter has resumed the seconds count from where it was previously paused.
+ After a arbitrary time, Stop the recording.
+ Select Output File in file browser
+ Verify that an audio file has been generated
+ Play output file in media player
+ Verify that audible audio is recorded in file and that audio is only recorded for period that Pause was not selected
+ Verify there is no audible artifact that separates the two or more recording periods, that is that the joint is seamless"));
     },
-
 
     play_a_slideshow: function()
     {
-        prompt(twiki('*Slideshow Test 1 :* Play a slideshow of pictures on the device from various sources
-
-    1. Click on [Open] Icon
-    1. Select Directory from the list
-    1. Navigate to desired directory
-    1. Select desired directory containing pictures
-    1. Click [Play]
-    1. Verify that the slideshow starts
-    1. Click on [Pause]
-    1. Verify that slideshow stops on given image
-    1. Click [Play] again
-    1. Verify that slideshow resumes
-    1. Click [Next File]
-    1. Verify that slideshow jumps to next image in directory
-    1. Click [Previous File]
-    1. Verify that slideshow jumps to previous image in directory
-    1. Click [Stop]
-    1. Verify that slideshow has stopped
-    1. Click on [Open] Icon
-    1. Select Playlist from the list
-    1. Click [Play]
-    1. Verify that slideshow starts
-    1. Click on [Pause]
-    1. Verify that slideshow stops on given image
-    1. Click [Play] again
-    1. Verify that slideshow resumes
-    1. Click [Next File]
-    1. Verify that slideshow jumps to next image in directory
-    1. Click [Previous File]
-    1. Verify that slideshow jumps to previous image in directory
-    1. Click [Stop]
-    1. Verify that slideshow has stopped
-        '));
+        prompt(twiki("Launch the slideshow application
+Select [Open] Icon
+Select Directory from the list
+Navigate to desired directory
+Select desired directory containing pictures
+Select [Play]
+Verify that the slideshow starts
+Select [Pause]
+Verify that slideshow stops on given image
+Select [Play] again
+Verify that slideshow resumes
+Select [Next File]
+Verify that slideshow jumps to next image in directory
+Select [Previous File]
+Verify that slideshow jumps to previous image in directory
+Select [Stop]
+Verify that slideshow has stopped
+Select [Open] Icon
+Select Playlist from the list
+Select [Play]
+Verify that slideshow starts
+Select [Pause]
+Verify that slideshow stops on given image
+Select [Play] again
+Verify that slideshow resumes
+Select [Next File]
+Verify that slideshow jumps to next image in directory
+Select [Previous File]
+Verify that slideshow jumps to previous image in directory
+Select [Stop]
+Verify that slideshow has stopped"));
     }
 
 }
