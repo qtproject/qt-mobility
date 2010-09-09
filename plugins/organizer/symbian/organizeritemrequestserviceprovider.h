@@ -108,7 +108,7 @@ private: // Worker functions
     // Save detail definition
     void SaveDetailDefinitionL();
 #ifdef SYMBIAN_CALENDAR_V2
-    // Fetch collection Id
+    // Fetch collection local Id
     void CollectionIdL();
     // Fetch collection
     void CollectionL();
@@ -132,6 +132,7 @@ private:
     QList<QOrganizerCollection>             iCollections;
     QList<QOrganizerCollection>             iSuccessfullCollections;
     QList<QOrganizerCollectionId>           iCollectionIds;
+    QList<QOrganizerCollectionLocalId>      iCollectionLocalIds;
 #endif
     };
 
