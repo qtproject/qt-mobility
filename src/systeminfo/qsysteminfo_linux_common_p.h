@@ -166,6 +166,8 @@ Q_SIGNALS:
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
+   void cellIdChanged(const QString &); //1.2
+
 protected:
 #if !defined(QT_NO_DBUS)
     int getBluetoothRssi();
@@ -248,6 +250,7 @@ Q_SIGNALS:
     void logicalDriveChanged(bool, const QString &);
 
 private:
+    bool storageChanged;
      QMap<QString, QString> mountEntriesMap;
      void mountEntries();
      QFileSystemWatcher *mtabWatcherA;
@@ -259,10 +262,13 @@ private:
 
     QUDisksInterface *udisksIface;
     QUDisksDeviceInterface *udisksDeviceIface;
+
+private Q_SLOTS:
+    void udisksDeviceChanged(const QDBusObjectPath &);
 #endif
+
 private Q_SLOTS:
     void deviceChanged(const QString &path);
-    void udisksDeviceChanged(const QDBusObjectPath &);
 
 protected:
     void connectNotify(const char *signal);
@@ -312,7 +318,6 @@ Q_SIGNALS:
 
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlip(bool open);//1.2
-    void cellIdChanged(const QString &); //1.2
 
 protected:
     bool btPowered;

@@ -207,6 +207,40 @@ bool QUDisksDeviceInterface::deviceIsDrive()
     return this->getProperty("DeviceIsDrive").toBool();
 }
 
+bool QUDisksDeviceInterface::deviceIsLinuxLvm2LV()
+{
+    return this->getProperty("DeviceIsLinuxLvm2LV").toBool();
+}
+
+bool QUDisksDeviceInterface::deviceIsLinuxMd()
+{
+    return this->getProperty("DeviceIsLinuxMd").toBool();
+}
+
+bool QUDisksDeviceInterface::deviceIsLinuxLvm2PV()
+{
+    return this->getProperty("DeviceIsLinuxLvm2PV").toBool();
+}
+
+
+QString QUDisksDeviceInterface::uuid()
+{
+//    if(deviceIsPartition()) {
+//        return this->getProperty("PartitionUuid").toString();
+//    }
+    if(deviceIsLinuxLvm2LV()) {
+        return this->getProperty("LinuxLvm2LVUuid").toString();
+    }
+    if(deviceIsLinuxMd()) {
+        return this->getProperty("LinuxMdUuid").toString();
+    }
+    if(deviceIsLinuxLvm2PV()) {
+        return this->getProperty("LinuxLvm2PVUuid").toString();
+    }
+
+  return this->getProperty("IdUuid").toString();
+}
+
 QVariantMap QUDisksDeviceInterface::getProperties()
 {
     QDBusReply<QVariantMap > reply = this->call(QLatin1String("GetAll"));

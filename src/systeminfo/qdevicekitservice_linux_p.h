@@ -116,7 +116,13 @@ public:
     bool deviceIsPartition();
     bool deviceIsRemovable();
     bool deviceIsSystemInternal();
+    bool deviceIsLinuxLvm2LV();
+    bool deviceIsLinuxMd();
+    bool deviceIsLinuxLvm2PV();
+
     qulonglong partitionSize();
+
+    QString uuid();
 
 Q_SIGNALS:
     void changed(const QString &);
