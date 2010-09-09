@@ -41,6 +41,7 @@
 
 #include "qgeosearchmanagerengine_nokia.h"
 #include "qgeosearchreply_nokia.h"
+#include "marclanguagecodes.h"
 
 #include <qgeoaddress.h>
 #include <qgeocoordinate.h>
@@ -114,9 +115,8 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
     if (!m_token.isNull())
         requestString += "&token=" + m_token;
 
-    // TODO locale / language handling
-    //requestString += "&lg=";
-    //requestString += request->locale().language();
+    requestString += "&lg=";
+    requestString += languageToMarc(locale().language());
 
     requestString += "&country=";
     requestString += address.country();
@@ -170,9 +170,8 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordina
     requestString += "&lat=";
     requestString += trimDouble(coordinate.latitude());
 
-    // TODO locale / language handling
-    //requestString += "&lg=";
-    //requestString += request->locale().language();
+    requestString += "&lg=";
+    requestString += languageToMarc(locale().language());
 
     return search(requestString);
 }
@@ -202,19 +201,18 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchStrin
     if (!m_token.isNull())
         requestString += "&token=" + m_token;
 
-    // TODO locale / language handling
-    //requestString += "&lg=";
-    //requestString += request->locale().language();
+    requestString += "&lg=";
+    requestString += languageToMarc(locale().language());
 
     requestString += "&obloc=";
     requestString += searchString;
 
-    if(limit>0) {
+    if (limit > 0) {
         requestString += "&total=";
         requestString += QString::number(limit);
     }
 
-    if(offset>0) {
+    if (offset > 0) {
         requestString += "&offset=";
         requestString += QString::number(offset);
     }
@@ -280,4 +278,22 @@ void QGeoSearchManagerEngineNokia::placesError(QGeoSearchReply::Error error, con
     }
 
     emit this->error(reply, error, errorString);
+}
+
+QString QGeoSearchManagerEngineNokia::languageToMarc(QLocale::Language language)
+{
+    uint offset = 3*(uint(language));
+    if (language == QLocale::C || offset+2 > sizeof(marc_language_code_list))
+        return QLatin1String("eng");
+
+    const unsigned char *c = marc_language_code_list + offset;
+    if (c[0] == 0)
+        return QLatin1String("eng");
+
+    QString code(3, Qt::Uninitialized);
+    code[0] = ushort(c[0]);
+    code[1] = ushort(c[1]);
+    code[2] = ushort(c[2]);
+
+    return code;
 }

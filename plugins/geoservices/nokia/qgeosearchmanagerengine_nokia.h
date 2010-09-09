@@ -46,6 +46,8 @@
 #include <qgeosearchmanagerengine.h>
 
 #include <QNetworkAccessManager>
+#include <QLocale>
+
 
 QTM_USE_NAMESPACE
 
@@ -76,6 +78,7 @@ private slots:
 private:
     static QString trimDouble(qreal degree, int decimalDigits = 10);
     QGeoSearchReply* search(QString requestString);
+    QString languageToMarc(QLocale::Language language);
 
     QNetworkAccessManager *m_networkManager;
     QString m_host;

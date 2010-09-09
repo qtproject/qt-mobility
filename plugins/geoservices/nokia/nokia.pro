@@ -19,7 +19,8 @@ HEADERS += \
             qgeoroutingmanagerengine_nokia.h \
             qgeosearchmanagerengine_nokia.h \
             qgeosearchreply_nokia.h \
-            qgeoserviceproviderplugin_nokia.h
+            qgeoserviceproviderplugin_nokia.h \
+            marclanguagecodes.h
 
 SOURCES += \
             qgeocodexmlparser.cpp \
