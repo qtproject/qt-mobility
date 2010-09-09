@@ -80,12 +80,14 @@ class QueryThread : public QThread
 
 public:
     QueryThread();
-    void setArgs(EventLoggerEngine *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset);
+    void setArgs(QMessageServicePrivate* privateService, EventLoggerEngine *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset);
     void run();
 
  signals:
     void completed();
+
  public:
+    QMessageServicePrivate* _privateService;
     EventLoggerEngine *_parent;
     QMessageFilter _filter;
     QString _body;
@@ -133,8 +135,8 @@ public:
     QMessageIdList filterAndOrderMessages(const QMessageFilter &filter, const QMessageSortOrder& sortOrder,
 				      QString body, QMessageDataComparator::MatchFlags matchFlags);
 
-    bool filterMessages(const QMessageFilter &filter, const QMessageSortOrder& sortOrder,
-				      QString body, QMessageDataComparator::MatchFlags matchFlags);
+    bool filterMessages(QMessageServicePrivate* privateService, const QMessageFilter &filter,
+                        const QMessageSortOrder& sortOrder, QString body, QMessageDataComparator::MatchFlags matchFlags);
 
     void addEvent(QMessage &message);
     QMessageIdList m_ids;

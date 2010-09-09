@@ -59,10 +59,6 @@ QMessageServicePrivate::QMessageServicePrivate(QMessageService* parent)
    _active(false), _actionId(-1),
    _pendingRequestCount(0)
 {
-#ifdef EVENTLOGGER_THREAD
-    connect(EventLoggerEngine::instance(),SIGNAL(messagesFound(const QMessageIdList &,bool,bool)),this,SLOT(messagesFound(const QMessageIdList &,bool,bool)));
-
-#endif
 }
 
 QMessageServicePrivate::~QMessageServicePrivate()
@@ -104,7 +100,7 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
             _ids = EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
             QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
 #else
-            EventLoggerEngine::instance()->filterMessages(_filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
+            EventLoggerEngine::instance()->filterMessages(this, _filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
 #endif
             _pendingRequestCount++;
         } else {
@@ -176,7 +172,7 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
             _ids= EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,body,matchFlags);
             QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
 #else
-            EventLoggerEngine::instance()->filterMessages(_filter,sortOrder,body,matchFlags);
+            EventLoggerEngine::instance()->filterMessages(this, _filter,sortOrder,body,matchFlags);
 #endif
             _pendingRequestCount++;
         } else {

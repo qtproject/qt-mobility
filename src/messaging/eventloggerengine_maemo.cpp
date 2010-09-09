@@ -42,6 +42,7 @@
 #include "eventloggerengine_maemo_p.h"
 #include "telepathyengine_maemo_p.h"
 #include "maemohelpers_p.h"
+#include "qmessageservice_maemo_p.h"
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
@@ -56,7 +57,7 @@ EventLoggerEngine* EventLoggerEngine::instance()
 }
 
 
-EventLoggerEngine::EventLoggerEngine(QObject *parent):QObject(parent)
+EventLoggerEngine::EventLoggerEngine(QObject *parent):QObject(parent), _filterId(0)
 {
   //    qDebug() << "EventLoggerEngine::EventLoggerEngine";
     DBusError err=DBUS_ERROR_INIT;
@@ -75,6 +76,8 @@ EventLoggerEngine::EventLoggerEngine(QObject *parent):QObject(parent)
     g_signal_connect(G_OBJECT(el), "new-event", G_CALLBACK(new_event_cb),(void*)this);
     g_signal_connect(G_OBJECT(el), "event-deleted", G_CALLBACK(event_deleted_cb),(void*)this);
     g_signal_connect(G_OBJECT(el), "event-updated", G_CALLBACK(event_updated_cb),(void*)this);
+
+    qRegisterMetaType<QMessageIdList>("QMessageIdList");
 }
 
 
@@ -382,10 +385,11 @@ QMessageIdList EventLoggerEngine::filterAndOrderMessages(const QMessageFilter &f
 }
 #endif
 
-bool EventLoggerEngine::filterMessages(const QMessageFilter &filter,
-                                                    const QMessageSortOrder& sortOrder,
-                                                    QString body,
-                                                    QMessageDataComparator::MatchFlags matchFlags)
+bool EventLoggerEngine::filterMessages(QMessageServicePrivate* privateService,
+                                       const QMessageFilter &filter,
+                                       const QMessageSortOrder& sortOrder,
+                                       QString body,
+                                       QMessageDataComparator::MatchFlags matchFlags)
 {
 
   //  qDebug() << "EventLoggerEngine::filterMessages";
@@ -403,7 +407,7 @@ bool EventLoggerEngine::filterMessages(const QMessageFilter &filter,
     queryThread=new QueryThread();
     connect(queryThread, SIGNAL(completed()), this, SLOT(reportMatchingIds()), Qt::QueuedConnection);
   };
-  queryThread->setArgs(this, filter, body, matchFlags, sortOrder, 0,0);
+  queryThread->setArgs(privateService, this, filter, body, matchFlags, sortOrder, 0,0);
   queryThread->start();
 
     //  return queryThread.queryMessages(filter,sortOrder,body,matchFlags);
@@ -419,9 +423,14 @@ void EventLoggerEngine::messagesFound_(const QMessageIdList &ids)
 
 void EventLoggerEngine::reportMatchingIds()
 {
-  //  qDebug() << "EventLoggerEngine::messagesFound" << m_ids.count();
-  emit messagesFound(m_ids,true,false);
-  completed();
+    // qDebug() << "EventLoggerEngine::messagesFound" << m_ids.count();
+    QMetaObject::invokeMethod(queryThread->_privateService,
+                              "messagesFound",
+                              Qt::QueuedConnection,
+                              Q_ARG(const QMessageIdList, m_ids),
+                              Q_ARG(bool, true),
+                              Q_ARG(bool, false));
+    completed();
 }
 
 void EventLoggerEngine::completed()
@@ -511,8 +520,9 @@ QueryThread::QueryThread(): QThread()
 {
 }
 
-void QueryThread::setArgs(EventLoggerEngine *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
+void QueryThread::setArgs(QMessageServicePrivate* privateService, EventLoggerEngine *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
+  _privateService = privateService;
   _parent=parent;
   _filter=filter;
   _body=body;
