@@ -71,6 +71,7 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
             this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
+    connect(player, SIGNAL(videoAvailableChanged(bool)), this, SLOT(videoAvailableChanged(bool)));
     connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(displayErrorMessage()));
 
 //! [2]
@@ -118,16 +119,8 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(volumeChanged(int)), controls, SLOT(setVolume(int)));
     connect(player, SIGNAL(mutedChanged(bool)), controls, SLOT(setMuted(bool)));
 
-    QPushButton *fullScreenButton = new QPushButton(tr("FullScreen"), this);
+    fullScreenButton = new QPushButton(tr("FullScreen"), this);
     fullScreenButton->setCheckable(true);
-
-    if (videoWidget != 0) {
-        connect(fullScreenButton, SIGNAL(clicked(bool)), videoWidget, SLOT(setFullScreen(bool)));
-        connect(videoWidget, SIGNAL(fullScreenChanged(bool)),
-                fullScreenButton, SLOT(setChecked(bool)));
-    } else {
-        fullScreenButton->setEnabled(false);
-    }
 
     QPushButton *colorButton = new QPushButton(tr("Color Options..."), this);
     if (videoWidget)
@@ -307,6 +300,25 @@ void Player::handleCursor(QMediaPlayer::MediaStatus status)
 void Player::bufferingProgress(int progress)
 {
     setStatusInfo(tr("Buffering %4%").arg(progress));
+}
+
+void Player::videoAvailableChanged(bool available)
+{
+    if (!available) {
+        disconnect(fullScreenButton, SIGNAL(clicked(bool)),
+                    videoWidget, SLOT(setFullScreen(bool)));
+        disconnect(videoWidget, SIGNAL(fullScreenChanged(bool)),
+                fullScreenButton, SLOT(setChecked(bool)));
+        videoWidget->setFullScreen(false);
+    } else {
+        connect(fullScreenButton, SIGNAL(clicked(bool)),
+                videoWidget, SLOT(setFullScreen(bool)));
+        connect(videoWidget, SIGNAL(fullScreenChanged(bool)),
+                fullScreenButton, SLOT(setChecked(bool)));
+
+        if (fullScreenButton->isChecked())
+            videoWidget->setFullScreen(true);
+    }
 }
 
 void Player::setTrackInfo(const QString &info)
