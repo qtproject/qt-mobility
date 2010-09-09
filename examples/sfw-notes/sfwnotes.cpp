@@ -128,7 +128,8 @@ void ToDoTool::registerExampleServices()
     exampleXmlFiles << "notesmanagerservice.xml";
     foreach (const QString &fileName, exampleXmlFiles) {
         const QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
-        serviceManager->addService(path);
+        if (!serviceManager->addService(path))
+            qDebug() << "Unable to register notes manager service";
     }
 }
 
