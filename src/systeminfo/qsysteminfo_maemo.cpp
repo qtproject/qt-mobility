@@ -817,6 +817,7 @@ void QSystemNetworkInfoPrivate::registrationStatusChanged(uchar var1, ushort var
     }
     if (currentCellId != newCellId) {
         currentCellId = newCellId;
+        emit cellIdChanged(newCellId);
     }
     if (currentMCC != newMobileCountryCode) {
         currentMCC = newMobileCountryCode;
