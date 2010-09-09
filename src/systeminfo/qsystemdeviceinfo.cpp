@@ -210,8 +210,6 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     connect(d,SIGNAL(wirelessKeyboardConnected(bool)),
             this,SIGNAL(wirelessKeyboardConnected(bool)));
 
-    connect(d,SIGNAL(cellIdChanged(const QString &)),
-            this,SIGNAL(cellIdChanged(const QString &)));
     }
 
 /*!
