@@ -67,16 +67,21 @@ int DBusComm::init()
     // Application auto-start by dbus may take a while, so try
     // connecting a few times.
 
-    int cnt = 6; 
-    do {
+    int cnt = 10; 
+    positioningdProxy = new QDBusInterface(positioningdService,
+                                           positioningdPath,
+                                           positioningdInterface,
+                                           QDBusConnection::sessionBus());
+
+    while (cnt && (positioningdProxy->isValid() == false)) {
         // cout << "Connecting to positioning daemon..." << endl;
+        usleep(200000);
         positioningdProxy = new QDBusInterface(positioningdService,
                                                positioningdPath,
                                                positioningdInterface,
                                                QDBusConnection::sessionBus());
-        usleep(500000);
         cnt--;
-    } while (cnt && (positioningdProxy->isValid() == false));
+    }
 
     if (positioningdProxy->isValid() == false) {
         cerr << "DBus connection to positioning daemon failed.\n";

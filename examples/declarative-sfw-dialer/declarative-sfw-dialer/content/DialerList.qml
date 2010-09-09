@@ -40,7 +40,7 @@
 
 import Qt 4.7
 // ![4]
-import QtMobility.serviceframework 1.0
+import QtMobility.serviceframework 1.1
 // ![4]
 
 //Layout of the ServiceList control
@@ -100,7 +100,7 @@ Rectangle {
             Rectangle {
                 id: listItem
                 width: serviceListView.width
-                height: 40
+                height: childrenRect.height
                 border.color: "black"
                 border.width: 1
                 opacity: 0.6

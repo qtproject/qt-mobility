@@ -71,16 +71,6 @@ public:
     {
     }
 
-    QContactActionDescriptorPrivate(const QString& action, const QString& service, const QString& identifier, int version, const QContactActionFactory* factory)
-            : QSharedData(),
-            m_actionName(action),
-            m_serviceName(service),
-            m_identifier(identifier),
-            m_implementationVersion(version),
-            m_factory(factory)
-    {
-    }
-
     QContactActionDescriptorPrivate(const QContactActionDescriptorPrivate& other)
             : QSharedData(),
             m_actionName(other.m_actionName),

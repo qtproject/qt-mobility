@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include <QtCore/qmetaobject.h>
+#include <QtCore/qdebug.h>
 
 #include "qmediaobject_p.h"
 
@@ -176,11 +177,10 @@ void QMediaObject::unbind(QObject *object)
 {
     QMediaBindableInterface *helper = qobject_cast<QMediaBindableInterface*>(object);
 
-    Q_ASSERT(helper);
-    Q_ASSERT(helper->mediaObject() == this);
-
     if (helper && helper->mediaObject() == this)
         helper->setMediaObject(0);
+    else
+        qWarning() << "QMediaObject: Trying to unbind not connected helper object";
 }
 
 

@@ -15,16 +15,29 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle("Call Monitor");
     ui->lstRxMsg->setModel(&m_rxDBusMsg);
-    telephoycalllist = new QtMobility::QTelephonyCallList(this);
-    connect(telephoycalllist, SIGNAL(activeCallAdded(QTelephonyCallInfo)), SLOT(onActiveCallAdded(QTelephonyCallInfo)));
-    connect(telephoycalllist, SIGNAL(activeCallStatusChanged(QTelephonyCallInfo)), SLOT(onActiveCallStatusChanged(QTelephonyCallInfo)));
+    telephonycalllist = new QtMobility::QTelephonyCallList(this);
+    connect(telephonycalllist
+        , SIGNAL(activeCallAdded(QTelephonyCallInfo))
+        , SLOT(onActiveCallAdded(QTelephonyCallInfo)));
+    connect(telephonycalllist
+        , SIGNAL(activeCallStatusChanged(QTelephonyCallInfo))
+        , SLOT(onActiveCallStatusChanged(QTelephonyCallInfo)));
+    connect(telephonycalllist
+        , SIGNAL(activeCallRemoved(QTelephonyCallInfo))
+        , SLOT(onActiveCallRemoved(QTelephonyCallInfo)));
+    connect(telephonycalllist
+        , SIGNAL(hasActiveCalls(bool))
+        , SLOT(onHasActiveCalls(bool)));
+    connect(ui->pushButtonClearList
+        , SIGNAL(released())
+        , SLOT(onClearList()));
 }
 
 MainWindow::~MainWindow()
 {
     qDebug() << "MainWindow::~MainWindow()";
-    if(telephoycalllist != 0){
-        delete telephoycalllist;
+    if(telephonycalllist != 0){
+        delete telephonycalllist;
     }
     delete ui;
 }
@@ -41,10 +54,46 @@ void MainWindow::changeEvent(QEvent *e)
     }
 }
 
-void MainWindow::addListEntry(QString value)
+void MainWindow::addListEntry(const QString& event, const QTelephonyCallInfo& call)
 {
+    QString val = call.remotePartyIdentifier();
+    val += " " + event;
+    val += " ";
+
+    if(call.status() == QTelephony::Idle)
+        val += "-Idle";
+    else if(call.status() == QTelephony::Dialing)
+        val += "-Dialing";
+    else if(call.status() == QTelephony::Alerting)
+        val += "-Alerting";
+    else if(call.status() == QTelephony::Connected)
+        val += "-Connected";
+    else if(call.status() == QTelephony::Disconnecting)
+        val += "-Disconnecting";
+    else if(call.status() == QTelephony::Incoming)
+        val += "-Incoming";
+    else if(call.status() == QTelephony::OnHold)
+        val += "-OnHold";
+
+    val += " -";
+
+    unsigned int type = call.type();
+    if(type & QTelephony::Text)
+        val += "Text";
+    if(type & QTelephony::Data)
+        val += "Data";
+    if(type & QTelephony::Video)
+        val += "Video";
+    if(type & QTelephony::Voice)
+        val += "Voice";
+    if(type & QTelephony::Other)
+        val += "Other";
+
+    val += " -";
+    val += call.subType();
+
     QStringList vl = m_rxDBusMsg.stringList();
-    vl.append(value);
+    vl.append(val);
     m_rxDBusMsg.setStringList(vl);
     ui->lstRxMsg->scrollToBottom();
 
@@ -52,32 +101,27 @@ void MainWindow::addListEntry(QString value)
 
 void MainWindow::onActiveCallAdded(const QTelephonyCallInfo& call)
 {
-    addListEntry("call Added: " + call.remotePartyIdentifier());
-    if(call.type() == QTelephony::Video)
-        addListEntry("- type: Video");
-    else if(call.type() == QTelephony::Voice)
-        addListEntry("- type: Voice");
-    else if(call.type() == QTelephony::Text)
-        addListEntry("- type: Text");
-    else if(call.type() == QTelephony::Any)
-        addListEntry("- type: Any");
+    addListEntry("call added: ", call);
+}
+
+void MainWindow::onActiveCallRemoved(const QTelephonyCallInfo& call)
+{
+    addListEntry("call removed: ", call);
 }
 
 void MainWindow::onActiveCallStatusChanged(const QTelephonyCallInfo& call)
 {
-    addListEntry("status changed: " + call.remotePartyIdentifier());
-    if(call.status() == QTelephony::Idle)
-        addListEntry("- Idle");
-    else if(call.status() == QTelephony::Dialing)
-        addListEntry("- Dialing");
-    else if(call.status() == QTelephony::Alerting)
-        addListEntry("- Alerting");
-    else if(call.status() == QTelephony::Connected)
-        addListEntry("- Connected");
-    else if(call.status() == QTelephony::Disconnecting)
-        addListEntry("- Disconnecting");
-    else if(call.status() == QTelephony::Incomming)
-        addListEntry("- Incomming");
-    else if(call.status() == QTelephony::OnHold)
-        addListEntry("- OnHold");
+    addListEntry("status changed: ", call);
+}
+
+void MainWindow::onHasActiveCalls(bool value)
+{
+    qDebug() << "active Call count changed";
+}
+
+void MainWindow::onClearList()
+{
+    QStringList vl = m_rxDBusMsg.stringList();
+    vl.clear();
+    m_rxDBusMsg.setStringList(vl);
 }

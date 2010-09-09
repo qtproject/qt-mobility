@@ -84,7 +84,7 @@ namespace DBus
         Q_DISABLE_COPY(Channel)
     public:
         static const Feature FeatureCore;
-        static bool isCall(QString channeltype);
+        static bool isCall(QString channeltype, QString channelpath);
 
         Channel(QDBusConnection busconnection, const QString busname, const QString &objectPath, const QVariantMap &properties, Connection* connection);
         ~Channel();
@@ -92,16 +92,16 @@ namespace DBus
         QTelephony::CallStatus getStatus() { return status; }
         int getDirection() { return direction; }
         QString getRemotePartyIdentifier() { return remoteIdentifier; }
-        QTelephony::CallType getCalltype();
+        unsigned int getCallType();
         QString getSubType() { return subtype; }
 
         bool isCall() {
-            if(pIChannelTypeStreamedMedia || pIChannelTypeText)
+            if(pIChannelTypeStreamedMedia)
                 return true;
             return false;
         }
         bool isOutgoing() { return ( direction == 2 ? true : false); }
-        bool isIncomming() { return ( direction == 1 ? true : false); }
+        bool isIncoming() { return ( direction == 1 ? true : false); }
         bool isText() { return (pIChannelTypeText == 0 ? false : true); }
 
     Q_SIGNALS:
@@ -220,7 +220,7 @@ namespace DBus
         Connection* connection;
         /*
          0 = unknown
-         1 = incomming
+         1 = incoming
          2 = outgoing
          */
         int direction;

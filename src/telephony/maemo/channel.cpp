@@ -61,12 +61,7 @@ namespace DBus
         propertylist = properties;
         connection = conn;
 
-        qDebug() << " Channel::Channel(";
-        qDebug() << "- QDBusConnection base service: " << busconnection.baseService();
-        qDebug() << "- QDBusConnection name: " << busconnection.name();
-        qDebug() << "- objectPath: " << objectPath;
-        qDebug() << "- DBusProxy.busName: " << this->busName();
-        qDebug() << "- DBusProxy.objectPath: " << this->objectPath();
+        qDebug() << " Channel::Channel(...)";
 
         //Create Channel interface
         pIChannel = new DBus::Interfaces::IChannel(this->dbusConnection(),this->busName(), this->objectPath());
@@ -81,8 +76,7 @@ namespace DBus
         bool iscall = false;
         if(propertylist.contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"))){
             QString type = propertylist.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString();
-            qDebug() << "- check mediatype " << type;
-            iscall = Channel::isCall(type);
+            iscall = Channel::isCall(type, objectPath);
         }
 
         //get direction by chjecking the requested flag
@@ -93,32 +87,42 @@ namespace DBus
                 direction = 2;
             else
                 direction = 1;
-
-            qDebug() << "- direction 1=incomming, 2=outgoing " << direction;
         }
 
         //if its not a call we don't need to go further
         if(iscall){
-            qDebug() << "- it is a call";
             //set remote id
             remoteIdentifier = pIChannel->TargetID();
-            qDebug() << "remoteIdentifier " << remoteIdentifier;
             connect(pIChannel, SIGNAL(Closed()), SLOT(onClose()));
             connectType();
             connectInterfaces();
             connect((QObject*)this->becomeReady(), SIGNAL(finished(DBus::PendingOperation *)), SLOT(onChannelReady(DBus::PendingOperation*)));
         }
+
+        //set SubType
+        /*  For CallType Text subtype Voip is possible.
+            For CallType Data subtype GSM is possible.
+            For CallType Video subtype GSM & Voip is possible.
+            For CallType Audio subtype GSM & Voip is possible.*/
+        if(objectPath.indexOf("/org/freedesktop/Telepathy/Connection/ring/tel/ring") == 0)
+            subtype = "GSM";
+        else if(objectPath.indexOf("/org/freedesktop/Telepathy/Connection/spirit") == 0)
+            subtype = "Voip";
     }
 
-    bool Channel::isCall(QString channeltype)
+    bool Channel::isCall(QString channeltype, QString channelpath)
     {
-        qDebug() << "- check mediatype " << channeltype;
         /**************************
         check for Mediastream
         **************************/
-        if(channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA
-           || channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT){
+        qDebug() << "Channel::isCall channeltype " << channeltype;
+        qDebug() << "Channel::isCall channelpath " << channelpath;
+        if(channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA)
             return true;
+        //for text we need to check if it not SMS
+        else if(channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT){
+            if(channelpath.indexOf("/org/freedesktop/Telepathy/Connection/ring/tel/ring/") != 0)
+                return true;
         }
         return false;
     }
@@ -191,32 +195,23 @@ namespace DBus
 
     void Channel::createPropertiyList()
     {
-        qDebug() << "Channel::createPropertiyList";
         //read the channel interfaces
         QStringList interfaces = pIChannel->Interfaces();
         propertylist.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".Interfaces"), QVariant(interfaces));
 
-        qDebug() << "read Channel type interfaces";
         QString channeltype = pIChannel->ChannelType();
-        qDebug() << "- Add ChannelType " << channeltype;
         propertylist.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"), QVariant(channeltype));
 
-        qDebug() << "read Channel Requested flag to identicate the direction";
         bool requested = pIChannel->Requested();
-        qDebug() << "- Add Channel requested Flag " << requested;
         propertylist.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".Requested"), QVariant(requested));
     }
 
     void Channel::connectInterfaces()
     {
-        qDebug() << "Channel::connectInterfaces()";
-
-
         if(propertylist.contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".Interfaces"))){
             QStringList varlist = propertylist.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".Interfaces")).toStringList();
             foreach(const QString& supportedinterface, varlist)
             {
-                qDebug() << "- supported interface: " << supportedinterface;
                 if(supportedinterface == DBus::Interfaces::IChannelCallState::staticInterfaceName()){
                     pIChannelCallState = new DBus::Interfaces::IChannelCallState(this->dbusConnection(), this->busName(), this->objectPath());
                 }
@@ -286,7 +281,6 @@ namespace DBus
 
     void Channel::disconnectInterfaces()
     {
-        qDebug() << "Channel::disconnectInterfaces()";
         if(pIChannelCallState){
             disconnect(pIChannelCallState, SIGNAL(CallStateChanged(uint,uint)), this, SLOT(onCallStateChanged(uint,uint)));
         }
@@ -321,10 +315,8 @@ namespace DBus
 
     void Channel::connectType()
     {
-        qDebug() << "Channel::connectType()";
         if( propertylist.contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"))){
             subtype = propertylist.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString();
-            qDebug() << "- supported type interface: " << subtype;
             if(subtype == DBus::Interfaces::IChannelTypeContactList::staticInterfaceName()){
                 pIChannelTypeContactList = new DBus::Interfaces::IChannelTypeContactList(this->dbusConnection(), this->busName(), this->objectPath());
                 // no signals
@@ -350,9 +342,9 @@ namespace DBus
             }
 
             //Connect signals
-//            if(pIChannelTypeContactList){
-                // no signals
-//            }
+            //if(pIChannelTypeContactList){
+            //   no signals
+            //}
             if(pIChannelTypeFileTransfer){
                 connect(pIChannelTypeFileTransfer, SIGNAL(FileTransferStateChanged(uint,uint)), SLOT(onFileTransferStateChanged(uint,uint)));
                 connect(pIChannelTypeFileTransfer, SIGNAL(TransferredBytesChanged(qulonglong)), SLOT(onTransferredBytesChanged(qulonglong)));
@@ -392,7 +384,6 @@ namespace DBus
 
     void Channel::disconnectType()
     {
-        qDebug() << "Channel::disconnectType()";
         if(pIChannelTypeContactList){
             // no signals
         }
@@ -432,30 +423,22 @@ namespace DBus
         }
     }
 
-    QTelephony::CallType Channel::getCalltype()
+    unsigned int Channel::getCallType()
     {
-        qDebug() << "Channel::getCalltype()";
-        QTelephony::CallType ret = QTelephony::Other;
+        unsigned int ret = 0;
         if(pIChannelTypeStreamedMedia){
-            qDebug() << "- Listing Streams";
             QDBusPendingReply<DBus::Interfaces::MediaStreamInfoList> lst = pIChannelTypeStreamedMedia->ListStreams();
             lst.waitForFinished();
             //Type 0=Audio, 1=Video
             foreach(const DBus::Interfaces::MediaStreamInfo& info, lst.value()){
-                qDebug() << "-- Stream:";
-                qDebug() << "--- Contact " << info.contact;
-                qDebug() << "--- Direction " << info.direction;
-                qDebug() << "--- State " << info.state;
-                qDebug() << "--- Type " << info.type;
-                if(info.type == 0 && ret == QTelephony::Other)
-                    ret = QTelephony::Voice;
+                if(info.type == 0)
+                    ret |= QTelephony::Voice;
                 if(info.type == 1)
-                    ret = QTelephony::Video;
-
+                    ret |= QTelephony::Video;
             }
         }
-        else if(pIChannelTypeText)
-            ret = QTelephony::Text;
+        else if(this->pIChannelTypeText)
+            ret |= QTelephony::Text;
 
         return ret;
     }
@@ -466,9 +449,9 @@ namespace DBus
         qDebug() << "Channel::onChannelReady(...)";
         QTelephony::CallStatus newstatus = status;
 
-        //check if incomming direction
-        if(isIncomming())
-            newstatus = QTelephony::Incomming;
+        //check if incoming direction
+        if(isIncoming())
+            newstatus = QTelephony::Incoming;
         //check for outgoing, don't make status changed in sms calls otherwise this status change would be to early
         else if(isOutgoing() && !isText())
             newstatus = QTelephony::Dialing;
@@ -477,7 +460,6 @@ namespace DBus
             //check for call state if its ringing (call state 0bit = 1)
             if(direction == 2){
                 if(pIChannelCallState){
-                    qDebug() << "- pIChannelCallState->GetCallStates()";
                     QDBusPendingReply<DBus::Interfaces::ChannelCallStateMap> ccsm = pIChannelCallState->GetCallStates();
                     ccsm.waitForFinished();
                     if(ccsm.isValid()){
@@ -497,13 +479,11 @@ namespace DBus
             //Check if status is already connected => call state 0bit = ringing, Stream Directtion = 3 (Bidirectional)
             //This is valid for both incoming and outgoing calls
             if(pIChannelTypeStreamedMedia){
-                qDebug() << "- pIChannelTypeStreamedMedia->ListStreams()";
                 QDBusPendingReply<DBus::Interfaces::MediaStreamInfoList> streams = pIChannelTypeStreamedMedia->ListStreams();
                 streams.waitForFinished();
                 if(streams.isValid()){
                     foreach(const MediaStreamInfo& msi, streams.value())
                     {
-                        qDebug() << "- msi.direction " << msi.direction;
                         if(msi.direction == 3){
                             newstatus = QTelephony::Connected;
                             break;
@@ -514,7 +494,6 @@ namespace DBus
             //Check if status is OnHold
             if(this->pIChannelHold)
             {
-                qDebug() << "- pIChannelHold->GetHoldState()";
                 QDBusPendingReply<uint, uint> holdingstate = pIChannelHold->GetHoldState();
                 holdingstate.waitForFinished();
                 if(holdingstate.isValid()){
@@ -524,8 +503,6 @@ namespace DBus
                 }
             }
         }
-        qDebug() << "- direction " << direction;
-        qDebug() << "- newstatus " << newstatus;
 
         //Only emmit this status change if not sms call
         if(status != newstatus){
@@ -538,7 +515,7 @@ namespace DBus
     void Channel::onClose()
     {
         qDebug() << "IChannel - Channel::onClose()";
-        if(isIncomming() || isOutgoing())
+        if(isIncoming() || isOutgoing())
         {
             if(status != QTelephony::Disconnecting){
                 status = QTelephony::Disconnecting;
@@ -706,7 +683,7 @@ namespace DBus
         //streamDirection: 0=None, 1=Send, 2=Receive, 3=Bidirectional
         if(streamDirection == 3){
             //check for outgoing
-            if(isIncomming() || isOutgoing()){
+            if(isIncoming() || isOutgoing()){
                 if(status != QTelephony::Connected){
                     status = QTelephony::Connected;
                     connection->channelStatusChanged(this);
@@ -741,7 +718,7 @@ namespace DBus
     void Channel::onReceived(uint ID, uint timestamp, uint sender, uint type, uint flags, const QString& text)
     {
         qDebug() << "IChannelTypeText - Channel::onReceived()";
-        if(isIncomming() || isOutgoing()){
+        if(isIncoming() || isOutgoing()){
             if(status != QTelephony::Connected){
                 status = QTelephony::Connected;
                 connection->channelStatusChanged(this);
@@ -758,8 +735,8 @@ namespace DBus
     {
         qDebug() << "IChannelTypeText - Channel::onSent()";
 
-        //check if incomming direction
-        if(isIncomming()){
+        //check if incoming direction
+        if(isIncoming()){
             if(status != QTelephony::Connected){
                 status = QTelephony::Connected;
                 connection->channelStatusChanged(this);

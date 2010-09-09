@@ -58,11 +58,6 @@ namespace DBus
         , ptelephonyCallList(callList)
     {
         qDebug() << "Connection::Connection(...)";
-        qDebug() << "- QDBusConnection base service: " << busconnection.baseService();
-        qDebug() << "- QDBusConnection name: " << busconnection.name();
-        qDebug() << "- objectPath: " << objectPath;
-        qDebug() << "- DBusProxy.busName: " << this->busName();
-        qDebug() << "- DBusProxy.objectPath: " << this->objectPath();
 
         pIConnection = new DBus::Interfaces::IConnection(busconnection, busName, objectPath);
         connect(pIConnection, SIGNAL(SelfHandleChanged(uint)), SLOT(onSelfHandleChanged(uint)));
@@ -96,8 +91,6 @@ namespace DBus
 
     void Connection::readCurrentChannels()
     {
-        qDebug() << "Connection::readCurrentChannels()";
-
         if(pIConnection){
             QDBusPendingReply<DBus::Interfaces::ChannelInfoList> dbrlistchannels = pIConnection->ListChannels();
             dbrlistchannels.waitForFinished();
@@ -109,7 +102,7 @@ namespace DBus
                 qDebug() << "-- Path " << chi.channel.path();
                 qDebug() << "-- connectionbusname: " << connectionbusname;
                 qDebug() << "-- channelType " << chi.channelType;
-                if(Channel::isCall(chi.channelType)){
+                if(Channel::isCall(chi.channelType, chi.channel.path())){
                     qDebug() << "-- is call";
                     Channel* pchannel = new Channel(QDBusConnection::sessionBus(), connectionbusname,  chi.channel.path(), QVariantMap(), this);
                     ptelephonyCallList->newChannels(ChannelPtr(pchannel));
@@ -154,7 +147,7 @@ namespace DBus
             qDebug() << "- Creating QTelephonyCallInfoPrivate";
 
             if( channelDetails.properties.contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"))
-                && Channel::isCall(channelDetails.properties.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString())){
+                && Channel::isCall(channelDetails.properties.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString(), channelDetails.channel.path())){
                 Channel* pchannel = new Channel(QDBusConnection::sessionBus(), connectionbusname, channelDetails.channel.path(), channelDetails.properties, this);
                 ptelephonyCallList->newChannels(ChannelPtr(pchannel));
             }
@@ -166,9 +159,9 @@ namespace DBus
         qDebug() << "Connection::IConnectionRequests::onChannelClosed(...)";
     }
 
+    //own slots
     void Connection::channelStatusChanged(DBus::Channel *channel)
     {
-        qDebug() << "Connection::channelStatusChanged(...)";
         ptelephonyCallList->channelStatusChanged(ChannelPtr(channel));
     }
 }

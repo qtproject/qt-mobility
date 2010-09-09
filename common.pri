@@ -79,7 +79,12 @@ CONFIG(debug, debug|release) {
 contains(QT_CONFIG, reduce_exports):CONFIG+=hide_symbols
 
 #export more symbols if we build the unit tests
-contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
+contains(build_unit_tests, yes) {
+    DEFINES+=QTM_BUILD_UNITTESTS
+} else {
+    contains(build_public_unit_tests,yes):DEFINES+=QTM_BUILD_PUBLIC_UNITTESTS
+}
+
 
 #test whether we have a unit test
 !testcase {
@@ -97,9 +102,12 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
             DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE 
         } else {
             #check that plugin_type is set or warn otherwise
-            isEmpty(PLUGIN_TYPE):message(PLUGIN_TYPE not specified - install rule may not work)
-            target.path=$${QT_MOBILITY_PLUGINS}/$${PLUGIN_TYPE}
-            INSTALLS += target
+            isEmpty(PLUGIN_TYPE) {
+                message(PLUGIN_TYPE not specified - install rule may not work)
+            } else {
+                target.path=$${QT_MOBILITY_PLUGINS}/$${PLUGIN_TYPE}
+                INSTALLS += target
+            }
         }
     }
 

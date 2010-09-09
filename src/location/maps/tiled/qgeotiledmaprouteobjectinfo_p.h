@@ -70,8 +70,8 @@ public:
     QGeoTiledMapRouteObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapRouteObjectInfo();
 
-    void objectUpdate();
-    void mapUpdate();
+    void objectUpdated();
+    void mapUpdated();
 
     //QLineF connectShortest(const QGeoCoordinate &point1, const QGeoCoordinate &point2) const;
 

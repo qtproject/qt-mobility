@@ -317,6 +317,7 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
 
     {
         QVersitProperty rrule;
+        rrule.setValueType(QVersitProperty::PreformattedType);
         rrule.setName(QLatin1String("RRULE"));
         rrule.setValue(QLatin1String("FREQ=DAILY"));
         QOrganizerItemRecurrence recurrence;
@@ -360,6 +361,7 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
 
     {
         QVersitProperty rrule;
+        rrule.setValueType(QVersitProperty::PreformattedType);
         rrule.setName(QLatin1String("RRULE"));
         rrule.setValue(QLatin1String("FREQ=MONTHLY;BYMONTHDAY=1,-3"));
         QOrganizerItemRecurrence recurrence;
@@ -374,6 +376,7 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
 
     {
         QVersitProperty rrule;
+        rrule.setValueType(QVersitProperty::PreformattedType);
         rrule.setName(QLatin1String("RRULE"));
         rrule.setValue(QLatin1String("FREQ=YEARLY;BYWEEKNO=1,-3"));
         QOrganizerItemRecurrence recurrence;
@@ -388,6 +391,7 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
 
     {
         QVersitProperty rrule;
+        rrule.setValueType(QVersitProperty::PreformattedType);
         rrule.setName(QLatin1String("RRULE"));
         rrule.setValue(QLatin1String("FREQ=YEARLY;BYMONTH=1,10"));
         QOrganizerItemRecurrence recurrence;
@@ -404,6 +408,7 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
 
     {
         QVersitProperty rrule;
+        rrule.setValueType(QVersitProperty::PreformattedType);
         rrule.setName(QLatin1String("RRULE"));
         rrule.setValue(QLatin1String("FREQ=YEARLY;BYYEARDAY=1,366,-1"));
         QOrganizerItemRecurrence recurrence;
@@ -418,6 +423,7 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
 
     {
         QVersitProperty rrule;
+        rrule.setValueType(QVersitProperty::PreformattedType);
         rrule.setName(QLatin1String("RRULE"));
         rrule.setValue(QLatin1String("FREQ=WEEKLY;COUNT=4;INTERVAL=2;BYDAY=TU,SU;WKST=SU"));
         QOrganizerItemRecurrence recurrence;
@@ -435,6 +441,7 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
 
     {
         QVersitProperty rrule;
+        rrule.setValueType(QVersitProperty::PreformattedType);
         rrule.setName(QLatin1String("RRULE"));
         rrule.setValue(QLatin1String("FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1"));
         QOrganizerItemRecurrence recurrence;
@@ -451,6 +458,7 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
 
     {
         QVersitProperty rrule;
+        rrule.setValueType(QVersitProperty::PreformattedType);
         rrule.setName(QLatin1String("RRULE"));
         rrule.setValue(QLatin1String("FREQ=DAILY;UNTIL=20000131;BYMONTH=1"));
         QOrganizerItemRecurrence recurrence;
@@ -467,6 +475,7 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
 
     {
         QVersitProperty rrule;
+        rrule.setValueType(QVersitProperty::PreformattedType);
         rrule.setName(QLatin1String("RRULE"));
         rrule.setValue(QLatin1String("FREQ=DAILY;COUNT=5;BYMONTH=1"));
         QOrganizerItemRecurrence recurrence;

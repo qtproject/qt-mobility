@@ -88,7 +88,15 @@ QList<QContactLocalId> CntFilterDetail::contacts(
     if ( (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName ) &&
             (detailFilter.detailFieldName() != QContactPhoneNumber::FieldSubTypes)) {
         //Handle phonenumber ...
-        createMatchPhoneNumberQuery(filter,sqlQuery,error);
+		if(detailFilter.detailFieldName().isEmpty()){
+            fetchAllPhoneNumbers(sqlQuery);    
+        }
+        else if(bestMatchingEnabled()) {
+            bestMatchPhoneNumberQuery(filter,sqlQuery,error);
+        }
+        else {
+            createMatchPhoneNumberQuery(filter,sqlQuery,error);
+        }
         if (*error == QContactManager::NoError) {
             //fetch the contacts
             idList =  m_srvConnection.searchContacts(sqlQuery,error);
@@ -162,6 +170,18 @@ void CntFilterDetail::createSelectQuery(const QContactFilter& filter,
            }
        }
     }
+    else if (detailFilter.detailDefinitionName() == QContactEmailAddress::DefinitionName &&
+                        (detailFilter.detailFieldName().isEmpty())) {
+        QString type =  QString(" type = %1").arg(CntDbInfo::EEmailAddress);
+        QString whereClause = " WHERE" + type;
+        sqlQuery = "SELECT DISTINCT contact_id FROM comm_addr" + whereClause;
+        }
+    else if (detailFilter.detailDefinitionName() == QContactOnlineAccount::DefinitionName &&
+                        (detailFilter.detailFieldName().isEmpty())) {
+        QString type =  QString(" type = %1").arg(CntDbInfo::ESipAddress);
+        QString whereClause = " WHERE" + type;
+        sqlQuery = "SELECT DISTINCT contact_id FROM comm_addr" + whereClause;
+        }
     //everything else
     else {   
        QString tableName;
@@ -386,6 +406,7 @@ void CntFilterDetail::createMatchPhoneNumberQuery(
                 }
                 else {
                     *error = QContactManager::UnspecifiedError;
+                    return;
                 }
             }
             // Recreate query to fetch all match ids
@@ -397,34 +418,107 @@ void CntFilterDetail::createMatchPhoneNumberQuery(
             sqlQuery += ids;
             sqlQuery += ')';
         }
-      
-        // refine search
-        if (bestMatchingEnabled()) {
-            QList<QContactLocalId> list =  m_srvConnection.searchContacts(sqlQuery,error);
-            QList<QContactLocalId> bestMatchingIds;
-            if (*error == QContactManager::NoError) {
-                TRAP_IGNORE(
-                        bestMatchingIds = getBestMatchPhoneNumbersL(number, list, error);
-                )
-                if (bestMatchingIds.count()>0) {
-                    // recreate query
-                    QString selectQuery = " SELECT contact_id FROM comm_addr WHERE contact_id in (";
-                    QString ids = QString("%1").arg(bestMatchingIds.at(0));
-                    for(int i=1; i<bestMatchingIds.count(); ++i) {
-                        ids += QString(" ,%1").arg(bestMatchingIds.at(i));
-                    }
-                    selectQuery += ids + ')';
-                    sqlQuery = selectQuery;
-                }
-                else {
-                    // empty list
-                    QString selectQuery = " SELECT contact_id FROM comm_addr WHERE contact_id in (null)";
-                    sqlQuery = selectQuery;
-                }
-            }
-        }
     }
 }
+
+/*
+ * Fetch all contacts with phone number sql query
+ */
+void CntFilterDetail::fetchAllPhoneNumbers( QString& sqlQuery )
+
+{
+    QString type =  QString(" type = %1").arg(CntDbInfo::EPhoneNumber);
+    QString whereClause = " WHERE" + type;
+    sqlQuery = "SELECT DISTINCT contact_id FROM comm_addr" + whereClause;
+}
+
+/*
+ * Returns an sql query to fetch contact item IDs for all the contact items which may contain
+ * the specified telephone number in a telephone, fax or SMS type field.
+ *
+ * This is improved version of createMatchPhoneNumberQuery method.
+ * The number is compared starting from the right side of the number and 
+ * the method returns an array of candidate matches.  
+ * Punctuation (e.g. spaces) and other alphabetic characters are ignored
+ * when comparing. Leading zeros are removed. Digits are compared up to 
+ * the length of shorter number.
+ */
+void CntFilterDetail::bestMatchPhoneNumberQuery(const QContactFilter& filter,
+                                                QString& sqlQuery,
+                                                QContactManager::Error* error)
+    {
+    if (!filterSupported(filter) ) {
+          *error = QContactManager::NotSupportedError;
+          return;
+        }
+              
+    QContactDetailFilter detailFilter(filter);
+    QString number((detailFilter.value()).toString());
+    TPtrC numberPtr(reinterpret_cast<const TUint16*>(number.utf16()));
+    
+    const TInt KUpperMaxLength = KMaxPhoneMatchLength - KLowerSevenDigits;
+    TMatch phoneDigits = createPaddedPhoneDigits(numberPtr, KLowerSevenDigits, KUpperMaxLength, error);
+    
+    if (*error == QContactManager::NoError) {
+        // select fields for contacts that match phone lookup
+        //  SELECT contact_id, extra_value FROM comm_addr
+        //      WHERE value = [value string] AND type = [type value];
+        //
+        QString type =  QString(" type = %1").arg(CntDbInfo::EPhoneNumber);
+        QString value =  QString(" value = %1").arg(phoneDigits.iLowerSevenDigits);
+        QString whereClause = " WHERE" + value + " AND" + type;
+        sqlQuery = "SELECT contact_id, extra_value FROM comm_addr" + whereClause;
+        
+        QList<QPair<QContactLocalId, QString> > contactMatches =  m_srvConnection.searchPhoneNumbers(sqlQuery, error);
+        
+        // Check if search query was successful
+        if (*error != QContactManager::NoError) {
+              return;
+            }
+        
+        QStringList list;
+        for (int i=0; i<contactMatches.count(); ++i) {
+            // Check the upper digits...
+            TInt32 number = phoneDigits.iUpperDigits;
+            QString extraValue = contactMatches.at(i).second;
+            TPtrC extValString(reinterpret_cast<const TUint16*>(extraValue.utf16()));
+            
+            TInt32 storedUpperDigits(0);
+            if (TLex(extValString).Val(storedUpperDigits) == KErrNone) {
+                
+                TInt32 stored = storedUpperDigits;
+                TBool nonZeroInStoredFound = EFalse;
+                TBool nonZeroInNumberFound = EFalse;
+                while ((number != 0) && (stored != 0)) {
+                    nonZeroInNumberFound |= (number % 10 != 0);
+                    nonZeroInStoredFound |= (stored % 10 != 0);
+                    if (nonZeroInStoredFound && nonZeroInNumberFound) {
+                        break;
+                    }
+                    number /= 10;
+                    stored /= 10;
+                }
+                
+                if ((phoneDigits.iUpperDigits == 0) || (storedUpperDigits == 0) ||
+                     (number == stored)) {
+                    list.append(QString("%1").arg(contactMatches.at(i).first));
+                }
+            }
+            else {
+                *error = QContactManager::UnspecifiedError;
+                return;
+            }
+        }
+        // Recreate query to fetch all match ids
+        // SELECT DISTINCT contact_id FROM contact WHERE contact_id in (
+        //      ..
+        // )  
+        QString ids = list.join(" ,");
+        sqlQuery = "SELECT DISTINCT contact_id FROM contact WHERE contact_id in (";
+        sqlQuery += ids;
+        sqlQuery += ')';
+        }
+    }
 
 #ifdef PBK_UNIT_TEST
 void CntFilterDetail::emulateBestMatching()
@@ -560,49 +654,6 @@ CntFilterDetail::TMatch CntFilterDetail::createPhoneMatchNumber(
     return phoneNumber;
 }
 
-QList<QContactLocalId> CntFilterDetail::getBestMatchPhoneNumbersL(
-                                      const QString number,
-                                      const QList<QContactLocalId>& idList,
-                                      QContactManager::Error* error)
-
-{
-    TPtrC numberPtr(reinterpret_cast<const TUint16*>(number.utf16()));
-    RBuf matchNumber;
-    matchNumber.CleanupClosePushL();
-    matchNumber.CreateL(numberPtr);
-  
-    QList<QContactLocalId> bestMatchingIds;
-    for (int i=0; i<idList.count(); i++) {
-        QContact contact = m_dbInfo.engine()->contact(idList.at(i), QContactFetchHint(), error);
-        QList<QContactPhoneNumber> details = contact.details<QContactPhoneNumber>();
-        CntTransformContactData* transformPhoneNumber = new CntTransformPhoneNumber();
-        
-        bool matchFound(false);
-        for (int j = 0;j < details.count(); j++) {
-            QList<CContactItemField *> fields = transformPhoneNumber->transformDetailL(details.at(j));
-            for (int k = 0;k < details.count() && !matchFound; k++) {
-                CContactTextField* storage = fields.at(k)->TextStorage();
-                RBuf phoneNumber;
-                phoneNumber.CleanupClosePushL();
-                phoneNumber.CreateL(storage->Text());
-                if (TMatch::validateBestMatchingRulesL(phoneNumber,matchNumber)) {
-                    matchFound = true;
-                }
-                // phoneNumber
-                CleanupStack::PopAndDestroy();
-            }
-            if (matchFound) {
-                bestMatchingIds.append(idList.at(i));
-                break;
-            }
-        }
-        delete transformPhoneNumber;
-    }
-    // matchNumber
-    CleanupStack::PopAndDestroy();
-    return bestMatchingIds;
-}
-
 //CntFilterDetail::TMatch constructor.
 CntFilterDetail::TMatch::TMatch()
     :
@@ -672,191 +723,3 @@ TInt32 CntFilterDetail::TMatch::padOutPhoneMatchNumber(TInt32& phoneNumber,
     phoneNumber = result;
     return result;
 }
-
-// Removes non-digit chars except plus form the beginning
-// Checks if number matches to one of defined types
-//
-TInt CntFilterDetail::TMatch::formatAndCheckNumberType(TDes& number)
-    {
-    _LIT( KOneZeroPattern, "0*" );
-    _LIT( KTwoZerosPattern, "00*" );
-    _LIT( KPlusPattern, "+*" );
-    const TChar KPlus = TChar('+');
-    const TChar KZero = TChar('0');
-    const TChar KAsterisk = TChar('*');
-    const TChar KHash = TChar('#');
-    
-    for( TInt pos = 0; pos < number.Length(); ++pos ) {
-        TChar chr = number[pos];
-        if ( !chr.IsDigit() && !( pos == 0 && chr == KPlus  )
-                && !( chr == KAsterisk ) && !( chr == KHash ) ) {
-            number.Delete( pos, 1 );
-            --pos;
-        }
-    }
-    
-    TInt format;
-    
-    if (!number.Match(KTwoZerosPattern) && number.Length() > 2 && number[2] != KZero) {
-        format = ETwoZeros;
-    }
-    else if (!number.Match(KOneZeroPattern)&& number.Length() > 1 && number[1] != KZero) {
-        format = EOneZero;
-    }
-    else if (!number.Match(KPlusPattern) && number.Length() > 1 && number[1] != KZero) {
-        format = EPlus;
-    }
-    else if (number.Length() > 0 && number[0] != KZero && ( ( TChar ) number[0] ).IsDigit()) {
-        format = EDigit;
-    }
-    else {
-        format = EUnknown;
-    }
-
-    return format;
-    }
-
-TBool CntFilterDetail::TMatch::validateBestMatchingRulesL(const TDesC& phoneNumber, const TDesC& matchNumber)
-    {
-    RBuf numberA;
-    numberA.CleanupClosePushL();
-    numberA.CreateL(matchNumber);
-    TNumberType numberAType = (TNumberType) TMatch::formatAndCheckNumberType(numberA);
-    
-    RBuf numberB;
-    numberB.CleanupClosePushL();
-    numberB.CreateL(phoneNumber);
-    TNumberType numberBType = (TNumberType) TMatch::formatAndCheckNumberType(numberB);
-
-    TBool match = (!numberB.Compare(numberA) ||
-                    TMatch::checkBestMatchingRules(numberA, numberAType, numberB, numberBType) ||
-                    TMatch::checkBestMatchingRules(numberB, numberBType, numberA, numberAType));
-    
-    // cleanup
-    CleanupStack::PopAndDestroy(2);
-    return match;
-    }
-
-TBool CntFilterDetail::TMatch::checkBestMatchingRules(
-        const TDesC& numberA, TNumberType numberAType,
-        const TDesC& numberB, TNumberType numberBType  )
-    {
-    TBool result = EFalse;
-    
-    // Rules for matching not identical numbers
-    // Rules details are presented in Best_Number_Matching_Algorithm_Description.doc
-    
-    // rule International-International 1
-    if (!result && numberAType == EPlus && numberBType == ETwoZeros) {
-        TPtrC numberAPtr = numberA.Right(numberA.Length() - 1);
-        TPtrC numberBPtr = numberB.Right(numberB.Length() - 2);
-        result = !(numberAPtr.Compare(numberBPtr));
-        if (result) {
-            return result;
-        }
-    }
-
-    // rule International-International 2
-    if (numberAType == EPlus && numberBType == EDigit) {
-        TPtrC numberAPtr = numberA.Right( numberA.Length() - 1 );
-        if (numberAPtr.Length() < numberB.Length()) {
-            TPtrC numberBPtr = numberB.Right( numberAPtr.Length() );
-            result = !(numberAPtr.Compare(numberBPtr));
-            if (result) {
-                return result;
-            }
-        }
-    }
-
-    // rule International-International 3
-    if (numberAType == ETwoZeros && numberBType == EDigit) {
-        TPtrC numberAPtr = numberA.Right(numberA.Length() - 2);
-        if (numberAPtr.Length() < numberB.Length()) {
-            TPtrC numberBPtr = numberB.Right(numberAPtr.Length());
-            result = !(numberAPtr.Compare(numberBPtr));
-            if (result) {
-                return result;
-            }
-        }
-    }
-
-    // rule International-Operator 1
-    if (numberAType == EOneZero && numberBType == EPlus
-            || numberAType == EDigit && numberBType == EPlus) {
-        TPtrC numberAPtr;
-        if (numberAType == EOneZero) {
-            numberAPtr.Set(numberA.Right(numberA.Length() - 1));
-        }
-        else {
-            numberAPtr.Set(numberA);
-        }
-        if (numberAPtr.Length() < numberB.Length() - 1) {
-            TPtrC numberBPtr = numberB.Right(numberAPtr.Length());
-            result = !(numberAPtr.Compare(numberBPtr));
-            if (result) {
-                return result;
-            }
-        }
-    }
-
-    // rule International-Operator 2
-    if (numberAType == EOneZero && numberBType == ETwoZeros
-            || numberAType == EDigit && numberBType == ETwoZeros) {
-        TPtrC numberAPtr;
-        if (numberAType == EOneZero) {
-            numberAPtr.Set(numberA.Right(numberA.Length() - 1));
-        }
-        else {
-            numberAPtr.Set(numberA);
-        }
-        if (numberAPtr.Length() < numberB.Length() - 2) {
-            TPtrC numberBPtr = numberB.Right(numberAPtr.Length());
-            result = !(numberAPtr.Compare(numberBPtr));
-            if (result) {
-                return result;
-            }
-        }
-    }
-
-    // rule International-Operator 3
-    if (numberAType == EOneZero && numberBType == EDigit
-            || numberAType == EDigit && numberBType == EDigit) {
-        TPtrC numberAPtr;
-        if (numberAType == EOneZero) {
-            numberAPtr.Set(numberA.Right( numberA.Length() - 1));
-        }
-        else {
-            numberAPtr.Set(numberA);
-        }
-        if (numberAPtr.Length() < numberB.Length()) {
-            TPtrC numberBPtr = numberB.Right(numberAPtr.Length());
-            result = !(numberAPtr.Compare(numberBPtr));
-            if (result) {
-                return result;
-            }
-        }
-    }
-
-    // rule Operator-Operator 1
-    if (numberAType == EOneZero && numberBType == EDigit) {
-        TPtrC numberAPtr = numberA.Right(numberA.Length() - 1);
-        result = !(numberAPtr.Compare(numberB));
-        if (result) {
-            return result;
-        }
-    }
-    
-    // rule North America Numbering Plan 1
-    if (numberAType == EDigit && numberBType == EPlus) {
-        TPtrC numberBPtr = numberB.Right(numberB.Length() - 1);
-        result = !(numberA.Compare(numberBPtr));
-        if (result) {
-            return result;
-        }
-    }
-
-    // More exceptional acceptance rules can be added here
-    // Keep rules updated in the document Best_Number_Matching_Algorithm_Description.doc
-
-    return result;
-    }

@@ -71,7 +71,7 @@ QT_BEGIN_NAMESPACE
 
 class QMediaImageViewerServicePrivate;
 
-class Q_AUTOTEST_EXPORT QMediaImageViewerService : public QMediaService
+class QM_AUTOTEST_EXPORT QMediaImageViewerService : public QMediaService
 {
     Q_OBJECT
 public:

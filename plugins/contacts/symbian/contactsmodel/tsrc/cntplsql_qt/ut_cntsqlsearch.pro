@@ -22,12 +22,9 @@ CONFIG += hb
 
 DEPENDPATH += .
 INCLUDEPATH += ./
-INCLUDEPATH += ./inc
 INCLUDEPATH += ../../inc
-INCLUDEPATH += ../../../cntplsql/inc/
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 INCLUDEPATH += $$SYMBIAN_PATHS
-INCLUDEPATH += /orbit/include
 
 SOURCES += 		$$SYMBIAN_HEADERS \
 				ut_cntsqlsearch.cpp\			

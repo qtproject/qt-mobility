@@ -60,15 +60,21 @@ QGeoTiledMapPolylineObjectInfo::QGeoTiledMapPolylineObjectInfo(QGeoMapData *mapD
 
 QGeoTiledMapPolylineObjectInfo::~QGeoTiledMapPolylineObjectInfo() {}
 
-void QGeoTiledMapPolylineObjectInfo::objectUpdate()
+void QGeoTiledMapPolylineObjectInfo::objectUpdated()
 {
     QList<QGeoCoordinate> path = polyline->path();
 
     points = createPolygon(path, tiledMapData, false);
     //makepoly(points, path, mapData, false);
 
-    if (points.size() < 2)
+    if (points.size() < 2) {
+        if (pathItem) {
+            delete pathItem;
+            pathItem = 0;
+            graphicsItem = 0;
+        }
         return;
+    }
 
     QPainterPath painterPath;
     painterPath.addPolygon(points);
@@ -78,14 +84,14 @@ void QGeoTiledMapPolylineObjectInfo::objectUpdate()
 
     pathItem->setPath(painterPath);
 
-    mapUpdate();
+    mapUpdated();
 
     graphicsItem = pathItem;
 
     updateItem();
 }
 
-void QGeoTiledMapPolylineObjectInfo::mapUpdate()
+void QGeoTiledMapPolylineObjectInfo::mapUpdated()
 {
     if (pathItem) {
         pathItem->setPen(polyline->pen());

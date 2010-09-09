@@ -54,15 +54,18 @@ set RELEASEMODE=release
 set WIN32_RELEASEMODE=debug_and_release build_all
 set QT_MOBILITY_LIB=
 set BUILD_UNITTESTS=no
+set BUILD_PUBLIC_UNITTESTS=no
 set BUILD_EXAMPLES=no
 set BUILD_DEMOS=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
-set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery telephony organizer feedback
+set MOBILITY_MODULES=bearer location contacts systeminfo publishsubscribe versit messaging sensors serviceframework multimedia gallery telephony organizer feedback
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
 set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
+
+set ORGANIZER_REQUESTED="no"
 
 if exist "%QMAKE_CACHE%" del /Q %QMAKE_CACHE%
 if exist "%PROJECT_LOG%" del /Q %PROJECT_LOG%
@@ -85,6 +88,7 @@ if "%1" == "-plugindir"         goto pluginTag
 if "%1" == "-examplesdir"       goto examplesDirTag
 if "%1" == "-demosdir"          goto demosDirTag
 if "%1" == "-tests"             goto testTag
+if "%1" == "-public-tests-only" goto publicTestTag
 if "%1" == "-examples"          goto exampleTag
 if "%1" == "-demos"             goto demosTag
 if "%1" == "-qt"                goto qtTag
@@ -230,6 +234,11 @@ set BUILD_UNITTESTS=yes
 shift
 goto cmdline_parsing
 
+:publicTestTag
+set BUILD_PUBLIC_UNITTESTS=yes
+shift
+goto cmdline_parsing
+
 :exampleTag
 set BUILD_EXAMPLES=yes
 shift
@@ -306,6 +315,7 @@ if %FIRST% == bearer (
     echo     Versit selected ^(implies Contacts^)
 ) else if %FIRST% == organizer (
     echo     Organizer selected
+    set ORGANIZER_REQUESTED="yes"
 ) else if %FIRST% == feedback (
     echo     Feedback selected
 ) else if %FIRST% == sensors (
@@ -362,6 +372,9 @@ echo QT_MOBILITY_PREFIX = %QT_MOBILITY_PREFIX:\=/% >> %PROJECT_CONFIG%
 
 echo build_unit_tests = %BUILD_UNITTESTS% >> %PROJECT_CONFIG%
 set BUILD_UNITTESTS=
+
+echo build_public_unit_tests = %BUILD_PUBLIC_UNITTESTS% >> %PROJECT_CONFIG%
+set BUILD_PUBLIC_UNITTESTS=
 
 echo build_examples = %BUILD_EXAMPLES% >> %PROJECT_CONFIG%
 set BUILD_EXAMPLES=
@@ -523,6 +536,7 @@ goto windowsTests
 call :compileTest LBT lbt
 call :compileTest SNAP snap
 call :compileTest OCC occ
+call :compileTest SymbianENote symbianenote
 call :compileTest SymbianContactSIM symbiancntsim
 call :compileTest SymbianContactModel symbiancntmodel
 call :compileTest SymbianContactModelv2 symbiancntmodelv2
@@ -537,6 +551,7 @@ call :compileTest Surfaces_s60 surfaces_s60
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
 call :compileTest callinformation_symbian callinformation_symbian
 call :compileTest IMMERSION immersion
+call :compileTest AdvancedTouchFeedback advancedtouchfeedback 
 goto noTests
 
 :windowsTests
@@ -602,11 +617,9 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\requests
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\filters
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\details
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\items
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\requests
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\filters
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\details
+REM    if "%ORGANIZER_REQUESTED%" == "yes" (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersitOrganizer %SOURCE_PATH%\src\versitorganizer
+REM        )
 ) else if %FIRST% == sensors (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSensors %SOURCE_PATH%\src\sensors
 ) else if %FIRST% == gallery (
@@ -665,6 +678,7 @@ set FIRST=
 set MODULES_TEMP=
 set QT_MOBILITY_EXAMPLES=
 set QT_MOBILITY_DEMOS=
+set ORGANIZER_REQUESTED=
 exit /b 1
 
 :exitTag
@@ -684,4 +698,5 @@ set FIRST=
 set MODULES_TEMP=
 set QT_MOBILITY_EXAMPLES=
 set QT_MOBILITY_DEMOS=
+set ORGANIZER_REQUESTED=
 exit /b 0

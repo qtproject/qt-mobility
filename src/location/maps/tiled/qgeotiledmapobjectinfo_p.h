@@ -80,6 +80,9 @@ public:
     void addToParent();
     void removeFromParent();
 
+    void visibleChanged(bool visible);
+    void selectedChanged(bool selected);
+
     QGeoBoundingBox boundingBox() const;
     bool contains(const QGeoCoordinate &coord) const;
 

@@ -64,13 +64,6 @@
 QTM_USE_NAMESPACE
 
 /*
- * TODO : The naming conventions needed to be change. 
- * all methods should return the bool values, except some methods.
- * all conversion and setting will be done by passing by values and references
- * wherever required.
- */
-
-/*
  *
  * Landmark Utility To convert qt landmark data class to symbian landmark data classes
  * 
@@ -100,7 +93,7 @@ public:
     /*
      * returns new qt landmark object converted from symbian landmark object.
      */
-    static QLandmark* convertToQtLandmark(QString mangerUri, CPosLandmark* symbianLandmark);
+    static QLandmark* convertToQtLandmark(QString managerUri, CPosLandmark* symbianLandmark);
 
     /*
      * returns new symbian landmark converted from qt landmark object. 
@@ -116,12 +109,12 @@ public:
     /*
      * returns new qt landmark id object converted from symbian landmark id object.
      */
-    static QLandmarkId convertToQtLandmarkId(QString mangerUri, TPosLmItemId symbianLandmarkId);
+    static QLandmarkId convertToQtLandmarkId(QString managerUri, TPosLmItemId symbianLandmarkId);
 
     /*
      * returns list of qt landmarks ids converted from symbian landmark id list.
      */
-    static QList<QLandmarkId> convertToQtLandmarkIds(QString mangerUri,
+    static QList<QLandmarkId> convertToQtLandmarkIds(QString managerUri,
         RArray<TPosLmItemId>& symbianLandmarkIds);
 
     /*
@@ -137,7 +130,7 @@ public:
     /*
      * returns new object of qt landmark category converted from symbian landmark category. 
      */
-    static QLandmarkCategory* convertToQtLandmarkCategory(QString mangerUri,
+    static QLandmarkCategory* convertToQtLandmarkCategory(QString managerUri,
         CPosLandmarkCategory* symbianLandmarkCategory);
 
     /*
@@ -156,30 +149,20 @@ public:
     /*
      * returns new object of qt category id coverted from symbian category object.
      */
-    static QLandmarkCategoryId convertToQtLandmarkCategoryId(QString mangerUri,
+    static QLandmarkCategoryId convertToQtLandmarkCategoryId(QString managerUri,
         TPosLmItemId symbianLandmarkCategoryId);
 
     /*
      * returns list of category ids converted from symbian category ids.
      */
-    static QList<QLandmarkCategoryId> convertToQtLandmarkCategoryIds(QString mangerUri, RArray<
+    static QList<QLandmarkCategoryId> convertToQtLandmarkCategoryIds(QString managerUri, RArray<
         TPosLmItemId>& symbianCategoryIds);
 
     /*
      * returns symbian category id converted from qt landmark category id.
      */
     static TPosLmItemId
-        convertToSymbianLandmarkCategoryId(QLandmarkCategoryId qtLandmarkCategoryId);
-
-    /*
-     * returns symbian coordinate object converted from qt coordinate object.
-     */
-    static TCoordinate getCoordinate(QGeoCoordinate qtCoordinate);
-
-    /*
-     * returns landmarks name in symbian desciptor format from qt landmark object.
-     */
-    static TDesC getSymbianLandmarkName(QLandmark* qtLandmark);
+    convertToSymbianLandmarkCategoryId(QLandmarkCategoryId qtLandmarkCategoryId);
 
     /*
      * returns symbian landmark id from qt landmark object.
@@ -189,7 +172,7 @@ public:
     /*
      * returns list of qt category ids associated with landmark from symbian landmark object.
      */
-    static QList<QLandmarkCategoryId> getCategoryIds(QString mangerUri,
+    static QList<QLandmarkCategoryId> getCategoryIds(QString managerUri,
         CPosLandmark* symbianLandmark);
 
     /*
@@ -213,12 +196,6 @@ public:
      */
     static QList<QLandmarkCategory> getCategoriesL(CPosLmCategoryManager* catMgr, QList<
         QLandmarkCategoryId> qtCategoryIds);
-
-    /*
-     * returns the list of qt landmarks from the list of qt landmark ids.
-     */
-    static QList<QLandmark> getLandmarksL(CPosLandmarkDatabase* landmarkDb,
-        QList<QLandmarkId> qtLandmarkIds);
 
     /* 
      * This method checks the provided category id is global category or not
@@ -260,24 +237,20 @@ public:
      */
     static QStringList landmarkAttributeKeys();
 
-    /*
-     * Returns Landmark package formats
-     *  
-     * Thease formats are the symbian platform specific landmark package formats,
-     * where landmarks can be packaged in different xml formats as defined in 
-     * landmarks exchange format specification.
-     * Thease formats are used to import and export of landmarks 
-     * 
-     * This list may change from version to version without notice, 
-     * or even be removed.
-     */
-    static QStringList landmarkPackageFormats();
-    
-    
     /**
      * converts the attribute key string to symbian position field value. 
      */
-    static TPositionFieldId LandmarkUtility::positionFieldId(QString keyValue);
+    static TPositionFieldId positionFieldId(QString keyValue);
+
+    /**
+     * converts qt format string to symbian format string
+     */
+    static HBufC8* landmarkPackageFormatsStrL(const QString& format);
+
+    /**
+     * Prepares the path for the file
+     */
+    static QString preparePath(QString filename);
 
 };
 

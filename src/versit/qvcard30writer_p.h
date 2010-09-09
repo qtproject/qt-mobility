@@ -58,7 +58,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QVCard30Writer : public QVersitDocumentWriter
+class QM_AUTOTEST_EXPORT QVCard30Writer : public QVersitDocumentWriter
 {
 public:
     QVCard30Writer();
@@ -66,7 +66,7 @@ public:
 
     void encodeVersitProperty(const QVersitProperty& property);
     void encodeParameters(const QMultiHash<QString,QString>& parameters);
-    static void backSlashEscape(QString& text);
+    static void backSlashEscape(QString* text);
     QHash<QString,QString> mPropertyNameMappings;
 };
 

@@ -67,7 +67,7 @@ QTM_BEGIN_NAMESPACE
 class QVersitDocument;
 class QVersitProperty;
 
-class Q_AUTOTEST_EXPORT VersitUtils
+class QM_AUTOTEST_EXPORT VersitUtils
 {
 public:
     static QByteArray encode(const QByteArray& ba, QTextCodec* codec);

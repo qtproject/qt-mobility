@@ -44,6 +44,7 @@
 
 #include "qdeclarativecoordinate_p.h"
 #include "qgraphicsgeomap.h"
+#include "qgeomapobject.h"
 
 class QGraphicsItem;
 

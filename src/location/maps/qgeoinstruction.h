@@ -59,7 +59,6 @@ class Q_LOCATION_EXPORT QGeoInstruction
 {
 
 public:
-
     enum InstructionDirection {
         NoDirection,
         DirectionForward,

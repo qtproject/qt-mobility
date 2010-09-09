@@ -357,7 +357,8 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
 
     requestString += "&instructionformat=text";
 
-    requestString += "&language=ENG";  // TODO locale / language handling
+    requestString += "&language=";
+    requestString += locale().name().replace("_","-");
 
     return requestString;
 }

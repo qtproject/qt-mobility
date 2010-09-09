@@ -92,11 +92,12 @@ void QTelephonyCallListPrivate::emitActiveCallAdded(QTelephonyCallInfoPrivate& c
     QTelephonyCallInfo callinfo;
     callinfo.d = QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(&call);
     emit p->activeCallAdded(callinfo);
+    if(callInfoList.count() == 1)
+        emit p->hasActiveCalls(true);
 }
 
 void QTelephonyCallListPrivate::newChannelsSlot(const ChannelsArray& channelsarray)
 {
-    qDebug() << "TelephonyCallListPrivate::newChannelsSlot";
     //create a QTelephonyCallInfoPrivate
     if(channelsarray.channelslist.count() > 0){
         Channels chs = channelsarray.channelslist.at(0);
@@ -105,6 +106,7 @@ void QTelephonyCallListPrivate::newChannelsSlot(const ChannelsArray& channelsarr
             QTelephonyCallInfoPrivate* cip = new QTelephonyCallInfoPrivate();
             cip->remotePartyIdentifier = var.toString();
             cip->type = QTelephony::Voice;
+            cip->direction = QTelephony::Received;
             callInfoList.append(QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(cip));
             emitActiveCallAdded(*cip);
         }
@@ -142,6 +144,7 @@ void QTelephonyCallListPrivate::statusChangedSlot(const QString& status)
             emit emitActiveCallRemoved(*callInfoList[i].data());
         }
         callInfoList.clear();
+        emit p->hasActiveCalls(false);
     }
 }
 
@@ -160,6 +163,11 @@ QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephon
         }
     }
     return ret;
+}
+
+int QTelephonyCallListPrivate::activeCallCount() const
+{
+    return callInfoList.count();
 }
 
 #include "moc_qtelephonycalllist_linux_p.cpp"

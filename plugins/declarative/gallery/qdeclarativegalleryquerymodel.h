@@ -48,6 +48,7 @@
 #include <QtCore/qabstractitemmodel.h>
 #include <QtCore/qpointer.h>
 #include <QtDeclarative/qdeclarative.h>
+#include <QtScript/QtScript>
 
 QTM_BEGIN_NAMESPACE
 
@@ -63,8 +64,7 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
     Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery NOTIFY galleryChanged)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(Result result READ result NOTIFY resultChanged)
-    Q_PROPERTY(int currentProgress READ currentProgress NOTIFY progressChanged)
-    Q_PROPERTY(int maximumProgress READ maximumProgress NOTIFY progressChanged)
+    Q_PROPERTY(int progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(QStringList sortProperties READ sortPropertyNames WRITE setSortPropertyNames NOTIFY sortPropertyNamesChanged)
     Q_PROPERTY(bool live READ isLive WRITE setLive NOTIFY liveChanged)
@@ -73,6 +73,7 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
     Q_PROPERTY(Scope scope READ scope WRITE setScope NOTIFY scopeChanged)
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged)
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(QDeclarativeGalleryFilterBase* filter READ filter WRITE setFilter NOTIFY filterChanged)
 public:
     enum State
@@ -122,8 +123,11 @@ public:
     State state() const { return State(m_request.state()); }
     Result result() const { return Result(m_request.result()); }
 
-    int currentProgress() const { return m_request.currentProgress(); }
-    int maximumProgress() const { return m_request.maximumProgress(); }
+    qreal progress() const
+    {
+        const int max = m_request.maximumProgress();
+        return max > 0 ? qreal(m_request.currentProgress()) / max : qreal(0.0);
+    }
 
     QStringList propertyNames() { return m_request.propertyNames(); }
     void setPropertyNames(const QStringList &names) {
@@ -164,6 +168,14 @@ public:
 
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
 
+    int count() const { return m_rowCount; }
+
+    Q_INVOKABLE QScriptValue get(const QScriptValue &index) const;
+    Q_INVOKABLE QVariant property(int index, const QString &property) const;
+
+    Q_INVOKABLE void set(int index, const QScriptValue &value);
+    Q_INVOKABLE void setProperty(int index, const QString &property, const QVariant &value);
+
     void classBegin();
     void componentComplete();
 
@@ -190,6 +202,7 @@ Q_SIGNALS:
     void filterChanged();
     void offsetChanged();
     void limitChanged();
+    void countChanged();
 
 private Q_SLOTS:
     void _q_setResultSet(QGalleryResultSet *resultSet);
@@ -202,6 +215,7 @@ private:
     QGalleryQueryRequest m_request;
     QPointer<QDeclarativeGalleryFilterBase> m_filter;
     QGalleryResultSet *m_resultSet;
+    QVector<QPair<int, QString> > m_propertyNames;
     int m_rowCount;
     bool m_complete;
 };

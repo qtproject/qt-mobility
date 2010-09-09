@@ -281,7 +281,7 @@ void QFeedbackHapticsEffect::setDuration(int msecs)
     \brief the intensity of the effect.
 
     This property defines the intensity of the feedback effect.
-    The value can be between 0. and 1.
+    The value can be between 0 and 1.
 */
 qreal QFeedbackHapticsEffect::intensity() const
 {
@@ -393,7 +393,8 @@ void QFeedbackHapticsEffect::setActuator(const QFeedbackActuator &actuator)
     \property QFeedbackHapticsEffect::period
     \brief set the period for the effect.
 
-    It has a default value of -1, which mean that it is not a periodic effect.
+    It has a default value of -1, which means that it is not a periodic effect.
+    It is not supported to change the period while an effect is running.
     Note: not all actuators support periodic effects
 */
 int QFeedbackHapticsEffect::period() const

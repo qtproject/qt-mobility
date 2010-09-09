@@ -44,7 +44,7 @@
 #include "tst_qversitreader.h"
 #include "qversitreader.h"
 #include "qversitproperty.h"
-#ifdef QT_BUILD_INTERNAL
+#ifdef QTM_BUILD_UNITTESTS
 #include "qversitreader_p.h"
 #include "versitutils_p.h"
 #endif

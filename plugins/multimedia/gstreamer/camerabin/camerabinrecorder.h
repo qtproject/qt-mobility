@@ -50,7 +50,6 @@ QT_USE_NAMESPACE
 class CameraBinRecorder : public QMediaRecorderControl
 {
     Q_OBJECT
-    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
 
 public:
     CameraBinRecorder(CameraBinSession *session);

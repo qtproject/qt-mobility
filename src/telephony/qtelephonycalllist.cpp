@@ -123,13 +123,25 @@ QTelephonyCallList::~QTelephonyCallList()
     \fn QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephony::CallType& calltype) const
     \a calltype All calls in the list have this type.
 
-    Gives back a list of calls from type of calltype.
+    Returns a list of calls from type of calltype.
 */
 QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephony::CallType& calltype) const
 {
     if(d)
         return d->activeCalls(calltype);
     return QList<QTelephonyCallInfo>();
+}
+
+/*!
+    \fn int QTelephonyCallList::activeCallCount() const
+
+    Returns the number of current active calls.
+*/
+int QTelephonyCallList::activeCallCount() const
+{
+    if(d)
+        return d->activeCallCount();
+    return 0;
 }
 
 #include "moc_qtelephonycalllist.cpp"
