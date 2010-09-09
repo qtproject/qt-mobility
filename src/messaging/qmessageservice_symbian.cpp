@@ -89,7 +89,7 @@ bool QMessageServicePrivate::sendEmail(QMessage &message)
 #ifdef FREESTYLEMAILUSED
             bool retVal = CFSEngine::instance()->sendEmail(message);
             if (retVal == true) {
-                d_ptr->setFinished(retVal);
+                setFinished(retVal);
             }
             return retVal;
 #else
