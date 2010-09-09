@@ -149,6 +149,10 @@ private slots:  // Test cases
     void signalEmission();
     void invalidDetail();
     void invalidDetail_data(){ addManagers(); };
+	void addReminderToSingleInstance();
+	void addReminderToSingleInstance_data(){ addManagers(); };
+	void removeReminderFromSingleInstance();
+	void removeReminderFromSingleInstance_data(){ addManagers(); };
 
 private:
     // TODO: enable the following test cases by moving them to "private slots"
@@ -654,6 +658,116 @@ void tst_SymbianOm::invalidDetail()
     QVERIFY(todo.saveDetail(&invalidDetail));
     QVERIFY(!m_om->saveItem(&todo));
     QVERIFY(m_om->error() == QOrganizerItemManager::InvalidDetailError);
+}
+
+/*!
+ * Creates an exceptional entry by adding reminder detail to single instance of a repeating entry
+ */
+void tst_SymbianOm::addReminderToSingleInstance()
+{
+	// Repeating event without reminder
+    QOrganizerItem repeatingEvent;
+    repeatingEvent.setType(QOrganizerItemType::TypeEvent);
+    
+	// Add the start and end time
+	QOrganizerEventTimeRange timeRange;
+    timeRange.setStartDateTime(QDateTime::currentDateTime());
+    timeRange.setEndDateTime(QDateTime::currentDateTime().addSecs(3000));
+    
+	// Create a daily recurrence rule
+	QOrganizerItemRecurrence recurrence;
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    rrule.setCount(3);
+    QList<QOrganizerItemRecurrenceRule> list;
+    list.append(rrule);
+    recurrence.setRecurrenceRules(list);
+    
+	// Save the item
+	repeatingEvent.saveDetail(&timeRange);
+    repeatingEvent.saveDetail(&recurrence);
+    QVERIFY(m_om->saveItem(&repeatingEvent));
+    
+	// Fetch the instances
+	QList<QOrganizerItem> itemInstances = m_om->itemInstances(repeatingEvent, QDateTime::currentDateTime(), QDateTime(), 3);
+    QVERIFY(itemInstances.count() == 3);
+    
+	// Verify that reminder detail is empty
+	QOrganizerItem instance1 = itemInstances.at(0);
+    QOrganizerItemReminder rptReminder = instance1.detail<QOrganizerItemReminder>();
+    QVERIFY(rptReminder.isEmpty());
+    
+	// Add reminder detail to create an exceptional entry
+	rptReminder.setDateTime(QDateTime::currentDateTime().addSecs(-300));
+    instance1.saveDetail(&rptReminder);
+    QVERIFY(m_om->saveItem(&instance1));
+	
+	// Verify that the exceptional entry has been created
+    instance1 = m_om->item(instance1.localId());
+    rptReminder = instance1.detail<QOrganizerItemReminder>();
+    QVERIFY(!rptReminder.isEmpty());
+	
+	// Verify that the other instances have not been modified
+	itemInstances = m_om->itemInstances(repeatingEvent, QDateTime::currentDateTime(), QDateTime(), 3);
+	instance1 = itemInstances.at(1);
+    rptReminder = instance1.detail<QOrganizerItemReminder>();
+    QVERIFY(rptReminder.isEmpty());
+}
+
+/*!
+ * Creates an exceptional entry by removing reminder detail from a single instance of a repeating entry
+ */
+void tst_SymbianOm::removeReminderFromSingleInstance()
+{
+	// Repeating event with reminder
+    QOrganizerItem repeatingEvent;
+    repeatingEvent.setType(QOrganizerItemType::TypeEvent);
+	
+	// Add the start and end time
+    QOrganizerEventTimeRange timeRange;
+    timeRange.setStartDateTime(QDateTime::currentDateTime());
+    timeRange.setEndDateTime(QDateTime::currentDateTime().addSecs(3000));
+    
+	// Create a daily recurrence rule
+	QOrganizerItemRecurrence recurrence;
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    rrule.setCount(3);
+    QList<QOrganizerItemRecurrenceRule> list;
+    list.append(rrule);
+    recurrence.setRecurrenceRules(list);
+    
+	// Add reminder detail
+	QOrganizerItemReminder repeatReminder;
+    repeatReminder.setDateTime(QDateTime::currentDateTime().addSecs(-300));
+    
+	// Save the item
+	repeatingEvent.saveDetail(&timeRange);
+    repeatingEvent.saveDetail(&recurrence);
+    repeatingEvent.saveDetail(&repeatReminder);
+    QVERIFY(m_om->saveItem(&repeatingEvent));
+    
+	// Fetch the instances
+	QList<QOrganizerItem> itemInstances = m_om->itemInstances(repeatingEvent, QDateTime::currentDateTime(), QDateTime(), 3);
+    QVERIFY(itemInstances.count() == 3);
+    
+	// Modify first instance by removing reminder detail and save
+	QOrganizerItem instance1 = itemInstances.at(0);
+    QOrganizerItemReminder rptReminder = instance1.detail<QOrganizerItemReminder>();
+    QCOMPARE(rptReminder.dateTime(), repeatReminder.dateTime());
+    instance1.removeDetail(&rptReminder);
+    QVERIFY(m_om->saveItem(&instance1));
+    
+	// Verify that an exception has been created
+	instance1 = m_om->item(instance1.localId());
+    rptReminder = instance1.detail<QOrganizerItemReminder>();
+    QVERIFY(rptReminder.isEmpty());
+	
+	// Check if the other instances are intact
+	itemInstances = m_om->itemInstances(repeatingEvent, QDateTime::currentDateTime(), QDateTime(), 3);
+	instance1 = itemInstances.at(1);
+    rptReminder = instance1.detail<QOrganizerItemReminder>();
+    QVERIFY(!rptReminder.isEmpty());
 }
 
 /*!

@@ -200,14 +200,14 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
         if (m_active) {
             m_active = false;
             m_singleUpdate = false;
-            emit activeChanged(m_active);
+            emit activeChanged();
         }
     }
     if (m_positioningMethod != positioningMethod()) {
         m_positioningMethod = positioningMethod();
-        emit positioningMethodChanged(m_positioningMethod);
+        emit positioningMethodChanged();
     }
-    emit this->nmeaSourceChanged(m_nmeaSource);
+    emit this->nmeaSourceChanged();
 }
 
 void QDeclarativePositionSource::setUpdateInterval(int updateInterval)
@@ -219,7 +219,7 @@ void QDeclarativePositionSource::setUpdateInterval(int updateInterval)
     if (m_positionSource) {
         m_positionSource->setUpdateInterval(updateInterval);
     }
-    emit updateIntervalChanged(m_updateInterval);
+    emit updateIntervalChanged();
 }
 
 /*!
@@ -317,7 +317,7 @@ void QDeclarativePositionSource::start()
         m_positionSource->startUpdates();
         if (!m_active) {
             m_active = true;
-            emit activeChanged(m_active);
+            emit activeChanged();
         }
     }
 }
@@ -339,7 +339,7 @@ void QDeclarativePositionSource::update()
         if (!m_active) {
             m_active = true;
             m_singleUpdate = true;
-            emit activeChanged(m_active);
+            emit activeChanged();
         }
     }
 }
@@ -360,7 +360,7 @@ void QDeclarativePositionSource::stop()
         m_positionSource->stopUpdates();
         if (m_active) {
             m_active = false;
-            emit activeChanged(m_active);
+            emit activeChanged();
         }
     }
 }
@@ -421,7 +421,7 @@ bool QDeclarativePositionSource::isActive() const
 
 */
 
-QObject* QDeclarativePositionSource::position()
+QDeclarativePosition* QDeclarativePositionSource::position()
 {
     return &m_position;
 }
@@ -430,23 +430,16 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo& 
 {
     if (update.isValid()) {
         m_position.setTimestamp(update.timestamp());
-        m_position.setLatitude(update.coordinate().latitude());
-        m_position.setLongitude(update.coordinate().longitude());
-
-        if (update.coordinate().type() == QGeoCoordinate::Coordinate3D) {
-            m_position.setAltitude(update.coordinate().altitude());
-        }
-
+        m_position.setCoordinate(update.coordinate());
         if (update.hasAttribute(QGeoPositionInfo::GroundSpeed)) {
             m_position.setSpeed(update.attribute(QGeoPositionInfo::GroundSpeed));
         }
-
         emit positionChanged();
     }
     if (m_singleUpdate && m_active) {
         m_active = false;
         m_singleUpdate = false;
-        emit activeChanged(m_active);
+        emit activeChanged();
     }
 }
 

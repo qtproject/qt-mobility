@@ -89,6 +89,7 @@ QT_MOBILITY_PLUGINS=
 QT_MOBILITY_EXAMPLES=
 QT_MOBILITY_DEMOS=
 BUILD_UNITTESTS=
+BUILD_PUBLIC_UNITTESTS=
 BUILD_EXAMPLES=
 BUILD_DEMOS=
 BUILD_DOCS=yes
@@ -106,6 +107,7 @@ MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit me
 MOBILITY_MODULES_UNPARSED=
 QMKSPEC=
 OS="other"
+ORGANIZER_REQUESTED=
 
 usage() 
 {
@@ -200,6 +202,9 @@ while [ "$#" -gt 0 ]; do
         -tests)
             BUILD_UNITTESTS="yes"
             ;;
+        -public-tests-only)
+            BUILD_PUBLIC_UNITTESTS="yes"
+            ;;
         -demos)
             BUILD_DEMOS="yes"
             ;;
@@ -244,8 +249,12 @@ while [ "$#" -gt 0 ]; do
             MOBILITY_MODULES=
             for m in $MOBILITY_MODULES_UNPARSED; do
                 case "$m" in
-                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|sensors|gallery|telephony|versit|organizer|feedback)
+                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|sensors|gallery|telephony|versit|feedback)
                         MOBILITY_MODULES="$MOBILITY_MODULES $m";
+                        ;;
+                    organizer)
+                        MOBILITY_MODULES="$MOBILITY_MODULES $m";
+                        ORGANIZER_REQUESTED=yes
                         ;;
                     *)
                         echo "Unknown module: $m"
@@ -430,6 +439,12 @@ else
     echo "build_unit_tests = yes" >> "$CONFIG_IN"
 fi
 
+if [ -z "$BUILD_PUBLIC_UNITTESTS" ]; then
+    echo "build_public_unit_tests = no" >> "$CONFIG_IN"
+else
+    echo "build_public_unit_tests = yes" >> "$CONFIG_IN"
+fi
+
 if [ -z "$BUILD_EXAMPLES" ]; then
     echo "build_examples = no" >> "$CONFIG_IN"
 else
@@ -605,7 +620,9 @@ for module in $MOBILITY_MODULES; do
             $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/details
             $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/requests
             $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/filters
-            $relpath/bin/syncheaders $shadowpath/include/QtVersitOrganizer $relpath/src/versitorganizer
+            if [ -n "$ORGANIZER_REQUESTED" ]; then
+                $relpath/bin/syncheaders $shadowpath/include/QtVersitOrganizer $relpath/src/versitorganizer
+            fi
             ;;
         sensors)
             $relpath/bin/syncheaders $shadowpath/include/QtSensors $relpath/src/sensors
@@ -618,6 +635,10 @@ for module in $MOBILITY_MODULES; do
             ;;
         organizer)
             $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer
+            $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer/items
+            $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer/requests
+            $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer/filters
+            $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer/details
             ;;
         *)
             echo "Cannot generate headers for $module"

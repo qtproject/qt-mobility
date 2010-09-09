@@ -21,12 +21,21 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
+     <property name="tabPosition">
+      <enum>QTabWidget::North</enum>
+     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="usesScrollButtons">
+      <bool>true</bool>
+     </property>
+     <property name="documentMode">
+      <bool>false</bool>
+     </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>low-level API</string>
+       <string>low-level</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
@@ -40,7 +49,7 @@
             <x>0</x>
             <y>0</y>
             <width>379</width>
-            <height>700</height>
+            <height>695</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -51,6 +60,9 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="frame">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -431,6 +443,13 @@
                  </widget>
                 </item>
                 <item>
+                 <widget class="QPushButton" name="exitButton">
+                  <property name="text">
+                   <string>Exit</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QLabel" name="effectState">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -459,7 +478,7 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>high-level API</string>
+       <string>high-level</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
@@ -472,8 +491,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>257</width>
-            <height>294</height>
+            <width>379</width>
+            <height>695</height>
            </rect>
           </property>
           <widget class="QWidget" name="layoutWidget">
@@ -482,7 +501,7 @@
              <x>10</x>
              <y>10</y>
              <width>221</width>
-             <height>91</height>
+             <height>92</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -511,7 +530,7 @@
      </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
-       <string>File API</string>
+       <string>File</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
@@ -524,8 +543,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>257</width>
-            <height>294</height>
+            <width>379</width>
+            <height>695</height>
            </rect>
           </property>
           <widget class="QWidget" name="layoutWidget">

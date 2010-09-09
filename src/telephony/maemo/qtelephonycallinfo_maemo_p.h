@@ -54,6 +54,7 @@
 // We mean it.
 //
 
+#include <qmobilityglobal.h>
 #include <QtCore/qshareddata.h>
 #include <QList>
 #include <QString>
@@ -66,7 +67,7 @@
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QTelephonyCallInfoPrivate : public QSharedData
+class QM_AUTOTEST_EXPORT QTelephonyCallInfoPrivate : public QSharedData
 {
 public:
     QTelephonyCallInfoPrivate();

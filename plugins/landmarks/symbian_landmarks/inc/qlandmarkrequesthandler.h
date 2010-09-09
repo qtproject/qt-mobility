@@ -107,6 +107,7 @@ private:
     CPosLandmarkEncoder *iLandmarkEncoder;
     RFs iFileSystem;
     CBufBase *iExportBuffer;
+    HBufC *iExportPath;
     QList<QLandmarkCategoryId> iCategoryIds;
     QList<QLandmarkId> iLandmarkIds;
     QList<QLandmark> iLandmarks;
@@ -156,7 +157,7 @@ public:
     TBool CancelRequest();
     TBool WaitForFinished(TInt);
     void SetOperation(CPosLmOperation *aOp = NULL);
-    void SetExportData(CPosLandmarkEncoder *aEncoder, RFs &aFileSystem, CBufBase *aExportBuffer,
+    void SetExportData(CPosLandmarkEncoder *aEncoder, RFs &aFileSystem, HBufC *aExportPath, CBufBase *aExportBuffer,
         QList<QLandmarkId> lmIds = QList<QLandmarkId> ());
     void SetImportData(QList<QLandmarkId>& aParsedLmIds);
     CPosLmOperation * GetOperation();

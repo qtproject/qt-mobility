@@ -134,6 +134,8 @@ void QDeclarativeLandmarkAbstractModel::setLimit(int limit)
     if (limit == m_limit)
         return;
     m_limit = limit;
+    if (m_autoUpdate)
+        scheduleUpdate();
     emit limitChanged();
 }
 
@@ -147,6 +149,8 @@ void QDeclarativeLandmarkAbstractModel::setOffset(int offset)
     if (offset == m_offset)
         return;
     m_offset = offset;
+    if (m_autoUpdate)
+        scheduleUpdate();
     emit offsetChanged();
 }
 
@@ -160,15 +164,6 @@ QDeclarativeLandmarkModel::QDeclarativeLandmarkModel(QObject *parent) :
     // Establish role names so that they can be queried from this model
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
-    roleNames.insert(NameRole, "name");
-    roleNames.insert(PhoneNumberRole, "phoneNumber");
-    roleNames.insert(DescriptionRole, "description");
-    roleNames.insert(RadiusRole, "radius");
-    roleNames.insert(IconSourceRole, "iconSource");
-    roleNames.insert(UrlRole, "url");
-    roleNames.insert(LatitudeRole, "latitude");
-    roleNames.insert(LongitudeRole, "longitude");
-    roleNames.insert(AltitudeRole, "altitude");
     roleNames.insert(LandmarkRole, "landmark");
     setRoleNames(roleNames);
 }
@@ -193,28 +188,16 @@ int QDeclarativeLandmarkModel::rowCount(const QModelIndex &parent) const
 QVariant QDeclarativeLandmarkModel::data(const QModelIndex &index, int role) const
 {
     QLandmark landmark = m_landmarks.value(index.row());
+
     switch (role) {
         case Qt::DisplayRole:
             return landmark.name();
-        case NameRole:
-            return landmark.name();
-        case PhoneNumberRole:
-            return landmark.phoneNumber();
-        case DescriptionRole:
-            return landmark.description();
-        case RadiusRole:
-            return landmark.radius();
-        case IconSourceRole:
-            return landmark.iconUrl();
-        case UrlRole:
-            return landmark.url();
-        case LatitudeRole:
-            return landmark.coordinate().latitude();
-        case LongitudeRole:
-            return landmark.coordinate().longitude();
-        case AltitudeRole:
-            return landmark.coordinate().altitude();
-    }
+        case LandmarkRole:
+            if (m_landmarkMap.value(landmark.landmarkId().localId()))
+                return QVariant::fromValue(m_landmarkMap.value(landmark.landmarkId().localId()));
+            else
+                return QVariant();
+        }
     return QVariant();
 }
 
@@ -235,11 +218,22 @@ QDeclarativeLandmarkFilterBase* QDeclarativeLandmarkModel::filter()
 
 void QDeclarativeLandmarkModel::setFilter(QDeclarativeLandmarkFilterBase* filter)
 {
-    if (filter == m_filter)
-        return;
     m_filter = filter;
-    scheduleUpdate();
+    // Connect to listen for filters' content changes
+    if (filter)
+        QObject::connect(filter, SIGNAL(filterContentChanged()), this, SLOT(filterContentChanged()));
+    if (m_autoUpdate)
+        scheduleUpdate();
     emit filterChanged();
+}
+
+void QDeclarativeLandmarkModel::filterContentChanged()
+{
+#ifdef QDECLARATIVE_LANDMARK_DEBUG
+    qDebug() << "QDeclarativeLandmarkModel::filterContentChanged(), scheduling update.";
+#endif
+    if (m_autoUpdate)
+        scheduleUpdate();
 }
 
 void QDeclarativeLandmarkModel::startUpdate()
@@ -449,6 +443,8 @@ void QDeclarativeLandmarkModel::setSortBy(QDeclarativeLandmarkModel::SortKey key
     if (key == m_sortKey)
         return;
     m_sortKey = key;
+    if (m_autoUpdate)
+        scheduleUpdate();
     emit sortByChanged();
 }
 
@@ -462,6 +458,8 @@ void QDeclarativeLandmarkModel::setSortOrder(QDeclarativeLandmarkModel::SortOrde
     if (order == m_sortOrder)
         return;
     m_sortOrder = order;
+    if (m_autoUpdate)
+        scheduleUpdate();
     emit sortOrderChanged();
 }
 
@@ -487,15 +485,17 @@ void QDeclarativeLandmarkModel::fetchRequestStateChanged(QLandmarkAbstractReques
         beginInsertRows(QModelIndex(), 0, m_landmarks.count()); // TODO check if this should be amount of received landmarks
         int oldCount = m_landmarks.count();
         m_landmarks = m_fetchRequest->landmarks();
+        // Convert into declarative classes
+        convertLandmarksToDeclarative();
         endInsertRows();
         if (oldCount != m_landmarks.count())
             emit countChanged();
     } else if (m_error != m_fetchRequest->errorString()) {
         m_error = m_fetchRequest->errorString();
+        // Convert into declarative classes
+        convertLandmarksToDeclarative();
         emit errorChanged();
     }
-    // Convert into declarative classes --> possible to return landmarks in a list in QML
-    convertLandmarksToDeclarative();
 }
 
 #include "moc_qdeclarativelandmarkmodel_p.cpp"

@@ -93,7 +93,7 @@ public:
 };
 
 
-class Q_AUTOTEST_EXPORT QPainterVideoSurface : public QAbstractVideoSurface
+class QM_AUTOTEST_EXPORT QPainterVideoSurface : public QAbstractVideoSurface
 {
     Q_OBJECT
 public:

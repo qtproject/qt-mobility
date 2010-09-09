@@ -58,7 +58,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QVCard30Writer : public QVersitDocumentWriter
+class QM_AUTOTEST_EXPORT QVCard30Writer : public QVersitDocumentWriter
 {
 public:
     QVCard30Writer();

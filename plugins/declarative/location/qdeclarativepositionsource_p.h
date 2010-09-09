@@ -57,7 +57,7 @@ class QDeclarativePositionSource : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QObject* position READ position NOTIFY positionChanged)
+    Q_PROPERTY(QDeclarativePosition* position READ position NOTIFY positionChanged)
     Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
     Q_PROPERTY(QUrl nmeaSource READ nmeaSource WRITE setNmeaSource NOTIFY nmeaSourceChanged)
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval NOTIFY updateIntervalChanged)
@@ -81,7 +81,7 @@ public:
     QUrl nmeaSource() const;
     int updateInterval() const;
     bool isActive() const;
-    QObject* position();
+    QDeclarativePosition* position();
     PositioningMethod positioningMethod() const;
 
 public Q_SLOTS:
@@ -91,10 +91,10 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void positionChanged();
-    void activeChanged(bool active);
-    void nmeaSourceChanged(QUrl nmeaSource);
-    void updateIntervalChanged(int updateInterval);
-    void positioningMethodChanged(QDeclarativePositionSource::PositioningMethod positioningMethod);
+    void activeChanged();
+    void nmeaSourceChanged();
+    void updateIntervalChanged();
+    void positioningMethodChanged();
 
 private Q_SLOTS:
     void positionUpdateReceived(const QGeoPositionInfo& update);

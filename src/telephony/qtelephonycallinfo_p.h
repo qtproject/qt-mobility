@@ -69,7 +69,7 @@ using namespace QTelephony;
 
 struct
 #if defined(Q_OS_LINUX)
-        Q_AUTOTEST_EXPORT
+        QM_AUTOTEST_EXPORT
 #endif
         QTelephonyCallInfoPrivate : public QSharedData
 {
