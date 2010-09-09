@@ -76,7 +76,7 @@ namespace DBus
         bool iscall = false;
         if(propertylist.contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"))){
             QString type = propertylist.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString();
-            iscall = Channel::isCall(type);
+            iscall = Channel::isCall(type, objectPath);
         }
 
         //get direction by chjecking the requested flag
@@ -98,16 +98,31 @@ namespace DBus
             connectInterfaces();
             connect((QObject*)this->becomeReady(), SIGNAL(finished(DBus::PendingOperation *)), SLOT(onChannelReady(DBus::PendingOperation*)));
         }
+
+        //set SubType
+        /*  For CallType Text subtype Voip is possible.
+            For CallType Data subtype GSM is possible.
+            For CallType Video subtype GSM & Voip is possible.
+            For CallType Audio subtype GSM & Voip is possible.*/
+        if(objectPath.indexOf("/org/freedesktop/Telepathy/Connection/ring/tel/ring") == 0)
+            subtype = "GSM";
+        else if(objectPath.indexOf("/org/freedesktop/Telepathy/Connection/spirit") == 0)
+            subtype = "Voip";
     }
 
-    bool Channel::isCall(QString channeltype)
+    bool Channel::isCall(QString channeltype, QString channelpath)
     {
         /**************************
         check for Mediastream
         **************************/
-        if(channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA
-           || channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT){
+        qDebug() << "Channel::isCall channeltype " << channeltype;
+        qDebug() << "Channel::isCall channelpath " << channelpath;
+        if(channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA)
             return true;
+        //for text we need to check if it not SMS
+        else if(channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT){
+            if(channelpath.indexOf("/org/freedesktop/Telepathy/Connection/ring/tel/ring/") != 0)
+                return true;
         }
         return false;
     }
@@ -420,10 +435,9 @@ namespace DBus
                     ret |= QTelephony::Voice;
                 if(info.type == 1)
                     ret |= QTelephony::Video;
-
             }
         }
-        else if(pIChannelTypeText)
+        else if(this->pIChannelTypeText)
             ret |= QTelephony::Text;
 
         return ret;

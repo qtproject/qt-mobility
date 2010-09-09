@@ -307,7 +307,7 @@ void QTelephonyCallListPrivate::emitActiveCallRemoved(QTelephonyCallInfoPrivate&
     QTelephonyCallInfo callinfo;
     callinfo.d = QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(&call);
     emit p->activeCallRemoved(callinfo);
-    if(callInfoList.count() == 0 && p->enableHasActiveCallsNotify)
+    if(callInfoList.count() == 0)
         emit p->hasActiveCalls(false);
 }
 
@@ -316,7 +316,7 @@ void QTelephonyCallListPrivate::emitActiveCallAdded(QTelephonyCallInfoPrivate& c
     QTelephonyCallInfo callinfo;
     callinfo.d = QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(&call);
     emit p->activeCallAdded(callinfo);
-    if(callInfoList.count() == 1 && p->enableHasActiveCallsNotify)
+    if(callInfoList.count() == 1)
         emit p->hasActiveCalls(true);
 }
 
@@ -327,6 +327,7 @@ QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephon
     //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
     for( int i = 0; i < callInfoList.count(); i++){
         if(callInfoList.at(i).data()->type == QTelephony::Any
+            || QTelephony::Any == calltype
             || callInfoList.at(i).data()->type == calltype)
         {
             QTelephonyCallInfo callinfo;
