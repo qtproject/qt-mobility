@@ -357,6 +357,15 @@ void EventLoggerEngine::notification(int eventId, QString service,QMessageStoreP
         }
     }
 
+    if (notificationType == QMessageStorePrivate::Updated) {
+        // Remove updated message from cache to make sure that message
+        // will be retrieved again from backend
+        MessageCache::instance()->remove(QMessageId(QString("el")+QString::number(eventId)));
+    } else if (notificationType == QMessageStorePrivate::Removed) {
+        // Remove removed message from cache
+        MessageCache::instance()->remove(QMessageId(QString("el")+QString::number(eventId)));
+    }
+
     if (matchingFilters.count() > 0) {
             ipMessageStorePrivate->messageNotification(notificationType,
                                                        QMessageId(QString("el")+QString::number(eventId)),
