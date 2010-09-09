@@ -63,6 +63,7 @@ class EventEditPage;
 class TodoEditPage;
 class JournalEditPage;
 class EventOccurrenceEditPage;
+class AddCalendarPage;
 
 class CalendarDemo : public QMainWindow
 {
@@ -76,6 +77,7 @@ public Q_SLOTS:
     void activateMonthPage();
     void activateDayPage();
     void activateEditPage(const QOrganizerItem &item);
+    void activatePreviousPage();
     void addNewEvent();
     void addNewTodo();
     void addNewJournal();
@@ -90,6 +92,8 @@ private Q_SLOTS:
     void importItems();
     void exportItems();
     void deleteAllEntries();
+    void addCalendar();
+    void editCalendar();
     void saveReqStateChanged(QOrganizerItemAbstractRequest::State);
     void removeReqStateChanged(QOrganizerItemAbstractRequest::State);
 
@@ -105,6 +109,10 @@ private:
     TodoEditPage *m_todoEditPage;
     JournalEditPage *m_journalEditPage;
     EventOccurrenceEditPage *m_eventOccurrenceEditPage;
+    AddCalendarPage *m_addCalendarPage;
+
+    int m_previousPage;
+    QOrganizerItem m_previousItem;
 
     QAction *m_switchViewAction;
 
