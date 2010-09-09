@@ -77,13 +77,6 @@ public:
 private:
     QTelephonyCallListPrivate* d;
     friend class QTelephonyCallListPrivate;
-
-private:
-    virtual void connectNotify ( const char * signal );
-    bool enableCallStatusChangeNotify;
-    bool enableCallRemovedNotify;
-    bool enableCallAddedNotify;
-    bool enableHasActiveCallsNotify;
 };
 
 QTM_END_NAMESPACE

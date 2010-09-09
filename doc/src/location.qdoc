@@ -385,7 +385,8 @@ For more details see the \l {Landmark Examples} {Landmark Examples} page for:
     platforms have extended attributes).
     \o Custom attributes:  These are attributes that a client application can use to associate
     its own domain specific data with a landmark.  These are accessible through the customAttribute() and
-    setCustomAttribute() functions.
+    setCustomAttribute() functions.  (Only the sqlite backend which is used
+    on Maemo5, Windows and Linux platforms support custom attributes).
 \endlist
 
     The combination of core and extended attributes are regarded as \c manager

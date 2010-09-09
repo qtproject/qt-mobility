@@ -89,6 +89,7 @@ QT_MOBILITY_PLUGINS=
 QT_MOBILITY_EXAMPLES=
 QT_MOBILITY_DEMOS=
 BUILD_UNITTESTS=
+BUILD_PUBLIC_UNITTESTS=
 BUILD_EXAMPLES=
 BUILD_DEMOS=
 BUILD_DOCS=yes
@@ -199,6 +200,9 @@ while [ "$#" -gt 0 ]; do
             ;;
         -tests)
             BUILD_UNITTESTS="yes"
+            ;;
+        -public-tests-only)
+            BUILD_PUBLIC_UNITTESTS="yes"
             ;;
         -demos)
             BUILD_DEMOS="yes"
@@ -427,6 +431,12 @@ if [ -z "$BUILD_UNITTESTS" ]; then
     echo "build_unit_tests = no" >> "$CONFIG_IN"
 else
     echo "build_unit_tests = yes" >> "$CONFIG_IN"
+fi
+
+if [ -z "$BUILD_PUBLIC_UNITTESTS" ]; then
+    echo "build_public_unit_tests = no" >> "$CONFIG_IN"
+else
+    echo "build_public_unit_tests = yes" >> "$CONFIG_IN"
 fi
 
 if [ -z "$BUILD_EXAMPLES" ]; then

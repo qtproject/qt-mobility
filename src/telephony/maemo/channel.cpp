@@ -57,57 +57,77 @@ namespace DBus
         : StatefullDBusProxy(busconnection, busname, objectPath)
         , ReadyObject(this, FeatureCore)
     {
-        init();
-        propertylist = properties;
-        connection = conn;
-
         qDebug() << " Channel::Channel(...)";
 
-        //Create Channel interface
-        pIChannel = new DBus::Interfaces::IChannel(this->dbusConnection(),this->busName(), this->objectPath());
+        init();
+        if(isValid()){
+            propertylist = properties;
+            connection = conn;
 
-        //Set flag to indicate if values must be read
-        if(propertylist.count() <= 0){
-            createPropertiyList();
-            wasExistingChannel = true;
-        }
+            //Create Channel interface
+            pIChannel = new DBus::Interfaces::IChannel(this->dbusConnection(),this->busName(), this->objectPath());
 
-        //check if is a call
-        bool iscall = false;
-        if(propertylist.contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"))){
-            QString type = propertylist.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString();
-            iscall = Channel::isCall(type);
-        }
+            //Set flag to indicate if values must be read
+            if(propertylist.count() <= 0){
+                createPropertiyList();
+                wasExistingChannel = true;
+            }
 
-        //get direction by chjecking the requested flag
-        //if Requested then this channel was created in response to a local request => outgoing
-        if(propertylist.contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".Requested"))){
-            bool requested = propertylist.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".Requested")).toBool();
-            if(requested)
-                direction = 2;
-            else
-                direction = 1;
-        }
+            //check if is a call
+            bool iscall = false;
+            if(propertylist.contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"))){
+                QString type = propertylist.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString();
+                iscall = Channel::isCall(type, objectPath);
+            }
+            qDebug() << "iscall " << iscall;
 
-        //if its not a call we don't need to go further
-        if(iscall){
-            //set remote id
-            remoteIdentifier = pIChannel->TargetID();
-            connect(pIChannel, SIGNAL(Closed()), SLOT(onClose()));
-            connectType();
-            connectInterfaces();
-            connect((QObject*)this->becomeReady(), SIGNAL(finished(DBus::PendingOperation *)), SLOT(onChannelReady(DBus::PendingOperation*)));
+            //get direction by chjecking the requested flag
+            //if Requested then this channel was created in response to a local request => outgoing
+            if(propertylist.contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".Requested"))){
+                bool requested = propertylist.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".Requested")).toBool();
+                if(requested)
+                    direction = 2;
+                else
+                    direction = 1;
+            }
+
+            //if its not a call we don't need to go further
+            if(iscall){
+                //set remote id
+                remoteIdentifier = pIChannel->TargetID();
+                connect(pIChannel, SIGNAL(Closed()), SLOT(onClose()));
+                connectType();
+                connectInterfaces();
+                connect((QObject*)this->becomeReady(), SIGNAL(finished(DBus::PendingOperation *)), SLOT(onChannelReady(DBus::PendingOperation*)));
+            }
+
+            //set SubType
+            /*  For CallType Text subtype Voip is possible.
+                For CallType Data subtype GSM is possible.
+                For CallType Video subtype GSM & Voip is possible.
+                For CallType Audio subtype GSM & Voip is possible.*/
+            if(objectPath.indexOf("/org/freedesktop/Telepathy/Connection/ring/tel/ring") == 0)
+                subtype = "GSM";
+            else if(objectPath.indexOf("/org/freedesktop/Telepathy/Connection/spirit") == 0)
+                subtype = "Voip";
         }
     }
 
-    bool Channel::isCall(QString channeltype)
+    bool Channel::isCall(QString channeltype, QString channelpath)
     {
-        /**************************
-        check for Mediastream
-        **************************/
-        if(channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA
-           || channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT){
-            return true;
+        if(channelpath.length() > 0){
+            /**************************
+            check for Mediastream
+            **************************/
+            qDebug() << "Channel::isCall channeltype " << channeltype;
+            qDebug() << "Channel::isCall channelpath " << channelpath;
+            if(channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAMED_MEDIA)
+                return true;
+            //for text we need to check if it not SMS
+            else if(channeltype == TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT){
+                if(channelpath.indexOf("/org/freedesktop/Telepathy/Connection/ring/tel/ring/") != 0)
+                    return true;
+            }
         }
         return false;
     }
@@ -420,10 +440,9 @@ namespace DBus
                     ret |= QTelephony::Voice;
                 if(info.type == 1)
                     ret |= QTelephony::Video;
-
             }
         }
-        else if(pIChannelTypeText)
+        else if(this->pIChannelTypeText)
             ret |= QTelephony::Text;
 
         return ret;

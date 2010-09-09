@@ -638,6 +638,7 @@ QList<QOrganizerItem> TestNoteItems::createItems_Negative(int noOfItems)
         QOrganizerItemId id;
         QOrganizerItemLocalId localId(1234);
         id.setLocalId(localId);
+        id.setManagerUri("qtorganizer:symbian:");
         organizerItem.setId(id);
 
         // Set current time
@@ -740,6 +741,7 @@ void TestNoteItems::requestResultsAvailable_Negative()
             // Advance the iterator to point to next item in the error map
             iter.next();
             qWarning() << iter.value() << "trown while saving item";
+            QCOMPARE(errorMap.count(), KNumberOfItems);
         }
         
         // Clear m_itemIds to fetch all the item Ids

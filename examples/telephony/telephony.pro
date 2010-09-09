@@ -18,3 +18,7 @@ INCLUDEPATH += ../../src/telephony
 include(../examples.pri)
 CONFIG += mobility
 MOBILITY = telephony
+
+symbian {
+    TARGET.CAPABILITY = UserEnvironment ReadUserData ReadDeviceData
+}

@@ -62,8 +62,8 @@ private slots:
 private slots:
     void saveCollection();
     void collectionIds();
-    void removeCollection();
     void fetchCollection();
+    void removeCollection();
     
 public slots:
    void requestStateChanged(QOrganizerItemAbstractRequest::State currentState);
@@ -120,7 +120,7 @@ void tst_symbianasynchcollections::collectionIds()
 }
 
 void tst_symbianasynchcollections::fetchCollection()
-{/*
+{
     // Make sure to delete the old request, if any
     delete m_itemRequest;
     // Create new request
@@ -140,8 +140,8 @@ void tst_symbianasynchcollections::fetchCollection()
     QOrganizerCollectionFetchRequest * collectionFetchRequest(
         (QOrganizerCollectionFetchRequest*)m_itemRequest);
     // Set collections
-    QList<QOrganizerCollectionId> collectionIds;
-    collectionFetchRequest->setCollectionIds(collectionIds);
+    //QList<QOrganizerCollectionId> collectionIds;
+    //collectionFetchRequest->setCollectionIds(collectionIds);
 
     // Start the request
     collectionFetchRequest->start();
@@ -149,7 +149,7 @@ void tst_symbianasynchcollections::fetchCollection()
     collectionFetchRequest->waitForFinished(KTimeToWait);
     // Verify if the request is finished
     QVERIFY(collectionFetchRequest->isFinished());
- */}
+}
 
 void tst_symbianasynchcollections::saveCollection()
 {
@@ -278,15 +278,25 @@ void tst_symbianasynchcollections::requestResultsAvailable()
 {
     QOrganizerItemAbstractRequest::RequestType reqType(m_itemRequest->type());
     switch (reqType) {
+    case QOrganizerItemAbstractRequest::CollectionFetchRequest : {
+        // Check error map
+        QList<QOrganizerCollection> collections(
+            ((QOrganizerCollectionFetchRequest*)(m_itemRequest))->collections());
+        // Error map should contain zero errors to indicate successful deletion
+        // of all the items
+        int count(collections.count());
+        QCOMPARE(count, 2);
+    }
+    break;
     case QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest : {
         // Get all collection ids
-        QList<QOrganizerCollectionLocalId> collectionIds(
+        QList<QOrganizerCollectionLocalId> collectionsLocalId(
         ((QOrganizerCollectionLocalIdFetchRequest*)(m_itemRequest))
         ->collectionIds());
         
         QVERIFY(m_itemRequest->error() == QOrganizerItemManager::NoError);
 
-        qWarning() << collectionIds.count() << "calendar/s are present currently";
+        qWarning() << collectionsLocalId.count() << "calendar/s are present currently";
     }
     break;
     case QOrganizerItemAbstractRequest::CollectionSaveRequest : {

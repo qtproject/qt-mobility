@@ -98,14 +98,15 @@ QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
     
     // Open calendar session and open default file
     m_defaultCalSession = CCalSession::NewL();
+#ifdef SYMBIAN_CALENDAR_V2
+    // Add default session to array
+    m_calSessions.Append(m_defaultCalSession);
+#endif
     m_defaultCalSession->OpenL(KNullDesC);
 
 #ifdef SYMBIAN_CALENDAR_V2
     // Start listening to calendar file changes
     m_defaultCalSession->StartFileChangeNotificationL(*this);
-    
-    // Add default session to array
-    m_calSessions.Append(m_defaultCalSession);
     
     // Get default calendar filename
     QString defaultFileName = toQString(m_defaultCalSession->DefaultFileNameL());
@@ -872,46 +873,55 @@ QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collections(const QList
 }
 
 QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collectionsL(const QList<QOrganizerCollectionLocalId>& collectionIds) const
-{
+    {
     QList<QOrganizerCollection> collections;
-    
+
     // Loop through open collections/sessions
-    int count = m_calSessions.Count();
+    int count = sessionCount();
     for (int i=0; i<count; i++) {
-        CCalSession *session = m_calSessions[i];
-        
-        // Get collection id
-        QOrganizerCollectionLocalId localId(session->CollectionIdL());
-        
-        // Find matching collection if id is provided
-        if (!collectionIds.isEmpty()) {
-            if (!collectionIds.contains(localId))
-                continue;
-        }
-        
         // Create a new collection to hold the data
         QOrganizerCollection collection;
-     
-        // Set collection id
-        QOrganizerCollectionId id;
-        id.setManagerUri(managerUri());
-        id.setLocalId(localId);
-        collection.setId(id);
-        
-        // Read calendar info from session
-        CCalCalendarInfo* calInfo = session->CalendarInfoL();
-        CleanupStack::PushL(calInfo);
-        collection.setMetaData(toMetaDataL(*calInfo));       
-        CleanupStack::PopAndDestroy(calInfo);
-        
-        collections.append(collection);
+        bool found(collectionL(i, collectionIds, collection));
+        if (found) {
+            collections.append(collection);
+        }
     }
-    
+
     // Nothing found?
     if (collections.isEmpty())
         User::Leave(KErrNotFound);
 
     return collections;
+}
+
+bool QOrganizerItemSymbianEngine::collectionL(const int 
+    index, const QList<QOrganizerCollectionLocalId>& collectionIds, 
+    QOrganizerCollection& collection) const
+{
+    CCalSession *session = m_calSessions[index];
+    
+    // Get collection id
+    QOrganizerCollectionLocalId localId(session->CollectionIdL());
+    
+    // Find matching collection if id is provided
+    if (!collectionIds.isEmpty()) {
+        if (!collectionIds.contains(localId))
+            return false;
+    }
+    
+    // Read calendar info from session
+    CCalCalendarInfo* calInfo = session->CalendarInfoL();
+    CleanupStack::PushL(calInfo);
+    collection.setMetaData(toMetaDataL(*calInfo));       
+    CleanupStack::PopAndDestroy(calInfo);
+
+    // Fetch successfull. Set collection id now
+    QOrganizerCollectionId id;
+    id.setManagerUri(managerUri());
+    id.setLocalId(localId);
+    collection.setId(id);
+
+    return true;
 }
 
 bool QOrganizerItemSymbianEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
@@ -965,7 +975,7 @@ void QOrganizerItemSymbianEngine::saveCollectionL(QOrganizerCollection* collecti
     // Did we find any?
     if (!session) {
         
-        // If collection id is defined it a matching session must be found
+        // If collection id is defined a matching session must be found
         if (collection->id().localId())
             User::Leave(KErrArgument);
         
@@ -975,6 +985,7 @@ void QOrganizerItemSymbianEngine::saveCollectionL(QOrganizerCollection* collecti
         // Create a new session to the calendar file
         session = CCalSession::NewL();
         TRAPD(err, session->CreateCalFileL(fileName, *calInfo));
+        CleanupStack::PushL(session);
         if (err == KErrAlreadyExists) {
             // Calendar file might exist already. So just open it.
             // (It might be waiting for deletion with its EMarkAsDelete flag set.)
@@ -983,7 +994,8 @@ void QOrganizerItemSymbianEngine::saveCollectionL(QOrganizerCollection* collecti
         } else {
             User::LeaveIfError(err);
             session->OpenL(fileName);
-        }        
+        }
+        CleanupStack::Pop(session);
         m_calSessions.Append(session);
     }
     else {
@@ -1336,7 +1348,9 @@ void QOrganizerItemSymbianEngine::CalendarInfoChangeNotificationL(RPointerArray<
                 // A calendar file has been created but not by this manager instance.
                 // Create a new session to the file
                 session = CCalSession::NewL();
+                CleanupStack::PushL(session);
                 session->OpenL(fileName);
+                CleanupStack::Pop(session);
                 m_calSessions.Append(session);
                 emit collectionsAdded(ids << session->CollectionIdL());
             }
@@ -1379,8 +1393,8 @@ void QOrganizerItemSymbianEngine::CalendarInfoChangeNotificationL(RPointerArray<
                 // Calendar file has been modified but we do not have a session to it.
                 // Create a new session to the file
                 session = CCalSession::NewL();
-                session->OpenL(fileName);
                 CleanupStack::PushL(session);
+                session->OpenL(fileName);                
                 
                 // Get EMarkAsDelete property
                 CCalCalendarInfo *calInfo = session->CalendarInfoL();
