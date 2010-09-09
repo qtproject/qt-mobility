@@ -77,6 +77,7 @@ signals:
     void limitChanged();
     void offsetChanged();
     void modelChanged();
+    void databaseChanged();
 
 public slots:
     void update();

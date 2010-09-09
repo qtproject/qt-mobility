@@ -62,6 +62,8 @@ public:
     QDeclarativeCoordinate(const QGeoCoordinate &coordinate, QObject* parent = 0);
     ~QDeclarativeCoordinate();
 
+    Q_INVOKABLE qreal distanceTo(QObject* coordinate);
+
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &coordinate);
 
