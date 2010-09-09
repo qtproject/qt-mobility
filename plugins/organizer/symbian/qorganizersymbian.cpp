@@ -872,46 +872,55 @@ QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collections(const QList
 }
 
 QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collectionsL(const QList<QOrganizerCollectionLocalId>& collectionIds) const
-{
+    {
     QList<QOrganizerCollection> collections;
-    
+
     // Loop through open collections/sessions
-    int count = m_calSessions.Count();
+    int count = sessionCount();
     for (int i=0; i<count; i++) {
-        CCalSession *session = m_calSessions[i];
-        
-        // Get collection id
-        QOrganizerCollectionLocalId localId(session->CollectionIdL());
-        
-        // Find matching collection if id is provided
-        if (!collectionIds.isEmpty()) {
-            if (!collectionIds.contains(localId))
-                continue;
-        }
-        
         // Create a new collection to hold the data
         QOrganizerCollection collection;
-     
-        // Set collection id
-        QOrganizerCollectionId id;
-        id.setManagerUri(managerUri());
-        id.setLocalId(localId);
-        collection.setId(id);
-        
-        // Read calendar info from session
-        CCalCalendarInfo* calInfo = session->CalendarInfoL();
-        CleanupStack::PushL(calInfo);
-        collection.setMetaData(toMetaDataL(*calInfo));       
-        CleanupStack::PopAndDestroy(calInfo);
-        
-        collections.append(collection);
+        bool found(collectionL(i, collectionIds, collection));
+        if (found) {
+            collections.append(collection);
+        }
     }
-    
+
     // Nothing found?
     if (collections.isEmpty())
         User::Leave(KErrNotFound);
 
     return collections;
+}
+
+bool QOrganizerItemSymbianEngine::collectionL(const int 
+    index, const QList<QOrganizerCollectionLocalId>& collectionIds, 
+    QOrganizerCollection& collection) const
+{
+    CCalSession *session = m_calSessions[index];
+    
+    // Get collection id
+    QOrganizerCollectionLocalId localId(session->CollectionIdL());
+    
+    // Find matching collection if id is provided
+    if (!collectionIds.isEmpty()) {
+        if (!collectionIds.contains(localId))
+            return false;
+    }
+    
+    // Set collection id
+    QOrganizerCollectionId id;
+    id.setManagerUri(managerUri());
+    id.setLocalId(localId);
+    collection.setId(id);
+    
+    // Read calendar info from session
+    CCalCalendarInfo* calInfo = session->CalendarInfoL();
+    CleanupStack::PushL(calInfo);
+    collection.setMetaData(toMetaDataL(*calInfo));       
+    CleanupStack::PopAndDestroy(calInfo);
+    
+    return true;
 }
 
 bool QOrganizerItemSymbianEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
