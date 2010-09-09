@@ -212,7 +212,9 @@ void CLineStatusObserver::updateCallList()
                         }
                         if (mobileCallInfoPckg().iRemoteParty.iDirection == RMobileCall::EMobileOriginated) {
                             callinfo_p->remotePartyIdentifier = toQString(mobileCallInfoPckg().iDialledParty.iTelNumber);
+                            callinfo_p->direction = QTelephony::Dialed;
                         } else {
+                            callinfo_p->direction = QTelephony::Received;
                             if (mobileCallInfoPckg().iRemoteParty.iRemoteIdStatus == RMobileCall::ERemoteIdentityAvailable) {
                                 callinfo_p->remotePartyIdentifier = toQString(mobileCallInfoPckg().iRemoteParty.iRemoteNumber.iTelNumber);
                             } else {
