@@ -908,18 +908,18 @@ bool QOrganizerItemSymbianEngine::collectionL(const int
             return false;
     }
     
-    // Set collection id
-    QOrganizerCollectionId id;
-    id.setManagerUri(managerUri());
-    id.setLocalId(localId);
-    collection.setId(id);
-    
     // Read calendar info from session
     CCalCalendarInfo* calInfo = session->CalendarInfoL();
     CleanupStack::PushL(calInfo);
     collection.setMetaData(toMetaDataL(*calInfo));       
     CleanupStack::PopAndDestroy(calInfo);
-    
+
+    // Fetch successfull. Set collection id now
+    QOrganizerCollectionId id;
+    id.setManagerUri(managerUri());
+    id.setLocalId(localId);
+    collection.setId(id);
+
     return true;
 }
 
