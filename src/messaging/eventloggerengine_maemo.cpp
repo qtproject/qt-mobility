@@ -190,7 +190,7 @@ QMessage EventLoggerEngine::eventToMessage(RTComElEvent & ev)
     QMessageAddressList messageAddresslist;
     messageAddresslist.append(QMessageAddress(QMessageAddress::Phone, QString(ev.fld_local_uid)));
     message.setTo(messageAddresslist);
-    message.setBody(QString(ev.fld_free_text));
+    message.setBody(QString::fromUtf8(ev.fld_free_text));
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
     privateMessage->_id = QMessageId(QString("el")+QString::number(ev.fld_id));
     privateMessage->_modified = false;
@@ -286,7 +286,7 @@ additional_text=%s icon_name=%s pango_markup=%s\n",
          QMessageAddressList messageAddresslist;
          messageAddresslist.append(QMessageAddress(QMessageAddress::Phone, QString(ev.fld_local_uid)));
          message.setTo(messageAddresslist);
-         message.setBody(QString(ev.fld_free_text));
+         message.setBody(QString::fromUtf8(ev.fld_free_text));
          QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
          privateMessage->_id = id;
          privateMessage->_modified = false;
