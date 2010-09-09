@@ -107,7 +107,7 @@ void QDeclarativeLandmarkCategoryModel::setFetchRange()
 void QDeclarativeLandmarkCategoryModel::setFetchOrder()
 {
     if (!m_fetchRequest ||
-        ((m_sortKey == NoSort) && (m_sortOrder = NoOrder)) ||
+        ((m_sortKey == NoSort) && (m_sortOrder == NoOrder)) ||
         m_fetchRequest->type() != QLandmarkAbstractRequest::CategoryFetchRequest)
         return;
     if (m_sortingOrder)

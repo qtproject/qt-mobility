@@ -343,7 +343,7 @@ void QDeclarativeLandmarkModel::setFetchRange()
 
 void QDeclarativeLandmarkModel::setFetchOrder()
 {
-    if (!m_fetchRequest || ((m_sortKey == NoSort) && (m_sortOrder = NoOrder)))
+    if (!m_fetchRequest || ((m_sortKey == NoSort) && (m_sortOrder == NoOrder)))
         return;
     if (m_sortingOrder)
         delete m_sortingOrder;
