@@ -132,6 +132,8 @@ namespace DBus
 
         qDebug().nospace() << "proxy invalidated: " << reason
             << ": " << message;
+        qDebug() << "- bus: " << mPriv->busName;
+        qDebug() << "- path" << mPriv->objectPath;
 
         mPriv->invalidationReason = reason;
         mPriv->invalidationMessage = message;

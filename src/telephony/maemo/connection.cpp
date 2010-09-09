@@ -59,17 +59,22 @@ namespace DBus
     {
         qDebug() << "Connection::Connection(...)";
 
-        pIConnection = new DBus::Interfaces::IConnection(busconnection, busName, objectPath);
-        connect(pIConnection, SIGNAL(SelfHandleChanged(uint)), SLOT(onSelfHandleChanged(uint)));
-        connect(pIConnection, SIGNAL(NewChannel(QDBusObjectPath,QString,uint,uint,bool)), SLOT(onNewChannel(QDBusObjectPath,QString,uint,uint,bool)));
-        connect(pIConnection, SIGNAL(ConnectionError(QString,QVariantMap)), SLOT(onConnectionError(QString,QVariantMap)));
-        connect(pIConnection, SIGNAL(StatusChanged(uint,uint)), SLOT(onStatusChanged(uint,uint)));
+        pIConnection = 0;
+        pIConnectionRequests = 0;
 
-        pIConnectionRequests = new DBus::Interfaces::IConnectionRequests(busconnection, this->busName(), this->objectPath());
-        connect(pIConnectionRequests, SIGNAL(NewChannels(DBus::Interfaces::ChannelDetailsList)), SLOT(onNewChannels(DBus::Interfaces::ChannelDetailsList)));
-        connect(pIConnectionRequests, SIGNAL(ChannelClosed(QDBusObjectPath)), SLOT(onChannelClosed(QDBusObjectPath)));
+        if(isValid()){
+            pIConnection = new DBus::Interfaces::IConnection(busconnection, busName, objectPath);
+            connect(pIConnection, SIGNAL(SelfHandleChanged(uint)), SLOT(onSelfHandleChanged(uint)));
+            connect(pIConnection, SIGNAL(NewChannel(QDBusObjectPath,QString,uint,uint,bool)), SLOT(onNewChannel(QDBusObjectPath,QString,uint,uint,bool)));
+            connect(pIConnection, SIGNAL(ConnectionError(QString,QVariantMap)), SLOT(onConnectionError(QString,QVariantMap)));
+            connect(pIConnection, SIGNAL(StatusChanged(uint,uint)), SLOT(onStatusChanged(uint,uint)));
 
-        readCurrentChannels();
+            pIConnectionRequests = new DBus::Interfaces::IConnectionRequests(busconnection, this->busName(), this->objectPath());
+            connect(pIConnectionRequests, SIGNAL(NewChannels(DBus::Interfaces::ChannelDetailsList)), SLOT(onNewChannels(DBus::Interfaces::ChannelDetailsList)));
+            connect(pIConnectionRequests, SIGNAL(ChannelClosed(QDBusObjectPath)), SLOT(onChannelClosed(QDBusObjectPath)));
+
+            readCurrentChannels();
+        }
     }
 
     Connection::~Connection()
