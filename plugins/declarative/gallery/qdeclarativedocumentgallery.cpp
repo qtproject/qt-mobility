@@ -39,42 +39,54 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYABSTRACTRESPONSE_P_H
-#define QGALLERYABSTRACTRESPONSE_P_H
+#include "qdeclarativedocumentgallery.h"
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qgalleryabstractresponse.h"
+#include <qgalleryabstractrequest.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryAbstractResponsePrivate
+static const char *qt_documentGalleryTypes[] =
 {
-public:
-    QGalleryAbstractResponsePrivate()
-        : q_ptr(0)
-        , error(QGalleryAbstractRequest::NoError)
-        , status(QGalleryAbstractRequest::Active)
-    {
-    }
-
-    virtual ~QGalleryAbstractResponsePrivate() {}
-
-    QGalleryAbstractResponse *q_ptr;
-    int error;
-    QGalleryAbstractRequest::Status status;
-    QString errorString;
+    "File",
+    "Folder",
+    "Document",
+    "Text",
+    "Audio",
+    "Image",
+    "Video",
+    "Playlist",
+    "Artist",
+    "AlbumArtist",
+    "Album",
+    "AudioGenre",
+    "PhotoAlbum"
 };
 
-QTM_END_NAMESPACE
+Q_GLOBAL_STATIC(QDocumentGallery, qt_declarativeDocumentGalleryInstance);
 
-#endif
+QString QDeclarativeDocumentGallery::toString(ItemType type)
+{
+    return type > InvalidType && type < NItemTypes
+            ? QLatin1String(qt_documentGalleryTypes[type - 1])
+            : QString();
+}
+
+QDeclarativeDocumentGallery::ItemType QDeclarativeDocumentGallery::itemTypeFromString(
+        const QString &string)
+{
+    for (int i = InvalidType; i < NItemTypes; ++i) {
+        if (string == QLatin1String(qt_documentGalleryTypes[i]))
+            return ItemType(i);
+    }
+
+    return QDeclarativeDocumentGallery::InvalidType;
+}
+
+QAbstractGallery *QDeclarativeDocumentGallery::gallery()
+{
+    return qt_declarativeDocumentGalleryInstance();
+}
+
+#include "moc_qdeclarativedocumentgallery.cpp"
+
+QTM_END_NAMESPACE

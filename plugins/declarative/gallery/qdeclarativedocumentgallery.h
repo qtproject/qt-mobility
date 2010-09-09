@@ -39,42 +39,48 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYABSTRACTRESPONSE_P_H
-#define QGALLERYABSTRACTRESPONSE_P_H
+#ifndef QDECLARATIVEDOCUMENTGALLERY_H
+#define QDECLARATIVEDOCUMENTGALLERY_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qgalleryabstractresponse.h"
+#include <qdocumentgallery.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryAbstractResponsePrivate
+class QDeclarativeDocumentGallery : public QObject
 {
+    Q_OBJECT
+    Q_ENUMS(ItemType)
 public:
-    QGalleryAbstractResponsePrivate()
-        : q_ptr(0)
-        , error(QGalleryAbstractRequest::NoError)
-        , status(QGalleryAbstractRequest::Active)
+
+    enum ItemType
     {
-    }
+        InvalidType,
+        File,
+        Folder,
+        Document,
+        Text,
+        Audio,
+        Image,
+        Video,
+        Playlist,
+        Artist,
+        AlbumArtist,
+        Album,
+        AudioGenre,
+        PhotoAlbum,
+#ifndef Q_MOC_RUN
+        NItemTypes
+#endif
+    };
 
-    virtual ~QGalleryAbstractResponsePrivate() {}
+    static QString toString(ItemType type);
+    static ItemType itemTypeFromString(const QString &string);
 
-    QGalleryAbstractResponse *q_ptr;
-    int error;
-    QGalleryAbstractRequest::Status status;
-    QString errorString;
+    static QAbstractGallery *gallery();
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QDeclarativeDocumentGallery::ItemType))
 
 #endif
