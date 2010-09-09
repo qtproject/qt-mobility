@@ -155,6 +155,9 @@ public:
     QOrganizerCollectionLocalId defaultCollectionId(QOrganizerItemManager::Error* error) const;
     QList<QOrganizerCollectionLocalId> collectionIds(QOrganizerItemManager::Error* error) const;
     QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const;
+    bool collectionL(const int 
+        index, const QList<QOrganizerCollectionLocalId>& collectionIds, 
+        QOrganizerCollection& collection) const;
     bool saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error);
     bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
 #endif
