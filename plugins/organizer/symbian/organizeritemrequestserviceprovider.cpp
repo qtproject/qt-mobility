@@ -151,7 +151,7 @@ TBool COrganizerItemRequestsServiceProvider::StartRequest(
                     iCollectionLocalIds.append(
                         iCollectionIds.at(index).localId());
                 	}
-                iNoOfItems = iOrganizerItemManagerEngine.sessionCount();
+                iNoOfItems = iCollectionIds.count();
                 }
                 break;
 #endif
@@ -306,7 +306,10 @@ void COrganizerItemRequestsServiceProvider::SaveItemL()
         // RunError would call SelfComplete() for recursive operation
         iIndex++;
         // Save item
-        iOrganizerItemManagerEngine.saveItemL(&iItemList[iIndex-1]);
+        // TODO: changeSet and collection id needed!
+        // without changeSet signaling does not work, and without collection id
+        // the item is always stored to the default collection
+        iOrganizerItemManagerEngine.saveItemL(&iItemList[iIndex-1], 0, 0);
         iSuccessfullItems.append(iItemList[iIndex-1]);
         // Calls itself recursively until all the items are deleted
         SelfComplete();
@@ -539,16 +542,8 @@ void COrganizerItemRequestsServiceProvider::SaveDetailDefinitionL()
 // Fetch collection local Id
 void COrganizerItemRequestsServiceProvider::CollectionIdL()
     {
-    TInt count(iOrganizerItemManagerEngine.sessionCount());
-    QList<QOrganizerCollectionLocalId> collectionLocalIds;
-    // As there are no costly IPCs involved in this operation so
-    // execute a loop to perform the operation as it's done in a short
-    // time span
-    for (TInt index(0); index < count; index++)
-        {
-        collectionLocalIds.append(
-            iOrganizerItemManagerEngine.collectionIdL(index));
-        }
+    QList<QOrganizerCollectionLocalId> collectionLocalIds = iOrganizerItemManagerEngine.collectionIdsL();
+
     // Notify results
     QOrganizerItemManagerEngine::updateCollectionLocalIdFetchRequest( 
         (QOrganizerCollectionLocalIdFetchRequest*)(iReq), collectionLocalIds, 
