@@ -107,6 +107,7 @@ private:
     QLabel *coverLabel;
     QSlider *slider;
     QPushButton *fullScreenButton;
+    QPushButton *colorButton;
     PlaylistModel *playlistModel;
     QAbstractItemView *playlistView;
     QString trackInfo;

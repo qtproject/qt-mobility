@@ -122,11 +122,9 @@ Player::Player(QWidget *parent)
     fullScreenButton = new QPushButton(tr("FullScreen"), this);
     fullScreenButton->setCheckable(true);
 
-    QPushButton *colorButton = new QPushButton(tr("Color Options..."), this);
-    if (videoWidget)
-        connect(colorButton, SIGNAL(clicked()), this, SLOT(showColorDialog()));
-    else
-        colorButton->setEnabled(false);
+    colorButton = new QPushButton(tr("Color Options..."), this);
+    colorButton->setEnabled(false);
+    connect(colorButton, SIGNAL(clicked()), this, SLOT(showColorDialog()));
 
     QBoxLayout *displayLayout = new QHBoxLayout;
     if (videoWidget)
@@ -319,6 +317,7 @@ void Player::videoAvailableChanged(bool available)
         if (fullScreenButton->isChecked())
             videoWidget->setFullScreen(true);
     }
+    colorButton->setEnabled(available);
 }
 
 void Player::setTrackInfo(const QString &info)
