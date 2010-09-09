@@ -43,6 +43,8 @@
 
 #include "qgalleryabstractresponse_p.h"
 
+#include <qdocumentgallery.h>
+
 #include <QtDBus/qdbuspendingcall.h>
 
 QTM_BEGIN_NAMESPACE
@@ -59,7 +61,7 @@ public:
     {
         qWarning("QGalleryRemoveRequest DBUS error: %s", qPrintable(error.message()));
 
-        q_func()->finish(QGalleryAbstractRequest::ConnectionError);
+        q_func()->finish(QDocumentGallery::ConnectionError);
     }
 
     void _q_removeFinished(QDBusPendingCallWatcher *watcher)
@@ -71,7 +73,7 @@ public:
         if (watcher->isError())
             setError(watcher->error());
         else
-            q_func()->finish(QGalleryAbstractRequest::Succeeded);
+            q_func()->finish();
     }
 };
 
@@ -86,7 +88,7 @@ QGalleryTrackerRemoveResponse::QGalleryTrackerRemoveResponse(
     if (remove.isError()) {
         d->setError(remove.error());
     } else if (remove.isFinished()) {
-        finish(QGalleryAbstractRequest::Succeeded);
+        finish();
     } else {
         d->removeWatcher = new QDBusPendingCallWatcher(remove);
 
@@ -118,7 +120,7 @@ bool QGalleryTrackerRemoveResponse::waitForFinished(int)
         if (watcher->isError())
             d->setError(watcher->error());
         else
-            finish(QGalleryAbstractRequest::Succeeded);
+            finish();
     }
 
     return true;
