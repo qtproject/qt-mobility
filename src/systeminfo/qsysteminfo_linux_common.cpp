@@ -1824,7 +1824,6 @@ qint64 QSystemStorageInfoLinuxCommonPrivate::totalDiskSpace(const QString &drive
 
 QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive(const QString &driveVolume)
 {
-    uriForDrive(driveVolume);
     if(udisksIsAvailable) {
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_UDISKS)
@@ -1834,8 +1833,6 @@ QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive
 
             QString chopper = devIface.deviceFile();
             QString mountp;
-//            if(devIface.deviceMountPaths().count() > 0)
-//                mountp = devIface.deviceMountPaths().at(0);
             if(devIface.deviceIsRemovable()) {
                 return QSystemStorageInfo::RemovableDrive;
             } else if(devIface.deviceIsSystemInternal()){
@@ -1937,7 +1934,7 @@ void QSystemStorageInfoLinuxCommonPrivate::mountEntries()
             if(devIface.deviceIsMounted()) {
                 QString fsname = devIface.deviceMountPaths().at(0);
                 if( !mountEntriesMap.keys().contains(fsname)) {
-                    mountEntriesMap[fsname.toLatin1()] = device.path();
+                    mountEntriesMap[fsname.toLatin1()] = device.path()/*.section("/")*/;
                 }
             }
         }
@@ -1984,19 +1981,15 @@ void QSystemStorageInfoLinuxCommonPrivate::mountEntries()
 
 QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVolume)
 {
-#if !defined(QT_NO_DBUS)
-#if !defined(QT_NO_UDISKS)
-    if(udisksIsAvailable) {
-        QUDisksDeviceInterface devIface(mountEntriesMap.value(driveVolume));
-        if(devIface.deviceIsMounted()) {
-            return devIface.uuid();
+    QDir uuidDir("/dev/disk/by-uuid");
+    QFileInfoList fileList = uuidDir.entryInfoList();
+    foreach(const QFileInfo fi, fileList) {
+        if(fi.isSymLink()) {
+            if(fi.symLinkTarget().contains(mountEntriesMap.value(driveVolume).section("/",-1))) {
+                return fi.baseName();
+            }
         }
-        return QString();
     }
-#endif
-    if(halIsAvailable) {
-    }
-#endif
     return QString();
 }
 
