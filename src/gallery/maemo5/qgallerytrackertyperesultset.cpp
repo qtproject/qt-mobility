@@ -46,6 +46,8 @@
 #include <QtCore/qdatetime.h>
 #include <QtDBus/qdbuspendingreply.h>
 
+#include "qdocumentgallery.h"
+
 #include "qgalleryresultset_p.h"
 
 Q_DECLARE_METATYPE(QVector<QStringList>)
@@ -108,7 +110,7 @@ void QGalleryTrackerTypeResultSetPrivate::queryFinished(const QDBusPendingCall &
     const int oldCount = count;
 
     if (call.isError()) {
-        q_func()->finish(QGalleryAbstractRequest::ConnectionError);
+        q_func()->finish(QDocumentGallery::ConnectionError);
 
         return;
     } else if (!accumulative) {
@@ -159,7 +161,7 @@ void QGalleryTrackerTypeResultSetPrivate::queryFinished(const QDBusPendingCall &
         emit q_func()->metaDataChanged(0, 1, QList<int>() << 0);
 
     if (!queryWatcher)
-        q_func()->finish(QGalleryAbstractRequest::Succeeded);
+        q_func()->finish();
 }
 
 void QGalleryTrackerTypeResultSetPrivate::queryCount()
@@ -288,7 +290,7 @@ bool QGalleryTrackerTypeResultSet::waitForFinished(int msecs)
 
             delete watcher;
 
-            if (d->result != QGalleryAbstractRequest::NoResult)
+            if (d->status != QGalleryAbstractRequest::Active)
                 return true;
         } else {
             return true;

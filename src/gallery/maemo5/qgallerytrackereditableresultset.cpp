@@ -56,14 +56,14 @@ class QGalleryTrackerEditableResultSetPrivate : public QGalleryTrackerResultSetP
     Q_DECLARE_PUBLIC(QGalleryTrackerEditableResultSet)
 public:
     QGalleryTrackerEditableResultSetPrivate(
-            const QGalleryTrackerResultSetArguments &arguments,
+            QGalleryTrackerResultSetArguments *arguments,
             const QGalleryDBusInterfacePointer &metaDataInterface,
-            bool live,
+            bool autoUpdate,
             int cursorPosition,
             int minimumPagedItems)
-        : QGalleryTrackerResultSetPrivate(arguments, live, cursorPosition, minimumPagedItems)
+        : QGalleryTrackerResultSetPrivate(arguments, autoUpdate, cursorPosition, minimumPagedItems)
         , metaDataInterface(metaDataInterface)
-        , fieldNames(arguments.fieldNames)
+        , fieldNames(arguments->fieldNames)
     {
     }
 
@@ -72,15 +72,15 @@ public:
 };
 
 QGalleryTrackerEditableResultSet::QGalleryTrackerEditableResultSet(
-        const QGalleryTrackerResultSetArguments &arguments,
+        QGalleryTrackerResultSetArguments *arguments,
         const QGalleryDBusInterfacePointer &metaDataInterface,
-        bool live,
+        bool autoUpdate,
         int cursorPosition,
         int minimumPagedItems,
         QObject *parent)
     : QGalleryTrackerResultSet(
             *new QGalleryTrackerEditableResultSetPrivate(
-                    arguments, metaDataInterface, live, cursorPosition, minimumPagedItems),
+                    arguments, metaDataInterface, autoUpdate, cursorPosition, minimumPagedItems),
             parent)
 {
 }

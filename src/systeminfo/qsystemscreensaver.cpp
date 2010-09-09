@@ -46,6 +46,12 @@ QTM_BEGIN_NAMESPACE
 
 /////
  /*!
+   \class QSystemScreenSaver
+   \ingroup systeminfo
+   \inmodule QtSystemInfo
+    \brief The QSystemScreenSaver class provides access to screen saver and blanking.
+
+   \fn QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
    Constructs a QSystemScreenSaver object with the given \a parent.
 
    On platforms where there is no one default screensaver mechanism, such as Linux, this class
@@ -55,7 +61,7 @@ QTM_BEGIN_NAMESPACE
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
     : QObject(parent)
 {
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(QT_SIMULATOR)
     d = new QSystemScreenSaverPrivate(static_cast<QSystemScreenSaverLinuxCommonPrivate*>(parent));
 #else
     d = new QSystemScreenSaverPrivate(parent);
@@ -72,7 +78,10 @@ QSystemScreenSaver::~QSystemScreenSaver()
 }
 
 /*!
-    Temporarily inhibits the screensaver.
+  \fn bool QSystemScreenSaver::setScreenSaverInhibit()
+  \brief Set the screensaver to be inhibited.
+
+   Temporarily inhibits the screensaver.
 
     Will be reverted upon destruction of the QSystemScreenSaver object.
     Returns true on success, otherwise false.

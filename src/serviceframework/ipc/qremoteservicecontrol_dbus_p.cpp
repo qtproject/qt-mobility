@@ -179,12 +179,12 @@ DBusSessionAdaptor::~DBusSessionAdaptor()
 {
 }
 
-QRemoteServiceControlPrivate::QRemoteServiceControlPrivate(QObject* parent)
-    : QObject(parent)
+QRemoteServiceControlDbusPrivate::QRemoteServiceControlDbusPrivate(QObject* parent)
+    : QRemoteServiceControlPrivate(parent)
 {
 }
 
-void QRemoteServiceControlPrivate::publishServices(const QString& ident)
+void QRemoteServiceControlDbusPrivate::publishServices(const QString& ident)
 {
     createServiceEndPoint(ident);
 }
@@ -192,7 +192,7 @@ void QRemoteServiceControlPrivate::publishServices(const QString& ident)
 /*!
     Creates endpoint on service side.
 */
-bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& /*ident*/)
+bool QRemoteServiceControlDbusPrivate::createServiceEndPoint(const QString& /*ident*/)
 {
     InstanceManager *iManager = InstanceManager::instance();
     QList<QRemoteServiceIdentifier> list = iManager->allIdents();
@@ -237,6 +237,11 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& /*ident*
     }
 
     return false;
+}
+
+QRemoteServiceControlPrivate* QRemoteServiceControlPrivate::constructPrivateObject(QObject *parent)
+{
+  return new QRemoteServiceControlDbusPrivate(parent);
 }
 
 /*!

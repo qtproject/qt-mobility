@@ -1,6 +1,24 @@
-TEMPLATE = subdirs
+# #####################################################################
+# Telephony Mobility API
+# #####################################################################
 
-SUBDIRS += callmonitor
-SUBDIRS += dialer
+QT       += core gui
+TEMPLATE = app
+TARGET = callmonitor
 
+SOURCES += main.cpp\
+        mainwindow.cpp
 
+HEADERS  += mainwindow.h
+
+FORMS    += mainwindow.ui
+
+INCLUDEPATH += ../../src/telephony
+
+include(../examples.pri)
+CONFIG += mobility
+MOBILITY = telephony
+
+symbian {
+    TARGET.CAPABILITY = UserEnvironment ReadUserData ReadDeviceData
+}

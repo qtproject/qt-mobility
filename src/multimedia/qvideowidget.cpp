@@ -322,7 +322,7 @@ QWindowVideoWidgetBackend::QWindowVideoWidgetBackend(
     connect(control, SIGNAL(fullScreenChanged(bool)), m_widget, SLOT(_q_fullScreenChanged(bool)));
     connect(control, SIGNAL(nativeSizeChanged()), m_widget, SLOT(_q_dimensionsChanged()));
 
-
+    control->setWinId(widget->winId());
 }
 
 QWindowVideoWidgetBackend::~QWindowVideoWidgetBackend()
@@ -416,7 +416,7 @@ void QWindowVideoWidgetBackend::paintEvent(QPaintEvent *event)
 }
 
 #if defined(Q_WS_WIN)
-bool QWindowVideoWidgetBackend::winEvent(MSG *message, long *result)
+bool QWindowVideoWidgetBackend::winEvent(MSG *message, long *)
 {
     if (message->message == WM_PAINT)
         m_windowControl->repaint();

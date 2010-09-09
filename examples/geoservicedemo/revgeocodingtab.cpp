@@ -50,19 +50,55 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QDialogButtonBox>
+
+GeocodingCoordinateInputDialog::GeocodingCoordinateInputDialog(QGeoCoordinate& location, QWidget *parent)
+    : QDialog(parent), m_location(location)
+{
+    setWindowTitle(tr("Reverse Geocoding Coordinates"));
+
+    QLabel *locationlbl = new QLabel(tr("Location (lat,long):"));
+    m_locLong = new QLineEdit(QString::number(location.longitude()));
+    m_locLong->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_locLat = new QLineEdit(QString::number(location.latitude()));
+    m_locLat->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    QHBoxLayout *firstrow = new QHBoxLayout;
+    firstrow->setSpacing(2);
+    firstrow->setContentsMargins(2, 1, 2, 1);
+    firstrow->addWidget(m_locLat);
+    firstrow->addWidget(m_locLong);
+
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel,Qt::Horizontal);
+    connect(buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
+    connect(buttonBox,SIGNAL(rejected()),this,SLOT(reject()));
+
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->setSizeConstraint(QLayout::SetFixedSize);
+    mainLayout->setSpacing(2);
+    mainLayout->setContentsMargins(2, 1, 2, 1);
+    mainLayout->addWidget(locationlbl);
+    mainLayout->addLayout(firstrow);
+    mainLayout->addWidget(buttonBox);
+    setLayout(mainLayout);
+}
+
+void GeocodingCoordinateInputDialog::accept()
+{
+    m_location.setLatitude(m_locLat->text().toDouble());
+    m_location.setLongitude(m_locLong->text().toDouble());
+    QDialog::accept();
+}
 
 ReverseGeocodingTab::ReverseGeocodingTab(QWidget *parent) :
         QWidget(parent),
         m_searchManager(NULL)
 {
-    QLabel *locationlbl = new QLabel(tr("Location (lat,long):"));
-    m_locLong = new QLineEdit("13.377");
-    m_locLong->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    m_locLat = new QLineEdit("52.51");
-    m_locLat->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_location.setLatitude(52.51);
+    m_location.setLongitude(13.377);
 
-    m_requestBtn = new QPushButton(tr("Reverse Geocoding"));
-    m_requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    m_requestBtn = new QPushButton(tr("Search By Coordinates"));
+    m_requestBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_requestBtn->setDisabled(true);
     QObject::connect(m_requestBtn, SIGNAL(clicked(bool)), this, SLOT(on_btnRequest_clicked()));
 
@@ -71,14 +107,11 @@ ReverseGeocodingTab::ReverseGeocodingTab(QWidget *parent) :
     labels << tr("Elements") << tr("Value");
     m_resultTree->setHeaderLabels(labels);
     m_resultTree->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    m_resultTree->setColumnWidth(0, 150);
+    m_resultTree->setColumnWidth(0, 240);
 
     QHBoxLayout *firstrow = new QHBoxLayout;
-    firstrow->setSpacing(0);
-    firstrow->setContentsMargins(0, 0, 0, 0);
-    firstrow->addWidget(locationlbl);
-    firstrow->addWidget(m_locLat);
-    firstrow->addWidget(m_locLong);
+    firstrow->setSpacing(2);
+    firstrow->setContentsMargins(2, 1, 2, 1);
     firstrow->addWidget(m_requestBtn);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -113,11 +146,14 @@ void ReverseGeocodingTab::initialize(QGeoSearchManager *searchManager)
 void ReverseGeocodingTab::on_btnRequest_clicked()
 {
     if (m_searchManager) {
-        QGeoCoordinate coord(m_locLat->text().toDouble(), m_locLong->text().toDouble());
-
-        m_resultTree->clear();
-
-        m_searchManager->reverseGeocode(coord);
+        GeocodingCoordinateInputDialog dlg(m_location,this);
+        if(dlg.exec()==QDialog::Accepted) {
+            m_resultTree->clear();
+            QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
+            top->setText(0, tr("Reverse Geocode"));
+            top->setText(1, tr("Requesting data"));
+            m_searchManager->reverseGeocode(m_location);
+        }
     } else {
         QMessageBox::warning(this, tr("Reverse Geocoding"), tr("No search manager available."));
     }
@@ -126,6 +162,7 @@ void ReverseGeocodingTab::on_btnRequest_clicked()
 void ReverseGeocodingTab::replyFinished(QGeoSearchReply* reply)
 {
     if (!isHidden() && reply->error() == QGeoSearchReply::NoError) {
+        m_resultTree->clear();
         PlacePresenter presenter(m_resultTree, reply);
         presenter.show();
         reply->deleteLater();
@@ -137,6 +174,7 @@ void ReverseGeocodingTab::resultsError(QGeoSearchReply* reply, QGeoSearchReply::
     Q_UNUSED(errorCode)
 
     if (!isHidden()) {
+        m_resultTree->clear();
         QTreeWidgetItem* errorResultItem = new QTreeWidgetItem(m_resultTree);
         errorResultItem->setText(0, tr("Error"));
         errorResultItem->setText(1, errorString);

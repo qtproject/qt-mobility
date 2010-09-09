@@ -44,6 +44,8 @@
 
 #include <qgalleryitemrequest.h>
 
+#include "qdeclarativedocumentgallery.h"
+
 #include <QtCore/qpointer.h>
 #include <QtCore/qurl.h>
 #include <QtDeclarative/qdeclarative.h>
@@ -55,59 +57,46 @@ class QDeclarativeGalleryItem : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
     Q_INTERFACES(QDeclarativeParserStatus)
-    Q_ENUMS(State)
-    Q_ENUMS(Result)
-    Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery NOTIFY galleryChanged)
-    Q_PROPERTY(State state READ state NOTIFY stateChanged)
-    Q_PROPERTY(Result result READ result NOTIFY resultChanged)
-    Q_PROPERTY(int currentProgress READ currentProgress NOTIFY progressChanged)
-    Q_PROPERTY(int maximumProgress READ maximumProgress NOTIFY progressChanged)
+    Q_ENUMS(Status)
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
+    Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
+    Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
-    Q_PROPERTY(bool live READ isLive WRITE setLive NOTIFY liveChanged)
+    Q_PROPERTY(bool autoUpdate READ isAutoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QVariant item READ itemId WRITE setItemId NOTIFY itemIdChanged)
-    Q_PROPERTY(bool available READ available NOTIFY avaialbleChanged)
-    Q_PROPERTY(QString itemType READ itemType NOTIFY availableChanged)
+    Q_PROPERTY(bool available READ available NOTIFY availableChanged)
     Q_PROPERTY(QUrl itemUrl READ itemUrl NOTIFY availableChanged)
     Q_PROPERTY(QObject *metaData READ metaData NOTIFY metaDataChanged)
 public:
-    enum State
+    enum Status
     {
-        Inactive    = QGalleryAbstractRequest::Inactive,
+        Null        = QGalleryAbstractRequest::Inactive,
         Active      = QGalleryAbstractRequest::Active,
+        Finished    = QGalleryAbstractRequest::Finished,
+        Idle        = QGalleryAbstractRequest::Idle,
         Cancelling  = QGalleryAbstractRequest::Cancelling,
-        Idle        = QGalleryAbstractRequest::Idle
+        Cancelled   = QGalleryAbstractRequest::Cancelled,
+        Error       = QGalleryAbstractRequest::Error
     };
 
-    enum Result
-    {
-        NoResult                        = QGalleryAbstractRequest::NoResult,
-        Succeeded                       = QGalleryAbstractRequest::NoResult,
-        Cancelled                       = QGalleryAbstractRequest::NoResult,
-        NoGallery                       = QGalleryAbstractRequest::NoResult,
-        NotSupported                    = QGalleryAbstractRequest::NoResult,
-        ConnectionError                 = QGalleryAbstractRequest::NoResult,
-        InvalidItemError                = QGalleryAbstractRequest::NoResult
-    };
-
-    QDeclarativeGalleryItem(QObject *parent = 0);
     ~QDeclarativeGalleryItem();
 
-    QAbstractGallery *gallery() const { return m_request.gallery(); }
-    void setGallery(QAbstractGallery *gallery) {
-        if (!m_complete || !gallery) { m_request.setGallery(gallery); emit galleryChanged(); } }
+    Status status() const { return m_status; }
 
-    State state() const { return State(m_request.state()); }
-    Result result() const { return Result(m_request.result()); }
+    qreal progress() const
+    {
+        const int max = m_request.maximumProgress();
+        return max > 0 ? qreal(m_request.currentProgress()) / max : qreal(0.0);
+    }
 
-    int currentProgress() const { return m_request.currentProgress(); }
-    int maximumProgress() const { return m_request.maximumProgress(); }
+    QString errorMessage() const { return m_errorMessage; }
 
     QStringList propertyNames() { return m_request.propertyNames(); }
     void setPropertyNames(const QStringList &names) {
         if (!m_complete) m_request.setPropertyNames(names); emit propertyNamesChanged(); }
 
-    bool isLive() const { return m_request.isLive(); }
-    void setLive(bool live) { m_request.setLive(live); emit liveChanged(); }
+    bool isAutoUpdate() const { return m_request.isAutoUpdate(); }
+    void setAutoUpdate(bool enabled) { m_request.setAutoUpdate(enabled); emit autoUpdateChanged(); }
 
     QVariant itemId() const { return m_request.itemId(); }
     void setItemId(const QVariant &itemId) {
@@ -115,7 +104,6 @@ public:
 
     bool available() const { return m_request.isValid(); }
 
-    QString itemType() const { return m_request.itemType(); }
     QUrl itemUrl() const { return m_request.itemUrl(); }
 
     QObject *metaData() const { return m_metaData; }
@@ -129,37 +117,51 @@ public Q_SLOTS:
     void clear() { m_request.clear(); }
 
 Q_SIGNALS:
-    void succeeded();
-    void cancelled();
-    void failed(int result);
-    void finished(int result);
-    void stateChanged();
-    void resultChanged();
+    void statusChanged();
     void progressChanged();
+    void errorMessageChanged();
     void availableChanged();
     void metaDataChanged();
 
     void galleryChanged();
     void propertyNamesChanged();
-    void liveChanged();
+    void autoUpdateChanged();
     void itemIdChanged();
 
+protected:
+    explicit QDeclarativeGalleryItem(QObject *parent = 0);
+
+    QGalleryItemRequest m_request;
+    QDeclarativePropertyMap *m_metaData;
+    QHash<int, QString> m_propertyKeys;
+    QString m_errorMessage;
+    Status m_status;
+    bool m_complete;
 
 private Q_SLOTS:
+    void _q_statusChanged();
     void _q_itemChanged();
     void _q_metaDataChanged(const QList<int> &keys);
     void _q_valueChanged(const QString &key, const QVariant &value) {
         m_request.setMetaData(key, value); }
+};
 
-private:
-    QGalleryItemRequest m_request;
-    QDeclarativePropertyMap *m_metaData;
-    QHash<int, QString> m_propertyKeys;
-    bool m_complete;
+class QDeclarativeDocumentGalleryItem : public QDeclarativeGalleryItem
+{
+    Q_OBJECT
+    Q_PROPERTY(QDeclarativeDocumentGallery::ItemType itemType READ itemType NOTIFY itemTypeChanged)
+public:
+    explicit QDeclarativeDocumentGalleryItem(QObject *parent = 0);
+    ~QDeclarativeDocumentGalleryItem();
+
+    QDeclarativeDocumentGallery::ItemType itemType() const;
+
+Q_SIGNALS:
+    void itemTypeChanged();
 };
 
 QTM_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryItem))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeDocumentGalleryItem))
 
 #endif

@@ -53,7 +53,6 @@ QT_USE_NAMESPACE
 class QGstreamerRecorderControl : public QMediaRecorderControl
 {
     Q_OBJECT
-    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
 
 public:
     QGstreamerRecorderControl(QGstreamerCaptureSession *session);

@@ -143,9 +143,10 @@ include(video/video.pri)
 include(effects/effects.pri)
 
 mac {
+!simulator {
    HEADERS += qpaintervideosurface_mac_p.h
    OBJECTIVE_SOURCES += qpaintervideosurface_mac.mm
-
+}
    LIBS += -framework AppKit -framework QuartzCore -framework QTKit
 }
 
@@ -155,7 +156,13 @@ maemo5 {
     SOURCES += qxvideosurface_maemo5.cpp
     SOURCES += qgraphicsvideoitem_maemo5.cpp
     LIBS += -lXv  -lX11 -lXext
-} else {
+}
+
+maemo6 {
+    SOURCES += qgraphicsvideoitem_overlay.cpp
+}
+
+!maemo* {
     SOURCES += qgraphicsvideoitem.cpp
 }
 

@@ -55,7 +55,8 @@ typedef QPair<QContactLocalId, QContactLocalId> QOwnCardPair;
 CntSymbianDatabase::CntSymbianDatabase(QContactManagerEngine *engine, QContactManager::Error* error) :
     m_engine(engine),
     m_contactDatabase(0),
-    m_currentOwnCardId(0)
+    m_currentOwnCardId(0),
+    m_restoreStarted(false)
 {
     TRAPD(err, initializeL());
     CntSymbianTransformError::transformError(err, error);
@@ -218,6 +219,15 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
             m_currentOwnCardId = QContactLocalId(id);
         }
         break;
+    case EContactDbObserverEventRestoreBeginning:    
+        m_restoreStarted = true;
+        break;
+    case EContactDbObserverEventBackupRestoreCompleted:    
+        if (m_restoreStarted) {
+            changeSet.setDataChanged(true);
+            m_restoreStarted = false;
+        }
+        break;
     default:
         break; // ignore other events
     }
@@ -316,6 +326,15 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
             changeSet.setOldAndNewSelfContactId(QOwnCardPair(m_currentOwnCardId, QContactLocalId(id)));
         m_currentOwnCardId = QContactLocalId(id);
         break;
+    case EContactDbObserverEventRestoreBeginning:    
+        m_restoreStarted = true;
+        break;
+    case EContactDbObserverEventBackupRestoreCompleted:    
+        if (m_restoreStarted) {
+            changeSet.setDataChanged(true);
+            m_restoreStarted = false;
+        }
+        break;        
     default:
         break; // ignore other events
     }

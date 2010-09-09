@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -79,27 +79,26 @@ class QTelephonyCallListPrivate :
 public:
     QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
     virtual ~QTelephonyCallListPrivate();
-    QList<QTelephonyCallInfo> activeCalls(const QTelephonyEvents::CallType& calltype) const;
+    QList<QTelephonyCallInfo> activeCalls(const QTelephony::CallType& calltype) const;
+    int activeCallCount() const;
 
-    
-private slots:
+public slots:
     void updateCallInformation();
     
-private: // From MCallInformationObserver
+public: // From MCallInformationObserver
     void CallInformationChanged();
 
-private:
+public: // For testing purposes
     void IterateCallInformationListL(QList<int> &existingCalls);
     
     void fillCallInfo(
             QTelephonyCallInfoPrivate &callInfo, const MCall& fromCall);
     void fillCallRemoteInfo(
             QTelephonyCallInfoPrivate &callInfo, const MCall& fromCall);
-    QTelephonyEvents::CallStatus mapStatus(CCPCall::TCallState aStatus);
-    QTelephonyEvents::CallType mapType(CCPCall::TCallType aType);
+    QTelephony::CallStatus mapStatus(CCPCall::TCallState aStatus);
+    QTelephony::CallType mapType(CCPCall::TCallType aType);
     QString mapSubType(ulong aServiceId);
-    
-private:
+
     void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);
     void emitActiveCallRemoved(QTelephonyCallInfoPrivate& call);
     void emitActiveCallAdded(QTelephonyCallInfoPrivate& call);

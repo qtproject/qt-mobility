@@ -48,6 +48,8 @@
 
 #include <QPolygonF>
 
+#include <QDebug>
+
 QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
@@ -67,8 +69,18 @@ QGeoTiledMapObjectInfo::~QGeoTiledMapObjectInfo()
 void QGeoTiledMapObjectInfo::addToParent()
 {
     if (graphicsItem) {
-        tiledMapDataPrivate->scene->addItem(graphicsItem);
+        QGeoTiledMapObjectInfo *parentInfo
+                = static_cast<QGeoTiledMapObjectInfo*>(parentObjectInfo());
+
+        if (parentInfo)
+            graphicsItem->setParentItem(parentInfo->graphicsItem);
+        else
+            tiledMapDataPrivate->scene->addItem(graphicsItem);
+
         tiledMapDataPrivate->itemMap.insert(graphicsItem, mapObject());
+        graphicsItem->setVisible(mapObject()->isVisible());
+        graphicsItem->setFlag(QGraphicsItem::ItemIsSelectable);
+        graphicsItem->setSelected(mapObject()->isSelected());
     }
 }
 
@@ -77,6 +89,22 @@ void QGeoTiledMapObjectInfo::removeFromParent()
     if (graphicsItem) {
         tiledMapDataPrivate->scene->removeItem(graphicsItem);
         tiledMapDataPrivate->itemMap.remove(graphicsItem);
+    }
+}
+
+void QGeoTiledMapObjectInfo::visibleChanged(bool visible)
+{
+    if (graphicsItem) {
+        graphicsItem->setVisible(visible);
+        updateItem();
+    }
+}
+
+void QGeoTiledMapObjectInfo::selectedChanged(bool selected)
+{
+    if (graphicsItem) {
+        graphicsItem->setSelected(selected);
+        updateItem();
     }
 }
 
@@ -98,7 +126,8 @@ bool QGeoTiledMapObjectInfo::contains(const QGeoCoordinate &coord) const
 {
     QPoint point = tiledMapData->coordinateToWorldPixel(coord);
 
-    if (graphicsItem && graphicsItem->contains(point))
+    //if (graphicsItem && graphicsItem->contains(point))
+    if (graphicsItem && graphicsItem->mapToParent(graphicsItem->shape()).contains(point))
         return true;
 
     return false;

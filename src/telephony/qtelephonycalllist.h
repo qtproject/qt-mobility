@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -62,15 +62,19 @@ public:
     explicit QTelephonyCallList(QObject *parent = 0);
     virtual ~QTelephonyCallList();
 
+    Q_PROPERTY(int activeCallCount READ activeCallCount)
+
 Q_SIGNALS:
     void activeCallStatusChanged(const QTelephonyCallInfo& call);
     void activeCallRemoved(const QTelephonyCallInfo& call);
     void activeCallAdded(const QTelephonyCallInfo& call);
+    void hasActiveCalls(bool value);
 
 public:
-    QList<QTelephonyCallInfo > activeCalls(const QTelephonyEvents::CallType& calltype = QTelephonyEvents::Any) const;
+    QList<QTelephonyCallInfo > activeCalls(const QTelephony::CallType& calltype = QTelephony::Any) const;
+    int activeCallCount() const;
 
-protected:
+private:
     QTelephonyCallListPrivate* d;
     friend class QTelephonyCallListPrivate;
 };

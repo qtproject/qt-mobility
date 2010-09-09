@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS landmark_notification (
 );
 @@@
 CREATE TABLE IF NOT EXISTS category_notification (
-    timestamp REAL,
+    timestamp INTEGER,
     action TEXT,
     categoryId INTEGER,
     PRIMARY KEY(timestamp, action, categoryId)
@@ -79,7 +79,7 @@ FOR EACH ROW
         DELETE FROM landmark_notification
         WHERE timestamp < strftime('%s', 'now', '-2 minutes');
         INSERT INTO landmark_notification(timestamp, action, landmarkId)
-        VALUES(strftime("%f", "now") - strftime("%S", "now") + strftime("%s"),'ADD', new.id);
+        VALUES((strftime("%f", "now") - strftime("%S", "now") + strftime("%s"))*1000,'ADD', new.id);
     END;
 @@@
 CREATE TRIGGER IF NOT EXISTS change_landmark_notification
@@ -89,7 +89,7 @@ FOR EACH ROW
         DELETE FROM landmark_notification
         WHERE timestamp < strftime('%s', 'now', '-2 minutes');
         INSERT INTO landmark_notification(timestamp, action, landmarkId)
-        VALUES(strftime("%f", "now") - strftime("%S", "now") + strftime("%s"),'CHANGE', new.id);
+        VALUES((strftime("%f", "now") - strftime("%S", "now") + strftime("%s"))*1000,'CHANGE', new.id);
     END;
 @@@
 CREATE TRIGGER IF NOT EXISTS remove_landmark_notification
@@ -99,7 +99,7 @@ FOR EACH ROW
         DELETE FROM landmark_notification
         WHERE timestamp < strftime('%s', 'now', '-2 minutes');
         INSERT INTO landmark_notification(timestamp, action, landmarkId)
-        VALUES(strftime("%f", "now") - strftime("%S", "now") + strftime("%s"),'REMOVE', old.id);
+        VALUES((strftime("%f", "now") - strftime("%S", "now") + strftime("%s"))*1000,'REMOVE', old.id);
     END;
 @@@
 CREATE TRIGGER IF NOT EXISTS add_category_notification
@@ -109,7 +109,7 @@ FOR EACH ROW
         DELETE FROM category_notification
         WHERE timestamp < strftime('%s', 'now', '-2 minutes');
         INSERT INTO category_notification(timestamp, action, categoryId)
-        VALUES(strftime("%f", "now") - strftime("%S", "now") + strftime("%s"),'ADD', new.id);
+        VALUES((strftime("%f", "now") - strftime("%S", "now") + strftime("%s"))*1000,'ADD', new.id);
     END;
 @@@
 CREATE TRIGGER IF NOT EXISTS change_category_notification
@@ -119,7 +119,7 @@ FOR EACH ROW
         DELETE FROM category_notification
         WHERE timestamp < strftime('%s', 'now', '-2 minutes');
         INSERT INTO category_notification(timestamp, action, categoryId)
-        VALUES(strftime("%f", "now") - strftime("%S", "now") + strftime("%s"),'CHANGE', new.id);
+        VALUES((strftime("%f", "now") - strftime("%S", "now") + strftime("%s"))*1000,'CHANGE', new.id);
     END;
 @@@
 CREATE TRIGGER IF NOT EXISTS remove_category_notification
@@ -129,7 +129,7 @@ FOR EACH ROW
         DELETE FROM category_notification
         WHERE timestamp < strftime('%s', 'now', '-2 minutes');
         INSERT INTO category_notification(timestamp, action, categoryId)
-        VALUES(strftime("%f", "now") - strftime("%S", "now") + strftime("%s"),'REMOVE', old.id);
+        VALUES((strftime("%f", "now") - strftime("%S", "now") + strftime("%s"))*1000,'REMOVE', old.id);
     END;
 @@@
 CREATE INDEX IF NOT EXISTS landmark_category_fk_lm_index ON landmark_category(landmarkId);

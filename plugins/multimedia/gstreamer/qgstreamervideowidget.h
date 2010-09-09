@@ -92,6 +92,7 @@ public slots:
 
 signals:
     void sinkChanged();
+    void readyChanged(bool);
 
 private:
     void createVideoWidget();

@@ -12,19 +12,21 @@ PLUGIN_TYPE = declarative
 
 include(../../../common.pri)
 
-QT += declarative
+QT += declarative script
 
 
 CONFIG += mobility
 MOBILITY = gallery
 
 HEADERS += \
+        qdeclarativedocumentgallery.h \
         qdeclarativegalleryfilter.h \
         qdeclarativegalleryitem.h \
         qdeclarativegalleryquerymodel.h \
         qdeclarativegallerytype.h
 
 SOURCES += \
+        qdeclarativedocumentgallery.cpp \
         qdeclarativegallery.cpp \
         qdeclarativegalleryfilter.cpp \
         qdeclarativegalleryitem.cpp \

@@ -17,7 +17,7 @@ void QDeclarativeLandmarkCategory::setName(const QString& name)
     if (name == m_category.name())
         return;
     m_category.setName(name);
-    emit nameChanged(name);
+    emit nameChanged();
 }
 
 QUrl QDeclarativeLandmarkCategory::iconSource()
@@ -30,7 +30,7 @@ void QDeclarativeLandmarkCategory::setIconSource(const QUrl& iconSource)
     if (iconSource == m_category.iconUrl())
         return;
     m_category.setIconUrl(iconSource);
-    emit iconSourceChanged(iconSource);
+    emit iconSourceChanged();
 }
 
 // Initializes this category from the given category

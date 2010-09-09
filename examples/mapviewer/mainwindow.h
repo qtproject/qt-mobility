@@ -159,6 +159,7 @@ private slots:
     void mapTypeChanged(QGraphicsGeoMap::MapType type);
     void setCoordsClicked();
     void updateCoords(const QGeoCoordinate &coords);
+    void sceneSelectionChanged();
 
     void networkSessionOpened();
     void error(QNetworkSession::SessionError error);
@@ -169,6 +170,7 @@ private:
     QGeoRoutingManager *m_routingManager;
 
     MapWidget *m_mapWidget;
+    QGraphicsPathItem* m_fullScreenButton;
     QMenu* m_popupMenu;
     QPixmap m_markerIcon;
     QPoint m_lastClicked;
@@ -182,6 +184,9 @@ private:
     QLineEdit *m_longitudeEdit;
     QToolButton *m_captureCoordsButton;
     QPushButton *m_setCoordsButton;
+
+    QLayout *m_layout;
+    bool fullscreen;
 
     QNetworkSession *m_session;
 };

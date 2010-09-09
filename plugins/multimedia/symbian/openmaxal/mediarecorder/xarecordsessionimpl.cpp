@@ -588,7 +588,8 @@ TInt32 XARecordSessionImpl::getSampleRates(
 
 TInt32 XARecordSessionImpl::getBitrates(
                         const TDesC& aEncoder,
-                        RArray<TUint32> &aBitrates)
+                        RArray<TUint32> &aBitrates,
+                        TBool& aContinuous)
 {
     TRACE_FUNCTION_ENTRY;
 
@@ -605,10 +606,12 @@ TInt32 XARecordSessionImpl::getBitrates(
     }
 
     TInt32 returnValue(KErrNotSupported);
+    XAboolean cont;
     if (found == false)
         return returnValue;
 
-    returnValue = getBitratesByAudioCodecID(encoderId, aBitrates);
+    returnValue = getBitratesByAudioCodecID(encoderId, aBitrates, cont);
+    aContinuous = cont;
 
     TRACE_FUNCTION_EXIT;
     return returnValue;
@@ -756,7 +759,8 @@ void XARecordSessionImpl::setVeryLowQuality()
 {
     /* Set to very low quality encoder preset */
     RArray<TUint32> bitrates;
-    TInt res = getBitratesByAudioCodecID(m_AudioEncoderId, bitrates);
+    XAboolean continuous;
+    TInt res = getBitratesByAudioCodecID(m_AudioEncoderId, bitrates, continuous);
     if ((res == KErrNone) && (bitrates.Count() > 0) ) {
         /* Sort the array and pick the lowest bit rate */
         bitrates.SortUnsigned();
@@ -769,11 +773,15 @@ void XARecordSessionImpl::setLowQuality()
 {
     /* Set to low quality encoder preset */
     RArray<TUint32> bitrates;
-    TInt res = getBitratesByAudioCodecID(m_AudioEncoderId, bitrates);
+    XAboolean continuous;
+    TInt res = getBitratesByAudioCodecID(m_AudioEncoderId, bitrates, continuous);
     if ((res == KErrNone) && (bitrates.Count() > 0)) {
         /* Sort the array and pick the low quality bit rate */
         bitrates.SortUnsigned();
-        m_BitRate = bitrates[bitrates.Count()*1/4];
+        if (continuous == XA_BOOLEAN_FALSE)
+            m_BitRate = bitrates[bitrates.Count()*1/4];
+        else
+            m_BitRate = (bitrates[1] - bitrates[0])/4;
     }
     bitrates.Close();
 }
@@ -782,11 +790,15 @@ void XARecordSessionImpl::setNormalQuality()
 {
     /* Set to normal quality encoder preset */
     RArray<TUint32> bitrates;
-    TInt res = getBitratesByAudioCodecID(m_AudioEncoderId, bitrates);
+    XAboolean continuous;
+    TInt res = getBitratesByAudioCodecID(m_AudioEncoderId, bitrates, continuous);
     if ((res == KErrNone) && (bitrates.Count() > 0)) {
         /* Sort the array and pick the middle range bit rate */
         bitrates.SortUnsigned();
-        m_BitRate = bitrates[bitrates.Count()/2];
+        if (continuous == XA_BOOLEAN_FALSE)
+            m_BitRate = bitrates[bitrates.Count()/2];
+        else
+            m_BitRate = (bitrates[1] - bitrates[0])/2;
     }
     bitrates.Close();
 }
@@ -795,11 +807,15 @@ void XARecordSessionImpl::setHighQuality()
 {
     /* Set to high quality encoder preset */
     RArray<TUint32> bitrates;
-    TInt res = getBitratesByAudioCodecID(m_AudioEncoderId, bitrates);
+    XAboolean continuous;
+    TInt res = getBitratesByAudioCodecID(m_AudioEncoderId, bitrates, continuous);
     if ((res == KErrNone) && (bitrates.Count() > 0)) {
         /* Sort the array and pick the high quality bit rate */
         bitrates.SortUnsigned();
-        m_BitRate = bitrates[bitrates.Count()*3/4];
+        if (continuous == XA_BOOLEAN_FALSE)
+            m_BitRate = bitrates[bitrates.Count()*3/4];
+        else
+            m_BitRate = (bitrates[1] - bitrates[0])*3/4;
     }
     bitrates.Close();
 }
@@ -808,7 +824,8 @@ void XARecordSessionImpl::setVeryHighQuality()
 {
     /* Set to very high quality encoder preset */
     RArray<TUint32> bitrates;
-    TInt res = getBitratesByAudioCodecID(m_AudioEncoderId, bitrates);
+    XAboolean continuous;
+    TInt res = getBitratesByAudioCodecID(m_AudioEncoderId, bitrates, continuous);
     if ((res == KErrNone) && (bitrates.Count() > 0)) {
         /* Sort the array and pick the highest bit rate */
         bitrates.SortUnsigned();
@@ -1181,7 +1198,8 @@ TInt32 XARecordSessionImpl::setEncoderSettingsToMediaRecorder()
 
 TInt32 XARecordSessionImpl::getBitratesByAudioCodecID(
         XAuint32 encoderId,
-        RArray<TUint32> &aBitrates)
+        RArray<TUint32> &aBitrates,
+        XAboolean& aContinuous)
 {
     TRACE_FUNCTION_ENTRY;
 
@@ -1197,7 +1215,7 @@ TInt32 XARecordSessionImpl::getBitratesByAudioCodecID(
                                         &codecDesc);
     TInt32 returnValue = mapError(xa_result, ETrue);
     RET_ERR_IF_ERR(returnValue);
-
+    aContinuous = codecDesc.isBitrateRangeContinuous;
     /* TODO What do we do if we have more than one caps?? */
     if (codecDesc.isBitrateRangeContinuous == XA_BOOLEAN_TRUE) {
         aBitrates.Append(codecDesc.minBitRate);

@@ -1611,6 +1611,7 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
 
         {
             QOrganizerItemRecurrenceRule rrule;
+            rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
             rrule.setWeekStart(Qt::Monday);
             rrule.setDaysOfWeek(QList<Qt::DayOfWeek>() << Qt::Friday << Qt::Saturday << Qt::Sunday);
             rrule.setEndDate(QDate(2010, 1, 27));

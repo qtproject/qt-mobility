@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,7 +53,7 @@
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-using namespace QTelephonyEvents;
+using namespace QTelephony;
 
 struct QTelephonyCallInfoPrivate;
 class Q_TELEPHONY_EXPORT QTelephonyCallInfo
@@ -62,12 +62,15 @@ public:
     QTelephonyCallInfo();
     QTelephonyCallInfo(const QTelephonyCallInfo& other);
     ~QTelephonyCallInfo();
-
+    bool operator ==(const QTelephonyCallInfo& other) const;
+    bool operator !=(const QTelephonyCallInfo& other) const;
+    QTelephonyCallInfo& operator=(const QTelephonyCallInfo& other);
     QString remotePartyIdentifier() const;
-    CallType type() const;
+    unsigned int type() const;
     QString subType() const;
     CallStatus status() const;
     QVariant value(const QString& key) const;
+    Direction direction() const;
 private:
     QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate> d;
     friend class QTelephonyCallListPrivate;

@@ -96,8 +96,12 @@ Rectangle {
         height : 480
         focus : visible //to receive focus and capture key events
 
-        onImageSaved : {
-            photoPreview.source = capturedImagePath
+        flashMode: stillControls.flashMode
+        whiteBalanceMode: stillControls.whiteBalance
+        exposureCompensation: stillControls.exposureCompensation
+
+        onImageCaptured : {
+            photoPreview.source = preview
             stillControls.previewAvailable = true
             cameraUI.state = "PhotoPreview"
         }
@@ -107,7 +111,6 @@ Rectangle {
         id: stillControls
         anchors.fill: parent
         camera: camera
-        //focus: visible
         onPreviewSelected: cameraUI.state = "PhotoPreview"
     }
 }
