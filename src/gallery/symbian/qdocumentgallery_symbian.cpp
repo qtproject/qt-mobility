@@ -116,10 +116,10 @@ QDocumentGallery::~QDocumentGallery()
 bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::RequestType type) const
 {
     switch (type) {
-        case QGalleryAbstractRequest::QueryRequest:
-        case QGalleryAbstractRequest::ItemRequest:
-        case QGalleryAbstractRequest::TypeRequest:
-        case QGalleryAbstractRequest::RemoveRequest:
+    case QGalleryAbstractRequest::QueryRequest:
+    case QGalleryAbstractRequest::ItemRequest:
+    case QGalleryAbstractRequest::TypeRequest:
+    case QGalleryAbstractRequest::RemoveRequest:
         return true;
         default:
         return false;
@@ -138,8 +138,7 @@ QGalleryProperty::Attributes QDocumentGallery::propertyAttributes(
 {
     if( propertyName == QDocumentGallery::url.name() ) {
         return (QGalleryProperty::CanRead | QGalleryProperty::CanSort | QGalleryProperty::CanFilter );
-    }
-    else {
+    } else {
         return (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanSort | QGalleryProperty::CanFilter );
     }
 }
@@ -149,15 +148,15 @@ QGalleryAbstractResponse* QDocumentGallery::createResponse(QGalleryAbstractReque
     Q_D(QDocumentGallery); // access to private class
 
     switch (request->type()) {
-        case QGalleryAbstractRequest::ItemRequest:
+    case QGalleryAbstractRequest::ItemRequest:
         return d->createItemResponse(static_cast<QGalleryItemRequest *>(request));
-        case QGalleryAbstractRequest::TypeRequest:
+    case QGalleryAbstractRequest::TypeRequest:
         return d->createTypeResponse(static_cast<QGalleryTypeRequest *>(request));
-        case QGalleryAbstractRequest::RemoveRequest:
+    case QGalleryAbstractRequest::RemoveRequest:
         return d->createRemoveResponse(static_cast<QGalleryRemoveRequest *>(request));
-        case QGalleryAbstractRequest::QueryRequest:
+    case QGalleryAbstractRequest::QueryRequest:
         return d->createQueryResponse(static_cast<QGalleryQueryRequest *>(request));
-        default:
+    default:
         return 0;
     }
 }

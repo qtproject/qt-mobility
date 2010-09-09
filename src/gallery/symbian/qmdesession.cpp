@@ -51,8 +51,8 @@
 QTM_BEGIN_NAMESPACE
 
 QMdeSession::QMdeSession(QObject *parent)
-:QObject(parent)
-,m_cmdeSession(NULL)
+    :QObject(parent)
+    ,m_cmdeSession(NULL)
 {
     TRAP_IGNORE( m_cmdeSession = CMdESession::NewL( *this ) );
     m_eventLoop.exec();
@@ -100,7 +100,7 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer,
 
     CMdEObjectQuery* query = NULL;
 
-    if( request->rootType() == QDocumentGallery::File.name() ) {
+    if (request->rootType() == QDocumentGallery::File.name()) {
         CMdEObjectDef& mediaObjDef = defaultNamespace.GetObjectDefL(
             MdeConstants::MediaObject::KMediaObject );
         CMdEObjectDef& imageObjDef = defaultNamespace.GetObjectDefL(
@@ -117,12 +117,11 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer,
         objectDefs->Append( &audioObjDef );
 
         TRAPD( err, query = m_cmdeSession->NewObjectQueryL( mediaObjDef, objectDefs, observer ) );
-        if( err ) {
+        if (err) {
             delete objectDefs;
             return NULL;
         }
-    }
-    else {
+    } else {
         CMdEObjectDef& objdef = QDocumentGalleryMDSUtility::ObjDefFromItemTypeL(defaultNamespace, request->rootType() );
         if( objdef.Name() == MdeConstants::Object::KBaseObject ) {
             // Base object definition is only returned if the root type does not match supported types
@@ -148,12 +147,10 @@ int QMdeSession::RemoveObject( const unsigned int itemId )
     if (err == KErrNone) {
         if (result != KNoId) {
             ret = QGalleryAbstractRequest::Succeeded;
-        }
-        else {
+        } else {
             ret = QGalleryAbstractRequest::RequestError;
         }
-    }
-    else {
+    } else {
         ret = QGalleryAbstractRequest::RequestError;
     }
 

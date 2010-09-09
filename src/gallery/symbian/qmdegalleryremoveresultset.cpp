@@ -48,7 +48,7 @@
 QTM_BEGIN_NAMESPACE
 
 QMDEGalleryRemoveResultSet::QMDEGalleryRemoveResultSet(QMdeSession *session, QObject *parent)
-:QMDEGalleryResultSet(parent)
+    : QMDEGalleryResultSet(parent)
 {
     m_request = static_cast<QGalleryRemoveRequest *>(parent);
     m_session = session;
