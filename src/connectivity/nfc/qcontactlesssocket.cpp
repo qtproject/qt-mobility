@@ -46,6 +46,9 @@
     \class QContactlessSocket
     \brief The QContactlessSocket class provides an NFC LLCP socket.
 
+    \ingroup connectivity-nfc
+    \inmodule QtConnectivity
+
     NFC LLCP protocol is a peer-to-peer communication protocol between two NFC complient devices.
 */
 
