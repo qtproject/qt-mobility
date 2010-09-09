@@ -140,8 +140,7 @@ public slots:
 
 private slots:
 
-    void filterContentChange();
-
+    void sort();
     void construction();
     void construction_data();
     void defaultProperties();
@@ -158,6 +157,9 @@ private slots:
     void robustness_data();
     void categoriesOfLandmarkFetch();
     void categoriesOfLandmarkFetch_data();
+    void filterContentChange();
+
+    void sort_data();
 
 private:
     QObject* createComponent(const QString& componentString);
@@ -797,7 +799,7 @@ void tst_QDeclarativeLandmark::declarativeLandmarkList()
     delete model;
 }
 
-// Verify declarative list -property of landmarks works
+// Verify declarative list -property of categories works
 void tst_QDeclarativeLandmark::declarativeCategoryList()
 {
     populateTypicalDb();
@@ -819,6 +821,44 @@ void tst_QDeclarativeLandmark::declarativeCategoryList()
     // Clear()
     QDeclarativeLandmarkCategoryModel::categories_clear(&declarativeList);
     delete model;
+}
+
+// Tests the basics of sorting
+void tst_QDeclarativeLandmark::sort()
+{
+    QFETCH(QString, componentString);
+    QFETCH(QStringList, names);
+    populateTypicalDb();
+    QObject* source_obj = createComponent(componentString);
+    QDeclarativeLandmarkAbstractModel* model = static_cast<QDeclarativeLandmarkAbstractModel*>(source_obj);
+    model->setDbFileName(DB_FILENAME);
+    QTRY_VERIFY(model->property("count").toInt() > 2); // Wait for population
+
+    // check data is in expected order
+    if (componentString.contains("LandmarkCategoryModel")) {
+        QDeclarativeLandmarkCategoryModel* landmarkCategoryModel = static_cast<QDeclarativeLandmarkCategoryModel*>(model);
+        QList<QLandmarkCategory> categories = landmarkCategoryModel->categoryList();
+        for (int i = 0; i < names.count(); i++) {
+            QCOMPARE(categories.at(i).name(), names.at(i));
+        }
+    } else {
+        QDeclarativeLandmarkModel* landmarkModel = static_cast<QDeclarativeLandmarkModel*>(model);
+        QList<QLandmark> landmarks = landmarkModel->landmarkList();
+        for (int i = 0; i < names.count(); i++) {
+            QCOMPARE(landmarks.at(i).name(), names.at(i));
+        }
+    }
+    delete source_obj;
+}
+
+void tst_QDeclarativeLandmark::sort_data()
+{
+    QTest::addColumn<QString>("componentString");
+    QTest::addColumn<QStringList>("names");
+    QTest::newRow("LandmarkModel ascending name") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:true; sortBy: LandmarkModel.NameSort; sortOrder: LandmarkModel.AscendingOrder}" << (QStringList() << "Alpha centauri" << "Brisbane" << "London");
+    QTest::newRow("LandmarkModel descending name") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:true; sortBy: LandmarkModel.NameSort; sortOrder: LandmarkModel.DescendingOrder}" << (QStringList() << "Tower" << "Tower" << "Sydney");
+    QTest::newRow("LandmarkCategoryModel ascending name") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:true;sortBy: LandmarkCategoryModel.NameSort; sortOrder: LandmarkCategoryModel.AscendingOrder}" << (QStringList() << "Cities" << "Empty");
+    QTest::newRow("LandmarkCategoryModel descending name") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:true;sortBy: LandmarkModel.NameSort; sortOrder: LandmarkModel.DescendingOrder}" << (QStringList() << "Sunshine cities" << "Sights");
 }
 
 /*
