@@ -52,7 +52,7 @@ QMDEGalleryItemResultSet::QMDEGalleryItemResultSet(QMdeSession *session, QObject
 :QMDEGalleryResultSet(parent)
 {
     m_request = static_cast<QGalleryItemRequest *>(parent);
-    m_live = m_request->isLive();
+    m_live = m_request->isAutoUpdate();
     m_session = session;
     m_resultObject = NULL;
 
