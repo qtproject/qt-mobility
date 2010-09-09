@@ -47,7 +47,9 @@
 #include <QtCore/qdatetime.h>
 #include <QtDBus/qdbusreply.h>
 
+#include <qdocumentgallery.h>
 #include <qgalleryresource.h>
+
 
 Q_DECLARE_METATYPE(QVector<QStringList>)
 
@@ -125,7 +127,7 @@ void QGalleryTrackerResultSetPrivate::queryFinished(const QDBusPendingCall &call
 
         flags &= ~Active;
 
-        q_func()->finish(QGalleryAbstractRequest::ConnectionError);
+        q_func()->finish(QDocumentGallery::ConnectionError);
     } else if (flags & Cancelled) {
         iCache.count = 0;
 
@@ -531,7 +533,7 @@ void QGalleryTrackerResultSetPrivate::_q_parseFinished()
         else
             emit q_func()->progressChanged(progressMaximum, progressMaximum);
 
-        q_func()->finish(QGalleryAbstractRequest::Succeeded, flags & Live);
+        q_func()->finish(flags & Live);
     } else if (flags & Cancelled) {
         iCache.count = 0;
 
@@ -572,12 +574,13 @@ void QGalleryTrackerResultSetPrivate::_q_editFinished(QGalleryTrackerMetaDataEdi
 
 QGalleryTrackerResultSet::QGalleryTrackerResultSet(
         QGalleryTrackerResultSetArguments *arguments,
-        bool live,
+        bool autoUpdate,
         int cursorPosition,
         int minimumPagedItems,
         QObject *parent)
     : QGalleryResultSet(
-            *new QGalleryTrackerResultSetPrivate(arguments, live, cursorPosition, minimumPagedItems),
+            *new QGalleryTrackerResultSetPrivate(
+                    arguments, autoUpdate, cursorPosition, minimumPagedItems),
             parent)
 {
     Q_D(QGalleryTrackerResultSet);
