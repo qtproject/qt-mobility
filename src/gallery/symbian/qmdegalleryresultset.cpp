@@ -55,7 +55,6 @@ QMDEGalleryResultSet::QMDEGalleryResultSet(QObject *parent)
     : QGalleryResultSet(parent)
     , m_cursorPosition(-1)
     , m_live(false)
-    , m_itemType(NULL)
     , m_isValid(false)
 
 {
