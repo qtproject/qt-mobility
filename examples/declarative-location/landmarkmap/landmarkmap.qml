@@ -83,11 +83,12 @@ Item {
         size.height: parent.height
         zoomLevel: 15
         center: myPositionSource.position.coordinate
-        onCenterChanged: {
+        onZoomLevelChanged: {
             var distance = center.distanceTo(map.toCoordinate(Qt.point(0,0)))
-            console.log("Center changed, radius for proximity filter will be set to: " + distance / 2)
+            console.log("Zoom changed, radius for proximity filter will be set to: " + distance / 2)
             proximityFilter.radius = distance / 2
         }
+        onCenterChanged: console.log("Center changed")
     }
 
     Common.Slider {
