@@ -54,6 +54,7 @@ Have an audio stream url available (e.g. http://202.6.74.107:8060/triplej.mp3 fo
 Have a video stream url available (e.g. http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4)
 Ensure access to Internet available to device
 Ensure radio reception is available in testing area
+A device specific headset is required to be connected to device for radio testing
 */
     initTestCase: function()
     {
@@ -235,7 +236,7 @@ When at last file in playlist and at end of file, verify that fullscreen mode is
 
     seek_controls_for_video: function()
     {
-        prompt(twiki("This test is not applicable to the Symbian platform
+        prompt(twiki("
 While playing a video file, Select or Tap on [1.0] (Multiplier) control
 Select [2.0]
 Verify that file is playing at double speed
