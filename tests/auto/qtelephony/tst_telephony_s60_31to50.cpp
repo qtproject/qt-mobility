@@ -135,6 +135,7 @@ void tst_Telephony::init()
     qDebug("called before everything else");
     mock_linestatus = QTelephony::Idle;
     pCallList = new tst_TelefonyCallList();
+    pCallList->getPrivateTelefonyList()->m_observers[0]->iStatus = TRequestStatus(0);
 }
 
 //Test cases
