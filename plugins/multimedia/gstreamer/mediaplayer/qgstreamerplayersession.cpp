@@ -343,12 +343,19 @@ void QGstreamerPlayerSession::updateVideoRenderer()
 void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
 {
     if (m_videoOutput != videoOutput) {
-        if (m_videoOutput)
+        if (m_videoOutput) {
             disconnect(m_videoOutput, SIGNAL(sinkChanged()),
                        this, SLOT(updateVideoRenderer()));
-        if (videoOutput)
+            disconnect(m_videoOutput, SIGNAL(readyChanged(bool)),
+                   this, SLOT(updateVideoRenderer()));
+        }
+
+        if (videoOutput) {
             connect(videoOutput, SIGNAL(sinkChanged()),
                     this, SLOT(updateVideoRenderer()));
+            connect(videoOutput, SIGNAL(readyChanged(bool)),
+                   this, SLOT(updateVideoRenderer()));
+        }
 
         m_videoOutput = videoOutput;
     }
@@ -890,7 +897,26 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 }
                 break;
             case GST_MESSAGE_WARNING:
+                {
+                    GError *err;
+                    gchar *debug;
+                    gst_message_parse_warning (gm, &err, &debug);
+                    qWarning() << "Warning:" << QString::fromUtf8(err->message);
+                    g_error_free (err);
+                    g_free (debug);
+                }
+                break;
             case GST_MESSAGE_INFO:
+#ifdef DEBUG_PLAYBIN
+                {
+                    GError *err;
+                    gchar *debug;
+                    gst_message_parse_info (gm, &err, &debug);
+                    qDebug() << "Info:" << QString::fromUtf8(err->message);
+                    g_error_free (err);
+                    g_free (debug);
+                }
+#endif
                 break;
             case GST_MESSAGE_BUFFERING:
                 {

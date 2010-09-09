@@ -351,7 +351,7 @@ void CLandmarkRequestAO::SetOperation(CPosLmOperation *aOp)
 }
 
 void CLandmarkRequestAO::SetExportData(CPosLandmarkEncoder *aEncoder, RFs &aFs,
-    CBufBase *aExportBuffer, QList<QLandmarkId> lmIds)
+    HBufC *aExportPath, CBufBase *aExportBuffer, QList<QLandmarkId> lmIds)
 {
     if (iParent) {
         if (aEncoder)
@@ -360,6 +360,9 @@ void CLandmarkRequestAO::SetExportData(CPosLandmarkEncoder *aEncoder, RFs &aFs,
             iParent->iExportBuffer = aExportBuffer;
         if (&lmIds != 0 && lmIds.size() > 0) {
             iParent->iLandmarkIds = lmIds;
+        }
+        if( aExportPath ) {
+            iParent->iExportPath = aExportPath;
         }
         iParent->iFileSystem = aFs;
     }

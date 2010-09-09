@@ -204,7 +204,7 @@ CCPCall::TCallState mapStatus(QTelephony::CallStatus status)
     case QTelephony::Alerting: newStatus = CCPCall::EStateConnecting; break;
     case QTelephony::Connected: newStatus = CCPCall::EStateConnected; break;
     case QTelephony::Disconnecting: newStatus = CCPCall::EStateDisconnecting; break;
-    case QTelephony::Incomming: newStatus = CCPCall::EStateRinging; break;
+    case QTelephony::Incoming: newStatus = CCPCall::EStateRinging; break;
     case QTelephony::OnHold: newStatus = CCPCall::EStateHold; break;
     default: Q_ASSERT(false); break;
     }

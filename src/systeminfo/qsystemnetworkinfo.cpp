@@ -46,6 +46,10 @@
 QTM_BEGIN_NAMESPACE
         Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
 
+#ifdef QT_SIMULATOR
+QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate(); }
+#endif
+
 /*!
    \class QSystemNetworkInfo
    \ingroup systeminfo

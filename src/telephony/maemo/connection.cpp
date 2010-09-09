@@ -102,7 +102,7 @@ namespace DBus
                 qDebug() << "-- Path " << chi.channel.path();
                 qDebug() << "-- connectionbusname: " << connectionbusname;
                 qDebug() << "-- channelType " << chi.channelType;
-                if(Channel::isCall(chi.channelType)){
+                if(Channel::isCall(chi.channelType, chi.channel.path())){
                     qDebug() << "-- is call";
                     Channel* pchannel = new Channel(QDBusConnection::sessionBus(), connectionbusname,  chi.channel.path(), QVariantMap(), this);
                     ptelephonyCallList->newChannels(ChannelPtr(pchannel));
@@ -147,7 +147,7 @@ namespace DBus
             qDebug() << "- Creating QTelephonyCallInfoPrivate";
 
             if( channelDetails.properties.contains(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"))
-                && Channel::isCall(channelDetails.properties.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString())){
+                && Channel::isCall(channelDetails.properties.value(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType")).toString(), channelDetails.channel.path())){
                 Channel* pchannel = new Channel(QDBusConnection::sessionBus(), connectionbusname, channelDetails.channel.path(), channelDetails.properties, this);
                 ptelephonyCallList->newChannels(ChannelPtr(pchannel));
             }

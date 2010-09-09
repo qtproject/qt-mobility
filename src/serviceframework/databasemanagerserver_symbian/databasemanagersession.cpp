@@ -58,26 +58,33 @@ bool lessThan(const QServiceInterfaceDescriptor &d1,
             && d1.minorVersion() < d2.minorVersion());
     }
 
-CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewL(CDatabaseManagerServer& aServer)
+CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewL(CDatabaseManagerServer& aServer, QString dbPath)
     {
-    CDatabaseManagerServerSession* self = CDatabaseManagerServerSession::NewLC(aServer);
+    CDatabaseManagerServerSession* self = CDatabaseManagerServerSession::NewLC(aServer, dbPath);
     CleanupStack::Pop(self);
     return self;
     }
 
-CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewLC(CDatabaseManagerServer& aServer)
+CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewLC(CDatabaseManagerServer& aServer, QString dbPath)
     {
     CDatabaseManagerServerSession* self = new (ELeave) CDatabaseManagerServerSession(aServer);
     CleanupStack::PushL(self);
-    self->ConstructL();
+    self->ConstructL(dbPath);
     return self;
     }
 
-void CDatabaseManagerServerSession::ConstructL()
+void CDatabaseManagerServerSession::ConstructL(QString dbPath)
     {
     iDb = new ServiceDatabase();
-    initDbPath();
+    iDb->setDatabasePath(dbPath);
+    openDb();
+    
+    //initDbPath();
     iDatabaseManagerSignalHandler = new DatabaseManagerSignalHandler(*this);
+        
+    m_watcher = new QFileSystemWatcher();
+    QObject::connect(m_watcher, SIGNAL(fileChanged(QString)),
+            iDatabaseManagerSignalHandler, SLOT(databaseChanged(QString)));
     }
 
 CDatabaseManagerServerSession::CDatabaseManagerServerSession(CDatabaseManagerServer& aServer) 
@@ -358,7 +365,7 @@ TInt CDatabaseManagerServerSession::InterfacesSizeL(const RMessage2& aMessage)
     QServiceFilter filter;
     out >> filter;
     
-    QList<QServiceInterfaceDescriptor> interfaces = iDb->getInterfaces(filter);    
+    QList<QServiceInterfaceDescriptor> interfaces = iDb->getInterfaces(filter);
     iByteArray = new QByteArray();
     
     QDataStream in(iByteArray, QIODevice::WriteOnly);
@@ -513,13 +520,8 @@ TInt CDatabaseManagerServerSession::SetInterfaceDefault2L(const RMessage2& aMess
 
 void CDatabaseManagerServerSession::SetChangeNotificationsEnabled(const RMessage2& aMessage)
     {
-    if (!m_watcher) 
-        {
-        m_watcher = new QFileSystemWatcher(QStringList() << iDb->databasePath());
-        QObject::connect(m_watcher, SIGNAL(fileChanged(QString)),
-                iDatabaseManagerSignalHandler, SLOT(databaseChanged(QString)));
-        }
-
+  
+    m_watcher->addPath(iDb->databasePath());
     
     if (aMessage.Int0() == 1) // 1 == Notifications enabled 
         {
@@ -592,36 +594,6 @@ void CDatabaseManagerServerSession::ServiceRemoved(const QString& aServiceName)
         iMsg.Complete(ENotifySignalComplete);
         iWaitingAsyncRequest = EFalse;
         }
-    }
-
-void CDatabaseManagerServerSession::initDbPath()
-    {
-    QString dbIdentifier = "_system";
-    ServiceDatabase *db = iDb;
-    QDir dir(QDir::toNativeSeparators(QCoreApplication::applicationDirPath()));
-    QString qtVersion(qVersion());
-    qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
-    QString dbName = QString("QtServiceFramework_") + qtVersion + dbIdentifier + QLatin1String(".db");
-    db->setDatabasePath(dir.path() + QDir::separator() + dbName);
-
-    // check if database is copied from Z drive; also valid for emulator
-    QFile dbFile(iDb->databasePath());
-    QFileInfo dbFileInfo(dbFile);
-    if (!dbFileInfo.exists()) {
-        // create folder first
-        if (!dbFileInfo.dir().exists()) 
-            QDir::root().mkpath(dbFileInfo.path());
-        // copy file from ROM
-        QFile romDb(QLatin1String("z:\\private\\2002ac7f\\") + dbFileInfo.fileName());
-        if (romDb.open(QIODevice::ReadOnly) && dbFile.open(QFile::WriteOnly)) {
-            QByteArray data = romDb.readAll();
-            dbFile.write(data);
-            dbFile.close();
-            romDb.close();
-        }
-    }
-    
-    openDb();
     }
 
 bool CDatabaseManagerServerSession::openDb()
