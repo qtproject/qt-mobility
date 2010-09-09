@@ -34,6 +34,7 @@
 // Used to create HbKeymapFactory singleton to get rid of resource leak
 #include <QLocale>
 #include <hbinputkeymapfactory.h>
+#include <hbinputkeymap.h>
 
 
 // Must have same value as KMaxTokenLength in c12keypredictivesearchtable.cpp
@@ -79,6 +80,15 @@ UT_CPplPredictiveSearchTable::~UT_CPplPredictiveSearchTable()
     {
     delete iTable;
     iTable = NULL;
+
+	delete iPredictiveSearchSynchronizer;
+    iPredictiveSearchSynchronizer = NULL;
+	
+	delete iPredSearchQwertyTable;
+	iPredSearchQwertyTable = NULL;
+
+	delete iPredSearchSettingsTable;
+	iPredSearchSettingsTable = NULL;
     
     iDB.Close(); // Must close DB before it can be deleted
     RSqlDatabase::Delete(KDBFile);
@@ -102,20 +112,9 @@ void UT_CPplPredictiveSearchTable::ConstructL()
     // It generates the test case table.
     CEUnitTestSuiteClass::ConstructL();
     
-#if defined(USE_ORBIT_KEYMAP)
     // Create singleton outside actual test cases so that it is not treated as
     // resource leak, since it can't be deleted.
     HbKeymapFactory::instance();
-#else
-    // If Orbit keymap is not used, EUnit shows there is a resource leak in the
-    // first test case of UT_CPplPredictiveSearchTable that writes something to
-    // the database.
-    // To get rid of the resource leak, the following code is here to create DB,
-    // and one contact, delete it, delete DB. 
-    SetupL();
-    UT_DeleteLL(); // Adds and deletes 1 contact
-    Teardown();
-#endif
     }
     
 // -----------------------------------------------------------------------------
@@ -143,9 +142,7 @@ void UT_CPplPredictiveSearchTable::SetupL()
                                             *iTable,
                                             *iPredSearchQwertyTable,
                                             *iPredSearchSettingsTable);  
-#if defined(USE_ORBIT_KEYMAP)
     HbKeymapFactory::instance();
-#endif
 	}
     
 // -----------------------------------------------------------------------------
@@ -207,6 +204,7 @@ void UT_CPplPredictiveSearchTable::UseSpecificDbL(const TDesC& aDbFile)
                                             *iTable,
                                             *iPredSearchQwertyTable,
                                             *iPredSearchSettingsTable);
+    HbKeymapFactory::instance();
     }
 
 // -----------------------------------------------------------------------------
@@ -830,6 +828,23 @@ void UT_CPplPredictiveSearchTable::UT_ConvertToHexL()
 	EUNIT_ASSERT_EQUALS(KConversionError, iTable->ConvertToHex("12345678901234567890"));
 	}
 
+// Get 1..N keymaps and their ownership
+void UT_CPplPredictiveSearchTable::UT_HbKeymapFactoryApiL()
+    {
+/* Temporarily commented out, since does not compile in pre-wk32 environment
+    const HbKeymap* keymap =
+        HbKeymapFactory::instance()->keymap(QLocale::English,  
+                                            HbKeymapFactory::NoCaching);
+    delete keymap;
+    
+
+    keymap = NULL;
+    keymap = HbKeymapFactory::instance()->keymap(QLocale::Swedish,  
+                                                HbKeymapFactory::NoCaching);
+    delete keymap;
+*/
+    }
+
 void UT_CPplPredictiveSearchTable::AddContactL(const TDesC& aFirstName,
                                                const TDesC& aLastName,
                                                TContactItemId aContactId)
@@ -881,7 +896,9 @@ void UT_CPplPredictiveSearchTable::CheckItemCountL(
     TInt aCountInTable10,
     TInt aCountInTable11)
     {
-    TPtrC tableNames[KTableCount] =
+#if defined(__WINSCW__)
+    TPtrC tableNames[KTableCount] = // Does not compile in armv5
+    //const TDesC tableNames[KTableCount] = // Compiles in armv5, but crashes in winscw
         {
         KSqlContactPredSearchTable0,
         KSqlContactPredSearchTable1,
@@ -896,6 +913,24 @@ void UT_CPplPredictiveSearchTable::CheckItemCountL(
         KSqlContactPredSearchTable10,
         KSqlContactPredSearchTable11
         };
+#else
+    // armv5
+    TPtrC tableNames[KTableCount] =
+        {
+        static_cast<TPtrC>(KSqlContactPredSearchTable0),
+        static_cast<TPtrC>(KSqlContactPredSearchTable1),
+        static_cast<TPtrC>(KSqlContactPredSearchTable2),
+        static_cast<TPtrC>(KSqlContactPredSearchTable3),
+        static_cast<TPtrC>(KSqlContactPredSearchTable4),
+        static_cast<TPtrC>(KSqlContactPredSearchTable5),
+        static_cast<TPtrC>(KSqlContactPredSearchTable6),
+        static_cast<TPtrC>(KSqlContactPredSearchTable7),
+        static_cast<TPtrC>(KSqlContactPredSearchTable8),
+        static_cast<TPtrC>(KSqlContactPredSearchTable9),
+        static_cast<TPtrC>(KSqlContactPredSearchTable10),
+        static_cast<TPtrC>(KSqlContactPredSearchTable11)
+        };
+#endif
     TInt rowCounts[KTableCount] = {0};
     
     for (TInt i = 0; i < KTableCount; ++i)
@@ -1206,6 +1241,13 @@ EUNIT_TEST(
     "FUNCTIONALITY",
     SetupL, UT_ConvertToHexL, Teardown )
 
+EUNIT_TEST(
+    "Test HbKeymapFactory API",
+    "UT_CPplPredictiveSearchTable",
+    "test API",
+    "FUNCTIONALITY",
+    SetupL, UT_HbKeymapFactoryApiL, Teardown )
+    
 EUNIT_END_TEST_TABLE
 
 //  END OF FILE

@@ -44,7 +44,7 @@ import Qt.multimedia 4.7
 
 Item {
     id: flashMode
-    property int value
+    property int value : values[flickableList.index]
     property variant values : [ Camera.FlashAuto, Camera.FlashOff, Camera.FlashOn, Camera.FlashRedEyeReduction ]
 
     signal clicked
@@ -66,10 +66,6 @@ Item {
                 "images/camera_flash_fill.png", "images/camera_flash_redeye.png"]
 
         onClicked: flashMode.clicked()
-
-        onIndexChanged: {
-            flashMode.value = flashMode.values[flickableList.index]
-        }
 
         delegate: Item {
             width: flickableList.width

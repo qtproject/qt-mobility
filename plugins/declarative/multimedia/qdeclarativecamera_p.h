@@ -80,7 +80,6 @@ class QDeclarativeCamera : public QDeclarativeItem
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
 
     Q_PROPERTY(QString capturedImagePath READ capturedImagePath NOTIFY imageSaved)
-    //Q_PROPERTY(QImage capturedImagePreview READ capturedImagePreview NOTIFY imageCaptured)
 
     Q_PROPERTY(int iso READ isoSensitivity WRITE setManualIsoSensitivity NOTIFY isoSensitivityChanged)
     Q_PROPERTY(qreal shutterSpeed READ shutterSpeed NOTIFY shutterSpeedChanged)
@@ -96,9 +95,9 @@ class QDeclarativeCamera : public QDeclarativeItem
     Q_PROPERTY(int captureHeight READ captureHeight WRITE setCaptureHeight NOTIFY captureHeightChanged)
 
     Q_PROPERTY(qreal opticalZoom READ opticalZoom WRITE setOpticalZoom NOTIFY opticalZoomChanged)
-    Q_PROPERTY(qreal maximumOpticalZoom READ maximumOpticalZoom)
+    Q_PROPERTY(qreal maximumOpticalZoom READ maximumOpticalZoom NOTIFY maximumOpticalZoomChanged)
     Q_PROPERTY(qreal digitalZoom READ digitalZoom WRITE setDigitalZoom NOTIFY digitalZoomChanged)
-    Q_PROPERTY(qreal maximumDigitalZoom READ maximumDigitalZoom)
+    Q_PROPERTY(qreal maximumDigitalZoom READ maximumDigitalZoom NOTIFY maximumDigitalZoomChanged)
 
     Q_ENUMS(State)
     Q_ENUMS(LockStatus)
@@ -238,7 +237,7 @@ Q_SIGNALS:
 
     void lockStatusChanged();
 
-    void imageCaptured();
+    void imageCaptured(const QString &preview);
     void imageSaved(const QString &path);
     void captureFailed(const QString &message);
 

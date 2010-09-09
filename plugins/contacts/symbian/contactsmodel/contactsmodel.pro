@@ -13,7 +13,7 @@
 # Nokia Corporation - initial contribution.
 #
 # Contributors:
-# 
+#
 # Description:
 #
 #
@@ -23,38 +23,50 @@ TEMPLATE = subdirs
 BLD_INF_RULES.prj_mmpfiles = "./groupsql/cntmodel.mmp"\
                              "./group/cntview.mmp"\
                              "./group/template.mmp"\
-                             "./groupsql/cntsrv.mmp"\
-                             "./groupsql/cntplsql.mmp"
+                             "./groupsql/cntsrv.mmp"
 
 # Exports
 deploy.path = /
 
 # IBY files
 iby.path = epoc32/rom/include
-iby.sources = cntmodel.iby cntplsql.iby
+iby.sources = cntmodel.iby
+
+#
+# The CI system currently builds against latest stable Qt,
+# which doesn't get installed to epoc32/include
+# Try to handle both cases here. (cntplsql needs Qt)
+#
+exists($${EPOCROOT}epoc32/include/mw/QtCore) {
+message(Adding cntplsql)
+BLD_INF_RULES.prj_mmpfiles += "./groupsql/cntplsql.mmp"
+iby.sources += cntplsql.iby
+}
 
 for(iby, iby.sources):BLD_INF_RULES.prj_exports += "groupsql/$$iby $$deploy.path$$iby.path/$$iby"
 
-# Headers
-headers.path = epoc32/include
-headers.sources = inc/cntdef.h\
-                  inc/cntdb.h\
-                  inc/cntdbobs.h\
-                  inc/cntfield.h\
-                  inc/cntfldst.h\
-                  inc/cntfilt.h\ 
-                  inc/cntitem.h\ 
-                  inc/cntview.h\
-                  inc/cntviewbase.h\
-                  inc/cntsync.h\
-                  inc/cntviewfindconfig.h\
-                  inc/cntviewfindconfig.inl\
-                  inc/cntviewsortplugin.h\
-                  inc/cntmodel.rh\
-                  inc/cntdef.hrh\
-                  inc/cntviewstore.h\
-                  cntvcard/cntvcard.h\
-                 
+# Seems we currently need to export headers to both epoc32\include and the proper app directory
+# (until the build environment gets cleaned up to not have any contactsmodel headers by default)
+# otherwise we have problems with stale headers
 
-for(header, headers.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$headers.path/$$basename(header)"
+# these headers come from ./inc and go to APP_LAYER_PUBLIC_EXPORT_PATH
+publicincheaders = cntdef.h cntdb.h cntdbobs.h cntfield.h cntfldst.h cntfilt.h cntitem.h cntview.h \
+    cntviewbase.h cntsync.h cntviewsortplugin.h cntdef.hrh
+
+# these headers come from ./inc and go to APP_LAYER_PLATFORM_EXPORT_PATH
+platformincheaders = cntmodel.rh cntviewfindconfig.h cntviewfindconfig.inl cntviewstore.h \
+    cntphonenumparser.h cntviewsortpluginbase.h cntsyncecom.h
+
+# these headers come from ./cntvcard and go to APP_LAYER_PUBLIC_EXPORT_PATH
+publiccntvcardheaders = cntvcard.h
+
+for(header, publicincheaders):BLD_INF_RULES.prj_exports += "./inc/$$header APP_LAYER_PUBLIC_EXPORT_PATH($$header)"
+for(header, platformincheaders):BLD_INF_RULES.prj_exports += "./inc/$$header APP_LAYER_PLATFORM_EXPORT_PATH($$header)"
+for(header, publiccntvcardheaders):BLD_INF_RULES.prj_exports += "./cntvcard/$$header APP_LAYER_PUBLIC_EXPORT_PATH($$header)"
+
+# Now the duplicate to \epoc32\include. .. . 
+for(header, publicincheaders):BLD_INF_RULES.prj_exports += "./inc/$$header /epoc32/include/$$header"
+for(header, platformincheaders):BLD_INF_RULES.prj_exports += "./inc/$$header /epoc32/include/$$header"
+for(header, publiccntvcardheaders):BLD_INF_RULES.prj_exports += "./cntvcard/$$header /epoc32/include/$$header"
+
 

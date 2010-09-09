@@ -46,6 +46,7 @@
 #include <QDateTime>
 #include <qgeopositioninfosource.h>
 #include <qgeopositioninfo.h>
+#include <qdeclarativecoordinate_p.h>
 #include <QtDeclarative/qdeclarative.h>
 
 // Define this to get qDebug messages
@@ -60,14 +61,11 @@ QTM_BEGIN_NAMESPACE
 class QDeclarativePosition : public QObject
 {
     Q_OBJECT
-
-    Q_PROPERTY(QDateTime timestamp READ timestamp WRITE setTimestamp NOTIFY timestampChanged)
-    Q_PROPERTY(double latitude READ latitude WRITE setLatitude NOTIFY latitudeChanged)
     Q_PROPERTY(bool latitudeValid READ isLatitudeValid NOTIFY latitudeValidChanged)
-    Q_PROPERTY(double longitude READ longitude WRITE setlongitude NOTIFY longitudeChanged)
-    Q_PROPERTY(bool longitudeValid READ islongitudeValid NOTIFY longitudeValidChanged)
-    Q_PROPERTY(double altitude READ altitude WRITE setAltitude NOTIFY altitudeChanged)
+    Q_PROPERTY(bool longitudeValid READ isLongitudeValid NOTIFY longitudeValidChanged)
     Q_PROPERTY(bool altitudeValid READ isAltitudeValid NOTIFY altitudeValidChanged)
+    Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate NOTIFY coordinateChanged)
+    Q_PROPERTY(QDateTime timestamp READ timestamp WRITE setTimestamp NOTIFY timestampChanged)
     Q_PROPERTY(double speed READ speed WRITE setSpeed NOTIFY speedChanged)
     Q_PROPERTY(bool speedValid READ isSpeedValid NOTIFY speedValidChanged)
 
@@ -76,47 +74,37 @@ public:
     QDeclarativePosition(QObject* parent = 0);
     ~QDeclarativePosition();
 
+    bool isLatitudeValid() const;
+    bool isLongitudeValid() const;
+    bool isAltitudeValid() const;
     QDateTime timestamp() const;
     void setTimestamp(const QDateTime& timestamp);
-
-    double latitude() const;
-    void setLatitude(double latitude);
-    bool isLatitudeValid() const;
-
-    double longitude() const;
-    void setlongitude(double longitude);
-    bool islongitudeValid() const;
-
     double speed() const;
     void setSpeed(double speed);
     bool isSpeedValid() const;
-
-    double altitude() const;
-    void setAltitude(double altitude);
-    bool isAltitudeValid() const;
+    void setCoordinate(QDeclarativeCoordinate* coordinate);
+    QDeclarativeCoordinate* coordinate();
+    // C++
+    void setCoordinate(QGeoCoordinate coordinate);
 
 Q_SIGNALS:
-    void timestampChanged(QDateTime timestamp);
-    void latitudeChanged(double latitude);
-    void latitudeValidChanged(bool isValid);
-    void longitudeChanged(double longitude);
-    void longitudeValidChanged(bool isValid);
-    void altitudeChanged(double altitude);
-    void altitudeValidChanged(bool isValid);
-    void speedChanged(double speed);
-    void speedValidChanged(bool isValid);
+
+    void latitudeValidChanged();
+    void longitudeValidChanged();
+    void altitudeValidChanged();
+    void timestampChanged();
+    void speedChanged();
+    void speedValidChanged();
+    void coordinateChanged();
 
 private:
-    QGeoPositionInfo m_positionInfo;
-    QDateTime m_timestamp;
-    double m_latitude;
     bool m_latitudeValid;
-    double m_longitude;
     bool m_longitudeValid;
-    double m_altitude;
     bool m_altitudeValid;
+    QDateTime m_timestamp;
     double m_speed;
     bool m_speedValid;
+    QDeclarativeCoordinate m_coordinate;
 };
 
 QTM_END_NAMESPACE

@@ -32,21 +32,26 @@ contains(mobility_modules,location) {
     SUBDIRS += logfilepositionsource \
                satellitedialog 
 
-    !symbian:!wince* {
+    !wince* {
         SUBDIRS += landmarkbrowser
     }
 
-    !symbian|contains(mobility_modules,bearer) {
+    contains(QT_MAJOR_VERSION, 4):greaterThan(QT_MINOR_VERSION, 6) {
     	SUBDIRS += geoservicedemo \
-                   mapviewer
+                    mapviewer
 
+    } else {
+        contains(mobility_modules,bearer) {
+    	    SUBDIRS += geoservicedemo \
+                       mapviewer
+        }
     }
 
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo
         
         contains(QT_CONFIG, declarative) {
-            sources.files += declarative_loc_flickr
+            sources.files += declarative-location
             sources.files += declarative_mapviewer
         }
     }
@@ -114,6 +119,10 @@ contains(mobility_modules,gallery) {
     SUBDIRS += \
         documentproperties \
         mediabrowser
+
+    contains(QT_CONFIG, declarative) {
+        sources.files += declarative-music-browser
+    }
 }
 
 # Organizer API examples
@@ -128,7 +137,10 @@ contains(mobility_modules,telephony) {
 
 # Feedback API examples
 contains(mobility_modules, feedback) {
-    SUBDIRS += hapticsplayer hapticsquare
+    #SUBDIRS += hapticsplayer # this not a good UI for mobile screens at the moment
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += hapticsquare
+    }
 }
 
 # Connectivity

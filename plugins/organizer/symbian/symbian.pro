@@ -2,7 +2,12 @@ TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtorganizer_symbian)
 PLUGIN_TYPE=organizer
- 
+
+# support for S^4-specific types
+contains(symbianenote_enabled,yes) {
+    DEFINES += AGENDA_EXT_SUPPORT
+}
+
 CONFIG += mobility
 MOBILITY = organizer
 
@@ -28,6 +33,7 @@ symbian: {
     	qorganizeritemrequestqueue.h \
     	organizeritemrequestserviceprovider.h \
         qorganizersymbian_p.h \
+        organizersymbianutils.h \
         organizeritemtransform.h \
         transform/organizeritemdetailtransform.h \
         transform/organizereventtimerangetransform.h \
@@ -42,11 +48,13 @@ symbian: {
         transform/organizeritemtypetransform.h \
         transform/organizerjournaltimerangetransform.h \
         transform/organizertodoprogresstransform.h \
-        transform/organizertodotimerangetransform.h
+        transform/organizertodotimerangetransform.h \
+	transform/organizeritemremindertransform.h
     SOURCES += \
     	qorganizeritemrequestqueue.cpp \
     	organizeritemrequestserviceprovider.cpp \
         qorganizersymbian.cpp \
+        organizersymbianutils.cpp \
         organizeritemtransform.cpp \
         transform/organizeritemdetailtransform.cpp \
         transform/organizereventtimerangetransform.cpp \
@@ -61,7 +69,8 @@ symbian: {
         transform/organizeritemtypetransform.cpp \
         transform/organizerjournaltimerangetransform.cpp \
         transform/organizertodoprogresstransform.cpp \
-        transform/organizertodotimerangetransform.cpp
+        transform/organizertodotimerangetransform.cpp \
+	transform/organizeritemremindertransform.cpp
 
     LIBS += -lcalinterimapi
 

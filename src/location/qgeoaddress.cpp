@@ -43,6 +43,11 @@
 #include "qgeoaddress.h"
 #include "qgeoaddress_p.h"
 
+
+#ifdef QGEOADDRESS_DEBUG
+#include <QDebug>
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 QGeoAddressPrivate::QGeoAddressPrivate()
@@ -96,7 +101,7 @@ QGeoAddress::QGeoAddress(const QGeoAddress &other)
 }
 
 /*!
-    Destroys the address
+    Destroys this address.
 */
 QGeoAddress::~QGeoAddress()
 {
@@ -118,6 +123,18 @@ QGeoAddress &QGeoAddress::operator=(const QGeoAddress & address)
 */
 bool QGeoAddress::operator==(const QGeoAddress &other) const
 {
+#ifdef QGEOADDRESS_DEBUG
+    qDebug() << "country" << (d->sCountry == other.country());
+    qDebug() << "countryCode" << (d->sCountryCode == other.countryCode());
+    qDebug() << "state:" <<  (d->sState == other.state());
+    qDebug() << "county:" << (d->sCounty == other.county());
+    qDebug() << "city:" << (d->sCity == other.city());
+    qDebug() << "district:" << (d->sDistrict == other.district());
+    qDebug() << "street:" << (d->sStreet == other.street());
+    qDebug() << "streetNumber:" << (d->sStreetNumber == other.streetNumber());
+    qDebug() << "postCode:" << (d->sPostCode == other.postCode());
+#endif
+
     return d->sCountry == other.country() &&
            d->sCountryCode == other.countryCode() &&
            d->sState == other.state() &&

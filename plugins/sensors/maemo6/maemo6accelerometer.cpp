@@ -49,7 +49,8 @@ maemo6accelerometer::maemo6accelerometer(QSensor *sensor)
 {
     const QString sensorName = "accelerometersensor";
     initSensor<AccelerometerSensorChannelInterface>(sensorName, m_initDone);
-
+    setDescription(QLatin1String("x, y, and z axes accelerations in m/s^2"));
+    setRanges(GRAVITY_EARTH_THOUSANDTH);
 
     if (m_sensorInterface){
         if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)),

@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qdeclarativecoordinate_p.h"
+#include <qnumeric.h>
 #include "qdeclarative.h"
 
 QTM_BEGIN_NAMESPACE
@@ -47,9 +48,11 @@ QTM_BEGIN_NAMESPACE
 /*!
     \qmlclass Coordinate
 
-    \brief The Coordinate element holds various positional data, such as \l latitude,
-    \l longitude and \l altitude.
+    \brief The Coordinate element holds various positional data, such as \l
+    latitude, \l longitude and \l altitude.
     \inherits QObject
+
+    \ingroup qml-location
 
     The Coordinate element is part of the \bold{QtMobility.location 1.0} module.
 */
@@ -66,7 +69,20 @@ QDeclarativeCoordinate::~QDeclarativeCoordinate() {}
 
 void QDeclarativeCoordinate::setCoordinate(const QGeoCoordinate &coordinate)
 {
+    QGeoCoordinate previousCoordinate = m_coordinate;
     m_coordinate = coordinate;
+
+    // Comparing two NotANumbers is false which is not wanted here
+    if (coordinate.altitude() != previousCoordinate.altitude() &&
+        !(qIsNaN(coordinate.altitude()) && qIsNaN(previousCoordinate.altitude()))) {
+        emit altitudeChanged(m_coordinate.altitude());
+    }
+    if (coordinate.latitude() != previousCoordinate.latitude()) {
+        emit latitudeChanged(m_coordinate.latitude());
+    }
+    if (coordinate.longitude() != previousCoordinate.longitude()) {
+        emit longitudeChanged(m_coordinate.longitude());
+    }
 }
 
 QGeoCoordinate QDeclarativeCoordinate::coordinate() const

@@ -42,9 +42,9 @@
 #include "storagestatus_s60.h"
 #include <QChar>
 #include <QString>
-#ifndef SYMBIAN_3
+#ifndef SYMBIAN_3_1
 #include <driveinfo.h>
-#endif //SYMBIAN_3
+#endif //SYMBIAN_3_1
 #include <f32file.h>
 
 
@@ -53,9 +53,9 @@ m_previousDriveList(TDriveList())
 {
     CActiveScheduler::Add(this);
     if (iFs.Connect() == KErrNone) {
-#ifndef SYMBIAN_3
+#ifndef SYMBIAN_3_1
         m_previousDriveList.Copy(PopulateDriveList());
-#endif //SYMBIAN_3
+#endif //SYMBIAN_3_1
         startMonitoring();
     }
 }
@@ -80,7 +80,7 @@ void CMMCStorageStatus::DoCancel()
 {
     iFs.NotifyChangeCancel();
 }
-#ifndef SYMBIAN_3
+#ifndef SYMBIAN_3_1
 TDriveList CMMCStorageStatus::PopulateDriveList()
 {
     TDriveList driveList;
@@ -148,11 +148,11 @@ void CMMCStorageStatus::CompareDriveLists(const TDriveList &aDriveList)
     }
     m_previousDriveList.Copy(aDriveList);
 }
-#endif //SYMBIAN_3
+#endif //SYMBIAN_3_1
 
 void CMMCStorageStatus::RunL()
 {
-#ifdef SYMBIAN_3
+#ifdef SYMBIAN_3_1
     TDriveInfo driveInfo;
     TDriveNumber driveLetter = EDriveE;  // Have to use hardcoded MMC drive letter for 3.1
     if (iFs.Drive(driveInfo, driveLetter) == KErrNone) {
@@ -175,9 +175,9 @@ void CMMCStorageStatus::RunL()
         foreach (MStorageStatusObserver *observer, m_observers)
             observer->storageStatusChanged(driveInserted, volume);
     }
-#else // SYMBIAN_3
+#else // SYMBIAN_3_1
     CompareDriveLists(PopulateDriveList());
-#endif // SYMBIAN_3
+#endif // SYMBIAN_3_1
     startMonitoring();
 }
 

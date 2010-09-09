@@ -45,31 +45,64 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoBoundingArea
-    \brief The QGeoBoundingArea class defines a rectangular geographic area.
+    \brief The QGeoBoundingArea class defines a geographic area.
 
     \inmodule QtLocation
 
     \ingroup maps
+
+    This class is the base class for classes which specify a geographic 
+    area.  
+    
+    For the sake of consistency, subclasses should describe the specific
+    details of the associated areas in terms of QGeoCoordinate instances 
+    and distances in metres.
 */
 
 /*!
+    \enum QGeoBoundingArea::AreaType
+
+    Describes the type of a bounding area.
+
+    \value BoxType A box shaped bounding area.
+
+    \value CircleType A circular bounding area.
+*/
+
+/*!
+    Destroys this bounding area.
 */
 QGeoBoundingArea::~QGeoBoundingArea() {}
 
 /*!
-\fn virtual AreaType type() const
+\fn virtual QGeoBoundingArea::AreaType QGeoBoundingArea::type() const
+
+Returns the type of this area.
 */
 
 /*!
 \fn bool QGeoBoundingArea::isValid() const
+
+Returns whether this bounding area is valid.
+
+An area is considered to be invalid if some of the data that is required to 
+unambiguously describe the area has not been set or has been set to an 
+unsuitable value.
 */
 
 /*!
 \fn bool QGeoBoundingArea::isEmpty() const
+
+Returns whether this bounding area is empty.
+
+An empty area is a region which has a geometrical area of 0.
 */
 
 /*!
 \fn bool QGeoBoundingArea::contains(const QGeoCoordinate &coordinate) const
+
+Returns whether the coordinate \a coordinate is contained withing this 
+area.
 */
 
 QTM_END_NAMESPACE

@@ -59,8 +59,8 @@ typedef TPckgBuf<TInt> TError;
 class CDatabaseManagerServerSession : public CSession2
     {
     public:
-        static CDatabaseManagerServerSession* NewL(CDatabaseManagerServer& aServer);
-        static CDatabaseManagerServerSession* NewLC(CDatabaseManagerServer& aServer);
+        static CDatabaseManagerServerSession* NewL(CDatabaseManagerServer& aServer, QString dbPath);
+        static CDatabaseManagerServerSession* NewLC(CDatabaseManagerServer& aServer, QString dbPath);
         virtual ~CDatabaseManagerServerSession();
     
         void ServiceL(const RMessage2& aMessage);
@@ -84,13 +84,12 @@ class CDatabaseManagerServerSession : public CSession2
         void ServiceRemoved(const QString& aServiceName);
         void ServiceAdded(const QString& aServiceName);
         void databaseChanged(const QString &path);
-        
+              
     private:
         CDatabaseManagerServerSession(CDatabaseManagerServer& aServer);
-        void ConstructL();
+        void ConstructL(QString dbPath);
         TError LastErrorCode();
-        void initDbPath();
-        bool openDb();
+        bool openDb();        
             
     protected:
         void PanicClient(const RMessage2& aMessage, TInt aPanic) const;
@@ -103,7 +102,7 @@ class CDatabaseManagerServerSession : public CSession2
         DatabaseManagerSignalHandler* iDatabaseManagerSignalHandler;
         ServiceDatabase *iDb;
         QStringList m_knownServices;
-        QFileSystemWatcher *m_watcher;
+        QFileSystemWatcher *m_watcher;        
     };
 
 QTM_END_NAMESPACE

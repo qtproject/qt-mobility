@@ -43,6 +43,7 @@
 #include "ipcendpoint_p.h"
 #include "objectendpoint_p.h"
 #include <QTimer>
+#include <QCoreApplication>
 
 /* IPC based on Symbian Client-Server framework
  * This module implements the Symbian specific IPC mechanisms and related control.
@@ -113,13 +114,12 @@ private:
     RServiceSession *session;
 };
 
-
 class SymbianServerEndPoint: public QServiceIpcEndPoint
 {
     Q_OBJECT
 public:
     SymbianServerEndPoint(CServiceProviderServerSession* session, QObject* parent = 0)
-        : QServiceIpcEndPoint(parent), session(session)
+        : QServiceIpcEndPoint(parent), session(session), obj(0)
     {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
         qDebug() << "Symbian IPC server endpoint created.";
@@ -130,11 +130,14 @@ public:
         session->SetParent(this);
     }
 
+
     ~SymbianServerEndPoint()
     {
-#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-        qDebug() << "Symbian IPC server endpoint destroyed.";
-#endif
+    #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
+        qDebug() << "Symbian IPC server endpoint destroyed. --- emit disconnected";
+    #endif
+
+        emit disconnected();
     }
 
     void packageReceived(QServicePackage package)
@@ -144,6 +147,11 @@ public:
 #endif        
         incoming.enqueue(package);
         emit readyRead();
+    }
+    
+    void setObjectEndPoint(ObjectEndPoint *aObj)
+    {
+        obj = aObj;
     }
 
 protected:
@@ -161,14 +169,21 @@ protected:
 
 private:
     CServiceProviderServerSession *session;
+    ObjectEndPoint *obj;
 };
 
-QRemoteServiceControlPrivate::QRemoteServiceControlPrivate(QObject *parent)
-    : QObject(parent)
+
+QRemoteServiceControlSymbianPrivate::QRemoteServiceControlSymbianPrivate(QObject *parent)
+    : QRemoteServiceControlPrivate(parent)
 {
 }
 
-void QRemoteServiceControlPrivate::publishServices(const QString &ident)
+void QRemoteServiceControlSymbianPrivate::closingLastInstance()
+{
+  emit lastInstanceClosed();
+}
+
+void QRemoteServiceControlSymbianPrivate::publishServices(const QString &ident)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "QRemoteServiceControlPrivate::publishServices() for ident: " << ident;
@@ -190,14 +205,20 @@ void QRemoteServiceControlPrivate::publishServices(const QString &ident)
     RProcess::Rendezvous(KErrNone);
 }
 
-void QRemoteServiceControlPrivate::processIncoming(CServiceProviderServerSession* newSession)
+void QRemoteServiceControlSymbianPrivate::processIncoming(CServiceProviderServerSession* newSession)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG  
     qDebug("GTR Processing incoming session creation.");
 #endif
     // Create service provider-side endpoints.
-    SymbianServerEndPoint* ipcEndPoint = new SymbianServerEndPoint(newSession);
+    SymbianServerEndPoint* ipcEndPoint = new SymbianServerEndPoint(newSession, this);
     ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
+    ipcEndPoint->setObjectEndPoint(endPoint);
+}
+
+QRemoteServiceControlPrivate* QRemoteServiceControlPrivate::constructPrivateObject(QObject *parent)
+{
+  return new QRemoteServiceControlSymbianPrivate(parent);
 }
 
 QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier &typeId, const QString &location)
@@ -209,7 +230,7 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
     // provide. If service provider is not up, it will be started.
     // Connecting is tried few times in a loop, because if service starting is
     // done at device startup, everything may not be ready yet.
-    RServiceSession *session = new RServiceSession(location.section(':', 1, 1));
+    RServiceSession *session = new RServiceSession(location);
     int err = session->Connect();
     int i = 0;
     while (err != KErrNone) {
@@ -228,24 +249,37 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
     // Create IPC endpoint. In practice binds the communication session and abstracting
     // class presenting the IPC endoint.
     SymbianClientEndPoint* ipcEndPoint = new SymbianClientEndPoint(session);
+    ipcEndPoint->setParent(session);
     // Create an active message solicitor, which listens messages from server
-    ServiceMessageListener* messageListener = new ServiceMessageListener(session, ipcEndPoint);
+    ServiceMessageListener* messageListener = new ServiceMessageListener(session, ipcEndPoint);    
     // Create object endpoint, which handles the metaobject protocol.
     ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
+    endPoint->setParent(session);
     QObject *proxy = endPoint->constructProxy(typeId);
-    QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
+    session->setParent(proxy);
     QObject::connect(session, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)),
         proxy, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)));
     return proxy;
 }
 
 RServiceSession::RServiceSession(QString address) 
-: iSize(0)
+: iSize(0), iListener(0)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "RServiceSession() for address: " << address;
 #endif
     iServerAddress = address;
+}
+
+RServiceSession::~RServiceSession()
+{
+    delete iListener;
+    Close();
+}
+
+void RServiceSession::setListener(ServiceMessageListener *listener)
+{
+  iListener = listener;
 }
 
 void RServiceSession::Close()
@@ -393,7 +427,7 @@ void RServiceSession::ListenForPackages(TRequestStatus& aStatus)
 void RServiceSession::CancelListenForPackages()
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG  
-    qDebug("RServiceSession::CancelListenForPackages");
+    qDebug("RServiceSession::CancelListenForPackages -- 2");
 #endif
     TInt err = SendReceive(EPackageRequestCancel, TIpcArgs(NULL));
     if(err != KErrNone){
@@ -407,7 +441,6 @@ void RServiceSession::CancelListenForPackages()
         e = QService::ErrorOutofMemory;
         break;
       }
-      qDebug() << "RServiceSession::CancelListenForPackages failed with error: " << e;
       emit errorUnrecoverableIPCFault(e);
     }
 }
@@ -420,7 +453,7 @@ void RServiceSession::ipcFailure(QService::UnrecoverableIPCError err)
   emit errorUnrecoverableIPCFault(err);
 }
 
-CServiceProviderServer::CServiceProviderServer(QRemoteServiceControlPrivate* aOwner)
+CServiceProviderServer::CServiceProviderServer(QRemoteServiceControlSymbianPrivate* aOwner)
     : CServer2(EPriorityNormal), iSessionCount(0), iOwner(aOwner)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
@@ -448,7 +481,7 @@ void CServiceProviderServer::IncreaseSessions()
 {
     iSessionCount++;
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-    qDebug() << "CServiceProviderServer incremented session count to: " << iSessionCount;
+    qDebug() << ">>>> CServiceProviderServer incremented session count to: " << iSessionCount;
 #endif
 }
 
@@ -456,8 +489,14 @@ void CServiceProviderServer::DecreaseSessions()
 {
     iSessionCount--;
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-    qDebug() << "CServiceProviderServer decremented session count to: " << iSessionCount;
+    qDebug() << "<<<< CServiceProviderServer decremented session count to: " << iSessionCount;
 #endif
+    if(iSessionCount == 0){
+        Cancel();
+        iOwner->closingLastInstance();
+        if(iOwner->quitOnLastInstanceClosed())
+          QCoreApplication::exit();
+    }
 }
 
 CServiceProviderServerSession *CServiceProviderServerSession::NewL(CServiceProviderServer &aServer)
@@ -503,6 +542,7 @@ CServiceProviderServerSession::~CServiceProviderServerSession()
 #endif
     iServer.DecreaseSessions();
     delete iByteArray;
+    delete iOwner;
 }
 
 void CServiceProviderServerSession::ServiceL(const RMessage2 &aMessage)
@@ -580,7 +620,7 @@ void CServiceProviderServerSession::HandlePackageRequestL(const RMessage2& aMess
       SendServicePackageL(iPendingPackageQueue.dequeue());
 }
 
-void CServiceProviderServerSession::HandlePackageRequestCancelL(const RMessage2& /*aMessage*/)
+void CServiceProviderServerSession::HandlePackageRequestCancelL(const RMessage2& aMessage)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug("HandlePackageRequestCancelL");
@@ -589,6 +629,7 @@ void CServiceProviderServerSession::HandlePackageRequestCancelL(const RMessage2&
         iMsg.Complete(KErrCancel);
         iPendingPackageRequest = EFalse;
     }
+    aMessage.Complete(EPackageRequestComplete);
 }
 
 void CServiceProviderServerSession::SendServicePackageL(const QServicePackage& aPackage)
@@ -650,6 +691,7 @@ ServiceMessageListener::ServiceMessageListener(RServiceSession* aSession, Symbia
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG    
     qDebug("ServiceMessageListener constructor");
 #endif
+    aSession->setListener(this);
     CActiveScheduler::Add(this);
     StartListening();
 }

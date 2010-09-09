@@ -274,7 +274,6 @@ QGeoRouteRequest::TravelMode QGeoRoute::travelMode() const
 */
 void QGeoRoute::setPath(const QList<QGeoCoordinate> &path)
 {
-    // TODO not handled in private impl copy constructor / assignment operator
     d_ptr->path = path;
 }
 
@@ -286,7 +285,6 @@ void QGeoRoute::setPath(const QList<QGeoCoordinate> &path)
 */
 QList<QGeoCoordinate> QGeoRoute::path() const
 {
-    // TODO not handled in private impl copy constructor / assignment operator
     return d_ptr->path;
 }
 

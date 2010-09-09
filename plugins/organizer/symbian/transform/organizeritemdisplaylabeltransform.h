@@ -49,6 +49,8 @@ public:
     void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item);
     void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry);
     QString detailDefinitionName();
+    void modifyBaseSchemaDefinitions(QMap<QString, 
+        QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const;
 };
 
 #endif /* ORGANIZERITEMDISPLAYLABELTRANSFORM_H_ */

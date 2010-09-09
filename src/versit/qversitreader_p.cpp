@@ -76,7 +76,8 @@ LineReader::LineReader(QIODevice* device, QTextCodec *codec, int chunkSize)
     mChunkSize(chunkSize),
     mCrlfList(*VersitUtils::newlineList(mCodec)),
     mBuffer(LByteArray(QByteArray())),
-    mOdometer(0)
+    mOdometer(0),
+    mSearchFrom(0)
 {
 }
 

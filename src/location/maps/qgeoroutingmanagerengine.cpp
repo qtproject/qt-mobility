@@ -371,6 +371,12 @@ QGeoRouteRequest::InstructionDetails QGeoRoutingManagerEngine::supportedInstruct
 }
 
 /*!
+    Sets the locale to be used by the this manager to \a locale.
+
+    If this routing manager supports returning addresses and instructions
+    in different languages, they will be returned in the language of \a locale.
+
+    The locale used defaults to the system locale if this is not set.
 */
 void QGeoRoutingManagerEngine::setLocale(const QLocale &locale)
 {
@@ -378,6 +384,8 @@ void QGeoRoutingManagerEngine::setLocale(const QLocale &locale)
 }
 
 /*!
+    Returns the locale used to hint to this routing manager about what
+    language to use for addresses and instructions.
 */
 QLocale QGeoRoutingManagerEngine::locale() const
 {

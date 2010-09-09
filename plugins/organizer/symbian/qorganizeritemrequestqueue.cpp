@@ -101,7 +101,6 @@ bool QOrganizerItemRequestQueue::cancelRequest(
 bool QOrganizerItemRequestQueue::waitForRequestFinished(
         QOrganizerItemAbstractRequest* req, int msecs)
 {
-    // TODO create a seperate timer and event loop for all requests
     m_timer->start(msecs);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(exitLoop()));
     m_eventLoop->exec();
@@ -115,9 +114,6 @@ bool QOrganizerItemRequestQueue::waitForRequestFinished(
 void QOrganizerItemRequestQueue::exitLoop()
 {
     disconnect(m_timer, SIGNAL(timeout()), this, SLOT(exitLoop()));
-    // TODO:
-    // Exit the respective event loop for the request for which this loop was 
-    // started
     m_eventLoop->exit();
 }
 

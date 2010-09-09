@@ -92,13 +92,10 @@ void UT_CQwertyPredictiveSearchTable::ConstructL()
     // The ConstructL from the base class CEUnitTestSuiteClass must be called.
     // It generates the test case table.
     CEUnitTestSuiteClass::ConstructL();
-    
 
-#if defined(USE_ORBIT_KEYMAP)
     // Create singleton outside actual test cases so that it is not treated as
     // resource leak, since it can't be deleted.
     HbKeymapFactory::instance();
-#endif
     }
     
 // -----------------------------------------------------------------------------

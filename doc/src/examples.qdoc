@@ -55,6 +55,7 @@
     \list
     \o \l{mediabrowser}{Media Browser}
     \o \l{documentproperties}{Document Properties}
+    \o \l{declarative-music-browser}{QML Music Browser}
     \endlist
 
     \section2 Feedback
@@ -116,6 +117,7 @@
     \o \l{sfw-notes}{Notes Manager}
     \o \l{declarative-sfw-notes}{Declarative Notes Manager}
     \o \l{declarative-sfw-dialer}{Declarative Dialer}
+    \o \l{sfwecho}{Echo Client}
     \endlist
 
     \section2 System Information

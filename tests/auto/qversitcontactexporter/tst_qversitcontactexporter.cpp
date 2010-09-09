@@ -46,32 +46,13 @@
 #include "qversitcontactexporter_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
-#include "qversitdefs_p.h"
 #include <QString>
 #include <QStringList>
 #include <QList>
 #include <QPixmap>
 #include <QImageWriter>
 #include <QtTest/QtTest>
-#include <qcontact.h>
-#include <qcontactaddress.h>
-#include <qcontactemailaddress.h>
-#include <qcontactname.h>
-#include <qcontactphonenumber.h>
-#include <qcontacturl.h>
-#include <qcontactguid.h>
-#include <qcontacttimestamp.h>
-#include <qcontactbirthday.h>
-#include <qcontactnote.h>
-#include <qcontactgeolocation.h>
-#include <qcontactorganization.h>
-#include <qcontactavatar.h>
-#include <qcontactgender.h>
-#include <qcontactnickname.h>
-#include <qcontactanniversary.h>
-#include <qcontactonlineaccount.h>
-#include <qcontactfamily.h>
-#include <qcontactdisplaylabel.h>
+#include <qtcontacts.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -301,22 +282,6 @@ void tst_QVersitContactExporter::testContactDetailHandler()
     detail = findDetailByName(unknownDetails, definitionName);
     QCOMPARE(definitionName, detail.definitionName());
 
-    // Test that preProcessDetail returns true stops the exporter from doing anything.
-    contact.clearDetails();
-    QContactName contactName;
-    contactName.setFirstName(QLatin1String("John"));
-    contact.saveDetail(&contactName);
-    detailHandler.clear();
-    detailHandler.mPreProcess = true;
-    // Fails, with NoNameError
-    QVERIFY(!mExporter->exportContacts(QList<QContact>() << contact,
-            QVersitDocument::VCard30Type));
-    QList<QVersitDocument> documents = mExporter->documents();
-    QCOMPARE(documents.size(), 0);
-    QVERIFY(detailHandler.mPreProcessedDetails.count() > BASE_PROPERTY_COUNT);
-    QCOMPARE(detailHandler.mPostProcessedDetails.count(), 0);
-    QCOMPARE(detailHandler.mUnknownDetails.count(), 0);
-
     QVERIFY(mExporter->detailHandler() == &detailHandler);
     mExporter->setDetailHandler(static_cast<QVersitContactExporterDetailHandler*>(0));
 }
@@ -351,6 +316,15 @@ void tst_QVersitContactExporter::testEncodeName()
     QContact contact;
     QContactName name;
 
+    // An empty contact - a blank FN should be generated
+    QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard21Type));
+    QCOMPARE(mExporter->documents().size(), 1);
+    QVersitDocument document = mExporter->documents().first();
+    QCOMPARE(document.properties().size(), 1);
+    QVersitProperty property = document.properties().first();
+    QCOMPARE(property.name(), QString::fromAscii("FN"));
+    QCOMPARE(property.value(), QString());
+
     // Special characters are NOT backslash escaped by the exporter, only by the writer.
     name.setFirstName(QString::fromAscii("He;ido"));
     name.setLastName(QString::fromAscii("HH"));
@@ -358,7 +332,7 @@ void tst_QVersitContactExporter::testEncodeName()
     name.setPrefix(QString::fromAscii("Mr."));
     contact.saveDetail(&name);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard21Type));
-    QVersitDocument document = mExporter->documents().first();
+    document = mExporter->documents().first();
 
     // Each Contact has display label detail by default. Display label is enocded
     // if some value exists for the Label or if value for Name exists.

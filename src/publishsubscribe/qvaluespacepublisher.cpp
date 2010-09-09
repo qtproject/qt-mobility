@@ -123,6 +123,9 @@ public:
     QValueSpacePublisherPrivate(const QString &_path, const QUuid &uuid);
 
     QString path;
+#ifdef QT_SIMULATOR
+    QString originalPath;
+#endif
 
     QAbstractValueSpaceLayer *layer;
     QAbstractValueSpaceLayer::Handle handle;
@@ -136,6 +139,11 @@ QValueSpacePublisherPrivate::QValueSpacePublisherPrivate(const QString &_path,
 :   layer(0), handle(QAbstractValueSpaceLayer::InvalidHandle), hasSet(false), hasWatch(false)
 {
     path = qCanonicalPath(_path);
+#ifdef QT_SIMULATOR
+    originalPath = path;
+    path = qAddSimulatorPrefix(path);
+#endif
+
 
     if ((filter & QValueSpace::PermanentLayer &&
          filter & QValueSpace::TransientLayer) ||
@@ -165,6 +173,10 @@ QValueSpacePublisherPrivate::QValueSpacePublisherPrivate(const QString &_path, c
 :   layer(0), handle(QAbstractValueSpaceLayer::InvalidHandle), hasSet(false), hasWatch(false)
 {
     path = qCanonicalPath(_path);
+#ifdef QT_SIMULATOR
+    originalPath = path;
+    path = qAddSimulatorPrefix(path);
+#endif
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
@@ -251,7 +263,11 @@ QValueSpacePublisher::~QValueSpacePublisher()
 */
 QString QValueSpacePublisher::path() const
 {
+#ifndef QT_SIMULATOR
     return d->path;
+#else
+    return d->originalPath;
+#endif
 }
 
 /*!

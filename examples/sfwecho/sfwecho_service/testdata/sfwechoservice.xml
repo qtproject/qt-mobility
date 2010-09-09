@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<SFW version="1.1">
 <service>
     <name>EchoService</name>
-    <filepath>localsocket:sfwecho_service</filepath>
+    <ipcaddress>sfwecho_service</ipcaddress>
     <description>Instant Messaging Echo Example</description>
     <interface>
         <name>com.nokia.qt.example.sfwecho</name>
@@ -16,3 +17,4 @@
         <capabilities></capabilities>
     </interface>
 </service>
+</SFW>

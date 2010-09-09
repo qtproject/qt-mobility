@@ -160,6 +160,7 @@ void tst_QServiceManager_IPC::initTestCase()
 
     //test that the service is installed
     QList<QServiceInterfaceDescriptor> list = manager->findInterfaces("IPCExampleService");
+    QVERIFY2(list.count() == 2,"unit test specific IPCExampleService not registered/found" );
     serviceUnique = manager->loadInterface(list[0]);
     serviceUniqueOther = manager->loadInterface(list[0]);
     serviceShared = manager->loadInterface(list[1]);
@@ -204,7 +205,11 @@ void tst_QServiceManager_IPC::cleanupTestCase()
     
     if (requiresLackey()) {
         lackey->terminate();
-        lackey->waitForFinished();
+       
+        // terminate didnt cause process to exit
+        if (!lackey->waitForFinished(10000))
+            lackey->kill();
+
         switch(lackey->exitCode()) {
         case 0:
             qDebug("Lackey returned exit success(0)");

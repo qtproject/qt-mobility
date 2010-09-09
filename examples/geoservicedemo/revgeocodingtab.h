@@ -43,6 +43,7 @@
 #define REVERSEGEOCODINGTAB_H_
 
 #include <QWidget>
+#include <QDialog>
 
 #include <qgeosearchmanager.h>
 
@@ -51,6 +52,19 @@ class QLineEdit;
 class QPushButton;
 
 QTM_USE_NAMESPACE
+
+class GeocodingCoordinateInputDialog: public QDialog
+{
+    Q_OBJECT
+public:
+    GeocodingCoordinateInputDialog(QGeoCoordinate& location, QWidget *parent=0);
+private slots:
+    void accept();
+private:
+    QGeoCoordinate& m_location;
+    QLineEdit *m_locLong;
+    QLineEdit *m_locLat;
+};
 
 class ReverseGeocodingTab: public QWidget
 {
@@ -70,9 +84,8 @@ private slots:
 
 private:
     QGeoSearchManager *m_searchManager;
-    QLineEdit *m_locLong;
-    QLineEdit *m_locLat;
+    QGeoCoordinate m_location;
     QTreeWidget *m_resultTree;
-    QPushButton *requestBtn;
+    QPushButton *m_requestBtn;
 };
 #endif /* ROUTETAB_H_ */

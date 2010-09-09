@@ -91,3 +91,16 @@ void maemo6sensorbase::stop()
     if (m_sensorInterface)
         m_sensorInterface->stop();
 }
+
+
+void maemo6sensorbase::setRanges(qreal correctionFactor){
+    int l = m_sensorInterface->getAvailableDataRanges().size();
+
+    for (int i=0; i<l; i++){
+        qreal rangeMin = ((DataRange)(m_sensorInterface->getAvailableDataRanges().at(i))).min * correctionFactor;
+        qreal rangeMax =((DataRange)(m_sensorInterface->getAvailableDataRanges().at(i))).max * correctionFactor;
+        qreal resolution = ((DataRange)(m_sensorInterface->getAvailableDataRanges().at(i))).resolution * correctionFactor;
+        addOutputRange(rangeMin, rangeMax, resolution);
+    }
+
+}

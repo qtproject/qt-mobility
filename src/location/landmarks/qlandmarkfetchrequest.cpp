@@ -87,6 +87,7 @@ QLandmarkFetchRequest::~QLandmarkFetchRequest()
 QLandmarkFilter QLandmarkFetchRequest::filter() const
 {
     Q_D(const QLandmarkFetchRequest);
+    QMutexLocker ml(&d->mutex);
     return d->filter;
 }
 
@@ -96,6 +97,7 @@ QLandmarkFilter QLandmarkFetchRequest::filter() const
 void QLandmarkFetchRequest::setFilter(const QLandmarkFilter &filter)
 {
     Q_D(QLandmarkFetchRequest);
+    QMutexLocker ml(&d->mutex);
     d->filter = filter;
 }
 
@@ -105,6 +107,7 @@ void QLandmarkFetchRequest::setFilter(const QLandmarkFilter &filter)
 QList<QLandmarkSortOrder> QLandmarkFetchRequest::sorting() const
 {
     Q_D(const QLandmarkFetchRequest);
+    QMutexLocker ml(&d->mutex);
     return d->sorting;
 }
 
@@ -116,6 +119,7 @@ QList<QLandmarkSortOrder> QLandmarkFetchRequest::sorting() const
 void QLandmarkFetchRequest::setSorting(const QList<QLandmarkSortOrder> &sorting)
 {
     Q_D(QLandmarkFetchRequest);
+    QMutexLocker ml(&d->mutex);
     d->sorting = sorting;
 }
 
@@ -127,6 +131,7 @@ void QLandmarkFetchRequest::setSorting(const QList<QLandmarkSortOrder> &sorting)
 void QLandmarkFetchRequest::setSorting(const QLandmarkSortOrder &sorting)
 {
     Q_D(QLandmarkFetchRequest);
+    QMutexLocker ml(&d->mutex);
     d->sorting.clear();
     d->sorting.append(sorting);
 }
@@ -137,6 +142,7 @@ void QLandmarkFetchRequest::setSorting(const QLandmarkSortOrder &sorting)
 int QLandmarkFetchRequest::limit() const
 {
     Q_D(const QLandmarkFetchRequest);
+    QMutexLocker ml(&d->mutex);
     return d->limit;
 }
 
@@ -146,6 +152,7 @@ int QLandmarkFetchRequest::limit() const
 void QLandmarkFetchRequest::setLimit(int limit)
 {
     Q_D(QLandmarkFetchRequest);
+    QMutexLocker ml(&d->mutex);
     d->limit = limit;
 }
 
@@ -155,6 +162,7 @@ void QLandmarkFetchRequest::setLimit(int limit)
 int QLandmarkFetchRequest::offset() const
 {
     Q_D(const QLandmarkFetchRequest);
+    QMutexLocker ml(&d->mutex);
     return d->offset;
 }
 
@@ -163,6 +171,7 @@ int QLandmarkFetchRequest::offset() const
 */
 void QLandmarkFetchRequest::setOffset(int offset) {
     Q_D(QLandmarkFetchRequest);
+    QMutexLocker ml(&d->mutex);
     d->offset = offset;
 }
 
@@ -173,6 +182,7 @@ void QLandmarkFetchRequest::setOffset(int offset) {
 QList<QLandmark> QLandmarkFetchRequest::landmarks() const
 {
     Q_D(const QLandmarkFetchRequest);
+    QMutexLocker ml(&d->mutex);
     return d->landmarks;
 }
 

@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qdeclarativecamera_p.h"
+#include "qdeclarativecamerapreviewprovider_p.h"
 
 #include <qmediaplayercontrol.h>
 #include <qmediaservice.h>
@@ -117,9 +118,11 @@ void QDeclarativeCamera::_q_error(int errorCode, const QString &errorString)
 
 void QDeclarativeCamera::_q_imageCaptured(int id, const QImage &preview)
 {
-    Q_UNUSED(id);
     m_capturedImagePreview = preview;
-    emit imageCaptured();
+    QString previewId = QString("preview_%1").arg(id);
+    QDeclarativeCameraPreviewProvider::registerPreview(previewId, preview);
+
+    emit imageCaptured(QLatin1String("image://camera/")+previewId);
 }
 
 void QDeclarativeCamera::_q_imageSaved(int id, const QString &fileName)
@@ -272,6 +275,8 @@ QDeclarativeCamera::QDeclarativeCamera(QDeclarativeItem *parent) :
 
     connect(m_focus, SIGNAL(opticalZoomChanged(qreal)), this, SIGNAL(opticalZoomChanged(qreal)));
     connect(m_focus, SIGNAL(digitalZoomChanged(qreal)), this, SIGNAL(digitalZoomChanged(qreal)));
+    connect(m_focus, SIGNAL(maximumOpticalZoomChanged(qreal)), this, SIGNAL(maximumOpticalZoomChanged(qreal)));
+    connect(m_focus, SIGNAL(maximumDigitalZoomChanged(qreal)), this, SIGNAL(maximumDigitalZoomChanged(qreal)));
 
     //delayed start to evoid stopping the cammera immediately if
     //stop() is called after constructor,
@@ -411,7 +416,6 @@ void QDeclarativeCamera::geometryChanged(const QRectF &newGeometry, const QRectF
 
 void QDeclarativeCamera::keyPressEvent(QKeyEvent * event)
 {
-    qDebug() << Q_FUNC_INFO << event->key();
     switch (event->key()) {
     case Qt::Key_CameraFocus:
         m_camera->searchAndLock();
@@ -429,7 +433,6 @@ void QDeclarativeCamera::keyPressEvent(QKeyEvent * event)
 
 void QDeclarativeCamera::keyReleaseEvent(QKeyEvent * event)
 {
-    qDebug() << Q_FUNC_INFO << event->key();
     switch (event->key()) {
     case Qt::Key_CameraFocus:
         m_camera->unlock();

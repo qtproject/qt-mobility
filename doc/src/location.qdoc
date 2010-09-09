@@ -263,6 +263,7 @@ the current location.
 
 \annotatedlist location
 
+\target Landmarks
 \section1 Landmarks
 The Landmarks portion of the Location API facilitates the creation,
 retrieval, updating and deletion of landmarks from arbitrary data stores.
@@ -285,9 +286,210 @@ It is generally recommended that the asynchronous \l {Asynchronous Landmark Requ
 a datastore contains a significantly large number of landmarks or if the datastore is being accessed over a network.
 
 
-\section2 Landmark Examples
+\section2 Landmark operation examples
 
-For more details see the \l {Landmark Examples} {Landmark Examples} page.
+For more details see the \l {Landmark Examples} {Landmark Examples} page for:
+\list
+    \o \l {Creating/Saving categories and landmarks}
+    \o \l {Retrieving categories and landmarks}
+    \o \l {Deleting categories and landmarks}
+    \o \l {Importing landmarks}
+    \o \l {Exporting landmarks}
+\endlist
+
+\section2 Landmark Attributes
+
+    The attribute system for landmarks is intended to be expose advanced
+    functionality provided a particular manager supports them.
+    Each landmark consists of a number of attributes such as name, coordinates,
+    description etc. These attributes can be divided into 3 distinct types.
+
+    \list
+    \o Core attributes:  These are core properties common to all managers.
+    These are accessible through standard member functions.  They are also available through
+    the generic attributes() function via a key name.  e.g. A landmark name is retrievable
+    through landmark.name() or landmark.attribute("name").  The return type of the attributes() function
+    is a QVariant.
+    The following tables provides the member functions and their equivalent attribute keys.
+
+    \endlist
+
+    Landmark Attributes
+    \table
+    \header
+        \o Member function
+        \o Attribute key
+        \o Member function
+        \o Attribute key
+    \row
+        \o address().country()
+        \o "country"
+        \o address().countryCode()
+        \o "countryCode"
+    \row
+        \o address().county()
+        \o "county"
+        \o address().district()
+        \o "district"
+    \row
+        \o address().postCode()
+        \o "postCode"
+        \o address().state()
+        \o "state"
+    \row
+        \o address().street()
+        \o "street"
+        \o address().streetNumber()
+        \o "streetNumber"
+    \row
+        \o coordinate().latitude()
+        \o "latitude"
+        \o coordinate().longitude()
+        \o "longitude"
+    \row
+        \o description()
+        \o "description"
+        \o iconUrl()
+        \o "iconUrl"
+    \row
+        \o name()
+        \o "name"
+        \o phoneNumber()
+        \o "phoneNumber"
+    \row
+        \o radius()
+        \o "radius"
+        \o url()
+        \o "url"
+    \endtable
+
+    Category Attributes
+    \table
+    \header
+        \o Member function
+        \o AttributeKey
+        \o Member function
+        \o AttributeKey
+    \row
+        \o iconUrl()
+        \o "iconUrl"
+        \o name()
+        \o "name"
+    \endtable
+
+    \list
+    \o Extended attributes:  These are attributes that a particular manager provides
+    above those of the core attributes.  The keys to be used are dependent upon the manager.
+    The extended attributes may be accessed using the attribute() and setAttribute() functions,
+    just as the core attributes are.  (As of the Qt Mobility 1.1 beta, none of the supported
+    platforms have extended attributes).
+    \o Custom attributes:  These are attributes that a client application can use to associate
+    its own domain specific data with a landmark.  These are accessible through the customAttribute() and
+    setCustomAttribute() functions.
+\endlist
+
+    The combination of core and extended attributes are regarded as \c manager
+    attributes. These are accessible through the attribute() and setAttribute()
+    functions. Custom attributes are conceptually separate from the manager
+    attributes since they are not predefined and thus are accessed using the
+    customAttribute() and setCustomAttribute() functions instead. There is an
+    important semantic difference between manager and custom attributes in that
+    setting an invalid QVariant to a manager attribute will set the attribute
+    value to a default value, e.g setAttribute("name", QVariant()) will assign
+    an empty string to name. Setting an invalid QVariant on a custom attribute
+    will remove that attribute from the landmark, eg
+    setCustomAttribute("price", QVariant()) will remove the price attribute
+    from the landmark. The concept of attributes also applies to categories.
+
+    A QLandmarkManager can be queried as to whether it supports extended or
+    custom attributes by using the QLandmarkManager::isFeatureSupported()
+    function. Extended and custom attributes may also be enabled and disabled
+    by using the QLandmarkManager::setExtendedAttributesEnabled() and
+    QLandmarkManager::setCustomAttributesEnabled() function.  When fetching
+    a set of landmarks, the landmark object will contain extended or custom attributes
+    attributes depending upon whether these are enabled in the manager.
+
+    The manager attribute keys that are available for use can be retrieved by using
+    the QLandmarkManager::landmarkAttributeKeys() function.  Only the core attribute keys
+    are returned if extended attributes are disabled.  In similar fashion, attribute keys
+    for categories can be retrieved by using QLandmarkManager::categoryAttributeKeys().
+    Custom attributes are added on landmark by landmark basis so the manager
+    cannot provide a set of custom attribute keys.
+
+    Filtering on various attributes is facilitated by the QLandmarkAttributeFilter.
+    The attribute filter be used to search for a set of attributes by ANDing them all together
+    or by ORing them.  The attribute filter may only be used to search one type of attributes,
+    i.e. either manager attributes or custom attributes.  Not all attributes are searchable,
+    and the ones that can be searched are backend specific.  The following set of attributes
+    are currently searchable.
+
+
+    \table
+    \header
+        \o {3,1} Searchable attributes
+    \row
+        \o "city"
+        \o "country"
+        \o "county"
+    \row
+        \o "countryCode"
+        \o "description"
+        \o "district"
+    \row
+        \o "name"
+        \o "state"
+        \o "street"
+    \row
+        \o "phoneNumber"
+        \o "postCode"
+        \o
+    \endtable
+
+\section3 Importing and Exporting Landmarks
+The landmarks API supports import and exporting of landmarks.  The file formats that are supported depends on the particular manager.
+The following table outline the formats that may be used for each manager.  You may also query the supported formats through the
+QLandmarkManager::supportedFormats() function.
+
+\table
+\header
+    \o Manager
+    \o Platform
+    \o Import formats
+    \o Export formats
+\row
+    \o  com.nokia.qt.landmarks.engines.symbian
+    \o  Symbian 3rd Edition
+    \o  Lmx
+    \o  Lmx
+\row
+    \o  com.nokia.qt.landmarks.engines.symbian
+    \o  Symbian 5th Edition
+    \o  Gpx, Lmx, Kml, Kmz
+    \o  Lmx
+\row
+    \o com.nokia.qt.landmarks.engines.sqlite
+    \o Maemo 5, windows, linux
+    \o Lmx, Gpx(version 1.1 only)
+    \o Lmx, Gpx(vesion 1.1)
+\endtable
+
+During an import operation, every landmark from the import source will result in the creation of a new landmark, however any categories
+defined in the import source will be mapped to existing categories if possible.  If a mappping cannot be found then a new category
+is created.
+
+During an import or export operation,the QLandmarkManager::TransferOption can be used to decide what to do with category data,
+provided the given format supports them.  (For formats such as gpx which do not support categories, the transfer option is ignored).
+Typically, any categories are included as is with QLandmarkManager::IncludeCategoryData being the default option.  You may choose
+to ignore any categories by providing using QLandmarkManager::ExcludeCategoryData.  For an import operation, you can use
+QLandmarkManager::AttachSingleCategory in conjunction with a QLandmarkCategoryId, to have all imported landmarks be assigned
+to that category(any exisiting category associations defined in the import source are ignored).
+
+The export operation by default exports all landmarks within the manager.  If you wish to export only a subset you can
+provide a list of landmark ids to do so.  One caveat with exporting landmarks to gpx format is that the gpx does not support
+landmarks which have NaN latitude and longitude values.  If you try to export all landmarks, then those landmarks with NaN values
+are skipped over.  However if you provide a list of ids of landmarks to export, the export operation will fail if any one
+of those landmarks have NaN latitude or longitude values.
+
 
 \section2 Landmark classes
 
@@ -357,16 +559,16 @@ is part of Qt Mobility.
 
 \section2 Mapping
 
-The QGeoMapWidget class is the main class used for displaying and interacting
+The QGraphicsGeoMap class is the main class used for displaying and interacting
 with maps. It is designed for use within the Graphics View Framework, and is
 a subclass of QGraphicsWidget.
 
 The QGeoMappingManager provides most of the functionality required by
-QGeoMapWidget.  The details of QGeoMappingManager are mostly only important
+QGraphicsGeoMap.  The details of QGeoMappingManager are mostly only important
 to plugin implementers, as regular users should not need to make use of
-QGeoMappingManager outside of the QGeoMapWidget constructor:
+QGeoMappingManager outside of the QGraphicsGeoMap constructor:
 \code
-    QGeoMapWidget *widget = new QGeoMapWidget(mappingManager);
+    QGraphicsGeoMap *map = new QGraphicsGeoMap(mappingManager);
 \endcode
 
 \annotatedlist maps-mapping
@@ -440,6 +642,16 @@ QGeoServiceProviderFactory::createMappingManagerEngine() and
 QGeoServiceProviderFactory::createRoutingManagerEngine() as appropriate.
 
 \annotatedlist maps-impl
+
+\section3 Tile-based map convenience classes
+
+Most of the current tile based mapping APIs are very similar, and so we 
+provide a number of classes intended to make writing tile based mapping 
+plugins much simpler.  
+
+If the Mercator projection and the most common tile addressing scheme is used this will mainly involve subclassing QGeoTiledMappingManagerEngine and providing an implementation of QGeoTiledMappingManagerEngine::getTileImage().
+
+\annotatedlist maps-impl-tiled
 
 */
 

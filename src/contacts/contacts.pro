@@ -107,7 +107,7 @@ symbian {
     isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=symbian
 
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = CAP_GENERAL_DLL
+    TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC7A
 
     LIBS += -lefsrv
@@ -117,6 +117,15 @@ symbian {
     CONTACTS_DEPLOYMENT.sources = QtContacts.dll
     CONTACTS_DEPLOYMENT.path = /sys/bin
     DEPLOYMENT += CONTACTS_DEPLOYMENT
+}
+
+simulator {
+    isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=simulator
+
+    SOURCES += contactconnection_simulator.cpp engines/qcontactmemorybackenddata_simulator.cpp
+    HEADERS += contactconnection_simulator_p.h engines/qcontactmemorybackenddata_simulator_p.h
+    INCLUDEPATH += ../mobilitysimulator
+    qtAddLibrary(QtMobilitySimulator)
 }
 
 !isEmpty(CONTACTS_DEFAULT_ENGINE): DEFINES += Q_CONTACTS_DEFAULT_ENGINE=$$CONTACTS_DEFAULT_ENGINE
