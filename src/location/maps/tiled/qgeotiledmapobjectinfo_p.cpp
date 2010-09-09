@@ -126,7 +126,6 @@ bool QGeoTiledMapObjectInfo::contains(const QGeoCoordinate &coord) const
 {
     QPoint point = tiledMapData->coordinateToWorldPixel(coord);
 
-    //if (graphicsItem && graphicsItem->contains(point))
     if (graphicsItem && graphicsItem->mapToParent(graphicsItem->shape()).contains(point))
         return true;
 
