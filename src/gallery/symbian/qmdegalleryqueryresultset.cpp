@@ -124,9 +124,9 @@ void QMDEGalleryQueryResultSet::HandleQueryCompleted( CMdEQuery &aQuery, TInt aE
                     m_live = false;
                 }
             }
-            finish(QGalleryAbstractRequest::Succeeded, m_live);
+            finish(m_live);
         } else {
-            finish(QGalleryAbstractRequest::RequestError, false);
+            error(QDocumentGallery::ConnectionError);
         }
     }
 }
@@ -215,29 +215,29 @@ void QMDEGalleryQueryResultSet::createQuery()
 
     if (!m_session) {
         if (!m_launchUpdateQuery) {
-            finish(QGalleryAbstractRequest::ConnectionError, false);
+            error(QDocumentGallery::ConnectionError);
         } else {
             m_launchUpdateQuery = false;
         }
         return;
     }
 
-    int error = 0;
+    int error = QDocumentGallery::NoError;
     TRAPD( err, m_query = m_session->NewObjectQueryL( this, m_request, error ) );
     if (err) {
         m_query = NULL;
         if (!m_launchUpdateQuery) {
-            finish(QGalleryAbstractRequest::RequestError, false);
+            QGalleryAbstractResponse::error(QDocumentGallery::ConnectionError);
         } else {
             m_launchUpdateQuery = false;
         }
         return;
-    } else if (error != QGalleryAbstractRequest::NoResult) {
+    } else if (error != QDocumentGallery::NoError) {
         m_query->RemoveObserver( *this );
         delete m_query;
         m_query = NULL;
         if (!m_launchUpdateQuery) {
-            finish(error, false);
+            QGalleryAbstractResponse::error(error);
         } else {
             m_launchUpdateQuery = false;
         }
@@ -254,13 +254,13 @@ void QMDEGalleryQueryResultSet::createQuery()
             delete m_query;
             m_query = NULL;
             if (!m_launchUpdateQuery) {
-                finish(QGalleryAbstractRequest::RequestError, false);
+                QGalleryAbstractResponse::error(QDocumentGallery::ConnectionError);
             } else {
                 m_launchUpdateQuery = false;
             }
         }
     } else if (!m_launchUpdateQuery) {
-        finish(QGalleryAbstractRequest::NotSupported, false);
+        QGalleryAbstractResponse::error(QDocumentGallery::ItemTypeError,);
     } else {
         m_launchUpdateQuery = false;
     }

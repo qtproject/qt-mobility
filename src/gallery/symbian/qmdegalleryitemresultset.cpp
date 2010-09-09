@@ -112,9 +112,9 @@ void QMDEGalleryItemResultSet::createQuery()
                 m_live = false;
             }
         }
-        finish(QGalleryAbstractRequest::Succeeded, m_live);
+        finish(m_live);
     } else {
-        finish(QGalleryAbstractRequest::RequestError, false);
+        error(QDocumentGallery::ConnectionError);
     }
 }
 

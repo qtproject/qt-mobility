@@ -66,7 +66,10 @@ void QMDEGalleryRemoveResultSet::createQuery()
     // This call only removes the entry from MDS DB. Should the actual binary
     // be deleted from disk???
     // After that m_ret contains error code from request
-    finish(m_result, false);
+    if (m_result == QDocumentGallery::NoError)
+        finish(false);
+    else
+        error(m_result);
 }
 
 #include "moc_qmdegalleryremoveresultset.cpp"

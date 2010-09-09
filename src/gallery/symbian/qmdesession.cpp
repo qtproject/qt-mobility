@@ -138,7 +138,7 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer,
 int QMdeSession::RemoveObject( const unsigned int itemId )
 {
     TItemId result = 0;
-    int ret = QGalleryAbstractRequest::NoResult;
+    int ret = QDocumentGallery::NoError;
     TRAPD( err,
         CMdENamespaceDef& defaultNamespaceDef = GetDefaultNamespaceDefL();
         result = m_cmdeSession->RemoveObjectL( itemId, &defaultNamespaceDef )
@@ -146,12 +146,12 @@ int QMdeSession::RemoveObject( const unsigned int itemId )
 
     if (err == KErrNone) {
         if (result != KNoId) {
-            ret = QGalleryAbstractRequest::Succeeded;
+            ret = QDocumentGallery::NoError;
         } else {
-            ret = QGalleryAbstractRequest::RequestError;
+            ret = QDocumentGallery::ItemIdError;
         }
     } else {
-        ret = QGalleryAbstractRequest::RequestError;
+        ret = QDocumentGallery::ConnectionError;
     }
 
     return ret;
