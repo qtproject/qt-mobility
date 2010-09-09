@@ -267,7 +267,7 @@ typedef enum {
 Q_GLOBAL_STATIC(ModestEngine,modestEngine);
 
 ModestEngine::ModestEngine()
- : m_allEmailMessagesInCache(false)
+ : m_filterId(0), m_allEmailMessagesInCache(false)
 {
     qWarning() << "ModestEngine::ModestEngine Starting to initialize";
     g_type_init();
