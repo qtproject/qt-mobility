@@ -65,11 +65,6 @@ namespace DBus
     private Q_SLOTS:
         void onServiceOwnerChanged(const QString &name, const QString &oldOwner,
                 const QString &newOwner);
-
-    private:
-        struct Private;
-        friend struct Private;
-        Private *mPriv;
     };
 
 } // DBus
