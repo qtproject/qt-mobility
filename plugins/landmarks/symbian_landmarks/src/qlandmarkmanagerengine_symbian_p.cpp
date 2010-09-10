@@ -121,6 +121,10 @@ _LIT8( KPosMimeTypeLandmarkCollectionXml,"application/vnd.nokia.landmarkcollecti
 #define KDefaultIndex 0
 #define KExtrachars 3
 
+//#if(defined __SERIES60_31__ || defined __SERIES60_32__ || defined __SERIES60_50__ || defined __S60_31__ || defined __S60_32__ || defined __S60_50__)
+//#define SYMBIAN_OR_COMPOSITION_RESTRICTED
+//#endif 
+
 /**
  * Constructs CLandmarkDbEventHandler
  */
@@ -396,16 +400,7 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
         return QList<QLandmarkId> ();
     }
 
-    bool isNearestFilter = false;
-    // check for nearest
-    if (filter.type() == QLandmarkFilter::ProximityFilter) {
-        QLandmarkProximityFilter proximityFilter = filter;
-        if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-            isNearestFilter = true;
-        }
-    }
-
-    sortFetchedLmIds(limit, offset, sortOrders, result, isNearestFilter, filter.type(), error,
+    sortFetchedLmIds(limit, offset, sortOrders, result, filter.type(), error,
         errorString);
 
     return result;
@@ -1065,6 +1060,12 @@ bool LandmarkManagerEngineSymbianPrivate::importLandmarks(QIODevice *device, con
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
+    if (!device) {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString = "Invalid io device pointer";
+        return false;
+    }
+
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
@@ -1106,6 +1107,12 @@ bool LandmarkManagerEngineSymbianPrivate::exportLandmarks(QIODevice *device, con
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
+    if (!device) {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString = "Invalid io device pointer";
+        return false;
+    }
+
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
@@ -1145,7 +1152,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::None;
+    QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::NoSupport;
 
     switch (filter.type()) {
 
@@ -1169,7 +1176,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
     case QLandmarkFilter::ProximityFilter:
     case QLandmarkFilter::BoxFilter:
     {
-        supportLevel = QLandmarkManager::Native;
+        supportLevel = QLandmarkManager::NativeSupport;
         break;
     }
     case QLandmarkFilter::AttributeFilter:
@@ -1228,7 +1235,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
                 if (!found)
                     break;
             }
-            supportLevel = QLandmarkManager::Native;
+            supportLevel = QLandmarkManager::NativeSupport;
         }
         break;
     }
@@ -1236,7 +1243,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
     case QLandmarkFilter::IntersectionFilter:
     case QLandmarkFilter::UnionFilter:
     {
-        supportLevel = QLandmarkManager::Emulated;
+        supportLevel = QLandmarkManager::EmulatedSupport;
         break;
     }
     default:
@@ -1259,14 +1266,14 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::sortOrderSup
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::Native;
+    QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::NativeSupport;
 
     switch (sortOrders.at(0).type()) {
     case QLandmarkSortOrder::DefaultSort:
     case QLandmarkSortOrder::NameSort:
         break;
     default:
-        supportLevel = QLandmarkManager::None;
+        supportLevel = QLandmarkManager::NoSupport;
         break;
     }
 
@@ -1285,11 +1292,11 @@ bool LandmarkManagerEngineSymbianPrivate::isFeatureSupported(
     *errorString = "";
 
     switch (feature) {
-    case (QLandmarkManager::ImportExport):
-    case (QLandmarkManager::Notifications):
+    case (QLandmarkManager::ImportExportFeature):
+    case (QLandmarkManager::NotificationsFeature):
         return true;
-    case (QLandmarkManager::ExtendedAttributes):
-    case (QLandmarkManager::CustomAttributes):
+    case (QLandmarkManager::ExtendedAttributesFeature):
+    case (QLandmarkManager::CustomAttributesFeature):
         *error = QLandmarkManager::NotSupportedError;
         *errorString = "Not supported feature";
         return false;
@@ -2068,6 +2075,16 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
     {
         QLandmarkExportRequest * exportRequest = static_cast<QLandmarkExportRequest*> (request);
 
+        QLandmarkManager::Error error;
+        QString errorString = "";
+        QStringList exportFormats = supportedFormats(QLandmarkManager::ExportOperation, &error,
+            &errorString);
+
+        if (!exportFormats.contains(exportRequest->format(), Qt::CaseInsensitive)) {
+            qDebug() << "Not Supported Export Format Type = " << exportRequest->format();
+            User::Leave(KErrNotSupported);
+        }
+
         CPosLmOperation* exportOperation = NULL;
         QIODevice *outputdevice = 0;
         QList<QLandmarkId> exportedLandmarkIds;
@@ -2172,6 +2189,10 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
             // Determine if the export path is a buffer
             outputdevice = dynamic_cast<QBuffer *> (exportRequest->device());
             if (outputdevice) {
+
+                if (exportRequest->format().isEmpty()) {
+                    User::Leave(KErrArgument);
+                }
 
                 // Set the encoder to write to a buffer
                 bufferPath = encoder->SetUseOutputBufferL();
@@ -2796,7 +2817,7 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
         // set the coordinate values
         TCoordinate symbianCoord;
 
-        QGeoCoordinate qCoord = proximityFilter.coordinate();
+        QGeoCoordinate qCoord = proximityFilter.center();
         if (LandmarkUtility::isValidLat(qCoord.latitude()) && LandmarkUtility::isValidLong(
             qCoord.longitude())) {
             symbianCoord.SetCoordinate(qCoord.latitude(), qCoord.longitude());
@@ -3407,6 +3428,12 @@ void LandmarkManagerEngineSymbianPrivate::handleSymbianError(TInt errorId,
         *errorString = "Invalid data provided";
         break;
     }
+    case KErrBadName:
+    {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString = "Bad file name or bad file path";
+        break;
+    }
     case KErrPermissionDenied:
     {
         *error = QLandmarkManager::PermissionsError;
@@ -3415,9 +3442,8 @@ void LandmarkManagerEngineSymbianPrivate::handleSymbianError(TInt errorId,
     }
     case KErrAccessDenied:
     {
-        *error = QLandmarkManager::LockedError;
-        *errorString
-            = "Database is readonly/busy for other operation, so no addition/updation/removal possible.";
+        *error = QLandmarkManager::PermissionsError;
+        *errorString = "The database is read only, access is denied.";
         break;
     }
     case KErrLocked:
@@ -3457,6 +3483,7 @@ void LandmarkManagerEngineSymbianPrivate::handleSymbianError(TInt errorId,
     {
         *error = QLandmarkManager::UnknownError;
         *errorString = QString("Symbian Landmarks Error = %1").arg(errorId);
+        qDebug() << *errorString;
         break;
     }
     } // switch closure
@@ -3510,17 +3537,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
                     symbianLmIds);
                 symbianLmIds.Close();
 
-                bool isNearestFilter = false;
-                // check for nearest
-                if (lmIdFetchRequest->filter().type() == QLandmarkFilter::ProximityFilter) {
-                    QLandmarkProximityFilter proximityFilter = lmIdFetchRequest->filter();
-                    if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-                        isNearestFilter = true;
-                    }
-                }
-
                 sortFetchedLmIds(lmIdFetchRequest->limit(), lmIdFetchRequest->offset(),
-                    lmIdFetchRequest->sorting(), aData->iLandmarkIds, isNearestFilter,
+                    lmIdFetchRequest->sorting(), aData->iLandmarkIds,
                     lmIdFetchRequest->filter().type(), &error, &errorString);
             }
         }
@@ -3578,17 +3596,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
                     symbianLmIds);
                 symbianLmIds.Close();
 
-                bool isNearestFilter = false;
-                // check for nearest
-                if (lmfetchRequest->filter().type() == QLandmarkFilter::ProximityFilter) {
-                    QLandmarkProximityFilter proximityFilter = lmfetchRequest->filter();
-                    if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-                        isNearestFilter = true;
-                    }
-                }
-
                 if (sortFetchedLmIds(lmfetchRequest->limit(), lmfetchRequest->offset(),
-                    lmfetchRequest->sorting(), aData->iLandmarkIds, isNearestFilter,
+                    lmfetchRequest->sorting(), aData->iLandmarkIds,
                     lmfetchRequest->filter().type(), &error, &errorString)) {
 
                     // get all landmark data
@@ -4220,16 +4229,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
                 symbianLmIds.Close();
             }
 
-            bool isNearestFilter = false;
-            // check for nearest
-            if (filters.at(aData->iOpCount - 1).type() == QLandmarkFilter::ProximityFilter) {
-                QLandmarkProximityFilter proximityFilter = filters.at(aData->iOpCount);
-                if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-                    isNearestFilter = true;
-                }
-            }
             // sort and fetch with offset if required.
-            sortFetchedLmIds(limit, offset, sortOrders, result, isNearestFilter, filters.at(
+            sortFetchedLmIds(limit, offset, sortOrders, result, filters.at(
                 aData->iOpCount - 1).type(), &error, &errorString);
 
             // update the first result
@@ -4316,7 +4317,7 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
  * also filters the data with offset and limit
  */
 bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset, QList<
-    QLandmarkSortOrder> sortOrders, QList<QLandmarkId>& landmarkIds, bool isNearestFilter,
+    QLandmarkSortOrder> sortOrders, QList<QLandmarkId>& landmarkIds,
     QLandmarkFilter::FilterType filterType, QLandmarkManager::Error *error, QString *errorString) const
 {
     // if no search data found return empty list
@@ -4363,13 +4364,6 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
         landmarkIds = QLandmarkManagerEngineSymbian::sortLandmarks(landmarks, sortOrders);
     }
 
-    if (isNearestFilter) {
-        QLandmarkId nearestLmId = landmarkIds.at(0);
-        landmarkIds.clear();
-        landmarkIds.append(nearestLmId);
-        return true;
-    }
-
     int resultcount = landmarkIds.size();
     qDebug() << "result size = " << resultcount << " limit = " << limit << " offset = " << offset;
 
@@ -4405,9 +4399,14 @@ void LandmarkManagerEngineSymbianPrivate::exportLandmarksL(QIODevice *device,
     QIODevice *outputdevice = 0;
 
     // check for the format
-    if (format.isEmpty()) {
-        qDebug() << "Invalid Format Type";
-        User::Leave(KErrArgument);
+    QLandmarkManager::Error error;
+    QString errorString = "";
+    QStringList exportFormats = supportedFormats(QLandmarkManager::ExportOperation, &error,
+        &errorString);
+
+    if (!exportFormats.contains(format, Qt::CaseInsensitive)) {
+        qDebug() << "Not Supported Export Format Type = " << format;
+        User::Leave(KErrNotSupported);
     }
 
     // Encoder initialized with the supported landmark package format
@@ -4521,6 +4520,10 @@ void LandmarkManagerEngineSymbianPrivate::exportLandmarksL(QIODevice *device,
         // Determine if the export path is a buffer
         outputdevice = dynamic_cast<QBuffer *> (device);
         if (outputdevice) {
+
+            if (format.isEmpty()) {
+                User::Leave(KErrArgument);
+            }
 
             if (!device->isWritable())
                 User::Leave(KErrArgument);
