@@ -1414,10 +1414,7 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
         {
             QLandmarkProximityFilter proximityFilter(filter);
 
-            if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly)
-                return true; // since we only have one landmark to use, is considered the nearest
-
-            double distance = proximityFilter.coordinate().distanceTo(landmark.coordinate());
+            double distance = proximityFilter.center().distanceTo(landmark.coordinate());
             if (distance < proximityFilter.radius() || qFuzzyCompare(distance, proximityFilter.radius()))
                 return true;
             else

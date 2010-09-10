@@ -409,11 +409,11 @@ bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::Landmark
     *errorString = "";
 
     switch(feature) {
-        case (QLandmarkManager::CustomAttributes):
-        case (QLandmarkManager::Notifications):
-        case (QLandmarkManager::ImportExport):
+        case (QLandmarkManager::CustomAttributesFeature):
+        case (QLandmarkManager::NotificationsFeature):
+        case (QLandmarkManager::ImportExportFeature):
             return true;
-        case (QLandmarkManager::ExtendedAttributes):
+        case (QLandmarkManager::ExtendedAttributesFeature):
             return false;
         default:
             return false;

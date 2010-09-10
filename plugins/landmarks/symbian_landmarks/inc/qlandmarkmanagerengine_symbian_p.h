@@ -214,7 +214,7 @@ private:
         int maxMatches) const;
 
     bool sortFetchedLmIds(int limit, int offset, QList<QLandmarkSortOrder> sortOrders, QList<
-        QLandmarkId>& landmarkIds, bool isNearestFilter, QLandmarkFilter::FilterType filterType,
+        QLandmarkId>& landmarkIds, QLandmarkFilter::FilterType filterType,
         QLandmarkManager::Error *error, QString *errorString) const;
 
     // to handle symbian errors to assign appropriate manager error and error description.
