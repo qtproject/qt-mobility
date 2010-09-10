@@ -261,7 +261,7 @@ void QMDEGalleryQueryResultSet::createQuery()
             }
         }
     } else if (!m_launchUpdateQuery) {
-        QGalleryAbstractResponse::error(QDocumentGallery::ItemTypeError,);
+        QGalleryAbstractResponse::error(QDocumentGallery::ItemTypeError);
     } else {
         m_launchUpdateQuery = false;
     }
