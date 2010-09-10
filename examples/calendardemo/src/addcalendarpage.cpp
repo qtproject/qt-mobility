@@ -167,16 +167,26 @@ void AddCalendarPage::calendarChanged(QOrganizerItemManager *manager, QOrganizer
     if (colorList.canConvert(QVariant::StringList))
         availableColors = colorList.toStringList();
 
-    foreach(QString color, availableColors)
+    int index = 0;
+    foreach(QString color, availableColors) {
         m_colorComboBox->addItem(color);
+        if (calendar.metaData("Color").toString() == color)
+            m_colorComboBox->setCurrentIndex(index);
+        ++index;
+    }
 
     QVariant typeList = calendar.metaData("Available types");
     QStringList availableTypes;
     if (typeList.canConvert(QVariant::StringList))
         availableTypes = typeList.toStringList();
 
-    foreach(QString type, availableTypes)
+    index = 0;
+    foreach(QString type, availableTypes) {
         m_typeComboBox->addItem(type);
+        if (calendar.metaData("Type").toString() == type)
+            m_typeComboBox->setCurrentIndex(index);
+        ++index;
+    }
 
     QVariant visible = calendar.metaData("Visible");
     if (visible.canConvert(QVariant::Bool))
