@@ -445,13 +445,21 @@ void QGalleryIntersectionFilter::clear()
 }
 
 /*!
-    \fn QGalleryIntersectionFilter operator &&(const QGalleryIntersectionFilter &filter1, const T &filter2)
+    \fn QGalleryIntersectionFilter operator &&(const QGalleryIntersectionFilter &filter1, const QGalleryIntersectionFilter &filter2)
 
     Returns a gallery filter matches the intersection of \a filter1 and
     \a filter2.
 
     \relates QGalleryIntersectionFilter
 */
+
+QGalleryIntersectionFilter operator &&(
+        const QGalleryIntersectionFilter &filter1, const QGalleryIntersectionFilter &filter2)
+{
+    QGalleryIntersectionFilter filter = filter1;
+    filter.append(filter2);
+    return filter;
+}
 
 /*!
     \class QGalleryUnionFilter
@@ -673,13 +681,21 @@ void QGalleryUnionFilter::clear()
 }
 
 /*!
-    \fn QGalleryUnionFilter operator ||(const QGalleryUnionFilter &filter1, const T &filter2)
+    \fn QGalleryUnionFilter operator ||(const QGalleryUnionFilter &filter1, const QGalleryUnionFilter &filter2)
 
     Returns a gallery filter which matches the union of \a filter1 and
     \a filter2.
 
     \relates QGalleryUnionFilter
 */
+
+QGalleryUnionFilter operator ||(
+        const QGalleryUnionFilter &filter1, const QGalleryUnionFilter &filter2)
+{
+    QGalleryUnionFilter filter = filter1;
+    filter.append(filter2);
+    return filter;
+}
 
 /*!
     \class QGalleryMetaDataFilter
