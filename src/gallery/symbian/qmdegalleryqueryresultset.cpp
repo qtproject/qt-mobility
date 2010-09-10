@@ -132,7 +132,7 @@ void QMDEGalleryQueryResultSet::HandleQueryCompleted( CMdEQuery &aQuery, TInt aE
         }
     }
 }
-
+#ifdef MDS_25_COMPILATION_ENABLED
 void QMDEGalleryQueryResultSet::HandleObjectNotification( CMdESession& /*aSession*/,
     TObserverNotificationType aType,
     const RArray<TItemId>& aObjectIdArray )
@@ -216,7 +216,22 @@ void QMDEGalleryQueryResultSet::HandleObjectNotification( CMdESession& /*aSessio
         }
     }
 }
+#else
+void QMDEGalleryQueryResultSet::HandleObjectAdded(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray)
+{
+    
+}
 
+void QMDEGalleryQueryResultSet::HandleObjectModified(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray)
+{
+    
+}
+
+void QMDEGalleryQueryResultSet::HandleObjectRemoved(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray)
+{
+    
+}
+#endif //MDS_25_COMPILATION_ENABLED
 void QMDEGalleryQueryResultSet::createQuery()
 {
     delete m_query;

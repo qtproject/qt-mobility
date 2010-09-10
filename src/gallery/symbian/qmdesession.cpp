@@ -77,7 +77,16 @@ void QMdeSession::HandleSessionError(CMdESession& /*aSession*/, TInt /*aError*/)
 
 CMdENamespaceDef& QMdeSession::GetDefaultNamespaceDefL()
 {
+#ifdef MDS_25_COMPILATION_ENABLED
     return m_cmdeSession->GetDefaultNamespaceDefL();
+#else
+    CMdENamespaceDef *nameSpaceDef = NULL;
+    nameSpaceDef = m_cmdeSession->GetDefaultNamespaceDefL();
+    if (nameSpaceDef)
+        return *nameSpaceDef;
+    else
+        User::Leave(KErrBadHandle);
+#endif //MDS_25_COMPILATION_ENABLED
 }
 
 CMdEObject* QMdeSession::GetFullObjectL( const unsigned int id )
@@ -99,7 +108,7 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer,
     CMdENamespaceDef& defaultNamespace = GetDefaultNamespaceDefL();
 
     CMdEObjectQuery* query = NULL;
-
+#ifdef MDS_25_COMPILATION_ENABLED
     if( request->rootType() == QDocumentGallery::File.name() ) {
         CMdEObjectDef& mediaObjDef = defaultNamespace.GetObjectDefL(
             MdeConstants::MediaObject::KMediaObject );
@@ -133,6 +142,9 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer,
 
     error = QDocumentGalleryMDSUtility::SetupQueryConditions(query, request, defaultNamespace);
 
+#else
+        
+#endif //MDS_25_COMPILATION_ENABLED 
     return query;
 }
 
@@ -162,21 +174,33 @@ int QMdeSession::RemoveObject( const unsigned int itemId )
 
 void QMdeSession::AddItemAddedObserverL( MMdEObjectObserver& observer, CMdELogicCondition *condition )
 {
+#ifdef MDS_25_COMPILATION_ENABLED    
     m_cmdeSession->AddObjectObserverL( observer, condition, ENotifyAdd );
+#else
+    // TODO port mds 2.0
+#endif //MDS_25_COMPILATION_ENABLED
 }
 
 void QMdeSession::AddItemChangedObserverL( MMdEObjectObserver& observer, RArray<TItemId> &idArray )
 {
+#ifdef MDS_25_COMPILATION_ENABLED
     CMdELogicCondition* condition = CMdELogicCondition::NewLC( ELogicConditionOperatorOr );
     condition->AddObjectConditionL( idArray );
-
+    
     m_cmdeSession->AddObjectObserverL( observer, condition, (ENotifyModify | ENotifyRemove) );
     CleanupStack::Pop(); // condition
+#else
+    // TODO port mds 2.0
+#endif //MDS_25_COMPILATION_ENABLED
 }
 
 void QMdeSession::RemoveObjectObserver( MMdEObjectObserver& observer )
 {
+#ifdef MDS_25_COMPILATION_ENABLED    
     TRAP_IGNORE( m_cmdeSession->RemoveObjectObserverL( observer ) );
+#else
+    // TODO port mds 2.0
+#endif //MDS_25_COMPILATION_ENABLED
 }
 
 #include "moc_qmdesession.cpp"

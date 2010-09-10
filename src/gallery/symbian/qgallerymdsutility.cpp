@@ -62,6 +62,7 @@ QDocumentGalleryMDSUtility::~QDocumentGalleryMDSUtility()
 
 CMdEObjectDef& QDocumentGalleryMDSUtility::ObjDefFromItemTypeL( CMdENamespaceDef &nameSpace, QString itemType )
 {
+#ifdef MDS_25_COMPILATION_ENABLED
     if (itemType == QDocumentGallery::Audio.name()) {
         return nameSpace.GetObjectDefL( MdeConstants::Audio::KAudioObject );
     }
@@ -80,6 +81,27 @@ CMdEObjectDef& QDocumentGalleryMDSUtility::ObjDefFromItemTypeL( CMdENamespaceDef
 
     // Return Base Object definition
     return nameSpace.GetObjectDefL( MdeConstants::Object::KBaseObject );
+#else
+    //mds 2.0 return pointer instead of ref from GetObjectDefL function
+    if (itemType == QDocumentGallery::Audio.name()) {
+        return *(nameSpace.GetObjectDefL( MdeConstants::Audio::KAudioObject ));
+    }
+    else if (itemType == QDocumentGallery::File.name()) {
+        return *(nameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject ));
+    }
+    else if (itemType == QDocumentGallery::Image.name()) {
+        return *(nameSpace.GetObjectDefL( MdeConstants::Image::KImageObject ));
+    }
+    else if (itemType == QDocumentGallery::PhotoAlbum.name()) {
+        return *(nameSpace.GetObjectDefL( MdeConstants::Album::KAlbumObject ));
+    }
+    else if (itemType == QDocumentGallery::Video.name()) {
+        return *(nameSpace.GetObjectDefL( MdeConstants::Video::KVideoObject ));
+    }
+
+    // Return Base Object definition
+    return *(nameSpace.GetObjectDefL( MdeConstants::Object::KBaseObject ));
+#endif
 }
 
 void QDocumentGalleryMDSUtility::GetDataFieldsForItemType( QStringList &propertyList, QString itemType )
@@ -192,7 +214,8 @@ void QDocumentGalleryMDSUtility::GetDataFieldsForItemType( QStringList &property
 
 void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVariant &output, int key )
 {
-    output.clear();
+#ifdef MDS_25_COMPILATION_ENABLED
+        output.clear();
     switch( key ) {
         case EUri:
         {
@@ -348,7 +371,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-#ifdef MDS_25_COMPILATION_ENABLED            
+//#ifdef MDS_25_COMPILATION_ENABLED            
         case EAudioCodec:
         {
             if( inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
@@ -365,7 +388,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-#endif //MDS_25_COMPILATION_ENABLED
+//#endif //MDS_25_COMPILATION_ENABLED
         case EAudioBitrate:
         case EVideoBitrate:
         {
@@ -640,10 +663,12 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
         default:
         break;
     }
+#endif //MDS_25_COMPILATION_ENABLED    
 }
 
 QString QDocumentGalleryMDSUtility::GetItemTypeFromMDEObject( CMdEObject *inputItem )
 {
+#ifdef MDS_25_COMPILATION_ENABLED
     if( inputItem->Def().Name() == MdeConstants::Album::KAlbumObject ) {
         return QDocumentGallery::PhotoAlbum.name();
     }
@@ -662,6 +687,7 @@ QString QDocumentGalleryMDSUtility::GetItemTypeFromMDEObject( CMdEObject *inputI
 
     QString null;
     return null;
+#endif //MDS_25_COMPILATION_ENABLED    
 }
 
 int QDocumentGalleryMDSUtility::GetPropertyKey( const QString &property )
@@ -917,6 +943,7 @@ TTime QDocumentGalleryMDSUtility::QDateTimetosymbianTTime(const QDateTime& time)
 CMdEPropertyDef *QDocumentGalleryMDSUtility::GetMDSPropertyDefL( const QString &property,
     CMdENamespaceDef& defaultNameSpace )
 {
+#ifdef MDS_25_COMPILATION_ENABLED
     if( property == QDocumentGallery::fileSize.name() ) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Object::KBaseObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Object::KSizeProperty );
@@ -1002,13 +1029,13 @@ CMdEPropertyDef *QDocumentGalleryMDSUtility::GetMDSPropertyDefL( const QString &
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KRatingProperty );
         return &propDef;
     }
-#ifdef MDS_25_COMPILATION_ENABLED
+//#ifdef MDS_25_COMPILATION_ENABLED
     else if( property == QDocumentGallery::audioCodec.name() ) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KAudioFourCCProperty );
         return &propDef;
     }
-#endif //MDS_25_COMPILATION_ENABLED
+//#endif //MDS_25_COMPILATION_ENABLED
     else if( property == QDocumentGallery::playCount.name() ) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
@@ -1080,6 +1107,7 @@ CMdEPropertyDef *QDocumentGalleryMDSUtility::GetMDSPropertyDefL( const QString &
         return &propDef;
     }
     return NULL;
+#endif //MDS_25_COMPILATION_ENABLED
 }
 
 int QDocumentGalleryMDSUtility::SetupQueryConditions(CMdEObjectQuery *query,
@@ -1156,6 +1184,7 @@ int QDocumentGalleryMDSUtility::SetupQueryConditions(CMdEObjectQuery *query,
 
 bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVariant &value, int key )
 {
+#ifdef MDS_25_COMPILATION_ENABLED
     switch( key )
     {
         case EUri:
@@ -1447,7 +1476,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
                 }
             }
         }
-#ifdef MDS_25_COMPILATION_ENABLED            
+//#ifdef MDS_25_COMPILATION_ENABLED            
         case EAudioCodec:
         {
             if( item->Def().Name() != MdeConstants::Audio::KAudioObject &&
@@ -1477,7 +1506,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
                 }
             }
         }
-#endif //MDS_25_COMPILATION_ENABLED
+//#endif //MDS_25_COMPILATION_ENABLED
         case EAudioBitrate:
         case EVideoBitrate:
         {
@@ -2006,6 +2035,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
         default:
             return false;
     }
+#endif //MDS_25_COMPILATION_ENABLED
 }
 
 int QDocumentGalleryMDSUtility::InsertUInt32PropertyCondition( CMdELogicCondition &rootCond,

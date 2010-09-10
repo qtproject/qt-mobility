@@ -65,7 +65,7 @@ QMDEGalleryItemResultSet::~QMDEGalleryItemResultSet()
 
     m_session->RemoveObjectObserver( *this );
 }
-
+#ifdef MDS_25_COMPILATION_ENABLED
 void QMDEGalleryItemResultSet::HandleObjectNotification( CMdESession& /*aSession*/,
     TObserverNotificationType aType,
     const RArray<TItemId>& aObjectIdArray )
@@ -98,6 +98,23 @@ void QMDEGalleryItemResultSet::HandleObjectNotification( CMdESession& /*aSession
         }
     }
 }
+#else
+
+void QMDEGalleryItemResultSet::HandleObjectAdded(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray)
+{
+    
+}
+
+void QMDEGalleryItemResultSet::HandleObjectModified(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray)
+{
+    
+}
+
+void QMDEGalleryItemResultSet::HandleObjectRemoved(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray)
+{
+    
+}
+#endif //MDS_25_COMPILATION_ENABLED
 
 void QMDEGalleryItemResultSet::createQuery()
 {

@@ -66,11 +66,16 @@ public:
         TInt aNewItemCount );
 
     void HandleQueryCompleted( CMdEQuery& aQuery, TInt aError );
-
+#ifdef MDS_25_COMPILATION_ENABLED
     void HandleObjectNotification( CMdESession& aSession,
         TObserverNotificationType aType,
         const RArray<TItemId>& aObjectIdArray );
-
+#else    
+    void HandleObjectAdded(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray);
+    void HandleObjectModified(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray);
+    void HandleObjectRemoved(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray);
+#endif //MDS_25_COMPILATION_ENABLED
+    
     void createQuery();
 
 private:
