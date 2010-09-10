@@ -687,4 +687,6 @@ EXPORTS
 	?status@QGalleryQueryModel@QtMobility@@QBE?AW4Status@QGalleryAbstractRequest@2@XZ @ 686 NONAME ; enum QtMobility::QGalleryAbstractRequest::Status QtMobility::QGalleryQueryModel::status(void) const
 	?statusChanged@QGalleryAbstractRequest@QtMobility@@IAEXW4Status@12@@Z @ 687 NONAME ; void QtMobility::QGalleryAbstractRequest::statusChanged(enum QtMobility::QGalleryAbstractRequest::Status)
 	?statusChanged@QGalleryQueryModel@QtMobility@@IAEXW4Status@QGalleryAbstractRequest@2@@Z @ 688 NONAME ; void QtMobility::QGalleryQueryModel::statusChanged(enum QtMobility::QGalleryAbstractRequest::Status)
+	??WQtMobility@@YA?AVQGalleryUnionFilter@0@ABV10@0@Z @ 689 NONAME ; class QtMobility::QGalleryUnionFilter QtMobility::operator||(class QtMobility::QGalleryUnionFilter const &, class QtMobility::QGalleryUnionFilter const &)
+	??VQtMobility@@YA?AVQGalleryIntersectionFilter@0@ABV10@0@Z @ 690 NONAME ; class QtMobility::QGalleryIntersectionFilter QtMobility::operator&&(class QtMobility::QGalleryIntersectionFilter const &, class QtMobility::QGalleryIntersectionFilter const &)
 

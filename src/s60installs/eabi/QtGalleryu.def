@@ -529,4 +529,6 @@ EXPORTS
 	_ZNK10QtMobility24QGalleryAbstractResponse11errorStringEv @ 528 NONAME
 	_ZNK10QtMobility24QGalleryAbstractResponse5errorEv @ 529 NONAME
 	_ZNK10QtMobility24QGalleryAbstractResponse8isActiveEv @ 530 NONAME
+	_ZN10QtMobilityaaERKNS_26QGalleryIntersectionFilterES2_ @ 531 NONAME
+	_ZN10QtMobilityooERKNS_19QGalleryUnionFilterES2_ @ 532 NONAME
 
