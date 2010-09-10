@@ -84,13 +84,12 @@ PlayerControls::PlayerControls(QWidget *parent)
 
     connect(muteButton, SIGNAL(clicked()), this, SLOT(muteClicked()));
 
-    volumeSlider = new QSlider(Qt::Horizontal, this);
-
 #ifndef Q_WS_MAEMO_5
+    volumeSlider = new QSlider(Qt::Horizontal, this);
     volumeSlider->setRange(0, 100);
 
     connect(volumeSlider, SIGNAL(sliderMoved(int)), this, SIGNAL(changeVolume(int)));
-#endif
+
 
     rateBox = new QComboBox(this);
     rateBox->addItem("0.5x", QVariant(0.5));
@@ -99,7 +98,7 @@ PlayerControls::PlayerControls(QWidget *parent)
     rateBox->setCurrentIndex(1);
 
     connect(rateBox, SIGNAL(activated(int)), SLOT(updateRate()));
-
+#endif
 
     QBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);

@@ -58,7 +58,7 @@ QGeoTiledMapRectangleObjectInfo::QGeoTiledMapRectangleObjectInfo(QGeoMapData *ma
 
 QGeoTiledMapRectangleObjectInfo::~QGeoTiledMapRectangleObjectInfo() {}
 
-void QGeoTiledMapRectangleObjectInfo::objectUpdate()
+void QGeoTiledMapRectangleObjectInfo::objectUpdated()
 {
 #if 1
     QGeoCoordinate coord1 = rectangle->bounds().topLeft();
@@ -133,18 +133,17 @@ void QGeoTiledMapRectangleObjectInfo::objectUpdate()
     if (rectangleItem2)
         rectangleItem2->setBrush(rectangle->brush());
 
-    mapUpdate();
+    mapUpdated();
 
     graphicsItem = rectangleItem1;
 
     updateItem();
 }
 
-void QGeoTiledMapRectangleObjectInfo::mapUpdate()
+void QGeoTiledMapRectangleObjectInfo::mapUpdated()
 {
     if (rectangleItem1) {
         QPen pen = rectangle->pen();
-        pen.setWidthF(pen.widthF() * tiledMapData->zoomFactor());
         rectangleItem1->setPen(pen);
         if (rectangleItem2)
             rectangleItem2->setPen(pen);

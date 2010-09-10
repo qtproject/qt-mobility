@@ -35,6 +35,7 @@ Cpp.ignoretokens        = QAXFACTORY_EXPORT \
                           Q_EXPORT_PLUGIN \
                           Q_GFX_INLINE \
                           Q_AUTOTEST_EXPORT \
+                          QM_AUTOTEST_EXPORT \
                           Q_GUI_EXPORT \
                           Q_GUI_EXPORT_INLINE \
                           Q_GUI_EXPORT_STYLE_CDE \
@@ -64,6 +65,7 @@ Cpp.ignoretokens        = QAXFACTORY_EXPORT \
                           Q_XMLSTREAM_EXPORT \
                           Q_XMLPATTERNS_EXPORT \
                           QDBUS_EXPORT \
+                          Q_DBUS_EXPORT \
                           QT_BEGIN_NAMESPACE \
                           QT_BEGIN_INCLUDE_NAMESPACE \
                           QT_END_NAMESPACE \
@@ -90,4 +92,7 @@ Cpp.ignoredirectives    = Q_DECLARE_HANDLE \
                           __attribute__ \
                           K_DECLARE_PRIVATE \
                           PHONON_OBJECT \
-                          PHONON_HEIR
+                          PHONON_HEIR \
+			  Q_PRIVATE_PROPERTY \
+			  Q_DECLARE_PRIVATE_D \
+			  Q_CLASSINFO

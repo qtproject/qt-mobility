@@ -11,6 +11,8 @@ DEFINES += QT_BUILD_FEEDBACK_LIB \
     QT_MAKEDLL \
     QT_ASCII_CAST_WARNINGS
 include(../../common.pri)
+
+INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
 INCLUDEPATH += .
 
 # Input
@@ -28,6 +30,8 @@ symbian {
     
     # UID
     TARGET.UID3 = 0x2002BFCE
+
+    LIBS += -lefsrv
 
     # Main library
     FEEDBACK_DEPLOYMENT.sources = QtFeedback.dll

@@ -79,6 +79,8 @@ private:
 
     QNetworkAccessManager *m_networkManager;
     QString m_host;
+    QString m_referer;
+    QString m_token;
 };
 
 #endif

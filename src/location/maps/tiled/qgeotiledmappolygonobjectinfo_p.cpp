@@ -58,12 +58,21 @@ QGeoTiledMapPolygonObjectInfo::QGeoTiledMapPolygonObjectInfo(QGeoMapData *mapDat
 
 QGeoTiledMapPolygonObjectInfo::~QGeoTiledMapPolygonObjectInfo() {}
 
-void QGeoTiledMapPolygonObjectInfo::objectUpdate()
+void QGeoTiledMapPolygonObjectInfo::objectUpdated()
 {
     QList<QGeoCoordinate> path = polygon->path();
 
     points = createPolygon(path, tiledMapData, true);
     //makepoly(points, path, mapData, true);
+
+    if (points.size() < 3) {
+        if (polygonItem) {
+            delete polygonItem;
+            polygonItem = 0;
+            graphicsItem = 0;
+        }
+        return;
+    }
 
     if (!polygonItem)
         polygonItem = new QGraphicsPolygonItem();
@@ -71,19 +80,17 @@ void QGeoTiledMapPolygonObjectInfo::objectUpdate()
     polygonItem->setPolygon(points);
     polygonItem->setBrush(polygon->brush());
 
-    mapUpdate();
+    mapUpdated();
 
     graphicsItem = polygonItem;
 
     updateItem();
 }
 
-void QGeoTiledMapPolygonObjectInfo::mapUpdate()
+void QGeoTiledMapPolygonObjectInfo::mapUpdated()
 {
     if (polygonItem) {
-        QPen pen = polygon->pen();
-        pen.setWidthF(pen.widthF() * tiledMapData->zoomFactor());
-        polygonItem->setPen(pen);
+        polygonItem->setPen(polygon->pen());
     }
 }
 

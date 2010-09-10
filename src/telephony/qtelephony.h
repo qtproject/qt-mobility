@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,26 +47,37 @@
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-namespace QTelephonyEvents
-{
-    enum CallType {
-        Any = 0,
-        Text,
-        Data,
-        Video,
-        Voice,
-        Other
-    };
+//use this define to avaoi multiple enum declaration between
+//Telephony Lib and Declarative Lib.
+#define CALLTYPEENUM enum CallType{ \
+    Any = 0x00, \
+    Text = 0x01, \
+    Data = 0x02, \
+    Video = 0x04, \
+    Voice = 0x08, \
+    Other = 0x16 \
+};
 
-    enum CallStatus {
-        Idle = 0,
-        Dialing,
-        Alerting,
-        Connected,
-        Disconnecting,
-        Incomming,
-        OnHold
-    };
+#define CALLSTATUSENUM enum CallStatus { \
+    Idle = 0, \
+    Dialing, \
+    Alerting, \
+    Connected, \
+    Disconnecting, \
+    Incoming, \
+    OnHold \
+};
+
+#define CALLDIRECTIONENUM enum Direction { \
+    Received = 0, \
+    Dialed \
+};
+
+namespace QTelephony
+{
+    CALLTYPEENUM
+    CALLSTATUSENUM
+    CALLDIRECTIONENUM
 }
 
 QTM_END_NAMESPACE

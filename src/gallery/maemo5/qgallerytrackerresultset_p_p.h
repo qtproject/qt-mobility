@@ -220,37 +220,40 @@ public:
     Q_DECLARE_FLAGS(Flags, Flag)
 
     QGalleryTrackerResultSetPrivate(
-            const QGalleryTrackerResultSetArguments &arguments,
+            QGalleryTrackerResultSetArguments *arguments,
             bool live,
             int offset,
             int limit)
-        : idColumn(arguments.idColumn)
-        , urlColumn(arguments.urlColumn)
-        , typeColumn(arguments.typeColumn)
-        , updateMask(arguments.updateMask)
-        , identityWidth(arguments.identityWidth)
-        , valueOffset(arguments.valueOffset)
-        , compositeOffset(arguments.valueOffset + arguments.valueColumns.count())
-        , aliasOffset(compositeOffset + arguments.compositeColumns.count())
-        , columnCount(aliasOffset + arguments.aliasColumns.count())
+        : idColumn(arguments->idColumn.take())
+        , urlColumn(arguments->urlColumn.take())
+        , typeColumn(arguments->typeColumn.take())
+        , updateMask(arguments->updateMask)
+        , identityWidth(arguments->identityWidth)
+        , tableWidth(arguments->tableWidth)
+        , valueOffset(arguments->valueOffset)
+        , compositeOffset(arguments->compositeOffset)
+        , aliasOffset(compositeOffset + arguments->compositeColumns.count())
+        , columnCount(aliasOffset + arguments->aliasColumns.count())
         , queryOffset(offset)
         , queryLimit(limit)
         , currentRow(0)
         , currentIndex(-1)
         , rowCount(0)
         , progressMaximum(0)
-        , queryInterface(arguments.queryInterface)
-        , queryMethod(arguments.queryMethod)
-        , queryArguments(arguments.queryArguments)
-        , propertyNames(arguments.propertyNames)
-        , propertyAttributes(arguments.propertyAttributes)
-        , propertyTypes(arguments.propertyTypes)
-        , valueColumns(arguments.valueColumns)
-        , compositeColumns(arguments.compositeColumns)
-        , aliasColumns(arguments.aliasColumns)
-        , sortCriteria(arguments.sortCriteria)
-        , resourceKeys(arguments.resourceKeys)
+        , queryInterface(arguments->queryInterface)
+        , queryMethod(arguments->queryMethod)
+        , queryArguments(arguments->queryArguments)
+        , propertyNames(arguments->propertyNames)
+        , propertyAttributes(arguments->propertyAttributes)
+        , propertyTypes(arguments->propertyTypes)
+        , valueColumns(arguments->valueColumns)
+        , compositeColumns(arguments->compositeColumns)
+        , aliasColumns(arguments->aliasColumns)
+        , sortCriteria(arguments->sortCriteria)
+        , resourceKeys(arguments->resourceKeys)
     {
+        arguments->clear();
+
         if (live)
             flags |= Live;
     }
@@ -268,12 +271,9 @@ public:
 
     const int updateMask;
     const int identityWidth;
+    const int tableWidth;
     const int valueOffset;
-    const union
-    {
-        int compositeOffset;
-        int tableWidth;
-    };
+    const int compositeOffset;
     const int aliasOffset;
     const int columnCount;
     const int queryOffset;

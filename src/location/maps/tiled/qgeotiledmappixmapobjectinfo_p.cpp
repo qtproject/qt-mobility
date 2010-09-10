@@ -58,32 +58,34 @@ QGeoTiledMapPixmapObjectInfo::QGeoTiledMapPixmapObjectInfo(QGeoMapData *mapData,
 
 QGeoTiledMapPixmapObjectInfo::~QGeoTiledMapPixmapObjectInfo() {}
 
-void QGeoTiledMapPixmapObjectInfo::objectUpdate()
+void QGeoTiledMapPixmapObjectInfo::objectUpdated()
 {
-    QPointF position = tiledMapData->coordinateToWorldPixel(pixmap->coordinate());
+    if (!pixmap->coordinate().isValid()
+            || pixmap->pixmap().isNull()) {
+        if (pixmapItem) {
+            delete pixmapItem;
+            pixmapItem = 0;
+            graphicsItem = 0;
+        }
+        return;
+    }
 
     if (!pixmapItem)
         pixmapItem = new QGraphicsPixmapItem();
 
     pixmapItem->setPixmap(pixmap->pixmap());
-    pixmapItem->setOffset(position);
-    pixmapItem->setTransformOriginPoint(position);
-
-    mapUpdate();
-
+    pixmapItem->setPos(tiledMapData->coordinateToWorldPixel(pixmap->coordinate()));
+    mapUpdated();
     graphicsItem = pixmapItem;
-
     updateItem();
 }
 
-void QGeoTiledMapPixmapObjectInfo::mapUpdate()
+void QGeoTiledMapPixmapObjectInfo::mapUpdated()
 {
     if (pixmapItem) {
-        int zoomFactor = tiledMapData->zoomFactor();
-        pixmapItem->resetTransform();
+        qreal zoomFactor = tiledMapData->zoomFactor();
         pixmapItem->setScale(zoomFactor);
-        pixmapItem->translate(pixmap->offset().x() * zoomFactor,
-                              pixmap->offset().y() * zoomFactor);
+        pixmapItem->setTransform(QTransform::fromTranslate(pixmap->offset().x() * zoomFactor, pixmap->offset().y() * zoomFactor));
     }
 }
 

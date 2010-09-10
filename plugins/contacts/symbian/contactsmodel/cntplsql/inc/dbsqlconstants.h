@@ -126,14 +126,16 @@ _LIT(KCommAddrType, "type");
 _LIT(KCommAddrValue, "value");
 _LIT(KCommAddrExtraValue, "extra_value");
 _LIT(KCommAddrContactId, "contact_id");
+_LIT(KCommAddrExtraTypeInfo, "extra_type_info");
 // parameters
 _LIT(KCommAddrIdParam, ":comm_addr_id");
 _LIT(KCommAddrTypeParam, ":type");
 _LIT(KCommAddrValueParam, ":value");
 _LIT(KCommAddrExtraValueParam, ":extra_value");
 _LIT(KCommAddrContactIdParam, ":contact_id");
+_LIT(KCommAddrExtraTypeInfoParam, ":extra_type_info");
 // create statements
-_LIT(KCommAddrCreateStmnt, "CREATE TABLE comm_addr (comm_addr_id  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, type INTEGER NOT NULL, value CHAR(255) NOT NULL, extra_value CHAR(255), contact_id INTEGER NOT NULL, FOREIGN KEY (contact_id) REFERENCES contact(contact_id)); CREATE INDEX comm_addr_val_idx  ON comm_addr (value); CREATE INDEX comm_addr_contact_id_idx  ON comm_addr (contact_id);");
+_LIT(KCommAddrCreateStmnt, "CREATE TABLE comm_addr (comm_addr_id  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, type INTEGER NOT NULL, value CHAR(255) NOT NULL, extra_value CHAR(255), contact_id INTEGER NOT NULL, extra_type_info INTEGER, FOREIGN KEY (contact_id) REFERENCES contact(contact_id)); CREATE INDEX comm_addr_val_idx  ON comm_addr (value); CREATE INDEX comm_addr_contact_id_idx  ON comm_addr (contact_id);");
 // end comm_address table
 
 // groups table

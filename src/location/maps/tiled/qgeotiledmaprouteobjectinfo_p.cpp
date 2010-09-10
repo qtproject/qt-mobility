@@ -63,7 +63,7 @@ QGeoTiledMapRouteObjectInfo::QGeoTiledMapRouteObjectInfo(QGeoMapData *mapData, Q
 
 QGeoTiledMapRouteObjectInfo::~QGeoTiledMapRouteObjectInfo() {}
 
-void QGeoTiledMapRouteObjectInfo::objectUpdate()
+void QGeoTiledMapRouteObjectInfo::objectUpdated()
 {
     QListIterator<QGeoRouteSegment> segIt(route->route().routeSegments());
 
@@ -79,17 +79,19 @@ void QGeoTiledMapRouteObjectInfo::objectUpdate()
         }
     }
 
+    // TODO cleanup object if less than 2 valid points
+
     if (!pathItem)
         pathItem = new QGraphicsPathItem();
 
-    mapUpdate();
+    mapUpdated();
 
     graphicsItem = pathItem;
 
     updateItem();
 }
 
-void QGeoTiledMapRouteObjectInfo::mapUpdate()
+void QGeoTiledMapRouteObjectInfo::mapUpdated()
 {
     if (!pathItem)
         return;
@@ -110,9 +112,7 @@ void QGeoTiledMapRouteObjectInfo::mapUpdate()
 
         distanceFilteredPoints.append(points.at(points.size() - 1));
 
-        QPen pen = route->pen();
-        pen.setWidthF(pen.widthF() * tiledMapData->zoomFactor());
-        pathItem->setPen(pen);
+        pathItem->setPen(route->pen());
     }
 
     QPainterPath painterPath;

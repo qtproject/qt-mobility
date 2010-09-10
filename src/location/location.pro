@@ -86,6 +86,9 @@ maemo6 {
                 qgeosatelliteinfosource_maemo_p.h \
                 dbuscomm_maemo_p.h \
                 dbusserver_maemo_p.h
+    CONFIG += create_pc create_prl
+    pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+    pkgconfig.files = QtLocation.pc
 }
 
 maemo5 {
@@ -140,6 +143,22 @@ symbian {
     QtLocationDeployment.sources = QtLocation.dll
     QtLocationDeployment.path = /sys/bin
     DEPLOYMENT += QtLocationDeployment
+}
+
+simulator {
+    QT += gui
+    SOURCES += qgeopositioninfosource_simulator.cpp \
+                qlocationdata_simulator.cpp \
+                qgeosatelliteinfosource_simulator.cpp \
+                qgeoareamonitor_simulator.cpp \
+                qlocationconnection_simulator.cpp
+    HEADERS += qgeopositioninfosource_simulator_p.h \
+                qlocationdata_simulator_p.h \
+                qgeosatelliteinfosource_simulator_p.h \
+                qgeoareamonitor_simulator_p.h \
+                qlocationconnection_simulator_p.h
+    INCLUDEPATH += ../mobilitysimulator
+    qtAddLibrary(QtMobilitySimulator)
 }
 
 CONFIG += middleware

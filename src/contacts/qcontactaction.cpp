@@ -43,7 +43,7 @@
 #include "qcontactmanager_p.h"
 #include "qcontactactiondescriptor.h"
 
-#include "qcontactactionservicemanager_p.h"
+#include "qcontactactionmanager_p.h"
 
 #include <QSet>
 #include <QString>
@@ -74,7 +74,9 @@ QContactAction::~QContactAction()
   by calling \l results(), and as results become available the action will emit \l resultsAvailable().
 
   Each instance of a QContactAction is created by a \l QContactActionFactory when
-  \l QContactActionFactory::instance() is called; the caller takes ownership of the action instance.
+  \l QContactAction::action() is called; the caller takes ownership of the action instance.
+  Each action is uniquely described by a \l QContactActionDescriptor, which is passed to the
+  \l QContactAction::action() function to instantiate an action.
  
   \sa QContactActionFactory, QContactActionFilter
  */
@@ -85,7 +87,7 @@ QContactAction::~QContactAction()
  */
 
 /*!
-  \fn QContactAction::actionDescriptor() const
+  \fn QContactAction::actionDescriptors(const QString& actionName) const
   Returns the descriptor which uniquely identifies this action implementation.  A descriptor
   consists of an action name, a vendor name and an implementation version.
   The name of the action identifies the action provided; different implementations of an action
@@ -178,7 +180,7 @@ QStringList QContactAction::availableActions(const QString& serviceName)
     // SLOW naive implementation...
     QSet<QString> ret;
     QContactManagerData::loadFactories();
-    QList<QContactActionDescriptor> actionDescriptors = QContactActionServiceManager::instance()->actionDescriptors();
+    QList<QContactActionDescriptor> actionDescriptors = QContactActionManager::instance()->actionDescriptors();
     for (int i = 0; i < actionDescriptors.size(); i++) {
         QContactActionDescriptor descriptor = actionDescriptors.at(i);
         if (serviceName.isEmpty() || serviceName == descriptor.serviceName()) {
@@ -285,18 +287,20 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAction::ActionOpenInViewer, "view");
  */
 QList<QContactActionDescriptor> QContactAction::actionDescriptors(const QString& actionName)
 {
-    QContactActionServiceManager* qcasm = QContactActionServiceManager::instance();
-    return qcasm->actionDescriptors(actionName);
+    QContactActionManager* qcam = QContactActionManager::instance();
+    return qcam->actionDescriptors(actionName);
 }
 
 /*!
   Returns a pointer to a new instance of the action implementation identified by the given \a descriptor.
-  The caller does NOT take ownership of the action implementation and must not delete it or undefined behaviour will occur.
+  The caller takes ownership of the action implementation and must delete it to avoid leaking memory.
+  The caller is able to delete the action at any time, however doing so prior to when the action
+  transitions to a finished state may have an undefined outcome depending on the implementation of the action.
  */
 QContactAction* QContactAction::action(const QContactActionDescriptor& descriptor)
 {
-    QContactActionServiceManager* qcasm = QContactActionServiceManager::instance();
-    return qcasm->action(descriptor);
+    QContactActionManager* qcam = QContactActionManager::instance();
+    return qcam->action(descriptor);
 }
 
 #include "moc_qcontactaction.cpp"

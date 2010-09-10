@@ -64,6 +64,7 @@
 #include "cnttransformfamily.h"
 #include "cnttransformempty.h"
 #include "cntsymbiantransformerror.h"
+#include "cntbackendsdefs.h"
 
 #include <qtcontacts.h>
 #include <cntfldst.h>
@@ -73,12 +74,6 @@
 #include <cntdef.hrh> // explicitly included because of KUidContactFieldGEOValue
 
 #include <QDebug>
-
-//UIDs for preferred (default) fields
-const int KDefaultFieldForCall = 0x10003E70;
-const int KDefaultFieldForVideoCall = 0x101F85A6;
-const int KDefaultFieldForEmail = 0x101F85A7;
-const int KDefaultFieldForMessage = 0x101f4cf1;
 
 CntTransformContact::CntTransformContact() :
     m_tzConverter(0)
@@ -501,34 +496,46 @@ void CntTransformContact::transformPreferredDetailL(const QContact& contact,
     }
 
     if (contact.isPreferredDetail("call", detail)) {
-        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForCall));
+        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KCntDefaultFieldForCall));
     }
     if (contact.isPreferredDetail("email", detail)) {
-        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForEmail));
+        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KCntDefaultFieldForEmail));
     }
     if (contact.isPreferredDetail("videocall", detail)) {
-        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForVideoCall));
+        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KCntDefaultFieldForVideoCall));
     }
     if (contact.isPreferredDetail("message", detail)) {
-        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForMessage));
+        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KCntDefaultFieldForMessage));
     }
+    if (contact.isPreferredDetail("OnlineAccountActions", detail)) {
+        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KCntDefaultFieldForOnlineAccount));
+    }
+    if (contact.isPreferredDetail("url", detail)) {
+        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KCntDefaultFieldForUrl));
+    } 
 }
 
 void CntTransformContact::transformPreferredDetail(const CContactItemField& field,
         const QContactDetail& detail, QContact& contact) const
 {
-    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForCall))) {
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KCntDefaultFieldForCall))) {
         contact.setPreferredDetail("call", detail);
     }
-    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForEmail))) {
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KCntDefaultFieldForEmail))) {
         contact.setPreferredDetail("email", detail);
     }
-    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForVideoCall))) {
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KCntDefaultFieldForVideoCall))) {
         contact.setPreferredDetail("videocall", detail);
     }
-    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForMessage))) {
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KCntDefaultFieldForMessage))) {
         contact.setPreferredDetail("message", detail);
     }
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KCntDefaultFieldForOnlineAccount))) {
+        contact.setPreferredDetail("OnlineAccountActions", detail);
+    }
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KCntDefaultFieldForUrl))) {
+        contact.setPreferredDetail("url", detail);
+    } 
 }
 
 void CntTransformContact::resetTransformObjects() const

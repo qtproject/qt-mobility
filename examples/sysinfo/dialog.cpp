@@ -68,6 +68,7 @@ Dialog::~Dialog()
 void Dialog::changeEvent(QEvent *e)
 {
     QWidget::changeEvent(e);
+#if !defined(Q_WS_MAEMO_6)
     switch (e->type()) {
     case QEvent::LanguageChange:
         retranslateUi(this);
@@ -75,6 +76,7 @@ void Dialog::changeEvent(QEvent *e)
     default:
         break;
     }
+#endif
 }
 
 void Dialog::tabChanged(int index)
@@ -399,6 +401,9 @@ void Dialog::getVersion(int index)
 //! [Firm ver]
         version = QSystemInfo::Firmware;
 //! [Firm ver]
+        break;
+    case 4:
+        version = QSystemInfo::QtMobility;
         break;
     };
 

@@ -55,7 +55,6 @@ class QGeoTiledMapRequestPrivate;
 class Q_LOCATION_EXPORT QGeoTiledMapRequest
 {
 public:
-    // TODO add isValid method, set to false for default constructor
     QGeoTiledMapRequest();
     QGeoTiledMapRequest(QGeoTiledMapData *mapData,
                         int row,
@@ -65,6 +64,7 @@ public:
     ~QGeoTiledMapRequest();
 
     QGeoTiledMapRequest& operator= (const QGeoTiledMapRequest &other);
+
     bool operator== (const QGeoTiledMapRequest &other) const;
 
     QGeoTiledMapData *mapData() const;

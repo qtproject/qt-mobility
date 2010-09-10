@@ -331,6 +331,10 @@ private slots:
                 << QGeoCoordinate(-90,-180) << QGeoCoordinate(-45,+45) << false;
         QTest::newRow("valid == same valid")
                 << QGeoCoordinate(-90,-180) << QGeoCoordinate(-90,-180) << true;
+        QTest::newRow("different longitudes at north pole are equal")
+                << QGeoCoordinate(90, 0) << QGeoCoordinate(90, 45) << true;
+        QTest::newRow("different longitudes at south pole are equal")
+                << QGeoCoordinate(-90, 0) << QGeoCoordinate(-90, 45) << true;
     }
 
     void type()

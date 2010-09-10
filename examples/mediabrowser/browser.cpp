@@ -95,7 +95,6 @@ Browser::Browser(QWidget *parent, Qt::WindowFlags flags)
     menuBar()->addAction(tr("Photos"), this, SLOT(showPhotos()));
 
     setCentralWidget(stack);
-    showArtists();
 
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5StackedWindow);

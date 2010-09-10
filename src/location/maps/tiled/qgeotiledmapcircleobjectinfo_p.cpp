@@ -77,7 +77,7 @@ inline static double qgeocoordinate_radToDeg(double rad)
     return rad * 180 / M_PI;
 }
 
-void QGeoTiledMapCircleObjectInfo::objectUpdate()
+void QGeoTiledMapCircleObjectInfo::objectUpdated()
 {
     QList<QGeoCoordinate> path;
 
@@ -194,19 +194,17 @@ void QGeoTiledMapCircleObjectInfo::objectUpdate()
     polygonItem->setPolygon(points);
     polygonItem->setBrush(circle->brush());
 
-    mapUpdate();
+    mapUpdated();
 
     graphicsItem = polygonItem;
 
     updateItem();
 }
 
-void QGeoTiledMapCircleObjectInfo::mapUpdate()
+void QGeoTiledMapCircleObjectInfo::mapUpdated()
 {
     if (polygonItem) {
-        QPen pen = circle->pen();
-        pen.setWidthF(pen.widthF() * tiledMapData->zoomFactor());
-        polygonItem->setPen(pen);
+        polygonItem->setPen(circle->pen());
     }
 }
 

@@ -95,9 +95,14 @@ Rectangle {
         width : 640
         height : 480
         focus : visible //to receive focus and capture key events
+        //captureResolution : "640x480"
 
-        onImageSaved : {
-            photoPreview.source = capturedImagePath
+        flashMode: stillControls.flashMode
+        whiteBalanceMode: stillControls.whiteBalance
+        exposureCompensation: stillControls.exposureCompensation
+
+        onImageCaptured : {
+            photoPreview.source = preview
             stillControls.previewAvailable = true
             cameraUI.state = "PhotoPreview"
         }
@@ -107,7 +112,6 @@ Rectangle {
         id: stillControls
         anchors.fill: parent
         camera: camera
-        //focus: visible
         onPreviewSelected: cameraUI.state = "PhotoPreview"
     }
 }

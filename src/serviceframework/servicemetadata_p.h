@@ -61,8 +61,8 @@
 #include "qserviceinterfacedescriptor.h"
 
 #ifdef SERVICE_XML_GENERATOR
-#undef Q_AUTOTEST_EXPORT
-#define Q_AUTOTEST_EXPORT
+#undef QM_AUTOTEST_EXPORT
+#define QM_AUTOTEST_EXPORT
 #endif
 
 QT_BEGIN_NAMESPACE
@@ -81,13 +81,15 @@ public:
 
     ServiceMetaDataResults(const ServiceMetaDataResults& other)
     {
-        description = other.description;
+        type = other.type;;
         location = other.location;
         name = other.name;
+        description = other.description;
         interfaces = other.interfaces;
         latestInterfaces = other.latestInterfaces;
     }
-    
+   
+    int type;
     QString location;
     QString name;
     QString description;
@@ -96,11 +98,11 @@ public:
 };
 
 #ifndef QT_NO_DATASTREAM
-Q_AUTOTEST_EXPORT QDataStream &operator<<(QDataStream &, const ServiceMetaDataResults &);
-Q_AUTOTEST_EXPORT QDataStream &operator>>(QDataStream &, ServiceMetaDataResults &);
+QM_AUTOTEST_EXPORT QDataStream &operator<<(QDataStream &, const ServiceMetaDataResults &);
+QM_AUTOTEST_EXPORT QDataStream &operator>>(QDataStream &, ServiceMetaDataResults &);
 #endif
 
-class Q_AUTOTEST_EXPORT ServiceMetaData 
+class QM_AUTOTEST_EXPORT ServiceMetaData
 {
 public:
 
@@ -111,7 +113,7 @@ public:
     enum ServiceMetadataErr {
         SFW_ERROR_NO_SERVICE = 0,                           /* Can not find service root node in XML file*/
         SFW_ERROR_NO_SERVICE_NAME,                          /* Can not find service name in XML file */
-        SFW_ERROR_NO_SERVICE_FILEPATH,                      /* Can not find service filepath in XML file */
+        SFW_ERROR_NO_SERVICE_PATH,                          /* Can not find service filepath in XML file */
         SFW_ERROR_NO_SERVICE_INTERFACE,                     /* No interface for the service in XML file*/
         SFW_ERROR_NO_INTERFACE_VERSION,                     /* Can not find interface version in XML file */
         SFW_ERROR_NO_INTERFACE_NAME,                        /* Can not find interface name in XML file*/
@@ -123,7 +125,12 @@ public:
         SFW_ERROR_INVALID_VERSION,
         SFW_ERROR_DUPLICATED_TAG,                           /* The tag appears twice */
         SFW_ERROR_INVALID_CUSTOM_TAG,                       /* The customproperty tag is not corectly formatted or otherwise incorrect*/
-        SFW_ERROR_DUPLICATED_CUSTOM_KEY                     /* The customproperty appears twice*/
+        SFW_ERROR_DUPLICATED_CUSTOM_KEY,                    /* The customproperty appears twice*/
+        SFW_ERROR_MULTIPLE_SERVICE_TYPES,                   /* Both filepath and ipcaddress found in the XML file */
+        SFW_ERROR_INVALID_FILEPATH,                         /* Service path cannot contain IPC prefix */
+        SFW_ERROR_INVALID_XML_VERSION,                      /* Error parsing serficefw version node */
+        SFW_ERROR_UNSUPPORTED_IPC,                          /* Servicefw version doesn't support IPC */
+        SFW_ERROR_UNSUPPORTED_XML_VERSION                   /* Unsupported servicefw version supplied */
     };
 
 public:
@@ -147,23 +154,25 @@ public:
 private:
     QList<QServiceInterfaceDescriptor> latestInterfaces() const;
     QServiceInterfaceDescriptor latestInterfaceVersion(const QString &interfaceName);
+    bool processVersionElement(QXmlStreamReader &aXMLReader);
     bool processServiceElement(QXmlStreamReader &aXMLReader);
-    
     bool processInterfaceElement(QXmlStreamReader &aXMLReader);
-
     void clearMetadata();
 
 private:
     bool lessThan(const QServiceInterfaceDescriptor &d1,
                     const QServiceInterfaceDescriptor &d2) const;
+    bool greaterThan(const QString &v1, const QString &v2) const;
     bool checkVersion(const QString &version) const;
     void transformVersion(const QString &version, int *major, int *minor) const;
 
     QIODevice *xmlDevice;
     bool ownsXmlDevice;
+    QString xmlVersion;
     QString serviceName;
     QString serviceLocation;
     QString serviceDescription;
+    QService::Type serviceType;
     QList<QServiceInterfaceDescriptor> serviceInterfaces;
     QSet<QString> duplicates;
     int latestError;

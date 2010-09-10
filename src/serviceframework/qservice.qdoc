@@ -53,8 +53,6 @@
     does not distinguish scopes and therefore UserScope and SystemScope may
     be used interchangeably.
 
-
-
     \value UserScope When adding and removing services, uses a storage location
     specific to the current user.
     When searching for services and interface implementations, first searches in the
@@ -68,4 +66,11 @@
     storage location.
 */
 
+/*!
+    \enum QService::Type
+    Defines the type of the service 
 
+    \value    Plugin          This denotes that the service is plug-in based.
+    \value    InterProcess    This denotes that the service is deployed using IPC mechanisms 
+                              available on the current platform, such as DBus or local sockets.
+*/

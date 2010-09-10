@@ -82,6 +82,7 @@ QLandmarkImportRequest::~QLandmarkImportRequest()
 QIODevice *QLandmarkImportRequest::device() const
 {
     Q_D(const QLandmarkImportRequest);
+    QMutexLocker ml(&d->mutex);
     return d->device;
 }
 
@@ -91,6 +92,7 @@ QIODevice *QLandmarkImportRequest::device() const
 void QLandmarkImportRequest::setDevice(QIODevice *device)
 {
     Q_D(QLandmarkImportRequest);
+    QMutexLocker ml(&d->mutex);
     d->device = device;
 }
 
@@ -104,6 +106,7 @@ void QLandmarkImportRequest::setDevice(QIODevice *device)
 QString QLandmarkImportRequest::fileName() const
 {
     Q_D(const QLandmarkImportRequest);
+    QMutexLocker ml(&d->mutex);
     QFile *file = qobject_cast<QFile *>(d->device);
     return file ? file->fileName() : QString();
 }
@@ -118,7 +121,7 @@ QString QLandmarkImportRequest::fileName() const
 void QLandmarkImportRequest::setFileName(const QString &fileName)
 {
     Q_D(QLandmarkImportRequest);
-
+    QMutexLocker ml(&d->mutex);
     d->device = new QFile(fileName);
 }
 
@@ -132,6 +135,7 @@ void QLandmarkImportRequest::setFileName(const QString &fileName)
 QString QLandmarkImportRequest::format() const
 {
     Q_D(const QLandmarkImportRequest);
+    QMutexLocker ml(&d->mutex);
     return d->format;
 }
 
@@ -143,6 +147,7 @@ QString QLandmarkImportRequest::format() const
 void QLandmarkImportRequest::setFormat(const QString &format)
 {
     Q_D(QLandmarkImportRequest);
+    QMutexLocker ml(&d->mutex);
     d->format = format;
 }
 
@@ -156,6 +161,7 @@ void QLandmarkImportRequest::setFormat(const QString &format)
 QLandmarkManager::TransferOption QLandmarkImportRequest::transferOption() const
 {
     Q_D(const QLandmarkImportRequest);
+    QMutexLocker ml(&d->mutex);
     return d->option;
 }
 
@@ -167,6 +173,7 @@ QLandmarkManager::TransferOption QLandmarkImportRequest::transferOption() const
 void QLandmarkImportRequest::setTransferOption(QLandmarkManager::TransferOption option)
 {
     Q_D(QLandmarkImportRequest);
+    QMutexLocker ml(&d->mutex);
     d->option = option;
 }
 
@@ -178,6 +185,7 @@ void QLandmarkImportRequest::setTransferOption(QLandmarkManager::TransferOption 
 QLandmarkCategoryId QLandmarkImportRequest::categoryId() const
 {
     Q_D(const QLandmarkImportRequest);
+    QMutexLocker ml(&d->mutex);
     return d->categoryId;
 }
 
@@ -189,6 +197,7 @@ QLandmarkCategoryId QLandmarkImportRequest::categoryId() const
 void QLandmarkImportRequest::setCategoryId(const QLandmarkCategoryId &categoryId)
 {
     Q_D(QLandmarkImportRequest);
+    QMutexLocker ml(&d->mutex);
     d->categoryId = categoryId;
 }
 
@@ -198,6 +207,7 @@ void QLandmarkImportRequest::setCategoryId(const QLandmarkCategoryId &categoryId
 QList<QLandmarkId> QLandmarkImportRequest::landmarkIds() const
 {
     Q_D(const QLandmarkImportRequest);
+    QMutexLocker ml(&d->mutex);
     return d->landmarkIds;
 }
 

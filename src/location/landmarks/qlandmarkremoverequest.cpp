@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-request
 */
 
@@ -82,6 +82,7 @@ QLandmarkRemoveRequest::~QLandmarkRemoveRequest()
 QList<QLandmarkId> QLandmarkRemoveRequest::landmarkIds() const
 {
     Q_D(const QLandmarkRemoveRequest);
+    QMutexLocker ml(&d->mutex);
     return d->landmarkIds;
 }
 
@@ -93,6 +94,7 @@ QList<QLandmarkId> QLandmarkRemoveRequest::landmarkIds() const
 void QLandmarkRemoveRequest::setLandmarkIds(const QList<QLandmarkId> &landmarkIds)
 {
     Q_D(QLandmarkRemoveRequest);
+    QMutexLocker ml(&d->mutex);
     d->landmarkIds = landmarkIds;
 }
 
@@ -104,6 +106,7 @@ void QLandmarkRemoveRequest::setLandmarkIds(const QList<QLandmarkId> &landmarkId
 void QLandmarkRemoveRequest::setLandmarkId(const QLandmarkId &landmarkId)
 {
     Q_D(QLandmarkRemoveRequest);
+    QMutexLocker ml(&d->mutex);
     d->landmarkIds.clear();
     d->landmarkIds.append((landmarkId));
 }
@@ -115,6 +118,7 @@ void QLandmarkRemoveRequest::setLandmarkId(const QLandmarkId &landmarkId)
 QMap<int, QLandmarkManager::Error> QLandmarkRemoveRequest::errorMap() const
 {
     Q_D(const QLandmarkRemoveRequest);
+    QMutexLocker ml(&d->mutex);
     return d->errorMap;
 }
 

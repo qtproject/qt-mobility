@@ -48,6 +48,9 @@
 
 #include "qcontactaction.h"
 #include "qcontactactiondescriptor.h"
+#ifdef QT_SIMULATOR
+#include "qcontactsimulatorbackend_p.h"
+#endif
 
 #include <QSharedData>
 #include <QtPlugin>
@@ -72,6 +75,7 @@ QTM_BEGIN_NAMESPACE
 
 /* Shared QContactManager stuff here, default engine stuff below */
 QHash<QString, QContactManagerEngineFactory*> QContactManagerData::m_engines;
+QList<QContactActionManagerPlugin*> QContactManagerData::m_actionManagers;
 
 bool QContactManagerData::m_discovered;
 bool QContactManagerData::m_discoveredStatic;
@@ -86,6 +90,7 @@ static void qContactsCleanEngines()
         delete factories.at(i);
     }
     QContactManagerData::m_engines.clear();
+    QContactManagerData::m_actionManagers.clear();
 }
 
 
@@ -108,6 +113,10 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
     QString builtManagerName = managerName.isEmpty() ? QContactManager::availableManagers().value(0) : managerName;
     if (builtManagerName == QLatin1String("memory")) {
         m_engine = QContactMemoryEngine::createMemoryEngine(parameters);
+#ifdef QT_SIMULATOR
+    } else if (builtManagerName == QLatin1String("simulator")) {
+        m_engine = QContactSimulatorEngine::createSimulatorEngine(parameters);
+#endif
     } else {
         int implementationVersion = parameterValue(parameters, QTCONTACTS_IMPLEMENTATION_VERSION_NAME, -1);
 
@@ -217,7 +226,14 @@ void QContactManagerData::loadFactories()
         /* Now discover the dynamic plugins */
         for (int i=0; i < m_pluginPaths.count(); i++) {
             QPluginLoader qpl(m_pluginPaths.at(i));
+
+#if !defined QT_NO_DEBUG
+            if (showDebug)
+                qDebug() << "Loading plugin" << m_pluginPaths.at(i);
+#endif
+
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(qpl.instance());
+            QContactActionManagerPlugin *m = qobject_cast<QContactActionManagerPlugin*>(qpl.instance());
 
             if (f) {
                 QString name = f->managerName();
@@ -237,9 +253,13 @@ void QContactManagerData::loadFactories()
                 }
             }
 
+            if (m) {
+                m_actionManagers.append(m);
+            }
+
             /* Debugging */
 #if !defined QT_NO_DEBUG
-            if (showDebug && !f) {
+            if (showDebug && !f && !m) {
                 qDebug() << "Unknown plugin:" << qpl.errorString();
                 if (qpl.instance()) {
                     qDebug() << "[qobject:" << qpl.instance() << "]";
@@ -259,6 +279,7 @@ void QContactManagerData::loadFactories()
 #if !defined QT_NO_DEBUG
         if (showDebug) {
             qDebug() << "Found engines:" << engineNames;
+            qDebug() << "Found action engines:" << m_actionManagers;
         }
 #endif
     }

@@ -66,7 +66,7 @@ static const QString serviceMetaDataErrorString(int error)
             return QObject::tr("XML does not contain <service> node.");
         case ServiceMetaData::SFW_ERROR_NO_SERVICE_NAME:
             return QObject::tr("XML does not specify service name.");
-        case ServiceMetaData::SFW_ERROR_NO_SERVICE_FILEPATH:
+        case ServiceMetaData::SFW_ERROR_NO_SERVICE_PATH:
             return QObject::tr("XML does not specify service resource location.");
         case ServiceMetaData::SFW_ERROR_NO_SERVICE_INTERFACE:
             return QObject::tr("XML does not contain any interfaces.");
@@ -92,6 +92,10 @@ static const QString serviceMetaDataErrorString(int error)
             return QObject::tr("XML contains an invalid custom property.");
         case ServiceMetaData::SFW_ERROR_DUPLICATED_CUSTOM_KEY:
             return QObject::tr("XML contains a duplicate custom property.");
+        case ServiceMetaData::SFW_ERROR_MULTIPLE_SERVICE_TYPES:
+            return QObject::tr("XML contains both <filepath> and <ipcaddress> tags.");
+        case ServiceMetaData::SFW_ERROR_INVALID_FILEPATH:
+            return QObject::tr("XML contains invalid <filepath> value.");
         default:
             return QString();
     }
@@ -218,6 +222,7 @@ void ServiceXmlGenerator::loadFromXml(const QString& f)
         if (data.extractMetadata()) {
             m_serviceInfo->load(data.parseResults());
             m_unsavedData = false;
+            refreshPreview();
             return;
         }
     }
@@ -323,8 +328,11 @@ void ServiceXmlGenerator::getServiceXml(QIODevice *device)
     QXmlStreamWriter writer(device);
     writer.setAutoFormatting(true);
     writer.writeStartDocument();
+    writer.writeStartElement(QLatin1String("SFW"));
+    writer.writeAttribute(QLatin1String("version"), "1.1");
     writer.writeStartElement(QLatin1String("service"));
     m_serviceInfo->writeXml(&writer);
+    writer.writeEndElement();
     writer.writeEndElement();
     writer.writeEndDocument();
 }

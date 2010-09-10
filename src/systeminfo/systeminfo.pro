@@ -26,7 +26,7 @@ PRIVATE_HEADERS += qsysteminfocommon_p.h
 DEFINES += QT_BUILD_SYSINFO_LIB QT_MAKEDLL
 
 
-win32 {
+win32:!simulator {
     contains(CONFIG,release) {
        CONFIG-=console
     }
@@ -55,7 +55,7 @@ win32 {
         -lCoredll
 }
 
-unix: {
+unix:!simulator {
     QT += gui
     maemo5|maemo6|linux-*: {
         contains(bluez_enabled, yes):DEFINES += BLUEZ_SUPPORTED
@@ -83,7 +83,7 @@ LIBS+=-lX11 -lXrandr
     maemo5|maemo6: {
             #Qt GConf wrapper added here until a proper place is found for it.
             CONFIG += link_pkgconfig
-            LIBS += -lXrandr
+          #  LIBS += -lXrandr
             SOURCES += qsysteminfo_maemo.cpp gconfitem.cpp
             HEADERS += qsysteminfo_maemo_p.h gconfitem_p.h
         contains(QT_CONFIG,dbus): {
@@ -128,12 +128,9 @@ LIBS+=-lX11 -lXrandr
 
     symbian:{
         contains(S60_VERSION, 3.1){
-            DEFINES += SYMBIAN_3
+            DEFINES += SYMBIAN_3_1
         }        
 
-        contains(S60_VERSION, 3.2){
-            DEFINES += SYMBIAN_3
-        }
         contains(hb_symbian_enabled,yes) {
             CONFIG += qt hb
             DEFINES += HB_SUPPORTED
@@ -186,6 +183,12 @@ LIBS+=-lX11 -lXrandr
         QtSystemInfoDeployment.path = /sys/bin
         DEPLOYMENT += QtSystemInfoDeployment
     }
+}
+simulator {
+    SOURCES += qsysteminfo_simulator.cpp qsysteminfodata_simulator.cpp
+    HEADERS += qsysteminfo_simulator_p.h qsysteminfodata_simulator_p.h
+    INCLUDEPATH += ../mobilitysimulator
+    qtAddLibrary(QtMobilitySimulator)
 }
 
 HEADERS += $$PUBLIC_HEADERS 

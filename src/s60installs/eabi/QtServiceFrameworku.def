@@ -125,4 +125,10 @@ EXPORTS
 	_ZNK10QtMobility27QRemoteServiceClassRegister5typesEv @ 124 NONAME
 	_ZTIN10QtMobility21QRemoteServiceControlE @ 125 NONAME
 	_ZTVN10QtMobility21QRemoteServiceControlE @ 126 NONAME
+	_ZN10QtMobility15QServiceContext13setClientDataERK7QStringRK8QVariant @ 127 NONAME
+	_ZN10QtMobility15QServiceContext15resetClientDataEv @ 128 NONAME
+	_ZNK10QtMobility15QServiceContext10clientDataERK7QString @ 129 NONAME
+	_ZN10QtMobility21QRemoteServiceControl27setQuitOnLastInstanceClosedEb @ 130 NONAME
+	_ZN10QtMobility21QRemoteServiceControl18lastInstanceClosedEv @ 131 NONAME
+	_ZNK10QtMobility21QRemoteServiceControl24quitOnLastInstanceClosedEv @ 132 NONAME
 

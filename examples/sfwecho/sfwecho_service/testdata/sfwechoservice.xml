@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<SFW version="1.1">
 <service>
     <name>EchoService</name>
-    <filepath>localsocket:sfwecho_service</filepath>
-    <description>Demo demonstrating a signal and slot connection</description>
+    <ipcaddress>sfwecho_service</ipcaddress>
+    <description>Instant Messaging Echo Example</description>
     <interface>
         <name>com.nokia.qt.example.sfwecho</name>
         <version>1.0</version>
-        <description>Unspecified</description>
+        <description>Unique Client</description>
+        <capabilities></capabilities>
+    </interface>
+    <interface>
+        <name>com.nokia.qt.example.sfwecho</name>
+        <version>1.1</version>
+        <description>Shared Client</description>
         <capabilities></capabilities>
     </interface>
 </service>
+</SFW>

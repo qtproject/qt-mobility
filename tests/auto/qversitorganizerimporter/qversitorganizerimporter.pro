@@ -11,6 +11,7 @@ INCLUDEPATH += \
     . \
     ../../ \
     ../../../src/versit \
+    ../../../src/versitorganizer \
     ../../../src/organizer \
     ../../../src/organizer/details \
     ../../../src/organizer/requests \
@@ -21,7 +22,7 @@ HEADERS += tst_qversitorganizerimporter.h
 SOURCES += tst_qversitorganizerimporter.cpp
 
 CONFIG += mobility
-MOBILITY += organizer versit contacts
+MOBILITY += organizer versit
 
 symbian: { 
     TARGET.CAPABILITY = ALL \

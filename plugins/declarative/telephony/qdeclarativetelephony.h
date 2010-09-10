@@ -43,84 +43,76 @@
 #define QDECLARATIVETELEPHONY_H
 
 #include <QtCore>
-#include <qdeclarative.h>
-#include <qdeclarativelist.h>
+#include <QtDeclarative/qdeclarative.h>
+#include <QtDeclarative/qdeclarativelist.h>
 #include <qtelephony.h>
 #include <qtelephonycalllist.h>
 
 QT_USE_NAMESPACE
 QTM_USE_NAMESPACE
 
-class QTelephonyCallInfoWrapper : public QObject {
+class QDeclarativeTelephonyCallInfo : public QObject {
     Q_OBJECT
-    Q_ENUMS(CallType CallStatus)
+    Q_ENUMS(CallStatus Direction)
+    Q_FLAGS(CallType)
     Q_PROPERTY(QString remotePartyIdentifier READ remotePartyIdentifier)
-    Q_PROPERTY(CallType type READ type)
+    Q_PROPERTY(unsigned int type READ type)
     Q_PROPERTY(CallStatus status READ status)
 
 public:
 
-    enum CallType {
-        Any = QTelephonyEvents::Any,
-        Text = QTelephonyEvents::Text,
-        Data = QTelephonyEvents::Data,
-        Video = QTelephonyEvents::Video,
-        Voice = QTelephonyEvents::Voice,
-        Other = QTelephonyEvents::Other,
-    };
+    CALLTYPEENUM
+    CALLSTATUSENUM
+    CALLDIRECTIONENUM
 
-    enum CallStatus {
-        Idle = QTelephonyEvents::Idle,
-        Dialing = QTelephonyEvents::Dialing,
-        Alerting = QTelephonyEvents::Alerting,
-        Connected = QTelephonyEvents::Connected,
-        Disconnecting = QTelephonyEvents::Disconnecting,
-        Incomming = QTelephonyEvents::Incomming,
-        OnHold = QTelephonyEvents::OnHold
-    };
-
-    QTelephonyCallInfoWrapper();
-    QTelephonyCallInfoWrapper(const QTelephonyCallInfo& other);
-    QTelephonyCallInfoWrapper(const QTelephonyCallInfoWrapper& other);
-    virtual ~QTelephonyCallInfoWrapper();
-    QTelephonyCallInfoWrapper& operator=(const QTelephonyCallInfoWrapper& other);
-
+    QDeclarativeTelephonyCallInfo();
+    QDeclarativeTelephonyCallInfo(const QTelephonyCallInfo& other);
+    QDeclarativeTelephonyCallInfo(const QDeclarativeTelephonyCallInfo& other);
+    virtual ~QDeclarativeTelephonyCallInfo();
+    QDeclarativeTelephonyCallInfo& operator=(const QDeclarativeTelephonyCallInfo& other);
 
     QString remotePartyIdentifier() const;
-    CallType type() const;
+    unsigned int type() const;
     CallStatus status() const;
     QString subType() const;
     QVariant value(const QString& param) const;
+    Direction direction() const;
 
 private:
     QTelephonyCallInfo* d;
 };
-QML_DECLARE_TYPE(QTelephonyCallInfoWrapper)
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeTelephonyCallInfo))
 
-class QTelephonyCallListWrapper : public QObject {
+class QDeclarativeTelephonyCallList : public QObject {
     Q_OBJECT
+    Q_PROPERTY(int activeCallCount READ activeCallCount)
 
 public:
-    QTelephonyCallListWrapper();
-    virtual~QTelephonyCallListWrapper();
+    QDeclarativeTelephonyCallList();
+    virtual~QDeclarativeTelephonyCallList();
 
 Q_SIGNALS:
-    void activeCallStatusChanged(const QTelephonyCallInfoWrapper& call);
-    void activeCallRemoved(const QTelephonyCallInfoWrapper& call);
-    void activeCallAdded(const QTelephonyCallInfoWrapper& call);
-public:
-    QList<QTelephonyCallInfoWrapper> activeCalls(const QTelephonyCallInfoWrapper::CallType& calltype) const;
+    void activeCallStatusChanged(QDeclarativeTelephonyCallInfo* call);
+    void activeCallRemoved(QDeclarativeTelephonyCallInfo* call);
+    void activeCallAdded(QDeclarativeTelephonyCallInfo* call);
+    void hasActiveCalls(bool value);
+
+protected:
+    int activeCallCount() const;
+    Q_INVOKABLE QList< QDeclarativeTelephonyCallInfo* > activeCalls(const QDeclarativeTelephonyCallInfo::CallType& calltype);
 
 private slots:
-    void activeCallStatusChanged(const QTelephonyCallInfo& call);
-    void activeCallRemoved(const QTelephonyCallInfo& call);
-    void activeCallAdded(const QTelephonyCallInfo& call);
+    void onCallStatusChanged(const QTelephonyCallInfo& call);
+    void onCallRemoved(const QTelephonyCallInfo& call);
+    void onCallAdded(const QTelephonyCallInfo& call);
+    void onActiveCalls(bool value);
 
 private:
     QTelephonyCallList* d;
+    QList<QDeclarativeTelephonyCallInfo> tmpcallinfolist;
 };
 
-QML_DECLARE_TYPE(QTelephonyCallListWrapper)
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeTelephonyCallList))
 
 #endif //QDECLARATIVETELEPHONY_H
 

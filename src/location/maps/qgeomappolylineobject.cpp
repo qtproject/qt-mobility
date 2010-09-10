@@ -47,22 +47,52 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
+    \class QGeoMapPolylineObject
+    \brief The QGeoMapPolylineObject class is a QGeoMapObject used to draw
+    a segmented line on a map.
+
+    \inmodule QtLocation
+
+    \ingroup maps-mapping-objects
+
+    The polyline is specified by a list of at least 2 valid QGeoCoordinate
+    instances and a line will be drawn between every adjacent pairs of
+    coordinates in the list.
+*/
+
+/*!
+    Constructs a new polyline object with the parent \a parent.
 */
 QGeoMapPolylineObject::QGeoMapPolylineObject(QGeoMapObject *parent)
         : QGeoMapObject(new QGeoMapPolylineObjectPrivate(this, parent)) {}
 
 /*!
+    Destroys this polyline object.
 */
 QGeoMapPolylineObject::~QGeoMapPolylineObject()
 {
 }
 
+/*!
+    \property QGeoMapPolylineObject::path
+    \brief This property holds the ordered list of coordinates which define the
+    segmented line to be drawn by this polyline object.
+
+    The default value of this property is an empty list of coordinates.
+
+    A line will be drawn between every pair of coordinates which are adjacent in
+    the list.
+
+    Invalid coordinates in the list will be ignored, and if the list of
+    coordinates contains less than 2 valid coordinates then the polyline object
+    will not be displayed.
+*/
 void QGeoMapPolylineObject::setPath(const QList<QGeoCoordinate> &path)
 {
     Q_D(QGeoMapPolylineObject);
     if (d->path != path) {
         d->path = path;
-        objectUpdate();
+        objectUpdated();
         emit pathChanged(d->path);
     }
 }
@@ -73,14 +103,28 @@ QList<QGeoCoordinate> QGeoMapPolylineObject::path() const
     return d->path;
 }
 
+/*!
+    \property QGeoMapPolylineObject::pen
+    \brief This property holds the pen that will be used to draw this object.
+
+    The pen is used to draw the polyline.
+
+    The pen will be treated as a cosmetic pen, which means that the width
+    of the pen will be independent of the zoom level of the map.
+*/
 void QGeoMapPolylineObject::setPen(const QPen &pen)
 {
     Q_D(QGeoMapPolylineObject);
-    if (d->pen != pen) {
-        d->pen = pen;
-        objectUpdate();
-        emit penChanged(d->pen);
-    }
+
+    QPen newPen = pen;
+    newPen.setCosmetic(true);
+
+    if (d->pen == newPen)
+        return;
+
+    d->pen = newPen;
+    objectUpdated();
+    emit penChanged(d->pen);
 }
 
 QPen QGeoMapPolylineObject::pen() const
@@ -93,7 +137,10 @@ QPen QGeoMapPolylineObject::pen() const
 *******************************************************************************/
 
 QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::PolylineType) {}
+        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::PolylineType)
+{
+    pen.setCosmetic(true);
+}
 
 QGeoMapPolylineObjectPrivate::~QGeoMapPolylineObjectPrivate() {}
 

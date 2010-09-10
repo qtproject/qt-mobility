@@ -161,12 +161,10 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceIdentifier& ident
     QMutexLocker ml(&lock);
     if (!metaMap.contains(ident))
         return;
-    
     ServiceIdentDescriptor& descr = metaMap[ident];
     if (descr.instanceType == QRemoteServiceClassRegister::SharedInstance) {
         if (descr.sharedRefCount < 1)
             return;
-
         if (descr.sharedRefCount == 1) {
             if (descr.sharedInstance)
                 descr.sharedInstance->deleteLater();

@@ -179,12 +179,12 @@ DBusSessionAdaptor::~DBusSessionAdaptor()
 {
 }
 
-QRemoteServiceControlPrivate::QRemoteServiceControlPrivate(QObject* parent)
-    : QObject(parent)
+QRemoteServiceControlDbusPrivate::QRemoteServiceControlDbusPrivate(QObject* parent)
+    : QRemoteServiceControlPrivate(parent)
 {
 }
 
-void QRemoteServiceControlPrivate::publishServices(const QString& ident)
+void QRemoteServiceControlDbusPrivate::publishServices(const QString& ident)
 {
     createServiceEndPoint(ident);
 }
@@ -192,7 +192,7 @@ void QRemoteServiceControlPrivate::publishServices(const QString& ident)
 /*!
     Creates endpoint on service side.
 */
-bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& /*ident*/)
+bool QRemoteServiceControlDbusPrivate::createServiceEndPoint(const QString& /*ident*/)
 {
     InstanceManager *iManager = InstanceManager::instance();
     QList<QRemoteServiceIdentifier> list = iManager->allIdents();
@@ -210,8 +210,8 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& /*ident*
         QString serviceName = "com.nokia.qtmobility.sfw." + list[0].name;
         connection->unregisterService(serviceName);
 
-        connection->registerService(serviceName);
-        if (!connection->registerService(serviceName)) {
+        bool service = connection->registerService(serviceName);
+        if (!service) {
             qWarning() << "Cannot register service to DBus";
             return 0;
         }
@@ -235,7 +235,13 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& /*ident*
         Q_UNUSED(endpoint);
         return true;
     }
+
     return false;
+}
+
+QRemoteServiceControlPrivate* QRemoteServiceControlPrivate::constructPrivateObject(QObject *parent)
+{
+  return new QRemoteServiceControlDbusPrivate(parent);
 }
 
 /*!

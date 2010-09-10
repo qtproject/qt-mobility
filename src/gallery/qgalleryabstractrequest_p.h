@@ -55,7 +55,10 @@
 
 #include "qgalleryabstractrequest.h"
 
+#include "qabstractgallery.h"
 #include "qgalleryabstractresponse.h"
+
+#include <QtCore/qsharedpointer.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -66,7 +69,6 @@ public:
     QGalleryAbstractRequestPrivate(
             QAbstractGallery *gallery, QGalleryAbstractRequest::RequestType type)
         : gallery(gallery)
-        , response(0)
         , type(type)
         , state(QGalleryAbstractRequest::Inactive)
         , result(QGalleryAbstractRequest::NoResult)
@@ -77,16 +79,14 @@ public:
 
     virtual ~QGalleryAbstractRequestPrivate()
     {
-        delete response;
     }
 
     void _q_finished();
-    void _q_galleryDestroyed();
     void _q_progressChanged(int current, int maximum);
 
     QGalleryAbstractRequest *q_ptr;
-    QAbstractGallery *gallery;
-    QGalleryAbstractResponse *response;
+    QWeakPointer<QAbstractGallery> gallery;
+    QScopedPointer<QGalleryAbstractResponse> response;
     QGalleryAbstractRequest::RequestType type;
     QGalleryAbstractRequest::State state;
     int result;

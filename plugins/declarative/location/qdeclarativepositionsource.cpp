@@ -52,8 +52,11 @@ QTM_BEGIN_NAMESPACE
 /*!
     \qmlclass PositionSource
 
-    \brief The PositionSource element allows you to get information about your current position.
+    \brief The PositionSource element allows you to get information about your
+    current position.
     \inherits QObject
+
+    \ingroup qml-location
 
     The PositionSource element allows you to get information about your current position.
     You can receive information about things such as \l Position::latitude,
@@ -62,7 +65,7 @@ QTM_BEGIN_NAMESPACE
 
     Support for location sources are platform dependant. When declaring a PositionSource element, a
     default PositionSource source shall be created. Supported positioning methods are held in
-    \l PositioningMethods. As a development convinience, one may also set data file as a source (NMEA format).
+    \l PositioningMethods. As a development convenience, one may also set data file as a source (NMEA format).
     Location updates are not necessarily started automatically upon element declaration, see \l start \l stop \l active
     and \l update.
 
@@ -197,14 +200,14 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
         if (m_active) {
             m_active = false;
             m_singleUpdate = false;
-            emit activeChanged(m_active);
+            emit activeChanged();
         }
     }
     if (m_positioningMethod != positioningMethod()) {
         m_positioningMethod = positioningMethod();
-        emit positioningMethodChanged(m_positioningMethod);
+        emit positioningMethodChanged();
     }
-    emit this->nmeaSourceChanged(m_nmeaSource);
+    emit this->nmeaSourceChanged();
 }
 
 void QDeclarativePositionSource::setUpdateInterval(int updateInterval)
@@ -216,14 +219,14 @@ void QDeclarativePositionSource::setUpdateInterval(int updateInterval)
     if (m_positionSource) {
         m_positionSource->setUpdateInterval(updateInterval);
     }
-    emit updateIntervalChanged(m_updateInterval);
+    emit updateIntervalChanged();
 }
 
 /*!
     \qmlproperty url PositionSource::nmeaSource
 
     This property holds the source for NMEA data (file). One purpose of this
-    property is to be of development convinience.
+    property is to be of development convenience.
 
     Setting this property will override any other position source. Currently only
     files local to the .qml -file are supported. Nmea source is created in simulation mode,
@@ -314,7 +317,7 @@ void QDeclarativePositionSource::start()
         m_positionSource->startUpdates();
         if (!m_active) {
             m_active = true;
-            emit activeChanged(m_active);
+            emit activeChanged();
         }
     }
 }
@@ -322,7 +325,7 @@ void QDeclarativePositionSource::start()
 /*!
     \qmlmethod PositionSource::update()
 
-    A convinience method to request single update from the location source.
+    A convenience method to request single update from the location source.
     If there is no source available, this method has no effect.
 
     \sa start, stop, active
@@ -336,7 +339,7 @@ void QDeclarativePositionSource::update()
         if (!m_active) {
             m_active = true;
             m_singleUpdate = true;
-            emit activeChanged(m_active);
+            emit activeChanged();
         }
     }
 }
@@ -357,7 +360,7 @@ void QDeclarativePositionSource::stop()
         m_positionSource->stopUpdates();
         if (m_active) {
             m_active = false;
-            emit activeChanged(m_active);
+            emit activeChanged();
         }
     }
 }
@@ -418,7 +421,7 @@ bool QDeclarativePositionSource::isActive() const
 
 */
 
-QObject* QDeclarativePositionSource::position()
+QDeclarativePosition* QDeclarativePositionSource::position()
 {
     return &m_position;
 }
@@ -427,23 +430,16 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo& 
 {
     if (update.isValid()) {
         m_position.setTimestamp(update.timestamp());
-        m_position.setLatitude(update.coordinate().latitude());
-        m_position.setlongitude(update.coordinate().longitude());
-
-        if (update.coordinate().type() == QGeoCoordinate::Coordinate3D) {
-            m_position.setAltitude(update.coordinate().altitude());
-        }
-
+        m_position.setCoordinate(update.coordinate());
         if (update.hasAttribute(QGeoPositionInfo::GroundSpeed)) {
             m_position.setSpeed(update.attribute(QGeoPositionInfo::GroundSpeed));
         }
-
         emit positionChanged();
     }
     if (m_singleUpdate && m_active) {
         m_active = false;
         m_singleUpdate = false;
-        emit activeChanged(m_active);
+        emit activeChanged();
     }
 }
 

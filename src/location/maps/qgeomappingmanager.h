@@ -71,7 +71,6 @@ public:
     int managerVersion() const;
 
     QGeoMapData* createMapData(QGraphicsGeoMap *geoMap);
-    void removeMapData(QGeoMapData *mapData);
 
     QList<QGraphicsGeoMap::MapType> supportedMapTypes() const;
 
@@ -80,9 +79,6 @@ public:
 
     qreal minimumZoomLevel() const;
     qreal maximumZoomLevel() const;
-
-    bool supportsTilt() const;
-    bool supportsHeading() const;
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;

@@ -114,6 +114,7 @@ public:
 
     QGstreamerElementFactory *videoInput() const { return m_videoInputFactory; }
     void setVideoInput(QGstreamerElementFactory *videoInput);
+    bool isReady() const;
 
     QObject *viewfinder() const { return m_viewfinder; }
     void setViewfinder(QObject *viewfinder);
@@ -143,6 +144,7 @@ signals:
     void focusStatusChanged(QCamera::LockStatus status, QCamera::LockChangeReason reason);
     void mutedChanged(bool);
     void viewfinderChanged();
+    void readyChanged(bool);
 
 public slots:
     void setDevice(const QString &device);

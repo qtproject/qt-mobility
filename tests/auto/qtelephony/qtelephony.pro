@@ -17,9 +17,28 @@ win32 {
     MOBILITY = telephony
 }
 
-symbian {
-    SOURCES += tst_telephony_s60.cpp
-    MOBILITY = telephony
+symbian { 
+    DEFINES += QT_MAKEDLL QT_BUILD_TELEPHONY_LIB
+    
+    contains(callinformation_symbian_enabled, yes) { 
+        INCLUDEPATH -= ../../../src/telephony
+        INCLUDEPATH += ../../../src/telephony/symbian
+        SOURCES += tst_telephony_moc_s3.cpp \
+            ../../../src/telephony/symbian/qtelephonycallinfo_symbian_p.cpp \
+            ../../../src/telephony/symbian/qtelephonycalllist_symbian_p.cpp \
+            tst_telephony_s60.cpp
+        HEADERS += ../../../src/telephony/symbian/qtelephonycallinfo_symbian_p.h \
+            ../../../src/telephony/symbian/qtelephonycalllist_symbian_p.h
+    } else {
+        INCLUDEPATH -= ../../../src/telephony
+        HEADERS += tst_telephony_moc_s60_31to50.h \ 
+            ../../../src/telephony/qtelephonycalllist_symbian_p.h
+        SOURCES += tst_telephony_s60_31to50.cpp
+    }
+    SOURCES += ../../../src/telephony/qtelephonycalllist.cpp \
+        ../../../src/telephony/qtelephonycallinfo.cpp
+    HEADERS += ../../../src/telephony/qtelephonycalllist.h \
+        ../../../src/telephony/qtelephonycallinfo.h
 } 
 
 linux-*:!maemo* {

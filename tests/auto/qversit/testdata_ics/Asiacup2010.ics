@@ -1,0 +1,103 @@
+BEGIN:VCALENDAR
+PRODID:-//ESPN Cricinfo//Series Fixtures//EN
+VERSION:2.0
+METHOD:PUBLISH
+BEGIN:VEVENT
+DESCRIPTION:Follow every ball of every international match live on Cricinfo.com.\n\nGet all the latest Asia Cup news at: http://www.cricinfo.com/asia2010/content/series/424694.html
+SUMMARY:1st Match Sri Lanka v Pakistan
+DTSTART:20100615T090000Z
+DTEND:20100615T170000Z
+LOCATION:Rangiri Dambulla International Stadium
+TRANSP:OPAQUE
+UID:455231_0
+BEGIN:VALARM
+TRIGGER:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Follow every ball of every international match live on Cricinfo.com.\n\nGet all the latest Asia Cup news at: http://www.cricinfo.com/asia2010/content/series/424694.html
+SUMMARY:2nd Match Bangladesh v India
+DTSTART:20100616T090000Z
+DTEND:20100616T170000Z
+LOCATION:Rangiri Dambulla International Stadium
+TRANSP:OPAQUE
+UID:455232_0
+BEGIN:VALARM
+TRIGGER:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Follow every ball of every international match live on Cricinfo.com.\n\nGet all the latest Asia Cup news at: http://www.cricinfo.com/asia2010/content/series/424694.html
+SUMMARY:3rd Match Sri Lanka v Bangladesh
+DTSTART:20100618T090000Z
+DTEND:20100618T170000Z
+LOCATION:Rangiri Dambulla International Stadium
+TRANSP:OPAQUE
+UID:455233_0
+BEGIN:VALARM
+TRIGGER:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Follow every ball of every international match live on Cricinfo.com.\n\nGet all the latest Asia Cup news at: http://www.cricinfo.com/asia2010/content/series/424694.html
+SUMMARY:4th Match India v Pakistan
+DTSTART:20100619T090000Z
+DTEND:20100619T170000Z
+LOCATION:Rangiri Dambulla International Stadium
+TRANSP:OPAQUE
+UID:455234_0
+BEGIN:VALARM
+TRIGGER:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Follow every ball of every international match live on Cricinfo.com.\n\nGet all the latest Asia Cup news at: http://www.cricinfo.com/asia2010/content/series/424694.html
+SUMMARY:5th Match Bangladesh v Pakistan
+DTSTART:20100621T090000Z
+DTEND:20100621T170000Z
+LOCATION:Rangiri Dambulla International Stadium
+TRANSP:OPAQUE
+UID:455235_0
+BEGIN:VALARM
+TRIGGER:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Follow every ball of every international match live on Cricinfo.com.\n\nGet all the latest Asia Cup news at: http://www.cricinfo.com/asia2010/content/series/424694.html
+SUMMARY:6th Match Sri Lanka v India
+DTSTART:20100622T090000Z
+DTEND:20100622T170000Z
+LOCATION:Rangiri Dambulla International Stadium
+TRANSP:OPAQUE
+UID:455236_0
+BEGIN:VALARM
+TRIGGER:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Follow every ball of every international match live on Cricinfo.com.\n\nGet all the latest Asia Cup news at: http://www.cricinfo.com/asia2010/content/series/424694.html
+SUMMARY:Final TBD v TBD
+DTSTART:20100624T090000Z
+DTEND:20100624T170000Z
+LOCATION:Rangiri Dambulla International Stadium
+TRANSP:OPAQUE
+UID:455237_0
+BEGIN:VALARM
+TRIGGER:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+END:VCALENDAR

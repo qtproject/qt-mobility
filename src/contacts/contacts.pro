@@ -15,12 +15,6 @@ include(engines/engines.pri)
 include(filters/filters.pri)
 include(requests/requests.pri)
 
-CONFIG += mobility
-MOBILITY = serviceframework
-
-# contacts depends on service framework (for actions)
-INCLUDEPATH += ../serviceframework
-
 # Input
 PUBLIC_HEADERS += \
     qcontact.h \
@@ -49,7 +43,7 @@ PRIVATE_HEADERS += \
     qcontact_p.h \
     qcontactabstractrequest_p.h \
     qcontactactiondescriptor_p.h \
-    qcontactactionservicemanager_p.h \
+    qcontactactionmanager_p.h \
     qcontactactiontarget_p.h \
     qcontactchangeset_p.h \
     qcontactdetail_p.h \
@@ -68,7 +62,7 @@ SOURCES += \
     qcontactaction.cpp \
     qcontactactiondescriptor.cpp \
     qcontactactionfactory.cpp \
-    qcontactactionservicemanager_p.cpp \
+    qcontactactionmanager_p.cpp \
     qcontactactiontarget.cpp \
     qcontactchangeset.cpp \
     qcontactdetail.cpp \
@@ -113,7 +107,7 @@ symbian {
     isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=symbian
 
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = CAP_GENERAL_DLL
+    TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC7A
 
     LIBS += -lefsrv
@@ -123,6 +117,15 @@ symbian {
     CONTACTS_DEPLOYMENT.sources = QtContacts.dll
     CONTACTS_DEPLOYMENT.path = /sys/bin
     DEPLOYMENT += CONTACTS_DEPLOYMENT
+}
+
+simulator {
+    isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=simulator
+
+    SOURCES += contactconnection_simulator.cpp engines/qcontactmemorybackenddata_simulator.cpp
+    HEADERS += contactconnection_simulator_p.h engines/qcontactmemorybackenddata_simulator_p.h
+    INCLUDEPATH += ../mobilitysimulator
+    qtAddLibrary(QtMobilitySimulator)
 }
 
 !isEmpty(CONTACTS_DEFAULT_ENGINE): DEFINES += Q_CONTACTS_DEFAULT_ENGINE=$$CONTACTS_DEFAULT_ENGINE
