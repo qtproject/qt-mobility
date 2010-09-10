@@ -65,10 +65,6 @@ QDeclarativeGalleryQueryModel::~QDeclarativeGalleryQueryModel()
 {
 }
 
-void QDeclarativeGalleryQueryModel::classBegin()
-{
-}
-
 void QDeclarativeGalleryQueryModel::componentComplete()
 {
     m_complete = true;
@@ -380,12 +376,16 @@ void QDeclarativeGalleryQueryModel::_q_itemsChanged(int index, int count)
 QDeclarativeDocumentGalleryModel::QDeclarativeDocumentGalleryModel(QObject *parent)
     : QDeclarativeGalleryQueryModel(parent)
 {
-    m_request.setGallery(QDeclarativeDocumentGallery::gallery());
     m_request.setRootType(QDocumentGallery::File);
 }
 
 QDeclarativeDocumentGalleryModel::~QDeclarativeDocumentGalleryModel()
 {
+}
+
+void QDeclarativeDocumentGalleryModel::classBegin()
+{
+    m_request.setGallery(QDeclarativeDocumentGallery::gallery(this));
 }
 
 /*!

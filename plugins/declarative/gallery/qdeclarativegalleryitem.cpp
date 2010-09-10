@@ -72,10 +72,6 @@ QDeclarativeGalleryItem::~QDeclarativeGalleryItem()
 {
 }
 
-void QDeclarativeGalleryItem::classBegin()
-{
-}
-
 void QDeclarativeGalleryItem::componentComplete()
 {
     m_complete = true;
@@ -169,13 +165,16 @@ void QDeclarativeGalleryItem::_q_metaDataChanged(const QList<int> &keys)
 QDeclarativeDocumentGalleryItem::QDeclarativeDocumentGalleryItem(QObject *parent)
     : QDeclarativeGalleryItem(parent)
 {
-    m_request.setGallery(QDeclarativeDocumentGallery::gallery());
-
     connect(this, SIGNAL(availableChanged()), this, SIGNAL(itemTypeChanged()));
 }
 
 QDeclarativeDocumentGalleryItem::~QDeclarativeDocumentGalleryItem()
 {
+}
+
+void QDeclarativeDocumentGalleryItem::classBegin()
+{
+    m_request.setGallery(QDeclarativeDocumentGallery::gallery(this));
 }
 
 /*!

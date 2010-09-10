@@ -204,6 +204,13 @@ contains(mobility_modules,gallery) {
                 qgallerytrackerresultset_maemo5 \
                 qgallerytrackerschema_maemo5
     }
+
+    contains (QT_CONFIG, declarative) {
+        SUBDIRS += \
+                qdeclarativedocumentgalleryitem \
+                qdeclarativedocumentgallerymodel \
+                qdeclarativedocumentgallerytype
+    }
 }
 
 # Feedback

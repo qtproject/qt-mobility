@@ -108,7 +108,6 @@ public:
 
     QObject *metaData() const { return m_metaData; }
 
-    void classBegin();
     void componentComplete();
 
 public Q_SLOTS:
@@ -153,6 +152,8 @@ class QDeclarativeDocumentGalleryItem : public QDeclarativeGalleryItem
 public:
     explicit QDeclarativeDocumentGalleryItem(QObject *parent = 0);
     ~QDeclarativeDocumentGalleryItem();
+
+    void classBegin();
 
     QDeclarativeDocumentGallery::ItemType itemType() const;
 

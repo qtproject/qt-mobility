@@ -154,7 +154,6 @@ public:
     Q_INVOKABLE void set(int index, const QScriptValue &value);
     Q_INVOKABLE void setProperty(int index, const QString &property, const QVariant &value);
 
-    void classBegin();
     void componentComplete();
 
 public Q_SLOTS:
@@ -206,6 +205,8 @@ class QDeclarativeDocumentGalleryModel : public QDeclarativeGalleryQueryModel
 public:
     explicit QDeclarativeDocumentGalleryModel(QObject *parent = 0);
     ~QDeclarativeDocumentGalleryModel();
+
+    void classBegin();
 
     QDeclarativeDocumentGallery::ItemType rootType() const;
     void setRootType(QDeclarativeDocumentGallery::ItemType itemType);

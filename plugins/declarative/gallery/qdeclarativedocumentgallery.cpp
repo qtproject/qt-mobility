@@ -43,6 +43,9 @@
 
 #include <qgalleryabstractrequest.h>
 
+#include <QtDeclarative/qdeclarativecontext.h>
+#include <QtDeclarative/qdeclarativeengine.h>
+
 QTM_BEGIN_NAMESPACE
 
 static const char *qt_documentGalleryTypes[] =
@@ -82,8 +85,18 @@ QDeclarativeDocumentGallery::ItemType QDeclarativeDocumentGallery::itemTypeFromS
     return QDeclarativeDocumentGallery::InvalidType;
 }
 
-QAbstractGallery *QDeclarativeDocumentGallery::gallery()
+QAbstractGallery *QDeclarativeDocumentGallery::gallery(QObject *object)
 {
+#ifndef QTM_BUILD_UNITTESTS
+    Q_UNUSED(object);
+#else
+    if  (QDeclarativeContext *context = QDeclarativeEngine::contextForObject(object)) {
+        if (QAbstractGallery *gallery = qobject_cast<QAbstractGallery *>(
+                context->contextProperty(QLatin1String("qt_testGallery")).value<QObject *>())) {
+            return gallery;
+        }
+    }
+#endif
     return qt_declarativeDocumentGalleryInstance();
 }
 
