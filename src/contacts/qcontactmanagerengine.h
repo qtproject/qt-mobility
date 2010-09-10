@@ -204,6 +204,8 @@ public:
     /*! \reimp */
     QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error) const {return QContactManagerEngine::contacts(filter, sortOrders, fetchHint, error);}
     virtual QList<QContact> contacts(const QList<QContactLocalId>& localIds, QMap<int, QContactManager::Error>* errorMap, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
+
+    static void updateContactFetchByIdRequest(QContactFetchByIdRequest* req, const QList<QContact>& result, const QMap<int, QContactManager::Error>& errorMap, QContactManager::Error error, QContactAbstractRequest::State);
 };
 
 QTM_END_NAMESPACE

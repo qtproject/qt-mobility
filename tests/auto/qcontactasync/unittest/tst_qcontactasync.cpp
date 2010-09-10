@@ -189,6 +189,8 @@ private slots:
 
     void contactFetch();
     void contactFetch_data() { addManagers(); }
+    void contactFetchById();
+    void contactFetchById_data() { addManagers(); }
     void contactIdFetch();
     void contactIdFetch_data() { addManagers(); }
     void contactRemove();
@@ -622,6 +624,54 @@ void tst_QContactAsync::contactFetch()
     }
     QVERIFY(obj == NULL);
 }
+
+void tst_QContactAsync::contactFetchById()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QContactManager> cm(prepareModel(uri));
+
+    QContactFetchByIdRequest cfr;
+    QVERIFY(cfr.type() == QContactAbstractRequest::ContactFetchByIdRequest);
+
+    // initial state - not started, no manager.
+    QVERIFY(!cfr.isActive());
+    QVERIFY(!cfr.isFinished());
+    QVERIFY(!cfr.start());
+    QVERIFY(!cfr.cancel());
+    QVERIFY(!cfr.waitForFinished());
+
+    // get all contact ids
+    QList<QContactLocalId> contactIds(cm->contactIds());
+
+    // "all contacts" retrieval
+    cfr.setManager(cm.data());
+    cfr.setLocalIds(contactIds);
+    QCOMPARE(cfr.manager(), cm.data());
+    QVERIFY(!cfr.isActive());
+    QVERIFY(!cfr.isFinished());
+    QVERIFY(!cfr.cancel());
+    QVERIFY(!cfr.waitForFinished());
+    qRegisterMetaType<QContactFetchByIdRequest*>("QContactFetchByIdRequest*");
+    QThreadSignalSpy spy(&cfr, SIGNAL(stateChanged(QContactAbstractRequest::State)));
+    QVERIFY(!cfr.cancel()); // not started
+
+    QVERIFY(cfr.start());
+    //QVERIFY(cfr.isFinished() || !cfr.start());  // already started. // thread scheduling means this is untestable
+    QVERIFY((cfr.isActive() && cfr.state() == QContactAbstractRequest::ActiveState) || cfr.isFinished());
+    QVERIFY(cfr.waitForFinished());
+    QVERIFY(cfr.isFinished());
+
+    QVERIFY(spy.count() >= 1); // active + finished progress signals
+    spy.clear();
+
+    QList<QContact> contacts = cfr.contacts();
+    QCOMPARE(contactIds.size(), contacts.size());
+    for (int i = 0; i < contactIds.size(); i++) {
+        QContact curr = cm->contact(contactIds.at(i));
+        QVERIFY(contacts.at(i) == curr);
+    }
+}
+
 
 void tst_QContactAsync::contactIdFetch()
 {

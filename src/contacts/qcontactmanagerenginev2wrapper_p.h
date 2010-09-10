@@ -53,11 +53,14 @@
 // We mean it.
 //
 
+#include <QPointer>
 #include "qcontactmanagerengine.h"
 
 QTM_USE_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
+
+class RequestController;
 
 /* Wrap a V1 engine and provide the V2 api */
 class QContactManagerEngineV2Wrapper : public QContactManagerEngineV2
@@ -66,6 +69,9 @@ class QContactManagerEngineV2Wrapper : public QContactManagerEngineV2
 public:
     QContactManagerEngineV2Wrapper(QContactManagerEngine* wrappee);
     ~QContactManagerEngineV2Wrapper();
+
+    /* Extra functions */
+    static void setEngineOfRequest(QContactAbstractRequest* request, QContactManagerEngine* engine);
 
     /* Overridden functions */
     virtual bool startRequest(QContactAbstractRequest* req);
@@ -108,8 +114,60 @@ public:
     virtual QList<QVariant::Type> supportedDataTypes() const {return m_engine->supportedDataTypes();}
     virtual QStringList supportedContactTypes() const {return m_engine->supportedContactTypes();}
 
+private Q_SLOTS:
+    void requestStateChanged(QContactAbstractRequest::State state);
+
 private:
+    QHash<QContactAbstractRequest*, RequestController*> m_controllerForRequest;
     QContactManagerEngine* m_engine;
+
+    friend class FetchByIdRequestController;
+};
+
+class RequestController : public QObject {
+    Q_OBJECT
+public Q_SLOTS:
+    void handleUpdatedSubRequest(QContactAbstractRequest::State state);
+
+Q_SIGNALS:
+    void stateChanged(QContactAbstractRequest::State state);
+
+public:
+    RequestController()
+        : QObject(0), m_request(0), m_currentSubRequest(0) {}
+
+    void setRequest(QContactAbstractRequest* request) { m_request = request; }
+    QContactAbstractRequest* request() { return m_request; }
+
+    virtual bool start() = 0;
+    virtual bool waitForFinished(int msecs) = 0;
+
+protected:
+    virtual void handleFinishedSubRequest(QContactAbstractRequest* req) = 0;
+
+private:
+    void handleUpdatedSubRequest(
+            QContactAbstractRequest* subReq, QContactAbstractRequest::State state);
+
+protected:
+    QPointer<QContactAbstractRequest> m_request;
+    QPointer<QContactAbstractRequest> m_currentSubRequest;
+};
+
+
+class FetchByIdRequestController : public RequestController
+{
+public:
+    FetchByIdRequestController(QContactManagerEngine* engine)
+        : RequestController(), m_engine(engine), m_finished(false) {}
+    bool start();
+    bool waitForFinished(int msecs);
+
+protected:
+    void handleFinishedSubRequest(QContactAbstractRequest* req);
+
+    QContactManagerEngine* m_engine;
+    bool m_finished;
 };
 
 QTM_END_NAMESPACE

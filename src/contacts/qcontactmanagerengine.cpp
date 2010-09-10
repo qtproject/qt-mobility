@@ -2774,6 +2774,32 @@ QList<QContact> QContactManagerEngineV2::contacts(const QList<QContactLocalId> &
     return ret;
 }
 
+/*!
+  Updates the given QContactFetchByIdRequest \a req with the latest results \a result, and operation error \a error, and map of input index to individual error \a errorMap.
+  In addition, the state of the request will be changed to \a newState.
+
+  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
+
+  If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+ */
+void QContactManagerEngineV2::updateContactFetchByIdRequest(QContactFetchByIdRequest* req, const QList<QContact>& result, const QMap<int, QContactManager::Error>& errorMap, QContactManager::Error error, QContactAbstractRequest::State newState)
+{
+    if (req) {
+        QWeakPointer<QContactFetchByIdRequest> ireq(req); // Take this in case the first emit deletes us
+        QContactFetchByIdRequestPrivate* rd = static_cast<QContactFetchByIdRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->m_mutex);
+        bool emitState = rd->m_state != newState;
+        rd->m_contacts = result;
+        rd->m_errors = errorMap;
+        rd->m_error = error;
+        rd->m_state = newState;
+        ml.unlock();
+        emit ireq.data()->resultsAvailable();
+        if (emitState && ireq)
+            emit ireq.data()->stateChanged(newState);
+    }
+}
+
 #include "moc_qcontactmanagerengine.cpp"
 
 QTM_END_NAMESPACE
