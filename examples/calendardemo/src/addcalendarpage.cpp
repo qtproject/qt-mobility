@@ -85,12 +85,14 @@ AddCalendarPage::AddCalendarPage(QWidget *parent)
 
     QVBoxLayout *scrollAreaLayout = new QVBoxLayout();
 
+#if defined(Q_WS_MAEMO_5)
     scrollAreaLayout->addWidget(nameLabel);
     scrollAreaLayout->addWidget(m_nameEdit);
     scrollAreaLayout->addWidget(colorLabel);
     scrollAreaLayout->addWidget(m_colorComboBox);
     scrollAreaLayout->addWidget(typeLabel);
     scrollAreaLayout->addWidget(m_typeComboBox);
+#endif
 
     QHBoxLayout *checkBoxLayout = new QHBoxLayout();
     checkBoxLayout->addWidget(m_visibleCheckBox);
