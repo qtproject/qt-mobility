@@ -47,6 +47,7 @@
 #include "journaleditpage.h"
 #include "eventoccurrenceeditpage.h"
 #include "addcalendarpage.h"
+#include "editcalendarspage.h"
 #ifdef BUILD_VERSIT
 #include "qversitreader.h"
 #include "qversitwriter.h"
@@ -75,9 +76,11 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     m_journalEditPage = new JournalEditPage(m_stackedWidget);
     m_eventOccurrenceEditPage = new EventOccurrenceEditPage(m_stackedWidget);
     m_addCalendarPage = new AddCalendarPage(m_stackedWidget);
+    m_editCalendarsPage = new EditCalendarsPage(m_stackedWidget);
 
     //qRegisterMetaType<QOrganizerItemManager>("QOrganizerItemManager");
     qRegisterMetaType<QOrganizerItem>("QOrganizerItem");
+    qRegisterMetaType<QOrganizerCollection>("QOrganizerCollection");
 
     connect(m_monthPage, SIGNAL(showDayPage(QDate)), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_monthPage, SIGNAL(showEditPage(const QOrganizerItem &)), this, SLOT(activateEditPage(const QOrganizerItem &)), Qt::QueuedConnection);
@@ -95,7 +98,10 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     connect(m_journalEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_eventOccurrenceEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_addCalendarPage, SIGNAL(showPreviousPage()), this, SLOT(activatePreviousPage()), Qt::QueuedConnection);
-    
+    connect(m_editCalendarsPage, SIGNAL(showAddCalendarPage(QOrganizerItemManager*,QOrganizerCollection*)), this, SLOT(editExistingCalendar(QOrganizerItemManager*,QOrganizerCollection*)), Qt::QueuedConnection);
+    connect(m_editCalendarsPage, SIGNAL(showPreviousPage()), this, SLOT(activateMonthPage()), Qt::QueuedConnection);
+    connect(m_editCalendarsPage, SIGNAL(addClicked()), this, SLOT(addCalendar()), Qt::QueuedConnection);
+
     // Connect to the save and remove request status change signals
     connect(&m_saveReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
             this, SLOT(saveReqStateChanged(QOrganizerItemAbstractRequest::State)));
@@ -111,6 +117,7 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     m_stackedWidget->addWidget(m_journalEditPage);
     m_stackedWidget->addWidget(m_eventOccurrenceEditPage);
     m_stackedWidget->addWidget(m_addCalendarPage);
+    m_stackedWidget->addWidget(m_editCalendarsPage);
     m_stackedWidget->setCurrentIndex(0);
 
     setCentralWidget(m_stackedWidget);
@@ -235,6 +242,8 @@ void CalendarDemo::activatePreviousPage()
         activateMonthPage();
     else if (m_previousPage == m_stackedWidget->indexOf(m_dayPage))
         activateDayPage();
+    else if (m_previousPage == m_stackedWidget->indexOf(m_editCalendarsPage))
+        editCalendar();
     else
         activateEditPage(m_previousItem);
 }
@@ -416,7 +425,16 @@ void CalendarDemo::addCalendar()
 
 void CalendarDemo::editCalendar()
 {
-    // TODO
+    m_editCalendarsPage->showPage(m_manager);
+    m_previousPage = m_stackedWidget->currentIndex();
+    m_stackedWidget->setCurrentWidget(m_editCalendarsPage);
+}
+
+void CalendarDemo::editExistingCalendar(QOrganizerItemManager *manager, QOrganizerCollection* calendar)
+{
+    m_addCalendarPage->calendarChanged(manager, *calendar);
+    m_previousPage = m_stackedWidget->currentIndex();
+    m_stackedWidget->setCurrentWidget(m_addCalendarPage);
 }
 
 void CalendarDemo::saveReqStateChanged(QOrganizerItemAbstractRequest::State reqState)

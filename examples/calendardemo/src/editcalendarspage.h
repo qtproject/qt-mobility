@@ -37,92 +37,51 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef EDITCALENDARSPAGE_H
+#define EDITCALENDARSPAGE_H
 
-#ifndef CALENDARDEMO_H
-#define CALENDARDEMO_H
-
-#include <QtGui/QMainWindow>
-#include <QDate>
+#include <QWidget>
 #include <qmobilityglobal.h>
-#include <qorganizeritemsaverequest.h>
-#include <qorganizeritemremoverequest.h>
-class QProgressDialog;
+#include <qorganizercollection.h>
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItemManager;
-class QOrganizerItem;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-#define ORGANIZER_ITEM_ROLE Qt::UserRole+1
-#define ORGANIZER_CALENDAR_ROLE Qt::UserRole+2
+class QListWidget;
+class QListWidgetItem;
+class QVBoxLayout;
+class QString;
 
-class QStackedWidget;
-class MonthPage;
-class DayPage;
-class EventEditPage;
-class TodoEditPage;
-class JournalEditPage;
-class EventOccurrenceEditPage;
-class AddCalendarPage;
-class EditCalendarsPage;
-
-class CalendarDemo : public QMainWindow
+class EditCalendarsPage : public QWidget
 {
     Q_OBJECT
 
 public:
-    CalendarDemo(QWidget *parent = 0);
-    ~CalendarDemo();
+    EditCalendarsPage(QWidget *parent = 0);
+    ~EditCalendarsPage();
 
 public Q_SLOTS:
-    void activateMonthPage();
-    void activateDayPage();
-    void activateEditPage(const QOrganizerItem &item);
-    void activatePreviousPage();
-    void addNewEvent();
-    void addNewTodo();
-    void addNewJournal();
-    void changeManager(QOrganizerItemManager *manager);
-    void updateSelectedDay(const QDate& date);
+    void editClicked();
+    void deleteClicked();
+    void backClicked();
+    void itemDoubleClicked(QListWidgetItem *listItem);
+    void showPage(QOrganizerItemManager *manager);
 
-private Q_SLOTS:
-    void switchView();
-    void editItem();
-    void removeItem();
-    void addEvents();
-    void importItems();
-    void exportItems();
-    void deleteAllEntries();
-    void addCalendar();
-    void editCalendar();
-    void editExistingCalendar(QOrganizerItemManager *manager, QOrganizerCollection* calendar);
-    void saveReqStateChanged(QOrganizerItemAbstractRequest::State);
-    void removeReqStateChanged(QOrganizerItemAbstractRequest::State);
+Q_SIGNALS:
+    void addClicked();
+    void showPreviousPage();
+    void showAddCalendarPage(QOrganizerItemManager*, QOrganizerCollection*);
+
+protected: // from QWidget
+    void showEvent(QShowEvent *event);
 
 private:
-    void buildMenu();
-
-    QDate m_currentDate;
     QOrganizerItemManager *m_manager;
-    QStackedWidget *m_stackedWidget;
-    MonthPage *m_monthPage;
-    DayPage *m_dayPage;
-    EventEditPage *m_eventEditPage;
-    TodoEditPage *m_todoEditPage;
-    JournalEditPage *m_journalEditPage;
-    EventOccurrenceEditPage *m_eventOccurrenceEditPage;
-    AddCalendarPage *m_addCalendarPage;
-    EditCalendarsPage *m_editCalendarsPage;
-
-    int m_previousPage;
-    QOrganizerItem m_previousItem;
-
-    QAction *m_switchViewAction;
-
-    QOrganizerItemSaveRequest m_saveReq;
-    QOrganizerItemRemoveRequest m_remReq;
-    QProgressDialog *m_progressDlg;
+    QOrganizerCollection m_collection;
+    QAction *m_saveOrNextSoftKey;
+    QListWidget *m_calendarList;
 };
 
-#endif // CALENDARDEMO_H
+#endif // EDITCALENDARSPAGE_H

@@ -82,7 +82,6 @@ Q_SIGNALS:
 private:
     QOrganizerItemManager *m_manager;
     QOrganizerCollection m_collection;
-    QVBoxLayout *m_repeatControls;
     QAction *m_saveOrNextSoftKey;
 
 #if defined(Q_WS_MAEMO_5)
