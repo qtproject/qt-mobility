@@ -63,7 +63,7 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
     Q_ENUMS(Status)
     Q_ENUMS(Scope)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
-    Q_PROPERTY(int progress READ progress NOTIFY progressChanged)
+    Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(QStringList sortProperties READ sortPropertyNames WRITE setSortPropertyNames NOTIFY sortPropertyNamesChanged)
