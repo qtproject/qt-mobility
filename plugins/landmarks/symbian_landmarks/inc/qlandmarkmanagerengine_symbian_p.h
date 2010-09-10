@@ -61,7 +61,6 @@
 #include <EPos_CPosLmCategoryCriteria.h> 
 // user includes
 #include "qlandmarkdbeventhandler.h"
-#include "qlandmarkdbeventobserver.h"
 #include "qlandmarkrequesthandler.h"
 
 class CPosLandmarkDatabase;
@@ -79,7 +78,8 @@ QTM_USE_NAMESPACE
  * technology change should inherit from this class.
  */
 
-class LandmarkManagerEngineSymbianPrivate: public MLandmarkRequestObserver, public MLandmarkDbEventObserver
+class LandmarkManagerEngineSymbianPrivate: public MLandmarkRequestObserver,
+    public MLandmarkDbEventObserver
 {
 public:
     LandmarkManagerEngineSymbianPrivate(LandmarkEventObserver& lmOpObserver,
@@ -214,8 +214,8 @@ private:
         int maxMatches) const;
 
     bool sortFetchedLmIds(int limit, int offset, QList<QLandmarkSortOrder> sortOrders, QList<
-        QLandmarkId>& landmarkIds, bool isNearestFilter, QLandmarkManager::Error *error,
-        QString *errorString) const;
+        QLandmarkId>& landmarkIds, bool isNearestFilter, QLandmarkFilter::FilterType filterType,
+        QLandmarkManager::Error *error, QString *errorString) const;
 
     // to handle symbian errors to assign appropriate manager error and error description.
     void

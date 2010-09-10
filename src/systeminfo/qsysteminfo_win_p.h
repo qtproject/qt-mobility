@@ -148,7 +148,7 @@ Q_SIGNALS:
    void currentMobileNetworkCodeChanged(const QString &);
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
-   void cellIdChanged(const QString &);//1.2
+   void cellIdChanged(int);//1.2
 
 private Q_SLOTS:
    void networkStrengthTimeout();

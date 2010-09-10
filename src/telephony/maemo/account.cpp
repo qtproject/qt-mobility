@@ -58,10 +58,12 @@ namespace DBus
     {
         qDebug() << " Account::Account(";
 
-        //Create Account Manager interface
-        pIAccount = new DBus::Interfaces::IAccount(this->dbusConnection(),this->busName(), this->objectPath());
-        QString connectionpath = pIAccount->Connection().path();
-        connection = ConnectionPtr(new Connection(QDBusConnection::sessionBus(), PATH2BUS(connectionpath), connectionpath, ptelephonyCallList));
+        if(isValid()){
+            //Create Account Manager interface
+            pIAccount = new DBus::Interfaces::IAccount(this->dbusConnection(),this->busName(), this->objectPath());
+            QString connectionpath = pIAccount->Connection().path();
+            connection = ConnectionPtr(new Connection(QDBusConnection::sessionBus(), PATH2BUS(connectionpath), connectionpath, ptelephonyCallList));
+        }
     }
 
     Account::~Account()

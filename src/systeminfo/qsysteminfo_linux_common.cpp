@@ -73,6 +73,11 @@
 #endif
 #endif
 
+#if defined(QT_NO_UDISKS)
+#include <blkid/blkid.h>
+#include <linux/fs.h>
+#endif
+
 #ifdef BLUEZ_SUPPORTED
 # include <bluetooth/bluetooth.h>
 # include <bluetooth/bnep.h>
@@ -130,8 +135,6 @@ static bool udisksAvailable()
         QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.UDisks");
         if (reply.isValid() && reply.value()) {
             return reply.value();
-        } else {
-            qDebug() << "not";
         }
     }
 #endif
@@ -1404,7 +1407,7 @@ void QSystemNetworkInfoLinuxCommonPrivate::ofonoNetworkPropertyChangedContext(co
 
     }
     if(item == "CellId") {
-        Q_EMIT cellIdChanged(value.variant().toString());
+        Q_EMIT cellIdChanged(value.variant().toUInt());
     }
     if(item == "Technology") {
 
@@ -1688,6 +1691,8 @@ QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObje
 
     logicalDrives();
     storageChanged = false;
+    qDebug() << Q_FUNC_INFO;
+
 }
 
 QSystemStorageInfoLinuxCommonPrivate::~QSystemStorageInfoLinuxCommonPrivate()
@@ -1970,7 +1975,8 @@ void QSystemStorageInfoLinuxCommonPrivate::mountEntries()
         } else {
             ok = true;
         }
-        if(ok && !mountEntriesMap.keys().contains(me->mnt_dir)) {
+        if(ok && !mountEntriesMap.keys().contains(me->mnt_dir)
+            && QString(me->mnt_fsname).left(1) == "/") {
             mountEntriesMap[me->mnt_dir] = me->mnt_fsname;
         }
 
@@ -1981,15 +1987,53 @@ void QSystemStorageInfoLinuxCommonPrivate::mountEntries()
 
 QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVolume)
 {
+#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_UDISKS)
+    if(udisksIsAvailable) {
+        QUDisksDeviceInterface devIface(mountEntriesMap.value(driveVolume));
+        if(devIface.deviceIsMounted()) {
+            return devIface.uuid();
+        }
+        return QString();
+    }
+#endif
+#else
     QDir uuidDir("/dev/disk/by-uuid");
-    QFileInfoList fileList = uuidDir.entryInfoList();
-    foreach(const QFileInfo fi, fileList) {
-        if(fi.isSymLink()) {
-            if(fi.symLinkTarget().contains(mountEntriesMap.value(driveVolume).section("/",-1))) {
-                return fi.baseName();
+    if(uuidDir.exists()) {
+        QFileInfoList fileList = uuidDir.entryInfoList();
+        foreach(const QFileInfo fi, fileList) {
+            if(fi.isSymLink()) {
+                if(fi.symLinkTarget().contains(mountEntriesMap.value(driveVolume).section("/",-1))) {
+                    return fi.baseName();
+                }
             }
         }
     }
+//last resort
+    int fd;
+    blkid_probe pr = NULL;
+    uint64_t size;
+    const char *label;
+    char *ret;
+    QFile dev(mountEntriesMap.value(driveVolume));
+    dev.open(QIODevice::ReadOnly);
+    fd = dev.handle();
+    if(fd < 0) {
+        qDebug() << "XXXXXXXXXXXXXXXXXXXXXXXXXXXX" << mountEntriesMap.value(driveVolume);
+       return QString();
+    } else {
+        pr = blkid_new_probe();
+        blkid_probe_set_request (pr, BLKID_PROBREQ_UUID);
+        ::ioctl(fd, BLKGETSIZE64, &size);
+        blkid_probe_set_device (pr, fd, 0, size);
+        blkid_do_safeprobe (pr);
+        blkid_probe_lookup_value(pr, "UUID", &label, NULL);
+        ret = strdup(label);
+        blkid_free_probe (pr);
+        close(fd);
+        return label;
+    }
+#endif
     return QString();
 }
 

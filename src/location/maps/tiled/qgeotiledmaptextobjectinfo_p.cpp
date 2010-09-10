@@ -46,6 +46,8 @@
 
 #include "qgeomaptextobject.h"
 
+#include <QFontMetrics>
+
 QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapTextObjectInfo::QGeoTiledMapTextObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
@@ -69,16 +71,34 @@ void QGeoTiledMapTextObjectInfo::objectUpdated()
         return;
     }
 
-    QPointF position = tiledMapData->coordinateToWorldPixel(text->coordinate());
-
     if (!textItem)
         textItem = new QGraphicsSimpleTextItem();
 
     textItem->setText(text->text());
     textItem->setFont(text->font());
     textItem->setBrush(text->brush());
+
+    QFontMetrics metrics(text->font());
+    QRect bounds = metrics.boundingRect(text->text());
+
+    if (text->alignment() & Qt::AlignLeft) {
+        alignmentOffset.setX(0);
+    } else if (text->alignment() & Qt::AlignHCenter) {
+        alignmentOffset.setX((-bounds.width()) / 2.0);
+    } else if (text->alignment() & Qt::AlignRight) {
+        alignmentOffset.setX(-bounds.width());
+    }
+
+    if (text->alignment() & Qt::AlignTop) {
+        alignmentOffset.setY(0);
+    } else if (text->alignment() & Qt::AlignVCenter) {
+        alignmentOffset.setY((-bounds.height()) / 2.0);
+    } else if (text->alignment() & Qt::AlignBottom) {
+        alignmentOffset.setY(-bounds.height());
+    }
+
+    QPointF position = tiledMapData->coordinateToWorldPixel(text->coordinate());
     textItem->setPos(position);
-    //textItem->setTransformOriginPoint(position);
 
     mapUpdated();
 
@@ -91,9 +111,13 @@ void QGeoTiledMapTextObjectInfo::mapUpdated()
 {
     if (textItem) {
         int zoomFactor = tiledMapData->zoomFactor();
-
         textItem->resetTransform();
         textItem->setScale(zoomFactor);
+        QPointF offset = text->offset();
+        offset += alignmentOffset;
+        textItem->setTransform(QTransform::fromTranslate(
+                                   offset.x() * zoomFactor,
+                                   offset.y() * zoomFactor));
     }
 }
 
