@@ -115,7 +115,7 @@ public:
     bool filter(const QMessage &message) const;
     static bool filter(const QMessage &message, const QMessageFilterPrivate &filter);
 
-#if defined(Q_WS_MAEMO_5)
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
     static bool preFilter(QMessage::Type type, const QString &idPrefix, const QMessageFilterPrivate &privateFilter);
     static bool preFilterRow(QMessage::Type type, const QString &idPrefix, const SortedMessageFilterList &filterRow);
     bool preFilter(QMessage::Type type, const QString idPrefix = QString()) const;
