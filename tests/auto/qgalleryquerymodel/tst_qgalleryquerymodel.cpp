@@ -386,7 +386,7 @@ void tst_QGalleryItemListModel::properties()
 {
     const QStringList sortPropertyNames = QStringList()
             << QLatin1String("rating") << QLatin1String("duration");
-    const bool isAutoUpdate = true;
+    const bool autoUpdate = true;
     const int offset = 90;
     const int limit = 12;
     const QString rootType = QLatin1String("Document");
@@ -404,7 +404,7 @@ void tst_QGalleryItemListModel::properties()
     QVERIFY(model.gallery() == &gallery);
 
     QCOMPARE(model.sortPropertyNames(), QStringList());
-    QCOMPARE(model.isAutoUpdate(), false);
+    QCOMPARE(model.autoUpdate(), false);
     QCOMPARE(model.offset(), 0);
     QCOMPARE(model.limit(), 0);
     QCOMPARE(model.rootType(), QString());
@@ -415,8 +415,8 @@ void tst_QGalleryItemListModel::properties()
     model.setSortPropertyNames(sortPropertyNames);
     QCOMPARE(model.sortPropertyNames(), sortPropertyNames);
 
-    model.setAutoUpdate(isAutoUpdate);
-    QCOMPARE(model.isAutoUpdate(), isAutoUpdate);
+    model.setAutoUpdate(autoUpdate);
+    QCOMPARE(model.autoUpdate(), autoUpdate);
 
     model.setOffset(offset);
     QCOMPARE(model.offset(), offset);
@@ -455,7 +455,7 @@ void tst_QGalleryItemListModel::properties()
     QVERIFY(propertyNames.contains("turtle"));
 
     QCOMPARE(gallery.request()->sortPropertyNames(), sortPropertyNames);
-    QCOMPARE(gallery.request()->isAutoUpdate(), isAutoUpdate);
+    QCOMPARE(gallery.request()->autoUpdate(), autoUpdate);
     QCOMPARE(gallery.request()->offset(), offset);
     QCOMPARE(gallery.request()->limit(), limit);
     QCOMPARE(gallery.request()->rootType(), rootType);

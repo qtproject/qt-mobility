@@ -492,9 +492,9 @@ void QGalleryQueryModel::setSortPropertyNames(const QStringList &names)
     initial query succeeded.
 */
 
-bool QGalleryQueryModel::isAutoUpdate() const
+bool QGalleryQueryModel::autoUpdate() const
 {
-    return d_ptr->query.isAutoUpdate();
+    return d_ptr->query.autoUpdate();
 }
 
 void QGalleryQueryModel::setAutoUpdate(bool enabled)

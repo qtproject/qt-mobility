@@ -63,7 +63,7 @@ class QDeclarativeGalleryType : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
-    Q_PROPERTY(bool autoUpdate READ isAutoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(bool available READ available NOTIFY availableChanged)
     Q_PROPERTY(QObject *metaData READ metaData NOTIFY metaDataChanged)
 public:
@@ -94,14 +94,13 @@ public:
     void setPropertyNames(const QStringList &names) {
         if (!m_complete) m_request.setPropertyNames(names); emit propertyNamesChanged(); }
 
-    bool isAutoUpdate() const { return m_request.isAutoUpdate(); }
+    bool autoUpdate() const { return m_request.autoUpdate(); }
     void setAutoUpdate(bool enabled) { m_request.setAutoUpdate(enabled); emit autoUpdateChanged(); }
 
     bool available() const { return m_request.isValid(); }
 
     QObject *metaData() const { return m_metaData; }
 
-    void classBegin();
     void componentComplete();
 
 public Q_SLOTS:
@@ -143,6 +142,8 @@ class QDeclarativeDocumentGalleryType : public QDeclarativeGalleryType
 public:
     explicit QDeclarativeDocumentGalleryType(QObject *parent = 0);
     ~QDeclarativeDocumentGalleryType();
+
+    void classBegin();
 
     QDeclarativeDocumentGallery::ItemType itemType() const;
     void setItemType(QDeclarativeDocumentGallery::ItemType itemType);

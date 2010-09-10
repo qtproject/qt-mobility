@@ -70,11 +70,6 @@ QDeclarativeGalleryType::~QDeclarativeGalleryType()
 {
 }
 
-
-void QDeclarativeGalleryType::classBegin()
-{
-}
-
 void QDeclarativeGalleryType::componentComplete()
 {
     m_complete = true;
@@ -167,11 +162,15 @@ void QDeclarativeGalleryType::_q_metaDataChanged(const QList<int> &keys)
 QDeclarativeDocumentGalleryType::QDeclarativeDocumentGalleryType(QObject *parent)
     : QDeclarativeGalleryType(parent)
 {
-    m_request.setGallery(QDeclarativeDocumentGallery::gallery());
 }
 
 QDeclarativeDocumentGalleryType::~QDeclarativeDocumentGalleryType()
 {
+}
+
+void QDeclarativeDocumentGalleryType::classBegin()
+{
+    m_request.setGallery(QDeclarativeDocumentGallery::gallery(this));
 }
 
 /*!

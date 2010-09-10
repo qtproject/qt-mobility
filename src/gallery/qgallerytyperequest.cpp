@@ -171,7 +171,7 @@ void QGalleryTypeRequest::setPropertyNames(const QStringList &names)
 */
 
 
-bool QGalleryTypeRequest::isAutoUpdate() const
+bool QGalleryTypeRequest::autoUpdate() const
 {
     return d_func()->autoUpdate;
 }
