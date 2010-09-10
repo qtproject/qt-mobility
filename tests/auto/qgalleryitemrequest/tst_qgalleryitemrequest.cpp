@@ -199,7 +199,7 @@ void tst_QGalleryItemRequest::properties()
     QGalleryItemRequest request;
 
     QCOMPARE(request.propertyNames(), QStringList());
-    QCOMPARE(request.isAutoUpdate(), false);
+    QCOMPARE(request.autoUpdate(), false);
     QCOMPARE(request.itemId(), QVariant());
 
     request.setPropertyNames(QStringList()
@@ -214,7 +214,7 @@ void tst_QGalleryItemRequest::properties()
             << QLatin1String("trackNumber"));
 
     request.setAutoUpdate(true);
-    QCOMPARE(request.isAutoUpdate(), true);
+    QCOMPARE(request.autoUpdate(), true);
 
     request.setItemId(QVariant(76));
     QCOMPARE(request.itemId(), QVariant(76));

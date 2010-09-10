@@ -178,7 +178,7 @@ void QGalleryQueryRequest::setSortPropertyNames(const QStringList &names)
 */
 
 
-bool QGalleryQueryRequest::isAutoUpdate() const
+bool QGalleryQueryRequest::autoUpdate() const
 {
     return d_func()->autoUpdate;
 }

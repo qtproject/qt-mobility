@@ -202,7 +202,7 @@ void tst_QGalleryTypeRequest::properties()
     QGalleryTypeRequest request;
 
     QCOMPARE(request.propertyNames(), QStringList());
-    QCOMPARE(request.isAutoUpdate(), false);
+    QCOMPARE(request.autoUpdate(), false);
     QCOMPARE(request.itemType(), QString());
 
     request.setPropertyNames(QStringList()
@@ -217,7 +217,7 @@ void tst_QGalleryTypeRequest::properties()
             << QLatin1String("trackNumber"));
 
     request.setAutoUpdate(true);
-    QCOMPARE(request.isAutoUpdate(), true);
+    QCOMPARE(request.autoUpdate(), true);
 
     request.setItemType(audioType);
     QCOMPARE(request.itemType(), QString::fromLatin1("Audio"));

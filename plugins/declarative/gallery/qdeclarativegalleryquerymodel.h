@@ -67,7 +67,7 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
     Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(QStringList sortProperties READ sortPropertyNames WRITE setSortPropertyNames NOTIFY sortPropertyNamesChanged)
-    Q_PROPERTY(bool autoUpdate READ isAutoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem NOTIFY rootItemChanged)
     Q_PROPERTY(Scope scope READ scope WRITE setScope NOTIFY scopeChanged)
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
@@ -119,7 +119,7 @@ public:
     void setSortPropertyNames(const QStringList &names) {
         if (!m_complete) m_request.setSortPropertyNames(names); emit sortPropertyNamesChanged(); }
 
-    bool isAutoUpdate() const { return m_request.isAutoUpdate(); }
+    bool autoUpdate() const { return m_request.autoUpdate(); }
     void setAutoUpdate(bool enabled) { m_request.setAutoUpdate(enabled); emit autoUpdateChanged(); }
 
     Scope scope() const { return Scope(m_request.scope()); }

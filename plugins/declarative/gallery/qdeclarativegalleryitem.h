@@ -62,7 +62,7 @@ class QDeclarativeGalleryItem : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
-    Q_PROPERTY(bool autoUpdate READ isAutoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QVariant item READ itemId WRITE setItemId NOTIFY itemIdChanged)
     Q_PROPERTY(bool available READ available NOTIFY availableChanged)
     Q_PROPERTY(QUrl itemUrl READ itemUrl NOTIFY availableChanged)
@@ -95,7 +95,7 @@ public:
     void setPropertyNames(const QStringList &names) {
         if (!m_complete) m_request.setPropertyNames(names); emit propertyNamesChanged(); }
 
-    bool isAutoUpdate() const { return m_request.isAutoUpdate(); }
+    bool autoUpdate() const { return m_request.autoUpdate(); }
     void setAutoUpdate(bool enabled) { m_request.setAutoUpdate(enabled); emit autoUpdateChanged(); }
 
     QVariant itemId() const { return m_request.itemId(); }
