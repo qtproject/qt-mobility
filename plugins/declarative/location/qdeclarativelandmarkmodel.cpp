@@ -112,10 +112,13 @@ void QDeclarativeLandmarkAbstractModel::setDbFileName(QString fileName)
         delete m_manager;
         m_manager = 0;
     }
-
     QMap<QString, QString> map;
     map["filename"] = m_dbFileName;
+#ifdef Q_OS_SYMBIAN
+    m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.symbian", map);
+#else
     m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
+#endif
     connectManager();
 }
 

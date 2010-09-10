@@ -140,7 +140,6 @@ public slots:
 
 private slots:
 
-    void sort();
     void construction();
     void construction_data();
     void defaultProperties();
@@ -150,6 +149,7 @@ private slots:
     void basicFetch();
     void basicFetch_data();
     void databaseChanges();
+    void sort();
     void declarativeLandmarkList();
     void declarativeCategoryList();
     void updateCancel();
@@ -223,7 +223,11 @@ void tst_QDeclarativeLandmark::createDb(QString fileName)
         delete m_manager;
         m_manager = 0;
     }
+#ifdef Q_OS_SYMBIAN
+    m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.symbian", map);
+#else
     m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
+#endif
 }
 
 void tst_QDeclarativeLandmark::deleteDb(QString fileName)
@@ -243,6 +247,7 @@ void tst_QDeclarativeLandmark::construction()
     QFETCH(QString, componentString);
     QFETCH(QString, expectedClassName);
     QFETCH(bool, shouldSucceed);
+
     // Component encapsulates one component description
     QDeclarativeComponent component(&m_engine);
     component.setData(componentString.toLatin1(), QUrl::fromLocalFile(""));
@@ -283,7 +288,7 @@ void tst_QDeclarativeLandmark::construction_data()
     QTest::addColumn<QString>("componentString");
     QTest::addColumn<bool>("shouldSucceed");
     // LandmarkModel
-    QTest::newRow("LandmarkModel: No properties") <<  "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {}" << true;
+    QTest::newRow("LandmarkModel: No properties auto update false") <<  "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate: false}" << true;
     QTest::newRow("LandmarkModel: Only id property") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId}" << true;
     QTest::newRow("LandmarkModel: Valuetype properties") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; autoUpdate:true; limit: 5; offset: 2; sortBy: LandmarkModel.NameSort; sortOrder: LandmarkModel.DescendingOrder}" << true;
     QTest::newRow("LandmarkModel: With filter") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; autoUpdate:true; limit: 5; offset: 2; filter: LandmarkNameFilter{id: filter} }" << true;
