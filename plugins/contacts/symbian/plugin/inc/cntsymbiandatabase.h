@@ -101,6 +101,7 @@ private:
     QList<QContactLocalId> m_contactsEmitted;
     QContactLocalId m_currentOwnCardId;
     QMap<QContactLocalId, QSet<QContactLocalId> > m_groupContents;
+    bool m_restoreStarted;
 #ifdef CNTSYMBIANDATABASE_UNIT_TEST
     friend class TestCntSymbianDatabase;
 #endif  //CNTSYMBIANDATABASE_UNIT_TEST

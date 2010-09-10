@@ -55,10 +55,14 @@ class Q_GALLERY_EXPORT QGalleryAbstractResponse : public QObject
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryAbstractResponse)
 public:
-    QGalleryAbstractResponse(int result, QObject *parent = 0);
+    QGalleryAbstractResponse(
+            int error, const QString &errorString = QString(), QObject *parent = 0);
     ~QGalleryAbstractResponse();
 
-    int result() const;
+    int error() const;
+    QString errorString() const;
+
+    bool isActive() const;
     bool isIdle() const;
 
     virtual void cancel();
@@ -67,13 +71,17 @@ public:
 
 Q_SIGNALS:
     void finished();
+    void resumed();
+    void cancelled();
     void progressChanged(int current, int maximum);
 
 protected:
     QGalleryAbstractResponse(QObject *parent = 0);
     QGalleryAbstractResponse(QGalleryAbstractResponsePrivate &dd, QObject *parent);
 
-    void finish(int result, bool idle = false);
+    void finish(bool idle = false);
+    void resume();
+    void error(int error, const QString &errorString = QString());
 
     QScopedPointer<QGalleryAbstractResponsePrivate> d_ptr;
 };

@@ -63,8 +63,14 @@ public:
     GstElement *videoSink();
     void precessNewStream() {}
 
+    bool isReady() const { return m_surface != 0; }
+
 signals:
     void sinkChanged();
+    void readyChanged(bool);
+
+private slots:
+    void handleFormatChange();
 
 private:    
     QVideoSurfaceGstSink *m_videoSink;

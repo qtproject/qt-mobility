@@ -43,12 +43,13 @@
 #include "qmdegalleryremoveresultset.h"
 #include "qmdesession.h"
 //API
+#include "qdocumentgallery.h"
 #include "qgalleryremoverequest.h"
 
 QTM_BEGIN_NAMESPACE
 
 QMDEGalleryRemoveResultSet::QMDEGalleryRemoveResultSet(QMdeSession *session, QObject *parent)
-:QMDEGalleryResultSet(parent)
+    : QMDEGalleryResultSet(parent)
 {
     m_request = static_cast<QGalleryRemoveRequest *>(parent);
     m_session = session;
@@ -66,7 +67,10 @@ void QMDEGalleryRemoveResultSet::createQuery()
     // This call only removes the entry from MDS DB. Should the actual binary
     // be deleted from disk???
     // After that m_ret contains error code from request
-    finish(m_result, false);
+    if (m_result == QDocumentGallery::NoError)
+        finish(false);
+    else
+        error(m_result);
 }
 
 #include "moc_qmdegalleryremoveresultset.cpp"

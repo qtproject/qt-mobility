@@ -89,11 +89,13 @@ void QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
         subWriter.setDevice(&buffer);
         subWriter.encodeVersitDocument(embeddedDocument);
         QString documentString(mCodec->toUnicode(data));
-        backSlashEscape(documentString);
+        backSlashEscape(&documentString);
         renderedValue = documentString;
     } else if (variant.type() == QVariant::String) {
         renderedValue = variant.toString();
-        backSlashEscape(renderedValue);
+        if (property.valueType() != QVersitProperty::PreformattedType) {
+            backSlashEscape(&renderedValue);
+        }
     } else if (variant.type() == QVariant::StringList) {
         // We need to backslash escape and concatenate the values in the list
         QStringList values = property.variantValue().toStringList();
@@ -114,7 +116,7 @@ void QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
                 if (!first) {
                     renderedValue += separator;
                 }
-                backSlashEscape(value);
+                backSlashEscape(&value);
                 renderedValue += value;
                 first = false;
             }
@@ -135,7 +137,7 @@ void QVCard30Writer::encodeParameters(const QMultiHash<QString,QString>& paramet
     foreach (QString nameString, names) {
         writeString(QLatin1String(";"));
         QStringList values = parameters.values(nameString);
-        backSlashEscape(nameString);
+        backSlashEscape(&nameString);
         writeString(nameString);
         writeString(QLatin1String("="));
         for (int i=0; i<values.size(); i++) {
@@ -143,7 +145,7 @@ void QVCard30Writer::encodeParameters(const QMultiHash<QString,QString>& paramet
                 writeString(QLatin1String(","));
             QString value = values.at(i);
 
-            backSlashEscape(value);
+            backSlashEscape(&value);
             writeString(value);
         }
     }
@@ -155,13 +157,13 @@ void QVCard30Writer::encodeParameters(const QMultiHash<QString,QString>& paramet
  * to RFC 2426.  This is called on parameter names and values and property values.
  * Colons ARE NOT escaped because the examples in RFC2426 suggest that they shouldn't be.
  */
-void QVCard30Writer::backSlashEscape(QString& text)
+void QVCard30Writer::backSlashEscape(QString* text)
 {
     /* replaces ; with \;
                 , with \,
                 \ with \\
      */
-    text.replace(QRegExp(QLatin1String("([;,\\\\])")), QLatin1String("\\\\1"));
+    text->replace(QRegExp(QLatin1String("([;,\\\\])")), QLatin1String("\\\\1"));
     // replaces any CRLFs with \n
-    text.replace(QRegExp(QLatin1String("\r\n|\r|\n")), QLatin1String("\\n"));
+    text->replace(QRegExp(QLatin1String("\r\n|\r|\n")), QLatin1String("\\n"));
 }

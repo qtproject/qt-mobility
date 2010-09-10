@@ -70,28 +70,6 @@ class QGeoMapObject;
 class QGeoMapData;
 class QGeoMapDataPrivate;
 
-//class QGeoMapObjectInfo
-//{
-//public:
-//    QGeoMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
-//    virtual ~QGeoMapObjectInfo();
-
-//    virtual void addToParent() = 0;
-//    virtual void removeFromParent() = 0;
-
-//    virtual void objectUpdate() = 0;
-//    virtual void mapUpdate() = 0;
-
-//    virtual QGeoBoundingBox boundingBox() const = 0;
-//    virtual bool contains(const QGeoCoordinate &coord) const = 0;
-
-//    QGeoMapData* mapData;
-//    QGeoMapObject* mapObject;
-
-//private:
-//    Q_DISABLE_COPY(QGeoMapObjectInfo)
-//};
-
 class QGeoMapObjectPrivate
 {
 public:
@@ -104,8 +82,8 @@ public:
     void addToParent(QGeoMapObject *parent);
     void removeFromParent();
 
-    void objectUpdate();
-    void mapUpdate();
+    void objectUpdated();
+    void mapUpdated();
 
     QGeoBoundingBox boundingBox() const;
     bool contains(const QGeoCoordinate &coord) const;

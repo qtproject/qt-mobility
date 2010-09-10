@@ -40,19 +40,13 @@
     \page index.html
     \startpage index.html  Qt Reference Documentation
 
-    \title Qt Mobility Project APIs Overview (Technology Preview)
-
     \brief An overview of the Qt Mobility Project APIs.
 
     \tableofcontents
 
-    This is a Technology Preview including several new APIs primarily intended
-    for Mobile application development.
-
-    The advantage of sharing this work with you, so early in the development
-    cycle, is that you now have the opportunity to review and provide your
-    feedback to us. With your feedback we will together build high quality
-    robust new APIs for Qt.
+    The advantage of sharing this work with you is that you now have the
+    opportunity to review and provide your feedback to us. With your feedback we
+    will together build high quality robust new APIs for Qt.
 
     Although we anticipate that the new APIs will be of most advantage to those
     developers embarked on mobile application development, in many cases they may
@@ -285,7 +279,7 @@
     The Landmarks portion of the Location API facilitates the creation,
     retrieval, updating and deletion of landmarks from arbitrary data stores.
 
-    For more details, see the \l {Landmark Examples}{Landmark examples}.
+    For more details, see the \l {Landmarks} {Landmarks API overview}.
 
     \section2 Document Gallery
 

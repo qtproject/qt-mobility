@@ -55,6 +55,7 @@
 
 #include "qvideosurfacegstsink.h"
 
+//#define DEBUG_VIDEO_SURFACE_SINK
 
 
 Q_DECLARE_METATYPE(QVideoSurfaceFormat)
@@ -75,7 +76,9 @@ QList<QVideoFrame::PixelFormat> QVideoSurfaceGstDelegate::supportedPixelFormats(
 {
     QMutexLocker locker(const_cast<QMutex *>(&m_mutex));
 
-    if (handleType == QAbstractVideoBuffer::NoHandle || !m_surface)
+    if (!m_surface)
+        return QList<QVideoFrame::PixelFormat>();
+    else if (handleType == QAbstractVideoBuffer::NoHandle)
         return m_supportedPixelFormats;
     else if (handleType == QAbstractVideoBuffer::XvShmImageHandle)
         return m_supportedXVideoPixelFormats;
@@ -134,13 +137,16 @@ void QVideoSurfaceGstDelegate::stop()
 bool QVideoSurfaceGstDelegate::isActive()
 {
     QMutexLocker locker(&m_mutex);
-    return m_surface->isActive();
+    return !m_surface.isNull() && m_surface->isActive();
 }
 
 GstFlowReturn QVideoSurfaceGstDelegate::render(GstBuffer *buffer)
 {
-    if (!m_surface)
-        return GST_FLOW_NOT_NEGOTIATED;
+    if (!m_surface) {
+        qWarning() << "Rendering video frame to deleted surface, skip.";
+        //return GST_FLOW_NOT_NEGOTIATED;
+        return GST_FLOW_OK;
+    }
 
     QMutexLocker locker(&m_mutex);
 
@@ -205,7 +211,8 @@ void QVideoSurfaceGstDelegate::queuedRender()
     QMutexLocker locker(&m_mutex);
 
     if (m_surface.isNull()) {
-        m_renderReturn = GST_FLOW_ERROR;
+        qWarning() << "Rendering video frame to deleted surface, skip the frame";
+        m_renderReturn = GST_FLOW_OK;
     } else if (m_surface->present(m_frame)) {
         m_renderReturn = GST_FLOW_OK;
     } else {
@@ -219,7 +226,8 @@ void QVideoSurfaceGstDelegate::queuedRender()
             m_renderReturn = GST_FLOW_OK;
             break;
         default:
-            m_renderReturn = GST_FLOW_ERROR;
+            qWarning() << "Failed to render video frame:" << m_surface->error();
+            m_renderReturn = GST_FLOW_OK;
             break;
         }
     }
@@ -232,8 +240,11 @@ void QVideoSurfaceGstDelegate::supportedFormatsChanged()
     QMutexLocker locker(&m_mutex);
 
     m_supportedPixelFormats.clear();
-    if (m_surface)
+    m_supportedXVideoPixelFormats.clear();
+    if (m_surface) {
         m_supportedPixelFormats = m_surface->supportedPixelFormats();
+        m_supportedXVideoPixelFormats = m_surface->supportedPixelFormats(QAbstractVideoBuffer::XvShmImageHandle);
+    }
 }
 
 struct YuvFormat
@@ -498,8 +509,10 @@ gboolean QVideoSurfaceGstSink::set_caps(GstBaseSink *base, GstCaps *caps)
 {
     VO_SINK(base);
 
-    //qDebug() << "set_caps";
-    //qDebug() << gst_caps_to_string(caps);
+#ifdef DEBUG_VIDEO_SURFACE_SINK
+    qDebug() << "set_caps:";
+    qDebug() << gst_caps_to_string(caps);
+#endif
 
     if (!caps) {
         sink->delegate->stop();
@@ -523,13 +536,16 @@ gboolean QVideoSurfaceGstSink::set_caps(GstBaseSink *base, GstCaps *caps)
             gst_caps_unref(sink->lastRequestedCaps);
         sink->lastRequestedCaps = 0;
 
-        //qDebug() << "Staring video surface:";
-        //qDebug() << format;
-        //qDebug() << bytesPerLine;
+#ifdef DEBUG_VIDEO_SURFACE_SINK
+        qDebug() << "Staring video surface, format:";
+        qDebug() << format;
+        qDebug() << "bytesPerLine:" << bytesPerLine;
+#endif
 
         if (sink->delegate->start(format, bytesPerLine))
             return TRUE;
-
+        else
+            qWarning() << "Failed to start video surface";
     }
 
     return FALSE;
@@ -641,7 +657,9 @@ GstFlowReturn QVideoSurfaceGstSink::buffer_alloc(
 
         if (format.pixelFormat() != surfaceFormat.pixelFormat() ||
             format.frameSize() != surfaceFormat.frameSize()) {
-            //qDebug() << "new format requested, restart video surface";
+#ifdef DEBUG_VIDEO_SURFACE_SINK
+            qDebug() << "new format requested, restart video surface";
+#endif
             sink->delegate->stop();
         }
     }
@@ -651,7 +669,7 @@ GstFlowReturn QVideoSurfaceGstSink::buffer_alloc(
         QVideoSurfaceFormat format = formatForCaps(intersection, &bytesPerLine);
 
         if (!sink->delegate->start(format, bytesPerLine)) {
-            //qDebug() << "failed to start video surface";
+            qWarning() << "failed to start video surface";
             return GST_FLOW_NOT_NEGOTIATED;
         }
     }
@@ -713,7 +731,6 @@ gboolean QVideoSurfaceGstSink::event(GstBaseSink *base, GstEvent *event)
 GstFlowReturn QVideoSurfaceGstSink::preroll(GstBaseSink *base, GstBuffer *buffer)
 {
     VO_SINK(base);
-
     return sink->delegate->render(buffer);
 }
 

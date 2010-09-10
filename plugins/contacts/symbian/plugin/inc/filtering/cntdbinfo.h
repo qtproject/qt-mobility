@@ -64,6 +64,13 @@ public:
             EEmailAddress,
             ESipAddress
             };
+			
+	// comm address table's extra type info values. specify if the phone number is mobile or non mobile 		
+    enum TCommAddrExtraInfoType
+            {
+            ENonMobileNumber = 0,
+            EMobileNumber
+            };
 public:
     CntDbInfo(QContactManagerEngine* engine);
     virtual ~CntDbInfo();
@@ -85,6 +92,8 @@ public:
 private:
     QHash<QString,QString> contactsTableIdColumNameMapping;
     QHash<QString,QPair<int,bool> > commAddrTableIdColumNameMapping;
+    
+    QHash<QString,int> commAddrExtraInfoMap;
     QContactManagerEngine* m_engine; // not owned
 };
 

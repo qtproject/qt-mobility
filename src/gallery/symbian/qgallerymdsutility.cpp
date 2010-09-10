@@ -65,17 +65,13 @@ CMdEObjectDef& QDocumentGalleryMDSUtility::ObjDefFromItemTypeL( CMdENamespaceDef
 #ifdef MDS_25_COMPILATION_ENABLED
     if (itemType == QDocumentGallery::Audio.name()) {
         return nameSpace.GetObjectDefL( MdeConstants::Audio::KAudioObject );
-    }
-    else if (itemType == QDocumentGallery::File.name()) {
+    } else if (itemType == QDocumentGallery::File.name()) {
         return nameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
-    }
-    else if (itemType == QDocumentGallery::Image.name()) {
+    } else if (itemType == QDocumentGallery::Image.name()) {
         return nameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
-    }
-    else if (itemType == QDocumentGallery::PhotoAlbum.name()) {
+    } else if (itemType == QDocumentGallery::PhotoAlbum.name()) {
         return nameSpace.GetObjectDefL( MdeConstants::Album::KAlbumObject );
-    }
-    else if (itemType == QDocumentGallery::Video.name()) {
+    } else if (itemType == QDocumentGallery::Video.name()) {
         return nameSpace.GetObjectDefL( MdeConstants::Video::KVideoObject );
     }
 
@@ -106,15 +102,14 @@ CMdEObjectDef& QDocumentGalleryMDSUtility::ObjDefFromItemTypeL( CMdENamespaceDef
 
 void QDocumentGalleryMDSUtility::GetDataFieldsForItemType( QStringList &propertyList, QString itemType )
 {
-    if( itemType == QDocumentGallery::Album.name() ) {
+    if (itemType == QDocumentGallery::Album.name()) {
         // From MDS base object
         propertyList.append( QDocumentGallery::url.name() );
         propertyList.append( QDocumentGallery::fileSize.name() );
         propertyList.append( QDocumentGallery::lastModified.name() );
         propertyList.append( QDocumentGallery::title.name() );
         propertyList.append( QDocumentGallery::mimeType.name() );
-    }
-    else if( itemType == QDocumentGallery::Audio.name() ) {
+    } else if (itemType == QDocumentGallery::Audio.name()) {
         // From MDS base object
         propertyList.append( QDocumentGallery::url.name() );
         propertyList.append( QDocumentGallery::fileSize.name() );
@@ -136,8 +131,7 @@ void QDocumentGalleryMDSUtility::GetDataFieldsForItemType( QStringList &property
         propertyList.append( QDocumentGallery::playCount.name() );
         //From MDS audio object
         propertyList.append( QDocumentGallery::sampleRate.name() );
-    }
-    else if( itemType == QDocumentGallery::File.name() ) {
+    } else if (itemType == QDocumentGallery::File.name()) {
         // From MDS base object
         propertyList.append( QDocumentGallery::url.name() );
         propertyList.append( QDocumentGallery::fileSize.name() );
@@ -150,8 +144,7 @@ void QDocumentGalleryMDSUtility::GetDataFieldsForItemType( QStringList &property
         propertyList.append( QDocumentGallery::description.name() );
         propertyList.append( QDocumentGallery::comments.name() );
         propertyList.append( QDocumentGallery::rating.name() );
-    }
-    else if( itemType == QDocumentGallery::Image.name() ) {
+    } else if (itemType == QDocumentGallery::Image.name()) {
         propertyList.append( QDocumentGallery::url.name() );
         propertyList.append( QDocumentGallery::fileSize.name() );
         propertyList.append( QDocumentGallery::lastModified.name() );
@@ -183,8 +176,7 @@ void QDocumentGalleryMDSUtility::GetDataFieldsForItemType( QStringList &property
         propertyList.append( QDocumentGallery::focalLength.name() );
         propertyList.append( QDocumentGallery::meteringMode.name() );
         propertyList.append( QDocumentGallery::whiteBalance.name() );
-    }
-    else if( itemType == QDocumentGallery::Video.name() ) {
+    } else if (itemType == QDocumentGallery::Video.name()) {
         propertyList.append( QDocumentGallery::url.name() );
         propertyList.append( QDocumentGallery::fileSize.name() );
         propertyList.append( QDocumentGallery::lastModified.name() );
@@ -216,14 +208,14 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
 {
 #ifdef MDS_25_COMPILATION_ENABLED
         output.clear();
-    switch( key ) {
-        case EUri:
+    switch (key) {
+    case EUri:
         {
             QUrl url( s60DescToQString( inputItem->Uri() ) );
             output.setValue( url );
             break;
         }
-        case EFileSize:
+    case EFileSize:
         {
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Object::KSizeProperty );
             CMdEProperty* sizeProp = NULL;
@@ -234,7 +226,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case ELastModified:
+    case ELastModified:
         {
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Object::KLastModifiedDateProperty );
             CMdEProperty* modProp = NULL;
@@ -244,7 +236,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case ETitle:
+    case ETitle:
         {
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Object::KTitleProperty );
             CMdEProperty* titleProp = NULL;
@@ -254,7 +246,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EMime:
+    case EMime:
         {
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Object::KItemTypeProperty );
             CMdEProperty* mimeProp = NULL;
@@ -264,11 +256,11 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EAuthor:
+    case EAuthor:
         {
-            if( inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                inputItem->Def().Name() != MdeConstants::Video::KVideoObject &&
-                inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KAuthorProperty );
@@ -279,11 +271,11 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case ECopyright:
+    case ECopyright:
         {
-            if( inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                inputItem->Def().Name() != MdeConstants::Video::KVideoObject &&
-                inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KCopyrightProperty );
@@ -294,11 +286,11 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EDescription:
+    case EDescription:
         {
-            if( inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                inputItem->Def().Name() != MdeConstants::Video::KVideoObject &&
-                inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KDescriptionProperty );
@@ -309,11 +301,11 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EComments:
+    case EComments:
         {
-            if( inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                inputItem->Def().Name() != MdeConstants::Video::KVideoObject &&
-                inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KCommentProperty );
@@ -324,11 +316,11 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case ERating:
+    case ERating:
         {
-            if( inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                inputItem->Def().Name() != MdeConstants::Video::KVideoObject &&
-                inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KRatingProperty );
@@ -340,11 +332,11 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EDuration:
+    case EDuration:
         {
-            if( inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                inputItem->Def().Name() != MdeConstants::Video::KVideoObject &&
-                inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KDurationProperty );
@@ -358,9 +350,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
         }
         case EPerformer:
         {
-            if( inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                inputItem->Def().Name() != MdeConstants::Video::KVideoObject &&
-                inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KArtistProperty );
@@ -372,11 +364,11 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             break;
         }
 //#ifdef MDS_25_COMPILATION_ENABLED            
-        case EAudioCodec:
+    case EAudioCodec:
         {
-            if( inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                inputItem->Def().Name() != MdeConstants::Video::KVideoObject &&
-                inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KAudioFourCCProperty );
@@ -389,12 +381,12 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             break;
         }
 //#endif //MDS_25_COMPILATION_ENABLED
-        case EAudioBitrate:
-        case EVideoBitrate:
+    case EAudioBitrate:
+    case EVideoBitrate:
         {
-            if( inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                inputItem->Def().Name() != MdeConstants::Video::KVideoObject &&
-                inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KBitrateProperty );
@@ -406,11 +398,11 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EPlayCount:
+    case EPlayCount:
         {
-            if( inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                inputItem->Def().Name() != MdeConstants::Video::KVideoObject &&
-                inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
@@ -422,9 +414,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case ESampleRate:
+    case ESampleRate:
         {
-            if( inputItem->Def().Name() != MdeConstants::Audio::KAudioObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Audio::KSamplingFrequencyProperty );
@@ -436,11 +428,11 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EWidth:
+    case EWidth:
         {
-            if( inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                inputItem->Def().Name() != MdeConstants::Video::KVideoObject &&
-                inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KWidthProperty );
@@ -452,11 +444,11 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EHeight:
+    case EHeight:
         {
-            if( inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                inputItem->Def().Name() != MdeConstants::Video::KVideoObject &&
-                inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KHeightProperty );
@@ -468,9 +460,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EOrientation:
+    case EOrientation:
         {
-            if( inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KOrientationProperty );
@@ -482,9 +474,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EDateTaken:
+    case EDateTaken:
         {
-            if( inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KDateTimeOriginalProperty );
@@ -495,9 +487,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case ECameraManufacturer:
+    case ECameraManufacturer:
         {
-            if( inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KMakeProperty );
@@ -508,9 +500,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case ECameraModel:
+    case ECameraModel:
         {
-            if( inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KModelProperty );
@@ -521,9 +513,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EExposureProgram:
+    case EExposureProgram:
         {
-            if( inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KExposureProgramProperty );
@@ -535,9 +527,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EExposureTime:
+    case EExposureTime:
         {
-            if( inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KExposureTimeProperty );
@@ -549,9 +541,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EFNumber:
+    case EFNumber:
         {
-            if( inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KFNumberProperty );
@@ -563,9 +555,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EFlashEnabled:
+    case EFlashEnabled:
         {
-            if( inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KFlashProperty );
@@ -577,9 +569,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EFocalLength:
+    case EFocalLength:
         {
-            if( inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KFocalLengthIn35mmFilmProperty );
@@ -591,9 +583,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EMeteringMode:
+    case EMeteringMode:
         {
-            if( inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KMeteringModeProperty );
@@ -605,9 +597,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EWhiteBalance:
+    case EWhiteBalance:
         {
-            if( inputItem->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KWhiteBalanceProperty );
@@ -619,9 +611,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case ELanguage:
+    case ELanguage:
         {
-            if( inputItem->Def().Name() != MdeConstants::Video::KVideoObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Video::KVideoObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Video::KAudioLanguageProperty );
@@ -632,9 +624,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EFrameRate:
+    case EFrameRate:
         {
-            if( inputItem->Def().Name() != MdeConstants::Video::KVideoObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Video::KVideoObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Video::KFramerateProperty );
@@ -646,9 +638,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-        case EResumePosition:
+    case EResumePosition:
         {
-            if( inputItem->Def().Name() != MdeConstants::Video::KVideoObject ) {
+            if (inputItem->Def().Name() != MdeConstants::Video::KVideoObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Video::KLastPlayPositionProperty );
@@ -669,19 +661,15 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
 QString QDocumentGalleryMDSUtility::GetItemTypeFromMDEObject( CMdEObject *inputItem )
 {
 #ifdef MDS_25_COMPILATION_ENABLED
-    if( inputItem->Def().Name() == MdeConstants::Album::KAlbumObject ) {
+    if (inputItem->Def().Name() == MdeConstants::Album::KAlbumObject) {
         return QDocumentGallery::PhotoAlbum.name();
-    }
-    else if( inputItem->Def().Name() == MdeConstants::Audio::KAudioObject ) {
+    } else if (inputItem->Def().Name() == MdeConstants::Audio::KAudioObject) {
         return QDocumentGallery::Audio.name();
-    }
-    else if( inputItem->Def().Name() == MdeConstants::MediaObject::KMediaObject ) {
+    } else if (inputItem->Def().Name() == MdeConstants::MediaObject::KMediaObject) {
         return QDocumentGallery::File.name();
-    }
-    else if( inputItem->Def().Name() == MdeConstants::Image::KImageObject ) {
+    } else if (inputItem->Def().Name() == MdeConstants::Image::KImageObject) {
         return QDocumentGallery::Image.name();
-    }
-    else if( inputItem->Def().Name() == MdeConstants::Video::KVideoObject ) {
+    } else if (inputItem->Def().Name() == MdeConstants::Video::KVideoObject) {
         return QDocumentGallery::Video.name();
     }
 
@@ -692,103 +680,71 @@ QString QDocumentGalleryMDSUtility::GetItemTypeFromMDEObject( CMdEObject *inputI
 
 int QDocumentGalleryMDSUtility::GetPropertyKey( const QString &property )
 {
-    if( property == QDocumentGallery::url.name() ) {
+    if (property == QDocumentGallery::url.name()) {
         return EUri;
-    }
-    else if( property == QDocumentGallery::fileSize.name() ) {
+    } else if (property == QDocumentGallery::fileSize.name()) {
         return EFileSize;
-    }
-    else if( property == QDocumentGallery::lastModified.name() ) {
+    } else if (property == QDocumentGallery::lastModified.name()) {
         return ELastModified;
-    }
-    else if( property == QDocumentGallery::title.name() ) {
+    } else if (property == QDocumentGallery::title.name()) {
         return ETitle;
-    }
-    else if( property == QDocumentGallery::mimeType.name() ) {
+    } else if (property == QDocumentGallery::mimeType.name()) {
         return EMime;
-    }
-    else if( property == QDocumentGallery::duration.name() ) {
+    } else if (property == QDocumentGallery::duration.name()) {
         return EDuration;
-    }
-    else if( property == QDocumentGallery::performer.name() ) {
+    } else if (property == QDocumentGallery::performer.name()) {
         return EPerformer;
-    }
-    else if( property == QDocumentGallery::width.name() ) {
+    } else if (property == QDocumentGallery::width.name()) {
         return EWidth;
-    }
-    else if( property == QDocumentGallery::height.name() ) {
+    } else if (property == QDocumentGallery::height.name()) {
         return EHeight;
-    }
-    else if( property == QDocumentGallery::orientation.name() ) {
+    } else if (property == QDocumentGallery::orientation.name()) {
         return EOrientation;
-    }
-    else if( property == QDocumentGallery::audioBitRate.name() ) {
+    } else if (property == QDocumentGallery::audioBitRate.name()) {
         return EAudioBitrate;
-    }
-    else if( property == QDocumentGallery::videoBitRate.name() ) {
+    } else if (property == QDocumentGallery::videoBitRate.name()) {
         return EVideoBitrate;
-    }
-    else if( property == QDocumentGallery::frameRate.name() ) {
+    } else if (property == QDocumentGallery::frameRate.name()) {
         return EFrameRate;
-    }
-    else if( property == QDocumentGallery::copyright.name() ) {
+    } else if (property == QDocumentGallery::copyright.name()) {
         return ECopyright;
-    }
-    else if( property == QDocumentGallery::description.name() ) {
+    } else if (property == QDocumentGallery::description.name()) {
         return EDescription;
-    }
-    else if( property == QDocumentGallery::comments.name() ) {
+    } else if (property == QDocumentGallery::comments.name()) {
         return EComments;
-    }
-    else if( property == QDocumentGallery::author.name() ) {
+    } else if (property == QDocumentGallery::author.name()) {
         return EAuthor;
-    }
-    else if( property == QDocumentGallery::rating.name() ) {
+    } else if (property == QDocumentGallery::rating.name()) {
         return ERating;
-    }
-    else if( property == QDocumentGallery::audioCodec.name() ) {
+    } else if (property == QDocumentGallery::audioCodec.name()) {
         return EAudioCodec;
-    }
-    else if( property == QDocumentGallery::playCount.name() ) {
+    } else if (property == QDocumentGallery::playCount.name()) {
         return EPlayCount;
-    }
-    else if( property == QDocumentGallery::sampleRate.name() ) {
+    } else if (property == QDocumentGallery::sampleRate.name()) {
         return ESampleRate;
-    }
-    else if( property == QDocumentGallery::dateTaken.name() ) {
+    } else if (property == QDocumentGallery::dateTaken.name()) {
         return EDateTaken;
-    }
-    else if( property == QDocumentGallery::cameraManufacturer.name() ) {
+    } else if (property == QDocumentGallery::cameraManufacturer.name()) {
         return ECameraManufacturer;
-    }
-    else if( property == QDocumentGallery::cameraModel.name() ) {
+    } else if (property == QDocumentGallery::cameraModel.name()) {
         return ECameraModel;
-    }
-    else if( property == QDocumentGallery::exposureProgram.name() ) {
+    } else if (property == QDocumentGallery::exposureProgram.name()) {
         return EExposureProgram;
-    }
-    else if( property == QDocumentGallery::exposureTime.name() ) {
+    } else if (property == QDocumentGallery::exposureTime.name()) {
         return EExposureTime;
-    }
-    else if( property == QDocumentGallery::fNumber.name() ) {
+    } else if (property == QDocumentGallery::fNumber.name()) {
         return EFNumber;
-    }
-    else if( property == QDocumentGallery::flashEnabled.name() ) {
+    } else if (property == QDocumentGallery::flashEnabled.name()) {
         return EFlashEnabled;
-    }
-    else if( property == QDocumentGallery::focalLength.name() ) {
+    } else if (property == QDocumentGallery::focalLength.name()) {
         return EFocalLength;
-    }
-    else if( property == QDocumentGallery::meteringMode.name() ) {
+    } else if (property == QDocumentGallery::meteringMode.name()) {
         return EMeteringMode;
-    }
-    else if( property == QDocumentGallery::whiteBalance.name() ) {
+    } else if (property == QDocumentGallery::whiteBalance.name()) {
         return EWhiteBalance;
-    }
-    else if( property == QDocumentGallery::language.name() ) {
+    } else if (property == QDocumentGallery::language.name()) {
         return ELanguage;
-    }
-    else if( property == QDocumentGallery::resumePosition.name() ) {
+    } else if (property == QDocumentGallery::resumePosition.name()) {
         return EResumePosition;
     }
     return -1;
@@ -799,59 +755,47 @@ QVariant::Type QDocumentGalleryMDSUtility::GetPropertyType( int key )
     //TODO: remove compile warnings
     switch( key )
     {
-        case EUri:
-        {
-            return QVariant::Url;
-        }
-        case EFileSize:
-        case EAudioCodec:
-        case EPlayCount:
-        {
-            return QVariant::ULongLong;
-        }
-        case ELastModified:
-        case EDateTaken:
-        {
-            return QVariant::DateTime;
-        }
-        case ETitle:
-        case EMime:
-        case EAuthor:
-        case ECopyright:
-        case EDescription:
-        case EComments:
-        case EPerformer:
-        case ECameraManufacturer:
-        case ECameraModel:
-        case ELanguage:
-        {
-            return QVariant::String;
-        }
-        case ERating:
-        case EAudioBitrate:
-        case EWidth:
-        case EHeight:
-        case EOrientation:
-        case EExposureProgram:
-        case EFlashEnabled:
-        case EFocalLength:
-        case EMeteringMode:
-        case EWhiteBalance:
-        case EVideoBitrate:
-        {
-            return QVariant::UInt;
-        }
-        case EDuration:
-        case ESampleRate:
-        case EExposureTime:
-        case EFNumber:
-        case EFrameRate:
-        case EResumePosition:
-        {
-            return QVariant::Double;
-        }
-        default:
-            return QVariant::Invalid;
+    case EUri:
+        return QVariant::Url;
+    case EFileSize:
+    case EAudioCodec:
+    case EPlayCount:
+        return QVariant::ULongLong;
+    case ELastModified:
+    case EDateTaken:
+        return QVariant::DateTime;
+    case ETitle:
+    case EMime:
+    case EAuthor:
+    case ECopyright:
+    case EDescription:
+    case EComments:
+    case EPerformer:
+    case ECameraManufacturer:
+    case ECameraModel:
+    case ELanguage:
+        return QVariant::String;
+    case ERating:
+    case EAudioBitrate:
+    case EWidth:
+    case EHeight:
+    case EOrientation:
+    case EExposureProgram:
+    case EFlashEnabled:
+    case EFocalLength:
+    case EMeteringMode:
+    case EWhiteBalance:
+    case EVideoBitrate:
+        return QVariant::UInt;
+    case EDuration:
+    case ESampleRate:
+    case EExposureTime:
+    case EFNumber:
+    case EFrameRate:
+    case EResumePosition:
+        return QVariant::Double;
+    default:
+        return QVariant::Invalid;
     }
 }
 
@@ -892,8 +836,7 @@ QString QDocumentGalleryMDSUtility::s60Desc8ToQString(const TDesC8& desc)
     QString qtString;
     HBufC* s60str;
     TRAPD(error, s60str = CnvUtfConverter::ConvertToUnicodeFromUtf8L(desc));
-    if (error == KErrNone)
-    {
+    if (error == KErrNone) {
         qtString = QString::fromUtf16(s60str->Ptr(), s60str->Length());
         delete s60str;
     }
@@ -914,8 +857,7 @@ HBufC8* QDocumentGalleryMDSUtility::qStringToS60Desc8(const QString& string)
     TPtrC16 str(reinterpret_cast<const TUint16*>(string.utf16()));
     HBufC8* s60str;
     TRAPD(error, s60str = CnvUtfConverter::ConvertFromUnicodeToUtf8L(str));
-    if (error != KErrNone)
-    {
+    if (error != KErrNone) {
         return NULL;
     }
     return s60str;
@@ -944,164 +886,133 @@ CMdEPropertyDef *QDocumentGalleryMDSUtility::GetMDSPropertyDefL( const QString &
     CMdENamespaceDef& defaultNameSpace )
 {
 #ifdef MDS_25_COMPILATION_ENABLED
-    if( property == QDocumentGallery::fileSize.name() ) {
+    if (property == QDocumentGallery::fileSize.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Object::KBaseObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Object::KSizeProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::lastModified.name() ) {
+    } else if (property == QDocumentGallery::lastModified.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Object::KBaseObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Object::KLastModifiedDateProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::title.name() ) {
+    } else if (property == QDocumentGallery::title.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Object::KBaseObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Object::KTitleProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::mimeType.name() ) {
+    } else if (property == QDocumentGallery::mimeType.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Object::KBaseObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Object::KItemTypeProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::duration.name() ) {
+    } else if (property == QDocumentGallery::duration.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KDurationProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::performer.name() ) {
+    } else if (property == QDocumentGallery::performer.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KArtistProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::width.name() ) {
+    } else if (property == QDocumentGallery::width.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KWidthProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::height.name() ) {
+    } else if (property == QDocumentGallery::height.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KHeightProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::orientation.name() ) {
+    } else if (property == QDocumentGallery::orientation.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Image::KOrientationProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::audioBitRate.name() ) {
+    } else if (property == QDocumentGallery::audioBitRate.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KBitrateProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::videoBitRate.name() ) {
+    } else if (property == QDocumentGallery::videoBitRate.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KBitrateProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::frameRate.name() ) {
+    } else if (property == QDocumentGallery::frameRate.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Video::KVideoObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Video::KFramerateProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::author.name() ) {
+    } else if (property == QDocumentGallery::author.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KAuthorProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::copyright.name() ) {
+    } else if (property == QDocumentGallery::copyright.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KCopyrightProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::description.name() ) {
+    } else if (property == QDocumentGallery::description.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KDescriptionProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::comments.name() ) {
+    } else if (property == QDocumentGallery::comments.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KCommentProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::rating.name() ) {
+    } else if (property == QDocumentGallery::rating.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KRatingProperty );
         return &propDef;
-    }
 //#ifdef MDS_25_COMPILATION_ENABLED
-    else if( property == QDocumentGallery::audioCodec.name() ) {
+    } else if (property == QDocumentGallery::audioCodec.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KAudioFourCCProperty );
         return &propDef;
-    }
 //#endif //MDS_25_COMPILATION_ENABLED
-    else if( property == QDocumentGallery::playCount.name() ) {
+    } else if (property == QDocumentGallery::playCount.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::sampleRate.name() ) {
+    } else if (property == QDocumentGallery::sampleRate.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Audio::KAudioObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Audio::KSamplingFrequencyProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::dateTaken.name() ) {
+    } else if (property == QDocumentGallery::dateTaken.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Image::KDateTimeOriginalProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::cameraManufacturer.name() ) {
+    } else if (property == QDocumentGallery::cameraManufacturer.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Image::KMakeProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::cameraModel.name() ) {
+    } else if (property == QDocumentGallery::cameraModel.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Image::KModelProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::exposureProgram.name() ) {
+    } else if (property == QDocumentGallery::exposureProgram.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Image::KExposureProgramProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::exposureTime.name() ) {
+    } else if (property == QDocumentGallery::exposureTime.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Image::KExposureTimeProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::fNumber.name() ) {
+    } else if (property == QDocumentGallery::fNumber.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Image::KFNumberProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::flashEnabled.name() ) {
+    } else if (property == QDocumentGallery::flashEnabled.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Image::KFlashProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::focalLength.name() ) {
+    } else if (property == QDocumentGallery::focalLength.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Image::KFocalLengthIn35mmFilmProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::meteringMode.name() ) {
+    } else if (property == QDocumentGallery::meteringMode.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Image::KMeteringModeProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::whiteBalance.name() ) {
+    } else if (property == QDocumentGallery::whiteBalance.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Image::KWhiteBalanceProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::language.name() ) {
+    } else if (property == QDocumentGallery::language.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Video::KVideoObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Video::KAudioLanguageProperty );
         return &propDef;
-    }
-    else if( property == QDocumentGallery::resumePosition.name() ) {
+    } else if (property == QDocumentGallery::resumePosition.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Video::KVideoObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Video::KLastPlayPositionProperty );
         return &propDef;
@@ -1115,44 +1026,38 @@ int QDocumentGalleryMDSUtility::SetupQueryConditions(CMdEObjectQuery *query,
     CMdENamespaceDef& defaultNameSpace)
 {
     // Add filtering conditions
-    int conditionError = QGalleryAbstractRequest::NoResult;
+    int conditionError = QDocumentGallery::NoError;
     CMdELogicCondition &rootCond = query->Conditions();
 
     // Add filtering conditions
     QGalleryFilter filter = request->filter();
 
     switch (filter.type()) {
-        case QGalleryFilter::Invalid:
+    case QGalleryFilter::Invalid:
         break;
-        case QGalleryFilter::Intersection:
-        {
-            rootCond.SetOperator( ELogicConditionOperatorAnd );
-            conditionError = AddIntersectionFilter( rootCond, filter, defaultNameSpace );
-            break;
-        }
-        case QGalleryFilter::Union:
-        {
-            rootCond.SetOperator( ELogicConditionOperatorOr );
-            conditionError = AddUnionFilter( rootCond, filter, defaultNameSpace );
-            break;
-        }
-        case QGalleryFilter::MetaData:
-        {
-            conditionError = AddMetadataFilter( rootCond, filter, defaultNameSpace );
-            break;
-        }
-        default:
-        return QGalleryAbstractRequest::UnsupportedFilterTypeError;
+    case QGalleryFilter::Intersection:
+        rootCond.SetOperator( ELogicConditionOperatorAnd );
+        conditionError = AddIntersectionFilter( rootCond, filter, defaultNameSpace );
+        break;
+    case QGalleryFilter::Union:
+        rootCond.SetOperator( ELogicConditionOperatorOr );
+        conditionError = AddUnionFilter( rootCond, filter, defaultNameSpace );
+        break;
+    case QGalleryFilter::MetaData:
+        conditionError = AddMetadataFilter( rootCond, filter, defaultNameSpace );
+        break;
+    default:
+        return QDocumentGallery::FilterError;
     }
 
-    if( conditionError != QGalleryAbstractRequest::NoResult ) {
+    if (conditionError != QDocumentGallery::NoError) {
         return conditionError;
     }
 
     // Add sorting conditions
     const QStringList sortPropertyNames = request->sortPropertyNames();
     const bool descending = !sortPropertyNames.isEmpty()
-    && sortPropertyNames.first().startsWith(QLatin1Char('-'));
+            && sortPropertyNames.first().startsWith(QLatin1Char('-'));
 
     for (QStringList::const_iterator it = sortPropertyNames.constBegin();
         it != sortPropertyNames.constEnd();
@@ -1168,18 +1073,17 @@ int QDocumentGalleryMDSUtility::SetupQueryConditions(CMdEObjectQuery *query,
 
         CMdEPropertyDef *propDef = NULL;
         TRAPD( err, propDef = GetMDSPropertyDefL( propertyName, defaultNameSpace ) );
-        if( err || !propDef ) {
+        if (err || !propDef) {
             continue;
         }
 
-        if( ascending ) {
+        if (ascending) {
             TRAP_IGNORE( query->AppendOrderRuleL( TMdEOrderRule( *propDef, ESortAscending ) ) );
-        }
-        else {
+        } else {
             TRAP_IGNORE( query->AppendOrderRuleL( TMdEOrderRule( *propDef, ESortDescending ) ) );
         }
     }
-    return QGalleryAbstractRequest::NoResult;
+    return QDocumentGallery::NoError;
 }
 
 bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVariant &value, int key )
@@ -1187,59 +1091,52 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
 #ifdef MDS_25_COMPILATION_ENABLED
     switch( key )
     {
-        case EUri:
-        {
-            return false;
-        }
-        case EFileSize:
+    case EUri:
+        return false;
+    case EFileSize:
         {
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Object::KSizeProperty );
             CMdEProperty* sizeProp = NULL;
             item->Property( propDef, sizeProp );
             if ( sizeProp ) {
                 TRAPD( err, sizeProp->SetUint32ValueL( value.toULongLong() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddUint32PropertyL( propDef, value.toULongLong() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case ELastModified:
+    case ELastModified:
         {
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Object::KLastModifiedDateProperty );
             CMdEProperty* modProp = NULL;
             item->Property( propDef, modProp );
             if ( modProp ) {
                 TRAPD( err, modProp->SetTimeValueL( QDateTimetosymbianTTime( value.toDateTime() ) ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
             else {
                 TRAPD( err, item->AddTimePropertyL( propDef, QDateTimetosymbianTTime( value.toDateTime() ) ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case ETitle:
+    case ETitle:
         {
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Object::KTitleProperty );
             CMdEProperty* titleProp = NULL;
@@ -1247,32 +1144,27 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
             if ( titleProp ) {
                 TRAPD( err, titleProp->SetTextValueL( text ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case EMime:
+    case EMime:
+        return false;
+    case EAuthor:
         {
-            return false;
-        }
-        case EAuthor:
-        {
-            if( item->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                item->Def().Name() != MdeConstants::Video::KVideoObject &&
-                item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KAuthorProperty );
@@ -1281,28 +1173,25 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
             if ( authorProp ) {
                 TRAPD( err, authorProp->SetTextValueL( text ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case ECopyright:
+    case ECopyright:
         {
-            if( item->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                item->Def().Name() != MdeConstants::Video::KVideoObject &&
-                item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject ) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KCopyrightProperty );
@@ -1311,28 +1200,25 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
             if ( copyProp ) {
                 TRAPD( err, copyProp->SetTextValueL( text ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case EDescription:
+    case EDescription:
         {
-            if( item->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                item->Def().Name() != MdeConstants::Video::KVideoObject &&
-                item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KDescriptionProperty );
@@ -1341,28 +1227,25 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
             if ( desProp ) {
                 TRAPD( err, desProp->SetTextValueL( text ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case EComments:
+    case EComments:
         {
-            if( item->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                item->Def().Name() != MdeConstants::Video::KVideoObject &&
-                item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KCommentProperty );
@@ -1371,28 +1254,25 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
             if ( comProp ) {
                 TRAPD( err, comProp->SetTextValueL( text ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case ERating:
+    case ERating:
         {
-            if( item->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                item->Def().Name() != MdeConstants::Video::KVideoObject &&
-                item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KRatingProperty );
@@ -1400,28 +1280,25 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, rateProp );
             if ( rateProp ) {
                 TRAPD( err, rateProp->SetUint8ValueL( value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddUint8PropertyL( propDef, value.toUInt() ) );
-                if( err ) {
+                if(err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case EDuration:
+    case EDuration:
         {
-            if( item->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                item->Def().Name() != MdeConstants::Video::KVideoObject &&
-                item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KDurationProperty );
@@ -1429,28 +1306,25 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, duraProp );
             if ( duraProp ) {
                 TRAPD( err, duraProp->SetReal32ValueL( value.toDouble() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddReal32PropertyL( propDef, value.toDouble() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case EPerformer:
+    case EPerformer:
         {
-            if( item->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                item->Def().Name() != MdeConstants::Video::KVideoObject &&
-                item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KArtistProperty );
@@ -1459,29 +1333,26 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
             if ( artistProp ) {
                 TRAPD( err, artistProp->SetTextValueL( text ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
 //#ifdef MDS_25_COMPILATION_ENABLED            
-        case EAudioCodec:
+    case EAudioCodec:
         {
-            if( item->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                item->Def().Name() != MdeConstants::Video::KVideoObject &&
-                item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject ) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KAudioFourCCProperty );
@@ -1489,30 +1360,27 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, codecProp );
             if ( codecProp ) {
                 TRAPD( err, codecProp->SetUint32ValueL( value.toULongLong() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddUint32PropertyL( propDef, value.toULongLong() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
 //#endif //MDS_25_COMPILATION_ENABLED
-        case EAudioBitrate:
-        case EVideoBitrate:
+    case EAudioBitrate:
+    case EVideoBitrate:
         {
-            if( item->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                item->Def().Name() != MdeConstants::Video::KVideoObject &&
-                item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KBitrateProperty );
@@ -1520,28 +1388,25 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, brateProp );
             if ( brateProp ) {
                 TRAPD( err, brateProp->SetUint16ValueL( value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddUint16PropertyL( propDef, value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case EPlayCount:
+    case EPlayCount:
         {
-            if( item->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                item->Def().Name() != MdeConstants::Video::KVideoObject &&
-                item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if(item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
@@ -1549,26 +1414,23 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, countProp );
             if ( countProp ) {
                 TRAPD( err, countProp->SetUint32ValueL( value.toULongLong() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddUint32PropertyL( propDef, value.toULongLong() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case ESampleRate:
+    case ESampleRate:
         {
-            if( item->Def().Name() != MdeConstants::Audio::KAudioObject ) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Audio::KSamplingFrequencyProperty );
@@ -1576,28 +1438,25 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, samplingProp );
             if ( samplingProp ) {
                 TRAPD( err, samplingProp->SetReal32ValueL( value.toDouble() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddReal32PropertyL( propDef, value.toDouble() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case EWidth:
+    case EWidth:
         {
-            if( item->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                item->Def().Name() != MdeConstants::Video::KVideoObject &&
-                item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KWidthProperty );
@@ -1605,28 +1464,25 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, widthProp );
             if ( widthProp ) {
                 TRAPD( err, widthProp->SetUint16ValueL( value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddUint16PropertyL( propDef, value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case EHeight:
+    case EHeight:
         {
-            if( item->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                item->Def().Name() != MdeConstants::Video::KVideoObject &&
-                item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KHeightProperty );
@@ -1634,26 +1490,23 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, heightProp );
             if ( heightProp ) {
                 TRAPD( err, heightProp->SetUint16ValueL( value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddUint16PropertyL( propDef, value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case EOrientation:
+    case EOrientation:
         {
-            if( item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject ) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KOrientationProperty );
@@ -1661,26 +1514,24 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, orientationProp );
             if ( orientationProp ) {
                 TRAPD( err, orientationProp->SetUint16ValueL( value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
             else {
                 TRAPD( err, item->AddUint16PropertyL( propDef, value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case EDateTaken:
+    case EDateTaken:
         {
-            if( item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KDateTimeOriginalProperty );
@@ -1688,26 +1539,23 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, dateProp );
             if ( dateProp ) {
                 TRAPD( err, dateProp->SetTimeValueL( QDateTimetosymbianTTime( value.toDateTime() ) ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddTimePropertyL( propDef, QDateTimetosymbianTTime( value.toDateTime() ) ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case ECameraManufacturer:
+    case ECameraManufacturer:
         {
-            if( item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KMakeProperty );
@@ -1716,26 +1564,23 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
             if ( makeProp ) {
                 TRAPD( err, makeProp->SetTextValueL( text ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case ECameraModel:
+    case ECameraModel:
         {
-            if( item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KModelProperty );
@@ -1744,26 +1589,23 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
             if ( modelProp ) {
                 TRAPD( err, modelProp->SetTextValueL( text ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case EExposureProgram:
+    case EExposureProgram:
         {
-            if( item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KExposureProgramProperty );
@@ -1771,26 +1613,23 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, exppProp );
             if ( exppProp ) {
                 TRAPD( err, exppProp->SetUint16ValueL( value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddUint16PropertyL( propDef, value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case EExposureTime:
+    case EExposureTime:
         {
-            if( item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KExposureTimeProperty );
@@ -1798,26 +1637,23 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, exptProp );
             if ( exptProp ) {
                 TRAPD( err, exptProp->SetReal32ValueL( value.toDouble() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddReal32PropertyL( propDef, value.toDouble() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case EFNumber:
+    case EFNumber:
         {
-            if( item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KFNumberProperty );
@@ -1825,26 +1661,23 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, fnumProp );
             if ( fnumProp ) {
                 TRAPD( err, fnumProp->SetReal32ValueL( value.toDouble() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddReal32PropertyL( propDef, value.toDouble() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case EFlashEnabled:
+    case EFlashEnabled:
         {
-            if( item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KFlashProperty );
@@ -1852,26 +1685,23 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, flashProp );
             if ( flashProp ) {
                 TRAPD( err, flashProp->SetUint16ValueL( value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddUint16PropertyL( propDef, value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case EFocalLength:
+    case EFocalLength:
         {
-            if( item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KFocalLengthIn35mmFilmProperty );
@@ -1879,26 +1709,23 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, focalProp );
             if ( focalProp ) {
                 TRAPD( err, focalProp->SetUint16ValueL( value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddUint16PropertyL( propDef, value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        case EMeteringMode:
+    case EMeteringMode:
         {
-            if( item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KMeteringModeProperty );
@@ -1906,16 +1733,15 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, metProp );
             if ( metProp ) {
                 TRAPD( err, metProp->SetUint16ValueL( value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
                 }
                 else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 TRAPD( err, item->AddUint16PropertyL( propDef, value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
                 }
                 else {
@@ -1925,7 +1751,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
         }
         case EWhiteBalance:
         {
-            if( item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KWhiteBalanceProperty );
@@ -1933,26 +1759,24 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, whiteProp );
             if ( whiteProp ) {
                 TRAPD( err, whiteProp->SetUint16ValueL( value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
             else {
                 TRAPD( err, item->AddUint16PropertyL( propDef, value.toUInt() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
         case ELanguage:
         {
-            if( item->Def().Name() != MdeConstants::Video::KVideoObject ) {
+            if (item->Def().Name() != MdeConstants::Video::KVideoObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Video::KAudioLanguageProperty );
@@ -1961,26 +1785,24 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
             if ( langProp ) {
                 TRAPD( err, langProp->SetTextValueL( text ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
             else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
         case EFrameRate:
         {
-            if( item->Def().Name() != MdeConstants::Video::KVideoObject ) {
+            if (item->Def().Name() != MdeConstants::Video::KVideoObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Video::KFramerateProperty );
@@ -1988,26 +1810,24 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, framerProp );
             if ( framerProp ) {
                 TRAPD( err, framerProp->SetReal32ValueL( value.toDouble() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
             else {
                 TRAPD( err, item->AddReal32PropertyL( propDef, value.toDouble() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
         case EResumePosition:
         {
-            if( item->Def().Name() != MdeConstants::Video::KVideoObject ) {
+            if (item->Def().Name() != MdeConstants::Video::KVideoObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Video::KLastPlayPositionProperty );
@@ -2015,25 +1835,23 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, posProp );
             if ( posProp ) {
                 TRAPD( err, posProp->SetReal32ValueL( value.toDouble() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
             else {
                 TRAPD( err, item->AddReal32PropertyL( propDef, value.toDouble() ) );
-                if( err ) {
+                if (err) {
                     return false;
-                }
-                else {
+                } else {
                     return true;
                 }
             }
         }
-        default:
-            return false;
+    default:
+        return false;
     }
 #endif //MDS_25_COMPILATION_ENABLED
 }
@@ -2044,39 +1862,29 @@ int QDocumentGalleryMDSUtility::InsertUInt32PropertyCondition( CMdELogicConditio
     QGalleryMetaDataFilter &filter )
 {
     int err;
-    switch( filter.comparator() ) {
-        case QGalleryFilter::Equals:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEInt64Equal( valueToMatch.toULongLong() ) ) );
-            break;
-        }
-        case QGalleryFilter::LessThan:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEInt64Less( valueToMatch.toULongLong() ) ) );
-            break;
-        }
-        case QGalleryFilter::GreaterThan:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEInt64Greater( valueToMatch.toULongLong() ) ) );
-            break;
-        }
-        case QGalleryFilter::LessThanEquals:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEInt64LessEqual( valueToMatch.toULongLong() ) ) );
-            break;
-        }
-        case QGalleryFilter::GreaterThanEquals:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEInt64GreaterEqual( valueToMatch.toULongLong() ) ) );
-            break;
-        }
-        default:
-            return QGalleryAbstractRequest::UnsupportedFilterTypeError;
+    switch (filter.comparator()) {
+    case QGalleryFilter::Equals:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdEInt64Equal(valueToMatch.toULongLong())));
+        break;
+    case QGalleryFilter::LessThan:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdEInt64Less(valueToMatch.toULongLong())));
+        break;
+    case QGalleryFilter::GreaterThan:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdEInt64Greater(valueToMatch.toULongLong())));
+        break;
+    case QGalleryFilter::LessThanEquals:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdEInt64LessEqual(valueToMatch.toULongLong())));
+        break;
+    case QGalleryFilter::GreaterThanEquals:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdEInt64GreaterEqual(valueToMatch.toULongLong())));
+        break;
+    default:
+        return QDocumentGallery::FilterError;
     }
-    if( err ) {
-        return QGalleryAbstractRequest::PropertyTypeError;
+    if (err) {
+        return QDocumentGallery::FilterError;
     }
-    return QGalleryAbstractRequest::NoResult;
+    return QDocumentGallery::NoError;
 }
 
 int QDocumentGalleryMDSUtility::InsertTTImePropertyCondition( CMdELogicCondition &rootCond,
@@ -2086,39 +1894,29 @@ int QDocumentGalleryMDSUtility::InsertTTImePropertyCondition( CMdELogicCondition
 {
     int err;
     TTime time( QDateTimetosymbianTTime( valueToMatch.toDateTime() ) );
-    switch( filter.comparator() ) {
-        case QGalleryFilter::Equals:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdETimeEqual( time ) ) );
-            break;
-        }
-        case QGalleryFilter::LessThan:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdETimeLess( time ) ) );
-            break;
-        }
-        case QGalleryFilter::GreaterThan:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdETimeGreater( time ) ) );
-            break;
-        }
-        case QGalleryFilter::LessThanEquals:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdETimeLessEqual( time ) ) );
-            break;
-        }
-        case QGalleryFilter::GreaterThanEquals:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdETimeGreaterEqual( time ) ) );
-            break;
-        }
-        default:
-            return QGalleryAbstractRequest::UnsupportedFilterTypeError;
+    switch (filter.comparator()) {
+    case QGalleryFilter::Equals:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdETimeEqual(time)));
+        break;
+    case QGalleryFilter::LessThan:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdETimeLess(time)));
+        break;
+    case QGalleryFilter::GreaterThan:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdETimeGreater(time)));
+        break;
+    case QGalleryFilter::LessThanEquals:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdETimeLessEqual(time)));
+        break;
+    case QGalleryFilter::GreaterThanEquals:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdETimeGreaterEqual(time)));
+        break;
+    default:
+        return QDocumentGallery::FilterError;
     }
-    if( err ) {
-        return QGalleryAbstractRequest::PropertyTypeError;
+    if (err) {
+        return QDocumentGallery::FilterError;
     }
-    return QGalleryAbstractRequest::NoResult;
+    return QDocumentGallery::NoError;
 }
 
 int QDocumentGalleryMDSUtility::InsertStringPropertyCondition( CMdELogicCondition &rootCond,
@@ -2127,43 +1925,35 @@ int QDocumentGalleryMDSUtility::InsertStringPropertyCondition( CMdELogicConditio
     QGalleryMetaDataFilter &filter )
 {
     int err;
-    const TDesC text( qStringToS60Desc( valueToMatch.toString() )->Des() );
-    switch( filter.comparator() ) {
-        case QGalleryFilter::Equals:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef,
-                    ETextPropertyConditionCompareEquals,
-                    text) );
-            break;
-        }
-        case QGalleryFilter::Contains:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef,
-                    ETextPropertyConditionCompareContains,
-                    text) );
-            break;
-        }
-        case QGalleryFilter::StartsWith:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef,
-                    ETextPropertyConditionCompareBeginsWith,
-                    text) );
-            break;
-        }
-        case QGalleryFilter::EndsWith:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef,
-                    ETextPropertyConditionCompareEndsWith,
-                    text) );
-            break;
-        }
-        default:
-            return QGalleryAbstractRequest::UnsupportedFilterTypeError;
+    const TDesC text(qStringToS60Desc(valueToMatch.toString() )->Des());
+    switch (filter.comparator()) {
+    case QGalleryFilter::Equals:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef,
+                ETextPropertyConditionCompareEquals,
+                text) );
+        break;
+    case QGalleryFilter::Contains:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef,
+                ETextPropertyConditionCompareContains,
+                text) );
+        break;
+    case QGalleryFilter::StartsWith:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef,
+                ETextPropertyConditionCompareBeginsWith,
+                text));
+        break;
+    case QGalleryFilter::EndsWith:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef,
+                ETextPropertyConditionCompareEndsWith,
+                text));
+        break;
+    default:
+        return QDocumentGallery::FilterError;
     }
-    if( err ) {
-        return QGalleryAbstractRequest::PropertyTypeError;
+    if (err) {
+        return QDocumentGallery::FilterError;
     }
-    return QGalleryAbstractRequest::NoResult;
+    return QDocumentGallery::NoError;
 }
 
 int QDocumentGalleryMDSUtility::InsertUriPropertyCondition( CMdELogicCondition &rootCond,
@@ -2172,26 +1962,20 @@ int QDocumentGalleryMDSUtility::InsertUriPropertyCondition( CMdELogicCondition &
 {
     int err;
     const TDesC text( qStringToS60Desc( valueToMatch.toString() )->Des() );
-    switch( filter.comparator() ) {
-        case QGalleryFilter::Equals:
-        {
-            TRAP( err, rootCond.AddObjectConditionL( EObjectConditionCompareUri,
-                    text) );
-            break;
-        }
-        case QGalleryFilter::StartsWith:
-        {
-            TRAP( err, rootCond.AddObjectConditionL( EObjectConditionCompareUriBeginsWith,
-                    text) );
-            break;
-        }
-        default:
-            return QGalleryAbstractRequest::UnsupportedFilterTypeError;
+    switch (filter.comparator()) {
+    case QGalleryFilter::Equals:
+        TRAP(err, rootCond.AddObjectConditionL(EObjectConditionCompareUri, text));
+        break;
+    case QGalleryFilter::StartsWith:
+        TRAP(err, rootCond.AddObjectConditionL(EObjectConditionCompareUriBeginsWith, text));
+        break;
+    default:
+        return QDocumentGallery::FilterError;
     }
-    if( err ) {
-        return QGalleryAbstractRequest::PropertyTypeError;
+    if (err) {
+        return QDocumentGallery::FilterError;
     }
-    return QGalleryAbstractRequest::NoResult;
+    return QDocumentGallery::NoError;
 }
 
 int QDocumentGalleryMDSUtility::InsertUIntPropertyCondition( CMdELogicCondition &rootCond,
@@ -2200,39 +1984,29 @@ int QDocumentGalleryMDSUtility::InsertUIntPropertyCondition( CMdELogicCondition 
     QGalleryMetaDataFilter &filter )
 {
     int err;
-    switch( filter.comparator() ) {
-        case QGalleryFilter::Equals:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEUintEqual( valueToMatch.toULongLong() ) ) );
-            break;
-        }
-        case QGalleryFilter::LessThan:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEUintLess( valueToMatch.toULongLong() ) ) );
-            break;
-        }
-        case QGalleryFilter::GreaterThan:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEUintGreater( valueToMatch.toULongLong() ) ) );
-            break;
-        }
-        case QGalleryFilter::LessThanEquals:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEUintLessEqual( valueToMatch.toULongLong() ) ) );
-            break;
-        }
-        case QGalleryFilter::GreaterThanEquals:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdEUintGreaterEqual( valueToMatch.toULongLong() ) ) );
-            break;
-        }
-        default:
-            return QGalleryAbstractRequest::UnsupportedFilterTypeError;
+    switch (filter.comparator()) {
+    case QGalleryFilter::Equals:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdEUintEqual(valueToMatch.toULongLong())));
+        break;
+    case QGalleryFilter::LessThan:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdEUintLess(valueToMatch.toULongLong())));
+        break;
+    case QGalleryFilter::GreaterThan:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdEUintGreater(valueToMatch.toULongLong())));
+        break;
+    case QGalleryFilter::LessThanEquals:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdEUintLessEqual(valueToMatch.toULongLong())));
+        break;
+    case QGalleryFilter::GreaterThanEquals:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdEUintGreaterEqual(valueToMatch.toULongLong())));
+        break;
+    default:
+        return QDocumentGallery::FilterError;
     }
-    if( err ) {
-        return QGalleryAbstractRequest::PropertyTypeError;
+    if (err) {
+        return QDocumentGallery::FilterError;
     }
-    return QGalleryAbstractRequest::NoResult;
+    return QDocumentGallery::NoError;
 }
 
 int QDocumentGalleryMDSUtility::InsertReal32PropertyCondition( CMdELogicCondition &rootCond,
@@ -2241,39 +2015,29 @@ int QDocumentGalleryMDSUtility::InsertReal32PropertyCondition( CMdELogicConditio
     QGalleryMetaDataFilter &filter )
 {
     int err;
-    switch( filter.comparator() ) {
-        case QGalleryFilter::Equals:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdERealEqual( valueToMatch.toDouble() ) ) );
-            break;
-        }
-        case QGalleryFilter::LessThan:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdERealLess( valueToMatch.toDouble() ) ) );
-            break;
-        }
-        case QGalleryFilter::GreaterThan:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdERealGreater( valueToMatch.toDouble() ) ) );
-            break;
-        }
-        case QGalleryFilter::LessThanEquals:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdERealLessEqual( valueToMatch.toDouble() ) ) );
-            break;
-        }
-        case QGalleryFilter::GreaterThanEquals:
-        {
-            TRAP( err, rootCond.AddPropertyConditionL( *propDef, TMdERealGreaterEqual( valueToMatch.toDouble() ) ) );
-            break;
-        }
-        default:
-            return QGalleryAbstractRequest::UnsupportedFilterTypeError;
+    switch (filter.comparator()) {
+    case QGalleryFilter::Equals:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdERealEqual(valueToMatch.toDouble())));
+        break;
+    case QGalleryFilter::LessThan:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdERealLess(valueToMatch.toDouble())));
+        break;
+    case QGalleryFilter::GreaterThan:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdERealGreater(valueToMatch.toDouble())));
+        break;
+    case QGalleryFilter::LessThanEquals:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdERealLessEqual(valueToMatch.toDouble())));
+        break;
+    case QGalleryFilter::GreaterThanEquals:
+        TRAP(err, rootCond.AddPropertyConditionL(*propDef, TMdERealGreaterEqual(valueToMatch.toDouble())));
+        break;
+    default:
+        return QDocumentGallery::FilterError;
     }
-    if( err ) {
-        return QGalleryAbstractRequest::PropertyTypeError;
+    if (err) {
+        return QDocumentGallery::FilterError;
     }
-    return QGalleryAbstractRequest::NoResult;
+    return QDocumentGallery::NoError;
 }
 
 int QDocumentGalleryMDSUtility::AddFilter(CMdELogicCondition &rootCond,
@@ -2281,46 +2045,44 @@ int QDocumentGalleryMDSUtility::AddFilter(CMdELogicCondition &rootCond,
     CMdENamespaceDef& defaultNameSpace)
 {
     switch (filter.type()) {
-        case QGalleryFilter::Invalid:
-        return QGalleryAbstractRequest::NoResult;
-        case QGalleryFilter::Intersection:
+    case QGalleryFilter::Invalid:
+        return QDocumentGallery::NoError;
+    case QGalleryFilter::Intersection:
         {
             CMdELogicCondition *rootNode = NULL;
             TRAPD( err, rootNode = &rootCond.AddLogicConditionL( ELogicConditionOperatorAnd ) );
-            if( err ) {
-                return QGalleryAbstractRequest::RequestError;
+            if (err) {
+                return QDocumentGallery::FilterError;
             }
 
-            int conditionError = QGalleryAbstractRequest::NoResult;
+            int conditionError = QDocumentGallery::NoError;
             conditionError = AddIntersectionFilter( *rootNode, filter, defaultNameSpace );
-            if( conditionError != QGalleryAbstractRequest::NoResult ) {
+            if (conditionError != QDocumentGallery::NoError) {
                 return conditionError;
             }
             break;
         }
-        case QGalleryFilter::Union:
+    case QGalleryFilter::Union:
         {
             CMdELogicCondition *rootNode = NULL;
             TRAPD( err, rootNode = &rootCond.AddLogicConditionL( ELogicConditionOperatorOr ) );
-            if( err ) {
-                return QGalleryAbstractRequest::RequestError;
+            if (err) {
+                return QDocumentGallery::FilterError;
             }
 
-            int conditionError = QGalleryAbstractRequest::NoResult;
+            int conditionError = QDocumentGallery::NoError;
             conditionError = AddUnionFilter( *rootNode, filter, defaultNameSpace );
-            if( conditionError != QGalleryAbstractRequest::NoResult ) {
+            if (conditionError != QDocumentGallery::NoError) {
                 return conditionError;
             }
             break;
         }
-        case QGalleryFilter::MetaData:
-        {
-            return AddMetadataFilter( rootCond, filter, defaultNameSpace );
-        }
-        default:
-            return QGalleryAbstractRequest::UnsupportedFilterTypeError;
+    case QGalleryFilter::MetaData:
+        return AddMetadataFilter(rootCond, filter, defaultNameSpace);
+    default:
+        return QDocumentGallery::FilterError;
     }
-    return QGalleryAbstractRequest::NoResult;
+    return QDocumentGallery::NoError;
 }
 
 int QDocumentGalleryMDSUtility::AddIntersectionFilter(CMdELogicCondition &rootCond,
@@ -2330,14 +2092,14 @@ int QDocumentGalleryMDSUtility::AddIntersectionFilter(CMdELogicCondition &rootCo
     QGalleryIntersectionFilter intersectionFilter = filter.toIntersectionFilter();
     QList<QGalleryFilter> filters = intersectionFilter.filters();
     int filterCount = filters.count();
-    int conditionError = QGalleryAbstractRequest::NoResult;
-    for( int i = 0; i < filterCount; i++ ) {
+    int conditionError = QDocumentGallery::NoError;
+    for (int i = 0; i < filterCount; i++) {
         conditionError = AddFilter( rootCond, filters[i], defaultNameSpace );
-        if( conditionError != QGalleryAbstractRequest::NoResult ) {
+        if (conditionError != QDocumentGallery::NoError) {
             return conditionError;
         }
     }
-    return QGalleryAbstractRequest::NoResult;
+    return QDocumentGallery::NoError;
 }
 
 int QDocumentGalleryMDSUtility::AddUnionFilter(CMdELogicCondition &rootCond,
@@ -2347,14 +2109,14 @@ int QDocumentGalleryMDSUtility::AddUnionFilter(CMdELogicCondition &rootCond,
     QGalleryUnionFilter unionFilter = filter.toUnionFilter();
     QList<QGalleryFilter> filters = unionFilter.filters();
     int filterCount = filters.count();
-    int conditionError = QGalleryAbstractRequest::NoResult;
-    for( int i = 0; i < filterCount; i++ ) {
+    int conditionError = QDocumentGallery::NoError;
+    for (int i = 0; i < filterCount; i++) {
         conditionError = AddFilter( rootCond, filters[i], defaultNameSpace );
-        if( conditionError != QGalleryAbstractRequest::NoResult ) {
+        if (conditionError != QDocumentGallery::NoError) {
             return conditionError;
         }
     }
-    return QGalleryAbstractRequest::NoResult;
+    return QDocumentGallery::NoError;
 }
 
 int QDocumentGalleryMDSUtility::AddMetadataFilter(CMdELogicCondition &rootCond,
@@ -2365,57 +2127,46 @@ int QDocumentGalleryMDSUtility::AddMetadataFilter(CMdELogicCondition &rootCond,
     QString propertyToMatch = metaDataFilter.propertyName();
 
     bool uriComparison = false;
-    if( propertyToMatch == QDocumentGallery::url.name() ) {
+    if (propertyToMatch == QDocumentGallery::url.name()) {
         uriComparison = true;
     }
 
     CMdEPropertyDef *propDef = NULL;
-    if( !uriComparison ) {
+    if (!uriComparison) {
         TRAPD( err, propDef = GetMDSPropertyDefL( propertyToMatch, defaultNameSpace ) );
-        if( err || !propDef ) {
-            return QGalleryAbstractRequest::PropertyTypeError;
+        if (err || !propDef) {
+            return QDocumentGallery::FilterError;
         }
     }
 
     QVariant valueToMatch = metaDataFilter.value();
-    int conditionError = QGalleryAbstractRequest::NoResult;
-    if( uriComparison ) {
+    int conditionError = QDocumentGallery::NoError;
+    if (uriComparison) {
         conditionError = InsertUriPropertyCondition( rootCond, valueToMatch, metaDataFilter );
-    }
-    else {
+    } else {
         TPropertyType propertyType = propDef->PropertyType();
-        switch( propertyType ) {
-            case EPropertyUint32:
-            case EPropertyInt64:
-            {
-                conditionError = InsertUInt32PropertyCondition( rootCond, propDef, valueToMatch, metaDataFilter );
-                break;
-            }
-            case EPropertyTime:
-            {
-                conditionError = InsertTTImePropertyCondition( rootCond, propDef, valueToMatch, metaDataFilter );
-                break;
-            }
-            case EPropertyText:
-            {
-                conditionError = InsertStringPropertyCondition( rootCond, propDef, valueToMatch, metaDataFilter );
-                break;
-            }
-            case EPropertyBool:
-            case EPropertyUint8:
-            case EPropertyUint16:
-            {
-                conditionError = InsertUIntPropertyCondition( rootCond, propDef, valueToMatch, metaDataFilter );
-                break;
-            }
-            case EPropertyReal32:
-            case EPropertyReal64:
-            {
-                conditionError = InsertReal32PropertyCondition( rootCond, propDef, valueToMatch, metaDataFilter );
-                break;
-            }
-            default:
-                return QGalleryAbstractRequest::PropertyTypeError;
+        switch (propertyType) {
+        case EPropertyUint32:
+        case EPropertyInt64:
+            conditionError = InsertUInt32PropertyCondition(rootCond, propDef, valueToMatch, metaDataFilter);
+            break;
+        case EPropertyTime:
+            conditionError = InsertTTImePropertyCondition(rootCond, propDef, valueToMatch, metaDataFilter);
+            break;
+        case EPropertyText:
+            conditionError = InsertStringPropertyCondition(rootCond, propDef, valueToMatch, metaDataFilter);
+            break;
+        case EPropertyBool:
+        case EPropertyUint8:
+        case EPropertyUint16:
+            conditionError = InsertUIntPropertyCondition(rootCond, propDef, valueToMatch, metaDataFilter);
+            break;
+        case EPropertyReal32:
+        case EPropertyReal64:
+            conditionError = InsertReal32PropertyCondition(rootCond, propDef, valueToMatch, metaDataFilter);
+            break;
+        default:
+            return QDocumentGallery::FilterError;
         }
     }
     return conditionError;

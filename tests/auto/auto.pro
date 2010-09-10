@@ -49,8 +49,8 @@ contains(mobility_modules,location) {
         SUBDIRS += qgeoinfosources_wince
     }
 
-    SUBDIRS +=  qlandmarkfilehandler_gpx
-                #qlandmarkfilehandler_lmx
+    SUBDIRS +=  qlandmarkfilehandler_gpx \
+                qlandmarkfilehandler_lmx
     
     SUBDIRS += qlandmarkmanagerengine_sqlite
 }
@@ -204,5 +204,12 @@ contains(mobility_modules,gallery) {
                 qgallerytrackerresultset_maemo5 \
                 qgallerytrackerschema_maemo5
     }
+}
+
+# Feedback
+contains(mobility_modules,feedback) {
+    SUBDIRS += \
+        qfeedbackactuator \
+        qfeedbackhapticseffect
 }
 

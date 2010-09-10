@@ -69,8 +69,8 @@ public:
     QGeoTiledMapCircleObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapCircleObjectInfo();
 
-    void objectUpdate();
-    void mapUpdate();
+    void objectUpdated();
+    void mapUpdated();
 
     QGeoMapCircleObject* circle;
     QGraphicsPolygonItem *polygonItem;

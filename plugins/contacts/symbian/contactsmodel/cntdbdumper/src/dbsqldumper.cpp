@@ -332,6 +332,10 @@ const TDesC& CDbStructure::Column(TInt aTableIndex, TInt aColumnIndex)
 					{
 					return KCommAddrContactId;
 					}
+				case 5:
+                    {
+                    return KCommAddrExtraTypeInfo;
+                    }
 				}
 			break;
 		case KContactPredSearchTable0Name: //columns in predictive search tables

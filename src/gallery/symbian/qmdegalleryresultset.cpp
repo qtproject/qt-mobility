@@ -52,11 +52,10 @@
 QTM_BEGIN_NAMESPACE
 
 QMDEGalleryResultSet::QMDEGalleryResultSet(QObject *parent)
-: QGalleryResultSet(parent)
-, m_cursorPosition(-1)
-, m_live(false)
-, m_itemType(NULL)
-, m_isValid(false)
+    : QGalleryResultSet(parent)
+    , m_cursorPosition(-1)
+    , m_live(false)
+    , m_isValid(false)
 
 {
     m_itemArray.Reset();
@@ -74,10 +73,9 @@ int QMDEGalleryResultSet::propertyKey(const QString &property) const
 
 QGalleryProperty::Attributes QMDEGalleryResultSet::propertyAttributes(int key) const
 {
-    if( key == QDocumentGalleryMDSUtility::EUri ) {
+    if (key == QDocumentGalleryMDSUtility::EUri) {
         return (QGalleryProperty::CanRead | QGalleryProperty::CanSort | QGalleryProperty::CanFilter );
-    }
-    else {
+    } else {
         return (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanSort | QGalleryProperty::CanFilter );
     }
 }
@@ -96,9 +94,9 @@ bool QMDEGalleryResultSet::isValid() const
 {
     // Index based check
     if ( itemCount() != 0 && itemCount() >= currentIndex() )
-    return true;
+        return true;
     else
-    return false;
+        return false;
 }
 
 QVariant QMDEGalleryResultSet::itemId() const
@@ -106,7 +104,7 @@ QVariant QMDEGalleryResultSet::itemId() const
     uint idVar = 0;
 
     if (isValid())
-    idVar = m_itemArray[m_cursorPosition]->Id();
+        idVar = m_itemArray[m_cursorPosition]->Id();
 
     return QVariant(idVar);
 }
@@ -117,8 +115,7 @@ QUrl QMDEGalleryResultSet::itemUrl() const
         const QUrl url =
         QUrl(QDocumentGalleryMDSUtility::s60DescToQString( m_itemArray[m_cursorPosition]->Uri()));
         return url;
-    }
-    else {
+    } else {
         return QUrl();
     }
 
@@ -126,9 +123,9 @@ QUrl QMDEGalleryResultSet::itemUrl() const
 
 QString QMDEGalleryResultSet::itemType() const
 {
-    if ( isValid() )
-    return QDocumentGalleryMDSUtility::GetItemTypeFromMDEObject( m_itemArray[m_cursorPosition] );
-    else {
+    if (isValid()) {
+        return QDocumentGalleryMDSUtility::GetItemTypeFromMDEObject( m_itemArray[m_cursorPosition] );
+    } else {
         QString null;
         return null;
     }
@@ -138,9 +135,9 @@ QList<QGalleryResource> QMDEGalleryResultSet::resources() const
 {
     QList<QGalleryResource> resources;
 
-    if(m_itemArray[m_cursorPosition]) {
-        const QUrl url =
-        QUrl( QDocumentGalleryMDSUtility::s60DescToQString( m_itemArray[m_cursorPosition]->Uri() ) );
+    if (m_itemArray[m_cursorPosition]) {
+        const QUrl url = QUrl(
+                QDocumentGalleryMDSUtility::s60DescToQString(m_itemArray[m_cursorPosition]->Uri()));
 
         QStringList propertyList;
         QDocumentGalleryMDSUtility::GetDataFieldsForItemType( propertyList, itemType() );
@@ -148,11 +145,11 @@ QList<QGalleryResource> QMDEGalleryResultSet::resources() const
         const int count = propertyList.count();
         QMap<int, QVariant> attributes;
 
-        for( int i = 0; i < count; i++ ) {
+        for (int i = 0; i < count; i++) {
             int propertyKey = QDocumentGalleryMDSUtility::GetPropertyKey( propertyList[i] );
             QVariant value = metaData( propertyKey );
             if (!value.isNull())
-            attributes.insert(propertyKey, value);
+                attributes.insert(propertyKey, value);
         }
         resources.append(QGalleryResource(url, attributes));
     }
@@ -171,7 +168,7 @@ QVariant QMDEGalleryResultSet::metaData(int key) const
     CMdEObject *item = m_itemArray[m_cursorPosition];
     if (item) {
         TRAPD( err, QDocumentGalleryMDSUtility::GetMetaDataFieldL( item, retval, key ) );
-        if( err ) {
+        if (err) {
             retval.clear();
         }
     }
@@ -185,16 +182,14 @@ bool QMDEGalleryResultSet::setMetaData(int key, const QVariant &value)
 
     TRAPD( err, QDocumentGalleryMDSUtility::SetMetaDataFieldL(
             m_itemArray[m_cursorPosition], value, key) );
-    if( err ) {
+    if (err) {
         return false;
-    }
-    else {
-        if( ret ) {
+    } else {
+        if (ret) {
             TRAP( err, m_session->CommitObjectL( *m_itemArray[m_cursorPosition] ) );
-            if( err ) {
+            if (err) {
                 return false;
-            }
-            else {
+            } else {
                 return true;
             }
         }
@@ -209,10 +204,9 @@ int QMDEGalleryResultSet::currentIndex() const
 
 bool QMDEGalleryResultSet::fetch(int index)
 {
-    if( m_itemArray.Count() <= 0 || index < 0 || index > m_itemArray.Count() ) {
+    if (m_itemArray.Count() <= 0 || index < 0 || index > m_itemArray.Count()) {
         return false;
-    }
-    else {
+    } else {
         m_cursorPosition = index;
         m_isValid = true;
         return true;
@@ -222,10 +216,9 @@ bool QMDEGalleryResultSet::fetch(int index)
 bool QMDEGalleryResultSet::fetchNext()
 {
     int newIndex = m_cursorPosition + 1;
-    if( m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count() ) {
+    if (m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count()) {
         return false;
-    }
-    else {
+    } else {
         m_cursorPosition = newIndex;
         m_isValid = true;
         return true;
@@ -235,10 +228,9 @@ bool QMDEGalleryResultSet::fetchNext()
 bool QMDEGalleryResultSet::fetchPrevious()
 {
     int newIndex = m_cursorPosition - 1;
-    if( m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count() ) {
+    if (m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count()) {
         return false;
-    }
-    else {
+    } else {
         m_cursorPosition = newIndex;
         m_isValid = true;
         return true;
@@ -248,10 +240,9 @@ bool QMDEGalleryResultSet::fetchPrevious()
 bool QMDEGalleryResultSet::fetchFirst()
 {
     int newIndex = 0; // first item
-    if( m_itemArray.Count() <= 0 ) {
+    if (m_itemArray.Count() <= 0) {
         return false;
-    }
-    else {
+    } else {
         m_cursorPosition = newIndex;
         m_isValid = true;
         return true;
@@ -261,10 +252,9 @@ bool QMDEGalleryResultSet::fetchFirst()
 bool QMDEGalleryResultSet::fetchLast()
 {
     int newIndex = m_itemArray.Count() - 1; // last item
-    if( m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count() ) {
+    if (m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count()) {
         return false;
-    }
-    else {
+    } else {
         m_cursorPosition = newIndex;
         m_isValid = true;
         return true;

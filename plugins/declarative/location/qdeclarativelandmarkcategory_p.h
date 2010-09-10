@@ -26,18 +26,14 @@ public:
     void setIconSource(const QUrl& iconSource);
 
 signals:
-
-    void nameChanged(QString name);
-    void iconSourceChanged(QUrl iconSource);
-
-public slots:
+    void nameChanged();
+    void iconSourceChanged();
 
 private:
 
     QLandmarkCategory m_category;
     friend class QDeclarativeLandmarkCategoryModel;
     void setCategory(const QLandmarkCategory& category);
-
 };
 
 QTM_END_NAMESPACE

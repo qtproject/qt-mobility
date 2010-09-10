@@ -241,17 +241,17 @@
     {
         position: absolute;
         top: 28px;
-        left: 88px;
-        width: 302px;
+        left: 80px;
+        width: 398px;
         height: 22px;
     }
     .header .qtref span
     {
         display: block;
-        width: 302px;
+        width: 398px;
         height: 22px;
         text-indent: -999em;
-        background: url(../images/sprites-combined.png) no-repeat -78px -235px;
+        background: url(../images/sprites-combined.png) no-repeat -92px -244px;
     }
     .content a:visited
     {

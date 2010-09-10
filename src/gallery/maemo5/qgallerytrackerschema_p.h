@@ -57,6 +57,8 @@
 #include "qgalleryfilter.h"
 #include "qgalleryproperty.h"
 
+#include "qdocumentgallery.h"
+
 #include <QtCore/qstringlist.h>
 
 QTM_BEGIN_NAMESPACE
@@ -69,7 +71,7 @@ class QGalleryTrackerValueColumn;
 struct QGalleryTrackerResultSetArguments;
 struct QGalleryTrackerTypeResultSetArguments;
 
-class Q_AUTOTEST_EXPORT QGalleryTrackerSchema
+class QM_AUTOTEST_EXPORT QGalleryTrackerSchema
 {
 public:
     QGalleryTrackerSchema(const QString &itemType);
@@ -82,21 +84,20 @@ public:
 
     QString itemType() const;
 
-    static QString uriFromItemId(int *error, const QVariant &itemId);
-    QString itemIdFromUri(const QString &uri) const;
+    static QString uriFromItemId(QDocumentGallery::Error *error, const QVariant &itemId);
 
     static int serviceUpdateId(const QString &service);
 
     QStringList supportedPropertyNames() const;
     QGalleryProperty::Attributes propertyAttributes(const QString &propertyName) const;
 
-    int prepareItemResponse(
+    QDocumentGallery::Error prepareItemResponse(
             QGalleryTrackerResultSetArguments *arguments,
             QGalleryDBusInterfaceFactory *dbus,
             const QString &itemId,
             const QStringList &propertyNames) const;
 
-    int prepareQueryResponse(
+    QDocumentGallery::Error prepareQueryResponse(
             QGalleryTrackerResultSetArguments *arguments,
             QGalleryDBusInterfaceFactory *dbus,
             QGalleryQueryRequest::Scope scope,
@@ -105,7 +106,7 @@ public:
             const QStringList &propertyNames,
             const QStringList &sortPropertyNames) const;
 
-    int prepareTypeResponse(
+    QDocumentGallery::Error prepareTypeResponse(
             QGalleryTrackerTypeResultSetArguments *arguments,
             QGalleryDBusInterfaceFactory *dbus) const;
 
@@ -113,7 +114,7 @@ private:
     QGalleryTrackerSchema(int itemIndex, int aggregateIndex)
         : m_itemIndex(itemIndex), m_aggregateIndex(aggregateIndex) {}
 
-    int buildFilterQuery(
+    QDocumentGallery::Error buildFilterQuery(
             QString *query,
             QGalleryQueryRequest::Scope scope,
             const QString &scopeItemId,

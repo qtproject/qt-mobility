@@ -17,7 +17,12 @@ void QDeclarativeLandmark::setName(const QString& name)
     if (name == m_landmark.name())
         return;
     m_landmark.setName(name);
-    emit nameChanged(name);
+    emit nameChanged();
+}
+
+QDeclarativeCoordinate* QDeclarativeLandmark::coordinate()
+{
+    return &m_coordinate;
 }
 
 QString QDeclarativeLandmark::phoneNumber()
@@ -30,7 +35,7 @@ void QDeclarativeLandmark::setPhoneNumber(const QString& phoneNumber)
     if (phoneNumber == m_landmark.phoneNumber())
         return;
     m_landmark.setPhoneNumber(phoneNumber);
-    emit phoneNumberChanged(phoneNumber);
+    emit phoneNumberChanged();
 }
 
 QString QDeclarativeLandmark::description()
@@ -43,7 +48,7 @@ void QDeclarativeLandmark::setDescription(const QString& description)
     if (description == m_landmark.description())
         return;
     m_landmark.setDescription(description);
-    emit descriptionChanged(description);
+    emit descriptionChanged();
 }
 
 double QDeclarativeLandmark::radius()
@@ -56,7 +61,7 @@ void QDeclarativeLandmark::setRadius(const double& radius)
     if (radius == m_landmark.radius())
         return;
     m_landmark.setRadius(radius);
-    emit radiusChanged(radius);
+    emit radiusChanged();
 }
 
 QUrl QDeclarativeLandmark::iconSource()
@@ -69,7 +74,7 @@ void QDeclarativeLandmark::setIconSource(const QUrl& iconSource)
     if (iconSource == m_landmark.iconUrl())
         return;
     m_landmark.setIconUrl(iconSource);
-    emit iconSourceChanged(iconSource);
+    emit iconSourceChanged();
 }
 
 QUrl QDeclarativeLandmark::url()
@@ -82,14 +87,21 @@ void QDeclarativeLandmark::setUrl(const QUrl& url)
     if (url == m_landmark.url())
         return;
     m_landmark.setUrl(url);
-    emit urlChanged(url);
+    emit urlChanged();
 }
 
 // Initializes this landmark from the given landmark
 void QDeclarativeLandmark::setLandmark(const QLandmark& landmark)
 {
     m_landmark = landmark;
+    m_coordinate.setCoordinate(m_landmark.coordinate());
+    emit coordinateChanged();
     // TODO update notifications when the whole scenario is more clear
+}
+
+QList<QLandmarkCategoryId> QDeclarativeLandmark::categoryIds () const
+{
+    return m_landmark.categoryIds();
 }
 
 #include "moc_qdeclarativelandmark_p.cpp"

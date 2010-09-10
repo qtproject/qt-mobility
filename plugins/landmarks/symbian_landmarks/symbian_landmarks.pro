@@ -48,6 +48,7 @@ CONFIG += mobility
 MOBILITY = location
 
 include(../../../common.pri)
+include(symbian_landmarks_defines.pri)
 
 symbian {
 
@@ -63,11 +64,14 @@ symbian {
         -leposlmsearchlib \
         -leposlmdbmanlib \
         -llbs \
-        -euser \
+        -leuser \
         -lefsrv \
         -lcone \
-        -lbafl
-
+        -lbafl \
+		-lapgrfx \
+		-lefsrv \
+		-lapmime
+		
     pluginDep.sources = $${TARGET}.dll
     pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += pluginDep
@@ -78,7 +82,6 @@ HEADERS += 	inc/qlandmarkmanagerenginefactory_symbian.h \
 			inc/qlandmarkmanagerengine_symbian_p.h \
 			inc/qlandmarkutility.h \
 			inc/qlandmarkdbeventhandler.h \
-			inc/qlandmarkdbeventobserver.h \
 			inc/qlandmarkrequesthandler.h 
 
 SOURCES += 	src/qlandmarkmanagerenginefactory_symbian.cpp \
@@ -86,7 +89,6 @@ SOURCES += 	src/qlandmarkmanagerenginefactory_symbian.cpp \
 			src/qlandmarkmanagerengine_symbian_p.cpp \
 			src/qlandmarkutility.cpp \
 			src/qlandmarkdbeventhandler.cpp \
-			src/qlandmarkdbeventobserver.cpp \
 			src/qlandmarkrequesthandler.cpp
 			
 target.path=$$QT_MOBILITY_PREFIX/plugins/landmarks

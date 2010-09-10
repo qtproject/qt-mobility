@@ -48,7 +48,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QSystemReadWriteLockPrivate;
-class Q_AUTOTEST_EXPORT QSystemReadWriteLock
+class QM_AUTOTEST_EXPORT QSystemReadWriteLock
 {
 public:
     enum AccessMode{Create, Open};

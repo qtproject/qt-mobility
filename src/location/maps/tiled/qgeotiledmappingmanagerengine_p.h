@@ -57,9 +57,6 @@
 #include "qgeotiledmapreply.h"
 
 #include <QSize>
-#include <QRectF>
-#include <QList>
-#include <QSet>
 
 QTM_BEGIN_NAMESPACE
 
@@ -74,7 +71,6 @@ public:
     QGeoTiledMappingManagerEnginePrivate();
     ~QGeoTiledMappingManagerEnginePrivate();
 
-    QList<QString> supportedImageFormats;
     QSize tileSize;
 
 private:

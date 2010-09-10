@@ -47,7 +47,7 @@
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QGalleryProperty::Attributes);
+Q_DECLARE_METATYPE(QGalleryProperty::Attributes)
 
 class tst_QDocumentGallery : public QObject
 {
@@ -135,6 +135,8 @@ void tst_QDocumentGallery::itemTypeProperties_data()
 
     QTest::newRow("Album") << QString(QDocumentGallery::Album) << (QStringList()
 #if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
+            << QDocumentGallery::albumArtist
+            << QDocumentGallery::albumTitle
             << QDocumentGallery::artist
             << QDocumentGallery::duration
             << QDocumentGallery::title

@@ -51,8 +51,8 @@
 QTM_BEGIN_NAMESPACE
 
 QMdeSession::QMdeSession(QObject *parent)
-:QObject(parent)
-,m_cmdeSession(NULL)
+    :QObject(parent)
+    ,m_cmdeSession(NULL)
 {
     TRAP_IGNORE( m_cmdeSession = CMdESession::NewL( *this ) );
     m_eventLoop.exec();
@@ -82,10 +82,9 @@ CMdENamespaceDef& QMdeSession::GetDefaultNamespaceDefL()
 #else
     CMdENamespaceDef *nameSpaceDef = NULL;
     nameSpaceDef = m_cmdeSession->GetDefaultNamespaceDefL();
-    if (nameSpaceDef)
-        return *nameSpaceDef;
-    else
+    if (!nameSpaceDef)
         User::Leave(KErrBadHandle);
+    return *nameSpaceDef;
 #endif //MDS_25_COMPILATION_ENABLED
 }
 
@@ -109,7 +108,7 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer,
 
     CMdEObjectQuery* query = NULL;
 #ifdef MDS_25_COMPILATION_ENABLED
-    if( request->rootType() == QDocumentGallery::File.name() ) {
+    if (request->rootType() == QDocumentGallery::File.name()) {
         CMdEObjectDef& mediaObjDef = defaultNamespace.GetObjectDefL(
             MdeConstants::MediaObject::KMediaObject );
         CMdEObjectDef& imageObjDef = defaultNamespace.GetObjectDefL(
@@ -126,12 +125,11 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer,
         objectDefs->Append( &audioObjDef );
 
         TRAPD( err, query = m_cmdeSession->NewObjectQueryL( mediaObjDef, objectDefs, observer ) );
-        if( err ) {
+        if (err) {
             delete objectDefs;
             return NULL;
         }
-    }
-    else {
+    } else {
         CMdEObjectDef& objdef = QDocumentGalleryMDSUtility::ObjDefFromItemTypeL(defaultNamespace, request->rootType() );
         if( objdef.Name() == MdeConstants::Object::KBaseObject ) {
             // Base object definition is only returned if the root type does not match supported types
@@ -151,7 +149,7 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer,
 int QMdeSession::RemoveObject( const unsigned int itemId )
 {
     TItemId result = 0;
-    int ret = QGalleryAbstractRequest::NoResult;
+    int ret = QDocumentGallery::NoError;
     TRAPD( err,
         CMdENamespaceDef& defaultNamespaceDef = GetDefaultNamespaceDefL();
         result = m_cmdeSession->RemoveObjectL( itemId, &defaultNamespaceDef )
@@ -159,14 +157,12 @@ int QMdeSession::RemoveObject( const unsigned int itemId )
 
     if (err == KErrNone) {
         if (result != KNoId) {
-            ret = QGalleryAbstractRequest::Succeeded;
+            ret = QDocumentGallery::NoError;
+        } else {
+            ret = QDocumentGallery::ItemIdError;
         }
-        else {
-            ret = QGalleryAbstractRequest::RequestError;
-        }
-    }
-    else {
-        ret = QGalleryAbstractRequest::RequestError;
+    } else {
+        ret = QDocumentGallery::ConnectionError;
     }
 
     return ret;

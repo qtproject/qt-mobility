@@ -2,4 +2,4 @@ TEMPLATE = subdirs
 
 include(../../common.pri)
 
-SUBDIRS +=  nokia nokiasearch
+SUBDIRS +=  nokia

@@ -96,7 +96,8 @@ public:
     QVersitContactExporter(const QString& profile);
     ~QVersitContactExporter();
 
-    bool exportContacts(const QList<QContact>& contacts, QVersitDocument::VersitType versitType);
+    bool exportContacts(const QList<QContact>& contacts,
+            QVersitDocument::VersitType versitType = QVersitDocument::VCard30Type);
     QList<QVersitDocument> documents() const;
     QMap<int, Error> errors() const;
 

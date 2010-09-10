@@ -113,10 +113,10 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
     to choose landmarks that belong to a certain category or a QLandmarkProximityFilter to choose landmarks
     within a certain range from a given location.  A QLandmarkSortOrder order defines how the results should
     be sorted.  The limit allows specification of the maximum number of items to
-    return and the offset defines the index of the first item.  The following demonstrates how to search for the 5 nearest
-    landmarks to a given coordinate.
+    return and the offset defines the index of the first item.  The following demonstrates how to search for the first 100
+    landmarks belonging to a given category, sorted by name.
 
-    \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve landmarks by proximity synchronously
+    \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve landmarks by category synchronously
 
     The set of parameters described above are not always necessary as defaults are provided, if we wanted to retrieve
     all landmarks, then the appropriate call is:
@@ -144,16 +144,10 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
 
     \section1 Importing and exporting
     Import and exporting are potentially long operations, to perform these operations asynchronously
-    see QLandmarkImportRequest and QLandmarkExportRequest.  The simplest way to perform import and export
-    operations is to specify a filename:
+    see QLandmarkImportRequest and QLandmarkExportRequest.  The simplest way to perform an import
+    is to supply a filename while an export will need both a filename and format.
 
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp ImportExport landmark simple
-
-    \i {At the time of the QtMobility 1.1 tech preview, only importing of landmarks by supplying a
-       file format is functional.  For the supported platforms, the file format that may be supplied
-       is "GpxV1.1" which means only Gpx version 1.1 files are known to work.  Exporting is still
-       under development and so are notifications.}
-
 */
 
 /*!
@@ -230,6 +224,7 @@ QLandmarkManager::QLandmarkManager(QObject *parent)
     QString managerName;
 
 #ifdef Q_OS_SYMBIAN
+    managerName = "com.nokia.qt.landmarks.engines.symbian";
 #else
     managerName = "com.nokia.qt.landmarks.engines.sqlite";
 #endif
@@ -435,8 +430,6 @@ bool QLandmarkManager::saveCategory(QLandmarkCategory *category)
 
 /*!
     Remove the category identified by \a categoryId from the database.
-    The categoryId is cleared(and becomes invalid) on successful
-    removal.  An unsuccessful removal will leave the identifer alone.
 
     Returns true if the category was removed successfully, otherwise
     returnse false.
@@ -752,8 +745,6 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
     returns false.  It may be possible that only a subset of
     landmarks are imported depending upon the backed implementation.
 
-    The current default managers for the maemo and desktop platforms
-    support GPX version 1.1, and the format to use is \c GpxV1.1.
 */
 bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format, QLandmarkManager::TransferOption option, const QLandmarkCategoryId &categoryId)
 {
@@ -789,9 +780,6 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format,
     Returns true if all landmarks could be imported, otherwise
     returns false.  It may be possible that only a subset of landmarks
     are imported.
-
-    The current default managers for the maemo and desktop platforms
-    support GPX version 1.1, and the format to use is \c GpxV1.1.
 */
 bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &format, QLandmarkManager::TransferOption option, const QLandmarkCategoryId &categoryId)
 {

@@ -77,6 +77,7 @@ public:
         return QCamera::NoLock;
     }
 
+    bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
 
 public slots:
     void reloadLater();

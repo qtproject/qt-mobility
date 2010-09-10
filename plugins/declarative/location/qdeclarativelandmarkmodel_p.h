@@ -8,6 +8,7 @@
 #include <qlandmarkmanager.h>
 #include <qlandmarksortorder.h>
 #include <qlandmarkfetchrequest.h>
+#include <qlandmarkimportrequest.h>
 
 #include <QtDeclarative/qdeclarative.h>
 #include <QDeclarativeParserStatus>
@@ -15,51 +16,31 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeLandmarkModel: public QAbstractListModel, public QDeclarativeParserStatus
+
+class QDeclarativeLandmarkAbstractModel : public QAbstractListModel, public QDeclarativeParserStatus
 {
     Q_OBJECT
-
-    Q_PROPERTY(QString error READ error NOTIFY errorChanged)
-    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged)
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
-    Q_PROPERTY(int count READ count NOTIFY countChanged)
-    Q_PROPERTY(QDeclarativeLandmarkFilterBase* filter READ filter WRITE setFilter NOTIFY filterChanged)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
+    Q_PROPERTY(QString error READ error NOTIFY errorChanged)
     Q_PROPERTY(SortKey sortBy READ sortBy WRITE setSortBy NOTIFY sortByChanged)
     Q_PROPERTY(SortOrder sortOrder READ sortOrder WRITE setSortOrder NOTIFY sortOrderChanged)
-    // dbFileName is _not_ official public property, but used in testing
-    Q_PROPERTY(QString dbFileName READ dbFileName WRITE setDbFileName NOTIFY dbFileNameChanged)
     Q_INTERFACES(QDeclarativeParserStatus)
+    Q_ENUMS(SortOrder)
+    Q_ENUMS(SortKey)
 
 public:
-    explicit QDeclarativeLandmarkModel(QObject* parent = 0);
-    ~QDeclarativeLandmarkModel();
+    explicit QDeclarativeLandmarkAbstractModel(QObject* parent = 0);
+    virtual ~QDeclarativeLandmarkAbstractModel();
 
-    // From QAbstractListModel
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
-
-    // From QDeclarativeParserStatus
-    void classBegin() {}
-    void componentComplete();
-
-    // Roles for exposing data via model
-    enum Roles {
-        NameRole = Qt::UserRole + 500, // Check
-        PhoneNumberRole,
-        DescriptionRole,
-        RadiusRole,
-        IconSourceRole,
-        UrlRole,
-        LatitudeRole,
-        LongitudeRole
-    };
     enum SortOrder {
         AscendingOrder = Qt::AscendingOrder,
-        DescendingOrder = Qt::DescendingOrder
+        DescendingOrder = Qt::DescendingOrder,
+        NoOrder = Qt::DescendingOrder + 1
     };
     enum SortKey {
-        DefaultSort = QLandmarkSortOrder::DefaultSort,
+        NoSort = QLandmarkSortOrder::DefaultSort,
         NameSort = QLandmarkSortOrder::NameSort
     };
 
@@ -67,34 +48,119 @@ public:
     void setSortBy(SortKey key);
     SortOrder sortOrder() const;
     void setSortOrder(SortOrder order);
-    int count();
+
+    // From QDeclarativeParserStatus
+    virtual void classBegin() {}
+    virtual void componentComplete();
+
+    // From QAbstractListModel
+    virtual int rowCount(const QModelIndex &parent) const = 0;
+    virtual QVariant data(const QModelIndex &index, int role) const = 0;
+
+    bool autoUpdate() const;
+    void setAutoUpdate(bool autoUpdate);
+    QString error() const;
     int limit();
     void setLimit(int limit);
     int offset();
     void setOffset(int offset);
-    QString error() const;
-    QString dbFileName() const;
-    void setDbFileName(QString fileName);
-    void setAutoUpdate(bool autoUpdate);
-    bool autoUpdate() const;
+
+    void scheduleUpdate();
+    Q_INVOKABLE void setDbFileName(QString fileName); //  testing purposes only
+    virtual void startUpdate() = 0;
+
+signals:
+    void sortByChanged();
+    void sortOrderChanged();
+    void errorChanged();
+    void autoUpdateChanged();
+    void limitChanged();
+    void offsetChanged();
+    void modelChanged();
+
+public slots:
+    void update();
+
+private slots:
+    void categoriesChanged(const QList<QLandmarkCategoryId> &);
+    void landmarksChanged(const QList<QLandmarkId> &);
+    void dataChanged();
+
+protected:
+    virtual void cancelUpdate() = 0;
+    virtual void cancelImport() {};
+    void connectManager();
+
+protected:
+    QLandmarkManager* m_manager;
+    bool m_componentCompleted;
+    bool m_updatePending;
+    bool m_autoUpdate;
+    QString m_error;
+    QString m_dbFileName;
+    int m_limit;
+    int m_offset;
+    QLandmarkSortOrder* m_sortingOrder;
+    SortOrder m_sortOrder;
+    SortKey m_sortKey;
+};
+
+class QDeclarativeLandmarkModel: public QDeclarativeLandmarkAbstractModel
+{
+    Q_OBJECT
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
+    Q_PROPERTY(QDeclarativeLandmarkFilterBase* filter READ filter WRITE setFilter NOTIFY filterChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeLandmark> landmarks READ landmarks NOTIFY landmarksChanged)
+    Q_PROPERTY(QString importFile READ importFile WRITE setImportFile NOTIFY importFileChanged)
+
+public:
+    explicit QDeclarativeLandmarkModel(QObject* parent = 0);
+    virtual ~QDeclarativeLandmarkModel();
+
+    // From QAbstractListModel
+    int rowCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
+
+    // Roles for exposing data via model. Only one role because
+    // everything can be accessed via QDeclarativeLandmark
+    enum Roles {
+        LandmarkRole = Qt::UserRole + 500
+    };
+
+    QString importFile() const;
+    void setImportFile(QString importFile);
+    void scheduleImport();
+    Q_INVOKABLE void importLandmarks();
+
+    virtual void componentComplete();
+
+    int count();
     QDeclarativeLandmarkFilterBase* filter();
     void setFilter(QDeclarativeLandmarkFilterBase* filter);
 
+    // For testing purpose to access directly ordered data
+    QList<QLandmark> landmarkList();
+
+    QDeclarativeListProperty<QDeclarativeLandmark> landmarks();
+    static void landmarks_append(QDeclarativeListProperty<QDeclarativeLandmark>* prop, QDeclarativeLandmark* landmark);
+    static int landmarks_count(QDeclarativeListProperty<QDeclarativeLandmark>* prop);
+    static QDeclarativeLandmark* landmarks_at(QDeclarativeListProperty<QDeclarativeLandmark>* prop, int index);
+    static void landmarks_clear(QDeclarativeListProperty<QDeclarativeLandmark>* prop);
+
+protected:
+    Q_INVOKABLE void startUpdate();
+    Q_INVOKABLE void startImport();
+
 signals:
-    void errorChanged(QString error);
-    void autoUpdateChanged();
-    void limitChanged(int limit);
-    void offsetChanged(int offset);
-    void countChanged(int count);
+    void countChanged();
     void filterChanged();
-    void sortByChanged();
-    void sortOrderChanged();
-    void dbFileNameChanged();
+    void landmarksChanged();
+    void importFileChanged();
 
 private slots:
-    void update();
+    void filterContentChanged();
     void cancelUpdate();
-    void scheduleUpdate();
+    void cancelImport();
     void fetchRequestStateChanged(QLandmarkAbstractRequest::State);
 
 private:
@@ -103,23 +169,15 @@ private:
     void setFetchOrder();
 
 private:
-    QLandmarkManager* m_manager;
     QDeclarativeLandmarkFilterBase* m_filter;
     QLandmarkFetchRequest* m_fetchRequest;
-    QLandmarkSortOrder* m_sortingOrder;
+    QLandmarkImportRequest* m_importRequest;
+    QString m_importFile;
+    bool m_importPending;
     // Landmark list received from platform
     QList<QLandmark> m_landmarks;
     // Same landmark list, but as declarative classes
     QMap<QString, QDeclarativeLandmark*> m_landmarkMap;
-    SortOrder m_sortOrder;
-    SortKey m_sortKey;
-    QString m_error;
-    QString m_dbFileName;
-bool m_componentCompleted : 1;
-bool m_updatePending : 1;
-bool m_autoUpdate : 1;
-    int m_limit;
-    int m_offset;
 };
 
 QTM_END_NAMESPACE

@@ -220,39 +220,41 @@ public:
     Q_DECLARE_FLAGS(Flags, Flag)
 
     QGalleryTrackerResultSetPrivate(
-            const QGalleryTrackerResultSetArguments &arguments,
-            bool live,
+            QGalleryTrackerResultSetArguments *arguments,
+            bool autoUpdate,
             int offset,
             int limit)
-        : idColumn(arguments.idColumn)
-        , urlColumn(arguments.urlColumn)
-        , typeColumn(arguments.typeColumn)
-        , updateMask(arguments.updateMask)
-        , identityWidth(arguments.identityWidth)
-        , tableWidth(arguments.tableWidth)
-        , valueOffset(arguments.valueOffset)
-        , compositeOffset(arguments.compositeOffset)
-        , aliasOffset(compositeOffset + arguments.compositeColumns.count())
-        , columnCount(aliasOffset + arguments.aliasColumns.count())
+        : idColumn(arguments->idColumn.take())
+        , urlColumn(arguments->urlColumn.take())
+        , typeColumn(arguments->typeColumn.take())
+        , updateMask(arguments->updateMask)
+        , identityWidth(arguments->identityWidth)
+        , tableWidth(arguments->tableWidth)
+        , valueOffset(arguments->valueOffset)
+        , compositeOffset(arguments->compositeOffset)
+        , aliasOffset(compositeOffset + arguments->compositeColumns.count())
+        , columnCount(aliasOffset + arguments->aliasColumns.count())
         , queryOffset(offset)
         , queryLimit(limit)
         , currentRow(0)
         , currentIndex(-1)
         , rowCount(0)
         , progressMaximum(0)
-        , queryInterface(arguments.queryInterface)
-        , queryMethod(arguments.queryMethod)
-        , queryArguments(arguments.queryArguments)
-        , propertyNames(arguments.propertyNames)
-        , propertyAttributes(arguments.propertyAttributes)
-        , propertyTypes(arguments.propertyTypes)
-        , valueColumns(arguments.valueColumns)
-        , compositeColumns(arguments.compositeColumns)
-        , aliasColumns(arguments.aliasColumns)
-        , sortCriteria(arguments.sortCriteria)
-        , resourceKeys(arguments.resourceKeys)
+        , queryInterface(arguments->queryInterface)
+        , queryMethod(arguments->queryMethod)
+        , queryArguments(arguments->queryArguments)
+        , propertyNames(arguments->propertyNames)
+        , propertyAttributes(arguments->propertyAttributes)
+        , propertyTypes(arguments->propertyTypes)
+        , valueColumns(arguments->valueColumns)
+        , compositeColumns(arguments->compositeColumns)
+        , aliasColumns(arguments->aliasColumns)
+        , sortCriteria(arguments->sortCriteria)
+        , resourceKeys(arguments->resourceKeys)
     {
-        if (live)
+        arguments->clear();
+
+        if (autoUpdate)
             flags |= Live;
     }
 

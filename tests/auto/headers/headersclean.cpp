@@ -171,7 +171,7 @@
 #include <maps/tiled/qgeotiledmappingmanagerengine.h>
 #include <maps/tiled/qgeotiledmaprequest.h>
 #include <maps/qgeomaprectangleobject.h>
-#include <maps/qgeomapwidget.h>
+#include <maps/qgraphicsgeomap.h>
 #include <maps/qgeomapobject.h>
 #include <maps/qgeorouterequest.h>
 #include <maps/qgeosearchmanagerengine.h>

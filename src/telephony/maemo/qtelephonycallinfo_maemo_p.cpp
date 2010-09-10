@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,10 +42,10 @@
 #include <qmobilityglobal.h>
 
 #include "qtelephony.h"
-#include "maemo/cli-constants.h"
+#include "maemo/constants.h"
 #include "maemo/qtelephonycallinfo_maemo_p.h"
 
-using namespace Tp;
+using namespace DBus;
 
 QTM_BEGIN_NAMESPACE
 
@@ -60,25 +60,24 @@ QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate(const QTelephonyCallInfoPri
 {
 }
 
-QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate(Tp::ChannelPtr channel)
+QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate(DBus::ChannelPtr channel)
     : telepathychannel(channel)
 {
 }
 
 QString QTelephonyCallInfoPrivate::remotePartyIdentifier() const
 {
-    qDebug() << "QTelephonyCallInfoPrivate::remotePartyIdentifier()";
     if(telepathychannel)
         return telepathychannel->getRemotePartyIdentifier();
 
     return QString("");
 }
 
-QTelephonyEvents::CallType QTelephonyCallInfoPrivate::type() const
+unsigned int QTelephonyCallInfoPrivate::type() const
 {
-    QTelephonyEvents::CallType ret = QTelephonyEvents::Other;
+    unsigned int ret = 0;
     if(telepathychannel)
-        ret =   telepathychannel->getCalltype();
+        ret = telepathychannel->getCallType();
     return ret;
 }
 
@@ -90,11 +89,24 @@ QString QTelephonyCallInfoPrivate::subType() const
     return ret;
 }
 
-QTelephonyEvents::CallStatus QTelephonyCallInfoPrivate::status() const
+QTelephony::CallStatus QTelephonyCallInfoPrivate::status() const
 {
-    QTelephonyEvents::CallStatus ret = QTelephonyEvents::Idle;
+    QTelephony::CallStatus ret = QTelephony::Idle;
     if(telepathychannel)
         ret = telepathychannel->getStatus();
+    return ret;
+}
+
+QTelephony::Direction QTelephonyCallInfoPrivate::direction() const
+{
+    QTelephony::Direction ret = QTelephony::Received;
+    if(telepathychannel){
+        /*
+        1 = incoming
+        2 = outgoing*/
+        if(telepathychannel->getDirection() == 2)
+            ret = QTelephony::Dialed;
+    }
     return ret;
 }
 
