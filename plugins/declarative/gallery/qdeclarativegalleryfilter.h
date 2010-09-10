@@ -105,7 +105,6 @@ protected:
         : QDeclarativeGalleryFilterBase(parent)
     {
         m_filter.setComparator(comparator);
-        m_filter.setCaseSensitivity(Qt::CaseInsensitive);
     }
 
     QGalleryMetaDataFilter m_filter;
@@ -141,7 +140,6 @@ protected:
         : QDeclarativeGalleryFilterBase(parent)
     {
         m_filter.setComparator(comparator);
-        m_filter.setCaseSensitivity(Qt::CaseInsensitive);
     }
 
     QGalleryMetaDataFilter m_filter;
