@@ -43,6 +43,7 @@
 #include "qmdegalleryremoveresultset.h"
 #include "qmdesession.h"
 //API
+#include "qdocumentgallery.h"
 #include "qgalleryremoverequest.h"
 
 QTM_BEGIN_NAMESPACE

@@ -44,6 +44,7 @@
 #include "qgallerymdsutility.h"
 #include "qmdesession.h"
 //API
+#include "qdocumentgallery.h"
 #include "qgalleryqueryrequest.h"
 
 QTM_BEGIN_NAMESPACE
