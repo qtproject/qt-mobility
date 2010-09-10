@@ -92,17 +92,18 @@ unix:!simulator {
                     DEFINES += QT_NO_CONNMAN
                 }
             } else {
-                DEFINES += QT_NO_NETWORKMANAGER
+                DEFINES += QT_NO_NETWORKMANAGER QT_NO_UDISKS QT_NO_CONNMAN
+                LIBS += -lblkid
             }
         }
         
     maemo5|maemo6: {
             #Qt GConf wrapper added here until a proper place is found for it.
             CONFIG += link_pkgconfig
-          #  LIBS += -lXrandr
+            LIBS += -lblkid
             SOURCES += qsysteminfo_maemo.cpp gconfitem.cpp
             HEADERS += qsysteminfo_maemo_p.h gconfitem_p.h
-                    DEFINES += QT_NO_CONNMAN
+            DEFINES += QT_NO_CONNMAN QT_NO_UDISKS  QT_NO_NETWORKMANAGER
         contains(QT_CONFIG,dbus): {
                 QT += dbus
                 SOURCES += qhalservice_linux.cpp
