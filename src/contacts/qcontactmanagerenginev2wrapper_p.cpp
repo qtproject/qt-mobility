@@ -73,14 +73,18 @@ QContactManagerEngineV2Wrapper::~QContactManagerEngineV2Wrapper()
 
 void QContactManagerEngineV2Wrapper::requestDestroyed(QContactAbstractRequest* req)
 {
-    // TODO - if it's a partial save request, handle it, otherwise pass it on
-    return m_engine->requestDestroyed(req);
+    RequestController* controller = m_controllerForRequest.value(req);
+
+    if (controller) {
+        // If we own it, just delete the controller (and ignore any subrequests' signals from now on)
+        delete controller;
+    } else {
+        m_engine->requestDestroyed(req);
+    }
 }
 
 bool QContactManagerEngineV2Wrapper::startRequest(QContactAbstractRequest* req)
 {
-    if (!req)
-        return false;
     if (req->type() == QContactAbstractRequest::ContactSaveRequest
         && !static_cast<QContactSaveRequest*>(req)->definitionMask().isEmpty()) {
         // This is a partial save
@@ -125,8 +129,15 @@ void QContactManagerEngineV2Wrapper::requestStateChanged(QContactAbstractRequest
 /* \reimp */
 bool QContactManagerEngineV2Wrapper::cancelRequest(QContactAbstractRequest* req)
 {
-    // TODO - see if we know about this request
-    return m_engine->cancelRequest(req);
+    RequestController* controller = m_controllerForRequest.value(req);
+
+    if (controller) {
+        // If we own it, just delete the controller (and ignore any subrequests' signals from now on)
+        delete controller;
+        return true;
+    } else {
+        return m_engine->cancelRequest(req);
+    }
 }
 
 /* \reimp */
@@ -188,7 +199,7 @@ bool FetchByIdRequestController::start()
     qcfr->setFetchHint(qcfr->fetchHint());
     // normally, you'd set the manager, but in this case, we only have a bare engine:
     QContactManagerEngineV2Wrapper::setEngineOfRequest(qcfr, m_engine);
-    m_currentSubRequest = qcfr;
+    m_currentSubRequest.reset(qcfr);
     connect(qcfr, SIGNAL(stateChanged(QContactAbstractRequest::State)),
             this, SLOT(handleUpdatedSubRequest(QContactAbstractRequest::State)),
             Qt::QueuedConnection);
@@ -200,12 +211,12 @@ bool FetchByIdRequestController::waitForFinished(int msecs)
 {
     // If the current request is active, it must be a ContactFetchRequest.  We just need to
     // wait for it to finish, then finalize the post-processing.
-    if (!m_currentSubRequest)
+    if (m_currentSubRequest.isNull())
         return false;
     if (!m_currentSubRequest->waitForFinished(msecs))
         return false;
 
-    handleFinishedSubRequest(m_currentSubRequest);
+    handleFinishedSubRequest(m_currentSubRequest.data());
     return true;
 }
 
@@ -224,8 +235,6 @@ void FetchByIdRequestController::handleFinishedSubRequest(QContactAbstractReques
     QContactFetchRequest* qcfr = static_cast<QContactFetchRequest*>(subReq);
     QList<QContact> contacts = qcfr->contacts();
     QContactManager::Error error = qcfr->error();
-
-    delete subReq; // No need for this any more
 
     // Build an index into the results
     QHash<QContactLocalId, QContact> idMap;

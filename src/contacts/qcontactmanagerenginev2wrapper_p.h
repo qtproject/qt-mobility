@@ -54,6 +54,7 @@
 //
 
 #include <QPointer>
+#include <QScopedPointer>
 #include "qcontactmanagerengine.h"
 
 QTM_USE_NAMESPACE
@@ -151,7 +152,7 @@ private:
 
 protected:
     QPointer<QContactAbstractRequest> m_request;
-    QPointer<QContactAbstractRequest> m_currentSubRequest;
+    QScopedPointer<QContactAbstractRequest> m_currentSubRequest;
 };
 
 
