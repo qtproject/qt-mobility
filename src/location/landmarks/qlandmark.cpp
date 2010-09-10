@@ -56,6 +56,7 @@
 #include <QVariant>
 #include <QStringList>
 #include <QSet>
+#include <QHash>
 
 #ifdef LANDMARKPRIVATE_DEBUG
 #include <QDebug>

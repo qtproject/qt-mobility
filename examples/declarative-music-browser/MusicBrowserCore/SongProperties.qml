@@ -47,9 +47,8 @@ Rectangle {
 
     color: "black"
 
-    GalleryItem {
+    DocumentGalleryItem {
         id: song
-        gallery: documentGallery
 
         properties: [
             "title",
