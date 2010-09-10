@@ -673,10 +673,10 @@ EXPORTS
 	?finished@QGalleryAbstractRequest@QtMobility@@IAEXXZ @ 672 NONAME ; void QtMobility::QGalleryAbstractRequest::finished(void)
 	?finished@QGalleryQueryModel@QtMobility@@IAEXXZ @ 673 NONAME ; void QtMobility::QGalleryQueryModel::finished(void)
 	?isActive@QGalleryAbstractResponse@QtMobility@@QBE_NXZ @ 674 NONAME ; bool QtMobility::QGalleryAbstractResponse::isActive(void) const
-	?isAutoUpdate@QGalleryItemRequest@QtMobility@@QBE_NXZ @ 675 NONAME ; bool QtMobility::QGalleryItemRequest::isAutoUpdate(void) const
-	?isAutoUpdate@QGalleryQueryModel@QtMobility@@QBE_NXZ @ 676 NONAME ; bool QtMobility::QGalleryQueryModel::isAutoUpdate(void) const
-	?isAutoUpdate@QGalleryQueryRequest@QtMobility@@QBE_NXZ @ 677 NONAME ; bool QtMobility::QGalleryQueryRequest::isAutoUpdate(void) const
-	?isAutoUpdate@QGalleryTypeRequest@QtMobility@@QBE_NXZ @ 678 NONAME ; bool QtMobility::QGalleryTypeRequest::isAutoUpdate(void) const
+	?isAutoUpdate@QGalleryItemRequest@QtMobility@@QBE_NXZ @ 675 NONAME ABSENT ; bool QtMobility::QGalleryItemRequest::isAutoUpdate(void) const
+	?isAutoUpdate@QGalleryQueryModel@QtMobility@@QBE_NXZ @ 676 NONAME ABSENT ; bool QtMobility::QGalleryQueryModel::isAutoUpdate(void) const
+	?isAutoUpdate@QGalleryQueryRequest@QtMobility@@QBE_NXZ @ 677 NONAME ABSENT ; bool QtMobility::QGalleryQueryRequest::isAutoUpdate(void) const
+	?isAutoUpdate@QGalleryTypeRequest@QtMobility@@QBE_NXZ @ 678 NONAME ABSENT ; bool QtMobility::QGalleryTypeRequest::isAutoUpdate(void) const
 	?resume@QGalleryAbstractResponse@QtMobility@@IAEXXZ @ 679 NONAME ; void QtMobility::QGalleryAbstractResponse::resume(void)
 	?resumed@QGalleryAbstractResponse@QtMobility@@IAEXXZ @ 680 NONAME ; void QtMobility::QGalleryAbstractResponse::resumed(void)
 	?setAutoUpdate@QGalleryItemRequest@QtMobility@@QAEX_N@Z @ 681 NONAME ; void QtMobility::QGalleryItemRequest::setAutoUpdate(bool)
@@ -689,4 +689,8 @@ EXPORTS
 	?statusChanged@QGalleryQueryModel@QtMobility@@IAEXW4Status@QGalleryAbstractRequest@2@@Z @ 688 NONAME ; void QtMobility::QGalleryQueryModel::statusChanged(enum QtMobility::QGalleryAbstractRequest::Status)
 	??WQtMobility@@YA?AVQGalleryUnionFilter@0@ABV10@0@Z @ 689 NONAME ; class QtMobility::QGalleryUnionFilter QtMobility::operator||(class QtMobility::QGalleryUnionFilter const &, class QtMobility::QGalleryUnionFilter const &)
 	??VQtMobility@@YA?AVQGalleryIntersectionFilter@0@ABV10@0@Z @ 690 NONAME ; class QtMobility::QGalleryIntersectionFilter QtMobility::operator&&(class QtMobility::QGalleryIntersectionFilter const &, class QtMobility::QGalleryIntersectionFilter const &)
+	?autoUpdate@QGalleryTypeRequest@QtMobility@@QBE_NXZ @ 691 NONAME ; bool QtMobility::QGalleryTypeRequest::autoUpdate(void) const
+	?autoUpdate@QGalleryItemRequest@QtMobility@@QBE_NXZ @ 692 NONAME ; bool QtMobility::QGalleryItemRequest::autoUpdate(void) const
+	?autoUpdate@QGalleryQueryModel@QtMobility@@QBE_NXZ @ 693 NONAME ; bool QtMobility::QGalleryQueryModel::autoUpdate(void) const
+	?autoUpdate@QGalleryQueryRequest@QtMobility@@QBE_NXZ @ 694 NONAME ; bool QtMobility::QGalleryQueryRequest::autoUpdate(void) const
 
