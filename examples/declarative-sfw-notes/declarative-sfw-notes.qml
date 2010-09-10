@@ -51,7 +51,7 @@ Rectangle {
     property bool validService: false
 
     // ![1]
-    property variant notesManager: notesService.serviceObject
+    property variant notesManager: 0
     // ![1]
 
     id: mainWindow
@@ -103,7 +103,7 @@ Rectangle {
         text: ""
         font.pointSize: 18; font.family: "Comic Sans MS"; font.italic:true
         horizontalAlignment: Text.AlignHCenter
-        wrapMode: Text.WordWrap
+        wrapMode: Text.Wrap
         width: noteArea.width
         anchors.verticalCenter: noteArea.verticalCenter
         anchors.horizontalCenter: title.horizontalCenter
@@ -185,6 +185,7 @@ Rectangle {
 
             if (notesService.valid) {
                 notesManager = notesService.serviceObject;
+                notesManager.init();
             // ![2]
                 var list = notesManager.noteSet;
                 if (list.length > 0) {curr = 1;}
@@ -233,16 +234,6 @@ Rectangle {
         }
     }
 
-    Connections {
-        target: notesManager
-        
-        onSoundAlarm: {
-            alarmDialog.text = "ALERT SOUNDED!!!" + "\n\n" + 
-                               formatDateTime(alarm) + "\n\n" + notesManager.alarmMessage;
-            alarmDialog.opacity = 1;
-        }
-    }
-
     Dialog {
         id: deleteDialog
         text: "Confirm removing this note item?"
@@ -268,6 +259,12 @@ Rectangle {
     Dialog {
         id: invalidDialog
         text: "No valid default interface for:\n\n\"" + interfaceDialog.defaultText + "\""
+        cancelable: false
+    }
+
+    Dialog {
+        id: unconnectedDialog
+        text: "Unable to connect to notes manager database\n in current or home directory"
         cancelable: false
     }
 
@@ -325,6 +322,23 @@ Rectangle {
     Service {
         id: notesService
         interfaceName: "com.nokia.qt.examples.NotesManager"
+
+        Component.onCompleted: {
+            notesManager = notesService.serviceObject;
+        }
     }
     // ![6]
+
+    // ![7]
+    Connections {
+        target: notesManager
+        ignoreUnknownSignals: true
+
+        onSoundAlarm: {
+            alarmDialog.text = "ALERT SOUNDED!!!" + "\n\n" + 
+                               formatDateTime(alarm) + "\n\n" + notesManager.alarmMessage;
+            alarmDialog.opacity = 1;
+        }
+    }
+    // ![7]
 }
