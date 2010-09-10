@@ -1522,6 +1522,7 @@ qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 
 QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QString &driveVolume)
 {
+    uriForDrive(driveVolume);
 #if !defined( Q_OS_WINCE)
     uint result =  GetDriveType((WCHAR *)driveVolume.utf16());
     switch(result) {
@@ -1571,6 +1572,12 @@ void QSystemStorageInfoPrivate::mountEntries()
 
 QString QSystemStorageInfoPrivate::uriForDrive(const QString &driveVolume)
 {
+    WCHAR volume[MAX_PATH];
+    if (GetVolumeNameForVolumeMountPoint(reinterpret_cast<const wchar_t *>(driveVolume.utf16()), volume, MAX_PATH)) {
+        QString returnStr(QString::fromUtf16(reinterpret_cast<const unsigned short *>(volume)));
+        qDebug() << returnStr;
+        return returnStr;
+    }
     return QString();
 }
 
