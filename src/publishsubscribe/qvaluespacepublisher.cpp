@@ -55,6 +55,7 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QValueSpacePublisher class allows applications to publish values in the Value Space.
 
+    \inmodule QtPublishSubscribe
     \ingroup publishsubscribe
 
     When multiple Value Space layers are available QValueSpacePublisher only publishes values to
@@ -122,6 +123,9 @@ public:
     QValueSpacePublisherPrivate(const QString &_path, const QUuid &uuid);
 
     QString path;
+#ifdef QT_SIMULATOR
+    QString originalPath;
+#endif
 
     QAbstractValueSpaceLayer *layer;
     QAbstractValueSpaceLayer::Handle handle;
@@ -135,6 +139,11 @@ QValueSpacePublisherPrivate::QValueSpacePublisherPrivate(const QString &_path,
 :   layer(0), handle(QAbstractValueSpaceLayer::InvalidHandle), hasSet(false), hasWatch(false)
 {
     path = qCanonicalPath(_path);
+#ifdef QT_SIMULATOR
+    originalPath = path;
+    path = qAddSimulatorPrefix(path);
+#endif
+
 
     if ((filter & QValueSpace::PermanentLayer &&
          filter & QValueSpace::TransientLayer) ||
@@ -164,6 +173,10 @@ QValueSpacePublisherPrivate::QValueSpacePublisherPrivate(const QString &_path, c
 :   layer(0), handle(QAbstractValueSpaceLayer::InvalidHandle), hasSet(false), hasWatch(false)
 {
     path = qCanonicalPath(_path);
+#ifdef QT_SIMULATOR
+    originalPath = path;
+    path = qAddSimulatorPrefix(path);
+#endif
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
@@ -250,7 +263,11 @@ QValueSpacePublisher::~QValueSpacePublisher()
 */
 QString QValueSpacePublisher::path() const
 {
+#ifndef QT_SIMULATOR
     return d->path;
+#else
+    return d->originalPath;
+#endif
 }
 
 /*!

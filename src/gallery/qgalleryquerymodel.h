@@ -42,9 +42,9 @@
 #ifndef QGALLERYQUERYMODEL_H
 #define QGALLERYQUERYMODEL_H
 
-#include <QtCore/qabstractitemmodel.h>
-
 #include <qgalleryqueryrequest.h>
+
+#include <QtCore/qabstractitemmodel.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -64,7 +64,7 @@ class Q_GALLERY_EXPORT QGalleryQueryModel : public QAbstractItemModel
     Q_PROPERTY(QString rootType READ rootType WRITE setRootType)
     Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem)
     Q_PROPERTY(QGalleryQueryRequest::Scope scope READ scope WRITE setScope)
-    Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
+    Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter)
     Q_PROPERTY(int result READ result NOTIFY resultChanged)
     Q_PROPERTY(QGalleryAbstractRequest::State state READ state NOTIFY stateChanged)
 public:

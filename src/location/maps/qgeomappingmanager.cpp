@@ -44,6 +44,7 @@
 #include "qgeomappingmanagerengine.h"
 
 #include <QNetworkProxy>
+#include <QLocale>
 
 QTM_BEGIN_NAMESPACE
 
@@ -53,21 +54,26 @@ QTM_BEGIN_NAMESPACE
     and interacting with maps.
 
     \inmodule QtLocation
-    
+
     \ingroup maps-mapping
 
     A QGeoMappingManager instance can create QGeoMapData instances with
-    createMapData(). These instances can be used to contain and manage
-    information concerning what a particular QGeoMapWidget is viewing.
+    createMapData(). The QGeoMapData instances can be used to contain and
+    manage information concerning what a particular QGraphicsGeoMap is viewing.
 
     The functions in this class will typically not be used by clients of this
     API, as the most common uses will only need to obtain a QGeoMappingManager
-    instance and associate it with a QGeoMapWidget instance:
+    instance and associate it with a QGraphicsGeoMap instance:
     \code
         QGeoServiceProvider serviceProvider("nokia");
         QGeoMappingManager *manager = serviceProvider.mappingManager();
-        QGeoMapWidget *widget = new QGeoMapWidget(manager);
+        QGraphicsGeoMap *geoMap = new QGraphicsGeoMap(manager);
     \endcode
+
+    This could have been simplified by having the plugin return a
+    QGraphicsGeoMap instance instead, but this approach allows users to
+    subclass QGraphicsGeoMap in order to override the standard event handlers
+    and implement custom map behaviours.
 */
 
 /*!
@@ -91,7 +97,7 @@ QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject
 }
 
 /*!
-    Destroys this QGeoMappingManager object.
+    Destroys this mapping manager.
 */
 QGeoMappingManager::~QGeoMappingManager()
 {
@@ -114,17 +120,6 @@ QString QGeoMappingManager::managerName() const
 }
 
 /*!
-    Returns the parameters used in the creation of this mapping manager.
-*/
-QMap<QString, QString> QGeoMappingManager::managerParameters() const
-{
-//    if (!d_ptr->engine)
-//        return QMap<QString, QString>();
-
-    return d_ptr->engine->managerParameters();
-}
-
-/*!
     Returns the version of the engine which implements the behaviour of this
     mapping manager.
 
@@ -140,45 +135,24 @@ int QGeoMappingManager::managerVersion() const
 }
 
 /*!
-    Returns a new QGeoMapData instance for \a widget which will be managed by this manager.
+    Returns a new QGeoMapData instance for \a geoMap which will be managed by
+    this manager.
 */
-QGeoMapData* QGeoMappingManager::createMapData(QGeoMapWidget *widget)
+QGeoMapData* QGeoMappingManager::createMapData(QGraphicsGeoMap *geoMap)
 {
 //    if (!d_ptr->engine)
 //        return 0;
 
-    return d_ptr->engine->createMapData(widget);
+    return d_ptr->engine->createMapData(geoMap);
 }
-
-/*!
-    Stops this manager from managing \a mapData.
-*/
-void QGeoMappingManager::removeMapData(QGeoMapData *mapData)
-{
-//    if (d_ptr->engine)
-        d_ptr->engine->removeMapData(mapData);
-}
-
-///*!
-//    Updates the map image stored in \a mapData based on the viewport
-//    data contained within \a mapData.
-
-//    The image may be updated incrementally, as will happen with
-//    tile based mapping managers.
-//*/
-//void QGeoMappingManager::updateMapImage(QGeoMapData *mapData)
-//{
-////    if (d_ptr->engine)
-//        d_ptr->engine->updateMapImage(mapData);
-//}
 
 /*!
     Returns a list of the map types supported by this manager.
 */
-QList<QGeoMapWidget::MapType> QGeoMappingManager::supportedMapTypes() const
+QList<QGraphicsGeoMap::MapType> QGeoMappingManager::supportedMapTypes() const
 {
 //    if (!d_ptr->engine)
-//        return QList<QGeoMapWidget::MapType>();
+//        return QList<QGraphicsGeoMap::MapType>();
 
     return d_ptr->engine->supportedMapTypes();
 }
@@ -243,25 +217,38 @@ QSize QGeoMappingManager::maximumImageSize() const
     return d_ptr->engine->maximumImageSize();
 }
 
+/*!
+    Sets the locale to be used by the this manager to \a locale.
+
+    If this mapping manager supports returning map labels
+    in different languages, they will be returned in the language of \a locale.
+
+    The locale used defaults to the system locale if this is not set.
+*/
+void QGeoMappingManager::setLocale(const QLocale &locale)
+{
+    d_ptr->engine->setLocale(locale);
+}
+
+/*!
+    Returns the locale used to hint to this mapping manager about what
+    language to use for map labels.
+*/
+QLocale QGeoMappingManager::locale() const
+{
+    return d_ptr->engine->locale();
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoMappingManagerPrivate::QGeoMappingManagerPrivate()
         : engine(0) {}
 
-QGeoMappingManagerPrivate::QGeoMappingManagerPrivate(const QGeoMappingManagerPrivate &other)
-        : engine(other.engine) {}
-
 QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate()
 {
-    delete engine;
-}
-
-QGeoMappingManagerPrivate& QGeoMappingManagerPrivate::operator= (const QGeoMappingManagerPrivate & other)
-{
-    engine = other.engine;
-
-    return *this;
+    if (engine)
+        delete engine;
 }
 
 #include "moc_qgeomappingmanager.cpp"

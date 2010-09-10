@@ -41,32 +41,13 @@
 
 //TESTED_COMPONENT=src/versit
 
-#include "qversitdefs_p.h"
 #include "tst_qversitcontactimporter.h"
 #include "qversitcontactimporter.h"
 #include "qversitcontactimporter_p.h"
 #include <qversitproperty.h>
 #include <qversitdocument.h>
+#include <qtcontacts.h>
 #include <QtTest/QtTest>
-#include <qcontact.h>
-#include <qcontactdetail.h>
-#include <qcontactname.h>
-#include <qcontactaddress.h>
-#include <qcontactphonenumber.h>
-#include <qcontactemailaddress.h>
-#include <qcontacturl.h>
-#include <qcontactguid.h>
-#include <qcontactorganization.h>
-#include <qcontacttimestamp.h>
-#include <qcontactanniversary.h>
-#include <qcontactbirthday.h>
-#include <qcontactgender.h>
-#include <qcontactnickname.h>
-#include <qcontactavatar.h>
-#include <qcontactgeolocation.h>
-#include <qcontactnote.h>
-#include <qcontactonlineaccount.h>
-#include <qcontactfamily.h>
 #include <QDir>
 
 QTM_BEGIN_NAMESPACE
@@ -737,13 +718,13 @@ void tst_QVersitContactImporter::testNickname()
     document.addProperty(nameProperty);
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
-    QList<QContactDetail> nickNames = contact.details(QContactNickname::DefinitionName);
+    QList<QContactNickname> nickNames = contact.details<QContactNickname>();
     QCOMPARE(nickNames.count(),3);
-    nickName = static_cast<QContactNickname>(nickNames[0]);
+    nickName = nickNames[0];
     QCOMPARE(nickName.nickname(),QString::fromAscii("Homie"));
-    nickName = static_cast<QContactNickname>(nickNames[1]);
+    nickName = nickNames[1];
     QCOMPARE(nickName.nickname(),QString::fromAscii("SuperHero"));
-    nickName = static_cast<QContactNickname>(nickNames[2]);
+    nickName = nickNames[2];
     QCOMPARE(nickName.nickname(),QString::fromAscii("NukeSpecialist"));
 
     // X-NICKNAME
@@ -758,6 +739,15 @@ void tst_QVersitContactImporter::testNickname()
     contact = mImporter->contacts().first();
     nickName = contact.detail<QContactNickname>();
     QCOMPARE(nickName.nickname(),QLatin1String("Homie"));
+
+    // both X-NICKNAME and NICKNAME
+    nameProperty.setName(QString::fromAscii("NICKNAME"));
+    document.addProperty(nameProperty);
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    contact = mImporter->contacts().first();
+    nickNames = contact.details<QContactNickname>();
+    QCOMPARE(nickNames.size(), 1);
+    QCOMPARE(nickNames.first().nickname(), QLatin1String("Homie"));
 }
 
 void tst_QVersitContactImporter::testAvatarThumbnail()
@@ -1216,13 +1206,12 @@ void tst_QVersitContactImporter::testTag()
     QCOMPARE(tagDetail.tag(), QLatin1String("red"));
 
     // multiple values
-    document.clear();
-    document.setType(QVersitDocument::VCard30Type);
     tagProperty.setName(QLatin1String("CATEGORIES"));
     tagProperty.setValue(QStringList()
-                         << QLatin1String("red")
+                         << QLatin1String("red")  // duplicate from previous property should be pruned
                          << QLatin1String("green")
-                         << QLatin1String("blue"));
+                         << QLatin1String("blue")
+                         << QLatin1String("blue"));  // duplicates should be pruned
     tagProperty.setValueType(QVersitProperty::ListType);
     document.addProperty(tagProperty);
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));

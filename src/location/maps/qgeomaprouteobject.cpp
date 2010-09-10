@@ -46,63 +46,149 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QGeoMapRouteObject
+    \brief The QGeoMapRouteObject class is a QGeoMapObject used to draw
+    a route on a map.
+
+    \inmodule QtLocation
+
+    \ingroup maps-mapping-objects
+
+    The route is specified by a QGeoRoute object.
+
+    The route might be quite detailed, and so to improve performance the
+    detail level can be set with QGeoMapRouteObject::detailLevel.
+
+    The route object draws the route as a series of lines with a minimum
+    on-screen harmattan length equal to the detail level.  This is done so that
+    the small changes in direction of a road will be visible at high zoom
+    levels but will not slow down the rendering at the lower zoom levels.
+*/
+
+/*!
+    Constructs a new route object with the parent \a parent.
+*/
+QGeoMapRouteObject::QGeoMapRouteObject(QGeoMapObject *parent)
+    : QGeoMapObject(new QGeoMapRouteObjectPrivate(this, parent)) {}
+
+/*!
+    Constructs a new route object for the route \a route and with parent \a
+    parent.
+*/
 QGeoMapRouteObject::QGeoMapRouteObject(const QGeoRoute &route, QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapRouteObjectPrivate(this, parent))
+        : QGeoMapObject(new QGeoMapRouteObjectPrivate(this, parent))
 {
     Q_D(QGeoMapRouteObject);
     d->route = route;
-    d->bounds = route.bounds();
 }
 
+/*!
+    Destroys this route object
+*/
 QGeoMapRouteObject::~QGeoMapRouteObject()
 {
 }
 
-QPen QGeoMapRouteObject::pen() const
-{
-    Q_D(const QGeoMapRouteObject);
+/*!
+    \property QGeoMapRouteObject::route
+    \brief This property holds the which will be displayed.
 
-    return d->pen;
-}
+    The default value of this property is an empty route.
 
-void QGeoMapRouteObject::setPen(const QPen &aPen)
-{
-    Q_D(QGeoMapRouteObject);
-
-    d->pen = aPen;
-}
-
+    If QGeoRoute::path() returns a list of less than 2 valid QGeoCoordinates
+    then the route object will not be displayed.
+*/
 QGeoRoute QGeoMapRouteObject::route() const
 {
     Q_D(const QGeoMapRouteObject);
-
     return d->route;
 }
 
-void QGeoMapRouteObject::setDetailLevel(quint32 pixels)
+void QGeoMapRouteObject::setRoute(const QGeoRoute &route)
+{
+    Q_D(QGeoMapRouteObject);
+    //if (d->route != route) {
+    d->route = route;
+    objectUpdated();
+    emit routeChanged(d->route);
+    //}
+}
+
+/*!
+    \property QGeoMapRouteObject::pen
+    \brief This property holds the pen that will be used to draw this object.
+
+    The pen is used to draw the route.
+
+    The pen will be treated as a cosmetic pen, which means that the width
+    of the pen will be independent of the zoom level of the map.
+*/
+QPen QGeoMapRouteObject::pen() const
+{
+    Q_D(const QGeoMapRouteObject);
+    return d->pen;
+}
+
+void QGeoMapRouteObject::setPen(const QPen &pen)
 {
     Q_D(QGeoMapRouteObject);
 
-    d->detailLevel = pixels;
+    QPen newPen = pen;
+    newPen.setCosmetic(true);
+
+    if (d->pen == newPen)
+        return;
+
+    d->pen = newPen;
+    objectUpdated();
+    emit penChanged(d->pen);
 }
 
+/*!
+    \property QGeoMapRouteObject::detailLevel
+    \brief This property holds the level of detail used to draw this object.
+
+    A QGeoRoute instance can contain a large amount of information about the
+    path taken by the route. This property is used as a hint to help reduce the
+    amount of information that needs to be drawn on the map.
+
+    The path taken by the route is represented as a list of QGeoCoordinate
+    instances. This route object will draw lines between these coordinates, but
+    will skip members of the list until the manhattan distance between the
+    start point and the end point of the line is at least \a detailLevel.
+
+    The default value of this property is 20.
+*/
 quint32 QGeoMapRouteObject::detailLevel() const
 {
     Q_D(const QGeoMapRouteObject);
-
     return d->detailLevel;
+}
+
+void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
+{
+    Q_D(QGeoMapRouteObject);
+    if (d->detailLevel != detailLevel) {
+        d->detailLevel = detailLevel;
+        objectUpdated();
+        emit detailLevelChanged(d->detailLevel);
+    }
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::GeoRouteType)
+        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::RouteType)
 {
     detailLevel = DEFAULT_ROUTE_DETAIL_LEVEL;
+    pen.setCosmetic(true);
 }
 
 QGeoMapRouteObjectPrivate::~QGeoMapRouteObjectPrivate() {}
+
+#include "moc_qgeomaprouteobject.cpp"
 
 QTM_END_NAMESPACE
 

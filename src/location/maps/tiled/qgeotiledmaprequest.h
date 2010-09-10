@@ -42,10 +42,10 @@
 #ifndef QGEOTILEDMAPREQUEST_H
 #define QGEOTILEDMAPREQUEST_H
 
-#include "qgeomapwidget.h"
+#include "qgraphicsgeomap.h"
 
 #include <QRect>
-#include <QSharedDataPointer>
+#include <QExplicitlySharedDataPointer>
 
 QTM_BEGIN_NAMESPACE
 
@@ -55,7 +55,6 @@ class QGeoTiledMapRequestPrivate;
 class Q_LOCATION_EXPORT QGeoTiledMapRequest
 {
 public:
-    // TODO add isValid method, set to false for default constructor
     QGeoTiledMapRequest();
     QGeoTiledMapRequest(QGeoTiledMapData *mapData,
                         int row,
@@ -65,11 +64,12 @@ public:
     ~QGeoTiledMapRequest();
 
     QGeoTiledMapRequest& operator= (const QGeoTiledMapRequest &other);
+
     bool operator== (const QGeoTiledMapRequest &other) const;
 
     QGeoTiledMapData *mapData() const;
 
-    QGeoMapWidget::MapType mapType() const;
+    QGraphicsGeoMap::MapType mapType() const;
     int zoomLevel() const;
 
     int row() const;
@@ -77,7 +77,7 @@ public:
     QRect tileRect() const;
 
 private:
-    QSharedDataPointer<QGeoTiledMapRequestPrivate> d_ptr;
+    QExplicitlySharedDataPointer<QGeoTiledMapRequestPrivate> d_ptr;
 };
 
 Q_LOCATION_EXPORT uint qHash(const QGeoTiledMapRequest &key);

@@ -62,6 +62,8 @@
 
 QT_BEGIN_NAMESPACE
 
+//#define DEBUG_GFX_VIDEO_ITEM
+
 //update overlay geometry slightly later,
 //to ensure color key is alredy replaced with static frame
 #define GEOMETRY_UPDATE_DELAY 20
@@ -262,7 +264,7 @@ public:
     void updateLastFrame();
 
     void _q_present();
-    void _q_formatChanged(const QVideoSurfaceFormat &format);
+    void _q_updateNativeSize();
     void _q_serviceDestroyed();
     void _q_mediaObjectDestroyed();
 };
@@ -370,14 +372,16 @@ void QGraphicsVideoItemPrivate::_q_present()
     q_ptr->update(boundingRect);
 }
 
-void QGraphicsVideoItemPrivate::_q_formatChanged(const QVideoSurfaceFormat &format)
+void QGraphicsVideoItemPrivate::_q_updateNativeSize()
 {
-    nativeSize = format.sizeHint();
-    lastFrame = QPixmap();
+    const QSize &size = surface->surfaceFormat().sizeHint();
+    if (nativeSize != size) {
+        lastFrame = QPixmap();
+        nativeSize = size;
 
-    updateRects();
-
-    emit q_ptr->nativeSizeChanged(nativeSize);
+        updateRects();
+        emit q_ptr->nativeSizeChanged(nativeSize);
+    }
 }
 
 void QGraphicsVideoItemPrivate::_q_serviceDestroyed()
@@ -408,7 +412,7 @@ QGraphicsVideoItem::QGraphicsVideoItem(QGraphicsItem *parent)
     setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
 
     connect(d_ptr->surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
-            this, SLOT(_q_formatChanged(QVideoSurfaceFormat)));
+            this, SLOT(_q_updateNativeSize()));
 
     connect(d_ptr->surface, SIGNAL(activeChanged(bool)), this, SLOT(_q_present()));
 }
@@ -514,7 +518,10 @@ QRectF QGraphicsVideoItem::boundingRect() const
 void QGraphicsVideoItem::paint(
         QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+#ifdef DEBUG_GFX_VIDEO_ITEM
     qDebug() << "QGraphicsVideoItem::paint";
+#endif
+
     Q_UNUSED(option);
     Q_D(QGraphicsVideoItem);
 
@@ -551,7 +558,7 @@ void QGraphicsVideoItem::paint(
         if (widget) {
             //workaround for xvideo issue with U/V planes swapped
             QPoint topLeft = widget->mapToGlobal(overlayRect.topLeft());
-            if ((topLeft.x() & 1) == 0)
+            if ((topLeft.x() & 1) == 0 && topLeft.x() != 0)
                 overlayRect.moveLeft(overlayRect.left()-1);
         }
 
@@ -581,7 +588,9 @@ void QGraphicsVideoItem::paint(
             geometryChanged = true;
             d->softwareRenderingTimer.start(SOFTWARE_RENDERING_DURATION, this);
 
-            //qDebug() << "set video display rect:" << deviceRect;
+#ifdef DEBUG_GFX_VIDEO_ITEM
+            qDebug() << "set video display rect:" << overlayRect;
+#endif
 
         }
 

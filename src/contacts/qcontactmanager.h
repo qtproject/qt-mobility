@@ -57,6 +57,7 @@
 #include "qcontactrelationship.h"
 #include "qcontactsortorder.h"
 #include "qcontactfetchhint.h"
+#include "qcontacttype.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -77,6 +78,18 @@ public:
     QContactManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
 #endif
     explicit QContactManager(QObject* parent);
+
+#if Q_QDOC
+    static const QLatin1Constant ParameterSignalSources;
+    static const QLatin1Constant ParameterSignalDefinitions;
+    static const QLatin1Constant ParameterValueOnlyOtherProcesses;
+    static const QLatin1Constant ParameterValueOnlyOtherManagers;
+#else
+    Q_DECLARE_LATIN1_CONSTANT(ParameterSignalSources, "SignalSources");
+    Q_DECLARE_LATIN1_CONSTANT(ParameterSignalDefinitions, "SignalDefinitions");
+    Q_DECLARE_LATIN1_CONSTANT(ParameterValueOnlyOtherProcesses, "OnlyOtherProcesses");
+    Q_DECLARE_LATIN1_CONSTANT(ParameterValueOnlyOtherManagers, "OnlyOtherManagers");
+#endif
 
     static QContactManager* fromUri(const QString& uri, QObject* parent = 0);
     ~QContactManager();                     // dtor

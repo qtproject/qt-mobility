@@ -45,6 +45,7 @@
 
 #include "qtcontactsglobal.h"
 #include "qcontactactiondescriptor.h"
+#include "qcontactactiontarget.h"
 
 #include <QObject>
 #include <QtPlugin>
@@ -62,19 +63,28 @@ class Q_CONTACTS_EXPORT QContactActionFactory : public QObject
     Q_OBJECT
 
 public:
-    virtual ~QContactActionFactory() = 0;
-    virtual QString name() const = 0;
+    QContactActionFactory(QObject *parent = 0) : QObject(parent) {}
+    virtual ~QContactActionFactory();
     virtual QList<QContactActionDescriptor> actionDescriptors() const = 0;
-    virtual QContactAction* instance(const QContactActionDescriptor& descriptor) const = 0;
-    virtual QVariantMap actionMetadata(const QContactActionDescriptor& descriptor) const = 0;
+    virtual QContactAction* create(const QContactActionDescriptor& which) const = 0;
+
+    // Backend functionality for QCAD
+    virtual QSet<QContactActionTarget> supportedTargets(const QContact& contact, const QContactActionDescriptor& which) const = 0;
+    virtual QContactFilter contactFilter(const QContactActionDescriptor& which) const = 0;
+    virtual QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters, const QContactActionDescriptor& which) const = 0;
+
+    virtual bool supportsContact(const QContact& contact, const QContactActionDescriptor& which) const; // virtual but not pure virtual; default impl. calls supportedTargets.isEmpty().
+
+#ifdef Q_QDOC
+    static const QLatin1Constant InterfaceName;
+#else
+    Q_DECLARE_LATIN1_CONSTANT(InterfaceName, "com.nokia.qt.mobility.contacts.action");
+#endif
+
+protected:
+    QContactActionDescriptor createDescriptor(const QString& actionName, const QString& serviceName, const QString& actionIdentifier, int implementationVersion) const;
 };
 
 QTM_END_NAMESPACE
-
-QT_BEGIN_NAMESPACE
-#define QT_CONTACTS_ACTION_FACTORY_INTERFACE "com.nokia.qt.mobility.contacts.actionfactory/1.0"
-Q_DECLARE_INTERFACE(QtMobility::QContactActionFactory, QT_CONTACTS_ACTION_FACTORY_INTERFACE);
-QT_END_NAMESPACE
-
 
 #endif

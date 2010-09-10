@@ -57,6 +57,7 @@
 
 #include "qcontact_p.h"
 #include "qcontactdetail_p.h"
+#include "qcontactactionmanager_p.h"
 
 #include <QMutex>
 #include <QMutexLocker>
@@ -544,19 +545,13 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
         {
             // Find any matching actions, and do a union filter on their filter objects
             QContactActionFilter af(filter);
-            QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
+            QList<QContactActionDescriptor> descriptors = QContactActionManager::instance()->actionDescriptors(af.actionName());
 
             QList<QContactFilter> filters;
-            // There's a small wrinkle if there's a value specified in the action filter
-            // we have to adjust any contained QContactDetailFilters to have that value
-            // or test if a QContactDetailRangeFilter contains this value already
             for (int j = 0; j < descriptors.count(); j++) {
-                QContactAction* action = QContactAction::action(descriptors.at(j));
-
                 // Action filters are not allowed to return action filters, at all
                 // it's too annoying to check for recursion
-                QContactFilter d = action->contactFilter();
-                delete action; // clean up.
+                QContactFilter d = descriptors.at(j).contactFilter();
                 if (!validateActionFilter(d))
                     continue;
 
@@ -951,6 +946,21 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     subTypes << QString(QLatin1String(QContactUrl::SubTypeHomePage));
     f.setAllowableValues(subTypes);
     fields.insert(QContactUrl::FieldSubType, f);
+    f.setDataType(QVariant::StringList);
+    f.setAllowableValues(contexts);
+    fields.insert(QContactDetail::FieldContext, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    retn.insert(d.name(), d);
+
+    // favorite
+    d.setName(QContactFavorite::DefinitionName);
+    fields.clear();
+    f.setAllowableValues(QVariantList());
+    f.setDataType(QVariant::Bool);
+    fields.insert(QContactFavorite::FieldFavorite, f);
+    f.setDataType(QVariant::Int);
+    fields.insert(QContactFavorite::FieldIndex, f);
     f.setDataType(QVariant::StringList);
     f.setAllowableValues(contexts);
     fields.insert(QContactDetail::FieldContext, f);
@@ -1783,8 +1793,10 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                     QString preprocessedInput;
                     for (int i = 0; i < input.size(); i++) {
                         QChar current = input.at(i).toLower();
-                        if (current.isDigit()) preprocessedInput.append(current);
-                        // note: we ignore characters like '+', 'p', 'w', '*' and '#' which may be important.
+                        // XXX NOTE: we ignore characters like '+', 'p', 'w', '*' and '#' which may be important.
+                        if (current.isDigit()) {
+                            preprocessedInput.append(current);
+                        }
                     }
 
                     /* Look at every detail in the set of details and compare */
@@ -1794,8 +1806,10 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                         QString preprocessedValueString;
                         for (int i = 0; i < valueString.size(); i++) {
                             QChar current = valueString.at(i).toLower();
-                            if (current.isDigit()) preprocessedValueString.append(current);
                             // note: we ignore characters like '+', 'p', 'w', '*' and '#' which may be important.
+                            if (current.isDigit()) {
+                                preprocessedValueString.append(current);
+                            }
                         }
 
                         // if the matchflags input don't require a particular criteria to pass, we assume that it has passed.
@@ -1811,6 +1825,11 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                         bool mewr = (mew ? preprocessedValueString.endsWith(preprocessedInput) : true);
                         if (mewr && mswr && mcr && mer) {
                             return true; // this detail meets all of the criteria which were required, and hence must match.
+                        }
+
+                        // fallback case: default MatchPhoneNumber compares the rightmost 7 digits, ignoring other matchflags.
+                        if (preprocessedValueString.right(7) == preprocessedInput.right(7)) {
+                            return true;
                         }
                     }
                 } else if (cdf.matchFlags() & QContactFilter::MatchKeypadCollation) {
@@ -2048,18 +2067,15 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             {
                 // Find any matching actions, and do a union filter on their filter objects
                 QContactActionFilter af(filter);
-                QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
+                QList<QContactActionDescriptor> descriptors = QContactActionManager::instance()->actionDescriptors(af.actionName());
 
                 // There's a small wrinkle if there's a value specified in the action filter
                 // we have to adjust any contained QContactDetailFilters to have that value
                 // or test if a QContactDetailRangeFilter contains this value already
                 for (int j = 0; j < descriptors.count(); j++) {
-                    QContactAction* action = QContactAction::action(descriptors.at(j));
-
                     // Action filters are not allowed to return action filters, at all
                     // it's too annoying to check for recursion
-                    QContactFilter d = action->contactFilter();
-                    delete action; // clean up.
+                    QContactFilter d = descriptors.at(j).contactFilter();
                     if (!validateActionFilter(d))
                         return false;
 

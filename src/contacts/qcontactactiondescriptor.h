@@ -44,37 +44,75 @@
 #define QCONTACTACTIONDESCRIPTOR_H
 
 #include "qtcontactsglobal.h"
+#include "qcontactfilter.h"
+#include "qcontactdetail.h"
+
+#include <QSet>
+#include <QVariant>
+#include <QMap>
 #include <QString>
 #include <QSharedDataPointer>
 
 QTM_BEGIN_NAMESPACE
 
+class QContact;
+class QContactActionFactory;
+class QContactActionTarget;
 class QContactActionDescriptorPrivate;
+
+// MSVC needs the declaration before the friend statement
+class QContactActionDescriptor;
+Q_CONTACTS_EXPORT uint qHash(const QContactActionDescriptor& key);
+
 class Q_CONTACTS_EXPORT QContactActionDescriptor
 {
 public:
-    explicit QContactActionDescriptor(const QString& actionName = QString(), const QString& vendorName = QString(), int vendorVersion = -1);
+    QContactActionDescriptor();
     QContactActionDescriptor(const QContactActionDescriptor& other);
     QContactActionDescriptor& operator=(const QContactActionDescriptor& other);
     ~QContactActionDescriptor();
 
-    bool isEmpty() const;
+    bool isValid() const;
     bool operator==(const QContactActionDescriptor& other) const;
     bool operator!=(const QContactActionDescriptor& other) const;
 
-    void setActionName(const QString& actionName);
-    void setVendorName(const QString& vendorName);
-    void setImplementationVersion(int implementationVersion);
-
     QString actionName() const;
-    QString vendorName() const;
+    QString serviceName() const;
+    QString actionIdentifier() const;
     int implementationVersion() const;
+
+    /* The descriptor provides the client with all information required in UI. */
+    QSet<QContactActionTarget> supportedTargets(const QContact& contact) const;
+    QContactFilter contactFilter() const;
+    bool supportsContact(const QContact& contact) const;
+    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const;
+
+    /* Convenience meta data accessors */
+    QVariant metaData(const QString& key, const QVariantMap& parameters = QVariantMap()) const;
+    QVariant metaData(const QString& key, const QContactActionTarget& target, const QVariantMap& parameters = QVariantMap()) const;
+    QVariant metaData(const QString& key, const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap()) const;
+
+    // default meta-data keys
+#ifdef Q_QDOC
+    static const QLatin1Constant MetaDataIcon;
+    static const QLatin1Constant MetaDataLabel;
+    static const QLatin1Constant MetaDataSecondLabel;
+    static const QLatin1Constant MetaDataOptionalParameterKeys;
+    static const QLatin1Constant MetaDataMandatoryParameterKeys;
+#else
+    Q_DECLARE_LATIN1_CONSTANT(MetaDataIcon, "Icon");
+    Q_DECLARE_LATIN1_CONSTANT(MetaDataLabel, "Label");
+    Q_DECLARE_LATIN1_CONSTANT(MetaDataSecondLabel, "SecondLabel");
+    Q_DECLARE_LATIN1_CONSTANT(MetaDataOptionalParameterKeys, "OptionalParameterKeys");
+    Q_DECLARE_LATIN1_CONSTANT(MetaDataMandatoryParameterKeys, "MandatoryParameterKeys");
+#endif
 
 private:
     QSharedDataPointer<QContactActionDescriptorPrivate> d;
+    friend class QContactActionFactory;
+    friend class QContactActionServiceManager;
+    friend uint qHash(const QContactActionDescriptor& key);
 };
-
-Q_CONTACTS_EXPORT uint qHash(const QContactActionDescriptor& key);
 
 QTM_END_NAMESPACE
 

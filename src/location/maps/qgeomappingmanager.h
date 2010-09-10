@@ -42,11 +42,13 @@
 #ifndef QGEOMAPPINGMANAGER_H
 #define QGEOMAPPINGMANAGER_H
 
-#include "qgeomapwidget.h"
+#include "qgraphicsgeomap.h"
 
 #include <QObject>
 #include <QSize>
 #include <QPair>
+
+class QLocale;
 
 QTM_BEGIN_NAMESPACE
 
@@ -66,20 +68,20 @@ public:
     ~QGeoMappingManager();
 
     QString managerName() const;
-    QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
-    QGeoMapData* createMapData(QGeoMapWidget *widget);
-    void removeMapData(QGeoMapData *mapData);
-    //void updateMapImage(QGeoMapData *mapData);
+    QGeoMapData* createMapData(QGraphicsGeoMap *geoMap);
 
-    QList<QGeoMapWidget::MapType> supportedMapTypes() const;
+    QList<QGraphicsGeoMap::MapType> supportedMapTypes() const;
 
     QSize minimumImageSize() const;
     QSize maximumImageSize() const;
 
     qreal minimumZoomLevel() const;
     qreal maximumZoomLevel() const;
+
+    void setLocale(const QLocale &locale);
+    QLocale locale() const;
 
 private:
     QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = 0);

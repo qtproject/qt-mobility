@@ -1675,6 +1675,13 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
                                             this,SLOT(bluezPropertyChanged(QString, QDBusVariant)))) {
                      qDebug() << "bluez could not connect signal";
                  }
+                 QDBusReply<QVariantMap > reply =  adapterInterface->call(QLatin1String("GetProperties"));
+                 QVariant var;
+                 QString property="Powered";
+                 QVariantMap map = reply.value();
+                 if (map.contains(property)) {
+                     btPowered = map.value(property ).toBool();
+                 }
              }
          }
      }
@@ -1683,7 +1690,10 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
  void QSystemDeviceInfoLinuxCommonPrivate::bluezPropertyChanged(const QString &str, QDBusVariant v)
   {
      if(str == "Powered") {
-          emit bluetoothStateChanged(v.variant().toBool());
+             if(btPowered != v.variant().toBool()) {
+             btPowered = !btPowered;
+             emit bluetoothStateChanged(btPowered);
+         }
       }
       // Pairable Name Class Discoverable
   }
@@ -1691,7 +1701,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
 
  bool QSystemDeviceInfoLinuxCommonPrivate::currentBluetoothPowerState()
  {
-     return false;
+     return btPowered;
  }
 
 QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent) : QObject(parent)

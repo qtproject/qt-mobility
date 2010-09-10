@@ -43,8 +43,6 @@
 
 #include "qmobilityglobal.h"
 
-//#include "qsysteminfocommon.h"
-
 #include <QObject>
 #include <QSize>
 #include <QPair>
@@ -77,7 +75,8 @@ public:
     enum Version {
         Os = 1,
         QtCore,
-        Firmware
+        Firmware,
+        QtMobility
     };
 
     QString version(QSystemInfo::Version type, const QString &parameter = QString());

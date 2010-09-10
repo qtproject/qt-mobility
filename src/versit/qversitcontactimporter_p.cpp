@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qversitdefs_p.h"
+#include "qversitcontactsdefs_p.h"
 #include "qversitcontactimporter_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
@@ -70,7 +70,7 @@
 #include <qcontactthumbnail.h>
 #include <qcontactringtone.h>
 #include "qversitcontacthandler.h"
-#include "qversitpluginloader_p.h"
+#include "qversitcontactpluginloader_p.h"
 
 #include <QHash>
 #include <QFile>
@@ -117,7 +117,7 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate(const QString& prof
             QLatin1String(versitSubTypeMappings[i].contactString));
     }
 
-    mPluginPropertyHandlers = QVersitPluginLoader::instance()->createHandlers(profile);
+    mPluginPropertyHandlers = QVersitContactPluginLoader::instance()->createContactHandlers(profile);
 }
 
 /*!
@@ -504,11 +504,18 @@ bool QVersitContactImporterPrivate::createNicknames(
         return false;
     QStringList values = variant.toStringList();
     QStringList contexts = extractContexts(property);
+
+    // We don't want to make duplicates of existing nicknames
+    QSet<QString> existingNicknames;
+    foreach (const QContactNickname& nickname, contact->details<QContactNickname>()) {
+        existingNicknames.insert(nickname.nickname());
+    }
     foreach(const QString& value, values) {
-        if (!value.isEmpty()) {
-            QContactNickname nickName;
-            nickName.setNickname(value);
-            saveDetailWithContext(updatedDetails, nickName, contexts);
+        if (!value.isEmpty() && !existingNicknames.contains(value)) {
+            QContactNickname nickname;
+            nickname.setNickname(value);
+            saveDetailWithContext(updatedDetails, nickname, contexts);
+            existingNicknames.insert(value);
         }
     }
     return true;
@@ -529,11 +536,18 @@ bool QVersitContactImporterPrivate::createTags(
         return false;
     QStringList values = variant.toStringList();
     QStringList contexts = extractContexts(property);
+
+    // We don't want to make duplicates of existing tags
+    QSet<QString> existingTags;
+    foreach (const QContactTag& tag, contact->details<QContactTag>()) {
+        existingTags.insert(tag.tag());
+    }
     foreach(const QString& value, values) {
-        if (!value.isEmpty()) {
+        if (!value.isEmpty() && !existingTags.contains(value)) {
             QContactTag tag;
             tag.setTag(value);
             saveDetailWithContext(updatedDetails, tag, contexts);
+            existingTags.insert(value);
         }
     }
     return true;

@@ -87,6 +87,7 @@ QLandmarkExportRequest::~QLandmarkExportRequest()
 QIODevice *QLandmarkExportRequest::device() const
 {
     Q_D(const QLandmarkExportRequest);
+    QMutexLocker ml(&d->mutex);
     return d->device;
 }
 
@@ -96,6 +97,7 @@ QIODevice *QLandmarkExportRequest::device() const
 void QLandmarkExportRequest::setDevice(QIODevice *device)
 {
     Q_D(QLandmarkExportRequest);
+    QMutexLocker ml(&d->mutex);
     d->device = device;
 }
 
@@ -109,6 +111,7 @@ void QLandmarkExportRequest::setDevice(QIODevice *device)
 QString QLandmarkExportRequest::fileName() const
 {
     Q_D(const QLandmarkExportRequest);
+    QMutexLocker ml(&d->mutex);
     QFile *file = qobject_cast<QFile *>(d->device);
     return file ? file->fileName() : QString();
 }
@@ -123,6 +126,7 @@ QString QLandmarkExportRequest::fileName() const
 void QLandmarkExportRequest::setFileName(const QString &fileName)
 {
     Q_D(QLandmarkExportRequest);
+    QMutexLocker ml(&d->mutex);
     d->device = new QFile(fileName);
 }
 
@@ -132,6 +136,7 @@ void QLandmarkExportRequest::setFileName(const QString &fileName)
 QString QLandmarkExportRequest::format() const
 {
     Q_D(const QLandmarkExportRequest);
+    QMutexLocker ml(&d->mutex);
     return d->format;
 }
 
@@ -141,7 +146,34 @@ QString QLandmarkExportRequest::format() const
 void QLandmarkExportRequest::setFormat(const QString &format)
 {
     Q_D(QLandmarkExportRequest);
+    QMutexLocker ml(&d->mutex);
     d->format = format;
+}
+
+/*!
+    Returns the export option of the export request.
+    The export option defines how categories are treated
+    during the export operation.  The default option is
+    QLandmarkManager::IncludeCategoryData.
+
+*/
+QLandmarkManager::TransferOption QLandmarkExportRequest::transferOption() const
+{
+    Q_D(const QLandmarkExportRequest);
+    QMutexLocker ml(&d->mutex);
+    return d->option;
+}
+
+/*!
+    Sets the export \a option of the export request.
+    The export \a option defines how categories are treated
+    during the export operation.
+*/
+void QLandmarkExportRequest::setTransferOption(QLandmarkManager::TransferOption option)
+{
+    Q_D(QLandmarkExportRequest);
+    QMutexLocker ml(&d->mutex);
+    d->option = option;
 }
 
 /*!
@@ -150,6 +182,7 @@ void QLandmarkExportRequest::setFormat(const QString &format)
 QList<QLandmarkId> QLandmarkExportRequest::landmarkIds() const
 {
     Q_D(const QLandmarkExportRequest);
+    QMutexLocker ml(&d->mutex);
     return d->landmarkIds;
 }
 
@@ -157,9 +190,10 @@ QList<QLandmarkId> QLandmarkExportRequest::landmarkIds() const
     Sets the landmarks to be exported by specifying a list of
     \a landmarkIds.
 */
-void QLandmarkExportRequest::setLandmarkIds(QList<QLandmarkId> &landmarkIds)
+void QLandmarkExportRequest::setLandmarkIds(const QList<QLandmarkId> &landmarkIds)
 {
     Q_D(QLandmarkExportRequest);
+    QMutexLocker ml(&d->mutex);
     d->landmarkIds = landmarkIds;
 }
 

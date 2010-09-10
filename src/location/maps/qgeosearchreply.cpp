@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup maps-places
 
     Instances of QGeoSearchReply manage the state and results of these
@@ -91,6 +91,8 @@ QTM_BEGIN_NAMESPACE
     \value UnsupportedOptionError
         The requested operation or one of the options for the operation are not
         supported by the service provider.
+    \value CombinationError
+        An error occurred while results where being combined from multiple sources.
     \value UnknownError
         An error occurred which does not fit into any of the other categories.
 */
@@ -184,22 +186,22 @@ QString QGeoSearchReply::errorString() const
 }
 
 /*!
-    Sets the viewport which contains the results to \a bounds.
+    Sets the viewport which contains the results to \a viewport.
 */
-void QGeoSearchReply::setBounds(const QGeoBoundingBox &bounds)
+void QGeoSearchReply::setViewport(QGeoBoundingArea *viewport)
 {
-    d_ptr->bounds = bounds;
+    d_ptr->viewport = viewport;
 }
 
 /*!
     Returns the viewport which contains the results.
 
-    This function will return an invalid QGeoBoundingBox if no viewport bias
+    This function will return 0 if no viewport bias
     was specified in the QGeoSearchManager function which created this reply.
 */
-QGeoBoundingBox QGeoSearchReply::bounds() const
+QGeoBoundingArea* QGeoSearchReply::viewport() const
 {
-    return d_ptr->bounds;
+    return d_ptr->viewport;
 }
 
 /*!
@@ -230,7 +232,7 @@ void QGeoSearchReply::setPlaces(const QList<QGeoPlace> &places)
 }
 
 /*!
-    Cancels the operation.
+    Cancels the operation immediately.
 
     This will do nothing if the reply is finished.
 */
@@ -238,6 +240,48 @@ void QGeoSearchReply::abort()
 {
     if (!isFinished())
         setFinished(true);
+}
+
+/*!
+    Returns the limit on the number of responses from each data source.
+
+    If no limit was set this function will return -1.
+
+    This may be more than places().length() if the number of responses
+    was less than the number requested.
+
+    If QGeoSearchManager::search() is used along with
+    QGeoSearchManager::setAdditionalLandmarkManagers the number of results can
+    be as high as limit * (1 + number of additional landmark managers).
+*/
+int QGeoSearchReply::limit() const
+{
+    return d_ptr->limit;
+}
+
+/*!
+    Returns the offset
+*/
+int QGeoSearchReply::offset() const
+{
+    return d_ptr->offset;
+}
+
+/*!
+    Sets the limit on the number of responses from each data source to \a limit.
+
+    If \a limit is -1 then all available responses will be returned.
+*/
+void QGeoSearchReply::setLimit(int limit)
+{
+    d_ptr->limit = limit;
+}
+
+/*!
+*/
+void QGeoSearchReply::setOffset(int offset)
+{
+    d_ptr->offset = offset;
 }
 
 /*!
@@ -275,32 +319,19 @@ void QGeoSearchReply::abort()
 QGeoSearchReplyPrivate::QGeoSearchReplyPrivate()
         : error(QGeoSearchReply::NoError),
         errorString(""),
-        isFinished(false) {}
+        isFinished(false),
+        limit(-1),
+        offset(0) {}
 
 QGeoSearchReplyPrivate::QGeoSearchReplyPrivate(QGeoSearchReply::Error error, const QString &errorString)
         : error(error),
         errorString(errorString),
-        isFinished(true) {}
-
-QGeoSearchReplyPrivate::QGeoSearchReplyPrivate(const QGeoSearchReplyPrivate &other)
-        : error(error),
-        errorString(errorString),
-        isFinished(isFinished),
-        bounds(other.bounds),
-        places(other.places) {}
+        isFinished(true),
+        limit(-1),
+        offset(0) {}
 
 QGeoSearchReplyPrivate::~QGeoSearchReplyPrivate() {}
 
-QGeoSearchReplyPrivate& QGeoSearchReplyPrivate::operator= (const QGeoSearchReplyPrivate & other)
-{
-    error = other.error;
-    errorString = other.errorString;
-    isFinished = other.isFinished;
-    bounds = other.bounds;
-    places = other.places;
-
-    return *this;
-}
 
 #include "moc_qgeosearchreply.cpp"
 

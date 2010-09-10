@@ -196,6 +196,56 @@ Q_DEFINE_LATIN1_CONSTANT(QContactFamily::FieldChildren, "Children");
    Sets the names of the children of the contact which is stored in this detail to \a childrenNames.
  */
 
+/* ==================== QContactFavorite ======================= */
+/*!
+   \class QContactFavorite
+   \brief The QContactFavorite class indicates if a contact is a favorite contact as well as the
+   position it should appear in an ordered list of favorites.
+   \ingroup contacts-details
+ */
+
+/*!
+   \variable QContactFavorite::DefinitionName
+   The string constant for the definition name of QContactFavorite details.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactFavorite::DefinitionName, "Favorite");
+
+/*!
+   \variable QContactFavorite::FieldFavorite
+
+   The field key constant for the value that indicates whether a contact is a favorite.
+   \sa index(), setIndex()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactFavorite::FieldFavorite, "Favorite");
+
+/*!
+   \variable QContactFavorite::FieldIndex
+
+   The field key constant for the value containing the index of the favorite contact (which determines the order they appear)
+   \sa index(), setIndex()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactFavorite::FieldIndex, "Index");
+
+/*!
+   \fn bool QContactFavorite::isFavorite() const
+   Returns true if the contact is a favorite, false otherwise.
+ */
+
+/*!
+   \fn QContactFavorite::setFavorite(bool isFavorite) 
+   If \a isFavorite is true, marks the contact as a favorite.  Otherwise, marks the contact as not a favorite.
+ */
+
+/*!
+   \fn int QContactFavorite::index() const
+   Returns the index of the favorite contact.
+ */
+
+/*!
+   \fn QContactFavorite::setIndex(int index) 
+   Sets the index of the favorite contact to \a index.
+ */
+
 /* ==================== QContactAnniversary ======================= */
 
 /*!
@@ -214,7 +264,12 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::DefinitionName, "Anniversary");
    \variable QContactAnniversary::FieldOriginalDate
 
    The field key constant for the original anniversary date value.
-   \sa originalDate(), setOriginalDate()
+
+   This field is either a date, or a date and time.  Some managers
+   may support either type, while others may convert the value here
+   to a specific type (either discarding the time if only a date is
+   supported, or by using midnight if a time is not supplied).
+   \sa originalDate(), setOriginalDate(), originalDateTime(), setOriginalDateTime()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::FieldOriginalDate, "OriginalDate");
 
@@ -292,12 +347,25 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeMemorial, "Memorial");
 
 /*!
    \fn QContactAnniversary::originalDate() const
-   Returns the original date of occurrence of the event stored in this detail.
+   Returns the original date of the event stored in this detail.
+   If the original event occurrence stored is a QDateTime, this returns the date portion.
  */
 
 /*!
    \fn QContactAnniversary::setOriginalDate(const QDate& date)
-   Sets the original date of occurrence of the event stored in this detail to \a date.
+   Sets the original date of the event stored in this detail to \a date.
+ */
+
+/*!
+   \fn QContactAnniversary::originalDateTime() const
+   Returns the original date and time of the event stored in this detail.
+   If the original event occurrence stored is a QDate, this returns a QDateTime with the
+   time set to midnight.
+ */
+
+/*!
+   \fn QContactAnniversary::setOriginalDateTime(const QDateTime& dateTime)
+   Sets the original date and time of the event stored in this detail to \a dateTime.
  */
 
 /*!
@@ -401,11 +469,14 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAvatar::FieldVideoUrl, "VideoUrl");
 /* ==================== QContactAddress ======================= */
 
 
-// XXX TODO - explain the different segments and their typical mapping
 /*!
    \class QContactAddress
    \brief The QContactAddress class contains an address of a contact.
    \ingroup contacts-details
+
+   The fields in the QContactAddress class are based on the segments
+   of the ADR property of a Versit vCard file.
+   Versit \reg is a trademark of the Internet Mail Consortium.
  */
 
 /*!
@@ -418,6 +489,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::DefinitionName, "Address");
    \variable QContactAddress::FieldStreet
 
    The field key constant for the value containing the street segment.
+   The street segment contains the street number and street name of the address.
    \sa street(), setStreet()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldStreet, "Street");
@@ -426,6 +498,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldStreet, "Street");
    \variable QContactAddress::FieldLocality
 
    The field key constant for the value containing the locality segment.
+   The locality segment contains the name of the city, town or suburb of the address.
    \sa locality(), setLocality()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldLocality, "Locality");
@@ -435,6 +508,8 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldLocality, "Locality");
    \variable QContactAddress::FieldRegion
 
    The field key constant for the value containing the region segment.
+   The region segment contains the name or identifier of the state,
+   province or region of the address.
    \sa region(), setRegion()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldRegion, "Region");
@@ -443,6 +518,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldRegion, "Region");
    \variable QContactAddress::FieldPostcode
 
    The field key constant for the value containing the postcode segment.
+   The postcode segment contains the postal code for the address.
    \sa postcode(), setPostcode()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldPostcode, "Postcode");
@@ -451,6 +527,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldPostcode, "Postcode");
    \variable QContactAddress::FieldCountry
 
    The field key constant for the value containing the country segment.
+   The country segment contains the name of the country of the address.
    \sa country(), setCountry()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldCountry, "Country");
@@ -459,6 +536,8 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldCountry, "Country");
    \variable QContactAddress::FieldPostOfficeBox
 
    The field key constant for the value containing the post office box segment.
+   The post office box segment contains the post office box identifier of the
+   mailing address.
    \sa postOfficeBox(), setPostOfficeBox()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldPostOfficeBox, "PostOfficeBox");
@@ -835,18 +914,37 @@ Q_DEFINE_LATIN1_CONSTANT(QContactBirthday::DefinitionName, "Birthday");
    \variable QContactBirthday::FieldBirthday
 
    The field key constant for the value containing the birthday date.
-   \sa date(), setDate()
+
+   This field is either a date, or a date and time.  Some managers
+   may support either type, while others may convert the value here
+   to a specific type (either discarding the time if only a date is
+   supported, or by using midnight if a time is not supplied).
+
+   \sa date(), setDate(), dateTime(), setDateTime()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactBirthday::FieldBirthday, "Birthday");
 
 /*!
    \fn QContactBirthday::date() const
    Returns the date of the birthday which is stored in this detail.
+   If the birthday stored is a QDateTime, this returns the date portion.
  */
 
 /*!
    \fn QContactBirthday::setDate(const QDate& date)
    Sets the date of the birthday which is stored in this detail to \a date.
+ */
+
+/*!
+   \fn QContactBirthday::dateTime() const
+   Returns the date and time of the birthday which is stored in this detail.
+   If the birthday stored is a QDate, this returns a QDateTime with the
+   time set to midnight.
+ */
+
+/*!
+   \fn QContactBirthday::setDateTime(const QDateTime& dateTime)
+   Sets the date and time of the birthday which is stored in this detail to \a dateTime.
  */
 
 /* ==================== QContactGender ======================= */

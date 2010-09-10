@@ -34,6 +34,8 @@ maemo* {
   HEADERS += camerabuttonlistener_maemo.h
 
   SOURCES += camerabuttonlistener_maemo.cpp
+
+  QT += dbus
 }
 
 # Input
@@ -60,17 +62,19 @@ SOURCES += \
     qgstreamervideoinputdevicecontrol.cpp
 
 
-!win32:!embedded:!mac:!symbian {
+!win32:!embedded:!mac:!symbian:!simulator {
     LIBS += -lXv -lX11 -lXext
 
     HEADERS += \
         qgstreamervideooverlay.h \
+        qgstreamervideowindow.h \
         qgstreamervideowidget.h \
         qx11videosurface.h \
         qgstxvimagebuffer.h
 
     SOURCES += \
         qgstreamervideooverlay.cpp \
+        qgstreamervideowindow.cpp \
         qgstreamervideowidget.cpp \
         qx11videosurface.cpp \
         qgstxvimagebuffer.cpp

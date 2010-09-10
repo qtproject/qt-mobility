@@ -254,57 +254,57 @@ void tst_QVCard30Writer::testBackSlashEscape()
 {
     // Empty string
     QString input;
-    QVCard30Writer::backSlashEscape(input);
+    QVCard30Writer::backSlashEscape(&input);
     QCOMPARE(input,QString());
 
     // Nothing to escape in the string
     input = QString::fromAscii("Nothing to escape");
-    QVCard30Writer::backSlashEscape(input);
+    QVCard30Writer::backSlashEscape(&input);
     QCOMPARE(input,QString::fromAscii("Nothing to escape"));
 
     // Line break in the beginning
     input = QString::fromAscii("\r\n input");
-    QVCard30Writer::backSlashEscape(input);
+    QVCard30Writer::backSlashEscape(&input);
     QCOMPARE(input,QString::fromAscii("\\n input"));
 
     // Line break in the end
     input = QString::fromAscii("input\r\n");
-    QVCard30Writer::backSlashEscape(input);
+    QVCard30Writer::backSlashEscape(&input);
     QCOMPARE(input,QString::fromAscii("input\\n"));
 
     // Semicolon in the beginning
     input = QString::fromAscii(";input");
-    QVCard30Writer::backSlashEscape(input);
+    QVCard30Writer::backSlashEscape(&input);
     QCOMPARE(input,QString::fromAscii("\\;input"));
 
     // Semicolon in the end
     input = QString::fromAscii("input;");
-    QVCard30Writer::backSlashEscape(input);
+    QVCard30Writer::backSlashEscape(&input);
     QCOMPARE(input,QString::fromAscii("input\\;"));
 
     // Comma in the beginning
     input = QString::fromAscii(",input");
-    QVCard30Writer::backSlashEscape(input);
+    QVCard30Writer::backSlashEscape(&input);
     QCOMPARE(input,QString::fromAscii("\\,input"));
 
     // Comma in the end
     input = QString::fromAscii("input,");
-    QVCard30Writer::backSlashEscape(input);
+    QVCard30Writer::backSlashEscape(&input);
     QCOMPARE(input,QString::fromAscii("input\\,"));
 
     // Backslash in the beginning
     input = QString::fromAscii("\\input");
-    QVCard30Writer::backSlashEscape(input);
+    QVCard30Writer::backSlashEscape(&input);
     QCOMPARE(input,QString::fromAscii("\\\\input"));
 
     // Backslash in the end
     input = QString::fromAscii("input\\");
-    QVCard30Writer::backSlashEscape(input);
+    QVCard30Writer::backSlashEscape(&input);
     QCOMPARE(input,QString::fromAscii("input\\\\"));
 
     // Line break, semicolon, backslash and comma in the middle of the string
     input = QString::fromAscii("Escape these \r\n ; , \\ ");
-    QVCard30Writer::backSlashEscape(input);
+    QVCard30Writer::backSlashEscape(&input);
     QCOMPARE(input, QString::fromAscii("Escape these \\n \\; \\, \\\\ "));
 }
 #endif

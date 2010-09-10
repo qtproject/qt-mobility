@@ -97,10 +97,8 @@ void CPplPredictiveSearchTableBase::DeleteL(const CContactItem& aItem,
 Default implementation returns empty list.
 */
 QStringList CPplPredictiveSearchTableBase::GetTableSpecificFields(
-	const CContactItem& /*aItem*/,
-	TBool& aMandatoryFieldsPresent) const
+	const CContactItem& /*aItem*/) const
 	{
-	aMandatoryFieldsPresent = ETrue;
 	QStringList emptyList;
 	return emptyList;
 	}
@@ -191,6 +189,9 @@ QList<QChar> CPplPredictiveSearchTableBase::DetermineTables(QStringList aTokens)
 // Insert a contact to predictive search tables.
 // Write contact's all tokens to each associate pred.search table.
 // E.g. if FN="11 22" LN="2 333", write "11","22","2" and "333" to tables 1, 2 and 3.
+//
+// Store also contacts that have a mail address beginning by an unknown character
+// as the contact can still be searched by first name or last name.
 void CPplPredictiveSearchTableBase::WriteToDbL(const CContactItem& aItem)
 	{
 	PRINT(_L("CPplPredictiveSearchTableBase::WriteToDbL"));
@@ -204,14 +205,9 @@ void CPplPredictiveSearchTableBase::WriteToDbL(const CContactItem& aItem)
 	QStringList tokens;
 	QList<QChar> tables;
 	QT_TRYCATCH_LEAVING({
-		TBool mandatoryFieldsPresent(EFalse);
-		QStringList tableSpecificFields =
-			GetTableSpecificFields(aItem, mandatoryFieldsPresent);
-		if (mandatoryFieldsPresent)
-			{
-			tokens = GetTokens(tableSpecificFields, firstNameAsNbr, lastNameAsNbr);
-			tables = DetermineTables(tokens);
-			}
+		QStringList tableSpecificFields = GetTableSpecificFields(aItem);
+		tokens = GetTokens(tableSpecificFields, firstNameAsNbr, lastNameAsNbr);
+		tables = DetermineTables(tokens);
 		});
 
 	HBufC* tableName(NULL);
@@ -372,11 +368,7 @@ CPplPredictiveSearchTableBase::AddTokens(HBufC* aString, QStringList& aTokens) c
 	if (aString)
 		{
 		QString s((QChar*)aString->Ptr(), aString->Length());
-#if defined(USE_ORBIT_KEYMAP)
 		QStringList tokens = s.split(iKeyMap->Separator(), QString::SkipEmptyParts);
-#else
-		QStringList tokens = s.split(' ', QString::SkipEmptyParts);
-#endif
 
 		// Select tokens in the same order they are in original aString
 		for (TInt i = 0; i < tokens.count(); ++i)

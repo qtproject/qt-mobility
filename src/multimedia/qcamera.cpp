@@ -116,19 +116,24 @@ class QCameraPrivate : public QMediaObjectPrivate
 public:
     QCameraPrivate():
         QMediaObjectPrivate(),
+        provider(0),
         control(0),        
         viewfinder(0),
         capture(0),
+        state(QCamera::UnloadedState),
         error(QCamera::NoError),
         supportedLocks(QCamera::NoLock),
         requestedLocks(QCamera::NoLock),
         lockStatus(QCamera::Unlocked),
         lockChangeReason(QCamera::UserRequest),
-        supressLockChangedSignal(false)
+        supressLockChangedSignal(false),
+        restartPending(false)
     {
     }
 
     void initControls();
+
+    QMediaServiceProvider *provider;
 
     QCameraControl *control;
     QCameraLocksControl *locksControl;    
@@ -140,6 +145,8 @@ public:
     QObject *viewfinder;
     QObject *capture;
 
+    QCamera::State state;
+
     QCamera::Error error;
     QString errorString;
 
@@ -150,10 +157,17 @@ public:
     QCamera::LockChangeReason lockChangeReason;
     bool supressLockChangedSignal;
 
+    bool restartPending;
+
     void _q_error(int error, const QString &errorString);
     void unsetError() { error = QCamera::NoError; errorString.clear(); }
 
+    void setState(QCamera::State);
+
     void _q_updateLockStatus(QCamera::LockType, QCamera::LockStatus, QCamera::LockChangeReason);
+    void _q_updateState(QCamera::State newState);
+    void _q_preparePropertyChange(int changeType);
+    void _q_restartCamera();
     void updateLockStatus();
 };
 
@@ -170,6 +184,69 @@ void QCameraPrivate::_q_error(int error, const QString &errorString)
     emit q->error(this->error);
 }
 
+void QCameraPrivate::setState(QCamera::State newState)
+{
+    Q_Q(QCamera);
+
+    unsetError();
+
+    if (!control) {
+        _q_error(QCamera::ServiceMissingError, q_ptr->tr("The camera service is missing"));
+        return;
+    }
+
+    if (state == newState)
+        return;
+
+    restartPending = false;
+    state = newState;
+    control->setState(state);
+    emit q->stateChanged(state);
+}
+
+void QCameraPrivate::_q_updateState(QCamera::State newState)
+{
+    Q_Q(QCamera);
+
+    //omit changins state to Loaded when the camera is temporarily
+    //stopped to apply shanges
+    if (restartPending)
+        return;
+
+    if (newState != state) {
+        qDebug() << "Camera state changed:" << newState;
+        state = newState;
+        emit q->stateChanged(state);
+    }
+}
+
+void QCameraPrivate::_q_preparePropertyChange(int changeType)
+{
+    if (!control)
+        return;
+
+    QCamera::Status status = control->status();
+
+    //all the changes are allowed until the camera is starting
+    if (control->state() != QCamera::ActiveState)
+        return;
+
+    if (control->canChangeProperty(QCameraControl::PropertyChangeType(changeType), status))
+        return;
+
+    restartPending = true;
+    control->setState(QCamera::LoadedState);
+    QMetaObject::invokeMethod(q_ptr, "_q_restartCamera", Qt::QueuedConnection);
+}
+
+void QCameraPrivate::_q_restartCamera()
+{
+    if (restartPending) {
+        restartPending = false;
+        control->setState(QCamera::ActiveState);
+    }
+}
+
 void QCameraPrivate::initControls()
 {
     Q_Q(QCamera);
@@ -181,7 +258,8 @@ void QCameraPrivate::initControls()
         locksControl = qobject_cast<QCameraLocksControl *>(service->requestControl(QCameraLocksControl_iid));
 
         if (control) {
-            q->connect(control, SIGNAL(stateChanged(QCamera::State)), q, SIGNAL(stateChanged(QCamera::State)));
+            q->connect(control, SIGNAL(stateChanged(QCamera::State)), q, SLOT(_q_updateState(QCamera::State)));
+            q->connect(control, SIGNAL(statusChanged(QCamera::Status)), q, SIGNAL(statusChanged(QCamera::Status)));
             q->connect(control, SIGNAL(captureModeChanged(QCamera::CaptureMode)),
                        q, SIGNAL(captureModeChanged(QCamera::CaptureMode)));
             q->connect(control, SIGNAL(error(int,QString)), q, SLOT(_q_error(int,QString)));
@@ -274,6 +352,7 @@ QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
     QMediaObject(*new QCameraPrivate, parent, provider->requestService(Q_MEDIASERVICE_CAMERA))
 {
     Q_D(QCamera);
+    d->provider = provider;
     d->initControls();
     d->cameraExposure = new QCameraExposure(this);
     d->cameraFocus = new QCameraFocus(this);
@@ -289,6 +368,7 @@ QCamera::QCamera(const QByteArray& device, QObject *parent):
                   QMediaServiceProvider::defaultServiceProvider()->requestService(Q_MEDIASERVICE_CAMERA, QMediaServiceProviderHint(device)))
 {
     Q_D(QCamera);
+    d->provider = QMediaServiceProvider::defaultServiceProvider();
     d->initControls();
 
     if (d->service != 0) {
@@ -326,6 +406,15 @@ QCamera::~QCamera()
     d->cameraFocus = 0;
     delete d->imageProcessing;
     d->imageProcessing = 0;
+
+    if (d->service) {
+        if (d->control)
+            d->service->releaseControl(d->control);
+        if (d->locksControl)
+            d->service->releaseControl(d->locksControl);
+
+        d->provider->releaseService(d->service);
+    }
 }
 
 
@@ -387,6 +476,8 @@ QCameraImageProcessing *QCamera::imageProcessing() const
 void QCamera::setViewfinder(QVideoWidget *viewfinder)
 {
     Q_D(QCamera);
+    d->_q_preparePropertyChange(QCameraControl::Viewfinder);
+
     if (d->viewfinder)
         unbind(d->viewfinder);
 
@@ -403,6 +494,8 @@ void QCamera::setViewfinder(QVideoWidget *viewfinder)
 void QCamera::setViewfinder(QGraphicsVideoItem *viewfinder)
 {
     Q_D(QCamera);
+    d->_q_preparePropertyChange(QCameraControl::Viewfinder);
+
     if (d->viewfinder)
         unbind(d->viewfinder);
 
@@ -443,6 +536,12 @@ bool QCamera::isCaptureModeSupported(QCamera::CaptureMode mode) const
 
   The type of media (video or still images),
   the camera is configured to capture.
+
+  It's allowed to change capture mode in any camera state,
+  but if the camera is currently active,
+  chaging capture mode is likely to lead to camera status
+  chaged to QCamera::LoadedStatus, QCamera::LoadingStatus,
+  and when the camera is ready to QCamera::ActiveStatus.
 */
 
 QCamera::CaptureMode QCamera::captureMode() const
@@ -453,8 +552,13 @@ QCamera::CaptureMode QCamera::captureMode() const
 void QCamera::setCaptureMode(QCamera::CaptureMode mode)
 {
     Q_D(QCamera);
-    if (d->control)
-        d->control->setCaptureMode(mode);
+
+    if (mode != captureMode()) {
+        if (d->control) {
+            d->_q_preparePropertyChange(QCameraControl::CaptureMode);
+            d->control->setCaptureMode(mode);
+        }
+    }
 }
 
 
@@ -471,16 +575,7 @@ void QCamera::setCaptureMode(QCamera::CaptureMode mode)
 void QCamera::start()
 {
     Q_D(QCamera);
-
-    d->unsetError();
-
-    if (d->control)
-        d->control->setState(QCamera::ActiveState);
-    else {
-        d->errorString = tr("The camera service is missing");
-        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
-                                    Q_ARG(QCamera::Error, QCamera::ServiceMissingError));
-    }
+    d->setState(QCamera::ActiveState);
 }
 
 /*!
@@ -490,17 +585,12 @@ void QCamera::start()
 void QCamera::stop()
 {
     Q_D(QCamera);
-
-    d->unsetError();
-
-    if(d->control)
-        d->control->setState(QCamera::LoadedState);
-    else
-        d->_q_error(QCamera::ServiceMissingError, tr("The camera service is missing"));
+    d->setState(QCamera::LoadedState);
 }
 
 /*!
     Open the camera device.
+    The camera state is changed to QCamera::LoadedStatus.
 
     It's not necessary to explcitly load the camera,
     unless unless the application have to read the supported camera
@@ -512,26 +602,17 @@ void QCamera::stop()
 void QCamera::load()
 {
     Q_D(QCamera);
-
-    d->unsetError();
-
-    if(d->control)
-        d->control->setState(QCamera::LoadedState);
-    else
-        d->_q_error(QCamera::ServiceMissingError, tr("The camera service is missing"));
+    d->setState(QCamera::LoadedState);
 }
 
 /*!
     Close the camera device and deallocate the related resources.
+    The camera state is changed to QCamera::UnloadedStatus.
 */
 void QCamera::unload()
 {
     Q_D(QCamera);
-
-    d->unsetError();
-
-    if(d->control)
-        d->control->setState(QCamera::UnloadedState);
+    d->setState(QCamera::UnloadedState);
 }
 
 
@@ -555,10 +636,7 @@ QString QCamera::deviceDescription(const QByteArray &device)
 
 QCamera::State QCamera::state() const
 {
-    if(d_func()->control)
-        return (QCamera::State)d_func()->control->state();
-
-    return QCamera::UnloadedState;
+    return d_func()->state;
 }
 
 QCamera::Status QCamera::status() const
@@ -706,12 +784,14 @@ void QCamera::unlock()
 
 /*!
     \enum QCamera::State
-    \value ActiveState
-           The camera has been started and can produce data.
-           The viewfinder displays video frames in active state.
+    \value UnloadedState
+           The initial camera state, with camera not loaded,
+           the camera capabilities except of supported capture modes
+           are unknown.
 
-           It may be not allowed to change some camera settings,
-           like image resolution or codec in the active state.
+           While the supported settings are unknown in this state,
+           it's allowed to set the camera capture settings like codec,
+           resolution, or frame rate.
 
     \value LoadedState
            The camera is loaded and ready to be configured.
@@ -719,12 +799,12 @@ void QCamera::unlock()
            In the Idle state it's allowed to query camera capabilities,
            set capture resolution, codecs, etc.
 
-           The camera state is asyncronyously changed to IdleState
-           with QCamera::setCaptureMode().
+           The viewfinder is not active in the loaded state.
 
-    \value StoppedState
-           The initial camera state, with camera not loaded,
-           the camera capabilities except of supported capture modes are unknown.
+    \value ActiveState
+           In the active state as soon as camera is started
+           the viewfinder displays video frames and the
+           camera is ready for capture.
 */
 
 
@@ -739,10 +819,19 @@ void QCamera::unlock()
            The camera has been started and can produce data.
            The viewfinder displays video frames in active state.
 
+           Depending on backend, changing some camera settings like
+           capture mode, codecs or resolution in ActiveState may lead
+           to changing the camera status to LoadedStatus and StartingStatus while
+           the settings are applied and back to ActiveStatus when the camera is ready.
+
     \value StartingStatus
-           The camera is starting in result of state transition
-           to QCamera::ActiveState.
+           The camera is starting in result of state transition to QCamera::ActiveState.
            The camera service is not ready to capture yet.
+
+    \value StandbyStatus
+           The camera is in the power saving standby mode.
+           The camera may come to the standby mode after some time of inactivity
+           in the QCamera::LoadedState state.
 
     \value LoadedStatus
            The camera is loaded and ready to be configured.
@@ -755,8 +844,11 @@ void QCamera::unlock()
            QCamera::UnloadedState to QCamera::LoadedState or QCamera::ActiveState.
 
     \value UnloadedStatus
-           The initial camera state, with camera not loaded.
-           The camera capabilities except of supported capture modes may be unknown.
+           The initial camera status, with camera not loaded.
+           The camera capabilities including supported capture settings may be unknown.
+
+    \value UnavailableStatus
+           The camera or camera backend is not available.
 */
 
 

@@ -41,6 +41,16 @@
 
 #include "organizeritemtypetransform.h"
 
+void OrganizerItemTypeTransform::modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const
+{
+#ifndef AGENDA_EXT_SUPPORT
+    // Note not supported on legacy platforms
+    schemaDefs.remove(QOrganizerItemType::TypeNote);
+#endif    
+    // Journal is not supported on Symbian. Remove the type itself
+    schemaDefs.remove(QOrganizerItemType::TypeJournal);
+}
+
 void OrganizerItemTypeTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
     CCalEntry::TType entryType = entry.EntryTypeL();
@@ -50,16 +60,47 @@ void OrganizerItemTypeTransform::transformToDetailL(const CCalEntry& entry, QOrg
         itemType = QLatin1String(QOrganizerItemType::TypeTodo);
     else if (entryType == CCalEntry::EEvent)
         itemType = QLatin1String(QOrganizerItemType::TypeEvent);
-    else if (entryType == CCalEntry::EAppt)
-        itemType = QLatin1String(QOrganizerItemType::TypeEvent);
+    else if (entryType == CCalEntry::EAppt) {
+        // Assume this is an event occurrence if the recurrence id is set
+        if (entry.RecurrenceIdL().TimeUtcL() != Time::NullTTime())
+            itemType = QLatin1String(QOrganizerItemType::TypeEventOccurrence);
+        else
+            itemType = QLatin1String(QOrganizerItemType::TypeEvent);
+    }
     else if (entryType == CCalEntry::EAnniv)
         itemType = QLatin1String(QOrganizerItemType::TypeEvent);
+#ifdef AGENDA_EXT_SUPPORT
+    else if (CCalEntry::ENote == entryType) {
+        itemType = QLatin1String(QOrganizerItemType::TypeNote);
+    }
+#endif
     else
         User::Leave(KErrUnknown); // unknown type
 
     // TODO: CCalEntry::EReminder
 
     item->setType(itemType);
+}
+
+void OrganizerItemTypeTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
+{
+    CCalEntry::TType entryType = instance.Entry().EntryTypeL();
+    QString itemType;
+
+    if (entryType == CCalEntry::ETodo)
+        itemType = QLatin1String(QOrganizerItemType::TypeTodoOccurrence);
+    else if (entryType == CCalEntry::EEvent)
+        itemType = QLatin1String(QOrganizerItemType::TypeEventOccurrence);
+    else if (entryType == CCalEntry::EAppt)
+        itemType = QLatin1String(QOrganizerItemType::TypeEventOccurrence);
+    else if (entryType == CCalEntry::EAnniv)
+        itemType = QLatin1String(QOrganizerItemType::TypeEventOccurrence);
+    else
+        User::Leave(KErrUnknown); // unknown type
+
+    // TODO: CCalEntry::EReminder
+
+    itemInstance->setType(itemType);
 }
 
 void OrganizerItemTypeTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
@@ -77,14 +118,21 @@ QString OrganizerItemTypeTransform::detailDefinitionName()
 CCalEntry::TType OrganizerItemTypeTransform::entryTypeL(const QOrganizerItem &item)
 {
     QString itemType = item.type();
-    CCalEntry::TType entryType;
+    CCalEntry::TType entryType(CCalEntry::EAppt);
 
-    if (itemType == QOrganizerItemType::TypeTodo)
+    if (itemType == QOrganizerItemType::TypeTodo || itemType == QOrganizerItemType::TypeTodoOccurrence)
         entryType = CCalEntry::ETodo;
-    else if (itemType == QOrganizerItemType::TypeEvent)
+    else if (itemType == QOrganizerItemType::TypeEvent || itemType == QOrganizerItemType::TypeEventOccurrence)
         entryType = CCalEntry::EAppt;
+#ifdef AGENDA_EXT_SUPPORT
+    else if (QOrganizerItemType::TypeNote == itemType) {
+        entryType = CCalEntry::ENote;
+    }
+#endif
     else
         User::Leave(KErrUnknown); // unknown type
+        
+        
 
     // TODO: CCalEntry::EEvent???
     // TODO: CCalEntry::EReminder

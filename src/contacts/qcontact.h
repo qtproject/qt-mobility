@@ -51,11 +51,11 @@
 #include <QSharedDataPointer>
 
 #include "qtcontactsglobal.h"
-
 #include "qcontactdetail.h"
+#include "qcontactrelationship.h"
+
 #include "qcontactdetaildefinition.h"
 #include "qcontactdisplaylabel.h"
-#include "qcontactrelationship.h"
 #include "qcontactrelationshipfilter.h"
 #include "qcontacttype.h"
 
@@ -67,6 +67,7 @@ class QContactManager;
 class QContactData;
 class QContactName;
 class QContactAction;
+class QContactActionDescriptor;
 
 // MSVC needs the function declared before the friend declaration
 class QContact;
@@ -98,18 +99,16 @@ public:
     void setType(const QString& type);
     void setType(const QContactType& type);
 
-    /* The (backend synthesized) display label of the contact */
+    /* The (backend synthesized, or set with QCME::setContactDisplayLabel()) display label of the contact */
     QString displayLabel() const;
 
     /* Is this an empty contact? */
     bool isEmpty() const;
     void clearDetails();
 
-    /* Access details of particular type or which support a particular action */
+    /* Access details of particular type */
     QContactDetail detail(const QString& definitionId) const;
     QList<QContactDetail> details(const QString& definitionId = QString()) const;
-    QContactDetail detailWithAction(QContactAction* action) const;
-    QList<QContactDetail> detailsWithAction(QContactAction* action) const;
 
     QList<QContactDetail> details(const QString& definitionName, const QString& fieldName, const QString& value) const;
 
@@ -142,8 +141,8 @@ public:
     {
         QList<QContactDetail> props = details(T::DefinitionName.latin1());
         QList<T> ret;
-        foreach(QContactDetail prop, props)
-            ret.append(T(prop));
+        for (int i=0; i<props.count(); i++)
+            ret.append(T(props.at(i)));
         return ret;
     }
 
@@ -152,8 +151,8 @@ public:
     {
         QList<QContactDetail> props = details(T::DefinitionName, fieldName, value);
         QList<T> ret;
-        foreach(QContactDetail prop, props)
-            ret.append(T(prop));
+        for (int i=0; i<props.count(); i++)
+            ret.append(T(props.at(i)));
         return ret;
     }
 
@@ -161,8 +160,8 @@ public:
     {
         QList<QContactDetail> props = details(T::DefinitionName.latin1(), fieldName, value);
         QList<T> ret;
-        foreach(QContactDetail prop, props)
-            ret.append(T(prop));
+        for (int i=0; i<props.count(); i++)
+            ret.append(T(props.at(i)));
         return ret;
     }
 
@@ -172,15 +171,15 @@ public:
     }
 
     /* generic detail addition/removal functions */
-    bool saveDetail(QContactDetail* detail);   // modifies the detail - sets its ID if detail already exists
-    bool removeDetail(QContactDetail* detail); // modifies the detail - unsets its ID
+    bool saveDetail(QContactDetail* detail);
+    bool removeDetail(QContactDetail* detail);
 
     /* Relationships that this contact was involved in when it was retrieved from the manager */
     QList<QContactRelationship> relationships(const QString& relationshipType = QString()) const;
     QList<QContactId> relatedContacts(const QString& relationshipType = QString(), QContactRelationship::Role role = QContactRelationship::Either) const;
 
     /* Actions available to be performed on this contact */
-    QList<QContactActionDescriptor> availableActions(const QString& vendorName = QString(), int implementationVersion = -1) const;
+    QList<QContactActionDescriptor> availableActions(const QString& serviceName = QString()) const;
 
     /* Preferences (eg, set a particular detail preferred for the SMS action) - subject to change! */
     bool setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail);
@@ -196,6 +195,11 @@ private:
     friend QDataStream& operator>>(QDataStream& in, QContact& contact);
 
     QSharedDataPointer<QContactData> d;
+
+#if defined(SIMULATOR_APPLICATION) || defined(QT_SIMULATOR)
+    friend QDataStream &operator<<(QDataStream &, const QContact &);
+    friend QDataStream &operator>>(QDataStream &, QContact &);
+#endif
 };
 
 Q_CONTACTS_EXPORT uint qHash(const QContact& key);

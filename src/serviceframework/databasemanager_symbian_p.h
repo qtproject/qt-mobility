@@ -120,7 +120,7 @@ class RDatabaseManagerSession : public RSessionBase
 
 class DatabaseManagerSignalMonitor;
 
-class Q_AUTOTEST_EXPORT DatabaseManager : public QObject
+class QM_AUTOTEST_EXPORT DatabaseManager : public QObject
 {
     Q_OBJECT
 

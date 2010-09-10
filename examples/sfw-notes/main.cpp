@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     ToDoTool dialog;
     
 #ifdef Q_OS_SYMBIAN
-    dialog.showMaximused();
+    dialog.showMaximized();
 #else
     dialog.show();
 #endif

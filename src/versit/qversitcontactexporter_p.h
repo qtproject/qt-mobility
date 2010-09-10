@@ -56,7 +56,6 @@
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
-#include "qvcardbackuphandlers_p.h"
 
 #include <QHash>
 #include <QObject>
@@ -66,7 +65,7 @@ class QContact;
 class QContactDetail;
 class QVersitContactHandler;
 
-class Q_AUTOTEST_EXPORT QVersitContactExporterPrivate
+class QM_AUTOTEST_EXPORT QVersitContactExporterPrivate
 {
 public:
     QVersitContactExporterPrivate(const QString& profile = QString());

@@ -38,13 +38,8 @@
 **
 ****************************************************************************/
 
-#include <QtCore>
 #include <QtGui>
 #include <QtDeclarative>
-#include <qaccelerometer.h>
-#include <qorientationsensor.h>
-
-QTM_USE_NAMESPACE
 
 class MainWidget : public QWidget
 {

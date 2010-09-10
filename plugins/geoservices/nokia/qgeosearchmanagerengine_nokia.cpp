@@ -47,27 +47,41 @@
 #include <QNetworkProxy>
 #include <QMap>
 
-QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoSearchManagerEngine(parameters),
-        m_host("loc.desktop.maps.svc.ovi.com")
+        m_host("loc.desktop.maps.svc.ovi.com"),
+        m_referer("localhost")
 {
     m_networkManager = new QNetworkAccessManager(this);
 
     QList<QString> keys = parameters.keys();
 
     if (keys.contains("places.proxy")) {
-        QString proxy = parameters.value("places.proxy");
+        QString proxy = parameters.value("places.proxy").toString();
         if (!proxy.isEmpty())
             m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
     }
 
     if (keys.contains("places.host")) {
-        QString host = parameters.value("places.host");
+        QString host = parameters.value("places.host").toString();
         if (!host.isEmpty())
             m_host = host;
     }
 
+    if (keys.contains("places.referer")) {
+        QString referer = parameters.value("places.referer").toString();
+        if (!referer.isEmpty())
+            m_referer = referer;
+    }
+
+    if (keys.contains("places.token")) {
+        QString token = parameters.value("places.token").toString();
+        if (!token.isEmpty())
+            m_token = token;
+    }
+
     setSupportsGeocoding(true);
+    setSupportsReverseGeocoding(true);
 
     QGeoSearchManager::SearchTypes supportedSearchTypes;
     supportedSearchTypes |= QGeoSearchManager::SearchGeocode;
@@ -82,7 +96,8 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, Q
 
 QGeoSearchManagerEngineNokia::~QGeoSearchManagerEngineNokia() {}
 
-QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &address, const QGeoBoundingBox &bounds)
+QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &address,
+        QGeoBoundingArea *bounds)
 {
     Q_UNUSED(bounds)
 
@@ -94,7 +109,10 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
 
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/geocoder/gc/1.0?referer=localhost";
+    requestString += "/geocoder/gc/1.0?referer=" + m_referer;
+
+    if (!m_token.isNull())
+        requestString += "&token=" + m_token;
 
     // TODO locale / language handling
     //requestString += "&lg=";
@@ -131,11 +149,12 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
     return search(requestString);
 }
 
-QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate, const QGeoBoundingBox &bounds)
+QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,
+        QGeoBoundingArea *bounds)
 {
     Q_UNUSED(bounds)
 
-    if (!supportsGeocoding()) {
+    if (!supportsReverseGeocoding()) {
         QGeoSearchReply *reply = new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError, "Reverse geocoding is not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
         return reply;
@@ -143,7 +162,9 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordina
 
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/geocoder/rgc/1.0?referer=localhost";
+    requestString += "/geocoder/rgc/1.0?referer=" + m_referer;
+    if (!m_token.isNull())
+        requestString += "&token=" + m_token;
     requestString += "&long=";
     requestString += trimDouble(coordinate.longitude());
     requestString += "&lat=";
@@ -156,8 +177,14 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordina
     return search(requestString);
 }
 
-QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchString, QGeoSearchManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
+QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchString,
+        QGeoSearchManager::SearchTypes searchTypes,
+        int limit,
+        int offset,
+        QGeoBoundingArea *bounds)
 {
+    Q_UNUSED(bounds)
+
     // NOTE this will eventually replaced by a much improved implementation
     // which will make use of the additionLandmarkManagers()
     if ((searchTypes != QGeoSearchManager::SearchTypes(QGeoSearchManager::SearchAll))
@@ -168,11 +195,12 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchStrin
         return reply;
     }
 
-    Q_UNUSED(bounds)
-
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/geocoder/gc/1.0?referer=localhost";
+    requestString += "/geocoder/gc/1.0?referer=" + m_referer;
+
+    if (!m_token.isNull())
+        requestString += "&token=" + m_token;
 
     // TODO locale / language handling
     //requestString += "&lg=";
@@ -180,6 +208,16 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchStrin
 
     requestString += "&obloc=";
     requestString += searchString;
+
+    if(limit>0) {
+        requestString += "&total=";
+        requestString += QString::number(limit);
+    }
+
+    if(offset>0) {
+        requestString += "&offset=";
+        requestString += QString::number(offset);
+    }
 
     return search(requestString);
 }

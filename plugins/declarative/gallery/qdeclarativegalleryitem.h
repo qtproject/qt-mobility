@@ -57,14 +57,14 @@ class QDeclarativeGalleryItem : public QObject, public QDeclarativeParserStatus
     Q_INTERFACES(QDeclarativeParserStatus)
     Q_ENUMS(State)
     Q_ENUMS(Result)
-    Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery)
+    Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery NOTIFY galleryChanged)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(Result result READ result NOTIFY resultChanged)
-    Q_PROPERTY(int currentProgress READ currentProgress NOTIFY progressChanged)
-    Q_PROPERTY(int maximumProgress READ maximumProgress NOTIFY progressChanged)
-    Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames)
-    Q_PROPERTY(bool live READ isLive WRITE setLive)
-    Q_PROPERTY(QVariant item READ itemId WRITE setItemId)
+    Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
+    Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
+    Q_PROPERTY(bool live READ isLive WRITE setLive NOTIFY liveChanged)
+    Q_PROPERTY(QVariant item READ itemId WRITE setItemId NOTIFY itemIdChanged)
+    Q_PROPERTY(bool available READ available NOTIFY availableChanged)
     Q_PROPERTY(QString itemType READ itemType NOTIFY availableChanged)
     Q_PROPERTY(QUrl itemUrl READ itemUrl NOTIFY availableChanged)
     Q_PROPERTY(QObject *metaData READ metaData NOTIFY metaDataChanged)
@@ -92,24 +92,30 @@ public:
     ~QDeclarativeGalleryItem();
 
     QAbstractGallery *gallery() const { return m_request.gallery(); }
-    void setGallery(QAbstractGallery *gallery) { m_request.setGallery(gallery); }
+    void setGallery(QAbstractGallery *gallery) {
+        if (!m_complete || !gallery) { m_request.setGallery(gallery); emit galleryChanged(); } }
 
     State state() const { return State(m_request.state()); }
     Result result() const { return Result(m_request.result()); }
 
-    int currentProgress() const { return m_request.currentProgress(); }
-    int maximumProgress() const { return m_request.maximumProgress(); }
+    qreal progress() const
+    {
+        const int max = m_request.maximumProgress();
+        return max > 0 ? qreal(m_request.currentProgress()) / max : qreal(0.0);
+    }
 
     QStringList propertyNames() { return m_request.propertyNames(); }
     void setPropertyNames(const QStringList &names) {
-        if (!m_complete) m_request.setPropertyNames(names); }
+        if (!m_complete) m_request.setPropertyNames(names); emit propertyNamesChanged(); }
 
     bool isLive() const { return m_request.isLive(); }
-    void setLive(bool live) { m_request.setLive(live); }
+    void setLive(bool live) { m_request.setLive(live); emit liveChanged(); }
 
     QVariant itemId() const { return m_request.itemId(); }
     void setItemId(const QVariant &itemId) {
-        m_request.setItemId(itemId); if (m_complete) m_request.execute(); }
+        m_request.setItemId(itemId); if (m_complete) m_request.execute(); emit itemIdChanged(); }
+
+    bool available() const { return m_request.isValid(); }
 
     QString itemType() const { return m_request.itemType(); }
     QUrl itemUrl() const { return m_request.itemUrl(); }
@@ -135,17 +141,20 @@ Q_SIGNALS:
     void availableChanged();
     void metaDataChanged();
 
+    void galleryChanged();
+    void propertyNamesChanged();
+    void liveChanged();
+    void itemIdChanged();
+
+
 private Q_SLOTS:
-    void _q_resultSetChanged(QGalleryResultSet *resultSet);
-    void _q_itemsInserted(int index, int count);
-    void _q_itemsRemoved(int index, int count);
-    void _q_metaDataChanged(int index, int count, const QList<int> &keys);
+    void _q_itemChanged();
+    void _q_metaDataChanged(const QList<int> &keys);
     void _q_valueChanged(const QString &key, const QVariant &value) {
         m_request.setMetaData(key, value); }
 
 private:
     QGalleryItemRequest m_request;
-    QGalleryResultSet *m_resultSet;
     QDeclarativePropertyMap *m_metaData;
     QHash<int, QString> m_propertyKeys;
     bool m_complete;

@@ -48,10 +48,13 @@
 //General
 #define NAME_TAG  "name"
 #define DESCRIPTION_TAG "description"
+#define SERVICEFW_TAG "SFW"
+#define XML_MAX "1.1"
 
 //Service related
 #define SERVICE_TAG "service" 
 #define SERVICE_FILEPATH "filepath"
+#define SERVICE_IPCADDRESS "ipcaddress"
 
 //Interface related
 #define INTERFACE_TAG "interface"
@@ -59,12 +62,15 @@
 #define INTERFACE_CAPABILITY "capabilities"
 #define INTERFACE_CUSTOM_PROPERTY "customproperty"
 
+//Service type prefix
+#define SERVICE_IPC_PREFIX "_q_ipc_addr:"
+
 QTM_BEGIN_NAMESPACE
 
 #ifndef QT_NO_DATASTREAM
 QDataStream &operator<<(QDataStream &out, const ServiceMetaDataResults &r)
 {
-    out << r.name << r.location;
+    out << r.type << r.name << r.location;
     out << r.description << r.interfaces << r.latestInterfaces;
 
     return out;
@@ -72,7 +78,7 @@ QDataStream &operator<<(QDataStream &out, const ServiceMetaDataResults &r)
 
 QDataStream &operator>>(QDataStream &in, ServiceMetaDataResults &r)
 {
-    in >> r.name >> r.location;
+    in >> r.type >> r.name >> r.location;
     in >> r.description >> r.interfaces >> r.latestInterfaces;
 
     return in;
@@ -190,6 +196,7 @@ QIODevice *ServiceMetaData::device() const
 ServiceMetaDataResults ServiceMetaData::parseResults() const
 {
     ServiceMetaDataResults results;
+    results.type = serviceType;
     results.location = serviceLocation;
     results.name = serviceName;
     results.description = serviceDescription;
@@ -209,6 +216,8 @@ ServiceMetaDataResults ServiceMetaData::parseResults() const
  */
 bool ServiceMetaData::extractMetadata()
 {
+    Q_ASSERT(checkVersion(XML_MAX));
+
     latestError = 0;
     clearMetadata();                   
     QXmlStreamReader xmlReader;
@@ -223,13 +232,21 @@ bool ServiceMetaData::extractMetadata()
         // Read XML doc 
         while (!xmlReader.atEnd() && !parseError) {
             xmlReader.readNext();
+            //Found <SFW> xml versioning tag introduced in 1.1
+            //If this tag is not found the XML parser version will be 1.0
+            if (xmlReader.isStartElement() && xmlReader.name() == SERVICEFW_TAG) {
+                if (!processVersionElement(xmlReader)) {
+                    parseError = true;
+                }
+            }
             //Found a <service> node, read service related metadata
-            if (xmlReader.isStartElement() && xmlReader.name() == SERVICE_TAG) {
+            else if (xmlReader.isStartElement() && xmlReader.name() == SERVICE_TAG) {
                 if (!processServiceElement(xmlReader)) {
                     parseError = true;
                 }
             }
-            else if (xmlReader.isStartElement() && xmlReader.name() != SERVICE_TAG) {
+            else if (xmlReader.isStartElement() && xmlReader.name() != SERVICE_TAG
+                                                && xmlReader.name() != SERVICEFW_TAG) {
                 latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE;
                 parseError = true;
             }
@@ -241,8 +258,8 @@ bool ServiceMetaData::extractMetadata()
         if (ownsXmlDevice)
             xmlDevice->close();
     }
+    
     if (parseError) {
-        clearMetadata();
         //provide better error reports
         switch (latestError) {
             case SFW_ERROR_NO_SERVICE:                              /* Can not find service root node in XML file*/
@@ -251,8 +268,11 @@ bool ServiceMetaData::extractMetadata()
             case SFW_ERROR_NO_SERVICE_NAME:                          /* Can not find service name in XML file */
                 qDebug() << "Missing or empty <name> tag within <service>";
                 break;
-            case SFW_ERROR_NO_SERVICE_FILEPATH:                      /* Can not find service filepath in XML file */
-                qDebug() << "Missing or empty <filepath> tag within <service>";
+            case SFW_ERROR_NO_SERVICE_PATH:                          /* Can not find service filepath or ipcaddress in XML file */
+                if (greaterThan(xmlVersion, "1.0"))
+                    qDebug() << "Missing or empty <filepath> or <ipcaddress> tag within <service>";
+                else
+                    qDebug() << "Missing or empty <filepath> tag within <service>";
                 break;
             case SFW_ERROR_NO_SERVICE_INTERFACE:                     /* No interface for the service in XML file*/
                 qDebug() << "Missing <interface> tag";
@@ -270,7 +290,8 @@ bool ServiceMetaData::extractMetadata()
                 qDebug() << "Not a valid service xml";
                 break;
             case SFW_ERROR_PARSE_SERVICE:                            /* Error parsing service node */
-                qDebug() << "Invalid tag within <service> tags";
+                qDebug().nospace() << "Invalid tag within <service> with the supplied version(" 
+                                   << xmlVersion << ")";
                 break;
             case SFW_ERROR_PARSE_INTERFACE:                          /* Error parsing interface node */
                 qDebug() << "Invalid tag within <interface> tags";
@@ -290,7 +311,25 @@ bool ServiceMetaData::extractMetadata()
             case SFW_ERROR_DUPLICATED_CUSTOM_KEY:                    /* The customproperty appears twice*/
                 qDebug() << "Same custom property appears multiple times";
                 break;
+            case SFW_ERROR_MULTIPLE_SERVICE_TYPES:                   /* Both filepath and ipcaddress found in the XML file */
+                qDebug() << "Cannot specify both <filepath> and <ipcaddress> tags within <service>";
+                break;
+            case SFW_ERROR_INVALID_FILEPATH:                         /* Service path cannot contain IPC prefix */
+                qDebug() << "Invalid service location, avoid private prefixes";
+                break;
+            case SFW_ERROR_INVALID_XML_VERSION:                      /* Error parsing servicefw version node */
+                qDebug() << "Invalid or missing version attribute in <SFW> tag";
+                break;
+            case SFW_ERROR_UNSUPPORTED_IPC:                          /* Servicefw version doesn't support IPC */
+                qDebug().nospace() << "Supplied service framework version(" << xmlVersion 
+                                   << ") doesn't support the <ipcaddress> tag";
+                break;
+            case SFW_ERROR_UNSUPPORTED_XML_VERSION:                  /* Unsupported servicefw version supplied */
+                qDebug().nospace() << "Service framework version(" << xmlVersion 
+                                   << ") is higher than available support(" << QString(XML_MAX) << ")";
+                break;
         }
+        clearMetadata();
     }
     return !parseError;
 }
@@ -305,6 +344,57 @@ int ServiceMetaData::getLatestError() const
 }
  
 /*
+    Parses the service framework xml version tag and continues to parse the service
+*/
+bool ServiceMetaData::processVersionElement(QXmlStreamReader &aXMLReader)
+{
+    Q_ASSERT(aXMLReader.isStartElement() && aXMLReader.name() == SERVICEFW_TAG);
+    bool parseError = false;
+    
+    if (aXMLReader.attributes().hasAttribute("version")) {
+        xmlVersion = aXMLReader.attributes().value("version").toString();
+        bool success = checkVersion(xmlVersion);
+
+        if (xmlVersion.isEmpty() || !success) {
+            latestError = ServiceMetaData::SFW_ERROR_INVALID_XML_VERSION;
+            parseError = true;
+        } else {
+            if (greaterThan(xmlVersion, XML_MAX)) {
+                latestError = ServiceMetaData::SFW_ERROR_UNSUPPORTED_XML_VERSION;
+                parseError = true;
+            }
+        }
+    } else {
+        latestError = ServiceMetaData::SFW_ERROR_INVALID_XML_VERSION;
+        parseError = true;
+    }
+
+    while(!parseError && !aXMLReader.atEnd()) {
+        aXMLReader.readNext();
+        //Found a <service> node, read service related metadata
+        if (aXMLReader.isStartElement() && aXMLReader.name() == SERVICE_TAG) {
+            if (!processServiceElement(aXMLReader)) {
+                parseError = true;
+            }
+        } 
+        else if (aXMLReader.isEndElement() && aXMLReader.name() == SERVICEFW_TAG) {
+            //Found </SFW>, leave the loop
+            break;
+        } 
+        else if (aXMLReader.isStartElement() && aXMLReader.name() != SERVICE_TAG) {
+            latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE;
+            parseError = true;
+        }
+        else if (aXMLReader.tokenType() == QXmlStreamReader::Invalid) {
+            latestError = ServiceMetaData::SFW_ERROR_INVALID_XML_FILE;
+            parseError = true;
+        }
+    }
+
+    return !parseError;
+}
+
+/*
     Parses and extracts the service metadata from the current xml <service> node \n
  */
 bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
@@ -312,29 +402,51 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
     Q_ASSERT(aXMLReader.isStartElement() && aXMLReader.name() == SERVICE_TAG);
     bool parseError = false;
 
-    int dupSTags[3] = {0 //->tag name
+    int dupSTags[4] = {0 //->tag name
         ,0 //-> service description
         ,0 //-> filepath
+        ,0 //-> ipcaddress
     };
     while(!parseError && !aXMLReader.atEnd()) {
         aXMLReader.readNext();
-        if (aXMLReader.isStartElement() && aXMLReader.name() == DESCRIPTION_TAG) {
+        if (aXMLReader.isStartElement() && aXMLReader.name() == NAME_TAG) {
+            //Found <name> tag
+            serviceName = aXMLReader.readElementText();
+            dupSTags[0]++;
+        } else if (aXMLReader.isStartElement() && aXMLReader.name() == DESCRIPTION_TAG) {
             //Found <description> tag
             serviceDescription = aXMLReader.readElementText();
             dupSTags[1]++;
-        } else if (aXMLReader.isStartElement() && aXMLReader.name() == NAME_TAG) {
-            serviceName = aXMLReader.readElementText();
-            dupSTags[0]++;
-        } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_TAG) {
-            //Found a <interface> node, read module related metadata  
-            if (!processInterfaceElement(aXMLReader)) 
-                parseError = true;
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == SERVICE_FILEPATH ) {
-            //Found <filepath> tag
+            //Found <filepath> tag for plugin service
             dupSTags[2]++;
             serviceLocation = aXMLReader.readElementText();
+            //Check if IPC prefix was used incorrectly here
+            if (serviceLocation.startsWith(SERVICE_IPC_PREFIX)) {
+                latestError = ServiceMetaData::SFW_ERROR_INVALID_FILEPATH;
+                parseError = true;
+            }
+        } else if (aXMLReader.isStartElement() && aXMLReader.name() == SERVICE_IPCADDRESS ) {
+            //Found <ipcaddress> tag for IPC service
+            //Check if servicefw XML version supports IPC
+            if (greaterThan(xmlVersion, "1.0")) {
+                dupSTags[3]++;
+                serviceLocation = aXMLReader.readElementText();
+                //Check if IPC prefix was used incorrectly here
+                if (serviceLocation.startsWith(SERVICE_IPC_PREFIX)) {
+                    latestError = ServiceMetaData::SFW_ERROR_INVALID_FILEPATH;
+                    parseError = true;
+                }
+            } else {
+                latestError = ServiceMetaData::SFW_ERROR_UNSUPPORTED_IPC;
+                parseError = true;
+            }
+        } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_TAG) {
+            //Found interface> node, read module related metadata  
+            if (!processInterfaceElement(aXMLReader)) 
+                parseError = true;
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == "version") {
-            //FOUND <version> tag on service level. We ignore this for now
+            //Found <version> tag on service level. We ignore this for now
             aXMLReader.readElementText();
         } else if (aXMLReader.isEndElement() && aXMLReader.name() == SERVICE_TAG) {
             //Found </service>, leave the loop
@@ -347,24 +459,33 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
             parseError = true;
         }
     }
+
     if ( !parseError ) {
         if (serviceName.isEmpty()) {
             latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE_NAME;
             parseError = true;
         } else if (serviceLocation.isEmpty()) {
-            latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE_FILEPATH;
+            latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE_PATH;
             parseError = true;
         }
     }
 
-    for(int i=0;!parseError && i<3;i++) {
+    if (dupSTags[3] > 0)
+        serviceType = QService::InterProcess;
+
+    if ((dupSTags[2] > 0) && (dupSTags[3] > 0)) {
+        latestError = SFW_ERROR_MULTIPLE_SERVICE_TYPES;
+        parseError = true;
+    }
+
+    for (int i=0; !parseError && i<4; i++) {
         if (dupSTags[i] > 1) {
-            parseError = true;
             latestError = SFW_ERROR_DUPLICATED_TAG;
+            parseError = true;
             break;
         }
     }
-        
+
     //update all interfaces with service data
     const int icount = serviceInterfaces.count();
     if (icount == 0 && latestError == 0) {
@@ -375,11 +496,9 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
         serviceInterfaces.at(i).d->serviceName = serviceName;
         serviceInterfaces.at(i).d->attributes[QServiceInterfaceDescriptor::Location] = serviceLocation;
         serviceInterfaces.at(i).d->attributes[QServiceInterfaceDescriptor::ServiceDescription] = serviceDescription;
+        serviceInterfaces.at(i).d->attributes[QServiceInterfaceDescriptor::ServiceType] = serviceType;
     }
 
-    if (parseError) {
-        clearMetadata();
-    }
     return !parseError;
 }
 
@@ -401,6 +520,7 @@ bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
         0   //->description
     };
     aInterface.d = new QServiceInterfaceDescriptorPrivate;
+           
     while (!parseError && !aXMLReader.atEnd()) {
         aXMLReader.readNext();
         //Read interface description
@@ -535,6 +655,20 @@ bool ServiceMetaData::lessThan(const QServiceInterfaceDescriptor &d1,
 
 }
 
+bool ServiceMetaData::greaterThan(const QString &v1, const QString &v2) const
+{
+    int majorV1 = -1;
+    int minorV1 = -1;
+    transformVersion(v1, &majorV1, &minorV1);
+
+    int majorV2 = -1;
+    int minorV2 = -1;
+    transformVersion(v2, &majorV2, &minorV2);
+
+    return  (majorV1 > majorV2 
+             || (majorV1 == majorV2 && minorV1 > minorV2));
+}
+
 bool ServiceMetaData::checkVersion(const QString &version) const
 {
     //match x.y as version format
@@ -570,18 +704,20 @@ void ServiceMetaData::transformVersion(const QString &version, int *major, int *
     }
 }
 
-/*
+ /*
  *  Clears the service metadata
  *
  */
 void ServiceMetaData::clearMetadata()
 {
+    xmlVersion = "1.0";
     serviceName.clear();
     serviceLocation.clear();
     serviceDescription.clear();
     serviceInterfaces.clear();
     duplicates.clear();
     m_latestIndex.clear();
+    serviceType = QService::Plugin;
 }
 
 QTM_END_NAMESPACE

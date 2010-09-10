@@ -61,7 +61,9 @@ QTM_BEGIN_NAMESPACE
     \class QAbstractValueSpaceLayer
     \brief The QAbstractValueSpaceLayer class provides support for adding new logical data layers
            to the Qt Value Space.
+    \inmodule QtPublishSubscribe
     \ingroup publishsubscribe
+    \internal
 
     To create a new layer in the Value Space subclass this class and reimplement all of the virtual
     functions.  The new layer is installed by either calling QValueSpace::installLayer() or by
@@ -510,6 +512,16 @@ QString qCanonicalPath(const QString &path)
     result.resize(outc);
     return result;
 }
+
+#ifdef QT_SIMULATOR
+QString qAddSimulatorPrefix(const QString &path)
+{
+    QString result("/SimulatorPrivate");
+    result.append(path);
+    return result;
+}
+
+#endif
 
 #include "moc_qvaluespace_p.cpp"
 

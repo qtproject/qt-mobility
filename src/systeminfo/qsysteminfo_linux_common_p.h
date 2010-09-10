@@ -234,8 +234,8 @@ public:
     QString imei() {return QString();}
     QString imsi() {return QString();}
     QString manufacturer();
-    QString model();
-    QString productName();
+    QString model()  {return QString();}
+    QString productName()  {return QString();}
 
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
@@ -257,6 +257,8 @@ Q_SIGNALS:
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
 protected:
+    bool btPowered;
+
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;

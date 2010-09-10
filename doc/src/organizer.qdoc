@@ -146,17 +146,33 @@ leaf class; in that case, it may be necessary for the client to inspect the
 supported detail definition for that leaf class and modify its behavior
 accordingly.
 
+\section3 \bold{Item Collection}
+
+Every item stored in a manager belongs to exactly one
+\l{QOrganizerCollection}{collection}.  A collection can have properties such
+as a name, a "color", a specified icon, a description, and so on.  Collections
+may be added or removed if the manager supports those operations, or modified.
+There will always be at least one collection in a manager, and the manager
+will always have a default collection into which items are saved if no other
+collection is specified.
+
+Some managers will allow users to create collections (for example, a "football
+fixtures" collection) while others may have built-in collections (for example,
+"work" and "home" collections).
+
 \section2 Manager
 
 Access to organizer items is provided by implementations of the Qt Organizer
 \l{QOrganizerItemManager}{manager} API. A manager provides access to zero or
-more platform-specific datastores.  Each datastore may support different
-capabilities (for example, the ability to store certain datatypes, the ability
-to natively filter on different details or details of different definitions,
-the provision of locking mechanisms, the provision of changelog information,
-etc) which are reported by the manager on request.  The manager therefore
-provides access to detail definitions and organizer items stored in different
-datastores, in a platform and datastore independent manner.
+more platform-specific datastores.  Each manager must support exactly one
+schema per item type (that is, a schema is per-manager, not per-collection).
+Each manager may support different capabilities (for example, the ability
+to store certain datatypes, the ability to natively filter on different
+details or details of different definitions, the provision of locking
+mechanisms, the provision of changelog information, etc) which are reported by
+the manager on request.  The manager therefore provides access to detail
+definitions and collections of organizer items stored in different datastores,
+in a platform and datastore independent manner.
 
 
 \section3 \bold{Meta Data API}
@@ -217,11 +233,14 @@ The asynchronous API is offered through various classes derived from the
 QOrganizerItemAbstractRequest class, including
 QOrganizerItemLocalIdFetchRequest, QOrganizerItemFetchRequest,
 QOrganizerItemSaveRequest, QOrganizerItemRemoveRequest,
+QOrganizerCollectionLocalIdFetchRequest, QOrganizerCollectionFetchRequest,
+QOrganizerCollectionRemoveRequest, QOrganizerCollectionSaveRequest,
 QOrganizerItemDetailDefinitionFetchRequest,
 QOrganizerItemDetailDefinitionSaveRequest, and
 QOrganizerItemDetailDefinitionRemoveRequest.
 
-The asynchronous API allows manipulation of \l{QOrganizerItem}{items} and
+The asynchronous API allows manipulation of \l{QOrganizerItem}{items},
+\l{QOrganizerCollection}{collections} and
 \l{QOrganizerItemDetailDefinition}{schema definitions}, but does not provide
 manager capability or meta data information reporting.
 
@@ -237,7 +256,8 @@ local, high-speed datastores, or for applications which do not require a
 responsive user interface.
 
 The synchronous API is offered through the QOrganizerItemManager class, and
-includes manipulation of \l{QOrganizerItem}{items} and
+includes manipulation of \l{QOrganizerItem}{items},
+\l{QOrganizerCollection}{collections} and
 \l{QOrganizerItemDetailDefinition}{schema definitions}.  As previously
 described, the meta data reporting and manipulation functions are also
 provided via synchronous API only.
@@ -268,41 +288,58 @@ A manager backend may be implemented by subclassing
 See \l{Qt Organizer Manager Engines} for more information on available engines
 and how to write your own engine.
 
+\section1 Calendar Features
+
+\section2 Recurrences
+
+\section2 All-day and Multiple-day Event Support
+Events and Todos can be specified as all-day or multi-day by setting the
+TimeSpecified field to \tt{true}.  When this field is set to true, it means that
+the time portion of the StartDateTime and EndDateTime should be ignored.  An
+event or todo with TimeSpecified set to true should be considered to start and
+end roughly on its given start and end dates (inclusive), but without specifying
+exact times.  For example, a birthday could be specified with a QOrganizerEvent
+where the StartDateTime and EndDateTime have the same value, and TimeSpecified
+is set to true.
 
 \section1 On-going Development
 
 There are several areas of API which are actively being developed, which are
-not included in the Technical Preview.  These include:
+not included in the Beta release.  These include:
 \list
-  \o Multiple Calendar Support
   \o Timezone Support
   \o Result Pagination Support
-  \o All-day and Multiple-day Event Support
+\endlist
+
+There are some areas of API which are included in the Beta release,
+but which are very likely to change as they are currently undergoing review
+and development.
+\list
+  \o Multiple Collection Support
+  \o Item And Collection Id Semantics
 \endlist
 
 Each of these areas is complex and may have important ramifications to related
 areas of the API, and so are discussed separately below.
 
-\section2 Multiple Calendar Support
+\section2 Multiple Collection Support
 
 One aspect of the Qt Mobility Organizer API which is still under discussion
-and active development is the ability to support multiple "calendars" for
-different contexts.  Currently, no API is offered to support multiple
-calendars.  It is still undecided how multiple calendars should be supported
-by the API (some possibilities, in no particular order, include: each calendar
-is modeled as a separate manager; each calendar is modeled as a top-level
-item, and API for manipulating these calendars is offered via
-QOrganizerItemManager and through various subclasses of
-QOrganizerItemAbstractRequest; calendars are supported only as a
-QOrganizerItemTag detail in each item; etc).
+and active development is the ability to support multiple "collections" of
+items.  The API which will eventually be offered for this will rely on the
+outcome of discussion and research into the semantics of item duplication
+and item identification, which are described below.
 
-The semantics of events stored in multiple calendars is also under discussion.
-Multiple calendar support has the potential to introduce possibly confusing
+\section2 Item And Collection Id Semantics
+
+The semantics of items stored in multiple collections is also under discussion.
+Multiple collection support has the potential to introduce possibly confusing
 semantics (for example: sharing of event data versus duplication of event
-data) and so we need to carefully consider how current calendar and scheduling
-backends work, in order to determine what is technically feasible and what is
-most intuitive for the application developer, before mandating some particular
-set of semantics related to multiple calendar support.
+data; manager-unique item ids versus collection-unique item ids; etc) and so we
+need to carefully consider how current calendar and scheduling backends work,
+in order to determine what is technically feasible and what is most intuitive
+for the application developer, before mandating some particular set of
+semantics related to multiple calendar support.
 
 \section2 Timezone Support
 
@@ -348,21 +385,6 @@ not support the feature.
 In short, discussion about result pagination is still on-going, as it is a
 complex topic with far-reaching ramifications given that we must maintain
 consistency between the various modules of the Qt Mobility project.
-
-\section2 All-day and Multiple-day Event Support
-
-Several options for supporting all-day and multiple-day events have been
-considered.  One possible method of supporting all-day events is to allow the
-start date time of the event to be set to a date without a time component,
-while another might be to explicitly set the start and end date times to cover
-an entire 24 hour period (the currently supported solution).
-We envision that multiple-day events will be supported in the same manner as
-all-day events.
-
-Finally, the way in which all-day and multiple-day events are supported may
-depend on the way in which timezone support is implemented.  As such, this
-aspect of the API will be considered iteratively as support for timezone
-information matures.
 
 \section1 Using the API
 

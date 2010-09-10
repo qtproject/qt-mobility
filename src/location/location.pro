@@ -16,7 +16,9 @@ include(maps/maps.pri)
 PUBLIC_HEADERS += \
                     qgeoaddress.h \
                     qgeoareamonitor.h \
+                    qgeoboundingarea.h \
                     qgeoboundingbox.h \
+                    qgeoboundingcircle.h \
                     qgeocoordinate.h \
                     qgeoplace.h \
                     qgeopositioninfo.h \
@@ -28,6 +30,7 @@ PUBLIC_HEADERS += \
 PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
                     qgeoboundingbox_p.h \
+                    qgeoboundingcircle_p.h \
                     qgeoplace_p.h \
                     qlocationutils_p.h \
                     qnmeapositioninfosource_p.h
@@ -83,6 +86,9 @@ maemo6 {
                 qgeosatelliteinfosource_maemo_p.h \
                 dbuscomm_maemo_p.h \
                 dbusserver_maemo_p.h
+    CONFIG += create_pc create_prl
+    pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+    pkgconfig.files = QtLocation.pc
 }
 
 maemo5 {
@@ -109,7 +115,9 @@ HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 SOURCES += \
             qgeoaddress.cpp \
             qgeoareamonitor.cpp \
+            qgeoboundingarea.cpp \
             qgeoboundingbox.cpp \
+            qgeoboundingcircle.cpp \
             qgeocoordinate.cpp \
             qgeoplace.cpp \
             qgeopositioninfo.cpp \
@@ -122,7 +130,6 @@ SOURCES += \
 symbian {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC83
-    MMP_RULES += EXPORTUNFROZEN
 
     INCLUDEPATH += $${EPOCROOT}epoc32/include/osextensions \
                    $${EPOCROOT}epoc32/include/LBTHeaders \
@@ -136,6 +143,22 @@ symbian {
     QtLocationDeployment.sources = QtLocation.dll
     QtLocationDeployment.path = /sys/bin
     DEPLOYMENT += QtLocationDeployment
+}
+
+simulator {
+    QT += gui
+    SOURCES += qgeopositioninfosource_simulator.cpp \
+                qlocationdata_simulator.cpp \
+                qgeosatelliteinfosource_simulator.cpp \
+                qgeoareamonitor_simulator.cpp \
+                qlocationconnection_simulator.cpp
+    HEADERS += qgeopositioninfosource_simulator_p.h \
+                qlocationdata_simulator_p.h \
+                qgeosatelliteinfosource_simulator_p.h \
+                qgeoareamonitor_simulator_p.h \
+                qlocationconnection_simulator_p.h
+    INCLUDEPATH += ../mobilitysimulator
+    qtAddLibrary(QtMobilitySimulator)
 }
 
 CONFIG += middleware

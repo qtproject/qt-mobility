@@ -221,6 +221,17 @@ public:
 		ESipAddress
 		};
 
+	// defines extra_type_info of communication address.
+	// !! the values these represent are persisted in the database  !!
+	// !!  do not change the order -- add new ones to the bottom    !!
+	// !!   changing these values could break data compatibility    !!
+	enum TCommAddrExtraInfoType
+	    {
+	    ENonMobileNumber = 0,
+	    EMobileNumber
+	    };
+
+
 public:
 	static CPplCommAddrTable* NewL(RSqlDatabase& aDatabase, CLplContactProperties& aProperties);
 	static CPplCommAddrTable* NewLC(RSqlDatabase& aDatabase, CLplContactProperties& aProperties);
@@ -240,13 +251,15 @@ private:
 	void ConstructL();
 	CPplCommAddrTable(RSqlDatabase& aDatabase, CLplContactProperties& iProperties);
 	void RemoveNonUpdatedAddrsL(RArray<TMatch>& aNewPhones, RArray<TPtrC>& aNewEmails, RArray<TPtrC>& aNewSips, 
-							RArray<TInt>& aFreeCommAddrIds, const TInt aItemId);
+							RArray<TInt>& aFreeCommAddrIds, const TInt aItemId, 
+							CPplCommAddrTable::TCommAddrExtraInfoType aExtraInfoType);
 	void DoUpdateCommAddrsL(RArray<TMatch>& aNewPhones, RArray<TPtrC>& aNewEmails, RArray<TPtrC>& aNewSips, 
-						    RArray<TInt>& aFreeCommAddrIds, const TInt aItemId);
+						    RArray<TInt>& aFreeCommAddrIds, const TInt aItemId, 
+						    CPplCommAddrTable::TCommAddrExtraInfoType aExtraInfoType = ENonMobileNumber);
 	void DeleteSingleCommAddrL(TInt aCommAddrId, TBool& aLowDiskErrorOccurred);
 	void DoPhoneNumWriteOpL(const CPplCommAddrTable::TMatch& aPhoneNum, TCntSqlStatement aType, TInt aCntId);
-	void DoPhoneNumWriteOpL(const CPplCommAddrTable::TMatch& aPhoneNum, TCntSqlStatement aType, TInt aCntId, 
-							TInt aCommAddrId);
+	void DoPhoneNumWriteOpL(const CPplCommAddrTable::TMatch& aPhoneNum, TCntSqlStatement aType, TInt aCntId, TInt aCommAddrId,
+							CPplCommAddrTable::TCommAddrExtraInfoType aExtraInfoType = ENonMobileNumber);
 	void DoNonPhoneWriteOpL(const TDesC& aAddress, TCntSqlStatement aType, TInt aCntId, 
 							TCommAddrType aAddrType);
 	void DoNonPhoneWriteOpL(const TDesC& aAddress, TCntSqlStatement aType, TInt aCntId, 
@@ -333,9 +346,7 @@ private: // New pure virtual functions
 											 QStringList aTokens) = 0;
 
 private: // New virtual functions
-	virtual QStringList
-		GetTableSpecificFields(const CContactItem& aItem,
-							   TBool& aMandatoryFieldsPresent) const;
+	virtual QStringList GetTableSpecificFields(const CContactItem& aItem) const;
 
 public:
 	const CPcsKeyMap* KeyMap() const;

@@ -85,6 +85,7 @@ public:
         UnloadedStatus,
         LoadingStatus,
         LoadedStatus,
+        StandbyStatus,
         StartingStatus,
         ActiveStatus
     };
@@ -184,6 +185,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void stateChanged(QCamera::State);
     void captureModeChanged(QCamera::CaptureMode);
+    void statusChanged(QCamera::Status);
 
     void locked();
     void lockFailed();
@@ -196,8 +198,11 @@ Q_SIGNALS:
 private:
     Q_DISABLE_COPY(QCamera)
     Q_DECLARE_PRIVATE(QCamera)
+    Q_PRIVATE_SLOT(d_func(), void _q_preparePropertyChange(int))
+    Q_PRIVATE_SLOT(d_func(), void _q_restartCamera())
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
     Q_PRIVATE_SLOT(d_func(), void _q_updateLockStatus(QCamera::LockType, QCamera::LockStatus, QCamera::LockChangeReason))
+    Q_PRIVATE_SLOT(d_func(), void _q_updateState(QCamera::State))
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::LockTypes)

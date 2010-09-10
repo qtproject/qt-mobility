@@ -2,16 +2,16 @@ TARGET = sfwecho_service
 INCLUDEPATH += ../../../src/serviceframework
 DEPENDPATH += ../../../src/serviceframework
 
+include(../../examples.pri)
+
 QT = core
 TEMPLATE=app
 
-include(../../examples.pri)
-
-CONFIG += mobility
+CONFIG += mobility no_icon
 MOBILITY = serviceframework
 
-SOURCES += main.cpp
 HEADERS += 
+SOURCES += main.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
@@ -20,7 +20,9 @@ symbian {
 wince*|symbian*: {
     addFiles.sources = testdata/*
     addFiles.path = xmldata
-    DEPLOYMENT += addFiles
+    addFiles2.sources = testdata/*
+    addFiles2.path = /private/2002AC7F/import/
+    DEPLOYMENT += addFiles addFiles2
 }
 wince* {
     DEFINES+= TESTDATA_DIR=\\\".\\\"

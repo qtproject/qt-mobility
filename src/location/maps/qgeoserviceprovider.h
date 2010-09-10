@@ -45,6 +45,7 @@
 #include "qmobilityglobal.h"
 
 #include <QMap>
+#include <QVariant>
 
 class QString;
 class QStringList;
@@ -72,8 +73,8 @@ public:
     };
 
     static QStringList availableServiceProviders();
-    QGeoServiceProvider(const QString &providerName, const QMap<QString, QString> &parameters = (QMap<QString, QString>()));
-    QGeoServiceProvider(const QString &providerName, int providerVersion, const QMap<QString, QString> &parameters = (QMap<QString, QString>()));
+    QGeoServiceProvider(const QString &providerName,
+                        const QMap<QString, QVariant> &parameters = (QMap<QString, QVariant>()));
 
     ~QGeoServiceProvider();
 

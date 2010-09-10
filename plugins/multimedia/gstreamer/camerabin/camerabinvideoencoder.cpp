@@ -187,14 +187,15 @@ void CameraBinVideoEncoder::resetActualSettings()
 GstElement *CameraBinVideoEncoder::createEncoder()
 {
     QString codec = m_videoSettings.codec();
+    QByteArray elementName = m_elementNames.value(codec);
 
-    GstElement *encoderElement = gst_element_factory_make( m_elementNames.value(codec).constData(), "video-encoder");
+    GstElement *encoderElement = gst_element_factory_make( elementName.constData(), "video-encoder");
 
     if (encoderElement) {
         if (m_videoSettings.encodingMode() == QtMultimediaKit::ConstantQualityEncoding) {
             QtMultimediaKit::EncodingQuality qualityValue = m_videoSettings.quality();
 
-            if (codec == QLatin1String("video/h264")) {
+            if (elementName == "x264enc") {
                 //constant quantizer mode
                 g_object_set(G_OBJECT(encoderElement), "pass", 4, NULL);
                 int qualityTable[] = {
@@ -205,7 +206,7 @@ GstElement *CameraBinVideoEncoder::createEncoder()
                     8 //VeryHigh
                 };
                 g_object_set(G_OBJECT(encoderElement), "quantizer", qualityTable[qualityValue], NULL);
-            } else if (codec == QLatin1String("video/xvid")) {
+            } else if (elementName == "xvidenc") {
                 //constant quantizer mode
                 g_object_set(G_OBJECT(encoderElement), "pass", 3, NULL);
                 int qualityTable[] = {
@@ -217,12 +218,9 @@ GstElement *CameraBinVideoEncoder::createEncoder()
                 };
                 int quant = qualityTable[qualityValue];
                 g_object_set(G_OBJECT(encoderElement), "quantizer", quant, NULL);
-            } else if (codec == QLatin1String("video/mpeg4") ||
-                       codec == QLatin1String("video/mpeg1") ||
-                       codec == QLatin1String("video/mpeg2") ) {
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-                //g_object_set(G_OBJECT(encoderElement), "bitrate", bitrate, NULL);
-#else
+            } else if (elementName == "ffenc_mpeg4" ||
+                       elementName == "ffenc_mpeg1video" ||
+                       elementName == "ffenc_mpeg2video" ) {
                 //constant quantizer mode
                 g_object_set(G_OBJECT(encoderElement), "pass", 2, NULL);
                 //quant from 1 to 30, default ~3
@@ -235,8 +233,7 @@ GstElement *CameraBinVideoEncoder::createEncoder()
                 };
                 double quant = qualityTable[qualityValue];
                 g_object_set(G_OBJECT(encoderElement), "quantizer", quant, NULL);
-#endif
-            } else if (codec == QLatin1String("video/theora")) {
+            } else if (elementName == "theoraenc") {
                 int qualityTable[] = {
                     8, //VeryLow
                     16, //Low
@@ -247,6 +244,10 @@ GstElement *CameraBinVideoEncoder::createEncoder()
                 //quality from 0 to 63
                 int quality = qualityTable[qualityValue];
                 g_object_set(G_OBJECT(encoderElement), "quality", quality, NULL);
+            } else if (elementName == "dsph264enc" ||
+                       elementName == "dspmp4venc" ||
+                       elementName == "dsph263enc") {
+                //only bitrate parameter is supported
             }
         } else {
             int bitrate = m_videoSettings.bitRate();
@@ -282,7 +283,6 @@ GstElement *CameraBinVideoEncoder::createEncoder()
 
         }
     }
-
 
     return encoderElement;
 }

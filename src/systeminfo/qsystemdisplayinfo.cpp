@@ -40,13 +40,23 @@
 ****************************************************************************/
 
 #include "qsystemdisplayinfo.h"
-#include "qsysteminfocommon.h"
+#include "qsysteminfocommon_p.h"
 
 QTM_BEGIN_NAMESPACE
         Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
 
+#ifdef QT_SIMULATOR
+QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate() { return displayInfoPrivate(); }
+#endif
+
 // display
  /*!
+   \class QSystemDisplayInfo
+   \ingroup systeminfo
+   \inmodule QtSystemInfo
+
+        \brief The QSystemDisplayInfo class provides access to display information from the system.
+
    \fn QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
    Constructs a QSystemDisplayInfo object with the given \a parent.
  */

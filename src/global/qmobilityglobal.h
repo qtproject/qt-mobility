@@ -41,7 +41,6 @@
 #ifndef QMOBILITYGLOBAL_H
 #define QMOBILITYGLOBAL_H
 
-
 #define QTM_VERSION_STR   "1.1.0"
 /*
    QTM_VERSION is (major << 16) + (minor << 8) + patch.
@@ -56,13 +55,17 @@
 
 #define QTM_PACKAGE_TAG ""
 
-#if defined(QTM_BUILD_UNITTESTS)
-# include <qconfig.h>
-# if !defined(QT_BUILD_INTERNAL)
-#   define QT_BUILD_INTERNAL
-# endif
-#endif
 #include <QtCore/qglobal.h>
+#if defined(QTM_BUILD_UNITTESTS) && (defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)) && defined(QT_MAKEDLL)
+#    define QM_AUTOTEST_EXPORT Q_DECL_EXPORT
+#elif defined(QTM_BUILD_UNITTESTS) && (defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)) && defined(QT_DLL)
+#    define QM_AUTOTEST_EXPORT Q_DECL_IMPORT
+#elif defined(QTM_BUILD_UNITTESTS) && !(defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)) && defined(QT_SHARED)
+#    define QM_AUTOTEST_EXPORT Q_DECL_EXPORT
+#else
+#    define QM_AUTOTEST_EXPORT
+#endif
+
 
 #if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
 #  if defined(QT_NODLL)
@@ -91,6 +94,11 @@
 #      define Q_VERSIT_EXPORT Q_DECL_EXPORT
 #    else
 #      define Q_VERSIT_EXPORT Q_DECL_IMPORT
+#    endif
+#    if defined(QT_BUILD_VERSIT_ORGANIZER_LIB)
+#      define Q_VERSIT_ORGANIZER_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_VERSIT_ORGANIZER_EXPORT Q_DECL_IMPORT
 #    endif
 #    if defined(QT_BUILD_LOCATION_LIB)
 #      define Q_LOCATION_EXPORT Q_DECL_EXPORT
@@ -147,6 +155,7 @@
 #    define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_IMPORT
 #    define Q_CONTACTS_EXPORT Q_DECL_IMPORT
 #    define Q_VERSIT_EXPORT Q_DECL_IMPORT
+#    define Q_VERSIT_ORGANIZER_EXPORT Q_DECL_IMPORT
 #    define Q_LOCATION_EXPORT Q_DECL_IMPORT
 #    define Q_MULTIMEDIA_EXPORT Q_DECL_IMPORT
 #    define Q_MESSAGING_EXPORT Q_DECL_IMPORT
@@ -170,6 +179,7 @@
 #    define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_EXPORT
 #    define Q_CONTACTS_EXPORT Q_DECL_EXPORT
 #    define Q_VERSIT_EXPORT Q_DECL_EXPORT
+#    define Q_VERSIT_ORGANIZER_EXPORT Q_DECL_EXPORT
 #    define Q_LOCATION_EXPORT Q_DECL_EXPORT
 #    define Q_MULTIMEDIA_EXPORT Q_DECL_EXPORT
 #    define Q_MESSAGING_EXPORT Q_DECL_EXPORT
@@ -185,6 +195,7 @@
 #    define Q_PUBLISHSUBSCRIBE_EXPORT
 #    define Q_CONTACTS_EXPORT
 #    define Q_VERSIT_EXPORT
+#    define Q_VERSIT_ORGANIZER_EXPORT
 #    define Q_LOCATION_EXPORT
 #    define Q_MULTIMEDIA_EXPORT
 #    define Q_MESSAGING_EXPORT
@@ -204,10 +215,10 @@
 #    undef Q_SERVICEFW_EXPORT
 #  endif
 #  define Q_SERVICEFW_EXPORT
-#  ifdef Q_AUTOTEST_EXPORT
-#    undef Q_AUTOTEST_EXPORT
+#  ifdef QM_AUTOTEST_EXPORT
+#    undef QM_AUTOTEST_EXPORT
 #  endif
-#  define Q_AUTOTEST_EXPORT
+#  define QM_AUTOTEST_EXPORT
 #endif
 
 // The namespace is hardcoded as moc has issues resolving

@@ -84,7 +84,7 @@ bool InstanceManager::addType(const QMetaObject* meta,
     QMutexLocker ml(&lock);
 
     if (metaMap.contains(ident)) {
-        qWarning() << "Service" << ident.name << "(" << ident.interface << ", " << ident.version << ")"
+        qWarning() << "Service" << ident.name << "(" << ident.iface << ", " << ident.version << ")"
             << "already registered";
     } else {
         ServiceIdentDescriptor d;
@@ -161,12 +161,10 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceIdentifier& ident
     QMutexLocker ml(&lock);
     if (!metaMap.contains(ident))
         return;
-    
     ServiceIdentDescriptor& descr = metaMap[ident];
     if (descr.instanceType == QRemoteServiceClassRegister::SharedInstance) {
         if (descr.sharedRefCount < 1)
             return;
-
         if (descr.sharedRefCount == 1) {
             if (descr.sharedInstance)
                 descr.sharedInstance->deleteLater();

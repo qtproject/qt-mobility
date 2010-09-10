@@ -147,7 +147,6 @@ protected:
 
 private:
     Q_PRIVATE_SLOT(d_ptr, void _q_finished())
-    Q_PRIVATE_SLOT(d_ptr, void _q_galleryDestroyed())
     Q_PRIVATE_SLOT(d_ptr, void _q_progressChanged(int, int))
 };
 

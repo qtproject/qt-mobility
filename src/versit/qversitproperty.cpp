@@ -102,7 +102,9 @@ QTM_BEGIN_NAMESPACE
   \value BinaryType The property value holds a binary value and can be retrieved with
   QVersitProperty::value<QByteArray>()
   \value VersitDocumentType The property value holds a nested Versit document and can be retrieved
-  with QVersitProperty::value<QVersitDocument>()
+  \value PreformattedType The property value holds a string that represents exactly the text for
+  the property in the vCard file, bar line-wrapping.  That is, if the property were to be written
+  to file it should be written as-is, with no backslash escaping.
  */
 
 /*! Constructs a new empty property */

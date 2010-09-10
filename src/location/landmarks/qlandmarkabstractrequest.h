@@ -64,7 +64,9 @@ public:
         LandmarkIdFetchRequest,
         CategoryIdFetchRequest,
         LandmarkFetchRequest,
+        LandmarkFetchByIdRequest,
         CategoryFetchRequest,
+        CategoryFetchByIdRequest,
         LandmarkSaveRequest,
         LandmarkRemoveRequest,
         CategorySaveRequest,
@@ -89,12 +91,12 @@ public:
     QLandmarkManager * manager() const;
     void setManager(QLandmarkManager *manager);
 
-public slots:
+public Q_SLOTS:
     bool start();
     bool cancel();
     bool waitForFinished(int msecs = 0);
 
-signals:
+Q_SIGNALS:
     void resultsAvailable();
     void stateChanged(QLandmarkAbstractRequest::State newState);
 protected:
@@ -103,6 +105,7 @@ protected:
 private:
     Q_DISABLE_COPY(QLandmarkAbstractRequest)
     friend class QLandmarkManagerEngine;
+    friend class QLandmarkAbstractRequestPrivate;
 };
 
 QTM_END_NAMESPACE

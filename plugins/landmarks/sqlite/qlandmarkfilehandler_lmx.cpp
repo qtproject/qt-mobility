@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qlandmarkfilehandler_lmx_p.h"
+#include "databaseoperations_p.h"
 
 #include <qlandmarkmanagerengine.h>
 #include <qlandmarkcategory.h>
@@ -52,15 +53,20 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 #include <qnumeric.h>
+#include <QSqlDatabase>
+#include <QSqlError>
 
 #include <QDebug>
 
 QTM_USE_NAMESPACE
 
-QLandmarkFileHandlerLmx::QLandmarkFileHandlerLmx()
+QLandmarkFileHandlerLmx::QLandmarkFileHandlerLmx(const volatile bool  * cancel)
     : QObject(),
     m_writer(0),
-    m_reader(0)
+    m_reader(0),
+    m_option(QLandmarkManager::IncludeCategoryData),
+    m_cancel(cancel),
+    m_categoryIdNameHash(QHash<QString,QString>())
 {
 }
 
@@ -82,6 +88,20 @@ void QLandmarkFileHandlerLmx::setLandmarks(const QList<QLandmark> &landmarks)
     m_landmarks = landmarks;
 }
 
+void QLandmarkFileHandlerLmx::setCategoryIdNameHash(const QHash<QString,QString> &categoryIdNameHash)
+{
+    m_categoryIdNameHash = categoryIdNameHash;
+}
+
+QList<QStringList> QLandmarkFileHandlerLmx::landmarkCategoryNames()
+{
+    return m_landmarkCategoryNames;
+}
+
+void QLandmarkFileHandlerLmx::setTransferOption(QLandmarkManager::TransferOption option) {
+    m_option = option;
+}
+
 bool QLandmarkFileHandlerLmx::importData(QIODevice *device)
 {
     if (m_reader)
@@ -90,22 +110,24 @@ bool QLandmarkFileHandlerLmx::importData(QIODevice *device)
     m_reader = new QXmlStreamReader(device);
 
     if (!readLmx()) {
-        m_error = m_reader->errorString();
-        emit error(m_error);
+        if (m_errorCode != QLandmarkManager::CancelError) {//if it wasn't canceled
+            m_errorCode = QLandmarkManager::ParsingError;//must've been a parsing error.
+            m_error = m_reader->errorString();
+        }
         return false;
     } else {
         if (m_reader->atEnd()) {
             m_reader->readNextStartElement();
             if (!m_reader->name().isEmpty()) {
+                m_errorCode = QLandmarkManager::ParsingError;
                 m_error = QString("A single root element named \"lmx\" was expected (second root element was named \"%1\").").arg(m_reader->name().toString());
-                emit error(m_error);
                 return false;
             }
         }
     }
 
     m_error = "";
-    emit finishedImport();
+    m_errorCode = QLandmarkManager::NoError;
     return true;
 }
 
@@ -233,8 +255,16 @@ bool QLandmarkFileHandlerLmx::readLandmark(QLandmark &landmark)
     </xsd:complexType>
     */
 
+    if(m_cancel && (*m_cancel) == true) {
+        m_errorCode = QLandmarkManager::CancelError;
+        m_error = "Import of lmx file was canceled";
+        return false;
+    }
+
     Q_ASSERT(m_reader->isStartElement() &&
              (m_reader->name() == "landmark"));
+
+    m_landmarkCategoryNames.append(QStringList());
 
     if (!m_reader->readNextStartElement())
         return true;
@@ -309,16 +339,16 @@ bool QLandmarkFileHandlerLmx::readLandmark(QLandmark &landmark)
             return true;
     }
 
-    QList<QLandmarkCategoryId> categoryIds;
 
+    QStringList categoryNames;
     while (m_reader->name() == "category") {
-        QLandmarkCategoryId id;
-        if (!readCategory(id))
+        QString name;
+        if (!readCategory(name))
             return false;
-        //TODO: category importing categoryIds << id;
+        categoryNames << name;
 
         if (!m_reader->readNextStartElement()) {
-            landmark.setCategoryIds(categoryIds);
+            m_landmarkCategoryNames.last() = categoryNames;
             return true;
         }
     }
@@ -547,20 +577,23 @@ bool QLandmarkFileHandlerLmx::readAddressInfo(QLandmark &landmark)
             }
             counts[name] = 1;
 
-            if (name == "country") {
+            if (name == "county") {
+                address.setCounty(m_reader->readElementText());
+            } else if (name == "country") {
                 address.setCountry(m_reader->readElementText());
             } else if (name == "state") {
                 address.setState(m_reader->readElementText());
             } else if (name == "city") {
                 address.setCity(m_reader->readElementText());
+            } else if (name == "district") {
+                address.setDistrict(m_reader->readElementText());
             } else if (name == "postalCode") {
                 address.setPostCode(m_reader->readElementText());
             } else if (name == "street") {
-                QStringList street = m_reader->readElementText().split(' ');
-                address.setStreetNumber(street.takeFirst());
-                address.setStreet(street.join(" "));
+                QString street = m_reader->readElementText();
+                address.setStreet(street);
             } else if (name == "phoneNumber") {
-                landmark.setPhone(m_reader->readElementText());
+                landmark.setPhoneNumber(m_reader->readElementText());
             } else {
                 m_reader->skipCurrentElement();
             }
@@ -623,7 +656,7 @@ bool QLandmarkFileHandlerLmx::readMediaLink(QLandmark &landmark)
     return false;
 }
 
-bool QLandmarkFileHandlerLmx::readCategory(QLandmarkCategoryId &categoryId)
+bool QLandmarkFileHandlerLmx::readCategory(QString &name)
 {
     /*
     <xsd:complexType name="categoryType">
@@ -661,33 +694,8 @@ bool QLandmarkFileHandlerLmx::readCategory(QLandmarkCategoryId &categoryId)
     }
 
     if (m_reader->name() == "name") {
-        QString name = m_reader->readElementText();
+        name = m_reader->readElementText();
         if (!m_reader->readNextStartElement()) {
-
-            QLandmarkCategory cat;
-/*TODO :category hand handling
-            if (!idString.isEmpty()) {
-                QLandmarkCategoryId id;
-                id.setManagerUri(m_engine->managerUri());
-                id.setLocalId(idString);
-
-                QLandmarkManager::Error error;
-                cat = m_engine->category(id, &error, &m_error);
-
-                if (error != QLandmarkManager::NoError) {
-                    m_reader->raiseError(m_error);
-                    return false;
-                }
-            }
-
-            cat.setName(name);
-            if(!m_engine->saveCategory(&cat, 0, &m_error)) {
-                m_reader->raiseError(m_error);
-                return false;
-            }
-
-            categoryId = cat.categoryId();
-*/
             return true;
         }
     }
@@ -709,7 +717,6 @@ bool QLandmarkFileHandlerLmx::exportData(QIODevice *device, const QString &nsPre
     bool result = writeLmx();
 
     if(!result) {
-        emit error(m_error);
         return false;
     }
 
@@ -763,6 +770,12 @@ bool QLandmarkFileHandlerLmx::writeLandmarkCollection(const QList<QLandmark> &la
     m_writer->writeStartElement(m_ns, "landmarkCollection");
 
     for (int i = 0; i < m_landmarks.size(); ++i) {
+        if(m_cancel && (*m_cancel) == true) {
+            m_errorCode = QLandmarkManager::CancelError;
+            m_error = "Export of lmx file was canceled";
+            return false;
+        }
+
         if (!writeLandmark(m_landmarks.at(i)))
             return false;
     }
@@ -796,9 +809,11 @@ bool QLandmarkFileHandlerLmx::writeLandmark(const QLandmark &landmark)
         if (!writeMediaLink(landmark))
             return false;
 
-    for (int i = 0; i < landmark.categoryIds().size(); ++i) {
-        if (!writeCategory(landmark.categoryIds().at(i)))
-            return false;
+    if (m_option != QLandmarkManager::ExcludeCategoryData) {
+        for (int i = 0; i < landmark.categoryIds().size(); ++i) {
+            if (!writeCategory(landmark.categoryIds().at(i)))
+                return false;
+        }
     }
 
     m_writer->writeEndElement();
@@ -842,7 +857,7 @@ bool QLandmarkFileHandlerLmx::writeAddressInfo(const QLandmark &landmark)
             && address.state().isEmpty()
             && address.country().isEmpty()
             && address.postCode().isEmpty()
-            && landmark.phone().isEmpty())
+            && landmark.phoneNumber().isEmpty())
         return true;
 
     m_writer->writeStartElement(m_ns, "addressInfo");
@@ -853,18 +868,19 @@ bool QLandmarkFileHandlerLmx::writeAddressInfo(const QLandmark &landmark)
     if (!address.state().isEmpty())
         m_writer->writeTextElement(m_ns, "state", address.state());
 
+    if (!address.county().isEmpty())
+        m_writer->writeTextElement(m_ns, "county", address.county());
+
     if (!address.city().isEmpty())
         m_writer->writeTextElement(m_ns, "city", address.city());
+
+    if (!address.district().isEmpty())
+        m_writer->writeTextElement(m_ns, "district", address.district());
 
     if (!address.postCode().isEmpty())
         m_writer->writeTextElement(m_ns, "postalCode", address.postCode());
 
     QString street;
-    if (!address.streetNumber().isEmpty())
-        street.append(address.streetNumber());
-
-    if (!address.streetNumber().isEmpty() && !address.street().isEmpty())
-        street.append(" ");
 
     if (!address.street().isEmpty())
         street.append(address.street());
@@ -872,8 +888,8 @@ bool QLandmarkFileHandlerLmx::writeAddressInfo(const QLandmark &landmark)
     if (!street.isEmpty())
         m_writer->writeTextElement(m_ns, "street", street);
 
-    if (!landmark.phone().isEmpty())
-        m_writer->writeTextElement(m_ns, "phoneNumber", landmark.phone());
+    if (!landmark.phoneNumber().isEmpty())
+        m_writer->writeTextElement(m_ns, "phoneNumber", landmark.phoneNumber());
 
     m_writer->writeEndElement();
 
@@ -891,29 +907,33 @@ bool QLandmarkFileHandlerLmx::writeMediaLink(const QLandmark &landmark)
 
 bool QLandmarkFileHandlerLmx::writeCategory(const QLandmarkCategoryId &id)
 {
-/*TODO: category handling
     if (!id.isValid()) {
+        m_errorCode = QLandmarkManager::BadArgumentError;
         m_error = QString("The category with id \"%1\" from manager \"%2\" is invalid.").arg(id.localId()).arg(id.managerUri());
         return false;
     }
 
-    QLandmarkManager::Error error;
-    QLandmarkCategory cat = m_engine->category(id, &error, &m_error);
-    if (error != QLandmarkManager::NoError) {
+    if (!m_categoryIdNameHash.contains(id.localId())) {
+        m_errorCode = QLandmarkManager::UnknownError;
+        m_error = "Category for landmark could not be identified";
         return false;
     }
 
     m_writer->writeStartElement(m_ns, "category");
-    m_writer->writeTextElement(m_ns, "id", cat.categoryId().localId());
-    m_writer->writeTextElement(m_ns, "name", cat.name());
+    m_writer->writeTextElement(m_ns, "name", m_categoryIdNameHash.value(id.localId()));
     m_writer->writeEndElement();
-*/
+
     return true;
 }
 
 QString QLandmarkFileHandlerLmx::errorString() const
 {
     return m_error;
+}
+
+QLandmarkManager::Error QLandmarkFileHandlerLmx::errorCode() const
+{
+    return m_errorCode;
 }
 
 #include "moc_qlandmarkfilehandler_lmx_p.cpp"

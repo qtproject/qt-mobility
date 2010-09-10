@@ -56,7 +56,6 @@
 
 #include <QtCore/qdatetime.h>
 #include <QtCore/qurl.h>
-#include <QtCore/qresource.h>
 
 #include <QtCore/qdebug.h>
 
@@ -172,6 +171,7 @@ QT7PlayerSession::QT7PlayerSession(QObject *parent)
    , m_mediaStatus(QMediaPlayer::NoMedia)
    , m_mediaStream(0)
    , m_videoOutput(0)
+   , m_currentTime(0)
    , m_muted(false)
    , m_tryingAsync(false)
    , m_volume(100)
@@ -450,6 +450,7 @@ void QT7PlayerSession::openMovie(bool tryAsync)
                 [NSNumber numberWithBool:YES], QTMovieResolveDataRefsAttribute,
                 [NSNumber numberWithBool:YES], QTMovieDontInteractWithUserAttribute,
                 nil];
+
 
     if (requestUrl.scheme() == QLatin1String("qrc")) {
         // Load from Qt resource

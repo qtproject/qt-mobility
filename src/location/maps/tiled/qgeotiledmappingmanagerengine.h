@@ -43,19 +43,16 @@
 #define QGEOTILEDMAPPINGMANAGERENGINE_H
 
 #include "qgeomappingmanagerengine.h"
+
 #include "qgeotiledmapreply.h"
+#include "qgeotiledmaprequest.h"
+#include "qgeotiledmapdata.h"
 
 #include <QMap>
-
-class QNetworkAccessManager;
-class QNetworkProxy;
+#include <QVariant>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoTiledMapRequest;
-class QGeoTiledMapData;
-
-class QGeoTiledMappingManagerThread;
 class QGeoTiledMappingManagerEnginePrivate;
 
 class Q_LOCATION_EXPORT QGeoTiledMappingManagerEngine : public QGeoMappingManagerEngine
@@ -66,16 +63,12 @@ public:
 
     virtual QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request) = 0;
 
-    virtual QGeoMapData* createMapData(QGeoMapWidget *widget);
-    virtual void removeMapData(QGeoMapData* mapData);
+    virtual QGeoMapData* createMapData(QGraphicsGeoMap *geoMap);
 
-    QList<QString> supportedImageFormats() const;
     QSize tileSize() const;
 
 protected:
-    QGeoTiledMappingManagerEngine(const QMap<QString, QString> &parameters, QObject *parent = 0);
-
-    void setSupportedImageFormats(const QList<QString> &imageFormats);
+    QGeoTiledMappingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent = 0);
     void setTileSize(const QSize &tileSize);
 
 private:

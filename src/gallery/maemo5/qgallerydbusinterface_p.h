@@ -60,7 +60,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QGalleryDBusInterface : public QDBusAbstractInterface, public QSharedData
+class QM_AUTOTEST_EXPORT QGalleryDBusInterface : public QDBusAbstractInterface, public QSharedData
 {
     Q_OBJECT
 public:
@@ -92,23 +92,6 @@ Q_SIGNALS:
     void ServiceStatisticsUpdated(const QVector<QStringList> &statistics);
 };
 
-class QGalleryThumbnailerDBusInterface : public QGalleryDBusInterface
-{
-    Q_OBJECT
-public:
-    QGalleryThumbnailerDBusInterface(
-            const QString &service,
-            const QString &path,
-            const char *interface,
-            const QDBusConnection &connection = QDBusConnection::sessionBus(),
-            QObject *parent = 0)
-        : QGalleryDBusInterface(service, path, interface, connection, parent) {}
-
-Q_SIGNALS:
-    void Ready(uint handle, const QStringList &filePaths);
-    void Finished(uint handle);
-};
-
 class QGalleryDBusInterfaceFactory
 {
 public:
@@ -118,7 +101,6 @@ public:
     virtual QGalleryDBusInterfacePointer metaDataInterface() = 0;
     virtual QGalleryDBusInterfacePointer searchInterface() = 0;
     virtual QGalleryDBusInterfacePointer fileInterface() = 0;
-    virtual QGalleryDBusInterfacePointer thumbnailInterface() = 0;
 };
 
 QTM_END_NAMESPACE

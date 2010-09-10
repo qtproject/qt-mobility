@@ -41,13 +41,22 @@ isEmpty(QT_LIBINFIX):symbian {
         EPOCROOT50 = $$(EPOCROOT50)
     }
 
+    #Symbian^3 and beyond requires special package flags
+    #we cannot use S60_VERSION == 5.2 as Qt 4.6.x does not define it yet
+    #see $QTDIR/mkspecs/common/symbian/symbian.conf for details
+    exists($${EPOCROOT}epoc32/release/winscw/udeb/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/data/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/release/armv5/lib/libstdcppv5.dso) {
+        pkg_version = $$replace(VERSION,"\.",",")
+        qtmobilitydeployment.pkg_prerules += "$${LITERAL_HASH}{\"QtMobility\"},(0x2002AC89),$${pkg_version},TYPE=SA,RU,NR"
+    }
+
     contains(mobility_modules, messaging): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtMessaging.dll
-	
+    
     contains(mobility_modules, serviceframework) { 
         qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtServiceFramework.dll \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qsfwdatabasemanagerserver.exe
+    }
 
     contains(mobility_modules, location) {
         qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtLocation.dll
@@ -55,13 +64,13 @@ isEmpty(QT_LIBINFIX):symbian {
         pluginstubs += "\"$$QT_MOBILITY_BUILD_TREE/plugins/geoservices/nokia/qmakepluginstubs/qtgeoservices_nokia.qtplugin\" - \"!:\\resource\\qt\\plugins\\geoservices\\qtgeoservices_nokia.qtplugin\""
         contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
-            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_location.dll
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_location.dll \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_serviceframework.dll
             pluginstubs += \
-            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\location\\qmakepluginstubs\\declarative_location.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\location\\declarative_location.qtplugin\""
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\location\\qmakepluginstubs\\declarative_location.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\location\\declarative_location.qtplugin\"" \
             "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\serviceframework\\qmakepluginstubs\\declarative_serviceframework.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\serviceframework\\declarative_serviceframework.qtplugin\""
             qmldirs += \
-            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\location\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\location\\qmldir\""
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\location\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\location\\qmldir\"" \
             "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\serviceframework\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\serviceframework\\qmldir\""
         }
     }
@@ -69,7 +78,7 @@ isEmpty(QT_LIBINFIX):symbian {
     contains(mobility_modules, systeminfo) { 
         qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtSystemInfo.dll
-	contains(QT_CONFIG, declarative): {
+        contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_systeminfo.dll
             pluginstubs += \
@@ -93,49 +102,94 @@ isEmpty(QT_LIBINFIX):symbian {
         }
     }
 
-    contains(mobility_modules, versit): qtmobilitydeployment.sources += \
-        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtVersit.dll
+    contains(mobility_modules, versit) {
+        qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtVersit.dll
+        qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtversit_backuphandler.dll
+        pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\versit\\backuphandler\\qmakepluginstubs\\qtversit_backuphandler.qtplugin\"  - \"!:\\resource\\qt\\plugins\\versit\\qtversit_backuphandler.qtplugin\""
+    }
 
-    contains(mobility_modules, feedback): qtmobilitydeployment.sources += \
-        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtFeedback.dll
-	
-    contains(mobility_modules, organizer) { 
-        qtmobilitydeployment.sources += \
-        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtOrganizer.dll
-	contains(QT_CONFIG, declarative): {
-            qtmobilitydeployment.sources += \
-            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_organizer.dll
+    contains(mobility_modules, feedback) {
+        qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtFeedback.dll
+        contains(immersion_enabled, yes) {
+            qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtfeedback_immersion.dll
             pluginstubs += \
-            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\organizer\\qmakepluginstubs\\declarative_organizer.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\organizer\\declarative_organizer.qtplugin\""
+                "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\feedback\\immersion\\qmakepluginstubs\\qtfeedback_immersion.qtplugin\"  - \"!:\\resource\\qt\\plugins\\feedback\\qtfeedback_immersion.qtplugin\""
+        }
+
+        contains(QT_CONFIG, phonon) {
+            qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtfeedback_phonon.dll
+            pluginstubs += \
+                "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\feedback\\phonon\\qmakepluginstubs\\qtfeedback_phonon.qtplugin\"  - \"!:\\resource\\qt\\plugins\\feedback\\qtfeedback_phonon.qtplugin\""
+        }
+
+        feedback = \
+            "IF package(0x1028315F)" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtfeedback_symbian.dll\" - \"!:\\sys\\bin\\qtfeedback_symbian.dll\"" \
+            "ELSEIF package(0x102752AE)" \
+            "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtfeedback_symbian.dll\" - \"!:\\sys\\bin\\qtfeedback_symbian.dll\"" \
+            "ELSEIF package(0x102032BE)" \
+            "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtfeedback_symbian.dll\" - \"!:\\sys\\bin\\qtfeedback_symbian.dll\"" \
+            "ELSE" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtfeedback_symbian.dll\" - \"!:\\sys\\bin\\qtfeedback_symbian.dll\"" \
+            "ENDIF"
+
+        qtmobilitydeployment.pkg_postrules += feedback
+
+        pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\feedback\\symbian\\qmakepluginstubs\\qtfeedback_symbian.qtplugin\"  - \"!:\\resource\\qt\\plugins\\feedback\\qtfeedback_symbian.qtplugin\""
+    }
+
+    contains(mobility_modules, organizer) { 
+        qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtOrganizer.dll
+        contains(QT_CONFIG, declarative) {
+            qtmobilitydeployment.sources +=  $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_organizer.dll
+            pluginstubs += \
+                "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\organizer\\qmakepluginstubs\\declarative_organizer.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\organizer\\declarative_organizer.qtplugin\""
             qmldirs += \
-            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\organizer\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\organizer\\qmldir\""
-        }	
+                "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\organizer\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\organizer\\qmldir\""
+        }   
+        organizer = \
+            "IF package(0x1028315F)" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtorganizer_symbian.dll\" - \"!:\\sys\\bin\\qtorganizer_symbian.dll\"" \
+            "ELSEIF package(0x102752AE)" \
+            "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtorganizer_symbian.dll\" - \"!:\\sys\\bin\\qtorganizer_symbian.dll\"" \
+            "ELSEIF package(0x102032BE)" \
+            "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtorganizer_symbian.dll\" - \"!:\\sys\\bin\\qtorganizer_symbian.dll\"" \
+            "ELSE" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtorganizer_symbian.dll\" - \"!:\\sys\\bin\\qtorganizer_symbian.dll\"" \
+            "ENDIF"
+
+        qtmobilitydeployment.pkg_postrules += organizer
+
+        pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\organizer\\symbian\\qmakepluginstubs\\qtorganizer_symbian.qtplugin\"  - \"!:\\resource\\qt\\plugins\\organizer\\qtorganizer_symbian.qtplugin\""
     }
 
     contains(mobility_modules, telephony) { 
         qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtTelephony.dll
-	contains(QT_CONFIG, declarative): {
+    contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_telephony.dll
             pluginstubs += \
             "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\telephony\\qmakepluginstubs\\declarative_telephony.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\telephony\\declarative_telephony.qtplugin\""
             qmldirs += \
             "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\telephony\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\telephony\\qmldir\""
-        }	
+        }   
     }
 
     contains(mobility_modules, gallery) { 
         qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll
-	contains(QT_CONFIG, declarative): {
+    contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_gallery.dll
             pluginstubs += \
             "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\gallery\\qmakepluginstubs\\declarative_gallery.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\gallery\\declarative_gallery.qtplugin\""
             qmldirs += \
             "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\gallery\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\gallery\\qmldir\""
-        }	
+        }   
     }
 
     contains(mobility_modules, bearer) {
@@ -156,7 +210,8 @@ isEmpty(QT_LIBINFIX):symbian {
     contains(mobility_modules, contacts) {
 
         qtmobilitydeployment.sources += \
-            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtContacts.dll
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtContacts.dll \
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtcontacts_serviceactionmanager.dll
 
         contacts = \
             "IF package(0x1028315F)" \
@@ -172,7 +227,8 @@ isEmpty(QT_LIBINFIX):symbian {
         qtmobilitydeployment.pkg_postrules += contacts
 
         pluginstubs += \
-            "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbian/qmakepluginstubs/qtcontacts_symbian.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\qtcontacts_symbian.qtplugin\""
+            "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbian/qmakepluginstubs/qtcontacts_symbian.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\qtcontacts_symbian.qtplugin\"" \
+            "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbian/qmakepluginstubs/qtcontacts_serviceactionmanager.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\qtcontacts_serviceactionmanager.qtplugin\""
 
         contains(symbiancntsim_enabled, yes) {
             pluginstubs += \
@@ -191,7 +247,7 @@ isEmpty(QT_LIBINFIX):symbian {
 
             qtmobilitydeployment.pkg_postrules += symbiancntsim
         }
-	 contains(QT_CONFIG, declarative): {
+     contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_contacts.dll
             pluginstubs += \
@@ -214,17 +270,32 @@ isEmpty(QT_LIBINFIX):symbian {
             "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_mmfengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_mmfengine.dll\"" \
             "ELSEIF package(0x102032BE)" \
             "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_mmfengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_mmfengine.dll\"" \
-            "ELSE" \
+            "ELSEIF package(0x20022E6D)" \
             "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_mmfengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_mmfengine.dll\"" \
             "ENDIF"
 
 
         qtmobilitydeployment.pkg_postrules += multimedia
 
+        camera = \
+            "IF package(0x1028315F)" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_ecamengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_ecamengine.dll\"" \
+            "ELSEIF package(0x102752AE)" \
+            "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_ecamengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_ecamengine.dll\"" \
+            "ELSEIF package(0x102032BE)" \
+            "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_ecamengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_ecamengine.dll\"" \
+            "ELSEIF package(0x20022E6D)" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_ecamengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_ecamengine.dll\"" \
+            "ENDIF"
+
+        qtmobilitydeployment.pkg_postrules += camera
+
         contains(openmaxal_symbian_enabled, yes) {
             openmax = \
                 "IF package(0x20022E6D)" \
                 "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_xarecordservice.dll\" - \"!:\\sys\\bin\\qtmultimediakit_xarecordservice.dll\"" \
+                "ELSEIF package(0x20032DE7)" \
+                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_openmaxalengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_openmaxalengine.dll\"" \
                 "ENDIF"
 
             qtmobilitydeployment.pkg_postrules += openmax
@@ -232,12 +303,23 @@ isEmpty(QT_LIBINFIX):symbian {
             pluginstubs += \
                 "IF package(0x20022E6D)" \
                     "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/openmaxal/mediarecorder/qmakepluginstubs/qtmultimediakit_xarecordservice.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_xarecordservice.qtplugin\"" \
+                "ELSEIF package(0x20032DE7)" \
+                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/openmaxal/qmakepluginstubs/qtmultimediakit_openmaxalengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_xarecordservice.qtplugin\"" \
                 "ENDIF"
         }
 
         pluginstubs += \
-            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
-            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/qtmultimediakit_m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\qtmultimediakit_m3u.qtplugin\"" \
+            "IF package(0x1028315F)" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
+            "ELSEIF package(0x102752AE)" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
+            "ELSEIF package(0x102032BE)" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
+            "ELSEIF package(0x20022E6D)" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
+            "ENDIF" \
+            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/ecam/qmakepluginstubs/qtmultimediakit_ecamengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_ecamengine.qtplugin\"" \
+            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/qtmultimediakit_m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\qtmultimediakit_m3u.qtplugin\"" 
 	    
 	contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
@@ -251,40 +333,37 @@ isEmpty(QT_LIBINFIX):symbian {
 
     contains(mobility_modules, sensors) {
 
+        equals(sensors_symbian_enabled,yes) {
+            sensorplugin=symbian
+        } else:equals(sensors_s60_31_enabled,yes) {
+            sensorplugin=s60_sensor_api
+        } else {
+            error("Must have a Symbian sensor backend available")
+        }
+
         qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtSensors.dll
 
-        sensors = ""
+        sensors = \
+            "IF package(0x1028315F)" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_sym.dll\" - \"!:\\sys\\bin\\qtsensors_sym.dll\"" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_generic.dll\" - \"!:\\sys\\bin\\qtsensors_generic.dll\"" \
+            "ELSEIF package(0x102752AE)" \
+            "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_sym.dll\" - \"!:\\sys\\bin\\qtsensors_sym.dll\"" \
+            "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_generic.dll\" - \"!:\\sys\\bin\\qtsensors_generic.dll\"" \
+            "ELSEIF package(0x102032BE)" \
+            "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_sym.dll\" - \"!:\\sys\\bin\\qtsensors_sym.dll\"" \
+            "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_generic.dll\" - \"!:\\sys\\bin\\qtsensors_generic.dll\"" \
+            "ELSE" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_sym.dll\" - \"!:\\sys\\bin\\qtsensors_sym.dll\"" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_generic.dll\" - \"!:\\sys\\bin\\qtsensors_generic.dll\"" \
+            "ENDIF"
 
-        equals(sensors_s60_31_enabled,yes) {
-            sensors += \
-                "IF package(0x102032BE)" \
-                "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_s60sensorapi.dll\" - \"!:\\sys\\bin\\qtsensor_s60sensorapi.dll\"" \
-                "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_generic.dll\" - \"!:\\sys\\bin\\qtsensors_generic.dll\"" \
-                "ENDIF"
-        } else:equals(sensors_symbian_enabled,yes) {
-            sensors += \
-                "IF package(0x102752AE)" \
-                "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_sym.dll\" - \"!:\\sys\\bin\\qtsensors_sym.dll\"" \
-                "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_generic.dll\" - \"!:\\sys\\bin\\qtsensors_generic.dll\"" \
-                "ELSE" \
-                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_sym.dll\" - \"!:\\sys\\bin\\qtsensors_sym.dll\"" \
-                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_generic.dll\" - \"!:\\sys\\bin\\qtsensors_generic.dll\"" \
-                "ENDIF"
-        }
+        pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/$$sensorplugin/qmakepluginstubs/qtsensors_sym.qtplugin\"  - \"!:\\resource\\qt\\plugins\\sensors\\qtsensors_sym.qtplugin\"" \
+            "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/generic/qmakepluginstubs/qtsensors_generic.qtplugin\"  - \"!:\\resource\\qt\\plugins\\sensors\\qtsensors_generic.qtplugin\""
 
         !isEmpty(sensors):qtmobilitydeployment.pkg_postrules += sensors
-
-        equals(sensors_s60_31_enabled,yes) {
-            pluginstubs += \
-                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/s60_sensor_api/qmakepluginstubs/qtsensors_s60sensorapi.qtplugin\"  - \"!:\\resource\\qt\\plugins\\sensors\\qtsensors_s60sensorapi.qtplugin\""\
-                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/generic/qmakepluginstubs/qtsensors_generic.qtplugin\"  - \"!:\\resource\\qt\\plugins\\sensors\\qtsensors_generic.qtplugin\""
-        } else:equals(sensors_symbian_enabled,yes) {
-            pluginstubs += \
-                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/qtsensors_sym.qtplugin\"  - \"!:\\resource\\qt\\plugins\\sensors\\qtsensors_sym.qtplugin\""\
-                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/generic/qmakepluginstubs/qtsensors_generic.qtplugin\"  - \"!:\\resource\\qt\\plugins\\sensors\\qtsensors_generic.qtplugin\""
-        }
-
         contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_sensors.dll
@@ -300,7 +379,12 @@ isEmpty(QT_LIBINFIX):symbian {
  
     qtmobilitydeployment.path = /sys/bin
 
-    DEPLOYMENT += qtmobilitydeployment
+    # Support backup and restore for QtMobility libraries and applications
+    mobilitybackup.sources = backup_registration.xml
+    mobilitybackup.path = c:/private/10202D56/import/packages/$$replace(TARGET.UID3, 0x,)
+
+    DEPLOYMENT += qtmobilitydeployment\
+                mobilitybackup
 } else {
     message(Deployment of infixed library names not supported)
 }

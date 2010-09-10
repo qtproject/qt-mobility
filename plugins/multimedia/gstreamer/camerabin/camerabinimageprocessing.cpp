@@ -132,16 +132,6 @@ bool CameraBinImageProcessing::isWhiteBalanceModeSupported(QCameraImageProcessin
     return m_mappedWbValues.values().contains(mode);
 }
 
-int CameraBinImageProcessing::manualWhiteBalance() const
-{
-    return 0;
-}
-
-void CameraBinImageProcessing::setManualWhiteBalance(int colorTemperature)
-{
-    Q_UNUSED(colorTemperature);
-}
-
 bool CameraBinImageProcessing::isProcessingParameterSupported(QCameraImageProcessingControl::ProcessingParameter parameter) const
 {
     return parameter == QCameraImageProcessingControl::Contrast

@@ -49,10 +49,8 @@
     This example demonstrates using the Document Gallery to navigate
     collections of media documents organized using meta-data.
 
-    The \l QGalleryQueryRequest class is used to query the document gallery
+    The \l QGalleryQueryModel class is used to query the document gallery
     for items of a specific type, and for the children of container documents.
-    And the \l QGalleryItemListModel class is used to present the documents
-    returned by the queries, in an item view.
 
     The browser has five views that can be selected from the application menu
     each displaying a different type of document or collection.

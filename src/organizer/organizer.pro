@@ -16,7 +16,10 @@ include(filters/filters.pri)
 include(engines/engines.pri)
 
 # Input
-PUBLIC_HEADERS += qorganizeritemabstractrequest.h \
+PUBLIC_HEADERS += \
+    qorganizercollection.h \
+    qorganizercollectionid.h \
+    qorganizeritemabstractrequest.h \
     qorganizeritemchangeset.h \
     qorganizeritemdetail.h \
     qorganizeritemdetaildefinition.h \
@@ -33,7 +36,9 @@ PUBLIC_HEADERS += qorganizeritemabstractrequest.h \
     qtorganizerglobal.h \
     qtorganizer.h
 
-PRIVATE_HEADERS += qorganizeritemmanager_p.h \
+PRIVATE_HEADERS += \
+    qorganizercollection_p.h \
+    qorganizercollectionid_p.h \
     qorganizeritemabstractrequest_p.h \
     qorganizeritemchangeset_p.h \
     qorganizeritem_p.h \
@@ -43,10 +48,13 @@ PRIVATE_HEADERS += qorganizeritemmanager_p.h \
     qorganizeritemfetchhint_p.h \
     qorganizeritemdetailfielddefinition_p.h \
     qorganizeritemdetaildefinition_p.h \
+    qorganizeritemmanager_p.h \
     qorganizeritemrecurrencerule_p.h \
     qorganizeritemsortorder_p.h
 
 SOURCES += \
+    qorganizercollection.cpp \
+    qorganizercollectionid.cpp \
     qorganizeritemabstractrequest.cpp \
     qorganizeritemchangeset.cpp \
     qorganizeritem.cpp \
@@ -66,7 +74,17 @@ SOURCES += \
 HEADERS += $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS
 
-symbian { 
+maemo5 {
+    isEmpty(ORGANIZER_DEFAULT_ENGINE): ORGANIZER_DEFAULT_ENGINE=maemo5
+}
+
+maemo6 {
+    isEmpty(ORGANIZER_DEFAULT_ENGINE): ORGANIZER_DEFAULT_ENGINE=maemo6
+}
+
+symbian {
+    isEmpty(ORGANIZER_DEFAULT_ENGINE): ORGANIZER_DEFAULT_ENGINE=symbian
+
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
 
@@ -86,4 +104,12 @@ symbian {
     # export headers into EPOCROOT
     for(header, exportheaders.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
 }
+
+CONFIG += app
+maemo5 {
+    isEmpty(ORGANIZER_DEFAULT_ENGINE): ORGANIZER_DEFAULT_ENGINE=maemo5
+}
+
+!isEmpty(ORGANIZER_DEFAULT_ENGINE): DEFINES += Q_ORGANIZER_DEFAULT_ENGINE=$$ORGANIZER_DEFAULT_ENGINE
+
 include(../../features/deploy.pri)

@@ -43,6 +43,11 @@
 #include "qgeoaddress.h"
 #include "qgeoaddress_p.h"
 
+
+#ifdef QGEOADDRESS_DEBUG
+#include <QDebug>
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 QGeoAddressPrivate::QGeoAddressPrivate()
@@ -60,8 +65,7 @@ QGeoAddressPrivate::QGeoAddressPrivate(const QGeoAddressPrivate &other)
         sDistrict(other.sDistrict),
         sStreet(other.sStreet),
         sStreetNumber(other.sStreetNumber),
-        sPostCode(other.sPostCode),
-        sPostOfficeBox(other.sPostOfficeBox)
+        sPostCode(other.sPostCode)
 {
 }
 
@@ -97,7 +101,7 @@ QGeoAddress::QGeoAddress(const QGeoAddress &other)
 }
 
 /*!
-    Destroys the address
+    Destroys this address.
 */
 QGeoAddress::~QGeoAddress()
 {
@@ -119,6 +123,18 @@ QGeoAddress &QGeoAddress::operator=(const QGeoAddress & address)
 */
 bool QGeoAddress::operator==(const QGeoAddress &other) const
 {
+#ifdef QGEOADDRESS_DEBUG
+    qDebug() << "country" << (d->sCountry == other.country());
+    qDebug() << "countryCode" << (d->sCountryCode == other.countryCode());
+    qDebug() << "state:" <<  (d->sState == other.state());
+    qDebug() << "county:" << (d->sCounty == other.county());
+    qDebug() << "city:" << (d->sCity == other.city());
+    qDebug() << "district:" << (d->sDistrict == other.district());
+    qDebug() << "street:" << (d->sStreet == other.street());
+    qDebug() << "streetNumber:" << (d->sStreetNumber == other.streetNumber());
+    qDebug() << "postCode:" << (d->sPostCode == other.postCode());
+#endif
+
     return d->sCountry == other.country() &&
            d->sCountryCode == other.countryCode() &&
            d->sState == other.state() &&
@@ -127,8 +143,7 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
            d->sDistrict == other.district() &&
            d->sStreet == other.street() &&
            d->sStreetNumber == other.streetNumber() &&
-           d->sPostCode == other.postCode() &&
-           d->sPostOfficeBox == other.postOfficeBox();
+           d->sPostCode == other.postCode();
 }
 
 /*!
@@ -283,22 +298,6 @@ void QGeoAddress::setPostCode(const QString &postCode)
 }
 
 /*!
-   Returns the post office box.
-*/
-QString QGeoAddress::postOfficeBox() const
-{
-    return d->sPostOfficeBox;
-}
-
-/*!
-   Sets the \a postOfficeBox.
-*/
-void QGeoAddress::setPostOfficeBox(const QString &postOfficeBox)
-{
-    d->sPostOfficeBox = postOfficeBox;
-}
-
-/*!
     Returns whether this address is empty. An address is considered empty
     if \i all of its fields are empty.
 */
@@ -312,8 +311,7 @@ bool QGeoAddress::isEmpty() const
            d->sDistrict.isEmpty() &&
            d->sStreet.isEmpty() &&
            d->sStreetNumber.isEmpty() &&
-           d->sPostCode.isEmpty() &&
-           d->sPostOfficeBox.isEmpty();
+           d->sPostCode.isEmpty();
 }
 /*!
     Clears the all the address' data fields.
@@ -329,7 +327,6 @@ void QGeoAddress::clear()
     d->sStreet.clear();
     d->sStreetNumber.clear();
     d->sPostCode.clear();
-    d->sPostOfficeBox.clear();
 }
 
 QTM_END_NAMESPACE

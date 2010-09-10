@@ -121,7 +121,7 @@ corresponding values that can be assigned to \c MOBILITY.
     \o gallery
 \row
     \o \l {Telephony Events}{Telephony Events}
-    \o telephony
+    \o telephonyapi
 \row
     \o \l {Organizer}
     \o organizer

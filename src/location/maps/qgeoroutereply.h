@@ -77,10 +77,9 @@ public:
     QGeoRouteRequest request() const;
     QList<QGeoRoute> routes() const;
 
-public slots:
     virtual void abort();
 
-signals:
+Q_SIGNALS:
     void finished();
     void error(QGeoRouteReply::Error error, const QString &errorString = QString());
 

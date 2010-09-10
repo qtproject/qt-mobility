@@ -42,7 +42,19 @@
 #ifndef QGEOMAPOBJECT_P_H
 #define QGEOMAPOBJECT_P_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qgeomapobject.h"
+#include "qgeomapobjectinfo.h"
 
 #include <QList>
 #include <QRectF>
@@ -55,43 +67,23 @@ class QStyleOptionGraphicsItem;
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapObject;
+class QGeoMapData;
 class QGeoMapDataPrivate;
-
-class QGeoMapObjectInfo
-{
-public:
-    QGeoMapObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
-    virtual ~QGeoMapObjectInfo();
-
-    virtual void addToParent() = 0;
-    virtual void removeFromParent() = 0;
-
-    virtual void objectUpdate() = 0;
-    virtual void mapUpdate() = 0;
-
-    virtual QGeoBoundingBox boundingBox() const = 0;
-    virtual bool contains(const QGeoCoordinate &coord) const = 0;
-
-    const QGeoMapObjectPrivate* mapObjectPrivate;
-
-private:
-    Q_DISABLE_COPY(QGeoMapObjectInfo)
-};
 
 class QGeoMapObjectPrivate
 {
 public:
     QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent, QGeoMapObject::Type type = QGeoMapObject::ContainerType);
-    QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapDataPrivate *mapData, QGeoMapObject::Type type = QGeoMapObject::ContainerType);
+    QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapData *mapData, QGeoMapObject::Type type = QGeoMapObject::ContainerType);
     virtual ~QGeoMapObjectPrivate();
 
-    void setMapData(QGeoMapDataPrivate *mapData);
+    void setMapData(QGeoMapData *mapData);
 
     void addToParent(QGeoMapObject *parent);
     void removeFromParent();
 
-    void objectUpdate();
-    void mapUpdate();
+    void objectUpdated();
+    void mapUpdated();
 
     QGeoBoundingBox boundingBox() const;
     bool contains(const QGeoCoordinate &coord) const;
@@ -99,14 +91,14 @@ public:
     QGeoMapObject::Type type;
     QGeoMapObject *parent;
     QList<QGeoMapObject *> children;
+
     int zValue;
     bool isVisible;
-    QGeoBoundingBox bounds;
+    bool isSelected;
 
-    QGeoMapDataPrivate *mapData;
+    QGeoMapData *mapData;
     mutable QGeoMapObjectInfo *info;
 
-//private:
     QGeoMapObject *q_ptr;
     Q_DECLARE_PUBLIC(QGeoMapObject)
     Q_DISABLE_COPY(QGeoMapObjectPrivate)

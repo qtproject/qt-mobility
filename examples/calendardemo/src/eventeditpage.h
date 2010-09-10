@@ -59,6 +59,8 @@ class QLineEdit;
 class QDateTimeEdit;
 class QVBoxLayout;
 class QString;
+class QSpinBox;
+class QDateEdit;
 
 class EventEditPage : public QWidget
 {
@@ -70,11 +72,15 @@ public:
 
 public Q_SLOTS:
     void cancelClicked();
-    void saveOrNextClicked();
+    void saveClicked();
     void eventChanged(QOrganizerItemManager *manager, const QOrganizerEvent &event);
-    void handleRepeatIndexChanged(const QString);
-    void handlemultipleEntriesToBeCreated(int);
-    void handleCountChanged(int);
+    void frequencyChanged(const QString&);
+    void countChanged(int);
+    void untilChanged(QDate);
+    void endConditionChanged(const QString&);
+    void alarmIndexChanged(const QString);
+    void setCountField();
+    void setRepeatUntilField();
 
 Q_SIGNALS:
     void showDayPage();
@@ -87,15 +93,16 @@ private:
     QOrganizerEvent m_organizerEvent;
     QList<QOrganizerItem> m_listOfEvents;
     QOrganizerItemSaveRequest *m_saveItemRequest;
-    QVBoxLayout *m_scrollAreaLayout;
+    QVBoxLayout *m_repeatControls;
     QAction *m_saveOrNextSoftKey;
+    QComboBox *m_alarmComboBox;
     QComboBox *m_typeComboBox;
     QLineEdit *m_subjectEdit;
     QDateTimeEdit *m_startTimeEdit;
     QDateTimeEdit *m_endTimeEdit;
-    int m_numOfEntiresToBeCreated;
-    bool m_countFieldAdded;
-    bool m_multipleEntries;
+    QComboBox *m_endConditionComboBox;
+    QSpinBox *m_countSpinBox;
+    QDateEdit *m_repeatUntilDate;
 };
 
 #endif // EVENTEDITPAGE_H_

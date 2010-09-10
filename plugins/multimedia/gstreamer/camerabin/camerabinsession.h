@@ -114,9 +114,10 @@ public:
 
     QGstreamerElementFactory *videoInput() const { return m_videoInputFactory; }
     void setVideoInput(QGstreamerElementFactory *videoInput);
+    bool isReady() const;
 
-    QGstreamerVideoRendererInterface *videoPreview() const { return m_viewfinder; }
-    void setViewfinder(QGstreamerVideoRendererInterface *viewfinder);
+    QObject *viewfinder() const { return m_viewfinder; }
+    void setViewfinder(QObject *viewfinder);
 
     void captureImage(int requestId, const QString &fileName);
 
@@ -142,6 +143,8 @@ signals:
     void imageSaved(int requestId, const QString &fileName);
     void focusStatusChanged(QCamera::LockStatus status, QCamera::LockChangeReason reason);
     void mutedChanged(bool);
+    void viewfinderChanged();
+    void readyChanged(bool);
 
 public slots:
     void setDevice(const QString &device);
@@ -174,7 +177,8 @@ private:
 
     QGstreamerElementFactory *m_audioInputFactory;
     QGstreamerElementFactory *m_videoInputFactory;
-    QGstreamerVideoRendererInterface *m_viewfinder;
+    QObject *m_viewfinder;
+    QGstreamerVideoRendererInterface *m_viewfinderInterface;
 
     CameraBinAudioEncoder *m_audioEncodeControl;
     CameraBinVideoEncoder *m_videoEncodeControl;

@@ -10,6 +10,7 @@ PUBLIC_HEADERS += \
     details/qcontactdisplaylabel.h \
     details/qcontactemailaddress.h \
     details/qcontactfamily.h \
+    details/qcontactfavorite.h \
     details/qcontactgender.h \
     details/qcontactgeolocation.h \
     details/qcontactglobalpresence.h \

@@ -55,6 +55,7 @@
 #include <qmediaservice.h>
 #include <qcamera.h>
 #include <qcameraimagecapture.h>
+#include <qgraphicsvideoitem.h>
 
 QT_USE_NAMESPACE
 class MockCaptureControl;
@@ -68,7 +69,8 @@ public:
             QCameraControl(parent),
             m_state(QCamera::UnloadedState),
             m_captureMode(QCamera::CaptureStillImage),
-            m_status(QCamera::UnloadedStatus)
+            m_status(QCamera::UnloadedStatus),
+            m_propertyChangesSupported(false)
     {
     }
 
@@ -106,8 +108,12 @@ public:
     QCamera::CaptureMode captureMode() const { return m_captureMode; }
     void setCaptureMode(QCamera::CaptureMode mode)
     {
-        if (m_captureMode != mode)
-            emit captureModeChanged(m_captureMode = mode);
+        if (m_captureMode != mode) {
+            if (m_state == QCamera::ActiveState)
+                QVERIFY(m_propertyChangesSupported);
+            m_captureMode = mode;
+            emit captureModeChanged(mode);
+        }
     }
 
     bool isCaptureModeSupported(QCamera::CaptureMode mode) const
@@ -120,9 +126,17 @@ public:
         return QCamera::LockExposure | QCamera::LockFocus | QCamera::LockWhiteBalance;
     }
 
+    bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const
+    {
+        Q_UNUSED(changeType);
+        Q_UNUSED(status);
+        return m_propertyChangesSupported;
+    }
+
     QCamera::State m_state;
     QCamera::CaptureMode m_captureMode;
     QCamera::Status m_status;
+    bool m_propertyChangesSupported;
 };
 
 
@@ -622,12 +636,9 @@ public:
     void setSupportedWhiteBalanceModes(QSet<QCameraImageProcessing::WhiteBalanceMode> modes) {
         m_supportedWhiteBalance = modes; }
 
-    int manualWhiteBalance() const { return m_manualWhiteBalance; }
-    void setManualWhiteBalance(int colorTemperature) { m_manualWhiteBalance = colorTemperature; }
-
     bool isProcessingParameterSupported(ProcessingParameter parameter) const
     {
-        return parameter == Contrast ||  parameter == Sharpening;
+        return parameter == Contrast ||  parameter == Sharpening || parameter == ColorTemperature;
     }
     QVariant processingParameter(ProcessingParameter parameter) const
     {
@@ -636,6 +647,8 @@ public:
             return m_contrast;
         case Sharpening:
             return m_sharpeningLevel;
+        case ColorTemperature:
+            return m_manualWhiteBalance;
         default:
             return QVariant();
         }
@@ -649,6 +662,9 @@ public:
         case Sharpening:
             m_sharpeningLevel = value;
             break;
+        case ColorTemperature:
+            m_manualWhiteBalance = value;
+            break;
         default:
             break;
         }
@@ -658,7 +674,7 @@ public:
 private:
     QCameraImageProcessing::WhiteBalanceMode m_whiteBalanceMode;
     QSet<QCameraImageProcessing::WhiteBalanceMode> m_supportedWhiteBalance;
-    int m_manualWhiteBalance;
+    QVariant m_manualWhiteBalance;
     QVariant m_contrast;
     QVariant m_sharpeningLevel;
 };
@@ -830,6 +846,7 @@ private slots:
     void testImageSettings();
     void testCameraLock();
     void testCameraLockCancel();
+    void testCameraEncodingProperyChange();
 
 private:
     MockSimpleCameraService  *mockSimpleCameraService;
@@ -911,9 +928,9 @@ void tst_QCamera::testSimpleCameraWhiteBalance()
     QCOMPARE(camera.imageProcessing()->whiteBalanceMode(), QCameraImageProcessing::WhiteBalanceAuto);
     camera.imageProcessing()->setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceCloudy);
     QCOMPARE(camera.imageProcessing()->whiteBalanceMode(), QCameraImageProcessing::WhiteBalanceAuto);
-    QCOMPARE(camera.imageProcessing()->manualWhiteBalance(), -1);
+    QCOMPARE(camera.imageProcessing()->manualWhiteBalance(), 0);
     camera.imageProcessing()->setManualWhiteBalance(5000);
-    QCOMPARE(camera.imageProcessing()->manualWhiteBalance(), -1);
+    QCOMPARE(camera.imageProcessing()->manualWhiteBalance(), 0);
 }
 
 void tst_QCamera::testSimpleCameraExposure()
@@ -1105,7 +1122,9 @@ void tst_QCamera::testCameraWhiteBalance()
     MockCameraService service;
     service.mockImageProcessingControl->setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceFlash);
     service.mockImageProcessingControl->setSupportedWhiteBalanceModes(whiteBalanceModes);
-    service.mockImageProcessingControl->setManualWhiteBalance(34);
+    service.mockImageProcessingControl->setProcessingParameter(
+                QCameraImageProcessingControl::ColorTemperature,
+                QVariant(34));
 
     MockProvider provider;
     provider.service = &service;
@@ -1438,6 +1457,123 @@ void tst_QCamera::testCameraLockCancel()
     QCOMPARE(lockedSignal.count(), 0);
     QCOMPARE(lockFailedSignal.count(), 0);
     QCOMPARE(lockStatusChangedSignal.count(), 1);
+}
+
+void tst_QCamera::testCameraEncodingProperyChange()
+{
+    MockCameraService service;
+    provider->service = &service;
+    QCamera camera(0, provider);
+    QCameraImageCapture imageCapture(&camera);
+
+    QSignalSpy stateChangedSignal(&camera, SIGNAL(stateChanged(QCamera::State)));
+    QSignalSpy statusChangedSignal(&camera, SIGNAL(statusChanged(QCamera::Status)));
+
+    camera.start();
+    QCOMPARE(camera.state(), QCamera::ActiveState);
+    QCOMPARE(camera.status(), QCamera::ActiveStatus);
+
+    QCOMPARE(stateChangedSignal.count(), 1);
+    QCOMPARE(statusChangedSignal.count(), 1);
+    stateChangedSignal.clear();
+    statusChangedSignal.clear();
+
+    camera.setCaptureMode(QCamera::CaptureVideo);
+    QCOMPARE(camera.state(), QCamera::ActiveState);
+    QCOMPARE(camera.status(), QCamera::LoadedStatus);
+
+    QCOMPARE(stateChangedSignal.count(), 0);
+    QCOMPARE(statusChangedSignal.count(), 1);
+    stateChangedSignal.clear();
+    statusChangedSignal.clear();
+
+    QTest::qWait(10);
+
+    QCOMPARE(camera.state(), QCamera::ActiveState);
+    QCOMPARE(camera.status(), QCamera::ActiveStatus);
+    QCOMPARE(stateChangedSignal.count(), 0);
+    QCOMPARE(statusChangedSignal.count(), 1);
+    stateChangedSignal.clear();
+    statusChangedSignal.clear();
+
+    //backens should not be stopped since the capture mode is Video
+    imageCapture.setEncodingSettings(QImageEncoderSettings());
+    QCOMPARE(stateChangedSignal.count(), 0);
+    QCOMPARE(statusChangedSignal.count(), 0);
+
+    camera.setCaptureMode(QCamera::CaptureStillImage);
+    QTest::qWait(10);
+    stateChangedSignal.clear();
+    statusChangedSignal.clear();
+
+    //the settings change should trigger camera stop/start
+    imageCapture.setEncodingSettings(QImageEncoderSettings());
+    QCOMPARE(camera.state(), QCamera::ActiveState);
+    QCOMPARE(camera.status(), QCamera::LoadedStatus);
+
+    QCOMPARE(stateChangedSignal.count(), 0);
+    QCOMPARE(statusChangedSignal.count(), 1);
+    stateChangedSignal.clear();
+    statusChangedSignal.clear();
+
+    QTest::qWait(10);
+
+    QCOMPARE(camera.state(), QCamera::ActiveState);
+    QCOMPARE(camera.status(), QCamera::ActiveStatus);
+    QCOMPARE(stateChangedSignal.count(), 0);
+    QCOMPARE(statusChangedSignal.count(), 1);
+    stateChangedSignal.clear();
+    statusChangedSignal.clear();
+
+    //the settings change should trigger camera stop/start only once
+    camera.setCaptureMode(QCamera::CaptureVideo);
+    camera.setCaptureMode(QCamera::CaptureStillImage);
+    imageCapture.setEncodingSettings(QImageEncoderSettings());
+    imageCapture.setEncodingSettings(QImageEncoderSettings());
+
+    QCOMPARE(camera.state(), QCamera::ActiveState);
+    QCOMPARE(camera.status(), QCamera::LoadedStatus);
+
+    QCOMPARE(stateChangedSignal.count(), 0);
+    QCOMPARE(statusChangedSignal.count(), 1);
+    stateChangedSignal.clear();
+    statusChangedSignal.clear();
+
+    QTest::qWait(10);
+
+    QCOMPARE(camera.state(), QCamera::ActiveState);
+    QCOMPARE(camera.status(), QCamera::ActiveStatus);
+    QCOMPARE(stateChangedSignal.count(), 0);
+    QCOMPARE(statusChangedSignal.count(), 1);
+    stateChangedSignal.clear();
+    statusChangedSignal.clear();
+
+    //setting the viewfinder should also trigget backend to be restarted:
+    camera.setViewfinder(new QGraphicsVideoItem());
+    QCOMPARE(camera.state(), QCamera::ActiveState);
+    QCOMPARE(camera.status(), QCamera::LoadedStatus);
+
+    QCOMPARE(stateChangedSignal.count(), 0);
+    QCOMPARE(statusChangedSignal.count(), 1);
+
+    QTest::qWait(10);
+
+    service.mockControl->m_propertyChangesSupported = true;
+    //the changes to encoding settings,
+    //capture mode and encoding parameters should not trigger service restart
+    stateChangedSignal.clear();
+    statusChangedSignal.clear();
+
+    camera.setCaptureMode(QCamera::CaptureVideo);
+    camera.setCaptureMode(QCamera::CaptureStillImage);
+    imageCapture.setEncodingSettings(QImageEncoderSettings());
+    imageCapture.setEncodingSettings(QImageEncoderSettings());
+    QTest::ignoreMessage(QtWarningMsg, "QMediaObject: Trying to unbind not connected helper object ");
+    camera.setViewfinder(new QGraphicsVideoItem());
+
+    QCOMPARE(stateChangedSignal.count(), 0);
+    QCOMPARE(statusChangedSignal.count(), 0);
+
 }
 
 

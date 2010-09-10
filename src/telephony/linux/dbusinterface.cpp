@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "dbusinterface.h"
+#include "dbusinterface_p.h"
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
@@ -60,6 +60,6 @@ Requests::~Requests()
     qDebug() << "QtMobility::Requests destructor";
 }
 
-#include "moc_dbusinterface.cpp"
+#include "moc_dbusinterface_p.cpp"
 
 QTM_END_NAMESPACE

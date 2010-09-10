@@ -32,25 +32,28 @@ contains(mobility_modules,location) {
     SUBDIRS += logfilepositionsource \
                satellitedialog 
 
-    !symbian:!wince* {
+    !wince* {
         SUBDIRS += landmarkbrowser
     }
 
-    !symbian|contains(mobility_modules,bearer) {
+    contains(QT_MAJOR_VERSION, 4):greaterThan(QT_MINOR_VERSION, 6) {
     	SUBDIRS += geoservicedemo \
-                   mapviewer
+                    mapviewer
 
+    } else {
+        contains(mobility_modules,bearer) {
+    	    SUBDIRS += geoservicedemo \
+                       mapviewer
+        }
     }
 
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo
         
-        contains(QT_CONFIG, webkit) {
-            SUBDIRS += fetchgooglemaps
+        contains(QT_CONFIG, declarative) {
+            sources.files += declarative-location
+            sources.files += declarative_mapviewer
         }
-	contains(QT_CONFIG, declarative) {
-	        sources.files += declarative_loc_flickr
-	}
     }
 }
 
@@ -90,7 +93,7 @@ contains(mobility_modules,multimedia) {
 
 
 #Messaging examples
-contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
+contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5|maemo6 {
     contains(mobility_modules,messaging) {
         !win32-g++ {
 	    SUBDIRS += \
@@ -102,7 +105,7 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
             }
 
             # MessagingEx lives in tests for some reason
-            maemo5:SUBDIRS += ../tests/messagingex
+            maemo5|maemo6:SUBDIRS += ../tests/messagingex
          }
     }
 }
@@ -116,6 +119,10 @@ contains(mobility_modules,gallery) {
     SUBDIRS += \
         documentproperties \
         mediabrowser
+
+    contains(QT_CONFIG, declarative) {
+        sources.files += declarative-music-browser
+    }
 }
 
 # Organizer API examples
@@ -125,12 +132,15 @@ contains(mobility_modules, organizer) {
 
 # Telephony API examples
 contains(mobility_modules,telephony) {
-    unix:!mac:!maemo* {SUBDIRS += telephony}
+    unix:!mac {SUBDIRS += telephony}
 }
 
 # Feedback API examples
 contains(mobility_modules, feedback) {
-    SUBDIRS += hapticsplayer hapticsquare
+    #SUBDIRS += hapticsplayer # this not a good UI for mobile screens at the moment
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += hapticsquare
+    }
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES

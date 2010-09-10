@@ -55,7 +55,6 @@
 
 #include "qmobilityglobal.h"
 #include "qversitcontactimporter.h"
-#include "qvcardbackuphandlers_p.h"
 
 #include <QList>
 #include <QDateTime>
@@ -71,7 +70,7 @@ class QVersitProperty;
 class QVersitDocument;
 class QVersitContactHandler;
 
-class Q_AUTOTEST_EXPORT QVersitContactImporterPrivate
+class QM_AUTOTEST_EXPORT QVersitContactImporterPrivate
 {
 public:
     QVersitContactImporterPrivate(const QString& profile = QString());

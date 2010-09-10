@@ -41,13 +41,12 @@
 
 //TESTED_COMPONENT=src/documentgallery
 
-#include <QtTest/QtTest>
-
 #include <qgalleryabstractrequest.h>
 
 #include <qabstractgallery.h>
 #include <qgalleryabstractresponse.h>
 
+#include <QtTest/QtTest>
 
 QTM_USE_NAMESPACE
 
@@ -1107,13 +1106,13 @@ void tst_QGalleryAbstractRequest::clearGallery()
     QCOMPARE(stateSpy.count(), 0);
 
     request.setGallery(0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
     QCOMPARE(succeededSpy.count(), 1);
     QCOMPARE(cancelledSpy.count(), 0);
     QCOMPARE(failedSpy.count(), 0);
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 2);
+    QCOMPARE(resultSpy.count(), 1);
     QCOMPARE(stateSpy.count(), 0);
 
     // Clear idle response.
@@ -1126,22 +1125,22 @@ void tst_QGalleryAbstractRequest::clearGallery()
     QCOMPARE(cancelledSpy.count(), 0);
     QCOMPARE(failedSpy.count(), 0);
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 3);
+    QCOMPARE(resultSpy.count(), 1);
     QCOMPARE(stateSpy.count(), 1);
     QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
              QGalleryAbstractRequest::Idle);
 
     request.setGallery(0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Idle);
     QCOMPARE(succeededSpy.count(), 2);
     QCOMPARE(cancelledSpy.count(), 0);
     QCOMPARE(failedSpy.count(), 0);
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 4);
-    QCOMPARE(stateSpy.count(), 2);
+    QCOMPARE(resultSpy.count(), 1);
+    QCOMPARE(stateSpy.count(), 1);
     QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Inactive);
+             QGalleryAbstractRequest::Idle);
 
     // Clear active response.
     gallery.setResult(QGalleryAbstractRequest::NoResult);
@@ -1154,22 +1153,22 @@ void tst_QGalleryAbstractRequest::clearGallery()
     QCOMPARE(cancelledSpy.count(), 0);
     QCOMPARE(failedSpy.count(), 0);
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 4);
-    QCOMPARE(stateSpy.count(), 3);
+    QCOMPARE(resultSpy.count(), 2);
+    QCOMPARE(stateSpy.count(), 2);
     QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
              QGalleryAbstractRequest::Active);
 
     request.setGallery(0);
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Active);
     QCOMPARE(succeededSpy.count(), 2);
     QCOMPARE(cancelledSpy.count(), 0);
     QCOMPARE(failedSpy.count(), 0);
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 4);
-    QCOMPARE(stateSpy.count(), 4);
+    QCOMPARE(resultSpy.count(), 2);
+    QCOMPARE(stateSpy.count(), 2);
     QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Inactive);
+             QGalleryAbstractRequest::Active);
 }
 
 void tst_QGalleryAbstractRequest::deleteGallery()
@@ -1218,13 +1217,13 @@ void tst_QGalleryAbstractRequest::deleteGallery()
 
     delete gallery;
     QVERIFY(request.gallery() == 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
     QCOMPARE(succeededSpy.count(), 1);
     QCOMPARE(cancelledSpy.count(), 0);
     QCOMPARE(failedSpy.count(), 0);
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 2);
+    QCOMPARE(resultSpy.count(), 1);
 
     // Idle response.
     gallery = new QtTestGallery;
@@ -1241,17 +1240,17 @@ void tst_QGalleryAbstractRequest::deleteGallery()
     QCOMPARE(cancelledSpy.count(), 0);
     QCOMPARE(failedSpy.count(), 0);
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 3);
+    QCOMPARE(resultSpy.count(), 1);
 
     delete gallery;
     QVERIFY(request.gallery() == 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Idle);
     QCOMPARE(succeededSpy.count(), 2);
     QCOMPARE(cancelledSpy.count(), 0);
     QCOMPARE(failedSpy.count(), 0);
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 4);
+    QCOMPARE(resultSpy.count(), 1);
 
     // Clear active response.
     gallery = new QtTestGallery;
@@ -1266,17 +1265,17 @@ void tst_QGalleryAbstractRequest::deleteGallery()
     QCOMPARE(cancelledSpy.count(), 0);
     QCOMPARE(failedSpy.count(), 0);
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 4);
+    QCOMPARE(resultSpy.count(), 2);
 
     delete gallery;
     QVERIFY(request.gallery() == 0);
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Active);
     QCOMPARE(succeededSpy.count(), 2);
     QCOMPARE(cancelledSpy.count(), 0);
     QCOMPARE(failedSpy.count(), 0);
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 4);
+    QCOMPARE(resultSpy.count(), 2);
 }
 
 QTEST_MAIN(tst_QGalleryAbstractRequest)

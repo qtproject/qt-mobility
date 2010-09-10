@@ -41,12 +41,12 @@
 
 //TESTED_COMPONENT=src/documentgallery
 
-#include <QtTest/QtTest>
-
 #include <qgalleryremoverequest.h>
 
 #include <qabstractgallery.h>
 #include <qgalleryabstractresponse.h>
+
+#include <QtTest/QtTest>
 
 QTM_USE_NAMESPACE
 

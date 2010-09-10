@@ -433,10 +433,9 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
 
     // QContactUrl
     fields = defns[contactType][QContactUrl::DefinitionName].fields();
-    fields.remove(QContactDetail::FieldContext);
     fields.remove(QContactUrl::FieldSubType);
     defns[contactType][QContactUrl::DefinitionName].setFields(fields);
-    defns[contactType][QContactUrl::DefinitionName].setUnique(true);
+    defns[contactType][QContactUrl::DefinitionName].setUnique(false);
     
     QCM5_DEBUG << "Contact type" << contactType << "Keys" <<  defns.keys();
     

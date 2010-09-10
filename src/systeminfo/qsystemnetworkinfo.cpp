@@ -40,16 +40,97 @@
 ****************************************************************************/
 
 #include "qsystemnetworkinfo.h"
-#include "qsysteminfocommon.h"
+#include "qsysteminfocommon_p.h"
 #include <QMetaType>
 
 QTM_BEGIN_NAMESPACE
         Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
 
+#ifdef QT_SIMULATOR
+QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate(); }
+#endif
+
 /*!
-  \fn QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
-  Constructs a QSystemNetworkInfo object with the given \a parent.
+   \class QSystemNetworkInfo
+   \ingroup systeminfo
+   \inmodule QtSystemInfo
+
+   \brief The QSystemNetworkInfo class provides access to network information.
+
+    \fn QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
+
+        Constructs a QSystemNetworkInfo object with the given \a parent.
 */
+
+
+        /*!
+            \enum QSystemNetworkInfo::NetworkStatus
+            This enum describes the status of the network connection:
+
+            \value UndefinedStatus        There is no network device, or error.
+            \value NoNetworkAvailable     There is no network available.
+            \value EmergencyOnly          Emergency calls only.
+            \value Searching              Searching for or connecting with the network.
+            \value Busy                   Network is busy.
+            \value Connected              Connected to newtwork.
+            \value HomeNetwork            On Home Network.
+            \value Denied                 Network access denied.
+            \value Roaming                On Roaming network.
+
+          */
+        /*!
+            \enum QSystemNetworkInfo::NetworkMode
+            This enum describes the type of network:
+
+            \value UnknownMode             Unknown network, or network error.
+            \value GsmMode                 Global System for Mobile (GSM) network.
+            \value CdmaMode                Code division multiple access (CDMA) network.
+            \value WcdmaMode               Wideband Code Division Multiple Access (W-CDMA) network.
+            \value WlanMode                Wireless Local Area Network (WLAN) network.
+            \value EthernetMode            Wired Local Area network.
+            \value BluetoothMode           Bluetooth network.
+            \value WimaxMode               Wimax network.
+
+          */
+
+
+
+        /*!
+          \fn void QSystemNetworkInfo::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode, QSystemNetworkInfo::NetworkStatus status)
+
+          This signal is emitted whenever the network status of \a mode changes, specified by \a status.
+          */
+
+        /*!
+          \fn void QSystemNetworkInfo::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode,int strength)
+
+          This signal is emitted whenever the network \a mode signal strength changes, specified by \a strength.
+          */
+
+        /*!
+          \fn void QSystemNetworkInfo::currentMobileCountryCodeChanged(const QString &mcc)
+
+          This signal is emitted whenever the Mobile Country Code changes, specified by \a mcc.
+        */
+
+        /*!
+          \fn void QSystemNetworkInfo::currentMobileNetworkCodeChanged(const QString &mnc)
+
+          This signal is emitted whenever the network Mobile Network Code changes, specified by \a mnc.
+        */
+
+        /*!
+          \fn void QSystemNetworkInfo::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QString & netName)
+
+          This signal is emitted whenever the network \a mode name changes, specified by \a netName.
+
+        */
+
+        /*!
+          \fn void QSystemNetworkInfo::networkModeChanged(QSystemNetworkInfo::NetworkMode mode)
+
+          This signal is emitted whenever the network mode changes, specified by \a mode.
+        */
 
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
    : QObject(parent), d(netInfoPrivate())

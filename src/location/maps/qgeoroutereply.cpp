@@ -50,9 +50,8 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoRouteReply class manages an operation started by an instance
     of QGeoRoutingManager.
 
-
     \inmodule QtLocation
-    
+
     \ingroup maps-routing
 
     Instances of QGeoRouteReply manage the state and results of these
@@ -211,7 +210,7 @@ void QGeoRouteReply::setRoutes(const QList<QGeoRoute> &routes)
 }
 
 /*!
-    Cancels the operation.
+    Cancels the operation immediately.
 
     This will do nothing if the reply is finished.
 */
@@ -264,25 +263,7 @@ QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(QGeoRouteReply::Error error, QStrin
         errorString(errorString),
         isFinished(true) {}
 
-QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(const QGeoRouteReplyPrivate &other)
-        : error(other.error),
-        errorString(other.errorString),
-        isFinished(other.isFinished),
-        request(other.request),
-        routes(other.routes) {}
-
 QGeoRouteReplyPrivate::~QGeoRouteReplyPrivate() {}
-
-QGeoRouteReplyPrivate& QGeoRouteReplyPrivate::operator= (const QGeoRouteReplyPrivate & other)
-{
-    error = other.error;
-    errorString = other.errorString;
-    isFinished = other.isFinished;
-    request = other.request;
-    routes = other.routes;
-
-    return *this;
-}
 
 #include "moc_qgeoroutereply.cpp"
 
