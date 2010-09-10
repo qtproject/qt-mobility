@@ -168,6 +168,9 @@ private:
     friend class QGalleryFilter;
 };
 
+QGalleryIntersectionFilter Q_GALLERY_EXPORT operator &&(
+        const QGalleryIntersectionFilter &filter1, const QGalleryIntersectionFilter &filter2);
+
 class QGalleryUnionFilterPrivate;
 
 class Q_GALLERY_EXPORT QGalleryUnionFilter
@@ -210,6 +213,9 @@ private:
 
     friend class QGalleryFilter;
 };
+
+QGalleryUnionFilter Q_GALLERY_EXPORT operator ||(
+        const QGalleryUnionFilter &filter1, const QGalleryUnionFilter &filter2);
 
 class QGalleryMetaDataFilterPrivate;
 
@@ -254,22 +260,6 @@ private:
 
     friend class QGalleryFilter;
 };
-
-template <typename T>
-QGalleryUnionFilter operator ||(const QGalleryUnionFilter &filter1, const T &filter2)
-{
-    QGalleryUnionFilter filter = filter1;
-    filter.append(filter2);
-    return filter;
-}
-
-template <typename T>
-QGalleryIntersectionFilter operator &&(const QGalleryIntersectionFilter &filter1, const T &filter2)
-{
-    QGalleryIntersectionFilter filter = filter1;
-    filter.append(filter2);
-    return filter;
-}
 
 QTM_END_NAMESPACE
 
