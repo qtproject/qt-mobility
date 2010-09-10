@@ -59,6 +59,7 @@ class.  It consists of three major sections:
   \o Error Reporting
   \o Schema Manipulation
   \o Organizer Item Manipulation
+  \o Item Collection Manipulation
 \endlist
 
 
@@ -129,6 +130,34 @@ may be accessed by calling QOrganizerItemManager::error() directly after the ori
 
 The item manipulation functionality is also provided via asynchronous API through the QOrganizerItemFetchRequest,
 QOrganizerItemSaveRequest, and QOrganizerItemRemoveRequest classes.
+
+
+\section2 Item Collection Manipulation
+
+Every item stored in a manager belongs to exactly one collection.  Every
+manager has at least one collection, and every manager has exactly one
+default collection.  Some managers provide more than one collection, and
+some managers allow clients to add, modify or remove collections.
+
+A collection is a grouping of items, which has its own meta data such as the
+name of the collection, a description, perhaps a "color" or sound effect,
+and so on.  The synchronous API offers the following functions to manipulate
+collections:
+\list
+  \o QList<QOrganizerCollectionLocalId> collectionIds() const;
+  \o QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds = QList<QOrganizerCollectionLocalId>()) const;
+  \o bool saveCollection(QOrganizerCollection* collection);
+  \o bool removeCollection(const QOrganizerCollectionLocalId& collectionId);
+\endlist
+
+It also offers the function:
+\list
+  \o QOrganizerCollectionLocalId defaultCollectionId() const;
+\endlist
+so that clients can query the default collection id from the manager.  The
+manager's default collection is the collection into which an item will be
+saved if no collection id is specified during an item save operation.
+
 
 \section2 Schema Manipulation
 

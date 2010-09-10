@@ -72,6 +72,7 @@ public:
 
     QGeoMapTextObject* text;
     QGraphicsSimpleTextItem *textItem;
+    QPointF alignmentOffset;
 };
 
 QTM_END_NAMESPACE

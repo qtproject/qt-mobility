@@ -58,19 +58,23 @@ namespace DBus
     {
         qDebug() << " AccountManager::AccountManager(";
 
-        //Create Account Manager interface
-        pIAccountManager = new DBus::Interfaces::IAccountManager(this->dbusConnection(),this->busName(), this->objectPath());
-        DBus::Interfaces::ObjectPathList opl = pIAccountManager->ValidAccounts();
-        /*
-         e.g.
-        "/org/freedesktop/Telepathy/Account/ring/tel/ring"
-        "/org/freedesktop/Telepathy/Account/spirit/skype/wolfgang_2ebeck100"
-        */
-        foreach(const QDBusObjectPath& objp, opl){
-            accountList.push_back(AccountPtr(new Account(QDBusConnection::sessionBus(), busname, objp.path(), ptelephonyCallList)));
+        if(isValid()){
+            //Create Account Manager interface
+            pIAccountManager = new DBus::Interfaces::IAccountManager(this->dbusConnection(),busName(), this->objectPath());
+            if(pIAccountManager->isValid()){
+                DBus::Interfaces::ObjectPathList opl = pIAccountManager->ValidAccounts();
+                /*
+                 e.g.
+                "/org/freedesktop/Telepathy/Account/ring/tel/ring"
+                "/org/freedesktop/Telepathy/Account/spirit/skype/wolfgang_2ebeck100"
+                */
+                foreach(const QDBusObjectPath& objp, opl){
+                    accountList.push_back(AccountPtr(new Account(QDBusConnection::sessionBus(), busname, objp.path(), ptelephonyCallList)));
+                }
+                connect(pIAccountManager, SIGNAL(AccountRemoved(QDBusObjectPath)), SLOT(onAccountRemoved(QDBusObjectPath)));
+                connect(pIAccountManager, SIGNAL(AccountValidityChanged(QDBusObjectPath,bool)), SLOT(onAccountValidityChanged(QDBusObjectPath,bool)));
+            }
         }
-        connect(pIAccountManager, SIGNAL(AccountRemoved(QDBusObjectPath)), SLOT(onAccountRemoved(QDBusObjectPath)));
-        connect(pIAccountManager, SIGNAL(AccountValidityChanged(QDBusObjectPath,bool)), SLOT(onAccountValidityChanged(QDBusObjectPath,bool)));
     }
 
     AccountManager::~AccountManager()
@@ -83,12 +87,23 @@ namespace DBus
 
     void AccountManager::onAccountRemoved(const QDBusObjectPath& account)
     {
-
+        qDebug() << "AccountManager::onAccountRemoved";
+        int found = -1;
+        for(int i = 0; i < accountList.count(); i++){
+            if(accountList[i].data()->objectPath() == account.path()){
+                found = i;
+                break;
+            }
+        }
     }
 
     void AccountManager::onAccountValidityChanged(const QDBusObjectPath& account, bool valid)
     {
-
+        qDebug() << "AccountManager::onAccountValidityChanged";
+        onAccountRemoved(account);
+        if(valid){
+            accountList.push_back(AccountPtr(new Account(QDBusConnection::sessionBus(), busName(), account.path(), ptelephonyCallList)));
+        }
     }
 }//DBus
 
