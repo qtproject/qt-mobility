@@ -39,41 +39,45 @@
 **
 ****************************************************************************/
 
-
-#ifndef QORGANIZERITEMINSTANCEORIGIN_H
-#define QORGANIZERITEMINSTANCEORIGIN_H
+#ifndef QORGANIZERITEMENGINELOCALID_H
+#define QORGANIZERITEMENGINELOCALID_H
 
 #include <QString>
+#include <QSharedDataPointer>
 
 #include "qtorganizerglobal.h"
-#include "qorganizeritemdetail.h"
-#include "qorganizeritem.h"
+
+class QDataStream;
 
 QTM_BEGIN_NAMESPACE
 
-/* Leaf class */
-class Q_ORGANIZER_EXPORT QOrganizerItemInstanceOrigin : public QOrganizerItemDetail
+class Q_ORGANIZER_EXPORT QOrganizerItemEngineLocalId
 {
 public:
-#ifdef Q_QDOC
-    static const QLatin1Constant DefinitionName;
-    static const QLatin1Constant FieldParentLocalId;
-    static const QLatin1Constant FieldOriginalDate;
-#else
-    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemInstanceOrigin, "InstanceOrigin")
-    Q_DECLARE_LATIN1_CONSTANT(FieldParentLocalId, "ParentLocalId");
-    Q_DECLARE_LATIN1_CONSTANT(FieldOriginalDate, "OriginalDate");
+    virtual ~QOrganizerItemEngineLocalId() {}
+
+    virtual bool isEqualTo(const QOrganizerItemEngineLocalId* other) const = 0;
+    virtual bool isLessThan(const QOrganizerItemEngineLocalId* other) const = 0;
+
+    virtual uint engineLocalIdType() const = 0;
+    virtual QOrganizerItemEngineLocalId* clone() const = 0; // const?  does it return a ref?
+
+#ifndef QT_NO_DEBUG_STREAM
+    // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
+    virtual QDebug datastreamDbg(QDebug dbg) = 0;
 #endif
-
-    void setParentLocalId(QOrganizerItemLocalId parentId) {setValue(FieldParentLocalId, QVariant::fromValue(parentId));}
-    QOrganizerItemLocalId parentLocalId() const {return variantValue(FieldParentLocalId).value<QOrganizerItemLocalId>();}
-
-
-    void setOriginalDate(const QDate& date) {setValue(FieldOriginalDate, date);}
-    QDate originalDate() const {return variantValue(FieldOriginalDate).toDate();}
+#ifndef QT_NO_DATASTREAM
+    // NOTE: on platforms where Qt is built without data streams enabled, vtable will differ!
+    virtual QDataStream& datastreamOut(QDataStream& out) = 0;
+    virtual QDataStream& datastreamIn(QDataStream& in) = 0; // might not exist; might be QCME::deserializeId() instead.
+#endif
+    virtual uint hash() const = 0;
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemEngineLocalId), Q_MOVABLE_TYPE); // XXX TODO: or is it a complex type?
+
 
 #endif
 

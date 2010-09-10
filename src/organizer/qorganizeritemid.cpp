@@ -41,6 +41,7 @@
 
 #include "qorganizeritemid.h"
 #include "qorganizeritemid_p.h"
+#include "qorganizeritemenginelocalid.h"
 #include <QHash>
 #include <QDebug>
 #include <QDataStream>
@@ -63,7 +64,7 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \typedef QOrganizerItemLocalId
+  \class QOrganizerItemLocalId
   \relates QOrganizerItemId
   \brief The QOrganizerItemLocalId type represents the unique id of an organizer item within its manager.
 
@@ -71,10 +72,174 @@ QTM_BEGIN_NAMESPACE
   (involving links to organizer items outside a particular manager) also accept a manager URI - this
   combination is stored in a \l QOrganizerItemId.
 
-  An invalid QOrganizerItemLocalId is represented by a zero (0) value.
+  A default-constructed QOrganizerItemLocalId is a null QOrganizerItemLocalId, which does not identify
+  any item in a manager.  Clients may wish to set the local id of an item to the default-constructed id
+  if they wish to copy that item from one manager to another (by calling QOrganizerItemManager::saveItem()),
+  whereupon that manager will replace the id with one that identifies the newly created item.
 
   \sa QOrganizerItemId
 */
+
+/*!
+  Constructs a new, null QOrganizerItemLocalId.
+ */
+QOrganizerItemLocalId::QOrganizerItemLocalId()
+    : d(0)
+{
+}
+
+/*!
+  Cleans up any memory in use by this local id.
+ */
+QOrganizerItemLocalId::~QOrganizerItemLocalId()
+{
+    delete d;
+}
+
+/*!
+  Constructs a manager-unique local id which wraps the given engine-unique item id
+  \a engineItemId.  This local id takes ownership of the engine-unique item id and
+  will delete it when the local id goes out of scope.  Engine implementors must not
+  delete the \a engineItemId or undefined behaviour will occur.
+ */
+QOrganizerItemLocalId::QOrganizerItemLocalId(QOrganizerItemEngineLocalId* engineItemId)
+    : d(engineItemId)
+{
+}
+
+/*!
+  Constructs a new copy of the \a other id.
+ */
+QOrganizerItemLocalId::QOrganizerItemLocalId(const QOrganizerItemLocalId& other)
+    : d(other.d->clone())
+{
+}
+
+/*!
+  Assigns the \a other id to this id.
+ */
+QOrganizerItemLocalId& QOrganizerItemLocalId::operator=(const QOrganizerItemLocalId& other)
+{
+    // clean up our "old" engine id.
+    if (d)
+        delete d;
+
+    // default case: other.d is a null ptr.
+    d = 0;
+
+    // if it isn't, clone the "new" engine id.
+    if (other.d)
+        d = other.d->clone();
+
+    return *this;
+}
+
+/*!
+  Returns true if this id is equal to the \a other id; otherwise returns false.
+ */
+bool QOrganizerItemLocalId::operator==(const QOrganizerItemLocalId& other) const
+{
+    // if both ids are null then they are equal.
+    if (d == 0 && other.d == 0)
+        return true;
+
+    if (d && other.d) {
+        // ensure they're of the same type (and therefore comparable)
+        if (d->engineLocalIdType() && other.d->engineLocalIdType()) {
+            return d->isEqualTo(other.d);
+        }
+    }
+    return false;
+}
+
+/*!
+  Returns true if this id is not equal to the \a other id; otherwise, returns false.
+ */
+bool QOrganizerItemLocalId::operator!=(const QOrganizerItemLocalId& other) const
+{
+    if (d && other.d) {
+        // ensure they're of the same type (and therefore comparable)
+        if (d->engineLocalIdType() && other.d->engineLocalIdType()) {
+            return !(d->isEqualTo(other.d));
+        }
+    }
+    return false;
+}
+
+/*!
+  Returns true if this id is less than the \a other id; otherwise, returns false.
+ */
+bool QOrganizerItemLocalId::operator<(const QOrganizerItemLocalId& other) const
+{
+    // a null id is always less than a non-null id.
+    if (d == 0 && other.d != 0)
+        return true;
+
+    if (d && other.d) {
+        // ensure they're of the same type (and therefore comparable)
+        if (d->engineLocalIdType() && other.d->engineLocalIdType()) {
+            return d->isLessThan(other.d);
+        }
+    }
+
+    return false;
+}
+
+/*!
+  Returns true if this id is a null or default constructed id; otherwise, returns false.
+ */
+bool QOrganizerItemLocalId::isNull() const
+{
+    return (d == 0);
+}
+
+/*!
+  Streams this id out to the debug stream \a dbg
+ */
+QDebug QOrganizerItemLocalId::datastreamDbg(QDebug dbg)
+{
+    if (d)
+        return d->datastreamDbg(dbg);
+    return dbg;
+}
+
+/*!
+  Streams this id out to the data stream \a out
+ */
+QDataStream& QOrganizerItemLocalId::datastreamOut(QDataStream& out)
+{
+    if (d)
+        return d->datastreamOut(out);
+    return out;
+}
+
+/*!
+  Streams this id in from the data stream \a in
+ */
+QDataStream& QOrganizerItemLocalId::datastreamIn(QDataStream& in)
+{
+    if (d)
+        return d->datastreamIn(in);
+    return in;
+
+    // XXX TODO: maybe instead of calling d->datastreamIn(in), we'll instead do:
+    //check type (ie, which engine);
+    //instantiate factory for that engine
+    //ask factory to deserialize the id for us.
+}
+
+/*!
+  Returns the hash value for this id.  Note that this hash value
+  is only unique per manager (that is, you should not store a hash
+  of local id to item, where the items come from multiple managers,
+  since it is likely that collisions will occur).
+ */
+uint QOrganizerItemLocalId::hash() const
+{
+    if (d)
+        return d->hash();
+    return 0;
+}
 
 /*!
  * Constructs a new organizer item id
@@ -146,13 +311,26 @@ bool QOrganizerItemId::operator<(const QOrganizerItemId& other) const
 /*!
  * Returns the hash value for \a key.
  */
+uint qHash(const QOrganizerItemLocalId &key)
+{
+    return QT_PREPEND_NAMESPACE(qHash)(key.d->hash());
+}
+
+/*!
+ * Returns the hash value for \a key.
+ */
 uint qHash(const QOrganizerItemId &key)
 {
     return QT_PREPEND_NAMESPACE(qHash)(key.managerUri())
-            + QT_PREPEND_NAMESPACE(qHash)(key.localId());
+            + qHash(key.localId());
 }
 
 #ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QOrganizerItemLocalId& id)
+{
+    return id.d->datastreamDbg(dbg);
+}
+
 QDebug operator<<(QDebug dbg, const QOrganizerItemId& id)
 {
     dbg.nospace() << "QOrganizerItemId(" << id.managerUri() << ", " << id.localId() << ")";
@@ -161,6 +339,17 @@ QDebug operator<<(QDebug dbg, const QOrganizerItemId& id)
 #endif
 
 #ifndef QT_NO_DATASTREAM
+QDataStream& operator<<(QDataStream& out, const QOrganizerItemLocalId& id)
+{
+    return id.d->datastreamOut(out);
+}
+
+QDataStream& operator>>(QDataStream& in, QOrganizerItemLocalId& id)
+{
+    return id.d->datastreamIn(in);
+}
+
+
 QDataStream& operator<<(QDataStream& out, const QOrganizerItemId& id)
 {
     quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItemId

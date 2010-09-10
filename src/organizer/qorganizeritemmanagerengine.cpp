@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qorganizeritemmanagerengine.h"
+#include "qorganizeritemenginelocalid.h"
 
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizeritemdetailfielddefinition.h"
@@ -1694,6 +1695,21 @@ void QOrganizerItemManagerEngine::setItemCollectionId(QOrganizerItem* item, cons
     if (item) {
         QOrganizerItemData::setCollectionId(item, collectionId);
     }
+}
+
+/*!
+  Creates a new local item id from an engine-local item id.
+  Takes ownership of the \a engineId pointer.
+  Do not delete \a engineId after calling this function, or
+  undefined behaviour will occur.  Do not call this function
+  multiple times with the same pointer, or undefined behavior
+  will occur.
+
+  XXX TODO: is this an argument for using a shared data pointer in QOILId?
+ */
+QOrganizerItemLocalId QOrganizerItemManagerEngine::createLocalItemId(QOrganizerItemEngineLocalId* engineId)
+{
+    return (QOrganizerItemLocalId(engineId));
 }
 
 

@@ -72,8 +72,37 @@
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
 #include "qorganizeritemrecurrencerule.h"
+#include "qorganizeritemenginelocalid.h"
 
 QTM_BEGIN_NAMESPACE
+
+class QOrganizerItemMemoryEngineLocalId : QOrganizerItemEngineLocalId
+{
+public:
+    QOrganizerItemMemoryEngineLocalId();
+    ~QOrganizerItemMemoryEngineLocalId();
+    QOrganizerItemMemoryEngineLocalId(const QOrganizerItemMemoryEngineLocalId& other);
+
+    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const;
+    bool isLessThan(const QOrganizerItemEngineLocalId* other) const;
+
+    uint engineLocalIdType() const;
+    QOrganizerItemEngineLocalId* clone() const;
+
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug datastreamDbg(QDebug dbg);
+#endif
+#ifndef QT_NO_DATASTREAM
+    QDataStream& datastreamOut(QDataStream& out);
+    QDataStream& datastreamIn(QDataStream& in);
+#endif
+    uint hash() const;
+
+private:
+    quint32 m_localCollectionId;
+    quint32 m_localItemId;
+    friend class QOrganizerItemMemoryEngine;
+};
 
 class QOrganizerItemAbstractRequest;
 class QOrganizerItemManagerEngine;
@@ -83,7 +112,6 @@ public:
     QOrganizerItemMemoryEngineData()
         : QSharedData(),
         m_refCount(QAtomicInt(1)),
-        m_selfOrganizerItemId(0),
         m_nextOrganizerItemId(1),
         m_anonymous(false)
     {
@@ -92,7 +120,6 @@ public:
     QOrganizerItemMemoryEngineData(const QOrganizerItemMemoryEngineData& other)
         : QSharedData(other),
         m_refCount(QAtomicInt(1)),
-        m_selfOrganizerItemId(other.m_selfOrganizerItemId),
         m_nextOrganizerItemId(other.m_nextOrganizerItemId),
         m_anonymous(other.m_anonymous)
     {
@@ -105,12 +132,11 @@ public:
     QAtomicInt m_refCount;
     QString m_id;                                  // the id parameter value
 
-    QOrganizerItemLocalId m_selfOrganizerItemId;               // the "MyCard" organizer item id
     QList<QOrganizerItem> m_organizeritems;                    // list of organizer items
     QList<QOrganizerItemLocalId> m_organizeritemIds;           // list of organizer item Id's
     QList<QString> m_definitionIds;                // list of definition types (id's)
     mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definitions; // map of organizer item type to map of definition name to definitions.
-    QOrganizerItemLocalId m_nextOrganizerItemId;
+    quint32 m_nextOrganizerItemId; // the m_localItemId portion of a QOrganizerItemMemoryEngineLocalId.
     bool m_anonymous;                              // Is this backend ever shared?
 
     void emitSharedSignals(QOrganizerItemChangeSet* cs)

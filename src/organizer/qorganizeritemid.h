@@ -51,7 +51,56 @@ class QDataStream;
 
 QTM_BEGIN_NAMESPACE
 
-typedef quint32 QOrganizerItemLocalId;
+// MSVC needs the function declared before the friend declaration
+class QOrganizerItemManagerEngine;
+class QOrganizerItemEngineLocalId;
+class QOrganizerItemLocalId;
+Q_ORGANIZER_EXPORT uint qHash(const QOrganizerItemLocalId& key);
+#ifndef QT_NO_DATASTREAM
+Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerItemLocalId& id);
+Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItemLocalId& id);
+#endif
+#ifndef QT_NO_DEBUG_STREAM
+Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemLocalId& id);
+#endif
+
+class Q_ORGANIZER_EXPORT QOrganizerItemLocalId
+{
+public:
+    QOrganizerItemLocalId();
+    ~QOrganizerItemLocalId();
+
+    QOrganizerItemLocalId(const QOrganizerItemLocalId& other);
+    QOrganizerItemLocalId& operator=(const QOrganizerItemLocalId& other);
+
+    bool operator==(const QOrganizerItemLocalId& other) const;
+    bool operator!=(const QOrganizerItemLocalId& other) const;
+    bool operator<(const QOrganizerItemLocalId& other) const;
+
+    bool isNull() const;
+
+protected:
+    explicit QOrganizerItemLocalId(QOrganizerItemEngineLocalId* engineId);
+
+private:
+    QDebug datastreamDbg(QDebug dbg);
+    QDataStream& datastreamOut(QDataStream& out);
+    QDataStream& datastreamIn(QDataStream& in); // this may require instantiating engines...
+    uint hash() const;
+
+    QOrganizerItemEngineLocalId* d; // QSharedDataPointer or not?
+
+#ifndef QT_NO_DEBUG_STREAM
+    friend QDebug operator<<(QDebug dbg, const QOrganizerItemLocalId& id);
+#endif
+#ifndef QT_NO_DATASTREAM
+    friend QDataStream& operator<<(QDataStream& out, const QOrganizerItemLocalId& id);
+    friend QDataStream& operator>>(QDataStream& in, QOrganizerItemLocalId& id);
+#endif
+    friend uint qHash(const QOrganizerItemLocalId& key);
+    friend class QOrganizerItemManagerEngine;
+};
+
 
 class QOrganizerItemIdPrivate;
 class Q_ORGANIZER_EXPORT QOrganizerItemId
@@ -89,7 +138,11 @@ Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id
 
 QTM_END_NAMESPACE
 
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemLocalId), Q_MOVABLE_TYPE); // XXX TODO: or is it now a complex type?
 Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemId), Q_MOVABLE_TYPE);
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerItemLocalId));
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerItemId));
 
 
 #endif

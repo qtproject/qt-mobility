@@ -64,6 +64,7 @@ QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemFilter;
 class QOrganizerItemSortOrder;
+class QOrganizerItemEngineLocalId;
 
 /* Forward decls, since these don't actually exist yet */
 class QOrganizerItemInstanceFetchRequest;
@@ -166,7 +167,8 @@ public:
 
     // Other protected area update functions
     static void setDetailAccessConstraints(QOrganizerItemDetail* detail, QOrganizerItemDetail::AccessConstraints constraints);
-    static void setItemCollectionId(QOrganizerItem* item, const QOrganizerCollectionId& collectionId); // XXX TODO: setting in QOrganizerItem instead?
+    static void setItemCollectionId(QOrganizerItem* item, const QOrganizerCollectionId& collectionId); // XXX TODO: setting in QOrganizerItem instead
+    static QOrganizerItemLocalId createLocalItemId(QOrganizerItemEngineLocalId* engineId);
 
     /* Helper functions */
     static int compareItem(const QOrganizerItem& a, const QOrganizerItem& b, const QList<QOrganizerItemSortOrder>& sortOrders);

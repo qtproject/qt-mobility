@@ -84,6 +84,99 @@ QTM_BEGIN_NAMESPACE
 QMap<QString, QOrganizerItemMemoryEngineData*> QOrganizerItemMemoryEngine::engineDatas;
 
 /*!
+  \class QOrganizerItemMemoryEngineLocalId
+  \brief The QOrganizerItemMemoryEngineLocalId class provides an id which uniquely identifies
+  a QOrganizerItem stored within a collection stored within a a QOrganizerItemMemoryEngine.
+
+  It may be used as a reference implementation, although since different platforms
+  have different semantics for ids (datastore-unique versus calendar-unique, etc),
+  the precise implementation required may differ.
+ */
+QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId()
+    : m_localCollectionId(0), m_localItemId(0)
+{
+}
+
+QOrganizerItemMemoryEngineLocalId::~QOrganizerItemMemoryEngineLocalId()
+{
+}
+
+QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId(const QOrganizerItemMemoryEngineLocalId& other)
+    : m_localCollectionId(other.m_localCollectionId), m_localItemId(other.m_localItemId)
+{
+}
+
+bool QOrganizerItemMemoryEngineLocalId::isEqualTo(const QOrganizerItemEngineLocalId* other) const
+{
+    quint32 otherlocalCollectionId = static_cast<const QOrganizerItemMemoryEngineLocalId*>(other)->m_localCollectionId;
+    quint32 otherlocalItemId = static_cast<const QOrganizerItemMemoryEngineLocalId*>(other)->m_localItemId;
+    if (m_localCollectionId != otherlocalCollectionId)
+        return false;
+    if (m_localItemId != otherlocalItemId)
+        return false;
+    return true;
+}
+
+bool QOrganizerItemMemoryEngineLocalId::isLessThan(const QOrganizerItemEngineLocalId* other) const
+{
+    // order by collection, then by item in collection.
+    quint32 otherlocalCollectionId = static_cast<const QOrganizerItemMemoryEngineLocalId*>(other)->m_localCollectionId;
+    quint32 otherlocalItemId = static_cast<const QOrganizerItemMemoryEngineLocalId*>(other)->m_localItemId;
+    if (m_localCollectionId < otherlocalCollectionId)
+        return true;
+    if (m_localCollectionId == otherlocalCollectionId)
+        return (m_localItemId < otherlocalItemId);
+    return false;
+}
+
+uint QOrganizerItemMemoryEngineLocalId::engineLocalIdType() const
+{
+    // engines should embed the result of this as const read-only data (uint),
+    // instead of calculating it every time the function is called...
+    return qHash(QString(QLatin1String("memory")));
+}
+
+QOrganizerItemEngineLocalId* QOrganizerItemMemoryEngineLocalId::clone() const
+{
+    QOrganizerItemMemoryEngineLocalId *myClone = new QOrganizerItemMemoryEngineLocalId;
+    myClone->m_localCollectionId = m_localCollectionId;
+    myClone->m_localItemId = m_localItemId;
+    return myClone;
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug QOrganizerItemMemoryEngineLocalId::datastreamDbg(QDebug dbg)
+{
+    dbg.nospace() << "QOrganizerItemMemoryEngineLocalId(" << m_localCollectionId << ", " << m_localItemId << ")";
+    return dbg.maybeSpace();
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+QDataStream& QOrganizerItemMemoryEngineLocalId::datastreamOut(QDataStream& out)
+{
+    return (out << m_localItemId << m_localCollectionId);
+}
+
+QDataStream& QOrganizerItemMemoryEngineLocalId::datastreamIn(QDataStream& in)
+{
+    // XXX TODO: decide whether this is required.
+    return in; // or whether we put this functionality in QCME.
+}
+#endif
+
+uint QOrganizerItemMemoryEngineLocalId::hash() const
+{
+    // Note: doesn't need to be unique, since == ensures difference.
+    // hash function merely determines distribution in a hash table.
+    quint64 combinedLocalId = m_localItemId;
+    combinedLocalId <<= 32;
+    combinedLocalId += m_localCollectionId;
+    return uint(((combinedLocalId >> (8 * sizeof(uint) - 1)) ^ combinedLocalId) & (~0U));
+}
+
+
+/*!
  * Factory function for creating a new in-memory backend, based
  * on the given \a parameters.
  *
@@ -505,7 +598,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
     // first, retrieve all persisted instances (exceptions) which occur between the specified datetimes.
     QOrganizerItemDetailFilter parentFilter;
     parentFilter.setDetailDefinitionName(QOrganizerItemInstanceOrigin::DefinitionName, QOrganizerItemInstanceOrigin::FieldParentLocalId);
-    parentFilter.setValue(generator.localId());
+    parentFilter.setValue(QVariant::fromValue(generator.localId()));
     QList<QOrganizerItem> persistedExceptions = items(parentFilter, QList<QOrganizerItemSortOrder>(), QOrganizerItemFetchHint(), error);
     foreach (const QOrganizerItem& currException, persistedExceptions) {
         QDateTime lowerBound;
@@ -713,8 +806,12 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, cons
         theOrganizerItem->saveDetail(&ts);
 
         // update the organizer item - set its ID
-        newId.setLocalId(++d->m_nextOrganizerItemId);
+        QOrganizerItemMemoryEngineLocalId* newMemoryEngineLocalId = new QOrganizerItemMemoryEngineLocalId;
+        newMemoryEngineLocalId->m_localCollectionId = 1; // XXX TODO fix collection support.  for now, we have only one collection.
+        newMemoryEngineLocalId->m_localItemId = ++d->m_nextOrganizerItemId;
+        newId.setLocalId(QOrganizerItemManagerEngine::createLocalItemId(newMemoryEngineLocalId));
         theOrganizerItem->setId(newId);
+        // note: do NOT delete the QOrganizerItemMemoryEngineLocalId -- the QOrganizerItemLocalId ctor takes ownership of it.
 
         if (!fixOccurrenceReferences(theOrganizerItem, error)) {
             return false;
@@ -790,7 +887,7 @@ bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem
         }
         QOrganizerItemLocalId parentId = instanceOrigin.parentLocalId();
         if (!guid.isEmpty()) {
-            if (parentId != 0) {
+            if (!parentId.isNull()) {
                 QOrganizerItemManager::Error tempError;
                 QOrganizerItem parentItem = item(parentId, QOrganizerItemFetchHint(), &tempError);
                 if (guid != parentItem.guid()
@@ -809,7 +906,7 @@ bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem
                         break;
                     }
                 }
-                if (parentId == 0) {
+                if (parentId.isNull()) {
                     // couldn't find an item with the given guid
                     *error = QOrganizerItemManager::InvalidOccurrenceError;
                     return false;
@@ -826,7 +923,7 @@ bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem
                 origin.setParentLocalId(parentId);
                 theItem->saveDetail(&origin);
             }
-        } else if (parentId != 0) {
+        } else if (!parentId.isNull()) {
             QOrganizerItemManager::Error tempError;
             QOrganizerItem parentItem = item(parentId, QOrganizerItemFetchHint(), &tempError);
             if (parentItem.guid().isEmpty()
