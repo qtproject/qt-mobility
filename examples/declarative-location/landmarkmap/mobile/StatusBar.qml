@@ -42,32 +42,20 @@
 import Qt 4.7
 
 Item {
-    id: titleBar
+    id: statusBar
     BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
 
     Item {
         id: container
         width: (parent.width * 2) - 55 ; height: parent.height
-
-        Image {
-            id: quitButton
-            anchors.left: parent.left//; anchors.leftMargin: 0
-            anchors.verticalCenter: parent.verticalCenter
-            source: "images/quit.png"
-            MouseArea {
-                anchors.fill: parent
-                onClicked: Qt.quit()
-            }
-        }
-
         Text {
             id: categoryText
             anchors {
-                left: quitButton.right; leftMargin: 10; rightMargin: 10
+                 leftMargin: 10; rightMargin: 10; // left: quitButton.right;
                 verticalCenter: parent.verticalCenter
             }
             elide: Text.ElideLeft
-            text: "Landmarkmap example"
+            text: ""
             font.bold: true; color: "White"; style: Text.Raised; styleColor: "Black"
         }
     }
