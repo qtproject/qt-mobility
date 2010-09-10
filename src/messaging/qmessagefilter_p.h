@@ -115,10 +115,14 @@ public:
     bool filter(const QMessage &message) const;
     static bool filter(const QMessage &message, const QMessageFilterPrivate &filter);
 
-#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
+#if defined(Q_WS_MAEMO_5)
     static bool preFilter(QMessage::Type type, const QString &idPrefix, const QMessageFilterPrivate &privateFilter);
     static bool preFilterRow(QMessage::Type type, const QString &idPrefix, const SortedMessageFilterList &filterRow);
     bool preFilter(QMessage::Type type, const QString idPrefix = QString()) const;
+#else
+    static bool preFilter(QMessage::Type type, const QString &idPrefix, const QMessageFilterPrivate &privateFilter) { return true; }
+    static bool preFilterRow(QMessage::Type type, const QString &idPrefix, const SortedMessageFilterList &filterRow) { return true; }
+    bool preFilter(QMessage::Type type, const QString idPrefix = QString()) const { return true; }
 #endif
     
     static void changeComparatorValuesToOpposite(QMessageFilter& filter);
