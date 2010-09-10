@@ -129,10 +129,7 @@ private:
     TInt                                    iNoOfItems;
     TInt                                    iIndex;
 #ifdef SYMBIAN_CALENDAR_V2
-    QList<QOrganizerCollection>             iCollections;
     QList<QOrganizerCollection>             iSuccessfullCollections;
-    QList<QOrganizerCollectionId>           iCollectionIds;
-    QList<QOrganizerCollectionLocalId>      iCollectionLocalIds;
 #endif
     };
 
