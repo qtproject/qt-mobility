@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtDeclarative module of the Qt Toolkit.
+** This file is part of the demonstration applications of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,40 +39,25 @@
 **
 ****************************************************************************/
 
-import Qt 4.7
+#include <QtGui/QApplication>
+#include <QtDeclarative/QDeclarativeView>
+#include <QtDeclarative/QDeclarativeEngine>
 
-Item {
-    id: titleBar
-    BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
-
-    Item {
-        id: container
-        width: (parent.width * 2) - 55 ; height: parent.height
-
-        Image {
-            id: quitButton
-            anchors.left: parent.left//; anchors.leftMargin: 0
-            anchors.verticalCenter: parent.verticalCenter
-            source: "images/quit.png"
-            MouseArea {
-                anchors.fill: parent
-                onClicked: Qt.quit()
-            }
-        }
-
-        Text {
-            id: categoryText
-            anchors {
-                left: quitButton.right; leftMargin: 10; rightMargin: 10
-                verticalCenter: parent.verticalCenter
-            }
-            elide: Text.ElideLeft
-            text: "Declarative location Flickr"
-            font.bold: true; color: "White"; style: Text.Raised; styleColor: "Black"
-        }
-    }
-
-    transitions: Transition {
-        NumberAnimation { properties: "x"; easing.type: Easing.InOutQuad }
-    }
+int main(int argc, char *argv[])
+{
+    QApplication application(argc, argv);
+    const QString mainQmlApp = QLatin1String("flickr.qml");
+    QDeclarativeView view;
+    view.setSource(QUrl(mainQmlApp));
+    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    // Qt.quit() called in embedded .qml by default only emits
+    // quit() signal, so do this (optionally use Qt.exit()).
+    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
+#if defined(Q_OS_SYMBIAN)
+    view.showFullScreen();
+#else // Q_OS_SYMBIAN
+    view.setGeometry(QRect(100, 100, 360, 640));
+    view.show();
+#endif // Q_OS_SYMBIAN
+    return application.exec();
 }

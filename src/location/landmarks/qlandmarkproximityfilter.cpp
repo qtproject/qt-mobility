@@ -55,7 +55,9 @@ QTM_BEGIN_NAMESPACE
     \ingroup landmarks-filter
 
     In order to be a valid filter, the region covered by the proximity filter must not cover one of the poles.
-    The landmarks are returned in ascending order of distance.
+    The landmarks are returned in ascending order of distance.  A proximity filter may
+    be used inside an intersection filter to sort landmarks by distance in combination with other
+    criteria such as categories.
 */
 
 /*!

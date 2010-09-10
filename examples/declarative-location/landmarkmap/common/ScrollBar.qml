@@ -42,37 +42,40 @@
 import Qt 4.7
 
 Item {
-    id: titleBar
-    BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
+    id: container
 
-    Item {
-        id: container
-        width: (parent.width * 2) - 55 ; height: parent.height
+    property variant flickableArea
 
-        Image {
-            id: quitButton
-            anchors.left: parent.left//; anchors.leftMargin: 0
-            anchors.verticalCenter: parent.verticalCenter
-            source: "images/quit.png"
-            MouseArea {
-                anchors.fill: parent
-                onClicked: Qt.quit()
+    Rectangle {
+        radius: 5
+        color: "black"
+        opacity: 0.3
+        border.color: "white"
+        border.width: 2
+        x: 0
+        y: flickableArea.visibleArea.yPosition * container.height
+        width: parent.width
+        height: flickableArea.visibleArea.heightRatio * container.height
+    }
+    states: [
+        State {
+            name: "show"
+            when: flickableArea.movingVertically
+            PropertyChanges {
+                target: container
+                opacity: 1
             }
         }
-
-        Text {
-            id: categoryText
-            anchors {
-                left: quitButton.right; leftMargin: 10; rightMargin: 10
-                verticalCenter: parent.verticalCenter
+    ]
+    transitions: [
+        Transition {
+            from: "*"
+            to: "*"
+            NumberAnimation {
+                target: container
+                properties: "opacity"
+                duration: 400
             }
-            elide: Text.ElideLeft
-            text: "Declarative location Flickr"
-            font.bold: true; color: "White"; style: Text.Raised; styleColor: "Black"
         }
-    }
-
-    transitions: Transition {
-        NumberAnimation { properties: "x"; easing.type: Easing.InOutQuad }
-    }
+    ]
 }

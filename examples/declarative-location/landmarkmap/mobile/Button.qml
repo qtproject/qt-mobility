@@ -42,37 +42,38 @@
 import Qt 4.7
 
 Item {
-    id: titleBar
-    BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
+    id: container
 
-    Item {
-        id: container
-        width: (parent.width * 2) - 55 ; height: parent.height
+    signal clicked
 
-        Image {
-            id: quitButton
-            anchors.left: parent.left//; anchors.leftMargin: 0
-            anchors.verticalCenter: parent.verticalCenter
-            source: "images/quit.png"
-            MouseArea {
-                anchors.fill: parent
-                onClicked: Qt.quit()
-            }
-        }
+    property string text
 
-        Text {
-            id: categoryText
-            anchors {
-                left: quitButton.right; leftMargin: 10; rightMargin: 10
-                verticalCenter: parent.verticalCenter
-            }
-            elide: Text.ElideLeft
-            text: "Declarative location Flickr"
-            font.bold: true; color: "White"; style: Text.Raised; styleColor: "Black"
-        }
+    BorderImage {
+        id: buttonImage
+        source: "images/toolbutton.sci"
+        width: container.width; height: container.height
     }
-
-    transitions: Transition {
-        NumberAnimation { properties: "x"; easing.type: Easing.InOutQuad }
+    BorderImage {
+        id: pressed
+        opacity: 0
+        source: "images/toolbutton.sci"
+        width: container.width; height: container.height
     }
+    MouseArea {
+        id: mouseRegion
+        anchors.fill: buttonImage
+        onClicked: { container.clicked(); }
+    }
+    Text {
+        color: "white"
+        anchors.centerIn: buttonImage; font.bold: true
+        text: container.text; style: Text.Raised; styleColor: "black"
+    }
+    states: [
+        State {
+            name: "Pressed"
+            when: mouseRegion.pressed == true
+            PropertyChanges { target: pressed; opacity: 1 }
+        }
+    ]
 }

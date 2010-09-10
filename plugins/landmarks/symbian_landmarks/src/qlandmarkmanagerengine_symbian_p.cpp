@@ -121,6 +121,10 @@ _LIT8( KPosMimeTypeLandmarkCollectionXml,"application/vnd.nokia.landmarkcollecti
 #define KDefaultIndex 0
 #define KExtrachars 3
 
+//#if(defined __SERIES60_31__ || defined __SERIES60_32__ || defined __SERIES60_50__ || defined __S60_31__ || defined __S60_32__ || defined __S60_50__)
+//#define SYMBIAN_OR_COMPOSITION_RESTRICTED
+//#endif 
+
 /**
  * Constructs CLandmarkDbEventHandler
  */
@@ -1065,6 +1069,12 @@ bool LandmarkManagerEngineSymbianPrivate::importLandmarks(QIODevice *device, con
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
+    if (!device) {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString = "Invalid io device pointer";
+        return false;
+    }
+
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
@@ -1106,6 +1116,12 @@ bool LandmarkManagerEngineSymbianPrivate::exportLandmarks(QIODevice *device, con
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
+    if (!device) {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString = "Invalid io device pointer";
+        return false;
+    }
+
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
@@ -2068,6 +2084,16 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
     {
         QLandmarkExportRequest * exportRequest = static_cast<QLandmarkExportRequest*> (request);
 
+        QLandmarkManager::Error error;
+        QString errorString = "";
+        QStringList exportFormats = supportedFormats(QLandmarkManager::ExportOperation, &error,
+            &errorString);
+
+        if (!exportFormats.contains(exportRequest->format(), Qt::CaseInsensitive)) {
+            qDebug() << "Not Supported Export Format Type = " << exportRequest->format();
+            User::Leave(KErrNotSupported);
+        }
+
         CPosLmOperation* exportOperation = NULL;
         QIODevice *outputdevice = 0;
         QList<QLandmarkId> exportedLandmarkIds;
@@ -2172,6 +2198,10 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
             // Determine if the export path is a buffer
             outputdevice = dynamic_cast<QBuffer *> (exportRequest->device());
             if (outputdevice) {
+
+                if (exportRequest->format().isEmpty()) {
+                    User::Leave(KErrArgument);
+                }
 
                 // Set the encoder to write to a buffer
                 bufferPath = encoder->SetUseOutputBufferL();
@@ -3407,6 +3437,12 @@ void LandmarkManagerEngineSymbianPrivate::handleSymbianError(TInt errorId,
         *errorString = "Invalid data provided";
         break;
     }
+    case KErrBadName:
+    {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString = "Bad file name or bad file path";
+        break;
+    }
     case KErrPermissionDenied:
     {
         *error = QLandmarkManager::PermissionsError;
@@ -3415,9 +3451,8 @@ void LandmarkManagerEngineSymbianPrivate::handleSymbianError(TInt errorId,
     }
     case KErrAccessDenied:
     {
-        *error = QLandmarkManager::LockedError;
-        *errorString
-            = "Database is readonly/busy for other operation, so no addition/updation/removal possible.";
+        *error = QLandmarkManager::PermissionsError;
+        *errorString = "The database is read only, access is denied.";
         break;
     }
     case KErrLocked:
@@ -3457,6 +3492,7 @@ void LandmarkManagerEngineSymbianPrivate::handleSymbianError(TInt errorId,
     {
         *error = QLandmarkManager::UnknownError;
         *errorString = QString("Symbian Landmarks Error = %1").arg(errorId);
+        qDebug() << *errorString;
         break;
     }
     } // switch closure
@@ -4405,9 +4441,14 @@ void LandmarkManagerEngineSymbianPrivate::exportLandmarksL(QIODevice *device,
     QIODevice *outputdevice = 0;
 
     // check for the format
-    if (format.isEmpty()) {
-        qDebug() << "Invalid Format Type";
-        User::Leave(KErrArgument);
+    QLandmarkManager::Error error;
+    QString errorString = "";
+    QStringList exportFormats = supportedFormats(QLandmarkManager::ExportOperation, &error,
+        &errorString);
+
+    if (!exportFormats.contains(format, Qt::CaseInsensitive)) {
+        qDebug() << "Not Supported Export Format Type = " << format;
+        User::Leave(KErrNotSupported);
     }
 
     // Encoder initialized with the supported landmark package format
@@ -4521,6 +4562,10 @@ void LandmarkManagerEngineSymbianPrivate::exportLandmarksL(QIODevice *device,
         // Determine if the export path is a buffer
         outputdevice = dynamic_cast<QBuffer *> (device);
         if (outputdevice) {
+
+            if (format.isEmpty()) {
+                User::Leave(KErrArgument);
+            }
 
             if (!device->isWritable())
                 User::Leave(KErrArgument);
