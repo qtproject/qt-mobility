@@ -55,10 +55,19 @@
 
 #include <QVariant>
 #include <QStringList>
+#include <QSet>
+#include <QHash>
 
 #ifdef LANDMARKPRIVATE_DEBUG
 #include <QDebug>
 #endif
+
+
+QTM_BEGIN_NAMESPACE
+uint qHash(const QLandmarkCategoryId& key) {
+   return qHash(key.localId()) + qHash(key.managerUri());
+}
+QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
@@ -142,7 +151,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     qDebug() << "radius:" <<  (radius == other.radius);
     qDebug() << "phoneNumber:" << (phoneNumber == other.phoneNumber);
     qDebug() << "url:" << (url == other.url);
-    qDebug() << "categoryIds:" << (categoryIds == other.categoryIds);
+    qDebug() << "categoryIds:" << (categoryIds.toSet() == other.categoryIds.toSet());
     qDebug() << "managerAttributes:" << (managerAttributes == other.managerAttributes);
     qDebug() << "customAttributes:" << (customAttributes == other.customAttributes);
     qDebug() << "id" << (id == other.id);
@@ -155,7 +164,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
             && (radius == other.radius)
             && (phoneNumber == other.phoneNumber)
             && (url == other.url)
-            && (categoryIds == other.categoryIds)
+            && (categoryIds.toSet() == other.categoryIds.toSet())
             && (managerAttributes == other.managerAttributes)
             && (customAttributes == other.customAttributes)
            && (id == other.id));

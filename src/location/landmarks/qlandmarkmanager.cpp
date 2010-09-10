@@ -112,7 +112,8 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
     The QLandmarkFilter defines the criteria for selecting landmarks e.g. a QLandmarkCategoryFilter may be used
     to choose landmarks that belong to a certain category or a QLandmarkProximityFilter to choose landmarks
     within a certain range from a given location.  A QLandmarkSortOrder order defines how the results should
-    be sorted.  The limit allows specification of the maximum number of items to
+    be sorted.  (Note that if you wish to sort by distance, you must use a QLandmarkProximityFilter, usually
+    in conjunction with a QLandmarkIntersectionFilter).  The limit allows specification of the maximum number of items to
     return and the offset defines the index of the first item.  The following demonstrates how to search for the first 100
     landmarks belonging to a given category, sorted by name.
 
@@ -906,7 +907,7 @@ QLandmarkManager::SupportLevel QLandmarkManager::filterSupportLevel(const QLandm
      if (!d->engine) {
         d->errorCode = QLandmarkManager::InvalidManagerError;
         d->errorString = QString("Invalid Manager");
-        return QLandmarkManager::None;
+        return QLandmarkManager::NoSupport;
     }
 
     return d->engine->filterSupportLevel(filter, &(d->errorCode), &(d->errorString));
@@ -922,7 +923,7 @@ QLandmarkManager::SupportLevel QLandmarkManager::sortOrderSupportLevel(const QLi
      if (!d->engine) {
         d->errorCode = QLandmarkManager::InvalidManagerError;
         d->errorString = QString("Invalid Manager");
-        return QLandmarkManager::None;
+        return QLandmarkManager::NoSupport;
     }
 
     return d->engine->sortOrderSupportLevel(sortOrders, &(d->errorCode), &(d->errorString));
