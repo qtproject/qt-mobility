@@ -57,7 +57,7 @@ class  Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
     Q_OBJECT
     Q_ENUMS(NetworkStatus)
     Q_ENUMS(NetworkMode)
-    Q_PROPERTY(int cellId READ cellId)
+    Q_PROPERTY(int cellId READ cellId NOTIFY cellIdChanged)
     Q_PROPERTY(int locationAreaCode READ locationAreaCode)
     Q_PROPERTY(QString currentMobileCountryCode READ currentMobileCountryCode NOTIFY currentMobileCountryCodeChanged)
     Q_PROPERTY(QString currentMobileNetworkCode READ currentMobileNetworkCode NOTIFY currentMobileNetworkCodeChanged)

@@ -317,9 +317,9 @@ void QSystemNetworkInfo::connectNotify(const char *signal)
                 this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            cellIdChanged(const QString &))))) {
-        connect(d,SIGNAL(cellIdChanged(const QString &)),
-                this,SIGNAL(cellIdChanged(const QString &)));
+            cellIdChanged(int))))) {
+        connect(d,SIGNAL(cellIdChanged(int)),
+                this,SIGNAL(cellIdChanged(int)));
     }
 }
 
