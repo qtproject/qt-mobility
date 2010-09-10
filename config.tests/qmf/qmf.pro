@@ -9,9 +9,9 @@ INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
 
 # QMF libraries must be located at $QMF_LIBDIR
 macx {
-    LIBS += -F$$(QMF_LIBDIR) -framework qtopiamail
+    LIBS += -F$$(QMF_LIBDIR) -framework qmfclient
 } else {
-    LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
+    LIBS += -L $$(QMF_LIBDIR) -lqmfclient
 }
 QMAKE_RPATHDIR+= $$(QMF_LIBDIR)
 

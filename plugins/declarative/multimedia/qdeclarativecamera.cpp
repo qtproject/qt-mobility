@@ -502,43 +502,22 @@ void QDeclarativeCamera::setManualIsoSensitivity(int iso)
     m_exposure->setManualIsoSensitivity(iso);
 }
 
-int QDeclarativeCamera::captureWidth() const
+QSize QDeclarativeCamera::captureResolution() const
 {
-    return m_imageSettings.resolution().width();
+    return m_imageSettings.resolution();
 }
 
-int QDeclarativeCamera::captureHeight() const
+void QDeclarativeCamera::setCaptureResolution(const QSize &resolution)
 {
-    return m_imageSettings.resolution().height();
-}
-
-void QDeclarativeCamera::setCaptureWidth(int w)
-{
-    QSize resolution = m_imageSettings.resolution();
-
-    if (resolution.width() != w) {
-        resolution.setWidth(w);
+    if (m_imageSettings.resolution() != resolution) {
         m_imageSettings.setResolution(resolution);
 
         if (!m_imageSettingsChanged) {
             m_imageSettingsChanged = true;
             QMetaObject::invokeMethod(this, "_q_updateImageSettings", Qt::QueuedConnection);
         }
-    }
-}
 
-void QDeclarativeCamera::setCaptureHeight(int h)
-{
-    QSize resolution = m_imageSettings.resolution();
-
-    if (resolution.height() != h) {
-        resolution.setHeight(h);
-        m_imageSettings.setResolution(resolution);
-
-        if (!m_imageSettingsChanged) {
-            m_imageSettingsChanged = true;
-            QMetaObject::invokeMethod(this, "_q_updateImageSettings", Qt::QueuedConnection);
-        }
+        emit captureResolutionChanged(resolution);
     }
 }
 

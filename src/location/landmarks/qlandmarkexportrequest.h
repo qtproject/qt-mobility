@@ -67,7 +67,7 @@ public:
     void setTransferOption(QLandmarkManager::TransferOption option);
 
     QList<QLandmarkId> landmarkIds() const;
-    void setLandmarkIds(QList<QLandmarkId> &landmarkIds);
+    void setLandmarkIds(const QList<QLandmarkId> &landmarkIds);
 private:
     Q_DISABLE_COPY(QLandmarkExportRequest)
     Q_DECLARE_PRIVATE(QLandmarkExportRequest)
