@@ -60,14 +60,21 @@ QTM_BEGIN_NAMESPACE
     criteria such as categories.
 */
 
+/*!
+    \enum QLandmarkProximityFilter::Selection
+    Defines the selection behavior of the proximity filter.
+    \value SelectAll Selects all landmarks in the given proximity
+    \value SelectNearestOnly Selects only the closest landmark
+*/
+
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkProximityFilter)
 
 /*!
     Creates a filter that will select landmarks within a given \a radius around
-    a \a center coordinate.
+    a central \a coordinate.
 */
-QLandmarkProximityFilter::QLandmarkProximityFilter(const QGeoCoordinate &center, double radius)
-        : QLandmarkFilter(new QLandmarkProximityFilterPrivate(center, radius))
+QLandmarkProximityFilter::QLandmarkProximityFilter(const QGeoCoordinate &coordinate, double radius)
+        : QLandmarkFilter(new QLandmarkProximityFilterPrivate(coordinate, radius))
 {
 }
 
@@ -85,21 +92,21 @@ QLandmarkProximityFilter::~QLandmarkProximityFilter()
 }
 
 /*!
-    Returns the center coordinate of the filter.
+    Returns the central coordinate of the filter.
 */
-QGeoCoordinate QLandmarkProximityFilter::center() const
+QGeoCoordinate QLandmarkProximityFilter::coordinate() const
 {
     Q_D(const QLandmarkProximityFilter);
-    return d->center;
+    return d->coordinate;
 }
 
 /*!
-    Sets the \a center coordinate of the filter.
+    Sets the central \a coordinate of the filter.
 */
-void QLandmarkProximityFilter::setCenter(const QGeoCoordinate &center)
+void QLandmarkProximityFilter::setCoordinate(const QGeoCoordinate &coordinate)
 {
     Q_D(QLandmarkProximityFilter);
-    d->center = center;
+    d->coordinate = coordinate;
 }
 
 /*!
@@ -120,22 +127,43 @@ void QLandmarkProximityFilter::setRadius(double radius)
     d->radius = radius;
 }
 
+/*!
+    Returns the selection type of the proximity filter.
+    By default the proximity filter will be \c SelectAll to select all landmarks
+    with a given proximity.
+*/
+QLandmarkProximityFilter::Selection QLandmarkProximityFilter::selection() const
+{
+    Q_D(const QLandmarkProximityFilter);
+    return d->selection;
+}
+
+/*!
+    Sets the \a selection type of the proximity filter.
+*/
+void QLandmarkProximityFilter::setSelection(QLandmarkProximityFilter::Selection selection)
+{
+    Q_D(QLandmarkProximityFilter);
+    d->selection = selection;
+}
 
 /*******************************************************************************
 *******************************************************************************/
 
-QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate(const QGeoCoordinate &center, double radius)
+QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate(const QGeoCoordinate &coordinate, double radius)
         : QLandmarkFilterPrivate(),
-        center(center),
+        coordinate(coordinate),
         radius(radius)
 {
     type = QLandmarkFilter::ProximityFilter;
+    selection = QLandmarkProximityFilter::SelectAll;
 }
 
 QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate(const QLandmarkProximityFilterPrivate &other)
         : QLandmarkFilterPrivate(other),
-        center(other.center),
-        radius(other.radius)
+        coordinate(other.coordinate),
+        radius(other.radius),
+        selection(other.selection)
         {}
 
 QLandmarkProximityFilterPrivate::~QLandmarkProximityFilterPrivate() {}

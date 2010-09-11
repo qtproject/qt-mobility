@@ -427,6 +427,7 @@ QGeoSearchReply* QGeoSearchManager::search(const QString &searchString,
                 if (circle->isValid() && !circle->isEmpty()) {
                     QLandmarkProximityFilter proximityFilter(circle->center(),
                             circle->radius());
+                    proximityFilter.setSelection(QLandmarkProximityFilter::SelectAll);
                     intersectFilter.append(proximityFilter);
                 }
                 break;

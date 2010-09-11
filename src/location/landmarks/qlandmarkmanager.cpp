@@ -907,7 +907,7 @@ QLandmarkManager::SupportLevel QLandmarkManager::filterSupportLevel(const QLandm
      if (!d->engine) {
         d->errorCode = QLandmarkManager::InvalidManagerError;
         d->errorString = QString("Invalid Manager");
-        return QLandmarkManager::NoSupport;
+        return QLandmarkManager::None;
     }
 
     return d->engine->filterSupportLevel(filter, &(d->errorCode), &(d->errorString));
@@ -923,7 +923,7 @@ QLandmarkManager::SupportLevel QLandmarkManager::sortOrderSupportLevel(const QLi
      if (!d->engine) {
         d->errorCode = QLandmarkManager::InvalidManagerError;
         d->errorString = QString("Invalid Manager");
-        return QLandmarkManager::NoSupport;
+        return QLandmarkManager::None;
     }
 
     return d->engine->sortOrderSupportLevel(sortOrders, &(d->errorCode), &(d->errorString));
