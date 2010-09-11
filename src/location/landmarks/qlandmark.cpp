@@ -62,6 +62,7 @@
 #include <QDebug>
 #endif
 
+uint qHash(const QString &key);
 
 QTM_BEGIN_NAMESPACE
 uint qHash(const QLandmarkCategoryId& key) {
