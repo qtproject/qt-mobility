@@ -40,39 +40,28 @@
 ****************************************************************************/
 
 import Qt 4.7
-
-Item {
-    id: titleBar
-    BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
-
+    Component {
     Item {
-        id: container
-        width: (parent.width * 2) - 55 ; height: parent.height
+        id: wrapper; width: wrapper.ListView.view.width; height: 86
+        Item {
+            id: moveMe
+            Rectangle { color: "black"; opacity: index % 2 ? 0.2 : 0.4; height: 84; width: wrapper.width; y: 1 }
+            Rectangle {
+                x: 6; y: 4; width: 76; height: 76; color: "white"; smooth: true
 
-        Image {
-            id: quitButton
-            anchors.left: parent.left//; anchors.leftMargin: 0
-            anchors.verticalCenter: parent.verticalCenter
-            source: "images/quit.png"
-            MouseArea {
-                anchors.fill: parent
-                onClicked: Qt.quit()
+                Image {
+                    //source: imagePath;
+                    source: "http://farm" + farm + ".static.flickr.com/" + server + "/" + id + "_" + secret + "_t.jpg"
+                    width: parent.width; height: parent.height
+                    x: 0; y: 0 }
+
+                Image { source: "images/gloss.png" }
+            }
+            Column {
+                x: 92; width: wrapper.ListView.view.width - 95; y: 15; spacing: 2
+                Text { text: title; color: "white"; width: parent.width; font.bold: true; elide: Text.ElideRight; style: Text.Raised; styleColor: "black" }
+                Text { text: datetaken; width: parent.width; elide: Text.ElideRight; color: "#cccccc"; style: Text.Raised; styleColor: "black" }
             }
         }
-
-        Text {
-            id: categoryText
-            anchors {
-                left: quitButton.right; leftMargin: 10; rightMargin: 10
-                verticalCenter: parent.verticalCenter
-            }
-            elide: Text.ElideLeft
-            text: "Declarative location Flickr"
-            font.bold: true; color: "White"; style: Text.Raised; styleColor: "Black"
-        }
-    }
-
-    transitions: Transition {
-        NumberAnimation { properties: "x"; easing.type: Easing.InOutQuad }
     }
 }

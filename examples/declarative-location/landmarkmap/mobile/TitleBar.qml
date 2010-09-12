@@ -67,7 +67,7 @@ Item {
                 verticalCenter: parent.verticalCenter
             }
             elide: Text.ElideLeft
-            text: "Declarative location Flickr"
+            text: "Declarative location Flickr demo"
             font.bold: true; color: "White"; style: Text.Raised; styleColor: "Black"
         }
     }

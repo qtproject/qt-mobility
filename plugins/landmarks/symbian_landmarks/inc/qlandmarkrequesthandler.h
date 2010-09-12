@@ -100,7 +100,6 @@ private:
     // for engine
     // not owned
     QLandmarkAbstractRequest *iQtRequest;
-    QLandmarkIdFetchRequest *iLmIdFetchRequest;
 
     // owned
     CPosLandmarkSearch *iLandmarkSearch;
@@ -197,7 +196,7 @@ public:
     CLandmarkRequestData* FetchAsyncRequest(QLandmarkAbstractRequest *);
 
 private:
-    RArray<CLandmarkRequestData> iRequestList;
+    RPointerArray<CLandmarkRequestData> iRequestList;
     RFastLock iRequestListLock;
 };
 

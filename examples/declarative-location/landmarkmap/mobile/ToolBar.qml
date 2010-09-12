@@ -42,37 +42,32 @@
 import Qt 4.7
 
 Item {
-    id: titleBar
+    id: toolbar
+
+    property alias button1Label: button1.text
+    property alias button2Label: button2.text
+    property alias button3Label: button3.text
+    signal button1Clicked
+    signal button2Clicked
+    signal button3Clicked
+
     BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
 
-    Item {
-        id: container
-        width: (parent.width * 2) - 55 ; height: parent.height
-
-        Image {
-            id: quitButton
-            anchors.left: parent.left//; anchors.leftMargin: 0
-            anchors.verticalCenter: parent.verticalCenter
-            source: "images/quit.png"
-            MouseArea {
-                anchors.fill: parent
-                onClicked: Qt.quit()
-            }
-        }
-
-        Text {
-            id: categoryText
-            anchors {
-                left: quitButton.right; leftMargin: 10; rightMargin: 10
-                verticalCenter: parent.verticalCenter
-            }
-            elide: Text.ElideLeft
-            text: "Declarative location Flickr"
-            font.bold: true; color: "White"; style: Text.Raised; styleColor: "Black"
-        }
+    Button {
+        id: button1
+        anchors.left: parent.left; anchors.leftMargin: 5; y: 3; width: 100; height: 32
+        onClicked: toolbar.button1Clicked()
     }
 
-    transitions: Transition {
-        NumberAnimation { properties: "x"; easing.type: Easing.InOutQuad }
+    Button {
+        id: button2
+        anchors.right: button3.left; anchors.rightMargin: 5; y: 3; width: 100; height: 32
+        onClicked: toolbar.button2Clicked()
+    }
+
+    Button {
+        id: button3
+        anchors.right: parent.right; anchors.rightMargin: 5; y: 3; width: 100; height: 32
+        onClicked: toolbar.button3Clicked()
     }
 }
