@@ -1,5 +1,3 @@
-!symbian:warning("DEPLOYMENT rules only tested on Symbian.")
-
 QT += declarative network
 SOURCES += $$PWD/qmllandmarkmap.cpp
 include($$PWD/deployment.pri)
