@@ -67,7 +67,6 @@ Item {
     LandmarkProximityFilter {
         id: proximityFilter
         coordinate: map.center
-        radius: 500
     }
 
     LandmarkModel {
@@ -82,14 +81,24 @@ Item {
         id: landmarkDelegate
         Item {
             width: 50; height: 20
-            Rectangle {
-                Text {
-                    text: landmark.name
-                    MouseArea{
-                        anchors.fill: parent
-                        onClicked: console.log("Landmark clicked." + landmark.name)
+            x: map.toScreenPosition(landmark.coordinate).x
+            y: map.toScreenPosition(landmark.coordinate).y
+            Image {
+                id: landmarkIcon
+                source: "mobile/images/landmarkstar.png"
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked: {
+                        console.log("Landmark clicked, setting visible: " + landmark.name)
+                        landmarkNameText.visible = true
                     }
                 }
+            }
+            Text {
+                id: landmarkNameText
+                anchors.top: landmarkIcon.bottom
+                text:  landmark.name
+                visible: false
             }
         }
     }
@@ -106,6 +115,15 @@ Item {
             proximityFilter.radius = distance / 2
         }
         onCenterChanged: console.log("Center changed")
+    }
+
+    Mobile.TitleBar { id: titleBar; z: 5; width: parent.width - statusBar.width; height: 40; opacity: 0.9 }
+    Mobile.StatusBar { id: statusBar; z: 6; width: 80; height: titleBar.height; opacity: titleBar.opacity; anchors.right: parent.right}
+
+    Repeater {
+        id: landmarkView
+        model: landmarkModel
+        delegate: landmarkDelegate
     }
 
     Common.Slider {
@@ -140,6 +158,4 @@ Item {
             map.center = myPositionSource.position.coordinate
         }
     }
-    Mobile.TitleBar { id: titleBar; z: 5; width: parent.width - statusBar.width; height: 40; opacity: 0.9 }
-    Mobile.StatusBar { id: statusBar; z: 6; width: 80; height: titleBar.height; opacity: titleBar.opacity; anchors.right: parent.right}
 }
