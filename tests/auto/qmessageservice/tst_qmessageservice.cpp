@@ -40,7 +40,6 @@
 ****************************************************************************/
 #include <QObject>
 #include <QTest>
-#include <QDebug>
 
 #include "qmessageservice.h"
 #include "../support/support.h"
@@ -512,13 +511,11 @@ void tst_QMessageService::testQueryCountData()
     QTest::addColumn<QMessageIdList>("negatedIds");
     QTest::addColumn<QString>("body");
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("empty filter")
         << QMessageFilter() 
         << messageIds
         << QMessageIdList()
         << "";
-#endif
 
     QTest::newRow("id equality 1")
         << QMessageFilter::byId(messageIds[0], QMessageDataComparator::Equal) 
@@ -1943,7 +1940,7 @@ void tst_QMessageService::testCountMessages()
 
         SignalCatcher sc(this);
         connect(testService,SIGNAL(messagesCounted(int)),&sc,SLOT(messagesCounted(int)));
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
         connect(testService,SIGNAL(stateChanged(QMessageService::State)),&sc,SLOT(stateChanged(QMessageService::State)));
 #endif
 
@@ -1951,7 +1948,7 @@ void tst_QMessageService::testCountMessages()
 
         if(body.isEmpty()) {
             QCOMPARE(testService->countMessages(filter&~existingAccountsFilter),true);
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
 #else
             while(testService->state() == QMessageService::ActiveState)
@@ -1960,7 +1957,7 @@ void tst_QMessageService::testCountMessages()
             QCOMPARE(sc.count-existingMessageIds.count(), ids.count());
 
             QCOMPARE(testService->countMessages(~filter&~existingAccountsFilter),true);
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
 #else
             while(testService->state() == QMessageService::ActiveState)
