@@ -50,7 +50,7 @@ CameraBinVideoEncoder::CameraBinVideoEncoder(CameraBinSession *session)
 {
     QList<QByteArray> codecCandidates;
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    codecCandidates << "video/h264" << "video/mpeg4" << "video/h263" << "video/theora"
+    codecCandidates << "video/mpeg4" << "video/h264" << "video/h263" << "video/theora"
                     << "video/mpeg2" << "video/mpeg1" << "video/mjpeg" << "video/VP8" << "video/h261";
 
     m_elementNames["video/h264"] = "dsph264enc";
