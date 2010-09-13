@@ -84,9 +84,11 @@ void QGeoSearchReplyNokia::networkFinished()
     if (parser.parse(m_reply)) {
         QList<QGeoPlace> places = parser.results();
         QGeoBoundingArea *bounds = viewport();
-        for (int i=places.size()-1; i>=0; --i) {
-            if(!bounds->contains(places[i].coordinate()))
-                places.removeAt(i);
+        if(bounds) {
+            for (int i=places.size()-1; i>=0; --i) {
+                if(!bounds->contains(places[i].coordinate()))
+                    places.removeAt(i);
+            }
         }
         setPlaces(places);
         setFinished(true);
