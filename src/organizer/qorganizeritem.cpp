@@ -203,16 +203,20 @@ QOrganizerItem& QOrganizerItem::assign(const QOrganizerItem& other, const char* 
  */
 bool QOrganizerItem::isEmpty() const
 {
-    /* Every organizer item has a display label field.. */
-    if (d->m_details.count() > 2)
+    /* Every organizer item has a type.. */
+    if (d->m_details.count() > 1)
         return false;
 
-    /* We know we have two details (a display label and a type) */
-    const QOrganizerItemDisplayLabel& label = detail<QOrganizerItemDisplayLabel>();
-    return label.label().isEmpty();
+    /* if there's a label, is it empty? */
+    //const QOrganizerItemDisplayLabel& label = detail<QOrganizerItemDisplayLabel>();
+    //return label.label().isEmpty();
+    /* if there's a description, is it empty? */
+    //const QOrganizerItemDescription& description = detail<QOrganizerItemDescription>();
+    //return description.description().isEmpty();
 
     // XXX TODO:
     // depending on the type, different details may be mandatory!
+    return true;
 }
 
 /*!
