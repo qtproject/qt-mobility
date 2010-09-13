@@ -92,7 +92,7 @@ public:
     virtual QNdefMessage ndefMessage() const;
     virtual void setNdefMessage(const QNdefMessage &message);
 
-    // AdpuAccess
+    // ApduAccess
     virtual QByteArray sendApduCommand(const QByteArray &command);
     virtual QList<QByteArray> sendApduCommands(const QList<QByteArray> &commands);
 
