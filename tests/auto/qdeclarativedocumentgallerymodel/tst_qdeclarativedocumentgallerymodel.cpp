@@ -393,26 +393,506 @@ void tst_QDeclarativeDocumentGalleryModel::construct_data()
             << 0
             << 0;
 
-    QTest::newRow("Image [] autoUpdate: keywords = holiday")
+    QTest::newRow("Image [] filter: width = 1920")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {\n"
                         "rootType: DocumentGallery.Image\n"
                         "filter: GalleryEqualsFilter {\n"
-                            "property: \"keywords\"\n"
-                            "value: \"holiday\"\n"
+                            "property: \"width\"\n"
+                            "value: 1920\n"
+                            "inverted: false\n"
                         "}\n"
                     "}\n")
             << "Image"
             << QVariant()
             << QGalleryQueryRequest::AllDescendants
-            << QGalleryFilter(QDocumentGallery::keywords == QLatin1String("holiday"))
+            << QGalleryFilter(QDocumentGallery::width == 1920)
             << QStringList()
             << QStringList()
             << false
             << 0
             << 0;
+
+    QTest::newRow("Image [] filter: width != 1920")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "rootType: DocumentGallery.Image\n"
+                        "filter: GalleryEqualsFilter {\n"
+                            "property: \"width\"\n"
+                            "value: 1920\n"
+                            "inverted: true\n"
+                        "}\n"
+                    "}\n")
+            << "Image"
+            << QVariant()
+            << QGalleryQueryRequest::AllDescendants
+            << QGalleryFilter(!(QDocumentGallery::width == 1920))
+            << QStringList()
+            << QStringList()
+            << false
+            << 0
+            << 0;
+
+    QTest::newRow("Image [] filter: width < 1920")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "rootType: DocumentGallery.Image\n"
+                        "filter: GalleryLessThanFilter {\n"
+                            "property: \"width\"\n"
+                            "value: 1920\n"
+                        "}\n"
+                    "}\n")
+            << "Image"
+            << QVariant()
+            << QGalleryQueryRequest::AllDescendants
+            << QGalleryFilter(QDocumentGallery::width < 1920)
+            << QStringList()
+            << QStringList()
+            << false
+            << 0
+            << 0;
+
+    QTest::newRow("Image [] filter: width <= 1920")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "rootType: DocumentGallery.Image\n"
+                        "filter: GalleryLessThanEqualsFilter {\n"
+                            "property: \"width\"\n"
+                            "value: 1920\n"
+                        "}\n"
+                    "}\n")
+            << "Image"
+            << QVariant()
+            << QGalleryQueryRequest::AllDescendants
+            << QGalleryFilter(QDocumentGallery::width <= 1920)
+            << QStringList()
+            << QStringList()
+            << false
+            << 0
+            << 0;
+
+    QTest::newRow("Image [] filter: width > 1920")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "rootType: DocumentGallery.Image\n"
+                        "filter: GalleryGreaterThanFilter {\n"
+                            "property: \"width\"\n"
+                            "value: 1920\n"
+                        "}\n"
+                    "}\n")
+            << "Image"
+            << QVariant()
+            << QGalleryQueryRequest::AllDescendants
+            << QGalleryFilter(QDocumentGallery::width > 1920)
+            << QStringList()
+            << QStringList()
+            << false
+            << 0
+            << 0;
+
+    QTest::newRow("Image [] filter: width >= 1920")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "rootType: DocumentGallery.Image\n"
+                        "filter: GalleryGreaterThanEqualsFilter {\n"
+                            "property: \"width\"\n"
+                            "value: 1920\n"
+                        "}\n"
+                    "}\n")
+            << "Image"
+            << QVariant()
+            << QGalleryQueryRequest::AllDescendants
+            << QGalleryFilter(QDocumentGallery::width >= 1920)
+            << QStringList()
+            << QStringList()
+            << false
+            << 0
+            << 0;
+
+    QTest::newRow("File [] filter: fileName.startsWith(p)")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "rootType: DocumentGallery.File\n"
+                        "filter: GalleryStartsWithFilter {\n"
+                            "property: \"fileName\"\n"
+                            "value: \"p\"\n"
+                            "inverted: false\n"
+                        "}\n"
+                    "}\n")
+            << "File"
+            << QVariant()
+            << QGalleryQueryRequest::AllDescendants
+            << QGalleryFilter(QGalleryMetaDataFilter(
+                    QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith))
+            << QStringList()
+            << QStringList()
+            << false
+            << 0
+            << 0;
+
+    QTest::newRow("File [] filter: !fileName.startsWith(p)")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "rootType: DocumentGallery.File\n"
+                        "filter: GalleryStartsWithFilter {\n"
+                            "property: \"fileName\"\n"
+                            "value: \"p\"\n"
+                            "inverted: true\n"
+                        "}\n"
+                    "}\n")
+            << "File"
+            << QVariant()
+            << QGalleryQueryRequest::AllDescendants
+            << QGalleryFilter(!QGalleryMetaDataFilter(
+                    QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith))
+            << QStringList()
+            << QStringList()
+            << false
+            << 0
+            << 0;
+    QTest::newRow("File [] filter: fileName.endsWith(.jpg)")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "rootType: DocumentGallery.File\n"
+                        "filter: GalleryEndsWithFilter {\n"
+                            "property: \"fileName\"\n"
+                            "value: \".jpg\"\n"
+                        "}\n"
+                    "}\n")
+            << "File"
+            << QVariant()
+            << QGalleryQueryRequest::AllDescendants
+            << QGalleryFilter(QGalleryMetaDataFilter(
+                    QDocumentGallery::fileName, QLatin1String(".jpg"), QGalleryFilter::EndsWith))
+            << QStringList()
+            << QStringList()
+            << false
+            << 0
+            << 0;
+
+    QTest::newRow("File [] filter: fileName.contains(p)")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "rootType: DocumentGallery.File\n"
+                        "filter: GalleryContainsFilter {\n"
+                            "property: \"fileName\"\n"
+                            "value: \"p\"\n"
+                        "}\n"
+                    "}\n")
+            << "File"
+            << QVariant()
+            << QGalleryQueryRequest::AllDescendants
+            << QGalleryFilter(QGalleryMetaDataFilter(
+                    QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::Contains))
+            << QStringList()
+            << QStringList()
+            << false
+            << 0
+            << 0;
+
+    QTest::newRow("File [] filter: fileName.wildcard(p*.jpg)")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "rootType: DocumentGallery.File\n"
+                        "filter: GalleryWildcardFilter {\n"
+                            "property: \"fileName\"\n"
+                            "value: \"p*.jpg\"\n"
+                        "}\n"
+                    "}\n")
+            << "File"
+            << QVariant()
+            << QGalleryQueryRequest::AllDescendants
+            << QGalleryFilter(QGalleryMetaDataFilter(
+                    QDocumentGallery::fileName, QLatin1String("p*.jpg"), QGalleryFilter::Wildcard))
+            << QStringList()
+            << QStringList()
+            << false
+            << 0
+            << 0;
+
+    QTest::newRow("File [] filter: fileName.regExp(p\\d{6}\\.(jpg|jpeg))")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "rootType: DocumentGallery.File\n"
+                        "filter: GalleryEqualsFilter {\n"
+                            "property: \"fileName\"\n"
+                            "value: /p\\d{6}\\.(jpg|jpeg)/\n"
+                        "}\n"
+                    "}\n")
+            << "File"
+            << QVariant()
+            << QGalleryQueryRequest::AllDescendants
+            << QGalleryFilter(QGalleryMetaDataFilter(
+                    QDocumentGallery::fileName,
+                    QRegExp(QLatin1String("p\\d{6}\\.(jpg|jpeg)"), Qt::CaseSensitive, QRegExp::RegExp2),
+                    QGalleryFilter::RegExp))
+            << QStringList()
+            << QStringList()
+            << false
+            << 0
+            << 0;
+
+    {
+        QGalleryIntersectionFilter filter;
+        filter.append(QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith));
+        filter.append(QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String(".jpg"), QGalleryFilter::EndsWith));
+
+        QTest::newRow("File [] filter: fileName.startsWith(p) && fileName.endsWith(.jpg")
+                << QByteArray(
+                        "import Qt 4.7\n"
+                        "import QtMobility.gallery 1.1\n"
+                        "DocumentGalleryModel {\n"
+                            "rootType: DocumentGallery.File\n"
+                            "filter: GalleryFilterIntersection {\n"
+                                "GalleryStartsWithFilter {\n"
+                                    "property: \"fileName\"\n"
+                                    "value: \"p\"\n"
+                                "}\n"
+                                "GalleryEndsWithFilter {\n"
+                                    "property: \"fileName\"\n"
+                                    "value: \".jpg\"\n"
+                                "}\n"
+                            "}\n"
+                        "}\n")
+                << "File"
+                << QVariant()
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QStringList()
+                << QStringList()
+                << false
+                << 0
+                << 0;
+    } {
+        QGalleryUnionFilter filter;
+        filter.append(QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String(".jpg"), QGalleryFilter::EndsWith));
+        filter.append(QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String(".jpeg"), QGalleryFilter::EndsWith));
+
+        QTest::newRow("File [] filter: fileName.endsWith(.jpg) || fileName.endsWith(.jpeg")
+                << QByteArray(
+                        "import Qt 4.7\n"
+                        "import QtMobility.gallery 1.1\n"
+                        "DocumentGalleryModel {\n"
+                            "rootType: DocumentGallery.File\n"
+                            "filter: GalleryFilterUnion {\n"
+                                "GalleryEndsWithFilter {\n"
+                                    "property: \"fileName\"\n"
+                                    "value: \".jpg\"\n"
+                                "}\n"
+                                "GalleryEndsWithFilter {\n"
+                                    "property: \"fileName\"\n"
+                                    "value: \".jpeg\"\n"
+                                "}\n"
+                            "}\n"
+                        "}\n")
+                << "File"
+                << QVariant()
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QStringList()
+                << QStringList()
+                << false
+                << 0
+                << 0;
+    } {
+        QGalleryUnionFilter unionFilter;
+        unionFilter.append(QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String(".jpg"), QGalleryFilter::EndsWith));
+        unionFilter.append(QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String(".jpeg"), QGalleryFilter::EndsWith));
+
+        QGalleryIntersectionFilter filter;
+        filter.append(QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith));
+        filter.append(unionFilter);
+
+        QTest::newRow("File [] filter: fileName.startsWith(p) && (fileName.endsWith(.jpg) || fileName.endsWith(.jpeg)")
+                << QByteArray(
+                        "import Qt 4.7\n"
+                        "import QtMobility.gallery 1.1\n"
+                        "DocumentGalleryModel {\n"
+                            "rootType: DocumentGallery.File\n"
+                            "filter: GalleryFilterIntersection {\n"
+                                "GalleryStartsWithFilter {\n"
+                                    "property: \"fileName\"\n"
+                                    "value: \"p\"\n"
+                                "}\n"
+                                "GalleryFilterUnion {\n"
+                                    "GalleryEndsWithFilter {\n"
+                                        "property: \"fileName\"\n"
+                                        "value: \".jpg\"\n"
+                                    "}\n"
+                                    "GalleryEndsWithFilter {\n"
+                                        "property: \"fileName\"\n"
+                                        "value: \".jpeg\"\n"
+                                    "}\n"
+                                "}\n"
+                            "}\n"
+                        "}\n")
+                << "File"
+                << QVariant()
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QStringList()
+                << QStringList()
+                << false
+                << 0
+                << 0;
+    } {
+        QGalleryUnionFilter filter;
+        {
+            QGalleryIntersectionFilter intersectionFilter;
+            intersectionFilter.append(QGalleryMetaDataFilter(
+                    QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith));
+            intersectionFilter.append(QGalleryMetaDataFilter(
+                    QDocumentGallery::fileName, QLatin1String(".jpg"), QGalleryFilter::EndsWith));
+            filter.append(intersectionFilter);
+        } {
+            QGalleryIntersectionFilter intersectionFilter;
+            intersectionFilter.append(QGalleryMetaDataFilter(
+                    QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith));
+            intersectionFilter.append(QGalleryMetaDataFilter(
+                    QDocumentGallery::fileName, QLatin1String(".jpeg"), QGalleryFilter::EndsWith));
+            filter.append(intersectionFilter);
+        }
+
+        QTest::newRow("File [] filter: (fileName.startsWith(p) && fileName.endsWith(.jpg) || (fileName.startsWith(p) && fileName.endsWith(.jpeg)")
+                << QByteArray(
+                        "import Qt 4.7\n"
+                        "import QtMobility.gallery 1.1\n"
+                        "DocumentGalleryModel {\n"
+                            "rootType: DocumentGallery.File\n"
+                            "filter: GalleryFilterUnion {\n"
+                                "GalleryFilterIntersection {\n"
+                                    "GalleryStartsWithFilter {\n"
+                                        "property: \"fileName\"\n"
+                                        "value: \"p\"\n"
+                                    "}\n"
+                                    "GalleryEndsWithFilter {\n"
+                                        "property: \"fileName\"\n"
+                                        "value: \".jpg\"\n"
+                                    "}\n"
+                                "}\n"
+                                "GalleryFilterIntersection {\n"
+                                    "GalleryStartsWithFilter {\n"
+                                        "property: \"fileName\"\n"
+                                        "value: \"p\"\n"
+                                    "}\n"
+                                    "GalleryEndsWithFilter {\n"
+                                        "property: \"fileName\"\n"
+                                        "value: \".jpeg\"\n"
+                                    "}\n"
+                                "}\n"
+                            "}\n"
+                        "}\n")
+                << "File"
+                << QVariant()
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QStringList()
+                << QStringList()
+                << false
+                << 0
+                << 0;
+    }    {
+    QGalleryIntersectionFilter filter;
+    filter.append(QGalleryMetaDataFilter(
+            QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith));
+    filter.append(QGalleryMetaDataFilter(
+            QDocumentGallery::fileName, QLatin1String(".jpg"), QGalleryFilter::EndsWith));
+
+    QTest::newRow("File [] filter: fileName.startsWith(p) && (fileName.endsWith(.jpg)")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "rootType: DocumentGallery.File\n"
+                        "filter: GalleryFilterIntersection {\n"
+                            "GalleryStartsWithFilter {\n"
+                                "property: \"fileName\"\n"
+                                "value: \"p\"\n"
+                            "}\n"
+                            "GalleryFilterIntersection {\n"
+                                "GalleryEndsWithFilter {\n"
+                                    "property: \"fileName\"\n"
+                                    "value: \".jpg\"\n"
+                                "}\n"
+                            "}\n"
+                        "}\n"
+                    "}\n")
+            << "File"
+            << QVariant()
+            << QGalleryQueryRequest::AllDescendants
+            << QGalleryFilter(filter)
+            << QStringList()
+            << QStringList()
+            << false
+            << 0
+            << 0;
+    } {
+        QGalleryUnionFilter filter;
+        filter.append(QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String(".jpg"), QGalleryFilter::EndsWith));
+        filter.append(QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String(".jpeg"), QGalleryFilter::EndsWith));
+
+        QTest::newRow("File [] filter: fileName.endsWith(.jpg) || (fileName.endsWith(.jpeg)")
+                << QByteArray(
+                        "import Qt 4.7\n"
+                        "import QtMobility.gallery 1.1\n"
+                        "DocumentGalleryModel {\n"
+                            "rootType: DocumentGallery.File\n"
+                            "filter: GalleryFilterUnion {\n"
+                                "GalleryEndsWithFilter {\n"
+                                    "property: \"fileName\"\n"
+                                    "value: \".jpg\"\n"
+                                "}\n"
+                                "GalleryFilterUnion {\n"
+                                    "GalleryEndsWithFilter {\n"
+                                        "property: \"fileName\"\n"
+                                        "value: \".jpeg\"\n"
+                                    "}\n"
+                                "}\n"
+                            "}\n"
+                        "}\n")
+                << "File"
+                << QVariant()
+                << QGalleryQueryRequest::AllDescendants
+                << QGalleryFilter(filter)
+                << QStringList()
+                << QStringList()
+                << false
+                << 0
+                << 0;
+    }
 }
 
 void tst_QDeclarativeDocumentGalleryModel::construct()
