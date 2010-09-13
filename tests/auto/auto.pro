@@ -116,6 +116,7 @@ contains(mobility_modules,organizer) {
         qorganizeritem \
         qorganizeritemdetail \
         qorganizeritemdetaildefinition \
+        qorganizeritemfilter \
         qorganizeritemmanager
 }
 
