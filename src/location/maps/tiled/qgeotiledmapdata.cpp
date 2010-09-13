@@ -857,6 +857,10 @@ void QGeoTiledMapDataPrivate::paintMap(QPainter *painter, const QStyleOptionGrap
 
 void QGeoTiledMapDataPrivate::paintMapObjects(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+    QPainter::RenderHints hints = painter->renderHints();
+    painter->setRenderHint(QPainter::Antialiasing, true);
+#endif
     updateScreenRect();
 
     qreal targetX = ((viewportSize.width() * zoomFactor) - maxZoomScreenRect.width()) / 2.0;
@@ -878,6 +882,9 @@ void QGeoTiledMapDataPrivate::paintMapObjects(QPainter *painter, const QStyleOpt
                       QRectF(targetX, targetY, targetW, targetH),
                       maxZoomScreenRect,
                       Qt::IgnoreAspectRatio);
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+        painter->setRenderHints(hints);
+#endif
         return;
     }
 
@@ -905,6 +912,9 @@ void QGeoTiledMapDataPrivate::paintMapObjects(QPainter *painter, const QStyleOpt
                   QRectF(targetX + targetW - eastsideWidth, targetY, eastsideWidth, targetH),
                   eastside,
                   Qt::IgnoreAspectRatio);
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+    painter->setRenderHints(hints);
+#endif
     // TODO: call this recursively to draw more than 2 sets of objects
 }
 

@@ -170,7 +170,7 @@ void MapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             if (entries_considered > 0) kineticPanSpeed /= entries_considered;
             lastMoveTime = currentTime;
 
-            // When releasing the mouse button/finger while moving, start the kinetic panning timer (which also takes care of calling stopPanning).
+            // When releasing the mouse button/finger while moving, start the kinetic panning timer
             kineticTimer->start();
             panDecellerate = true;
         }
@@ -193,7 +193,7 @@ void MapWidget::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
         // Calculate position delta
         QPointF delta = event->lastPos() - event->pos();
 
-        // Calculate and set speed (TODO: average over 3 events)
+        // Calculate and set speed
         if (deltaTime > 0) {
             kineticPanSpeed = delta / deltaTime;
 
