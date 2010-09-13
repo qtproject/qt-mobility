@@ -2655,7 +2655,6 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
         // 7) transfer any errors from saving to errorMap
 
         QList<QContactLocalId> existingContactIds;
-        QSet<QString> mask = definitionMask.toSet();
 
         // Error conditions:
         // 1) bad id passed in (can't fetch)
@@ -2664,8 +2663,6 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
         // all of which needs to be returned in the error map
 
         QHash<int, int> existingIdMap; // contacts index to existingContacts index
-        QSet<int> badArgumentSet; // contacts indices that are bad
-        bool ok = true;
 
         // Try to figure out which of our arguments are new contacts
         for(int i = 0; i < contacts->count(); i++) {
@@ -2680,21 +2677,19 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
                 }
             } else if (!c.id().managerUri().isEmpty() || c.localId() != 0) {
                 // Hmm, error (wrong manager)
-                badArgumentSet.insert(i);
-                ok = false;
                 errorMap->insert(i, QContactManager::DoesNotExistError);
             } // else new contact
         }
 
-        // Now fetch those contacts
+        // Now fetch the existing contacts
         QMap<int, QContactManager::Error> fetchErrors;
         QContactManager::Error fetchError = QContactManager::NoError;
         QList<QContact> existingContacts = this->contacts(existingContactIds, &fetchErrors, QContactFetchHint() , &fetchError);
-        ok &= (fetchError == QContactManager::NoError);
 
         // Prepare the list to save
         QList<QContact> contactsToSave;
         QList<int> savedToOriginalMap; // contactsToSave index to contacts index
+        QSet<QString> mask = definitionMask.toSet();
 
         for (int i = 0; i < contacts->count(); i++) {
             // See if this is an existing contact or a new one
@@ -2712,7 +2707,7 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
 
                 QSharedDataPointer<QContactData>& cd = QContactData::contactData(contactToSave);
                 cd->removeOnly(mask);
-            } else if (badArgumentSet.contains(i)) {
+            } else if (errorMap->contains(i)) {
                 // A bad argument.  Leave it out of the contactsToSave list
                 continue;
             } // else new contact
@@ -2736,7 +2731,7 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
         // Now save them
         QMap<int, QContactManager::Error> saveErrors;
         QContactManager::Error saveError = QContactManager::NoError;
-        ok &= saveContacts(&contactsToSave, &saveErrors, &saveError);
+        saveContacts(&contactsToSave, &saveErrors, &saveError);
 
         // Now update the passed in arguments, where necessary
 
@@ -2751,7 +2746,7 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
             it++;
         }
 
-        return ok;
+        return !errorMap->isEmpty();
     }
 }
 
@@ -2782,7 +2777,7 @@ QList<QContact> QContactManagerEngineV2::contacts(const QList<QContactLocalId> &
 
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
  */
-void QContactManagerEngineV2::updateContactFetchByIdRequest(QContactFetchByIdRequest* req, const QList<QContact>& result, const QMap<int, QContactManager::Error>& errorMap, QContactManager::Error error, QContactAbstractRequest::State newState)
+void QContactManagerEngineV2::updateContactFetchByIdRequest(QContactFetchByIdRequest* req, const QList<QContact>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State newState)
 {
     if (req) {
         QWeakPointer<QContactFetchByIdRequest> ireq(req); // Take this in case the first emit deletes us

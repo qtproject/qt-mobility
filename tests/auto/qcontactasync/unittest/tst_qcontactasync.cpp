@@ -197,6 +197,8 @@ private slots:
     void contactRemove_data() { addManagers(); }
     void contactSave();
     void contactSave_data() { addManagers(); }
+    void contactPartialSave();
+    void contactPartialSave_data() { addManagers(); }
 
     void definitionFetch();
     void definitionFetch_data() { addManagers(); }
@@ -1139,6 +1141,51 @@ void tst_QContactAsync::contactSave()
         QCOMPARE(cm->contactIds().size(), originalCount + 1);
         break;
     }
+}
+
+void tst_QContactAsync::contactPartialSave()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QContactManager> cm(prepareModel(uri));
+
+    QList<QContact> contacts(cm->contacts());
+    QList<QContact> originalContacts(contacts);
+    QCOMPARE(contacts.count(), 3);
+
+    QContactLocalId aId = contacts[0].localId();
+    QContactLocalId bId = contacts[1].localId();
+    QContactLocalId cId = contacts[2].localId();
+
+    // Test 1: saving a contact with a changed detail masked out does nothing
+    QContactPhoneNumber phn(contacts[0].detail<QContactPhoneNumber>());
+    phn.setNumber("new number");
+    contacts[0].saveDetail(&phn);
+
+    QContactSaveRequest csr;
+    csr.setContacts(contacts);
+    csr.setDefinitionMask(QStringList(QContactEmailAddress::DefinitionName));
+    csr.setManager(cm.data());
+    qRegisterMetaType<QContactSaveRequest*>("QContactSaveRequest*");
+    QThreadSignalSpy spy(&csr, SIGNAL(stateChanged(QContactAbstractRequest::State)));
+    QVERIFY(csr.start());
+    QVERIFY((csr.isActive() && csr.state() == QContactAbstractRequest::ActiveState) || csr.isFinished());
+    QVERIFY(csr.waitForFinished());
+    QVERIFY(csr.isFinished());
+    QVERIFY(spy.count() >= 1); // active + finished progress signals
+    spy.clear();
+
+    QCOMPARE(csr.error(), QContactManager::NoError);
+    QVERIFY(csr.errorMap().isEmpty());
+    QCOMPARE(cm->contact(aId).detail<QContactPhoneNumber>().number(),
+            originalContacts[0].detail<QContactPhoneNumber>().number());
+
+    // Test 2: saving a contact with a changed detail in the mask changes it
+    csr.setDefinitionMask(QStringList(QContactPhoneNumber::DefinitionName));
+    QVERIFY(csr.start());
+    QVERIFY(csr.waitForFinished());
+    QCOMPARE(csr.error(), QContactManager::NoError);
+    QVERIFY(csr.errorMap().isEmpty());
+    QCOMPARE(cm->contact(aId).detail<QContactPhoneNumber>().number(), QString("new number"));
 }
 
 void tst_QContactAsync::definitionFetch()

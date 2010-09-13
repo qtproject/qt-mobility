@@ -135,16 +135,18 @@ Q_SIGNALS:
 
 public:
     RequestController()
-        : QObject(0), m_request(0), m_currentSubRequest(0) {}
+        : QObject(0), m_request(0), m_currentSubRequest(0), m_finished(false) {}
 
     void setRequest(QContactAbstractRequest* request) { m_request = request; }
     QContactAbstractRequest* request() { return m_request; }
 
     virtual bool start() = 0;
-    virtual bool waitForFinished(int msecs) = 0;
+    bool waitForFinished(int msecs);
 
 protected:
     virtual void handleFinishedSubRequest(QContactAbstractRequest* req) = 0;
+    void finish() { m_finished = true; }
+    bool isFinished() { return m_finished; }
 
 private:
     void handleUpdatedSubRequest(
@@ -153,22 +155,47 @@ private:
 protected:
     QPointer<QContactAbstractRequest> m_request;
     QScopedPointer<QContactAbstractRequest> m_currentSubRequest;
+
+private:
+    bool m_finished;
 };
 
 
 class FetchByIdRequestController : public RequestController
 {
+    Q_OBJECT
 public:
     FetchByIdRequestController(QContactManagerEngine* engine)
-        : RequestController(), m_engine(engine), m_finished(false) {}
+        : RequestController(), m_engine(engine) {}
     bool start();
-    bool waitForFinished(int msecs);
 
 protected:
     void handleFinishedSubRequest(QContactAbstractRequest* req);
 
     QContactManagerEngine* m_engine;
+};
+
+
+class PartialSaveRequestController : public RequestController
+{
+    Q_OBJECT
+public:
+    PartialSaveRequestController(QContactManagerEngine* engine, QContactManagerEngineV2* v2wrapper)
+        : RequestController(), m_engine(engine), m_v2wrapper(v2wrapper) {}
+    bool start();
+
+protected:
+    void handleFinishedSubRequest(QContactAbstractRequest* req);
+
+private:
+    QContactSaveRequest* request() { return static_cast<QContactSaveRequest*>(m_request.data()); }
+
+    QContactManagerEngine* m_engine;
+    QContactManagerEngineV2* m_v2wrapper;
     bool m_finished;
+    QHash<int, int> m_existingIdMap; // contacts index to existingContacts index
+    QList<int> m_savedToOriginalMap; // contactsToSave index to contacts index
+    QMap<int, QContactManager::Error> m_errorMap;
 };
 
 QTM_END_NAMESPACE
