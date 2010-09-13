@@ -153,6 +153,8 @@ private slots:  // Test cases
 	void addReminderToSingleInstance_data(){ addManagers(); };
 	void removeReminderFromSingleInstance();
 	void removeReminderFromSingleInstance_data(){ addManagers(); };
+	void timezone();
+	void timezone_data() { addManagers(); };
 
 private:
     // TODO: enable the following test cases by moving them to "private slots"
@@ -181,6 +183,7 @@ private: // util functions
 
 private:
     QOrganizerItemManager *m_om;
+    TTimeIntervalSeconds m_UTCOffset;
 };
 
 
@@ -191,6 +194,9 @@ void tst_SymbianOm::init()
 
     // Remove all organizer items first (Note: ignores possible errors)
     m_om->removeItems(m_om->itemIds(), 0);
+	
+    // Save UTC offset
+    m_UTCOffset = User::UTCOffset();
 }
 
 void tst_SymbianOm::cleanup()
@@ -199,6 +205,9 @@ void tst_SymbianOm::cleanup()
     m_om->removeItems(m_om->itemIds(), 0);
     delete m_om;
     m_om = 0;
+	
+    // Restore UTC offset
+    User::SetUTCOffset(m_UTCOffset);
 }
 
 void tst_SymbianOm::addSimpleItem()
@@ -768,6 +777,34 @@ void tst_SymbianOm::removeReminderFromSingleInstance()
 	instance1 = itemInstances.at(1);
     rptReminder = instance1.detail<QOrganizerItemReminder>();
     QVERIFY(!rptReminder.isEmpty());
+}
+
+void tst_SymbianOm::timezone()
+{
+    // Set local time to UTC+2
+    User::SetUTCOffset(2*60*60);
+    
+    // Save a simple event 
+    QOrganizerEvent event;
+    event.setDisplayLabel("test timezone");
+    QDateTime startDateTime(QDate(2010, 1, 1));
+    QDateTime endDateTime = startDateTime.addSecs(60*60);
+    event.setStartDateTime(startDateTime);
+    event.setEndDateTime(endDateTime);
+    QVERIFY(m_om->saveItem(&event));
+    
+    // Fetch & verify
+    event = m_om->item(event.localId());
+    QVERIFY(event.startDateTime() == startDateTime);
+    QVERIFY(event.endDateTime() == endDateTime);
+       
+    // Set local time to UTC+3
+    User::SetUTCOffset(3*60*60);
+    
+    // Fetch & verify
+    event = m_om->item(event.localId());
+    QVERIFY(event.startDateTime() == startDateTime);
+    QVERIFY(event.endDateTime() == endDateTime);
 }
 
 /*!

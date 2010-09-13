@@ -47,7 +47,7 @@
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QGalleryProperty::Attributes);
+Q_DECLARE_METATYPE(QGalleryProperty::Attributes)
 
 class tst_QDocumentGallery : public QObject
 {
