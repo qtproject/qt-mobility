@@ -153,7 +153,8 @@ QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
     
     // Create entry view (creation is synchronized with CActiveSchedulerWait)
 #ifdef SYMBIAN_CALENDAR_V2
-    for(int i(0); i < m_calSessions.Count(); i++) {
+    int count(sessionCount());
+    for(int i(0); i < count; i++) {
         CCalSession *session = m_calSessions[i];
         m_entryViews.insert(session->CollectionIdL(), CCalEntryView::NewL(*session, *this));
         m_activeSchedulerWait->Start();
@@ -952,9 +953,16 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemSymbianEngine::collectionIds(QO
 QList<QOrganizerCollectionLocalId> QOrganizerItemSymbianEngine::collectionIdsL() const
 {
     QList<QOrganizerCollectionLocalId> ids;
-    for (int i(0); i < m_calSessions.Count(); i++)
+    int count(sessionCount());
+    for (int i(0); i < count; i++)
         ids.append(m_calSessions[i]->CollectionIdL());
     return ids;
+}
+
+// Returns number of sessions currently open
+int QOrganizerItemSymbianEngine::sessionCount() const
+{
+    return m_calSessions.Count();
 }
 
 QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
@@ -969,8 +977,9 @@ QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collectionsL(const QLis
     {
     QList<QOrganizerCollection> collections;
 
+    int count(sessionCount());
     // Loop through open collections/sessions
-    for (int i=0;  i < m_calSessions.Count(); i++) {
+    for (int i=0;  i < count; i++) {
         // Create a new collection to hold the data
         QOrganizerCollection collection;
         bool found(collectionL(i, collectionIds, collection));
@@ -1051,7 +1060,7 @@ void QOrganizerItemSymbianEngine::saveCollectionL(QOrganizerCollection* collecti
             
     // Find existing collection/session
     CCalSession *session = 0;
-    int count = m_calSessions.Count();
+    int count = sessionCount();
     for (int i=0; i<count; i++) {
         if (m_calSessions[i]->CollectionIdL() == collection->id().localId()) {
             session = m_calSessions[i];
@@ -1132,7 +1141,7 @@ void QOrganizerItemSymbianEngine::removeCollectionL(const QOrganizerCollectionLo
         User::Leave(KErrAccessDenied);
     
     // Find collection
-    int count = m_calSessions.Count();
+    int count = sessionCount();
     for (int i=0; i<count; i++) {
         if (m_calSessions[i]->CollectionIdL() == collectionId) {
             
@@ -1423,8 +1432,8 @@ void QOrganizerItemSymbianEngine::CalendarInfoChangeNotificationL(RPointerArray<
         
         // Try to find matching session
         CCalSession *session = 0;
-        int sessionCount = m_calSessions.Count();
-        for (int j=0; j<sessionCount; j++){
+        int count = sessionCount();
+        for (int j=0; j<count; j++){
             CCalCalendarInfo *calInfo = m_calSessions[j]->CalendarInfoL();
             CleanupStack::PushL(calInfo);
             if (calInfo->FileNameL() == fileName) {
