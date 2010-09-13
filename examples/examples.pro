@@ -49,11 +49,9 @@ contains(mobility_modules,location) {
 
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo
-        
-        contains(QT_CONFIG, declarative) {
-            sources.files += declarative-location
-            sources.files += declarative_mapviewer
-        }
+      }  
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += declarative-location
     }
 }
 

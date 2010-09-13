@@ -120,5 +120,12 @@
     \list
     \o \l{sysinfo}{System Information}
     \endlist
+
+    \section2 Sensors
+
+    \list
+    \o \l{sensors/grueplugin}{Grue Plugin}
+    \o \l{sensors/grueapp}{Grue Application}
+    \endlist
 */
 

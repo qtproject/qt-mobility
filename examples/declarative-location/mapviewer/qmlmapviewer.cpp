@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the demonstration applications of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,48 +39,25 @@
 **
 ****************************************************************************/
 
-#ifndef QSENSORPLUGINLOADER_H
-#define QSENSORPLUGINLOADER_H
+#include <QtGui/QApplication>
+#include <QtDeclarative/QDeclarativeView>
+#include <QtDeclarative/QDeclarativeEngine>
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <qmobilityglobal.h>
-#include <QtCore/QObject>
-#include <QtCore/qstring.h>
-#include <QtCore/qlist.h>
-#include <QtCore/qpluginloader.h>
-
-QTM_BEGIN_NAMESPACE
-
-class QSensorPluginInterface;
-
-class QM_AUTOTEST_EXPORT QSensorPluginLoader
+int main(int argc, char *argv[])
 {
-public:
-    QSensorPluginLoader(const char *iid, const QString &suffix = QString());
-    ~QSensorPluginLoader();
-
-    QList<QSensorPluginInterface*> plugins() const { return m_plugins; }
-
-private:
-    void load();
-
-    QByteArray  m_iid;
-    QString     m_location;
-    QList<QSensorPluginInterface*> m_plugins;
-    QList<QPluginLoader *> m_loaders;
-};
-
-QTM_END_NAMESPACE
-
-#endif
-
+    QApplication application(argc, argv);
+    const QString mainQmlApp = QLatin1String("mapviewer.qml");
+    QDeclarativeView view;
+    view.setSource(QUrl(mainQmlApp));
+    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    // Qt.quit() called in embedded .qml by default only emits
+    // quit() signal, so do this (optionally use Qt.exit()).
+    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
+#if defined(Q_OS_SYMBIAN)
+    view.showFullScreen();
+#else // Q_OS_SYMBIAN
+    view.setGeometry(QRect(100, 100, 360, 640));
+    view.show();
+#endif // Q_OS_SYMBIAN
+    return application.exec();
+}
