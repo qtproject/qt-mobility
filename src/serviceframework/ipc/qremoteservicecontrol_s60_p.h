@@ -206,8 +206,7 @@ public:
 
     void closingLastInstance();
 
-private:
-    QRemoteServiceControl::securityFilter m_filter;
+private:    
     CServiceProviderServer *m_server;
 };
 

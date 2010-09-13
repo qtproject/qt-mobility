@@ -74,7 +74,15 @@ void QRemoteServiceControlPrivate::setQuitOnLastInstanceClosed(bool quit)
 
 QRemoteServiceControl::securityFilter QRemoteServiceControlPrivate::setSecurityFilter(QRemoteServiceControl::securityFilter filter)
 {
-  return NULL; // Not supported
+    QRemoteServiceControl::securityFilter f;
+    f = filter;
+    iFilter = filter;
+    return f;
+}
+
+QRemoteServiceControl::securityFilter QRemoteServiceControlPrivate::getSecurityFilter()
+{
+    return iFilter;
 }
 
 

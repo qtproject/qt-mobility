@@ -16,18 +16,8 @@ MOBILITY = serviceframework
 
 RESOURCES += sfwnotes.qrc
 
-win32 {
+!symbian {      
     FORMS += sfwnotes.ui
-}
-
-unix: {
-    linux-*: {
-        FORMS += sfwnotes.ui
-    }
-
-    mac: {
-        FORMS += sfwnotes.ui
-    }
 }
 
 mac:CONFIG -= app_bundle

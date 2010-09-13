@@ -76,5 +76,12 @@ private:
     QRemoteServiceControlPrivate* d;
 };
 
+struct QRemoteServiceControlLocalSocketCred {
+    int fd;
+    int pid;
+    int uid;
+    int gid;
+};
+
 QTM_END_NAMESPACE
 #endif //QREMOTESERVICECONTROL_H

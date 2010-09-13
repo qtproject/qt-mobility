@@ -176,7 +176,7 @@ private:
 
 
 QRemoteServiceControlSymbianPrivate::QRemoteServiceControlSymbianPrivate(QObject *parent)
-    : QRemoteServiceControlPrivate(parent), m_filter(0), m_server(0)
+    : QRemoteServiceControlPrivate(parent), m_server(0)
 {
 }
 
@@ -195,8 +195,8 @@ void QRemoteServiceControlSymbianPrivate::publishServices(const QString &ident)
     m_server = new CServiceProviderServer(this);
     TPtrC serviceIdent(reinterpret_cast<const TUint16*>(ident.utf16()));
 
-    if(m_filter)
-      m_server->setSecurityFilter(m_filter);
+    if(getSecurityFilter())
+      m_server->setSecurityFilter(getSecurityFilter());
 
     TInt err = m_server->Start(serviceIdent);
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG    
@@ -224,15 +224,10 @@ void QRemoteServiceControlSymbianPrivate::processIncoming(CServiceProviderServer
 
 QRemoteServiceControl::securityFilter QRemoteServiceControlSymbianPrivate::setSecurityFilter(QRemoteServiceControl::securityFilter filter)
 {
-  QRemoteServiceControl::securityFilter f;
-
-  f = m_filter;
-  m_filter = filter;
-
   if(m_server)
-    m_server->setSecurityFilter(m_filter);
+    m_server->setSecurityFilter(filter);
 
-  return f;
+  return QRemoteServiceControlPrivate::setSecurityFilter(filter);
 }
 
 
