@@ -82,7 +82,6 @@ HEADERS += 	inc/qlandmarkmanagerenginefactory_symbian.h \
 			inc/qlandmarkmanagerengine_symbian_p.h \
 			inc/qlandmarkutility.h \
 			inc/qlandmarkdbeventhandler.h \
-			inc/qlandmarkdbeventobserver.h \
 			inc/qlandmarkrequesthandler.h 
 
 SOURCES += 	src/qlandmarkmanagerenginefactory_symbian.cpp \
@@ -90,7 +89,6 @@ SOURCES += 	src/qlandmarkmanagerenginefactory_symbian.cpp \
 			src/qlandmarkmanagerengine_symbian_p.cpp \
 			src/qlandmarkutility.cpp \
 			src/qlandmarkdbeventhandler.cpp \
-			src/qlandmarkdbeventobserver.cpp \
 			src/qlandmarkrequesthandler.cpp
 			
 target.path=$$QT_MOBILITY_PREFIX/plugins/landmarks

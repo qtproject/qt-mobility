@@ -54,149 +54,361 @@ class tst_QGalleryAbstractResponse : public QObject
 private Q_SLOTS:
     void finish();
     void cancel();
-    void idle();
-    void immediateResponse();
+    void cancelIdle();
+    void finishIdle();
+    void errorActive();
+    void errorIdle();
+    void errorFinished();
+    void errorCancelled();
+    void immediateError();
 };
 
 class QtGalleryTestResponse : public QGalleryAbstractResponse
 {
 public:
-    void doFinish(int result, bool idle) { finish(result, idle); }
+    using QGalleryAbstractResponse::error;
+    using QGalleryAbstractResponse::finish;
+    using QGalleryAbstractResponse::resume;
 };
 
 void tst_QGalleryAbstractResponse::finish()
 {
     QtGalleryTestResponse response;
 
-    QSignalSpy spy(&response, SIGNAL(finished()));
+    QSignalSpy finishedSpy(&response, SIGNAL(finished()));
+    QSignalSpy cancelledSpy(&response, SIGNAL(cancelled()));
+    QSignalSpy resumedSpy(&response, SIGNAL(resumed()));
 
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(response.isActive(), true);
     QCOMPARE(response.isIdle(), false);
-
-    // Calling finish with no result does nothing.
-    response.doFinish(QGalleryAbstractRequest::NoResult, false);
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(response.isIdle(), false);
-    QCOMPARE(spy.count(), 0);
-
-    response.doFinish(QGalleryAbstractRequest::NoResult, true);
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(response.isIdle(), false);
-    QCOMPARE(spy.count(), 0);
 
     // The first call to finish with a valid result emits finished.
-    response.doFinish(QGalleryAbstractRequest::Succeeded, false);
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::Succeeded));
+    response.finish(false);
+    QCOMPARE(response.isActive(), false);
     QCOMPARE(response.isIdle(), false);
-    QCOMPARE(spy.count(), 1);
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 0);
 
     // Subsequent calls to finish do nothing.
-    response.doFinish(QGalleryAbstractRequest::Succeeded, true);
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::Succeeded));
+    response.finish(false);
+    QCOMPARE(response.isActive(), false);
     QCOMPARE(response.isIdle(), false);
-    QCOMPARE(spy.count(), 1);
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 0);
 
-    response.doFinish(QGalleryAbstractRequest::Cancelled, false);
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::Succeeded));
+    response.finish(true);
+    QCOMPARE(response.isActive(), false);
     QCOMPARE(response.isIdle(), false);
-    QCOMPARE(spy.count(), 1);
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 0);
 
-    // Subsequent call to cancel do nothing.
+    // Subsequent calls to cancel do nothing.
     response.cancel();
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(response.isActive(), false);
     QCOMPARE(response.isIdle(), false);
-    QCOMPARE(spy.count(), 1);
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 0);
+
+    // Subsequent calls to resume do nothing.
+    response.resume();
+    QCOMPARE(response.isActive(), false);
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 0);
 }
 
 void tst_QGalleryAbstractResponse::cancel()
 {
     QtGalleryTestResponse response;
 
-    QSignalSpy spy(&response, SIGNAL(finished()));
+    QSignalSpy finishedSpy(&response, SIGNAL(finished()));
+    QSignalSpy cancelledSpy(&response, SIGNAL(cancelled()));
+    QSignalSpy resumedSpy(&response, SIGNAL(resumed()));
 
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(response.isActive(), true);
     QCOMPARE(response.isIdle(), false);
 
-    // Calling cancel on an unfinished will set the result to Cancelled, and
-    //emit finished().
+    // Calling cancel on an unfinished will emit cancelled, and set isActive false.
     response.cancel();
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::Cancelled));
+    QCOMPARE(response.isActive(), false);
     QCOMPARE(response.isIdle(), false);
-    QCOMPARE(spy.count(), 1);
+    QCOMPARE(finishedSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 1);
+    QCOMPARE(resumedSpy.count(), 0);
 
     // Subsequent calls to finish do nothing.
-    response.doFinish(QGalleryAbstractRequest::RequestError, true);
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::Cancelled));
+    response.finish(false);
+    QCOMPARE(response.isActive(), false);
     QCOMPARE(response.isIdle(), false);
-    QCOMPARE(spy.count(), 1);
+    QCOMPARE(finishedSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 1);
+    QCOMPARE(resumedSpy.count(), 0);
 
-    response.doFinish(QGalleryAbstractRequest::Cancelled, false);
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::Cancelled));
+    response.finish(true);
+    QCOMPARE(response.isActive(), false);
     QCOMPARE(response.isIdle(), false);
-    QCOMPARE(spy.count(), 1);
+    QCOMPARE(finishedSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 1);
+    QCOMPARE(resumedSpy.count(), 0);
 
     // Subsequent call to cancel do nothing.
     response.cancel();
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::Cancelled));
+    QCOMPARE(response.isActive(), false);
     QCOMPARE(response.isIdle(), false);
-    QCOMPARE(spy.count(), 1);
+    QCOMPARE(finishedSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 1);
+    QCOMPARE(resumedSpy.count(), 0);
+
+    // Subsequent call to resume do nothing.
+    response.resume();
+    QCOMPARE(response.isActive(), false);
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(finishedSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 1);
+    QCOMPARE(resumedSpy.count(), 0);
 }
 
-void tst_QGalleryAbstractResponse::idle()
+void tst_QGalleryAbstractResponse::cancelIdle()
 {
     QtGalleryTestResponse response;
 
-    QSignalSpy spy(&response, SIGNAL(finished()));
+    QSignalSpy finishedSpy(&response, SIGNAL(finished()));
+    QSignalSpy cancelledSpy(&response, SIGNAL(cancelled()));
+    QSignalSpy resumedSpy(&response, SIGNAL(resumed()));
 
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(response.isActive(), true);
     QCOMPARE(response.isIdle(), false);
 
-    response.doFinish(QGalleryAbstractRequest::Succeeded, true);
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(response.isIdle(), true);
-    QCOMPARE(spy.count(), 1);
+    // Calling resume while active does nothing.
+    response.resume();
+    QCOMPARE(response.isActive(), true);
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(finishedSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 0);
 
-    // Subsequent calls to finish do nothing.
-    response.doFinish(QGalleryAbstractRequest::Succeeded, false);
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::Succeeded));
+    // The first call to finish with a valid result emits finished.
+    response.finish(true);
+    QCOMPARE(response.isActive(), false);
     QCOMPARE(response.isIdle(), true);
-    QCOMPARE(spy.count(), 1);
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 0);
 
-    response.doFinish(QGalleryAbstractRequest::RequestError, true);
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::Succeeded));
+    // Calling resume set isActive to true and emits resumed.
+    response.resume();
+    QCOMPARE(response.isActive(), true);
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 1);
+
+    // Calling resume while active does nothing.
+    response.resume();
+    QCOMPARE(response.isActive(), true);
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 1);
+
+    // Finishing again works as before.
+    response.finish(true);
+    QCOMPARE(response.isActive(), false);
     QCOMPARE(response.isIdle(), true);
-    QCOMPARE(spy.count(), 1);
+    QCOMPARE(finishedSpy.count(), 2);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 1);
 
-    // Cancel exits the idle state.
+
+    // Cancelling sets isIdle to false and emits cancelled.
     response.cancel();
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(response.isActive(), false);
     QCOMPARE(response.isIdle(), false);
-    QCOMPARE(spy.count(), 2);
-
-    // Subsequent calls to finish do nothing.
-    response.doFinish(QGalleryAbstractRequest::Succeeded, false);
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(response.isIdle(), false);
-    QCOMPARE(spy.count(), 2);
-
-    response.doFinish(QGalleryAbstractRequest::RequestError, true);
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(response.isIdle(), false);
-    QCOMPARE(spy.count(), 2);
-
-    // Subsequent call to cancel do nothing.
-    response.cancel();
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(response.isIdle(), false);
-    QCOMPARE(spy.count(), 2);
+    QCOMPARE(finishedSpy.count(), 2);
+    QCOMPARE(cancelledSpy.count(), 1);
+    QCOMPARE(resumedSpy.count(), 1);
 }
 
-void tst_QGalleryAbstractResponse::immediateResponse()
+void tst_QGalleryAbstractResponse::finishIdle()
 {
-    QGalleryAbstractResponse response(QGalleryAbstractRequest::Succeeded);
+    QtGalleryTestResponse response;
 
-    QCOMPARE(response.result(), int(QGalleryAbstractRequest::Succeeded));
+    QSignalSpy finishedSpy(&response, SIGNAL(finished()));
+    QSignalSpy cancelledSpy(&response, SIGNAL(cancelled()));
+    QSignalSpy resumedSpy(&response, SIGNAL(resumed()));
+
+    QCOMPARE(response.isActive(), true);
     QCOMPARE(response.isIdle(), false);
+
+    // Calling resume while active does nothing.
+    response.resume();
+    QCOMPARE(response.isActive(), true);
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(finishedSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 0);
+
+    // The first call to finish with a valid result emits finished.
+    response.finish(true);
+    QCOMPARE(response.isActive(), false);
+    QCOMPARE(response.isIdle(), true);
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 0);
+
+    // Calling resume set isActive to true and emits resumed.
+    response.resume();
+    QCOMPARE(response.isActive(), true);
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 1);
+
+    // Calling resume while active does nothing.
+    response.resume();
+    QCOMPARE(response.isActive(), true);
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 1);
+
+    // Finishing again works as before.
+    response.finish(true);
+    QCOMPARE(response.isActive(), false);
+    QCOMPARE(response.isIdle(), true);
+    QCOMPARE(finishedSpy.count(), 2);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 1);
+
+    // Finishing with idle = true does nothing while idle.
+    response.finish(true);
+    QCOMPARE(response.isActive(), false);
+    QCOMPARE(response.isIdle(), true);
+    QCOMPARE(finishedSpy.count(), 2);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 1);
+
+    // Finishing with idle = false sets isIdle to false and emits finished.
+    response.finish(false);
+    QCOMPARE(response.isActive(), false);
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(finishedSpy.count(), 3);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 1);
+}
+
+void tst_QGalleryAbstractResponse::errorActive()
+{
+    QtGalleryTestResponse response;
+
+    QSignalSpy finishedSpy(&response, SIGNAL(finished()));
+    QSignalSpy cancelledSpy(&response, SIGNAL(cancelled()));
+    QSignalSpy resumedSpy(&response, SIGNAL(resumed()));
+
+    QCOMPARE(response.isActive(), true);
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(response.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(response.errorString(), QString());
+
+    response.error(300, QLatin1String("error"));
+
+    QCOMPARE(response.error(), 300);
+    QCOMPARE(response.errorString(), QLatin1String("error"));
+    QCOMPARE(response.isActive(), false);
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 0);
+}
+
+void tst_QGalleryAbstractResponse::errorIdle()
+{
+    QtGalleryTestResponse response;
+    response.finish(true);
+
+    QSignalSpy finishedSpy(&response, SIGNAL(finished()));
+    QSignalSpy cancelledSpy(&response, SIGNAL(cancelled()));
+    QSignalSpy resumedSpy(&response, SIGNAL(resumed()));
+
+    QCOMPARE(response.isActive(), false);
+    QCOMPARE(response.isIdle(), true);
+    QCOMPARE(response.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(response.errorString(), QString());
+
+    response.error(300, QLatin1String("error"));
+
+    QCOMPARE(response.isActive(), false);
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(response.error(), 300);
+    QCOMPARE(response.errorString(), QLatin1String("error"));
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 0);
+}
+
+void tst_QGalleryAbstractResponse::errorFinished()
+{
+    QtGalleryTestResponse response;
+    response.finish(false);
+
+    QSignalSpy finishedSpy(&response, SIGNAL(finished()));
+    QSignalSpy cancelledSpy(&response, SIGNAL(cancelled()));
+    QSignalSpy resumedSpy(&response, SIGNAL(resumed()));
+
+    QCOMPARE(response.isActive(), false);
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(response.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(response.errorString(), QString());
+
+    response.error(300, QLatin1String("error"));
+
+    QCOMPARE(response.isActive(), false);
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(response.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(response.errorString(), QString());
+    QCOMPARE(finishedSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 0);
+}
+
+void tst_QGalleryAbstractResponse::errorCancelled()
+{
+    QtGalleryTestResponse response;
+    response.cancel();
+
+    QSignalSpy finishedSpy(&response, SIGNAL(finished()));
+    QSignalSpy cancelledSpy(&response, SIGNAL(cancelled()));
+    QSignalSpy resumedSpy(&response, SIGNAL(resumed()));
+
+    QCOMPARE(response.isActive(), false);
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(response.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(response.errorString(), QString());
+
+    response.error(300, QLatin1String("error"));
+
+    QCOMPARE(response.isActive(), false);
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(response.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(response.errorString(), QString());
+    QCOMPARE(finishedSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(resumedSpy.count(), 0);
+}
+
+void tst_QGalleryAbstractResponse::immediateError()
+{
+    QGalleryAbstractResponse response(300, QLatin1String("error"));
+
+    QCOMPARE(response.isActive(), false);
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(response.error(), 300);
+    QCOMPARE(response.errorString(), QLatin1String("error"));
     QCOMPARE(response.waitForFinished(300), true);
 }
 

@@ -212,7 +212,9 @@ void CLineStatusObserver::updateCallList()
                         }
                         if (mobileCallInfoPckg().iRemoteParty.iDirection == RMobileCall::EMobileOriginated) {
                             callinfo_p->remotePartyIdentifier = toQString(mobileCallInfoPckg().iDialledParty.iTelNumber);
+                            callinfo_p->direction = QTelephony::Dialed;
                         } else {
+                            callinfo_p->direction = QTelephony::Received;
                             if (mobileCallInfoPckg().iRemoteParty.iRemoteIdStatus == RMobileCall::ERemoteIdentityAvailable) {
                                 callinfo_p->remotePartyIdentifier = toQString(mobileCallInfoPckg().iRemoteParty.iRemoteNumber.iTelNumber);
                             } else {
@@ -307,6 +309,8 @@ void QTelephonyCallListPrivate::emitActiveCallRemoved(QTelephonyCallInfoPrivate&
     QTelephonyCallInfo callinfo;
     callinfo.d = QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(&call);
     emit p->activeCallRemoved(callinfo);
+    if(callInfoList.count() == 0)
+        emit p->hasActiveCalls(false);
 }
 
 void QTelephonyCallListPrivate::emitActiveCallAdded(QTelephonyCallInfoPrivate& call)
@@ -314,6 +318,8 @@ void QTelephonyCallListPrivate::emitActiveCallAdded(QTelephonyCallInfoPrivate& c
     QTelephonyCallInfo callinfo;
     callinfo.d = QExplicitlySharedDataPointer<QTelephonyCallInfoPrivate>(&call);
     emit p->activeCallAdded(callinfo);
+    if(callInfoList.count() == 1)
+        emit p->hasActiveCalls(true);
 }
 
 QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephony::CallType& calltype) const
@@ -323,6 +329,7 @@ QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephon
     //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
     for( int i = 0; i < callInfoList.count(); i++){
         if(callInfoList.at(i).data()->type == QTelephony::Any
+            || QTelephony::Any == calltype
             || callInfoList.at(i).data()->type == calltype)
         {
             QTelephonyCallInfo callinfo;

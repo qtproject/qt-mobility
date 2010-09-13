@@ -539,6 +539,11 @@ void TestFiltering::testContactDetailFilter()
 {
     testContactDetailFilter_1();
     testContactDetailFilter_2();
+    testContactDetailFilter_3();
+    testContactDetailFilter_4();
+    testContactDetailFilter_5();
+	testContactDetailFilter_6();
+	testContactDetailFilter_7();
 }
 
 void TestFiltering::testContactDetailFilter_1()
@@ -647,6 +652,195 @@ void TestFiltering::testContactDetailFilter_2()
     QVERIFY(expectedCount == seachedcontactcount);
     QVERIFY(error == QContactManager::NotSupportedError);
 }   
+
+void TestFiltering::testContactDetailFilter_3()
+{
+    // Test for fetching Mobile number
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
+    
+    QContactSortOrder sortOrderFirstName;
+    sortOrderFirstName.setDetailDefinitionName(QContactName::DefinitionName,
+        QContactName::FieldFirstName);
+
+    QContactSortOrder sortOrderLastName;
+    sortOrderLastName.setDetailDefinitionName(QContactName::DefinitionName,
+        QContactName::FieldLastName);
+
+    sortOrder.append(sortOrderFirstName);
+    sortOrder.append(sortOrderLastName);
+    
+    QContactDetailFilter mobileFilter;
+    mobileFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, 
+            QContactPhoneNumber::FieldSubTypes); 
+    mobileFilter.setValue(QLatin1String(QContactPhoneNumber::SubTypeMobile));
+    
+    
+    cnt_ids = m_engine->contactIds(mobileFilter, sortOrder, &error);
+    // check counts 
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount =7;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestFiltering::testContactDetailFilter_4()
+{
+	//Test for checking Grp conference number filtering
+    //Create contact with phone number 1234567
+    QContact phonecontact;
+
+    QContactName contactName;
+    contactName.setFirstName("Stefann");
+    contactName.setLastName("Fedrernn");
+    phonecontact.saveDetail(&contactName);
+    
+    QContactPhoneNumber number;
+    number.setContexts("Home");
+    number.setSubTypes("Mobile");
+    number.setNumber("1234567");
+    phonecontact.saveDetail(&number);
+
+    QContactManager::Error err;
+    QVERIFY(m_engine->saveContact(&phonecontact, &err));
+    
+    //Create Group with Conference number 1234567
+    QContact groupcontact;
+    groupcontact.setType(QContactType::TypeGroup);
+    QContactName groupName;
+    groupName.setCustomLabel("groupname");
+    groupcontact.saveDetail(&groupName);
+    
+    QContactPhoneNumber confnumber ;
+    confnumber.setNumber("1234567");
+    groupcontact.saveDetail(&confnumber);
+    
+ 
+    QVERIFY(m_engine->saveContact(&groupcontact, &err));
+    
+    // Test Contact Sip field support
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
+    
+    QContactSortOrder sortOrderFirstName;
+    sortOrderFirstName.setDetailDefinitionName(QContactName::DefinitionName,
+        QContactName::FieldFirstName);
+
+    QContactSortOrder sortOrderLastName;
+    sortOrderLastName.setDetailDefinitionName(QContactName::DefinitionName,
+        QContactName::FieldLastName);
+
+    sortOrder.append(sortOrderFirstName);
+    sortOrder.append(sortOrderLastName);
+    
+    QContactDetailFilter phoneFilter; 
+    phoneFilter.setDetailDefinitionName( QContactPhoneNumber::DefinitionName, 
+                                             QContactPhoneNumber::FieldNumber);
+    QString phnumber("1234567");
+    phoneFilter.setValue(phnumber);
+    
+    
+    cnt_ids = m_engine->contactIds(phoneFilter, sortOrder, &error);
+    // check counts 
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount =2;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    
+    QVERIFY(m_engine->removeContact(phonecontact.localId(), &err));
+    QVERIFY(m_engine->removeContact(groupcontact.localId(), &err));
+    
+}
+
+void TestFiltering::testContactDetailFilter_5()
+{    
+    // Test Contact with email 
+    // Filter with Empty Field value
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
+    
+    QContactSortOrder sortOrderFirstName;
+    sortOrderFirstName.setDetailDefinitionName(QContactName::DefinitionName,
+        QContactName::FieldFirstName);
+
+    QContactSortOrder sortOrderLastName;
+    sortOrderLastName.setDetailDefinitionName(QContactName::DefinitionName,
+        QContactName::FieldLastName);
+
+    sortOrder.append(sortOrderFirstName);
+    sortOrder.append(sortOrderLastName);
+    
+    QContactDetailFilter emailFilter; 
+    emailFilter.setDetailDefinitionName( QContactEmailAddress::DefinitionName);
+   
+    
+    
+    cnt_ids = m_engine->contactIds(emailFilter, sortOrder, &error);
+    // check counts 
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount =9;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestFiltering::testContactDetailFilter_6()
+{    
+    // Test Contact with phone number 
+    // Filter with Empty Field value
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
+    
+    QContactSortOrder sortOrderFirstName;
+    sortOrderFirstName.setDetailDefinitionName(QContactName::DefinitionName,
+        QContactName::FieldFirstName);
+
+    QContactSortOrder sortOrderLastName;
+    sortOrderLastName.setDetailDefinitionName(QContactName::DefinitionName,
+        QContactName::FieldLastName);
+
+    sortOrder.append(sortOrderFirstName);
+    sortOrder.append(sortOrderLastName);
+    
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName);
+    
+    cnt_ids = m_engine->contactIds(filter, sortOrder, &error);
+    // check counts 
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount =9;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestFiltering::testContactDetailFilter_7()
+{    
+    // Test Contact with Online account 
+    // Filter with Empty Field value
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
+    
+    QContactSortOrder sortOrderFirstName;
+    sortOrderFirstName.setDetailDefinitionName(QContactName::DefinitionName,
+        QContactName::FieldFirstName);
+
+    QContactSortOrder sortOrderLastName;
+    sortOrderLastName.setDetailDefinitionName(QContactName::DefinitionName,
+        QContactName::FieldLastName);
+
+    sortOrder.append(sortOrderFirstName);
+    sortOrder.append(sortOrderLastName);
+    
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactOnlineAccount::DefinitionName);
+    
+    cnt_ids = m_engine->contactIds(filter, sortOrder, &error);
+    // check counts 
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount =2;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
 
 void TestFiltering::testRelationshipFilter()
 {

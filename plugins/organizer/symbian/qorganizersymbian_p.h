@@ -75,6 +75,9 @@
 
 #include <calprogresscallback.h> // MCalProgressCallBack
 #include <calchangecallback.h>
+#ifdef SYMBIAN_CALENDAR_V2
+#include <calfilechangenotification.h>
+#endif
 
 QTM_USE_NAMESPACE
 
@@ -117,6 +120,9 @@ class CCalCalendarInfo;
 class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine, 
                                     public MCalProgressCallBack,
                                     public MCalChangeCallBack2
+#ifdef SYMBIAN_CALENDAR_V2
+                                    ,public MCalFileChangeObserver
+#endif
 {
     Q_OBJECT
 
@@ -149,6 +155,9 @@ public:
     QOrganizerCollectionLocalId defaultCollectionId(QOrganizerItemManager::Error* error) const;
     QList<QOrganizerCollectionLocalId> collectionIds(QOrganizerItemManager::Error* error) const;
     QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const;
+    bool collectionL(const int 
+        index, const QList<QOrganizerCollectionLocalId>& collectionIds, 
+        QOrganizerCollection& collection) const;
     bool saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error);
     bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
 #endif
@@ -172,15 +181,20 @@ public: // MCalProgressCallBack
     void Progress(TInt aPercentageCompleted);
     void Completed(TInt aError);
     TBool NotifyProgress();
-    
+
 public: // MCalChangeCallBack2
     void CalChangeNotification(RArray<TCalChangeEntry>& aChangeItems);
+
+#ifdef SYMBIAN_CALENDAR_V2
+public: // MCalFileChangeObserver
+    void CalendarInfoChangeNotificationL(RPointerArray<CCalFileChangeInfo>& aCalendarInfoChangeEntries);
+#endif
     
 public: 
     /* Util functions */
     static bool transformError(TInt symbianError, QOrganizerItemManager::Error* qtError);
     void deleteItemL(const QOrganizerItemLocalId& organizeritemId);
-    void saveItemL(QOrganizerItem *item, QOrganizerItemChangeSet *changeSet = 0);
+    void saveItemL(QOrganizerItem *item, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet *changeSet);
     void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, 
             const QOrganizerItemFetchHint& fetchHint) const;
     QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, 
@@ -194,11 +208,13 @@ public:
 #endif
     
 private:
-    CCalEntry* entryForItemOccurrenceL(QOrganizerItem *item, bool &isNewEntry) const;
-    CCalEntry* entryForItemL(QOrganizerItem *item, bool &isNewEntry) const;
-    CCalEntry* findEntryL(QOrganizerItemLocalId localId, QString manageruri) const;
-    CCalEntry* findEntryL(const TDesC8& globalUid) const;
-    CCalEntry* findParentEntryLC(QOrganizerItem *item, const TDesC8& globalUid) const;
+    CCalEntryView* entryViewL(const QOrganizerCollectionLocalId& collectionId) const;
+    QOrganizerCollectionLocalId collectionLocalIdL(QOrganizerItem item, const QOrganizerCollectionLocalId& collectionId = 0) const;
+    CCalEntry* entryForItemOccurrenceL(const QOrganizerCollectionLocalId collectionId, QOrganizerItem *item, bool &isNewEntry) const;
+    CCalEntry* entryForItemL(const QOrganizerCollectionLocalId collectionId, QOrganizerItem *item, bool &isNewEntry) const;
+    CCalEntry* findEntryL(const QOrganizerCollectionLocalId collectionId, QOrganizerItemLocalId localId, QString manageruri) const;
+    CCalEntry* findEntryL(const QOrganizerCollectionLocalId collectionId, const TDesC8& globalUid) const;
+    CCalEntry* findParentEntryLC(const QOrganizerCollectionLocalId collectionId, QOrganizerItem *item, const TDesC8& globalUid) const;
     void removeItemL(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet *changeSet);
 	
 private:
@@ -207,7 +223,7 @@ private:
 #ifdef SYMBIAN_CALENDAR_V2    
     RPointerArray<CCalSession> m_calSessions;
 #endif
-    CCalEntryView *m_entryView;
+    QMap<QOrganizerCollectionLocalId, CCalEntryView *> m_entryViews;
     CCalInstanceView *m_instanceView;
     CActiveSchedulerWait *m_activeSchedulerWait;
     QOrganizerItemRequestQueue* m_requestServiceProviderQueue;

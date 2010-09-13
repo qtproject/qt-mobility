@@ -51,7 +51,7 @@ contains(mobility_modules,location) {
     	SUBDIRS += flickrdemo
         
         contains(QT_CONFIG, declarative) {
-            sources.files += declarative_loc_flickr
+            sources.files += declarative-location
             sources.files += declarative_mapviewer
         }
     }
@@ -121,7 +121,7 @@ contains(mobility_modules,gallery) {
         mediabrowser
 
     contains(QT_CONFIG, declarative) {
-        sources.files += declarativemusicbrowser
+        sources.files += declarative-music-browser
     }
 }
 
@@ -138,7 +138,9 @@ contains(mobility_modules,telephony) {
 # Feedback API examples
 contains(mobility_modules, feedback) {
     #SUBDIRS += hapticsplayer # this not a good UI for mobile screens at the moment
-    SUBDIRS += hapticsquare
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += hapticsquare
+    }
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES

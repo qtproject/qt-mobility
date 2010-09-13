@@ -88,7 +88,10 @@ QList<QContactLocalId> CntFilterDetail::contacts(
     if ( (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName ) &&
             (detailFilter.detailFieldName() != QContactPhoneNumber::FieldSubTypes)) {
         //Handle phonenumber ...
-        if(bestMatchingEnabled()) {
+		if(detailFilter.detailFieldName().isEmpty()){
+            fetchAllPhoneNumbers(sqlQuery);    
+        }
+        else if(bestMatchingEnabled()) {
             bestMatchPhoneNumberQuery(filter,sqlQuery,error);
         }
         else {
@@ -167,6 +170,18 @@ void CntFilterDetail::createSelectQuery(const QContactFilter& filter,
            }
        }
     }
+    else if (detailFilter.detailDefinitionName() == QContactEmailAddress::DefinitionName &&
+                        (detailFilter.detailFieldName().isEmpty())) {
+        QString type =  QString(" type = %1").arg(CntDbInfo::EEmailAddress);
+        QString whereClause = " WHERE" + type;
+        sqlQuery = "SELECT DISTINCT contact_id FROM comm_addr" + whereClause;
+        }
+    else if (detailFilter.detailDefinitionName() == QContactOnlineAccount::DefinitionName &&
+                        (detailFilter.detailFieldName().isEmpty())) {
+        QString type =  QString(" type = %1").arg(CntDbInfo::ESipAddress);
+        QString whereClause = " WHERE" + type;
+        sqlQuery = "SELECT DISTINCT contact_id FROM comm_addr" + whereClause;
+        }
     //everything else
     else {   
        QString tableName;
@@ -404,6 +419,17 @@ void CntFilterDetail::createMatchPhoneNumberQuery(
             sqlQuery += ')';
         }
     }
+}
+
+/*
+ * Fetch all contacts with phone number sql query
+ */
+void CntFilterDetail::fetchAllPhoneNumbers( QString& sqlQuery )
+
+{
+    QString type =  QString(" type = %1").arg(CntDbInfo::EPhoneNumber);
+    QString whereClause = " WHERE" + type;
+    sqlQuery = "SELECT DISTINCT contact_id FROM comm_addr" + whereClause;
 }
 
 /*

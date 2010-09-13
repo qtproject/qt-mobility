@@ -43,6 +43,7 @@
 #include "ipcendpoint_p.h"
 #include "objectendpoint_p.h"
 #include <QTimer>
+#include <QCoreApplication>
 
 /* IPC based on Symbian Client-Server framework
  * This module implements the Symbian specific IPC mechanisms and related control.
@@ -113,13 +114,12 @@ private:
     RServiceSession *session;
 };
 
-
 class SymbianServerEndPoint: public QServiceIpcEndPoint
 {
     Q_OBJECT
 public:
     SymbianServerEndPoint(CServiceProviderServerSession* session, QObject* parent = 0)
-        : QServiceIpcEndPoint(parent), session(session)
+        : QServiceIpcEndPoint(parent), session(session), obj(0)
     {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
         qDebug() << "Symbian IPC server endpoint created.";
@@ -130,11 +130,14 @@ public:
         session->SetParent(this);
     }
 
+
     ~SymbianServerEndPoint()
     {
-#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-        qDebug() << "Symbian IPC server endpoint destroyed.";
-#endif
+    #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
+        qDebug() << "Symbian IPC server endpoint destroyed. --- emit disconnected";
+    #endif
+
+        emit disconnected();
     }
 
     void packageReceived(QServicePackage package)
@@ -144,6 +147,11 @@ public:
 #endif        
         incoming.enqueue(package);
         emit readyRead();
+    }
+    
+    void setObjectEndPoint(ObjectEndPoint *aObj)
+    {
+        obj = aObj;
     }
 
 protected:
@@ -161,14 +169,21 @@ protected:
 
 private:
     CServiceProviderServerSession *session;
+    ObjectEndPoint *obj;
 };
 
-QRemoteServiceControlPrivate::QRemoteServiceControlPrivate(QObject *parent)
-    : QObject(parent)
+
+QRemoteServiceControlSymbianPrivate::QRemoteServiceControlSymbianPrivate(QObject *parent)
+    : QRemoteServiceControlPrivate(parent)
 {
 }
 
-void QRemoteServiceControlPrivate::publishServices(const QString &ident)
+void QRemoteServiceControlSymbianPrivate::closingLastInstance()
+{
+  emit lastInstanceClosed();
+}
+
+void QRemoteServiceControlSymbianPrivate::publishServices(const QString &ident)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "QRemoteServiceControlPrivate::publishServices() for ident: " << ident;
@@ -190,14 +205,20 @@ void QRemoteServiceControlPrivate::publishServices(const QString &ident)
     RProcess::Rendezvous(KErrNone);
 }
 
-void QRemoteServiceControlPrivate::processIncoming(CServiceProviderServerSession* newSession)
+void QRemoteServiceControlSymbianPrivate::processIncoming(CServiceProviderServerSession* newSession)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG  
     qDebug("GTR Processing incoming session creation.");
 #endif
     // Create service provider-side endpoints.
-    SymbianServerEndPoint* ipcEndPoint = new SymbianServerEndPoint(newSession);
+    SymbianServerEndPoint* ipcEndPoint = new SymbianServerEndPoint(newSession, this);
     ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
+    ipcEndPoint->setObjectEndPoint(endPoint);
+}
+
+QRemoteServiceControlPrivate* QRemoteServiceControlPrivate::constructPrivateObject(QObject *parent)
+{
+  return new QRemoteServiceControlSymbianPrivate(parent);
 }
 
 QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier &typeId, const QString &location)
@@ -432,7 +453,7 @@ void RServiceSession::ipcFailure(QService::UnrecoverableIPCError err)
   emit errorUnrecoverableIPCFault(err);
 }
 
-CServiceProviderServer::CServiceProviderServer(QRemoteServiceControlPrivate* aOwner)
+CServiceProviderServer::CServiceProviderServer(QRemoteServiceControlSymbianPrivate* aOwner)
     : CServer2(EPriorityNormal), iSessionCount(0), iOwner(aOwner)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
@@ -470,6 +491,12 @@ void CServiceProviderServer::DecreaseSessions()
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "<<<< CServiceProviderServer decremented session count to: " << iSessionCount;
 #endif
+    if(iSessionCount == 0){
+        Cancel();
+        iOwner->closingLastInstance();
+        if(iOwner->quitOnLastInstanceClosed())
+          QCoreApplication::exit();
+    }
 }
 
 CServiceProviderServerSession *CServiceProviderServerSession::NewL(CServiceProviderServer &aServer)
@@ -515,6 +542,7 @@ CServiceProviderServerSession::~CServiceProviderServerSession()
 #endif
     iServer.DecreaseSessions();
     delete iByteArray;
+    delete iOwner;
 }
 
 void CServiceProviderServerSession::ServiceL(const RMessage2 &aMessage)

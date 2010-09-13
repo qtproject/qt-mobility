@@ -108,8 +108,6 @@ void registerExampleService()
     const QString path = QCoreApplication::applicationDirPath() + "/xmldata/sfwechoservice.xml";
     if (!m.addService(path)) {
         qWarning() << "Cannot register EchoService" << path;
-    } else {
-        qDebug() << "Registered: " << path;
     }
 }
 
@@ -125,9 +123,8 @@ int main(int argc, char** argv)
     QRemoteServiceClassRegister::registerType<EchoUniqueService>(QRemoteServiceClassRegister::UniqueInstance);
     QRemoteServiceControl* control = new QRemoteServiceControl();
     control->publishServices("sfwecho_service");
-
     int res =  app.exec();
-
+    
     delete control;    
     return res;
 }

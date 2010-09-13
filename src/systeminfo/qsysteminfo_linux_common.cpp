@@ -65,10 +65,12 @@
 #include <mntent.h>
 #include <sys/stat.h>
 
+#if !defined(Q_WS_MAEMO_6)
 #ifdef Q_WS_X11
 #include <QX11Info>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
+#endif
 #endif
 
 #ifdef BLUEZ_SUPPORTED
@@ -885,10 +887,12 @@ int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
         return -1;
     }
 
+#if !defined(Q_WS_MAEMO_6)
 #ifdef Q_WS_X11
     return wid.screen(screen)->x11Info().depth();
 #else
-        return QPixmap::defaultDepth();
+#endif
+    return QPixmap::defaultDepth();
 #endif
 }
 
@@ -1671,6 +1675,13 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
                                             this,SLOT(bluezPropertyChanged(QString, QDBusVariant)))) {
                      qDebug() << "bluez could not connect signal";
                  }
+                 QDBusReply<QVariantMap > reply =  adapterInterface->call(QLatin1String("GetProperties"));
+                 QVariant var;
+                 QString property="Powered";
+                 QVariantMap map = reply.value();
+                 if (map.contains(property)) {
+                     btPowered = map.value(property ).toBool();
+                 }
              }
          }
      }
@@ -1679,7 +1690,10 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
  void QSystemDeviceInfoLinuxCommonPrivate::bluezPropertyChanged(const QString &str, QDBusVariant v)
   {
      if(str == "Powered") {
-          emit bluetoothStateChanged(v.variant().toBool());
+             if(btPowered != v.variant().toBool()) {
+             btPowered = !btPowered;
+             emit bluetoothStateChanged(btPowered);
+         }
       }
       // Pairable Name Class Discoverable
   }
@@ -1687,7 +1701,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
 
  bool QSystemDeviceInfoLinuxCommonPrivate::currentBluetoothPowerState()
  {
-     return false;
+     return btPowered;
  }
 
 QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent) : QObject(parent)
