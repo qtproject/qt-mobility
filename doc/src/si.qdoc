@@ -42,6 +42,13 @@
 
 \tableofcontents
 
+\section1 Namespace
+
+The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility APIs into Qt. See the
+\l {Quickstart Example}{Quickstart guide} for an example on how the
+namespace impacts on application development.
+
 \annotatedlist systeminfo
 
 
@@ -49,13 +56,6 @@
 
 The System Information API provides a set of APIs to discover system
 related information and capabilities.
-
-\section1 Namespace
-
-The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility APIs into Qt. See the
-\l {Quickstart Example}{Quickstart guide} for an example on how the
-namespace impacts on application development.
 
 \section1 Overview
 The System Information API returns the system information related to a
