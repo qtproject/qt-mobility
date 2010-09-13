@@ -114,6 +114,7 @@ contains(mobility_modules,organizer) {
     # Organizer
     SUBDIRS += \
         qorganizeritem \
+        qorganizeritemdetail \
         qorganizeritemmanager
 }
 
