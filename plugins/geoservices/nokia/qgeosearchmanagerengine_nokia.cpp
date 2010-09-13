@@ -100,8 +100,6 @@ QGeoSearchManagerEngineNokia::~QGeoSearchManagerEngineNokia() {}
 QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &address,
         QGeoBoundingArea *bounds)
 {
-    Q_UNUSED(bounds)
-
     if (!supportsGeocoding()) {
         QGeoSearchReply *reply = new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError, "Geocoding is not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
@@ -146,14 +144,12 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
         requestString += address.streetNumber();
     }
 
-    return search(requestString);
+    return search(requestString,bounds);
 }
 
 QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,
         QGeoBoundingArea *bounds)
 {
-    Q_UNUSED(bounds)
-
     if (!supportsReverseGeocoding()) {
         QGeoSearchReply *reply = new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError, "Reverse geocoding is not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
@@ -173,7 +169,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordina
     requestString += "&lg=";
     requestString += languageToMarc(locale().language());
 
-    return search(requestString);
+    return search(requestString,bounds);
 }
 
 QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchString,
@@ -182,8 +178,6 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchStrin
         int offset,
         QGeoBoundingArea *bounds)
 {
-    Q_UNUSED(bounds)
-
     // NOTE this will eventually replaced by a much improved implementation
     // which will make use of the additionLandmarkManagers()
     if ((searchTypes != QGeoSearchManager::SearchTypes(QGeoSearchManager::SearchAll))
@@ -217,13 +211,16 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchStrin
         requestString += QString::number(offset);
     }
 
-    return search(requestString);
+    return search(requestString, bounds, limit, offset);
 }
 
-QGeoSearchReply* QGeoSearchManagerEngineNokia::search(QString requestString)
+QGeoSearchReply* QGeoSearchManagerEngineNokia::search(QString requestString,
+    QGeoBoundingArea *bounds,
+    int limit,
+    int offset)
 {
     QNetworkReply *networkReply = m_networkManager->get(QNetworkRequest(QUrl(requestString)));
-    QGeoSearchReplyNokia *reply = new QGeoSearchReplyNokia(networkReply, this);
+    QGeoSearchReplyNokia *reply = new QGeoSearchReplyNokia(networkReply, limit, offset, bounds, this);
 
     connect(reply,
             SIGNAL(finished()),

@@ -42,7 +42,7 @@
 #include "qgeosearchreply_nokia.h"
 #include "qgeocodexmlparser.h"
 
-QGeoSearchReplyNokia::QGeoSearchReplyNokia(QNetworkReply *reply, QObject *parent)
+QGeoSearchReplyNokia::QGeoSearchReplyNokia(QNetworkReply *reply, int limit, int offset, QGeoBoundingArea *viewport, QObject *parent)
         : QGeoSearchReply(parent),
         m_reply(reply)
 {
@@ -55,6 +55,10 @@ QGeoSearchReplyNokia::QGeoSearchReplyNokia(QNetworkReply *reply, QObject *parent
             SIGNAL(error(QNetworkReply::NetworkError)),
             this,
             SLOT(networkError(QNetworkReply::NetworkError)));
+
+    setLimit(limit);
+    setOffset(offset);
+    setViewport(viewport);
 }
 
 QGeoSearchReplyNokia::~QGeoSearchReplyNokia()
@@ -78,8 +82,13 @@ void QGeoSearchReplyNokia::networkFinished()
 
     QGeoCodeXmlParser parser;
     if (parser.parse(m_reply)) {
-        // TODO trim results based on bounds
-        setPlaces(parser.results());
+        QList<QGeoPlace> places = parser.results();
+        QGeoBoundingArea *bounds = viewport();
+        for (int i=places.size()-1; i>=0; --i) {
+            if(!bounds->contains(places[i].coordinate()))
+                places.removeAt(i);
+        }
+        setPlaces(places);
         setFinished(true);
     } else {
         setError(QGeoSearchReply::ParseError,parser.errorString());
