@@ -193,10 +193,10 @@ public: // MCalFileChangeObserver
 public: 
     /* Util functions */
     static bool transformError(TInt symbianError, QOrganizerItemManager::Error* qtError);
-    void deleteItemL(const QOrganizerItemLocalId& organizeritemId);
     void saveItemL(QOrganizerItem *item, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet *changeSet);
     void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, 
             const QOrganizerItemFetchHint& fetchHint) const;
+    void removeItemL(const QOrganizerItemLocalId& organizeritemId);
     QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, 
         const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders) const;
@@ -215,7 +215,6 @@ private:
     CCalEntry* findEntryL(const QOrganizerCollectionLocalId collectionId, QOrganizerItemLocalId localId, QString manageruri) const;
     CCalEntry* findEntryL(const QOrganizerCollectionLocalId collectionId, const TDesC8& globalUid) const;
     CCalEntry* findParentEntryLC(const QOrganizerCollectionLocalId collectionId, QOrganizerItem *item, const TDesC8& globalUid) const;
-    void removeItemL(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet *changeSet);
 	
 private:
     QOrganizerItemSymbianEngineData *d;

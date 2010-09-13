@@ -115,6 +115,9 @@ private slots:  // Test cases
     void modifyItem_data(){ addManagers(); };
     void modifyItem();
 
+    void removeItem_data(){ addManagers(); };
+    void removeItem();
+
     void fetchItems_data(){ addManagers(); };
     void fetchItems();
 
@@ -448,6 +451,28 @@ void tst_symbianomcollections::modifyItem()
     // Verify
     QCOMPARE(m_om->item(item.localId()).displayLabel(), QString("modifyitem"));
     QCOMPARE(m_om->item(item.localId()).collectionId().localId(), c.id().localId());
+}
+
+void tst_symbianomcollections::removeItem()
+{
+    // Save a collection
+    QOrganizerCollection c;
+    c.setMetaData("Name", "removeItem");
+    c.setMetaData("FileName", "c:removeitem");
+    QVERIFY(m_om->saveCollection(&c));
+
+    // Save an item to the newly created collection
+    QOrganizerItem item = createItem(QOrganizerItemType::TypeEvent,
+                                      QString("removeitem"),
+                                      QDateTime::currentDateTime().addMSecs(3600));
+    QVERIFY(m_om->saveItem(&item, c.id().localId()));
+
+    // Remove item
+    QOrganizerItemLocalId localId = item.localId();
+    QVERIFY(m_om->removeItem(localId));
+
+    // Verify
+    QVERIFY(m_om->item(localId).isEmpty());
 }
 
 void tst_symbianomcollections::fetchItems()

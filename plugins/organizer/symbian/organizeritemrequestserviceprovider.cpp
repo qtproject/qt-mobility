@@ -269,7 +269,7 @@ void COrganizerItemRequestsServiceProvider::RemoveItemL()
         // RunError would call SelfComplete() for recursive operation
         iIndex++;
         // Delete an item
-        iOrganizerItemManagerEngine.deleteItemL(iItemIds.at(iIndex-1));
+        iOrganizerItemManagerEngine.removeItemL(iItemIds.at(iIndex-1));
         // Calls itself recursively until all the items are deleted
         SelfComplete();
         }
