@@ -736,7 +736,7 @@ void tst_QDeclarativeLandmark::boxFilter()
     delete top_left_coordinate;
     delete bottom_right_coordinate;
 
-} // zzz
+}
 
 void tst_QDeclarativeLandmark::boxFilter_data()
 {
