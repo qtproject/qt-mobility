@@ -1,7 +1,9 @@
 QT += declarative network
-SOURCES += $$PWD/qmllandmarkmap.cpp
+SOURCES += $$PWD/qmlmapviewer.cpp
 include($$PWD/deployment.pri)
-include($$QT_MOBILITY_BUILD_TREE/examples/examples.pri)
+include($$PWD/../declarative-location.pri)
+
+TARGET = qml_mapviewer
 
 symbian {
     TARGET.CAPABILITY = NetworkServices Location ReadUserData WriteUserData

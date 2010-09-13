@@ -1,7 +1,9 @@
 QT += declarative network
-SOURCES += $$PWD/qmllocationflickr.cpp
+SOURCES += $$PWD/qmllandmarkmap.cpp
 include($$PWD/deployment.pri)
-include($$QT_MOBILITY_BUILD_TREE/examples/examples.pri)
+include($$PWD/../declarative-location.pri)
+
+TARGET = qml_landmarkmap
 
 symbian {
     TARGET.CAPABILITY = NetworkServices Location ReadUserData WriteUserData
