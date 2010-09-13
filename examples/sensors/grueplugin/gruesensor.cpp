@@ -53,7 +53,8 @@ IMPLEMENT_READING(GrueSensorReading)
     The Grue Sensor informs you of your chance of being eaten by a Grue.
 
     Grues love the dark so as long as your surroundings are relatively light
-    you are safe.
+    you are safe. However the more time you spend in the dark, the higher
+    your chances are of being eaten by a Grue.
 */
 
 /*!
@@ -61,9 +62,10 @@ IMPLEMENT_READING(GrueSensorReading)
     \brief holds your chance of being eaten.
 
     The value is the probability (from 0 to 1) that a Grue will eat you.
-    A probability of 1 means you will be eaten. The darker it is, the more
-    likely you are to be eaten by a Grue. If you are in a lit room, the
-    probability will be 0.
+    A probability of 1 means you are currently being eaten. The darker
+    it is, the more likely you are to be eaten by a Grue. The longer you
+    stay in a dark area, the more likely you are to be eaten by a Grue.
+    If you are in a lit room, the probability will be 0 as Grues fear light.
 */
 
 qreal GrueSensorReading::chanceOfBeingEaten() const
