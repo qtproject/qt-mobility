@@ -140,6 +140,9 @@ public slots:
 
 private slots:
 
+    void landmarksOfCategoriesFetch();
+    void landmarksOfCategoriesFetch_data();
+
     void construction();
     void construction_data();
     void defaultProperties();
@@ -610,7 +613,6 @@ void tst_QDeclarativeLandmark::categoriesOfLandmarkFetch()
     if (expectedMatches > 0)
         QTRY_VERIFY(!countChangedSpy.isEmpty());
     QTRY_COMPARE(categoryModel->property("count").toInt(), expectedMatches);
-
     delete categoryModel;
     delete landmarkModel;
 }
@@ -624,6 +626,83 @@ void tst_QDeclarativeLandmark::categoriesOfLandmarkFetch_data()
     QTest::newRow("no category") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:false;}" << "Alpha centauri" << 0;
     QTest::newRow("one category") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:false;}" << "London" << 1;
     QTest::newRow("two categories") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:false;}" << "Brisbane" << 2;
+}
+
+void tst_QDeclarativeLandmark::landmarksOfCategoriesFetch()
+{
+    QFETCH(QString, componentString);
+    QFETCH(QStringList, categoryNames);
+    QFETCH(int, expectedMatches);
+    populateTypicalDb();
+
+    QObject* source_obj = createComponent(componentString);
+    QDeclarativeLandmarkModel* landmarkModel = static_cast<QDeclarativeLandmarkModel*>(source_obj);
+    landmarkModel->setDbFileName(DB_FILENAME);
+
+    source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel { autoUpdate:true;}");
+    QDeclarativeLandmarkCategoryModel* categoryModel = static_cast<QDeclarativeLandmarkCategoryModel*>(source_obj);
+    categoryModel->setDbFileName(DB_FILENAME);
+    QTest::qWait(50);
+
+    // Iterate through categories in the category model. Match against interesting categorynames
+    // (the categories with which the landmarks should be filtered). Create filters based for those items
+    // and store them in a list. At the end, if there more than one filters in the list, form a union filter,
+    // otherwise use a single category filter (non-union/compound).
+    QDeclarativeLandmarkFilterBase* result_filter(0);
+    QList<QDeclarativeLandmarkFilterBase*> category_filters;
+    foreach (QString categoryName, categoryNames) {
+        QDeclarativeLandmarkCategory* category(0);
+        QDeclarativeListProperty<QDeclarativeLandmarkCategory> declarativeList = categoryModel->categories();
+        for (int i = 0; i < categoryModel->count(); i++) {
+            qDebug() << "Looping through: " <<  QDeclarativeLandmarkCategoryModel::categories_at(&declarativeList, i)->name();
+            qDebug() << "And comparing it with: " << categoryName;
+            if (QDeclarativeLandmarkCategoryModel::categories_at(&declarativeList, i)->name() == categoryName) {
+                category = QDeclarativeLandmarkCategoryModel::categories_at(&declarativeList, i);
+                break;
+            }
+        }
+        QVERIFY(category != 0);
+        QDeclarativeLandmarkCategoryFilter* category_filter = static_cast<QDeclarativeLandmarkCategoryFilter*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryFilter {}"));
+        category_filter->setCategory(category);
+        category_filters.append(category_filter);
+    }
+    QDeclarativeLandmarkUnionFilter* union_filter = static_cast<QDeclarativeLandmarkUnionFilter*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkUnionFilter {}"));
+    QDeclarativeListProperty<QDeclarativeLandmarkFilterBase> declarativeFilterList = union_filter->filters();
+    if (category_filters.count() > 1) {
+        for (int i = 0; i < category_filters.count(); i++) {
+            QDeclarativeLandmarkCompoundFilter::filters_append(&declarativeFilterList, category_filters.at(i));
+        }
+        result_filter = union_filter;
+    } else if (category_filters.count() == 1) {
+        result_filter = category_filters.at(0);
+    } else {
+        qWarning("No filters created");
+    }
+
+    QSignalSpy countChangedSpy(landmarkModel, SIGNAL(countChanged()));
+    landmarkModel->setFilter(result_filter);
+    landmarkModel->metaObject()->invokeMethod(landmarkModel, "update");
+    if (expectedMatches > 0)
+        QTRY_VERIFY(!countChangedSpy.isEmpty());
+    else
+        QTest::qWait(50); // Wait so that unexpected signals are detected
+    QTRY_COMPARE(landmarkModel->property("count").toInt(), expectedMatches);
+
+    qDeleteAll(category_filters);
+    delete union_filter;
+    delete categoryModel;
+    delete landmarkModel;
+}
+
+void tst_QDeclarativeLandmark::landmarksOfCategoriesFetch_data()
+{
+    QTest::addColumn<QString>("componentString");
+    QTest::addColumn<QStringList>("categoryNames");
+    QTest::addColumn<int>("expectedMatches");
+
+    QTest::newRow("empty category") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:false;}" << (QStringList() << "Empty") << 0;
+    QTest::newRow("one category (many matches)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:false;}" << (QStringList() << "Cities") << 3;
+    QTest::newRow("two categories (many + many matches") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:false;}" << (QStringList() << "Sights" << "Cities") << 6;
 }
 
 // Update database without autoUpdate with update() and verify signals are received an count updates

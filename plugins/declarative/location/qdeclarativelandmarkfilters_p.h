@@ -6,7 +6,9 @@
 #include <qdeclarativecoordinate_p.h>
 #include <qlandmarkunionfilter.h>
 #include <qlandmarknamefilter.h>
+#include <qlandmarkcategoryfilter.h>
 #include <qlandmarkfilter.h>
+#include <qdeclarativelandmarkcategory_p.h>
 
 #include <QtDeclarative/qdeclarative.h>
 #include <QDeclarativeListProperty>
@@ -57,6 +59,28 @@ private:
 };
 
 
+class QDeclarativeLandmarkCategoryFilter : public QDeclarativeLandmarkFilterBase
+{
+    Q_OBJECT
+    Q_PROPERTY(QDeclarativeLandmarkCategory* category READ category WRITE setCategory NOTIFY categoryChanged)
+
+public:
+    explicit QDeclarativeLandmarkCategoryFilter(QObject* parent = 0);
+    ~QDeclarativeLandmarkCategoryFilter();
+
+    QDeclarativeLandmarkCategory* category() const;
+    void setCategory(QDeclarativeLandmarkCategory* category);
+    // From QDeclarativeLandmarkFilterBase
+    virtual QLandmarkFilter* filter();
+
+signals:
+    void categoryChanged();
+
+private:
+    QDeclarativeLandmarkCategory* m_category;
+    QLandmarkCategoryFilter m_filter;
+};
+
 class QDeclarativeLandmarkNameFilter : public QDeclarativeLandmarkFilterBase
 {
     Q_OBJECT
@@ -78,6 +102,7 @@ private:
     QString m_name;
     QLandmarkNameFilter m_filter;
 };
+
 
 class QDeclarativeLandmarkProximityFilter : public QDeclarativeLandmarkFilterBase
 {
@@ -133,6 +158,7 @@ private:
 
 QTM_END_NAMESPACE
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkNameFilter));
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkCategoryFilter));
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkProximityFilter));
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkUnionFilter));
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkIntersectionFilter));

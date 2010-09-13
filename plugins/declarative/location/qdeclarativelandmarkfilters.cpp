@@ -34,6 +34,35 @@ QLandmarkFilter* QDeclarativeLandmarkNameFilter::filter()
     return &m_filter;
 }
 
+QDeclarativeLandmarkCategoryFilter::QDeclarativeLandmarkCategoryFilter(QObject* parent) :
+        QDeclarativeLandmarkFilterBase(parent)
+{
+}
+
+QDeclarativeLandmarkCategoryFilter::~QDeclarativeLandmarkCategoryFilter()
+{
+}
+
+QDeclarativeLandmarkCategory* QDeclarativeLandmarkCategoryFilter::category() const
+{
+    return m_category;
+}
+
+void QDeclarativeLandmarkCategoryFilter::setCategory(QDeclarativeLandmarkCategory* category)
+{
+    m_category = category;
+    m_filter.setCategoryId(m_category->category().categoryId());
+    emit categoryChanged();
+    emit filterContentChanged();
+}
+
+QLandmarkFilter* QDeclarativeLandmarkCategoryFilter::filter()
+{
+    if (!m_category)
+        return 0;
+    return &m_filter;
+}
+
 QDeclarativeLandmarkProximityFilter::QDeclarativeLandmarkProximityFilter(QObject *parent) :
         QDeclarativeLandmarkFilterBase(parent), m_radius(50), m_coordinate(0)
 {
