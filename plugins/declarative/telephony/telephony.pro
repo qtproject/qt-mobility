@@ -1,6 +1,5 @@
 INCLUDEPATH += ../../../src/telephony
 INCLUDEPATH += ../../../src/global
-INCLUDEPATH += C:\dev\qt\qt_build\4_7_stable\include
 
 TARGET  = $$qtLibraryTarget(declarative_telephony)
 TEMPLATE = lib
