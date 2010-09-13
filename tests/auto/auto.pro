@@ -112,7 +112,11 @@ contains(mobility_modules,contacts) {
 
 contains(mobility_modules,organizer) {
     # Organizer
-    SUBDIRS += qorganizeritemmanager
+    SUBDIRS += \
+        qorganizeritem \
+        qorganizeritemdetail \
+        qorganizeritemdetaildefinition \
+        qorganizeritemmanager
 }
 
 contains(mobility_modules,versit) {
