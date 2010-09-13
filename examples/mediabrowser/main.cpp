@@ -48,7 +48,11 @@ int main(int argc, char *argv[])
 
     Browser browser;
     browser.showArtists();
+#ifdef Q_OS_SYMBIAN
+    browser.showMaximized();
+#else
     browser.show();
+#endif
 
     return app.exec();
 }

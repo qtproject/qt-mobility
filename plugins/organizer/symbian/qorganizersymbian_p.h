@@ -210,11 +210,11 @@ public:
 private:
     CCalEntryView* entryViewL(const QOrganizerCollectionLocalId& collectionId) const;
     QOrganizerCollectionLocalId collectionLocalIdL(QOrganizerItem item, const QOrganizerCollectionLocalId& collectionId = 0) const;
-    CCalEntry* entryForItemOccurrenceL(QOrganizerItem *item, bool &isNewEntry) const;
-    CCalEntry* entryForItemL(QOrganizerItem *item, bool &isNewEntry) const;
-    CCalEntry* findEntryL(QOrganizerItemLocalId localId, QString manageruri) const;
-    CCalEntry* findEntryL(const TDesC8& globalUid) const;
-    CCalEntry* findParentEntryLC(QOrganizerItem *item, const TDesC8& globalUid) const;
+    CCalEntry* entryForItemOccurrenceL(const QOrganizerCollectionLocalId collectionId, QOrganizerItem *item, bool &isNewEntry) const;
+    CCalEntry* entryForItemL(const QOrganizerCollectionLocalId collectionId, QOrganizerItem *item, bool &isNewEntry) const;
+    CCalEntry* findEntryL(const QOrganizerCollectionLocalId collectionId, QOrganizerItemLocalId localId, QString manageruri) const;
+    CCalEntry* findEntryL(const QOrganizerCollectionLocalId collectionId, const TDesC8& globalUid) const;
+    CCalEntry* findParentEntryLC(const QOrganizerCollectionLocalId collectionId, QOrganizerItem *item, const TDesC8& globalUid) const;
     void removeItemL(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet *changeSet);
 	
 private:

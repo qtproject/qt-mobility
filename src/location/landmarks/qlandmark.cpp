@@ -55,18 +55,10 @@
 
 #include <QVariant>
 #include <QStringList>
-#include <QSet>
 
 #ifdef LANDMARKPRIVATE_DEBUG
 #include <QDebug>
 #endif
-
-
-QTM_BEGIN_NAMESPACE
-uint qHash(const QLandmarkCategoryId& key) {
-   return qHash(key.localId()) + qHash(key.managerUri());
-}
-QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
@@ -141,6 +133,31 @@ QLandmarkPrivate& QLandmarkPrivate::operator= (const QLandmarkPrivate & other)
 
 bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
 {
+    bool categoryIdsMatch = true;
+    //TODO: optimize using QSet
+    if (categoryIds.count() == other.categoryIds.count()) {
+        for (int i=0; i < categoryIds.count(); ++i) {
+            if (other.categoryIds.contains(categoryIds.at(i))) {
+                continue;
+            } else {
+                categoryIdsMatch = false;
+                break;
+            }
+        }
+
+        if (categoryIdsMatch == true) {
+            for (int i=0; i < other.categoryIds.count(); ++i) {
+                if (categoryIds.contains(other.categoryIds.at(i))) {
+                    continue;
+                } else {
+                    categoryIdsMatch = false;
+                    break;
+                }
+            }
+        }
+    } else {
+        categoryIdsMatch = false;
+    }
 
 #ifdef LANDMARKPRIVATE_DEBUG
     qDebug() << "==" << (QGeoPlacePrivate::operator== (other));
@@ -150,7 +167,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     qDebug() << "radius:" <<  (radius == other.radius);
     qDebug() << "phoneNumber:" << (phoneNumber == other.phoneNumber);
     qDebug() << "url:" << (url == other.url);
-    qDebug() << "categoryIds:" << (categoryIds.toSet() == other.categoryIds.toSet());
+    qDebug() << "categoryIds:" << (categoryIdsMatch);
     qDebug() << "managerAttributes:" << (managerAttributes == other.managerAttributes);
     qDebug() << "customAttributes:" << (customAttributes == other.customAttributes);
     qDebug() << "id" << (id == other.id);
@@ -163,7 +180,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
             && (radius == other.radius)
             && (phoneNumber == other.phoneNumber)
             && (url == other.url)
-            && (categoryIds.toSet() == other.categoryIds.toSet())
+            && (categoryIdsMatch)
             && (managerAttributes == other.managerAttributes)
             && (customAttributes == other.customAttributes)
            && (id == other.id));
