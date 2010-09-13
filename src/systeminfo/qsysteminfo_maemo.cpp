@@ -123,15 +123,11 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,
                                                "/com/nokia/SystemInfo",
                                                "com.nokia.SystemInfo",
                                                QDBusConnection::systemBus());
-            if(!connectionInterface.isValid()) {
-                qWarning() << "interfacenot valid";
-            } else {
-                QDBusReply< QByteArray > reply =
-                    connectionInterface.call("GetConfigValue",
-                                             "/device/sw-release-ver");
-                if(reply.isValid())
-                    return reply.value();
-            }
+            QDBusReply< QByteArray > reply =
+                connectionInterface.call("GetConfigValue",
+                                         "/device/sw-release-ver");
+            if(reply.isValid())
+                return reply.value();
             break;
         }
         default:

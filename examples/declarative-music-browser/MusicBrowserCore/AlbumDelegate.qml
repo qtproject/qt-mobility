@@ -192,9 +192,8 @@ Package {
             id: songColumn
 
             Repeater {
-                model: GalleryQueryModel {
-                    gallery: documentGallery
-                    rootType: "Audio"
+                model: DocumentGalleryModel {
+                    rootType: DocumentGallery.Audio
                     rootItem: itemId
                     properties: [ "trackNumber", "title", "duration" ]
                     sortProperties: [ "trackNumber" ]
@@ -208,9 +207,8 @@ Package {
         id: fullScreenView
 
         ListView {
-            model: GalleryQueryModel {
-                gallery: documentGallery
-                rootType: "Audio"
+            model: DocumentGalleryModel {
+                rootType: DocumentGallery.Audio
                 rootItem: itemId
                 properties: [ "trackNumber", "title", "duration" ]
                 sortProperties: [ "trackNumber" ]

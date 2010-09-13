@@ -387,16 +387,20 @@ QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::itemIds(const QOrganiz
     TCalTime calTime;
     calTime.SetTimeUtcL(TCalTime::MinTime());
     
-    // Get ids
+    // Get ids from all entry views
+    // TODO: instead of looping through entry views, get the collection id from
+    // local id? (not certain that is the correct way, because the Qt API for
+    // collections is still under development)
     RArray<TCalLocalUid> ids;
-    // TODO: collection id?
-    TRAPD(err, entryViewL(1)->GetIdsModifiedSinceDateL(calTime, ids));
-    transformError(err, error);
-    if (*error != QOrganizerItemManager::NoError) {
-        ids.Close();
-        return QList<QOrganizerItemLocalId>();
+    foreach(QOrganizerCollectionLocalId collectionId, m_entryViews.keys()) {
+        TRAPD(err, entryViewL(collectionId)->GetIdsModifiedSinceDateL(calTime, ids));
+        transformError(err, error);
+        if (*error != QOrganizerItemManager::NoError) {
+            ids.Close();
+            return QList<QOrganizerItemLocalId>();
+        }
     }
-    
+
     // Convert to QOrganizerItemLocalId list
     QList<QOrganizerItemLocalId> itemIds;
     int count = ids.Count();
@@ -483,12 +487,21 @@ void QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& itemId, QOr
 
     // Fetch item
     TCalLocalUid uid(itemId);
-	// TODO: collection id?
-    CCalEntry *calEntry = entryViewL(1)->FetchL(uid);
-    if (!calEntry) {
-        User::Leave(KErrNotFound); // Leave with KErrNotFound as to indicate that the entry 
-        // is not present in the database
+    CCalEntry *calEntry(0);
+    QOrganizerCollectionLocalId collectionLocalId(0);
+    foreach(QOrganizerCollectionLocalId id, m_entryViews.keys()) {
+        // TODO: instead of looping through entry views, get the collection id from
+        // local id? (not certain that is the correct way, because the Qt API for
+        // collections is still under development)
+        calEntry = entryViewL(id)->FetchL(uid);
+        if (calEntry) {
+            collectionLocalId = id;
+            break;
+        }
     }
+    // The corresponding entry not found from the database
+    if (!calEntry)
+        User::Leave(KErrNotFound);
     CleanupStack::PushL(calEntry);
 
     // Transform CCalEntry -> QOrganizerItem
@@ -504,12 +517,18 @@ void QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& itemId, QOr
     if (item->type() == QOrganizerItemType::TypeEventOccurrence) {
         HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
         // We don't know the local id yet, let's search with globalUid
-        CCalEntry *parentEntry = findParentEntryLC(item, *globalUid);
+        CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, item, *globalUid);
         QOrganizerEventOccurrence *eventOccurrence = (QOrganizerEventOccurrence *)item;
         eventOccurrence->setParentLocalId(parentEntry->LocalUidL());
         CleanupStack::PopAndDestroy(parentEntry);
         CleanupStack::PopAndDestroy(globalUid);
     }
+
+    // Set collection id
+    QOrganizerCollectionId cid;
+    cid.setLocalId(collectionLocalId);
+    cid.setManagerUri(managerUri());
+    setItemCollectionId(item, cid);
 
     CleanupStack::PopAndDestroy(calEntry);
 }
@@ -551,8 +570,6 @@ bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items, const 
 
 bool QOrganizerItemSymbianEngine::saveItem(QOrganizerItem* item, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
 {
-    Q_UNUSED(collectionId) // TODO: multiple collection (calendar) support
-        
     // Validate & save
     if (validateItem(*item, error)) {
         QOrganizerItemChangeSet changeSet;
@@ -561,6 +578,61 @@ bool QOrganizerItemSymbianEngine::saveItem(QOrganizerItem* item, const QOrganize
         changeSet.emitSignals(this);
     }
     return *error == QOrganizerItemManager::NoError;
+}
+
+void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet *changeSet)
+{
+    QOrganizerCollectionLocalId collectionLocalId = collectionLocalIdL(*item, collectionId);
+
+    // Find the entry corresponding to the item or to the item occurrence.
+    // Creates a new one, if the corresponding entry does not exist yet.
+    CCalEntry *entry(0);
+    bool isNewEntry(false);
+    if(item->type()== QOrganizerItemType::TypeEventOccurrence
+        || item->type()== QOrganizerItemType::TypeTodoOccurrence) {
+        entry = entryForItemOccurrenceL(collectionId, item, isNewEntry);
+    } else {
+        entry = entryForItemL(collectionId, item, isNewEntry);
+    }
+    CleanupStack::PushL(entry);
+
+    // Transform QOrganizerItem -> CCalEntry    
+    m_itemTransform.toEntryL(*item, entry);
+
+    // Save entry to the database
+    RPointerArray<CCalEntry> entries;
+    CleanupClosePushL(entries);
+    entries.AppendL(entry);
+    TInt count(0);
+    entryViewL(collectionId)->StoreL(entries, count);
+    if (count != entries.Count()) {
+        // The documentation states about count "On return, this
+        // contains the number of entries which were successfully stored".
+        // So it is not clear which error caused storing the entry to fail
+        // -> let's use the "one-error-fits-all" error code KErrGeneral.
+        User::Leave(KErrGeneral);
+    }
+
+    // Transform details that are available/updated after saving    
+    m_itemTransform.toItemPostSaveL(*entry, item, managerUri());
+
+    // Set collection id
+    QOrganizerCollectionId cid;
+    cid.setLocalId(collectionLocalIdL(*item, collectionId));
+    cid.setManagerUri(managerUri());
+    setItemCollectionId(item, cid);
+
+    // Cleanup
+    CleanupStack::PopAndDestroy(&entries);
+    CleanupStack::PopAndDestroy(entry);
+
+    // Update change set for signal emissions
+    if (changeSet) {
+        if (isNewEntry)
+            changeSet->insertAddedItem(item->localId());
+        else
+            changeSet->insertChangedItem(item->localId());
+    }
 }
 
 /*!
@@ -617,60 +689,7 @@ QOrganizerCollectionLocalId QOrganizerItemSymbianEngine::collectionLocalIdL(QOrg
 #endif
 }
 
-void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet *changeSet)
-{
-    // Find the entry corresponding to the item or to the item occurrence.
-    // Creates a new one, if the corresponding entry does not exist yet.
-    CCalEntry *entry(0);
-    bool isNewEntry(false);
-    if(item->type()== QOrganizerItemType::TypeEventOccurrence
-        || item->type()== QOrganizerItemType::TypeTodoOccurrence) {
-        entry = entryForItemOccurrenceL(item, isNewEntry);
-    } else {
-        entry = entryForItemL(item, isNewEntry);
-    }
-    CleanupStack::PushL(entry);
-
-    // Transform QOrganizerItem -> CCalEntry    
-    m_itemTransform.toEntryL(*item, entry);
-
-    // Save entry to the database
-    RPointerArray<CCalEntry> entries;
-    CleanupClosePushL(entries);
-    entries.AppendL(entry);
-    TInt count(0);
-    entryViewL(collectionId)->StoreL(entries, count);
-    if (count != entries.Count()) {
-        // The documentation states about count "On return, this
-        // contains the number of entries which were successfully stored".
-        // So it is not clear which error caused storing the entry to fail
-        // -> let's use the "one-error-fits-all" error code KErrGeneral.
-        User::Leave(KErrGeneral);
-    }
-
-    // Transform details that are available/updated after saving    
-    m_itemTransform.toItemPostSaveL(*entry, item, managerUri());
-
-    // Set collection id
-    QOrganizerCollectionId cid;
-    cid.setLocalId(collectionLocalIdL(*item, collectionId));
-    cid.setManagerUri(managerUri());
-    setItemCollectionId(item, cid);
-
-    // Cleanup
-    CleanupStack::PopAndDestroy(&entries);
-    CleanupStack::PopAndDestroy(entry);
-
-    // Update change set for signal emissions
-    if (changeSet) {
-        if (isNewEntry)
-            changeSet->insertAddedItem(item->localId());
-        else
-            changeSet->insertChangedItem(item->localId());
-    }
-}
-
-CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(QOrganizerItem *item, bool &isNewEntry) const
+CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(const QOrganizerCollectionLocalId collectionId, QOrganizerItem *item, bool &isNewEntry) const
 {
     CCalEntry * entry(NULL);
 
@@ -690,7 +709,7 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(QOrganizerItem *
 
     // Entry not found, find the parent entry and create a new child for it
     HBufC8* parentGlobalUid = OrganizerItemGuidTransform::guidLC(*item);
-    CCalEntry *parentEntry = findParentEntryLC(item, *parentGlobalUid);
+    CCalEntry *parentEntry = findParentEntryLC(collectionId, item, *parentGlobalUid);
 
     // Get the parameters for the new child entry
     QOrganizerItemInstanceOrigin origin = item->detail<QOrganizerItemInstanceOrigin>();
@@ -718,16 +737,16 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(QOrganizerItem *
     return entry; // Ownership transferred
 }
 
-CCalEntry* QOrganizerItemSymbianEngine::entryForItemL(QOrganizerItem *item, bool &isNewEntry) const
+CCalEntry* QOrganizerItemSymbianEngine::entryForItemL(const QOrganizerCollectionLocalId collectionId, QOrganizerItem *item, bool &isNewEntry) const
 {
     // Try to find with local id
-    CCalEntry *entry = findEntryL(item->localId(), item->id().managerUri());
+    CCalEntry *entry = findEntryL(collectionId, item->localId(), item->id().managerUri());
 
     // Not found. Try to find with globalUid
     if (!entry) {
         HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
 
-        entry = findEntryL(*globalUid);
+        entry = findEntryL(collectionId, *globalUid);
         // Not found? Create a new entry instance to be saved to the database
         if (!entry) {
             CCalEntry::TType type = OrganizerItemTypeTransform::entryTypeL(*item);
@@ -741,7 +760,7 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemL(QOrganizerItem *item, bool
     return entry;
 }
 
-CCalEntry * QOrganizerItemSymbianEngine::findEntryL(QOrganizerItemLocalId localId, QString manageruri) const
+CCalEntry * QOrganizerItemSymbianEngine::findEntryL(const QOrganizerCollectionLocalId collectionId, QOrganizerItemLocalId localId, QString manageruri) const
 {
     CCalEntry *entry(0);
 
@@ -750,8 +769,7 @@ CCalEntry * QOrganizerItemSymbianEngine::findEntryL(QOrganizerItemLocalId localI
         // The item has a local id, check the item is from this manager
         if (manageruri == managerUri()) {
             // Fetch the item (will return NULL if the localid is not found)
-            // TODO: collection id?
-            entry = entryViewL(1)->FetchL(localId); // ownership transferred
+            entry = entryViewL(collectionId)->FetchL(localId);
             if (!entry)
                 User::Leave(KErrNotFound);
         } else {
@@ -763,15 +781,14 @@ CCalEntry * QOrganizerItemSymbianEngine::findEntryL(QOrganizerItemLocalId localI
     return entry;
 }
 
-CCalEntry * QOrganizerItemSymbianEngine::findEntryL(const TDesC8& globalUid) const
+CCalEntry * QOrganizerItemSymbianEngine::findEntryL(const QOrganizerCollectionLocalId collectionId, const TDesC8& globalUid) const
 {
     CCalEntry *entry(0);
 
     if (globalUid.Length()) {
         // Search for an existing entry based on guid
         RPointerArray<CCalEntry> calEntryArray;
-        // TODO: collection id?
-        entryViewL(1)->FetchL(globalUid, calEntryArray);
+        entryViewL(collectionId)->FetchL(globalUid, calEntryArray);
         if (calEntryArray.Count()) {
             // take the first item in the array
             entry = calEntryArray[0];
@@ -784,7 +801,7 @@ CCalEntry * QOrganizerItemSymbianEngine::findEntryL(const TDesC8& globalUid) con
     return entry;
 }
 
-CCalEntry* QOrganizerItemSymbianEngine::findParentEntryLC(QOrganizerItem *item, const TDesC8& globalUid) const
+CCalEntry* QOrganizerItemSymbianEngine::findParentEntryLC(const QOrganizerCollectionLocalId collectionId, QOrganizerItem *item, const TDesC8& globalUid) const
 {
     CCalEntry *parent(0);
 
@@ -792,14 +809,13 @@ CCalEntry* QOrganizerItemSymbianEngine::findParentEntryLC(QOrganizerItem *item, 
     QOrganizerItemInstanceOrigin origin = item->detail<QOrganizerItemInstanceOrigin>();
     if (origin.parentLocalId()) {
         // Fetch the item (will return NULL if the localid is not found)
-        // TODO: collection id?
-        parent = entryViewL(collectionLocalIdL(*item))->FetchL(origin.parentLocalId()); // ownership transferred
+        parent = entryViewL(collectionId)->FetchL(origin.parentLocalId()); // ownership transferred
         if (!parent)
             User::Leave(KErrInvalidOccurrence);
         CleanupStack::PushL(parent);
     // Try to find with globalUid
     } else if (globalUid.Length()) {
-        parent = findEntryL(globalUid);
+        parent = findEntryL(collectionId, globalUid);
         if (!parent)
             User::Leave(KErrInvalidOccurrence);
         CleanupStack::PushL(parent);

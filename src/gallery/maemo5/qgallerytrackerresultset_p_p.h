@@ -221,7 +221,7 @@ public:
 
     QGalleryTrackerResultSetPrivate(
             QGalleryTrackerResultSetArguments *arguments,
-            bool live,
+            bool autoUpdate,
             int offset,
             int limit)
         : idColumn(arguments->idColumn.take())
@@ -254,7 +254,7 @@ public:
     {
         arguments->clear();
 
-        if (live)
+        if (autoUpdate)
             flags |= Live;
     }
 

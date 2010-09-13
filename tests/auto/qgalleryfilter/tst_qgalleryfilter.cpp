@@ -46,7 +46,6 @@
 
 #include <QtTest/QtTest>
 
-Q_DECLARE_METATYPE(Qt::CaseSensitivity);
 Q_DECLARE_METATYPE(QVariant);
 Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGalleryFilter))
 Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGalleryFilter::Comparator))
@@ -93,21 +92,18 @@ void tst_QGalleryFilter::metaDataFilter_data()
     QTest::addColumn<QString>("propertyName");
     QTest::addColumn<QVariant>("value");
     QTest::addColumn<QGalleryFilter::Comparator>("comparator");
-    QTest::addColumn<Qt::CaseSensitivity>("caseSensitivity");
     QTest::addColumn<bool>("inverted");
 
     QTest::newRow("album title")
             << QString::fromLatin1("albumTitle")
             << QVariant(QString::fromLatin1("Greatest"))
             << QGalleryFilter::StartsWith
-            << Qt::CaseSensitive
             << false;
 
     QTest::newRow("not album title")
             << QString::fromLatin1("albumTitle")
             << QVariant(QString::fromLatin1("Greatest"))
             << QGalleryFilter::StartsWith
-            << Qt::CaseInsensitive
             << false;
 }
 
@@ -116,7 +112,6 @@ void tst_QGalleryFilter::metaDataFilter()
     QFETCH(QString, propertyName);
     QFETCH(QVariant, value);
     QFETCH(QGalleryFilter::Comparator, comparator);
-    QFETCH(Qt::CaseSensitivity, caseSensitivity);
     QFETCH(bool, inverted);
 
     {
@@ -126,24 +121,21 @@ void tst_QGalleryFilter::metaDataFilter()
         QCOMPARE(filter.propertyName(), QString());
         QCOMPARE(filter.value(), QVariant());
         QCOMPARE(filter.comparator(), QGalleryFilter::Equals);
-        QCOMPARE(filter.caseSensitivity(), Qt::CaseSensitive);
         QCOMPARE(filter.isInverted(), false);
 
         filter.setPropertyName(propertyName);
         filter.setValue(value);
         filter.setComparator(comparator);
-        filter.setCaseSensitivity(caseSensitivity);
         filter.setInverted(inverted);
 
         QCOMPARE(filter.propertyName(), propertyName);
         QCOMPARE(filter.value(), value);
         QCOMPARE(filter.comparator(), comparator);
-        QCOMPARE(filter.caseSensitivity(), caseSensitivity);
         QCOMPARE(filter.isInverted(), inverted);
     }
 
     {
-        QGalleryMetaDataFilter filter(propertyName, value, comparator, caseSensitivity);
+        QGalleryMetaDataFilter filter(propertyName, value, comparator);
 
         if (inverted)
             filter = !filter;
@@ -153,7 +145,6 @@ void tst_QGalleryFilter::metaDataFilter()
         QCOMPARE(filter.propertyName(), propertyName);
         QCOMPARE(filter.value(), value);
         QCOMPARE(filter.comparator(), comparator);
-        QCOMPARE(filter.caseSensitivity(), caseSensitivity);
         QCOMPARE(filter.isInverted(), inverted);
     }
 }
@@ -410,7 +401,6 @@ void tst_QGalleryFilter::copyOnWrite()
         filter.setPropertyName(QLatin1String("albumTitle"));
         filter.setValue(QLatin1String("Greatest Hits"));
         filter.setComparator(QGalleryFilter::EndsWith);
-        filter.setCaseSensitivity(Qt::CaseInsensitive);
         filter.setInverted(true);
 
         metaDataFilter = filter;
@@ -423,13 +413,11 @@ void tst_QGalleryFilter::copyOnWrite()
         QCOMPARE(filterCopy.propertyName(), QLatin1String("albumTitle"));
         QCOMPARE(filterCopy.value(), QVariant(QLatin1String("Greatest Hits")));
         QCOMPARE(filterCopy.comparator(), QGalleryFilter::EndsWith);
-        QCOMPARE(filterCopy.caseSensitivity(), Qt::CaseInsensitive);
         QCOMPARE(filterCopy.isInverted(), true);
 
         QCOMPARE(filter.propertyName(), QLatin1String("artist"));
         QCOMPARE(filter.value(), QVariant(QLatin1String("Self Titled")));
         QCOMPARE(filter.comparator(), QGalleryFilter::StartsWith);
-        QCOMPARE(filter.caseSensitivity(), Qt::CaseInsensitive);
         QCOMPARE(filter.isInverted(), true);
     } {
         QGalleryUnionFilter filter;
@@ -474,7 +462,6 @@ void tst_QGalleryFilter::copyOnWrite()
     QCOMPARE(metaDataFilter.propertyName(), QLatin1String("albumTitle"));
     QCOMPARE(metaDataFilter.value(), QVariant(QLatin1String("Greatest Hits")));
     QCOMPARE(metaDataFilter.comparator(), QGalleryFilter::EndsWith);
-    QCOMPARE(metaDataFilter.caseSensitivity(), Qt::CaseInsensitive);
     QCOMPARE(metaDataFilter.isInverted(), true);
 
     filters = unionFilter.filters();
@@ -778,19 +765,6 @@ void tst_QGalleryFilter::equality_data()
             << QGalleryFilter(metaDataFilter)
             << QGalleryFilter(!metaDataFilter)
             << false;
-    QTest::newRow("unequal meta-data filter (case-sensitivity")
-            << QGalleryFilter(QGalleryMetaDataFilter(
-                    albumProperty,
-                    QLatin1String("Self Titled"),
-                    QGalleryFilter::Equals,
-                    Qt::CaseSensitive))
-            << QGalleryFilter(QGalleryMetaDataFilter(
-                    albumProperty,
-                    QLatin1String("Self Titled"),
-                    QGalleryFilter::Equals,
-                    Qt::CaseInsensitive))
-            << false;
-
     QTest::newRow("unequal union filter count")
             << QGalleryFilter(unionFilter)
             << QGalleryFilter(unionFilter && metaDataFilter)
@@ -895,7 +869,6 @@ void tst_QGalleryFilter::inequality()
 #define TST_QGALLERYMETADATAFILTER_DEBUG_TEXT "QGalleryMetaDataFilter(" \
         "propertyName: \"title\" " \
         "comparator: 6 "  \
-        "case-sensitive: 1 " \
         "value: QVariant(QString, \"Greatest\") ) "
 
 void tst_QGalleryFilter::debugMessage_data()
@@ -908,7 +881,7 @@ void tst_QGalleryFilter::debugMessage_data()
             << QByteArray("QGalleryFilter()");
     QTest::newRow("null QGalleryMetaDataFilter")
             << QGalleryFilter(QGalleryMetaDataFilter())
-            << QByteArray("QGalleryMetaDataFilter(comparator: 0 case-sensitive: 1)");
+            << QByteArray("QGalleryMetaDataFilter(comparator: 0)");
     QTest::newRow("null QGalleryUnionFilter")
             << QGalleryFilter(QGalleryUnionFilter())
             << QByteArray("QGalleryUnionFilter()");

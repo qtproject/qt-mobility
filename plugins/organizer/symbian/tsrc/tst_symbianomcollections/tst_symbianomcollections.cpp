@@ -115,6 +115,9 @@ private slots:  // Test cases
     void modifyItem_data(){ addManagers(); };
     void modifyItem();
 
+    void fetchItems_data(){ addManagers(); };
+    void fetchItems();
+
     // TODO: test all known properties
     //void collectionProperties_data();
     //void collectionProperties();
@@ -445,6 +448,36 @@ void tst_symbianomcollections::modifyItem()
     // Verify
     QCOMPARE(m_om->item(item.localId()).displayLabel(), QString("modifyitem"));
     QCOMPARE(m_om->item(item.localId()).collectionId().localId(), c.id().localId());
+}
+
+void tst_symbianomcollections::fetchItems()
+{
+    // Save a collection
+    QOrganizerCollection c;
+    c.setMetaData("Name", "fetchItems");
+    c.setMetaData("FileName", "c:fetchitems");
+    QVERIFY(m_om->saveCollection(&c));
+
+    const int itemCount(100);
+    for (int i(0); i < itemCount; i++) {
+        // Save similar item to both of the collections
+        QOrganizerItem item1 = createItem(QOrganizerItemType::TypeEvent,
+                                          QString("additem")+ i,
+                                          QDateTime::currentDateTime().addMSecs(3600));
+        QOrganizerItem item2 = item1;
+        QVERIFY(m_om->saveItem(&item1));
+        QVERIFY(m_om->saveItem(&item2, c.id().localId()));
+    }
+
+    // Verify there are no duplicates in the list
+    bool noduplicates(true);
+    foreach(QOrganizerItemLocalId localid, m_om->itemIds()) {
+        if (m_om->itemIds().count(localid) > 1) {
+            qWarning() << "duplicate local id: " << localid;
+            noduplicates = false;
+        }
+    }
+    QVERIFY(noduplicates);
 }
 
 /*!
