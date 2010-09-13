@@ -140,8 +140,8 @@ public slots:
 
 private slots:
 
-    void landmarksOfCategoriesFetch();
-    void landmarksOfCategoriesFetch_data();
+    void boxFilter();
+    void boxFilter_data();
 
     void construction();
     void construction_data();
@@ -160,8 +160,9 @@ private slots:
     void robustness_data();
     void categoriesOfLandmarkFetch();
     void categoriesOfLandmarkFetch_data();
+    void landmarksOfCategoriesFetch();
+    void landmarksOfCategoriesFetch_data();
     void filterContentChange();
-
     void sort_data();
 
 private:
@@ -703,6 +704,52 @@ void tst_QDeclarativeLandmark::landmarksOfCategoriesFetch_data()
     QTest::newRow("empty category") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:false;}" << (QStringList() << "Empty") << 0;
     QTest::newRow("one category (many matches)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:false;}" << (QStringList() << "Cities") << 3;
     QTest::newRow("two categories (many + many matches") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:false;}" << (QStringList() << "Sights" << "Cities") << 6;
+}
+
+void tst_QDeclarativeLandmark::boxFilter()
+{
+    QFETCH(QString, componentString);
+    QFETCH(double, topLeftLatitude);
+    QFETCH(double, topLeftLongitude);
+    QFETCH(double, bottomRightLatitude);
+    QFETCH(double, bottomRightLongitude);
+    QFETCH(int, expectedMatches);
+    populateTypicalDb();
+
+    QObject* source_obj = createComponent(componentString);
+    QDeclarativeLandmarkModel* landmarkModel = static_cast<QDeclarativeLandmarkModel*>(source_obj);
+    landmarkModel->setDbFileName(DB_FILENAME);
+
+    QDeclarativeLandmarkBoxFilter* box_filter = static_cast<QDeclarativeLandmarkBoxFilter*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkBoxFilter {}"));
+    QDeclarativeCoordinate* top_left_coordinate = new QDeclarativeCoordinate(QGeoCoordinate(topLeftLatitude, topLeftLongitude));
+    QDeclarativeCoordinate* bottom_right_coordinate = new QDeclarativeCoordinate(QGeoCoordinate(bottomRightLatitude, bottomRightLongitude));
+    box_filter->setTopLeft(top_left_coordinate);
+    box_filter->setBottomRight(bottom_right_coordinate);
+    landmarkModel->setFilter(box_filter);
+    landmarkModel->metaObject()->invokeMethod(landmarkModel, "update");
+
+    if (expectedMatches == 0)
+        QTest::qWait(50);
+    QTRY_COMPARE(landmarkModel->count(), expectedMatches);
+
+    delete box_filter;
+    delete top_left_coordinate;
+    delete bottom_right_coordinate;
+
+} // zzz
+
+void tst_QDeclarativeLandmark::boxFilter_data()
+{
+    QTest::addColumn<QString>("componentString");
+    QTest::addColumn<double>("topLeftLatitude");
+    QTest::addColumn<double>("topLeftLongitude");
+    QTest::addColumn<double>("bottomRightLatitude");
+    QTest::addColumn<double>("bottomRightLongitude");
+    QTest::addColumn<int>("expectedMatches");
+
+    QTest::newRow("zero matches with zero box") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:false;}" << double(0) << double(0) << double(0) << double(0) << 0;
+    QTest::newRow("one match with small box") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:false;}" << double(21) << double(19) << double(19) << double(21) << 1;
+    QTest::newRow("two matches with larger box") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:false;}" << double(72) << double(69) << double(69) << double(72) << 2;
 }
 
 // Update database without autoUpdate with update() and verify signals are received an count updates
