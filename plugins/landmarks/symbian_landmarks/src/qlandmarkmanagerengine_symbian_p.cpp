@@ -2957,7 +2957,7 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
          }
          if (keyList.contains("radius")) {
          if (attributeFilter.attribute("radius").isValid()) {
-         if (lmk.radius() == attributeFilter.attribute("radius").toDouble())
+         if (lmk.radius() == attributeFilter.attribute("radius").toReal())
          radlmkids.insert(lmk.landmarkId().localId());
          }
          else if (lmk.radius() > 0)

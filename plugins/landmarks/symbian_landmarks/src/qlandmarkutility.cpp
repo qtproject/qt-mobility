@@ -283,7 +283,7 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
     }
 
     // set coverage radius
-    double rad = qtLandmark->radius();
+    qreal rad = qtLandmark->radius();
     if (rad > 0) {
         symbianLandmark.SetCoverageRadius(rad);
     }
@@ -431,7 +431,7 @@ CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
     }
 
     // set coverage radius
-    double rad = qtLandmark->radius();
+    qreal rad = qtLandmark->radius();
     if (rad > 0) {
         symbianLandmark->SetCoverageRadius(rad);
     }
