@@ -105,8 +105,8 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer,
     int &error)
 {
     CMdENamespaceDef& defaultNamespace = GetDefaultNamespaceDefL();
-
     CMdEObjectQuery* query = NULL;
+    
 #ifdef MDS_25_COMPILATION_ENABLED
     if (request->rootType() == QDocumentGallery::File.name()) {
         CMdEObjectDef& mediaObjDef = defaultNamespace.GetObjectDefL(
@@ -138,11 +138,14 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer,
         query = m_cmdeSession->NewObjectQueryL( defaultNamespace, objdef, observer );
     }
 
+#else
+    CMdEObjectDef& objdef = QDocumentGalleryMDSUtility::ObjDefFromItemTypeL(defaultNamespace, request->rootType());
+    query = m_cmdeSession->NewObjectQueryL( defaultNamespace, objdef, observer );
+#endif //MDS_25_COMPILATION_ENABLED
+    
+    q_check_ptr(query); // check if we have a valid pointer as the next function is not leaving
     error = QDocumentGalleryMDSUtility::SetupQueryConditions(query, request, defaultNamespace);
 
-#else
-        
-#endif //MDS_25_COMPILATION_ENABLED 
     return query;
 }
 
@@ -173,21 +176,22 @@ void QMdeSession::AddItemAddedObserverL( MMdEObjectObserver& observer, CMdELogic
 #ifdef MDS_25_COMPILATION_ENABLED    
     m_cmdeSession->AddObjectObserverL( observer, condition, ENotifyAdd );
 #else
-    // TODO port mds 2.0
+    // TODO: check whether default namespace is ok (NULL -> default used)
+    m_cmdeSession->AddObjectObserverL(observer, condition, NULL);
 #endif //MDS_25_COMPILATION_ENABLED
 }
 
 void QMdeSession::AddItemChangedObserverL( MMdEObjectObserver& observer, RArray<TItemId> &idArray )
 {
-#ifdef MDS_25_COMPILATION_ENABLED
     CMdELogicCondition* condition = CMdELogicCondition::NewLC( ELogicConditionOperatorOr );
     condition->AddObjectConditionL( idArray );
-    
+#ifdef MDS_25_COMPILATION_ENABLED
     m_cmdeSession->AddObjectObserverL( observer, condition, (ENotifyModify | ENotifyRemove) );
-    CleanupStack::Pop(); // condition
 #else
-    // TODO port mds 2.0
+    // TODO: check whether default namespace is ok (NULL -> default used)
+    m_cmdeSession->AddObjectObserverL( observer, condition, NULL );
 #endif //MDS_25_COMPILATION_ENABLED
+    CleanupStack::Pop(); // condition
 }
 
 void QMdeSession::RemoveObjectObserver( MMdEObjectObserver& observer )
@@ -195,7 +199,7 @@ void QMdeSession::RemoveObjectObserver( MMdEObjectObserver& observer )
 #ifdef MDS_25_COMPILATION_ENABLED    
     TRAP_IGNORE( m_cmdeSession->RemoveObjectObserverL( observer ) );
 #else
-    // TODO port mds 2.0
+    TRAP_IGNORE( m_cmdeSession->RemoveObjectObserver(observer) );
 #endif //MDS_25_COMPILATION_ENABLED
 }
 

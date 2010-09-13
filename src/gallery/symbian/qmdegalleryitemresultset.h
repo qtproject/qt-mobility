@@ -56,6 +56,14 @@ public MMdEObjectObserver
     Q_OBJECT
 public:
 
+    enum QMdeSessionObserverNotificationType
+    {
+        ENotifyAdd    = 0x0001,
+        ENotifyModify = 0x0002,
+        ENotifyRemove = 0x0004
+    };
+
+    
     QMDEGalleryItemResultSet(QMdeSession *session, QObject *parent = 0);
     ~QMDEGalleryItemResultSet();
 
@@ -69,7 +77,12 @@ public:
     void HandleObjectRemoved(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray);
 #endif
     
+    void doHandleObjectNotificationL(CMdESession& aSession,
+        QMdeSessionObserverNotificationType aType,
+        const RArray<TItemId>& aObjectIdArray);
+    
     void createQuery();
+
 
 private:
     QGalleryItemRequest *m_request;
