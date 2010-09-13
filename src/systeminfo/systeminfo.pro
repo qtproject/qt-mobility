@@ -42,7 +42,8 @@ win32:!simulator {
             -lUser32 \
             -lGdi32 \
             -lIphlpapi \
-            -lOleaut32
+            -lOleaut32 \
+            -lDxva2
     }
 
     win32-g++ : {

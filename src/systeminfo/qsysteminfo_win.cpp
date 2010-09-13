@@ -76,7 +76,7 @@
 #include <Winuser.h>
 #include <Pm.h>
 #endif
-
+#include <HighLevelMonitorConfigurationAPI.h>
 
 #if !defined( Q_CC_MINGW)
 #ifndef Q_OS_WINCE
@@ -1396,9 +1396,36 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation
 
 float QSystemDisplayInfoPrivate::contrast(int screen)
 {
-    Q_UNUSED(screen);
+    DWORD current = 0;
+    if (QSysInfo::WindowsVersion >= QSysInfo::WV_VISTA) {
 
-    return 0.0;
+        HMONITOR monHandle = NULL;
+        QDesktopWidget wid;
+        HWND hWnd = wid.screen(screen)->winId();
+
+        monHandle = MonitorFromWindow(hWnd, MONITOR_DEFAULTTOPRIMARY);
+        LPPHYSICAL_MONITOR physMon = 0;
+        DWORD numMonitors;
+
+        if(GetNumberOfPhysicalMonitorsFromHMONITOR(monHandle, &numMonitors)) {
+
+            physMon = (LPPHYSICAL_MONITOR)malloc( numMonitors* sizeof(PHYSICAL_MONITOR));
+
+            GetPhysicalMonitorsFromHMONITOR(monHandle, numMonitors, physMon);
+
+
+            DWORD caps, colorTemp;
+            GetMonitorCapabilities(monHandle, &caps, &colorTemp);
+            if (caps & MC_CAPS_CONTRAST ) {
+                DWORD min=0;
+                DWORD max = 0;
+                GetMonitorContrast(monHandle, &min, &current, &max);
+            }
+            DestroyPhysicalMonitors(numMonitors,physMon);
+            free(physMon);
+        }
+    }
+    return (float)current;
 }
 
 int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
