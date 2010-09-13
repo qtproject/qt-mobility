@@ -3270,21 +3270,6 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
                     CleanupStack::Pop(textContainsStreet);
                 }
             }
-            else if (keyList.at(i) == "streetNumber") {
-                CPosLmTextCriteria* textStrNumCriteria = CPosLmTextCriteria::NewLC();
-                afieldArray.InsertInOrder(LandmarkUtility::positionFieldId(keyList.at(i)));
-                textStrNumCriteria->SetTextL(filterName);
-                textStrNumCriteria->SetPositionFieldsToSearchL(afieldArray);
-                compositeCriteria->AddArgument(textStrNumCriteria);
-                CleanupStack::Pop(textStrNumCriteria);
-                if (filterNamecont.Length() > 0) {
-                    CPosLmTextCriteria* textContainsStrNum = CPosLmTextCriteria::NewLC();
-                    textContainsStrNum->SetTextL(filterNamecont);
-                    textContainsStrNum->SetPositionFieldsToSearchL(afieldArray);
-                    compositeCriteria->AddArgument(textContainsStrNum);
-                    CleanupStack::Pop(textContainsStrNum);
-                }
-            }
             else if (keyList.at(i) == "postCode") {
                 CPosLmTextCriteria* textPostCodeCriteria = CPosLmTextCriteria::NewLC();
                 afieldArray.InsertInOrder(LandmarkUtility::positionFieldId(keyList.at(i)));

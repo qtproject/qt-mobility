@@ -41,6 +41,7 @@
 
 #include "qlandmarkmanagerengine_symbian.h"
 #include "qlandmarkmanagerengine_symbian_p.h"
+#include "qlandmarkutility.h"
 
 #include <QDebug>
 
@@ -512,7 +513,7 @@ QStringList QLandmarkManagerEngineSymbian::landmarkAttributeKeys(QLandmarkManage
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
-    return QLandmarkManagerEngine::landmarkAttributeKeys(error, errorString);
+    return LandmarkUtility::landmarkAttributeKeys();
 }
 
 QStringList QLandmarkManagerEngineSymbian::categoryAttributeKeys(QLandmarkManager::Error *error,
@@ -522,7 +523,7 @@ QStringList QLandmarkManagerEngineSymbian::categoryAttributeKeys(QLandmarkManage
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
-    return QLandmarkManagerEngine::categoryAttributeKeys(error, errorString);
+    return LandmarkUtility::categoryAttributeKeys();
 }
 
 //protected methods
