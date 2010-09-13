@@ -255,7 +255,6 @@ GstElement *CameraBinVideoEncoder::createEncoder()
                     8000000, //High
                     16000000 //VeryHigh
                 };
-                //quality from 0 to 63
                 int bitrate = qualityTable[qualityValue];
                 g_object_set(G_OBJECT(encoderElement), "bitrate", bitrate, NULL);
             }
