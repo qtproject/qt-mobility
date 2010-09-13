@@ -257,7 +257,7 @@ QList<QLandmarkId> sortQueryByDistance(QSqlQuery *query, const QLandmarkProximit
     LandmarkPoint point;
 
     double radius = proximityFilter.radius();
-    QGeoCoordinate center = proximityFilter.coordinate();
+    QGeoCoordinate center = proximityFilter.center();
 
     while(query->next()) {
         if (queryRun && queryRun->isCanceled) {
@@ -280,8 +280,6 @@ QList<QLandmarkId> sortQueryByDistance(QSqlQuery *query, const QLandmarkProximit
 
     for (int i=0;i < sortedPoints.count(); ++i) {
         result << sortedPoints.at(i).landmarkId;
-        if (i==0 && proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly)
-            break;
     }
     return result;
 }
@@ -416,11 +414,6 @@ QString landmarkIdsBoxQueryString(const QLandmarkBoxFilter &filter)
 
     queryString += ") ";
     return queryString;
-}
-
-QString landmarkIdsNearestQueryString(const QLandmarkProximityFilter &filter)
-{
-   return QString("SELECT id, latitude, longitude FROM landmark ");
 }
 
 bool removeLandmarkHelper(const QString &connectionName, const QLandmarkId &landmarkId,
@@ -964,7 +957,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
     case QLandmarkFilter::NameFilter: {
             QLandmarkNameFilter nameFilter;
             nameFilter = filter;
-            if (DatabaseOperations::filterSupportLevel(nameFilter)== QLandmarkManager::None) {
+            if (DatabaseOperations::filterSupportLevel(nameFilter)== QLandmarkManager::NoSupport) {
                 *error = QLandmarkManager::NotSupportedError;
                 *errorString = "The name filter's configuration is not supported";
                 return result;
@@ -1011,11 +1004,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
     case QLandmarkFilter::ProximityFilter: {
             QLandmarkProximityFilter proximityFilter = filter;
             if (proximityFilter.radius() < 0) {
-                if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-                    queryString = ::landmarkIdsNearestQueryString(proximityFilter);
-                } else {
-                    queryString =  ::landmarkIdsDefaultQueryString();
-                }
+                queryString =  ::landmarkIdsDefaultQueryString();
                 break;
             }
            //fall through if we have a radius, we can use a box filter
@@ -1031,7 +1020,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                 if(filter.type() == QLandmarkFilter::ProximityFilter) {
                     QLandmarkProximityFilter proximityFilter;
                     proximityFilter = filter;
-                    center = proximityFilter.coordinate();
+                    center = proximityFilter.center();
                     radius = proximityFilter.radius();
                 }
 
@@ -2866,7 +2855,7 @@ QLandmarkManager::SupportLevel DatabaseOperations::filterSupportLevel(const QLan
 {
     switch(filter.type()) {
         case QLandmarkFilter::DefaultFilter:
-            return QLandmarkManager::Native;
+            return QLandmarkManager::NativeSupport;
         case QLandmarkFilter::AttributeFilter:
         {
             const QLandmarkAttributeFilter attribFilter(filter);
@@ -2876,85 +2865,85 @@ QLandmarkManager::SupportLevel DatabaseOperations::filterSupportLevel(const QLan
             if (attribFilter.attributeType() == QLandmarkAttributeFilter::ManagerAttributes) {
                 foreach(const QString key, filterKeys) {
                     if (!supportedSearchableAttributes.contains(key))
-                        return QLandmarkManager::None;
+                        return QLandmarkManager::NoSupport;
                 }
             }
             foreach (const QString &key, filterKeys) {
                 if (attribFilter.matchFlags(key) & QLandmarkFilter::MatchCaseSensitive)
-                    return QLandmarkManager::None;
+                    return QLandmarkManager::NoSupport;
             }
         }
         case QLandmarkFilter::BoxFilter:
         {
-            return QLandmarkManager::Native;
+            return QLandmarkManager::NativeSupport;
         }
         case QLandmarkFilter::CategoryFilter:
         {
-            return QLandmarkManager::Native;
+            return QLandmarkManager::NativeSupport;
         }
         case QLandmarkFilter::IntersectionFilter:
         {
             const QLandmarkIntersectionFilter andFilter(filter);
             const QList<QLandmarkFilter>& terms = andFilter.filters();
-            QLandmarkManager::SupportLevel currentLevel = QLandmarkManager::Native;
+            QLandmarkManager::SupportLevel currentLevel = QLandmarkManager::NativeSupport;
             if (terms.count() ==0)
                 return currentLevel;
 
             for(int i=0; i < terms.count();i++) {
-                    if (filterSupportLevel(terms.at(i)) == QLandmarkManager::None)
-                        return QLandmarkManager::None;
-                    else if (filterSupportLevel(terms.at(i)) == QLandmarkManager::Emulated)
-                        currentLevel = QLandmarkManager::Emulated;
+                    if (filterSupportLevel(terms.at(i)) == QLandmarkManager::NoSupport)
+                        return QLandmarkManager::NoSupport;
+                    else if (filterSupportLevel(terms.at(i)) == QLandmarkManager::EmulatedSupport)
+                        currentLevel = QLandmarkManager::EmulatedSupport;
             }
             return currentLevel;
         }
         case QLandmarkFilter::LandmarkIdFilter:
         {
-            return QLandmarkManager::Native;
+            return QLandmarkManager::NativeSupport;
         }
         case QLandmarkFilter::InvalidFilter:
         {
-            return QLandmarkManager::Native;
+            return QLandmarkManager::NativeSupport;
         }
         case QLandmarkFilter::NameFilter:
         {
             const QLandmarkNameFilter nameFilter(filter);
             if (nameFilter.matchFlags() & QLandmarkFilter::MatchCaseSensitive)
-                return QLandmarkManager::None;
+                return QLandmarkManager::NoSupport;
             else
-                return QLandmarkManager::Native;
+                return QLandmarkManager::NativeSupport;
         }
         case QLandmarkFilter::ProximityFilter:
         {
-            return QLandmarkManager::Native;
+            return QLandmarkManager::NativeSupport;
         }
         case QLandmarkFilter::UnionFilter:
         {
             const QLandmarkUnionFilter orFilter(filter);
             const QList<QLandmarkFilter>& terms = orFilter.filters();
-            QLandmarkManager::SupportLevel currentLevel = QLandmarkManager::Native;
+            QLandmarkManager::SupportLevel currentLevel = QLandmarkManager::NativeSupport;
             if (terms.count() == 0)
                 return currentLevel;
 
             for (int i=0; i < terms.count(); i++) {
-                if (filterSupportLevel(terms.at(i)) == QLandmarkManager::None)
-                    return QLandmarkManager::None;
-                else if (filterSupportLevel(terms.at(i)) == QLandmarkManager::Emulated)
-                    currentLevel = QLandmarkManager::Emulated;
+                if (filterSupportLevel(terms.at(i)) == QLandmarkManager::NoSupport)
+                    return QLandmarkManager::NoSupport;
+                else if (filterSupportLevel(terms.at(i)) == QLandmarkManager::EmulatedSupport)
+                    currentLevel = QLandmarkManager::EmulatedSupport;
             }
 
             return currentLevel;
         }
         default: {
-            return QLandmarkManager::None;
+            return QLandmarkManager::NoSupport;
         }
     }
-    return QLandmarkManager::None;
+    return QLandmarkManager::NoSupport;
 }
 
 QLandmarkManager::SupportLevel DatabaseOperations::sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders) const
 {
-    QLandmarkManager::SupportLevel currentLevel = QLandmarkManager::Native;
+    QLandmarkManager::SupportLevel currentLevel = QLandmarkManager::NativeSupport;
     foreach(const QLandmarkSortOrder &sortOrder, sortOrders){
         switch(sortOrder.type()) {
             case (QLandmarkSortOrder::DefaultSort):
@@ -2962,7 +2951,7 @@ QLandmarkManager::SupportLevel DatabaseOperations::sortOrderSupportLevel(const Q
             case (QLandmarkSortOrder::NameSort):
                 continue;
             default:
-                currentLevel = QLandmarkManager::None;
+                currentLevel = QLandmarkManager::NoSupport;
         }
     }
     return currentLevel;

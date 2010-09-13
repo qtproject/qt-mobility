@@ -400,16 +400,7 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
         return QList<QLandmarkId> ();
     }
 
-    bool isNearestFilter = false;
-    // check for nearest
-    if (filter.type() == QLandmarkFilter::ProximityFilter) {
-        QLandmarkProximityFilter proximityFilter = filter;
-        if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-            isNearestFilter = true;
-        }
-    }
-
-    sortFetchedLmIds(limit, offset, sortOrders, result, isNearestFilter, filter.type(), error,
+    sortFetchedLmIds(limit, offset, sortOrders, result, filter.type(), error,
         errorString);
 
     return result;
@@ -1161,7 +1152,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::None;
+    QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::NoSupport;
 
     switch (filter.type()) {
 
@@ -1185,7 +1176,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
     case QLandmarkFilter::ProximityFilter:
     case QLandmarkFilter::BoxFilter:
     {
-        supportLevel = QLandmarkManager::Native;
+        supportLevel = QLandmarkManager::NativeSupport;
         break;
     }
     case QLandmarkFilter::AttributeFilter:
@@ -1244,7 +1235,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
                 if (!found)
                     break;
             }
-            supportLevel = QLandmarkManager::Native;
+            supportLevel = QLandmarkManager::NativeSupport;
         }
         break;
     }
@@ -1252,7 +1243,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
     case QLandmarkFilter::IntersectionFilter:
     case QLandmarkFilter::UnionFilter:
     {
-        supportLevel = QLandmarkManager::Emulated;
+        supportLevel = QLandmarkManager::EmulatedSupport;
         break;
     }
     default:
@@ -1275,14 +1266,14 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::sortOrderSup
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::Native;
+    QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::NativeSupport;
 
     switch (sortOrders.at(0).type()) {
     case QLandmarkSortOrder::DefaultSort:
     case QLandmarkSortOrder::NameSort:
         break;
     default:
-        supportLevel = QLandmarkManager::None;
+        supportLevel = QLandmarkManager::NoSupport;
         break;
     }
 
@@ -1301,11 +1292,11 @@ bool LandmarkManagerEngineSymbianPrivate::isFeatureSupported(
     *errorString = "";
 
     switch (feature) {
-    case (QLandmarkManager::ImportExport):
-    case (QLandmarkManager::Notifications):
+    case (QLandmarkManager::ImportExportFeature):
+    case (QLandmarkManager::NotificationsFeature):
         return true;
-    case (QLandmarkManager::ExtendedAttributes):
-    case (QLandmarkManager::CustomAttributes):
+    case (QLandmarkManager::ExtendedAttributesFeature):
+    case (QLandmarkManager::CustomAttributesFeature):
         *error = QLandmarkManager::NotSupportedError;
         *errorString = "Not supported feature";
         return false;
@@ -2826,7 +2817,7 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
         // set the coordinate values
         TCoordinate symbianCoord;
 
-        QGeoCoordinate qCoord = proximityFilter.coordinate();
+        QGeoCoordinate qCoord = proximityFilter.center();
         if (LandmarkUtility::isValidLat(qCoord.latitude()) && LandmarkUtility::isValidLong(
             qCoord.longitude())) {
             symbianCoord.SetCoordinate(qCoord.latitude(), qCoord.longitude());
@@ -3546,17 +3537,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
                     symbianLmIds);
                 symbianLmIds.Close();
 
-                bool isNearestFilter = false;
-                // check for nearest
-                if (lmIdFetchRequest->filter().type() == QLandmarkFilter::ProximityFilter) {
-                    QLandmarkProximityFilter proximityFilter = lmIdFetchRequest->filter();
-                    if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-                        isNearestFilter = true;
-                    }
-                }
-
                 sortFetchedLmIds(lmIdFetchRequest->limit(), lmIdFetchRequest->offset(),
-                    lmIdFetchRequest->sorting(), aData->iLandmarkIds, isNearestFilter,
+                    lmIdFetchRequest->sorting(), aData->iLandmarkIds,
                     lmIdFetchRequest->filter().type(), &error, &errorString);
             }
         }
@@ -3614,17 +3596,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
                     symbianLmIds);
                 symbianLmIds.Close();
 
-                bool isNearestFilter = false;
-                // check for nearest
-                if (lmfetchRequest->filter().type() == QLandmarkFilter::ProximityFilter) {
-                    QLandmarkProximityFilter proximityFilter = lmfetchRequest->filter();
-                    if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-                        isNearestFilter = true;
-                    }
-                }
-
                 if (sortFetchedLmIds(lmfetchRequest->limit(), lmfetchRequest->offset(),
-                    lmfetchRequest->sorting(), aData->iLandmarkIds, isNearestFilter,
+                    lmfetchRequest->sorting(), aData->iLandmarkIds,
                     lmfetchRequest->filter().type(), &error, &errorString)) {
 
                     // get all landmark data
@@ -4256,16 +4229,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
                 symbianLmIds.Close();
             }
 
-            bool isNearestFilter = false;
-            // check for nearest
-            if (filters.at(aData->iOpCount - 1).type() == QLandmarkFilter::ProximityFilter) {
-                QLandmarkProximityFilter proximityFilter = filters.at(aData->iOpCount);
-                if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-                    isNearestFilter = true;
-                }
-            }
             // sort and fetch with offset if required.
-            sortFetchedLmIds(limit, offset, sortOrders, result, isNearestFilter, filters.at(
+            sortFetchedLmIds(limit, offset, sortOrders, result, filters.at(
                 aData->iOpCount - 1).type(), &error, &errorString);
 
             // update the first result
@@ -4352,7 +4317,7 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
  * also filters the data with offset and limit
  */
 bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset, QList<
-    QLandmarkSortOrder> sortOrders, QList<QLandmarkId>& landmarkIds, bool isNearestFilter,
+    QLandmarkSortOrder> sortOrders, QList<QLandmarkId>& landmarkIds,
     QLandmarkFilter::FilterType filterType, QLandmarkManager::Error *error, QString *errorString) const
 {
     // if no search data found return empty list
@@ -4397,13 +4362,6 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
 
         landmarkIds.clear();
         landmarkIds = QLandmarkManagerEngineSymbian::sortLandmarks(landmarks, sortOrders);
-    }
-
-    if (isNearestFilter) {
-        QLandmarkId nearestLmId = landmarkIds.at(0);
-        landmarkIds.clear();
-        landmarkIds.append(nearestLmId);
-        return true;
     }
 
     int resultcount = landmarkIds.size();

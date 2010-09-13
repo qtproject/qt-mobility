@@ -569,20 +569,10 @@ private slots:
         QVERIFY(!MockEngine::testFilter(nameFilter,lm));
     }
 
-    void testNearestFilter()
-    {
-        QLandmarkProximityFilter nearestFilter;
-        nearestFilter.setCoordinate(QGeoCoordinate(30,30));
-        nearestFilter.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
-        QLandmark lm;
-        lm.setCoordinate(QGeoCoordinate(40,30));
-        QVERIFY(MockEngine::testFilter(nearestFilter,lm));
-    }
-
     void testProximityFilter()
     {
         QLandmarkProximityFilter proximityFilter;
-        proximityFilter.setCoordinate(QGeoCoordinate(30,30));
+        proximityFilter.setCenter(QGeoCoordinate(30,30));
         proximityFilter.setRadius( QGeoCoordinate(30,30).distanceTo(QGeoCoordinate(30,32)) );
 
         //test landmark in the centre

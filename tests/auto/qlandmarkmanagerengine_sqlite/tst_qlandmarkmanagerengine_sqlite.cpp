@@ -871,7 +871,6 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
      //we use a lot of intersection and union filters to try slow down the fetching
      //enough so that we can cancel the fetching operation.
      QLandmarkProximityFilter proximityFilter(QGeoCoordinate(5.0,5.0), 1000);
-     proximityFilter.setSelection(QLandmarkProximityFilter::SelectAll);
 
      QLandmarkIntersectionFilter intersectionFilter;
      intersectionFilter.append(proximityFilter);
@@ -3561,12 +3560,12 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
     //TODO: more edge cases, async version of these tests
     QGeoCoordinate nearNorthPole(89.91,0);
     QLandmarkProximityFilter proximityFilter;
-    proximityFilter.setCoordinate(nearNorthPole);
+    proximityFilter.setCenter(nearNorthPole);
     proximityFilter.setRadius(11000);
     m_manager->landmarks(proximityFilter);
     QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
 
-    proximityFilter.setCoordinate(nearNorthPole);
+    proximityFilter.setCenter(nearNorthPole);
     proximityFilter.setRadius(9000);
     m_manager->landmarks(proximityFilter);
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
@@ -3606,7 +3605,7 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximityOrder()
     m_manager->saveLandmark(&lm6);
 
     QLandmarkProximityFilter proximityFilter;
-    proximityFilter.setCoordinate(QGeoCoordinate(20,20));
+    proximityFilter.setCenter(QGeoCoordinate(20,20));
     QList<QLandmark> lms;
     QVERIFY(doFetch(type,proximityFilter, &lms));
     QCOMPARE(lms.count(), 6);
@@ -3887,33 +3886,6 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksNearest() {
     for (int i = 0; i < northeastFilterCoords.size(); ++i) {
         testSets << QPair<QGeoCoordinate, QGeoCoordinate>(northeastFilterCoords.at(i), northeastLmCoords.at(i));
     }
-
-    for (int i = 0; i < testSets.size(); ++i) {
-        QGeoCoordinate filterCoord = testSets.at(i).first;
-        QGeoCoordinate lmCoord = testSets.at(i).second;
-
-        QLandmarkProximityFilter filter(filterCoord);
-        filter.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
-
-        QList<QLandmark> lms = m_manager->landmarks(filter);
-
-        QCOMPARE(lms.size(), 1);
-
-        QCOMPARE(lms.at(0).coordinate(), lmCoord);
-    }
-
-    QLandmarkProximityFilter filter1(QGeoCoordinate(-10.0, -10.0), -1.0);
-    filter1.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
-
-    QList<QLandmark> lms = m_manager->landmarks(filter1);
-    QCOMPARE(lms.size(), 1);
-    QCOMPARE(lms.at(0).coordinate(), QGeoCoordinate(-1.0, -1.0));
-
-    QLandmarkProximityFilter filter2(QGeoCoordinate(-10.0, -10.0), 100.0);
-    filter2.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
-
-    lms = m_manager->landmarks(filter2);
-    QCOMPARE(lms.size(), 0);
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksNearestAsync() {
@@ -4033,52 +4005,6 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksNearestAsync() {
         testSets << QPair<QGeoCoordinate, QGeoCoordinate>(northeastFilterCoords.at(i), northeastLmCoords.at(i));
     }
 
-    for (int i = 0; i < testSets.size(); ++i) {
-        QGeoCoordinate filterCoord = testSets.at(i).first;
-        QGeoCoordinate lmCoord = testSets.at(i).second;
-        QLandmarkProximityFilter filter(filterCoord);
-        filter.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
-        QLandmarkFetchRequest fetchRequest(m_manager);
-        fetchRequest.setFilter(filter);
-        QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
-        fetchRequest.start();
-
-        QVERIFY(waitForAsync(spy, &fetchRequest));
-        QList<QLandmark> lms = fetchRequest.landmarks();
-
-        QVERIFY(checkIdFetchRequest(lms,filter));
-
-        QCOMPARE(lms.size(), 1);
-        QCOMPARE(lms.at(0).coordinate(), lmCoord);
-    }
-
-    QLandmarkProximityFilter filter1(QGeoCoordinate(-10.0, -10.0), -1.0);
-    filter1.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
-
-    QLandmarkFetchRequest fetchRequest(m_manager);
-    fetchRequest.setFilter(filter1);
-    QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
-    fetchRequest.start();
-
-    QVERIFY(waitForAsync(spy, &fetchRequest));
-    QList<QLandmark> lms = fetchRequest.landmarks();
-
-    QVERIFY(checkIdFetchRequest(lms,filter1));
-
-    QCOMPARE(lms.size(), 1);
-    QCOMPARE(lms.at(0).coordinate(), QGeoCoordinate(-1.0, -1.0));
-
-    QLandmarkProximityFilter filter2(QGeoCoordinate(-10.0, -10.0), 100.0);
-    filter2.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
-    fetchRequest.setFilter(filter2);
-    fetchRequest.start();
-
-    QVERIFY(waitForAsync(spy, &fetchRequest));
-    lms = fetchRequest.landmarks();
-
-    QVERIFY(checkIdFetchRequest(lms,filter2));
-
-    QCOMPARE(lms.size(), 0);
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksCategory() {
@@ -4846,7 +4772,7 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksIntersection() {
     m_manager->saveLandmark(&lm12);
 
     QLandmarkProximityFilter proximityFilter;
-    proximityFilter.setCoordinate(QGeoCoordinate(50,50));
+    proximityFilter.setCenter(QGeoCoordinate(50,50));
     proximityFilter.setRadius(-1);
     QVERIFY(doFetch(type,proximityFilter, &lms));
     QCOMPARE(lms.count(), 12);
@@ -4993,14 +4919,14 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksIntersection() {
     //landmarks in its region
     intersectionFilter.clear();
     intersectionFilter.append(cat2Filter);
-    proximityFilter.setCoordinate(QGeoCoordinate(-70,-70));
+    proximityFilter.setCenter(QGeoCoordinate(-70,-70));
     proximityFilter.setRadius(100000);
     intersectionFilter.append(proximityFilter);
     QVERIFY(doFetch(type,intersectionFilter, &lms));
     QCOMPARE(lms.count(), 0);
 
     //don't use a radius with the proximityFilter
-    proximityFilter.setCoordinate(QGeoCoordinate(50,50));
+    proximityFilter.setCenter(QGeoCoordinate(50,50));
     proximityFilter.setRadius(-1);
     intersectionFilter.clear();
     intersectionFilter.append(cat1Filter);
@@ -7236,113 +7162,113 @@ void tst_QLandmarkManagerEngineSqlite::supportedFormats() {
 
 void tst_QLandmarkManagerEngineSqlite::filterSupportLevel() {
     QLandmarkFilter filter;
-    QCOMPARE(m_manager->filterSupportLevel(filter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(filter), QLandmarkManager::NativeSupport);
     //TODO: Invalid filter?
 
     //name filter
     QLandmarkNameFilter nameFilter;
-    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
     nameFilter.setMatchFlags(QLandmarkFilter::MatchStartsWith);
-    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
     nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
-    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
     nameFilter.setMatchFlags(QLandmarkFilter::MatchEndsWith);
-    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
     nameFilter.setMatchFlags(QLandmarkFilter::MatchFixedString);
-    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
     nameFilter.setMatchFlags(QLandmarkFilter::MatchExactly);
-    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
     nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
-    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::None);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NoSupport);
     nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive | QLandmarkFilter::MatchStartsWith);
-    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::None);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NoSupport);
 
     //proximity filter
     QLandmarkProximityFilter proximityFilter;
-    QCOMPARE(m_manager->filterSupportLevel(proximityFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(proximityFilter), QLandmarkManager::NativeSupport);
 
     //box filter
     QLandmarkBoxFilter boxFilter;
-    QCOMPARE(m_manager->filterSupportLevel(boxFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(boxFilter), QLandmarkManager::NativeSupport);
 
     //AND filter
     QLandmarkIntersectionFilter andFilter;
-    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::NativeSupport);
     andFilter.append(boxFilter);
     andFilter.append(proximityFilter);
-    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::NativeSupport);
     nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
     andFilter.append(nameFilter);
     andFilter.append(filter);
-    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::None);
+    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::NoSupport);
     andFilter.clear();
 
     QLandmarkIntersectionFilter andFilter2;//try multi level intersection
     andFilter2.append(filter);             //that has native support
     andFilter.append(boxFilter);
     andFilter.append(andFilter2);
-    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::NativeSupport);
     andFilter2.append(nameFilter);  //try a multi level intersection with no
     andFilter.clear();              //support
     andFilter.append(boxFilter);
     andFilter.append(andFilter2);
     andFilter.append(proximityFilter);
-    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::None);
+    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::NoSupport);
 
 
     //union filter
     QLandmarkUnionFilter orFilter;
-    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::NativeSupport);
     orFilter.append(boxFilter);
     orFilter.append(proximityFilter);
-    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::NativeSupport);
     nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
     orFilter.append(nameFilter);
     orFilter.append(filter);
-    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::None);
+    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::NoSupport);
     orFilter.clear();
 
     QLandmarkUnionFilter orFilter2;//try multi level Union
     orFilter2.append(filter);             //that has native support
     orFilter.append(boxFilter);
     orFilter.append(orFilter2);
-    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::NativeSupport);
     orFilter2.append(nameFilter);  //try a multi level Union with no
     orFilter.clear();              //support
     orFilter.append(boxFilter);
     orFilter.append(orFilter2);
     orFilter.append(proximityFilter);
-    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::None);
+    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::NoSupport);
 
     //attribute filter
     //manager attributes that exist
     QLandmarkAttributeFilter attributeFilter;
     attributeFilter.setAttribute("name", "jack");
     attributeFilter.setAttribute("description", "colonel");
-    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NativeSupport);
 
     //try a manager attribute that doesn't exist
     attributeFilter.setAttribute("weapon", "staff");
-    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::None);
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
 
     //try an attribute with case sensitive matching(not supported
     attributeFilter.clearAttributes();
     attributeFilter.setAttribute("description", "desc", QLandmarkFilter::MatchCaseSensitive);
     attributeFilter.setAttribute("street", "abydos");
-    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::None);
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
     attributeFilter.setAttribute("description", "desc",
                     QLandmarkFilter::MatchCaseSensitive | QLandmarkFilter::MatchStartsWith);
     attributeFilter.setAttribute("street", "abydos");
-    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::None);
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
 
     //try see if other match flags will give native support
     attributeFilter.setAttribute("description", "desc");
     attributeFilter.setAttribute("street", "abydos", QLandmarkFilter::MatchStartsWith);
-    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NativeSupport);
 
     //try a landmark id filter
     QLandmarkIdFilter idFilter;
-    QCOMPARE(m_manager->filterSupportLevel(idFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(idFilter), QLandmarkManager::NativeSupport);
 }
 
 void tst_QLandmarkManagerEngineSqlite::sortOrderSupportLevel() {
@@ -7350,26 +7276,26 @@ void tst_QLandmarkManagerEngineSqlite::sortOrderSupportLevel() {
     QLandmarkSortOrder defaultSort;
     QList<QLandmarkSortOrder> sortOrders;
     sortOrders << defaultSort;
-    QCOMPARE(m_manager->sortOrderSupportLevel(sortOrders), QLandmarkManager::Native);
+    QCOMPARE(m_manager->sortOrderSupportLevel(sortOrders), QLandmarkManager::NativeSupport);
 
     //name sort order
     QLandmarkNameSort nameSort;
     sortOrders.clear();
     sortOrders << nameSort;
-    QCOMPARE(m_manager->sortOrderSupportLevel(sortOrders), QLandmarkManager::Native);
+    QCOMPARE(m_manager->sortOrderSupportLevel(sortOrders), QLandmarkManager::NativeSupport);
 
     //try a list
     sortOrders.clear();
     sortOrders << defaultSort << nameSort << defaultSort;
-    QCOMPARE(m_manager->sortOrderSupportLevel(sortOrders), QLandmarkManager::Native);
+    QCOMPARE(m_manager->sortOrderSupportLevel(sortOrders), QLandmarkManager::NativeSupport);
 }
 
 void tst_QLandmarkManagerEngineSqlite::isFeatureSupported()
 {
-    QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::Notifications));
-    QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::ImportExport));
-    QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::CustomAttributes));
-    QVERIFY(!m_manager->isFeatureSupported(QLandmarkManager::ExtendedAttributes));
+    QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::NotificationsFeature));
+    QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::ImportExportFeature));
+    QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::CustomAttributesFeature));
+    QVERIFY(!m_manager->isFeatureSupported(QLandmarkManager::ExtendedAttributesFeature));
 }
 
 void tst_QLandmarkManagerEngineSqlite::extendedAttributes()

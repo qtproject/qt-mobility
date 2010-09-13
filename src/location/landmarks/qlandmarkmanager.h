@@ -83,16 +83,16 @@ public:
     };
 
     enum SupportLevel {
-        Native,
-        Emulated,
-        None
+        NativeSupport,
+        EmulatedSupport,
+        NoSupport
     };
 
     enum LandmarkFeature {
-        ExtendedAttributes,
-        CustomAttributes,
-        ImportExport,
-        Notifications
+        ExtendedAttributesFeature,
+        CustomAttributesFeature,
+        ImportExportFeature,
+        NotificationsFeature
     };
 
 
