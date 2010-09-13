@@ -250,7 +250,7 @@
 
     For more details see the \l{Versit}{Versit API overview}.
 
-    \section1 Preview APIs
+    \section1 BETA APIs
 
     \section2 Organizer
 
@@ -499,7 +499,7 @@
     </tr>
     <tr>
     <td>Versit(Organizer)</td>
-    <td>TP</td>
+    <td>BETA</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
@@ -512,7 +512,7 @@
     </tr>
     <tr>
     <td>Camera</td>
-    <td>TP</td>
+    <td>BETA</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
@@ -525,7 +525,7 @@
     </tr>
     <tr>
     <td nowrap="nowrap">Service Framework(OOP)</td>
-    <td>TP</td>
+    <td>BETA</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
@@ -538,7 +538,7 @@
     </tr>
     <tr>
     <td>Organizer</td>
-    <td>TP</td>
+    <td>BETA</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
@@ -551,7 +551,7 @@
     </tr>
     <tr>
     <td>Landmarks</td>
-    <td>TP</td>
+    <td>BETA</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
@@ -564,7 +564,7 @@
     </tr>
     <tr>
     <td>Document Gallery</td>
-    <td>TP</td>
+    <td>BETA</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
@@ -577,7 +577,7 @@
     </tr>
     <tr>
     <td>Maps/Navigation</td>
-    <td>TP</td>
+    <td>BETA</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
@@ -590,7 +590,7 @@
     </tr>
     <tr>
     <td>Feedback</td>
-    <td>TP</td>
+    <td>BETA</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
