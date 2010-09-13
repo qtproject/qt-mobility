@@ -303,12 +303,23 @@ void COrganizerItemRequestsServiceProvider::SaveItemL()
         // update index beforehand in case saveItemL leaves, if so
         // RunError would call SelfComplete() for recursive operation
         iIndex++;
-        // Save item
-        // TODO: changeSet and collection id needed!
-        // without changeSet signaling does not work, and without collection id
-        // the item is always stored to the default collection
-        iOrganizerItemManagerEngine.saveItemL(&iItemList[iIndex-1], 0, 0);
-        iSuccessfullItems.append(iItemList[iIndex-1]);
+        QOrganizerItem item(iItemList[iIndex-1]);
+        // Validate item before saving
+        TBool isItemSupported(
+            iOrganizerItemManagerEngine.validateItem(item, &iError));
+        if (isItemSupported)
+            {
+            // Save item
+            // TODO: changeSet and collection id needed!
+            // without changeSet signaling does not work, and without collection id
+            // the item is always stored to the default collection
+            iOrganizerItemManagerEngine.saveItemL(&iItemList[iIndex-1], 0, 0);
+            iSuccessfullItems.append(iItemList[iIndex-1]);
+            }
+        else
+            {
+            iErrorMap.insert(iIndex-1, iError);
+            }
         // Calls itself recursively until all the items are deleted
         SelfComplete();
         }
