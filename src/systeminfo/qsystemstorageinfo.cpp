@@ -56,9 +56,6 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
    \ingroup systeminfo
    \inmodule QtSystemInfo
         \brief The QSystemStorageInfo class provides access to memory and disk information from the system.
-
-   \fn QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
-  Constructs a QSystemStorageInfo object with the given \a parent.
 */
 
         /*!
@@ -73,12 +70,16 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
         */
 
         /*!
-           \fn void QSystemStorageInfo::logicalDriveChanged(bool,const QString &))
+           \fn void QSystemStorageInfo::logicalDriveChanged(bool added, const QString &vol)
 
-           This signal gets emitted when new storage has been added or removed from the system.
+           This signal is emitted when the storage volume \a vol has been added to or removed from
+           the system. If \a added is true, the volume has been added; if false, it has been
+           removed.
         */
 
-
+/*!
+  Constructs a QSystemStorageInfo object with the given \a parent.
+ */
 QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
    : QObject(parent), d(storageInfoPrivate())
 {
