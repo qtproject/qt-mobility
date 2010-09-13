@@ -1,4 +1,4 @@
-TARGET = tst_declarativedocumentgallerymodel
+TARGET = tst_qdeclarativedocumentgallerymodel
 INCLUDEPATH += ../../../src/gallery
 DEPENDPATH += ../../src/gallery
 CONFIG += testcase
