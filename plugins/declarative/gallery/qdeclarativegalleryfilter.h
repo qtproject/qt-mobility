@@ -238,16 +238,6 @@ public:
     }
 };
 
-class QDeclarativeGalleryRegExpFilter : public QDeclarativeGalleryStringFilter
-{
-    Q_OBJECT
-public:
-    explicit QDeclarativeGalleryRegExpFilter(QObject *parent = 0)
-        : QDeclarativeGalleryStringFilter(QGalleryFilter::RegExp, parent)
-    {
-    }
-};
-
 class QDeclarativeGalleryFilterUnion : public QDeclarativeGalleryFilterBase
 {
     Q_OBJECT
@@ -300,7 +290,6 @@ QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryContainsFilter))
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryStartsWithFilter))
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryEndsWithFilter))
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryWildcardFilter))
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryRegExpFilter))
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryFilterUnion))
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryFilterIntersection))
 
