@@ -47,10 +47,17 @@
 
 #include <QPixmap>
 #include <QPoint>
+#include <QPen>
+#include <QBrush>
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapPixmapObjectPrivate;
+
+enum MapShapeType {
+    SHAPE_BALLOON = 0,
+    SHAPE_STAR = 1
+};
 
 class Q_LOCATION_EXPORT QGeoMapPixmapObject : public QGeoMapObject
 {
@@ -72,6 +79,16 @@ public:
 
     QPoint offset() const;
     void setOffset(const QPoint &offset);
+
+    void becomeStandardMarker(MapShapeType shapeType, const QString & text, const QPen & pen, const QPen & textPen, const QBrush & brush);
+
+    static QGeoMapPixmapObject * createStandardMarker(const QGeoCoordinate & coordinate, MapShapeType shapeType, const QString & text, const QPen & pen, const QPen & textPen, const QBrush & brush) {
+        QGeoMapPixmapObject * ret = new QGeoMapPixmapObject;
+        ret->setCoordinate(coordinate);
+        ret->becomeStandardMarker(shapeType, text, pen, textPen, brush);
+        return ret;
+    }
+
 
 signals:
     void coordinateChanged(const QGeoCoordinate &coordinate);
