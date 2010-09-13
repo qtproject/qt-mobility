@@ -248,6 +248,16 @@ GstElement *CameraBinVideoEncoder::createEncoder()
                        elementName == "dspmp4venc" ||
                        elementName == "dsph263enc") {
                 //only bitrate parameter is supported
+                int qualityTable[] = {
+                    1000000, //VeryLow
+                    2000000, //Low
+                    4000000, //Normal
+                    8000000, //High
+                    16000000 //VeryHigh
+                };
+                //quality from 0 to 63
+                int bitrate = qualityTable[qualityValue];
+                g_object_set(G_OBJECT(encoderElement), "bitrate", bitrate, NULL);
             }
         } else {
             int bitrate = m_videoSettings.bitRate();
