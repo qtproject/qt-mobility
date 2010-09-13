@@ -72,7 +72,6 @@
 #include <QTextCodec>
 #include <QEventLoop>
 #include <QTimer>
-#include <QtTest\qsignalspy.h>
 
 using namespace EmailClientApi;
 
@@ -203,6 +202,9 @@ void createFSMessage(QMessage &message, NmApiMessage &fsMessage)
 CFSEngine::CFSEngine()
 {
     startEventObserver();
+    m_emailService = new NmApiEmailService(this);
+    connect(m_emailService, SIGNAL(initialized(bool)), this, SLOT(emailServiceInitialized(bool)));
+    m_emailService->initialise();
 }
 
 CFSEngine::~CFSEngine()
@@ -213,6 +215,9 @@ CFSEngine::~CFSEngine()
     while (!m_addList.isEmpty())
         delete m_addList.takeFirst();
     
+    if (m_emailServiceInitialized)
+        m_emailService->uninitialise();
+    
     cancelEventObserver();
 }
 
@@ -221,12 +226,23 @@ CFSEngine* CFSEngine::instance()
     return fsEngine();
 }
 
-void CFSEngine::startEventObserver()
+void CFSEngine::emailServiceInitialized(bool initialized)
 {
+    m_emailServiceInitialized = initialized;
+}
+
+void CFSEngine::startEventObserver()
+{   
     m_eventNotifier = new NmApiEventNotifier(this);
+    qRegisterMetaType<EmailClientApi::NmApiMessageEvent>("EmailClientApi::NmApiMessageEvent");
+    connect(m_eventNotifier, SIGNAL(messageEvent(EmailClientApi::NmApiMessageEvent, quint64, quint64, QList<quint64>)),this,
+                     SLOT(messageEvent(EmailClientApi::NmApiMessageEvent, quint64, quint64, QList<quint64>)));
     m_eventNotifier->start();
-    connect(m_eventNotifier,SIGNAL(messageEvent(MessageEvent,quint64,quint64,QList<quint64>)),this,
-                     SLOT(messageEvent(MessageEvent,quint64,quint64,QList<quint64>)),Qt::QueuedConnection);
+    bool running;
+    if (m_eventNotifier->isRunning())
+        running = true;
+    else
+        running = false;
 }
 
 void CFSEngine::messageEvent(EmailClientApi::NmApiMessageEvent event, quint64 mailboxId, quint64 folderId, QList<quint64> envelopeIdList)
@@ -311,12 +327,14 @@ void CFSEngine::notification(quint64 mailboxId, quint64 envelopeId, quint64 fold
     for ( ; it != end; ++it) {
         const QMessageFilter &filter(it.value());
         if (!messageRetrieved) {
-            NmApiMessage* fsMessage = NULL;
-            //TODO: Use NmApiEmailService::getMessage() to find NmApiMessage by messageId.            
-            if (!fsMessage) {
-                return;
-            }
-            message = CreateQMessage(fsMessage);
+            NmApiMessage fsMessage;
+            int err;
+            if (m_emailServiceInitialized)
+                m_emailService->getMessage(mailboxId, folderId, envelopeId, fsMessage);
+               
+            
+
+            message = CreateQMessage(&fsMessage);
             messageRetrieved = true;
         }
 
@@ -2747,6 +2765,35 @@ void CFSAsynchronousAddOperation::createDraftMessage()
     connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(createDraftMessageCompleted(int, QVariant)));
 }
 
+CFSAsynchronousRetrieveBodyOperation::CFSAsynchronousRetrieveBodyOperation()
+{
+    
+}
+
+CFSAsynchronousRetrieveBodyOperation::~CFSAsynchronousRetrieveBodyOperation()
+{
+
+}
+
+void CFSAsynchronousRetrieveBodyOperation::retrieveBody(QMessageId &messageId, QMessageServicePrivate &privateService)
+{
+    m_privateService = &privateService;
+}
+
+CFSAsynchronousRetrieveAttachmentOperation::CFSAsynchronousRetrieveAttachmentOperation()
+{
+    
+}
+
+CFSAsynchronousRetrieveAttachmentOperation::~CFSAsynchronousRetrieveAttachmentOperation()
+{
+
+}
+
+void CFSAsynchronousRetrieveAttachmentOperation::retrieveAttachment(QMessageId &messageId, QMessageServicePrivate &privateService)
+{
+    m_privateService = &privateService;
+}
 
 #include "..\..\build\Release\QtMessaging\moc\moc_qfsnmengine_symbian_p.cpp";
 

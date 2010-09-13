@@ -61,6 +61,7 @@
 #include <nmapimessagemanager.h>
 #include <nmapieventnotifier.h>
 #include <xqappmgr.h>
+#include <nmapiemailservice.h>
 
 #include "qmessagemanager.h"
 #include "qmessagestore_symbian_p.h"
@@ -161,6 +162,7 @@ public:
     void createFSMessage(QMessage &message, NmApiMessage &fsMessage);
     
 public slots:
+    void emailServiceInitialized(bool initialized);
     void messageEvent(EmailClientApi::NmApiMessageEvent event, quint64 mailboxId, quint64 folderId, QList<quint64> envelopeIdList);
     void sendCompleted(int success, CFSAsynchronousSendOperation *operation);
     void addMessageCompleted(int success, CFSAsynchronousAddOperation *operation);
@@ -239,6 +241,8 @@ private:
     bool m_addMessageError;
     bool m_deleteMessageError;
     XQApplicationManager m_applicationManager;
+    NmApiEmailService *m_emailService;
+    bool m_emailServiceInitialized;
     friend class QMessageService;
     friend class CFSMessagesFindOperation;
     
@@ -359,6 +363,37 @@ private:
     NmApiMessageManager* m_manager;
 
 };
+
+class CFSAsynchronousRetrieveBodyOperation : public QObject
+
+{
+    Q_OBJECT
+  
+public:
+    CFSAsynchronousRetrieveBodyOperation();
+    ~CFSAsynchronousRetrieveBodyOperation();
+    
+    void retrieveBody(QMessageId &messageId, QMessageServicePrivate &privateService);
+    
+private:
+    QMessageServicePrivate *m_privateService;
+};
+
+class CFSAsynchronousRetrieveAttachmentOperation : public QObject
+
+{
+    Q_OBJECT
+  
+public:
+    CFSAsynchronousRetrieveAttachmentOperation();
+    ~CFSAsynchronousRetrieveAttachmentOperation();
+    
+    void retrieveAttachment(QMessageId &messageId, QMessageServicePrivate &privateService);
+    
+private:
+    QMessageServicePrivate *m_privateService;
+};
+
 
 QTM_END_NAMESPACE
 
