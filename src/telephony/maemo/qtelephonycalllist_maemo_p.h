@@ -79,8 +79,8 @@ class QTelephonyCallListPrivate : public QObject
 public:
     QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
     virtual ~QTelephonyCallListPrivate();
-    QList<QTelephonyCallInfo> activeCalls(const QTelephony::CallType& calltype) const;
     int activeCallCount() const;
+    QList<QTelephonyCallInfo> activeCalls(const QTelephony::CallType& calltype) const;
 
     //for tp
     void newChannels(DBus::ChannelPtr channelptr);

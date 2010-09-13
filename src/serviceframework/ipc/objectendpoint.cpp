@@ -46,6 +46,7 @@
 #include "qsignalintercepter_p.h"
 #include <QTimer>
 #include <QEventLoop>
+#include <QEvent>
 #include <QVarLengthArray>
 
 QTM_BEGIN_NAMESPACE
@@ -188,16 +189,15 @@ ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* pa
 
 ObjectEndPoint::~ObjectEndPoint()
 {
-    if (d->endPointType == Service) {
-        InstanceManager::instance()->removeObjectInstance(d->typeIdent, d->serviceInstanceId);
-    }
-
     delete d;
 }
 
 void ObjectEndPoint::disconnected()
 {
-    deleteLater();
+  if (d->endPointType == Service) {
+      InstanceManager::instance()->removeObjectInstance(d->typeIdent, d->serviceInstanceId);
+  }
+  deleteLater();
 }
 
 /*

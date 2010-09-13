@@ -76,7 +76,8 @@ public:
         qmlRegisterType<QDeclarativePositionSource>(uri, 1, 1, "PositionSource");
         qmlRegisterType<QDeclarativeLandmark>(uri, 1, 1, "Landmark");
         qmlRegisterType<QDeclarativeLandmarkModel>(uri, 1, 1, "LandmarkModel");
-        qmlRegisterType<QDeclarativeLandmarkFilter>(uri, 1, 1, "LandmarkFilter");
+        qmlRegisterType<QDeclarativeLandmarkNameFilter>(uri, 1, 1, "LandmarkNameFilter");
+        qmlRegisterType<QDeclarativeLandmarkProximityFilter>(uri, 1, 1, "LandmarkProximityFilter");
         qmlRegisterType<QDeclarativeLandmarkUnionFilter>(uri, 1, 1, "LandmarkUnionFilter");
         qmlRegisterType<QDeclarativeLandmarkIntersectionFilter>(uri, 1, 1, "LandmarkIntersectionFilter");
         qmlRegisterType<QDeclarativeLandmarkCategory>(uri, 1, 1, "LandmarkCategory");

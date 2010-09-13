@@ -88,7 +88,7 @@ private:
     QMediaControl *m_videoOutput;
 
     QGstreamerVideoRenderer *m_videoRenderer;
-    QGstreamerVideoOverlay *m_videoWindow;
+    QMediaControl *m_videoWindow;
     QGstreamerVideoWidgetControl *m_videoWidgetControl;
     CameraBinImageCapture *m_imageCaptureControl;
 };

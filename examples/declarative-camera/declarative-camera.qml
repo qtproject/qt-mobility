@@ -95,13 +95,14 @@ Rectangle {
         width : 640
         height : 480
         focus : visible //to receive focus and capture key events
+        //captureResolution : "640x480"
 
         flashMode: stillControls.flashMode
         whiteBalanceMode: stillControls.whiteBalance
         exposureCompensation: stillControls.exposureCompensation
 
-        onImageSaved : {
-            photoPreview.source = capturedImagePath
+        onImageCaptured : {
+            photoPreview.source = preview
             stillControls.previewAvailable = true
             cameraUI.state = "PhotoPreview"
         }

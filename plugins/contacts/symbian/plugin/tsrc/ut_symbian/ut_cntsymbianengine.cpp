@@ -49,7 +49,8 @@
 #include <qcontactorganization.h>
 #include <qcontactemailaddress.h>
 #include <qcontactguid.h>
-
+#include <qcontactonlineaccount.h>
+#include <qcontacturl.h>
 #include <QtTest/QtTest>
 
 void TestSymbianEngine::initTestCase()
@@ -216,6 +217,17 @@ void TestSymbianEngine::saveContactWithPreferredDetails()
     email.setEmailAddress("dummyemail");
     c.saveDetail(&email);
     c.setPreferredDetail("email", email);
+    
+    QContactOnlineAccount onlineAccount;
+    onlineAccount.setAccountUri("dummy");
+    onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeImpp);
+    c.saveDetail(&onlineAccount);
+    c.setPreferredDetail("OnlineAccountActions", onlineAccount);
+    
+    QContactUrl url;
+    url.setUrl("http://dummy");
+    c.saveDetail(&url);
+    c.setPreferredDetail("url", url);
 
     QVERIFY(m_engine->saveContact(&c, &err));
     QVERIFY(err == QContactManager::NoError);
@@ -244,6 +256,16 @@ void TestSymbianEngine::saveContactWithPreferredDetails()
     QVERIFY(emailDetail.definitionName() == QContactEmailAddress::DefinitionName);
     QContactEmailAddress fetchedEmail = static_cast<QContactEmailAddress>(emailDetail);
     QVERIFY(fetchedEmail.emailAddress() == "dummyemail");
+    
+    QContactDetail onlineAccountDetail = fetched.preferredDetail("OnlineAccountActions");
+    QVERIFY(onlineAccountDetail.definitionName() == QContactOnlineAccount::DefinitionName);
+    QContactOnlineAccount fetchedOnlineAccount = static_cast<QContactOnlineAccount>(onlineAccountDetail);
+    QVERIFY(fetchedOnlineAccount.accountUri() == "dummy");
+
+    QContactDetail urlDetail = fetched.preferredDetail("url");
+    QVERIFY(urlDetail.definitionName() == QContactUrl::DefinitionName);
+    QContactUrl fetchedUrl = static_cast<QContactUrl>(urlDetail);
+    QVERIFY(fetchedUrl.url() == "http://dummy");    
 
     //save a contact with one preferred details for several actions
     QContact c2;

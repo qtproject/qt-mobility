@@ -574,6 +574,7 @@ private slots:
     void filterLandmarksBoxAsync();
 
     void filterLandmarksIntersection();
+    void filterLandmarksIntersection_data();
     void filterLandmarksIntersectionAsync();
 
     void filterLandmarksMultipleBox();
@@ -3453,17 +3454,15 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
     datelineFilterCoords << QGeoCoordinate(-0.1, 179.9);
     datelineFilterCoords << QGeoCoordinate(0.1, 179.9);
 
-    /*TODO: test poles
-        northPoleFilterCoords << QGeoCoordinate(89.9, -179.9);
-        northPoleFilterCoords << QGeoCoordinate(89.9, -0.1);
-        northPoleFilterCoords << QGeoCoordinate(89.9, 0.1);
-        northPoleFilterCoords << QGeoCoordinate(89.9, 179.9);
+    northPoleFilterCoords << QGeoCoordinate(89.9, -179.9);
+    northPoleFilterCoords << QGeoCoordinate(89.9, -0.1);
+    northPoleFilterCoords << QGeoCoordinate(89.9, 0.1);
+    northPoleFilterCoords << QGeoCoordinate(89.9, 179.9);
 
-        southPoleFilterCoords << QGeoCoordinate(-89.9, -179.9);
-        southPoleFilterCoords << QGeoCoordinate(-89.9, -0.1);
-        southPoleFilterCoords << QGeoCoordinate(-89.9, 0.1);
-        southPoleFilterCoords << QGeoCoordinate(-89.9, 179.9);
-*/
+    southPoleFilterCoords << QGeoCoordinate(-89.9, -179.9);
+    southPoleFilterCoords << QGeoCoordinate(-89.9, -0.1);
+    southPoleFilterCoords << QGeoCoordinate(-89.9, 0.1);
+    southPoleFilterCoords << QGeoCoordinate(-89.9, 179.9);
 
     eastFilterCoords << QGeoCoordinate(-0.1, 10.0);
     eastFilterCoords << QGeoCoordinate(0.1, 10.0);
@@ -3500,9 +3499,9 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
     QList<QList<QGeoCoordinate> > coords;
     coords << greenwhichLmCoords;
     coords << datelineLmCoords;
-    //TODO: test poles
-    //        coords << northPoleLmCoords;
-    //        coords << southPoleLmCoords;
+
+    coords << northPoleLmCoords;
+    coords << southPoleLmCoords;
     coords << eastLmCoords;
     coords << northLmCoords;
     coords << northeastLmCoords;
@@ -3519,9 +3518,10 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
     QList<QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> > > testSets;
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(greenwhichFilterCoords, greenwhichLmCoords);
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(datelineFilterCoords, datelineLmCoords);
-    //TODO: test poles
-    //        testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(northPoleFilterCoords, northPoleLmCoords);
-    //        testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(southPoleFilterCoords, southPoleLmCoords);
+
+    testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(northPoleFilterCoords, northPoleLmCoords);
+    testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(southPoleFilterCoords, southPoleLmCoords);
+
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(northFilterCoords, northLmCoords);
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(eastFilterCoords, eastLmCoords);
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(northeastFilterCoords, northeastLmCoords);
@@ -3534,8 +3534,12 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
 
         for (int j = 0; j < filterCoords.size(); ++j) {
             QLandmarkProximityFilter filter(filterCoords.at(j), dist);
-
             QList<QLandmark> lms = m_manager->landmarks(filter);
+
+            if (i ==2 || i ==3) { //we're in the testing the north and south poles which is invalid
+                QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
+                continue;
+            }
 
             if (lms.size() != lmCoords.size()) {
                 for (int k = 0; k < lms.size(); ++k)
@@ -3551,6 +3555,21 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
             }
         }
     }
+
+    m_manager->removeLandmarks(m_manager->landmarkIds());
+
+    //TODO: more edge cases, async version of these tests
+    QGeoCoordinate nearNorthPole(89.91,0);
+    QLandmarkProximityFilter proximityFilter;
+    proximityFilter.setCoordinate(nearNorthPole);
+    proximityFilter.setRadius(11000);
+    m_manager->landmarks(proximityFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
+
+    proximityFilter.setCoordinate(nearNorthPole);
+    proximityFilter.setRadius(9000);
+    m_manager->landmarks(proximityFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximityOrder()
@@ -4640,6 +4659,7 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksBoxAsync() {
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksIntersection() {
+    QFETCH(QString, type);
     QLandmarkCategory cat1;
     cat1.setName("CAT1");
     QVERIFY(m_manager->saveCategory(&cat1));
@@ -4751,74 +4771,256 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksIntersection() {
     m_manager->removeLandmarks(m_manager->landmarkIds());
 
     QCOMPARE(m_manager->landmarkIds().count(), 0);
+    QLandmarkCategory cat4;
+    cat4.setName("CAT4");
+    m_manager->saveCategory(&cat4);
 
-    QLandmark lm1;
+    QLandmark lm1; //outside
     lm1.setName("LM1");
-    lm1.setCoordinate(QGeoCoordinate(10,0));
+    lm1.setCoordinate(QGeoCoordinate(50,55.1));
     lm1.addCategoryId(cat1.categoryId());
     m_manager->saveLandmark(&lm1);
 
     QLandmark lm2;
     lm2.setName("LM2");
-    lm2.setCoordinate(QGeoCoordinate(10,20));
-    lm2.addCategoryId(cat1.categoryId());
+    lm2.setCoordinate(QGeoCoordinate(50,55));
+    lm2.addCategoryId(cat3.categoryId());
     m_manager->saveLandmark(&lm2);
 
     QLandmark lm3;
     lm3.setName("LM3");
-    lm3.setCoordinate(QGeoCoordinate(10,21));
-    lm3.addCategoryId(cat2.categoryId());
+    lm3.setCoordinate(QGeoCoordinate(53,50));
+    lm3.addCategoryId(cat1.categoryId());
     m_manager->saveLandmark(&lm3);
 
-    QLandmark lm4;
+    QLandmark lm4;//outside
     lm4.setName("LM4");
-    lm4.setCoordinate(QGeoCoordinate(10,22));
-    lm4.addCategoryId(cat3.categoryId());
+    lm4.setCoordinate(QGeoCoordinate(53.23,50));
     m_manager->saveLandmark(&lm4);
 
     QLandmark lm5;
     lm5.setName("LM5");
-    lm5.setCoordinate(QGeoCoordinate(10,22));
-    lm5.addCategoryId(cat1.categoryId());
+    lm5.setCoordinate(QGeoCoordinate(51,51));
     lm5.addCategoryId(cat2.categoryId());
+    lm5.addCategoryId(cat1.categoryId());
     m_manager->saveLandmark(&lm5);
 
     QLandmark lm6;
     lm6.setName("LM6");
-    lm6.setCoordinate(QGeoCoordinate(10,50));
+    lm6.setCoordinate(QGeoCoordinate(52,48));
+    lm6.addCategoryId(cat2.categoryId());
     m_manager->saveLandmark(&lm6);
 
-    filter.clear();
-    QLandmarkProximityFilter proximityFilter(QGeoCoordinate(10,21),120000);
-    filter.append(proximityFilter);
-    QCOMPARE(m_manager->landmarks(filter).count(), 4);
+    QLandmark lm7;//outside
+    lm7.setName("LM7");
+    lm7.setCoordinate(QGeoCoordinate(52.66, 47));
+    m_manager->saveLandmark(&lm7);
+
+    QLandmark lm8;//outside
+    lm8.setName("LM8");
+    lm8.setCoordinate(QGeoCoordinate(46,50));
+    m_manager->saveLandmark(&lm8);
+
+    QLandmark lm9;
+    lm9.setName("LM9");
+    lm9.setCoordinate(QGeoCoordinate(51, 48.5));
+    lm9.addCategoryId(cat1.categoryId());
+    lm9.addCategoryId(cat2.categoryId());
+    m_manager->saveLandmark(&lm9);
+
+    QLandmark lm10;
+    lm10.setName("LM10");
+    lm10.setCoordinate(QGeoCoordinate(49,49));
+    lm10.addCategoryId(cat1.categoryId());
+    m_manager->saveLandmark(&lm10);
+
+    QLandmark lm11;
+    lm11.setName("LM11");
+    lm11.setCoordinate(QGeoCoordinate(48,51));
+    m_manager->saveLandmark(&lm11);
+
+    QLandmark lm12;
+    lm12.setName("LM12");
+    lm12.setCoordinate(QGeoCoordinate(48,53.83));
+    lm12.addCategoryId(cat3.categoryId());
+    m_manager->saveLandmark(&lm12);
+
+    QLandmarkProximityFilter proximityFilter;
+    proximityFilter.setCoordinate(QGeoCoordinate(50,50));
+    proximityFilter.setRadius(-1);
+    QVERIFY(doFetch(type,proximityFilter, &lms));
+    QCOMPARE(lms.count(), 12);
+    QCOMPARE(lms.at(0),lm5);
+    QCOMPARE(lms.at(1), lm10);
+    QCOMPARE(lms.at(2), lm9);
+    QCOMPARE(lms.at(3), lm11);
+    QCOMPARE(lms.at(4), lm6);
+    QCOMPARE(lms.at(5), lm3);
+    QCOMPARE(lms.at(6), lm12);
+    QCOMPARE(lms.at(7), lm2);
+    QCOMPARE(lms.at(8), lm4);
+    QCOMPARE(lms.at(9), lm7);
+    QCOMPARE(lms.at(10), lm1);
+    QCOMPARE(lms.at(11), lm8);
+
+    proximityFilter.setRadius(358000);
+    QVERIFY(doFetch(type,proximityFilter, &lms));
+    QCOMPARE(lms.count(), 8);
+    QCOMPARE(lms.at(0),lm5);
+    QCOMPARE(lms.at(1), lm10);
+    QCOMPARE(lms.at(2), lm9);
+    QCOMPARE(lms.at(3), lm11);
+    QCOMPARE(lms.at(4), lm6);
+    QCOMPARE(lms.at(5), lm3);
+    QCOMPARE(lms.at(6), lm12);
+    QCOMPARE(lms.at(7), lm2);
+
+    QLandmarkIntersectionFilter intersectionFilter;
+    proximityFilter.setRadius(-1);
+    intersectionFilter.append(proximityFilter);
+    QVERIFY(doFetch(type,proximityFilter, &lms));
+    QCOMPARE(lms.count(), 12);
+    QCOMPARE(lms.at(0),lm5);
+    QCOMPARE(lms.at(1), lm10);
+    QCOMPARE(lms.at(2), lm9);
+    QCOMPARE(lms.at(3), lm11);
+    QCOMPARE(lms.at(4), lm6);
+    QCOMPARE(lms.at(5), lm3);
+    QCOMPARE(lms.at(6), lm12);
+    QCOMPARE(lms.at(7), lm2);
+    QCOMPARE(lms.at(8), lm4);
+    QCOMPARE(lms.at(9), lm7);
+    QCOMPARE(lms.at(10), lm1);
+    QCOMPARE(lms.at(11), lm8);
+
+    intersectionFilter.clear();
+    proximityFilter.setRadius(358000);
+    intersectionFilter.append(proximityFilter);
+    QVERIFY(doFetch(type,intersectionFilter, &lms));
+    QCOMPARE(lms.count(), 8);
+    QCOMPARE(lms.at(0),lm5);
+    QCOMPARE(lms.at(1), lm10);
+    QCOMPARE(lms.at(2), lm9);
+    QCOMPARE(lms.at(3), lm11);
+    QCOMPARE(lms.at(4), lm6);
+    QCOMPARE(lms.at(5), lm3);
+    QCOMPARE(lms.at(6), lm12);
+    QCOMPARE(lms.at(7), lm2);
 
     QLandmarkCategoryFilter cat1Filter;
     cat1Filter.setCategoryId(cat1.categoryId());
-    filter.append(cat1Filter);
-    QCOMPARE(m_manager->landmarks(filter).count(), 2);
-    lms =m_manager->landmarks(filter);
-    QVERIFY(lms.contains(lm2));
-    QVERIFY(lms.contains(lm5));
 
     QLandmarkCategoryFilter cat2Filter;
     cat2Filter.setCategoryId(cat2.categoryId());
-    filter.append(cat2Filter);
-    QCOMPARE(m_manager->landmarks(filter).count(), 1);
-    lms =m_manager->landmarks(filter);
-    QVERIFY(lms.contains(lm5));
 
+    QLandmarkCategoryFilter cat3Filter;
+    cat3Filter.setCategoryId(cat3.categoryId());
+
+    //try proximity and a catgegory
+    intersectionFilter.clear();
+    intersectionFilter.append(proximityFilter);
+    intersectionFilter.append(cat1Filter);
+    QVERIFY(doFetch(type,intersectionFilter, &lms));
+    QCOMPARE(lms.count(), 4);
+    QCOMPARE(lms.at(0), lm5);
+    QCOMPARE(lms.at(1), lm10);
+    QCOMPARE(lms.at(2), lm9);
+    QCOMPARE(lms.at(3), lm3);
+
+    //try proximity and a different category
+    intersectionFilter.clear();
+    intersectionFilter.append(proximityFilter);
+    intersectionFilter.append(cat2Filter);
+    QVERIFY(doFetch(type,intersectionFilter, &lms));
+    QCOMPARE(lms.count(),3);
+    QCOMPARE(lms.at(0), lm5);
+    QCOMPARE(lms.at(1), lm9);
+    QCOMPARE(lms.at(2), lm6);
+
+    //try a proximity and two categories together
+    intersectionFilter.clear();
+    intersectionFilter.append(cat1Filter);
+    intersectionFilter.append(proximityFilter);
+    intersectionFilter.append(cat2Filter);
+    QVERIFY(doFetch(type,intersectionFilter, &lms));
+    QCOMPARE(lms.count(),2);
+    QCOMPARE(lms.at(0), lm5);
+    QCOMPARE(lms.at(1), lm9);
+
+    //try a proximity but with two categories t    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+    intersectionFilter.clear();
+    intersectionFilter.append(cat1Filter);
+    intersectionFilter.append(proximityFilter);
+    intersectionFilter.append(cat3Filter);
+    QVERIFY(doFetch(type,intersectionFilter, &lms));
+    QCOMPARE(lms.count(),0);
+
+    //try with a union of two categories which have no overlap
     QLandmarkUnionFilter unionFilter;
     unionFilter.append(cat1Filter);
+    unionFilter.append(cat3Filter);
+    intersectionFilter.clear();
+    intersectionFilter.append(unionFilter);
+    intersectionFilter.append(proximityFilter);
+    QVERIFY(doFetch(type,intersectionFilter, &lms));
+    QCOMPARE(lms.count(), 6);
+    QCOMPARE(lms.at(0),lm5);
+    QCOMPARE(lms.at(1), lm10);
+    QCOMPARE(lms.at(2), lm9);
+    QCOMPARE(lms.at(3), lm3);
+    QCOMPARE(lms.at(4), lm12);
+    QCOMPARE(lms.at(5), lm2);
+
+    //try a union of two categories which do have overlap
+    unionFilter.clear();
     unionFilter.append(cat2Filter);
-    filter.clear();
-    filter.append(proximityFilter);
-    filter.append(unionFilter);
-    QCOMPARE(m_manager->landmarks(filter).count(), 3);
-    lms = m_manager->landmarks(filter);
-    QVERIFY(lms.contains(lm2));
-    QVERIFY(lms.contains(lm3));
-    QVERIFY(lms.contains(lm5));
+    unionFilter.append(cat1Filter);
+    intersectionFilter.clear();
+    intersectionFilter.append(proximityFilter);
+    intersectionFilter.append(unionFilter);
+    QVERIFY(doFetch(type,intersectionFilter, &lms));
+    QCOMPARE(lms.count(), 5);
+    QCOMPARE(lms.at(0), lm5);
+    QCOMPARE(lms.at(1), lm10);
+    QCOMPARE(lms.at(2), lm9);
+    QCOMPARE(lms.at(3), lm6);
+    QCOMPARE(lms.at(4), lm3);
+
+    //try an intersection filter categories but proximity doesn't have
+    //landmarks in its region
+    intersectionFilter.clear();
+    intersectionFilter.append(cat2Filter);
+    proximityFilter.setCoordinate(QGeoCoordinate(-70,-70));
+    proximityFilter.setRadius(100000);
+    intersectionFilter.append(proximityFilter);
+    QVERIFY(doFetch(type,intersectionFilter, &lms));
+    QCOMPARE(lms.count(), 0);
+
+    //don't use a radius with the proximityFilter
+    proximityFilter.setCoordinate(QGeoCoordinate(50,50));
+    proximityFilter.setRadius(-1);
+    intersectionFilter.clear();
+    intersectionFilter.append(cat1Filter);
+    intersectionFilter.append(proximityFilter);
+    QVERIFY(doFetch(type,intersectionFilter, &lms));
+    QCOMPARE(lms.count(), 5);
+    QCOMPARE(lms.at(0), lm5);
+    QCOMPARE(lms.at(1), lm10);
+    QCOMPARE(lms.at(2), lm9);
+    QCOMPARE(lms.at(3), lm3);
+    QCOMPARE(lms.at(4), lm1);
+
+    //TODO: combin async and sync into one test function
+}
+
+void tst_QLandmarkManagerEngineSqlite::filterLandmarksIntersection_data() {
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksIntersectionAsync() {
@@ -6620,8 +6822,7 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx() {
         exportRequest.setFormat(QLandmarkManager::Gpx);
         exportRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
         exportRequest.setFileName(exportFile);
-        QList<QLandmarkId> idList;
-        exportRequest.setLandmarkIds(idList);
+        exportRequest.setLandmarkIds(QList<QLandmarkId>());
         exportRequest.start();
         QTest::qWait(50);
         exportRequest.cancel();
@@ -6960,8 +7161,7 @@ void tst_QLandmarkManagerEngineSqlite::exportLmx() {
         exportRequest.setFormat(QLandmarkManager::Lmx);
         exportRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
         exportRequest.setFileName(exportFile);
-        QList<QLandmarkId> idList;
-        exportRequest.setLandmarkIds(idList);
+        exportRequest.setLandmarkIds(QList<QLandmarkId>());
         exportRequest.start();
         QTest::qWait(50);
         exportRequest.cancel();

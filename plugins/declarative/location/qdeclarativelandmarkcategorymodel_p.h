@@ -32,9 +32,7 @@ public:
 
     // Roles for exposing data via model
     enum {
-        NameRole = Qt::UserRole + 500, // Check
-        DescriptionRole,
-        IconSourceRole,
+        CategoryRole = Qt::UserRole + 500
     };
     QDeclarativeLandmark* landmark() const;
     void setLandmark(QDeclarativeLandmark* landmark);
@@ -62,6 +60,7 @@ private:
     void convertCategoriesToDeclarative();
     void setFetchRange();
     void setFetchFilters();
+    void setFetchOrder();
 
 private:
     QLandmarkAbstractRequest* m_fetchRequest;

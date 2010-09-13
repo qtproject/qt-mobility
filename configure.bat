@@ -54,6 +54,7 @@ set RELEASEMODE=release
 set WIN32_RELEASEMODE=debug_and_release build_all
 set QT_MOBILITY_LIB=
 set BUILD_UNITTESTS=no
+set BUILD_PUBLIC_UNITTESTS=no
 set BUILD_EXAMPLES=no
 set BUILD_DEMOS=no
 set BUILD_DOCS=yes
@@ -87,6 +88,7 @@ if "%1" == "-plugindir"         goto pluginTag
 if "%1" == "-examplesdir"       goto examplesDirTag
 if "%1" == "-demosdir"          goto demosDirTag
 if "%1" == "-tests"             goto testTag
+if "%1" == "-public-tests-only" goto publicTestTag
 if "%1" == "-examples"          goto exampleTag
 if "%1" == "-demos"             goto demosTag
 if "%1" == "-qt"                goto qtTag
@@ -232,6 +234,11 @@ set BUILD_UNITTESTS=yes
 shift
 goto cmdline_parsing
 
+:publicTestTag
+set BUILD_PUBLIC_UNITTESTS=yes
+shift
+goto cmdline_parsing
+
 :exampleTag
 set BUILD_EXAMPLES=yes
 shift
@@ -365,6 +372,9 @@ echo QT_MOBILITY_PREFIX = %QT_MOBILITY_PREFIX:\=/% >> %PROJECT_CONFIG%
 
 echo build_unit_tests = %BUILD_UNITTESTS% >> %PROJECT_CONFIG%
 set BUILD_UNITTESTS=
+
+echo build_public_unit_tests = %BUILD_PUBLIC_UNITTESTS% >> %PROJECT_CONFIG%
+set BUILD_PUBLIC_UNITTESTS=
 
 echo build_examples = %BUILD_EXAMPLES% >> %PROJECT_CONFIG%
 set BUILD_EXAMPLES=
@@ -541,7 +551,9 @@ call :compileTest Surfaces_s60 surfaces_s60
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
 call :compileTest callinformation_symbian callinformation_symbian
 call :compileTest IMMERSION immersion
-call :compileTest AdvancedTouchFeedback advancedtouchfeedback 
+call :compileTest AdvancedTouchFeedback advancedtouchfeedback
+call :compileTest MDS mds
+call :compileTest MDS_25 mds_25
 goto noTests
 
 :windowsTests

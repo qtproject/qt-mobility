@@ -264,7 +264,7 @@ public:
     void updateLastFrame();
 
     void _q_present();
-    void _q_formatChanged(const QVideoSurfaceFormat &format);
+    void _q_updateNativeSize();
     void _q_serviceDestroyed();
     void _q_mediaObjectDestroyed();
 };
@@ -372,14 +372,16 @@ void QGraphicsVideoItemPrivate::_q_present()
     q_ptr->update(boundingRect);
 }
 
-void QGraphicsVideoItemPrivate::_q_formatChanged(const QVideoSurfaceFormat &format)
+void QGraphicsVideoItemPrivate::_q_updateNativeSize()
 {
-    nativeSize = format.sizeHint();
-    lastFrame = QPixmap();
+    const QSize &size = surface->surfaceFormat().sizeHint();
+    if (nativeSize != size) {
+        lastFrame = QPixmap();
+        nativeSize = size;
 
-    updateRects();
-
-    emit q_ptr->nativeSizeChanged(nativeSize);
+        updateRects();
+        emit q_ptr->nativeSizeChanged(nativeSize);
+    }
 }
 
 void QGraphicsVideoItemPrivate::_q_serviceDestroyed()
@@ -410,7 +412,7 @@ QGraphicsVideoItem::QGraphicsVideoItem(QGraphicsItem *parent)
     setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
 
     connect(d_ptr->surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
-            this, SLOT(_q_formatChanged(QVideoSurfaceFormat)));
+            this, SLOT(_q_updateNativeSize()));
 
     connect(d_ptr->surface, SIGNAL(activeChanged(bool)), this, SLOT(_q_present()));
 }

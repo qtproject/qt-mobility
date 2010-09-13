@@ -40,14 +40,7 @@
 ****************************************************************************/
 
 #include "qremoteservicecontrol.h"
-
-#if defined(Q_OS_SYMBIAN)
-    #include "qremoteservicecontrol_s60_p.h"
-#elif defined(QT_NO_DBUS)
-    #include "qremoteservicecontrol_p.h"
-#else
-    #include "qremoteservicecontrol_dbus_p.h"
-#endif
+#include "qremoteservicecontrol_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -72,7 +65,8 @@ QTM_BEGIN_NAMESPACE
 QRemoteServiceControl::QRemoteServiceControl(QObject* parent)
     : QObject(parent)
 {
-    d = new QRemoteServiceControlPrivate(this);
+    d = QRemoteServiceControlPrivate::constructPrivateObject(this);
+    connect(d, SIGNAL(lastInstanceClosed()), this, SIGNAL(lastInstanceClosed()));
 }
 
 /*!
@@ -91,6 +85,16 @@ QRemoteServiceControl::~QRemoteServiceControl()
 void QRemoteServiceControl::publishServices( const QString& ident)
 {
     d->publishServices(ident);
+}
+
+bool QRemoteServiceControl::quitOnLastInstanceClosed() const
+{
+  return d->quitOnLastInstanceClosed();
+}
+
+void QRemoteServiceControl::setQuitOnLastInstanceClosed(bool quit)
+{
+  d->setQuitOnLastInstanceClosed(quit);
 }
 
 #include "moc_qremoteservicecontrol.cpp"

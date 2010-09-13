@@ -2,10 +2,15 @@ TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtorganizer_maemo5)
 PLUGIN_TYPE = organizer
+
 CONFIG += mobility
 MOBILITY = organizer
+
 CONFIG += link_pkgconfig
 PKGCONFIG += calendar-backend
+
+QT += sql
+
 include(../../../common.pri)
 INCLUDEPATH += ../../../src/organizer \
     ../../../src/organizer/items \
@@ -22,6 +27,3 @@ SOURCES += qorganizermaemo5.cpp \
     qorganizeritemtransform.cpp \
     qorganizerasynchprocess.cpp \
     qorganizercaldbaccess.cpp
-target.path = $${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
-INSTALLS += target
-QT += sql

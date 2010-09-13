@@ -1,0 +1,2 @@
+To import landmarks from a file, place the landmark file in the same folder with .qml
+(e.g. "myImportedLandmarks.gpx") (and change the filename accordingly in .qml if needed).
