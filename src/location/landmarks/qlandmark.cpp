@@ -80,7 +80,6 @@ QStringList QLandmarkPrivate::commonKeys = QStringList() << "name"
                                                          << "city"
                                                          << "district"
                                                          << "street"
-                                                         << "streetNumber"
                                                          << "postCode";
 
 QLandmarkPrivate::QLandmarkPrivate()
@@ -489,8 +488,6 @@ QVariant QLandmark::attribute(const QString &key) const
         return d->address.district();
     } else if (key.compare("street", Qt::CaseSensitive) ==0 ){
         return d->address.street();
-    } else if (key.compare("streetNumber", Qt::CaseSensitive) ==0 ){
-        return d->address.streetNumber();
     } else if (key.compare("postCode", Qt::CaseSensitive) ==0 ){
         return d->address.postCode();
     }
@@ -553,9 +550,6 @@ void QLandmark::setAttribute(const QString &key, const QVariant &value)
         return;
     } else if (key.compare("street", Qt::CaseSensitive) ==0 ){
         d->address.setStreet(value.toString());
-        return;
-    } else if (key.compare("streetNumber", Qt::CaseSensitive) ==0 ){
-        d->address.setStreetNumber(value.toString());
         return;
     } else if (key.compare("postCode", Qt::CaseSensitive) ==0 ){
         d->address.setPostCode(value.toString());

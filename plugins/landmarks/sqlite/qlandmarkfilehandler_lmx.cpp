@@ -851,8 +851,7 @@ bool QLandmarkFileHandlerLmx::writeAddressInfo(const QLandmark &landmark)
 {
     QGeoAddress address = landmark.address();
 
-    if (address.streetNumber().isEmpty()
-            && address.street().isEmpty()
+    if (address.street().isEmpty()
             && address.city().isEmpty()
             && address.state().isEmpty()
             && address.country().isEmpty()

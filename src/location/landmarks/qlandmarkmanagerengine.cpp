@@ -552,62 +552,20 @@ QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::TransferO
 */
 
 /*!
+   \fn QStringList QLandmarkManagerEngine::landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
     Returns the list of attribute keys the landmarks will have.
     If extended attributes are enabled (provided manager supported them),
     landmarks will possess  extra keys in addition to the standard cross platform keys.
     Errors are stored in \a error and \a errorString.
 */
-QStringList QLandmarkManagerEngine::landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-
-    *error = QLandmarkManager::NoError;
-    *errorString  = "";
-
-    //TODO: optimize
-    QStringList commonKeys = QStringList()
-                             << "name"
-                             << "description"
-                             << "iconUrl"
-                             << "radius"
-                             << "phoneNumber"
-                             << "url"
-                             << "latitude"
-                             << "longitude"
-                             << "altitude"
-                             << "country"
-                             << "countryCode"
-                             << "state"
-                             << "county"
-                             << "city"
-                             << "district"
-                             << "street"
-                             << "streetNumber"
-                             << "postCode";
-    return commonKeys;
-}
 
 /*!
+    \fn QStringList QLandmarkManagerEngine::categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
     Returns the list of attribute keys the categories will have.
     If extended attributes are enabled (provided manager supported them),
     categories will possess  extra keys in addition to the standard cross platform keys.
     Errors are stored in \a error and \a errorString.
 */
-QStringList QLandmarkManagerEngine::categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-
-    *error = QLandmarkManager::NoError;
-    *errorString  = "";
-
-
-    //TODO: Optimize
-    QStringList commonKeys = QStringList() << "name"
-                             << "iconUrl";
-    return commonKeys;
-}
 
 /*!
     \fn bool QLandmarkManagerEngine::isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const

@@ -426,8 +426,12 @@ QStringList QLandmarkManagerEngineSqlite::landmarkAttributeKeys(QLandmarkManager
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
+    //TODO: optimize
+    QStringList commonKeys = DatabaseOperations::coreAttributes +
+                             DatabaseOperations::coreGenericAttributes;
+    commonKeys.sort();
 
-    return QLandmarkManagerEngine::landmarkAttributeKeys(error, errorString);
+    return commonKeys;
 }
 
 QStringList QLandmarkManagerEngineSqlite::categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
@@ -437,7 +441,11 @@ QStringList QLandmarkManagerEngineSqlite::categoryAttributeKeys(QLandmarkManager
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    return QLandmarkManagerEngine::categoryAttributeKeys(error, errorString);
+    //TODO: optimize
+    QStringList commonKeys = DatabaseOperations::coreCategoryAttributes +
+                             DatabaseOperations::coreGenericCategoryAttributes;
+    commonKeys.clear();
+    return commonKeys;
 }
 
 bool QLandmarkManagerEngineSqlite::isReadOnly(QLandmarkManager::Error *error, QString *errorString) const
