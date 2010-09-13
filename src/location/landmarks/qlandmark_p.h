@@ -79,7 +79,7 @@ public:
     QList<QLandmarkCategoryId> categoryIds;
     QString description;
     QUrl iconUrl;
-    double radius;
+    qreal radius;
     QHash<QString, QVariant> managerAttributes;
     QHash<QString, QVariant> customAttributes;
     QString phoneNumber;

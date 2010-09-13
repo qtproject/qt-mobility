@@ -86,8 +86,8 @@ public:
     QUrl iconUrl() const;
     void setIconUrl(const QUrl &iconUrl);
 
-    double radius() const;
-    void setRadius(double radius);
+    qreal radius() const;
+    void setRadius(qreal radius);
 
     QVariant attribute(const QString &key) const;
     void setAttribute(const QString &key, const QVariant &value);

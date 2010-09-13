@@ -207,8 +207,8 @@ int compareDistance(const QGeoCoordinate &a, const QGeoCoordinate &b, const QGeo
 
     if (a.isValid()) {
         if (b.isValid()) {
-            double da = c.distanceTo(a);
-            double db = c.distanceTo(b);
+            qreal da = c.distanceTo(a);
+            qreal db = c.distanceTo(b);
 
             if (qFuzzyCompare(da,db)) {
                 result = 0;
@@ -256,7 +256,7 @@ QList<QLandmarkId> sortQueryByDistance(QSqlQuery *query, const QLandmarkProximit
     QList<LandmarkPoint>  sortedPoints;
     LandmarkPoint point;
 
-    double radius = proximityFilter.radius();
+    qreal radius = proximityFilter.radius();
     QGeoCoordinate center = proximityFilter.center();
 
     while(query->next()) {
@@ -273,7 +273,7 @@ QList<QLandmarkId> sortQueryByDistance(QSqlQuery *query, const QLandmarkProximit
         point.landmarkId.setLocalId(QString::number(query->value(0).toInt()));
 
         if (radius == -1 || (point.coordinate.distanceTo(center) < radius)
-            || qFuzzyCompare((double)(point.coordinate.distanceTo(center)), radius)) {
+            || qFuzzyCompare(point.coordinate.distanceTo(center), radius)) {
             addSortedPoint(&sortedPoints,point,center);
         }
     }
@@ -346,8 +346,9 @@ bool executeQuery(QSqlQuery *query, const QString &statement, const QMap<QString
     return true;
 }
 
-QString queryStringForRadius(const QGeoCoordinate &coord, double radius)
+QString queryStringForRadius(const QGeoCoordinate &coord, qreal radius)
 {
+    Q_UNUSED(radius);
     return "SELECT id, latitude, longitude FROM landmark;";
 }
 
@@ -1016,7 +1017,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                 boxFilter = filter;
             } else {
                 QGeoCoordinate center;
-                double radius;
+                double radius; //use double since these are going to be usd in calculation with lat/long
                 if(filter.type() == QLandmarkFilter::ProximityFilter) {
                     QLandmarkProximityFilter proximityFilter;
                     proximityFilter = filter;

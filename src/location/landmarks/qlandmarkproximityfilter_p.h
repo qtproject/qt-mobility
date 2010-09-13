@@ -63,7 +63,7 @@ class QGeoCoordinate;
 class QLandmarkProximityFilterPrivate : public QLandmarkFilterPrivate
 {
 public:
-    QLandmarkProximityFilterPrivate(const QGeoCoordinate &center = QGeoCoordinate(), double radius=-1);
+    QLandmarkProximityFilterPrivate(const QGeoCoordinate &center = QGeoCoordinate(), qreal radius=-1);
     QLandmarkProximityFilterPrivate(const QLandmarkProximityFilterPrivate &other);
     virtual ~QLandmarkProximityFilterPrivate();
 
@@ -78,7 +78,7 @@ public:
     Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(QLandmarkProximityFilter, QLandmarkFilter::ProximityFilter)
 
     QGeoCoordinate center;
-    double radius;
+    qreal radius;
 };
 
 QTM_END_NAMESPACE

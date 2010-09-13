@@ -434,7 +434,7 @@ void QLandmark::setIconUrl(const QUrl &url)
     such as cities.  Note that landmark searches over a given area
     do not factor in the coverage radius.
 */
-double QLandmark::radius() const
+qreal QLandmark::radius() const
 {
     Q_D(const QLandmark);
     return d->radius;
@@ -443,7 +443,7 @@ double QLandmark::radius() const
 /*!
     Sets the coverage \a radius of the landmark.
 */
-void QLandmark::setRadius(double radius)
+void QLandmark::setRadius(qreal radius)
 {
     Q_D(QLandmark);
     d->radius = radius;
@@ -516,7 +516,7 @@ void QLandmark::setAttribute(const QString &key, const QVariant &value)
         setIconUrl(QUrl(value.toUrl()));
         return;
     } else if (key.compare("radius", Qt::CaseInsensitive) == 0) {
-        setRadius(value.toDouble());
+        setRadius(value.toReal());
         return;
     } else if (key.compare("phoneNumber", Qt::CaseInsensitive) == 0) {
         setPhoneNumber(value.toString());

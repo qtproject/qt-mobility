@@ -3525,7 +3525,7 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(eastFilterCoords, eastLmCoords);
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(northeastFilterCoords, northeastLmCoords);
 
-    double dist = QGeoCoordinate(0.0, 0.0).distanceTo(QGeoCoordinate(5.0, 5.0));
+    qreal dist = QGeoCoordinate(0.0, 0.0).distanceTo(QGeoCoordinate(5.0, 5.0));
 
     for (int i = 0; i < testSets.size(); ++i) {
         QList<QGeoCoordinate> filterCoords = testSets.at(i).first;
@@ -3616,7 +3616,7 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximityOrder()
     QCOMPARE(lms.at(4), lm6);
     QCOMPARE(lms.at(5), lm5);
 
-    double radius = QGeoCoordinate(20,20).distanceTo(QGeoCoordinate(20,50));
+    qreal radius = QGeoCoordinate(20,20).distanceTo(QGeoCoordinate(20,50));
     proximityFilter.setRadius(radius);
     QVERIFY(doFetch(type, proximityFilter,&lms));
 
@@ -3735,7 +3735,7 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximityAsync() {
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(eastFilterCoords, eastLmCoords);
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(northeastFilterCoords, northeastLmCoords);
 
-    double dist = QGeoCoordinate(0.0, 0.0).distanceTo(QGeoCoordinate(5.0, 5.0));
+    qreal dist = QGeoCoordinate(0.0, 0.0).distanceTo(QGeoCoordinate(5.0, 5.0));
 
     for (int i = 0; i < testSets.size(); ++i) {
         QList<QGeoCoordinate> filterCoords = testSets.at(i).first;
@@ -6773,7 +6773,7 @@ void tst_QLandmarkManagerEngineSqlite::exportLmx() {
     //Note: lmx does not support iconUrl, countryCode, streetNumber
     QString lm1Name("lm1 name");
     QString lm1Description("lm1 Description");
-    double lm1Radius(5);
+    qreal lm1Radius(5);
     QString lm1PhoneNumber("lm1 phoneNumber");
     QUrl lm1Url("lm1 URL");
     QGeoCoordinate lm1Coordinate(1,2,3);
@@ -6796,7 +6796,7 @@ void tst_QLandmarkManagerEngineSqlite::exportLmx() {
 
     QString lm2Name("lm2 name");
     QString lm2Description("lm2 Description");
-    double lm2Radius(6);
+    qreal lm2Radius(6);
     QString lm2PhoneNumber("lm2 phoneNumber");
     QUrl lm2Url("lm2 URL");
     QGeoCoordinate lm2Coordinate(4,5,6);
@@ -6819,7 +6819,7 @@ void tst_QLandmarkManagerEngineSqlite::exportLmx() {
 
     QString lm3Name("lm3 name");
     QString lm3Description("lm3 Description");
-    double lm3Radius(6);
+    qreal lm3Radius(6);
     QString lm3PhoneNumber("lm3 phoneNumber");
     QUrl lm3Url("lm3 URL");
     QGeoCoordinate lm3Coordinate(4,5,6);

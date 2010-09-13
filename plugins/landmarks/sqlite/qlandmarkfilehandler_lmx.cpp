@@ -294,14 +294,14 @@ bool QLandmarkFileHandlerLmx::readLandmark(QLandmark &landmark)
         QString s = m_reader->readElementText();
 
         if ((s == "INF") || (s == "-INF") || (s == "NaN")) {
-            m_reader->raiseError(QString("The element \"coverageRadius\" expected a value convertable to type double (value was \"%1\").").arg(s));
+            m_reader->raiseError(QString("The element \"coverageRadius\" expected a value convertable to type real (value was \"%1\").").arg(s));
             return false;
         }
 
-        double rad = s.toDouble(&ok);
+        qreal rad = (qreal)(s.toDouble(&ok));
 
         if (!ok) {
-            m_reader->raiseError(QString("The element \"coverageRadius\" expected a value convertable to type double (value was \"%1\").").arg(s));
+            m_reader->raiseError(QString("The element \"coverageRadius\" expected a value convertable to type real (value was \"%1\").").arg(s));
             return false;
         }
 

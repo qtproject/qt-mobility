@@ -1414,7 +1414,7 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
         {
             QLandmarkProximityFilter proximityFilter(filter);
 
-            double distance = proximityFilter.center().distanceTo(landmark.coordinate());
+            qreal distance = proximityFilter.center().distanceTo(landmark.coordinate());
             if (distance < proximityFilter.radius() || qFuzzyCompare(distance, proximityFilter.radius()))
                 return true;
             else

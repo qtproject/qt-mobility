@@ -66,7 +66,7 @@ Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkProximityFilter)
     Creates a filter that will select landmarks within a given \a radius around
     a \a center coordinate.
 */
-QLandmarkProximityFilter::QLandmarkProximityFilter(const QGeoCoordinate &center, double radius)
+QLandmarkProximityFilter::QLandmarkProximityFilter(const QGeoCoordinate &center, qreal radius)
         : QLandmarkFilter(new QLandmarkProximityFilterPrivate(center, radius))
 {
 }
@@ -105,7 +105,7 @@ void QLandmarkProximityFilter::setCenter(const QGeoCoordinate &center)
 /*!
     Returns the radius of the filter.
 */
-double QLandmarkProximityFilter::radius() const
+qreal QLandmarkProximityFilter::radius() const
 {
     Q_D(const QLandmarkProximityFilter);
     return d->radius;
@@ -114,7 +114,7 @@ double QLandmarkProximityFilter::radius() const
 /*!
     Sets the \a radius of the filter.
 */
-void QLandmarkProximityFilter::setRadius(double radius)
+void QLandmarkProximityFilter::setRadius(qreal radius)
 {
     Q_D(QLandmarkProximityFilter);
     d->radius = radius;
@@ -124,7 +124,7 @@ void QLandmarkProximityFilter::setRadius(double radius)
 /*******************************************************************************
 *******************************************************************************/
 
-QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate(const QGeoCoordinate &center, double radius)
+QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate(const QGeoCoordinate &center, qreal radius)
         : QLandmarkFilterPrivate(),
         center(center),
         radius(radius)
