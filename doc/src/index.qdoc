@@ -298,14 +298,6 @@
 
     For more details, see the \l {Feedback}{Feedback API Overview}.
 
-    \section2 Telephony
-
-    The Qt Telephony Events API enables access to the telephony event services to 
-    provide telephony call notification that other applications can use to 
-    be notified.
-
-    For more details, see the \l {Telephony Events}{Telephony Overview}.
-    
     \section1 The QtMobility Namespace 
 
     The QtMobility APIs are placed into the QtMobility namespace. This is
@@ -598,19 +590,6 @@
     </tr>
     <tr>
     <td>Feedback</td>
-    <td>TP</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    </tr>
-    <tr>
-    <td>Telephony Events</td>
     <td>TP</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>

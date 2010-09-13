@@ -130,11 +130,6 @@ contains(mobility_modules, organizer) {
     SUBDIRS += calendardemo
 }
 
-# Telephony API examples
-contains(mobility_modules,telephony) {
-    unix:!mac {SUBDIRS += telephony}
-}
-
 # Feedback API examples
 contains(mobility_modules, feedback) {
     #SUBDIRS += hapticsplayer # this not a good UI for mobile screens at the moment
