@@ -51,6 +51,12 @@
 #include "test_sensor.h"
 #include "test_sensorimpl.h"
 
+// The unit test needs to change the behaviour of the library. It does this
+// through an exported but undocumented function.
+QTM_BEGIN_NAMESPACE
+Q_SENSORS_EXPORT void sensors_unit_test_hook(int index);
+QTM_END_NAMESPACE
+
 QTM_USE_NAMESPACE
 
 class MyFilter : public TestSensorFilter
@@ -71,6 +77,7 @@ class tst_QSensor : public QObject
 public:
     tst_QSensor()
     {
+        sensors_unit_test_hook(0); // change some flags the library uses
     }
 
 private slots:
@@ -84,6 +91,7 @@ private slots:
     {
         QSettings settings(QLatin1String("Nokia"), QLatin1String("Sensors"));
         settings.clear();
+
 #ifdef WAIT_AT_END
         QFile _stdin;
         _stdin.open(1, QIODevice::ReadOnly);
@@ -97,10 +105,7 @@ private slots:
         QList<QByteArray> expected;
         expected << "QAccelerometer" << TestSensor::type;
         QList<QByteArray> actual = QSensor::sensorTypes();
-
-        for (int i = 0; i < expected.size(); ++i) {
-            QVERIFY2(actual.contains(expected.at(i)),expected.at(i)+" not present");
-        }
+        QCOMPARE(actual, expected);
     }
 
     void testSensorRegistered()
@@ -318,6 +323,17 @@ private slots:
 
         QTest::ignoreMessage(QtWarningMsg, "setDataRate: rate 300 is not supported by the sensor. ");
         sensor.setDataRate(300);
+    }
+
+    // This test must be LAST or it will interfere with the other tests
+    void testLoadingPlugins()
+    {
+        // Go ahead and load the actual plugins (as a test that plugin loading works)
+        sensors_unit_test_hook(1);
+
+        // Hmm... There's no real way to tell if this worked or not.
+        // If it doesn't work the unit test will probably crash.
+        // That's what it did on Symbian before plugin loading was fixed.
     }
 };
 
