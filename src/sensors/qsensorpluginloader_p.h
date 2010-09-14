@@ -54,7 +54,7 @@
 //
 
 #include <qmobilityglobal.h>
-#include <QObject>
+#include <QtCore/QObject>
 #include <QtCore/qstring.h>
 #include <QtCore/qlist.h>
 #include <QtCore/qpluginloader.h>

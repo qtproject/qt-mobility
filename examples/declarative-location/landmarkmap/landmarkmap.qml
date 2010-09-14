@@ -49,13 +49,7 @@ Item {
     width: 320
     height: 480
     focus: true
-
-    MouseArea {
-        anchors.fill: parent
-        onDoubleClicked: {
-            map.center = map.toCoordinate(Qt.point(mouse.x, mouse.y))
-        }
-    }
+    property bool inLandmarkView: false
 
     PositionSource {
         id: myPositionSource
@@ -63,65 +57,180 @@ Item {
         updateInterval: 5000
         onPositionChanged: console.log("Position changed")
     }
-
     LandmarkProximityFilter {
         id: proximityFilter
         coordinate: map.center
-        radius: 500
     }
-
+    LandmarkBoxFilter {
+        id: boxFilter
+        topLeft: map.toCoordinate(Qt.point(0,0))
+        bottomRight: map.toCoordinate(Qt.point(page.width,-page.height))
+    }
     LandmarkModel {
         id: landmarkModel
         autoUpdate: true
         onModelChanged: console.log("Model changed, landmark count: " + count)
-        filter: proximityFilter
+        //filter: proximityFilter
+        filter: boxFilter
+        limit: 50
+    }
+    ListView {
+        id: landmarkListView;
+        model: landmarkModel;
+        delegate: landmarkListDelegate;
+        z: 5
+        width: parent.width - 20;
+        height: parent.height -20;
+        x: -(parent.width * 1.5);
+        highlightFollowsCurrentItem: false
+        focus: true
     }
 
-    Map {
-        id: map
-        size.width: parent.width
-        size.height: parent.height
-        zoomLevel: 15
-        center: myPositionSource.position.coordinate
-        onZoomLevelChanged: {
-            var distance = center.distanceTo(map.toCoordinate(Qt.point(0,0)))
-            console.log("Zoom changed, radius for proximity filter will be set to: " + distance / 2)
-            proximityFilter.radius = distance / 2
+    Component {
+        id: landmarkListDelegate
+        Item {
+            width: 200; height: 20
+            Text {
+                id: nameField; text: landmark.name
+            }
         }
-        onCenterChanged: console.log("Center changed")
     }
 
-    Common.Slider {
-         id: zoomSlider;
-         minimum: 1; maximum: 18;
-         anchors {
-             bottom: toolbar.top; left: parent.left; right: parent.right;
-             bottomMargin: 5; rightMargin: 5; leftMargin: 5
-         }
-         onValueChanged: {
-             console.log("Zoom slider value changed to: " + value)
-             map.zoomLevel = value
-         }
+    Component {
+        id: landmarkMapDelegate
+        Item {
+            width: 50; height: 20
+            x: map.toScreenPosition(landmark.coordinate).x
+            y: map.toScreenPosition(landmark.coordinate).y
+            Image {
+                id: landmarkIcon
+                source: "mobile/images/landmarkstar.png"
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked: {
+                        console.log("Landmark clicked, setting visible: " + landmark.name)
+                        landmarkNameText.visible = true
+                    }
+                }
+            }
+            Text {
+                id: landmarkNameText
+                anchors.top: landmarkIcon.bottom
+                text:  landmark.name
+                visible: false
+            }
+        }
     }
 
-    Mobile.ToolBar {
-        id: toolbar
-        height: 40; width: parent.width
-        anchors.bottom: parent.bottom
-        button1Label: "NMEA"; button2Label: "Import"; button3Label: "Whereami"
-        onButton1Clicked: {
-            console.log("Clicked, setting nmea log as source");
-            myPositionSource.nmeaSource = "nmealog.txt"
-            myPositionSource.start()
+    Rectangle {
+        id: background
+        anchors.fill: parent;
+        Image { source: "mobile/images/stripes.png"; fillMode: Image.Tile; anchors.fill: parent; opacity: 0.3 }
+        MouseArea {
+            anchors.fill: parent
+            onDoubleClicked: map.center = map.toCoordinate(Qt.point(mouse.x, mouse.y))
         }
-        onButton2Clicked: {
-            console.log("Clicked, setting import file to get landmarks");
-            landmarkModel.importFile = "myImportedLandmarks.gpx"
-            myPositionSource.start()
+
+        Map {
+            id: map
+            anchors.top: background.top
+            size.width: parent.width
+            size.height: parent.height
+            zoomLevel: 1
+            center: myPositionSource.position.coordinate
+            onZoomLevelChanged: {
+                console.log("Zoom changed")
+                updateFilters();
+            }
+            onCenterChanged: {
+                console.log("Center changed")
+                updateFilters();
+            }
+            function updateFilters () {
+                proximityFilter.radius = map.toCoordinate(Qt.point(0,0)) / 2
+                boxFilter.topLeft = map.toCoordinate(Qt.point(0,0))
+                boxFilter.bottomRight = map.toCoordinate(Qt.point(background.width, background.height))
+                //console.log("zero point coordinate lat: " + map.toCoordinate(Qt.point(0,0)).latitude + " lon: " + map.toCoordinate(Qt.point(0,0)).longitude)
+                //console.log("bottom point coordinate lat: " + map.toCoordinate(Qt.point(page.width, page.height)).latitude + " lon: " + map.toCoordinate(Qt.point(page.width, page.height)).longitude)
+            }
         }
-        onButton3Clicked: {
-            console.log("Clicked, setting map center to follow the source");
-            map.center = myPositionSource.position.coordinate
+        Mobile.TitleBar { id: titleBar; z: 5; width: parent.width - statusBar.width; height: 40; opacity: 0.7 }
+        Mobile.StatusBar { id: statusBar; z: 6; width: 80; height: titleBar.height; opacity: titleBar.opacity; anchors.right: parent.right}
+
+        Repeater {
+            id: landmarkView
+            model: landmarkModel
+            delegate: landmarkMapDelegate
+        }
+
+        Common.Slider {
+            id: zoomSlider;
+            minimum: 1; maximum: 18;
+            anchors {
+                bottom: toolbar1.top; left: parent.left; right: parent.right;
+                bottomMargin: 5; rightMargin: 5; leftMargin: 5
+            }
+            onValueChanged: {
+                console.log("Zoom slider value changed to: " + value)
+                map.zoomLevel = value
+            }
+        }
+
+        Mobile.ToolBar {
+            id: toolbar1
+            opacity: titleBar.opacity
+            height: 40; width: parent.width
+            anchors.bottom: toolbar2.top
+            z: 6
+            button1Label: "landmarks"; button2Label: "categories"; button3Label: "unassigned"
+            onButton1Clicked: {
+                console.log("Clicked, toggling landmarks mode");
+                if (inLandmarkView == true) inLandmarkView = false;
+                else inLandmarkView = true;
+            }
+            onButton2Clicked: {
+                console.log("Clicked, toggling categories mode");
+            }
+            onButton3Clicked: {
+                console.log("Clicked, unassigned");
+            }
+        }
+
+        Mobile.ToolBar {
+            id: toolbar2
+            opacity: toolbar1.opacity
+            height: 40; width: parent.width
+            anchors.bottom: parent.bottom
+            z: 6
+            button1Label: "nmealog.txt"; button2Label: "mydb.gpx"; button3Label: "locate me"
+            onButton1Clicked: {
+                console.log("Clicked, setting nmea log as source");
+                myPositionSource.nmeaSource = "nmealog.txt"
+                myPositionSource.start()
+            }
+            onButton2Clicked: {
+                console.log("Clicked, setting import file to get landmarks, count was: " + landmarkModel.count);
+                landmarkModel.importFile = "AUS-PublicToilet-Queensland.gpx"
+                myPositionSource.start()
+            }
+            onButton3Clicked: {
+                console.log("Clicked, setting map center to follow the source");
+                map.center = myPositionSource.position.coordinate
+            }
+        }
+        states: [State {
+                name: "CategoryView"
+                PropertyChanges { target: background; x: -background.width }
+            }, State {
+                name: "LandmarkView"
+                when: inLandmarkView == true
+                PropertyChanges { target: map; x: -map.width }
+                PropertyChanges { target: zoomSlider; x: -map.width}
+                PropertyChanges { target: toolbar1; button1Label: "Back" }
+                PropertyChanges { target: landmarkListView; x: 0 }
+            }]
+        transitions: Transition {
+            NumberAnimation { properties: "x"; duration: 500; easing.type: Easing.InOutQuad }
         }
     }
 }

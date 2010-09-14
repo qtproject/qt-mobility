@@ -125,5 +125,6 @@ const Q_ORGANIZER_EXPORT QOrganizerItemFilter operator|(const QOrganizerItemFilt
 QTM_END_NAMESPACE
 
 Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemFilter), Q_MOVABLE_TYPE);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QTM_PREPEND_NAMESPACE(QOrganizerItemFilter::MatchFlags));
 
 #endif

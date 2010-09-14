@@ -67,11 +67,10 @@ Item {
                 verticalCenter: parent.verticalCenter
             }
             elide: Text.ElideLeft
-            text: "Declarative location Flickr demo"
+            text: "Landmarkmap example"
             font.bold: true; color: "White"; style: Text.Raised; styleColor: "Black"
         }
     }
-
     transitions: Transition {
         NumberAnimation { properties: "x"; easing.type: Easing.InOutQuad }
     }

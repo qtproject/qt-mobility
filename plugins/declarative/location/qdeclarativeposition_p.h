@@ -50,7 +50,7 @@
 #include <QtDeclarative/qdeclarative.h>
 
 // Define this to get qDebug messages
-// #define QDECLARATIVE_POSITION_DEBUG
+#define QDECLARATIVE_POSITION_DEBUG
 
 #ifdef QDECLARATIVE_POSITION_DEBUG
 #include <QDebug>
