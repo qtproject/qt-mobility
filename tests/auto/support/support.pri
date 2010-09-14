@@ -41,7 +41,7 @@ symbian|wince*|maemo*|win32|mac {
     INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
 
     # QMF libraries must be located at $QMF_LIBDIR
-    LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
+    LIBS += -L $$(QMF_LIBDIR) -lqmfclient
 
     SOURCES += $$PWD/support_qmf.cpp
 }
