@@ -1296,7 +1296,6 @@ bool LandmarkManagerEngineSymbianPrivate::isFeatureSupported(
     case (QLandmarkManager::NotificationsFeature):
         return true;
     case (QLandmarkManager::ExtendedAttributesFeature):
-    case (QLandmarkManager::CustomAttributesFeature):
         *error = QLandmarkManager::NotSupportedError;
         *errorString = "Not supported feature";
         return false;
@@ -1440,44 +1439,6 @@ void LandmarkManagerEngineSymbianPrivate::setExtendedAttributesEnabled(bool enab
     *errorString = "Symbian landmarks apis dont support extended attributes of landmarks";
 
     m_isExtendedAttributesEnabled = enabled;
-}
-
-/*!
- Returns whether custom attributes are enabled or not. Custom attributes
- are arbitrary attributes created by the application for a landmark.
- If custom attributes are enabled (and the manager supports them),
- retrieved landmarks will have extra attributes accessible
- using QLandmark::customAttributes().  Custom attributes must be enabled
- to save any landmarks with possess custom attributes.  This same behaviour
- applies to categories if custom category attributes are supported.
- Errors are stored in \a error and \a errorString.
- */
-bool LandmarkManagerEngineSymbianPrivate::isCustomAttributesEnabled(QLandmarkManager::Error *error,
-    QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Symbian landmarks apis dont support custom attributes of landmarks";
-
-    //return m_isCustomAttributesEnabled;
-    // Always false as symbian landmarks apis dont support custom attributes of landmarks.
-    return false;
-}
-
-/*!
- Sets whether custom attributes are \a enabled or not.
- Errors are stored in \a error and \a errorString.
- */
-void LandmarkManagerEngineSymbianPrivate::setCustomAttributesEnabled(bool enabled,
-    QLandmarkManager::Error *error, QString *errorString)
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Symbian landmarks apis dont support custom attributes of landmarks";
-
-    m_isCustomAttributesEnabled = enabled;
 }
 
 /*!
@@ -2323,13 +2284,6 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
     if (!categoryExists) {
         *error = QLandmarkManager::BadArgumentError;
         *errorString = "Landmark contains a category id that does not exist";
-        return result;
-    }
-
-    if (landmark->customAttributeKeys().size() > 0) {
-        *error = QLandmarkManager::NotSupportedError;
-        *errorString
-            = "Landmark contains the different attributes, that this engines doesnt support";
         return result;
     }
 

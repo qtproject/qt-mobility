@@ -431,32 +431,6 @@ void QLandmarkManagerEngineSymbian::setExtendedAttributesEnabled(bool enabled,
 }
 
 /*!
- Returns whether custom attributes are enabled or not. Custom attributes
- are arbitrary attributes created by the application for a landmark.
- If custom attributes are enabled (and the manager supports them),
- retrieved landmarks will have extra attributes accessible
- using QLandmark::customAttributes().  Custom attributes must be enabled
- to save any landmarks with possess custom attributes.  This same behaviour
- applies to categories if custom category attributes are supported.
- Errors are stored in \a error and \a errorString.
- */
-bool QLandmarkManagerEngineSymbian::isCustomAttributesEnabled(QLandmarkManager::Error *error,
-    QString *errorString) const
-{
-    return d_ptr->isCustomAttributesEnabled(error, errorString);
-}
-
-/*!
- Sets whether custom attributes are \a enabled or not.
- Errors are stored in \a error and \a errorString.
- */
-void QLandmarkManagerEngineSymbian::setCustomAttributesEnabled(bool enabled,
-    QLandmarkManager::Error *error, QString *errorString)
-{
-    return d_ptr->setCustomAttributesEnabled(enabled, error, errorString);
-}
-
-/*!
  Notifies the manager engine that the givan \a request has been destroyed.
  */
 void QLandmarkManagerEngineSymbian::requestDestroyed(QLandmarkAbstractRequest* request)

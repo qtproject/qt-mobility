@@ -172,10 +172,6 @@ public:
     void setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error,
         QString *errorString);
 
-    bool isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
-    void setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error,
-        QString *errorString);
-
     /* Asynchronous Request Support */
     void requestDestroyed(QLandmarkAbstractRequest* request);
     bool startRequest(QLandmarkAbstractRequest* request);
