@@ -132,11 +132,49 @@ void QMDEGalleryQueryResultSet::HandleQueryCompleted( CMdEQuery &aQuery, TInt aE
     }
 }
 #ifdef MDS_25_COMPILATION_ENABLED
-void QMDEGalleryQueryResultSet::HandleObjectNotification( CMdESession& /*aSession*/,
+void QMDEGalleryQueryResultSet::HandleObjectNotification( CMdESession& aSession,
     TObserverNotificationType aType,
     const RArray<TItemId>& aObjectIdArray )
 {
+    int err = KErrNone;
     if (aType == ENotifyAdd) {
+        TRAP(err, doHandleObjectNotificationL(aSession,QMDEGalleryQueryResultSet::ENotifyAdd, aObjectIdArray);)
+    } else if (aType == ENotifyRemove) {
+        TRAP(err, doHandleObjectNotificationL(aSession,QMDEGalleryQueryResultSet::ENotifyRemove, aObjectIdArray);)
+    } else if (aType == ENotifyModify) {
+        TRAP(err, doHandleObjectNotificationL(aSession,QMDEGalleryQueryResultSet::ENotifyModify, aObjectIdArray);)
+    }
+    if (err != KErrNone)
+        emit error(err);
+}
+#else
+void QMDEGalleryQueryResultSet::HandleObjectAdded(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray)
+{
+    TRAPD(err, doHandleObjectNotificationL(aSession,QMDEGalleryQueryResultSet::ENotifyAdd, aObjectIdArray);)
+    if (err != KErrNone)
+        emit error(err);
+}
+
+void QMDEGalleryQueryResultSet::HandleObjectModified(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray)
+{
+    TRAPD(err, doHandleObjectNotificationL(aSession,QMDEGalleryQueryResultSet::ENotifyModify, aObjectIdArray);)
+    if (err != KErrNone)
+        emit error(err);
+}
+
+void QMDEGalleryQueryResultSet::HandleObjectRemoved(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray)
+{
+    TRAPD(err, doHandleObjectNotificationL(aSession,QMDEGalleryQueryResultSet::ENotifyRemove, aObjectIdArray);)
+    if (err != KErrNone)
+        emit error(err);
+}
+#endif //MDS_25_COMPILATION_ENABLED
+
+void QMDEGalleryQueryResultSet::doHandleObjectNotificationL( CMdESession& aSession,
+    QMdeSessionObserverQueryNotificationType aType,
+    const RArray<TItemId>& aObjectIdArray )
+{
+    if (aType == QMDEGalleryQueryResultSet::ENotifyAdd) {
         m_launchUpdateQuery = true;
 
         if (m_query_running) {
@@ -144,7 +182,7 @@ void QMDEGalleryQueryResultSet::HandleObjectNotification( CMdESession& /*aSessio
             m_query->Cancel();
         }
         createQuery();
-    } else if (aType == ENotifyRemove) {
+    } else if (aType == QMDEGalleryQueryResultSet::ENotifyRemove) {
         const int count = aObjectIdArray.Count();
         // Linear search as the result set might be sorted by the query
         for (int i = 0; i < count; i++) {
@@ -167,7 +205,7 @@ void QMDEGalleryQueryResultSet::HandleObjectNotification( CMdESession& /*aSessio
                 }
             }
         }
-    } else if (aType == ENotifyModify) {
+    } else if (aType == QMDEGalleryQueryResultSet::ENotifyModify) {
         const int count = aObjectIdArray.Count();
         // Linear search as the result set might be sorted by the query
         for (int i = 0; i < count; i++) {
@@ -206,24 +244,9 @@ void QMDEGalleryQueryResultSet::HandleObjectNotification( CMdESession& /*aSessio
                 }
             }
         }
-    }
-}
-#else
-void QMDEGalleryQueryResultSet::HandleObjectAdded(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray)
-{
-    
+    }   
 }
 
-void QMDEGalleryQueryResultSet::HandleObjectModified(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray)
-{
-    
-}
-
-void QMDEGalleryQueryResultSet::HandleObjectRemoved(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray)
-{
-    
-}
-#endif //MDS_25_COMPILATION_ENABLED
 void QMDEGalleryQueryResultSet::createQuery()
 {
     delete m_query;
