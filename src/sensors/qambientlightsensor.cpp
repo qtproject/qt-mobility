@@ -91,7 +91,18 @@ QAmbientLightReading::LightLevel QAmbientLightReading::lightLevel() const
 */
 void QAmbientLightReading::setLightLevel(QAmbientLightReading::LightLevel lightLevel)
 {
-    d->lightLevel = lightLevel;
+    switch (lightLevel) {
+    case Dark:
+    case Twilight:
+    case Light:
+    case Bright:
+    case Sunny:
+        d->lightLevel = lightLevel;
+        break;
+    default:
+        d->lightLevel = Undefined;
+        break;
+    }
 }
 
 // =====================================================================
