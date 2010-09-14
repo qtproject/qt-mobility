@@ -49,6 +49,9 @@
 #include <QtDeclarative/qdeclarativecontext.h>
 #include <QtDeclarative/qdeclarativeengine.h>
 
+#include <qdeclarativedocumentgallery.h>
+#include <qdeclarativegalleryfilter.h>
+
 #include <QtTest/QtTest>
 
 QTM_USE_NAMESPACE
@@ -239,8 +242,24 @@ public Q_SLOTS:
     void initTestCase();
 
 private Q_SLOTS:
-    void construct_data();
-    void construct();
+    void rootType_data();
+    void rootType();
+    void properties_data();
+    void properties();
+    void sortProperties_data();
+    void sortProperties();
+    void autoUpdate_data();
+    void autoUpdate();
+    void rootItem_data();
+    void rootItem();
+    void scope_data();
+    void scope();
+    void offset_data();
+    void offset();
+    void limit_data();
+    void limit();
+    void filter_data();
+    void filter();
 
 private:
     QtTestGallery gallery;
@@ -255,406 +274,726 @@ void tst_QDeclarativeDocumentGalleryModel::initTestCase()
     engine.rootContext()->setContextProperty(QLatin1String("qt_testGallery"), &gallery);
 }
 
-void tst_QDeclarativeDocumentGalleryModel::construct_data()
+void tst_QDeclarativeDocumentGalleryModel::rootType_data()
 {
     QTest::addColumn<QByteArray>("qml");
-    QTest::addColumn<QString>("rootType");
-    QTest::addColumn<QVariant>("rootItem");
-    QTest::addColumn<QGalleryQueryRequest::Scope>("scope");
-    QTest::addColumn<QGalleryFilter>("filter");
-    QTest::addColumn<QStringList>("propertyNames");
-    QTest::addColumn<QStringList>("sortPropertyNames");
-    QTest::addColumn<bool>("autoUpdate");
-    QTest::addColumn<int>("offset");
-    QTest::addColumn<int>("limit");
+    QTest::addColumn<QString>("initialRootTypeString");
+    QTest::addColumn<int>("initialRootType");
+    QTest::addColumn<int>("rootType");
 
-    QTest::newRow("Default []")
+    QTest::newRow("Default -> Audio")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {}\n")
             << "File"
-            << QVariant()
-            << QGalleryQueryRequest::AllDescendants
-            << QGalleryFilter()
-            << QStringList()
-            << QStringList()
-            << false
-            << 0
-            << 0;
+            << int(QDeclarativeDocumentGallery::File)
+            << int(QDeclarativeDocumentGallery::Audio);
 
-    QTest::newRow("Audio [ title, duration | +rating ]")
+    QTest::newRow("File -> Image")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {\n"
-                        "rootType: DocumentGallery.Audio\n"
-                        "properties: [ \"title\", \"duration\" ]\n"
-                        "sortProperties: [ \"+rating\" ]\n"
+                        "rootType: DocumentGallery.File\n"
                     "}\n")
-            << "Audio"
-            << QVariant()
-            << QGalleryQueryRequest::AllDescendants
-            << QGalleryFilter()
-            << (QStringList() << QLatin1String("title") << QLatin1String("duration"))
-            << (QStringList() << QLatin1String("+rating"))
-            << false
-            << 0
-            << 0;
+            << "File"
+            << int(QDeclarativeDocumentGallery::File)
+            << int(QDeclarativeDocumentGallery::Image);
 
-    QTest::newRow("Video [] offset: 30; limit: 15")
+    QTest::newRow("Video -> Artist")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {\n"
                         "rootType: DocumentGallery.Video\n"
-                        "offset: 30\n"
-                        "limit: 15\n"
                     "}\n")
             << "Video"
-            << QVariant()
-            << QGalleryQueryRequest::AllDescendants
-            << QGalleryFilter()
-            << QStringList()
-            << QStringList()
-            << false
-            << 30
-            << 15;
+            << int(QDeclarativeDocumentGallery::Video)
+            << int(QDeclarativeDocumentGallery::Artist);
 
-    QTest::newRow("Image [] autoUpdate: true")
-            << QByteArray(
-                    "import Qt 4.7\n"
-                    "import QtMobility.gallery 1.1\n"
-                    "DocumentGalleryModel {\n"
-                        "rootType: DocumentGallery.Image\n"
-                        "autoUpdate: true\n"
-                    "}\n")
-            << "Image"
-            << QVariant()
-            << QGalleryQueryRequest::AllDescendants
-            << QGalleryFilter()
-            << QStringList()
-            << QStringList()
-            << true
-            << 0
-            << 0;
-
-    QTest::newRow("Playlist [] autoUpdate: false")
+    QTest::newRow("Playlist -> Playlist")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {\n"
                         "rootType: DocumentGallery.Playlist\n"
-                        "autoUpdate: false\n"
                     "}\n")
             << "Playlist"
-            << QVariant()
-            << QGalleryQueryRequest::AllDescendants
-            << QGalleryFilter()
-            << QStringList()
-            << QStringList()
-            << false
-            << 0
-            << 0;
+            << int(QDeclarativeDocumentGallery::Playlist)
+            << int(QDeclarativeDocumentGallery::Playlist);
+}
 
-    QTest::newRow("Audio [] rootItem: folder:///path/to/music")
+void tst_QDeclarativeDocumentGalleryModel::rootType()
+{
+    QFETCH(QByteArray, qml);
+    QFETCH(QString, initialRootTypeString);
+    QFETCH(int, initialRootType);
+    QFETCH(int, rootType);
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QSignalSpy spy(object.data(), SIGNAL(rootTypeChanged()));
+
+    QCOMPARE(object->property("rootType"), QVariant(initialRootType));
+    QCOMPARE(gallery.request()->rootType(), initialRootTypeString);
+
+    object->setProperty("rootType", rootType);
+    QCOMPARE(object->property("rootType"), QVariant(initialRootType));
+    QCOMPARE(spy.count(), 0);
+
+    QMetaObject::invokeMethod(object.data(), "reload");
+    QCOMPARE(gallery.request()->rootType(), initialRootTypeString);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::properties_data()
+{
+    QTest::addColumn<QByteArray>("qml");
+    QTest::addColumn<QStringList>("initialPropertyNames");
+    QTest::addColumn<QStringList>("propertyNames");
+
+    QTest::newRow("Default -> [ title ]")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {}\n")
+            << QStringList()
+            << (QStringList() << QLatin1String("title"));
+
+    QTest::newRow("[ title, duration ] -> [ fileName ]")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {\n"
-                        "rootType: DocumentGallery.Audio\n"
+                        "properties: [ \"title\", \"duration\" ]\n"
+                        "sortProperties: [ \"+rating\" ]\n"
+                    "}\n")
+            << (QStringList() << QLatin1String("title") << QLatin1String("duration"))
+            << (QStringList() << QLatin1String("fileName"));
+}
+
+void tst_QDeclarativeDocumentGalleryModel::properties()
+{
+    QFETCH(QByteArray, qml);
+    QFETCH(QStringList, initialPropertyNames);
+    QFETCH(QStringList, propertyNames);
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QSignalSpy spy(object.data(), SIGNAL(propertyNamesChanged()));
+
+    QCOMPARE(object->property("properties"), QVariant(initialPropertyNames));
+    QCOMPARE(gallery.request()->propertyNames(), initialPropertyNames);
+
+    object->setProperty("properties", propertyNames);
+    QCOMPARE(object->property("properties"), QVariant(initialPropertyNames));
+    QCOMPARE(spy.count(), 0);
+
+    QMetaObject::invokeMethod(object.data(), "reload");
+    QCOMPARE(gallery.request()->propertyNames(), initialPropertyNames);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::sortProperties_data()
+{
+    QTest::addColumn<QByteArray>("qml");
+    QTest::addColumn<QStringList>("initialSortPropertyNames");
+    QTest::addColumn<QStringList>("sortPropertyNames");
+
+    QTest::newRow("Default -> [ +rating ]")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {}\n")
+            << QStringList()
+            << (QStringList() << "+rating");
+
+    QTest::newRow("[ +rating ] ->  [ albumArtist, albumTitle, trackNumber ]")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "sortProperties: [ \"+rating\" ]\n"
+                    "}\n")
+            << (QStringList() << QLatin1String("+rating"))
+            << (QStringList()
+                << QLatin1String("albumArtist")
+                << QLatin1String("albumTitle")
+                << QLatin1String("trackNumber"));
+
+    QTest::newRow("[ albumArtist, albumTitle, trackNumber ] ->  [ albumArtist, albumTitle, trackNumber ]")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "sortProperties: [ \"albumArtist\", \"albumTitle\", \"trackNumber\" ]\n"
+                    "}\n")
+            << (QStringList()
+                << QLatin1String("albumArtist")
+                << QLatin1String("albumTitle")
+                << QLatin1String("trackNumber"))
+            << (QStringList()
+                << QLatin1String("albumArtist")
+                << QLatin1String("albumTitle")
+                << QLatin1String("trackNumber"));
+}
+
+void tst_QDeclarativeDocumentGalleryModel::sortProperties()
+{
+    QFETCH(QByteArray, qml);
+    QFETCH(QStringList, initialSortPropertyNames);
+    QFETCH(QStringList, sortPropertyNames);
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QSignalSpy spy(object.data(), SIGNAL(sortPropertyNamesChanged()));
+
+    QCOMPARE(object->property("sortProperties"), QVariant(initialSortPropertyNames));
+    QCOMPARE(gallery.request()->sortPropertyNames(), initialSortPropertyNames);
+
+    object->setProperty("sortProperties", sortPropertyNames);
+    QCOMPARE(object->property("sortProperties"), QVariant(sortPropertyNames));
+    QCOMPARE(spy.count(), initialSortPropertyNames != sortPropertyNames ? 1 : 0);
+
+    QMetaObject::invokeMethod(object.data(), "reload");
+    QCOMPARE(gallery.request()->sortPropertyNames(), sortPropertyNames);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::autoUpdate_data()
+{
+    QTest::addColumn<QByteArray>("qml");
+    QTest::addColumn<bool>("initialAutoUpdate");
+    QTest::addColumn<bool>("autoUpdate");
+
+    QTest::newRow("Default -> true")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {}\n")
+            << false
+            << true;
+
+    QTest::newRow("true -> false")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "autoUpdate: true\n"
+                    "}\n")
+            << true
+            << false;
+
+    QTest::newRow("false -> true")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "autoUpdate: false\n"
+                    "}\n")
+            << false
+            << true;
+
+    QTest::newRow("true -> true")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "autoUpdate: true\n"
+                    "}\n")
+            << true
+            << true;
+
+    QTest::newRow("false -> false")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "autoUpdate: false\n"
+                    "}\n")
+            << false
+            << false;
+}
+
+void tst_QDeclarativeDocumentGalleryModel::autoUpdate()
+{
+    QFETCH(QByteArray, qml);
+    QFETCH(bool, initialAutoUpdate);
+    QFETCH(bool, autoUpdate);
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QSignalSpy spy(object.data(), SIGNAL(autoUpdateChanged()));
+
+    QCOMPARE(object->property("autoUpdate"), QVariant(initialAutoUpdate));
+    QCOMPARE(gallery.request()->autoUpdate(), initialAutoUpdate);
+
+    object->setProperty("autoUpdate", autoUpdate);
+    QCOMPARE(object->property("autoUpdate"), QVariant(autoUpdate));
+    QCOMPARE(spy.count(), initialAutoUpdate != autoUpdate ? 1 : 0);
+
+    QMetaObject::invokeMethod(object.data(), "reload");
+    QCOMPARE(gallery.request()->autoUpdate(), autoUpdate);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::rootItem_data()
+{
+    QTest::addColumn<QByteArray>("qml");
+    QTest::addColumn<QVariant>("initialRootItem");
+    QTest::addColumn<QVariant>("rootItem");
+
+    QTest::newRow("Default -> 34")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {}\n")
+            << QVariant()
+            << QVariant(34);
+
+    QTest::newRow("folder:///path/to/music -> folder:///path/to/images")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
                         "rootItem: \"folder:///path/to/music\"\n"
                     "}\n")
-            << "Audio"
             << QVariant(QLatin1String("folder:///path/to/music"))
-            << QGalleryQueryRequest::AllDescendants
-            << QGalleryFilter()
-            << QStringList()
-            << QStringList()
-            << false
-            << 0
-            << 0;
+            << QVariant(QLatin1String("folder:///path/to/images"));
 
-    QTest::newRow("Folder [] scope: DirectDescendants")
+    QTest::newRow("26 -> folder:///path/to/images")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {\n"
-                        "rootType: DocumentGallery.Folder\n"
+                        "rootItem: 26\n"
+                    "}\n")
+            << QVariant(26)
+            << QVariant(QLatin1String("folder:///path/to/images"));
+}
+
+void tst_QDeclarativeDocumentGalleryModel::rootItem()
+{
+    QFETCH(QByteArray, qml);
+    QFETCH(QVariant, initialRootItem);
+    QFETCH(QVariant, rootItem);
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QSignalSpy spy(object.data(), SIGNAL(rootItemChanged()));
+
+    QCOMPARE(object->property("rootItem"), initialRootItem);
+    QCOMPARE(gallery.request()->rootItem(), initialRootItem);
+
+    object->setProperty("rootItem", rootItem);
+    QCOMPARE(object->property("rootItem"), rootItem);
+    QCOMPARE(spy.count(), initialRootItem != rootItem ? 1 : 0);
+
+    QMetaObject::invokeMethod(object.data(), "reload");
+    QCOMPARE(gallery.request()->rootItem(), rootItem);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::scope_data()
+{
+    QTest::addColumn<QByteArray>("qml");
+    QTest::addColumn<QGalleryQueryRequest::Scope>("initialScope");
+    QTest::addColumn<QGalleryQueryRequest::Scope>("scope");
+
+    QTest::newRow("Default -> DirectDescendants")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {}\n")
+            << QGalleryQueryRequest::AllDescendants
+            << QGalleryQueryRequest::DirectDescendants;
+
+    QTest::newRow("DirectDescendants -> AllDescendants")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
                         "scope: DocumentGalleryModel.DirectDescendants\n"
                     "}\n")
-            << "Folder"
-            << QVariant()
             << QGalleryQueryRequest::DirectDescendants
-            << QGalleryFilter()
-            << QStringList()
-            << QStringList()
-            << false
-            << 0
-            << 0;
+            << QGalleryQueryRequest::AllDescendants;
 
-    QTest::newRow("Image [] filter: width = 1920")
+    QTest::newRow("AllDescendants -> DirectDescendants")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {\n"
-                        "rootType: DocumentGallery.Image\n"
+                        "scope: DocumentGalleryModel.AllDescendants\n"
+                    "}\n")
+            << QGalleryQueryRequest::AllDescendants
+            << QGalleryQueryRequest::DirectDescendants;
+
+
+    QTest::newRow("AllDescendants -> AllDescendants")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "scope: DocumentGalleryModel.AllDescendants\n"
+                    "}\n")
+            << QGalleryQueryRequest::AllDescendants
+            << QGalleryQueryRequest::AllDescendants;
+
+    QTest::newRow("DirectDescendants -> DirectDescendants")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "scope: DocumentGalleryModel.DirectDescendants\n"
+                    "}\n")
+            << QGalleryQueryRequest::DirectDescendants
+            << QGalleryQueryRequest::DirectDescendants;
+}
+
+void tst_QDeclarativeDocumentGalleryModel::scope()
+{
+    QFETCH(QByteArray, qml);
+    QFETCH(QGalleryQueryRequest::Scope, initialScope);
+    QFETCH(QGalleryQueryRequest::Scope, scope);
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QSignalSpy spy(object.data(), SIGNAL(scopeChanged()));
+
+    QCOMPARE(object->property("scope"), QVariant(int(initialScope)));
+    QCOMPARE(gallery.request()->scope(), initialScope);
+
+    object->setProperty("scope", scope);
+    QCOMPARE(object->property("scope"), QVariant(int(scope)));
+    QCOMPARE(spy.count(), initialScope != scope ? 1 : 0);
+
+    QMetaObject::invokeMethod(object.data(), "reload");
+    QCOMPARE(gallery.request()->scope(), scope);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::offset_data()
+{
+    QTest::addColumn<QByteArray>("qml");
+    QTest::addColumn<int>("initialOffset");
+    QTest::addColumn<int>("offset");
+
+    QTest::newRow("Default -> 125")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {}\n")
+            << 0
+            << 125;
+
+    QTest::newRow("30 -> 15")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "offset: 30\n"
+                    "}\n")
+            << 30
+            << 15;
+
+    QTest::newRow("63 -> 63")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "offset: 63\n"
+                    "}\n")
+            << 63
+            << 63;
+}
+
+void tst_QDeclarativeDocumentGalleryModel::offset()
+{
+    QFETCH(QByteArray, qml);
+    QFETCH(int, initialOffset);
+    QFETCH(int, offset);
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QSignalSpy spy(object.data(), SIGNAL(offsetChanged()));
+
+    QCOMPARE(object->property("offset"), QVariant(initialOffset));
+    QCOMPARE(gallery.request()->offset(), initialOffset);
+
+    object->setProperty("offset", offset);
+    QCOMPARE(object->property("offset"), QVariant(offset));
+    QCOMPARE(spy.count(), initialOffset != offset ? 1 : 0);
+
+    QMetaObject::invokeMethod(object.data(), "reload");
+    QCOMPARE(gallery.request()->offset(), offset);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::limit_data()
+{
+    QTest::addColumn<QByteArray>("qml");
+    QTest::addColumn<int>("initialLimit");
+    QTest::addColumn<int>("limit");
+
+    QTest::newRow("Default -> 125")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {}\n")
+            << 0
+            << 125;
+
+    QTest::newRow("30 -> 15")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "limit: 30\n"
+                    "}\n")
+            << 30
+            << 15;
+
+    QTest::newRow("63 -> 63")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "limit: 63\n"
+                    "}\n")
+            << 63
+            << 63;
+}
+
+void tst_QDeclarativeDocumentGalleryModel::limit()
+{
+    QFETCH(QByteArray, qml);
+    QFETCH(int, initialLimit);
+    QFETCH(int, limit);
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QSignalSpy spy(object.data(), SIGNAL(limitChanged()));
+
+    QCOMPARE(object->property("limit"), QVariant(initialLimit));
+    QCOMPARE(gallery.request()->limit(), initialLimit);
+
+    object->setProperty("limit", limit);
+    QCOMPARE(object->property("limit"), QVariant(limit));
+    QCOMPARE(spy.count(), initialLimit != limit ? 1 : 0);
+
+    QMetaObject::invokeMethod(object.data(), "reload");
+    QCOMPARE(gallery.request()->limit(), limit);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::filter_data()
+{
+    QTest::addColumn<QByteArray>("qml");
+    QTest::addColumn<QGalleryFilter>("filter");
+
+    QTest::newRow("Default")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {}\n")
+            << QGalleryFilter();
+
+
+    QTest::newRow("width == 1920")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
                         "filter: GalleryEqualsFilter {\n"
                             "property: \"width\"\n"
                             "value: 1920\n"
                             "inverted: false\n"
                         "}\n"
                     "}\n")
-            << "Image"
-            << QVariant()
-            << QGalleryQueryRequest::AllDescendants
-            << QGalleryFilter(QDocumentGallery::width == 1920)
-            << QStringList()
-            << QStringList()
-            << false
-            << 0
-            << 0;
+            << QGalleryFilter(QDocumentGallery::width == 1920);
 
-    QTest::newRow("Image [] filter: width != 1920")
+    QTest::newRow("width != 1920")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {\n"
-                        "rootType: DocumentGallery.Image\n"
                         "filter: GalleryEqualsFilter {\n"
                             "property: \"width\"\n"
                             "value: 1920\n"
                             "inverted: true\n"
                         "}\n"
                     "}\n")
-            << "Image"
-            << QVariant()
-            << QGalleryQueryRequest::AllDescendants
-            << QGalleryFilter(!(QDocumentGallery::width == 1920))
-            << QStringList()
-            << QStringList()
-            << false
-            << 0
-            << 0;
+            << QGalleryFilter(!(QDocumentGallery::width == 1920));
 
-    QTest::newRow("Image [] filter: width < 1920")
+    QTest::newRow("width < 1920")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {\n"
-                        "rootType: DocumentGallery.Image\n"
                         "filter: GalleryLessThanFilter {\n"
                             "property: \"width\"\n"
                             "value: 1920\n"
                         "}\n"
                     "}\n")
-            << "Image"
-            << QVariant()
-            << QGalleryQueryRequest::AllDescendants
-            << QGalleryFilter(QDocumentGallery::width < 1920)
-            << QStringList()
-            << QStringList()
-            << false
-            << 0
-            << 0;
+            << QGalleryFilter(QDocumentGallery::width < 1920);
 
-    QTest::newRow("Image [] filter: width <= 1920")
+    QTest::newRow("width <= 1920")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {\n"
-                        "rootType: DocumentGallery.Image\n"
                         "filter: GalleryLessThanEqualsFilter {\n"
                             "property: \"width\"\n"
                             "value: 1920\n"
                         "}\n"
                     "}\n")
-            << "Image"
-            << QVariant()
-            << QGalleryQueryRequest::AllDescendants
-            << QGalleryFilter(QDocumentGallery::width <= 1920)
-            << QStringList()
-            << QStringList()
-            << false
-            << 0
-            << 0;
+            << QGalleryFilter(QDocumentGallery::width <= 1920);
 
-    QTest::newRow("Image [] filter: width > 1920")
+    QTest::newRow("width > 1920")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {\n"
-                        "rootType: DocumentGallery.Image\n"
                         "filter: GalleryGreaterThanFilter {\n"
                             "property: \"width\"\n"
                             "value: 1920\n"
                         "}\n"
                     "}\n")
-            << "Image"
-            << QVariant()
-            << QGalleryQueryRequest::AllDescendants
-            << QGalleryFilter(QDocumentGallery::width > 1920)
-            << QStringList()
-            << QStringList()
-            << false
-            << 0
-            << 0;
+            << QGalleryFilter(QDocumentGallery::width > 1920);
 
-    QTest::newRow("Image [] filter: width >= 1920")
+    QTest::newRow("width >= 1920")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {\n"
-                        "rootType: DocumentGallery.Image\n"
                         "filter: GalleryGreaterThanEqualsFilter {\n"
                             "property: \"width\"\n"
                             "value: 1920\n"
                         "}\n"
                     "}\n")
-            << "Image"
-            << QVariant()
-            << QGalleryQueryRequest::AllDescendants
-            << QGalleryFilter(QDocumentGallery::width >= 1920)
-            << QStringList()
-            << QStringList()
-            << false
-            << 0
-            << 0;
+            << QGalleryFilter(QDocumentGallery::width >= 1920);
 
-    QTest::newRow("File [] filter: fileName.startsWith(p)")
+    QTest::newRow("fileName.startsWith(p)")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {\n"
-                        "rootType: DocumentGallery.File\n"
                         "filter: GalleryStartsWithFilter {\n"
                             "property: \"fileName\"\n"
                             "value: \"p\"\n"
                             "inverted: false\n"
                         "}\n"
                     "}\n")
-            << "File"
-            << QVariant()
-            << QGalleryQueryRequest::AllDescendants
             << QGalleryFilter(QGalleryMetaDataFilter(
-                    QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith))
-            << QStringList()
-            << QStringList()
-            << false
-            << 0
-            << 0;
+                    QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith));
 
-    QTest::newRow("File [] filter: !fileName.startsWith(p)")
+    QTest::newRow("!fileName.startsWith(p)")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {\n"
-                        "rootType: DocumentGallery.File\n"
                         "filter: GalleryStartsWithFilter {\n"
                             "property: \"fileName\"\n"
                             "value: \"p\"\n"
                             "inverted: true\n"
                         "}\n"
                     "}\n")
-            << "File"
-            << QVariant()
-            << QGalleryQueryRequest::AllDescendants
             << QGalleryFilter(!QGalleryMetaDataFilter(
-                    QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith))
-            << QStringList()
-            << QStringList()
-            << false
-            << 0
-            << 0;
-    QTest::newRow("File [] filter: fileName.endsWith(.jpg)")
+                    QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith));
+    QTest::newRow("fileName.endsWith(.jpg)")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {\n"
-                        "rootType: DocumentGallery.File\n"
                         "filter: GalleryEndsWithFilter {\n"
                             "property: \"fileName\"\n"
                             "value: \".jpg\"\n"
                         "}\n"
                     "}\n")
-            << "File"
-            << QVariant()
-            << QGalleryQueryRequest::AllDescendants
             << QGalleryFilter(QGalleryMetaDataFilter(
-                    QDocumentGallery::fileName, QLatin1String(".jpg"), QGalleryFilter::EndsWith))
-            << QStringList()
-            << QStringList()
-            << false
-            << 0
-            << 0;
+                    QDocumentGallery::fileName, QLatin1String(".jpg"), QGalleryFilter::EndsWith));
 
-    QTest::newRow("File [] filter: fileName.contains(p)")
+    QTest::newRow("fileName.contains(p)")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {\n"
-                        "rootType: DocumentGallery.File\n"
                         "filter: GalleryContainsFilter {\n"
                             "property: \"fileName\"\n"
                             "value: \"p\"\n"
                         "}\n"
                     "}\n")
-            << "File"
-            << QVariant()
-            << QGalleryQueryRequest::AllDescendants
             << QGalleryFilter(QGalleryMetaDataFilter(
-                    QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::Contains))
-            << QStringList()
-            << QStringList()
-            << false
-            << 0
-            << 0;
+                    QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::Contains));
 
-    QTest::newRow("File [] filter: fileName.wildcard(p*.jpg)")
+    QTest::newRow("fileName.wildcard(p*.jpg)")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {\n"
-                        "rootType: DocumentGallery.File\n"
                         "filter: GalleryWildcardFilter {\n"
                             "property: \"fileName\"\n"
                             "value: \"p*.jpg\"\n"
                         "}\n"
                     "}\n")
-            << "File"
-            << QVariant()
-            << QGalleryQueryRequest::AllDescendants
             << QGalleryFilter(QGalleryMetaDataFilter(
-                    QDocumentGallery::fileName, QLatin1String("p*.jpg"), QGalleryFilter::Wildcard))
-            << QStringList()
-            << QStringList()
-            << false
-            << 0
-            << 0;
+                    QDocumentGallery::fileName, QLatin1String("p*.jpg"), QGalleryFilter::Wildcard));
 
-    QTest::newRow("File [] filter: fileName.regExp(p\\d{6}\\.(jpg|jpeg))")
+    QTest::newRow("fileName.regExp(p\\d{6}\\.(jpg|jpeg))")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryModel {\n"
-                        "rootType: DocumentGallery.File\n"
                         "filter: GalleryEqualsFilter {\n"
                             "property: \"fileName\"\n"
                             "value: /p\\d{6}\\.(jpg|jpeg)/\n"
                         "}\n"
                     "}\n")
-            << "File"
-            << QVariant()
-            << QGalleryQueryRequest::AllDescendants
             << QGalleryFilter(QGalleryMetaDataFilter(
                     QDocumentGallery::fileName,
                     QRegExp(QLatin1String("p\\d{6}\\.(jpg|jpeg)"), Qt::CaseSensitive, QRegExp::RegExp2),
-                    QGalleryFilter::RegExp))
-            << QStringList()
-            << QStringList()
-            << false
-            << 0
-            << 0;
+                    QGalleryFilter::RegExp));
 
     {
         QGalleryIntersectionFilter filter;
@@ -663,12 +1002,11 @@ void tst_QDeclarativeDocumentGalleryModel::construct_data()
         filter.append(QGalleryMetaDataFilter(
                 QDocumentGallery::fileName, QLatin1String(".jpg"), QGalleryFilter::EndsWith));
 
-        QTest::newRow("File [] filter: fileName.startsWith(p) && fileName.endsWith(.jpg")
+        QTest::newRow("fileName.startsWith(p) && fileName.endsWith(.jpg")
                 << QByteArray(
                         "import Qt 4.7\n"
                         "import QtMobility.gallery 1.1\n"
                         "DocumentGalleryModel {\n"
-                            "rootType: DocumentGallery.File\n"
                             "filter: GalleryFilterIntersection {\n"
                                 "GalleryStartsWithFilter {\n"
                                     "property: \"fileName\"\n"
@@ -680,15 +1018,7 @@ void tst_QDeclarativeDocumentGalleryModel::construct_data()
                                 "}\n"
                             "}\n"
                         "}\n")
-                << "File"
-                << QVariant()
-                << QGalleryQueryRequest::AllDescendants
-                << QGalleryFilter(filter)
-                << QStringList()
-                << QStringList()
-                << false
-                << 0
-                << 0;
+                << QGalleryFilter(filter);
     } {
         QGalleryUnionFilter filter;
         filter.append(QGalleryMetaDataFilter(
@@ -696,12 +1026,11 @@ void tst_QDeclarativeDocumentGalleryModel::construct_data()
         filter.append(QGalleryMetaDataFilter(
                 QDocumentGallery::fileName, QLatin1String(".jpeg"), QGalleryFilter::EndsWith));
 
-        QTest::newRow("File [] filter: fileName.endsWith(.jpg) || fileName.endsWith(.jpeg")
+        QTest::newRow("fileName.endsWith(.jpg) || fileName.endsWith(.jpeg")
                 << QByteArray(
                         "import Qt 4.7\n"
                         "import QtMobility.gallery 1.1\n"
                         "DocumentGalleryModel {\n"
-                            "rootType: DocumentGallery.File\n"
                             "filter: GalleryFilterUnion {\n"
                                 "GalleryEndsWithFilter {\n"
                                     "property: \"fileName\"\n"
@@ -713,15 +1042,7 @@ void tst_QDeclarativeDocumentGalleryModel::construct_data()
                                 "}\n"
                             "}\n"
                         "}\n")
-                << "File"
-                << QVariant()
-                << QGalleryQueryRequest::AllDescendants
-                << QGalleryFilter(filter)
-                << QStringList()
-                << QStringList()
-                << false
-                << 0
-                << 0;
+                << QGalleryFilter(filter);
     } {
         QGalleryUnionFilter unionFilter;
         unionFilter.append(QGalleryMetaDataFilter(
@@ -734,12 +1055,11 @@ void tst_QDeclarativeDocumentGalleryModel::construct_data()
                 QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith));
         filter.append(unionFilter);
 
-        QTest::newRow("File [] filter: fileName.startsWith(p) && (fileName.endsWith(.jpg) || fileName.endsWith(.jpeg)")
+        QTest::newRow("fileName.startsWith(p) && (fileName.endsWith(.jpg) || fileName.endsWith(.jpeg)")
                 << QByteArray(
                         "import Qt 4.7\n"
                         "import QtMobility.gallery 1.1\n"
                         "DocumentGalleryModel {\n"
-                            "rootType: DocumentGallery.File\n"
                             "filter: GalleryFilterIntersection {\n"
                                 "GalleryStartsWithFilter {\n"
                                     "property: \"fileName\"\n"
@@ -757,15 +1077,7 @@ void tst_QDeclarativeDocumentGalleryModel::construct_data()
                                 "}\n"
                             "}\n"
                         "}\n")
-                << "File"
-                << QVariant()
-                << QGalleryQueryRequest::AllDescendants
-                << QGalleryFilter(filter)
-                << QStringList()
-                << QStringList()
-                << false
-                << 0
-                << 0;
+                << QGalleryFilter(filter);
     } {
         QGalleryUnionFilter filter;
         {
@@ -784,12 +1096,11 @@ void tst_QDeclarativeDocumentGalleryModel::construct_data()
             filter.append(intersectionFilter);
         }
 
-        QTest::newRow("File [] filter: (fileName.startsWith(p) && fileName.endsWith(.jpg) || (fileName.startsWith(p) && fileName.endsWith(.jpeg)")
+        QTest::newRow("(fileName.startsWith(p) && fileName.endsWith(.jpg) || (fileName.startsWith(p) && fileName.endsWith(.jpeg)")
                 << QByteArray(
                         "import Qt 4.7\n"
                         "import QtMobility.gallery 1.1\n"
                         "DocumentGalleryModel {\n"
-                            "rootType: DocumentGallery.File\n"
                             "filter: GalleryFilterUnion {\n"
                                 "GalleryFilterIntersection {\n"
                                     "GalleryStartsWithFilter {\n"
@@ -813,50 +1124,33 @@ void tst_QDeclarativeDocumentGalleryModel::construct_data()
                                 "}\n"
                             "}\n"
                         "}\n")
-                << "File"
-                << QVariant()
-                << QGalleryQueryRequest::AllDescendants
-                << QGalleryFilter(filter)
-                << QStringList()
-                << QStringList()
-                << false
-                << 0
-                << 0;
-    }    {
-    QGalleryIntersectionFilter filter;
-    filter.append(QGalleryMetaDataFilter(
-            QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith));
-    filter.append(QGalleryMetaDataFilter(
-            QDocumentGallery::fileName, QLatin1String(".jpg"), QGalleryFilter::EndsWith));
+                << QGalleryFilter(filter);
+    } {
+        QGalleryIntersectionFilter filter;
+        filter.append(QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith));
+        filter.append(QGalleryMetaDataFilter(
+                QDocumentGallery::fileName, QLatin1String(".jpg"), QGalleryFilter::EndsWith));
 
-    QTest::newRow("File [] filter: fileName.startsWith(p) && (fileName.endsWith(.jpg)")
-            << QByteArray(
-                    "import Qt 4.7\n"
-                    "import QtMobility.gallery 1.1\n"
-                    "DocumentGalleryModel {\n"
-                        "rootType: DocumentGallery.File\n"
-                        "filter: GalleryFilterIntersection {\n"
-                            "GalleryStartsWithFilter {\n"
-                                "property: \"fileName\"\n"
-                                "value: \"p\"\n"
-                            "}\n"
-                            "GalleryFilterIntersection {\n"
-                                "GalleryEndsWithFilter {\n"
+        QTest::newRow("fileName.startsWith(p) && (fileName.endsWith(.jpg)")
+                << QByteArray(
+                        "import Qt 4.7\n"
+                        "import QtMobility.gallery 1.1\n"
+                        "DocumentGalleryModel {\n"
+                            "filter: GalleryFilterIntersection {\n"
+                                "GalleryStartsWithFilter {\n"
                                     "property: \"fileName\"\n"
-                                    "value: \".jpg\"\n"
+                                    "value: \"p\"\n"
+                                "}\n"
+                                "GalleryFilterIntersection {\n"
+                                    "GalleryEndsWithFilter {\n"
+                                        "property: \"fileName\"\n"
+                                        "value: \".jpg\"\n"
+                                    "}\n"
                                 "}\n"
                             "}\n"
-                        "}\n"
-                    "}\n")
-            << "File"
-            << QVariant()
-            << QGalleryQueryRequest::AllDescendants
-            << QGalleryFilter(filter)
-            << QStringList()
-            << QStringList()
-            << false
-            << 0
-            << 0;
+                        "}\n")
+                << QGalleryFilter(filter);
     } {
         QGalleryUnionFilter filter;
         filter.append(QGalleryMetaDataFilter(
@@ -864,12 +1158,11 @@ void tst_QDeclarativeDocumentGalleryModel::construct_data()
         filter.append(QGalleryMetaDataFilter(
                 QDocumentGallery::fileName, QLatin1String(".jpeg"), QGalleryFilter::EndsWith));
 
-        QTest::newRow("File [] filter: fileName.endsWith(.jpg) || (fileName.endsWith(.jpeg)")
+        QTest::newRow("fileName.endsWith(.jpg) || (fileName.endsWith(.jpeg)")
                 << QByteArray(
                         "import Qt 4.7\n"
                         "import QtMobility.gallery 1.1\n"
                         "DocumentGalleryModel {\n"
-                            "rootType: DocumentGallery.File\n"
                             "filter: GalleryFilterUnion {\n"
                                 "GalleryEndsWithFilter {\n"
                                     "property: \"fileName\"\n"
@@ -883,30 +1176,14 @@ void tst_QDeclarativeDocumentGalleryModel::construct_data()
                                 "}\n"
                             "}\n"
                         "}\n")
-                << "File"
-                << QVariant()
-                << QGalleryQueryRequest::AllDescendants
-                << QGalleryFilter(filter)
-                << QStringList()
-                << QStringList()
-                << false
-                << 0
-                << 0;
+                << QGalleryFilter(filter);
     }
 }
 
-void tst_QDeclarativeDocumentGalleryModel::construct()
+void tst_QDeclarativeDocumentGalleryModel::filter()
 {
     QFETCH(QByteArray, qml);
-    QFETCH(QString, rootType);
-    QFETCH(QVariant, rootItem);
-    QFETCH(QGalleryQueryRequest::Scope, scope);
     QFETCH(QGalleryFilter, filter);
-    QFETCH(QStringList, propertyNames);
-    QFETCH(QStringList, sortPropertyNames);
-    QFETCH(bool, autoUpdate);
-    QFETCH(int, offset);
-    QFETCH(int, limit);
 
     QDeclarativeComponent component(&engine);
     component.setData(qml, QUrl());
@@ -916,15 +1193,7 @@ void tst_QDeclarativeDocumentGalleryModel::construct()
     QVERIFY(gallery.request());
     QVERIFY(gallery.response());
 
-    QCOMPARE(gallery.request()->rootType(), rootType);
-    QCOMPARE(gallery.request()->rootItem(), rootItem);
-    QCOMPARE(gallery.request()->scope(), scope);
     QCOMPARE(gallery.request()->filter(), filter);
-    QCOMPARE(gallery.request()->propertyNames(), propertyNames);
-    QCOMPARE(gallery.request()->sortPropertyNames(), sortPropertyNames);
-    QCOMPARE(gallery.request()->autoUpdate(), autoUpdate);
-    QCOMPARE(gallery.request()->offset(), offset);
-    QCOMPARE(gallery.request()->limit(), limit);
 }
 
 QTEST_MAIN(tst_QDeclarativeDocumentGalleryModel)
