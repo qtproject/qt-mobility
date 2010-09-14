@@ -82,7 +82,10 @@ enum State {
     ,   InitializingState
     ,   ActiveState
     ,   IdleState
-    ,   SuspendedState
+    // QAudio is suspended; DevSound is paused
+    ,   SuspendedPausedState
+    // QAudio is suspended; DevSound is stopped
+    ,   SuspendedStoppedState
 };
 
 /**
@@ -118,7 +121,14 @@ public:
     int samplesProcessed() const;
     bool setFormat(const QAudioFormat &format);
     bool start();
-    void pause();
+
+    // If DevSound implementation supports pause, calls pause and returns true.
+    // Otherwise calls stop and returns false.  In this case, all DevSound buffers
+    // currently held by the backend must be discarded.
+    bool pause();
+
+    void resume();
+
     void stop();
     void bufferProcessed();
 
@@ -141,6 +151,7 @@ signals:
 private:
     void getSupportedCodecs();
     void populateCapabilities();
+    bool isResumeSupported() const;
 
 private:
     const QAudio::Mode              m_mode;
