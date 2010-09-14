@@ -61,16 +61,6 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
 
    Constructs a QSystemDeviceInfo with the given \a parent.
  */
-        /*!
-           \enum QSystemDisplayInfo::DisplayOrientation
-          This enum describes the current orientation of the display.
-
-             \value Unknown              Orientation could not be determined.
-             \value Landscape            Orientation is in landscape.
-             \value Portrait             Orientation is in portrait.
-             \value InvertedLandscape    Orientation is landscape inverted.
-             \value InvertedPortrait     Orientation is portrait inverted.
-        */
 
         /*!
           \fn void QSystemDeviceInfo::batteryLevelChanged(int level)
