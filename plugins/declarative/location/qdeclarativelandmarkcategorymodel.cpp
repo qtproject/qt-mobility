@@ -22,6 +22,7 @@ QDeclarativeLandmarkCategoryModel::QDeclarativeLandmarkCategoryModel(QObject *pa
 QDeclarativeLandmarkCategoryModel::~QDeclarativeLandmarkCategoryModel()
 {
     delete m_fetchRequest;
+    delete m_sortingOrder;
     qDeleteAll(m_categoryMap.values());
     m_categoryMap.clear();
 }
@@ -110,10 +111,12 @@ void QDeclarativeLandmarkCategoryModel::setFetchOrder()
         ((m_sortKey == NoSort) && (m_sortOrder == NoOrder)) ||
         m_fetchRequest->type() != QLandmarkAbstractRequest::CategoryFetchRequest)
         return;
-    if (m_sortingOrder)
+    if (m_sortingOrder) {
         delete m_sortingOrder;
+        m_sortingOrder = 0;
+    }
     if (m_sortKey == NameSort) {
-        m_sortingOrder = new QLandmarkNameSort(); // Only supported sort type
+        m_sortingOrder = new QLandmarkNameSort();
     } else {
         m_sortingOrder = new QLandmarkSortOrder();
     }
