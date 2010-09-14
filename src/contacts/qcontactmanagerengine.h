@@ -193,7 +193,6 @@ class Q_CONTACTS_EXPORT QContactManagerEngineV2 : public QContactManagerEngine
     Q_OBJECT
 public:
     QContactManagerEngineV2() : QContactManagerEngine() {}
-    ~QContactManagerEngineV2();
 
     // This is the V1 function - c++ overloading rules require this here, or to use "using"
     /*! \reimp */

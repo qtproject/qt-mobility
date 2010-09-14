@@ -71,7 +71,7 @@ static bool validateActionFilter(const QContactFilter& filter);
 
 /*!
   \class QContactManagerEngine
-  \brief The QContactManagerEngine class provides the interface for all
+  \brief The QContactManagerEngine class provides the interface for
   implementations of the contact manager backend functionality.
   \inmodule QtContacts
   
@@ -239,11 +239,13 @@ QList<QContactLocalId> QContactManagerEngine::contactIds(const QContactFilter& f
   Any operation error which occurs will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
-  in the matching contacts will be returned.  A client should not make changes to a contact which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the contact back to the manager (as the "new" restricted contact will
-  replace the previously saved contact in the backend).
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and
+  action preferences in the matching contacts will be returned.
+
+  If a non-default fetch hint is supplied, and the client wishes to make changes to the contacts,
+  they should ensure that only a detail definition hint is supplied and that when saving it back, a
+  definition mask should be used which corresponds to the detail definition hint.  This is to ensure
+  that no data is lost by overwriting an existing contact with a restricted version of it.
 
   \sa QContactFetchHint
  */
@@ -2605,6 +2607,33 @@ void QContactManagerEngine::updateRelationshipRemoveRequest(QContactRelationship
 }
 
 /*!
+  \class QContactManagerEngineV2
+  \brief The QContactManagerEngineV2 class provides the interface for
+  implementations of the contact manager backend functionality.
+  \inmodule QtContacts
+  
+  \ingroup contacts-backends
+
+  Instances of this class are usually provided by a
+  \l QContactManagerEngineFactory, which is loaded from a plugin.
+
+  The default implementation of this interface provides a basic
+  level of functionality for some functions so that specific engines
+  can simply implement the functionality that is supported by
+  the specific contacts engine that is being adapted.
+
+  More information on writing a contacts engine plugin is available in
+  the \l{Qt Contacts Manager Engines} documentation.
+
+  Engines that support the QContactManagerEngine interface but not the
+  QContactManagerEngineV2 interface will be wrapped by the QContactManager
+  by a class that emulates the extra functionality of the
+  QContactManagerEngineV2 interface.
+
+  \sa QContactManagerEngine, QContactManager, QContactManagerEngineFactory
+ */
+
+/*!
   Updates the given QContactRelationshipFetchRequest \a req with the latest results \a result, and operation error \a error.
   In addition, the state of the request will be changed to \a newState.
 
@@ -2629,15 +2658,37 @@ void QContactManagerEngine::updateRelationshipFetchRequest(QContactRelationshipF
     }
 }
 
+/*!
+  \fn QContactManagerEngineV2::QContactManagerEngineV2()
+  Constructs an empty QContactManagerEngineV2.
+ */
 
-QContactManagerEngineV2::~QContactManagerEngineV2()
-{
+/*!
+  \fn bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStringList &definitionMask, QMap<int, QContactManager::Error> *errorMap, QContactManager::Error *error)
+  For each contact in \a contacts, either add it to the database or update an existing one.
 
-}
+  This function accepts a \a definitionMask, which specifies which details of the contacts should be
+  updated.  Details with definition names not included in the definitionMask will not be updated.
 
-// TODO should the default implementation do the right thing, or return false?
+  The manager should populate \a errorMap (the map of indices of the \a contacts list to the error
+  which occurred when saving the contact at that index) for every index for which the contact could
+  not be saved, if it is able.
+
+  The supplied \a errorMap parameter may be null, if the client does not desire detailed error information.
+  If supplied, it will be empty upon entry to this function.
+
+  The \l QContactManager::error() function will only return \c QContactManager::NoError if all
+  contacts were saved successfully.
+
+  For each newly saved contact that was successful, the id of the contact in the \a contacts list
+  will be updated with the new value.  If a failure occurs when saving a new contact, the id will be
+  cleared.
+
+  Any errors encountered during this operation should be stored to \a error.
+ */
 bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStringList &definitionMask, QMap<int, QContactManager::Error> *errorMap, QContactManager::Error *error)
 {
+    // TODO should the default implementation do the right thing, or return false?
     if (definitionMask.isEmpty()) {
         // Non partial, just pass it on
         return saveContacts(contacts, errorMap, error);
@@ -2750,6 +2801,27 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
     }
 }
 
+/*!
+  Returns the list of contacts with the ids given by \a localIds.  There is a one-to-one
+  correspondence between the returned contacts and the supplied \a localIds.
+  
+  If there is an invalid id in \a localIds, then an empty QContact will take its place in the
+  returned list and an entry will be inserted into \a errorMap.
+
+  The overall operation error will be saved in \a error.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and
+  action preferences in the matching contacts will be returned.
+
+  If a non-default fetch hint is supplied, and the client wishes to make changes to the contacts,
+  they should ensure that only a detail definition hint is supplied (see \l
+  QContactFetchHint::detailDefinitionHint()) and that when saving it back, a definition mask should
+  be used which corresponds to the detail definition hint.  This is to ensure that no data is lost
+  by overwriting an existing contact with a restricted version of it.
+
+  \sa QContactFetchHint
+ */
 QList<QContact> QContactManagerEngineV2::contacts(const QList<QContactLocalId> &localIds, QMap<int, QContactManager::Error> *errorMap, const QContactFetchHint &fetchHint, QContactManager::Error *error) const
 {
     // Default implementation is to fetch one by one
