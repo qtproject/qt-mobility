@@ -281,12 +281,15 @@ void COrganizerItemRequestsServiceProvider::RemoveItemL()
         // RunError would call SelfComplete() for recursive operation
         iIndex++;
         // Delete an item
-        iOrganizerItemManagerEngine.removeItemL(iItemIds.at(iIndex-1));
+        QOrganizerItemLocalId itemLocalId(iItemIds.at(iIndex-1));
+        iOrganizerItemManagerEngine.removeItemL(itemLocalId);
+        iChangeSet.insertRemovedItem(itemLocalId);
         // Calls itself recursively until all the items are deleted
         SelfComplete();
         }
     else
         {
+        iChangeSet.emitSignals(&iOrganizerItemManagerEngine);
         // Notify results
         QOrganizerItemManagerEngine::updateItemRemoveRequest(
                 (QOrganizerItemRemoveRequest*)(iReq), 
@@ -680,5 +683,7 @@ void COrganizerItemRequestsServiceProvider::Cleanup()
     iSuccessfullItems.clear();
 #ifdef SYMBIAN_CALENDAR_V2
     iSuccessfullCollections.clear();
+    iCollectionLocalIds.clear();
 #endif
+    iChangeSet.clearAll();
     }
