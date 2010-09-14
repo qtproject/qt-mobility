@@ -50,6 +50,9 @@
 #include "qsensor.h"
 #include "test_sensor.h"
 #include "test_sensorimpl.h"
+#include "qambientlightsensor.h"
+#include "qorientationsensor.h"
+#include "qtapsensor.h"
 
 // The unit test needs to change the behaviour of the library. It does this
 // through an exported but undocumented function.
@@ -323,6 +326,53 @@ private slots:
 
         QTest::ignoreMessage(QtWarningMsg, "setDataRate: rate 300 is not supported by the sensor. ");
         sensor.setDataRate(300);
+    }
+
+    void testEnumHandling()
+    {
+        {
+            QAmbientLightReading reading;
+            for (int i = 0; i <= 6; i++) {
+                QAmbientLightReading::LightLevel setting = static_cast<QAmbientLightReading::LightLevel>(i);
+                QAmbientLightReading::LightLevel expected = setting;
+                if (i == 6)
+                    expected = QAmbientLightReading::Undefined;
+                reading.setLightLevel(setting);
+                QCOMPARE(reading.lightLevel(), expected);
+            }
+        }
+
+        {
+            QOrientationReading reading;
+            for (int i = 0; i <= 7; i++) {
+                QOrientationReading::Orientation setting = static_cast<QOrientationReading::Orientation>(i);
+                QOrientationReading::Orientation expected = setting;
+                if (i == 7)
+                    expected = QOrientationReading::Undefined;
+                reading.setOrientation(setting);
+                QCOMPARE(reading.orientation(), expected);
+            }
+        }
+
+        {
+            QTapReading reading;
+            reading.setTapDirection(QTapReading::Undefined);
+            QCOMPARE(reading.tapDirection(), QTapReading::Undefined);
+            reading.setTapDirection(QTapReading::X_Pos);
+            QCOMPARE(reading.tapDirection(), QTapReading::X_Pos);
+            reading.setTapDirection(QTapReading::X_Neg);
+            QCOMPARE(reading.tapDirection(), QTapReading::X_Neg);
+            reading.setTapDirection(QTapReading::Y_Pos);
+            QCOMPARE(reading.tapDirection(), QTapReading::Y_Pos);
+            reading.setTapDirection(QTapReading::Y_Neg);
+            QCOMPARE(reading.tapDirection(), QTapReading::Y_Neg);
+            reading.setTapDirection(QTapReading::Z_Pos);
+            QCOMPARE(reading.tapDirection(), QTapReading::Z_Pos);
+            reading.setTapDirection(QTapReading::Z_Neg);
+            QCOMPARE(reading.tapDirection(), QTapReading::Z_Neg);
+            reading.setTapDirection(static_cast<QTapReading::TapDirection>(1000));
+            QCOMPARE(reading.tapDirection(), QTapReading::Undefined);
+        }
     }
 
     // This test must be LAST or it will interfere with the other tests
