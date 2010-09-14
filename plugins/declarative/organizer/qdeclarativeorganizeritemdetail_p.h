@@ -38,62 +38,90 @@
 **
 ****************************************************************************/
 
-#ifndef QMLORGANIZERITEM_H
-#define QMLORGANIZERITEM_H
+#ifndef QDECLARATIVEORGANIZERITEMDETAIL_H
+#define QDECLARATIVEORGANIZERITEMDETAIL_H
 
-#include <QList>
 #include <QtDeclarative>
 
-#include "qorganizeritem.h"
-#include "qorganizeritemmanager.h"
-#include "qorganizeritemsaverequest.h"
+#include <QVariant>
+#include "qorganizeritemdetail.h"
 
 QTM_USE_NAMESPACE;
 
-class QMLOrganizerItem : public QAbstractListModel
+class QDeclarativeOrganizerItemDetail : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY (bool itemChanged READ itemChanged NOTIFY onItemChanged)
-    Q_PROPERTY (int itemId READ itemId NOTIFY onItemIdChanged)
+    Q_PROPERTY(QString definitionName READ definitionName NOTIFY valueChanged)
+    Q_PROPERTY(QStringList fields READ fields NOTIFY valueChanged)
+    Q_PROPERTY(AccessConstraints accessConstraints READ accessConstraints NOTIFY valueChanged)
+
+    Q_ENUMS(AccessConstraint)
+    Q_FLAGS(AccessConstraints)
+
 public:
-    enum {
-        DetailNameRole = Qt::UserRole + 500,
-        DetailFieldKeyRole,
-        DetailFieldValueRole,
-        DetailFieldRole
+
+    enum AccessConstraint {
+        NoConstraint = QOrganizerItemDetail::NoConstraint,
+        ReadOnly = QOrganizerItemDetail::ReadOnly,
+        Irremovable = QOrganizerItemDetail::Irremovable
     };
+    Q_DECLARE_FLAGS(AccessConstraints, AccessConstraint)
 
-    explicit QMLOrganizerItem(QObject *parent = 0);
-    void setItem(const QOrganizerItem& c);
-    void setManager(QOrganizerItemManager* manager);
-    QOrganizerItem item() const;
-    QVariant itemMap() const;
-    Q_INVOKABLE QList<QObject*> details() const;
-    Q_INVOKABLE QList<QObject*> detailFields() const;
-    bool itemChanged() const;
-    Q_INVOKABLE void save();
+    explicit QDeclarativeOrganizerItemDetail(QObject* parent = 0);
 
-    int itemId() const;
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
+    AccessConstraints accessConstraints() const;
+    QString definitionName() const;
 
+    QOrganizerItemDetail detail() const;
+    void setDetail(const QOrganizerItemDetail& detail);
+
+    Q_INVOKABLE QStringList fields() const;
+    Q_INVOKABLE QString value(const QString& key) const;
+    Q_INVOKABLE bool setValue(const QString& key, const QVariant& value);
+    Q_INVOKABLE bool removeValue(const QString& key);
 
 signals:
-    void onItemChanged();
-    void onItemIdChanged();
-private slots:
-    void onItemSaved();
+    void valueChanged();
+
 private:
-    QOrganizerItem m_item;
-    QDeclarativePropertyMap* m_itemMap;
-    QList<QDeclarativePropertyMap*> m_detailMaps;
-    QList<QObject*> m_details;
-    QList<QObject*> m_detailFields;
-    QOrganizerItemManager* m_manager;
-    QOrganizerItemSaveRequest m_saveRequest;
+    QOrganizerItemDetail m_detail;
 };
 
+QML_DECLARE_TYPE(QDeclarativeOrganizerItemDetail)
 
-QML_DECLARE_TYPE(QMLOrganizerItem)
 
-#endif // QMLORGANIZERITEM_H
+//event time range detail
+class QDeclarativeOrganizerEventTimeRange : public QDeclarativeOrganizerItemDetail
+{
+    Q_OBJECT
+public:
+    QDeclarativeOrganizerEventTimeRange(QObject* parent)
+        :QDeclarativeOrganizerItemDetail(parent)
+    {
+    }
+
+signals:
+    void valueChanged();
+};
+
+//audible reminder detail
+//comment detail
+//description detail
+//display label detail
+//email reminder detail
+//guid detail
+//instance origin detail
+//location detail
+//priority detail
+//recurrence detail
+//reminder detail
+//timestamp detail
+//type detail
+//visual reminder detail
+//journal time range detail
+//todo progress detail
+//todo time range detail
+#endif // QDECLARATIVEORGANIZERITEMDETAIL_H
+
+
+

@@ -38,41 +38,48 @@
 **
 ****************************************************************************/
 
-#ifndef QMLORGANIZERITEMDETAILFIELD_H
-#define QMLORGANIZERITEMDETAILFIELD_H
+#ifndef QDECLARATIVEORGANIZER_H
+#define QDECLARATIVEORGANIZER_H
 
-#include <QDeclarativePropertyMap>
+#include <QList>
+#include <QPair>
+#include <QMap>
+#include <QDate>
+#include <QAbstractListModel>
+#include <QDeclarativeListProperty>
+#include <QtDeclarative>
 
+#include "qorganizeritem.h"
+#include "qorganizeritemmanager.h"
+#include "qorganizeritemlocalidfetchrequest.h"
 
+QTM_USE_NAMESPACE;
 
-class QMLOrganizerItemDetailField : public QObject
+class QDeclarativeOrganizerItem;
+class QDeclarativeOrganizerModel;
+class QDeclarativeOrganizer : public QObject
 {
-    Q_OBJECT
+Q_OBJECT
+Q_PROPERTY(QStringList availableManagers READ availableManagers)
+Q_PROPERTY(QString manager READ manager WRITE setManager)
+
 public:
-    Q_PROPERTY(QString detailName READ detailName NOTIFY detailNameChanged)
-    Q_PROPERTY(QString key READ key NOTIFY keyChanged)
-    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
-    QMLOrganizerItemDetailField(QObject* parent = 0);
 
-    void setDetailPropertyMap(QDeclarativePropertyMap* map);
+    explicit QDeclarativeOrganizer(QObject *parent = 0);
 
-    void setKey(const QString& key);
-    QString key() const;
+    QStringList availableManagers() const;
 
-    QVariant value() const;
-    void setValue(const QVariant& value);
+    QString manager();
+    void setManager(const QString& manager);
 
-    QString detailName() const;
-    void setDetailName(const QString& name);
-signals:
-    void keyChanged();
-    void valueChanged();
-    void detailNameChanged();
+    Q_INVOKABLE QDeclarativeOrganizerModel* itemModel(const QDateTime& start, const QDateTime& end);
+
 private:
-    QDeclarativePropertyMap* m_map;
-    QString m_key;
-    QString m_detailName;
+    friend class QDeclarativeOrganizerModel;
+    QMap<QPair<QDateTime,QDateTime>, QDeclarativeOrganizerModel*> m_models;
+    QOrganizerItemManager* m_manager;
 };
 
+QML_DECLARE_TYPE(QDeclarativeOrganizer)
 
-#endif // QMLORGANIZERITEMDETAILFIELD_H
+#endif // QDeclarativeOrganizer_H
