@@ -79,7 +79,7 @@ QDeclarativeDocumentGallery::ItemType QDeclarativeDocumentGallery::itemTypeFromS
 {
     for (int i = InvalidType; i < NItemTypes; ++i) {
         if (string == QLatin1String(qt_documentGalleryTypes[i]))
-            return ItemType(i);
+            return ItemType(i + File);
     }
 
     return QDeclarativeDocumentGallery::InvalidType;
