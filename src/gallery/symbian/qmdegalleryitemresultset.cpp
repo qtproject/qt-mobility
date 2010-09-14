@@ -67,7 +67,7 @@ QMDEGalleryItemResultSet::~QMDEGalleryItemResultSet()
     m_session->RemoveObjectObserver( *this );
 }
 #ifdef MDS_25_COMPILATION_ENABLED
-void QMDEGalleryItemResultSet::HandleObjectNotification( CMdESession& /*aSession*/,
+void QMDEGalleryItemResultSet::HandleObjectNotification( CMdESession& aSession,
     TObserverNotificationType aType,
     const RArray<TItemId>& aObjectIdArray )
 {
