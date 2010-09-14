@@ -58,7 +58,6 @@ QLandmarkCategoryPrivate::QLandmarkCategoryPrivate()
       name(QString()),
       iconUrl(QUrl()),
       description(QString()),
-      customAttributes(QHash<QString, QVariant>()),
       id(QLandmarkCategoryId())
 {
 }
@@ -68,7 +67,6 @@ QLandmarkCategoryPrivate::QLandmarkCategoryPrivate(const QLandmarkCategoryPrivat
       name(other.name),
       iconUrl(other.iconUrl),
       description(other.description),
-      customAttributes(other.customAttributes),
       id(other.id)
 {
 }
@@ -82,7 +80,6 @@ QLandmarkCategoryPrivate& QLandmarkCategoryPrivate::operator= (const QLandmarkCa
     name = other.name;
     iconUrl = other.iconUrl;
     description = other.description;
-    customAttributes = other.customAttributes;
     id = other.id;
 
     return *this;
@@ -93,7 +90,6 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
     return ((name == other.name)
             && (iconUrl == other.iconUrl)
             && (description == other.description)
-            && (customAttributes == other.customAttributes)
             && (id == other.id));
 }
 
@@ -282,47 +278,6 @@ QStringList QLandmarkCategory::attributeKeys() const
 }
 
 /*!
-    Returns the value of the custom attribute corresponding to \a key.
-    If the custom attribute doest exist, returns \a defaultValue.
-
-    If no default value is specified, a default QVariant is returned.
-*/
-QVariant QLandmarkCategory::customAttribute(const QString &key, const QVariant &defaultValue) const
-{
-    return d->customAttributes.value(key,defaultValue);
-}
-
-/*!
-    Sets the \a value of the custom attribute corresponding to \a key.
-    Setting an invalid QVariant removes the key.
-*/
-void QLandmarkCategory::setCustomAttribute(const QString &key, const QVariant &value)
-{
-    if (!value.isValid())
-        d->customAttributes.remove(key);
-    else
-        d->customAttributes[key] = value;
-}
-
-/*!
-    Returns a list of custom Attribute keys.
-
-    \sa customAttribute(), setCustomAttribute()
-*/
-QStringList QLandmarkCategory::customAttributeKeys() const
-{
-    return d->customAttributes.keys();
-}
-
-/*!
-    Removes the custom attribute corresponding to \a key.
-*/
-void QLandmarkCategory::removeCustomAttribute(const QString &key)
-{
-    d->customAttributes.remove(key);
-}
-
-/*!
     Clears all the data fields of the category.
 */
 void QLandmarkCategory::clear()
@@ -330,6 +285,5 @@ void QLandmarkCategory::clear()
     d->name.clear();
     d->iconUrl.clear();
     d->description.clear();
-    d->customAttributes.clear();
     d->id = QLandmarkCategoryId();
 }

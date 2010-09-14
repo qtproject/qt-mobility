@@ -81,11 +81,6 @@ public:
     void setAttribute(const QString &key, const QVariant &value);
     QStringList attributeKeys() const;
 
-    QVariant customAttribute(const QString &key, const QVariant &defaultValue = QVariant()) const;
-    void setCustomAttribute(const QString &key, const QVariant &value);
-    QStringList customAttributeKeys() const;
-    void removeCustomAttribute(const QString &key);
-
     void clear();
 private:
     QSharedDataPointer<QLandmarkCategoryPrivate> d;
