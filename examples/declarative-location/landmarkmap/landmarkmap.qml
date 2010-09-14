@@ -67,7 +67,6 @@ Item {
     LandmarkProximityFilter {
         id: proximityFilter
         coordinate: map.center
-        radius: 500
     }
 
     LandmarkModel {
@@ -75,13 +74,40 @@ Item {
         autoUpdate: true
         onModelChanged: console.log("Model changed, landmark count: " + count)
         filter: proximityFilter
+        limit: 10
+    }
+
+    Component {
+        id: landmarkDelegate
+        Item {
+            width: 50; height: 20
+            x: map.toScreenPosition(landmark.coordinate).x
+            y: map.toScreenPosition(landmark.coordinate).y
+            Image {
+                id: landmarkIcon
+                source: "mobile/images/landmarkstar.png"
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked: {
+                        console.log("Landmark clicked, setting visible: " + landmark.name)
+                        landmarkNameText.visible = true
+                    }
+                }
+            }
+            Text {
+                id: landmarkNameText
+                anchors.top: landmarkIcon.bottom
+                text:  landmark.name
+                visible: false
+            }
+        }
     }
 
     Map {
         id: map
         size.width: parent.width
         size.height: parent.height
-        zoomLevel: 15
+        zoomLevel: 1
         center: myPositionSource.position.coordinate
         onZoomLevelChanged: {
             var distance = center.distanceTo(map.toCoordinate(Qt.point(0,0)))
@@ -89,6 +115,15 @@ Item {
             proximityFilter.radius = distance / 2
         }
         onCenterChanged: console.log("Center changed")
+    }
+
+    Mobile.TitleBar { id: titleBar; z: 5; width: parent.width - statusBar.width; height: 40; opacity: 0.9 }
+    Mobile.StatusBar { id: statusBar; z: 6; width: 80; height: titleBar.height; opacity: titleBar.opacity; anchors.right: parent.right}
+
+    Repeater {
+        id: landmarkView
+        model: landmarkModel
+        delegate: landmarkDelegate
     }
 
     Common.Slider {
@@ -103,7 +138,6 @@ Item {
              map.zoomLevel = value
          }
     }
-
     Mobile.ToolBar {
         id: toolbar
         height: 40; width: parent.width
@@ -115,8 +149,8 @@ Item {
             myPositionSource.start()
         }
         onButton2Clicked: {
-            console.log("Clicked, setting import file to get landmarks");
-            landmarkModel.importFile = "myImportedLandmarks.gpx"
+            console.log("Clicked, setting import file to get landmarks, count was: " + landmarkModel.count);
+            landmarkModel.importFile = "AUS-PublicToilet-Queensland.gpx"
             myPositionSource.start()
         }
         onButton3Clicked: {

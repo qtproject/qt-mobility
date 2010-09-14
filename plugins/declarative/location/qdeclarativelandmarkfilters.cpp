@@ -34,6 +34,79 @@ QLandmarkFilter* QDeclarativeLandmarkNameFilter::filter()
     return &m_filter;
 }
 
+QDeclarativeLandmarkCategoryFilter::QDeclarativeLandmarkCategoryFilter(QObject* parent) :
+        QDeclarativeLandmarkFilterBase(parent), m_category(0)
+{
+}
+
+QDeclarativeLandmarkCategoryFilter::~QDeclarativeLandmarkCategoryFilter()
+{
+}
+
+QDeclarativeLandmarkCategory* QDeclarativeLandmarkCategoryFilter::category() const
+{
+    return m_category;
+}
+
+void QDeclarativeLandmarkCategoryFilter::setCategory(QDeclarativeLandmarkCategory* category)
+{
+    m_category = category;
+    m_filter.setCategoryId(m_category->category().categoryId());
+    emit categoryChanged();
+    emit filterContentChanged();
+}
+
+QLandmarkFilter* QDeclarativeLandmarkCategoryFilter::filter()
+{
+    if (!m_category)
+        return 0;
+    return &m_filter;
+}
+
+QDeclarativeLandmarkBoxFilter::QDeclarativeLandmarkBoxFilter(QObject* parent) :
+        QDeclarativeLandmarkFilterBase(parent), m_topLeft(0), m_bottomRight(0)
+{
+}
+
+QDeclarativeLandmarkBoxFilter::~QDeclarativeLandmarkBoxFilter()
+{
+}
+
+QDeclarativeCoordinate* QDeclarativeLandmarkBoxFilter::topLeft() const
+{
+    return m_topLeft;
+}
+
+QDeclarativeCoordinate* QDeclarativeLandmarkBoxFilter::bottomRight() const
+{
+    return m_bottomRight;
+}
+
+void QDeclarativeLandmarkBoxFilter::setTopLeft(QDeclarativeCoordinate* coordinate)
+{
+    m_topLeft = coordinate;
+    if (m_topLeft && m_bottomRight)
+        m_filter.setBoundingBox(QGeoBoundingBox(m_topLeft->coordinate(), m_bottomRight->coordinate()));
+    emit topLeftChanged();
+    emit filterContentChanged();
+}
+
+void QDeclarativeLandmarkBoxFilter::setBottomRight(QDeclarativeCoordinate* coordinate)
+{
+    m_bottomRight = coordinate;
+    if (m_topLeft && m_bottomRight)
+        m_filter.setBoundingBox(QGeoBoundingBox(m_topLeft->coordinate(), m_bottomRight->coordinate()));
+    emit bottomRightChanged();
+    emit filterContentChanged();
+}
+
+QLandmarkFilter* QDeclarativeLandmarkBoxFilter::filter()
+{
+    if (!m_topLeft || !m_bottomRight)
+        return 0;
+    return &m_filter;
+}
+
 QDeclarativeLandmarkProximityFilter::QDeclarativeLandmarkProximityFilter(QObject *parent) :
         QDeclarativeLandmarkFilterBase(parent), m_radius(50), m_coordinate(0)
 {

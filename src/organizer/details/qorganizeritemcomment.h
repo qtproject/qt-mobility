@@ -47,6 +47,7 @@
 #include "qtorganizerglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
+#include "qorganizeritemfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -64,6 +65,9 @@ public:
 
     void setComment(const QString& comment) {setValue(FieldComment, comment);}
     QString comment() const {return value(FieldComment);}
+
+    // Convenience filter
+    static QOrganizerItemFilter match(const QString& substring);
 };
 
 QTM_END_NAMESPACE

@@ -244,43 +244,67 @@ void UT_CQwertyPredictiveSearchTable::UT_UnmappedMailAddressL()
     {
     // All names and mail addresses begin with unmapped characters, so contact
     // is not stored to QWERTY tables at all.
-    _LIT(KUnmappedName, "8nbrAtStart");
-    _LIT(KNameWithUnmappedChars, "rname28afterNbr");
-    _LIT(KUnmappedMail, "mailto:123user@domain");
-    _LIT(KUnmappedMail2, "800@call.id");
-    _LIT(KUnmappedMail3, "5begins@by.nbr");
-    AddContactL(KTestContactId, KUnmappedName, KNullDesC, KUnmappedMail, KUnmappedMail2); 
+    _LIT(KUnmappedName, "¨unknownCharAtStart");
+    _LIT(KUnmappedName2, "¨nameAfterUnk");
+    _LIT(KUnmappedMail, "mailto:¨user@domain");
+    _LIT(KUnmappedMail2, "¨addr@call.id");
+    _LIT(KUnmappedMail3, "¨begins@by.unk.char");
+    AddContactL(KTestContactId, KUnmappedName, KUnmappedName2, KUnmappedMail,
+    			KUnmappedMail2, KUnmappedMail3); 
     // Check tables are empty
     CheckItemCountL(InitTableVector());
     
     
-    // One mail address begin with a mapped character
-    AddContactL(KTestContactId2, KNullDesC, KNameWithUnmappedChars, 
+    // One mail address begins with a mapped character
+    AddContactL(KTestContactId2, KNullDesC, KUnmappedName2, 
                 KUnmappedMail, KUnmappedMail2, KMail);
     
     QVector<TInt> result = InitTableVector();
-    result[3] = 1; // KNameWithUnmappedChars
     result[4] = 1; // KMail
     CheckItemCountL(result);
     
    
     // All mail addresses begin with unmapped characters, but contact can be
-    // searched by first name and last name. Contact is stored to QWERTY tables.
-    AddContactL(KTestContactId3, KNameWithUnmappedChars, KLastName, 
-                KUnmappedMail, KUnmappedMail2, KUnmappedMail3);
+    // searched by first name. Contact is stored to QWERTY tables.
+    _LIT(KNameWithUnmappedChars, "E¨¨");
+    _LIT(KMailWithUnmappedChars, "(¨&)");
+    AddContactL(KTestContactId3, KNameWithUnmappedChars, KNullDesC, 
+                KUnmappedMail, KUnmappedMail2, KMailWithUnmappedChars);
     
-    result[2] = 1; // KLastName
-    result[3] = 2; // Second KNameWithUnmappedChars
+    result[2] = 1; // KNameWithUnmappedChars
+    result[32] = 1; // KMailWithUnmappedChars
     CheckItemCountL(result);
     }
 
+// -----------------------------------------------------------------------------
+// UT_CQwertyPredictiveSearchTable::UT_BeginByNumberL
+// -----------------------------------------------------------------------------
+//
+void UT_CQwertyPredictiveSearchTable::UT_BeginByNumberL()
+    {
+    // Several names and mail addresses begin by number. They are all stored.
+    _LIT(KNameBeginsByNbr, "8nbrAtStart");
+    _LIT(KMailBeginsByNbr, "mailto:0123user@domain");
+    _LIT(KMail2BeginsByNbr, "800@call.id");
+    _LIT(KMail3BeginsByNbr, "5begins@by.nbr");
+    AddContactL(KTestContactId, KNameBeginsByNbr, KFirstName2, KMailBeginsByNbr,
+    			KMail2BeginsByNbr, KMail3BeginsByNbr);
+    
+    QVector<TInt> result = InitTableVector();
+    result[7] = 1;  // KFirstName2
+    result[36] = 1; // begins by 5
+    result[39] = 2; // begins by 8
+    result[41] = 2; // begins by 0
+    CheckItemCountL(result);
+    }
+    
 // -----------------------------------------------------------------------------
 // UT_CQwertyPredictiveSearchTable::InitTableVector
 // -----------------------------------------------------------------------------
 //
 QVector<TInt> UT_CQwertyPredictiveSearchTable::InitTableVector() const
 	{
-	QVector<TInt> allTablesAreEmpty(CQwertyKeyMap::EAmountOfKeysInQwertyKeypad, 0);
+	QVector<TInt> allTablesAreEmpty(CQwertyKeyMap::EMaxAmountOfKeysInQwertyKeypad, 0);
 	return allTablesAreEmpty;
 	}
 
@@ -397,8 +421,14 @@ void UT_CQwertyPredictiveSearchTable::CheckItemCountL(
         TSqlScalarFullSelectQuery scalarQuery(iDB);
     
         TInt rowCount = scalarQuery.SelectIntL(ptr);
-        
-		EUNIT_ASSERT_EQUALS(aCountInTables.at(tableNumber), rowCount);
+        TInt expectedCount = aCountInTables.at(tableNumber);
+
+        if (expectedCount != rowCount)
+            {
+            RDebug::Print(_L("wrong item count in table nbr %d, expected=%d, actual=%d"),
+                          tableNumber, expectedCount, rowCount);
+            EUNIT_ASSERT_EQUALS(expectedCount, rowCount);
+            }
 		++tableNumber;
         }
 

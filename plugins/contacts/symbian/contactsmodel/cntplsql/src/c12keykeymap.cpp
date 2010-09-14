@@ -170,7 +170,7 @@ TInt C12keyKeyMap::ComputeValue(QString aString,
 	}
 
 // ----------------------------------------------------------------------------
-// C12keyKeyMap::SetHardcodedCharacters
+// C12keyKeyMap::SelectLanguages
 // In emulator (except in unit tests), select just the default language, as new
 // SDKs have over 40 languages, causing out of memory error.
 // In hardware and when compiling unit tests in emulator, select all languages
