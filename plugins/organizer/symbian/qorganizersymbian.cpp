@@ -443,12 +443,14 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::items(const QOrganizerItemFil
     
     // Get ids
     RArray<TCalLocalUid> ids;
-    // TODO: collection id?
-    TRAPD(err, entryViewL(1)->GetIdsModifiedSinceDateL(calTime, ids));
-    transformError(err, error);
-    if (*error != QOrganizerItemManager::NoError) {
-        ids.Close();
-        return QList<QOrganizerItem>();
+    // TODO: optimize if the filter rules out some of the collections
+    foreach (QOrganizerCollectionLocalId collectionId, m_entryViews.keys()) {
+        TRAPD(err, entryViewL(collectionId)->GetIdsModifiedSinceDateL(calTime, ids));
+        transformError(err, error);
+        if (*error != QOrganizerItemManager::NoError) {
+            ids.Close();
+            return QList<QOrganizerItem>();
+        }
     }
         
     // Get items
@@ -701,7 +703,6 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(const QOrganizer
             User::Leave(KErrInvalidOccurrence);
 
         // Fetch the item (will return NULL if the localid is not found)
-        // TODO: collection id?
         entry = entryViewL(collectionLocalIdL(*item))->FetchL(item->localId());
         if (!entry)
             User::Leave(KErrInvalidOccurrence);
@@ -910,7 +911,6 @@ void QOrganizerItemSymbianEngine::removeItemL(const QOrganizerItemLocalId& organ
     if (!calEntry)
         User::Leave(KErrNotFound);
     CleanupStack::PushL(calEntry);
-    // TODO: collection id?
     entryViewL(collectionLocalId)->DeleteL(*calEntry);
     CleanupStack::PopAndDestroy(calEntry);
 }
