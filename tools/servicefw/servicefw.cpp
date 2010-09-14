@@ -218,6 +218,11 @@ void CommandProcessor::add(const QStringList &args)
     
         setErrorCode(error);
     }
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    // exit the event loop for maemo
+    QCoreApplication::exit(0);
+#endif
 }
 
 void CommandProcessor::remove(const QStringList &args)
