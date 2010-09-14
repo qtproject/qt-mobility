@@ -161,10 +161,6 @@ public:
     bool isReadOnly(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error,
         QString *errorString) const;
 
-    bool isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
-    void setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error,
-        QString *errorString);
-
     /* Asynchronous Request Support */
     void requestDestroyed(QLandmarkAbstractRequest* request);
     bool startRequest(QLandmarkAbstractRequest* request);
@@ -237,8 +233,6 @@ private:
     CPosLmCategoryManager* m_LandmarkCatMgr;
     LandmarkEventObserver& m_LmEventObserver;
     QStringList m_LandmarkAttributeKeys;
-
-    bool m_isExtendedAttributesEnabled;
 
 private:
     friend class QLandmarkDbEventObserver;

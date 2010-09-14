@@ -406,31 +406,6 @@ bool QLandmarkManagerEngineSymbian::isReadOnly(const QLandmarkCategoryId &catego
 }
 
 /*!
- Returns whether extended attributes specific to this manager are enabled or not.
- If extended attributes are enabled, retrieved landmarks will have
- extra attribute keys accessible through the QLandmark::attribute() function.
- Extended attributes must be enabled to save any landmarks which possess
- extended attributes.  This same behaviour will also apply to categories
- if extended category attributes are supported.
- Errors are stored in \a error and \a errorString.
- */
-bool QLandmarkManagerEngineSymbian::isExtendedAttributesEnabled(QLandmarkManager::Error *error,
-    QString *errorString) const
-{
-    return d_ptr->isExtendedAttributesEnabled(error, errorString);
-}
-
-/*!
- Sets whether extended attributes are \a enabled or not.
- Errors are stored in \a error and \a errorString.
- */
-void QLandmarkManagerEngineSymbian::setExtendedAttributesEnabled(bool enabled,
-    QLandmarkManager::Error *error, QString *errorString)
-{
-    return d_ptr->setExtendedAttributesEnabled(enabled, error, errorString);
-}
-
-/*!
  Notifies the manager engine that the givan \a request has been destroyed.
  */
 void QLandmarkManagerEngineSymbian::requestDestroyed(QLandmarkAbstractRequest* request)

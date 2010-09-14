@@ -1295,10 +1295,6 @@ bool LandmarkManagerEngineSymbianPrivate::isFeatureSupported(
     case (QLandmarkManager::ImportExportFeature):
     case (QLandmarkManager::NotificationsFeature):
         return true;
-    case (QLandmarkManager::ExtendedAttributesFeature):
-        *error = QLandmarkManager::NotSupportedError;
-        *errorString = "Not supported feature";
-        return false;
     default:
         *error = QLandmarkManager::BadArgumentError;
         *errorString = "Invalid feature";
@@ -1402,43 +1398,6 @@ QStringList LandmarkManagerEngineSymbianPrivate::supportedFormats(
     }
 
     return formats;
-}
-
-/*!
- Returns whether extended attributes specific to this manager are enabled or not.
- If extended attributes are enabled, retrieved landmarks will have
- extra attribute keys accessible through the QLandmark::attribute() function.
- Extended attributes must be enabled to save any landmarks which possess
- extended attributes.  This same behaviour will also apply to categories
- if extended category attributes are supported.
- Errors are stored in \a error and \a errorString.
- */
-bool LandmarkManagerEngineSymbianPrivate::isExtendedAttributesEnabled(
-    QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Symbian landmarks apis dont support extended attributes of landmarks";
-
-    //return m_isExtendedAttributesEnabled;
-    // Always returns false as Symbian landmarks apis dont support extended attributes of landmarks.
-    return false;
-}
-
-/*!
- Sets whether extended attributes are \a enabled or not.
- Errors are stored in \a error and \a errorString.
- */
-void LandmarkManagerEngineSymbianPrivate::setExtendedAttributesEnabled(bool enabled,
-    QLandmarkManager::Error *error, QString *errorString)
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Symbian landmarks apis dont support extended attributes of landmarks";
-
-    m_isExtendedAttributesEnabled = enabled;
 }
 
 /*!
