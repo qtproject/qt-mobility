@@ -101,7 +101,11 @@ QStringList QAudioPluginLoader::pluginList() const
             qDebug()<<"Looking for plugins in "<<pluginsDir.path()<<files;
 #endif
         for (int j=0; j < files.count(); j++) {
-            plugins <<  pluginsDir.absoluteFilePath(files.at(j));
+            const QString &file = files.at(j);
+#if defined(Q_WS_MAEMO_5)
+            if (!file.contains(QLatin1String("n900audio")))
+#endif
+            plugins <<  pluginsDir.absoluteFilePath(file);
         }
     }
     return  plugins;

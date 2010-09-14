@@ -151,7 +151,7 @@ void QMessageServicePrivate::transmitActivityChanged(QMailServiceAction::Activit
         if (!_transmitIds.isEmpty()) {
             // If these messages were transmitted, we need to move them to Sent folder
             QMailMessageKey filter(QMailMessageKey::id(_transmitIds));
-            foreach (const QMailMessageId &id, QMailStore::instance()->queryMessages(filter & QMailMessageKey::status(QMailMessage::Sent))) {
+            foreach (const QMailMessageId &id, mailStoreInstance()->queryMessages(filter & QMailMessageKey::status(QMailMessage::Sent))) {
                 QMessage message(convert(id));
 
                 QMessagePrivate::setStandardFolder(message,QMessage::SentFolder);
@@ -318,8 +318,8 @@ bool QMessageService::queryMessages(const QMessageFilter &filter, const QMessage
     d_ptr->_activeStoreAction = true;
     emit stateChanged(QMessageService::ActiveState);
 
-    d_ptr->_candidateIds = QMailStore::instance()->queryMessages(convert(filter), convert(sortOrder), limit, offset);
-    d_ptr->_error = convert(QMailStore::instance()->lastError());
+    d_ptr->_candidateIds = mailStoreInstance()->queryMessages(convert(filter), convert(sortOrder), limit, offset);
+    d_ptr->_error = convert(mailStoreInstance()->lastError());
 
     if (d_ptr->_error == QMessageManager::NoError) {
         d_ptr->_lastFilter = QMessageFilter();
@@ -363,8 +363,8 @@ bool QMessageService::queryMessages(const QMessageFilter &filter, const QString 
     }
 
     // Find all messages to perform the body search on
-    d_ptr->_candidateIds = QMailStore::instance()->queryMessages(convert(filter), convert(sortOrder));
-    d_ptr->_error = convert(QMailStore::instance()->lastError());
+    d_ptr->_candidateIds = mailStoreInstance()->queryMessages(convert(filter), convert(sortOrder));
+    d_ptr->_error = convert(mailStoreInstance()->lastError());
 
     if (d_ptr->_error == QMessageManager::NoError) {
         d_ptr->_lastFilter = filter;
@@ -388,8 +388,8 @@ bool QMessageService::countMessages(const QMessageFilter &filter)
     d_ptr->_active = 0;
     d_ptr->_activeStoreAction = true;
     
-    d_ptr->_candidateIds = QMailStore::instance()->queryMessages(convert(filter));
-    d_ptr->_error = convert(QMailStore::instance()->lastError());
+    d_ptr->_candidateIds = mailStoreInstance()->queryMessages(convert(filter));
+    d_ptr->_error = convert(mailStoreInstance()->lastError());
 
     if (d_ptr->_error == QMessageManager::NoError) {
         d_ptr->_lastFilter = QMessageFilter();
@@ -445,21 +445,21 @@ bool QMessageService::send(QMessage &message)
 
     if (msg->id().isValid()) {
         // Update the message
-        if (!QMailStore::instance()->updateMessage(msg)) {
+        if (!mailStoreInstance()->updateMessage(msg)) {
             d_ptr->_error = QMessageManager::FrameworkFault;
             qWarning() << "Unable to mark message as outgoing";
             return false;
         }
     } else {
         // Add this message to the store
-        if (!QMailStore::instance()->addMessage(msg)) {
+        if (!mailStoreInstance()->addMessage(msg)) {
             d_ptr->_error = QMessageManager::FrameworkFault;
             qWarning() << "Unable to store message for transmission";
             return false;
         }
     }
 
-    d_ptr->_transmitIds = QMailStore::instance()->queryMessages(QMailMessageKey::status(QMailMessage::Outgoing) & QMailMessageKey::parentAccountId(msg->parentAccountId()));
+    d_ptr->_transmitIds = mailStoreInstance()->queryMessages(QMailMessageKey::status(QMailMessage::Outgoing) & QMailMessageKey::parentAccountId(msg->parentAccountId()));
 
     d_ptr->_error = QMessageManager::NoError;
     d_ptr->_active = &d_ptr->_transmit;

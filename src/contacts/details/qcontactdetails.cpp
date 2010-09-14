@@ -380,11 +380,14 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAvatar::FieldVideoUrl, "VideoUrl");
 /* ==================== QContactAddress ======================= */
 
 
-// XXX TODO - explain the different segments and their typical mapping
 /*!
    \class QContactAddress
    \brief The QContactAddress class contains an address of a contact.
    \ingroup contacts-details
+
+   The fields in the QContactAddress class are based on the segments
+   of the ADR property of a Versit vCard file.
+   Versit \reg is a trademark of the Internet Mail Consortium.
  */
 
 /*!
@@ -397,6 +400,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::DefinitionName, "Address");
    \variable QContactAddress::FieldStreet
 
    The field key constant for the value containing the street segment.
+   The street segment contains the street number and street name of the address.
    \sa street(), setStreet()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldStreet, "Street");
@@ -405,6 +409,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldStreet, "Street");
    \variable QContactAddress::FieldLocality
 
    The field key constant for the value containing the locality segment.
+   The locality segment contains the name of the city, town or suburb of the address.
    \sa locality(), setLocality()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldLocality, "Locality");
@@ -413,6 +418,8 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldLocality, "Locality");
    \variable QContactAddress::FieldRegion
 
    The field key constant for the value containing the region segment.
+   The region segment contains the name or identifier of the state,
+   province or region of the address.
    \sa region(), setRegion()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldRegion, "Region");
@@ -421,6 +428,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldRegion, "Region");
    \variable QContactAddress::FieldPostcode
 
    The field key constant for the value containing the postcode segment.
+   The postcode segment contains the postal code for the address.
    \sa postcode(), setPostcode()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldPostcode, "Postcode");
@@ -429,6 +437,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldPostcode, "Postcode");
    \variable QContactAddress::FieldCountry
 
    The field key constant for the value containing the country segment.
+   The country segment contains the name of the country of the address.
    \sa country(), setCountry()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldCountry, "Country");
@@ -437,6 +446,8 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldCountry, "Country");
    \variable QContactAddress::FieldPostOfficeBox
 
    The field key constant for the value containing the post office box segment.
+   The post office box segment contains the post office box identifier of the
+   mailing address.
    \sa postOfficeBox(), setPostOfficeBox()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldPostOfficeBox, "PostOfficeBox");
