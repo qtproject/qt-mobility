@@ -2392,13 +2392,6 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategoryInternalL(QLandmarkCategor
         return result;
     }
 
-    if (category->customAttributeKeys().size() > 0) {
-        *error = QLandmarkManager::NotSupportedError;
-        *errorString
-            = "LandmarkCategory contains the different attributes, that this engines doesnt support";
-        return result;
-    }
-
     CPosLandmarkCategory* symbiancat = NULL;
     QLandmarkCategoryId categoryId = category->categoryId();
 
