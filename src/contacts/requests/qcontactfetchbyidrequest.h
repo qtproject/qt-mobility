@@ -39,31 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTTAG_H
-#define QCONTACTTAG_H
-
-#include <QString>
+#ifndef QCONTACTFETCHBYIDREQUEST_H
+#define QCONTACTFETCHBYIDREQUEST_H
 
 #include "qtcontactsglobal.h"
-#include "qcontactdetail.h"
+#include "qcontactabstractrequest.h"
 #include "qcontact.h"
+#include "qcontactfetchhint.h"
+
+#include <QList>
+#include <QStringList>
 
 QTM_BEGIN_NAMESPACE
 
-/* Leaf class */
-class Q_CONTACTS_EXPORT QContactTag : public QContactDetail
+class QContactFetchByIdRequestPrivate;
+class Q_CONTACTS_EXPORT QContactFetchByIdRequest : public QContactAbstractRequest
 {
-public:
-#ifdef Q_QDOC
-    static const QLatin1Constant DefinitionName;
-    static const QLatin1Constant FieldTag;
-#else
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactTag, "Tag")
-    Q_DECLARE_LATIN1_CONSTANT(FieldTag, "Tag");
-#endif
+    Q_OBJECT
 
-    void setTag(const QString& tag) {setValue(FieldTag, tag);}
-    QString tag() const {return value(FieldTag);}
+public:
+    QContactFetchByIdRequest(QObject* parent = 0);
+    ~QContactFetchByIdRequest();
+
+    /* Selection, restriction and sorting */
+    void setLocalIds(const QList<QContactLocalId>& localIds);
+    void setFetchHint(const QContactFetchHint& fetchHint);
+    QList<QContactLocalId> localIds() const;
+    QContactFetchHint fetchHint() const;
+
+    /* Results */
+    QList<QContact> contacts() const;
+    QMap<int, QContactManager::Error> errorMap() const;
+
+private:
+    Q_DISABLE_COPY(QContactFetchByIdRequest)
+    friend class QContactManagerEngine;
+    Q_DECLARE_PRIVATE_D(d_ptr, QContactFetchByIdRequest)
 };
 
 QTM_END_NAMESPACE
