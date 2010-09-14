@@ -38,48 +38,90 @@
 **
 ****************************************************************************/
 
-#ifndef QMLORGANIZERITEMDETAIL_H
-#define QMLORGANIZERITEMDETAIL_H
+#ifndef QDECLARATIVEORGANIZERITEMDETAIL_H
+#define QDECLARATIVEORGANIZERITEMDETAIL_H
 
 #include <QtDeclarative>
-#include <QDeclarativePropertyMap>
+
 #include <QVariant>
 #include "qorganizeritemdetail.h"
 
 QTM_USE_NAMESPACE;
 
-class QMLOrganizerItemDetail : public QObject
+class QDeclarativeOrganizerItemDetail : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(QString definitionName READ definitionName NOTIFY valueChanged)
+    Q_PROPERTY(QStringList fields READ fields NOTIFY valueChanged)
+    Q_PROPERTY(AccessConstraints accessConstraints READ accessConstraints NOTIFY valueChanged)
+
+    Q_ENUMS(AccessConstraint)
+    Q_FLAGS(AccessConstraints)
+
+public:
+
+    enum AccessConstraint {
+        NoConstraint = QOrganizerItemDetail::NoConstraint,
+        ReadOnly = QOrganizerItemDetail::ReadOnly,
+        Irremovable = QOrganizerItemDetail::Irremovable
+    };
+    Q_DECLARE_FLAGS(AccessConstraints, AccessConstraint)
+
+    explicit QDeclarativeOrganizerItemDetail(QObject* parent = 0);
+
+    AccessConstraints accessConstraints() const;
+    QString definitionName() const;
+
+    QOrganizerItemDetail detail() const;
+    void setDetail(const QOrganizerItemDetail& detail);
+
+    Q_INVOKABLE QStringList fields() const;
+    Q_INVOKABLE QString value(const QString& key) const;
+    Q_INVOKABLE bool setValue(const QString& key, const QVariant& value);
+    Q_INVOKABLE bool removeValue(const QString& key);
+
+signals:
+    void valueChanged();
+
+private:
+    QOrganizerItemDetail m_detail;
+};
+
+QML_DECLARE_TYPE(QDeclarativeOrganizerItemDetail)
+
+
+//event time range detail
+class QDeclarativeOrganizerEventTimeRange : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
 public:
-    Q_PROPERTY(QString name READ name NOTIFY nameChanged)
-    Q_PROPERTY(bool detailChanged READ detailChanged NOTIFY onDetailChanged)
-
-    explicit QMLOrganizerItemDetail(QObject* parent = 0);
-    void setDetailPropertyMap(QDeclarativePropertyMap* map);
-    QDeclarativePropertyMap* propertyMap() const;
-    Q_INVOKABLE QList<QObject*> fields() const;
-    bool detailChanged() const;
-    void setDetailChanged(bool changed);
-    QOrganizerItemDetail detail() const;
-    QString name() const;
-    void setName(const QString& name);
+    QDeclarativeOrganizerEventTimeRange(QObject* parent)
+        :QDeclarativeOrganizerItemDetail(parent)
+    {
+    }
 
 signals:
-    void nameChanged();
-    void onDetailChanged();
-private slots:
-    void detailChanged(const QString &key, const QVariant &value);
-private:
-    bool m_detailChanged;
-    QDeclarativePropertyMap* m_map;
-    QString m_detailName;
-    QList<QObject*> m_fields;
+    void valueChanged();
 };
 
-QML_DECLARE_TYPE(QMLOrganizerItemDetail)
-
-#endif // QMLORGANIZERITEMDETAIL_H
+//audible reminder detail
+//comment detail
+//description detail
+//display label detail
+//email reminder detail
+//guid detail
+//instance origin detail
+//location detail
+//priority detail
+//recurrence detail
+//reminder detail
+//timestamp detail
+//type detail
+//visual reminder detail
+//journal time range detail
+//todo progress detail
+//todo time range detail
+#endif // QDECLARATIVEORGANIZERITEMDETAIL_H
 
 
 
