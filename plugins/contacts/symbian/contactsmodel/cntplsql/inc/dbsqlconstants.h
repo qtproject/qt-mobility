@@ -49,7 +49,8 @@ _LIT(KSqlContactPredSearchTable9, "predictivesearch9");
 _LIT(KSqlContactPredSearchTable10, "predictivesearch10");
 _LIT(KSqlContactPredSearchTable11, "predictivesearch11");
 _LIT(KSqlContactPresenceTableName, "presence");
-// There are also 44 qwerty-mail tables (qm0..qm43)
+// There are also up to 63 qwerty-mail tables (qm0..qm63).
+// In practice the amount of qwerty-mail tables is around 45.
 
 
 enum TDatabaseTables

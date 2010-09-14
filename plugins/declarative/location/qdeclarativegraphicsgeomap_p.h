@@ -70,10 +70,12 @@ public:
     void setDeclarativeCenter(const QDeclarativeCoordinate *center);
     QDeclarativeCoordinate* declarativeCenter() const;
 
-    Q_INVOKABLE QPointF toScreenPosition(const QDeclarativeCoordinate *coordinate) const;
-    // TODO: the return type needs to be changed back to QDeclarativeCoordinate*
+
+    // TODO: the types need to be changed back to QDeclarativeCoordinate*
     // when fix to QML is available
     Q_INVOKABLE QObject* toCoordinate(QPointF screenPosition) const;
+    Q_INVOKABLE QPointF toScreenPosition(QObject *coordinate) const;
+    //Q_INVOKABLE QPointF toScreenPosition(const QDeclarativeCoordinate *coordinate) const;
 
 private slots:
     void memberCenterChanged(const QGeoCoordinate &coordinate);

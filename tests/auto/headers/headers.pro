@@ -23,7 +23,6 @@ INCLUDEPATH += ../../../src/contacts \
                 ../../../src/sensors \
                 ../../../src/serviceframework \
                 ../../../src/systeminfo \
-                ../../../src/telephony \
                 ../../../src/versit
 
 CONFIG += testcase

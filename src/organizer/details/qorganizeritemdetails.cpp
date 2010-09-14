@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qorganizeritemdetails.h"
+#include "qorganizeritemdetailfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -95,6 +96,21 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDescription::FieldDescription, "Descripti
    \inmodule QtOrganizer
    \ingroup organizer-details
 */
+
+/*!
+    Returns a filter suitable for finding items with a display label containing the specified
+    \a substring.
+*/
+QOrganizerItemFilter QOrganizerItemDisplayLabel::match(const QString &substring)
+{
+    QOrganizerItemDetailFilter f;
+    f.setDetailDefinitionName(QOrganizerItemDisplayLabel::DefinitionName,
+                              QOrganizerItemDisplayLabel::FieldLabel);
+    f.setValue(substring);
+    f.setMatchFlags(QOrganizerItemFilter::MatchContains);
+
+    return f;
+}
 
 /*!
    \fn void QOrganizerItemDisplayLabel::setLabel(const QString& label)
@@ -331,6 +347,23 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTimeRange::FieldEntryDateTime, "EntryD
    \ingroup organizer-details
  */
 
+
+/*!
+    Returns a filter suitable for finding items whose location matches the specified \a substring.
+    This filter matches location names only.  If you wish to match against address or geolocation
+    co-ordinates, use a QContactDetailFilter instead.
+*/
+QOrganizerItemFilter QOrganizerItemLocation::match(const QString &substring)
+{
+    QOrganizerItemDetailFilter f;
+    f.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName,
+                              QOrganizerItemLocation::FieldLocationName);
+    f.setValue(substring);
+    f.setMatchFlags(QOrganizerItemFilter::MatchContains);
+
+    return f;
+}
+
 /*!
 \variable QOrganizerItemLocation::DefinitionName
 
@@ -402,6 +435,21 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLocationName, "LocationNam
  */
 
 /*!
+    Returns a filter suitable for finding items with a comment containing the specified
+    \a substring.
+*/
+QOrganizerItemFilter QOrganizerItemComment::match(const QString &substring)
+{
+    QOrganizerItemDetailFilter f;
+    f.setDetailDefinitionName(QOrganizerItemComment::DefinitionName,
+                              QOrganizerItemComment::FieldComment);
+    f.setValue(substring);
+    f.setMatchFlags(QOrganizerItemFilter::MatchContains);
+
+    return f;
+}
+
+/*!
    \variable QOrganizerItemComment::DefinitionName
    The constant string which identifies the definition of details which are comments.
  */
@@ -434,6 +482,20 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemComment::FieldComment, "Comment");
    \inmodule QtOrganizer
    \ingroup organizer-details
  */
+
+/*!
+    Returns a filter suitable for finding items of the specified \a priority.
+*/
+QOrganizerItemFilter QOrganizerItemPriority::match(QOrganizerItemPriority::Priority priority)
+{
+    QOrganizerItemDetailFilter f;
+    f.setDetailDefinitionName(QOrganizerItemPriority::DefinitionName,
+                              QOrganizerItemPriority::FieldPriority);
+    f.setValue(priority);
+    f.setMatchFlags(QOrganizerItemFilter::MatchExactly);
+
+    return f;
+}
 
 /*!
    \enum QOrganizerItemPriority::Priority

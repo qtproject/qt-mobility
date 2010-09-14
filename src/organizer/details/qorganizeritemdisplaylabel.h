@@ -47,6 +47,7 @@
 
 #include "qtorganizerglobal.h"
 #include "qorganizeritemdetail.h"
+#include "qorganizeritemfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -64,6 +65,9 @@ public:
 
     void setLabel(const QString& label) {setValue(FieldLabel, label);}
     QString label() const {return value(FieldLabel);}
+
+    // Convenience filter
+    static QOrganizerItemFilter match(const QString& substring);
 };
 
 QTM_END_NAMESPACE

@@ -241,13 +241,7 @@ QByteArray QSensor::defaultSensorForType(const QByteArray &type)
     if (!d->backendsByType.contains(type))
         return QByteArray();
 
-    QSettings::Scope scope;
-#ifdef QTM_BUILD_UNITTESTS
-    // The unit test needs to modify Sensors.conf but it can't access the system directory
-    scope = QSettings::UserScope;
-#else
-    scope = QSettings::SystemScope;
-#endif
+    QSettings::Scope scope = QSettings::UserScope;
     QSettings settings(scope, QLatin1String("Nokia"), QLatin1String("Sensors"));
     QVariant value = settings.value(QString(QLatin1String("Default/%1")).arg(QString::fromLatin1(type)));
     if (!value.isNull()) {
