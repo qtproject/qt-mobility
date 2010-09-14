@@ -401,10 +401,6 @@
 #include <qsystemscreensaver.h>
 #include <qsystemstorageinfo.h>
 
-//QtTelephony
-#include <qtelephonycallinfo.h>
-#include <qtelephonycalllist.h>
-
 //QtVersit
 #include <qversitcontacthandler.h>
 #include <qversitproperty.h>
