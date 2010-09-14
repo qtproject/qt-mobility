@@ -529,6 +529,7 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
 {
     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+#ifdef Q_WS_X11
     XRRScreenConfiguration *sc;
     Rotation cur_rotation;
     sc = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), screen));
@@ -553,6 +554,7 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation
             break;
         };
     }
+#endif
     return orientation;
 }
 
