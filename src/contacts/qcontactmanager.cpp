@@ -490,6 +490,14 @@ QContact QContactManager::contact(const QContactLocalId& contactId, const QConta
 /*!
   Returns a list of contacts given a list of local ids (\a localIds).
 
+  Returns the list of contacts with the ids given by \a localIds.  There is a one-to-one
+  correspondence between the returned contacts and the supplied \a localIds.
+  
+  If there is an invalid id in \a localIds, then an empty QContact will take its place in the
+  returned list and an entry will be inserted into \a errorMap.
+
+  The overall operation error will be saved in \a error.
+
   The \a fetchHint parameter describes the optimization hints that a manager may take.
   If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
   in the matching contacts will be returned.  A client should not make changes to a contact which has
@@ -598,6 +606,10 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
 /*!
   Adds the list of contacts given by \a contacts list to the database.
   Returns true if the contacts were saved successfully, otherwise false.
+
+  This function accepts a \a definitionMask, which specifies which details of
+  the contacts should be updated.  Details with definition names not included in
+  the definitionMask will not be updated or added.
 
   The manager might populate \a errorMap (the map of indices of the \a contacts list to
   the error which occurred when saving the contact at that index) for

@@ -2668,7 +2668,8 @@ void QContactManagerEngine::updateRelationshipFetchRequest(QContactRelationshipF
   For each contact in \a contacts, either add it to the database or update an existing one.
 
   This function accepts a \a definitionMask, which specifies which details of the contacts should be
-  updated.  Details with definition names not included in the definitionMask will not be updated.
+  updated.  Details with definition names not included in the definitionMask will not be updated
+  or added.
 
   The manager should populate \a errorMap (the map of indices of the \a contacts list to the error
   which occurred when saving the contact at that index) for every index for which the contact could
