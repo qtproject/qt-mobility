@@ -124,6 +124,9 @@ private slots:  // Test cases
     void fetchItems_data(){ addManagers(); };
     void fetchItems();
 
+    void fetchItemInstance_data(){ addManagers(); };
+    void fetchItemInstance();
+
     // TODO: test all known properties
     //void collectionProperties_data();
     //void collectionProperties();
@@ -574,6 +577,9 @@ void tst_symbianomcollections::fetchItems()
         QVERIFY(m_om->saveItem(&item2, c.id().localId()));
     }
 
+    // Verify
+    QCOMPARE(m_om->itemIds().count(), itemCount * 2);
+    QCOMPARE(m_om->items().count(), itemCount * 2);
     // Verify there are no duplicates in the list
     bool noduplicates(true);
     foreach(QOrganizerItemLocalId localid, m_om->itemIds()) {
@@ -583,6 +589,34 @@ void tst_symbianomcollections::fetchItems()
         }
     }
     QVERIFY(noduplicates);
+}
+
+void tst_symbianomcollections::fetchItemInstance()
+{
+    // Save a collection
+    QOrganizerCollection c;
+    c.setMetaData("Name", "fetchItemInstance");
+    c.setMetaData("FileName", "c:fetchiteminstance");
+    QVERIFY(m_om->saveCollection(&c));
+
+    // Save a weekly recurring item
+    QOrganizerItem item = createItem(QOrganizerItemType::TypeEvent,
+                                      QString("fetchiteminstance"),
+                                      QDateTime::currentDateTime().addMSecs(3600));
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    rrule.setCount(5);
+    QList<QOrganizerItemRecurrenceRule> rrules;
+    rrules.append(rrule);
+    QOrganizerItemRecurrence recurrence;
+    recurrence.setRecurrenceRules(rrules);
+    QVERIFY(item.saveDetail(&recurrence));
+    QVERIFY(m_om->saveItem(&item, c.id().localId()));
+
+    // Verify
+    QCOMPARE(m_om->itemInstances().count(), 5);
+    QCOMPARE(m_om->items().count(), 1);
+    QCOMPARE(m_om->items().at(0).collectionId(), c.id());
 }
 
 /*!

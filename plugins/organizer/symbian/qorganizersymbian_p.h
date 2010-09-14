@@ -72,12 +72,14 @@
 #include "qorganizeritemchangeset.h"
 
 #include "organizeritemtransform.h"
+#include "organizersymbiancollection.h"
 
 #include <calprogresscallback.h> // MCalProgressCallBack
 #include <calchangecallback.h>
 #ifdef SYMBIAN_CALENDAR_V2
 #include <calfilechangenotification.h>
 #endif
+
 
 QTM_USE_NAMESPACE
 
@@ -118,8 +120,7 @@ class CCalCalendarInfo;
 #endif
 
 class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine, 
-                                    public MCalProgressCallBack,
-                                    public MCalChangeCallBack2
+                                    public MCalProgressCallBack
 #ifdef SYMBIAN_CALENDAR_V2
                                     ,public MCalFileChangeObserver
 #endif
@@ -182,9 +183,6 @@ public: // MCalProgressCallBack
     void Completed(TInt aError);
     TBool NotifyProgress();
 
-public: // MCalChangeCallBack2
-    void CalChangeNotification(RArray<TCalChangeEntry>& aChangeItems);
-
 #ifdef SYMBIAN_CALENDAR_V2
 public: // MCalFileChangeObserver
     void CalendarInfoChangeNotificationL(RPointerArray<CCalFileChangeInfo>& aCalendarInfoChangeEntries);
@@ -219,17 +217,12 @@ private:
 	
 private:
     QOrganizerItemSymbianEngineData *d;
-    CCalSession *m_defaultCalSession;
-#ifdef SYMBIAN_CALENDAR_V2    
-    RPointerArray<CCalSession> m_calSessions;
-#endif
-    QMap<QOrganizerCollectionLocalId, CCalEntryView *> m_entryViews;
+    
+    OrganizerSymbianCollection m_defaultCollection;
+    QMap<QOrganizerCollectionLocalId, OrganizerSymbianCollection> m_collections;
     CCalInstanceView *m_instanceView;
     CActiveSchedulerWait *m_activeSchedulerWait;
     QOrganizerItemRequestQueue* m_requestServiceProviderQueue;
-
-    // TODO: replace this with an algorithm that generates the calendar entry UID
-    int m_entrycount;
     OrganizerItemTransform m_itemTransform;
     mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definition;
 
