@@ -1024,40 +1024,6 @@ QStringList QLandmarkManager::categoryAttributeKeys() const
 }
 
 /*!
-    Returns whether extended attributes specific to this manager are enabled or not.
-    If extended attributes are enabled, retrieved landmarks will have
-    extra attribute keys accessible through the QLandmark::attribute() function.
-    Extended attributes must be enabled to save any landmarks which possess
-    extended attributes.  This same behaviour will also apply to categories
-    if extended category attributes are supported.
-*/
-bool QLandmarkManager::isExtendedAttributesEnabled() const
-{
-    Q_D(const QLandmarkManager);
-
-    if (!d->engine) {
-        d->errorCode = QLandmarkManager::InvalidManagerError;
-        d->errorString = QString("Invalid Manager");
-    }
-    return  d->engine->isExtendedAttributesEnabled(&(d->errorCode), &(d->errorString));
-}
-
-/*!
-    Sets whether extended attributes are \a enabled or not
-*/
-void QLandmarkManager::setExtendedAttributesEnabled(bool enabled)
-{
-    Q_D(QLandmarkManager);
-
-   if (!d->engine) {
-        d->errorCode = QLandmarkManager::InvalidManagerError;
-        d->errorString = QString("Invalid Manager");
-    }
-
-    d->engine->setExtendedAttributesEnabled(enabled, &(d->errorCode), &(d->errorString));
-}
-
-/*!
     Returns the manager name for this QLandmarkManager.
 
     The manager name usually takes the format of a reverse domain string.  An example

@@ -103,9 +103,8 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
         m_dbWatcher(NULL),
         m_latestLandmarkTimestamp(0),
         m_latestCategoryTimestamp(0),
-        m_isExtendedAttributesEnabled(false),
         m_isCustomAttributesEnabled(false),
-        m_databaseOperations(m_isExtendedAttributesEnabled)
+        m_databaseOperations()
 {
     qRegisterMetaType<ERROR_MAP >();
     qRegisterMetaType<QList<QLandmarkCategoryId> >();
@@ -404,8 +403,6 @@ bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::Landmark
         case (QLandmarkManager::NotificationsFeature):
         case (QLandmarkManager::ImportExportFeature):
             return true;
-        case (QLandmarkManager::ExtendedAttributesFeature):
-            return false;
         default:
             return false;
     }
@@ -466,25 +463,6 @@ bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkCategoryId &categor
     *errorString = "";
 
     return false;
-}
-
-bool QLandmarkManagerEngineSqlite::isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Extended attributes are not supported";
-
-    return m_isExtendedAttributesEnabled;
-}
-
-void QLandmarkManagerEngineSqlite::setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString)
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Extended attributes are not supported";
-    return;
 }
 
 /* Asynchronous Request Support */

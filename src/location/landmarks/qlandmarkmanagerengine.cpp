@@ -568,25 +568,6 @@ QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::TransferO
 */
 
 /*!
-    \fn bool QLandmarkManagerEngine::isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const
-
-    Returns whether extended attributes specific to this manager are enabled or not.
-    If extended attributes are enabled, retrieved landmarks will have
-    extra attribute keys accessible through the QLandmark::attribute() function.
-    Extended attributes must be enabled to save any landmarks which possess
-    extended attributes.  This same behaviour will also apply to categories
-    if extended category attributes are supported.
-    Errors are stored in \a error and \a errorString.
-*/
-
-/*!
-    \fn void QLandmarkManagerEngine::setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString)
-
-    Sets whether extended attributes are \a enabled or not.
-    Errors are stored in \a error and \a errorString.
-*/
-
-/*!
     Notifies the manager engine that the givan \a request has been destroyed.
 */
 void QLandmarkManagerEngine::requestDestroyed(QLandmarkAbstractRequest* request)

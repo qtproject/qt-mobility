@@ -144,9 +144,6 @@ public:
     virtual QStringList landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual QStringList categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const = 0;
 
-    virtual bool isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const = 0;
-    virtual void setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString) = 0;
-
     /* Asynchronous Request Support */
     virtual void requestDestroyed(QLandmarkAbstractRequest* request) = 0;
     virtual bool startRequest(QLandmarkAbstractRequest* request) = 0;

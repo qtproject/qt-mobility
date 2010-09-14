@@ -103,7 +103,6 @@ QLandmarkPrivate::QLandmarkPrivate(const QLandmarkPrivate &other)
         description(other.description),
         iconUrl(other.iconUrl),
         radius(other.radius),
-        managerAttributes(other.managerAttributes),
         customAttributes(other.customAttributes),
         phoneNumber(other.phoneNumber),
         url(other.url),
@@ -123,7 +122,6 @@ QLandmarkPrivate& QLandmarkPrivate::operator= (const QLandmarkPrivate & other)
     phoneNumber = other.phoneNumber;
     url = other.url;
     categoryIds = other.categoryIds;
-    managerAttributes = other.managerAttributes;
     customAttributes = other.customAttributes;
     id = other.id;
 
@@ -167,7 +165,6 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     qDebug() << "phoneNumber:" << (phoneNumber == other.phoneNumber);
     qDebug() << "url:" << (url == other.url);
     qDebug() << "categoryIds:" << (categoryIdsMatch);
-    qDebug() << "managerAttributes:" << (managerAttributes == other.managerAttributes);
     qDebug() << "customAttributes:" << (customAttributes == other.customAttributes);
     qDebug() << "id" << (id == other.id);
 #endif
@@ -180,7 +177,6 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
             && (phoneNumber == other.phoneNumber)
             && (url == other.url)
             && (categoryIdsMatch)
-            && (managerAttributes == other.managerAttributes)
             && (customAttributes == other.customAttributes)
            && (id == other.id));
 }
@@ -456,17 +452,17 @@ QVariant QLandmark::attribute(const QString &key) const
 {
     Q_D(const QLandmark);
 
-    if (key.compare("name",Qt::CaseInsensitive) == 0) {
+    if (key.compare("name",Qt::CaseSensitive) == 0) {
         return name();
-    } else if (key.compare("description", Qt::CaseInsensitive) == 0) {
+    } else if (key.compare("description", Qt::CaseSensitive) == 0) {
         return description();
-    } else if (key.compare("iconUrl",Qt::CaseInsensitive) ==0) {
+    } else if (key.compare("iconUrl",Qt::CaseSensitive) ==0) {
         return iconUrl();
-    } else if (key.compare("radius", Qt::CaseInsensitive) == 0) {
+    } else if (key.compare("radius", Qt::CaseSensitive) == 0) {
         return radius();
-    } else if (key.compare("phoneNumber", Qt::CaseInsensitive) == 0) {
+    } else if (key.compare("phoneNumber", Qt::CaseSensitive) == 0) {
         return phoneNumber();
-    } else if (key.compare("url", Qt::CaseInsensitive) ==0 ) {
+    } else if (key.compare("url", Qt::CaseSensitive) ==0 ) {
         return url();
     } else if (key.compare("latitude", Qt::CaseSensitive)== 0) {
         return d->coordinate.latitude();
@@ -492,7 +488,7 @@ QVariant QLandmark::attribute(const QString &key) const
         return d->address.postCode();
     }
 
-    return d->managerAttributes.value(key);
+    return QVariant();
 }
 
 /*!
@@ -555,8 +551,6 @@ void QLandmark::setAttribute(const QString &key, const QVariant &value)
         d->address.setPostCode(value.toString());
         return;
     }
-
-    d->managerAttributes.insert(key, value);
 }
 
 /*!
@@ -567,21 +561,7 @@ void QLandmark::setAttribute(const QString &key, const QVariant &value)
 QStringList QLandmark::attributeKeys() const
 {
     Q_D(const QLandmark);
-    return d->commonKeys + d->managerAttributes.keys();
-}
-
-/*!
-    Removes the attribute corresponding to \a key.
-    Common cross platform attributes cannot be removed,
-    only extended attributes may be removed using this function.
-*/
-void QLandmark::removeAttribute(const QString &key)
-{
-    Q_D(QLandmark);
-    if (d->commonKeys.contains(key))
-        return;
-     else
-        d->managerAttributes.remove(key);
+    return d->commonKeys;
 }
 
 /*!
@@ -654,7 +634,6 @@ void QLandmark::clear()
     d->description.clear();
     d->iconUrl.clear();
     d->radius = 0.0;
-    d->managerAttributes.clear();
     d->customAttributes.clear();
     d->phoneNumber.clear();
     d->url.clear();

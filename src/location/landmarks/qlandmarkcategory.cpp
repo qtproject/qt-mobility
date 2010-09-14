@@ -58,7 +58,6 @@ QLandmarkCategoryPrivate::QLandmarkCategoryPrivate()
       name(QString()),
       iconUrl(QUrl()),
       description(QString()),
-      managerAttributes(QHash<QString, QVariant>()),
       customAttributes(QHash<QString, QVariant>()),
       id(QLandmarkCategoryId())
 {
@@ -69,7 +68,6 @@ QLandmarkCategoryPrivate::QLandmarkCategoryPrivate(const QLandmarkCategoryPrivat
       name(other.name),
       iconUrl(other.iconUrl),
       description(other.description),
-      managerAttributes(other.managerAttributes),
       customAttributes(other.customAttributes),
       id(other.id)
 {
@@ -84,7 +82,6 @@ QLandmarkCategoryPrivate& QLandmarkCategoryPrivate::operator= (const QLandmarkCa
     name = other.name;
     iconUrl = other.iconUrl;
     description = other.description;
-    managerAttributes = other.managerAttributes;
     customAttributes = other.customAttributes;
     id = other.id;
 
@@ -96,7 +93,6 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
     return ((name == other.name)
             && (iconUrl == other.iconUrl)
             && (description == other.description)
-            && (managerAttributes == other.managerAttributes)
             && (customAttributes == other.customAttributes)
             && (id == other.id));
 }
@@ -256,8 +252,7 @@ QVariant QLandmarkCategory::attribute(const QString &key) const
     } else if (key.compare("iconUrl",Qt::CaseInsensitive) ==0) {
         return iconUrl();
     }
-
-    return d->managerAttributes.value(key);
+    return QVariant();
 }
 
 /*!
@@ -274,9 +269,6 @@ void QLandmarkCategory::setAttribute(const QString &key, const QVariant &value)
         setIconUrl(QUrl(value.toUrl()));
         return;
     }
-
-    if (d->managerAttributes.contains(key))
-        d->managerAttributes[key] = value;
 }
 
 /*!
@@ -286,20 +278,7 @@ void QLandmarkCategory::setAttribute(const QString &key, const QVariant &value)
 */
 QStringList QLandmarkCategory::attributeKeys() const
 {
-    return d->commonKeys + d->managerAttributes.keys();
-}
-
-/*!
-    Removes the attribute corresponding to \a key.
-    Common cross platform attributes cannot be removed,
-    only extended attributes may be removed using this function.
-*/
-void QLandmarkCategory::removeAttribute(const QString &key)
-{
-    if (d->commonKeys.contains(key))
-        return;
-    else
-        d->managerAttributes.remove(key);
+    return d->commonKeys;
 }
 
 /*!
@@ -351,7 +330,6 @@ void QLandmarkCategory::clear()
     d->name.clear();
     d->iconUrl.clear();
     d->description.clear();
-    d->managerAttributes.clear();
     d->customAttributes.clear();
     d->id = QLandmarkCategoryId();
 }

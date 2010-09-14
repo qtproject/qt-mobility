@@ -483,11 +483,10 @@ bool categoryNameCompare(const QLandmarkCategory &cat1, const QLandmarkCategory 
 
 using namespace DatabaseOperationsHelpers;
 
-DatabaseOperations::DatabaseOperations(const volatile bool &isExtendedAttribsEnabled)
+DatabaseOperations::DatabaseOperations()
     : connectionName(QString()),
     managerUri(QString()),
-    queryRun(0),
-    isExtendedAttributesEnabled(isExtendedAttribsEnabled)
+    queryRun(0)
 {
 }
 
@@ -634,8 +633,6 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
         while(query2.next()) {
             QString key = query2.value(0).toString();
             if (coreGenericAttributes.contains(key)) {
-                lm.setAttribute(key, query2.value(1));
-            } else if (extendedGenericAttributes.contains(key) && isExtendedAttributesEnabled) {
                 lm.setAttribute(key, query2.value(1));
             } else {
                 qWarning() << "Database is corrupt it contains an unrecognised generic key: " << key;
@@ -1433,11 +1430,9 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
     QStringList landmarkAttributes = landmark->attributeKeys();
     foreach (const QString &key, landmarkAttributes) {
         if (!coreAttributes.contains(key) && !coreGenericAttributes.contains(key)) {
-            if (isExtendedAttributesEnabled && !extendedGenericAttributes.contains(key)) {
-                *error = QLandmarkManager::NotSupportedError;
-                *errorString = QString("The manager does not recognise the following key:") + key;
-                return false;
-            }
+            *error = QLandmarkManager::NotSupportedError;
+            *errorString = QString("The manager does not recognise the following key:") + key;
+            return false;
         }
     }
 
@@ -1558,9 +1553,6 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
     }
 
     QStringList attributeKeys = coreGenericAttributes;
-    if (this->isExtendedAttributesEnabled)
-        attributeKeys << extendedGenericAttributes;
-
     QSqlQuery query(db);
 
     foreach(const QString &key, attributeKeys) {
@@ -1908,8 +1900,6 @@ QLandmarkCategory DatabaseOperations::category(const QLandmarkCategoryId &landma
             QString key = query.value(0).toString();
             if (coreGenericCategoryAttributes.contains(key)) {
                 cat.setAttribute(key, query.value(1));
-            } else if (extendedGenericCategoryAttributes.contains(key) && isExtendedAttributesEnabled) {
-                cat.setAttribute(key, query.value(1));
             } else {
                 qWarning() << "Database is corrupt it contains an unrecognised generic key: " << key;
             }
@@ -2107,8 +2097,6 @@ bool DatabaseOperations::saveCategoryHelper(QLandmarkCategory *category,
     bindValues.clear();
     bindValues.insert("catId",category->categoryId().localId());
     QStringList attributeKeys = coreGenericCategoryAttributes;
-    if (this->isExtendedAttributesEnabled)
-        attributeKeys << extendedGenericCategoryAttributes;
 
     foreach(const QString &key, attributeKeys) {
         if (!category->attributeKeys().contains(key))
@@ -2850,7 +2838,7 @@ void QueryRun::run()
         connectionName = QUuid::createUuid().toString();//each connection needs a unique name
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
         db.setDatabaseName(engine->m_dbFilename);
-        DatabaseOperations databaseOperations(engine->m_isExtendedAttributesEnabled);
+        DatabaseOperations databaseOperations;
         databaseOperations.connectionName = connectionName;
         databaseOperations.managerUri = managerUri;
         databaseOperations.queryRun = this;
@@ -3341,7 +3329,6 @@ const QStringList DatabaseOperations::coreGenericAttributes = QStringList()
                                                               << "postCode"
                                                               << "phoneNumber"
                                                               << "url";
-const QStringList DatabaseOperations::extendedGenericAttributes = QStringList();
 
 const QStringList DatabaseOperations::supportedSearchableAttributes = QStringList() << "name"
                                                          << "description"
@@ -3360,5 +3347,3 @@ const QStringList DatabaseOperations::coreCategoryAttributes = QStringList()
 
 const QStringList DatabaseOperations::coreGenericCategoryAttributes = QStringList()
                                                                << "iconUrl";
-
-const QStringList DatabaseOperations::extendedGenericCategoryAttributes = QStringList();

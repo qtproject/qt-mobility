@@ -611,7 +611,6 @@ private slots:
     void sortOrderSupportLevel();
 
     void isFeatureSupported();
-    void extendedAttributes();
 
     /*void customAttributes();
     void customAttributes_data();*/
@@ -1697,8 +1696,8 @@ void tst_QLandmarkManagerEngineSqlite::updateLandmark() {
 
     lm1.removeCategoryId(cat1.categoryId());
     QVERIFY(m_manager->saveLandmark(&lm1));
-    QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
+    QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
     QTest::qWait(10);
     QCOMPARE(spyAdd.count(), 0);
     QCOMPARE(spyChange.count(), 1);
@@ -7350,15 +7349,6 @@ void tst_QLandmarkManagerEngineSqlite::isFeatureSupported()
     QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::NotificationsFeature));
     QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::ImportExportFeature));
     //TODO: remove custom attributes, QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::CustomAttributesFeature));
-    QVERIFY(!m_manager->isFeatureSupported(QLandmarkManager::ExtendedAttributesFeature));
-}
-
-void tst_QLandmarkManagerEngineSqlite::extendedAttributes()
-{
-    m_manager->setExtendedAttributesEnabled(true);
-    QCOMPARE(m_manager->error(), QLandmarkManager::NotSupportedError);
-    QVERIFY(!m_manager->isExtendedAttributesEnabled());
-    QCOMPARE(m_manager->error(), QLandmarkManager::NotSupportedError);
 }
 
 /*
