@@ -199,8 +199,6 @@ private:
     QMessage CreateQMessage(NmApiMessage *aMessage) const; 
 
     void addAttachmentToMessage(QMessage &message, QMessageContentContainer &attachment) const;
-    QDateTime symbianTTimetoQDateTime(const TTime &time) const;
-    TTime qDateTimeToSymbianTTime(const QDateTime &date) const;
 
     static bool accountLessThan(const QMessageAccountId accountId1, const QMessageAccountId accountId2);
     void orderAccounts(QMessageAccountIdList &accountIds,  const QMessageAccountSortOrder &sortOrder) const;

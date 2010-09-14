@@ -332,8 +332,6 @@ void CFSEngine::notification(quint64 mailboxId, quint64 envelopeId, quint64 fold
             if (m_emailServiceInitialized)
                 m_emailService->getMessage(mailboxId, folderId, envelopeId, fsMessage);
                
-            
-
             message = CreateQMessage(&fsMessage);
             messageRetrieved = true;
         }
@@ -728,7 +726,6 @@ NmApiMessage CFSEngine::updateFsMessage(QMessage *message)
             QMessageContentContainerIdList contentIds = message->contentIds();
             foreach (QMessageContentContainerId id, contentIds){
                 QMessageContentContainer container = message->find(id);
-               // MEmailMessageContent* content = fsMessage->ContentL(); 
                 QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
                 if (pPrivateContainer->_id == message->bodyId()) {
                     // ContentContainer is body
@@ -798,7 +795,7 @@ bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOpti
 
     QMessage qmessage = message(id);
     quint64 mailboxId = stripIdPrefix(qmessage.parentAccountId().toString()).toULongLong();
-    NmApiMessageManager* manager = new NmApiMessageManager(0, mailboxId);
+    NmApiMessageManager* manager = new NmApiMessageManager(this, mailboxId);
     QPointer<NmApiOperation> deleteOperation = manager->deleteMessages(messageIds);
     QEventLoop* eventloop = new QEventLoop();
 
@@ -873,6 +870,7 @@ bool CFSEngine::composeMessage(const QMessage &message)
     map.insert(emailSendBccKey, bccRecipients);
     map.insert(emailSendSubjectKey, message.subject());
     
+    // body and attachments not yet supported
     map.insert(emailSendBodyTextKey, message.textContent());
     
     QList<QVariant> data;
@@ -908,7 +906,13 @@ bool CFSEngine::retrieveHeader(QMessageServicePrivate &privateService, const QMe
 
 bool CFSEngine::exportUpdates(const QMessageAccountId &id)
 {
-    return false;
+ /* TODO: ?  
+    quint64 mailboxId = stripIdPrefix(id.toString()).toULongLong();
+    if (m_emailServiceInitialized){
+        m_emailService->synchroniseMailbox(mailboxId);
+        return true;
+    } else
+        return false;*/
 }
 
 bool CFSEngine::removeMessages(const QMessageFilter& /*filter*/, QMessageManager::RemovalOption /*option*/)
@@ -1853,18 +1857,15 @@ QMessage CFSEngine::CreateQMessage(NmApiMessage* aMessage) const
     message.setDate(envelope.sentTime());
     message.setReceivedDate(envelope.sentTime());
     
+    quint64 mailboxId = envelope.mailboxId();
+    const QMessageAccountId accountId = QMessageAccountId(QString::number(mailboxId));
+    message.setParentAccountId(accountId);
     
     quint64 parentFolderId = envelope.parentFolder();
-    
-   /* quint64 mailboxId = parentFolderId.mailboxId;
-    const QMessageAccountId accountId = QMessageAccountId(QString::number(mailboxId.iId));
-    message.setParentAccountId(accountId);*/
-    
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
     privateMessage->_parentFolderId = QMessageFolderId(QString::number(parentFolderId));
     
-  /*  MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
-    MEmailFolder* folder = mailbox->FolderL(folderId);
+  /*  use emailservice getFolder
     QMessagePrivate::setStandardFolder(message, QMessage::InboxFolder);
     if (folder->FolderType() == EDrafts) {
         QMessagePrivate::setStandardFolder(message, QMessage::DraftsFolder);
@@ -1873,23 +1874,22 @@ QMessage CFSEngine::CreateQMessage(NmApiMessage* aMessage) const
     } else if (folder->FolderType() == ESent) {
         QMessagePrivate::setStandardFolder(message, QMessage::SentFolder);
     }
-    folder->Release();
-    mailbox->Release();
 */
     if (envelope.isRead()) {
         privateMessage->_status = privateMessage->_status | QMessage::Read; 
     }
 
-    // bodytext and attachment(s)
-    QString contentType = envelope.contentType();
-    if (contentType == "text/html")
-        message.setBody(aMessage->htmlContent().content(), "text/html");
-    else 
-        message.setBody(aMessage->plainTextContent().content(), "text/plain");
+    QString htmlContent = aMessage->htmlContent().content();
+    if (!htmlContent.isEmpty())
+        message.setBody(htmlContent, "text/html");
+    QString plainContent = aMessage->plainTextContent().content();
+    if (!plainContent.isEmpty())
+        message.setBody(plainContent, "text/plain");
   
     if (envelope.hasAttachments())
         privateMessage->_status = privateMessage->_status | QMessage::HasAttachments;
     
+    // attachment implementation changes.. use messagemanager or what ??
     QList<NmApiAttachment> attachments = aMessage->attachments();
     foreach (NmApiAttachment attachment, attachments) {
         QByteArray name = attachment.fileName().toUtf8();
@@ -1950,9 +1950,8 @@ QMessage CFSEngine::CreateQMessage(NmApiMessage* aMessage) const
     if (!subject.isEmpty()) {
         message.setSubject(subject);
     }
-    
-    // TODO: size
-    privateMessage->_size = size;
+
+    privateMessage->_size = envelope.totalSize();
 
     return message;    
 }
@@ -1985,27 +1984,6 @@ void CFSEngine::addAttachmentToMessage(QMessage& message, QMessageContentContain
     message.setStatus(QMessage::HasAttachments,haveAttachments);
     
     privateMessage->_modified = true;
-}
-
-QDateTime CFSEngine::symbianTTimetoQDateTime(const TTime& time) const
-{
-    TDateTime dateTime = time.DateTime();
-    QDate qdate = QDate(dateTime.Year(), static_cast<int>(dateTime.Month())+1, dateTime.Day()+1);
-    QTime qtime = QTime(dateTime.Hour(), dateTime.Minute(), dateTime.Second(), dateTime.MicroSecond()/1000 );
-    return QDateTime(qdate, qtime, Qt::UTC);
-}
-
-TTime CFSEngine::qDateTimeToSymbianTTime(const QDateTime& date) const
-{
-    TDateTime dateTime;
-    dateTime.SetYear(date.date().year());
-    dateTime.SetMonth(static_cast<TMonth>(date.date().month()-1));
-    dateTime.SetDay(date.date().day()-1);
-    dateTime.SetHour(date.time().hour());
-    dateTime.SetMinute(date.time().minute());
-    dateTime.SetSecond(date.time().second());
-    dateTime.SetMicroSecond(date.time().msec()*1000);
-    return TTime(dateTime);
 }
 
 NmApiEmailFolderType CFSEngine::standardFolderId(QMessage::StandardFolder standardFolder)
