@@ -81,11 +81,15 @@ isEmpty(QT_LIBINFIX):symbian {
         contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_systeminfo.dll
-            pluginstubs += \
-            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\systeminfo\\qmakepluginstubs\\declarative_systeminfo.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\systeminfo\\declarative_systeminfo.qtplugin\""
-            qmldirs += \
-            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\systeminfo\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\systeminfo\\qmldir\""
-        }
+
+        sysinfo = \
+            "IF package(0x102032BE)" \
+            "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtsysteminfo_symbian.dll\" - \"!:\\sys\\bin\\qtsysteminfo_symbian.dll\"" \
+            "ELSE" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtsysteminfo_symbian.dll\" - \"!:\\sys\\bin\\qtsysteminfo_symbian.dll\"" \
+            "ENDIF"
+
+        qtmobilitydeployment.pkg_postrules += sysinfo
     }
 
     contains(mobility_modules, publishsubscribe) {
