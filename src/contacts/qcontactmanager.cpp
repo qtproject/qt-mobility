@@ -316,7 +316,7 @@ QContactManager::~QContactManager()
 
 
 /*!
-   \variable QContactManager::ParameterKeySignalSources
+   \variable QContactManager::ParameterSignalSources
    The string constant for the parameter key which holds the value for signal sources.
    If a manager supports suppressing change signals depending on the value given for
    this construction parameter, clients can request that signals be suppressed if the
@@ -333,7 +333,7 @@ QContactManager::~QContactManager()
 Q_DEFINE_LATIN1_CONSTANT(QContactManager::ParameterSignalSources, "SignalSources");
 
 /*!
-   \variable QContactManager::ParameterKeySignalDefinitions
+   \variable QContactManager::ParameterSignalDefinitions
    The string constant for the parameter key which holds the names of detail definitions.
    If a manager supports suppressing change signals depending on the value given for
    this construction parameter, clients can request that signals be suppressed if the
@@ -495,8 +495,6 @@ QContact QContactManager::contact(const QContactLocalId& contactId, const QConta
   
   If there is an invalid id in \a localIds, then an empty QContact will take its place in the
   returned list and an entry will be inserted into \a errorMap.
-
-  The overall operation error will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
   If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
@@ -913,7 +911,6 @@ bool QContactManager::removeDetailDefinition(const QString& definitionName, cons
   \value SelfContact The manager supports the concept of saving a contact which represents the current user
   \value ChangeLogs The manager supports reporting of timestamps of changes, and filtering and sorting by those timestamps
   \value Anonymous The manager is isolated from other managers
-  \value PartialSaves The manager supports partial saves natively.  If not present, this functionality is emulated.
  */
 
 /*!

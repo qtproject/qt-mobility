@@ -195,13 +195,11 @@ public:
     QContactManagerEngineV2() : QContactManagerEngine() {}
 
     // This is the V1 function - c++ overloading rules require this here, or to use "using"
-    /*! \reimp */
-    bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error) {return QContactManagerEngine::saveContacts(contacts, errorMap, error);}
+    bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
     virtual bool saveContacts(QList<QContact>* contacts,  const QStringList& definitionMask, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
 
     // Again, this is the v1 function
-    /*! \reimp */
-    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error) const {return QContactManagerEngine::contacts(filter, sortOrders, fetchHint, error);}
+    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
     virtual QList<QContact> contacts(const QList<QContactLocalId>& localIds, QMap<int, QContactManager::Error>* errorMap, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
 
     static void updateContactFetchByIdRequest(QContactFetchByIdRequest* req, const QList<QContact>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State);

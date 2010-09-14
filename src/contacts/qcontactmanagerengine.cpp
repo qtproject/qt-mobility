@@ -2663,8 +2663,19 @@ void QContactManagerEngine::updateRelationshipFetchRequest(QContactRelationshipF
   Constructs an empty QContactManagerEngineV2.
  */
 
+/*! \reimp */
+bool QContactManagerEngineV2::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
+{
+    return QContactManagerEngine::saveContacts(contacts, errorMap, error);
+}
+
+/*! \reimp */
+QList<QContact> QContactManagerEngineV2::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error) const
+{
+    return QContactManagerEngine::contacts(filter, sortOrders, fetchHint, error);
+}
+
 /*!
-  \fn bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStringList &definitionMask, QMap<int, QContactManager::Error> *errorMap, QContactManager::Error *error)
   For each contact in \a contacts, either add it to the database or update an existing one.
 
   This function accepts a \a definitionMask, which specifies which details of the contacts should be
@@ -2818,10 +2829,9 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
   action preferences in the matching contacts will be returned.
 
   If a non-default fetch hint is supplied, and the client wishes to make changes to the contacts,
-  they should ensure that only a detail definition hint is supplied (see \l
-  QContactFetchHint::detailDefinitionHint()) and that when saving it back, a definition mask should
-  be used which corresponds to the detail definition hint.  This is to ensure that no data is lost
-  by overwriting an existing contact with a restricted version of it.
+  they should ensure that only a detail definition hint is supplied and that when saving it back, a
+  definition mask should be used which corresponds to the detail definition hint.  This is to ensure
+  that no data is lost by overwriting an existing contact with a restricted version of it.
 
   \sa QContactFetchHint
  */
