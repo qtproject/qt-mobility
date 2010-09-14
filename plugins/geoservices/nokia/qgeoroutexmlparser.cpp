@@ -91,9 +91,13 @@ bool QGeoRouteXmlParser::parseRootElement()
         return false;
     }
 
+    bool updateroute=false;
     if (m_reader->name() != "CalculateRoute" && m_reader->name() != "GetRoute")  {
         m_reader->raiseError(QString("The root element is expected to have the name \"CalculateRoute\" or \"GetRoute\" (root element was named \"%1\").").arg(m_reader->name().toString()));
         return false;
+    }
+    else if (m_reader->name() == "GetRoute") {
+        updateroute = true;
     }
 
     if (m_reader->readNextStartElement()) {
@@ -109,10 +113,10 @@ bool QGeoRouteXmlParser::parseRootElement()
         } else if (m_reader->name() == "Route") {
             QGeoRoute route;
             route.setRequest(m_request);
-
+            if(updateroute)
+                route.setTravelMode(QGeoRouteRequest::TravelMode(int(m_request.travelModes())));
             if (!parseRoute(&route))
                 continue; //route parsing failed move on to the next
-
             m_results.append(route);
         } else if (m_reader->name() == "Progress") {
             //TODO: updated route progress
