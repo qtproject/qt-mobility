@@ -87,4 +87,5 @@ EXPORTS
 	_ZTVN10QtMobility15QFeedbackEffectE @ 86 NONAME
 	_ZTVN10QtMobility19QFeedbackFileEffectE @ 87 NONAME
 	_ZTVN10QtMobility22QFeedbackHapticsEffectE @ 88 NONAME
+	_ZNK10QtMobility17QFeedbackActuatoreqERKS0_ @ 89 NONAME
 
