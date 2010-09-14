@@ -110,7 +110,7 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfo::getOrientation(int sc
 
 
 /*!
-    Returns the current contrast of the screen \a screen.
+    Returns the current contrast of the screen \a screen, from 0 to 1.
 
     \sa QDesktopWidget::screenCount()
 */
