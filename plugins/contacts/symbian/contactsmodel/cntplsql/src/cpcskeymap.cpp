@@ -22,17 +22,13 @@
 #include <hbinputkeymapfactory.h>
 
 // This macro suppresses log writes
-//#define NO_PRED_SEARCH_LOGS
+// #define NO_PRED_SEARCH_LOGS
 #include "predictivesearchlog.h"
 
 const QChar KSpaceChar = ' ';
 
 // Separator character stored in predictive search table columns
 const QChar KSeparatorChar = ' ';
-
-// Code using the new API (wk32 onwards) is put here. Remove old API code
-// when wk30 is no longer used.
-// #define NEW_KEYMAP_FACTORY_API
 
 
 // ============================== MEMBER FUNCTIONS ============================
@@ -178,6 +174,15 @@ TBool CPcsKeyMap::ShouldSkipChar(QChar /*aChar*/, TBool /*aSkipHashStar*/) const
 	}
 
 // ----------------------------------------------------------------------------
+// CPcsKeyMap::ReadExtraCharacters
+// Default implementation does nothing
+// ----------------------------------------------------------------------------
+TInt CPcsKeyMap::ReadExtraCharacters(const HbInputLanguage& /*aLanguage*/)
+	{
+	return 0;
+	}
+
+// ----------------------------------------------------------------------------
 // CPcsKeyMap::ConstructL
 // ----------------------------------------------------------------------------
 void CPcsKeyMap::ConstructL(HbKeyboardType aKeyboardType)
@@ -214,6 +219,61 @@ CPcsKeyMap::CPcsKeyMap(TInt aAmountOfKeys,
 	}
 
 // ----------------------------------------------------------------------------
+// CPcsKeyMap::AddNewKeyToMap
+// Filter out duplicate characters, so that a character is only mapped to one
+// key.
+// ----------------------------------------------------------------------------
+TBool
+CPcsKeyMap::AddNewKeyToMap(TInt aKey, const QString aCharsForKey, TInt& aCount)
+	{
+	TBool added(EFalse);
+    for (TInt i = aCharsForKey.length() - 1; i >= 0 ; --i) 
+        {
+        QChar ch = aCharsForKey[i];
+		if (!IsCharAlreadyMapped(ch) && !iHardcodedChars.contains(ch))
+            {
+#if defined(WRITE_PRED_SEARCH_LOGS)
+            char ascChar = ch.toAscii();
+            TChar logChar(ArrayIndexToMappedChar(aKey).unicode());
+
+            if (ascChar == 0) // ch can't be represented in ASCII
+                {
+                PRINT2(_L("CPcsKeyMap: map key(%c) <-> char=0x%x"),
+                       logChar, ch);
+                }
+            else
+                {
+                PRINT3(_L("CPcsKeyMap: map key(%c) <-> char='%c'(0x%x)"),
+                       logChar,
+                       ascChar,
+                       ascChar);
+                }
+            ++aCount;
+#endif // #if defined(WRITE_PRED_SEARCH_LOGS)
+            iKeyMapping[aKey] += ch;
+			added = ETrue;
+            }
+        }
+	return added;
+	}
+
+// ----------------------------------------------------------------------------
+// CPcsKeyMap::IsCharAlreadyMapped
+// ----------------------------------------------------------------------------
+TBool CPcsKeyMap::IsCharAlreadyMapped(QChar aChar) const
+	{
+	int count = iKeyMapping.count();
+	for (int i = 0; i < count; ++i)
+		{
+		if (iKeyMapping[i].contains(aChar))
+			{
+			return ETrue;
+			}
+		}
+	return EFalse;
+	}
+
+// ----------------------------------------------------------------------------
 // CPcsKeyMap::InitKeyMappings
 // Put string for each key into iKeyMapping.
 // ----------------------------------------------------------------------------
@@ -229,9 +289,7 @@ void CPcsKeyMap::InitKeyMappings()
 
 // ----------------------------------------------------------------------------
 // CPcsKeyMap::ConstructLanguageMappings
-// Fetch keymap for selected languages.
-// Currently QWERTY keymaps do not map digits ('0'..'9') to any key, even with
-// HbModifierChrPressed and HbModifierFnPressed modifiers.
+// Read keymapping information for the selected languages.
 // ----------------------------------------------------------------------------
 void CPcsKeyMap::ConstructLanguageMappings(HbKeyboardType aKeyboardType)
 	{
@@ -257,10 +315,10 @@ void CPcsKeyMap::ConstructLanguageMappings(HbKeyboardType aKeyboardType)
 
 	for (TInt lang = 0; lang < languageCount; ++lang)
 		{
-        PRINT2(_L("(%d) handle language %d"), lang, languages[lang].language());
+        // PRINT2(_L("(%d) handle language %d"), lang, languages[lang].language());
 		if (IsLanguageSupported(languages[lang].language()))
 			{
-			PRINT2(_L("Constructing keymap for lang=%d,var=%d"),
+			PRINT2(_L("Construct keymap for lang=%d,var=%d"),
 				   languages[lang].language(),
 				   languages[lang].variant());
 #if defined(NEW_KEYMAP_FACTORY_API)
@@ -284,6 +342,10 @@ void CPcsKeyMap::ConstructLanguageMappings(HbKeyboardType aKeyboardType)
 #if defined(NEW_KEYMAP_FACTORY_API)
                 delete keymap;
 #endif
+#if defined(WRITE_PRED_SEARCH_LOGS)
+                count +=
+#endif
+				ReadExtraCharacters(languages[lang]);
 			    }
 			else
                 {
@@ -337,48 +399,18 @@ TInt CPcsKeyMap::ReadKeymapCharacters(HbKeyboardType aKeyboardType,
     PRINT(_L("Enter CPcsKeyMap::ReadKeymapCharacters"));
 
     TInt count(0);
-
     for (TInt key = 0; key < iAmountOfKeys; ++key)
         {
-        PRINT1(_L("handle key(enum value %d)"), key); // test
+        PRINT1(_L("handle key(enum value %d)"), key);
         const HbMappedKey* mappedKey = aKeymap.keyForIndex(aKeyboardType, key);
         // 12-key: Most languages don't have mapping for EKeyStar, EKeyHash.
-        // QWERTY: Different languages have different amount of keys,
-        // so mappedKey can be NULL.
+        // QWERTY: Languages have variable amount of keys, so mappedKey can be NULL.
         if (mappedKey)
             {
             const QString lowerCase = mappedKey->characters(HbModifierNone); // "abc2.."
             const QString upperCase = mappedKey->characters(HbModifierShiftPressed); // "ABC2.."                        
             const QString charsForKey = lowerCase + upperCase; 
-
-            // Filter out duplicate characters
-            for (TInt i = charsForKey.length() - 1; i >= 0 ; --i) 
-                {
-                QChar ch = charsForKey[i];
-                if (!iKeyMapping[key].contains(ch) &&
-                    !iHardcodedChars.contains(ch))
-                    {
-#if defined(WRITE_PRED_SEARCH_LOGS)
-                    char ascChar = ch.toAscii();
-                    TChar logChar(ArrayIndexToMappedChar(key).unicode());
-
-                    if (ascChar == 0) // ch can't be represented in ASCII
-                        {
-                        PRINT2(_L("CPcsKeyMap: map key(%c) <-> char=0x%x"),
-                               logChar, ch);
-                        }
-                    else
-                        {
-                        PRINT3(_L("CPcsKeyMap: map key(%c) <-> char='%c'(0x%x)"),
-                               logChar,
-                               ascChar,
-                               ascChar);
-                        }
-                    ++count;
-#endif // #if defined(WRITE_PRED_SEARCH_LOGS)
-                    iKeyMapping[key] += ch;
-                    }
-                }
+			AddNewKeyToMap(key, charsForKey, count);
             }
         }
     
