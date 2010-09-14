@@ -307,12 +307,12 @@ void QGalleryTrackerResultSetPrivate::synchronize()
         const_row_iterator rOuterEnd = rBegin + ((((rEnd - rBegin) + iStep - 1) / rStep) * rStep);
         const_row_iterator iOuterEnd = iBegin + ((((iEnd - iBegin) + iStep - 1) / iStep) * iStep);
 
-        const_row_iterator rInnerEnd = qMin(rBegin + rStep, rEnd);
-        const_row_iterator iInnerEnd = qMin(iBegin + iStep, iEnd);
+        const_row_iterator rInnerEnd = qMin(rBegin + rStep * 2, rEnd);
+        const_row_iterator iInnerEnd = qMin(iBegin + iStep * 2, iEnd);
 
         for (const_row_iterator rOuter = rBegin, iOuter = iBegin;
                 !equal && rOuter != rOuterEnd && iOuter != iOuterEnd;
-                rOuter += rStep / 2, iOuter += iStep / 2) {
+                rOuter += rStep, iOuter += iStep) {
             for (const_row_iterator rInner = rBegin, iInner = iBegin;
                     rInner != rInnerEnd && iInner != iInnerEnd;
                     ++rInner, ++iInner) {
