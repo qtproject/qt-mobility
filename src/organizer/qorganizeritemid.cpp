@@ -111,8 +111,10 @@ QOrganizerItemLocalId::QOrganizerItemLocalId(QOrganizerItemEngineLocalId* engine
   Constructs a new copy of the \a other id.
  */
 QOrganizerItemLocalId::QOrganizerItemLocalId(const QOrganizerItemLocalId& other)
-    : d(other.d->clone())
 {
+    d = 0;
+    if (other.d)
+        d = other.d->clone();
 }
 
 /*!
@@ -313,7 +315,9 @@ bool QOrganizerItemId::operator<(const QOrganizerItemId& other) const
  */
 uint qHash(const QOrganizerItemLocalId &key)
 {
-    return QT_PREPEND_NAMESPACE(qHash)(key.d->hash());
+    if (key.d)
+        return QT_PREPEND_NAMESPACE(qHash)(key.d->hash());
+    return 0;
 }
 
 /*!

@@ -76,10 +76,11 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemMemoryEngineLocalId : QOrganizerItemEngineLocalId
+class QOrganizerItemMemoryEngineLocalId : public QOrganizerItemEngineLocalId
 {
 public:
     QOrganizerItemMemoryEngineLocalId();
+    QOrganizerItemMemoryEngineLocalId(quint32 collectionId, quint32 itemId);
     ~QOrganizerItemMemoryEngineLocalId();
     QOrganizerItemMemoryEngineLocalId(const QOrganizerItemMemoryEngineLocalId& other);
 

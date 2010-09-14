@@ -50,6 +50,9 @@
 #include "qorganizernote.h"
 #include "qorganizerevent.h"
 
+#include "qorganizeritemmemorybackend_p.h"
+#include "qorganizeritemenginelocalid.h"
+
 QTM_USE_NAMESPACE
 // Eventually these will make it into qtestcase.h
 // but we might need to tweak the timeout values here.
@@ -686,7 +689,7 @@ void tst_QOrganizerItemManager::add()
     QVERIFY(cm->error() == QOrganizerItemManager::NoError);
 
     QVERIFY(!item.id().managerUri().isEmpty());
-    QVERIFY(item.id().localId() != 0);
+    QVERIFY(!item.id().localId().isNull());
     QCOMPARE(cm->itemIds().count(), currCount+1);
 
     QOrganizerItem added = cm->item(item.id().localId());
@@ -814,7 +817,7 @@ void tst_QOrganizerItemManager::addExceptions()
     rrule.setCount(3);
     event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
     QVERIFY(cm->saveItem(&event));
-    QVERIFY(event.localId() != 0);
+    QVERIFY(!event.localId().isNull());
     event = cm->item(event.localId());
     // the guid must be set so when it is exported to iCalendar, the relationship can be represented
     QVERIFY(!event.guid().isEmpty());
@@ -827,7 +830,7 @@ void tst_QOrganizerItemManager::addExceptions()
     QCOMPARE(secondItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
     QOrganizerEventOccurrence secondEvent = static_cast<QOrganizerEventOccurrence>(secondItem); // not sure this is the best way...
     QCOMPARE(secondEvent.startDateTime(), QDateTime(QDate(2010, 1, 8), QTime(11, 0, 0)));
-    QCOMPARE(secondEvent.localId(), (unsigned int)0);
+    QCOMPARE(secondEvent.localId(), QOrganizerItemLocalId());
     QCOMPARE(secondEvent.parentLocalId(), event.localId());
 
     // save a change to an occurrence's detail (ie. create an exception)
@@ -840,7 +843,7 @@ void tst_QOrganizerItemManager::addExceptions()
 
     // save a change to an occurrence's time
     QOrganizerEventOccurrence thirdEvent = static_cast<QOrganizerEventOccurrence>(items.at(2));
-    QCOMPARE(thirdEvent.localId(), (unsigned int)0);
+    QCOMPARE(thirdEvent.localId(), QOrganizerItemLocalId());
     QCOMPARE(thirdEvent.parentLocalId(), event.localId());
     thirdEvent.setStartDateTime(QDateTime(QDate(2010, 1, 15), QTime(13, 0, 0)));
     thirdEvent.setEndDateTime(QDateTime(QDate(2010, 1, 15), QTime(14, 0, 0)));
@@ -855,7 +858,7 @@ void tst_QOrganizerItemManager::addExceptions()
     bool foundSecond = false;
     bool foundThird = false;
     foreach (const QOrganizerItem& item, items) {
-        if (item.localId() == 0) {
+        if (item.localId().isNull()) {
             foundFirst = true;
             firstItem = item;
         }
@@ -875,18 +878,18 @@ void tst_QOrganizerItemManager::addExceptions()
     QVERIFY(foundFirst); // there should still be one "generated" occurrence
     QCOMPARE(firstItem.displayLabel(), QLatin1String("meeting")); // and it should have the original label.
     // item occurrences which are not exceptions should have zero localId
-    QVERIFY(firstItem.localId() == 0);
+    QVERIFY(firstItem.localId().isNull());
 
     // the exception's changes have been persisted
     QVERIFY(foundSecond);
     QCOMPARE(secondEvent.displayLabel(), QLatin1String("seminar"));
     // item occurrences which are persisted exceptions should have non-zero localId
-    QVERIFY(secondEvent.localId() != 0);
+    QVERIFY(!secondEvent.localId().isNull());
 
     QVERIFY(foundThird);
     QCOMPARE(thirdEvent.startDateTime(), QDateTime(QDate(2010, 1, 15), QTime(13, 0, 0)));
     QCOMPARE(thirdEvent.endDateTime(), QDateTime(QDate(2010, 1, 15), QTime(14, 0, 0)));
-    QVERIFY(thirdEvent.localId() != 0);
+    QVERIFY(!thirdEvent.localId().isNull());
 }
 
 void tst_QOrganizerItemManager::addExceptionsWithGuid()
@@ -910,7 +913,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     christmas.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
     QVERIFY(cm->saveItem(&christmas));
     QVERIFY(!christmas.id().managerUri().isEmpty());
-    QVERIFY(christmas.id().localId() != 0);
+    QVERIFY(!christmas.id().localId().isNull());
 
     QOrganizerEvent newYearsDay;
     newYearsDay.setGuid("newyear");
@@ -948,7 +951,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     exception.setId(QOrganizerItemId());
     exception.setGuid(QLatin1String("christmas"));
     QVERIFY(cm->saveItem(&exception));
-    QVERIFY(exception.localId() != 0);
+    QVERIFY(!exception.localId().isNull());
     QOrganizerEventOccurrence savedException = cm->item(exception.localId());
     QCOMPARE(savedException.parentLocalId(), christmas.localId()); // parentLocalId should be set by manager
 
@@ -973,7 +976,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
 
     // can't set guid to a non-event
     exception2.setGuid(QLatin1String("report"));
-    exception2.setParentLocalId(0);
+    exception2.setParentLocalId(QOrganizerItemLocalId());
     QVERIFY(!cm->saveItem(&exception2));
     QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
 
@@ -1006,7 +1009,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     // with original date, guid and parentId set and consistent, and localId=0, it should work
     exception3.setOriginalDate(QDate(2012, 12, 25));
     QVERIFY(cm->saveItem(&exception3));
-    QVERIFY(exception3.localId() != 0);
+    QVERIFY(!exception3.localId().isNull());
     savedException = cm->item(exception3.localId());
     QCOMPARE(savedException.parentLocalId(), christmas.localId());
 }
@@ -1914,7 +1917,7 @@ void tst_QOrganizerItemManager::signalEmission()
     QTRY_COMPARE(spyCA.count(), addSigCount);
     args = spyCA.takeFirst();
     addSigCount -= 1;
-    arg = args.first().value<QList<quint32> >();
+    arg = args.first().value<QList<QOrganizerItemLocalId> >();
     QVERIFY(arg.count() == 1);
     QCOMPARE(QOrganizerItemLocalId(arg.at(0)), cid);
 
@@ -1926,7 +1929,7 @@ void tst_QOrganizerItemManager::signalEmission()
     QTRY_COMPARE(spyCM.count(), modSigCount);
     args = spyCM.takeFirst();
     modSigCount -= 1;
-    arg = args.first().value<QList<quint32> >();
+    arg = args.first().value<QList<QOrganizerItemLocalId> >();
     QVERIFY(arg.count() == 1);
     QCOMPARE(QOrganizerItemLocalId(arg.at(0)), cid);
 
@@ -1936,7 +1939,7 @@ void tst_QOrganizerItemManager::signalEmission()
     QTRY_COMPARE(spyCR.count(), remSigCount);
     args = spyCR.takeFirst();
     remSigCount -= 1;
-    arg = args.first().value<QList<quint32> >();
+    arg = args.first().value<QList<QOrganizerItemLocalId> >();
     QVERIFY(arg.count() == 1);
     QCOMPARE(QOrganizerItemLocalId(arg.at(0)), cid);
 
@@ -2060,7 +2063,7 @@ void tst_QOrganizerItemManager::errorStayingPut()
     QVERIFY(m1.error() == QOrganizerItemManager::NoError);
 
     /* Remove an invalid item to get an error */
-    QVERIFY(m1.removeItem(0) == false);
+    QVERIFY(m1.removeItem(QOrganizerItemLocalId()) == false);
     QVERIFY(m1.error() == QOrganizerItemManager::DoesNotExistError);
 
     /* Create a new manager with hopefully the same backend */
@@ -2301,7 +2304,7 @@ void tst_QOrganizerItemManager::detailDefinitions()
 
 void tst_QOrganizerItemManager::changeSet()
 {
-    QOrganizerItemLocalId id(1);
+    QOrganizerItemLocalId id;
 
     QOrganizerItemChangeSet changeSet;
     QVERIFY(changeSet.addedItems().isEmpty());

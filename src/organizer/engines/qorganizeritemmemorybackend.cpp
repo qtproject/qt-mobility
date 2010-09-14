@@ -97,6 +97,11 @@ QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId()
 {
 }
 
+QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId(quint32 collectionId, quint32 itemId)
+    : m_localCollectionId(collectionId), m_localItemId(itemId)
+{
+}
+
 QOrganizerItemMemoryEngineLocalId::~QOrganizerItemMemoryEngineLocalId()
 {
 }
