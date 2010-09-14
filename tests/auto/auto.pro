@@ -112,7 +112,12 @@ contains(mobility_modules,contacts) {
 
 contains(mobility_modules,organizer) {
     # Organizer
-    SUBDIRS += qorganizeritemmanager
+    SUBDIRS += \
+        qorganizeritem \
+        qorganizeritemdetail \
+        qorganizeritemdetaildefinition \
+        qorganizeritemfilter \
+        qorganizeritemmanager
 }
 
 contains(mobility_modules,versit) {
@@ -133,11 +138,6 @@ contains(mobility_modules,versit) {
             qversitorganizerimporter \
             qversit
     }
-}
-
-contains(mobility_modules,telephony) {
-    # TODO change this when other backends are developed
-    linux-*: SUBDIRS += qtelephony
 }
 
 contains(mobility_modules,multimedia) {

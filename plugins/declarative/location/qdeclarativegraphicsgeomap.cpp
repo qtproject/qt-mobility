@@ -102,9 +102,10 @@ void QDeclarativeGraphicsGeoMap::object_clear(QDeclarativeListProperty<QGeoMapOb
     static_cast<QDeclarativeGraphicsGeoMap*>(prop->object)->clearMapObjects();
 }
 
-QPointF QDeclarativeGraphicsGeoMap::toScreenPosition(const QDeclarativeCoordinate *coordinate) const
+// TODO following two needs to be changed to use QDeclarativeCoordinate* when QML supports it
+QPointF QDeclarativeGraphicsGeoMap::toScreenPosition(QObject *coordinate) const
 {
-    return coordinateToScreenPosition(coordinate->coordinate());
+    return coordinateToScreenPosition(static_cast<QDeclarativeCoordinate*>(coordinate)->coordinate());
 }
 
 QObject* QDeclarativeGraphicsGeoMap::toCoordinate(QPointF screenPosition) const

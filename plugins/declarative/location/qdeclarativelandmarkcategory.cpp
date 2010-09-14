@@ -33,11 +33,17 @@ void QDeclarativeLandmarkCategory::setIconSource(const QUrl& iconSource)
     emit iconSourceChanged();
 }
 
+QLandmarkCategory QDeclarativeLandmarkCategory::category() const
+{
+    return m_category;
+}
+
 // Initializes this category from the given category
 void QDeclarativeLandmarkCategory::setCategory(const QLandmarkCategory& category)
 {
     m_category = category;
-    // TODO update notifications when the whole scenario is more clear
+    emit nameChanged();
+    emit iconSourceChanged();
 }
 
 #include "moc_qdeclarativelandmarkcategory_p.cpp"
