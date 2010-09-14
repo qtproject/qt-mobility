@@ -140,9 +140,6 @@ public slots:
 
 private slots:
 
-    void boxFilter();
-    void boxFilter_data();
-
     void construction();
     void construction_data();
     void defaultProperties();
@@ -162,6 +159,8 @@ private slots:
     void categoriesOfLandmarkFetch_data();
     void landmarksOfCategoriesFetch();
     void landmarksOfCategoriesFetch_data();
+    void boxFilter();
+    void boxFilter_data();
     void filterContentChange();
     void sort_data();
 
@@ -736,7 +735,7 @@ void tst_QDeclarativeLandmark::boxFilter()
     delete top_left_coordinate;
     delete bottom_right_coordinate;
 
-} // zzz
+}
 
 void tst_QDeclarativeLandmark::boxFilter_data()
 {
@@ -1096,7 +1095,12 @@ void tst_QDeclarativeLandmark::filterContentChange()
     extra_declarative_coordinate.setLongitude(1);
     extra_declarative_coordinate.setLatitude(1);
     QTRY_COMPARE(source_obj->property("count").toInt(), 1);
+    QDeclarativeLandmarkCompoundFilter::filters_clear(&declarativeList);
     delete source_obj;
+    //delete union_filter_obj;
+    //delete proximity_filter_obj;
+    //delete extra_name_filter_obj;
+    //delete extra_proximity_filter_obj;
 }
 
 
