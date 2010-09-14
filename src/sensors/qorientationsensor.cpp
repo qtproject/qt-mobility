@@ -100,7 +100,19 @@ QOrientationReading::Orientation QOrientationReading::orientation() const
 */
 void QOrientationReading::setOrientation(QOrientationReading::Orientation orientation)
 {
-    d->orientation = orientation;
+    switch (orientation) {
+    case TopUp:
+    case TopDown:
+    case LeftUp:
+    case RightUp:
+    case FaceUp:
+    case FaceDown:
+        d->orientation = orientation;
+        break;
+    default:
+        d->orientation = Undefined;
+        break;
+    }
 }
 
 // =====================================================================
