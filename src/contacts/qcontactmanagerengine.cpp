@@ -2794,11 +2794,13 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
         // Populate the errorMap with the errorMap of the attempted save
         QMap<int, QContactManager::Error>::iterator it(saveErrors.begin());
         while (it != saveErrors.end()) {
-            errorMap->insert(savedToOriginalMap[it.key()], it.value());
+            if (it.value() != QContactManager::NoError) {
+                errorMap->insert(savedToOriginalMap[it.key()], it.value());
+            }
             it++;
         }
 
-        return !errorMap->isEmpty();
+        return errorMap->isEmpty();
     }
 }
 
