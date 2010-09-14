@@ -94,11 +94,6 @@ public:
     QStringList attributeKeys() const;
     void removeAttribute(const QString &key);
 
-    QVariant customAttribute(const QString &key, const QVariant &defaultValue = QVariant()) const;
-    void setCustomAttribute(const QString &key, const QVariant &value);
-    QStringList customAttributeKeys() const;
-    void removeCustomAttribute(const QString &key);
-
     QString phoneNumber() const;
     void setPhoneNumber(const QString &phoneNumber);
 

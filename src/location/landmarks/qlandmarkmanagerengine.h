@@ -147,9 +147,6 @@ public:
     virtual bool isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual void setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString) = 0;
 
-    virtual bool isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const =  0;
-    virtual void setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString) = 0;
-
     /* Asynchronous Request Support */
     virtual void requestDestroyed(QLandmarkAbstractRequest* request) = 0;
     virtual bool startRequest(QLandmarkAbstractRequest* request) = 0;

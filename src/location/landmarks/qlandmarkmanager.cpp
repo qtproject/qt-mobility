@@ -1058,42 +1058,6 @@ void QLandmarkManager::setExtendedAttributesEnabled(bool enabled)
 }
 
 /*!
-    Returns whether custom attributes are enabled or not. Custom attributes
-    are arbitrary attributes created by the application for a landmark or category.
-    If custom attributes are enabled (and the manager supports them),
-    retrieved landmarks and categories will have extra attributes accessible
-    using QLandmark::customAttributes().  Custom attributes must be enabled
-    to save any landmarks with possess custom attributes.  This same behaviour
-    applies to categories if custom category attributes are supported.
-*/
-bool QLandmarkManager::isCustomAttributesEnabled() const
-{
-    Q_D(const QLandmarkManager);
-
-    if (!d->engine) {
-        d->errorCode = QLandmarkManager::InvalidManagerError;
-        d->errorString = QString("Invalid Manager");
-    }
-
-    return d->engine->isCustomAttributesEnabled(&(d->errorCode), &(d->errorString));
-}
-
-/*!
-    Sets whether custom attributes are \a enabled or not.
-*/
-void QLandmarkManager::setCustomAttributesEnabled(bool enabled)
-{
-    Q_D(QLandmarkManager);
-
-        if (!d->engine) {
-        d->errorCode = QLandmarkManager::InvalidManagerError;
-        d->errorString = QString("Invalid Manager");
-    }
-
-    d->engine->setCustomAttributesEnabled(enabled, &(d->errorCode), &(d->errorString));
-}
-
-/*!
     Returns the manager name for this QLandmarkManager.
 
     The manager name usually takes the format of a reverse domain string.  An example

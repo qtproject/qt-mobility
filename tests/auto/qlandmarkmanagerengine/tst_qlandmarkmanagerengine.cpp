@@ -251,6 +251,7 @@ private slots:
         QVERIFY(!MockEngine::testFilter(filter,lm));
 
 
+        /* TODO: remove custom attributes
         //test multiple custom attributes ,AND operation
         QLandmark lm2;
         lm2.setCustomAttribute("name", "LM1");
@@ -316,6 +317,7 @@ private slots:
         QVERIFY(!MockEngine::testFilter(filter,lm3));
         filter.setAttribute("capcity", 5);
         QVERIFY(MockEngine::testFilter(filter,lm3));
+        */
     }
 
     void testFilterBox() {

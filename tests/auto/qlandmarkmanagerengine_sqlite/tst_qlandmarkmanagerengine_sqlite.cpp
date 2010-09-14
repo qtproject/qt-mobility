@@ -490,12 +490,10 @@ private:
         QStringList knownTables;
         knownTables << "category";
         knownTables << "category_attribute";
-        knownTables << "category_custom_attribute";
         knownTables << "category_notification";
         knownTables << "landmark";
         knownTables << "landmark_attribute";
         knownTables << "landmark_category";
-        knownTables << "landmark_custom_attribute";
         knownTables << "landmark_notification";
         return (tables == knownTables);
     }
@@ -615,8 +613,8 @@ private slots:
     void isFeatureSupported();
     void extendedAttributes();
 
-    void customAttributes();
-    void customAttributes_data();
+    /*void customAttributes();
+    void customAttributes_data();*/
 
     void categoryLimitOffset();
     //TODO: void categoryLimitOffsetAsync()
@@ -936,7 +934,8 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
      QSignalSpy spyAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
 
     QLandmarkCategory emptyCategory;
-    int originalKeyCount = emptyCategory.customAttributeKeys().count();
+    //TODO: remove custom attributes
+    //int originalKeyCount = emptyCategory.customAttributeKeys().count();
 
      // add - no attributes
      QLandmarkCategory cat1;
@@ -949,6 +948,14 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
      QCOMPARE(spyAdd.count(), 1);
      QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.categoryId());
 
+
+     QLandmarkCategory cat2;
+     cat2.setName("CAT2");
+     QVERIFY(m_manager->saveCategory(&cat2));
+     QLandmarkCategory cat3;
+     cat3.setName("CAT3");
+     QVERIFY(m_manager->saveCategory(&cat3));
+     /* Disable custom attributes
      // add - with attributes
      m_manager->setCustomAttributesEnabled(true);
     QLandmarkCategory cat2;
@@ -977,7 +984,7 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
     QVERIFY(m_manager->saveCategory(&cat3));
     QCOMPARE(m_manager->category(cat3.categoryId()).customAttribute("ichi").toInt(), 1);
     QCOMPARE(m_manager->category(cat3.categoryId()).customAttribute("ni"), QVariant());
-    QCOMPARE(m_manager->category(cat3.categoryId()).customAttribute("san").toInt(), 3);
+    QCOMPARE(m_manager->category(cat3.categoryId()).customAttribute("san").toInt(), 3);*/
 
     //try adding a category when a category already exists
     QLandmarkCategory cat1Duplicate;
@@ -998,9 +1005,11 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
 void tst_QLandmarkManagerEngineSqlite::addCategoryAsync() {
 
     QSignalSpy spyAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
-    m_manager->setCustomAttributesEnabled(true);
+    //Disable Custom Attributes
+    //m_manager->setCustomAttributesEnabled(true);
     QLandmarkCategory emptyCategory;
-    int originalKeyCount = emptyCategory.customAttributeKeys().count();
+    //disable custom attributes
+    //int originalKeyCount = emptyCategory.customAttributeKeys().count();
 
     // add - no attributes
     QLandmarkCategory cat1;
@@ -1022,6 +1031,20 @@ void tst_QLandmarkManagerEngineSqlite::addCategoryAsync() {
     QCOMPARE(spyAdd.count(), 1);
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.categoryId());
 
+    QLandmarkCategory cat2;
+    cat2.setName("CAT2");
+    saveCategoryRequest.setCategory(cat2);
+    saveCategoryRequest.start();
+    QVERIFY(waitForAsync(spy, &saveCategoryRequest));
+
+    QLandmarkCategory cat3;
+    cat3.setName("CAT3");
+    saveCategoryRequest.setCategory(cat3);
+    saveCategoryRequest.start();
+    QVERIFY(waitForAsync(spy, &saveCategoryRequest));
+    QCOMPARE(saveCategoryRequest.categories().count(),1);
+
+    /* Disabling custom attributes
     // add - with attributes
     QLandmarkCategory cat2;
     cat2.setName("CAT2");
@@ -1068,7 +1091,7 @@ void tst_QLandmarkManagerEngineSqlite::addCategoryAsync() {
     cat3saved = saveCategoryRequest.categories().at(0);
     QCOMPARE(m_manager->category(cat3saved.categoryId()).customAttribute("ichi").toInt(), 1);
     QCOMPARE(m_manager->category(cat3saved.categoryId()).customAttribute("ni"), QVariant());
-    QCOMPARE(m_manager->category(cat3saved.categoryId()).customAttribute("san").toInt(), 3);
+    QCOMPARE(m_manager->category(cat3saved.categoryId()).customAttribute("san").toInt(), 3);*/
 
      //try adding a category when a category already exists
     QLandmarkCategory cat1Duplicate;
@@ -1277,7 +1300,8 @@ void tst_QLandmarkManagerEngineSqlite::addLandmark() {
     QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
 
     QLandmark emptyLandmark;
-    int originalKeyCount = emptyLandmark.customAttributeKeys().count();
+    //Disable custom attributes
+    //int originalKeyCount = emptyLandmark.customAttributeKeys().count();
 
     // add - no attributes
     QLandmark lm1;
@@ -1308,6 +1332,7 @@ void tst_QLandmarkManagerEngineSqlite::addLandmark() {
     QCOMPARE(spyAdd.count(), 1);
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm2.landmarkId());
 
+/* Disabling custom attributes
     // add - with attributes
     m_manager->setCustomAttributesEnabled(true);
     QLandmark lm3;
@@ -1337,14 +1362,14 @@ void tst_QLandmarkManagerEngineSqlite::addLandmark() {
     QVERIFY(m_manager->saveLandmark(&lm4));
     QCOMPARE(m_manager->landmark(lm4.landmarkId()).customAttribute("ichi").toInt(), 1);
     QCOMPARE(m_manager->landmark(lm4.landmarkId()).customAttribute("ni"), QVariant());
-    QCOMPARE(m_manager->landmark(lm4.landmarkId()).customAttribute("san").toInt(), 3);
+    QCOMPARE(m_manager->landmark(lm4.landmarkId()).customAttribute("san").toInt(), 3);*/
 }
 
 void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
     QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
 
     QLandmark emptyLandmark;
-    int originalKeyCount = emptyLandmark.customAttributeKeys().count();
+    //int originalKeyCount = emptyLandmark.customAttributeKeys().count();
 
     // add - no attributes
     QLandmark lm1;
@@ -1509,6 +1534,7 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
     }
     QVERIFY(foundCancelError);
 
+    /* Disabling custom attributes
     // add - with attributes
     m_manager->setCustomAttributesEnabled(true);
     QCOMPARE(m_manager->isCustomAttributesEnabled(), true);
@@ -1556,7 +1582,7 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
     lm10saved = saveRequest.landmarks().at(0);
     QCOMPARE(m_manager->landmark(lm10saved.landmarkId()).customAttribute("ichi").toInt(), 1);
     QCOMPARE(m_manager->landmark(lm10saved.landmarkId()).customAttribute("ni"), QVariant());
-    QCOMPARE(m_manager->landmark(lm10saved.landmarkId()).customAttribute("san").toInt(), 3);
+    QCOMPARE(m_manager->landmark(lm10saved.landmarkId()).customAttribute("san").toInt(), 3);*/
 }
 
 void tst_QLandmarkManagerEngineSqlite::updateLandmark() {
@@ -1785,22 +1811,25 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryId() {
     QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), catY.categoryId());
     spyRemove.clear();
 
+    /* Disable custom attributes
     //test that category attributes were really removed when a category is removed
     m_manager->setCustomAttributesEnabled(true);
     QCOMPARE(m_manager->isCustomAttributesEnabled(), true);
+    */
+
     QLandmarkCategory cat4;
     cat4.setName("CAT4");
-    cat4.setCustomAttribute("four", 4);
+    // Disable Custom attributes cat4.setCustomAttribute("four", 4);
     QVERIFY(m_manager->saveCategory(&cat4));
 
     QLandmarkCategory cat5;
     cat5.setName("CAT5");
-    cat5.setCustomAttribute("five", 5);
+    // Disable custom attributes cat5.setCustomAttribute("five", 5);
     QVERIFY(m_manager->saveCategory(&cat5));
 
     QLandmarkCategory cat6;
     cat6.setName("LM6");
-    cat6.setCustomAttribute("six", 6);
+    //Disable custom attributes cat6.setCustomAttribute("six", 6);
     QVERIFY(m_manager->saveCategory(&cat6));
 
     {
@@ -1816,12 +1845,14 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryId() {
     query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
 
+    /* TODO: Disabled custom attributes, remove this
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
+    */
     query.finish();
 
     QVERIFY(m_manager->removeCategory(cat5.categoryId()));
@@ -1836,12 +1867,14 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryId() {
     query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
 
+    /* TODO: Disabled Custom attributes, remove this
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
     QVERIFY(!query.next());
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
+    */
     }
 
     QSqlDatabase::removeDatabase("testing");
@@ -1953,21 +1986,21 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryIdAsync() {
     spyRemove.clear();
 
      //test that category attributes were really removed when a category is removed
-    m_manager->setCustomAttributesEnabled(true);
-    QCOMPARE(m_manager->isCustomAttributesEnabled(), true);
+    //TODO: remove custom attriubutes- m_manager->setCustomAttributesEnabled(true);
+    //QCOMPARE(m_manager->isCustomAttributesEnabled(), true);
     QLandmarkCategory cat4;
     cat4.setName("CAT4");
-    cat4.setCustomAttribute("four", 4);
+    //TODO: remove custom attriubutes- cat4.setCustomAttribute("four", 4);
     QVERIFY(m_manager->saveCategory(&cat4));
 
     QLandmarkCategory cat5;
     cat5.setName("CAT5");
-    cat5.setCustomAttribute("five", 5);
+    //TODO: remove custom attributes cat5.setCustomAttribute("five", 5);
     QVERIFY(m_manager->saveCategory(&cat5));
 
     QLandmarkCategory cat6;
     cat6.setName("LM6");
-    cat6.setCustomAttribute("six", 6);
+    //TODO: remove custom attriubutes- cat6.setCustomAttribute("six", 6);
     QVERIFY(m_manager->saveCategory(&cat6));
 
     {
@@ -1983,12 +2016,14 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryIdAsync() {
     query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
 
+    /* TODO: remove custom attriubutes-
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
+    */
     query.finish();
 
     removeRequest.setCategoryId(cat5.categoryId());
@@ -2006,12 +2041,14 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryIdAsync() {
     query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
 
+    /*  TODO: remove custom attributes
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
     QVERIFY(!query.next());
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
+    */
     }
 
     QSqlDatabase::removeDatabase("testing");
@@ -2065,21 +2102,21 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmark() {
     spyRemove.clear();
 
     // with attributes
-    m_manager->setCustomAttributesEnabled(true);
-    QVERIFY(m_manager->isCustomAttributesEnabled());
+    // TODO: remove custom attributes, m_manager->setCustomAttributesEnabled(true);
+    //QVERIFY(m_manager->isCustomAttributesEnabled());
     QLandmark lm4;
     lm4.setName("LM4");
-    lm4.setCustomAttribute("four", 4);
+    // TODO: remove custom attributes    lm4.setCustomAttribute("four", 4);
     QVERIFY(m_manager->saveLandmark(&lm4));
 
     QLandmark lm5;
     lm5.setName("LM5");
-    lm5.setCustomAttribute("five", 5);
+    // TODO: remove custom attributes-lm5.setCustomAttribute("five", 5);
     QVERIFY(m_manager->saveLandmark(&lm5));
 
     QLandmark lm6;
     lm6.setName("LM6");
-    lm6.setCustomAttribute("six", 6);
+    // TODO: remove custom attributes-lm6.setCustomAttribute("six", 6);
     QVERIFY(m_manager->saveLandmark(&lm6));
 
     QCOMPARE(m_manager->landmark(lm4.landmarkId()),lm4);
@@ -2099,12 +2136,14 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmark() {
     query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
 
+    /* TODO: remove custom attributes
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm4.landmarkId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm5.landmarkId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
+    */
 
     query.finish();
 
@@ -2120,12 +2159,14 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmark() {
     query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
 
+    //TODO: remove custom attributes
+    /*
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm4.landmarkId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm5.landmarkId().localId()));
     QVERIFY(!query.next());
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
-    QVERIFY(query.next());
+    QVERIFY(query.next());*/
     }
 
     QSqlDatabase::removeDatabase("testing");
@@ -2194,21 +2235,21 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmarkAsync() {
     spyRemove.clear();
 
     // with attributes
-    m_manager->setCustomAttributesEnabled(true);
-    QVERIFY(m_manager->isCustomAttributesEnabled());
+    //TODO: remove custom attributes,m_manager->setCustomAttributesEnabled(true);
+    //QVERIFY(m_manager->isCustomAttributesEnabled());
     QLandmark lm4;
     lm4.setName("LM4");
-    lm4.setCustomAttribute("four", 4);
+    //TODO: remove custom attributes -lm4.setCustomAttribute("four", 4);
     QVERIFY(m_manager->saveLandmark(&lm4));
 
     QLandmark lm5;
     lm5.setName("LM5");
-    lm5.setCustomAttribute("five", 5);
+    //TODO: remove custom attributes - lm5.setCustomAttribute("five", 5);
     QVERIFY(m_manager->saveLandmark(&lm5));
 
     QLandmark lm6;
     lm6.setName("LM6");
-    lm6.setCustomAttribute("six", 6);
+    //TODO: remove custom attributes - lm6.setCustomAttribute("six", 6);
     QVERIFY(m_manager->saveLandmark(&lm6));
 
     QCOMPARE(m_manager->landmark(lm4.landmarkId()),lm4);
@@ -2228,12 +2269,14 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmarkAsync() {
     query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
 
+    /* //TODO: remove custom attributes -
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm4.landmarkId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm5.landmarkId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
+    */
     query.finish();
 
     removeRequest.setLandmarkId(lm5.landmarkId());
@@ -2251,12 +2294,14 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmarkAsync() {
     query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
 
+    /* //TODO: remove custom attributes -
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm4.landmarkId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm5.landmarkId().localId()));
     QVERIFY(!query.next());
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
+    */
     }
 
     QSqlDatabase::removeDatabase("testing");
@@ -5532,71 +5577,80 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksUnionAsync() {
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterAttribute() {
-    m_manager->setCustomAttributesEnabled(true);
-    QVERIFY(m_manager->isCustomAttributesEnabled());
+    //TODO: remove custom attributes m_manager->setCustomAttributesEnabled(true);
+    //QVERIFY(m_manager->isCustomAttributesEnabled());
 
     QLandmark lm1;
     lm1.setName("Adelaide");
     lm1.setDescription("The description of adelaide");
-    lm1.setCustomAttribute("one",1);
-    lm1.setCustomAttribute("two", 2);
-    lm1.setCustomAttribute("three",3);
-    lm1.setCustomAttribute("alphabet", "alpha");
-    lm1.setCustomAttribute("number", "san");
+    //TODO: remove custom attributes
+    //lm1.setCustomAttribute("one",1);
+    //lm1.setCustomAttribute("two", 2);
+    //lm1.setCustomAttribute("three",3);
+    //lm1.setCustomAttribute("alphabet", "alpha");
+    //lm1.setCustomAttribute("number", "san");
     QVERIFY(m_manager->saveLandmark(&lm1));
 
     QLandmark lm2;
     lm2.setName("Adel");
     lm2.setDescription("The description of adel");
-    lm2.setCustomAttribute("two", 22);
-    lm2.setCustomAttribute("alphabet", "alpha");
-    lm2.setCustomAttribute("number", "roku");
+    //TODO: remove custom attributes
+    //lm2.setCustomAttribute("two", 22);
+    //lm2.setCustomAttribute("alphabet", "alpha");
+    //lm2.setCustomAttribute("number", "roku");
     QVERIFY(m_manager->saveLandmark(&lm2));
 
     QLandmark lm3;
     lm3.setName("Brisbane");
     lm3.setDescription("The chronicles of brisbane");
-    lm3.setCustomAttribute("three", 3);
-    lm3.setCustomAttribute("four", 4);
-    lm3.setCustomAttribute("alphabet", "beta");
-    lm3.setCustomAttribute("number", "rokun");
+    //TODO: remove custom attributes
+    //lm3.setCustomAttribute("three", 3);
+    //lm3.setCustomAttribute("four", 4);
+    //lm3.setCustomAttribute("alphabet", "beta");
+    //lm3.setCustomAttribute("number", "rokun");
     QVERIFY(m_manager->saveLandmark(&lm3));
 
     QLandmark lm4;
     lm4.setName("Perth");
     lm4.setDescription("The summary of perth");
-    lm4.setCustomAttribute("caption", "mystifying");
+    //TODO: remove custom attributes
+    //lm4.setCustomAttribute("caption", "mystifying");
     QVERIFY(m_manager->saveLandmark(&lm4));
 
     QLandmark lm5;
     lm5.setName("Canberra");
     lm5.setDescription("The chronicles of canberra");
-    lm5.setCustomAttribute("caption", "myst");
+    //TODO: remove custom attributes
+    //lm5.setCustomAttribute("caption", "myst");
     QVERIFY(m_manager->saveLandmark(&lm5));
 
     QLandmark lm6;
     lm6.setName("Tinberra");
     lm6.setDescription("The chronicles of tinberra");
-    lm6.setCustomAttribute("caption", "terrifying");
+    // TODO: remove custom attributes
+    //lm6.setCustomAttribute("caption", "terrifying");
     QVERIFY(m_manager->saveLandmark(&lm6));
 
     QLandmark lm7;
     lm7.setName("Madelaide");
     lm7.setDescription("The summary of madelaide");
-    lm7.setCustomAttribute("caption", "write caption here");
+    //TODO: remove custom attributes
+    //lm7.setCustomAttribute("caption", "write caption here");
     QVERIFY(m_manager->saveLandmark(&lm7));
 
     QLandmark lm8;
     lm8.setName("Terran");
     lm8.setDescription("Summary of terran");
-    lm8.setCustomAttribute("caption", "MYST");
+    //TODO: remove custom attributes
+    //lm8.setCustomAttribute("caption", "MYST");
     QVERIFY(m_manager->saveLandmark(&lm8));
 
     QLandmark lm9;
     lm9.setName("ADEL");
     lm9.setDescription("The summary of ADEL");
-    lm9.setCustomAttribute("CAPTION", "MYST");
-    lm9.setCustomAttribute("number",999);
+    //TODO: remove custom attributes
+    //lm9.setCustomAttribute("CAPTION", "MYST");
+    //lm9.setCustomAttribute("number",999);
     QVERIFY(m_manager->saveLandmark(&lm9));
 
     QList<QLandmark> lms;
@@ -5700,6 +5754,7 @@ void tst_QLandmarkManagerEngineSqlite::filterAttribute() {
     QVERIFY(doFetch(type,attributeFilter,&lms));
     QCOMPARE(lms.count(), 9);
 
+    /* Disable custom attributes
     //========== test custom attributes =====
     //try and OR operation
     attributeFilter.clearAttributes();
@@ -5871,7 +5926,7 @@ void tst_QLandmarkManagerEngineSqlite::filterAttribute() {
         QVERIFY(doFetch(type,attributeFilter,&lms));
         QCOMPARE(lms.count(), 1);
         QCOMPARE(lms.at(0), lm9);
-    }
+    }*/
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterAttribute_data()
@@ -7294,7 +7349,7 @@ void tst_QLandmarkManagerEngineSqlite::isFeatureSupported()
 {
     QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::NotificationsFeature));
     QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::ImportExportFeature));
-    QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::CustomAttributesFeature));
+    //TODO: remove custom attributes, QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::CustomAttributesFeature));
     QVERIFY(!m_manager->isFeatureSupported(QLandmarkManager::ExtendedAttributesFeature));
 }
 
@@ -7306,6 +7361,7 @@ void tst_QLandmarkManagerEngineSqlite::extendedAttributes()
     QCOMPARE(m_manager->error(), QLandmarkManager::NotSupportedError);
 }
 
+/*
 void tst_QLandmarkManagerEngineSqlite::customAttributes()
 {
     QFETCH(QString, type);
@@ -7406,7 +7462,7 @@ void tst_QLandmarkManagerEngineSqlite::customAttributes_data()
     QTest::addColumn<QString>("type");
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
-}
+}*/
 
 void tst_QLandmarkManagerEngineSqlite::categoryLimitOffset() {
     for (int i = 0; i < 50; ++i) {

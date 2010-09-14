@@ -587,26 +587,6 @@ QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::TransferO
 */
 
 /*!
-    \fn bool QLandmarkManagerEngine::isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
-
-    Returns whether custom attributes are enabled or not. Custom attributes
-    are arbitrary attributes created by the application for a landmark.
-    If custom attributes are enabled (and the manager supports them),
-    retrieved landmarks will have extra attributes accessible
-    using QLandmark::customAttributes().  Custom attributes must be enabled
-    to save any landmarks with possess custom attributes.  This same behaviour
-    applies to categories if custom category attributes are supported.
-    Errors are stored in \a error and \a errorString.
-*/
-
-/*!
-    \fn void QLandmarkManagerEngine::setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString)
-
-     Sets whether custom attributes are \a enabled or not.
-     Errors are stored in \a error and \a errorString.
-*/
-
-/*!
     Notifies the manager engine that the givan \a request has been destroyed.
 */
 void QLandmarkManagerEngine::requestDestroyed(QLandmarkAbstractRequest* request)
@@ -1230,10 +1210,8 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
             QStringList filterKeys = attribFilter.attributeKeys();
 
             QStringList landmarkKeys;
-            if (attribFilter.attributeType() == QLandmarkAttributeFilter::ManagerAttributes)
                 landmarkKeys = landmark.attributeKeys();
-            else
-                landmarkKeys = landmark.customAttributeKeys();
+
 
             if (attribFilter.operationType() ==  QLandmarkAttributeFilter::AndOperation) {
                 QVariant lmAttributeValue;
@@ -1243,10 +1221,7 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
                         if (!attribFilter.attribute(filterKey).isValid())
                             continue;
 
-                        if (attribFilter.attributeType() == QLandmarkAttributeFilter::ManagerAttributes)
                             lmAttributeValue = landmark.attribute(filterKey);
-                        else
-                            lmAttributeValue = landmark.customAttribute(filterKey);
 
                         if (lmAttributeValue.type() == QVariant::String) {
                             QString lmString = lmAttributeValue.toString();
@@ -1270,10 +1245,7 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
                         if (!(attribFilter.attribute(filterKey).isValid()))
                             return true;
 
-                        if (attribFilter.attributeType() == QLandmarkAttributeFilter::ManagerAttributes)
-                            lmAttributeValue = landmark.attribute(filterKey);
-                        else
-                            lmAttributeValue = landmark.customAttribute(filterKey);
+                        lmAttributeValue = landmark.attribute(filterKey);
 
                         if (lmAttributeValue.type() == QVariant::String) {
                             QString lmString = lmAttributeValue.toString();

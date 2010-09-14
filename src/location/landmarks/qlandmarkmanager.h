@@ -90,7 +90,6 @@ public:
 
     enum LandmarkFeature {
         ExtendedAttributesFeature,
-        CustomAttributesFeature,
         ImportExportFeature,
         NotificationsFeature
     };
@@ -178,9 +177,6 @@ public:
 
     QStringList landmarkAttributeKeys() const;
     QStringList categoryAttributeKeys() const;
-
-    bool isCustomAttributesEnabled() const;
-    void setCustomAttributesEnabled(bool enabled);
 
     bool isExtendedAttributesEnabled() const;
     void setExtendedAttributesEnabled(bool enabled);

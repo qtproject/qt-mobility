@@ -585,54 +585,6 @@ void QLandmark::removeAttribute(const QString &key)
 }
 
 /*!
-    Returns the value of the custom attribute corresponding to \a key.
-    If the custom attribute doest exist, returns \a defaultValue.
-
-    If no default value is specified, a default QVariant is returned.
-*/
-QVariant QLandmark::customAttribute(const QString &key, const QVariant &defaultValue) const
-{
-    Q_D(const QLandmark);
-
-    return d->customAttributes.value(key, defaultValue);
-}
-
-/*!
-    Sets the \a value of the custom attribute corresponding to \a key.
-    Setting an invalid QVariant removes the key.
-*/
-void QLandmark::setCustomAttribute(const QString &key, const QVariant &value)
-{
-    Q_D(QLandmark);
-
-    if (!value.isValid())
-        d->customAttributes.remove(key);
-    else
-        d->customAttributes[key] = value;
-}
-
-/*!
-    Returns a list of custom Attribute keys.
-
-    \sa customAttribute(), setCustomAttribute()
-*/
-QStringList QLandmark::customAttributeKeys() const
-{
-    Q_D(const QLandmark);
-
-    return d->customAttributes.keys();
-}
-
-/*!
-    Removes the custom attribute corresponding to \a key.
-*/
-void QLandmark::removeCustomAttribute(const QString &key)
-{
-    Q_D(QLandmark);
-     d->customAttributes.remove(key);
-}
-
-/*!
     Returns the phone number of the landmark.
 */
 QString QLandmark::phoneNumber() const

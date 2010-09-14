@@ -100,7 +100,7 @@ class DatabaseOperations {
     QString managerUri;
     QueryRun *queryRun;
 
-    DatabaseOperations(const volatile bool &isExtendedAttribsEnabled, const volatile bool &isCustomAttribsEnabled);
+    DatabaseOperations(const volatile bool &isExtendedAttribsEnabled);
     QLandmark retrieveLandmark(const QLandmarkId &landmarkId,
                                QLandmarkManager::Error *error, QString *errorString) const;
 
@@ -220,7 +220,6 @@ class DatabaseOperations {
     QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders) const;
 
     const volatile bool &isExtendedAttributesEnabled;
-    const volatile bool &isCustomAttributesEnabled;
 
     static const QStringList coreAttributes;
     static const QStringList coreGenericAttributes;
