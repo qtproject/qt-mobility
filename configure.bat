@@ -554,6 +554,7 @@ call :compileTest IMMERSION immersion
 call :compileTest AdvancedTouchFeedback advancedtouchfeedback
 call :compileTest MDS mds
 call :compileTest MDS_25 mds_25
+call :compileTest MDS_25_92MCL mds_25_92mcl
 goto noTests
 
 :windowsTests

@@ -363,7 +363,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-//#ifdef MDS_25_COMPILATION_ENABLED            
+#ifdef MDS_25_92MCL_COMPILATION_ENABLED            
     case EAudioCodec:
         {
             if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
@@ -380,7 +380,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-//#endif //MDS_25_COMPILATION_ENABLED
+#endif //MDS_25_92MCL_COMPILATION_ENABLED
     case EAudioBitrate:
     case EVideoBitrate:
         {
@@ -954,12 +954,12 @@ CMdEPropertyDef *QDocumentGalleryMDSUtility::GetMDSPropertyDefL( const QString &
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KRatingProperty );
         return &propDef;
-//#ifdef MDS_25_COMPILATION_ENABLED
+#ifdef MDS_25_92MCL_COMPILATION_ENABLED
     } else if (property == QDocumentGallery::audioCodec.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KAudioFourCCProperty );
         return &propDef;
-//#endif //MDS_25_COMPILATION_ENABLED
+#endif //MDS_25_92MCL_COMPILATION_ENABLED
     } else if (property == QDocumentGallery::playCount.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
@@ -1347,7 +1347,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
                 }
             }
         }
-//#ifdef MDS_25_COMPILATION_ENABLED            
+#ifdef MDS_25_92MCL_COMPILATION_ENABLED            
     case EAudioCodec:
         {
             if (item->Def().Name() != MdeConstants::Audio::KAudioObject
@@ -1374,7 +1374,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
                 }
             }
         }
-//#endif //MDS_25_COMPILATION_ENABLED
+#endif //MDS_25_92MCL_COMPILATION_ENABLED
     case EAudioBitrate:
     case EVideoBitrate:
         {
