@@ -316,8 +316,8 @@ void COrganizerItemRequestsServiceProvider::SaveItemL()
             // TODO: changeSet and collection id needed!
             // without changeSet signaling does not work, and without collection id
             // the item is always stored to the default collection
-            iOrganizerItemManagerEngine.saveItemL(&iItemList[iIndex-1], 0, 0);
-            iSuccessfullItems.append(iItemList[iIndex-1]);
+            iOrganizerItemManagerEngine.saveItemL(&item, 0, 0);
+            iSuccessfullItems.append(item);
             }
         else
             {
@@ -465,13 +465,14 @@ void COrganizerItemRequestsServiceProvider::FetchDetailDefinitionL()
     for (TInt index(0); index < count; index++)
         {
         // Fetch detail definition
+        QString stringItem(stringList.at(index));
         QOrganizerItemDetailDefinition detailDefinition( 
                 (iOrganizerItemManagerEngine.detailDefinition(
-                        stringList[index], itemType, &iError)));
+                    stringItem, itemType, &iError)));
     
         if (QOrganizerItemManager::NoError == iError)
             {
-            detailDefinitionMap.insert(stringList[index], detailDefinition);
+            detailDefinitionMap.insert(stringItem, detailDefinition);
             }
         else
             {
