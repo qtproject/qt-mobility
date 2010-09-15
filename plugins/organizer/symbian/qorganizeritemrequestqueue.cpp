@@ -73,9 +73,13 @@ bool QOrganizerItemRequestQueue::startRequest(
         m_abstractRequestMap[req]);
     // asynchronous service provider does not exist, create a new one
     if (!requestServiceProvider) {
-        requestServiceProvider = 
+        TRAPD(err, requestServiceProvider = 
             COrganizerItemRequestsServiceProvider::NewL(
-                m_organizerItemManagerEngine);
+                m_organizerItemManagerEngine));
+        if (err) {
+            // Request service provider not instantiated successfully
+            return false;
+        }
         m_abstractRequestMap.insert(req, requestServiceProvider);
     }
     // Start the request

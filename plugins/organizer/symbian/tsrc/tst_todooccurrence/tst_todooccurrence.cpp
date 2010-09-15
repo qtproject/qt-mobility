@@ -325,7 +325,7 @@ void TestTodoOccurrence::addOccurrencedata(QString itemType)
 	fourthInstanceDateTime.setDate(QDate(2010, 10,22));
 	fifthInstanceDateTime.setDate(QDate(2010, 11, 6));
 
-	QTest::newRow("weekly on monday and thursday for 3 weeks")
+	QTest::newRow("monthly on monday and thursday")
 		<< itemType
 		<< QDateTime(QDate(2010 , 9, 6))
 		<< monthlyRrule
@@ -347,7 +347,7 @@ void TestTodoOccurrence::addOccurrencedata(QString itemType)
 	fourthInstanceDateTime.setDate(QDate(2010, 10,14));
 	fifthInstanceDateTime.setDate(QDate(2010, 11, 10));
 	
-	QTest::newRow("weekly on monday and thursday for 3 weeks")
+	QTest::newRow("monthly on wednesday and thursday for 3 weeks")
 		<< itemType
 		<< QDateTime(QDate(2010 , 9, 6))
 		<< monthlyRruleUsingSetPosition
@@ -372,7 +372,7 @@ void TestTodoOccurrence::addOccurrencedata(QString itemType)
 	fourthInstanceDateTime.setDate(QDate(2013, 9,10));
 	fifthInstanceDateTime.setDate(QDate(2014, 9, 9));
 
-	QTest::newRow("weekly on monday and thursday for 3 weeks")
+	QTest::newRow("yearly on 2nd tuesday of every september")
 		<< itemType
 		<< QDateTime(QDate(2010 , 9, 6))
 		<< yearlyRrule
@@ -392,6 +392,8 @@ void TestTodoOccurrence::addOccurrenceDetail()
 	
 	// Set the item type
 	QOrganizerTodo item;
+	QString displayLabel = "check display";
+	item.setDisplayLabel(displayLabel);
 	item.setStartDateTime(startTime);
 	item.setDueDateTime(startTime);
 
@@ -410,6 +412,7 @@ void TestTodoOccurrence::addOccurrenceDetail()
 	item = m_om->item(item.localId());
 
 	QCOMPARE(item.type(), itemType);
+	QCOMPARE(item.displayLabel(), displayLabel);
 	QOrganizerItemPriority todoPriority = item.detail(QOrganizerItemPriority::DefinitionName);
 	QCOMPARE(todoPriority.priority(), priority.priority());
 	// Fetch the instances of the item.
@@ -472,6 +475,15 @@ void TestTodoOccurrence::editOccurrenceNegative()
     // Save item with recurrence rule.
     QVERIFY(m_om->saveItem(&item));    
     item = m_om->item(item.localId());
+    
+    // Add comment to the item and save.
+    QOrganizerItemComment comment;
+    comment.setComment("check comment");
+    // Comments are not supporeted.
+    QVERIFY(item.saveDetail(&comment));  
+    QVERIFY(!m_om->saveItem(&item));
+    QVERIFY(m_om->error() == QOrganizerItemManager::InvalidDetailError);
+    
 
     //Fetch first instance of the saved entry to modify
     QList<QOrganizerItem> instanceList = m_om->itemInstances(item,startTime,startTime);

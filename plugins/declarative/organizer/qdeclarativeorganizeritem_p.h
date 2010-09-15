@@ -38,41 +38,60 @@
 **
 ****************************************************************************/
 
-#ifndef QMLORGANIZERITEMDETAILFIELD_H
-#define QMLORGANIZERITEMDETAILFIELD_H
+#ifndef QDECLARATIVEORGANIZERITEM_H
+#define QDECLARATIVEORGANIZERITEM_H
 
-#include <QDeclarativePropertyMap>
+#include <QList>
+#include <QtDeclarative>
 
+#include "qorganizeritem.h"
 
+QTM_USE_NAMESPACE;
 
-class QMLOrganizerItemDetailField : public QObject
+class QMLOrganizerItem : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY (bool itemChanged READ itemChanged NOTIFY onItemChanged)
+    Q_PROPERTY (int itemId READ itemId NOTIFY onItemIdChanged)
 public:
-    Q_PROPERTY(QString detailName READ detailName NOTIFY detailNameChanged)
-    Q_PROPERTY(QString key READ key NOTIFY keyChanged)
-    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
-    QMLOrganizerItemDetailField(QObject* parent = 0);
+    enum {
+        DetailNameRole = Qt::UserRole + 500,
+        DetailFieldKeyRole,
+        DetailFieldValueRole,
+        DetailFieldRole
+    };
 
-    void setDetailPropertyMap(QDeclarativePropertyMap* map);
+    explicit QMLOrganizerItem(QObject *parent = 0);
+    void setItem(const QOrganizerItem& c);
+    void setManager(QOrganizerItemManager* manager);
+    QOrganizerItem item() const;
+    QVariant itemMap() const;
+    Q_INVOKABLE QList<QObject*> details() const;
+    Q_INVOKABLE QList<QObject*> detailFields() const;
+    bool itemChanged() const;
+    Q_INVOKABLE void save();
 
-    void setKey(const QString& key);
-    QString key() const;
+    int itemId() const;
+    int rowCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
 
-    QVariant value() const;
-    void setValue(const QVariant& value);
 
-    QString detailName() const;
-    void setDetailName(const QString& name);
 signals:
-    void keyChanged();
-    void valueChanged();
-    void detailNameChanged();
+    void onItemChanged();
+    void onItemIdChanged();
+private slots:
+    void onItemSaved();
 private:
-    QDeclarativePropertyMap* m_map;
-    QString m_key;
-    QString m_detailName;
+    QOrganizerItem m_item;
+    QDeclarativePropertyMap* m_itemMap;
+    QList<QDeclarativePropertyMap*> m_detailMaps;
+    QList<QObject*> m_details;
+    QList<QObject*> m_detailFields;
+    QOrganizerItemManager* m_manager;
+    QOrganizerItemSaveRequest m_saveRequest;
 };
 
 
-#endif // QMLORGANIZERITEMDETAILFIELD_H
+QML_DECLARE_TYPE(QMLOrganizerItem)
+
+#endif // QMLORGANIZERITEM_H
