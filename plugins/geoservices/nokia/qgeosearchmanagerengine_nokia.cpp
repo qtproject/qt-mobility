@@ -141,11 +141,6 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
         requestString += address.street();
     }
 
-    if (!address.streetNumber().isEmpty()) {
-        requestString += "&number=";
-        requestString += address.streetNumber();
-    }
-
     return search(requestString);
 }
 
