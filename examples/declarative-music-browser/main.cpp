@@ -38,39 +38,31 @@
 **
 ****************************************************************************/
 
-import Qt 4.7
-import QtMobility.gallery 1.1
+#include <QtGui/QApplication>
+#include <QtDeclarative/QDeclarativeContext>
+#include <QtDeclarative/QDeclarativeEngine>
+#include <QtDeclarative/QDeclarativeView>
 
-Item {
-    height: 32
+#include "utility.h"
 
-    Text {
-        id: trackLabel
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
-        width: 48
-        text: trackNumber
-        color: "white"
-    }
+int main(int argc, char *argv[])
+{
+    QApplication application(argc, argv);
 
-    Text {
-        id: titleLabel
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: trackLabel.right
-        text: title
-        color: "white"
-    }
+    Utility utility;
 
-    Text {
-        id: durationLabel
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
-        text: Utility.formatDuration(duration)
-        color: "white"
-    }
+    QDeclarativeView view;
+    view.setSource(QUrl(QLatin1String("qrc:///musicbrowser.qml")));
+    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    view.rootContext()->setContextProperty(QLatin1String("Utility"), &utility);
 
-    MouseArea {
-        anchors.fill: parent
-        onClicked: songProperties.show(itemId)
-    }
+    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
+
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5)
+    view.showFullScreen();
+#else
+    view.show();
+#endif
+
+    return application.exec();
 }
