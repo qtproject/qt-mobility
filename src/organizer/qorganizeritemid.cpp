@@ -378,6 +378,14 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id)
 #endif
 
 /*!
+  Returns true if localId is a null or default constructed id; otherwise, returns false.
+ */
+bool QOrganizerItemId::isNull() const
+{
+    return d->m_localId.isNull();
+}
+
+/*!
  * Returns the URI of the manager which contains the organizer item identified by this id
  */
 QString QOrganizerItemId::managerUri() const

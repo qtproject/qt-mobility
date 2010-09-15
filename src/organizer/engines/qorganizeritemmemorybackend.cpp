@@ -644,7 +644,6 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
 
     // now generate a list of rdates (from the recurrenceDates and recurrenceRules)
     QList<QDateTime> rdates;
-    rdates += initialDateTime;
     foreach (const QDate& rdate, recur.recurrenceDates()) {
         rdates += QDateTime(rdate, initialDateTime.time());
     }
@@ -797,7 +796,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, cons
         // id does not exist; if not zero, fail.
         QOrganizerItemId newId;
         newId.setManagerUri(managerUri());
-        if (theOrganizerItem->id() != QOrganizerItemId() && theOrganizerItem->id() != newId) {
+        if (!theOrganizerItem->id().isNull()) {
             // the ID is not empty, and it doesn't identify an existing organizer item in our database either.
             *error = QOrganizerItemManager::DoesNotExistError;
             return false;

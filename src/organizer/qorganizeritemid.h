@@ -101,7 +101,6 @@ private:
     friend class QOrganizerItemManagerEngine;
 };
 
-
 class QOrganizerItemIdPrivate;
 class Q_ORGANIZER_EXPORT QOrganizerItemId
 {
@@ -115,6 +114,8 @@ public:
     bool operator==(const QOrganizerItemId& other) const;
     bool operator!=(const QOrganizerItemId& other) const;
     bool operator<(const QOrganizerItemId& other) const;
+
+    bool isNull() const;
 
     QString managerUri() const;
     QOrganizerItemLocalId localId() const;

@@ -833,7 +833,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     // instance origin
     d.setName(QOrganizerItemInstanceOrigin::DefinitionName);
     fields.clear();
-    f.setDataType(QVariant::Int);
+    f.setDataType(static_cast<QVariant::Type>(qMetaTypeId<QOrganizerItemLocalId>()));
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemInstanceOrigin::FieldParentLocalId, f);
     f.setDataType(QVariant::Date);
