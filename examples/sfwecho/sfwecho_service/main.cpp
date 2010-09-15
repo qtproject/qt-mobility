@@ -119,8 +119,8 @@ Q_DECLARE_METATYPE(QMetaType::Type);
 bool check(const void *p)
 {
     const QRemoteServiceControlLocalSocketCred *cr = (const struct QRemoteServiceControlLocalSocketCred *)p;
-    if(cr->cr.pid%2) {
-           qDebug() << "Failing client: " << cr->cr.pid;
+    if(cr->pid%2) {
+           qDebug() << "Failing client: " << cr->pid;
         return false;
     }
     return true;
