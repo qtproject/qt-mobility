@@ -161,14 +161,6 @@ public:
     bool isReadOnly(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error,
         QString *errorString) const;
 
-    bool isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
-    void setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error,
-        QString *errorString);
-
-    bool isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
-    void setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error,
-        QString *errorString);
-
     /* Asynchronous Request Support */
     void requestDestroyed(QLandmarkAbstractRequest* request);
     bool startRequest(QLandmarkAbstractRequest* request);
@@ -214,7 +206,7 @@ private:
         int maxMatches) const;
 
     bool sortFetchedLmIds(int limit, int offset, QList<QLandmarkSortOrder> sortOrders, QList<
-        QLandmarkId>& landmarkIds, bool isNearestFilter, QLandmarkFilter::FilterType filterType,
+        QLandmarkId>& landmarkIds, QLandmarkFilter::FilterType filterType,
         QLandmarkManager::Error *error, QString *errorString) const;
 
     // to handle symbian errors to assign appropriate manager error and error description.
@@ -241,9 +233,6 @@ private:
     CPosLmCategoryManager* m_LandmarkCatMgr;
     LandmarkEventObserver& m_LmEventObserver;
     QStringList m_LandmarkAttributeKeys;
-
-    bool m_isExtendedAttributesEnabled;
-    bool m_isCustomAttributesEnabled;
 
 private:
     friend class QLandmarkDbEventObserver;

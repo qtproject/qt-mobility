@@ -57,7 +57,6 @@ public:
         const QLandmarkAttributeFilterPrivate *od = static_cast<const QLandmarkAttributeFilterPrivate*>(other);
         return (attributes == od->attributes)
             && (flags == od->flags)
-            && (attributeType == od->attributeType)
             && (operationType == od->operationType);
     }
 
@@ -65,7 +64,6 @@ public:
 
     QHash<QString, QVariant> attributes;
     QHash<QString, QLandmarkFilter::MatchFlags> flags;
-    QLandmarkAttributeFilter::AttributeType attributeType;
     QLandmarkAttributeFilter::OperationType operationType;
 };
 
@@ -73,7 +71,6 @@ QLandmarkAttributeFilterPrivate::QLandmarkAttributeFilterPrivate()
     : QLandmarkFilterPrivate(),
     attributes(QHash<QString, QVariant>()),
     flags(QHash<QString, QLandmarkFilter::MatchFlags>()),
-    attributeType(QLandmarkAttributeFilter::ManagerAttributes),
     operationType(QLandmarkAttributeFilter::AndOperation)
 
 {
@@ -99,13 +96,6 @@ QLandmarkAttributeFilterPrivate::~QLandmarkAttributeFilterPrivate()
     (ie. common cross platform attributes and extended attributes specific to a manager) or custom attributes.
 */
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkAttributeFilter);
-
-/*!
-    \enum QLandmarkAttributeFilter::AttributeType
-    Defines type of landmark attributes this filter operates on.
-    \value ManagerAttributes The filter operates on standard cross platform attributes and extended attributes.
-    \value CustomAttributes The filter operates on custom attributes.
-*/
 
 /*!
     \enum QLandmarkAttributeFilter::OperationType
@@ -208,24 +198,6 @@ QStringList QLandmarkAttributeFilter::attributeKeys() const
 {
     Q_D(const QLandmarkAttributeFilter);
     return d->attributes.keys();
-}
-
-/*!
-    Returns the type of attribute this filter will operate on.
-*/
-QLandmarkAttributeFilter::AttributeType QLandmarkAttributeFilter::attributeType() const
-{
-    Q_D(const QLandmarkAttributeFilter);
-    return d->attributeType;
-}
-
-/*!
-    Sets the type of attribute this filter will operate on to \a attributeType.
-*/
-void QLandmarkAttributeFilter::setAttributeType(QLandmarkAttributeFilter::AttributeType attributeType)
-{
-    Q_D(QLandmarkAttributeFilter);
-    d->attributeType = attributeType;
 }
 
 /*!
