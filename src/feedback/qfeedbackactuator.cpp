@@ -139,7 +139,7 @@ QString QFeedbackActuator::name() const
 */
 QFeedbackActuator::State QFeedbackActuator::state() const
 {
-    return QFeedbackActuator::State(QFeedbackHapticsInterface::instance()->actuatorProperty(*this, QFeedbackHapticsInterface::Name).toInt());
+    return QFeedbackActuator::State(QFeedbackHapticsInterface::instance()->actuatorProperty(*this, QFeedbackHapticsInterface::State).toInt());
 }
 
 /*!

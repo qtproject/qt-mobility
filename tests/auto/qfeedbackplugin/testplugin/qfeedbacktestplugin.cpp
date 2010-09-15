@@ -82,8 +82,21 @@ void QFeedbackTestPlugin::setActuatorProperty(const QFeedbackActuator &actuator,
 QVariant QFeedbackTestPlugin::actuatorProperty(const QFeedbackActuator &actuator, ActuatorProperty prop)
 {
     Q_UNUSED(actuator)
-    Q_UNUSED(prop)
-    return QString(QLatin1String("test plugin"));
+
+    switch (prop) {
+        case Name:
+            return QString(QLatin1String("test plugin"));
+
+        case State:
+            return static_cast<int>(QFeedbackActuator::Unknown);
+
+        case Enabled:
+            return false;
+        default:
+            break;
+    }
+
+    return QVariant();
 }
 
 bool QFeedbackTestPlugin::isActuatorCapabilitySupported(const QFeedbackActuator &, QFeedbackActuator::Capability cap)

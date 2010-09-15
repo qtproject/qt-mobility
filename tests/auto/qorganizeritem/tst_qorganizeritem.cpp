@@ -71,6 +71,13 @@ private slots:
     void traits();
     void idTraits();
     void localIdTraits();
+
+    void event();
+    void todo();
+    void journal();
+    void note();
+    void eventOccurrence();
+    void todoOccurrence();
 };
 
 tst_QOrganizerItem::tst_QOrganizerItem()
@@ -594,6 +601,176 @@ void tst_QOrganizerItem::localIdTraits()
     QVERIFY(!ti.isDummy);
 }
 
+void tst_QOrganizerItem::event()
+{
+    QOrganizerEvent testEvent;
+    QCOMPARE(testEvent.type(), QString(QLatin1String(QOrganizerItemType::TypeEvent)));
+
+    testEvent.setLocationName("test location");
+    testEvent.setLocationAddress("test address");
+    testEvent.setLocationGeoCoordinates("0.73;0.57");
+    QCOMPARE(testEvent.locationName(), QString("test location"));
+    QCOMPARE(testEvent.locationAddress(), QString("test address"));
+    QCOMPARE(testEvent.locationGeoCoordinates(), QString("0.73;0.57"));
+
+    testEvent.setStartDateTime(QDateTime(QDate::currentDate()));
+    QCOMPARE(testEvent.startDateTime(), QDateTime(QDate::currentDate()));
+    testEvent.setEndDateTime(QDateTime(QDate::currentDate().addDays(1)));
+    QCOMPARE(testEvent.endDateTime(), QDateTime(QDate::currentDate().addDays(1)));
+    QVERIFY(!testEvent.isTimeSpecified()); // default is all day event.
+    testEvent.setTimeSpecified(true);
+    QVERIFY(testEvent.isTimeSpecified());
+
+    testEvent.setPriority(QOrganizerItemPriority::VeryHighPriority);
+    QCOMPARE(testEvent.priority(), QOrganizerItemPriority::VeryHighPriority);
+    testEvent.setPriority(QOrganizerItemPriority::VeryLowPriority);
+    QCOMPARE(testEvent.priority(), QOrganizerItemPriority::VeryLowPriority);
+
+    QList<QDate> rdates;
+    rdates << QDate::currentDate() << QDate::currentDate().addDays(3) << QDate::currentDate().addDays(8);
+    testEvent.setRecurrenceDates(rdates);
+    QCOMPARE(testEvent.recurrenceDates(), rdates);
+
+    QList<QDate> exdates;
+    exdates << QDate::currentDate().addDays(3);
+    testEvent.setExceptionDates(exdates);
+    QCOMPARE(testEvent.exceptionDates(), exdates);
+
+    QList<QOrganizerItemRecurrenceRule> rrules;
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setCount(2);
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    rrules << rrule;
+    testEvent.setRecurrenceRules(rrules);
+    //QVERIFY(testEvent.recurrenceRules() == rrules); // XXX TODO: implement operator == for QOIRR.
+
+    QList<QOrganizerItemRecurrenceRule> exrules;
+    QOrganizerItemRecurrenceRule exrule;
+    exrule.setCount(1);
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    testEvent.setExceptionRules(exrules);
+    //QVERIFY(testEvent.exceptionRules() == exrules); // XXX TODO: implement operator == for QOIRR.
+}
+
+void tst_QOrganizerItem::todo()
+{
+    QOrganizerTodo testTodo;
+    QCOMPARE(testTodo.type(), QString(QLatin1String(QOrganizerItemType::TypeTodo)));
+
+    QCOMPARE(testTodo.status(), QOrganizerTodoProgress::StatusNotStarted);
+    testTodo.setStatus(QOrganizerTodoProgress::StatusInProgress);
+    QCOMPARE(testTodo.status(), QOrganizerTodoProgress::StatusInProgress);
+
+    QCOMPARE(testTodo.progressPercentage(), 0);
+    testTodo.setProgressPercentage(50);
+    QCOMPARE(testTodo.progressPercentage(), 50);
+    testTodo.setStatus(QOrganizerTodoProgress::StatusComplete);
+    QCOMPARE(testTodo.progressPercentage(), 50); // XXX TODO: should this update automatically?
+
+    testTodo.setDueDateTime(QDateTime(QDate::currentDate()));
+    QCOMPARE(testTodo.dueDateTime(), QDateTime(QDate::currentDate()));
+    testTodo.setFinishedDateTime(QDateTime(QDate::currentDate().addDays(1)));
+    QCOMPARE(testTodo.finishedDateTime(), QDateTime(QDate::currentDate().addDays(1)));
+
+    testTodo.setPriority(QOrganizerItemPriority::VeryHighPriority);
+    QCOMPARE(testTodo.priority(), QOrganizerItemPriority::VeryHighPriority);
+    testTodo.setPriority(QOrganizerItemPriority::VeryLowPriority);
+    QCOMPARE(testTodo.priority(), QOrganizerItemPriority::VeryLowPriority);
+
+    QList<QDate> rdates;
+    rdates << QDate::currentDate() << QDate::currentDate().addDays(3) << QDate::currentDate().addDays(8);
+    testTodo.setRecurrenceDates(rdates);
+    QCOMPARE(testTodo.recurrenceDates(), rdates);
+
+    QList<QDate> exdates;
+    exdates << QDate::currentDate().addDays(3);
+    testTodo.setExceptionDates(exdates);
+    QCOMPARE(testTodo.exceptionDates(), exdates);
+
+    QList<QOrganizerItemRecurrenceRule> rrules;
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setCount(2);
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    rrules << rrule;
+    testTodo.setRecurrenceRules(rrules);
+    //QVERIFY(testTodo.recurrenceRules() == rrules); // XXX TODO: implement operator == for QOIRR.
+
+    QList<QOrganizerItemRecurrenceRule> exrules;
+    QOrganizerItemRecurrenceRule exrule;
+    exrule.setCount(1);
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    testTodo.setExceptionRules(exrules);
+    //QVERIFY(testTodo.exceptionRules() == exrules); // XXX TODO: implement operator == for QOIRR.
+}
+
+void tst_QOrganizerItem::journal()
+{
+    QOrganizerJournal testJournal;
+    QCOMPARE(testJournal.type(), QString(QLatin1String(QOrganizerItemType::TypeJournal)));
+
+    QDateTime currDateTime = QDateTime::currentDateTime();
+    testJournal.setDateTime(currDateTime);
+    QCOMPARE(testJournal.dateTime(), currDateTime);
+}
+
+void tst_QOrganizerItem::note()
+{
+    QOrganizerNote testNote;
+    QCOMPARE(testNote.type(), QString(QLatin1String(QOrganizerItemType::TypeNote)));
+}
+
+void tst_QOrganizerItem::eventOccurrence()
+{
+    QOrganizerEventOccurrence testEventOccurrence;
+    QCOMPARE(testEventOccurrence.type(), QString(QLatin1String(QOrganizerItemType::TypeEventOccurrence)));
+
+    testEventOccurrence.setLocationName("test location");
+    testEventOccurrence.setLocationAddress("test address");
+    testEventOccurrence.setLocationGeoCoordinates("0.73;0.57");
+    QCOMPARE(testEventOccurrence.locationName(), QString("test location"));
+    QCOMPARE(testEventOccurrence.locationAddress(), QString("test address"));
+    QCOMPARE(testEventOccurrence.locationGeoCoordinates(), QString("0.73;0.57"));
+
+    testEventOccurrence.setStartDateTime(QDateTime(QDate::currentDate()));
+    QCOMPARE(testEventOccurrence.startDateTime(), QDateTime(QDate::currentDate()));
+    testEventOccurrence.setEndDateTime(QDateTime(QDate::currentDate().addDays(1)));
+    QCOMPARE(testEventOccurrence.endDateTime(), QDateTime(QDate::currentDate().addDays(1)));
+
+    testEventOccurrence.setPriority(QOrganizerItemPriority::VeryHighPriority);
+    QCOMPARE(testEventOccurrence.priority(), QOrganizerItemPriority::VeryHighPriority);
+    testEventOccurrence.setPriority(QOrganizerItemPriority::VeryLowPriority);
+    QCOMPARE(testEventOccurrence.priority(), QOrganizerItemPriority::VeryLowPriority);
+
+    // the parent id and original date time must be tested in the manager unit test
+}
+
+void tst_QOrganizerItem::todoOccurrence()
+{
+    QOrganizerTodoOccurrence testTodoOccurrence;
+    QCOMPARE(testTodoOccurrence.type(), QString(QLatin1String(QOrganizerItemType::TypeTodoOccurrence)));
+
+    QCOMPARE(testTodoOccurrence.status(), QOrganizerTodoProgress::StatusNotStarted);
+    testTodoOccurrence.setStatus(QOrganizerTodoProgress::StatusInProgress);
+    QCOMPARE(testTodoOccurrence.status(), QOrganizerTodoProgress::StatusInProgress);
+
+    QCOMPARE(testTodoOccurrence.progressPercentage(), 0);
+    testTodoOccurrence.setProgressPercentage(50);
+    QCOMPARE(testTodoOccurrence.progressPercentage(), 50);
+    testTodoOccurrence.setStatus(QOrganizerTodoProgress::StatusComplete);
+    QCOMPARE(testTodoOccurrence.progressPercentage(), 50); // XXX TODO: should this update automatically?
+
+    testTodoOccurrence.setDueDateTime(QDateTime(QDate::currentDate()));
+    QCOMPARE(testTodoOccurrence.dueDateTime(), QDateTime(QDate::currentDate()));
+    testTodoOccurrence.setFinishedDateTime(QDateTime(QDate::currentDate().addDays(1)));
+    QCOMPARE(testTodoOccurrence.finishedDateTime(), QDateTime(QDate::currentDate().addDays(1)));
+
+    testTodoOccurrence.setPriority(QOrganizerItemPriority::VeryHighPriority);
+    QCOMPARE(testTodoOccurrence.priority(), QOrganizerItemPriority::VeryHighPriority);
+    testTodoOccurrence.setPriority(QOrganizerItemPriority::VeryLowPriority);
+    QCOMPARE(testTodoOccurrence.priority(), QOrganizerItemPriority::VeryLowPriority);
+
+    // the parent id and original date time must be tested in the manager unit test
+}
 
 QTEST_MAIN(tst_QOrganizerItem)
 #include "tst_qorganizeritem.moc"
