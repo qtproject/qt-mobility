@@ -38,27 +38,31 @@
 **
 ****************************************************************************/
 
-.pragma library
+#ifndef UTILITY_H
+#define UTILITY_H
 
-var homePath = "file:///home/user";
-var illegalCharacters = /(\(.*\)|\{.*\}|\[.*\]|<.*>|[\(\)_\{\}\[\]\!@#$^&*+=|\/"'?~`])/g
-var whitespace = /\s+/g
+#include <QtCore/QObject>
+#include <QtCore/QRegExp>
+#include <QtCore/QUrl>
 
-function getAlbumArtUrl(artist, title) {
-    if (artist == "") artist = " ";
-    if (title == "") title = " ";
-
-    var artPath = homePath
-            + "/.cache/media-art/album-"
-            + Qt.md5(artist.toLowerCase().replace(illegalCharacters, "").replace(whitespace, " "))
-            + "-"
-            + Qt.md5(title.toLowerCase().replace(illegalCharacters, "").replace(whitespace, " "))
-            + ".jpeg";
-
-    return homePath + "/.thumbnails/cropped/" + Qt.md5(artPath) + ".jpeg";
-}
-
-function formatDuration(duration)
+class Utility : public QObject
 {
-    return Math.floor(duration / 60) + ":" + (duration % 60)
-}
+    Q_OBJECT
+public:
+    Utility(QObject *parent = 0);
+    ~Utility();
+
+    Q_INVOKABLE QString formatDuration(int duration) const;
+    Q_INVOKABLE QUrl getAlbumArtUrl(const QString &artist, const QString &title) const;
+    Q_INVOKABLE QUrl getAlbumArtThumbnailUrl(const QString &artist, const QString &title) const;
+
+#if defined(Q_OS_UNIX) && !(defined(Q_OS_SYMBIAN) || defined(Q_OS_MAC))
+private:
+    QString hash(const QString &identifier) const;
+
+    QRegExp illegalCharacters;
+    QString whitespace;
+#endif
+};
+
+#endif
