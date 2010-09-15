@@ -39,57 +39,41 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOPLAYERSERVICE_H
-#define S60VIDEOPLAYERSERVICE_H
+#ifndef S60MEDIASTREAMCONTROL_H
+#define S60MEDIASTREAMCONTROL_H
 
-#include <QtCore/qobject.h>
-#include <qmediaservice.h>
+#include <QVariant>
 
-#include "ms60mediaplayerresolver.h"
-#include "s60mediaplayeraudioendpointselector.h"
+#include "s60mediaplayercontrol.h"
 
-QT_BEGIN_NAMESPACE
-class QMediaMetaData;
-class QMediaPlayerControl;
-class QMediaPlaylist;
-QT_END_NAMESPACE
+#include <qmediastreamscontrol.h>
+#include <qtmedianamespace.h>
 
 QT_USE_NAMESPACE
 
-class S60VideoPlayerSession;
-class S60AudioPlayerSession;
 class S60MediaPlayerControl;
-class S60MediaMetaDataProvider;
-class S60MediaStreamControl;
-class S60MediaRecognizer;
+class S60MediaSettings;
 
-class QMediaPlaylistNavigator;
-
-class S60MediaPlayerService : public QMediaService, public MS60MediaPlayerResolver
+class S60MediaStreamControl : public QMediaStreamsControl
 {
     Q_OBJECT
-
 public:
+    S60MediaStreamControl(QObject *session, QObject *parent = 0);
+    ~S60MediaStreamControl();
 
-    S60MediaPlayerService(QObject *parent = 0);
-    ~S60MediaPlayerService();
+    // from QMediaStreamsControl
+    int streamCount();
+    QMediaStreamsControl::StreamType streamType(int streamNumber);
+    QVariant metaData(int streamNumber, QtMultimediaKit::MetaData key);
+    bool isActive(int streamNumber);
+    void setActive(int streamNumber, bool state);
 
-    QMediaControl *requestControl(const char *name);
-    void releaseControl(QMediaControl *control);
-
-protected: // From MS60MediaPlayerResolver
-    S60MediaPlayerSession* PlayerSession();
-    S60MediaPlayerSession* VideoPlayerSession();
-    S60MediaPlayerSession* AudioPlayerSession();
+public Q_SLOTS:
+    void handleStreamsChanged();
 
 private:
     S60MediaPlayerControl *m_control;
-    S60VideoPlayerSession *m_videoPlayerSession;
-    S60AudioPlayerSession *m_audioPlayerSession;
-    S60MediaMetaDataProvider *m_metaData;
-    S60MediaPlayerAudioEndpointSelector *m_audioEndpointSelector;
-    S60MediaStreamControl *m_streamControl;
-    QMediaControl *m_videoOutput;
+    S60MediaSettings::TMediaType m_mediaType;
 };
 
-#endif
+#endif //S60MEDIASTREAMCONTROL_H
