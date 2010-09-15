@@ -3569,7 +3569,7 @@ void tst_QContactManager::partialSave()
     QContactDetail badDetail("BadDetail");
     badDetail.setValue("BadField", "BadValue");
     contacts[5].saveDetail(&badDetail);
-    QVERIFY(!cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName) << "BadDetail", &errorMap));
+    QVERIFY(!cm->saveContacts(&contacts, QStringList("BadDetail"), &errorMap));
     QCOMPARE(errorMap.count(), 2);
     QCOMPARE(errorMap[4], QContactManager::DoesNotExistError);
     QCOMPARE(errorMap[5], QContactManager::InvalidDetailError);
@@ -3578,7 +3578,7 @@ void tst_QContactManager::partialSave()
     badId = id4;
     badId.setLocalId(987234); // something nonexistent
     contacts[4].setId(badId);
-    QVERIFY(!cm->saveContacts(&contacts, QStringList(QContactEmailAddress::DefinitionName) << "BadDetail", &errorMap));
+    QVERIFY(!cm->saveContacts(&contacts, QStringList("BadDetail"), &errorMap));
     QCOMPARE(errorMap.count(), 2);
     QCOMPARE(errorMap[4], QContactManager::DoesNotExistError);
     QCOMPARE(errorMap[5], QContactManager::InvalidDetailError);
