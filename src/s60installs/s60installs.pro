@@ -219,7 +219,7 @@ isEmpty(QT_LIBINFIX):symbian {
 
         pluginstubs += \
             "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbian/qmakepluginstubs/qtcontacts_symbian.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\qtcontacts_symbian.qtplugin\"" \
-            "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbian/qmakepluginstubs/qtcontacts_serviceactionmanager.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\qtcontacts_serviceactionmanager.qtplugin\""
+            "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/serviceactionmanager/qmakepluginstubs/qtcontacts_serviceactionmanager.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\qtcontacts_serviceactionmanager.qtplugin\""
 
         contains(symbiancntsim_enabled, yes) {
             pluginstubs += \
