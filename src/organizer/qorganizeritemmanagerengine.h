@@ -133,7 +133,7 @@ public:
     /* Capabilities reporting */
     virtual bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const;
     virtual bool isFilterSupported(const QOrganizerItemFilter& filter) const;
-    virtual QList<QVariant::Type> supportedDataTypes() const;
+    virtual QList<int> supportedDataTypes() const;
     virtual QStringList supportedItemTypes() const;
 
     /* Reports the built-in definitions from the schema */

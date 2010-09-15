@@ -89,7 +89,7 @@ QOrganizerItemDetailFieldDefinition& QOrganizerItemDetailFieldDefinition::operat
 /*!
  * Returns the data type of the field
  */
-QVariant::Type QOrganizerItemDetailFieldDefinition::dataType() const
+int QOrganizerItemDetailFieldDefinition::dataType() const
 {
     return d->m_dataType;
 }
@@ -97,7 +97,7 @@ QVariant::Type QOrganizerItemDetailFieldDefinition::dataType() const
 /*!
  * Sets the data type of the field to \a type
  */
-void QOrganizerItemDetailFieldDefinition::setDataType(QVariant::Type type)
+void QOrganizerItemDetailFieldDefinition::setDataType(int type)
 {
     d->m_dataType = type;
 }
@@ -159,7 +159,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemDetailFieldDefinition& de
         quint32 dataType;
         QVariantList allowableValues;
         in >> dataType >> allowableValues;
-        definition.setDataType(QVariant::Type(dataType));
+        definition.setDataType(dataType);
         definition.setAllowableValues(allowableValues);
     } else {
         in.setStatus(QDataStream::ReadCorruptData);

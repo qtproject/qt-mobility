@@ -443,9 +443,9 @@ bool QOrganizerItemSkeletonEngine::isFilterSupported(const QOrganizerItemFilter&
     return false;
 }
 
-QList<QVariant::Type> QOrganizerItemSkeletonEngine::supportedDataTypes() const
+QList<int> QOrganizerItemSkeletonEngine::supportedDataTypes() const
 {
-    QList<QVariant::Type> ret;
+    QList<int> ret;
     // TODO - tweak which data types this engine understands
     ret << QVariant::String;
     ret << QVariant::Date;

@@ -751,34 +751,38 @@ void tst_QOrganizerItemManager::add()
                 // any value of the correct type will be accepted
                 bool savedSuccessfully = false;
                 QVariant dummyValue = QVariant(fieldKey); // try to get some unique string data
-                if (dummyValue.canConvert(currentField.dataType())) {
-                    savedSuccessfully = dummyValue.convert(currentField.dataType());
-                    if (savedSuccessfully) {
-                        // we have successfully created a (supposedly) valid field for this detail.
-                        det.setValue(fieldKey, dummyValue);
-                        continue;
+                if (static_cast<unsigned>(currentField.dataType()) < QVariant::UserType) {
+                    QVariant::Type type = static_cast<QVariant::Type>(currentField.dataType());
+                    // It is not a user-defined type
+                    if (dummyValue.canConvert(type)) {
+                        savedSuccessfully = dummyValue.convert(type);
+                        if (savedSuccessfully) {
+                            // we have successfully created a (supposedly) valid field for this detail.
+                            det.setValue(fieldKey, dummyValue);
+                            continue;
+                        }
                     }
-                }
 
-                // nope, couldn't save the string value (test); try a date.
-                dummyValue = QVariant(QDate::currentDate());
-                if (dummyValue.canConvert(currentField.dataType())) {
-                    savedSuccessfully = dummyValue.convert(currentField.dataType());
-                    if (savedSuccessfully) {
-                        // we have successfully created a (supposedly) valid field for this detail.
-                        det.setValue(fieldKey, dummyValue);
-                        continue;
+                    // nope, couldn't save the string value (test); try a date.
+                    dummyValue = QVariant(QDate::currentDate());
+                    if (dummyValue.canConvert(type)) {
+                        savedSuccessfully = dummyValue.convert(type);
+                        if (savedSuccessfully) {
+                            // we have successfully created a (supposedly) valid field for this detail.
+                            det.setValue(fieldKey, dummyValue);
+                            continue;
+                        }
                     }
-                }
 
-                // nope, couldn't convert a string or a date - try the integer value (42)
-                dummyValue = QVariant(42);
-                if (dummyValue.canConvert(currentField.dataType())) {
-                    savedSuccessfully = dummyValue.convert(currentField.dataType());
-                    if (savedSuccessfully) {
-                        // we have successfully created a (supposedly) valid field for this detail.
-                        det.setValue(fieldKey, dummyValue);
-                        continue;
+                    // nope, couldn't convert a string or a date - try the integer value (42)
+                    dummyValue = QVariant(42);
+                    if (dummyValue.canConvert(type)) {
+                        savedSuccessfully = dummyValue.convert(type);
+                        if (savedSuccessfully) {
+                            // we have successfully created a (supposedly) valid field for this detail.
+                            det.setValue(fieldKey, dummyValue);
+                            continue;
+                        }
                     }
                 }
 
@@ -2177,7 +2181,8 @@ void tst_QOrganizerItemManager::detailDefinitions()
 
     /* A detail definition with valid allowed values (or really just one) */
     QOrganizerItemDetailDefinition allowedDef = newDef;
-    field.setAllowableValues(field.allowableValues() << (QVariant(field.dataType())));
+    field.setAllowableValues(field.allowableValues() <<
+                             (QVariant(static_cast<QVariant::Type>(field.dataType()))));
     fields.clear();
     fields.insert("Restricted value", field);
     allowedDef.setFields(fields);

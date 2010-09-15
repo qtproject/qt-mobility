@@ -1339,9 +1339,9 @@ bool QOrganizerItemMemoryEngine::hasFeature(QOrganizerItemManager::ManagerFeatur
 /*!
  * \reimp
  */
-QList<QVariant::Type> QOrganizerItemMemoryEngine::supportedDataTypes() const
+QList<int> QOrganizerItemMemoryEngine::supportedDataTypes() const
 {
-    QList<QVariant::Type> st;
+    QList<int> st;
     st.append(QVariant::String);
     st.append(QVariant::Date);
     st.append(QVariant::DateTime);

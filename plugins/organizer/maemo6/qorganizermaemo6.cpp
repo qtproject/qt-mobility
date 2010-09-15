@@ -465,9 +465,9 @@ bool QOrganizerItemMaemo6Engine::isFilterSupported(const QOrganizerItemFilter& f
     return false;
 }
 
-QList<QVariant::Type> QOrganizerItemMaemo6Engine::supportedDataTypes() const
+QList<int> QOrganizerItemMaemo6Engine::supportedDataTypes() const
 {
-    QList<QVariant::Type> ret;
+    QList<int> ret;
     // TODO - tweak which data types this engine understands
     ret << QVariant::String;
     ret << QVariant::Date;

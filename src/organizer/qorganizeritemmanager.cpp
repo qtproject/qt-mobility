@@ -712,7 +712,7 @@ bool QOrganizerItemManager::hasFeature(QOrganizerItemManager::ManagerFeature fea
 /*!
   Returns the list of data types supported by the manager
  */
-QList<QVariant::Type> QOrganizerItemManager::supportedDataTypes() const
+QList<int> QOrganizerItemManager::supportedDataTypes() const
 {
     return d->m_engine->supportedDataTypes();
 }

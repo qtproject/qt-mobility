@@ -450,9 +450,9 @@ bool QOrganizerItemManagerEngine::isFilterSupported(const QOrganizerItemFilter& 
 /*!
   Returns the list of data types supported by this engine.
  */
-QList<QVariant::Type> QOrganizerItemManagerEngine::supportedDataTypes() const
+QList<int> QOrganizerItemManagerEngine::supportedDataTypes() const
 {
-    return QList<QVariant::Type>();
+    return QList<int>();
 }
 
 /*!
@@ -1571,7 +1571,7 @@ bool QOrganizerItemManagerEngine::validateDefinition(const QOrganizerItemDetailD
     }
 
     // Check each field now
-    QList<QVariant::Type> types = supportedDataTypes();
+    QList<int> types = supportedDataTypes();
     QMapIterator<QString, QOrganizerItemDetailFieldDefinition> it(definition.fields());
     while(it.hasNext()) {
         it.next();
@@ -1587,7 +1587,7 @@ bool QOrganizerItemManagerEngine::validateDefinition(const QOrganizerItemDetailD
 
         // Check that each allowed value is the same type
         for (int i=0; i < it.value().allowableValues().count(); i++) {
-            if (it.value().allowableValues().at(i).type() != it.value().dataType()) {
+            if (it.value().allowableValues().at(i).userType() != it.value().dataType()) {
                 *error = QOrganizerItemManager::BadArgumentError;
                 return false;
             }
