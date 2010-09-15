@@ -50,6 +50,8 @@ QOrganizerItemRequestQueue* QOrganizerItemRequestQueue::instance(
 
 QOrganizerItemRequestQueue::~QOrganizerItemRequestQueue()
 {
+    // Exit any waitForRequestFinished if active
+    exitLoop();
     // Cleanup, delete all the pointers from the hash map
     QMapIterator<QOrganizerItemAbstractRequest*, 
     COrganizerItemRequestsServiceProvider*> iter(m_abstractRequestMap);
