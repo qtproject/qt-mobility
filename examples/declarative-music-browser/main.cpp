@@ -38,7 +38,10 @@
 **
 ****************************************************************************/
 
-#include <QtDeclarative>
+#include <QtGui/QApplication>
+#include <QtDeclarative/QDeclarativeContext>
+#include <QtDeclarative/QDeclarativeEngine>
+#include <QtDeclarative/QDeclarativeView>
 
 #include "utility.h"
 
