@@ -43,6 +43,7 @@
 
 #include <QtTest/QtTest>
 #include "qsysteminfo.h"
+#include <QDesktopWidget>
 
 QTM_USE_NAMESPACE
 class tst_QSystemDisplayInfo : public QObject
@@ -66,14 +67,15 @@ void tst_QSystemDisplayInfo::tst_colorDepth()
 {
     QSystemDisplayInfo di;
     int depth = di.colorDepth(0);
-
-    QVERIFY(depth == 0
-            || depth == 8
-            || depth == 16
-            || depth == 24
-            || depth == 32
-            || depth == 64);
-
+    QDesktopWidget wid;
+    if(wid.screenCount() > 1) {
+        QVERIFY(depth == 0
+                || depth == 8
+                || depth == 16
+                || depth == 24
+                || depth == 32
+                || depth == 64);
+        }
     QVERIFY(di.colorDepth(999) == -1);
 }
 
