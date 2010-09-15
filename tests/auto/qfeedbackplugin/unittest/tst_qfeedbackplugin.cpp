@@ -106,6 +106,16 @@ void tst_QFeedbackPlugin::testPlugin()
 
     // make sure we found the test actuator...
     QCOMPARE(testActuator.name(), QString("test plugin"));
+    QCOMPARE(testActuator.id(), 7357); // test
+    QVERIFY(testActuator.isCapabilitySupported(QFeedbackActuator::Period));
+    testActuator.setEnabled(true);
+    QVERIFY(!testActuator.isEnabled()); // the test plugin always returns enabled = false.
+    testActuator.setEnabled(false);
+    QVERIFY(!testActuator.isEnabled()); // the test plugin always returns enabled = false.
+    testActuator.setEnabled(true);
+    QVERIFY(!testActuator.isEnabled()); // the test plugin always returns enabled = false.
+    QCOMPARE(testActuator.state(), QFeedbackActuator::Unknown); // and it always returns state = unknown.
+    // XXX TODO: ensure that a "working" plugin returns real values..
 
     // then, ensure that the test effect uses this actuator.
     m_testEffect.setActuator(testActuator);
