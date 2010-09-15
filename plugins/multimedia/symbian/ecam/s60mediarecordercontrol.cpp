@@ -81,7 +81,7 @@ bool S60MediaRecorderControl::setOutputLocation(const QUrl& sink)
     return false;
 }
 
-QMediaRecorder::State S60MediaRecorderControl::convertMMFStateToQtState(S60VideoCaptureSession::TVideoCaptureState aState) const
+QMediaRecorder::State S60MediaRecorderControl::convertInternalStateToQtState(S60VideoCaptureSession::TVideoCaptureState aState) const
 {
     QMediaRecorder::State state;
 
@@ -103,7 +103,7 @@ QMediaRecorder::State S60MediaRecorderControl::convertMMFStateToQtState(S60Video
 
 void S60MediaRecorderControl::updateState(S60VideoCaptureSession::TVideoCaptureState state)
 {
-    QMediaRecorder::State newState = convertMMFStateToQtState(state);
+    QMediaRecorder::State newState = convertInternalStateToQtState(state);
 
     if (m_state != newState) {
         m_state = newState;
