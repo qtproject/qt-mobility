@@ -41,7 +41,9 @@
 
 import Qt 4.7
 
+// At the moment unused, could accommodate e.g. satellite symbols etc.
 Item {
+    property alias text1: freeText.text
     id: statusBar
     BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
 
@@ -49,9 +51,9 @@ Item {
         id: container
         width: (parent.width * 2) - 55 ; height: parent.height
         Text {
-            id: categoryText
+            id: freeText
             anchors {
-                 leftMargin: 10; rightMargin: 10; // left: quitButton.right;
+                leftMargin: 10; rightMargin: 10;
                 verticalCenter: parent.verticalCenter
             }
             elide: Text.ElideLeft
