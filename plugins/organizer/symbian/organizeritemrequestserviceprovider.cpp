@@ -342,11 +342,6 @@ void COrganizerItemRequestsServiceProvider::SaveItemL()
 void COrganizerItemRequestsServiceProvider::FetchItemsL()
     {
     QOrganizerItemFilter filter = ((QOrganizerItemFetchRequest*)iReq)->filter();
-    QList<QOrganizerItemSortOrder> sortOrder = 
-            ((QOrganizerItemFetchRequest*)iReq)->sorting();
-    // Fetch hint is not supported as of now
-    QOrganizerItemFetchHint fetchHint = 
-            ((QOrganizerItemFetchRequest*)iReq)->fetchHint();
     
     // Get the filter type
     QOrganizerItemFilter::FilterType filterType = filter.type();
@@ -371,6 +366,12 @@ void COrganizerItemRequestsServiceProvider::FetchItemsL()
                     filter, sortOrder, &iError));
                 iNoOfItems = iItemIds.count();
                 }
+            QList<QOrganizerItemSortOrder> sortOrder = 
+                    ((QOrganizerItemFetchRequest*)iReq)->sorting();
+            // Fetch hint is not supported as of now
+            QOrganizerItemFetchHint fetchHint = 
+                    ((QOrganizerItemFetchRequest*)iReq)->fetchHint();
+
             FetchItemsandFilterL(filter, sortOrder, fetchHint);
             }
             break;

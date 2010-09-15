@@ -72,11 +72,18 @@ const TInt KErrInvalidOccurrence(-32768);
 QOrganizerItemManagerEngine* QOrganizerItemSymbianFactory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(parameters);
-    Q_UNUSED(error);
-
-    /* TODO - if you understand any specific parameters. save them in the engine so that engine::managerParameters can return them */
 
     QOrganizerItemSymbianEngine* ret = new QOrganizerItemSymbianEngine(); // manager takes ownership and will clean up.
+    TRAPD(err, ret->initializeL());
+    QOrganizerItemSymbianEngine::transformError(err, error);
+    if (*error != QOrganizerItemManager::NoError) {
+        // Something went wrong. Return null so that QOrganizerItemManagerData::createEngine() will
+        // return QOrganizerItemInvalidEngine to the client. This will avoid null pointer exceptions
+        // if the client still tries to access the manager.
+        delete ret;
+        ret = 0;
+    }
+    
     return ret;
 }
 
@@ -91,6 +98,11 @@ QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
     QOrganizerItemManagerEngine(),
     m_defaultCollection(this),
     m_activeSchedulerWait(0)
+{
+
+}
+
+void QOrganizerItemSymbianEngine::initializeL()
 {
     // Open the default collection
     m_defaultCollection.openL(KNullDesC);
@@ -339,6 +351,21 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(const QOrganize
 
 QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
 {
+    QList<QOrganizerItemLocalId> ids;
+    TRAPD(err, itemIdsL(ids, filter, sortOrders))
+    transformError(err, error);
+    if (*error != QOrganizerItemManager::NoError) {
+        return QList<QOrganizerItemLocalId>();
+    } else {
+        return ids;
+    }
+}
+
+void QOrganizerItemSymbianEngine::itemIdsL(
+    QList<QOrganizerItemLocalId>& itemLocalids, 
+    const QOrganizerItemFilter& filter, 
+    const QList<QOrganizerItemSortOrder>& sortOrders) const
+{
     // Set minumum time for id fetch
     // TODO: get minumum time from filter
     TCalTime calTime;
@@ -349,45 +376,43 @@ QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::itemIds(const QOrganiz
     // local id? (not certain that is the correct way, because the Qt API for
     // collections is still under development)
     RArray<TCalLocalUid> ids;
+    CleanupClosePushL(ids);
     foreach(QOrganizerCollectionLocalId collectionId, m_collections.keys()) {
-        TRAPD(err, entryViewL(collectionId)->GetIdsModifiedSinceDateL(calTime, ids));
-        transformError(err, error);
-        if (*error != QOrganizerItemManager::NoError) {
-            ids.Close();
-            return QList<QOrganizerItemLocalId>();
-        }
+        entryViewL(collectionId)->GetIdsModifiedSinceDateL(calTime, ids);
     }
 
     // Convert to QOrganizerItemLocalId list
     QList<QOrganizerItemLocalId> itemIds;
     int count = ids.Count();
-    for (int i=0; i<count; i++)
+    for (int i=0; i<count; i++) {
         itemIds << QOrganizerItemLocalId(ids[i]);
-    ids.Close();
+    }
+    CleanupStack::PopAndDestroy(&ids);
     
+    QOrganizerItemFilter::FilterType filterType = filter.type();
     // No filtering and sorting needed?
-    if (filter.type() == QOrganizerItemFilter::InvalidFilter || filter.type() == QOrganizerItemFilter::DefaultFilter && sortOrders.count() == 0)
-        return itemIds;   
+    if (filterType == QOrganizerItemFilter::InvalidFilter || 
+        filterType == QOrganizerItemFilter::DefaultFilter && 
+        sortOrders.count() == 0) {
+        itemLocalids.append(itemIds);
+        return;
+    }
         
     // Get items for slow filter
     QOrganizerItemFetchHint fetchHint;
     QList<QOrganizerItem> items;
     foreach(const QOrganizerItemLocalId &id, itemIds) {
-        QOrganizerItem item = this->item(id, fetchHint, error);
-        if (*error != QOrganizerItemManager::NoError)
-            return QList<QOrganizerItemLocalId>();
+        QOrganizerItem item;
+        itemL(id, &item, fetchHint);
         items << item;
     }
     
     // Use the general implementation to filter and sort items
     QList<QOrganizerItem> filteredAndSorted = slowFilter(items, filter, sortOrders);
     
-    // Convert to QOrganizerItemLocalId list
-    QList<QOrganizerItemLocalId> filteredAndSortedIds;
-    foreach (const QOrganizerItem &item, filteredAndSorted)
-        filteredAndSortedIds << item.localId();
-    
-    return filteredAndSortedIds;
+    foreach (const QOrganizerItem& item, filteredAndSorted) {
+        itemLocalids << item.localId();
+    }
 }
 
 QList<QOrganizerItem> QOrganizerItemSymbianEngine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
