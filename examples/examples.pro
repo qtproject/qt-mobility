@@ -119,7 +119,8 @@ contains(mobility_modules,gallery) {
         mediabrowser
 
     contains(QT_CONFIG, declarative) {
-        sources.files += declarative-music-browser
+        SUBDIRS += \
+                declarative-music-browser
     }
 }
 
