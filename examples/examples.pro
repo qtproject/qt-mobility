@@ -13,11 +13,10 @@ contains(mobility_modules,serviceframework) {
     #These examples do not work on Symbian yet
     !symbian:SUBDIRS+= sfw-notes
     
-    !symbian:contains(QT_CONFIG, declarative) {
-        SUBDIRS += declarative-sfw-dialer
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += declarative-sfw-dialer declarative-sfw-notes
 
-        sources.files += declarative-sfw-notes \
-                         declarative-sfw-dialer/declarative-sfw-dialer
+        !symbian:sources.files += declarative-sfw-dialer/declarative-sfw-dialer
     }
 }
 
