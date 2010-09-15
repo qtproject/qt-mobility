@@ -150,7 +150,7 @@ QLandmarkFilter* QDeclarativeLandmarkProximityFilter::filter()
         return 0;
     // Populate filter only now in case their contents have changed.
     m_filter.setRadius(m_radius);
-    m_filter.setCoordinate(m_coordinate->coordinate());
+    m_filter.setCenter(m_coordinate->coordinate());
     return &m_filter;
 }
 
