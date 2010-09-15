@@ -42,7 +42,7 @@
 #ifndef QREMOTESERVICECONTROL_S60_P_H
 #define QREMOTESERVICECONTROL_S60_P_H
 
-#define QT_SFW_SYMBIAN_IPC_DEBUG
+//#define QT_SFW_SYMBIAN_IPC_DEBUG
 
 #include "qremoteservicecontrol.h"
 #include "qremoteservicecontrol_p.h"

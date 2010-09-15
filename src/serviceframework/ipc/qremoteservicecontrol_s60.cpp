@@ -204,10 +204,10 @@ void QRemoteServiceControlSymbianPrivate::publishServices(const QString &ident)
         qDebug() << "RTR server->Start() failed, TODO return false.";
     } else {
         qDebug("GTR QRemoteServiceControlPrivate::server providing service started successfully");
-    }
+    }    
+    qDebug() << "Service fired rendezvous";
 #endif
     // If we're started by the client, notify them we're running
-    qDebug() << "Service fired rendezvous";
     RProcess::Rendezvous(KErrNone);
 }
 
@@ -337,7 +337,9 @@ void RServiceSession::SendServicePackage(const QServicePackage& aPackage)
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_6);
     out << aPackage;
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "Size of package sent from client to server: " << block.count();
+#endif
     TPtrC8 ptr8((TUint8*)(block.constData()), block.size());
     TIpcArgs args(&ptr8, &iError);
     TInt err = SendReceive(EServicePackage, args);
@@ -691,8 +693,8 @@ void CServiceProviderServerSession::SendServicePackageL(const QServicePackage& a
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug("CServiceProviderServerSession:: SendServicePackage for package: ");
-#endif
     printServicePackage(aPackage);
+#endif
     if (iPendingPackageRequest) {
         if(iBlockData.isEmpty()){
           // Serialize the package        
