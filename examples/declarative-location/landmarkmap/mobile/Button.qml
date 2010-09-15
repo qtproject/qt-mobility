@@ -47,6 +47,7 @@ Item {
     signal clicked
 
     property string text
+    property color textColor: "white"
 
     BorderImage {
         id: buttonImage
@@ -65,7 +66,7 @@ Item {
         onClicked: { container.clicked(); }
     }
     Text {
-        color: "white"
+        color: textColor
         anchors.centerIn: buttonImage; font.bold: true
         text: container.text; style: Text.Raised; styleColor: "black"
     }
