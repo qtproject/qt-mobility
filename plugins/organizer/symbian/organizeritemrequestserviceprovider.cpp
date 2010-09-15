@@ -289,6 +289,7 @@ void COrganizerItemRequestsServiceProvider::RemoveItemL()
         }
     else
         {
+        // Notify changeset
         iChangeSet.emitSignals(&iOrganizerItemManagerEngine);
         // Notify results
         QOrganizerItemManagerEngine::updateItemRemoveRequest(
@@ -313,10 +314,10 @@ void COrganizerItemRequestsServiceProvider::SaveItemL()
         if (isItemSupported)
             {
             // Save item
-            // TODO: changeSet and collection id needed!
+            // TODO: collection id needed!
             // without changeSet signaling does not work, and without collection id
             // the item is always stored to the default collection
-            iOrganizerItemManagerEngine.saveItemL(&item, 0, 0);
+            iOrganizerItemManagerEngine.saveItemL(&item, 0, &iChangeSet);
             iSuccessfullItems.append(item);
             }
         else
@@ -328,6 +329,8 @@ void COrganizerItemRequestsServiceProvider::SaveItemL()
         }
     else
         {
+        // Notify changeset
+        iChangeSet.emitSignals(&iOrganizerItemManagerEngine);
         // Notify results
         QOrganizerItemManagerEngine::updateItemSaveRequest(
                 (QOrganizerItemSaveRequest*)(iReq), 
