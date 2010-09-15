@@ -72,11 +72,18 @@ const TInt KErrInvalidOccurrence(-32768);
 QOrganizerItemManagerEngine* QOrganizerItemSymbianFactory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(parameters);
-    Q_UNUSED(error);
-
-    /* TODO - if you understand any specific parameters. save them in the engine so that engine::managerParameters can return them */
 
     QOrganizerItemSymbianEngine* ret = new QOrganizerItemSymbianEngine(); // manager takes ownership and will clean up.
+    TRAPD(err, ret->initializeL());
+    QOrganizerItemSymbianEngine::transformError(err, error);
+    if (*error != QOrganizerItemManager::NoError) {
+        // Something went wrong. Return null so that QOrganizerItemManagerData::createEngine() will
+        // return QOrganizerItemInvalidEngine to the client. This will avoid null pointer exceptions
+        // if the client still tries to access the manager.
+        delete ret;
+        ret = 0;
+    }
+    
     return ret;
 }
 
@@ -91,6 +98,11 @@ QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
     QOrganizerItemManagerEngine(),
     m_defaultCollection(this),
     m_activeSchedulerWait(0)
+{
+
+}
+
+void QOrganizerItemSymbianEngine::initializeL()
 {
     // Open the default collection
     m_defaultCollection.openL(KNullDesC);

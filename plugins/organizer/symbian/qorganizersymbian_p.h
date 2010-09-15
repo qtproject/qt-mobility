@@ -128,8 +128,6 @@ class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine,
     Q_OBJECT
 
 public:
-    static QOrganizerItemSymbianEngine *createSkeletonEngine(const QMap<QString, QString>& parameters);
-
     QOrganizerItemSymbianEngine();
     ~QOrganizerItemSymbianEngine();
 
@@ -188,7 +186,9 @@ public: // MCalFileChangeObserver
     void CalendarInfoChangeNotificationL(RPointerArray<CCalFileChangeInfo>& aCalendarInfoChangeEntries);
 #endif
     
-public: 
+public:
+    void initializeL();
+    
     /* Util functions */
     static bool transformError(TInt symbianError, QOrganizerItemManager::Error* qtError);
     void saveItemL(QOrganizerItem *item, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet *changeSet);
