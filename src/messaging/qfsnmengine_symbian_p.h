@@ -186,7 +186,7 @@ private:
     QMessageAccountIdList accountsByType(QMessage::Type type) const;
     void updateEmailAccounts() const;
     NmApiMessage updateFsMessage(QMessage *message);
-    NmApiMessage message(const quint64 messageId) const;
+    NmApiMessage message(const quint64 mailboxId, const quint64 folderId, const quint64 messageId) const;
     
     QMessageFolderIdList folderIdsByAccountId(const QMessageAccountId &accountId) const;
     QMessageFolderIdList filterMessageFoldersL(const QMessageFolderFilter &filter, bool &filterHandled) const;
