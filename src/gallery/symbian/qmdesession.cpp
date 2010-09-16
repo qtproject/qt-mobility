@@ -77,22 +77,23 @@ void QMdeSession::HandleSessionError(CMdESession& /*aSession*/, TInt /*aError*/)
 
 CMdENamespaceDef& QMdeSession::GetDefaultNamespaceDefL()
 {
+    if (m_cmdeSession) {
 #ifdef MDS_25_COMPILATION_ENABLED
-    return m_cmdeSession->GetDefaultNamespaceDefL();
+        return m_cmdeSession->GetDefaultNamespaceDefL();
+    }
 #else
     CMdENamespaceDef *nameSpaceDef = NULL;
-    nameSpaceDef = m_cmdeSession->GetDefaultNamespaceDefL();
+        nameSpaceDef = m_cmdeSession->GetDefaultNamespaceDefL();
     if (!nameSpaceDef)
         User::Leave(KErrBadHandle);
-    return *nameSpaceDef;
+    return *nameSpaceDef;    
+    }
 #endif //MDS_25_COMPILATION_ENABLED
 }
 
-CMdEObject* QMdeSession::GetFullObjectL( const unsigned int id )
+CMdEObject* QMdeSession::GetFullObjectL(const unsigned int id)
 {
-    CMdEObject* ret = m_cmdeSession->GetFullObjectL( id );
-
-    return ret;
+    return m_cmdeSession->GetFullObjectL(id);
 }
 
 void QMdeSession::CommitObjectL( CMdEObject& object )
@@ -196,11 +197,13 @@ void QMdeSession::AddItemChangedObserverL( MMdEObjectObserver& observer, RArray<
 
 void QMdeSession::RemoveObjectObserver( MMdEObjectObserver& observer )
 {
+    if (m_cmdeSession) {
 #ifdef MDS_25_COMPILATION_ENABLED    
-    TRAP_IGNORE( m_cmdeSession->RemoveObjectObserverL( observer ) );
+        TRAP_IGNORE( m_cmdeSession->RemoveObjectObserverL(observer));
 #else
-    TRAP_IGNORE( m_cmdeSession->RemoveObjectObserver(observer) );
+        m_cmdeSession->RemoveObjectObserver(observer);
 #endif //MDS_25_COMPILATION_ENABLED
+    }
 }
 
 #include "moc_qmdesession.cpp"
