@@ -86,6 +86,9 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#include <sys/stat.h>
+#include <sys/vfs.h>
+
 //we cannot include iwlib.h as the platform may not have it installed
 //there we have to go via the kernel's wireless.h
 //#include <iwlib.h>
@@ -1677,6 +1680,7 @@ QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObje
     halIsAvailable = halAvailable();
     udisksIsAvailable = udisksAvailable();
 
+
 #if !defined(QT_NO_DBUS)
     if(halIsAvailable)
         halIface = new QHalInterface(this);
@@ -1691,7 +1695,11 @@ QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObje
 
     logicalDrives();
     storageChanged = false;
-    qDebug() << Q_FUNC_INFO;
+
+    checkAvailableStorage();
+    storageTimer = new QTimer(this);
+    connect(storageTimer,SIGNAL(timeout()),this,SLOT(checkAvailableStorage()));
+    storageTimer->start(60 * 1000);
 
 }
 
@@ -2039,10 +2047,46 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
 
 QSystemStorageInfo::StorageState QSystemStorageInfoLinuxCommonPrivate::getStorageState(const QString &driveVolume)
 {
-    QSystemStorageInfo::StorageState state = QSystemStorageInfo::UnknownStorageState;
-   return state;
+    QSystemStorageInfo::StorageState storState = QSystemStorageInfo::UnknownStorageState;
+    struct statfs fs;
+    if (statfs(driveVolume.toLocal8Bit(), &fs) == 0) {
+        if( fs.f_bfree != 0) {
+            long percent = 100 -(fs.f_blocks - fs.f_bfree) * 100 / fs.f_blocks;
+            qDebug()  << driveVolume << percent;
+
+            if(percent < 41 && percent > 10 ) {
+                storState = QSystemStorageInfo::LowStorageState;
+            } else if(percent < 11 && percent > 2 ) {
+                storState =  QSystemStorageInfo::VeryLowStorageState;
+            } else if(percent < 3  ) {
+                storState =  QSystemStorageInfo::CriticalStorageState;
+            } else {
+                 storState =  QSystemStorageInfo::NormalStorageState;
+            }
+        }
+    }
+//    qDebug()  << driveVolume << storState;
+   return storState;
 }
 
+//QT_LINUXBASE
+
+void QSystemStorageInfoLinuxCommonPrivate::checkAvailableStorage()
+{
+    QMap<QString, QString> oldDrives = mountEntriesMap;
+    foreach(const QString &vol, oldDrives.keys()) {
+        QSystemStorageInfo::StorageState storState = getStorageState(vol);
+        if(!stateMap.contains(vol)) {
+            stateMap.insert(vol,storState);
+        } else {
+            if(stateMap.value(vol) != storState) {
+                stateMap[vol] = storState;
+                qDebug() << "storage state changed" << storState;
+                Q_EMIT storageStateChanged(vol, storState);
+            }
+        }
+    }
+}
 
 QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {

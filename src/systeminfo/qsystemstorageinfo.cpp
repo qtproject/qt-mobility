@@ -85,10 +85,16 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
 */
 
 /*!
-           \fn void QSystemStorageInfo::logicalDriveChanged(bool,const QString &))
+     \fn void QSystemStorageInfo::logicalDriveChanged(bool,const QString &))
 
-           This signal gets emitted when new storage has been added or removed from the system.
-        */
+     This signal gets emitted when new storage has been added or removed from the system.
+*/
+
+/*!
+     \fn void QSystemStorageInfo::storageStateChanged(const QString &, QSystemStorageInfo::StorageState)
+
+     This signal gets emitted when a volume has changed from one StorageState to another.
+*/
 
 
 QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
@@ -100,8 +106,8 @@ QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
     connect(d,SIGNAL(logicalDriveChanged(bool,const QString &)),
            this,SIGNAL(logicalDriveChanged(bool,const QString &)));
 
-    connect(d,SIGNAL(storageStateChanged(QSystemStorageInfo::StorageState state)),
-           this,SIGNAL(storageStateChanged(QSystemStorageInfo::StorageState state)));
+    connect(d,SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)),
+           this,SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)));
 }
 
 /*!

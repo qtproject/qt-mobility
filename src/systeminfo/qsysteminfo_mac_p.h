@@ -231,7 +231,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void logicalDriveChanged(bool added,const QString &vol);
-    void storageStateChanged(QSystemStorageInfo::StorageState state); //1.2
+    void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state); //1.2
 
 private:
     QHash<QString, QString> mountEntriesHash;

@@ -57,6 +57,7 @@
 #include <QObject>
 #include <QSize>
 #include <QHash>
+#include <QTimer>
 
 #include "qsysteminfo.h"
 #include "qsystemdeviceinfo.h"
@@ -249,14 +250,17 @@ public:
 
 Q_SIGNALS:
     void logicalDriveChanged(bool, const QString &);
-    void storageStateChanged(QSystemStorageInfo::StorageState state); //1.2
+    void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state); //1.2
 
 private:
     bool storageChanged;
      QMap<QString, QString> mountEntriesMap;
+     QMap<QString, QSystemStorageInfo::StorageState> stateMap;
      void mountEntries();
      QFileSystemWatcher *mtabWatcherA;
      QFileSystemWatcher *mtabWatcherB;
+
+     QTimer *storageTimer;
 
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;
@@ -271,6 +275,7 @@ private Q_SLOTS:
 
 private Q_SLOTS:
     void deviceChanged(const QString &path);
+    void checkAvailableStorage();
 
 protected:
     void connectNotify(const char *signal);

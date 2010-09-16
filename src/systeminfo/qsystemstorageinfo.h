@@ -91,7 +91,7 @@ public:
 
 Q_SIGNALS:
     void logicalDriveChanged(bool added,const QString &vol);
-    void storageStateChanged(QSystemStorageInfo::StorageState state); //1.2
+    void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state); //1.2
 
 private:
        QSystemStorageInfoPrivate *d;
