@@ -237,21 +237,28 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemLocation)
 class QDeclarativeOrganizerItemPriority : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
-    Q_PROPERTY(QString geoLocation READ geoLocation WRITE setGeoLocation NOTIFY valueChanged)
-    Q_PROPERTY(QString address READ address WRITE setAddress NOTIFY valueChanged)
-    Q_PROPERTY(QString locationName READ locationName WRITE setLocationName NOTIFY valueChanged)
-
+    Q_PROPERTY(Priority priority READ priority WRITE setPriority NOTIFY valueChanged)
+    Q_ENUMS(Priority)
 public:
+    enum Priority {
+        UnknownPriority = QOrganizerItemPriority::UnknownPriority,
+        HighestPriority = QOrganizerItemPriority::HighestPriority,
+        ExtremelyHighPriority = QOrganizerItemPriority::ExtremelyHighPriority,
+        VeryHighPriority = QOrganizerItemPriority::VeryHighPriority,
+        HighPriority = QOrganizerItemPriority::HighestPriority,
+        MediumPriority = QOrganizerItemPriority::MediumPriority,
+        LowPriority = QOrganizerItemPriority::LowPriority,
+        VeryLowPriority = QOrganizerItemPriority::VeryLowPriority,
+        ExtremelyLowPriority = QOrganizerItemPriority::ExtremelyLowPriority,
+        LowestPriority = QOrganizerItemPriority::LowestPriority
+    };
+
     QDeclarativeOrganizerItemPriority(QObject* parent)
         :QDeclarativeOrganizerItemDetail(parent)
     {
     }
-    void setGeoLocation(const QString& stringCoords) {detail().setValue(QOrganizerItemLocation::FieldGeoLocation, stringCoords);}
-    QString geoLocation() const {return detail().value(QOrganizerItemLocation::FieldGeoLocation);}
-    void setAddress(const QString& address) {detail().setValue(QOrganizerItemLocation::FieldAddress, address);}
-    QString address() const {return detail().value(QOrganizerItemLocation::FieldAddress);}
-    void setLocationName(const QString& locationName) {detail().setValue(QOrganizerItemLocation::FieldLocationName, locationName);}
-    QString locationName() const {return detail().value(QOrganizerItemLocation::FieldLocationName);}
+    void setPriority(Priority priority) {detail().setValue(QOrganizerItemPriority::FieldPriority, static_cast<int>(priority));}
+    Priority priority() const {return static_cast<Priority>(detail().value<int>(QOrganizerItemPriority::FieldPriority));}
 
 signals:
     void valueChanged();

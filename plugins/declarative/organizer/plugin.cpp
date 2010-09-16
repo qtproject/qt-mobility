@@ -63,6 +63,8 @@ public:
         qmlRegisterType<QDeclarativeOrganizerItem>(uri, 1, 1, "OrganizerItem");
         qmlRegisterType<QDeclarativeOrganizer>(uri, 1, 1, "Organizer");
 
+        //items
+
         //details
         qmlRegisterType<QDeclarativeOrganizerItemDetail>(uri, 1, 1, "OrganizerItemDetail");
         qmlRegisterType<QDeclarativeOrganizerEventTimeRange>(uri, 1, 1, "OrganizerEventTimeRange");
