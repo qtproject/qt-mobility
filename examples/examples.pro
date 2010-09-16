@@ -49,11 +49,9 @@ contains(mobility_modules,location) {
 
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo
-        
-        contains(QT_CONFIG, declarative) {
-            sources.files += declarative-location
-            sources.files += declarative_mapviewer
-        }
+      }  
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += declarative-location
     }
 }
 
@@ -121,18 +119,14 @@ contains(mobility_modules,gallery) {
         mediabrowser
 
     contains(QT_CONFIG, declarative) {
-        sources.files += declarative-music-browser
+        SUBDIRS += \
+                declarative-music-browser
     }
 }
 
 # Organizer API examples
 contains(mobility_modules, organizer) {
     SUBDIRS += calendardemo
-}
-
-# Telephony API examples
-contains(mobility_modules,telephony) {
-    unix:!mac {SUBDIRS += telephony}
 }
 
 # Feedback API examples

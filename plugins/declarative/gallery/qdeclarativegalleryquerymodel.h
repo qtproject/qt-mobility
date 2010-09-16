@@ -103,41 +103,33 @@ public:
 
     Status status() const { return m_status; }
 
-    qreal progress() const
-    {
-        const int max = m_request.maximumProgress();
-        return max > 0 ? qreal(m_request.currentProgress()) / max : qreal(0.0);
-    }
+    qreal progress() const;
 
     QString errorMessage() const { return m_errorMessage; }
 
     QStringList propertyNames() { return m_request.propertyNames(); }
-    void setPropertyNames(const QStringList &names) {
-        if (!m_complete) { m_request.setPropertyNames(names); emit propertyNamesChanged(); } }
+    void setPropertyNames(const QStringList &names);
 
     QStringList sortPropertyNames() const { return m_request.sortPropertyNames(); }
-    void setSortPropertyNames(const QStringList &names) {
-        if (!m_complete) m_request.setSortPropertyNames(names); emit sortPropertyNamesChanged(); }
+    void setSortPropertyNames(const QStringList &names);
 
     bool autoUpdate() const { return m_request.autoUpdate(); }
-    void setAutoUpdate(bool enabled) { m_request.setAutoUpdate(enabled); emit autoUpdateChanged(); }
+    void setAutoUpdate(bool enabled);
 
     Scope scope() const { return Scope(m_request.scope()); }
-    void setScope(Scope scope) {
-        m_request.setScope(QGalleryQueryRequest::Scope(scope)); emit scopeChanged(); }
+    void setScope(Scope scope);
 
     QVariant rootItem() const { return m_request.rootItem(); }
-    void setRootItem(const QVariant &itemId) {
-        m_request.setRootItem(itemId); emit rootItemChanged(); }
+    void setRootItem(const QVariant &itemId);
 
-    QDeclarativeGalleryFilterBase *filter() const { return m_filter; }
-    void setFilter(QDeclarativeGalleryFilterBase *filter) { m_filter = filter; filterChanged(); }
+    QDeclarativeGalleryFilterBase *filter() const { return m_filter.data(); }
+    void setFilter(QDeclarativeGalleryFilterBase *filter);
 
     int offset() const { return m_request.offset(); }
-    void setOffset(int offset) { m_request.setOffset(offset); emit offsetChanged(); }
+    void setOffset(int offset);
 
     int limit() const { return m_request.limit(); }
-    void setLimit(int limit) { m_request.setLimit(limit); emit limitChanged(); }
+    void setLimit(int limit);
 
     int rowCount(const QModelIndex &parent) const;
 
@@ -175,16 +167,22 @@ Q_SIGNALS:
     void limitChanged();
     void countChanged();
 
+protected Q_SLOTS:
+    void deferredExecute();
+
 protected:
     explicit QDeclarativeGalleryQueryModel(QObject *parent = 0);
 
     virtual QVariant itemType(const QString &type) const = 0;
 
+    void timerEvent(QTimerEvent *event);
+
     QGalleryQueryRequest m_request;
-    QPointer<QDeclarativeGalleryFilterBase> m_filter;
+    QWeakPointer<QDeclarativeGalleryFilterBase> m_filter;
     QGalleryResultSet *m_resultSet;
     QVector<QPair<int, QString> > m_propertyNames;
     QString m_errorMessage;
+    QBasicTimer m_executeTimer;
     Status m_status;
     int m_rowCount;
     bool m_complete;

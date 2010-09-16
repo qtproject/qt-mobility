@@ -40,26 +40,52 @@
 
 #include "gruesensorimpl.h"
 #include <QDebug>
+#include <QTimer>
 
 char const * const gruesensorimpl::id("grue.gruesensor");
 
 gruesensorimpl::gruesensorimpl(QSensor *sensor)
     : QSensorBackend(sensor)
 {
+    // We need a light sensor
     lightSensor = new QAmbientLightSensor(this);
-    lightSensor->addFilter(this);
+    connect(lightSensor, SIGNAL(readingChanged()), this, SLOT(lightChanged()));
     lightSensor->connectToBackend();
 
+    // We need a timer
+    darkTimer = new QTimer(this);
+    darkTimer->setInterval(1000);
+    connect(darkTimer, SIGNAL(timeout()), this, SLOT(increaseChance()));
+
+    // We use this as our timestamp source
+    timer.start();
+
+//! [setReading]
+    // Register our reading instance
     setReading<GrueSensorReading>(&m_reading);
+//! [setReading]
+
+//! [metadata]
+    // Supply metadata
+    // We can run as fast as the light sensor does
     setDataRates(lightSensor);
+    // Only one output range, 0 to 1 in .1 increments
     addOutputRange(0, 1, 0.1);
     setDescription(QLatin1String("Grue Sensor"));
+//! [metadata]
 }
 
 void gruesensorimpl::start()
 {
+//! [start]
     lightSensor->setDataRate(sensor()->dataRate());
     lightSensor->start();
+    // If the light sensor doesn't work we don't work either
+    if (!lightSensor->isActive())
+        sensorStopped();
+    if (lightSensor->isBusy())
+        sensorBusy();
+//! [start]
 }
 
 void gruesensorimpl::stop()
@@ -67,32 +93,43 @@ void gruesensorimpl::stop()
     lightSensor->stop();
 }
 
-bool gruesensorimpl::filter(QAmbientLightReading *reading)
+void gruesensorimpl::lightChanged()
 {
-    qreal chance;
+    qreal chance = 0.0;
+    darkTimer->stop();
 
-    switch (reading->lightLevel()) {
-    case QAmbientLightReading::Undefined:
-        chance = 0.5; // No idea... call it 50/50
-        break;
+    switch (lightSensor->reading()->lightLevel()) {
     case QAmbientLightReading::Dark:
-        chance = 1.0;
-        break;
-    case QAmbientLightReading::Twilight:
+        // It is dark. You are likely to be eaten by a grue.
         chance = 0.1;
+        darkTimer->start();
         break;
     default:
-        chance = 0.0;
         break;
     }
 
+    // Only send an update if the value has changed.
     if (chance != m_reading.chanceOfBeingEaten()) {
-        m_reading.setTimestamp(reading->timestamp());
+        m_reading.setTimestamp(timer.elapsed());
         m_reading.setChanceOfBeingEaten(chance);
 
         newReadingAvailable();
     }
+}
 
-    return true;
+void gruesensorimpl::increaseChance()
+{
+    // The longer you stay in the dark, the higher your chance of being eaten
+    qreal chance = m_reading.chanceOfBeingEaten() + 0.1;
+
+    m_reading.setTimestamp(timer.elapsed());
+    m_reading.setChanceOfBeingEaten(chance);
+
+    newReadingAvailable();
+
+    // No point in using the timer anymore if we've hit 1... you can't get more
+    // likely to be eaten than 100%
+    if (chance == 1.0)
+        darkTimer->stop();
 }
 

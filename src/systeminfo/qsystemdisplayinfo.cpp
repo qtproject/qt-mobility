@@ -41,6 +41,7 @@
 
 #include "qsystemdisplayinfo.h"
 #include "qsysteminfocommon_p.h"
+#include <QDesktopWidget>
 
 QTM_BEGIN_NAMESPACE
         Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
@@ -84,6 +85,10 @@ QSystemDisplayInfo::~QSystemDisplayInfo()
 */
 int QSystemDisplayInfo::displayBrightness(int screenNumber)
 {
+    QDesktopWidget wid;
+    if(wid.screenCount() < 1 || wid.screenCount() - 1 < screenNumber) {
+        return -1;
+    }
     return displayInfoPrivate()->displayBrightness(screenNumber);
 }
 
@@ -95,6 +100,10 @@ int QSystemDisplayInfo::displayBrightness(int screenNumber)
 */
 int QSystemDisplayInfo::colorDepth(int screenNumber)
 {
+    QDesktopWidget wid;
+    if(wid.screenCount() < 1 || wid.screenCount() - 1 < screenNumber) {
+        return -1;
+    }
     return displayInfoPrivate()->colorDepth(screenNumber);
 }
 

@@ -64,7 +64,6 @@ QGeoAddressPrivate::QGeoAddressPrivate(const QGeoAddressPrivate &other)
         sCity(other.sCity),
         sDistrict(other.sDistrict),
         sStreet(other.sStreet),
-        sStreetNumber(other.sStreetNumber),
         sPostCode(other.sPostCode)
 {
 }
@@ -131,7 +130,6 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
     qDebug() << "city:" << (d->sCity == other.city());
     qDebug() << "district:" << (d->sDistrict == other.district());
     qDebug() << "street:" << (d->sStreet == other.street());
-    qDebug() << "streetNumber:" << (d->sStreetNumber == other.streetNumber());
     qDebug() << "postCode:" << (d->sPostCode == other.postCode());
 #endif
 
@@ -142,7 +140,6 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
            d->sCity == other.city() &&
            d->sDistrict == other.district() &&
            d->sStreet == other.street() &&
-           d->sStreetNumber == other.streetNumber() &&
            d->sPostCode == other.postCode();
 }
 
@@ -266,22 +263,6 @@ void QGeoAddress::setStreet(const QString &street)
 }
 
 /*!
-    Returns the street number.
-*/
-QString QGeoAddress::streetNumber() const
-{
-    return d->sStreetNumber;
-}
-
-/*!
-    Sets the \a streetNumber.
-*/
-void QGeoAddress::setStreetNumber(const QString &streetNumber)
-{
-    d->sStreetNumber = streetNumber;
-}
-
-/*!
     Returns the post code.
 */
 QString QGeoAddress::postCode() const
@@ -310,7 +291,6 @@ bool QGeoAddress::isEmpty() const
            d->sCity.isEmpty() &&
            d->sDistrict.isEmpty() &&
            d->sStreet.isEmpty() &&
-           d->sStreetNumber.isEmpty() &&
            d->sPostCode.isEmpty();
 }
 /*!
@@ -325,7 +305,6 @@ void QGeoAddress::clear()
     d->sCity.clear();
     d->sDistrict.clear();
     d->sStreet.clear();
-    d->sStreetNumber.clear();
     d->sPostCode.clear();
 }
 

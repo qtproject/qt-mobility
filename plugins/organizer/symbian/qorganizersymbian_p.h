@@ -72,12 +72,14 @@
 #include "qorganizeritemchangeset.h"
 
 #include "organizeritemtransform.h"
+#include "organizersymbiancollection.h"
 
 #include <calprogresscallback.h> // MCalProgressCallBack
 #include <calchangecallback.h>
 #ifdef SYMBIAN_CALENDAR_V2
 #include <calfilechangenotification.h>
 #endif
+
 
 QTM_USE_NAMESPACE
 
@@ -118,8 +120,7 @@ class CCalCalendarInfo;
 #endif
 
 class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine, 
-                                    public MCalProgressCallBack,
-                                    public MCalChangeCallBack2
+                                    public MCalProgressCallBack
 #ifdef SYMBIAN_CALENDAR_V2
                                     ,public MCalFileChangeObserver
 #endif
@@ -127,8 +128,6 @@ class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine,
     Q_OBJECT
 
 public:
-    static QOrganizerItemSymbianEngine *createSkeletonEngine(const QMap<QString, QString>& parameters);
-
     QOrganizerItemSymbianEngine();
     ~QOrganizerItemSymbianEngine();
 
@@ -141,6 +140,9 @@ public:
     QList<QOrganizerItem> itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint,QOrganizerItemManager::Error* error) const;
 
     QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const;
+    void QOrganizerItemSymbianEngine::itemIdsL(QList<QOrganizerItemLocalId>& ids, 
+        const QOrganizerItemFilter& filter, 
+        const QList<QOrganizerItemSortOrder>& sortOrders) const;
     QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
 
@@ -182,26 +184,26 @@ public: // MCalProgressCallBack
     void Completed(TInt aError);
     TBool NotifyProgress();
 
-public: // MCalChangeCallBack2
-    void CalChangeNotification(RArray<TCalChangeEntry>& aChangeItems);
-
 #ifdef SYMBIAN_CALENDAR_V2
 public: // MCalFileChangeObserver
     void CalendarInfoChangeNotificationL(RPointerArray<CCalFileChangeInfo>& aCalendarInfoChangeEntries);
 #endif
     
-public: 
+public:
+    void initializeL();
+    
     /* Util functions */
     static bool transformError(TInt symbianError, QOrganizerItemManager::Error* qtError);
-    void deleteItemL(const QOrganizerItemLocalId& organizeritemId);
     void saveItemL(QOrganizerItem *item, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet *changeSet);
     void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, 
             const QOrganizerItemFetchHint& fetchHint) const;
+    void removeItemL(const QOrganizerItemLocalId& organizeritemId);
     QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, 
         const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders) const;
 #ifdef SYMBIAN_CALENDAR_V2
     QList<QOrganizerCollectionLocalId> collectionIdsL() const;
+    int sessionCount() const;
     QList<QOrganizerCollection> collectionsL(const QList<QOrganizerCollectionLocalId>& collectionIds) const;
     void saveCollectionL(QOrganizerCollection* collection);
     void removeCollectionL(const QOrganizerCollectionLocalId& collectionId);
@@ -215,21 +217,15 @@ private:
     CCalEntry* findEntryL(const QOrganizerCollectionLocalId collectionId, QOrganizerItemLocalId localId, QString manageruri) const;
     CCalEntry* findEntryL(const QOrganizerCollectionLocalId collectionId, const TDesC8& globalUid) const;
     CCalEntry* findParentEntryLC(const QOrganizerCollectionLocalId collectionId, QOrganizerItem *item, const TDesC8& globalUid) const;
-    void removeItemL(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet *changeSet);
 	
 private:
     QOrganizerItemSymbianEngineData *d;
-    CCalSession *m_defaultCalSession;
-#ifdef SYMBIAN_CALENDAR_V2    
-    RPointerArray<CCalSession> m_calSessions;
-#endif
-    QMap<QOrganizerCollectionLocalId, CCalEntryView *> m_entryViews;
+    
+    OrganizerSymbianCollection m_defaultCollection;
+    QMap<QOrganizerCollectionLocalId, OrganizerSymbianCollection> m_collections;
     CCalInstanceView *m_instanceView;
     CActiveSchedulerWait *m_activeSchedulerWait;
     QOrganizerItemRequestQueue* m_requestServiceProviderQueue;
-
-    // TODO: replace this with an algorithm that generates the calendar entry UID
-    int m_entrycount;
     OrganizerItemTransform m_itemTransform;
     mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definition;
 

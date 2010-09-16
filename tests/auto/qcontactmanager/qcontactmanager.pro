@@ -13,6 +13,11 @@ INCLUDEPATH += ../
 
 CONFIG += mobility
 MOBILITY = contacts
+contains(mobility_modules,versit) {
+    MOBILITY += versit
+    DEFINES += USE_VERSIT_PLZ
+    INCLUDEPATH += ../../../src/versit
+}
 SOURCES  += tst_qcontactmanager.cpp
 HEADERS += ../qcontactmanagerdataholder.h
 
