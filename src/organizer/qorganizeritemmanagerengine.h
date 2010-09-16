@@ -136,7 +136,7 @@ public:
     virtual QStringList supportedItemTypes() const;
 
     /* Reports the built-in definitions from the schema */
-    static QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > schemaDefinitions();
+    static QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > schemaDefinitions(int version = 1);
 
 Q_SIGNALS:
     void dataChanged();

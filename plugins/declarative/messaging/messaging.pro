@@ -24,13 +24,12 @@ HEADERS += \
 CONFIG += mobility
 MOBILITY += messaging
 
-DESTDIR = $$[QT_INSTALL_PREFIX]/imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
-INSTALLS += target qmldir
+INSTALLS += qmldir
 
 # QMF libraries must be located at $QMF_LIBDIR
 simulator|contains(qmf_enabled, yes) {
@@ -41,4 +40,17 @@ simulator|contains(qmf_enabled, yes) {
         LIBS += -L$$(QMF_LIBDIR) -l$$qtLibraryTarget(qtopiamail)
     }
 }
+
+symbian {
+    # In Symbian, a library should enjoy _largest_ possible capability set.
+    TARGET.CAPABILITY = ALL -TCB
+    # Allow writable DLL data
+    TARGET.EPOCALLOWDLLDATA = 1
+    # Target UID, makes every Symbian app unique
+    TARGET.UID3 = 0x20031601
+    # Specifies what files shall be deployed: the plugin itself and the qmldir file.
+    importFiles.sources = $$DESTDIR/declarative_gallery$${QT_LIBINFIX}.dll qmldir
+    importFiles.path = $$QT_IMPORTS_BASE_DIR/$$TARGETPATH
+    DEPLOYMENT = importFiles
+ }
 

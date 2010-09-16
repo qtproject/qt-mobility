@@ -113,6 +113,7 @@ contains(mobility_modules,contacts) {
 contains(mobility_modules,organizer) {
     # Organizer
     SUBDIRS += \
+        qorganizercollection \
         qorganizeritem \
         qorganizeritemdetail \
         qorganizeritemdetaildefinition \
@@ -217,6 +218,7 @@ contains(mobility_modules,gallery) {
 contains(mobility_modules,feedback) {
     SUBDIRS += \
         qfeedbackactuator \
-        qfeedbackhapticseffect
+        qfeedbackhapticseffect \
+        qfeedbackplugin
 }
 

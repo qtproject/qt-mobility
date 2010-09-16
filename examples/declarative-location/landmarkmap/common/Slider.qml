@@ -43,7 +43,6 @@ import Qt 4.7
 
 Item {
     id: slider; width: 400; height: 16
-
     // value is read/write.
     property int value
     onValueChanged: { handle.x = 2 + (value - minimum) * slider.xMax / (maximum - minimum); }

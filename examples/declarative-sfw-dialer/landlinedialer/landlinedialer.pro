@@ -16,6 +16,8 @@ MOBILITY = serviceframework
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
+    TARGET.EPOCALLOWDLLDATA=1
+    load(armcc_warnings)
 }
 
 xml.path = $$QT_MOBILITY_EXAMPLES/xmldata

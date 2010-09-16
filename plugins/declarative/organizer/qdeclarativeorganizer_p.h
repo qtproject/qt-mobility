@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,27 +38,48 @@
 **
 ****************************************************************************/
 
-.pragma library
+#ifndef QDECLARATIVEORGANIZER_H
+#define QDECLARATIVEORGANIZER_H
 
-var homePath = "file:///home/user";
-var illegalCharacters = /(\(.*\)|\{.*\}|\[.*\]|<.*>|[\(\)_\{\}\[\]\!@#$^&*+=|\/"'?~`])/g
-var whitespace = /\s+/g
+#include <QList>
+#include <QPair>
+#include <QMap>
+#include <QDate>
+#include <QAbstractListModel>
+#include <QDeclarativeListProperty>
+#include <QtDeclarative>
 
-function getAlbumArtUrl(artist, title) {
-    if (artist == "") artist = " ";
-    if (title == "") title = " ";
+#include "qorganizeritem.h"
+#include "qorganizeritemmanager.h"
+#include "qorganizeritemlocalidfetchrequest.h"
 
-    var artPath = homePath
-            + "/.cache/media-art/album-"
-            + Qt.md5(artist.toLowerCase().replace(illegalCharacters, "").replace(whitespace, " "))
-            + "-"
-            + Qt.md5(title.toLowerCase().replace(illegalCharacters, "").replace(whitespace, " "))
-            + ".jpeg";
+QTM_USE_NAMESPACE;
 
-    return homePath + "/.thumbnails/cropped/" + Qt.md5(artPath) + ".jpeg";
-}
-
-function formatDuration(duration)
+class QDeclarativeOrganizerItem;
+class QDeclarativeOrganizerModel;
+class QDeclarativeOrganizer : public QObject
 {
-    return Math.floor(duration / 60) + ":" + (duration % 60)
-}
+Q_OBJECT
+Q_PROPERTY(QStringList availableManagers READ availableManagers)
+Q_PROPERTY(QString manager READ manager WRITE setManager)
+
+public:
+
+    explicit QDeclarativeOrganizer(QObject *parent = 0);
+
+    QStringList availableManagers() const;
+
+    QString manager();
+    void setManager(const QString& manager);
+
+    Q_INVOKABLE QDeclarativeOrganizerModel* itemModel(const QDateTime& start, const QDateTime& end);
+
+private:
+    friend class QDeclarativeOrganizerModel;
+    QMap<QPair<QDateTime,QDateTime>, QDeclarativeOrganizerModel*> m_models;
+    QOrganizerItemManager* m_manager;
+};
+
+QML_DECLARE_TYPE(QDeclarativeOrganizer)
+
+#endif // QDeclarativeOrganizer_H

@@ -13,15 +13,6 @@ CREATE TABLE IF NOT EXISTS landmark_attribute(
     PRIMARY KEY(landmarkId,key)
 );
 @@@
-CREATE TABLE IF NOT EXISTS landmark_custom_attribute (
-    landmarkId INTEGER,
-    key TEXT,
-    value BLOB,
-    PRIMARY KEY (landmarkId,key)
-);
-@@@
-CREATE INDEX IF NOT EXISTS landmark_custom_attribute_fk_index ON landmark_custom_attribute(landmarkId);
-@@@
 CREATE TABLE IF NOT EXISTS category (
     id INTEGER PRIMARY KEY,
     name TEXT
@@ -33,15 +24,6 @@ CREATE TABLE IF NOT EXISTS category_attribute(
     value BLOB,
     PRIMARY KEY (categoryId,key)
 );
-@@@
-CREATE TABLE IF NOT EXISTS category_custom_attribute (
-    categoryId INTEGER,
-    key TEXT,
-    value TEXT,
-    PRIMARY KEY (categoryId,key)
-);
-@@@
-CREATE INDEX IF NOT EXISTS category_custom_attribute_fk_index ON category_custom_attribute(categoryId);
 @@@
 CREATE TABLE IF NOT EXISTS landmark_category (
     landmarkId INTEGER,

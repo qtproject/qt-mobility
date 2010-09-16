@@ -373,9 +373,9 @@ simulator|contains(qmf_enabled, yes):!maemo6 {
     # QMF libraries must be located at $QMF_LIBDIR
     mac {
         QMAKE_LFLAGS += -F$$(QMF_LIBDIR)
-            LIBS += -framework qtopiamail
+            LIBS += -framework qmfclient
     } else {
-        LIBS += -L$$(QMF_LIBDIR) -l$$qtLibraryTarget(qtopiamail)
+        LIBS += -L$$(QMF_LIBDIR) -l$$qtLibraryTarget(qmfclient)
     }
 
     PRIVATE_HEADERS += qmfhelpers_p.h \

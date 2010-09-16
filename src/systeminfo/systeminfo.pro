@@ -132,6 +132,7 @@ LIBS+=-lX11 -lXrandr
         }        
 
         contains(hb_symbian_enabled,yes) {
+            ## for symbian ^4 
             CONFIG += qt hb
             DEFINES += HB_SUPPORTED
             message("s60_HbKeymap enabled")
