@@ -182,6 +182,20 @@ void QGraphicsGeoMap::setMappingManager(QGeoMappingManager *manager)
     }
 
     d_ptr->mapData = d_ptr->manager->createMapData(this);
+
+    connect(d_ptr->mapData,
+           SIGNAL(zoomLevelChanged(qreal)),
+           this,
+           SIGNAL(zoomLevelChanged(qreal)));
+    connect(d_ptr->mapData,
+            SIGNAL(mapTypeChanged(QGraphicsGeoMap::MapType)),
+            this,
+            SIGNAL(mapTypeChanged(QGraphicsGeoMap::MapType)));
+    connect(d_ptr->mapData,
+            SIGNAL(centerChanged(QGeoCoordinate)),
+            this,
+            SIGNAL(centerChanged(QGeoCoordinate)));
+
     setMapType(type);
     d_ptr->mapData->setWindowSize(QSizeF(300, 300));
 }
@@ -260,13 +274,8 @@ qreal QGraphicsGeoMap::maximumZoomLevel() const
 */
 void QGraphicsGeoMap::setZoomLevel(qreal zoomLevel)
 {
-    if (d_ptr->mapData) {
-        qreal oldZoom = d_ptr->mapData->zoomLevel();
+    if (d_ptr->mapData)
         d_ptr->mapData->setZoomLevel(zoomLevel);
-        qreal newZoom = d_ptr->mapData->zoomLevel();
-        if (oldZoom != newZoom)
-            emit zoomLevelChanged(newZoom);
-    }
 }
 
 qreal QGraphicsGeoMap::zoomLevel() const
@@ -304,12 +313,8 @@ void QGraphicsGeoMap::pan(int dx, int dy)
 */
 void QGraphicsGeoMap::setCenter(const QGeoCoordinate &center)
 {
-    if (d_ptr->mapData) {
-        if (d_ptr->mapData->center() != center) {
-            d_ptr->mapData->setCenter(center);
-            emit centerChanged(center);
-        }
-    }
+    if (d_ptr->mapData)
+        d_ptr->mapData->setCenter(center);
 }
 
 QGeoCoordinate QGraphicsGeoMap::center() const
@@ -345,11 +350,7 @@ void QGraphicsGeoMap::setMapType(QGraphicsGeoMap::MapType mapType)
         if (!d_ptr->manager->supportedMapTypes().contains(mapType))
             return;
 
-        if (d_ptr->mapData->mapType() == mapType)
-            return;
-
         d_ptr->mapData->setMapType(mapType);
-        emit mapTypeChanged(mapType);
     }
 }
 

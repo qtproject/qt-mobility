@@ -62,6 +62,10 @@ class QGeoMapOverlay;
 class Q_LOCATION_EXPORT QGeoMapData : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QSizeF windowSize READ windowSize WRITE setWindowSize NOTIFY windowSizeChanged)
+    Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
+    Q_PROPERTY(QGraphicsGeoMap::MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
+    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
 
 public:
     QGeoMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
@@ -119,6 +123,12 @@ protected:
     virtual QGeoMapObjectInfo* createMapObjectInfo(QGeoMapObject *object);
 
     QGeoMapDataPrivate* d_ptr;
+
+Q_SIGNALS:
+    void windowSizeChanged(const QSizeF &windowSize);
+    void zoomLevelChanged(qreal zoomLevel);
+    void centerChanged(const QGeoCoordinate &coordinate);
+    void mapTypeChanged(QGraphicsGeoMap::MapType mapType);
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapData)

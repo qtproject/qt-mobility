@@ -278,6 +278,8 @@ void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
 {
     Q_D(QGeoTiledMapData);
 
+    QGeoMapData::setCenter(center);
+
     d->maxZoomCenter = coordinateToWorldPixel(center);
     d->updateScreenRect();
     geoMap()->update();
@@ -433,6 +435,7 @@ void QGeoTiledMapData::setWindowSize(const QSizeF &size)
     Q_D(QGeoTiledMapData);
 
     QGeoMapData::setWindowSize(size);
+
     d->updateScreenRect();
     d->updateMapImage();
 }
@@ -682,6 +685,7 @@ void QGeoTiledMapData::tileFinished()
 
 void QGeoTiledMapData::tileError(QGeoTiledMapReply::Error error, QString errorString)
 {
+    Q_UNUSED(error)
     qWarning() << errorString;
 }
 
@@ -865,7 +869,7 @@ void QGeoTiledMapDataPrivate::clearRequests()
     requestRects.clear();
 }
 
-void QGeoTiledMapDataPrivate::paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option)
+void QGeoTiledMapDataPrivate::paintMap(QPainter *painter, const QStyleOptionGraphicsItem * /*option*/)
 {
     qreal offsetX = ((windowSize.width() * zoomFactor) - maxZoomScreenRect.width()) / 2.0;
     if (offsetX < 0.0)
@@ -909,7 +913,7 @@ void QGeoTiledMapDataPrivate::paintMap(QPainter *painter, const QStyleOptionGrap
     }
 }
 
-void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option)
+void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem * /*option*/)
 {
 #if !(defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
     QPainter::RenderHints hints = painter->renderHints();

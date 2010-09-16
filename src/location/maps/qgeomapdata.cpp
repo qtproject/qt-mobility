@@ -135,7 +135,12 @@ QGeoMapObject* QGeoMapData::containerObject()
 */
 void QGeoMapData::setWindowSize(const QSizeF &size)
 {
+    if (d_ptr->windowSize == size)
+        return;
+
     d_ptr->windowSize = size;
+
+    emit windowSizeChanged(d_ptr->windowSize);
 }
 
 /*!
@@ -162,7 +167,13 @@ void QGeoMapData::setZoomLevel(qreal zoomLevel)
 {
     zoomLevel = qMin(zoomLevel, d_ptr->engine->maximumZoomLevel());
     zoomLevel = qMax(zoomLevel, d_ptr->engine->minimumZoomLevel());
+
+    if (d_ptr->zoomLevel == zoomLevel)
+        return;
+
     d_ptr->zoomLevel = zoomLevel;
+
+    emit zoomLevelChanged(d_ptr->zoomLevel);
 }
 
 /*!
@@ -196,7 +207,12 @@ void QGeoMapData::pan(int dx, int dy)
 */
 void QGeoMapData::setCenter(const QGeoCoordinate &center)
 {
+    if (d_ptr->center == center)
+        return;
+
     d_ptr->center = center;
+
+    emit centerChanged(d_ptr->center);
 }
 
 /*!
@@ -212,7 +228,12 @@ QGeoCoordinate QGeoMapData::center() const
 */
 void QGeoMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 {
+    if (d_ptr->mapType == mapType)
+        return;
+
     d_ptr->mapType = mapType;
+
+    emit mapTypeChanged(mapType);
 }
 
 /*!
@@ -388,15 +409,22 @@ void QGeoMapData::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 
     The default implementation does not paint anything.
 */
-void QGeoMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option) {}
+void QGeoMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option)
+{
+    Q_UNUSED(painter)
+    Q_UNUSED(option)
+}
 
 /*!
     Paints the map objects on \a painter, using the options \a option.
 
     The default implementation does not paint anything.
 */
-
-void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option) {}
+void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option)
+{
+    Q_UNUSED(painter)
+    Q_UNUSED(option)
+}
 
 /*!
     Paints the provider notices on \a painter, using the options \a option.
@@ -414,7 +442,11 @@ void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem
 
     The default implementation does not paint anything.
 */
-void QGeoMapData::paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *option) {}
+void QGeoMapData::paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *option)
+{
+    Q_UNUSED(painter)
+    Q_UNUSED(option)
+}
 
 /*!
     Returns the map overlays associated with this map.
@@ -488,6 +520,7 @@ void QGeoMapData::associateMapObject(QGeoMapObject *mapObject)
 */
 QGeoMapObjectInfo* QGeoMapData::createMapObjectInfo(QGeoMapObject *object)
 {
+    Q_UNUSED(object)
     return 0;
 }
 

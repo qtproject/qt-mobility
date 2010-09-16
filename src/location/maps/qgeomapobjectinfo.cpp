@@ -144,14 +144,20 @@ void QGeoMapObjectInfo::mapUpdated() {}
 
     The default implementation does nothing.
 */
-void QGeoMapObjectInfo::visibleChanged(bool visible) {}
+void QGeoMapObjectInfo::visibleChanged(bool visible)
+{
+    Q_UNUSED(visible)
+}
 
 /*!
     This function is run when the selected state of the object changes.
 
     The default implementation does nothing.
 */
-void QGeoMapObjectInfo::selectedChanged(bool selected) {}
+void QGeoMapObjectInfo::selectedChanged(bool selected)
+{
+    Q_UNUSED(selected)
+}
 
 /*!
     Returns a bounding box which contains this map object.
@@ -171,6 +177,7 @@ QGeoBoundingBox QGeoMapObjectInfo::boundingBox() const
 */
 bool QGeoMapObjectInfo::contains(const QGeoCoordinate &coordinate) const
 {
+    Q_UNUSED(coordinate)
     return false;
 }
 
