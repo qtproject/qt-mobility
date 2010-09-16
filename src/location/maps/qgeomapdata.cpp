@@ -265,7 +265,7 @@ void QGeoMapData::clearMapObjects()
 }
 
 /*!
-    Returns the list of map objects managed by this map which
+    Returns the list of visible map objects managed by this map which
     contain the point \a screenPosition within their boundaries.
 */
 QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition) const
@@ -276,7 +276,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
     int childObjectCount = d_ptr->containerObject->childObjects().count();
     for (int i = 0; i < childObjectCount; ++i) {
         QGeoMapObject *object = d_ptr->containerObject->childObjects().at(i);
-        if (object->contains(coord))
+        if (object->contains(coord) && object->isVisible())
             results.append(object);
     }
 
@@ -284,14 +284,13 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
 }
 
 /*!
-    Returns the list of map objects managed by this map which are displayed at
+    Returns the list of visible map objects managed by this map which are displayed at
     least partially within the on screen rectangle \a screenRect.
 */
 QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRect) const
 {
     QList<QGeoMapObject*> results;
 
-    // TODO - find a way to disambiguate rectangles at poles
     QGeoCoordinate topLeft = screenPositionToCoordinate(screenRect.topLeft());
     QGeoCoordinate bottomRight = screenPositionToCoordinate(screenRect.bottomRight());
 
@@ -300,7 +299,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
     int childObjectCount = d_ptr->containerObject->childObjects().count();
     for (int i = 0; i < childObjectCount; ++i) {
         QGeoMapObject *object = d_ptr->containerObject->childObjects().at(i);
-        if (bounds.intersects(object->boundingBox()))
+        if (bounds.intersects(object->boundingBox()) && object->isVisible())
             results.append(object);
     }
 
