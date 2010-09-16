@@ -142,7 +142,7 @@ TBool COrganizerItemRequestsServiceProvider::StartRequest(
                 iCollectionLocalIds.append(
                     ((QOrganizerCollectionFetchRequest*) iReq)
                     ->collectionIds());
-                iNoOfItems = iOrganizerItemManagerEngine.sessionCount();
+                iNoOfItems = iOrganizerItemManagerEngine.collectionCount();
                 }
                 break;
 #endif
@@ -230,7 +230,7 @@ void COrganizerItemRequestsServiceProvider::RunL()
             break;
         case QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest:
             {
-            CollectionIdL();
+            CollectionIds();
             }
             break;
         case QOrganizerItemAbstractRequest::CollectionRemoveRequest :
@@ -550,16 +550,13 @@ void COrganizerItemRequestsServiceProvider::SaveDetailDefinitionL()
     }
 
 #ifdef SYMBIAN_CALENDAR_V2
-// Fetch collection local Id
-void COrganizerItemRequestsServiceProvider::CollectionIdL()
+// Fetch collection local Ids
+void COrganizerItemRequestsServiceProvider::CollectionIds()
     {
-    QList<QOrganizerCollectionLocalId> collectionLocalIds = 
-        iOrganizerItemManagerEngine.collectionIdsL();
-
     // Notify results
     QOrganizerItemManagerEngine::updateCollectionLocalIdFetchRequest( 
-        (QOrganizerCollectionLocalIdFetchRequest*)(iReq), collectionLocalIds, 
-        iError, QOrganizerItemAbstractRequest::FinishedState);
+        (QOrganizerCollectionLocalIdFetchRequest*)(iReq), iOrganizerItemManagerEngine.collectionIds(), 
+        QOrganizerItemManager::NoError, QOrganizerItemAbstractRequest::FinishedState);
     }
 
 // Fetch collection
