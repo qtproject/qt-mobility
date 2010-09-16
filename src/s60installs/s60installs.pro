@@ -90,6 +90,7 @@ isEmpty(QT_LIBINFIX):symbian {
             "ENDIF"
 
         qtmobilitydeployment.pkg_postrules += sysinfo
+        }
     }
 
     contains(mobility_modules, publishsubscribe) {
