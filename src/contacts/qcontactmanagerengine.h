@@ -200,7 +200,7 @@ public:
 
     // Again, this is the v1 function
     QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
-    virtual QList<QContact> contacts(const QList<QContactLocalId>& localIds, QMap<int, QContactManager::Error>* errorMap, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
+    virtual QList<QContact> contacts(const QList<QContactLocalId>& localIds, const QContactFetchHint& fetchHint, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error) const;
 
     static void updateContactFetchByIdRequest(QContactFetchByIdRequest* req, const QList<QContact>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State);
 };
