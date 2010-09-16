@@ -104,20 +104,18 @@
  */
 
 /*!
-  \fn QOrganizerItemEngineLocalId::datastreamDbg(QDebug dbg)
+  \fn QOrganizerItemEngineLocalId::debugStreamOut(QDebug dbg)
   Streams this id out to the debug stream \a dbg.
  */
 
 /*!
-  \fn QOrganizerItemEngineLocalId::datastreamOut(QDataStream& out)
+  \fn QOrganizerItemEngineLocalId::dataStreamOut(QDataStream& out)
   Streams this id out to the data stream \a out.
  */
 
 /*!
-  \fn QOrganizerItemEngineLocalId::datastreamIn(QDataStream& in)
+  \fn QOrganizerItemEngineLocalId::dataStreamIn(QDataStream& in)
   Streams this id in from the datastream \a in.
-  TODO: maybe this function doesn't exist; instead, have QOrganizerItemLocalId::datastreamIn()
-      instantiate the correct engine, and call QCME::deserializeId()...
  */
 
 /*!

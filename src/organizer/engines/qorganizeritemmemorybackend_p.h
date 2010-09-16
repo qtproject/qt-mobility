@@ -91,11 +91,11 @@ public:
     QOrganizerItemEngineLocalId* clone() const;
 
 #ifndef QT_NO_DEBUG_STREAM
-    QDebug datastreamDbg(QDebug dbg);
+    QDebug debugStreamOut(QDebug dbg);
 #endif
 #ifndef QT_NO_DATASTREAM
-    QDataStream& datastreamOut(QDataStream& out);
-    QDataStream& datastreamIn(QDataStream& in);
+    QDataStream& dataStreamOut(QDataStream& out);
+    QDataStream& dataStreamIn(QDataStream& in);
 #endif
     uint hash() const;
 

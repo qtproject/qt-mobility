@@ -83,12 +83,7 @@ public:
     bool isNull() const;
 
 private:
-    QDebug datastreamDbg(QDebug dbg);
-    QDataStream& datastreamOut(QDataStream& out);
-    QDataStream& datastreamIn(QDataStream& in); // this may require instantiating engines...
-    uint hash() const;
-
-    QOrganizerItemEngineLocalId* d; // QSharedDataPointer or not?
+    QOrganizerItemEngineLocalId* d;
 
 #ifndef QT_NO_DEBUG_STREAM
     friend QDebug operator<<(QDebug dbg, const QOrganizerItemLocalId& id);

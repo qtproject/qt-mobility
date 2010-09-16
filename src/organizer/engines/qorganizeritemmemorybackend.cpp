@@ -150,7 +150,7 @@ QOrganizerItemEngineLocalId* QOrganizerItemMemoryEngineLocalId::clone() const
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug QOrganizerItemMemoryEngineLocalId::datastreamDbg(QDebug dbg)
+QDebug QOrganizerItemMemoryEngineLocalId::debugStreamOut(QDebug dbg)
 {
     dbg.nospace() << "QOrganizerItemMemoryEngineLocalId(" << m_localCollectionId << ", " << m_localItemId << ")";
     return dbg.maybeSpace();
@@ -158,15 +158,15 @@ QDebug QOrganizerItemMemoryEngineLocalId::datastreamDbg(QDebug dbg)
 #endif
 
 #ifndef QT_NO_DATASTREAM
-QDataStream& QOrganizerItemMemoryEngineLocalId::datastreamOut(QDataStream& out)
+QDataStream& QOrganizerItemMemoryEngineLocalId::dataStreamOut(QDataStream& out)
 {
     return (out << m_localItemId << m_localCollectionId);
 }
 
-QDataStream& QOrganizerItemMemoryEngineLocalId::datastreamIn(QDataStream& in)
+QDataStream& QOrganizerItemMemoryEngineLocalId::dataStreamIn(QDataStream& in)
 {
-    // XXX TODO: decide whether this is required.
-    return in; // or whether we put this functionality in QCME.
+    in >> m_localItemId >> m_localCollectionId;
+    return in;
 }
 #endif
 

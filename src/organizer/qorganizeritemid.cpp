@@ -199,54 +199,6 @@ bool QOrganizerItemLocalId::isNull() const
 }
 
 /*!
-  Streams this id out to the debug stream \a dbg
- */
-QDebug QOrganizerItemLocalId::datastreamDbg(QDebug dbg)
-{
-    if (d)
-        return d->datastreamDbg(dbg);
-    return dbg;
-}
-
-/*!
-  Streams this id out to the data stream \a out
- */
-QDataStream& QOrganizerItemLocalId::datastreamOut(QDataStream& out)
-{
-    if (d)
-        return d->datastreamOut(out);
-    return out;
-}
-
-/*!
-  Streams this id in from the data stream \a in
- */
-QDataStream& QOrganizerItemLocalId::datastreamIn(QDataStream& in)
-{
-    if (d)
-        return d->datastreamIn(in);
-    return in;
-
-    // XXX TODO: maybe instead of calling d->datastreamIn(in), we'll instead do:
-    //check type (ie, which engine);
-    //instantiate factory for that engine
-    //ask factory to deserialize the id for us.
-}
-
-/*!
-  Returns the hash value for this id.  Note that this hash value
-  is only unique per manager (that is, you should not store a hash
-  of local id to item, where the items come from multiple managers,
-  since it is likely that collisions will occur).
- */
-uint QOrganizerItemLocalId::hash() const
-{
-    if (d)
-        return d->hash();
-    return 0;
-}
-
-/*!
  * Constructs a new organizer item id
  */
 QOrganizerItemId::QOrganizerItemId()
@@ -335,7 +287,7 @@ uint qHash(const QOrganizerItemId &key)
 #ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QOrganizerItemLocalId& id)
 {
-    return id.d->datastreamDbg(dbg);
+    return id.d->debugStreamOut(dbg);
 }
 
 QDebug operator<<(QDebug dbg, const QOrganizerItemId& id)
@@ -348,7 +300,7 @@ QDebug operator<<(QDebug dbg, const QOrganizerItemId& id)
 #ifndef QT_NO_DATASTREAM
 QDataStream& operator<<(QDataStream& out, const QOrganizerItemLocalId& id)
 {
-    return id.d->datastreamOut(out);
+    return id.d->dataStreamOut(out);
 }
 
 QDataStream& operator<<(QDataStream& out, const QOrganizerItemId& id)
@@ -367,7 +319,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id)
         QOrganizerItemLocalId localId(QOrganizerItemManagerData::createEngineLocalId(managerUri));
         if (localId.d) {
             id.setManagerUri(managerUri);
-            localId.d->datastreamIn(in);
+            localId.d->dataStreamIn(in);
         }
     } else {
         in.setStatus(QDataStream::ReadCorruptData);

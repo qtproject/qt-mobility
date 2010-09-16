@@ -64,12 +64,12 @@ public:
 
 #ifndef QT_NO_DEBUG_STREAM
     // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
-    virtual QDebug datastreamDbg(QDebug dbg) = 0;
+    virtual QDebug debugStreamOut(QDebug dbg) = 0;
 #endif
 #ifndef QT_NO_DATASTREAM
     // NOTE: on platforms where Qt is built without data streams enabled, vtable will differ!
-    virtual QDataStream& datastreamOut(QDataStream& out) = 0;
-    virtual QDataStream& datastreamIn(QDataStream& in) = 0; // might not exist; might be QCME::deserializeId() instead.
+    virtual QDataStream& dataStreamOut(QDataStream& out) = 0;
+    virtual QDataStream& dataStreamIn(QDataStream& in) = 0;
 #endif
     virtual uint hash() const = 0;
 };
