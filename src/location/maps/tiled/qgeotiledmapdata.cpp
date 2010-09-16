@@ -468,6 +468,21 @@ void QGeoTiledMapData::pan(int dx, int dy)
 /*!
     \reimp
 */
+QGeoBoundingBox QGeoTiledMapData::viewport() const
+{
+    Q_D(const QGeoTiledMapData);
+    if (d->maxZoomScreenRectClippedRight.isValid()) {
+        return QGeoBoundingBox(worldPixelToCoordinate(d->maxZoomScreenRectClippedLeft.topLeft()),
+                               worldPixelToCoordinate(d->maxZoomScreenRectClippedRight.bottomRight()));
+    } else {
+        return QGeoBoundingBox(worldPixelToCoordinate(d->maxZoomScreenRect.topLeft()),
+                               worldPixelToCoordinate(d->maxZoomScreenRect.bottomRight()));
+    }
+}
+
+/*!
+    \reimp
+*/
 void QGeoTiledMapData::fitToViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter)
 {
     Q_D(QGeoTiledMapData);
@@ -478,19 +493,23 @@ void QGeoTiledMapData::fitToViewport(const QGeoBoundingBox &bounds, bool preserv
     int minZoomLevel = engine()->minimumZoomLevel();
     int maxZoomLevel = engine()->maximumZoomLevel();
 
-    int zoomFactor = 1 << minZoomLevel;
+    int zoomFactor = 1 << maxZoomLevel;
 
     for (int i = minZoomLevel; i <= maxZoomLevel; ++i) {
         QRect rect = d->screenRectForZoomFactor(zoomFactor);
         QGeoBoundingBox viewport = QGeoBoundingBox(worldPixelToCoordinate(rect.topLeft()),
                                                    worldPixelToCoordinate(rect.bottomRight()));
 
+        qWarning() << i << zoomFactor
+                      << viewport.topLeft()
+                         << viewport.bottomRight();
+
         if (!viewport.contains(bounds)) {
             setZoomLevel(qMax(minZoomLevel, i - 1));
             return;
         }
 
-        zoomFactor *= 2;
+        zoomFactor /= 2;
     }
 
     setZoomLevel(maxZoomLevel);

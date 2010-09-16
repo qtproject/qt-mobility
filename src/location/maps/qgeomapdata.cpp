@@ -265,18 +265,13 @@ void QGeoMapData::clearMapObjects()
 }
 
 /*!
+    \fn QGeoBoundingBox QGeoMapData::viewport() const
     Returns a bounding box corresponding to the physical area displayed 
     in the viewport of the map.
 
     The bounding box which is returned is defined by the upper left and 
     lower right corners of the visible area of the map.
 */
-QGeoBoundingBox QGeoMapData::viewport() const
-{
-    return QGeoBoundingBox(screenPositionToCoordinate(QPoint(0, 0)),
-                           screenPositionToCoordinate(QPoint(d_ptr->windowSize.width(),
-                                                             d_ptr->windowSize.height())));
-}
 
 /*!
     \fn void QGeoMapData::fitToViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter)

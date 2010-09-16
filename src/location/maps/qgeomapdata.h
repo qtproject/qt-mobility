@@ -86,7 +86,7 @@ public:
     void removeMapObject(QGeoMapObject *mapObject);
     void clearMapObjects();
     
-    virtual QGeoBoundingBox viewport() const;
+    virtual QGeoBoundingBox viewport() const = 0;
     virtual void fitToViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false) = 0;
 
     virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition) const;
