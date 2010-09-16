@@ -635,9 +635,9 @@ void QGeoTiledMapData::tileError(QGeoTiledMapReply::Error error, QString errorSt
 /*!
     \reimp
 */
-QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition)
+QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition) const
 {
-    Q_D(QGeoTiledMapData);
+    Q_D(const QGeoTiledMapData);
 
     QGeoCoordinate coord = screenPositionToCoordinate(screenPosition);
 
@@ -664,9 +664,9 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF
 /*!
     \reimp
 */
-QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &screenRect)
+QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &screenRect) const
 {
-    Q_D(QGeoTiledMapData);
+    Q_D(const QGeoTiledMapData);
 
     QRectF rect(d->maxZoomScreenRect.topLeft() + screenRect.topLeft() * d->zoomFactor, screenRect.size() * d->zoomFactor);
 
