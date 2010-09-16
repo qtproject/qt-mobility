@@ -351,13 +351,6 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerItemLocalId& id)
     return id.d->datastreamOut(out);
 }
 
-QDataStream& operator>>(QDataStream& in, QOrganizerItemLocalId& id)
-{
-    //FIXME: this will crash in most of the cases, because id is not initialized. It is called from QOrganizerItemLocalIdFilter
-    return id.d->datastreamIn(in);
-}
-
-
 QDataStream& operator<<(QDataStream& out, const QOrganizerItemId& id)
 {
     quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItemId

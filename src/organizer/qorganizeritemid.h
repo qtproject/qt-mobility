@@ -95,7 +95,6 @@ private:
 #endif
 #ifndef QT_NO_DATASTREAM
     friend QDataStream& operator<<(QDataStream& out, const QOrganizerItemLocalId& id);
-    friend QDataStream& operator>>(QDataStream& in, QOrganizerItemLocalId& id);
     friend QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id);
 #endif
     friend uint qHash(const QOrganizerItemLocalId& key);
