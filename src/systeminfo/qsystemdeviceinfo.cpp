@@ -51,16 +51,19 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
 #endif
 
 // device
- /*!
+        /*!
         \class QSystemDeviceInfo
         \ingroup systeminfo
         \inmodule QtSystemInfo
         \brief The QSystemDeviceInfo class provides access to device information from the system.
+        */
 
+        /*!
         \fn QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
 
-   Constructs a QSystemDeviceInfo with the given \a parent.
- */
+        Constructs a QSystemDeviceInfo with the given \a parent.
+        */
+
         /*!
            \enum QSystemDisplayInfo::DisplayOrientation
           This enum describes the current orientation of the display.
