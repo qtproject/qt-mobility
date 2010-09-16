@@ -161,6 +161,30 @@ public:
     static int AddMetadataFilter(CMdELogicCondition &rootCond,
         QGalleryFilter &filter,
         CMdENamespaceDef& defaultNameSpace);
+    
+private:
+
+#ifdef MDS_25_COMPILATION_ENABLED
+    static CMdEObjectDef& ObjDefFromItemTypeForMDS25L( CMdENamespaceDef &nameSpace, QString itemType );
+
+    static void GetMetaDataFieldForMDS25L( CMdEObject *inputItem, QVariant &output, int key );
+
+    static CMdEPropertyDef *GetMDSPropertyDefForMDS25L(const QString &property,
+                                                       CMdENamespaceDef& defaultNameSpace);
+
+    static bool SetMetaDataFieldForMDS25L( CMdEObject *item, const QVariant &value, int key );
+
+#else
+    static CMdEObjectDef* ObjDefFromItemTypeForMDS20L( CMdENamespaceDef &nameSpace, QString itemType );
+
+    static void GetMetaDataFieldForMDS20L( CMdEObject *inputItem, QVariant &output, int key );
+
+    static CMdEPropertyDef *GetMDSPropertyDefForMDS20L(const QString &property,
+                                                       CMdENamespaceDef& defaultNameSpace);
+
+    static bool SetMetaDataFieldForMDS20L( CMdEObject *item, const QVariant &value, int key );
+
+#endif // MDS_25_COMPILATION_ENABLED 
 };
 
 QTM_END_NAMESPACE
