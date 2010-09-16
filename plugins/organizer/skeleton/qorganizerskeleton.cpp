@@ -55,6 +55,12 @@ QOrganizerItemManagerEngine* QOrganizerItemSkeletonFactory::engine(const QMap<QS
     return ret;
 }
 
+QOrganizerItemEngineLocalId* QOrganizerItemSkeletonFactory::createEngineLocalId()
+{
+    /* TODO - return the localid specific to the engine */
+    return NULL;
+}
+
 QString QOrganizerItemSkeletonFactory::managerName() const
 {
     /* TODO - put your engine name here */

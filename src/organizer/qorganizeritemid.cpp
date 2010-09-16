@@ -42,6 +42,7 @@
 #include "qorganizeritemid.h"
 #include "qorganizeritemid_p.h"
 #include "qorganizeritemenginelocalid.h"
+#include "qorganizeritemmanager_p.h"
 #include <QHash>
 #include <QDebug>
 #include <QDataStream>
@@ -350,6 +351,7 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerItemLocalId& id)
 
 QDataStream& operator>>(QDataStream& in, QOrganizerItemLocalId& id)
 {
+    //FIXME: this will crash in most of the cases, because id is not initialized. It is called from QOrganizerItemLocalIdFilter
     return id.d->datastreamIn(in);
 }
 
@@ -366,10 +368,12 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id)
     in >> formatVersion;
     if (formatVersion == 1) {
         QString managerUri;
-        QOrganizerItemLocalId localId;
-        in >> managerUri >> localId;
-        id.setManagerUri(managerUri);
-        id.setLocalId(localId);
+        in >> managerUri;
+        QOrganizerItemLocalId localId(QOrganizerItemManagerData::createEngineLocalId(managerUri));
+        if (localId.d) {
+            id.setManagerUri(managerUri);
+            localId.d->datastreamIn(in);
+        }
     } else {
         in.setStatus(QDataStream::ReadCorruptData);
     }

@@ -168,6 +168,7 @@ private slots:
     void detailDefinitions();
     void detailOrders();
     void itemType();
+    void dataSerialization();
 
     /* Tests that take no data */
     void itemValidation();
@@ -195,6 +196,7 @@ private slots:
     void detailDefinitions_data() {addManagers();}
     void detailOrders_data() {addManagers();}
     void itemType_data() {addManagers();}
+    void dataSerialization_data() {addManagers();}
 };
 
 tst_QOrganizerItemManager::tst_QOrganizerItemManager()
@@ -2367,6 +2369,29 @@ void tst_QOrganizerItemManager::fetchHint()
     QOrganizerItemFetchHint hint;
     hint.setOptimizationHints(QOrganizerItemFetchHint::NoBinaryBlobs);
     QCOMPARE(hint.optimizationHints(), QOrganizerItemFetchHint::NoBinaryBlobs);
+}
+
+void tst_QOrganizerItemManager::dataSerialization()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+
+    QOrganizerEvent event;
+    event.setDisplayLabel("event");
+    event.setStartDateTime(QDateTime(QDate(2010, 9, 9), QTime(11, 0, 0)));
+    event.setEndDateTime(QDateTime(QDate(2010, 9, 9), QTime(11, 30, 0)));
+
+    if (cm->saveItem(&event)) {
+        QByteArray buffer;
+        QDataStream outBufferStream(&buffer, QIODevice::WriteOnly);
+        outBufferStream << event.id();
+        QVERIFY(buffer.length() > 0);
+
+        QDataStream inBufferStream(buffer);
+        QOrganizerItemId id;
+        inBufferStream >> id;
+        QVERIFY(id == event.id());
+    }
 }
 
 QList<QOrganizerItemDetail> tst_QOrganizerItemManager::removeAllDefaultDetails(const QList<QOrganizerItemDetail>& details)

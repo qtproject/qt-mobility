@@ -64,10 +64,13 @@ Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItemLocalI
 Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemLocalId& id);
 #endif
 
+class QOrganizerItemId;
 class Q_ORGANIZER_EXPORT QOrganizerItemLocalId
 {
 public:
     QOrganizerItemLocalId();
+    explicit QOrganizerItemLocalId(QOrganizerItemEngineLocalId* engineId);
+
     ~QOrganizerItemLocalId();
 
     QOrganizerItemLocalId(const QOrganizerItemLocalId& other);
@@ -78,9 +81,6 @@ public:
     bool operator<(const QOrganizerItemLocalId& other) const;
 
     bool isNull() const;
-
-protected:
-    explicit QOrganizerItemLocalId(QOrganizerItemEngineLocalId* engineId);
 
 private:
     QDebug datastreamDbg(QDebug dbg);
@@ -96,6 +96,7 @@ private:
 #ifndef QT_NO_DATASTREAM
     friend QDataStream& operator<<(QDataStream& out, const QOrganizerItemLocalId& id);
     friend QDataStream& operator>>(QDataStream& in, QOrganizerItemLocalId& id);
+    friend QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id);
 #endif
     friend uint qHash(const QOrganizerItemLocalId& key);
     friend class QOrganizerItemManagerEngine;
