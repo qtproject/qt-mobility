@@ -283,20 +283,12 @@ isEmpty(QT_LIBINFIX):symbian {
 
         contains(openmaxal_symbian_enabled, yes) {
             openmax = \
-                "IF package(0x20022E6D)" \
-                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_xarecordservice.dll\" - \"!:\\sys\\bin\\qtmultimediakit_xarecordservice.dll\"" \
-                "ELSEIF package(0x20032DE7)" \
                 "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_openmaxalengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_openmaxalengine.dll\"" \
-                "ENDIF"
 
             qtmobilitydeployment.pkg_postrules += openmax
 
             pluginstubs += \
-                "IF package(0x20022E6D)" \
-                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/openmaxal/mediarecorder/qmakepluginstubs/qtmultimediakit_xarecordservice.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_xarecordservice.qtplugin\"" \
-                "ELSEIF package(0x20032DE7)" \
-                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/openmaxal/qmakepluginstubs/qtmultimediakit_openmaxalengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_xarecordservice.qtplugin\"" \
-                "ENDIF"
+                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/openmaxal/qmakepluginstubs/qtmultimediakit_openmaxalengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_openmaxalengine.qtplugin\"" \
         }
 
         pluginstubs += \
