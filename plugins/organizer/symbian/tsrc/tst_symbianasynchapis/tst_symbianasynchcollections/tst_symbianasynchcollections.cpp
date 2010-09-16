@@ -78,7 +78,7 @@ private:
 private:
     QOrganizerItemManager*                  m_om;
     QOrganizerItemAbstractRequest*          m_itemRequest;
-    QList<QOrganizerCollectionId>           m_collectionIds;
+    QList<QOrganizerCollectionLocalId>           m_collectionIds;
 };
 
 
@@ -146,7 +146,7 @@ void tst_symbianasynchcollections::fetchCollection()
     QOrganizerCollectionFetchRequest * collectionFetchRequest(
         (QOrganizerCollectionFetchRequest*)m_itemRequest);
     // Set collections
-    QList<QOrganizerCollectionId> collectionIds;
+    QList<QOrganizerCollectionLocalId> collectionIds;
     collectionFetchRequest->setCollectionIds(m_collectionIds);
 
     // Start the request
@@ -253,7 +253,7 @@ void tst_symbianasynchcollections::saveItem()
 
     itemSaveRequest->setItems(createItems(KNumberOfEntries));
     if (m_collectionIds.count()) {
-    itemSaveRequest->setCollectionId(m_collectionIds.at(0).localId());
+    itemSaveRequest->setCollectionId(m_collectionIds.at(0));
     }
     itemSaveRequest->start();
     itemSaveRequest->waitForFinished(KTimeToWait);
@@ -373,7 +373,7 @@ void tst_symbianasynchcollections::requestResultsAvailable()
         int count(savedCollections.count());
         m_collectionIds.clear();
         for (int index(0); index < count; index++) {
-            m_collectionIds.append(savedCollections.at(index).id());
+            m_collectionIds.append(savedCollections.at(index).id().localId());
         }
         // Check the number of requests saved. magic number to be changed to a
         // constant
