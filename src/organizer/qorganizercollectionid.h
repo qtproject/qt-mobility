@@ -49,7 +49,45 @@
 
 QTM_BEGIN_NAMESPACE
 
-typedef quint32 QOrganizerCollectionLocalId;
+class QOrganizerItemManagerEngine;
+class QOrganizerCollectionEngineLocalId;
+
+class QOrganizerCollectionId;
+class Q_ORGANIZER_EXPORT QOrganizerCollectionLocalId
+{
+public:
+    QOrganizerCollectionLocalId();
+    explicit QOrganizerCollectionLocalId(QOrganizerCollectionEngineLocalId* engineId);
+
+    ~QOrganizerCollectionLocalId();
+
+    QOrganizerCollectionLocalId(const QOrganizerCollectionLocalId& other);
+    QOrganizerCollectionLocalId& operator=(const QOrganizerCollectionLocalId& other);
+
+    bool operator==(const QOrganizerCollectionLocalId& other) const;
+    bool operator!=(const QOrganizerCollectionLocalId& other) const;
+    bool operator<(const QOrganizerCollectionLocalId& other) const;
+
+    bool isNull() const;
+
+private:
+    QDebug debugStreamOut(QDebug dbg);
+    QDataStream& dataStreamOut(QDataStream& out);
+    QDataStream& dataStreamIn(QDataStream& in); // this may require instantiating engines...
+    uint hash() const;
+
+    QOrganizerCollectionEngineLocalId* d; // QSharedDataPointer or not?
+
+#ifndef QT_NO_DEBUG_STREAM
+    friend QDebug operator<<(QDebug dbg, const QOrganizerCollectionLocalId& id);
+#endif
+#ifndef QT_NO_DATASTREAM
+    friend QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionLocalId& id);
+    friend QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& id);
+#endif
+    friend uint qHash(const QOrganizerCollectionLocalId& key);
+    friend class QOrganizerItemManagerEngine;
+};
 
 class QOrganizerCollectionIdPrivate;
 class Q_ORGANIZER_EXPORT QOrganizerCollectionId
@@ -76,13 +114,17 @@ private:
 };
 
 Q_ORGANIZER_EXPORT uint qHash(const QOrganizerCollectionId& key);
+Q_ORGANIZER_EXPORT uint qHash(const QTM_PREPEND_NAMESPACE(QOrganizerCollectionLocalId)& key);
 #ifndef QT_NO_DEBUG_STREAM
 Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerCollectionId& id);
+Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerCollectionLocalId& id);
 #endif
 
 #ifndef QT_NO_DATASTREAM
 Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionId& collectionId);
 Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& collectionId);
+Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionLocalId& id);
+Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerCollectionLocalId& id);
 #endif
 
 QTM_END_NAMESPACE

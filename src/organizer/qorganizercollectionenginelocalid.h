@@ -39,36 +39,45 @@
 **
 ****************************************************************************/
 
+#ifndef QORGANIZERCOLLECTIONENGINELOCALID_H
+#define QORGANIZERCOLLECTIONENGINELOCALID_H
 
-#ifndef QORGANIZERITEMMANAGERENGINEFACTORY_H
-#define QORGANIZERITEMMANAGERENGINEFACTORY_H
-
-#include <QtPlugin>
-#include <QMap>
 #include <QString>
+#include <QSharedDataPointer>
 
-#include "qorganizeritemmanager.h"
+#include "qtorganizerglobal.h"
+
+class QDataStream;
 
 QTM_BEGIN_NAMESPACE
-/* Backend plugin API interface, creates engines for us */
-class QOrganizerItemManagerEngine;
-class QOrganizerCollectionEngineLocalId;
-class Q_ORGANIZER_EXPORT QOrganizerItemManagerEngineFactory
+
+class Q_ORGANIZER_EXPORT QOrganizerCollectionEngineLocalId
 {
 public:
-    // engine factory functions
-    virtual QList<int> supportedImplementationVersions() const;
-    virtual ~QOrganizerItemManagerEngineFactory();
-    virtual QOrganizerItemManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error) = 0;
-    virtual QString managerName() const = 0;
-    virtual QOrganizerItemEngineLocalId* createEngineLocalId() = 0;
-    virtual QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId() = 0;
+    virtual ~QOrganizerCollectionEngineLocalId() {}
+
+    virtual bool isEqualTo(const QOrganizerCollectionEngineLocalId* other) const = 0;
+    virtual bool isLessThan(const QOrganizerCollectionEngineLocalId* other) const = 0;
+
+    virtual uint engineLocalIdType() const = 0;
+    virtual QOrganizerCollectionEngineLocalId* clone() const = 0; // const?  does it return a ref?
+
+#ifndef QT_NO_DEBUG_STREAM
+    // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
+    virtual QDebug debugStreamOut(QDebug dbg) = 0;
+#endif
+#ifndef QT_NO_DATASTREAM
+    // NOTE: on platforms where Qt is built without data streams enabled, vtable will differ!
+    virtual QDataStream& dataStreamOut(QDataStream& out) = 0;
+    virtual QDataStream& dataStreamIn(QDataStream& in) = 0; // might not exist; might be QCME::deserializeId() instead.
+#endif
+    virtual uint hash() const = 0;
 };
+
 QTM_END_NAMESPACE
 
-QT_BEGIN_NAMESPACE
-#define QT_ORGANIZER_BACKEND_INTERFACE "com.nokia.qt.mobility.organizeritems.enginefactory/1.0"
-Q_DECLARE_INTERFACE(QtMobility::QOrganizerItemManagerEngineFactory, QT_ORGANIZER_BACKEND_INTERFACE);
-QT_END_NAMESPACE
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerCollectionEngineLocalId), Q_MOVABLE_TYPE); // XXX TODO: or is it a complex type?
+
 
 #endif
+

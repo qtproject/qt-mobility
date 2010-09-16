@@ -1094,7 +1094,7 @@ void tst_QOrganizerItemManager::batch()
     QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
 
     /* First test null pointer operations */
-    QVERIFY(!cm->saveItems(NULL, NULL));
+    QVERIFY(!cm->saveItems(NULL));
     QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
 
     QVERIFY(!cm->removeItems(QList<QOrganizerItemLocalId>(), NULL));
@@ -2079,7 +2079,7 @@ void tst_QOrganizerItemManager::errorStayingPut()
     QVERIFY(m2.error() == QOrganizerItemManager::NoError);
 
     /* Cause an error on the other ones and check the first is not affected */
-    m2.saveItems(0, 0);
+    m2.saveItems(0);
     QVERIFY(m1.error() == QOrganizerItemManager::DoesNotExistError);
     QVERIFY(m2.error() == QOrganizerItemManager::BadArgumentError);
 

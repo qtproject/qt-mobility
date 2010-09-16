@@ -180,6 +180,85 @@ uint QOrganizerItemMemoryEngineLocalId::hash() const
     return uint(((combinedLocalId >> (8 * sizeof(uint) - 1)) ^ combinedLocalId) & (~0U));
 }
 
+/*!
+  \class QOrganizerCollectionMemoryEngineLocalId
+  \brief The QOrganizerCollectionMemoryEngineLocalId class provides an id which uniquely identifies
+  a QOrganizerCollection stored within a collection stored within a a QOrganizerCollectionMemoryEngine.
+
+  It may be used as a reference implementation, although since different platforms
+  have different semantics for ids (datastore-unique versus calendar-unique, etc),
+  the precise implementation required may differ.
+ */
+QOrganizerCollectionMemoryEngineLocalId::QOrganizerCollectionMemoryEngineLocalId()
+    : m_localCollectionId(0)
+{
+}
+
+QOrganizerCollectionMemoryEngineLocalId::QOrganizerCollectionMemoryEngineLocalId(const QOrganizerCollectionMemoryEngineLocalId& other)
+    : m_localCollectionId(other.m_localCollectionId)
+{
+}
+
+QOrganizerCollectionMemoryEngineLocalId::~QOrganizerCollectionMemoryEngineLocalId()
+{
+}
+
+bool QOrganizerCollectionMemoryEngineLocalId::isEqualTo(const QOrganizerCollectionEngineLocalId* other) const
+{
+    quint32 otherlocalCollectionId = static_cast<const QOrganizerCollectionMemoryEngineLocalId*>(other)->m_localCollectionId;
+    if (m_localCollectionId != otherlocalCollectionId)
+        return false;
+    return true;
+}
+
+bool QOrganizerCollectionMemoryEngineLocalId::isLessThan(const QOrganizerCollectionEngineLocalId* other) const
+{
+    // order by collection, then by item in collection.
+    quint32 otherlocalCollectionId = static_cast<const QOrganizerCollectionMemoryEngineLocalId*>(other)->m_localCollectionId;
+    if (m_localCollectionId < otherlocalCollectionId)
+        return true;
+    return false;
+}
+
+uint QOrganizerCollectionMemoryEngineLocalId::engineLocalIdType() const
+{
+    // engines should embed the result of this as const read-only data (uint),
+    // instead of calculating it every time the function is called...
+    return qHash(QString(QLatin1String("memory")));
+}
+
+QOrganizerCollectionEngineLocalId* QOrganizerCollectionMemoryEngineLocalId::clone() const
+{
+    QOrganizerCollectionMemoryEngineLocalId *myClone = new QOrganizerCollectionMemoryEngineLocalId;
+    myClone->m_localCollectionId = m_localCollectionId;
+    return myClone;
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug QOrganizerCollectionMemoryEngineLocalId::debugStreamOut(QDebug dbg)
+{
+    dbg.nospace() << "QOrganizerCollectionMemoryEngineLocalId(" << m_localCollectionId << ")";
+    return dbg.maybeSpace();
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+QDataStream& QOrganizerCollectionMemoryEngineLocalId::dataStreamOut(QDataStream& out)
+{
+    return (out << m_localCollectionId);
+}
+
+QDataStream& QOrganizerCollectionMemoryEngineLocalId::dataStreamIn(QDataStream& in)
+{
+    // XXX TODO: decide whether this is required.
+    return (in >> m_localCollectionId); // or whether we put this functionality in QCME.
+}
+#endif
+
+uint QOrganizerCollectionMemoryEngineLocalId::hash() const
+{
+    return QT_PREPEND_NAMESPACE(qHash)(m_localCollectionId);
+}
 
 /*!
  * Factory function for creating a new in-memory backend, based

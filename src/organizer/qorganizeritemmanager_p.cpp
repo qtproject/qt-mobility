@@ -272,6 +272,20 @@ QOrganizerItemEngineLocalId* QOrganizerItemManagerData::createEngineLocalId(cons
     return engineFactory ? engineFactory->createEngineLocalId() : NULL;
 }
 
+/* Caller takes ownership of the id */
+QOrganizerCollectionEngineLocalId* QOrganizerItemManagerData::createEngineCollectionLocalId(const QString& uri)
+{
+    QString managerName;
+    QOrganizerItemManager::parseUri(uri, &managerName, NULL);
+
+    if (managerName == QLatin1String("memory"))
+        return new QOrganizerCollectionMemoryEngineLocalId();
+
+    loadFactories();
+    QOrganizerItemManagerEngineFactory *engineFactory = m_engines.value(managerName);
+    return engineFactory ? engineFactory->createCollectionEngineLocalId() : NULL;
+}
+
 // trampoline for private classes
 QOrganizerItemManagerEngine* QOrganizerItemManagerData::engine(const QOrganizerItemManager* manager)
 {

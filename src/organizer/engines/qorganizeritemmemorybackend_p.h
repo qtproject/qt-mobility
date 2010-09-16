@@ -73,6 +73,7 @@
 #include "qorganizeritemchangeset.h"
 #include "qorganizeritemrecurrencerule.h"
 #include "qorganizeritemenginelocalid.h"
+#include "qorganizercollectionenginelocalid.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -102,6 +103,34 @@ public:
 private:
     quint32 m_localCollectionId;
     quint32 m_localItemId;
+    friend class QOrganizerItemMemoryEngine;
+};
+
+class QOrganizerCollectionMemoryEngineLocalId : public QOrganizerCollectionEngineLocalId
+{
+public:
+    QOrganizerCollectionMemoryEngineLocalId();
+    QOrganizerCollectionMemoryEngineLocalId(quint32 collectionId);
+    ~QOrganizerCollectionMemoryEngineLocalId();
+    QOrganizerCollectionMemoryEngineLocalId(const QOrganizerCollectionMemoryEngineLocalId& other);
+
+    bool isEqualTo(const QOrganizerCollectionEngineLocalId* other) const;
+    bool isLessThan(const QOrganizerCollectionEngineLocalId* other) const;
+
+    uint engineLocalIdType() const;
+    QOrganizerCollectionEngineLocalId* clone() const;
+
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug debugStreamOut(QDebug dbg);
+#endif
+#ifndef QT_NO_DATASTREAM
+    QDataStream& dataStreamOut(QDataStream& out);
+    QDataStream& dataStreamIn(QDataStream& in);
+#endif
+    uint hash() const;
+
+private:
+    quint32 m_localCollectionId;
     friend class QOrganizerItemMemoryEngine;
 };
 
