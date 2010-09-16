@@ -33,6 +33,7 @@ symbian: {
     	qorganizeritemrequestqueue.h \
     	organizeritemrequestserviceprovider.h \
         qorganizersymbian_p.h \
+        organizersymbiancollection.h \
         organizersymbianutils.h \
         organizeritemtransform.h \
         transform/organizeritemdetailtransform.h \
@@ -54,6 +55,7 @@ symbian: {
     	qorganizeritemrequestqueue.cpp \
     	organizeritemrequestserviceprovider.cpp \
         qorganizersymbian.cpp \
+        organizersymbiancollection.cpp \
         organizersymbianutils.cpp \
         organizeritemtransform.cpp \
         transform/organizeritemdetailtransform.cpp \

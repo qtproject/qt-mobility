@@ -45,7 +45,7 @@
 #include <e32base.h>
 #include <qtorganizer.h>
 #include <calcommon.h>
-
+#include "QOrganizerItemChangeSet.h"
 // Forward declarations
 class QOrganizerItemSymbianEngine; // Symbian Plugin
 
@@ -132,6 +132,7 @@ private:
     QList<QOrganizerCollection>             iSuccessfullCollections;
     QList<QOrganizerCollectionLocalId>      iCollectionLocalIds;
 #endif
+    QOrganizerItemChangeSet                 iChangeSet;
     };
 
 #endif /* CORGANIZERITEMREQUESTSSERVICEPROVIDER_H_ */

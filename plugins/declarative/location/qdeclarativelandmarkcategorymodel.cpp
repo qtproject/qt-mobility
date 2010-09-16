@@ -196,7 +196,8 @@ void QDeclarativeLandmarkCategoryModel::fetchRequestStateChanged(QLandmarkAbstra
         // Convert into declarative classes
         convertCategoriesToDeclarative();
         endResetModel();
-        emit modelChanged();
+        if (!(oldCount == 0 && m_categories.count() == 0))
+            emit modelChanged();
         if (oldCount != m_categories.count())
             emit countChanged();
     } else if (m_error != m_fetchRequest->errorString()) {

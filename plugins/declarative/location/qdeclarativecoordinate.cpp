@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup qml-location
 
-    The Coordinate element is part of the \bold{QtMobility.location 1.0} module.
+    The Coordinate element is part of the \bold{QtMobility.location 1.1} module.
 */
 
 QDeclarativeCoordinate::QDeclarativeCoordinate(QObject* parent)
