@@ -499,16 +499,19 @@ void QGeoTiledMapData::fitToViewport(const QGeoBoundingBox &bounds, bool preserv
 /*!
     \reimp
 */
-void QGeoTiledMapData::paint(QPainter *painter, const QStyleOptionGraphicsItem *option)
+void QGeoTiledMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
     Q_D(QGeoTiledMapData);
-
     d->paintMap(painter, option);
+}
 
-    for (int i = 0; i < d->overlays.size(); ++i)
-        d->overlays[i]->paint(painter, option);
-
-    d->paintMapObjects(painter, option);
+/*!
+    \reimp
+*/
+void QGeoTiledMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option)
+{
+    Q_D(QGeoTiledMapData);
+    d->paintObjects(painter, option);
 }
 
 void QGeoTiledMapData::processRequests()
@@ -887,7 +890,7 @@ void QGeoTiledMapDataPrivate::paintMap(QPainter *painter, const QStyleOptionGrap
     }
 }
 
-void QGeoTiledMapDataPrivate::paintMapObjects(QPainter *painter, const QStyleOptionGraphicsItem *option)
+void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
 #if !(defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
     QPainter::RenderHints hints = painter->renderHints();
@@ -1021,6 +1024,11 @@ QRect QGeoTiledMapDataPrivate::screenRectForZoomFactor(int factor)
 void QGeoTiledMapDataPrivate::updateScreenRect()
 {
     maxZoomScreenRect = screenRectForZoomFactor(zoomFactor);
+
+    int x = maxZoomScreenRect.x();
+    int y = maxZoomScreenRect.y();
+    int width = maxZoomScreenRect.width();
+    int height = maxZoomScreenRect.height();
 
     if (x + width < maxZoomSize.width()) {
         maxZoomScreenRectClippedLeft = maxZoomScreenRect;

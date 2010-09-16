@@ -76,8 +76,6 @@ public:
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
     QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;
 
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
-
     virtual QPoint coordinateToWorldPixel(const QGeoCoordinate &coordinate) const;
     virtual QGeoCoordinate worldPixelToCoordinate(const QPoint &pixel) const;
 
@@ -87,6 +85,9 @@ public:
     int zoomFactor() const;
 
 protected:
+    void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    void paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
+
     QGeoMapObjectInfo* createMapObjectInfo(QGeoMapObject *mapObject);
 
 private Q_SLOTS:

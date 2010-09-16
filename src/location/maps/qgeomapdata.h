@@ -112,6 +112,10 @@ protected:
     QGeoMappingManagerEngine* engine() const;
     QGeoMapObject* containerObject();
 
+    virtual void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    virtual void paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    virtual void paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *option);
+
     virtual QGeoMapObjectInfo* createMapObjectInfo(QGeoMapObject *object);
 
     QGeoMapDataPrivate* d_ptr;

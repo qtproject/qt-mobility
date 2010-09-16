@@ -271,7 +271,7 @@ void QGeoMapData::clearMapObjects()
     The bounding box which is returned is defined by the upper left and 
     lower right corners of the visible area of the map.
 */
-QGeoBoundingBox QGraphicsGeoMap::viewport() const
+QGeoBoundingBox QGeoMapData::viewport() const
 {
     return QGeoBoundingBox(screenPositionToCoordinate(QPoint(0, 0)),
                            screenPositionToCoordinate(QPoint(d_ptr->windowSize.width(),
@@ -279,7 +279,7 @@ QGeoBoundingBox QGraphicsGeoMap::viewport() const
 }
 
 /*!
-    \fn void QGraphicsGeoMap fitToViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter)
+    \fn void QGeoMapData::fitToViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter)
 
     Attempts to fit the bounding box \a bounds into the viewport of the map.
 
@@ -337,7 +337,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
     Returns the list of visible map objects manager by this widget which 
     are displayed at least partially within the viewport of the map.
 */
-QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsInViewport() const
+QList<QGeoMapObject*> QGeoMapData::mapObjectsInViewport() const
 {
     return mapObjectsInScreenRect(QRectF(0.0,
                                          0.0,
@@ -365,18 +365,61 @@ QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsInViewport() const
 */
 
 /*!
-    Paints the map on \a painter, using the options \a option.
+    Paints the map and everything associated with it on \a painter, using the
+    options \a option.
 
-    This should handle the painting of the map overlays and the map objects as
-    well.
-
-    The default implementation just draws the overlays.
+    This will paint the map with paintMap(), then the map overlays with
+    QGeoMapOverlay::paint(), then the map objects with paintObjects(), and
+    finally paintProviderNotices().
 */
 void QGeoMapData::paint(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
+    paintMap(painter, option);
+
     for (int i = 0; i < d_ptr->overlays.size(); ++i)
         d_ptr->overlays[i]->paint(painter, option);
+
+    paintObjects(painter, option);
+
+    paintProviderNotices(painter, option);
 }
+
+/*!
+    Paints the map on \a painter, using the options \a option.
+
+    The map overlays, map objects and the provider notices (such as copyright
+    and powered by notices) are painted in separate methods, which are combined
+    in the paint() method.
+
+    The default implementation does not paint anything.
+*/
+void QGeoMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option) {}
+
+/*!
+    Paints the map objects on \a painter, using the options \a option.
+
+    The default implementation does not paint anything.
+*/
+
+void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option) {}
+
+/*!
+    Paints the provider notices on \a painter, using the options \a option.
+
+    The provider notices are things like the copyright and powered by notices.
+
+    The provider may not want the client developers to be able to move the
+    notices from their standard positions and so we have not provided API
+    support for specifying the position of the notices at this time.
+
+    If support for hinting at the positon of the notices is to be provided by
+    plugin parameters, the suggested parameter keys are
+    "mapping.notices.copyright.alignment" and
+    "mapping.notices.poweredby.alignment", with type Qt::Alignment.
+
+    The default implementation does not paint anything.
+*/
+void QGeoMapData::paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *option) {}
 
 /*!
     Returns the map overlays associated with this map.

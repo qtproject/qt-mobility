@@ -43,6 +43,7 @@
 #include "qgraphicsgeomap_p.h"
 
 #include "qgeocoordinate.h"
+#include "qgeoboundingbox.h"
 #include "qgeomapobject.h"
 
 #include "qgeoserviceprovider.h"
