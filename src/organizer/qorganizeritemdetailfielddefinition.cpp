@@ -145,7 +145,7 @@ bool QOrganizerItemDetailFieldDefinition::operator!=(const QOrganizerItemDetailF
 QDataStream& operator<<(QDataStream& out, const QOrganizerItemDetailFieldDefinition& definition)
 {
     quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItemDetailFieldDefinition
-    return out << formatVersion << static_cast<quint32>(definition.dataType()) << definition.allowableValues();
+    return out << formatVersion << static_cast<qint32>(definition.dataType()) << definition.allowableValues();
 }
 
 /*!
@@ -156,7 +156,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemDetailFieldDefinition& de
     quint8 formatVersion;
     in >> formatVersion;
     if (formatVersion == 1) {
-        quint32 dataType;
+        qint32 dataType;
         QVariantList allowableValues;
         in >> dataType >> allowableValues;
         definition.setDataType(dataType);
