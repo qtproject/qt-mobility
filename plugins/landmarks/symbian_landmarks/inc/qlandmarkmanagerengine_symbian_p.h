@@ -171,9 +171,6 @@ public:
     void HandleExecutionL(CLandmarkRequestData*, TRequestStatus&);
     void HandleCompletionL(CLandmarkRequestData*);
 
-    // to get keys defined by managerengine.
-    void setLandmarkAttributeKeys(QStringList landmarkKeys);
-
 private:
     bool saveLandmarkInternalL(QLandmark* landmark, QLandmarkManager::Error *error,
         QString *errorString, bool *added, bool *changed);
@@ -232,7 +229,6 @@ private:
     CPosLandmarkDatabase* m_LandmarkDb;
     CPosLmCategoryManager* m_LandmarkCatMgr;
     LandmarkEventObserver& m_LmEventObserver;
-    QStringList m_LandmarkAttributeKeys;
 
 private:
     friend class QLandmarkDbEventObserver;

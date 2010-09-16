@@ -426,7 +426,7 @@ void QGraphicsGeoMap::clearMapObjects()
     Returns the list of map objects managed by this widget which
     contain the point \a screenPosition within their boundaries.
 */
-QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsAtScreenPosition(const QPointF &screenPosition)
+QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsAtScreenPosition(const QPointF &screenPosition) const
 {
     if (d_ptr->mapData)
         return d_ptr->mapData->mapObjectsAtScreenPosition(screenPosition);
@@ -439,7 +439,7 @@ QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsAtScreenPosition(const QPointF 
     displayed at least partially within the on screen rectangle
     \a screenRect.
 */
-QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsInScreenRect(const QRectF &screenRect)
+QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsInScreenRect(const QRectF &screenRect) const
 {
     if (d_ptr->mapData)
         return d_ptr->mapData->mapObjectsInScreenRect(screenRect);

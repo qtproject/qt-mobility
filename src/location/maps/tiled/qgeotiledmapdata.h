@@ -68,8 +68,8 @@ public:
 
     void setMapType(QGraphicsGeoMap::MapType mapType);
 
-    QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
-    QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
+    QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition) const;
+    QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect) const;
 
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
     QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;

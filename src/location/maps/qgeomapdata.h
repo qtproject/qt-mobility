@@ -86,8 +86,8 @@ public:
     void removeMapObject(QGeoMapObject *mapObject);
     void clearMapObjects();
 
-    virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
-    virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
+    virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition) const;
+    virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect) const;
 
     QList<QGeoMapOverlay*> mapOverlays() const;
     void addMapOverlay(QGeoMapOverlay *overlay);
