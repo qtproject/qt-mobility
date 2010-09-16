@@ -242,11 +242,6 @@ void S60AudioPlayerSession::setActiveEndpoint(const QString& name)
     if (m_audioOutput) {
         TRAPD(err, m_audioOutput->SetAudioOutputL(output));
         setError(err);
-
-        if (m_audioEndpoint != name) {
-            m_audioEndpoint = name;
-            emit activeEndpointChanged(name);
-        }
     }
 #endif
 }
