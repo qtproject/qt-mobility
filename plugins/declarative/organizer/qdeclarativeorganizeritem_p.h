@@ -38,47 +38,60 @@
 **
 ****************************************************************************/
 
-#ifndef QMLORGANIZER_H
-#define QMLORGANIZER_H
+#ifndef QDECLARATIVEORGANIZERITEM_H
+#define QDECLARATIVEORGANIZERITEM_H
 
 #include <QList>
-#include <QPair>
-#include <QMap>
-#include <QDate>
-#include <QAbstractListModel>
-#include <QDeclarativeListProperty>
 #include <QtDeclarative>
 
 #include "qorganizeritem.h"
-#include "qorganizeritemmanager.h"
-#include "qorganizeritemlocalidfetchrequest.h"
 
 QTM_USE_NAMESPACE;
-class QMLOrganizerItem;
-class QMLOrganizerModel;
-class QMLOrganizer : public QObject
+
+class QMLOrganizerItem : public QAbstractListModel
 {
-Q_OBJECT
-Q_PROPERTY(QStringList availableManagers READ availableManagers)
-Q_PROPERTY(QString manager READ manager WRITE setManager)
-
+    Q_OBJECT
+    Q_PROPERTY (bool itemChanged READ itemChanged NOTIFY onItemChanged)
+    Q_PROPERTY (int itemId READ itemId NOTIFY onItemIdChanged)
 public:
+    enum {
+        DetailNameRole = Qt::UserRole + 500,
+        DetailFieldKeyRole,
+        DetailFieldValueRole,
+        DetailFieldRole
+    };
 
-    explicit QMLOrganizer(QObject *parent = 0);
+    explicit QMLOrganizerItem(QObject *parent = 0);
+    void setItem(const QOrganizerItem& c);
+    void setManager(QOrganizerItemManager* manager);
+    QOrganizerItem item() const;
+    QVariant itemMap() const;
+    Q_INVOKABLE QList<QObject*> details() const;
+    Q_INVOKABLE QList<QObject*> detailFields() const;
+    bool itemChanged() const;
+    Q_INVOKABLE void save();
 
-    QStringList availableManagers() const;
+    int itemId() const;
+    int rowCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
 
-    QString manager();
-    void setManager(const QString& manager);
 
-    Q_INVOKABLE QMLOrganizerModel* itemModel(const QDateTime& start, const QDateTime& end);
-
+signals:
+    void onItemChanged();
+    void onItemIdChanged();
+private slots:
+    void onItemSaved();
 private:
-    friend class QMLOrganizerModel;
-    QMap<QPair<QDateTime,QDateTime>, QMLOrganizerModel*> m_models;
+    QOrganizerItem m_item;
+    QDeclarativePropertyMap* m_itemMap;
+    QList<QDeclarativePropertyMap*> m_detailMaps;
+    QList<QObject*> m_details;
+    QList<QObject*> m_detailFields;
     QOrganizerItemManager* m_manager;
+    QOrganizerItemSaveRequest m_saveRequest;
 };
 
-QML_DECLARE_TYPE(QMLOrganizer)
 
-#endif // QMLORGANIZER_H
+QML_DECLARE_TYPE(QMLOrganizerItem)
+
+#endif // QMLORGANIZERITEM_H

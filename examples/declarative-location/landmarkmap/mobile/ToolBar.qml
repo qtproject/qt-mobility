@@ -47,6 +47,9 @@ Item {
     property alias button1Label: button1.text
     property alias button2Label: button2.text
     property alias button3Label: button3.text
+    property alias button1FontColor: button1.textColor
+    property alias button2FontColor: button2.textColor
+    property alias button3FontColor: button3.textColor
     signal button1Clicked
     signal button2Clicked
     signal button3Clicked

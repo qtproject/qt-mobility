@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,41 +38,31 @@
 **
 ****************************************************************************/
 
-#ifndef QMLORGANIZERITEMDETAILFIELD_H
-#define QMLORGANIZERITEMDETAILFIELD_H
+#include <QtGui/QApplication>
+#include <QtDeclarative/QDeclarativeContext>
+#include <QtDeclarative/QDeclarativeEngine>
+#include <QtDeclarative/QDeclarativeView>
 
-#include <QDeclarativePropertyMap>
+#include "utility.h"
 
-
-
-class QMLOrganizerItemDetailField : public QObject
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
-public:
-    Q_PROPERTY(QString detailName READ detailName NOTIFY detailNameChanged)
-    Q_PROPERTY(QString key READ key NOTIFY keyChanged)
-    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
-    QMLOrganizerItemDetailField(QObject* parent = 0);
+    QApplication application(argc, argv);
 
-    void setDetailPropertyMap(QDeclarativePropertyMap* map);
+    Utility utility;
 
-    void setKey(const QString& key);
-    QString key() const;
+    QDeclarativeView view;
+    view.setSource(QUrl(QLatin1String("qrc:///musicbrowser.qml")));
+    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    view.rootContext()->setContextProperty(QLatin1String("Utility"), &utility);
 
-    QVariant value() const;
-    void setValue(const QVariant& value);
+    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
 
-    QString detailName() const;
-    void setDetailName(const QString& name);
-signals:
-    void keyChanged();
-    void valueChanged();
-    void detailNameChanged();
-private:
-    QDeclarativePropertyMap* m_map;
-    QString m_key;
-    QString m_detailName;
-};
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5)
+    view.showFullScreen();
+#else
+    view.show();
+#endif
 
-
-#endif // QMLORGANIZERITEMDETAILFIELD_H
+    return application.exec();
+}

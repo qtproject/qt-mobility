@@ -240,17 +240,6 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark
             }
         }
 
-        // set street no
-        if (symbianLandmark->IsPositionFieldAvailable(EPositionFieldCrossing1)) {
-            TPtrC posField;
-            symbianLandmark->GetPositionField(EPositionFieldCrossing1, posField);
-            if (posField.Length() > 0) {
-                lmBuf.Copy(posField);
-                QString lmPosField((QChar*) (lmBuf.Ptr()), lmBuf.Length());
-                address.setStreetNumber(lmPosField);
-            }
-        }
-
         // set QGeoAddress with above info
         qtLandmark->setAddress(address);
 
@@ -283,7 +272,7 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
     }
 
     // set coverage radius
-    double rad = qtLandmark->radius();
+    qreal rad = qtLandmark->radius();
     if (rad > 0) {
         symbianLandmark.SetCoverageRadius(rad);
     }
@@ -396,15 +385,6 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
             lmStreet.length());
         symbianLandmark.SetPositionFieldL(EPositionFieldStreet, symbianLmPosField);
     }
-
-    // set street number
-    QString lmStreetNumber = qtLandmark->address().streetNumber();
-    if (lmStreetNumber.length() > 0) {
-        TPtrC symbianLmPosField(reinterpret_cast<const TText*> (lmStreetNumber.constData()),
-            lmStreetNumber.length());
-        symbianLandmark.SetPositionFieldL(EPositionFieldCrossing1, symbianLmPosField);
-    }
-
 }
 
 CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
@@ -431,7 +411,7 @@ CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
     }
 
     // set coverage radius
-    double rad = qtLandmark->radius();
+    qreal rad = qtLandmark->radius();
     if (rad > 0) {
         symbianLandmark->SetCoverageRadius(rad);
     }
@@ -543,16 +523,6 @@ CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
         TPtrC symbianLmPosField(reinterpret_cast<const TText*> (lmStreet.constData()),
             lmStreet.length());
         symbianLandmark->SetPositionFieldL(EPositionFieldStreet, symbianLmPosField);
-    }
-
-    // set street number
-    // this is just a assignment of extra field of landmark
-    // as there is no such field avaiable in positioning fields
-    QString lmStreetNumber = qtLandmark->address().streetNumber();
-    if (lmStreetNumber.length() > 0) {
-        TPtrC symbianLmPosField(reinterpret_cast<const TText*> (lmStreetNumber.constData()),
-            lmStreetNumber.length());
-        symbianLandmark->SetPositionFieldL(EPositionFieldCrossing1, symbianLmPosField);
     }
 
     CleanupStack::Pop(symbianLandmark);
@@ -948,11 +918,21 @@ QStringList LandmarkUtility::landmarkAttributeKeys()
                              << "city"
                              << "district"
                              << "street"
-                             << "streetNumber"
                              << "postCode";
     return commonKeys;
 }
 
+/*
+ * list of category attribute keys
+ *
+ */
+QStringList LandmarkUtility::categoryAttributeKeys()
+{
+    QStringList commonKeys = QStringList()
+                             << "name"
+                             << "iconUrl";
+    return commonKeys;
+}
 
 /**
  * converts attribute key string to symbian position field id value
@@ -965,8 +945,6 @@ TPositionFieldId LandmarkUtility::positionFieldId(QString keyValue)
         fieldId = EPositionFieldBuildingTelephone;
     else if (keyValue == "street")
         fieldId = EPositionFieldStreet;
-    else if (keyValue == "streetNumber")
-        fieldId = EPositionFieldCrossing1;
     else if (keyValue == "county")
         fieldId = EPositionFieldCounty;
     else if (keyValue == "city")

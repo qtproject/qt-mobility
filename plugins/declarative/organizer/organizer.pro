@@ -28,18 +28,22 @@ target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 
 # Input
-HEADERS += qmlorganizermodel.h \
-           qmlorganizeritem.h \
-           qmlorganizeritemdetail.h \
-           qmlorganizeritemdetailfield.h \
-           qmlorganizer.h
+HEADERS += qdeclarativeorganizermodel_p.h \
+           qdeclarativeorganizeritem_p.h \
+           qdeclarativeorganizeritemdetail_p.h \
+           qdeclarativeorganizer_p.h \
+           qmetaobjectbuilder_p.h \
+           qdeclarativeopenmetaobject_p.h \
+           qdeclarativeorganizeritemfilter_p.h
 
 SOURCES += plugin.cpp \
            qmllorganizermodel.cpp \
-           qmlorganizeritem.cpp \
-           qmlorganizeritemdetail.cpp \
-           qmlorganizeritemdetailfield.cpp \
-           qmlorganizer.cpp
+           qdeclarativeorganizeritem.cpp \
+           qdeclarativeorganizeritemdetail.cpp \
+           qdeclarativeorganizer.cpp \
+           qmetaobjectbuilder.cpp \
+           qdeclarativeopenmetaobject.cpp
+
 
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
