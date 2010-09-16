@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the demonstration applications of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,43 +39,25 @@
 **
 ****************************************************************************/
 
-#ifndef S60AUDIOENDPOINTSELECTOR_H
-#define S60AUDIOENDPOINTSELECTOR_H
+#include <QtGui/QApplication>
+#include <QtDeclarative/QDeclarativeView>
+#include <QtDeclarative/QDeclarativeEngine>
 
-#include <QStringList>
-
-#include <qaudioendpointselector.h>
-
-QT_USE_NAMESPACE
-
-class S60AudioCaptureSession;
-
-class S60AudioEndpointSelector : public QAudioEndpointSelector
+int main(int argc, char *argv[])
 {
-
-Q_OBJECT
-
-public:
-    S60AudioEndpointSelector(QObject *session, QObject *parent = 0);
-    ~S60AudioEndpointSelector();
-
-    QList<QString> availableEndpoints() const;
-    QString endpointDescription(const QString& name) const;
-    QString defaultEndpoint() const;
-    QString activeEndpoint() const;
-
-private:    
-    void update();    
-    
-public Q_SLOTS:
-    void setActiveEndpoint(const QString& name);
-
-private:
-    QString          m_audioInput;
-    QList<QString>   m_names;
-    QList<QString>   m_descriptions;
-
-    S60AudioCaptureSession* m_session;
-};
-
-#endif // S60AUDIOENDPOINTSELECTOR_H
+    QApplication application(argc, argv);
+    const QString mainQmlApp = QLatin1String("declarative-sfw-notes.qml");
+    QDeclarativeView view;
+    view.setSource(QUrl(mainQmlApp));
+    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    // Qt.quit() called in embedded .qml by default only emits
+    // quit() signal, so do this (optionally use Qt.exit()).
+    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
+#if defined(Q_OS_SYMBIAN)
+    view.showFullScreen();
+#else // Q_OS_SYMBIAN
+    view.setGeometry(QRect(100, 100, 360, 640));
+    view.show();
+#endif // Q_OS_SYMBIAN
+    return application.exec();
+}
