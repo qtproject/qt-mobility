@@ -83,7 +83,7 @@ public:
 
     qreal zoomLevel;
     QGeoCoordinate center;
-    QSizeF viewportSize;
+    QSizeF windowSize;
     QGraphicsGeoMap::MapType mapType;
 
     QList<QGeoMapOverlay*> overlays;

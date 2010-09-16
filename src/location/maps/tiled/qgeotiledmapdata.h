@@ -57,7 +57,7 @@ public:
     QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
     virtual ~QGeoTiledMapData();
 
-    void setViewportSize(const QSizeF &size);
+    void setWindowSize(const QSizeF &size);
 
     void setZoomLevel(qreal zoomLevel);
 
@@ -67,6 +67,8 @@ public:
     QGeoCoordinate center() const;
 
     void setMapType(QGraphicsGeoMap::MapType mapType);
+
+    virtual void fitToViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false);
 
     QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition) const;
     QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect) const;

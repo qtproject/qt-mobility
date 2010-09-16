@@ -127,7 +127,7 @@ QGraphicsGeoMap::QGraphicsGeoMap(QGraphicsItem *parent)
 
     setMinimumSize(QSizeF(0, 0));
     setPreferredSize(QSizeF(500, 500));
-//    d_ptr->mapData->setViewportSize(QSizeF(300, 300));
+//    d_ptr->mapData->setWindowSize(QSizeF(300, 300));
 }
 
 /*!
@@ -155,7 +155,7 @@ QGraphicsGeoMap::QGraphicsGeoMap(QGeoMappingManager *manager, QGraphicsItem *par
 
     setMinimumSize(QSizeF(0, 0));
     setPreferredSize(QSizeF(500, 500));
-    //d_ptr->mapData->setViewportSize(QSizeF(300, 300));
+    //d_ptr->mapData->setWindowSize(QSizeF(300, 300));
 }
 
 /*!
@@ -182,7 +182,7 @@ void QGraphicsGeoMap::setMappingManager(QGeoMappingManager *manager)
 
     d_ptr->mapData = d_ptr->manager->createMapData(this);
     setMapType(type);
-    d_ptr->mapData->setViewportSize(QSizeF(300, 300));
+    d_ptr->mapData->setWindowSize(QSizeF(300, 300));
 }
 
 /*!
@@ -191,7 +191,7 @@ void QGraphicsGeoMap::setMappingManager(QGeoMappingManager *manager)
 void QGraphicsGeoMap::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     if (d_ptr->mapData) {
-        d_ptr->mapData->setViewportSize(event->newSize());
+        d_ptr->mapData->setWindowSize(event->newSize());
     }
 }
 
@@ -423,6 +423,39 @@ void QGraphicsGeoMap::clearMapObjects()
 }
 
 /*!
+    Returns a bounding box corresponding to the physical area displayed 
+    in the viewport of the map.
+
+    The bounding box which is returned is defined by the upper left and 
+    lower right corners of the visible area of the map.
+*/
+QGeoBoundingBox QGraphicsGeoMap::viewport() const
+{
+    if (!d_ptr->mapData)
+        return QGeoBoundingBox();
+
+    return d_ptr->mapData->viewport();
+}
+
+/*!
+    Attempts to fit the bounding box \a bounds into the viewport of the map.
+
+    This method will change the zoom level to the maximum zoom level such 
+    that all of \bounds is visible within the resulting viewport.
+
+    If \a preserveViewportCenter is false the map will be centered on the 
+    bounding box \a bounds before the zoom level is changed, otherwise the 
+    center of the map will not be changed.
+*/
+void QGraphicsGeoMap::fitToViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter)
+{
+    if (!d_ptr->mapData)
+        return;
+
+    d_ptr->mapData->fitToViewport(bounds, preserveViewportCenter);
+}
+
+/*!
     Returns the list of visible map objects managed by this widget which
     contain the point \a screenPosition within their boundaries.
 */
@@ -443,6 +476,18 @@ QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsInScreenRect(const QRectF &scre
 {
     if (d_ptr->mapData)
         return d_ptr->mapData->mapObjectsInScreenRect(screenRect);
+
+    return QList<QGeoMapObject*>();
+}
+
+/*!
+    Returns the list of visible map objects manager by this widget which 
+    are displayed at least partially within the viewport of the map.
+*/
+QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsInViewport() const
+{
+    if (d_ptr->mapData)
+        return d_ptr->mapData->mapObjectsInViewport();
 
     return QList<QGeoMapObject*>();
 }

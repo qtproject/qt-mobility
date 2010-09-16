@@ -67,8 +67,8 @@ public:
     QGeoMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
     virtual ~QGeoMapData();
 
-    virtual void setViewportSize(const QSizeF &size);
-    virtual QSizeF viewportSize() const;
+    virtual void setWindowSize(const QSizeF &size);
+    virtual QSizeF windowSize() const;
 
     virtual void setZoomLevel(qreal zoomLevel);
     virtual qreal zoomLevel() const;
@@ -85,9 +85,13 @@ public:
     void addMapObject(QGeoMapObject *mapObject);
     void removeMapObject(QGeoMapObject *mapObject);
     void clearMapObjects();
+    
+    virtual QGeoBoundingBox viewport() const;
+    virtual void fitToViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false) = 0;
 
     virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition) const;
     virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect) const;
+    virtual QList<QGeoMapObject*> mapObjectsInViewport() const;
 
     QList<QGeoMapOverlay*> mapOverlays() const;
     void addMapOverlay(QGeoMapOverlay *overlay);

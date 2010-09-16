@@ -88,6 +88,8 @@ public:
     void cleanupCaches();
 
     bool intersects(QGeoMapObject *mapObject, const QRectF &rect);
+
+    QRect screenRectForZoomFactor(int zoomFactor);
     void updateScreenRect();
 
     bool containedInScreen(const QPoint &point) const;
