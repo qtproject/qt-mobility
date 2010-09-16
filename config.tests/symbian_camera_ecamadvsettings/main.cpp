@@ -39,52 +39,7 @@
 **
 ****************************************************************************/
 
-#include "s60mediacontainercontrol.h"
-#include "s60videocapturesession.h"
-#include "s60cameraconstants.h"
-
-S60MediaContainerControl::S60MediaContainerControl(QObject *parent):
-    QMediaContainerControl(parent)
+int main(int, char**)
 {
+    return 0;
 }
-
-S60MediaContainerControl::S60MediaContainerControl(S60VideoCaptureSession *session, QObject *parent):
-    QMediaContainerControl(parent)
-{
-    m_session = session;
-
-    // Set default video container
-    m_supportedContainers = m_session->supportedVideoContainers();
-    if (!m_supportedContainers.isEmpty()) {
-        if (m_supportedContainers.indexOf(KMimeTypeDefaultContainer) != -1) // Use MP4 as default if platform supports it
-            setContainerMimeType(QString("video/mp4"));
-        else
-            setContainerMimeType(m_supportedContainers[0]); // Last as default
-    }
-}
-
-S60MediaContainerControl::~S60MediaContainerControl()
-{
-}
-
-QStringList S60MediaContainerControl::supportedContainers() const
-{
-    return m_session->supportedVideoContainers();
-}
-
-QString S60MediaContainerControl::containerMimeType() const
-{
-    return m_session->videoContainer();
-}
-
-void S60MediaContainerControl::setContainerMimeType(const QString &containerMimeType)
-{
-    m_session->setVideoContainer(containerMimeType);
-}
-
-QString S60MediaContainerControl::containerDescription(const QString &containerMimeType) const
-{
-    return m_session->videoContainerDescription(containerMimeType);
-}
-
-// End of file
