@@ -139,7 +139,7 @@ TBool COrganizerItemRequestsServiceProvider::StartRequest(
                 break;
             case QOrganizerItemAbstractRequest::CollectionFetchRequest :
                 {
-                QList<QOrganizerCollectionId> collectionIds(
+                QList<QOrganizerCollectionLocalId> collectionIds(
                     ((QOrganizerCollectionFetchRequest*) iReq)
                     ->collectionIds());
                 TInt count(collectionIds.count());
@@ -631,11 +631,11 @@ void COrganizerItemRequestsServiceProvider::RemoveCollectionL()
         // update index beforehand in case removeCollectionL leaves, if so
         // RunError would call SelfComplete() for recursive operation
         iIndex++;
-        QOrganizerCollectionId collectionId(
+        QOrganizerCollectionLocalId collectionId(
             ((QOrganizerCollectionRemoveRequest*) iReq)
             ->collectionIds().at(iIndex-1));
 
-        iOrganizerItemManagerEngine.removeCollectionL(collectionId.localId());
+        iOrganizerItemManagerEngine.removeCollectionL(collectionId);
         // Calls itself recursively until all the items are deleted
         SelfComplete();
         }
