@@ -146,7 +146,7 @@ TBool COrganizerItemRequestsServiceProvider::StartRequest(
                 for (TInt index(0); index < count; index++)
                     {
                     iCollectionLocalIds.append(
-                        collectionIds.at(index).localId());
+                        collectionIds.at(index));
                     }
                 iNoOfItems = iOrganizerItemManagerEngine.sessionCount();
                 }
