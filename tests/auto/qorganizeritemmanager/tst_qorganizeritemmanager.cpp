@@ -447,6 +447,62 @@ void tst_QOrganizerItemManager::nullIdOperations()
     QVERIFY(c.id() == QOrganizerItemId());
     QVERIFY(c.isEmpty());
     QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
+
+
+    // test that streaming null ids doesn't crash.
+    {
+        QOrganizerItemId nullId;
+        QByteArray buffer;
+        QDataStream outBufferStream(&buffer, QIODevice::WriteOnly);
+        outBufferStream << nullId;
+        QVERIFY(buffer.length() > 0);
+
+        QDataStream inBufferStream(buffer);
+        QOrganizerItemId id;
+        inBufferStream >> id;
+        QVERIFY(id == nullId);
+    }
+
+    {
+        QOrganizerItemLocalId nullLocalId;
+        QByteArray buffer;
+        QDataStream outBufferStream(&buffer, QIODevice::WriteOnly);
+        outBufferStream << nullLocalId;
+        QVERIFY(buffer.length() > 0);
+
+        // cannot stream in local ids; must stream in entire ids.
+        //QDataStream inBufferStream(buffer);
+        //QOrganizerItemLocalId id;
+        //inBufferStream >> id;
+        //QVERIFY(id == nullLocalId);
+    }
+
+    {
+        QOrganizerCollectionId nullId;
+        QByteArray buffer;
+        QDataStream outBufferStream(&buffer, QIODevice::WriteOnly);
+        outBufferStream << nullId;
+        QVERIFY(buffer.length() > 0);
+
+        QDataStream inBufferStream(buffer);
+        QOrganizerCollectionId id;
+        inBufferStream >> id;
+        QVERIFY(id == nullId);
+    }
+
+    {
+        QOrganizerCollectionLocalId nullLocalId;
+        QByteArray buffer;
+        QDataStream outBufferStream(&buffer, QIODevice::WriteOnly);
+        outBufferStream << nullLocalId;
+        QVERIFY(buffer.length() > 0);
+
+        // cannot stream in local ids; must stream in entire ids.
+        //QDataStream inBufferStream(buffer);
+        //QOrganizerCollectionLocalId id;
+        //inBufferStream >> id;
+        //QVERIFY(id == nullLocalId);
+    }
 }
 
 void tst_QOrganizerItemManager::uriParsing()

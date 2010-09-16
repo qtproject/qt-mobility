@@ -287,7 +287,10 @@ uint qHash(const QOrganizerItemId &key)
 #ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QOrganizerItemLocalId& id)
 {
-    return id.d->debugStreamOut(dbg);
+    if (id.d) {
+        return id.d->debugStreamOut(dbg);
+    }
+    return (dbg << QString(QLatin1String("(null)"))); // no local id data.
 }
 
 QDebug operator<<(QDebug dbg, const QOrganizerItemId& id)
@@ -300,7 +303,12 @@ QDebug operator<<(QDebug dbg, const QOrganizerItemId& id)
 #ifndef QT_NO_DATASTREAM
 QDataStream& operator<<(QDataStream& out, const QOrganizerItemLocalId& id)
 {
-    return id.d->dataStreamOut(out);
+    if (id.d) {
+        // we include a marker which contains "true" if there is local id data to be streamed.
+        out << static_cast<quint8>(true);
+        return id.d->dataStreamOut(out);
+    }
+    return (out << static_cast<quint8>(false));
 }
 
 QDataStream& operator<<(QDataStream& out, const QOrganizerItemId& id)
@@ -316,10 +324,15 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id)
     if (formatVersion == 1) {
         QString managerUri;
         in >> managerUri;
+        quint8 localIdMarker = static_cast<quint8>(false);
+        in >> localIdMarker;
         QOrganizerItemLocalId localId(QOrganizerItemManagerData::createEngineLocalId(managerUri));
         if (localId.d) {
             id.setManagerUri(managerUri);
-            localId.d->dataStreamIn(in);
+            if (localIdMarker == static_cast<quint8>(true)) {
+                // only try to stream in data if it exists.  otherwise, skip it.
+                localId.d->dataStreamIn(in);
+            }
         }
     } else {
         in.setStatus(QDataStream::ReadCorruptData);

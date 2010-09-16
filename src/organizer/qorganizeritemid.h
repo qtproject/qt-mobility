@@ -58,7 +58,6 @@ class QOrganizerItemLocalId;
 Q_ORGANIZER_EXPORT uint qHash(const QOrganizerItemLocalId& key);
 #ifndef QT_NO_DATASTREAM
 Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerItemLocalId& id);
-Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItemLocalId& id);
 #endif
 #ifndef QT_NO_DEBUG_STREAM
 Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemLocalId& id);
