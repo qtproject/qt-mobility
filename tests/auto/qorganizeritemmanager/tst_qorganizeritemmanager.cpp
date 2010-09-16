@@ -753,7 +753,7 @@ void tst_QOrganizerItemManager::add()
                 // any value of the correct type will be accepted
                 bool savedSuccessfully = false;
                 QVariant dummyValue = QVariant(fieldKey); // try to get some unique string data
-                if (static_cast<unsigned>(currentField.dataType()) < QVariant::UserType) {
+                if (currentField.dataType() < static_cast<int>(QVariant::UserType)) {
                     QVariant::Type type = static_cast<QVariant::Type>(currentField.dataType());
                     // It is not a user-defined type
                     if (dummyValue.canConvert(type)) {
@@ -2147,18 +2147,18 @@ void tst_QOrganizerItemManager::detailDefinitions()
                         }
                         QVERIFY(var.type() == QVariant::String || var.type() == QVariant::StringList);
                     }
-                } else if (field.dataType() == QVariant::List || field.dataType() == QVariant::Map || field.dataType() == (QVariant::Type) qMetaTypeId<QVariant>()) {
+                } else if (field.dataType() == QVariant::List || field.dataType() == QVariant::Map || field.dataType() == qMetaTypeId<QVariant>()) {
                     // Well, anything goes
                 } else {
                     // The type of each allowed value must match the data type
                     foreach(QVariant var, field.allowableValues()) {
-                        if (var.type() != field.dataType()) {
+                        if (var.userType() != field.dataType()) {
                             QString foo;
                             QDebug dbg(&foo);
                             dbg.nospace() << var;
                             qDebug().nospace() << "Field " << QString("%1::%2").arg(def.name()).arg(def.fields().key(field)).toAscii().constData() << " allowable value '" << foo.simplified().toAscii().constData() << "' not supported for field type " << QMetaType::typeName(field.dataType());
                         }
-                        QVERIFY(var.type() == field.dataType());
+                        QVERIFY(var.userType() == field.dataType());
                     }
                 }
             }
@@ -2206,7 +2206,7 @@ void tst_QOrganizerItemManager::detailDefinitions()
     invalidFieldTypeDef.setName("Invalid field type");
     badfields.clear();
     QOrganizerItemDetailFieldDefinition badfield;
-    badfield.setDataType((QVariant::Type) qMetaTypeId<UnsupportedMetatype>());
+    badfield.setDataType(qMetaTypeId<UnsupportedMetatype>());
     badfields.insert("Bad type", badfield);
     invalidFieldTypeDef.setFields(badfields);
 
