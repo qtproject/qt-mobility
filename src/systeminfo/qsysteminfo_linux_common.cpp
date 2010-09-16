@@ -1688,10 +1688,6 @@ QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObje
     storageChanged = false;
 
     checkAvailableStorage();
-    storageTimer = new QTimer(this);
-    connect(storageTimer,SIGNAL(timeout()),this,SLOT(checkAvailableStorage()));
-    storageTimer->start(60 * 1000);
-
 }
 
 QSystemStorageInfoLinuxCommonPrivate::~QSystemStorageInfoLinuxCommonPrivate()
@@ -1715,6 +1711,16 @@ void QSystemStorageInfoLinuxCommonPrivate::connectNotify(const char *signal)
                     this,SLOT(deviceChanged(const QString &)));
         }
     }
+
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageStateChanged(const QString &, QSystemStorageInfo::StorageState))))) {
+        if(!storageTimer) {
+            storageTimer = new QTimer(this);
+        }
+        connect(storageTimer,SIGNAL(timeout()),this,SLOT(checkAvailableStorage()));
+        if(!storageTimer->isActive())
+            storageTimer->start(60 * 1000);
+    }
 }
 
 void QSystemStorageInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
@@ -1732,6 +1738,10 @@ void QSystemStorageInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
             delete mtabWatcherA;
             mtabWatcherA = 0;
         }
+    }
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageStateChanged(const QString &, QSystemStorageInfo::StorageState))))) {
+        disconnect(storageTimer,SIGNAL(timeout()),this,SLOT(checkAvailableStorage()));
     }
 }
 
