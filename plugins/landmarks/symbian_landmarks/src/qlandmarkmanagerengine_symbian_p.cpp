@@ -400,16 +400,7 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
         return QList<QLandmarkId> ();
     }
 
-    bool isNearestFilter = false;
-    // check for nearest
-    if (filter.type() == QLandmarkFilter::ProximityFilter) {
-        QLandmarkProximityFilter proximityFilter = filter;
-        if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-            isNearestFilter = true;
-        }
-    }
-
-    sortFetchedLmIds(limit, offset, sortOrders, result, isNearestFilter, filter.type(), error,
+    sortFetchedLmIds(limit, offset, sortOrders, result, filter.type(), error,
         errorString);
 
     return result;
@@ -1161,7 +1152,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::None;
+    QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::NoSupport;
 
     switch (filter.type()) {
 
@@ -1185,7 +1176,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
     case QLandmarkFilter::ProximityFilter:
     case QLandmarkFilter::BoxFilter:
     {
-        supportLevel = QLandmarkManager::Native;
+        supportLevel = QLandmarkManager::NativeSupport;
         break;
     }
     case QLandmarkFilter::AttributeFilter:
@@ -1244,7 +1235,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
                 if (!found)
                     break;
             }
-            supportLevel = QLandmarkManager::Native;
+            supportLevel = QLandmarkManager::NativeSupport;
         }
         break;
     }
@@ -1252,7 +1243,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
     case QLandmarkFilter::IntersectionFilter:
     case QLandmarkFilter::UnionFilter:
     {
-        supportLevel = QLandmarkManager::Emulated;
+        supportLevel = QLandmarkManager::EmulatedSupport;
         break;
     }
     default:
@@ -1275,14 +1266,14 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::sortOrderSup
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::Native;
+    QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::NativeSupport;
 
     switch (sortOrders.at(0).type()) {
     case QLandmarkSortOrder::DefaultSort:
     case QLandmarkSortOrder::NameSort:
         break;
     default:
-        supportLevel = QLandmarkManager::None;
+        supportLevel = QLandmarkManager::NoSupport;
         break;
     }
 
@@ -1301,14 +1292,9 @@ bool LandmarkManagerEngineSymbianPrivate::isFeatureSupported(
     *errorString = "";
 
     switch (feature) {
-    case (QLandmarkManager::ImportExport):
-    case (QLandmarkManager::Notifications):
+    case (QLandmarkManager::ImportExportFeature):
+    case (QLandmarkManager::NotificationsFeature):
         return true;
-    case (QLandmarkManager::ExtendedAttributes):
-    case (QLandmarkManager::CustomAttributes):
-        *error = QLandmarkManager::NotSupportedError;
-        *errorString = "Not supported feature";
-        return false;
     default:
         *error = QLandmarkManager::BadArgumentError;
         *errorString = "Invalid feature";
@@ -1412,81 +1398,6 @@ QStringList LandmarkManagerEngineSymbianPrivate::supportedFormats(
     }
 
     return formats;
-}
-
-/*!
- Returns whether extended attributes specific to this manager are enabled or not.
- If extended attributes are enabled, retrieved landmarks will have
- extra attribute keys accessible through the QLandmark::attribute() function.
- Extended attributes must be enabled to save any landmarks which possess
- extended attributes.  This same behaviour will also apply to categories
- if extended category attributes are supported.
- Errors are stored in \a error and \a errorString.
- */
-bool LandmarkManagerEngineSymbianPrivate::isExtendedAttributesEnabled(
-    QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Symbian landmarks apis dont support extended attributes of landmarks";
-
-    //return m_isExtendedAttributesEnabled;
-    // Always returns false as Symbian landmarks apis dont support extended attributes of landmarks.
-    return false;
-}
-
-/*!
- Sets whether extended attributes are \a enabled or not.
- Errors are stored in \a error and \a errorString.
- */
-void LandmarkManagerEngineSymbianPrivate::setExtendedAttributesEnabled(bool enabled,
-    QLandmarkManager::Error *error, QString *errorString)
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Symbian landmarks apis dont support extended attributes of landmarks";
-
-    m_isExtendedAttributesEnabled = enabled;
-}
-
-/*!
- Returns whether custom attributes are enabled or not. Custom attributes
- are arbitrary attributes created by the application for a landmark.
- If custom attributes are enabled (and the manager supports them),
- retrieved landmarks will have extra attributes accessible
- using QLandmark::customAttributes().  Custom attributes must be enabled
- to save any landmarks with possess custom attributes.  This same behaviour
- applies to categories if custom category attributes are supported.
- Errors are stored in \a error and \a errorString.
- */
-bool LandmarkManagerEngineSymbianPrivate::isCustomAttributesEnabled(QLandmarkManager::Error *error,
-    QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Symbian landmarks apis dont support custom attributes of landmarks";
-
-    //return m_isCustomAttributesEnabled;
-    // Always false as symbian landmarks apis dont support custom attributes of landmarks.
-    return false;
-}
-
-/*!
- Sets whether custom attributes are \a enabled or not.
- Errors are stored in \a error and \a errorString.
- */
-void LandmarkManagerEngineSymbianPrivate::setCustomAttributesEnabled(bool enabled,
-    QLandmarkManager::Error *error, QString *errorString)
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Symbian landmarks apis dont support custom attributes of landmarks";
-
-    m_isCustomAttributesEnabled = enabled;
 }
 
 /*!
@@ -2335,13 +2246,6 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
         return result;
     }
 
-    if (landmark->customAttributeKeys().size() > 0) {
-        *error = QLandmarkManager::NotSupportedError;
-        *errorString
-            = "Landmark contains the different attributes, that this engines doesnt support";
-        return result;
-    }
-
     CPosLandmark* symbianLandmark = NULL;
     QLandmarkId landmarkId = landmark->landmarkId();
 
@@ -2485,13 +2389,6 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategoryInternalL(QLandmarkCategor
         *error = QLandmarkManager::BadArgumentError;
         *errorString
             = "Category Name is greater than its maxlength i.e. KPosLmMaxCategoryNameLength = 124.";
-        return result;
-    }
-
-    if (category->customAttributeKeys().size() > 0) {
-        *error = QLandmarkManager::NotSupportedError;
-        *errorString
-            = "LandmarkCategory contains the different attributes, that this engines doesnt support";
         return result;
     }
 
@@ -2826,7 +2723,7 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
         // set the coordinate values
         TCoordinate symbianCoord;
 
-        QGeoCoordinate qCoord = proximityFilter.coordinate();
+        QGeoCoordinate qCoord = proximityFilter.center();
         if (LandmarkUtility::isValidLat(qCoord.latitude()) && LandmarkUtility::isValidLong(
             qCoord.longitude())) {
             symbianCoord.SetCoordinate(qCoord.latitude(), qCoord.longitude());
@@ -2966,7 +2863,7 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
          }
          if (keyList.contains("radius")) {
          if (attributeFilter.attribute("radius").isValid()) {
-         if (lmk.radius() == attributeFilter.attribute("radius").toDouble())
+         if (lmk.radius() == attributeFilter.attribute("radius").toReal())
          radlmkids.insert(lmk.landmarkId().localId());
          }
          else if (lmk.radius() > 0)
@@ -3279,21 +3176,6 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
                     CleanupStack::Pop(textContainsStreet);
                 }
             }
-            else if (keyList.at(i) == "streetNumber") {
-                CPosLmTextCriteria* textStrNumCriteria = CPosLmTextCriteria::NewLC();
-                afieldArray.InsertInOrder(LandmarkUtility::positionFieldId(keyList.at(i)));
-                textStrNumCriteria->SetTextL(filterName);
-                textStrNumCriteria->SetPositionFieldsToSearchL(afieldArray);
-                compositeCriteria->AddArgument(textStrNumCriteria);
-                CleanupStack::Pop(textStrNumCriteria);
-                if (filterNamecont.Length() > 0) {
-                    CPosLmTextCriteria* textContainsStrNum = CPosLmTextCriteria::NewLC();
-                    textContainsStrNum->SetTextL(filterNamecont);
-                    textContainsStrNum->SetPositionFieldsToSearchL(afieldArray);
-                    compositeCriteria->AddArgument(textContainsStrNum);
-                    CleanupStack::Pop(textContainsStrNum);
-                }
-            }
             else if (keyList.at(i) == "postCode") {
                 CPosLmTextCriteria* textPostCodeCriteria = CPosLmTextCriteria::NewLC();
                 afieldArray.InsertInOrder(LandmarkUtility::positionFieldId(keyList.at(i)));
@@ -3546,17 +3428,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
                     symbianLmIds);
                 symbianLmIds.Close();
 
-                bool isNearestFilter = false;
-                // check for nearest
-                if (lmIdFetchRequest->filter().type() == QLandmarkFilter::ProximityFilter) {
-                    QLandmarkProximityFilter proximityFilter = lmIdFetchRequest->filter();
-                    if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-                        isNearestFilter = true;
-                    }
-                }
-
                 sortFetchedLmIds(lmIdFetchRequest->limit(), lmIdFetchRequest->offset(),
-                    lmIdFetchRequest->sorting(), aData->iLandmarkIds, isNearestFilter,
+                    lmIdFetchRequest->sorting(), aData->iLandmarkIds,
                     lmIdFetchRequest->filter().type(), &error, &errorString);
             }
         }
@@ -3614,17 +3487,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
                     symbianLmIds);
                 symbianLmIds.Close();
 
-                bool isNearestFilter = false;
-                // check for nearest
-                if (lmfetchRequest->filter().type() == QLandmarkFilter::ProximityFilter) {
-                    QLandmarkProximityFilter proximityFilter = lmfetchRequest->filter();
-                    if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-                        isNearestFilter = true;
-                    }
-                }
-
                 if (sortFetchedLmIds(lmfetchRequest->limit(), lmfetchRequest->offset(),
-                    lmfetchRequest->sorting(), aData->iLandmarkIds, isNearestFilter,
+                    lmfetchRequest->sorting(), aData->iLandmarkIds,
                     lmfetchRequest->filter().type(), &error, &errorString)) {
 
                     // get all landmark data
@@ -4256,16 +4120,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
                 symbianLmIds.Close();
             }
 
-            bool isNearestFilter = false;
-            // check for nearest
-            if (filters.at(aData->iOpCount - 1).type() == QLandmarkFilter::ProximityFilter) {
-                QLandmarkProximityFilter proximityFilter = filters.at(aData->iOpCount);
-                if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-                    isNearestFilter = true;
-                }
-            }
             // sort and fetch with offset if required.
-            sortFetchedLmIds(limit, offset, sortOrders, result, isNearestFilter, filters.at(
+            sortFetchedLmIds(limit, offset, sortOrders, result, filters.at(
                 aData->iOpCount - 1).type(), &error, &errorString);
 
             // update the first result
@@ -4352,7 +4208,7 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
  * also filters the data with offset and limit
  */
 bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset, QList<
-    QLandmarkSortOrder> sortOrders, QList<QLandmarkId>& landmarkIds, bool isNearestFilter,
+    QLandmarkSortOrder> sortOrders, QList<QLandmarkId>& landmarkIds,
     QLandmarkFilter::FilterType filterType, QLandmarkManager::Error *error, QString *errorString) const
 {
     // if no search data found return empty list
@@ -4397,13 +4253,6 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
 
         landmarkIds.clear();
         landmarkIds = QLandmarkManagerEngineSymbian::sortLandmarks(landmarks, sortOrders);
-    }
-
-    if (isNearestFilter) {
-        QLandmarkId nearestLmId = landmarkIds.at(0);
-        landmarkIds.clear();
-        landmarkIds.append(nearestLmId);
-        return true;
     }
 
     int resultcount = landmarkIds.size();

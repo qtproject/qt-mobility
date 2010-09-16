@@ -188,6 +188,7 @@ public:
     QMap<QString, QContactDetail> preferredDetails() const;
 
 private:
+    friend class QContactData;
     friend class QContactManager;
     friend class QContactManagerData;
     friend class QContactManagerEngine;

@@ -810,9 +810,13 @@ QString QSystemDeviceInfoPrivate::productName()
      int interval;
      int preferBlank;
      int allowExp;
-     XGetScreenSaver(QX11Info::display(), &ttime, &interval, &preferBlank, &allowExp);
-     int result = XSetScreenSaver(QX11Info::display(), timeout, interval, preferBlank, allowExp);
-     return result;
+     Display *dis = QX11Info::display();
+     if(dis) {
+         XGetScreenSaver(dis, &ttime, &interval, &preferBlank, &allowExp);
+         int result = XSetScreenSaver(QX11Info::display(), timeout, interval, preferBlank, allowExp);
+         return result;
+     }
+     return 0;
  }
 #endif
 
