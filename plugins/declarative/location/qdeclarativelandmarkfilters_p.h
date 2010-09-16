@@ -139,7 +139,7 @@ private:
 class QDeclarativeLandmarkProximityFilter : public QDeclarativeLandmarkFilterBase
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY coordinateChanged)
+    Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(double radius READ radius WRITE setRadius NOTIFY radiusChanged)
 
 public:
