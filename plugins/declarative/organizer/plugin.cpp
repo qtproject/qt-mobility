@@ -42,11 +42,12 @@
 #include <QApplication>
 #include <QtDeclarative>
 #include <QDeclarativeExtensionPlugin>
-#include <QDebug>
+
 #include "qdeclarativeorganizermodel_p.h"
 #include "qdeclarativeorganizeritem_p.h"
 #include "qdeclarativeorganizer_p.h"
 #include "qdeclarativeorganizeritemdetail_p.h"
+#include "qdeclarativeorganizeritemfilter_p.h"
 
 QT_USE_NAMESPACE
 
@@ -83,11 +84,16 @@ public:
         qmlRegisterType<QDeclarativeOrganizerTodoTimeRange>(uri, 1, 1, "OrganizerTodoTimeRange");
 
         //filters
-//        qmlRegisterType<>(uri, 1, 1, "");
-//        qmlRegisterType<>(uri, 1, 1, "");
-//        qmlRegisterType<>(uri, 1, 1, "");
-//        qmlRegisterType<>(uri, 1, 1, "");
-//        qmlRegisterType<>(uri, 1, 1, "");
+        qmlRegisterType<QDeclarativeOrganizerItemFilter>(uri, 1, 1, "OrganizerItemFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemChangelogFilter>(uri, 1, 1, "OrganizerItemChangelogFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemCollectionFilter>(uri, 1, 1, "OrganizerItemCollectionFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemDateTimePeriodFilter>(uri, 1, 1, "OrganizerItemDateTimePeriodFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemDetailFilter>(uri, 1, 1, "OrganizerItemDetailFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemDetailRangeFilter>(uri, 1, 1, "OrganizerItemDetailRangeFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemLocalIdFilter>(uri, 1, 1, "OrganizerItemLocalIdFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemIntersectionFilter>(uri, 1, 1, "OrganizerItemIntersectionFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemUnionFilter>(uri, 1, 1, "OrganizerItemUnionFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemInvalidFilter>(uri, 1, 1, "OrganizerItemInvalidFilter");
     }
 };
 
