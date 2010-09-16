@@ -61,18 +61,30 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
   Constructs a QSystemStorageInfo object with the given \a parent.
 */
 
-        /*!
-            \enum QSystemStorageInfo::DriveType
-            This enum describes the type of drive or volume
+/*!
+    \enum QSystemStorageInfo::DriveType
+    This enum describes the type of drive or volume
 
-            \value NoDrive               Drive type undetermined.
-            \value InternalDrive         Is internal drive.
-            \value RemovableDrive        Is removable.
-            \value RemoteDrive           Is a network drive.
-            \value CdromDrive            Is a cd rom drive.
-        */
+    \value NoDrive               Drive type undetermined.
+    \value InternalDrive         Is internal drive.
+    \value RemovableDrive        Is removable.
+    \value RemoteDrive           Is a network drive.
+    \value CdromDrive            Is a cd rom drive.
+*/
 
-        /*!
+/*!
+    \enum QSystemStorageInfo::StorageState
+    This enum describes the state of the storage level of drive or volume.
+
+    \value UnknownStorageState         Storage level indicates an error, offline or unknown.
+    \value NormalStorageState          Storage level indicates normal.
+    \value LowStorageState             Storage level indicates below 40%.
+    \value VeryLowStorageState         Storage level indicates below 10%.
+    \value CriticalStorageState        Storage level indicates below 2%.
+
+*/
+
+/*!
            \fn void QSystemStorageInfo::logicalDriveChanged(bool,const QString &))
 
            This signal gets emitted when new storage has been added or removed from the system.
@@ -83,8 +95,13 @@ QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
    : QObject(parent), d(storageInfoPrivate())
 {
     qRegisterMetaType<QSystemStorageInfo::DriveType>("QSystemStorageInfo::DriveType");
+    qRegisterMetaType<QSystemStorageInfo::StorageState>("QSystemStorageInfo::StorageState");
+
     connect(d,SIGNAL(logicalDriveChanged(bool,const QString &)),
            this,SIGNAL(logicalDriveChanged(bool,const QString &)));
+
+    connect(d,SIGNAL(storageStateChanged(QSystemStorageInfo::StorageState state)),
+           this,SIGNAL(storageStateChanged(QSystemStorageInfo::StorageState state)));
 }
 
 /*!
@@ -137,6 +154,15 @@ QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &dr
 QString QSystemStorageInfo::uriForDrive(const QString &driveVolume)
 {
     return storageInfoPrivate()->uriForDrive(driveVolume);
+}
+
+
+/*!
+ Returns the storage state of volume \a driveVolume
+*/
+QSystemStorageInfo::StorageState QSystemStorageInfo::getStorageState(const QString &driveVolume)
+{
+   return storageInfoPrivate()->getStorageState(driveVolume);
 }
 
 #include "moc_qsystemstorageinfo.cpp"

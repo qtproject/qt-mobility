@@ -56,6 +56,8 @@ class  Q_SYSINFO_EXPORT QSystemStorageInfo : public QObject
     Q_PROPERTY(QStringList logicalDrives READ logicalDrives NOTIFY logicalDriveChanged)
     Q_ENUMS(DriveType)
 
+    Q_ENUMS(StorageState)
+
 public:
 
     explicit QSystemStorageInfo(QObject *parent = 0);
@@ -69,16 +71,27 @@ public:
         CdromDrive
     };
 
+    enum StorageState {
+        UnknownStorageState = 0,
+        NormalStorageState,
+        LowStorageState, //40%
+        VeryLowStorageState, //10%
+        CriticalStorageState, //2%
+    }; //1.2
+
+
     Q_INVOKABLE qlonglong totalDiskSpace(const QString &driveVolume);
     Q_INVOKABLE qlonglong availableDiskSpace(const QString &driveVolume);
     static QStringList logicalDrives();
 
     Q_INVOKABLE QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
-    QString uriForDrive(const QString &driveVolume);//1.2
+    Q_INVOKABLE QString uriForDrive(const QString &driveVolume);//1.2
+    Q_INVOKABLE QSystemStorageInfo::StorageState getStorageState(const QString &volume);//1.2
 
 Q_SIGNALS:
     void logicalDriveChanged(bool added,const QString &vol);
+    void storageStateChanged(QSystemStorageInfo::StorageState state); //1.2
 
 private:
        QSystemStorageInfoPrivate *d;

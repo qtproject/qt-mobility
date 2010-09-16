@@ -46,6 +46,7 @@
 
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QSystemStorageInfo::DriveType);
+Q_DECLARE_METATYPE(QSystemStorageInfo::StorageState);
 
 class tst_QSystemStorageInfo : public QObject
 {
@@ -58,6 +59,7 @@ private slots:
     void tst_availableDiskSpace();
     void tst_logicalDrives();
     void tst_typeForDrive();
+    void tst_getStorageState();
 
 };
 
@@ -102,6 +104,20 @@ void tst_QSystemStorageInfo::tst_typeForDrive()
                 || type == QSystemStorageInfo::InternalDrive
                 || type == QSystemStorageInfo::RemoteDrive
                 || type == QSystemStorageInfo::RemovableDrive);
+    }
+}
+
+void tst_QSystemStorageInfo::tst_getStorageState()
+{
+    QSystemStorageInfo mi;
+    QStringList volList = mi.logicalDrives();
+    foreach(QString vol, volList) {
+        QSystemStorageInfo::StorageState state = mi.getStorageState(vol);
+        QVERIFY(state == QSystemStorageInfo::UnknownStorageState
+                || state == QSystemStorageInfo::NormalStorageState
+                || state == QSystemStorageInfo::LowStorageState
+                || state == QSystemStorageInfo::VeryLowStorageState
+                || state == QSystemStorageInfo::CriticalStorageState);
     }
 }
 

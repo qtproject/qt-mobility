@@ -1896,6 +1896,12 @@ QString QSystemStorageInfoPrivate::uriForDrive(const QString &driveVolume)
     return QString();
 }
 
+QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::getStorageState(const QString &driveVolume)
+{
+    QSystemStorageInfo::StorageState state = QSystemStorageInfo::UnknownStorageState;
+   return state;
+}
+
 void powerInfoChanged(void* context)
 {
     QSystemDeviceInfoPrivate *sys = reinterpret_cast<QSystemDeviceInfoPrivate *>(context);

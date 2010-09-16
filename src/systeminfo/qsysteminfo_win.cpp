@@ -1608,6 +1608,12 @@ QString QSystemStorageInfoPrivate::uriForDrive(const QString &driveVolume)
     return QString();
 }
 
+QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::getStorageState(const QString &driveVolume)
+{
+    QSystemStorageInfo::StorageState state = QSystemStorageInfo::UnknownStorageState;
+   return state;
+}
+
 #if defined(Q_OS_WINCE)
 QPowerNotificationThread::QPowerNotificationThread(QSystemDeviceInfoPrivate *parent)
     : parent(parent),

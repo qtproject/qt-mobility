@@ -207,6 +207,7 @@ public:
     QTM_PREPEND_NAMESPACE(QSystemStorageInfo::DriveType) typeForDrive(const QString &driveVolume);
 
     QString uriForDrive(const QString &driveVolume);//1.2
+    QSystemStorageInfo::StorageState getStorageState(const QString &volume);//1.2
 
 public Q_SLOTS:
     void notificationArrived();
@@ -217,6 +218,7 @@ private:
 
 Q_SIGNALS:
     void logicalDriveChanged(bool,const QString&);
+    void storageStateChanged(QSystemStorageInfo::StorageState state); //1.2
 
 };
 

@@ -2037,6 +2037,12 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
     return QString();
 }
 
+QSystemStorageInfo::StorageState QSystemStorageInfoLinuxCommonPrivate::getStorageState(const QString &driveVolume)
+{
+    QSystemStorageInfo::StorageState state = QSystemStorageInfo::UnknownStorageState;
+   return state;
+}
+
 
 QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
