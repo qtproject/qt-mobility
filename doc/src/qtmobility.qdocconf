@@ -81,6 +81,8 @@ language                = Cpp
 
 imagedirs = images
 
+indexes                 = qt.index
+
 headerdirs = ../../src/global \
              ../../src/bearer \
              ../../src/feedback \
