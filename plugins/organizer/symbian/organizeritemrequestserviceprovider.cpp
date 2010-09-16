@@ -139,15 +139,9 @@ TBool COrganizerItemRequestsServiceProvider::StartRequest(
                 break;
             case QOrganizerItemAbstractRequest::CollectionFetchRequest :
                 {
-                QList<QOrganizerCollectionLocalId> collectionIds(
+                iCollectionLocalIds.append(
                     ((QOrganizerCollectionFetchRequest*) iReq)
                     ->collectionIds());
-                TInt count(collectionIds.count());
-                for (TInt index(0); index < count; index++)
-                    {
-                    iCollectionLocalIds.append(
-                        collectionIds.at(index));
-                    }
                 iNoOfItems = iOrganizerItemManagerEngine.sessionCount();
                 }
                 break;
