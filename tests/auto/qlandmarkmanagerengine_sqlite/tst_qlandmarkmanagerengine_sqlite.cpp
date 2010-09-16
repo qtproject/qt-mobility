@@ -490,12 +490,10 @@ private:
         QStringList knownTables;
         knownTables << "category";
         knownTables << "category_attribute";
-        knownTables << "category_custom_attribute";
         knownTables << "category_notification";
         knownTables << "landmark";
         knownTables << "landmark_attribute";
         knownTables << "landmark_category";
-        knownTables << "landmark_custom_attribute";
         knownTables << "landmark_notification";
         return (tables == knownTables);
     }
@@ -574,6 +572,7 @@ private slots:
     void filterLandmarksBoxAsync();
 
     void filterLandmarksIntersection();
+    void filterLandmarksIntersection_data();
     void filterLandmarksIntersectionAsync();
 
     void filterLandmarksMultipleBox();
@@ -612,10 +611,9 @@ private slots:
     void sortOrderSupportLevel();
 
     void isFeatureSupported();
-    void extendedAttributes();
 
-    void customAttributes();
-    void customAttributes_data();
+    /*void customAttributes();
+    void customAttributes_data();*/
 
     void categoryLimitOffset();
     //TODO: void categoryLimitOffsetAsync()
@@ -870,7 +868,6 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
      //we use a lot of intersection and union filters to try slow down the fetching
      //enough so that we can cancel the fetching operation.
      QLandmarkProximityFilter proximityFilter(QGeoCoordinate(5.0,5.0), 1000);
-     proximityFilter.setSelection(QLandmarkProximityFilter::SelectAll);
 
      QLandmarkIntersectionFilter intersectionFilter;
      intersectionFilter.append(proximityFilter);
@@ -936,7 +933,8 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
      QSignalSpy spyAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
 
     QLandmarkCategory emptyCategory;
-    int originalKeyCount = emptyCategory.customAttributeKeys().count();
+    //TODO: remove custom attributes
+    //int originalKeyCount = emptyCategory.customAttributeKeys().count();
 
      // add - no attributes
      QLandmarkCategory cat1;
@@ -949,6 +947,14 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
      QCOMPARE(spyAdd.count(), 1);
      QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.categoryId());
 
+
+     QLandmarkCategory cat2;
+     cat2.setName("CAT2");
+     QVERIFY(m_manager->saveCategory(&cat2));
+     QLandmarkCategory cat3;
+     cat3.setName("CAT3");
+     QVERIFY(m_manager->saveCategory(&cat3));
+     /* Disable custom attributes
      // add - with attributes
      m_manager->setCustomAttributesEnabled(true);
     QLandmarkCategory cat2;
@@ -977,7 +983,7 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
     QVERIFY(m_manager->saveCategory(&cat3));
     QCOMPARE(m_manager->category(cat3.categoryId()).customAttribute("ichi").toInt(), 1);
     QCOMPARE(m_manager->category(cat3.categoryId()).customAttribute("ni"), QVariant());
-    QCOMPARE(m_manager->category(cat3.categoryId()).customAttribute("san").toInt(), 3);
+    QCOMPARE(m_manager->category(cat3.categoryId()).customAttribute("san").toInt(), 3);*/
 
     //try adding a category when a category already exists
     QLandmarkCategory cat1Duplicate;
@@ -998,9 +1004,11 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
 void tst_QLandmarkManagerEngineSqlite::addCategoryAsync() {
 
     QSignalSpy spyAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
-    m_manager->setCustomAttributesEnabled(true);
+    //Disable Custom Attributes
+    //m_manager->setCustomAttributesEnabled(true);
     QLandmarkCategory emptyCategory;
-    int originalKeyCount = emptyCategory.customAttributeKeys().count();
+    //disable custom attributes
+    //int originalKeyCount = emptyCategory.customAttributeKeys().count();
 
     // add - no attributes
     QLandmarkCategory cat1;
@@ -1022,6 +1030,20 @@ void tst_QLandmarkManagerEngineSqlite::addCategoryAsync() {
     QCOMPARE(spyAdd.count(), 1);
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.categoryId());
 
+    QLandmarkCategory cat2;
+    cat2.setName("CAT2");
+    saveCategoryRequest.setCategory(cat2);
+    saveCategoryRequest.start();
+    QVERIFY(waitForAsync(spy, &saveCategoryRequest));
+
+    QLandmarkCategory cat3;
+    cat3.setName("CAT3");
+    saveCategoryRequest.setCategory(cat3);
+    saveCategoryRequest.start();
+    QVERIFY(waitForAsync(spy, &saveCategoryRequest));
+    QCOMPARE(saveCategoryRequest.categories().count(),1);
+
+    /* Disabling custom attributes
     // add - with attributes
     QLandmarkCategory cat2;
     cat2.setName("CAT2");
@@ -1068,7 +1090,7 @@ void tst_QLandmarkManagerEngineSqlite::addCategoryAsync() {
     cat3saved = saveCategoryRequest.categories().at(0);
     QCOMPARE(m_manager->category(cat3saved.categoryId()).customAttribute("ichi").toInt(), 1);
     QCOMPARE(m_manager->category(cat3saved.categoryId()).customAttribute("ni"), QVariant());
-    QCOMPARE(m_manager->category(cat3saved.categoryId()).customAttribute("san").toInt(), 3);
+    QCOMPARE(m_manager->category(cat3saved.categoryId()).customAttribute("san").toInt(), 3);*/
 
      //try adding a category when a category already exists
     QLandmarkCategory cat1Duplicate;
@@ -1277,7 +1299,8 @@ void tst_QLandmarkManagerEngineSqlite::addLandmark() {
     QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
 
     QLandmark emptyLandmark;
-    int originalKeyCount = emptyLandmark.customAttributeKeys().count();
+    //Disable custom attributes
+    //int originalKeyCount = emptyLandmark.customAttributeKeys().count();
 
     // add - no attributes
     QLandmark lm1;
@@ -1308,6 +1331,7 @@ void tst_QLandmarkManagerEngineSqlite::addLandmark() {
     QCOMPARE(spyAdd.count(), 1);
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm2.landmarkId());
 
+/* Disabling custom attributes
     // add - with attributes
     m_manager->setCustomAttributesEnabled(true);
     QLandmark lm3;
@@ -1337,14 +1361,14 @@ void tst_QLandmarkManagerEngineSqlite::addLandmark() {
     QVERIFY(m_manager->saveLandmark(&lm4));
     QCOMPARE(m_manager->landmark(lm4.landmarkId()).customAttribute("ichi").toInt(), 1);
     QCOMPARE(m_manager->landmark(lm4.landmarkId()).customAttribute("ni"), QVariant());
-    QCOMPARE(m_manager->landmark(lm4.landmarkId()).customAttribute("san").toInt(), 3);
+    QCOMPARE(m_manager->landmark(lm4.landmarkId()).customAttribute("san").toInt(), 3);*/
 }
 
 void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
     QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
 
     QLandmark emptyLandmark;
-    int originalKeyCount = emptyLandmark.customAttributeKeys().count();
+    //int originalKeyCount = emptyLandmark.customAttributeKeys().count();
 
     // add - no attributes
     QLandmark lm1;
@@ -1509,6 +1533,7 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
     }
     QVERIFY(foundCancelError);
 
+    /* Disabling custom attributes
     // add - with attributes
     m_manager->setCustomAttributesEnabled(true);
     QCOMPARE(m_manager->isCustomAttributesEnabled(), true);
@@ -1556,7 +1581,7 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
     lm10saved = saveRequest.landmarks().at(0);
     QCOMPARE(m_manager->landmark(lm10saved.landmarkId()).customAttribute("ichi").toInt(), 1);
     QCOMPARE(m_manager->landmark(lm10saved.landmarkId()).customAttribute("ni"), QVariant());
-    QCOMPARE(m_manager->landmark(lm10saved.landmarkId()).customAttribute("san").toInt(), 3);
+    QCOMPARE(m_manager->landmark(lm10saved.landmarkId()).customAttribute("san").toInt(), 3);*/
 }
 
 void tst_QLandmarkManagerEngineSqlite::updateLandmark() {
@@ -1671,8 +1696,8 @@ void tst_QLandmarkManagerEngineSqlite::updateLandmark() {
 
     lm1.removeCategoryId(cat1.categoryId());
     QVERIFY(m_manager->saveLandmark(&lm1));
-    QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
+    QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
     QTest::qWait(10);
     QCOMPARE(spyAdd.count(), 0);
     QCOMPARE(spyChange.count(), 1);
@@ -1785,22 +1810,25 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryId() {
     QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), catY.categoryId());
     spyRemove.clear();
 
+    /* Disable custom attributes
     //test that category attributes were really removed when a category is removed
     m_manager->setCustomAttributesEnabled(true);
     QCOMPARE(m_manager->isCustomAttributesEnabled(), true);
+    */
+
     QLandmarkCategory cat4;
     cat4.setName("CAT4");
-    cat4.setCustomAttribute("four", 4);
+    // Disable Custom attributes cat4.setCustomAttribute("four", 4);
     QVERIFY(m_manager->saveCategory(&cat4));
 
     QLandmarkCategory cat5;
     cat5.setName("CAT5");
-    cat5.setCustomAttribute("five", 5);
+    // Disable custom attributes cat5.setCustomAttribute("five", 5);
     QVERIFY(m_manager->saveCategory(&cat5));
 
     QLandmarkCategory cat6;
     cat6.setName("LM6");
-    cat6.setCustomAttribute("six", 6);
+    //Disable custom attributes cat6.setCustomAttribute("six", 6);
     QVERIFY(m_manager->saveCategory(&cat6));
 
     {
@@ -1816,12 +1844,14 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryId() {
     query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
 
+    /* TODO: Disabled custom attributes, remove this
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
+    */
     query.finish();
 
     QVERIFY(m_manager->removeCategory(cat5.categoryId()));
@@ -1836,12 +1866,14 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryId() {
     query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
 
+    /* TODO: Disabled Custom attributes, remove this
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
     QVERIFY(!query.next());
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
+    */
     }
 
     QSqlDatabase::removeDatabase("testing");
@@ -1953,21 +1985,21 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryIdAsync() {
     spyRemove.clear();
 
      //test that category attributes were really removed when a category is removed
-    m_manager->setCustomAttributesEnabled(true);
-    QCOMPARE(m_manager->isCustomAttributesEnabled(), true);
+    //TODO: remove custom attriubutes- m_manager->setCustomAttributesEnabled(true);
+    //QCOMPARE(m_manager->isCustomAttributesEnabled(), true);
     QLandmarkCategory cat4;
     cat4.setName("CAT4");
-    cat4.setCustomAttribute("four", 4);
+    //TODO: remove custom attriubutes- cat4.setCustomAttribute("four", 4);
     QVERIFY(m_manager->saveCategory(&cat4));
 
     QLandmarkCategory cat5;
     cat5.setName("CAT5");
-    cat5.setCustomAttribute("five", 5);
+    //TODO: remove custom attributes cat5.setCustomAttribute("five", 5);
     QVERIFY(m_manager->saveCategory(&cat5));
 
     QLandmarkCategory cat6;
     cat6.setName("LM6");
-    cat6.setCustomAttribute("six", 6);
+    //TODO: remove custom attriubutes- cat6.setCustomAttribute("six", 6);
     QVERIFY(m_manager->saveCategory(&cat6));
 
     {
@@ -1983,12 +2015,14 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryIdAsync() {
     query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
 
+    /* TODO: remove custom attriubutes-
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
+    */
     query.finish();
 
     removeRequest.setCategoryId(cat5.categoryId());
@@ -2006,12 +2040,14 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryIdAsync() {
     query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
 
+    /*  TODO: remove custom attributes
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
     QVERIFY(!query.next());
     query.exec(QString("SELECT * FROM category_custom_attribute WHERE categoryId=%1").arg(cat6.categoryId().localId()));
     QVERIFY(query.next());
+    */
     }
 
     QSqlDatabase::removeDatabase("testing");
@@ -2065,21 +2101,21 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmark() {
     spyRemove.clear();
 
     // with attributes
-    m_manager->setCustomAttributesEnabled(true);
-    QVERIFY(m_manager->isCustomAttributesEnabled());
+    // TODO: remove custom attributes, m_manager->setCustomAttributesEnabled(true);
+    //QVERIFY(m_manager->isCustomAttributesEnabled());
     QLandmark lm4;
     lm4.setName("LM4");
-    lm4.setCustomAttribute("four", 4);
+    // TODO: remove custom attributes    lm4.setCustomAttribute("four", 4);
     QVERIFY(m_manager->saveLandmark(&lm4));
 
     QLandmark lm5;
     lm5.setName("LM5");
-    lm5.setCustomAttribute("five", 5);
+    // TODO: remove custom attributes-lm5.setCustomAttribute("five", 5);
     QVERIFY(m_manager->saveLandmark(&lm5));
 
     QLandmark lm6;
     lm6.setName("LM6");
-    lm6.setCustomAttribute("six", 6);
+    // TODO: remove custom attributes-lm6.setCustomAttribute("six", 6);
     QVERIFY(m_manager->saveLandmark(&lm6));
 
     QCOMPARE(m_manager->landmark(lm4.landmarkId()),lm4);
@@ -2099,12 +2135,14 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmark() {
     query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
 
+    /* TODO: remove custom attributes
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm4.landmarkId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm5.landmarkId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
+    */
 
     query.finish();
 
@@ -2120,12 +2158,14 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmark() {
     query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
 
+    //TODO: remove custom attributes
+    /*
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm4.landmarkId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm5.landmarkId().localId()));
     QVERIFY(!query.next());
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
-    QVERIFY(query.next());
+    QVERIFY(query.next());*/
     }
 
     QSqlDatabase::removeDatabase("testing");
@@ -2194,21 +2234,21 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmarkAsync() {
     spyRemove.clear();
 
     // with attributes
-    m_manager->setCustomAttributesEnabled(true);
-    QVERIFY(m_manager->isCustomAttributesEnabled());
+    //TODO: remove custom attributes,m_manager->setCustomAttributesEnabled(true);
+    //QVERIFY(m_manager->isCustomAttributesEnabled());
     QLandmark lm4;
     lm4.setName("LM4");
-    lm4.setCustomAttribute("four", 4);
+    //TODO: remove custom attributes -lm4.setCustomAttribute("four", 4);
     QVERIFY(m_manager->saveLandmark(&lm4));
 
     QLandmark lm5;
     lm5.setName("LM5");
-    lm5.setCustomAttribute("five", 5);
+    //TODO: remove custom attributes - lm5.setCustomAttribute("five", 5);
     QVERIFY(m_manager->saveLandmark(&lm5));
 
     QLandmark lm6;
     lm6.setName("LM6");
-    lm6.setCustomAttribute("six", 6);
+    //TODO: remove custom attributes - lm6.setCustomAttribute("six", 6);
     QVERIFY(m_manager->saveLandmark(&lm6));
 
     QCOMPARE(m_manager->landmark(lm4.landmarkId()),lm4);
@@ -2228,12 +2268,14 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmarkAsync() {
     query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
 
+    /* //TODO: remove custom attributes -
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm4.landmarkId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm5.landmarkId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
+    */
     query.finish();
 
     removeRequest.setLandmarkId(lm5.landmarkId());
@@ -2251,12 +2293,14 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmarkAsync() {
     query.exec(QString("SELECT * FROM landmark_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
 
+    /* //TODO: remove custom attributes -
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm4.landmarkId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm5.landmarkId().localId()));
     QVERIFY(!query.next());
     query.exec(QString("SELECT * FROM landmark_custom_attribute WHERE landmarkId=%1").arg(lm6.landmarkId().localId()));
     QVERIFY(query.next());
+    */
     }
 
     QSqlDatabase::removeDatabase("testing");
@@ -3453,17 +3497,15 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
     datelineFilterCoords << QGeoCoordinate(-0.1, 179.9);
     datelineFilterCoords << QGeoCoordinate(0.1, 179.9);
 
-    /*TODO: test poles
-        northPoleFilterCoords << QGeoCoordinate(89.9, -179.9);
-        northPoleFilterCoords << QGeoCoordinate(89.9, -0.1);
-        northPoleFilterCoords << QGeoCoordinate(89.9, 0.1);
-        northPoleFilterCoords << QGeoCoordinate(89.9, 179.9);
+    northPoleFilterCoords << QGeoCoordinate(89.9, -179.9);
+    northPoleFilterCoords << QGeoCoordinate(89.9, -0.1);
+    northPoleFilterCoords << QGeoCoordinate(89.9, 0.1);
+    northPoleFilterCoords << QGeoCoordinate(89.9, 179.9);
 
-        southPoleFilterCoords << QGeoCoordinate(-89.9, -179.9);
-        southPoleFilterCoords << QGeoCoordinate(-89.9, -0.1);
-        southPoleFilterCoords << QGeoCoordinate(-89.9, 0.1);
-        southPoleFilterCoords << QGeoCoordinate(-89.9, 179.9);
-*/
+    southPoleFilterCoords << QGeoCoordinate(-89.9, -179.9);
+    southPoleFilterCoords << QGeoCoordinate(-89.9, -0.1);
+    southPoleFilterCoords << QGeoCoordinate(-89.9, 0.1);
+    southPoleFilterCoords << QGeoCoordinate(-89.9, 179.9);
 
     eastFilterCoords << QGeoCoordinate(-0.1, 10.0);
     eastFilterCoords << QGeoCoordinate(0.1, 10.0);
@@ -3500,9 +3542,9 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
     QList<QList<QGeoCoordinate> > coords;
     coords << greenwhichLmCoords;
     coords << datelineLmCoords;
-    //TODO: test poles
-    //        coords << northPoleLmCoords;
-    //        coords << southPoleLmCoords;
+
+    coords << northPoleLmCoords;
+    coords << southPoleLmCoords;
     coords << eastLmCoords;
     coords << northLmCoords;
     coords << northeastLmCoords;
@@ -3519,14 +3561,15 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
     QList<QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> > > testSets;
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(greenwhichFilterCoords, greenwhichLmCoords);
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(datelineFilterCoords, datelineLmCoords);
-    //TODO: test poles
-    //        testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(northPoleFilterCoords, northPoleLmCoords);
-    //        testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(southPoleFilterCoords, southPoleLmCoords);
+
+    testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(northPoleFilterCoords, northPoleLmCoords);
+    testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(southPoleFilterCoords, southPoleLmCoords);
+
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(northFilterCoords, northLmCoords);
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(eastFilterCoords, eastLmCoords);
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(northeastFilterCoords, northeastLmCoords);
 
-    double dist = QGeoCoordinate(0.0, 0.0).distanceTo(QGeoCoordinate(5.0, 5.0));
+    qreal dist = QGeoCoordinate(0.0, 0.0).distanceTo(QGeoCoordinate(5.0, 5.0));
 
     for (int i = 0; i < testSets.size(); ++i) {
         QList<QGeoCoordinate> filterCoords = testSets.at(i).first;
@@ -3534,8 +3577,12 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
 
         for (int j = 0; j < filterCoords.size(); ++j) {
             QLandmarkProximityFilter filter(filterCoords.at(j), dist);
-
             QList<QLandmark> lms = m_manager->landmarks(filter);
+
+            if (i ==2 || i ==3) { //we're in the testing the north and south poles which is invalid
+                QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
+                continue;
+            }
 
             if (lms.size() != lmCoords.size()) {
                 for (int k = 0; k < lms.size(); ++k)
@@ -3551,6 +3598,21 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximity() {
             }
         }
     }
+
+    m_manager->removeLandmarks(m_manager->landmarkIds());
+
+    //TODO: more edge cases, async version of these tests
+    QGeoCoordinate nearNorthPole(89.91,0);
+    QLandmarkProximityFilter proximityFilter;
+    proximityFilter.setCenter(nearNorthPole);
+    proximityFilter.setRadius(11000);
+    m_manager->landmarks(proximityFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
+
+    proximityFilter.setCenter(nearNorthPole);
+    proximityFilter.setRadius(9000);
+    m_manager->landmarks(proximityFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximityOrder()
@@ -3587,7 +3649,7 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximityOrder()
     m_manager->saveLandmark(&lm6);
 
     QLandmarkProximityFilter proximityFilter;
-    proximityFilter.setCoordinate(QGeoCoordinate(20,20));
+    proximityFilter.setCenter(QGeoCoordinate(20,20));
     QList<QLandmark> lms;
     QVERIFY(doFetch(type,proximityFilter, &lms));
     QCOMPARE(lms.count(), 6);
@@ -3598,7 +3660,7 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximityOrder()
     QCOMPARE(lms.at(4), lm6);
     QCOMPARE(lms.at(5), lm5);
 
-    double radius = QGeoCoordinate(20,20).distanceTo(QGeoCoordinate(20,50));
+    qreal radius = QGeoCoordinate(20,20).distanceTo(QGeoCoordinate(20,50));
     proximityFilter.setRadius(radius);
     QVERIFY(doFetch(type, proximityFilter,&lms));
 
@@ -3717,7 +3779,7 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksProximityAsync() {
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(eastFilterCoords, eastLmCoords);
     testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(northeastFilterCoords, northeastLmCoords);
 
-    double dist = QGeoCoordinate(0.0, 0.0).distanceTo(QGeoCoordinate(5.0, 5.0));
+    qreal dist = QGeoCoordinate(0.0, 0.0).distanceTo(QGeoCoordinate(5.0, 5.0));
 
     for (int i = 0; i < testSets.size(); ++i) {
         QList<QGeoCoordinate> filterCoords = testSets.at(i).first;
@@ -3868,33 +3930,6 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksNearest() {
     for (int i = 0; i < northeastFilterCoords.size(); ++i) {
         testSets << QPair<QGeoCoordinate, QGeoCoordinate>(northeastFilterCoords.at(i), northeastLmCoords.at(i));
     }
-
-    for (int i = 0; i < testSets.size(); ++i) {
-        QGeoCoordinate filterCoord = testSets.at(i).first;
-        QGeoCoordinate lmCoord = testSets.at(i).second;
-
-        QLandmarkProximityFilter filter(filterCoord);
-        filter.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
-
-        QList<QLandmark> lms = m_manager->landmarks(filter);
-
-        QCOMPARE(lms.size(), 1);
-
-        QCOMPARE(lms.at(0).coordinate(), lmCoord);
-    }
-
-    QLandmarkProximityFilter filter1(QGeoCoordinate(-10.0, -10.0), -1.0);
-    filter1.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
-
-    QList<QLandmark> lms = m_manager->landmarks(filter1);
-    QCOMPARE(lms.size(), 1);
-    QCOMPARE(lms.at(0).coordinate(), QGeoCoordinate(-1.0, -1.0));
-
-    QLandmarkProximityFilter filter2(QGeoCoordinate(-10.0, -10.0), 100.0);
-    filter2.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
-
-    lms = m_manager->landmarks(filter2);
-    QCOMPARE(lms.size(), 0);
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksNearestAsync() {
@@ -4014,52 +4049,6 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksNearestAsync() {
         testSets << QPair<QGeoCoordinate, QGeoCoordinate>(northeastFilterCoords.at(i), northeastLmCoords.at(i));
     }
 
-    for (int i = 0; i < testSets.size(); ++i) {
-        QGeoCoordinate filterCoord = testSets.at(i).first;
-        QGeoCoordinate lmCoord = testSets.at(i).second;
-        QLandmarkProximityFilter filter(filterCoord);
-        filter.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
-        QLandmarkFetchRequest fetchRequest(m_manager);
-        fetchRequest.setFilter(filter);
-        QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
-        fetchRequest.start();
-
-        QVERIFY(waitForAsync(spy, &fetchRequest));
-        QList<QLandmark> lms = fetchRequest.landmarks();
-
-        QVERIFY(checkIdFetchRequest(lms,filter));
-
-        QCOMPARE(lms.size(), 1);
-        QCOMPARE(lms.at(0).coordinate(), lmCoord);
-    }
-
-    QLandmarkProximityFilter filter1(QGeoCoordinate(-10.0, -10.0), -1.0);
-    filter1.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
-
-    QLandmarkFetchRequest fetchRequest(m_manager);
-    fetchRequest.setFilter(filter1);
-    QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
-    fetchRequest.start();
-
-    QVERIFY(waitForAsync(spy, &fetchRequest));
-    QList<QLandmark> lms = fetchRequest.landmarks();
-
-    QVERIFY(checkIdFetchRequest(lms,filter1));
-
-    QCOMPARE(lms.size(), 1);
-    QCOMPARE(lms.at(0).coordinate(), QGeoCoordinate(-1.0, -1.0));
-
-    QLandmarkProximityFilter filter2(QGeoCoordinate(-10.0, -10.0), 100.0);
-    filter2.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
-    fetchRequest.setFilter(filter2);
-    fetchRequest.start();
-
-    QVERIFY(waitForAsync(spy, &fetchRequest));
-    lms = fetchRequest.landmarks();
-
-    QVERIFY(checkIdFetchRequest(lms,filter2));
-
-    QCOMPARE(lms.size(), 0);
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksCategory() {
@@ -4640,6 +4629,7 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksBoxAsync() {
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksIntersection() {
+    QFETCH(QString, type);
     QLandmarkCategory cat1;
     cat1.setName("CAT1");
     QVERIFY(m_manager->saveCategory(&cat1));
@@ -4751,74 +4741,256 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksIntersection() {
     m_manager->removeLandmarks(m_manager->landmarkIds());
 
     QCOMPARE(m_manager->landmarkIds().count(), 0);
+    QLandmarkCategory cat4;
+    cat4.setName("CAT4");
+    m_manager->saveCategory(&cat4);
 
-    QLandmark lm1;
+    QLandmark lm1; //outside
     lm1.setName("LM1");
-    lm1.setCoordinate(QGeoCoordinate(10,0));
+    lm1.setCoordinate(QGeoCoordinate(50,55.1));
     lm1.addCategoryId(cat1.categoryId());
     m_manager->saveLandmark(&lm1);
 
     QLandmark lm2;
     lm2.setName("LM2");
-    lm2.setCoordinate(QGeoCoordinate(10,20));
-    lm2.addCategoryId(cat1.categoryId());
+    lm2.setCoordinate(QGeoCoordinate(50,55));
+    lm2.addCategoryId(cat3.categoryId());
     m_manager->saveLandmark(&lm2);
 
     QLandmark lm3;
     lm3.setName("LM3");
-    lm3.setCoordinate(QGeoCoordinate(10,21));
-    lm3.addCategoryId(cat2.categoryId());
+    lm3.setCoordinate(QGeoCoordinate(53,50));
+    lm3.addCategoryId(cat1.categoryId());
     m_manager->saveLandmark(&lm3);
 
-    QLandmark lm4;
+    QLandmark lm4;//outside
     lm4.setName("LM4");
-    lm4.setCoordinate(QGeoCoordinate(10,22));
-    lm4.addCategoryId(cat3.categoryId());
+    lm4.setCoordinate(QGeoCoordinate(53.23,50));
     m_manager->saveLandmark(&lm4);
 
     QLandmark lm5;
     lm5.setName("LM5");
-    lm5.setCoordinate(QGeoCoordinate(10,22));
-    lm5.addCategoryId(cat1.categoryId());
+    lm5.setCoordinate(QGeoCoordinate(51,51));
     lm5.addCategoryId(cat2.categoryId());
+    lm5.addCategoryId(cat1.categoryId());
     m_manager->saveLandmark(&lm5);
 
     QLandmark lm6;
     lm6.setName("LM6");
-    lm6.setCoordinate(QGeoCoordinate(10,50));
+    lm6.setCoordinate(QGeoCoordinate(52,48));
+    lm6.addCategoryId(cat2.categoryId());
     m_manager->saveLandmark(&lm6);
 
-    filter.clear();
-    QLandmarkProximityFilter proximityFilter(QGeoCoordinate(10,21),120000);
-    filter.append(proximityFilter);
-    QCOMPARE(m_manager->landmarks(filter).count(), 4);
+    QLandmark lm7;//outside
+    lm7.setName("LM7");
+    lm7.setCoordinate(QGeoCoordinate(52.66, 47));
+    m_manager->saveLandmark(&lm7);
+
+    QLandmark lm8;//outside
+    lm8.setName("LM8");
+    lm8.setCoordinate(QGeoCoordinate(46,50));
+    m_manager->saveLandmark(&lm8);
+
+    QLandmark lm9;
+    lm9.setName("LM9");
+    lm9.setCoordinate(QGeoCoordinate(51, 48.5));
+    lm9.addCategoryId(cat1.categoryId());
+    lm9.addCategoryId(cat2.categoryId());
+    m_manager->saveLandmark(&lm9);
+
+    QLandmark lm10;
+    lm10.setName("LM10");
+    lm10.setCoordinate(QGeoCoordinate(49,49));
+    lm10.addCategoryId(cat1.categoryId());
+    m_manager->saveLandmark(&lm10);
+
+    QLandmark lm11;
+    lm11.setName("LM11");
+    lm11.setCoordinate(QGeoCoordinate(48,51));
+    m_manager->saveLandmark(&lm11);
+
+    QLandmark lm12;
+    lm12.setName("LM12");
+    lm12.setCoordinate(QGeoCoordinate(48,53.83));
+    lm12.addCategoryId(cat3.categoryId());
+    m_manager->saveLandmark(&lm12);
+
+    QLandmarkProximityFilter proximityFilter;
+    proximityFilter.setCenter(QGeoCoordinate(50,50));
+    proximityFilter.setRadius(-1);
+    QVERIFY(doFetch(type,proximityFilter, &lms));
+    QCOMPARE(lms.count(), 12);
+    QCOMPARE(lms.at(0),lm5);
+    QCOMPARE(lms.at(1), lm10);
+    QCOMPARE(lms.at(2), lm9);
+    QCOMPARE(lms.at(3), lm11);
+    QCOMPARE(lms.at(4), lm6);
+    QCOMPARE(lms.at(5), lm3);
+    QCOMPARE(lms.at(6), lm12);
+    QCOMPARE(lms.at(7), lm2);
+    QCOMPARE(lms.at(8), lm4);
+    QCOMPARE(lms.at(9), lm7);
+    QCOMPARE(lms.at(10), lm1);
+    QCOMPARE(lms.at(11), lm8);
+
+    proximityFilter.setRadius(358000);
+    QVERIFY(doFetch(type,proximityFilter, &lms));
+    QCOMPARE(lms.count(), 8);
+    QCOMPARE(lms.at(0),lm5);
+    QCOMPARE(lms.at(1), lm10);
+    QCOMPARE(lms.at(2), lm9);
+    QCOMPARE(lms.at(3), lm11);
+    QCOMPARE(lms.at(4), lm6);
+    QCOMPARE(lms.at(5), lm3);
+    QCOMPARE(lms.at(6), lm12);
+    QCOMPARE(lms.at(7), lm2);
+
+    QLandmarkIntersectionFilter intersectionFilter;
+    proximityFilter.setRadius(-1);
+    intersectionFilter.append(proximityFilter);
+    QVERIFY(doFetch(type,proximityFilter, &lms));
+    QCOMPARE(lms.count(), 12);
+    QCOMPARE(lms.at(0),lm5);
+    QCOMPARE(lms.at(1), lm10);
+    QCOMPARE(lms.at(2), lm9);
+    QCOMPARE(lms.at(3), lm11);
+    QCOMPARE(lms.at(4), lm6);
+    QCOMPARE(lms.at(5), lm3);
+    QCOMPARE(lms.at(6), lm12);
+    QCOMPARE(lms.at(7), lm2);
+    QCOMPARE(lms.at(8), lm4);
+    QCOMPARE(lms.at(9), lm7);
+    QCOMPARE(lms.at(10), lm1);
+    QCOMPARE(lms.at(11), lm8);
+
+    intersectionFilter.clear();
+    proximityFilter.setRadius(358000);
+    intersectionFilter.append(proximityFilter);
+    QVERIFY(doFetch(type,intersectionFilter, &lms));
+    QCOMPARE(lms.count(), 8);
+    QCOMPARE(lms.at(0),lm5);
+    QCOMPARE(lms.at(1), lm10);
+    QCOMPARE(lms.at(2), lm9);
+    QCOMPARE(lms.at(3), lm11);
+    QCOMPARE(lms.at(4), lm6);
+    QCOMPARE(lms.at(5), lm3);
+    QCOMPARE(lms.at(6), lm12);
+    QCOMPARE(lms.at(7), lm2);
 
     QLandmarkCategoryFilter cat1Filter;
     cat1Filter.setCategoryId(cat1.categoryId());
-    filter.append(cat1Filter);
-    QCOMPARE(m_manager->landmarks(filter).count(), 2);
-    lms =m_manager->landmarks(filter);
-    QVERIFY(lms.contains(lm2));
-    QVERIFY(lms.contains(lm5));
 
     QLandmarkCategoryFilter cat2Filter;
     cat2Filter.setCategoryId(cat2.categoryId());
-    filter.append(cat2Filter);
-    QCOMPARE(m_manager->landmarks(filter).count(), 1);
-    lms =m_manager->landmarks(filter);
-    QVERIFY(lms.contains(lm5));
 
+    QLandmarkCategoryFilter cat3Filter;
+    cat3Filter.setCategoryId(cat3.categoryId());
+
+    //try proximity and a catgegory
+    intersectionFilter.clear();
+    intersectionFilter.append(proximityFilter);
+    intersectionFilter.append(cat1Filter);
+    QVERIFY(doFetch(type,intersectionFilter, &lms));
+    QCOMPARE(lms.count(), 4);
+    QCOMPARE(lms.at(0), lm5);
+    QCOMPARE(lms.at(1), lm10);
+    QCOMPARE(lms.at(2), lm9);
+    QCOMPARE(lms.at(3), lm3);
+
+    //try proximity and a different category
+    intersectionFilter.clear();
+    intersectionFilter.append(proximityFilter);
+    intersectionFilter.append(cat2Filter);
+    QVERIFY(doFetch(type,intersectionFilter, &lms));
+    QCOMPARE(lms.count(),3);
+    QCOMPARE(lms.at(0), lm5);
+    QCOMPARE(lms.at(1), lm9);
+    QCOMPARE(lms.at(2), lm6);
+
+    //try a proximity and two categories together
+    intersectionFilter.clear();
+    intersectionFilter.append(cat1Filter);
+    intersectionFilter.append(proximityFilter);
+    intersectionFilter.append(cat2Filter);
+    QVERIFY(doFetch(type,intersectionFilter, &lms));
+    QCOMPARE(lms.count(),2);
+    QCOMPARE(lms.at(0), lm5);
+    QCOMPARE(lms.at(1), lm9);
+
+    //try a proximity but with two categories t    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+    intersectionFilter.clear();
+    intersectionFilter.append(cat1Filter);
+    intersectionFilter.append(proximityFilter);
+    intersectionFilter.append(cat3Filter);
+    QVERIFY(doFetch(type,intersectionFilter, &lms));
+    QCOMPARE(lms.count(),0);
+
+    //try with a union of two categories which have no overlap
     QLandmarkUnionFilter unionFilter;
     unionFilter.append(cat1Filter);
+    unionFilter.append(cat3Filter);
+    intersectionFilter.clear();
+    intersectionFilter.append(unionFilter);
+    intersectionFilter.append(proximityFilter);
+    QVERIFY(doFetch(type,intersectionFilter, &lms));
+    QCOMPARE(lms.count(), 6);
+    QCOMPARE(lms.at(0),lm5);
+    QCOMPARE(lms.at(1), lm10);
+    QCOMPARE(lms.at(2), lm9);
+    QCOMPARE(lms.at(3), lm3);
+    QCOMPARE(lms.at(4), lm12);
+    QCOMPARE(lms.at(5), lm2);
+
+    //try a union of two categories which do have overlap
+    unionFilter.clear();
     unionFilter.append(cat2Filter);
-    filter.clear();
-    filter.append(proximityFilter);
-    filter.append(unionFilter);
-    QCOMPARE(m_manager->landmarks(filter).count(), 3);
-    lms = m_manager->landmarks(filter);
-    QVERIFY(lms.contains(lm2));
-    QVERIFY(lms.contains(lm3));
-    QVERIFY(lms.contains(lm5));
+    unionFilter.append(cat1Filter);
+    intersectionFilter.clear();
+    intersectionFilter.append(proximityFilter);
+    intersectionFilter.append(unionFilter);
+    QVERIFY(doFetch(type,intersectionFilter, &lms));
+    QCOMPARE(lms.count(), 5);
+    QCOMPARE(lms.at(0), lm5);
+    QCOMPARE(lms.at(1), lm10);
+    QCOMPARE(lms.at(2), lm9);
+    QCOMPARE(lms.at(3), lm6);
+    QCOMPARE(lms.at(4), lm3);
+
+    //try an intersection filter categories but proximity doesn't have
+    //landmarks in its region
+    intersectionFilter.clear();
+    intersectionFilter.append(cat2Filter);
+    proximityFilter.setCenter(QGeoCoordinate(-70,-70));
+    proximityFilter.setRadius(100000);
+    intersectionFilter.append(proximityFilter);
+    QVERIFY(doFetch(type,intersectionFilter, &lms));
+    QCOMPARE(lms.count(), 0);
+
+    //don't use a radius with the proximityFilter
+    proximityFilter.setCenter(QGeoCoordinate(50,50));
+    proximityFilter.setRadius(-1);
+    intersectionFilter.clear();
+    intersectionFilter.append(cat1Filter);
+    intersectionFilter.append(proximityFilter);
+    QVERIFY(doFetch(type,intersectionFilter, &lms));
+    QCOMPARE(lms.count(), 5);
+    QCOMPARE(lms.at(0), lm5);
+    QCOMPARE(lms.at(1), lm10);
+    QCOMPARE(lms.at(2), lm9);
+    QCOMPARE(lms.at(3), lm3);
+    QCOMPARE(lms.at(4), lm1);
+
+    //TODO: combin async and sync into one test function
+}
+
+void tst_QLandmarkManagerEngineSqlite::filterLandmarksIntersection_data() {
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksIntersectionAsync() {
@@ -5404,71 +5576,80 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksUnionAsync() {
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterAttribute() {
-    m_manager->setCustomAttributesEnabled(true);
-    QVERIFY(m_manager->isCustomAttributesEnabled());
+    //TODO: remove custom attributes m_manager->setCustomAttributesEnabled(true);
+    //QVERIFY(m_manager->isCustomAttributesEnabled());
 
     QLandmark lm1;
     lm1.setName("Adelaide");
     lm1.setDescription("The description of adelaide");
-    lm1.setCustomAttribute("one",1);
-    lm1.setCustomAttribute("two", 2);
-    lm1.setCustomAttribute("three",3);
-    lm1.setCustomAttribute("alphabet", "alpha");
-    lm1.setCustomAttribute("number", "san");
+    //TODO: remove custom attributes
+    //lm1.setCustomAttribute("one",1);
+    //lm1.setCustomAttribute("two", 2);
+    //lm1.setCustomAttribute("three",3);
+    //lm1.setCustomAttribute("alphabet", "alpha");
+    //lm1.setCustomAttribute("number", "san");
     QVERIFY(m_manager->saveLandmark(&lm1));
 
     QLandmark lm2;
     lm2.setName("Adel");
     lm2.setDescription("The description of adel");
-    lm2.setCustomAttribute("two", 22);
-    lm2.setCustomAttribute("alphabet", "alpha");
-    lm2.setCustomAttribute("number", "roku");
+    //TODO: remove custom attributes
+    //lm2.setCustomAttribute("two", 22);
+    //lm2.setCustomAttribute("alphabet", "alpha");
+    //lm2.setCustomAttribute("number", "roku");
     QVERIFY(m_manager->saveLandmark(&lm2));
 
     QLandmark lm3;
     lm3.setName("Brisbane");
     lm3.setDescription("The chronicles of brisbane");
-    lm3.setCustomAttribute("three", 3);
-    lm3.setCustomAttribute("four", 4);
-    lm3.setCustomAttribute("alphabet", "beta");
-    lm3.setCustomAttribute("number", "rokun");
+    //TODO: remove custom attributes
+    //lm3.setCustomAttribute("three", 3);
+    //lm3.setCustomAttribute("four", 4);
+    //lm3.setCustomAttribute("alphabet", "beta");
+    //lm3.setCustomAttribute("number", "rokun");
     QVERIFY(m_manager->saveLandmark(&lm3));
 
     QLandmark lm4;
     lm4.setName("Perth");
     lm4.setDescription("The summary of perth");
-    lm4.setCustomAttribute("caption", "mystifying");
+    //TODO: remove custom attributes
+    //lm4.setCustomAttribute("caption", "mystifying");
     QVERIFY(m_manager->saveLandmark(&lm4));
 
     QLandmark lm5;
     lm5.setName("Canberra");
     lm5.setDescription("The chronicles of canberra");
-    lm5.setCustomAttribute("caption", "myst");
+    //TODO: remove custom attributes
+    //lm5.setCustomAttribute("caption", "myst");
     QVERIFY(m_manager->saveLandmark(&lm5));
 
     QLandmark lm6;
     lm6.setName("Tinberra");
     lm6.setDescription("The chronicles of tinberra");
-    lm6.setCustomAttribute("caption", "terrifying");
+    // TODO: remove custom attributes
+    //lm6.setCustomAttribute("caption", "terrifying");
     QVERIFY(m_manager->saveLandmark(&lm6));
 
     QLandmark lm7;
     lm7.setName("Madelaide");
     lm7.setDescription("The summary of madelaide");
-    lm7.setCustomAttribute("caption", "write caption here");
+    //TODO: remove custom attributes
+    //lm7.setCustomAttribute("caption", "write caption here");
     QVERIFY(m_manager->saveLandmark(&lm7));
 
     QLandmark lm8;
     lm8.setName("Terran");
     lm8.setDescription("Summary of terran");
-    lm8.setCustomAttribute("caption", "MYST");
+    //TODO: remove custom attributes
+    //lm8.setCustomAttribute("caption", "MYST");
     QVERIFY(m_manager->saveLandmark(&lm8));
 
     QLandmark lm9;
     lm9.setName("ADEL");
     lm9.setDescription("The summary of ADEL");
-    lm9.setCustomAttribute("CAPTION", "MYST");
-    lm9.setCustomAttribute("number",999);
+    //TODO: remove custom attributes
+    //lm9.setCustomAttribute("CAPTION", "MYST");
+    //lm9.setCustomAttribute("number",999);
     QVERIFY(m_manager->saveLandmark(&lm9));
 
     QList<QLandmark> lms;
@@ -5572,6 +5753,7 @@ void tst_QLandmarkManagerEngineSqlite::filterAttribute() {
     QVERIFY(doFetch(type,attributeFilter,&lms));
     QCOMPARE(lms.count(), 9);
 
+    /* Disable custom attributes
     //========== test custom attributes =====
     //try and OR operation
     attributeFilter.clearAttributes();
@@ -5743,7 +5925,7 @@ void tst_QLandmarkManagerEngineSqlite::filterAttribute() {
         QVERIFY(doFetch(type,attributeFilter,&lms));
         QCOMPARE(lms.count(), 1);
         QCOMPARE(lms.at(0), lm9);
-    }
+    }*/
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterAttribute_data()
@@ -6620,8 +6802,7 @@ void tst_QLandmarkManagerEngineSqlite::exportGpx() {
         exportRequest.setFormat(QLandmarkManager::Gpx);
         exportRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
         exportRequest.setFileName(exportFile);
-        QList<QLandmarkId> idList;
-        exportRequest.setLandmarkIds(idList);
+        exportRequest.setLandmarkIds(QList<QLandmarkId>());
         exportRequest.start();
         QTest::qWait(50);
         exportRequest.cancel();
@@ -6646,7 +6827,7 @@ void tst_QLandmarkManagerEngineSqlite::exportLmx() {
     //Note: lmx does not support iconUrl, countryCode, streetNumber
     QString lm1Name("lm1 name");
     QString lm1Description("lm1 Description");
-    double lm1Radius(5);
+    qreal lm1Radius(5);
     QString lm1PhoneNumber("lm1 phoneNumber");
     QUrl lm1Url("lm1 URL");
     QGeoCoordinate lm1Coordinate(1,2,3);
@@ -6669,7 +6850,7 @@ void tst_QLandmarkManagerEngineSqlite::exportLmx() {
 
     QString lm2Name("lm2 name");
     QString lm2Description("lm2 Description");
-    double lm2Radius(6);
+    qreal lm2Radius(6);
     QString lm2PhoneNumber("lm2 phoneNumber");
     QUrl lm2Url("lm2 URL");
     QGeoCoordinate lm2Coordinate(4,5,6);
@@ -6692,7 +6873,7 @@ void tst_QLandmarkManagerEngineSqlite::exportLmx() {
 
     QString lm3Name("lm3 name");
     QString lm3Description("lm3 Description");
-    double lm3Radius(6);
+    qreal lm3Radius(6);
     QString lm3PhoneNumber("lm3 phoneNumber");
     QUrl lm3Url("lm3 URL");
     QGeoCoordinate lm3Coordinate(4,5,6);
@@ -6960,8 +7141,7 @@ void tst_QLandmarkManagerEngineSqlite::exportLmx() {
         exportRequest.setFormat(QLandmarkManager::Lmx);
         exportRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
         exportRequest.setFileName(exportFile);
-        QList<QLandmarkId> idList;
-        exportRequest.setLandmarkIds(idList);
+        exportRequest.setLandmarkIds(QList<QLandmarkId>());
         exportRequest.start();
         QTest::qWait(50);
         exportRequest.cancel();
@@ -7036,113 +7216,113 @@ void tst_QLandmarkManagerEngineSqlite::supportedFormats() {
 
 void tst_QLandmarkManagerEngineSqlite::filterSupportLevel() {
     QLandmarkFilter filter;
-    QCOMPARE(m_manager->filterSupportLevel(filter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(filter), QLandmarkManager::NativeSupport);
     //TODO: Invalid filter?
 
     //name filter
     QLandmarkNameFilter nameFilter;
-    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
     nameFilter.setMatchFlags(QLandmarkFilter::MatchStartsWith);
-    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
     nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
-    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
     nameFilter.setMatchFlags(QLandmarkFilter::MatchEndsWith);
-    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
     nameFilter.setMatchFlags(QLandmarkFilter::MatchFixedString);
-    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
     nameFilter.setMatchFlags(QLandmarkFilter::MatchExactly);
-    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
     nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
-    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::None);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NoSupport);
     nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive | QLandmarkFilter::MatchStartsWith);
-    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::None);
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NoSupport);
 
     //proximity filter
     QLandmarkProximityFilter proximityFilter;
-    QCOMPARE(m_manager->filterSupportLevel(proximityFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(proximityFilter), QLandmarkManager::NativeSupport);
 
     //box filter
     QLandmarkBoxFilter boxFilter;
-    QCOMPARE(m_manager->filterSupportLevel(boxFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(boxFilter), QLandmarkManager::NativeSupport);
 
     //AND filter
     QLandmarkIntersectionFilter andFilter;
-    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::NativeSupport);
     andFilter.append(boxFilter);
     andFilter.append(proximityFilter);
-    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::NativeSupport);
     nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
     andFilter.append(nameFilter);
     andFilter.append(filter);
-    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::None);
+    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::NoSupport);
     andFilter.clear();
 
     QLandmarkIntersectionFilter andFilter2;//try multi level intersection
     andFilter2.append(filter);             //that has native support
     andFilter.append(boxFilter);
     andFilter.append(andFilter2);
-    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::NativeSupport);
     andFilter2.append(nameFilter);  //try a multi level intersection with no
     andFilter.clear();              //support
     andFilter.append(boxFilter);
     andFilter.append(andFilter2);
     andFilter.append(proximityFilter);
-    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::None);
+    QCOMPARE(m_manager->filterSupportLevel(andFilter), QLandmarkManager::NoSupport);
 
 
     //union filter
     QLandmarkUnionFilter orFilter;
-    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::NativeSupport);
     orFilter.append(boxFilter);
     orFilter.append(proximityFilter);
-    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::NativeSupport);
     nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
     orFilter.append(nameFilter);
     orFilter.append(filter);
-    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::None);
+    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::NoSupport);
     orFilter.clear();
 
     QLandmarkUnionFilter orFilter2;//try multi level Union
     orFilter2.append(filter);             //that has native support
     orFilter.append(boxFilter);
     orFilter.append(orFilter2);
-    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::NativeSupport);
     orFilter2.append(nameFilter);  //try a multi level Union with no
     orFilter.clear();              //support
     orFilter.append(boxFilter);
     orFilter.append(orFilter2);
     orFilter.append(proximityFilter);
-    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::None);
+    QCOMPARE(m_manager->filterSupportLevel(orFilter), QLandmarkManager::NoSupport);
 
     //attribute filter
     //manager attributes that exist
     QLandmarkAttributeFilter attributeFilter;
     attributeFilter.setAttribute("name", "jack");
     attributeFilter.setAttribute("description", "colonel");
-    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NativeSupport);
 
     //try a manager attribute that doesn't exist
     attributeFilter.setAttribute("weapon", "staff");
-    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::None);
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
 
     //try an attribute with case sensitive matching(not supported
     attributeFilter.clearAttributes();
     attributeFilter.setAttribute("description", "desc", QLandmarkFilter::MatchCaseSensitive);
     attributeFilter.setAttribute("street", "abydos");
-    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::None);
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
     attributeFilter.setAttribute("description", "desc",
                     QLandmarkFilter::MatchCaseSensitive | QLandmarkFilter::MatchStartsWith);
     attributeFilter.setAttribute("street", "abydos");
-    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::None);
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
 
     //try see if other match flags will give native support
     attributeFilter.setAttribute("description", "desc");
     attributeFilter.setAttribute("street", "abydos", QLandmarkFilter::MatchStartsWith);
-    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NativeSupport);
 
     //try a landmark id filter
     QLandmarkIdFilter idFilter;
-    QCOMPARE(m_manager->filterSupportLevel(idFilter), QLandmarkManager::Native);
+    QCOMPARE(m_manager->filterSupportLevel(idFilter), QLandmarkManager::NativeSupport);
 }
 
 void tst_QLandmarkManagerEngineSqlite::sortOrderSupportLevel() {
@@ -7150,36 +7330,28 @@ void tst_QLandmarkManagerEngineSqlite::sortOrderSupportLevel() {
     QLandmarkSortOrder defaultSort;
     QList<QLandmarkSortOrder> sortOrders;
     sortOrders << defaultSort;
-    QCOMPARE(m_manager->sortOrderSupportLevel(sortOrders), QLandmarkManager::Native);
+    QCOMPARE(m_manager->sortOrderSupportLevel(sortOrders), QLandmarkManager::NativeSupport);
 
     //name sort order
     QLandmarkNameSort nameSort;
     sortOrders.clear();
     sortOrders << nameSort;
-    QCOMPARE(m_manager->sortOrderSupportLevel(sortOrders), QLandmarkManager::Native);
+    QCOMPARE(m_manager->sortOrderSupportLevel(sortOrders), QLandmarkManager::NativeSupport);
 
     //try a list
     sortOrders.clear();
     sortOrders << defaultSort << nameSort << defaultSort;
-    QCOMPARE(m_manager->sortOrderSupportLevel(sortOrders), QLandmarkManager::Native);
+    QCOMPARE(m_manager->sortOrderSupportLevel(sortOrders), QLandmarkManager::NativeSupport);
 }
 
 void tst_QLandmarkManagerEngineSqlite::isFeatureSupported()
 {
-    QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::Notifications));
-    QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::ImportExport));
-    QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::CustomAttributes));
-    QVERIFY(!m_manager->isFeatureSupported(QLandmarkManager::ExtendedAttributes));
+    QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::NotificationsFeature));
+    QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::ImportExportFeature));
+    //TODO: remove custom attributes, QVERIFY(m_manager->isFeatureSupported(QLandmarkManager::CustomAttributesFeature));
 }
 
-void tst_QLandmarkManagerEngineSqlite::extendedAttributes()
-{
-    m_manager->setExtendedAttributesEnabled(true);
-    QCOMPARE(m_manager->error(), QLandmarkManager::NotSupportedError);
-    QVERIFY(!m_manager->isExtendedAttributesEnabled());
-    QCOMPARE(m_manager->error(), QLandmarkManager::NotSupportedError);
-}
-
+/*
 void tst_QLandmarkManagerEngineSqlite::customAttributes()
 {
     QFETCH(QString, type);
@@ -7280,7 +7452,7 @@ void tst_QLandmarkManagerEngineSqlite::customAttributes_data()
     QTest::addColumn<QString>("type");
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
-}
+}*/
 
 void tst_QLandmarkManagerEngineSqlite::categoryLimitOffset() {
     for (int i = 0; i < 50; ++i) {

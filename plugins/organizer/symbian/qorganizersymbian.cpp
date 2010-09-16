@@ -72,11 +72,18 @@ const TInt KErrInvalidOccurrence(-32768);
 QOrganizerItemManagerEngine* QOrganizerItemSymbianFactory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(parameters);
-    Q_UNUSED(error);
-
-    /* TODO - if you understand any specific parameters. save them in the engine so that engine::managerParameters can return them */
 
     QOrganizerItemSymbianEngine* ret = new QOrganizerItemSymbianEngine(); // manager takes ownership and will clean up.
+    TRAPD(err, ret->initializeL());
+    QOrganizerItemSymbianEngine::transformError(err, error);
+    if (*error != QOrganizerItemManager::NoError) {
+        // Something went wrong. Return null so that QOrganizerItemManagerData::createEngine() will
+        // return QOrganizerItemInvalidEngine to the client. This will avoid null pointer exceptions
+        // if the client still tries to access the manager.
+        delete ret;
+        ret = 0;
+    }
+    
     return ret;
 }
 
@@ -89,29 +96,25 @@ Q_EXPORT_PLUGIN2(qtorganizer_symbian, QOrganizerItemSymbianFactory);
 
 QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
     QOrganizerItemManagerEngine(),
-    m_defaultCalSession(0),
-    m_entryView(0),
-    m_activeSchedulerWait(0),
-    m_entrycount(0)
+    m_defaultCollection(this),
+    m_activeSchedulerWait(0)
 {
-    // TODO: using CCal api stuff might be more readable if it was refactored into a separate class
-    
-    // Open calendar session and open default file
-    m_defaultCalSession = CCalSession::NewL();
-    m_defaultCalSession->OpenL(KNullDesC);
 
+}
+
+void QOrganizerItemSymbianEngine::initializeL()
+{
+    // Open the default collection
+    m_defaultCollection.openL(KNullDesC);
+    m_collections.insert(m_defaultCollection.localId(), m_defaultCollection); 
+    m_defaultCollection.createEntryViewL();
+    
 #ifdef SYMBIAN_CALENDAR_V2
     // Start listening to calendar file changes
-    m_defaultCalSession->StartFileChangeNotificationL(*this);
-    
-    // Add default session to array
-    m_calSessions.Append(m_defaultCalSession);
-    
-    // Get default calendar filename
-    QString defaultFileName = toQString(m_defaultCalSession->DefaultFileNameL());
+    m_defaultCollection.calSession()->StartFileChangeNotificationL(*this);
     
     // Load available calendars
-    CCalCalendarIterator *iterator = CCalCalendarIterator::NewL(*m_defaultCalSession);
+    CCalCalendarIterator *iterator = CCalCalendarIterator::NewL(*m_defaultCollection.calSession());
     CleanupStack::PushL(iterator);
     for (CCalCalendarInfo *calInfo=iterator->FirstL(); calInfo != 0; calInfo=iterator->NextL()) {
         
@@ -127,45 +130,28 @@ QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
 
         // Skip default calendar (already loaded)
         QString fileName = toQString(calInfo->FileNameL());
-        if (fileName.compare(defaultFileName, Qt::CaseInsensitive) == 0) {
+        if (fileName.compare(m_defaultCollection.fileName(), Qt::CaseInsensitive) == 0) {
             CleanupStack::PopAndDestroy(calInfo);
             continue;
         }
         
         // Open a new session to the calendar
-        CCalSession *session = CCalSession::NewL();
-        CleanupStack::PushL(session);
-        session->OpenL(calInfo->FileNameL());
-        CleanupStack::Pop(session);
-        m_calSessions.Append(session);
+        OrganizerSymbianCollection collection(this);
+        collection.openL(calInfo->FileNameL());
+        m_collections.insert(collection.localId(), collection);
+        collection.createEntryViewL();
         
         CleanupStack::PopAndDestroy(calInfo);
     }
     CleanupStack::PopAndDestroy(iterator);
 #endif
        
-    m_instanceView = CCalInstanceView::NewL(*m_defaultCalSession, *this);
+    m_instanceView = CCalInstanceView::NewL(*m_defaultCollection.calSession(), *this);
     // TODO: multical instance view(s)
     // TODO: The calendar session may take some time to initialize which would
     // make an UI app using symbian backend freeze. To be refactored.
     m_activeSchedulerWait = new CActiveSchedulerWait(); 
     m_activeSchedulerWait->Start();
-    
-    // Create entry view (creation is synchronized with CActiveSchedulerWait)
-    m_entryView = CCalEntryView::NewL(*m_defaultCalSession, *this);
-    // TODO: multical entry views
-    m_activeSchedulerWait->Start();
-
-    // Create change notification filter & Start listening to calendar events
-    TCalTime minTime;
-    minTime.SetTimeUtcL(TCalTime::MinTime());
-    TCalTime maxTime;
-    maxTime.SetTimeUtcL(TCalTime::MaxTime());
-    CalCommon::TCalTimeRange calTimeRange(minTime, maxTime);
-    CCalChangeNotificationFilter *filter = CCalChangeNotificationFilter::NewL(MCalChangeCallBack2::EChangeEntryAll, true, calTimeRange);
-    m_defaultCalSession->StartChangeNotification(*this, *filter);
-    delete filter;
-    // TODO: multical event listener
     
     // Create request queue for asynch requests
     m_requestServiceProviderQueue = QOrganizerItemRequestQueue::instance(*this);
@@ -173,18 +159,12 @@ QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
 
 QOrganizerItemSymbianEngine::~QOrganizerItemSymbianEngine()
 {
-    m_defaultCalSession->StopChangeNotification();
-
+#ifdef SYMBIAN_CALENDAR_V2
+    m_defaultCollection.calSession()->StopFileChangeNotification();
+#endif
 	delete m_requestServiceProviderQueue;
     delete m_activeSchedulerWait;
-    delete m_entryView;
     delete m_instanceView;
-    
-#ifdef SYMBIAN_CALENDAR_V2
-    m_calSessions.ResetAndDestroy();
-#else
-    delete m_defaultCalSession;
-#endif
 }
 
 QString QOrganizerItemSymbianEngine::managerName() const
@@ -371,50 +351,68 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(const QOrganize
 
 QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
 {
+    QList<QOrganizerItemLocalId> ids;
+    TRAPD(err, itemIdsL(ids, filter, sortOrders))
+    transformError(err, error);
+    if (*error != QOrganizerItemManager::NoError) {
+        return QList<QOrganizerItemLocalId>();
+    } else {
+        return ids;
+    }
+}
+
+void QOrganizerItemSymbianEngine::itemIdsL(
+    QList<QOrganizerItemLocalId>& itemLocalids, 
+    const QOrganizerItemFilter& filter, 
+    const QList<QOrganizerItemSortOrder>& sortOrders) const
+{
     // Set minumum time for id fetch
     // TODO: get minumum time from filter
     TCalTime calTime;
     calTime.SetTimeUtcL(TCalTime::MinTime());
     
-    // Get ids
+    // Get ids from all entry views
+    // TODO: instead of looping through entry views, get the collection id from
+    // local id? (not certain that is the correct way, because the Qt API for
+    // collections is still under development)
     RArray<TCalLocalUid> ids;
-    TRAPD(err, m_entryView->GetIdsModifiedSinceDateL(calTime, ids));
-    transformError(err, error);
-    if (*error != QOrganizerItemManager::NoError) {
-        ids.Close();
-        return QList<QOrganizerItemLocalId>();
+    CleanupClosePushL(ids);
+    foreach(QOrganizerCollectionLocalId collectionId, m_collections.keys()) {
+        entryViewL(collectionId)->GetIdsModifiedSinceDateL(calTime, ids);
     }
-    
+
     // Convert to QOrganizerItemLocalId list
     QList<QOrganizerItemLocalId> itemIds;
     int count = ids.Count();
-    for (int i=0; i<count; i++)
+    for (int i=0; i<count; i++) {
         itemIds << QOrganizerItemLocalId(ids[i]);
-    ids.Close();
+    }
+    CleanupStack::PopAndDestroy(&ids);
     
+    QOrganizerItemFilter::FilterType filterType = filter.type();
     // No filtering and sorting needed?
-    if (filter.type() == QOrganizerItemFilter::InvalidFilter || filter.type() == QOrganizerItemFilter::DefaultFilter && sortOrders.count() == 0)
-        return itemIds;   
+    if (filterType == QOrganizerItemFilter::InvalidFilter || 
+        filterType == QOrganizerItemFilter::DefaultFilter && 
+        sortOrders.count() == 0) {
+        itemLocalids.append(itemIds);
+        return;
+    }
         
     // Get items for slow filter
     QOrganizerItemFetchHint fetchHint;
     QList<QOrganizerItem> items;
     foreach(const QOrganizerItemLocalId &id, itemIds) {
-        QOrganizerItem item = this->item(id, fetchHint, error);
-        if (*error != QOrganizerItemManager::NoError)
-            return QList<QOrganizerItemLocalId>();
+        QOrganizerItem item;
+        itemL(id, &item, fetchHint);
         items << item;
     }
     
     // Use the general implementation to filter and sort items
     QList<QOrganizerItem> filteredAndSorted = slowFilter(items, filter, sortOrders);
     
-    // Convert to QOrganizerItemLocalId list
-    QList<QOrganizerItemLocalId> filteredAndSortedIds;
-    foreach (const QOrganizerItem &item, filteredAndSorted)
-        filteredAndSortedIds << item.localId();
-    
-    return filteredAndSortedIds;
+    foreach (const QOrganizerItem& item, filteredAndSorted) {
+        itemLocalids << item.localId();
+    }
 }
 
 QList<QOrganizerItem> QOrganizerItemSymbianEngine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
@@ -426,11 +424,14 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::items(const QOrganizerItemFil
     
     // Get ids
     RArray<TCalLocalUid> ids;
-    TRAPD(err, m_entryView->GetIdsModifiedSinceDateL(calTime, ids));
-    transformError(err, error);
-    if (*error != QOrganizerItemManager::NoError) {
-        ids.Close();
-        return QList<QOrganizerItem>();
+    // TODO: optimize if the filter rules out some of the collections
+    foreach (QOrganizerCollectionLocalId collectionId, m_collections.keys()) {
+        TRAPD(err, entryViewL(collectionId)->GetIdsModifiedSinceDateL(calTime, ids));
+        transformError(err, error);
+        if (*error != QOrganizerItemManager::NoError) {
+            ids.Close();
+            return QList<QOrganizerItem>();
+        }
     }
         
     // Get items
@@ -470,11 +471,21 @@ void QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& itemId, QOr
 
     // Fetch item
     TCalLocalUid uid(itemId);
-    CCalEntry *calEntry = m_entryView->FetchL(uid);
-    if (!calEntry) {
-        User::Leave(KErrNotFound); // Leave with KErrNotFound as to indicate that the entry 
-        // is not present in the database
+    CCalEntry *calEntry(0);
+    QOrganizerCollectionLocalId collectionLocalId(0);
+    foreach(QOrganizerCollectionLocalId id, m_collections.keys()) {
+        // TODO: instead of looping through entry views, get the collection id from
+        // local id? (not certain that is the correct way, because the Qt API for
+        // collections is still under development)
+        calEntry = entryViewL(id)->FetchL(uid);
+        if (calEntry) {
+            collectionLocalId = id;
+            break;
+        }
     }
+    // The corresponding entry not found from the database
+    if (!calEntry)
+        User::Leave(KErrNotFound);
     CleanupStack::PushL(calEntry);
 
     // Transform CCalEntry -> QOrganizerItem
@@ -490,20 +501,24 @@ void QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& itemId, QOr
     if (item->type() == QOrganizerItemType::TypeEventOccurrence) {
         HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
         // We don't know the local id yet, let's search with globalUid
-        CCalEntry *parentEntry = findParentEntryLC(item, *globalUid);
+        CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, item, *globalUid);
         QOrganizerEventOccurrence *eventOccurrence = (QOrganizerEventOccurrence *)item;
         eventOccurrence->setParentLocalId(parentEntry->LocalUidL());
         CleanupStack::PopAndDestroy(parentEntry);
         CleanupStack::PopAndDestroy(globalUid);
     }
 
+    // Set collection id
+    QOrganizerCollectionId cid;
+    cid.setLocalId(collectionLocalId);
+    cid.setManagerUri(managerUri());
+    setItemCollectionId(item, cid);
+
     CleanupStack::PopAndDestroy(calEntry);
 }
 
 bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error* error)
 {
-    Q_UNUSED(collectionId) // TODO: multiple collection (calendar) support
-
     // TODO: the performance would be probably better, if we had a separate
     // implementation for the case with a list of items that would save all
     // the items
@@ -516,7 +531,7 @@ bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items, const 
         // Validate & save
         QOrganizerItemManager::Error saveError;
         if (validateItem(item, &saveError)) {
-            TRAPD(err, saveItemL(&item, &changeSet));
+            TRAPD(err, saveItemL(&item, collectionId, &changeSet));
             transformError(err, &saveError);
         }
         
@@ -539,29 +554,29 @@ bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items, const 
 
 bool QOrganizerItemSymbianEngine::saveItem(QOrganizerItem* item, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
 {
-    Q_UNUSED(collectionId) // TODO: multiple collection (calendar) support
-        
     // Validate & save
     if (validateItem(*item, error)) {
         QOrganizerItemChangeSet changeSet;
-        TRAPD(err, saveItemL(item, &changeSet));
+        TRAPD(err, saveItemL(item, collectionId, &changeSet));
         transformError(err, error);
         changeSet.emitSignals(this);
     }
     return *error == QOrganizerItemManager::NoError;
 }
 
-void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItemChangeSet *changeSet)
+void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet *changeSet)
 {
+    QOrganizerCollectionLocalId collectionLocalId = collectionLocalIdL(*item, collectionId);
+
     // Find the entry corresponding to the item or to the item occurrence.
     // Creates a new one, if the corresponding entry does not exist yet.
     CCalEntry *entry(0);
     bool isNewEntry(false);
     if(item->type()== QOrganizerItemType::TypeEventOccurrence
         || item->type()== QOrganizerItemType::TypeTodoOccurrence) {
-        entry = entryForItemOccurrenceL(item, isNewEntry);
+        entry = entryForItemOccurrenceL(collectionId, item, isNewEntry);
     } else {
-        entry = entryForItemL(item, isNewEntry);
+        entry = entryForItemL(collectionId, item, isNewEntry);
     }
     CleanupStack::PushL(entry);
 
@@ -573,7 +588,7 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItem
     CleanupClosePushL(entries);
     entries.AppendL(entry);
     TInt count(0);
-    m_entryView->StoreL(entries, count);
+    entryViewL(collectionId)->StoreL(entries, count);
     if (count != entries.Count()) {
         // The documentation states about count "On return, this
         // contains the number of entries which were successfully stored".
@@ -584,6 +599,12 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItem
 
     // Transform details that are available/updated after saving    
     m_itemTransform.toItemPostSaveL(*entry, item, managerUri());
+
+    // Set collection id
+    QOrganizerCollectionId cid;
+    cid.setLocalId(collectionLocalIdL(*item, collectionId));
+    cid.setManagerUri(managerUri());
+    setItemCollectionId(item, cid);
 
     // Cleanup
     CleanupStack::PopAndDestroy(&entries);
@@ -598,7 +619,54 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItem
     }
 }
 
-CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(QOrganizerItem *item, bool &isNewEntry) const
+/*!
+ * Retrieves the entry view for the collection. Leaves with KErrArgument if
+ * not found.
+ */
+CCalEntryView* QOrganizerItemSymbianEngine::entryViewL(const QOrganizerCollectionLocalId& collectionId) const
+{
+    QOrganizerCollectionLocalId tempCollectionId = collectionId;
+
+    // 0 is interpreted as the default collection
+    if (tempCollectionId == 0)
+        tempCollectionId = m_defaultCollection.localId();
+
+    if (!m_collections.contains(tempCollectionId))
+        User::Leave(KErrArgument);
+
+    return m_collections[tempCollectionId].calEntryView();
+}
+
+/*!
+ * Returns item's collection id if it is valid. If not returns collectionId
+ * given as a parameter if it is valid. Fallback is to return the default
+ * session's collection id.
+ */
+QOrganizerCollectionLocalId QOrganizerItemSymbianEngine::collectionLocalIdL(QOrganizerItem item, const QOrganizerCollectionLocalId& collectionId) const
+{
+#ifdef SYMBIAN_CALENDAR_V2
+    QOrganizerCollectionLocalId itemCollectionId = item.collectionId().localId();
+
+    if (itemCollectionId && collectionId
+        && collectionId != itemCollectionId)
+            User::Leave(KErrArgument);
+    else if (collectionId)
+        return collectionId;
+    else if (itemCollectionId)
+        return itemCollectionId;
+
+    // Default collection id is the default session's collection id
+    return m_defaultCollection.localId();
+#else
+    Q_UNUSED(item);
+    Q_UNUSED(collectionId);
+
+    // Collections not supported, the default collection id is 1
+    return 1;
+#endif
+}
+
+CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(const QOrganizerCollectionLocalId collectionId, QOrganizerItem *item, bool &isNewEntry) const
 {
     CCalEntry * entry(NULL);
 
@@ -609,7 +677,7 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(QOrganizerItem *
             User::Leave(KErrInvalidOccurrence);
 
         // Fetch the item (will return NULL if the localid is not found)
-        entry = m_entryView->FetchL(item->localId());
+        entry = entryViewL(collectionLocalIdL(*item))->FetchL(item->localId());
         if (!entry)
             User::Leave(KErrInvalidOccurrence);
         return entry;
@@ -617,7 +685,7 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(QOrganizerItem *
 
     // Entry not found, find the parent entry and create a new child for it
     HBufC8* parentGlobalUid = OrganizerItemGuidTransform::guidLC(*item);
-    CCalEntry *parentEntry = findParentEntryLC(item, *parentGlobalUid);
+    CCalEntry *parentEntry = findParentEntryLC(collectionId, item, *parentGlobalUid);
 
     // Get the parameters for the new child entry
     QOrganizerItemInstanceOrigin origin = item->detail<QOrganizerItemInstanceOrigin>();
@@ -645,16 +713,16 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(QOrganizerItem *
     return entry; // Ownership transferred
 }
 
-CCalEntry* QOrganizerItemSymbianEngine::entryForItemL(QOrganizerItem *item, bool &isNewEntry) const
+CCalEntry* QOrganizerItemSymbianEngine::entryForItemL(const QOrganizerCollectionLocalId collectionId, QOrganizerItem *item, bool &isNewEntry) const
 {
     // Try to find with local id
-    CCalEntry *entry = findEntryL(item->localId(), item->id().managerUri());
+    CCalEntry *entry = findEntryL(collectionId, item->localId(), item->id().managerUri());
 
     // Not found. Try to find with globalUid
     if (!entry) {
         HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
 
-        entry = findEntryL(*globalUid);
+        entry = findEntryL(collectionId, *globalUid);
         // Not found? Create a new entry instance to be saved to the database
         if (!entry) {
             CCalEntry::TType type = OrganizerItemTypeTransform::entryTypeL(*item);
@@ -668,7 +736,7 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemL(QOrganizerItem *item, bool
     return entry;
 }
 
-CCalEntry * QOrganizerItemSymbianEngine::findEntryL(QOrganizerItemLocalId localId, QString manageruri) const
+CCalEntry * QOrganizerItemSymbianEngine::findEntryL(const QOrganizerCollectionLocalId collectionId, QOrganizerItemLocalId localId, QString manageruri) const
 {
     CCalEntry *entry(0);
 
@@ -677,7 +745,7 @@ CCalEntry * QOrganizerItemSymbianEngine::findEntryL(QOrganizerItemLocalId localI
         // The item has a local id, check the item is from this manager
         if (manageruri == managerUri()) {
             // Fetch the item (will return NULL if the localid is not found)
-            entry = m_entryView->FetchL(localId); // ownership transferred
+            entry = entryViewL(collectionId)->FetchL(localId);
             if (!entry)
                 User::Leave(KErrNotFound);
         } else {
@@ -689,14 +757,14 @@ CCalEntry * QOrganizerItemSymbianEngine::findEntryL(QOrganizerItemLocalId localI
     return entry;
 }
 
-CCalEntry * QOrganizerItemSymbianEngine::findEntryL(const TDesC8& globalUid) const
+CCalEntry * QOrganizerItemSymbianEngine::findEntryL(const QOrganizerCollectionLocalId collectionId, const TDesC8& globalUid) const
 {
     CCalEntry *entry(0);
 
     if (globalUid.Length()) {
         // Search for an existing entry based on guid
         RPointerArray<CCalEntry> calEntryArray;
-        m_entryView->FetchL(globalUid, calEntryArray);
+        entryViewL(collectionId)->FetchL(globalUid, calEntryArray);
         if (calEntryArray.Count()) {
             // take the first item in the array
             entry = calEntryArray[0];
@@ -709,7 +777,7 @@ CCalEntry * QOrganizerItemSymbianEngine::findEntryL(const TDesC8& globalUid) con
     return entry;
 }
 
-CCalEntry* QOrganizerItemSymbianEngine::findParentEntryLC(QOrganizerItem *item, const TDesC8& globalUid) const
+CCalEntry* QOrganizerItemSymbianEngine::findParentEntryLC(const QOrganizerCollectionLocalId collectionId, QOrganizerItem *item, const TDesC8& globalUid) const
 {
     CCalEntry *parent(0);
 
@@ -717,13 +785,13 @@ CCalEntry* QOrganizerItemSymbianEngine::findParentEntryLC(QOrganizerItem *item, 
     QOrganizerItemInstanceOrigin origin = item->detail<QOrganizerItemInstanceOrigin>();
     if (origin.parentLocalId()) {
         // Fetch the item (will return NULL if the localid is not found)
-        parent = m_entryView->FetchL(origin.parentLocalId()); // ownership transferred
+        parent = entryViewL(collectionId)->FetchL(origin.parentLocalId()); // ownership transferred
         if (!parent)
             User::Leave(KErrInvalidOccurrence);
         CleanupStack::PushL(parent);
     // Try to find with globalUid
     } else if (globalUid.Length()) {
-        parent = findEntryL(globalUid);
+        parent = findEntryL(collectionId, globalUid);
         if (!parent)
             User::Leave(KErrInvalidOccurrence);
         CleanupStack::PushL(parent);
@@ -752,61 +820,73 @@ CCalEntry* QOrganizerItemSymbianEngine::findParentEntryLC(QOrganizerItem *item, 
 
 bool QOrganizerItemSymbianEngine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
-    // TODO: the performance would be probably better, if we had a separate
+    // Note: the performance would be probably better, if we had a separate
     // implementation for the case with a list of item ids that would
     // remove all the items
-    
+
     QOrganizerItemChangeSet changeSet;
-    
+
     for (int i(0); i < itemIds.count(); i++) {
-        
         // Remove
-        QOrganizerItemManager::Error removeError;
-        TRAPD(err, removeItemL(itemIds.at(i), &changeSet));
-        transformError(err, &removeError);
-        
-        // Check error
-        if (removeError != QOrganizerItemManager::NoError) {
+        QOrganizerItemManager::Error removeError = QOrganizerItemManager::NoError;
+        TRAPD(err, removeItemL(itemIds.at(i)));
+        if (err != KErrNone) {
+            transformError(err, &removeError);
             *error = removeError;
             if (errorMap)
                 errorMap->insert(i, *error);
+        } else {
+            // Signals
+            changeSet.insertRemovedItem(itemIds.at(i));
         }
     }
-    
+
     // Emit changes
     changeSet.emitSignals(this);
-    
+
     return *error == QOrganizerItemManager::NoError;
 }
 
 bool QOrganizerItemSymbianEngine::removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemManager::Error* error)
 {
-    QOrganizerItemChangeSet changeSet;
-    TRAPD(err, removeItemL(organizeritemId, &changeSet));
-    transformError(err, error);
-    changeSet.emitSignals(this);
+    TRAPD(err, removeItemL(organizeritemId));
+    if (err != KErrNone) {
+        transformError(err, error);
+    } else {
+        // Signals
+        QOrganizerItemChangeSet changeSet;
+        changeSet.insertRemovedItem(organizeritemId);
+        changeSet.emitSignals(this);
+    }
     return *error == QOrganizerItemManager::NoError;
 }
 
-void QOrganizerItemSymbianEngine::removeItemL(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet *changeSet)
+void QOrganizerItemSymbianEngine::removeItemL(const QOrganizerItemLocalId& organizeritemId)
 {
     // TODO: How to remove item instances?
-    deleteItemL(organizeritemId);
-    // Update change set
-    changeSet->insertRemovedItem(organizeritemId);
-}
 
-void QOrganizerItemSymbianEngine::deleteItemL(const QOrganizerItemLocalId& organizeritemId)
-{
+    // Fetch item
     // There is a bug in symbian calendar API. It will not report any error
-    // when removing a nonexisting entry. So we need to check if the item
-    // really exists before deleting it.
-    CCalEntry *entry = m_entryView->FetchL(TCalLocalUid(organizeritemId));
-    if (!entry)
+    // when removing a nonexisting entry. So we need to fetch the item to see
+    // if it really exists before trying to delete it.
+    TCalLocalUid uid(organizeritemId);
+    CCalEntry *calEntry(0);
+    QOrganizerCollectionLocalId collectionLocalId(0);
+    foreach(QOrganizerCollectionLocalId id, m_collections.keys()) {
+        // TODO: instead of looping through entry views, get the collection id from
+        // local id? (not certain that is the correct way, because the Qt API for
+        // collections is still under development)
+        calEntry = entryViewL(id)->FetchL(uid);
+        if (calEntry) {
+            collectionLocalId = id;
+            break;
+        }
+    }
+    if (!calEntry)
         User::Leave(KErrNotFound);
-    CleanupStack::PushL(entry);
-    m_entryView->DeleteL(*entry);
-    CleanupStack::PopAndDestroy(entry);
+    CleanupStack::PushL(calEntry);
+    entryViewL(collectionLocalId)->DeleteL(*calEntry);
+    CleanupStack::PopAndDestroy(calEntry);
 }
 
 QList<QOrganizerItem> QOrganizerItemSymbianEngine::slowFilter(const QList<QOrganizerItem> &items, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
@@ -830,10 +910,8 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::slowFilter(const QList<QOrgan
 #ifdef SYMBIAN_CALENDAR_V2
 QOrganizerCollectionLocalId QOrganizerItemSymbianEngine::defaultCollectionId(QOrganizerItemManager::Error* error) const
 {
-    TCalCollectionId id = 0;
-    TRAPD(err, id = m_defaultCalSession->CollectionIdL());
-    transformError(err, error);
-    return QOrganizerCollectionLocalId(id);
+    *error = QOrganizerItemManager::NoError;
+    return m_defaultCollection.localId();
 }
 
 QList<QOrganizerCollectionLocalId> QOrganizerItemSymbianEngine::collectionIds(QOrganizerItemManager::Error* error) const
@@ -846,21 +924,17 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemSymbianEngine::collectionIds(QO
 
 QList<QOrganizerCollectionLocalId> QOrganizerItemSymbianEngine::collectionIdsL() const
 {
+    // TODO: refactor as function is no longer leaving
     QList<QOrganizerCollectionLocalId> ids;
-    int count = sessionCount();
-    for (int i=0; i<count; i++)
-        ids.append(collectionIdL(i));
+    foreach (const OrganizerSymbianCollection &collection, m_collections)
+        ids.append(collection.localId());
     return ids;
 }
 
-QOrganizerCollectionLocalId QOrganizerItemSymbianEngine::collectionIdL(int index) const
-{
-    return m_calSessions[index]->CollectionIdL();
-}
-
+// Returns number of sessions currently open
 int QOrganizerItemSymbianEngine::sessionCount() const
 {
-    return m_calSessions.Count();
+    return m_collections.count();
 }
 
 QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
@@ -872,46 +946,55 @@ QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collections(const QList
 }
 
 QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collectionsL(const QList<QOrganizerCollectionLocalId>& collectionIds) const
-{
+    {
     QList<QOrganizerCollection> collections;
-    
+
+    int count(sessionCount());
     // Loop through open collections/sessions
-    int count = m_calSessions.Count();
-    for (int i=0; i<count; i++) {
-        CCalSession *session = m_calSessions[i];
-        
-        // Get collection id
-        QOrganizerCollectionLocalId localId(session->CollectionIdL());
-        
-        // Find matching collection if id is provided
-        if (!collectionIds.isEmpty()) {
-            if (!collectionIds.contains(localId))
-                continue;
-        }
-        
+    for (int i=0;  i < count; i++) {
         // Create a new collection to hold the data
         QOrganizerCollection collection;
-     
-        // Set collection id
-        QOrganizerCollectionId id;
-        id.setManagerUri(managerUri());
-        id.setLocalId(localId);
-        collection.setId(id);
-        
-        // Read calendar info from session
-        CCalCalendarInfo* calInfo = session->CalendarInfoL();
-        CleanupStack::PushL(calInfo);
-        collection.setMetaData(toMetaDataL(*calInfo));       
-        CleanupStack::PopAndDestroy(calInfo);
-        
-        collections.append(collection);
+        bool found(collectionL(i, collectionIds, collection));
+        if (found) {
+            collections.append(collection);
+        }
     }
-    
+
     // Nothing found?
     if (collections.isEmpty())
         User::Leave(KErrNotFound);
 
     return collections;
+}
+
+bool QOrganizerItemSymbianEngine::collectionL(const int 
+    index, const QList<QOrganizerCollectionLocalId>& collectionIds, 
+    QOrganizerCollection& collection) const
+{
+    CCalSession *session = m_collections.values()[index].calSession();
+    
+    // Get collection id
+    QOrganizerCollectionLocalId localId(m_collections.values()[index].localId());
+    
+    // Find matching collection if id is provided
+    if (!collectionIds.isEmpty()) {
+        if (!collectionIds.contains(localId))
+            return false;
+    }
+    
+    // Read calendar info from session
+    CCalCalendarInfo* calInfo = session->CalendarInfoL();
+    CleanupStack::PushL(calInfo);
+    collection.setMetaData(toMetaDataL(*calInfo));       
+    CleanupStack::PopAndDestroy(calInfo);
+
+    // Fetch successfull. Set collection id now
+    QOrganizerCollectionId id;
+    id.setManagerUri(managerUri());
+    id.setLocalId(localId);
+    collection.setId(id);
+
+    return true;
 }
 
 bool QOrganizerItemSymbianEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
@@ -940,62 +1023,45 @@ void QOrganizerItemSymbianEngine::saveCollectionL(QOrganizerCollection* collecti
             User::Leave(KErrArgument); // uri does not match this manager
     }
     
+    // Find existing collection
+    QOrganizerCollectionLocalId localId = collection->id().localId();
+    OrganizerSymbianCollection symbianCollection(this);
+    if (localId) {
+        if (m_collections.contains(localId))
+            symbianCollection = m_collections[localId];
+        else
+            User::Leave(KErrArgument); // collection id was defined but was not found
+    }
+    
     // Convert metadata to cal info
     CCalCalendarInfo *calInfo = toCalInfoLC(collection->metaData());
-    
-    // Get filename
-    QString fileNameString = collection->metaData("FileName").toString();
-    TPtrC16 fileName = toPtrC16(fileNameString);
-            
-    // Find existing collection/session
-    CCalSession *session = 0;
-    int count = m_calSessions.Count();
-    for (int i=0; i<count; i++) {
-        if (m_calSessions[i]->CollectionIdL() == collection->id().localId()) {
-            session = m_calSessions[i];
-            break;
-        }
-    }
     
     // Update modification time
     TTime currentTime;
     currentTime.HomeTime();
     setCalInfoPropertyL(calInfo, EModificationTime, currentTime);
     
-    // Did we find any?
-    if (!session) {
-        
-        // If collection id is defined it a matching session must be found
-        if (collection->id().localId())
-            User::Leave(KErrArgument);
-        
+    // Get filename from collection to be saved
+    QString fileName = collection->metaData("FileName").toString();
+    
+    // Did we found an existing collection?
+    if (!symbianCollection.isValid()) {
+
         // Set creation time
         setCalInfoPropertyL(calInfo, ECreationTime, currentTime);       
                 
-        // Create a new session to the calendar file
-        session = CCalSession::NewL();
-        TRAPD(err, session->CreateCalFileL(fileName, *calInfo));
-        if (err == KErrAlreadyExists) {
-            // Calendar file might exist already. So just open it.
-            // (It might be waiting for deletion with its EMarkAsDelete flag set.)
-            session->OpenL(fileName);
-            session->SetCalendarInfoL(*calInfo);
-        } else {
-            User::LeaveIfError(err);
-            session->OpenL(fileName);
-        }        
-        m_calSessions.Append(session);
+        // Create a new collection
+        symbianCollection.openL(toPtrC16(fileName), calInfo);
+        m_collections.insert(symbianCollection.localId(), symbianCollection);
+        symbianCollection.createEntryViewL();
     }
     else {
-        // Cannot allow changing the filename for an existing session
-        CCalCalendarInfo* info = session->CalendarInfoL();
-        CleanupStack::PushL(info);
-        if (info->FileNameL() != fileName)
+        // Cannot allow changing the filename for an existing collection
+        if (symbianCollection.fileName() != fileName)
             User::Leave(KErrArgument);
-        CleanupStack::PopAndDestroy(info);
 
-        // Just update the existing collection/session
-        session->SetCalendarInfoL(*calInfo);
+        // Update the existing collection
+        symbianCollection.calSession()->SetCalendarInfoL(*calInfo);
     }
     
     CleanupStack::PopAndDestroy(calInfo);
@@ -1003,7 +1069,7 @@ void QOrganizerItemSymbianEngine::saveCollectionL(QOrganizerCollection* collecti
     // Update id to the collection object
     QOrganizerCollectionId id;
     id.setManagerUri(managerUri());
-    id.setLocalId(session->CollectionIdL());
+    id.setLocalId(symbianCollection.localId());
     collection->setId(id);
 }
 
@@ -1020,20 +1086,19 @@ void QOrganizerItemSymbianEngine::removeCollectionL(const QOrganizerCollectionLo
 {
     // Dont allow removing the default collection
     // TODO: Or should we allow this?
-    if (collectionId == m_defaultCalSession->CollectionIdL())
+    if (collectionId == m_defaultCollection.localId())
         User::Leave(KErrAccessDenied);
     
     // Find collection
-    int count = m_calSessions.Count();
-    for (int i=0; i<count; i++) {
-        if (m_calSessions[i]->CollectionIdL() == collectionId) {
+    foreach(OrganizerSymbianCollection collection, m_collections) {
+        if (collection.localId() == collectionId) {
             
             // Get cal info
-            CCalCalendarInfo *calInfo = m_calSessions[i]->CalendarInfoL();
+            CCalCalendarInfo *calInfo = collection.calSession()->CalendarInfoL();
             CleanupStack::PushL(calInfo);
                         
             // Remove the calendar file itself
-            TRAPD(err, m_calSessions[i]->DeleteCalFileL(calInfo->FileNameL()));
+            TRAPD(err, collection.calSession()->DeleteCalFileL(calInfo->FileNameL()));
             if( err == KErrInUse ) {
                 
                 // We cannot remove the calendar if we are not the only one
@@ -1054,16 +1119,15 @@ void QOrganizerItemSymbianEngine::removeCollectionL(const QOrganizerCollectionLo
                 // Client might reopen the calendar before its really deleted.
                             
                 // Update calendar info
-                m_calSessions[i]->SetCalendarInfoL( *calInfo );
+                collection.calSession()->SetCalendarInfoL( *calInfo );
                 }
             else {
                 User::LeaveIfError(err);
             }
             CleanupStack::PopAndDestroy(calInfo);
-            
-            // Remove the session
-            delete m_calSessions[i];
-            m_calSessions.Remove(i);            
+
+            // Delete the collection
+            m_collections.remove(collection.localId());
             return;
         }
     }
@@ -1259,45 +1323,6 @@ TBool QOrganizerItemSymbianEngine::NotifyProgress()
     return EFalse;
 }
 
-/*!
- * From MCalChangeCallBack2
- */
-void QOrganizerItemSymbianEngine::CalChangeNotification(RArray<TCalChangeEntry>& aChangeItems)
-{
-    // NOTE: We will not be notified of a change if we are the source. So these events are
-    // caused by something else than our manager instance.
-    
-    QOrganizerItemChangeSet changeSet;
-    
-    int count = aChangeItems.Count();
-    for (int i=0; i<count; i++) 
-    {
-        QOrganizerItemLocalId entryId = QOrganizerItemLocalId(aChangeItems[i].iEntryId);
-        switch(aChangeItems[i].iChangeType)
-        {
-            case MCalChangeCallBack2::EChangeAdd:       
-                changeSet.insertAddedItem(entryId);
-                break;
-                
-            case MCalChangeCallBack2::EChangeDelete:
-                changeSet.insertRemovedItem(entryId);
-                break;
-                
-            case MCalChangeCallBack2::EChangeModify:
-                changeSet.insertChangedItem(entryId);
-                break;
-                
-            case MCalChangeCallBack2::EChangeUndefined:
-                // fallthrough
-            default: 
-                changeSet.setDataChanged(true);
-                break;
-        }
-    }
-    
-    changeSet.emitSignals(this);
-}
-
 #ifdef SYMBIAN_CALENDAR_V2
 void QOrganizerItemSymbianEngine::CalendarInfoChangeNotificationL(RPointerArray<CCalFileChangeInfo>& aCalendarInfoChangeEntries)
 {
@@ -1308,100 +1333,67 @@ void QOrganizerItemSymbianEngine::CalendarInfoChangeNotificationL(RPointerArray<
         // Get changed calendar file name
         const TDesC& fileName = aCalendarInfoChangeEntries[i]->FileNameL();
         
-        // Try to find matching session
-        CCalSession *session = 0;
-        int sessionCount = m_calSessions.Count();
-        for (int j=0; j<sessionCount; j++){
-            CCalCalendarInfo *calInfo = m_calSessions[j]->CalendarInfoL();
-            CleanupStack::PushL(calInfo);
-            if (calInfo->FileNameL() == fileName) {
-                session = m_calSessions[j];
-                CleanupStack::PopAndDestroy(calInfo);
-                break;
-            }
-            CleanupStack::PopAndDestroy(calInfo);
+        // Try to find matching collection
+        OrganizerSymbianCollection collection(this);
+        foreach (OrganizerSymbianCollection c, m_collections) {
+            if (c.fileName() == toQString(fileName))
+                collection = c; 
         }
         
-        // Set collection id for signal emission
-        QList<QOrganizerCollectionLocalId> ids;
-        if (session)
-            ids << session->CollectionIdL();
-        
         // Check change type
+        QList<QOrganizerCollectionLocalId> ids;
         switch (aCalendarInfoChangeEntries[i]->ChangeType())
         {
         case ECalendarFileCreated:
-            //qDebug() << this << session << toQString(fileName) << "created";
-            if (!session) {
+            if (!collection.isValid()) {
                 // A calendar file has been created but not by this manager instance.
-                // Create a new session to the file
-                session = CCalSession::NewL();
-                session->OpenL(fileName);
-                m_calSessions.Append(session);
-                emit collectionsAdded(ids << session->CollectionIdL());
+                collection.openL(fileName);
+                m_collections.insert(collection.localId(), collection);
+                collection.createEntryViewL();
+                emit collectionsAdded(ids << collection.localId());
             }
             break;
             
         case ECalendarFileDeleted:
-            //qDebug() << this << session << toQString(fileName) << "deleted";
-            if (session) {
+            if (collection.isValid()) {
                 // A calendar file has been removed but not by this manager instance.
-                m_calSessions.Remove(m_calSessions.Find(session));
-                delete session;
-                emit collectionsRemoved(ids);
+                QOrganizerCollectionLocalId id = collection.localId();
+                m_collections.remove(id);
+                emit collectionsRemoved(ids << id);
             }
             break;
             
         case ECalendarInfoCreated:
-            //qDebug() << this << session << toQString(fileName) << "info created";
             break;
             
-        case ECalendarInfoUpdated: // fallthrough
-            //qDebug() << this << session << toQString(fileName) << "info updated";
-            if (session) {
-                // Get EMarkAsDelete property
-                CCalCalendarInfo *calInfo = session->CalendarInfoL();
-                TBool markAsDelete = EFalse;
-                TRAP_IGNORE(markAsDelete = getCalInfoPropertyL<TBool>(*calInfo, EMarkAsDelete));
-                delete calInfo;
-                
-                if (markAsDelete) {
-                    // A calendar file has been marked for deletion but not by this manager instance.
-                    m_calSessions.Remove(m_calSessions.Find(session));
-                    delete session;
-                    emit collectionsRemoved(ids);
-                    
+        case ECalendarInfoUpdated:
+            if (collection.isValid()) {
+                if (collection.isMarkedForDeletionL()) {
+                    // A calendar file has been marked for deletion but not by this manager instance
+                    QOrganizerCollectionLocalId id = collection.localId();
+                    m_collections.remove(id);
+                    emit collectionsRemoved(ids << id);
                     // TODO: Try removing the calendar file?                    
                 } else {
-                    emit collectionsChanged(ids);
+                    emit collectionsChanged(ids << collection.localId());
                 }
             } else {
                 // Calendar file has been modified but we do not have a session to it.
-                // Create a new session to the file
-                session = CCalSession::NewL();
-                session->OpenL(fileName);
-                CleanupStack::PushL(session);
+                collection.openL(fileName);             
                 
-                // Get EMarkAsDelete property
-                CCalCalendarInfo *calInfo = session->CalendarInfoL();
-                TBool markAsDelete = EFalse;
-                TRAP_IGNORE(markAsDelete = getCalInfoPropertyL<TBool>(*calInfo, EMarkAsDelete));
-                delete calInfo;
-                
-                if (markAsDelete) {
+                // Is it marked for deletion?
+                if (collection.isMarkedForDeletionL()) {
                     // Something has modified a calendar which is marked for deletion.
-                    CleanupStack::PopAndDestroy(session);
                 } else {
                     // A calendar file which was marked for deletion has been taken into use again.
-                    m_calSessions.Append(session);
-                    CleanupStack::Pop(session);
-                    emit collectionsAdded(ids << session->CollectionIdL());
+                    m_collections.insert(collection.localId(), collection);
+                    collection.createEntryViewL();
+                    emit collectionsAdded(ids << collection.localId());
                 }
             }
             break;
             
         case ECalendarInfoDeleted:
-            //qDebug() << this << session << toQString(fileName) << "info deleted";
             break;
             
         default:

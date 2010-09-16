@@ -108,7 +108,6 @@ void TestNoteItems::initTestCase()
 
 void TestNoteItems::cleanupTestCase()
 {
-
     if (m_om) {
         delete m_om;
         m_om = 0;
@@ -161,18 +160,6 @@ QList<QOrganizerItem> TestNoteItems::createItems(int noOfItems)
         QString description("myDescription");
         // Set organizer item description
         organizerItem.setDescription(description);
-        // Create desplay label
-        QString desplaylabel("myDescription");
-        // Set display label
-        organizerItem.setDisplayLabel(desplaylabel);
-
-        // Set current time
-        QOrganizerEventTimeRange timeRange;
-        QDateTime startTime;
-        startTime.currentDateTime();
-        timeRange.setStartDateTime(startTime.currentDateTime());
-
-        QVERIFY(organizerItem.saveDetail(&timeRange));
 
         itemsList.append(organizerItem);
     }
@@ -638,6 +625,7 @@ QList<QOrganizerItem> TestNoteItems::createItems_Negative(int noOfItems)
         QOrganizerItemId id;
         QOrganizerItemLocalId localId(1234);
         id.setLocalId(localId);
+        id.setManagerUri("qtorganizer:symbian:");
         organizerItem.setId(id);
 
         // Set current time
@@ -740,6 +728,7 @@ void TestNoteItems::requestResultsAvailable_Negative()
             // Advance the iterator to point to next item in the error map
             iter.next();
             qWarning() << iter.value() << "trown while saving item";
+            QCOMPARE(errorMap.count(), KNumberOfItems);
         }
         
         // Clear m_itemIds to fetch all the item Ids

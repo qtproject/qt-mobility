@@ -139,12 +139,18 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
         requestString += address.street();
     }
 
-    if (!address.streetNumber().isEmpty()) {
-        requestString += "&number=";
-        requestString += address.streetNumber();
-    }
+    // TODO? 
+    // street number has been removed from QGeoAddress
+    // do we need to try to split it out from QGeoAddress::street
+    // in order to geocode properly
 
-    return search(requestString,bounds);
+    // Old code:
+//    if (!address.streetNumber().isEmpty()) {
+//        requestString += "&number=";
+//        requestString += address.streetNumber();
+//    }
+
+    return search(requestString, bounds);
 }
 
 QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,

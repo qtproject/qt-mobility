@@ -45,6 +45,13 @@ access points.
 
 \tableofcontents
 
+\section1 Namespace
+
+The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility APIs into Qt. See the
+\l {Quickstart Example}{Quickstart guide} for an example on how the
+namespace impacts on application development.
+
 \section1 Overview
 
 The Bearer Management API controls the system's connectivity state. This

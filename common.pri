@@ -79,7 +79,12 @@ CONFIG(debug, debug|release) {
 contains(QT_CONFIG, reduce_exports):CONFIG+=hide_symbols
 
 #export more symbols if we build the unit tests
-contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
+contains(build_unit_tests, yes) {
+    DEFINES+=QTM_BUILD_UNITTESTS
+} else {
+    contains(build_public_unit_tests,yes):DEFINES+=QTM_BUILD_PUBLIC_UNITTESTS
+}
+
 
 #test whether we have a unit test
 !testcase {

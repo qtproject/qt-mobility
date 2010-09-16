@@ -54,11 +54,12 @@ set RELEASEMODE=release
 set WIN32_RELEASEMODE=debug_and_release build_all
 set QT_MOBILITY_LIB=
 set BUILD_UNITTESTS=no
+set BUILD_PUBLIC_UNITTESTS=no
 set BUILD_EXAMPLES=no
 set BUILD_DEMOS=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
-set MOBILITY_MODULES=bearer location contacts systeminfo publishsubscribe versit messaging sensors serviceframework multimedia gallery telephony organizer feedback
+set MOBILITY_MODULES=bearer location contacts systeminfo publishsubscribe versit messaging sensors serviceframework multimedia gallery organizer feedback
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
@@ -87,6 +88,7 @@ if "%1" == "-plugindir"         goto pluginTag
 if "%1" == "-examplesdir"       goto examplesDirTag
 if "%1" == "-demosdir"          goto demosDirTag
 if "%1" == "-tests"             goto testTag
+if "%1" == "-public-tests-only" goto publicTestTag
 if "%1" == "-examples"          goto exampleTag
 if "%1" == "-demos"             goto demosTag
 if "%1" == "-qt"                goto qtTag
@@ -136,7 +138,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -no-docs .......... Do not build documentation (build by default)
     echo -modules ^<list^> ... Build only the specified modules (default all)
     echo                     Choose from: bearer contacts gallery location publishsubscribe
-    echo                     messaging multimedia systeminfo serviceframework telephony
+    echo                     messaging multimedia systeminfo serviceframework
     echo                     sensors versit organizer feedback
     echo                     Modules should be separated by a space and surrounded
     echo                     by double quotation. If a selected module depends on other modules
@@ -232,6 +234,11 @@ set BUILD_UNITTESTS=yes
 shift
 goto cmdline_parsing
 
+:publicTestTag
+set BUILD_PUBLIC_UNITTESTS=yes
+shift
+goto cmdline_parsing
+
 :exampleTag
 set BUILD_EXAMPLES=yes
 shift
@@ -302,8 +309,6 @@ if %FIRST% == bearer (
     echo     Systeminfo selected
 ) else if %FIRST% == serviceframework (
     echo     ServiceFramework selected
-) else if %FIRST% == telephony (
-    echo     Telephony selected
 ) else if %FIRST% == versit (
     echo     Versit selected ^(implies Contacts^)
 ) else if %FIRST% == organizer (
@@ -365,6 +370,9 @@ echo QT_MOBILITY_PREFIX = %QT_MOBILITY_PREFIX:\=/% >> %PROJECT_CONFIG%
 
 echo build_unit_tests = %BUILD_UNITTESTS% >> %PROJECT_CONFIG%
 set BUILD_UNITTESTS=
+
+echo build_public_unit_tests = %BUILD_PUBLIC_UNITTESTS% >> %PROJECT_CONFIG%
+set BUILD_PUBLIC_UNITTESTS=
 
 echo build_examples = %BUILD_EXAMPLES% >> %PROJECT_CONFIG%
 set BUILD_EXAMPLES=
@@ -541,7 +549,9 @@ call :compileTest Surfaces_s60 surfaces_s60
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
 call :compileTest callinformation_symbian callinformation_symbian
 call :compileTest IMMERSION immersion
-call :compileTest AdvancedTouchFeedback advancedtouchfeedback 
+call :compileTest AdvancedTouchFeedback advancedtouchfeedback
+call :compileTest MDS mds
+call :compileTest MDS_25 mds_25
 goto noTests
 
 :windowsTests
@@ -598,8 +608,6 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSystemInfo %SOURCE_PATH%\src\systeminfo
 ) else if %FIRST% == serviceframework (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtServiceFramework %SOURCE_PATH%\src\serviceframework
-) else if %FIRST% == telephony (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtTelephony %SOURCE_PATH%\src\telephony
 ) else if %FIRST% == versit (
     REM versit implies contacts.  organizer includes might also be necessary
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersit %SOURCE_PATH%\src\versit

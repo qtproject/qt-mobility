@@ -629,7 +629,8 @@ void TestFiltering::testContactDetailFilter_2()
     expectedCount =1;  
     QVERIFY(expectedCount == seachedcontactcount);
     
-    // Test Not supported fields
+    // Test Not supported fields (by our SQL-based filtering, so it rolls
+    // back to slow filtering inside Qt Contacts Mobility)
     QContactDetailFilter cdf3;
     cdf3.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
     cdf3.setValue("aba");
@@ -639,7 +640,7 @@ void TestFiltering::testContactDetailFilter_2()
     seachedcontactcount = cnt_ids.count();
     expectedCount =0;  
     QVERIFY(expectedCount == seachedcontactcount);
-    QVERIFY(error == QContactManager::NotSupportedError);
+    QVERIFY(error == QContactManager::NoError);
     
     QContactDetailFilter cdf4;
     cdf4.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
@@ -650,7 +651,7 @@ void TestFiltering::testContactDetailFilter_2()
     seachedcontactcount = cnt_ids.count();
     expectedCount =0;  
     QVERIFY(expectedCount == seachedcontactcount);
-    QVERIFY(error == QContactManager::NotSupportedError);
+    QVERIFY(error == QContactManager::NoError);
 }   
 
 void TestFiltering::testContactDetailFilter_3()
@@ -1494,10 +1495,6 @@ void TestFiltering::testFilterSupported()
     flag = filterDefault.filterSupported(QContactFilter());
     QVERIFY(flag ==true);
     
-    CntFilterDetail filterDetail(*m_database,srvConnection,dbInfo);
-    flag = filterDetail.filterSupported(QContactDetailFilter());
-    QVERIFY(flag ==true);
-        
     CntFilterRelationship filterRlationship(*m_database,srvConnection,dbInfo);
     QContactRelationshipFilter relationFilter;                   
     relationFilter.setRelationshipType(QContactRelationship::HasMember);
@@ -1513,6 +1510,10 @@ void TestFiltering::testFilterSupported()
     QVERIFY(flag ==true);
         
     //Not supported cases
+    CntFilterDetail filterDetail(*m_database,srvConnection,dbInfo);
+    flag = filterDetail.filterSupported(QContactDetailFilter());
+    QVERIFY(flag ==false);
+    
     flag = filterDefault.filterSupported(f1);
     QVERIFY(flag ==false);
         

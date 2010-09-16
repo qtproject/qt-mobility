@@ -40,16 +40,14 @@
 
 import Qt 4.7
 import QtMobility.gallery 1.1
-import "script/mediaart.js" as Script
 
 Rectangle {
     property alias songId: song.item
 
     color: "black"
 
-    GalleryItem {
+    DocumentGalleryItem {
         id: song
-        gallery: documentGallery
 
         properties: [
             "title",
@@ -136,6 +134,9 @@ Rectangle {
                 Image {
                     id: albumCover
 
+                    property url albumUrl: Utility.getAlbumArtThumbnailUrl(
+                            song.metaData.albumArtist, song.metaData.albumTitle)
+
                     anchors.left: parent.left
                     anchors.top: parent.top
 
@@ -144,12 +145,7 @@ Rectangle {
 
                     fillMode: Image.PreserveAspectFit
                     asynchronous: true
-                    source: Script.getAlbumArtUrl(song.metaData.albumArtist, song.metaData.albumTitle)
-                }
-
-                Image {
-                    anchors.fill: albumCover
-                    source: albumCover.status == Image.Error ? "images/nocover.png" : ""
+                    source: albumUrl != "" ? albumUrl : "images/nocover.png"
                 }
 
                 LineEdit {
@@ -276,7 +272,7 @@ Rectangle {
                 color: "white"
                 font.pointSize: 15
 
-                text: Script.formatDuration(song.metaData.duration)
+                text: Utility.formatDuration(song.metaData.duration)
             }
         }
     }

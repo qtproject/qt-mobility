@@ -76,6 +76,10 @@ private slots:
     void updateOccurrenceLocalId();
     void fetchNegative_data();
     void fetchNegative();
+    void daylightSavingTime_data() { addManagers(); }
+    void daylightSavingTime();
+    void leapYear_data() { addManagers(); }
+    void leapYear();	
 
 private:
     void addManagers();
@@ -84,7 +88,6 @@ private:
     
 private:
     QOrganizerItemManager *m_om;
-    
 };
 
 void tst_ItemOccurrence::init()
@@ -760,6 +763,78 @@ void tst_ItemOccurrence::fetchNegative()
    // Fetch the item instance with invalid endtime
    instanceList = m_om->itemInstances(item,startTime,QDateTime());
    QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);   
+}
+
+void tst_ItemOccurrence::daylightSavingTime()
+{
+    // Create a monthly event for one year 
+    QOrganizerEvent event;
+    event.setDisplayLabel("test daylight saving time");
+    QDateTime startDateTime(QDate(2010, 1, 1));
+    //startDateTime = startDateTime.addSecs(60*60);
+    QDateTime endDateTime = startDateTime.addSecs(60*60);
+    event.setStartDateTime(startDateTime);
+    event.setEndDateTime(endDateTime);
+    
+    QOrganizerItemRecurrenceRule rule;
+    rule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+    rule.setEndDate(QDate(2010, 12, 31));
+    event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rule);
+
+    QVERIFY(m_om->saveItem(&event));
+
+    //qDebug() << "event:";
+    //qDebug() << "\tstart time utc   :" << event.startDateTime().toUTC();
+    //qDebug() << "\tstart time local :" << event.startDateTime().toLocalTime();
+    //qDebug() << "\tend time utc     :" << event.endDateTime().toUTC();
+    //qDebug() << "\tend time local   :" << event.endDateTime().toLocalTime();
+
+    // Verify that event occurs the same time every month
+    QList<QOrganizerItem> events = m_om->itemInstances(event, event.startDateTime(), QDateTime(rule.endDate()));
+    QVERIFY(events.count() == 12);
+    foreach(QOrganizerEventOccurrence occurence, events) {
+
+        //qDebug() << "event occurrence:";
+        //qDebug() << "\tstart time utc   :" << occurence.startDateTime().toUTC();
+        //qDebug() << "\tstart time local :" << occurence.startDateTime().toLocalTime();
+        //qDebug() << "\tend time utc     :" << occurence.endDateTime().toUTC();
+        //qDebug() << "\tend time local   :" << occurence.endDateTime().toLocalTime();
+
+        QVERIFY(occurence.startDateTime().toUTC().time() == startDateTime.toUTC().time());
+        QVERIFY(occurence.endDateTime().toUTC().time() == endDateTime.toUTC().time());
+        QVERIFY(occurence.startDateTime().toLocalTime().time() == startDateTime.toLocalTime().time());
+        QVERIFY(occurence.endDateTime().toLocalTime().time() == endDateTime.toLocalTime().time());
+        QVERIFY(occurence.startDateTime().toLocalTime().date().day() == startDateTime.toLocalTime().date().day());
+        QVERIFY(occurence.endDateTime().toLocalTime().date().day() == endDateTime.toLocalTime().date().day());
+    }
+
+}
+
+void tst_ItemOccurrence::leapYear()
+{
+    // Add a yearly recurring event on leap day
+    QOrganizerEvent event;
+    event.setDisplayLabel("test leap year");
+    QDateTime startDateTime(QDate(2012, 2, 29), QTime(00,00), Qt::UTC);
+    QDateTime endDateTime = startDateTime.addSecs(60*60);
+    event.setStartDateTime(startDateTime);
+    event.setEndDateTime(endDateTime);
+    QOrganizerItemRecurrenceRule rule;
+    rule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    rule.setDaysOfMonth(QList<int>() << 29);
+    rule.setEndDate(QDate(2020, 3, 1));
+    event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rule);
+    QVERIFY(m_om->saveItem(&event));
+
+    // Verify
+    QList<QOrganizerItem> events = m_om->itemInstances(event, event.startDateTime(), QDateTime(rule.endDate()));
+    QVERIFY(events.count() == 9);
+    foreach(QOrganizerEventOccurrence occurence, events) {
+        if (occurence.startDateTime().date().year() % 4 == 0)
+            QVERIFY(occurence.startDateTime().date().day() == 29); // leap year
+        else
+            QVERIFY(occurence.startDateTime().date().day() == 28); // normal year
+    }
 }
 
 /*!

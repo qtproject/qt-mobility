@@ -92,7 +92,7 @@ class QLandmarkManagerEngineSymbian: public QLandmarkManagerEngine, public Landm
 {
 Q_OBJECT
 public:
-    QLandmarkManagerEngineSymbian(const QString &filename = QString("file://c:eposlm.ldb"));
+    QLandmarkManagerEngineSymbian(const QString &filename = QString());
     ~QLandmarkManagerEngineSymbian();
 
     /* URI reporting */
@@ -167,14 +167,6 @@ public:
         QString *errorString) const;
     bool isReadOnly(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error,
         QString *errorString) const;
-
-    bool isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
-    void setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error,
-        QString *errorString);
-
-    bool isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
-    void setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error,
-        QString *errorString);
 
     /* Asynchronous Request Support */
     void requestDestroyed(QLandmarkAbstractRequest* request);

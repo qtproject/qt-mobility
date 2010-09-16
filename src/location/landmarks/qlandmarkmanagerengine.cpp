@@ -167,8 +167,8 @@ int QLandmarkManagerEngine::managerVersion() const
 
     Any error which occurs will be saved in \a error and \a errorString.
  */
-QList<QLandmarkId> QLandmarkManagerEngine::landmarkIds(const QLandmarkFilter& filter,
-        int limit, int offset, const QList<QLandmarkSortOrder>& sortOrders, QLandmarkManager::Error* error,
+QList<QLandmarkId> QLandmarkManagerEngine::landmarkIds(const QLandmarkFilter& /*filter*/,
+        int /*limit*/, int /*offset*/, const QList<QLandmarkSortOrder>& /*sortOrders*/, QLandmarkManager::Error* /*error*/,
         QString *errorString) const
 {
     return QList<QLandmarkId>();
@@ -181,8 +181,8 @@ QList<QLandmarkId> QLandmarkManagerEngine::landmarkIds(const QLandmarkFilter& fi
     Any error which occurs will be saved in \a error and \a errorString.
     The identifiers are returned in order according to the given \a nameSort.
 */
-QList<QLandmarkCategoryId> QLandmarkManagerEngine::categoryIds(int limit, int offset, const QLandmarkNameSort &nameSort, QLandmarkManager::Error *error,
-        QString *errorString) const
+QList<QLandmarkCategoryId> QLandmarkManagerEngine::categoryIds(int /*limit*/, int /*offset*/, const QLandmarkNameSort& /*nameSort*/, QLandmarkManager::Error* /*error*/,
+        QString* /*errorString*/) const
 {
     return QList<QLandmarkCategoryId>();
 }
@@ -192,8 +192,8 @@ QList<QLandmarkCategoryId> QLandmarkManagerEngine::categoryIds(int limit, int of
 
     Any errors encountered are:stored in \a error and \a errorString.
 */
-QLandmark QLandmarkManagerEngine::landmark(const QLandmarkId &landmarkId, QLandmarkManager::Error *error,
-        QString *errorString) const
+QLandmark QLandmarkManagerEngine::landmark(const QLandmarkId &/*landmarkId*/, QLandmarkManager::Error * /*error*/,
+        QString* /*errorString*/) const
 {
     return QLandmark();
 }
@@ -207,8 +207,8 @@ QLandmark QLandmarkManagerEngine::landmark(const QLandmarkId &landmarkId, QLandm
     \a errorString.  \a error is set to QLandmarkManager::NoError, if
     all landmarks were successfully retrieved.
 */
-QList<QLandmark> QLandmarkManagerEngine::landmarks(const QList<QLandmarkId> &landmarkIds, QMap<int, QLandmarkManager::Error> *errorMap,
-                                        QLandmarkManager::Error *error, QString *errorString) const
+QList<QLandmark> QLandmarkManagerEngine::landmarks(const QList<QLandmarkId>& /*landmarkIds*/, QMap<int, QLandmarkManager::Error>* /*errorMap*/,
+                                        QLandmarkManager::Error* /*error*/, QString* /*errorString*/) const
 {
     return QList<QLandmark>();
 }
@@ -220,8 +220,8 @@ QList<QLandmark> QLandmarkManagerEngine::landmarks(const QList<QLandmarkId> &lan
 
     Overall operation errors are stored in \a error and \a errorString.
 */
-QList<QLandmark> QLandmarkManagerEngine::landmarks(const QLandmarkFilter &filter, int limit, int offset,
-                    const QList<QLandmarkSortOrder> &sortOrders, QLandmarkManager::Error *error, QString *errorString) const
+QList<QLandmark> QLandmarkManagerEngine::landmarks(const QLandmarkFilter& /*filter*/, int /*limit*/, int /*offset*/,
+                    const QList<QLandmarkSortOrder>& /*sortOrders*/, QLandmarkManager::Error* /*error*/, QString* /*errorString*/) const
 {
     return QList<QLandmark>();
 }
@@ -231,8 +231,8 @@ QList<QLandmark> QLandmarkManagerEngine::landmarks(const QLandmarkFilter &filter
 
     Any errors encountered are stored in \a error and \a errorString.
 */
-QLandmarkCategory QLandmarkManagerEngine::category(const QLandmarkCategoryId &categoryId,
-        QLandmarkManager::Error *error, QString *errorString) const
+QLandmarkCategory QLandmarkManagerEngine::category(const QLandmarkCategoryId& /*categoryId*/,
+        QLandmarkManager::Error* /*error*/, QString* /*errorString*/) const
 {
     return QLandmarkCategory();
 }
@@ -246,9 +246,9 @@ QLandmarkCategory QLandmarkManagerEngine::category(const QLandmarkCategoryId &ca
     \a errorString.  \a error is set to QLandmarkManager::NoError, if
     all categories were successfully retrieved.
 */
-QList<QLandmarkCategory> QLandmarkManagerEngine::categories(const QList<QLandmarkCategoryId> &categoryIds,
-                                                            QMap<int, QLandmarkManager::Error> *errorMap,
-                                                            QLandmarkManager::Error *error, QString *errorString) const
+QList<QLandmarkCategory> QLandmarkManagerEngine::categories(const QList<QLandmarkCategoryId>& /*categoryIds*/,
+                                                            QMap<int, QLandmarkManager::Error>* /*errorMap*/,
+                                                            QLandmarkManager::Error* /*error*/, QString* /*errorString*/) const
 {
     return QList<QLandmarkCategory>();
 }
@@ -259,8 +259,8 @@ QList<QLandmarkCategory> QLandmarkManagerEngine::categories(const QList<QLandmar
     of the first category.  A \a limit of -1 means all categories should be returned.
     The returned categories ordered according to the gien \a nameSort.
 */
-QList<QLandmarkCategory> QLandmarkManagerEngine::categories(int limit, int offset, const QLandmarkNameSort &nameSort,
-                                                            QLandmarkManager::Error *error, QString *errorString) const
+QList<QLandmarkCategory> QLandmarkManagerEngine::categories(int /*limit*/, int /*offset*/, const QLandmarkNameSort& /*nameSort*/,
+                                                            QLandmarkManager::Error* /*error*/, QString* /*errorString*/) const
 {
     return QList<QLandmarkCategory>();
 }
@@ -294,8 +294,8 @@ QList<QLandmarkCategory> QLandmarkManagerEngine::categories(int limit, int offse
     Any errors encountered during this operation should be stored in
     \a error and \a errorString.
 */
-bool QLandmarkManagerEngine::saveLandmark(QLandmark* landmark,
-        QLandmarkManager::Error *error, QString *errorString)
+bool QLandmarkManagerEngine::saveLandmark(QLandmark* /*landmark*/,
+        QLandmarkManager::Error* /*error*/, QString* /*errorString*/)
 {
     return false;
 }
@@ -327,8 +327,8 @@ bool QLandmarkManagerEngine::saveLandmark(QLandmark* landmark,
 
     \sa QLandmarkManagerEngine::saveLandmark()
 */
-bool QLandmarkManagerEngine::saveLandmarks(QList<QLandmark> * landmarks, QMap<int, QLandmarkManager::Error> *errorMap,
-        QLandmarkManager::Error *error, QString *errorString)
+bool QLandmarkManagerEngine::saveLandmarks(QList<QLandmark> * /*landmarks*/, QMap<int, QLandmarkManager::Error>* /*errorMap*/,
+        QLandmarkManager::Error* /*error*/, QString* /*errorString*/)
 {
     return false;
 }
@@ -345,7 +345,7 @@ bool QLandmarkManagerEngine::saveLandmarks(QList<QLandmark> * landmarks, QMap<in
     Any errors encountered during this operation should be stored to
     \a error and \a errorString.
 */
-bool QLandmarkManagerEngine::removeLandmark(const QLandmarkId &landmarkId, QLandmarkManager::Error *error, QString *errorString)
+bool QLandmarkManagerEngine::removeLandmark(const QLandmarkId& /*landmarkId*/, QLandmarkManager::Error* /*error*/, QString* /*errorString*/)
 {
     return false;
 }
@@ -369,8 +369,8 @@ bool QLandmarkManagerEngine::removeLandmark(const QLandmarkId &landmarkId, QLand
 
     \sa QLandmarkManagerEngine::removeLandmark()
 */
-bool QLandmarkManagerEngine::removeLandmarks(const QList<QLandmarkId> &landmarkIds, QMap<int, QLandmarkManager::Error> *errorMap,
-        QLandmarkManager::Error *error, QString *errorString)
+bool QLandmarkManagerEngine::removeLandmarks(const QList<QLandmarkId>& /*landmarkIds*/, QMap<int, QLandmarkManager::Error>* /*errorMap*/,
+        QLandmarkManager::Error* /*error*/, QString* /*errorString*/)
 {
     return false;
 }
@@ -400,8 +400,8 @@ bool QLandmarkManagerEngine::removeLandmarks(const QList<QLandmarkId> &landmarkI
     Overall operations errors should be stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::saveCategory(QLandmarkCategory* category,
-        QLandmarkManager::Error *error, QString *errorString)
+bool QLandmarkManagerEngine::saveCategory(QLandmarkCategory* /*category*/,
+        QLandmarkManager::Error* /*error*/, QString* /*errorString*/)
 {
     return false;
 }
@@ -420,8 +420,8 @@ bool QLandmarkManagerEngine::saveCategory(QLandmarkCategory* category,
     Overall operational errors are stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::removeCategory(const QLandmarkCategoryId &categoryId,
-        QLandmarkManager::Error *error, QString *errorString)
+bool QLandmarkManagerEngine::removeCategory(const QLandmarkCategoryId& /*categoryId*/,
+        QLandmarkManager::Error* /*error*/, QString* /*errorString*/)
 {
     return false;
 }
@@ -444,7 +444,7 @@ bool QLandmarkManagerEngine::removeCategory(const QLandmarkCategoryId &categoryI
     Overall operational errors are stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, const QString &format, QLandmarkManager::TransferOption option, const QLandmarkCategoryId& categoryId,
+bool QLandmarkManagerEngine::importLandmarks(QIODevice* /*device*/, const QString& /*format*/, QLandmarkManager::TransferOption /*option*/, const QLandmarkCategoryId& /*categoryId*/,
         QLandmarkManager::Error *error, QString *errorString)
 {
     Q_ASSERT(error);
@@ -473,7 +473,7 @@ bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, const QString &f
     Overall operation errors are stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::TransferOption option,
+bool QLandmarkManagerEngine::exportLandmarks(QIODevice * /*device*/, const QString& /*format*/, QList<QLandmarkId> /*landmarkIds*/, QLandmarkManager::TransferOption /*option*/,
         QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
@@ -487,7 +487,7 @@ bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, const QString &f
     Returns the supported file formats for the given exchange \a operation, i.e. import or export.
     Errors are stored in \a error and \a errorString.
 */
-QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::TransferOperation operation , QLandmarkManager::Error *error, QString *errorString) const
+QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::TransferOperation /*operation*/ , QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
@@ -552,100 +552,19 @@ QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::TransferO
 */
 
 /*!
+   \fn QStringList QLandmarkManagerEngine::landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
     Returns the list of attribute keys the landmarks will have.
     If extended attributes are enabled (provided manager supported them),
     landmarks will possess  extra keys in addition to the standard cross platform keys.
     Errors are stored in \a error and \a errorString.
 */
-QStringList QLandmarkManagerEngine::landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-
-    *error = QLandmarkManager::NoError;
-    *errorString  = "";
-
-    //TODO: optimize
-    QStringList commonKeys = QStringList()
-                             << "name"
-                             << "description"
-                             << "iconUrl"
-                             << "radius"
-                             << "phoneNumber"
-                             << "url"
-                             << "latitude"
-                             << "longitude"
-                             << "altitude"
-                             << "country"
-                             << "countryCode"
-                             << "state"
-                             << "county"
-                             << "city"
-                             << "district"
-                             << "street"
-                             << "streetNumber"
-                             << "postCode";
-    return commonKeys;
-}
 
 /*!
+    \fn QStringList QLandmarkManagerEngine::categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
     Returns the list of attribute keys the categories will have.
     If extended attributes are enabled (provided manager supported them),
     categories will possess  extra keys in addition to the standard cross platform keys.
     Errors are stored in \a error and \a errorString.
-*/
-QStringList QLandmarkManagerEngine::categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-
-    *error = QLandmarkManager::NoError;
-    *errorString  = "";
-
-
-    //TODO: Optimize
-    QStringList commonKeys = QStringList() << "name"
-                             << "iconUrl";
-    return commonKeys;
-}
-
-/*!
-    \fn bool QLandmarkManagerEngine::isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const
-
-    Returns whether extended attributes specific to this manager are enabled or not.
-    If extended attributes are enabled, retrieved landmarks will have
-    extra attribute keys accessible through the QLandmark::attribute() function.
-    Extended attributes must be enabled to save any landmarks which possess
-    extended attributes.  This same behaviour will also apply to categories
-    if extended category attributes are supported.
-    Errors are stored in \a error and \a errorString.
-*/
-
-/*!
-    \fn void QLandmarkManagerEngine::setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString)
-
-    Sets whether extended attributes are \a enabled or not.
-    Errors are stored in \a error and \a errorString.
-*/
-
-/*!
-    \fn bool QLandmarkManagerEngine::isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
-
-    Returns whether custom attributes are enabled or not. Custom attributes
-    are arbitrary attributes created by the application for a landmark.
-    If custom attributes are enabled (and the manager supports them),
-    retrieved landmarks will have extra attributes accessible
-    using QLandmark::customAttributes().  Custom attributes must be enabled
-    to save any landmarks with possess custom attributes.  This same behaviour
-    applies to categories if custom category attributes are supported.
-    Errors are stored in \a error and \a errorString.
-*/
-
-/*!
-    \fn void QLandmarkManagerEngine::setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString)
-
-     Sets whether custom attributes are \a enabled or not.
-     Errors are stored in \a error and \a errorString.
 */
 
 /*!
@@ -1272,10 +1191,8 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
             QStringList filterKeys = attribFilter.attributeKeys();
 
             QStringList landmarkKeys;
-            if (attribFilter.attributeType() == QLandmarkAttributeFilter::ManagerAttributes)
                 landmarkKeys = landmark.attributeKeys();
-            else
-                landmarkKeys = landmark.customAttributeKeys();
+
 
             if (attribFilter.operationType() ==  QLandmarkAttributeFilter::AndOperation) {
                 QVariant lmAttributeValue;
@@ -1285,10 +1202,7 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
                         if (!attribFilter.attribute(filterKey).isValid())
                             continue;
 
-                        if (attribFilter.attributeType() == QLandmarkAttributeFilter::ManagerAttributes)
                             lmAttributeValue = landmark.attribute(filterKey);
-                        else
-                            lmAttributeValue = landmark.customAttribute(filterKey);
 
                         if (lmAttributeValue.type() == QVariant::String) {
                             QString lmString = lmAttributeValue.toString();
@@ -1312,10 +1226,7 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
                         if (!(attribFilter.attribute(filterKey).isValid()))
                             return true;
 
-                        if (attribFilter.attributeType() == QLandmarkAttributeFilter::ManagerAttributes)
-                            lmAttributeValue = landmark.attribute(filterKey);
-                        else
-                            lmAttributeValue = landmark.customAttribute(filterKey);
+                        lmAttributeValue = landmark.attribute(filterKey);
 
                         if (lmAttributeValue.type() == QVariant::String) {
                             QString lmString = lmAttributeValue.toString();
@@ -1414,10 +1325,7 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
         {
             QLandmarkProximityFilter proximityFilter(filter);
 
-            if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly)
-                return true; // since we only have one landmark to use, is considered the nearest
-
-            double distance = proximityFilter.coordinate().distanceTo(landmark.coordinate());
+            qreal distance = proximityFilter.center().distanceTo(landmark.coordinate());
             if (distance < proximityFilter.radius() || qFuzzyCompare(distance, proximityFilter.radius()))
                 return true;
             else

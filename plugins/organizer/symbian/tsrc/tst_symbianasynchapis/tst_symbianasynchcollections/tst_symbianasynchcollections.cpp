@@ -50,6 +50,7 @@ QTM_USE_NAMESPACE
 
 const QString managerNameSymbian("symbian");
 const int KTimeToWait = 1000;
+const int KNumberOfEntries = 2;
 
 class tst_symbianasynchcollections : public QObject
 {
@@ -62,13 +63,18 @@ private slots:
 private slots:
     void saveCollection();
     void collectionIds();
-    void removeCollection();
     void fetchCollection();
+    
+private slots:
+    void saveItem();
+    void removeCollection();
     
 public slots:
    void requestStateChanged(QOrganizerItemAbstractRequest::State currentState);
    void requestResultsAvailable();
     
+private:
+   QList<QOrganizerItem> createItems(int noOfItems);
 private:
     QOrganizerItemManager*                  m_om;
     QOrganizerItemAbstractRequest*          m_itemRequest;
@@ -120,7 +126,7 @@ void tst_symbianasynchcollections::collectionIds()
 }
 
 void tst_symbianasynchcollections::fetchCollection()
-{/*
+{
     // Make sure to delete the old request, if any
     delete m_itemRequest;
     // Create new request
@@ -141,7 +147,7 @@ void tst_symbianasynchcollections::fetchCollection()
         (QOrganizerCollectionFetchRequest*)m_itemRequest);
     // Set collections
     QList<QOrganizerCollectionId> collectionIds;
-    collectionFetchRequest->setCollectionIds(collectionIds);
+    collectionFetchRequest->setCollectionIds(m_collectionIds);
 
     // Start the request
     collectionFetchRequest->start();
@@ -149,7 +155,7 @@ void tst_symbianasynchcollections::fetchCollection()
     collectionFetchRequest->waitForFinished(KTimeToWait);
     // Verify if the request is finished
     QVERIFY(collectionFetchRequest->isFinished());
- */}
+}
 
 void tst_symbianasynchcollections::saveCollection()
 {
@@ -224,6 +230,67 @@ void tst_symbianasynchcollections::removeCollection()
     QVERIFY(collectionRemoveRequest->isFinished());
 }
 
+void tst_symbianasynchcollections::saveItem()
+{
+    // Make sure to delete the old request, if any
+    delete m_itemRequest;
+    // Create new request
+    m_itemRequest = new QOrganizerItemSaveRequest(this);
+    // Set manager
+    m_itemRequest->setManager(m_om);
+
+    // Connect for the state change signal 
+    connect(m_itemRequest, 
+        SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
+        this, 
+        SLOT(requestStateChanged(QOrganizerItemAbstractRequest::State)));
+    connect(m_itemRequest, SIGNAL(resultsAvailable()), 
+        this, SLOT(requestResultsAvailable()));
+
+    // Type cast the new request to appropriate type
+    QOrganizerItemSaveRequest * itemSaveRequest(
+        (QOrganizerItemSaveRequest*)m_itemRequest);
+
+    itemSaveRequest->setItems(createItems(KNumberOfEntries));
+    if (m_collectionIds.count()) {
+    itemSaveRequest->setCollectionId(m_collectionIds.at(0).localId());
+    }
+    itemSaveRequest->start();
+    itemSaveRequest->waitForFinished(KTimeToWait);
+}
+
+QList<QOrganizerItem> tst_symbianasynchcollections::createItems(int noOfItems)
+{
+    QList<QOrganizerItem> itemsList;
+    
+    for (int index(0); index < noOfItems; index++) {
+        // Create a new organizer item
+        QOrganizerItem organizerItem;
+        // Set the organizer item type
+        organizerItem.setType(QOrganizerItemType::TypeEvent);
+        // Create description string 
+        QString description("myDescription");
+        // Set organizer item description
+        organizerItem.setDescription(description);
+        // Create desplay label
+        QString desplaylabel("myDescription");
+        // Set display label
+        organizerItem.setDisplayLabel(desplaylabel);
+        
+        // Set current time
+        QOrganizerEventTimeRange timeRange;
+        QDateTime startTime;
+        startTime.currentDateTime();
+        timeRange.setStartDateTime(startTime.currentDateTime());
+        
+        QVERIFY(organizerItem.saveDetail(&timeRange));
+        
+        itemsList.append(organizerItem);
+    }
+    
+    return itemsList;
+}
+
 void tst_symbianasynchcollections::requestStateChanged(
     QOrganizerItemAbstractRequest::State currentState)
 {
@@ -278,21 +345,33 @@ void tst_symbianasynchcollections::requestResultsAvailable()
 {
     QOrganizerItemAbstractRequest::RequestType reqType(m_itemRequest->type());
     switch (reqType) {
+    case QOrganizerItemAbstractRequest::CollectionFetchRequest : {
+        // Check error map
+        QList<QOrganizerCollection> collections(
+            ((QOrganizerCollectionFetchRequest*)(m_itemRequest))->collections());
+        // Error map should contain zero errors to indicate successful deletion
+        // of all the items
+        int count(collections.count());
+        QCOMPARE(count, 1);
+    }
+    break;
     case QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest : {
         // Get all collection ids
-        QList<QOrganizerCollectionLocalId> collectionIds(
+        QList<QOrganizerCollectionLocalId> collectionsLocalId(
         ((QOrganizerCollectionLocalIdFetchRequest*)(m_itemRequest))
         ->collectionIds());
         
+        int count(collectionsLocalId.count());
         QVERIFY(m_itemRequest->error() == QOrganizerItemManager::NoError);
 
-        qWarning() << collectionIds.count() << "calendar/s are present currently";
+        qWarning() << collectionsLocalId.count() << "calendar/s are present currently";
     }
     break;
     case QOrganizerItemAbstractRequest::CollectionSaveRequest : {
         QList<QOrganizerCollection> savedCollections(
             ((QOrganizerCollectionSaveRequest*)(m_itemRequest))->collections());
         int count(savedCollections.count());
+        m_collectionIds.clear();
         for (int index(0); index < count; index++) {
             m_collectionIds.append(savedCollections.at(index).id());
         }

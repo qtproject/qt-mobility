@@ -61,11 +61,11 @@ namespace OrganizerSymbianUtils
     QString toQString(const TDesC16 &des);
     TPtrC8 toPtrC8(const QByteArray &bytes);
     TPtrC16 toPtrC16(const QString &string);
-    TCalTime toTCalTimeL(QDateTime dateTime);
-    TCalTime toTCalTimeL(QDate date);
-    QDateTime toQDateTimeL(TCalTime calTime);
-    TTime toTTimeL(QDateTime dateTime);
-    QDateTime toQDateTimeL(TTime time);
+    TCalTime toTCalTimeL(const QDateTime &dateTime);
+    TCalTime toTCalTimeL(const QDate &date);
+    QDateTime toQDateTimeL(const TCalTime &calTime);
+    TTime toTTime(const QDateTime &dateTime, Qt::TimeSpec timeSpec);
+    QDateTime toQDateTime(const TTime &time, Qt::TimeSpec timeSpec);
 #ifdef SYMBIAN_CALENDAR_V2
     
     template<typename T>

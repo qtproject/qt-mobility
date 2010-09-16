@@ -62,7 +62,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QContactInvalidEngine : public QContactManagerEngine
+class QContactInvalidEngine : public QContactManagerEngineV2
 {
 public:
     QContactInvalidEngine();
