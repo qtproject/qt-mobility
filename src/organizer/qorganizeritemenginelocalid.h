@@ -60,7 +60,7 @@ public:
     virtual bool isLessThan(const QOrganizerItemEngineLocalId* other) const = 0;
 
     virtual uint engineLocalIdType() const = 0;
-    virtual QOrganizerItemEngineLocalId* clone() const = 0; // const?  does it return a ref?
+    virtual QOrganizerItemEngineLocalId* clone() const = 0;
 
 #ifndef QT_NO_DEBUG_STREAM
     // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
@@ -76,7 +76,7 @@ public:
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemEngineLocalId), Q_MOVABLE_TYPE); // XXX TODO: or is it a complex type?
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemEngineLocalId), Q_MOVABLE_TYPE);
 
 
 #endif

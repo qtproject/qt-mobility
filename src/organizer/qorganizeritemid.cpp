@@ -113,9 +113,10 @@ QOrganizerItemLocalId::QOrganizerItemLocalId(QOrganizerItemEngineLocalId* engine
  */
 QOrganizerItemLocalId::QOrganizerItemLocalId(const QOrganizerItemLocalId& other)
 {
-    d = 0;
     if (other.d)
         d = other.d->clone();
+    else
+        d = 0;
 }
 
 /*!
@@ -123,16 +124,17 @@ QOrganizerItemLocalId::QOrganizerItemLocalId(const QOrganizerItemLocalId& other)
  */
 QOrganizerItemLocalId& QOrganizerItemLocalId::operator=(const QOrganizerItemLocalId& other)
 {
+    if (d == other.d)
+        return *this;
+
     // clean up our "old" engine id.
     if (d)
         delete d;
 
-    // default case: other.d is a null ptr.
-    d = 0;
-
-    // if it isn't, clone the "new" engine id.
     if (other.d)
         d = other.d->clone();
+    else
+        d = 0;
 
     return *this;
 }
