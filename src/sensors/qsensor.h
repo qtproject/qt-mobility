@@ -151,12 +151,15 @@ Q_SIGNALS:
     void activeChanged();
     void readingChanged();
     void sensorError(int error);
+    void availableSensorsChanged();
 
 protected:
     // called by the back end
     QSensorPrivate *d_func() const { return d.data(); }
 
 private:
+    void registerInstance();
+
     QScopedPointer<QSensorPrivate> d;
     Q_DISABLE_COPY(QSensor)
 };

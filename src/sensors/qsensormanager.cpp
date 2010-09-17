@@ -53,8 +53,11 @@ Q_GLOBAL_STATIC_WITH_ARGS(QSensorPluginLoader, pluginLoader, (QSensorPluginInter
 typedef QHash<QByteArray,QSensorBackendFactory*> FactoryForIdentifierMap;
 typedef QHash<QByteArray,FactoryForIdentifierMap> BackendIdentifiersForTypeMap;
 
-class QSensorManagerPrivate
+class QSensorManagerPrivate : public QObject
 {
+    friend class QSensorManager;
+
+    Q_OBJECT
 public:
     QSensorManagerPrivate()
         : pluginsLoaded(false)
@@ -70,6 +73,9 @@ public:
 
     // Holds the first identifier for each type
     QHash<QByteArray, QByteArray> firstIdentifierForType;
+
+Q_SIGNALS:
+    void availableSensorsChanged();
 };
 
 Q_GLOBAL_STATIC(QSensorManagerPrivate, sensorManagerPrivate)
@@ -147,6 +153,29 @@ void QSensorManager::registerBackend(const QByteArray &type, const QByteArray &i
     SENSORLOG() << "registering backend for type" << type << "identifier" << identifier;// << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
     FactoryForIdentifierMap &factoryByIdentifier = d->backendsByType[type];
     factoryByIdentifier[identifier] = factory;
+    Q_EMIT d->availableSensorsChanged();
+}
+
+/*!
+    Unregister the backend for \a type with \a identifier.
+*/
+void QSensorManager::unregisterBackend(const QByteArray &type, const QByteArray &identifier)
+{
+    QSensorManagerPrivate *d = sensorManagerPrivate();
+    Q_ASSERT(d->backendsByType.contains(type));
+    FactoryForIdentifierMap &factoryByIdentifier = d->backendsByType[type];
+    Q_ASSERT(factoryByIdentifier.contains(identifier));
+
+    (void)factoryByIdentifier.take(identifier); // we don't own this pointer anyway
+    if (d->firstIdentifierForType[type] == identifier) {
+        if (factoryByIdentifier.count())
+            d->firstIdentifierForType[type] == factoryByIdentifier.begin().key();
+        else
+            (void)d->firstIdentifierForType.take(type);
+    }
+    if (!factoryByIdentifier.count())
+        (void)d->backendsByType.take(type);
+    Q_EMIT d->availableSensorsChanged();
 }
 
 /*!
@@ -282,6 +311,12 @@ QByteArray QSensor::defaultSensorForType(const QByteArray &type)
     return d->firstIdentifierForType[type];
 }
 
+void QSensor::registerInstance()
+{
+    QSensorManagerPrivate *d = sensorManagerPrivate();
+    connect(d, SIGNAL(availableSensorsChanged()), this, SIGNAL(availableSensorsChanged()));
+}
+
 // =====================================================================
 
 /*!
@@ -322,6 +357,8 @@ QByteArray QSensor::defaultSensorForType(const QByteArray &type)
 
     \sa {Creating a sensor plugin}
 */
+
+#include "qsensormanager.moc"
 
 QTM_END_NAMESPACE
 
