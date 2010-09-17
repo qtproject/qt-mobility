@@ -222,7 +222,10 @@ void QGeoMapData::setCenter(const QGeoCoordinate &center)
 
     d_ptr->center = center;
 
-    if (!d_ptr->blockPropertyChangeSignals)
+    // TODO: Blocking centerChanged causes route object not to draw route when panning
+    // Is blocking here always necessary or should thecenterChanged, or something else,
+    // be emitted somewhere else for route object to update visible route?
+    //if (!d_ptr->blockPropertyChangeSignals)
         emit centerChanged(d_ptr->center);
 }
 
@@ -299,10 +302,10 @@ void QGeoMapData::clearMapObjects()
 
 /*!
     \fn QGeoBoundingBox QGeoMapData::viewport() const
-    Returns a bounding box corresponding to the physical area displayed 
+    Returns a bounding box corresponding to the physical area displayed
     in the viewport of the map.
 
-    The bounding box which is returned is defined by the upper left and 
+    The bounding box which is returned is defined by the upper left and
     lower right corners of the visible area of the map.
 */
 
@@ -311,11 +314,11 @@ void QGeoMapData::clearMapObjects()
 
     Attempts to fit the bounding box \a bounds into the viewport of the map.
 
-    This method will change the zoom level to the maximum zoom level such 
+    This method will change the zoom level to the maximum zoom level such
     that all of \bounds is visible within the resulting viewport.
 
-    If \a preserveViewportCenter is false the map will be centered on the 
-    bounding box \a bounds before the zoom level is changed, otherwise the 
+    If \a preserveViewportCenter is false the map will be centered on the
+    bounding box \a bounds before the zoom level is changed, otherwise the
     center of the map will not be changed.
 */
 
@@ -362,7 +365,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
 }
 
 /*!
-    Returns the list of visible map objects manager by this widget which 
+    Returns the list of visible map objects manager by this widget which
     are displayed at least partially within the viewport of the map.
 */
 QList<QGeoMapObject*> QGeoMapData::mapObjectsInViewport() const
