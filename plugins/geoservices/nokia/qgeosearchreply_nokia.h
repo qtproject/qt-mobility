@@ -51,7 +51,7 @@ class QGeoSearchReplyNokia : public QGeoSearchReply
 {
     Q_OBJECT
 public:
-    QGeoSearchReplyNokia(QNetworkReply *reply, QObject *parent = 0);
+    QGeoSearchReplyNokia(QNetworkReply *reply, int limit, int offset, QGeoBoundingArea *viewport, QObject *parent = 0);
     ~QGeoSearchReplyNokia();
 
     void abort();

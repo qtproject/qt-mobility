@@ -42,7 +42,7 @@
 #ifndef QDECLARATIVEGEOMAPOBJECT_H
 #define QDECLARATIVEGEOMAPOBJECT_H
 
-#include "qgeomapobject.h"
+#include "qgeomapgroupobject.h"
 
 #include <QtDeclarative/qdeclarative.h>
 #include <QDeclarativeListProperty>
@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 
-class QDeclarativeGeoMapObject : public QGeoMapObject
+class QDeclarativeGeoMapObject : public QGeoMapGroupObject
 {
     Q_OBJECT
 
