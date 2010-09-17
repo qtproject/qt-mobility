@@ -60,8 +60,8 @@ public:
     QOrganizerCollectionFetchRequest(QObject* parent = 0);
 
     /* Selection, restriction and sorting */
-    void setCollectionIds(const QList<QOrganizerCollectionId>& collectionIds);
-    QList<QOrganizerCollectionId> collectionIds() const;
+    void setCollectionIds(const QList<QOrganizerCollectionLocalId>& collectionIds);
+    QList<QOrganizerCollectionLocalId> collectionIds() const;
 
     /* Results */
     QList<QOrganizerCollection> collections() const;

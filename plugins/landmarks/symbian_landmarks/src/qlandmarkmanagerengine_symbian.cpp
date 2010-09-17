@@ -51,12 +51,6 @@
 QLandmarkManagerEngineSymbian::QLandmarkManagerEngineSymbian(const QString &filename)
 {
     d_ptr = new LandmarkManagerEngineSymbianPrivate(*this, filename);
-
-    QLandmarkManager::Error error = QLandmarkManager::NoError;
-    QString errorString = "";
-    QStringList attrKeys = landmarkAttributeKeys(&error, &errorString);
-    if (error == QLandmarkManager::NoError)
-        d_ptr->setLandmarkAttributeKeys(attrKeys);
 }
 
 /*!
@@ -473,6 +467,16 @@ QStringList QLandmarkManagerEngineSymbian::categoryAttributeKeys(QLandmarkManage
     *error = QLandmarkManager::NoError;
     *errorString = "";
     return LandmarkUtility::categoryAttributeKeys();
+}
+
+QStringList QLandmarkManagerEngineSymbian::serachableLandmarkAttributeKeys(QLandmarkManager::Error *error,
+    QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+    return LandmarkUtility::serachableLandmarkAttributeKeys();
 }
 
 //protected methods

@@ -113,8 +113,6 @@ S60CameraService::~S60CameraService()
         delete m_videoEncoder;
     if (m_audioEncoder)
         delete m_audioEncoder;
-    if (m_viewFinderWidget)
-        delete m_viewFinderWidget;
     if (m_imageEncoderControl)
         delete m_imageEncoderControl;
     if (m_locksControl)
@@ -128,9 +126,13 @@ S60CameraService::~S60CameraService()
     if (m_videosession)
         delete m_videosession;
 
-    // Last, delete CameraControl for CCamera to be destructed after CCameraAdvancedSettings
+    // Delete CameraControl for CCamera to be destructed after CCameraAdvancedSettings
     if (m_control)
         delete m_control;
+
+    // Delete VideoWidgetControl last that ViewFinder gets stopped before widget (and window) is destroyed
+    if (m_viewFinderWidget)
+        delete m_viewFinderWidget;
 }
 
 QMediaControl *S60CameraService::requestControl(const char *name)

@@ -150,11 +150,11 @@ LandmarkManagerEngineSymbianPrivate::LandmarkManagerEngineSymbianPrivate(
         ExecuteAndDeleteLD(m_LandmarkDb->InitializeL());
         // create Category Manager
         m_LandmarkCatMgr = CPosLmCategoryManager::NewL(*m_LandmarkDb);
-    );
 
-    HBufC* dbName = m_LandmarkDb->DatabaseUriLC();
-    m_dbFilename = QString((QChar*) (dbName->Ptr()), dbName->Length());
-    CleanupStack::Pop(dbName);
+        HBufC* dbName = m_LandmarkDb->DatabaseUriLC();
+        m_dbFilename = QString((QChar*) (dbName->Ptr()), dbName->Length());
+        CleanupStack::Pop(dbName);
+    );
 
     m_DbEventHandler.AddObsever(this);
 }
@@ -203,14 +203,6 @@ int LandmarkManagerEngineSymbianPrivate::managerVersion() const
 QString LandmarkManagerEngineSymbianPrivate::managerUri() const
 {
     return QLandmarkManager::buildUri(managerName(), managerParameters(), managerVersion());
-}
-
-/**
- * Sets the landmark attribute keys defined by QLandmarkManagerEngine 
- */
-void LandmarkManagerEngineSymbianPrivate::setLandmarkAttributeKeys(QStringList landmarkKeys)
-{
-    m_LandmarkAttributeKeys = landmarkKeys;
 }
 
 /*!
@@ -400,8 +392,7 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
         return QList<QLandmarkId> ();
     }
 
-    sortFetchedLmIds(limit, offset, sortOrders, result, filter.type(), error,
-        errorString);
+    sortFetchedLmIds(limit, offset, sortOrders, result, filter.type(), error, errorString);
 
     return result;
 }
@@ -493,11 +484,12 @@ QList<QLandmark> LandmarkManagerEngineSymbianPrivate::landmarks(
             if (errorMap)
                 errorMap->insert(i, lastError);
             result << QLandmark();
+
+            *error = lastError;
+            *errorString = lastErrorString;
         }
     }
 
-    *error = lastError;
-    *errorString = lastErrorString;
     return result;
 }
 
@@ -597,11 +589,11 @@ QList<QLandmarkCategory> LandmarkManagerEngineSymbianPrivate::categories(const Q
             if (errorMap)
                 errorMap->insert(i, lastError);
             result << QLandmarkCategory();
+
+            *error = lastError;
+            *errorString = lastErrorString;
         }
     }
-
-    *error = lastError;
-    *errorString = lastErrorString;
 
     return result;
 }
@@ -1216,9 +1208,6 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
                 break;
             }
             TInt found = 0;
-
-            // default landmark attributes
-            //QStringList lmkat = m_LandmarkAttributeKeys;
 
             // symbian platform supported attributes
             QStringList lmkat = LandmarkUtility::landmarkAttributeKeys();
@@ -1999,6 +1988,10 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
         QString errorString = "";
         QStringList exportFormats = supportedFormats(QLandmarkManager::ExportOperation, &error,
             &errorString);
+
+        if (exportRequest->format().isEmpty()) {
+            User::Leave(KErrArgument);
+        }
 
         if (!exportFormats.contains(exportRequest->format(), Qt::CaseInsensitive)) {
             qDebug() << "Not Supported Export Format Type = " << exportRequest->format();
@@ -2938,6 +2931,8 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
         RArray<TUint> afieldArray;
         // Search with CPosLmTextCriteria fields only
         for (int i = 0; i < keyList.size(); ++i) {
+            
+            // skip not supported attributes
             if ((keyList.at(i) == "latitude") || (keyList.at(i) == "longitude") || (keyList.at(i)
                 == "altitude") || (keyList.at(i) == "radius") || (keyList.at(i) == "iconurl"))
                 continue;
@@ -3191,6 +3186,12 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
                     CleanupStack::Pop(textContainsPostCode);
                 }
             }
+            else {
+                qDebug() << "Not supported attribute provided";
+                CleanupStack::PopAndDestroy(compositeCriteria);
+                User::Leave( KErrNotSupported);
+            }
+            
         }
 
         // TODO : This check is required in case of emulation.
@@ -3742,7 +3743,7 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
                 HBufC8 *buffer = HBufC8::New(aData->iExportBuffer->Size() + 1);
                 CleanupStack::PushL(buffer);
                 TPtr8 ptr = buffer->Des();
-                aData->iExportBuffer->Read(0, ptr);
+                aData->iExportBuffer->Read(0, ptr, n);
                 char* str = new (ELeave) char[ptr.Size() + 1];
                 Mem::Copy(str, ptr.Ptr(), ptr.Size());
                 str[ptr.Size()] = '\0';
@@ -4121,8 +4122,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
             }
 
             // sort and fetch with offset if required.
-            sortFetchedLmIds(limit, offset, sortOrders, result, filters.at(
-                aData->iOpCount - 1).type(), &error, &errorString);
+            sortFetchedLmIds(limit, offset, sortOrders, result,
+                filters.at(aData->iOpCount - 1).type(), &error, &errorString);
 
             // update the first result
             if (aData->iOpCount == 1) {
@@ -4295,6 +4296,11 @@ void LandmarkManagerEngineSymbianPrivate::exportLandmarksL(QIODevice *device,
     QStringList exportFormats = supportedFormats(QLandmarkManager::ExportOperation, &error,
         &errorString);
 
+    if (format.isEmpty()) {
+        qDebug() << "Export Format Type is not provided ";
+        User::Leave(KErrArgument);
+    }
+
     if (!exportFormats.contains(format, Qt::CaseInsensitive)) {
         qDebug() << "Not Supported Export Format Type = " << format;
         User::Leave(KErrNotSupported);
@@ -4411,10 +4417,6 @@ void LandmarkManagerEngineSymbianPrivate::exportLandmarksL(QIODevice *device,
         // Determine if the export path is a buffer
         outputdevice = dynamic_cast<QBuffer *> (device);
         if (outputdevice) {
-
-            if (format.isEmpty()) {
-                User::Leave(KErrArgument);
-            }
 
             if (!device->isWritable())
                 User::Leave(KErrArgument);

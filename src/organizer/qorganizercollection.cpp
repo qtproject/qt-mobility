@@ -77,6 +77,11 @@ bool QOrganizerCollection::operator==(const QOrganizerCollection &other) const
     return d->m_id == other.d->m_id;
 }
 
+QOrganizerCollectionLocalId QOrganizerCollection::localId() const
+{
+    return d->m_id.localId();
+}
+
 QOrganizerCollectionId QOrganizerCollection::id() const
 {
     return d->m_id;
