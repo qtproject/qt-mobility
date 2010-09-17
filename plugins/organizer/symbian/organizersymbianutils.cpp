@@ -122,6 +122,16 @@ QDateTime toQDateTime(const TTime &time, Qt::TimeSpec timeSpec)
     return qdt.toTimeSpec(Qt::LocalTime); // return with default timespec set
 }
 
+QOrganizerCollectionLocalId toCollectionLocalId(quint32 collectionId)
+{
+    return QOrganizerCollectionLocalId(new QOrganizerCollectionSymbianEngineLocalId(collectionId));
+}
+
+QOrganizerItemLocalId toItemLocalId(quint32 collectionId, quint32 itemId)
+{
+    return QOrganizerItemLocalId(new QOrganizerItemSymbianEngineLocalId(collectionId, itemId));
+}
+
 #ifdef SYMBIAN_CALENDAR_V2
 
 void setCalInfoPropertyL(CCalCalendarInfo *calInfo, TCalenPropertyUid propertyUid, const QString &value)
