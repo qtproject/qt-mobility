@@ -162,7 +162,7 @@ Q_SIGNALS:
    void currentMobileNetworkCodeChanged(const QString &);
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
-   void cellIdChanged(nt);//1.2
+   void cellIdChanged(int);//1.2
 
 public Q_SLOTS:
    void primaryInterface();
@@ -177,6 +177,7 @@ private:
 
 private Q_SLOTS:
     void rssiTimeout();
+
 protected:
     void startNetworkChangeLoop();
     bool isInterfaceActive(const char* netInterface);
@@ -234,10 +235,15 @@ Q_SIGNALS:
     void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state); //1.2
 
 private:
-    QHash<QString, QString> mountEntriesHash;
+    QMap<QString, QString> mountEntriesMap;
     bool updateVolumesMap();
     void mountEntries();
     bool sessionThread();
+    QMap<QString, QSystemStorageInfo::StorageState> stateMap;
+    QTimer *storageTimer;
+
+private Q_SLOTS:
+    void checkAvailableStorage();
 
 protected:
     void connectNotify(const char *signal);

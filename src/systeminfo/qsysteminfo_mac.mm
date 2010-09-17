@@ -1671,6 +1671,8 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
         : QObject(parent), daSessionThread(0)
 {
     updateVolumesMap();
+
+    checkAvailableStorage();
 }
 
 
@@ -1685,7 +1687,7 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 void QSystemStorageInfoPrivate::storageChanged( bool added, const QString &vol)
 {
     if(!vol.isEmpty()) {
-        QHashIterator<QString, QString> it(mountEntriesHash);
+        QMapIterator<QString, QString> it(mountEntriesMap);
         QString foundKey;
         bool seen = false;
         while (it.hasNext()) {
@@ -1701,7 +1703,7 @@ void QSystemStorageInfoPrivate::storageChanged( bool added, const QString &vol)
             updateVolumesMap();
         }
         if(!added && seen) {
-            mountEntriesHash.remove(foundKey);
+            mountEntriesMap.remove(foundKey);
             Q_EMIT logicalDriveChanged(added,vol);
         }
 
@@ -1712,12 +1714,12 @@ void QSystemStorageInfoPrivate::storageChanged( bool added, const QString &vol)
         } else { //removed
             // cdroms unmounting seem to not have a volume name with the notification here, so
             // we need to manually deal with it
-            QHash <QString,QString> oldDrives = mountEntriesHash;
+            QMap <QString,QString> oldDrives = mountEntriesMap;
             updateVolumesMap();
-            QStringList newDrives = mountEntriesHash.keys();
+            QStringList newDrives = mountEntriesMap.keys();
             QString foundDrive;
 
-            QHashIterator<QString, QString> it(oldDrives);
+            QMapIterator<QString, QString> it(oldDrives);
             while (it.hasNext()) {
                 it.next();
                 if(!newDrives.contains(it.key())) {
@@ -1733,15 +1735,15 @@ bool QSystemStorageInfoPrivate::updateVolumesMap()
     struct statfs64 *buf = NULL;
     unsigned i, count = 0;
 
-    mountEntriesHash.clear();
+    mountEntriesMap.clear();
 
     count = getmntinfo64(&buf, 0);
     for (i=0; i<count; i++) {
         char *volName = buf[i].f_mntonname;
         if(buf[i].f_type != 19
            && buf[i].f_type != 20
-           && !mountEntriesHash.contains(volName)) {
-            mountEntriesHash.insert(buf[i].f_mntfromname,volName);
+           && !mountEntriesMap.contains(volName)) {
+            mountEntriesMap.insert(buf[i].f_mntfromname,volName);
         }
     }
     return true;
@@ -1761,6 +1763,8 @@ qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 
 qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
+    getStorageState(driveVolume);
+
     qint64 totalBytes=0;
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSDictionary *attr = [ [NSFileManager defaultManager] attributesOfFileSystemForPath:qstringToNSString(driveVolume) error:nil];
@@ -1785,7 +1789,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
         return QSystemStorageInfo::NoDrive;
     }
 
-    diskRef = DADiskCreateFromBSDName(NULL, sessionRef, mountEntriesHash.key(driveVolume).toLatin1());
+    diskRef = DADiskCreateFromBSDName(NULL, sessionRef, mountEntriesMap.key(driveVolume).toLatin1());
     if (diskRef == NULL) {
         CFRelease(sessionRef);
         return QSystemStorageInfo::NoDrive;
@@ -1846,7 +1850,7 @@ QStringList QSystemStorageInfoPrivate::logicalDrives()
 {
     updateVolumesMap();
     QStringList drivesList;
-    QHashIterator<QString, QString> it(mountEntriesHash);
+    QMapIterator<QString, QString> it(mountEntriesMap);
      while (it.hasNext()) {
          it.next();
          drivesList << it.value();
@@ -1875,6 +1879,16 @@ void QSystemStorageInfoPrivate::connectNotify(const char *signal)
         DARegisterDiskAppearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,mountCallback2,this);
         DARegisterDiskDisappearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,unmountCallback,this);
     }
+
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageStateChanged(const QString &, QSystemStorageInfo::StorageState))))) {
+        if(!storageTimer) {
+            storageTimer = new QTimer(this);
+        }
+        connect(storageTimer,SIGNAL(timeout()),this,SLOT(checkAvailableStorage()));
+        if(!storageTimer->isActive())
+            storageTimer->start(60 * 1000);
+    }
 }
 
 
@@ -1889,6 +1903,10 @@ void QSystemStorageInfoPrivate::disconnectNotify(const char *signal)
        // DAUnregisterApprovalCallback((__DAApprovalSession *)daSessionThread->session,(void*)unmountCallback,NULL);
 #endif
     }
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageStateChanged(const QString &, QSystemStorageInfo::StorageState))))) {
+        disconnect(storageTimer,SIGNAL(timeout()),this,SLOT(checkAvailableStorage()));
+    }
 }
 
 QString QSystemStorageInfoPrivate::uriForDrive(const QString &driveVolume)
@@ -1898,8 +1916,44 @@ QString QSystemStorageInfoPrivate::uriForDrive(const QString &driveVolume)
 
 QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::getStorageState(const QString &driveVolume)
 {
-    QSystemStorageInfo::StorageState state = QSystemStorageInfo::UnknownStorageState;
-   return state;
+    QSystemStorageInfo::StorageState storState = QSystemStorageInfo::UnknownStorageState;
+
+    struct statfs fs;
+    if (statfs(driveVolume.toLocal8Bit(), &fs) == 0) {
+        if( fs.f_bfree != 0) {
+            long percent = 100 -(fs.f_blocks - fs.f_bfree) * 100 / fs.f_blocks;
+            qDebug()  << driveVolume << percent;
+
+
+            if(percent < 41 && percent > 10 ) {
+                storState = QSystemStorageInfo::LowStorageState;
+            } else if(percent < 11 && percent > 2 ) {
+                storState =  QSystemStorageInfo::VeryLowStorageState;
+            } else if(percent < 3  ) {
+                storState =  QSystemStorageInfo::CriticalStorageState;
+            } else {
+                storState =  QSystemStorageInfo::NormalStorageState;
+            }
+        }
+    }
+    return storState;
+}
+
+void QSystemStorageInfoPrivate::checkAvailableStorage()
+{
+    QMap<QString, QString> oldDrives = mountEntriesMap;
+    foreach(const QString &vol, oldDrives.keys()) {
+        QSystemStorageInfo::StorageState storState = getStorageState(vol);
+        if(!stateMap.contains(vol)) {
+            stateMap.insert(vol,storState);
+        } else {
+            if(stateMap.value(vol) != storState) {
+                stateMap[vol] = storState;
+                qDebug() << "storage state changed" << storState;
+                Q_EMIT storageStateChanged(vol, storState);
+            }
+        }
+    }
 }
 
 void powerInfoChanged(void* context)
