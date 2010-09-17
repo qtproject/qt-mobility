@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the demonstration applications of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,52 +39,25 @@
 **
 ****************************************************************************/
 
-#include "qremoteservicecontrol_p.h"
+#include <QtGui/QApplication>
+#include <QtDeclarative/QDeclarativeView>
+#include <QtDeclarative/QDeclarativeEngine>
 
-QTM_BEGIN_NAMESPACE
-
-
-QRemoteServiceControlPrivate::QRemoteServiceControlPrivate(QObject* parent)
-    : QObject(parent), m_quit(true)
+int main(int argc, char *argv[])
 {
+    QApplication application(argc, argv);
+    const QString mainQmlApp = QLatin1String("declarative-sfw-dialer.qml");
+    QDeclarativeView view;
+    view.setSource(QUrl(mainQmlApp));
+    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    // Qt.quit() called in embedded .qml by default only emits
+    // quit() signal, so do this (optionally use Qt.exit()).
+    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
+#if defined(Q_OS_SYMBIAN)
+    view.showFullScreen();
+#else // Q_OS_SYMBIAN
+    view.setGeometry(QRect(100, 100, 360, 640));
+    view.show();
+#endif // Q_OS_SYMBIAN
+    return application.exec();
 }
-QRemoteServiceControlPrivate::~QRemoteServiceControlPrivate()
-{  
-}
-
-void QRemoteServiceControlPrivate::publishServices( const QString& ident)
-{
-  qWarning("QRemoteServiceControlPrivate::publishServices has not been reimplemented");
-}
-
-void QRemoteServiceControlPrivate::processIncoming()
-{
-  qWarning("QRemoteServiceControlPrivate::processIncoming has not been reimplemented");
-}
-
-bool QRemoteServiceControlPrivate::quitOnLastInstanceClosed() const
-{
-  return m_quit;
-}
-
-void QRemoteServiceControlPrivate::setQuitOnLastInstanceClosed(bool quit)
-{  
-  m_quit = quit;
-}
-
-QRemoteServiceControl::securityFilter QRemoteServiceControlPrivate::setSecurityFilter(QRemoteServiceControl::securityFilter filter)
-{
-    QRemoteServiceControl::securityFilter f;
-    f = filter;
-    iFilter = filter;
-    return f;
-}
-
-QRemoteServiceControl::securityFilter QRemoteServiceControlPrivate::getSecurityFilter()
-{
-    return iFilter;
-}
-
-
-#include "moc_qremoteservicecontrol_p.cpp"
-QTM_END_NAMESPACE

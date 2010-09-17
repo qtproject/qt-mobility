@@ -18,9 +18,9 @@ symbian {
 }
 
 wince*|symbian*: {
-    addFiles.sources = testdata/*
+    addFiles.sources = sfwechoservice.xml
     addFiles.path = xmldata
-    addFiles2.sources = testdata/*
+    addFiles2.sources = sfwechoservice.xml
     addFiles2.path = /private/2002AC7F/import/
     DEPLOYMENT += addFiles addFiles2
 }
@@ -31,6 +31,6 @@ wince* {
 }
 
 xml.path = $$QT_MOBILITY_EXAMPLES/xmldata
-xml.files = testdata/sfwechoservice.xml
+xml.files = sfwechoservice.xml
 INSTALLS += xml
 
