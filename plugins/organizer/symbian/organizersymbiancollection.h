@@ -43,7 +43,7 @@
 
 #include <calchangecallback.h>
 #include <calprogresscallback.h>
-#include "qorganizercollectionid.h"
+#include "qorganizercollection.h"
 
 QTM_USE_NAMESPACE
 
@@ -70,7 +70,7 @@ public:
     QOrganizerItemManagerEngine *m_engine;
     CCalSession *m_calSession;
     CCalEntryView *m_calEntryView;
-    QOrganizerCollectionLocalId m_localId;
+    QOrganizerCollectionId m_id;
     CActiveSchedulerWait *m_activeSchedulerWait;
     QString m_fileName;
     int m_error;
@@ -89,12 +89,14 @@ public:
     void openL(const TDesC &fileName);
 #endif
     void createEntryViewL();
+    QOrganizerCollectionId id() const;
     QOrganizerCollectionLocalId localId() const;
     CCalSession *calSession() const; 
     CCalEntryView *calEntryView() const;
     QString fileName() const;
     bool isValid() const;
     bool isMarkedForDeletionL() const;
+    QOrganizerCollection toQOrganizerCollectionL() const;
     
 private:
     QExplicitlySharedDataPointer<OrganizerSymbianCollectionPrivate> d;

@@ -115,6 +115,7 @@ contains(mobility_modules,organizer) {
     SUBDIRS += \
         qorganizercollection \
         qorganizeritem \
+        qorganizeritemasync \
         qorganizeritemdetail \
         qorganizeritemdetaildefinition \
         qorganizeritemfilter \
