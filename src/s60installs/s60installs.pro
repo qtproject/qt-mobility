@@ -109,6 +109,11 @@ isEmpty(QT_LIBINFIX):symbian {
         qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtversit_backuphandler.dll
         pluginstubs += \
             "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\versit\\backuphandler\\qmakepluginstubs\\qtversit_backuphandler.qtplugin\"  - \"!:\\resource\\qt\\plugins\\versit\\qtversit_backuphandler.qtplugin\""
+
+        ## now the versit organizer module - depends on versit and organizer.
+        contains(mobility_modules, organizer) {
+            qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtVersitOrganizer.dll
+        }
     }
 
     contains(mobility_modules, feedback) {
