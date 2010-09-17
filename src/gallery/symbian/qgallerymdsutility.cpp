@@ -202,6 +202,10 @@ void QDocumentGalleryMDSUtility::GetDataFieldsForItemType( QStringList &property
 
 void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVariant &output, int key )
 {
+    output.clear();
+    if (!inputItem)
+        return;
+    
 #ifdef MDS_25_COMPILATION_ENABLED
     GetMetaDataFieldForMDS25L( inputItem, output, key );
 #else
@@ -212,10 +216,6 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
 #ifdef MDS_25_COMPILATION_ENABLED
 void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputItem, QVariant &output, int key )
 {
-    if (!inputItem)
-        return;
-
-    output.clear();
     switch (key) {
     case EUri:
         {
@@ -227,8 +227,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         {
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Object::KSizeProperty );
             CMdEProperty* sizeProp = NULL;
-            inputItem->Property( propDef, sizeProp );
-            if ( sizeProp ) {
+            int foundIndex = inputItem->Property( propDef, sizeProp );
+            if ( foundIndex != KErrNotFound && sizeProp ) {
                 unsigned long int value = sizeProp->Uint32ValueL();
                 output.setValue( value );
             }
@@ -238,8 +238,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         {
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Object::KLastModifiedDateProperty );
             CMdEProperty* modProp = NULL;
-            inputItem->Property( propDef, modProp );
-            if ( modProp ) {
+            int foundIndex = inputItem->Property( propDef, modProp );
+            if ( foundIndex != KErrNotFound && modProp ) {
                 output.setValue(symbianTTimetoQDateTime(modProp->TimeValueL()));
             }
             break;
@@ -248,8 +248,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         {
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Object::KTitleProperty );
             CMdEProperty* titleProp = NULL;
-            inputItem->Property( propDef, titleProp );
-            if ( titleProp ) {
+            int foundIndex = inputItem->Property( propDef, titleProp );
+            if ( foundIndex != KErrNotFound && titleProp ) {
                 output.setValue( s60DescToQString( titleProp->TextValueL() ) );
             }
             break;
@@ -258,8 +258,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         {
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Object::KItemTypeProperty );
             CMdEProperty* mimeProp = NULL;
-            inputItem->Property( propDef, mimeProp );
-            if ( mimeProp ) {
+            int foundIndex = inputItem->Property( propDef, mimeProp );
+            if ( foundIndex != KErrNotFound && mimeProp ) {
                 output.setValue( s60DescToQString( mimeProp->TextValueL() ) );
             }
             break;
@@ -273,8 +273,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KAuthorProperty );
             CMdEProperty* authorProp = NULL;
-            inputItem->Property( propDef, authorProp );
-            if ( authorProp ) {
+            int foundIndex = inputItem->Property( propDef, authorProp );
+            if ( foundIndex != KErrNotFound && authorProp ) {
                 output.setValue( s60DescToQString( authorProp->TextValueL() ) );
             }
             break;
@@ -288,8 +288,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KCopyrightProperty );
             CMdEProperty* copyProp = NULL;
-            inputItem->Property( propDef, copyProp );
-            if ( copyProp ) {
+            int foundIndex = inputItem->Property( propDef, copyProp );
+            if ( foundIndex != KErrNotFound && copyProp ) {
                 output.setValue( s60DescToQString( copyProp->TextValueL() ) );
             }
             break;
@@ -303,8 +303,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KDescriptionProperty );
             CMdEProperty* desProp = NULL;
-            inputItem->Property( propDef, desProp );
-            if ( desProp ) {
+            int foundIndex = inputItem->Property( propDef, desProp );
+            if ( foundIndex != KErrNotFound && desProp ) {
                 output.setValue( s60DescToQString( desProp->TextValueL() ) );
             }
             break;
@@ -318,8 +318,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KCommentProperty );
             CMdEProperty* comProp = NULL;
-            inputItem->Property( propDef, comProp );
-            if ( comProp ) {
+            int foundIndex = inputItem->Property( propDef, comProp );
+            if ( foundIndex != KErrNotFound && comProp ) {
                 output.setValue( s60DescToQString( comProp->TextValueL() ) );
             }
             break;
@@ -333,8 +333,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KRatingProperty );
             CMdEProperty* rateProp = NULL;
-            inputItem->Property( propDef, rateProp );
-            if ( rateProp ) {
+            int foundIndex = inputItem->Property( propDef, rateProp );
+            if ( foundIndex != KErrNotFound && rateProp ) {
                 unsigned int value = rateProp->Uint8ValueL();
                 output.setValue( value );
             }
@@ -349,14 +349,14 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KDurationProperty );
             CMdEProperty* duraProp = NULL;
-            inputItem->Property( propDef, duraProp );
-            if ( duraProp ) {
+            int foundIndex = inputItem->Property( propDef, duraProp );
+            if ( foundIndex != KErrNotFound && duraProp ) {
                 double value = duraProp->Real32ValueL();
                 output.setValue( value );
             }
             break;
         }
-        case EPerformer:
+    case EPerformer:
         {
             if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
                     && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
@@ -365,13 +365,12 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KArtistProperty );
             CMdEProperty* artistProp = NULL;
-            inputItem->Property( propDef, artistProp );
-            if ( artistProp ) {
+            int foundIndex = inputItem->Property( propDef, artistProp );
+            if ( foundIndex != KErrNotFound && artistProp ) {
                 output.setValue( s60DescToQString( artistProp->TextValueL() ) );
             }
             break;
         }
-#ifdef MDS_25_92MCL_COMPILATION_ENABLED            
     case EAudioCodec:
         {
             if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
@@ -379,16 +378,19 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
                     && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
+#ifdef MDS_25_92MCL_COMPILATION_ENABLED
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KAudioFourCCProperty );
+#else
+            CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Video::KAudioFourCCProperty );
+#endif //MDS_25_92MCL_COMPILATION_ENABLED
             CMdEProperty* codecProp = NULL;
-            inputItem->Property( propDef, codecProp );
-            if ( codecProp ) {
+            int foundIndex = inputItem->Property( propDef, codecProp );
+            if ( foundIndex != KErrNotFound && codecProp ) {
                 unsigned long int value = codecProp->Uint32ValueL();
                 output.setValue( value );
             }
             break;
         }
-#endif //MDS_25_92MCL_COMPILATION_ENABLED
     case EAudioBitrate:
     case EVideoBitrate:
         {
@@ -399,8 +401,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KBitrateProperty );
             CMdEProperty* brateProp = NULL;
-            inputItem->Property( propDef, brateProp );
-            if ( brateProp ) {
+            int foundIndex = inputItem->Property( propDef, brateProp );
+            if ( foundIndex != KErrNotFound && brateProp ) {
                 unsigned int value = brateProp->Uint16ValueL();
                 output.setValue( value );
             }
@@ -415,8 +417,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
             CMdEProperty* countProp = NULL;
-            inputItem->Property( propDef, countProp );
-            if ( countProp ) {
+            int foundIndex = inputItem->Property( propDef, countProp );
+            if ( foundIndex != KErrNotFound && countProp ) {
                 unsigned long int value = countProp->Uint32ValueL();
                 output.setValue( value );
             }
@@ -429,8 +431,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Audio::KSamplingFrequencyProperty );
             CMdEProperty* samplingProp = NULL;
-            inputItem->Property( propDef, samplingProp );
-            if ( samplingProp ) {
+            int foundIndex = inputItem->Property( propDef, samplingProp );
+            if ( foundIndex != KErrNotFound && samplingProp ) {
                 double value = samplingProp->Real32ValueL();
                 output.setValue( value );
             }
@@ -445,8 +447,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KWidthProperty );
             CMdEProperty* widthProp = NULL;
-            inputItem->Property( propDef, widthProp );
-            if ( widthProp ) {
+            int foundIndex = inputItem->Property( propDef, widthProp );
+            if ( foundIndex != KErrNotFound && widthProp ) {
                 unsigned int value = widthProp->Uint16ValueL();
                 output.setValue( value );
             }
@@ -461,8 +463,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KHeightProperty );
             CMdEProperty* heightProp = NULL;
-            inputItem->Property( propDef, heightProp );
-            if ( heightProp ) {
+            int foundIndex = inputItem->Property( propDef, heightProp );
+            if ( foundIndex != KErrNotFound && heightProp ) {
                 unsigned int value = heightProp->Uint16ValueL();
                 output.setValue( value );
             }
@@ -475,8 +477,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KOrientationProperty );
             CMdEProperty* orientationProp = NULL;
-            inputItem->Property( propDef, orientationProp );
-            if ( orientationProp ) {
+            int foundIndex = inputItem->Property( propDef, orientationProp );
+            if ( foundIndex != KErrNotFound && orientationProp ) {
                 unsigned int value = orientationProp->Uint16ValueL();
                 output.setValue( value );
             }
@@ -489,8 +491,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KDateTimeOriginalProperty );
             CMdEProperty* dateProp = NULL;
-            inputItem->Property( propDef, dateProp );
-            if ( dateProp ) {
+            int foundIndex = inputItem->Property( propDef, dateProp );
+            if ( foundIndex != KErrNotFound && dateProp ) {
                 output.setValue(symbianTTimetoQDateTime(dateProp->TimeValueL()));
             }
             break;
@@ -502,8 +504,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KMakeProperty );
             CMdEProperty* makeProp = NULL;
-            inputItem->Property( propDef, makeProp );
-            if ( makeProp ) {
+            int foundIndex = inputItem->Property( propDef, makeProp );
+            if ( foundIndex != KErrNotFound && makeProp ) {
                 output.setValue( s60DescToQString( makeProp->TextValueL() ) );
             }
             break;
@@ -515,8 +517,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KModelProperty );
             CMdEProperty* modelProp = NULL;
-            inputItem->Property( propDef, modelProp );
-            if ( modelProp ) {
+            int foundIndex = inputItem->Property( propDef, modelProp );
+            if ( foundIndex != KErrNotFound && modelProp ) {
                 output.setValue( s60DescToQString( modelProp->TextValueL() ) );
             }
             break;
@@ -528,8 +530,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KExposureProgramProperty );
             CMdEProperty* exppProp = NULL;
-            inputItem->Property( propDef, exppProp );
-            if ( exppProp ) {
+            int foundIndex = inputItem->Property( propDef, exppProp );
+            if ( foundIndex != KErrNotFound && exppProp ) {
                 unsigned int value = exppProp->Uint16ValueL();
                 output.setValue( value );
             }
@@ -542,8 +544,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KExposureTimeProperty );
             CMdEProperty* exptProp = NULL;
-            inputItem->Property( propDef, exptProp );
-            if ( exptProp ) {
+            int foundIndex = inputItem->Property( propDef, exptProp );
+            if ( foundIndex != KErrNotFound && exptProp ) {
                 double value = exptProp->Real32ValueL();
                 output.setValue( value );
             }
@@ -556,8 +558,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KFNumberProperty );
             CMdEProperty* fnumProp = NULL;
-            inputItem->Property( propDef, fnumProp );
-            if ( fnumProp ) {
+            int foundIndex = inputItem->Property( propDef, fnumProp );
+            if ( foundIndex != KErrNotFound && fnumProp ) {
                 double value = fnumProp->Real32ValueL();
                 output.setValue( value );
             }
@@ -570,8 +572,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KFlashProperty );
             CMdEProperty* flashProp = NULL;
-            inputItem->Property( propDef, flashProp );
-            if ( flashProp ) {
+            int foundIndex = inputItem->Property( propDef, flashProp );
+            if ( foundIndex != KErrNotFound && flashProp ) {
                 unsigned int value = flashProp->Uint16ValueL();
                 output.setValue( value );
             }
@@ -584,8 +586,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KFocalLengthIn35mmFilmProperty );
             CMdEProperty* focalProp = NULL;
-            inputItem->Property( propDef, focalProp );
-            if ( focalProp ) {
+            int foundIndex = inputItem->Property( propDef, focalProp );
+            if ( foundIndex != KErrNotFound && focalProp ) {
                 unsigned int value = focalProp->Uint16ValueL();
                 output.setValue( value );
             }
@@ -598,8 +600,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KMeteringModeProperty );
             CMdEProperty* metProp = NULL;
-            inputItem->Property( propDef, metProp );
-            if ( metProp ) {
+            int foundIndex = inputItem->Property( propDef, metProp );
+            if ( foundIndex != KErrNotFound && metProp ) {
                 unsigned int value = metProp->Uint16ValueL();
                 output.setValue( value );
             }
@@ -612,8 +614,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KWhiteBalanceProperty );
             CMdEProperty* whiteProp = NULL;
-            inputItem->Property( propDef, whiteProp );
-            if ( whiteProp ) {
+            int foundIndex = inputItem->Property( propDef, whiteProp );
+            if ( foundIndex != KErrNotFound && whiteProp ) {
                 unsigned int value = whiteProp->Uint16ValueL();
                 output.setValue( value );
             }
@@ -626,8 +628,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Video::KAudioLanguageProperty );
             CMdEProperty* langProp = NULL;
-            inputItem->Property( propDef, langProp );
-            if ( langProp ) {
+            int foundIndex = inputItem->Property( propDef, langProp );
+            if ( foundIndex != KErrNotFound && langProp ) {
                 output.setValue( s60DescToQString( langProp->TextValueL() ) );
             }
             break;
@@ -639,8 +641,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Video::KFramerateProperty );
             CMdEProperty* framerProp = NULL;
-            inputItem->Property( propDef, framerProp );
-            if ( framerProp ) {
+            int foundIndex = inputItem->Property( propDef, framerProp );
+            if ( foundIndex != KErrNotFound && framerProp ) {
                 double value = framerProp->Real32ValueL();
                 output.setValue( value );
             }
@@ -653,8 +655,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Video::KLastPlayPositionProperty );
             CMdEProperty* posProp = NULL;
-            inputItem->Property( propDef, posProp );
-            if ( posProp ) {
+            int foundIndex = inputItem->Property( propDef, posProp );
+            if ( foundIndex != KErrNotFound && posProp ) {
                 double value = posProp->Real32ValueL();
                 output.setValue( value );
             }
@@ -669,10 +671,6 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
 
 void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputItem, QVariant &output, int key )
 {
-    if (!inputItem)
-        return;
-
-    output.clear();
     switch (key) {
     case EUri:
         {
@@ -1261,6 +1259,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
 
 QString QDocumentGalleryMDSUtility::GetItemTypeFromMDEObject( CMdEObject *inputItem )
 {
+    if( !inputItem )
+        return NULL;
+
     if (inputItem->Def().Name() == MdeConstants::Album::KAlbumObject) {
         return QDocumentGallery::PhotoAlbum.name();
     } else if (inputItem->Def().Name() == MdeConstants::Audio::KAudioObject) {
@@ -1272,8 +1273,6 @@ QString QDocumentGalleryMDSUtility::GetItemTypeFromMDEObject( CMdEObject *inputI
     } else if (inputItem->Def().Name() == MdeConstants::Video::KVideoObject) {
         return QDocumentGallery::Video.name();
     }
-    QString null;
-    return null;
 }
 
 int QDocumentGalleryMDSUtility::GetPropertyKey( const QString &property )
@@ -1562,12 +1561,14 @@ CMdEPropertyDef *QDocumentGalleryMDSUtility::GetMDSPropertyDefForMDS25L( const Q
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KRatingProperty );
         return &propDef;
-#ifdef MDS_25_92MCL_COMPILATION_ENABLED
     }  else if (property == QDocumentGallery::audioCodec.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
+#ifdef MDS_25_92MCL_COMPILATION_ENABLED
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KAudioFourCCProperty );
-        return &propDef;
+#else
+        CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Video::KAudioFourCCProperty );
 #endif //MDS_25_92MCL_COMPILATION_ENABLED
+        return &propDef;
     }  else if (property == QDocumentGallery::playCount.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
@@ -1892,6 +1893,9 @@ int QDocumentGalleryMDSUtility::SetupQueryConditions(CMdEObjectQuery *query,
 
 bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVariant &value, int key )
 {
+    if ( !item )
+        return false;
+    
 #ifdef MDS_25_COMPILATION_ENABLED
     SetMetaDataFieldForMDS25L( item, value, key );
 #else
@@ -1902,9 +1906,6 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
 #ifdef MDS_25_COMPILATION_ENABLED
 bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, const QVariant &value, int key )
 {
-    if (!item)
-        return false;
-    
     switch( key )
     {
     case EUri:
@@ -1913,8 +1914,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         {
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Object::KSizeProperty );
             CMdEProperty* sizeProp = NULL;
-            item->Property( propDef, sizeProp );
-            if ( sizeProp ) {
+            int foundIndex = item->Property( propDef, sizeProp );
+            if ( foundIndex != KErrNotFound && sizeProp ) {
                 TRAPD( err, sizeProp->SetUint32ValueL( value.toULongLong() ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -1926,8 +1927,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         {
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Object::KLastModifiedDateProperty );
             CMdEProperty* modProp = NULL;
-            item->Property( propDef, modProp );
-            if ( modProp ) {
+            int foundIndex = item->Property( propDef, modProp );
+            if ( foundIndex != KErrNotFound && modProp ) {
                 TRAPD( err, modProp->SetTimeValueL( QDateTimetosymbianTTime( value.toDateTime() ) ) );
                 return err == KErrNone ? true : false ;
             }
@@ -1940,9 +1941,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         {
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Object::KTitleProperty );
             CMdEProperty* titleProp = NULL;
-            item->Property( propDef, titleProp );
+            int foundIndex = item->Property( propDef, titleProp );
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( titleProp ) {
+            if ( foundIndex != KErrNotFound && titleProp ) {
                 TRAPD( err, titleProp->SetTextValueL( text ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -1961,9 +1962,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KAuthorProperty );
             CMdEProperty* authorProp = NULL;
-            item->Property( propDef, authorProp );
+            int foundIndex = item->Property( propDef, authorProp );
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( authorProp ) {
+            if ( foundIndex != KErrNotFound && authorProp ) {
                 TRAPD( err, authorProp->SetTextValueL( text ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -1980,9 +1981,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KCopyrightProperty );
             CMdEProperty* copyProp = NULL;
-            item->Property( propDef, copyProp );
+            int foundIndex = item->Property( propDef, copyProp );
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( copyProp ) {
+            if ( foundIndex != KErrNotFound && copyProp ) {
                 TRAPD( err, copyProp->SetTextValueL( text ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -1999,9 +2000,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KDescriptionProperty );
             CMdEProperty* desProp = NULL;
-            item->Property( propDef, desProp );
+            int foundIndex = item->Property( propDef, desProp );
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( desProp ) {
+            if ( foundIndex != KErrNotFound && desProp ) {
                 TRAPD( err, desProp->SetTextValueL( text ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2018,9 +2019,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KCommentProperty );
             CMdEProperty* comProp = NULL;
-            item->Property( propDef, comProp );
+            int foundIndex = item->Property( propDef, comProp );
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( comProp ) {
+            if ( foundIndex != KErrNotFound && comProp ) {
                 TRAPD( err, comProp->SetTextValueL( text ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2037,8 +2038,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KRatingProperty );
             CMdEProperty* rateProp = NULL;
-            item->Property( propDef, rateProp );
-            if ( rateProp ) {
+            int foundIndex = item->Property( propDef, rateProp );
+            if ( foundIndex != KErrNotFound && rateProp ) {
                 TRAPD( err, rateProp->SetUint8ValueL( value.toUInt() ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2055,8 +2056,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KDurationProperty );
             CMdEProperty* duraProp = NULL;
-            item->Property( propDef, duraProp );
-            if ( duraProp ) {
+            int foundIndex = item->Property( propDef, duraProp );
+            if ( foundIndex != KErrNotFound && duraProp ) {
                 TRAPD( err, duraProp->SetReal32ValueL( value.toDouble() ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2073,9 +2074,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KArtistProperty );
             CMdEProperty* artistProp = NULL;
-            item->Property( propDef, artistProp );
+            int foundIndex = item->Property( propDef, artistProp );
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( artistProp ) {
+            if ( foundIndex != KErrNotFound && artistProp ) {
                 TRAPD( err, artistProp->SetTextValueL( text ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2083,18 +2084,21 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
                 return err == KErrNone ? true : false ;
             }
         }
-#ifdef MDS_25_92MCL_COMPILATION_ENABLED            
-     case EAudioCodec:
+    case EAudioCodec:
         {
             if (item->Def().Name() != MdeConstants::Audio::KAudioObject
                     && item->Def().Name() != MdeConstants::Video::KVideoObject
                     && item->Def().Name() != MdeConstants::Image::KImageObject ) {
                 return false;
             }
+#ifdef MDS_25_92MCL_COMPILATION_ENABLED
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KAudioFourCCProperty );
+#else
+            CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Video::KAudioFourCCProperty );
+#endif //MDS_25_92MCL_COMPILATION_ENABLED
             CMdEProperty* codecProp = NULL;
-            item->Property( propDef, codecProp );
-            if ( codecProp ) {
+            int foundIndex = item->Property( propDef, codecProp );
+            if ( foundIndex != KErrNotFound && codecProp ) {
                 TRAPD( err, codecProp->SetUint32ValueL( value.toULongLong() ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2102,7 +2106,6 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
                 return err == KErrNone ? true : false ;
             }
         }
-#endif //MDS_25_92MCL_COMPILATION_ENABLED
     case EAudioBitrate:
     case EVideoBitrate:
         {
@@ -2113,8 +2116,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KBitrateProperty );
             CMdEProperty* brateProp = NULL;
-            item->Property( propDef, brateProp );
-            if ( brateProp ) {
+            int foundIndex = item->Property( propDef, brateProp );
+            if ( foundIndex != KErrNotFound && brateProp ) {
                 TRAPD( err, brateProp->SetUint16ValueL( value.toUInt() ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2131,8 +2134,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
             CMdEProperty* countProp = NULL;
-            item->Property( propDef, countProp );
-            if ( countProp ) {
+            int foundIndex = item->Property( propDef, countProp );
+            if ( foundIndex != KErrNotFound && countProp ) {
                 TRAPD( err, countProp->SetUint32ValueL( value.toULongLong() ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2147,8 +2150,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Audio::KSamplingFrequencyProperty );
             CMdEProperty* samplingProp = NULL;
-            item->Property( propDef, samplingProp );
-            if ( samplingProp ) {
+            int foundIndex = item->Property( propDef, samplingProp );
+            if ( foundIndex != KErrNotFound && samplingProp ) {
                 TRAPD( err, samplingProp->SetReal32ValueL( value.toDouble() ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2165,8 +2168,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KWidthProperty );
             CMdEProperty* widthProp = NULL;
-            item->Property( propDef, widthProp );
-            if ( widthProp ) {
+            int foundIndex = item->Property( propDef, widthProp );
+            if ( foundIndex != KErrNotFound && widthProp ) {
                 TRAPD( err, widthProp->SetUint16ValueL( value.toUInt() ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2183,8 +2186,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KHeightProperty );
             CMdEProperty* heightProp = NULL;
-            item->Property( propDef, heightProp );
-            if ( heightProp ) {
+            int foundIndex = item->Property( propDef, heightProp );
+            if ( foundIndex != KErrNotFound && heightProp ) {
                 TRAPD( err, heightProp->SetUint16ValueL( value.toUInt() ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2199,8 +2202,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KOrientationProperty );
             CMdEProperty* orientationProp = NULL;
-            item->Property( propDef, orientationProp );
-            if ( orientationProp ) {
+            int foundIndex = item->Property( propDef, orientationProp );
+            if ( foundIndex != KErrNotFound && orientationProp ) {
                 TRAPD( err, orientationProp->SetUint16ValueL( value.toUInt() ) );
                 return err == KErrNone ? true : false ;
             }
@@ -2216,8 +2219,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KDateTimeOriginalProperty );
             CMdEProperty* dateProp = NULL;
-            item->Property( propDef, dateProp );
-            if ( dateProp ) {
+            int foundIndex = item->Property( propDef, dateProp );
+            if ( foundIndex != KErrNotFound && dateProp ) {
                 TRAPD( err, dateProp->SetTimeValueL( QDateTimetosymbianTTime( value.toDateTime() ) ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2232,9 +2235,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KMakeProperty );
             CMdEProperty* makeProp = NULL;
-            item->Property( propDef, makeProp );
+            int foundIndex = item->Property( propDef, makeProp );
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( makeProp ) {
+            if ( foundIndex != KErrNotFound && makeProp ) {
                 TRAPD( err, makeProp->SetTextValueL( text ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2249,9 +2252,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KModelProperty );
             CMdEProperty* modelProp = NULL;
-            item->Property( propDef, modelProp );
+            int foundIndex = item->Property( propDef, modelProp );
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( modelProp ) {
+            if ( foundIndex != KErrNotFound && modelProp ) {
                 TRAPD( err, modelProp->SetTextValueL( text ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2266,8 +2269,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KExposureProgramProperty );
             CMdEProperty* exppProp = NULL;
-            item->Property( propDef, exppProp );
-            if ( exppProp ) {
+            int foundIndex = item->Property( propDef, exppProp );
+            if ( foundIndex != KErrNotFound && exppProp ) {
                 TRAPD( err, exppProp->SetUint16ValueL( value.toUInt() ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2282,8 +2285,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KExposureTimeProperty );
             CMdEProperty* exptProp = NULL;
-            item->Property( propDef, exptProp );
-            if ( exptProp ) {
+            int foundIndex = item->Property( propDef, exptProp );
+            if ( foundIndex != KErrNotFound && exptProp ) {
                 TRAPD( err, exptProp->SetReal32ValueL( value.toDouble() ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2298,8 +2301,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KFNumberProperty );
             CMdEProperty* fnumProp = NULL;
-            item->Property( propDef, fnumProp );
-            if ( fnumProp ) {
+            int foundIndex = item->Property( propDef, fnumProp );
+            if ( foundIndex != KErrNotFound && fnumProp ) {
                 TRAPD( err, fnumProp->SetReal32ValueL( value.toDouble() ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2314,8 +2317,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KFlashProperty );
             CMdEProperty* flashProp = NULL;
-            item->Property( propDef, flashProp );
-            if ( flashProp ) {
+            int foundIndex = item->Property( propDef, flashProp );
+            if ( foundIndex != KErrNotFound && flashProp ) {
                 TRAPD( err, flashProp->SetUint16ValueL( value.toUInt() ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2330,8 +2333,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KFocalLengthIn35mmFilmProperty );
             CMdEProperty* focalProp = NULL;
-            item->Property( propDef, focalProp );
-            if ( focalProp ) {
+            int foundIndex = item->Property( propDef, focalProp );
+            if ( foundIndex != KErrNotFound && focalProp ) {
                 TRAPD( err, focalProp->SetUint16ValueL( value.toUInt() ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2346,8 +2349,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KMeteringModeProperty );
             CMdEProperty* metProp = NULL;
-            item->Property( propDef, metProp );
-            if ( metProp ) {
+            int foundIndex = item->Property( propDef, metProp );
+            if ( foundIndex != KErrNotFound && metProp ) {
                 TRAPD( err, metProp->SetUint16ValueL( value.toUInt() ) );
                 return err == KErrNone ? true : false ;
             } else {
@@ -2355,15 +2358,15 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
                 return err == KErrNone ? true : false ;
             }
         }
-        case EWhiteBalance:
+    case EWhiteBalance:
         {
             if (item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KWhiteBalanceProperty );
             CMdEProperty* whiteProp = NULL;
-            item->Property( propDef, whiteProp );
-            if ( whiteProp ) {
+            int foundIndex = item->Property( propDef, whiteProp );
+            if ( foundIndex != KErrNotFound && whiteProp ) {
                 TRAPD( err, whiteProp->SetUint16ValueL( value.toUInt() ) );
                 return err == KErrNone ? true : false ;
             }
@@ -2372,16 +2375,16 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
                 return err == KErrNone ? true : false ;
             }
         }
-        case ELanguage:
+    case ELanguage:
         {
             if (item->Def().Name() != MdeConstants::Video::KVideoObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Video::KAudioLanguageProperty );
             CMdEProperty* langProp = NULL;
-            item->Property( propDef, langProp );
+            int foundIndex = item->Property( propDef, langProp );
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( langProp ) {
+            if ( foundIndex != KErrNotFound && langProp ) {
                 TRAPD( err, langProp->SetTextValueL( text ) );
                 return err == KErrNone ? true : false ;
             }
@@ -2390,15 +2393,15 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
                 return err == KErrNone ? true : false ;
             }
         }
-        case EFrameRate:
+    case EFrameRate:
         {
             if (item->Def().Name() != MdeConstants::Video::KVideoObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Video::KFramerateProperty );
             CMdEProperty* framerProp = NULL;
-            item->Property( propDef, framerProp );
-            if ( framerProp ) {
+            int foundIndex = item->Property( propDef, framerProp );
+            if ( foundIndex != KErrNotFound && framerProp ) {
                 TRAPD( err, framerProp->SetReal32ValueL( value.toDouble() ) );
                 return err == KErrNone ? true : false ;
             }
@@ -2407,15 +2410,15 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
                 return err == KErrNone ? true : false ;
             }
         }
-        case EResumePosition:
+    case EResumePosition:
         {
             if (item->Def().Name() != MdeConstants::Video::KVideoObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Video::KLastPlayPositionProperty );
             CMdEProperty* posProp = NULL;
-            item->Property( propDef, posProp );
-            if ( posProp ) {
+            int foundIndex = item->Property( propDef, posProp );
+            if ( foundIndex != KErrNotFound && posProp ) {
                 TRAPD( err, posProp->SetReal32ValueL( value.toDouble() ) );
                 return err == KErrNone ? true : false ;
             }
@@ -2433,9 +2436,6 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
 
 bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, const QVariant &value, int key )
 {
-    if (!item)
-        return false;
-
     switch( key )
     {
     case EUri:
@@ -3014,7 +3014,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
                 return err == KErrNone ? true : false ;
             }
         }
-        case EWhiteBalance:
+    case EWhiteBalance:
         {
             if (item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
@@ -3036,7 +3036,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
                 return err == KErrNone ? true : false ;
             }
         }
-        case EFrameRate:
+    case EFrameRate:
         {
             if (item->Def().Name() != MdeConstants::Video::KVideoObject) {
                 return false;
@@ -3058,7 +3058,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
                 return err == KErrNone ? true : false ;
             }
         }
-        case EResumePosition:
+    case EResumePosition:
         {
             if (item->Def().Name() != MdeConstants::Video::KVideoObject) {
                 return false;
