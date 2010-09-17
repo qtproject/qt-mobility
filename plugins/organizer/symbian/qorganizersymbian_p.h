@@ -245,6 +245,7 @@ public:
     QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, 
         const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders) const;
+    QOrganizerItemRequestQueue* requestQueue();
 #ifdef SYMBIAN_CALENDAR_V2
     QList<QOrganizerCollectionLocalId> collectionIds() const;
     int collectionCount() const;
