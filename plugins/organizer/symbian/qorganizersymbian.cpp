@@ -576,7 +576,7 @@ void QOrganizerItemSymbianEngine::itemIdsL(
     QList<QOrganizerItemLocalId> itemIds;
     int count = ids.Count();
     for (int i=0; i<count; i++) {
-        itemIds << QOrganizerItemLocalId(new (QOrganizerItemSymbianEngineLocalId(defaultCollectionLocalIdValue, ids[i])));
+        itemIds << QOrganizerItemLocalId(new QOrganizerItemSymbianEngineLocalId(defaultCollectionLocalIdValue, ids[i]));
     }
     CleanupStack::PopAndDestroy(&ids);
 
@@ -739,9 +739,9 @@ void QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& itemId,
         QOrganizerCollectionSymbianEngineLocalId* collectionIdPtr = static_cast<QOrganizerCollectionSymbianEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalCollectionId(collectionLocalId));
         if (collectionIdPtr != 0)
             localCollectionIdValue = collectionIdPtr->m_localCollectionId;
-        CCalEntry *parentEntry = findParentEntryLC(localCollectionIdValue, item, *globalUid);
+        CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, item, *globalUid);
         QOrganizerEventOccurrence *eventOccurrence = (QOrganizerEventOccurrence *)item;
-        eventOccurrence->setParentLocalId(QOrganizerLocalItemId(new QOrganizerItemSymbianEngineLocalId(parentEntry->LocalUidL())));
+        eventOccurrence->setParentLocalId(QOrganizerLocalItemId(new QOrganizerItemSymbianEngineLocalId(localCollectionIdValue, parentEntry->LocalUidL()))); // XXX TODO: FIXME: please double check this, not sure if this is the correct collection?
         CleanupStack::PopAndDestroy(parentEntry);
         CleanupStack::PopAndDestroy(globalUid);
     }
