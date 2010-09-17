@@ -889,8 +889,8 @@ int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
     return wid.screen(screen)->x11Info().depth();
 #else
 #endif
-    return QPixmap::defaultDepth();
 #endif
+    return QPixmap::defaultDepth();
 }
 
 
