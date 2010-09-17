@@ -60,7 +60,7 @@ public:
     virtual bool isLessThan(const QOrganizerCollectionEngineLocalId* other) const = 0;
 
     virtual uint engineLocalIdType() const = 0;
-    virtual QOrganizerCollectionEngineLocalId* clone() const = 0; // const?  does it return a ref?
+    virtual QOrganizerCollectionEngineLocalId* clone() const = 0;
 
 #ifndef QT_NO_DEBUG_STREAM
     // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
@@ -69,14 +69,14 @@ public:
 #ifndef QT_NO_DATASTREAM
     // NOTE: on platforms where Qt is built without data streams enabled, vtable will differ!
     virtual QDataStream& dataStreamOut(QDataStream& out) = 0;
-    virtual QDataStream& dataStreamIn(QDataStream& in) = 0; // might not exist; might be QCME::deserializeId() instead.
+    virtual QDataStream& dataStreamIn(QDataStream& in) = 0;
 #endif
     virtual uint hash() const = 0;
 };
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerCollectionEngineLocalId), Q_MOVABLE_TYPE); // XXX TODO: or is it a complex type?
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerCollectionEngineLocalId), Q_MOVABLE_TYPE);
 
 
 #endif

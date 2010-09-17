@@ -250,8 +250,7 @@ QDataStream& QOrganizerCollectionMemoryEngineLocalId::dataStreamOut(QDataStream&
 
 QDataStream& QOrganizerCollectionMemoryEngineLocalId::dataStreamIn(QDataStream& in)
 {
-    // XXX TODO: decide whether this is required.
-    return (in >> m_localCollectionId); // or whether we put this functionality in QCME.
+    return (in >> m_localCollectionId);
 }
 #endif
 

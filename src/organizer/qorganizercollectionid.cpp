@@ -118,16 +118,17 @@ QOrganizerCollectionLocalId::QOrganizerCollectionLocalId(const QOrganizerCollect
  */
 QOrganizerCollectionLocalId& QOrganizerCollectionLocalId::operator=(const QOrganizerCollectionLocalId& other)
 {
+    if (d == other.d)
+        return *this;
+
     // clean up our "old" engine id.
     if (d)
         delete d;
 
-    // default case: other.d is a null ptr.
-    d = 0;
-
-    // if it isn't, clone the "new" engine id.
     if (other.d)
         d = other.d->clone();
+    else
+        d = 0;
 
     return *this;
 }
@@ -189,49 +190,6 @@ bool QOrganizerCollectionLocalId::operator<(const QOrganizerCollectionLocalId& o
 bool QOrganizerCollectionLocalId::isNull() const
 {
     return (d == 0);
-}
-
-/*!
-  Streams this id out to the debug stream \a dbg
- */
-QDebug QOrganizerCollectionLocalId::debugStreamOut(QDebug dbg)
-{
-    if (d)
-        return d->debugStreamOut(dbg);
-    return dbg;
-}
-
-/*!
-  Streams this id out to the data stream \a out
- */
-QDataStream& QOrganizerCollectionLocalId::dataStreamOut(QDataStream& out)
-{
-    if (d)
-        return d->dataStreamOut(out);
-    return out;
-}
-
-/*!
-  Streams this id in from the data stream \a in
- */
-QDataStream& QOrganizerCollectionLocalId::dataStreamIn(QDataStream& in)
-{
-    if (d)
-        return d->dataStreamIn(in);
-    return in;
-}
-
-/*!
-  Returns the hash value for this id.  Note that this hash value
-  is only unique per manager (that is, you should not store a hash
-  of local id to item, where the items come from multiple managers,
-  since it is likely that collisions will occur).
- */
-uint QOrganizerCollectionLocalId::hash() const
-{
-    if (d)
-        return d->hash();
-    return 0;
 }
 
 /*!
