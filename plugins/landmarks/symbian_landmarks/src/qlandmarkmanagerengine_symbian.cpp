@@ -469,8 +469,8 @@ QStringList QLandmarkManagerEngineSymbian::categoryAttributeKeys(QLandmarkManage
     return LandmarkUtility::categoryAttributeKeys();
 }
 
-QStringList QLandmarkManagerEngineSymbian::serachableLandmarkAttributeKeys(QLandmarkManager::Error *error,
-    QString *errorString) const
+QStringList QLandmarkManagerEngineSymbian::serachableLandmarkAttributeKeys(
+    QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
