@@ -150,7 +150,7 @@ bool QOrganizerItemLocalId::operator==(const QOrganizerItemLocalId& other) const
 
     if (d && other.d) {
         // ensure they're of the same type (and therefore comparable)
-        if (d->engineLocalIdType() && other.d->engineLocalIdType()) {
+        if (d->engineLocalIdType() == other.d->engineLocalIdType()) {
             return d->isEqualTo(other.d);
         }
     }
@@ -164,7 +164,7 @@ bool QOrganizerItemLocalId::operator!=(const QOrganizerItemLocalId& other) const
 {
     if (d && other.d) {
         // ensure they're of the same type (and therefore comparable)
-        if (d->engineLocalIdType() && other.d->engineLocalIdType()) {
+        if (d->engineLocalIdType() == other.d->engineLocalIdType()) {
             return !(d->isEqualTo(other.d));
         }
     }
@@ -182,7 +182,7 @@ bool QOrganizerItemLocalId::operator<(const QOrganizerItemLocalId& other) const
 
     if (d && other.d) {
         // ensure they're of the same type (and therefore comparable)
-        if (d->engineLocalIdType() && other.d->engineLocalIdType()) {
+        if (d->engineLocalIdType() == other.d->engineLocalIdType()) {
             return d->isLessThan(other.d);
         }
     }

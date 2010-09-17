@@ -845,9 +845,13 @@ void tst_QOrganizerItemAsync::itemRemove()
     QVERIFY(!irr.cancel());
     QVERIFY(!irr.waitForFinished());
 
+    QList<QOrganizerItemLocalId> allIds(oim->itemIds());
+    QVERIFY(!allIds.isEmpty());
+    QOrganizerItemLocalId removableId(allIds.first());
+
     // specific contact set
-    irr.setItemId(QOrganizerItemLocalId()); // XXX TODO: Fixme with some specific id.
-    QVERIFY(irr.itemIds() == QList<QOrganizerItemLocalId>() << QOrganizerItemLocalId()); // XXX TODO: Fixme with some specific id.
+    irr.setItemId(removableId);
+    QVERIFY(irr.itemIds() == QList<QOrganizerItemLocalId>() << removableId);
 
     // specific contact removal via detail filter
     int originalCount = oim->itemIds().size();

@@ -42,6 +42,7 @@
 #include <QMetaType>
 
 #include "qtorganizer.h"
+#include "qorganizeritemenginelocalid.h"
 
 //TESTED_COMPONENT=src/organizer
 //TESTED_CLASS=
@@ -84,6 +85,48 @@ private slots:
     void sortObject(); // should perhaps be in a different test :)
     void sortTraits();
 };
+
+class BasicItemLocalId : public QOrganizerItemEngineLocalId
+{
+public:
+    BasicItemLocalId(uint id) : m_id(id) {}
+    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const {
+        return m_id == static_cast<const BasicItemLocalId*>(other)->m_id;
+    }
+    bool isLessThan(const QOrganizerItemEngineLocalId* other) const {
+        return m_id < static_cast<const BasicItemLocalId*>(other)->m_id;
+    }
+    uint engineLocalIdType() const {
+        return 0;
+    }
+    QOrganizerItemEngineLocalId* clone() const {
+        BasicItemLocalId* cloned = new BasicItemLocalId(m_id);
+        return cloned;
+    }
+    QDebug debugStreamOut(QDebug dbg) {
+        return dbg << m_id;
+    }
+    QDataStream& dataStreamOut(QDataStream& out) {
+        return out << static_cast<quint32>(m_id);
+    }
+    QDataStream& dataStreamIn(QDataStream& in) {
+        quint32 id;
+        in >> id;
+        m_id = id;
+        return in;
+    }
+    uint hash() const {
+        return m_id;
+    }
+
+private:
+    uint m_id;
+};
+
+QOrganizerItemLocalId makeId(uint id)
+{
+    return QOrganizerItemLocalId(new BasicItemLocalId(id));
+}
 
 tst_QOrganizerItemFilter::tst_QOrganizerItemFilter()
 {
@@ -815,7 +858,7 @@ void tst_QOrganizerItemFilter::idListFilter()
     QVERIFY(idf.ids().count() == 0);
 
     QList<QOrganizerItemLocalId> ids;
-    ids << 5 << 6 << 17;
+    ids << makeId(5) << makeId(6) << makeId(17);
 
     idf.setIds(ids);
     QVERIFY(idf.ids() == ids);
@@ -978,7 +1021,7 @@ void tst_QOrganizerItemFilter::canonicalizedFilter_data()
 
     {
         QOrganizerItemLocalIdFilter qclif;
-        qclif.setIds(QList<QOrganizerItemLocalId>() << 1 << 2);
+        qclif.setIds(QList<QOrganizerItemLocalId>() << makeId(1) << makeId(2));
         QTest::newRow("Normal local id filter")
                 << static_cast<QOrganizerItemFilter>(qclif)
                 << static_cast<QOrganizerItemFilter>(qclif);
@@ -1190,15 +1233,11 @@ void tst_QOrganizerItemFilter::datastream_data()
     }
 
     {
-        QOrganizerItemLocalIdFilter filter;
-        filter.setIds(QList<QOrganizerItemLocalId>() << 1 << 2 << 3);
-        QTest::newRow("localid") << (QOrganizerItemFilter)filter;
-    }
-
-    {
         QOrganizerItemUnionFilter filter;
         QTest::newRow("union") << (QOrganizerItemFilter)filter;
     }
+
+    // NOTE: LocalIdFilter streaming is not supported
 }
 
 void tst_QOrganizerItemFilter::traits()
