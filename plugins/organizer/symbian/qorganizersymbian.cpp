@@ -924,7 +924,7 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(
             User::Leave(KErrInvalidOccurrence);
 
         // Fetch the item (will return NULL if the localid is not found)
-        entry = entryViewL(collectionLocalIdL(*item))->FetchL(item->localId());
+        entry = entryViewL(collectionLocalIdL(*item))->FetchL(toTCalLocalUid(item->localId()));
         if (!entry)
             User::Leave(KErrInvalidOccurrence);
         return entry;
@@ -998,7 +998,7 @@ CCalEntry * QOrganizerItemSymbianEngine::findEntryL(
         // The item has a local id, check the item is from this manager
         if (manageruri == managerUri()) {
             // Fetch the item (will return NULL if the localid is not found)
-            entry = entryViewL(collectionId)->FetchL(localId);
+            entry = entryViewL(collectionId)->FetchL(toTCalLocalUid(localId));
             if (!entry)
                 User::Leave(KErrNotFound);
         } else {
@@ -1042,7 +1042,7 @@ CCalEntry* QOrganizerItemSymbianEngine::findParentEntryLC(
     QOrganizerItemInstanceOrigin origin = item->detail<QOrganizerItemInstanceOrigin>();
     if (!origin.parentLocalId().isNull()) {
         // Fetch the item (will return NULL if the localid is not found)
-        parent = entryViewL(collectionId)->FetchL(origin.parentLocalId()); // ownership transferred
+        parent = entryViewL(collectionId)->FetchL(toTCalLocalUid(origin.parentLocalId())); // ownership transferred
         if (!parent)
             User::Leave(KErrInvalidOccurrence);
         CleanupStack::PushL(parent);
@@ -1067,7 +1067,7 @@ CCalEntry* QOrganizerItemSymbianEngine::findParentEntryLC(
         // Guid is not consistent with parentEntry UID
         User::Leave(KErrInvalidOccurrence);
     } else if (!origin.parentLocalId().isNull()
-        && (origin.parentLocalId() != parent->LocalUidL())) {
+        && (toTCalLocalUid(origin.parentLocalId()) != parent->LocalUidL())) {
         // parentLocalId is not consistent with parentEntry localUID
         User::Leave(KErrInvalidOccurrence);
     }
@@ -1133,7 +1133,7 @@ void QOrganizerItemSymbianEngine::removeItemL(
     // There is a bug in symbian calendar API. It will not report any error
     // when removing a nonexisting entry. So we need to fetch the item to see
     // if it really exists before trying to delete it.
-    TCalLocalUid uid(organizeritemId);
+    TCalLocalUid uid = toTCalLocalUid(organizeritemId);
     CCalEntry *calEntry(0);
     QOrganizerCollectionLocalId collectionLocalId(0);
     foreach (const OrganizerSymbianCollection &collection, m_collections) {

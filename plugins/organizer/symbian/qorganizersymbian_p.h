@@ -137,7 +137,11 @@ public:
     QDataStream& dataStreamIn(QDataStream& in);
 #endif
     uint hash() const;
-
+    
+public:
+    quint32 calLocalUid() { return m_localItemId; }
+    quint32 calCollectionId() { return m_localCollectionId; }
+    
 private:
     quint32 m_localItemId; // the symbian backend requires quint32 for itemId + quint32 for collectionId
     quint32 m_localCollectionId;

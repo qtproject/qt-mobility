@@ -132,6 +132,12 @@ QOrganizerItemLocalId toItemLocalId(quint32 collectionId, quint32 itemId)
     return QOrganizerItemLocalId(new QOrganizerItemSymbianEngineLocalId(collectionId, itemId));
 }
 
+TCalLocalUid toTCalLocalUid(const QOrganizerItemLocalId& itemLocalId)
+{
+    // TODO: should we have a check for engineLocalIdType here?
+    return static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemLocalId))->calLocalUid();
+}
+
 #ifdef SYMBIAN_CALENDAR_V2
 
 void setCalInfoPropertyL(CCalCalendarInfo *calInfo, TCalenPropertyUid propertyUid, const QString &value)
