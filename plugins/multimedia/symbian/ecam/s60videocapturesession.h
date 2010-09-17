@@ -54,7 +54,6 @@
 #include <e32base.h>
 #include <VideoRecorder.h> // CVideoRecorderUtility(Observer)
 #ifdef S60_DEVVIDEO_RECORDING_SUPPORTED
-#include <mmf/devvideo/devvideobase.h>
 #include <mmf/devvideo/devvideorecord.h>
 #endif // S60_DEVVIDEO_RECORDING_SUPPORTED
 
@@ -103,6 +102,28 @@ public: // Enums
         EPaused
     };
 
+    // TODO: Defninition
+    enum AudioQualityDefinition
+    {
+        ENoAudioQuality = 0,
+        EOnlyAudioQuality,
+        EAudioQualityAndBitRate,
+        EAudioQualityAndSampleRate,
+    };
+
+    // TODO: Defninition
+    enum VideoQualityDefinition
+    {
+        ENoVideoQuality = 0,
+        EOnlyVideoQuality,
+        EVideoQualityAndResolution,
+        EVideoQualityAndFrameRate,
+        EVideoQualityAndBitRate,
+        EVideoQualityAndResolutionAndBitRate,
+        EVideoQualityAndResolutionAndFrameRate,
+        EVideoQualityAndFrameRateAndBitRate
+    };
+
 public: // Constructor & Destructor
 
     S60VideoCaptureSession(QObject *parent = 0);
@@ -149,44 +170,40 @@ public: // Methods
     QUrl outputLocation() const;
 
     // Resolution
-    QSize videoResolution() const;
     void setVideoResolution(const QSize &resolution);
-    QList<QSize> supportedVideoResolutions();
-    QList<QSize> supportedVideoResolutions(const QVideoEncoderSettings &settings);
+    QList<QSize> supportedVideoResolutions(bool &continuous);
+    QList<QSize> supportedVideoResolutions(const QVideoEncoderSettings &settings, bool &continuous);
 
     // Framerate
-    qreal framerate() const;
     void setFrameRate(const qreal rate);
-    QList<qreal> supportedVideoFrameRates();
-    QList<qreal> supportedVideoFrameRates(const QVideoEncoderSettings &settings);
+    QList<qreal> supportedVideoFrameRates(bool &continuous);
+    QList<qreal> supportedVideoFrameRates(const QVideoEncoderSettings &settings, bool &continuous);
 
-    // Video Bitrate
-    int bitrate();
+    // Other Video Settings
     void setBitrate(const int bitrate);
+    void setVideoEncodingMode(const QtMultimediaKit::EncodingMode mode);
 
     // Video Codecs
-    QString videoCaptureCodec() const;
     void setVideoCaptureCodec(const QString &codecName);
     QStringList supportedVideoCaptureCodecs();
-    bool isSupportedVideoCaptureCodec(const QString &codecName);
     QString videoCaptureCodecDescription(const QString &codecName);
 
     // Audio Codecs
-    QString audioCaptureCodec() const;
     void setAudioCaptureCodec(const QString &codecName);
     QStringList supportedAudioCaptureCodecs();
 
     // Video Encoder Settings
     void videoEncoderSettings(QVideoEncoderSettings &videoSettings) const;
-    void setVideoEncoderSettings(const QVideoEncoderSettings &videoSettings);
 
     // Audio Encoder Settings
     void audioEncoderSettings(QAudioEncoderSettings &audioSettings) const;
-    void setAudioEncoderSettings(const QAudioEncoderSettings &audioSettings);
 
     // Video Capture Quality
-    QtMultimediaKit::EncodingQuality videoCaptureQuality() const;
-    void setVideoCaptureQuality(const QtMultimediaKit::EncodingQuality quality);
+    void setVideoCaptureQuality(const QtMultimediaKit::EncodingQuality quality,
+                                const VideoQualityDefinition mode);
+    // Audio Capture Quality
+    void setAudioCaptureQuality(const QtMultimediaKit::EncodingQuality quality,
+                                const AudioQualityDefinition mode);
 
     // Video Containers
     QString videoContainer() const;
@@ -195,8 +212,12 @@ public: // Methods
     bool isSupportedVideoContainer(const QString &containerName);
     QString videoContainerDescription(const QString &containerName);
 
-    // Audio SampleRate
-    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous);
+    // Audio Settings
+    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings, bool &continuous);
+    void setAudioSampleRate(const int sampleRate);
+    void setAudioBitRate(const int bitRate);
+    void setAudioChannelCount(const int channelCount);
+    void setAudioEncodingMode(const QtMultimediaKit::EncodingMode mode);
 
     // Video Options
     QSize pixelAspectRatio();
@@ -210,26 +231,32 @@ private: // Internal
 
     QCamera::Error fromSymbianErrorToQtMultimediaError(int aError);
 
-    bool queryCurrentCameraInfo();
     void initializeVideoCaptureSettings();
     void doInitializeVideoRecorderL();
     void commitVideoEncoderSettings();
     void resetSession();
 
-    void doSetVideoFrameRateFixed(bool fixed);
-    void doSetBitrate(const int &bitrate);
+    void doSetCodecs(const QString &aCodec, const QString &vCodec);
     void doSetVideoResolution(const QSize &resolution);
     void doSetFrameRate(qreal rate);
+    void doSetBitrate(const int &bitrate);
 
-    QMap<QString, int> formatMap();
-    QMap<QString, int> formatDescMap();
+//    QMap<QString, int> formatMap();
+//    QMap<QString, int> formatDescMap();
     void updateVideoCaptureContainers();
-    void updateVideoCaptureContainersL();
+    void doUpdateVideoCaptureContainersL();
+    void selectController(const QString &format,
+                          TUid &controllerUid,
+                          TUid &formatUid);
     void doPopulateVideoCodecsDataL();
     void doPopulateVideoCodecsL();
-    void doPopulateAudioCodecsL();
-
-
+#ifndef S60_DEVVIDEO_RECORDING_SUPPORTED
+	void doPopulateMaxVideoParameters();
+#endif // S60_DEVVIDEO_RECORDING_SUPPORTED
+	void doPopulateAudioCodecsL();
+	QSize maximumResolutionForMimeType(const QString &mimeType) const;
+	qreal maximumFrameRateForMimeType(const QString &mimeType) const;
+	int maximumBitRateForMimeType(const QString &mimeType) const;
 
 Q_SIGNALS: // Notifications
 
@@ -239,37 +266,70 @@ Q_SIGNALS: // Notifications
 
 private: // Structs
 
-    struct VideoControllerData {
-        int controllerUid;
-        int formatUid;
-        QString formatDescription;
+    struct VideoFormatData {
+        QString     description;
+        QStringList supportedMimeTypes;
     };
 
-    struct TSupportedFrameRatePictureSize {
+    /*
+     * This structure is used to define supported resolutions and framerate
+     * (depending on each other) for each supported encodec mime type (encoder
+     * profile and level)
+     */
+    struct SupportedFrameRatePictureSize {
+        SupportedFrameRatePictureSize() {}
+        SupportedFrameRatePictureSize(qreal rate, QSize size):
+            frameRate(rate),
+            frameSize(size) {}
         qreal frameRate;
         QSize frameSize;
         };
+
+    /*
+     * This structure defines supported resolution/framerate pairs and bitrate
+     * for the codec mime type (certain codec profile and level). It also
+     * holds the controller Uid (default = 0).
+     */
+    struct MaxResolutionRatesAndTypes {
+        MaxResolutionRatesAndTypes() {}
+        MaxResolutionRatesAndTypes(QSize size, qreal fRate, int bRate):
+            bitRate(bRate)
+        {
+            frameRatePictureSizePair.append(SupportedFrameRatePictureSize(fRate,size));
+        }
+        QList<SupportedFrameRatePictureSize> frameRatePictureSizePair;
+        QStringList                          mimeTypes;
+        int                                  bitRate;
+    };
 
 private: // Data
 
     CCameraEngine               *m_cameraEngine;
     CVideoRecorderUtility       *m_videoRecorder;
-    int                         m_videoQuality;
+
     mutable int                 m_error;
+    TVideoCaptureState          m_captureState;
+
     QUrl                        m_sink;
-    mutable TCameraInfo         m_info;
+    QUrl                        m_requestedSink;
     QVideoEncoderSettings       m_videoSettings;
     QAudioEncoderSettings       m_audioSettings;
-    TVideoCaptureState          m_captureState;
+    int                         m_videoQuality;
     QString                     m_container;
-    QHash<QString,VideoControllerData> m_videoControllerMap;
-    QHash<QString,QList<TSupportedFrameRatePictureSize> >  m_videoCodecData;
+    QString                     m_requestedContainer;
+    bool                        m_muted;
+    int                         m_maxClipSize;
+
+    mutable TCameraInfo         m_info;
     QStringList                 m_videoCodeclist;
     QHash<QString, TFourCC>     m_audioCodeclist;
-    bool                        m_muted;
-    bool                        m_startAfterPrepareComplete;
+    QHash<TInt, QHash<TInt,VideoFormatData> > m_videoControllerMap;
+    QList<MaxResolutionRatesAndTypes> m_videoParametersForEncoder;
+
+    bool                        m_openWhenInitialized;
     bool                        m_prepareAfterOpenComplete;
-    int                         m_maxClipSize;
+    bool                        m_startAfterPrepareComplete;
+    bool                        m_uncommittedSettings;
 };
 
 #endif // S60VIDEOCAPTURESESSION_H

@@ -825,7 +825,6 @@ bool LandmarkUtility::validLocalId(QString localId)
     bool result = false;
 
     if (!localId.isEmpty()) {
-        //qDebug() << "local id = " << localId;
         for (int i = 0; i < localId.size(); ++i) {
             QChar ch = localId.operator [](i);
             if (!ch.isNumber()) {
@@ -931,6 +930,28 @@ QStringList LandmarkUtility::categoryAttributeKeys()
     QStringList commonKeys = QStringList()
                              << "name"
                              << "iconUrl";
+    return commonKeys;
+}
+
+/*
+ * list of searchable landmark attribute keys
+ * 
+ */
+QStringList LandmarkUtility::serachableLandmarkAttributeKeys()
+{
+    QStringList commonKeys = QStringList()
+                             << "name"
+                             << "description"
+                             << "phoneNumber"
+                             << "url"
+                             << "country"
+                             << "countryCode"
+                             << "state"
+                             << "county"
+                             << "city"
+                             << "district"
+                             << "street"
+                             << "postCode";
     return commonKeys;
 }
 

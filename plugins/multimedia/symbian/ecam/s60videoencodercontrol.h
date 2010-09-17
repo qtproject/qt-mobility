@@ -84,24 +84,26 @@ public: // QVideoEncoderControl
 
 private: // Internal
 
-    QString videoCodec() const;
-    void setVideoCodec(const QString &codecName);
+//    QString videoCodec() const;
+//    void setVideoCodec(const QString &codecName);
 
-    int bitRate() const;
-    void setBitRate(int);
+//    int bitRate() const;
+//    void setBitRate(int);
 
-    QtMultimediaKit::EncodingQuality quality() const;
-    void setQuality(QtMultimediaKit::EncodingQuality);
-
+//    QtMultimediaKit::EncodingQuality quality() const;
+//    void setQuality(QtMultimediaKit::EncodingQuality);
+/*
     qreal minimumFrameRate() const;
     qreal maximumFrameRate() const;
-    qreal frameRate() const;
-    void setFrameRate(qreal frameRate);
-
+*/
+//    qreal frameRate() const;
+//    void setFrameRate(qreal frameRate);
+/*
     QSize minimumResolution() const;
     QSize maximumResolution() const;
-    QSize videoResolution() const;
-    void setResolution(const QSize resolution);
+*/
+//    QSize videoResolution() const;
+//    void setResolution(const QSize resolution);
 
 private: // Data
 
