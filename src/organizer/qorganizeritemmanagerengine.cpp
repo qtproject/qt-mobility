@@ -1707,22 +1707,6 @@ void QOrganizerItemManagerEngine::setItemCollectionId(QOrganizerItem* item, cons
 }
 
 /*!
-  Creates a new local item id from an engine-local item id.
-  Takes ownership of the \a engineId pointer.
-  Do not delete \a engineId after calling this function, or
-  undefined behaviour will occur.  Do not call this function
-  multiple times with the same pointer, or undefined behavior
-  will occur.
-
-  XXX TODO: is this an argument for using a shared data pointer in QOILId?
- */
-QOrganizerItemLocalId QOrganizerItemManagerEngine::createLocalItemId(QOrganizerItemEngineLocalId* engineId)
-{
-    return (QOrganizerItemLocalId(engineId));
-}
-
-
-/*!
   Adds the given \a organizeritem to the database if \a organizeritem has a
   default-constructed id, or an id with the manager URI set to the URI of
   this manager and a local id of zero, otherwise updates the organizer item in
@@ -2454,6 +2438,24 @@ QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::sortItems(const QList<
         }
     }
     return sortedIds;
+}
+
+/*!
+  Returns the engine local id from the given \a localId.
+  The caller does not take ownership of the pointer, and should not delete returned id or undefined behavior may occur.
+ */
+QOrganizerItemEngineLocalId* QOrganizerItemManagerEngine::engineLocalId(const QOrganizerItemLocalId& localId)
+{
+    return localId.d;
+}
+
+/*!
+  Returns the engine local id from the given \a localId.
+  The caller does not take ownership of the pointer, and should not delete returned id or undefined behavior may occur.
+ */
+QOrganizerCollectionEngineLocalId* QOrganizerItemManagerEngine::engineLocalId(const QOrganizerCollectionLocalId& localId)
+{
+    return localId.d;
 }
 
 /*!

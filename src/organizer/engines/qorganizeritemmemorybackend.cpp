@@ -891,7 +891,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, cons
         QOrganizerItemMemoryEngineLocalId* newMemoryEngineLocalId = new QOrganizerItemMemoryEngineLocalId;
         newMemoryEngineLocalId->m_localCollectionId = 1; // XXX TODO fix collection support.  for now, we have only one collection.
         newMemoryEngineLocalId->m_localItemId = ++d->m_nextOrganizerItemId;
-        newId.setLocalId(QOrganizerItemManagerEngine::createLocalItemId(newMemoryEngineLocalId));
+        newId.setLocalId(QOrganizerItemLocalId(newMemoryEngineLocalId));
         theOrganizerItem->setId(newId);
         // note: do NOT delete the QOrganizerItemMemoryEngineLocalId -- the QOrganizerItemLocalId ctor takes ownership of it.
 
