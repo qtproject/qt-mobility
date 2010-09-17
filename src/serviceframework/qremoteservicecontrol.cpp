@@ -97,6 +97,11 @@ void QRemoteServiceControl::setQuitOnLastInstanceClosed(bool quit)
   d->setQuitOnLastInstanceClosed(quit);
 }
 
+QRemoteServiceControl::securityFilter QRemoteServiceControl::setSecurityFilter(QRemoteServiceControl::securityFilter filter)
+{
+  return d->setSecurityFilter(filter);
+}
+
 #include "moc_qremoteservicecontrol.cpp"
 
 QTM_END_NAMESPACE

@@ -15,8 +15,6 @@ contains(mobility_modules,serviceframework) {
     
     contains(QT_CONFIG, declarative) {
         SUBDIRS += declarative-sfw-dialer declarative-sfw-notes
-
-        !symbian:sources.files += declarative-sfw-dialer/declarative-sfw-dialer
     }
 }
 
