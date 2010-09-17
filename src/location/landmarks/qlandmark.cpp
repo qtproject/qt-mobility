@@ -434,7 +434,7 @@ void QLandmark::setIconUrl(const QUrl &url)
 }
 
 /*!
-    Returns the coverage radius of the landmark.
+    Returns the coverage radius of the landmark.  The unit of the radius is meters.
 
     The coverage radius is relevant for large landmarks
     such as cities.  Note that landmark searches over a given area
@@ -447,7 +447,8 @@ double QLandmark::radius() const
 }
 
 /*!
-    Sets the coverage \a radius of the landmark.
+    Sets the coverage \a radius of the landmark.  The unit of the \a radius
+    is meters.
 */
 void QLandmark::setRadius(double radius)
 {
