@@ -259,7 +259,7 @@ void QOrganizerItemManagerData::loadFactories()
 }
 
 /* Caller takes ownership of the id */
-QOrganizerItemEngineLocalId* QOrganizerItemManagerData::createEngineLocalId(const QString& uri)
+QOrganizerItemEngineLocalId* QOrganizerItemManagerData::createEngineItemLocalId(const QString& uri)
 {
     QString managerName;
     QOrganizerItemManager::parseUri(uri, &managerName, NULL);
@@ -269,7 +269,7 @@ QOrganizerItemEngineLocalId* QOrganizerItemManagerData::createEngineLocalId(cons
 
     loadFactories();
     QOrganizerItemManagerEngineFactory *engineFactory = m_engines.value(managerName);
-    return engineFactory ? engineFactory->createEngineLocalId() : NULL;
+    return engineFactory ? engineFactory->createEngineItemLocalId() : NULL;
 }
 
 /* Caller takes ownership of the id */
@@ -283,7 +283,7 @@ QOrganizerCollectionEngineLocalId* QOrganizerItemManagerData::createEngineCollec
 
     loadFactories();
     QOrganizerItemManagerEngineFactory *engineFactory = m_engines.value(managerName);
-    return engineFactory ? engineFactory->createCollectionEngineLocalId() : NULL;
+    return engineFactory ? engineFactory->createEngineCollectionLocalId() : NULL;
 }
 
 // trampoline for private classes

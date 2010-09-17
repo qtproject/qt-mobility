@@ -326,7 +326,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id)
         in >> managerUri;
         quint8 localIdMarker = static_cast<quint8>(false);
         in >> localIdMarker;
-        QOrganizerItemLocalId localId(QOrganizerItemManagerData::createEngineLocalId(managerUri));
+        QOrganizerItemLocalId localId(QOrganizerItemManagerData::createEngineItemLocalId(managerUri));
         if (localId.d) {
             id.setManagerUri(managerUri);
             if (localIdMarker == static_cast<quint8>(true)) {
