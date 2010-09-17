@@ -1562,3 +1562,8 @@ bool QOrganizerItemSymbianEngine::transformError(TInt symbianError, QOrganizerIt
     }
     return *qtError == QOrganizerItemManager::NoError;
 }
+
+QOrganizerItemRequestQueue* QOrganizerItemSymbianEngine::requestQueue()
+{
+    return m_requestServiceProviderQueue;
+}
