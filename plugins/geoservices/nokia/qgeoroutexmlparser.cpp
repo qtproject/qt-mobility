@@ -202,31 +202,41 @@ bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
 {
     QList<QGeoRouteSegment> routesegments;
 
+    //Add the first instruction as starting point
+    if(instructions.count()>0) {
+        QGeoRouteSegment segment;
+        segment.setInstruction(instructions[0].instruction);
+        QList<QGeoCoordinate> path; // use instruction position as one point segment path
+        path.append(instructions[0].instruction.position());
+        segment.setPath(path);
+        routesegments.append(segment);
+        instructions.removeAt(0);
+    }
+
     for (int i = 0; i < segments.count(); ++i) {
-        for (int j = instructions.count() - 1; j >= 0; --j) {
-            if (instructions[j].id == segments[i].instructionId || instructions[j].toId == segments[i].id) {
-                if (!segments[i].segment.instruction().instructionText().isEmpty()) {
-                    if (segments[i].segment.instruction() != instructions[j].instruction) {
-                        QGeoRouteSegment segment;
-                        segment.setInstruction(instructions[j].instruction);
-                        routesegments.append(segment);
-                        instructions.removeAt(j);
-                    }
-                } else {
+        if(segments[i].instructionId.isEmpty()) {
+            routesegments.append(segments[i].segment);
+        } else {
+            for (int j = 0; j < instructions.count(); ++j) {
+                if (instructions[j].id == segments[i].instructionId
+                    && segments[i].segment.instruction().instructionText().isEmpty()) {
                     segments[i].segment.setInstruction(instructions[j].instruction);
+                    routesegments.append(segments[i].segment);
                     instructions.removeAt(j);
+                    break;
+                } else {
+                    //Add orphan instruction into new empty segment
+                    QGeoRouteSegment segment;
+                    segment.setInstruction(instructions[j].instruction);
+                    QList<QGeoCoordinate> path; // use instruction position as one point segment path
+                    path.append(instructions[j].instruction.position());
+                    segment.setPath(path);
+                    routesegments.append(segment);
+                    instructions.removeAt(j);
+                    --j;
                 }
             }
         }
-        routesegments.append(segments[i].segment);
-    }
-
-    for (int i = 0;i < instructions.count();++i) {
-        //Add orphan instruction into new empty segment
-        QGeoRouteSegment segment;
-        segment.setInstruction(instructions[i].instruction);
-        routesegments.append(segment);
-        instructions.removeAt(i);
     }
     route->setRouteSegments(routesegments);
 
