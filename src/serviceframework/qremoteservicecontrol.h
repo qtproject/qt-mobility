@@ -65,12 +65,22 @@ public:
     bool quitOnLastInstanceClosed() const;
     void setQuitOnLastInstanceClosed(const bool quit);
 
+    typedef bool (*securityFilter)(const void *message);
+    securityFilter setSecurityFilter(securityFilter filter);
+
 Q_SIGNALS:
     void lastInstanceClosed();
 
 
 private:
     QRemoteServiceControlPrivate* d;
+};
+
+struct QRemoteServiceControlLocalSocketCred {
+    int fd;
+    int pid;
+    int uid;
+    int gid;
 };
 
 QTM_END_NAMESPACE

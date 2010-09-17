@@ -45,6 +45,7 @@
 #include <calentryview.h>
 #include "organizersymbianutils.h"
 #include "qorganizeritemchangeset.h"
+#include "qorganizeritemmanagerengine.h"
 
 using namespace OrganizerSymbianUtils;
 
@@ -53,7 +54,6 @@ OrganizerSymbianCollectionPrivate::OrganizerSymbianCollectionPrivate()
     m_engine(0),
     m_calSession(0),
     m_calEntryView(0),
-    m_localId(0),
     m_error(0)
 {
     m_activeSchedulerWait = new CActiveSchedulerWait();
@@ -61,9 +61,6 @@ OrganizerSymbianCollectionPrivate::OrganizerSymbianCollectionPrivate()
 
 OrganizerSymbianCollectionPrivate::~OrganizerSymbianCollectionPrivate()
 {
-    //if (m_localId)
-        //qDebug() << "collection close" << m_localId << m_fileName;
-
     if (m_calSession)
         m_calSession->StopChangeNotification();
     delete m_calEntryView;
@@ -147,6 +144,7 @@ OrganizerSymbianCollection::OrganizerSymbianCollection(QOrganizerItemManagerEngi
 {
     d = new OrganizerSymbianCollectionPrivate();
     d->m_engine = engine;
+    d->m_id.setManagerUri(engine->managerUri());
 }
 
 OrganizerSymbianCollection::OrganizerSymbianCollection(const OrganizerSymbianCollection &other)
@@ -207,12 +205,12 @@ void OrganizerSymbianCollection::openL(const TDesC &fileName)
     
     // Get collection id
 #ifdef SYMBIAN_CALENDAR_V2
-    d->m_localId = d->m_calSession->CollectionIdL();
+    d->m_id.setLocalId(d->m_calSession->CollectionIdL());
 #else
-    // TODO: If multiple calendars are to be supported on without native support
+    // TODO: If multiple calendars are to be supported without native support
     // we need to generate a real id here. Currently there will only be one
-    // collection so does not matter if its just a magic number.
-    d->m_localId = 1;
+    // collection so it does not matter if its just a magic number.
+    d->m_id.setLocalId(1);
 #endif
     
     // Start listening to calendar events
@@ -224,8 +222,6 @@ void OrganizerSymbianCollection::openL(const TDesC &fileName)
     CCalChangeNotificationFilter *filter = CCalChangeNotificationFilter::NewL(MCalChangeCallBack2::EChangeEntryAll, true, calTimeRange);
     d->m_calSession->StartChangeNotification(*d, *filter);
     delete filter;
-    
-    //qDebug() << "collection open" << d->m_localId << d->m_fileName;
 }
 
 void OrganizerSymbianCollection::createEntryViewL()
@@ -236,9 +232,14 @@ void OrganizerSymbianCollection::createEntryViewL()
     User::LeaveIfError(d->m_error);
 }
 
+QOrganizerCollectionId OrganizerSymbianCollection::id() const
+{
+    return d->m_id;
+}
+
 QOrganizerCollectionLocalId OrganizerSymbianCollection::localId() const 
 { 
-    return d->m_localId; 
+    return d->m_id.localId(); 
 }
 
 CCalSession *OrganizerSymbianCollection::calSession() const
@@ -258,7 +259,7 @@ QString OrganizerSymbianCollection::fileName() const
 
 bool OrganizerSymbianCollection::isValid() const
 {
-    return (d->m_localId > 0);
+    return (d->m_id.localId() > 0);
 }
 
 bool OrganizerSymbianCollection::isMarkedForDeletionL() const
@@ -274,4 +275,28 @@ bool OrganizerSymbianCollection::isMarkedForDeletionL() const
 #else
     return false;
 #endif
+}
+
+QOrganizerCollection OrganizerSymbianCollection::toQOrganizerCollectionL() const
+{
+    // Nothing to convert?
+    if (!d->m_engine && !d->m_calSession)
+        User::Leave(KErrNotReady);
+
+    QOrganizerCollection collection;
+
+#ifdef SYMBIAN_CALENDAR_V2
+    // Read metadata
+    CCalCalendarInfo* calInfo = d->m_calSession->CalendarInfoL();
+    CleanupStack::PushL(calInfo);
+    collection.setMetaData(toMetaDataL(*calInfo));       
+    CleanupStack::PopAndDestroy(calInfo);
+#else
+    collection.setMetaData("FileName", d->m_fileName);
+#endif
+
+    // Set id
+    collection.setId(this->id());
+    
+    return collection;
 }
