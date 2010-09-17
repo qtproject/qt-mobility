@@ -188,7 +188,7 @@ void OrganizerItemTransform::toItemPostSaveL(const CCalEntry &entry, QOrganizerI
     // Update local id
     QOrganizerItemId itemId;
     TCalLocalUid localUid = entry.LocalUidL();
-    itemId.setLocalId(QOrganizerItemLocalId(new QOrganizerItemSymbianEngineLocalId(localUid)));
+    itemId.setLocalId(QOrganizerItemLocalId(new QOrganizerItemSymbianEngineLocalId(0, localUid))); // XXX TODO: FIXME: when multicalendar is implemented.
     itemId.setManagerUri(managerUri);
     item->setId(itemId);
 }
