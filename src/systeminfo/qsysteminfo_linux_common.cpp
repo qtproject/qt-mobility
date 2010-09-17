@@ -1306,12 +1306,31 @@ QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject
  #if !defined(QT_NO_DBUS)
     setupBluetooth();
 #endif
+    initBatteryStatus();
 }
 
 QSystemDeviceInfoLinuxCommonPrivate::~QSystemDeviceInfoLinuxCommonPrivate()
 {
 }
 
+void QSystemDeviceInfoLinuxCommonPrivate::initBatteryStatus()
+{
+    const int level = batteryLevel();
+    QSystemDeviceInfo::BatteryStatus stat = QSystemDeviceInfo::NoBatteryLevel;
+
+    if(level < 4) {
+        stat = QSystemDeviceInfo::BatteryCritical;
+    } else if(level < 11) {
+         stat = QSystemDeviceInfo::BatteryVeryLow;
+    } else if(level < 41) {
+         stat =  QSystemDeviceInfo::BatteryLow;
+    } else if(level > 40) {
+         stat = QSystemDeviceInfo::BatteryNormal;
+    }
+    if(currentBatStatus != stat) {
+        currentBatStatus = stat;
+    }
+}
 
 void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
 {
@@ -1382,24 +1401,28 @@ void QSystemDeviceInfoLinuxCommonPrivate::halChanged(int,QVariantList map)
        if(map.at(i).toString() == "battery.charge_level.percentage") {
             const int level = batteryLevel();
             emit batteryLevelChanged(level);
+            QSystemDeviceInfo::BatteryStatus stat = QSystemDeviceInfo::NoBatteryLevel;
+
             if(level < 4) {
-                emit batteryStatusChanged(QSystemDeviceInfo::BatteryCritical);
+                stat = QSystemDeviceInfo::BatteryCritical;
             } else if(level < 11) {
-                emit batteryStatusChanged(QSystemDeviceInfo::BatteryVeryLow);
+                 stat = QSystemDeviceInfo::BatteryVeryLow;
             } else if(level < 41) {
-                emit batteryStatusChanged(QSystemDeviceInfo::BatteryLow);
+                 stat =  QSystemDeviceInfo::BatteryLow;
             } else if(level > 40) {
-                emit batteryStatusChanged(QSystemDeviceInfo::BatteryNormal);
+                 stat = QSystemDeviceInfo::BatteryNormal;
             }
-            else {
-                emit batteryStatusChanged(QSystemDeviceInfo::NoBatteryLevel);
+            if(currentBatStatus != stat) {
+                currentBatStatus = stat;
+                Q_EMIT batteryStatusChanged(stat);
             }
         }
         if((map.at(i).toString() == "ac_adapter.present")
         || (map.at(i).toString() == "battery.rechargeable.is_charging")) {
             QSystemDeviceInfo::PowerState state = currentPowerState();
             emit powerStateChanged(state);
-       }} //end map
+       }
+    } //end map
 }
 #endif
 
