@@ -82,18 +82,12 @@ void QDeclarativeGalleryItem::componentComplete()
 
 void QDeclarativeGalleryItem::_q_statusChanged()
 {
-    Status status = m_status;
     QString message = m_request.errorString();
+    qSwap(message, m_errorMessage);
 
     m_status = Status(m_request.status());
 
-    qSwap(message, m_errorMessage);
-
-    if (m_status != status) {
-        m_status = status;
-
-        emit statusChanged();
-    }
+    emit statusChanged();
 
     if (message != m_errorMessage)
         emit errorMessageChanged();

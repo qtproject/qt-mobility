@@ -51,13 +51,15 @@
 
 #include <qdeclarativedocumentgallery.h>
 #include <qdeclarativegalleryfilter.h>
+#include <qdeclarativegalleryquerymodel.h>
 
 #include <QtTest/QtTest>
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QGalleryFilter);
-Q_DECLARE_METATYPE(QGalleryQueryRequest::Scope);
+Q_DECLARE_METATYPE(QGalleryFilter)
+Q_DECLARE_METATYPE(QGalleryQueryRequest::Scope)
+Q_DECLARE_METATYPE(QModelIndex)
 
 class QtTestResultSet : public QGalleryResultSet
 {
@@ -109,7 +111,8 @@ public:
     QGalleryProperty::Attributes propertyAttributes(int key) const {
         return m_propertyAttributes.value(m_propertyNames.value(key)); }
 
-    QVariant::Type propertyType(int) const { return QVariant::Invalid; }
+    QVariant::Type propertyType(int key) const {
+        return key >= 0 && key < m_propertyNames.count() ? QVariant::String : QVariant::Invalid; }
 
     int itemCount() const { return m_rows.count(); }
 
@@ -127,11 +130,11 @@ public:
     QString itemType() const { return m_rows.value(m_currentIndex).itemType; }
 
     QVariant metaData(int key) const {
-        return m_rows.value(m_currentIndex).metaData.value(m_propertyNames.at(key)); }
+        return m_rows.value(m_currentIndex).metaData.value(m_propertyNames.value(key)); }
 
     bool setMetaData(int key, const QVariant &value)
     {
-        if (isValid() && key >= 0) {
+        if (isValid() && key >= 0 && key < m_propertyNames.count()) {
             const QString propertyName = m_propertyNames.at(key);
 
             if (m_propertyAttributes.value(propertyName) & QGalleryProperty::CanWrite) {
@@ -165,9 +168,10 @@ public:
 
     using QGalleryResultSet::metaDataChanged;
     using QGalleryResultSet::itemsMoved;
+    using QGalleryResultSet::progressChanged;
 
 private:
-    QStringList m_propertyNames;
+    const QStringList m_propertyNames;
     const QHash<QString, QGalleryProperty::Attributes> m_propertyAttributes;
     QVector<Row> m_rows;
     int m_currentIndex;
@@ -209,6 +213,8 @@ public:
         m_rows.append(QtTestResultSet::Row(itemId, itemUrl, rootType, metaData));
     }
 
+    void clearRows() { m_rows.clear(); }
+
     QGalleryQueryRequest *request() const { return m_request.data(); }
     QtTestResultSet *response() const { return m_response.data(); }
 
@@ -240,6 +246,7 @@ class tst_QDeclarativeDocumentGalleryModel : public QObject
     Q_OBJECT
 public Q_SLOTS:
     void initTestCase();
+    void cleanup();
 
 private Q_SLOTS:
     void rootType_data();
@@ -260,8 +267,22 @@ private Q_SLOTS:
     void limit();
     void filter_data();
     void filter();
+    void progress_data();
+    void progress();
+    void roleNames();
+    void indexes();
+    void data_data();
+    void data();
+    void property_data();
+    void property();
+    void itemsInserted();
+    void itemsRemoved();
+    void itemsMoved();
+    void metaDataChanged();
 
 private:
+    void populateGallery();
+
     QtTestGallery gallery;
     QDeclarativeEngine engine;
 };
@@ -270,9 +291,50 @@ void tst_QDeclarativeDocumentGalleryModel::initTestCase()
 {
     qRegisterMetaType<QGalleryFilter>();
     qRegisterMetaType<QGalleryQueryRequest::Scope>();
+    qRegisterMetaType<QModelIndex>();
+
+    QHash<QString, QGalleryProperty::Attributes> propertyAttributes;
+    propertyAttributes.insert(QLatin1String("title"), QGalleryProperty::CanRead
+            | QGalleryProperty::CanWrite
+            | QGalleryProperty::CanFilter
+            | QGalleryProperty::CanSort);
+    propertyAttributes.insert(QLatin1String("fileName"), QGalleryProperty::CanRead
+            | QGalleryProperty::CanFilter
+            | QGalleryProperty::CanSort);
+    propertyAttributes.insert(QLatin1String("keywords"), QGalleryProperty::CanRead
+            | QGalleryProperty::CanWrite
+            | QGalleryProperty::CanFilter);
+    gallery.setPropertyAttributes(propertyAttributes);
 
     engine.rootContext()->setContextProperty(QLatin1String("qt_testGallery"), &gallery);
 }
+
+void tst_QDeclarativeDocumentGalleryModel::cleanup()
+{
+    gallery.clearRows();
+}
+
+void tst_QDeclarativeDocumentGalleryModel::populateGallery()
+{
+    QHash<QString, QVariant> metaData;
+
+    metaData.insert(QLatin1String("fileName"), QLatin1String("interlude.mp3"));
+    metaData.insert(QLatin1String("title"), QLatin1String("Interlude"));
+    gallery.addRow(
+            3,
+            QUrl(QLatin1String("file:///music/interlude.mp3")),
+            QLatin1String("Audio"),
+            metaData);
+
+    metaData.insert(QLatin1String("fileName"), QLatin1String("beep.wav"));
+    metaData.remove(QLatin1String("title"));
+    gallery.addRow(
+            45,
+            QUrl(QLatin1String("file:///sounds/beep.wav")),
+            QLatin1String("Audio"),
+            metaData);
+}
+
 
 void tst_QDeclarativeDocumentGalleryModel::rootType_data()
 {
@@ -1194,6 +1256,619 @@ void tst_QDeclarativeDocumentGalleryModel::filter()
     QVERIFY(gallery.response());
 
     QCOMPARE(gallery.request()->filter(), filter);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::progress_data()
+{
+    QTest::addColumn<int>("currentProgress");
+    QTest::addColumn<int>("maximumProgress");
+    QTest::addColumn<qreal>("normalizedProgress");
+
+    QTest::newRow("25%")
+            << 25
+            << 100
+            << qreal(0.25);
+
+    QTest::newRow("50%")
+            << 3
+            << 6
+            << qreal(0.5);
+
+    QTest::newRow("75%")
+            << 60
+            << 80
+            << qreal(0.75);
+
+    QTest::newRow("100%")
+            << 32
+            << 32
+            << qreal(1.0);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::progress()
+{
+    QFETCH(int, currentProgress);
+    QFETCH(int, maximumProgress);
+    QFETCH(qreal, normalizedProgress);
+
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryModel {\n"
+                "properties: [ \"fileName\", \"title\", \"turtle\" ]\n"
+            "}\n");
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QSignalSpy spy(object.data(), SIGNAL(progressChanged()));
+
+    QCOMPARE(object->property("progress"), QVariant(qreal(0.0)));
+
+    gallery.response()->progressChanged(currentProgress, maximumProgress);
+    QCOMPARE(object->property("progress"), QVariant(normalizedProgress));
+    QCOMPARE(spy.count(), 1);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::roleNames()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryModel {\n"
+                "properties: [ \"fileName\", \"title\", \"turtle\" ]\n"
+            "}\n");
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QAbstractItemModel *model = qobject_cast<QAbstractItemModel *>(object.data());
+    QVERIFY(model);
+
+    QHash<int, QByteArray> roleNames = model->roleNames();
+
+    QCOMPARE(roleNames.value(QDeclarativeGalleryQueryModel::ItemId), QByteArray("itemId"));
+    QCOMPARE(roleNames.value(QDeclarativeGalleryQueryModel::ItemType), QByteArray("itemType"));
+
+    QCOMPARE(roleNames.key("fileName", -1), gallery.response()->propertyKey(QLatin1String("fileName")) + 2);
+    QCOMPARE(roleNames.key("title", -1), gallery.response()->propertyKey(QLatin1String("title")) + 2);
+    QCOMPARE(roleNames.key("turtle", -1), -1);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::indexes()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryModel {\n"
+                "properties: [ \"fileName\", \"title\", \"turtle\" ]\n"
+            "}\n");
+
+    gallery.addRow();
+    gallery.addRow();
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QAbstractItemModel *model = qobject_cast<QAbstractItemModel *>(object.data());
+    QVERIFY(model);
+
+    QCOMPARE(model->rowCount(), 2);
+    QCOMPARE(model->columnCount(), 1);
+
+    QCOMPARE(model->index(-1, -1).isValid(), false);
+    QCOMPARE(model->index(-1,  0).isValid(), false);
+    QCOMPARE(model->index(-1,  0).isValid(), false);
+    QCOMPARE(model->index(-1,  1).isValid(), false);
+
+    QCOMPARE(model->index( 0, -1).isValid(), false);
+    QCOMPARE(model->index( 0,  0).isValid(), true);
+    QCOMPARE(model->index( 0,  0).isValid(), true);
+    QCOMPARE(model->index( 0,  1).isValid(), false);
+
+    QCOMPARE(model->index( 1, -1).isValid(), false);
+    QCOMPARE(model->index( 1,  0).isValid(), true);
+    QCOMPARE(model->index( 1,  0).isValid(), true);
+    QCOMPARE(model->index( 1,  1).isValid(), false);
+
+    QCOMPARE(model->index( 2, -1).isValid(), false);
+    QCOMPARE(model->index( 2,  0).isValid(), false);
+    QCOMPARE(model->index( 2,  0).isValid(), false);
+    QCOMPARE(model->index( 2,  1).isValid(), false);
+
+    QModelIndex parent = model->index(0, 0);
+
+    QCOMPARE(model->rowCount(parent), 0);
+    QCOMPARE(model->columnCount(parent), 0);
+
+    QCOMPARE(model->index(-1, -1, parent).isValid(), false);
+    QCOMPARE(model->index(-1,  0, parent).isValid(), false);
+    QCOMPARE(model->index(-1,  0, parent).isValid(), false);
+    QCOMPARE(model->index(-1,  1, parent).isValid(), false);
+
+    QCOMPARE(model->index( 0, -1, parent).isValid(), false);
+    QCOMPARE(model->index( 0,  0, parent).isValid(), false);
+    QCOMPARE(model->index( 0,  0, parent).isValid(), false);
+    QCOMPARE(model->index( 0,  1, parent).isValid(), false);
+
+    QCOMPARE(model->index( 1, -1, parent).isValid(), false);
+    QCOMPARE(model->index( 1,  0, parent).isValid(), false);
+    QCOMPARE(model->index( 1,  0, parent).isValid(), false);
+    QCOMPARE(model->index( 1,  1, parent).isValid(), false);
+
+    QCOMPARE(model->index( 2, -1, parent).isValid(), false);
+    QCOMPARE(model->index( 2,  0, parent).isValid(), false);
+    QCOMPARE(model->index( 2,  0, parent).isValid(), false);
+    QCOMPARE(model->index( 2,  1, parent).isValid(), false);
+
+}
+
+void tst_QDeclarativeDocumentGalleryModel::data_data()
+{
+    QTest::addColumn<int>("index");
+    QTest::addColumn<bool>("isValid");
+    QTest::addColumn<QVariant>("itemId");
+    QTest::addColumn<QVariant>("newItemId");
+    QTest::addColumn<QVariant>("itemType");
+    QTest::addColumn<QVariant>("newItemType");
+    QTest::addColumn<QVariant>("fileName");
+    QTest::addColumn<QVariant>("newFileName");
+    QTest::addColumn<QVariant>("title");
+    QTest::addColumn<QVariant>("newTitle");
+
+    QTest::newRow("-1")
+            << -1
+            << false
+            << QVariant()
+            << QVariant(9)
+            << QVariant()
+            << QVariant::fromValue(QDeclarativeDocumentGallery::File)
+            << QVariant()
+            << QVariant(QLatin1String("a.file"))
+            << QVariant()
+            << QVariant(QLatin1String("Something"));
+
+    QTest::newRow("0")
+            << 0
+            << true
+            << QVariant(3)
+            << QVariant(76)
+            << QVariant::fromValue(QDeclarativeDocumentGallery::Audio)
+            << QVariant::fromValue(QDeclarativeDocumentGallery::Video)
+            << QVariant(QLatin1String("interlude.mp3"))
+            << QVariant(QLatin1String("03-interlude.mp3"))
+            << QVariant(QLatin1String("Interlude"))
+            << QVariant(QLatin1String("An Interlude"));
+
+    QTest::newRow("1")
+            << 1
+            << true
+            << QVariant(45)
+            << QVariant(21)
+            << QVariant::fromValue(QDeclarativeDocumentGallery::Audio)
+            << QVariant::fromValue(QDeclarativeDocumentGallery::Image)
+            << QVariant(QLatin1String("beep.wav"))
+            << QVariant(QLatin1String("beep.mp3"))
+            << QVariant(QVariant::String)
+            << QVariant(QLatin1String("Beep Sound"));
+
+    QTest::newRow("2")
+            << 2
+            << false
+            << QVariant()
+            << QVariant(9)
+            << QVariant()
+            << QVariant::fromValue(QDeclarativeDocumentGallery::File)
+            << QVariant()
+            << QVariant(QLatin1String("a.file"))
+            << QVariant()
+            << QVariant(QLatin1String("Something"));
+}
+
+void tst_QDeclarativeDocumentGalleryModel::data()
+{
+    QFETCH(int, index);
+    QFETCH(bool, isValid);
+    QFETCH(QVariant, itemId);
+    QFETCH(QVariant, newItemId);
+    QFETCH(QVariant, itemType);
+    QFETCH(QVariant, newItemType);
+    QFETCH(QVariant, fileName);
+    QFETCH(QVariant, newFileName);
+    QFETCH(QVariant, title);
+    QFETCH(QVariant, newTitle);
+
+    populateGallery();
+
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryModel {\n"
+                "properties: [ \"fileName\", \"title\", \"turtle\" ]\n"
+            "}\n");
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QAbstractItemModel *model = qobject_cast<QAbstractItemModel *>(object.data());
+    QVERIFY(model);
+
+    QSignalSpy spy(model, SIGNAL(dataChanged(QModelIndex,QModelIndex)));
+
+    const int itemIdRole = QDeclarativeGalleryQueryModel::ItemId;
+    const int itemTypeRole = QDeclarativeGalleryQueryModel::ItemType;
+    const int fileNameRole = model->roleNames().key("fileName");
+    const int titleRole = model->roleNames().key("title");
+
+    QCOMPARE(model->rowCount(), 2);
+    QCOMPARE(model->columnCount(), 1);
+
+    QModelIndex modelIndex = model->index(index, 0);
+    QCOMPARE(modelIndex.isValid(), isValid);
+
+    QCOMPARE(model->data(modelIndex, itemIdRole), itemId);
+    QCOMPARE(model->data(modelIndex, itemTypeRole).toInt(), itemType.toInt());
+    QCOMPARE(model->data(modelIndex, fileNameRole), fileName);
+    QCOMPARE(model->data(modelIndex, titleRole), title);
+
+    QCOMPARE(model->setData(modelIndex, newItemId, itemIdRole), false);
+    QCOMPARE(model->data(modelIndex, itemIdRole), itemId);
+    QCOMPARE(spy.count(), 0);
+
+    QCOMPARE(model->setData(modelIndex, newItemType, itemTypeRole), false);
+    QCOMPARE(model->data(modelIndex, itemTypeRole).toInt(), itemType.toInt());
+    QCOMPARE(spy.count(), 0);
+
+    QCOMPARE(model->setData(modelIndex, newFileName, fileNameRole), false);
+    QCOMPARE(model->data(modelIndex, fileNameRole), fileName);
+    QCOMPARE(spy.count(), 0);
+
+    QCOMPARE(model->setData(modelIndex, newTitle, titleRole), isValid);
+    QCOMPARE(model->data(modelIndex, titleRole), isValid ? newTitle : title);
+    QCOMPARE(spy.count(), isValid ? 1 : 0);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::property_data()
+{
+    data_data();
+}
+
+#define QT_GALLERY_MODEL_CALL_PROPERTY(index, property) \
+    QMetaObject::invokeMethod( \
+            object.data(), \
+            "property", \
+            Q_RETURN_ARG(QVariant, value), \
+            Q_ARG(int, index), \
+            Q_ARG(QString, QLatin1String(property)))
+
+#define QT_GALLERY_MODEL_CALL_SET_PROPERTY(index, property, value) \
+    QMetaObject::invokeMethod( \
+            object.data(), \
+            "setProperty", \
+            Q_ARG(int, index), \
+            Q_ARG(QString, QLatin1String(property)), \
+            Q_ARG(QVariant, QVariant(value)))
+
+void tst_QDeclarativeDocumentGalleryModel::property()
+{
+    QFETCH(int, index);
+    QFETCH(bool, isValid);
+    QFETCH(QVariant, itemId);
+    QFETCH(QVariant, newItemId);
+    QFETCH(QVariant, itemType);
+    QFETCH(QVariant, newItemType);
+    QFETCH(QVariant, fileName);
+    QFETCH(QVariant, newFileName);
+    QFETCH(QVariant, title);
+    QFETCH(QVariant, newTitle);
+
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryModel {\n"
+                "properties: [ \"fileName\", \"title\", \"turtle\" ]\n"
+            "}\n");
+
+    populateGallery();
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QSignalSpy spy(object.data(), SIGNAL(dataChanged(QModelIndex,QModelIndex)));
+
+    QCOMPARE(object->property("count"), QVariant(2));
+
+    QVariant value;
+
+    QCOMPARE(QT_GALLERY_MODEL_CALL_PROPERTY(index, "itemId"), true);
+    QCOMPARE(value, itemId);
+    QCOMPARE(QT_GALLERY_MODEL_CALL_PROPERTY(index, "itemType"), true);
+    QCOMPARE(value.toInt(), itemType.toInt());
+    QCOMPARE(QT_GALLERY_MODEL_CALL_PROPERTY(index, "fileName"), true);
+    QCOMPARE(value, fileName);
+    QCOMPARE(QT_GALLERY_MODEL_CALL_PROPERTY(index, "title"), true);
+    QCOMPARE(value, title);
+    QCOMPARE(QT_GALLERY_MODEL_CALL_PROPERTY(index, "turtle"), true);
+    QCOMPARE(value, QVariant());
+
+    QCOMPARE(QT_GALLERY_MODEL_CALL_SET_PROPERTY(index, "itemId", newItemId), true);
+    QCOMPARE(QT_GALLERY_MODEL_CALL_PROPERTY(index, "itemId"), true);
+    QCOMPARE(value, itemId);
+    QCOMPARE(spy.count(), 0);
+
+    QCOMPARE(QT_GALLERY_MODEL_CALL_SET_PROPERTY(index, "itemType", newItemType), true);
+    QCOMPARE(QT_GALLERY_MODEL_CALL_PROPERTY(index, "itemType"), true);
+    QCOMPARE(value.toInt(), itemType.toInt());
+    QCOMPARE(spy.count(), 0);
+
+    QCOMPARE(QT_GALLERY_MODEL_CALL_SET_PROPERTY(index, "fileName", newFileName), true);
+    QCOMPARE(QT_GALLERY_MODEL_CALL_PROPERTY(index, "fileName"), true);
+    QCOMPARE(value, fileName);
+    QCOMPARE(spy.count(), 0);
+
+    QCOMPARE(QT_GALLERY_MODEL_CALL_SET_PROPERTY(index, "title", newTitle), true);
+    QCOMPARE(QT_GALLERY_MODEL_CALL_PROPERTY(index, "title"), true);
+    QCOMPARE(value, isValid ? newTitle : title);
+    QCOMPARE(spy.count(), isValid ? 1 : 0);
+
+    QCOMPARE(QT_GALLERY_MODEL_CALL_SET_PROPERTY(index, "turtle", QLatin1String("It's a turtle")), true);
+    QCOMPARE(QT_GALLERY_MODEL_CALL_PROPERTY(index, "turtle"), true);
+    QCOMPARE(value, QVariant());
+    QCOMPARE(spy.count(), isValid ? 1 : 0);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::itemsInserted()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryModel {\n"
+                "properties: [ \"fileName\", \"title\", \"turtle\" ]\n"
+            "}\n");
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QAbstractItemModel *model = qobject_cast<QAbstractItemModel *>(object.data());
+    QVERIFY(model);
+
+    QSignalSpy countSpy(model, SIGNAL(countChanged()));
+    QSignalSpy beforeSpy(model, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)));
+    QSignalSpy afterSpy(model, SIGNAL(rowsInserted(QModelIndex,int,int)));
+
+    QCOMPARE(model->rowCount(), 0);
+    QCOMPARE(model->columnCount(), 1);
+
+    gallery.response()->beginInsertRows(0);
+    gallery.response()->addRow();
+    gallery.response()->addRow();
+    gallery.response()->addRow();
+    gallery.response()->endInsertRows();
+
+    QCOMPARE(model->rowCount(), 3);
+    QCOMPARE(model->property("count"), QVariant(3));
+    QCOMPARE(countSpy.count(), 1);
+    QCOMPARE(beforeSpy.count(), 1);
+    QCOMPARE(beforeSpy.last().value(1).toInt(), 0);
+    QCOMPARE(beforeSpy.last().value(2).toInt(), 2);
+    QCOMPARE(afterSpy.count(), 1);
+    QCOMPARE(afterSpy.last().value(1).toInt(), 0);
+    QCOMPARE(afterSpy.last().value(2).toInt(), 2);
+
+    gallery.response()->beginInsertRows(1);
+    gallery.response()->addRow();
+    gallery.response()->addRow();
+    gallery.response()->endInsertRows();
+
+    QCOMPARE(model->rowCount(), 5);
+    QCOMPARE(model->property("count"), QVariant(5));
+    QCOMPARE(countSpy.count(), 2);
+    QCOMPARE(beforeSpy.count(), 2);
+    QCOMPARE(beforeSpy.last().value(1).toInt(), 1);
+    QCOMPARE(beforeSpy.last().value(2).toInt(), 2);
+    QCOMPARE(afterSpy.count(), 2);
+    QCOMPARE(afterSpy.last().value(1).toInt(), 1);
+    QCOMPARE(afterSpy.last().value(2).toInt(), 2);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::itemsRemoved()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryModel {\n"
+                "properties: [ \"fileName\", \"title\", \"turtle\" ]\n"
+            "}\n");
+
+    gallery.addRow();
+    gallery.addRow();
+    gallery.addRow();
+    gallery.addRow();
+    gallery.addRow();
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QAbstractItemModel *model = qobject_cast<QAbstractItemModel *>(object.data());
+    QVERIFY(model);
+
+    QSignalSpy countSpy(model, SIGNAL(countChanged()));
+    QSignalSpy beforeSpy(model, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)));
+    QSignalSpy afterSpy(model, SIGNAL(rowsRemoved(QModelIndex,int,int)));
+
+    QCOMPARE(model->rowCount(), 5);
+    QCOMPARE(model->columnCount(), 1);
+    QCOMPARE(model->property("count"), QVariant(5));
+
+    gallery.response()->removeRows(1, 2);
+
+    QCOMPARE(model->rowCount(), 3);
+    QCOMPARE(model->property("count"), QVariant(3));
+    QCOMPARE(countSpy.count(), 1);
+    QCOMPARE(beforeSpy.count(), 1);
+    QCOMPARE(beforeSpy.last().value(1).toInt(), 1);
+    QCOMPARE(beforeSpy.last().value(2).toInt(), 2);
+    QCOMPARE(afterSpy.count(), 1);
+    QCOMPARE(afterSpy.last().value(1).toInt(), 1);
+    QCOMPARE(afterSpy.last().value(2).toInt(), 2);
+
+    gallery.response()->removeRows(0, 3);
+
+    QCOMPARE(model->rowCount(), 0);
+    QCOMPARE(model->property("count"), QVariant(0));
+    QCOMPARE(countSpy.count(), 2);
+    QCOMPARE(beforeSpy.count(), 2);
+    QCOMPARE(beforeSpy.last().value(1).toInt(), 0);
+    QCOMPARE(beforeSpy.last().value(2).toInt(), 2);
+    QCOMPARE(afterSpy.count(), 2);
+    QCOMPARE(afterSpy.last().value(1).toInt(), 0);
+    QCOMPARE(afterSpy.last().value(2).toInt(), 2);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::itemsMoved()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryModel {\n"
+                "properties: [ \"fileName\", \"title\", \"turtle\" ]\n"
+            "}\n");
+
+    gallery.addRow();
+    gallery.addRow();
+    gallery.addRow();
+    gallery.addRow();
+    gallery.addRow();
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QAbstractItemModel *model = qobject_cast<QAbstractItemModel *>(object.data());
+    QVERIFY(model);
+
+    QSignalSpy countSpy(model, SIGNAL(countChanged()));
+    QSignalSpy beforeSpy(model, SIGNAL(rowsAboutToBeMoved(QModelIndex,int,int,QModelIndex,int)));
+    QSignalSpy afterSpy(model, SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)));
+
+    QCOMPARE(model->rowCount(), 5);
+    QCOMPARE(model->columnCount(), 1);
+    QCOMPARE(model->property("count"), QVariant(5));
+
+    gallery.response()->itemsMoved(0, 3, 2);
+
+    QCOMPARE(model->rowCount(), 5);
+    QCOMPARE(model->property("count"), QVariant(5));
+    QCOMPARE(countSpy.count(), 0);
+    QCOMPARE(beforeSpy.count(), 1);
+    QCOMPARE(beforeSpy.last().value(1).toInt(), 0);
+    QCOMPARE(beforeSpy.last().value(2).toInt(), 1);
+    QCOMPARE(beforeSpy.last().value(4).toInt(), 3);
+    QCOMPARE(afterSpy.count(), 1);
+    QCOMPARE(afterSpy.last().value(1).toInt(), 0);
+    QCOMPARE(afterSpy.last().value(2).toInt(), 1);
+    QCOMPARE(afterSpy.last().value(4).toInt(), 3);
+
+    gallery.response()->itemsMoved(2, 0, 3);
+
+    QCOMPARE(model->rowCount(), 5);
+    QCOMPARE(model->property("count"), QVariant(5));
+    QCOMPARE(countSpy.count(), 0);
+    QCOMPARE(beforeSpy.count(), 2);
+    QCOMPARE(beforeSpy.last().value(1).toInt(), 2);
+    QCOMPARE(beforeSpy.last().value(2).toInt(), 4);
+    QCOMPARE(beforeSpy.last().value(4).toInt(), 0);
+    QCOMPARE(afterSpy.count(), 2);
+    QCOMPARE(afterSpy.last().value(1).toInt(), 2);
+    QCOMPARE(afterSpy.last().value(2).toInt(), 4);
+    QCOMPARE(afterSpy.last().value(4).toInt(), 0);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::metaDataChanged()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryModel {\n"
+                "properties: [ \"fileName\", \"title\", \"turtle\" ]\n"
+            "}\n");
+
+    gallery.addRow();
+    gallery.addRow();
+    gallery.addRow();
+    gallery.addRow();
+    gallery.addRow();
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QAbstractItemModel *model = qobject_cast<QAbstractItemModel *>(object.data());
+    QVERIFY(model);
+
+    QSignalSpy spy(model, SIGNAL(dataChanged(QModelIndex,QModelIndex)));
+
+    QCOMPARE(model->rowCount(), 5);
+    QCOMPARE(model->columnCount(), 1);
+
+    QList<int> keys;
+    keys.append(model->roleNames().key("fileName"));
+    keys.append(model->roleNames().key("title"));
+
+    gallery.response()->metaDataChanged(1, 1, keys);
+
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(spy.last().value(0).value<QModelIndex>(), model->index(1, 0));
+    QCOMPARE(spy.last().value(1).value<QModelIndex>(), model->index(1, 0));
+
+    gallery.response()->metaDataChanged(2, 3, QList<int>());
+
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(spy.last().value(0).value<QModelIndex>(), model->index(2, 0));
+    QCOMPARE(spy.last().value(1).value<QModelIndex>(), model->index(4, 0));
 }
 
 QTEST_MAIN(tst_QDeclarativeDocumentGalleryModel)
