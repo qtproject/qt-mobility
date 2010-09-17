@@ -208,6 +208,40 @@ void tst_symbianomcollections::fetchCollection()
     // Do a basic verify
     QVERIFY(cs[0].id().localId() == dId);
     QVERIFY(cs[0].id().managerUri() == m_om->managerUri());    
+
+    // fetch entries for an non existent calendar
+    QOrganizerCollectionLocalId nonId;
+    cs.clear();
+    cs = m_om->collections(QList<QOrganizerCollectionLocalId>() << nonId);
+    QVERIFY(m_om->error() == QOrganizerItemManager::DoesNotExistError);
+
+    // add a collection and fetch
+    QOrganizerCollection c1;
+    c1.setMetaData("Name", "testname");
+    c1.setMetaData("FileName", "c:testcalendar");
+    c1.setMetaData("Description", "this is a test collection");
+    c1.setMetaData("OwnerName", "test");
+    c1.setMetaData("Color", QColor(Qt::red));
+    c1.setMetaData("Enabled", true);
+    QVERIFY(m_om->saveCollection(&c1));
+    cs.clear();
+    cs = m_om->collections();
+    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    QVERIFY(cs.count() == 2);
+    
+    //remove and then fetch the collections
+    QVERIFY(m_om->removeCollection(c1.id().localId()));
+        
+    cs.clear();
+    cs = m_om->collections();
+    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    QVERIFY(cs.count() == 1);
+    
+    // fetch an already removed collection
+    cs.clear();
+    cs = m_om->collections(QList<QOrganizerCollectionLocalId>() << c1.id().localId());
+    QVERIFY(m_om->error() == QOrganizerItemManager::DoesNotExistError);
+    QVERIFY(cs.count() == 0);
 }
 
 void tst_symbianomcollections::saveCollection()
