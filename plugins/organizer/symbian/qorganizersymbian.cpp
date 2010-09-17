@@ -1340,9 +1340,9 @@ bool QOrganizerItemSymbianEngine::isFilterSupported(
     return false;
 }
 
-QList<QVariant::Type> QOrganizerItemSymbianEngine::supportedDataTypes() const
+QList<int> QOrganizerItemSymbianEngine::supportedDataTypes() const
 {
-    QList<QVariant::Type> ret;
+    QList<int> ret;
     // TODO - tweak which data types this engine understands
     ret << QVariant::String;
     ret << QVariant::Date;

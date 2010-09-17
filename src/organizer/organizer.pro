@@ -28,6 +28,7 @@ PUBLIC_HEADERS += \
     qorganizeritemfilter.h \
     qorganizeritem.h \
     qorganizeritemid.h \
+    qorganizeritemenginelocalid.h \
     qorganizeritemmanager.h \
     qorganizeritemmanagerengine.h \
     qorganizeritemmanagerenginefactory.h \
@@ -64,6 +65,7 @@ SOURCES += \
     qorganizeritemfetchhint.cpp \
     qorganizeritemfilter.cpp \
     qorganizeritemid.cpp \
+    qorganizeritemenginelocalid.cpp \
     qorganizeritemmanager.cpp \
     qorganizeritemmanagerengine.cpp \
     qorganizeritemmanagerenginefactory.cpp \
