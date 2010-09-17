@@ -222,6 +222,16 @@ bool QUDisksDeviceInterface::deviceIsLinuxLvm2PV()
     return this->getProperty("DeviceIsLinuxLvm2PV").toBool();
 }
 
+bool QUDisksDeviceInterface::deviceIsRotational()
+{
+    return this->getProperty("DeviceIsRotational").toBool();
+}
+
+QString QUDisksDeviceInterface::driveMediaCompatibility()
+{
+    return this->getProperty("DriveMediaCompatibility").toBool();
+
+}
 
 QString QUDisksDeviceInterface::uuid()
 {

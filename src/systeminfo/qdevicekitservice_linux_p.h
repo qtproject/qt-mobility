@@ -110,6 +110,7 @@ public:
     QString driveMedia();
     QStringList deviceMountPaths();
     QVariantMap getProperties();
+
     bool deviceIsDrive();
     bool deviceIsMediaChangeDetacted();
     bool deviceIsMounted();
@@ -119,6 +120,9 @@ public:
     bool deviceIsLinuxLvm2LV();
     bool deviceIsLinuxMd();
     bool deviceIsLinuxLvm2PV();
+
+    bool deviceIsRotational();
+    QString driveMediaCompatibility();
 
     qulonglong partitionSize();
 

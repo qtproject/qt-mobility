@@ -66,10 +66,12 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
     This enum describes the type of drive or volume
 
     \value NoDrive               Drive type undetermined.
-    \value InternalDrive         Is internal drive.
-    \value RemovableDrive        Is removable.
+    \value InternalDrive         Is internal mass storage drive like a harddrive.
+    \value RemovableDrive        Is a removable disk like MMC.
     \value RemoteDrive           Is a network drive.
     \value CdromDrive            Is a cd rom drive.
+    \value InternalFlashDrive    Is an internal flash disk, or Phone Memory.
+    \value RamDrive              Is a virtual drive made in RAM memory.
 */
 
 /*!

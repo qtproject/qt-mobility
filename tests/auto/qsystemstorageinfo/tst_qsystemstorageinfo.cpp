@@ -103,7 +103,10 @@ void tst_QSystemStorageInfo::tst_typeForDrive()
                 || type == QSystemStorageInfo::CdromDrive
                 || type == QSystemStorageInfo::InternalDrive
                 || type == QSystemStorageInfo::RemoteDrive
-                || type == QSystemStorageInfo::RemovableDrive);
+                || type == QSystemStorageInfo::RemovableDrive
+                || type == QSystemStorageInfo::InternalFlashDrive
+                || type == QSystemStorageInfo::RamDrive
+                );
     }
 }
 

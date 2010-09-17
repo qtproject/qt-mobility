@@ -1839,11 +1839,14 @@ QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive
             QString mountp;
             if(devIface.deviceIsRemovable()) {
                 return QSystemStorageInfo::RemovableDrive;
-            } else if(devIface.deviceIsSystemInternal()){
-                return QSystemStorageInfo::InternalDrive;
+            } else if(devIface.deviceIsSystemInternal()) {
+                if(devIface.deviceIsRotational()) {
+                    return QSystemStorageInfo::InternalDrive;
+                } else {
+                    return QSystemStorageInfo::InternalFlashDrive;
+                }
             } else {
                 return QSystemStorageInfo::RemoteDrive;
-
             }
         } else {
             //udisks cannot see mounted samba shares

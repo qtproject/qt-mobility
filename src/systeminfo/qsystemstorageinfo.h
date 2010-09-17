@@ -68,7 +68,9 @@ public:
         InternalDrive,
         RemovableDrive,
         RemoteDrive,
-        CdromDrive
+        CdromDrive,
+        InternalFlashDrive, //1.2
+        RamDrive //1.2
     };
 
     enum StorageState {
