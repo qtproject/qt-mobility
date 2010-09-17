@@ -314,7 +314,7 @@ void COrganizerItemRequestsServiceProvider::SaveItemL()
             // TODO: collection id needed!
             // without changeSet signaling does not work, and without collection id
             // the item is always stored to the default collection
-            iOrganizerItemManagerEngine.saveItemL(&item, 0, &iChangeSet);
+            iOrganizerItemManagerEngine.saveItemL(&item, QOrganizerCollectionLocalId(), &iChangeSet);
             iSuccessfullItems.append(item);
             }
         else

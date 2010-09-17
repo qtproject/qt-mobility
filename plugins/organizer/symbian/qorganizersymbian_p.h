@@ -85,6 +85,7 @@
 
 QTM_USE_NAMESPACE
 
+class OrganizerItemTransform; // forward declare transform class.
 class QOrganizerItemSymbianEngine; // forward declare symbian engine.
 class QOrganizerCollectionSymbianEngineLocalId : public QOrganizerCollectionEngineLocalId
 {
@@ -141,6 +142,7 @@ private:
     quint32 m_localItemId; // the symbian backend requires quint32 for itemId + quint32 for collectionId
     quint32 m_localCollectionId;
     friend class QOrganizerItemSymbianEngine;
+    friend class OrganizerItemTransform;
 };
 
 
@@ -324,7 +326,7 @@ private:
     CCalEntryView* entryViewL(
         const QOrganizerCollectionLocalId& collectionId) const;
     QOrganizerCollectionLocalId collectionLocalIdL(QOrganizerItem item, 
-        const QOrganizerCollectionLocalId& collectionId = 0) const;
+        const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId()) const;
     CCalEntry* entryForItemOccurrenceL(
         const QOrganizerCollectionLocalId collectionId, QOrganizerItem *item, 
         bool &isNewEntry) const;

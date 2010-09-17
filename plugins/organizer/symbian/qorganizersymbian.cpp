@@ -369,6 +369,11 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(
     QOrganizerItemManager::Error* error) const
 {
     QList<QOrganizerItem> occurrenceList;
+
+    quint32 defaultCollectionLocalIdValue = 0;
+    QOrganizerCollectionSymbianEngineLocalId* idPtr = static_cast<QOrganizerCollectionSymbianEngineLocalId>(QOrganizerItemManagerEngine::engineLocalCollectionId(m_defaultCollection.localId()));
+    if (idPtr != 0)
+        defaultCollectionLocalIdValue = idPtr->m_localCollectionId;
     
     // Parent item should be an Event or a Todo
     if (!((generator.type()== QOrganizerItemType::TypeEvent) ||(generator.type()== QOrganizerItemType::TypeTodo))) {
@@ -452,7 +457,7 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(
                          id.setManagerUri(this->managerUri());
                          // The instance might be modified. Then it will not point to the parent entry.
                          // In this case local id must be set. Otherwise it should be zero.
-                         QOrganizerItemLocalId instanceEntryId(new QOrganizerItemSymbianEngineLocalId(calInstance->Entry().LocalUidL()));
+                         QOrganizerItemLocalId instanceEntryId(new QOrganizerItemSymbianEngineLocalId(defaultCollectionLocalIdValue, calInstance->Entry().LocalUidL()));
                          if (instanceEntryId != generator.localId())
                              id.setLocalId(instanceEntryId);
                          itemInstance.setId(id);
@@ -510,7 +515,7 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(
                  // The instance might be modified. Then it will not point to the parent entry.
                  // In this case local id must be set. Otherwise it should be zero.                                                  
                  if (calInstance->Entry().RecurrenceIdL().TimeUtcL() != Time::NullTTime()) {
-                     QOrganizerItemLocalId instanceEntryId(new QOrganizerItemSymbianEngineLocalId(calInstance->Entry().LocalUidL()));
+                     QOrganizerItemLocalId instanceEntryId(new QOrganizerItemSymbianEngineLocalId(defaultCollectionLocalIdValue, calInstance->Entry().LocalUidL()));
                      id.setLocalId(instanceEntryId);
                      itemInstance.setId(id);
                  }                                                                      
@@ -556,11 +561,16 @@ void QOrganizerItemSymbianEngine::itemIdsL(
     CleanupClosePushL(ids);
     getIdsModifiedSinceDateL(ids, filter);
 
+    quint32 defaultCollectionLocalIdValue = 0;
+    QOrganizerCollectionSymbianEngineLocalId* idPtr = static_cast<QOrganizerCollectionSymbianEngineLocalId>(QOrganizerItemManagerEngine::engineLocalCollectionId(m_defaultCollection.localId()));
+    if (idPtr != 0)
+        defaultCollectionLocalIdValue = idPtr->m_localCollectionId;
+
     // Convert to QOrganizerItemLocalId list
     QList<QOrganizerItemLocalId> itemIds;
     int count = ids.Count();
     for (int i=0; i<count; i++) {
-        itemIds << QOrganizerItemLocalId(new (QOrganizerItemSymbianEngineLocalId(ids[i])));
+        itemIds << QOrganizerItemLocalId(new (QOrganizerItemSymbianEngineLocalId(defaultCollectionLocalIdValue, ids[i])));
     }
     CleanupStack::PopAndDestroy(&ids);
 
@@ -628,6 +638,11 @@ void QOrganizerItemSymbianEngine::itemsL(QList<QOrganizerItem>& itemsList,
     const QList<QOrganizerItemSortOrder>& sortOrders, 
     const QOrganizerItemFetchHint& fetchHint) const
 {
+    // first, retrieve default collection id.
+    quint32 defaultCollectionLocalIdValue = 0;
+    QOrganizerCollectionSymbianEngineLocalId* idPtr = static_cast<QOrganizerCollectionSymbianEngineLocalId>(QOrganizerItemManagerEngine::engineLocalCollectionId(m_defaultCollection.localId()));
+    if (idPtr != 0)
+        defaultCollectionLocalIdValue = idPtr->m_localCollectionId;
 
     // Get ids
     RArray<TCalLocalUid> ids;
@@ -638,7 +653,7 @@ void QOrganizerItemSymbianEngine::itemsL(QList<QOrganizerItem>& itemsList,
     int count = ids.Count();
     for (int i=0; i<count; i++) {
         QOrganizerItem item;
-        itemL(QOrganizerItemLocalId(ids[i]), &item, fetchHint);
+        itemL(QOrganizerItemLocalId(new QOrganizerItemSymbianEngineLocalId(defaultCollectionLocalIdValue, ids[i])), &item, fetchHint);
         items << item;
     }
     CleanupStack::PopAndDestroy(&ids);
@@ -676,10 +691,16 @@ void QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& itemId,
         You can ignore the fetch hint and fetch everything (but you must
         fetch at least what is mentioned in the fetch hint). */
 
+    // get the value of the local item id.
+    QOrganizerItemSymbianEngineLocalId* idPtr = static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemId));
+    quint32 itemLocalIdValue = 0;
+    if (idPtr != 0)
+        itemLocalIdValue = idPtr->m_localItemId;
+
     // Fetch item
-    TCalLocalUid uid(itemId);
+    TCalLocalUid uid(itemLocalIdValue);
     CCalEntry *calEntry(0);
-    QOrganizerCollectionLocalId collectionLocalId(0);
+    QOrganizerCollectionLocalId collectionLocalId(new QOrganizerCollectionSymbianEngineLocalId(0));
     foreach (const OrganizerSymbianCollection &collection, m_collections) {
         // TODO: instead of looping through entry views, get the collection id from
         // local id? (not certain that is the correct way, because the Qt API for
@@ -708,9 +729,9 @@ void QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& itemId,
     if (item->type() == QOrganizerItemType::TypeEventOccurrence) {
         HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
         // We don't know the local id yet, let's search with globalUid
-        CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, item, *globalUid);
+        CCalEntry *parentEntry = findParentEntryLC((static_cast<QOrganizerCollectionSymbianEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalCollectionId(collectionLocalId)))->m_localCollectionId, item, *globalUid);
         QOrganizerEventOccurrence *eventOccurrence = (QOrganizerEventOccurrence *)item;
-        eventOccurrence->setParentLocalId(parentEntry->LocalUidL());
+        eventOccurrence->setParentLocalId(QOrganizerLocalItemId(new QOrganizerItemSymbianEngineLocalId(parentEntry->LocalUidL())));
         CleanupStack::PopAndDestroy(parentEntry);
         CleanupStack::PopAndDestroy(globalUid);
     }
@@ -864,7 +885,7 @@ QOrganizerCollectionLocalId QOrganizerItemSymbianEngine::collectionLocalIdL(
 #ifdef SYMBIAN_CALENDAR_V2
     QOrganizerCollectionLocalId itemCollectionId = item.collectionId().localId();
 
-    if (itemCollectionId && collectionId
+    if (!itemCollectionId.isNull() && !collectionId.isNull()
         && collectionId != itemCollectionId)
             User::Leave(KErrArgument);
     else if (collectionId)
